@@ -2,7 +2,7 @@
 
 **Gewitterradar** is a Home Assistant dashboard card for live lightning and thunderstorm visualization using data supplied by the Home Assistant Blitzortung.org integration.
 
-Current stable release: **V4.04**
+Stable channel: **Latest** — currently **V4.04**
 
 ## Highlights
 
@@ -34,6 +34,8 @@ Gewitterradar can be installed as a custom **Dashboard** repository in HACS:
 https://github.com/TheDaimos/gewitterradar
 ```
 
+For a normal installation, use the default **newest / Latest** version offered by HACS. Do not deliberately select a fixed older version unless you need a rollback or a specific compatibility state. HACS checks the repository for newer releases and can then offer future Gewitterradar updates automatically.
+
 HACS installs `gewitterradar.js`, the four required visual assets and a staged copy of `app_gewitterradar_pkg.yaml` below `/config/www/community/gewitterradar/` (exposed by Home Assistant as `/hacsfiles/gewitterradar/`).
 
 The package still requires one manual step: copy or move
@@ -60,7 +62,11 @@ type: custom:gewitterradar-card
 
 ## Release
 
+V4.04 is frozen as the current verified regression baseline at commit `8ada0e06aef47627d31224b9e46d58de459fb24b`. The `v4.04` tag and the backup branch `frozen/v4.04` are checked by CI against that exact commit. Future changes must use a new version instead of modifying V4.04 in place.
+
 V4.04 keeps the working V4.03 HACS distribution model: the GitHub release publishes **zero custom release assets**, forcing current HACS to use the tagged `dist/` tree. V4.04 adds `dist/app_gewitterradar_pkg.yaml` to that tree, so users no longer need to download the helper package separately before installing it manually under `/config/packages/`.
+
+Future stable releases are explicitly published as GitHub **Latest** releases. At present GitHub `releases/latest` resolves to V4.04. See [Release policy](docs/RELEASE_POLICY.md).
 
 Application behavior, helper IDs/defaults, layouts, lightning processing, compass behavior and the optimized PNG files remain unchanged.
 
