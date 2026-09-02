@@ -6,10 +6,25 @@
 - Blitzortung.org-Integration mit den benötigten Blitz-/Zählerentitäten.
 - Standard-Zähler der Beispielkonfiguration: `sensor.home_lightning_counter`.
 
+## Variante A: Installation über HACS
+
+1. In HACS `TheDaimos/gewitterradar` als benutzerdefiniertes Repository vom Typ **Dashboard** hinzufügen.
+2. Gewitterradar installieren.
+3. HACS stellt die Karte und ihre Bilddateien unter `/hacsfiles/gewitterradar/` bereit. Der stabile Ressourcendateiname lautet `gewitterradar.js`.
+4. Das Home-Assistant-Package wie unter Schritt 3 beschrieben zusätzlich manuell installieren; HACS kann diesen Teil nicht nach `/config/packages/` kopieren.
+
+Wenn die Lovelace-Ressourcen in YAML verwaltet werden, lautet die Moduladresse:
+
+```text
+/hacsfiles/gewitterradar/gewitterradar.js
+```
+
+## Variante B: Manuelle Installation
+
 ## 1. JavaScript und Assets kopieren
 
 - `gewitterradar-card-v4_01.js` nach `/config/www/gewitterradar/gewitterradar-card-v4_01.js` kopieren.
-- Die vier PNG-Dateien aus `assets/` nach `/config/www/gewitterradar/assets/` kopieren.
+- Die vier PNG-Dateien aus `dist/assets/` nach `/config/www/gewitterradar/assets/` kopieren.
 
 Erwartete Asset-Dateien:
 

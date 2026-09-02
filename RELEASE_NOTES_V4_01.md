@@ -32,6 +32,13 @@ All four files remain 8-bit RGBA PNGs with transparency. The new dimensions reta
 
 Replace the JavaScript file and all four PNG assets together. V4.01 uses refreshed internal asset cache keys; the Lovelace resource URL should also use `?v=4_01`.
 
+## Installation options
+
+- **HACS Dashboard:** Add `https://github.com/TheDaimos/gewitterradar` as a custom Dashboard repository. HACS installs the JavaScript card and its visual assets through the stable `gewitterradar.js` entry point.
+- **Manual:** Follow the German or English installation guide included in the repository.
+
+The Home Assistant package containing the required `lightning_detection_*` helpers is not installed by HACS and must be copied to `/config/packages/` separately.
+
 ## Home Assistant Recorder recommendation
 
 ```yaml

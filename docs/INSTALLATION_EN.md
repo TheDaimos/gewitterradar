@@ -6,10 +6,25 @@
 - Blitzortung.org integration providing the required lightning/counter entities.
 - Default counter used by the example: `sensor.home_lightning_counter`.
 
+## Option A: Install through HACS
+
+1. Add `TheDaimos/gewitterradar` to HACS as a custom **Dashboard** repository.
+2. Install Gewitterradar.
+3. HACS provides the card and its visual assets under `/hacsfiles/gewitterradar/`. The stable resource filename is `gewitterradar.js`.
+4. Install the Home Assistant package manually as described in step 3 below; HACS cannot copy this part to `/config/packages/`.
+
+If Lovelace resources are managed in YAML, use this module URL:
+
+```text
+/hacsfiles/gewitterradar/gewitterradar.js
+```
+
+## Option B: Manual installation
+
 ## 1. Copy JavaScript and assets
 
 - Copy `gewitterradar-card-v4_01.js` to `/config/www/gewitterradar/gewitterradar-card-v4_01.js`.
-- Copy the four PNG files from `assets/` to `/config/www/gewitterradar/assets/`.
+- Copy the four PNG files from `dist/assets/` to `/config/www/gewitterradar/assets/`.
 
 Expected asset files:
 

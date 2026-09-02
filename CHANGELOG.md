@@ -13,6 +13,8 @@ Gewitterradar V4.01 keeps the V4.00 feature set unchanged and reduces the extern
 - Combined asset size reduced from 5,966,253 to 2,321,551 bytes (61.09%).
 - Asset cache keys updated so Home Assistant clients load the V4.01 files immediately.
 - No functional, helper, layout or data-processing behavior changed.
+- HACS Dashboard compatibility added through `hacs.json` and the stable `dist/gewitterradar.js` entry point.
+- The HACS entry point resolves its visual assets relative to `/hacsfiles/`; the approved manual V4.01 card remains byte-identical.
 
 ## V4.00 — First stable release
 

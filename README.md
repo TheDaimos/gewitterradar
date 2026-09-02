@@ -28,6 +28,15 @@ See:
 - [Installation – English](docs/INSTALLATION_EN.md)
 - [Home Assistant Recorder recommendation](docs/RECORDER.md)
 
+Gewitterradar can be installed as a custom **Dashboard** repository in HACS:
+
+```text
+https://github.com/TheDaimos/gewitterradar
+```
+
+HACS installs the card and its visual assets. The Home Assistant package in
+`home-assistant/app_gewitterradar_pkg.yaml` must still be installed manually.
+
 The JavaScript card is registered as:
 
 ```yaml
@@ -37,6 +46,8 @@ type: custom:gewitterradar-card
 ## Release
 
 V4.01 is a maintenance release that conservatively optimizes the four external PNG assets while preserving the V4.00 feature set and Home Assistant helper interface.
+
+The release includes a stable HACS entry point at `dist/gewitterradar.js`.
 
 See [V4.01 release notes](RELEASE_NOTES_V4_01.md), the [asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
