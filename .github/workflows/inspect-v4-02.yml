@@ -1,0 +1,19 @@
+name: Inspect V4.02 source markers
+
+on:
+  push:
+    branches:
+      - release/v4.02-hacs-fix
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Inspect V4.01 source markers
+        run: node scripts/audit-v4-02-source.mjs
