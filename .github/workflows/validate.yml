@@ -33,6 +33,7 @@ jobs:
         uses: hacs/action@main
         with:
           category: plugin
+          ignore: license images
 
   publish-v4-01:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
