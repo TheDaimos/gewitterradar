@@ -1,4 +1,4 @@
-# Gewitterradar V4.02 – Installation (EN)
+# Gewitterradar V4.03 – Installation (EN)
 
 ## Requirements
 
@@ -9,7 +9,7 @@
 ## Option A: Install through HACS
 
 1. Add `TheDaimos/gewitterradar` to HACS as a custom **Dashboard** repository.
-2. Install Gewitterradar V4.02, or use **Redownload** when upgrading.
+2. Install Gewitterradar V4.03, or use **Redownload** when upgrading.
 3. HACS installs the stable `gewitterradar.js` entry point and the complete `assets/` directory under `/config/www/community/gewitterradar/`. Home Assistant exposes this through `/hacsfiles/gewitterradar/`.
 4. Install the Home Assistant package manually. A HACS Dashboard repository cannot copy files into `/config/packages/`.
 
@@ -31,15 +31,17 @@ If Lovelace resources are managed in YAML, use this module URL:
 /hacsfiles/gewitterradar/gewitterradar.js
 ```
 
-### Upgrade note for V4.01
+### Upgrade note for V4.01/V4.02
 
-V4.01 exposed a standalone `gewitterradar.js` GitHub release asset. HACS could therefore select a single-file installation and omit `assets/`. V4.02 removes that release layout. After redownloading V4.02, the `assets/` directory shown above must be present.
+V4.01 could be treated as a single-file installation because of its standalone `gewitterradar.js` release asset. V4.02 removed that file, but still published the package, ZIP and checksum as custom GitHub release assets. Current HACS prioritizes those release assets before the tagged repository `dist/` tree, so those three files could be copied into `/config/www/community/gewitterradar/` while the card and graphics were omitted.
+
+V4.03 therefore publishes **no custom GitHub release assets**. HACS falls through to the tagged repository tree and installs `dist/gewitterradar.js` together with `dist/assets/`.
 
 ## Option B: Manual installation
 
 ### 1. Copy JavaScript and assets
 
-- Copy `gewitterradar-card-v4_02.js` to `/config/www/gewitterradar/gewitterradar-card-v4_02.js`.
+- Copy `gewitterradar-card-v4_03.js` to `/config/www/gewitterradar/gewitterradar-card-v4_03.js`.
 - Copy the four PNG files from `dist/assets/` to `/config/www/gewitterradar/assets/`.
 
 Expected asset files:
@@ -54,7 +56,7 @@ Expected asset files:
 Register the card as a JavaScript module:
 
 ```text
-/local/gewitterradar/gewitterradar-card-v4_02.js?v=4_02
+/local/gewitterradar/gewitterradar-card-v4_03.js?v=4_03
 ```
 
 After updates, refresh the browser or Companion App cache.
@@ -63,7 +65,7 @@ After updates, refresh the browser or Companion App cache.
 
 Copy `home-assistant/app_gewitterradar_pkg.yaml` to `/config/packages/app_gewitterradar_pkg.yaml`.
 
-The same package is also published as a separate V4.02 release asset for convenient download without extracting the complete release ZIP.
+Because V4.03 intentionally has no custom release assets, obtain the package directly from the tagged repository or from GitHub's automatically generated source-code archive.
 
 `configuration.yaml` must include packages:
 
@@ -72,7 +74,7 @@ homeassistant:
   packages: !include_dir_named packages
 ```
 
-Existing `lightning_detection_*` helper IDs are intentionally preserved. Package logic is unchanged from V4.01. Restart Home Assistant afterwards.
+Existing `lightning_detection_*` helper IDs are intentionally preserved. Package logic is unchanged from V4.01/V4.02. Restart Home Assistant afterwards.
 
 If stale helpers are already shown as unavailable because the package file was missing, restore the package and perform a full Home Assistant restart. With the same entity IDs, the YAML helpers are provided again under their existing IDs.
 
@@ -114,7 +116,7 @@ The Recorder exclusion prevents long-term storage of these entities without disa
 
 ## 6. First smoke test
 
-- The card loads and displays `V4.02`.
+- The card loads and displays `V4.03`.
 - A HACS installation contains all four PNG files under `/config/www/community/gewitterradar/assets/`.
 - The Blitzortung.org source-status LED is plausible.
 - Settings open correctly.
