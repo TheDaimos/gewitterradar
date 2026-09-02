@@ -64,7 +64,7 @@ V4.04 keeps the working V4.03 HACS distribution model: the GitHub release publis
 
 Application behavior, helper IDs/defaults, layouts, lightning processing, compass behavior and the optimized PNG files remain unchanged.
 
-See [V4.04 release notes](RELEASE_NOTES_V4_04.md), the [HACS packaging note](docs/HACS_V4_02_FIX.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
+See [V4.04 release notes](RELEASE_NOTES_V4_04.md), the [V4.04 HACS package-staging note](docs/HACS_V4_04_PACKAGE_STAGING.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Data source
 
