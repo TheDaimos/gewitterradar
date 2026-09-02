@@ -1,4 +1,4 @@
-name: Inspect V4.02 source markers
+name: Prepare V4.02 generated files
 
 on:
   push:
@@ -7,13 +7,25 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  inspect:
+  prepare:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Inspect V4.01 source markers
-        run: node scripts/audit-v4-02-source.mjs
+      - name: Generate V4.02 sources, HACS distribution and checksums
+        run: node scripts/prepare-v4-02.mjs
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gewitterradar-card-v4_02.js gewitterradar-card-v4_02.txt dist/gewitterradar.js SHA256SUMS.txt
+          if git diff --cached --quiet; then
+            echo "Generated V4.02 files are already current."
+            exit 0
+          fi
+          git commit -m "Generate Gewitterradar V4.02 distribution"
+          git push
