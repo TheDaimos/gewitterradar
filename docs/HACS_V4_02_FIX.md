@@ -1,9 +1,7 @@
-# HACS packaging note — V4.02
+# HACS packaging note — V4.02 (superseded)
 
-V4.02 fixes the V4.01 HACS single-file installation path.
+V4.02 removed the V4.01 standalone `gewitterradar.js` release asset, but the field test showed that this was not sufficient.
 
-The HACS manifest keeps `filename: gewitterradar.js`, while the tagged repository provides that file at `dist/gewitterradar.js` together with `dist/assets/`.
+Current HACS prioritizes custom assets attached to the selected GitHub release before the tagged repository `dist/` tree. Because V4.02 still published `app_gewitterradar_pkg.yaml`, the full release ZIP and its checksum as custom release assets, HACS copied those files into `/config/www/community/gewitterradar/` and did not install `dist/gewitterradar.js` or `dist/assets/`.
 
-Do not publish a standalone GitHub release asset named `gewitterradar.js`. If such an asset exists, HACS may prefer it and install the card as a single file, omitting the PNG assets required by the compass and trend UI.
-
-The V4.02 release may publish the full ZIP, its checksum and `app_gewitterradar_pkg.yaml`; none of those names collide with the HACS JavaScript entry point.
+V4.03 supersedes this approach. See `docs/HACS_V4_03_FIX.md`.
