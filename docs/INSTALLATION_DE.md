@@ -6,10 +6,14 @@
 - Blitzortung.org-Integration mit den benötigten Blitz-/Zählerentitäten.
 - Standard-Zähler der Beispielkonfiguration: `sensor.home_lightning_counter`.
 
+## HACS-Updatekanal
+
+Für die normale Installation und spätere Aktualisierungen soll in HACS die standardmäßig angebotene **neueste / Latest-Version** verwendet werden. Aktuell ist dies V4.04. Eine feste ältere Version sollte nur bewusst für einen Rückschritt oder eine besondere Kompatibilitätsanforderung gewählt werden. HACS prüft die Repository-Metadaten regelmäßig und kann neue stabile Gewitterradar-Releases dadurch als Update anbieten.
+
 ## Variante A: Installation über HACS
 
 1. In HACS `TheDaimos/gewitterradar` als benutzerdefiniertes Repository vom Typ **Dashboard** hinzufügen.
-2. Gewitterradar V4.04 installieren bzw. bei einem Update **neu herunterladen**.
+2. Gewitterradar mit der standardmäßig angebotenen **Latest / neuesten Version** installieren bzw. bei einem Update **neu herunterladen**. Aktuell entspricht Latest der V4.04.
 3. HACS installiert `gewitterradar.js`, den vollständigen Ordner `assets/` und zusätzlich `app_gewitterradar_pkg.yaml` nach `/config/www/community/gewitterradar/`.
 4. `app_gewitterradar_pkg.yaml` anschließend manuell nach `/config/packages/app_gewitterradar_pkg.yaml` kopieren oder verschieben.
 5. Home Assistant vollständig neu starten.
