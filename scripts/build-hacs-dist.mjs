@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const sourcePath = resolve(projectRoot, 'gewitterradar-card-v4_01.js');
+const sourcePath = resolve(projectRoot, 'gewitterradar-card-v4_02.js');
 const distPath = resolve(projectRoot, 'dist', 'gewitterradar.js');
 
 const assets = [
@@ -18,8 +18,8 @@ let card = await readFile(sourcePath, 'utf8');
 for (const asset of assets) {
   await access(resolve(projectRoot, 'dist', 'assets', asset));
 
-  const manualUrl = `'/local/gewitterradar/assets/${asset}?v=401'`;
-  const hacsUrl = `new URL('./assets/${asset}?v=401', import.meta.url).href`;
+  const manualUrl = `'/local/gewitterradar/assets/${asset}?v=402'`;
+  const hacsUrl = `new URL('./assets/${asset}?v=402', import.meta.url).href`;
   const occurrences = card.split(manualUrl).length - 1;
 
   if (occurrences !== 1) {
@@ -30,4 +30,4 @@ for (const asset of assets) {
 }
 
 await writeFile(distPath, card, 'utf8');
-console.log(`Built ${distPath} with ${assets.length} verified asset references.`);
+console.log(`Built ${distPath} with ${assets.length} verified asset references for V4.02.`);
