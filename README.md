@@ -2,7 +2,7 @@
 
 **Gewitterradar** is a Home Assistant dashboard card for live lightning and thunderstorm visualization using data supplied by the Home Assistant Blitzortung.org integration.
 
-Current stable release: **V4.02**
+Current stable release: **V4.03**
 
 ## Highlights
 
@@ -46,13 +46,11 @@ type: custom:gewitterradar-card
 
 ## Release
 
-V4.02 is a focused HACS packaging hotfix. It corrects the V4.01 installation path that could cause HACS to install only the standalone JavaScript release asset while omitting `dist/assets/`.
+V4.03 is a focused HACS packaging hotfix based on the V4.02 field test. Current HACS prioritizes custom GitHub release assets over the tagged repository `dist/` tree. Therefore the V4.03 GitHub release intentionally publishes **zero custom release assets**. HACS falls through to `dist/gewitterradar.js` and installs the complete `dist/` tree including `dist/assets/`.
 
-The V4.02 GitHub release deliberately does **not** publish a standalone release asset named `gewitterradar.js`. HACS therefore resolves the stable entry point from `dist/gewitterradar.js` and installs the complete `dist/` tree, including all four PNG assets.
+Application behavior, helper IDs, layouts, lightning processing and the optimized PNG files remain unchanged. The helper package remains available inside the tagged repository and GitHub's automatically generated source archive for manual installation.
 
-Application behavior, helper IDs, layouts, lightning processing and the V4.01 PNG files remain unchanged. The Home Assistant helper package is also unchanged and is included in the release ZIP and as a separate convenience release asset for manual installation.
-
-See [V4.02 release notes](RELEASE_NOTES_V4_02.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
+See [V4.03 release notes](RELEASE_NOTES_V4_03.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Data source
 
