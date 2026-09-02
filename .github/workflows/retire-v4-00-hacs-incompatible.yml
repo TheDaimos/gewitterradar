@@ -1,0 +1,26 @@
+name: Retire HACS-incompatible V4.00 release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove V4.00 public release and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          if gh release view v4.00 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release delete v4.00 --repo "${GITHUB_REPOSITORY}" --cleanup-tag --yes
+          else
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/v4.00" >/dev/null 2>&1 || true
+          fi
