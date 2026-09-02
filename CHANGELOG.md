@@ -1,5 +1,19 @@
 # Changelog
 
+## V4.01 — Asset optimization
+
+Gewitterradar V4.01 keeps the V4.00 feature set unchanged and reduces the external PNG asset payload.
+
+### Changes
+
+- Trend medallion reduced from 1254 × 1254 to 512 × 512 pixels.
+- Trend arrow reduced from 1254 × 1254 to 256 × 256 pixels.
+- Both compass frames conservatively reduced from 1254 × 1254 to 1152 × 1152 pixels.
+- PNGs remain RGBA with full transparency and lossless PNG encoding.
+- Combined asset size reduced from 5,966,253 to 2,321,551 bytes (61.09%).
+- Asset cache keys updated so Home Assistant clients load the V4.01 files immediately.
+- No functional, helper, layout or data-processing behavior changed.
+
 ## V4.00 — First stable release
 
 Gewitterradar V4.00 consolidates the mature V3.x development cycle into the first stable major release.

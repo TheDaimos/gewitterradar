@@ -2,7 +2,7 @@
 
 **Gewitterradar** is a Home Assistant dashboard card for live lightning and thunderstorm visualization using data supplied by the Home Assistant Blitzortung.org integration.
 
-Current stable release: **V4.00**
+Current stable release: **V4.01**
 
 ## Highlights
 
@@ -36,9 +36,9 @@ type: custom:gewitterradar-card
 
 ## Release
 
-V4.00 is the first stable major release of Gewitterradar.
+V4.01 is a maintenance release that conservatively optimizes the four external PNG assets while preserving the V4.00 feature set and Home Assistant helper interface.
 
-See [CHANGELOG.md](CHANGELOG.md) for the public milestone history.
+See [V4.01 release notes](RELEASE_NOTES_V4_01.md), the [asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Data source
 

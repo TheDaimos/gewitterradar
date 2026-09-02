@@ -1,8 +1,20 @@
-# Gewitterradar V4.00 — Release Notes
+# Gewitterradar V4.01 — Release Notes
 
-Gewitterradar V4.00 is the first stable major release of the Home Assistant lightning and thunderstorm dashboard.
+Gewitterradar V4.01 is a focused maintenance release based on the frozen V4.00 codebase. It conservatively reduces the dimensions and payload of the four external PNG interface assets without changing application behavior, helper IDs, layouts or lightning-processing logic.
 
-## Highlights
+## Asset optimization
+
+| Asset | V4.00 dimensions | V4.01 dimensions | V4.00 bytes | V4.01 bytes | Reduction |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Trend medallion | 1254 × 1254 | 512 × 512 | 2,592,711 | 448,794 | 82.69% |
+| Trend arrow | 1254 × 1254 | 256 × 256 | 1,266,532 | 60,981 | 95.19% |
+| Compass frame V1 | 1254 × 1254 | 1152 × 1152 | 1,294,563 | 1,065,811 | 17.67% |
+| Compass frame V2 | 1254 × 1254 | 1152 × 1152 | 812,447 | 745,965 | 8.18% |
+| **Total** |  |  | **5,966,253** | **2,321,551** | **61.09%** |
+
+All four files remain 8-bit RGBA PNGs with transparency. The new dimensions retain approximately 3.71× source-pixel reserve for the trend assets at their maximum CSS display size and 2.68× reserve for the compass frames.
+
+## Preserved V4.00 capabilities
 
 - Live lightning visualization with Blitzortung.org data supplied through Home Assistant.
 - Three coupled assessment zones for observation, storm and danger.
@@ -15,6 +27,10 @@ Gewitterradar V4.00 is the first stable major release of the Home Assistant ligh
 - Responsive layouts refined for phones, tablets, iPad, iPad Pro and desktop.
 - Public release history available from the version badge.
 - Live source-status indicator for the configured lightning counter entity.
+
+## Upgrade note
+
+Replace the JavaScript file and all four PNG assets together. V4.01 uses refreshed internal asset cache keys; the Lovelace resource URL should also use `?v=4_01`.
 
 ## Home Assistant Recorder recommendation
 

@@ -1,4 +1,4 @@
-# Gewitterradar V4.00 – Installation (DE)
+# Gewitterradar V4.01 – Installation (DE)
 
 ## Voraussetzungen
 
@@ -8,7 +8,7 @@
 
 ## 1. JavaScript und Assets kopieren
 
-- `gewitterradar-card-v4_00.js` nach `/config/www/gewitterradar/gewitterradar-card-v4_00.js` kopieren.
+- `gewitterradar-card-v4_01.js` nach `/config/www/gewitterradar/gewitterradar-card-v4_01.js` kopieren.
 - Die vier PNG-Dateien aus `assets/` nach `/config/www/gewitterradar/assets/` kopieren.
 
 Erwartete Asset-Dateien:
@@ -23,7 +23,7 @@ Erwartete Asset-Dateien:
 Als JavaScript-Modul:
 
 ```text
-/local/gewitterradar/gewitterradar-card-v4_00.js?v=4_00
+/local/gewitterradar/gewitterradar-card-v4_01.js?v=4_01
 ```
 
 Bei einem Update anschließend den Browser-/Companion-App-Cache neu laden.
@@ -79,7 +79,7 @@ Der Recorder-Ausschluss verhindert die dauerhafte Aufzeichnung dieser Entitäten
 
 ## 6. Ersttest
 
-- Karte lädt und zeigt `V4.00`.
+- Karte lädt und zeigt `V4.01`.
 - Blitzortung.org-Status-LED ist plausibel.
 - Einstellungen öffnen.
 - Beobachtungs-, Gewitter- und Gefahrenradius prüfen; Gewitter mindestens 5 KM bzw. mindestens aktueller Gefahrenradius.

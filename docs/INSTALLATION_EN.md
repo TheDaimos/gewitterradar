@@ -1,4 +1,4 @@
-# Gewitterradar V4.00 – Installation (EN)
+# Gewitterradar V4.01 – Installation (EN)
 
 ## Requirements
 
@@ -8,7 +8,7 @@
 
 ## 1. Copy JavaScript and assets
 
-- Copy `gewitterradar-card-v4_00.js` to `/config/www/gewitterradar/gewitterradar-card-v4_00.js`.
+- Copy `gewitterradar-card-v4_01.js` to `/config/www/gewitterradar/gewitterradar-card-v4_01.js`.
 - Copy the four PNG files from `assets/` to `/config/www/gewitterradar/assets/`.
 
 Expected asset files:
@@ -23,7 +23,7 @@ Expected asset files:
 Register the card as a JavaScript module:
 
 ```text
-/local/gewitterradar/gewitterradar-card-v4_00.js?v=4_00
+/local/gewitterradar/gewitterradar-card-v4_01.js?v=4_01
 ```
 
 After updates, refresh the browser or Companion App cache.
@@ -79,7 +79,7 @@ The Recorder exclusion prevents long-term storage of these entities without disa
 
 ## 6. First smoke test
 
-- The card loads and displays `V4.00`.
+- The card loads and displays `V4.01`.
 - The Blitzortung.org source-status LED is plausible.
 - Settings open correctly.
 - Check observation, storm and danger radii; storm must be at least 5 KM and at least the current danger radius.

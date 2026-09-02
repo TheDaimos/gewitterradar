@@ -1,11 +1,11 @@
-/* Gewitterradar Card V4.00 – erster stabiler Hauptrelease auf Basis des abgenommenen V3.99715-Stands.
+/* Gewitterradar Card V4.01 – konservatives Asset-Optimierungsrelease auf Basis des eingefrorenen V4.00-Stands.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt. */
 (function () {
   if (customElements.get('gewitterradar-card')) return;
 
-  const CARD_VERSION = '4.00';
-  const GEWITTERRADAR_BUILD = 'V4.00-2026-09-02';
+  const CARD_VERSION = '4.01';
+  const GEWITTERRADAR_BUILD = 'V4.01-2026-09-02';
   const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   const LEAFLET_CSS_URL = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
 
@@ -24,10 +24,10 @@
     return window.__leafletJsPromise;
   }
 
-  const TREND_MEDALLION_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-medallion.png?v=1';
-  const TREND_ARROW_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-arrow.png?v=1';
-  const COMPASS_METAL_FRAME_V1_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v1.png?v=1';
-  const COMPASS_METAL_FRAME_V2_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v2.png?v=1';
+  const TREND_MEDALLION_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-medallion.png?v=401';
+  const TREND_ARROW_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-arrow.png?v=401';
+  const COMPASS_METAL_FRAME_V1_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v1.png?v=401';
+  const COMPASS_METAL_FRAME_V2_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v2.png?v=401';
 
   // Freigegebenes CK-Signatur-Asset: exakt dieselben PNG-Bytes wie V3.99324.
   // V3.99400 speichert den Base64-Datenstrom kompakt statt in 66 Fragmenten.
@@ -11899,6 +11899,11 @@
             </div>
             <div class="release-history-body">
               <article class="release-history-entry">
+                <div class="release-history-version">V4.01</div>
+                <h3>Asset optimization</h3>
+                <p>Conservatively right-sized and losslessly encoded the four external PNG assets for their actual interface render limits, retained generous HiDPI reserves, reduced the combined asset payload by about 61%, and refreshed asset cache keys without changing app behavior.</p>
+              </article>
+              <article class="release-history-entry">
                 <div class="release-history-version">V4.00</div>
                 <h3>First stable release</h3>
                 <p>First stable Gewitterradar release, consolidating live lightning visualization, three-zone storm assessment, responsive cross-device operation, 19 language variants, metric and imperial units, compass navigation, and 120-minute activity history into a hardened Home Assistant card.</p>
@@ -17765,4 +17770,4 @@
   });
 })();
 
-/* END Gewitterradar Card V4.00 */
+/* END Gewitterradar Card V4.01 */
