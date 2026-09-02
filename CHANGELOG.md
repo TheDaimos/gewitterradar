@@ -1,6 +1,6 @@
 # Changelog
 
-> **Distribution status:** V4.01 and V4.02 were withdrawn after real HACS installation tests showed incomplete deployments. Their GitHub releases, tags, release-note files and versioned card source files have been removed so HACS users cannot select or install those defective distributions. Their entries remain here only as historical documentation. V4.03 is the first working HACS distribution; V4.04 is the current recommended release.
+> **Distribution status:** V4.00, V4.01 and V4.02 are no longer published as installable HACS releases. V4.00 was a valid first stable/manual baseline but its GitHub release used a ZIP asset layout that is not safe for the current HACS Dashboard download path. V4.01 and V4.02 were withdrawn after real HACS installation tests showed incomplete deployments. Their public GitHub releases/tags were removed; the V4.01/V4.02 versioned card source and release-note files were also removed from `main`. The historical entries remain here only for traceability. V4.03 is the first working HACS distribution; V4.04 is the current recommended release.
 
 ## V4.04 — HACS package staging
 
@@ -60,9 +60,9 @@ This release was withdrawn. Its GitHub release/tag and versioned source/release-
 - Asset cache keys updated for the optimized files.
 - No functional, helper, layout or data-processing behavior changed.
 
-## V4.00 — First stable release
+## V4.00 — First stable release / historical manual baseline
 
-Gewitterradar V4.00 consolidates the mature V3.x development cycle into the first stable major release.
+Gewitterradar V4.00 consolidates the mature V3.x development cycle into the first stable major release. The application baseline itself remains part of project history, but its original GitHub release/tag was retired because the attached ZIP release asset is not compatible with the current HACS Dashboard distribution strategy and could otherwise be offered as a misleading installable version.
 
 ### Highlights
 
