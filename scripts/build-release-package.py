@@ -9,17 +9,17 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUTPUT = PROJECT_ROOT / "gewitterradar-v4_03.zip"
+DEFAULT_OUTPUT = PROJECT_ROOT / "gewitterradar-v4_04.zip"
 FIXED_TIMESTAMP = (2026, 9, 2, 0, 0, 0)
 
 ROOT_FILES = (
     "README.md",
     "CHANGELOG.md",
-    "RELEASE_NOTES_V4_03.md",
+    "RELEASE_NOTES_V4_04.md",
     "SHA256SUMS.txt",
     "hacs.json",
-    "gewitterradar-card-v4_03.js",
-    "gewitterradar-card-v4_03.txt",
+    "gewitterradar-card-v4_04.js",
+    "gewitterradar-card-v4_04.txt",
 )
 DIRECTORIES = ("dist", "docs", "home-assistant")
 
@@ -58,6 +58,7 @@ def main() -> None:
         names = set(archive.namelist())
         required = {
             "dist/gewitterradar.js",
+            "dist/app_gewitterradar_pkg.yaml",
             "dist/assets/gewitterradar-compass-frame-v1.png",
             "dist/assets/gewitterradar-compass-frame-v2.png",
             "dist/assets/gewitterradar-trend-arrow.png",
@@ -68,7 +69,7 @@ def main() -> None:
         if absent:
             raise RuntimeError(f"Source ZIP is incomplete; missing: {absent}")
 
-    print(f"Built internal V4.03 source ZIP {output} with {len(package_files())} files and verified HACS assets plus Home Assistant package.")
+    print(f"Built internal V4.04 source ZIP {output} with {len(package_files())} files and verified HACS card, graphics and staged Home Assistant package.")
 
 
 if __name__ == "__main__":
