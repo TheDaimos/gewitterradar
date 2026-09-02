@@ -1,5 +1,7 @@
 # Changelog
 
+> **Distribution status:** V4.01 and V4.02 were withdrawn after real HACS installation tests showed incomplete deployments. Their GitHub releases, tags, release-note files and versioned card source files have been removed so HACS users cannot select or install those defective distributions. Their entries remain here only as historical documentation. V4.03 is the first working HACS distribution; V4.04 is the current recommended release.
+
 ## V4.04 — HACS package staging
 
 Gewitterradar V4.04 keeps the successful V4.03 HACS distribution path and improves the only remaining manual installation step.
@@ -30,32 +32,33 @@ Gewitterradar V4.03 completes the HACS packaging correction after the V4.02 fiel
 - Updated card/build version to V4.03 and asset cache keys to `v=403`.
 - No helper IDs, defaults, layouts, lightning-processing logic, compass behavior or PNG bytes changed.
 
-## V4.02 — HACS packaging hotfix
+## V4.02 — WITHDRAWN / defective HACS distribution
 
-V4.02 removed the standalone `gewitterradar.js` release asset that had caused the V4.01 single-file installation path. The field test revealed a second HACS rule: the remaining custom release assets (`app_gewitterradar_pkg.yaml`, release ZIP and checksum) were still preferred over `dist/`, so HACS copied those files into `/config/www/community/gewitterradar/` and did not install the card or `assets/`. V4.03 supersedes this incomplete packaging correction.
+V4.02 removed the standalone `gewitterradar.js` release asset that had caused the V4.01 single-file installation path. The field test revealed a second HACS rule: the remaining custom release assets (`app_gewitterradar_pkg.yaml`, release ZIP and checksum) were still preferred over `dist/`, so HACS copied those files into `/config/www/community/gewitterradar/` and did not install the card or `assets/`.
 
-### Changes
+This release was withdrawn. Its GitHub release/tag and versioned source/release-note files were removed so it cannot be selected as an installable HACS version.
+
+### Historical changes
 
 - Removed the standalone `gewitterradar.js` GitHub release asset.
 - Added V4.02 installation/recovery documentation and verification checks.
 - Preserved application logic, helper IDs and image bytes.
 
-## V4.01 — Asset optimization
+## V4.01 — WITHDRAWN / defective HACS distribution
 
-Gewitterradar V4.01 keeps the V4.00 feature set unchanged and reduces the external PNG asset payload.
+Gewitterradar V4.01 introduced the optimized external PNG assets, but its HACS release packaging published `gewitterradar.js` as a standalone release asset. HACS consequently installed only that file and omitted the required graphics directory; the helper package was also not part of the installed HACS tree.
 
-### Changes
+This release was withdrawn. Its GitHub release/tag and versioned source/release-note files were removed so it cannot be selected as an installable HACS version. The optimized PNG work itself was retained in later working releases.
+
+### Historical changes
 
 - Trend medallion reduced from 1254 × 1254 to 512 × 512 pixels.
 - Trend arrow reduced from 1254 × 1254 to 256 × 256 pixels.
 - Both compass frames conservatively reduced from 1254 × 1254 to 1152 × 1152 pixels.
 - PNGs remain RGBA with full transparency and lossless PNG encoding.
 - Combined asset size reduced from 5,966,253 to 2,321,551 bytes (61.09%).
-- Asset cache keys updated so Home Assistant clients load the V4.01 files immediately.
+- Asset cache keys updated for the optimized files.
 - No functional, helper, layout or data-processing behavior changed.
-- HACS Dashboard compatibility added through `hacs.json` and the stable `dist/gewitterradar.js` entry point.
-- The HACS entry point resolves its visual assets relative to `/hacsfiles/`; the approved manual V4.01 card remains byte-identical.
-- Added reproducible HACS build, integrity verification and automatic repository validation.
 
 ## V4.00 — First stable release
 
