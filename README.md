@@ -2,7 +2,7 @@
 
 **Gewitterradar** is a Home Assistant dashboard card for live lightning and thunderstorm visualization using data supplied by the Home Assistant Blitzortung.org integration.
 
-Current stable release: **V4.03**
+Current stable release: **V4.04**
 
 ## Highlights
 
@@ -34,9 +34,23 @@ Gewitterradar can be installed as a custom **Dashboard** repository in HACS:
 https://github.com/TheDaimos/gewitterradar
 ```
 
-HACS installs `gewitterradar.js` together with the four required visual assets below `/hacsfiles/gewitterradar/`.
+HACS installs `gewitterradar.js`, the four required visual assets and a staged copy of `app_gewitterradar_pkg.yaml` below `/config/www/community/gewitterradar/` (exposed by Home Assistant as `/hacsfiles/gewitterradar/`).
 
-The Home Assistant package in `home-assistant/app_gewitterradar_pkg.yaml` must still be copied manually to `/config/packages/app_gewitterradar_pkg.yaml`; a HACS Dashboard repository cannot install files into `/config/packages/`.
+The package still requires one manual step: copy or move
+
+```text
+/config/www/community/gewitterradar/app_gewitterradar_pkg.yaml
+```
+
+to
+
+```text
+/config/packages/app_gewitterradar_pkg.yaml
+```
+
+and restart Home Assistant. This cannot be automated by the HACS Dashboard installation because HACS installs this repository only inside its own `/config/www/community/gewitterradar/` directory and does not deploy configuration files into `/config/packages/`.
+
+The canonical package source remains `home-assistant/app_gewitterradar_pkg.yaml`; V4.04 places a byte-identical convenience copy at `dist/app_gewitterradar_pkg.yaml` so HACS delivers it together with the card.
 
 The JavaScript card is registered as:
 
@@ -46,11 +60,11 @@ type: custom:gewitterradar-card
 
 ## Release
 
-V4.03 is a focused HACS packaging hotfix based on the V4.02 field test. Current HACS prioritizes custom GitHub release assets over the tagged repository `dist/` tree. Therefore the V4.03 GitHub release intentionally publishes **zero custom release assets**. HACS falls through to `dist/gewitterradar.js` and installs the complete `dist/` tree including `dist/assets/`.
+V4.04 keeps the working V4.03 HACS distribution model: the GitHub release publishes **zero custom release assets**, forcing current HACS to use the tagged `dist/` tree. V4.04 adds `dist/app_gewitterradar_pkg.yaml` to that tree, so users no longer need to download the helper package separately before installing it manually under `/config/packages/`.
 
-Application behavior, helper IDs, layouts, lightning processing and the optimized PNG files remain unchanged. The helper package remains available inside the tagged repository and GitHub's automatically generated source archive for manual installation.
+Application behavior, helper IDs/defaults, layouts, lightning processing, compass behavior and the optimized PNG files remain unchanged.
 
-See [V4.03 release notes](RELEASE_NOTES_V4_03.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
+See [V4.04 release notes](RELEASE_NOTES_V4_04.md), the [V4.04 HACS package-staging note](docs/HACS_V4_04_PACKAGE_STAGING.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Data source
 

@@ -1,4 +1,4 @@
-name: Validate HACS and publish V4.03
+name: Validate HACS and publish V4.04
 
 on:
   push:
@@ -19,12 +19,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Rebuild HACS distribution
         run: node scripts/build-hacs-dist.mjs
-      - name: Verify generated files are committed
-        run: git diff --exit-code -- dist/gewitterradar.js
-      - name: Verify HACS distribution and zero-asset release layout
+      - name: Verify generated HACS files are committed
+        run: git diff --exit-code -- dist/gewitterradar.js dist/app_gewitterradar_pkg.yaml
+      - name: Verify HACS distribution, staged package and zero-asset release layout
         run: node scripts/verify-hacs-dist.mjs
-      - name: Verify complete V4.03 source package internally
-        run: python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_03.zip"
+      - name: Verify complete V4.04 source package internally
+        run: python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_04.zip"
 
   validate-hacs:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
           category: plugin
           ignore: license images
 
-  publish-v4-03:
+  publish-v4-04:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs:
       - verify-dist
@@ -46,16 +46,16 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Publish V4.03 without custom release assets
+      - name: Publish V4.04 without custom release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v4.03 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            echo "Release v4.03 already exists; leaving it unchanged."
+          if gh release view v4.04 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release v4.04 already exists; leaving it unchanged."
             exit 0
           fi
-          gh release create v4.03 \
+          gh release create v4.04 \
             --repo "${GITHUB_REPOSITORY}" \
             --target "${GITHUB_SHA}" \
-            --title "Gewitterradar V4.03" \
-            --notes-file RELEASE_NOTES_V4_03.md
+            --title "Gewitterradar V4.04" \
+            --notes-file RELEASE_NOTES_V4_04.md

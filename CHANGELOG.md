@@ -1,5 +1,21 @@
 # Changelog
 
+## V4.04 — HACS package staging
+
+Gewitterradar V4.04 keeps the successful V4.03 HACS distribution path and improves the only remaining manual installation step.
+
+### Changes
+
+- Added a byte-identical copy of `home-assistant/app_gewitterradar_pkg.yaml` as `dist/app_gewitterradar_pkg.yaml`.
+- HACS now downloads the helper package together with `gewitterradar.js` and the four PNG assets into `/config/www/community/gewitterradar/`.
+- Users only need to copy or move the already local `app_gewitterradar_pkg.yaml` to `/config/packages/app_gewitterradar_pkg.yaml` and restart Home Assistant.
+- The manual copy/move is intentionally required: a HACS Dashboard repository is installed inside `/config/www/community/<repository>/` and cannot deploy Home Assistant configuration files into `/config/packages/`.
+- The canonical maintained package remains `home-assistant/app_gewitterradar_pkg.yaml`; CI verifies that the staged `dist/` copy is byte-identical.
+- V4.04 continues to publish zero custom GitHub release assets so HACS cannot bypass the complete `dist/` tree.
+- Added documentation, release notes and integrity checks for the staged package workflow.
+- Updated card/build version to V4.04 and asset cache keys to `v=404`.
+- No helper IDs/defaults, package logic, layouts, lightning-processing logic, compass behavior or PNG bytes changed.
+
 ## V4.03 — HACS release-asset priority fix
 
 Gewitterradar V4.03 completes the HACS packaging correction after the V4.02 field test showed that current HACS prioritizes any custom assets attached to the selected GitHub release before the repository `dist/` tree.
