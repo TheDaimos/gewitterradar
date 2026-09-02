@@ -15,6 +15,7 @@ Gewitterradar V4.01 keeps the V4.00 feature set unchanged and reduces the extern
 - No functional, helper, layout or data-processing behavior changed.
 - HACS Dashboard compatibility added through `hacs.json` and the stable `dist/gewitterradar.js` entry point.
 - The HACS entry point resolves its visual assets relative to `/hacsfiles/`; the approved manual V4.01 card remains byte-identical.
+- Added reproducible HACS build, integrity verification and automatic repository validation.
 
 ## V4.00 — First stable release
 

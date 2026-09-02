@@ -1,0 +1,65 @@
+name: Validate HACS and publish V4.01
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  verify-dist:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Rebuild HACS distribution
+        run: node scripts/build-hacs-dist.mjs
+      - name: Verify generated files are committed
+        run: git diff --exit-code -- dist/gewitterradar.js
+      - name: Verify HACS distribution
+        run: node scripts/verify-hacs-dist.mjs
+      - name: Verify release package
+        run: python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_01.zip"
+
+  validate-hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: HACS validation
+        uses: hacs/action@main
+        with:
+          category: plugin
+
+  publish-v4-01:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify-dist
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Build release package
+        run: |
+          python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_01.zip"
+          sha256sum "${RUNNER_TEMP}/gewitterradar-v4_01.zip" > "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256"
+      - name: Publish V4.01 once
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v4.01 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release v4.01 already exists; leaving it unchanged."
+            exit 0
+          fi
+          gh release create v4.01 \
+            "${RUNNER_TEMP}/gewitterradar-v4_01.zip" \
+            "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256" \
+            "dist/gewitterradar.js" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${GITHUB_SHA}" \
+            --title "Gewitterradar V4.01" \
+            --notes-file RELEASE_NOTES_V4_01.md

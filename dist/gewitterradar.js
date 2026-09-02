@@ -24,7 +24,6 @@
     return window.__leafletJsPromise;
   }
 
-  // Resolve visual assets next to this module so the HACS /hacsfiles/ path remains portable.
   const TREND_MEDALLION_IMAGE = new URL('./assets/gewitterradar-trend-medallion.png?v=401', import.meta.url).href;
   const TREND_ARROW_IMAGE = new URL('./assets/gewitterradar-trend-arrow.png?v=401', import.meta.url).href;
   const COMPASS_METAL_FRAME_V1_IMAGE = new URL('./assets/gewitterradar-compass-frame-v1.png?v=401', import.meta.url).href;

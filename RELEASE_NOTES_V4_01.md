@@ -39,6 +39,8 @@ Replace the JavaScript file and all four PNG assets together. V4.01 uses refresh
 
 The Home Assistant package containing the required `lightning_detection_*` helpers is not installed by HACS and must be copied to `/config/packages/` separately.
 
+The HACS distribution is generated reproducibly from the approved V4.01 source. Automated checks verify that only the four asset URLs differ, that all PNG checksums match and that the HACS manifest points to `gewitterradar.js`.
+
 ## Home Assistant Recorder recommendation
 
 ```yaml
