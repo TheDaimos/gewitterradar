@@ -15,8 +15,23 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
+      - name: Check out repository with release history
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify frozen V4.04 release anchor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          expected="8ada0e06aef47627d31224b9e46d58de459fb24b"
+          tag_commit="$(git rev-parse 'refs/tags/v4.04^{commit}')"
+          branch_commit="$(git rev-parse 'refs/remotes/origin/frozen/v4.04^{commit}')"
+          release_target="$(gh release view v4.04 --repo "${GITHUB_REPOSITORY}" --json targetCommitish --jq '.targetCommitish')"
+
+          test "${tag_commit}" = "${expected}"
+          test "${branch_commit}" = "${expected}"
+          test "${release_target}" = "${expected}"
       - name: Rebuild HACS distribution
         run: node scripts/build-hacs-dist.mjs
       - name: Verify generated HACS files are committed
@@ -51,11 +66,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view v4.04 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            echo "Release v4.04 already exists; leaving it unchanged."
+            echo "Release v4.04 already exists; leaving the frozen release unchanged."
             exit 0
           fi
           gh release create v4.04 \
             --repo "${GITHUB_REPOSITORY}" \
             --target "${GITHUB_SHA}" \
             --title "Gewitterradar V4.04" \
-            --notes-file RELEASE_NOTES_V4_04.md
+            --notes-file RELEASE_NOTES_V4_04.md \
+            --latest
