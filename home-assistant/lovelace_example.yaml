@@ -1,0 +1,14 @@
+# Gewitterradar V4.00
+# Productive panel view using the final custom element.
+
+title: Gewitterradar
+path: gewitterradar
+icon: mdi:weather-lightning
+type: panel
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:gewitterradar-card
+        counter_entity: sensor.home_lightning_counter
+        radius_entity: input_number.lightning_detection_observation_radius
+        compass_mode_entity: input_boolean.lightning_detection_compass_nearest_strike
