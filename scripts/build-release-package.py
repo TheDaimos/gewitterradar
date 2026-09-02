@@ -9,17 +9,17 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUTPUT = PROJECT_ROOT / "gewitterradar-v4_01.zip"
+DEFAULT_OUTPUT = PROJECT_ROOT / "gewitterradar-v4_02.zip"
 FIXED_TIMESTAMP = (2026, 9, 2, 0, 0, 0)
 
 ROOT_FILES = (
     "README.md",
     "CHANGELOG.md",
-    "RELEASE_NOTES_V4_01.md",
+    "RELEASE_NOTES_V4_02.md",
     "SHA256SUMS.txt",
     "hacs.json",
-    "gewitterradar-card-v4_01.js",
-    "gewitterradar-card-v4_01.txt",
+    "gewitterradar-card-v4_02.js",
+    "gewitterradar-card-v4_02.txt",
 )
 DIRECTORIES = ("dist", "docs", "home-assistant")
 
@@ -34,6 +34,10 @@ def package_files() -> list[Path]:
 def main() -> None:
     output = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else DEFAULT_OUTPUT
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    missing = [path for path in package_files() if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing release files: {missing}")
 
     with tempfile.NamedTemporaryFile(dir=output.parent, suffix=".zip", delete=False) as temporary:
         temporary_path = Path(temporary.name)
@@ -50,7 +54,21 @@ def main() -> None:
     finally:
         temporary_path.unlink(missing_ok=True)
 
-    print(f"Built {output} with {len(package_files())} files.")
+    with zipfile.ZipFile(output, "r") as archive:
+        names = set(archive.namelist())
+        required = {
+            "dist/gewitterradar.js",
+            "dist/assets/gewitterradar-compass-frame-v1.png",
+            "dist/assets/gewitterradar-compass-frame-v2.png",
+            "dist/assets/gewitterradar-trend-arrow.png",
+            "dist/assets/gewitterradar-trend-medallion.png",
+            "home-assistant/app_gewitterradar_pkg.yaml",
+        }
+        absent = sorted(required - names)
+        if absent:
+            raise RuntimeError(f"Release ZIP is incomplete; missing: {absent}")
+
+    print(f"Built {output} with {len(package_files())} files and verified HACS assets plus Home Assistant package.")
 
 
 if __name__ == "__main__":

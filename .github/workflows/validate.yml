@@ -1,4 +1,4 @@
-name: Validate HACS and publish V4.01
+name: Validate HACS and publish V4.02
 
 on:
   push:
@@ -21,10 +21,10 @@ jobs:
         run: node scripts/build-hacs-dist.mjs
       - name: Verify generated files are committed
         run: git diff --exit-code -- dist/gewitterradar.js
-      - name: Verify HACS distribution
+      - name: Verify HACS distribution and release layout
         run: node scripts/verify-hacs-dist.mjs
-      - name: Verify release package
-        run: python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_01.zip"
+      - name: Verify complete V4.02 release package
+        run: python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_02.zip"
 
   validate-hacs:
     runs-on: ubuntu-latest
@@ -35,37 +35,35 @@ jobs:
           category: plugin
           ignore: license images
 
-  publish-v4-01:
+  publish-v4-02:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: verify-dist
+    needs:
+      - verify-dist
+      - validate-hacs
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Build release package
+      - name: Build release package and checksum
         run: |
-          python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_01.zip"
+          python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_02.zip"
           cd "${RUNNER_TEMP}"
-          sha256sum gewitterradar-v4_01.zip > gewitterradar-v4_01.zip.sha256
-      - name: Publish V4.01 once
+          sha256sum gewitterradar-v4_02.zip > gewitterradar-v4_02.zip.sha256
+      - name: Publish V4.02 once
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v4.01 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            gh release upload v4.01 \
-              "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256" \
-              --repo "${GITHUB_REPOSITORY}" \
-              --clobber
-            echo "Release v4.01 already exists; refreshed its checksum file only."
+          if gh release view v4.02 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release v4.02 already exists; leaving immutable release assets unchanged."
             exit 0
           fi
-          gh release create v4.01 \
-            "${RUNNER_TEMP}/gewitterradar-v4_01.zip" \
-            "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256" \
-            "dist/gewitterradar.js" \
+          gh release create v4.02 \
+            "${RUNNER_TEMP}/gewitterradar-v4_02.zip" \
+            "${RUNNER_TEMP}/gewitterradar-v4_02.zip.sha256" \
+            "home-assistant/app_gewitterradar_pkg.yaml" \
             --repo "${GITHUB_REPOSITORY}" \
             --target "${GITHUB_SHA}" \
-            --title "Gewitterradar V4.01" \
-            --notes-file RELEASE_NOTES_V4_01.md
+            --title "Gewitterradar V4.02" \
+            --notes-file RELEASE_NOTES_V4_02.md

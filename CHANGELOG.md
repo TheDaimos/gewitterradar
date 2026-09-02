@@ -1,5 +1,20 @@
 # Changelog
 
+## V4.02 — HACS packaging hotfix
+
+Gewitterradar V4.02 corrects the HACS distribution layout introduced with V4.01 without changing card behavior or the Home Assistant helper interface.
+
+### Changes
+
+- Removed the standalone `gewitterradar.js` GitHub release asset from the HACS release path. This prevents HACS from treating the repository as a single-file release and omitting the required `dist/assets/` directory.
+- HACS now resolves the stable entry point from `dist/gewitterradar.js` and installs the complete `dist/` tree.
+- All four required PNG assets are therefore installed automatically below `/hacsfiles/gewitterradar/assets/`.
+- The Home Assistant package remains a manual installation because HACS Dashboard repositories cannot write to `/config/packages/`.
+- `home-assistant/app_gewitterradar_pkg.yaml` is included in the V4.02 release ZIP and additionally published as a convenience release asset.
+- Added explicit V4.02 installation/recovery documentation and verification checks for the HACS asset layout.
+- Updated the card version/build marker and asset cache keys to V4.02 / `v=402`.
+- No helper IDs, defaults, layouts, lightning-processing logic, compass behavior or image bytes changed from V4.01.
+
 ## V4.01 — Asset optimization
 
 Gewitterradar V4.01 keeps the V4.00 feature set unchanged and reduces the external PNG asset payload.

@@ -2,7 +2,7 @@
 
 **Gewitterradar** is a Home Assistant dashboard card for live lightning and thunderstorm visualization using data supplied by the Home Assistant Blitzortung.org integration.
 
-Current stable release: **V4.01**
+Current stable release: **V4.02**
 
 ## Highlights
 
@@ -34,8 +34,9 @@ Gewitterradar can be installed as a custom **Dashboard** repository in HACS:
 https://github.com/TheDaimos/gewitterradar
 ```
 
-HACS installs the card and its visual assets. The Home Assistant package in
-`home-assistant/app_gewitterradar_pkg.yaml` must still be installed manually.
+HACS installs `gewitterradar.js` together with the four required visual assets below `/hacsfiles/gewitterradar/`.
+
+The Home Assistant package in `home-assistant/app_gewitterradar_pkg.yaml` must still be copied manually to `/config/packages/app_gewitterradar_pkg.yaml`; a HACS Dashboard repository cannot install files into `/config/packages/`.
 
 The JavaScript card is registered as:
 
@@ -45,11 +46,13 @@ type: custom:gewitterradar-card
 
 ## Release
 
-V4.01 is a maintenance release that conservatively optimizes the four external PNG assets while preserving the V4.00 feature set and Home Assistant helper interface.
+V4.02 is a focused HACS packaging hotfix. It corrects the V4.01 installation path that could cause HACS to install only the standalone JavaScript release asset while omitting `dist/assets/`.
 
-The release includes a stable HACS entry point at `dist/gewitterradar.js`.
+The V4.02 GitHub release deliberately does **not** publish a standalone release asset named `gewitterradar.js`. HACS therefore resolves the stable entry point from `dist/gewitterradar.js` and installs the complete `dist/` tree, including all four PNG assets.
 
-See [V4.01 release notes](RELEASE_NOTES_V4_01.md), the [asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
+Application behavior, helper IDs, layouts, lightning processing and the V4.01 PNG files remain unchanged. The Home Assistant helper package is also unchanged and is included in the release ZIP and as a separate convenience release asset for manual installation.
+
+See [V4.02 release notes](RELEASE_NOTES_V4_02.md), the [V4.01 asset verification report](docs/ASSET_OPTIMIZATION_V4_01.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Data source
 

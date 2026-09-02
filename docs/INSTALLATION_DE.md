@@ -1,4 +1,4 @@
-# Gewitterradar V4.01 – Installation (DE)
+# Gewitterradar V4.02 – Installation (DE)
 
 ## Voraussetzungen
 
@@ -9,9 +9,21 @@
 ## Variante A: Installation über HACS
 
 1. In HACS `TheDaimos/gewitterradar` als benutzerdefiniertes Repository vom Typ **Dashboard** hinzufügen.
-2. Gewitterradar installieren.
-3. HACS stellt die Karte und ihre Bilddateien unter `/hacsfiles/gewitterradar/` bereit. Der stabile Ressourcendateiname lautet `gewitterradar.js`.
-4. Das Home-Assistant-Package wie unter Schritt 3 beschrieben zusätzlich manuell installieren; HACS kann diesen Teil nicht nach `/config/packages/` kopieren.
+2. Gewitterradar V4.02 installieren bzw. bei einem Update **neu herunterladen**.
+3. HACS installiert den stabilen Einstiegspunkt `gewitterradar.js` und den vollständigen Ordner `assets/` nach `/config/www/community/gewitterradar/`. Über Home Assistant ist dies unter `/hacsfiles/gewitterradar/` erreichbar.
+4. Das Home-Assistant-Package zusätzlich manuell installieren. Ein HACS-Dashboard-Repository kann keine Datei nach `/config/packages/` kopieren.
+
+Nach der Installation muss die Verzeichnisstruktur mindestens so aussehen:
+
+```text
+/config/www/community/gewitterradar/
+├── gewitterradar.js
+└── assets/
+    ├── gewitterradar-compass-frame-v1.png
+    ├── gewitterradar-compass-frame-v2.png
+    ├── gewitterradar-trend-arrow.png
+    └── gewitterradar-trend-medallion.png
+```
 
 Wenn die Lovelace-Ressourcen in YAML verwaltet werden, lautet die Moduladresse:
 
@@ -19,11 +31,15 @@ Wenn die Lovelace-Ressourcen in YAML verwaltet werden, lautet die Moduladresse:
 /hacsfiles/gewitterradar/gewitterradar.js
 ```
 
+### Hinweis für ein Upgrade von V4.01
+
+V4.01 konnte durch ein einzelnes `gewitterradar.js`-Release-Asset von HACS als Ein-Datei-Installation behandelt werden. Dadurch fehlte `assets/`. V4.02 beseitigt diese Release-Struktur. Nach dem Neuherunterladen von V4.02 muss der oben gezeigte `assets/`-Ordner vorhanden sein.
+
 ## Variante B: Manuelle Installation
 
-## 1. JavaScript und Assets kopieren
+### 1. JavaScript und Assets kopieren
 
-- `gewitterradar-card-v4_01.js` nach `/config/www/gewitterradar/gewitterradar-card-v4_01.js` kopieren.
+- `gewitterradar-card-v4_02.js` nach `/config/www/gewitterradar/gewitterradar-card-v4_02.js` kopieren.
 - Die vier PNG-Dateien aus `dist/assets/` nach `/config/www/gewitterradar/assets/` kopieren.
 
 Erwartete Asset-Dateien:
@@ -33,12 +49,12 @@ Erwartete Asset-Dateien:
 - `gewitterradar-compass-frame-v1.png`
 - `gewitterradar-compass-frame-v2.png`
 
-## 2. Lovelace-Ressource eintragen
+### 2. Lovelace-Ressource eintragen
 
 Als JavaScript-Modul:
 
 ```text
-/local/gewitterradar/gewitterradar-card-v4_01.js?v=4_01
+/local/gewitterradar/gewitterradar-card-v4_02.js?v=4_02
 ```
 
 Bei einem Update anschließend den Browser-/Companion-App-Cache neu laden.
@@ -47,6 +63,8 @@ Bei einem Update anschließend den Browser-/Companion-App-Cache neu laden.
 
 `home-assistant/app_gewitterradar_pkg.yaml` nach `/config/packages/app_gewitterradar_pkg.yaml` kopieren.
 
+Die Datei ist außerdem als separates V4.02-Release-Asset verfügbar, damit sie ohne Entpacken des vollständigen ZIP-Pakets heruntergeladen werden kann.
+
 In `configuration.yaml` muss die Package-Einbindung vorhanden sein:
 
 ```yaml
@@ -54,7 +72,9 @@ homeassistant:
   packages: !include_dir_named packages
 ```
 
-Die bestehenden Helper-IDs `lightning_detection_*` werden bewusst beibehalten. Danach Home Assistant neu starten.
+Die bestehenden Helper-IDs `lightning_detection_*` werden bewusst beibehalten. Die Package-Logik ist gegenüber V4.01 unverändert. Danach Home Assistant neu starten.
+
+Wenn nach einer fehlenden Package-Datei bereits alte Helper als „Nicht verfügbar“ angezeigt werden, die Package-Datei wiederherstellen und Home Assistant vollständig neu starten. Bei identischen Entity-IDs werden die YAML-Helfer wieder unter ihren bisherigen IDs bereitgestellt.
 
 ## 4. Gewitterradar-View anlegen
 
@@ -94,7 +114,8 @@ Der Recorder-Ausschluss verhindert die dauerhafte Aufzeichnung dieser Entitäten
 
 ## 6. Ersttest
 
-- Karte lädt und zeigt `V4.01`.
+- Karte lädt und zeigt `V4.02`.
+- Unter `/config/www/community/gewitterradar/assets/` sind bei HACS-Installation alle vier PNG-Dateien vorhanden.
 - Blitzortung.org-Status-LED ist plausibel.
 - Einstellungen öffnen.
 - Beobachtungs-, Gewitter- und Gefahrenradius prüfen; Gewitter mindestens 5 KM bzw. mindestens aktueller Gefahrenradius.
