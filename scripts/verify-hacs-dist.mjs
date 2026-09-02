@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const source = await readFile(resolve(projectRoot, 'gewitterradar-card-v4_02.js'), 'utf8');
+const source = await readFile(resolve(projectRoot, 'gewitterradar-card-v4_03.js'), 'utf8');
 let normalizedDist = await readFile(resolve(projectRoot, 'dist', 'gewitterradar.js'), 'utf8');
 const checksumLines = (await readFile(resolve(projectRoot, 'SHA256SUMS.txt'), 'utf8')).trim().split('\n');
 const checksums = new Map(checksumLines.map((line) => {
@@ -20,8 +20,8 @@ const assets = [
 ];
 
 for (const asset of assets) {
-  const manualUrl = `'/local/gewitterradar/assets/${asset}?v=402'`;
-  const hacsUrl = `new URL('./assets/${asset}?v=402', import.meta.url).href`;
+  const manualUrl = `'/local/gewitterradar/assets/${asset}?v=403'`;
+  const hacsUrl = `new URL('./assets/${asset}?v=403', import.meta.url).href`;
   const occurrences = normalizedDist.split(hacsUrl).length - 1;
 
   if (occurrences !== 1) {
@@ -40,12 +40,12 @@ for (const asset of assets) {
 }
 
 if (normalizedDist !== source) {
-  throw new Error('HACS JavaScript differs from the approved V4.02 source beyond asset URL resolution.');
+  throw new Error('HACS JavaScript differs from the approved V4.03 source beyond asset URL resolution.');
 }
 
 for (const relativePath of [
-  'gewitterradar-card-v4_02.js',
-  'gewitterradar-card-v4_02.txt',
+  'gewitterradar-card-v4_03.js',
+  'gewitterradar-card-v4_03.txt',
   'dist/gewitterradar.js',
   'home-assistant/app_gewitterradar_pkg.yaml',
   'hacs.json',
@@ -63,13 +63,15 @@ if (manifest.name !== 'Gewitterradar' || manifest.filename !== 'gewitterradar.js
 }
 
 const workflow = await readFile(resolve(projectRoot, '.github', 'workflows', 'validate.yml'), 'utf8');
-const releaseCreateBlock = workflow.split('gh release create v4.02', 2)[1] ?? '';
-if (!releaseCreateBlock) {
-  throw new Error('V4.02 release creation command was not found.');
+if (!/gh release create v4\.03 \\\n\s+--repo/.test(workflow)) {
+  throw new Error('V4.03 release creation must contain no custom release assets before --repo.');
 }
-const commandBlock = releaseCreateBlock.split('--notes-file RELEASE_NOTES_V4_02.md', 1)[0];
-if (commandBlock.includes('dist/gewitterradar.js')) {
-  throw new Error('Regression: standalone gewitterradar.js must not be published as a V4.02 release asset.');
+const releaseCreateBlock = workflow.split('gh release create v4.03', 2)[1] ?? '';
+const commandBlock = releaseCreateBlock.split('--notes-file RELEASE_NOTES_V4_03.md', 1)[0];
+for (const forbidden of ['dist/gewitterradar.js', 'app_gewitterradar_pkg.yaml', 'gewitterradar-v4_03.zip', 'RUNNER_TEMP']) {
+  if (commandBlock.includes(forbidden)) {
+    throw new Error(`Regression: V4.03 release must contain zero custom assets; found ${forbidden}.`);
+  }
 }
 
-console.log('HACS V4.02 distribution verified: card logic, manifest, four assets, checksums and release layout are consistent.');
+console.log('HACS V4.03 distribution verified: card logic, manifest, four assets, checksums and zero-custom-asset release layout are consistent.');
