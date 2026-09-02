@@ -1,0 +1,31 @@
+name: Prepare V4.04 generated files
+
+on:
+  push:
+    branches:
+      - release/v4.04-pkg-staging
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Generate V4.04 sources, HACS distribution, staged package and checksums
+        run: node scripts/prepare-v4-04.mjs
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gewitterradar-card-v4_04.js gewitterradar-card-v4_04.txt dist/gewitterradar.js dist/app_gewitterradar_pkg.yaml SHA256SUMS.txt
+          if git diff --cached --quiet; then
+            echo "Generated V4.04 files are already current."
+            exit 0
+          fi
+          git commit -m "Generate Gewitterradar V4.04 distribution"
+          git push
