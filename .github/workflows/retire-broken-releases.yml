@@ -1,0 +1,28 @@
+name: Retire broken HACS releases
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retire V4.01 and V4.02 releases and tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          for tag in v4.01 v4.02; do
+            if gh release view "$tag" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              gh release delete "$tag" --repo "${GITHUB_REPOSITORY}" --cleanup-tag --yes
+            else
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag}" >/dev/null 2>&1 || true
+            fi
+          done
