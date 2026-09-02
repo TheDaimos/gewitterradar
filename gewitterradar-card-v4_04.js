@@ -24,10 +24,10 @@
     return window.__leafletJsPromise;
   }
 
-  const TREND_MEDALLION_IMAGE = new URL('./assets/gewitterradar-trend-medallion.png?v=404', import.meta.url).href;
-  const TREND_ARROW_IMAGE = new URL('./assets/gewitterradar-trend-arrow.png?v=404', import.meta.url).href;
-  const COMPASS_METAL_FRAME_V1_IMAGE = new URL('./assets/gewitterradar-compass-frame-v1.png?v=404', import.meta.url).href;
-  const COMPASS_METAL_FRAME_V2_IMAGE = new URL('./assets/gewitterradar-compass-frame-v2.png?v=404', import.meta.url).href;
+  const TREND_MEDALLION_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-medallion.png?v=404';
+  const TREND_ARROW_IMAGE = '/local/gewitterradar/assets/gewitterradar-trend-arrow.png?v=404';
+  const COMPASS_METAL_FRAME_V1_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v1.png?v=404';
+  const COMPASS_METAL_FRAME_V2_IMAGE = '/local/gewitterradar/assets/gewitterradar-compass-frame-v2.png?v=404';
 
   // Freigegebenes CK-Signatur-Asset: exakt dieselben PNG-Bytes wie V3.99324.
   // V3.99400 speichert den Base64-Datenstrom kompakt statt in 66 Fragmenten.
