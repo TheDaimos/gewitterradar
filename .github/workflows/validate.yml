@@ -47,13 +47,18 @@ jobs:
       - name: Build release package
         run: |
           python3 scripts/build-release-package.py "${RUNNER_TEMP}/gewitterradar-v4_01.zip"
-          sha256sum "${RUNNER_TEMP}/gewitterradar-v4_01.zip" > "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256"
+          cd "${RUNNER_TEMP}"
+          sha256sum gewitterradar-v4_01.zip > gewitterradar-v4_01.zip.sha256
       - name: Publish V4.01 once
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view v4.01 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            echo "Release v4.01 already exists; leaving it unchanged."
+            gh release upload v4.01 \
+              "${RUNNER_TEMP}/gewitterradar-v4_01.zip.sha256" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --clobber
+            echo "Release v4.01 already exists; refreshed its checksum file only."
             exit 0
           fi
           gh release create v4.01 \
