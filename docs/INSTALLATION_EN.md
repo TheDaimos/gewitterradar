@@ -6,10 +6,14 @@
 - Blitzortung.org integration providing the required lightning/counter entities.
 - Default counter used by the example: `sensor.home_lightning_counter`.
 
+## HACS update channel
+
+For normal installation and future updates, use the default **newest / Latest** version offered by HACS. This is currently V4.04. Select a fixed older version only for an intentional rollback or a specific compatibility requirement. HACS regularly refreshes repository metadata and can offer newer stable Gewitterradar releases as updates.
+
 ## Option A: Install through HACS
 
 1. Add `TheDaimos/gewitterradar` to HACS as a custom **Dashboard** repository.
-2. Install Gewitterradar V4.04, or use **Redownload** when upgrading.
+2. Install the default **Latest / newest version**, or use **Redownload** when upgrading. Latest currently resolves to V4.04.
 3. HACS installs `gewitterradar.js`, the complete `assets/` directory and `app_gewitterradar_pkg.yaml` under `/config/www/community/gewitterradar/`.
 4. Manually copy or move `app_gewitterradar_pkg.yaml` to `/config/packages/app_gewitterradar_pkg.yaml`.
 5. Perform a full Home Assistant restart.
