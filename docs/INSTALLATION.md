@@ -16,6 +16,17 @@ When this release candidate is approved for public installation:
 
 The native integration does not automatically register the separate Dashboard resource and does not modify Home Assistant `.storage` files.
 
+### Expected result after a full restart
+
+After the Config Entry has been created and Home Assistant has completed a full restart:
+
+- the Config Entry must be `loaded`;
+- **Gewitterradar must be visible under Settings → Devices & services → Integrations**;
+- the 16 native configuration entities must still exist with their persisted values;
+- HACS should show the Integration repository as installed rather than pending restart.
+
+The manifest intentionally classifies Gewitterradar as a Home Assistant `service` integration. Do not change it back to `helper`: Home Assistant's Integrations dashboard filters Helper Config Entries into the separate Helpers UI, which can make an otherwise healthy Config Entry appear to have disappeared.
+
 ## Manual installation
 
 Copy the complete directory:
@@ -60,6 +71,8 @@ A fresh native installation does not require the historical Gewitterradar YAML h
 
 If supported legacy `lightning_detection_*` helpers are present on first setup, valid values for missing native settings may be imported once. Existing native values always take precedence. Legacy helpers are not deleted or rewritten.
 
+The native integration also does not delete unrelated historical Registry objects. In particular, an unavailable automation entity or HACS update entity is not proof that the current Config Entry created it. Verify the source/config-entry/repository ID before removing such leftovers.
+
 See [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
 
 ## Dashboard/Card requirement
@@ -71,6 +84,20 @@ https://github.com/TheDaimos/gewitterradar-dashboard
 ```
 
 The Dashboard continues to use the Home Assistant Blitzortung.org integration as the live lightning-event data source.
+
+## Real-install regression checks
+
+After installing an updated release candidate which contains the first real-install fixes:
+
+1. perform a full Home Assistant restart;
+2. verify Gewitterradar remains listed under **Devices & services → Integrations**;
+3. verify all 16 configuration entities and their values;
+4. add/remove or otherwise cause discovery of a `person.*` or `zone.*` entity, or change the reference-location environment;
+5. verify the reference-location select refreshes its options without a thread-safety warning mentioning `async_write_ha_state`;
+6. verify the existing Dashboard/Card continues to operate;
+7. only then continue with HACS rollback and re-update validation.
+
+See [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md).
 
 ## Release-candidate verification
 

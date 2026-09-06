@@ -42,6 +42,8 @@ Once this release candidate is approved for public installation:
 5. Add **Gewitterradar**.
 6. Install the separate Gewitterradar Dashboard/Card repository if the frontend is not already installed.
 
+After the Config Entry has been created, **Gewitterradar must remain visible on Settings → Devices & services → Integrations after a full Home Assistant restart**. The integration is classified as a Home Assistant `service` integration for that purpose; it is not a Helper-tab integration.
+
 See [`docs/INSTALLATION.md`](docs/INSTALLATION.md) for the complete procedure.
 
 ### Manual installation
@@ -64,13 +66,16 @@ Restart Home Assistant and add **Gewitterradar** through the UI.
 
 On first native setup, supported valid legacy helper values may be imported once. Existing native values take precedence and legacy helpers are not deleted or rewritten.
 
+The native integration deliberately does not delete unrelated or historical Home Assistant Entity Registry entries. Old unavailable automation entities or HACS update entities from earlier packages/repository names must be verified as stale before they are removed from the Home Assistant instance.
+
 See [`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md).
 
 ## Known release-candidate limitations
 
 - `device_tracker.*` is not automatically migrated as a reference-location source; this is a documented non-blocking limitation.
 - A native Integration installation does not automatically register the separate Lovelace card resource. Install the Dashboard/Card through its own supported HACS Dashboard path.
-- Real HACS fresh-install/update/rollback validation and the final Android/iPad frontend spot checks remain release gates until explicitly recorded as passed.
+- Historical unavailable registry entities are not auto-deleted because they may belong to an older package/repository installation rather than this Config Entry.
+- HACS update/rollback/re-update after the first real-install hotfix and the final Android/iPad frontend spot checks remain release gates until explicitly recorded as passed.
 
 ## Validation
 
@@ -82,7 +87,11 @@ The release line is validated independently through:
 - deterministic 12-file integration-package staging;
 - fresh-install, migration, unload/re-enable and rollback tests.
 
+The first public-repository real HACS installation on 2026-09-06 verified that the Config Entry loads, all 16 configuration entities are created, and their values survive a full Home Assistant restart. That test also exposed two release-candidate defects which are now covered by regression fixes: incorrect `helper` manifest classification and an off-event-loop location-option state write.
+
 A green runtime test does not substitute for HACS/Hassfest validation, and static packaging validation does not substitute for a real HACS installation test.
+
+See [`docs/REAL_INSTALL_FINDINGS_2026-09-06.md`](docs/REAL_INSTALL_FINDINGS_2026-09-06.md) for the first real-install findings and required re-checks.
 
 ## Licensing and branding
 

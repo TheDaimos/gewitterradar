@@ -17,6 +17,9 @@ def test_manifest_is_valid_and_single_entry() -> None:
     assert manifest["version"] == "0.17.0"
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
+    # Gewitterradar is a user-visible service integration, not a Helper-tab
+    # entity factory. The Integrations dashboard filters helpers out.
+    assert manifest["integration_type"] == "service"
     assert manifest["after_dependencies"] == [
         "input_boolean",
         "input_number",
