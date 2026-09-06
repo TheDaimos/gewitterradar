@@ -2,11 +2,11 @@
 
 ## HACS installation
 
-This repository is the native **Integration** component of Gewitterradar. The Lovelace Dashboard/Card is distributed separately from `TheDaimos/gewitterradar`.
+This repository is the native **Integration** component of Gewitterradar. The Lovelace Dashboard/Card is distributed separately from `TheDaimos/gewitterradar-dashboard`.
 
 When this release candidate is approved for public installation:
 
-1. In HACS, add `https://github.com/TheDaimos/gewitterradar-integration` as a custom repository of type **Integration**.
+1. In HACS, add `https://github.com/TheDaimos/gewitterradar` as a custom repository of type **Integration**.
 2. Install **Gewitterradar Integration**.
 3. Restart Home Assistant if HACS/Home Assistant requests it.
 4. Open **Settings → Devices & services**.
@@ -67,7 +67,7 @@ See [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
 The Integration repository provides backend/configuration entities only. For the full Gewitterradar visual application, install the Dashboard/Card separately from:
 
 ```text
-https://github.com/TheDaimos/gewitterradar
+https://github.com/TheDaimos/gewitterradar-dashboard
 ```
 
 The Dashboard continues to use the Home Assistant Blitzortung.org integration as the live lightning-event data source.

@@ -7,8 +7,8 @@ This repository is the native Home Assistant integration for **Gewitterradar**.
 
 The native integration and the Gewitterradar dashboard card are intentionally distributed as two separate HACS repository types:
 
-- **Integration:** this repository (`TheDaimos/gewitterradar-integration`)
-- **Dashboard/Card:** `TheDaimos/gewitterradar`
+- **Integration:** this repository (`TheDaimos/gewitterradar`)
+- **Dashboard/Card:** `TheDaimos/gewitterradar-dashboard`
 
 A complete Gewitterradar installation uses both components. The Dashboard repository remains the source of the Lovelace card and frontend assets; this repository installs only the native backend/configuration integration under `custom_components/gewitterradar/`.
 
