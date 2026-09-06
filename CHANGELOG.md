@@ -22,7 +22,7 @@ Initial native Home Assistant integration release line.
 ### Compatibility
 
 - Designed to coexist with the frozen Gewitterradar V4.04 Dashboard/Card migration baseline.
-- Dashboard/Card distribution remains separate at `TheDaimos/gewitterradar`.
+- Dashboard/Card distribution remains separate at `TheDaimos/gewitterradar-dashboard`.
 - The Blitzortung.org Home Assistant integration remains the live lightning-event data source used by the Dashboard.
 
 ### Known limitation
@@ -31,6 +31,6 @@ Initial native Home Assistant integration release line.
 
 ### Release gates still open
 
-- validation against the final public Integration repository;
+- complete public HACS Integration validation;
 - real HACS fresh-install/update/rollback proof;
 - final Android/iPad frontend spot checks, including Android last-compass persistence.
