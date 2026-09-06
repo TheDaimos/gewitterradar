@@ -3,7 +3,7 @@
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
-from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.core import Event, HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import (
     async_track_state_added_domain,
@@ -101,16 +101,18 @@ class GewitterradarReferenceLocationSelect(GewitterradarSelect):
         await super().async_added_to_hass()
         self.async_on_remove(
             async_track_state_added_domain(
-                self.hass, LOCATION_DOMAINS, self._async_locations_changed
+                self.hass, LOCATION_DOMAINS, self._locations_changed
             )
         )
         self.async_on_remove(
             async_track_state_removed_domain(
-                self.hass, LOCATION_DOMAINS, self._async_locations_changed
+                self.hass, LOCATION_DOMAINS, self._locations_changed
             )
         )
 
-    @callback
-    def _async_locations_changed(self, _: Event) -> None:
-        """Publish changed dynamic location options."""
-        self.async_write_ha_state()
+    def _locations_changed(self, _: Event) -> None:
+        """Publish changed location options safely from any callback thread."""
+        # Home Assistant can dispatch synchronous state listeners from a worker
+        # thread. async_write_ha_state() is event-loop-only; the scheduling API is
+        # explicitly thread-safe and prevents the real-install crash warning.
+        self.schedule_update_ha_state()

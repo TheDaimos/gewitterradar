@@ -25,6 +25,21 @@ On first setup of a new native Config Entry, supported valid `lightning_detectio
 
 After migration, native values can be changed independently. The old helpers remain untouched so a controlled transition/rollback remains possible during the migration period.
 
+## Historical Registry leftovers are outside the migration contract
+
+The native migration reads supported legacy helper states. It does **not** own or automatically delete unrelated Home Assistant Entity Registry, Device Registry or HACS repository objects.
+
+During the first public HACS real-install check, two unavailable automation entities and one unavailable HACS update entity were present in the test instance. The current native integration contains no automation platform and does not create those automation entities. The stale update entity was associated with an older/renamed HACS repository identity rather than the current native Integration repository.
+
+Treat such objects as historical installation residue, not as native migration output. Before deleting them:
+
+1. confirm the entity is unavailable and has no active backing configuration;
+2. confirm its Config Entry/repository identity is not the current `TheDaimos/gewitterradar` Integration;
+3. confirm no Dashboard/Card resource still references the old repository/path;
+4. remove only the verified stale Registry/repository object.
+
+The native integration deliberately avoids automatic Registry cleanup because deleting unrelated user objects would violate the non-destructive migration contract.
+
 ## Unload / disable / re-enable
 
 Unloading or disabling the same Config Entry does not erase its persisted native options. Re-enabling the same entry restores the native values and the one-time migration does not run again when the current migration marker is present.
@@ -42,6 +57,8 @@ Do not rely on native-only values surviving deletion of the Config Entry unless 
 ## Frontend compatibility
 
 The Gewitterradar Dashboard/Card uses native configuration entities first and can fall back to the legacy helper model during the supported transition period. Missing/unavailable/unknown native configuration state therefore does not require destructive helper migration.
+
+The native Config Entry itself is intentionally classified as a Home Assistant `service` integration. This keeps it visible on **Settings → Devices & services → Integrations**. `integration_type: helper` is incorrect for Gewitterradar and would route/filter the entry toward Home Assistant's separate Helpers UI.
 
 ## Known non-blocking limitation
 
@@ -62,4 +79,6 @@ The migration/rollback model has been covered by Home Assistant runtime tests fo
 - package/helper-free fresh installation;
 - frontend native/legacy fallback lifecycle.
 
-A real public-HACS fresh/update/rollback installation remains a separate release gate and must be recorded before the release candidate is declared stable.
+The first public HACS real-install additionally verified that the Config Entry loads, all 16 native configuration entities are present and their values survive a full Home Assistant restart. That run exposed the manifest-classification and reference-location thread-safety defects now covered by the release-candidate hotfix/regression tests.
+
+A real HACS update to the corrected candidate, rollback and re-update remain separate release gates and must be recorded before the release candidate is declared stable.
