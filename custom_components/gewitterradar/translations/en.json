@@ -1,0 +1,70 @@
+{
+  "title": "Gewitterradar",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Gewitterradar",
+        "description": "Create the Gewitterradar integration entry. Settings and migration will be added in later milestones."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Only one Gewitterradar integration entry is allowed."
+    }
+  },
+  "entity": {
+    "select": {
+      "language": {
+        "name": "Language"
+      },
+      "distance_unit": {
+        "name": "Distance unit"
+      },
+      "compass_design": {
+        "name": "Compass design"
+      },
+      "reference_location": {
+        "name": "Reference location"
+      }
+    },
+    "number": {
+      "observation_radius": {
+        "name": "Observation radius"
+      },
+      "storm_radius": {
+        "name": "Storm radius"
+      },
+      "danger_radius": {
+        "name": "Danger radius"
+      },
+      "aura_width": {
+        "name": "Aura width"
+      },
+      "aura_intensity": {
+        "name": "Aura intensity"
+      }
+    },
+    "switch": {
+      "aura_effects": {
+        "name": "Aura effects"
+      },
+      "warning_animation": {
+        "name": "Warning animation"
+      },
+      "storm_simulation": {
+        "name": "Storm simulation"
+      },
+      "show_location_selector": {
+        "name": "Show location selector"
+      },
+      "compass_nearest_strike": {
+        "name": "Compass nearest strike"
+      },
+      "compass_device_orientation": {
+        "name": "Compass device orientation"
+      },
+      "map_grouping": {
+        "name": "Map grouping"
+      }
+    }
+  }
+}
