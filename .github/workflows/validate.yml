@@ -1,0 +1,113 @@
+name: Validate Gewitterradar integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hacs-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: HACS integration validation
+        uses: hacs/action@main
+        with:
+          category: integration
+
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  package-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Verify deterministic HACS integration staging
+        run: python scripts/verify-hacs-integration-package.py
+      - name: Check JSON metadata
+        run: |
+          python -m json.tool hacs.json >/dev/null
+          python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+
+  home-assistant-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HOME_ASSISTANT_VERSION: "2026.9.0"
+      PYTEST_HA_CUSTOM_COMPONENT_VERSION: "0.13.362"
+      EXPECTED_HARNESS_HA_PIN: "homeassistant==2026.9.0b6"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install Home Assistant test harness
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install "pytest-homeassistant-custom-component==${PYTEST_HA_CUSTOM_COMPONENT_VERSION}"
+
+      - name: Verify documented harness pin
+        run: |
+          python - <<'PY'
+          import importlib.metadata
+          import os
+
+          requirements = importlib.metadata.requires(
+              "pytest-homeassistant-custom-component"
+          ) or []
+          pins = [
+              requirement
+              for requirement in requirements
+              if requirement.startswith("homeassistant==")
+          ]
+          expected = os.environ["EXPECTED_HARNESS_HA_PIN"]
+          print(f"declared Home Assistant pin: {pins}")
+          if pins != [expected]:
+              raise SystemExit(
+                  "The upstream harness pin changed. Re-evaluate the temporary "
+                  "Home Assistant installation sequence instead of silently "
+                  "overriding new metadata."
+              )
+          PY
+
+      - name: Replace beta core with Home Assistant 2026.9.0 final
+        run: |
+          set -euo pipefail
+          python -m pip install --no-deps --force-reinstall "homeassistant==${HOME_ASSISTANT_VERSION}"
+
+      - name: Verify Python and Home Assistant runtime
+        run: |
+          python - <<'PY'
+          import importlib.metadata
+          import sys
+          import homeassistant
+
+          expected = "2026.9.0"
+          actual = importlib.metadata.version("homeassistant")
+          print(f"Python: {sys.version}")
+          print(f"Home Assistant: {actual}")
+          print(f"Home Assistant module: {homeassistant.__file__}")
+          if sys.version_info < (3, 14, 2):
+              raise SystemExit("Python 3.14.2 or newer is required")
+          if actual != expected:
+              raise SystemExit(f"Expected Home Assistant {expected}, got {actual}")
+          PY
+
+      - name: Run Home Assistant tests
+        run: python -m pytest -q tests
+
+      - name: Check Python syntax
+        run: python -m compileall -q custom_components tests
