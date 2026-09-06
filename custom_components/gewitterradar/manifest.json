@@ -1,0 +1,19 @@
+{
+  "domain": "gewitterradar",
+  "name": "Gewitterradar",
+  "after_dependencies": [
+    "input_boolean",
+    "input_number",
+    "input_select"
+  ],
+  "codeowners": ["@TheDaimos"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/TheDaimos/gewitterradar-integration",
+  "integration_type": "helper",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/TheDaimos/gewitterradar-integration/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.17.0"
+}
