@@ -1,0 +1,70 @@
+{
+  "title": "Gewitterradar",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gewitterradar einrichten",
+        "description": "Erstellt den Integrationseintrag für Gewitterradar. Einstellungen und Migration folgen in späteren Meilensteinen."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Es ist nur ein Gewitterradar-Integrationseintrag zulässig."
+    }
+  },
+  "entity": {
+    "select": {
+      "language": {
+        "name": "Sprache"
+      },
+      "distance_unit": {
+        "name": "Entfernungseinheit"
+      },
+      "compass_design": {
+        "name": "Kompassdesign"
+      },
+      "reference_location": {
+        "name": "Referenzstandort"
+      }
+    },
+    "number": {
+      "observation_radius": {
+        "name": "Beobachtungsradius"
+      },
+      "storm_radius": {
+        "name": "Gewitterradius"
+      },
+      "danger_radius": {
+        "name": "Gefahrenradius"
+      },
+      "aura_width": {
+        "name": "Aura-Breite"
+      },
+      "aura_intensity": {
+        "name": "Aura-Intensität"
+      }
+    },
+    "switch": {
+      "aura_effects": {
+        "name": "Aura-Effekte"
+      },
+      "warning_animation": {
+        "name": "Warnanimation"
+      },
+      "storm_simulation": {
+        "name": "Gewittersimulation"
+      },
+      "show_location_selector": {
+        "name": "Standortauswahl anzeigen"
+      },
+      "compass_nearest_strike": {
+        "name": "Kompass zum nächsten Einschlag"
+      },
+      "compass_device_orientation": {
+        "name": "Kompass-Geräteausrichtung"
+      },
+      "map_grouping": {
+        "name": "Kartengruppierung"
+      }
+    }
+  }
+}
