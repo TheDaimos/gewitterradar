@@ -1,97 +1,145 @@
-# Gewitterradar — Home Assistant Integration
+# Gewitterradar
 
-This repository is the native Home Assistant integration for **Gewitterradar**.
+**Gewitterradar** ist ein gemeinsames Home-Assistant-Projekt mit zwei Auslieferungsformen:
 
-**Current integration version:** `0.17.0`  
-**Release status:** release-candidate preparation; not yet declared stable for general installation.
+- native Home-Assistant-Integration;
+- Dashboard-/Lovelace-Karte.
 
-The native integration and the Gewitterradar dashboard card are intentionally distributed as two separate HACS repository types:
+Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
 
-- **Integration:** this repository (`TheDaimos/gewitterradar`)
-- **Dashboard/Card:** `TheDaimos/gewitterradar-dashboard`
+**Current native integration version:** `0.17.0`  
+**Current dashboard stable channel:** `V4.05`
 
-A complete Gewitterradar installation uses both components. The Dashboard repository remains the source of the Lovelace card and frontend assets; this repository installs only the native backend/configuration integration under `custom_components/gewitterradar/`.
+Die gemeinsame Frontend-/Produktkonvergenz läuft derzeit. Bis die vereinheitlichte Auslieferung vollständig veröffentlicht ist, wird die Dashboard-Karte zusätzlich über `TheDaimos/gewitterradar-dashboard` ausgeliefert. Dieser Dashboard-Zweig ist eine abgeleitete Auslieferungsform und keine unabhängige Entwicklungsquelle mehr.
 
-## What the native integration provides
+## Was die native Integration bereitstellt
 
-- one UI Config Flow and one Config Entry;
-- persistent settings through `ConfigEntry.options`;
-- typed per-entry runtime state;
-- 16 native configuration entities:
-  - 4 Select entities;
-  - 5 Number entities;
-  - 7 Switch entities;
-- validated observation/storm/danger radius ordering and bounds;
-- dynamic `person.*` / `zone.*` reference-location choices;
-- one-time, non-destructive migration from supported legacy `lightning_detection_*` helpers;
-- package-free fresh installation;
-- unload/re-enable persistence and documented rollback behavior.
+- einen UI Config Flow und einen Config Entry;
+- persistente Einstellungen über `ConfigEntry.options`;
+- typisierten Laufzeitzustand pro Config Entry;
+- 16 native Konfigurationsentitäten:
+  - 4 Select-Entitäten;
+  - 5 Number-Entitäten;
+  - 7 Switch-Entitäten;
+- validierte Reihenfolge und Grenzen für Beobachtungs-, Gewitter- und Gefahrenradius;
+- dynamische `person.*`-/`zone.*`-Referenzorte;
+- einmalige, nicht-destruktive Migration unterstützter Legacy-Helfer `lightning_detection_*`;
+- package-fähige bzw. package-freie Migrationspfade;
+- dokumentiertes Unload-/Re-Enable-/Rollback-Verhalten.
 
-The native integration does **not** replace the Blitzortung.org data source used by the Gewitterradar dashboard for live lightning events.
+Die native Integration ersetzt nicht die Blitzortung.org-Datenquelle für Live-Blitzereignisse.
+
+## Zwei Auslieferungsformen, ein gemeinsamer Produktstand
+
+Verbindliche Projektregel:
+
+- Änderungen an Gewitterradar gelten standardmäßig für **Integration und Dashboard**;
+- gemeinsamer Frontend-Code wird nur einmal entwickelt;
+- Dashboard- und Integrationsauslieferung werden daraus deterministisch erzeugt;
+- Abweichungen bei gemeinsamem Frontend, Assets, About-Dialog oder Prüfsummen gelten als Release-Fehler.
+
+Besonders geschützt ist der abgenommene V4.05-Stand von **„Über Gewitterradar“** einschließlich Widmung „Für Alkje“, Slogan, Hero-/Widmungs-Assets, Recorder-Hinweis, Radien-Semantik und Onboarding-Verhalten. Siehe:
+
+`docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
 
 ## Installation
 
-### HACS
+### 1. Native Gewitterradar-Integration
 
-Once this release candidate is approved for public installation:
+1. Dieses Repository in HACS als benutzerdefiniertes **Integration**-Repository hinzufügen.
+2. **Gewitterradar Integration** installieren.
+3. Home Assistant neu starten, wenn HACS dies verlangt.
+4. **Einstellungen → Geräte & Dienste → Integration hinzufügen** öffnen.
+5. **Gewitterradar** hinzufügen.
 
-1. Add this repository to HACS as a custom **Integration** repository.
-2. Install **Gewitterradar Integration**.
-3. Restart Home Assistant if requested.
-4. Open **Settings → Devices & services → Add integration**.
-5. Add **Gewitterradar**.
-6. Install the separate Gewitterradar Dashboard/Card repository if the frontend is not already installed.
+Nach einem vollständigen Home-Assistant-Neustart muss die Integration weiterhin unter **Einstellungen → Geräte & Dienste → Integrationen** sichtbar bleiben.
 
-After the Config Entry has been created, **Gewitterradar must remain visible on Settings → Devices & services → Integrations after a full Home Assistant restart**. The integration is classified as a Home Assistant `service` integration for that purpose; it is not a Helper-tab integration.
+### 2. Dashboard-/Lovelace-Auslieferung
 
-See [`docs/INSTALLATION.md`](docs/INSTALLATION.md) for the complete procedure.
+Bis die gemeinsame Auslieferung vollständig konvergiert und veröffentlicht ist, zusätzlich das Dashboard-Repository installieren:
 
-### Manual installation
+`TheDaimos/gewitterradar-dashboard`
 
-Copy:
-
-```text
-custom_components/gewitterradar/
-```
-
-into:
+HACS installiert dessen Modul aktuell unter:
 
 ```text
-/config/custom_components/gewitterradar/
+/hacsfiles/gewitterradar-dashboard/gewitterradar.js
 ```
 
-Restart Home Assistant and add **Gewitterradar** through the UI.
+### 3. Nach dem HACS-Download: Gewitterradar-View anlegen
 
-## Existing V4.04 / legacy-helper installations
+**Wichtig:** Der Download der Dashboard-Karte erzeugt keine Home-Assistant-View automatisch.
 
-On first native setup, supported valid legacy helper values may be imported once. Existing native values take precedence and legacy helpers are not deleted or rewritten.
+Prüfe unter **Einstellungen → Dashboards → Ressourcen**, dass folgende Modulressource vorhanden ist:
 
-The native integration deliberately does not delete unrelated or historical Home Assistant Entity Registry entries. Old unavailable automation entities or HACS update entities from earlier packages/repository names must be verified as stale before they are removed from the Home Assistant instance.
+```text
+/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+```
 
-See [`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md).
+Lege anschließend eine Dashboard-View an. Der aktuelle vollständige V4.05-Beispielstand lautet:
 
-## Known release-candidate limitations
+```yaml
+title: Gewitterradar
+path: gewitterradar
+icon: mdi:weather-lightning
+type: panel
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:gewitterradar-card
+        counter_entity: sensor.home_lightning_counter
+        radius_entity: input_number.lightning_detection_observation_radius
+        compass_mode_entity: input_boolean.lightning_detection_compass_nearest_strike
+```
 
-- `device_tracker.*` is not automatically migrated as a reference-location source; this is a documented non-blocking limitation.
-- A native Integration installation does not automatically register the separate Lovelace card resource. Install the Dashboard/Card through its own supported HACS Dashboard path.
-- Historical unavailable registry entities are not auto-deleted because they may belong to an older package/repository installation rather than this Config Entry.
-- HACS update/rollback/re-update after the first real-install hotfix and the final Android/iPad frontend spot checks remain release gates until explicitly recorded as passed.
+Der eigentliche Kartentyp ist:
+
+```yaml
+type: custom:gewitterradar-card
+```
+
+Die drei Beispiel-Entity-IDs stammen aus der bisherigen Package-/Legacy-Linie. Die laufende Konvergenz hat ausdrücklich das Ziel, Frontend und native Konfiguration aus demselben Gewitterradar-Stand bereitzustellen und die Neunutzer-Einrichtung weiter zu vereinfachen.
+
+## Bestehende V4.04-/Legacy-Installationen
+
+Beim ersten nativen Setup können unterstützte gültige Legacy-Helferwerte einmalig importiert werden. Bestehende native Werte haben Vorrang; Legacy-Helfer werden nicht gelöscht oder überschrieben.
+
+Die native Integration löscht bewusst keine fremden oder historischen Home-Assistant-Entity-Registry-Einträge automatisch. Alte nicht verfügbare Automations- oder HACS-Update-Entitäten aus früheren Packages bzw. Repository-Namen müssen erst als wirklich veraltet verifiziert werden.
+
+Siehe [`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md).
+
+## Aktuelle Konvergenz- und Release-Gates
+
+Vor dem nächsten gemeinsamen Gewitterradar-Release müssen mindestens nachgewiesen sein:
+
+- vollständige Übernahme des veröffentlichten Dashboard-V4.05-Frontendstands;
+- geschützter „Über Gewitterradar“-Dialog in beiden Auslieferungsformen;
+- gleiche gemeinsame Frontend-/About-Assets und Prüfsummen;
+- grüne native Integrationstests;
+- grüne Dashboard-/HACS-Tests;
+- reale Home-Assistant-/HACS-Abnahme;
+- iPad-/Android-Spotchecks;
+- dokumentierter Installationspfad einschließlich Dashboard-View-Einrichtung.
+
+Aktiver Tracker:
+
+- Issue #3 — `Converge V4.05 frontend into unified Gewitterradar product`
 
 ## Validation
 
-The release line is validated independently through:
+Die Release-Linie wird unabhängig geprüft durch:
 
-- Home Assistant runtime tests;
+- Home-Assistant-Laufzeittests;
 - Hassfest;
-- HACS Integration validation;
-- deterministic 12-file integration-package staging;
-- fresh-install, migration, unload/re-enable and rollback tests.
+- HACS-Integrationsvalidierung;
+- deterministisches Integration-Package-Staging;
+- Fresh-Install-, Migration-, Unload-/Re-Enable- und Rollback-Tests;
+- Dashboard-/Frontend-Build- und Asset-Prüfungen;
+- reale HACS-/Geräteabnahme.
 
-The first public-repository real HACS installation on 2026-09-06 verified that the Config Entry loads, all 16 configuration entities are created, and their values survive a full Home Assistant restart. That test also exposed two release-candidate defects which are now covered by regression fixes: incorrect `helper` manifest classification and an off-event-loop location-option state write.
+Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische Packaging-Prüfung ersetzt keinen realen HACS-Installationstest.
 
-A green runtime test does not substitute for HACS/Hassfest validation, and static packaging validation does not substitute for a real HACS installation test.
-
-See [`docs/REAL_INSTALL_FINDINGS_2026-09-06.md`](docs/REAL_INSTALL_FINDINGS_2026-09-06.md) for the first real-install findings and required re-checks.
+Siehe [`docs/REAL_INSTALL_FINDINGS_2026-09-06.md`](docs/REAL_INSTALL_FINDINGS_2026-09-06.md) für die ersten Real-Install-Erkenntnisse.
 
 ## Licensing and branding
 
