@@ -8,10 +8,13 @@ export function approvedDelta(baseline) {
   const css=`        /* Approved post-V4.05 controls: visual shell only; handlers/hit targets unchanged. */
         .about-close span{position:relative;border:0;background:none;overflow:visible}
         .about-close span img{position:absolute;left:50%;top:50%;width:34px;height:34px;max-width:none;object-fit:contain;transform:translate(-50%,-50%);filter:none;pointer-events:none}
+        .about-dialog .about-code-meta .about-copy{appearance:none;border:0;background:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent}
+        .about-code-meta .about-copy::before{content:none}
         .about-copy>img{position:relative;display:block;width:28px;height:28px;object-fit:contain;pointer-events:none;filter:none}
-        .about-close:focus-visible,.about-copy:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px;border-radius:5px}
-        @media(hover:hover) and (pointer:fine){.about-close:hover img,.about-copy:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
-        .about-close:active img{transform:translate(-50%,calc(-50% + .5px)) scale(.97);filter:brightness(.92)}.about-copy:active img{transform:translateY(.5px) scale(.97);filter:brightness(.92)}
+        .about-close:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px;border-radius:5px}
+        .about-copy:focus-visible>img{filter:brightness(1.15) drop-shadow(1px 0 0 #ffe1a1) drop-shadow(-1px 0 0 #ffe1a1) drop-shadow(0 1px 0 #ffe1a1) drop-shadow(0 -1px 0 #ffe1a1)}
+        @media(hover:hover) and (pointer:fine){.about-close:hover img,.about-copy:hover:not(:focus-visible) img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
+        .about-close:active img{transform:translate(-50%,calc(-50% + .5px)) scale(.97);filter:brightness(.92)}.about-copy:active:not(:focus-visible) img{transform:translateY(.5px) scale(.97);filter:brightness(.92)}
 `;
   return once(result,'      </style>\n      <dialog class="about-dialog"',css+'      </style>\n      <dialog class="about-dialog"');
 }
