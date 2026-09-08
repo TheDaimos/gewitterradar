@@ -1,0 +1,1379 @@
+[
+  {
+    "name": "reference",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 57.95077083333334,
+        "bottom": 105.26457291666668,
+        "headerHeight": 113
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 7,
+      "y": 5,
+      "width": 718,
+      "height": 869,
+      "bottom": 874
+    },
+    "header": {
+      "x": 8,
+      "y": 6,
+      "width": 716,
+      "height": 113,
+      "bottom": 119
+    },
+    "logo": {
+      "x": 24,
+      "y": 20,
+      "width": 86,
+      "height": 86,
+      "bottom": 106
+    },
+    "title": {
+      "x": 134,
+      "y": 25,
+      "width": 385,
+      "height": 38.390625,
+      "bottom": 63.390625
+    },
+    "closeTouch": {
+      "x": 680,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 688.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 18,
+      "y": 119,
+      "width": 696,
+      "height": 114,
+      "bottom": 233
+    },
+    "welcome": {
+      "x": 18,
+      "y": 239,
+      "width": 696,
+      "height": 85.6875,
+      "bottom": 324.6875
+    },
+    "radii": {
+      "x": 18,
+      "y": 330.6875,
+      "width": 696,
+      "height": 157,
+      "bottom": 487.6875
+    },
+    "network": {
+      "x": 18,
+      "y": 493.6875,
+      "width": 696,
+      "height": 83,
+      "bottom": 576.6875
+    },
+    "recorder": {
+      "x": 18,
+      "y": 582.6875,
+      "width": 696,
+      "height": 180.78125,
+      "bottom": 763.46875
+    },
+    "accordion": {
+      "x": 18,
+      "y": 769.46875,
+      "width": 696,
+      "height": 48.390625,
+      "bottom": 817.859375
+    },
+    "footer": {
+      "x": 8,
+      "y": 819,
+      "width": 716,
+      "height": 54,
+      "bottom": 873
+    },
+    "contentHeight": 700,
+    "contentScrollHeight": 700,
+    "overflow": false
+  },
+  {
+    "name": "desktop",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 67.67028125000002,
+        "bottom": 124.36754687499999,
+        "headerHeight": 132
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 290,
+      "y": 5,
+      "width": 860,
+      "height": 990,
+      "bottom": 995
+    },
+    "header": {
+      "x": 291,
+      "y": 6,
+      "width": 858,
+      "height": 132,
+      "bottom": 138
+    },
+    "logo": {
+      "x": 307,
+      "y": 26,
+      "width": 94,
+      "height": 94,
+      "bottom": 120
+    },
+    "title": {
+      "x": 425,
+      "y": 31,
+      "width": 385,
+      "height": 43.1875,
+      "bottom": 74.1875
+    },
+    "closeTouch": {
+      "x": 1105,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 1113.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 301,
+      "y": 138,
+      "width": 838,
+      "height": 132,
+      "bottom": 270
+    },
+    "welcome": {
+      "x": 301,
+      "y": 276,
+      "width": 838,
+      "height": 94,
+      "bottom": 370
+    },
+    "radii": {
+      "x": 301,
+      "y": 376,
+      "width": 838,
+      "height": 173,
+      "bottom": 549
+    },
+    "network": {
+      "x": 301,
+      "y": 555,
+      "width": 838,
+      "height": 94,
+      "bottom": 649
+    },
+    "recorder": {
+      "x": 301,
+      "y": 655,
+      "width": 838,
+      "height": 205,
+      "bottom": 860
+    },
+    "accordion": {
+      "x": 301,
+      "y": 866,
+      "width": 838,
+      "height": 48.390625,
+      "bottom": 914.390625
+    },
+    "footer": {
+      "x": 291,
+      "y": 930,
+      "width": 858,
+      "height": 64,
+      "bottom": 994
+    },
+    "contentHeight": 792,
+    "contentScrollHeight": 792,
+    "overflow": false
+  },
+  {
+    "name": "ipad-closed",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 67.67028125000002,
+        "bottom": 124.36754687499999,
+        "headerHeight": 132
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 82,
+      "y": 5,
+      "width": 860,
+      "height": 758,
+      "bottom": 763
+    },
+    "header": {
+      "x": 83,
+      "y": 6,
+      "width": 858,
+      "height": 132,
+      "bottom": 138
+    },
+    "logo": {
+      "x": 99,
+      "y": 26,
+      "width": 94,
+      "height": 94,
+      "bottom": 120
+    },
+    "title": {
+      "x": 217,
+      "y": 31,
+      "width": 385,
+      "height": 43.1875,
+      "bottom": 74.1875
+    },
+    "closeTouch": {
+      "x": 897,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 905.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 93,
+      "y": 138,
+      "width": 838,
+      "height": 132,
+      "bottom": 270
+    },
+    "welcome": {
+      "x": 93,
+      "y": 276,
+      "width": 838,
+      "height": 94,
+      "bottom": 370
+    },
+    "radii": {
+      "x": 93,
+      "y": 376,
+      "width": 838,
+      "height": 173,
+      "bottom": 549
+    },
+    "network": {
+      "x": 93,
+      "y": 555,
+      "width": 838,
+      "height": 94,
+      "bottom": 649
+    },
+    "recorder": {
+      "x": 93,
+      "y": 655,
+      "width": 838,
+      "height": 205,
+      "bottom": 860
+    },
+    "accordion": {
+      "x": 93,
+      "y": 866,
+      "width": 838,
+      "height": 48.390625,
+      "bottom": 914.390625
+    },
+    "footer": {
+      "x": 83,
+      "y": 698,
+      "width": 858,
+      "height": 64,
+      "bottom": 762
+    },
+    "contentHeight": 560,
+    "contentScrollHeight": 776,
+    "overflow": false
+  },
+  {
+    "name": "ipad-open",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 57.892000000000024,
+        "bottom": 108.64200000000002,
+        "headerHeight": 113
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 7,
+      "y": 5,
+      "width": 770,
+      "height": 758,
+      "bottom": 763
+    },
+    "header": {
+      "x": 8,
+      "y": 6,
+      "width": 768,
+      "height": 113,
+      "bottom": 119
+    },
+    "logo": {
+      "x": 24,
+      "y": 20,
+      "width": 86,
+      "height": 86,
+      "bottom": 106
+    },
+    "title": {
+      "x": 134,
+      "y": 25,
+      "width": 385,
+      "height": 38.390625,
+      "bottom": 63.390625
+    },
+    "closeTouch": {
+      "x": 732,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 740.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 18,
+      "y": 119,
+      "width": 748,
+      "height": 114,
+      "bottom": 233
+    },
+    "welcome": {
+      "x": 18,
+      "y": 239,
+      "width": 748,
+      "height": 85.6875,
+      "bottom": 324.6875
+    },
+    "radii": {
+      "x": 18,
+      "y": 330.6875,
+      "width": 748,
+      "height": 157,
+      "bottom": 487.6875
+    },
+    "network": {
+      "x": 18,
+      "y": 493.6875,
+      "width": 748,
+      "height": 83,
+      "bottom": 576.6875
+    },
+    "recorder": {
+      "x": 18,
+      "y": 582.6875,
+      "width": 748,
+      "height": 180.78125,
+      "bottom": 763.46875
+    },
+    "accordion": {
+      "x": 18,
+      "y": 769.46875,
+      "width": 748,
+      "height": 48.390625,
+      "bottom": 817.859375
+    },
+    "footer": {
+      "x": 8,
+      "y": 708,
+      "width": 768,
+      "height": 54,
+      "bottom": 762
+    },
+    "contentHeight": 589,
+    "contentScrollHeight": 699,
+    "overflow": false
+  },
+  {
+    "name": "ipad-portrait",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 57.91008333333333,
+        "bottom": 107.60279166666668,
+        "headerHeight": 113
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 7,
+      "y": 5,
+      "width": 754,
+      "height": 1014,
+      "bottom": 1019
+    },
+    "header": {
+      "x": 8,
+      "y": 6,
+      "width": 752,
+      "height": 113,
+      "bottom": 119
+    },
+    "logo": {
+      "x": 24,
+      "y": 20,
+      "width": 86,
+      "height": 86,
+      "bottom": 106
+    },
+    "title": {
+      "x": 134,
+      "y": 25,
+      "width": 385,
+      "height": 38.390625,
+      "bottom": 63.390625
+    },
+    "closeTouch": {
+      "x": 716,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 724.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 18,
+      "y": 119,
+      "width": 732,
+      "height": 114,
+      "bottom": 233
+    },
+    "welcome": {
+      "x": 18,
+      "y": 239,
+      "width": 732,
+      "height": 85.6875,
+      "bottom": 324.6875
+    },
+    "radii": {
+      "x": 18,
+      "y": 330.6875,
+      "width": 732,
+      "height": 157,
+      "bottom": 487.6875
+    },
+    "network": {
+      "x": 18,
+      "y": 493.6875,
+      "width": 732,
+      "height": 83,
+      "bottom": 576.6875
+    },
+    "recorder": {
+      "x": 18,
+      "y": 582.6875,
+      "width": 732,
+      "height": 180.78125,
+      "bottom": 763.46875
+    },
+    "accordion": {
+      "x": 18,
+      "y": 769.46875,
+      "width": 732,
+      "height": 48.390625,
+      "bottom": 817.859375
+    },
+    "footer": {
+      "x": 8,
+      "y": 964,
+      "width": 752,
+      "height": 54,
+      "bottom": 1018
+    },
+    "contentHeight": 845,
+    "contentScrollHeight": 845,
+    "overflow": false
+  },
+  {
+    "name": "ipad-pro",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 12,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 67.67028125000002,
+        "bottom": 124.36754687499999,
+        "headerHeight": 132
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 253,
+      "y": 5,
+      "width": 860,
+      "height": 1014,
+      "bottom": 1019
+    },
+    "header": {
+      "x": 254,
+      "y": 6,
+      "width": 858,
+      "height": 132,
+      "bottom": 138
+    },
+    "logo": {
+      "x": 270,
+      "y": 26,
+      "width": 94,
+      "height": 94,
+      "bottom": 120
+    },
+    "title": {
+      "x": 388,
+      "y": 31,
+      "width": 385,
+      "height": 43.1875,
+      "bottom": 74.1875
+    },
+    "closeTouch": {
+      "x": 1068,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 1076.5,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 264,
+      "y": 138,
+      "width": 838,
+      "height": 132,
+      "bottom": 270
+    },
+    "welcome": {
+      "x": 264,
+      "y": 276,
+      "width": 838,
+      "height": 94,
+      "bottom": 370
+    },
+    "radii": {
+      "x": 264,
+      "y": 376,
+      "width": 838,
+      "height": 173,
+      "bottom": 549
+    },
+    "network": {
+      "x": 264,
+      "y": 555,
+      "width": 838,
+      "height": 94,
+      "bottom": 649
+    },
+    "recorder": {
+      "x": 264,
+      "y": 655,
+      "width": 838,
+      "height": 205,
+      "bottom": 860
+    },
+    "accordion": {
+      "x": 264,
+      "y": 866,
+      "width": 838,
+      "height": 48.390625,
+      "bottom": 914.390625
+    },
+    "footer": {
+      "x": 254,
+      "y": 954,
+      "width": 858,
+      "height": 64,
+      "bottom": 1018
+    },
+    "contentHeight": 816,
+    "contentScrollHeight": 816,
+    "overflow": false
+  },
+  {
+    "name": "android-portrait",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 10,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 68.19017708333334,
+        "bottom": 94.49030729166668,
+        "headerHeight": 132
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 6,
+      "y": 6,
+      "width": 400,
+      "height": 903,
+      "bottom": 909
+    },
+    "header": {
+      "x": 7,
+      "y": 7,
+      "width": 398,
+      "height": 132,
+      "bottom": 139
+    },
+    "logo": {
+      "x": 19,
+      "y": 23,
+      "width": 70,
+      "height": 70,
+      "bottom": 93
+    },
+    "title": {
+      "x": 101,
+      "y": 28,
+      "width": 225,
+      "height": 27.59375,
+      "bottom": 55.59375
+    },
+    "closeTouch": {
+      "x": 361,
+      "y": 7,
+      "width": 44,
+      "height": 44,
+      "bottom": 51
+    },
+    "closeVisual": {
+      "x": 369.5,
+      "y": 15.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 42.5
+    },
+    "dedication": {
+      "x": 15,
+      "y": 139,
+      "width": 382,
+      "height": 224.875,
+      "bottom": 363.875
+    },
+    "welcome": {
+      "x": 15,
+      "y": 369.875,
+      "width": 382,
+      "height": 179.875,
+      "bottom": 549.75
+    },
+    "radii": {
+      "x": 15,
+      "y": 555.75,
+      "width": 382,
+      "height": 257.90625,
+      "bottom": 813.65625
+    },
+    "network": {
+      "x": 15,
+      "y": 819.65625,
+      "width": 382,
+      "height": 131.78125,
+      "bottom": 951.4375
+    },
+    "recorder": {
+      "x": 15,
+      "y": 957.4375,
+      "width": 382,
+      "height": 359,
+      "bottom": 1316.4375
+    },
+    "accordion": {
+      "x": 15,
+      "y": 1322.4375,
+      "width": 382,
+      "height": 54.390625,
+      "bottom": 1376.828125
+    },
+    "footer": {
+      "x": 7,
+      "y": 818,
+      "width": 398,
+      "height": 90,
+      "bottom": 908
+    },
+    "contentHeight": 679,
+    "contentScrollHeight": 1238,
+    "overflow": false
+  },
+  {
+    "name": "android-landscape",
+    "delivery": "integration",
+    "controls": [
+      {
+        "label": "Schließen",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      },
+      {
+        "label": "YAML kopieren",
+        "hit": [
+          44,
+          44
+        ],
+        "visible": true,
+        "contained": true,
+        "ratio": 1
+      }
+    ],
+    "status": "PASS",
+    "refinement": {
+      "claimClear": true,
+      "claimFont": 11,
+      "claimUnboxed": true,
+      "claimContained": true,
+      "lineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "lineAlignment": true,
+      "benefitLines": [
+        1,
+        1,
+        1
+      ],
+      "subtitle": "Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.",
+      "quote": "Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.",
+      "claim": "Gewitter beobachten, Entwicklungen entdecken.",
+      "headerSizing": "auto, 70% auto",
+      "heroRatioPreserved": true,
+      "church": {
+        "top": 27.46028125000001,
+        "bottom": 84.15754687499998,
+        "headerHeight": 85
+      },
+      "subtitleFits": true,
+      "ringColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#c4483b"
+      ],
+      "legendColors": [
+        "#d9b45e",
+        "#79b8e7",
+        "#d74d43"
+      ],
+      "smallHeart": 1,
+      "handwriting": 3,
+      "largeHeartGlow": "drop-shadow(rgb(101, 64, 33) 0px 1px 0.6px) drop-shadow(rgba(255, 225, 181, 0.85) 0px 0px 2px) drop-shadow(rgba(220, 160, 102, 0.74) 0px 0px 6px) drop-shadow(rgba(181, 116, 67, 0.6) -2px 2px 12px)",
+      "outerMetal": "linear-gradient(145deg, rgb(212, 170, 105) 0%, rgb(118, 80, 46) 15%, rgb(243, 220, 176) 29%, rgb(118, 83, 47) 43%, rgb(188, 144, 87) 57%, rgb(252, 226, 182) 73%, rgb(114, 80, 49) 87%, rgb(199, 155, 98) 100%)"
+    },
+    "dialog": {
+      "x": 27.5,
+      "y": 5,
+      "width": 860,
+      "height": 402,
+      "bottom": 407
+    },
+    "header": {
+      "x": 28.5,
+      "y": 6,
+      "width": 858,
+      "height": 85,
+      "bottom": 91
+    },
+    "logo": {
+      "x": 44.5,
+      "y": 14,
+      "width": 65,
+      "height": 65,
+      "bottom": 79
+    },
+    "title": {
+      "x": 133.5,
+      "y": 17,
+      "width": 385,
+      "height": 33.59375,
+      "bottom": 50.59375
+    },
+    "closeTouch": {
+      "x": 842.5,
+      "y": 6,
+      "width": 44,
+      "height": 44,
+      "bottom": 50
+    },
+    "closeVisual": {
+      "x": 851,
+      "y": 14.5,
+      "width": 27,
+      "height": 27,
+      "bottom": 41.5
+    },
+    "dedication": {
+      "x": 38.5,
+      "y": 91,
+      "width": 838,
+      "height": 132,
+      "bottom": 223
+    },
+    "welcome": {
+      "x": 38.5,
+      "y": 229,
+      "width": 838,
+      "height": 94,
+      "bottom": 323
+    },
+    "radii": {
+      "x": 38.5,
+      "y": 329,
+      "width": 838,
+      "height": 173,
+      "bottom": 502
+    },
+    "network": {
+      "x": 38.5,
+      "y": 508,
+      "width": 838,
+      "height": 94,
+      "bottom": 602
+    },
+    "recorder": {
+      "x": 38.5,
+      "y": 608,
+      "width": 838,
+      "height": 205,
+      "bottom": 813
+    },
+    "accordion": {
+      "x": 38.5,
+      "y": 819,
+      "width": 838,
+      "height": 48.390625,
+      "bottom": 867.390625
+    },
+    "footer": {
+      "x": 28.5,
+      "y": 352,
+      "width": 858,
+      "height": 54,
+      "bottom": 406
+    },
+    "contentHeight": 261,
+    "contentScrollHeight": 776,
+    "overflow": false
+  },
+  {
+    "status": "PASS",
+    "scenario": "first",
+    "cycles": 20,
+    "settings": 16
+  },
+  {
+    "status": "PASS",
+    "scenario": "seen",
+    "cycles": 20,
+    "settings": 16
+  },
+  {
+    "status": "PASS",
+    "scenario": "older",
+    "cycles": 20,
+    "settings": 16
+  },
+  {
+    "status": "PASS",
+    "scenario": "future",
+    "cycles": 20,
+    "settings": 16
+  },
+  {
+    "status": "PASS",
+    "scenario": "preview",
+    "cycles": 20,
+    "settings": 16
+  },
+  {
+    "existingFrontendHarness": "PASS"
+  }
+]

@@ -5,11 +5,14 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from math import isfinite
+from pathlib import Path
 from typing import Any
 
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     COMPASS_DESIGN_OPTIONS,
@@ -210,6 +213,18 @@ class GewitterradarRuntimeData:
 
 
 type GewitterradarConfigEntry = ConfigEntry[GewitterradarRuntimeData]
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Serve the shared card once per HA lifecycle; resource registration is explicit."""
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            "/gewitterradar",
+            str(Path(__file__).parent / "frontend"),
+            False,
+        )
+    ])
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry) -> bool:

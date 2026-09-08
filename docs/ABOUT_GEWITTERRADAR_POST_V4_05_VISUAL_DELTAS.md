@@ -98,3 +98,7 @@ Ein nachfolgender gemeinsamer Gewitterradar-Stand ist nur releasefähig, wenn:
 - beide Auslieferungsformen denselben Frontendstand und dieselben Runtime-Assets verwenden;
 - bestehende Frontend-, Integration-, Responsive- und Asset-Prüfungen grün bleiben;
 - der geschützte V4.05-About-Inhalt außerhalb dieser ausdrücklich freigegebenen Änderungen unverändert bleibt.
+
+## 8. Implementierter Review-Kandidat
+
+Die drei freigegebenen Deltas sind in der gemeinsamen Quelle umgesetzt. Die eingefrorene Baseline bleibt unverändert. Acht Browserprofile beider Payloads und der maskierte Golden-Vergleich sind lokal bestanden; Linux-Integrationstests sind noch offen. Siehe [vollständigen Prüfbericht](PREMIUM_CONTROLS_2026-09-08.md).

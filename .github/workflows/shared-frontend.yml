@@ -1,0 +1,36 @@
+name: Validate shared Gewitterradar frontend
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  shared-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: node scripts/verify-frontend.mjs
+      - run: node scripts/test-frontend-build.mjs
+      - run: node --check frontend/gewitterradar.js
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
+      - run: npx playwright install --with-deps chromium
+      - name: Frozen V4.05 geometry and pixel comparison
+        run: node scripts/test-about-golden.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Both delivery browser suites
+        run: |
+          set -euo pipefail
+          chrome=$(node -p "require('playwright').chromium.executablePath()")
+          for delivery in dashboard integration; do
+            mkdir -p "artwork/acceptance/premium-controls/$delivery"
+            ABOUT_DELIVERY="$delivery" node scripts/test-about-browser.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shared-frontend-browser-evidence
+          path: artwork/acceptance/premium-controls/

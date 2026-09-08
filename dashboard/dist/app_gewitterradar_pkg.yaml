@@ -1,0 +1,414 @@
+# =============================================================================
+# APP GEWITTERRADAR – HOME ASSISTANT PACKAGE
+# Release baseline: V4.01
+# =============================================================================
+#
+# TARGET PATH:
+#   /config/packages/app_gewitterradar_pkg.yaml
+#
+# Prerequisite in configuration.yaml:
+#
+#   homeassistant:
+#     packages: !include_dir_named packages
+#
+# IMPORTANT:
+# - Do not add another package-name level above the sections below.
+# - Do not use `initial:` for user settings. Home Assistant restores their state.
+# - The first-run automation initializes defaults only once.
+# - Existing legacy Blitzortung helpers are read once, where possible, so a
+#   migration does not unnecessarily discard existing radius / toggle settings.
+# - All technical helper IDs and visible helper names in this package use English.
+# - The lightning_detection_* helper IDs remain unchanged by design.
+# - Only the package filename/release metadata is normalized to Gewitterradar here.
+# =============================================================================
+
+input_select:
+  lightning_detection_language:
+    name: "App Lightning Detection – Language"
+    icon: mdi:translate
+    options:
+      - Deutsch
+      - English
+      - Dansk
+      - Español
+      - Français
+      - Nederlands
+      - Polski
+      - Português
+      - Svenska
+      - Italiano
+      - Norsk bokmål
+      - Suomi
+      - Čeština
+      - Ελληνικά
+      - Magyar
+      - Boarisch
+      - Plattdüütsch
+      - Sächs’sch
+      - Schwäbisch
+    # The dotted separator before dialects is rendered only by the card UI;
+    # it is deliberately not an input_select option.
+
+  lightning_detection_distance_unit:
+    name: "App Lightning Detection – Distance Unit"
+    icon: mdi:ruler
+    options:
+      - KM
+      - MI
+
+  lightning_detection_compass_design:
+    name: "App Lightning Detection – Compass Design"
+    icon: mdi:compass-rose
+    options:
+      - Compass A
+      - Compass B
+      - Compass C
+
+  lightning_detection_location:
+    name: "App Lightning Detection – Reference Location"
+    icon: mdi:crosshairs-gps
+    # Datenschutzneutraler Startwert. Gewitterradar erkennt zur Laufzeit alle
+    # person.*-Entitäten der verbundenen Home-Assistant-Instanz und hält diesen
+    # input_select automatisch synchron.
+    #
+    # Zusätzliche zone.*- / device_tracker.*-Referenzen können optional über
+    # `location_entities:` in der Kartenkonfiguration ergänzt werden.
+    options:
+      - zone.home
+
+input_number:
+  lightning_detection_observation_radius:
+    name: "App Lightning Detection – Observation Radius"
+    icon: mdi:radar
+    min: 10
+    max: 1000
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_storm_radius:
+    name: "App Lightning Detection – Storm Radius"
+    icon: mdi:weather-lightning
+    min: 5
+    max: 1000
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_danger_radius:
+    name: "App Lightning Detection – Danger Radius"
+    icon: mdi:alert-circle-outline
+    min: 1
+    max: 250
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_aura_width:
+    name: "App Lightning Detection – Aura Width"
+    icon: mdi:arrow-expand-horizontal
+    min: 15
+    max: 60
+    step: 1
+    mode: slider
+    unit_of_measurement: "%"
+
+  lightning_detection_aura_intensity:
+    name: "App Lightning Detection – Aura Intensity"
+    icon: mdi:brightness-6
+    min: 0
+    max: 70
+    step: 1
+    mode: slider
+    unit_of_measurement: "%"
+
+input_boolean:
+  lightning_detection_aura_effects:
+    name: "App Lightning Detection – Aura Effects"
+    icon: mdi:blur
+
+  lightning_detection_warning_animation:
+    name: "App Lightning Detection – Warning Animation"
+    icon: mdi:lightning-bolt
+
+  lightning_detection_storm_simulation:
+    name: "App Lightning Detection – Storm Simulation Tools"
+    icon: mdi:test-tube
+
+  lightning_detection_show_location_selector:
+    name: "App Lightning Detection – Show Location Selector"
+    icon: mdi:crosshairs-gps
+
+  lightning_detection_compass_nearest_strike:
+    name: "App Lightning Detection – Compass Nearest Strike"
+    icon: mdi:compass
+
+  lightning_detection_compass_device_orientation:
+    name: "App Lightning Detection – Compass Device Orientation"
+    icon: mdi:cellphone-marker
+
+  lightning_detection_map_grouping:
+    name: "App Lightning Detection – Map Grouping"
+    icon: mdi:map-marker-multiple
+
+  # Separate one-time marker for the V3.9934 aura controls. It is deliberately
+  # independent of older initialization markers so existing installations receive
+  # the new boolean/width/intensity defaults exactly once.
+  lightning_detection_aura_controls_initialized:
+    name: "App Lightning Detection – Aura Controls Initialization Complete"
+    icon: mdi:check-circle-outline
+
+  # Internal first-run marker. Once ON, later Home Assistant restarts never
+  # overwrite the user's selected language or other app settings.
+  lightning_detection_defaults_initialized:
+    name: "App Lightning Detection – Initialization Complete"
+    icon: mdi:check-decagram
+
+# =============================================================================
+# FIRST-RUN INITIALIZATION / LEGACY MIGRATION
+# =============================================================================
+automation:
+  - id: app_lightning_detection_initialize_defaults
+    alias: "App Lightning Detection – Initialize Defaults"
+    description: >-
+      Initializes the V3.98 package only once. Existing legacy Blitzortung
+      helper values are copied where possible. Later restarts preserve all
+      user settings. English is the first-install language default.
+
+    triggers:
+      - trigger: homeassistant
+        event: start
+
+    conditions:
+      - condition: state
+        entity_id: input_boolean.lightning_detection_defaults_initialized
+        state: "off"
+
+    actions:
+      - variables:
+          legacy_observation: "{{ states('input_number.blitzortung_anzeigeradius') }}"
+          legacy_storm: "{{ states('input_number.blitzortung_gewitterradius') }}"
+          legacy_danger: "{{ states('input_number.blitzortung_gefahrenradius') }}"
+          legacy_compass_design: "{{ states('input_select.blitzortung_kompass_design') }}"
+
+      # English is deliberately set only here, on the first package start.
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.lightning_detection_language
+        data:
+          option: English
+
+      # New installations start metric. Existing installations are never reset:
+      # their one-time defaults marker is already ON, and the helper restores state.
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.lightning_detection_distance_unit
+        data:
+          option: KM
+
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.lightning_detection_observation_radius
+        data:
+          value: >-
+            {% set v = legacy_observation | float(75) %}
+            {{ [1000, [10, v] | max] | min }}
+
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.lightning_detection_storm_radius
+        data:
+          value: >-
+            {% set obs = legacy_observation | float(75) %}
+            {% set v = legacy_storm | float(30) %}
+            {{ [1000, [obs, [5, v] | max] | min] | min }}
+
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.lightning_detection_danger_radius
+        data:
+          value: >-
+            {% set storm = legacy_storm | float(30) %}
+            {% set v = legacy_danger | float(15) %}
+            {{ [250, [storm, [1, v] | max] | min] | min }}
+
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.lightning_detection_compass_design
+        data:
+          option: >-
+            {% set map = {
+              'Kompass A':'Compass A', 'Kompass B':'Compass B', 'Kompass C':'Compass C',
+              'Compass A':'Compass A', 'Compass B':'Compass B', 'Compass C':'Compass C'
+            } %}
+            {{ map.get(legacy_compass_design, 'Compass C') }}
+
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.lightning_detection_location
+        data:
+          # Datenschutzneutraler Startwert. Die Karte ergänzt nach dem Start
+          # automatisch die person.*-Entitäten dieser HA-Instanz.
+          option: zone.home
+
+      # Defaults first; valid legacy values override them below.
+      - action: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.lightning_detection_warning_animation
+            - input_boolean.lightning_detection_map_grouping
+
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+            - input_boolean.lightning_detection_storm_simulation
+            - input_boolean.lightning_detection_show_location_selector
+            - input_boolean.lightning_detection_compass_nearest_strike
+            - input_boolean.lightning_detection_compass_device_orientation
+
+      # Copy legacy boolean states only if the legacy helper actually exists.
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_warnanimation') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_warnanimation','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_warning_animation }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_warning_animation }
+
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_gewittersimulation') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_gewittersimulation','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_storm_simulation }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_storm_simulation }
+
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_standortwahl_hauptansicht') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_standortwahl_hauptansicht','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_show_location_selector }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_show_location_selector }
+
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_kompass_nachster_treffer') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_kompass_nachster_treffer','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_compass_nearest_strike }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_compass_nearest_strike }
+
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_kompass_geraeteausrichtung') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_kompass_geraeteausrichtung','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_compass_device_orientation }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_compass_device_orientation }
+
+      - if:
+          - condition: template
+            value_template: "{{ states('input_boolean.blitzortung_karte_gruppierung') in ['on','off'] }}"
+        then:
+          - choose:
+              - conditions: "{{ is_state('input_boolean.blitzortung_karte_gruppierung','on') }}"
+                sequence:
+                  - action: input_boolean.turn_on
+                    target: { entity_id: input_boolean.lightning_detection_map_grouping }
+            default:
+              - action: input_boolean.turn_off
+                target: { entity_id: input_boolean.lightning_detection_map_grouping }
+
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.lightning_detection_defaults_initialized
+
+    mode: single
+
+  - id: app_lightning_detection_initialize_aura_controls
+    alias: "App Lightning Detection – Initialize Aura Controls"
+    description: >-
+      Initializes the V3.9937 aura controls exactly once. The defaults 40 % width
+      and 55 % intensity reproduce approximately the former Medium SVG appearance.
+      Later Home Assistant restarts preserve all user adjustments.
+
+    triggers:
+      - trigger: homeassistant
+        event: start
+
+    conditions:
+      - condition: state
+        entity_id: input_boolean.lightning_detection_aura_controls_initialized
+        state: "off"
+
+    actions:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.lightning_detection_aura_effects
+
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.lightning_detection_aura_width
+        data:
+          value: 40
+
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.lightning_detection_aura_intensity
+        data:
+          value: 55
+
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.lightning_detection_aura_controls_initialized
+
+    mode: single
+
+# =============================================================================
+# HELPER INVENTORY
+# =============================================================================
+# input_select.lightning_detection_language
+# input_select.lightning_detection_distance_unit
+# input_select.lightning_detection_compass_design
+# input_select.lightning_detection_location
+# input_number.lightning_detection_observation_radius
+# input_number.lightning_detection_storm_radius
+# input_number.lightning_detection_danger_radius
+# input_number.lightning_detection_aura_width
+# input_number.lightning_detection_aura_intensity
+# input_boolean.lightning_detection_aura_effects
+# input_boolean.lightning_detection_warning_animation
+# input_boolean.lightning_detection_storm_simulation
+# input_boolean.lightning_detection_show_location_selector
+# input_boolean.lightning_detection_compass_nearest_strike
+# input_boolean.lightning_detection_compass_device_orientation
+# input_boolean.lightning_detection_map_grouping
+# input_boolean.lightning_detection_aura_controls_initialized
+# input_boolean.lightning_detection_defaults_initialized
+# =============================================================================

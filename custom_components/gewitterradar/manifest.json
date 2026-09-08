@@ -8,7 +8,7 @@
   ],
   "codeowners": ["@TheDaimos"],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["http"],
   "documentation": "https://github.com/TheDaimos/gewitterradar",
   "integration_type": "service",
   "iot_class": "calculated",

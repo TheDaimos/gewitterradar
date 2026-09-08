@@ -12,6 +12,13 @@ Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. D
 
 Die gemeinsame Frontend-/Produktkonvergenz läuft derzeit. Bis die vereinheitlichte Auslieferung vollständig veröffentlicht ist, wird die Dashboard-Karte zusätzlich über `TheDaimos/gewitterradar-dashboard` ausgeliefert. Dieser Dashboard-Zweig ist eine abgeleitete Auslieferungsform und keine unabhängige Entwicklungsquelle mehr.
 
+
+## Unveröffentlichter gemeinsamer Frontend-Kandidat (2026-09-08)
+
+Auf `feature/integrated-dashboard-v4.05` ist die gemeinsame Quelle jetzt `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität. Die native Variante enthält die Karte und stellt nach Integrationseinrichtung `/gewitterradar/gewitterradar.js` als manuell einzutragende Modulressource bereit. Nur eine Gewitterradar-Ressource laden. Die unten beschriebenen HACS-Pfade beziehen sich weiterhin auf die veröffentlichte V4.05-Auslieferung.
+
+Lokale Browser-/Build-Prüfungen sind bestanden; Linux-Integrationstests und reale HACS-/Geräteabnahme des Kandidaten stehen aus. Siehe [Prüfbericht](docs/PREMIUM_CONTROLS_2026-09-08.md) und [Installation](docs/INSTALLATION.md).
+
 ## Was die native Integration bereitstellt
 
 - einen UI Config Flow und einen Config Entry;

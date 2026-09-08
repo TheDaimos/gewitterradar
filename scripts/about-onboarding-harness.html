@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gewitterradar About acceptance</title>
+<style>body{margin:0;background:#111923;color:#eee;font:14px system-ui}#fixture{width:100%;max-width:1300px}#result{white-space:pre-wrap}</style>
+<div id="fixture"></div><pre id="result">running</pre>
+<script type="module">
+await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');
+const key='gewitterradar-about-onboarding-version';
+const scenario=new URLSearchParams(location.search).get('scenario')||'first';
+if(scenario==='first')localStorage.removeItem(key);
+if(scenario==='older')localStorage.setItem(key,'0');
+if(scenario==='future')localStorage.setItem(key,'2');
+const states={
+  'select.gewitterradar_language':{state:'Deutsch',attributes:{}},
+  'select.gewitterradar_distance_unit':{state:'KM',attributes:{}},
+  'number.gewitterradar_observation_radius':{state:'200',attributes:{}},
+  'number.gewitterradar_storm_radius':{state:'80',attributes:{}},
+  'number.gewitterradar_danger_radius':{state:'10',attributes:{}},
+  'input_number.lightning_detection_observation_radius':{state:'120',attributes:{}}
+};
+const hass={config:{version:'harness',unit_system:{length:'km'},latitude:0,longitude:0},states,themes:{theme:'dark'},callService:async()=>{}};
+let fixture=document.querySelector('#fixture');
+if(scenario==='preview'){const preview=document.createElement('hui-card-preview');fixture.append(preview);fixture=preview;localStorage.removeItem(key);}
+const make=()=>{const card=document.createElement('gewitterradar-card');card.setConfig({});card.hass=hass;fixture.append(card);return card;};
+try {
+  const card=make(), second=make();
+  window.aboutCard=card;
+  const assert=(value,message)=>{if(!value)throw Error(message);};
+  const expected=!['seen','future','preview'].includes(scenario);
+  assert(!!card._aboutDialog?.open===expected,'first-start state');
+  assert(!second._aboutDialog,'multiple cards opened onboarding');
+  if(expected){const seenBeforeLater=localStorage.getItem(key);card._aboutDialog.querySelector('.about-later').click();assert(localStorage.getItem(key)===seenBeforeLater,'Later acknowledged an unseen version');card._openAbout();}
+  if(!expected)card._openAbout();
+  const dialog=card._aboutDialog, content=dialog.querySelector('.about-content'), details=dialog.querySelector('details');
+  assert(!details.open,'accordion must start closed');
+  assert(content.firstElementChild.classList.contains('about-dedication'),'dedication order');
+  assert(dialog.querySelector('.about-dedication p').textContent==='Danke, dass du mir die Zeit lässt, meinen Interessen und meiner Begeisterung für Technik, Wetter und all den Ideen dazwischen nachzugehen – und mich Projekten wie Gewitterradar mit so viel Freude und Ausdauer zu widmen.','dedication changed');
+  assert(dialog.querySelectorAll('[data-setting]').length===16,'16 settings');
+  assert(dialog.querySelectorAll('.about-source-list li').length===4,'four recorder sources');
+  assert(dialog.querySelectorAll('[data-setting] .about-purpose').length===16,'16 setting purposes');
+  assert([...dialog.querySelectorAll('.about-purpose')].every(node=>node.textContent.trim().length>0),'missing technical purpose');
+  assert(dialog.querySelectorAll('.about-purpose').length===22,'16 settings + 4 sources + 2 location purposes');
+  assert([...dialog.querySelectorAll('.about-legacy-id')].every(node=>node.textContent.includes('Dient nur als Kompatibilitäts-Fallback.')),'legacy purpose');
+  assert(dialog.querySelector('.about-recorder-intro').textContent.includes('configuration.yaml'),'configuration.yaml instruction');
+  const expectedYaml='recorder:\n  exclude:\n    entity_globs:\n      - "geo_location.lightning_strike*"\n    entities:\n      - sensor.home_lightning_distance\n      - sensor.home_lightning_azimuth\n      - sensor.home_lightning_counter';
+  assert(dialog.querySelector('pre code').textContent===expectedYaml,'exact V2 Recorder YAML');
+  const value=()=>dialog.querySelector('[data-radius="observation_radius"] output').textContent;
+  assert(value()==='200 KM','native radius');
+  details.querySelector('summary').click();assert(details.open,'accordion open');
+  content.scrollTop=100;
+  states['number.gewitterradar_observation_radius'].state='unavailable';card.hass={...hass};
+  assert(value()==='120 KM','unavailable native fallback');
+  assert(card._aboutDialog===dialog&&details.open&&content.scrollTop===100,'live update rebuilt/scrolled dialog');
+  states['number.gewitterradar_observation_radius'].state='unknown';card.hass={...hass};assert(value()==='120 KM','unknown native fallback');
+  delete states['number.gewitterradar_observation_radius'];card.hass={...hass};assert(value()==='120 KM','missing native fallback');
+  delete states['input_number.lightning_detection_observation_radius'];card.hass={...hass};assert(value()==='—','missing radius must not invent a default');
+  states['number.gewitterradar_observation_radius']={state:'200',attributes:{}};
+  states['select.gewitterradar_distance_unit'].state='MI';card.hass={...hass};assert(value().includes('MI')&&!value().startsWith('200'),'mile conversion');
+  states['select.gewitterradar_distance_unit'].state='KM';
+  card._config.observation_radius_entity='number.test_radius';states['number.test_radius']={state:'175',attributes:{}};card.hass={...hass};
+  assert(value()==='175 KM'&&dialog.querySelector('[data-setting="observation_radius"]').textContent.includes('number.test_radius'),'explicit override transparency');
+  delete card._config.observation_radius_entity;delete states['number.test_radius'];
+  for(const language of ['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']){
+    states['select.gewitterradar_language'].state=language;card.hass={...hass};
+    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);
+    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');
+  }
+  states['select.gewitterradar_language'].state='Deutsch';card.hass={...hass};
+  const root=card.shadowRoot.querySelector('#card-root'), recent=card.shadowRoot.querySelector('#recent-content');
+  card._closeAbout(true);
+  assert(localStorage.getItem(key)===(scenario==='future'?'2':'1'),'acknowledgement persistence');
+  for(let n=0;n<20;n++){
+    card.shadowRoot.querySelector('#settings-about').click();
+    assert(card._aboutDialog.open,'manual settings action');
+    assert(!card._aboutDialog.querySelector('details').open,'reopen accordion default');
+    card._closeAbout();
+    assert(!card.shadowRoot.querySelector('#about-shell')&&!card._aboutDialog&&!card._aboutReturnFocus,'DOM/reference cleanup');
+  }
+  const storedBeforeLater=localStorage.getItem(key);card._openAbout();card._aboutDialog.querySelector('.about-later').click();
+  assert(!card._aboutDialog&&localStorage.getItem(key)===storedBeforeLater,'later action changed acknowledgement');
+  assert(card.shadowRoot.querySelector('#card-root')===root&&card.shadowRoot.querySelector('#recent-content')===recent,'card/recent rebuilt');
+  card._openAbout();card.remove();assert(!card._aboutDialog,'disconnect cleanup');fixture.append(card);assert(!card._aboutDialog,'reconnect repeated onboarding');
+  second.remove();card._openAbout();
+  window.aboutResult={status:'PASS',scenario,cycles:20,settings:16};
+  document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);
+}catch(error){window.aboutResult={status:'FAIL',message:error.stack};document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);}
+</script>

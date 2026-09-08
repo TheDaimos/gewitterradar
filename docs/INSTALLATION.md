@@ -12,7 +12,7 @@ When this release candidate is approved for public installation:
 4. Open **Settings → Devices & services**.
 5. Select **Add integration** and search for **Gewitterradar**.
 6. Create the single Gewitterradar Config Entry.
-7. Install the separate Gewitterradar Dashboard/Card repository if the Lovelace frontend is not already installed.
+7. For this unreleased shared-frontend candidate, add `/gewitterradar/gewitterradar.js` as a JavaScript module under **Settings → Dashboards → Resources**, then create a card of type `custom:gewitterradar-card`. The integration now includes the frontend.
 
 The native integration does not automatically register the separate Dashboard resource and does not modify Home Assistant `.storage` files.
 
@@ -53,6 +53,9 @@ The resulting target must contain at least:
 ├── select.py
 ├── strings.json
 ├── switch.py
+├── frontend/
+│   ├── gewitterradar.js
+│   └── assets/ (all 17 runtime images)
 ├── brand/
 │   ├── icon.png
 │   └── icon@2x.png
@@ -77,11 +80,11 @@ See [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
 
 ## Dashboard/Card requirement
 
-The Integration repository provides backend/configuration entities only. For the full Gewitterradar visual application, install the Dashboard/Card separately from:
+The unreleased shared-frontend candidate includes the same card and assets as the derived Dashboard package. After the integration has been set up, its resource is `/gewitterradar/gewitterradar.js` (JavaScript module). Resource registration remains explicit; no `.storage` manipulation is performed.
 
-```text
-https://github.com/TheDaimos/gewitterradar-dashboard
-```
+For the published frozen V4.05 channel, the separate Dashboard delivery remains available at `https://github.com/TheDaimos/gewitterradar-dashboard`. Load exactly one Gewitterradar module: either the integration URL or `/hacsfiles/gewitterradar-dashboard/gewitterradar.js`. Verify and remove/disable obsolete resource registrations before switching; in particular the historical `/hacsfiles/gewitterradar/gewitterradar.js?...` path can collide. Do not change entity settings or delete the legacy package as part of a resource switch.
+
+The candidate still requires Linux runtime CI and real HACS/device acceptance; it is not a published release.
 
 The Dashboard continues to use the Home Assistant Blitzortung.org integration as the live lightning-event data source.
 

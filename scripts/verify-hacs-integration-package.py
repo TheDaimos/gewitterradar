@@ -27,6 +27,10 @@ REQUIRED = {
     "translations/de.json",
     "translations/en.json",
 }
+REQUIRED |= {"frontend/gewitterradar.js"} | {
+    "frontend/" + asset["file"]
+    for asset in json.loads((ROOT / "frontend" / "assets.json").read_text(encoding="utf-8"))
+}
 FORBIDDEN_SUFFIXES = {".patch", ".pyc"}
 
 
