@@ -52,18 +52,12 @@ const server=http.createServer((req,res)=>{
         const church={top:530*scale+crop,bottom:675*scale+crop,headerHeight:header.clientHeight};
         const numbers=[...d.querySelectorAll('.about-line-numbers span')],lines=[...d.querySelectorAll('pre code>span')];
         const lineAlignment=numbers.length===lines.length&&numbers.every((n,i)=>Math.abs(n.getBoundingClientRect().top-lines[i].getClientRects()[0].top)<2);
-        const alignmentRows=numbers.map((number,i)=>{
-          const code=lines[i],numberRect=number.getBoundingClientRect(),codeRect=code?.getClientRects()[0];
-          const numberStyle=style(number),codeStyle=code?style(code):null;
-          return {line:i+1,numberTop:numberRect.top,codeTop:codeRect?.top??null,delta:codeRect?numberRect.top-codeRect.top:null,numberHeight:numberRect.height,codeHeight:codeRect?.height??null,numberLineHeight:numberStyle.lineHeight,codeLineHeight:codeStyle?.lineHeight??null,numberFontFamily:numberStyle.fontFamily,codeFontFamily:codeStyle?.fontFamily??null,numberFontSize:numberStyle.fontSize,codeFontSize:codeStyle?.fontSize??null};
-        });
         const benefit=d.querySelector('[data-about-text="recorderBenefit"]');
         let offset=0;
         const benefitLines=benefit.textContent.split('\n').map(text=>{const range=document.createRange();range.setStart(benefit.firstChild,offset);range.setEnd(benefit.firstChild,offset+text.length);offset+=text.length+1;return range.getClientRects().length;});
         return {
           claimClear,claimFont:parseFloat(style(claim).fontSize),claimUnboxed:style(claim).backgroundImage==='none'&&style(claim).backgroundColor==='rgba(0, 0, 0, 0)'&&style(claim).boxShadow==='none',claimContained:claimBox.top>=headerBox.top&&claimBox.bottom<=headerBox.bottom&&claimBox.left>=headerBox.left&&claimBox.right<=headerBox.right,
           lineNumbers:numbers.map(n=>n.textContent),lineAlignment,benefitLines,
-          yamlAlignmentDiagnostics:{numberCount:numbers.length,lineCount:lines.length,rows:alignmentRows,maxAbsDelta:alignmentRows.some(row=>row.delta!==null)?Math.max(...alignmentRows.filter(row=>row.delta!==null).map(row=>Math.abs(row.delta))):null,violatingLines:alignmentRows.filter(row=>row.delta===null||Math.abs(row.delta)>=2).map(row=>row.line)},
           subtitle:subtitle.textContent,quote:d.querySelector('[data-about-text="quote"]').textContent,claim:d.querySelector('[data-about-text="claim"]').textContent,
           headerSizing:style(header).backgroundSize,heroRatioPreserved:heroHeightSize==='auto',church,subtitleFits:subtitle.getBoundingClientRect().bottom<=header.getBoundingClientRect().bottom,
           ringColors:[...d.querySelectorAll('.about-radar>circle')].slice(0,3).map(n=>n.getAttribute('stroke')),
@@ -72,46 +66,6 @@ const server=http.createServer((req,res)=>{
           largeHeartGlow:style(d.querySelector('.about-heart')).filter,outerMetal:style(d,'::before').backgroundImage
         };
       });
-      if(name==='reference'){
-        const variants=await page.evaluate(()=>{
-          const d=window.aboutCard._aboutDialog,pre=d.querySelector('pre'),code=pre.querySelector('code');
-          const numbers=[...d.querySelectorAll('.about-line-numbers span')],lines=[...code.children];
-          const codeStyle=code.getAttribute('style');
-          const originals=lines.map(line=>({style:line.getAttribute('style'),text:line.textContent}));
-          const restoreStyle=(node,value)=>value===null?node.removeAttribute('style'):node.setAttribute('style',value);
-          const rectFields=(prefix,rect)=>Object.fromEntries(['top','bottom','height'].map(key=>[prefix+key[0].toUpperCase()+key.slice(1),rect?.[key]??null]));
-          const rangeRect=node=>{const range=document.createRange();range.selectNodeContents(node);return range.getClientRects()[0];};
-          const computed=node=>{const style=getComputedStyle(node);return Object.fromEntries(['display','fontFamily','fontSize','lineHeight','whiteSpace','verticalAlign'].map(key=>[key,style[key]]));};
-          const measure=name=>{
-            const rows=lines.map((line,i)=>{
-              const number=numbers[i].getBoundingClientRect(),bounding=line.getBoundingClientRect(),client=line.getClientRects()[0],range=rangeRect(line);
-              return {line:i+1,...rectFields('number',number),...rectFields('codeBounding',bounding),...rectFields('codeClient',client),...rectFields('codeRange',range),...rectFields('numberRange',rangeRect(numbers[i])),deltaNumberVsCodeBounding:number.top-bounding.top,deltaNumberVsCodeClient:client?number.top-client.top:null,deltaNumberVsCodeRange:range?number.top-range.top:null};
-            });
-            const stepKeys=['number','codeBounding','codeClient','codeRange'];
-            rows.forEach((row,i)=>stepKeys.forEach(key=>{row[key+'Step']=i===0||row[key+'Top']===null||rows[i-1][key+'Top']===null?null:row[key+'Top']-rows[i-1][key+'Top'];}));
-            const maxDelta=key=>{const values=rows.map(row=>row[key]).filter(value=>value!==null);return values.length?Math.max(...values.map(Math.abs)):null;};
-            const compactRect=node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height};};
-            return {name,lineNumbers:numbers.map(n=>n.textContent),numberCount:numbers.length,lineCount:lines.length,rows,preRect:compactRect(pre),codeRect:compactRect(code),computedStyles:{pre:computed(pre),code:computed(code),firstCodeSpan:computed(lines[0]),firstNumberSpan:computed(numbers[0])},maxAbsBoundingDelta:maxDelta('deltaNumberVsCodeBounding'),maxAbsClientDelta:maxDelta('deltaNumberVsCodeClient'),maxAbsRangeDelta:maxDelta('deltaNumberVsCodeRange'),...Object.fromEntries(stepKeys.map(key=>[key+'StepValues',rows.slice(1).map(row=>row[key+'Step'])]))};
-          };
-          const baseline=measure('baseline');
-          let fontInherit,blockLines;
-          try{
-            code.style.fontFamily='inherit';
-            fontInherit=measure('font-inherit');
-          }finally{restoreStyle(code,codeStyle);}
-          try{
-            lines.forEach((line,i)=>{
-              if(i<lines.length-1&&line.textContent.endsWith('\n'))line.firstChild.nodeValue=line.textContent.slice(0,-1);
-              line.style.display='block';
-            });
-            blockLines=measure('block-lines');
-          }finally{
-            lines.forEach((line,i)=>{line.firstChild.nodeValue=originals[i].text;restoreStyle(line,originals[i].style);});
-          }
-          return {baseline,fontInherit,blockLines,platformFonts:'not-collected'};
-        });
-        console.log('ABOUT_YAML_LINUX_AB_DIAGNOSTICS '+JSON.stringify({profile:name,delivery,chromium:browser.version(),...variants}));
-      }
       if(refinement.subtitle!=='Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.'||refinement.quote!=='Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.'||refinement.claim!=='Gewitter beobachten, Entwicklungen entdecken.')throw Error('Refinement copy differs from approved text');
       if(!refinement.heroRatioPreserved||!refinement.subtitleFits)throw Error(`${name}: header sizing/wrapping regression`);
       if(!refinement.claimClear||!refinement.claimContained||refinement.claimFont<9)throw Error(`${name}: slogan legibility or overlap regression`);

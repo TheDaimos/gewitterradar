@@ -9,6 +9,7 @@ export function approvedDelta(baseline) {
         .about-close span{position:relative;border:0;background:none;overflow:visible}
         .about-close span img{position:absolute;left:50%;top:50%;width:34px;height:34px;max-width:none;object-fit:contain;transform:translate(-50%,-50%);filter:none;pointer-events:none}
         .about-dialog .about-code-meta .about-copy{appearance:none;border:0;background:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent}
+        .about-code-wrap code{font-family:inherit}
         .about-code-meta .about-copy::before{content:none}
         .about-copy>img{position:relative;display:block;width:28px;height:28px;object-fit:contain;pointer-events:none;filter:none}
         .about-close:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px;border-radius:5px}
