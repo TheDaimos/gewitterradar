@@ -33,6 +33,20 @@ Sofern der Benutzer eine Aufgabe nicht ausdrücklich auf nur eine Auslieferungsf
 
 Gemeinsamer Frontend-/Produktcode darf nicht unabhängig in zwei Repositories gepflegt werden. Er wird einmal in diesem Repository entwickelt und daraus deterministisch für beide Auslieferungsformen gebaut bzw. synchronisiert.
 
+## Harte Schutzregel: „Über Gewitterradar“ V4.05
+
+Der am 2026-09-07/08 ausdrücklich abgenommene V4.05-Stand des **„Über Gewitterradar“-Dialogs / About-Dialogs** ist eine geschützte Acceptance-Baseline.
+
+Verbindliche Schutzquelle:
+
+`docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
+
+Die dort dokumentierte Danksagung/Widmung „Für Alkje“, der Slogan, die Texte, die visuelle Gestaltung, Hero-/Widmungs-Assets, Recorder-Darstellung, Radien-Semantik, Blitzortung.org-Danksagung, Entitätenübersicht und das Onboarding-/Dialogverhalten müssen bei der Konvergenz vollständig erhalten bleiben.
+
+Dieser Stand darf **nicht** aus Kostengründen, bei Refactoring, beim Packaging, beim Wechsel der Auslieferungsform oder aus technischer Bequemlichkeit vereinfacht, weggelassen, ersetzt oder neu gestaltet werden. Änderungen an dieser Acceptance-Baseline benötigen eine ausdrückliche Benutzerentscheidung.
+
+Ein gemeinsamer Build oder Release ist **nicht releasefähig**, solange der geschützte About-Stand nicht in beiden Auslieferungsformen vorhanden und gegen die eingefrorene V4.05-Referenz verifiziert ist.
+
 ## Repository-Rollen
 
 - `TheDaimos/gewitterradar` — kanonische Produkt- und Entwicklungsquelle.
@@ -50,6 +64,7 @@ Build-/Release-Prüfungen sollen verhindern, dass sich Integration und Dashboard
 - unterschiedliche gemeinsame Frontend-Versionen;
 - unterschiedliche gemeinsame Frontend-Builds;
 - fehlende oder abweichende Assets;
+- fehlender oder abweichender geschützter About-Stand;
 - nicht reproduzierbare Dashboard-Ausleitung aus dem kanonischen Quellstand;
 - inkonsistente Prüfsummen oder Release-Metadaten.
 
@@ -59,7 +74,14 @@ Ein Dashboard-spezifischer Notfallfix ist nur nach ausdrücklicher Anweisung zul
 
 Der bereits abgenommene und veröffentlichte Dashboard-Stand V4.05 einschließlich „Über Gewitterradar“, Slogan, Danksagung/Widmung, Hero-/Widmungs-Assets und der übrigen akzeptierten Frontendänderungen ist die Referenz für die erste Zusammenführung in die gemeinsame Gewitterradar-Quelle. Der eingefrorene Dashboard-Tag `v4.05` selbst bleibt unverändert.
 
-Weitere Details: `docs/DELIVERY_ARCHITECTURE.md`.
+Verbindliche Dokumente:
+
+- `docs/DELIVERY_ARCHITECTURE.md`
+- `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
+
+Aktiver Konvergenz-Tracker:
+
+- GitHub Issue #3 — `Converge V4.05 frontend into unified Gewitterradar product`
 
 ## Dev-Toolkit
 
