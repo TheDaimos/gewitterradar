@@ -72,7 +72,46 @@ const server=http.createServer((req,res)=>{
           largeHeartGlow:style(d.querySelector('.about-heart')).filter,outerMetal:style(d,'::before').backgroundImage
         };
       });
-      if(name==='reference')console.log('ABOUT_YAML_ALIGNMENT_DIAGNOSTICS '+JSON.stringify({profile:name,delivery,chromium:browser.version(),lineNumbers:refinement.lineNumbers,lineAlignment:refinement.lineAlignment,...refinement.yamlAlignmentDiagnostics}));
+      if(name==='reference'){
+        const variants=await page.evaluate(()=>{
+          const d=window.aboutCard._aboutDialog,pre=d.querySelector('pre'),code=pre.querySelector('code');
+          const numbers=[...d.querySelectorAll('.about-line-numbers span')],lines=[...code.children];
+          const codeStyle=code.getAttribute('style');
+          const originals=lines.map(line=>({style:line.getAttribute('style'),text:line.textContent}));
+          const restoreStyle=(node,value)=>value===null?node.removeAttribute('style'):node.setAttribute('style',value);
+          const rectFields=(prefix,rect)=>Object.fromEntries(['top','bottom','height'].map(key=>[prefix+key[0].toUpperCase()+key.slice(1),rect?.[key]??null]));
+          const rangeRect=node=>{const range=document.createRange();range.selectNodeContents(node);return range.getClientRects()[0];};
+          const computed=node=>{const style=getComputedStyle(node);return Object.fromEntries(['display','fontFamily','fontSize','lineHeight','whiteSpace','verticalAlign'].map(key=>[key,style[key]]));};
+          const measure=name=>{
+            const rows=lines.map((line,i)=>{
+              const number=numbers[i].getBoundingClientRect(),bounding=line.getBoundingClientRect(),client=line.getClientRects()[0],range=rangeRect(line);
+              return {line:i+1,...rectFields('number',number),...rectFields('codeBounding',bounding),...rectFields('codeClient',client),...rectFields('codeRange',range),...rectFields('numberRange',rangeRect(numbers[i])),deltaNumberVsCodeBounding:number.top-bounding.top,deltaNumberVsCodeClient:client?number.top-client.top:null,deltaNumberVsCodeRange:range?number.top-range.top:null};
+            });
+            const stepKeys=['number','codeBounding','codeClient','codeRange'];
+            rows.forEach((row,i)=>stepKeys.forEach(key=>{row[key+'Step']=i===0||row[key+'Top']===null||rows[i-1][key+'Top']===null?null:row[key+'Top']-rows[i-1][key+'Top'];}));
+            const maxDelta=key=>{const values=rows.map(row=>row[key]).filter(value=>value!==null);return values.length?Math.max(...values.map(Math.abs)):null;};
+            const compactRect=node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height};};
+            return {name,lineNumbers:numbers.map(n=>n.textContent),numberCount:numbers.length,lineCount:lines.length,rows,preRect:compactRect(pre),codeRect:compactRect(code),computedStyles:{pre:computed(pre),code:computed(code),firstCodeSpan:computed(lines[0]),firstNumberSpan:computed(numbers[0])},maxAbsBoundingDelta:maxDelta('deltaNumberVsCodeBounding'),maxAbsClientDelta:maxDelta('deltaNumberVsCodeClient'),maxAbsRangeDelta:maxDelta('deltaNumberVsCodeRange'),...Object.fromEntries(stepKeys.map(key=>[key+'StepValues',rows.slice(1).map(row=>row[key+'Step'])]))};
+          };
+          const baseline=measure('baseline');
+          let fontInherit,blockLines;
+          try{
+            code.style.fontFamily='inherit';
+            fontInherit=measure('font-inherit');
+          }finally{restoreStyle(code,codeStyle);}
+          try{
+            lines.forEach((line,i)=>{
+              if(i<lines.length-1&&line.textContent.endsWith('\n'))line.firstChild.nodeValue=line.textContent.slice(0,-1);
+              line.style.display='block';
+            });
+            blockLines=measure('block-lines');
+          }finally{
+            lines.forEach((line,i)=>{line.firstChild.nodeValue=originals[i].text;restoreStyle(line,originals[i].style);});
+          }
+          return {baseline,fontInherit,blockLines,platformFonts:'not-collected'};
+        });
+        console.log('ABOUT_YAML_LINUX_AB_DIAGNOSTICS '+JSON.stringify({profile:name,delivery,chromium:browser.version(),...variants}));
+      }
       if(refinement.subtitle!=='Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.'||refinement.quote!=='Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.'||refinement.claim!=='Gewitter beobachten, Entwicklungen entdecken.')throw Error('Refinement copy differs from approved text');
       if(!refinement.heroRatioPreserved||!refinement.subtitleFits)throw Error(`${name}: header sizing/wrapping regression`);
       if(!refinement.claimClear||!refinement.claimContained||refinement.claimFont<9)throw Error(`${name}: slogan legibility or overlap regression`);
