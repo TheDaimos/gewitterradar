@@ -42,6 +42,10 @@ const server=http.createServer((req,res)=>{
         const claimClear=!headerTextBoxes.some(box=>intersects(claimBox,box))&&!intersects(claimBox,d.querySelector('.about-close').getBoundingClientRect());
         const hero=new Image();hero.src=style(header).backgroundImage.match(/url\(["']?([^"')]+)/)[1];await hero.decode();
         const heroSize=style(header).backgroundSize.split(',').at(-1).trim().split(/\s+/);
+        // A single size implies auto height; cover/contain are separate sizing modes.
+        const heroHeightSize=heroSize.length===1
+          ? (heroSize[0]==='cover'||heroSize[0]==='contain'?null:'auto')
+          : heroSize[1];
         const scale=header.clientWidth*parseFloat(heroSize[0])/100/hero.naturalWidth;
         const crop=(header.clientHeight-hero.naturalHeight*scale)*parseFloat(style(header).backgroundPositionY.split(',').at(-1))/100;
         // Measured church silhouette in the unchanged 1536x1024 master.
@@ -51,24 +55,17 @@ const server=http.createServer((req,res)=>{
         const benefit=d.querySelector('[data-about-text="recorderBenefit"]');
         let offset=0;
         const benefitLines=benefit.textContent.split('\n').map(text=>{const range=document.createRange();range.setStart(benefit.firstChild,offset);range.setEnd(benefit.firstChild,offset+text.length);offset+=text.length+1;return range.getClientRects().length;});
-        const subtitleRect=subtitle.getBoundingClientRect(),subtitleStyle=style(subtitle);
-        const subtitleRange=document.createRange();subtitleRange.selectNodeContents(subtitle);
-        const subtitleLineTops=new Set([...subtitleRange.getClientRects()]
-          .filter(rect=>rect.width>0&&rect.height>0)
-          .map(rect=>Math.round(rect.top*100)/100));
         return {
-          headerDiagnostics:{heroSize,subtitleRect:subtitleRect.toJSON(),headerRect:headerBox.toJSON(),subtitleBottomDelta:subtitleRect.bottom-headerBox.bottom,fontFamily:subtitleStyle.fontFamily,fontSize:subtitleStyle.fontSize,lineHeight:subtitleStyle.lineHeight,textLines:subtitleLineTops.size},
           claimClear,claimFont:parseFloat(style(claim).fontSize),claimUnboxed:style(claim).backgroundImage==='none'&&style(claim).backgroundColor==='rgba(0, 0, 0, 0)'&&style(claim).boxShadow==='none',claimContained:claimBox.top>=headerBox.top&&claimBox.bottom<=headerBox.bottom&&claimBox.left>=headerBox.left&&claimBox.right<=headerBox.right,
           lineNumbers:numbers.map(n=>n.textContent),lineAlignment,benefitLines,
           subtitle:subtitle.textContent,quote:d.querySelector('[data-about-text="quote"]').textContent,claim:d.querySelector('[data-about-text="claim"]').textContent,
-          headerSizing:style(header).backgroundSize,heroRatioPreserved:heroSize[1]==='auto',church,subtitleFits:subtitle.getBoundingClientRect().bottom<=header.getBoundingClientRect().bottom,
+          headerSizing:style(header).backgroundSize,heroRatioPreserved:heroHeightSize==='auto',church,subtitleFits:subtitle.getBoundingClientRect().bottom<=header.getBoundingClientRect().bottom,
           ringColors:[...d.querySelectorAll('.about-radar>circle')].slice(0,3).map(n=>n.getAttribute('stroke')),
           legendColors:[...d.querySelectorAll('.about-radius')].map(n=>style(n).getPropertyValue('--radius-color').trim()),
           smallHeart:d.querySelectorAll('.about-small-heart').length,handwriting:d.querySelectorAll('.about-handwriting path').length,
           largeHeartGlow:style(d.querySelector('.about-heart')).filter,outerMetal:style(d,'::before').backgroundImage
         };
       });
-      if(name==='reference')console.log('ABOUT_HEADER_DIAGNOSTICS '+JSON.stringify({profile:name,delivery,chromium:browser.version(),heroRatioPreserved:refinement.heroRatioPreserved,headerSizing:refinement.headerSizing,subtitleFits:refinement.subtitleFits,...refinement.headerDiagnostics}));
       if(refinement.subtitle!=='Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.'||refinement.quote!=='Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.'||refinement.claim!=='Gewitter beobachten, Entwicklungen entdecken.')throw Error('Refinement copy differs from approved text');
       if(!refinement.heroRatioPreserved||!refinement.subtitleFits)throw Error(`${name}: header sizing/wrapping regression`);
       if(!refinement.claimClear||!refinement.claimContained||refinement.claimFont<9)throw Error(`${name}: slogan legibility or overlap regression`);
