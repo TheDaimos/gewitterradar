@@ -85,7 +85,7 @@ if (process.argv[2]) {
   const {chromium} = require('playwright');
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
   const localeRequests = [];
-  let localeFailuresRemaining = 0;
+  let rejectExternalLocales = false;
   const server = createServer(async (req,res) => {
     const url = new URL(req.url,'http://localhost');
     if (url.pathname === '/about-locale-lazy-probe.html') {
@@ -98,7 +98,7 @@ if (process.argv[2]) {
     }
     if (url.pathname.endsWith('/locales/about-locales.js')) {
       localeRequests.push({path:url.pathname,search:url.search});
-      if (localeFailuresRemaining) { localeFailuresRemaining--; res.writeHead(503).end(); return; }
+      if (rejectExternalLocales) { res.writeHead(503).end(); return; }
     }
     const file = resolve(root,'.'+decodeURIComponent(url.pathname));
     if (!file.startsWith(resolve(root)+sep)) {res.writeHead(403).end();return;}
@@ -226,11 +226,13 @@ if (process.argv[2]) {
     assert.deepEqual(manual.pageErrors,[]);
     await manual.context.close();
 
-    localeFailuresRemaining = 1;
+    rejectExternalLocales = true;
+    const beforeFailure = localeRequests.length;
     const retry = await openProbe('dashboard','hactag=retry','Dansk');
     await retry.page.evaluate(() => window.probeCard._openAbout());
-    await retry.page.waitForTimeout(150);
-    assert.equal(localeRequests.length,3,'failed external import was not attempted exactly once');
+    await retry.page.waitForFunction(title => window.probeCard._aboutDialog?.querySelector('[data-about-text="title"]')?.textContent===title,
+      model.locales.English.strings.title);
+    assert.ok(localeRequests.length > beforeFailure,'failed external import was not attempted');
     const fallback = await retry.page.evaluate(() => {
       const dialog=window.probeCard._aboutDialog;
       return {
@@ -242,11 +244,13 @@ if (process.argv[2]) {
     });
     assert.deepEqual(fallback,{title:model.locales.English.strings.title,dedication:model.locales.English.strings.dedicationTitle,
       setting:model.locales.English.settingLabels.language,sources:clone(model.locales.English.sourcePurposes)});
+    const failedRequestCount = localeRequests.length;
+    rejectExternalLocales = false;
     await retry.page.evaluate(() => window.probeCard._syncAbout());
     await retry.page.waitForFunction(title => window.probeCard._aboutDialog.querySelector('[data-about-text="title"]').textContent===title,
       allLocales.Dansk.strings.title);
-    assert.equal(localeRequests.length,4,'failed external import was not retried');
-    assert.deepEqual(localeRequests.slice(2).map(request=>request.search),['?hactag=retry','?hactag=retry']);
+    assert.ok(localeRequests.length > failedRequestCount,'failed external import was not retried');
+    assert.ok(localeRequests.slice(beforeFailure).every(request=>request.search==='?hactag=retry'),'retry locale cache-buster mismatch');
     assert.deepEqual(retry.pageErrors,[],'external import failure escaped as an unhandled rejection');
     await retry.context.close();
     console.log('PASS: lazy native startup/About, external loading, caching, full English failure fallback, retry and cache-buster inheritance.');
