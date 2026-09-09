@@ -12,6 +12,8 @@ const model = readAboutLocaleModel(source);
 const clone = value => JSON.parse(JSON.stringify(value));
 const validate = locales => model.validate(locales,model.settings,model.languages,model.recorderYaml);
 validate(model.locales);
+const futureLanguage = model.languages.find(({value}) => !Object.hasOwn(model.locales,value))?.value;
+assert.ok(futureLanguage,'A registry locale without an About bundle is required for fallback probes');
 let rejected = 0;
 const invalid = mutate => {
   const locales = clone(model.locales);
@@ -19,7 +21,7 @@ const invalid = mutate => {
   assert.throws(() => validate(locales),/About|German/);
   rejected++;
 };
-for (const language of ['Deutsch','English']) {
+for (const language of Object.keys(model.locales)) {
   for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes']) {
     const key = Object.keys(model.locales[language][group])[0];
     invalid(locales => delete locales[language][group][key]);
@@ -32,7 +34,7 @@ for (const language of ['Deutsch','English']) {
 invalid(locales => delete locales.English);
 invalid(locales => delete locales.Deutsch);
 invalid(locales => locales.Englisch = clone(locales.English));
-invalid(locales => locales.Dansk = {strings: clone(locales.English.strings)});
+invalid(locales => locales[futureLanguage] = {strings: clone(locales.English.strings)});
 invalid(locales => locales.English.extraGroup = {});
 // Exercise the strict build/verify entry point, not just a separately called validator.
 assert.throws(() => readAboutLocaleModel(source.replace('strings: ABOUT_STRINGS.English,','strings: {},')),/About keys differ/);
@@ -41,23 +43,23 @@ console.log(`PASS: German master/English fallback and ${rejected} invalid schema
 // The same declared incomplete bundle must survive registration but fail strict validation.
 const localeAnchor = '  const ABOUT_LOCALES = {';
 assert.equal(source.split(localeAnchor).length,2);
-const incompleteSource = source.replace(localeAnchor,localeAnchor+'\n    Dansk: {strings: {}},');
+const incompleteSource = source.replace(localeAnchor,localeAnchor+'\n    '+JSON.stringify(futureLanguage)+': {strings: {}},');
 let runtime;
 assert.doesNotThrow(() => { runtime = loadAboutLocaleRuntime(incompleteSource); });
 assert.equal(runtime.resolve('Deutsch'),runtime.locales.Deutsch);
 assert.equal(runtime.resolve('English'),runtime.locales.English);
-assert.doesNotThrow(() => assert.equal(runtime.resolve('Dansk'),runtime.locales.English));
-assert.throws(() => readAboutLocaleModel(incompleteSource),/Invalid About bundle: Dansk/);
+assert.doesNotThrow(() => assert.equal(runtime.resolve(futureLanguage),runtime.locales.English));
+assert.throws(() => readAboutLocaleModel(incompleteSource),new RegExp('Invalid About bundle: '+futureLanguage));
 console.log('PASS: incomplete declared locale: Runtime -> English; Strict Validator -> rejected; production card registration succeeds.');
 
 for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes']) {
   const incomplete = clone(model.locales.English);
   delete incomplete[group][Object.keys(incomplete[group])[0]];
-  model.locales.Dansk = incomplete;
-  assert.doesNotThrow(() => assert.equal(model.resolve('Dansk'),model.locales.English));
+  model.locales[futureLanguage] = incomplete;
+  assert.doesNotThrow(() => assert.equal(model.resolve(futureLanguage),model.locales.English));
   assert.throws(() => validate(model.locales),/About keys differ/);
 }
-delete model.locales.Dansk;
+delete model.locales[futureLanguage];
 
 const card = Object.create(model.Card.prototype);
 let appChecks = 0;
@@ -78,11 +80,11 @@ for (const {value: language} of model.languages) {
 const future = clone(model.locales.English);
 future.strings.title = 'Future locale test';
 future.settingLabels.language = 'Future setting label';
-model.locales.Dansk = future;
+model.locales[futureLanguage] = future;
 validate(model.locales);
-assert.equal(model.resolve('Dansk'),future);
-delete model.locales.Dansk;
-assert.equal(model.resolve('Dansk'),model.locales.English);
+assert.equal(model.resolve(futureLanguage),future);
+delete model.locales[futureLanguage];
+assert.equal(model.resolve(futureLanguage),model.locales.English);
 model.app.English.strings['about.__scope_probe'] = 'Must not leak into About';
 card._languageValue = () => 'English';
 assert.equal(card._t('about.__scope_probe'),'about.__scope_probe');

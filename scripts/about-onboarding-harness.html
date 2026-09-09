@@ -66,8 +66,8 @@ try {
   delete card._config.observation_radius_entity;delete states['number.test_radius'];
   for(const language of ['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']){
     states['select.gewitterradar_language'].state=language;card.hass={...hass};
-    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);
-    assert(dialog.querySelector('.about-dedication h3').textContent===(language==='Deutsch'?'Für Alkje':'For Alkje'),'dedication localized');
+    assert(dialog.querySelector('h2').textContent===({Deutsch:'Über Gewitterradar',Dansk:'Om Gewitterradar',Nederlands:'Over Gewitterradar'}[language]||'About Gewitterradar'),'language fallback '+language);
+    assert(dialog.querySelector('.about-dedication h3').textContent===({Deutsch:'Für Alkje',Dansk:'Til Alkje',Nederlands:'Voor Alkje'}[language]||'For Alkje'),'dedication localized');
   }
   states['select.gewitterradar_language'].state='Deutsch';card.hass={...hass};
   const root=card.shadowRoot.querySelector('#card-root'), recent=card.shadowRoot.querySelector('#recent-content');

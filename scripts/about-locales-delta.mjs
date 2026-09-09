@@ -18,6 +18,18 @@ export function aboutLocalesDelta(source) {
 const localeArchitecture = String.raw`  // One resolved bundle owns every About text. Existing tables are only data inputs.
   // Add future translations here as complete bundles; LANGUAGE_DEFINITIONS owns names.
   const ABOUT_LOCALES = {
+    Dansk: {
+      strings: ABOUT_STRINGS.Dansk,
+      settingLabels: ABOUT_SETTING_LABELS.Dansk,
+      settingPurposes: ABOUT_SETTING_PURPOSES.Dansk,
+      sourcePurposes: ABOUT_SOURCE_PURPOSES.Dansk
+    },
+    Nederlands: {
+      strings: ABOUT_STRINGS.Nederlands,
+      settingLabels: ABOUT_SETTING_LABELS.Nederlands,
+      settingPurposes: ABOUT_SETTING_PURPOSES.Nederlands,
+      sourcePurposes: ABOUT_SOURCE_PURPOSES.Nederlands
+    },
     Deutsch: {
       strings: ABOUT_STRINGS.Deutsch,
       settingLabels: ABOUT_SETTING_LABELS.Deutsch,
