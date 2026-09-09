@@ -79,7 +79,7 @@
       observation:'Frühe Beobachtung entfernter Gewitter im weiteren Umfeld.',
       storm:'Nähere Gewitteraktivität, die erhöhte Aufmerksamkeit erfordert.',
       danger:'Unmittelbarer Nahbereich mit besonders kritischer Relevanz.',
-      radiusInfo:'Die Radien helfen, Gewitter frühzeitig einzuschätzen und die aktuelle Situation schnell und übersichtlich zu beurteilen.',
+      radiusInfo:'Die Radien helfen, Gewitter frühzeitig einzuschätzen und die aktuelle Situation schnell und übersichtlich zu beurteilen. Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt zugleich zum Gewitter- und Beobachtungsradius.',
       thanks:'Dank an Blitzortung.org',
       network:'Ein besonderer Dank gilt Blitzortung.org und seiner weltweiten Community freiwilliger Stationsbetreiber. Gewitterradar nutzt Blitzdaten, die durch dieses gemeinschaftlich betriebene Ortungsnetz bereitgestellt werden.',
       recorder:'Wichtiger Hinweis zum Home-Assistant-Recorder',
@@ -14945,6 +14945,7 @@
         .about-close span img{position:absolute;left:50%;top:50%;width:34px;height:34px;max-width:none;object-fit:contain;transform:translate(-50%,-50%);filter:none;pointer-events:none}
         .about-dialog .about-code-meta .about-copy{appearance:none;border:0;background:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent}
         .about-code-wrap code{font-family:inherit}
+        @media(max-width:620px){.about-dedication-copy p{max-width:60%}}
         .about-code-meta .about-copy::before{content:none}
         .about-copy>img{position:relative;display:block;width:28px;height:28px;object-fit:contain;pointer-events:none;filter:none}
         .about-close:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px;border-radius:5px}

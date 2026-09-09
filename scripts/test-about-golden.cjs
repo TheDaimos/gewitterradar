@@ -1,4 +1,4 @@
-// Compare against frozen V4.05 plus only the independently scoped Recorder font fix.
+// Compare frozen V4.05 with independently scoped Recorder and About finalization adjustments.
 const {chromium}=require('playwright'),sharp=require('sharp'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'artwork/acceptance/premium-controls/golden');fs.mkdirSync(out,{recursive:true});
 const server=http.createServer((req,res)=>{
@@ -52,6 +52,33 @@ async function prepareRecorderFontReference(page){
  assert.equal(state.after.html,state.before.html,'Reference changed Recorder DOM/newlines');
  assert.deepEqual(state.after.protectedStyles,state.before.protectedStyles,'Reference changed protected Recorder styles');
 }
+// Independent reference adjustment for the two approved About finalization changes.
+async function prepareAboutFinalReference(page){
+ const before=await captureGeometry(page);
+ await page.evaluate(()=>{
+  const d=window.aboutCard._aboutDialog,info=d.querySelector('[data-about-text="radiusInfo"]');
+  const original='Die Radien helfen, Gewitter frühzeitig einzuschätzen und die aktuelle Situation schnell und übersichtlich zu beurteilen.';
+  if(info.textContent!==original)throw Error('Unexpected frozen radius explanation');
+  info.textContent=original+' Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt zugleich zum Gewitter- und Beobachtungsradius.';
+  const css=document.createElement('style');
+  css.textContent='@media(max-width:620px){.about-dedication-copy p{max-width:60%}}';
+  d.append(css);
+ });
+ const after=await captureGeometry(page),dedicationDelta=after['.about-dedication'][3]-before['.about-dedication'][3],radiiDelta=after['.about-radii'][3]-before['.about-radii'][3];
+ assert.ok(dedicationDelta>=0&&radiiDelta>=0,'Reference unexpectedly shrank a section');
+ if(page.viewportSize().width>620)assert.equal(dedicationDelta,0,'Desktop/tablet dedication changed');
+ const downstream=new Set(['.about-network','.about-recorder','.about-copy','.about-entities']);
+ for(const selector of Object.keys(before)){
+  for(const i of [0,2])assert.equal(after[selector][i],before[selector][i],'Reference horizontal drift: '+selector);
+  if(selector==='.about-dedication'||selector==='.about-radii')continue;
+  assert.ok(Math.abs(after[selector][3]-before[selector][3])<=0.001,'Reference height drift: '+selector);
+  if(selector==='.about-heart'||selector==='.about-signature')continue;
+  const shift=downstream.has(selector)?dedicationDelta+radiiDelta:['.about-welcome'].includes(selector)?dedicationDelta:0;
+  assert.equal(after[selector][1],before[selector][1]+shift,'Reference flow drift: '+selector);
+ }
+ assert.equal(after['.about-dedication'][1],before['.about-dedication'][1]);
+ assert.equal(after['.about-radii'][1],before['.about-radii'][1]+dedicationDelta);
+}
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({executablePath:process.argv[2],headless:true});const results=[];
  try{
   for(const [name,width,height,touch] of [['reference',732,879,false],['desktop',1440,1000,false],['ipad-closed',1024,768,true],['ipad-open',784,768,true],['ipad-portrait',768,1024,true],['ipad-pro',1366,1024,true],['android-portrait',412,915,true],['android-landscape',915,412,true]]){
@@ -66,6 +93,8 @@ async function prepareRecorderFontReference(page){
      await prepareRecorderFontReference(page);
      geometry=await captureGeometry(page);
      assertReferenceScope(frozenOriginalGeometry,geometry,name);
+     await prepareAboutFinalReference(page);
+     geometry=await captureGeometry(page);
     }
     const screenshot=await page.locator('.about-dialog').screenshot({animations:'disabled',mask:[page.locator('.about-close'),page.locator('.about-copy'),page.locator('.about-dev')]});
     if(name==='reference')fs.writeFileSync(path.join(out,golden?'v4.05-masked.png':'candidate-masked.png'),screenshot);
