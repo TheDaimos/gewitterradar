@@ -3,6 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {approvedDelta} from './frontend-delta.mjs';
+import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 export async function expectedPayload(){
@@ -10,6 +11,7 @@ export async function expectedPayload(){
  if(hash(baseline)!=='9f594d5c23c5af5bdabf90749eb2639457a4cc14307407e20674036a02565e9b')throw Error('Frozen V4.05 fixture changed');
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
  if(source.toString()!==approvedDelta(baseline.toString()))throw Error('Frontend exceeds approved close/copy/DEV delta');
+ readAboutLocaleModel(source.toString());
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
  const referenced=[...new Set([...source.toString().matchAll(/new URL\('\.\/(assets\/[^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>m[1]))].sort();
  if(inventory.length!==17||new Set(inventory.map(a=>a.file)).size!==17||JSON.stringify(referenced)!==JSON.stringify(inventory.map(a=>a.file).sort()))throw Error('Asset inventory/reference mismatch');

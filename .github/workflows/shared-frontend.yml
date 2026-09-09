@@ -17,8 +17,11 @@ jobs:
       - run: node scripts/verify-frontend.mjs
       - run: node scripts/test-frontend-build.mjs
       - run: node --check frontend/gewitterradar.js
+      - run: node scripts/test-about-locales.mjs
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
       - run: npx playwright install --with-deps chromium
+      - name: About locale registry and rendering
+        run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Language onboarding
         run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Frozen V4.05 geometry and pixel comparison

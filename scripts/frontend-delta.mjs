@@ -1,4 +1,5 @@
 import {languageOnboardingDelta} from './language-onboarding-delta.mjs';
+import {aboutLocalesDelta} from './about-locales-delta.mjs';
 // Explicit, reviewable exceptions to the frozen public V4.05 frontend.
 export function approvedDelta(baseline) {
   const once=(text,from,to)=>{if(text.split(from).length!==2)throw Error('Baseline anchor changed: '+from.slice(0,80));return text.replace(from,to);};
@@ -36,5 +37,5 @@ export function approvedDelta(baseline) {
         @media(hover:hover) and (pointer:fine){.about-close:hover img,.about-copy:hover:not(:focus-visible) img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
         .about-close:active img{transform:translate(-50%,calc(-50% + .5px)) scale(.97);filter:brightness(.92)}.about-copy:active:not(:focus-visible) img{transform:translateY(.5px) scale(.97);filter:brightness(.92)}
 `;
-  return languageOnboardingDelta(once(result,'      </style>\n      <dialog class="about-dialog"',css+'      </style>\n      <dialog class="about-dialog"'));
+  return aboutLocalesDelta(languageOnboardingDelta(once(result,'      </style>\n      <dialog class="about-dialog"',css+'      </style>\n      <dialog class="about-dialog"')));
 }
