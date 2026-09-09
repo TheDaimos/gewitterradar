@@ -97,29 +97,29 @@
     },
     English: {
       title:'About Gewitterradar', close:'Close', understood:'Understood',
-      subtitle:'Storms. Data. Safety. Our shared passion.', claim:'Observe nature. Live safely.', welcome:'Welcome, weather enthusiasts!',
-      intro:'This project is for everyone fascinated by thunderstorms, lightning, weather and the dynamics of our atmosphere. Gewitterradar helps you understand nature, recognise developments early and observe them with respect. We are glad you are part of this community!',
-      quote:'“Every storm holds a story.”',
-      radii:'The three radii', radiiTagline:'Three areas. A clear overview.', schematic:'Schematic radius diagram, not to scale',
-      observation:'Early observation of distant storms in the wider surroundings.',
-      storm:'Closer storm activity calling for increased attention.',
+      subtitle:'For weather enthusiasts who want to follow lightning activity in a clear and easy-to-understand way.', claim:'Observe thunderstorms, discover how they develop.', welcome:'Welcome, weather enthusiasts!',
+      intro:'This project is for everyone fascinated by thunderstorms, lightning, weather phenomena and the fascinating dynamics of our atmosphere. Gewitterradar helps you understand nature better, recognise developments early and observe them with respect. It’s great to have you as part of this community!',
+      quote:'Thunderstorms reveal just how powerful the atmosphere can be.',
+      radii:'The three radii', radiiTagline:'Three areas. One clear overview.', schematic:'Schematic representation of the radii, not to scale',
+      observation:'Early observation of distant thunderstorms in the wider area.',
+      storm:'Closer thunderstorm activity that requires increased attention.',
       danger:'Immediate vicinity with particularly critical relevance.',
-      radiusInfo:'The radii help you assess approaching thunderstorms early and understand the current situation at a glance.',
+      radiusInfo:'The radii help you assess thunderstorms early and understand the current situation quickly and clearly. The radii build on one another: a strike within the danger radius also counts within the storm and observation radii.',
       thanks:'Thanks to Blitzortung.org',
-      network:'Special thanks to Blitzortung.org and the worldwide network of volunteer station operators. The lightning data used by Gewitterradar is made possible by this community-operated detection network.',
+      network:'Special thanks go to Blitzortung.org and its worldwide community of volunteer station operators. Gewitterradar uses lightning data provided by this community-operated detection network.',
       recorder:'Important note about the Home Assistant Recorder',
-      recorderText:'To prevent excessive Home Assistant database growth, exclude these four rapidly changing lightning sources from Recorder in configuration.yaml. Merge into any existing recorder: section — do not add a second top-level recorder: block. Live states remain available to Gewitterradar.',
+      recorderText:'To limit database growth, we strongly recommend excluding these four sources from Recorder in configuration.yaml. Add them to an existing recorder: section – do not create a second top-level block. Live states remain available.',
       recorderBenefit:'Less data.\nA leaner system.\nFor long-term operation.',
       copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.', later:'View again later',
-      merge:'If a recorder: section already exists, merge these entries into it. Do NOT create a second top-level recorder: block.',
+      merge:'If a recorder: section already exists, integrate these entries there. Do NOT create a second top-level recorder: block.',
       live:'Recorder exclusion does NOT disable live states for Gewitterradar. Existing historical data is not removed automatically.',
-      entities:'Entities & functions used', entitiesSubtitle:'An overview of the entities used and their functions.', native:'Native Gewitterradar configuration', sourceNative:'Native', legacy:'Legacy fallback / compatibility',
-      legacyPurpose:'Used only as a compatibility fallback.', locationPerson:'Provides selectable person locations.', locationZone:'Provides selectable reference zones.',
-      legacyText:'Existing lightning_detection_* helpers provide compatibility. They are not required for a fresh native installation.',
+      entities:'Entities & functions used', entitiesSubtitle:'An overview of all entities used and their functions.', native:'Native Gewitterradar configuration', sourceNative:'Native', legacy:'Legacy fallback / compatibility',
+      legacyPurpose:'Used only as a compatibility fallback.', locationPerson:'Provides selectable person locations.', locationZone:'Provides selectable zones as reference locations.',
+      legacyText:'The existing lightning_detection_* helpers are provided for compatibility. They are not required for a fresh native installation.',
       resolved:'Currently resolved', available:'available', unavailable:'unavailable', override:'Card configuration',
       sources:'Lightning data sources', locations:'Location sources', dynamic:'person.* and zone.* are discovered dynamically.',
       dedicationTitle:'For Alkje', dedicationText:'Thank you for giving me the time to pursue the interests and enthusiasm I have for technology, weather, and all the ideas in between – and to devote myself to projects like Gewitterradar with so much joy and perseverance.',
-      footer:'Available any time under Settings → About Gewitterradar.'
+      footer:'Available at any time under Settings → About Gewitterradar.'
     }
   };
   // IDs come exclusively from SETTING_ENTITIES; these accessors preserve explicit card overrides.
@@ -137,7 +137,7 @@
   };
   const ABOUT_SETTING_PURPOSES = {
     Deutsch:{language:'Wählt die Sprache der Karte.',distance_unit:'Legt KM oder MI fest.',compass_design:'Wählt das Kompassdesign.',reference_location:'Bestimmt den Referenzstandort.',observation_radius:'Legt den äußeren Beobachtungsbereich fest.',storm_radius:'Definiert den Bereich erhöhter Gewitteraktivität.',danger_radius:'Definiert den unmittelbaren Gefahrenbereich.',aura_width:'Steuert die Breite des Aura-Effekts.',aura_intensity:'Steuert die Stärke des Aura-Effekts.',aura_effects:'Schaltet Aura-Effekte ein oder aus.',warning_animation:'Aktiviert die Warnanimation.',storm_simulation:'Aktiviert die Gewittersimulation.',show_location_selector:'Erlaubt die Standortauswahl.',compass_nearest_strike:'Richtet den Kompass auf den nächsten Blitz.',compass_device_orientation:'Nutzt die Geräteausrichtung.',map_grouping:'Gruppiert nahe Blitze auf der Karte.'},
-    English:{language:'Selects the card language.',distance_unit:'Sets KM or MI.',compass_design:'Selects the compass design.',reference_location:'Sets the reference location.',observation_radius:'Sets the outer observation area.',storm_radius:'Defines the area of increased storm activity.',danger_radius:'Defines the immediate danger area.',aura_width:'Controls aura effect width.',aura_intensity:'Controls aura effect intensity.',aura_effects:'Turns aura effects on or off.',warning_animation:'Enables warning animation.',storm_simulation:'Enables storm simulation.',show_location_selector:'Enables location selection.',compass_nearest_strike:'Points to the nearest strike.',compass_device_orientation:'Uses device orientation.',map_grouping:'Groups nearby strikes on the map.'}
+    English:{language:'Selects the card language.',distance_unit:'Sets KM or MI.',compass_design:'Selects the compass design.',reference_location:'Sets the reference location.',observation_radius:'Sets the outer observation area.',storm_radius:'Defines the area of increased storm activity.',danger_radius:'Defines the immediate danger area.',aura_width:'Controls aura effect width.',aura_intensity:'Controls aura effect intensity.',aura_effects:'Turns aura effects on or off.',warning_animation:'Enables warning animation.',storm_simulation:'Enables storm simulation.',show_location_selector:'Enables location selection.',compass_nearest_strike:'Points the compass to the nearest strike.',compass_device_orientation:'Uses device orientation.',map_grouping:'Groups nearby strikes on the map.'}
   };
   const ABOUT_SOURCE_PURPOSES = {
     Deutsch:{'geo_location.lightning_strike*':'Liefert einzelne Blitzpositionen.','sensor.home_lightning_distance':'Liefert die Entfernung zum letzten Blitz.','sensor.home_lightning_azimuth':'Liefert die Richtung zum letzten Blitz.','sensor.home_lightning_counter':'Zählt erkannte Blitzereignisse.'},
