@@ -7,6 +7,8 @@
   await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');
   const wait=(ms)=>new Promise((resolve)=>setTimeout(resolve,ms));
   const result=document.getElementById('result');
+// This harness covers the existing UI after language confirmation; the dedicated language suite covers first start.
+localStorage.setItem('gewitterradar-language-onboarding-version','1');
   const compassStorageKey='gewitterradar-last-compass-design';
   localStorage.removeItem(compassStorageKey);
   // Dedicated about-onboarding-harness.html covers the unseen/seen/version paths.

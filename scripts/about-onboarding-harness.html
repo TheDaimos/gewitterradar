@@ -6,6 +6,8 @@
 <div id="fixture"></div><pre id="result">running</pre>
 <script type="module">
 await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');
+// This harness covers the existing UI after language confirmation; the dedicated language suite covers first start.
+localStorage.setItem('gewitterradar-language-onboarding-version','1');
 const key='gewitterradar-about-onboarding-version';
 const scenario=new URLSearchParams(location.search).get('scenario')||'first';
 if(scenario==='first')localStorage.removeItem(key);
