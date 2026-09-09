@@ -132,12 +132,12 @@
     compass_device_orientation:'_deviceOrientationEntity', map_grouping:'_mapGroupingEntity'
   };
   const ABOUT_SETTING_LABELS = {
-    Deutsch:['Sprache','Distanzeinheit','Kompassdesign','Referenzstandort','Beobachtungsradius','Gewitterradius','Gefahrenradius','Aura-Breite','Aura-Intensität','Aura-Effekte','Warnanimation','Gewittersimulation','Standortauswahl','Kompass: nächster Blitz','Geräteorientierung','Kartengruppierung'],
-    English:['Language','Distance unit','Compass design','Reference location','Observation radius','Storm radius','Danger radius','Aura width','Aura intensity','Aura effects','Warning animation','Storm simulation','Location selector','Compass: nearest strike','Device orientation','Map grouping']
+    Deutsch:{language:'Sprache',distance_unit:'Distanzeinheit',compass_design:'Kompassdesign',reference_location:'Referenzstandort',observation_radius:'Beobachtungsradius',storm_radius:'Gewitterradius',danger_radius:'Gefahrenradius',aura_width:'Aura-Breite',aura_intensity:'Aura-Intensität',aura_effects:'Aura-Effekte',warning_animation:'Warnanimation',storm_simulation:'Gewittersimulation',show_location_selector:'Standortauswahl',compass_nearest_strike:'Kompass: nächster Blitz',compass_device_orientation:'Geräteorientierung',map_grouping:'Kartengruppierung'},
+    English:{language:'Language',distance_unit:'Distance unit',compass_design:'Compass design',reference_location:'Reference location',observation_radius:'Observation radius',storm_radius:'Storm radius',danger_radius:'Danger radius',aura_width:'Aura width',aura_intensity:'Aura intensity',aura_effects:'Aura effects',warning_animation:'Warning animation',storm_simulation:'Storm simulation',show_location_selector:'Location selector',compass_nearest_strike:'Compass: nearest strike',compass_device_orientation:'Device orientation',map_grouping:'Map grouping'}
   };
   const ABOUT_SETTING_PURPOSES = {
-    Deutsch:['Wählt die Sprache der Karte.','Legt KM oder MI fest.','Wählt das Kompassdesign.','Bestimmt den Referenzstandort.','Legt den äußeren Beobachtungsbereich fest.','Definiert den Bereich erhöhter Gewitteraktivität.','Definiert den unmittelbaren Gefahrenbereich.','Steuert die Breite des Aura-Effekts.','Steuert die Stärke des Aura-Effekts.','Schaltet Aura-Effekte ein oder aus.','Aktiviert die Warnanimation.','Aktiviert die Gewittersimulation.','Erlaubt die Standortauswahl.','Richtet den Kompass auf den nächsten Blitz.','Nutzt die Geräteausrichtung.','Gruppiert nahe Blitze auf der Karte.'],
-    English:['Selects the card language.','Sets KM or MI.','Selects the compass design.','Sets the reference location.','Sets the outer observation area.','Defines the area of increased storm activity.','Defines the immediate danger area.','Controls aura effect width.','Controls aura effect intensity.','Turns aura effects on or off.','Enables warning animation.','Enables storm simulation.','Enables location selection.','Points to the nearest strike.','Uses device orientation.','Groups nearby strikes on the map.']
+    Deutsch:{language:'Wählt die Sprache der Karte.',distance_unit:'Legt KM oder MI fest.',compass_design:'Wählt das Kompassdesign.',reference_location:'Bestimmt den Referenzstandort.',observation_radius:'Legt den äußeren Beobachtungsbereich fest.',storm_radius:'Definiert den Bereich erhöhter Gewitteraktivität.',danger_radius:'Definiert den unmittelbaren Gefahrenbereich.',aura_width:'Steuert die Breite des Aura-Effekts.',aura_intensity:'Steuert die Stärke des Aura-Effekts.',aura_effects:'Schaltet Aura-Effekte ein oder aus.',warning_animation:'Aktiviert die Warnanimation.',storm_simulation:'Aktiviert die Gewittersimulation.',show_location_selector:'Erlaubt die Standortauswahl.',compass_nearest_strike:'Richtet den Kompass auf den nächsten Blitz.',compass_device_orientation:'Nutzt die Geräteausrichtung.',map_grouping:'Gruppiert nahe Blitze auf der Karte.'},
+    English:{language:'Selects the card language.',distance_unit:'Sets KM or MI.',compass_design:'Selects the compass design.',reference_location:'Sets the reference location.',observation_radius:'Sets the outer observation area.',storm_radius:'Defines the area of increased storm activity.',danger_radius:'Defines the immediate danger area.',aura_width:'Controls aura effect width.',aura_intensity:'Controls aura effect intensity.',aura_effects:'Turns aura effects on or off.',warning_animation:'Enables warning animation.',storm_simulation:'Enables storm simulation.',show_location_selector:'Enables location selection.',compass_nearest_strike:'Points to the nearest strike.',compass_device_orientation:'Uses device orientation.',map_grouping:'Groups nearby strikes on the map.'}
   };
   const ABOUT_SOURCE_PURPOSES = {
     Deutsch:['Liefert einzelne Blitzpositionen.','Liefert die Entfernung zum letzten Blitz.','Liefert die Richtung zum letzten Blitz.','Zählt erkannte Blitzereignisse.'],
@@ -15035,7 +15035,6 @@
       const labels = ABOUT_SETTING_LABELS[this._languageValue()] || ABOUT_SETTING_LABELS[LANGUAGE_DEFAULT];
       const purposes = ABOUT_SETTING_PURPOSES[this._languageValue()] || ABOUT_SETTING_PURPOSES[LANGUAGE_DEFAULT];
       const sourcePurposes = ABOUT_SOURCE_PURPOSES[this._languageValue()] || ABOUT_SOURCE_PURPOSES[LANGUAGE_DEFAULT];
-      const keys = Object.keys(SETTING_ENTITIES);
       const setText = (node, value) => { if (node.textContent !== value) node.textContent = value; };
       dialog.querySelectorAll('.about-source-list .about-purpose').forEach((node, index) => setText(node, sourcePurposes[index]));
       for (const row of dialog.querySelectorAll('[data-setting]')) {
@@ -15044,8 +15043,8 @@
         const state = this._hass?.states?.[resolved]?.state;
         const available = state != null && !['unknown','unavailable',''].includes(state);
         const source = resolved === mapping.native ? t('sourceNative') : resolved === mapping.legacy ? t('legacy') : t('override');
-        setText(row.querySelector('strong'), labels[keys.indexOf(key)]);
-        setText(row.querySelector('.about-purpose'), purposes[keys.indexOf(key)]);
+        setText(row.querySelector('strong'), labels[key]);
+        setText(row.querySelector('.about-purpose'), purposes[key]);
         setText(row.querySelector('.about-native-id'), mapping.native);
         setText(row.querySelector('.about-legacy-id'), `${t('legacy')}: ${mapping.legacy} · ${t('legacyPurpose')}`);
         setText(row.querySelector('.about-entity-status'), `${t('resolved')}: ${resolved} · ${source} · ${t(available ? 'available' : 'unavailable')}`);
@@ -15054,7 +15053,7 @@
         const key = row.dataset.radius;
         const state = this._hass?.states?.[this[ABOUT_SETTING_ACCESSORS[key]]()]?.state;
         const value = state == null || String(state).trim() === '' ? null : finiteNumber(state);
-        setText(row.querySelector('strong span'), labels[keys.indexOf(key)]);
+        setText(row.querySelector('strong span'), labels[key]);
         setText(row.querySelector('output'), value == null ? '—' : this._formatRadiusDistance(value).text);
       }
     }
