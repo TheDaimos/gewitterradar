@@ -140,8 +140,8 @@
     English:{language:'Selects the card language.',distance_unit:'Sets KM or MI.',compass_design:'Selects the compass design.',reference_location:'Sets the reference location.',observation_radius:'Sets the outer observation area.',storm_radius:'Defines the area of increased storm activity.',danger_radius:'Defines the immediate danger area.',aura_width:'Controls aura effect width.',aura_intensity:'Controls aura effect intensity.',aura_effects:'Turns aura effects on or off.',warning_animation:'Enables warning animation.',storm_simulation:'Enables storm simulation.',show_location_selector:'Enables location selection.',compass_nearest_strike:'Points to the nearest strike.',compass_device_orientation:'Uses device orientation.',map_grouping:'Groups nearby strikes on the map.'}
   };
   const ABOUT_SOURCE_PURPOSES = {
-    Deutsch:['Liefert einzelne Blitzpositionen.','Liefert die Entfernung zum letzten Blitz.','Liefert die Richtung zum letzten Blitz.','Zählt erkannte Blitzereignisse.'],
-    English:['Provides individual strike positions.','Provides distance to the latest strike.','Provides direction to the latest strike.','Counts detected lightning events.']
+    Deutsch:{'geo_location.lightning_strike*':'Liefert einzelne Blitzpositionen.','sensor.home_lightning_distance':'Liefert die Entfernung zum letzten Blitz.','sensor.home_lightning_azimuth':'Liefert die Richtung zum letzten Blitz.','sensor.home_lightning_counter':'Zählt erkannte Blitzereignisse.'},
+    English:{'geo_location.lightning_strike*':'Provides individual strike positions.','sensor.home_lightning_distance':'Provides distance to the latest strike.','sensor.home_lightning_azimuth':'Provides direction to the latest strike.','sensor.home_lightning_counter':'Counts detected lightning events.'}
   };
   const MEDALLION_DESIGNS = [{
     id:'trend_01',asset:TREND_MEDALLION_IMAGE,type:'image',size:'132px',x:'0px',y:'0px',
@@ -14992,6 +14992,7 @@
       for (const match of ABOUT_RECORDER_YAML.matchAll(/^\s+- "?([^"\n]+)"?$/gm)) {
         const row = document.createElement('li');
         row.innerHTML = '<code></code><p class="about-purpose"></p>';
+        row.dataset.source = match[1];
         row.querySelector('code').textContent = match[1];
         shell.querySelector('.about-source-list').append(row);
       }
@@ -15036,7 +15037,7 @@
       const purposes = ABOUT_SETTING_PURPOSES[this._languageValue()] || ABOUT_SETTING_PURPOSES[LANGUAGE_DEFAULT];
       const sourcePurposes = ABOUT_SOURCE_PURPOSES[this._languageValue()] || ABOUT_SOURCE_PURPOSES[LANGUAGE_DEFAULT];
       const setText = (node, value) => { if (node.textContent !== value) node.textContent = value; };
-      dialog.querySelectorAll('.about-source-list .about-purpose').forEach((node, index) => setText(node, sourcePurposes[index]));
+      dialog.querySelectorAll('.about-source-list [data-source]').forEach((row) => setText(row.querySelector('.about-purpose'), sourcePurposes[row.dataset.source]));
       for (const row of dialog.querySelectorAll('[data-setting]')) {
         const key = row.dataset.setting, mapping = SETTING_ENTITIES[key];
         const resolved = this[ABOUT_SETTING_ACCESSORS[key]]();
