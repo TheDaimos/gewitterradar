@@ -11,14 +11,15 @@ export async function expectedPayload(){
  if(hash(baseline)!=='9f594d5c23c5af5bdabf90749eb2639457a4cc14307407e20674036a02565e9b')throw Error('Frozen V4.05 fixture changed');
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
  if(source.toString()!==approvedDelta(baseline.toString()))throw Error('Frontend exceeds approved close/copy/DEV delta');
- readAboutLocaleModel(source.toString());
+ const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
+ readAboutLocaleModel(source.toString(),localeSource.toString());
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
  const referenced=[...new Set([...source.toString().matchAll(/new URL\('\.\/(assets\/[^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>m[1]))].sort();
  if(inventory.length!==17||new Set(inventory.map(a=>a.file)).size!==17||JSON.stringify(referenced)!==JSON.stringify(inventory.map(a=>a.file).sort()))throw Error('Asset inventory/reference mismatch');
  const actual=(await readdir(resolve(root,'frontend/assets'))).map(n=>'assets/'+n).sort();
  if(JSON.stringify(actual)!==JSON.stringify(referenced))throw Error('Unexpected/missing source assets');
  const frozenHashes=await readFile(resolve(root,'docs/V4_05_FRONTEND_REFERENCE_SHA256SUMS.txt'),'utf8');
- const payload=new Map([['gewitterradar.js',source]]);
+ const payload=new Map([['gewitterradar.js',source],['locales/about-locales.js',localeSource]]);
  for(const asset of inventory){
   const bytes=await readFile(resolve(root,'frontend',asset.file));
   if(hash(bytes)!==asset.sha256)throw Error('Asset SHA mismatch '+asset.file);
@@ -37,6 +38,6 @@ export async function build(){
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
  rows.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_pkg.yaml');
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
- console.log('Built one frontend and 17 common assets into both deliveries. Frozen V4.05 preserved.');
+ console.log('Built one frontend, one lazy About-locale module and 17 common assets into both deliveries. Frozen V4.05 preserved.');
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await build();

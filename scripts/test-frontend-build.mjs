@@ -7,7 +7,7 @@ verify();
 const before=await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'));
 await build();
 if(!(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'))).equals(before))throw Error('Non-deterministic rebuild');
-for(const relative of ['custom_components/gewitterradar/frontend/assets/gewitterradar-about-copy-scroll.webp','dashboard/dist/gewitterradar.js','frontend/gewitterradar.js']){
+for(const relative of ['custom_components/gewitterradar/frontend/assets/gewitterradar-about-copy-scroll.webp','dashboard/dist/gewitterradar.js','frontend/gewitterradar.js','dashboard/dist/locales/about-locales.js','frontend/locales/about-locales.js']){
  const file=resolve(root,relative),original=await readFile(file);
  try{await writeFile(file,Buffer.concat([original,Buffer.from('\ninvalid-parity-probe')]));let failed=false;try{verify();}catch{failed=true;}if(!failed)throw Error('Verifier accepted tampering: '+relative);}finally{await writeFile(file,original);}
 }

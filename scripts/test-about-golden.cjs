@@ -10,8 +10,9 @@ const server=http.createServer((req,res)=>{
   if(name.endsWith('about-onboarding-harness.html')&&url.searchParams.has('golden')){
    let harness=data.toString();
    harness=once(harness,"await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');","await import('../tests/fixtures/v4_05/gewitterradar.js');");
-   harness=once(harness,"    assert(dialog.querySelector('h2').textContent===({Deutsch:'Über Gewitterradar',Dansk:'Om Gewitterradar',Nederlands:'Over Gewitterradar'}[language]||'About Gewitterradar'),'language fallback '+language);","    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);");
-   harness=once(harness,"    assert(dialog.querySelector('.about-dedication h3').textContent===({Deutsch:'Für Alkje',Dansk:'Til Alkje',Nederlands:'Voor Alkje'}[language]||'For Alkje'),'dedication localized');","    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');");
+   harness=once(harness,"    if(!['Deutsch','English'].includes(language))for(let attempt=0;dialog.querySelector('h2').textContent==='About Gewitterradar'&&attempt<100;attempt++)await new Promise(resolve=>setTimeout(resolve,10));\n",'');
+   harness=once(harness,"    const title=dialog.querySelector('h2').textContent;\n    assert(language==='Deutsch'?title==='Über Gewitterradar':language==='English'?title==='About Gewitterradar':title!==''&&title!=='About Gewitterradar','language locale '+language);","    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);");
+   harness=once(harness,"    assert(dialog.querySelector('.about-dedication h3').textContent!=='','dedication localized');","    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');");
    data=Buffer.from(harness);
   }
   res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png'})[path.extname(file)]||'text/plain');res.end(data);

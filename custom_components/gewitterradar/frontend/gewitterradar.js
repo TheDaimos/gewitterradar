@@ -68,100 +68,6 @@
       - sensor.home_lightning_azimuth
       - sensor.home_lightning_counter`;
   const ABOUT_STRINGS = {
-    Dansk: {
-      "title": "Om Gewitterradar",
-      "close": "Luk",
-      "understood": "Forstået",
-      "subtitle": "For vejrentusiaster, der vil følge lynaktivitet klart og letforståeligt.",
-      "claim": "Følg tordenvejr, opdag udviklingen.",
-      "welcome": "Velkommen, vejrentusiaster!",
-      "intro": "Dette projekt er for alle, der er fascineret af tordenvejr, lyn, vejrfænomener og den fascinerende dynamik i vores atmosfære. Gewitterradar hjælper dig med bedre at forstå naturen, opdage udviklinger tidligt og observere dem med respekt. Dejligt, at du er en del af dette fællesskab!",
-      "quote": "Tordenvejr viser, hvor kraftfuld atmosfæren kan være.",
-      "radii": "De tre radier",
-      "radiiTagline": "Tre områder. Ét klart overblik.",
-      "schematic": "Skematisk visning af radierne, ikke målfast",
-      "observation": "Tidlig observation af fjerne tordenvejr i det større område.",
-      "storm": "Nærmere tordenvejrsaktivitet, som kræver øget opmærksomhed.",
-      "danger": "Umiddelbar nærzone med særlig kritisk betydning.",
-      "radiusInfo": "Radierne hjælper dig med at vurdere tordenvejr tidligt og få et hurtigt og klart overblik over den aktuelle situation. Radierne bygger på hinanden: Et lyn inden for fareradiusen tæller også med i tordenvejrsradiusen og observationsradiusen.",
-      "thanks": "Tak til Blitzortung.org",
-      "network": "En særlig tak går til Blitzortung.org og dets verdensomspændende fællesskab af frivillige stationsoperatører. Gewitterradar bruger lyndata, som stilles til rådighed af dette fællesskabsdrevne lokaliseringsnetværk.",
-      "recorder": "Vigtig bemærkning om Home Assistant Recorder",
-      "recorderText": "For at begrænse væksten i databasen anbefaler vi kraftigt at udelukke disse fire kilder fra Recorder i configuration.yaml. Tilføj dem til en eksisterende recorder:-sektion – opret ikke en anden blok på topniveau. Live-tilstande forbliver tilgængelige.",
-      "recorderBenefit": "Mindre data.\nEt slankere system.\nTil langvarig drift.",
-      "copy": "Kopiér YAML",
-      "copied": "Kopieret",
-      "copyFailed": "Kopiering er ikke mulig – markér venligst koden.",
-      "later": "Se igen senere",
-      "merge": "Hvis der allerede findes en recorder:-sektion, skal du integrere posterne dér. Opret IKKE en anden recorder:-blok på topniveau.",
-      "live": "Udelukkelse fra Recorder deaktiverer IKKE live-tilstandene for Gewitterradar. Eksisterende historiske data fjernes ikke automatisk.",
-      "entities": "Anvendte entiteter og funktioner",
-      "entitiesSubtitle": "En oversigt over alle anvendte entiteter og deres funktioner.",
-      "native": "Native Gewitterradar-konfiguration",
-      "sourceNative": "Native",
-      "legacy": "Legacy-fallback / kompatibilitet",
-      "legacyPurpose": "Bruges kun som kompatibilitets-fallback.",
-      "locationPerson": "Giver valgbare personplaceringer.",
-      "locationZone": "Giver valgbare zoner som referenceplaceringer.",
-      "legacyText": "De eksisterende lightning_detection_* hjælpere bruges af hensyn til kompatibilitet. De er ikke nødvendige for en ny native installation.",
-      "resolved": "Aktuelt anvendt",
-      "available": "tilgængelig",
-      "unavailable": "ikke tilgængelig",
-      "override": "Kortkonfiguration",
-      "sources": "Lyndatakilder",
-      "locations": "Placeringskilder",
-      "dynamic": "person.* og zone.* registreres dynamisk.",
-      "dedicationTitle": "Til Alkje",
-      "dedicationText": "Tak, fordi du giver mig tiden til at følge mine interesser og min begejstring for teknik, vejr og alle idéerne derimellem – og til at hellige mig projekter som Gewitterradar med så meget glæde og vedholdenhed.",
-      "footer": "Kan til enhver tid åbnes igen under Indstillinger → Om Gewitterradar."
-    },
-    Nederlands: {
-      "title": "Over Gewitterradar",
-      "close": "Sluiten",
-      "understood": "Begrepen",
-      "subtitle": "Voor weerliefhebbers die bliksemactiviteit helder en begrijpelijk willen volgen.",
-      "claim": "Onweer volgen, ontwikkelingen ontdekken.",
-      "welcome": "Welkom, weerliefhebbers!",
-      "intro": "Dit project is voor iedereen die gefascineerd is door onweer, bliksem, weersverschijnselen en de fascinerende dynamiek van onze atmosfeer. Gewitterradar helpt je de natuur beter te begrijpen, ontwikkelingen vroeg te herkennen en ze met respect te observeren. Fijn dat je deel uitmaakt van deze gemeenschap!",
-      "quote": "Onweer laat zien hoe krachtig de atmosfeer kan zijn.",
-      "radii": "De drie radiussen",
-      "radiiTagline": "Drie gebieden. Eén duidelijk overzicht.",
-      "schematic": "Schematische weergave van de radiussen, niet op schaal",
-      "observation": "Vroege observatie van onweer op grotere afstand in de ruimere omgeving.",
-      "storm": "Nabijere onweersactiviteit die extra aandacht vereist.",
-      "danger": "Directe omgeving met bijzonder kritieke betekenis.",
-      "radiusInfo": "De radiussen helpen je om onweer vroeg in te schatten en de actuele situatie snel en duidelijk te begrijpen. De radiussen zijn cumulatief: een blikseminslag binnen de gevarenradius telt ook mee binnen de onweersradius en observatieradius.",
-      "thanks": "Dank aan Blitzortung.org",
-      "network": "Speciale dank gaat uit naar Blitzortung.org en zijn wereldwijde gemeenschap van vrijwillige stationbeheerders. Gewitterradar gebruikt bliksemgegevens die door dit door de gemeenschap beheerde detectienetwerk beschikbaar worden gesteld.",
-      "recorder": "Belangrijke opmerking over Home Assistant Recorder",
-      "recorderText": "Om groei van de database te beperken, raden we sterk aan deze vier bronnen in configuration.yaml van Recorder uit te sluiten. Voeg ze toe aan een bestaande recorder:-sectie – maak geen tweede blok op het hoogste niveau. Live-statussen blijven beschikbaar.",
-      "recorderBenefit": "Minder gegevens.\nEen slanker systeem.\nVoor langdurig gebruik.",
-      "copy": "YAML kopiëren",
-      "copied": "Gekopieerd",
-      "copyFailed": "Kopiëren niet mogelijk – selecteer de code.",
-      "later": "Later opnieuw bekijken",
-      "merge": "Als er al een recorder:-sectie bestaat, voeg deze items daar dan aan toe. Maak GEEN tweede recorder:-blok op het hoogste niveau.",
-      "live": "Uitsluiting van Recorder schakelt de live-statussen van Gewitterradar NIET uit. Bestaande historische gegevens worden niet automatisch verwijderd.",
-      "entities": "Gebruikte entiteiten en functies",
-      "entitiesSubtitle": "Een overzicht van alle gebruikte entiteiten en hun functies.",
-      "native": "Native Gewitterradar-configuratie",
-      "sourceNative": "Native",
-      "legacy": "Legacy-fallback / compatibiliteit",
-      "legacyPurpose": "Wordt alleen gebruikt als compatibiliteitsfallback.",
-      "locationPerson": "Biedt selecteerbare persoonslocaties.",
-      "locationZone": "Biedt selecteerbare zones als referentielocaties.",
-      "legacyText": "De bestaande lightning_detection_* helpers worden gebruikt voor compatibiliteit. Ze zijn niet nodig voor een nieuwe native installatie.",
-      "resolved": "Momenteel bepaald",
-      "available": "beschikbaar",
-      "unavailable": "niet beschikbaar",
-      "override": "Kaartconfiguratie",
-      "sources": "Bronnen voor bliksemgegevens",
-      "locations": "Locatiebronnen",
-      "dynamic": "person.* en zone.* worden dynamisch gedetecteerd.",
-      "dedicationTitle": "Voor Alkje",
-      "dedicationText": "Dank je dat je me de tijd geeft om mijn interesses en enthousiasme voor techniek, weer en alle ideeën daartussen te volgen – en me met zoveel plezier en doorzettingsvermogen aan projecten als Gewitterradar te wijden.",
-      "footer": "Op elk moment opnieuw te openen via Instellingen → Over Gewitterradar."
-    },
     Deutsch: {
       title:'Über Gewitterradar', close:'Schließen', understood:'Verstanden',
       subtitle:'Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.', claim:'Gewitter beobachten, Entwicklungen entdecken.',
@@ -226,98 +132,14 @@
     compass_device_orientation:'_deviceOrientationEntity', map_grouping:'_mapGroupingEntity'
   };
   const ABOUT_SETTING_LABELS = {
-    Dansk: {
-      "language": "Sprog",
-      "distance_unit": "Afstandsenhed",
-      "compass_design": "Kompasdesign",
-      "reference_location": "Referenceplacering",
-      "observation_radius": "Observationsradius",
-      "storm_radius": "Tordenvejrsradius",
-      "danger_radius": "Fareradius",
-      "aura_width": "Aura-bredde",
-      "aura_intensity": "Aura-intensitet",
-      "aura_effects": "Aura-effekter",
-      "warning_animation": "Advarselsanimation",
-      "storm_simulation": "Tordenvejrssimulering",
-      "show_location_selector": "Placeringsvalg",
-      "compass_nearest_strike": "Kompas: nærmeste lyn",
-      "compass_device_orientation": "Enhedsorientering",
-      "map_grouping": "Kortgruppering"
-    },
-    Nederlands: {
-      "language": "Taal",
-      "distance_unit": "Afstandseenheid",
-      "compass_design": "Kompasontwerp",
-      "reference_location": "Referentielocatie",
-      "observation_radius": "Observatieradius",
-      "storm_radius": "Onweersradius",
-      "danger_radius": "Gevarenradius",
-      "aura_width": "Aura-breedte",
-      "aura_intensity": "Aura-intensiteit",
-      "aura_effects": "Aura-effecten",
-      "warning_animation": "Waarschuwingsanimatie",
-      "storm_simulation": "Onweerssimulatie",
-      "show_location_selector": "Locatieselectie",
-      "compass_nearest_strike": "Kompas: dichtstbijzijnde bliksem",
-      "compass_device_orientation": "Apparaatoriëntatie",
-      "map_grouping": "Kaartgroepering"
-    },
     Deutsch:{language:'Sprache',distance_unit:'Distanzeinheit',compass_design:'Kompassdesign',reference_location:'Referenzstandort',observation_radius:'Beobachtungsradius',storm_radius:'Gewitterradius',danger_radius:'Gefahrenradius',aura_width:'Aura-Breite',aura_intensity:'Aura-Intensität',aura_effects:'Aura-Effekte',warning_animation:'Warnanimation',storm_simulation:'Gewittersimulation',show_location_selector:'Standortauswahl',compass_nearest_strike:'Kompass: nächster Blitz',compass_device_orientation:'Geräteorientierung',map_grouping:'Kartengruppierung'},
     English:{language:'Language',distance_unit:'Distance unit',compass_design:'Compass design',reference_location:'Reference location',observation_radius:'Observation radius',storm_radius:'Storm radius',danger_radius:'Danger radius',aura_width:'Aura width',aura_intensity:'Aura intensity',aura_effects:'Aura effects',warning_animation:'Warning animation',storm_simulation:'Storm simulation',show_location_selector:'Location selector',compass_nearest_strike:'Compass: nearest strike',compass_device_orientation:'Device orientation',map_grouping:'Map grouping'}
   };
   const ABOUT_SETTING_PURPOSES = {
-    Dansk: {
-      "language": "Vælger kortets sprog.",
-      "distance_unit": "Angiver KM eller MI.",
-      "compass_design": "Vælger kompasdesign.",
-      "reference_location": "Angiver referenceplaceringen.",
-      "observation_radius": "Angiver det ydre observationsområde.",
-      "storm_radius": "Definerer området med øget tordenvejrsaktivitet.",
-      "danger_radius": "Definerer det umiddelbare fareområde.",
-      "aura_width": "Styrer bredden af aura-effekten.",
-      "aura_intensity": "Styrer intensiteten af aura-effekten.",
-      "aura_effects": "Slår aura-effekter til eller fra.",
-      "warning_animation": "Aktiverer advarselsanimationen.",
-      "storm_simulation": "Aktiverer tordenvejrssimuleringen.",
-      "show_location_selector": "Tillader valg af placering.",
-      "compass_nearest_strike": "Retter kompasset mod det nærmeste lyn.",
-      "compass_device_orientation": "Bruger enhedens orientering.",
-      "map_grouping": "Grupperer nærliggende lyn på kortet."
-    },
-    Nederlands: {
-      "language": "Selecteert de taal van de kaart.",
-      "distance_unit": "Stelt KM of MI in.",
-      "compass_design": "Selecteert het kompasontwerp.",
-      "reference_location": "Stelt de referentielocatie in.",
-      "observation_radius": "Stelt het buitenste observatiegebied in.",
-      "storm_radius": "Definieert het gebied met verhoogde onweersactiviteit.",
-      "danger_radius": "Definieert het directe gevarengebied.",
-      "aura_width": "Regelt de breedte van het aura-effect.",
-      "aura_intensity": "Regelt de intensiteit van het aura-effect.",
-      "aura_effects": "Schakelt aura-effecten in of uit.",
-      "warning_animation": "Activeert de waarschuwingsanimatie.",
-      "storm_simulation": "Activeert de onweerssimulatie.",
-      "show_location_selector": "Maakt locatieselectie mogelijk.",
-      "compass_nearest_strike": "Richt het kompas op de dichtstbijzijnde bliksem.",
-      "compass_device_orientation": "Gebruikt de oriëntatie van het apparaat.",
-      "map_grouping": "Groepeert nabije bliksem op de kaart."
-    },
     Deutsch:{language:'Wählt die Sprache der Karte.',distance_unit:'Legt KM oder MI fest.',compass_design:'Wählt das Kompassdesign.',reference_location:'Bestimmt den Referenzstandort.',observation_radius:'Legt den äußeren Beobachtungsbereich fest.',storm_radius:'Definiert den Bereich erhöhter Gewitteraktivität.',danger_radius:'Definiert den unmittelbaren Gefahrenbereich.',aura_width:'Steuert die Breite des Aura-Effekts.',aura_intensity:'Steuert die Stärke des Aura-Effekts.',aura_effects:'Schaltet Aura-Effekte ein oder aus.',warning_animation:'Aktiviert die Warnanimation.',storm_simulation:'Aktiviert die Gewittersimulation.',show_location_selector:'Erlaubt die Standortauswahl.',compass_nearest_strike:'Richtet den Kompass auf den nächsten Blitz.',compass_device_orientation:'Nutzt die Geräteausrichtung.',map_grouping:'Gruppiert nahe Blitze auf der Karte.'},
     English:{language:'Selects the card language.',distance_unit:'Sets KM or MI.',compass_design:'Selects the compass design.',reference_location:'Sets the reference location.',observation_radius:'Sets the outer observation area.',storm_radius:'Defines the area of increased storm activity.',danger_radius:'Defines the immediate danger area.',aura_width:'Controls aura effect width.',aura_intensity:'Controls aura effect intensity.',aura_effects:'Turns aura effects on or off.',warning_animation:'Enables warning animation.',storm_simulation:'Enables storm simulation.',show_location_selector:'Enables location selection.',compass_nearest_strike:'Points the compass to the nearest strike.',compass_device_orientation:'Uses device orientation.',map_grouping:'Groups nearby strikes on the map.'}
   };
   const ABOUT_SOURCE_PURPOSES = {
-    Dansk: {
-      "geo_location.lightning_strike*": "Leverer individuelle lynpositioner.",
-      "sensor.home_lightning_distance": "Leverer afstanden til det seneste lyn.",
-      "sensor.home_lightning_azimuth": "Leverer retningen til det seneste lyn.",
-      "sensor.home_lightning_counter": "Tæller registrerede lynhændelser."
-    },
-    Nederlands: {
-      "geo_location.lightning_strike*": "Levert afzonderlijke bliksemposities.",
-      "sensor.home_lightning_distance": "Levert de afstand tot de laatste bliksem.",
-      "sensor.home_lightning_azimuth": "Levert de richting naar de laatste bliksem.",
-      "sensor.home_lightning_counter": "Telt gedetecteerde bliksemgebeurtenissen."
-    },
     Deutsch:{'geo_location.lightning_strike*':'Liefert einzelne Blitzpositionen.','sensor.home_lightning_distance':'Liefert die Entfernung zum letzten Blitz.','sensor.home_lightning_azimuth':'Liefert die Richtung zum letzten Blitz.','sensor.home_lightning_counter':'Zählt erkannte Blitzereignisse.'},
     English:{'geo_location.lightning_strike*':'Provides individual strike positions.','sensor.home_lightning_distance':'Provides distance to the latest strike.','sensor.home_lightning_azimuth':'Provides direction to the latest strike.','sensor.home_lightning_counter':'Counts detected lightning events.'}
   };
@@ -599,20 +421,8 @@
   ];
 
   // One resolved bundle owns every About text. Existing tables are only data inputs.
-  // Add future translations here as complete bundles; LANGUAGE_DEFINITIONS owns names.
+  // Deutsch/English stay native; other registered languages are loaded as one module on About demand.
   const ABOUT_LOCALES = {
-    Dansk: {
-      strings: ABOUT_STRINGS.Dansk,
-      settingLabels: ABOUT_SETTING_LABELS.Dansk,
-      settingPurposes: ABOUT_SETTING_PURPOSES.Dansk,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.Dansk
-    },
-    Nederlands: {
-      strings: ABOUT_STRINGS.Nederlands,
-      settingLabels: ABOUT_SETTING_LABELS.Nederlands,
-      settingPurposes: ABOUT_SETTING_PURPOSES.Nederlands,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.Nederlands
-    },
     Deutsch: {
       strings: ABOUT_STRINGS.Deutsch,
       settingLabels: ABOUT_SETTING_LABELS.Deutsch,
@@ -626,6 +436,14 @@
       sourcePurposes: ABOUT_SOURCE_PURPOSES.English
     }
   };
+  const ABOUT_EXTERNAL_LANGUAGE_NAMES = new Set(LANGUAGE_DEFINITIONS
+    .map(entry => entry.value).filter(name => !Object.hasOwn(ABOUT_LOCALES,name)));
+  const ABOUT_LOCALE_MODULE_URL = (() => {
+    const main = new URL(import.meta.url), module = new URL('./locales/about-locales.js',main);
+    module.search = main.search;
+    return module.href;
+  })();
+  let aboutExternalLocales = null, aboutExternalLocalesLoading = null, aboutExternalLocaleAttempt = 0;
 
   function validateAboutLocales(locales, settings, languages, recorderYaml) {
     const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -673,9 +491,37 @@
     }
   }
 
+  function installAboutExternalLocales(locales) {
+    const combined = {...ABOUT_LOCALES,...locales};
+    validateAboutLocales(combined,SETTING_ENTITIES,LANGUAGE_DEFINITIONS,ABOUT_RECORDER_YAML);
+    if (Object.keys(locales).length !== ABOUT_EXTERNAL_LANGUAGE_NAMES.size ||
+        [...ABOUT_EXTERNAL_LANGUAGE_NAMES].some(name => !Object.hasOwn(locales,name))) {
+      throw Error('External About locales must cover every non-native registered language');
+    }
+    aboutExternalLocales = locales;
+    return locales;
+  }
+
+  function loadAboutExternalLocales() {
+    if (aboutExternalLocales) return Promise.resolve(aboutExternalLocales);
+    if (aboutExternalLocalesLoading) return aboutExternalLocalesLoading;
+    const url = new URL(ABOUT_LOCALE_MODULE_URL), attempt = aboutExternalLocaleAttempt++;
+    if (attempt) url.hash = 'retry-' + attempt;
+    aboutExternalLocalesLoading = import(url.href)
+      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES))
+      .catch(() => null)
+      .finally(() => { aboutExternalLocalesLoading = null; });
+    return aboutExternalLocalesLoading;
+  }
+
+  function requestAboutLocale(language, onLoaded) {
+    if (!ABOUT_EXTERNAL_LANGUAGE_NAMES.has(language) || aboutExternalLocales?.[language]) return;
+    loadAboutExternalLocales().then(locales => { if (locales?.[language]) onLoaded(); });
+  }
+
   function resolveAboutLocale(language) {
-    const candidate = LANGUAGE_DEFINITIONS.some(entry => entry.value === language) && Object.hasOwn(ABOUT_LOCALES,language)
-      ? ABOUT_LOCALES[language] : null;
+    const candidate = LANGUAGE_DEFINITIONS.some(entry => entry.value === language)
+      ? ABOUT_LOCALES[language] || aboutExternalLocales?.[language] : null;
     return isAboutLocaleComplete(candidate) ? candidate : ABOUT_LOCALES.English;
   }
 
@@ -14903,7 +14749,7 @@
       this._i18nAttrKeys = this._i18nAttrKeys || new WeakMap();
 
       const dynamicRoots = new Set([
-        'header-status','radar-subtitle-location','radar-subtitle-window','warn-text','animation-state',
+        'about-shell','header-status','radar-subtitle-location','radar-subtitle-window','warn-text','animation-state',
         'settings-location-coordinates','location-main-current','location-main-button','settings-location-button','mode-main',
         'map-legend','recent-content','recent-filter-stack','kpi-cardinal','kpi-time','hit-live','footer-update','device-main',
         'compass-caption','history-sub','trend-value','trend-sub','radius-keypad-title','radius-keypad-limit'
@@ -15286,7 +15132,11 @@
     _syncAbout() {
       const dialog = this._aboutDialog;
       if (!dialog) return;
-      const locale = resolveAboutLocale(this._languageValue());
+      const language = this._languageValue();
+      const locale = resolveAboutLocale(language);
+      const status = dialog.querySelector('.about-copy-status');
+      if (this._aboutStatusLanguage !== language || this._aboutStatusLocale !== locale) status.textContent = '';
+      this._aboutStatusLanguage = language; this._aboutStatusLocale = locale;
       const t = (key) => locale.strings[key];
       for (const node of dialog.querySelectorAll('[data-about-text]')) {
         const text = t(node.dataset.aboutText);
@@ -15297,6 +15147,9 @@
       const {settingLabels: labels, settingPurposes: purposes, sourcePurposes} = locale;
       const setText = (node, value) => { if (node.textContent !== value) node.textContent = value; };
       dialog.querySelectorAll('.about-source-list [data-source]').forEach((row) => setText(row.querySelector('.about-purpose'), sourcePurposes[row.dataset.source]));
+      requestAboutLocale(language, () => {
+        if (this._aboutDialog === dialog && this._languageValue() === language) this._syncAbout();
+      });
       for (const row of dialog.querySelectorAll('[data-setting]')) {
         const key = row.dataset.setting, mapping = SETTING_ENTITIES[key];
         const resolved = this[ABOUT_SETTING_ACCESSORS[key]]();

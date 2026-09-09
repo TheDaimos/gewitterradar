@@ -3,6 +3,18 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {runInNewContext} from 'node:vm';
 
+export function readExternalAboutLocales(source) {
+  const anchor = 'export const ABOUT_EXTERNAL_LOCALES = ';
+  if (source.split(anchor).length !== 2 || !source.trimEnd().endsWith(';')) {
+    throw Error('External About locale module shape changed');
+  }
+  const context = {};
+  runInNewContext(source.replace(anchor,'globalThis.externalAboutLocales = '),context,
+    {timeout:3000,filename:'about-locales.js'});
+  if (!context.externalAboutLocales) throw Error('External About locales were not exported');
+  return context.externalAboutLocales;
+}
+
 // Evaluate production registration without constructing a card or providing Home Assistant.
 export function loadAboutLocaleRuntime(source) {
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
@@ -10,8 +22,13 @@ export function loadAboutLocaleRuntime(source) {
   const script = source.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
     .replace(anchor, `  globalThis.aboutLocaleModel = {
       locales: ABOUT_LOCALES, settings: SETTING_ENTITIES, languages: LANGUAGE_DEFINITIONS,
+      tables: {strings:ABOUT_STRINGS,settingLabels:ABOUT_SETTING_LABELS,settingPurposes:ABOUT_SETTING_PURPOSES,sourcePurposes:ABOUT_SOURCE_PURPOSES},
       recorderYaml: ABOUT_RECORDER_YAML, validate: validateAboutLocales,
-      resolve: resolveAboutLocale, Card: GewitterradarCard, app: I18N, defaultLanguage: LANGUAGE_DEFAULT
+      resolve: resolveAboutLocale,
+      installExternal: typeof installAboutExternalLocales === 'function' ? installAboutExternalLocales : null,
+      externalNames: typeof ABOUT_EXTERNAL_LANGUAGE_NAMES === 'undefined' ? new Set() : ABOUT_EXTERNAL_LANGUAGE_NAMES,
+      moduleUrl: typeof ABOUT_LOCALE_MODULE_URL === 'undefined' ? null : ABOUT_LOCALE_MODULE_URL,
+      Card: GewitterradarCard, app: I18N, defaultLanguage: LANGUAGE_DEFAULT
     };\n` + anchor);
   const registered = new Map();
   const context = {URL, HTMLElement: class {}, customElements: {
@@ -24,14 +41,25 @@ export function loadAboutLocaleRuntime(source) {
 }
 
 // Build and verify always apply strict validation after evaluating the production module.
-export function readAboutLocaleModel(source) {
+export function readAboutLocaleModel(source, externalSource) {
   const model = loadAboutLocaleRuntime(source);
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
+  if (externalSource !== undefined) {
+    if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
+    const externalLocales = readExternalAboutLocales(externalSource);
+    model.validate({...model.locales,...externalLocales},model.settings,model.languages,model.recorderYaml);
+    const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
+    if (JSON.stringify(Object.keys(externalLocales)) !== JSON.stringify(expected)) {
+      throw Error('External About locales must exactly match non-native LANGUAGE_DEFINITIONS');
+    }
+    model.externalLocales = externalLocales;
+  }
   return model;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const source = await readFile(new URL('../frontend/gewitterradar.js',import.meta.url),'utf8');
-  const model = readAboutLocaleModel(source);
-  console.log(`PASS: About bundles ${Object.keys(model.locales).join(', ')}; ${model.languages.length} registered languages.`);
+  const externalSource = await readFile(new URL('../frontend/locales/about-locales.js',import.meta.url),'utf8');
+  const model = readAboutLocaleModel(source,externalSource);
+  console.log(`PASS: ${Object.keys(model.locales).length} native and ${Object.keys(model.externalLocales).length} external About bundles; ${model.languages.length} registered languages.`);
 }

@@ -27,7 +27,7 @@ REQUIRED = {
     "translations/de.json",
     "translations/en.json",
 }
-REQUIRED |= {"frontend/gewitterradar.js"} | {
+REQUIRED |= {"frontend/gewitterradar.js", "frontend/locales/about-locales.js"} | {
     "frontend/" + asset["file"]
     for asset in json.loads((ROOT / "frontend" / "assets.json").read_text(encoding="utf-8"))
 }

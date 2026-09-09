@@ -12,24 +12,18 @@ export function aboutLocalesDelta(source) {
     '      const locale = resolveAboutLocale(this._languageValue());\n      const t = (key) => locale.strings[key];\n      for (const node');
   once('      const labels = ABOUT_SETTING_LABELS[this._languageValue()] || ABOUT_SETTING_LABELS[LANGUAGE_DEFAULT];\n      const purposes = ABOUT_SETTING_PURPOSES[this._languageValue()] || ABOUT_SETTING_PURPOSES[LANGUAGE_DEFAULT];\n      const sourcePurposes = ABOUT_SOURCE_PURPOSES[this._languageValue()] || ABOUT_SOURCE_PURPOSES[LANGUAGE_DEFAULT];',
     '      const {settingLabels: labels, settingPurposes: purposes, sourcePurposes} = locale;');
+  once('      const locale = resolveAboutLocale(this._languageValue());\n      const t = (key) => locale.strings[key];',
+    '      const language = this._languageValue();\n      const locale = resolveAboutLocale(language);\n      const status = dialog.querySelector(\'.about-copy-status\');\n      if (this._aboutStatusLanguage !== language || this._aboutStatusLocale !== locale) status.textContent = \'\';\n      this._aboutStatusLanguage = language; this._aboutStatusLocale = locale;\n      const t = (key) => locale.strings[key];');
+  once("      for (const row of dialog.querySelectorAll('[data-setting]')) {",
+    "      requestAboutLocale(language, () => {\n        if (this._aboutDialog === dialog && this._languageValue() === language) this._syncAbout();\n      });\n      for (const row of dialog.querySelectorAll('[data-setting]')) {");
+  once("      const dynamicRoots = new Set([\n        'header-status'",
+    "      const dynamicRoots = new Set([\n        'about-shell','header-status'");
   return source;
 }
 
 const localeArchitecture = String.raw`  // One resolved bundle owns every About text. Existing tables are only data inputs.
-  // Add future translations here as complete bundles; LANGUAGE_DEFINITIONS owns names.
+  // Deutsch/English stay native; other registered languages are loaded as one module on About demand.
   const ABOUT_LOCALES = {
-    Dansk: {
-      strings: ABOUT_STRINGS.Dansk,
-      settingLabels: ABOUT_SETTING_LABELS.Dansk,
-      settingPurposes: ABOUT_SETTING_PURPOSES.Dansk,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.Dansk
-    },
-    Nederlands: {
-      strings: ABOUT_STRINGS.Nederlands,
-      settingLabels: ABOUT_SETTING_LABELS.Nederlands,
-      settingPurposes: ABOUT_SETTING_PURPOSES.Nederlands,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.Nederlands
-    },
     Deutsch: {
       strings: ABOUT_STRINGS.Deutsch,
       settingLabels: ABOUT_SETTING_LABELS.Deutsch,
@@ -43,6 +37,14 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
       sourcePurposes: ABOUT_SOURCE_PURPOSES.English
     }
   };
+  const ABOUT_EXTERNAL_LANGUAGE_NAMES = new Set(LANGUAGE_DEFINITIONS
+    .map(entry => entry.value).filter(name => !Object.hasOwn(ABOUT_LOCALES,name)));
+  const ABOUT_LOCALE_MODULE_URL = (() => {
+    const main = new URL(import.meta.url), module = new URL('./locales/about-locales.js',main);
+    module.search = main.search;
+    return module.href;
+  })();
+  let aboutExternalLocales = null, aboutExternalLocalesLoading = null, aboutExternalLocaleAttempt = 0;
 
   function validateAboutLocales(locales, settings, languages, recorderYaml) {
     const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -90,9 +92,37 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
     }
   }
 
+  function installAboutExternalLocales(locales) {
+    const combined = {...ABOUT_LOCALES,...locales};
+    validateAboutLocales(combined,SETTING_ENTITIES,LANGUAGE_DEFINITIONS,ABOUT_RECORDER_YAML);
+    if (Object.keys(locales).length !== ABOUT_EXTERNAL_LANGUAGE_NAMES.size ||
+        [...ABOUT_EXTERNAL_LANGUAGE_NAMES].some(name => !Object.hasOwn(locales,name))) {
+      throw Error('External About locales must cover every non-native registered language');
+    }
+    aboutExternalLocales = locales;
+    return locales;
+  }
+
+  function loadAboutExternalLocales() {
+    if (aboutExternalLocales) return Promise.resolve(aboutExternalLocales);
+    if (aboutExternalLocalesLoading) return aboutExternalLocalesLoading;
+    const url = new URL(ABOUT_LOCALE_MODULE_URL), attempt = aboutExternalLocaleAttempt++;
+    if (attempt) url.hash = 'retry-' + attempt;
+    aboutExternalLocalesLoading = import(url.href)
+      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES))
+      .catch(() => null)
+      .finally(() => { aboutExternalLocalesLoading = null; });
+    return aboutExternalLocalesLoading;
+  }
+
+  function requestAboutLocale(language, onLoaded) {
+    if (!ABOUT_EXTERNAL_LANGUAGE_NAMES.has(language) || aboutExternalLocales?.[language]) return;
+    loadAboutExternalLocales().then(locales => { if (locales?.[language]) onLoaded(); });
+  }
+
   function resolveAboutLocale(language) {
-    const candidate = LANGUAGE_DEFINITIONS.some(entry => entry.value === language) && Object.hasOwn(ABOUT_LOCALES,language)
-      ? ABOUT_LOCALES[language] : null;
+    const candidate = LANGUAGE_DEFINITIONS.some(entry => entry.value === language)
+      ? ABOUT_LOCALES[language] || aboutExternalLocales?.[language] : null;
     return isAboutLocaleComplete(candidate) ? candidate : ABOUT_LOCALES.English;
   }
 
