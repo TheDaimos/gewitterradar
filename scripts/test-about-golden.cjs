@@ -6,7 +6,11 @@ const server=http.createServer((req,res)=>{
  if(name.startsWith('/tests/fixtures/v4_05/assets/'))name=name.replace('/tests/fixtures/v4_05/assets/','/frontend/assets/');
  const file=path.resolve(root,'.'+name);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}
  fs.readFile(file,(error,data)=>{if(error){res.writeHead(404).end();return;}
-  if(name.endsWith('about-onboarding-harness.html')&&url.searchParams.has('golden'))data=Buffer.from(data.toString().replace(/await import\([^;]+;/,"await import('../tests/fixtures/v4_05/gewitterradar.js');"));
+  if(name.endsWith('about-onboarding-harness.html')&&url.searchParams.has('golden')){
+   data=Buffer.from(data.toString()
+    .replace(/await import\([^;]+;/,"await import('../tests/fixtures/v4_05/gewitterradar.js');")
+    .replace("assert(dialog.querySelector('.about-dedication h3').textContent===(language==='Deutsch'?'Für Alkje':'For Alkje'),'dedication localized');","assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');"));
+  }
   res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png'})[path.extname(file)]||'text/plain');res.end(data);
  });
 });
