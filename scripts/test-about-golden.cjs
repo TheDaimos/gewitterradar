@@ -1,15 +1,18 @@
 // Compare frozen V4.05 with independently scoped Recorder and About finalization adjustments.
 const {chromium}=require('playwright'),sharp=require('sharp'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'artwork/acceptance/premium-controls/golden');fs.mkdirSync(out,{recursive:true});
+const once=(source,from,to)=>{assert.equal(source.split(from).length,2,'Golden harness anchor changed: '+from.slice(0,80));return source.replace(from,to);};
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');let name=url.pathname;
  if(name.startsWith('/tests/fixtures/v4_05/assets/'))name=name.replace('/tests/fixtures/v4_05/assets/','/frontend/assets/');
  const file=path.resolve(root,'.'+name);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}
  fs.readFile(file,(error,data)=>{if(error){res.writeHead(404).end();return;}
   if(name.endsWith('about-onboarding-harness.html')&&url.searchParams.has('golden')){
-   data=Buffer.from(data.toString()
-    .replace(/await import\([^;]+;/,"await import('../tests/fixtures/v4_05/gewitterradar.js');")
-    .replace("assert(dialog.querySelector('.about-dedication h3').textContent===(language==='Deutsch'?'Für Alkje':'For Alkje'),'dedication localized');","assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');"));
+   let harness=data.toString();
+   harness=once(harness,"await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');","await import('../tests/fixtures/v4_05/gewitterradar.js');");
+   harness=once(harness,"    assert(dialog.querySelector('h2').textContent===({Deutsch:'Über Gewitterradar',Dansk:'Om Gewitterradar',Nederlands:'Over Gewitterradar'}[language]||'About Gewitterradar'),'language fallback '+language);","    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);");
+   harness=once(harness,"    assert(dialog.querySelector('.about-dedication h3').textContent===({Deutsch:'Für Alkje',Dansk:'Til Alkje',Nederlands:'Voor Alkje'}[language]||'For Alkje'),'dedication localized');","    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');");
+   data=Buffer.from(harness);
   }
   res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png'})[path.extname(file)]||'text/plain');res.end(data);
  });
