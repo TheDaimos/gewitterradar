@@ -1,22 +1,24 @@
 // Explicit first-start delta; the canonical frontend remains a single shared payload.
 export function languageOnboardingDelta(source) {
  const once=(from,to)=>{if(source.split(from).length!==2)throw Error('Language onboarding anchor changed: '+from.slice(0,80));source=source.replace(from,to);};
- once('  const ABOUT_ONBOARDING_VERSION = 1;',`  const LANGUAGE_ONBOARDING_VERSION = 1;
-  const LANGUAGE_ONBOARDING_KEY = 'gewitterradar-language-onboarding-version';
+ once('  const ABOUT_ONBOARDING_VERSION = 1;',`  const LANGUAGE_INITIALIZATION_ENTITIES = Object.freeze({native:'switch.gewitterradar_language_initialized',legacy:'input_boolean.lightning_detection_language_initialized'});
   let languageOnboardingOwner = null;
-  let languageOnboardingSessionVersion = 0;
   const ABOUT_ONBOARDING_VERSION = 1;`);
  once('    disconnectedCallback() {\n      this._closeAbout(false, false);','    disconnectedCallback() {\n      this._closeLanguageOnboarding(false);\n      this._closeAbout(false, false);');
  once('      if (!this.isConnected || !this._built || !this._hass || aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;', '      if (!this.isConnected || !this._built || !this._hass) return;');
- once("      let seen = 0;\n      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}", "      if (!this._languageOnboardingComplete()) { this._openLanguageOnboarding(); return; }\n      if (this._languageOnboardingDialog || aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;\n      let seen = 0;\n      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}");
+ once("      let seen = 0;\n      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}", "      if (!this._languageOnboardingComplete()) { this._openLanguageOnboarding(); return; }\n      if (languageOnboardingOwner?._languageOnboardingSubmitting) return;\n      this._closeLanguageOnboarding(true);\n      if (aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;\n      let seen = 0;\n      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}");
  once('    _openAbout() {\n', '    _openAbout() {\n      if (!this._languageOnboardingComplete()) { this._maybeOpenAbout(); return; }\n');
  once('    _maybeOpenAbout() {',methods+'    _maybeOpenAbout() {');
  return source;
 }
 const methods=String.raw`    _languageOnboardingComplete() {
-      if (languageOnboardingSessionVersion >= LANGUAGE_ONBOARDING_VERSION) return true;
-      try { return Number(localStorage.getItem(LANGUAGE_ONBOARDING_KEY)) >= LANGUAGE_ONBOARDING_VERSION; }
-      catch (_) { return false; }
+      return this._hass?.states?.[this._languageInitializationEntity()]?.state === 'on';
+    }
+
+    _languageInitializationEntity() {
+      // A present native marker remains authoritative even while unavailable.
+      const mapping = LANGUAGE_INITIALIZATION_ENTITIES;
+      return this._config.language_initialized_entity || (this._hass?.states?.[mapping.native] ? mapping.native : mapping.legacy);
     }
 
     _initialLanguageChoice() {
@@ -69,6 +71,9 @@ const methods=String.raw`    _languageOnboardingComplete() {
       const button = dialog.querySelector('button'),error = dialog.querySelector('.language-error');
       this._languageOnboardingSubmitting = true;button.disabled = true;error.textContent = '';
       try {
+        if (this._languageOnboardingComplete()) { this._closeLanguageOnboarding(true); return; }
+        const marker = this._languageInitializationEntity(),markerState = this._hass?.states?.[marker]?.state;
+        if (!['on','off'].includes(markerState) || !['switch','input_boolean'].includes(marker?.split('.')[0])) throw Error('Global language marker unavailable');
         const entity = this._languageEntity(),state = this._hass?.states?.[entity];
         if (!state || ['unknown','unavailable'].includes(state.state)) throw Error('Language setting unavailable');
         const written = await this._selectSetting(entity,value);
@@ -76,8 +81,14 @@ const methods=String.raw`    _languageOnboardingComplete() {
         if (this._languageOnboardingDialog !== dialog || !this.isConnected) return;
         // Reuse the regular selector's transient preview until HA confirms its state.
         this._languagePreview = value;
-        try { localStorage.setItem(LANGUAGE_ONBOARDING_KEY,String(LANGUAGE_ONBOARDING_VERSION)); } catch (_) {}
-        languageOnboardingSessionVersion = LANGUAGE_ONBOARDING_VERSION;
+        await this._hass.callService(marker.split('.')[0],'turn_on',{entity_id:marker});
+        // Advance only after the global HA state is visible, never from a local marker.
+        const deadline = Date.now() + 10000;
+        while (!this._languageOnboardingComplete()) {
+          if (this._languageOnboardingDialog !== dialog || !this.isConnected) return;
+          if (Date.now() >= deadline) throw Error('Global language marker not confirmed');
+          await new Promise(resolve => setTimeout(resolve,50));
+        }
         this._closeLanguageOnboarding(true);
         this._render();this._maybeOpenAbout();
       } catch (_) {
@@ -85,7 +96,7 @@ const methods=String.raw`    _languageOnboardingComplete() {
           error.textContent = 'Sprache konnte nicht gespeichert werden. Bitte erneut versuchen. / Could not save the language. Please try again.';
           button.disabled = false;button.focus();
         }
-      } finally { this._languageOnboardingSubmitting = false; }
+      } finally { this._languageOnboardingSubmitting = false; if (this._languageOnboardingComplete()) this._maybeOpenAbout(); }
     }
 
     _closeLanguageOnboarding(restoreFocus = false) {

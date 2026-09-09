@@ -8,14 +8,14 @@
   const wait=(ms)=>new Promise((resolve)=>setTimeout(resolve,ms));
   const result=document.getElementById('result');
 // This harness covers the existing UI after language confirmation; the dedicated language suite covers first start.
-localStorage.setItem('gewitterradar-language-onboarding-version','1');
+
   const compassStorageKey='gewitterradar-last-compass-design';
   localStorage.removeItem(compassStorageKey);
   // Dedicated about-onboarding-harness.html covers the unseen/seen/version paths.
   localStorage.setItem('gewitterradar-about-onboarding-version','1');
   const card=document.createElement('gewitterradar-card');
   card.setConfig({});
-  card.hass={language:'de',config:{version:'harness',unit_system:{length:'km'},latitude:0,longitude:0},states:{},themes:{theme:'dark'},callService:async()=>{}};
+  card.hass={language:'de',config:{version:'harness',unit_system:{length:'km'},latitude:0,longitude:0},states:{'switch.gewitterradar_language_initialized':{state:'on',attributes:{}}},themes:{theme:'dark'},callService:async()=>{}};
   document.getElementById('fixture').append(card);
   await wait(1800);
   card._setMedallionCalibrationEnabled(true);

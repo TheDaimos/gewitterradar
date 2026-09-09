@@ -2,22 +2,35 @@
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..'),key='gewitterradar-language-onboarding-version',aboutKey='gewitterradar-about-onboarding-version';
+const installations=new Map();
+let installationId=0;
 const fixture=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#0b141c}#fixture{width:100%;max-width:1300px}</style><div id="fixture"></div><script type="module">
 const params=new URLSearchParams(location.search);
 await import(params.get('delivery')==='integration'?'/custom_components/gewitterradar/frontend/gewitterradar.js':'/dashboard/dist/gewitterradar.js');
 window.calls=[];window.cards=[];window.fail=params.has('fail');window.defer=false;
 const entity=params.get('entity')||'select.gewitterradar_language';
-window.hass={language:params.get('ha')||'en',locale:params.has('locale')?{language:params.get('locale')}:undefined,config:{version:'test',unit_system:{length:'km'},latitude:0,longitude:0},themes:{theme:'dark'},states:params.has('missing')?{}:{[entity]:{state:params.get('chosen')||'English',attributes:{}}},callService:async(domain,service,data)=>{
- window.calls.push({domain,service,data});if(window.fail)throw Error('Service unavailable');
- if(window.defer)await new Promise(resolve=>window.finishWrite=resolve);
- window.hass={...window.hass,states:{...window.hass.states,[data.entity_id]:{state:data.option,attributes:{}}}};
+const marker=params.get('marker')||(entity.startsWith('input_select.')?'input_boolean.lightning_detection_language_initialized':'switch.gewitterradar_language_initialized');
+if(params.has('oldLocal'))localStorage.setItem('gewitterradar-language-onboarding-version','1');
+const globalState=await (await fetch('/global?'+params)).json();
+window.hass={language:params.get('ha')||'en',locale:params.has('locale')?{language:params.get('locale')}:undefined,config:{version:'test',unit_system:{length:'km'},latitude:0,longitude:0},themes:{theme:'dark'},states:params.has('missing')?{}:{[entity]:{state:globalState.language,attributes:{}},...(!params.has('missingMarker')?{[marker]:{state:globalState.initialized?'on':'off',attributes:{}}}:{})},callService:async(domain,service,data)=>{
+ window.calls.push({domain,service,data});if(window.fail || (window.failMarker&&service==='turn_on'))throw Error('Service unavailable');
+ if(window.defer&&service==='select_option')await new Promise(resolve=>window.finishWrite=resolve);
+ await fetch('/global?'+params,{method:'POST',body:JSON.stringify(service==='select_option'?{language:data.option}:{initialized:true})});
+ window.hass={...window.hass,states:{...window.hass.states,[data.entity_id]:{state:service==='select_option'?data.option:'on',attributes:{}}}};
  window.cards.forEach(card=>card.hass=window.hass);
 }};
-window.makeCard=()=>{const card=document.createElement('gewitterradar-card');card.setConfig(params.has('override')?{language_entity:entity}:{});window.cards.push(card);card.hass=window.hass;let host=document.querySelector('#fixture');if(params.has('preview')){const preview=document.createElement('hui-card-preview');host.append(preview);host=preview;}host.append(card);return card;};
+window.makeCard=()=>{const card=document.createElement('gewitterradar-card');card.setConfig({...params.has('override')?{language_entity:entity}:{},...params.has('marker')?{language_initialized_entity:marker}:{}});window.cards.push(card);card.hass=window.hass;let host=document.querySelector('#fixture');if(params.has('preview')){const preview=document.createElement('hui-card-preview');host.append(preview);host=preview;}host.append(card);return card;};
 window.card=window.makeCard();window.ready=true;
 </script>`;
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
+ if(url.pathname==='/global'){
+  const id=url.searchParams.get('installation');
+  if(!installations.has(id))installations.set(id,{language:url.searchParams.get('chosen')||'English',initialized:false});
+  const state=installations.get(id);res.setHeader('Content-Type','application/json');
+  if(req.method==='POST'){let body='';req.on('data',chunk=>body+=chunk);req.on('end',()=>{Object.assign(state,JSON.parse(body));res.end(JSON.stringify(state));});}
+  else res.end(JSON.stringify(state));return;
+ }
  if(url.pathname==='/fixture'){res.setHeader('Content-Type','text/html');res.end(fixture);return;}
  const file=path.resolve(root,'.'+decodeURIComponent(url.pathname));if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}
  fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end();return;}res.setHeader('Content-Type',({'.js':'text/javascript','.webp':'image/webp','.png':'image/png'})[path.extname(file)]||'text/plain');res.end(data);});
@@ -30,7 +43,7 @@ const server=http.createServer((req,res)=>{
  const open=async(delivery,params={},options={})=>{
   const context=await browser.newContext({viewport:{width:900,height:850},...options});
   const page=await context.newPage();
-  await page.goto(base+'/fixture?'+new URLSearchParams({delivery,...params}));await page.waitForFunction(()=>window.ready);
+  await page.goto(base+'/fixture?'+new URLSearchParams({delivery,installation:String(++installationId),...params}));await page.waitForFunction(()=>window.ready);
   return {context,page};
  };
  const confirm=async page=>{await page.getByRole('button',{name:'Weiter / Continue'}).click();await page.waitForFunction(()=>!window.card._languageOnboardingDialog);};
@@ -61,9 +74,10 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('.about-dialog').count(),0);
    await page.evaluate(()=>window.finishWrite());
    await page.waitForFunction(()=>!window.card._languageOnboardingDialog);
-   assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),'1');
+   assert.equal(await page.evaluate(()=>window.hass.states[window.card._languageInitializationEntity()].state),'on');
+   assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
    assert.equal(await page.evaluate(()=>window.card._languageValue()),'English');
-   assert.deepEqual(await page.evaluate(()=>window.calls),[{domain:'select',service:'select_option',data:{entity_id:'select.gewitterradar_language',option:'English'}}]);
+   assert.deepEqual(await page.evaluate(()=>window.calls),[{domain:'select',service:'select_option',data:{entity_id:'select.gewitterradar_language',option:'English'}},{domain:'switch',service:'turn_on',data:{entity_id:'switch.gewitterradar_language_initialized'}}]);
    assert.equal(await page.locator('.about-dialog').count(),1);
    assert.equal(await page.locator('.about-dialog h2').textContent(),'About Gewitterradar');
    assert.equal(await page.evaluate(key=>localStorage.getItem(key),aboutKey),null);
@@ -73,6 +87,33 @@ const server=http.createServer((req,res)=>{
    await page.evaluate(()=>{window.hass={...window.hass,language:'de-DE',locale:{language:'de-DE'}};window.card.hass=window.hass;});
    assert.equal(await page.evaluate(()=>window.card._languageValue()),'English');assert.equal(await page.evaluate(()=>window.calls.length),0);
    await context.close();
+   // Two independent profiles share only the simulated HA installation, never storage.
+   const first=await open(delivery,{ha:'es',oldLocal:'1'});
+   assert.equal(await first.page.locator('.language-onboarding').count(),1,'old local marker cannot initialize HA');
+   await first.page.getByRole('radio',{name:'Français',exact:true}).check();await confirm(first.page);
+   const installation=new URL(first.page.url()).searchParams.get('installation');
+   await first.page.evaluate(()=>window.card._closeAbout(true,false));
+   const second=await open(delivery,{ha:'de-DE',installation});
+   assert.equal(await second.page.locator('.language-onboarding').count(),0);
+   assert.equal(await second.page.evaluate(()=>window.card._languageValue()),'Français');
+   assert.equal(await second.page.locator('.about-dialog').count(),1);
+   assert.equal(await second.page.evaluate(()=>window.calls.length),0);
+   await first.page.reload();await first.page.waitForFunction(()=>window.ready);
+   assert.equal(await first.page.locator('.language-onboarding').count(),0);
+   assert.equal(await first.page.locator('.about-dialog').count(),0);
+   await second.context.close();await first.context.close();
+   const markerFailure=await open(delivery,{missingMarker:'1'});
+   await markerFailure.page.getByRole('button',{name:'Weiter / Continue'}).click();
+   await markerFailure.page.locator('.language-error').filter({hasText:'Could not save'}).waitFor();
+   assert.equal(await markerFailure.page.evaluate(()=>window.calls.length),0);
+   await markerFailure.context.close();
+   const rejected=await open(delivery);
+   await rejected.page.evaluate(()=>window.failMarker=true);
+   await rejected.page.getByRole('button',{name:'Weiter / Continue'}).click();
+   await rejected.page.locator('.language-error').filter({hasText:'Could not save'}).waitFor();
+   assert.equal(await rejected.page.locator('.about-dialog').count(),0);
+   assert.equal(await rejected.page.evaluate(()=>window.card._languageOnboardingComplete()),false);
+   await rejected.context.close();
    // Same write path for legacy helpers and explicit card overrides.
    for(const entity of ['input_select.lightning_detection_language','select.test_language']){
     const {context,page}=await open(delivery,{ha:'de-DE',entity,...(entity==='select.test_language'?{override:'1'}:{})});
@@ -90,6 +131,7 @@ const server=http.createServer((req,res)=>{
     assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
     assert.equal(await page.locator('.about-dialog').count(),0);
     await page.evaluate(()=>{window.fail=false;window.hass.states['select.gewitterradar_language']={state:'English',attributes:{}};});
+    await page.evaluate(()=>window.hass.states[window.card._languageInitializationEntity()]={state:'off',attributes:{}});
     await confirm(page);assert.equal(await page.locator('.about-dialog h2').textContent(),'Über Gewitterradar');
     await context.close();
    }

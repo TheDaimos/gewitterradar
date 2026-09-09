@@ -123,6 +123,11 @@ input_number:
     unit_of_measurement: "%"
 
 input_boolean:
+  lightning_detection_language_initialized:
+    name: "Gewitterradar – Language initialized"
+    icon: mdi:translate
+    # No initial value: restore the global confirmation across HA restarts.
+
   lightning_detection_aura_effects:
     name: "App Lightning Detection – Aura Effects"
     icon: mdi:blur

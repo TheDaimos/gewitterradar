@@ -7,13 +7,14 @@
 <script type="module">
 await import(new URLSearchParams(location.search).get('delivery')==='integration' ? '../custom_components/gewitterradar/frontend/gewitterradar.js' : '../dashboard/dist/gewitterradar.js');
 // This harness covers the existing UI after language confirmation; the dedicated language suite covers first start.
-localStorage.setItem('gewitterradar-language-onboarding-version','1');
+
 const key='gewitterradar-about-onboarding-version';
 const scenario=new URLSearchParams(location.search).get('scenario')||'first';
 if(scenario==='first')localStorage.removeItem(key);
 if(scenario==='older')localStorage.setItem(key,'0');
 if(scenario==='future')localStorage.setItem(key,'2');
 const states={
+  'switch.gewitterradar_language_initialized':{state:'on',attributes:{}},
   'select.gewitterradar_language':{state:'Deutsch',attributes:{}},
   'select.gewitterradar_distance_unit':{state:'KM',attributes:{}},
   'number.gewitterradar_observation_radius':{state:'200',attributes:{}},

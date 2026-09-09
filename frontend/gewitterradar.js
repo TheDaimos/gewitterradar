@@ -48,10 +48,8 @@
     { id:'candidate_06', uiIndex:6, type:'frame', label:'Candidate 06', frame:COMPASS_METAL_FRAME_V5_IMAGE, visualStageScale:1.059, outerAlphaRatio:[.929825,.922648], fitContour:'protected circular opening', outerOverhangs:'four screw bosses and decorative outer metal', intrusionAngles:[0,90,180,270], calibrationRound:[626.22/1254,603.41/1254,414.42/1254], roundFitMode:'protected', local:true }
   ];
   const COMPASS_DESIGN_STORAGE_KEY = 'gewitterradar-last-compass-design';
-  const LANGUAGE_ONBOARDING_VERSION = 1;
-  const LANGUAGE_ONBOARDING_KEY = 'gewitterradar-language-onboarding-version';
+  const LANGUAGE_INITIALIZATION_ENTITIES = Object.freeze({native:'switch.gewitterradar_language_initialized',legacy:'input_boolean.lightning_detection_language_initialized'});
   let languageOnboardingOwner = null;
-  let languageOnboardingSessionVersion = 0;
   const ABOUT_ONBOARDING_VERSION = 1;
   const ABOUT_STORAGE_KEY = 'gewitterradar-about-onboarding-version';
   let aboutClaimedVersion = 0;
@@ -14712,9 +14710,13 @@
     }
 
     _languageOnboardingComplete() {
-      if (languageOnboardingSessionVersion >= LANGUAGE_ONBOARDING_VERSION) return true;
-      try { return Number(localStorage.getItem(LANGUAGE_ONBOARDING_KEY)) >= LANGUAGE_ONBOARDING_VERSION; }
-      catch (_) { return false; }
+      return this._hass?.states?.[this._languageInitializationEntity()]?.state === 'on';
+    }
+
+    _languageInitializationEntity() {
+      // A present native marker remains authoritative even while unavailable.
+      const mapping = LANGUAGE_INITIALIZATION_ENTITIES;
+      return this._config.language_initialized_entity || (this._hass?.states?.[mapping.native] ? mapping.native : mapping.legacy);
     }
 
     _initialLanguageChoice() {
@@ -14767,6 +14769,9 @@
       const button = dialog.querySelector('button'),error = dialog.querySelector('.language-error');
       this._languageOnboardingSubmitting = true;button.disabled = true;error.textContent = '';
       try {
+        if (this._languageOnboardingComplete()) { this._closeLanguageOnboarding(true); return; }
+        const marker = this._languageInitializationEntity(),markerState = this._hass?.states?.[marker]?.state;
+        if (!['on','off'].includes(markerState) || !['switch','input_boolean'].includes(marker?.split('.')[0])) throw Error('Global language marker unavailable');
         const entity = this._languageEntity(),state = this._hass?.states?.[entity];
         if (!state || ['unknown','unavailable'].includes(state.state)) throw Error('Language setting unavailable');
         const written = await this._selectSetting(entity,value);
@@ -14774,8 +14779,14 @@
         if (this._languageOnboardingDialog !== dialog || !this.isConnected) return;
         // Reuse the regular selector's transient preview until HA confirms its state.
         this._languagePreview = value;
-        try { localStorage.setItem(LANGUAGE_ONBOARDING_KEY,String(LANGUAGE_ONBOARDING_VERSION)); } catch (_) {}
-        languageOnboardingSessionVersion = LANGUAGE_ONBOARDING_VERSION;
+        await this._hass.callService(marker.split('.')[0],'turn_on',{entity_id:marker});
+        // Advance only after the global HA state is visible, never from a local marker.
+        const deadline = Date.now() + 10000;
+        while (!this._languageOnboardingComplete()) {
+          if (this._languageOnboardingDialog !== dialog || !this.isConnected) return;
+          if (Date.now() >= deadline) throw Error('Global language marker not confirmed');
+          await new Promise(resolve => setTimeout(resolve,50));
+        }
         this._closeLanguageOnboarding(true);
         this._render();this._maybeOpenAbout();
       } catch (_) {
@@ -14783,7 +14794,7 @@
           error.textContent = 'Sprache konnte nicht gespeichert werden. Bitte erneut versuchen. / Could not save the language. Please try again.';
           button.disabled = false;button.focus();
         }
-      } finally { this._languageOnboardingSubmitting = false; }
+      } finally { this._languageOnboardingSubmitting = false; if (this._languageOnboardingComplete()) this._maybeOpenAbout(); }
     }
 
     _closeLanguageOnboarding(restoreFocus = false) {
@@ -14801,7 +14812,9 @@
         if (/^(hui-card-preview|hui-dialog-edit-card|hui-card-element-editor)$/.test(node.localName || '')) return;
       }
       if (!this._languageOnboardingComplete()) { this._openLanguageOnboarding(); return; }
-      if (this._languageOnboardingDialog || aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;
+      if (languageOnboardingOwner?._languageOnboardingSubmitting) return;
+      this._closeLanguageOnboarding(true);
+      if (aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;
       let seen = 0;
       try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
       if (seen >= ABOUT_ONBOARDING_VERSION) return;

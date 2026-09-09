@@ -21,6 +21,7 @@ from .const import (
     CONF_DISTANCE_UNIT,
     CONF_LEGACY_IMPORT_VERSION,
     CONF_LANGUAGE,
+    CONF_LANGUAGE_INITIALIZED,
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
     CONF_STORM_RADIUS,
@@ -230,11 +231,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry) -> bool:
     """Set up Gewitterradar from a config entry."""
     data = dict(entry.data)
+    existing = dict(entry.options)
+    # Preserve a confirmation from the global legacy helper on native migration.
+    # Neither an existing language value nor any browser state implies consent.
+    if CONF_LANGUAGE_INITIALIZED not in existing:
+        marker = hass.states.get("input_boolean.lightning_detection_language_initialized")
+        if marker is not None and marker.state == "on":
+            existing[CONF_LANGUAGE_INITIALIZED] = True
     try:
         if data.get(CONF_LEGACY_IMPORT_VERSION) == LEGACY_IMPORT_VERSION:
-            options = _options_with_defaults(dict(entry.options))
+            options = _options_with_defaults(existing)
         else:
-            options = _options_after_legacy_import(hass, dict(entry.options))
+            options = _options_after_legacy_import(hass, existing)
             data[CONF_LEGACY_IMPORT_VERSION] = LEGACY_IMPORT_VERSION
     except (TypeError, ValueError) as err:
         raise ConfigEntryError(f"Invalid Gewitterradar options: {err}") from err
