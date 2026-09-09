@@ -58,7 +58,6 @@
   const ABOUT_DEDICATION_IMAGE = new URL('./assets/gewitterradar-about-dedication-v4.webp', import.meta.url).href;
   const ABOUT_CLOSE_IMAGE = new URL('./assets/gewitterradar-about-close-premium.webp', import.meta.url).href;
   const ABOUT_COPY_IMAGE = new URL('./assets/gewitterradar-about-copy-scroll.webp', import.meta.url).href;
-  const ABOUT_DEDICATION = 'Danke, dass du mir die Zeit lässt, meinen Interessen und meiner Begeisterung für Technik, Wetter und all den Ideen dazwischen nachzugehen – und mich Projekten wie Gewitterradar mit so viel Freude und Ausdauer zu widmen.';
   // Kept byte-for-byte in sync with the fenced YAML in docs/RECORDER.md by the build gate.
   const ABOUT_RECORDER_YAML = `recorder:
   exclude:
@@ -88,11 +87,12 @@
       copy:'YAML kopieren', copied:'Kopiert', copyFailed:'Kopieren nicht möglich – bitte den Code markieren.', later:'Später erneut ansehen',
       merge:'Falls bereits ein recorder:-Abschnitt existiert, integriere die Einträge dort. Lege KEINEN zweiten Top-Level-recorder:-Block an.',
       live:'Der Recorder-Ausschluss deaktiviert NICHT die Live-Zustände für Gewitterradar. Bestehende historische Daten werden nicht automatisch entfernt.',
-      entities:'Verwendete Entitäten & Funktionen', entitiesSubtitle:'Eine Übersicht aller verwendeten Entitäten und ihrer Funktionen.', native:'Native Gewitterradar-Konfiguration', legacy:'Legacy-Fallback / Kompatibilität',
+      entities:'Verwendete Entitäten & Funktionen', entitiesSubtitle:'Eine Übersicht aller verwendeten Entitäten und ihrer Funktionen.', native:'Native Gewitterradar-Konfiguration', sourceNative:'Native', legacy:'Legacy-Fallback / Kompatibilität',
       legacyPurpose:'Dient nur als Kompatibilitäts-Fallback.', locationPerson:'Stellt wählbare Personenstandorte bereit.', locationZone:'Stellt wählbare Zonen als Referenz bereit.',
       legacyText:'Die bestehenden lightning_detection_* Helfer dienen der Kompatibilität. Für eine frische native Installation sind sie nicht erforderlich.',
       resolved:'Aktuell aufgelöst', available:'verfügbar', unavailable:'nicht verfügbar', override:'Card-Konfiguration',
       sources:'Blitzdatenquellen', locations:'Standortquellen', dynamic:'person.* und zone.* werden dynamisch ermittelt.',
+      dedicationTitle:'Für Alkje', dedicationText:'Danke, dass du mir die Zeit lässt, meinen Interessen und meiner Begeisterung für Technik, Wetter und all den Ideen dazwischen nachzugehen – und mich Projekten wie Gewitterradar mit so viel Freude und Ausdauer zu widmen.',
       footer:'Jederzeit über Einstellungen → Über Gewitterradar erneut aufrufbar.'
     },
     English: {
@@ -113,11 +113,12 @@
       copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.', later:'View again later',
       merge:'If a recorder: section already exists, merge these entries into it. Do NOT create a second top-level recorder: block.',
       live:'Recorder exclusion does NOT disable live states for Gewitterradar. Existing historical data is not removed automatically.',
-      entities:'Entities & functions used', entitiesSubtitle:'An overview of the entities used and their functions.', native:'Native Gewitterradar configuration', legacy:'Legacy fallback / compatibility',
+      entities:'Entities & functions used', entitiesSubtitle:'An overview of the entities used and their functions.', native:'Native Gewitterradar configuration', sourceNative:'Native', legacy:'Legacy fallback / compatibility',
       legacyPurpose:'Used only as a compatibility fallback.', locationPerson:'Provides selectable person locations.', locationZone:'Provides selectable reference zones.',
       legacyText:'Existing lightning_detection_* helpers provide compatibility. They are not required for a fresh native installation.',
       resolved:'Currently resolved', available:'available', unavailable:'unavailable', override:'Card configuration',
       sources:'Lightning data sources', locations:'Location sources', dynamic:'person.* and zone.* are discovered dynamically.',
+      dedicationTitle:'For Alkje', dedicationText:'Thank you for giving me the time to pursue the interests and enthusiasm I have for technology, weather, and all the ideas in between – and to devote myself to projects like Gewitterradar with so much joy and perseverance.',
       footer:'Available any time under Settings → About Gewitterradar.'
     }
   };
@@ -14956,7 +14957,7 @@
       <dialog class="about-dialog" role="dialog" aria-modal="true" aria-labelledby="about-title">
         <header class="about-head"><img src="${ABOUT_LOGO}" alt="Gewitterradar" width="86" height="86"><div class="about-head-copy"><h2 id="about-title" data-about-text="title"></h2><p data-about-text="subtitle"></p></div><div class="about-claim" data-about-text="claim"></div><button class="about-close" type="button" data-about-close aria-label="Close"><span aria-hidden="true"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></span></button></header>
         <div class="about-content">
-          <section class="about-dedication"><div class="about-forest" aria-hidden="true"></div>${icon('heart','about-heart')}<div class="about-dedication-copy"><h3>Für Alkje</h3><p></p></div><div class="about-signature" aria-hidden="true"><svg class="about-handwriting" viewBox="0 0 170 62" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="skewX(-12)"><path d="M16 49C22 36 24 18 27 13M8 26C21 7 56 9 55 27C54 43 31 53 15 48M48 45C58 28 70 29 65 41C60 53 47 52 51 41C56 31 68 30 67 34L63 47C62 51 68 47 75 40M72 49L80 31L74 45C89 28 94 28 88 42C83 54 92 48 99 41M96 49C103 31 112 6 114 9C121 19 103 35 102 36L113 32C104 37 103 41 111 45C116 51 122 42 124 40M120 41C139 39 144 26 132 31C122 34 113 54 132 48L145 40M148 47C152 46 151 52 146 55"/><path d="M23 20C23 29 20 40 16 48M64 35L60 45M78 35L73 47M105 22L97 47M131 33C126 37 122 42 124 46" stroke-width="2.15" opacity=".45"/><path d="M9 57C43 49 85 61 137 50" opacity=".55" stroke-width=".65"/></g></svg>${icon('heartSmall','about-small-heart')}<small>dass du immer an mich glaubst.</small></div></section>
+          <section class="about-dedication"><div class="about-forest" aria-hidden="true"></div>${icon('heart','about-heart')}<div class="about-dedication-copy"><h3 data-about-text="dedicationTitle"></h3><p data-about-text="dedicationText"></p></div><div class="about-signature" aria-hidden="true"><svg class="about-handwriting" viewBox="0 0 170 62" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="skewX(-12)"><path d="M16 49C22 36 24 18 27 13M8 26C21 7 56 9 55 27C54 43 31 53 15 48M48 45C58 28 70 29 65 41C60 53 47 52 51 41C56 31 68 30 67 34L63 47C62 51 68 47 75 40M72 49L80 31L74 45C89 28 94 28 88 42C83 54 92 48 99 41M96 49C103 31 112 6 114 9C121 19 103 35 102 36L113 32C104 37 103 41 111 45C116 51 122 42 124 40M120 41C139 39 144 26 132 31C122 34 113 54 132 48L145 40M148 47C152 46 151 52 146 55"/><path d="M23 20C23 29 20 40 16 48M64 35L60 45M78 35L73 47M105 22L97 47M131 33C126 37 122 42 124 46" stroke-width="2.15" opacity=".45"/><path d="M9 57C43 49 85 61 137 50" opacity=".55" stroke-width=".65"/></g></svg>${icon('heartSmall','about-small-heart')}<small>dass du immer an mich glaubst.</small></div></section>
           <section class="about-welcome">${icon('people')}<div><h3 data-about-text="welcome"></h3><p data-about-text="intro"></p></div><aside class="about-quote" data-about-text="quote"></aside></section>
           <section class="about-radii"><div class="about-section-head">${icon('radar')}<h3 data-about-text="radii"></h3><small data-about-text="radiiTagline"></small></div><div class="about-radii-layout">
             <div class="about-radar-wrap"><svg class="about-radar" viewBox="0 0 120 120" role="img"><title data-about-text="schematic"></title><defs><radialGradient id="about-radar-observation"><stop stop-color="#d9b45e" stop-opacity=".05"/><stop offset=".62" stop-color="#d9b45e" stop-opacity=".03"/><stop offset="1" stop-color="#d9b45e" stop-opacity=".2"/></radialGradient><radialGradient id="about-radar-storm"><stop stop-color="#79b8e7" stop-opacity=".04"/><stop offset="1" stop-color="#79b8e7" stop-opacity=".13"/></radialGradient></defs><circle cx="60" cy="60" r="57" fill="url(#about-radar-observation)" stroke="#d9b45e" stroke-width=".75"/><circle cx="60" cy="60" r="36" fill="url(#about-radar-storm)" stroke="#79b8e7" stroke-width=".75"/><circle cx="60" cy="60" r="19" fill="#cf403912" stroke="#c4483b" stroke-width=".75"/><path d="M60 1V119M1 60H119" stroke="#dce0d4" stroke-opacity=".35" stroke-width=".65"/><circle cx="60" cy="60" r="3" fill="#fff5e5"/></svg></div>
@@ -14971,7 +14972,6 @@
       </dialog>`;
 
       const dialog = shell.querySelector('dialog');
-      shell.querySelector('.about-dedication p').textContent = ABOUT_DEDICATION;
       const code = shell.querySelector('pre code');
       ABOUT_RECORDER_YAML.split('\n').forEach((line, index, lines) => {
         const span = document.createElement('span');
@@ -15043,7 +15043,7 @@
         const resolved = this[ABOUT_SETTING_ACCESSORS[key]]();
         const state = this._hass?.states?.[resolved]?.state;
         const available = state != null && !['unknown','unavailable',''].includes(state);
-        const source = resolved === mapping.native ? 'Native' : resolved === mapping.legacy ? t('legacy') : t('override');
+        const source = resolved === mapping.native ? t('sourceNative') : resolved === mapping.legacy ? t('legacy') : t('override');
         setText(row.querySelector('strong'), labels[keys.indexOf(key)]);
         setText(row.querySelector('.about-purpose'), purposes[keys.indexOf(key)]);
         setText(row.querySelector('.about-native-id'), mapping.native);

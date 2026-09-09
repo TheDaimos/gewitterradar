@@ -67,7 +67,7 @@ try {
   for(const language of ['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']){
     states['select.gewitterradar_language'].state=language;card.hass={...hass};
     assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);
-    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');
+    assert(dialog.querySelector('.about-dedication h3').textContent===(language==='Deutsch'?'Für Alkje':'For Alkje'),'dedication localized');
   }
   states['select.gewitterradar_language'].state='Deutsch';card.hass={...hass};
   const root=card.shadowRoot.querySelector('#card-root'), recent=card.shadowRoot.querySelector('#recent-content');
