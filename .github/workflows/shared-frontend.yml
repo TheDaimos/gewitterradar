@@ -24,6 +24,8 @@ jobs:
         run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Language onboarding
         run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: V4.06 Settings and Help profiles
+        run: node scripts/test-v406-ui.cjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Frozen V4.05 geometry and pixel comparison
         run: node scripts/test-about-golden.cjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Both delivery browser suites

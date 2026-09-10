@@ -28,13 +28,15 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
       strings: ABOUT_STRINGS.Deutsch,
       settingLabels: ABOUT_SETTING_LABELS.Deutsch,
       settingPurposes: ABOUT_SETTING_PURPOSES.Deutsch,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.Deutsch
+      sourcePurposes: ABOUT_SOURCE_PURPOSES.Deutsch,
+      help: HELP_STRINGS.Deutsch
     },
     English: {
       strings: ABOUT_STRINGS.English,
       settingLabels: ABOUT_SETTING_LABELS.English,
       settingPurposes: ABOUT_SETTING_PURPOSES.English,
-      sourcePurposes: ABOUT_SOURCE_PURPOSES.English
+      sourcePurposes: ABOUT_SOURCE_PURPOSES.English,
+      help: HELP_STRINGS.English
     }
   };
   const ABOUT_EXTERNAL_LANGUAGE_NAMES = new Set(LANGUAGE_DEFINITIONS
@@ -52,7 +54,7 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
       throw Error('About locales require Deutsch master and English fallback');
     }
     const master = locales.Deutsch;
-    if (!object(master?.strings) || !Object.keys(master.strings).length || !object(master?.sourcePurposes)) {
+    if (!object(master?.strings) || !Object.keys(master.strings).length || !object(master?.sourcePurposes) || !object(master?.help)) {
       throw Error('Invalid German About master');
     }
     const sourceKeys = [...recorderYaml.matchAll(/^\s+- "?([^"\s]+)"?$/gm)].map(match => match[1]);
@@ -67,9 +69,15 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
       settingPurposes: Object.keys(settings),
       sourcePurposes: Object.keys(master.sourcePurposes)
     };
+    const sameShape = (value, reference) => {
+      if (typeof reference === 'string') return typeof value === 'string' && !!value.trim();
+      if (typeof reference === 'boolean') return value === reference;
+      if (Array.isArray(reference)) return Array.isArray(value) && value.length === reference.length && reference.every((item,index) => sameShape(value[index],item));
+      return object(reference) && object(value) && Object.keys(value).length === Object.keys(reference).length && Object.keys(reference).every(key => Object.hasOwn(value,key) && sameShape(value[key],reference[key]));
+    };
     for (const [name, locale] of Object.entries(locales)) {
       if (!languages.some(entry => entry.value === name)) throw Error('Unregistered About locale: ' + name);
-      if (!sameKeys(locale,Object.keys(groups))) throw Error('Invalid About bundle: ' + name);
+      if (!sameKeys(locale,[...Object.keys(groups),'help'])) throw Error('Invalid About bundle: ' + name);
       for (const [group, keys] of Object.entries(groups)) {
         if (!sameKeys(locale[group],keys)) throw Error('About keys differ: ' + name + '.' + group);
         for (const key of keys) {
@@ -78,6 +86,8 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
           }
         }
       }
+      if (!sameShape(locale.help,master.help)) throw Error('Help keys differ: ' + name);
+      if (locale.help.sections.some((section,index) => section.key !== master.help.sections[index].key)) throw Error('Help section identity differs: ' + name);
     }
   }
 
@@ -92,15 +102,19 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
     }
   }
 
-  function installAboutExternalLocales(locales) {
-    const combined = {...ABOUT_LOCALES,...locales};
+  function installAboutExternalLocales(locales, helpLocales) {
+    if (!locales || !helpLocales || Object.keys(locales).some(name => !Object.hasOwn(helpLocales,name)) || Object.keys(helpLocales).some(name => !Object.hasOwn(locales,name))) {
+      throw Error('External About and Help locale registries differ');
+    }
+    const complete = Object.fromEntries(Object.entries(locales).map(([name,locale]) => [name,{...locale,help:helpLocales[name]}]));
+    const combined = {...ABOUT_LOCALES,...complete};
     validateAboutLocales(combined,SETTING_ENTITIES,LANGUAGE_DEFINITIONS,ABOUT_RECORDER_YAML);
     if (Object.keys(locales).length !== ABOUT_EXTERNAL_LANGUAGE_NAMES.size ||
         [...ABOUT_EXTERNAL_LANGUAGE_NAMES].some(name => !Object.hasOwn(locales,name))) {
       throw Error('External About locales must cover every non-native registered language');
     }
-    aboutExternalLocales = locales;
-    return locales;
+    aboutExternalLocales = complete;
+    return complete;
   }
 
   function loadAboutExternalLocales() {
@@ -109,7 +123,7 @@ const localeArchitecture = String.raw`  // One resolved bundle owns every About 
     const url = new URL(ABOUT_LOCALE_MODULE_URL), attempt = aboutExternalLocaleAttempt++;
     if (attempt) url.hash = 'retry-' + attempt;
     aboutExternalLocalesLoading = import(url.href)
-      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES))
+      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES,module.HELP_EXTERNAL_LOCALES))
       .catch(() => null)
       .finally(() => { aboutExternalLocalesLoading = null; });
     return aboutExternalLocalesLoading;

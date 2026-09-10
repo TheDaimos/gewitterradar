@@ -16,9 +16,9 @@ Auf weiteren Geräten wird die bereits global bestätigte Sprache unverändert v
 
 Der native modale Dialog ist ohne X und ohne Escape-Abbruch, unterstützt Radio-Tastaturbedienung, Fokusumlauf, sichtbaren Fokus und eine scrollbare Sprachliste auf kleinen Touch-Geräten. Keine freigegebenen Assets oder About-Geometrie werden verändert.
 
-## Übergang in Phase 1
+## Lokalisierte Dialoge
 
-Die bestätigte Sprache steht vor dem Öffnen von About über den bestehenden Sprachmechanismus bereit. About besitzt derzeit nur Deutsch und Englisch; die übrigen 17 Varianten verwenden weiterhin den bestehenden englischen About-Fallback, die Widmung bleibt dort vorerst Deutsch. Phase 1 fügt keine neuen About-Übersetzungen hinzu.
+Die bestätigte Sprache steht vor dem Öffnen von About über den bestehenden Sprachmechanismus bereit. About und Hilfe sind für alle 19 Varianten vollständig registriert. Deutsch und English liegen nativ im Hauptmodul; die übrigen 17 Varianten werden gemeinsam aus `locales/about-locales.js` geladen. Ein fehlgeschlagener Import bleibt wiederholbar und verwendet bis zum erfolgreichen Laden den vollständigen englischen Bundle-Fallback.
 
 ## Prüfungen
 

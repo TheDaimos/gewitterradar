@@ -46,7 +46,7 @@ try {
   assert(dialog.querySelectorAll('.about-purpose').length===22,'16 settings + 4 sources + 2 location purposes');
   assert([...dialog.querySelectorAll('.about-legacy-id')].every(node=>node.textContent.includes('Dient nur als Kompatibilitäts-Fallback.')),'legacy purpose');
   assert(dialog.querySelector('.about-recorder-intro').textContent.includes('configuration.yaml'),'configuration.yaml instruction');
-  const expectedYaml='recorder:\n  exclude:\n    entity_globs:\n      - "geo_location.lightning_strike*"\n    entities:\n      - sensor.home_lightning_distance\n      - sensor.home_lightning_azimuth\n      - sensor.home_lightning_counter';
+  const expectedYaml='recorder:\n  exclude:\n    entity_globs:\n      - "geo_location.lightning_strike*"\n      - "sensor.*_lightning_distance"\n      - "sensor.*_lightning_azimuth"\n      - "sensor.*_lightning_counter"';
   assert(dialog.querySelector('pre code').textContent===expectedYaml,'exact V2 Recorder YAML');
   const value=()=>dialog.querySelector('[data-radius="observation_radius"] output').textContent;
   assert(value()==='200 KM','native radius');

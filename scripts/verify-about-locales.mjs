@@ -4,15 +4,17 @@ import {fileURLToPath} from 'node:url';
 import {runInNewContext} from 'node:vm';
 
 export function readExternalAboutLocales(source) {
-  const anchor = 'export const ABOUT_EXTERNAL_LOCALES = ';
-  if (source.split(anchor).length !== 2 || !source.trimEnd().endsWith(';')) {
+  const aboutAnchor = 'export const ABOUT_EXTERNAL_LOCALES = ';
+  const helpAnchor = 'export const HELP_EXTERNAL_LOCALES = ';
+  if (source.split(aboutAnchor).length !== 2 || source.split(helpAnchor).length !== 2 || !source.trimEnd().endsWith(';')) {
     throw Error('External About locale module shape changed');
   }
   const context = {};
-  runInNewContext(source.replace(anchor,'globalThis.externalAboutLocales = '),context,
+  runInNewContext(source.replace(aboutAnchor,'globalThis.externalAboutLocales = ')
+    .replace(helpAnchor,'globalThis.externalHelpLocales = '),context,
     {timeout:3000,filename:'about-locales.js'});
-  if (!context.externalAboutLocales) throw Error('External About locales were not exported');
-  return context.externalAboutLocales;
+  if (!context.externalAboutLocales || !context.externalHelpLocales) throw Error('External About/Help locales were not exported');
+  return {about:context.externalAboutLocales,help:context.externalHelpLocales};
 }
 
 // Evaluate production registration without constructing a card or providing Home Assistant.
@@ -22,7 +24,7 @@ export function loadAboutLocaleRuntime(source) {
   const script = source.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
     .replace(anchor, `  globalThis.aboutLocaleModel = {
       locales: ABOUT_LOCALES, settings: SETTING_ENTITIES, languages: LANGUAGE_DEFINITIONS,
-      tables: {strings:ABOUT_STRINGS,settingLabels:ABOUT_SETTING_LABELS,settingPurposes:ABOUT_SETTING_PURPOSES,sourcePurposes:ABOUT_SOURCE_PURPOSES},
+      tables: {strings:ABOUT_STRINGS,settingLabels:ABOUT_SETTING_LABELS,settingPurposes:ABOUT_SETTING_PURPOSES,sourcePurposes:ABOUT_SOURCE_PURPOSES,help:HELP_STRINGS},
       recorderYaml: ABOUT_RECORDER_YAML, validate: validateAboutLocales,
       resolve: resolveAboutLocale,
       installExternal: typeof installAboutExternalLocales === 'function' ? installAboutExternalLocales : null,
@@ -46,12 +48,15 @@ export function readAboutLocaleModel(source, externalSource) {
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
   if (externalSource !== undefined) {
     if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
-    const externalLocales = readExternalAboutLocales(externalSource);
+    const external = readExternalAboutLocales(externalSource);
+    const externalLocales = Object.fromEntries(Object.entries(external.about).map(([name,locale]) => [name,{...locale,help:external.help[name]}]));
     model.validate({...model.locales,...externalLocales},model.settings,model.languages,model.recorderYaml);
     const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
     if (JSON.stringify(Object.keys(externalLocales)) !== JSON.stringify(expected)) {
       throw Error('External About locales must exactly match non-native LANGUAGE_DEFINITIONS');
     }
+    model.externalAboutLocales = external.about;
+    model.externalHelpLocales = external.help;
     model.externalLocales = externalLocales;
   }
   return model;

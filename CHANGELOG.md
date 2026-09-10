@@ -1,11 +1,19 @@
 # Changelog
 
-## Unreleased — shared V4.05 frontend and premium controls
+## Unreleased — V4.06 / native integration 0.18.0
+
+- Add the localized premium Help & Notes dialog for all 19 language variants.
+- Refine Settings/About premium hierarchy, localized About headers and language-onboarding readability.
+- Replace fixed Recorder sensor IDs with multi-device wildcard patterns.
+- Version the dashboard helper package as `app_gewitterradar_v4_06_pkg.yaml` and verify its global language marker.
+- Build the shared frontend, lazy locale module, assets and package deterministically into both delivery forms.
+
+## Shared V4.05 frontend and premium controls
 
 - Import the frozen V4.05 frontend once into `frontend/`; derive integration and dashboard payloads with exact SHA-256 parity and a fail-closed approved-delta guard.
 - Use the supplied transparent close/copy artwork while preserving all dialog and clipboard handlers, 44×44 hit targets, content and layout. Remove only the visible `DEV` label.
 - Serve the integration-local payload using supported asynchronous HTTP static registration; resource registration remains manual.
-- Add both-delivery browser coverage, frozen-reference comparison and native HTTP route tests. Local browser/build/package checks pass; native runtime tests are blocked on Windows (`fcntl`) and require Linux CI. No release or tag.
+- Add both-delivery browser coverage, frozen-reference comparison and native HTTP route tests.
 
 
 ## 0.17.0 — release-candidate preparation

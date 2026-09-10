@@ -64,7 +64,7 @@ def verify(stage_root: Path) -> dict[str, str]:
         raise RuntimeError(f"Forbidden staged files: {forbidden}")
 
     manifest = json.loads(files["manifest.json"].read_text(encoding="utf-8"))
-    if manifest["domain"] != "gewitterradar" or manifest["version"] != "0.17.0":
+    if manifest["domain"] != "gewitterradar" or manifest["version"] != "0.18.0":
         raise RuntimeError("Unexpected integration manifest identity")
 
     source_hashes = {

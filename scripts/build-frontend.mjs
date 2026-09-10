@@ -32,11 +32,11 @@ export const destinations=['custom_components/gewitterradar/frontend','dashboard
 export async function build(){
  const payload=await expectedPayload();
  for(const destination of destinations)for(const [name,bytes] of payload){const target=resolve(root,destination,name);await mkdir(dirname(target),{recursive:true});await writeFile(target,bytes);}
- const pkg=await readFile(resolve(root,'home-assistant/app_gewitterradar_pkg.yaml'));
- await writeFile(resolve(root,'dashboard/dist/app_gewitterradar_pkg.yaml'),pkg);
+ const pkg=await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'));
+ await writeFile(resolve(root,'dashboard/dist/app_gewitterradar_v4_06_pkg.yaml'),pkg);
  const rows=[];
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
- rows.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_pkg.yaml');
+ rows.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_v4_06_pkg.yaml');
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
  console.log('Built one frontend, one lazy About-locale module and 17 common assets into both deliveries. Frozen V4.05 preserved.');
 }

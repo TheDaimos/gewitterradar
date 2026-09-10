@@ -86,9 +86,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Leverer individuelle lynpositioner.",
-      "sensor.home_lightning_distance": "Leverer afstanden til det seneste lyn.",
-      "sensor.home_lightning_azimuth": "Leverer retningen til det seneste lyn.",
-      "sensor.home_lightning_counter": "Tæller registrerede lynhændelser."
+      "sensor.*_lightning_distance": "Leverer afstanden til det seneste lyn.",
+      "sensor.*_lightning_azimuth": "Leverer retningen til det seneste lyn.",
+      "sensor.*_lightning_counter": "Tæller registrerede lynhændelser."
     }
   },
   "Español": {
@@ -177,9 +177,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Proporciona posiciones individuales de rayos.",
-      "sensor.home_lightning_distance": "Proporciona la distancia al último rayo.",
-      "sensor.home_lightning_azimuth": "Proporciona la dirección del último rayo.",
-      "sensor.home_lightning_counter": "Cuenta los eventos de rayos detectados."
+      "sensor.*_lightning_distance": "Proporciona la distancia al último rayo.",
+      "sensor.*_lightning_azimuth": "Proporciona la dirección del último rayo.",
+      "sensor.*_lightning_counter": "Cuenta los eventos de rayos detectados."
     }
   },
   "Français": {
@@ -268,9 +268,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Fournit les positions individuelles des impacts de foudre.",
-      "sensor.home_lightning_distance": "Fournit la distance jusqu’au dernier impact de foudre.",
-      "sensor.home_lightning_azimuth": "Fournit la direction du dernier impact de foudre.",
-      "sensor.home_lightning_counter": "Compte les événements de foudre détectés."
+      "sensor.*_lightning_distance": "Fournit la distance jusqu’au dernier impact de foudre.",
+      "sensor.*_lightning_azimuth": "Fournit la direction du dernier impact de foudre.",
+      "sensor.*_lightning_counter": "Compte les événements de foudre détectés."
     }
   },
   "Nederlands": {
@@ -359,9 +359,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Levert afzonderlijke bliksemposities.",
-      "sensor.home_lightning_distance": "Levert de afstand tot de laatste bliksem.",
-      "sensor.home_lightning_azimuth": "Levert de richting naar de laatste bliksem.",
-      "sensor.home_lightning_counter": "Telt gedetecteerde bliksemgebeurtenissen."
+      "sensor.*_lightning_distance": "Levert de afstand tot de laatste bliksem.",
+      "sensor.*_lightning_azimuth": "Levert de richting naar de laatste bliksem.",
+      "sensor.*_lightning_counter": "Telt gedetecteerde bliksemgebeurtenissen."
     }
   },
   "Polski": {
@@ -450,9 +450,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Dostarcza pozycje pojedynczych wyładowań.",
-      "sensor.home_lightning_distance": "Dostarcza odległość do ostatniego wyładowania.",
-      "sensor.home_lightning_azimuth": "Dostarcza kierunek do ostatniego wyładowania.",
-      "sensor.home_lightning_counter": "Zlicza wykryte zdarzenia wyładowań."
+      "sensor.*_lightning_distance": "Dostarcza odległość do ostatniego wyładowania.",
+      "sensor.*_lightning_azimuth": "Dostarcza kierunek do ostatniego wyładowania.",
+      "sensor.*_lightning_counter": "Zlicza wykryte zdarzenia wyładowań."
     }
   },
   "Português": {
@@ -541,9 +541,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Fornece posições individuais de raios.",
-      "sensor.home_lightning_distance": "Fornece a distância até ao último raio.",
-      "sensor.home_lightning_azimuth": "Fornece a direção do último raio.",
-      "sensor.home_lightning_counter": "Conta eventos de raios detetados."
+      "sensor.*_lightning_distance": "Fornece a distância até ao último raio.",
+      "sensor.*_lightning_azimuth": "Fornece a direção do último raio.",
+      "sensor.*_lightning_counter": "Conta eventos de raios detetados."
     }
   },
   "Svenska": {
@@ -632,9 +632,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Tillhandahåller positioner för enskilda blixtar.",
-      "sensor.home_lightning_distance": "Tillhandahåller avståndet till den senaste blixten.",
-      "sensor.home_lightning_azimuth": "Tillhandahåller riktningen till den senaste blixten.",
-      "sensor.home_lightning_counter": "Räknar identifierade blixthändelser."
+      "sensor.*_lightning_distance": "Tillhandahåller avståndet till den senaste blixten.",
+      "sensor.*_lightning_azimuth": "Tillhandahåller riktningen till den senaste blixten.",
+      "sensor.*_lightning_counter": "Räknar identifierade blixthändelser."
     }
   },
   "Italiano": {
@@ -723,9 +723,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Fornisce le posizioni dei singoli fulmini.",
-      "sensor.home_lightning_distance": "Fornisce la distanza dall’ultimo fulmine.",
-      "sensor.home_lightning_azimuth": "Fornisce la direzione dell’ultimo fulmine.",
-      "sensor.home_lightning_counter": "Conta gli eventi di fulmini rilevati."
+      "sensor.*_lightning_distance": "Fornisce la distanza dall’ultimo fulmine.",
+      "sensor.*_lightning_azimuth": "Fornisce la direzione dell’ultimo fulmine.",
+      "sensor.*_lightning_counter": "Conta gli eventi di fulmini rilevati."
     }
   },
   "Norsk bokmål": {
@@ -814,9 +814,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Gir posisjoner for enkeltlyn.",
-      "sensor.home_lightning_distance": "Gir avstanden til det siste lynet.",
-      "sensor.home_lightning_azimuth": "Gir retningen til det siste lynet.",
-      "sensor.home_lightning_counter": "Teller registrerte lynhendelser."
+      "sensor.*_lightning_distance": "Gir avstanden til det siste lynet.",
+      "sensor.*_lightning_azimuth": "Gir retningen til det siste lynet.",
+      "sensor.*_lightning_counter": "Teller registrerte lynhendelser."
     }
   },
   "Suomi": {
@@ -905,9 +905,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Tarjoaa yksittäisten salamoiden sijainnit.",
-      "sensor.home_lightning_distance": "Tarjoaa etäisyyden viimeisimpään salamaan.",
-      "sensor.home_lightning_azimuth": "Tarjoaa suunnan viimeisimpään salamaan.",
-      "sensor.home_lightning_counter": "Laskee havaitut salamatapahtumat."
+      "sensor.*_lightning_distance": "Tarjoaa etäisyyden viimeisimpään salamaan.",
+      "sensor.*_lightning_azimuth": "Tarjoaa suunnan viimeisimpään salamaan.",
+      "sensor.*_lightning_counter": "Laskee havaitut salamatapahtumat."
     }
   },
   "Čeština": {
@@ -996,9 +996,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Poskytuje polohy jednotlivých blesků.",
-      "sensor.home_lightning_distance": "Poskytuje vzdálenost k poslednímu blesku.",
-      "sensor.home_lightning_azimuth": "Poskytuje směr k poslednímu blesku.",
-      "sensor.home_lightning_counter": "Počítá zaznamenané bleskové události."
+      "sensor.*_lightning_distance": "Poskytuje vzdálenost k poslednímu blesku.",
+      "sensor.*_lightning_azimuth": "Poskytuje směr k poslednímu blesku.",
+      "sensor.*_lightning_counter": "Počítá zaznamenané bleskové události."
     }
   },
   "Ελληνικά": {
@@ -1087,9 +1087,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Παρέχει θέσεις μεμονωμένων κεραυνών.",
-      "sensor.home_lightning_distance": "Παρέχει την απόσταση από τον τελευταίο κεραυνό.",
-      "sensor.home_lightning_azimuth": "Παρέχει την κατεύθυνση του τελευταίου κεραυνού.",
-      "sensor.home_lightning_counter": "Μετρά τα ανιχνευμένα συμβάντα κεραυνών."
+      "sensor.*_lightning_distance": "Παρέχει την απόσταση από τον τελευταίο κεραυνό.",
+      "sensor.*_lightning_azimuth": "Παρέχει την κατεύθυνση του τελευταίου κεραυνού.",
+      "sensor.*_lightning_counter": "Μετρά τα ανιχνευμένα συμβάντα κεραυνών."
     }
   },
   "Magyar": {
@@ -1178,9 +1178,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Egyedi villámhelyeket biztosít.",
-      "sensor.home_lightning_distance": "Megadja a legutóbbi villám távolságát.",
-      "sensor.home_lightning_azimuth": "Megadja a legutóbbi villám irányát.",
-      "sensor.home_lightning_counter": "Számolja az észlelt villámeseményeket."
+      "sensor.*_lightning_distance": "Megadja a legutóbbi villám távolságát.",
+      "sensor.*_lightning_azimuth": "Megadja a legutóbbi villám irányát.",
+      "sensor.*_lightning_counter": "Számolja az észlelt villámeseményeket."
     }
   },
   "Boarisch": {
@@ -1269,9 +1269,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Liefert einzelne Blitzpositionen.",
-      "sensor.home_lightning_distance": "Liefert de Entfernung zum letzten Blitz.",
-      "sensor.home_lightning_azimuth": "Liefert de Richtung zum letzten Blitz.",
-      "sensor.home_lightning_counter": "Zählt erkannte Blitzereignisse."
+      "sensor.*_lightning_distance": "Liefert de Entfernung zum letzten Blitz.",
+      "sensor.*_lightning_azimuth": "Liefert de Richtung zum letzten Blitz.",
+      "sensor.*_lightning_counter": "Zählt erkannte Blitzereignisse."
     }
   },
   "Plattdüütsch": {
@@ -1360,9 +1360,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Levert einzelne Blitzpositschonen.",
-      "sensor.home_lightning_distance": "Levert den Afstand to den letzten Blitz.",
-      "sensor.home_lightning_azimuth": "Levert de Richtung to den letzten Blitz.",
-      "sensor.home_lightning_counter": "Tellt funnen Blitzereignisse."
+      "sensor.*_lightning_distance": "Levert den Afstand to den letzten Blitz.",
+      "sensor.*_lightning_azimuth": "Levert de Richtung to den letzten Blitz.",
+      "sensor.*_lightning_counter": "Tellt funnen Blitzereignisse."
     }
   },
   "Sächs’sch": {
@@ -1451,9 +1451,9 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Liefert einzelne Blitzpositionen.",
-      "sensor.home_lightning_distance": "Liefert de Entfernung zum letzten Blitz.",
-      "sensor.home_lightning_azimuth": "Liefert de Richtung zum letzten Blitz.",
-      "sensor.home_lightning_counter": "Zählt erkannte Blitzereignisse."
+      "sensor.*_lightning_distance": "Liefert de Entfernung zum letzten Blitz.",
+      "sensor.*_lightning_azimuth": "Liefert de Richtung zum letzten Blitz.",
+      "sensor.*_lightning_counter": "Zählt erkannte Blitzereignisse."
     }
   },
   "Schwäbisch": {
@@ -1542,9 +1542,171 @@ export const ABOUT_EXTERNAL_LOCALES = {
     },
     "sourcePurposes": {
       "geo_location.lightning_strike*": "Liefert einzelne Blitzpositionen.",
-      "sensor.home_lightning_distance": "Liefert d’Entfernung zum letzte Blitz.",
-      "sensor.home_lightning_azimuth": "Liefert d’Richtung zum letzte Blitz.",
-      "sensor.home_lightning_counter": "Zählt erkannte Blitzereignisse."
+      "sensor.*_lightning_distance": "Liefert d’Entfernung zum letzte Blitz.",
+      "sensor.*_lightning_azimuth": "Liefert d’Richtung zum letzte Blitz.",
+      "sensor.*_lightning_counter": "Zählt erkannte Blitzereignisse."
     }
   }
+};
+
+const makeHelpLocale = (v) => ({
+  menuTitle:v.menu,title:v.menu,subtitle:v.subtitle,close:v.close,copy:v.copy,copied:v.copied,copyFailed:v.copyFailed,
+  sections:[
+    {key:'prerequisites',title:v.prerequisitesTitle,paragraphs:[v.prerequisites],notes:[v.prerequisitesNote]},
+    {key:'radii',title:v.radiiTitle,paragraphs:[v.radii],items:v.radiusItems,notes:[v.radiiNote]},
+    {key:'location',title:v.locationTitle,paragraphs:[v.location],notes:[v.locationNote]},
+    {key:'functions',title:v.functionsTitle,entries:v.functions},
+    {key:'defaults',title:v.defaultsTitle,paragraphs:[v.defaultsIntro],items:v.defaults},
+    {key:'troubleshooting',title:v.troubleshootingTitle,entries:v.troubleshooting},
+    {key:'recorder',title:v.recorderTitle,paragraphs:[v.recorder],recorder:true,notes:v.recorderNotes}
+  ]
+});
+
+const germanHelpForDialects = makeHelpLocale({
+  menu:'Hilfe & Hinweise',subtitle:'Kurz erklärt, damit Gewitterradar zuverlässig und nachvollziehbar arbeitet.',close:'Hilfe schließen',copy:'YAML kopieren',copied:'Kopiert',copyFailed:'Kopieren nicht möglich – bitte den Code markieren.',
+  prerequisitesTitle:'Voraussetzungen',prerequisites:'Gewitterradar verarbeitet die Blitzdaten, die Home Assistant von der verwendeten Blitzortung-Datenquelle erhält. Prüfe dort den richtigen Referenzstandort und stelle den Quellradius mindestens so groß wie den Beobachtungsradius in Gewitterradar ein. Gewitterradar kann keine Blitze anzeigen oder auswerten, die von der Datenquelle bereits herausgefiltert wurden.',prerequisitesNote:'Wenn mehrere Blitzortung-Geräte oder Beobachtungspunkte vorhanden sind, müssen die verwendeten Entitäten eindeutig zum gewünschten Referenzpunkt passen.',
+  radiiTitle:'Die Radien',radii:'Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- und Beobachtungsradius. Die Bereiche sind Entfernungsschwellen, keine voneinander getrennten Datenquellen.',radiusItems:['Beobachtungsradius – äußerer Bereich für frühe Beobachtung.','Gewitterradius – näherer Bereich mit erhöhter Aufmerksamkeit.','Gefahrenradius – unmittelbarer Nahbereich mit besonders hoher Relevanz.'],radiiNote:'Der Gefahrenradius ist auf maximal 250 km begrenzt.',
+  locationTitle:'Referenzstandort',location:'Der Referenzstandort bestimmt, von welchem Punkt aus Entfernungen und Richtungen berechnet werden. Gewitterradar erkennt person.*- und zone.*-Entitäten dynamisch. Ändert sich der Standort einer Person, werden Entfernungen auf Basis der aktuellen Home-Assistant-Daten neu bewertet.',locationNote:'Ein falscher Referenzstandort führt zu falschen Entfernungen, Radien und Kompassrichtungen.',
+  functionsTitle:'Wichtige Funktionen',functions:[['Aura-Effekte','visualisieren Blitzaktivität, verändern aber nicht die Erkennung oder Zählung.'],['Warnanimation','hebt relevante Gewitteraktivität optisch hervor.'],['Kartengruppierung','fasst nahe Blitzmarker zusammen und hält die Karte übersichtlicher.'],['Kompass: nächster Blitz','richtet die Anzeige auf den nächstgelegenen erkannten Blitz.'],['Geräteorientierung','kann auf unterstützten Mobilgeräten die Geräteausrichtung einbeziehen.'],['Gewittersimulation','ist ausschließlich für Test und Diagnose gedacht und sollte im normalen Betrieb ausgeschaltet bleiben.']],
+  defaultsTitle:'Empfohlene Grundeinstellungen',defaultsIntro:'Für einen stabilen Start empfehlen wir:',defaults:['Quellradius der Blitzortung-Datenquelle mindestens so groß wie den Gewitterradar-Beobachtungsradius einstellen.','Kartengruppierung eingeschaltet lassen.','Warnanimation eingeschaltet lassen.','Aura-Effekte nach persönlichem Geschmack einstellen; sie beeinflussen die Erkennung nicht.','Gewittersimulation im normalen Betrieb ausgeschaltet lassen.','Geräteorientierung nur aktivieren, wenn sie auf dem verwendeten Mobilgerät benötigt wird.'],
+  troubleshootingTitle:'Wenn etwas nicht stimmt',troubleshooting:[['Keine oder zu wenige Blitze','Status der Blitzortung-Datenquelle, Quellradius und verwendete Blitz-Entitäten prüfen.'],['Entfernungen oder Richtungen wirken falsch','Referenzstandort und Distanzeinheit prüfen.'],['Sprachauswahl erscheint immer wieder','Prüfen, ob das aktuelle Gewitterradar-Package installiert ist und der Initialisierungshelfer vorhanden ist.'],['Darstellung nach Update unverändert','Browser-/App-Cache vollständig neu laden und sicherstellen, dass die aktuelle JavaScript-Datei verwendet wird.'],['Merkwürdiges Verhalten oder doppelte Karte','In Home Assistant darf nur EINE Gewitterradar-Modulressource aktiv sein. Native Integration und Dashboard-/HACS-Ressource dürfen nicht gleichzeitig dieselbe Custom Card registrieren.']],
+  recorderTitle:'Home-Assistant-Recorder',recorder:'Blitzdaten können sehr viele Zustandsänderungen erzeugen. Für einen langfristig schlanken Recorder empfehlen wir, die folgenden Entitäten bzw. Entitätsmuster auszuschließen.',recorderNotes:['Falls bereits ein recorder:-Abschnitt existiert, diese Einträge dort ergänzen. Keinen zweiten Top-Level-recorder:-Block anlegen.','Die Ausschlüsse deaktivieren NICHT die Live-Zustände für Gewitterradar.','Bereits vorhandene historische Daten werden dadurch nicht automatisch gelöscht.','Die Wildcards unterstützen mehrere Blitzortung-Geräte bzw. Beobachtungspunkte unabhängig vom Entity-Präfix.']
+});
+const dialectHelp = (menu,subtitle,titles) => ({...germanHelpForDialects,menuTitle:menu,title:menu,subtitle,sections:germanHelpForDialects.sections.map((section,index)=>({...section,title:titles[index]}))});
+
+export const HELP_EXTERNAL_LOCALES = {
+  'Dansk':makeHelpLocale({
+    menu:'Hjælp & bemærkninger',subtitle:'En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.',close:'Luk hjælp',copy:'Kopiér YAML',copied:'Kopieret',copyFailed:'Kopiering er ikke mulig – markér koden.',
+    prerequisitesTitle:'Forudsætninger',prerequisites:'Gewitterradar behandler de lyndata, som Home Assistant modtager fra den konfigurerede lyndetektionskilde. Kontrollér det korrekte referencested dér, og sæt kilderadius mindst lige så stor som observationsradius i Gewitterradar. Gewitterradar kan ikke vise eller vurdere lyn, som kilden allerede har filtreret fra.',prerequisitesNote:'Hvis der findes flere lyndetektorer eller observationspunkter, skal de anvendte entiteter entydigt høre til det ønskede referencepunkt.',
+    radiiTitle:'Radierne',radii:'Radierne er kumulative: Et lyn i fareradius tæller også i tordenvejrs- og observationsradius. Områderne er afstandsgrænser, ikke separate datakilder.',radiusItems:['Observationsradius – ydre område til tidlig observation.','Tordenvejrsradius – nærmere område, der kræver øget opmærksomhed.','Fareradius – umiddelbart nærområde med særlig høj relevans.'],radiiNote:'Fareradius er begrænset til højst 250 km.',
+    locationTitle:'Referencested',location:'Referencestedet bestemmer det punkt, som afstande og retninger beregnes fra. Gewitterradar registrerer dynamisk person.*- og zone.*-entiteter. Når en persons placering ændres, beregnes afstandene igen ud fra de aktuelle Home Assistant-data.',locationNote:'Et forkert referencested giver forkerte afstande, radiusvurderinger og kompasretninger.',
+    functionsTitle:'Vigtige funktioner',functions:[['Auraeffekter','visualiserer lynaktivitet, men ændrer ikke registrering eller optælling.'],['Advarselsanimation','fremhæver relevant tordenvejrsaktivitet visuelt.'],['Kortgruppering','samler nærliggende lynmarkører og holder kortet overskueligt.'],['Kompas: nærmeste lyn','retter visningen mod det nærmeste registrerede lyn.'],['Enhedsretning','kan bruge enhedens retning på understøttede mobilenheder.'],['Tordenvejrssimulering','er kun beregnet til test og diagnostik og bør være slået fra under normal drift.']],
+    defaultsTitle:'Anbefalede grundindstillinger',defaultsIntro:'For en stabil start anbefaler vi:',defaults:['Sæt lyndetektionskildens radius mindst lige så stor som Gewitterradars observationsradius.','Lad kortgruppering være slået til.','Lad advarselsanimation være slået til.','Tilpas auraeffekter efter smag; de påvirker ikke registreringen.','Lad tordenvejrssimulering være slået fra under normal drift.','Aktivér kun enhedsretning, når den er nødvendig på den anvendte mobilenhed.'],
+    troubleshootingTitle:'Hvis noget ikke virker',troubleshooting:[['Ingen eller for få lyn','Kontrollér lyndetektionskildens status, kilderadius og de anvendte lynentiteter.'],['Afstande eller retninger ser forkerte ud','Kontrollér referencested og afstandsenhed.'],['Sprogvalget vises igen og igen','Kontrollér, at den aktuelle Gewitterradar-pakke og initialiseringshjælperen er installeret.'],['Visningen er uændret efter en opdatering','Genindlæs browser-/app-cachen helt, og kontrollér, at den aktuelle JavaScript-fil bruges.'],['Uventet adfærd eller dobbelt kort','Kun ÉN Gewitterradar-modulressource må være aktiv i Home Assistant. Den native integration og Dashboard-/HACS-ressourcen må ikke registrere det samme brugerdefinerede kort samtidigt.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Lyndata kan skabe meget mange tilstandsændringer. For en slank Recorder-konfiguration på lang sigt anbefaler vi at udelukke følgende entiteter og entitetsmønstre.',recorderNotes:['Hvis der allerede findes en recorder:-sektion, skal posterne flettes ind dér. Opret ikke en anden recorder:-blok på topniveau.','Udelukkelserne deaktiverer IKKE de live-tilstande, Gewitterradar bruger.','Eksisterende historiske data fjernes ikke automatisk.','Wildcard-mønstrene understøtter flere lyndetektorer eller observationspunkter uanset entitetspræfiks.']
+  }),
+  'Español':makeHelpLocale({
+    menu:'Ayuda y notas',subtitle:'Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.',close:'Cerrar ayuda',copy:'Copiar YAML',copied:'Copiado',copyFailed:'No se puede copiar; selecciona el código.',
+    prerequisitesTitle:'Requisitos',prerequisites:'Gewitterradar procesa los datos de rayos que Home Assistant recibe de la fuente de detección configurada. Comprueba allí la ubicación de referencia correcta y ajusta el radio de la fuente como mínimo al radio de observación de Gewitterradar. Gewitterradar no puede mostrar ni evaluar rayos que la fuente ya haya filtrado.',prerequisitesNote:'Si hay varios dispositivos de detección u observatorios, las entidades utilizadas deben pertenecer claramente al punto de referencia deseado.',
+    radiiTitle:'Los radios',radii:'Los radios son acumulativos: un rayo dentro del radio de peligro también cuenta dentro de los radios de tormenta y observación. Son umbrales de distancia, no fuentes de datos separadas.',radiusItems:['Radio de observación – zona exterior para la observación temprana.','Radio de tormenta – zona más cercana que requiere mayor atención.','Radio de peligro – entorno inmediato de especial relevancia.'],radiiNote:'El radio de peligro está limitado a un máximo de 250 km.',
+    locationTitle:'Ubicación de referencia',location:'La ubicación de referencia determina el punto desde el que se calculan distancias y direcciones. Gewitterradar detecta dinámicamente entidades person.* y zone.*. Cuando cambia la ubicación de una persona, las distancias se recalculan con los datos actuales de Home Assistant.',locationNote:'Una ubicación de referencia incorrecta produce distancias, evaluaciones de radio y direcciones de brújula incorrectas.',
+    functionsTitle:'Funciones importantes',functions:[['Efectos de aura','visualizan la actividad de rayos, pero no cambian la detección ni el recuento.'],['Animación de aviso','resalta visualmente la actividad tormentosa relevante.'],['Agrupación del mapa','agrupa marcadores cercanos para mantener el mapa claro.'],['Brújula: rayo más cercano','orienta la vista hacia el rayo detectado más próximo.'],['Orientación del dispositivo','puede usar la orientación en dispositivos móviles compatibles.'],['Simulación de tormenta','sirve solo para pruebas y diagnóstico y debe permanecer desactivada durante el uso normal.']],
+    defaultsTitle:'Ajustes básicos recomendados',defaultsIntro:'Para un inicio estable recomendamos:',defaults:['Configurar el radio de la fuente de rayos al menos igual que el radio de observación de Gewitterradar.','Mantener activada la agrupación del mapa.','Mantener activada la animación de aviso.','Ajustar los efectos de aura al gusto; no afectan a la detección.','Mantener desactivada la simulación de tormenta durante el uso normal.','Activar la orientación del dispositivo solo cuando sea necesaria en el móvil utilizado.'],
+    troubleshootingTitle:'Si algo no funciona',troubleshooting:[['No hay rayos o hay muy pocos','Comprueba el estado de la fuente, el radio de origen y las entidades de rayos utilizadas.'],['Las distancias o direcciones parecen incorrectas','Comprueba la ubicación de referencia y la unidad de distancia.'],['La selección de idioma reaparece','Comprueba que estén instalados el paquete actual de Gewitterradar y el ayudante de inicialización.'],['La vista no cambia tras actualizar','Recarga completamente la caché del navegador o la aplicación y confirma que se usa el JavaScript actual.'],['Comportamiento extraño o tarjeta duplicada','Solo puede estar activo UN recurso de módulo Gewitterradar en Home Assistant. La integración nativa y el recurso Dashboard/HACS no deben registrar simultáneamente la misma tarjeta personalizada.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Los datos de rayos pueden generar muchísimos cambios de estado. Para mantener Recorder ligero a largo plazo, recomendamos excluir las siguientes entidades y patrones.',recorderNotes:['Si ya existe una sección recorder:, incorpora allí estas entradas. No crees un segundo bloque recorder: de nivel superior.','Las exclusiones NO desactivan los estados en vivo utilizados por Gewitterradar.','Los datos históricos existentes no se eliminan automáticamente.','Los patrones comodín admiten varios detectores u observatorios independientemente del prefijo de entidad.']
+  }),
+  'Français':makeHelpLocale({
+    menu:'Aide et remarques',subtitle:'Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.',close:'Fermer l’aide',copy:'Copier le YAML',copied:'Copié',copyFailed:'Copie impossible — sélectionnez le code.',
+    prerequisitesTitle:'Prérequis',prerequisites:'Gewitterradar traite les données de foudre que Home Assistant reçoit de la source de détection configurée. Vérifiez-y le bon emplacement de référence et définissez le rayon de la source au moins aussi grand que le rayon d’observation de Gewitterradar. Gewitterradar ne peut ni afficher ni évaluer les impacts déjà filtrés par la source.',prerequisitesNote:'Si plusieurs détecteurs ou points d’observation existent, les entités utilisées doivent correspondre sans ambiguïté au point de référence souhaité.',
+    radiiTitle:'Les rayons',radii:'Les rayons sont cumulatifs : un impact dans le rayon de danger compte aussi dans les rayons d’orage et d’observation. Ce sont des seuils de distance, pas des sources de données séparées.',radiusItems:['Rayon d’observation – zone extérieure pour l’observation précoce.','Rayon d’orage – zone plus proche demandant une vigilance accrue.','Rayon de danger – proximité immédiate particulièrement importante.'],radiiNote:'Le rayon de danger est limité à 250 km au maximum.',
+    locationTitle:'Emplacement de référence',location:'L’emplacement de référence détermine le point depuis lequel les distances et directions sont calculées. Gewitterradar détecte dynamiquement les entités person.* et zone.*. Quand l’emplacement d’une personne change, les distances sont recalculées à partir des données Home Assistant actuelles.',locationNote:'Un emplacement de référence incorrect entraîne des distances, des évaluations de rayon et des directions de boussole incorrectes.',
+    functionsTitle:'Fonctions importantes',functions:[['Effets d’aura','visualisent l’activité de foudre sans modifier la détection ni le comptage.'],['Animation d’alerte','met visuellement en évidence l’activité orageuse pertinente.'],['Regroupement de carte','regroupe les marqueurs proches pour garder la carte lisible.'],['Boussole : impact le plus proche','oriente l’affichage vers l’impact détecté le plus proche.'],['Orientation de l’appareil','peut utiliser l’orientation des appareils mobiles compatibles.'],['Simulation d’orage','sert uniquement aux tests et au diagnostic et doit rester désactivée en fonctionnement normal.']],
+    defaultsTitle:'Réglages de base recommandés',defaultsIntro:'Pour un démarrage stable, nous recommandons :',defaults:['Définir le rayon de la source au moins aussi grand que le rayon d’observation de Gewitterradar.','Laisser le regroupement de carte activé.','Laisser l’animation d’alerte activée.','Régler les effets d’aura selon vos préférences ; ils n’influencent pas la détection.','Laisser la simulation d’orage désactivée en fonctionnement normal.','Activer l’orientation de l’appareil uniquement si elle est nécessaire sur l’appareil utilisé.'],
+    troubleshootingTitle:'Si quelque chose ne fonctionne pas',troubleshooting:[['Aucun impact ou trop peu','Vérifiez l’état de la source, son rayon et les entités de foudre utilisées.'],['Distances ou directions incorrectes','Vérifiez l’emplacement de référence et l’unité de distance.'],['Le choix de langue réapparaît','Vérifiez que le package Gewitterradar actuel et l’assistant d’initialisation sont installés.'],['Affichage inchangé après mise à jour','Rechargez complètement le cache du navigateur ou de l’application et vérifiez que le JavaScript actuel est utilisé.'],['Comportement étrange ou carte en double','Une seule ressource de module Gewitterradar doit être active dans Home Assistant. L’intégration native et la ressource Dashboard/HACS ne doivent pas enregistrer simultanément la même carte personnalisée.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Les données de foudre peuvent produire de très nombreux changements d’état. Pour garder Recorder léger sur le long terme, nous recommandons d’exclure les entités et motifs suivants.',recorderNotes:['Si une section recorder: existe déjà, fusionnez-y ces entrées. Ne créez pas un second bloc recorder: de premier niveau.','Ces exclusions ne désactivent PAS les états en direct utilisés par Gewitterradar.','Les données historiques existantes ne sont pas supprimées automatiquement.','Les motifs génériques prennent en charge plusieurs détecteurs ou points d’observation, quel que soit le préfixe des entités.']
+  }),
+  'Nederlands':makeHelpLocale({
+    menu:'Hulp & aanwijzingen',subtitle:'Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.',close:'Hulp sluiten',copy:'YAML kopiëren',copied:'Gekopieerd',copyFailed:'Kopiëren niet mogelijk — selecteer de code.',
+    prerequisitesTitle:'Vereisten',prerequisites:'Gewitterradar verwerkt de bliksemgegevens die Home Assistant van de ingestelde detectiebron ontvangt. Controleer daar de juiste referentielocatie en stel de bronradius minstens zo groot in als de observatieradius in Gewitterradar. Gewitterradar kan inslagen die al door de bron zijn weggefilterd niet tonen of beoordelen.',prerequisitesNote:'Bij meerdere detectoren of observatiepunten moeten de gebruikte entiteiten eenduidig bij het gewenste referentiepunt horen.',
+    radiiTitle:'De stralen',radii:'De stralen zijn cumulatief: een inslag binnen de gevarenradius telt ook binnen de onweers- en observatieradius. Het zijn afstandsdrempels, geen afzonderlijke gegevensbronnen.',radiusItems:['Observatieradius – buitenste gebied voor vroege observatie.','Onweersradius – dichter gebied dat extra aandacht vraagt.','Gevarenradius – directe omgeving met bijzonder hoge relevantie.'],radiiNote:'De gevarenradius is begrensd op maximaal 250 km.',
+    locationTitle:'Referentielocatie',location:'De referentielocatie bepaalt vanaf welk punt afstanden en richtingen worden berekend. Gewitterradar detecteert person.*- en zone.*-entiteiten dynamisch. Als de locatie van een persoon verandert, worden afstanden opnieuw berekend met de actuele Home Assistant-gegevens.',locationNote:'Een verkeerde referentielocatie veroorzaakt verkeerde afstanden, radiusbeoordelingen en kompasrichtingen.',
+    functionsTitle:'Belangrijke functies',functions:[['Aura-effecten','visualiseren bliksemactiviteit maar veranderen detectie of telling niet.'],['Waarschuwingsanimatie','benadrukt relevante onweersactiviteit visueel.'],['Kaartgroepering','voegt nabije inslagmarkeringen samen en houdt de kaart overzichtelijk.'],['Kompas: dichtstbijzijnde inslag','richt de weergave op de dichtstbijzijnde gedetecteerde inslag.'],['Apparaatoriëntatie','kan op ondersteunde mobiele apparaten de oriëntatie gebruiken.'],['Onweerssimulatie','is alleen bedoeld voor tests en diagnose en moet normaal uitgeschakeld blijven.']],
+    defaultsTitle:'Aanbevolen basisinstellingen',defaultsIntro:'Voor een stabiele start adviseren we:',defaults:['Stel de bronradius minstens zo groot in als de Gewitterradar-observatieradius.','Laat kaartgroepering ingeschakeld.','Laat de waarschuwingsanimatie ingeschakeld.','Pas aura-effecten naar wens aan; ze beïnvloeden de detectie niet.','Laat onweerssimulatie tijdens normaal gebruik uitgeschakeld.','Schakel apparaat­oriëntatie alleen in wanneer die op het gebruikte mobiele apparaat nodig is.'],
+    troubleshootingTitle:'Als iets niet werkt',troubleshooting:[['Geen of te weinig inslagen','Controleer de bronstatus, bronradius en gebruikte bliksementiteiten.'],['Afstanden of richtingen lijken verkeerd','Controleer referentielocatie en afstandseenheid.'],['Taalkeuze blijft terugkomen','Controleer of het actuele Gewitterradar-package en de initialisatiehelper zijn geïnstalleerd.'],['Weergave na update onveranderd','Laad de browser-/appcache volledig opnieuw en controleer dat het actuele JavaScript-bestand wordt gebruikt.'],['Vreemd gedrag of dubbele kaart','Er mag slechts ÉÉN Gewitterradar-moduleresource actief zijn in Home Assistant. De native integratie en Dashboard-/HACS-resource mogen dezelfde custom card niet tegelijk registreren.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Bliksemgegevens kunnen zeer veel statuswijzigingen veroorzaken. Voor een slanke Recorder-configuratie op lange termijn adviseren we de volgende entiteiten en patronen uit te sluiten.',recorderNotes:['Voeg deze regels toe aan een bestaande recorder:-sectie. Maak geen tweede recorder:-blok op het hoogste niveau.','De uitsluitingen schakelen live-statussen voor Gewitterradar NIET uit.','Bestaande historische gegevens worden niet automatisch verwijderd.','De jokerpatronen ondersteunen meerdere detectoren of observatiepunten, ongeacht het entiteitsvoorvoegsel.']
+  }),
+  'Polski':makeHelpLocale({
+    menu:'Pomoc i wskazówki',subtitle:'Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.',close:'Zamknij pomoc',copy:'Kopiuj YAML',copied:'Skopiowano',copyFailed:'Nie można skopiować — zaznacz kod.',
+    prerequisitesTitle:'Wymagania',prerequisites:'Gewitterradar przetwarza dane o wyładowaniach, które Home Assistant otrzymuje ze skonfigurowanego źródła detekcji. Sprawdź tam właściwą lokalizację odniesienia i ustaw promień źródła co najmniej tak duży jak promień obserwacji w Gewitterradar. Gewitterradar nie może wyświetlać ani oceniać wyładowań odfiltrowanych już przez źródło.',prerequisitesNote:'Jeśli dostępnych jest kilka detektorów lub punktów obserwacyjnych, używane encje muszą jednoznacznie należeć do właściwego punktu odniesienia.',
+    radiiTitle:'Promienie',radii:'Promienie nakładają się: wyładowanie w promieniu zagrożenia liczy się także w promieniu burzy i obserwacji. Są to progi odległości, a nie oddzielne źródła danych.',radiusItems:['Promień obserwacji – zewnętrzny obszar wczesnej obserwacji.','Promień burzy – bliższy obszar wymagający większej uwagi.','Promień zagrożenia – bezpośrednie otoczenie o szczególnym znaczeniu.'],radiiNote:'Promień zagrożenia jest ograniczony do maksymalnie 250 km.',
+    locationTitle:'Lokalizacja odniesienia',location:'Lokalizacja odniesienia określa punkt, od którego obliczane są odległości i kierunki. Gewitterradar dynamicznie wykrywa encje person.* i zone.*. Po zmianie lokalizacji osoby odległości są obliczane ponownie z bieżących danych Home Assistant.',locationNote:'Błędna lokalizacja odniesienia powoduje błędne odległości, ocenę promieni i kierunki kompasu.',
+    functionsTitle:'Ważne funkcje',functions:[['Efekty aury','wizualizują aktywność wyładowań, ale nie zmieniają wykrywania ani zliczania.'],['Animacja ostrzeżenia','wyróżnia wizualnie istotną aktywność burzową.'],['Grupowanie mapy','łączy pobliskie znaczniki i utrzymuje czytelność mapy.'],['Kompas: najbliższe wyładowanie','kieruje widok na najbliższe wykryte wyładowanie.'],['Orientacja urządzenia','może uwzględniać orientację obsługiwanych urządzeń mobilnych.'],['Symulacja burzy','służy wyłącznie do testów i diagnostyki i powinna być wyłączona podczas normalnej pracy.']],
+    defaultsTitle:'Zalecane ustawienia podstawowe',defaultsIntro:'Dla stabilnego startu zalecamy:',defaults:['Ustaw promień źródła co najmniej tak duży jak promień obserwacji Gewitterradar.','Pozostaw włączone grupowanie mapy.','Pozostaw włączoną animację ostrzeżenia.','Dostosuj efekty aury do upodobań; nie wpływają na wykrywanie.','Pozostaw symulację burzy wyłączoną podczas normalnej pracy.','Włącz orientację urządzenia tylko wtedy, gdy jest potrzebna na używanym urządzeniu mobilnym.'],
+    troubleshootingTitle:'Gdy coś nie działa',troubleshooting:[['Brak lub za mało wyładowań','Sprawdź stan źródła, promień źródła i używane encje wyładowań.'],['Odległości lub kierunki są błędne','Sprawdź lokalizację odniesienia i jednostkę odległości.'],['Wybór języka ciągle wraca','Sprawdź, czy zainstalowano aktualny pakiet Gewitterradar i helper inicjalizacji.'],['Wygląd nie zmienił się po aktualizacji','Całkowicie przeładuj pamięć podręczną przeglądarki/aplikacji i upewnij się, że używany jest aktualny plik JavaScript.'],['Nietypowe zachowanie lub podwójna karta','W Home Assistant może być aktywny tylko JEDEN zasób modułu Gewitterradar. Integracja natywna i zasób Dashboard/HACS nie mogą jednocześnie rejestrować tej samej karty niestandardowej.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Dane o wyładowaniach mogą generować bardzo wiele zmian stanu. Aby Recorder pozostał lekki w długim okresie, zalecamy wykluczenie poniższych encji i wzorców.',recorderNotes:['Jeśli sekcja recorder: już istnieje, dodaj do niej te wpisy. Nie twórz drugiego bloku recorder: najwyższego poziomu.','Wykluczenia NIE wyłączają stanów na żywo używanych przez Gewitterradar.','Istniejące dane historyczne nie są automatycznie usuwane.','Wzorce wieloznaczne obsługują wiele detektorów lub punktów obserwacyjnych niezależnie od prefiksu encji.']
+  }),
+  'Português':makeHelpLocale({
+    menu:'Ajuda e notas',subtitle:'Um guia breve para manter o Gewitterradar fiável e fácil de compreender.',close:'Fechar ajuda',copy:'Copiar YAML',copied:'Copiado',copyFailed:'Não foi possível copiar — selecione o código.',
+    prerequisitesTitle:'Pré-requisitos',prerequisites:'O Gewitterradar processa os dados de relâmpagos que o Home Assistant recebe da fonte de deteção configurada. Verifique aí a localização de referência correta e defina o raio da fonte pelo menos tão grande como o raio de observação do Gewitterradar. O Gewitterradar não pode mostrar nem avaliar descargas já filtradas pela fonte.',prerequisitesNote:'Se existirem vários detetores ou pontos de observação, as entidades utilizadas devem pertencer claramente ao ponto de referência pretendido.',
+    radiiTitle:'Os raios',radii:'Os raios são cumulativos: uma descarga dentro do raio de perigo também conta nos raios de tempestade e de observação. São limites de distância, não fontes de dados separadas.',radiusItems:['Raio de observação – área exterior para observação antecipada.','Raio de tempestade – área mais próxima que exige maior atenção.','Raio de perigo – proximidade imediata com relevância especialmente elevada.'],radiiNote:'O raio de perigo está limitado a um máximo de 250 km.',
+    locationTitle:'Localização de referência',location:'A localização de referência determina o ponto a partir do qual são calculadas distâncias e direções. O Gewitterradar deteta dinamicamente entidades person.* e zone.*. Quando a localização de uma pessoa muda, as distâncias são recalculadas com os dados atuais do Home Assistant.',locationNote:'Uma localização de referência incorreta origina distâncias, avaliações de raio e direções da bússola incorretas.',
+    functionsTitle:'Funções importantes',functions:[['Efeitos de aura','visualizam a atividade de relâmpagos, mas não alteram a deteção nem a contagem.'],['Animação de aviso','realça visualmente atividade de trovoada relevante.'],['Agrupamento do mapa','combina marcadores próximos e mantém o mapa legível.'],['Bússola: descarga mais próxima','orienta a vista para a descarga detetada mais próxima.'],['Orientação do dispositivo','pode utilizar a orientação em dispositivos móveis compatíveis.'],['Simulação de trovoada','destina-se apenas a testes e diagnóstico e deve permanecer desativada em funcionamento normal.']],
+    defaultsTitle:'Definições básicas recomendadas',defaultsIntro:'Para um início estável recomendamos:',defaults:['Definir o raio da fonte pelo menos igual ao raio de observação do Gewitterradar.','Manter o agrupamento do mapa ativado.','Manter a animação de aviso ativada.','Ajustar os efeitos de aura ao gosto pessoal; não influenciam a deteção.','Manter a simulação de trovoada desativada em funcionamento normal.','Ativar a orientação do dispositivo apenas quando necessária no dispositivo móvel utilizado.'],
+    troubleshootingTitle:'Se algo não funcionar',troubleshooting:[['Nenhuma ou poucas descargas','Verifique o estado da fonte, o raio da fonte e as entidades de relâmpagos usadas.'],['Distâncias ou direções parecem erradas','Verifique a localização de referência e a unidade de distância.'],['A seleção de idioma reaparece','Verifique se o pacote Gewitterradar atual e o auxiliar de inicialização estão instalados.'],['Visualização inalterada após atualização','Recarregue totalmente a cache do navegador/aplicação e confirme que o JavaScript atual está a ser usado.'],['Comportamento estranho ou cartão duplicado','Só pode estar ativo UM recurso de módulo Gewitterradar no Home Assistant. A integração nativa e o recurso Dashboard/HACS não podem registar simultaneamente o mesmo cartão personalizado.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Os dados de relâmpagos podem gerar muitas alterações de estado. Para uma configuração Recorder leve a longo prazo, recomendamos excluir as seguintes entidades e padrões.',recorderNotes:['Se já existir uma secção recorder:, integre nela estas entradas. Não crie um segundo bloco recorder: de nível superior.','As exclusões NÃO desativam os estados em direto usados pelo Gewitterradar.','Os dados históricos existentes não são removidos automaticamente.','Os padrões wildcard suportam vários detetores ou pontos de observação, independentemente do prefixo da entidade.']
+  }),
+  'Svenska':makeHelpLocale({
+    menu:'Hjälp och anvisningar',subtitle:'En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.',close:'Stäng hjälpen',copy:'Kopiera YAML',copied:'Kopierat',copyFailed:'Det gick inte att kopiera – markera koden.',
+    prerequisitesTitle:'Förutsättningar',prerequisites:'Gewitterradar behandlar de blixtdata som Home Assistant tar emot från den konfigurerade detektionskällan. Kontrollera rätt referensplats där och ställ in källradien minst lika stor som observationsradien i Gewitterradar. Gewitterradar kan inte visa eller utvärdera blixtar som redan har filtrerats bort av källan.',prerequisitesNote:'Om flera blixtdetektorer eller observationspunkter finns måste de använda entiteterna tydligt tillhöra önskad referenspunkt.',
+    radiiTitle:'Radierna',radii:'Radierna är kumulativa: en blixt inom faroradien räknas även inom åsk- och observationsradien. Områdena är avståndsgränser, inte separata datakällor.',radiusItems:['Observationsradie – yttre område för tidig observation.','Åskradie – närmare område som kräver ökad uppmärksamhet.','Faroradie – omedelbart närområde med särskilt hög relevans.'],radiiNote:'Faroradien är begränsad till högst 250 km.',
+    locationTitle:'Referensplats',location:'Referensplatsen bestämmer punkten som avstånd och riktningar beräknas från. Gewitterradar identifierar person.*- och zone.*-entiteter dynamiskt. När en persons plats ändras beräknas avstånden på nytt med aktuella Home Assistant-data.',locationNote:'En felaktig referensplats ger felaktiga avstånd, radiebedömningar och kompassriktningar.',
+    functionsTitle:'Viktiga funktioner',functions:[['Auraeffekter','visualiserar blixtaktivitet men ändrar inte detektering eller räkning.'],['Varningsanimation','framhäver relevant åskaktivitet visuellt.'],['Kartgruppering','samlar närliggande blixtmarkörer och håller kartan tydlig.'],['Kompass: närmaste blixt','riktar visningen mot den närmaste detekterade blixten.'],['Enhetsorientering','kan använda orienteringen på mobila enheter som stöds.'],['Åsksimulering','är endast avsedd för test och diagnostik och bör vara avstängd under normal drift.']],
+    defaultsTitle:'Rekommenderade grundinställningar',defaultsIntro:'För en stabil start rekommenderar vi:',defaults:['Ställ in källradien minst lika stor som Gewitterradars observationsradie.','Låt kartgruppering vara aktiverad.','Låt varningsanimationen vara aktiverad.','Anpassa auraeffekterna efter smak; de påverkar inte detekteringen.','Låt åsksimulering vara avstängd under normal drift.','Aktivera enhetsorientering endast när den behövs på den mobila enheten.'],
+    troubleshootingTitle:'Om något inte fungerar',troubleshooting:[['Inga eller för få blixtar','Kontrollera källans status, källradien och de blixtentiteter som används.'],['Avstånd eller riktningar verkar fel','Kontrollera referensplats och avståndsenhet.'],['Språkvalet visas igen','Kontrollera att aktuellt Gewitterradar-paket och initialiseringshjälparen är installerade.'],['Visningen är oförändrad efter uppdatering','Ladda om webbläsarens/appens cache helt och säkerställ att aktuell JavaScript-fil används.'],['Oväntat beteende eller dubbelt kort','Endast EN Gewitterradar-modulresurs får vara aktiv i Home Assistant. Den inbyggda integrationen och Dashboard-/HACS-resursen får inte registrera samma anpassade kort samtidigt.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Blixtdata kan skapa väldigt många tillståndsändringar. För en slimmad Recorder-konfiguration över tid rekommenderar vi att följande entiteter och mönster undantas.',recorderNotes:['Om en recorder:-sektion redan finns ska posterna läggas till där. Skapa inte ett andra recorder:-block på toppnivå.','Undantagen inaktiverar INTE de live-tillstånd som Gewitterradar använder.','Befintliga historiska data tas inte bort automatiskt.','Jokermönstren stöder flera blixtdetektorer eller observationspunkter oberoende av entitetsprefix.']
+  }),
+  'Italiano':makeHelpLocale({
+    menu:'Aiuto e note',subtitle:'Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.',close:'Chiudi aiuto',copy:'Copia YAML',copied:'Copiato',copyFailed:'Copia non disponibile — seleziona il codice.',
+    prerequisitesTitle:'Prerequisiti',prerequisites:'Gewitterradar elabora i dati dei fulmini che Home Assistant riceve dalla sorgente di rilevamento configurata. Verifica lì la posizione di riferimento corretta e imposta il raggio della sorgente almeno pari al raggio di osservazione di Gewitterradar. Gewitterradar non può mostrare o valutare scariche già filtrate dalla sorgente.',prerequisitesNote:'Se sono presenti più rilevatori o punti di osservazione, le entità usate devono appartenere chiaramente al punto di riferimento desiderato.',
+    radiiTitle:'I raggi',radii:'I raggi sono cumulativi: una scarica nel raggio di pericolo conta anche nei raggi di temporale e osservazione. Sono soglie di distanza, non sorgenti dati separate.',radiusItems:['Raggio di osservazione – area esterna per l’osservazione anticipata.','Raggio di temporale – area più vicina che richiede maggiore attenzione.','Raggio di pericolo – zona immediata di particolare rilevanza.'],radiiNote:'Il raggio di pericolo è limitato a un massimo di 250 km.',
+    locationTitle:'Posizione di riferimento',location:'La posizione di riferimento determina il punto da cui vengono calcolate distanze e direzioni. Gewitterradar rileva dinamicamente le entità person.* e zone.*. Quando cambia la posizione di una persona, le distanze vengono ricalcolate con i dati correnti di Home Assistant.',locationNote:'Una posizione di riferimento errata produce distanze, valutazioni dei raggi e direzioni della bussola errate.',
+    functionsTitle:'Funzioni importanti',functions:[['Effetti aura','visualizzano l’attività dei fulmini ma non modificano rilevamento o conteggio.'],['Animazione di avviso','evidenzia visivamente l’attività temporalesca rilevante.'],['Raggruppamento mappa','unisce i marcatori vicini e mantiene ordinata la mappa.'],['Bussola: fulmine più vicino','orienta la vista verso la scarica rilevata più vicina.'],['Orientamento dispositivo','può utilizzare l’orientamento sui dispositivi mobili supportati.'],['Simulazione temporale','serve solo per test e diagnostica e deve restare disattivata durante l’uso normale.']],
+    defaultsTitle:'Impostazioni di base consigliate',defaultsIntro:'Per un avvio stabile consigliamo:',defaults:['Impostare il raggio della sorgente almeno pari al raggio di osservazione di Gewitterradar.','Lasciare attivo il raggruppamento della mappa.','Lasciare attiva l’animazione di avviso.','Regolare gli effetti aura a piacere; non influiscono sul rilevamento.','Lasciare disattivata la simulazione temporale durante l’uso normale.','Attivare l’orientamento dispositivo solo quando serve sul dispositivo mobile usato.'],
+    troubleshootingTitle:'Se qualcosa non funziona',troubleshooting:[['Nessun fulmine o troppo pochi','Controlla stato della sorgente, raggio sorgente ed entità fulmine usate.'],['Distanze o direzioni errate','Controlla posizione di riferimento e unità di distanza.'],['La selezione lingua ricompare','Verifica che siano installati il package Gewitterradar corrente e l’helper di inizializzazione.'],['Aspetto invariato dopo l’aggiornamento','Ricarica completamente la cache del browser/app e verifica che venga usato il JavaScript corrente.'],['Comportamento anomalo o scheda doppia','In Home Assistant può essere attiva una sola risorsa modulo Gewitterradar. L’integrazione nativa e la risorsa Dashboard/HACS non devono registrare contemporaneamente la stessa custom card.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'I dati dei fulmini possono generare moltissimi cambiamenti di stato. Per una configurazione Recorder snella nel tempo consigliamo di escludere le seguenti entità e i relativi modelli.',recorderNotes:['Se esiste già una sezione recorder:, integra lì queste voci. Non creare un secondo blocco recorder: di primo livello.','Le esclusioni NON disattivano gli stati live usati da Gewitterradar.','I dati storici esistenti non vengono rimossi automaticamente.','I modelli wildcard supportano più rilevatori o punti di osservazione indipendentemente dal prefisso delle entità.']
+  }),
+  'Norsk bokmål':makeHelpLocale({
+    menu:'Hjelp og merknader',subtitle:'En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.',close:'Lukk hjelp',copy:'Kopier YAML',copied:'Kopiert',copyFailed:'Kopiering er ikke tilgjengelig – marker koden.',
+    prerequisitesTitle:'Forutsetninger',prerequisites:'Gewitterradar behandler lyndataene som Home Assistant mottar fra den konfigurerte lyndeteksjonskilden. Kontroller riktig referansested der, og sett kilderadius minst like stor som observasjonsradiusen i Gewitterradar. Gewitterradar kan ikke vise eller vurdere lynnedslag som allerede er filtrert bort av kilden.',prerequisitesNote:'Hvis flere lyndetektorer eller observasjonspunkter finnes, må entitetene som brukes tydelig tilhøre ønsket referansepunkt.',
+    radiiTitle:'Radiene',radii:'Radiene er kumulative: Et lynnedslag innenfor fareradiusen teller også innenfor torden- og observasjonsradiusen. Områdene er avstandsgrenser, ikke separate datakilder.',radiusItems:['Observasjonsradius – ytre område for tidlig observasjon.','Tordenradius – nærmere område som krever økt oppmerksomhet.','Fareradius – umiddelbar nærhet med særlig høy relevans.'],radiiNote:'Fareradiusen er begrenset til maksimalt 250 km.',
+    locationTitle:'Referansested',location:'Referansestedet bestemmer punktet som avstander og retninger beregnes fra. Gewitterradar oppdager person.*- og zone.*-entiteter dynamisk. Når en persons plassering endres, beregnes avstandene på nytt fra gjeldende Home Assistant-data.',locationNote:'Et feil referansested gir feil avstander, radiusvurderinger og kompassretninger.',
+    functionsTitle:'Viktige funksjoner',functions:[['Auraeffekter','visualiserer lynaktivitet, men endrer ikke deteksjon eller telling.'],['Varselanimasjon','fremhever relevant tordenværaktivitet visuelt.'],['Kartgruppering','samler nærliggende markører og holder kartet oversiktlig.'],['Kompass: nærmeste lyn','retter visningen mot nærmeste registrerte lynnedslag.'],['Enhetsretning','kan bruke retningen på støttede mobilenheter.'],['Tordenværsimulering','er bare ment for test og diagnostikk og bør være avslått under normal drift.']],
+    defaultsTitle:'Anbefalte grunninnstillinger',defaultsIntro:'For en stabil start anbefaler vi:',defaults:['Sett kilderadius minst like stor som Gewitterradars observasjonsradius.','La kartgruppering være aktivert.','La varselanimasjonen være aktivert.','Tilpass auraeffektene etter smak; de påvirker ikke deteksjonen.','La tordenværsimulering være avslått under normal drift.','Aktiver enhetsretning bare når den trengs på mobilenheten som brukes.'],
+    troubleshootingTitle:'Hvis noe ikke fungerer',troubleshooting:[['Ingen eller for få lynnedslag','Kontroller kildestatus, kilderadius og lynentitetene som brukes.'],['Avstander eller retninger virker feil','Kontroller referansested og avstandsenhet.'],['Språkvalget kommer stadig tilbake','Kontroller at gjeldende Gewitterradar-pakke og initialiseringshjelper er installert.'],['Visningen er uendret etter oppdatering','Last nettleser-/appbufferen helt på nytt og kontroller at gjeldende JavaScript-fil brukes.'],['Uventet oppførsel eller dobbelt kort','Bare ÉN Gewitterradar-modulressurs kan være aktiv i Home Assistant. Den native integrasjonen og Dashboard-/HACS-ressursen må ikke registrere samme egendefinerte kort samtidig.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Lyndata kan skape svært mange tilstandsendringer. For en slank Recorder-konfigurasjon over tid anbefaler vi å utelate følgende entiteter og mønstre.',recorderNotes:['Hvis en recorder:-seksjon allerede finnes, legg oppføringene til der. Ikke opprett en ny recorder:-blokk på toppnivå.','Unntakene deaktiverer IKKE live-tilstandene som Gewitterradar bruker.','Eksisterende historiske data fjernes ikke automatisk.','Jokermønstrene støtter flere lyndetektorer eller observasjonspunkter uavhengig av entitetsprefiks.']
+  }),
+  'Suomi':makeHelpLocale({
+    menu:'Ohje ja huomautukset',subtitle:'Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.',close:'Sulje ohje',copy:'Kopioi YAML',copied:'Kopioitu',copyFailed:'Kopiointi ei onnistu – valitse koodi.',
+    prerequisitesTitle:'Edellytykset',prerequisites:'Gewitterradar käsittelee salamadataa, jonka Home Assistant saa määritetystä salamapaikannuslähteestä. Tarkista lähteessä oikea viitesijainti ja aseta lähteen säde vähintään Gewitterradarin havaintosäteen suuruiseksi. Gewitterradar ei voi näyttää tai arvioida salamoita, jotka lähde on jo suodattanut pois.',prerequisitesNote:'Jos käytössä on useita paikantimia tai havaintopisteitä, käytettyjen entiteettien on kuuluttava yksiselitteisesti haluttuun viitepisteeseen.',
+    radiiTitle:'Säteet',radii:'Säteet ovat kumulatiivisia: vaarasäteen sisällä oleva salama lasketaan myös ukkos- ja havaintosäteeseen. Alueet ovat etäisyysrajoja, eivät erillisiä tietolähteitä.',radiusItems:['Havaintosäde – ulompi alue varhaiseen havainnointiin.','Ukkossäde – lähempi alue, joka vaatii enemmän huomiota.','Vaarasäde – välitön lähialue, jolla on erityisen suuri merkitys.'],radiiNote:'Vaarasäde on rajoitettu enintään 250 kilometriin.',
+    locationTitle:'Viitesijainti',location:'Viitesijainti määrittää pisteen, josta etäisyydet ja suunnat lasketaan. Gewitterradar tunnistaa person.*- ja zone.*-entiteetit dynaamisesti. Kun henkilön sijainti muuttuu, etäisyydet lasketaan uudelleen Home Assistantin nykyisistä tiedoista.',locationNote:'Virheellinen viitesijainti johtaa vääriin etäisyyksiin, sädearvioihin ja kompassisuuntiin.',
+    functionsTitle:'Tärkeät toiminnot',functions:[['Aura-tehosteet','havainnollistavat salamatoimintaa mutta eivät muuta tunnistusta tai laskentaa.'],['Varoitusanimaatio','korostaa olennaista ukkostoimintaa visuaalisesti.'],['Karttaryhmittely','yhdistää läheiset salamamerkit ja pitää kartan selkeänä.'],['Kompassi: lähin salama','suuntaa näytön lähimpään havaittuun salamaan.'],['Laitteen suunta','voi käyttää tuettujen mobiililaitteiden suuntausta.'],['Ukkossimulaatio','on tarkoitettu vain testaukseen ja diagnostiikkaan ja tulee pitää pois käytöstä normaalisti.']],
+    defaultsTitle:'Suositellut perusasetukset',defaultsIntro:'Vakaaseen aloitukseen suosittelemme:',defaults:['Aseta salamälähteen säde vähintään Gewitterradarin havaintosäteen suuruiseksi.','Pidä karttaryhmittely käytössä.','Pidä varoitusanimaatio käytössä.','Säädä aura-tehosteet mieltymyksen mukaan; ne eivät vaikuta tunnistukseen.','Pidä ukkossimulaatio pois käytöstä normaalissa käytössä.','Ota laitteen suunta käyttöön vain, jos sitä tarvitaan kyseisellä mobiililaitteella.'],
+    troubleshootingTitle:'Jos jokin ei toimi',troubleshooting:[['Salamoita ei näy tai niitä on liian vähän','Tarkista lähteen tila, lähdesäde ja käytetyt salamaentiteetit.'],['Etäisyydet tai suunnat näyttävät vääriltä','Tarkista viitesijainti ja etäisyysyksikkö.'],['Kielivalinta palaa jatkuvasti','Tarkista, että nykyinen Gewitterradar-paketti ja alustuksen apuentiteetti on asennettu.'],['Näkymä ei muutu päivityksen jälkeen','Lataa selaimen tai sovelluksen välimuisti kokonaan uudelleen ja varmista nykyisen JavaScript-tiedoston käyttö.'],['Outo toiminta tai kaksinkertainen kortti','Home Assistantissa saa olla aktiivisena vain YKSI Gewitterradar-moduuliresurssi. Natiivi integraatio ja Dashboard-/HACS-resurssi eivät saa rekisteröidä samaa mukautettua korttia yhtä aikaa.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Salamadata voi synnyttää erittäin paljon tilamuutoksia. Pitkällä aikavälillä kevyttä Recorder-määritystä varten suosittelemme seuraavien entiteettien ja mallien poissulkemista.',recorderNotes:['Jos recorder:-osio on jo olemassa, yhdistä nämä rivit siihen. Älä luo toista ylätason recorder:-lohkoa.','Poissulkemiset EIVÄT poista Gewitterradarin käyttämiä reaaliaikaisia tiloja käytöstä.','Olemassa olevia historiatietoja ei poisteta automaattisesti.','Jokerimerkkimallit tukevat useita paikantimia tai havaintopisteitä entiteetin etuliitteestä riippumatta.']
+  }),
+  'Čeština':makeHelpLocale({
+    menu:'Nápověda a poznámky',subtitle:'Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.',close:'Zavřít nápovědu',copy:'Kopírovat YAML',copied:'Zkopírováno',copyFailed:'Kopírování není dostupné – označte kód.',
+    prerequisitesTitle:'Předpoklady',prerequisites:'Gewitterradar zpracovává data o blescích, která Home Assistant přijímá z nastaveného zdroje detekce. Zkontrolujte v něm správnou referenční polohu a nastavte poloměr zdroje alespoň stejně velký jako pozorovací poloměr v Gewitterradaru. Gewitterradar nemůže zobrazit ani vyhodnotit výboje, které zdroj již odfiltroval.',prerequisitesNote:'Pokud existuje více detektorů nebo pozorovacích bodů, musí použité entity jednoznačně patřit k požadovanému referenčnímu bodu.',
+    radiiTitle:'Poloměry',radii:'Poloměry se překrývají: výboj v nebezpečném poloměru se počítá také do bouřkového a pozorovacího poloměru. Jde o prahové vzdálenosti, nikoli oddělené zdroje dat.',radiusItems:['Pozorovací poloměr – vnější oblast pro včasné pozorování.','Bouřkový poloměr – bližší oblast vyžadující zvýšenou pozornost.','Nebezpečný poloměr – bezprostřední okolí s mimořádnou důležitostí.'],radiiNote:'Nebezpečný poloměr je omezen maximálně na 250 km.',
+    locationTitle:'Referenční poloha',location:'Referenční poloha určuje bod, od kterého se počítají vzdálenosti a směry. Gewitterradar dynamicky rozpoznává entity person.* a zone.*. Když se poloha osoby změní, vzdálenosti se přepočítají z aktuálních dat Home Assistant.',locationNote:'Nesprávná referenční poloha způsobí chybné vzdálenosti, vyhodnocení poloměrů a směry kompasu.',
+    functionsTitle:'Důležité funkce',functions:[['Efekty aury','znázorňují aktivitu blesků, ale nemění detekci ani počítání.'],['Výstražná animace','vizuálně zvýrazňuje významnou bouřkovou aktivitu.'],['Seskupování mapy','spojuje blízké značky a udržuje mapu přehlednou.'],['Kompas: nejbližší blesk','nasměruje zobrazení k nejbližšímu rozpoznanému výboji.'],['Orientace zařízení','může využívat orientaci podporovaných mobilních zařízení.'],['Simulace bouřky','slouží jen k testování a diagnostice a za běžného provozu má zůstat vypnutá.']],
+    defaultsTitle:'Doporučená základní nastavení',defaultsIntro:'Pro stabilní začátek doporučujeme:',defaults:['Nastavte poloměr zdroje alespoň stejně velký jako pozorovací poloměr Gewitterradaru.','Ponechte seskupování mapy zapnuté.','Ponechte výstražnou animaci zapnutou.','Nastavte efekty aury podle svých preferencí; detekci neovlivňují.','Za běžného provozu ponechte simulaci bouřky vypnutou.','Orientaci zařízení zapněte jen tehdy, je-li na daném mobilním zařízení potřebná.'],
+    troubleshootingTitle:'Když něco nefunguje',troubleshooting:[['Žádné nebo příliš málo výbojů','Zkontrolujte stav zdroje, poloměr zdroje a použité entity blesků.'],['Vzdálenosti nebo směry vypadají chybně','Zkontrolujte referenční polohu a jednotku vzdálenosti.'],['Výběr jazyka se stále vrací','Ověřte instalaci aktuálního balíčku Gewitterradar a inicializačního pomocníka.'],['Zobrazení se po aktualizaci nezměnilo','Úplně obnovte mezipaměť prohlížeče/aplikace a ověřte použití aktuálního souboru JavaScript.'],['Neobvyklé chování nebo dvojitá karta','V Home Assistant smí být aktivní jen JEDEN modulový prostředek Gewitterradar. Nativní integrace a prostředek Dashboard/HACS nesmějí současně registrovat stejnou vlastní kartu.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Data o blescích mohou vytvářet velmi mnoho změn stavu. Pro dlouhodobě úspornou konfiguraci Recorder doporučujeme vyloučit následující entity a vzory.',recorderNotes:['Pokud již existuje sekce recorder:, začleňte položky do ní. Nevytvářejte druhý blok recorder: nejvyšší úrovně.','Vyloučení NEVYPÍNAJÍ živé stavy používané Gewitterradarem.','Stávající historická data se automaticky neodstraní.','Zástupné vzory podporují více detektorů nebo pozorovacích bodů bez ohledu na prefix entity.']
+  }),
+  'Ελληνικά':makeHelpLocale({
+    menu:'Βοήθεια και σημειώσεις',subtitle:'Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.',close:'Κλείσιμο βοήθειας',copy:'Αντιγραφή YAML',copied:'Αντιγράφηκε',copyFailed:'Η αντιγραφή δεν είναι διαθέσιμη — επιλέξτε τον κώδικα.',
+    prerequisitesTitle:'Προϋποθέσεις',prerequisites:'Το Gewitterradar επεξεργάζεται τα δεδομένα κεραυνών που λαμβάνει το Home Assistant από τη ρυθμισμένη πηγή ανίχνευσης. Ελέγξτε εκεί τη σωστή θέση αναφοράς και ορίστε την ακτίνα πηγής τουλάχιστον ίση με την ακτίνα παρατήρησης του Gewitterradar. Το Gewitterradar δεν μπορεί να εμφανίσει ή να αξιολογήσει κεραυνούς που έχουν ήδη φιλτραριστεί από την πηγή.',prerequisitesNote:'Αν υπάρχουν πολλοί ανιχνευτές ή σημεία παρατήρησης, οι οντότητες που χρησιμοποιούνται πρέπει να αντιστοιχούν σαφώς στο επιθυμητό σημείο αναφοράς.',
+    radiiTitle:'Οι ακτίνες',radii:'Οι ακτίνες είναι αθροιστικές: ένας κεραυνός μέσα στην ακτίνα κινδύνου μετρά επίσης στις ακτίνες καταιγίδας και παρατήρησης. Πρόκειται για όρια απόστασης, όχι για ξεχωριστές πηγές δεδομένων.',radiusItems:['Ακτίνα παρατήρησης – εξωτερική περιοχή για έγκαιρη παρατήρηση.','Ακτίνα καταιγίδας – κοντινότερη περιοχή που απαιτεί αυξημένη προσοχή.','Ακτίνα κινδύνου – άμεση γειτνίαση με ιδιαίτερα υψηλή σημασία.'],radiiNote:'Η ακτίνα κινδύνου περιορίζεται σε μέγιστο 250 km.',
+    locationTitle:'Θέση αναφοράς',location:'Η θέση αναφοράς καθορίζει το σημείο από το οποίο υπολογίζονται αποστάσεις και κατευθύνσεις. Το Gewitterradar εντοπίζει δυναμικά οντότητες person.* και zone.*. Όταν αλλάζει η θέση ενός ατόμου, οι αποστάσεις επανυπολογίζονται από τα τρέχοντα δεδομένα του Home Assistant.',locationNote:'Λανθασμένη θέση αναφοράς οδηγεί σε λανθασμένες αποστάσεις, αξιολόγηση ακτίνων και κατευθύνσεις πυξίδας.',
+    functionsTitle:'Σημαντικές λειτουργίες',functions:[['Εφέ αύρας','απεικονίζουν τη δραστηριότητα κεραυνών χωρίς να αλλάζουν την ανίχνευση ή την καταμέτρηση.'],['Κίνηση προειδοποίησης','τονίζει οπτικά τη σημαντική δραστηριότητα καταιγίδας.'],['Ομαδοποίηση χάρτη','συνδυάζει κοντινούς δείκτες και διατηρεί τον χάρτη καθαρό.'],['Πυξίδα: κοντινότερος κεραυνός','στρέφει την προβολή προς τον κοντινότερο ανιχνευμένο κεραυνό.'],['Προσανατολισμός συσκευής','μπορεί να χρησιμοποιεί τον προσανατολισμό υποστηριζόμενων κινητών συσκευών.'],['Προσομοίωση καταιγίδας','προορίζεται μόνο για δοκιμή και διάγνωση και πρέπει να παραμένει απενεργοποιημένη στην κανονική λειτουργία.']],
+    defaultsTitle:'Προτεινόμενες βασικές ρυθμίσεις',defaultsIntro:'Για σταθερή εκκίνηση προτείνουμε:',defaults:['Ορίστε την ακτίνα πηγής τουλάχιστον ίση με την ακτίνα παρατήρησης του Gewitterradar.','Διατηρήστε ενεργή την ομαδοποίηση χάρτη.','Διατηρήστε ενεργή την κίνηση προειδοποίησης.','Ρυθμίστε τα εφέ αύρας κατά προτίμηση· δεν επηρεάζουν την ανίχνευση.','Διατηρήστε απενεργοποιημένη την προσομοίωση καταιγίδας στην κανονική λειτουργία.','Ενεργοποιήστε τον προσανατολισμό συσκευής μόνο όταν χρειάζεται στη συγκεκριμένη κινητή συσκευή.'],
+    troubleshootingTitle:'Αν κάτι δεν λειτουργεί',troubleshooting:[['Καθόλου ή πολύ λίγοι κεραυνοί','Ελέγξτε την κατάσταση της πηγής, την ακτίνα πηγής και τις οντότητες κεραυνών.'],['Οι αποστάσεις ή κατευθύνσεις φαίνονται λάθος','Ελέγξτε τη θέση αναφοράς και τη μονάδα απόστασης.'],['Η επιλογή γλώσσας επανεμφανίζεται','Ελέγξτε ότι έχουν εγκατασταθεί το τρέχον πακέτο Gewitterradar και ο βοηθός αρχικοποίησης.'],['Η προβολή δεν άλλαξε μετά την ενημέρωση','Επαναφορτώστε πλήρως την cache του προγράμματος περιήγησης/εφαρμογής και βεβαιωθείτε ότι χρησιμοποιείται το τρέχον JavaScript.'],['Παράξενη συμπεριφορά ή διπλή κάρτα','Μόνο ΕΝΑΣ πόρος μονάδας Gewitterradar επιτρέπεται να είναι ενεργός στο Home Assistant. Η εγγενής ενσωμάτωση και ο πόρος Dashboard/HACS δεν πρέπει να καταχωρούν ταυτόχρονα την ίδια προσαρμοσμένη κάρτα.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'Τα δεδομένα κεραυνών μπορούν να δημιουργήσουν πάρα πολλές αλλαγές κατάστασης. Για λιτή μακροχρόνια ρύθμιση του Recorder προτείνουμε να εξαιρεθούν οι ακόλουθες οντότητες και τα μοτίβα.',recorderNotes:['Αν υπάρχει ήδη ενότητα recorder:, ενσωματώστε εκεί αυτές τις καταχωρίσεις. Μη δημιουργήσετε δεύτερο μπλοκ recorder: ανώτατου επιπέδου.','Οι εξαιρέσεις ΔΕΝ απενεργοποιούν τις ζωντανές καταστάσεις που χρησιμοποιεί το Gewitterradar.','Τα υπάρχοντα ιστορικά δεδομένα δεν διαγράφονται αυτόματα.','Τα μοτίβα wildcard υποστηρίζουν πολλούς ανιχνευτές ή σημεία παρατήρησης ανεξάρτητα από το πρόθεμα οντότητας.']
+  }),
+  'Magyar':makeHelpLocale({
+    menu:'Súgó és megjegyzések',subtitle:'Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.',close:'Súgó bezárása',copy:'YAML másolása',copied:'Másolva',copyFailed:'A másolás nem érhető el – jelölje ki a kódot.',
+    prerequisitesTitle:'Előfeltételek',prerequisites:'A Gewitterradar a Home Assistant által a beállított villámdetektáló forrásból fogadott adatokat dolgozza fel. Ellenőrizze ott a megfelelő referenciahelyet, és a forrás sugarát állítsa legalább akkorára, mint a Gewitterradar megfigyelési sugara. A Gewitterradar nem tudja megjeleníteni vagy értékelni a forrás által már kiszűrt villámokat.',prerequisitesNote:'Ha több detektor vagy megfigyelési pont van, a használt entitásoknak egyértelműen a kívánt referenciaponthoz kell tartozniuk.',
+    radiiTitle:'A sugarak',radii:'A sugarak egymásra épülnek: a veszélyzónán belüli villám a vihar- és megfigyelési sugárba is beleszámít. Ezek távolsági küszöbök, nem külön adatforrások.',radiusItems:['Megfigyelési sugár – külső terület a korai megfigyeléshez.','Viharsugár – közelebbi terület, amely fokozott figyelmet igényel.','Veszélysugár – közvetlen környezet kiemelten nagy jelentőséggel.'],radiiNote:'A veszélysugár legfeljebb 250 km lehet.',
+    locationTitle:'Referenciahely',location:'A referenciahely határozza meg azt a pontot, amelytől a távolságokat és irányokat számítjuk. A Gewitterradar dinamikusan felismeri a person.* és zone.* entitásokat. Ha egy személy helyzete megváltozik, a távolságokat a Home Assistant aktuális adataiból újraszámítja.',locationNote:'A hibás referenciahely hibás távolságokat, sugárértékelést és iránytűirányokat eredményez.',
+    functionsTitle:'Fontos funkciók',functions:[['Auraeffektek','megjelenítik a villámtevékenységet, de nem módosítják az észlelést vagy a számlálást.'],['Figyelmeztető animáció','vizuálisan kiemeli a jelentős vihartevékenységet.'],['Térképcsoportosítás','összevonja a közeli villámjelölőket és áttekinthetően tartja a térképet.'],['Iránytű: legközelebbi villám','a kijelzőt a legközelebbi észlelt villám felé irányítja.'],['Eszköz tájolása','támogatott mobileszközökön felhasználhatja az eszköz tájolását.'],['Viharszimuláció','csak tesztelésre és diagnosztikára szolgál, normál használatkor maradjon kikapcsolva.']],
+    defaultsTitle:'Ajánlott alapbeállítások',defaultsIntro:'A stabil induláshoz javasoljuk:',defaults:['A villámforrás sugarát állítsa legalább a Gewitterradar megfigyelési sugarára.','Hagyja bekapcsolva a térképcsoportosítást.','Hagyja bekapcsolva a figyelmeztető animációt.','Az auraeffekteket ízlés szerint állítsa; az észlelést nem befolyásolják.','Normál használatkor hagyja kikapcsolva a viharszimulációt.','Az eszköz tájolását csak akkor kapcsolja be, ha az adott mobileszközön szükséges.'],
+    troubleshootingTitle:'Ha valami nem működik',troubleshooting:[['Nincs vagy túl kevés villám','Ellenőrizze a forrás állapotát, a forrássugarat és a használt villámentitásokat.'],['A távolságok vagy irányok hibásnak tűnnek','Ellenőrizze a referenciahelyet és a távolság mértékegységét.'],['A nyelvválasztás újra megjelenik','Ellenőrizze az aktuális Gewitterradar-csomag és az inicializálási segéd telepítését.'],['A megjelenés nem változott frissítés után','Töltse újra teljesen a böngésző/app gyorsítótárát, és ellenőrizze az aktuális JavaScript használatát.'],['Szokatlan működés vagy kettős kártya','A Home Assistantban csak EGY Gewitterradar modul-erőforrás lehet aktív. A natív integráció és a Dashboard/HACS-erőforrás nem regisztrálhatja egyszerre ugyanazt az egyéni kártyát.']],
+    recorderTitle:'Home Assistant Recorder',recorder:'A villámadatok nagyon sok állapotváltozást okozhatnak. A hosszú távon karcsú Recorder-konfigurációhoz javasoljuk az alábbi entitások és minták kizárását.',recorderNotes:['Ha már van recorder: szakasz, ezeket a bejegyzéseket oda illessze. Ne hozzon létre második felső szintű recorder: blokkot.','A kizárások NEM tiltják le a Gewitterradar által használt élő állapotokat.','A meglévő előzményadatok nem törlődnek automatikusan.','A helyettesítő minták több detektort vagy megfigyelési pontot támogatnak az entitás előtagjától függetlenül.']
+  }),
+  'Boarisch':dialectHelp('Hüf & Hinwais','Kurz erklärt, damit s’Gewitterradar zuverlässig und nachvollziehbar lafft.',['Voraussetzungen','De Radien','Referenzstandort','Wichtige Funktionen','Empfohlene Grundeinstellungen','Wenn wos ned stimmt','Home-Assistant-Recorder']),
+  'Plattdüütsch':dialectHelp('Hülp & Henwiesen','Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.',['Vörutsetten','De Radien','Referenzsteed','Wichtige Funktionen','Anraadt Grundinstellen','Wenn wat nich stimmt','Home-Assistant-Recorder']),
+  'Sächs’sch':dialectHelp('Hilche & Hinweese','Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.',['Voraussetzungen','De Radien','Referenzstandord','Wicht’sche Funktionen','Empfohlene Grundeinstellungen','Wenn was nich stimmt','Home-Assistant-Recorder']),
+  'Schwäbisch':dialectHelp('Hilf & Hinweis','Kurz erklärt, dass s’Gewitterradar zuverlässig ond nachvollziehbar lauft.',['Voraussetzungen','D’Radien','Referenzstandort','Wichtige Funktionen','Empfohlene Grundeinstellungen','Wenn ebbes net stimmt','Home-Assistant-Recorder']),
 };

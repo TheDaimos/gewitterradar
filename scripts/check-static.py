@@ -13,10 +13,10 @@ for directory in ("custom_components", "tests", "scripts"):
 for directory in ("custom_components", "frontend"):
     for file in (ROOT / directory).rglob("*.json"):
         json.loads(file.read_text(encoding="utf-8"))
-for file in [*(ROOT / ".github" / "workflows").glob("*.yml"), ROOT / "home-assistant/app_gewitterradar_pkg.yaml", ROOT / "dashboard/dist/app_gewitterradar_pkg.yaml"]:
+for file in [*(ROOT / ".github" / "workflows").glob("*.yml"), ROOT / "home-assistant/app_gewitterradar_v4_06_pkg.yaml", ROOT / "dashboard/dist/app_gewitterradar_v4_06_pkg.yaml"]:
     yaml.safe_load(file.read_text(encoding="utf-8"))
 count = 0
-for file in ("test_manifest.py", "test_hacs_packaging.py"):
+for file in ("test_manifest.py", "test_hacs_packaging.py", "test_v406_package.py"):
     module = runpy.run_path(str(ROOT / "tests" / file))
     for name, function in module.items():
         if not name.startswith("test_"):

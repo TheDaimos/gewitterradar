@@ -50,6 +50,11 @@ const server=http.createServer((req,res)=>{
         const crop=(header.clientHeight-hero.naturalHeight*scale)*parseFloat(style(header).backgroundPositionY.split(',').at(-1))/100;
         // Measured church silhouette in the unchanged 1536x1024 master.
         const church={top:530*scale+crop,bottom:675*scale+crop,headerHeight:header.clientHeight};
+        const box=node=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,top:r.top,right:r.right,bottom:r.bottom,left:r.left};};
+        const headerStyle=style(header),title=d.querySelector('.about-head-copy h2'),logo=d.querySelector('.about-head>img'),close=d.querySelector('.about-close');
+        const heroX=parseFloat(headerStyle.backgroundPositionX.split(',').at(-1)),heroY=parseFloat(headerStyle.backgroundPositionY.split(',').at(-1)),heroWidth=hero.naturalWidth*scale,heroHeight=hero.naturalHeight*scale;
+        const heroBox={x:headerBox.left+(header.clientWidth-heroWidth)*heroX/100,y:headerBox.top+(header.clientHeight-heroHeight)*heroY/100,width:heroWidth,height:heroHeight};
+        const headerDiagnostics={header:box(header),title:box(title),subtitle:box(subtitle),claim:box(claim),close:box(close),logo:box(logo),hero:heroBox,padding:headerStyle.padding,gap:headerStyle.gap,columnGap:headerStyle.columnGap,gridTemplateColumns:headerStyle.gridTemplateColumns,titleLineHeight:style(title).lineHeight,subtitleLineHeight:style(subtitle).lineHeight,claimLineHeight:style(claim).lineHeight};
         const numbers=[...d.querySelectorAll('.about-line-numbers span')],lines=[...d.querySelectorAll('pre code>span')];
         const lineAlignment=numbers.length===lines.length&&numbers.every((n,i)=>Math.abs(n.getBoundingClientRect().top-lines[i].getClientRects()[0].top)<2);
         const benefit=d.querySelector('[data-about-text="recorderBenefit"]');
@@ -59,7 +64,7 @@ const server=http.createServer((req,res)=>{
           claimClear,claimFont:parseFloat(style(claim).fontSize),claimUnboxed:style(claim).backgroundImage==='none'&&style(claim).backgroundColor==='rgba(0, 0, 0, 0)'&&style(claim).boxShadow==='none',claimContained:claimBox.top>=headerBox.top&&claimBox.bottom<=headerBox.bottom&&claimBox.left>=headerBox.left&&claimBox.right<=headerBox.right,
           lineNumbers:numbers.map(n=>n.textContent),lineAlignment,benefitLines,
           subtitle:subtitle.textContent,quote:d.querySelector('[data-about-text="quote"]').textContent,claim:d.querySelector('[data-about-text="claim"]').textContent,
-          headerSizing:style(header).backgroundSize,heroRatioPreserved:heroHeightSize==='auto',church,subtitleFits:subtitle.getBoundingClientRect().bottom<=header.getBoundingClientRect().bottom,
+          headerSizing:style(header).backgroundSize,heroRatioPreserved:heroHeightSize==='auto',church,subtitleFits:subtitle.getBoundingClientRect().bottom<=header.getBoundingClientRect().bottom,headerDiagnostics,
           ringColors:[...d.querySelectorAll('.about-radar>circle')].slice(0,3).map(n=>n.getAttribute('stroke')),
           legendColors:[...d.querySelectorAll('.about-radius')].map(n=>style(n).getPropertyValue('--radius-color').trim()),
           smallHeart:d.querySelectorAll('.about-small-heart').length,handwriting:d.querySelectorAll('.about-handwriting path').length,
@@ -67,11 +72,11 @@ const server=http.createServer((req,res)=>{
         };
       });
       if(refinement.subtitle!=='Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.'||refinement.quote!=='Gewitter machen sichtbar, wie kraftvoll Atmosphäre sein kann.'||refinement.claim!=='Gewitter beobachten, Entwicklungen entdecken.')throw Error('Refinement copy differs from approved text');
-      if(!refinement.heroRatioPreserved||!refinement.subtitleFits)throw Error(`${name}: header sizing/wrapping regression`);
-      if(!refinement.claimClear||!refinement.claimContained||refinement.claimFont<9)throw Error(`${name}: slogan legibility or overlap regression`);
+      if(!refinement.heroRatioPreserved||!refinement.subtitleFits)throw Error(`${name}: header sizing/wrapping regression ${JSON.stringify({heroRatioPreserved:refinement.heroRatioPreserved,headerSizing:refinement.headerSizing,subtitleFits:refinement.subtitleFits,headerDiagnostics:refinement.headerDiagnostics})}`);
+      if(!refinement.claimClear||!refinement.claimContained||refinement.claimFont<9)throw Error(`${name}: slogan legibility or overlap regression ${JSON.stringify({claimClear:refinement.claimClear,claimContained:refinement.claimContained,claimFont:refinement.claimFont,headerDiagnostics:refinement.headerDiagnostics})}`);
       if(!refinement.claimUnboxed)throw Error(`${name}: slogan regained a visible tile background`);
       if(refinement.church.top<0||refinement.church.bottom>refinement.church.headerHeight)throw Error(`${name}: church silhouette cropped out`);
-      if(refinement.lineNumbers.join()!=='1,2,3,4,5,6,7,8'||!refinement.lineAlignment)throw Error(`${name}: YAML line number alignment failed`);
+      if(refinement.lineNumbers.join()!=='1,2,3,4,5,6,7'||!refinement.lineAlignment)throw Error(`${name}: YAML line number alignment failed`);
       if(refinement.benefitLines.join()!=='1,1,1')throw Error(`${name}: warning text wraps outside its three intentional lines`);
       if(refinement.ringColors.join()!=='#d9b45e,#79b8e7,#c4483b'||refinement.legendColors.join()!=='#d9b45e,#79b8e7,#d74d43')throw Error('Radius GOLD/BLUE/RED semantic mapping regressed');
       if(refinement.smallHeart!==1||refinement.handwriting<1||!refinement.largeHeartGlow.includes('drop-shadow'))throw Error('Handwritten dedication refinement missing');

@@ -7,17 +7,17 @@
 
 Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
 
-**Current native integration version:** `0.17.0`  
-**Current dashboard stable channel:** `V4.05`
+**Current native integration version:** `0.18.0`
+**Current shared product candidate:** `V4.06`
 
 Die gemeinsame Frontend-/Produktkonvergenz läuft derzeit. Bis die vereinheitlichte Auslieferung vollständig veröffentlicht ist, wird die Dashboard-Karte zusätzlich über `TheDaimos/gewitterradar-dashboard` ausgeliefert. Dieser Dashboard-Zweig ist eine abgeleitete Auslieferungsform und keine unabhängige Entwicklungsquelle mehr.
 
 
-## Unveröffentlichter gemeinsamer Frontend-Kandidat (2026-09-08)
+## Gemeinsamer V4.06-Kandidat
 
-Auf `feature/integrated-dashboard-v4.05` ist die gemeinsame Quelle jetzt `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität. Die native Variante enthält die Karte und stellt nach Integrationseinrichtung `/gewitterradar/gewitterradar.js` als manuell einzutragende Modulressource bereit. Nur eine Gewitterradar-Ressource laden. Die unten beschriebenen HACS-Pfade beziehen sich weiterhin auf die veröffentlichte V4.05-Auslieferung.
+Die gemeinsame Quelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität. V4.06 enthält den lokalisierten Hilfe-Dialog, 19 About-/Hilfe-Sprachvarianten und die gemeinsame Recorder-Wildcard-Regel. Die native Variante stellt `/gewitterradar/gewitterradar.js` bereit.
 
-Lokale Browser-/Build-Prüfungen sind bestanden; Linux-Integrationstests und reale HACS-/Geräteabnahme des Kandidaten stehen aus. Siehe [Prüfbericht](docs/PREMIUM_CONTROLS_2026-09-08.md) und [Installation](docs/INSTALLATION.md).
+Für einen manuellen Dashboard-Test muss der komplette Inhalt von `dashboard/dist/` nach `/config/www/community/gewitterradar-dashboard/` kopiert werden, einschließlich `assets/`, `locales/about-locales.js` und `app_gewitterradar_v4_06_pkg.yaml`. Die alte unversionierte Package-Datei muss ersetzt werden. Siehe [Installation](docs/INSTALLATION.md).
 
 ## Was die native Integration bereitstellt
 
@@ -83,7 +83,7 @@ Prüfe unter **Einstellungen → Dashboards → Ressourcen**, dass folgende Modu
 /hacsfiles/gewitterradar-dashboard/gewitterradar.js
 ```
 
-Lege anschließend eine Dashboard-View an. Der aktuelle vollständige V4.05-Beispielstand lautet:
+Lege anschließend eine Dashboard-View an. Ein vollständiger V4.06-Beispielstand lautet:
 
 ```yaml
 title: Gewitterradar

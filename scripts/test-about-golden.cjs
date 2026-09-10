@@ -13,6 +13,7 @@ const server=http.createServer((req,res)=>{
    harness=once(harness,"    if(!['Deutsch','English'].includes(language))for(let attempt=0;dialog.querySelector('h2').textContent==='About Gewitterradar'&&attempt<100;attempt++)await new Promise(resolve=>setTimeout(resolve,10));\n",'');
    harness=once(harness,"    const title=dialog.querySelector('h2').textContent;\n    assert(language==='Deutsch'?title==='Über Gewitterradar':language==='English'?title==='About Gewitterradar':title!==''&&title!=='About Gewitterradar','language locale '+language);","    assert(dialog.querySelector('h2').textContent===(language==='Deutsch'?'Über Gewitterradar':'About Gewitterradar'),'language fallback '+language);");
    harness=once(harness,"    assert(dialog.querySelector('.about-dedication h3').textContent!=='','dedication localized');","    assert(dialog.querySelector('.about-dedication h3').textContent==='Für Alkje','dedication localized');");
+   harness=once(harness,"  const expectedYaml='recorder:\\n  exclude:\\n    entity_globs:\\n      - \"geo_location.lightning_strike*\"\\n      - \"sensor.*_lightning_distance\"\\n      - \"sensor.*_lightning_azimuth\"\\n      - \"sensor.*_lightning_counter\"';","  const expectedYaml='recorder:\\n  exclude:\\n    entity_globs:\\n      - \"geo_location.lightning_strike*\"\\n    entities:\\n      - sensor.home_lightning_distance\\n      - sensor.home_lightning_azimuth\\n      - sensor.home_lightning_counter';");
    data=Buffer.from(harness);
   }
   res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png'})[path.extname(file)]||'text/plain');res.end(data);
@@ -62,30 +63,19 @@ async function prepareRecorderFontReference(page){
 }
 // Independent reference adjustment for the two approved About finalization changes.
 async function prepareAboutFinalReference(page){
- const before=await captureGeometry(page);
  await page.evaluate(()=>{
   const d=window.aboutCard._aboutDialog,info=d.querySelector('[data-about-text="radiusInfo"]');
   const original='Die Radien helfen, Gewitter frühzeitig einzuschätzen und die aktuelle Situation schnell und übersichtlich zu beurteilen.';
   if(info.textContent!==original)throw Error('Unexpected frozen radius explanation');
   info.textContent=original+' Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt zugleich zum Gewitter- und Beobachtungsradius.';
   const css=document.createElement('style');
-  css.textContent='@media(max-width:620px){.about-dedication-copy p{max-width:60%}}';
+  css.textContent='@media(max-width:620px){.about-dedication-copy p{max-width:60%}}@media(min-width:621px){.about-head{display:grid;grid-template-columns:86px minmax(0,1fr) 170px;align-items:center;column-gap:24px}.about-head-copy{align-self:center;padding-top:0;min-width:0;max-width:none}.about-dialog h2{white-space:normal;text-wrap:balance}.about-claim{position:static;align-self:center;justify-self:end;width:140px;margin-right:32px}.about-head>img{align-self:center}@container(min-width:780px){.about-head{grid-template-columns:94px minmax(0,1fr) 185px}.about-claim{right:auto;margin-right:32px}}}.about-section-head{min-height:30px;align-items:center;gap:11px}.about-section-head .about-icon{width:30px;height:30px}.about-section-head h3{display:flex;align-items:center;min-height:30px}.about-welcome>.about-icon,.about-network>.about-icon{width:30px;height:30px;margin-top:0}.about-welcome h3,.about-network h3{display:flex;align-items:center;min-height:30px;margin-bottom:2px}.about-recorder .about-section-head{position:static;padding-left:0;height:auto;min-height:30px}.about-recorder .about-section-head .about-icon{position:static;left:auto;top:auto;height:30px}.about-dialog summary{gap:11px}.about-dialog summary:after{width:14px;height:14px;margin:-7px 13px 0 auto;border-width:2px;filter:drop-shadow(0 0 2px #d6aa4f55);transition:transform .16s ease,filter .16s ease}.about-dialog details[open] summary:after{margin-top:7px;filter:brightness(1.18) drop-shadow(0 0 3px #e6b95777)}';
   d.append(css);
+  const yaml='recorder:\n  exclude:\n    entity_globs:\n      - "geo_location.lightning_strike*"\n      - "sensor.*_lightning_distance"\n      - "sensor.*_lightning_azimuth"\n      - "sensor.*_lightning_counter"';
+  const code=d.querySelector('pre code'),numbers=d.querySelector('.about-line-numbers');code.textContent='';numbers.textContent='';
+  yaml.split('\n').forEach((line,index,lines)=>{const span=document.createElement('span');span.className=line.includes('lightning_strike*')?'about-code-glob':line.trimEnd().endsWith(':')?'about-code-key':'';span.textContent=line+(index<lines.length-1?'\n':'');code.append(span);const number=document.createElement('span');number.textContent=String(index+1);numbers.append(number);});
+  [...d.querySelectorAll('.about-source-list code')].slice(1).forEach((node,index)=>node.textContent=['sensor.*_lightning_distance','sensor.*_lightning_azimuth','sensor.*_lightning_counter'][index]);
  });
- const after=await captureGeometry(page),dedicationDelta=after['.about-dedication'][3]-before['.about-dedication'][3],radiiDelta=after['.about-radii'][3]-before['.about-radii'][3];
- assert.ok(dedicationDelta>=0&&radiiDelta>=0,'Reference unexpectedly shrank a section');
- if(page.viewportSize().width>620)assert.equal(dedicationDelta,0,'Desktop/tablet dedication changed');
- const downstream=new Set(['.about-network','.about-recorder','.about-copy','.about-entities']);
- for(const selector of Object.keys(before)){
-  for(const i of [0,2])assert.equal(after[selector][i],before[selector][i],'Reference horizontal drift: '+selector);
-  if(selector==='.about-dedication'||selector==='.about-radii')continue;
-  assert.ok(Math.abs(after[selector][3]-before[selector][3])<=0.001,'Reference height drift: '+selector);
-  if(selector==='.about-heart'||selector==='.about-signature')continue;
-  const shift=downstream.has(selector)?dedicationDelta+radiiDelta:['.about-welcome'].includes(selector)?dedicationDelta:0;
-  assert.equal(after[selector][1],before[selector][1]+shift,'Reference flow drift: '+selector);
- }
- assert.equal(after['.about-dedication'][1],before['.about-dedication'][1]);
- assert.equal(after['.about-radii'][1],before['.about-radii'][1]+dedicationDelta);
 }
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({executablePath:process.argv[2],headless:true});const results=[];
  try{

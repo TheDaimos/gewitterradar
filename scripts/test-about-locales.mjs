@@ -26,7 +26,7 @@ let rejected = 0;
 const invalid = mutate => {
   const locales = clone(allLocales);
   mutate(locales);
-  assert.throws(() => validate(locales),/About|German/);
+  assert.throws(() => validate(locales),/About|Help|German/);
   rejected++;
 };
 for (const language of Object.keys(allLocales)) {
@@ -38,6 +38,10 @@ for (const language of Object.keys(allLocales)) {
     invalid(locales => locales[language][group][key] = null);
     invalid(locales => locales[language][group] = []);
   }
+  invalid(locales => delete locales[language].help);
+  invalid(locales => delete locales[language].help.menuTitle);
+  invalid(locales => locales[language].help.sections[0].paragraphs[0] = '  ');
+  invalid(locales => locales[language].help.sections.pop());
 }
 invalid(locales => delete locales.English);
 invalid(locales => delete locales.Deutsch);
@@ -52,12 +56,15 @@ for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes
   const incomplete = clone(model.externalLocales);
   incomplete.Dansk = clone(incomplete.Dansk);
   delete incomplete.Dansk[group][Object.keys(incomplete.Dansk[group])[0]];
-  assert.throws(() => model.installExternal(incomplete),/About keys differ/);
+  assert.throws(() => model.installExternal(
+    Object.fromEntries(Object.entries(incomplete).map(([name,locale]) => [name,{strings:locale.strings,settingLabels:locale.settingLabels,settingPurposes:locale.settingPurposes,sourcePurposes:locale.sourcePurposes}])),
+    Object.fromEntries(Object.entries(incomplete).map(([name,locale]) => [name,locale.help]))
+  ),/About keys differ/);
   assert.equal(model.resolve('Dansk'),model.locales.English);
   rejected++;
 }
-model.installExternal(model.externalLocales);
-for (const {value: language} of model.languages) assert.equal(model.resolve(language),allLocales[language]);
+model.installExternal(model.externalAboutLocales,model.externalHelpLocales);
+for (const {value: language} of model.languages) assert.deepEqual(clone(model.resolve(language)),clone(allLocales[language]));
 console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} invalid schema/runtime mutations; strict validation rejects every incomplete bundle.`);
 
 const card = Object.create(model.Card.prototype);
@@ -65,7 +72,7 @@ let appChecks = 0;
 for (const {value: language} of model.languages) {
   card._languageValue = () => language;
   const expected = allLocales[language];
-  assert.equal(model.resolve(language),expected);
+  assert.deepEqual(clone(model.resolve(language)),clone(expected));
   for (const [key,value] of Object.entries(expected.strings)) assert.equal(card._t('about.'+key),value);
   const fallback = model.app[model.defaultLanguage]?.strings || {};
   const table = model.app[language]?.strings || fallback;
@@ -165,8 +172,20 @@ if (process.argv[2]) {
           settingLabel:locale.settingLabels.language,settingPurpose:locale.settingPurposes.language,
           sourcePurposes:clone(locale.sourcePurposes),signature:'dass du immer an mich glaubst.',signatureHidden:'true'
         },delivery+': '+language);
+        const header = await page.evaluate(() => {
+          const dialog=window.aboutCard._aboutDialog,title=dialog.querySelector('h2').getBoundingClientRect(),claim=dialog.querySelector('.about-claim').getBoundingClientRect(),head=dialog.querySelector('.about-head').getBoundingClientRect();
+          return {title:{left:title.left,right:title.right,top:title.top,bottom:title.bottom},claim:{left:claim.left,right:claim.right,top:claim.top,bottom:claim.bottom},head:{left:head.left,right:head.right,top:head.top,bottom:head.bottom},overflow:dialog.scrollWidth>dialog.clientWidth};
+        });
+        assert.equal(header.overflow,false,delivery+': '+language+' About overflow');
+        assert.ok(header.title.left>=header.head.left-.5&&header.title.right<=header.claim.left-12,delivery+': '+language+' About header collision');
+        await page.evaluate(() => {window.aboutCard._closeAbout(false,false);window.aboutCard._openHelp();});
+        await page.waitForFunction(title => window.aboutCard._helpDialog?.querySelector('h2')?.textContent===title,locale.help.title);
+        const helpActual=await page.evaluate(() => {const d=window.aboutCard._helpDialog;return {title:d.querySelector('h2').textContent,subtitle:d.querySelector('.help-subtitle').textContent,sections:[...d.querySelectorAll('.help-section')].map(node=>node.dataset.helpSection),yaml:d.querySelector('.help-code-wrap code').textContent,overflow:d.scrollWidth>d.clientWidth||d.querySelector('.help-content').scrollWidth>d.querySelector('.help-content').clientWidth,closeSize:[d.querySelector('.help-close').offsetWidth,d.querySelector('.help-close').offsetHeight]};});
+        assert.deepEqual(helpActual,clone({title:locale.help.title,subtitle:locale.help.subtitle,sections:locale.help.sections.map(section=>section.key),yaml:model.recorderYaml,overflow:false,closeSize:[44,44]}),delivery+': '+language+' Help');
+        await page.evaluate(() => {window.aboutCard._closeHelp(false);window.aboutCard._openAbout();});
+        await page.waitForFunction(title => window.aboutCard._aboutDialog?.querySelector('h2')?.textContent===title,locale.strings.title);
       }
-      console.log(`PASS: ${delivery} browser renders all four About groups for ${languages.length} registry languages.`);
+      console.log(`PASS: ${delivery} browser renders collision-free About and complete Help for ${languages.length} registry languages.`);
       await context.close();
     }
 
@@ -244,11 +263,14 @@ if (process.argv[2]) {
     });
     assert.deepEqual(fallback,{title:model.locales.English.strings.title,dedication:model.locales.English.strings.dedicationTitle,
       setting:model.locales.English.settingLabels.language,sources:clone(model.locales.English.sourcePurposes)});
+    await retry.page.evaluate(() => {window.probeCard._closeAbout(false,false);window.probeCard._openHelp();});
+    await retry.page.waitForFunction(title => window.probeCard._helpDialog?.querySelector('h2')?.textContent===title,model.locales.English.help.title);
+    assert.deepEqual(await retry.page.evaluate(() => {const d=window.probeCard._helpDialog;return {title:d.querySelector('h2').textContent,sections:d.querySelectorAll('.help-section').length};}),{title:model.locales.English.help.title,sections:7});
     const failedRequestCount = localeRequests.length;
     rejectExternalLocales = false;
-    await retry.page.evaluate(() => window.probeCard._syncAbout());
-    await retry.page.waitForFunction(title => window.probeCard._aboutDialog.querySelector('[data-about-text="title"]').textContent===title,
-      allLocales.Dansk.strings.title);
+    await retry.page.evaluate(() => window.probeCard._syncHelp());
+    await retry.page.waitForFunction(title => window.probeCard._helpDialog.querySelector('h2').textContent===title,
+      allLocales.Dansk.help.title);
     assert.ok(localeRequests.length > failedRequestCount,'failed external import was not retried');
     assert.ok(localeRequests.slice(beforeFailure).every(request=>request.search==='?hactag=retry'),'retry locale cache-buster mismatch');
     assert.deepEqual(retry.pageErrors,[],'external import failure escaped as an unhandled rejection');

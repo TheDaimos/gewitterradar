@@ -1,10 +1,10 @@
 # =============================================================================
 # APP GEWITTERRADAR – HOME ASSISTANT PACKAGE
-# Release baseline: V4.01
+# Release baseline: V4.06
 # =============================================================================
 #
 # TARGET PATH:
-#   /config/packages/app_gewitterradar_pkg.yaml
+#   /config/packages/app_gewitterradar_v4_06_pkg.yaml
 #
 # Prerequisite in configuration.yaml:
 #
@@ -407,6 +407,7 @@ automation:
 # input_number.lightning_detection_danger_radius
 # input_number.lightning_detection_aura_width
 # input_number.lightning_detection_aura_intensity
+# input_boolean.lightning_detection_language_initialized
 # input_boolean.lightning_detection_aura_effects
 # input_boolean.lightning_detection_warning_animation
 # input_boolean.lightning_detection_storm_simulation
