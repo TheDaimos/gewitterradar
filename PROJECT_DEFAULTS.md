@@ -8,9 +8,12 @@ Kanonische globale Regeln:
 
 Vor umfangreicher Arbeit in einem frischen ChatGPT-/Codex-Kontext zuerst die aktuellen globalen Defaults, danach die aktuellen Regeln und den Zustand dieses Repositories und anschließend bei Bedarf das gemeinsame Dev-Toolkit laden.
 
-Bevorzugtes Bootstrap-Mnemonik:
+Bevorzugte Bootstrap-Mnemoniken, vollständig gleichwertig:
 
-> **Deimos**
+> **Deimos**  
+> **Daimos**
+
+Alle Bootstrap-Aliase sind fail-closed: Die aktuelle `TheDaimos/project-defaults/START_HERE.md` muss tatsächlich geladen und befolgt werden, bevor Arbeitsbereitschaft erklärt wird. Ein alleinstehendes `Deimos`/`Daimos` darf nicht zuerst aus Erinnerung oder nur als Projektbezug beantwortet werden.
 
 ## Verbindliche Produktregel: ein Gewitterradar, zwei Auslieferungsformen
 
