@@ -11838,6 +11838,70 @@
               justify-content:center;
             }
           }
+          /* V4.06 menu polish: premium About icon and three-level diagnostic hierarchy. */
+          #settings-about > span[aria-hidden="true"] {
+            display:grid;
+            place-items:center;
+            flex:0 0 24px;
+            width:24px;
+            height:24px;
+            font:700 21px/1 "Segoe UI Symbol","Arial Unicode MS",sans-serif;
+            color:#e2b95d;
+            background:linear-gradient(135deg,#926521 6%,#f8e4a5 35%,#c18a2c 60%,#f1cf75 82%,#8d5d1a);
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+            filter:drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 2px rgba(232,181,65,.28));
+            transition:filter .16s ease;
+          }
+          #settings-about:focus-visible { outline:none; }
+          #settings-about:focus-visible > span[aria-hidden="true"] {
+            outline:2px solid rgba(255,225,161,.92);
+            outline-offset:2px;
+            border-radius:50%;
+            filter:brightness(1.13) drop-shadow(0 0 3px rgba(244,197,91,.42));
+          }
+          @media(hover:hover) and (pointer:fine) {
+            #settings-about:hover > span[aria-hidden="true"] {
+              filter:brightness(1.14) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 3px rgba(238,188,72,.38));
+            }
+          }
+          #settings-about:active > span[aria-hidden="true"] {
+            filter:brightness(.9) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92));
+          }
+          #settings-diagnostic-section > .settings-section-content > .settings-row-label {
+            box-sizing:border-box;
+            width:100%;
+            padding:9px 12px 4px 22px;
+            color:#d7bd82;
+            font-size:8.6px;
+            font-weight:820;
+            line-height:1.25;
+            letter-spacing:.055em;
+          }
+          #settings-diagnostic-section > .settings-section-content > .settings-row {
+            padding-left:34px;
+            padding-right:12px;
+          }
+          #settings-diagnostic-section > .settings-section-content > .settings-test-grid {
+            padding-left:34px;
+            padding-right:12px;
+          }
+          @media(max-width:720px) {
+            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:20px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:10px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:10px; }
+          }
+          @media(max-height:720px) {
+            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding:7px 9px 3px 20px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:9px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:9px; }
+          }
+          @media(max-width:520px) and (min-height:721px) {
+            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:18px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:26px; }
+            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
+          }
         </style>
 
         <ha-card id="card-root">
@@ -12861,7 +12925,7 @@
                 </div>
               </details>
 
-              <details class="settings-section settings-collapsible">
+              <details class="settings-section settings-collapsible" id="settings-diagnostic-section">
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title" id="settings-diagnostic-section-title">Kalibrierung &amp; Diagnose</div>

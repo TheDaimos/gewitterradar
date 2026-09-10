@@ -124,6 +124,58 @@ const server=http.createServer((req,res)=>{
       if(!await page.locator('.about-entities').evaluate(d=>d.open))throw Error('touch accordion failed');
       await page.keyboard.press('Escape');
       if(await page.locator('.about-dialog').count())throw Error('Escape did not clean up');
+      await page.locator('#settings-open').click();
+      const diagnosticSection=page.locator('#settings-diagnostic-section');
+      const diagnosticSummary=diagnosticSection.locator(':scope > summary');
+      if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
+      if(!await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not open`);
+      const settingsRefinement=await page.evaluate(()=>{
+        const shadow=window.aboutCard.shadowRoot,rect=node=>{const r=node.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
+        const textRect=node=>{const range=document.createRange();range.selectNodeContents(node);const boxes=[...range.getClientRects()];range.detach();if(!boxes.length)return rect(node);const left=Math.min(...boxes.map(box=>box.left)),top=Math.min(...boxes.map(box=>box.top)),right=Math.max(...boxes.map(box=>box.right)),bottom=Math.max(...boxes.map(box=>box.bottom));return {left,top,right,bottom,width:right-left,height:bottom-top};};
+        const dialog=shadow.getElementById('settings-dialog'),body=dialog.querySelector('.settings-body'),section=shadow.getElementById('settings-diagnostic-section'),content=section.querySelector(':scope > .settings-section-content');
+        const level1=textRect(shadow.getElementById('settings-diagnostic-section-title'));
+        const level2=[...content.querySelectorAll(':scope > .settings-row-label')].map(node=>textRect(node));
+        const rows=[...content.querySelectorAll(':scope > .settings-row')],level3=rows.map(row=>textRect(row.querySelector('.settings-row-label')));
+        const toggles=rows.map(row=>row.querySelector('.settings-switch')).filter(Boolean).map(node=>rect(node));
+        const testGrid=content.querySelector(':scope > .settings-test-grid'),testGridRect=rect(testGrid),testButtons=[...testGrid.querySelectorAll('button')].map(node=>rect(node));
+        const about=shadow.getElementById('settings-about'),info=about.querySelector(':scope > span[aria-hidden="true"]'),infoStyle=getComputedStyle(info);
+        const containers=[dialog,body,section,content,testGrid];
+        return {dialog:rect(dialog),section:rect(section),content:rect(content),level1,level2,level3,toggles,testGrid:testGridRect,testButtons,about:rect(about),info:rect(info),infoFontSize:parseFloat(infoStyle.fontSize),infoBackground:infoStyle.backgroundImage,infoFilter:infoStyle.filter,horizontalOverflow:containers.some(node=>node.scrollWidth>node.clientWidth+1)};
+      });
+      const level2Left=Math.min(...settingsRefinement.level2.map(rect=>rect.left)),level3Left=Math.min(...settingsRefinement.level3.map(rect=>rect.left));
+      const toggleRights=settingsRefinement.toggles.map(rect=>rect.right),toggleSpread=Math.max(...toggleRights)-Math.min(...toggleRights);
+      if(level2Left<settingsRefinement.level1.left+4||level3Left<level2Left+4)throw Error(`${name}: diagnostic hierarchy indentation failed ${JSON.stringify({level1:settingsRefinement.level1.left,level2Left,level3Left})}`);
+      if(toggleSpread>.5)throw Error(`${name}: settings toggle alignment shifted by ${toggleSpread}px`);
+      if(settingsRefinement.horizontalOverflow||settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1))throw Error(`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}`);
+      if(settingsRefinement.about.height<44||settingsRefinement.info.width<23.5||settingsRefinement.info.height<23.5||settingsRefinement.infoFontSize<20||settingsRefinement.infoBackground==='none')throw Error(`${name}: premium About icon regression ${JSON.stringify(settingsRefinement)}`);
+      const aboutButton=page.locator('#settings-about'),aboutBoxBefore=await aboutButton.boundingBox();
+      let hoverFilter=null,pressedFilter=null,pressedBox=null;
+      if(!hasTouch){
+        await aboutButton.hover();hoverFilter=await aboutButton.locator(':scope > span[aria-hidden="true"]').evaluate(node=>getComputedStyle(node).filter);
+        await page.mouse.down();
+        await page.waitForTimeout(180);
+        pressedFilter=await aboutButton.locator(':scope > span[aria-hidden="true"]').evaluate(node=>getComputedStyle(node).filter);
+        pressedBox=await aboutButton.boundingBox();
+        await page.mouse.move(aboutBoxBefore.x+aboutBoxBefore.width-2,aboutBoxBefore.y+aboutBoxBefore.height+8);
+        await page.mouse.up();
+      }
+      await page.locator('#settings-close').focus();await page.keyboard.press('Tab');
+      const focusState=await aboutButton.locator(':scope > span[aria-hidden="true"]').evaluate(node=>({outline:getComputedStyle(node).outlineStyle,outlineWidth:getComputedStyle(node).outlineWidth,focusVisible:node.parentElement.matches(':focus-visible'),activeId:node.getRootNode().activeElement?.id,aboutOpen:!!node.getRootNode().querySelector('.about-dialog')}));
+      const aboutBoxAfter=await aboutButton.boundingBox();
+      if(!focusState.focusVisible||focusState.outline==='none'||parseFloat(focusState.outlineWidth)<2)throw Error(`${name}: About focus-visible indicator missing ${JSON.stringify(focusState)}`);
+      if(['x','y','width','height'].some(key=>Math.abs(aboutBoxBefore[key]-aboutBoxAfter[key])>.01))throw Error(`${name}: About hover/focus layout shift`);
+      if(!hasTouch&&hoverFilter===settingsRefinement.infoFilter)throw Error(`${name}: About hover reflection missing`);
+      if(!hasTouch&&(pressedFilter===hoverFilter||['x','y','width','height'].some(key=>Math.abs(aboutBoxBefore[key]-pressedBox[key])>.01)))throw Error(`${name}: About pressed state missing or unstable`);
+      settingsRefinement.level2Indent=level2Left-settingsRefinement.section.left;
+      settingsRefinement.level3Indent=level3Left-settingsRefinement.section.left;
+      settingsRefinement.toggleSpread=toggleSpread;
+      settingsRefinement.focusState=focusState;
+      settingsRefinement.hoverFilter=hoverFilter;
+      settingsRefinement.pressedFilter=pressedFilter;
+      if(process.argv[3]&&['desktop','ipad-portrait','android-portrait'].includes(name))await page.screenshot({path:path.join(process.argv[3],`settings-${name}-diagnostics.png`)});
+      if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
+      if(await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not close`);
+      await page.locator('#settings-close').click();
       await page.evaluate(()=>window.aboutCard._openAbout());
       await page.keyboard.press('Shift+Tab');
       const focusInside=await page.evaluate(()=>window.aboutCard._aboutDialog.contains(window.aboutCard.shadowRoot.activeElement));
@@ -141,7 +193,7 @@ const server=http.createServer((req,res)=>{
           await page.screenshot({path:path.join(process.argv[3],`about-${name}-entities.png`)});
         }
       }
-      results.push({name,delivery,controls,status:'PASS',refinement,...geometry});
+      results.push({name,delivery,controls,status:'PASS',refinement,settingsRefinement,...geometry});
       console.log(`${name}: PASS`);
       await context.close();
     }
