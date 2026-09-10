@@ -52,7 +52,7 @@ const server = http.createServer((req, res) => {
         await page.waitForFunction(() => window.aboutResult);
         assert.equal(await page.evaluate(() => window.aboutResult.status), 'PASS');
 
-        const metrics = await page.evaluate(async () => {
+        const metrics = await page.evaluate(() => {
           const card = window.aboutCard;
           card._closeAbout(false, false);
           card.shadowRoot.getElementById('settings-open').click();
@@ -62,70 +62,44 @@ const server = http.createServer((req, res) => {
           const links = [...root.querySelectorAll('.settings-premium-link')];
           const icons = [...root.querySelectorAll('.settings-premium-icon')];
           const current = () => root.querySelector('.settings-collapsible');
-          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-          const frames = (count = 1) => new Promise((resolve) => {
-            const step = () => {
-              if (--count <= 0) resolve();
-              else requestAnimationFrame(step);
-            };
-            requestAnimationFrame(step);
-          });
-          const snapshot = (node, label) => {
-            const style = getComputedStyle(node);
-            const animations = node.getAnimations().map((animation) => ({
-              type: animation.constructor?.name || 'Animation',
-              playState: animation.playState,
-              currentTime: animation.currentTime,
-              startTime: animation.startTime,
-              pending: animation.pending,
-            }));
-            return {
-              label,
-              matchesOpen: node.matches('[open]'),
-              attribute: node.hasAttribute('open'),
-              property: node.open,
-              borderColor: style.borderColor,
-              backgroundColor: style.backgroundColor,
-              backgroundImage: style.backgroundImage,
-              boxShadow: style.boxShadow,
-              transitionProperty: style.transitionProperty,
-              transitionDuration: style.transitionDuration,
-              transitionDelay: style.transitionDelay,
-              transitionTimingFunction: style.transitionTimingFunction,
-              animationName: style.animationName,
-              animationDuration: style.animationDuration,
-              animations,
-            };
-          };
+          const stateNode = current();
 
-          current().open = false;
-          await frames(2);
-          await sleep(220);
+          // Linux Chrome for Testing 151 can keep a newly created CSS transition
+          // pending at timeline time 0 while wall-clock setTimeout already elapsed.
+          // This assertion protects the semantic closed/open endpoint styles, not
+          // browser scheduler timing. Disable only this node's transition for the
+          // two endpoint reads, then restore its previous inline state exactly.
+          const previousTransition = stateNode.style.getPropertyValue('transition');
+          const previousTransitionPriority = stateNode.style.getPropertyPriority('transition');
+          stateNode.style.setProperty('transition', 'none', 'important');
+
+          stateNode.open = false;
           const closedNode = current();
           const closed = getComputedStyle(closedNode).borderColor;
           const closedState = {
             attribute: closedNode.hasAttribute('open'),
             property: closedNode.open,
           };
-          const diagnostics = [snapshot(closedNode, 'closed-220')];
 
-          current().open = true;
+          stateNode.open = true;
           const openedNode = current();
-          diagnostics.push(snapshot(openedNode, 'open-immediate'));
-          await frames(1);
-          diagnostics.push(snapshot(openedNode, 'open-raf1'));
-          await frames(1);
-          diagnostics.push(snapshot(openedNode, 'open-raf2'));
-          await sleep(220);
-          diagnostics.push(snapshot(openedNode, 'open-220'));
-          await sleep(280);
-          diagnostics.push(snapshot(openedNode, 'open-500'));
-
           const opened = getComputedStyle(openedNode).borderColor;
           const openedState = {
             attribute: openedNode.hasAttribute('open'),
             property: openedNode.open,
           };
+          const selectorMatched = openedNode.matches('.settings-section[open]');
+
+          if (previousTransition) {
+            stateNode.style.setProperty(
+              'transition',
+              previousTransition,
+              previousTransitionPriority,
+            );
+          } else {
+            stateNode.style.removeProperty('transition');
+          }
+
           const summary = openedNode.querySelector('summary');
           const after = getComputedStyle(summary, '::after');
           const signature = getComputedStyle(root.querySelector('.settings-signature'));
@@ -148,16 +122,10 @@ const server = http.createServer((req, res) => {
             closedState,
             openedState,
             sameNode: closedNode === openedNode,
-            selectorMatched: openedNode.matches('.settings-section[open]'),
-            diagnostics,
-            visibilityState: document.visibilityState,
+            selectorMatched,
             signatureFilter: signature.filter,
           };
         });
-
-        console.log(
-          `V406_OPEN_STATE_DIAGNOSTICS ${JSON.stringify({ delivery, profile, ...metrics })}`,
-        );
 
         assert.notEqual(metrics.dialogBorder, 'rgba(0, 0, 0, 0)', `${delivery}/${profile} dialog border`);
         assert.equal(metrics.dialogOverflow, false, `${delivery}/${profile} settings overflow`);
@@ -175,6 +143,8 @@ const server = http.createServer((req, res) => {
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
         assert.deepEqual(metrics.closedState, { attribute: false, property: false });
         assert.deepEqual(metrics.openedState, { attribute: true, property: true });
+        assert.equal(metrics.sameNode, true, `${delivery}/${profile} stable settings node`);
+        assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.notEqual(
           metrics.closed,
           metrics.opened,
