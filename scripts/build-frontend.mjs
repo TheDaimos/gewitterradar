@@ -32,7 +32,8 @@ export const destinations=['custom_components/gewitterradar/frontend','dashboard
 export async function build(){
  const payload=await expectedPayload();
  for(const destination of destinations)for(const [name,bytes] of payload){const target=resolve(root,destination,name);await mkdir(dirname(target),{recursive:true});await writeFile(target,bytes);}
- const pkg=await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'));
+ const pkgText=(await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'),'utf8')).replace(/\r\n?/g,'\n');
+ const pkg=Buffer.from(pkgText,'utf8');
  await writeFile(resolve(root,'dashboard/dist/app_gewitterradar_v4_06_pkg.yaml'),pkg);
  const rows=[];
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
