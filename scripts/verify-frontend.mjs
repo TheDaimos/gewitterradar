@@ -9,7 +9,8 @@ for(const dest of destinations){
  if(JSON.stringify(await files(resolve(root,dest)))!==JSON.stringify(wanted.sort()))throw Error('Unexpected/missing payload file '+dest);
  for(const [name,bytes] of payload){const actual=await readFile(resolve(root,dest,name));if(!actual.equals(bytes))throw Error('Delivery parity failed '+dest+'/'+name);checks.push(hash(actual)+'  '+dest+'/'+name);}
 }
-const pkg=await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'));
+const pkgText=(await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'),'utf8')).replace(/\r\n?/g,'\n');
+const pkg=Buffer.from(pkgText,'utf8');
 if(!(await readFile(resolve(root,'dashboard/dist/app_gewitterradar_v4_06_pkg.yaml'))).equals(pkg))throw Error('Legacy package parity failed');
 checks.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_v4_06_pkg.yaml');
 if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==checks.sort().join('\n')+'\n')throw Error('Checksum inventory stale');
