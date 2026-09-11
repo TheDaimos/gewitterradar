@@ -54,14 +54,19 @@ const server = http.createServer((req, res) => {
 
         assert.equal(about.versionText,'V4.06 · Visual V2 · Gewitterradar · by CK',`${delivery}/${profile} compact Welcome version line`);
         assert.equal(about.overflow,false,`${delivery}/${profile} Welcome footer has no horizontal overflow`);
-        assert.ok(about.version.top >= about.sig.bottom - 0.75,`${delivery}/${profile} version sits below signature`);
-        assert.ok(about.version.top - about.sig.bottom <= 10,`${delivery}/${profile} version spacing below signature remains deliberate`);
         if (width > 620) {
           assert.ok(about.sig.width >= 190 && about.sig.width <= 198,`${delivery}/${profile} signature enlarged about 15 percent`);
           const desired=(about.footer.left+about.understood.left)/2;
           assert.ok(Math.abs(about.sig.cx-desired)<=22,`${delivery}/${profile} signature centered between left frame and Verstanden button`);
+          assert.ok(Math.abs(about.sig.cy-about.understood.cy)<=1.5,`${delivery}/${profile} signature vertically centered with footer buttons`);
+          const versionLeftInset=about.version.left-about.footer.left;
+          const versionBottomInset=about.footer.bottom-about.version.bottom;
+          assert.ok(versionLeftInset>=0 && versionLeftInset<=32,`${delivery}/${profile} version moved into lower-left corner with small inset`);
+          assert.ok(versionBottomInset>=0 && versionBottomInset<=18,`${delivery}/${profile} version keeps a small bottom inset`);
         } else {
           assert.ok(about.sig.width >= 116 && about.sig.width <= 123,`${delivery}/${profile} mobile signature enlarged proportionally`);
+          assert.ok(about.version.top >= about.sig.bottom - 0.75,`${delivery}/${profile} mobile version remains below signature`);
+          assert.ok(about.version.top - about.sig.bottom <= 10,`${delivery}/${profile} mobile version spacing below signature remains deliberate`);
         }
         assert.equal(about.radii.length,3,`${delivery}/${profile} all three radius rows present`);
         for (const [index,entry] of about.radii.entries()) {
