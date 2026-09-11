@@ -23,6 +23,12 @@ export function v406UiPolishPass5Delta(source) {
         .about-footer-signature{width:196px!important;max-width:100%!important;height:auto!important}
         .about-radius strong,.about-radius p{padding-right:74px}
         .about-radius output{position:absolute;right:0;top:50%;transform:translateY(-50%);min-width:58px;padding:2.5px 5px;font-size:1.25em;line-height:1.1;border-radius:5px;box-sizing:border-box}
+        @media(min-width:621px){
+          .about-footer{position:relative}
+          .about-footer-left{position:relative;display:block!important;align-self:stretch!important;min-height:54px}
+          .about-footer-signature-wrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0!important}
+          .about-footer-left .about-dev{position:absolute;left:6px;bottom:4px;text-align:left;white-space:nowrap}
+        }
         @media(max-width:620px){
           .about-footer-left{grid-column:1;grid-row:2;gap:4px}
           .about-footer-left .about-dev{font-size:6.8px}
