@@ -64,7 +64,7 @@ const server = http.createServer((req, res) => {
           assert.ok(versionLeftInset>=0 && versionLeftInset<=32,`${delivery}/${profile} version moved into lower-left corner with small inset`);
           assert.ok(versionBottomInset>=0 && versionBottomInset<=18,`${delivery}/${profile} version keeps a small bottom inset`);
         } else {
-          assert.ok(about.sig.width >= 138 && about.sig.width <= 146,`${delivery}/${profile} mobile signature enlarged about 18 percent`);
+          assert.ok(about.sig.width >= 160 && about.sig.width <= 168,`${delivery}/${profile} mobile signature enlarged for stronger presence`);
           assert.ok(about.version.top >= about.sig.bottom - 0.75,`${delivery}/${profile} mobile version remains below signature`);
           assert.ok(about.version.top - about.sig.bottom <= 10,`${delivery}/${profile} mobile version spacing below signature remains deliberate`);
         }
