@@ -48,7 +48,25 @@ Wesentliche Ergebnisse:
 
 Bei der realen Android-Hochformatprüfung zeigte die griechische About-Überschrift einen speziellen Layoutfall: Der längere Untertitel kollidierte mit dem darunter platzierten Spruch.
 
-Die griechischen Texte bleiben unverändert. Stattdessen erhält ausschließlich **Griechisch + mobiles Hochformat** einen echten Textfluss im Kopfbereich: Der Spruch folgt dem Untertitel in einer eigenen Grid-Zeile und kann diesen dadurch nicht mehr überdecken. Für diesen Sonderfall wurde zusätzlich eine Browser-Regression eingeführt. Die abschließende reale Geräte-Sichtprüfung dieses letzten Feinschliffs steht noch aus.
+Die griechischen Texte bleiben unverändert. Stattdessen erhält ausschließlich **Griechisch + mobiles Hochformat** einen echten Textfluss im Kopfbereich: Der Spruch folgt dem Untertitel in einer eigenen Grid-Zeile und kann diesen dadurch nicht mehr überdecken. Für diesen Sonderfall wurde zusätzlich eine Browser-Regression eingeführt.
+
+Die anschließende reale Sichtprüfung auf Android im Hochformat wurde erfolgreich abgeschlossen; der korrigierte griechische Kopfbereich ist damit sowohl automatisiert als auch auf dem Zielgerät abgenommen.
+
+## V4.06 – finaler Recorder-Sprachaudit
+
+Nach der Geräteabnahme wurde der Recorder-Bereich nochmals separat über alle **19 registrierten Sprachvarianten** geprüft. Dabei wurden sowohl About/Welcome als auch **„Hilfe & Hinweise“** gegen den aktuellen technischen Stand abgeglichen.
+
+Bestätigt wurden:
+
+- exakt vier aktuelle Recorder-Wildcards;
+- kein verbleibender produktiver Recorder-Pfad mit den früheren festen `sensor.home_lightning_*`-IDs;
+- Hinweis auf Ergänzung einer vorhandenen `recorder:`-Sektion statt eines zweiten Top-Level-Blocks;
+- Live-Zustände bleiben trotz Recorder-Ausschluss aktiv;
+- vorhandene historische Daten werden nicht automatisch gelöscht;
+- Mehrgeräte-/Mehrbeobachtungspunkt-Unterstützung unabhängig vom Entity-Präfix;
+- lokalisierte Kopiertexte und vollständige Recorder-Hilfesektionen.
+
+Der Audit ergab keinen erforderlichen Übersetzungsumbau. Zusätzlich wurde er als eigener fail-closed CI-Test dauerhaft abgesichert; die Detailprüfung ist in `docs/RECORDER_LOCALE_AUDIT_V4_06.md` dokumentiert.
 
 ## Qualitätssicherung
 
@@ -59,10 +77,11 @@ Die V4.06-Linie wird unter anderem abgesichert durch:
 - Browserprofile für Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat;
 - beide Auslieferungsformen in denselben Browserprüfungen;
 - Sprachschema- und Locale-Prüfungen;
+- dedizierten Recorder-Sprachaudit für alle 19 registrierten Varianten;
 - Home-Assistant-Laufzeittests;
 - HACS-Validierung;
 - Hassfest;
 - Paketvertragsprüfungen;
 - reale Geräteabnahme zusätzlich zu automatisierten Tests.
 
-Automatisierte Tests ersetzen dabei ausdrücklich nicht die abschließende reale Sichtprüfung auf den Zielgeräten.
+Automatisierte Tests ersetzen dabei ausdrücklich nicht die reale Sichtprüfung auf den Zielgeräten; die zuletzt offene griechische Android-Hochformatprüfung wurde erfolgreich abgeschlossen.
