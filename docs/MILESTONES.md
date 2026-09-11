@@ -86,4 +86,12 @@ Folgende Themen sind **geplant, aber bewusst noch keiner Version zugeordnet**:
 
 Vor einer technischen Umsetzung müssen dafür **gute, belastbare und nach Möglichkeit offizielle Datenquellen** recherchiert, fachlich bewertet und hinsichtlich Aktualität, geografischer Abdeckung, Lizenzierung/Nutzbarkeit, Home-Assistant-Eignung und Ausfallsicherheit geprüft werden. Architektur, Datenquellen, genaue Warnlogik und Versionszuordnung bleiben bis zu dieser Recherche ausdrücklich offen.
 
+#### Notiz – Regen-/Radarzellen und mögliche Datenquellen
+
+- Regen-/Radarzellen sollen später grundsätzlich als **zusätzliche transparente Kartenebene über der bestehenden OSM-Grundkarte** geprüft werden; keine Änderung der OSM-Grundkarte selbst ist dafür vorgesehen.
+- Als ernsthafte Quellenkandidaten für eine spätere fachliche Prüfung sind insbesondere **DWD Open Data** mit Radarprodukten sowie die DWD-Produkte **KONRAD3D** und **Mesozyklonen** vorgemerkt.
+- **RainViewer** bleibt als möglicher Prototyp-/Referenzkandidat vorgemerkt, aber ausdrücklich noch nicht als produktive Kernquelle festgelegt.
+- Vor jeder Entscheidung sind Datenformat, Aktualisierungsintervall, geografische Abdeckung, Nutzungs-/Lizenzbedingungen, technische Einbindung, Ausfallsicherheit und Eignung für Home Assistant zu prüfen.
+- Diese Notiz ist ausschließlich Backlog/Recherchegrundlage und enthält **keine Versionszuordnung und keinen Umsetzungsauftrag**.
+
 Weitere größere Architekturänderungen bleiben ebenfalls getrennt vom eingefrorenen V4.06-Stand.
