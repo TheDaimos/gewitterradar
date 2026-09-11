@@ -43,11 +43,15 @@ jobs:
         with:
           name: shared-frontend-browser-evidence
           path: artwork/acceptance/premium-controls/
+      - name: Apply accepted V4.06 UI-polish preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-preview.mjs
+      - name: V4.06 UI-polish preview browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Build accepted V4.06 UI-polish preview payload
         if: success()
-        run: |
-          node scripts/apply-v406-ui-polish-preview.mjs
-          node --check frontend/gewitterradar.js
+        run: node --check frontend/gewitterradar.js
       - uses: actions/upload-artifact@v4
         if: success()
         with:
