@@ -32,11 +32,11 @@ export function v406UiPolishPass5Delta(source) {
         @media(max-width:620px){
           .about-footer-left{grid-column:1;grid-row:2;gap:4px}
           .about-footer-left .about-dev{font-size:6.8px}
-          .about-footer-signature{width:143px!important;max-width:100%!important}
+          .about-footer-signature{width:165px!important;max-width:100%!important}
         }
         @supports (-webkit-touch-callout:none){
           @media(hover:none) and (pointer:coarse) and (min-width:700px) and (min-height:700px){
-            .about-footer-left .about-dev{transform:translateY(30px)}
+            .about-footer-left .about-dev{transform:translateY(14px)}
           }
         }
 `;
