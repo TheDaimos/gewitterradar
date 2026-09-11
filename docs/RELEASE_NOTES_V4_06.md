@@ -1,6 +1,6 @@
 # Gewitterradar V4.06 – Release Notes
 
-> Status: Release-Kandidat. Dieses Dokument beschreibt den vorgesehenen V4.06-Stand; die endgültige Veröffentlichung erfolgt erst nach vollständiger Abschlussprüfung.
+> Status: Release-Kandidat. Reale Geräte-Sichtprüfung und Recorder-Sprachaudit sind abgeschlossen; Veröffentlichung und endgültiger Release-Freeze stehen noch aus.
 
 ## Überblick
 
@@ -15,7 +15,7 @@ Der Schwerpunkt dieser Version liegt auf Internationalisierung, Hilfe und Dokume
 - Verzögert geladenes gemeinsames Locale-Modul für die zusätzlichen Sprachen.
 - Persönliche, bereits vorhandene Signatur aus den Einstellungen zusätzlich im Welcome-Footer.
 - Kompakte Footer-Kennung: `V4.06 · Visual V2 · Gewitterradar · by CK`.
-- Eigene Projektgeschichte, Meilensteinübersicht und V4.06-Release-Notes.
+- Eigene Projektgeschichte, Meilensteinübersicht, Recorder-Sprachaudit und V4.06-Release-Notes.
 
 ## Recorder und Datenquellen
 
@@ -31,7 +31,9 @@ recorder:
       - "sensor.*_lightning_counter"
 ```
 
-Damit lassen sich mehrere Blitzortungsgeräte bzw. Beobachtungspunkte ohne festes Sensorpräfix abdecken. Die Ausschlüsse betreffen die Recorder-Historie und deaktivieren nicht die Live-Zustände von Gewitterradar.
+Damit lassen sich mehrere Blitzortungsgeräte bzw. Beobachtungspunkte ohne festes Sensorpräfix abdecken. Die Ausschlüsse betreffen die Recorder-Historie und deaktivieren nicht die Live-Zustände von Gewitterradar. Bereits vorhandene historische Daten werden durch diese Konfigurationsänderung nicht automatisch gelöscht.
+
+Der finale Recorder-Sprachaudit wurde für alle **19 registrierten Sprachvarianten** abgeschlossen. Geprüft wurden About-/Welcome-Hinweise, die vollständige Recorder-Sektion in **„Hilfe & Hinweise“**, die Merge-Anweisung für eine vorhandene `recorder:`-Sektion, Live-/Historienhinweise, Mehrgeräte-Wildcards sowie Kopiertexte. Die technischen YAML-Bezeichner bleiben in allen Sprachen unverändert. Ein eigener fail-closed CI-Test verhindert die Rückkehr der früheren festen `sensor.home_lightning_*`-Recorder-IDs.
 
 ## Premium-Oberfläche
 
@@ -51,7 +53,8 @@ Damit lassen sich mehrere Blitzortungsgeräte bzw. Beobachtungspunkte ohne feste
 - Footer-Anordnung aus Signatur, Schaltflächen, Zahnrad und Versionsinformation gerätespezifisch verfeinert;
 - Radius-Wertefelder `70 KM`, `30 KM`, `5 KM` um ungefähr 25 % vergrößert und vertikal zu den zugehörigen Zeilen zentriert;
 - iPad-/iPad-Pro-Fokusartefakte am Premium-X und am erneut geöffneten About-Dialog behoben;
-- griechischer mobiler Hochformat-Sonderfall korrigiert: Der Spruch fließt nun unter dem längeren Untertitel und überdeckt ihn nicht mehr. Die griechische Übersetzung selbst wurde nicht verkürzt oder verändert.
+- griechischer mobiler Hochformat-Sonderfall korrigiert: Der Spruch fließt nun unter dem längeren Untertitel und überdeckt ihn nicht mehr. Die griechische Übersetzung selbst wurde nicht verkürzt oder verändert;
+- korrigierter griechischer Hochformat-Stand anschließend real auf Android geprüft und abgenommen.
 
 ## Technische Änderungen
 
@@ -61,6 +64,7 @@ Damit lassen sich mehrere Blitzortungsgeräte bzw. Beobachtungspunkte ohne feste
 - versioniertes Dashboard-Helferpaket `app_gewitterradar_v4_06_pkg.yaml`;
 - lazy geladenes About-/Hilfe-Locale-Modul;
 - fail-closed Delta-Prüfungen für geschützte Quellanker;
+- dedizierter fail-closed Recorder-Sprachaudit für alle 19 registrierten Varianten;
 - Regressionstests für beide Auslieferungsformen.
 
 ## Geräte- und Browserprüfung
@@ -73,7 +77,7 @@ Die automatisierte Frontend-Prüfung deckt folgende Profile ab:
 - Android Hochformat;
 - Android Querformat.
 
-Zusätzlich wurden die visuellen Feinanpassungen wiederholt auf realen Android- und iPad-Geräten geprüft. Der griechische Hochformat-Fix erhält eine eigene Kollisionsprüfung zwischen Untertitel und Spruch.
+Zusätzlich wurden die visuellen Feinanpassungen wiederholt auf realen Android- und iPad-Geräten geprüft. Der griechische Hochformat-Fix besitzt eine eigene Kollisionsprüfung zwischen Untertitel und Spruch und wurde zusätzlich real auf Android bestätigt.
 
 ## Home-Assistant-Qualitätssicherung
 
@@ -85,6 +89,7 @@ Die V4.06-Linie wird getrennt geprüft durch:
 - deterministisches Paket-Staging;
 - Frontend-Neubau und Paritätsprüfungen;
 - Locale-/Sprachvalidierung;
+- Recorder-Sprachaudit;
 - Browserregressionen beider Auslieferungsformen.
 
 ## Kompatibilität
@@ -96,4 +101,4 @@ Die V4.06-Linie wird getrennt geprüft durch:
 
 ## Letztes Release-Gate
 
-Vor der endgültigen V4.06-Freigabe erfolgt nach dem letzten Build noch die reale Sichtprüfung des korrigierten griechischen mobilen Hochformats sowie der vollständige abschließende CI-/Paket-/Paritätscheck.
+Die reale griechische Android-Hochformatprüfung ist abgeschlossen und der Recorder-Sprachaudit für alle 19 registrierten Varianten ist erfolgreich. Vor der endgültigen V4.06-Freigabe verbleiben nur noch der vollständig grüne Abschlusslauf auf dem final dokumentierten Stand, die letzte Paritäts-/Artefaktkontrolle sowie der Release-Freeze mit anschließender Veröffentlichung.
