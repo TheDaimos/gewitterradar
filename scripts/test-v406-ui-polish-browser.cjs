@@ -44,6 +44,7 @@ const server = http.createServer((req, res) => {
           const dialog = root.getElementById('settings-dialog');
           const close = root.getElementById('settings-close');
           const image = close.querySelector('img');
+          const computed = getComputedStyle(dialog);
           const frame = getComputedStyle(dialog, '::after');
           const links = [...root.querySelectorAll('.settings-premium-link')].map((node) => {
             const r = node.getBoundingClientRect();
@@ -54,8 +55,9 @@ const server = http.createServer((req, res) => {
             closeImage:image ? new URL(image.src).pathname : '',
             closeText:close.textContent.trim(),
             overflow:dialog.scrollWidth > dialog.clientWidth,
-            border:getComputedStyle(dialog).borderTopColor,
-            radius:getComputedStyle(dialog).borderTopLeftRadius,
+            borderWidth:computed.borderTopWidth,
+            backgroundImage:computed.backgroundImage,
+            radius:computed.borderTopLeftRadius,
             frameContent:frame.content,
             frameBorder:frame.borderTopColor,
             frameWidth:frame.borderTopWidth,
@@ -66,7 +68,8 @@ const server = http.createServer((req, res) => {
         assert.match(settings.closeImage, /gewitterradar-about-close-premium\.webp$/);
         assert.equal(settings.closeText, '', `${delivery}/${profile} no legacy settings x`);
         assert.equal(settings.overflow, false, `${delivery}/${profile} settings overflow`);
-        assert.notEqual(settings.border, 'rgba(0, 0, 0, 0)');
+        assert.ok(parseFloat(settings.borderWidth) >= 1, `${delivery}/${profile} settings gradient border width`);
+        assert.match(settings.backgroundImage, /conic-gradient\(/, `${delivery}/${profile} Settings shimmer gradient`);
         assert.notEqual(settings.frameContent, 'none');
         assert.notEqual(settings.frameBorder, 'rgba(0, 0, 0, 0)');
         assert.ok(parseFloat(settings.frameWidth) >= 1, `${delivery}/${profile} settings inner frame`);
@@ -95,6 +98,8 @@ const server = http.createServer((req, res) => {
             copyImage:copyImage ? new URL(copyImage.src).pathname : '',
             gear:!!gear,
             gearPath:gear?.querySelector('path')?.getAttribute('d') || '',
+            gearCircles:gear?.querySelectorAll('circle').length || 0,
+            gearViewBox:gear?.getAttribute('viewBox') || '',
             overflow:dialog.scrollWidth > dialog.clientWidth || content.scrollWidth > content.clientWidth,
             border:getComputedStyle(dialog).borderTopColor,
             radius:getComputedStyle(dialog).borderTopLeftRadius,
@@ -108,8 +113,10 @@ const server = http.createServer((req, res) => {
         assert.equal(help.closeText, '', `${delivery}/${profile} no legacy help x`);
         assert.deepEqual(help.copySize, [44,44]);
         assert.match(help.copyImage, /gewitterradar-about-copy-scroll\.webp$/);
-        assert.equal(help.gear, true, `${delivery}/${profile} premium functions gear`);
-        assert.match(help.gearPath, /^M48 21l4 2 5-1/);
+        assert.equal(help.gear, true, `${delivery}/${profile} deterministic functions gear`);
+        assert.equal(help.gearViewBox, '0 0 96 96');
+        assert.equal(help.gearCircles, 2, `${delivery}/${profile} gear hub geometry`);
+        assert.match(help.gearPath, /^M39\.2,26\.8 L42\.4,25\.7 L42\.8,18\.5/);
         assert.equal(help.overflow, false, `${delivery}/${profile} help overflow`);
         assert.notEqual(help.border, 'rgba(0, 0, 0, 0)');
         assert.notEqual(help.frameContent, 'none');

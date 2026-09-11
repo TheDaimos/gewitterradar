@@ -19,8 +19,10 @@ assert.ok(polished.includes('.about-dedication-copy{transform:translateY(7px)}')
 assert.ok(polished.includes("' meiner Begeisterung für Technik,'"));
 assert.ok(polished.includes("' Wetter und all den Ideen dazwischen'"));
 
-// New small polish block: stronger stable frames and shared premium controls.
-assert.ok(polished.includes('border-color:rgba(232,188,96,.92)'));
+// Current review block: variegated Settings frame plus shared premium controls.
+assert.ok(polished.includes('border:1px solid transparent'));
+assert.ok(polished.includes('conic-gradient(from 210deg'));
+assert.ok(polished.includes('rgba(255,231,159,.98) 48deg'));
 assert.ok(polished.includes(".settings-dialog::after{content:''"));
 assert.ok(polished.includes('settings-close settings-close-premium'));
 assert.ok(polished.includes('src="${ABOUT_CLOSE_IMAGE}"'));
@@ -30,9 +32,11 @@ assert.ok(polished.includes("ABOUT_CLOSE_IMAGE + '\" alt=\"\" width=\"34\" heigh
 assert.ok(polished.includes('copyImage.src=ABOUT_COPY_IMAGE'));
 assert.ok(polished.includes('.help-copy img{display:block;width:34px;height:34px'));
 assert.ok(polished.includes('premiumFunctionsIcon=\'<svg viewBox="0 0 96 96"'));
-assert.ok(polished.includes('id="helpFunctionsMetal"'));
+assert.ok(polished.includes('id="helpFunctionsMetalV2"'));
 assert.ok(polished.includes('if(section.key===\'functions\')icon.innerHTML=premiumFunctionsIcon'));
-assert.ok(polished.includes('M48 21l4 2 5-1 5 9 4 3 8 1v10'));
+assert.ok(polished.includes('M39.2,26.8 L42.4,25.7 L42.8,18.5'));
+assert.ok(polished.includes('<circle cx="48" cy="48" r="16.5"'));
+assert.ok(!polished.includes('M48 21l4 2 5-1 5 9 4 3 8 1v10'));
 
 // Legacy generic visual controls must not survive this preview layer.
 assert.ok(!polished.includes('aria-label="Einstellungen schließen">×</button>'));
@@ -48,4 +52,4 @@ let rejected=false;
 try { v406UiPolishDelta(polished); } catch { rejected=true; }
 assert.equal(rejected,true,'already-polished source must fail closed');
 
-console.log('PASS: accepted V4.06 UI polish stays narrow, preserves accepted mobile/iPad work and adds only frame/control harmonization plus isolated gear trial.');
+console.log('PASS: V4.06 UI polish preserves accepted controls, adds the Settings shimmer frame and uses deterministic gear trial V2.');
