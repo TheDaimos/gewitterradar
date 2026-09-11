@@ -20,6 +20,8 @@ jobs:
       - run: node scripts/test-about-locales.mjs
       - name: Accepted V4.06 UI-polish delta
         run: node scripts/test-v406-ui-polish-delta.mjs
+      - name: V4.06 UI-polish pass2 delta
+        run: node scripts/test-v406-ui-polish-pass2-delta.mjs
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
       - run: npx playwright install --with-deps chromium
       - name: About locale registry and rendering
@@ -49,6 +51,12 @@ jobs:
       - name: V4.06 UI-polish preview browser profiles
         if: success()
         run: node scripts/test-v406-ui-polish-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply V4.06 UI-polish pass2 preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-pass2-preview.mjs
+      - name: V4.06 UI-polish pass2 browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-pass2-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
       - name: Build accepted V4.06 UI-polish preview payload
         if: success()
         run: node --check frontend/gewitterradar.js
