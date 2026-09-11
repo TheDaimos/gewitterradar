@@ -7,17 +7,18 @@
 
 Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
 
-**Current native integration version:** `0.18.0`
-**Current shared product candidate:** `V4.06`
+**Current native integration version:** `0.18.0`  
+**Current shared product release:** `2026/09 · V4.06`
 
-Die gemeinsame Frontend-/Produktkonvergenz läuft derzeit. Bis die vereinheitlichte Auslieferung vollständig veröffentlicht ist, wird die Dashboard-Karte zusätzlich über `TheDaimos/gewitterradar-dashboard` ausgeliefert. Dieser Dashboard-Zweig ist eine abgeleitete Auslieferungsform und keine unabhängige Entwicklungsquelle mehr.
+V4.06 führt die gemeinsame Frontend-/Produktkonvergenz in einen öffentlichen Release-Stand. Die Dashboard-Karte wird weiterhin zusätzlich über `TheDaimos/gewitterradar-dashboard` ausgeliefert; dieser Dashboard-Zweig ist eine abgeleitete Auslieferungsform und keine unabhängige Entwicklungsquelle mehr.
 
+## Gemeinsamer V4.06-Release
 
-## Gemeinsamer V4.06-Kandidat
-
-Die gemeinsame Quelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität. V4.06 enthält den lokalisierten Hilfe-Dialog, 19 About-/Hilfe-Sprachvarianten und die gemeinsame Recorder-Wildcard-Regel. Die native Variante stellt `/gewitterradar/gewitterradar.js` bereit.
+Die gemeinsame Quelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität. V4.06 enthält den lokalisierten Hilfe-Dialog, **15 Sprachen plus 4 Dialektvarianten (19 Sprachvarianten)** und die gemeinsame Recorder-Wildcard-Regel. Die native Variante stellt `/gewitterradar/gewitterradar.js` bereit.
 
 Für einen manuellen Dashboard-Test muss der komplette Inhalt von `dashboard/dist/` nach `/config/www/community/gewitterradar-dashboard/` kopiert werden, einschließlich `assets/`, `locales/about-locales.js` und `app_gewitterradar_v4_06_pkg.yaml`. Die alte unversionierte Package-Datei muss ersetzt werden. Siehe [Installation](docs/INSTALLATION.md).
+
+Das verbindliche Versions-/Monatsformat und die Pflichtschritte für kommende Releases stehen in [`docs/RELEASE_PROCESS.md`](docs/RELEASE_PROCESS.md). Der aktuelle Stand wird als `YYYY/MM · Vx.xx`, historische Release-History-Einträge als `Vx.xx · YYYY/MM` angezeigt.
 
 ## Was die native Integration bereitstellt
 
@@ -63,11 +64,11 @@ Nach einem vollständigen Home-Assistant-Neustart muss die Integration weiterhin
 
 ### 2. Dashboard-/Lovelace-Auslieferung
 
-Bis die gemeinsame Auslieferung vollständig konvergiert und veröffentlicht ist, zusätzlich das Dashboard-Repository installieren:
+Für die Dashboard-/Lovelace-Auslieferung das abgeleitete Dashboard-Repository installieren:
 
 `TheDaimos/gewitterradar-dashboard`
 
-HACS installiert dessen Modul aktuell unter:
+HACS installiert dessen Modul unter:
 
 ```text
 /hacsfiles/gewitterradar-dashboard/gewitterradar.js
@@ -105,7 +106,7 @@ Der eigentliche Kartentyp ist:
 type: custom:gewitterradar-card
 ```
 
-Die drei Beispiel-Entity-IDs stammen aus der bisherigen Package-/Legacy-Linie. Die laufende Konvergenz hat ausdrücklich das Ziel, Frontend und native Konfiguration aus demselben Gewitterradar-Stand bereitzustellen und die Neunutzer-Einrichtung weiter zu vereinfachen.
+Die drei Beispiel-Entity-IDs stammen aus der bisherigen Package-/Legacy-Linie. V4.06 stellt Frontend und native Konfiguration aus demselben Gewitterradar-Produktstand bereit; unterstützte Legacy-Helfer bleiben als Migrations-/Kompatibilitätspfad erhalten.
 
 ## Bestehende V4.04-/Legacy-Installationen
 
@@ -115,22 +116,22 @@ Die native Integration löscht bewusst keine fremden oder historischen Home-Assi
 
 Siehe [`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md).
 
-## Aktuelle Konvergenz- und Release-Gates
+## V4.06 Release-Freeze
 
-Vor dem nächsten gemeinsamen Gewitterradar-Release müssen mindestens nachgewiesen sein:
+Zum V4.06-Abschluss gehören:
 
 - vollständige Übernahme des veröffentlichten Dashboard-V4.05-Frontendstands;
 - geschützter „Über Gewitterradar“-Dialog in beiden Auslieferungsformen;
-- gleiche gemeinsame Frontend-/About-Assets und Prüfsummen;
-- grüne native Integrationstests;
-- grüne Dashboard-/HACS-Tests;
+- identische gemeinsame Frontend-/About-Assets und Frontend-Payloads;
+- grüne native Integrationstests, HACS und Hassfest;
 - reale Home-Assistant-/HACS-Abnahme;
-- iPad-/Android-Spotchecks;
-- dokumentierter Installationspfad einschließlich Dashboard-View-Einrichtung.
+- Android-/iPad-/iPad-Pro-Spotchecks;
+- erfolgreich abgenommener griechischer Mobile-Hochformat-Fix;
+- Recorder-Sprachaudit für alle 19 Varianten;
+- dokumentierter Installationspfad einschließlich Dashboard-View-Einrichtung;
+- lückenlose Release History V4.00–V4.06 mit `YYYY/MM`-Chronologie.
 
-Aktiver Tracker:
-
-- Issue #3 — `Converge V4.05 frontend into unified Gewitterradar product`
+Neue Funktionen werden nicht in den eingefrorenen V4.06-Stand nachgeschoben. Für **V4.07 · PLANNED** ist die **Weltweite Orts-Suche** vorgemerkt.
 
 ## Validation
 
@@ -142,6 +143,8 @@ Die Release-Linie wird unabhängig geprüft durch:
 - deterministisches Integration-Package-Staging;
 - Fresh-Install-, Migration-, Unload-/Re-Enable- und Rollback-Tests;
 - Dashboard-/Frontend-Build- und Asset-Prüfungen;
+- Locale-/Recorder-Sprachaudits;
+- Browserregressionen beider Auslieferungsformen;
 - reale HACS-/Geräteabnahme.
 
 Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische Packaging-Prüfung ersetzt keinen realen HACS-Installationstest.

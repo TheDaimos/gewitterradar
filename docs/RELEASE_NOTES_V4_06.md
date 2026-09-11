@@ -1,25 +1,28 @@
-# Gewitterradar V4.06 – Release Notes
+# Gewitterradar V4.06 · 2026/09 – Release Notes
 
-> Status: Release-Kandidat. Reale Geräte-Sichtprüfung und Recorder-Sprachaudit sind abgeschlossen; Veröffentlichung und endgültiger Release-Freeze stehen noch aus.
+> Status: **Finaler Release-Stand.** Reale Geräte-Sichtprüfung, Recorder-Sprachaudit, Release-History-Abgleich und Abschlussvalidierung gehören zum V4.06-Freeze.
 
 ## Überblick
 
 V4.06 führt Dashboard-Karte und native Home-Assistant-Integration auf einen gemeinsamen Frontend- und Produktstand zusammen. Beide Auslieferungsformen werden deterministisch aus derselben Quelle erzeugt und gemeinsam geprüft.
 
-Der Schwerpunkt dieser Version liegt auf Internationalisierung, Hilfe und Dokumentation, Recorder-Mehrgerätefähigkeit sowie einer umfangreichen realen Geräte-Feinabstimmung der Premium-Oberfläche.
+Der Schwerpunkt dieser Version liegt auf Internationalisierung, Hilfe und Dokumentation, Recorder-Mehrgerätefähigkeit, Release-Chronologie sowie einer umfangreichen realen Geräte-Feinabstimmung der Premium-Oberfläche.
 
 ## Neu
 
-- **19 About-/Hilfe-Sprachvarianten** mit streng validiertem Sprachschema.
+- **15 Sprachen + 4 Dialektvarianten = 19 About-/Hilfe-Sprachvarianten** mit streng validiertem Sprachschema.
 - Neuer Premium-Dialog **„Hilfe & Hinweise“** mit Erklärungen zu Voraussetzungen, Radien, Referenzstandort, wichtigen Funktionen, Grundeinstellungen, Fehlerdiagnose und Recorder.
 - Verzögert geladenes gemeinsames Locale-Modul für die zusätzlichen Sprachen.
 - Persönliche, bereits vorhandene Signatur aus den Einstellungen zusätzlich im Welcome-Footer.
-- Kompakte Footer-Kennung: `V4.06 · Visual V2 · Gewitterradar · by CK`.
-- Eigene Projektgeschichte, Meilensteinübersicht, Recorder-Sprachaudit und V4.06-Release-Notes.
+- Finale Welcome-Kennung: `2026/09 · V4.06 · Gewitterradar · by CK`.
+- Einstellungen unten links und Release-History-Kopf: `2026/09 · V4.06`.
+- Release History mit lückenloser V4.00–V4.06-Linie, nachgetragenem V4.05-Eintrag und Monatsangaben.
+- `V4.07 · PLANNED` mit **Weltweiter Orts-Suche** als nächstem vorgesehenen Entwicklungsthema.
+- Eigene Projektgeschichte, Meilensteinübersicht, Recorder-Sprachaudit, verbindlicher Release-Ablauf und V4.06-Release-Notes.
 
 ## Recorder und Datenquellen
 
-Die Recorder-Empfehlung verwendet jetzt geräteunabhängige Wildcards:
+Die Recorder-Empfehlung verwendet geräteunabhängige Wildcards:
 
 ```yaml
 recorder:
@@ -33,7 +36,7 @@ recorder:
 
 Damit lassen sich mehrere Blitzortungsgeräte bzw. Beobachtungspunkte ohne festes Sensorpräfix abdecken. Die Ausschlüsse betreffen die Recorder-Historie und deaktivieren nicht die Live-Zustände von Gewitterradar. Bereits vorhandene historische Daten werden durch diese Konfigurationsänderung nicht automatisch gelöscht.
 
-Der finale Recorder-Sprachaudit wurde für alle **19 registrierten Sprachvarianten** abgeschlossen. Geprüft wurden About-/Welcome-Hinweise, die vollständige Recorder-Sektion in **„Hilfe & Hinweise“**, die Merge-Anweisung für eine vorhandene `recorder:`-Sektion, Live-/Historienhinweise, Mehrgeräte-Wildcards sowie Kopiertexte. Die technischen YAML-Bezeichner bleiben in allen Sprachen unverändert. Ein eigener fail-closed CI-Test verhindert die Rückkehr der früheren festen `sensor.home_lightning_*`-Recorder-IDs.
+Der finale Recorder-Sprachaudit wurde für alle 19 registrierten Sprachvarianten abgeschlossen. Ein eigener fail-closed CI-Test verhindert die Rückkehr der früheren festen `sensor.home_lightning_*`-Recorder-IDs.
 
 ## Premium-Oberfläche
 
@@ -44,19 +47,29 @@ Der finale Recorder-Sprachaudit wurde für alle **19 registrierten Sprachvariant
 - Hilfesymbole geräteübergreifend ausgerichtet und das Haus-Symbol bei **„Voraussetzungen“** vergrößert;
 - Chevrons und Abschnittshierarchie optisch verfeinert;
 - Premium-Einstiegsschaltflächen im Einstellungsdialog auch auf geeigneten mobilen Hochformatbreiten nebeneinander;
-- Versionsanzeige im Einstellungsdialog aus dem Kopfbereich in den unteren linken Freiraum verschoben.
+- Versionsanzeige im Einstellungsdialog in den unteren linken Freiraum verschoben.
 
 ## Welcome-/About-Feinabstimmung
 
 - persönliche Widmung im deutschen mobilen Hochformat gezielt auf einen besseren Textfluss abgestimmt;
 - persönliche Signatur im Welcome-Footer auf Desktop/Tablet an den Schaltflächen ausgerichtet und auf Android stärker hervorgehoben;
 - Footer-Anordnung aus Signatur, Schaltflächen, Zahnrad und Versionsinformation gerätespezifisch verfeinert;
-- Radius-Wertefelder `70 KM`, `30 KM`, `5 KM` um ungefähr 25 % vergrößert und vertikal zu den zugehörigen Zeilen zentriert;
+- Radius-Wertefelder `70 KM`, `30 KM`, `5 KM` um ungefähr 25 % vergrößert und vertikal zentriert;
 - iPad-/iPad-Pro-Fokusartefakte am Premium-X und am erneut geöffneten About-Dialog behoben;
-- griechischer mobiler Hochformat-Sonderfall korrigiert: Der Spruch fließt nun unter dem längeren Untertitel und überdeckt ihn nicht mehr. Die griechische Übersetzung selbst wurde nicht verkürzt oder verändert;
-- korrigierter griechischer Hochformat-Stand anschließend real auf Android geprüft und abgenommen.
+- griechischer mobiler Hochformat-Sonderfall korrigiert: Der Spruch fließt unter dem längeren Untertitel und überdeckt ihn nicht mehr; die griechische Übersetzung selbst blieb unverändert;
+- korrigierter griechischer Hochformat-Stand real auf Android geprüft und abgenommen.
 
-## Technische Änderungen
+## Release History und Zeitachse
+
+Die sichtbare Release History verwendet ab V4.06 verbindlich:
+
+- aktueller Stand: `YYYY/MM · Vx.xx`;
+- veröffentlichte historische Einträge: `Vx.xx · YYYY/MM`;
+- Planung: `Vx.xx · PLANNED`.
+
+Die Projektzeitachse beginnt `2026/08`; die sichtbaren V3.x-Meilensteine sind diesem Entwicklungsmonat zugeordnet. Die stabile V4-Reihe V4.00 bis V4.06 gehört zu `2026/09`. V4.05 ist wieder als eigener öffentlicher Meilenstein enthalten. Die Pflege dieses Formats ist in `docs/RELEASE_PROCESS.md` verbindlich festgeschrieben.
+
+## Technische Änderungen und Qualitätssicherung
 
 - gemeinsame kanonische Frontend-Quelle;
 - deterministische Erzeugung der Dashboard- und Integrationsauslieferung;
@@ -64,33 +77,10 @@ Der finale Recorder-Sprachaudit wurde für alle **19 registrierten Sprachvariant
 - versioniertes Dashboard-Helferpaket `app_gewitterradar_v4_06_pkg.yaml`;
 - lazy geladenes About-/Hilfe-Locale-Modul;
 - fail-closed Delta-Prüfungen für geschützte Quellanker;
-- dedizierter fail-closed Recorder-Sprachaudit für alle 19 registrierten Varianten;
-- Regressionstests für beide Auslieferungsformen.
-
-## Geräte- und Browserprüfung
-
-Die automatisierte Frontend-Prüfung deckt folgende Profile ab:
-
-- Desktop;
-- iPad;
-- iPad Pro;
-- Android Hochformat;
-- Android Querformat.
-
-Zusätzlich wurden die visuellen Feinanpassungen wiederholt auf realen Android- und iPad-Geräten geprüft. Der griechische Hochformat-Fix besitzt eine eigene Kollisionsprüfung zwischen Untertitel und Spruch und wurde zusätzlich real auf Android bestätigt.
-
-## Home-Assistant-Qualitätssicherung
-
-Die V4.06-Linie wird getrennt geprüft durch:
-
-- Home-Assistant-Laufzeittests;
-- Hassfest;
-- HACS-Integrationsvalidierung;
-- deterministisches Paket-Staging;
-- Frontend-Neubau und Paritätsprüfungen;
-- Locale-/Sprachvalidierung;
-- Recorder-Sprachaudit;
-- Browserregressionen beider Auslieferungsformen.
+- dedizierter Recorder-Sprachaudit;
+- Regressionstests für beide Auslieferungsformen;
+- Browserprofile Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat;
+- Home-Assistant-Laufzeittests, Hassfest, HACS-Validierung und Paketverträge.
 
 ## Kompatibilität
 
@@ -99,6 +89,6 @@ Die V4.06-Linie wird getrennt geprüft durch:
 - Historische fremde oder nicht mehr verfügbare Entity-Registry-Einträge werden nicht automatisch gelöscht.
 - Native Integration und Dashboard-Auslieferung dürfen nicht gleichzeitig dieselbe Custom Card doppelt registrieren; in Home Assistant soll nur die tatsächlich verwendete Gewitterradar-Modulressource aktiv sein.
 
-## Letztes Release-Gate
+## Freeze
 
-Die reale griechische Android-Hochformatprüfung ist abgeschlossen und der Recorder-Sprachaudit für alle 19 registrierten Varianten ist erfolgreich. Vor der endgültigen V4.06-Freigabe verbleiben nur noch der vollständig grüne Abschlusslauf auf dem final dokumentierten Stand, die letzte Paritäts-/Artefaktkontrolle sowie der Release-Freeze mit anschließender Veröffentlichung.
+V4.06 wird ausschließlich aus dem vollständig geprüften finalen Commit veröffentlicht. Nach dem Freeze werden Tag, eingefrorener Rückfallpunkt und Release-Artefakte nicht mehr umgeschrieben. Neue Funktionen – insbesondere die geplante weltweite Orts-Suche – beginnen erst auf der nächsten Versionslinie.

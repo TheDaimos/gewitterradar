@@ -30,6 +30,8 @@ jobs:
         run: node scripts/test-v406-ui-polish-pass4-delta.mjs
       - name: V4.06 UI-polish pass5 delta
         run: node scripts/test-v406-ui-polish-pass5-delta.mjs
+      - name: V4.06 release metadata and history delta
+        run: node scripts/test-v406-release-history-delta.mjs
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
       - run: npx playwright install --with-deps chromium
       - name: About locale registry and rendering
@@ -83,13 +85,19 @@ jobs:
       - name: V4.06 UI-polish pass5 browser profiles
         if: success()
         run: node scripts/test-v406-ui-polish-pass5-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
-      - name: Build accepted V4.06 UI-polish preview payload
+      - name: Apply final V4.06 release metadata and history
+        if: success()
+        run: node scripts/apply-v406-release-history-preview.mjs
+      - name: V4.06 release metadata and history browser profiles
+        if: success()
+        run: node scripts/test-v406-release-history-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Build accepted V4.06 release payload
         if: success()
         run: node --check frontend/gewitterradar.js
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: v406-ui-polish-preview-payload
+          name: v406-release-payload
           path: |
             frontend/gewitterradar.js
             custom_components/gewitterradar/frontend/gewitterradar.js

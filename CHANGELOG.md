@@ -1,12 +1,15 @@
 # Changelog
 
-## Unreleased — V4.06 / native integration 0.18.0
+## 2026/09 — V4.06 / native integration 0.18.0
 
 ### Added
 
-- Add the localized premium Help & Notes dialog for all 19 language variants.
-- Reuse the approved Settings signature in the Welcome footer and add the compact author/version line `V4.06 · Visual V2 · Gewitterradar · by CK`.
-- Add dedicated V4.06 project history, milestone tracking, Recorder locale audit and release-note documentation.
+- Add the localized premium Help & Notes dialog for **15 languages plus 4 dialect variants (19 variants total)**.
+- Reuse the approved Settings signature in the Welcome footer and add the final release stamp `2026/09 · V4.06 · Gewitterradar · by CK`.
+- Add `2026/09 · V4.06` to the lower-left Settings area and to the Release History header.
+- Complete the visible Release History with V4.06 and the previously missing V4.05, and add `YYYY/MM` to all published history entries.
+- Add `V4.07 · PLANNED — Worldwide location search` as the next planned development topic without presenting it as shipped functionality.
+- Add dedicated V4.06 project history, milestone tracking, Recorder locale audit, binding release-process documentation and release notes.
 
 ### Improved
 
@@ -20,9 +23,9 @@
 - Refine About accordion chevron placement and premium section hierarchy.
 - Tune the German mobile-portrait dedication layout without changing other device layouts.
 - Enlarge the Welcome radius value badges (`70 KM`, `30 KM`, `5 KM`) by about 25% and vertically center them with their respective rows.
-- Move the Settings version label from the header into the lower-left free area.
 - Align Welcome footer controls, signature, gear and version information for Desktop, Android and tablet layouts.
 - Increase the personal signature presence on Android/mobile while preserving the exact approved signature artwork.
+- Derive the visible `YYYY/MM` release stamp from the canonical `GEWITTERRADAR_BUILD` metadata instead of maintaining separate date strings.
 
 ### Fixed
 
@@ -30,6 +33,7 @@
 - Keep the Welcome footer version line visible and footnote-like on iPad/iPad Pro.
 - Fix the Greek About header on mobile portrait by letting the claim flow below the longer Greek subtitle instead of overlapping it; the Greek translation remains unchanged.
 - Replace fixed Recorder sensor IDs with multi-device wildcard patterns.
+- Restore V4.05 to the visible Release History so the public V4.00–V4.06 sequence is complete.
 
 ### Delivery and validation
 
@@ -37,10 +41,12 @@
 - Build the shared frontend, lazy locale module, assets and package deterministically into both delivery forms.
 - Keep dashboard and native-integration frontend payloads byte-identical.
 - Extend browser regression coverage across Desktop, iPad, iPad Pro, Android portrait and Android landscape for both delivery forms, including the Greek mobile-portrait header flow.
+- Add dedicated browser checks for the final `YYYY/MM` release stamps and Release History chronology.
 - Complete the real Android portrait acceptance of the Greek header-flow correction.
 - Audit Recorder guidance across all 19 registered language variants: four current wildcard sources, existing-`recorder:` merge guidance, live-state behavior, historical-data behavior, multi-device semantics and localized copy texts.
 - Add `scripts/test-recorder-locales.mjs` as a fail-closed CI gate against incomplete Recorder guidance or legacy fixed `sensor.home_lightning_*` Recorder IDs.
-- Continue validating Home Assistant runtime behavior, HACS, Hassfest, package contracts and deterministic frontend reconstruction independently.
+- Add a binding per-release chronology checklist in `docs/RELEASE_PROCESS.md` and mirror the rule in `PROJECT_DEFAULTS.md`.
+- Validate Home Assistant runtime behavior, HACS, Hassfest, package contracts and deterministic frontend reconstruction independently before the final freeze.
 
 ## Shared V4.05 frontend and premium controls
 
@@ -96,7 +102,9 @@ Initial native Home Assistant integration release line.
 - Historical `device_tracker.*` reference selections are not automatically migrated.
 - Historical unavailable Entity Registry entries and stale HACS update entities are intentionally not deleted automatically by the native integration.
 
-### Release gates still open
+### Historical release-candidate gates
+
+The following gates belonged to the earlier 0.17.0 candidate phase and are retained as historical evidence:
 
 - HACS update to the corrected real-install candidate;
 - full-restart verification that Gewitterradar remains visible under Devices & services → Integrations;

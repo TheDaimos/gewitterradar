@@ -2,13 +2,19 @@
 
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
 
-## V4.05 – eingefrorene visuelle Referenz
+## Zeitachse
 
-V4.05 wurde als geschützte visuelle Ausgangsbasis für die weitere Produktkonvergenz eingefroren. Besonders geschützt sind der Dialog **„Über Gewitterradar“**, die Widmung **„Für Alkje“**, Hero- und Widmungsdarstellung, Radien-Semantik, Recorder-Hinweis sowie das Onboarding-Verhalten.
+Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören deshalb zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4.01 bis V4.06 gehören zur Release-Phase `2026/09`.
+
+Seit V4.06 ist die Monatskennung Teil des verbindlichen Releaseformats: Der aktuelle Stand wird als `YYYY/MM · Vx.xx` dargestellt, historische Einträge als `Vx.xx · YYYY/MM`. Der vollständige Ablauf ist in `docs/RELEASE_PROCESS.md` festgeschrieben.
+
+## V4.05 · 2026/09 – eingefrorene visuelle Referenz
+
+V4.05 wurde als geschützte visuelle Ausgangsbasis für die weitere Produktkonvergenz eingefroren. Die öffentliche V4.05 führte das Premium-Erlebnis **„Über Gewitterradar“** mit First-Start-Onboarding, wieder aufrufbarem Informationsdialog und der persönlichen Widmung **„Für Alkje“** ein. Besonders geschützt sind außerdem Hero- und Widmungsdarstellung, Radien-Semantik, Recorder-Hinweis sowie das Onboarding-Verhalten.
 
 Aus diesem Stand wurden die freigegebenen Premium-Bedienelemente übernommen. Das betrifft insbesondere das metallische Schließen-X und die Schriftrolle für Kopieraktionen. Diese Grafiken werden nicht neu gezeichnet, sondern als freigegebene Originale wiederverwendet.
 
-## V4.06 – ein Produkt, zwei Auslieferungsformen
+## V4.06 · 2026/09 – ein Produkt, zwei Auslieferungsformen
 
 Mit V4.06 wird Gewitterradar fachlich und technisch als ein gemeinsames Produkt gepflegt. Die gemeinsame Frontend-Quelle wird deterministisch in zwei Auslieferungsformen erzeugt:
 
@@ -19,9 +25,9 @@ Abweichungen des gemeinsamen Frontends, der Assets oder der Prüfsummen zwischen
 
 ## V4.06 – Internationalisierung und Hilfe
 
-Der About-/Hilfe-Bereich wurde auf **19 Sprachvarianten** erweitert. Nicht native Sprachpakete werden als gemeinsames, verzögert geladenes Locale-Modul bereitgestellt. Deutsch und Englisch bleiben direkt verfügbar; unbekannte oder unvollständige Sprachpakete fallen kontrolliert auf Englisch zurück.
+Der About-/Hilfe-Bereich umfasst **15 Sprachen plus 4 Dialektvarianten – insgesamt 19 Sprachvarianten**. Nicht native Sprachpakete werden als gemeinsames, verzögert geladenes Locale-Modul bereitgestellt. Deutsch und Englisch bleiben direkt verfügbar; unbekannte oder unvollständige Sprachpakete fallen kontrolliert auf Englisch zurück.
 
-Der neue Dialog **„Hilfe & Hinweise“** erklärt Voraussetzungen, Radien, Referenzstandort, wichtige Funktionen, empfohlene Grundeinstellungen, Fehlerdiagnose und Home-Assistant-Recorder. Die Recorder-Beispiele verwenden nun Wildcards für mehrere Blitzortungsgeräte bzw. Beobachtungspunkte.
+Der Dialog **„Hilfe & Hinweise“** erklärt Voraussetzungen, Radien, Referenzstandort, wichtige Funktionen, empfohlene Grundeinstellungen, Fehlerdiagnose und Home-Assistant-Recorder. Die Recorder-Beispiele verwenden Wildcards für mehrere Blitzortungsgeräte bzw. Beobachtungspunkte.
 
 ## V4.06 – Premium-Oberfläche und reale Geräteabnahme
 
@@ -38,10 +44,11 @@ Wesentliche Ergebnisse:
 - verbesserte Chevron-Ausrichtung und Abschnittshierarchie;
 - mobile Widmung mit eigenem Hochformat-Textfluss;
 - persönliche Signatur aus den Einstellungen unverändert auch im Welcome-Footer;
-- neue kompakte Fußnote `V4.06 · Visual V2 · Gewitterradar · by CK`;
+- finale Welcome-Kennung `2026/09 · V4.06 · Gewitterradar · by CK`;
+- Settings-Kennung `2026/09 · V4.06` im unteren linken Freiraum;
+- Release-History-Kopf `2026/09 · V4.06` und datierte Historieneinträge;
 - gerätespezifische Footer-Feinabstimmung für Android sowie iPad/iPad Pro;
 - um etwa 25 % vergrößerte und vertikal zentrierte Wertefelder `70 KM`, `30 KM`, `5 KM`;
-- Versionsanzeige im Einstellungsdialog aus dem Kopfbereich in den unteren linken Freiraum verschoben;
 - iPad-/iPad-Pro-Fokusartefakte am About-X und am Dialog selbst beseitigt, ohne das freigegebene X zu verändern.
 
 ## V4.06 – griechischer Hochformat-Sonderfall
@@ -54,34 +61,18 @@ Die anschließende reale Sichtprüfung auf Android im Hochformat wurde erfolgrei
 
 ## V4.06 – finaler Recorder-Sprachaudit
 
-Nach der Geräteabnahme wurde der Recorder-Bereich nochmals separat über alle **19 registrierten Sprachvarianten** geprüft. Dabei wurden sowohl About/Welcome als auch **„Hilfe & Hinweise“** gegen den aktuellen technischen Stand abgeglichen.
+Nach der Geräteabnahme wurde der Recorder-Bereich nochmals separat über alle **19 registrierten Sprachvarianten** geprüft. Bestätigt wurden exakt vier aktuelle Recorder-Wildcards, die Merge-Anweisung für eine vorhandene `recorder:`-Sektion, der Erhalt der Live-Zustände, das Verhalten vorhandener historischer Daten und die Mehrgeräte-/Mehrbeobachtungspunkt-Unterstützung unabhängig vom Entity-Präfix.
 
-Bestätigt wurden:
+Der Audit ergab keinen erforderlichen Übersetzungsumbau und ist mit `scripts/test-recorder-locales.mjs` als eigener fail-closed CI-Test abgesichert. Details stehen in `docs/RECORDER_LOCALE_AUDIT_V4_06.md`.
 
-- exakt vier aktuelle Recorder-Wildcards;
-- kein verbleibender produktiver Recorder-Pfad mit den früheren festen `sensor.home_lightning_*`-IDs;
-- Hinweis auf Ergänzung einer vorhandenen `recorder:`-Sektion statt eines zweiten Top-Level-Blocks;
-- Live-Zustände bleiben trotz Recorder-Ausschluss aktiv;
-- vorhandene historische Daten werden nicht automatisch gelöscht;
-- Mehrgeräte-/Mehrbeobachtungspunkt-Unterstützung unabhängig vom Entity-Präfix;
-- lokalisierte Kopiertexte und vollständige Recorder-Hilfesektionen.
+## V4.06 – Release History vervollständigt
 
-Der Audit ergab keinen erforderlichen Übersetzungsumbau. Zusätzlich wurde er als eigener fail-closed CI-Test dauerhaft abgesichert; die Detailprüfung ist in `docs/RECORDER_LOCALE_AUDIT_V4_06.md` dokumentiert.
+Die sichtbare Release History enthält ab V4.06 wieder lückenlos die öffentliche V4-Reihe einschließlich der zuvor fehlenden **V4.05**. V4.00 bis V4.06 sind `2026/09` zugeordnet; die sichtbaren V3.x-Entwicklungsmeilensteine sind `2026/08` zugeordnet.
 
-## Qualitätssicherung
+Als nächster Entwicklungswunsch ist **V4.07 · PLANNED – Worldwide location search / Weltweite Orts-Suche** vorgemerkt. Diese Funktion ist ausdrücklich Planung und kein Bestandteil von V4.06.
 
-Die V4.06-Linie wird unter anderem abgesichert durch:
+## Qualitätssicherung und Freeze
 
-- deterministischen Frontend-Neubau;
-- SHA-/Asset-Paritätsprüfungen;
-- Browserprofile für Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat;
-- beide Auslieferungsformen in denselben Browserprüfungen;
-- Sprachschema- und Locale-Prüfungen;
-- dedizierten Recorder-Sprachaudit für alle 19 registrierten Varianten;
-- Home-Assistant-Laufzeittests;
-- HACS-Validierung;
-- Hassfest;
-- Paketvertragsprüfungen;
-- reale Geräteabnahme zusätzlich zu automatisierten Tests.
+V4.06 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprachschema- und Locale-Prüfungen, Recorder-Sprachaudit, Home-Assistant-Laufzeittests, HACS, Hassfest, Paketverträge und reale Geräteabnahme abgesichert.
 
-Automatisierte Tests ersetzen dabei ausdrücklich nicht die reale Sichtprüfung auf den Zielgeräten; die zuletzt offene griechische Android-Hochformatprüfung wurde erfolgreich abgeschlossen.
+Nach Abschluss des finalen Release-Laufs wird der exakt geprüfte V4.06-Commit eingefroren. Bereits veröffentlichte V4.05- und frühere Rückfallpunkte bleiben unverändert.
