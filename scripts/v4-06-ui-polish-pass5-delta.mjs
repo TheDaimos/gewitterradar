@@ -1,6 +1,7 @@
 // Fifth real-device refinement pass for V4.06.
 // Refines only approved placement/scale details: Welcome footer signature/version,
-// Settings version placement, and the three Welcome radius value badges.
+// Settings version placement, the three Welcome radius value badges, and the
+// Greek mobile-portrait header flow observed on a real device.
 
 function once(source, from, to, label) {
   if (source.split(from).length !== 2) {
@@ -39,8 +40,20 @@ export function v406UiPolishPass5Delta(source) {
             .about-footer-left .about-dev{transform:translateY(14px)}
           }
         }
+        /* V4.06 pass5: Greek mobile portrait needs real text flow instead of an absolute claim overlay. */
+        @media(max-width:620px) and (orientation:portrait){
+          .about-dialog[data-about-language="Ελληνικά"] .about-head{display:grid;grid-template-columns:70px minmax(0,1fr);grid-template-rows:auto auto;align-items:start;column-gap:12px;row-gap:6px;height:auto;min-height:158px}
+          .about-dialog[data-about-language="Ελληνικά"] .about-head>img{grid-column:1;grid-row:1;align-self:start}
+          .about-dialog[data-about-language="Ελληνικά"] .about-head-copy{grid-column:2;grid-row:1;align-self:start;max-width:none}
+          .about-dialog[data-about-language="Ελληνικά"] .about-head-copy p{max-width:none}
+          .about-dialog[data-about-language="Ελληνικά"] .about-claim{position:static;grid-column:2;grid-row:2;justify-self:stretch;align-self:start;width:auto;max-width:none;margin:0;padding:2px 4px;font-size:9px;line-height:1.35;text-align:center}
+        }
 `;
   result = once(result, pass4FooterCssAnchor, pass4FooterCssAnchor + pass5Css, 'footer-version-radius-css');
+
+  const languageDatasetAnchor = `      const language = this._languageValue();\n      const locale = resolveAboutLocale(language);\n      const status = dialog.querySelector('.about-copy-status');`;
+  const languageDatasetReplacement = `      const language = this._languageValue();\n      dialog.dataset.aboutLanguage = language;\n      const locale = resolveAboutLocale(language);\n      const status = dialog.querySelector('.about-copy-status');`;
+  result = once(result, languageDatasetAnchor, languageDatasetReplacement, 'about-language-dataset');
 
   const persistentSettingsCssAnchor = `          .settings-dialog::after{content:none!important}\n`;
   const persistentSettingsCss = String.raw`          /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */

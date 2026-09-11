@@ -2,11 +2,42 @@
 
 ## Unreleased — V4.06 / native integration 0.18.0
 
+### Added
+
 - Add the localized premium Help & Notes dialog for all 19 language variants.
+- Reuse the approved Settings signature in the Welcome footer and add the compact author/version line `V4.06 · Visual V2 · Gewitterradar · by CK`.
+- Add dedicated V4.06 project history, milestone tracking and release-note documentation.
+
+### Improved
+
 - Refine Settings/About premium hierarchy, localized About headers and language-onboarding readability.
+- Strengthen the metallic gold frames and controlled shimmer in Settings and Help while preserving the accepted dark premium appearance.
+- Harmonize the premium close control across Settings, Help and About using the approved close artwork and keep 44×44 interaction targets.
+- Reuse the approved scroll artwork for Recorder YAML copy actions.
+- Reuse the Welcome gear geometry/material in the Main view and Help, with device-independent rendering.
+- Normalize Help icon alignment across Desktop, Android, iPad and iPad Pro; enlarge the prerequisites/home symbol for clearer balance.
+- Keep the two premium Settings entry buttons side by side on mobile portrait where the available width permits it.
+- Refine About accordion chevron placement and premium section hierarchy.
+- Tune the German mobile-portrait dedication layout without changing other device layouts.
+- Enlarge the Welcome radius value badges (`70 KM`, `30 KM`, `5 KM`) by about 25% and vertically center them with their respective rows.
+- Move the Settings version label from the header into the lower-left free area.
+- Align Welcome footer controls, signature, gear and version information for Desktop, Android and tablet layouts.
+- Increase the personal signature presence on Android/mobile while preserving the exact approved signature artwork.
+
+### Fixed
+
+- Fix iPad/iPad Pro WebKit focus artifacts around the About close control and around the reopened About dialog without changing the accepted premium X asset.
+- Keep the Welcome footer version line visible and footnote-like on iPad/iPad Pro.
+- Fix the Greek About header on mobile portrait by letting the claim flow below the longer Greek subtitle instead of overlapping it; the Greek translation remains unchanged.
 - Replace fixed Recorder sensor IDs with multi-device wildcard patterns.
+
+### Delivery and validation
+
 - Version the dashboard helper package as `app_gewitterradar_v4_06_pkg.yaml` and verify its global language marker.
 - Build the shared frontend, lazy locale module, assets and package deterministically into both delivery forms.
+- Keep dashboard and native-integration frontend payloads byte-identical.
+- Extend browser regression coverage across Desktop, iPad, iPad Pro, Android portrait and Android landscape for both delivery forms, including the Greek mobile-portrait header flow.
+- Continue validating Home Assistant runtime behavior, HACS, Hassfest, package contracts and deterministic frontend reconstruction independently.
 
 ## Shared V4.05 frontend and premium controls
 

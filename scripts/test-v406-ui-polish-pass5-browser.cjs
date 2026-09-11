@@ -74,6 +74,28 @@ const server = http.createServer((req, res) => {
           assert.ok(Math.abs(entry.out.cy-entry.row.cy)<=1,`${delivery}/${profile} radius ${index+1} badge vertically centered in its row`);
         }
 
+        if (profile === 'android-portrait') {
+          await page.evaluate(() => {
+            const card=window.aboutCard;
+            card._hass.states[card._languageEntity()].state='Ελληνικά';
+            card.hass={...card._hass};
+          });
+          await page.waitForFunction(() => {
+            const dialog=window.aboutCard?._aboutDialog;
+            return dialog?.dataset.aboutLanguage==='Ελληνικά' &&
+              dialog.querySelector('[data-about-text="title"]')?.textContent==='Σχετικά με το Gewitterradar';
+          });
+          const greek = await page.evaluate(() => {
+            const dialog=window.aboutCard._aboutDialog,head=dialog.querySelector('.about-head');
+            const subtitle=dialog.querySelector('.about-head-copy p'),claim=dialog.querySelector('.about-claim');
+            const rect=(el)=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+            return {head:rect(head),subtitle:rect(subtitle),claim:rect(claim),overflow:dialog.scrollWidth>dialog.clientWidth};
+          });
+          assert.ok(greek.claim.top >= greek.subtitle.bottom + 2,`${delivery}/${profile} Greek claim flows below the subtitle`);
+          assert.ok(greek.claim.bottom <= greek.head.bottom + .5,`${delivery}/${profile} Greek claim stays inside the header`);
+          assert.equal(greek.overflow,false,`${delivery}/${profile} Greek About has no horizontal overflow`);
+        }
+
         await page.evaluate(() => {
           const card=window.aboutCard;
           card._closeAbout(false,false);

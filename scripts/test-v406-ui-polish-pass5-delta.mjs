@@ -23,6 +23,9 @@ assert.ok(polished.includes('.about-footer-signature{width:196px!important'));
 assert.ok(polished.includes('.about-footer-signature{width:165px!important'));
 assert.ok(polished.includes('@media(hover:none) and (pointer:coarse) and (min-width:700px) and (min-height:700px)'));
 assert.ok(polished.includes('.about-footer-left .about-dev{transform:translateY(14px)}'));
+assert.ok(polished.includes('dialog.dataset.aboutLanguage = language;'));
+assert.ok(polished.includes('.about-dialog[data-about-language="Ελληνικά"] .about-head{display:grid;'));
+assert.ok(polished.includes('.about-dialog[data-about-language="Ελληνικά"] .about-claim{position:static;'));
 assert.ok(polished.includes('.about-radius output{position:absolute;right:0;top:50%;transform:translateY(-50%);min-width:58px'));
 assert.ok(polished.includes('font-size:1.25em'));
 assert.ok(polished.includes('class="settings-footer-version" title="Kartenversion">V${CARD_VERSION}</div>'));
@@ -35,4 +38,4 @@ let rejected=false;
 try { v406UiPolishPass5Delta(polished); } catch { rejected=true; }
 assert.equal(rejected,true,'already-pass5-polished source must fail closed');
 
-console.log('PASS: V4.06 UI polish pass5 places the reused signature/version, keeps the iPad footer note visible and lower, enlarges the mobile signature, moves Settings version, and enlarges/centers all three radius badges without touching accepted visual assets.');
+console.log('PASS: V4.06 UI polish pass5 preserves accepted footer/radius polish and adds collision-free Greek mobile-portrait header flow without changing the Greek translation.');
