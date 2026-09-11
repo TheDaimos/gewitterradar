@@ -13,7 +13,8 @@ const stage2 = v406UiPolishPass2Delta(stage1);
 const polished = v406UiPolishPass3Delta(stage2);
 
 assert.ok(polished.includes('V4.06 pass3: suppress WebKit\'s reopen focus frame'));
-assert.ok(polished.includes("const reopenedFromSettings = this._aboutReturnFocus?.id === 'settings-about';"));
+assert.ok(polished.includes("addEventListener('click', () => this._openAbout(true))"));
+assert.ok(polished.includes('_openAbout(fromSettings = false)'));
 assert.ok(polished.includes('navigator.maxTouchPoints > 0 && Math.min(window.innerWidth, window.innerHeight) >= 700'));
 assert.ok(polished.includes("dialog.classList.toggle('about-touch-tablet', touchTablet)"));
 assert.ok(polished.includes("dialog.focus({preventScroll:true})"));

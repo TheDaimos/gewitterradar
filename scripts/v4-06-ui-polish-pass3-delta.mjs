@@ -12,6 +12,12 @@ function once(source, from, to, label) {
 export function v406UiPolishPass3Delta(source) {
   let result = source;
 
+  const settingsAboutAnchor = `      this.shadow.getElementById('settings-about')?.addEventListener('click', () => this._openAbout());`;
+  const settingsAboutReplacement = `      this.shadow.getElementById('settings-about')?.addEventListener('click', () => this._openAbout(true));`;
+  result = once(result, settingsAboutAnchor, settingsAboutReplacement, 'about-settings-source');
+
+  result = once(result, `    _openAbout() {`, `    _openAbout(fromSettings = false) {`, 'about-open-source-parameter');
+
   const ipadFocusCssAnchor = String.raw`        @media(hover:none) and (pointer:coarse) and (min-width:700px) and (max-width:1100px){
           .about-close{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent}
           .about-close:focus-visible{outline:none!important}
@@ -25,7 +31,7 @@ export function v406UiPolishPass3Delta(source) {
   result = once(result, ipadFocusCssAnchor, ipadFocusCssReplacement, 'about-ipad-reopen-focus-css');
 
   const focusAnchor = `      aboutClaimedVersion = ABOUT_ONBOARDING_VERSION;\n      dialog.querySelector('[data-about-close]').focus({preventScroll:true});`;
-  const focusReplacement = `      aboutClaimedVersion = ABOUT_ONBOARDING_VERSION;\n      const aboutClose = dialog.querySelector('[data-about-close]');\n      const reopenedFromSettings = this._aboutReturnFocus?.id === 'settings-about';\n      const touchTablet = reopenedFromSettings && navigator.maxTouchPoints > 0 && Math.min(window.innerWidth, window.innerHeight) >= 700;\n      dialog.classList.toggle('about-touch-tablet', touchTablet);\n      if (touchTablet) {\n        dialog.tabIndex = -1;\n        dialog.focus({preventScroll:true});\n      } else {\n        aboutClose.focus({preventScroll:true});\n      }`;
+  const focusReplacement = `      aboutClaimedVersion = ABOUT_ONBOARDING_VERSION;\n      const aboutClose = dialog.querySelector('[data-about-close]');\n      const touchTablet = fromSettings && navigator.maxTouchPoints > 0 && Math.min(window.innerWidth, window.innerHeight) >= 700;\n      dialog.classList.toggle('about-touch-tablet', touchTablet);\n      if (touchTablet) {\n        dialog.tabIndex = -1;\n        dialog.focus({preventScroll:true});\n      } else {\n        aboutClose.focus({preventScroll:true});\n      }`;
   result = once(result, focusAnchor, focusReplacement, 'about-ipad-reopen-focus-target');
 
   return result;
