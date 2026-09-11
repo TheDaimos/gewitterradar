@@ -76,4 +76,14 @@ Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**
 
 Für den nächsten Entwicklungszyklus ist eine **weltweite Orts-Suche** vorgemerkt, über die ein ausgewählter Ort als Gewitterradar-Referenzpunkt verwendet werden kann. Umfang, Datenquelle, Bedienung und technische Umsetzung werden erst in der V4.07-Design- und Validierungsphase festgelegt.
 
+### Unversionierter Backlog – Unwetter / Tornado / Alarmierung
+
+Folgende Themen sind **geplant, aber bewusst noch keiner Version zugeordnet**:
+
+- Tornado-/Rotationswarnungen bzw. Tornado-Ereignisse als zukünftige Warn- oder Karteninformation;
+- allgemeine Unwetterfunktionen über Blitzaktivität hinaus, beispielsweise Sturm, Hagel, Starkregen und weitere relevante Warnlagen;
+- eine konfigurierbare Alarmierungs-/Benachrichtigungsfunktion für relevante Gefahrenlagen und ausgewählte Bezugsstandorte.
+
+Vor einer technischen Umsetzung müssen dafür **gute, belastbare und nach Möglichkeit offizielle Datenquellen** recherchiert, fachlich bewertet und hinsichtlich Aktualität, geografischer Abdeckung, Lizenzierung/Nutzbarkeit, Home-Assistant-Eignung und Ausfallsicherheit geprüft werden. Architektur, Datenquellen, genaue Warnlogik und Versionszuordnung bleiben bis zu dieser Recherche ausdrücklich offen.
+
 Weitere größere Architekturänderungen bleiben ebenfalls getrennt vom eingefrorenen V4.06-Stand.
