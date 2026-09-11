@@ -6,7 +6,7 @@
 
 - Add the localized premium Help & Notes dialog for all 19 language variants.
 - Reuse the approved Settings signature in the Welcome footer and add the compact author/version line `V4.06 · Visual V2 · Gewitterradar · by CK`.
-- Add dedicated V4.06 project history, milestone tracking and release-note documentation.
+- Add dedicated V4.06 project history, milestone tracking, Recorder locale audit and release-note documentation.
 
 ### Improved
 
@@ -37,6 +37,9 @@
 - Build the shared frontend, lazy locale module, assets and package deterministically into both delivery forms.
 - Keep dashboard and native-integration frontend payloads byte-identical.
 - Extend browser regression coverage across Desktop, iPad, iPad Pro, Android portrait and Android landscape for both delivery forms, including the Greek mobile-portrait header flow.
+- Complete the real Android portrait acceptance of the Greek header-flow correction.
+- Audit Recorder guidance across all 19 registered language variants: four current wildcard sources, existing-`recorder:` merge guidance, live-state behavior, historical-data behavior, multi-device semantics and localized copy texts.
+- Add `scripts/test-recorder-locales.mjs` as a fail-closed CI gate against incomplete Recorder guidance or legacy fixed `sensor.home_lightning_*` Recorder IDs.
 - Continue validating Home Assistant runtime behavior, HACS, Hassfest, package contracts and deterministic frontend reconstruction independently.
 
 ## Shared V4.05 frontend and premium controls
