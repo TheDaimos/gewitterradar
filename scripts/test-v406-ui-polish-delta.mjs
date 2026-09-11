@@ -19,23 +19,31 @@ assert.ok(polished.includes('.about-dedication-copy{transform:translateY(7px)}')
 assert.ok(polished.includes("' meiner Begeisterung für Technik,'"));
 assert.ok(polished.includes("' Wetter und all den Ideen dazwischen'"));
 
-// Current review block: variegated Settings frame plus shared premium controls.
+// Current review block: brighter Welcome-like shimmer, stronger desktop Help curves and deterministic Help icons.
 assert.ok(polished.includes('border:1px solid transparent'));
-assert.ok(polished.includes('conic-gradient(from 210deg'));
-assert.ok(polished.includes('rgba(255,231,159,.98) 48deg'));
+assert.ok(polished.includes('conic-gradient(from 214deg'));
+assert.ok(polished.includes('rgba(255,236,168,1) 29deg'));
+assert.ok(!polished.includes('rgba(104,70,18,.88) 0deg'));
 assert.ok(polished.includes(".settings-dialog::after{content:''"));
 assert.ok(polished.includes('settings-close settings-close-premium'));
 assert.ok(polished.includes('src="${ABOUT_CLOSE_IMAGE}"'));
 assert.ok(polished.includes('V4.06 accepted UI polish: stable Help frame and shared premium controls.'));
 assert.ok(polished.includes('.help-dialog::after{content:""'));
+assert.ok(polished.includes('0 0 0 1px rgba(246,203,110,.42)'));
 assert.ok(polished.includes("ABOUT_CLOSE_IMAGE + '\" alt=\"\" width=\"34\" height=\"34\" draggable=\"false\""));
 assert.ok(polished.includes('copyImage.src=ABOUT_COPY_IMAGE'));
 assert.ok(polished.includes('.help-copy img{display:block;width:34px;height:34px'));
-assert.ok(polished.includes('premiumFunctionsIcon=\'<svg viewBox="0 0 96 96"'));
-assert.ok(polished.includes('id="helpFunctionsMetalV2"'));
-assert.ok(polished.includes('if(section.key===\'functions\')icon.innerHTML=premiumFunctionsIcon'));
+assert.ok(polished.includes('helpFunctionsRingV3'));
+assert.ok(polished.includes('fill="#c99b3f" stroke="#efcb73"'));
+assert.ok(polished.includes('const deterministicHelpIcons={prerequisites:'));
+assert.ok(polished.includes('icon.dataset.helpIcon=section.key'));
+assert.ok(polished.includes('icon.innerHTML=deterministicHelpIcons[section.key]'));
+assert.ok(polished.includes('.help-section-icon[data-help-icon="prerequisites"] svg{width:27px;height:27px}'));
+assert.ok(polished.includes('<circle cx="12" cy="12" r="8.2"'));
+assert.ok(polished.includes('<rect x="5" y="3.8" width="14" height="16.4"'));
 assert.ok(polished.includes('M39.2,26.8 L42.4,25.7 L42.8,18.5'));
 assert.ok(polished.includes('<circle cx="48" cy="48" r="16.5"'));
+assert.ok(!polished.includes('id="helpFunctionsMetalV2"'));
 assert.ok(!polished.includes('M48 21l4 2 5-1 5 9 4 3 8 1v10'));
 
 // Legacy generic visual controls must not survive this preview layer.
@@ -52,4 +60,4 @@ let rejected=false;
 try { v406UiPolishDelta(polished); } catch { rejected=true; }
 assert.equal(rejected,true,'already-polished source must fail closed');
 
-console.log('PASS: V4.06 UI polish preserves accepted controls, adds the Settings shimmer frame and uses deterministic gear trial V2.');
+console.log('PASS: V4.06 UI polish preserves accepted controls, brightens the Settings shimmer, strengthens desktop Help curves and removes platform-dependent Help glyph alignment.');

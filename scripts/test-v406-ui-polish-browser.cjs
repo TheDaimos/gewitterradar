@@ -88,8 +88,22 @@ const server = http.createServer((req, res) => {
           const copy = dialog.querySelector('[data-help-section="recorder"] .help-copy');
           const copyImage = copy?.querySelector('img');
           const gear = dialog.querySelector('[data-help-section="functions"] .help-section-icon svg');
+          const home = dialog.querySelector('[data-help-section="prerequisites"] .help-section-icon svg');
           const frame = getComputedStyle(dialog, '::after');
           const content = dialog.querySelector('.help-content');
+          const iconMetrics = [...dialog.querySelectorAll('.help-section-icon')].map((icon) => {
+            const svg = icon.querySelector('svg');
+            if (!svg) return null;
+            const a = icon.getBoundingClientRect();
+            const b = svg.getBoundingClientRect();
+            return {
+              key:icon.dataset.helpIcon || '',
+              dx:(b.left+b.width/2)-(a.left+a.width/2),
+              dy:(b.top+b.height/2)-(a.top+a.height/2),
+              width:b.width,
+              height:b.height,
+            };
+          }).filter(Boolean);
           return {
             closeSize:[close.offsetWidth,close.offsetHeight],
             closeImage:closeImage ? new URL(closeImage.src).pathname : '',
@@ -98,10 +112,14 @@ const server = http.createServer((req, res) => {
             copyImage:copyImage ? new URL(copyImage.src).pathname : '',
             gear:!!gear,
             gearPath:gear?.querySelector('path')?.getAttribute('d') || '',
+            gearFill:gear?.querySelector('path')?.getAttribute('fill') || '',
             gearCircles:gear?.querySelectorAll('circle').length || 0,
             gearViewBox:gear?.getAttribute('viewBox') || '',
+            homeViewBox:home?.getAttribute('viewBox') || '',
+            iconMetrics,
             overflow:dialog.scrollWidth > dialog.clientWidth || content.scrollWidth > content.clientWidth,
             border:getComputedStyle(dialog).borderTopColor,
+            boxShadow:getComputedStyle(dialog).boxShadow,
             radius:getComputedStyle(dialog).borderTopLeftRadius,
             frameContent:frame.content,
             frameBorder:frame.borderTopColor,
@@ -116,13 +134,22 @@ const server = http.createServer((req, res) => {
         assert.equal(help.gear, true, `${delivery}/${profile} deterministic functions gear`);
         assert.equal(help.gearViewBox, '0 0 96 96');
         assert.equal(help.gearCircles, 2, `${delivery}/${profile} gear hub geometry`);
+        assert.equal(help.gearFill, '#c99b3f', `${delivery}/${profile} uniform gear tooth metal`);
         assert.match(help.gearPath, /^M39\.2,26\.8 L42\.4,25\.7 L42\.8,18\.5/);
+        assert.equal(help.homeViewBox, '0 0 24 24', `${delivery}/${profile} deterministic home icon`);
+        assert.equal(help.iconMetrics.length, 7, `${delivery}/${profile} all Help icons deterministic`);
+        assert.ok(help.iconMetrics.every(({dx,dy}) => Math.abs(dx) <= 0.6 && Math.abs(dy) <= 0.6), `${delivery}/${profile} Help icon centering ${JSON.stringify(help.iconMetrics)}`);
+        const homeMetric = help.iconMetrics.find((item) => item.key === 'prerequisites');
+        assert.ok(homeMetric && homeMetric.width >= 26 && homeMetric.height >= 26, `${delivery}/${profile} enlarged prerequisites house`);
         assert.equal(help.overflow, false, `${delivery}/${profile} help overflow`);
         assert.notEqual(help.border, 'rgba(0, 0, 0, 0)');
         assert.notEqual(help.frameContent, 'none');
         assert.notEqual(help.frameBorder, 'rgba(0, 0, 0, 0)');
         assert.ok(parseFloat(help.frameWidth) >= 1, `${delivery}/${profile} help inner frame`);
         assert.ok(parseFloat(help.radius) >= 11, `${delivery}/${profile} help radius`);
+        if (profile === 'desktop') {
+          assert.match(help.boxShadow, /0px 0px 0px 1px/, `${delivery}/${profile} strengthened desktop Help curve`);
+        }
 
         await context.close();
         console.log(`${delivery}/${profile}: V4.06 UI-polish preview PASS`);
