@@ -39,6 +39,7 @@ EXPECTED_LEGACY_ENTITIES = {
 }
 
 EXPECTED_FRESH_DEFAULTS = {
+    "language_initialized": False,
     "language": "English",
     "distance_unit": "KM",
     "compass_design": "Compass C",
@@ -58,6 +59,7 @@ EXPECTED_FRESH_DEFAULTS = {
 }
 
 EXPECTED_NATIVE_ENTITY_IDS = {
+    "switch.gewitterradar_language_initialized",
     "select.gewitterradar_language",
     "select.gewitterradar_distance_unit",
     "select.gewitterradar_compass_design",
@@ -132,6 +134,7 @@ async def test_complete_valid_legacy_import_is_non_destructive(
     entry = await _setup_entry(hass, data={"future_marker": "preserved"})
 
     assert entry.options == {
+        "language_initialized": False,
         "language": "Deutsch",
         "distance_unit": "MI",
         "compass_design": "Compass A",

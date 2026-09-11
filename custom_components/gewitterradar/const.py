@@ -12,6 +12,7 @@ CONF_LEGACY_IMPORT_VERSION: Final = "legacy_import_version"
 PLATFORMS: Final = (Platform.SELECT, Platform.NUMBER, Platform.SWITCH)
 
 CONF_LANGUAGE: Final = "language"
+CONF_LANGUAGE_INITIALIZED: Final = "language_initialized"
 CONF_DISTANCE_UNIT: Final = "distance_unit"
 CONF_COMPASS_DESIGN: Final = "compass_design"
 CONF_REFERENCE_LOCATION: Final = "reference_location"
@@ -55,6 +56,7 @@ DEFAULT_REFERENCE_LOCATION: Final = "zone.home"
 LOCATION_DOMAINS: Final = ("person", "zone")
 
 DEFAULT_OPTIONS: Final = {
+    CONF_LANGUAGE_INITIALIZED: False,
     CONF_LANGUAGE: "English",
     CONF_DISTANCE_UNIT: "KM",
     CONF_COMPASS_DESIGN: "Compass C",
@@ -82,6 +84,7 @@ NUMBER_LIMITS: Final = {
 }
 
 SWITCH_KEYS: Final = (
+    CONF_LANGUAGE_INITIALIZED,
     CONF_AURA_EFFECTS,
     CONF_WARNING_ANIMATION,
     CONF_STORM_SIMULATION,

@@ -2,7 +2,7 @@
 
 ## HACS installation
 
-This repository is the native **Integration** component of Gewitterradar. The Lovelace Dashboard/Card is distributed separately from `TheDaimos/gewitterradar-dashboard`.
+This repository contains both delivery forms of Gewitterradar V4.06: native Integration `0.18.0` and the derived Dashboard/Card payload.
 
 When this release candidate is approved for public installation:
 
@@ -12,7 +12,7 @@ When this release candidate is approved for public installation:
 4. Open **Settings → Devices & services**.
 5. Select **Add integration** and search for **Gewitterradar**.
 6. Create the single Gewitterradar Config Entry.
-7. Install the separate Gewitterradar Dashboard/Card repository if the Lovelace frontend is not already installed.
+7. Add `/gewitterradar/gewitterradar.js` as a JavaScript module under **Settings → Dashboards → Resources**, then create a card of type `custom:gewitterradar-card`.
 
 The native integration does not automatically register the separate Dashboard resource and does not modify Home Assistant `.storage` files.
 
@@ -53,6 +53,10 @@ The resulting target must contain at least:
 ├── select.py
 ├── strings.json
 ├── switch.py
+├── frontend/
+│   ├── gewitterradar.js
+│   ├── assets/ (all 17 runtime images)
+│   └── locales/about-locales.js
 ├── brand/
 │   ├── icon.png
 │   └── icon@2x.png
@@ -75,13 +79,15 @@ The native integration also does not delete unrelated historical Registry object
 
 See [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
 
-## Dashboard/Card requirement
+## Manual Dashboard/Card delivery
 
-The Integration repository provides backend/configuration entities only. For the full Gewitterradar visual application, install the Dashboard/Card separately from:
+Copy the complete local `dashboard/dist/` directory to `/config/www/community/gewitterradar-dashboard/`. It must include `gewitterradar.js`, all of `assets/`, `locales/about-locales.js`, and `app_gewitterradar_v4_06_pkg.yaml`. The external locale module is required for the 17 lazy-loaded languages; without it they deliberately fall back to English.
 
-```text
-https://github.com/TheDaimos/gewitterradar-dashboard
-```
+Install the package as `/config/packages/app_gewitterradar_v4_06_pkg.yaml`. During an upgrade, remove or replace `/config/packages/app_gewitterradar_pkg.yaml`; never leave both files active because they define the same helpers. A full Home Assistant restart is required after changing the package, native Python code, or manifest.
+
+Load exactly one Gewitterradar module: either native `/gewitterradar/gewitterradar.js` or Dashboard `/hacsfiles/gewitterradar-dashboard/gewitterradar.js`. Verify and remove or disable obsolete resource registrations before switching; the historical `/hacsfiles/gewitterradar/gewitterradar.js?...` path must not remain active in parallel.
+
+The V4.06 candidate still requires real Home Assistant, iPad and Android acceptance before publication.
 
 The Dashboard continues to use the Home Assistant Blitzortung.org integration as the live lightning-event data source.
 

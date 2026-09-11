@@ -28,7 +28,9 @@ def test_hacs_manifest_describes_standard_integration_repository() -> None:
 def test_standard_hacs_staging_is_complete_and_byte_identical(tmp_path: Path) -> None:
     hashes = PACKAGING.verify(tmp_path)
     assert set(hashes) == PACKAGING.REQUIRED
-    assert not (tmp_path / "custom_components" / "gewitterradar" / "frontend").exists()
+    assert (tmp_path / "custom_components" / "gewitterradar" / "frontend" / "gewitterradar.js").is_file()
+    assert (tmp_path / "custom_components" / "gewitterradar" / "frontend" / "locales" / "about-locales.js").is_file()
+    assert len([name for name in hashes if name.startswith("frontend/")]) == 19
 
 
 def test_repository_contains_exactly_one_custom_integration() -> None:

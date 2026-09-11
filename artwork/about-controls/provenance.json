@@ -1,0 +1,20 @@
+{
+  "source": "User-supplied transparent PNG masters, 2026-09-08",
+  "conversion": "Sharp 256x256 inside, lossless WebP; alpha retained; no regeneration or repainting",
+  "assets": [
+    {
+      "master": "artwork/about-controls/closing.png",
+      "masterSHA256": "412af59629c9f6753acbf465b5f52b280c4fdd6d030eafb062898309b09dac1c",
+      "runtime": "assets/gewitterradar-about-close-premium.webp",
+      "runtimeSHA256": "206f20c56ed01bf49a989b52ea5e0281f0c2ea6f5babcb2f36bfe4ee89c0016e",
+      "bytes": 63816
+    },
+    {
+      "master": "artwork/about-controls/copy.png",
+      "masterSHA256": "f62932e4fdd13215f14b5c8984a43e831713f9a54f904a9ba20e438bf62cbf20",
+      "runtime": "assets/gewitterradar-about-copy-scroll.webp",
+      "runtimeSHA256": "d269784528e9da0aa2fdfee8252300e709c7415a76a57291071085342cf192c4",
+      "bytes": 63802
+    }
+  ]
+}

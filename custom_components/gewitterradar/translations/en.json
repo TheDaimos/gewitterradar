@@ -44,6 +44,7 @@
       }
     },
     "switch": {
+      "language_initialized": { "name": "Language initialized" },
       "aura_effects": {
         "name": "Aura effects"
       },

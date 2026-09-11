@@ -1,0 +1,104 @@
+name: Validate shared Gewitterradar frontend
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  shared-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: node scripts/verify-frontend.mjs
+      - run: node scripts/test-frontend-build.mjs
+      - run: node --check frontend/gewitterradar.js
+      - run: node scripts/test-about-locales.mjs
+      - name: Recorder locale release audit
+        run: node scripts/test-recorder-locales.mjs
+      - name: Accepted V4.06 UI-polish delta
+        run: node scripts/test-v406-ui-polish-delta.mjs
+      - name: V4.06 UI-polish pass2 delta
+        run: node scripts/test-v406-ui-polish-pass2-delta.mjs
+      - name: V4.06 UI-polish pass3 delta
+        run: node scripts/test-v406-ui-polish-pass3-delta.mjs
+      - name: V4.06 UI-polish pass4 delta
+        run: node scripts/test-v406-ui-polish-pass4-delta.mjs
+      - name: V4.06 UI-polish pass5 delta
+        run: node scripts/test-v406-ui-polish-pass5-delta.mjs
+      - name: V4.06 release metadata and history delta
+        run: node scripts/test-v406-release-history-delta.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
+      - run: npx playwright install --with-deps chromium
+      - name: About locale registry and rendering
+        run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Language onboarding
+        run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: V4.06 Settings and Help profiles
+        run: node scripts/test-v406-ui.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Frozen V4.05 geometry and pixel comparison
+        run: node scripts/test-about-golden.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Both delivery browser suites
+        run: |
+          set -euo pipefail
+          chrome=$(node -p "require('playwright').chromium.executablePath()")
+          for delivery in dashboard integration; do
+            mkdir -p "artwork/acceptance/premium-controls/$delivery"
+            ABOUT_DELIVERY="$delivery" node scripts/test-about-browser.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shared-frontend-browser-evidence
+          path: artwork/acceptance/premium-controls/
+      - name: Apply accepted V4.06 UI-polish preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-preview.mjs
+      - name: V4.06 UI-polish preview browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply V4.06 UI-polish pass2 preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-pass2-preview.mjs
+      - name: V4.06 UI-polish pass2 browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-pass2-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply V4.06 UI-polish pass3 preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-pass3-preview.mjs
+      - name: V4.06 UI-polish pass3 browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-pass3-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply V4.06 UI-polish pass4 preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-pass4-preview.mjs
+      - name: V4.06 UI-polish pass4 browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-pass4-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply V4.06 UI-polish pass5 preview
+        if: success()
+        run: node scripts/apply-v406-ui-polish-pass5-preview.mjs
+      - name: V4.06 UI-polish pass5 browser profiles
+        if: success()
+        run: node scripts/test-v406-ui-polish-pass5-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Apply final V4.06 release metadata and history
+        if: success()
+        run: node scripts/apply-v406-release-history-preview.mjs
+      - name: V4.06 release metadata and history browser profiles
+        if: success()
+        run: node scripts/test-v406-release-history-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Build accepted V4.06 release payload
+        if: success()
+        run: node --check frontend/gewitterradar.js
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: v406-release-payload
+          path: |
+            frontend/gewitterradar.js
+            custom_components/gewitterradar/frontend/gewitterradar.js
+            dashboard/dist/gewitterradar.js

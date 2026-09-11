@@ -1,0 +1,10 @@
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.png binary
+*.webp binary
+*.yaml text eol=lf
+*.yml text eol=lf
+*.html text eol=lf
+*.txt text eol=lf

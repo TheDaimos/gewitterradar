@@ -5,11 +5,14 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from math import isfinite
+from pathlib import Path
 from typing import Any
 
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     COMPASS_DESIGN_OPTIONS,
@@ -18,6 +21,7 @@ from .const import (
     CONF_DISTANCE_UNIT,
     CONF_LEGACY_IMPORT_VERSION,
     CONF_LANGUAGE,
+    CONF_LANGUAGE_INITIALIZED,
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
     CONF_STORM_RADIUS,
@@ -212,14 +216,33 @@ class GewitterradarRuntimeData:
 type GewitterradarConfigEntry = ConfigEntry[GewitterradarRuntimeData]
 
 
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Serve the shared card once per HA lifecycle; resource registration is explicit."""
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            "/gewitterradar",
+            str(Path(__file__).parent / "frontend"),
+            False,
+        )
+    ])
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry) -> bool:
     """Set up Gewitterradar from a config entry."""
     data = dict(entry.data)
+    existing = dict(entry.options)
+    # Preserve a confirmation from the global legacy helper on native migration.
+    # Neither an existing language value nor any browser state implies consent.
+    if CONF_LANGUAGE_INITIALIZED not in existing:
+        marker = hass.states.get("input_boolean.lightning_detection_language_initialized")
+        if marker is not None and marker.state == "on":
+            existing[CONF_LANGUAGE_INITIALIZED] = True
     try:
         if data.get(CONF_LEGACY_IMPORT_VERSION) == LEGACY_IMPORT_VERSION:
-            options = _options_with_defaults(dict(entry.options))
+            options = _options_with_defaults(existing)
         else:
-            options = _options_after_legacy_import(hass, dict(entry.options))
+            options = _options_after_legacy_import(hass, existing)
             data[CONF_LEGACY_IMPORT_VERSION] = LEGACY_IMPORT_VERSION
     except (TypeError, ValueError) as err:
         raise ConfigEntryError(f"Invalid Gewitterradar options: {err}") from err

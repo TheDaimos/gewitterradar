@@ -214,3 +214,13 @@ Diese Repositories werden nicht gelöscht. Sie sind jedoch nicht mehr die Standa
 8. erst danach die zusammengeführte Produktlinie veröffentlichen.
 
 Die bereits veröffentlichten Tags/Releases bleiben unverändert und dienen als Rückfall-/Vergleichsreferenz.
+
+## 14. Umgesetzter Kandidat vom 2026-09-08
+
+Gemeinsame Quelle: `frontend/gewitterradar.js`, `frontend/assets/` und `frontend/assets.json`. Der deterministische Build kopiert 18 gemeinsame Dateien nach `custom_components/gewitterradar/frontend/` und `dashboard/dist/`; nur die Dashboard-Variante enthält zusätzlich das unveränderte Legacy-Package aus `home-assistant/`. `dashboard/hacs.json` und `dashboard/README.md` beschreiben die abgeleitete Dashboard-Staging-Struktur. Eine Veröffentlichung wird nicht automatisiert.
+
+`verify-frontend.mjs` prüft Quelle gegen eingefrorene V4.05 plus exakt freigegebene Delta-Transformation, alle 17 Assets, exakte Dateiinventare, beide Payloads und `SHA256SUMS_FRONTEND.txt`. Negative Manipulationstests müssen Abweichungen ablehnen. Künftige freigegebene Produktänderungen müssen diesen bewusst engen Delta-Vertrag explizit weiterführen; ihn nicht stillschweigend umgehen.
+
+Native Bereitstellung: `async_setup` registriert `/gewitterradar` einmal pro Komponenten-Lifecycle über `async_register_static_paths` und `StaticPathConfig`; der Manifest-Eintrag `http` deklariert die Abhängigkeit. Das ist die [dokumentierte Home-Assistant-API](https://developers.home-assistant.io/blog/2024/06/18/async_register_static_paths/). Alle Runtime-Dateien liegen gemäß [HACS-Integration-Struktur](https://www.hacs.xyz/docs/publish/integration/) im Integrationsverzeichnis. Lovelace-Ressourcen werden manuell registriert; Settings, Migration und Entry-Lifecycle bleiben erhalten.
+
+Der nächste sichere Schritt bleibt Linux-Runtime-/HACS-/Hassfest-CI und reale Abnahme. Details und Evidenz: [Prüfbericht](PREMIUM_CONTROLS_2026-09-08.md).

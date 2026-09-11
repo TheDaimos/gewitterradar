@@ -73,18 +73,35 @@ Build-/Release-Prüfungen sollen verhindern, dass sich Integration und Dashboard
 
 Ein Dashboard-spezifischer Notfallfix ist nur nach ausdrücklicher Anweisung zulässig und muss vor dem nächsten normalen Release in die kanonische Quelle zurückgeführt werden.
 
-## Aktuelle Konvergenzaufgabe
+## Verbindliche Release-Chronologie
 
-Der bereits abgenommene und veröffentlichte Dashboard-Stand V4.05 einschließlich „Über Gewitterradar“, Slogan, Danksagung/Widmung, Hero-/Widmungs-Assets und der übrigen akzeptierten Frontendänderungen ist die Referenz für die erste Zusammenführung in die gemeinsame Gewitterradar-Quelle. Der eingefrorene Dashboard-Tag `v4.05` selbst bleibt unverändert.
+Jeder öffentliche Gewitterradar-Release führt zusätzlich zur Version eine Monatskennung `YYYY/MM`. Der vollständige Ablauf steht in `docs/RELEASE_PROCESS.md` und ist bei jeder neuen Version anzuwenden.
+
+Verbindlich sind insbesondere:
+
+- aktueller Stand in Welcome, Einstellungen und Release-History-Kopf: `YYYY/MM · Vx.xx`;
+- veröffentlichte History-Einträge: `Vx.xx · YYYY/MM`;
+- geplante, noch nicht veröffentlichte Versionen: `Vx.xx · PLANNED`;
+- `YYYY/MM` wird aus `GEWITTERRADAR_BUILD` abgeleitet und nicht unabhängig mehrfach hart codiert;
+- bei jedem Release werden Welcome-Footer, Settings-Kennung, Release History, Changelog, Projektgeschichte, Meilensteine, Release Notes und relevante README-/Installationsangaben abgeglichen;
+- die Release History darf keine öffentliche Version überspringen;
+- bereits veröffentlichte Monats-/Versionszuordnungen, Tags und Freeze-Punkte werden nicht stillschweigend umgeschrieben.
+
+Der V4.06-Sprachumfang ist als **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten** zu dokumentieren. Änderungen am Sprachumfang müssen künftig ebenfalls in History und Release Notes nachvollziehbar sein.
+
+## Aktueller Release-Stand
+
+V4.06 ist die erste vollständig konvergierte Release-Linie auf der gemeinsamen Produktquelle. Der veröffentlichte V4.05-Stand einschließlich „Über Gewitterradar“, Slogan, Danksagung/Widmung, Hero-/Widmungs-Assets und der übrigen akzeptierten Frontendänderungen bleibt geschützte Referenz; der eingefrorene Dashboard-Tag `v4.05` selbst bleibt unverändert.
+
+Für die nächste Versionslinie ist in der Release History ausdrücklich als **PLANNED** vorgemerkt:
+
+- V4.07 — Weltweite Orts-Suche.
 
 Verbindliche Dokumente:
 
 - `docs/DELIVERY_ARCHITECTURE.md`
 - `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
-
-Aktiver Konvergenz-Tracker:
-
-- GitHub Issue #3 — `Converge V4.05 frontend into unified Gewitterradar product`
+- `docs/RELEASE_PROCESS.md`
 
 ## Dev-Toolkit
 

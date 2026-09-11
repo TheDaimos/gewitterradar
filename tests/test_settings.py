@@ -46,6 +46,7 @@ from custom_components.gewitterradar.const import (
 )
 
 EXPECTED_DEFAULT_OPTIONS = {
+    "language_initialized": False,
     "language": "English",
     "distance_unit": "KM",
     "compass_design": "Compass C",
@@ -88,6 +89,7 @@ EXPECTED_DISTANCE_UNIT_OPTIONS = ("KM", "MI")
 EXPECTED_COMPASS_DESIGN_OPTIONS = ("Compass A", "Compass B", "Compass C")
 
 ENTITY_IDS_BY_KEY = {
+    "language_initialized": "switch.gewitterradar_language_initialized",
     "language": "select.gewitterradar_language",
     "distance_unit": "select.gewitterradar_distance_unit",
     "compass_design": "select.gewitterradar_compass_design",
@@ -149,18 +151,18 @@ async def _call_service(
 
 
 async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None:
-    """Test all defaults and exactly 16 stable native entities."""
+    """Test all defaults and exactly 17 stable native entities."""
     entry = await _setup_entry(hass)
 
     assert DEFAULT_OPTIONS == EXPECTED_DEFAULT_OPTIONS
     assert entry.options == EXPECTED_DEFAULT_OPTIONS
-    assert len(entry.options) == 16
+    assert len(entry.options) == 17
     assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
 
     registry = er.async_get(hass)
     registry_entries = er.async_entries_for_config_entry(registry, entry.entry_id)
     assert {registry_entry.entity_id for registry_entry in registry_entries} == ENTITY_IDS
-    assert len(registry_entries) == 16
+    assert len(registry_entries) == 17
     for key, entity_id in ENTITY_IDS_BY_KEY.items():
         registry_entry = registry.async_get(entity_id)
         assert registry_entry is not None
@@ -526,3 +528,39 @@ async def test_mixed_updates_unload_and_reload_preserve_every_option(
             assert float(state.state) == expected
         else:
             assert state.state == expected
+
+
+async def test_global_language_confirmation_persists_independently(hass: HomeAssistant) -> None:
+    """Language alone never initializes; the global marker survives reload."""
+    entry = await _setup_entry(hass, options={CONF_LANGUAGE: "Deutsch"})
+    marker = "switch.gewitterradar_language_initialized"
+    assert entry.options["language_initialized"] is False
+    assert hass.states.get(marker).state == STATE_OFF
+    await _call_service(hass, "select", "select_option", ENTITY_IDS_BY_KEY[CONF_LANGUAGE], option="English")
+    assert entry.options["language_initialized"] is False
+    await _call_service(hass, "switch", "turn_on", marker)
+    assert entry.options["language_initialized"] is True
+    assert entry.options[CONF_LANGUAGE] == "English"
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get(marker).state == STATE_ON
+    assert entry.options[CONF_LANGUAGE] == "English"
+    with pytest.raises(ServiceValidationError):
+        entry.runtime_data.async_set("language_initialized", "on")
+    assert entry.options["language_initialized"] is True
+
+
+async def test_global_legacy_confirmation_migrates_without_overwriting_native(hass: HomeAssistant) -> None:
+    """Only a real global helper can carry confirmation into native options."""
+    hass.states.async_set("input_boolean.lightning_detection_language_initialized", "on")
+    entry = await _setup_entry(hass, options={CONF_LANGUAGE: "Français"})
+    assert entry.options["language_initialized"] is True
+    assert entry.options[CONF_LANGUAGE] == "Français"
+    await _call_service(hass, "switch", "turn_off", "switch.gewitterradar_language_initialized")
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.options["language_initialized"] is False
