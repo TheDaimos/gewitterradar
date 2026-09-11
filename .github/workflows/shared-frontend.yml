@@ -43,3 +43,16 @@ jobs:
         with:
           name: shared-frontend-browser-evidence
           path: artwork/acceptance/premium-controls/
+      - name: Build accepted V4.06 UI-polish preview payload
+        if: success()
+        run: |
+          node scripts/apply-v406-ui-polish-preview.mjs
+          node --check frontend/gewitterradar.js
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: v406-ui-polish-preview-payload
+          path: |
+            frontend/gewitterradar.js
+            custom_components/gewitterradar/frontend/gewitterradar.js
+            dashboard/dist/gewitterradar.js
