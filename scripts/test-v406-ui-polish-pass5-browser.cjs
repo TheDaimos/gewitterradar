@@ -47,6 +47,7 @@ const server = http.createServer((req, res) => {
           return {
             footer:rect(footer), left:rect(left), sig:rect(sig), version:rect(version), understood:rect(understood),
             versionText:version.textContent,
+            versionTransform:getComputedStyle(version).transform,
             overflow:footer.scrollWidth>footer.clientWidth,
             radii:[...dialog.querySelectorAll('.about-radius')].map((row)=>{const output=row.querySelector('output');return {row:rect(row),out:rect(output),text:output.textContent};}),
           };
@@ -63,10 +64,16 @@ const server = http.createServer((req, res) => {
           const versionBottomInset=about.footer.bottom-about.version.bottom;
           assert.ok(versionLeftInset>=0 && versionLeftInset<=32,`${delivery}/${profile} version moved into lower-left corner with small inset`);
           assert.ok(versionBottomInset>=0 && versionBottomInset<=18,`${delivery}/${profile} version keeps a small bottom inset`);
+          if (profile === 'ipad' || profile === 'ipad-pro') {
+            assert.notEqual(about.versionTransform,'none',`${delivery}/${profile} iPad footer note receives the touch-tablet downward offset`);
+          } else {
+            assert.equal(about.versionTransform,'none',`${delivery}/${profile} non-iPad footer note keeps the accepted placement`);
+          }
         } else {
-          assert.ok(about.sig.width >= 116 && about.sig.width <= 123,`${delivery}/${profile} mobile signature enlarged proportionally`);
+          assert.ok(about.sig.width >= 138 && about.sig.width <= 146,`${delivery}/${profile} mobile signature enlarged about 18 percent`);
           assert.ok(about.version.top >= about.sig.bottom - 0.75,`${delivery}/${profile} mobile version remains below signature`);
           assert.ok(about.version.top - about.sig.bottom <= 10,`${delivery}/${profile} mobile version spacing below signature remains deliberate`);
+          assert.equal(about.versionTransform,'none',`${delivery}/${profile} mobile version remains centered below the signature`);
         }
         assert.equal(about.radii.length,3,`${delivery}/${profile} all three radius rows present`);
         for (const [index,entry] of about.radii.entries()) {
