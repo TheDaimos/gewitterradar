@@ -18,6 +18,8 @@ jobs:
       - run: node scripts/test-frontend-build.mjs
       - run: node --check frontend/gewitterradar.js
       - run: node scripts/test-about-locales.mjs
+      - name: Accepted V4.06 UI-polish delta
+        run: node scripts/test-v406-ui-polish-delta.mjs
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
       - run: npx playwright install --with-deps chromium
       - name: About locale registry and rendering
