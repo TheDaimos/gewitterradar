@@ -1,11 +1,21 @@
 import {readFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {v406UiPolishDelta} from './v4-06-ui-polish-delta.mjs';
+import {v406UiPolishPass2Delta} from './v4-06-ui-polish-pass2-delta.mjs';
+import {v406UiPolishPass3Delta} from './v4-06-ui-polish-pass3-delta.mjs';
+import {v406UiPolishPass4Delta} from './v4-06-ui-polish-pass4-delta.mjs';
+import {v406UiPolishPass5Delta} from './v4-06-ui-polish-pass5-delta.mjs';
 import {v406ReleaseHistoryDelta} from './v4-06-release-history-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const source = await readFile(resolve(root, 'frontend/gewitterradar.js'), 'utf8');
-const output = v406ReleaseHistoryDelta(source);
+const stage1 = v406UiPolishDelta(source);
+const stage2 = v406UiPolishPass2Delta(stage1);
+const stage3 = v406UiPolishPass3Delta(stage2);
+const stage4 = v406UiPolishPass4Delta(stage3);
+const stage5 = v406UiPolishPass5Delta(stage4);
+const output = v406ReleaseHistoryDelta(stage5);
 
 const mustInclude = [
   'const BUILD_YYYY_MM = (() => {',
@@ -41,5 +51,8 @@ for (const needle of mustExclude) {
   if (output.includes(needle)) throw new Error(`Obsolete release-history marker remains: ${needle}`);
 }
 
-if (v406ReleaseHistoryDelta(source) !== output) throw new Error('Release-history delta is not deterministic.');
+let rejected = false;
+try { v406ReleaseHistoryDelta(output); } catch { rejected = true; }
+if (!rejected) throw new Error('Already-finalized release-history source must fail closed.');
+
 console.log('V4.06 release/date/history delta assertions passed.');
