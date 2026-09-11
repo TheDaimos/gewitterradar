@@ -32,7 +32,10 @@ export function v406UiPolishPass5Delta(source) {
         @media(max-width:620px){
           .about-footer-left{grid-column:1;grid-row:2;gap:4px}
           .about-footer-left .about-dev{font-size:6.8px}
-          .about-footer-signature{width:121px!important;max-width:100%!important}
+          .about-footer-signature{width:143px!important;max-width:100%!important}
+        }
+        @media(hover:none) and (pointer:coarse) and (min-width:700px) and (min-height:700px){
+          .about-footer-left .about-dev{transform:translateY(30px)}
         }
 `;
   result = once(result, pass4FooterCssAnchor, pass4FooterCssAnchor + pass5Css, 'footer-version-radius-css');
