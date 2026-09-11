@@ -53,28 +53,39 @@ Status: V4.06 gemeinsamer Produktkandidat / native Integration 0.18.0.
 - Android-Signatur mit stärkerer Präsenz;
 - Desktop-, Android-, iPad- und iPad-Pro-Darstellung der akzeptierten Komponenten angeglichen.
 
-## Aktueller Abschlussmeilenstein
-
 ### M7 – Griechisch im mobilen Hochformat
 
-**Umgesetzt, automatisierte Prüfung läuft/steht als Release-Gate:**
+**Abgeschlossen und real auf Android abgenommen:**
 
-- längerer griechischer Untertitel darf den Spruch nicht mehr überdecken;
-- griechische Übersetzung bleibt unverändert;
+- längerer griechischer Untertitel überdeckt den Spruch nicht mehr;
+- griechische Übersetzung blieb unverändert;
 - nur `Ελληνικά` im mobilen Hochformat erhält den zusätzlichen natürlichen Kopfzeilen-Textfluss;
-- Browser-Regression prüft Abstand Untertitel → Spruch, Einhaltung des Kopfbereichs und fehlenden horizontalen Überlauf.
+- Browser-Regression prüft Abstand Untertitel → Spruch, Einhaltung des Kopfbereichs und fehlenden horizontalen Überlauf;
+- reale Android-Hochformat-Sichtprüfung erfolgreich abgeschlossen.
 
-**Noch erforderlich:** reale Sichtprüfung auf dem betroffenen mobilen Hochformat nach dem neuen Build.
+### M8 – finaler Recorder-Sprachaudit
 
-## Danach: V4.06 Release-Abschluss
+**Abgeschlossen:**
 
-Vor der Freigabe werden keine neuen gestalterischen Umbauten mehr begonnen. Der Abschluss besteht aus:
+- alle 19 registrierten Sprachvarianten geprüft;
+- About-/Welcome-Recordertexte, Kopiertexte und Hilfesektion vollständig;
+- exakt vier aktuelle Wildcard-Quellen bestätigt;
+- keine alten festen `sensor.home_lightning_*`-Recorder-IDs im aktuellen Pfad;
+- Merge-Hinweis für bestehende `recorder:`-Sektion bestätigt;
+- Live-Zustände und Verhalten vorhandener historischer Daten korrekt beschrieben;
+- Mehrgeräte-/Beobachtungspunkt-Hinweis unabhängig vom Entity-Präfix vorhanden;
+- eigener fail-closed CI-Test `scripts/test-recorder-locales.mjs` ergänzt.
 
-- finaler Geräte-Sichtprüfung des griechischen Hochformats;
-- vollständigem grünen Frontend-, Home-Assistant-, HACS-, Hassfest- und Paketlauf;
+## Aktueller Abschlussmeilenstein
+
+### M9 – V4.06 Release-Freeze
+
+Vor der Freigabe werden keine neuen gestalterischen Umbauten mehr begonnen. Der verbleibende Abschluss besteht aus:
+
+- vollständigem grünen Frontend-, Home-Assistant-, HACS-, Hassfest- und Paketlauf auf dem final dokumentierten Stand;
 - finaler Prüfung von Integration/Dashboard-Parität und Release-Artefakten;
-- Abgleich von Changelog, Projektgeschichte, Meilensteinen und Release Notes mit dem tatsächlich ausgelieferten Stand;
-- anschließender Freigabe des V4.06-Kandidaten nach erfolgreicher Gesamtabnahme.
+- abschließendem Abgleich von Changelog, Projektgeschichte, Meilensteinen und Release Notes;
+- Freeze des freigegebenen Kandidaten und anschließender V4.06-Veröffentlichung.
 
 ## Nach V4.06
 
