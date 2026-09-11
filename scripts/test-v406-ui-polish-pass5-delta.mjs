@@ -20,7 +20,9 @@ assert.ok(polished.includes('V4.06 pass5: final footer/version placement'));
 assert.ok(polished.includes('V4.06 · Visual V2 · Gewitterradar · by CK'));
 assert.ok(!polished.includes('V4.06 · Visual V2<br>Gewitterradar · Home Assistant'));
 assert.ok(polished.includes('.about-footer-signature{width:196px!important'));
-assert.ok(polished.includes('.about-footer-signature{width:121px!important'));
+assert.ok(polished.includes('.about-footer-signature{width:143px!important'));
+assert.ok(polished.includes('@media(hover:none) and (pointer:coarse) and (min-width:700px) and (min-height:700px)'));
+assert.ok(polished.includes('.about-footer-left .about-dev{transform:translateY(30px)}'));
 assert.ok(polished.includes('.about-radius output{position:absolute;right:0;top:50%;transform:translateY(-50%);min-width:58px'));
 assert.ok(polished.includes('font-size:1.25em'));
 assert.ok(polished.includes('class="settings-footer-version" title="Kartenversion">V${CARD_VERSION}</div>'));
@@ -33,4 +35,4 @@ let rejected=false;
 try { v406UiPolishPass5Delta(polished); } catch { rejected=true; }
 assert.equal(rejected,true,'already-pass5-polished source must fail closed');
 
-console.log('PASS: V4.06 UI polish pass5 places the reused signature/version, moves Settings version, and enlarges/centers all three radius badges without touching accepted visual assets.');
+console.log('PASS: V4.06 UI polish pass5 places the reused signature/version, moves the iPad footer note lower, enlarges the mobile signature, moves Settings version, and enlarges/centers all three radius badges without touching accepted visual assets.');
