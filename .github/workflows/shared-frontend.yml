@@ -18,6 +18,8 @@ jobs:
       - run: node scripts/test-frontend-build.mjs
       - run: node --check frontend/gewitterradar.js
       - run: node scripts/test-about-locales.mjs
+      - name: Recorder locale release audit
+        run: node scripts/test-recorder-locales.mjs
       - name: Accepted V4.06 UI-polish delta
         run: node scripts/test-v406-ui-polish-delta.mjs
       - name: V4.06 UI-polish pass2 delta
