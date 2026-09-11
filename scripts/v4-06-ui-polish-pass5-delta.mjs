@@ -26,7 +26,7 @@ export function v406UiPolishPass5Delta(source) {
         @media(min-width:621px){
           .about-footer{position:relative}
           .about-footer-left{position:relative;display:block!important;align-self:stretch!important;min-height:54px}
-          .about-footer-signature-wrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0!important}
+          .about-footer-signature-wrap{position:absolute;left:50%;top:50%;width:196px!important;max-width:none!important;transform:translate(-50%,-50%);margin:0!important}
           .about-footer-left .about-dev{position:absolute;left:6px;bottom:4px;text-align:left;white-space:nowrap}
         }
         @media(max-width:620px){
