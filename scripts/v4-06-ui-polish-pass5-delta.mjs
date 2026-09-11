@@ -23,15 +23,20 @@ export function v406UiPolishPass5Delta(source) {
         .about-footer-signature{width:196px!important;max-width:100%!important;height:auto!important}
         .about-radius strong,.about-radius p{padding-right:74px}
         .about-radius output{position:absolute;right:0;top:50%;transform:translateY(-50%);min-width:58px;padding:2.5px 5px;font-size:1.25em;line-height:1.1;border-radius:5px;box-sizing:border-box}
-        .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}
         @media(max-width:620px){
           .about-footer-left{grid-column:1;grid-row:2;gap:4px}
           .about-footer-left .about-dev{font-size:6.8px}
           .about-footer-signature{width:121px!important;max-width:100%!important}
         }
-        @media(max-width:720px){.settings-footer-version{left:14px;bottom:15px}}
 `;
   result = once(result, pass4FooterCssAnchor, pass4FooterCssAnchor + pass5Css, 'footer-version-radius-css');
+
+  const persistentSettingsCssAnchor = `          .settings-dialog::after{content:none!important}\n`;
+  const persistentSettingsCss = String.raw`          /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */
+          .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}
+          @media(max-width:720px){.settings-footer-version{left:14px;bottom:15px}}
+`;
+  result = once(result, persistentSettingsCssAnchor, persistentSettingsCssAnchor + persistentSettingsCss, 'persistent-settings-version-css');
 
   const footerAnchor = `<footer class="about-footer"><div class="about-footer-left"><span class="about-dev">V4.06 · Visual V2<br>Gewitterradar · Home Assistant</span><div class="settings-signature-wrap about-footer-signature-wrap" aria-hidden="true"><svg class="settings-signature about-footer-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><image id="about-footer-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image></svg></div></div><button class="about-understood" type="button">\${icon('check')}<span data-about-text="understood"></span></button><button class="about-later" type="button">\${icon('clock')}<span data-about-text="later"></span></button><div class="about-footer-reminder">\${icon('settings')}<p data-about-text="footer"></p></div></footer>`;
   const footerReplacement = `<footer class="about-footer"><div class="about-footer-left"><div class="settings-signature-wrap about-footer-signature-wrap" aria-hidden="true"><svg class="settings-signature about-footer-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><image id="about-footer-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image></svg></div><span class="about-dev">V4.06 · Visual V2 · Gewitterradar · by CK</span></div><button class="about-understood" type="button">\${icon('check')}<span data-about-text="understood"></span></button><button class="about-later" type="button">\${icon('clock')}<span data-about-text="later"></span></button><div class="about-footer-reminder">\${icon('settings')}<p data-about-text="footer"></p></div></footer>`;
