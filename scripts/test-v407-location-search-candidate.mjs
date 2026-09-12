@@ -33,6 +33,12 @@ const mustContain = [
   "den Eintrag „Gewitterradar Dashboard“ auswählen",
   "lässt er sich über „Neu konfigurieren“ nicht auf eine Standort-Entität umstellen",
   "500 km Erfassungsradius, 120 Minuten Zeitfenster und 200 Blitze",
+  "lokale To-do-Liste mit dem Namen „Gewitterradar Orte“",
+  "Externe Dienste & Netzwerkfreigaben",
+  "geocoding-api.open-meteo.com · HTTPS/TCP 443",
+  "nominatim.openstreetmap.org · HTTPS/TCP 443",
+  "unpkg.com · HTTPS/TCP 443",
+  "*.tile.openstreetmap.org · HTTPS/TCP 443",
   "device_tracker.gewitterradar verwendet"
 ];
 for (const needle of mustContain) {
