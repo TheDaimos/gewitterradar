@@ -1,6 +1,6 @@
 # Release Notes – V4.07 TEST CANDIDATE
 
-**Datum:** 2026-09-12  
+**Datum:** 2026-09-13  
 **Status:** Testkandidat / nicht veröffentlicht  
 **Native Integration:** 0.19.0
 
@@ -27,6 +27,8 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST4: clientseitige und serverseitige Netzwerkpfade werden getrennt dokumentiert.
 - TEST4: tatsächliche Laufzeitziele inventarisiert: Open-Meteo, Nominatim, unpkg/Leaflet, a/b/c OpenStreetMap-Kachelhosts sowie serverseitig der Blitzortung-MQTT-Broker `blitzortung.ha.sed.pl:1883` für Blitzortung v1.7.1.
 - TEST4: automatischer Vertrag für feste externe URL-Literale; neue Ziele müssen bewusst dokumentiert werden, bevor der Test wieder grün wird.
+- TEST5: fehlende Ortsbibliothek erklärt nun direkt den vollständigen Home-Assistant-Pfad: **Einstellungen → Geräte & Dienste → Integration hinzufügen → „Local to-do“ suchen/auswählen → Liste exakt „Gewitterradar Orte“ nennen**.
+- TEST5: derselbe Einrichtungspfad ist dauerhaft unter **Hilfe & Hinweise → Referenzstandort** dokumentiert; die englische Grundfassung wurde parallel ergänzt.
 
 ## Architekturentscheidung
 
@@ -71,7 +73,7 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 - keine privaten Home-Assistant-Frontend-APIs;
 - kein veraltetes `device_tracker.see`;
 - V4.06 bleibt eingefrorene Rückfallbasis;
-- neue externe feste URL-Ziele lassen den TEST4-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
+- neue externe feste URL-Ziele lassen den TEST4+-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
 - kein V4.07-Release-Tag und kein Merge nach `main` vor bestätigtem Regressionstest.
 
 ## Noch offen vor einer finalen V4.07-Freigabe
