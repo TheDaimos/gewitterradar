@@ -23,7 +23,10 @@ const mustContain = [
   "Blitzortung bereits passende Live-Daten",
   "V407_ISO_COUNTRY_CODES",
   "muss Blitzortung selbst diesen Tracker als Standortquelle verfolgen",
+  "Als Konfigurationstyp „Location entity“ wählen",
+  "den Eintrag „Gewitterradar Dashboard“ auswählen",
   "lässt er sich über „Neu konfigurieren“ nicht auf eine Standort-Entität umstellen",
+  "500 km Erfassungsradius, 120 Minuten Zeitfenster und 200 Blitze",
   "„★ Speichern“ ist davon unabhängig",
   "device_tracker.gewitterradar verwendet"
 ];
