@@ -4,7 +4,8 @@
   "after_dependencies": [
     "input_boolean",
     "input_number",
-    "input_select"
+    "input_select",
+    "blitzortung"
   ],
   "codeowners": ["@TheDaimos"],
   "config_flow": true,
@@ -15,5 +16,5 @@
   "issue_tracker": "https://github.com/TheDaimos/gewitterradar/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.18.0"
+  "version": "0.19.0"
 }
