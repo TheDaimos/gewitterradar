@@ -31,6 +31,7 @@ jobs:
           node --check scripts/v4-07-saved-places-delta.mjs
           node --check scripts/v4-07-country-groups-delta.mjs
           node --check scripts/v4-07-network-security-delta.mjs
+          node --check scripts/v4-07-todo-setup-help-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
       - name: Build V4.07 test candidate
