@@ -74,24 +74,16 @@ Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**
 
 ### V4.07 · PLANNED – Weltweite Orts-Suche
 
-Für den nächsten Entwicklungszyklus ist eine **weltweite Orts-Suche** vorgemerkt, über die ein ausgewählter Ort als Gewitterradar-Referenzpunkt verwendet werden kann. Umfang, Datenquelle, Bedienung und technische Umsetzung werden erst in der V4.07-Design- und Validierungsphase festgelegt.
+Für den nächsten Entwicklungszyklus ist eine **weltweite Orts-Suche** vorgemerkt, über die ein ausgewählter Ort als Gewitterradar-Referenzpunkt verwendet werden kann. Umfang, Datenquelle, Bedienung und technische Umsetzung werden in der V4.07-Design- und Validierungsphase festgelegt.
 
-### Unversionierter Backlog – Unwetter / Tornado / Alarmierung
+Die bisherige ausführliche Planung zu Ortssuche, Favoriten, Standortmodell, möglichem `device_tracker.gewitterradar`-Adapter sowie der Trennung von Bezugsstandort und aktivem Blitzdatenbereich wurde in die kanonische `docs/ROADMAP.md` überführt und gegen den V4.06-Stand bereinigt.
 
-Folgende Themen sind **geplant, aber bewusst noch keiner Version zugeordnet**:
+### Unversionierter Zukunfts-Backlog
 
-- Tornado-/Rotationswarnungen bzw. Tornado-Ereignisse als zukünftige Warn- oder Karteninformation;
-- allgemeine Unwetterfunktionen über Blitzaktivität hinaus, beispielsweise Sturm, Hagel, Starkregen und weitere relevante Warnlagen;
-- eine konfigurierbare Alarmierungs-/Benachrichtigungsfunktion für relevante Gefahrenlagen und ausgewählte Bezugsstandorte.
+Die vollständige verbindliche Zukunfts-/Ideenliste liegt ab 12.09.2026 in:
 
-Vor einer technischen Umsetzung müssen dafür **gute, belastbare und nach Möglichkeit offizielle Datenquellen** recherchiert, fachlich bewertet und hinsichtlich Aktualität, geografischer Abdeckung, Lizenzierung/Nutzbarkeit, Home-Assistant-Eignung und Ausfallsicherheit geprüft werden. Architektur, Datenquellen, genaue Warnlogik und Versionszuordnung bleiben bis zu dieser Recherche ausdrücklich offen.
+`docs/ROADMAP.md`
 
-#### Notiz – Regen-/Radarzellen und mögliche Datenquellen
+Dort sind unter anderem MapLibre, Wetter-/Radarzellen, Unwetter/Tornado/Alarmierung, 120-Minuten-Wiedergabe, Cluster-Verfeinerung, Standortkomfort, Vollbild/Earth-Ideen und die zugehörigen Quellen-/Architekturhinweise **ohne automatische Versions- oder Umsetzungszusage** festgehalten.
 
-- Regen-/Radarzellen sollen später grundsätzlich als **zusätzliche transparente Kartenebene über der bestehenden OSM-Grundkarte** geprüft werden; keine Änderung der OSM-Grundkarte selbst ist dafür vorgesehen.
-- Als ernsthafte Quellenkandidaten für eine spätere fachliche Prüfung sind insbesondere **DWD Open Data** mit Radarprodukten sowie die DWD-Produkte **KONRAD3D** und **Mesozyklonen** vorgemerkt.
-- **RainViewer** bleibt als möglicher Prototyp-/Referenzkandidat vorgemerkt, aber ausdrücklich noch nicht als produktive Kernquelle festgelegt.
-- Vor jeder Entscheidung sind Datenformat, Aktualisierungsintervall, geografische Abdeckung, Nutzungs-/Lizenzbedingungen, technische Einbindung, Ausfallsicherheit und Eignung für Home Assistant zu prüfen.
-- Diese Notiz ist ausschließlich Backlog/Recherchegrundlage und enthält **keine Versionszuordnung und keinen Umsetzungsauftrag**.
-
-Weitere größere Architekturänderungen bleiben ebenfalls getrennt vom eingefrorenen V4.06-Stand.
+Neue Ideen werden dort aufgenommen, ohne den eingefrorenen V4.06-Stand oder automatisch V4.07 zu erweitern.
