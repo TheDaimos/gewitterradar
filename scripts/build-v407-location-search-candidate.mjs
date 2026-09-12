@@ -8,6 +8,7 @@ import {v407SavedPlacesDelta} from './v4-07-saved-places-delta.mjs';
 import {v407CountryGroupsDelta} from './v4-07-country-groups-delta.mjs';
 import {v407NetworkSecurityDelta} from './v4-07-network-security-delta.mjs';
 import {v407TodoSetupHelpDelta} from './v4-07-todo-setup-help-delta.mjs';
+import {v407SavedPlacesSoftDeleteDelta} from './v4-07-saved-places-soft-delete-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir = resolve(root,'artifacts/v407');
@@ -21,7 +22,7 @@ const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 export async function buildV407Candidate() {
   const source = await readFile(sourcePath,'utf8');
   if (!source.includes("const CARD_VERSION = '4.06';")) throw new Error('Canonical source is not the expected V4.06 frontend');
-  const candidate = v407TodoSetupHelpDelta(v407NetworkSecurityDelta(v407CountryGroupsDelta(v407SavedPlacesDelta(v407HelpNotesDelta(v407LocationSearchDelta(source)))))).replace(/\r\n?/g,'\n');
+  const candidate = v407SavedPlacesSoftDeleteDelta(v407TodoSetupHelpDelta(v407NetworkSecurityDelta(v407CountryGroupsDelta(v407SavedPlacesDelta(v407HelpNotesDelta(v407LocationSearchDelta(source))))))).replace(/\r\n?/g,'\n');
   if (candidate === source) throw new Error('V4.07 delta produced no change');
   const bytes = Buffer.from(candidate,'utf8');
   await mkdir(outDir,{recursive:true});
