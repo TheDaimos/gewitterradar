@@ -4,8 +4,7 @@
   "after_dependencies": [
     "input_boolean",
     "input_number",
-    "input_select",
-    "blitzortung"
+    "input_select"
   ],
   "codeowners": ["@TheDaimos"],
   "config_flow": true,
