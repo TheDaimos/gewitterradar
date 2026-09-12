@@ -30,13 +30,14 @@ jobs:
           node --check scripts/v4-07-help-notes-delta.mjs
           node --check scripts/v4-07-saved-places-delta.mjs
           node --check scripts/v4-07-country-groups-delta.mjs
+          node --check scripts/v4-07-network-security-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
       - name: Build V4.07 test candidate
         run: node scripts/build-v407-location-search-candidate.mjs
       - name: Check generated JavaScript syntax
         run: node --check artifacts/v407/gewitterradar.js
-      - name: Validate V4.07 location-search contract
+      - name: Validate V4.07 location-search and network contract
         run: node scripts/test-v407-location-search-candidate.mjs
       - name: Verify byte-identical aliases
         run: cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
