@@ -6,6 +6,10 @@ from homeassistant.data_entry_flow import FlowResultType
 
 from custom_components.gewitterradar.const import (
     CONF_LEGACY_IMPORT_VERSION,
+    CONF_TRACKER_LATITUDE,
+    CONF_TRACKER_LONGITUDE,
+    CONF_TRACKER_NAME,
+    DEFAULT_TRACKER_NAME,
     DOMAIN,
     LEGACY_IMPORT_VERSION,
     NAME,
@@ -30,10 +34,18 @@ async def test_user_flow_creates_one_neutral_loaded_entry(
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == NAME
     assert result["data"] == {}
-    assert result["result"].data == {
-        CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION
+    entry = result["result"]
+    assert entry.data[CONF_LEGACY_IMPORT_VERSION] == LEGACY_IMPORT_VERSION
+    assert entry.data[CONF_TRACKER_NAME] == DEFAULT_TRACKER_NAME
+    assert entry.data[CONF_TRACKER_LATITUDE] == hass.config.latitude
+    assert entry.data[CONF_TRACKER_LONGITUDE] == hass.config.longitude
+    assert set(entry.data) == {
+        CONF_LEGACY_IMPORT_VERSION,
+        CONF_TRACKER_LATITUDE,
+        CONF_TRACKER_LONGITUDE,
+        CONF_TRACKER_NAME,
     }
-    assert result["result"].state is ConfigEntryState.LOADED
+    assert entry.state is ConfigEntryState.LOADED
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
 
 

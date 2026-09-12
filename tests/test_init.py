@@ -9,9 +9,27 @@ from homeassistant.data_entry_flow import FlowResultType
 from custom_components import gewitterradar
 from custom_components.gewitterradar.const import (
     CONF_LEGACY_IMPORT_VERSION,
+    CONF_TRACKER_LATITUDE,
+    CONF_TRACKER_LONGITUDE,
+    CONF_TRACKER_NAME,
+    DEFAULT_TRACKER_NAME,
     DOMAIN,
     LEGACY_IMPORT_VERSION,
 )
+
+
+def _assert_v407_entry_data(hass: HomeAssistant, data: dict) -> None:
+    """Assert the V4.07 product-owned tracker data without hiding extra keys."""
+    assert data[CONF_LEGACY_IMPORT_VERSION] == LEGACY_IMPORT_VERSION
+    assert data[CONF_TRACKER_NAME] == DEFAULT_TRACKER_NAME
+    assert data[CONF_TRACKER_LATITUDE] == hass.config.latitude
+    assert data[CONF_TRACKER_LONGITUDE] == hass.config.longitude
+    assert set(data) == {
+        CONF_LEGACY_IMPORT_VERSION,
+        CONF_TRACKER_LATITUDE,
+        CONF_TRACKER_LONGITUDE,
+        CONF_TRACKER_NAME,
+    }
 
 
 async def test_setup_unload_reload_preserves_entry(hass: HomeAssistant) -> None:
@@ -31,7 +49,8 @@ async def test_setup_unload_reload_preserves_entry(hass: HomeAssistant) -> None:
         entry = result["result"]
         assert setup_entry.await_count == 1
         assert entry.state is ConfigEntryState.LOADED
-        assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
+        _assert_v407_entry_data(hass, dict(entry.data))
+        persisted_data = dict(entry.data)
 
         with patch(
             "custom_components.gewitterradar.async_unload_entry",
@@ -43,7 +62,7 @@ async def test_setup_unload_reload_preserves_entry(hass: HomeAssistant) -> None:
         assert unload_entry.await_count == 1
         assert entry.state is ConfigEntryState.NOT_LOADED
         assert hass.config_entries.async_get_entry(entry.entry_id) is entry
-        assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
+        assert dict(entry.data) == persisted_data
 
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
@@ -51,4 +70,4 @@ async def test_setup_unload_reload_preserves_entry(hass: HomeAssistant) -> None:
         assert setup_entry.await_count == 2
         assert entry.state is ConfigEntryState.LOADED
         assert hass.config_entries.async_get_entry(entry.entry_id) is entry
-        assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
+        assert dict(entry.data) == persisted_data

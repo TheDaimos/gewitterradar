@@ -1,4 +1,4 @@
-"""Test the complete V0.14 native settings model against Home Assistant."""
+"""Test the complete native settings model against Home Assistant."""
 
 import asyncio
 import json
@@ -38,8 +38,12 @@ from custom_components.gewitterradar.const import (
     CONF_SHOW_LOCATION_SELECTOR,
     CONF_STORM_RADIUS,
     CONF_STORM_SIMULATION,
+    CONF_TRACKER_LATITUDE,
+    CONF_TRACKER_LONGITUDE,
+    CONF_TRACKER_NAME,
     CONF_WARNING_ANIMATION,
     DEFAULT_OPTIONS,
+    DEFAULT_TRACKER_NAME,
     DOMAIN,
     LEGACY_IMPORT_VERSION,
     NAME,
@@ -108,6 +112,8 @@ ENTITY_IDS_BY_KEY = {
     "map_grouping": "switch.gewitterradar_map_grouping",
 }
 ENTITY_IDS = set(ENTITY_IDS_BY_KEY.values())
+TRACKER_ENTITY_ID = "device_tracker.gewitterradar"
+NATIVE_ENTITY_IDS = ENTITY_IDS | {TRACKER_ENTITY_ID}
 
 EXPECTED_NUMBER_CAPABILITIES = {
     "number.gewitterradar_observation_radius": (10, 1000, 1, "slider", "km"),
@@ -134,6 +140,17 @@ async def _setup_entry(
     return entry
 
 
+def _assert_v407_entry_data(
+    hass: HomeAssistant, entry: MockConfigEntry, expected_without_tracker: dict
+) -> None:
+    """Assert product-owned tracker persistence plus caller-owned data."""
+    data = dict(entry.data)
+    assert data.pop(CONF_TRACKER_LATITUDE) == hass.config.latitude
+    assert data.pop(CONF_TRACKER_LONGITUDE) == hass.config.longitude
+    assert data.pop(CONF_TRACKER_NAME) == DEFAULT_TRACKER_NAME
+    assert data == expected_without_tracker
+
+
 async def _call_service(
     hass: HomeAssistant,
     domain: str,
@@ -151,18 +168,22 @@ async def _call_service(
 
 
 async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None:
-    """Test all defaults and exactly 17 stable native entities."""
+    """Test all defaults and exactly 18 stable V4.07 native entities."""
     entry = await _setup_entry(hass)
 
     assert DEFAULT_OPTIONS == EXPECTED_DEFAULT_OPTIONS
     assert entry.options == EXPECTED_DEFAULT_OPTIONS
     assert len(entry.options) == 17
-    assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
+    _assert_v407_entry_data(
+        hass,
+        entry,
+        {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION},
+    )
 
     registry = er.async_get(hass)
     registry_entries = er.async_entries_for_config_entry(registry, entry.entry_id)
-    assert {registry_entry.entity_id for registry_entry in registry_entries} == ENTITY_IDS
-    assert len(registry_entries) == 17
+    assert {registry_entry.entity_id for registry_entry in registry_entries} == NATIVE_ENTITY_IDS
+    assert len(registry_entries) == 18
     for key, entity_id in ENTITY_IDS_BY_KEY.items():
         registry_entry = registry.async_get(entity_id)
         assert registry_entry is not None
@@ -179,6 +200,11 @@ async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None
             assert float(state.state) == expected
         else:
             assert state.state == expected
+
+    tracker_registry_entry = registry.async_get(TRACKER_ENTITY_ID)
+    assert tracker_registry_entry is not None
+    assert tracker_registry_entry.config_entry_id == entry.entry_id
+    assert tracker_registry_entry.unique_id == f"{entry.entry_id}_reference_tracker"
 
     assert tuple(
         hass.states.get(ENTITY_IDS_BY_KEY[CONF_LANGUAGE]).attributes["options"]
@@ -215,10 +241,14 @@ async def test_existing_options_and_unknown_keys_are_preserved(
         },
     )
 
-    assert entry.data == {
-        **original_data,
-        CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION,
-    }
+    _assert_v407_entry_data(
+        hass,
+        entry,
+        {
+            **original_data,
+            CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION,
+        },
+    )
     assert entry.options[CONF_LANGUAGE] == "Deutsch"
     assert entry.options[CONF_OBSERVATION_RADIUS] == 20
     assert entry.options[CONF_STORM_RADIUS] == 20
@@ -436,8 +466,12 @@ async def test_number_bounds_and_radius_invariants_are_lossless(
 
 
 async def test_dynamic_reference_location_options(hass: HomeAssistant) -> None:
-    """Test dynamic person/zone discovery without production hard-coding."""
-    hass.states.async_set("zone.office", "zoning")
+    """Test person/zone discovery plus the one product-owned tracker."""
+    hass.states.async_set(
+        "zone.office",
+        "zoning",
+        {"latitude": 53.0, "longitude": 10.0, "radius": 100},
+    )
     hass.states.async_set("person.test_user", "home")
     entry = await _setup_entry(hass)
     entity_id = ENTITY_IDS_BY_KEY[CONF_REFERENCE_LOCATION]
@@ -446,7 +480,14 @@ async def test_dynamic_reference_location_options(hass: HomeAssistant) -> None:
     assert options[0] == "zone.home"
     assert "zone.office" in options
     assert "person.test_user" in options
-    assert all(option.split(".", 1)[0] in {"person", "zone"} for option in options)
+    assert TRACKER_ENTITY_ID in options
+    assert all(
+        option.split(".", 1)[0] in {"person", "zone", "device_tracker"}
+        for option in options
+    )
+    assert [option for option in options if option.startswith("device_tracker.")] == [
+        TRACKER_ENTITY_ID
+    ]
 
     hass.states.async_set("person.second_test_user", "not_home")
     await hass.async_block_till_done()
