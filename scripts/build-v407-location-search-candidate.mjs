@@ -3,6 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {v407LocationSearchDelta} from './v4-07-location-search-delta.mjs';
+import {v407HelpNotesDelta} from './v4-07-help-notes-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir = resolve(root,'artifacts/v407');
@@ -16,7 +17,7 @@ const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 export async function buildV407Candidate() {
   const source = await readFile(sourcePath,'utf8');
   if (!source.includes("const CARD_VERSION = '4.06';")) throw new Error('Canonical source is not the expected V4.06 frontend');
-  const candidate = v407LocationSearchDelta(source).replace(/\r\n?/g,'\n');
+  const candidate = v407HelpNotesDelta(v407LocationSearchDelta(source)).replace(/\r\n?/g,'\n');
   if (candidate === source) throw new Error('V4.07 delta produced no change');
   const bytes = Buffer.from(candidate,'utf8');
   await mkdir(outDir,{recursive:true});
