@@ -124,7 +124,7 @@ const RENDER_RESULTS = `        let v407ActiveResultCountry = '';
           const makeRow = (candidate) => {
             const row = document.createElement('article'); row.className='v407-location-result';
             const copy = document.createElement('div'); const title=document.createElement('div'); title.className='v407-location-result-title'; title.textContent=candidate.displayLabel;
-            const meta=document.createElement('div'); meta.className='v407-location-result-meta'; meta.textContent=`\${candidate.latitude.toFixed(5)}°, \${candidate.longitude.toFixed(5)}° · \${candidate.provider}\${candidate.postcode ? ' · '+candidate.postcode : ''}`;
+            const meta=document.createElement('div'); meta.className='v407-location-result-meta'; meta.textContent=candidate.latitude.toFixed(5)+'°, '+candidate.longitude.toFixed(5)+'° · '+candidate.provider+(candidate.postcode ? ' · '+candidate.postcode : '');
             copy.append(title,meta); const actions=document.createElement('div'); actions.className='v407-location-result-actions';
             const use=document.createElement('button'); use.type='button'; use.className='v407-location-result-use'; use.textContent=text.use;
             const save=document.createElement('button'); save.type='button'; save.className='v407-location-result-save'; save.textContent=text.save; save.disabled=false; save.title=text.saveTitle;
