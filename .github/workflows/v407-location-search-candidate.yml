@@ -26,6 +26,7 @@ jobs:
       - name: Check V4.07 delta and builder syntax
         run: |
           node --check scripts/v4-07-location-search-delta.mjs
+          node --check scripts/v4-07-help-notes-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
       - name: Build V4.07 test candidate
