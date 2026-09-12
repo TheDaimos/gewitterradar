@@ -7,7 +7,7 @@ const candidate = await readFile(resolve(root,'artifacts/v407/gewitterradar.js')
 
 const mustContain = [
   "const CARD_VERSION = '4.07';",
-  "const GEWITTERRADAR_BUILD = 'V4.07-TEST3-2026-09-12';",
+  "const GEWITTERRADAR_BUILD = 'V4.07-TEST4-2026-09-12';",
   "people:'Personen'",
   "zones:'Zonen'",
   "searchAction:'Ort suchen …'",
@@ -47,7 +47,10 @@ const mustContain = [
   "geocoding-api.open-meteo.com · HTTPS/TCP 443",
   "nominatim.openstreetmap.org · HTTPS/TCP 443",
   "unpkg.com · HTTPS/TCP 443",
-  "*.tile.openstreetmap.org · HTTPS/TCP 443",
+  "a.tile.openstreetmap.org, b.tile.openstreetmap.org und c.tile.openstreetmap.org · HTTPS/TCP 443",
+  "blitzortung.ha.sed.pl · MQTT/TCP 1883",
+  "HTTPS-Proxy, TLS-Inspection, Inhaltsfilter",
+  "http://www.w3.org/2000/svg ist lediglich der SVG-Namensraum",
   "device_tracker.gewitterradar verwendet"
 ];
 for (const needle of mustContain) {
@@ -55,7 +58,7 @@ for (const needle of mustContain) {
 }
 
 if (candidate.includes('device_tracker.see')) throw new Error('Deprecated device_tracker.see must not appear in V4.07 candidate');
-if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST3');
+if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST4');
 if (candidate.includes('const biasedQuery =')) throw new Error('Soft home-country preference must not rewrite the worldwide Nominatim query');
 
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
@@ -68,6 +71,24 @@ const isoLine = candidate.match(/const V407_ISO_COUNTRY_CODES = '([^']+)'\.split
 if (!isoLine) throw new Error('ISO country-code table missing');
 const codes = isoLine[1].split(' ');
 if (codes.length !== 249 || new Set(codes).size !== 249) throw new Error(`Expected 249 unique ISO country codes, got ${codes.length}/${new Set(codes).size}`);
+
+// Security contract: inventory every fixed http(s) URL literal embedded in the
+// generated frontend. The W3C SVG namespace is deliberately present but is not a
+// network request. Any new literal must be reviewed and documented before TEST4+
+// may pass.
+const urlLiterals = [...new Set(candidate.match(/https?:\/\/[^\"'`\s)]+/g) || [])].sort();
+const expectedUrlLiterals = [
+  'http://www.w3.org/2000/svg',
+  'https://geocoding-api.open-meteo.com/v1/search',
+  'https://nominatim.openstreetmap.org/search',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+].sort();
+if (JSON.stringify(urlLiterals) !== JSON.stringify(expectedUrlLiterals)) {
+  throw new Error(`External URL inventory changed. Expected ${JSON.stringify(expectedUrlLiterals)}, got ${JSON.stringify(urlLiterals)}`);
+}
+if ((candidate.match(/wss?:\/\//g) || []).length) throw new Error('Unexpected WebSocket URL literal added to V4.07 frontend');
 
 // Regression contract for the observed "Tokio" ambiguity: a famous exact global
 // result must be able to outrank a tiny home-country namesake when no hard country
@@ -83,10 +104,11 @@ const tokioCandidates = [
   {name:'Tokio',displayLabel:'Tokio, Präfektur Tokio, Japan',admin1:'Präfektur Tokio',countryCode:'JP',importance:14000000,postcodes:[],postcode:''}
 ];
 const worldwideTokio = rank(tokioCandidates,'Tokio','', 'DE');
-if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST3 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
+if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST4 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
 const hardGermanTokio = rank(tokioCandidates,'Tokio','DE','');
-if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST3 ranking regression: explicit DE country filter must remain dominant');
+if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST4 ranking regression: explicit DE country filter must remain dominant');
 
-console.log('V4.07 location-search TEST3 contract: PASS');
+console.log('V4.07 location-search TEST4 contract: PASS');
 console.log(`ISO countries: ${codes.length}`);
 console.log(`Tokio worldwide ranking: ${worldwideTokio.map((item) => item.countryCode).join(' > ')}`);
+console.log(`External URL literals: ${urlLiterals.length} (including non-network SVG namespace)`);
