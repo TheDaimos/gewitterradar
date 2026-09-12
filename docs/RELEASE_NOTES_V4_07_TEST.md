@@ -29,6 +29,10 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST4: automatischer Vertrag für feste externe URL-Literale; neue Ziele müssen bewusst dokumentiert werden, bevor der Test wieder grün wird.
 - TEST5: fehlende Ortsbibliothek erklärt nun direkt den vollständigen Home-Assistant-Pfad: **Einstellungen → Geräte & Dienste → Integration hinzufügen → „Local to-do“ suchen/auswählen → Liste exakt „Gewitterradar Orte“ nennen**.
 - TEST5: derselbe Einrichtungspfad ist dauerhaft unter **Hilfe & Hinweise → Referenzstandort** dokumentiert; die englische Grundfassung wurde parallel ergänzt.
+- TEST6: gespeicherte Orte können direkt im Standortmenü mit `×` weich entfernt werden. Dabei wird der zugehörige Local-To-do-Eintrag nicht gelöscht, sondern auf `completed` gesetzt.
+- TEST6: weich entfernte Orte erscheinen unter **„Entfernte Orte“** und können mit `↶` wiederhergestellt werden; Name, Koordinaten und Metadaten bleiben erhalten.
+- TEST6: wird ein zuvor weich entfernter Ort erneut über `★ Speichern` gewählt, stellt Gewitterradar den vorhandenen Eintrag wieder her, statt ein Duplikat anzulegen.
+- TEST6: der Kandidatenvertrag verbietet für diese Funktion `todo.remove_item`; Entfernen bleibt ausdrücklich reversibel und verwendet `todo.update_item`.
 
 ## Architekturentscheidung
 
@@ -74,11 +78,12 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 - kein veraltetes `device_tracker.see`;
 - V4.06 bleibt eingefrorene Rückfallbasis;
 - neue externe feste URL-Ziele lassen den TEST4+-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
+- Soft-Delete für gespeicherte Orte verändert ausschließlich den Status des eigenen Local-To-do-Eintrags und löscht den Eintrag nicht;
 - kein V4.07-Release-Tag und kein Merge nach `main` vor bestätigtem Regressionstest.
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- Entfernen/Rückgängig für gespeicherte Orte als kontrollierte Soft-Delete-Funktion;
+- Soft-Delete/Wiederherstellen für gespeicherte Orte auf realem Home Assistant testen;
 - vollständige Übersetzung aller neuen V4.07-Such-, Speicher- und Netzwerktexte in die gesamte Sprachmatrix;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
