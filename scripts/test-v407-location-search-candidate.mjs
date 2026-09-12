@@ -21,7 +21,11 @@ const mustContain = [
   "reference_name",
   "save.disabled=true",
   "Blitzortung bereits passende Live-Daten",
-  "V407_ISO_COUNTRY_CODES"
+  "V407_ISO_COUNTRY_CODES",
+  "muss Blitzortung selbst diesen Tracker als Standortquelle verfolgen",
+  "lässt er sich über „Neu konfigurieren“ nicht auf eine Standort-Entität umstellen",
+  "„★ Speichern“ ist davon unabhängig",
+  "device_tracker.gewitterradar verwendet"
 ];
 for (const needle of mustContain) {
   if (!candidate.includes(needle)) throw new Error(`V4.07 candidate contract missing: ${needle}`);
