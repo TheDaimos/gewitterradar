@@ -8,13 +8,19 @@ from math import isfinite
 from pathlib import Path
 from typing import Any
 
+import voluptuous as vol
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback, valid_entity_id
+from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
+from homeassistant.core import HomeAssistant, ServiceCall, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    BLITZORTUNG_DOMAIN,
+    BLITZORTUNG_LOCATION_ENTITY_KEY,
     COMPASS_DESIGN_OPTIONS,
     CONF_COMPASS_DESIGN,
     CONF_DANGER_RADIUS,
@@ -25,14 +31,25 @@ from .const import (
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
     CONF_STORM_RADIUS,
+    CONF_TRACKER_LATITUDE,
+    CONF_TRACKER_LONGITUDE,
+    CONF_TRACKER_NAME,
     DEFAULT_OPTIONS,
+    DEFAULT_TRACKER_NAME,
     DISTANCE_UNIT_OPTIONS,
+    DOMAIN,
     LANGUAGE_OPTIONS,
     LEGACY_ENTITIES,
     LEGACY_IMPORT_VERSION,
+    LOCATION_DISCOVERY_DOMAINS,
     LOCATION_DOMAINS,
     NUMBER_LIMITS,
     PLATFORMS,
+    SERVICE_FIELD_LATITUDE,
+    SERVICE_FIELD_LONGITUDE,
+    SERVICE_FIELD_NAME,
+    SERVICE_SET_REFERENCE_COORDINATES,
+    SIGNAL_REFERENCE_COORDINATES_UPDATED,
     SWITCH_KEYS,
 )
 
@@ -49,6 +66,14 @@ _FIXED_SELECT_OPTIONS = {
     CONF_DISTANCE_UNIT: DISTANCE_UNIT_OPTIONS,
     CONF_COMPASS_DESIGN: COMPASS_DESIGN_OPTIONS,
 }
+
+_SET_REFERENCE_COORDINATES_SCHEMA = vol.Schema(
+    {
+        vol.Required(SERVICE_FIELD_LATITUDE): cv.latitude,
+        vol.Required(SERVICE_FIELD_LONGITUDE): cv.longitude,
+        vol.Optional(SERVICE_FIELD_NAME, default=DEFAULT_TRACKER_NAME): cv.string,
+    }
+)
 
 
 def _validate_options(options: dict[str, Any]) -> None:
@@ -93,8 +118,6 @@ def _options_with_defaults(existing: dict[str, Any]) -> dict[str, Any]:
     """Add missing defaults while preserving valid existing settings."""
     options = {**DEFAULT_OPTIONS, **existing}
 
-    # V0.13 entries may only contain observation_radius. Derive missing dependent
-    # defaults without changing any radius which the user already stored.
     if CONF_OBSERVATION_RADIUS not in existing:
         options[CONF_OBSERVATION_RADIUS] = max(
             DEFAULT_OPTIONS[CONF_OBSERVATION_RADIUS],
@@ -129,12 +152,12 @@ def _legacy_value(hass: HomeAssistant, key: str) -> Any:
         return raw if raw in _FIXED_SELECT_OPTIONS[key] else _NO_LEGACY_VALUE
 
     if key == CONF_REFERENCE_LOCATION:
-        if valid_entity_id(raw) and raw.split(".", 1)[0] in LOCATION_DOMAINS:
+        if valid_entity_id(raw) and raw.split(".", 1)[0] in LOCATION_DISCOVERY_DOMAINS:
             return raw
         if raw.startswith("device_tracker."):
             _LOGGER.warning(
-                "Skipping unsupported legacy reference location %s; "
-                "device_tracker migration is not supported yet",
+                "Skipping legacy device_tracker reference location %s; V4.07 only "
+                "accepts its own tracker through the native coordinate service",
                 raw,
             )
         return _NO_LEGACY_VALUE
@@ -191,16 +214,53 @@ def _options_after_legacy_import(
     return _options_with_defaults(imported)
 
 
+def _initial_tracker_coordinates(hass: HomeAssistant) -> tuple[float, float]:
+    """Use zone.home coordinates where possible, otherwise HA's configured home."""
+    home = hass.states.get("zone.home")
+    if home is not None:
+        latitude = home.attributes.get(ATTR_LATITUDE)
+        longitude = home.attributes.get(ATTR_LONGITUDE)
+        if latitude is not None and longitude is not None:
+            try:
+                return float(latitude), float(longitude)
+            except (TypeError, ValueError):
+                pass
+    return float(hass.config.latitude), float(hass.config.longitude)
+
+
 @dataclass(slots=True)
 class GewitterradarRuntimeData:
     """Config-entry-backed runtime access for Gewitterradar settings."""
 
     hass: HomeAssistant
     entry: ConfigEntry[GewitterradarRuntimeData]
+    tracker_entity_id: str | None = None
 
     def get(self, key: str) -> Any:
         """Return a setting from the canonical Config Entry options."""
         return self.entry.options[key]
+
+    def tracker_value(self, key: str) -> Any:
+        """Return one product-owned reference-tracker value."""
+        return self.entry.data[key]
+
+    def blitzortung_status(self) -> dict[str, Any]:
+        """Inspect Blitzortung linkage without mutating foreign ConfigEntries."""
+        entries = self.hass.config_entries.async_entries(BLITZORTUNG_DOMAIN)
+        tracker = self.tracker_entity_id
+        matching = [
+            item
+            for item in entries
+            if tracker is not None
+            and item.data.get(BLITZORTUNG_LOCATION_ENTITY_KEY) == tracker
+        ]
+        return {
+            "installed": bool(entries),
+            "linked": bool(matching),
+            "setup_required": bool(entries) and not bool(matching),
+            "matching_entries": len(matching),
+            "tracker_entity_id": tracker,
+        }
 
     @callback
     def async_set(self, key: str, value: Any) -> None:
@@ -212,12 +272,57 @@ class GewitterradarRuntimeData:
             raise ServiceValidationError(str(err)) from err
         self.hass.config_entries.async_update_entry(self.entry, options=options)
 
+    @callback
+    def async_set_reference_coordinates(
+        self, latitude: float, longitude: float, name: str
+    ) -> None:
+        """Move the product-owned tracker and make it the active reference."""
+        if self.tracker_entity_id is None:
+            raise ServiceValidationError(
+                "Gewitterradar reference tracker is not ready yet"
+            )
+
+        label = name.strip() or DEFAULT_TRACKER_NAME
+        data = {
+            **self.entry.data,
+            CONF_TRACKER_LATITUDE: float(latitude),
+            CONF_TRACKER_LONGITUDE: float(longitude),
+            CONF_TRACKER_NAME: label,
+        }
+        options = {
+            **self.entry.options,
+            CONF_REFERENCE_LOCATION: self.tracker_entity_id,
+        }
+        try:
+            _validate_options(options)
+        except ValueError as err:
+            raise ServiceValidationError(str(err)) from err
+
+        self.hass.config_entries.async_update_entry(
+            self.entry,
+            data=data,
+            options=options,
+        )
+        async_dispatcher_send(
+            self.hass,
+            f"{SIGNAL_REFERENCE_COORDINATES_UPDATED}_{self.entry.entry_id}",
+        )
+
 
 type GewitterradarConfigEntry = ConfigEntry[GewitterradarRuntimeData]
 
 
+def _loaded_runtime(hass: HomeAssistant) -> GewitterradarRuntimeData:
+    """Return the single loaded Gewitterradar runtime for service calls."""
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        runtime = getattr(entry, "runtime_data", None)
+        if isinstance(runtime, GewitterradarRuntimeData):
+            return runtime
+    raise ServiceValidationError("Gewitterradar is not loaded")
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Serve the shared card once per HA lifecycle; resource registration is explicit."""
+    """Serve the card and register the V4.07 coordinate service once."""
     await hass.http.async_register_static_paths([
         StaticPathConfig(
             "/gewitterradar",
@@ -225,6 +330,21 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             False,
         )
     ])
+
+    async def _handle_set_reference_coordinates(call: ServiceCall) -> None:
+        runtime = _loaded_runtime(hass)
+        runtime.async_set_reference_coordinates(
+            call.data[SERVICE_FIELD_LATITUDE],
+            call.data[SERVICE_FIELD_LONGITUDE],
+            call.data[SERVICE_FIELD_NAME],
+        )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_REFERENCE_COORDINATES,
+        _handle_set_reference_coordinates,
+        schema=_SET_REFERENCE_COORDINATES_SCHEMA,
+    )
     return True
 
 
@@ -232,12 +352,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
     """Set up Gewitterradar from a config entry."""
     data = dict(entry.data)
     existing = dict(entry.options)
-    # Preserve a confirmation from the global legacy helper on native migration.
-    # Neither an existing language value nor any browser state implies consent.
+
     if CONF_LANGUAGE_INITIALIZED not in existing:
         marker = hass.states.get("input_boolean.lightning_detection_language_initialized")
         if marker is not None and marker.state == "on":
             existing[CONF_LANGUAGE_INITIALIZED] = True
+
+    if CONF_TRACKER_LATITUDE not in data or CONF_TRACKER_LONGITUDE not in data:
+        latitude, longitude = _initial_tracker_coordinates(hass)
+        data[CONF_TRACKER_LATITUDE] = latitude
+        data[CONF_TRACKER_LONGITUDE] = longitude
+    data.setdefault(CONF_TRACKER_NAME, DEFAULT_TRACKER_NAME)
+
     try:
         if data.get(CONF_LEGACY_IMPORT_VERSION) == LEGACY_IMPORT_VERSION:
             options = _options_with_defaults(existing)
@@ -246,6 +372,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
             data[CONF_LEGACY_IMPORT_VERSION] = LEGACY_IMPORT_VERSION
     except (TypeError, ValueError) as err:
         raise ConfigEntryError(f"Invalid Gewitterradar options: {err}") from err
+
     if options != entry.options or data != entry.data:
         hass.config_entries.async_update_entry(entry, data=data, options=options)
 
