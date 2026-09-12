@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/v4.07-location-search-ui
+      - feature/v4.07-location-search-ui-next
   pull_request:
     branches:
       - main
@@ -27,6 +28,7 @@ jobs:
         run: |
           node --check scripts/v4-07-location-search-delta.mjs
           node --check scripts/v4-07-help-notes-delta.mjs
+          node --check scripts/v4-07-saved-places-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
       - name: Build V4.07 test candidate
