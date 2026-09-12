@@ -1,0 +1,49 @@
+name: Build V4.07 location search test candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07-location-search-ui
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v407-location-search-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Prove canonical V4.06 frontend is still valid
+        run: node scripts/verify-frontend.mjs
+      - name: Check V4.07 delta and builder syntax
+        run: |
+          node --check scripts/v4-07-location-search-delta.mjs
+          node --check scripts/v4-07-help-notes-delta.mjs
+          node --check scripts/build-v407-location-search-candidate.mjs
+          node --check scripts/test-v407-location-search-candidate.mjs
+      - name: Build V4.07 test candidate
+        run: node scripts/build-v407-location-search-candidate.mjs
+      - name: Check generated JavaScript syntax
+        run: node --check artifacts/v407/gewitterradar.js
+      - name: Validate V4.07 location-search contract
+        run: node scripts/test-v407-location-search-candidate.mjs
+      - name: Verify byte-identical aliases
+        run: cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+      - name: Publish test JavaScript
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-location-search-test-js
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/SHA256SUMS.txt

@@ -9,7 +9,12 @@ NAME: Final = "Gewitterradar"
 LEGACY_IMPORT_VERSION: Final = 1
 CONF_LEGACY_IMPORT_VERSION: Final = "legacy_import_version"
 
-PLATFORMS: Final = (Platform.SELECT, Platform.NUMBER, Platform.SWITCH)
+PLATFORMS: Final = (
+    Platform.SELECT,
+    Platform.NUMBER,
+    Platform.SWITCH,
+    Platform.DEVICE_TRACKER,
+)
 
 CONF_LANGUAGE: Final = "language"
 CONF_LANGUAGE_INITIALIZED: Final = "language_initialized"
@@ -28,6 +33,23 @@ CONF_SHOW_LOCATION_SELECTOR: Final = "show_location_selector"
 CONF_COMPASS_NEAREST_STRIKE: Final = "compass_nearest_strike"
 CONF_COMPASS_DEVICE_ORIENTATION: Final = "compass_device_orientation"
 CONF_MAP_GROUPING: Final = "map_grouping"
+
+# V4.07 dynamic reference tracker. Coordinates are product-owned ConfigEntry data,
+# deliberately separate from ConfigEntry options and from the user's saved places.
+CONF_TRACKER_LATITUDE: Final = "tracker_latitude"
+CONF_TRACKER_LONGITUDE: Final = "tracker_longitude"
+CONF_TRACKER_NAME: Final = "tracker_name"
+DEFAULT_TRACKER_NAME: Final = "Gewitterradar"
+SERVICE_SET_REFERENCE_COORDINATES: Final = "set_reference_coordinates"
+SERVICE_FIELD_LATITUDE: Final = "latitude"
+SERVICE_FIELD_LONGITUDE: Final = "longitude"
+SERVICE_FIELD_NAME: Final = "name"
+SIGNAL_REFERENCE_COORDINATES_UPDATED: Final = f"{DOMAIN}_reference_coordinates_updated"
+
+# Blitzortung is inspected read-only. Gewitterradar never mutates another
+# integration's ConfigEntry or Home Assistant's .storage data.
+BLITZORTUNG_DOMAIN: Final = "blitzortung"
+BLITZORTUNG_LOCATION_ENTITY_KEY: Final = "location_entity"
 
 LANGUAGE_OPTIONS: Final = (
     "Deutsch",
@@ -53,7 +75,11 @@ LANGUAGE_OPTIONS: Final = (
 DISTANCE_UNIT_OPTIONS: Final = ("KM", "MI")
 COMPASS_DESIGN_OPTIONS: Final = ("Compass A", "Compass B", "Compass C")
 DEFAULT_REFERENCE_LOCATION: Final = "zone.home"
-LOCATION_DOMAINS: Final = ("person", "zone")
+
+# Valid native reference domains. Discovery intentionally remains restricted to
+# people/zones; only the Gewitterradar-owned device_tracker is added explicitly.
+LOCATION_DOMAINS: Final = ("person", "zone", "device_tracker")
+LOCATION_DISCOVERY_DOMAINS: Final = ("person", "zone")
 
 DEFAULT_OPTIONS: Final = {
     CONF_LANGUAGE_INITIALIZED: False,

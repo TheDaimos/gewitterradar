@@ -19,9 +19,11 @@ REQUIRED = {
     "brand/icon@2x.png",
     "config_flow.py",
     "const.py",
+    "device_tracker.py",
     "manifest.json",
     "number.py",
     "select.py",
+    "services.yaml",
     "strings.json",
     "switch.py",
     "translations/de.json",
@@ -64,7 +66,7 @@ def verify(stage_root: Path) -> dict[str, str]:
         raise RuntimeError(f"Forbidden staged files: {forbidden}")
 
     manifest = json.loads(files["manifest.json"].read_text(encoding="utf-8"))
-    if manifest["domain"] != "gewitterradar" or manifest["version"] != "0.18.0":
+    if manifest["domain"] != "gewitterradar" or manifest["version"] != "0.19.0":
         raise RuntimeError("Unexpected integration manifest identity")
 
     source_hashes = {

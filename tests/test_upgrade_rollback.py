@@ -1,4 +1,4 @@
-"""V0.18 upgrade, rollback and re-enable validation."""
+"""V4.07 upgrade, rollback and re-enable validation."""
 
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, STATE_UNAVAILABLE
@@ -114,7 +114,7 @@ async def test_upgrade_unload_reenable_and_remove_preserve_legacy(
 async def test_device_tracker_legacy_location_is_non_blocking_and_untouched(
     hass: HomeAssistant, caplog
 ) -> None:
-    """Keep the unsupported device-tracker limitation non-blocking."""
+    """Keep foreign legacy device trackers non-blocking and untouched."""
     hass.states.async_set(
         LEGACY_ENTITIES["reference_location"], "device_tracker.rollback_phone"
     )
@@ -129,4 +129,4 @@ async def test_device_tracker_legacy_location_is_non_blocking_and_untouched(
         hass.states.get(LEGACY_ENTITIES["reference_location"]).state
         == "device_tracker.rollback_phone"
     )
-    assert "device_tracker migration is not supported yet" in caplog.text
+    assert "Skipping legacy device_tracker reference location" in caplog.text

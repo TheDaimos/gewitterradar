@@ -1,6 +1,7 @@
 # Gewitterradar – Meilensteine
 
-Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**
+Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**  
+Aktive Entwicklung: **V4.07 TEST CANDIDATE / native Integration 0.19.0 auf Feature-Branch.**
 
 ## Erreicht
 
@@ -72,11 +73,23 @@ Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**
 
 ## Nach V4.06
 
-### V4.07 · PLANNED – Weltweite Orts-Suche
+### V4.07 · TEST CANDIDATE – Weltweite Orts-Suche / dynamischer Bezugsstandort
 
-Für den nächsten Entwicklungszyklus ist eine **weltweite Orts-Suche** vorgemerkt, über die ein ausgewählter Ort als Gewitterradar-Referenzpunkt verwendet werden kann. Umfang, Datenquelle, Bedienung und technische Umsetzung werden in der V4.07-Design- und Validierungsphase festgelegt.
+V4.07 bleibt die nächste vorgesehene Produktlinie. Der erste technische Kandidat ist nun konkreter als die ursprüngliche Planungsphase:
 
-Die bisherige ausführliche Planung zu Ortssuche, Favoriten, Standortmodell, möglichem `device_tracker.gewitterradar`-Adapter sowie der Trennung von Bezugsstandort und aktivem Blitzdatenbereich wurde in die kanonische `docs/ROADMAP.md` überführt und gegen den V4.06-Stand bereinigt.
+- wiederverwendbarer Geocoding-Kern im Dev-Toolkit als separater Draft-PR vorhanden;
+- optionales Land mit lokalem Auto-Complete, weicher automatischer Länderpräferenz und hartem explizitem Länderfilter konzeptionell/technisch vorbereitet;
+- Standort-Dropdown-Reihenfolge festgelegt: Personen → Zonen → Ort suchen → gespeicherte Orte;
+- Saved-Places-Modell über Local-To-do-Flexible-Datastore festgelegt, inklusive Soft-Delete/Rückgängig;
+- nativer `device_tracker` als Gewitterradar-eigener dynamischer Bezugsadapter implementiert;
+- Dashboard-Fallback als separater Template-`device_tracker` im V4.07-Package implementiert;
+- halbautomatischer Blitzortung-Weg festgelegt: einmalige Benutzerkonfiguration auf den Gewitterradar-Tracker, danach automatische Koordinatenwechsel;
+- Bezugsstandort und aktiver Blitzdatenbereich bleiben strikt getrennt;
+- Upstream-To-do zum offiziellen Blitzortung-Reconfigure-Wechsel dokumentiert.
+
+Noch **nicht** als Release abgeschlossen sind insbesondere die produktive Verdrahtung des Suchdialogs in das gemeinsame Frontend, Saved-Places-Persistenz, belastbare Datenregions-Synchronisationsanzeige sowie reale Home-Assistant-/Blitzortung-/Mobile-Regressionen.
+
+V4.06 bleibt bis dahin die eingefrorene Release- und Rückfallbasis.
 
 ### Unversionierter Zukunfts-Backlog
 

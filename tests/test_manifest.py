@@ -1,4 +1,4 @@
-"""Static contract tests for the V0.12 integration skeleton."""
+"""Static contract tests for the native Gewitterradar integration."""
 
 import ast
 import json
@@ -14,7 +14,7 @@ def test_manifest_is_valid_and_single_entry() -> None:
     manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
 
     assert manifest["domain"] == "gewitterradar"
-    assert manifest["version"] == "0.18.0"
+    assert manifest["version"] == "0.19.0"
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
     # Gewitterradar is a user-visible service integration, not a Helper-tab
@@ -51,7 +51,7 @@ def test_translation_files_are_valid_and_complete() -> None:
         assert "single_instance_allowed" in translations["config"]["abort"]
 
 
-def test_exact_v0_14_entity_platforms_exist() -> None:
-    """Validate the three platforms used by the V0.14 settings model."""
-    for platform in ("number.py", "select.py", "switch.py"):
+def test_native_entity_platforms_exist() -> None:
+    """Validate all platforms used by the V4.07 native settings model."""
+    for platform in ("number.py", "select.py", "switch.py", "device_tracker.py"):
         assert (INTEGRATION / platform).is_file()

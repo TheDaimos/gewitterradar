@@ -12,7 +12,11 @@ from custom_components.gewitterradar.const import (
     CONF_LEGACY_IMPORT_VERSION,
     CONF_OBSERVATION_RADIUS,
     CONF_STORM_SIMULATION,
+    CONF_TRACKER_LATITUDE,
+    CONF_TRACKER_LONGITUDE,
+    CONF_TRACKER_NAME,
     DEFAULT_OPTIONS,
+    DEFAULT_TRACKER_NAME,
     DOMAIN,
     LEGACY_ENTITIES,
     LEGACY_IMPORT_VERSION,
@@ -76,6 +80,7 @@ EXPECTED_NATIVE_ENTITY_IDS = {
     "switch.gewitterradar_compass_nearest_strike",
     "switch.gewitterradar_compass_device_orientation",
     "switch.gewitterradar_map_grouping",
+    "device_tracker.gewitterradar",
 }
 
 
@@ -83,6 +88,17 @@ def _set_legacy_states(hass: HomeAssistant, values: dict[str, str]) -> None:
     """Create only the requested legacy helper states."""
     for key, value in values.items():
         hass.states.async_set(EXPECTED_LEGACY_ENTITIES[key], value)
+
+
+def _assert_v407_entry_data(
+    hass: HomeAssistant, entry: MockConfigEntry, expected_without_tracker: dict
+) -> None:
+    """Assert persistent V4.07 tracker data plus caller-owned legacy/future data."""
+    data = dict(entry.data)
+    assert data.pop(CONF_TRACKER_LATITUDE) == hass.config.latitude
+    assert data.pop(CONF_TRACKER_LONGITUDE) == hass.config.longitude
+    assert data.pop(CONF_TRACKER_NAME) == DEFAULT_TRACKER_NAME
+    assert data == expected_without_tracker
 
 
 async def _setup_entry(
@@ -152,10 +168,14 @@ async def test_complete_valid_legacy_import_is_non_destructive(
         "compass_device_orientation": True,
         "map_grouping": False,
     }
-    assert entry.data == {
-        "future_marker": "preserved",
-        CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION,
-    }
+    _assert_v407_entry_data(
+        hass,
+        entry,
+        {
+            "future_marker": "preserved",
+            CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION,
+        },
+    )
     assert {
         entity_id: hass.states.get(entity_id).state
         for entity_id in EXPECTED_LEGACY_ENTITIES.values()
@@ -218,11 +238,16 @@ async def test_invalid_legacy_values_and_radii_do_not_block_setup(
 
     assert entry.state is ConfigEntryState.LOADED
     assert entry.options == EXPECTED_FRESH_DEFAULTS
-    assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
-    assert "device_tracker migration is not supported yet" in caplog.text
+    _assert_v407_entry_data(
+        hass,
+        entry,
+        {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION},
+    )
+    assert "Skipping legacy device_tracker reference location" in caplog.text
     assert "Ignoring inconsistent legacy radius values" in caplog.text
     assert {
-        key: hass.states.get(entity_id).state for key, entity_id in LEGACY_ENTITIES.items()
+        key: hass.states.get(entity_id).state
+        for key, entity_id in LEGACY_ENTITIES.items()
         if hass.states.get(entity_id) is not None
     } == before
 
@@ -244,7 +269,11 @@ async def test_package_free_config_flow_setup_reload_and_service(
     entry = result["result"]
     assert entry.state is ConfigEntryState.LOADED
     assert entry.options == EXPECTED_FRESH_DEFAULTS
-    assert entry.data == {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION}
+    _assert_v407_entry_data(
+        hass,
+        entry,
+        {CONF_LEGACY_IMPORT_VERSION: LEGACY_IMPORT_VERSION},
+    )
     registry = er.async_get(hass)
     assert {
         item.entity_id for item in er.async_entries_for_config_entry(registry, entry.entry_id)
@@ -261,9 +290,11 @@ async def test_package_free_config_flow_setup_reload_and_service(
     assert hass.states.get("switch.gewitterradar_storm_simulation").state == STATE_ON
 
     expected_options = dict(entry.options)
+    expected_data = dict(entry.data)
     assert await hass.config_entries.async_unload(entry.entry_id)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.LOADED
     assert entry.options == expected_options
+    assert dict(entry.data) == expected_data
     assert all(hass.states.get(entity_id) is None for entity_id in LEGACY_ENTITIES.values())

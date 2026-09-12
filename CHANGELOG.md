@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026/09 — V4.07 TEST CANDIDATE / native integration 0.19.0
+
+> **Nicht veröffentlicht.** Dieser Stand lebt ausschließlich auf dem V4.07-Feature-Branch. V4.06 bleibt die eingefrorene Release-/Rückfallbasis.
+
+### Added
+
+- Add a Gewitterradar-owned modern GPS `device_tracker` as the movable reference adapter for worldwide locations.
+- Add `gewitterradar.set_reference_coordinates` to atomically move the product-owned tracker and select it as the active Gewitterradar reference.
+- Add read-only Blitzortung linkage diagnostics without mutating foreign ConfigEntries or `.storage`.
+- Add `app_gewitterradar_v4_07_pkg.yaml` with a separate dashboard Template `device_tracker` and coordinate-set script.
+- Document the one-time semi-automatic Blitzortung setup and the permanent distinction between requested reference location and active lightning-data region.
+- Record the upstream task to contact the Blitzortung developer about an officially supported coordinate ↔ location-entity reconfigure path.
+
+### Safety / compatibility
+
+- Do not use deprecated `device_tracker.see`.
+- Do not rewrite Blitzortung ConfigEntries.
+- Keep native and dashboard tracker IDs distinct so both delivery forms can coexist during testing.
+- Keep the accepted V4.06 shared frontend unchanged in this backend test candidate; worldwide search UI remains the next bounded frontend integration job.
+- Do not claim lightning-data synchronization merely because the Gewitterradar tracker moved; Blitzortung applies its own movement threshold and subscription lifecycle.
+
+### Validation still required before release
+
+- Real Home Assistant install/restart/restore test for integration 0.19.0.
+- Real Blitzortung one-time tracker configuration and large/small location-move regression.
+- Package validation on a real Dashboard installation.
+- Canonical dropdown/search UI wiring, saved-place persistence and cross-device regression.
+- HACS/Hassfest/release gates and derived-dashboard synchronization after candidate acceptance.
+
 ## 2026/09 — V4.06 / native integration 0.18.0
 
 ### Added

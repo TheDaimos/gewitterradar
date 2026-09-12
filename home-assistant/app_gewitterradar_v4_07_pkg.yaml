@@ -1,0 +1,368 @@
+# =============================================================================
+# APP GEWITTERRADAR – HOME ASSISTANT PACKAGE
+# Test candidate: V4.07
+# =============================================================================
+# TARGET PATH:
+#   /config/packages/app_gewitterradar_v4_07_pkg.yaml
+#
+# Replace the V4.06 package with this file. Do NOT load V4.06 and V4.07 in
+# parallel because both intentionally own the same lightning_detection_* helpers.
+#
+# V4.07 adds a dashboard-only movable GPS reference:
+#   device_tracker.gewitterradar_dashboard
+#
+# The native integration deliberately uses device_tracker.gewitterradar instead,
+# so both delivery forms can coexist without intentionally claiming one entity ID.
+# Blitzortung must be configured once by the user to follow the tracker belonging
+# to the delivery form in use. Gewitterradar never rewrites Blitzortung ConfigEntries.
+# =============================================================================
+
+input_select:
+  lightning_detection_language:
+    name: "App Lightning Detection – Language"
+    icon: mdi:translate
+    options:
+      - Deutsch
+      - English
+      - Dansk
+      - Español
+      - Français
+      - Nederlands
+      - Polski
+      - Português
+      - Svenska
+      - Italiano
+      - Norsk bokmål
+      - Suomi
+      - Čeština
+      - Ελληνικά
+      - Magyar
+      - Boarisch
+      - Plattdüütsch
+      - Sächs’sch
+      - Schwäbisch
+
+  lightning_detection_distance_unit:
+    name: "App Lightning Detection – Distance Unit"
+    icon: mdi:ruler
+    options: [KM, MI]
+
+  lightning_detection_compass_design:
+    name: "App Lightning Detection – Compass Design"
+    icon: mdi:compass-rose
+    options:
+      - Compass A
+      - Compass B
+      - Compass C
+
+  lightning_detection_location:
+    name: "App Lightning Detection – Reference Location"
+    icon: mdi:crosshairs-gps
+    options:
+      - zone.home
+      - device_tracker.gewitterradar_dashboard
+
+input_number:
+  lightning_detection_observation_radius:
+    name: "App Lightning Detection – Observation Radius"
+    icon: mdi:radar
+    min: 10
+    max: 1000
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_storm_radius:
+    name: "App Lightning Detection – Storm Radius"
+    icon: mdi:weather-lightning
+    min: 5
+    max: 1000
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_danger_radius:
+    name: "App Lightning Detection – Danger Radius"
+    icon: mdi:alert-circle-outline
+    min: 1
+    max: 250
+    step: 1
+    mode: slider
+    unit_of_measurement: km
+
+  lightning_detection_aura_width:
+    name: "App Lightning Detection – Aura Width"
+    icon: mdi:arrow-expand-horizontal
+    min: 15
+    max: 60
+    step: 1
+    mode: slider
+    unit_of_measurement: "%"
+
+  lightning_detection_aura_intensity:
+    name: "App Lightning Detection – Aura Intensity"
+    icon: mdi:brightness-6
+    min: 0
+    max: 70
+    step: 1
+    mode: slider
+    unit_of_measurement: "%"
+
+  # V4.07 dashboard-only storage for the movable reference tracker.
+  # These values are product state, not the saved-place library.
+  lightning_detection_reference_latitude:
+    name: "Gewitterradar – Reference Latitude"
+    icon: mdi:latitude
+    min: -90
+    max: 90
+    step: 0.000001
+    mode: box
+
+  lightning_detection_reference_longitude:
+    name: "Gewitterradar – Reference Longitude"
+    icon: mdi:longitude
+    min: -180
+    max: 180
+    step: 0.000001
+    mode: box
+
+input_text:
+  lightning_detection_reference_name:
+    name: "Gewitterradar – Reference Name"
+    icon: mdi:map-marker
+    max: 100
+
+input_boolean:
+  lightning_detection_language_initialized:
+    name: "Gewitterradar – Language initialized"
+    icon: mdi:translate
+
+  lightning_detection_aura_effects:
+    name: "App Lightning Detection – Aura Effects"
+    icon: mdi:blur
+
+  lightning_detection_warning_animation:
+    name: "App Lightning Detection – Warning Animation"
+    icon: mdi:lightning-bolt
+
+  lightning_detection_storm_simulation:
+    name: "App Lightning Detection – Storm Simulation Tools"
+    icon: mdi:test-tube
+
+  lightning_detection_show_location_selector:
+    name: "App Lightning Detection – Show Location Selector"
+    icon: mdi:crosshairs-gps
+
+  lightning_detection_compass_nearest_strike:
+    name: "App Lightning Detection – Compass Nearest Strike"
+    icon: mdi:compass
+
+  lightning_detection_compass_device_orientation:
+    name: "App Lightning Detection – Compass Device Orientation"
+    icon: mdi:cellphone-marker
+
+  lightning_detection_map_grouping:
+    name: "App Lightning Detection – Map Grouping"
+    icon: mdi:map-marker-multiple
+
+  lightning_detection_aura_controls_initialized:
+    name: "App Lightning Detection – Aura Controls Initialization Complete"
+    icon: mdi:check-circle-outline
+
+  lightning_detection_defaults_initialized:
+    name: "App Lightning Detection – Initialization Complete"
+    icon: mdi:check-decagram
+
+  lightning_detection_reference_tracker_initialized:
+    name: "Gewitterradar – Reference Tracker Initialization Complete"
+    icon: mdi:crosshairs-gps
+
+# Modern supported template device tracker; no deprecated device_tracker.see.
+template:
+  - device_tracker:
+      - name: "Gewitterradar Dashboard"
+        default_entity_id: device_tracker.gewitterradar_dashboard
+        unique_id: gewitterradar_dashboard_reference_tracker
+        latitude: "{{ states('input_number.lightning_detection_reference_latitude') | float }}"
+        longitude: "{{ states('input_number.lightning_detection_reference_longitude') | float }}"
+        location_accuracy: 0
+        attributes:
+          reference_name: "{{ states('input_text.lightning_detection_reference_name') }}"
+          setup_note: >-
+            Configure Blitzortung once to use this device_tracker as its location
+            entity. Later coordinate changes are automatic.
+
+script:
+  gewitterradar_set_reference_coordinates_dashboard:
+    alias: "Gewitterradar – Set Dashboard Reference Coordinates"
+    description: >-
+      Moves only the Gewitterradar dashboard reference tracker. It does not modify
+      Blitzortung or any other integration ConfigEntry.
+    fields:
+      latitude:
+        name: Latitude
+        required: true
+        selector:
+          number: { min: -90, max: 90, step: any, mode: box }
+      longitude:
+        name: Longitude
+        required: true
+        selector:
+          number: { min: -180, max: 180, step: any, mode: box }
+      name:
+        name: Location name
+        required: true
+        selector:
+          text:
+    sequence:
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_reference_latitude }
+        data: { value: "{{ latitude | float }}" }
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_reference_longitude }
+        data: { value: "{{ longitude | float }}" }
+      - action: input_text.set_value
+        target: { entity_id: input_text.lightning_detection_reference_name }
+        data: { value: "{{ name | string }}" }
+      - action: input_select.select_option
+        target: { entity_id: input_select.lightning_detection_location }
+        data: { option: device_tracker.gewitterradar_dashboard }
+    mode: restart
+
+# =============================================================================
+# FIRST-RUN INITIALIZATION / LEGACY MIGRATION
+# =============================================================================
+automation:
+  - id: app_lightning_detection_initialize_defaults
+    alias: "App Lightning Detection – Initialize Defaults"
+    description: >-
+      Initializes defaults only once. Existing legacy radius/design values are
+      copied where possible. Later restarts preserve user settings.
+    triggers:
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: input_boolean.lightning_detection_defaults_initialized
+        state: "off"
+    actions:
+      - variables:
+          legacy_observation: "{{ states('input_number.blitzortung_anzeigeradius') }}"
+          legacy_storm: "{{ states('input_number.blitzortung_gewitterradius') }}"
+          legacy_danger: "{{ states('input_number.blitzortung_gefahrenradius') }}"
+          legacy_compass_design: "{{ states('input_select.blitzortung_kompass_design') }}"
+      - action: input_select.select_option
+        target: { entity_id: input_select.lightning_detection_language }
+        data: { option: English }
+      - action: input_select.select_option
+        target: { entity_id: input_select.lightning_detection_distance_unit }
+        data: { option: KM }
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_observation_radius }
+        data:
+          value: >-
+            {% set v = legacy_observation | float(75) %}
+            {{ [1000, [10, v] | max] | min }}
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_storm_radius }
+        data:
+          value: >-
+            {% set obs = legacy_observation | float(75) %}
+            {% set v = legacy_storm | float(30) %}
+            {{ [1000, [obs, [5, v] | max] | min] | min }}
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_danger_radius }
+        data:
+          value: >-
+            {% set storm = legacy_storm | float(30) %}
+            {% set v = legacy_danger | float(15) %}
+            {{ [250, [storm, [1, v] | max] | min] | min }}
+      - action: input_select.select_option
+        target: { entity_id: input_select.lightning_detection_compass_design }
+        data:
+          option: >-
+            {% set map = {
+              'Kompass A':'Compass A', 'Kompass B':'Compass B', 'Kompass C':'Compass C',
+              'Compass A':'Compass A', 'Compass B':'Compass B', 'Compass C':'Compass C'
+            } %}
+            {{ map.get(legacy_compass_design, 'Compass C') }}
+      - action: input_select.select_option
+        target: { entity_id: input_select.lightning_detection_location }
+        data: { option: zone.home }
+      - action: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.lightning_detection_warning_animation
+            - input_boolean.lightning_detection_map_grouping
+      - action: input_boolean.turn_off
+        target:
+          entity_id:
+            - input_boolean.lightning_detection_storm_simulation
+            - input_boolean.lightning_detection_show_location_selector
+            - input_boolean.lightning_detection_compass_nearest_strike
+            - input_boolean.lightning_detection_compass_device_orientation
+      - action: input_boolean.turn_on
+        target: { entity_id: input_boolean.lightning_detection_defaults_initialized }
+    mode: single
+
+  - id: app_lightning_detection_initialize_aura_controls
+    alias: "App Lightning Detection – Initialize Aura Controls"
+    description: "Initializes the V4 aura controls exactly once."
+    triggers:
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: input_boolean.lightning_detection_aura_controls_initialized
+        state: "off"
+    actions:
+      - action: input_boolean.turn_on
+        target: { entity_id: input_boolean.lightning_detection_aura_effects }
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_aura_width }
+        data: { value: 40 }
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_aura_intensity }
+        data: { value: 55 }
+      - action: input_boolean.turn_on
+        target: { entity_id: input_boolean.lightning_detection_aura_controls_initialized }
+    mode: single
+
+  - id: gewitterradar_initialize_reference_tracker
+    alias: "Gewitterradar – Initialize Dashboard Reference Tracker"
+    description: >-
+      Initializes the V4.07 movable dashboard tracker once from zone.home. It
+      never overwrites later user-selected coordinates.
+    triggers:
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: input_boolean.lightning_detection_reference_tracker_initialized
+        state: "off"
+    actions:
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_reference_latitude }
+        data:
+          value: "{{ state_attr('zone.home', 'latitude') | float(0) }}"
+      - action: input_number.set_value
+        target: { entity_id: input_number.lightning_detection_reference_longitude }
+        data:
+          value: "{{ state_attr('zone.home', 'longitude') | float(0) }}"
+      - action: input_text.set_value
+        target: { entity_id: input_text.lightning_detection_reference_name }
+        data: { value: "Home" }
+      - action: input_boolean.turn_on
+        target: { entity_id: input_boolean.lightning_detection_reference_tracker_initialized }
+    mode: single
+
+# =============================================================================
+# V4.07 NEW ENTITIES / ACTION
+# =============================================================================
+# device_tracker.gewitterradar_dashboard
+# input_number.lightning_detection_reference_latitude
+# input_number.lightning_detection_reference_longitude
+# input_text.lightning_detection_reference_name
+# input_boolean.lightning_detection_reference_tracker_initialized
+# script.gewitterradar_set_reference_coordinates_dashboard
+# =============================================================================

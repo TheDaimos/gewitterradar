@@ -3,7 +3,8 @@
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
-from homeassistant.core import Event, HomeAssistant
+from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import (
     async_track_state_added_domain,
@@ -21,7 +22,8 @@ from .const import (
     DISTANCE_UNIT_OPTIONS,
     DOMAIN,
     LANGUAGE_OPTIONS,
-    LOCATION_DOMAINS,
+    LOCATION_DISCOVERY_DOMAINS,
+    SIGNAL_REFERENCE_COORDINATES_UPDATED,
 )
 
 _FIXED_SELECTS = (
@@ -82,7 +84,7 @@ class GewitterradarSelect(SelectEntity):
 
 
 class GewitterradarReferenceLocationSelect(GewitterradarSelect):
-    """Select a dynamically discovered Home Assistant location entity."""
+    """Select people, zones or the product-owned movable tracker."""
 
     def __init__(self, runtime: GewitterradarRuntimeData) -> None:
         """Initialize the reference-location select."""
@@ -90,29 +92,42 @@ class GewitterradarReferenceLocationSelect(GewitterradarSelect):
 
     @property
     def options(self) -> list[str]:
-        """Return zone and person entity IDs currently known to Home Assistant."""
+        """Return safe location entity IDs currently known to Home Assistant."""
         current = self.current_option
-        discovered = set(self.hass.states.async_entity_ids(LOCATION_DOMAINS))
+        discovered = set(
+            self.hass.states.async_entity_ids(LOCATION_DISCOVERY_DOMAINS)
+        )
         discovered.update((DEFAULT_REFERENCE_LOCATION, current))
+        if self._runtime.tracker_entity_id:
+            discovered.add(self._runtime.tracker_entity_id)
         return [DEFAULT_REFERENCE_LOCATION, *sorted(discovered - {DEFAULT_REFERENCE_LOCATION})]
 
     async def async_added_to_hass(self) -> None:
-        """Track additions and removals of supported location entities."""
+        """Track safe location additions/removals and V4.07 reference moves."""
         await super().async_added_to_hass()
         self.async_on_remove(
             async_track_state_added_domain(
-                self.hass, LOCATION_DOMAINS, self._locations_changed
+                self.hass, LOCATION_DISCOVERY_DOMAINS, self._locations_changed
             )
         )
         self.async_on_remove(
             async_track_state_removed_domain(
-                self.hass, LOCATION_DOMAINS, self._locations_changed
+                self.hass, LOCATION_DISCOVERY_DOMAINS, self._locations_changed
+            )
+        )
+        self.async_on_remove(
+            async_dispatcher_connect(
+                self.hass,
+                f"{SIGNAL_REFERENCE_COORDINATES_UPDATED}_{self._runtime.entry.entry_id}",
+                self._reference_changed,
             )
         )
 
     def _locations_changed(self, _: Event) -> None:
         """Publish changed location options safely from any callback thread."""
-        # Home Assistant can dispatch synchronous state listeners from a worker
-        # thread. async_write_ha_state() is event-loop-only; the scheduling API is
-        # explicitly thread-safe and prevents the real-install crash warning.
         self.schedule_update_ha_state()
+
+    @callback
+    def _reference_changed(self) -> None:
+        """Publish the service-driven reference selection immediately."""
+        self.async_write_ha_state()
