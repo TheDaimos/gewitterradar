@@ -58,7 +58,23 @@ Ein gemeinsamer Build oder Release ist **nicht releasefähig**, solange der gesc
 - `TheDaimos/gewitterradar-integration-dev` — historisches Integrationsentwicklungs-, Test-, Migrations- und Handoff-Repository.
 - `TheDaimos/gewitterradar-maplibre-dev` — separater experimenteller Engine-Zweig bis zur ausdrücklich freigegebenen Integration.
 
-Historische Repositories, Branches, Handoffs und eingefrorene Releases bleiben als Evidenz und Rückfallpunkte erhalten. Sie werden nicht stillschweigend gelöscht oder umgeschrieben.
+Historische Repositories, Handoffs, veröffentlichte Tags und ausdrücklich eingefrorene Release-Stände bleiben als Evidenz und Rückfallpunkte erhalten und werden nicht stillschweigend umgeschrieben oder gelöscht.
+
+### Verbindliche Branch-Lebensdauer
+
+Branches sind **nicht automatisch dauerhafte Archivobjekte**. Für neue normale Entwicklung gilt bewusst ein schlankes Modell:
+
+- `main` ist die laufende kanonische Linie;
+- `feature/<thema>` wird nur für einen klar abgegrenzten Arbeitsblock angelegt und nach erfolgreicher Integration/Abnahme wieder entfernt;
+- veröffentlichte Versionen werden durch den unveränderlichen Tag `vX.XX` verankert;
+- optional bleibt genau ein `frozen/vX.XX` als ausdrücklich benannter Release-/Rückfallanker bestehen;
+- routinemäßige `backup/*`, `freeze/*-candidate`, `handoff/*` oder mehrfach redundante Sicherheitsbranches sollen künftig vermieden werden.
+
+Bereits vorhandene Branches dürfen im Rahmen einer **ausdrücklich freigegebenen Aufräumaktion** entfernt werden, wenn vorher verifiziert wurde, dass ihr relevanter Stand vollständig über `main`, einen Release-Tag oder einen ausdrücklich erhaltenen Freeze-Punkt erreichbar bzw. ersetzt ist. Vollständig integrierte/redundante temporäre Branches sollen nach dieser Prüfung gelöscht werden, damit sie nicht fälschlich als aktive Entwicklungsstände erscheinen.
+
+Ein Branch mit **nicht integrierten/abweichenden eindeutigen Commits** wird nicht allein zur optischen Bereinigung gelöscht. Solche Branches bleiben bis zur bewussten fachlichen Prüfung bzw. Archiventscheidung erhalten.
+
+Veröffentlichte Tags und `frozen/vX.XX` werden niemals nachträglich auf einen anderen Commit verschoben.
 
 ## Paritäts- und Release-Regel
 
