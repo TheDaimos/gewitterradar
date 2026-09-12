@@ -7,7 +7,7 @@ const candidate = await readFile(resolve(root,'artifacts/v407/gewitterradar.js')
 
 const mustContain = [
   "const CARD_VERSION = '4.07';",
-  "const GEWITTERRADAR_BUILD = 'V4.07-TEST4-2026-09-12';",
+  "const GEWITTERRADAR_BUILD = 'V4.07-TEST5-2026-09-13';",
   "people:'Personen'",
   "zones:'Zonen'",
   "searchAction:'Ort suchen …'",
@@ -42,7 +42,9 @@ const mustContain = [
   "den Eintrag „Gewitterradar Dashboard“ auswählen",
   "lässt er sich über „Neu konfigurieren“ nicht auf eine Standort-Entität umstellen",
   "500 km Erfassungsradius, 120 Minuten Zeitfenster und 200 Blitze",
-  "lokale To-do-Liste mit dem Namen „Gewitterradar Orte“",
+  "Einstellungen → Geräte & Dienste → Integration hinzufügen → „Local to-do“ suchen/auswählen → Liste exakt „Gewitterradar Orte“ nennen",
+  "Speicherliste einrichten: Einstellungen → Geräte & Dienste → Integration hinzufügen → nach „Local to-do“ suchen und diese Integration auswählen",
+  "Settings → Devices & services → Add integration → search/select “Local to-do” → name the list exactly “Gewitterradar Orte”",
   "Externe Dienste & Netzwerkfreigaben",
   "geocoding-api.open-meteo.com · HTTPS/TCP 443",
   "nominatim.openstreetmap.org · HTTPS/TCP 443",
@@ -58,8 +60,9 @@ for (const needle of mustContain) {
 }
 
 if (candidate.includes('device_tracker.see')) throw new Error('Deprecated device_tracker.see must not appear in V4.07 candidate');
-if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST4');
+if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST5');
 if (candidate.includes('const biasedQuery =')) throw new Error('Soft home-country preference must not rewrite the worldwide Nominatim query');
+if (candidate.includes("savedSetup:'Zum Speichern einmalig eine lokale To-do-Liste")) throw new Error('Old incomplete Local to-do setup hint must not remain in TEST5');
 
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
   .map((needle) => candidate.indexOf(needle));
@@ -74,7 +77,7 @@ if (codes.length !== 249 || new Set(codes).size !== 249) throw new Error(`Expect
 
 // Security contract: inventory every fixed http(s) URL literal embedded in the
 // generated frontend. The W3C SVG namespace is deliberately present but is not a
-// network request. Any new literal must be reviewed and documented before TEST4+
+// network request. Any new literal must be reviewed and documented before TEST5+
 // may pass.
 const urlLiterals = [...new Set(candidate.match(/https?:\/\/[^\"'`\s)]+/g) || [])].sort();
 const expectedUrlLiterals = [
@@ -104,11 +107,11 @@ const tokioCandidates = [
   {name:'Tokio',displayLabel:'Tokio, Präfektur Tokio, Japan',admin1:'Präfektur Tokio',countryCode:'JP',importance:14000000,postcodes:[],postcode:''}
 ];
 const worldwideTokio = rank(tokioCandidates,'Tokio','', 'DE');
-if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST4 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
+if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST5 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
 const hardGermanTokio = rank(tokioCandidates,'Tokio','DE','');
-if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST4 ranking regression: explicit DE country filter must remain dominant');
+if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST5 ranking regression: explicit DE country filter must remain dominant');
 
-console.log('V4.07 location-search TEST4 contract: PASS');
+console.log('V4.07 location-search TEST5 contract: PASS');
 console.log(`ISO countries: ${codes.length}`);
 console.log(`Tokio worldwide ranking: ${worldwideTokio.map((item) => item.countryCode).join(' > ')}`);
 console.log(`External URL literals: ${urlLiterals.length} (including non-network SVG namespace)`);
