@@ -1,0 +1,36 @@
+set_reference_coordinates:
+  name: Set reference coordinates
+  description: >-
+    Moves the Gewitterradar-owned reference tracker to explicit WGS84
+    coordinates and selects that tracker as the current Gewitterradar reference.
+    This service never changes another integration's ConfigEntry.
+  fields:
+    latitude:
+      name: Latitude
+      description: WGS84 latitude of the selected location.
+      required: true
+      example: 69.6492
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: any
+          mode: box
+    longitude:
+      name: Longitude
+      description: WGS84 longitude of the selected location.
+      required: true
+      example: 18.9553
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: any
+          mode: box
+    name:
+      name: Location name
+      description: Human-readable name shown on the Gewitterradar tracker.
+      required: false
+      example: Tromsø
+      selector:
+        text:
