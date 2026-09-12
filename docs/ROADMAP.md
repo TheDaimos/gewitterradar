@@ -199,6 +199,28 @@ Niedrige Priorität:
 
 ## EXPLORATION – Ideen ohne Umsetzungszusage
 
+### Dokumentation gefährlich naher Blitzeinschläge über Local-To-do
+
+Prüfidee: Den für gespeicherte Orte vorgesehenen **Local-To-do-Flexible-Datastore** später auch als rein lokale, nachvollziehbare Dokumentation besonders naher Blitzeinschläge verwenden.
+
+Möglicher Anwendungsfall:
+
+- Blitzeinschläge automatisch vormerken, wenn sie der `zone.home` bzw. einem ausdrücklich konfigurierten Schutzstandort gefährlich nahe kommen;
+- einen solchen Treffer als separates Ereignis mit Zeitstempel, Koordinaten, Entfernung zum Schutzstandort und verfügbarer Quellen-/Ereignisinformation dokumentieren;
+- diese Einträge nicht als Live-Telemetrie, sondern als seltene, menschenlesbare Ereignisdokumentation behandeln;
+- mögliche spätere Nutzung als zusätzliche persönliche Dokumentationshilfe nach einem vermuteten Blitzschaden, etwa bei der zeitlichen Einordnung gegenüber einer Versicherung.
+
+Vor jeder Planung gesondert bewerten:
+
+- fachliche Aussagekraft und Genauigkeit der Blitzortungsdaten am konkreten Einschlagsort;
+- sinnvolle Entfernungsschwelle und Vermeidung unnötiger/mehrfacher Einträge;
+- welche Metadaten für eine spätere Nachvollziehbarkeit tatsächlich dauerhaft gespeichert werden sollten;
+- Aufbewahrungsdauer, Datenschutz und lokale Datenpflege;
+- klare Kennzeichnung, dass Gewitterradar damit **keinen amtlichen, gutachterlichen oder versicherungsrechtlich verbindlichen Nachweis** erzeugt, sondern ausschließlich zusätzliche Ereignisdokumentation;
+- ob Local-To-do dafür langfristig die geeignete Persistenzschicht bleibt oder ein eigener Ereignisspeicher sinnvoller wäre.
+
+Diese Idee ist ausdrücklich **noch keiner Version zugeordnet** und muss vor einer Umsetzung separat fachlich und technisch bewertet werden.
+
 ### Kompass im Stil einer alten Taschenuhr
 
 - zusätzliche historische/instrumentelle Kompassgestaltung prüfen;
