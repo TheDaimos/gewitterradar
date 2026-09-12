@@ -1,6 +1,6 @@
 # Gewitterradar V4.07 – Release-To-do
 
-Stand: 12.09.2026
+Stand: 13.09.2026
 
 Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.07 bewusst geprüft und abgeschlossen werden sollen.
 
@@ -19,9 +19,11 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 ## Bereits offene V4.07-Releasepunkte
 
 - [ ] Neue V4.07-Hilfe- und Firewall-/Netzwerktexte in die vollständige Sprachmatrix übertragen.
-- [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten prüfen.
-- [ ] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real prüfen.
-- [ ] `★ Speichern` und „Gespeicherte Orte“ mit der lokalen To-do-Liste real prüfen.
+- [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten weiter prüfen.
+- [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
+- [x] `★ Speichern` und „Gespeicherte Orte“ mit der lokalen To-do-Liste real geprüft.
+- [ ] TEST6: `×` Soft-Delete → „Entfernte Orte“ → `↶` Wiederherstellen auf realem Home Assistant prüfen.
+- [ ] Prüfen, dass erneutes `★ Speichern` eines weich entfernten Ortes den vorhandenen Eintrag wiederherstellt und kein Duplikat erzeugt.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 Die Kontaktadresse ist ein Präsentations-/Kommunikationspunkt und darf die funktionale V4.07-Abnahme nicht verdecken. Ein späterer Wechsel des Mailanbieters soll nur die sichtbare Kontaktadresse betreffen und keine Produktlogik berühren.
