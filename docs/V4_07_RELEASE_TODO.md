@@ -34,7 +34,7 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [ ] Symbol für **Externe Dienste & Netzwerkfreigaben** auf kleine Darstellungsgröße vereinfachen. Aus der neuen Shield-Serie wurde **Variante 2** final ausgewählt; die technische Übernahme steht noch aus.
 - [x] TEST9 und TEST9R1 als Regression verworfen: Beide wurden zwar syntaktisch/vertraglich grün gebaut, aber auf einer nach TEST8 zusätzlich veränderten, nicht real abgenommenen Laufzeitbasis erzeugt. Damit war die Bezeichnung als Fortsetzung von TEST8 technisch irreführend.
 - [x] Build-Pipeline stabilisiert: Vor jeder weiteren TEST9-Erweiterung muss der erzeugte TEST8 byte-identisch zur real akzeptierten Referenz sein (1.649.138 Byte / SHA256 `a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9`). Abweichungen brechen die CI.
-- [ ] TEST9R2 auf realem Home Assistant prüfen. R2 wird ausschließlich auf der byte-identischen TEST8-Basis aufgebaut, verändert die bestehende Input-DOM-Struktur nicht und ergänzt nur das kleine `×` am rechten Ende von **Ort / PLZ**. Erwartete R2-Datei: 1.651.359 Byte, SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`.
+- [x] TEST9R2 auf realem Home Assistant geprüft und akzeptiert. Gewitterradar startet normal, **Ort suchen …** öffnet vollständig und das neue `×` im Feld **Ort / PLZ** löscht die Eingabe wie vorgesehen. R2 basiert ausschließlich auf der byte-identischen TEST8-Basis, verändert die bestehende Input-DOM-Struktur nicht und umfasst 1.651.359 Byte bei SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
