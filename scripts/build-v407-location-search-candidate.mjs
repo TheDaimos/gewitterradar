@@ -15,6 +15,7 @@ import {v407CountryGroupsDelta} from './v4-07-country-groups-delta.mjs';
 import {v407NetworkSecurityDelta} from './v4-07-network-security-delta.mjs';
 import {v407TodoSetupHelpDelta} from './v4-07-todo-setup-help-delta.mjs';
 import {v407SavedPlacesSoftDeleteDelta} from './v4-07-saved-places-soft-delete-delta.mjs';
+import {v407UiRegressionPolishDelta} from './v4-07-ui-regression-polish-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir = resolve(root,'artifacts/v407');
@@ -50,13 +51,15 @@ export async function buildV407Candidate() {
   if (!acceptedV406.includes('BUILD_YYYY_MM')) throw new Error('Accepted V4.06 release/date metadata missing');
   if (!acceptedV406.includes('V4.06 · 2026/09')) throw new Error('Accepted V4.06 release-history chronology missing');
 
-  const candidate = v407SavedPlacesSoftDeleteDelta(
-    v407TodoSetupHelpDelta(
-      v407NetworkSecurityDelta(
-        v407CountryGroupsDelta(
-          v407SavedPlacesDelta(
-            v407HelpNotesDelta(
-              v407LocationSearchDelta(acceptedV406)
+  const candidate = v407UiRegressionPolishDelta(
+    v407SavedPlacesSoftDeleteDelta(
+      v407TodoSetupHelpDelta(
+        v407NetworkSecurityDelta(
+          v407CountryGroupsDelta(
+            v407SavedPlacesDelta(
+              v407HelpNotesDelta(
+                v407LocationSearchDelta(acceptedV406)
+              )
             )
           )
         )
@@ -70,6 +73,8 @@ export async function buildV407Candidate() {
   if (!candidate.includes('settings-footer-version')) throw new Error('V4.07 regressed the accepted footer version placement');
   if (!candidate.includes('BUILD_YYYY_MM')) throw new Error('V4.07 regressed accepted date/version metadata');
   if (!candidate.includes('V4.06 · 2026/09')) throw new Error('V4.07 regressed accepted release-history chronology');
+  if (!candidate.includes('V4.07: Release History inherits the accepted Settings/Help premium metal treatment.')) throw new Error('V4.07 premium Release History polish missing');
+  if (!candidate.includes('closeLocationDropdown(false);\n        this._syncHelpMenu();')) throw new Error('Settings must close an open location dropdown before opening');
 
   const bytes = Buffer.from(candidate,'utf8');
   await mkdir(outDir,{recursive:true});
