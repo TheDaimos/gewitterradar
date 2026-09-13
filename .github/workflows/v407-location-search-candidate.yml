@@ -36,6 +36,7 @@ jobs:
           node --check scripts/v4-07-ui-regression-polish-delta.mjs
           node --check scripts/v4-07-location-dropdown-viewport-delta.mjs
           node --check scripts/v4-07-location-dropdown-dismiss-delta.mjs
+          node --check scripts/v4-07-help-release-history-i18n-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
       - name: Build V4.07 test candidate
