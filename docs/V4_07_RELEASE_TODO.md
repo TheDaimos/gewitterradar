@@ -18,8 +18,8 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 
 ## Bereits offene V4.07-Releasepunkte
 
-- [ ] Korrigiertes V4.07-Dashboard-Package auf Basis des vollständigen V4.06-Pakets in den kanonischen V4.07-Zweig übernehmen und anschließend mit dem abgeleiteten Repository `TheDaimos/gewitterradar-dashboard` synchronisieren; die sechs wiederhergestellten V4.06-Migrationspfade dürfen dabei nicht erneut verloren gehen.
-- [ ] Neue V4.07-Hilfe- und Firewall-/Netzwerktexte in die vollständige Sprachmatrix übertragen.
+- [x] Korrigiertes V4.07-Dashboard-Package auf Basis des vollständigen V4.06-Pakets in den kanonischen V4.07-Zweig übernommen, per Paritäts-/YAML-Test abgesichert und mit dem abgeleiteten Repository `TheDaimos/gewitterradar-dashboard` synchronisiert; die sechs wiederhergestellten V4.06-Migrationspfade bleiben erhalten. Die abgeleitete Prüfsummenliste enthält das V4.07-Package ebenfalls.
+- [x] Neue V4.07-Ortssuche-, Speicher-, Hilfe- und Firewall-/Netzwerktexte in die vollständige Sprachmatrix übertragen: 15 Sprachen plus 4 deutsche Dialektvarianten. Der CI-Vertrag prüft alle 19 Suchoberflächen-Sprachen sowie die 17 extern geladenen Hilfe-Sprachen auf vollständige Schlüssel/Abschnitte und Pflichtdetails.
 - [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten weiter prüfen.
 - [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
 - [x] `★ Speichern` und „Gespeicherte Orte“ mit der lokalen To-do-Liste real geprüft.
@@ -30,7 +30,7 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [x] TEST7: V4.07-Eintrag der Release History vom alten „PLANNED“-Text auf den tatsächlich implementierten Testkandidaten aktualisieren; real geprüft und akzeptiert.
 - [x] TEST7: erstes Premium-Netzwerksymbol für **Externe Dienste & Netzwerkfreigaben** technisch integriert; visuell verworfen.
 - [x] TEST8: ausgewähltes Symbol Nr. 4 als deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen integriert; keine zusätzliche Bilddatei oder externe Laufzeitabhängigkeit.
-- [ ] TEST8: ausgewähltes Firewall-Symbol auf realem Home Assistant visuell prüfen und endgültig akzeptieren.
+- [ ] Symbol für **Externe Dienste & Netzwerkfreigaben** auf kleine Darstellungsgröße vereinfachen (voraussichtlich schlichtes Shield); Detailvariante Nr. 4 ist technisch funktionsfähig, wirkt im realen kleinen Hilfemenü aber zu detailreich.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
