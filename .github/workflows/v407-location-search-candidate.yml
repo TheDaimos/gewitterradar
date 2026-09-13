@@ -41,14 +41,17 @@ jobs:
           node --check scripts/v4-07-firewall-icon-delta.mjs
           node --check scripts/v4-07-firewall-icon-variant2-delta.mjs
           node --check scripts/v4-07-location-query-clear-delta.mjs
+          node --check scripts/v4-07-desktop-query-clear-version-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/finalize-v407-test8-candidate.mjs
           node --check scripts/finalize-v407-test9-candidate.mjs
           node --check scripts/finalize-v407-test10-candidate.mjs
+          node --check scripts/finalize-v407-test10r1-candidate.mjs
           node --check scripts/test-v407-test8-candidate.mjs
           node --check scripts/test-v407-test9-candidate.mjs
           node --check scripts/test-v407-full-i18n-candidate.mjs
           node --check scripts/test-v407-test10-candidate.mjs
+          node --check scripts/test-v407-test10r1-candidate.mjs
       - name: Build accepted TEST7 base
         run: node scripts/build-v407-location-search-candidate.mjs
       - name: Check TEST7 generated JavaScript syntax
@@ -83,6 +86,17 @@ jobs:
         run: node scripts/test-v407-full-i18n-candidate.mjs
       - name: Validate TEST10 stabilization contract
         run: node scripts/test-v407-test10-candidate.mjs
+      - name: Prove byte-identical TEST10 baseline
+        run: |
+          echo "a95e7b3346089f45e51c7ceebfc3d813b6bebac8cef56d3fa4cfa8dff37bd076  artifacts/v407/gewitterradar.js" | sha256sum -c -
+          echo "a95e7b3346089f45e51c7ceebfc3d813b6bebac8cef56d3fa4cfa8dff37bd076  artifacts/v407/gewitterradar-v4.07-test.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar.js)" -eq 1769200
+      - name: Finalize TEST10R1 desktop clear and visible V4.07.10
+        run: node scripts/finalize-v407-test10r1-candidate.mjs
+      - name: Check TEST10R1 generated JavaScript syntax
+        run: node --check artifacts/v407/gewitterradar.js
+      - name: Validate TEST10R1 desktop clear and visible version contract
+        run: node scripts/test-v407-test10r1-candidate.mjs
       - name: Verify byte-identical aliases
         run: cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
       - name: Publish test JavaScript
