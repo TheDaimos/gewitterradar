@@ -32,9 +32,9 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST6: gespeicherte Orte können direkt im Standortmenü mit `×` weich entfernt werden. Dabei wird der zugehörige Local-To-do-Eintrag nicht gelöscht, sondern auf `completed` gesetzt.
 - TEST6: weich entfernte Orte erscheinen unter **„Entfernte Orte“** und können mit `↶` wiederhergestellt werden; Name, Koordinaten und Metadaten bleiben erhalten.
 - TEST6: Realtest auf Home Assistant bestätigt das weiche Entfernen mit `×` und die anschließende Wiederherstellung mit `↶`.
-- TEST6: wird ein zuvor weich entfernter Ort erneut über `★ Speichern` gewählt, stellt Gewitterradar den vorhandenen Eintrag wieder her, statt ein Duplikat anzulegen; dieser Sonderfall benötigt noch die abschließende Realverprobung.
+- TEST6: Realtest bestätigt außerdem den Sonderfall „Ort speichern → weich entfernen → denselben Ort erneut über die Suche speichern“: Der vorhandene `completed`-Eintrag wird auf `needs_action` zurückgesetzt, der Ort erscheint wieder unter „Gespeicherte Orte“ und es entsteht kein Duplikat.
 - TEST6: der Kandidatenvertrag verbietet für diese Funktion `todo.remove_item`; Entfernen bleibt ausdrücklich reversibel und verwendet `todo.update_item`.
-- V4.07-Oberflächenfeinschliff: Das Standortwahl-Menü wird beim Klick/Tap außerhalb geschlossen; Interaktionen innerhalb des Menüs und auf den beiden Standort-Schaltflächen bleiben davon ausgenommen. Die Realgeräteprüfung steht noch aus.
+- V4.07-Oberflächenfeinschliff: Das Standortwahl-Menü wird beim Klick/Tap außerhalb geschlossen; Interaktionen innerhalb des Menüs und auf den beiden Standort-Schaltflächen bleiben davon ausgenommen. Realtest bestätigt das gewünschte Schließverhalten.
 
 ## Architekturentscheidung
 
@@ -85,8 +85,6 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- Sonderfall prüfen: erneutes `★ Speichern` eines weich entfernten Ortes stellt den vorhandenen Eintrag wieder her und erzeugt kein Duplikat;
-- Klick/Tap außerhalb des geöffneten Standortwahl-Menüs auf realen Android-/iOS-/iPad-/Desktop-Oberflächen prüfen;
 - vollständige Übersetzung aller neuen V4.07-Such-, Speicher- und Netzwerktexte in die gesamte Sprachmatrix;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
