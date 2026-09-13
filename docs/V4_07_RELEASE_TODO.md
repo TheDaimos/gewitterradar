@@ -22,8 +22,9 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten weiter prüfen.
 - [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
 - [x] `★ Speichern` und „Gespeicherte Orte“ mit der lokalen To-do-Liste real geprüft.
-- [ ] TEST6: `×` Soft-Delete → „Entfernte Orte“ → `↶` Wiederherstellen auf realem Home Assistant prüfen.
+- [x] TEST6: `×` Soft-Delete → „Entfernte Orte“ → `↶` Wiederherstellen auf realem Home Assistant geprüft.
 - [ ] Prüfen, dass erneutes `★ Speichern` eines weich entfernten Ortes den vorhandenen Eintrag wiederherstellt und kein Duplikat erzeugt.
+- [ ] Standortwahl-Menü bei Klick/Tap außerhalb des Menüs schließen; Klicks innerhalb des Menüs sowie auf die beiden Standort-Schaltflächen dürfen dabei nicht als Außenklick behandelt werden.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
