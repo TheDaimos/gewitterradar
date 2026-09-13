@@ -7,7 +7,7 @@ const candidate = await readFile(resolve(root,'artifacts/v407/gewitterradar.js')
 
 const mustContain = [
   "const CARD_VERSION = '4.07';",
-  "const GEWITTERRADAR_BUILD = 'V4.07-TEST6-2026-09-13';",
+  "const GEWITTERRADAR_BUILD = 'V4.07-TEST7-2026-09-13';",
   "people:'Personen'",
   "zones:'Zonen'",
   "searchAction:'Ort suchen …'",
@@ -64,9 +64,21 @@ const mustContain = [
   "HTTPS-Proxy, TLS-Inspection, Inhaltsfilter",
   "http://www.w3.org/2000/svg ist lediglich der SVG-Namensraum",
   "device_tracker.gewitterradar verwendet",
+  "external_services:'<svg viewBox=\"0 0 24 24\"",
   "V4.07: Release History inherits the accepted Settings/Help premium metal treatment.",
   ".release-history-close img",
   "<button class=\"release-history-close\" id=\"release-history-close\" type=\"button\" aria-label=\"Close release history\"><img src=\"${ABOUT_CLOSE_IMAGE}\"",
+  "release-history-language-toggle",
+  "data-release-history-language=\"de\"",
+  "data-release-history-language=\"en\"",
+  "data-release-history-lang=\"de\"",
+  "data-release-history-lang=\"en\"",
+  "syncReleaseHistoryLanguage",
+  "releaseHistoryGermanLanguages",
+  "Gewitterradar · Versionsverlauf",
+  "Worldwide reference locations & saved places",
+  "Weltweite Referenzstandorte & gespeicherte Orte",
+  "V4.07 · 2026/09",
   "const viewport = window.visualViewport;",
   "const viewportCap = Math.max(1,Math.floor(viewportHeight * 0.88));",
   "const belowAvailable = Math.max(0,viewportBottom-rect.bottom-gap-margin);",
@@ -80,11 +92,19 @@ for (const needle of mustContain) {
 }
 
 if (candidate.includes('device_tracker.see')) throw new Error('Deprecated device_tracker.see must not appear in V4.07 candidate');
-if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST6');
+if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw new Error('Save button must be active in TEST7');
 if (candidate.includes('const biasedQuery =')) throw new Error('Soft home-country preference must not rewrite the worldwide Nominatim query');
-if (candidate.includes("savedSetup:'Zum Speichern einmalig eine lokale To-do-Liste")) throw new Error('Old incomplete Local to-do setup hint must not remain in TEST6');
-if (candidate.includes("callService('todo','remove_item'")) throw new Error('TEST6 saved-place removal must stay reversible and must not delete To-do items');
+if (candidate.includes("savedSetup:'Zum Speichern einmalig eine lokale To-do-Liste")) throw new Error('Old incomplete Local to-do setup hint must not remain in TEST7');
+if (candidate.includes("callService('todo','remove_item'")) throw new Error('Saved-place removal must stay reversible and must not delete To-do items');
 if (candidate.includes('aria-label="Close release history">×</button>')) throw new Error('Release History must use the accepted premium image close control');
+if (candidate.includes('V4.07 · PLANNED')) throw new Error('Release History must describe the implemented V4.07 candidate, not PLANNED scope');
+
+const languageButtons = candidate.match(/data-release-history-language="(?:de|en)"/g) || [];
+if (languageButtons.length !== 2) throw new Error(`Expected exactly two Release History language buttons, got ${languageButtons.length}`);
+const languagePanels = candidate.match(/data-release-history-lang="(?:de|en)"/g) || [];
+if (languagePanels.length !== 2) throw new Error(`Expected exactly two Release History language panels, got ${languagePanels.length}`);
+const v407HistoryEntries = candidate.match(/<div class="release-history-version">V4\.07 · 2026\/09<\/div>/g) || [];
+if (v407HistoryEntries.length !== 2) throw new Error(`Expected bilingual V4.07 Release History entries, got ${v407HistoryEntries.length}`);
 
 const settingsOpenStart = candidate.indexOf('      const openSettings = () => {');
 const settingsOpenEnd = candidate.indexOf('      const closeSettings = () => {',settingsOpenStart);
@@ -112,6 +132,16 @@ if (!outsideHandlerBlock.includes("if (!locationDropdown?.classList.contains('op
 if (!outsideHandlerBlock.includes("const path = typeof event.composedPath === 'function' ? event.composedPath() : [];")) throw new Error('Outside-pointer handler must use composedPath for shadow-DOM-safe hit testing');
 if (!outsideHandlerBlock.includes('path.includes(locationDropdown) || path.includes(settingsLocationButton) || path.includes(locationMainButton)')) throw new Error('Outside-pointer handler must preserve menu and trigger interactions');
 if (!outsideHandlerBlock.includes('closeLocationDropdown(false);')) throw new Error('Outside-pointer handler must close the location dropdown');
+
+const historyRuntimeStart = candidate.indexOf("      const releaseHistoryGermanLanguages = new Set(['Deutsch'");
+const historyRuntimeEnd = candidate.indexOf('      const openReleaseHistory = () => {',historyRuntimeStart);
+if (historyRuntimeStart < 0 || historyRuntimeEnd < 0) throw new Error('Release History language runtime not found');
+const historyRuntimeBlock = candidate.slice(historyRuntimeStart,historyRuntimeEnd);
+for (const dialect of ['Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']) {
+  if (!historyRuntimeBlock.includes(`'${dialect}'`)) throw new Error(`German Release History default mapping missing dialect: ${dialect}`);
+}
+if (!historyRuntimeBlock.includes("panel.hidden = panel.dataset.releaseHistoryLang !== language;")) throw new Error('Release History must hide the inactive language panel');
+if (!historyRuntimeBlock.includes("button.setAttribute('aria-pressed'")) throw new Error('Release History language buttons must expose pressed state');
 
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
   .map((needle) => candidate.indexOf(needle));
@@ -149,12 +179,14 @@ const tokioCandidates = [
   {name:'Tokio',displayLabel:'Tokio, Präfektur Tokio, Japan',admin1:'Präfektur Tokio',countryCode:'JP',importance:14000000,postcodes:[],postcode:''}
 ];
 const worldwideTokio = rank(tokioCandidates,'Tokio','', 'DE');
-if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST6 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
+if (worldwideTokio[0]?.countryCode !== 'JP') throw new Error('TEST7 ranking regression: famous Tokio/Japan must outrank the German namesake without an explicit country filter');
 const hardGermanTokio = rank(tokioCandidates,'Tokio','DE','');
-if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST6 ranking regression: explicit DE country filter must remain dominant');
+if (hardGermanTokio[0]?.countryCode !== 'DE') throw new Error('TEST7 ranking regression: explicit DE country filter must remain dominant');
 
-console.log('V4.07 location-search TEST6 contract: PASS');
+console.log('V4.07 location-search TEST7 contract: PASS');
 console.log(`ISO countries: ${codes.length}`);
 console.log(`Tokio worldwide ranking: ${worldwideTokio.map((item) => item.countryCode).join(' > ')}`);
 console.log(`External URL literals: ${urlLiterals.length} (including non-network SVG namespace)`);
 console.log('Location dropdown outside-pointer dismissal: GUARDED');
+console.log('External-services premium network icon: PRESENT');
+console.log('Release History DE/EN switch and bilingual V4.07 entry: GUARDED');
