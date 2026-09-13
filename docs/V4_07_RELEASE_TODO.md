@@ -18,6 +18,7 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 
 ## Bereits offene V4.07-Releasepunkte
 
+- [ ] Korrigiertes V4.07-Dashboard-Package auf Basis des vollständigen V4.06-Pakets in den kanonischen V4.07-Zweig übernehmen und anschließend mit dem abgeleiteten Repository `TheDaimos/gewitterradar-dashboard` synchronisieren; die sechs wiederhergestellten V4.06-Migrationspfade dürfen dabei nicht erneut verloren gehen.
 - [ ] Neue V4.07-Hilfe- und Firewall-/Netzwerktexte in die vollständige Sprachmatrix übertragen.
 - [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten weiter prüfen.
 - [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
