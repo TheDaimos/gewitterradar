@@ -39,7 +39,11 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST7: Überschrift, Untertitel, Schließen-Beschriftung und aktive Sprachschaltfläche werden mit umgeschaltet und sind über `aria-label`/`aria-pressed` zugänglich. Der Realtest wurde erfolgreich abgeschlossen.
 - TEST7: Der V4.07-Eintrag der Release History beschreibt nun den tatsächlich implementierten Testkandidaten statt eines veralteten „PLANNED“-Hinweises.
 - TEST7: Das zunächst eingesetzte verbundene-Knoten-Symbol für **Externe Dienste & Netzwerkfreigaben** war technisch korrekt, wurde im Realtest jedoch aus gestalterischen Gründen verworfen.
-- TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet, übernimmt damit die bestehende Premium-Farbgebung und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu.
+- TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol technisch durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu. Für die kleine Darstellung ist als letzter optischer Feinschliff eine einfachere Shield-Variante vorgemerkt.
+- V4.07-Sprachmatrix abgeschlossen: Sämtliche neuen Such-, Speicher- und Standorttexte liegen für **15 Sprachen plus 4 deutsche Dialektvarianten** vor. Der bisherige Deutsch/Englisch-Sonderpfad der V4.07-Ortssuche wurde durch eine vollständige 19-Sprachen-Tabelle ersetzt.
+- V4.07-Hilfe-Sprachmatrix abgeschlossen: Die neuen Abschnitte **Referenzstandort** sowie **Externe Dienste & Netzwerkfreigaben** werden auch für die 17 extern geladenen nicht-nativen Sprachvarianten vollständig ergänzt. Ein eigener CI-Vertrag prüft Struktur, Pflichtfelder und die sicherheitsrelevanten Laufzeitdetails aller Sprachfassungen.
+- Das korrigierte V4.07-Dashboard-Package basiert wieder auf dem vollständigen V4.06-Paket, behält alle sechs Legacy-Migrationspfade und wird im kanonischen V4.07-Zweig automatisiert gegen die Home-Assistant-Quelle auf Byte-/YAML-Parität geprüft.
+- Das korrigierte V4.07-Dashboard-Package wurde zusätzlich nach `TheDaimos/gewitterradar-dashboard` synchronisiert; dessen Prüfsummenbestand enthält nun auch `dist/app_gewitterradar_v4_07_pkg.yaml`.
 
 ## Architekturentscheidung
 
@@ -91,8 +95,8 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- TEST8 auf realem Home Assistant visuell prüfen: ausgewähltes Schild-/Firewall-Symbol in **Externe Dienste & Netzwerkfreigaben**;
-- vollständige Übersetzung aller neuen V4.07-Such-, Speicher- und Netzwerktexte in die gesamte Sprachmatrix;
+- Symbol für **Externe Dienste & Netzwerkfreigaben** auf die kleine reale Darstellung vereinfachen und final visuell akzeptieren;
+- ländergruppierte Ortssuche und Ranking auf den vorgesehenen realen Geräteklassen weiter regressionsprüfen;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
 - Tests von Blitzortung-Neuabonnierung, Latenz, Neustart/Restore und Recorder-Auswirkungen auf realem Home Assistant;
