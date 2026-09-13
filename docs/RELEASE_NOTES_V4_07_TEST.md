@@ -39,11 +39,13 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST7: Überschrift, Untertitel, Schließen-Beschriftung und aktive Sprachschaltfläche werden mit umgeschaltet und sind über `aria-label`/`aria-pressed` zugänglich. Der Realtest wurde erfolgreich abgeschlossen.
 - TEST7: Der V4.07-Eintrag der Release History beschreibt nun den tatsächlich implementierten Testkandidaten statt eines veralteten „PLANNED“-Hinweises.
 - TEST7: Das zunächst eingesetzte verbundene-Knoten-Symbol für **Externe Dienste & Netzwerkfreigaben** war technisch korrekt, wurde im Realtest jedoch aus gestalterischen Gründen verworfen.
-- TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol technisch durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu. Für die kleine Darstellung ist als letzter optischer Feinschliff eine einfachere Shield-Variante vorgemerkt.
+- TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol technisch durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu. Für die kleine Darstellung ist als letzter optischer Feinschliff die einfachere Shield-Variante 2 ausgewählt und zur späteren technischen Übernahme vorgemerkt.
 - V4.07-Sprachmatrix abgeschlossen: Sämtliche neuen Such-, Speicher- und Standorttexte liegen für **15 Sprachen plus 4 deutsche Dialektvarianten** vor. Der bisherige Deutsch/Englisch-Sonderpfad der V4.07-Ortssuche wurde durch eine vollständige 19-Sprachen-Tabelle ersetzt.
 - V4.07-Hilfe-Sprachmatrix abgeschlossen: Die neuen Abschnitte **Referenzstandort** sowie **Externe Dienste & Netzwerkfreigaben** werden auch für die 17 extern geladenen nicht-nativen Sprachvarianten vollständig ergänzt. Ein eigener CI-Vertrag prüft Struktur, Pflichtfelder und die sicherheitsrelevanten Laufzeitdetails aller Sprachfassungen.
 - Das korrigierte V4.07-Dashboard-Package basiert wieder auf dem vollständigen V4.06-Paket, behält alle sechs Legacy-Migrationspfade und wird im kanonischen V4.07-Zweig automatisiert gegen die Home-Assistant-Quelle auf Byte-/YAML-Parität geprüft.
 - Das korrigierte V4.07-Dashboard-Package wurde zusätzlich nach `TheDaimos/gewitterradar-dashboard` synchronisiert; dessen Prüfsummenbestand enthält nun auch `dist/app_gewitterradar_v4_07_pkg.yaml`.
+- TEST9: Im Feld **Ort / PLZ** wurde ein kompaktes `×` zum schnellen Zurücksetzen der Suchtexteingabe ergänzt. Die erste TEST9-Fassung verursachte dabei eine Regression: Durch die zusätzliche Input-Hülle war die bisherige `previousElementSibling`-Zuordnung zum Label nicht mehr gültig; die Dialoginitialisierung brach ab und Felder/Schaltfläche blieben unbeschriftet.
+- TEST9R1: Die Regression ist behoben. Das Label wird nun robust über den umgebenden Feldcontainer aufgelöst; ein zusätzlicher CI-Regressionsschutz verbietet die fehleranfällige alte Zuordnung. Der korrigierte Kandidaten-Build läuft erfolgreich durch. Der reale Home-Assistant-Test steht noch aus.
 
 ## Architekturentscheidung
 
@@ -90,12 +92,14 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 - V4.06 bleibt eingefrorene Rückfallbasis;
 - neue externe feste URL-Ziele lassen den TEST4+-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
 - Soft-Delete für gespeicherte Orte verändert ausschließlich den Status des eigenen Local-To-do-Eintrags und löscht den Eintrag nicht;
-- TEST7/TEST8 fügen keine neue externe Laufzeitabhängigkeit hinzu; Sprachumschalter und Firewall-Symbol sind vollständig im Frontend enthalten;
+- TEST7/TEST8/TEST9R1 fügen keine neue externe Laufzeitabhängigkeit hinzu;
+- TEST9R1 enthält einen expliziten Regressionstest für die Label-Auflösung des umhüllten Ort/PLZ-Eingabefelds;
 - kein V4.07-Release-Tag und kein Merge nach `main` vor bestätigtem Regressionstest.
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- Symbol für **Externe Dienste & Netzwerkfreigaben** auf die kleine reale Darstellung vereinfachen und final visuell akzeptieren;
+- Shield-Variante 2 für **Externe Dienste & Netzwerkfreigaben** technisch übernehmen und final visuell akzeptieren;
+- TEST9R1 `×`-Zurücksetzen im Feld **Ort / PLZ** real auf Home Assistant prüfen;
 - ländergruppierte Ortssuche und Ranking auf den vorgesehenen realen Geräteklassen weiter regressionsprüfen;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
