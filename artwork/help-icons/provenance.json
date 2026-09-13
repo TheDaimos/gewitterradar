@@ -1,0 +1,14 @@
+{
+  "version": "V4.07.11",
+  "date": "2026-09-13",
+  "scope": "Hilfe & Hinweise premium icon family",
+  "masterFormat": "SVG",
+  "masterCanvas": "2048x2048",
+  "transparentBackground": true,
+  "runtime": "Self-contained data:image/svg+xml;base64 URIs generated from the masters during TEST11 finalization",
+  "variants": {
+    "A": "help-external-shield2.svg",
+    "B": "help-external-rj45.svg"
+  },
+  "rule": "The hi-res/vector masters in artwork/help-icons/hires are authoritative and must remain in the canonical Gewitterradar repository. Runtime/test derivatives must never replace these originals."
+}
