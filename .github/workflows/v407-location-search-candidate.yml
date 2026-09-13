@@ -24,7 +24,7 @@ jobs:
           node-version: "24"
       - name: Prove canonical V4.06 frontend is still valid
         run: node scripts/verify-frontend.mjs
-      - name: Check V4.07 delta and builder syntax
+      - name: Check V4.07 stabilization scripts syntax
         run: |
           node --check scripts/v4-07-location-search-delta.mjs
           node --check scripts/v4-07-help-notes-delta.mjs
@@ -43,29 +43,28 @@ jobs:
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/finalize-v407-test8-candidate.mjs
           node --check scripts/finalize-v407-test9-candidate.mjs
-          node --check scripts/test-v407-location-search-candidate.mjs
-          node --check scripts/test-v407-full-i18n-candidate.mjs
           node --check scripts/test-v407-test8-candidate.mjs
           node --check scripts/test-v407-test9-candidate.mjs
-      - name: Build validated V4.07 TEST7 base candidate
+      - name: Build accepted TEST7 base
         run: node scripts/build-v407-location-search-candidate.mjs
       - name: Check TEST7 generated JavaScript syntax
         run: node --check artifacts/v407/gewitterradar.js
-      - name: Validate TEST7 location-search and network contract
-        run: node scripts/test-v407-location-search-candidate.mjs
-      - name: Validate complete 19-language V4.07 matrix
-        run: node scripts/test-v407-full-i18n-candidate.mjs
       - name: Finalize TEST8 selected firewall icon
         run: node scripts/finalize-v407-test8-candidate.mjs
       - name: Check TEST8 generated JavaScript syntax
         run: node --check artifacts/v407/gewitterradar.js
       - name: Validate TEST8 firewall icon contract
         run: node scripts/test-v407-test8-candidate.mjs
-      - name: Finalize TEST9 location-query clear control
+      - name: Prove byte-identical accepted TEST8 baseline
+        run: |
+          echo "a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9  artifacts/v407/gewitterradar.js" | sha256sum -c -
+          echo "a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9  artifacts/v407/gewitterradar-v4.07-test.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar.js)" -eq 1649138
+      - name: Finalize TEST9R2 isolated location-query clear control
         run: node scripts/finalize-v407-test9-candidate.mjs
-      - name: Check TEST9 generated JavaScript syntax
+      - name: Check TEST9R2 generated JavaScript syntax
         run: node --check artifacts/v407/gewitterradar.js
-      - name: Validate TEST9 location-query clear contract
+      - name: Validate TEST9R2 isolated query-clear contract
         run: node scripts/test-v407-test9-candidate.mjs
       - name: Verify byte-identical aliases
         run: cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
