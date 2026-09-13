@@ -46,6 +46,7 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - Das korrigierte V4.07-Dashboard-Package wurde zusätzlich nach `TheDaimos/gewitterradar-dashboard` synchronisiert; dessen Prüfsummenbestand enthält nun auch `dist/app_gewitterradar_v4_07_pkg.yaml`.
 - TEST9 und TEST9R1 wurden nach dem Realtest **verworfen**. Die anfängliche Diagnose eines reinen Label-/Wrapperfehlers war unvollständig: Beide Kandidaten wurden auf einem neu erzeugten „TEST8“ aufgebaut, der durch die zwischenzeitlich integrierte Vollübersetzung nicht mehr byte-identisch mit dem tatsächlich funktionierenden TEST8 war. Dadurch wurde eine nicht abgenommene Basis als stabile Referenz weiterverwendet.
 - TEST9R2 korrigiert den Entwicklungsprozess und die Funktion zugleich: Ausgangspunkt ist zwingend der byte-identische, real akzeptierte TEST8. Das `×` wird ohne zusätzliche Input-Hülle und ohne Änderung der bestehenden Label-DOM-Struktur ergänzt. R2 umfasst **1.651.359 Byte** bei SHA256 **`9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`**; der CI-Artefakt ist byte-identisch zur lokal aus der akzeptierten Referenz erzeugten Datei.
+- TEST9R2 wurde anschließend auf dem realen Home Assistant erfolgreich geprüft und akzeptiert: Gewitterradar startet normal, **Ort suchen …** öffnet vollständig und das neue `×` löscht die Eingabe im Feld **Ort / PLZ** wie vorgesehen.
 
 ## Architekturentscheidung
 
@@ -99,8 +100,7 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- TEST9R2 zunächst auf realem Home Assistant gegen die stabile TEST8-Basis prüfen;
-- vollständige 19-Sprachen-Matrix danach kontrolliert wieder aufsetzen und real abnehmen;
+- vollständige 19-Sprachen-Matrix jetzt kontrolliert auf den real akzeptierten TEST9R2-Stand aufsetzen und real abnehmen;
 - Shield-Variante 2 für **Externe Dienste & Netzwerkfreigaben** technisch übernehmen und final visuell akzeptieren;
 - ländergruppierte Ortssuche und Ranking auf den vorgesehenen realen Geräteklassen weiter regressionsprüfen;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
