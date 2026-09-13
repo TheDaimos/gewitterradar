@@ -19,7 +19,8 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 ## Bereits offene V4.07-Releasepunkte
 
 - [x] Korrigiertes V4.07-Dashboard-Package auf Basis des vollständigen V4.06-Pakets in den kanonischen V4.07-Zweig übernommen, per Paritäts-/YAML-Test abgesichert und mit dem abgeleiteten Repository `TheDaimos/gewitterradar-dashboard` synchronisiert; die sechs wiederhergestellten V4.06-Migrationspfade bleiben erhalten. Die abgeleitete Prüfsummenliste enthält das V4.07-Package ebenfalls.
-- [x] Neue V4.07-Ortssuche-, Speicher-, Hilfe- und Firewall-/Netzwerktexte in die vollständige Sprachmatrix übertragen: 15 Sprachen plus 4 deutsche Dialektvarianten. Der CI-Vertrag prüft alle 19 Suchoberflächen-Sprachen sowie die 17 extern geladenen Hilfe-Sprachen auf vollständige Schlüssel/Abschnitte und Pflichtdetails.
+- [x] Neue V4.07-Ortssuche-, Speicher-, Hilfe- und Firewall-/Netzwerktexte technisch in die vollständige Sprachmatrix übertragen: 15 Sprachen plus 4 deutsche Dialektvarianten. Die Übersetzungsdatei und ihr Prüfvertrag bleiben im Repository erhalten.
+- [ ] Vollständige 19-Sprachen-Matrix nach der TEST9-Stabilisierung erneut kontrolliert auf den real akzeptierten Kandidaten aufsetzen und danach auf realen Geräten abnehmen. Sie ist vorübergehend aus dem Laufzeit-Kandidaten herausgenommen, weil sie zwischen dem akzeptierten TEST8 und TEST9 unbemerkt die Byte-Basis verändert hatte.
 - [ ] Ländergruppierte Ortssuche und Ranking auf realen Geräten weiter prüfen.
 - [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
 - [x] `★ Speichern` und „Gespeicherte Orte“ mit der lokalen To-do-Liste real geprüft.
@@ -29,9 +30,11 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [x] TEST7: vollständige Release History zusätzlich auf Deutsch bereitstellen und einen DE/EN-Umschalter mit zugänglichem Auswahlstatus integrieren; real geprüft und akzeptiert.
 - [x] TEST7: V4.07-Eintrag der Release History vom alten „PLANNED“-Text auf den tatsächlich implementierten Testkandidaten aktualisieren; real geprüft und akzeptiert.
 - [x] TEST7: erstes Premium-Netzwerksymbol für **Externe Dienste & Netzwerkfreigaben** technisch integriert; visuell verworfen.
-- [x] TEST8: ausgewähltes Symbol Nr. 4 als deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen integriert; keine zusätzliche Bilddatei oder externe Laufzeitabhängigkeit.
+- [x] TEST8: ausgewähltes Symbol Nr. 4 als deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen integriert; keine zusätzliche Bilddatei oder externe Laufzeitabhängigkeit. Der real funktionierende TEST8 ist mit 1.649.138 Byte und SHA256 `a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9` als unveränderliche Stabilitätsbasis festgeschrieben.
 - [ ] Symbol für **Externe Dienste & Netzwerkfreigaben** auf kleine Darstellungsgröße vereinfachen. Aus der neuen Shield-Serie wurde **Variante 2** final ausgewählt; die technische Übernahme steht noch aus.
-- [ ] TEST9R1: kleines `×` am rechten Ende des Eingabefelds **Ort / PLZ** auf realem Home Assistant prüfen. TEST9 hatte durch die neue Input-Hülle die bisherige `previousElementSibling`-Labelzuordnung ungültig gemacht und dadurch die Initialisierung des Suchdialogs abgebrochen; TEST9R1 löst das Label nun robust über das umgebende Feld auf und besitzt einen CI-Regressionsschutz gegen genau diesen Fehler. Das `×` erscheint nur bei vorhandener Eingabe, löscht Suchtext sowie alte Treffer/Status, lässt einen optional gesetzten Länderfilter bestehen und setzt den Fokus zurück in das Eingabefeld.
+- [x] TEST9 und TEST9R1 als Regression verworfen: Beide wurden zwar syntaktisch/vertraglich grün gebaut, aber auf einer nach TEST8 zusätzlich veränderten, nicht real abgenommenen Laufzeitbasis erzeugt. Damit war die Bezeichnung als Fortsetzung von TEST8 technisch irreführend.
+- [x] Build-Pipeline stabilisiert: Vor jeder weiteren TEST9-Erweiterung muss der erzeugte TEST8 byte-identisch zur real akzeptierten Referenz sein (1.649.138 Byte / SHA256 `a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9`). Abweichungen brechen die CI.
+- [ ] TEST9R2 auf realem Home Assistant prüfen. R2 wird ausschließlich auf der byte-identischen TEST8-Basis aufgebaut, verändert die bestehende Input-DOM-Struktur nicht und ergänzt nur das kleine `×` am rechten Ende von **Ort / PLZ**. Erwartete R2-Datei: 1.651.359 Byte, SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
