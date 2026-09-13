@@ -9,7 +9,7 @@ export function v407LocationQueryClearDelta(source) {
   result = replaceOnce(
     result,
     "const GEWITTERRADAR_BUILD = 'V4.07-TEST8-2026-09-13';",
-    "const GEWITTERRADAR_BUILD = 'V4.07-TEST9-2026-09-13';",
+    "const GEWITTERRADAR_BUILD = 'V4.07-TEST9R1-2026-09-13';",
     'build marker'
   );
 
@@ -32,6 +32,15 @@ export function v407LocationQueryClearDelta(source) {
     `<div class="v407-location-search-field"><label for="v407-location-query"></label><input id="v407-location-query" type="search" autocomplete="off" spellcheck="false"></div>`,
     `<div class="v407-location-search-field"><label for="v407-location-query"></label><div class="v407-location-query-wrap"><input id="v407-location-query" type="search" autocomplete="off" spellcheck="false"><button type="button" class="v407-location-query-clear" aria-label="\${v407ClearQueryLabel()}" title="\${v407ClearQueryLabel()}" hidden>×</button></div></div>`,
     'query field markup'
+  );
+
+  // The query input is now wrapped so the clear button can sit inside the field.
+  // Keep label lookup independent of the input's immediate sibling relationship.
+  result = replaceOnce(
+    result,
+    `        queryInput.previousElementSibling.textContent = text.query; queryInput.placeholder = text.queryPlaceholder;`,
+    `        queryInput.closest('.v407-location-search-field').querySelector('label').textContent = text.query; queryInput.placeholder = text.queryPlaceholder;`,
+    'query label lookup after wrapper'
   );
 
   result = replaceOnce(
