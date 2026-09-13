@@ -19,7 +19,6 @@ import {v407UiRegressionPolishDelta} from './v4-07-ui-regression-polish-delta.mj
 import {v407LocationDropdownViewportDelta} from './v4-07-location-dropdown-viewport-delta.mjs';
 import {v407LocationDropdownDismissDelta} from './v4-07-location-dropdown-dismiss-delta.mjs';
 import {v407HelpReleaseHistoryI18nDelta} from './v4-07-help-release-history-i18n-delta.mjs';
-import {v407FullI18nDelta} from './v4-07-full-i18n-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir = resolve(root,'artifacts/v407');
@@ -55,19 +54,17 @@ export async function buildV407Candidate() {
   if (!acceptedV406.includes('BUILD_YYYY_MM')) throw new Error('Accepted V4.06 release/date metadata missing');
   if (!acceptedV406.includes('V4.06 · 2026/09')) throw new Error('Accepted V4.06 release-history chronology missing');
 
-  const candidate = v407FullI18nDelta(
-    v407HelpReleaseHistoryI18nDelta(
-      v407LocationDropdownDismissDelta(
-        v407LocationDropdownViewportDelta(
-          v407UiRegressionPolishDelta(
-            v407SavedPlacesSoftDeleteDelta(
-              v407TodoSetupHelpDelta(
-                v407NetworkSecurityDelta(
-                  v407CountryGroupsDelta(
-                    v407SavedPlacesDelta(
-                      v407HelpNotesDelta(
-                        v407LocationSearchDelta(acceptedV406)
-                      )
+  const candidate = v407HelpReleaseHistoryI18nDelta(
+    v407LocationDropdownDismissDelta(
+      v407LocationDropdownViewportDelta(
+        v407UiRegressionPolishDelta(
+          v407SavedPlacesSoftDeleteDelta(
+            v407TodoSetupHelpDelta(
+              v407NetworkSecurityDelta(
+                v407CountryGroupsDelta(
+                  v407SavedPlacesDelta(
+                    v407HelpNotesDelta(
+                      v407LocationSearchDelta(acceptedV406)
                     )
                   )
                 )
@@ -97,8 +94,6 @@ export async function buildV407Candidate() {
   if (!candidate.includes('release-history-language-toggle')) throw new Error('V4.07 bilingual Release History switch missing');
   if (!candidate.includes('data-release-history-lang="de"')) throw new Error('V4.07 German Release History missing');
   if (!candidate.includes('syncReleaseHistoryLanguage')) throw new Error('V4.07 Release History language runtime missing');
-  if (!candidate.includes('V407_LOCATION_TEXTS = Object.freeze')) throw new Error('V4.07 full location-search language matrix missing');
-  if (!candidate.includes('v407PatchExternalHelpLocales')) throw new Error('V4.07 external Help language patches missing');
 
   const bytes = Buffer.from(candidate,'utf8');
   await mkdir(outDir,{recursive:true});
