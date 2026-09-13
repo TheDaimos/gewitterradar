@@ -66,7 +66,12 @@ const mustContain = [
   "device_tracker.gewitterradar verwendet",
   "V4.07: Release History inherits the accepted Settings/Help premium metal treatment.",
   ".release-history-close img",
-  "<button class=\"release-history-close\" id=\"release-history-close\" type=\"button\" aria-label=\"Close release history\"><img src=\"${ABOUT_CLOSE_IMAGE}\""
+  "<button class=\"release-history-close\" id=\"release-history-close\" type=\"button\" aria-label=\"Close release history\"><img src=\"${ABOUT_CLOSE_IMAGE}\"",
+  "const viewport = window.visualViewport;",
+  "const viewportCap = Math.max(1,Math.floor(viewportHeight * 0.88));",
+  "const belowAvailable = Math.max(0,viewportBottom-rect.bottom-gap-margin);",
+  "const aboveAvailable = Math.max(0,rect.top-viewportTop-gap-margin);",
+  "locationDropdown.style.maxHeight = `${maxHeight}px`;"
 ];
 for (const needle of mustContain) {
   if (!candidate.includes(needle)) throw new Error(`V4.07 candidate contract missing: ${needle}`);
@@ -89,6 +94,14 @@ if (dropdownCloseIndex < 0 || settingsBackdropIndex < 0 || dropdownCloseIndex > 
   throw new Error('Settings must close the location dropdown before the Settings backdrop opens');
 }
 
+const locationPositionStart = candidate.indexOf('      const positionLocationDropdown = (anchor = settingsLocationButton) => {');
+const locationPositionEnd = candidate.indexOf('      const renderLocationDropdown = () => {',locationPositionStart);
+if (locationPositionStart < 0 || locationPositionEnd < 0) throw new Error('Location dropdown positioning block not found');
+const locationPositionBlock = candidate.slice(locationPositionStart,locationPositionEnd);
+if (!locationPositionBlock.includes('window.visualViewport')) throw new Error('Location dropdown must size against the visible viewport');
+if (!locationPositionBlock.includes('viewportHeight * 0.88')) throw new Error('Location dropdown viewport cap missing');
+if (!locationPositionBlock.includes('belowAvailable >= aboveAvailable')) throw new Error('Location dropdown must choose the side with more usable space when needed');
+
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
   .map((needle) => candidate.indexOf(needle));
 if (order.some((value) => value < 0) || order.some((value,index) => index > 0 && value <= order[index-1])) {
@@ -100,10 +113,6 @@ if (!isoLine) throw new Error('ISO country-code table missing');
 const codes = isoLine[1].split(' ');
 if (codes.length !== 249 || new Set(codes).size !== 249) throw new Error(`Expected 249 unique ISO country codes, got ${codes.length}/${new Set(codes).size}`);
 
-// Security contract: inventory every fixed http(s) URL literal embedded in the
-// generated frontend. The W3C SVG namespace is deliberately present but is not a
-// network request. Any new literal must be reviewed and documented before TEST6+
-// may pass.
 const urlLiterals = [...new Set(candidate.match(/https?:\/\/[^\"'`\s)]+/g) || [])].sort();
 const expectedUrlLiterals = [
   'http://www.w3.org/2000/svg',
@@ -118,9 +127,6 @@ if (JSON.stringify(urlLiterals) !== JSON.stringify(expectedUrlLiterals)) {
 }
 if ((candidate.match(/wss?:\/\//g) || []).length) throw new Error('Unexpected WebSocket URL literal added to V4.07 frontend');
 
-// Regression contract for the observed "Tokio" ambiguity: a famous exact global
-// result must be able to outrank a tiny home-country namesake when no hard country
-// filter is selected. An explicit country selection must still dominate.
 const rankStart = candidate.indexOf('      const v407Rank =');
 const rankEnd = candidate.indexOf('      const v407PrimaryIsGood =',rankStart);
 if (rankStart < 0 || rankEnd < 0) throw new Error('V4.07 rank function not found');
