@@ -63,7 +63,10 @@ const mustContain = [
   "blitzortung.ha.sed.pl · MQTT/TCP 1883",
   "HTTPS-Proxy, TLS-Inspection, Inhaltsfilter",
   "http://www.w3.org/2000/svg ist lediglich der SVG-Namensraum",
-  "device_tracker.gewitterradar verwendet"
+  "device_tracker.gewitterradar verwendet",
+  "V4.07: Release History inherits the accepted Settings/Help premium metal treatment.",
+  ".release-history-close img",
+  "<button class=\"release-history-close\" id=\"release-history-close\" type=\"button\" aria-label=\"Close release history\"><img src=\"${ABOUT_CLOSE_IMAGE}\""
 ];
 for (const needle of mustContain) {
   if (!candidate.includes(needle)) throw new Error(`V4.07 candidate contract missing: ${needle}`);
@@ -74,6 +77,17 @@ if (candidate.includes('save.disabled=true; save.title=text.saveLater')) throw n
 if (candidate.includes('const biasedQuery =')) throw new Error('Soft home-country preference must not rewrite the worldwide Nominatim query');
 if (candidate.includes("savedSetup:'Zum Speichern einmalig eine lokale To-do-Liste")) throw new Error('Old incomplete Local to-do setup hint must not remain in TEST6');
 if (candidate.includes("callService('todo','remove_item'")) throw new Error('TEST6 saved-place removal must stay reversible and must not delete To-do items');
+if (candidate.includes('aria-label="Close release history">×</button>')) throw new Error('Release History must use the accepted premium image close control');
+
+const settingsOpenStart = candidate.indexOf('      const openSettings = () => {');
+const settingsOpenEnd = candidate.indexOf('      const closeSettings = () => {',settingsOpenStart);
+if (settingsOpenStart < 0 || settingsOpenEnd < 0) throw new Error('Settings open handler not found');
+const settingsOpenBlock = candidate.slice(settingsOpenStart,settingsOpenEnd);
+const dropdownCloseIndex = settingsOpenBlock.indexOf('closeLocationDropdown(false);');
+const settingsBackdropIndex = settingsOpenBlock.indexOf("settingsBackdrop?.classList.add('open');");
+if (dropdownCloseIndex < 0 || settingsBackdropIndex < 0 || dropdownCloseIndex > settingsBackdropIndex) {
+  throw new Error('Settings must close the location dropdown before the Settings backdrop opens');
+}
 
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
   .map((needle) => candidate.indexOf(needle));
