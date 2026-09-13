@@ -1,5 +1,5 @@
 const replaceOnce = (source, from, to, label) => {
-  if (source.split(from).length !== 2) throw new Error(`V4.07 TEST9 clear-query anchor changed (${label})`);
+  if (source.split(from).length !== 2) throw new Error(`V4.07 TEST9R2 clear-query anchor changed (${label})`);
   return source.replace(from,to);
 };
 
@@ -9,14 +9,14 @@ export function v407LocationQueryClearDelta(source) {
   result = replaceOnce(
     result,
     "const GEWITTERRADAR_BUILD = 'V4.07-TEST8-2026-09-13';",
-    "const GEWITTERRADAR_BUILD = 'V4.07-TEST9R1-2026-09-13';",
+    "const GEWITTERRADAR_BUILD = 'V4.07-TEST9R2-2026-09-13';",
     'build marker'
   );
 
   result = replaceOnce(
     result,
     `          .v407-location-search-field input:focus { border-color:rgba(79,163,247,.62);box-shadow:0 0 0 2px rgba(79,163,247,.10); }\n          .v407-location-search-submit {`,
-    `          .v407-location-search-field input:focus { border-color:rgba(79,163,247,.62);box-shadow:0 0 0 2px rgba(79,163,247,.10); }\n          .v407-location-query-wrap { position:relative; }\n          .v407-location-query-wrap input { padding-right:40px; }\n          .v407-location-query-wrap input::-webkit-search-cancel-button { -webkit-appearance:none;appearance:none; }\n          .v407-location-query-clear {\n            appearance:none;-webkit-appearance:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);\n            width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:7px;background:transparent;\n            color:#7891a7;font:700 18px/1 inherit;cursor:pointer;padding:0;transition:background .15s ease,color .15s ease,opacity .15s ease;\n          }\n          .v407-location-query-clear:hover,.v407-location-query-clear:focus-visible { outline:none;background:rgba(79,163,247,.10);color:#cfe8ff; }\n          .v407-location-query-clear[hidden] { display:none; }\n          .v407-location-search-submit {`,
+    `          .v407-location-search-field input:focus { border-color:rgba(79,163,247,.62);box-shadow:0 0 0 2px rgba(79,163,247,.10); }\n          #v407-location-query { padding-right:40px; }\n          #v407-location-query::-webkit-search-cancel-button { -webkit-appearance:none;appearance:none; }\n          .v407-location-query-clear {\n            appearance:none;-webkit-appearance:none;position:absolute;right:4px;bottom:4px;\n            width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:7px;background:transparent;\n            color:#7891a7;font:700 18px/1 inherit;cursor:pointer;padding:0;transition:background .15s ease,color .15s ease,opacity .15s ease;\n          }\n          .v407-location-query-clear:hover,.v407-location-query-clear:focus-visible { outline:none;background:rgba(79,163,247,.10);color:#cfe8ff; }\n          .v407-location-query-clear[hidden] { display:none; }\n          .v407-location-search-submit {`,
     'clear-query css'
   );
 
@@ -30,17 +30,8 @@ export function v407LocationQueryClearDelta(source) {
   result = replaceOnce(
     result,
     `<div class="v407-location-search-field"><label for="v407-location-query"></label><input id="v407-location-query" type="search" autocomplete="off" spellcheck="false"></div>`,
-    `<div class="v407-location-search-field"><label for="v407-location-query"></label><div class="v407-location-query-wrap"><input id="v407-location-query" type="search" autocomplete="off" spellcheck="false"><button type="button" class="v407-location-query-clear" aria-label="\${v407ClearQueryLabel()}" title="\${v407ClearQueryLabel()}" hidden>×</button></div></div>`,
-    'query field markup'
-  );
-
-  // The query input is now wrapped so the clear button can sit inside the field.
-  // Keep label lookup independent of the input's immediate sibling relationship.
-  result = replaceOnce(
-    result,
-    `        queryInput.previousElementSibling.textContent = text.query; queryInput.placeholder = text.queryPlaceholder;`,
-    `        queryInput.closest('.v407-location-search-field').querySelector('label').textContent = text.query; queryInput.placeholder = text.queryPlaceholder;`,
-    'query label lookup after wrapper'
+    `<div class="v407-location-search-field"><label for="v407-location-query"></label><input id="v407-location-query" type="search" autocomplete="off" spellcheck="false"><button type="button" class="v407-location-query-clear" aria-label="\${v407ClearQueryLabel()}" title="\${v407ClearQueryLabel()}" hidden>×</button></div>`,
+    'query field markup without DOM wrapper'
   );
 
   result = replaceOnce(
