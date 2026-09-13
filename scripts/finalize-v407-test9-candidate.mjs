@@ -14,12 +14,12 @@ const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 const source = await readFile(outputPath,'utf8');
 if (!source.includes("const GEWITTERRADAR_BUILD = 'V4.07-TEST8-2026-09-13';")) {
-  throw new Error('TEST9 finalizer expected the validated TEST8 candidate as input');
+  throw new Error('TEST9R1 finalizer expected the validated TEST8 candidate as input');
 }
 
 const candidate = v407LocationQueryClearDelta(source).replace(/\r\n?/g,'\n');
-if (!candidate.includes("const GEWITTERRADAR_BUILD = 'V4.07-TEST9-2026-09-13';")) {
-  throw new Error('TEST9 build marker missing after query-clear finalization');
+if (!candidate.includes("const GEWITTERRADAR_BUILD = 'V4.07-TEST9R1-2026-09-13';")) {
+  throw new Error('TEST9R1 build marker missing after query-clear finalization');
 }
 
 const bytes = Buffer.from(candidate,'utf8');
@@ -28,4 +28,4 @@ await writeFile(outputPath,bytes);
 await writeFile(versionedPath,bytes);
 await writeFile(checksumPath,`${digest}  gewitterradar.js\n${digest}  gewitterradar-v4.07-test.js\n`);
 
-console.log(`Finalized V4.07 TEST9 location-query clear control: ${bytes.length} bytes, sha256 ${digest}`);
+console.log(`Finalized V4.07 TEST9R1 location-query clear control regression fix: ${bytes.length} bytes, sha256 ${digest}`);
