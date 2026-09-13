@@ -8,10 +8,10 @@ const candidate = await readFile(resolve(root,'artifacts/v407/gewitterradar.js')
 const mustContain = [
   "const CARD_VERSION = '4.07';",
   "const GEWITTERRADAR_BUILD = 'V4.07-TEST7-2026-09-13';",
-  "people:'Personen'",
-  "zones:'Zonen'",
-  "searchAction:'Ort suchen …'",
-  "savedPlaces:'Gespeicherte Orte'",
+  '"people":"Personen"',
+  '"zones":"Zonen"',
+  '"searchAction":"Ort suchen …"',
+  '"savedPlaces":"Gespeicherte Orte"',
   "https://geocoding-api.open-meteo.com/v1/search",
   "https://nominatim.openstreetmap.org/search",
   "url.searchParams.set('countryCode',countryCode)",
@@ -29,7 +29,7 @@ const mustContain = [
   "location-saved-option",
   "location-saved-remove",
   "location-saved-restore",
-  "removedPlaces:'Entfernte Orte'",
+  '"removedPlaces":"Entfernte Orte"',
   "v407RemoveSavedPlace",
   "v407RestoreSavedPlace",
   "v407UpdateSavedPlaceStatus(place,'completed')",
@@ -38,9 +38,9 @@ const mustContain = [
   "close();",
   "v407-country-filterbar",
   "v407-country-group",
-  "allCountries:'Alle Länder'",
-  "homeCountry:'Heimatland'",
-  "showMore:'Weitere {count} Treffer anzeigen'",
+  '"allCountries":"Alle Länder"',
+  '"homeCountry":"Heimatland"',
+  '"showMore":"Weitere {count} Treffer anzeigen"',
   "score += 2000",
   "score += 55",
   "renderResults(ranked,{preferredCountryCode,countryCode})",
@@ -143,10 +143,10 @@ for (const dialect of ['Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']
 if (!historyRuntimeBlock.includes("panel.hidden = panel.dataset.releaseHistoryLang !== language;")) throw new Error('Release History must hide the inactive language panel');
 if (!historyRuntimeBlock.includes("button.setAttribute('aria-pressed'")) throw new Error('Release History language buttons must expose pressed state');
 
-const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
+const order = ['"people":"Personen"','"zones":"Zonen"','"searchAction":"Ort suchen …"','"savedPlaces":"Gespeicherte Orte"']
   .map((needle) => candidate.indexOf(needle));
 if (order.some((value) => value < 0) || order.some((value,index) => index > 0 && value <= order[index-1])) {
-  throw new Error('V4.07 dropdown order contract failed');
+  throw new Error('V4.07 German dropdown-order contract failed');
 }
 
 const isoLine = candidate.match(/const V407_ISO_COUNTRY_CODES = '([^']+)'\.split\(' '\);/);
