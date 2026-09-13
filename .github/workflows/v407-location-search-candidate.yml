@@ -37,10 +37,12 @@ jobs:
           node --check scripts/v4-07-location-dropdown-viewport-delta.mjs
           node --check scripts/v4-07-location-dropdown-dismiss-delta.mjs
           node --check scripts/v4-07-help-release-history-i18n-delta.mjs
+          node --check scripts/v4-07-full-i18n-delta.mjs
           node --check scripts/v4-07-firewall-icon-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/finalize-v407-test8-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
+          node --check scripts/test-v407-full-i18n-candidate.mjs
           node --check scripts/test-v407-test8-candidate.mjs
       - name: Build validated V4.07 TEST7 base candidate
         run: node scripts/build-v407-location-search-candidate.mjs
@@ -48,6 +50,8 @@ jobs:
         run: node --check artifacts/v407/gewitterradar.js
       - name: Validate TEST7 location-search and network contract
         run: node scripts/test-v407-location-search-candidate.mjs
+      - name: Validate complete 19-language V4.07 matrix
+        run: node scripts/test-v407-full-i18n-candidate.mjs
       - name: Finalize TEST8 selected firewall icon
         run: node scripts/finalize-v407-test8-candidate.mjs
       - name: Check TEST8 generated JavaScript syntax
