@@ -1,0 +1,55 @@
+name: Build accepted V4.06 UI reconstruction
+
+on:
+  push:
+    branches:
+      - diagnostic/v4.07-settings-regression
+    paths:
+      - '.github/workflows/v406-accepted-ui-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Apply accepted V4.06 visual passes
+        run: |
+          set -euo pipefail
+          node scripts/apply-v406-ui-polish-preview.mjs
+          node scripts/apply-v406-ui-polish-pass2-preview.mjs
+          node scripts/apply-v406-ui-polish-pass3-preview.mjs
+          node scripts/apply-v406-ui-polish-pass4-preview.mjs
+          node scripts/apply-v406-ui-polish-pass5-preview.mjs
+      - name: Verify reconstructed settings UI
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          grep -Fq 'settings-close settings-close-premium' frontend/gewitterradar.js
+          grep -Fq 'V4.06 pass2: Welcome-derived 2px metal frame' frontend/gewitterradar.js
+          grep -Fq 'settings-footer-version' frontend/gewitterradar.js
+          if grep -Fq '<span class="settings-version" title="Kartenversion">V${CARD_VERSION}</span>' frontend/gewitterradar.js; then
+            echo 'Old header version marker still present' >&2
+            exit 1
+          fi
+      - name: Prepare artifact
+        run: |
+          mkdir -p artifact
+          cp frontend/gewitterradar.js artifact/gewitterradar.js
+          sha256sum artifact/gewitterradar.js > artifact/SHA256SUMS.txt
+          cat > artifact/README.txt <<'EOF'
+          Rekonstruierter, real abgenommener V4.06-UI-Endstand.
+          Enthält die fünf im Repository vorhandenen V4.06 UI-Polish-Pässe.
+          Nur zur Regressionseingrenzung verwenden.
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v406-accepted-ui-reconstruction
+          path: artifact/
+          if-no-files-found: error
