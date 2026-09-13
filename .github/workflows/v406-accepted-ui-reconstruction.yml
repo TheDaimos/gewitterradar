@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Apply accepted V4.06 visual passes
+      - name: Apply accepted V4.06 visual and release-history passes
         run: |
           set -euo pipefail
           node scripts/apply-v406-ui-polish-preview.mjs
@@ -27,13 +27,19 @@ jobs:
           node scripts/apply-v406-ui-polish-pass3-preview.mjs
           node scripts/apply-v406-ui-polish-pass4-preview.mjs
           node scripts/apply-v406-ui-polish-pass5-preview.mjs
-      - name: Verify reconstructed settings UI
+          node scripts/apply-v406-release-history-preview.mjs
+      - name: Verify reconstructed final V4.06 UI
         run: |
           set -euo pipefail
           node --check frontend/gewitterradar.js
           grep -Fq 'settings-close settings-close-premium' frontend/gewitterradar.js
           grep -Fq 'V4.06 pass2: Welcome-derived 2px metal frame' frontend/gewitterradar.js
           grep -Fq 'settings-footer-version' frontend/gewitterradar.js
+          grep -Fq '${BUILD_YYYY_MM} · V${CARD_VERSION}' frontend/gewitterradar.js
+          grep -Fq 'V4.06 · 2026/09' frontend/gewitterradar.js
+          grep -Fq 'V4.05 · 2026/09' frontend/gewitterradar.js
+          grep -Fq 'V4.04 · 2026/09' frontend/gewitterradar.js
+          grep -Fq 'V3.997 · 2026/08' frontend/gewitterradar.js
           if grep -Fq '<span class="settings-version" title="Kartenversion">V${CARD_VERSION}</span>' frontend/gewitterradar.js; then
             echo 'Old header version marker still present' >&2
             exit 1
@@ -44,12 +50,14 @@ jobs:
           cp frontend/gewitterradar.js artifact/gewitterradar.js
           sha256sum artifact/gewitterradar.js > artifact/SHA256SUMS.txt
           cat > artifact/README.txt <<'EOF'
-          Rekonstruierter, real abgenommener V4.06-UI-Endstand.
-          Enthält die fünf im Repository vorhandenen V4.06 UI-Polish-Pässe.
+          Rekonstruierter V4.06-Endstand mit allen fünf real abgenommenen UI-Polish-Pässen
+          und dem finalen Release-History-/Metadaten-Pass.
+          Enthält damit u. a. 2026/09 · V4.06 im Footer/Settings sowie
+          Versions- plus YYYY/MM-Angaben in der Release History.
           Nur zur Regressionseingrenzung verwenden.
           EOF
       - uses: actions/upload-artifact@v4
         with:
-          name: v406-accepted-ui-reconstruction
+          name: v406-final-accepted-ui-reconstruction
           path: artifact/
           if-no-files-found: error
