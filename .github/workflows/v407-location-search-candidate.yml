@@ -37,14 +37,23 @@ jobs:
           node --check scripts/v4-07-location-dropdown-viewport-delta.mjs
           node --check scripts/v4-07-location-dropdown-dismiss-delta.mjs
           node --check scripts/v4-07-help-release-history-i18n-delta.mjs
+          node --check scripts/v4-07-firewall-icon-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
+          node --check scripts/finalize-v407-test8-candidate.mjs
           node --check scripts/test-v407-location-search-candidate.mjs
-      - name: Build V4.07 test candidate
+          node --check scripts/test-v407-test8-candidate.mjs
+      - name: Build validated V4.07 TEST7 base candidate
         run: node scripts/build-v407-location-search-candidate.mjs
-      - name: Check generated JavaScript syntax
+      - name: Check TEST7 generated JavaScript syntax
         run: node --check artifacts/v407/gewitterradar.js
-      - name: Validate V4.07 location-search and network contract
+      - name: Validate TEST7 location-search and network contract
         run: node scripts/test-v407-location-search-candidate.mjs
+      - name: Finalize TEST8 selected firewall icon
+        run: node scripts/finalize-v407-test8-candidate.mjs
+      - name: Check TEST8 generated JavaScript syntax
+        run: node --check artifacts/v407/gewitterradar.js
+      - name: Validate TEST8 firewall icon contract
+        run: node scripts/test-v407-test8-candidate.mjs
       - name: Verify byte-identical aliases
         run: cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
       - name: Publish test JavaScript
