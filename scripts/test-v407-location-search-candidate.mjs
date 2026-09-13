@@ -71,7 +71,9 @@ const mustContain = [
   "const viewportCap = Math.max(1,Math.floor(viewportHeight * 0.88));",
   "const belowAvailable = Math.max(0,viewportBottom-rect.bottom-gap-margin);",
   "const aboveAvailable = Math.max(0,rect.top-viewportTop-gap-margin);",
-  "locationDropdown.style.maxHeight = `${maxHeight}px`;"
+  "locationDropdown.style.maxHeight = `${maxHeight}px`;",
+  "document.addEventListener('pointerdown',this._v407LocationOutsidePointerHandler,true);",
+  "path.includes(locationDropdown) || path.includes(settingsLocationButton) || path.includes(locationMainButton)"
 ];
 for (const needle of mustContain) {
   if (!candidate.includes(needle)) throw new Error(`V4.07 candidate contract missing: ${needle}`);
@@ -101,6 +103,15 @@ const locationPositionBlock = candidate.slice(locationPositionStart,locationPosi
 if (!locationPositionBlock.includes('window.visualViewport')) throw new Error('Location dropdown must size against the visible viewport');
 if (!locationPositionBlock.includes('viewportHeight * 0.88')) throw new Error('Location dropdown viewport cap missing');
 if (!locationPositionBlock.includes('belowAvailable >= aboveAvailable')) throw new Error('Location dropdown must choose the side with more usable space when needed');
+
+const outsideHandlerStart = candidate.indexOf('      this._v407LocationOutsidePointerHandler = (event) => {');
+const outsideHandlerEnd = candidate.indexOf("      document.addEventListener('pointerdown',this._v407LocationOutsidePointerHandler,true);",outsideHandlerStart);
+if (outsideHandlerStart < 0 || outsideHandlerEnd < 0) throw new Error('Location dropdown outside-pointer handler not found');
+const outsideHandlerBlock = candidate.slice(outsideHandlerStart,outsideHandlerEnd);
+if (!outsideHandlerBlock.includes("if (!locationDropdown?.classList.contains('open')) return;")) throw new Error('Outside-pointer handler must ignore a closed location dropdown');
+if (!outsideHandlerBlock.includes("const path = typeof event.composedPath === 'function' ? event.composedPath() : [];")) throw new Error('Outside-pointer handler must use composedPath for shadow-DOM-safe hit testing');
+if (!outsideHandlerBlock.includes('path.includes(locationDropdown) || path.includes(settingsLocationButton) || path.includes(locationMainButton)')) throw new Error('Outside-pointer handler must preserve menu and trigger interactions');
+if (!outsideHandlerBlock.includes('closeLocationDropdown(false);')) throw new Error('Outside-pointer handler must close the location dropdown');
 
 const order = ["people:'Personen'","zones:'Zonen'","searchAction:'Ort suchen …'","savedPlaces:'Gespeicherte Orte'"]
   .map((needle) => candidate.indexOf(needle));
@@ -146,3 +157,4 @@ console.log('V4.07 location-search TEST6 contract: PASS');
 console.log(`ISO countries: ${codes.length}`);
 console.log(`Tokio worldwide ranking: ${worldwideTokio.map((item) => item.countryCode).join(' > ')}`);
 console.log(`External URL literals: ${urlLiterals.length} (including non-network SVG namespace)`);
+console.log('Location dropdown outside-pointer dismissal: GUARDED');
