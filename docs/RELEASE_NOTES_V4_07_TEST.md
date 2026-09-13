@@ -40,12 +40,12 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST7: Der V4.07-Eintrag der Release History beschreibt nun den tatsächlich implementierten Testkandidaten statt eines veralteten „PLANNED“-Hinweises.
 - TEST7: Das zunächst eingesetzte verbundene-Knoten-Symbol für **Externe Dienste & Netzwerkfreigaben** war technisch korrekt, wurde im Realtest jedoch aus gestalterischen Gründen verworfen.
 - TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol technisch durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu. Für die kleine Darstellung ist als letzter optischer Feinschliff die einfachere Shield-Variante 2 ausgewählt und zur späteren technischen Übernahme vorgemerkt.
-- V4.07-Sprachmatrix abgeschlossen: Sämtliche neuen Such-, Speicher- und Standorttexte liegen für **15 Sprachen plus 4 deutsche Dialektvarianten** vor. Der bisherige Deutsch/Englisch-Sonderpfad der V4.07-Ortssuche wurde durch eine vollständige 19-Sprachen-Tabelle ersetzt.
-- V4.07-Hilfe-Sprachmatrix abgeschlossen: Die neuen Abschnitte **Referenzstandort** sowie **Externe Dienste & Netzwerkfreigaben** werden auch für die 17 extern geladenen nicht-nativen Sprachvarianten vollständig ergänzt. Ein eigener CI-Vertrag prüft Struktur, Pflichtfelder und die sicherheitsrelevanten Laufzeitdetails aller Sprachfassungen.
+- Der real akzeptierte TEST8 ist nun als unveränderliche Stabilitätsreferenz festgeschrieben: **1.649.138 Byte**, SHA256 **`a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9`**. Die CI bricht ab, wenn ein vermeintlicher TEST8 davon abweicht.
+- Die vollständige V4.07-Sprachmatrix für **15 Sprachen plus 4 deutsche Dialektvarianten** ist technisch implementiert und bleibt im Repository erhalten. Nach der Regressionsermittlung wurde sie jedoch bewusst wieder aus dem aktuellen Laufzeit-Testkandidaten herausgenommen, weil ihre nachträgliche Integration zwischen TEST8 und TEST9 die angebliche TEST8-Basis unbemerkt verändert hatte. Sie wird erst nach erfolgreicher TEST9-Stabilisierung kontrolliert neu aufgesetzt und real getestet.
 - Das korrigierte V4.07-Dashboard-Package basiert wieder auf dem vollständigen V4.06-Paket, behält alle sechs Legacy-Migrationspfade und wird im kanonischen V4.07-Zweig automatisiert gegen die Home-Assistant-Quelle auf Byte-/YAML-Parität geprüft.
 - Das korrigierte V4.07-Dashboard-Package wurde zusätzlich nach `TheDaimos/gewitterradar-dashboard` synchronisiert; dessen Prüfsummenbestand enthält nun auch `dist/app_gewitterradar_v4_07_pkg.yaml`.
-- TEST9: Im Feld **Ort / PLZ** wurde ein kompaktes `×` zum schnellen Zurücksetzen der Suchtexteingabe ergänzt. Die erste TEST9-Fassung verursachte dabei eine Regression: Durch die zusätzliche Input-Hülle war die bisherige `previousElementSibling`-Zuordnung zum Label nicht mehr gültig; die Dialoginitialisierung brach ab und Felder/Schaltfläche blieben unbeschriftet.
-- TEST9R1: Die Regression ist behoben. Das Label wird nun robust über den umgebenden Feldcontainer aufgelöst; ein zusätzlicher CI-Regressionsschutz verbietet die fehleranfällige alte Zuordnung. Der korrigierte Kandidaten-Build läuft erfolgreich durch. Der reale Home-Assistant-Test steht noch aus.
+- TEST9 und TEST9R1 wurden nach dem Realtest **verworfen**. Die anfängliche Diagnose eines reinen Label-/Wrapperfehlers war unvollständig: Beide Kandidaten wurden auf einem neu erzeugten „TEST8“ aufgebaut, der durch die zwischenzeitlich integrierte Vollübersetzung nicht mehr byte-identisch mit dem tatsächlich funktionierenden TEST8 war. Dadurch wurde eine nicht abgenommene Basis als stabile Referenz weiterverwendet.
+- TEST9R2 korrigiert den Entwicklungsprozess und die Funktion zugleich: Ausgangspunkt ist zwingend der byte-identische, real akzeptierte TEST8. Das `×` wird ohne zusätzliche Input-Hülle und ohne Änderung der bestehenden Label-DOM-Struktur ergänzt. R2 umfasst **1.651.359 Byte** bei SHA256 **`9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`**; der CI-Artefakt ist byte-identisch zur lokal aus der akzeptierten Referenz erzeugten Datei.
 
 ## Architekturentscheidung
 
@@ -92,14 +92,16 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 - V4.06 bleibt eingefrorene Rückfallbasis;
 - neue externe feste URL-Ziele lassen den TEST4+-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
 - Soft-Delete für gespeicherte Orte verändert ausschließlich den Status des eigenen Local-To-do-Eintrags und löscht den Eintrag nicht;
-- TEST7/TEST8/TEST9R1 fügen keine neue externe Laufzeitabhängigkeit hinzu;
-- TEST9R1 enthält einen expliziten Regressionstest für die Label-Auflösung des umhüllten Ort/PLZ-Eingabefelds;
+- TEST7/TEST8/TEST9R2 fügen keine neue externe Laufzeitabhängigkeit hinzu;
+- ab TEST9R2 wird der real akzeptierte TEST8 nicht mehr nur über Funktionsmarker, sondern zusätzlich über exakte Bytezahl und SHA256 als Ausgangsbasis erzwungen;
+- die vollständige Sprachmatrix bleibt bis zur kontrollierten Neuabnahme aus der stabilisierten Laufzeitkette herausgenommen;
 - kein V4.07-Release-Tag und kein Merge nach `main` vor bestätigtem Regressionstest.
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
+- TEST9R2 zunächst auf realem Home Assistant gegen die stabile TEST8-Basis prüfen;
+- vollständige 19-Sprachen-Matrix danach kontrolliert wieder aufsetzen und real abnehmen;
 - Shield-Variante 2 für **Externe Dienste & Netzwerkfreigaben** technisch übernehmen und final visuell akzeptieren;
-- TEST9R1 `×`-Zurücksetzen im Feld **Ort / PLZ** real auf Home Assistant prüfen;
 - ländergruppierte Ortssuche und Ranking auf den vorgesehenen realen Geräteklassen weiter regressionsprüfen;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
