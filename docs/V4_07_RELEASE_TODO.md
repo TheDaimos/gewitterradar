@@ -31,7 +31,7 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [x] TEST7: erstes Premium-Netzwerksymbol für **Externe Dienste & Netzwerkfreigaben** technisch integriert; visuell verworfen.
 - [x] TEST8: ausgewähltes Symbol Nr. 4 als deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen integriert; keine zusätzliche Bilddatei oder externe Laufzeitabhängigkeit.
 - [ ] Symbol für **Externe Dienste & Netzwerkfreigaben** auf kleine Darstellungsgröße vereinfachen. Aus der neuen Shield-Serie wurde **Variante 2** final ausgewählt; die technische Übernahme steht noch aus.
-- [ ] TEST9: kleines `×` am rechten Ende des Eingabefelds **Ort / PLZ** auf realem Home Assistant prüfen. Es erscheint nur bei vorhandener Eingabe, löscht den eingegebenen Suchtext sowie alte Treffer/Status, lässt einen optional gesetzten Länderfilter bestehen und setzt den Fokus zurück in das Eingabefeld.
+- [ ] TEST9R1: kleines `×` am rechten Ende des Eingabefelds **Ort / PLZ** auf realem Home Assistant prüfen. TEST9 hatte durch die neue Input-Hülle die bisherige `previousElementSibling`-Labelzuordnung ungültig gemacht und dadurch die Initialisierung des Suchdialogs abgebrochen; TEST9R1 löst das Label nun robust über das umgebende Feld auf und besitzt einen CI-Regressionsschutz gegen genau diesen Fehler. Das `×` erscheint nur bei vorhandener Eingabe, löscht Suchtext sowie alte Treffer/Status, lässt einen optional gesetzten Länderfilter bestehen und setzt den Fokus zurück in das Eingabefeld.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
