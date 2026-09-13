@@ -1,0 +1,42 @@
+name: Build V4.07 settings regression probes
+
+on:
+  push:
+    branches:
+      - diagnostic/v4.07-settings-regression
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-settings-probes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Verify probe builder syntax
+        run: node --check scripts/build-v407-settings-regression-probes.mjs
+      - name: Build current V4.07 TEST6 candidate
+        run: node scripts/build-v407-location-search-candidate.mjs
+      - name: Build diagnostic settings probes
+        run: node scripts/build-v407-settings-regression-probes.mjs
+      - name: Syntax-check all probe JavaScript files
+        run: |
+          for f in artifacts/v407-settings-regression-probes/*.js; do
+            echo "Checking $f"
+            node --check "$f"
+          done
+      - name: Publish settings regression probes
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-settings-regression-probes
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407-settings-regression-probes/*.js
+            artifacts/v407-settings-regression-probes/SHA256SUMS.txt
+            artifacts/v407-settings-regression-probes/README.md
