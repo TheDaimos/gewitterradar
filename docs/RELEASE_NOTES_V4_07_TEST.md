@@ -35,10 +35,11 @@ V4.07 erweitert Gewitterradar um eine weltweite Standortarchitektur mit eigenem 
 - TEST6: Realtest bestätigt außerdem den Sonderfall „Ort speichern → weich entfernen → denselben Ort erneut über die Suche speichern“: Der vorhandene `completed`-Eintrag wird auf `needs_action` zurückgesetzt, der Ort erscheint wieder unter „Gespeicherte Orte“ und es entsteht kein Duplikat.
 - TEST6: der Kandidatenvertrag verbietet für diese Funktion `todo.remove_item`; Entfernen bleibt ausdrücklich reversibel und verwendet `todo.update_item`.
 - V4.07-Oberflächenfeinschliff: Das Standortwahl-Menü wird beim Klick/Tap außerhalb geschlossen; Interaktionen innerhalb des Menüs und auf den beiden Standort-Schaltflächen bleiben davon ausgenommen. Realtest bestätigt das gewünschte Schließverhalten.
-- TEST7: **Externe Dienste & Netzwerkfreigaben** erhält ein eigenes deterministisches Premium-Netzwerksymbol aus verbundenen Knoten. Damit entfällt der bisherige generische Punkt-Fallback und die Darstellung bleibt unabhängig von Plattform-Schriftarten konsistent.
 - TEST7: Die **Release History** erhält einen kompakten DE/EN-Umschalter im Kopfbereich. Beide Sprachfassungen enthalten die vollständige Versionshistorie; bei Deutsch sowie den vier deutschen Dialektvarianten startet die Ansicht auf DE, bei allen anderen Oberflächensprachen auf EN. Eine manuelle Auswahl bleibt beim erneuten Öffnen erhalten.
-- TEST7: Überschrift, Untertitel, Schließen-Beschriftung und aktive Sprachschaltfläche werden mit umgeschaltet und sind über `aria-label`/`aria-pressed` zugänglich.
+- TEST7: Überschrift, Untertitel, Schließen-Beschriftung und aktive Sprachschaltfläche werden mit umgeschaltet und sind über `aria-label`/`aria-pressed` zugänglich. Der Realtest wurde erfolgreich abgeschlossen.
 - TEST7: Der V4.07-Eintrag der Release History beschreibt nun den tatsächlich implementierten Testkandidaten statt eines veralteten „PLANNED“-Hinweises.
+- TEST7: Das zunächst eingesetzte verbundene-Knoten-Symbol für **Externe Dienste & Netzwerkfreigaben** war technisch korrekt, wurde im Realtest jedoch aus gestalterischen Gründen verworfen.
+- TEST8: Das ausgewählte Symbol Nr. 4 ersetzt dieses Symbol durch ein deterministisches Schild-/Firewall-Symbol mit Mauerstruktur und bidirektionalen Netzwerkpfeilen. Es ist direkt als `currentColor`-SVG eingebettet, übernimmt damit die bestehende Premium-Farbgebung und fügt weder eine neue Bilddatei noch eine externe Laufzeitabhängigkeit hinzu.
 
 ## Architekturentscheidung
 
@@ -85,12 +86,12 @@ GitHub/HACS werden als Installations-/Updatepfad behandelt, nicht als normale Ka
 - V4.06 bleibt eingefrorene Rückfallbasis;
 - neue externe feste URL-Ziele lassen den TEST4+-Vertrag fehlschlagen, bis Inventar und Dokumentation bewusst aktualisiert werden;
 - Soft-Delete für gespeicherte Orte verändert ausschließlich den Status des eigenen Local-To-do-Eintrags und löscht den Eintrag nicht;
-- TEST7 fügt keine neue externe Laufzeitabhängigkeit hinzu; das Netzwerksymbol ist eingebettetes SVG-Markup;
+- TEST7/TEST8 fügen keine neue externe Laufzeitabhängigkeit hinzu; Sprachumschalter und Firewall-Symbol sind vollständig im Frontend enthalten;
 - kein V4.07-Release-Tag und kein Merge nach `main` vor bestätigtem Regressionstest.
 
 ## Noch offen vor einer finalen V4.07-Freigabe
 
-- TEST7 auf realen Oberflächen prüfen: neues Netzwerksymbol sowie DE/EN-Umschalter der Release History auf Desktop/Mobil/iPad;
+- TEST8 auf realem Home Assistant visuell prüfen: ausgewähltes Schild-/Firewall-Symbol in **Externe Dienste & Netzwerkfreigaben**;
 - vollständige Übersetzung aller neuen V4.07-Such-, Speicher- und Netzwerktexte in die gesamte Sprachmatrix;
 - reale Firewall-/DNS-Filter-/TLS-Inspection-Verprobung der TEST4-Hinweise;
 - belastbarer UI-Status für vollständig/teilweise/nicht abgedeckte Blitzdatenregion;
