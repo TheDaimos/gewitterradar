@@ -25,6 +25,10 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [x] TEST6: `×` Soft-Delete → „Entfernte Orte“ → `↶` Wiederherstellen auf realem Home Assistant geprüft.
 - [x] Erneutes `★ Speichern` eines weich entfernten Ortes stellt den vorhandenen Eintrag wieder her und erzeugt kein Duplikat; real geprüft.
 - [x] Standortwahl-Menü schließt bei Klick/Tap außerhalb des Menüs; Klicks innerhalb des Menüs sowie auf die beiden Standort-Schaltflächen werden nicht als Außenklick behandelt; real geprüft.
+- [x] TEST7: generischen Punkt-Fallback für **Externe Dienste & Netzwerkfreigaben** durch ein deterministisches Premium-Netzwerksymbol aus verbundenen Knoten ersetzen.
+- [x] TEST7: vollständige Release History zusätzlich auf Deutsch bereitstellen und einen DE/EN-Umschalter mit zugänglichem Auswahlstatus integrieren.
+- [x] TEST7: V4.07-Eintrag der Release History vom alten „PLANNED“-Text auf den tatsächlich implementierten Testkandidaten aktualisieren.
+- [ ] TEST7 auf realen Oberflächen visuell prüfen: Netzwerksymbol und DE/EN-Umschalter auf Desktop/Mobil/iPad.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
