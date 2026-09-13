@@ -18,6 +18,7 @@ import {v407SavedPlacesSoftDeleteDelta} from './v4-07-saved-places-soft-delete-d
 import {v407UiRegressionPolishDelta} from './v4-07-ui-regression-polish-delta.mjs';
 import {v407LocationDropdownViewportDelta} from './v4-07-location-dropdown-viewport-delta.mjs';
 import {v407LocationDropdownDismissDelta} from './v4-07-location-dropdown-dismiss-delta.mjs';
+import {v407HelpReleaseHistoryI18nDelta} from './v4-07-help-release-history-i18n-delta.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir = resolve(root,'artifacts/v407');
@@ -53,16 +54,18 @@ export async function buildV407Candidate() {
   if (!acceptedV406.includes('BUILD_YYYY_MM')) throw new Error('Accepted V4.06 release/date metadata missing');
   if (!acceptedV406.includes('V4.06 · 2026/09')) throw new Error('Accepted V4.06 release-history chronology missing');
 
-  const candidate = v407LocationDropdownDismissDelta(
-    v407LocationDropdownViewportDelta(
-      v407UiRegressionPolishDelta(
-        v407SavedPlacesSoftDeleteDelta(
-          v407TodoSetupHelpDelta(
-            v407NetworkSecurityDelta(
-              v407CountryGroupsDelta(
-                v407SavedPlacesDelta(
-                  v407HelpNotesDelta(
-                    v407LocationSearchDelta(acceptedV406)
+  const candidate = v407HelpReleaseHistoryI18nDelta(
+    v407LocationDropdownDismissDelta(
+      v407LocationDropdownViewportDelta(
+        v407UiRegressionPolishDelta(
+          v407SavedPlacesSoftDeleteDelta(
+            v407TodoSetupHelpDelta(
+              v407NetworkSecurityDelta(
+                v407CountryGroupsDelta(
+                  v407SavedPlacesDelta(
+                    v407HelpNotesDelta(
+                      v407LocationSearchDelta(acceptedV406)
+                    )
                   )
                 )
               )
@@ -86,6 +89,11 @@ export async function buildV407Candidate() {
   if (!candidate.includes('const belowAvailable = Math.max(0,viewportBottom-rect.bottom-gap-margin);')) throw new Error('V4.07 location dropdown available-space calculation missing');
   if (!candidate.includes("document.addEventListener('pointerdown',this._v407LocationOutsidePointerHandler,true);")) throw new Error('V4.07 outside-click location dropdown dismissal missing');
   if (!candidate.includes('path.includes(locationDropdown) || path.includes(settingsLocationButton) || path.includes(locationMainButton)')) throw new Error('V4.07 location dropdown dismissal exclusion guard missing');
+  if (!candidate.includes("const GEWITTERRADAR_BUILD = 'V4.07-TEST7-2026-09-13';")) throw new Error('V4.07 TEST7 build marker missing');
+  if (!candidate.includes("external_services:'<svg viewBox=\"0 0 24 24\"")) throw new Error('V4.07 premium external-services network icon missing');
+  if (!candidate.includes('release-history-language-toggle')) throw new Error('V4.07 bilingual Release History switch missing');
+  if (!candidate.includes('data-release-history-lang="de"')) throw new Error('V4.07 German Release History missing');
+  if (!candidate.includes('syncReleaseHistoryLanguage')) throw new Error('V4.07 Release History language runtime missing');
 
   const bytes = Buffer.from(candidate,'utf8');
   await mkdir(outDir,{recursive:true});
