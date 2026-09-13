@@ -31,10 +31,17 @@ def test_v407_dashboard_package_preserves_v406_migrations_and_tracker() -> None:
 
     assert "device_tracker.gewitterradar_dashboard" in text
     assert "gewitterradar_set_reference_coordinates_dashboard" in text
-    assert "device_tracker.see" not in text
+
+    # The package deliberately documents that device_tracker.see is deprecated.
+    # Guard executable YAML only, so the explanatory comment does not create a false positive.
+    active_yaml = "\n".join(
+        line for line in text.splitlines() if not line.lstrip().startswith("#")
+    )
+    assert "device_tracker.see" not in active_yaml
 
     parsed = yaml.safe_load(text)
     assert isinstance(parsed, dict)
+    assert "device_tracker" not in parsed
     assert "template" in parsed
     assert "script" in parsed
     assert "automation" in parsed
