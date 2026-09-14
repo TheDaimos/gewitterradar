@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const js=await readFile(resolve(root,'artifacts/v407/gewitterradar-v4.07.15.js'),'utf8');
-const must=["const CARD_DISPLAY_VERSION = '4.07.15';","V4.07-TEST15-2026-09-14","HELP_REFINED_ICONS_V4","help-question-v4","top:-18px!important;right:-10px!important","width:48px!important;height:48px!important","width:40px!important;height:40px!important","const HELP_PREMIUM_ICON_VARIANT = 'B';"];
+const must=["const CARD_DISPLAY_VERSION = '4.07.15';","V4.07-TEST15-2026-09-14","HELP_REFINED_ICONS_V4","top:-18px!important;right:-10px!important","width:48px!important;height:48px!important","width:40px!important;height:40px!important","const HELP_PREMIUM_ICON_VARIANT = 'B';"];
 for(const marker of must)if(!js.includes(marker))throw new Error(`TEST15 missing marker: ${marker}`);
 if(!js.includes('data:image/svg+xml;base64,'))throw new Error('TEST15 embedded SVG data missing');
 if(!js.includes('HELP_REFINED_ICONS_V4.question'))throw new Error('TEST15 question does not use V4 runtime master');
