@@ -72,8 +72,8 @@ const SECONDARY={
 const DIALECT_SIGNAL={
   'Boarisch':/\b(?:ned|san|de|da|werdn|muaß|kenna|gspeichert|Suach|derf|bloß|sei|ham|hod|oda|ois|Hüf|Hinwais|lafft|kummt|lassn|auße)\b/,
   'Plattdüütsch':/\b(?:nich|warrt|un|för|vun|Oort|Koort|spiekert|dörv|bloots|wesen|hebben|hett|as|bruukt|Kort|verklort|dormit|seker|verstahn|arbeidt|Buten-Deensten|Nettwark-Togrepen|jümmers|wedder)\b/,
-  'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene|derf|bloß|ham|odder|bidde|Gorz|damidd|looft|Hilche|Hinweese|gommd|Wischdsch|lassn)\b/,
-  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot|lauft|Hilf|emmer|lassa|bsunders|uffpassa)\b/,
+  'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene|derf|bloß|ham|odder|bidde|Gorz|damidd|looft|Hilche|Hinweese|gommd|Wischdsch|lassn|Exderne|Diensde|Netzwerkzugriffe)\b/,
+  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot|lauft|Hilf|emmer|lassa|bsunders|uffpassa|Dienscht)\b/,
 };
 
 const clone=value=>JSON.parse(JSON.stringify(value));
