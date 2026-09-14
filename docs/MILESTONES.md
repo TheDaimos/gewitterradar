@@ -1,7 +1,8 @@
 # Gewitterradar – Meilensteine
 
-Status: **V4.06 · 2026/09 – Release-Freeze / native Integration 0.18.0.**  
-Aktive Entwicklung: **V4.07 TEST CANDIDATE / native Integration 0.19.0 auf Feature-Branch.**
+Status: **V4.06 · 2026/09 – veröffentlichte Release-/Rückfallbasis.**  
+Aktive Entwicklung: **V4.07.31 Near-Final-Testkandidat / native Integration 0.19.0 auf Feature-Branch.**  
+Interner Reifegrad: **ca. 95 %** – Projektabschätzung, keine Release-Garantie.
 
 ## Erreicht
 
@@ -68,35 +69,59 @@ Aktive Entwicklung: **V4.07 TEST CANDIDATE / native Integration 0.19.0 auf Featu
 ### M10 – V4.06 Release-Freeze
 - finale Dokumentation abgeglichen;
 - finaler Frontend-/Browser-/Home-Assistant-/HACS-/Hassfest-/Paketlauf auf dem Release-Stand;
-- exakt geprüfter Commit als V4.06-Freeze festhalten;
-- öffentliche V4.06-Auslieferung aus genau diesem Stand erzeugen.
+- exakt geprüfter Commit als V4.06-Freeze festgehalten;
+- öffentliche V4.06-Auslieferung aus genau diesem Stand erzeugt.
 
-## Nach V4.06
+### M11 – V4.07 weltweite Standortarchitektur
+- weltweite Orts-/PLZ-Suche im bestehenden Standortmenü umgesetzt;
+- Open-Meteo primär, kontrollierter Nominatim-Rückfall;
+- lokales Länder-Auto-Complete und Ländergruppierung umgesetzt;
+- eigener nativer Gewitterradar-GPS-Tracker plus separater Dashboard-Tracker;
+- `gewitterradar.set_reference_coordinates` und Dashboard-Setzpfad umgesetzt;
+- `★` Speichern, `×` Soft-Delete und `↶` Wiederherstellen über Local-To-do umgesetzt und real geprüft;
+- `Nutzen` übernimmt den Standort, schließt die Suche und fokussiert die Karte;
+- Standortmenü schließt bei Außenklick/-tap;
+- Bezugsstandort und Blitzdatenbereich bleiben fachlich getrennt;
+- halbautomatischer Blitzortung-`Location entity`-Pfad dokumentiert und real grundsätzlich bestätigt;
+- Externe-Dienste-/Netzwerkdiagnose einschließlich fail-closed URL-Inventar ergänzt;
+- Release History um DE/EN-Umschalter und den realen V4.07-Umfang erweitert.
 
-### V4.07 · TEST CANDIDATE – Weltweite Orts-Suche / dynamischer Bezugsstandort
+### M12 – V4.07.31 Near-Final-Sprach- und Hilfestand
+- akzeptierte V4.07.30-Oberfläche unverändert als direkte Ausgangsbasis verwendet;
+- Deutsch und Englisch nativ, 17 externe Varianten im Locale-Modul;
+- **15 Sprachen + 4 Dialektvarianten = 19 Varianten** vollständig strukturell geprüft;
+- Boarisch, Plattdüütsch, Sächs’sch und Schwäbisch von großen Standarddeutsch-Hilfeblöcken bereinigt;
+- technisches Vokabular, Domains, Protokolle, Entity-/Service-Namen bewusst unverändert gelassen;
+- alte V4.07.29-Komplett-Registry durch V4.07.31 ersetzt statt dupliziert;
+- fail-closed Dialekt-/Schema-Regression ergänzt;
+- Haupt-JavaScript: **1.779.464 Bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`;
+- Locale-Modul: **401.387 Bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`;
+- Komplettartefakt `v407-test31-complete`: **2.238.710 Bytes**, ZIP-SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`;
+- V4.07.31-Kandidatenworkflow, HACS-Integration, Paketvertrag, Hassfest und Home-Assistant-2026.9.0-Laufzeitprüfung erfolgreich;
+- aktueller interner Reifegrad ungefähr **95 %**.
 
-V4.07 bleibt die nächste vorgesehene Produktlinie. Der erste technische Kandidat ist nun konkreter als die ursprüngliche Planungsphase:
+## Noch offen bis zum V4.07-Freeze
 
-- wiederverwendbarer Geocoding-Kern im Dev-Toolkit als separater Draft-PR vorhanden;
-- optionales Land mit lokalem Auto-Complete, weicher automatischer Länderpräferenz und hartem explizitem Länderfilter konzeptionell/technisch vorbereitet;
-- Standort-Dropdown-Reihenfolge festgelegt: Personen → Zonen → Ort suchen → gespeicherte Orte;
-- Saved-Places-Modell über Local-To-do-Flexible-Datastore festgelegt, inklusive Soft-Delete/Rückgängig;
-- nativer `device_tracker` als Gewitterradar-eigener dynamischer Bezugsadapter implementiert;
-- Dashboard-Fallback als separater Template-`device_tracker` im V4.07-Package implementiert;
-- halbautomatischer Blitzortung-Weg festgelegt: einmalige Benutzerkonfiguration auf den Gewitterradar-Tracker, danach automatische Koordinatenwechsel;
-- Bezugsstandort und aktiver Blitzdatenbereich bleiben strikt getrennt;
-- Upstream-To-do zum offiziellen Blitzortung-Reconfigure-Wechsel dokumentiert.
+- finaler V4.07.31-Realgeräte-Sprachaudit mit Deutsch/Englisch, repräsentativen externen Sprachen und allen vier Dialekten;
+- abschließende Desktop-/Android-/iPad-/iPad-Pro-Regression der Such-/Standort-/Saved-Places-/Touch-/Scrollpfade; iPhone/iOS ergänzen, sobald verfügbar;
+- Blitzortung: kleine/große Standortbewegung, Datenregions-Latenz, Neuabonnierung, Neustart/Restore und Recorder-/Datenbankauswirkungen final prüfen;
+- robusten sichtbaren Status für Bezugsstandort versus tatsächlich synchronisierte Blitzdatenregion entscheiden/abschließen;
+- Firewall-/DNS-/Proxy-/TLS-Inspection-Hinweise in einem real gefilterten/segmentierten Szenario verproben, soweit verfügbar;
+- finalen Shared-Frontend-/Browserlauf auf dem Freeze-Commit vollständig grün bestätigen;
+- beide Auslieferungsformen synchronisieren, finale Prüfsummen/Assets/Dokumentation erzeugen, exakt akzeptierten Commit einfrieren/taggen und HACS-/Release-Promotion durchführen.
 
-Noch **nicht** als Release abgeschlossen sind insbesondere die produktive Verdrahtung des Suchdialogs in das gemeinsame Frontend, Saved-Places-Persistenz, belastbare Datenregions-Synchronisationsanzeige sowie reale Home-Assistant-/Blitzortung-/Mobile-Regressionen.
+Neue Produktideen sollen diese Restarbeiten nicht mehr inhaltlich erweitern. Bis zum Freeze gilt funktional weitgehend **Feature-Freeze**; neue Ideen gehen in den Backlog.
 
-V4.06 bleibt bis dahin die eingefrorene Release- und Rückfallbasis.
+## Nach V4.07
 
 ### Unversionierter Zukunfts-Backlog
 
-Die vollständige verbindliche Zukunfts-/Ideenliste liegt ab 12.09.2026 in:
+Die vollständige verbindliche Zukunfts-/Ideenliste liegt in:
 
 `docs/ROADMAP.md`
 
 Dort sind unter anderem MapLibre, Wetter-/Radarzellen, Unwetter/Tornado/Alarmierung, 120-Minuten-Wiedergabe, Cluster-Verfeinerung, Standortkomfort, Vollbild/Earth-Ideen und die zugehörigen Quellen-/Architekturhinweise **ohne automatische Versions- oder Umsetzungszusage** festgehalten.
 
-Neue Ideen werden dort aufgenommen, ohne den eingefrorenen V4.06-Stand oder automatisch V4.07 zu erweitern.
+Zusätzlich ist im V4.07-Release-To-do die spätere Idee eines **globalen Gewitter-Lagebilds / Storm Feeds** festgehalten.
+
+Neue Ideen werden dort aufgenommen, ohne V4.07 automatisch zu erweitern.
