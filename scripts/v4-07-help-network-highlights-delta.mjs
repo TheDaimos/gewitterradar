@@ -25,7 +25,7 @@ export function v407HelpNetworkHighlightsDelta(source, variant = 'A') {
     result,
     `        const premiumHelpIconImages=HELP_PREMIUM_ICONS.sections;\n        help.sections.forEach((section,index)=>{`,
     String.raw`        const premiumHelpIconImages=HELP_PREMIUM_ICONS.sections;
-        const helpNetworkTokenPattern=/(?:\*\.)?(?:[a-z0-9-]+\.)+(?:com|org|pl)(?::\d{1,5})?|\b(?:HTTPS|HTTP|MQTT)\/TCP\s+\d{1,5}\b|\b(?:TCP|UDP)[ -]?\d{1,5}\b|\b(?:Open-Meteo(?: Geocoding)?|OpenStreetMap(?: Nominatim|-Kacheln|-tiles| tiles)?|Nominatim|Leaflet(?: 1\.9\.4)?|Blitzortung(?: v\d+(?:\.\d+)*)?|GitHub\/HACS|GitHub|HACS|Local(?:-|\s)to-do(?:-Liste|-list)?|Companion App|DNS|TLS-Inspection|CORS)\b|device_tracker\.gewitterradar(?:_dashboard)?|gewitterradar\.set_reference_coordinates/gi;
+        const helpNetworkTokenPattern=/a\/b\/c\.tile\.openstreetmap\.org|(?:\*\.)?(?:[a-z0-9-]+\.)+[a-z]{2,24}(?::\d{1,5})?|\b(?:HTTPS|HTTP|MQTT)\/TCP\s+\d{1,5}\b|\b(?:TCP|UDP)[ -]?\d{1,5}\b|\b(?:Open-Meteo(?: Geocoding)?|OpenStreetMap(?: Nominatim|-Kacheln|-Kachelserver|-tiles| tiles)?|Nominatim|Leaflet(?: 1\.9\.4)?|Blitzortung(?: v\d+(?:\.\d+)*)?|GitHub\/HACS|GitHub|HACS|Local(?:-|\s)to-do(?:-Liste|-list)?|Dashboard-Setz-Script|Companion App|DNS|TLS-Inspection|CORS)\b|device_tracker\.gewitterradar(?:_dashboard)?|gewitterradar\.set_reference_coordinates/gi;
         const appendHelpNetworkText=(target,text)=>{
           const source=String(text??'');helpNetworkTokenPattern.lastIndex=0;let cursor=0,match;
           while((match=helpNetworkTokenPattern.exec(source))){
