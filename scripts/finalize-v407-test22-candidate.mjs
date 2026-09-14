@@ -14,7 +14,7 @@ if(inputBytes.length!==1848338||inputDigest!=='241808eb2d9924f3dc737cc4eabce053e
 const source=inputBytes.toString('utf8');
 if(!source.includes("const CARD_DISPLAY_VERSION = '4.07.21';"))throw new Error('TEST22 expected visible V4.07.21 baseline');
 if(!source.includes('diagnostic-main-cell'))throw new Error('TEST22 requires accepted A1-J10 Main diagnostic grid');
-if(!source.includes('v407LocationDialogLanguage'))throw new Error('TEST22 requires accepted runtime language-cache fix');
+if(!source.includes("const requestedLanguage = String(this._languageValue() || 'English');")||!source.includes('backdrop && backdrop.dataset.v407Language === requestedLanguage')||!source.includes('backdrop.dataset.v407Language = requestedLanguage;'))throw new Error('TEST22 requires accepted runtime language-cache fix');
 if(!source.includes("max-height:calc(100dvh - 92px)"))throw new Error('TEST22 requires accepted diagnostic scroll fix');
 if(!source.includes('class="v407-location-country-clear"'))throw new Error('TEST22 requires accepted iPad country clear control');
 if(!source.includes('radii:HELP_REFINED_ICONS_V6.radii'))throw new Error('TEST22 requires accepted radius icon');
