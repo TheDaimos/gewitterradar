@@ -1,0 +1,82 @@
+name: Build V4.07.21 runtime regression candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07-location-search-ui-next
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test21:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check TEST21 scripts
+        run: |
+          node --check scripts/v4-07-test21-regression-delta.mjs
+          node --check scripts/finalize-v407-test21-candidate.mjs
+          node --check scripts/test-v407-test21-candidate.mjs
+          node --check scripts/test-v407-full-i18n-candidate.mjs
+          node --check scripts/test-v407-help-runtime-locales.mjs
+      - name: Rebuild V4.07 candidate chain through TEST14
+        run: |
+          node scripts/build-v407-location-search-candidate.mjs
+          node scripts/finalize-v407-test8-candidate.mjs
+          node scripts/finalize-v407-test9-candidate.mjs
+          node scripts/finalize-v407-test10-candidate.mjs
+          node scripts/finalize-v407-test10r1-candidate.mjs
+          node scripts/finalize-v407-test11-candidate.mjs
+          node scripts/finalize-v407-test12-candidate.mjs
+          node scripts/finalize-v407-test13-candidate.mjs
+          node scripts/finalize-v407-test14-candidate.mjs
+      - name: Rebuild exact TEST15 through TEST19 baselines
+        run: |
+          node scripts/finalize-v407-test15-candidate.mjs
+          node scripts/test-v407-test15-candidate.mjs
+          node scripts/finalize-v407-test16-candidate.mjs
+          node scripts/test-v407-test16-candidate.mjs
+          node scripts/finalize-v407-test17-candidate.mjs
+          node scripts/test-v407-test17-candidate.mjs
+          node scripts/finalize-v407-test18-candidate.mjs
+          node scripts/test-v407-test18-candidate.mjs
+          node scripts/finalize-v407-test19-candidate.mjs
+          node scripts/test-v407-test19-candidate.mjs
+          echo "1a1446a11eb5a4574712de0370f6204a4948d173f9f67c1110d28ded79b3a152  artifacts/v407/gewitterradar-v4.07.19.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.19.js)" -eq 1845550
+      - name: Rebuild exact TEST20 baseline
+        run: |
+          node scripts/finalize-v407-test20-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.20.js
+          node scripts/test-v407-test20-candidate.mjs
+          echo "ba3d45b6362c40572a9e8da97182a8dddc42fc7baac28a823d6269224e6742ca  artifacts/v407/gewitterradar-v4.07.20.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.20.js)" -eq 1847939
+      - name: Finalize and test V4.07.21
+        run: |
+          node scripts/finalize-v407-test21-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.21.js
+          node --check artifacts/v407/locales/about-locales.js
+          node scripts/test-v407-test21-candidate.mjs
+          node scripts/test-v407-full-i18n-candidate.mjs
+          node scripts/test-v407-help-runtime-locales.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.21.js
+      - name: Publish complete V4.07.21 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test21-complete
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.20.js
+            artifacts/v407/gewitterradar-v4.07.21.js
+            artifacts/v407/locales/about-locales.js
+            artifacts/v407/SHA256SUMS.txt
