@@ -3,6 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {v407Test23HelpContentDelta} from './v4-07-test23-help-content-delta.mjs';
+import {v407Test23ExternalHelpDelta} from './v4-07-test23-external-help-delta.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir=resolve(root,'artifacts/v407');
@@ -21,7 +22,8 @@ if(!source.includes("['Gewittersimulation','ist ausschließlich für Test und Di
 if(!source.includes('radii:HELP_REFINED_ICONS_V6.radii'))throw new Error('TEST23 requires accepted premium radii header icon');
 if(!source.includes('max-height:clamp(132px,calc(100dvh - 440px),520px);'))throw new Error('TEST23 requires accepted TEST22 zoom-safe Settings scroll');
 
-const output=v407Test23HelpContentDelta(source).replace(/\r\n?/g,'\n');
+const nativeOutput=v407Test23HelpContentDelta(source);
+const output=v407Test23ExternalHelpDelta(nativeOutput).replace(/\r\n?/g,'\n');
 const bytes=Buffer.from(output,'utf8');
 const digest=hash(bytes);
 await Promise.all([
@@ -35,4 +37,4 @@ const localeBytes=await readFile(resolve(outDir,'locales/about-locales.js'));
 const localeDigest=hash(localeBytes);
 await writeFile(resolve(outDir,'SHA256SUMS.txt'),`${digest}  gewitterradar.js\n${digest}  gewitterradar-v4.07-test.js\n${digest}  gewitterradar-v4.07.23.js\n${inputDigest}  gewitterradar-v4.07.22.js\n${localeDigest}  locales/about-locales.js\n`);
 console.log(`Finalized V4.07.23: ${bytes.length} bytes, sha256 ${digest}`);
-console.log('V4.07.23: bundled accepted Help wording, radius ring bullets, location/network headings, calibration/diagnostics and recommended defaults.');
+console.log('V4.07.23: bundled accepted Help wording, radius ring bullets, location/network headings, calibration/diagnostics and recommended defaults across all 19 runtime languages.');
