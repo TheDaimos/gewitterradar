@@ -18,7 +18,9 @@ const must=[
   '.settings-collapsible[open] > .settings-section-content::-webkit-scrollbar',
   '.settings-body {\n            flex:1 1 auto;\n            min-height:0;\n            overflow-y:auto;',
   'diagnostic-main-cell',
-  'v407LocationDialogLanguage',
+  "const requestedLanguage = String(this._languageValue() || 'English');",
+  'backdrop && backdrop.dataset.v407Language === requestedLanguage',
+  'backdrop.dataset.v407Language = requestedLanguage;',
   'class="v407-location-country-clear"',
   'radii:HELP_REFINED_ICONS_V6.radii'
 ];
