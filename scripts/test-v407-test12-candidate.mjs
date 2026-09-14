@@ -21,8 +21,10 @@ for (const [label,text,display,build,variant] of [
     `const GEWITTERRADAR_BUILD = '${build}';`,
     `const HELP_PREMIUM_ICON_VARIANT = '${variant}';`,
     '.help-network-highlight{color:#f2cf82;',
-    'const helpNetworkTokenPattern=',
+    'const helpNetworkTokenPattern=/device_tracker\\.gewitterradar',
+    'gewitterradar\\.set_reference_coordinates|a\\/b\\/c\\.tile\\.openstreetmap\\.org',
     "token.className='help-network-highlight'",
+    'target.append(document.createTextNode(source.slice(cursor,match.index)))',
     'setHelpDiagnosticText(p,text)',
     'setHelpDiagnosticText(li,text)',
     'setHelpDiagnosticText(dt,term)',
@@ -47,6 +49,12 @@ for (const [label,text,display,build,variant] of [
   ];
   for (const needle of required) if (!text.includes(needle)) throw new Error(`TEST12${label} missing ${needle}`);
   if (text.includes(`const CARD_DISPLAY_VERSION = '4.07.11${variant}';`)) throw new Error(`TEST12${label} still exposes V4.07.11`);
+  const regexStart=text.indexOf('const helpNetworkTokenPattern=');
+  const localService=text.indexOf('gewitterradar\\.set_reference_coordinates',regexStart);
+  const genericDomain=text.indexOf('(?:\\*\\.)?',regexStart);
+  if (regexStart<0 || localService<regexStart || genericDomain<regexStart || localService>genericDomain) {
+    throw new Error(`TEST12${label} local service identifier must take precedence over generic domain matching`);
+  }
 }
 if (a===b) throw new Error('TEST12A and TEST12B must retain distinct external-services premium shields');
 console.log('V4.07.12 golden Help network diagnostic highlighting contract: PASS');
