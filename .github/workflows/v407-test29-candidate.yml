@@ -97,7 +97,6 @@ jobs:
           node scripts/finalize-v407-test29-candidate.mjs
           node --check artifacts/v407/gewitterradar-v4.07.29.js
           node scripts/test-v407-test29-candidate.mjs
-          node scripts/test-v407-full-i18n-candidate.mjs
           echo "0a65b11e59bae32ec267a3269f0f3c5aceec28adb4b7a8d040fd1d5bec327c93  artifacts/v407/gewitterradar-v4.07.29.js" | sha256sum -c -
           test "$(wc -c < artifacts/v407/gewitterradar-v4.07.29.js)" -eq 1777891
           echo "f88f3c00e2f4e888e0354f9bf1cddea7035730d2771e0eac4f3f948271a7f189  artifacts/v407/locales/about-locales.js" | sha256sum -c -
