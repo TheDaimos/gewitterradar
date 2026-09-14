@@ -79,8 +79,8 @@ jobs:
           node scripts/test-v407-test24-candidate.mjs
           node scripts/test-v407-full-i18n-candidate.mjs
           node scripts/test-v407-help-runtime-locales.mjs
+          echo "049bc765796bc323ddd62bd61a4106291ec67648a1df941c2465b6db861dcb01  artifacts/v407/gewitterradar-v4.07.24.js" | sha256sum -c -
           test "$(wc -c < artifacts/v407/gewitterradar-v4.07.24.js)" -eq 1855999
-          sha256sum artifacts/v407/gewitterradar-v4.07.24.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.24.js
       - name: Publish complete V4.07.24 candidate
