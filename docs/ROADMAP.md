@@ -1,13 +1,14 @@
 # Gewitterradar – kanonische Roadmap
 
-Stand: **12.09.2026**
+Stand: **14.09.2026**
 
-Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und gegen den tatsächlich erreichten V4.06-Stand bereinigt.
+Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und wird gegen den tatsächlich erreichten Produktstand gepflegt.
 
 Ziel: Ideen und geplante Weiterentwicklungen dürfen nicht nur in Chats oder Notizen existieren, sollen aber auch **nicht automatisch zu einem Umsetzungsauftrag oder einer Versionszusage werden**.
 
 ## Statusmodell
 
+- **ACTIVE / VERSIONIERT** – aktuell in Umsetzung bzw. Finalisierung innerhalb einer ausdrücklich festgelegten Versionslinie.
 - **NEXT / VERSIONIERT** – ausdrücklich für die nächste Versionslinie vorgesehen.
 - **PLANNED / UNVERSIONIERT** – fachlich vorgemerkt, aber bewusst noch keiner Version zugeordnet.
 - **EXPLORATION** – Idee/Prüfauftrag ohne Umsetzungszusage.
@@ -19,72 +20,45 @@ Arbeitsregel aus den globalen Defaults:
 
 ---
 
-## NEXT / VERSIONIERT
+## ACTIVE / VERSIONIERT
 
-### V4.07 · PLANNED – Weltweite Orts-Suche
+### V4.07 · Near-Final-Testkandidat – Weltweite Orts-Suche / dynamischer Bezugsstandort
 
-V4.07 ist aktuell die **einzige fest einer nächsten Version zugeordnete neue Fachfunktion**.
+V4.07 ist mit **V4.07.31** funktional weit fortgeschritten und liegt nach aktueller Projektabschätzung bei ungefähr **95 % Reifegrad**. Diese Angabe ist keine Release-Garantie; bis zum Freeze gelten die verbleibenden realen Abnahme- und Release-Gates aus `docs/V4_07_RELEASE_TODO.md`.
 
-Ziel: Ein Ort soll per Freitext gesucht und anschließend als Gewitterradar-Referenzpunkt verwendet werden können.
+Der ursprünglich geplante Kernumfang ist inzwischen weitgehend umgesetzt:
 
-#### Kernumfang
+- weltweite Freitext-/PLZ-Suche;
+- Open-Meteo als primärer Geocoding-Dienst und kontrollierter Nominatim-Rückfall;
+- lokale Länder-Autovervollständigung und harte explizite Länderfilter;
+- ländergruppierte Suchtreffer und Ranking-Schutz für bedeutende globale Treffer;
+- Gewitterradar-eigener dynamischer GPS-`device_tracker`;
+- getrennte Tracker für native Integration und Dashboard-Testkoexistenz;
+- zentraler Gewitterradar-Bezugsstandort für Karte, Radien, Entfernungen, Kompass und Bewertung;
+- gespeicherte Orte über Local-To-do;
+- `★` Speichern, `×` Soft-Delete und `↶` Wiederherstellen ohne Duplikatbildung;
+- `Nutzen` übernimmt den Ort, schließt die Suche und fokussiert die Karte;
+- bewusste Trennung zwischen Bezugsstandort und aktivem Blitzdatenbereich;
+- halbautomatischer Blitzortung-Einrichtungsweg über eine einmalig konfigurierte `Location entity`;
+- Hilfe-/Netzwerktransparenz einschließlich Open-Meteo, Nominatim, Leaflet/unpkg, OSM-Kacheln und Blitzortung-MQTT;
+- vollständige Produktsprachmatrix mit 15 Sprachen + 4 Dialektvarianten;
+- V4.07.31 schließt die bekannten großen Standarddeutsch-Rückfälle in den vier Dialekt-Hilfen;
+- deterministische Kandidatenkette und fail-closed Regressionstests.
 
-- Freitextsuche nach Orten;
-- Suchergebnis liefert mindestens Anzeigename, Breitengrad und Längengrad;
-- Suchergebnis kann zunächst als temporärer Bezugsstandort verwendet werden;
-- Karte, Radien, Entfernungen, Kompass und Bewertung verwenden denselben zentralen Standortdatensatz wie vorhandene Home-Assistant-Personen/-Zonen;
-- keine stillschweigende Speicherung des ersten Suchtreffers;
-- klare Trennung zwischen Suche, Auswahl/Bestätigung und optionaler späterer Speicherung.
+#### V4.07 – noch offen bis zum Freeze
 
-#### Internes Standortmodell
+- finaler Realgeräte-Sprachaudit von V4.07.31;
+- finaler Desktop-/Android-/iPad-/iPad-Pro-Regressionslauf der Such-/Standort-/Saved-Places-Bedienung; iPhone/iOS ergänzen, sobald verfügbar;
+- Blitzortung-Datenregionswechsel: kleine/große Bewegung, Latenz, Neuabonnierung, Neustart/Restore und Recorder-/Datenbankauswirkungen;
+- robusten sichtbaren Status für Bezugsstandort versus tatsächlich synchronisierte Blitzdatenregion entscheiden/abschließen;
+- Netzwerk-/Firewall-/DNS-/Proxy-/TLS-Inspection-Hinweise real verproben, soweit eine geeignete Umgebung verfügbar ist;
+- finaler Shared-Frontend-/Browserlauf, Synchronisation beider Auslieferungsformen, Prüfsummen-/Asset-Inventar, Dokumentationsabgleich, Freeze/Tag und HACS-/Release-Promotion.
 
-Die frühere Planung bleibt als Zielbild gültig:
+Bis diese Punkte abgeschlossen sind, gilt für V4.07 weitgehend **Feature-Freeze**. Neue Ideen werden nicht mehr automatisch in V4.07 aufgenommen.
 
-```text
-person | zone | custom | search
-```
+### Noch keine nächste Versionsnummer festgelegt
 
-Die konkrete Implementierung darf dieses Modell verfeinern, soll aber die Fachlogik von der Karten-Engine und vom Geocoding-Anbieter entkoppeln.
-
-#### Favoriten / eigene Orte
-
-Favoriten bleiben Teil des Standort-Themenkomplexes, müssen aber nicht zwangsläufig vollständig in der ersten V4.07-Ausbaustufe landen. Vorgemerkt sind:
-
-- Suchorte mit `☆ / ★` speichern bzw. entfernen;
-- gespeicherte Orte in die bestehende Standortauswahl integrieren;
-- Home-Assistant-Personen/Zonen klar von eigenen Orten trennen;
-- eigene Favoriten umbenennen und löschen;
-- Dubletten vermeiden;
-- definierten Fallback verwenden, wenn ein aktuell ausgewählter Favorit gelöscht wird;
-- Home-Assistant-Personen und -Zonen niemals aus Gewitterradar heraus löschen.
-
-#### Bezugsstandort und Blitzdatenbereich getrennt behandeln
-
-Die frühere internationale Architekturregel bleibt wichtig:
-
-1. **Bezugsstandort** – bestimmt Karte, Radien, Entfernungen, Kompass und Bewertung.
-2. **Aktiver Blitzdatenbereich** – beschreibt, für welches geografische Gebiet die aktuell empfangenen Blitzereignisse tatsächlich gelten.
-
-Ein geografisch unpassender Blitzdatenbereich darf nicht als vermeintlich korrekte Live-Lage dargestellt werden.
-
-#### Bevorzugtes Adapter-Ziel – noch zu verifizieren
-
-Aus der alten Roadmap bleibt `device_tracker.gewitterradar` als bevorzugtes technisches Zielmodell vorgemerkt, **sofern eine aktuelle Machbarkeitsprüfung dies bestätigt**.
-
-Vor einer Umsetzung muss geprüft werden:
-
-- welcher aktuell unterstützte Home-Assistant-Mechanismus einen dynamischen virtuellen GPS-/Standortadapter sauber bereitstellt;
-- ob Latitude/Longitude zuverlässig und persistent genug gesetzt werden können;
-- ob die tatsächlich verwendete Blitzortung.org-Integration einen `device_tracker` als Standortquelle akzeptiert und Positionsänderungen zuverlässig nachführt;
-- Latenz, Umschaltschwellen, Neustart-/Restore-Verhalten und Fehlerfälle;
-- Recorder-/Datenbankauswirkungen;
-- keine direkten `.storage`-Manipulationen und keine privaten/undokumentierten Home-Assistant-Frontend-APIs.
-
-Falls das Modell technisch nicht sauber tragfähig ist, wird die Standort-/Blitzbereichs-Kopplung über einen unterstützten Backend-/Integrationsweg gelöst. Die Frontend-Karte darf Home-Assistant-Konfiguration nicht fragil manipulieren.
-
-#### Anbieter-/API-Regel
-
-Vor der Umsetzung wird die aktuelle Anbieterwahl bewusst geprüft. Das gemeinsame Dev-Toolkit enthält bereits wiederverwendbares Wissen zu Open-Meteo-Geocoding, aber Anbieterbedingungen, Quoten, Attribution und Eignung müssen für V4.07 aktuell neu verifiziert werden. Provider-spezifische Suchantworten sollen in provider-neutrale Koordinaten/Metadaten überführt werden.
+Nach dem V4.07-Freeze werden die untenstehenden unversionierten Punkte neu priorisiert. Es ist **noch keine automatische Zuordnung zu V4.08** oder einer anderen Versionsnummer beschlossen.
 
 ---
 
@@ -100,7 +74,8 @@ Ziele:
 - keine zweite getrennte Gewitterradar-Anwendung;
 - gemeinsame Daten- und Steuerungsschicht für OSM/Leaflet und MapLibre;
 - Blitzdaten, Radien, Standorte, Cluster, Filter und Statuslogik engine-unabhängig halten;
-- bestehende stabile OSM-/Leaflet-Logik nicht unnötig umbauen, bevor die Abstraktionsschicht belastbar ist.
+- bestehende stabile OSM-/Leaflet-Logik nicht unnötig umbauen, bevor die Abstraktionsschicht belastbar ist;
+- später einen kontrollierten Engine-Umschalter OSM/Leaflet ↔ MapLibre ermöglichen.
 
 ### Wetterebenen / Regen- und Radarzellen
 
@@ -136,6 +111,24 @@ Bewusst **ohne Versionszuordnung** vorgemerkt:
 
 Dafür werden vor jeder Planung gute, belastbare und möglichst offizielle Quellen benötigt. Datenherkunft, Aktualität, Abdeckung, Lizenz, Warnsemantik, Fehlalarm-/Ausfallverhalten und Home-Assistant-Integration müssen fachlich geprüft werden. Ein automatisches „Tornado erkannt“-Versprechen darf nicht aus indirekten Rotationsdaten abgeleitet werden, wenn die Quelle dies fachlich nicht hergibt.
 
+### Globales Gewitter-Lagebild / Storm Feed
+
+Spätere Feed-/Lagebild-Idee für starke Gewitter weltweit.
+
+Vorgemerkt:
+
+- RSS-/Feed-artige Liste aktuell besonders aktiver Gewitter;
+- Filter **Weltweit → Kontinent → Land**, optional Region/Bundesland bei belastbarer Datenquelle;
+- Ort/Region/Land, Kontinent, Aktivität, Zeitfenster und Aktualisierungszeit pro Eintrag;
+- fachlich begründete Ranglogik aus Blitzanzahl/-dichte, räumlicher Ausdehnung, Trend und Aktualität statt scheinpräziser „Stärke“;
+- Klick/Tap fokussiert das Gewitterzentrum auf der Karte;
+- nächstgelegenen geeigneten Ort bestimmen und über die vorhandene Standortpipeline als Gewitterradar-Referenz verwenden;
+- klar zwischen Feed-Lagebild und bereits synchronisierter Blitzortung-Livedatenregion unterscheiden;
+- keine Weltrangliste durch zyklisches Verschieben des Gewitterradar-Trackers oder weltweites „Abscannen“ der regionsbezogenen Blitzortung-Subscription erzeugen;
+- zusätzliche externe Datenquelle/API nur nach Lizenz-, Nutzungs-, Datenschutz-, Rate-Limit- und Ausfallprüfung;
+- Caching/Fallback so entwerfen, dass der normale Karten-/Saved-Places-Betrieb nicht von einem globalen Feed abhängt;
+- kompakte mobile Feed-/Kartenansicht für Android/iPhone/iPad/Desktop planen.
+
 ### 120-Minuten-Wiedergabe
 
 Die letzten 120 Minuten der Blitzaktivität bleiben als eigener Wiedergabemodus geplant.
@@ -170,12 +163,13 @@ Spätere Optimierung der bestehenden Clusterlogik:
 
 ### Standortverwaltung abrunden
 
-Nach der Grundfunktion der Ortssuche bleiben Komfortpunkte vorgemerkt:
+Nach der V4.07-Grundfunktion bleiben Komfortpunkte vorgemerkt:
 
-- Favoriten umbenennen/löschen;
-- Dubletten erkennen;
-- temporäre Suchorte sauber behandeln;
-- definiertes Verhalten bei nicht mehr verfügbaren Personen/Zonen/Favoriten.
+- Favoriten/eigene Orte umbenennen;
+- zusätzliche Dubletten- und Konfliktfälle sauber behandeln;
+- temporäre Suchorte weiter verfeinern;
+- definiertes Verhalten bei nicht mehr verfügbaren Personen/Zonen/Favoriten;
+- Home-Assistant-Personen und -Zonen niemals aus Gewitterradar heraus löschen.
 
 ### Geräte- und Oberflächenoptimierungen
 
@@ -250,6 +244,7 @@ Diese Idee ist ausdrücklich **noch keiner Version zugeordnet** und muss vor ein
 Folgende alte Roadmap-Themen sind keine offenen Zukunftspunkte mehr:
 
 - **Native Home-Assistant-Integration** – mit der V4.06-Linie umgesetzt; Integration und Dashboard sind heute zwei Auslieferungsformen desselben kanonischen Produkts.
+- **V4.07-Ortssuche als reine Planungsfunktion** – mit der V4.07.31-Linie weitgehend umgesetzt; verbleibend sind Freigabe-/Regressionsthemen und einzelne Komfort-/Statuspunkte, nicht mehr die Grundimplementierung.
 - **Informations-/Transparenzdialog als neues Grundfeature** – mit About/„Über Gewitterradar“ und „Hilfe & Hinweise“ weitgehend umgesetzt. Neue Datenquellen, Abdeckungszustände und Attributionen müssen diese vorhandenen Dialoge künftig ergänzen statt einen konkurrierenden dritten Informationsdialog einzuführen.
 - **V4.00-HACS-/Repository-Zielarchitektur** – durch die heutige kanonische Ein-Produkt-/Zwei-Auslieferungsformen-Architektur ersetzt.
 - **alte feste Recorder-Sensor-IDs** – durch die V4.06-Mehrgeräte-Wildcard-Regel ersetzt. Künftige Dokumentation muss die aktuelle Wildcard-Semantik verwenden.
