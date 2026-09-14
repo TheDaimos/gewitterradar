@@ -69,6 +69,13 @@ const SECONDARY={
   ],
 };
 
+const DIALECT_SIGNAL={
+  'Boarisch':/\b(?:ned|san|de|da|werdn|muaß|kenna|gspeichert|Suach|derf|bloß|sei|ham|hod|oda|ois|Hüf|Hinwais|lafft|kummt|lassn|auße)\b/,
+  'Plattdüütsch':/\b(?:nich|warrt|un|för|vun|Oort|Koort|spiekert|dörv|bloots|wesen|hebben|hett|as|bruukt|Kort|verklort|dormit|seker|verstahn|arbeidt|Buten-Deensten|Nettwark-Togrepen|jümmers|wedder)\b/,
+  'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene|derf|bloß|ham|odder|bidde|Gorz|damidd|looft|Hilche|Hinweese|gommd|Wischdsch|lassn)\b/,
+  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot|lauft|Hilf|emmer|lassa|bsunders|uffpassa)\b/,
+};
+
 const clone=value=>JSON.parse(JSON.stringify(value));
 const rewrite=(name,value)=>{
   if(Array.isArray(value))return value.map(item=>rewrite(name,item));
@@ -96,7 +103,7 @@ export function buildV40731ExternalHelpLocales(v40729){
     for(const [path,text] of flatten(result[name])){
       const old=oldLeaves.get(path);
       if(typeof old!=='string'||old.length<32||technical(old)||!/\p{L}/u.test(old))continue;
-      if(text===old)unchanged.push(`${path}: ${text}`);
+      if(text===old&&!DIALECT_SIGNAL[name].test(text))unchanged.push(`${path}: ${text}`);
     }
     if(unchanged.length)throw new Error(`V4.07.31 unchanged Standard-German prose remains in ${name}:\n${unchanged.join('\n')}`);
   }
