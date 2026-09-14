@@ -2,7 +2,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
-import {buildV40731ExternalHelpLocales,replaceV40729RegistryWithV40731,v407Test31HelpI18nDelta} from './v4-07-test31-help-i18n-delta.mjs';
+import {buildV40731ExternalHelpLocales,replaceV40729RegistryWithV40731,v407Test31HelpI18nDelta} from './v4-07-test31-help-i18n-r2.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir=resolve(root,'artifacts/v407');
