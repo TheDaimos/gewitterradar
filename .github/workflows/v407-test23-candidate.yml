@@ -79,8 +79,8 @@ jobs:
           node scripts/test-v407-test23-candidate.mjs
           node scripts/test-v407-full-i18n-candidate.mjs
           node scripts/test-v407-help-runtime-locales.mjs
-          echo "7e39905e62aa0b1990db3cef4f97e54ceba88c3487840590b312f8b3e4ca9afc  artifacts/v407/gewitterradar-v4.07.23.js" | sha256sum -c -
-          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.23.js)" -eq 1852445
+          echo "061b79c11e5507c27ec62dc552b9a7ec1e0caccc9a10e3b3d7ccd928113a786e  artifacts/v407/gewitterradar-v4.07.23.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.23.js)" -eq 1854294
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.23.js
       - name: Publish complete V4.07.23 candidate
