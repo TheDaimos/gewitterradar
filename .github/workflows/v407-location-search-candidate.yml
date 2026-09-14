@@ -45,6 +45,7 @@ jobs:
           node --check scripts/v4-07-help-premium-icons-delta.mjs
           node --check scripts/v4-07-help-network-highlights-delta.mjs
           node --check scripts/v4-07-help-polish-test13-delta.mjs
+          node --check scripts/v4-07-help-polish-test14-delta.mjs
           node --check scripts/build-v407-location-search-candidate.mjs
           node --check scripts/finalize-v407-test8-candidate.mjs
           node --check scripts/finalize-v407-test9-candidate.mjs
@@ -53,6 +54,7 @@ jobs:
           node --check scripts/finalize-v407-test11-candidate.mjs
           node --check scripts/finalize-v407-test12-candidate.mjs
           node --check scripts/finalize-v407-test13-candidate.mjs
+          node --check scripts/finalize-v407-test14-candidate.mjs
           node --check scripts/test-v407-test8-candidate.mjs
           node --check scripts/test-v407-test9-candidate.mjs
           node --check scripts/test-v407-full-i18n-candidate.mjs
@@ -61,6 +63,7 @@ jobs:
           node --check scripts/test-v407-test11-candidate.mjs
           node --check scripts/test-v407-test12-candidate.mjs
           node --check scripts/test-v407-test13-candidate.mjs
+          node --check scripts/test-v407-test14-candidate.mjs
       - name: Build accepted TEST7 base
         run: node scripts/build-v407-location-search-candidate.mjs
       - name: Check TEST7 generated JavaScript syntax
@@ -149,6 +152,20 @@ jobs:
         run: |
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.13.js
+      - name: Prove exact TEST13 baseline
+        run: |
+          echo "17c567e3a500aa61cac3acc20d70f8146316a9884c13f37549a4b3b1275c3da6  artifacts/v407/gewitterradar-v4.07.13.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.13.js)" -eq 1821053
+      - name: Finalize V4.07.14 clearer Help icons and close placement
+        run: node scripts/finalize-v407-test14-candidate.mjs
+      - name: Check V4.07.14 generated JavaScript syntax
+        run: node --check artifacts/v407/gewitterradar-v4.07.14.js
+      - name: Validate V4.07.14 Help icon clarity and placement contract
+        run: node scripts/test-v407-test14-candidate.mjs
+      - name: Verify TEST14 default aliases
+        run: |
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.14.js
       - name: Publish test JavaScript
         uses: actions/upload-artifact@v4
         with:
@@ -163,4 +180,5 @@ jobs:
             artifacts/v407/gewitterradar-v4.07.12A.js
             artifacts/v407/gewitterradar-v4.07.12B.js
             artifacts/v407/gewitterradar-v4.07.13.js
+            artifacts/v407/gewitterradar-v4.07.14.js
             artifacts/v407/SHA256SUMS.txt
