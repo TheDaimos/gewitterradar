@@ -2,7 +2,7 @@
 
 ## 2026/09 — V4.07 TEST CANDIDATE / native integration 0.19.0
 
-> **Nicht veröffentlicht.** Dieser Stand lebt ausschließlich auf dem V4.07-Feature-Branch. V4.06 bleibt die eingefrorene Release-/Rückfallbasis.
+> **Nicht veröffentlicht.** Aktueller Near-Final-Teststand ist **V4.07.31** auf `feature/v4.07.31-help-i18n-complete`. Interner Reifegrad: ca. **95 %**. V4.06 bleibt die eingefrorene öffentliche Release-/Rückfallbasis.
 
 ### Added
 
@@ -10,24 +10,54 @@
 - Add `gewitterradar.set_reference_coordinates` to atomically move the product-owned tracker and select it as the active Gewitterradar reference.
 - Add read-only Blitzortung linkage diagnostics without mutating foreign ConfigEntries or `.storage`.
 - Add `app_gewitterradar_v4_07_pkg.yaml` with a separate dashboard Template `device_tracker` and coordinate-set script.
+- Add worldwide place/postcode search with Open-Meteo as primary geocoder and a controlled OpenStreetMap Nominatim fallback.
+- Add local country autocomplete for 249 ISO-3166-1-alpha-2 codes, explicit country filtering, country-grouped result presentation and global ranking safeguards.
+- Add saved places through the local `Gewitterradar Orte` Local-To-do datastore, including `★` save, reversible `×` soft-delete and `↶` restore without duplicate creation.
+- Add automatic map focus after `Nutzen` and outside-click/tap closing for the location selector.
+- Add a bilingual DE/EN Release History switch and update the V4.07 history entry from the former planning placeholder to the implemented test-candidate scope.
+- Add the Help section **Externe Dienste & Netzwerkfreigaben** with a fail-closed inventory for the current runtime network targets.
+- Add premium Help iconography, deterministic embedded SVG assets, network/service highlighting, radius-specific Help presentation and viewport/zoom-safe Help/Settings scrolling.
 - Document the one-time semi-automatic Blitzortung setup and the permanent distinction between requested reference location and active lightning-data region.
 - Record the upstream task to contact the Blitzortung developer about an officially supported coordinate ↔ location-entity reconfigure path.
+
+### V4.07.31 — complete Help i18n regression fix
+
+- Keep Deutsch and English as the two native Help locales in the main JavaScript and load the remaining 17 variants from the external locale module.
+- Preserve the complete product language scope of **15 languages + 4 German dialect variants = 19 variants**.
+- Replace the superseded V4.07.29 complete external Help registry with the dedicated V4.07.31 registry instead of carrying both full registries in parallel.
+- Complete the four dialect Help variants **Boarisch, Plattdüütsch, Sächs’sch and Schwäbisch** so they no longer inherit large Standard-German Help blocks.
+- Preserve technical proper names, domains, protocols, entity IDs and service names without artificial translation.
+- Add a fail-closed dialect regression check that rejects known Standard-German fallback prose while accepting text that was already correctly dialectized in an earlier stage.
+- Keep all accepted V4.07.30 UI behavior unchanged, including the blue `Nutzen`/`Use` action, restrained `Location entity` emphasis and the accepted radius presentation.
+
+### Deterministic V4.07.31 identity
+
+- Main JavaScript: **1,779,464 bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`.
+- External locale module: **401,387 bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`.
+- GitHub Actions complete artifact `v407-test31-complete`: **2,238,710 bytes**, artifact ZIP SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`.
+- Dedicated V4.07.31 candidate workflow reconstructs the accepted chain through TEST30 before applying and testing the TEST31 delta.
+- HACS integration validation, package contract, Hassfest and Home Assistant 2026.9.0 runtime tests pass on the V4.07.31 branch.
+- Detailed near-final notes are recorded in `docs/RELEASE_NOTES_V4_07_31_TEST.md`.
 
 ### Safety / compatibility
 
 - Do not use deprecated `device_tracker.see`.
 - Do not rewrite Blitzortung ConfigEntries.
+- Do not manipulate `.storage` or private/undocumented Home Assistant frontend APIs.
 - Keep native and dashboard tracker IDs distinct so both delivery forms can coexist during testing.
-- Keep the accepted V4.06 shared frontend unchanged in this backend test candidate; worldwide search UI remains the next bounded frontend integration job.
 - Do not claim lightning-data synchronization merely because the Gewitterradar tracker moved; Blitzortung applies its own movement threshold and subscription lifecycle.
+- Keep V4.06 immutable as the public fallback until V4.07 is explicitly accepted, frozen and released.
 
 ### Validation still required before release
 
-- Real Home Assistant install/restart/restore test for integration 0.19.0.
-- Real Blitzortung one-time tracker configuration and large/small location-move regression.
-- Package validation on a real Dashboard installation.
-- Canonical dropdown/search UI wiring, saved-place persistence and cross-device regression.
-- HACS/Hassfest/release gates and derived-dashboard synchronization after candidate acceptance.
+- Final real-device V4.07.31 spot checks across Deutsch/English, representative external languages and all four dialect variants, including full Help scrolling and long labels.
+- Final Desktop/Android/iPad/iPad-Pro regression of search, country grouping/ranking, saved-place lifecycle, `Nutzen`, responsive scrolling and touch targets; add iPhone/iOS where available.
+- Real Blitzortung large/small move, re-subscription latency, restart/restore and Recorder/database-impact checks.
+- Decide/complete a robust visible distinction between Gewitterradar reference location and the actually synchronized Blitzortung data region.
+- Real firewall/DNS-filter/proxy/TLS-inspection verification where a suitable segmented environment is available.
+- Final shared-frontend/browser gate on the intended freeze commit, derived-dashboard synchronization, final documentation/history/checksum inventory, immutable tag/freeze and HACS/release promotion.
+
+The historical TEST1–TEST30 development details remain documented in `docs/RELEASE_NOTES_V4_07_TEST.md`; V4.07.31 is the current consolidation point.
 
 ## 2026/09 — V4.06 / native integration 0.18.0
 
