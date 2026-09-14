@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 1024 1024" role="img" aria-label="radii premium v2 airy three-ring">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff8d7"/>
+      <stop offset=".16" stop-color="#ffe082"/>
+      <stop offset=".38" stop-color="#c88924"/>
+      <stop offset=".58" stop-color="#7b4810"/>
+      <stop offset=".76" stop-color="#efbd50"/>
+      <stop offset="1" stop-color="#ffe8a0"/>
+    </linearGradient>
+    <filter id="depth" x="-18%" y="-18%" width="136%" height="136%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feOffset in="blur" dy="8" result="offset"/>
+      <feFlood flood-color="#000" flood-opacity=".68" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offset" operator="in" result="shadow"/>
+      <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g fill="none" stroke="url(#gold)" stroke-width="48" stroke-linecap="round" filter="url(#depth)">
+    <circle cx="512" cy="512" r="416"/>
+    <circle cx="512" cy="512" r="252"/>
+    <circle cx="512" cy="512" r="88"/>
+  </g>
+</svg>
