@@ -69,10 +69,47 @@ Der Audit ergab keinen erforderlichen Übersetzungsumbau und ist mit `scripts/te
 
 Die sichtbare Release History enthält ab V4.06 wieder lückenlos die öffentliche V4-Reihe einschließlich der zuvor fehlenden **V4.05**. V4.00 bis V4.06 sind `2026/09` zugeordnet; die sichtbaren V3.x-Entwicklungsmeilensteine sind `2026/08` zugeordnet.
 
-Als nächster Entwicklungswunsch ist **V4.07 · PLANNED – Worldwide location search / Weltweite Orts-Suche** vorgemerkt. Diese Funktion ist ausdrücklich Planung und kein Bestandteil von V4.06.
+Als nächster Entwicklungswunsch war **V4.07 · PLANNED – Worldwide location search / Weltweite Orts-Suche** vorgemerkt. Diese Planung wurde anschließend auf dem V4.07-Feature-Branch umgesetzt und ist damit historisch überholt; V4.06 selbst bleibt davon unverändert.
+
+## V4.07 · 2026/09 – weltweite Standortarchitektur
+
+V4.07 erweitert das gemeinsame Produkt um einen dynamischen Gewitterradar-Bezugsstandort und eine weltweite Ortssuche. Der Standortwechsel bleibt bewusst von der tatsächlichen Blitzdatenregion getrennt: Karte, Radien, Entfernungen, Kompass und Bewertung verwenden den Gewitterradar-Bezugsstandort, während die separat installierte Blitzortung-Integration ihre Datenregion nach eigener Bewegungs- und Abonnementlogik nachführt.
+
+Zum V4.07-Funktionsumfang gehören inzwischen:
+
+- weltweite Orts-/PLZ-Suche mit Open-Meteo und kontrolliertem Nominatim-Rückfall;
+- lokale Länder-Autovervollständigung und Ländergruppierung der Treffer;
+- Gewitterradar-eigener dynamischer GPS-Tracker;
+- separater Dashboard-Tracker für parallele Testkoexistenz;
+- gespeicherte Orte über Local-To-do;
+- `★` Speichern, reversibles `×` Entfernen und `↶` Wiederherstellen;
+- automatische Kartenfokussierung nach `Nutzen`;
+- dokumentierter halbautomatischer Blitzortung-Einrichtungsweg über `Location entity`;
+- DE/EN-Umschalter in der Release History;
+- umfassende Hilfe zu externen Diensten, Firewall-/Netzwerkpfaden und Diagnose;
+- Premium-Hilfe-Icons und deterministische Hervorhebungen für Netzwerk-, Dienst- und Entity-Bezeichner;
+- vollständige V4.07-Sprachmatrix mit 15 Sprachen und 4 deutschen Dialektvarianten.
+
+## V4.07.31 – Near-Final-Testkandidat
+
+Am 14.09.2026 erreicht V4.07 mit **V4.07.31** einen internen Reifegrad von ungefähr **95 %**. Diese Prozentangabe ist eine Projektabschätzung und keine öffentliche Release-Zusage.
+
+V4.07.31 schließt insbesondere die letzte bekannte strukturelle Lücke in **„Hilfe & Hinweise“**: Deutsch und Englisch bleiben nativ, 17 weitere Varianten werden aus dem externen Locale-Modul geladen, und Boarisch, Plattdüütsch, Sächs’sch sowie Schwäbisch erben keine großen Standarddeutsch-Hilfeblöcke mehr. Ein eigener fail-closed Regressionstest schützt diesen Zustand.
+
+Deterministische Identität des Near-Final-Kandidaten:
+
+- Haupt-JavaScript: **1.779.464 Bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`;
+- externes Locale-Modul: **401.387 Bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`;
+- vollständiges Actions-Artefakt `v407-test31-complete`: **2.238.710 Bytes**, ZIP-SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`.
+
+Der V4.07.31-spezifische Kandidatenlauf sowie HACS-Integration, Paketvertrag, Hassfest und Home-Assistant-2026.9.0-Laufzeittests sind erfolgreich. Vor einer öffentlichen V4.07-Freigabe bleiben bewusst reale Endgeräte-/Sprachprüfungen, Blitzortung-Datenregions-/Restart-/Latenzprüfungen, Netzwerk-/Filterverprobung soweit verfügbar und der finale Release-Freeze mit synchronisierten Auslieferungsformen offen.
+
+Die vollständige Near-Final-Dokumentation steht in `docs/RELEASE_NOTES_V4_07_31_TEST.md`. Die detaillierte TEST1–TEST30-Historie bleibt separat in `docs/RELEASE_NOTES_V4_07_TEST.md` erhalten.
 
 ## Qualitätssicherung und Freeze
 
 V4.06 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprachschema- und Locale-Prüfungen, Recorder-Sprachaudit, Home-Assistant-Laufzeittests, HACS, Hassfest, Paketverträge und reale Geräteabnahme abgesichert.
 
-Nach Abschluss des finalen Release-Laufs wird der exakt geprüfte V4.06-Commit eingefroren. Bereits veröffentlichte V4.05- und frühere Rückfallpunkte bleiben unverändert.
+V4.07 übernimmt diese Grundsätze und ergänzt sie um die deterministische Kandidatenkette, Standort-/Blitzdatenregion-Trennung, Provider-/Netzwerkinventar, Saved-Places-Regressionsschutz sowie die vollständige 19-Varianten-Hilfeprüfung.
+
+V4.06 bleibt bis zum ausdrücklich akzeptierten und eingefrorenen V4.07-Release unverändert die öffentliche Rückfallbasis. Erst der exakt final geprüfte V4.07-Commit darf als Release-Tag/Fallbackpunkt festgeschrieben werden.
