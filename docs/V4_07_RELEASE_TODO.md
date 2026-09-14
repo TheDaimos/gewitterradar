@@ -1,6 +1,6 @@
 # Gewitterradar V4.07 – Release-To-do
 
-Stand: 13.09.2026
+Stand: 14.09.2026
 
 Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.07 bewusst geprüft und abgeschlossen werden sollen.
 
@@ -38,6 +38,10 @@ Diese Datei sammelt kleine release-nahe Aufgaben, die vor einer Freigabe von V4.
 - [x] Build-Pipeline stabilisiert: Vor jeder weiteren Erweiterung muss der erzeugte TEST8 byte-identisch zur real akzeptierten Referenz sein (1.649.138 Byte / SHA256 `a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9`). Zusätzlich wird vor TEST10 die real akzeptierte TEST9R2-Basis byte-identisch erzwungen (1.651.359 Byte / SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`). Abweichungen brechen die CI.
 - [x] TEST9R2 auf realem Home Assistant geprüft und akzeptiert. Gewitterradar startet normal, **Ort suchen …** öffnet vollständig und die Löschfunktion wurde in beiden Eingabefeldern real bestätigt. R2 basiert ausschließlich auf der byte-identischen TEST8-Basis, verändert die bestehende Input-DOM-Struktur nicht und umfasst 1.651.359 Byte bei SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`.
 - [x] TEST10 technisch gebaut und vollständig durch den V4.07-Kandidatenvertrag geprüft: vollständige Sprachmatrix + Shield-Variante 2 auf der real akzeptierten TEST9R2-Basis, 1.769.200 Byte, SHA256 `a95e7b3346089f45e51c7ceebfc3d813b6bebac8cef56d3fa4cfa8dff37bd076`.
+- [x] TEST11: Premium-Icon-Satz für **Hilfe & Hinweise** technisch integriert. Alle Master-Originale liegen im kanonischen Repository unter `artwork/help-icons/hires/`; Variante A nutzt Shield Nr. 2, Variante B den Netzwerkstecker/RJ45. V4.07.11A/B bleiben als direkte Vergleichskandidaten erhalten.
+- [ ] TEST11 Premium-Icons auf realen Geräten visuell abnehmen und A/B für **Externe Dienste & Netzwerkfreigaben** final auswählen.
+- [x] TEST12: Diagnose-Lesbarkeit in **Hilfe & Hinweise** verbessert. Domains, Ports/Protokoll-Port-Angaben, relevante externe Dienste sowie lokale Gewitterradar-/Home-Assistant-Dienst- und Entity-Bezeichner werden im Fließtext deterministisch golden hervorgehoben, ohne die 19-sprachigen Hilfetexte selbst umzuschreiben. Die DOM-Erzeugung nutzt Textknoten und gezielte `span.help-network-highlight`-Elemente; die Premium-Icon-Varianten A/B bleiben erhalten. Kandidatenvertrag und Syntaxprüfung sind erfolgreich.
+- [ ] TEST12 Gold-Hervorhebungen real auf Android/Desktop/iPad prüfen: insbesondere lange Domains, `a/b/c.tile.openstreetmap.org`, `blitzortung.ha.sed.pl:1883`, `HTTPS/TCP 443`, `MQTT/TCP 1883`, `device_tracker.gewitterradar_dashboard` und `gewitterradar.set_reference_coordinates`.
 - [ ] Externe Dienste / Firewall-Hinweise in realen segmentierten bzw. gefilterten Netzen verproben.
 
 ## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
