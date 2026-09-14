@@ -15,7 +15,7 @@ if(source.includes('„Nutzen“ übernimmt'))throw new Error('German Nutzen act
 if(!source.includes('Nutzen übernimmt den gewählten Ort sofort als Bezugsstandort, schließt die Ortssuche automatisch und fährt die Karte direkt zum neuen Standort.'))throw new Error('German Nutzen Help copy missing');
 if(!source.includes('Use applies the selected place immediately, closes place search and moves the map directly to the new reference location.'))throw new Error('English Use Help copy changed unexpectedly');
 if(!source.includes("section.key==='location'&&entryIndex===2")||!source.includes("action.className='help-action-token help-action-use'"))throw new Error('Location Use/Nutzen action renderer missing');
-if(!source.includes("replace(/^[„“\\\"'«»‹›]+|[„“\\\"'«»‹›]+$/g,''"))throw new Error('Action-label quote sanitizer missing');
+if(!source.includes(`replace(/^[„“"'«»‹›]+|[„“"'«»‹›]+$/g,'')`))throw new Error('Action-label quote sanitizer missing');
 if(!source.includes('.help-action-use{height:1.56em;min-height:1.56em;padding:0 .52em;border:1px solid #5d849c;border-radius:.29em;color:#e5edf2!important'))throw new Error('Blue premium Use/Nutzen button styling missing');
 if(!source.includes('.help-process-highlight{display:inline-block;padding:1px 6px;border:1px solid rgba(225,190,110,.46)'))throw new Error('Subtle Location entity styling missing');
 if(source.includes('.help-process-highlight{display:inline-block;padding:1px 7px;border:1px solid rgba(255,213,116,.88)'))throw new Error('Overly prominent TEST29 Location entity styling still present');
