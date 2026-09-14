@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {buildV407Test29ExternalHelpLocales} from './v4-07-test29-build-external-help-locales.mjs';
-import {buildV40731ExternalHelpLocales,replaceV40729RegistryWithV40731,v407Test31HelpI18nDelta} from './v4-07-test31-help-i18n-delta.mjs';
+import {buildV40731ExternalHelpLocales,replaceV40729RegistryWithV40731,v407Test31HelpI18nDelta} from './v4-07-test31-help-i18n-r2.mjs';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const outDir=resolve(root,'artifacts/v407');
@@ -77,10 +77,10 @@ for(const name of names){
   for(const marker of germanSentinels)if(text.includes(marker))throw new Error(`Standard-German Help fallback remains in ${name}: ${marker}`);
 }
 const dialectMarkers={
-  'Boarisch':/\b(?:ned|san|de|da|werdn|muaß|kenna|gspeichert|Suach)\b/g,
-  'Plattdüütsch':/\b(?:nich|warrt|un|för|vun|Oort|Koort|spiekert)\b/g,
-  'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene)\b/g,
-  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach)\b/g,
+  'Boarisch':/\b(?:ned|san|de|da|werdn|muaß|kenna|gspeichert|Suach|derf|bloß|sei|ham|hod|oda|ois)\b/g,
+  'Plattdüütsch':/\b(?:nich|warrt|un|för|vun|Oort|Koort|spiekert|dörv|bloots|wesen|hebben|hett|as|bruukt)\b/g,
+  'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene|derf|bloß|ham|odder|bidde)\b/g,
+  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot)\b/g,
 };
 for(const [name,pattern] of Object.entries(dialectMarkers)){
   const hits=stringify(help31[name]).match(pattern)?.length||0;
