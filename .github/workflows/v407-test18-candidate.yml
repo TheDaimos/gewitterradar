@@ -1,0 +1,79 @@
+name: Build V4.07.18 iPad clear candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07-location-search-ui-next
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test18:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check TEST17/TEST18 scripts
+        run: |
+          node --check scripts/v4-07-help-radii-test17-delta.mjs
+          node --check scripts/finalize-v407-test17-candidate.mjs
+          node --check scripts/test-v407-test17-candidate.mjs
+          node --check scripts/v4-07-ipad-query-clear-test18-delta.mjs
+          node --check scripts/finalize-v407-test18-candidate.mjs
+          node --check scripts/test-v407-test18-candidate.mjs
+      - name: Rebuild V4.07 candidate chain through TEST14
+        run: |
+          node scripts/build-v407-location-search-candidate.mjs
+          node scripts/finalize-v407-test8-candidate.mjs
+          node scripts/finalize-v407-test9-candidate.mjs
+          node scripts/finalize-v407-test10-candidate.mjs
+          node scripts/finalize-v407-test10r1-candidate.mjs
+          node scripts/finalize-v407-test11-candidate.mjs
+          node scripts/finalize-v407-test12-candidate.mjs
+          node scripts/finalize-v407-test13-candidate.mjs
+          node scripts/finalize-v407-test14-candidate.mjs
+      - name: Finalize exact TEST15 baseline
+        run: |
+          node scripts/finalize-v407-test15-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.15.js
+          node scripts/test-v407-test15-candidate.mjs
+          echo "4d5cdd2f5fe7f0a0e987d978cead6cc5ff78d3cf6123d226f3e8787fdd3db986  artifacts/v407/gewitterradar-v4.07.15.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.15.js)" -eq 1835806
+      - name: Finalize exact TEST16 baseline
+        run: |
+          node scripts/finalize-v407-test16-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.16.js
+          node scripts/test-v407-test16-candidate.mjs
+          echo "56cfd3bafa6a2379baedb2d90b27d09b7d00c4abca90bfe650f24a3ef0c868f0  artifacts/v407/gewitterradar-v4.07.16.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.16.js)" -eq 1842239
+      - name: Finalize exact TEST17 baseline
+        run: |
+          node scripts/finalize-v407-test17-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.17.js
+          node scripts/test-v407-test17-candidate.mjs
+          echo "11d9d350d13eb62a3a02a7567f1f2eba94d83bf93d409e23b7100f5f40a44dd2  artifacts/v407/gewitterradar-v4.07.17.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.17.js)" -eq 1843980
+      - name: Finalize V4.07.18 iPad-safe clear control
+        run: |
+          node scripts/finalize-v407-test18-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.18.js
+          node scripts/test-v407-test18-candidate.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.18.js
+      - name: Publish V4.07.18 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test18-js
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.17.js
+            artifacts/v407/gewitterradar-v4.07.18.js
+            artifacts/v407/SHA256SUMS.txt
