@@ -26,6 +26,7 @@ jobs:
           node --check scripts/v4-07-ipad-query-clear-test18-delta.mjs
           node --check scripts/finalize-v407-test18-candidate.mjs
           node --check scripts/test-v407-test18-candidate.mjs
+          node --check scripts/test-v407-full-i18n-candidate.mjs
       - name: Rebuild V4.07 candidate chain through TEST14
         run: |
           node scripts/build-v407-location-search-candidate.mjs
@@ -63,8 +64,16 @@ jobs:
           node scripts/finalize-v407-test18-candidate.mjs
           node --check artifacts/v407/gewitterradar-v4.07.18.js
           node scripts/test-v407-test18-candidate.mjs
+          node scripts/test-v407-full-i18n-candidate.mjs
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.18.js
+      - name: Stage complete 19-language Help locale runtime
+        run: |
+          mkdir -p artifacts/v407/locales
+          cp frontend/locales/about-locales.js artifacts/v407/locales/about-locales.js
+          test -s artifacts/v407/locales/about-locales.js
+          node --check artifacts/v407/locales/about-locales.js
+          echo "$(sha256sum artifacts/v407/locales/about-locales.js | awk '{print $1}')  locales/about-locales.js" >> artifacts/v407/SHA256SUMS.txt
       - name: Publish V4.07.18 candidate
         uses: actions/upload-artifact@v4
         with:
@@ -76,4 +85,5 @@ jobs:
             artifacts/v407/gewitterradar-v4.07-test.js
             artifacts/v407/gewitterradar-v4.07.17.js
             artifacts/v407/gewitterradar-v4.07.18.js
+            artifacts/v407/locales/about-locales.js
             artifacts/v407/SHA256SUMS.txt
