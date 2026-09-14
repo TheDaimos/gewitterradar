@@ -87,10 +87,10 @@ for(const [name,pattern] of Object.entries(dialectMarkers)){
   if(hits<20)throw new Error(`TEST31 dialect localization signal too weak for ${name}: ${hits}`);
 }
 
-const test29Source=await readFile(resolve(outDir,'gewitterradar-v4.07.29.js'),'utf8');
+const test28Source=await readFile(resolve(outDir,'gewitterradar-v4.07.28.js'),'utf8');
 const sourceLocalePath=resolve(root,'frontend/locales/about-locales.js');
 const sourceLocaleText=await readFile(sourceLocalePath,'utf8');
-const rebuilt29=await buildV407Test29ExternalHelpLocales(test29Source,sourceLocaleText,sourceLocalePath);
+const rebuilt29=await buildV407Test29ExternalHelpLocales(test28Source,sourceLocaleText,sourceLocalePath);
 const rebuilt31=buildV40731ExternalHelpLocales(rebuilt29.result);
 const expectedModule=replaceV40729RegistryWithV40731(rebuilt29.moduleText.replace(/\r\n?/g,'\n'),rebuilt31).replace(/\r\n?/g,'\n');
 if(moduleText!==expectedModule)throw new Error('TEST31 locale module is not a deterministic transform of exact TEST29 locale output');
