@@ -1,0 +1,65 @@
+name: Build V4.07.16 Help icon candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07-location-search-ui-next
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test16:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check TEST15/TEST16 scripts
+        run: |
+          node --check scripts/v4-07-help-polish-test15-delta.mjs
+          node --check scripts/finalize-v407-test15-candidate.mjs
+          node --check scripts/test-v407-test15-candidate.mjs
+          node --check scripts/v4-07-help-polish-test16-delta.mjs
+          node --check scripts/finalize-v407-test16-candidate.mjs
+          node --check scripts/test-v407-test16-candidate.mjs
+      - name: Rebuild V4.07 candidate chain through TEST14
+        run: |
+          node scripts/build-v407-location-search-candidate.mjs
+          node scripts/finalize-v407-test8-candidate.mjs
+          node scripts/finalize-v407-test9-candidate.mjs
+          node scripts/finalize-v407-test10-candidate.mjs
+          node scripts/finalize-v407-test10r1-candidate.mjs
+          node scripts/finalize-v407-test11-candidate.mjs
+          node scripts/finalize-v407-test12-candidate.mjs
+          node scripts/finalize-v407-test13-candidate.mjs
+          node scripts/finalize-v407-test14-candidate.mjs
+      - name: Finalize exact TEST15 baseline
+        run: |
+          node scripts/finalize-v407-test15-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.15.js
+          node scripts/test-v407-test15-candidate.mjs
+          echo "4d5cdd2f5fe7f0a0e987d978cead6cc5ff78d3cf6123d226f3e8787fdd3db986  artifacts/v407/gewitterradar-v4.07.15.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.15.js)" -eq 1835806
+      - name: Finalize V4.07.16 micro-readable Help icons
+        run: |
+          node scripts/finalize-v407-test16-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.16.js
+          node scripts/test-v407-test16-candidate.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.16.js
+      - name: Publish V4.07.16 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test16-js
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.15.js
+            artifacts/v407/gewitterradar-v4.07.16.js
+            artifacts/v407/SHA256SUMS.txt
