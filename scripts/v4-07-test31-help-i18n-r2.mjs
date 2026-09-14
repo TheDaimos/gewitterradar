@@ -63,6 +63,7 @@ const SECONDARY={
     [/Backup wächst ungewöhnlich schnell/g,'Backup wächst arg schnell'],
     [/Sprachauswahl erscheint immer wieder/g,'Sprachauswahl kommt emmer wieder'],
     [/Darstellung nach Update unverändert/g,'Darstellung nachm Update unverändert'],
+    [/Merkwürdiges Verhalten oder doppelte Karte/g,'Komischs Verhalta oder doppelte Karta'],
     [/\bdarf\b/g,'derf'],[/\bDarf\b/g,'Derf'],[/\bnur\b/g,'bloß'],[/\bNur\b/g,'Bloß'],[/\bsein\b/g,'sei'],[/\bSein\b/g,'Sei'],
     [/\bhaben\b/g,'hen'],[/\bHaben\b/g,'Hen'],[/\bhat\b/g,'hot'],[/\bHat\b/g,'Hot'],[/\bsollte\b/g,'sollt'],[/\bSollte\b/g,'Sollt'],
     [/\bsollen\b/g,'sollet'],[/\bSollen\b/g,'Sollet'],[/\bfolgende\b/g,'d folgende'],[/\bFolgende\b/g,'D folgende'],[/\bverwendet\b/g,'benutzt'],[/\bVerwendet\b/g,'Benutzt'],
@@ -73,7 +74,7 @@ const DIALECT_SIGNAL={
   'Boarisch':/\b(?:ned|san|de|da|werdn|muaß|kenna|gspeichert|Suach|derf|bloß|sei|ham|hod|oda|ois|Hüf|Hinwais|lafft|kummt|lassn|auße)\b/,
   'Plattdüütsch':/\b(?:nich|warrt|un|för|vun|Oort|Koort|spiekert|dörv|bloots|wesen|hebben|hett|as|bruukt|Kort|verklort|dormit|seker|verstahn|arbeidt|Buten-Deensten|Nettwark-Togrepen|jümmers|wedder)\b/,
   'Sächs’sch':/\b(?:nich|un|dr|Ord|Standord|werdn|keene|derf|bloß|ham|odder|bidde|Gorz|damidd|looft|Hilche|Hinweese|gommd|Wischdsch|lassn|Exderne|Diensde|Netzwerkzugriffe)\b/,
-  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot|lauft|Hilf|emmer|lassa|bsunders|uffpassa|Dienscht)\b/,
+  'Schwäbisch':/\b(?:net|ond|dr|isch|send|gspeichert|Suach|derf|bloß|sei|hen|hot|lauft|Hilf|emmer|lassa|bsunders|uffpassa|Dienscht|Dienschd)\b/,
 };
 
 const clone=value=>JSON.parse(JSON.stringify(value));
