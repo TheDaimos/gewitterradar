@@ -35,36 +35,69 @@ const sections=(language)=>Object.fromEntries(HELP_STRINGS[language].sections.ma
 const de=sections('Deutsch'),en=sections('English');
 
 if(!source.includes("const CARD_DISPLAY_VERSION = '4.07.23';")||!source.includes('V4.07-TEST23-2026-09-14'))throw new Error('TEST23 version/build marker missing');
+
+/* Accepted radius block is frozen for this review. */
+if(!de.radii.notes[0].includes('Empfohlene Grundeinstellungen')||!de.radii.notes[0].includes('Blitzortung-App'))throw new Error('German radii cross-reference missing');
+if(!en.radii.notes[0].includes('Recommended defaults')||!en.radii.notes[0].includes('Blitzortung app'))throw new Error('English radii cross-reference missing');
+for(const marker of ['help-radius-list','help-radius-item','help-radius-bullet',"['observation','storm','danger']",'conic-gradient(from 215deg','#6fb7e866','#d65a5066'])if(!source.includes(marker))throw new Error(`Premium radius bullet marker missing: ${marker}`);
+if(!source.includes('radii:HELP_REFINED_ICONS_V6.radii'))throw new Error('Accepted premium radii header icon regressed');
+
+/* Location & saved places must be structured into scannable process steps. */
 if(de.location.title!=='Standort & gespeicherte Orte')throw new Error('German location Help heading mismatch');
 if(de.external_services.title!=='Externe Dienste & Netzwerkzugriffe')throw new Error('German network Help heading mismatch');
-if(de.location.paragraphs.length!==4||de.location.notes.length!==1)throw new Error('German location Help schema changed unexpectedly');
+if(de.location.paragraphs.length!==1||de.location.entries.length!==5||de.location.notes.length!==1)throw new Error('German location Help structure mismatch');
+for(const term of ['Standort','Blitzortung einrichten','Ort verwenden','Speicherliste einrichten','Gespeicherte Orte'])if(!de.location.entries.some(([entry])=>entry===term))throw new Error(`German location process heading missing: ${term}`);
 if(JSON.stringify(de.location).includes('500 km')||JSON.stringify(de.location).includes('120 min')||JSON.stringify(de.location).includes('200 Blitze'))throw new Error('Example values still live in German location Help');
-if(!de.location.paragraphs.some(text=>text.includes('Ortsbibliothek liegt lokal in Home Assistant')&&text.includes('Name und Koordinaten')))throw new Error('German local place-library explanation missing');
-if(!de.radii.notes[0].includes('Empfohlene Grundeinstellungen')||!de.radii.notes[0].includes('Blitzortung-App'))throw new Error('German radii cross-reference missing');
-if(de.functions.entries.length!==6||de.functions.entries.at(-1)[0]!=='Kalibrierung & Diagnose')throw new Error('German calibration/diagnostics Help entry missing');
-if(de.functions.entries.some(([term])=>term==='Gewittersimulation'))throw new Error('Storm simulation remains a standalone German Help function');
-if(!de.functions.entries.at(-1)[1].includes('Kompass- und Medaillon-Kalibrierung')||!de.functions.entries.at(-1)[1].includes('Gewittersimulation'))throw new Error('German calibration/diagnostics scope incomplete');
-if(de.defaults.items.length!==6)throw new Error('German recommended-defaults schema changed unexpectedly');
-const deDefaults=de.defaults.items.join(' ');
-for(const marker of ['500 km','120 Minuten','200 Blitze','keine zwingenden Vorgaben','Blitzortung-App','konfigurierten Standort','Tracker','Recorder-Ausschlüsse','Home-Assistant-Recorder'])if(!deDefaults.includes(marker))throw new Error(`German recommended defaults missing: ${marker}`);
+if(!de.location.paragraphs[0].includes('Ortsbibliothek liegt lokal in Home Assistant')||!de.location.paragraphs[0].includes('Name und Koordinaten'))throw new Error('German local place-library explanation missing');
 
 if(en.location.title!=='Location & saved places')throw new Error('English location Help heading mismatch');
 if(en.external_services.title!=='External services & network access')throw new Error('English network Help heading regressed');
-if(en.location.paragraphs.length!==4||en.location.notes.length!==1)throw new Error('English location Help schema changed unexpectedly');
-if(JSON.stringify(en.location).includes('500 km')||JSON.stringify(en.location).includes('120 minutes')||JSON.stringify(en.location).includes('200 lightnings'))throw new Error('Example values still live in English location Help');
-if(!en.radii.notes[0].includes('Recommended defaults')||!en.radii.notes[0].includes('Blitzortung app'))throw new Error('English radii cross-reference missing');
-if(en.functions.entries.length!==6||en.functions.entries.at(-1)[0]!=='Calibration & diagnostics')throw new Error('English calibration/diagnostics Help entry missing');
-if(en.functions.entries.some(([term])=>term==='Storm simulation'))throw new Error('Storm simulation remains a standalone English Help function');
-const enDefaults=en.defaults.items.join(' ');
-for(const marker of ['500 km','120 minute','200 lightnings','not mandatory','Blitzortung app','tracker used by Gewitterradar','Recorder exclusions','Home Assistant Recorder'])if(!enDefaults.includes(marker))throw new Error(`English recommended defaults missing: ${marker}`);
+if(en.location.paragraphs.length!==1||en.location.entries.length!==5||en.location.notes.length!==1)throw new Error('English location Help structure mismatch');
+for(const term of ['Location','Set up Blitzortung','Use location','Set up saved-place list','Saved places'])if(!en.location.entries.some(([entry])=>entry===term))throw new Error(`English location process heading missing: ${term}`);
 
-for(const marker of ['help-radius-list','help-radius-item','help-radius-bullet',"['observation','storm','danger']",'conic-gradient(from 215deg','#6fb7e866','#d65a5066'])if(!source.includes(marker))throw new Error(`Premium radius bullet marker missing: ${marker}`);
+/* Calibration/diagnostics wording remains accepted. */
+if(de.functions.entries.length!==6||de.functions.entries.at(-1)[0]!=='Kalibrierung & Diagnose')throw new Error('German calibration/diagnostics Help entry missing');
+if(de.functions.entries.some(([term])=>term==='Gewittersimulation'))throw new Error('Storm simulation remains a standalone German Help function');
+if(!de.functions.entries.at(-1)[1].includes('Kompass- und Medaillon-Kalibrierung')||!de.functions.entries.at(-1)[1].includes('Gewittersimulation'))throw new Error('German calibration/diagnostics scope incomplete');
+if(en.functions.entries.length!==6||en.functions.entries.at(-1)[0]!=='Calibration & diagnostics')throw new Error('English calibration/diagnostics Help entry missing');
+
+/* Recommended defaults: actual decisions are headings, Recorder is a dedicated high-priority entry. */
+if(de.defaults.items)throw new Error('German recommended defaults must no longer be an undifferentiated bullet list');
+if(de.defaults.entries.length!==7)throw new Error('German recommended defaults structure mismatch');
+const deDefaultTerms=de.defaults.entries.map(([term])=>term);
+for(const term of ['Testwerte · 500 km / 120 min / 200','Standort & Tracker abstimmen','Radien abstimmen','Aktiv lassen','Normalbetrieb','Recorder – unbedingt prüfen'])if(!deDefaultTerms.includes(term))throw new Error(`German recommended-default priority heading missing: ${term}`);
+const deRecorder=de.defaults.entries.find(([term])=>term.startsWith('Recorder'))?.[1]||'';
+for(const marker of ['Recorder-Ausschlüsse','Datenbank','Backups','sehr schnell anwachsen','Home-Assistant-Recorder'])if(!deRecorder.includes(marker))throw new Error(`German Recorder priority copy missing: ${marker}`);
+
+if(en.defaults.items)throw new Error('English recommended defaults must no longer be an undifferentiated bullet list');
+if(en.defaults.entries.length!==7)throw new Error('English recommended defaults structure mismatch');
+const enRecorder=en.defaults.entries.find(([term])=>term.startsWith('Recorder'))?.[1]||'';
+for(const marker of ['Recorder exclusions','database','backups','grow very quickly','Home Assistant Recorder'])if(!enRecorder.includes(marker))throw new Error(`English Recorder priority copy missing: ${marker}`);
+
+/* Backup growth is now a first-class troubleshooting case. */
+const deBackup=de.troubleshooting.entries.find(([term])=>term==='Backup wächst ungewöhnlich schnell')?.[1]||'';
+for(const marker of ['Recorder-Ausschlüsse','Datenbank','Backups','Home-Assistant-Recorder'])if(!deBackup.includes(marker))throw new Error(`German backup troubleshooting missing: ${marker}`);
+const enBackup=en.troubleshooting.entries.find(([term])=>term==='Backup grows unusually fast')?.[1]||'';
+for(const marker of ['Recorder exclusions','database','backups','Home Assistant Recorder'])if(!enBackup.includes(marker))throw new Error(`English backup troubleshooting missing: ${marker}`);
+
+/* Highlight priority and icon semantics. */
+if(!source.includes("troubleshooting:HELP_PREMIUM_ICONS.sections.recorder,recorder:HELP_REFINED_ICONS_V5.troubleshooting"))throw new Error('Recorder/troubleshooting Help icon swap missing');
+if(!source.includes("section.key==='defaults'&&/^Recorder\\b/i.test(String(term))"))throw new Error('Recorder priority renderer missing');
+if(!source.includes('help-recorder-priority'))throw new Error('Recorder priority visual treatment missing');
+const patternStart=source.indexOf('const helpNetworkTokenPattern='),patternEnd=source.indexOf(';',patternStart);
+if(patternStart<0||patternEnd<0)throw new Error('Help network token pattern missing');
+if(source.slice(patternStart,patternEnd).includes('Blitzortung(?:'))throw new Error('Blitzortung is still globally gold-highlighted');
+
+/* Settings diagnostic accordion needs real bottom travel, not only a nominal max-height. */
+if(!source.includes('max-height:clamp(132px,calc(100dvh - 440px),520px);'))throw new Error('TEST22 zoom-safe Settings scroll regressed');
+if(!source.includes('#settings-diagnostic-section[open]>.settings-section-content{padding-bottom:72px!important;scroll-padding-bottom:72px}'))throw new Error('Diagnostic accordion bottom scroll clearance missing');
+
 if(source.includes("title:'Externe Dienste & Netzwerkfreigaben'"))throw new Error('Old German network heading still present');
 if(source.includes("{key:'location',title:'Referenzstandort'"))throw new Error('Old German location heading still present');
-if(!source.includes('max-height:clamp(132px,calc(100dvh - 440px),520px);'))throw new Error('TEST22 zoom-safe Settings scroll regressed');
-if(!source.includes('radii:HELP_REFINED_ICONS_V6.radii'))throw new Error('Accepted premium radii header icon regressed');
 
-const {HELP_EXTERNAL_LOCALES}=await import(pathToFileURL(resolve(root,'artifacts/v407/locales/about-locales.js')).href+'?test23');
+/* Architecture freeze: DE/EN stay native; the 17 other locales stay in the external module. */
+if(!source.includes("Deutsch: {")||!source.includes("English: {")||!source.includes('ABOUT_EXTERNAL_LANGUAGE_NAMES'))throw new Error('Native/external locale architecture markers missing');
+const {HELP_EXTERNAL_LOCALES}=await import(pathToFileURL(resolve(root,'artifacts/v407/locales/about-locales.js')).href+'?test23-review2');
 const externalNames=['Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'];
 const patch=(name,help)=>{
   const copy=V407_HELP_COPY[name];
@@ -74,14 +107,12 @@ const patch=(name,help)=>{
   for(const section of help.sections||[]){if(section.key==='location'){out.push(location,external);continue;}if(section.key==='external_services')continue;out.push(section);}
   return {...help,sections:out};
 };
-const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
-const sameShape=(value,reference)=>{
-  if(typeof reference==='string')return typeof value==='string'&&!!value.trim();
-  if(typeof reference==='boolean')return value===reference;
-  if(Array.isArray(reference))return Array.isArray(value)&&value.length===reference.length&&reference.every((item,index)=>sameShape(value[index],item));
-  return object(reference)&&object(value)&&Object.keys(value).length===Object.keys(reference).length&&Object.keys(reference).every(key=>Object.hasOwn(value,key)&&sameShape(value[key],reference[key]));
-};
-for(const name of externalNames){if(!sameShape(patch(name,HELP_EXTERNAL_LOCALES[name]),HELP_STRINGS.Deutsch))throw new Error(`TEST23 external Help schema mismatch: ${name}`);}
+for(const name of externalNames){
+  const locale=HELP_EXTERNAL_LOCALES[name];
+  if(!locale||!locale.sections)throw new Error(`External Help locale missing: ${name}`);
+  const runtime=patch(name,locale);
+  for(const key of ['prerequisites','radii','location','external_services','functions','defaults','troubleshooting','recorder'])if(!runtime.sections.some(section=>section.key===key))throw new Error(`External runtime Help section missing (${name}): ${key}`);
+}
 
-console.log('V4.07.23 bundled Help content + premium radius bullet contract PASS');
-console.log(`V4.07.23 Help schema remains valid for 19 runtime languages (2 native + ${externalNames.length} external).`);
+console.log('V4.07.23 Help review-2 contract PASS');
+console.log('DE/EN review content updated; 17 external locales remain external and intentionally await global rollout.');
