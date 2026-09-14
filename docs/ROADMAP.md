@@ -111,6 +111,25 @@ Bewusst **ohne Versionszuordnung** vorgemerkt:
 
 Dafür werden vor jeder Planung gute, belastbare und möglichst offizielle Quellen benötigt. Datenherkunft, Aktualität, Abdeckung, Lizenz, Warnsemantik, Fehlalarm-/Ausfallverhalten und Home-Assistant-Integration müssen fachlich geprüft werden. Ein automatisches „Tornado erkannt“-Versprechen darf nicht aus indirekten Rotationsdaten abgeleitet werden, wenn die Quelle dies fachlich nicht hergibt.
 
+### Monitored Areas – feste Schutz-/Überwachungsstandorte
+
+Separate, feste Standorte sollen unabhängig vom aktuell ausgewählten Gewitterradar-Referenzstandort überwacht werden können. Die ausführliche Fachnotiz liegt in `docs/FUTURE_MONITORED_AREAS.md`.
+
+Vorgemerkt:
+
+- eigener Abschnitt **Monitored Areas** in der Standortauswahl;
+- vorhandene V4.07-Orts-/Koordinatenpipeline wiederverwenden;
+- `+` zum Hinzufügen sowie `−` zum Entfernen/Deaktivieren;
+- persistente lokale Standortbibliothek, möglichst analog zu gespeicherten Orten;
+- mehrere überwachte Standorte parallel und unabhängig vom aktuellen Kartenstandort;
+- pro Standort Name, Koordinaten, Überwachungsstatus und fachlich begründeter Radius;
+- Alarm bei neuen Blitzereignissen innerhalb des festgelegten Nahbereichs;
+- Deduplizierung, Cooldown/Bündelung und später Home-Assistant-/Companion-Benachrichtigungen prüfen;
+- geplantes Premium-Symbol: hochwertiges goldenes Schild mit rotem Blitz;
+- Radius nicht willkürlich auf 3 km oder 5 km festlegen, sondern vor Umsetzung fachlich recherchieren;
+- Blitzortungs-/Datenarchitektur für weit voneinander entfernte überwachte Orte klären; eine einzige regionsbezogene Subscription darf nicht als globale Überwachung missverstanden werden;
+- keine Behauptung eines amtlichen, gutachterlichen oder versicherungsrechtlich verbindlichen Blitzschadennachweises ohne belastbare Grundlage.
+
 ### Globales Gewitter-Lagebild / Storm Feed
 
 Spätere Feed-/Lagebild-Idee für starke Gewitter weltweit.
