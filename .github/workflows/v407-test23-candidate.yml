@@ -21,10 +21,8 @@ jobs:
       - name: Check TEST23 scripts
         run: |
           node --check scripts/v4-07-test23-help-content-delta.mjs
-          node --check scripts/v4-07-test23-review3-delta.mjs
           node --check scripts/finalize-v407-test23-candidate.mjs
           node --check scripts/test-v407-test23-candidate.mjs
-          node --check scripts/test-v407-test23-review3.mjs
           node --check scripts/finalize-v407-test22-candidate.mjs
           node --check scripts/test-v407-test22-candidate.mjs
       - name: Rebuild V4.07 candidate chain through TEST14
@@ -79,11 +77,10 @@ jobs:
           node --check artifacts/v407/gewitterradar-v4.07.23.js
           node --check artifacts/v407/locales/about-locales.js
           node scripts/test-v407-test23-candidate.mjs
-          node scripts/test-v407-test23-review3.mjs
           node scripts/test-v407-full-i18n-candidate.mjs
           node scripts/test-v407-help-runtime-locales.mjs
-          echo "36ba61d5ecb9b28f513d8cfc4ca69aeb374632b203866c6a95d47b219714caa3  artifacts/v407/gewitterradar-v4.07.23.js" | sha256sum -c -
-          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.23.js)" -eq 1855999
+          echo "061b79c11e5507c27ec62dc552b9a7ec1e0caccc9a10e3b3d7ccd928113a786e  artifacts/v407/gewitterradar-v4.07.23.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.23.js)" -eq 1854294
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.23.js
       - name: Publish complete V4.07.23 candidate
