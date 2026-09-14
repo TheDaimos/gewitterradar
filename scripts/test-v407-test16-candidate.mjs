@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+const js=await readFile(resolve(root,'artifacts/v407/gewitterradar-v4.07.16.js'),'utf8');
+const must=["const CARD_DISPLAY_VERSION = '4.07.16';","V4.07-TEST16-2026-09-14","HELP_REFINED_ICONS_V5","width:42px!important;height:42px!important","width:38px!important;height:38px!important","const HELP_PREMIUM_ICON_VARIANT = 'B';"];
+for(const marker of must)if(!js.includes(marker))throw new Error(`TEST16 missing marker: ${marker}`);
+if(!js.includes('data:image/svg+xml;base64,'))throw new Error('TEST16 embedded SVG data missing');
+if(!js.includes('HELP_REFINED_ICONS_V5.question'))throw new Error('TEST16 question does not use V5 runtime master');
+if(!js.includes('HELP_REFINED_ICONS_V5.troubleshooting'))throw new Error('TEST16 troubleshooting does not use V5 runtime master');
+if(!js.includes('top:-18px!important;right:-10px!important'))throw new Error('TEST16 lost accepted close placement');
+console.log('V4.07.16 Help icon readability/placement contract PASS');
