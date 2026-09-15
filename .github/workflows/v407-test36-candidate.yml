@@ -116,11 +116,16 @@ jobs:
           node scripts/test-v407-test36-candidate.mjs
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
           cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.36.js
-          echo "c93699f52ad39237ba23e297fabb63eb2fb51013a9b9432b6b8dbc9a6474195b  artifacts/v407/assets/gewitterradar-coordinate-target.svg" | sha256sum -c -
+          echo "12500f325ecf038a1d1c1c113d5ab8d5825af3eff9167afc10e6db59c0a48ea5  artifacts/v407/assets/gewitterradar-coordinate-target.svg" | sha256sum -c -
+          echo "b7aad6f0b05ec85456b58e3d175825be3050d5e41883a923dbce93327086c273  artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg" | sha256sum -c -
           echo "bytes=$(wc -c < artifacts/v407/gewitterradar-v4.07.36.js)" >> "$GITHUB_OUTPUT"
           echo "sha256=$(sha256sum artifacts/v407/gewitterradar-v4.07.36.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "locale_bytes=$(wc -c < artifacts/v407/locales/about-locales.js)" >> "$GITHUB_OUTPUT"
+          echo "locale_sha256=$(sha256sum artifacts/v407/locales/about-locales.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
           echo "asset_bytes=$(wc -c < artifacts/v407/assets/gewitterradar-coordinate-target.svg)" >> "$GITHUB_OUTPUT"
           echo "asset_sha256=$(sha256sum artifacts/v407/assets/gewitterradar-coordinate-target.svg | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "master_bytes=$(wc -c < artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg)" >> "$GITHUB_OUTPUT"
+          echo "master_sha256=$(sha256sum artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Execute generated V4.07.36 module with browser-global stubs
         run: |
@@ -148,12 +153,13 @@ jobs:
             artifacts/v407/gewitterradar-v4.07.36.js
             artifacts/v407/locales/about-locales.js
             artifacts/v407/assets/gewitterradar-coordinate-target.svg
+            artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg
             artifacts/v407/SHA256SUMS.txt
 
       - name: Publish V4.07.36 build identity
         uses: actions/upload-artifact@v4
         with:
-          name: v407-test36-meta-main-${{ steps.meta.outputs.bytes }}-${{ steps.meta.outputs.sha256 }}-asset-${{ steps.meta.outputs.asset_bytes }}-${{ steps.meta.outputs.asset_sha256 }}
+          name: v407-test36-meta-main-${{ steps.meta.outputs.bytes }}-${{ steps.meta.outputs.sha256 }}-locale-${{ steps.meta.outputs.locale_bytes }}-${{ steps.meta.outputs.locale_sha256 }}-asset-${{ steps.meta.outputs.asset_bytes }}-${{ steps.meta.outputs.asset_sha256 }}-master-${{ steps.meta.outputs.master_bytes }}-${{ steps.meta.outputs.master_sha256 }}
           if-no-files-found: error
           retention-days: 14
           path: artifacts/v407/SHA256SUMS.txt
