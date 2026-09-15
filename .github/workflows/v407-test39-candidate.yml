@@ -1,0 +1,75 @@
+name: Build V4.07.39 coordinate saved-place target candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07.39-coordinate-saved-target
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test39:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Check V4.07.39 scripts
+        run: |
+          node --check scripts/v4-07-test39-coordinate-saved-target-delta.mjs
+          node --check scripts/finalize-v407-test39-candidate.mjs
+          node --check scripts/test-v407-test39-candidate.mjs
+
+      - name: Rebuild and regression-test full V4.07 chain through TEST39
+        id: meta
+        run: |
+          node scripts/build-v407-test38-chain.mjs
+          node scripts/finalize-v407-test39-candidate.mjs
+          node --check artifacts/v407/gewitterradar-v4.07.39.js
+          node scripts/test-v407-test39-candidate.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.39.js
+          echo "bytes=$(wc -c < artifacts/v407/gewitterradar-v4.07.39.js)" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum artifacts/v407/gewitterradar-v4.07.39.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Execute generated V4.07.39 module with browser-global stubs
+        run: |
+          cat > /tmp/run-v407-module.mjs <<'EOF'
+          import {pathToFileURL} from 'node:url';
+          globalThis.customElements={get(){return undefined},define(){}};
+          globalThis.HTMLElement=class {};
+          globalThis.window=globalThis;
+          globalThis.document={};
+          await import(pathToFileURL(process.argv[2]).href);
+          console.log('V4.07.39 executable module import PASS');
+          EOF
+          node /tmp/run-v407-module.mjs "$(pwd)/artifacts/v407/gewitterradar-v4.07.39.js"
+
+      - name: Publish complete V4.07.39 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test39-complete
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.38.js
+            artifacts/v407/gewitterradar-v4.07.39.js
+            artifacts/v407/locales/about-locales.js
+            artifacts/v407/assets/gewitterradar-coordinate-target.svg
+            artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg
+            artifacts/v407/SHA256SUMS.txt
+
+      - name: Publish V4.07.39 build identity
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test39-meta-${{ steps.meta.outputs.bytes }}
+          if-no-files-found: error
+          retention-days: 14
+          path: artifacts/v407/SHA256SUMS.txt
