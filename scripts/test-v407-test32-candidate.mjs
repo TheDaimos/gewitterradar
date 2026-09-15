@@ -30,9 +30,9 @@ const candidate=candidateBuffer.toString('utf8');
 const rebuilt=v407Test32ReviewPolishDelta(source);
 assert(candidate===rebuilt,'V4.07.32 is not the deterministic delta from exact V4.07.31');
 
-assert(candidate.includes("const CARD_VERSION = '4.07.32';"),'V4.07.32 card version missing');
+assert(candidate.includes("const CARD_DISPLAY_VERSION = '4.07.32';"),'V4.07.32 display version missing');
 assert(candidate.includes("const GEWITTERRADAR_BUILD = 'V4.07-TEST32-2026-09-15';"),'V4.07.32 build marker missing');
-assert(!candidate.includes("const CARD_VERSION = '4.07.31';"),'old V4.07.31 card version still active');
+assert(!candidate.includes("const CARD_DISPLAY_VERSION = '4.07.31';"),'old V4.07.31 display version still active');
 assert(candidate.includes('HELP_EXTERNAL_LOCALES_V40731'),'V4.07.31 external locale registry must remain the runtime source');
 assert(!candidate.includes('HELP_EXTERNAL_LOCALES_V40732'),'V4.07.32 must not create a duplicate external locale registry');
 
@@ -82,8 +82,9 @@ for(const name of expectedNames){
   const useText=String(location.entries[2][1]??'').trim();
   const saveText=String(location.entries[4][1]??'').trim();
   const useNormalized=useText.replace(/^[„“"'«»‹›]+\s*/,'');
-  const useAction=(useNormalized.match(/^\S+/)?.[0]??'').replace(/^[„“"'«»‹›]+|[„“"'«»‹›]+$/g,'');
-  const useRest=useNormalized.slice(useNormalized.match(/^\S+/)?.[0]?.length??0).replace(/^[\s„“"'«»‹›]+/,'');
+  const useMatch=useNormalized.match(/^\S+/);
+  const useAction=(useMatch?.[0]??'').replace(/^[„“"'«»‹›]+|[„“"'«»‹›]+$/g,'');
+  const useRest=useNormalized.slice(useMatch?.[0]?.length??0).replace(/^[\s„“"'«»‹›]+/,'');
   assert(useAction.length>0,`${name}: localized Use action missing`);
   assert(!leadingQuote.test(useRest),`${name}: stray leading quote remains after localized Use action`);
   assert(!trailingQuote.test(useAction),`${name}: localized Use token keeps closing quote`);
