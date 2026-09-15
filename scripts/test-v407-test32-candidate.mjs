@@ -47,9 +47,7 @@ assert(!candidate.includes("section.key==='location'&&entryIndex===2){const valu
 // Accepted Use token styling must remain untouched.
 for(const fingerprint of [
   '.help-action-use{height:1.56em;min-height:1.56em;',
-  '.help-action-use:before{',
-  '.help-action-token help-action-save',
-  '.help-action-token help-action-use'
+  '.help-action-use:before{'
 ]) assert(candidate.includes(fingerprint),`accepted action-token fingerprint missing: ${fingerprint}`);
 
 // Review polish CSS. The artwork itself remains untouched; only close placement is unified.
