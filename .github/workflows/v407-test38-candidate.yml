@@ -1,0 +1,61 @@
+name: Build V4.07.38 location wording and target polish candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07.38-location-wording-target-polish
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test38:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Check V4.07.38 scripts
+        run: |
+          node --check scripts/v4-07-test38-location-wording-target-delta.mjs
+          node --check scripts/finalize-v407-test38-candidate.mjs
+          node --check scripts/test-v407-test38-candidate.mjs
+          node --check scripts/build-v407-test38-chain.mjs
+
+      - name: Rebuild and regression-test full V4.07 chain through TEST38
+        id: meta
+        run: |
+          node scripts/build-v407-test38-chain.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.38.js
+          echo "bytes=$(wc -c < artifacts/v407/gewitterradar-v4.07.38.js)" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum artifacts/v407/gewitterradar-v4.07.38.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "locale_sha256=$(sha256sum artifacts/v407/locales/about-locales.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish complete V4.07.38 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test38-complete
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.37.js
+            artifacts/v407/gewitterradar-v4.07.38.js
+            artifacts/v407/locales/about-locales.js
+            artifacts/v407/assets/gewitterradar-coordinate-target.svg
+            artifacts/v407/artwork/gewitterradar-coordinate-target-master.svg
+            artifacts/v407/SHA256SUMS.txt
+
+      - name: Publish V4.07.38 build identity
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test38-meta-${{ steps.meta.outputs.bytes }}
+          if-no-files-found: error
+          retention-days: 14
+          path: artifacts/v407/SHA256SUMS.txt
