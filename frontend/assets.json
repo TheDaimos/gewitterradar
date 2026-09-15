@@ -83,5 +83,10 @@
     "file": "assets/gewitterradar-about-copy-scroll.webp",
     "sha256": "d269784528e9da0aa2fdfee8252300e709c7415a76a57291071085342cf192c4",
     "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-coordinate-target.svg",
+    "sha256": "c93699f52ad39237ba23e297fabb63eb2fb51013a9b9432b6b8dbc9a6474195b",
+    "protected": false
   }
 ]
