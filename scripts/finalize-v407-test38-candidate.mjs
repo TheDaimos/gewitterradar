@@ -2,7 +2,8 @@ import {readFile,writeFile,copyFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {v407Test38LocationWordingTargetDelta,v407Test38SerializeExternalLocales} from './v4-07-test38-location-wording-target-delta.mjs';
+import {v407Test38LocationWordingTargetDelta} from './v4-07-test38-location-wording-target-delta.mjs';
+import {v407Test38SerializeExternalLocalesFixed} from './v4-07-test38-locale-serializer.mjs';
 
 const root=process.cwd();
 const dir=resolve(root,'artifacts/v407');
@@ -38,7 +39,7 @@ if(!masterBuffer.toString('utf8').includes('M808 998L748 938')||!masterBuffer.to
 
 const localeBaselineUrl=pathToFileURL(localePath).href+`?v40738=${Date.now()}`;
 const localeModule=await import(localeBaselineUrl);
-const localeCandidate=v407Test38SerializeExternalLocales(localeModule);
+const localeCandidate=v407Test38SerializeExternalLocalesFixed(localeModule);
 const localeCandidateBuffer=Buffer.from(localeCandidate,'utf8');
 const candidate=v407Test38LocationWordingTargetDelta(sourceBuffer.toString('utf8'),runtimeBuffer.toString('base64'));
 const candidateBuffer=Buffer.from(candidate,'utf8');
