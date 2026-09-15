@@ -40,7 +40,8 @@ assert(!candidate.includes('HELP_EXTERNAL_LOCALES_V40732'),'V4.07.32 must not cr
 // location section, not hard-coded German/English words.
 assert(candidate.includes("section.key==='location'&&(entryIndex===2||entryIndex===4)"),'generalized localized location action renderer missing');
 assert(candidate.includes("entryIndex===4?'help-action-token help-action-save':'help-action-token help-action-use'"),'localized Save/Use premium token classes missing');
-assert(candidate.includes("replace(/^[\\s„“\\\"'«»‹›]+/,'')"),'leading quote cleanup for localized action remainder missing');
+assert(candidate.includes("const rest=value.slice(actionMatch[0].length).replace("),'localized action remainder cleanup missing');
+assert(candidate.includes("dd.append(action);if(rest){dd.append(document.createTextNode(' '));setHelpDiagnosticText(dd,rest);}"),'clean localized action remainder rendering missing');
 assert(!candidate.includes("section.key==='location'&&entryIndex===2){const value=String(text??'');"),'old TEST30 Use-only renderer still active');
 
 // Accepted Use token styling must remain untouched.
