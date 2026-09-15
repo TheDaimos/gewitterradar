@@ -1,57 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048">
   <defs>
     <radialGradient id="gold" cx="35%" cy="28%" r="75%">
-      <stop offset="0" stop-color="#fff4bf"/><stop offset="0.18" stop-color="#e9bf5f"/><stop offset="0.44" stop-color="#93631b"/><stop offset="0.72" stop-color="#d6a445"/><stop offset="1" stop-color="#503006"/>
+      <stop offset="0" stop-color="#fff0aa"/>
+      <stop offset="0.18" stop-color="#e8bf59"/>
+      <stop offset="0.42" stop-color="#9d6b18"/>
+      <stop offset="0.68" stop-color="#d7a83d"/>
+      <stop offset="1" stop-color="#5f3b08"/>
     </radialGradient>
-    <linearGradient id="ruby" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e45760"/><stop offset="0.28" stop-color="#c72d39"/><stop offset="0.62" stop-color="#991b26"/><stop offset="1" stop-color="#5c0c14"/>
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff3be"/>
+      <stop offset="0.22" stop-color="#d8a94c"/>
+      <stop offset="0.47" stop-color="#81520f"/>
+      <stop offset="0.72" stop-color="#d5a543"/>
+      <stop offset="1" stop-color="#4b2d05"/>
     </linearGradient>
-    <linearGradient id="flightRed" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff7b80"/><stop offset="0.24" stop-color="#eb4d58"/><stop offset="0.56" stop-color="#c3293a"/><stop offset="1" stop-color="#73111e"/>
-    </linearGradient>
-    <linearGradient id="shaft" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f5fbfc"/><stop offset="0.22" stop-color="#b9cdd5"/><stop offset="0.48" stop-color="#6f8b96"/><stop offset="0.7" stop-color="#2b414b"/><stop offset="1" stop-color="#c4d4da"/>
-    </linearGradient>
-    <linearGradient id="blueMetal" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e1faff"/><stop offset="0.16" stop-color="#9de5ff"/><stop offset="0.34" stop-color="#49b8ea"/><stop offset="0.58" stop-color="#1674b9"/><stop offset="0.78" stop-color="#0b477d"/><stop offset="1" stop-color="#041b33"/>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5ead0"/>
+      <stop offset="0.35" stop-color="#c3a86f"/>
+      <stop offset="0.68" stop-color="#6e5223"/>
+      <stop offset="1" stop-color="#2f210c"/>
     </linearGradient>
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="34" stdDeviation="34" flood-color="#000" flood-opacity="0.62"/>
-      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#d39b34" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#d39b34" flood-opacity="0.20"/>
     </filter>
   </defs>
   <g filter="url(#shadow)">
+    <!-- target: premium brass, transparent outside -->
     <circle cx="920" cy="1110" r="570" fill="#07121a" stroke="url(#gold)" stroke-width="72"/>
-    <circle cx="920" cy="1110" r="455" fill="none" stroke="#af8230" stroke-width="42" opacity="0.92"/>
-    <circle cx="920" cy="1110" r="326" fill="none" stroke="#d8b45f" stroke-width="36" opacity="0.88"/>
-    <circle cx="920" cy="1110" r="196" fill="#101820" stroke="#8c6726" stroke-width="34"/>
-    <!-- subtle precision marks from the bullseye -->
-    <path d="M920 952V850M920 1268v102M762 1110H660M1078 1110h102" fill="none" stroke="#e3bd68" stroke-width="16" stroke-linecap="round" opacity="0.34"/>
-    <path d="M808 998L748 938M1032 998l60-60M808 1222l-60 60M1032 1222l60 60" fill="none" stroke="#d2a552" stroke-width="10" stroke-linecap="round" opacity="0.16"/>
-    <circle cx="920" cy="1110" r="82" fill="url(#ruby)" stroke="#f0a0a4" stroke-width="15"/>
-    <circle cx="920" cy="1110" r="29" fill="#650b14" stroke="#d45b62" stroke-width="7"/>
-    <circle cx="907" cy="1096" r="10" fill="#ffb0b4" opacity="0.44"/>
-    <!-- machined target highlights -->
-    <path d="M426 829 A570 570 0 0 1 1202 590" fill="none" stroke="#fff5cf" stroke-width="16" stroke-linecap="round" opacity="0.20"/>
-    <path d="M563 1323 A455 455 0 0 0 1198 1462" fill="none" stroke="#1d1102" stroke-width="18" stroke-linecap="round" opacity="0.42"/>
-    <path d="M559 795 A455 455 0 0 1 1032 671" fill="none" stroke="#f4d894" stroke-width="8" stroke-linecap="round" opacity="0.13"/>
-    <!-- detailed dart, entering bullseye from upper-right -->
+    <circle cx="920" cy="1110" r="455" fill="none" stroke="#b98a32" stroke-width="42" opacity="0.92"/>
+    <circle cx="920" cy="1110" r="326" fill="none" stroke="#e1bd67" stroke-width="36" opacity="0.88"/>
+    <circle cx="920" cy="1110" r="196" fill="#17110a" stroke="url(#brass)" stroke-width="34"/>
+    <circle cx="920" cy="1110" r="78" fill="url(#gold)" stroke="#fff0ae" stroke-width="16"/>
+    <circle cx="920" cy="1110" r="28" fill="#1d1205" opacity="0.9"/>
+    <!-- fine machined highlights -->
+    <path d="M426 829 A570 570 0 0 1 1202 590" fill="none" stroke="#fff5c9" stroke-width="16" stroke-linecap="round" opacity="0.22"/>
+    <path d="M563 1323 A455 455 0 0 0 1198 1462" fill="none" stroke="#1d1102" stroke-width="18" stroke-linecap="round" opacity="0.46"/>
+    <!-- dart, entering bullseye from upper-right -->
     <g transform="rotate(43 920 1110)">
-      <rect x="887" y="448" width="66" height="544" rx="30" fill="url(#shaft)" stroke="#1e2c33" stroke-width="17"/>
-      <path d="M895 505H945M893 585H947M893 670H947M893 755H947M895 840H945" stroke="#e3f0f4" stroke-width="10" opacity="0.36"/>
-      <path d="M900 522H940M900 602H940M900 687H940M900 772H940M900 857H940" stroke="#223943" stroke-width="5" opacity="0.42"/>
-      <path d="M905 454V976" stroke="#ffffff" stroke-width="8" opacity="0.24"/>
-      <path d="M937 458V973" stroke="#0c222d" stroke-width="9" opacity="0.34"/>
-      <!-- polished blue metallic point -->
-      <path d="M920 1100 L852 986 L988 986 Z" fill="url(#blueMetal)" stroke="#0a3558" stroke-width="18"/>
-      <path d="M920 1081L884 998" stroke="#dff8ff" stroke-width="11" stroke-linecap="round" opacity="0.58"/>
-      <path d="M920 1100L952 997" stroke="#061a2c" stroke-width="10" stroke-linecap="round" opacity="0.35"/>
-      <rect x="875" y="957" width="90" height="42" rx="13" fill="#0e4d80" stroke="#7fd2f5" stroke-width="8"/>
-      <!-- red flights with lighter ruby structure, deliberately different from bullseye -->
-      <path d="M920 448 L820 288 L899 311 L920 198 L941 311 L1020 288 Z" fill="url(#flightRed)" stroke="#64101a" stroke-width="18" stroke-linejoin="round"/>
-      <path d="M920 222L920 431M846 303L904 351M994 303L936 351" stroke="#ffb5b9" stroke-width="11" stroke-linecap="round" opacity="0.34"/>
-      <path d="M865 300L909 384M975 300L931 384" stroke="#79121e" stroke-width="8" stroke-linecap="round" opacity="0.48"/>
-      <path d="M837 289L904 319M1003 289L936 319" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.18"/>
+      <rect x="886" y="445" width="68" height="626" rx="34" fill="url(#steel)" stroke="#3a270d" stroke-width="18"/>
+      <path d="M920 1100 L853 989 L987 989 Z" fill="url(#brass)" stroke="#4f3309" stroke-width="18"/>
+      <path d="M920 445 L823 290 L900 311 L920 204 L940 311 L1017 290 Z" fill="url(#gold)" stroke="#50330a" stroke-width="18" stroke-linejoin="round"/>
+      <path d="M920 445 L920 1038" stroke="#fff1bb" stroke-width="10" opacity="0.32"/>
     </g>
   </g>
 </svg>
