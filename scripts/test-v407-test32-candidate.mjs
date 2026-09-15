@@ -74,7 +74,7 @@ assert(JSON.stringify(Object.keys(registry).sort())===JSON.stringify([...expecte
 const leadingQuote=/^[„“"'«»‹›]/;
 const trailingQuote=/[„“"'«»‹›]$/;
 for(const name of expectedNames){
-  const help=registry[name]?.help;
+  const help=registry[name];
   const location=help?.sections?.find(section=>section.key==='location');
   assert(location,`${name}: location section missing`);
   assert(location.entries?.length>=5,`${name}: location entries incomplete`);
