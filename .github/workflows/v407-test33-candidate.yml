@@ -1,0 +1,142 @@
+name: Build V4.07.33 corrected review polish candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.07.33-review-polish-fix
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test33:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Check V4.07.33 scripts
+        run: |
+          node --check scripts/v4-07-test33-review-polish-delta.mjs
+          node --check scripts/finalize-v407-test33-candidate.mjs
+          node --check scripts/test-v407-test33-candidate.mjs
+
+      - name: Rebuild V4.07 chain through TEST14
+        run: |
+          node scripts/build-v407-location-search-candidate.mjs
+          node scripts/finalize-v407-test8-candidate.mjs
+          node scripts/finalize-v407-test9-candidate.mjs
+          node scripts/finalize-v407-test10-candidate.mjs
+          node scripts/finalize-v407-test10r1-candidate.mjs
+          node scripts/finalize-v407-test11-candidate.mjs
+          node scripts/finalize-v407-test12-candidate.mjs
+          node scripts/finalize-v407-test13-candidate.mjs
+          node scripts/finalize-v407-test14-candidate.mjs
+
+      - name: Rebuild exact TEST15 through TEST19
+        run: |
+          node scripts/finalize-v407-test15-candidate.mjs
+          node scripts/test-v407-test15-candidate.mjs
+          node scripts/finalize-v407-test16-candidate.mjs
+          node scripts/test-v407-test16-candidate.mjs
+          node scripts/finalize-v407-test17-candidate.mjs
+          node scripts/test-v407-test17-candidate.mjs
+          node scripts/finalize-v407-test18-candidate.mjs
+          node scripts/test-v407-test18-candidate.mjs
+          node scripts/finalize-v407-test19-candidate.mjs
+          node scripts/test-v407-test19-candidate.mjs
+          echo "1a1446a11eb5a4574712de0370f6204a4948d173f9f67c1110d28ded79b3a152  artifacts/v407/gewitterradar-v4.07.19.js" | sha256sum -c -
+
+      - name: Rebuild exact TEST20 through TEST24
+        run: |
+          node scripts/finalize-v407-test20-candidate.mjs
+          node scripts/test-v407-test20-candidate.mjs
+          node scripts/finalize-v407-test21-candidate.mjs
+          node scripts/test-v407-test21-candidate.mjs
+          node scripts/finalize-v407-test22-candidate.mjs
+          node scripts/test-v407-test22-candidate.mjs
+          node scripts/finalize-v407-test23-candidate.mjs
+          node scripts/test-v407-test23-candidate.mjs
+          node scripts/finalize-v407-test24-candidate.mjs
+          node scripts/test-v407-test24-candidate.mjs
+          echo "049bc765796bc323ddd62bd61a4106291ec67648a1df941c2465b6db861dcb01  artifacts/v407/gewitterradar-v4.07.24.js" | sha256sum -c -
+
+      - name: Rebuild exact TEST25 through TEST28
+        run: |
+          node scripts/finalize-v407-test25-candidate.mjs
+          node scripts/test-v407-test25-candidate.mjs
+          node scripts/finalize-v407-test26-candidate.mjs
+          node scripts/test-v407-test26-candidate.mjs
+          node scripts/finalize-v407-test27-candidate.mjs
+          node scripts/test-v407-test27-candidate.mjs
+          node scripts/finalize-v407-test28-candidate.mjs
+          node scripts/test-v407-test28-candidate.mjs
+          node scripts/test-v407-full-i18n-candidate.mjs
+          node scripts/test-v407-help-runtime-locales.mjs
+          echo "d3c67dbcc2a9c25bec71eb6deb0ecd1085b054d61435b366a7c442f4a4d169f8  artifacts/v407/gewitterradar-v4.07.28.js" | sha256sum -c -
+
+      - name: Rebuild exact TEST29 through TEST31 baseline
+        run: |
+          node scripts/finalize-v407-test29-candidate.mjs
+          node scripts/test-v407-test29-candidate.mjs
+          echo "0a65b11e59bae32ec267a3269f0f3c5aceec28adb4b7a8d040fd1d5bec327c93  artifacts/v407/gewitterradar-v4.07.29.js" | sha256sum -c -
+          node scripts/finalize-v407-test30-candidate.mjs
+          node scripts/test-v407-test30-candidate.mjs
+          echo "858d2d21026814d916d9358fb11bcb39805fd4f0f6104553dbcf4f7a5c454cb0  artifacts/v407/gewitterradar-v4.07.30.js" | sha256sum -c -
+          node scripts/finalize-v407-test31-candidate.mjs
+          node scripts/test-v407-test31-candidate.mjs
+          echo "2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31  artifacts/v407/gewitterradar-v4.07.31.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/gewitterradar-v4.07.31.js)" -eq 1779464
+          echo "898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb  artifacts/v407/locales/about-locales.js" | sha256sum -c -
+          test "$(wc -c < artifacts/v407/locales/about-locales.js)" -eq 401387
+
+      - name: Finalize and regression-test V4.07.33
+        id: meta
+        run: |
+          node scripts/finalize-v407-test33-candidate.mjs
+          node scripts/test-v407-test33-candidate.mjs
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07-test.js
+          cmp artifacts/v407/gewitterradar.js artifacts/v407/gewitterradar-v4.07.33.js
+          echo "bytes=$(wc -c < artifacts/v407/gewitterradar-v4.07.33.js)" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum artifacts/v407/gewitterradar-v4.07.33.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "locale_bytes=$(wc -c < artifacts/v407/locales/about-locales.js)" >> "$GITHUB_OUTPUT"
+          echo "locale_sha256=$(sha256sum artifacts/v407/locales/about-locales.js | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Execute generated V4.07.33 module with browser-global stubs
+        run: |
+          cat > /tmp/run-v407-module.mjs <<'EOF'
+          import {pathToFileURL} from 'node:url';
+          globalThis.customElements={get(){return undefined},define(){}};
+          globalThis.HTMLElement=class {};
+          globalThis.window=globalThis;
+          globalThis.document={};
+          await import(pathToFileURL(process.argv[2]).href);
+          console.log('V4.07.33 executable module import PASS');
+          EOF
+          node /tmp/run-v407-module.mjs "$(pwd)/artifacts/v407/gewitterradar-v4.07.33.js"
+
+      - name: Publish complete V4.07.33 candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test33-complete
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/v407/gewitterradar.js
+            artifacts/v407/gewitterradar-v4.07-test.js
+            artifacts/v407/gewitterradar-v4.07.31.js
+            artifacts/v407/gewitterradar-v4.07.33.js
+            artifacts/v407/locales/about-locales.js
+            artifacts/v407/SHA256SUMS.txt
+
+      - name: Publish V4.07.33 build identity
+        uses: actions/upload-artifact@v4
+        with:
+          name: v407-test33-meta-main-${{ steps.meta.outputs.bytes }}-${{ steps.meta.outputs.sha256 }}-locale-${{ steps.meta.outputs.locale_bytes }}-${{ steps.meta.outputs.locale_sha256 }}
+          if-no-files-found: error
+          retention-days: 14
+          path: artifacts/v407/SHA256SUMS.txt
