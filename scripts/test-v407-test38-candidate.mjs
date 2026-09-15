@@ -23,7 +23,7 @@ assert(candidate.includes('"use":"Übernehmen"'),'German Übernehmen action miss
 assert(!candidate.includes('"use":"Nutzen"'),'German Nutzen action survived');
 assert(candidate.includes("['Ort übernehmen','Übernehmen setzt den gewählten Ort sofort als Bezugsstandort"),'German native help wording missing');
 assert(!candidate.includes("['Ort verwenden','Nutzen übernimmt"),'old German native help wording survived');
-assert(candidate.includes("['Apply location','Apply sets the selected place immediately as the reference location"),'English native help wording missing');
+assert(candidate.includes('["Apply location","Apply sets the selected place immediately as the reference location'),'English native help wording missing');
 assert(candidate.includes('"helpTitle":"Koordinaten übernehmen"'),'German coordinate help title not aligned');
 for(const [language,label] of Object.entries(V40738_LOCATION_USE_LABELS)) assert(candidate.includes(`"use":"${label}"`),`location action label missing (${language}: ${label})`);
 for(const fingerprint of [
