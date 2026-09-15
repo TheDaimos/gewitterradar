@@ -9,7 +9,7 @@ const localeDir=resolve(dir,'locales');
 const assetDir=resolve(dir,'assets');
 const sourcePath=resolve(dir,'gewitterradar-v4.07.35.js');
 const localePath=resolve(localeDir,'about-locales.js');
-const coordinateAssetSource=resolve(root,'frontend/assets/gewitterradar-coordinate-target.svg');
+const coordinateAssetSource=resolve(root,'artwork/location-search/runtime/gewitterradar-coordinate-target.svg');
 const coordinateAssetOut=resolve(assetDir,'gewitterradar-coordinate-target.svg');
 
 const EXPECTED_SOURCE_BYTES=1781842;
