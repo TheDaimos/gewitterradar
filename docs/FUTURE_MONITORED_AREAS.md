@@ -1,6 +1,6 @@
 # Gewitterradar – zukünftige Funktion „Monitored Areas“
 
-Stand: 14.09.2026
+Stand: 15.09.2026
 
 Diese Datei hält eine Funktionsidee für eine spätere Version nach Stabilisierung/Freigabe von V4.07 fest. Sie ist **kein V4.07-Blocker** und wird nicht parallel zur laufenden V4.07-Abnahme implementiert.
 
@@ -33,7 +33,7 @@ Gewitterradar soll diesen Zustand später prüfen und verständlich anzeigen, z.
 - `+` zum Anlegen bzw. Verknüpfen einer weiteren Monitored Area.
 - `−` zum Entfernen bzw. Deaktivieren einer Monitored Area; bestehende Ereignisprotokolle sollen dabei nicht automatisch vernichtet werden.
 - Mehrere überwachte Standorte müssen unabhängig vom aktuell auf der Karte gewählten Referenzstandort bestehen bleiben.
-- Ein Klick/Tap auf eine Monitored Area darf den Standort auf Wunsch weiterhin wie einen normalen Bezugsstandort auf der Karte öffnen bzw. fokussieren, ohne dadurch die anderen überwachten Standorte zu deaktivieren.
+- Ein Klick/Tap auf eine Monitored Area öffnet bevorzugt ein eigenes Detail-Popup für diesen Standort; eine separate Aktion im Popup darf den Standort zusätzlich auf der Karte fokussieren bzw. als Bezugsstandort verwenden, ohne andere überwachte Standorte zu deaktivieren.
 
 ## Symbolik in der Standortliste
 
@@ -46,11 +46,12 @@ Geplante Darstellung:
 - Premium-Metalloptik passend zu Gewitterradar;
 - Master-Asset in Hi-Res im kanonischen Repository erhalten, Laufzeitdarstellung daraus ableiten;
 - pro Monitored Area optional eine sehr kleine, feine, hochgestellte **goldene Ziffer** hinter/oberhalb des Schildes;
-- diese Ziffer kann die Anzahl der für diesen Standort protokollierten Blitzereignisse darstellen;
+- diese Ziffer soll bevorzugt die Zahl der **seit dem letzten Zähler-Reset neu registrierten Ereignisse** darstellen und nicht die gesamte historische Ereigniszahl;
+- die historische Gesamtzahl bleibt separat erhalten und wird im Detail-Popup angezeigt;
 - die Ziffer darf den Standortnamen, Touch-Bereich oder das Schild nicht überlagern und muss auch auf Mobilgeräten lesbar bleiben;
-- bei großen Ereigniszahlen später eine kompakte Darstellung wie `99+` prüfen.
+- bei großen Zählerständen später eine kompakte Darstellung wie `99+` prüfen.
 
-Die Ereigniszahl ist als Informationswert gedacht, nicht als Alarmstufe.
+Die hochgestellte Zahl ist als Informations-/Neuheitszähler gedacht, nicht als Alarmstufe. Ein Reset dieses Zählers darf niemals historische Ereignisdaten verändern.
 
 ## Lokaler Ereignisspeicher über To-do
 
@@ -95,16 +96,79 @@ Die genaue sichtbare Formatierung wird erst in der UI-/Implementierungsphase fes
 
 ## Zählung und Status
 
-Da Ereignisse strukturiert protokolliert werden, soll Gewitterradar pro Monitored Area eine Ereignisanzahl ableiten können.
+Da Ereignisse strukturiert protokolliert werden, soll Gewitterradar pro Monitored Area mindestens zwei getrennte Zählwerte führen können:
+
+1. **Gesamtzahl** aller dauerhaft gespeicherten, der Area zugeordneten Ereignisse.
+2. **Neu-Zähler** seit dem letzten manuellen Reset; dieser Wert ist der bevorzugte Kandidat für die kleine hochgestellte Zahl am Schild.
+
+Der Neu-Zähler darf nicht aus gelöschten oder veränderten To-do-Einträgen improvisiert werden, sondern soll als eigener Area-Zustand bzw. über einen stabilen Reset-Zeitpunkt/Reset-Marker geführt werden. Damit bleibt der historische Datenbestand unverändert und nachvollziehbar.
 
 Zu definieren:
 
-- zählt die Anzeige alle dauerhaft vorhandenen Ereignisse oder nur einen gewählten Zeitraum;
+- genaue Persistenz des letzten Reset-Zeitpunkts bzw. der letzten bestätigten Ereignisnummer;
+- Verhalten bei Neustart/Restore;
 - Verhalten bei archivierten/exportierten/gelöschten Einträgen;
 - Zählung muss unabhängig vom `completed`-/`needs_action`-Status von Local To-do fachlich eindeutig bleiben;
-- bei Bedarf separate Gesamtzahl und Zahl neuer/unbestätigter Ereignisse vorsehen.
+- optional später weitere Zeitraumzähler wie letzte 24 Stunden / 7 Tage / 30 Tage.
 
-Die kleine hochgestellte Zahl am Schild soll nur dann umgesetzt werden, wenn diese Semantik eindeutig und auf allen Zielgeräten visuell sauber ist.
+## Area-Detail-Popup
+
+Ein Klick/Tap auf den Namen bzw. die Zeile einer konkreten Monitored Area soll ein eigenes kompaktes **Detail-Popup** öffnen. Dieses Popup ist die zentrale Bedien- und Informationsansicht für genau diesen überwachten Standort.
+
+Vorgesehene Inhalte:
+
+- Name der Monitored Area;
+- goldenes Schild-/Blitzsymbol passend zur Standortliste;
+- aktueller Überwachungsstatus, z. B. **aktiv**, **Datenquelle nicht verfügbar**, **Blitzortung nicht zugeordnet** oder **Protokollspeicher fehlt**;
+- Koordinaten der Area;
+- eingestellter Überwachungsradius;
+- zugeordnete Blitzortung-/Tracker-Quelle;
+- historische Gesamtzahl protokollierter Ereignisse;
+- Anzahl neuer Ereignisse seit dem letzten Zähler-Reset;
+- Zeitpunkt des letzten registrierten Ereignisses;
+- Entfernung des zuletzt registrierten Blitzes;
+- optional später: nächster dokumentierter Blitz innerhalb eines gewählten Zeitraums bzw. bisher geringste registrierte Entfernung.
+
+### Ereignisdarstellung im Popup
+
+Das Popup soll eine kompakte Ansicht der Ereignisse enthalten, ohne die vollständige To-do-Liste nachbauen zu müssen.
+
+Vorgemerkt:
+
+- die letzten Ereignisse chronologisch anzeigen, z. B. die letzten 5 oder 10 Treffer;
+- je Zeile mindestens Ereignisnummer, Datum/Uhrzeit und Entfernung;
+- optional Koordinaten in einer zweiten Zeile oder aufklappbaren Detailansicht;
+- Möglichkeit, von dort zur vollständigen Ereignisansicht bzw. zum Export zu wechseln;
+- bei vielen Ereignissen keine endlose Liste im Popup, sondern begrenzte Vorschau plus „Alle anzeigen“/vergleichbare Aktion.
+
+### Reset des hochgestellten Zählers
+
+Das Popup erhält einen **Reset-Button** für den Neu-Zähler.
+
+Verbindliche Semantik:
+
+- Reset setzt ausschließlich den hochgestellten Neu-Zähler dieser Monitored Area auf `0`;
+- **kein To-do-Ereignis wird gelöscht, abgeschlossen, umgeschrieben oder archiviert**;
+- die historische Gesamtzahl bleibt unverändert;
+- CSV-/PDF-Exporte enthalten weiterhin sämtliche im gewählten Zeitraum vorhandenen Ereignisse;
+- neue Treffer nach dem Reset beginnen den Neu-Zähler wieder bei `1`;
+- Reset soll pro Area getrennt wirken;
+- Reset-Zeitpunkt bzw. bestätigte letzte Ereignisnummer muss persistent sein, damit der Zähler nach Home-Assistant-Neustart nicht ungewollt wieder hochspringt.
+
+Für die Bedienung ist eine kurze Bestätigung sinnvoll, die ausdrücklich klarstellt: **„Zähler zurücksetzen – Ereignisse bleiben erhalten.“** Damit darf der Reset optisch nicht wie eine Löschfunktion wirken.
+
+### Weitere Aktionen im Popup
+
+Als spätere Zielausstattung vorgemerkt:
+
+- Standort auf Karte anzeigen/fokussieren;
+- CSV-Export;
+- PDF-Export;
+- Benachrichtigungen für diese Area ein-/ausschalten;
+- Area bearbeiten bzw. Konfiguration anzeigen;
+- vollständige Ereignisliste öffnen.
+
+Das Popup soll sich gestalterisch in die vorhandene Premium-Oberfläche von Gewitterradar einfügen und auf Desktop, Android, iPhone/iOS, iPad und iPad Pro touch-tauglich bleiben.
 
 ## Alarmierung
 
@@ -185,6 +249,7 @@ Vor Implementierung zusätzlich klären:
 - Uhrzeiten intern eindeutig speichern; Anzeige lokalisiert in der Home-Assistant-/Gewitterradar-Zeitzone.
 - Exportdaten dürfen nicht nachträglich scheinpräziser dargestellt werden als die ursprüngliche Blitzquelle.
 - Änderungen am Standortnamen müssen die historische Zuordnung alter Ereignisse nachvollziehbar lassen; intern deshalb eine stabile Area-ID zusätzlich zum sichtbaren Namen vorsehen.
+- Neu-Zähler und historische Gesamtzahl strikt trennen; ein Zähler-Reset darf keine Ereignisdaten verändern.
 
 ## Abgrenzung
 
@@ -196,9 +261,10 @@ Ein Gewitterradar-PDF oder CSV darf nicht als „Beweis eines direkten Einschlag
 
 - eine Local-To-do-Liste pro Area oder eine gemeinsame Monitored-Areas-Ereignisliste;
 - genaue Verknüpfung zwischen Blitzortung-Instanz, Monitored Area und To-do-Speicher;
-- Ereigniszähler: Gesamtzahl, Zeitraum oder ungelesene/neue Ereignisse;
+- technische Persistenz von historischem Gesamtzähler, Neu-Zähler und Reset-Marker;
 - fachlich sinnvoller Überwachungsradius bzw. mehrere Radien/Kategorien;
 - roter oder blauer Blitz im goldenen Schild;
+- genaue Informationsdichte und Ereignisvorschau des Detail-Popups;
 - CSV- und PDF-Schema;
 - Aufbewahrung, Archivierung und Löschung alter Ereignisse;
 - Verhalten bei Umbenennen oder Entfernen einer Monitored Area;
