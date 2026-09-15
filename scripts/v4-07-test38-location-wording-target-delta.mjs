@@ -74,8 +74,8 @@ export function v407Test38LocationWordingTargetDelta(source,coordinateAssetBase6
     "['Ort verwenden','Nutzen übernimmt den gewählten Ort sofort als Bezugsstandort, schließt die Ortssuche automatisch und fährt die Karte direkt zum neuen Standort.']",
     "['Ort übernehmen','Übernehmen setzt den gewählten Ort sofort als Bezugsstandort, schließt die Ortssuche automatisch und fährt die Karte direkt zum neuen Standort.']",'native-help-de');
   result=once(result,
-    "['Use location','Use applies the selected place immediately, closes place search and moves the map directly to the new reference location.']",
-    "['Apply location','Apply sets the selected place immediately as the reference location, closes place search and moves the map directly to the new reference location.']",'native-help-en');
+    '["Use location","Use applies the selected place immediately, closes place search and moves the map directly to the new reference location."]',
+    '["Apply location","Apply sets the selected place immediately as the reference location, closes place search and moves the map directly to the new reference location."]','native-help-en');
   return result;
 }
 
