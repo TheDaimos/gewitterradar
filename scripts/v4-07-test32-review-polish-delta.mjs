@@ -19,9 +19,9 @@ export function v407Test32ReviewPolishDelta(source) {
 
   result = once(
     result,
-    "  const CARD_VERSION = '4.07.31';\n  const GEWITTERRADAR_BUILD = 'V4.07-TEST31-2026-09-14';",
-    "  const CARD_VERSION = '4.07.32';\n  const GEWITTERRADAR_BUILD = 'V4.07-TEST32-2026-09-15';",
-    'version-and-build'
+    "  const CARD_DISPLAY_VERSION = '4.07.31';\n  const GEWITTERRADAR_BUILD = 'V4.07-TEST31-2026-09-14';",
+    "  const CARD_DISPLAY_VERSION = '4.07.32';\n  const GEWITTERRADAR_BUILD = 'V4.07-TEST32-2026-09-15';",
+    'display-and-build'
   );
 
   const oldEntryRenderer = `if(section.entries?.length){const dl=document.createElement('dl');dl.className='help-entries';for(const [entryIndex,[term,text]] of section.entries.entries()){const dt=document.createElement('dt'),dd=document.createElement('dd');const recorderPriority=section.key==='defaults'&&/^Recorder\\b/i.test(String(term));if(recorderPriority){dt.className='help-recorder-priority';dd.className='help-recorder-priority';}setHelpDiagnosticText(dt,term);dt.append(document.createTextNode(':'));if(section.key==='location'&&entryIndex===2){const value=String(text??'');const split=value.indexOf(' ');if(split>0){const action=document.createElement('span');action.className='help-action-token help-action-use';action.textContent=value.slice(0,split).replace(/^[„“\\"'«»‹›]+|[„“\\"'«»‹›]+$/g,'');dd.append(action,document.createTextNode(' '));setHelpDiagnosticText(dd,value.slice(split+1));}else setHelpDiagnosticText(dd,text);}else setHelpDiagnosticText(dd,text);dl.append(dt,dd);}body.append(dl);}`;
