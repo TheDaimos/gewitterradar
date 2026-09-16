@@ -30,7 +30,8 @@ jobs:
           set -euo pipefail
           sha="$GITHUB_SHA"
           test "$(git rev-parse HEAD)" = "$sha"
-          test "$(git rev-parse origin/main)" = "$sha"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' --force
+          test "$(git rev-parse refs/remotes/origin/main^{commit})" = "$sha"
           test -f docs/archive-triggers/V4_07_57_PUBLISH.trigger
           grep -Fx 'VERSION=V4.07.57' docs/archive-triggers/V4_07_57_PUBLISH.trigger
           grep -Fx 'NATIVE_INTEGRATION=0.19.1' docs/archive-triggers/V4_07_57_PUBLISH.trigger
@@ -89,7 +90,7 @@ jobs:
           echo 'Timed out waiting for post-merge release gates.' >&2
           exit 1
 
-      - name: Create and verify Golden Master from exact release commit
+      - name: Create Golden Master from exact release commit
         id: golden
         shell: bash
         run: |
@@ -98,6 +99,11 @@ jobs:
           mkdir -p dist/source-archives
           chmod +x scripts/create-source-archive.sh
           scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.07.57 dist/source-archives
+
+      - name: Verify Golden Master archive
+        shell: bash
+        run: |
+          set -euo pipefail
           test -s '${{ steps.golden.outputs.zip_path }}'
           test -s '${{ steps.golden.outputs.bundle_path }}'
           test -s '${{ steps.golden.outputs.checksum_path }}'
@@ -187,8 +193,8 @@ jobs:
           EOF
 
           if gh release view v4.07.57 >/dev/null 2>&1; then
-            target=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v4.07.57" --jq '.object.sha')
-            test "$target" = "$sha"
+            git fetch origin refs/tags/v4.07.57:refs/tags/v4.07.57 --force
+            test "$(git rev-list -n1 v4.07.57)" = "$sha"
             echo 'v4.07.57 is already published on the exact expected commit.'
           else
             gh release create v4.07.57 \
