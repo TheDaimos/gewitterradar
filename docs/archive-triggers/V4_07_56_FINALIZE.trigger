@@ -1,1 +1,1 @@
-Finalize the user-accepted V4.07.56 promotion candidate, rebuild canonical deliveries, execute protected contracts, and self-remove this one-shot trigger.
+Finalize the user-accepted V4.07.56 promotion candidate, rebuild canonical deliveries, execute protected contracts, and self-remove this one-shot trigger. Retry after locale-alias verifier compatibility fix.
