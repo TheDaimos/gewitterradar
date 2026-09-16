@@ -97,11 +97,12 @@ const server = http.createServer((req, res) => {
           const after = getComputedStyle(summary, '::after');
           const signature = getComputedStyle(root.querySelector('.settings-signature'));
           const sections = [...root.querySelectorAll('.settings-collapsible')];
+          const rect = dialog.getBoundingClientRect();
 
           return {
-            dialogOpen: dialog.open,
+            dialogVisible: rect.width > 0 && rect.height > 0 && getComputedStyle(dialog).display !== 'none',
             dialogOverflow: dialog.scrollWidth > dialog.clientWidth,
-            dialogBottom: dialog.getBoundingClientRect().bottom,
+            dialogBottom: rect.bottom,
             links: links.map((node) => [node.offsetWidth, node.offsetHeight]),
             iconResiduals: icons.map((node, index) => {
               const a = node.getBoundingClientRect();
@@ -119,7 +120,7 @@ const server = http.createServer((req, res) => {
           };
         });
 
-        assert.equal(metrics.dialogOpen, true, `${delivery}/${profile} settings dialog open`);
+        assert.equal(metrics.dialogVisible, true, `${delivery}/${profile} settings dialog visible`);
         assert.equal(metrics.dialogOverflow, false, `${delivery}/${profile} settings overflow`);
         assert.ok(metrics.dialogBottom <= height + 0.5, `${delivery}/${profile} settings viewport`);
         assert.ok(
