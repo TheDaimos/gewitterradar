@@ -4,18 +4,24 @@ import {fileURLToPath} from 'node:url';
 import {runInNewContext} from 'node:vm';
 
 export function readExternalAboutLocales(source) {
-  const aboutAnchor = 'export const ABOUT_EXTERNAL_LOCALES = ';
-  const helpAnchor = 'export const HELP_EXTERNAL_LOCALES = ';
-  if (source.split(aboutAnchor).length !== 2 || source.split(helpAnchor).length !== 2 || !source.trimEnd().endsWith(';')) {
-    throw Error('External About locale module shape changed');
+  const requiredExports = ['ABOUT_EXTERNAL_LOCALES','HELP_EXTERNAL_LOCALES','HELP_EXTERNAL_LOCALES_V40753'];
+  for (const name of requiredExports) {
+    const anchor = `export const ${name} = `;
+    if (source.split(anchor).length !== 2) throw Error(`External About locale export changed: ${name}`);
   }
+  if (!source.trimEnd().endsWith(';')) throw Error('External About locale module shape changed');
   const context = {};
-  const executable = source.replace(aboutAnchor,'globalThis.externalAboutLocales = ')
-    .replace(helpAnchor,'globalThis.externalHelpLocales = ')
-    .replaceAll('export const ','const ');
+  const executable = source.replace(/export const ([A-Za-z0-9_]+)\s*=/g,'globalThis.$1 =');
   runInNewContext(executable,context,{timeout:3000,filename:'about-locales.js'});
-  if (!context.externalAboutLocales || !context.externalHelpLocales) throw Error('External About/Help locales were not exported');
-  return {about:context.externalAboutLocales,help:context.externalHelpLocales};
+  if (!context.ABOUT_EXTERNAL_LOCALES || !context.HELP_EXTERNAL_LOCALES || !context.HELP_EXTERNAL_LOCALES_V40753) {
+    throw Error('External About/Help locales were not exported');
+  }
+  return {
+    about: context.ABOUT_EXTERNAL_LOCALES,
+    help: context.HELP_EXTERNAL_LOCALES_V40753,
+    genericHelp: context.HELP_EXTERNAL_LOCALES,
+    historicalHelp: context.HELP_EXTERNAL_LOCALES_V40731 ?? null
+  };
 }
 
 // Evaluate production registration without constructing a card or providing Home Assistant.
@@ -43,22 +49,23 @@ export function loadAboutLocaleRuntime(source) {
   return model;
 }
 
-// Build and verify always apply strict validation after evaluating the production module.
+// Build and verify always apply the same external Help bundle that production imports.
 export function readAboutLocaleModel(source, externalSource) {
   const model = loadAboutLocaleRuntime(source);
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
   if (externalSource !== undefined) {
     if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
     const external = readExternalAboutLocales(externalSource);
-    const externalLocales = Object.fromEntries(Object.entries(external.about).map(([name,locale]) => [name,{...locale,help:external.help[name]}]));
-    model.validate({...model.locales,...externalLocales},model.settings,model.languages,model.recorderYaml);
+    // Run the actual production installer. It includes normalization of historical Help bundles
+    // and strict schema/language coverage validation.
+    const installed = model.installExternal(external.about,external.help);
     const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
-    if (JSON.stringify(Object.keys(externalLocales)) !== JSON.stringify(expected)) {
+    if (JSON.stringify(Object.keys(installed)) !== JSON.stringify(expected)) {
       throw Error('External About locales must exactly match non-native LANGUAGE_DEFINITIONS');
     }
     model.externalAboutLocales = external.about;
     model.externalHelpLocales = external.help;
-    model.externalLocales = externalLocales;
+    model.externalLocales = installed;
   }
   return model;
 }
