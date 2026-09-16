@@ -1,4 +1,4 @@
-name: Audit Gewitterradar V4.07.57 anchors
+name: Inspect Gewitterradar V4.07.57 build metadata
 
 on:
   push:
@@ -11,18 +11,26 @@ permissions:
   contents: read
 
 jobs:
-  audit:
+  inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Locate current version anchors
+      - name: Inspect version and build anchors
         run: |
           set -euo pipefail
-          echo '=== V4.07.56 references ==='
-          git grep -n -I -E 'V4\.07\.56|v4\.07\.56|4\.07\.56' -- . || true
-          echo '=== Native integration 0.19.0 references ==='
-          git grep -n -I -F '0.19.0' -- . || true
-          echo '=== Manifest ==='
-          cat custom_components/gewitterradar/manifest.json
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('frontend/gewitterradar.js').read_text(encoding='utf-8')
+          for needle in ['GEWITTERRADAR_BUILD','CARD_VERSION','CARD_DISPLAY_VERSION','TEST56','2026-09-16']:
+              print(f'=== {needle} ===')
+              pos=0
+              found=0
+              while True:
+                  i=s.find(needle,pos)
+                  if i<0: break
+                  print(s[max(0,i-100):min(len(s),i+220)].replace('\n','\\n'))
+                  found+=1
+                  pos=i+len(needle)
+                  if found>=10: break
+              print('count_shown=',found)
+          PY
