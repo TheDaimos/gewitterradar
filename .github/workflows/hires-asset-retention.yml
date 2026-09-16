@@ -2,14 +2,6 @@ name: Hi-Res asset retention
 
 on:
   pull_request:
-    paths:
-      - 'artwork/**'
-      - 'scripts/verify-hires-asset-retention.mjs'
-      - 'tests/contracts/hires-asset-retention-v4.07.56.json'
-      - 'docs/ASSET_RETENTION_POLICY.md'
-      - 'PROJECT_DEFAULTS.md'
-      - 'docs/RELEASE_PROCESS.md'
-      - '.github/workflows/hires-asset-retention.yml'
   push:
     branches:
       - main
@@ -17,14 +9,6 @@ on:
       - 'frozen/**'
       - 'feature/**'
       - 'finalize/**'
-    paths:
-      - 'artwork/**'
-      - 'scripts/verify-hires-asset-retention.mjs'
-      - 'tests/contracts/hires-asset-retention-v4.07.56.json'
-      - 'docs/ASSET_RETENTION_POLICY.md'
-      - 'PROJECT_DEFAULTS.md'
-      - 'docs/RELEASE_PROCESS.md'
-      - '.github/workflows/hires-asset-retention.yml'
 
 permissions:
   contents: read
