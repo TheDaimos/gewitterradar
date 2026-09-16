@@ -50,6 +50,20 @@ Dieser Stand darf **nicht** aus Kostengründen, bei Refactoring, beim Packaging,
 
 Ein gemeinsamer Build oder Release ist **nicht releasefähig**, solange der geschützte About-Stand nicht in beiden Auslieferungsformen vorhanden und gegen die eingefrorene V4.05-Referenz verifiziert ist.
 
+## Permanente Schutzregel für Hi-Res-Mastergrafiken
+
+Nicht mehr verwendete, ersetzte oder überarbeitete Hi-Res-Mastergrafiken werden **niemals automatisch gelöscht**.
+
+Sie bleiben dauerhaft im Repository erhalten. Wenn sie nicht mehr aktiv verwendet werden, dürfen sie in einen logisch benannten und vorzugsweise versionierten `legacy/`- oder `archive/`-Bereich verschoben werden. Git-Historie allein ist kein ausreichender Ersatz für die direkte Aufbewahrung im aktuellen kanonischen Repositorystand.
+
+Eine Löschung ist ausschließlich zulässig, wenn Christian die konkrete Löschung ausdrücklich anfordert **und** ausdrücklich bestätigt. Aufräumen, Refactoring, Deduplizierung, Repository-Verkleinerung, Ersatz durch ein neues Design, fehlende Runtime-Verwendung oder ein Versionswechsel sind niemals eine Löschfreigabe.
+
+Vor jedem Merge in `main` und vor jedem Release ist der Hi-Res-/Masterbestand zu prüfen. Verschwindet ein Master ohne dokumentierte ausdrückliche Löschfreigabe, ist der Merge/Release blockiert.
+
+Verbindliche Detailrichtlinie:
+
+`docs/ASSET_RETENTION_POLICY.md`
+
 ## Repository-Rollen
 
 - `TheDaimos/gewitterradar` — kanonische Produkt- und Entwicklungsquelle.
@@ -117,6 +131,7 @@ Verbindliche Dokumente:
 
 - `docs/DELIVERY_ARCHITECTURE.md`
 - `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
+- `docs/ASSET_RETENTION_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
 
 ## Dev-Toolkit
