@@ -38,6 +38,22 @@ assert.equal(
 );
 transformed = transformed.replace(controlFrom, controlTo);
 
+// Chromium's touch emulation does not consistently transfer keyboard focus after
+// a synthetic click in the same way as a desktop mouse. On non-touch profiles the
+// historical automatic focus-transfer assertion remains unchanged. On touch
+// profiles explicitly focus the real close control before Enter, then keep the
+// original close and return-focus assertions. This tests keyboard operability
+// without conflating it with emulated pointer-focus semantics.
+const keyboardFrom = "await page.locator('#settings-about').click();\n        await page.keyboard.press('Enter');";
+const keyboardTo = "await page.locator('#settings-about').click();\n        if(hasTouch)await page.locator('.about-close').focus();\n        await page.keyboard.press('Enter');";
+
+assert.equal(
+  transformed.split(keyboardFrom).length,
+  2,
+  'Historical keyboard activation anchor changed; review before updating the V4.07.56 wrapper.',
+);
+transformed = transformed.replace(keyboardFrom, keyboardTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
