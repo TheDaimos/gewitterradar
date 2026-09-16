@@ -74,6 +74,54 @@ Ein Release ist blockiert, wenn insbesondere einer der folgenden Bestandteile fe
 
 Eine absichtliche Änderung des Schutzvertrags erfordert vorab ausdrückliche Benutzerfreigabe, Anpassung von Schutzdokumentation und Contract-Test sowie erneute Abnahme der betroffenen Diagnosefunktionen.
 
+## PRE-MERGE-Snapshot und Golden Master
+
+`docs/GOLDEN_MASTER_POLICY.md` ist bei jeder wesentlichen Promotion nach `main` verbindlich.
+
+### Phase A – vor dem Merge
+
+Unmittelbar bevor der bisherige `main` durch die Promotion verändert wird:
+
+1. aktuellen vollständigen `main`-Commit-SHA bestimmen;
+2. PRE-MERGE-Snapshot aus exakt diesem Commit erzeugen;
+3. Quell-ZIP, Git-Bundle und SHA-256-Datei prüfen;
+4. Snapshot lokal/offline bzw. außerhalb des laufenden Repositorys sichern;
+5. erst danach den kontrollierten Merge bzw. die Synchronisierung nach `main` beginnen.
+
+Ein fehlender oder nicht verifizierbarer PRE-MERGE-Snapshot blockiert die Promotion.
+
+### Phase B – nach dem Merge
+
+Nach Integration in `main` werden sämtliche vorgesehenen Release-Gates gegen den **tatsächlichen neuen `main`-Commit** erneut ausgeführt.
+
+Erst wenn diese Prüfungen vollständig grün sind:
+
+1. exakten neuen `main`-Commit-SHA bestimmen;
+2. Golden-Master-ZIP aus genau diesem Commit erzeugen;
+3. Git-Bundle erzeugen;
+4. internes Manifest, vollständiges Dateiinventar und per-file SHA-256-Inventar prüfen;
+5. externen SHA-256-Wert für ZIP und Bundle prüfen;
+6. Golden Master unabhängig/lokal sichern;
+7. öffentlichen Release-Tag auf exakt denselben Commit setzen;
+8. GitHub-/HACS-Release aus diesem Stand veröffentlichen.
+
+Ein Kandidat, Freeze-Branch oder PRE-MERGE-Archiv darf nicht als Golden Master bezeichnet werden.
+
+### Archivierungstools
+
+Kanonische Erzeugung:
+
+```bash
+scripts/create-source-archive.sh PRE_MERGE <ref> <version>
+scripts/create-source-archive.sh GOLDEN_MASTER <ref> <version>
+```
+
+Automatisiert verfügbar über:
+
+`.github/workflows/source-archive.yml`
+
+Golden Master und HACS-/Installationspaket bleiben ausdrücklich unterschiedliche Artefakte.
+
 ## Release-Gates
 
 Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfungen grün sind. Dazu gehören je nach betroffenem Bereich insbesondere:
@@ -87,6 +135,7 @@ Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfunge
 - Paket-/Asset-Verträge und Prüfsummen;
 - **Hi-Res-Master-Audit gemäß `docs/ASSET_RETENTION_POLICY.md`;**
 - **Diagnose-Contract-Test gemäß `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`;**
+- **PRE-MERGE-/Golden-Master-Archivvertrag gemäß `docs/GOLDEN_MASTER_POLICY.md`;**
 - reale Geräteabnahme für zuvor als offen markierte Plattform- oder Layoutfälle.
 
-Nach dem erfolgreichen Abschluss wird der exakt geprüfte Commit eingefroren. Bereits veröffentlichte Tags, eingefrorene Releases und Rückfallpunkte werden niemals nachträglich umgeschrieben.
+Nach dem erfolgreichen Abschluss wird der exakt geprüfte Commit eingefroren. Bereits veröffentlichte Tags, eingefrorene Releases, PRE-MERGE-Snapshots und Golden Master werden niemals nachträglich umgeschrieben.
