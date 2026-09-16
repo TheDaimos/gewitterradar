@@ -1,8 +1,9 @@
 # Gewitterradar – Meilensteine
 
-Status: **V4.06 · 2026/09 – veröffentlichte Release-/Rückfallbasis.**  
-Aktive Entwicklung: **V4.07.31 Near-Final-Testkandidat / native Integration 0.19.0 auf Feature-Branch.**  
-Interner Reifegrad: **ca. 95 %** – Projektabschätzung, keine Release-Garantie.
+Status: **2026/09 · V4.07.56 – abgenommener Produkt-/Diagnosekandidat.**  
+Native Integration: **0.19.0.**  
+Öffentliche Rückfallbasis bis zur kontrollierten Promotion: **V4.06.**  
+`main` bleibt bis zur ausdrücklichen Benutzerfreigabe unverändert.
 
 ## Erreicht
 
@@ -53,7 +54,7 @@ Interner Reifegrad: **ca. 95 %** – Projektabschätzung, keine Release-Garantie
 - Browser-Regression ergänzt;
 - reale Android-Hochformat-Sichtprüfung erfolgreich abgeschlossen.
 
-### M8 – finaler Recorder-Sprachaudit
+### M8 – finaler Recorder-Sprachaudit V4.06
 - alle 19 registrierten Sprachvarianten geprüft;
 - exakt vier aktuelle Wildcard-Quellen bestätigt;
 - keine alten festen `sensor.home_lightning_*`-Recorder-IDs im aktuellen Pfad;
@@ -75,53 +76,118 @@ Interner Reifegrad: **ca. 95 %** – Projektabschätzung, keine Release-Garantie
 ### M11 – V4.07 weltweite Standortarchitektur
 - weltweite Orts-/PLZ-Suche im bestehenden Standortmenü umgesetzt;
 - Open-Meteo primär, kontrollierter Nominatim-Rückfall;
+- direkte Koordinateneingabe umgesetzt;
 - lokales Länder-Auto-Complete und Ländergruppierung umgesetzt;
 - eigener nativer Gewitterradar-GPS-Tracker plus separater Dashboard-Tracker;
 - `gewitterradar.set_reference_coordinates` und Dashboard-Setzpfad umgesetzt;
 - `★` Speichern, `×` Soft-Delete und `↶` Wiederherstellen über Local-To-do umgesetzt und real geprüft;
-- `Nutzen` übernimmt den Standort, schließt die Suche und fokussiert die Karte;
+- Standortübernahme schließt die Suche und fokussiert die Karte;
 - Standortmenü schließt bei Außenklick/-tap;
 - Bezugsstandort und Blitzdatenbereich bleiben fachlich getrennt;
-- halbautomatischer Blitzortung-`Location entity`-Pfad dokumentiert und real grundsätzlich bestätigt;
+- halbautomatischer Blitzortung-`Location entity`-Pfad dokumentiert;
 - Externe-Dienste-/Netzwerkdiagnose einschließlich fail-closed URL-Inventar ergänzt;
 - Release History um DE/EN-Umschalter und den realen V4.07-Umfang erweitert.
 
-### M12 – V4.07.31 Near-Final-Sprach- und Hilfestand
-- akzeptierte V4.07.30-Oberfläche unverändert als direkte Ausgangsbasis verwendet;
+### M12 – V4.07.31 historischer Near-Final-Sprach- und Hilfestand
 - Deutsch und Englisch nativ, 17 externe Varianten im Locale-Modul;
 - **15 Sprachen + 4 Dialektvarianten = 19 Varianten** vollständig strukturell geprüft;
 - Boarisch, Plattdüütsch, Sächs’sch und Schwäbisch von großen Standarddeutsch-Hilfeblöcken bereinigt;
 - technisches Vokabular, Domains, Protokolle, Entity-/Service-Namen bewusst unverändert gelassen;
-- alte V4.07.29-Komplett-Registry durch V4.07.31 ersetzt statt dupliziert;
 - fail-closed Dialekt-/Schema-Regression ergänzt;
-- Haupt-JavaScript: **1.779.464 Bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`;
-- Locale-Modul: **401.387 Bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`;
-- Komplettartefakt `v407-test31-complete`: **2.238.710 Bytes**, ZIP-SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`;
-- V4.07.31-Kandidatenworkflow, HACS-Integration, Paketvertrag, Hassfest und Home-Assistant-2026.9.0-Laufzeitprüfung erfolgreich;
-- aktueller interner Reifegrad ungefähr **95 %**.
+- damalige Kandidatenidentität und TEST-Historie dauerhaft in den V4.07-Test-Release-Notes dokumentiert.
 
-## Noch offen bis zum V4.07-Freeze
+V4.07.31 bleibt ein historischer Konsolidierungspunkt und ist nicht mehr der aktuelle Kandidat.
 
-- finaler V4.07.31-Realgeräte-Sprachaudit mit Deutsch/Englisch, repräsentativen externen Sprachen und allen vier Dialekten;
-- abschließende Desktop-/Android-/iPad-/iPad-Pro-Regression der Such-/Standort-/Saved-Places-/Touch-/Scrollpfade; iPhone/iOS ergänzen, sobald verfügbar;
-- Blitzortung: kleine/große Standortbewegung, Datenregions-Latenz, Neuabonnierung, Neustart/Restore und Recorder-/Datenbankauswirkungen final prüfen;
-- robusten sichtbaren Status für Bezugsstandort versus tatsächlich synchronisierte Blitzdatenregion entscheiden/abschließen;
-- Firewall-/DNS-/Proxy-/TLS-Inspection-Hinweise in einem real gefilterten/segmentierten Szenario verproben, soweit verfügbar;
-- finalen Shared-Frontend-/Browserlauf auf dem Freeze-Commit vollständig grün bestätigen;
-- beide Auslieferungsformen synchronisieren, finale Prüfsummen/Assets/Dokumentation erzeugen, exakt akzeptierten Commit einfrieren/taggen und HACS-/Release-Promotion durchführen.
+### M13 – V4.07.54 normaler UI-/Funktionsstand abgenommen
+- weltweite Ortssuche, Koordinateneingabe und gespeicherte Orte abgenommen;
+- Mehrsprachigkeit mit 19 Varianten abgenommen;
+- „Hilfe & Hinweise“ einschließlich Standort-/Recorder-/Netzwerkstruktur abgenommen;
+- akzeptierte Android-Kartenlegende und Radiusdarstellung festgelegt;
+- Einstellungen-/About-/Medaillon-/Kompass-Normalbetrieb abgenommen;
+- verbindlicher Funktions-Freeze festgelegt: keine erneuten Änderungen an normaler Karte, Ortssuche, Sprachen, Hilfe, Radien oder Bedienung innerhalb der V4.07.56-Finalisierung.
 
-Neue Produktideen sollen diese Restarbeiten nicht mehr inhaltlich erweitern. Bis zum Freeze gilt funktional weitgehend **Feature-Freeze**; neue Ideen gehen in den Backlog.
+### M14 – V4.07.55 Diagnose-Mastermodus
+- globaler Diagnosemodus mit pinkem Aktiv-Rahmen;
+- verschiebbare, minimier-/maximierbare Diagnosekonsole;
+- Childtools können ausgeblendet werden, ohne die Simulation zu stoppen;
+- Master-Hard-Stop beendet sämtliche Childtools und synthetischen Zustände;
+- virtuelle Szenarien AUS / BEOBACHTUNG / GEWITTER / GEFAHR / GESAMT;
+- synthetische Blitze laufen durch die normale Produktpipeline.
 
-## Nach V4.07
+### M15 – V4.07.56 Mehrzellen-/EXTREM-Diagnose und Medaillon-Abnahme
+- deterministische virtuelle Gewitter mit **1–5 Zellen**;
+- EXTREM-Test über die bestehende produktive Cluster-/Extremlogik, ohne Grenzwerte oder Farben künstlich zu erzwingen;
+- Gruppiert-/Einzelblitz-Darstellung über die normale Produktpipeline;
+- Medaillon-Zustände **LEER / PFEIL / TREND / FREEZE / NORMAL** abgenommen;
+- Kalibrier-, Geometrie-, Mess-, JSON-/Snapshot- und Performance-Diagnose geschützt;
+- 19 Diagnose-Sprachvarianten geschützt.
 
-### Unversionierter Zukunfts-Backlog
+### M16 – Diagnosevertrag dauerhaft geschützt
+- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md` angelegt;
+- maschinenlesbarer Diagnosevertrag eingeführt;
+- `scripts/verify-diagnostic-contract.mjs` als fail-closed Prüfer;
+- eigener GitHub-Actions-Workflow als Release-Gate;
+- absichtliche Abschwächung nur nach ausdrücklicher Benutzerfreigabe und erneuter Abnahme.
 
-Die vollständige verbindliche Zukunfts-/Ideenliste liegt in:
+### M17 – eigener V4.07.56-Golden-/Browservertrag
+- historische V4.05-Golden-Referenz unverändert erhalten;
+- eigener V4.07.56-Golden-Vertrag für sieben feste Profile eingeführt;
+- exakte akzeptierte Frontendidentität geschützt;
+- Geometrietoleranz maximal **0,02 px**;
+- pixelbezogene Gleichheit von Dashboard und Integration innerhalb desselben CI-Laufs;
+- sichtbares X und 44×44-Touchbereich getrennt und korrekt geprüft;
+- Desktop- und Touch-Fokus-/Tastaturpfade an die reale Browsersemantik angepasst;
+- vollständiger Shared-Frontend-/Browserlauf erfolgreich durchlaufen.
 
-`docs/ROADMAP.md`
+### M18 – permanente Hi-Res-/Legacy-Aufbewahrung
+- globale und projektspezifische Regel festgeschrieben: nicht mehr aktive Hi-Res-Master werden nicht automatisch gelöscht;
+- Git-Historie allein zählt nicht als ausreichendes Archiv;
+- alle bekannten Hilfe-, Ortssuche- und About-Master im aktuellen Repository bestätigt;
+- **32 eindeutige Master-/Legacy-Inhaltsidentitäten** in einem maschinenlesbaren Retentionsvertrag geschützt;
+- content-basierter Schutz erlaubt kontrollierte Verschiebung nach `legacy/`, aber kein stilles Verschwinden;
+- neue Master müssen fail-closed in den Vertrag aufgenommen werden;
+- eigener CI-Workflow läuft auf jedem relevanten Commit.
 
-Dort sind unter anderem MapLibre, Wetter-/Radarzellen, Unwetter/Tornado/Alarmierung, 120-Minuten-Wiedergabe, Cluster-Verfeinerung, Standortkomfort, Vollbild/Earth-Ideen und die zugehörigen Quellen-/Architekturhinweise **ohne automatische Versions- oder Umsetzungszusage** festgehalten.
+### M19 – V4.07.56 kanonischer Produktstand und Paket-/SHA-Vertrag
+- akzeptiertes Frontend direkt als kanonische Quelle synchronisiert;
+- Frontendgröße **1.955.141 Bytes**;
+- Frontend-SHA256 `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
+- Locale-SHA256 `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`;
+- native Integration auf **0.19.0**;
+- V4.07-Dashboard-Paket deterministisch in die kanonische Build-/Prüfsummenkette aufgenommen;
+- V4.07-Paket-SHA256 `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`;
+- historisches V4.06-Paket bleibt erhalten und wird weiterhin geprüft;
+- Release Notes, README, Installation, History und Release-To-do auf V4.07.56 synchronisiert.
 
-Zusätzlich ist im V4.07-Release-To-do die spätere Idee eines **globalen Gewitter-Lagebilds / Storm Feeds** festgehalten.
+## Noch offen bis zur kontrollierten V4.07.56-Promotion
 
-Neue Ideen werden dort aufgenommen, ohne V4.07 automatisch zu erweitern.
+- `CHANGELOG.md` auf den endgültigen V4.07.56-Kandidatenstand bringen;
+- letzten vollständigen Shared-Frontend-/Browserlauf auf dem endgültigen Dokumentations-/Prüfsummen-Commit grün bestätigen;
+- letzten Integration-/HACS-/Hassfest-/Home-Assistant-Lauf auf demselben Commit grün bestätigen;
+- abgeleitetes Repository `TheDaimos/gewitterradar-dashboard` aus exakt dem akzeptierten Stand synchronisieren;
+- finalen Vergleich des bisherigen `main` mit dem Promotionsstand durchführen;
+- ausdrückliche Benutzerfreigabe für die Promotion nach `main` einholen;
+- erst danach kontrolliert nach `main` integrieren;
+- relevante Release-Gates auf dem tatsächlichen neuen `main` erneut vollständig ausführen;
+- Golden Master aus exakt diesem grünen neuen `main` erzeugen und extern sichern;
+- öffentlichen Tag/GitHub-/HACS-Release auf exakt denselben verifizierten Commit setzen.
+
+Der PRE-MERGE-Snapshot des bisherigen `main` wurde bereits gemäß Promotion-Audit erzeugt und außerhalb GitHub gesichert.
+
+## Getrennte externe Prüfungen
+
+Diese Punkte verändern den abgenommenen V4.07.56-Produktstand nicht und werden nicht fälschlich als abgeschlossen dargestellt:
+
+- reales Verhalten der separat installierten Blitzortung-Integration bei kleinen/großen Standortbewegungen;
+- Neuabonnierungs-/Datenregions-Latenz von Blitzortung;
+- Neustart-/Restore-Verhalten mit einer konkret eingerichteten Blitzortung-`Location entity`;
+- Recorder-/Datenbankauswirkungen häufiger Standortwechsel;
+- reale DNS-Filter-/Proxy-/TLS-Inspection-/Segmentierungsfälle, soweit eine entsprechende Umgebung verfügbar ist.
+
+Ob diese externen Prüfungen vor dem öffentlichen Release zwingend abgeschlossen werden müssen oder als dokumentierte Nachprüfung weiterlaufen dürfen, bleibt eine bewusste Releaseentscheidung.
+
+## Nach V4.07.56
+
+Die vollständige Zukunfts-/Ideenliste liegt in `docs/ROADMAP.md`. Algorithmische Änderungen an Cluster-/Zoom-Logik gehören ausdrücklich in den V4.08-Arbeitsblock und nicht mehr in V4.07.56.
+
+Bis zur Promotion gilt **Feature-Freeze**: neue Produktideen gehen in den Backlog und verändern den abgenommenen V4.07.56-Stand nicht mehr.
