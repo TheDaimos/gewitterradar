@@ -1,0 +1,25 @@
+{
+  "contractVersion": 1,
+  "protectedSince": "V4.07.56 finalization",
+  "requiredCapabilities": [
+    "PRE-MERGE snapshot of exact old main commit before promotion",
+    "Golden Master only from exact post-merge main commit after green gates",
+    "full tracked source ZIP",
+    "snapshot manifest",
+    "complete tracked-file inventory",
+    "per-file SHA-256 inventory",
+    "external ZIP SHA-256",
+    "offline Git bundle",
+    "immutable archive naming and no overwrite",
+    "Golden Master distinct from HACS/install package",
+    "release tag resolves to Golden Master commit",
+    "independent/local retention"
+  ],
+  "requiredFiles": [
+    "docs/GOLDEN_MASTER_POLICY.md",
+    "docs/RELEASE_PROCESS.md",
+    "PROJECT_DEFAULTS.md",
+    "scripts/create-source-archive.sh",
+    ".github/workflows/source-archive.yml"
+  ]
+}
