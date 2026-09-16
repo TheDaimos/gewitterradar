@@ -24,8 +24,7 @@ jobs:
           set -euo pipefail
           expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
           git fetch origin '+refs/heads/frozen/v4.07.56:refs/remotes/origin/frozen/v4.07.56' --force
-          frozen_sha="$(git rev-parse refs/remotes/origin/frozen/v4.07.56^{commit})"
-          test "$frozen_sha" = "$expected"
+          test "$(git rev-parse refs/remotes/origin/frozen/v4.07.56^{commit})" = "$expected"
           git merge-base --is-ancestor "$expected" "$GITHUB_SHA"
 
       - name: Publish V4.07.56
@@ -34,40 +33,17 @@ jobs:
         run: |
           set -euo pipefail
           expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
-
           if gh release view v4.07.56 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             git fetch --force origin refs/tags/v4.07.56:refs/tags/v4.07.56
             test "$(git rev-parse refs/tags/v4.07.56^{commit})" = "$expected"
             exit 0
           fi
-
-          cat > /tmp/release-notes.md <<'EOF'
-# Gewitterradar V4.07.56
-
-Finaler, vollständig geprüfter V4.07.56-Release.
-
-## Highlights
-- weltweite Orts-/PLZ-Suche und direkte Koordinateneingabe
-- 19 Sprachvarianten für About/Hilfe
-- vollständig abgenommene Diagnosewerkzeuge einschließlich virtuellem Gewitter, Mehrzellen- und EXTREM-Test
-- geschützte Medaillon-, Kompass- und Diagnosefunktionen
-- deterministischer gemeinsamer Frontend-Build für Integration und Dashboard
-- Hi-Res-/Legacy-Asset-Retention mit fail-closed Schutz
-- vollständige Browserprüfungen für Desktop, iPad und Android
-- HACS-, Hassfest- und Home-Assistant-2026.9.0-Prüfung
-
-## Identität
-- Produktversion: `V4.07.56`
-- Native Integration: `0.19.0`
-- Release-Commit: `6418fd57790efdbb267cc2994f00bb995f40acfd`
-- Frontend SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`
-EOF
-
+          notes=$'Finaler, vollständig geprüfter V4.07.56-Release.\n\nHighlights: weltweite Orts-/PLZ-Suche und Koordinateneingabe; 19 Sprachvarianten; abgenommene Diagnosewerkzeuge; deterministischer gemeinsamer Frontend-Build; Hi-Res-/Legacy-Schutz; HACS/Hassfest/Home Assistant 2026.9.0 geprüft.\n\nProduktversion: V4.07.56\nNative Integration: 0.19.0\nRelease-Commit: 6418fd57790efdbb267cc2994f00bb995f40acfd\nFrontend SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a'
           gh release create v4.07.56 \
             --repo "$GITHUB_REPOSITORY" \
             --target "$expected" \
             --title 'Gewitterradar V4.07.56' \
-            --notes-file /tmp/release-notes.md \
+            --notes "$notes" \
             --latest
 
       - name: Verify release identity
