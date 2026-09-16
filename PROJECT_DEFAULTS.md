@@ -93,6 +93,25 @@ Verbindliche Schutzquellen:
 
 Ein fehlgeschlagener Diagnosevertrag blockiert Freeze, Merge und Release.
 
+## Verbindliche PRE-MERGE- und Golden-Master-Regel
+
+Bei jeder wesentlichen Promotion eines abgenommenen Gewitterradar-Stands nach `main` wird die kanonische Linie auf beiden Seiten des Übergangs archiviert:
+
+- **vor der Veränderung von `main`**: unveränderlicher PRE-MERGE-Snapshot des exakten alten `main`-Commits;
+- **nach dem Merge und erst nach vollständig grünen Abschlussprüfungen**: unveränderlicher Golden Master des exakten neuen `main`-Commits.
+
+Ein Kandidat, Freeze-/Feature-Branch oder PRE-MERGE-Snapshot ist niemals ein Golden Master.
+
+Golden Master und HACS-/Installationspaket sind ausdrücklich verschiedene Artefakte. Der Golden Master enthält den vollständigen in Git geführten Quell-, Test-, Dokumentations-, Workflow- und Assetbestand einschließlich aller aktiven und archivierten Hi-Res-Master sowie Manifest, Dateiinventar und Prüfsummen. Zusätzlich wird eine Git-Bundle-Notfallkopie erzeugt.
+
+Der spätere öffentliche Release-Tag muss auf denselben Commit zeigen, der im Golden-Master-Manifest dokumentiert ist. Archive werden niemals überschrieben; erneute Erzeugungen erhalten einen eindeutig unterscheidbaren Namen.
+
+Verbindliche Detailrichtlinie und Automatisierung:
+
+- `docs/GOLDEN_MASTER_POLICY.md`
+- `scripts/create-source-archive.sh`
+- `.github/workflows/source-archive.yml`
+
 ## Repository-Rollen
 
 - `TheDaimos/gewitterradar` — kanonische Produkt- und Entwicklungsquelle.
@@ -162,6 +181,7 @@ Verbindliche Dokumente:
 - `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
 - `docs/ASSET_RETENTION_POLICY.md`
 - `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
+- `docs/GOLDEN_MASTER_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
 
 ## Dev-Toolkit
