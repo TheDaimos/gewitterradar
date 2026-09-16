@@ -265,7 +265,7 @@ if (process.argv[2]) {
       setting:model.locales.English.settingLabels.language,sources:clone(model.locales.English.sourcePurposes)});
     await retry.page.evaluate(() => {window.probeCard._closeAbout(false,false);window.probeCard._openHelp();});
     await retry.page.waitForFunction(title => window.probeCard._helpDialog?.querySelector('h2')?.textContent===title,model.locales.English.help.title);
-    assert.deepEqual(await retry.page.evaluate(() => {const d=window.probeCard._helpDialog;return {title:d.querySelector('h2').textContent,sections:d.querySelectorAll('.help-section').length};}),{title:model.locales.English.help.title,sections:7});
+    assert.deepEqual(await retry.page.evaluate(() => {const d=window.probeCard._helpDialog;return {title:d.querySelector('h2').textContent,sections:d.querySelectorAll('.help-section').length};}),{title:model.locales.English.help.title,sections:8});
     const failedRequestCount = localeRequests.length;
     rejectExternalLocales = false;
     await retry.page.evaluate(() => window.probeCard._syncHelp());
