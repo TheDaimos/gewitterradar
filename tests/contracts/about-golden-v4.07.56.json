@@ -1,0 +1,191 @@
+{
+  "contractVersion": 1,
+  "protectedSince": "4.07.56",
+  "browserBaseline": {
+    "playwright": "1.62.1",
+    "chromium": "151.0.7922.34",
+    "geometryTolerancePx": 0.02
+  },
+  "acceptedFrontend": {
+    "version": "4.07.56",
+    "build": "V4.07-TEST56-2026-09-16",
+    "sha256": "249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a"
+  },
+  "profiles": [
+    {
+      "name": "reference",
+      "viewport": {"width": 732, "height": 879, "hasTouch": false},
+      "dialog": [7, 5, 718, 869],
+      "geometry": {
+        ".about-head": [8, 6, 716, 113],
+        ".about-head>img": [24, 20, 86, 86],
+        ".about-head-copy": [134, 27.188, 380, 71.609],
+        "h2": [134, 27.188, 380, 38.391],
+        ".about-claim": [536, 30.906, 140, 64.172],
+        ".about-close": [670, 16, 44, 44],
+        ".about-close span": [678.5, 24.5, 27, 27],
+        ".about-dedication": [18, 119, 696, 123.547],
+        ".about-heart": [43.839, 145.104, 71.323, 71.323],
+        ".about-signature": [526.137, 161.78, 177.725, 78.033],
+        ".about-welcome": [18, 248.547, 696, 95.078],
+        ".about-radii": [18, 349.625, 696, 227.391],
+        ".about-network": [18, 583.016, 696, 90.359],
+        ".about-recorder": [18, 679.375, 696, 179.781],
+        ".about-copy": [508, 749.281, 44, 44],
+        ".about-entities": [18, 865.156, 696, 48.391],
+        ".about-footer": [8, 809, 716, 64]
+      },
+      "rawRgbSha256": "43faae59a1fe6601a654c8ab4917577b911c394bdc9998d7e62f218b84318789"
+    },
+    {
+      "name": "desktop",
+      "viewport": {"width": 1440, "height": 1000, "hasTouch": false},
+      "dialog": [290, 5, 860, 990],
+      "geometry": {
+        ".about-head": [291, 6, 858, 132],
+        ".about-head>img": [307, 28, 94, 94],
+        ".about-head-copy": [425, 35.719, 499, 78.563],
+        "h2": [425, 35.719, 499, 43.188],
+        ".about-claim": [961, 42.906, 140, 64.172],
+        ".about-close": [1095, 16, 44, 44],
+        ".about-close span": [1103.5, 24.5, 27, 27],
+        ".about-dedication": [301, 138, 838, 132],
+        ".about-heart": [332.839, 168.339, 71.323, 71.323],
+        ".about-signature": [936.186, 186.441, 190.628, 79.617],
+        ".about-welcome": [301, 276, 838, 99.859],
+        ".about-radii": [301, 381.859, 838, 272.156],
+        ".about-network": [301, 660.016, 838, 94],
+        ".about-recorder": [301, 760.016, 838, 205],
+        ".about-copy": [917, 832.797, 44, 44],
+        ".about-entities": [301, 971.016, 838, 48.391],
+        ".about-footer": [291, 930, 858, 64]
+      },
+      "rawRgbSha256": "46ea7c078f767b63ee0d4a8dcfc9e8306f44da41dc809bd7c3e83e160d90e99e"
+    },
+    {
+      "name": "ipad-landscape",
+      "viewport": {"width": 1024, "height": 768, "hasTouch": true},
+      "dialog": [82, 5, 860, 758],
+      "geometry": {
+        ".about-head": [83, 6, 858, 132],
+        ".about-head>img": [99, 28, 94, 94],
+        ".about-head-copy": [217, 35.719, 499, 78.563],
+        "h2": [217, 35.719, 499, 43.188],
+        ".about-claim": [753, 42.906, 140, 64.172],
+        ".about-close": [887, 16, 44, 44],
+        ".about-close span": [895.5, 24.5, 27, 27],
+        ".about-dedication": [93, 138, 838, 132],
+        ".about-heart": [124.839, 168.339, 71.323, 71.323],
+        ".about-signature": [728.186, 186.441, 190.629, 79.617],
+        ".about-welcome": [93, 276, 838, 99.859],
+        ".about-radii": [93, 381.859, 838, 272.156],
+        ".about-network": [93, 660.016, 838, 94],
+        ".about-recorder": [93, 760.016, 838, 205],
+        ".about-copy": [709, 832.797, 44, 44],
+        ".about-entities": [93, 971.016, 838, 48.391],
+        ".about-footer": [83, 698, 858, 64]
+      },
+      "rawRgbSha256": "5e332d823c25e242fde219911db5d1186fa49e61617e3c6d3b275275ef9e2fdd"
+    },
+    {
+      "name": "ipad-portrait",
+      "viewport": {"width": 768, "height": 1024, "hasTouch": true},
+      "dialog": [7, 5, 754, 1014],
+      "geometry": {
+        ".about-head": [8, 6, 752, 113],
+        ".about-head>img": [24, 20, 86, 86],
+        ".about-head-copy": [134, 27.188, 416, 71.609],
+        "h2": [134, 27.188, 416, 38.391],
+        ".about-claim": [572, 30.906, 140, 64.172],
+        ".about-close": [706, 16, 44, 44],
+        ".about-close span": [714.5, 24.5, 27, 27],
+        ".about-dedication": [18, 119, 732, 114],
+        ".about-heart": [43.839, 140.339, 71.323, 71.323],
+        ".about-signature": [562.137, 152.234, 177.725, 78.033],
+        ".about-welcome": [18, 239, 732, 95.078],
+        ".about-radii": [18, 340.078, 732, 227.391],
+        ".about-network": [18, 573.469, 732, 90.359],
+        ".about-recorder": [18, 669.828, 732, 179.781],
+        ".about-copy": [544, 739.734, 44, 44],
+        ".about-entities": [18, 855.609, 732, 48.391],
+        ".about-footer": [8, 954, 752, 64]
+      },
+      "rawRgbSha256": "fe5fe40b8d0b5d21fb6afebbae371a399bfee0d9bc68384f5a42a6175454876b"
+    },
+    {
+      "name": "ipad-pro",
+      "viewport": {"width": 1366, "height": 1024, "hasTouch": true},
+      "dialog": [253, 5, 860, 1014],
+      "geometry": {
+        ".about-head": [254, 6, 858, 132],
+        ".about-head>img": [270, 28, 94, 94],
+        ".about-head-copy": [388, 35.719, 499, 78.563],
+        "h2": [388, 35.719, 499, 43.188],
+        ".about-claim": [924, 42.906, 140, 64.172],
+        ".about-close": [1058, 16, 44, 44],
+        ".about-close span": [1066.5, 24.5, 27, 27],
+        ".about-dedication": [264, 138, 838, 132],
+        ".about-heart": [295.839, 168.339, 71.323, 71.323],
+        ".about-signature": [899.186, 186.441, 190.628, 79.617],
+        ".about-welcome": [264, 276, 838, 99.859],
+        ".about-radii": [264, 381.859, 838, 272.156],
+        ".about-network": [264, 660.016, 838, 94],
+        ".about-recorder": [264, 760.016, 838, 205],
+        ".about-copy": [880, 832.797, 44, 44],
+        ".about-entities": [264, 971.016, 838, 48.391],
+        ".about-footer": [254, 954, 858, 64]
+      },
+      "rawRgbSha256": "0bb3827b59655c1e52769f6d7472c18e8d8d646bd13e7cf680085a2ac494d1b5"
+    },
+    {
+      "name": "android-portrait",
+      "viewport": {"width": 412, "height": 915, "hasTouch": true},
+      "dialog": [6, 6, 400, 903],
+      "geometry": {
+        ".about-head": [7, 7, 398, 132],
+        ".about-head>img": [19, 23, 70, 70],
+        ".about-head-copy": [101, 23, 225, 62.594],
+        "h2": [101, 28, 225, 27.594],
+        ".about-claim": [123, 106, 270, 20.5],
+        ".about-close": [351, 17, 44, 44],
+        ".about-close span": [359.5, 25.5, 27, 27],
+        ".about-dedication": [15, 139, 382, 261.25],
+        ".about-heart": [25.525, 208.025, 57.95, 57.95],
+        ".about-signature": [234.181, 320.249, 152.638, 72.753],
+        ".about-welcome": [15, 406.25, 382, 190.078],
+        ".about-radii": [15, 602.328, 382, 290.563],
+        ".about-network": [15, 898.891, 382, 141.984],
+        ".about-recorder": [15, 1046.875, 382, 347.875],
+        ".about-copy": [340, 1169.938, 44, 44],
+        ".about-entities": [15, 1400.75, 382, 66.891],
+        ".about-footer": [7, 782.984, 398, 125.016]
+      },
+      "rawRgbSha256": "3557942cb51f1bc7e823b360d18a704837de61562b5d6406d06b7e96079a6f7e"
+    },
+    {
+      "name": "android-landscape",
+      "viewport": {"width": 915, "height": 412, "hasTouch": true},
+      "dialog": [27.5, 5, 860, 402],
+      "geometry": {
+        ".about-head": [28.5, 6, 858, 85],
+        ".about-head>img": [44.5, 15.984, 65, 65],
+        ".about-head-copy": [162.5, 14, 499, 68.969],
+        "h2": [162.5, 14, 499, 33.594],
+        ".about-claim": [698.5, 20.578, 140, 55.813],
+        ".about-close": [832.5, 16, 44, 44],
+        ".about-close span": [841, 24.5, 27, 27],
+        ".about-dedication": [38.5, 91, 838, 132],
+        ".about-heart": [70.339, 121.339, 71.323, 71.323],
+        ".about-signature": [673.686, 139.441, 190.629, 79.617],
+        ".about-welcome": [38.5, 229, 838, 99.859],
+        ".about-radii": [38.5, 334.859, 838, 272.156],
+        ".about-network": [38.5, 613.016, 838, 94],
+        ".about-recorder": [38.5, 713.016, 838, 205],
+        ".about-copy": [654.5, 785.797, 44, 44],
+        ".about-entities": [38.5, 924.016, 838, 48.391],
+        ".about-footer": [28.5, 344, 858, 62]
+      },
+      "rawRgbSha256": "b84a0c75eb36718c41fa5e0429ac89c7c751f2af70724eeb268ac3d53adf622b"
+    }
+  ]
+}
