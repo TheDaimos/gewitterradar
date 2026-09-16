@@ -1,0 +1,11 @@
+{
+  "contractVersion": 1,
+  "version": "4.07.57",
+  "nativeIntegration": "0.19.1",
+  "sha256": "9bd06be34f661c3da2fba4b395173cb1c324bfc78e46c6bb4ad56eeeb0e9c25b",
+  "sizeBytes": 1955141,
+  "baselineVersion": "4.07.56",
+  "baselineSha256": "249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a",
+  "baselineSizeBytes": 1955141,
+  "allowedFrontendDelta": "version markers only; runtime behavior remains the protected V4.07.56 baseline"
+}

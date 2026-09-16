@@ -5,18 +5,27 @@ import {createHash} from 'node:crypto';
 import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-const acceptedFrontendSha='249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a';
-const acceptedFrontendSize=1955141;
+const baselineFrontendSha='249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a';
+const baselineFrontendSize=1955141;
+const normalizeV40757ToBaseline=text=>text
+ .replace('Gewitterradar Card V4.07.57','Gewitterradar Card V4.07.56')
+ .replace("const CARD_VERSION = '4.07.57';","const CARD_VERSION = '4.07.56';")
+ .replace("const CARD_DISPLAY_VERSION = '4.07.57';","const CARD_DISPLAY_VERSION = '4.07.56';");
 export async function expectedPayload(){
- const contract=JSON.parse(await readFile(resolve(root,'tests/contracts/diagnostic-contract-v4.07.56.json'),'utf8'));
- const accepted=contract?.acceptedSource;
- if(accepted?.sha256!==acceptedFrontendSha||accepted?.sizeBytes!==acceptedFrontendSize)throw Error('Accepted V4.07.56 source contract changed');
+ const baseline=JSON.parse(await readFile(resolve(root,'tests/contracts/diagnostic-contract-v4.07.56.json'),'utf8'))?.acceptedSource;
+ if(baseline?.sha256!==baselineFrontendSha||baseline?.sizeBytes!==baselineFrontendSize)throw Error('Protected V4.07.56 source contract changed');
+ const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.07.57.json'),'utf8'));
+ if(release?.version!=='4.07.57'||release?.baselineVersion!=='4.07.56'||release?.baselineSha256!==baselineFrontendSha||release?.baselineSizeBytes!==baselineFrontendSize)throw Error('V4.07.57 release contract metadata changed');
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
- if(source.length!==acceptedFrontendSize||hash(source)!==acceptedFrontendSha)throw Error('Frontend differs from accepted V4.07.56 baseline');
+ if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('Frontend differs from V4.07.57 release contract');
+ const sourceText=source.toString('utf8');
+ if(!sourceText.includes("const CARD_VERSION = '4.07.57';")||!sourceText.includes("const CARD_DISPLAY_VERSION = '4.07.57';"))throw Error('V4.07.57 version markers missing');
+ const normalized=Buffer.from(normalizeV40757ToBaseline(sourceText),'utf8');
+ if(normalized.length!==baselineFrontendSize||hash(normalized)!==baselineFrontendSha)throw Error('V4.07.57 frontend contains changes beyond the approved version markers');
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
- readAboutLocaleModel(source.toString(),localeSource.toString());
+ readAboutLocaleModel(sourceText,localeSource.toString());
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
- const referenced=[...new Set([...source.toString().matchAll(/new URL\('\.\/(assets\/[^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>m[1]))].sort();
+ const referenced=[...new Set([...sourceText.matchAll(/new URL\('\.\/(assets\/[^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>m[1]))].sort();
  const activeInventory=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
  const retainedInventory=inventory.filter(a=>a.referenced===false);
  if(inventory.length!==17||new Set(inventory.map(a=>a.file)).size!==17||activeInventory.length!==16||JSON.stringify(referenced)!==JSON.stringify(activeInventory))throw Error('Asset inventory/reference mismatch');
@@ -56,8 +65,8 @@ export async function build(){
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
  for(const [name,bytes] of packages)rows.push(hash(bytes)+'  dashboard/dist/'+name);
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
- console.log('Built accepted V4.07.56 frontend, one lazy About-locale module, 16 referenced assets and 1 retained legacy asset into both deliveries.');
+ console.log('Built V4.07.57 frontend as a version-marker-only patch over the protected V4.07.56 runtime baseline.');
  for(const [name,bytes] of packages)console.log(`Dashboard package ${name}: ${bytes.length} bytes, SHA256 ${hash(bytes)}`);
- console.log('Protected legacy assets preserved; V4.06 fallback package retained and V4.07 package built deterministically.');
+ console.log('Protected diagnostic/assets baseline preserved; V4.06 fallback package retained and V4.07 package built deterministically.');
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await build();

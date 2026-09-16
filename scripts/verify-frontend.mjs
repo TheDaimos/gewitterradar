@@ -24,4 +24,4 @@ if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChec
 }
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
-console.log('PASS: accepted V4.07.56 source baseline, exact delivery parity, 16 referenced assets, 1 retained legacy asset, V4.06 fallback package and canonical V4.07 package parity/checksums.');
+console.log('PASS: V4.07.57 version-marker patch validated against the protected V4.07.56 runtime baseline; exact delivery parity, assets and packages verified.');
