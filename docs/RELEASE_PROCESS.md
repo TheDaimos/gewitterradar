@@ -39,6 +39,18 @@ Der V4.06-Stand umfasst **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvariant
 
 Die Richtlinie `docs/ASSET_RETENTION_POLICY.md` ist bei **jedem** Merge in `main` und bei **jedem** öffentlichen Release verbindlich.
 
+Der maschinenlesbare Schutzvertrag ist:
+
+`tests/contracts/hires-asset-retention-v4.07.56.json`
+
+Vor jedem Freeze, Merge in `main` und öffentlichen Release muss zusätzlich
+
+`node scripts/verify-hires-asset-retention.mjs`
+
+erfolgreich durchlaufen. Der zugehörige CI-Workflow `.github/workflows/hires-asset-retention.yml` läuft auf jedem relevanten Commit und darf nicht umgangen oder stillschweigend abgeschwächt werden.
+
+Der Retentionsvertrag ist inhaltsbasiert: Ein geschützter Master darf aus einem aktiven `hires/`-Bereich in einen zugelassenen `legacy/`-/Archivbereich verschoben werden, sofern exakt derselbe geschützte Inhalt im aktuellen kanonischen Repositorystand erhalten bleibt. Eine Runtime-/Derived-Kopie ist kein Ersatz für den Masterbestand. Neu hinzukommender eindeutiger Master-/Legacy-Inhalt muss in den Vertrag aufgenommen werden, bevor der Stand releasefähig ist.
+
 Vor Freigabe muss ein Asset-Audit mindestens Folgendes prüfen:
 
 - Hi-Res-/Masterbestand von Basis und Kandidat vergleichen;
@@ -133,6 +145,7 @@ Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfunge
 - Home-Assistant-Laufzeittests;
 - HACS und Hassfest;
 - Paket-/Asset-Verträge und Prüfsummen;
+- **automatischer Hi-Res-Master-Retentionsvertrag über `scripts/verify-hires-asset-retention.mjs`;**
 - **Hi-Res-Master-Audit gemäß `docs/ASSET_RETENTION_POLICY.md`;**
 - **Diagnose-Contract-Test gemäß `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`;**
 - **PRE-MERGE-/Golden-Master-Archivvertrag gemäß `docs/GOLDEN_MASTER_POLICY.md`;**
