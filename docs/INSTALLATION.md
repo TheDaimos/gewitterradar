@@ -1,47 +1,51 @@
 # Installation
 
-## HACS installation
+## HACS-Installation
 
-This repository contains both delivery forms of Gewitterradar V4.06: native Integration `0.18.0` and the derived Dashboard/Card payload.
+Dieses Repository enthält beide Auslieferungsformen des aktuell abgenommenen Gewitterradar-Produktkandidaten **V4.07.56**: native Integration `0.19.0` und die abgeleitete Dashboard-/Card-Auslieferung.
 
-When this release candidate is approved for public installation:
+Bis zur kontrollierten Promotion nach `main` und zum öffentlichen Release bleibt V4.06 die öffentliche Rückfallbasis. V4.07.56 wird ausschließlich aus dem exakt geprüften Finalisierungsstand veröffentlicht.
 
-1. In HACS, add `https://github.com/TheDaimos/gewitterradar` as a custom repository of type **Integration**.
-2. Install **Gewitterradar Integration**.
-3. Restart Home Assistant if HACS/Home Assistant requests it.
-4. Open **Settings → Devices & services**.
-5. Select **Add integration** and search for **Gewitterradar**.
-6. Create the single Gewitterradar Config Entry.
-7. Add `/gewitterradar/gewitterradar.js` as a JavaScript module under **Settings → Dashboards → Resources**, then create a card of type `custom:gewitterradar-card`.
+### Native Integration
 
-The native integration does not automatically register the separate Dashboard resource and does not modify Home Assistant `.storage` files.
+1. In HACS `https://github.com/TheDaimos/gewitterradar` als benutzerdefiniertes Repository vom Typ **Integration** hinzufügen.
+2. **Gewitterradar Integration** installieren.
+3. Home Assistant neu starten, wenn HACS/Home Assistant dies verlangt.
+4. **Einstellungen → Geräte & Dienste** öffnen.
+5. **Integration hinzufügen** wählen und nach **Gewitterradar** suchen.
+6. Den einzelnen Gewitterradar-Config-Entry anlegen.
+7. `/gewitterradar/gewitterradar.js` als JavaScript-Modul unter **Einstellungen → Dashboards → Ressourcen** eintragen und anschließend eine Karte vom Typ `custom:gewitterradar-card` anlegen.
 
-### Expected result after a full restart
+Die native Integration registriert die separate Dashboard-Ressource nicht automatisch und verändert keine Home-Assistant-`.storage`-Dateien.
 
-After the Config Entry has been created and Home Assistant has completed a full restart:
+### Erwartetes Ergebnis nach vollständigem Neustart
 
-- the Config Entry must be `loaded`;
-- **Gewitterradar must be visible under Settings → Devices & services → Integrations**;
-- the 16 native configuration entities must still exist with their persisted values;
-- HACS should show the Integration repository as installed rather than pending restart.
+Nach dem Anlegen des Config Entry und einem vollständigen Home-Assistant-Neustart gilt:
 
-The manifest intentionally classifies Gewitterradar as a Home Assistant `service` integration. Do not change it back to `helper`: Home Assistant's Integrations dashboard filters Helper Config Entries into the separate Helpers UI, which can make an otherwise healthy Config Entry appear to have disappeared.
+- der Config Entry ist `loaded`;
+- **Gewitterradar bleibt unter Einstellungen → Geräte & Dienste → Integrationen sichtbar**;
+- die nativen Konfigurationsentitäten und ihre gespeicherten Werte bleiben vorhanden;
+- HACS zeigt das Integration-Repository als installiert und nicht mehr als `pending-restart`.
 
-## Manual installation
+Das Manifest klassifiziert Gewitterradar bewusst als Home-Assistant-Integration vom Typ `service`. Nicht auf `helper` zurückstellen: Home Assistant trennt Helper-Config-Entries in der Oberfläche von normalen Integrationen, wodurch ein technisch korrekt geladener Eintrag scheinbar verschwinden kann.
 
-Copy the complete directory:
+## Manuelle Installation der nativen Integration
+
+Den vollständigen Ordner
 
 ```text
 custom_components/gewitterradar/
 ```
 
-to:
+nach
 
 ```text
 /config/custom_components/gewitterradar/
 ```
 
-The resulting target must contain at least:
+kopieren.
+
+Der Zielordner muss mindestens enthalten:
 
 ```text
 /config/custom_components/gewitterradar/
@@ -55,7 +59,7 @@ The resulting target must contain at least:
 ├── switch.py
 ├── frontend/
 │   ├── gewitterradar.js
-│   ├── assets/ (all 17 runtime images)
+│   ├── assets/ (16 aktive Runtime-Grafiken + 1 bewusst erhaltenes Legacy-Asset)
 │   └── locales/about-locales.js
 ├── brand/
 │   ├── icon.png
@@ -65,55 +69,119 @@ The resulting target must contain at least:
     └── en.json
 ```
 
-Restart Home Assistant and add **Gewitterradar** through **Settings → Devices & services**.
+Home Assistant neu starten und **Gewitterradar** über **Einstellungen → Geräte & Dienste** hinzufügen.
 
-## Fresh installation behavior
+## Fresh-Install-Verhalten
 
-A fresh native installation does not require the historical Gewitterradar YAML helper package. Native defaults and settings live in the Config Entry. The integration exposes 16 native configuration entities.
+Eine frische native Installation benötigt das historische Gewitterradar-YAML-Helferpaket nicht. Native Standardwerte und Einstellungen liegen im Config Entry.
 
-## Existing installations
+Der V4.07-Stand ergänzt den Gewitterradar-eigenen dynamischen Referenztracker für weltweite Standortwechsel. Gewitterradar verändert dabei keine fremden Blitzortung-ConfigEntries und keine privaten Home-Assistant-Speicherstrukturen.
 
-If supported legacy `lightning_detection_*` helpers are present on first setup, valid values for missing native settings may be imported once. Existing native values always take precedence. Legacy helpers are not deleted or rewritten.
+## Bestehende Installationen
 
-The native integration also does not delete unrelated historical Registry objects. In particular, an unavailable automation entity or HACS update entity is not proof that the current Config Entry created it. Verify the source/config-entry/repository ID before removing such leftovers.
+Sind beim ersten nativen Setup unterstützte `lightning_detection_*`-Legacy-Helfer vorhanden, können gültige Werte einmalig für noch nicht gesetzte native Einstellungen übernommen werden. Bereits vorhandene native Werte haben Vorrang. Legacy-Helfer werden nicht gelöscht oder umgeschrieben.
 
-See [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
+Die native Integration löscht ebenfalls keine fremden oder historischen Registry-Objekte. Eine nicht verfügbare Automation oder HACS-Update-Entität ist allein kein Beweis, dass der aktuelle Config Entry sie erzeugt hat. Vor einer Entfernung immer Quelle, Config Entry und Repository-ID prüfen.
 
-## Manual Dashboard/Card delivery
+Siehe [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
 
-Copy the complete local `dashboard/dist/` directory to `/config/www/community/gewitterradar-dashboard/`. It must include `gewitterradar.js`, all of `assets/`, `locales/about-locales.js`, and `app_gewitterradar_v4_06_pkg.yaml`. The external locale module is required for the 17 lazy-loaded languages; without it they deliberately fall back to English.
+## Manuelle Dashboard-/Card-Auslieferung
 
-Install the package as `/config/packages/app_gewitterradar_v4_06_pkg.yaml`. During an upgrade, remove or replace `/config/packages/app_gewitterradar_pkg.yaml`; never leave both files active because they define the same helpers. A full Home Assistant restart is required after changing the package, native Python code, or manifest.
+Den vollständigen lokalen Ordner `dashboard/dist/` nach
 
-Load exactly one Gewitterradar module: either native `/gewitterradar/gewitterradar.js` or Dashboard `/hacsfiles/gewitterradar-dashboard/gewitterradar.js`. Verify and remove or disable obsolete resource registrations before switching; the historical `/hacsfiles/gewitterradar/gewitterradar.js?...` path must not remain active in parallel.
+```text
+/config/www/community/gewitterradar-dashboard/
+```
 
-The V4.06 candidate still requires real Home Assistant, iPad and Android acceptance before publication.
+kopieren. Er enthält insbesondere:
 
-The Dashboard continues to use the Home Assistant Blitzortung.org integration as the live lightning-event data source.
+- `gewitterradar.js`;
+- `assets/`;
+- `locales/about-locales.js`;
+- `app_gewitterradar_v4_07_pkg.yaml`;
+- zusätzlich das erhaltene historische `app_gewitterradar_v4_06_pkg.yaml` als Rückfall-/Migrationsreferenz.
 
-## Real-install regression checks
+Das externe Locale-Modul wird für die 17 verzögert geladenen Sprachvarianten benötigt; ohne dieses Modul fallen diese kontrolliert auf Englisch zurück.
 
-After installing an updated release candidate which contains the first real-install fixes:
+### V4.07-Paket aktivieren
 
-1. perform a full Home Assistant restart;
-2. verify Gewitterradar remains listed under **Devices & services → Integrations**;
-3. verify all 16 configuration entities and their values;
-4. add/remove or otherwise cause discovery of a `person.*` or `zone.*` entity, or change the reference-location environment;
-5. verify the reference-location select refreshes its options without a thread-safety warning mentioning `async_write_ha_state`;
-6. verify the existing Dashboard/Card continues to operate;
-7. only then continue with HACS rollback and re-update validation.
+Für eine aktive V4.07-Dashboard-Installation das Paket als
 
-See [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md).
+```text
+/config/packages/app_gewitterradar_v4_07_pkg.yaml
+```
 
-## Release-candidate verification
+verwenden.
 
-Before this release is declared stable, the following must be recorded as successful against the public repository:
+**V4.06 und V4.07 niemals gleichzeitig als aktive Packages laden.** Beide definieren absichtlich dieselben `lightning_detection_*`-Helfer. Beim Upgrade muss das V4.06-Paket ersetzt bzw. deaktiviert werden.
 
-- HACS Integration validation;
+Das kanonische V4.07-Paket besitzt aktuell die SHA256-Prüfsumme:
+
+```text
+1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694
+```
+
+Ein vollständiger Home-Assistant-Neustart ist nach Änderungen am Package, an nativem Python-Code oder am Manifest erforderlich.
+
+## JavaScript-Ressource
+
+Genau **ein** Gewitterradar-Modul laden:
+
+- native Integration: `/gewitterradar/gewitterradar.js`, oder
+- Dashboard/HACS: `/hacsfiles/gewitterradar-dashboard/gewitterradar.js`.
+
+Veraltete parallele Ressourcenregistrierungen vor dem Wechsel prüfen und entfernen/deaktivieren. Insbesondere historische Pfade wie `/hacsfiles/gewitterradar/gewitterradar.js?...` dürfen nicht parallel aktiv bleiben.
+
+Kanonische V4.07.56-Frontendidentität:
+
+```text
+Größe:  1.955.141 Bytes
+SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a
+```
+
+## Weltweiter Bezugsstandort und Blitzortung
+
+V4.07.56 kann den Gewitterradar-Bezugsstandort weltweit verschieben. Die separat installierte Blitzortung.org-Integration bleibt jedoch Eigentümerin ihrer eigenen Datenregion und Abonnementlogik.
+
+Der sichere Kopplungsweg lautet:
+
+1. den passenden Gewitterradar-Tracker einmalig als Blitzortung-`Location entity` konfigurieren;
+2. spätere Gewitterradar-Standortwechsel nur über den Gewitterradar-Tracker ausführen;
+3. nicht behaupten, dass ein Karten-/Trackerwechsel bereits die Blitzortung-Datenregion synchronisiert hat;
+4. reale Neuabonnierung und Latenz werden von Blitzortung selbst bestimmt.
+
+Gewitterradar schreibt keine fremden ConfigEntries um und manipuliert keine `.storage`-Dateien.
+
+## Real-Install-Regressionsprüfungen
+
+Nach Installation oder Update eines Kandidaten mindestens prüfen:
+
+1. vollständigen Home-Assistant-Neustart durchführen;
+2. verifizieren, dass Gewitterradar unter **Geräte & Dienste → Integrationen** sichtbar bleibt;
+3. native Konfigurationsentitäten und Werte prüfen;
+4. dynamische Referenzorte/Tracker ändern und auf Thread-Sicherheitsfehler achten;
+5. weltweite Ortssuche und Koordinateneingabe prüfen;
+6. gespeicherte Orte einschließlich Speichern, Soft-Delete und Wiederherstellen prüfen;
+7. vorhandene Dashboard-/Card-Auslieferung prüfen;
+8. erst danach Rollback-/Re-Update-Szenarien durchführen.
+
+Siehe [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md).
+
+## Release-Gates für V4.07.56
+
+Vor einer öffentlichen Freigabe müssen gegen den exakt vorgesehenen Commit erfolgreich sein:
+
+- deterministischer Frontend-Neubau und bytegenaue Parität beider Auslieferungsformen;
+- V4.07-Dashboard-Paketparität und gemeinsames SHA256-Inventar;
+- JavaScript-Syntaxprüfung;
+- HACS Integration Validation;
 - Hassfest;
-- Home Assistant runtime tests;
-- deterministic package verification;
-- real HACS fresh installation;
-- HACS update from the supported previous state;
-- rollback and re-update;
-- final Android/iPad frontend spot checks.
+- Home-Assistant-Laufzeittests;
+- Locale-/Help-/Recorder-Sprachaudits für 19 Varianten;
+- Browserprofile für Desktop, Tablet und Mobilgeräte;
+- V4.07.56-Golden-/Geometrievertrag;
+- Diagnosevertrag;
+- Hi-Res-/Legacy-Retentionsvertrag;
+- PRE-MERGE-/Golden-Master-Prozess gemäß `docs/GOLDEN_MASTER_POLICY.md`.
+
+Die detaillierten Abschlussnotizen stehen in [`RELEASE_NOTES_V4_07_56.md`](RELEASE_NOTES_V4_07_56.md).
