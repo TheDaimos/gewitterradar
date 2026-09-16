@@ -48,7 +48,24 @@ Die dort dokumentierte Danksagung/Widmung „Für Alkje“, der Slogan, die Text
 
 Dieser Stand darf **nicht** aus Kostengründen, bei Refactoring, beim Packaging, beim Wechsel der Auslieferungsform oder aus technischer Bequemlichkeit vereinfacht, weggelassen, ersetzt oder neu gestaltet werden. Änderungen an dieser Acceptance-Baseline benötigen eine ausdrückliche Benutzerentscheidung.
 
-Ein gemeinsamer Build oder Release ist **nicht releasefähig**, solange der geschützte About-Stand nicht in beiden Auslieferungsformen vorhanden und gegen die eingefrorene V4.05-Referenz verifiziert ist.
+Ein gemeinsamer Build oder Release ist **nicht releasefähig**, solange der geschützte About-Stand nicht in beiden Auslieferungsformen vorhanden und gegen die eingefrorene Referenz bzw. den daraus entwickelten aktuellen Golden-Vertrag verifiziert ist.
+
+## Harte Schutzregel: normaler UI-/Funktionsstand V4.07.54
+
+Der ausdrücklich abgenommene normale UI-/Funktionsstand von **V4.07.54** ist für die V4.07.56-Finalisierung gesperrt.
+
+Ohne ausdrückliche neue Benutzerentscheidung werden insbesondere **nicht** erneut verändert:
+
+- Kartenlogik und normale Darstellung;
+- weltweite Ortssuche und Koordinateneingabe;
+- gespeicherte Orte;
+- Sprachen und Dialekte;
+- „Hilfe & Hinweise“;
+- Radien und Aura;
+- normale Kompass-/Medaillon-Funktion;
+- normale Bedienung, Controls und akzeptierte gerätespezifische Layouts.
+
+V4.07.55/V4.07.56 dürfen diesen Stand ausschließlich um Diagnose-/Schutzfunktionen ergänzen. Algorithmische Änderungen, insbesondere an Cluster-/Zoom-Verhalten, gehören in den separaten V4.08-Arbeitsblock.
 
 ## Permanente Schutzregel für Hi-Res-Mastergrafiken
 
@@ -60,9 +77,14 @@ Eine Löschung ist ausschließlich zulässig, wenn Christian die konkrete Lösch
 
 Vor jedem Merge in `main` und vor jedem Release ist der Hi-Res-/Masterbestand zu prüfen. Verschwindet ein Master ohne dokumentierte ausdrückliche Löschfreigabe, ist der Merge/Release blockiert.
 
-Verbindliche Detailrichtlinie:
+Verbindliche Schutzquellen:
 
-`docs/ASSET_RETENTION_POLICY.md`
+- `docs/ASSET_RETENTION_POLICY.md`
+- `tests/contracts/hires-asset-retention-v4.07.56.json`
+- `scripts/verify-hires-asset-retention.mjs`
+- `.github/workflows/hires-asset-retention.yml`
+
+Der Retentionsvertrag ist inhaltsbasiert. Ein geschützter Master darf kontrolliert zwischen zugelassenen Hi-Res-/Legacy-Bereichen verschoben werden, aber nicht aus dem aktuellen kanonischen Repository verschwinden. Runtime-/Derived-Dateien gelten nicht als Ersatz. Neu hinzukommende eindeutige Master-/Legacy-Inhalte müssen fail-closed in den Vertrag aufgenommen werden.
 
 ## Harte Schutzregel: Diagnosemodus ab V4.07.56
 
@@ -92,6 +114,16 @@ Verbindliche Schutzquellen:
 - `.github/workflows/diagnostic-contract.yml`
 
 Ein fehlgeschlagener Diagnosevertrag blockiert Freeze, Merge und Release.
+
+## Verbindliche V4.07.56-Golden-/Browserregel
+
+Der historische V4.05-Golden-Test bleibt als Referenz erhalten. Für den abgenommenen V4.07.56-Stand gilt zusätzlich der eigene aktuelle Golden-Vertrag:
+
+- `tests/contracts/about-golden-v4.07.56.json`
+- `scripts/verify-about-golden-v40756.cjs`
+- `scripts/test-about-browser-v40756.cjs`
+
+Er schützt die exakte akzeptierte Frontendidentität, sieben feste Darstellungsprofile und die eingefrorene Geometrie mit maximal **0,02 px** Toleranz. Dashboard und Integration werden innerhalb desselben CI-Laufs pixelbezogen verglichen. Nicht deterministische Vollbild-Hashes über getrennte CI-Läufe sind Abnahmebeleg, aber kein flackernder Lauf-zu-Lauf-Blocker.
 
 ## Verbindliche PRE-MERGE- und Golden-Master-Regel
 
@@ -145,9 +177,11 @@ Build-/Release-Prüfungen sollen verhindern, dass sich Integration und Dashboard
 - unterschiedliche gemeinsame Frontend-Versionen;
 - unterschiedliche gemeinsame Frontend-Builds;
 - fehlende oder abweichende Assets;
-- fehlender oder abweichender geschützter About-Stand;
+- fehlender oder abweichender geschützter About-/Golden-Stand;
 - nicht reproduzierbare Dashboard-Ausleitung aus dem kanonischen Quellstand;
-- inkonsistente Prüfsummen oder Release-Metadaten.
+- inkonsistente Prüfsummen oder Release-Metadaten;
+- verschwundene geschützte Hi-Res-/Legacy-Master;
+- abgeschwächte oder beschädigte Diagnosefunktionen.
 
 Ein Dashboard-spezifischer Notfallfix ist nur nach ausdrücklicher Anweisung zulässig und muss vor dem nächsten normalen Release in die kanonische Quelle zurückgeführt werden.
 
@@ -165,15 +199,27 @@ Verbindlich sind insbesondere:
 - die Release History darf keine öffentliche Version überspringen;
 - bereits veröffentlichte Monats-/Versionszuordnungen, Tags und Freeze-Punkte werden nicht stillschweigend umgeschrieben.
 
-Der V4.06-Sprachumfang ist als **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten** zu dokumentieren. Änderungen am Sprachumfang müssen künftig ebenfalls in History und Release Notes nachvollziehbar sein.
+Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**. Änderungen am Sprachumfang müssen künftig ebenfalls in History und Release Notes nachvollziehbar sein.
 
-## Aktueller Release-Stand
+## Aktueller Release-/Promotionsstand
 
-V4.06 ist die erste vollständig konvergierte Release-Linie auf der gemeinsamen Produktquelle. Der veröffentlichte V4.05-Stand einschließlich „Über Gewitterradar“, Slogan, Danksagung/Widmung, Hero-/Widmungs-Assets und der übrigen akzeptierten Frontendänderungen bleibt geschützte Referenz; der eingefrorene Dashboard-Tag `v4.05` selbst bleibt unverändert.
+V4.06 bleibt bis zur kontrollierten Veröffentlichung die **öffentliche Release-/Rückfallbasis**.
 
-Für die nächste Versionslinie ist in der Release History ausdrücklich als **PLANNED** vorgemerkt:
+Der aktuell abgenommene gemeinsame Produkt-/Diagnosekandidat ist **2026/09 · V4.07.56 / native Integration 0.19.0**.
 
-- V4.07 — Weltweite Orts-Suche.
+Kanonische V4.07.56-Identität:
+
+- Frontend: **1.955.141 Bytes**;
+- Frontend-SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
+- Locale-SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`;
+- Dashboard-Paket: `app_gewitterradar_v4_07_pkg.yaml`;
+- Dashboard-Paket-SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
+
+Der PRE-MERGE-Snapshot des bisherigen `main` wurde gemäß Promotion-Audit bereits erzeugt und außerhalb GitHub gesichert. `main` bleibt trotzdem **unverändert, bis Christian die Promotion ausdrücklich freigibt**.
+
+Vor der Freigabe werden Finalisierungszweig, abgeleitete Dashboard-Auslieferung, Prüfsummen, Dokumentation und alle Release-Gates vollständig abgeglichen. Nach der Promotion müssen die relevanten Gates auf dem tatsächlichen neuen `main` erneut grün sein. Erst danach darf der Golden Master aus genau diesem Commit erzeugt und derselbe Commit veröffentlicht/getaggt werden.
+
+Externe Blitzortung-Datenregions-/Latenztests sowie spezielle DNS-/Proxy-/TLS-Inspection-Szenarien bleiben als separate Umgebungsprüfungen sichtbar und werden nicht fälschlich als bereits erledigte Produktabnahme dargestellt.
 
 Verbindliche Dokumente:
 
@@ -183,6 +229,8 @@ Verbindliche Dokumente:
 - `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
 - `docs/GOLDEN_MASTER_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
+- `docs/RELEASE_NOTES_V4_07_56.md`
+- `docs/V4_07_RELEASE_TODO.md`
 
 ## Dev-Toolkit
 
