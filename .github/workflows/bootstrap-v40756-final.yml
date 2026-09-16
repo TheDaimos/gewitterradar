@@ -1,4 +1,4 @@
-name: Bootstrap V4.07.56 final promotion
+name: Bootstrap V4.07.56 binary import
 
 on:
   push:
@@ -11,21 +11,65 @@ permissions:
   contents: write
 
 jobs:
-  finalize:
+  import-accepted-payload:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - name: Write final protection, build and release files
-        shell: python
+      - name: Download and verify exact accepted V4.07.56 package
+        shell: bash
         run: |
-          import base64
-          from pathlib import Path
-          files = {
-            'scripts/build-frontend.mjs': 'aW1wb3J0IHtyZWFkRmlsZSx3cml0ZUZpbGUsbWtkaXIscmVhZGRpcixybX0gZnJvbSAnbm9kZTpmcy9wcm9taXNlcyc7CmltcG9ydCB7cmVzb2x2ZSxkaXJuYW1lfSBmcm9tICdub2RlOnBhdGgnOwppbXBvcnQge2ZpbGVVUkxUb1BhdGh9IGZyb20gJ25vZGU6dXJsJzsKaW1wb3J0IHtjcmVhdGVIYXNofSBmcm9tICdub2RlOmNyeXB0byc7CmltcG9ydCB7cmVhZEFib3V0TG9jYWxlTW9kZWx9IGZyb20gJy4vdmVyaWZ5LWFib3V0LWxvY2FsZXMubWpzJzsKCmV4cG9ydCBjb25zdCByb290PXJlc29sdmUoZGlybmFtZShmaWxlVVJMVG9QYXRoKGltcG9ydC5tZXRhLnVybCkpLCcuLicpOwpleHBvcnQgY29uc3QgaGFzaD1ieXRlcz0+Y3JlYXRlSGFzaCgnc2hhMjU2JykudXBkYXRlKGJ5dGVzKS5kaWdlc3QoJ2hleCcpOwpjb25zdCBWNDA1X1NIQT0nOWY1OTRkNWMyM2M1YWY1YmRhYmY5MDc0OWViMjYzOTQ1N2E0Y2MxNDMwNzQwN2UyMDY3NDAzNmEwMjU2NWU5Yic7CmNvbnN0IFY0MDc1Nl9TSEE9JzI0OTQ4NWY0YmNmNjhjOWIyM2I4MjFjYWU5YjUwNzAzMGFlMDljZmY1YTU2ZjdlMjhkM2Q3ZjNiMDJlYjRhMWEnOwpjb25zdCBWNDA3NTZfTE9DQUxFX1NIQT0nOTk3YzRmZTliMzU3OTM1ODg4ZmRiN2JlZGM0M2NkZDE3ZjEwNWI5NzI0MWEwMDAzMjQ4OTFjZWE1NzVkZDQzNic7CgpmdW5jdGlvbiB2ZXJzaW9uT2Yoc291cmNlKXsKICBjb25zdCBtPXNvdXJjZS5tYXRjaCgvQ0FSRF9WRVJTSU9OXHMqPVxzKlsnXCJdKFxkK1wuXGQrXC5cZCspWydcIl0vKQogICAgfHwgc291cmNlLm1hdGNoKC9DQVJEX0RJU1BMQVlfVkVSU0lPTlxzKj1ccypbJ1wiXVY/KFxkK1wuXGQrXC5cZCspWydcIl0vKTsKICByZXR1cm4gbT8uWzFdPz9udWxsOwp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gZXhwZWN0ZWRQYXlsb2FkKCl7CiAgY29uc3QgYmFzZWxpbmU9YXdhaXQgcmVhZEZpbGUocmVzb2x2ZShyb290LCd0ZXN0cy9maXh0dXJlcy92NF8wNS9nZXdpdHRlcnJhZGFyLmpzJykpOwogIGlmKGhhc2goYmFzZWxpbmUpIT09VjQwNV9TSEEpdGhyb3cgRXJyb3IoJ0Zyb3plbiBWNC4wNSBmaXh0dXJlIGNoYW5nZWQnKTsKCiAgY29uc3Qgc291cmNlPWF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnZnJvbnRlbmQvZ2V3aXR0ZXJyYWRhci5qcycpKTsKICBjb25zdCBzb3VyY2VUZXh0PXNvdXJjZS50b1N0cmluZygpOwogIGNvbnN0IHZlcnNpb249dmVyc2lvbk9mKHNvdXJjZVRleHQpOwogIGlmKCF2ZXJzaW9uKXRocm93IEVycm9yKCdDYW5vbmljYWwgZnJvbnRlbmQgdmVyc2lvbiBjb3VsZCBub3QgYmUgcGFyc2VkJyk7CiAgaWYodmVyc2lvbj09PSc0LjA3LjU2JyYmaGFzaChzb3VyY2UpIT09VjQwNzU2X1NIQSl0aHJvdyBFcnJvcignQWNjZXB0ZWQgVjQuMDcuNTYgZnJvbnRlbmQgaWRlbnRpdHkgY2hhbmdlZCcpOwoKICBjb25zdCBsb2NhbGVTb3VyY2U9YXdhaXQgcmVhZEZpbGUocmVzb2x2ZShyb290LCdmcm9udGVuZC9sb2NhbGVzL2Fib3V0LWxvY2FsZXMuanMnKSk7CiAgcmVhZEFib3V0TG9jYWxlTW9kZWwoc291cmNlVGV4dCxsb2NhbGVTb3VyY2UudG9TdHJpbmcoKSk7CiAgaWYodmVyc2lvbj09PSc0LjA3LjU2JyYmaGFzaChsb2NhbGVTb3VyY2UpIT09VjQwNzU2X0xPQ0FMRV9TSEEpdGhyb3cgRXJyb3IoJ0FjY2VwdGVkIFY0LjA3LjU2IGxvY2FsZSBpZGVudGl0eSBjaGFuZ2VkJyk7CgogIGNvbnN0IGludmVudG9yeT1KU09OLnBhcnNlKGF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnZnJvbnRlbmQvYXNzZXRzLmpzb24nKSwndXRmOCcpKTsKICBjb25zdCByZWZlcmVuY2VkPVsuLi5uZXcgU2V0KFsuLi5zb3VyY2VUZXh0Lm1hdGNoQWxsKC9uZXcgVVJMXCgnXC5cLyhhc3NldHNcL1teJz9dKykoPzpcP1teJ10qKT8nLCBpbXBvcnRcLm1ldGFcLnVybFwpL2cpXS5tYXAobT0+bVsxXSkpXS5zb3J0KCk7CiAgaWYobmV3IFNldChpbnZlbnRvcnkubWFwKGE9PmEuZmlsZSkpLnNpemUhPT1pbnZlbnRvcnkubGVuZ3RoKXRocm93IEVycm9yKCdEdXBsaWNhdGUgZnJvbnRlbmQgYXNzZXQgaW52ZW50b3J5IGVudHJ5Jyk7CiAgaWYoSlNPTi5zdHJpbmdpZnkocmVmZXJlbmNlZCkhPT1KU09OLnN0cmluZ2lmeShpbnZlbnRvcnkubWFwKGE9PmEuZmlsZSkuc29ydCgpKSl0aHJvdyBFcnJvcignQXNzZXQgaW52ZW50b3J5L3JlZmVyZW5jZSBtaXNtYXRjaCcpOwogIGNvbnN0IGFjdHVhbD0oYXdhaXQgcmVhZGRpcihyZXNvbHZlKHJvb3QsJ2Zyb250ZW5kL2Fzc2V0cycpKSkubWFwKG49Pidhc3NldHMvJytuKS5zb3J0KCk7CiAgaWYoSlNPTi5zdHJpbmdpZnkoYWN0dWFsKSE9PUpTT04uc3RyaW5naWZ5KHJlZmVyZW5jZWQpKXRocm93IEVycm9yKCdVbmV4cGVjdGVkL21pc3Npbmcgc291cmNlIGFzc2V0cycpOwoKICBjb25zdCBmcm96ZW5IYXNoZXM9YXdhaXQgcmVhZEZpbGUocmVzb2x2ZShyb290LCdkb2NzL1Y0XzA1X0ZST05URU5EX1JFRkVSRU5DRV9TSEEyNTZTVU1TLnR4dCcpLCd1dGY4Jyk7CiAgY29uc3QgcGF5bG9hZD1uZXcgTWFwKFtbJ2dld2l0dGVycmFkYXIuanMnLHNvdXJjZV0sWydsb2NhbGVzL2Fib3V0LWxvY2FsZXMuanMnLGxvY2FsZVNvdXJjZV1dKTsKICBmb3IoY29uc3QgYXNzZXQgb2YgaW52ZW50b3J5KXsKICAgIGNvbnN0IGJ5dGVzPWF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnZnJvbnRlbmQnLGFzc2V0LmZpbGUpKTsKICAgIGlmKGhhc2goYnl0ZXMpIT09YXNzZXQuc2hhMjU2KXRocm93IEVycm9yKCdBc3NldCBTSEEgbWlzbWF0Y2ggJythc3NldC5maWxlKTsKICAgIGlmKGFzc2V0LnByb3RlY3RlZCYmIWZyb3plbkhhc2hlcy5pbmNsdWRlcyhhc3NldC5zaGEyNTYrJyAgZGlzdC8nK2Fzc2V0LmZpbGUpKXRocm93IEVycm9yKCdQcm90ZWN0ZWQgVjQuMDUgYXNzZXQgY2hhbmdlZCAnK2Fzc2V0LmZpbGUpOwogICAgcGF5bG9hZC5zZXQoYXNzZXQuZmlsZSxieXRlcyk7CiAgfQogIHJldHVybiBwYXlsb2FkOwp9CgpleHBvcnQgY29uc3QgZGVzdGluYXRpb25zPVsnY3VzdG9tX2NvbXBvbmVudHMvZ2V3aXR0ZXJyYWRhci9mcm9udGVuZCcsJ2Rhc2hib2FyZC9kaXN0J107Cgphc3luYyBmdW5jdGlvbiBwYWNrYWdlUGF5bG9hZCgpewogIGNvbnN0IGZpbGVzPVsnYXBwX2dld2l0dGVycmFkYXJfdjRfMDZfcGtnLnlhbWwnLCdhcHBfZ2V3aXR0ZXJyYWRhcl92NF8wN19wa2cueWFtbCddOwogIGNvbnN0IHBheWxvYWQ9bmV3IE1hcCgpOwogIGZvcihjb25zdCBuYW1lIG9mIGZpbGVzKXsKICAgIGNvbnN0IHRleHQ9KGF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnaG9tZS1hc3Npc3RhbnQnLG5hbWUpLCd1dGY4JykpLnJlcGxhY2UoL1xyXG4/L2csJ1xuJyk7CiAgICBwYXlsb2FkLnNldChuYW1lLEJ1ZmZlci5mcm9tKHRleHQsJ3V0ZjgnKSk7CiAgfQogIHJldHVybiBwYXlsb2FkOwp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gYnVpbGQoKXsKICBjb25zdCBwYXlsb2FkPWF3YWl0IGV4cGVjdGVkUGF5bG9hZCgpOwogIGZvcihjb25zdCBkZXN0aW5hdGlvbiBvZiBkZXN0aW5hdGlvbnMpewogICAgYXdhaXQgcm0ocmVzb2x2ZShyb290LGRlc3RpbmF0aW9uLCdhc3NldHMnKSx7cmVjdXJzaXZlOnRydWUsZm9yY2U6dHJ1ZX0pOwogICAgYXdhaXQgcm0ocmVzb2x2ZShyb290LGRlc3RpbmF0aW9uLCdsb2NhbGVzJykse3JlY3Vyc2l2ZTp0cnVlLGZvcmNlOnRydWV9KTsKICAgIGZvcihjb25zdCBbbmFtZSxieXRlc10gb2YgcGF5bG9hZCl7CiAgICAgIGNvbnN0IHRhcmdldD1yZXNvbHZlKHJvb3QsZGVzdGluYXRpb24sbmFtZSk7CiAgICAgIGF3YWl0IG1rZGlyKGRpcm5hbWUodGFyZ2V0KSx7cmVjdXJzaXZlOnRydWV9KTsKICAgICAgYXdhaXQgd3JpdGVGaWxlKHRhcmdldCxieXRlcyk7CiAgICB9CiAgfQoKICBjb25zdCBwYWNrYWdlcz1hd2FpdCBwYWNrYWdlUGF5bG9hZCgpOwogIGZvcihjb25zdCBbbmFtZSxieXRlc10gb2YgcGFja2FnZXMpYXdhaXQgd3JpdGVGaWxlKHJlc29sdmUocm9vdCwnZGFzaGJvYXJkL2Rpc3QnLG5hbWUpLGJ5dGVzKTsKCiAgY29uc3Qgcm93cz1bXTsKICBmb3IoY29uc3QgZGVzdCBvZiBkZXN0aW5hdGlvbnMpZm9yKGNvbnN0IFtuYW1lLGJ5dGVzXSBvZiBwYXlsb2FkKXJvd3MucHVzaChoYXNoKGJ5dGVzKSsnICAnK2Rlc3QrJy8nK25hbWUpOwogIGZvcihjb25zdCBbbmFtZSxieXRlc10gb2YgcGFja2FnZXMpcm93cy5wdXNoKGhhc2goYnl0ZXMpKycgIGRhc2hib2FyZC9kaXN0LycrbmFtZSk7CiAgYXdhaXQgd3JpdGVGaWxlKHJlc29sdmUocm9vdCwnU0hBMjU2U1VNU19GUk9OVEVORC50eHQnKSxyb3dzLnNvcnQoKS5qb2luKCdcbicpKydcbicpOwogIGNvbnNvbGUubG9nKGBCdWlsdCBjYW5vbmljYWwgJHt2ZXJzaW9uT2YoKGF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnZnJvbnRlbmQvZ2V3aXR0ZXJyYWRhci5qcycpLCd1dGY4JykpKX0gZnJvbnRlbmQgaW50byBib3RoIGRlbGl2ZXJpZXMgd2l0aCAke3BheWxvYWQuc2l6ZS0yfSByZWZlcmVuY2VkIGFzc2V0cy5gKTsKfQoKaWYocHJvY2Vzcy5hcmd2WzFdJiZyZXNvbHZlKHByb2Nlc3MuYXJndlsxXSk9PT1maWxlVVJMVG9QYXRoKGltcG9ydC5tZXRhLnVybCkpYXdhaXQgYnVpbGQoKTsK',
-            'scripts/verify-frontend.mjs': 'aW1wb3J0IHtyZWFkRmlsZSxyZWFkZGlyfSBmcm9tICdub2RlOmZzL3Byb21pc2VzJzsKaW1wb3J0IHtyZXNvbHZlfSBmcm9tICdub2RlOnBhdGgnOwppbXBvcnQge3Jvb3QsaGFzaCxleHBlY3RlZFBheWxvYWQsZGVzdGluYXRpb25zfSBmcm9tICcuL2J1aWxkLWZyb250ZW5kLm1qcyc7Cgpjb25zdCBwYXlsb2FkPWF3YWl0IGV4cGVjdGVkUGF5bG9hZCgpOwphc3luYyBmdW5jdGlvbiBmaWxlcyhkaXIscHJlZml4PScnKXsKICBjb25zdCBvdXQ9W107CiAgZm9yKGNvbnN0IGVudHJ5IG9mIGF3YWl0IHJlYWRkaXIoZGlyLHt3aXRoRmlsZVR5cGVzOnRydWV9KSl7CiAgICBjb25zdCBuYW1lPXByZWZpeCtlbnRyeS5uYW1lOwogICAgaWYoZW50cnkuaXNEaXJlY3RvcnkoKSlvdXQucHVzaCguLi5hd2FpdCBmaWxlcyhyZXNvbHZlKGRpcixlbnRyeS5uYW1lKSxuYW1lKycvJykpO2Vsc2Ugb3V0LnB1c2gobmFtZSk7CiAgfQogIHJldHVybiBvdXQuc29ydCgpOwp9Cgpjb25zdCBwYWNrYWdlcz1bJ2FwcF9nZXdpdHRlcnJhZGFyX3Y0XzA2X3BrZy55YW1sJywnYXBwX2dld2l0dGVycmFkYXJfdjRfMDdfcGtnLnlhbWwnXTsKY29uc3QgY2hlY2tzPVtdOwpmb3IoY29uc3QgZGVzdCBvZiBkZXN0aW5hdGlvbnMpewogIGNvbnN0IHdhbnRlZD1bLi4ucGF5bG9hZC5rZXlzKCksLi4uKGRlc3Q9PT0nZGFzaGJvYXJkL2Rpc3QnP3BhY2thZ2VzOltdKV0uc29ydCgpOwogIGNvbnN0IGFjdHVhbD1hd2FpdCBmaWxlcyhyZXNvbHZlKHJvb3QsZGVzdCkpOwogIGlmKEpTT04uc3RyaW5naWZ5KGFjdHVhbCkhPT1KU09OLnN0cmluZ2lmeSh3YW50ZWQpKXRocm93IEVycm9yKCdVbmV4cGVjdGVkL21pc3NpbmcgcGF5bG9hZCBmaWxlICcrZGVzdCk7CiAgZm9yKGNvbnN0IFtuYW1lLGJ5dGVzXSBvZiBwYXlsb2FkKXsKICAgIGNvbnN0IGFjdHVhbEJ5dGVzPWF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCxkZXN0LG5hbWUpKTsKICAgIGlmKCFhY3R1YWxCeXRlcy5lcXVhbHMoYnl0ZXMpKXRocm93IEVycm9yKCdEZWxpdmVyeSBwYXJpdHkgZmFpbGVkICcrZGVzdCsnLycrbmFtZSk7CiAgICBjaGVja3MucHVzaChoYXNoKGFjdHVhbEJ5dGVzKSsnICAnK2Rlc3QrJy8nK25hbWUpOwogIH0KfQpmb3IoY29uc3QgbmFtZSBvZiBwYWNrYWdlcyl7CiAgY29uc3Qgc291cmNlPUJ1ZmZlci5mcm9tKChhd2FpdCByZWFkRmlsZShyZXNvbHZlKHJvb3QsJ2hvbWUtYXNzaXN0YW50JyxuYW1lKSwndXRmOCcpKS5yZXBsYWNlKC9cclxuPy9nLCdcbicpLCd1dGY4Jyk7CiAgY29uc3Qgc3RhZ2VkPWF3YWl0IHJlYWRGaWxlKHJlc29sdmUocm9vdCwnZGFzaGJvYXJkL2Rpc3QnLG5hbWUpKTsKICBpZighc3RhZ2VkLmVxdWFscyhzb3VyY2UpKXRocm93IEVycm9yKCdEYXNoYm9hcmQgcGFja2FnZSBwYXJpdHkgZmFpbGVkICcrbmFtZSk7CiAgY2hlY2tzLnB1c2goaGFzaChzdGFnZWQpKycgIGRhc2hib2FyZC9kaXN0LycrbmFtZSk7Cn0KaWYoYXdhaXQgcmVhZEZpbGUocmVzb2x2ZShyb290LCdTSEEyNTZTVU1TX0ZST05URU5ELnR4dCcpLCd1dGY4JykhPT1jaGVja3Muc29ydCgpLmpvaW4oJ1xuJykrJ1xuJyl0aHJvdyBFcnJvcignQ2hlY2tzdW0gaW52ZW50b3J5IHN0YWxlJyk7CmNvbnN0IGhhY3M9SlNPTi5wYXJzZShhd2FpdCByZWFkRmlsZShyZXNvbHZlKHJvb3QsJ2Rhc2hib2FyZC9oYWNzLmpzb24nKSwndXRmOCcpKTsKaWYoaGFjcy5maWxlbmFtZSE9PSdnZXdpdHRlcnJhZGFyLmpzJ3x8aGFjcy56aXBfcmVsZWFzZSl0aHJvdyBFcnJvcignRGFzaGJvYXJkIEhBQ1MgcGFja2FnZSBjb250cmFjdCBjaGFuZ2VkJyk7CmNvbnNvbGUubG9nKGBQQVNTOiBjYW5vbmljYWwgc291cmNlLCBib3RoIGRlbGl2ZXJpZXMsICR7cGF5bG9hZC5zaXplLTJ9IGV4YWN0IHJlZmVyZW5jZWQgYXNzZXRzLCBwYWNrYWdlIHBhcml0eSBhbmQgY2hlY2tzdW0gaW52ZW50b3J5LmApOwo=',
-            'frontend/assets.json': 'WwogIHsiZmlsZSI6ImFzc2V0cy9nZXdpdHRlcnJhZGFyLWFib3V0LWRlZGljYXRpb24tdjQud2VicCIsInNoYTI1NiI6ImNiMWU4Zjg1Y2E5ZWVmMGY4ODMxNjg3NDY0ZWI5MzAwODc1MzBiY2M4YmE1ZWQ4MDU4MzJiOTA4NjY5N2M2YmIiLCJwcm90ZWN0ZWQiOnRydWV9LAogIHsiZmlsZSI6ImFzc2V0cy9nZXdpdHRlcnJhZGFyLWFib3V0LWhlcm8tdjIud2VicCIsInNoYTI1NiI6IjRiNjQ2OWEzYjllYzBhZDJjMTUwMmVkZGJmNWYyZmE2M2IxNThjMTBkMjZhMzVjNzE0ZDhlYjliZTYyNjVlMjUiLCJwcm90ZWN0ZWQiOnRydWV9LAogIHsiZmlsZSI6ImFzc2V0cy9nZXdpdHRlcnJhZGFyLWJyYW5kLWljb24ucG5nIiwic2hhMjU2IjoiNTM4OTIyNWZjODAxZDcxYmEyYmQ0YmUxZjQwNzc5YmU3ZWI4OWUyMDQ1ZDE3YWZlM2E1MDhjNTEwMTM0MGZmMCIsInByb3RlY3RlZCI6dHJ1ZX0sCiAgeyJmaWxlIjoiYXNzZXRzL2dld2l0dGVycmFkYXItY29tcGFzcy1mcmFtZS12MS5wbmciLCJzaGEyNTYiOiJiMDlkZjkxNDJkZj ... TRUNCATED_FOR_TOOL?
+          set -euo pipefail
+          curl --fail --location --retry 3 --retry-delay 2 \
+            'https://github.com/user-attachments/files/32284880/Gewitterradar_V4.07.56_DIAGNOSE_MULTICELL_EXTREME_COMPLETE.1.zip' \
+            --output /tmp/v40756.zip
+          echo 'c810e38ce59d3e7dbd3c04534f47cc428714aff19dc5fb619466001450e0e695  /tmp/v40756.zip' | sha256sum -c -
+          mkdir -p /tmp/v40756
+          unzip -q /tmp/v40756.zip -d /tmp/v40756
+          (cd /tmp/v40756 && sha256sum -c SHA256SUMS.txt)
+      - name: Import accepted canonical frontend and locale module byte-identically
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -m 0644 /tmp/v40756/gewitterradar.js frontend/gewitterradar.js
+          install -m 0644 /tmp/v40756/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          install -m 0644 /tmp/v40756/gewitterradar.js dashboard/dist/gewitterradar.js
+          install -m 0644 /tmp/v40756/locales/about-locales.js frontend/locales/about-locales.js
+          install -m 0644 /tmp/v40756/locales/about-locales.js custom_components/gewitterradar/frontend/locales/about-locales.js
+          install -m 0644 /tmp/v40756/locales/about-locales.js dashboard/dist/locales/about-locales.js
+          echo '249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a  frontend/gewitterradar.js' | sha256sum -c -
+          echo '997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436  frontend/locales/about-locales.js' | sha256sum -c -
+      - name: Import all world-location Hi-Res masters and derived artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artwork/location-search/hires artwork/location-search/runtime
+          cp -a /tmp/v40756/artwork/location-search/hires/. artwork/location-search/hires/
+          cp -a /tmp/v40756/artwork/location-search/runtime/. artwork/location-search/runtime/
+          cp /tmp/v40756/artwork/location-search/README.md artwork/location-search/README.md
+          mkdir -p artwork/location-search/legacy/v4.07.56
+          cp /tmp/v40756/artwork/gewitterradar-coordinate-target-master.svg \
+             artwork/location-search/legacy/v4.07.56/gewitterradar-coordinate-target-master.svg
+          mkdir -p artwork/location-search/package-assets/v4.07.56
+          cp -a /tmp/v40756/assets/. artwork/location-search/package-assets/v4.07.56/
+      - name: Preserve superseded close runtime in versioned legacy area
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artwork/about-controls/legacy/v4.06
+          cp frontend/assets/gewitterradar-about-close-premium.webp \
+             artwork/about-controls/legacy/v4.06/gewitterradar-about-close-premium.webp
+          test -s artwork/about-controls/closing.png
+          test -s artwork/help-icons/hires/help-close.svg
+      - name: Remove one-shot bootstrap files and commit imported payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/bootstrap-v40756-final.yml docs/archive-triggers/V4_07_56_IMPORT.trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --stat
+          git commit -m 'Import accepted V4.07.56 payload and protected artwork'
+          git push origin HEAD:finalize/v4.07.56-main-promotion
