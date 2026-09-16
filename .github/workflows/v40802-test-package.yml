@@ -1,0 +1,115 @@
+name: V4.08.02 Diagnostic Weather Lab Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40801-cluster-test.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
+      - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
+      - '.github/workflows/v40802-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.02 frontend
+        run: node scripts/build-v40802-diagnostic-weather-lab.mjs
+
+      - name: Verify generated frontend copies and test features
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          grep -F "const CARD_VERSION = '4.08.02';" frontend/gewitterradar.js
+          grep -F "V4.08.02-DIAGNOSTIC-WEATHER-LAB-2026-09-16" frontend/gewitterradar.js
+          grep -F "diagnostic-lab-density" frontend/gewitterradar.js
+          grep -F "diagnostic-lab-age" frontend/gewitterradar.js
+          grep -F "diagnostic-lab-boundaries" frontend/gewitterradar.js
+          grep -F "diagnostic-cluster-jump-timeout" frontend/gewitterradar.js
+          grep -F "_touchStatusClusterBrowseSessionV40802" frontend/gewitterradar.js
+          grep -F "diagnosticBoundaryPosition" frontend/gewitterradar.js
+          grep -F "outside:{bearing:318" frontend/gewitterradar.js
+          grep -F "precipitation:{prepared:true" frontend/gewitterradar.js
+          grep -F "clouds:{prepared:true" frontend/gewitterradar.js
+          grep -F "settings-cluster-v40801-toggle" frontend/gewitterradar.js
+          grep -F "const inStorm = s.distance != null && s.distance <= stormRadius;" frontend/gewitterradar.js
+
+      - name: Create installable V4.08.02 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40802
+          mkdir -p build/v40802/native/custom_components build/v40802/dashboard
+          cp -a custom_components/gewitterradar build/v40802/native/custom_components/
+          cp -a dashboard/dist/. build/v40802/dashboard/
+          cp docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md build/v40802/V4_08_DIAGNOSTIC_WEATHER_LAB.md
+          cat > build/v40802/README_V4.08.02_TEST.txt <<'EOF'
+          Gewitterradar V4.08.02 TEST
+          ===========================
+
+          Basis:
+          - unveränderlicher V4.07.56 Golden Master
+          - reproduzierbare V4.08.01 zonenabhängige Cluster-Testlogik
+
+          Neu in V4.08.02:
+          - Diagnose-Cockpit mit einklappbaren Bereichen
+          - Wetter-Labor als gemeinsame Basis für Blitz/Cluster und spätere Wetterebenen
+          - Blitzlast 1x / 5x / 20x
+          - Altersprofile gemischt / nur frisch / nur alt
+          - Radius-Grenzfälle knapp innen / exakt / knapp außen
+          - separates virtuelles Szenario AUSSEN
+          - Cluster-Sprung-Sitzung mit 5 s / 10 s / 20 s / unbegrenzt
+          - Standard für die Verprobung: 10 s Inaktivität
+          - manueller Sitzungsabbruch
+          - 20x Render-Stresstest während der Cluster-Sprung-Sitzung
+          - Niederschlag und Wolken architektonisch vorbereitet, noch nicht als Produktdarstellung aktiviert
+
+          Cluster-Auflösung:
+          Einstellungen -> Radien -> "Cluster-Auflösung · V4.08 TEST"
+          AUS = V4.07.56-Verhalten
+          EIN = zonenabhängige V4.08-Testlogik
+
+          Native Integration:
+          native/custom_components/gewitterradar nach /config/custom_components/ übernehmen,
+          Home Assistant neu starten und die Gewitterradar-Seite vollständig neu laden.
+          Ressourcen-URL bleibt /gewitterradar/gewitterradar.js.
+
+          Dashboard:
+          Inhalt aus dashboard/ entsprechend der bestehenden Dashboard-Installation nutzen.
+          Nicht native und Dashboard-JS gleichzeitig als zwei Ressourcen laden.
+
+          Hinweis:
+          V4.08.02 ist eine Verprobung. Der geschützte V4.07.56-Diagnosevertrag wird dadurch
+          noch nicht ersetzt. Nach Geräteabnahme wird der neue Diagnoseumfang gesondert festgeschrieben.
+          EOF
+          (
+            cd build/v40802
+            zip -qr ../Gewitterradar_V4.08.02_TEST.zip .
+          )
+          sha256sum build/Gewitterradar_V4.08.02_TEST.zip | tee build/Gewitterradar_V4.08.02_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40802-frontend.sha256
+
+      - name: Upload V4.08.02 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.02_TEST
+          path: |
+            build/Gewitterradar_V4.08.02_TEST.zip
+            build/Gewitterradar_V4.08.02_TEST.sha256
+            build/gewitterradar-v40802-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
