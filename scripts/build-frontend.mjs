@@ -35,16 +35,29 @@ export async function expectedPayload(){
  return payload;
 }
 export const destinations=['custom_components/gewitterradar/frontend','dashboard/dist'];
+export const dashboardPackages=[
+ ['home-assistant/app_gewitterradar_v4_06_pkg.yaml','app_gewitterradar_v4_06_pkg.yaml'],
+ ['home-assistant/app_gewitterradar_v4_07_pkg.yaml','app_gewitterradar_v4_07_pkg.yaml'],
+];
+export async function expectedDashboardPackages(){
+ const packages=new Map();
+ for(const [sourceName,targetName] of dashboardPackages){
+  const text=(await readFile(resolve(root,sourceName),'utf8')).replace(/\r\n?/g,'\n');
+  packages.set(targetName,Buffer.from(text,'utf8'));
+ }
+ return packages;
+}
 export async function build(){
  const payload=await expectedPayload();
  for(const destination of destinations)for(const [name,bytes] of payload){const target=resolve(root,destination,name);await mkdir(dirname(target),{recursive:true});await writeFile(target,bytes);}
- const pkgText=(await readFile(resolve(root,'home-assistant/app_gewitterradar_v4_06_pkg.yaml'),'utf8')).replace(/\r\n?/g,'\n');
- const pkg=Buffer.from(pkgText,'utf8');
- await writeFile(resolve(root,'dashboard/dist/app_gewitterradar_v4_06_pkg.yaml'),pkg);
+ const packages=await expectedDashboardPackages();
+ for(const [name,bytes] of packages)await writeFile(resolve(root,'dashboard/dist',name),bytes);
  const rows=[];
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
- rows.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_v4_06_pkg.yaml');
+ for(const [name,bytes] of packages)rows.push(hash(bytes)+'  dashboard/dist/'+name);
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
- console.log('Built accepted V4.07.56 frontend, one lazy About-locale module, 16 referenced assets and 1 retained legacy asset into both deliveries. Protected legacy assets preserved.');
+ console.log('Built accepted V4.07.56 frontend, one lazy About-locale module, 16 referenced assets and 1 retained legacy asset into both deliveries.');
+ for(const [name,bytes] of packages)console.log(`Dashboard package ${name}: ${bytes.length} bytes, SHA256 ${hash(bytes)}`);
+ console.log('Protected legacy assets preserved; V4.06 fallback package retained and V4.07 package built deterministically.');
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await build();
