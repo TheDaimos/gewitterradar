@@ -1,0 +1,53 @@
+name: Repair V4.07.56 locale test contract
+
+on:
+  push:
+    branches:
+      - finalize/v4.07.56-main-promotion
+    paths:
+      - '.github/workflows/fix-v40756-locale-test-contract.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Align one stale assertion with strict locale verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/test-about-locales.mjs')
+          s=p.read_text()
+          old="assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/module shape changed/);"
+          new="assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/External About locale export changed/);"
+          if s.count(old)!=1:
+              raise SystemExit(f'Expected exactly one stale assertion, found {s.count(old)}')
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Verify repaired contracts before commit
+        run: |
+          node scripts/verify-frontend.mjs
+          node scripts/test-frontend-build.mjs
+          node scripts/test-about-locales.mjs
+          node scripts/verify-diagnostic-contract.mjs
+      - name: Commit repair and remove one-shot helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/fix-v40756-locale-test-contract.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'Align V4.07.56 locale test with strict verifier'
+          git push origin HEAD:finalize/v4.07.56-main-promotion
