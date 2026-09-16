@@ -49,16 +49,16 @@ export function loadAboutLocaleRuntime(source) {
   return model;
 }
 
-// Build and verify always apply the same external Help bundle that production imports.
+// Verify the exact production external Help bundle, but return an uninstalled runtime so
+// the test suite can still exercise native fallback -> rejected install -> successful lazy install.
 export function readAboutLocaleModel(source, externalSource) {
   const model = loadAboutLocaleRuntime(source);
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
   if (externalSource !== undefined) {
     if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
     const external = readExternalAboutLocales(externalSource);
-    // Run the actual production installer. It includes normalization of historical Help bundles
-    // and strict schema/language coverage validation.
-    const installed = model.installExternal(external.about,external.help);
+    const validationModel = loadAboutLocaleRuntime(source);
+    const installed = validationModel.installExternal(external.about,external.help);
     const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
     if (JSON.stringify(Object.keys(installed)) !== JSON.stringify(expected)) {
       throw Error('External About locales must exactly match non-native LANGUAGE_DEFINITIONS');
