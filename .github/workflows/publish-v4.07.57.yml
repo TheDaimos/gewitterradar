@@ -1,0 +1,214 @@
+name: Publish Gewitterradar V4.07.57
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/archive-triggers/V4_07_57_PUBLISH.trigger'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify exact V4.07.57 release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$sha"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' --force
+          test "$(git rev-parse refs/remotes/origin/main^{commit})" = "$sha"
+          test -f docs/archive-triggers/V4_07_57_PUBLISH.trigger
+          grep -Fx 'VERSION=V4.07.57' docs/archive-triggers/V4_07_57_PUBLISH.trigger
+          grep -Fx 'NATIVE_INTEGRATION=0.19.1' docs/archive-triggers/V4_07_57_PUBLISH.trigger
+          grep -Fx 'FRONTEND_SHA256=ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571' docs/archive-triggers/V4_07_57_PUBLISH.trigger
+          grep -Fx 'FRONTEND_SIZE=1955144' docs/archive-triggers/V4_07_57_PUBLISH.trigger
+          test "$(python -c "import json; print(json.load(open('custom_components/gewitterradar/manifest.json'))['version'])")" = '0.19.1'
+          test "$(sha256sum frontend/gewitterradar.js | awk '{print $1}')" = 'ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571'
+          test "$(wc -c < frontend/gewitterradar.js | tr -d ' ')" = '1955144'
+
+      - name: Run release contracts on exact main commit
+        run: |
+          set -euo pipefail
+          node scripts/verify-frontend.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-source-archive-contract.mjs
+          bash -n scripts/create-source-archive.sh
+          python scripts/verify-hacs-integration-package.py
+          python -m json.tool hacs.json >/dev/null
+          python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+          node --check frontend/gewitterradar.js
+
+      - name: Wait for all post-merge release gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          required=(
+            'Validate Gewitterradar integration'
+            'Validate shared Gewitterradar frontend'
+            'Diagnostic contract'
+            'Hi-Res asset retention'
+            'Source archive contract'
+          )
+
+          for attempt in $(seq 1 80); do
+            data=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${sha}&per_page=100")
+            waiting=0
+            for name in "${required[@]}"; do
+              row=$(printf '%s' "$data" | jq -r --arg name "$name" '[.workflow_runs[] | select(.name==$name)] | sort_by(.created_at) | last | if . == null then "missing" else (.status + ":" + (.conclusion // "")) end')
+              echo "$name -> $row"
+              case "$row" in
+                completed:success) ;;
+                completed:*) echo "Release gate failed: $name ($row)" >&2; exit 1 ;;
+                *) waiting=1 ;;
+              esac
+            done
+            if [ "$waiting" -eq 0 ]; then
+              echo 'All required post-merge gates are green.'
+              exit 0
+            fi
+            sleep 15
+          done
+          echo 'Timed out waiting for post-merge release gates.' >&2
+          exit 1
+
+      - name: Create Golden Master from exact release commit
+        id: golden
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist/source-archives
+          mkdir -p dist/source-archives
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.07.57 dist/source-archives
+
+      - name: Verify Golden Master archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.golden.outputs.zip_path }}'
+          test -s '${{ steps.golden.outputs.bundle_path }}'
+          test -s '${{ steps.golden.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.golden.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.golden.outputs.zip_path }}'
+          git bundle verify '${{ steps.golden.outputs.bundle_path }}'
+
+      - name: Upload immutable Golden Master archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.07.57_GOLDEN_MASTER
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+
+      - name: Freeze exact release commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          git fetch origin '+refs/heads/frozen/v4.07.57:refs/remotes/origin/frozen/v4.07.57' 2>/dev/null || true
+          if git show-ref --verify --quiet refs/remotes/origin/frozen/v4.07.57; then
+            test "$(git rev-parse refs/remotes/origin/frozen/v4.07.57^{commit})" = "$sha"
+          else
+            git push origin "$sha:refs/heads/frozen/v4.07.57"
+          fi
+
+      - name: Publish GitHub and HACS release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+
+          if git ls-remote --exit-code --tags origin refs/tags/v4.07.57 >/dev/null 2>&1; then
+            git fetch origin refs/tags/v4.07.57:refs/tags/v4.07.57 --force
+            test "$(git rev-list -n1 v4.07.57)" = "$sha"
+          fi
+
+          cat > /tmp/release-notes.md <<'EOF'
+          # Gewitterradar V4.07.57 · 2026/09
+
+          V4.07.57 ist ein **Dokumentations- und Installations-Patch** auf der geschützten V4.07.56-Laufzeitbasis. Die Produktlogik wurde nicht verändert.
+
+          ## Schwerpunkt dieser Version
+
+          - Die Haupt-README wurde zu einer klar gegliederten, visuellen Installationsseite umgebaut.
+          - Die **native Home-Assistant-Integration steht jetzt an erster Stelle** und ist für neue Installationen direkt nachvollziehbar.
+          - HACS-Installation, Neustart und Hinzufügen unter **Einstellungen → Geräte & Dienste** sind Schritt für Schritt beschrieben.
+          - Die erforderliche Ressource `/gewitterradar/gewitterradar.js` als JavaScript-Modul ist deutlich hervorgehoben.
+          - Der vollständige, direkt kopierbare native Gewitterradar-View ist jetzt prominent dokumentiert:
+
+          ```yaml
+          title: Gewitterradar
+          path: gewitterradar
+          icon: mdi:weather-lightning
+          type: panel
+          cards:
+            - type: vertical-stack
+              cards:
+                - type: custom:gewitterradar-card
+                  counter_entity: sensor.home_lightning_counter
+                  radius_entity: number.gewitterradar_observation_radius
+                  compass_mode_entity: switch.gewitterradar_compass_nearest_strike
+          ```
+
+          - Die Unterschiede zwischen vollständiger View, `views:`-Rohkonfiguration und Manueller Karte sind erklärt.
+          - Referenztracker, Blitzortung-`Location entity`, Recorder-Schutz und Fehlersuche sind direkt in der Einstiegsdokumentation enthalten.
+          - Die separate Dashboard-/Package-Auslieferung wurde im gleichen Stil dokumentiert, mit ihrem eigenen HACS-Ressourcenpfad und den `lightning_detection_*`-Helfern.
+
+          ## Release-Identität
+
+          - **Gewitterradar:** V4.07.57
+          - **Native Integration:** 0.19.1
+          - **Build:** `V4.07-RELEASE57-2026-09-16`
+          - **Frontend:** 1.955.144 Bytes
+          - **Frontend SHA256:** `ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571`
+          - **Geschützte Laufzeitbasis:** V4.07.56
+          - **V4.07.56 Basis-SHA256:** `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`
+          - **Dashboard-Paket SHA256:** `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`
+
+          Der V4.07.57-Vertrag erlaubt im Frontend ausschließlich Versions- und Build-Metadatenänderungen. Nach Rücknormalisierung dieser Anker muss der Inhalt exakt der akzeptierten V4.07.56-Quelle entsprechen.
+
+          **Keine benutzerdefinierten Release-Artefakte:** HACS installiert weiterhin den vollständigen getaggten Repository-Stand.
+          EOF
+
+          if gh release view v4.07.57 >/dev/null 2>&1; then
+            git fetch origin refs/tags/v4.07.57:refs/tags/v4.07.57 --force
+            test "$(git rev-list -n1 v4.07.57)" = "$sha"
+            echo 'v4.07.57 is already published on the exact expected commit.'
+          else
+            gh release create v4.07.57 \
+              --target "$sha" \
+              --title 'Gewitterradar V4.07.57' \
+              --notes-file /tmp/release-notes.md \
+              --latest
+          fi
+
+      - name: Verify published release points to exact main commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch origin refs/tags/v4.07.57:refs/tags/v4.07.57 --force
+          test "$(git rev-list -n1 v4.07.57)" = "$GITHUB_SHA"
+          gh release view v4.07.57 --json tagName,isDraft,isPrerelease,url,targetCommitish

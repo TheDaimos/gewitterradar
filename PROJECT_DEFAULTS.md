@@ -203,23 +203,20 @@ Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten 
 
 ## Aktueller Release-/Promotionsstand
 
-V4.06 bleibt bis zur kontrollierten Veröffentlichung die **öffentliche Release-/Rückfallbasis**.
+Aktueller öffentlicher Produktstand ist **2026/09 · V4.07.57 / native Integration 0.19.1**.
 
-Der aktuell abgenommene gemeinsame Produkt-/Diagnosekandidat ist **2026/09 · V4.07.56 / native Integration 0.19.0**.
+V4.07.57 ist ein Dokumentations-/Installations-Patch auf der geschützten V4.07.56-Laufzeit- und Diagnosebasis. Die Produktlogik bleibt unverändert; im Frontend unterscheiden sich ausschließlich Versions- und Build-Metadatenanker.
 
-Kanonische V4.07.56-Identität:
+Kanonische V4.07.57-Identität:
 
-- Frontend: **1.955.141 Bytes**;
-- Frontend-SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
+- Frontend: **1.955.144 Bytes**;
+- Frontend-SHA256: `ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571`;
+- geschützte V4.07.56-Basis-SHA256 nach Metadaten-Normalisierung: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
 - Locale-SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`;
 - Dashboard-Paket: `app_gewitterradar_v4_07_pkg.yaml`;
 - Dashboard-Paket-SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
 
-Der PRE-MERGE-Snapshot des bisherigen `main` wurde gemäß Promotion-Audit bereits erzeugt und außerhalb GitHub gesichert. `main` bleibt trotzdem **unverändert, bis Christian die Promotion ausdrücklich freigibt**.
-
-Vor der Freigabe werden Finalisierungszweig, abgeleitete Dashboard-Auslieferung, Prüfsummen, Dokumentation und alle Release-Gates vollständig abgeglichen. Nach der Promotion müssen die relevanten Gates auf dem tatsächlichen neuen `main` erneut grün sein. Erst danach darf der Golden Master aus genau diesem Commit erzeugt und derselbe Commit veröffentlicht/getaggt werden.
-
-Externe Blitzortung-Datenregions-/Latenztests sowie spezielle DNS-/Proxy-/TLS-Inspection-Szenarien bleiben als separate Umgebungsprüfungen sichtbar und werden nicht fälschlich als bereits erledigte Produktabnahme dargestellt.
+Die V4.07.56-Tags, Freeze-Punkte und Schutzverträge bleiben unverändert historische Referenzen. V4.07.57 erhält einen eigenen Tag und einen eigenen eingefrorenen Release-Punkt.
 
 Verbindliche Dokumente:
 
