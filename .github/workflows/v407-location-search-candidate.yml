@@ -1,13 +1,13 @@
 name: Build V4.07 location search test candidate
 
+# Historical reconstruction workflow for the early V4.07 TEST7–TEST14 line.
+# It intentionally starts from the V4.06 frontend and therefore must not run
+# as a general pull-request gate for later V4.07 releases.
 on:
   push:
     branches:
       - feature/v4.07-location-search-ui
       - feature/v4.07-location-search-ui-next
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Prove canonical V4.06 frontend is still valid
+      - name: Prove canonical frontend contract is valid
         run: node scripts/verify-frontend.mjs
       - name: Check V4.07 stabilization scripts syntax
         run: |
