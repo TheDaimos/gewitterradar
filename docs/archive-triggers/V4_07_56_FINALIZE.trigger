@@ -1,0 +1,1 @@
+Finalize the user-accepted V4.07.56 promotion candidate, rebuild canonical deliveries, execute protected contracts, and self-remove this one-shot trigger.
