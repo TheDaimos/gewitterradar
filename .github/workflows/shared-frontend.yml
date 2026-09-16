@@ -37,9 +37,10 @@ jobs:
       - name: Protected diagnostic contract
         run: node scripts/verify-diagnostic-contract.mjs
 
-      # Historical V4.06 delta/apply/preview scripts stay in the repository as
-      # regression material. They are intentionally not replayed here because
-      # V4.07.56 is now the exact accepted canonical source baseline.
+      # Historical V4.06 delta/apply/preview and UI-polish scripts stay in the
+      # repository as regression material. They are intentionally not replayed
+      # against V4.07.56 because the user-accepted V4.07.56 source is now the
+      # exact canonical baseline.
 
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
@@ -51,8 +52,8 @@ jobs:
       - name: Language onboarding
         run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
-      - name: Settings and Help profiles
-        run: node scripts/test-v406-ui.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: V4.07.56 Settings and Help profiles
+        run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Frozen About geometry and pixel comparison
         run: node scripts/test-about-golden.cjs "$(node -p "require('playwright').chromium.executablePath()")"
