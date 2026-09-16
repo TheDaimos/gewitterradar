@@ -20,7 +20,7 @@
 
 > [!IMPORTANT]
 > **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**  
-> Diese README führt deshalb zuerst vollständig durch die native Installation. Die ältere bzw. alternative Dashboard-/Package-Variante findest du weiter unten in einem eigenen Abschnitt.
+> Diese README führt zuerst vollständig durch genau diesen Installationsweg. Die separate Dashboard-/Package-Variante findest du weiter unten.
 
 <table>
 <tr>
@@ -31,7 +31,7 @@
 **Empfohlen für neue Installationen**
 
 - Installation über HACS als **Integration**
-- Einstellungen direkt als Home-Assistant-Entitäten
+- eigene Home-Assistant-Entitäten für Einstellungen
 - kein YAML-Helferpaket notwendig
 - eigener Gewitterradar-Referenztracker
 - Dashboard-Karte aus derselben Installation
@@ -43,7 +43,7 @@
 
 Gewitterradar visualisiert Live-Blitze aus der Home-Assistant-Integration **Blitzortung.org**.
 
-Gewitterradar ersetzt Blitzortung.org **nicht**. Die Blitzortung-Integration muss deshalb vorhanden und funktionsfähig sein.
+Gewitterradar ersetzt Blitzortung.org **nicht**. Die Blitzortung-Integration muss vorhanden und funktionsfähig sein.
 
 </td>
 </tr>
@@ -51,7 +51,7 @@ Gewitterradar ersetzt Blitzortung.org **nicht**. Die Blitzortung-Integration mus
 
 ## Schnellnavigation
 
-**[Installation](#installation--native-integration)** · **[Dashboard einrichten](#dashboard-einrichten)** · **[Ressource registrieren](#4-dashboard-ressource-registrieren)** · **[Blitzortung koppeln](#bezugsstandort-und-blitzortung)** · **[Recorder schützen](#recorder-schutz-empfohlen)** · **[Fehlersuche](#fehlersuche)** · **[Alternative Dashboard-Variante](#alternative-dashboard--package-variante)**
+**[Installation](#installation--native-integration)** · **[Ressource](#4-dashboard-ressource-registrieren)** · **[View einrichten](#5-gewitterradar-view-einrichten)** · **[Blitzortung koppeln](#bezugsstandort-und-blitzortung)** · **[Recorder schützen](#recorder-schutz-empfohlen)** · **[Fehlersuche](#fehlersuche)**
 
 ---
 
@@ -59,11 +59,9 @@ Gewitterradar ersetzt Blitzortung.org **nicht**. Die Blitzortung-Integration mus
 
 ## Voraussetzungen
 
-Vor der Installation sollten vorhanden sein:
-
 - Home Assistant
 - HACS
-- die Home-Assistant-Integration **Blitzortung.org** als Live-Datenquelle
+- Home-Assistant-Integration **Blitzortung.org** als Live-Datenquelle
 
 > [!NOTE]
 > Eine frische native Gewitterradar-Installation benötigt **kein** `lightning_detection_*`-YAML-Package.
@@ -88,7 +86,7 @@ Als Typ auswählen:
 Integration
 ```
 
-Anschließend **Gewitterradar Integration** installieren.
+Danach **Gewitterradar Integration** installieren.
 
 ---
 
@@ -123,7 +121,7 @@ sichtbar bleiben.
 ## 4. Dashboard-Ressource registrieren
 
 > [!WARNING]
-> Dieser Schritt ist aktuell noch **manuell erforderlich**. Ohne diese Ressource kann Home Assistant die Gewitterradar-Karte nicht laden.
+> Dieser Schritt ist aktuell noch **manuell erforderlich**. Ohne die Ressource kann Home Assistant die Gewitterradar-Karte nicht laden.
 
 Öffne:
 
@@ -153,17 +151,17 @@ JavaScript-Modul
 </table>
 
 > [!IMPORTANT]
-> Bei der **nativen Integration** nicht gleichzeitig `/hacsfiles/gewitterradar-dashboard/gewitterradar.js` registrieren. Es darf nur **eine** Gewitterradar-JavaScript-Ressource aktiv sein.
+> Bei der nativen Integration nicht zusätzlich `/hacsfiles/gewitterradar-dashboard/gewitterradar.js` laden. Es darf nur **eine** Gewitterradar-JavaScript-Ressource aktiv sein.
 
 ---
 
-# Dashboard einrichten
+## 5. Gewitterradar-View einrichten
 
-Die Installation der Integration erzeugt aktuell **keine Dashboard-Ansicht automatisch**. Die Ansicht wird einmalig von Hand angelegt.
+Die native Integration erzeugt aktuell **keine Dashboard-View automatisch**.
 
-## Vollständiger Inhalt der Gewitterradar-View
+### Vollständiger, empfohlener View-Inhalt
 
-Wenn du den **Rohkonfigurationseditor des Dashboards** verwendest, kannst du diese View direkt übernehmen:
+Diesen Block kannst du für die Gewitterradar-View übernehmen:
 
 ```yaml
 title: Gewitterradar
@@ -171,15 +169,20 @@ path: gewitterradar
 icon: mdi:weather-lightning
 type: panel
 cards:
-  - type: custom:gewitterradar-card
+  - type: vertical-stack
+    cards:
+      - type: custom:gewitterradar-card
+        counter_entity: sensor.home_lightning_counter
+        radius_entity: number.gewitterradar_observation_radius
+        compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
 
 > [!TIP]
-> Das ist die empfohlene native Grundkonfiguration. Weitere `lightning_detection_*`-Helfer müssen bei einer frischen nativen Installation **nicht** eingetragen werden.
+> Dieser Block ist für die **native Integration** gedacht. Die Radius- und Kompass-Entitäten sind die nativen `number.gewitterradar_*`- bzw. `switch.gewitterradar_*`-Entitäten und nicht die alten `input_number.lightning_detection_*`-/`input_boolean.lightning_detection_*`-Helfer.
 
-### Wenn dein Dashboard im Rohkonfigurationseditor bereits mit `views:` beginnt
+### Wenn dein Dashboard mit `views:` beginnt
 
-Dann wird dieselbe Ansicht so eingefügt:
+Im Rohkonfigurationseditor des gesamten Dashboards sieht derselbe Abschnitt so aus:
 
 ```yaml
 views:
@@ -188,57 +191,46 @@ views:
     icon: mdi:weather-lightning
     type: panel
     cards:
-      - type: custom:gewitterradar-card
+      - type: vertical-stack
+        cards:
+          - type: custom:gewitterradar-card
+            counter_entity: sensor.home_lightning_counter
+            radius_entity: number.gewitterradar_observation_radius
+            compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
 
-## Alternative über die Home-Assistant-Oberfläche
+### Über die Home-Assistant-Oberfläche
 
-1. Das gewünschte Dashboard öffnen.
+1. Gewünschtes Dashboard öffnen.
 2. **Dashboard bearbeiten** wählen.
-3. Eine neue Ansicht anlegen.
+3. Neue Ansicht anlegen.
 4. Titel: **Gewitterradar**
 5. Pfad: **gewitterradar**
-6. Ansichtstyp: **Panel / eine Karte**
-7. Optionales Symbol: `mdi:weather-lightning`
-8. In der neuen Ansicht eine **Manuelle Karte** hinzufügen.
-9. Folgenden Inhalt einfügen:
+6. Symbol: `mdi:weather-lightning`
+7. Ansichtstyp: **Panel / eine Karte**
+8. Eine **Manuelle Karte** hinzufügen.
+9. Für die Karte diesen Inhalt verwenden:
 
 ```yaml
-type: custom:gewitterradar-card
+type: vertical-stack
+cards:
+  - type: custom:gewitterradar-card
+    counter_entity: sensor.home_lightning_counter
+    radius_entity: number.gewitterradar_observation_radius
+    compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
 
 ### Falls dein Blitzortung-Zähler anders heißt
 
-Standardmäßig verwendet die Karte:
+Der Beispielblock verwendet:
 
 ```text
 sensor.home_lightning_counter
 ```
 
-Falls deine Blitzortung-Entität einen anderen Namen besitzt, kannst du sie explizit angeben:
+Falls deine Blitzortung-Integration einen anderen Zähler besitzt, ersetze ausschließlich diese Entity-ID durch die tatsächliche Entity deines Systems.
 
-```yaml
-type: custom:gewitterradar-card
-counter_entity: sensor.DEIN_LIGHTNING_COUNTER
-```
-
-<details>
-<summary><strong>Native Entity-IDs explizit eintragen</strong></summary>
-
-<br>
-
-Normalerweise ist das bei einer frischen nativen Installation nicht erforderlich. Falls du die nativen Standard-Entity-IDs bewusst fest in der Karte hinterlegen möchtest, lautet der Block:
-
-```yaml
-type: custom:gewitterradar-card
-counter_entity: sensor.home_lightning_counter
-radius_entity: number.gewitterradar_observation_radius
-compass_mode_entity: switch.gewitterradar_compass_nearest_strike
-```
-
-Home Assistant kann Entity-IDs bei Namenskonflikten automatisch mit einem Suffix versehen. In diesem Fall die tatsächlichen Entity-IDs deines Systems verwenden.
-
-</details>
+Home Assistant kann auch native Gewitterradar-Entity-IDs bei Namenskonflikten mit einem Suffix versehen. In diesem Fall ebenfalls die tatsächlich erzeugte Entity-ID verwenden.
 
 ---
 
@@ -262,12 +254,16 @@ Home Assistant kann Entity-IDs bei Namenskonflikten automatisch mit einem Suffix
 <td>normalerweise <code>device_tracker.gewitterradar</code></td>
 </tr>
 <tr>
-<td><strong>Native Einstellungen</strong></td>
-<td>Sprache, Einheit, Kompass, Radien, Aura und weitere Gewitterradar-Optionen</td>
+<td><strong>Beobachtungsradius</strong></td>
+<td><code>number.gewitterradar_observation_radius</code></td>
+</tr>
+<tr>
+<td><strong>Kompassmodus</strong></td>
+<td><code>switch.gewitterradar_compass_nearest_strike</code></td>
 </tr>
 </table>
 
-Die Standardradien einer frischen nativen Installation sind derzeit:
+Standardradien einer frischen nativen Installation:
 
 - Beobachtung: **200 km**
 - Gewitter: **80 km**
@@ -279,7 +275,7 @@ Die Standardradien einer frischen nativen Installation sind derzeit:
 
 Gewitterradar besitzt ab V4.07 einen eigenen verschiebbaren Referenztracker.
 
-In einer normalen Installation lautet die vorgeschlagene Entity-ID:
+In einer Standardinstallation lautet die vorgeschlagene Entity-ID:
 
 ```text
 device_tracker.gewitterradar
@@ -287,18 +283,18 @@ device_tracker.gewitterradar
 
 Home Assistant kann bei einer bereits belegten Entity-ID einen abweichenden Namen vergeben.
 
-## Für einen festen Heimatstandort
+## Fester Heimatstandort
 
 Wenn Blitzortung.org bereits korrekt auf deinen gewünschten festen Standort eingestellt ist, musst du zunächst nichts ändern.
 
-## Für weltweite bzw. wechselnde Standorte
+## Weltweite bzw. wechselnde Standorte
 
 Wenn Gewitterradar den Referenzort dynamisch verschieben soll:
 
 1. In der **Blitzortung.org-Integration** den Gewitterradar-Tracker einmalig als **Location entity** auswählen.
 2. Danach Standorte direkt in Gewitterradar auswählen oder Koordinaten übernehmen.
 3. Gewitterradar aktualisiert seinen Referenztracker.
-4. Blitzortung.org bleibt für die Datenregion, das Neuabonnement und die Aktualisierungslatenz verantwortlich.
+4. Blitzortung.org bleibt für Datenregion, Neuabonnement und Aktualisierungslatenz verantwortlich.
 
 > [!NOTE]
 > Gewitterradar verändert keine fremden Config Entries und schreibt nicht direkt in Home-Assistant-`.storage`.
@@ -324,7 +320,7 @@ recorder:
 > [!CAUTION]
 > Falls bereits ein `recorder:`-Block vorhanden ist, die Einträge dort ergänzen. **Keinen zweiten `recorder:`-Hauptschlüssel anlegen.**
 
-Die Live-Zustände bleiben für Gewitterradar verfügbar. Bereits gespeicherte historische Daten werden durch diese Änderung nicht automatisch entfernt.
+Die Live-Zustände bleiben für Gewitterradar verfügbar. Bereits gespeicherte historische Daten werden dadurch nicht automatisch entfernt.
 
 Mehr dazu: **[`docs/RECORDER.md`](docs/RECORDER.md)**
 
@@ -345,7 +341,7 @@ Prüfe unter **Einstellungen → Dashboards → Ressourcen**, ob exakt diese Res
 
 Typ: **JavaScript-Modul**.
 
-Danach Browser bzw. Home-Assistant-App vollständig neu laden. Bei Bedarf einen Hard-Reload bzw. Cache-Neuladen durchführen.
+Danach Browser bzw. Home-Assistant-App vollständig neu laden.
 
 </details>
 
@@ -360,9 +356,9 @@ Prüfe zuerst die Blitzortung.org-Integration. Gewitterradar benötigt deren Liv
 geo_location.lightning_strike*
 ```
 
-sowie den zugehörigen Lightning-Counter.
+und den Lightning-Counter.
 
-Wenn dein Counter nicht `sensor.home_lightning_counter` heißt, trage ihn in der Karte explizit über `counter_entity` ein.
+Wenn dein Counter nicht `sensor.home_lightning_counter` heißt, ersetze `counter_entity` in der View durch die tatsächliche Entity-ID.
 
 </details>
 
@@ -378,13 +374,11 @@ Danach Browsercache neu laden.
 </details>
 
 <details>
-<summary><strong>Die Integration ist nach einem Neustart nicht mehr sichtbar</strong></summary>
+<summary><strong>Die Integration ist nach einem Neustart nicht sichtbar</strong></summary>
 
 <br>
 
-Unter **Einstellungen → Geräte & Dienste → Integrationen** nach Gewitterradar suchen und anschließend die Home-Assistant-Protokolle auf Fehler der Domain `gewitterradar` prüfen.
-
-Die native Integration ist als normale Home-Assistant-Service-Integration ausgelegt und muss nach einem vollständigen Neustart sichtbar bleiben.
+Unter **Einstellungen → Geräte & Dienste → Integrationen** nach Gewitterradar suchen und die Home-Assistant-Protokolle auf Fehler der Domain `gewitterradar` prüfen.
 
 </details>
 
@@ -436,7 +430,7 @@ Die native Integration ist als normale Home-Assistant-Service-Integration ausgel
 - persistente Home-Assistant-Einstellungen
 - eigene Number-/Select-/Switch-Entitäten
 - eigener Referenztracker
-- einmalige Legacy-Migration vorhandener `lightning_detection_*`-Werte
+- einmalige Legacy-Migration unterstützter `lightning_detection_*`-Werte
 
 </td>
 </tr>
@@ -451,7 +445,7 @@ Die native Integration ist als normale Home-Assistant-Service-Integration ausgel
 
 <br>
 
-Neben der nativen Integration existiert eine separate Dashboard-/Package-Auslieferung. Sie wird vor allem für bestehende Installationen und definierte Migrations-/Rückfallszenarien weiter gepflegt.
+Neben der nativen Integration existiert eine separate Dashboard-/Package-Auslieferung. Sie wird vor allem für bestehende Installationen sowie definierte Migrations- und Rückfallszenarien weiter gepflegt.
 
 Repository:
 
@@ -532,13 +526,13 @@ Home Assistant vollständig neu starten und anschließend **Gewitterradar** übe
 
 anlegen.
 
-Danach weiterhin die Frontend-Ressource
+Danach die Frontend-Ressource
 
 ```text
 /gewitterradar/gewitterradar.js
 ```
 
-als JavaScript-Modul registrieren und die Dashboard-Ansicht wie oben beschrieben erstellen.
+als JavaScript-Modul registrieren und die View wie oben beschrieben anlegen.
 
 </details>
 
@@ -547,26 +541,11 @@ als JavaScript-Modul registrieren und die Dashboard-Ansicht wie oben beschrieben
 # Dokumentation
 
 <table>
-<tr>
-<td><strong>Installation</strong></td>
-<td><a href="docs/INSTALLATION.md">docs/INSTALLATION.md</a></td>
-</tr>
-<tr>
-<td><strong>Recorder</strong></td>
-<td><a href="docs/RECORDER.md">docs/RECORDER.md</a></td>
-</tr>
-<tr>
-<td><strong>Migration / Rollback</strong></td>
-<td><a href="docs/MIGRATION_AND_ROLLBACK.md">docs/MIGRATION_AND_ROLLBACK.md</a></td>
-</tr>
-<tr>
-<td><strong>Release Notes</strong></td>
-<td><a href="docs/RELEASE_NOTES_V4_07_56.md">docs/RELEASE_NOTES_V4_07_56.md</a></td>
-</tr>
-<tr>
-<td><strong>Real-Install-Erkenntnisse</strong></td>
-<td><a href="docs/REAL_INSTALL_FINDINGS_2026-09-06.md">docs/REAL_INSTALL_FINDINGS_2026-09-06.md</a></td>
-</tr>
+<tr><td><strong>Installation</strong></td><td><a href="docs/INSTALLATION.md">docs/INSTALLATION.md</a></td></tr>
+<tr><td><strong>Recorder</strong></td><td><a href="docs/RECORDER.md">docs/RECORDER.md</a></td></tr>
+<tr><td><strong>Migration / Rollback</strong></td><td><a href="docs/MIGRATION_AND_ROLLBACK.md">docs/MIGRATION_AND_ROLLBACK.md</a></td></tr>
+<tr><td><strong>Release Notes</strong></td><td><a href="docs/RELEASE_NOTES_V4_07_56.md">docs/RELEASE_NOTES_V4_07_56.md</a></td></tr>
+<tr><td><strong>Real-Install-Erkenntnisse</strong></td><td><a href="docs/REAL_INSTALL_FINDINGS_2026-09-06.md">docs/REAL_INSTALL_FINDINGS_2026-09-06.md</a></td></tr>
 </table>
 
 ---
@@ -596,8 +575,6 @@ Verbindliche Schutz-/Prozessdokumente:
 - `docs/ASSET_RETENTION_POLICY.md`
 - `docs/GOLDEN_MASTER_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
-
-Zu den Release-Prüfungen gehören unter anderem Home-Assistant-Laufzeittests, Hassfest, HACS-Validierung, deterministische Builds, Fresh-Install-/Migration-/Rollback-Prüfungen, Browserregressionen sowie Golden-/Geometrie- und Diagnoseverträge.
 
 </details>
 
