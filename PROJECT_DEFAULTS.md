@@ -64,6 +64,35 @@ Verbindliche Detailrichtlinie:
 
 `docs/ASSET_RETENTION_POLICY.md`
 
+## Harte Schutzregel: Diagnosemodus ab V4.07.56
+
+Der mit V4.07.56 auf realen Geräten abgenommene Diagnosemodus ist eine **dauerhaft geschützte Produktfunktion**. Er darf nicht durch Cleanup, Refactoring, Vereinfachung, Dateiverkleinerung oder fehlende aktuelle Nutzung teilweise entfernt, semantisch abgeschwächt oder unbeabsichtigt beschädigt werden.
+
+Geschützt sind insbesondere:
+
+- Master-Diagnosemodus mit pinkem Aktiv-Rahmen;
+- dauerhaft erreichbare, minimier-/maximier- und verschiebbare Diagnose-Konsole;
+- getrennte Zustände für „Childtools ausblenden“ und „Diagnose beenden“;
+- Master-Hard-Stop für sämtliche Childtools und Simulationen;
+- virtuelles Gewitter mit AUS / BEOBACHTUNG / GEWITTER / GEFAHR / GESAMT;
+- 1–5 deterministische virtuelle Gewitterzellen;
+- EXTREM über die vorhandene produktive Extrem-/Violett-Logik;
+- normale Umschaltung Gruppiert / Einzelblitze über die Produktpipeline;
+- Medaillon-Presets LEER / PFEIL / TREND / FREEZE / NORMAL einschließlich Detailsteuerung;
+- Kompass-/Medaillon-Kalibrierung, Geometrie-/Overlay-/Messwerkzeuge, JSON-/Snapshot-/Performance-Diagnose;
+- der Diagnose-Sprachumfang mit 19 Sprachvarianten.
+
+Eine absichtliche Änderung dieses Diagnosevertrags benötigt eine ausdrückliche Benutzerentscheidung, Aktualisierung der Schutzdokumentation und Contract-Tests sowie erneute Abnahme der betroffenen Diagnosebereiche.
+
+Verbindliche Schutzquellen:
+
+- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
+- `tests/contracts/diagnostic-contract-v4.07.56.json`
+- `scripts/verify-diagnostic-contract.mjs`
+- `.github/workflows/diagnostic-contract.yml`
+
+Ein fehlgeschlagener Diagnosevertrag blockiert Freeze, Merge und Release.
+
 ## Repository-Rollen
 
 - `TheDaimos/gewitterradar` — kanonische Produkt- und Entwicklungsquelle.
@@ -132,6 +161,7 @@ Verbindliche Dokumente:
 - `docs/DELIVERY_ARCHITECTURE.md`
 - `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
 - `docs/ASSET_RETENTION_POLICY.md`
+- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
 - `docs/RELEASE_PROCESS.md`
 
 ## Dev-Toolkit
