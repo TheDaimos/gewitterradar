@@ -1,0 +1,96 @@
+name: Source archive snapshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_type:
+        description: Archive type
+        required: true
+        type: choice
+        options:
+          - PRE_MERGE
+          - GOLDEN_MASTER
+      source_ref:
+        description: Branch, tag or commit to archive (for example main)
+        required: true
+        default: main
+        type: string
+      version_label:
+        description: Version/promotion label (for example V4.08)
+        required: true
+        type: string
+  push:
+    branches:
+      - freeze/v4.07.49-final-candidate
+    paths:
+      - 'docs/archive-triggers/V4_07_56_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  create-source-archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch canonical branches and tags
+        run: |
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*' --force --prune
+
+      - name: Resolve archive parameters
+        id: params
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            archive_type='PRE_MERGE'
+            source_ref='refs/remotes/origin/main'
+            version_label='V4.07.56'
+          else
+            archive_type='${{ inputs.archive_type }}'
+            requested='${{ inputs.source_ref }}'
+            version_label='${{ inputs.version_label }}'
+            if git show-ref --verify --quiet "refs/remotes/origin/${requested}"; then
+              source_ref="refs/remotes/origin/${requested}"
+            else
+              source_ref="$requested"
+            fi
+          fi
+          echo "archive_type=$archive_type" >> "$GITHUB_OUTPUT"
+          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "version_label=$version_label" >> "$GITHUB_OUTPUT"
+
+      - name: Create immutable source ZIP and Git bundle
+        id: archive
+        shell: bash
+        run: |
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh \
+            '${{ steps.params.outputs.archive_type }}' \
+            '${{ steps.params.outputs.source_ref }}' \
+            '${{ steps.params.outputs.version_label }}' \
+            dist/source-archives
+
+      - name: Verify archive metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.archive.outputs.zip_path }}'
+          test -s '${{ steps.archive.outputs.bundle_path }}'
+          test -s '${{ steps.archive.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.archive.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.archive.outputs.zip_path }}'
+          git bundle verify '${{ steps.archive.outputs.bundle_path }}'
+
+      - name: Upload immutable source archive set
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.archive_base_name }}
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
