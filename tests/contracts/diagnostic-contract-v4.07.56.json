@@ -1,0 +1,35 @@
+{
+  "contractVersion": 1,
+  "protectedSince": "4.07.56",
+  "acceptedSource": {
+    "filename": "gewitterradar-v4.07.56.js",
+    "sizeBytes": 1955141,
+    "sha256": "249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a",
+    "acceptedOn": "2026-09-16"
+  },
+  "requiredLanguages": [
+    "Deutsch", "English", "Dansk", "Español", "Français", "Nederlands", "Polski", "Português", "Svenska",
+    "Italiano", "Norsk bokmål", "Suomi", "Čeština", "Ελληνικά", "Magyar", "Boarisch", "Plattdüütsch", "Sächs’sch", "Schwäbisch"
+  ],
+  "protectedCapabilities": [
+    "master diagnostic mode",
+    "pink master frame",
+    "persistent movable/minimizable diagnostic console",
+    "hide childtools without stopping simulation",
+    "master hard-stop for every childtool",
+    "virtual storm off/observation/storm/danger/all",
+    "virtual storm 1-5 deterministic cells",
+    "virtual storm EXTREM through production extreme threshold",
+    "normal grouped/individual production pipeline",
+    "medallion LEER/PFEIL/TREND/FREEZE/NORMAL",
+    "medallion arrow/animation/freeze detail controls",
+    "medallion fixed-angle controls",
+    "compass calibration",
+    "medallion calibration",
+    "geometry/overlay diagnostics",
+    "panel geometry table",
+    "JSON export and diagnostic snapshot",
+    "performance test",
+    "19 diagnostic language variants"
+  ]
+}
