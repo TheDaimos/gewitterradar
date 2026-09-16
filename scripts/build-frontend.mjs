@@ -10,7 +10,8 @@ const baselineFrontendSize=1955141;
 const normalizeV40757ToBaseline=text=>text
  .replace('Gewitterradar Card V4.07.57','Gewitterradar Card V4.07.56')
  .replace("const CARD_VERSION = '4.07.57';","const CARD_VERSION = '4.07.56';")
- .replace("const CARD_DISPLAY_VERSION = '4.07.57';","const CARD_DISPLAY_VERSION = '4.07.56';");
+ .replace("const CARD_DISPLAY_VERSION = '4.07.57';","const CARD_DISPLAY_VERSION = '4.07.56';")
+ .replace("const GEWITTERRADAR_BUILD = 'V4.07-RELEASE57-2026-09-16';","const GEWITTERRADAR_BUILD = 'V4.07-TEST56-2026-09-16';");
 export async function expectedPayload(){
  const baseline=JSON.parse(await readFile(resolve(root,'tests/contracts/diagnostic-contract-v4.07.56.json'),'utf8'))?.acceptedSource;
  if(baseline?.sha256!==baselineFrontendSha||baseline?.sizeBytes!==baselineFrontendSize)throw Error('Protected V4.07.56 source contract changed');

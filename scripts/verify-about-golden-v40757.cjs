@@ -24,7 +24,8 @@ assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.07.57';"), 'Exp
 const normalizedFrontend = Buffer.from(frontendText
   .replace('Gewitterradar Card V4.07.57', 'Gewitterradar Card V4.07.56')
   .replace("const CARD_VERSION = '4.07.57';", "const CARD_VERSION = '4.07.56';")
-  .replace("const CARD_DISPLAY_VERSION = '4.07.57';", "const CARD_DISPLAY_VERSION = '4.07.56';"), 'utf8');
+  .replace("const CARD_DISPLAY_VERSION = '4.07.57';", "const CARD_DISPLAY_VERSION = '4.07.56';")
+    .replace("const GEWITTERRADAR_BUILD = 'V4.07-RELEASE57-2026-09-16';", "const GEWITTERRADAR_BUILD = 'V4.07-TEST56-2026-09-16';"), 'utf8');
 const frontendSha = crypto.createHash('sha256').update(normalizedFrontend).digest('hex');
 assert.equal(frontendSha, contract.acceptedFrontend.sha256, 'V4.07.57 About source must differ from V4.07.56 only by version markers');
 
