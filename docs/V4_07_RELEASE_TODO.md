@@ -42,11 +42,12 @@ Diese Datei beschreibt nur noch die tatsächlich verbleibenden Schritte bis zur 
 
 ## Noch offen – formale Release-/Promotion-Schritte
 
-- [ ] `CHANGELOG.md` auf V4.07.56 als aktuellen Kandidatenstand synchronisieren.
-- [ ] `docs/HISTORY.md` auf V4.07.56 ergänzen.
-- [ ] `docs/MILESTONES.md` auf V4.07.56 ergänzen und alte 95-%-Kennung entfernen.
+- [x] `CHANGELOG.md` auf V4.07.56 als aktuellen Kandidatenstand synchronisiert.
+- [x] `docs/HISTORY.md` auf V4.07.56 synchronisiert.
+- [x] `docs/MILESTONES.md` auf V4.07.56 synchronisiert und alte 95-%-Kennung entfernt.
 - [x] `README.md` auf V4.07.56 synchronisiert.
 - [x] `docs/INSTALLATION.md` auf V4.07.56 synchronisiert.
+- [x] `PROJECT_DEFAULTS.md` auf den V4.07.56-Promotionsstand synchronisiert.
 - [x] `docs/RELEASE_NOTES_V4_07_56.md` angelegt.
 - [x] `SHA256SUMS_FRONTEND.txt` um das kanonische V4.07-Paket erweitert.
 - [ ] Letzten vollständigen Shared-Frontend-/Browserlauf auf dem endgültigen Dokumentations-/Prüfsummen-Commit grün bestätigen.
