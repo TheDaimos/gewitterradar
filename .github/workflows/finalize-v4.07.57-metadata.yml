@@ -1,0 +1,85 @@
+name: Finalize Gewitterradar V4.07.57 metadata
+
+on:
+  push:
+    branches:
+      - release/v4.07.57
+    paths:
+      - '.github/workflows/finalize-v4.07.57-metadata.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Finalize release build metadata
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p=Path('frontend/gewitterradar.js')
+          s=p.read_text(encoding='utf-8')
+          old="const GEWITTERRADAR_BUILD = 'V4.07-TEST56-2026-09-16';"
+          new="const GEWITTERRADAR_BUILD = 'V4.07-RELEASE57-2026-09-16';"
+          if s.count(old)!=1: raise SystemExit(f'Expected one old build anchor, found {s.count(old)}')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+
+          b=Path('scripts/build-frontend.mjs')
+          t=b.read_text(encoding='utf-8')
+          needle=".replace(\"const CARD_DISPLAY_VERSION = '4.07.57';\",\"const CARD_DISPLAY_VERSION = '4.07.56';\");"
+          repl=".replace(\"const CARD_DISPLAY_VERSION = '4.07.57';\",\"const CARD_DISPLAY_VERSION = '4.07.56';\")\n .replace(\"const GEWITTERRADAR_BUILD = 'V4.07-RELEASE57-2026-09-16';\",\"const GEWITTERRADAR_BUILD = 'V4.07-TEST56-2026-09-16';\");"
+          if t.count(needle)!=1: raise SystemExit('Build normalization anchor changed')
+          b.write_text(t.replace(needle,repl),encoding='utf-8')
+
+          g=Path('scripts/verify-about-golden-v40757.cjs')
+          u=g.read_text(encoding='utf-8')
+          needle2=".replace(\"const CARD_DISPLAY_VERSION = '4.07.57';\", \"const CARD_DISPLAY_VERSION = '4.07.56';\"), 'utf8');"
+          repl2=".replace(\"const CARD_DISPLAY_VERSION = '4.07.57';\", \"const CARD_DISPLAY_VERSION = '4.07.56';\")\n    .replace(\"const GEWITTERRADAR_BUILD = 'V4.07-RELEASE57-2026-09-16';\", \"const GEWITTERRADAR_BUILD = 'V4.07-TEST56-2026-09-16';\"), 'utf8');"
+          if u.count(needle2)!=1: raise SystemExit('Golden normalization anchor changed')
+          g.write_text(u.replace(needle2,repl2),encoding='utf-8')
+          PY
+
+          sha=$(sha256sum frontend/gewitterradar.js | awk '{print $1}')
+          size=$(wc -c < frontend/gewitterradar.js | tr -d ' ')
+          echo "Final V4.07.57 frontend: ${size} bytes, SHA256 ${sha}"
+          test "$size" = '1955144'
+
+          python - "$sha" "$size" <<'PY'
+          import json,sys
+          from pathlib import Path
+          sha,size=sys.argv[1],int(sys.argv[2])
+          p=Path('tests/contracts/frontend-release-v4.07.57.json')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          data['sha256']=sha
+          data['sizeBytes']=size
+          data['build']='V4.07-RELEASE57-2026-09-16'
+          data['allowedFrontendDelta']='version and build metadata markers only; runtime behavior remains the protected V4.07.56 baseline'
+          p.write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
+          PY
+
+          node scripts/build-frontend.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+
+      - name: Commit finalized metadata payload
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js dashboard/dist/gewitterradar.js SHA256SUMS_FRONTEND.txt scripts/build-frontend.mjs scripts/verify-about-golden-v40757.cjs tests/contracts/frontend-release-v4.07.57.json
+          git commit -m 'release: finalize V4.07.57 build metadata'
+          git push origin HEAD:release/v4.07.57
