@@ -17,7 +17,11 @@ for(const [name,bytes] of packages){
  checks.push(hash(bytes)+'  dashboard/dist/'+name);
 }
 const expectedChecksums=checks.sort().join('\n')+'\n';
-if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChecksums)throw Error('Checksum inventory stale');
+if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChecksums){
+ console.error('Expected package checksum rows:');
+ for(const row of checks.filter(row=>row.includes('_pkg.yaml')).sort())console.error(row);
+ throw Error('Checksum inventory stale');
+}
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
 console.log('PASS: accepted V4.07.56 source baseline, exact delivery parity, 16 referenced assets, 1 retained legacy asset, V4.06 fallback package and canonical V4.07 package parity/checksums.');
