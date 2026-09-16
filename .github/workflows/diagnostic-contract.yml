@@ -1,0 +1,44 @@
+name: Diagnostic contract
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'dashboard/dist/**'
+      - 'scripts/verify-diagnostic-contract.mjs'
+      - 'tests/contracts/**'
+      - 'docs/DIAGNOSTIC_PROTECTION_V4_07_56.md'
+      - 'PROJECT_DEFAULTS.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - '.github/workflows/diagnostic-contract.yml'
+  push:
+    branches:
+      - main
+      - 'freeze/**'
+      - 'frozen/**'
+      - 'feature/**'
+    paths:
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'dashboard/dist/**'
+      - 'scripts/verify-diagnostic-contract.mjs'
+      - 'tests/contracts/**'
+      - 'docs/DIAGNOSTIC_PROTECTION_V4_07_56.md'
+      - 'PROJECT_DEFAULTS.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - '.github/workflows/diagnostic-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-diagnostic-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify protected diagnostic contract
+        run: node scripts/verify-diagnostic-contract.mjs
