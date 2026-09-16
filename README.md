@@ -161,22 +161,51 @@ JavaScript-Modul
 
 Die Installation der Integration erzeugt aktuell **keine Dashboard-Ansicht automatisch**. Die Ansicht wird einmalig von Hand angelegt.
 
-## Empfohlener Weg über die Home-Assistant-Oberfläche
+## Vollständiger Inhalt der Gewitterradar-View
+
+Wenn du den **Rohkonfigurationseditor des Dashboards** verwendest, kannst du diese View direkt übernehmen:
+
+```yaml
+title: Gewitterradar
+path: gewitterradar
+icon: mdi:weather-lightning
+type: panel
+cards:
+  - type: custom:gewitterradar-card
+```
+
+> [!TIP]
+> Das ist die empfohlene native Grundkonfiguration. Weitere `lightning_detection_*`-Helfer müssen bei einer frischen nativen Installation **nicht** eingetragen werden.
+
+### Wenn dein Dashboard im Rohkonfigurationseditor bereits mit `views:` beginnt
+
+Dann wird dieselbe Ansicht so eingefügt:
+
+```yaml
+views:
+  - title: Gewitterradar
+    path: gewitterradar
+    icon: mdi:weather-lightning
+    type: panel
+    cards:
+      - type: custom:gewitterradar-card
+```
+
+## Alternative über die Home-Assistant-Oberfläche
 
 1. Das gewünschte Dashboard öffnen.
 2. **Dashboard bearbeiten** wählen.
 3. Eine neue Ansicht anlegen.
 4. Titel: **Gewitterradar**
-5. Ansichtstyp: **Panel / eine Karte**
-6. Optionales Symbol: `mdi:weather-lightning`
-7. In der neuen Ansicht eine **Manuelle Karte** hinzufügen.
-8. Folgenden Inhalt einfügen:
+5. Pfad: **gewitterradar**
+6. Ansichtstyp: **Panel / eine Karte**
+7. Optionales Symbol: `mdi:weather-lightning`
+8. In der neuen Ansicht eine **Manuelle Karte** hinzufügen.
+9. Folgenden Inhalt einfügen:
 
 ```yaml
 type: custom:gewitterradar-card
 ```
-
-**Das genügt für eine normale native Installation.** Die Karte erkennt die nativen Gewitterradar-Einstellungen automatisch.
 
 ### Falls dein Blitzortung-Zähler anders heißt
 
@@ -193,30 +222,21 @@ type: custom:gewitterradar-card
 counter_entity: sensor.DEIN_LIGHTNING_COUNTER
 ```
 
----
-
 <details>
-<summary><strong>Komplette View als YAML anzeigen</strong></summary>
+<summary><strong>Native Entity-IDs explizit eintragen</strong></summary>
 
 <br>
 
-Wenn du den **Rohkonfigurationseditor des gesamten Dashboards** verwendest, kann die Ansicht beispielsweise so aussehen:
-
-```yaml
-views:
-  - title: Gewitterradar
-    path: gewitterradar
-    icon: mdi:weather-lightning
-    type: panel
-    cards:
-      - type: custom:gewitterradar-card
-```
-
-Wenn du nur eine **Manuelle Karte** bearbeitest, verwendest du dagegen ausschließlich:
+Normalerweise ist das bei einer frischen nativen Installation nicht erforderlich. Falls du die nativen Standard-Entity-IDs bewusst fest in der Karte hinterlegen möchtest, lautet der Block:
 
 ```yaml
 type: custom:gewitterradar-card
+counter_entity: sensor.home_lightning_counter
+radius_entity: number.gewitterradar_observation_radius
+compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
+
+Home Assistant kann Entity-IDs bei Namenskonflikten automatisch mit einem Suffix versehen. In diesem Fall die tatsächlichen Entity-IDs deines Systems verwenden.
 
 </details>
 
