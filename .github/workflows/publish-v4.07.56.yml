@@ -1,0 +1,88 @@
+name: Publish Gewitterradar V4.07.56
+
+on:
+  push:
+    branches:
+      - finalize/v4.07.56-main-promotion
+    paths:
+      - 'docs/archive-triggers/V4_07_56_PUBLISH.trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  publish-v4-07-56:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout publisher branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact release commit and freeze
+        run: |
+          set -euo pipefail
+          expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' '+refs/heads/frozen/v4.07.56:refs/remotes/origin/frozen/v4.07.56' --force
+          main_sha="$(git rev-parse refs/remotes/origin/main^{commit})"
+          frozen_sha="$(git rev-parse refs/remotes/origin/frozen/v4.07.56^{commit})"
+          test "$main_sha" = "$expected"
+          test "$frozen_sha" = "$expected"
+
+      - name: Publish immutable V4.07.56 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
+
+          if gh release view v4.07.56 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            git fetch --force origin refs/tags/v4.07.56:refs/tags/v4.07.56
+            tag_sha="$(git rev-parse refs/tags/v4.07.56^{commit})"
+            test "$tag_sha" = "$expected"
+            echo 'V4.07.56 release already exists and points to the expected commit.'
+            exit 0
+          fi
+
+          cat > /tmp/release-notes.md <<'EOF'
+# Gewitterradar V4.07.56
+
+Finaler, vollständig geprüfter V4.07.56-Release.
+
+## Highlights
+- weltweite Orts-/PLZ-Suche und direkte Koordinateneingabe
+- 19 Sprachvarianten für About/Hilfe
+- vollständig abgenommene Diagnosewerkzeuge einschließlich virtuellem Gewitter, Mehrzellen- und EXTREM-Test
+- geschützte Medaillon-, Kompass- und Diagnosefunktionen
+- deterministischer gemeinsamer Frontend-Build für Integration und Dashboard
+- Hi-Res-/Legacy-Asset-Retention mit fail-closed Schutz
+- vollständige Browserprüfungen für Desktop, iPad und Android
+- HACS-, Hassfest- und Home-Assistant-2026.9.0-Prüfung
+
+## Identität
+- Produktversion: `V4.07.56`
+- Native Integration: `0.19.0`
+- Release-Commit: `6418fd57790efdbb267cc2994f00bb995f40acfd`
+- Frontend SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`
+
+Der Release-Tag, der eingefrorene Rückfallzweig und der geprüfte `main`-Stand verweisen auf denselben freigegebenen Commit.
+EOF
+
+          gh release create v4.07.56 \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$expected" \
+            --title 'Gewitterradar V4.07.56' \
+            --notes-file /tmp/release-notes.md \
+            --latest
+
+      - name: Verify published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
+          git fetch --force origin refs/tags/v4.07.56:refs/tags/v4.07.56
+          tag_sha="$(git rev-parse refs/tags/v4.07.56^{commit})"
+          test "$tag_sha" = "$expected"
+          gh release view v4.07.56 --repo "$GITHUB_REPOSITORY" --json isDraft,isPrerelease,tagName,name --jq 'select(.isDraft == false and .isPrerelease == false and .tagName == "v4.07.56" and .name == "Gewitterradar V4.07.56")' >/dev/null
+          echo "Published V4.07.56 at $expected"
