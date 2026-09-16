@@ -8,6 +8,7 @@ on:
       - 'scripts/build-v40801-cluster-test.mjs'
       - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
       - 'scripts/run-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab-pass2.mjs'
       - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
       - '.github/workflows/v40802-test-package.yml'
       - 'frontend/**'
@@ -30,7 +31,10 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p build
-          node scripts/run-v40802-diagnostic-weather-lab.mjs 2>&1 | tee build/v40802-build.log
+          {
+            node scripts/run-v40802-diagnostic-weather-lab.mjs
+            node scripts/build-v40802-diagnostic-weather-lab-pass2.mjs
+          } 2>&1 | tee build/v40802-build.log
 
       - name: Upload V4.08.02 build diagnostics
         if: always()
@@ -52,11 +56,18 @@ jobs:
           grep -F "V4.08.02-DIAGNOSTIC-WEATHER-LAB-2026-09-16" frontend/gewitterradar.js
           grep -F "diagnostic-lab-density" frontend/gewitterradar.js
           grep -F "diagnostic-lab-age" frontend/gewitterradar.js
+          grep -F "diagnostic-lab-pattern" frontend/gewitterradar.js
           grep -F "diagnostic-lab-boundaries" frontend/gewitterradar.js
           grep -F "diagnostic-cluster-jump-timeout" frontend/gewitterradar.js
           grep -F "_touchStatusClusterBrowseSessionV40802" frontend/gewitterradar.js
+          grep -F "_diagnosticClusterSplitMergeStressV40802" frontend/gewitterradar.js
+          grep -F "_diagnosticInjectStressCellV40802" frontend/gewitterradar.js
+          grep -F "Split/Merge ×10" frontend/gewitterradar.js
+          grep -F "Gefahr-Burst" frontend/gewitterradar.js
+          grep -F "Neue Zellen" frontend/gewitterradar.js
           grep -F "diagnosticBoundaryPosition" frontend/gewitterradar.js
           grep -F "outside:{bearing:318" frontend/gewitterradar.js
+          grep -F "diagnosticPattern:pattern" frontend/gewitterradar.js
           grep -F "precipitation:{prepared:true" frontend/gewitterradar.js
           grep -F "clouds:{prepared:true" frontend/gewitterradar.js
           grep -F "settings-cluster-v40801-toggle" frontend/gewitterradar.js
@@ -79,17 +90,21 @@ jobs:
           - unveränderlicher V4.07.56 Golden Master
           - reproduzierbare V4.08.01 zonenabhängige Cluster-Testlogik
 
-          Neu in V4.08.02:
-          - Diagnose-Cockpit mit einklappbaren Bereichen
-          - Wetter-Labor als gemeinsame Basis für Blitz/Cluster und spätere Wetterebenen
+          Diagnose-/Wetter-Labor:
+          - einklappbare Hauptbereiche, auf kleinen Displays jeweils ein Bereich offen
           - Blitzlast 1x / 5x / 20x
           - Altersprofile gemischt / nur frisch / nur alt
+          - Raumformen Standard / Kompakt / Breit / Linie / Ring / Überlappend / Doppelpunkt
           - Radius-Grenzfälle knapp innen / exakt / knapp außen
           - separates virtuelles Szenario AUSSEN
+          - Split/Merge x10
+          - Gefahr-Burst
+          - neue Zellen in Beobachtung und außerhalb
           - Cluster-Sprung-Sitzung mit 5 s / 10 s / 20 s / unbegrenzt
           - Standard für die Verprobung: 10 s Inaktivität
           - manueller Sitzungsabbruch
           - 20x Render-Stresstest während der Cluster-Sprung-Sitzung
+          - Liveanzeige für Zoom, Cluster-Policy, Index/N und stabile ID
           - Niederschlag und Wolken architektonisch vorbereitet, noch nicht als Produktdarstellung aktiviert
 
           Cluster-Auflösung:
