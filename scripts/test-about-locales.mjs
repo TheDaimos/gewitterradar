@@ -50,7 +50,7 @@ invalid(locales => locales.Dansk = {strings: clone(locales.English.strings)});
 invalid(locales => locales.English.extraGroup = {});
 // Exercise the strict build/verify entry point, not just a separately called validator.
 assert.throws(() => readAboutLocaleModel(source.replace('strings: ABOUT_STRINGS.English,','strings: {},'),externalSource),/About keys differ/);
-assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/module shape changed/);
+assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/External About locale export changed/);
 
 for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes']) {
   const incomplete = clone(model.externalLocales);
