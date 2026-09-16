@@ -1,0 +1,28 @@
+name: Audit Gewitterradar V4.07.57 anchors
+
+on:
+  push:
+    branches:
+      - release/v4.07.57
+    paths:
+      - '.github/workflows/audit-v4.07.57.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Locate current version anchors
+        run: |
+          set -euo pipefail
+          echo '=== V4.07.56 references ==='
+          git grep -n -I -E 'V4\.07\.56|v4\.07\.56|4\.07\.56' -- . || true
+          echo '=== Native integration 0.19.0 references ==='
+          git grep -n -I -F '0.19.0' -- . || true
+          echo '=== Manifest ==='
+          cat custom_components/gewitterradar/manifest.json
