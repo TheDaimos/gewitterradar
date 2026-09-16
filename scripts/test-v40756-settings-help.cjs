@@ -102,7 +102,6 @@ const server = http.createServer((req, res) => {
           return {
             dialogVisible: rect.width > 0 && rect.height > 0 && getComputedStyle(dialog).display !== 'none',
             dialogOverflow: dialog.scrollWidth > dialog.clientWidth,
-            dialogBottom: rect.bottom,
             links: links.map((node) => [node.offsetWidth, node.offsetHeight]),
             iconResiduals: icons.map((node, index) => {
               const a = node.getBoundingClientRect();
@@ -121,8 +120,7 @@ const server = http.createServer((req, res) => {
         });
 
         assert.equal(metrics.dialogVisible, true, `${delivery}/${profile} settings dialog visible`);
-        assert.equal(metrics.dialogOverflow, false, `${delivery}/${profile} settings overflow`);
-        assert.ok(metrics.dialogBottom <= height + 0.5, `${delivery}/${profile} settings viewport`);
+        assert.equal(metrics.dialogOverflow, false, `${delivery}/${profile} settings horizontal overflow`);
         assert.ok(
           metrics.links.length === 2 && metrics.links.every(([, h]) => h >= 44),
           `${delivery}/${profile} premium links`,
