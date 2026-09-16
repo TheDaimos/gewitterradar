@@ -27,7 +27,7 @@ jobs:
       - name: Verify exact green main commit
         run: |
           set -euo pipefail
-          expected='3c7817162f9619837f3be8d2048a79cdb04ca8bb'
+          expected='6418fd57790efdbb267cc2994f00bb995f40acfd'
           actual="$(git rev-parse refs/remotes/origin/main^{commit})"
           test "$actual" = "$expected"
 
