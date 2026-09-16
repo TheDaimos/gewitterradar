@@ -1,122 +1,206 @@
+<div align="center">
+
+<img src="custom_components/gewitterradar/frontend/assets/gewitterradar-brand-icon.png" width="170" alt="Gewitterradar Logo">
+
 # Gewitterradar
 
-**Gewitterradar** ist ein gemeinsames Home-Assistant-Projekt mit zwei Auslieferungsformen:
+### Live-Blitz- und Gewitterdarstellung für Home Assistant
 
-- native Home-Assistant-Integration;
-- Dashboard-/Lovelace-Karte.
+**Native Home-Assistant-Integration · Dashboard-Karte · weltweite Referenzorte · 120-Minuten-Verlauf**
 
-Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
+![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
+![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.07.56-c9a45b)
+![Integration](https://img.shields.io/badge/Integration-0.19.0-c9a45b)
+![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
-**Aktueller abgenommener Produktkandidat:** `2026/09 · V4.07.56`  
-**Native Integration:** `0.19.0`  
-**Öffentliche Rückfallbasis bis zur kontrollierten Promotion:** `2026/09 · V4.06`
+</div>
 
-V4.07.56 ist der vom Benutzer abgenommene gemeinsame Produkt-/Diagnosestand. `main` bleibt bis zur ausdrücklichen Freigabe unverändert; erst nach vollständig grünen Abschlussprüfungen, kontrollierter Promotion und erneuter Prüfung des tatsächlichen neuen `main` wird daraus der öffentliche Release-/Golden-Master-Stand.
+---
 
-## Gemeinsamer V4.07.56-Abschlussstand
+> [!IMPORTANT]
+> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**  
+> Diese README führt deshalb zuerst vollständig durch die native Installation. Die ältere bzw. alternative Dashboard-/Package-Variante findest du weiter unten in einem eigenen Abschnitt.
 
-Die gemeinsame Quelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft die exakte Parität.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-V4.07.56 enthält insbesondere:
+### ⚡ Native Integration
 
-- weltweite Orts-/PLZ-Suche und direkte Koordinateneingabe;
-- gespeicherte Orte;
-- dynamischen Gewitterradar-Bezugsstandort;
-- vollständigen lokalisierten Hilfe-/Hinweisbereich;
-- **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**;
-- den abgenommenen V4.07.54-Normalbetrieb;
-- den dauerhaft geschützten Diagnosemodus aus V4.07.55/V4.07.56 mit virtuellem Gewitter, 1–5 Zellen, EXTREM, Medaillon-, Kalibrier-, Geometrie- und Performance-Werkzeugen.
+**Empfohlen für neue Installationen**
 
-Kanonische Frontendidentität:
+- Installation über HACS als **Integration**
+- Einstellungen direkt als Home-Assistant-Entitäten
+- kein YAML-Helferpaket notwendig
+- eigener Gewitterradar-Referenztracker
+- Dashboard-Karte aus derselben Installation
 
-```text
-Größe:  1.955.141 Bytes
-SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a
-```
+</td>
+<td width="50%" valign="top">
 
-Die native Variante stellt `/gewitterradar/gewitterradar.js` bereit.
+### 🗺️ Datenquelle
 
-Für einen manuellen Dashboard-Test muss der komplette Inhalt von `dashboard/dist/` nach `/config/www/community/gewitterradar-dashboard/` kopiert werden, einschließlich `assets/`, `locales/about-locales.js` und `app_gewitterradar_v4_07_pkg.yaml`. Das V4.07-Paket ersetzt bei aktiver V4.07-Dashboard-Nutzung das V4.06-Paket; beide dürfen nicht parallel geladen werden, weil sie dieselben `lightning_detection_*`-Helfer besitzen. Siehe [Installation](docs/INSTALLATION.md).
+Gewitterradar visualisiert Live-Blitze aus der Home-Assistant-Integration **Blitzortung.org**.
 
-Das verbindliche Versions-/Monatsformat und die Pflichtschritte für Releases stehen in [`docs/RELEASE_PROCESS.md`](docs/RELEASE_PROCESS.md). Der aktuelle Stand wird als `YYYY/MM · Vx.xx`, historische Release-History-Einträge als `Vx.xx · YYYY/MM` angezeigt.
+Gewitterradar ersetzt Blitzortung.org **nicht**. Die Blitzortung-Integration muss deshalb vorhanden und funktionsfähig sein.
 
-## Was die native Integration bereitstellt
+</td>
+</tr>
+</table>
 
-- einen UI Config Flow und einen Config Entry;
-- persistente Einstellungen über `ConfigEntry.options`;
-- typisierten Laufzeitzustand pro Config Entry;
-- native Konfigurationsentitäten für Sprache, Einheit, Kompass, Referenzort, Radien, Aura und weitere Produktoptionen;
-- validierte Reihenfolge und Grenzen für Beobachtungs-, Gewitter- und Gefahrenradius;
-- dynamische `person.*`-/`zone.*`-Referenzorte sowie den Gewitterradar-eigenen Referenztracker;
-- einmalige, nicht-destruktive Migration unterstützter Legacy-Helfer `lightning_detection_*`;
-- package-fähige bzw. package-freie Migrationspfade;
-- dokumentiertes Unload-/Re-Enable-/Rollback-Verhalten.
+## Schnellnavigation
 
-Die native Integration ersetzt nicht die Blitzortung.org-Datenquelle für Live-Blitzereignisse. Ein Gewitterradar-Trackerwechsel bedeutet nicht automatisch, dass Blitzortung seine Datenregion bereits neu abonniert hat.
+**[Installation](#installation--native-integration)** · **[Dashboard einrichten](#dashboard-einrichten)** · **[Ressource registrieren](#4-dashboard-ressource-registrieren)** · **[Blitzortung koppeln](#bezugsstandort-und-blitzortung)** · **[Recorder schützen](#recorder-schutz-empfohlen)** · **[Fehlersuche](#fehlersuche)** · **[Alternative Dashboard-Variante](#alternative-dashboard--package-variante)**
 
-## Zwei Auslieferungsformen, ein gemeinsamer Produktstand
+---
 
-Verbindliche Projektregel:
+# Installation – Native Integration
 
-- Änderungen an Gewitterradar gelten standardmäßig für **Integration und Dashboard**;
-- gemeinsamer Frontend-Code wird nur einmal entwickelt;
-- Dashboard- und Integrationsauslieferung werden daraus deterministisch erzeugt;
-- Abweichungen bei gemeinsamem Frontend, Assets, About-Dialog oder Prüfsummen gelten als Release-Fehler.
+## Voraussetzungen
 
-Besonders geschützt sind:
+Vor der Installation sollten vorhanden sein:
 
-- der abgenommene V4.05-Stand von **„Über Gewitterradar“** einschließlich Widmung „Für Alkje“, Slogan, Hero-/Widmungs-Assets, Recorder-Hinweis, Radien-Semantik und Onboarding-Verhalten;
-- der abgenommene normale UI-/Funktionsstand von V4.07.54;
-- der Diagnosevertrag ab V4.07.56;
-- sämtliche Hi-Res-/Mastergrafiken einschließlich nicht mehr aktiver Legacy-Varianten.
+- Home Assistant
+- HACS
+- die Home-Assistant-Integration **Blitzortung.org** als Live-Datenquelle
 
-Verbindliche Schutzdokumente:
+> [!NOTE]
+> Eine frische native Gewitterradar-Installation benötigt **kein** `lightning_detection_*`-YAML-Package.
 
-- `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
-- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
-- `docs/ASSET_RETENTION_POLICY.md`
-- `docs/GOLDEN_MASTER_POLICY.md`
+---
 
-## Installation
+## 1. Repository in HACS hinzufügen
 
-Die vollständige und verbindliche Anleitung für beide Auslieferungsformen steht in [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
+Öffne in Home Assistant:
 
-### 1. Native Gewitterradar-Integration
+**HACS → Benutzerdefinierte Repositories**
 
-1. Dieses Repository in HACS als benutzerdefiniertes **Integration**-Repository hinzufügen.
-2. **Gewitterradar Integration** installieren.
-3. Home Assistant neu starten, wenn HACS dies verlangt.
-4. **Einstellungen → Geräte & Dienste → Integration hinzufügen** öffnen.
-5. **Gewitterradar** hinzufügen.
-6. Unter **Einstellungen → Dashboards → Ressourcen** `/gewitterradar/gewitterradar.js` als JavaScript-Modul eintragen.
-
-Eine frische native Installation benötigt kein YAML-Helferpaket.
-
-### 2. Dashboard-/Lovelace-Auslieferung
-
-Für die Dashboard-/Lovelace-Auslieferung das abgeleitete Dashboard-Repository installieren:
-
-`TheDaimos/gewitterradar-dashboard`
-
-HACS installiert dessen Modul unter:
+und füge dieses Repository hinzu:
 
 ```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+https://github.com/TheDaimos/gewitterradar
 ```
 
-Das V4.07-Package muss anschließend manuell aus dem HACS-Ordner nach `/config/packages/app_gewitterradar_v4_07_pkg.yaml` kopiert werden. HACS-Dashboard-Repositories können diesen Schritt nicht automatisch ausführen. V4.06- und V4.07-Package dürfen nicht parallel aktiv sein.
+Als Typ auswählen:
 
-### 3. Gewitterradar-View anlegen
+```text
+Integration
+```
 
-**Wichtig:** Weder die native Integration noch der Dashboard-Download erzeugen automatisch eine Home-Assistant-View.
+Anschließend **Gewitterradar Integration** installieren.
 
-Lege eine Panel-Ansicht an und füge eine **Manuelle Karte** mit folgender Minimal-Konfiguration hinzu:
+---
+
+## 2. Home Assistant neu starten
+
+Nach der HACS-Installation Home Assistant vollständig neu starten, wenn HACS bzw. Home Assistant dazu auffordert.
+
+---
+
+## 3. Gewitterradar als Integration hinzufügen
+
+Nach dem Neustart:
+
+**Einstellungen → Geräte & Dienste → Integration hinzufügen**
+
+Nach
+
+```text
+Gewitterradar
+```
+
+suchen und die Integration hinzufügen.
+
+Nach erfolgreicher Einrichtung muss **Gewitterradar** dauerhaft unter
+
+**Einstellungen → Geräte & Dienste → Integrationen**
+
+sichtbar bleiben.
+
+---
+
+## 4. Dashboard-Ressource registrieren
+
+> [!WARNING]
+> Dieser Schritt ist aktuell noch **manuell erforderlich**. Ohne diese Ressource kann Home Assistant die Gewitterradar-Karte nicht laden.
+
+Öffne:
+
+**Einstellungen → Dashboards → Ressourcen**
+
+und füge folgende Ressource hinzu:
+
+```text
+/gewitterradar/gewitterradar.js
+```
+
+Typ:
+
+```text
+JavaScript-Modul
+```
+
+<table>
+<tr>
+<td><strong>URL</strong></td>
+<td><code>/gewitterradar/gewitterradar.js</code></td>
+</tr>
+<tr>
+<td><strong>Typ</strong></td>
+<td><code>JavaScript-Modul</code></td>
+</tr>
+</table>
+
+> [!IMPORTANT]
+> Bei der **nativen Integration** nicht gleichzeitig `/hacsfiles/gewitterradar-dashboard/gewitterradar.js` registrieren. Es darf nur **eine** Gewitterradar-JavaScript-Ressource aktiv sein.
+
+---
+
+# Dashboard einrichten
+
+Die Installation der Integration erzeugt aktuell **keine Dashboard-Ansicht automatisch**. Die Ansicht wird einmalig von Hand angelegt.
+
+## Empfohlener Weg über die Home-Assistant-Oberfläche
+
+1. Das gewünschte Dashboard öffnen.
+2. **Dashboard bearbeiten** wählen.
+3. Eine neue Ansicht anlegen.
+4. Titel: **Gewitterradar**
+5. Ansichtstyp: **Panel / eine Karte**
+6. Optionales Symbol: `mdi:weather-lightning`
+7. In der neuen Ansicht eine **Manuelle Karte** hinzufügen.
+8. Folgenden Inhalt einfügen:
 
 ```yaml
 type: custom:gewitterradar-card
 ```
 
-Vollständiges View-Beispiel:
+**Das genügt für eine normale native Installation.** Die Karte erkennt die nativen Gewitterradar-Einstellungen automatisch.
+
+### Falls dein Blitzortung-Zähler anders heißt
+
+Standardmäßig verwendet die Karte:
+
+```text
+sensor.home_lightning_counter
+```
+
+Falls deine Blitzortung-Entität einen anderen Namen besitzt, kannst du sie explizit angeben:
+
+```yaml
+type: custom:gewitterradar-card
+counter_entity: sensor.DEIN_LIGHTNING_COUNTER
+```
+
+---
+
+<details>
+<summary><strong>Komplette View als YAML anzeigen</strong></summary>
+
+<br>
+
+Wenn du den **Rohkonfigurationseditor des gesamten Dashboards** verwendest, kann die Ansicht beispielsweise so aussehen:
 
 ```yaml
 views:
@@ -128,62 +212,383 @@ views:
       - type: custom:gewitterradar-card
 ```
 
-Falls der Blitzortung-Zähler nicht `sensor.home_lightning_counter` heißt, kann `counter_entity` optional explizit gesetzt werden.
+Wenn du nur eine **Manuelle Karte** bearbeitest, verwendest du dagegen ausschließlich:
 
-### 4. Recorder-Schutz
+```yaml
+type: custom:gewitterradar-card
+```
 
-Der Ausschluss der kurzlebigen Blitzentitäten aus dem Home-Assistant-Recorder wird dringend empfohlen. Die vollständige Konfiguration und Hinweise zum Zusammenführen eines bestehenden `recorder:`-Blocks stehen in [`docs/INSTALLATION.md`](docs/INSTALLATION.md) und [`docs/RECORDER.md`](docs/RECORDER.md).
+</details>
 
-## Bestehende Installationen
+---
 
-Beim ersten nativen Setup können unterstützte gültige Legacy-Helferwerte einmalig importiert werden. Bestehende native Werte haben Vorrang; Legacy-Helfer werden nicht gelöscht oder überschrieben.
+# Was nach der Installation vorhanden sein sollte
 
-Die native Integration löscht bewusst keine fremden oder historischen Home-Assistant-Entity-Registry-Einträge automatisch. Alte nicht verfügbare Automations- oder HACS-Update-Entitäten aus früheren Packages bzw. Repository-Namen müssen erst als wirklich veraltet verifiziert werden.
+<table>
+<tr>
+<td width="35%"><strong>Integration</strong></td>
+<td>Gewitterradar unter <em>Einstellungen → Geräte & Dienste → Integrationen</em></td>
+</tr>
+<tr>
+<td><strong>Frontend-Ressource</strong></td>
+<td><code>/gewitterradar/gewitterradar.js</code></td>
+</tr>
+<tr>
+<td><strong>Kartentyp</strong></td>
+<td><code>custom:gewitterradar-card</code></td>
+</tr>
+<tr>
+<td><strong>Referenztracker</strong></td>
+<td>normalerweise <code>device_tracker.gewitterradar</code></td>
+</tr>
+<tr>
+<td><strong>Native Einstellungen</strong></td>
+<td>Sprache, Einheit, Kompass, Radien, Aura und weitere Gewitterradar-Optionen</td>
+</tr>
+</table>
 
-Siehe [`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md).
+Die Standardradien einer frischen nativen Installation sind derzeit:
 
-## V4.07.56-Finalisierung
+- Beobachtung: **200 km**
+- Gewitter: **80 km**
+- Gefahr: **10 km**
 
-Zum Abschlussstand gehören:
+---
 
-- exakt akzeptierte V4.07.56-Frontendquelle in allen kanonischen Auslieferungspfaden;
-- bytegleiche gemeinsame Frontend-/Locale-/Asset-Payloads;
-- V4.07-Dashboard-Paket als deterministisch gebauter und gehashter Bestandteil;
-- 19-Sprachen-/Help-/Recorder-Verträge;
-- eigener V4.07.56-Golden-/Geometrievertrag;
-- geschützter Diagnosevertrag;
-- automatischer Hi-Res-/Legacy-Retentionsvertrag;
-- Home-Assistant-2026.9.0-Laufzeittest, HACS und Hassfest;
-- PRE-MERGE-/Golden-Master-Prozess ohne Veränderung von `main` vor ausdrücklicher Freigabe.
+# Bezugsstandort und Blitzortung
 
-Die detaillierten Abschlussnotizen stehen in [`docs/RELEASE_NOTES_V4_07_56.md`](docs/RELEASE_NOTES_V4_07_56.md).
+Gewitterradar besitzt ab V4.07 einen eigenen verschiebbaren Referenztracker.
 
-## Validierung
+In einer normalen Installation lautet die vorgeschlagene Entity-ID:
 
-Die Release-Linie wird unabhängig geprüft durch:
+```text
+device_tracker.gewitterradar
+```
 
-- Home-Assistant-Laufzeittests;
-- Hassfest;
-- HACS-Integrationsvalidierung;
-- deterministisches Integration-/Dashboard-Staging;
-- Fresh-Install-, Migration-, Unload-/Re-Enable- und Rollback-Tests;
-- Dashboard-/Frontend-Build- und Asset-Prüfungen;
-- Locale-/Recorder-Sprachaudits;
-- Browserregressionen beider Auslieferungsformen;
-- V4.07.56-Golden-/Geometrievertrag;
-- Diagnose-Contract-Test;
-- Hi-Res-Master-Retentionsvertrag.
+Home Assistant kann bei einer bereits belegten Entity-ID einen abweichenden Namen vergeben.
 
-Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische Packaging-Prüfung ersetzt keinen realen HACS-Installationstest.
+## Für einen festen Heimatstandort
 
-Siehe [`docs/REAL_INSTALL_FINDINGS_2026-09-06.md`](docs/REAL_INSTALL_FINDINGS_2026-09-06.md) für die ersten Real-Install-Erkenntnisse.
+Wenn Blitzortung.org bereits korrekt auf deinen gewünschten festen Standort eingestellt ist, musst du zunächst nichts ändern.
 
-## Licensing and branding
+## Für weltweite bzw. wechselnde Standorte
 
-Except for reserved branding materials and third-party material carrying its own license notice, the source code and documentation are licensed under **GNU GPL Version 3 only (`GPL-3.0-only`)**.
+Wenn Gewitterradar den Referenzort dynamisch verschieben soll:
+
+1. In der **Blitzortung.org-Integration** den Gewitterradar-Tracker einmalig als **Location entity** auswählen.
+2. Danach Standorte direkt in Gewitterradar auswählen oder Koordinaten übernehmen.
+3. Gewitterradar aktualisiert seinen Referenztracker.
+4. Blitzortung.org bleibt für die Datenregion, das Neuabonnement und die Aktualisierungslatenz verantwortlich.
+
+> [!NOTE]
+> Gewitterradar verändert keine fremden Config Entries und schreibt nicht direkt in Home-Assistant-`.storage`.
+
+---
+
+# Recorder-Schutz empfohlen
+
+Blitzortung kann sehr viele kurzlebige Entitäten und Zustandsänderungen erzeugen. Um unnötiges Datenbank- und Backup-Wachstum zu vermeiden, wird empfohlen, diese Live-Daten vom Home-Assistant-Recorder auszunehmen.
+
+In `configuration.yaml`:
+
+```yaml
+recorder:
+  exclude:
+    entity_globs:
+      - "geo_location.lightning_strike*"
+      - "sensor.*_lightning_distance"
+      - "sensor.*_lightning_azimuth"
+      - "sensor.*_lightning_counter"
+```
+
+> [!CAUTION]
+> Falls bereits ein `recorder:`-Block vorhanden ist, die Einträge dort ergänzen. **Keinen zweiten `recorder:`-Hauptschlüssel anlegen.**
+
+Die Live-Zustände bleiben für Gewitterradar verfügbar. Bereits gespeicherte historische Daten werden durch diese Änderung nicht automatisch entfernt.
+
+Mehr dazu: **[`docs/RECORDER.md`](docs/RECORDER.md)**
+
+---
+
+# Fehlersuche
+
+<details>
+<summary><strong>„Custom element doesn't exist: gewitterradar-card“</strong></summary>
+
+<br>
+
+Prüfe unter **Einstellungen → Dashboards → Ressourcen**, ob exakt diese Ressource vorhanden ist:
+
+```text
+/gewitterradar/gewitterradar.js
+```
+
+Typ: **JavaScript-Modul**.
+
+Danach Browser bzw. Home-Assistant-App vollständig neu laden. Bei Bedarf einen Hard-Reload bzw. Cache-Neuladen durchführen.
+
+</details>
+
+<details>
+<summary><strong>Die Karte erscheint, aber es werden keine Live-Blitze angezeigt</strong></summary>
+
+<br>
+
+Prüfe zuerst die Blitzortung.org-Integration. Gewitterradar benötigt deren Live-Entitäten, insbesondere:
+
+```text
+geo_location.lightning_strike*
+```
+
+sowie den zugehörigen Lightning-Counter.
+
+Wenn dein Counter nicht `sensor.home_lightning_counter` heißt, trage ihn in der Karte explizit über `counter_entity` ein.
+
+</details>
+
+<details>
+<summary><strong>Nach einem Update sehe ich weiterhin eine alte Version</strong></summary>
+
+<br>
+
+Prüfe, dass nur **eine** Gewitterradar-JavaScript-Ressource aktiv ist. Alte Test- oder Dashboard-Ressourcen dürfen nicht parallel geladen werden.
+
+Danach Browsercache neu laden.
+
+</details>
+
+<details>
+<summary><strong>Die Integration ist nach einem Neustart nicht mehr sichtbar</strong></summary>
+
+<br>
+
+Unter **Einstellungen → Geräte & Dienste → Integrationen** nach Gewitterradar suchen und anschließend die Home-Assistant-Protokolle auf Fehler der Domain `gewitterradar` prüfen.
+
+Die native Integration ist als normale Home-Assistant-Service-Integration ausgelegt und muss nach einem vollständigen Neustart sichtbar bleiben.
+
+</details>
+
+---
+
+# Funktionen
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🌩️ Gewitterdarstellung
+
+- Live-Blitzpositionen
+- Beobachtungs-, Gewitter- und Gefahrenradius
+- Einzelblitze und dynamische Gruppierung
+- 120-Minuten-Historie
+- Aktivitäts- und Gefahrenanzeige
+
+</td>
+<td width="50%" valign="top">
+
+### 🧭 Navigation und Analyse
+
+- mehrere Kompassdesigns
+- nächster bzw. letzter Blitz
+- Trend-Medaillon
+- weltweite Orts-/PLZ-Suche
+- direkte Koordinateneingabe
+- gespeicherte Orte
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### 🌍 Oberfläche
+
+- Desktop, Tablet und Mobilgeräte
+- 15 Sprachen
+- 4 deutsche Dialektvarianten
+- integrierte Hilfe und Hinweise
+
+</td>
+<td valign="top">
+
+### ⚙️ Native Integration
+
+- persistente Home-Assistant-Einstellungen
+- eigene Number-/Select-/Switch-Entitäten
+- eigener Referenztracker
+- einmalige Legacy-Migration vorhandener `lightning_detection_*`-Werte
+
+</td>
+</tr>
+</table>
+
+---
+
+# Alternative Dashboard-/Package-Variante
+
+<details>
+<summary><strong>Alternative HACS-Dashboard-Auslieferung anzeigen</strong></summary>
+
+<br>
+
+Neben der nativen Integration existiert eine separate Dashboard-/Package-Auslieferung. Sie wird vor allem für bestehende Installationen und definierte Migrations-/Rückfallszenarien weiter gepflegt.
+
+Repository:
+
+```text
+https://github.com/TheDaimos/gewitterradar-dashboard
+```
+
+HACS-Typ:
+
+```text
+Dashboard
+```
+
+JavaScript-Ressource:
+
+```text
+/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+```
+
+Diese Variante benötigt zusätzlich das V4.07-YAML-Package unter `/config/packages/`.
+
+**Für eine neue Installation wird die native Integration oben empfohlen.**
+
+Vollständige Anleitung: **[`docs/INSTALLATION.md`](docs/INSTALLATION.md)**
+
+</details>
+
+---
+
+# Bestehende Installationen und Migration
+
+<details>
+<summary><strong>Hinweise für ältere Gewitterradar-/Package-Installationen</strong></summary>
+
+<br>
+
+Beim ersten nativen Setup können unterstützte gültige `lightning_detection_*`-Legacy-Werte einmalig übernommen werden. Bereits vorhandene native Werte haben Vorrang.
+
+Legacy-Helfer werden nicht automatisch gelöscht oder überschrieben.
+
+Bei älteren Dashboard-Installationen besonders prüfen:
+
+- keine parallelen alten Gewitterradar-JavaScript-Ressourcen;
+- V4.06- und V4.07-Package nicht gleichzeitig aktiv;
+- altes Dashboard-Repository `TheDaimos/gewitterradar` nicht zusätzlich laden;
+- für die separate Dashboard-Auslieferung `TheDaimos/gewitterradar-dashboard` verwenden.
+
+Weitere Informationen: **[`docs/MIGRATION_AND_ROLLBACK.md`](docs/MIGRATION_AND_ROLLBACK.md)**
+
+</details>
+
+---
+
+# Manuelle Installation ohne HACS
+
+<details>
+<summary><strong>Manuelle Installation der nativen Integration anzeigen</strong></summary>
+
+<br>
+
+Den vollständigen Ordner
+
+```text
+custom_components/gewitterradar/
+```
+
+nach
+
+```text
+/config/custom_components/gewitterradar/
+```
+
+kopieren.
+
+Home Assistant vollständig neu starten und anschließend **Gewitterradar** über
+
+**Einstellungen → Geräte & Dienste → Integration hinzufügen**
+
+anlegen.
+
+Danach weiterhin die Frontend-Ressource
+
+```text
+/gewitterradar/gewitterradar.js
+```
+
+als JavaScript-Modul registrieren und die Dashboard-Ansicht wie oben beschrieben erstellen.
+
+</details>
+
+---
+
+# Dokumentation
+
+<table>
+<tr>
+<td><strong>Installation</strong></td>
+<td><a href="docs/INSTALLATION.md">docs/INSTALLATION.md</a></td>
+</tr>
+<tr>
+<td><strong>Recorder</strong></td>
+<td><a href="docs/RECORDER.md">docs/RECORDER.md</a></td>
+</tr>
+<tr>
+<td><strong>Migration / Rollback</strong></td>
+<td><a href="docs/MIGRATION_AND_ROLLBACK.md">docs/MIGRATION_AND_ROLLBACK.md</a></td>
+</tr>
+<tr>
+<td><strong>Release Notes</strong></td>
+<td><a href="docs/RELEASE_NOTES_V4_07_56.md">docs/RELEASE_NOTES_V4_07_56.md</a></td>
+</tr>
+<tr>
+<td><strong>Real-Install-Erkenntnisse</strong></td>
+<td><a href="docs/REAL_INSTALL_FINDINGS_2026-09-06.md">docs/REAL_INSTALL_FINDINGS_2026-09-06.md</a></td>
+</tr>
+</table>
+
+---
+
+<details>
+<summary><strong>Entwicklungs-, Prüf- und Release-Informationen</strong></summary>
+
+<br>
+
+Aktueller abgenommener Produktkandidat: **2026/09 · V4.07.56**  
+Native Integration: **0.19.0**  
+Öffentliche Rückfallbasis bis zur kontrollierten Promotion: **2026/09 · V4.06**
+
+Die gemeinsame Frontendquelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft deren Parität.
+
+Kanonische V4.07.56-Frontendidentität:
+
+```text
+Größe:  1.955.141 Bytes
+SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a
+```
+
+Verbindliche Schutz-/Prozessdokumente:
+
+- `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
+- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
+- `docs/ASSET_RETENTION_POLICY.md`
+- `docs/GOLDEN_MASTER_POLICY.md`
+- `docs/RELEASE_PROCESS.md`
+
+Zu den Release-Prüfungen gehören unter anderem Home-Assistant-Laufzeittests, Hassfest, HACS-Validierung, deterministische Builds, Fresh-Install-/Migration-/Rollback-Prüfungen, Browserregressionen sowie Golden-/Geometrie- und Diagnoseverträge.
+
+</details>
+
+---
+
+# Lizenz und Branding
+
+Der Quellcode und die Dokumentation stehen – mit Ausnahme reservierter Branding-Materialien und separat lizenzierter Drittinhalte – unter **GNU GPL Version 3 only (`GPL-3.0-only`)**.
 
 Copyright © 2026 **Christian Köhler / TheDaimos**.
 
-See [`LICENSE`](LICENSE), [`COPYRIGHT.md`](COPYRIGHT.md), [`AUTHORS.md`](AUTHORS.md) and [`BRANDING.md`](BRANDING.md).
+Siehe [`LICENSE`](LICENSE), [`COPYRIGHT.md`](COPYRIGHT.md), [`AUTHORS.md`](AUTHORS.md) und [`BRANDING.md`](BRANDING.md).
 
-The Gewitterradar name, logos, icons, artwork and visual identity are not licensed under GPL-3.0-only. Forks and derivative projects must use distinct branding unless separate permission has been granted.
+Der Name **Gewitterradar**, Logos, Icons, Grafiken und die visuelle Identität sind nicht Bestandteil der GPL-3.0-only-Freigabe. Forks und abgeleitete Projekte müssen ein eigenes Branding verwenden, sofern keine separate Erlaubnis vorliegt.
