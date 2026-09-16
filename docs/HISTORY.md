@@ -4,15 +4,15 @@ Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen P
 
 ## Zeitachse
 
-Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören deshalb zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4.01 bis V4.06 gehören zur Release-Phase `2026/09`.
+Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4.01 bis V4.06 gehören zur Release-Phase `2026/09`.
 
 Seit V4.06 ist die Monatskennung Teil des verbindlichen Releaseformats: Der aktuelle Stand wird als `YYYY/MM · Vx.xx` dargestellt, historische Einträge als `Vx.xx · YYYY/MM`. Der vollständige Ablauf ist in `docs/RELEASE_PROCESS.md` festgeschrieben.
 
 ## V4.05 · 2026/09 – eingefrorene visuelle Referenz
 
-V4.05 wurde als geschützte visuelle Ausgangsbasis für die weitere Produktkonvergenz eingefroren. Die öffentliche V4.05 führte das Premium-Erlebnis **„Über Gewitterradar“** mit First-Start-Onboarding, wieder aufrufbarem Informationsdialog und der persönlichen Widmung **„Für Alkje“** ein. Besonders geschützt sind außerdem Hero- und Widmungsdarstellung, Radien-Semantik, Recorder-Hinweis sowie das Onboarding-Verhalten.
+V4.05 wurde als geschützte visuelle Ausgangsbasis für die weitere Produktkonvergenz eingefroren. Die öffentliche V4.05 führte das Premium-Erlebnis **„Über Gewitterradar“** mit First-Start-Onboarding, wieder aufrufbarem Informationsdialog und der persönlichen Widmung **„Für Alkje“** ein.
 
-Aus diesem Stand wurden die freigegebenen Premium-Bedienelemente übernommen. Das betrifft insbesondere das metallische Schließen-X und die Schriftrolle für Kopieraktionen. Diese Grafiken werden nicht neu gezeichnet, sondern als freigegebene Originale wiederverwendet.
+Besonders geschützt sind Hero- und Widmungsdarstellung, Slogan, Recorder-Hinweis, Radien-Semantik, Entitätenübersicht und Onboarding-Verhalten. Die freigegebenen Premium-Bedienelemente und Mastergrafiken bleiben als Original- bzw. Legacy-Bestand erhalten.
 
 ## V4.06 · 2026/09 – ein Produkt, zwei Auslieferungsformen
 
@@ -23,93 +23,109 @@ Mit V4.06 wird Gewitterradar fachlich und technisch als ein gemeinsames Produkt 
 
 Abweichungen des gemeinsamen Frontends, der Assets oder der Prüfsummen zwischen beiden Auslieferungsformen gelten als Fehler. Die Build- und Prüfkette rekonstruiert beide Varianten aus derselben Quelle und vergleicht sie bytegenau.
 
-## V4.06 – Internationalisierung und Hilfe
+V4.06 vervollständigte außerdem die Internationalisierung mit **15 Sprachen plus 4 deutschen Dialektvarianten = 19 Sprachvarianten**, den umfangreichen Dialog **„Hilfe & Hinweise“**, die Recorder-Wildcard-Regeln, die Premium-Oberfläche sowie die Geräteabnahme auf Desktop, Android, iPad und iPad Pro.
 
-Der About-/Hilfe-Bereich umfasst **15 Sprachen plus 4 Dialektvarianten – insgesamt 19 Sprachvarianten**. Nicht native Sprachpakete werden als gemeinsames, verzögert geladenes Locale-Modul bereitgestellt. Deutsch und Englisch bleiben direkt verfügbar; unbekannte oder unvollständige Sprachpakete fallen kontrolliert auf Englisch zurück.
-
-Der Dialog **„Hilfe & Hinweise“** erklärt Voraussetzungen, Radien, Referenzstandort, wichtige Funktionen, empfohlene Grundeinstellungen, Fehlerdiagnose und Home-Assistant-Recorder. Die Recorder-Beispiele verwenden Wildcards für mehrere Blitzortungsgeräte bzw. Beobachtungspunkte.
-
-## V4.06 – Premium-Oberfläche und reale Geräteabnahme
-
-Die V4.06-Feinabstimmung wurde wiederholt auf Desktop, Android, iPad und iPad Pro geprüft. Dabei wurden nur gezielte Änderungen vorgenommen; bereits abgenommene Bereiche wurden nicht unnötig umgebaut.
-
-Wesentliche Ergebnisse:
-
-- kräftigere, metallisch schillernde Rahmen für Einstellungen und Hilfe;
-- harmonisierte Premium-Schließen-Schaltflächen;
-- freigegebene Schriftrolle für Recorder-Kopieraktionen;
-- Zahnrad aus der Welcome-Gestaltung auch in Hauptansicht und Hilfe;
-- stabilisierte Icon-Ausrichtung in **„Hilfe & Hinweise“**;
-- vergrößertes Haus-Symbol bei **„Voraussetzungen“**;
-- verbesserte Chevron-Ausrichtung und Abschnittshierarchie;
-- mobile Widmung mit eigenem Hochformat-Textfluss;
-- persönliche Signatur aus den Einstellungen unverändert auch im Welcome-Footer;
-- finale Welcome-Kennung `2026/09 · V4.06 · Gewitterradar · by CK`;
-- Settings-Kennung `2026/09 · V4.06` im unteren linken Freiraum;
-- Release-History-Kopf `2026/09 · V4.06` und datierte Historieneinträge;
-- gerätespezifische Footer-Feinabstimmung für Android sowie iPad/iPad Pro;
-- um etwa 25 % vergrößerte und vertikal zentrierte Wertefelder `70 KM`, `30 KM`, `5 KM`;
-- iPad-/iPad-Pro-Fokusartefakte am About-X und am Dialog selbst beseitigt, ohne das freigegebene X zu verändern.
-
-## V4.06 – griechischer Hochformat-Sonderfall
-
-Bei der realen Android-Hochformatprüfung zeigte die griechische About-Überschrift einen speziellen Layoutfall: Der längere Untertitel kollidierte mit dem darunter platzierten Spruch.
-
-Die griechischen Texte bleiben unverändert. Stattdessen erhält ausschließlich **Griechisch + mobiles Hochformat** einen echten Textfluss im Kopfbereich: Der Spruch folgt dem Untertitel in einer eigenen Grid-Zeile und kann diesen dadurch nicht mehr überdecken. Für diesen Sonderfall wurde zusätzlich eine Browser-Regression eingeführt.
-
-Die anschließende reale Sichtprüfung auf Android im Hochformat wurde erfolgreich abgeschlossen; der korrigierte griechische Kopfbereich ist damit sowohl automatisiert als auch auf dem Zielgerät abgenommen.
-
-## V4.06 – finaler Recorder-Sprachaudit
-
-Nach der Geräteabnahme wurde der Recorder-Bereich nochmals separat über alle **19 registrierten Sprachvarianten** geprüft. Bestätigt wurden exakt vier aktuelle Recorder-Wildcards, die Merge-Anweisung für eine vorhandene `recorder:`-Sektion, der Erhalt der Live-Zustände, das Verhalten vorhandener historischer Daten und die Mehrgeräte-/Mehrbeobachtungspunkt-Unterstützung unabhängig vom Entity-Präfix.
-
-Der Audit ergab keinen erforderlichen Übersetzungsumbau und ist mit `scripts/test-recorder-locales.mjs` als eigener fail-closed CI-Test abgesichert. Details stehen in `docs/RECORDER_LOCALE_AUDIT_V4_06.md`.
-
-## V4.06 – Release History vervollständigt
-
-Die sichtbare Release History enthält ab V4.06 wieder lückenlos die öffentliche V4-Reihe einschließlich der zuvor fehlenden **V4.05**. V4.00 bis V4.06 sind `2026/09` zugeordnet; die sichtbaren V3.x-Entwicklungsmeilensteine sind `2026/08` zugeordnet.
-
-Als nächster Entwicklungswunsch war **V4.07 · PLANNED – Worldwide location search / Weltweite Orts-Suche** vorgemerkt. Diese Planung wurde anschließend auf dem V4.07-Feature-Branch umgesetzt und ist damit historisch überholt; V4.06 selbst bleibt davon unverändert.
+Die sichtbare Release History wurde wieder lückenlos für V4.00 bis V4.06 hergestellt. V4.06 blieb anschließend die öffentliche Rückfallbasis während der Entwicklung von V4.07.
 
 ## V4.07 · 2026/09 – weltweite Standortarchitektur
 
 V4.07 erweitert das gemeinsame Produkt um einen dynamischen Gewitterradar-Bezugsstandort und eine weltweite Ortssuche. Der Standortwechsel bleibt bewusst von der tatsächlichen Blitzdatenregion getrennt: Karte, Radien, Entfernungen, Kompass und Bewertung verwenden den Gewitterradar-Bezugsstandort, während die separat installierte Blitzortung-Integration ihre Datenregion nach eigener Bewegungs- und Abonnementlogik nachführt.
 
-Zum V4.07-Funktionsumfang gehören inzwischen:
+Zum V4.07-Funktionsumfang gehören insbesondere:
 
-- weltweite Orts-/PLZ-Suche mit Open-Meteo und kontrolliertem Nominatim-Rückfall;
-- lokale Länder-Autovervollständigung und Ländergruppierung der Treffer;
+- weltweite Orts-/PLZ-Suche;
+- direkte Koordinateneingabe;
+- Open-Meteo als primäre Geocoding-Quelle mit kontrolliertem Nominatim-Rückfall;
+- lokale Länder-Autovervollständigung, Länderfilter und Gruppierung;
 - Gewitterradar-eigener dynamischer GPS-Tracker;
-- separater Dashboard-Tracker für parallele Testkoexistenz;
+- separater Dashboard-Tracker für die zweite Auslieferungsform;
 - gespeicherte Orte über Local-To-do;
-- `★` Speichern, reversibles `×` Entfernen und `↶` Wiederherstellen;
-- automatische Kartenfokussierung nach `Nutzen`;
+- Speichern, reversibles Entfernen und Wiederherstellen ohne Duplikatbildung;
+- automatische Kartenfokussierung nach Standortübernahme;
 - dokumentierter halbautomatischer Blitzortung-Einrichtungsweg über `Location entity`;
-- DE/EN-Umschalter in der Release History;
-- umfassende Hilfe zu externen Diensten, Firewall-/Netzwerkpfaden und Diagnose;
-- Premium-Hilfe-Icons und deterministische Hervorhebungen für Netzwerk-, Dienst- und Entity-Bezeichner;
-- vollständige V4.07-Sprachmatrix mit 15 Sprachen und 4 deutschen Dialektvarianten.
+- vollständige Hilfe zu externen Diensten, Firewall-/Netzwerkpfaden und Standortarchitektur;
+- vollständige 19-Varianten-Sprachmatrix.
 
-## V4.07.31 – Near-Final-Testkandidat
+## V4.07.31 · 2026/09 – historischer Near-Final-Punkt
 
-Am 14.09.2026 erreicht V4.07 mit **V4.07.31** einen internen Reifegrad von ungefähr **95 %**. Diese Prozentangabe ist eine Projektabschätzung und keine öffentliche Release-Zusage.
+V4.07.31 war am 14.09.2026 ein wichtiger Near-Final-Konsolidierungspunkt. Deutsch und Englisch blieben nativ, 17 weitere Varianten wurden aus dem externen Locale-Modul geladen, und Boarisch, Plattdüütsch, Sächs’sch sowie Schwäbisch wurden von großen Standarddeutsch-Hilfeblöcken bereinigt.
 
-V4.07.31 schließt insbesondere die letzte bekannte strukturelle Lücke in **„Hilfe & Hinweise“**: Deutsch und Englisch bleiben nativ, 17 weitere Varianten werden aus dem externen Locale-Modul geladen, und Boarisch, Plattdüütsch, Sächs’sch sowie Schwäbisch erben keine großen Standarddeutsch-Hilfeblöcke mehr. Ein eigener fail-closed Regressionstest schützt diesen Zustand.
+Die damalige deterministische Identität und die TEST1–TEST31-Entwicklung bleiben in `docs/RELEASE_NOTES_V4_07_31_TEST.md` und `docs/RELEASE_NOTES_V4_07_TEST.md` dokumentiert. V4.07.31 ist **nicht mehr der aktuelle Releasekandidat**.
 
-Deterministische Identität des Near-Final-Kandidaten:
+## V4.07.54 · 2026/09 – abgenommener normaler UI-/Funktionsstand
 
-- Haupt-JavaScript: **1.779.464 Bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`;
-- externes Locale-Modul: **401.387 Bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`;
-- vollständiges Actions-Artefakt `v407-test31-complete`: **2.238.710 Bytes**, ZIP-SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`.
+V4.07.54 wurde als verbindlicher normaler UI-/Funktionsstand abgenommen. Ab diesem Punkt gilt für die V4.07.56-Finalisierung ein harter Funktionsschutz: Karte, Ortssuche, Sprachen, Hilfe, Radien und normale Bedienung werden nicht erneut umgebaut.
 
-Der V4.07.31-spezifische Kandidatenlauf sowie HACS-Integration, Paketvertrag, Hassfest und Home-Assistant-2026.9.0-Laufzeittests sind erfolgreich. Vor einer öffentlichen V4.07-Freigabe bleiben bewusst reale Endgeräte-/Sprachprüfungen, Blitzortung-Datenregions-/Restart-/Latenzprüfungen, Netzwerk-/Filterverprobung soweit verfügbar und der finale Release-Freeze mit synchronisierten Auslieferungsformen offen.
+Zu den abgenommenen Bereichen gehören insbesondere die vollständige Mehrsprachigkeit, Hilfe-/Hinweisstruktur, Ortssuche und Koordinateneingabe, gespeicherte Orte, die akzeptierte Android-Kartenlegende sowie die finale normale Medaillon-/Kompass-/Radien-Darstellung.
 
-Die vollständige Near-Final-Dokumentation steht in `docs/RELEASE_NOTES_V4_07_31_TEST.md`. Die detaillierte TEST1–TEST30-Historie bleibt separat in `docs/RELEASE_NOTES_V4_07_TEST.md` erhalten.
+## V4.07.55/V4.07.56 · 2026/09 – Diagnosewerkzeuge
 
-## Qualitätssicherung und Freeze
+Nach dem normalen Funktions-Freeze wurde ausschließlich der Diagnosebereich erweitert.
 
-V4.06 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprachschema- und Locale-Prüfungen, Recorder-Sprachaudit, Home-Assistant-Laufzeittests, HACS, Hassfest, Paketverträge und reale Geräteabnahme abgesichert.
+V4.07.55 führte den globalen Diagnosemodus mit pinkem Aktiv-Rahmen, dauerhaft erreichbarer Diagnosekonsole, getrenntem Ausblenden der Childtools und Master-Hard-Stop ein. Zusätzlich kamen virtuelle Gewitterszenarien AUS / BEOBACHTUNG / GEWITTER / GEFAHR / GESAMT hinzu.
 
-V4.07 übernimmt diese Grundsätze und ergänzt sie um die deterministische Kandidatenkette, Standort-/Blitzdatenregion-Trennung, Provider-/Netzwerkinventar, Saved-Places-Regressionsschutz sowie die vollständige 19-Varianten-Hilfeprüfung.
+V4.07.56 ergänzte deterministische Mehrzellen-Simulationen mit **1–5 Zellen** und den Schalter **EXTREM**. EXTREM verändert keine Produktgrenzwerte und erzwingt keine Farbe; die synthetischen Blitze werden so erzeugt, dass die bestehende produktive Cluster-/Extrempipeline selbst entscheidet.
 
-V4.06 bleibt bis zum ausdrücklich akzeptierten und eingefrorenen V4.07-Release unverändert die öffentliche Rückfallbasis. Erst der exakt final geprüfte V4.07-Commit darf als Release-Tag/Fallbackpunkt festgeschrieben werden.
+Ebenfalls abgenommen wurden Gruppiert/Einzelblitze, Childtool-Ausblenden, Hard-Teardown und die Medaillon-Zustände **LEER / PFEIL / TREND / FREEZE / NORMAL**.
+
+Dieser Diagnoseumfang ist seitdem dauerhaft geschützt durch:
+
+- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`;
+- `tests/contracts/diagnostic-contract-v4.07.56.json`;
+- `scripts/verify-diagnostic-contract.mjs`;
+- `.github/workflows/diagnostic-contract.yml`.
+
+## V4.07.56 – kanonische akzeptierte Identität
+
+Der abgenommene V4.07.56-Frontendstand besitzt folgende Identität:
+
+- Haupt-JavaScript: **1.955.141 Bytes**;
+- SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
+- externes Locale-Modul SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`;
+- native Integration: **0.19.0**;
+- kanonisches Dashboard-Paket: `app_gewitterradar_v4_07_pkg.yaml`;
+- Dashboard-Paket SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
+
+Integration und Dashboard enthalten bytegleich dieselbe Frontend-/Locale-/Asset-Payload. Das historische V4.06-Paket bleibt als Rückfall-/Migrationsreferenz erhalten, V4.07 wird jedoch als eigener deterministischer Paketbestand gebaut und gehasht.
+
+## V4.07.56 – Golden Master und Browservertrag
+
+Der alte V4.05-Golden-Test bleibt als historische Referenz erhalten. Für V4.07.56 wurde ein eigener Golden-Vertrag eingeführt.
+
+Er schützt:
+
+- die exakte akzeptierte Frontendidentität;
+- sieben feste Darstellungsprofile;
+- Geometrie mit maximal **0,02 px** Toleranz;
+- pixelbezogene Gleichheit von Dashboard und Integration innerhalb desselben CI-Laufs;
+- aktuelle sichtbare Schließen-X-Geometrie bei weiterhin großem 44×44-Touchbereich;
+- passende Desktop- und Touch-Fokus-/Tastaturpfade.
+
+Damit wird V4.07.56 nicht auf die historische V4.05-Dialoggeometrie zurückgezwungen, sondern besitzt eine eigene reproduzierbare Abnahmebasis.
+
+## V4.07.56 – dauerhafter Hi-Res-/Legacy-Schutz
+
+Während der Finalisierung wurde die dauerhafte Aufbewahrung aller Hi-Res-/Mastergrafiken als globale und projektspezifische Regel festgeschrieben.
+
+Geschützte Master dürfen ihren Runtime-Einsatz verlieren, aber nicht stillschweigend gelöscht werden. Git-Historie allein gilt nicht als ausreichendes Archiv. Nicht mehr aktive Master werden bei Bedarf in einen logischen/versionierten Legacy-/Archivbereich verschoben.
+
+Für Gewitterradar existiert zusätzlich ein fail-closed Retentionsvertrag mit aktuell **32 eindeutigen geschützten Master-/Legacy-Inhaltsidentitäten**. Er schützt unter anderem sämtliche bekannten Hilfe-Master, die Premium-Master der weltweiten Ortssuche, frühere Zielvarianten sowie alte About-Schließen-/Kopiergrafiken.
+
+Verbindliche Schutzquellen:
+
+- `docs/ASSET_RETENTION_POLICY.md`;
+- `tests/contracts/hires-asset-retention-v4.07.56.json`;
+- `scripts/verify-hires-asset-retention.mjs`;
+- `.github/workflows/hires-asset-retention.yml`.
+
+## Qualitätssicherung und Promotion
+
+V4.07.56 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprach-/Locale-/Recorder-Prüfungen, V4.07.56-Golden-Vertrag, Diagnosevertrag, Hi-Res-Retentionsvertrag, Home-Assistant-Laufzeittests, HACS, Hassfest und Paketverträge abgesichert.
+
+Der PRE-MERGE-Snapshot des bisherigen `main` wurde bereits gemäß Promotion-Audit erzeugt und außerhalb GitHub gesichert. `main` bleibt jedoch bis zur ausdrücklichen Benutzerfreigabe unverändert.
+
+Nach einer kontrollierten Promotion müssen die relevanten Gates auf dem tatsächlichen neuen `main` erneut vollständig grün sein. Erst danach darf der Golden Master aus genau diesem Commit erzeugt und derselbe Commit öffentlich getaggt/veröffentlicht werden.
+
+Detaillierte Abschlussnotizen: `docs/RELEASE_NOTES_V4_07_56.md`.
+
+Externe Prüfungen des separat installierten Blitzortung-Datenregionswechsels sowie spezieller DNS-/Proxy-/TLS-Inspection-Umgebungen bleiben davon getrennt und werden nicht fälschlich als bereits abgeschlossen dargestellt.
