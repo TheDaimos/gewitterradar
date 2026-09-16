@@ -2,8 +2,8 @@
 
 **Gewitterradar** ist ein gemeinsames Home-Assistant-Projekt mit zwei Auslieferungsformen:
 
-- native Home-Assistant-Integration;
-- Dashboard-/Lovelace-Karte.
+- **native Home-Assistant-Integration** – der empfohlene und primär dokumentierte Installationsweg;
+- **Dashboard-/Lovelace-Karte** – eine separate alternative Auslieferungsform.
 
 Für Entwicklung und Produktpflege gibt es fachlich nur **ein Gewitterradar**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
 
@@ -79,39 +79,45 @@ Verbindliche Schutzdokumente:
 
 ## Installation
 
-### 1. Native Gewitterradar-Integration
+### 1. Empfohlen: Native Gewitterradar-Integration
 
-1. Dieses Repository in HACS als benutzerdefiniertes **Integration**-Repository hinzufügen.
-2. **Gewitterradar Integration** installieren.
-3. Home Assistant neu starten, wenn HACS dies verlangt.
+1. Dieses Repository in HACS als benutzerdefiniertes Repository vom Typ **Integration** hinzufügen:
+
+   ```text
+   https://github.com/TheDaimos/gewitterradar
+   ```
+
+2. **Gewitterradar Integration** in HACS installieren.
+3. Home Assistant vollständig neu starten, wenn HACS dies verlangt.
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen** öffnen.
-5. **Gewitterradar** hinzufügen.
+5. Nach **Gewitterradar** suchen und die Integration hinzufügen.
+6. Nach dem Anlegen des Config Entry Home Assistant vollständig neu starten.
 
-Nach einem vollständigen Home-Assistant-Neustart muss die Integration weiterhin unter **Einstellungen → Geräte & Dienste → Integrationen** sichtbar bleiben.
+Nach dem Neustart muss **Gewitterradar** weiterhin unter **Einstellungen → Geräte & Dienste → Integrationen** sichtbar sein. Die nativen Gewitterradar-Einstellungen und der eigene Referenztracker werden über die Integration bereitgestellt.
 
-### 2. Dashboard-/Lovelace-Auslieferung
+### 2. JavaScript-Ressource der nativen Integration registrieren
 
-Für die Dashboard-/Lovelace-Auslieferung das abgeleitete Dashboard-Repository installieren:
+**Dieser Schritt ist aktuell noch manuell erforderlich.**
 
-`TheDaimos/gewitterradar-dashboard`
-
-HACS installiert dessen Modul unter:
-
-```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
-```
-
-### 3. Nach dem HACS-Download: Gewitterradar-View anlegen
-
-**Wichtig:** Der Download der Dashboard-Karte erzeugt keine Home-Assistant-View automatisch.
-
-Prüfe unter **Einstellungen → Dashboards → Ressourcen**, dass folgende Modulressource vorhanden ist:
+Unter **Einstellungen → Dashboards → Ressourcen** folgende Ressource hinzufügen:
 
 ```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+/gewitterradar/gewitterradar.js
 ```
 
-Lege anschließend eine Dashboard-View an. Ein Beispielstand lautet:
+Ressourcentyp:
+
+```text
+JavaScript-Modul
+```
+
+Für die native Integration **nicht** den Dashboard-Pfad `/hacsfiles/gewitterradar-dashboard/gewitterradar.js` verwenden. Es darf immer nur **eine** Gewitterradar-JavaScript-Ressource aktiv sein.
+
+### 3. Gewitterradar-View anlegen
+
+Die HACS-Installation und der Config Entry erzeugen derzeit noch **keine Dashboard-View automatisch**. Nach der Ressourcenregistrierung muss daher eine Gewitterradar-Ansicht angelegt werden.
+
+Beispiel für die **native Integration**:
 
 ```yaml
 title: Gewitterradar
@@ -123,17 +129,53 @@ cards:
     cards:
       - type: custom:gewitterradar-card
         counter_entity: sensor.home_lightning_counter
-        radius_entity: input_number.lightning_detection_observation_radius
-        compass_mode_entity: input_boolean.lightning_detection_compass_nearest_strike
+        radius_entity: number.gewitterradar_observation_radius
+        compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
 
-Der eigentliche Kartentyp ist:
+Wichtig:
+
+- `number.gewitterradar_observation_radius` stammt aus der nativen Gewitterradar-Integration.
+- `switch.gewitterradar_compass_nearest_strike` stammt aus der nativen Gewitterradar-Integration.
+- `sensor.home_lightning_counter` stammt **nicht** aus Gewitterradar, sondern aus der separat verwendeten Blitzortung-/Blitzdaten-Konfiguration. Falls dieser Sensor auf dem eigenen System anders heißt, muss `counter_entity` entsprechend angepasst werden.
+- Die historischen `input_number.lightning_detection_*`- und `input_boolean.lightning_detection_*`-Entitäten gehören zur Package-/Legacy-Linie und sind **nicht** der Standard für eine frische native Installation.
+
+Wer den vollständigen Dashboard-Rohkonfigurationseditor verwendet, fügt die View unter `views:` ein, zum Beispiel:
 
 ```yaml
-type: custom:gewitterradar-card
+views:
+  - title: Gewitterradar
+    path: gewitterradar
+    icon: mdi:weather-lightning
+    type: panel
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:gewitterradar-card
+            counter_entity: sensor.home_lightning_counter
+            radius_entity: number.gewitterradar_observation_radius
+            compass_mode_entity: switch.gewitterradar_compass_nearest_strike
 ```
 
-Die Beispiel-Entity-IDs stammen aus der Package-/Legacy-Linie. Unterstützte Legacy-Helfer bleiben als Migrations-/Kompatibilitätspfad erhalten.
+### 4. Alternative: separate Dashboard-/Lovelace-Auslieferung
+
+Die separate Dashboard-Auslieferung ist nur erforderlich, wenn bewusst **nicht** die native Ressourcenbereitstellung verwendet werden soll.
+
+Dafür kann das abgeleitete Dashboard-Repository installiert werden:
+
+```text
+TheDaimos/gewitterradar-dashboard
+```
+
+HACS stellt dessen Modul unter folgendem Pfad bereit:
+
+```text
+/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+```
+
+Diese Variante verwendet je nach Installationsstand die Package-/Legacy-Linie mit `lightning_detection_*`-Helfern. Sie darf nicht parallel zur nativen JavaScript-Ressource geladen werden.
+
+Weitere Einzelheiten stehen in [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
 
 ## Bestehende Installationen
 
