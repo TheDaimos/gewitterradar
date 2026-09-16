@@ -10,9 +10,10 @@ export function readExternalAboutLocales(source) {
     throw Error('External About locale module shape changed');
   }
   const context = {};
-  runInNewContext(source.replace(aboutAnchor,'globalThis.externalAboutLocales = ')
-    .replace(helpAnchor,'globalThis.externalHelpLocales = '),context,
-    {timeout:3000,filename:'about-locales.js'});
+  const executable = source.replace(aboutAnchor,'globalThis.externalAboutLocales = ')
+    .replace(helpAnchor,'globalThis.externalHelpLocales = ')
+    .replaceAll('export const ','const ');
+  runInNewContext(executable,context,{timeout:3000,filename:'about-locales.js'});
   if (!context.externalAboutLocales || !context.externalHelpLocales) throw Error('External About/Help locales were not exported');
   return {about:context.externalAboutLocales,help:context.externalHelpLocales};
 }
