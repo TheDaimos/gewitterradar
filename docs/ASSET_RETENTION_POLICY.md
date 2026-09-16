@@ -60,6 +60,30 @@ Insbesondere dauerhaft aufzubewahren sind:
 
 Diese Liste ist nicht abschließend. Die Schutzregel gilt für **alle** bestehenden und zukünftigen Hi-Res-Master.
 
+## Maschinenlesbarer Retentionsvertrag
+
+Ab V4.07.56 wird die Richtlinie zusätzlich fail-closed technisch abgesichert.
+
+Kanonischer Vertrag:
+
+`tests/contracts/hires-asset-retention-v4.07.56.json`
+
+Kanonischer Prüfer:
+
+`node scripts/verify-hires-asset-retention.mjs`
+
+CI-Gate:
+
+`.github/workflows/hires-asset-retention.yml`
+
+Der Vertrag schützt nicht nur Dateipfade, sondern die identifizierten Git-Blobs und damit den konkreten Dateiinhalt. Ein geschützter Master darf deshalb später aus einem aktiven `hires/`-Pfad in einen zugelassenen `legacy/`-/Archivbereich verschoben werden, ohne seinen Schutz zu verlieren. Entscheidend ist, dass derselbe geschützte Inhalt im aktuellen kanonischen Repository weiterhin direkt vorhanden ist.
+
+Runtime-, Paket- oder Derived-Verzeichnisse zählen nicht als Masterarchiv. Eine verkleinerte oder konvertierte Runtime-Datei ersetzt niemals den geschützten Hi-Res-/Masterinhalt.
+
+Der Prüfer arbeitet außerdem fail-closed für neue Master: Taucht in einem geschützten `hires/`-/`legacy/`-Bereich neuer eindeutiger Grafikinhalt auf, der noch nicht im Vertrag registriert ist, schlägt der Test fehl. Der neue Master muss bewusst in den Retentionsvertrag aufgenommen werden. Dadurch werden zukünftige Master automatisch Teil des dauerhaften Schutzmodells und können später nicht unbemerkt verschwinden.
+
+Eine absichtliche Löschung eines bereits registrierten geschützten Inhalts setzt weiterhin die oben definierte ausdrückliche Löschanforderung **und** ausdrückliche Bestätigung voraus; erst danach darf der Vertrag bewusst angepasst werden.
+
 ## Pflichtprüfung vor jedem Merge/Release
 
 Vor jedem Merge in `main` und vor jedem öffentlichen Release muss ein Asset-Audit erfolgen:
@@ -69,7 +93,8 @@ Vor jedem Merge in `main` und vor jedem öffentlichen Release muss ein Asset-Aud
 3. Für jeden nicht mehr aktiven Master nachweisen, dass er weiterhin unter aktivem Artwork oder `legacy/`/`archive/` vorhanden ist.
 4. Prüfen, dass Runtime-Aufräumarbeiten keine Masterdateien mit entfernt haben.
 5. Bei verschobenen Altbeständen sinnvolle Version/Provenienz erhalten.
-6. Fehlt ein Master ohne ausdrücklich dokumentierte Löschfreigabe, ist der Merge/Release **blockiert**.
+6. `node scripts/verify-hires-asset-retention.mjs` erfolgreich ausführen.
+7. Fehlt ein Master ohne ausdrücklich dokumentierte Löschfreigabe oder meldet der Retentionsvertrag einen unregistrierten/verschwundenen Master, ist der Merge/Release **blockiert**.
 
 ## Fail-safe-Regel
 
