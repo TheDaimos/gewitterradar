@@ -79,6 +79,8 @@ Verbindliche Schutzdokumente:
 
 ## Installation
 
+Die vollständige und verbindliche Anleitung für beide Auslieferungsformen steht in [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
+
 ### 1. Native Gewitterradar-Integration
 
 1. Dieses Repository in HACS als benutzerdefiniertes **Integration**-Repository hinzufügen.
@@ -86,8 +88,9 @@ Verbindliche Schutzdokumente:
 3. Home Assistant neu starten, wenn HACS dies verlangt.
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen** öffnen.
 5. **Gewitterradar** hinzufügen.
+6. Unter **Einstellungen → Dashboards → Ressourcen** `/gewitterradar/gewitterradar.js` als JavaScript-Modul eintragen.
 
-Nach einem vollständigen Home-Assistant-Neustart muss die Integration weiterhin unter **Einstellungen → Geräte & Dienste → Integrationen** sichtbar bleiben.
+Eine frische native Installation benötigt kein YAML-Helferpaket.
 
 ### 2. Dashboard-/Lovelace-Auslieferung
 
@@ -101,39 +104,35 @@ HACS installiert dessen Modul unter:
 /hacsfiles/gewitterradar-dashboard/gewitterradar.js
 ```
 
-### 3. Nach dem HACS-Download: Gewitterradar-View anlegen
+Das V4.07-Package muss anschließend manuell aus dem HACS-Ordner nach `/config/packages/app_gewitterradar_v4_07_pkg.yaml` kopiert werden. HACS-Dashboard-Repositories können diesen Schritt nicht automatisch ausführen. V4.06- und V4.07-Package dürfen nicht parallel aktiv sein.
 
-**Wichtig:** Der Download der Dashboard-Karte erzeugt keine Home-Assistant-View automatisch.
+### 3. Gewitterradar-View anlegen
 
-Prüfe unter **Einstellungen → Dashboards → Ressourcen**, dass folgende Modulressource vorhanden ist:
+**Wichtig:** Weder die native Integration noch der Dashboard-Download erzeugen automatisch eine Home-Assistant-View.
 
-```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
-```
-
-Lege anschließend eine Dashboard-View an. Ein Beispielstand lautet:
-
-```yaml
-title: Gewitterradar
-path: gewitterradar
-icon: mdi:weather-lightning
-type: panel
-cards:
-  - type: vertical-stack
-    cards:
-      - type: custom:gewitterradar-card
-        counter_entity: sensor.home_lightning_counter
-        radius_entity: input_number.lightning_detection_observation_radius
-        compass_mode_entity: input_boolean.lightning_detection_compass_nearest_strike
-```
-
-Der eigentliche Kartentyp ist:
+Lege eine Panel-Ansicht an und füge eine **Manuelle Karte** mit folgender Minimal-Konfiguration hinzu:
 
 ```yaml
 type: custom:gewitterradar-card
 ```
 
-Die Beispiel-Entity-IDs stammen aus der Package-/Legacy-Linie. Unterstützte Legacy-Helfer bleiben als Migrations-/Kompatibilitätspfad erhalten.
+Vollständiges View-Beispiel:
+
+```yaml
+views:
+  - title: Gewitterradar
+    path: gewitterradar
+    icon: mdi:weather-lightning
+    type: panel
+    cards:
+      - type: custom:gewitterradar-card
+```
+
+Falls der Blitzortung-Zähler nicht `sensor.home_lightning_counter` heißt, kann `counter_entity` optional explizit gesetzt werden.
+
+### 4. Recorder-Schutz
+
+Der Ausschluss der kurzlebigen Blitzentitäten aus dem Home-Assistant-Recorder wird dringend empfohlen. Die vollständige Konfiguration und Hinweise zum Zusammenführen eines bestehenden `recorder:`-Blocks stehen in [`docs/INSTALLATION.md`](docs/INSTALLATION.md) und [`docs/RECORDER.md`](docs/RECORDER.md).
 
 ## Bestehende Installationen
 
