@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a7"/>
+      <stop offset="0.35" stop-color="#f2c95d"/>
+      <stop offset="0.7" stop-color="#b97919"/>
+      <stop offset="1" stop-color="#6f4308"/>
+    </linearGradient>
+    <linearGradient id="blueMetal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9fbff"/>
+      <stop offset="0.3" stop-color="#8cd9ff"/>
+      <stop offset="0.65" stop-color="#2d8fd3"/>
+      <stop offset="1" stop-color="#174b84"/>
+    </linearGradient>
+    <linearGradient id="redFlight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff7a7e"/>
+      <stop offset="0.45" stop-color="#e83c49"/>
+      <stop offset="1" stop-color="#8d1720"/>
+    </linearGradient>
+  </defs>
+  <circle cx="105" cy="145" r="82" fill="#061625" stroke="#291b07" stroke-width="16"/>
+  <circle cx="105" cy="145" r="79" fill="#081a2a" stroke="url(#gold)" stroke-width="10"/>
+  <circle cx="105" cy="145" r="55" fill="none" stroke="#f5d06f" stroke-width="10"/>
+  <circle cx="105" cy="145" r="31" fill="#0a1320" stroke="#d89c30" stroke-width="8"/>
+  <circle cx="105" cy="145" r="16" fill="#a71622" stroke="#ff5b62" stroke-width="4"/>
+  <circle cx="105" cy="145" r="6" fill="#f13640"/>
+  <path d="M116 135 L184 67" stroke="#071019" stroke-width="17" stroke-linecap="round"/>
+  <path d="M116 135 L184 67" stroke="url(#blueMetal)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M102 149 L116 128 L123 135 Z" fill="url(#blueMetal)" stroke="#d9f5ff" stroke-width="2"/>
+  <path d="M183 69 L177 42 L198 54 L212 34 L216 66 L189 75 Z" fill="url(#redFlight)" stroke="#611018" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M188 61 L207 45" stroke="#ff9da1" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+</svg>

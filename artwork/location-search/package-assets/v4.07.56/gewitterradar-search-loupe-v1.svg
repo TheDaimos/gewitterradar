@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1bd"/>
+      <stop offset="0.22" stop-color="#f6d47a"/>
+      <stop offset="0.5" stop-color="#c58d30"/>
+      <stop offset="0.78" stop-color="#805016"/>
+      <stop offset="1" stop-color="#f0c766"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff5cb"/>
+      <stop offset="0.3" stop-color="#eec86c"/>
+      <stop offset="1" stop-color="#8b5a18"/>
+    </linearGradient>
+    <radialGradient id="glass" cx="34%" cy="28%" r="78%">
+      <stop offset="0" stop-color="#2d6b9b" stop-opacity="0.35"/>
+      <stop offset="0.55" stop-color="#0f2840" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="108" cy="108" r="54" fill="#07121c" stroke="url(#gold)" stroke-width="13"/>
+  <circle cx="108" cy="108" r="42" fill="url(#glass)" stroke="#f3d68d" stroke-width="3" opacity="0.98"/>
+  <path d="M147 148L206 207" fill="none" stroke="#3f2a0e" stroke-width="27" stroke-linecap="round"/>
+  <path d="M147 148L206 207" fill="none" stroke="url(#gold2)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M81 78c10-8 22-12 35-12" fill="none" stroke="#fff4ce" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="108" cy="108" r="62" fill="none" stroke="#513516" stroke-width="2" opacity="0.35"/>
+</svg>
