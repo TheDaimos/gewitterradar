@@ -1,0 +1,62 @@
+name: Create V4.07.56 Golden Master
+
+on:
+  push:
+    branches:
+      - finalize/v4.07.56-main-promotion
+    paths:
+      - 'docs/archive-triggers/V4_07_56_GOLDEN_MASTER.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  golden-master:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch canonical refs
+        run: |
+          set -euo pipefail
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*' --force --prune
+
+      - name: Verify exact green main commit
+        run: |
+          set -euo pipefail
+          expected='3c7817162f9619837f3be8d2048a79cdb04ca8bb'
+          actual="$(git rev-parse refs/remotes/origin/main^{commit})"
+          test "$actual" = "$expected"
+
+      - name: Create Golden Master ZIP and Git bundle
+        id: archive
+        run: |
+          set -euo pipefail
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh \
+            GOLDEN_MASTER \
+            refs/remotes/origin/main \
+            V4.07.56 \
+            dist/source-archives
+
+      - name: Verify Golden Master
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.archive.outputs.zip_path }}'
+          test -s '${{ steps.archive.outputs.bundle_path }}'
+          test -s '${{ steps.archive.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.archive.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.archive.outputs.zip_path }}'
+          git bundle verify '${{ steps.archive.outputs.bundle_path }}'
+
+      - name: Upload immutable Golden Master set
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.archive_base_name }}
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
