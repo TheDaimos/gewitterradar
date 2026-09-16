@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Canonical V4.07.56 frontend contract
+      - name: Canonical V4.07.57 frontend contract
         run: node scripts/verify-frontend.mjs
 
       - name: Deterministic frontend build
@@ -37,10 +37,9 @@ jobs:
       - name: Protected diagnostic contract
         run: node scripts/verify-diagnostic-contract.mjs
 
-      # Historical V4.06 delta/apply/preview, UI-polish and V4.05 golden scripts
-      # stay in the repository as regression material. They are intentionally not
-      # replayed against V4.07.56 because the user-accepted V4.07.56 source is now
-      # the exact canonical baseline.
+      # Historical V4.06/V4.07 regression scripts remain as protected evidence.
+      # V4.07.57 is validated as a version/build-metadata-only patch over the
+      # exact accepted V4.07.56 runtime, diagnostic and geometry baseline.
 
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
@@ -52,11 +51,11 @@ jobs:
       - name: Language onboarding
         run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
-      - name: V4.07.56 Settings and Help profiles
+      - name: V4.07.57 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
-      - name: Accepted V4.07.56 About golden contract
-        run: node scripts/verify-about-golden-v40756.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: V4.07.57 About geometry against protected V4.07.56 golden contract
+        run: node scripts/verify-about-golden-v40757.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Both delivery browser suites
         run: |
