@@ -2,15 +2,17 @@ import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {approvedDelta} from './frontend-delta.mjs';
 import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+const acceptedFrontendSha='249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a';
+const acceptedFrontendSize=1955141;
 export async function expectedPayload(){
- const baseline=await readFile(resolve(root,'tests/fixtures/v4_05/gewitterradar.js'));
- if(hash(baseline)!=='9f594d5c23c5af5bdabf90749eb2639457a4cc14307407e20674036a02565e9b')throw Error('Frozen V4.05 fixture changed');
+ const contract=JSON.parse(await readFile(resolve(root,'tests/contracts/diagnostic-contract-v4.07.56.json'),'utf8'));
+ const accepted=contract?.acceptedSource;
+ if(accepted?.sha256!==acceptedFrontendSha||accepted?.sizeBytes!==acceptedFrontendSize)throw Error('Accepted V4.07.56 source contract changed');
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
- if(source.toString()!==approvedDelta(baseline.toString()))throw Error('Frontend exceeds approved close/copy/DEV delta');
+ if(source.length!==acceptedFrontendSize||hash(source)!==acceptedFrontendSha)throw Error('Frontend differs from accepted V4.07.56 baseline');
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  readAboutLocaleModel(source.toString(),localeSource.toString());
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
@@ -39,6 +41,6 @@ export async function build(){
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
  rows.push(hash(pkg)+'  dashboard/dist/app_gewitterradar_v4_06_pkg.yaml');
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
- console.log('Built one frontend, one lazy About-locale module and 17 common assets into both deliveries. Frozen V4.05 preserved.');
+ console.log('Built accepted V4.07.56 frontend, one lazy About-locale module and 17 common assets into both deliveries. Protected legacy assets preserved.');
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await build();
