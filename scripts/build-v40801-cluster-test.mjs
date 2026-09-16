@@ -76,7 +76,8 @@ replaceOnce(
 // Guardrails: the cluster browser session must remain render-independent.
 for (const required of [
   '_statusClusterBrowseSnapshot',
-  '_statusClusterBrowseIndex',
+  '_statusClusterBrowseActive',
+  '_statusFocusIndex',
   '_resetStatusClusterBrowse()',
   'stabile Weltpixel-ID wiedergefunden'
 ]) {
