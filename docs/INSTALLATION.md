@@ -1,22 +1,25 @@
 # Installation
 
-## HACS-Installation
+## Empfohlener Installationsweg: native Integration
 
-Dieses Repository enthält beide Auslieferungsformen des aktuell abgenommenen Gewitterradar-Produktkandidaten **V4.07.56**: native Integration `0.19.0` und die abgeleitete Dashboard-/Card-Auslieferung.
+Dieses Repository enthält beide Auslieferungsformen des aktuell abgenommenen Gewitterradar-Produktkandidaten **V4.07.56**: die native Integration `0.19.0` und die abgeleitete Dashboard-/Card-Auslieferung.
+
+Für neue Installationen ist die **native Home-Assistant-Integration der primäre und empfohlene Weg**. Die separate Dashboard-/Lovelace-Auslieferung ist eine Alternative und wird weiter unten getrennt beschrieben.
 
 Bis zur kontrollierten Promotion nach `main` und zum öffentlichen Release bleibt V4.06 die öffentliche Rückfallbasis. V4.07.56 wird ausschließlich aus dem exakt geprüften Finalisierungsstand veröffentlicht.
 
-### Native Integration
+## Native Integration über HACS
 
 1. In HACS `https://github.com/TheDaimos/gewitterradar` als benutzerdefiniertes Repository vom Typ **Integration** hinzufügen.
 2. **Gewitterradar Integration** installieren.
-3. Home Assistant neu starten, wenn HACS/Home Assistant dies verlangt.
+3. Home Assistant vollständig neu starten, wenn HACS/Home Assistant dies verlangt.
 4. **Einstellungen → Geräte & Dienste** öffnen.
 5. **Integration hinzufügen** wählen und nach **Gewitterradar** suchen.
 6. Den einzelnen Gewitterradar-Config-Entry anlegen.
-7. `/gewitterradar/gewitterradar.js` als JavaScript-Modul unter **Einstellungen → Dashboards → Ressourcen** eintragen und anschließend eine Karte vom Typ `custom:gewitterradar-card` anlegen.
+7. Home Assistant nach dem Anlegen des Config Entry vollständig neu starten.
+8. Anschließend die JavaScript-Ressource der nativen Integration registrieren und eine Gewitterradar-View anlegen, wie in den folgenden Abschnitten beschrieben.
 
-Die native Integration registriert die separate Dashboard-Ressource nicht automatisch und verändert keine Home-Assistant-`.storage`-Dateien.
+Die native Integration registriert die Dashboard-Ressource aktuell **nicht automatisch** und verändert keine Home-Assistant-`.storage`-Dateien. Die Ressourcenregistrierung ist deshalb momentan noch ein manueller Schritt.
 
 ### Erwartetes Ergebnis nach vollständigem Neustart
 
@@ -25,9 +28,97 @@ Nach dem Anlegen des Config Entry und einem vollständigen Home-Assistant-Neusta
 - der Config Entry ist `loaded`;
 - **Gewitterradar bleibt unter Einstellungen → Geräte & Dienste → Integrationen sichtbar**;
 - die nativen Konfigurationsentitäten und ihre gespeicherten Werte bleiben vorhanden;
+- der Gewitterradar-eigene Referenztracker ist vorhanden;
 - HACS zeigt das Integration-Repository als installiert und nicht mehr als `pending-restart`.
 
 Das Manifest klassifiziert Gewitterradar bewusst als Home-Assistant-Integration vom Typ `service`. Nicht auf `helper` zurückstellen: Home Assistant trennt Helper-Config-Entries in der Oberfläche von normalen Integrationen, wodurch ein technisch korrekt geladener Eintrag scheinbar verschwinden kann.
+
+## JavaScript-Ressource der nativen Integration registrieren
+
+Unter **Einstellungen → Dashboards → Ressourcen** folgende Ressource hinzufügen:
+
+```text
+/gewitterradar/gewitterradar.js
+```
+
+Ressourcentyp:
+
+```text
+JavaScript-Modul
+```
+
+Für eine native Installation gilt:
+
+- **nicht** `/hacsfiles/gewitterradar-dashboard/gewitterradar.js` verwenden;
+- **nicht** zusätzlich eine historische `/hacsfiles/gewitterradar/gewitterradar.js?...`-Ressource aktiv lassen;
+- genau **eine** Gewitterradar-JavaScript-Ressource laden.
+
+Nach dem Speichern der Ressource die Browseransicht bei Bedarf vollständig neu laden.
+
+## Gewitterradar-View für die native Integration anlegen
+
+Die native HACS-Installation und der Config Entry erzeugen derzeit **keine Dashboard-View automatisch**. Nach der Ressourcenregistrierung muss deshalb eine Gewitterradar-Ansicht angelegt werden.
+
+### View-Konfiguration
+
+Wenn nur die einzelne View bearbeitet wird, kann folgender Block verwendet werden:
+
+```yaml
+title: Gewitterradar
+path: gewitterradar
+icon: mdi:weather-lightning
+type: panel
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:gewitterradar-card
+        counter_entity: sensor.home_lightning_counter
+        radius_entity: number.gewitterradar_observation_radius
+        compass_mode_entity: switch.gewitterradar_compass_nearest_strike
+```
+
+Wer stattdessen den vollständigen Dashboard-Rohkonfigurationseditor verwendet, fügt die View unter `views:` ein:
+
+```yaml
+views:
+  - title: Gewitterradar
+    path: gewitterradar
+    icon: mdi:weather-lightning
+    type: panel
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:gewitterradar-card
+            counter_entity: sensor.home_lightning_counter
+            radius_entity: number.gewitterradar_observation_radius
+            compass_mode_entity: switch.gewitterradar_compass_nearest_strike
+```
+
+### Bedeutung der verwendeten Entitäten
+
+Die beiden Konfigurationsentitäten im Beispiel stammen aus der **nativen Gewitterradar-Integration**:
+
+```text
+number.gewitterradar_observation_radius
+switch.gewitterradar_compass_nearest_strike
+```
+
+Der Beispiel-Zähler
+
+```text
+sensor.home_lightning_counter
+```
+
+stammt dagegen **nicht** aus Gewitterradar. Er gehört zur separat verwendeten Blitzortung-/Blitzdaten-Konfiguration. Wenn der Blitz-Zähler auf dem eigenen System eine andere Entity-ID besitzt, muss `counter_entity` entsprechend angepasst werden.
+
+Historische Beispiele mit
+
+```text
+input_number.lightning_detection_*
+input_boolean.lightning_detection_*
+```
+
+gehören zur Package-/Legacy-Linie und sind **nicht** der Standard für eine frische native Installation.
 
 ## Manuelle Installation der nativen Integration
 
@@ -52,9 +143,11 @@ Der Zielordner muss mindestens enthalten:
 ├── __init__.py
 ├── config_flow.py
 ├── const.py
+├── device_tracker.py
 ├── manifest.json
 ├── number.py
 ├── select.py
+├── services.yaml
 ├── strings.json
 ├── switch.py
 ├── frontend/
@@ -69,7 +162,7 @@ Der Zielordner muss mindestens enthalten:
     └── en.json
 ```
 
-Home Assistant neu starten und **Gewitterradar** über **Einstellungen → Geräte & Dienste** hinzufügen.
+Home Assistant neu starten und **Gewitterradar** über **Einstellungen → Geräte & Dienste** hinzufügen. Danach ebenfalls `/gewitterradar/gewitterradar.js` als JavaScript-Modul registrieren und die View wie oben beschrieben anlegen.
 
 ## Fresh-Install-Verhalten
 
@@ -84,6 +177,26 @@ Sind beim ersten nativen Setup unterstützte `lightning_detection_*`-Legacy-Helf
 Die native Integration löscht ebenfalls keine fremden oder historischen Registry-Objekte. Eine nicht verfügbare Automation oder HACS-Update-Entität ist allein kein Beweis, dass der aktuelle Config Entry sie erzeugt hat. Vor einer Entfernung immer Quelle, Config Entry und Repository-ID prüfen.
 
 Siehe [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md).
+
+## Alternative: Dashboard-/Card-Auslieferung
+
+Die separate Dashboard-/Lovelace-Auslieferung ist **nicht zusätzlich erforderlich**, wenn die native Integration mit `/gewitterradar/gewitterradar.js` verwendet wird.
+
+Sie ist nur für Installationen gedacht, die bewusst die abgeleitete Dashboard-Auslieferung einsetzen.
+
+Das zugehörige Repository lautet:
+
+```text
+TheDaimos/gewitterradar-dashboard
+```
+
+Bei einer HACS-Installation dieser Variante liegt die JavaScript-Ressource unter:
+
+```text
+/hacsfiles/gewitterradar-dashboard/gewitterradar.js
+```
+
+Diese Ressource darf nicht parallel zur nativen Ressource `/gewitterradar/gewitterradar.js` aktiv sein.
 
 ## Manuelle Dashboard-/Card-Auslieferung
 
@@ -123,7 +236,7 @@ Das kanonische V4.07-Paket besitzt aktuell die SHA256-Prüfsumme:
 
 Ein vollständiger Home-Assistant-Neustart ist nach Änderungen am Package, an nativem Python-Code oder am Manifest erforderlich.
 
-## JavaScript-Ressource
+## JavaScript-Ressourcen im Überblick
 
 Genau **ein** Gewitterradar-Modul laden:
 
@@ -159,11 +272,13 @@ Nach Installation oder Update eines Kandidaten mindestens prüfen:
 1. vollständigen Home-Assistant-Neustart durchführen;
 2. verifizieren, dass Gewitterradar unter **Geräte & Dienste → Integrationen** sichtbar bleibt;
 3. native Konfigurationsentitäten und Werte prüfen;
-4. dynamische Referenzorte/Tracker ändern und auf Thread-Sicherheitsfehler achten;
-5. weltweite Ortssuche und Koordinateneingabe prüfen;
-6. gespeicherte Orte einschließlich Speichern, Soft-Delete und Wiederherstellen prüfen;
-7. vorhandene Dashboard-/Card-Auslieferung prüfen;
-8. erst danach Rollback-/Re-Update-Szenarien durchführen.
+4. prüfen, dass `/gewitterradar/gewitterradar.js` als einzige Gewitterradar-Ressource registriert ist;
+5. die native Gewitterradar-View mit den `gewitterradar_*`-Entitäten prüfen;
+6. dynamische Referenzorte/Tracker ändern und auf Thread-Sicherheitsfehler achten;
+7. weltweite Ortssuche und Koordinateneingabe prüfen;
+8. gespeicherte Orte einschließlich Speichern, Soft-Delete und Wiederherstellen prüfen;
+9. vorhandene Dashboard-/Card-Auslieferung nur bei bewusst verwendeter Alternativvariante prüfen;
+10. erst danach Rollback-/Re-Update-Szenarien durchführen.
 
 Siehe [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md).
 
@@ -181,7 +296,7 @@ Vor einer öffentlichen Freigabe müssen gegen den exakt vorgesehenen Commit erf
 - Browserprofile für Desktop, Tablet und Mobilgeräte;
 - V4.07.56-Golden-/Geometrievertrag;
 - Diagnosevertrag;
-- Hi-Res-/Legacy-Retentionsvertrag;
+- Hi-Res-Master-Retentionsvertrag;
 - PRE-MERGE-/Golden-Master-Prozess gemäß `docs/GOLDEN_MASTER_POLICY.md`.
 
 Die detaillierten Abschlussnotizen stehen in [`RELEASE_NOTES_V4_07_56.md`](RELEASE_NOTES_V4_07_56.md).
