@@ -1,1 +1,1 @@
-Finalize the user-accepted V4.07.56 promotion candidate, rebuild canonical deliveries, execute protected contracts, and self-remove this one-shot trigger. Retry after locale-alias verifier compatibility fix.
+Finalize the user-accepted V4.07.56 promotion candidate, rebuild canonical deliveries, execute protected contracts, and self-remove this one-shot trigger. Retry after aligning verification with the production V4.07.53 Help bundle.
