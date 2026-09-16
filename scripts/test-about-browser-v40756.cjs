@@ -9,18 +9,35 @@ const source = fs.readFileSync(sourcePath, 'utf8');
 // V4.07.56 intentionally keeps a 44x44 touch target around the premium close
 // artwork. At the narrow reference width that transparent hit area overlaps the
 // slogan by 6px, while the visible 27x27 close artwork does not overlap it.
-// Preserve the historical browser suite and adapt only this obsolete V4.05/V4.06
-// assumption for the accepted V4.07.56 UI.
-const from = "const claimClear=!headerTextBoxes.some(box=>intersects(claimBox,box))&&!intersects(claimBox,d.querySelector('.about-close').getBoundingClientRect());";
-const to = "const closeVisual=d.querySelector('.about-close span')||d.querySelector('.about-close img');const claimClear=!headerTextBoxes.some(box=>intersects(claimBox,box))&&!intersects(claimBox,closeVisual.getBoundingClientRect());";
+// Preserve the historical browser suite and adapt only obsolete V4.05/V4.06
+// assumptions for the accepted V4.07.56 UI.
+const overlapFrom = "const claimClear=!headerTextBoxes.some(box=>intersects(claimBox,box))&&!intersects(claimBox,d.querySelector('.about-close').getBoundingClientRect());";
+const overlapTo = "const closeVisual=d.querySelector('.about-close span')||d.querySelector('.about-close img');const claimClear=!headerTextBoxes.some(box=>intersects(claimBox,box))&&!intersects(claimBox,closeVisual.getBoundingClientRect());";
 
 assert.equal(
-  source.split(from).length,
+  source.split(overlapFrom).length,
   2,
   'Historical About browser overlap anchor changed; review before updating the V4.07.56 wrapper.',
 );
 
-const transformed = source.replace(from, to);
+let transformed = source.replace(overlapFrom, overlapTo);
+
+// The accepted V4.07.56 close control exposes its visible premium artwork through
+// the 27x27 span inside the 44x44 button. The old suite assumed every premium
+// control had to be represented by a direct IMG whose natural width was exactly
+// 256px. Keep that exact IMG contract for the copy control, but validate the
+// actual close visual for the close control while preserving hit area,
+// containment and square-ratio requirements.
+const controlFrom = "const img=button.querySelector('img'),r=button.getBoundingClientRect(),i=img.getBoundingClientRect();\n          return {label:button.getAttribute('aria-label'),hit:[r.width,r.height],visible:img.complete&&img.naturalWidth===256&&i.width>0&&i.height>0,contained:i.left>=r.left&&i.right<=r.right&&i.top>=r.top&&i.bottom<=r.bottom,ratio:i.width/i.height};";
+const controlTo = "const isClose=button.classList.contains('about-close'),img=button.querySelector('img'),visual=isClose?(button.querySelector('span')||img):img,r=button.getBoundingClientRect(),i=visual.getBoundingClientRect(),visualStyle=getComputedStyle(visual);\n          const closeArtworkVisible=isClose&&i.width>0&&i.height>0&&(visualStyle.backgroundImage!=='none'||(img&&img.complete&&img.naturalWidth>0));\n          const imageArtworkVisible=!isClose&&img&&img.complete&&img.naturalWidth===256&&i.width>0&&i.height>0;\n          return {label:button.getAttribute('aria-label'),hit:[r.width,r.height],visible:closeArtworkVisible||imageArtworkVisible,contained:i.left>=r.left&&i.right<=r.right&&i.top>=r.top&&i.bottom<=r.bottom,ratio:i.width/i.height};";
+
+assert.equal(
+  transformed.split(controlFrom).length,
+  2,
+  'Historical premium-control artwork anchor changed; review before updating the V4.07.56 wrapper.',
+);
+transformed = transformed.replace(controlFrom, controlTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
