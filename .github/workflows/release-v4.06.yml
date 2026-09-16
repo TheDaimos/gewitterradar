@@ -1,9 +1,10 @@
-name: Publish Gewitterradar V4.06
+name: Historical Publish Gewitterradar V4.06
 
+# V4.06 is already published and frozen. This historical publisher must never
+# run automatically on later main versions. It remains available only for an
+# explicit manual consistency/recovery run.
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,101 +14,31 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out exact main commit
+      - name: Check out exact requested commit
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Wait for all V4.06 release gates on this exact commit
+      - name: Verify this is the frozen V4.06 commit
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          sha="${GITHUB_SHA}"
-          repo="${GITHUB_REPOSITORY}"
-          deadline=$((SECONDS + 1500))
-          required=(
-            "Validate shared Gewitterradar frontend"
-            "Validate Gewitterradar integration"
-          )
+          git fetch --force origin refs/tags/v4.06:refs/tags/v4.06
+          tag_commit="$(git rev-parse 'refs/tags/v4.06^{commit}')"
+          frozen_commit="$(git ls-remote --heads origin refs/heads/frozen/v4.06 | awk '{print $1}')"
+          test -n "${tag_commit}"
+          test "${tag_commit}" = "${frozen_commit}"
+          echo "Historical V4.06 release/freeze commit: ${tag_commit}"
 
-          while true; do
-            runs="$(gh run list --repo "${repo}" --commit "${sha}" --limit 20 --json name,status,conclusion,headSha)"
-            ready=true
-
-            for workflow in "${required[@]}"; do
-              status="$(jq -r --arg workflow "${workflow}" --arg sha "${sha}" '[.[] | select(.name == $workflow and .headSha == $sha)][0].status // "missing"' <<<"${runs}")"
-              conclusion="$(jq -r --arg workflow "${workflow}" --arg sha "${sha}" '[.[] | select(.name == $workflow and .headSha == $sha)][0].conclusion // ""' <<<"${runs}")"
-              echo "${workflow}: status=${status} conclusion=${conclusion:-pending}"
-
-              case "${conclusion}" in
-                failure|cancelled|timed_out|action_required|stale)
-                  echo "Release gate failed: ${workflow} (${conclusion})" >&2
-                  exit 1
-                  ;;
-              esac
-
-              if [ "${status}" != "completed" ] || [ "${conclusion}" != "success" ]; then
-                ready=false
-              fi
-            done
-
-            if [ "${ready}" = true ]; then
-              break
-            fi
-            if [ "${SECONDS}" -ge "${deadline}" ]; then
-              echo "Timed out waiting for V4.06 release gates on ${sha}" >&2
-              exit 1
-            fi
-            sleep 15
-          done
-
-      - name: Verify V4.06 release metadata
+      - name: Verify V4.06 release metadata from frozen commit
         run: |
           set -euo pipefail
-          grep -Fq 'Status: **Finaler Release-Stand.**' docs/RELEASE_NOTES_V4_06.md
-          grep -Fq '15 Sprachen + 4 Dialektvarianten = 19' docs/RELEASE_NOTES_V4_06.md
-          grep -Fq 'V4.07' docs/MILESTONES.md
-          grep -Fq 'Weltweite Orts-Suche' docs/MILESTONES.md
-          grep -Fq 'YYYY/MM' docs/RELEASE_PROCESS.md
+          v406="$(git rev-parse 'refs/tags/v4.06^{commit}')"
+          git show "${v406}:docs/RELEASE_NOTES_V4_06.md" | grep -Fq 'Status: **Finaler Release-Stand.**'
+          git show "${v406}:docs/RELEASE_NOTES_V4_06.md" | grep -Fq '15 Sprachen + 4 Dialektvarianten = 19'
 
-      - name: Freeze exact V4.06 commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          existing="$(git ls-remote --heads origin refs/heads/frozen/v4.06 | awk '{print $1}')"
-          if [ -n "${existing}" ]; then
-            test "${existing}" = "${GITHUB_SHA}"
-          else
-            git push origin "${GITHUB_SHA}:refs/heads/frozen/v4.06"
-          fi
-
-      - name: Publish immutable V4.06 release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          if gh release view v4.06 --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            git fetch --force origin refs/tags/v4.06:refs/tags/v4.06
-            release_target="$(gh release view v4.06 --repo "${GITHUB_REPOSITORY}" --json targetCommitish --jq '.targetCommitish')"
-            tag_commit="$(git rev-parse 'refs/tags/v4.06^{commit}')"
-            frozen_commit="$(git ls-remote --heads origin refs/heads/frozen/v4.06 | awk '{print $1}')"
-            test "${release_target}" = "${tag_commit}"
-            test "${tag_commit}" = "${GITHUB_SHA}"
-            test "${frozen_commit}" = "${GITHUB_SHA}"
-            echo "V4.06 release already exists and is consistent."
-            exit 0
-          fi
-
-          gh release create v4.06 \
-            --repo "${GITHUB_REPOSITORY}" \
-            --target "${GITHUB_SHA}" \
-            --title "Gewitterradar V4.06" \
-            --notes-file docs/RELEASE_NOTES_V4_06.md \
-            --latest
-
-      - name: Verify published tag, release and freeze agree
+      - name: Verify published V4.06 release remains immutable
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -116,7 +47,6 @@ jobs:
           tag_commit="$(git rev-parse 'refs/tags/v4.06^{commit}')"
           frozen_commit="$(git ls-remote --heads origin refs/heads/frozen/v4.06 | awk '{print $1}')"
           release_target="$(gh release view v4.06 --repo "${GITHUB_REPOSITORY}" --json targetCommitish --jq '.targetCommitish')"
-          test "${tag_commit}" = "${GITHUB_SHA}"
-          test "${frozen_commit}" = "${GITHUB_SHA}"
-          test "${release_target}" = "${GITHUB_SHA}"
-          echo "V4.06 published and frozen at ${GITHUB_SHA}."
+          test "${tag_commit}" = "${frozen_commit}"
+          test "${release_target}" = "${tag_commit}"
+          echo "V4.06 remains published and frozen at ${tag_commit}."
