@@ -1,0 +1,100 @@
+name: V4.08.01 Cluster Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40801-cluster-test.mjs'
+      - '.github/workflows/v40801-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.01 frontend
+        run: node scripts/build-v40801-cluster-test.mjs
+
+      - name: Verify generated frontend copies
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          grep -F "const CARD_VERSION = '4.08.01';" frontend/gewitterradar.js
+          grep -F "V4.08.01-CLUSTER-TEST-2026-09-16" frontend/gewitterradar.js
+          grep -F "settings-cluster-v40801-toggle" frontend/gewitterradar.js
+          grep -F "const inStorm = s.distance != null && s.distance <= stormRadius;" frontend/gewitterradar.js
+          grep -F "_statusClusterBrowseSnapshot" frontend/gewitterradar.js
+
+      - name: Create installable test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40801
+          mkdir -p build/v40801/native/custom_components build/v40801/dashboard
+          cp -a custom_components/gewitterradar build/v40801/native/custom_components/
+          cp -a dashboard/dist/. build/v40801/dashboard/
+          cat > build/v40801/README_V4.08.01_TEST.txt <<'EOF'
+          Gewitterradar V4.08.01 TEST
+          ===========================
+
+          Ausgangsbasis: V4.07.56 Golden Master.
+          Testumfang: zonenabhängige Cluster-Auflösung.
+
+          In der App sichtbar als V4.08.01.
+
+          Verprobung:
+          Einstellungen -> Radien -> "Cluster-Auflösung · V4.08.01 TEST"
+
+          AUS:
+          - exaktes V4.07.56-Verhalten
+          - innerhalb Beobachtungsradius ab Zoom 8 Einzelblitze
+
+          EIN:
+          - Gefahrenradius: immer Einzelblitze
+          - Gewitterradius: bis Zoom 9 Cluster, ab Zoom 10 Einzelblitze
+          - Beobachtungsradius außerhalb Gewitterradius: bis Zoom 11 Cluster, ab Zoom 12 Einzelblitze
+          - außerhalb Beobachtungsradius: unverändert ab Zoom 12 Einzelblitze
+
+          Der Testschalter wird lokal im Browser gespeichert. Ein bewusster Wechsel setzt
+          die Cluster-Browser-Sitzung zurück; normale Renderzyklen sollen die laufende
+          Cluster-Jump-Reihenfolge weiterhin nicht zurücksetzen.
+
+          Native Integration:
+          Den Ordner native/custom_components/gewitterradar nach /config/custom_components/
+          übernehmen und Home Assistant neu starten. Die bestehende Ressourcen-URL
+          /gewitterradar/gewitterradar.js bleibt unverändert.
+
+          Dashboard-Test:
+          Inhalt aus dashboard/ entsprechend der bestehenden Dashboard-Installation nutzen.
+          Nicht gleichzeitig native und Dashboard-JS als zwei Ressourcen laden.
+          EOF
+          (
+            cd build/v40801
+            zip -qr ../Gewitterradar_V4.08.01_TEST.zip .
+          )
+          sha256sum build/Gewitterradar_V4.08.01_TEST.zip | tee build/Gewitterradar_V4.08.01_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40801-frontend.sha256
+
+      - name: Upload V4.08.01 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.01_TEST
+          path: |
+            build/Gewitterradar_V4.08.01_TEST.zip
+            build/Gewitterradar_V4.08.01_TEST.sha256
+            build/gewitterradar-v40801-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
