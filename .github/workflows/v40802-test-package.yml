@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/build-v40801-cluster-test.mjs'
       - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/run-v40802-diagnostic-weather-lab.mjs'
       - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
       - '.github/workflows/v40802-test-package.yml'
       - 'frontend/**'
@@ -29,7 +30,7 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p build
-          node scripts/build-v40802-diagnostic-weather-lab.mjs 2>&1 | tee build/v40802-build.log
+          node scripts/run-v40802-diagnostic-weather-lab.mjs 2>&1 | tee build/v40802-build.log
 
       - name: Upload V4.08.02 build diagnostics
         if: always()
@@ -97,7 +98,7 @@ jobs:
           EIN = zonenabhängige V4.08-Testlogik
 
           Native Integration:
-          native/custom_components/gewitterradar nach /config/custom_components/ übernehmen,
+          native/custom_components/gewitterradar nach /config/custom_components/gewitterradar übernehmen,
           Home Assistant neu starten und die Gewitterradar-Seite vollständig neu laden.
           Ressourcen-URL bleibt /gewitterradar/gewitterradar.js.
 
