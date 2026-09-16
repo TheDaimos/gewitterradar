@@ -26,6 +26,16 @@ function atLeast(version, floor) {
   return true;
 }
 
+function section(source, startMarker, endMarker, label) {
+  const start = source.indexOf(startMarker);
+  const end = start >= 0 ? source.indexOf(endMarker, start + startMarker.length) : -1;
+  if (start < 0 || end < 0) {
+    fail(`missing protected section ${label}`);
+    return '';
+  }
+  return source.slice(start, end);
+}
+
 function verifyContract(source, label, languages) {
   const before = errors.length;
   requireAll(source, [
@@ -89,6 +99,38 @@ function verifyContract(source, label, languages) {
     'diagnostic-visuals-hidden', 'diagnostic-childtools-hidden',
     "querySelectorAll('#diagnostic-exit,#diagnostic-exit-top')"
   ], 'hide/stop separation');
+
+  const bindBlock = section(source, '\n    _bindDiagnosticControls() {', '\n    _startDiagnostics() {', 'diagnostic control binding');
+  requireAll(bindBlock, [
+    "querySelectorAll('[data-diagnostic-storm]')",
+    'diagnostic-storm-cells-minus', 'diagnostic-storm-cells-plus', 'diagnostic-storm-extreme',
+    "getElementById('diagnostic-visuals')",
+    "querySelectorAll('#diagnostic-exit,#diagnostic-exit-top')",
+    "getElementById('diagnostic-minimize')",
+    "addEventListener('pointerdown'", "addEventListener('pointermove'", 'setPointerCapture'
+  ], 'diagnostic control binding');
+
+  const stopBlock = section(source, '\n    _stopDiagnostics() {', '\n    _clampDiagnosticConsole() {', 'master hard-stop');
+  requireAll(stopBlock, [
+    'this._diagnostics.enabled=false', 'this._diagnostics.visualsVisible=true',
+    "this._setDiagnosticVirtualStorm('off',{sync:false,render:false})",
+    'this._diagnostics.virtualStorm.cellCount=1', 'this._diagnostics.virtualStorm.extreme=false',
+    'this._setCompassCalibrationEnabled(false)', 'this._setMedallionCalibrationEnabled(false)',
+    'this._closeCompassCalibrationQuick(false)', 'this._closeMedallionCalibration(false)'
+  ], 'master hard-stop section');
+
+  const virtualBuildBlock = section(source, '\n    _buildDiagnosticVirtualStorm(', '\n    _setDiagnosticVirtualStorm(', 'virtual thunderstorm generator');
+  requireAll(virtualBuildBlock, [
+    "scenario==='all'?['observation','storm','danger']:[scenario]",
+    'Math.max(1,Math.min(5', '_clusterExtremeThreshold(zoom)',
+    'extremeThreshold', 'danger:', 'storm:', 'observation:'
+  ], 'virtual thunderstorm generator');
+
+  const syncBlock = section(source, '\n    _syncDiagnosticUi() {', '\n    _scheduleDiagnosticMeasure()', 'diagnostic UI synchronization');
+  requireAll(syncBlock, [
+    'diagnostic-master-active', 'diagnostic-visuals-hidden', 'diagnostic-childtools-hidden',
+    'diagnostic-console', 'diagnostic-minimize', 'diagnostic-virtual-storm-state'
+  ], 'diagnostic UI synchronization');
 
   const stormStart = source.indexOf('const DIAGNOSTIC_VIRTUAL_STORM_UI =');
   const stormEnd = source.indexOf('const DIAGNOSTIC_MODE_LABEL =', stormStart);
