@@ -55,8 +55,8 @@ jobs:
       - name: V4.07.56 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
-      - name: Capture accepted V4.07.56 About golden baseline
-        run: node scripts/capture-about-golden-v40756.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Accepted V4.07.56 About golden contract
+        run: node scripts/verify-about-golden-v40756.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Both delivery browser suites
         run: |
@@ -64,7 +64,7 @@ jobs:
           chrome=$(node -p "require('playwright').chromium.executablePath()")
           for delivery in dashboard integration; do
             mkdir -p "artwork/acceptance/premium-controls/$delivery"
-            ABOUT_DELIVERY="$delivery" node scripts/test-about-browser.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
+            ABOUT_DELIVERY="$delivery" node scripts/test-about-browser-v40756.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
           done
 
       - uses: actions/upload-artifact@v4
