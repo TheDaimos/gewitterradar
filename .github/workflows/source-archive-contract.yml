@@ -1,0 +1,44 @@
+name: Source archive contract
+
+on:
+  pull_request:
+    paths:
+      - 'docs/GOLDEN_MASTER_POLICY.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'PROJECT_DEFAULTS.md'
+      - 'scripts/create-source-archive.sh'
+      - 'scripts/verify-source-archive-contract.mjs'
+      - 'tests/contracts/source-archive-contract-v1.json'
+      - '.github/workflows/source-archive.yml'
+      - '.github/workflows/source-archive-contract.yml'
+  push:
+    branches:
+      - main
+      - 'freeze/**'
+      - 'frozen/**'
+      - 'feature/**'
+    paths:
+      - 'docs/GOLDEN_MASTER_POLICY.md'
+      - 'docs/RELEASE_PROCESS.md'
+      - 'PROJECT_DEFAULTS.md'
+      - 'scripts/create-source-archive.sh'
+      - 'scripts/verify-source-archive-contract.mjs'
+      - 'tests/contracts/source-archive-contract-v1.json'
+      - '.github/workflows/source-archive.yml'
+      - '.github/workflows/source-archive-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source-archive-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify archive contract
+        run: node scripts/verify-source-archive-contract.mjs
+      - name: Verify archiver shell syntax
+        run: bash -n scripts/create-source-archive.sh
