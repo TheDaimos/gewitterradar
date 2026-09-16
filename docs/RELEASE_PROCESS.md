@@ -35,6 +35,21 @@ Die Release History darf keine veröffentlichte öffentliche Version überspring
 
 Der V4.06-Stand umfasst **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**. Bei zukünftigen Releases ist der tatsächlich unterstützte Sprachumfang im Changelog, in den Release Notes und bei Änderungen am Sprachumfang auch in der Release History abzugleichen.
 
+## Hi-Res-Asset-Aufbewahrung
+
+Die Richtlinie `docs/ASSET_RETENTION_POLICY.md` ist bei **jedem** Merge in `main` und bei **jedem** öffentlichen Release verbindlich.
+
+Vor Freigabe muss ein Asset-Audit mindestens Folgendes prüfen:
+
+- Hi-Res-/Masterbestand von Basis und Kandidat vergleichen;
+- gelöschte, verschobene und umbenannte Master identifizieren;
+- bestätigen, dass nicht mehr aktive Master weiterhin im aktiven Artwork-Bereich oder unter einem logischen/versionierten `legacy/` bzw. `archive/` vorhanden sind;
+- sicherstellen, dass Runtime-/Derived-Aufräumarbeiten keine Hi-Res-Master mit entfernt haben;
+- bei archivierten Altbeständen sinnvolle Versions-/Provenienzangaben erhalten;
+- jeden verschwundenen Master ohne dokumentierte ausdrückliche Löschanforderung **und** ausdrückliche Bestätigung als Release-/Merge-Blocker behandeln.
+
+Nichtverwendung, Ersatz durch eine neue Grafik, Aufräumen, Refactoring, Deduplizierung oder Repository-Verkleinerung sind niemals ausreichende Löschgründe.
+
 ## Release-Gates
 
 Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfungen grün sind. Dazu gehören je nach betroffenem Bereich insbesondere:
@@ -46,6 +61,7 @@ Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfunge
 - Home-Assistant-Laufzeittests;
 - HACS und Hassfest;
 - Paket-/Asset-Verträge und Prüfsummen;
+- **Hi-Res-Master-Audit gemäß `docs/ASSET_RETENTION_POLICY.md`;**
 - reale Geräteabnahme für zuvor als offen markierte Plattform- oder Layoutfälle.
 
 Nach dem erfolgreichen Abschluss wird der exakt geprüfte Commit eingefroren. Bereits veröffentlichte Tags, eingefrorene Releases und Rückfallpunkte werden niemals nachträglich umgeschrieben.
