@@ -1,8 +1,28 @@
 # Changelog
 
+## 2026/09 — V4.07.57 / native integration 0.19.1
+
+### Documentation and installation
+
+- Rework the canonical README into a visually structured, integration-first installation guide with logo, badges, clear navigation, callouts and troubleshooting.
+- Put the native HACS installation path first and document the required `/gewitterradar/gewitterradar.js` JavaScript module prominently.
+- Add the complete copy-ready native Dashboard View including `vertical-stack`, Blitzortung counter, native radius entity and native compass-mode entity.
+- Clarify the difference between a complete View, a whole-dashboard `views:` block and the content of a Manual card.
+- Document the Gewitterradar reference tracker, Blitzortung `Location entity` coupling and Recorder protection in the main entry documentation.
+- Mirror the same readable installation structure in `TheDaimos/gewitterradar-dashboard`, adapted to HACS Dashboard delivery and the V4.07 helper package.
+
+### Release integrity
+
+- Product version: **V4.07.57**.
+- Native Integration: **0.19.1**.
+- Build metadata: `V4.07-RELEASE57-2026-09-16`.
+- Frontend: **1.955.144 Bytes**, SHA256 `ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571`.
+- Runtime logic remains the protected V4.07.56 baseline. After normalizing only the version/build metadata markers, the frontend reproduces the exact V4.07.56 SHA256 `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`.
+- V4.07 Dashboard package remains unchanged with SHA256 `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
+
 ## 2026/09 — V4.07.56 FINAL CANDIDATE / native integration 0.19.0
 
-> **Noch nicht öffentlich veröffentlicht.** V4.07.56 ist der vom Benutzer abgenommene gemeinsame Produkt-/Diagnosestand. Die kontrollierte Promotion nach `main`, der post-merge Golden Master sowie der öffentliche Tag/HACS-/GitHub-Release stehen noch aus. V4.06 bleibt bis dahin die öffentliche Rückfallbasis.
+> **Historischer Abschlussstand.** V4.07.56 wurde am 16.09.2026 veröffentlicht und bildet die geschützte Laufzeit-/Diagnosebasis für V4.07.57.
 
 ### Added
 

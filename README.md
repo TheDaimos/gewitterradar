@@ -10,8 +10,8 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.07.56-c9a45b)
-![Integration](https://img.shields.io/badge/Integration-0.19.0-c9a45b)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.07.57-c9a45b)
+![Integration](https://img.shields.io/badge/Integration-0.19.1-c9a45b)
 ![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
 </div>
@@ -544,7 +544,7 @@ als JavaScript-Modul registrieren und die View wie oben beschrieben anlegen.
 <tr><td><strong>Installation</strong></td><td><a href="docs/INSTALLATION.md">docs/INSTALLATION.md</a></td></tr>
 <tr><td><strong>Recorder</strong></td><td><a href="docs/RECORDER.md">docs/RECORDER.md</a></td></tr>
 <tr><td><strong>Migration / Rollback</strong></td><td><a href="docs/MIGRATION_AND_ROLLBACK.md">docs/MIGRATION_AND_ROLLBACK.md</a></td></tr>
-<tr><td><strong>Release Notes</strong></td><td><a href="docs/RELEASE_NOTES_V4_07_56.md">docs/RELEASE_NOTES_V4_07_56.md</a></td></tr>
+<tr><td><strong>Release Notes</strong></td><td><a href="docs/RELEASE_NOTES_V4_07_57.md">docs/RELEASE_NOTES_V4_07_57.md</a></td></tr>
 <tr><td><strong>Real-Install-Erkenntnisse</strong></td><td><a href="docs/REAL_INSTALL_FINDINGS_2026-09-06.md">docs/REAL_INSTALL_FINDINGS_2026-09-06.md</a></td></tr>
 </table>
 
@@ -555,17 +555,19 @@ als JavaScript-Modul registrieren und die View wie oben beschrieben anlegen.
 
 <br>
 
-Aktueller abgenommener Produktkandidat: **2026/09 · V4.07.56**  
-Native Integration: **0.19.0**  
-Öffentliche Rückfallbasis bis zur kontrollierten Promotion: **2026/09 · V4.06**
+Aktueller öffentlicher Produktstand: **2026/09 · V4.07.57**  
+Native Integration: **0.19.1**  
+Geschützte Laufzeitbasis: **2026/09 · V4.07.56**
 
 Die gemeinsame Frontendquelle liegt in `frontend/`. `node scripts/build-frontend.mjs` erzeugt identische Frontend-Payloads für Integration und Dashboard; `node scripts/verify-frontend.mjs` prüft deren Parität.
 
-Kanonische V4.07.56-Frontendidentität:
+Kanonische V4.07.57-Frontendidentität:
 
 ```text
-Größe:  1.955.141 Bytes
-SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a
+Größe:  1.955.144 Bytes
+SHA256: ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571
+
+Laufzeitschutz: Nach Rücknormalisierung der Versions-/Build-Metadatenanker ist der Frontendinhalt exakt identisch mit der geschützten V4.07.56-Basis (`249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`).
 ```
 
 Verbindliche Schutz-/Prozessdokumente:

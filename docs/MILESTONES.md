@@ -1,11 +1,17 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.07.56 – abgenommener Produkt-/Diagnosekandidat.**  
-Native Integration: **0.19.0.**  
-Öffentliche Rückfallbasis bis zur kontrollierten Promotion: **V4.06.**  
-`main` bleibt bis zur ausdrücklichen Benutzerfreigabe unverändert.
+Status: **2026/09 · V4.07.57 – öffentlicher Dokumentations-/Installations-Patch.**  
+Native Integration: **0.19.1.**  
+Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M20 – V4.07.57 verständliche öffentliche Installation
+- kanonische README visuell neu strukturiert und native Integration an erste Stelle gesetzt;
+- vollständigen kopierfertigen View-Block inklusive `vertical-stack` und nativer Entity-IDs prominent dokumentiert;
+- Ressourcenregistrierung, Blitzortung-Kopplung, Recorder-Schutz und Fehlersuche direkt auffindbar gemacht;
+- Dashboard-/Package-README im gleichen Stil gespiegelt;
+- Laufzeit gegenüber V4.07.56 durch einen Metadaten-only-Vertrag geschützt.
 
 ### M1 – V4.05 als geschützte Referenz eingefroren
 - veröffentlichte visuelle Ausgangsbasis gesichert;

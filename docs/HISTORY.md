@@ -4,9 +4,17 @@ Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen P
 
 ## Zeitachse
 
-Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4.01 bis V4.06 gehören zur Release-Phase `2026/09`.
+Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4-Releases bis einschließlich V4.07.57 gehören zur Release-Phase `2026/09`.
 
 Seit V4.06 ist die Monatskennung Teil des verbindlichen Releaseformats: Der aktuelle Stand wird als `YYYY/MM · Vx.xx` dargestellt, historische Einträge als `Vx.xx · YYYY/MM`. Der vollständige Ablauf ist in `docs/RELEASE_PROCESS.md` festgeschrieben.
+
+## V4.07.57 · 2026/09 – öffentliche Installation verständlich gemacht
+
+V4.07.57 ist ein gezielter Dokumentations- und Installations-Patch auf der geschützten V4.07.56-Laufzeitbasis. Die Haupt-README wurde zu einer visuell gegliederten Produkt- und Installationsseite umgebaut. Die native Integration steht nun an erster Stelle; HACS-Installation, Ressourcenregistrierung und der vollständige Gewitterradar-View sind ohne Suche direkt kopierbar.
+
+Parallel wurde die README der Dashboard-/Package-Auslieferung im gleichen Stil aufgebaut. Die Variante erklärt ihren zusätzlichen Package-Schritt, den HACS-Ressourcenpfad und die zugehörigen `lightning_detection_*`-Helfer separat und verwechselt sie nicht mit den nativen Entitäten.
+
+Die Produktlogik wurde für V4.07.57 nicht verändert. Die Frontendabweichung gegenüber V4.07.56 ist maschinell auf Versions- und Build-Metadaten beschränkt; nach Rücknormalisierung entsteht exakt die akzeptierte V4.07.56-Frontendidentität.
 
 ## V4.05 · 2026/09 – eingefrorene visuelle Referenz
 
