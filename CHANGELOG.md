@@ -1,63 +1,118 @@
 # Changelog
 
-## 2026/09 — V4.07 TEST CANDIDATE / native integration 0.19.0
+## 2026/09 — V4.07.56 FINAL CANDIDATE / native integration 0.19.0
 
-> **Nicht veröffentlicht.** Aktueller Near-Final-Teststand ist **V4.07.31** auf `feature/v4.07.31-help-i18n-complete`. Interner Reifegrad: ca. **95 %**. V4.06 bleibt die eingefrorene öffentliche Release-/Rückfallbasis.
+> **Noch nicht öffentlich veröffentlicht.** V4.07.56 ist der vom Benutzer abgenommene gemeinsame Produkt-/Diagnosestand. Die kontrollierte Promotion nach `main`, der post-merge Golden Master sowie der öffentliche Tag/HACS-/GitHub-Release stehen noch aus. V4.06 bleibt bis dahin die öffentliche Rückfallbasis.
 
 ### Added
 
 - Add a Gewitterradar-owned modern GPS `device_tracker` as the movable reference adapter for worldwide locations.
 - Add `gewitterradar.set_reference_coordinates` to atomically move the product-owned tracker and select it as the active Gewitterradar reference.
 - Add read-only Blitzortung linkage diagnostics without mutating foreign ConfigEntries or `.storage`.
-- Add `app_gewitterradar_v4_07_pkg.yaml` with a separate dashboard Template `device_tracker` and coordinate-set script.
+- Add `app_gewitterradar_v4_07_pkg.yaml` with a separate Dashboard Template `device_tracker` and coordinate-set script.
 - Add worldwide place/postcode search with Open-Meteo as primary geocoder and a controlled OpenStreetMap Nominatim fallback.
-- Add local country autocomplete for 249 ISO-3166-1-alpha-2 codes, explicit country filtering, country-grouped result presentation and global ranking safeguards.
+- Add direct latitude/longitude input to the worldwide location workflow.
+- Add local country autocomplete, explicit country filtering, country-grouped result presentation and global ranking safeguards.
 - Add saved places through the local `Gewitterradar Orte` Local-To-do datastore, including `★` save, reversible `×` soft-delete and `↶` restore without duplicate creation.
-- Add automatic map focus after `Nutzen` and outside-click/tap closing for the location selector.
-- Add a bilingual DE/EN Release History switch and update the V4.07 history entry from the former planning placeholder to the implemented test-candidate scope.
-- Add the Help section **Externe Dienste & Netzwerkfreigaben** with a fail-closed inventory for the current runtime network targets.
+- Add automatic map focus after location adoption and outside-click/tap closing for the location selector.
+- Add a bilingual DE/EN Release History switch and update the V4.07 history entry from the former planning placeholder to the implemented scope.
+- Add the Help section **Externe Dienste & Netzwerkfreigaben** with a fail-closed inventory for current runtime network targets.
 - Add premium Help iconography, deterministic embedded SVG assets, network/service highlighting, radius-specific Help presentation and viewport/zoom-safe Help/Settings scrolling.
-- Document the one-time semi-automatic Blitzortung setup and the permanent distinction between requested reference location and active lightning-data region.
-- Record the upstream task to contact the Blitzortung developer about an officially supported coordinate ↔ location-entity reconfigure path.
+- Add the protected diagnostic master mode with pink active frame, movable/minimizable console, independent child-tool hiding and master hard-stop.
+- Add deterministic virtual-storm scenarios `AUS`, `BEOBACHTUNG`, `GEWITTER`, `GEFAHR` and `GESAMT` through the normal production pipeline.
+- Add deterministic **1–5 virtual storm cells** and the **EXTREM** diagnostic path without changing product thresholds or forcing the resulting cluster color.
+- Add diagnostic grouped/individual strike rendering through the normal production renderer.
+- Add protected Medallion diagnostic states **LEER / PFEIL / TREND / FREEZE / NORMAL** together with calibration, geometry, overlay, JSON/snapshot and performance tools.
+- Add a dedicated V4.07.56 Golden/geometry contract for seven fixed browser profiles.
+- Add a permanent fail-closed Hi-Res/master retention contract protecting current and legacy artwork content.
 
-### V4.07.31 — complete Help i18n regression fix
+### Accepted normal product baseline
 
-- Keep Deutsch and English as the two native Help locales in the main JavaScript and load the remaining 17 variants from the external locale module.
+- V4.07.54 is the accepted normal UI/function baseline for the V4.07.56 finalization.
+- Keep the accepted map, worldwide location search, languages, Help, radii, Settings, Compass, Medallion and normal interaction behavior unchanged while finalizing diagnostics and release protection.
 - Preserve the complete product language scope of **15 languages + 4 German dialect variants = 19 variants**.
-- Replace the superseded V4.07.29 complete external Help registry with the dedicated V4.07.31 registry instead of carrying both full registries in parallel.
-- Complete the four dialect Help variants **Boarisch, Plattdüütsch, Sächs’sch and Schwäbisch** so they no longer inherit large Standard-German Help blocks.
-- Preserve technical proper names, domains, protocols, entity IDs and service names without artificial translation.
-- Add a fail-closed dialect regression check that rejects known Standard-German fallback prose while accepting text that was already correctly dialectized in an earlier stage.
-- Keep all accepted V4.07.30 UI behavior unchanged, including the blue `Nutzen`/`Use` action, restrained `Location entity` emphasis and the accepted radius presentation.
+- Keep Deutsch and English native in the main JavaScript and load the remaining 17 variants from the external locale module.
+- Preserve the accepted Android map/radius legend behavior and responsive Desktop/Tablet/Mobile presentation.
 
-### Deterministic V4.07.31 identity
+### Diagnostic protection
+
+- Protect the accepted V4.07.56 diagnostic behavior with `tests/contracts/diagnostic-contract-v4.07.56.json` and `scripts/verify-diagnostic-contract.mjs`.
+- Run the diagnostic contract through a dedicated GitHub Actions gate.
+- Treat silent removal, semantic weakening or cleanup-driven loss of an accepted diagnostic capability as a release blocker.
+- Require explicit user approval plus contract/documentation update and affected-function reacceptance for intentional diagnostic changes.
+
+### Golden/browser protection
+
+- Keep the historical V4.05 golden test intact as historical evidence.
+- Add a dedicated V4.07.56 Golden contract using the exact accepted frontend identity.
+- Freeze geometry across seven fixed profiles with a maximum tolerance of **0.02 px**.
+- Compare Dashboard and Integration rendering pixel-wise within the same CI run instead of using unstable cross-run full-screen hashes as a release blocker.
+- Distinguish the visible close symbol from its larger 44×44 touch target when checking visual overlap.
+- Preserve the 44×44 touch target while validating the current accepted visible X geometry.
+- Keep stricter automatic focus behavior on Desktop and explicitly focus the visible close control before keyboard activation in touch emulation.
+
+### Hi-Res/master retention
+
+- Permanently retain unused, superseded and legacy Hi-Res/master artwork in the current canonical repository state; Git history alone is not considered a sufficient archive.
+- Protect **32 unique master/legacy content identities** across Help, worldwide location search and About controls.
+- Allow a protected master to move into an approved `legacy/`/archive location only when the exact protected content remains present.
+- Do not count runtime/package-derived copies as master retention.
+- Fail closed when a protected master disappears or when new unique content appears in a protected Hi-Res/legacy area without being registered in the retention contract.
+- Keep the original large About close/copy masters, earlier target variants and the retained V4.06 premium close artwork.
+
+### Build, package and checksum alignment
+
+- Canonical accepted frontend: **1,955,141 bytes**, SHA256 `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`.
+- External About/Help locale module SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`.
+- Canonical V4.07 Dashboard package SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
+- Keep the historical V4.06 Dashboard package as retained fallback/migration material while also building and verifying the V4.07 package deterministically.
+- Include both Dashboard packages in the canonical checksum inventory.
+- Keep Integration and Dashboard frontend/locale/assets byte-identical.
+
+### Validation and safeguards
+
+- Deterministic frontend reconstruction and exact delivery parity are required.
+- JavaScript syntax, About/Help locale, Recorder locale, diagnostic contract and Hi-Res retention checks are release gates.
+- V4.07.56 Settings/Help browser profiles and the dedicated Golden contract are release gates.
+- Both Dashboard and Integration complete browser suites have been exercised against the accepted V4.07.56 baseline.
+- HACS integration validation, package contract, Hassfest and Home Assistant 2026.9.0 runtime tests are part of the final gate set.
+- Do not use deprecated `device_tracker.see`.
+- Do not rewrite Blitzortung ConfigEntries.
+- Do not manipulate `.storage` or private/undocumented Home Assistant frontend APIs.
+- Keep native and Dashboard tracker IDs distinct.
+- Do not claim lightning-data-region synchronization merely because the Gewitterradar tracker or map moved; Blitzortung controls its own movement threshold and subscription lifecycle.
+- Keep V4.06 immutable as the public fallback until V4.07.56 is promoted, revalidated on `main` and released.
+
+### Promotion state
+
+- The exact accepted V4.07.56 frontend is synchronized into the canonical product repository.
+- The PRE-MERGE snapshot of the existing `main` has been created and retained outside GitHub according to the promotion audit.
+- A Golden Master must only be generated from the fully tested **post-merge `main`** commit, never from this candidate branch or from the PRE-MERGE snapshot.
+- `main` remains unchanged until explicit user approval.
+- After promotion, all relevant release gates must run again on the actual new `main` commit before tagging or publishing.
+
+### External environment checks kept separate
+
+The following items concern the separately installed Blitzortung integration or special network environments and are not falsely reported as already completed product acceptance:
+
+- real small/large reference-location movement and Blitzortung data-region resubscription behavior;
+- real resubscription latency and restart/restore behavior with a configured Blitzortung `Location entity`;
+- Recorder/database effects of repeated location changes;
+- real DNS-filter, proxy, TLS-inspection or segmented-network verification where such an environment is available.
+
+Whether these environment checks are mandatory before the public release or remain documented follow-up work is a separate release decision.
+
+### Historical V4.07.31 consolidation point
+
+V4.07.31 remains preserved as an important historical Near-Final point, but it is no longer the current candidate.
 
 - Main JavaScript: **1,779,464 bytes**, SHA256 `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`.
 - External locale module: **401,387 bytes**, SHA256 `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`.
 - GitHub Actions complete artifact `v407-test31-complete`: **2,238,710 bytes**, artifact ZIP SHA256 `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`.
-- Dedicated V4.07.31 candidate workflow reconstructs the accepted chain through TEST30 before applying and testing the TEST31 delta.
-- HACS integration validation, package contract, Hassfest and Home Assistant 2026.9.0 runtime tests pass on the V4.07.31 branch.
-- Detailed near-final notes are recorded in `docs/RELEASE_NOTES_V4_07_31_TEST.md`.
+- V4.07.31 completed the four dialect Help variants and the 19-variant Help schema regression.
+- Detailed historical notes remain in `docs/RELEASE_NOTES_V4_07_31_TEST.md` and `docs/RELEASE_NOTES_V4_07_TEST.md`.
 
-### Safety / compatibility
-
-- Do not use deprecated `device_tracker.see`.
-- Do not rewrite Blitzortung ConfigEntries.
-- Do not manipulate `.storage` or private/undocumented Home Assistant frontend APIs.
-- Keep native and dashboard tracker IDs distinct so both delivery forms can coexist during testing.
-- Do not claim lightning-data synchronization merely because the Gewitterradar tracker moved; Blitzortung applies its own movement threshold and subscription lifecycle.
-- Keep V4.06 immutable as the public fallback until V4.07 is explicitly accepted, frozen and released.
-
-### Validation still required before release
-
-- Final real-device V4.07.31 spot checks across Deutsch/English, representative external languages and all four dialect variants, including full Help scrolling and long labels.
-- Final Desktop/Android/iPad/iPad-Pro regression of search, country grouping/ranking, saved-place lifecycle, `Nutzen`, responsive scrolling and touch targets; add iPhone/iOS where available.
-- Real Blitzortung large/small move, re-subscription latency, restart/restore and Recorder/database-impact checks.
-- Decide/complete a robust visible distinction between Gewitterradar reference location and the actually synchronized Blitzortung data region.
-- Real firewall/DNS-filter/proxy/TLS-inspection verification where a suitable segmented environment is available.
-- Final shared-frontend/browser gate on the intended freeze commit, derived-dashboard synchronization, final documentation/history/checksum inventory, immutable tag/freeze and HACS/release promotion.
-
-The historical TEST1–TEST30 development details remain documented in `docs/RELEASE_NOTES_V4_07_TEST.md`; V4.07.31 is the current consolidation point.
+Detailed V4.07.56 final-candidate notes are recorded in `docs/RELEASE_NOTES_V4_07_56.md`.
 
 ## 2026/09 — V4.06 / native integration 0.18.0
 
@@ -88,7 +143,7 @@ The historical TEST1–TEST30 development details remain documented in `docs/REL
 
 ### Fixed
 
-- Fix iPad/iPad Pro WebKit focus artifacts around the About close control and around the reopened About dialog without changing the accepted premium X asset.
+- Fix iPad/iPad Pro WebKit focus artifacts around the About close control and around the reopened About dialog without changing the approved premium X asset.
 - Keep the Welcome footer version line visible and footnote-like on iPad/iPad Pro.
 - Fix the Greek About header on mobile portrait by letting the claim flow below the longer Greek subtitle instead of overlapping it; the Greek translation remains unchanged.
 - Replace fixed Recorder sensor IDs with multi-device wildcard patterns.
@@ -113,7 +168,6 @@ The historical TEST1–TEST30 development details remain documented in `docs/REL
 - Use the supplied transparent close/copy artwork while preserving all dialog and clipboard handlers, 44×44 hit targets, content and layout. Remove only the visible `DEV` label.
 - Serve the integration-local payload using supported asynchronous HTTP static registration; resource registration remains manual.
 - Add both-delivery browser coverage, frozen-reference comparison and native HTTP route tests.
-
 
 ## 0.17.0 — release-candidate preparation
 
