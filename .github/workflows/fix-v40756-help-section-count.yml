@@ -1,0 +1,44 @@
+name: Repair V4.07.56 Help section count test
+
+on:
+  push:
+    branches:
+      - finalize/v4.07.56-main-promotion
+    paths:
+      - '.github/workflows/fix-v40756-help-section-count.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Align stale Help section count with accepted V4.07.56
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/test-about-locales.mjs')
+          s=p.read_text()
+          old="{title:model.locales.English.help.title,sections:7});"
+          new="{title:model.locales.English.help.title,sections:8});"
+          if s.count(old)!=1:
+              raise SystemExit(f'Expected exactly one stale Help section assertion, found {s.count(old)}')
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Commit repair and remove one-shot helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/fix-v40756-help-section-count.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'Align Help fallback test with accepted V4.07.56 sections'
+          git push origin HEAD:finalize/v4.07.56-main-promotion
