@@ -1,145 +1,105 @@
-# Gewitterradar V4.07 – Release-To-do
+# Gewitterradar V4.07.56 – Release-To-do
 
-Stand: **14.09.2026 – V4.07.31 Near-Final-Testkandidat**  
-Interner Reifegrad: **ca. 95 %** – Projektabschätzung, keine Release-Garantie.
+Stand: **16.09.2026 – abgenommener V4.07.56 Produkt-/Diagnosestand**  
+Native Integration: **0.19.0**  
+Promotion nach `main`: **noch nicht freigegeben / noch nicht ausgeführt**
 
-Diese Datei sammelt die release-nahen Aufgaben, die vor einer öffentlichen Freigabe von V4.07 bewusst geprüft und abgeschlossen werden sollen. Historische TEST-Zwischenstufen bleiben als Nachweis dokumentiert, gelten aber nicht mehr automatisch als eigenständige aktuelle Blocker.
+Diese Datei beschreibt nur noch die tatsächlich verbleibenden Schritte bis zur öffentlichen V4.07.56-Promotion. Historische TEST-Zwischenstufen bleiben in `docs/RELEASE_NOTES_V4_07_TEST.md` und `docs/RELEASE_NOTES_V4_07_31_TEST.md` erhalten und sind keine aktuellen Einzelblocker mehr.
 
-## Aktueller V4.07.31-Freigabeblock
+## Abgenommene V4.07.56-Identität
 
-### 1. Sprache / Hilfe / reale Geräte
+- Haupt-JavaScript: **1.955.141 Bytes**
+- Frontend-SHA256: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`
+- Locale-SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`
+- Dashboard-Paket: `app_gewitterradar_v4_07_pkg.yaml`
+- Dashboard-Paket-SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`
+- Finale Kandidaten-Notizen: `docs/RELEASE_NOTES_V4_07_56.md`
 
-- [ ] V4.07.31 auf realem Home Assistant mit Deutsch und Englisch vollständig prüfen.
-- [ ] Repräsentative externe Sprachen mit langen Beschriftungen/Sonderzeichen stichprobenartig prüfen.
-- [ ] **Boarisch, Plattdüütsch, Sächs’sch und Schwäbisch** real durchschalten und „Hilfe & Hinweise“ vollständig durchscrollen.
-- [ ] Prüfen, dass keine großen Standarddeutsch-Hilfeblöcke mehr in den vier Dialektfassungen erscheinen.
-- [ ] Aktionsdarstellung für `Nutzen`, `★`, `×`, `↶`, Netzwerk-/Entity-Hervorhebungen und Radien-Hilfe real prüfen.
-- [ ] Desktop, Android, iPad und iPad Pro final regressionsprüfen; iPhone/iOS ergänzen, sobald verfügbar.
+## Erledigte Produkt-/Regressionsblöcke
 
-### 2. Ortssuche / gespeicherte Orte / Bedienung
-
-- [ ] Ländergruppierte Ortssuche und Ranking nochmals auf den final vorgesehenen Geräteklassen prüfen.
-- [ ] `Nutzen` → Suche schließt → Karte fokussiert den neuen Standort nochmals im V4.07.31-Gesamtstand bestätigen.
-- [ ] `★ Speichern` → `×` Soft-Delete → `↶` Wiederherstellen im V4.07.31-Gesamtstand regressionsprüfen.
-- [ ] Erneutes Speichern eines weich entfernten Ortes nochmals auf Duplikatfreiheit prüfen.
-- [ ] Außenklick/-tap, Touch-Ziele, Dropdowns, Scrollgrenzen und Hoch-/Querformat final prüfen.
-
-### 3. Blitzortung / Datenregion
-
-- [ ] Kleine und große Standortbewegungen mit der finalen Kopplung prüfen.
-- [ ] Neuabonnierung und reale Latenz des Blitzdatenregionswechsels dokumentieren.
-- [ ] Home-Assistant-Neustart und Restore-Verhalten mit konfigurierter Blitzortung-`Location entity` prüfen.
-- [ ] Recorder-/Datenbankauswirkungen bei Standortwechseln beobachten.
-- [ ] Belastbaren sichtbaren Status für **Bezugsstandort** versus **tatsächlich synchronisierte Blitzdatenregion** entscheiden/abschließen.
-- [ ] Sicherstellen, dass ein bloßer Karten-/Trackerwechsel niemals als bestätigte Blitzdatenregions-Synchronisation dargestellt wird.
-
-### 4. Netzwerk / abgeschottete Umgebungen
-
-- [ ] Externe-Dienste-/Firewall-Hinweise in mindestens einem real segmentierten/gefilterten Szenario prüfen, soweit verfügbar.
-- [ ] Nach Möglichkeit DNS-Filter, Proxy oder TLS-Inspection als Fehlerbild gegen die dokumentierten Hinweise verproben.
-- [ ] Prüfen, dass Client- und Serverpfade in der Diagnose weiterhin korrekt getrennt beschrieben werden.
-
-### 5. Finaler Freeze / Veröffentlichung
-
-- [ ] Finalen Shared-Frontend-/Browserlauf auf dem vorgesehenen Freeze-Commit vollständig grün bestätigen.
-- [ ] Native Integration und Dashboard aus exakt demselben akzeptierten Frontendstand erzeugen/synchronisieren.
-- [ ] Abgeleitetes Repository `TheDaimos/gewitterradar-dashboard` auf den final akzeptierten Stand synchronisieren.
-- [ ] Sichtbare Release History auf den endgültigen V4.07-Release-Stand bringen.
-- [ ] `README.md`, `CHANGELOG.md`, `docs/HISTORY.md`, `docs/MILESTONES.md` und finale Release Notes auf den endgültigen Freeze-Commit synchronisieren.
-- [ ] Finale Asset-/Package-/SHA256-Inventare erzeugen und prüfen.
-- [ ] Exakt akzeptierten Commit als unveränderlichen V4.07-Releasepunkt einfrieren/taggen.
-- [ ] HACS-/GitHub-Release-Promotion ausschließlich aus diesem akzeptierten Stand durchführen.
-- [ ] V4.06 unverändert als Rückfallbasis behalten.
-
-## Aktuelle V4.07.31-Buildidentität
-
-- Haupt-JavaScript: **1.779.464 Bytes**
-- SHA256: `2d13746361d52af29be279f0c273d7fc3ca381a531a82f26efe8c82f3a871b31`
-- Locale-Modul: **401.387 Bytes**
-- Locale-SHA256: `898182f61b59682cd34607219018437999081b67e171e7f8955df454ec3d7ccb`
-- Actions-Artefakt: `v407-test31-complete`
-- Artifact-ID: `10366237921`
-- Artifact-Größe: **2.238.710 Bytes**
-- Artifact-ZIP SHA256: `91f4e615029040c1f01498355071871c693c771c5bf9d82efadc1586cf9d6917`
-- Near-Final-Release-Notes: `docs/RELEASE_NOTES_V4_07_31_TEST.md`
-
-## Bereits technisch/real bestätigte V4.07-Kernpunkte
-
-- [x] Korrigiertes V4.07-Dashboard-Package basiert wieder auf dem vollständigen V4.06-Paket; die sechs V4.06-Migrationspfade bleiben erhalten.
-- [x] V4.07-Ortssuche-, Speicher-, Hilfe- und Netzwerktexte technisch in die vollständige Sprachmatrix übertragen.
-- [x] Gewitterradar-eigener nativer dynamischer GPS-Tracker umgesetzt.
-- [x] Separater Dashboard-Tracker für Testkoexistenz umgesetzt.
-- [x] `Nutzen` → Dialog schließen → Karte automatisch fokussieren real geprüft.
-- [x] `★ Speichern` und gespeicherte Orte über Local-To-do real geprüft.
-- [x] `×` Soft-Delete → „Entfernte Orte“ → `↶` Wiederherstellen real geprüft.
-- [x] Erneutes Speichern eines weich entfernten Ortes reaktiviert den vorhandenen Eintrag ohne Duplikat.
-- [x] Standortwahl-Menü schließt bei Klick/Tap außerhalb, interne Interaktionen bleiben funktionsfähig.
-- [x] Release History besitzt vollständige DE-/EN-Fassungen mit Umschalter und aktualisiertem V4.07-Eintrag.
-- [x] Externe-Dienste-/Netzwerkinventar und fail-closed URL-Vertrag umgesetzt.
-- [x] Premium-Hilfe-Symbole, Netzwerk-/Dienst-Hervorhebung, Radius-Hilfe und adaptive Help-/Settings-Scrolllogik umgesetzt.
-- [x] V4.07.30: blauer `Nutzen`/`Use`-Aktionsstil und zurückgenommene `Location entity`-Hervorhebung; akzeptierte Radien unverändert.
-- [x] V4.07.31: Deutsch/Englisch nativ + 17 externe Hilfevarianten; vier Dialekte ohne große Standarddeutsch-Rückfallblöcke.
-- [x] V4.07.31-spezifischer deterministischer Komplettworkflow erfolgreich.
+- [x] Weltweite Orts-/PLZ-Suche und direkte Koordinateneingabe abgenommen.
+- [x] Länderfilter/-gruppierung, gespeicherte Orte, Soft-Delete und Wiederherstellen abgenommen.
+- [x] Standortübernahme und Kartenfokussierung abgenommen.
+- [x] Mehrsprachigkeit mit **15 Sprachen + 4 Dialekten = 19 Varianten** abgenommen.
+- [x] „Hilfe & Hinweise“ einschließlich Standort-, Recorder- und Netzwerkhinweisen abgenommen.
+- [x] V4.07.54 als gesperrter normaler UI-/Funktionsstand festgelegt.
+- [x] V4.07.55 Diagnose-Mastermodus, Konsole, Childtool-Ausblenden und Hard-Stop abgenommen.
+- [x] V4.07.56 virtuelle Gewitterzellen 1–5 und EXTREM über die normale Produktpipeline abgenommen.
+- [x] Gruppiert/Einzelblitze im Diagnoseszenario abgenommen.
+- [x] Medaillon-Zustände LEER / PFEIL / TREND / FREEZE / NORMAL abgenommen.
+- [x] Diagnosevertrag und fail-closed CI-Schutz eingerichtet.
+- [x] V4.07.56-Golden-/Geometrievertrag eingerichtet; historischer V4.05-Golden-Test bleibt erhalten.
+- [x] Vollständige Browserkette für beide Auslieferungsformen erfolgreich durchlaufen.
 - [x] HACS-Integration-Validierung erfolgreich.
 - [x] Paketvertrag erfolgreich.
 - [x] Hassfest erfolgreich.
-- [x] Home-Assistant-2026.9.0-Laufzeittests erfolgreich.
+- [x] Home-Assistant-2026.9.0-Laufzeittest erfolgreich.
+- [x] Hi-Res-/Legacy-Aufbewahrungsregel dauerhaft dokumentiert.
+- [x] Alle bekannten Hilfe-/Ortssuche-/About-Hi-Res-Master im aktuellen Repositorybestand bestätigt.
+- [x] Fail-closed Hi-Res-Retentionsvertrag und CI-Gate eingerichtet.
+- [x] Kanonischer Build auf beide Dashboard-Pakete erweitert; V4.07-Paket in das SHA256-Inventar aufgenommen.
+- [x] PRE-MERGE-Snapshot des bisherigen `main` gemäß Promotion-Audit bereits erzeugt und außerhalb GitHub gesichert.
 
-## Historische TEST-Zwischenstufen
+## Noch offen – formale Release-/Promotion-Schritte
 
-Die früheren TEST10-/TEST11-/TEST12-Einzelpunkte sind durch den konsolidierten V4.07.31-Gesamtstand **überholt**. Ihre technische Entwicklung bleibt in `docs/RELEASE_NOTES_V4_07_TEST.md` nachvollziehbar. Für die Freigabe werden sie nicht mehr einzeln gegen alte Zwischenartefakte abgenommen, sondern als Bestandteil des finalen V4.07.31-Regressionsblocks geprüft.
+- [ ] `CHANGELOG.md` auf V4.07.56 als aktuellen Kandidatenstand synchronisieren.
+- [ ] `docs/HISTORY.md` auf V4.07.56 ergänzen.
+- [ ] `docs/MILESTONES.md` auf V4.07.56 ergänzen und alte 95-%-Kennung entfernen.
+- [x] `README.md` auf V4.07.56 synchronisiert.
+- [x] `docs/INSTALLATION.md` auf V4.07.56 synchronisiert.
+- [x] `docs/RELEASE_NOTES_V4_07_56.md` angelegt.
+- [x] `SHA256SUMS_FRONTEND.txt` um das kanonische V4.07-Paket erweitert.
+- [ ] Letzten vollständigen Shared-Frontend-/Browserlauf auf dem endgültigen Dokumentations-/Prüfsummen-Commit grün bestätigen.
+- [ ] Letzten Integration-/HACS-/Hassfest-/Home-Assistant-Lauf auf demselben endgültigen Commit grün bestätigen.
+- [ ] Abgeleitetes Repository `TheDaimos/gewitterradar-dashboard` aus exakt diesem akzeptierten Stand synchronisieren.
+- [ ] Finalen Vergleich `main` ↔ V4.07.56-Promotionsstand durchführen und unerwartete Abweichungen ausschließen.
+- [ ] Ausdrückliche Benutzerfreigabe für die Promotion nach `main` einholen.
+- [ ] Erst danach kontrolliert nach `main` integrieren.
+- [ ] Relevante Release-Gates auf dem tatsächlichen neuen `main` erneut vollständig ausführen.
+- [ ] Golden Master aus exakt diesem grünen neuen `main` erzeugen und extern sichern.
+- [ ] Öffentlichen Tag/GitHub-/HACS-Release nur auf exakt denselben verifizierten Commit setzen.
 
-Wichtige historische Stabilitätsanker bleiben erhalten:
+## Externe Umgebungsprüfungen – weiterhin offen, nicht als erledigt markieren
 
-- real akzeptierter TEST8: **1.649.138 Bytes**, SHA256 `a48188b8ee20dc2256d745540f59c3a2e51a0b7d66758dc76f9677a411a021f9`;
-- real akzeptierter TEST9R2: **1.651.359 Bytes**, SHA256 `9d7f23d6307f1f232338446aabee19c88a1ddce1a0be1d534acea2b019fcf3b9`;
-- TEST10: **1.769.200 Bytes**, SHA256 `a95e7b3346089f45e51c7ceebfc3d813b6bebac8cef56d3fa4cfa8dff37bd076`;
-- TEST29: externalisierte 17-Sprachen-Hilfe;
-- TEST30: `Nutzen`/`Use`-Aktionsdarstellung + zurückgenommene `Location entity`-Hervorhebung;
-- TEST31: vollständiger Hilfe-i18n-Regressionsschluss einschließlich der vier Dialekte.
+Diese Punkte verändern nicht den bereits abgenommenen V4.07.56-Frontendstand. Sie betreffen die separat installierte Blitzortung-Integration oder besondere Netzumgebungen.
+
+### Blitzortung / Datenregion
+
+- [ ] Kleine und große Standortbewegungen mit einer real konfigurierten Blitzortung-`Location entity` prüfen.
+- [ ] Neuabonnierung und reale Latenz des Blitzdatenregionswechsels dokumentieren.
+- [ ] Home-Assistant-Neustart und Restore-Verhalten mit konkret eingerichteter Blitzortung-`Location entity` prüfen.
+- [ ] Recorder-/Datenbankauswirkungen bei häufigeren Standortwechseln beobachten.
+- [ ] Sichtbare Trennung **Gewitterradar-Bezugsstandort** versus **tatsächlich synchronisierte Blitzdatenregion** weiter bewerten.
+- [x] Produktregel festgelegt: Ein bloßer Karten-/Trackerwechsel wird niemals als bestätigte Blitzdatenregions-Synchronisation dargestellt.
+
+### Netzwerk / abgeschottete Umgebungen
+
+- [ ] Externe-Dienste-/Firewall-Hinweise in einem real segmentierten/gefilterten Szenario prüfen, soweit verfügbar.
+- [ ] Nach Möglichkeit DNS-Filter, Proxy oder TLS-Inspection als Fehlerbild verproben.
+- [x] Client- und Serverpfade in Hilfe/Diagnose getrennt dokumentiert und technisch geschützt.
+
+Diese externen Prüfungen werden nicht stillschweigend als erfolgreich erklärt. Ob sie zwingend vor dem öffentlichen Release abgeschlossen werden müssen oder als dokumentierte Nachprüfung weiterlaufen dürfen, bleibt eine bewusste Releaseentscheidung.
 
 ## Kontaktadresse für Gewitterradar
 
-Dieser Punkt ist release-nah, aber kein technischer Funktionsblocker.
+Release-nah, aber kein technischer V4.07.56-Produktblocker:
 
 - [ ] Externe Projektadresse `gewitterradar@gmx.de` bei GMX anlegen.
-- [ ] Vor Veröffentlichung prüfen, dass Empfang und Versand zuverlässig funktionieren.
-- [ ] Wiederherstellungs- und Kontosicherheitsdaten ausschließlich außerhalb des Repositorys verwalten; keine Zugangsdaten, Kennwörter oder Wiederherstellungscodes in Git, Quellcode oder Dokumentation ablegen.
-- [ ] Nach erfolgreicher Einrichtung die Adresse als dezente Kontakt-Fußnote im Welcome-Bereich ergänzen.
-- [ ] Dieselbe Kontakt-Fußnote unten in „Über Gewitterradar“ ergänzen.
-- [ ] Die sichtbare Bezeichnung wie „Kontakt“ / „Contact“ in allen 19 registrierten Sprachvarianten übersetzen; die E-Mail-Adresse selbst bleibt unverändert.
-- [ ] Wenn technisch sinnvoll, die Adresse als `mailto:`-Link ausführen, ohne das bestehende Premium-Layout oder die mobile Footer-Geometrie zu stören.
-- [ ] Desktop, Android, iPhone/iOS, iPad und iPad Pro auf Zeilenumbruch, Touch-Ziel und Footer-Abstände prüfen.
-- [ ] Erst nach verifizierter Existenz der Mailbox in einen öffentlichen Release übernehmen; bis dahin darf die Adresse nicht als funktionierender Supportkontakt dargestellt werden.
+- [ ] Empfang und Versand vor öffentlicher Anzeige verifizieren.
+- [ ] Wiederherstellungs-/Kontosicherheitsdaten ausschließlich außerhalb Git verwalten.
+- [ ] Adresse erst nach bestätigter Existenz als sichtbaren Kontakt in Welcome/„Über Gewitterradar“ aufnehmen.
+- [ ] Sichtbare Kontaktbezeichnung bei Umsetzung in allen 19 Sprachvarianten übersetzen.
 
-## Upstream Blitzortung – kein V4.07-Releaseblocker
+## Upstream Blitzortung – kein V4.07.56-Releaseblocker
 
 - [ ] Entwickler von `mrk-its/homeassistant-blitzortung` kontaktieren.
-- [ ] Offiziellen Reconfigure-Wechsel zwischen festen Koordinaten und einer `Location entity` anfragen/vorschlagen.
+- [ ] Offiziellen Reconfigure-Wechsel zwischen festen Koordinaten und `Location entity` anfragen/vorschlagen.
 - [ ] Wechsel einer bestehenden Standort-Entity über den offiziellen Reconfigure-Flow anfragen.
 
-Die sichere V4.07-Zwischenlösung bleibt bestehen: keine fremden ConfigEntries verändern, keine `.storage`-Manipulation, keine privaten APIs; einmalige manuelle Blitzortung-Einrichtung auf den Gewitterradar-Tracker, danach Standortwechsel über den Tracker.
+Die sichere Zwischenlösung bleibt bestehen: keine fremden ConfigEntries verändern, keine `.storage`-Manipulation und keine privaten APIs; einmalige manuelle Blitzortung-Einrichtung auf den Gewitterradar-Tracker, spätere Standortwechsel über diesen Tracker.
 
-## Spätere Feature-Idee: Globales Gewitter-Lagebild / Storm Feed
+## Nach V4.07.56
 
-Dieser Punkt ist ausdrücklich **kein Blocker für V4.07** und soll erst nach Stabilisierung/Freigabe der aktuellen Standortarchitektur umgesetzt werden.
+Neue Produktideen gehören in `docs/ROADMAP.md` bzw. in den V4.08-Plan. Insbesondere Cluster-/Zoom-Algorithmik wird nicht mehr in V4.07.56 verändert.
 
-- [ ] RSS-/Feed-artige Ansicht der aktuell stärksten Gewitter weltweit entwerfen.
-- [ ] Umschaltbare Ebenen bzw. Filter vorsehen: **Weltweit → Kontinent → Land**; optional Region/Bundesland, sofern die Datenquelle das zuverlässig hergibt.
-- [ ] Für jeden Eintrag mindestens Ort/Region/Land, Kontinent, aktuelle Aktivität, verwendetes Zeitfenster und Aktualisierungszeit anzeigen.
-- [ ] Geeignete Ranglogik untersuchen: z. B. Blitzanzahl in 10/30/60 Minuten, Blitzdichte, räumliche Ausdehnung, Aktivitätstrend und Aktualität. Keine scheinpräzise „Stärke“ anzeigen, bevor eine fachlich sinnvolle Metrik definiert ist.
-- [ ] Klick/Tap auf einen Feed-Eintrag soll dessen Gewitterzentrum auf der Karte fokussieren.
-- [ ] Für das Gewitterzentrum den nächstgelegenen geeigneten Ort bestimmen und diesen über die bestehende V4.07-Standortpipeline automatisch als Gewitterradar-Referenztracker setzen.
-- [ ] Derselbe Wechsel soll die vorhandene Kette weiterverwenden: Referenztracker setzen → Karte bewegen → Blitzortung folgt seiner konfigurierten `Location entity` und wechselt nach eigener Schwellenlogik die Datenregion.
-- [ ] Im Feed bzw. während des Wechsels sichtbar unterscheiden zwischen **Feed-Lagebild** und **bereits synchronisierter Blitzortung-Livedatenregion**.
-- [ ] Datenquelle für das globale Ranking separat recherchieren und lizenz-/nutzungsrechtlich prüfen. Die aktuelle regionsbezogene Blitzortung-Subscription kann allein keine belastbare Weltrangliste liefern.
-- [ ] Keine Lösung bauen, die zur Ermittlung der Weltrangliste zyklisch den Gewitterradar-Tracker durch viele Regionen verschiebt oder Blitzortung weltweit „abscannt“.
-- [ ] Falls ein zusätzlicher externer Dienst/API nötig wird: Domain, Port, Zweck, Datenübertragung, Ausfallverhalten, Rate-Limits und Datenschutz unter **Hilfe & Hinweise → Externe Dienste & Netzwerkfreigaben** aufnehmen.
-- [ ] Caching/Fallback prüfen, damit ein kurzzeitig nicht erreichbarer globaler Feed weder die normale Karte noch gespeicherte Orte beeinträchtigt.
-- [ ] Mobile Darstellung als kompakte Karten-/Feed-Liste planen; lange Ortsnamen, Flaggen, Trendanzeige und Touch-Ziele auf Android/iPhone/iPad/Desktop testen.
-
-## Arbeitsregel bis zum Freeze
-
-**Idee → Backlog. Planung → Analyse/Versionierung. Umsetzung → erst nach ausdrücklicher Freigabe.**
-
-Bis zum V4.07-Freeze sollen neue Produktideen nicht mehr in den Near-Final-Kandidaten hineinwachsen. Erst nach Abschluss der verbleibenden Freigabegates werden die nächsten Roadmap-Punkte priorisiert.
+Bis zur Promotion gilt weiterhin Feature-Freeze: **keine normale Karten-, Ortssuche-, Sprach-, Hilfe-, Radien-, Medaillon- oder Bedienlogik mehr ändern.**
