@@ -20,4 +20,4 @@ if(!(await readFile(resolve(root,'dashboard/dist/app_gewitterradar_v4_07_pkg.yam
 if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==checks.sort().join('\n')+'\n')throw Error('Checksum inventory stale');
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
-console.log('PASS: frozen baseline, approved delta, both deliveries, 17 assets, exact inventory, V4.06 and staged V4.07 YAML parity.');
+console.log('PASS: accepted V4.07.56 source baseline, exact delivery parity, 16 referenced assets, 1 retained legacy asset, V4.06 and staged V4.07 YAML parity.');
