@@ -50,6 +50,30 @@ Vor Freigabe muss ein Asset-Audit mindestens Folgendes prüfen:
 
 Nichtverwendung, Ersatz durch eine neue Grafik, Aufräumen, Refactoring, Deduplizierung oder Repository-Verkleinerung sind niemals ausreichende Löschgründe.
 
+## Diagnose-Schutzvertrag
+
+Ab V4.07.56 ist `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md` Bestandteil des Releasevertrags.
+
+Vor jedem Freeze, Merge in `main` und öffentlichen Release muss
+
+`node scripts/verify-diagnostic-contract.mjs`
+
+erfolgreich durchlaufen. Der zugehörige CI-Workflow `.github/workflows/diagnostic-contract.yml` darf nicht umgangen oder stillschweigend abgeschwächt werden.
+
+Ein Release ist blockiert, wenn insbesondere einer der folgenden Bestandteile fehlt oder semantisch beschädigt wurde:
+
+- Master-Diagnosemodus, pinker Aktiv-Rahmen oder Diagnose-Konsole;
+- Trennung von „Childtools ausblenden“ und „Diagnose beenden“;
+- Hard-Stop aller Childtools beim Beenden;
+- virtuelles Gewitter einschließlich AUS / BEOBACHTUNG / GEWITTER / GEFAHR / GESAMT;
+- 1–5 Zellen oder EXTREM-Test über die produktive Extrem-/Violett-Logik;
+- Gruppiert-/Einzelblitz-Test über die normale Produktpipeline;
+- Medaillon-Zustände LEER / PFEIL / TREND / FREEZE / NORMAL;
+- Kalibrier-, Geometrie-, Mess-, JSON-/Snapshot- oder Performance-Diagnose;
+- Diagnose-Sprachumfang mit 19 Sprachvarianten.
+
+Eine absichtliche Änderung des Schutzvertrags erfordert vorab ausdrückliche Benutzerfreigabe, Anpassung von Schutzdokumentation und Contract-Test sowie erneute Abnahme der betroffenen Diagnosefunktionen.
+
 ## Release-Gates
 
 Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfungen grün sind. Dazu gehören je nach betroffenem Bereich insbesondere:
@@ -62,6 +86,7 @@ Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfunge
 - HACS und Hassfest;
 - Paket-/Asset-Verträge und Prüfsummen;
 - **Hi-Res-Master-Audit gemäß `docs/ASSET_RETENTION_POLICY.md`;**
+- **Diagnose-Contract-Test gemäß `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`;**
 - reale Geräteabnahme für zuvor als offen markierte Plattform- oder Layoutfälle.
 
 Nach dem erfolgreichen Abschluss wird der exakt geprüfte Commit eingefroren. Bereits veröffentlichte Tags, eingefrorene Releases und Rückfallpunkte werden niemals nachträglich umgeschrieben.
