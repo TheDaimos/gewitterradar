@@ -1,0 +1,121 @@
+name: V4.08.03 Storm Radius Fix Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40801-cluster-test.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/run-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab-pass2.mjs'
+      - 'scripts/build-v40803-storm-radius-fix.mjs'
+      - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
+      - '.github/workflows/v40803-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.03 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          node scripts/build-v40803-storm-radius-fix.mjs 2>&1 | tee build/v40803-build.log
+
+      - name: Verify generated frontend copies and runtime guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          grep -F "const CARD_VERSION = '4.08.03';" frontend/gewitterradar.js
+          grep -F "V4.08.03-STORM-RADIUS-FIX-2026-09-17" frontend/gewitterradar.js
+          grep -F "const stormRadius = this._currentStormRadius ?? Math.min(this._stormRadiusValue(),observationRadius);" frontend/gewitterradar.js
+          grep -F "const dangerRadius = this._currentDangerRadius ?? Math.min(this._dangerRadiusValue(),stormRadius);" frontend/gewitterradar.js
+          grep -F "const inStorm = s.distance != null && s.distance <= stormRadius;" frontend/gewitterradar.js
+          node <<'NODE'
+          const fs=require('node:fs');
+          const s=fs.readFileSync('frontend/gewitterradar.js','utf8');
+          const use=s.indexOf('const inStorm = s.distance != null && s.distance <= stormRadius;');
+          const declaration=s.lastIndexOf('const stormRadius = this._currentStormRadius ?? Math.min(this._stormRadiusValue(),observationRadius);',use);
+          if(use<0||declaration<0||declaration>use) throw new Error('stormRadius runtime guard failed');
+          NODE
+
+      - name: Create installable V4.08.03 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40803
+          mkdir -p build/v40803/native/custom_components build/v40803/dashboard
+          cp -a custom_components/gewitterradar build/v40803/native/custom_components/
+          cp -a dashboard/dist/assets build/v40803/dashboard/
+          cp -a dashboard/dist/locales build/v40803/dashboard/
+          cp dashboard/dist/app_gewitterradar_v4_06_pkg.yaml build/v40803/dashboard/
+          cp dashboard/dist/app_gewitterradar_v4_07_pkg.yaml build/v40803/dashboard/
+          cp dashboard/dist/gewitterradar.js build/v40803/dashboard/gewitterradar-v4.08.03.js
+          cp docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md build/v40803/V4_08_DIAGNOSTIC_WEATHER_LAB.md
+          cat > build/v40803/README_V4.08.03_TEST.txt <<'EOF'
+          Gewitterradar V4.08.03 TEST
+          ===========================
+
+          Gezielte Korrektur gegenüber V4.08.02:
+          - behebt ReferenceError: stormRadius is not defined in _renderMapMarkers()
+          - Radienkette: Beobachtung -> Gewitter -> Gefahr
+          - keine Änderung der V4.08-Cluster-Schwellen oder Diagnosefunktionen
+
+          Dashboard-/Dev-Test:
+          Hauptmodul: dashboard/gewitterradar-v4.08.03.js
+          Ziel: /config/www/community/gewitterradar-dashboard/gewitterradar-v4.08.03.js
+          Ressource als JavaScript-Modul:
+          /hacsfiles/gewitterradar-dashboard/gewitterradar-v4.08.03.js?v=40803
+
+          Minimal-View:
+          title: Gewitterradar
+          path: gewitterradar
+          icon: mdi:weather-lightning
+          type: panel
+          cards:
+            - type: custom:gewitterradar-card
+
+          Package:
+          app_gewitterradar_v4_07_pkg.yaml ist gegenüber V4.08.02 unverändert.
+          EOF
+          (
+            cd build/v40803
+            zip -qr ../Gewitterradar_V4.08.03_TEST.zip .
+          )
+          sha256sum build/Gewitterradar_V4.08.03_TEST.zip | tee build/Gewitterradar_V4.08.03_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40803-frontend.sha256
+
+      - name: Upload V4.08.03 build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.03_BUILD_LOG
+          path: build/v40803-build.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload V4.08.03 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.03_TEST
+          path: |
+            build/Gewitterradar_V4.08.03_TEST.zip
+            build/Gewitterradar_V4.08.03_TEST.sha256
+            build/gewitterradar-v40803-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
