@@ -1,0 +1,151 @@
+name: V4.08.10 Infinity GFX Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40803-storm-radius-fix.mjs'
+      - 'scripts/build-v40804-cluster-session-countdown.py'
+      - 'scripts/build-v40805-session-control-polish.py'
+      - 'scripts/build-v40806-session-field-frame.py'
+      - 'scripts/build-v40807-help-frame.py'
+      - 'scripts/build-v40808-session-ab-compare.py'
+      - 'scripts/build-v40809-session-static-gold.py'
+      - 'scripts/build-v40810-infinity-gfx.py'
+      - 'docs/V4_08_INFINITY_GFX.md'
+      - '.github/workflows/v40810-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.10 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          {
+            node scripts/build-v40803-storm-radius-fix.mjs
+            python scripts/build-v40804-cluster-session-countdown.py
+            python scripts/build-v40805-session-control-polish.py
+            python scripts/build-v40806-session-field-frame.py
+            python scripts/build-v40807-help-frame.py
+            python scripts/build-v40808-session-ab-compare.py
+            python scripts/build-v40809-session-static-gold.py
+            python scripts/build-v40810-infinity-gfx.py
+          } 2>&1 | tee build/v40810-build.log
+
+      - name: Upload V4.08.10 build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.10_BUILD_LOG
+          path: build/v40810-build.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify generated frontend and infinity graphic guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('frontend/gewitterradar.js')
+          s=p.read_text(encoding='utf-8')
+          assert "const CARD_VERSION = '4.08.10';" in s
+          assert 'V4.08.10-INFINITY-GFX-2026-09-17' in s
+          assert "const GEWITTERRADAR_INFINITY_GFX = 'data:image/png;base64," in s
+          assert 'settings-cluster-session-infinity-gfx' in s
+          assert 'status-infinity-gfx' in s
+          assert "infinityGfx.src = GEWITTERRADAR_INFINITY_GFX;" in s
+          assert 'settings-cluster-session-infinity-glyph' not in s
+          assert "label += ' ∞';" not in s
+          assert "label += ` · ${Math.ceil(remainingMs / 1000)}s`;" in s
+          assert 'transform:scale(1.25);transform-origin:center;' in s
+          assert 'max-height:clamp(230px,calc(100dvh - 490px),560px)!important' in s
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert digest == 'eaacbadf1de52b441dddd9b58b5b7a623c23a66159fac027f5e5bd01aabe1618', digest
+          print('Frontend SHA256',digest)
+          print('V4.08.10 infinity GFX guards OK')
+          PY
+
+      - name: Create installable V4.08.10 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40810
+          mkdir -p build/v40810/native/custom_components build/v40810/dashboard
+          cp -a custom_components/gewitterradar build/v40810/native/custom_components/
+          cp -a dashboard/dist/. build/v40810/dashboard/
+          mv build/v40810/dashboard/gewitterradar.js build/v40810/dashboard/gewitterradar-v4.08.10.js
+          test -f build/v40810/dashboard/gewitterradar-v4.08.10.js
+          test ! -e build/v40810/dashboard/gewitterradar.js
+          cmp -s frontend/gewitterradar.js build/v40810/dashboard/gewitterradar-v4.08.10.js
+          cp docs/V4_08_INFINITY_GFX.md build/v40810/V4_08_INFINITY_GFX.md
+          cat > build/v40810/README_V4.08.10_TEST.txt <<'TXT'
+          Gewitterradar V4.08.10 TEST
+          ===========================
+
+          Neu in V4.08.10:
+          - Die bestätigte ornamentale Unendlichkeitsgrafik im gealterten Gold-/Messingstil
+            ersetzt das Unicode-Zeichen in der Sitzungszeit-Auswahl.
+          - Dieselbe Grafik wird bei einer unbegrenzten Cluster-Sprung-Sitzung auch
+            in der Karten-/Statusanzeige verwendet.
+          - Runtime-Grafik: transparente RGBA-PNG, 96 x 63 Pixel, verlustfreie PNG-Kompression.
+          - Keine Animation; die statische Goldbetonung aus V4.08.09 bleibt erhalten.
+          - Das bestätigte Hi-Res-Original wird später gemäß Asset-Retention-Regel als
+            geschützter Master hinterlegt; die Runtime-Datei ersetzt den Master nicht.
+          - Dartscheibe +25 Prozent und interner Radien-Scrollbereich bleiben erhalten.
+
+          Dashboard-/Dev-Test:
+          Datei:
+            dashboard/gewitterradar-v4.08.10.js
+
+          Ziel:
+            /config/www/community/gewitterradar-dashboard/gewitterradar-v4.08.10.js
+
+          Ressource:
+            /hacsfiles/gewitterradar-dashboard/gewitterradar-v4.08.10.js?v=40810
+
+          Ressourcentyp:
+            JavaScript-Modul
+
+          Package:
+          app_gewitterradar_v4_07_pkg.yaml bleibt unverändert verwendbar.
+          TXT
+          (
+            cd build/v40810
+            zip -qr ../Gewitterradar_V4.08.10_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.08.10_TEST.zip
+          sha256sum build/Gewitterradar_V4.08.10_TEST.zip | tee build/Gewitterradar_V4.08.10_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40810-frontend.sha256
+          sha256sum dashboard/dist/app_gewitterradar_v4_07_pkg.yaml | tee build/app_gewitterradar_v4_07_pkg.sha256
+          test "$(cut -d' ' -f1 build/app_gewitterradar_v4_07_pkg.sha256)" = "1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694"
+
+      - name: Upload V4.08.10 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.10_TEST
+          path: |
+            build/Gewitterradar_V4.08.10_TEST.zip
+            build/Gewitterradar_V4.08.10_TEST.sha256
+            build/gewitterradar-v40810-frontend.sha256
+            build/app_gewitterradar_v4_07_pkg.sha256
+          if-no-files-found: error
+          retention-days: 30
