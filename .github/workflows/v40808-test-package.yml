@@ -1,4 +1,4 @@
-name: V4.08.08 Session A/B Shimmer Test Package
+name: V4.08.08 Session A/B Comparison Test Package
 
 on:
   push:
@@ -14,7 +14,7 @@ on:
       - 'scripts/build-v40805-session-control-polish.py'
       - 'scripts/build-v40806-session-field-frame.py'
       - 'scripts/build-v40807-help-frame.py'
-      - 'scripts/build-v40808-session-ab-shimmer.py'
+      - 'scripts/build-v40808-session-ab-compare.py'
       - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
       - 'docs/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md'
       - 'docs/V4_08_SESSION_CONTROL_POLISH_TEST.md'
@@ -45,7 +45,7 @@ jobs:
             python scripts/build-v40805-session-control-polish.py
             python scripts/build-v40806-session-field-frame.py
             python scripts/build-v40807-help-frame.py
-            python scripts/build-v40808-session-ab-shimmer.py
+            python scripts/build-v40808-session-ab-compare.py
           } 2>&1 | tee build/v40808-build.log
 
       - name: Upload V4.08.08 build diagnostics
@@ -69,28 +69,38 @@ jobs:
           import hashlib
           p=Path('frontend/gewitterradar.js')
           s=p.read_text(encoding='utf-8')
-          assert "const CARD_VERSION = '4.08.08';" in s
-          assert 'V4.08.08-SESSION-AB-SHIMMER-2026-09-17' in s
-          assert 'settings-cluster-session-variant-a' in s
-          assert 'settings-cluster-session-variant-b' in s
-          assert 'settings-cluster-jump-selector-b' in s
-          assert 'settings-cluster-jump-seconds-b' in s
-          assert 'settings-cluster-jump-infinite-b' in s
-          assert 'linear-gradient(90deg,rgba(224,173,76,.22),rgba(224,173,76,.035))' in s
-          assert 'linear-gradient(270deg,rgba(224,173,76,.22),rgba(224,173,76,.035))' in s
-          assert 'bindClusterJumpSeconds(settingsClusterJumpSecondsB);' in s
-          assert 'settingsClusterJumpInfiniteB?.addEventListener' in s
+          required = [
+              "const CARD_VERSION = '4.08.08';",
+              'V4.08.08-SESSION-AB-COMPARE-2026-09-17',
+              'settings-cluster-session-variant-a',
+              'settings-cluster-session-variant-b',
+              'settings-cluster-jump-selector-a',
+              'settings-cluster-jump-selector-b',
+              'settings-cluster-jump-seconds-a',
+              'settings-cluster-jump-seconds-b',
+              'settings-cluster-jump-infinite-a',
+              'settings-cluster-jump-infinite-b',
+              'v40808-gold-ltr',
+              'v40808-gold-rtl',
+              "label += ' ∞';",
+              "label += ` · ${Math.ceil(remainingMs / 1000)}s`;",
+          ]
+          for marker in required:
+              assert marker in s, marker
+          assert "['a','b'].map(v => this.shadow.getElementById(`settings-cluster-jump-selector-${v}`))" in s
+          assert "['a','b'].map(v => $(`settings-cluster-jump-selector-${v}`))" in s
+          assert 'animation:v40808-gold-ltr 4.8s ease-in-out infinite' in s
+          assert 'animation:v40808-gold-rtl 4.8s ease-in-out infinite' in s
+          assert '.settings-cluster-session-variant-b.is-infinite .settings-cluster-session-infinite {' in s
+          assert 'animation:none;' in s
           assert 'transform:scale(1.25);transform-origin:center;' in s
           assert 'max-height:clamp(230px,calc(100dvh - 490px),560px)!important' in s
-          assert "label += ' ∞';" in s
-          assert "label += ` · ${Math.ceil(remainingMs / 1000)}s`;" in s
           decl=s.index('const stormRadius = this._currentStormRadius ?? Math.min(this._stormRadiusValue(),observationRadius);')
           use=s.index('const inStorm = s.distance != null && s.distance <= stormRadius;')
           assert decl < use
           digest=hashlib.sha256(p.read_bytes()).hexdigest()
-          assert digest == 'd0115cbc3c4b7313b6faffcd3dd80f2b977b3ed4970758feea60166d422f6ae2', digest
           print('Frontend SHA256',digest)
-          print('V4.08.08 A/B UI guards OK')
+          print('V4.08.08 simultaneous A/B comparison guards OK')
           PY
 
       - name: Create installable V4.08.08 test ZIP
@@ -119,16 +129,12 @@ jobs:
           - unveränderte V4.08 Diagnose-/Cluster-Testlogik
 
           Neu in V4.08.08:
-          - Die Sitzungszeit wird im Radien-Menü doppelt als A/B-Vergleich angezeigt.
-          - Beide Varianten steuern exakt denselben Wert und werden synchron gehalten.
-          - Variante A: aktive Seite + richtungsabhängiger Goldverlauf:
-            Zeit = links nach rechts, Unendlich = rechts nach links.
-          - Variante B: aktive Seite wird betont, Goldverlauf bleibt immer
-            links nach rechts. Damit lässt sich direkt beurteilen, ob die
-            Richtungsumkehr tatsächlich einen Mehrwert bringt.
-          - Goldschimmer basiert auf dem Recorder-Bereich aus Hilfe & Hinweise.
-          - Das Unicode-Unendlich-Zeichen bleibt weiterhin nur Platzhalter für
-            die spätere Hi-Res-Grafik.
+          - Die Sitzungszeit wird im Radien-Menü gleichzeitig doppelt als A/B-Vergleich angezeigt.
+          - Beide Varianten steuern exakt denselben Sitzungswert und bleiben synchron.
+          - Variante A: bewegter Goldschimmer; bei Zeit links nach rechts, bei Unendlich rechts nach links.
+          - Variante B: ruhige Goldbetonung nur auf der jeweils aktiven Seite, ohne Richtungsanimation.
+          - Damit lassen sich beide Darstellungen direkt im selben geöffneten Menü vergleichen.
+          - Das Unicode-Unendlich-Zeichen bleibt für diesen Vergleich Platzhalter für die spätere Hi-Res-Grafik.
 
           Dashboard-/Dev-Test:
           Datei:
