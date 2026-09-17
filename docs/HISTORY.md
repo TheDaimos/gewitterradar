@@ -118,6 +118,23 @@ Verbindliche Schutzquellen:
 - `scripts/verify-hires-asset-retention.mjs`;
 - `.github/workflows/hires-asset-retention.yml`.
 
+## V4.08 · 2026/09 – Cluster-Auflösung und Cluster-Navigation (TEST)
+
+V4.08 entwickelt die Cluster-Darstellung auf dem geschützten V4.07.56-Stand weiter. Der frühere V4.08-Testschalter **„Cluster-Auflösung · V4.08 TEST“** wird durch eine echte Profilauswahl ersetzt. Die Einstellung beschreibt nun ausdrücklich, **wann Cluster in Einzelblitze aufgelöst werden**.
+
+Die Testprofile sind **Früh**, **Ausgewogen**, **Spät** und **Klassisch · V4.07.56**. Ausgewogen entspricht der bisher erprobten zonenabhängigen V4.08-Abstimmung. Früh löst Cluster früher auf, Spät hält sie länger zusammen. Klassisch reproduziert weiterhin exakt den geschützten V4.07.56-Rückfallpfad. Ein adaptives Profil „Automatisch“ ist zu diesem Zeitpunkt bewusst noch nicht implementiert.
+
+Parallel wurde die bisherige Bezeichnung **„Cluster-Sprung · Sitzungszeit“** in **„Cluster-Navigation · Sitzungszeit“** überführt. Die Navigation unterstützt 5–3600 Sekunden oder `∞`; Countdown und Unendlich-Modus können direkt in der Statusanzeige umgeschaltet werden. Die in V4.08.21 korrigierte Pointer-Down-Behandlung macht diese Umschaltung auf Desktop und Touch zuverlässig, ohne gleichzeitig einen Cluster-Sprung auszulösen.
+
+Die ornamentale Unendlichkeitsgrafik im gealterten Gold-/Messingstil bleibt als gemeinsames Bedien- und Statusmotiv erhalten. Die verkleinerte Runtime-Grafik ersetzt den später geschützten Hi-Res-Master ausdrücklich nicht.
+
+Detaillierte Testdokumentation:
+
+- `docs/V4_08_CLUSTER_RESOLUTION_PROFILES.md`;
+- `docs/RELEASE_NOTES_V4_08_TEST.md`;
+- `docs/V4_08_CLUSTER_RESOLUTION_ANALYSIS.md`;
+- `docs/V4_08_INFINITY_GFX.md`.
+
 ## Qualitätssicherung und Promotion
 
 V4.07.56 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprach-/Locale-/Recorder-Prüfungen, V4.07.56-Golden-Vertrag, Diagnosevertrag, Hi-Res-Retentionsvertrag, Home-Assistant-Laufzeittests, HACS, Hassfest und Paketverträge abgesichert.
