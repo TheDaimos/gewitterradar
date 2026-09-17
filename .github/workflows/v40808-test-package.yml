@@ -1,0 +1,169 @@
+name: V4.08.08 Session A/B Shimmer Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40801-cluster-test.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/run-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab-pass2.mjs'
+      - 'scripts/build-v40803-storm-radius-fix.mjs'
+      - 'scripts/build-v40804-cluster-session-countdown.py'
+      - 'scripts/build-v40805-session-control-polish.py'
+      - 'scripts/build-v40806-session-field-frame.py'
+      - 'scripts/build-v40807-help-frame.py'
+      - 'scripts/build-v40808-session-ab-shimmer.py'
+      - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
+      - 'docs/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md'
+      - 'docs/V4_08_SESSION_CONTROL_POLISH_TEST.md'
+      - '.github/workflows/v40808-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.08 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          {
+            node scripts/build-v40803-storm-radius-fix.mjs
+            python scripts/build-v40804-cluster-session-countdown.py
+            python scripts/build-v40805-session-control-polish.py
+            python scripts/build-v40806-session-field-frame.py
+            python scripts/build-v40807-help-frame.py
+            python scripts/build-v40808-session-ab-shimmer.py
+          } 2>&1 | tee build/v40808-build.log
+
+      - name: Upload V4.08.08 build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.08_BUILD_LOG
+          path: build/v40808-build.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify generated frontend and A/B guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('frontend/gewitterradar.js')
+          s=p.read_text(encoding='utf-8')
+          assert "const CARD_VERSION = '4.08.08';" in s
+          assert 'V4.08.08-SESSION-AB-SHIMMER-2026-09-17' in s
+          assert 'settings-cluster-session-variant-a' in s
+          assert 'settings-cluster-session-variant-b' in s
+          assert 'settings-cluster-jump-selector-b' in s
+          assert 'settings-cluster-jump-seconds-b' in s
+          assert 'settings-cluster-jump-infinite-b' in s
+          assert 'linear-gradient(90deg,rgba(224,173,76,.22),rgba(224,173,76,.035))' in s
+          assert 'linear-gradient(270deg,rgba(224,173,76,.22),rgba(224,173,76,.035))' in s
+          assert 'bindClusterJumpSeconds(settingsClusterJumpSecondsB);' in s
+          assert 'settingsClusterJumpInfiniteB?.addEventListener' in s
+          assert 'transform:scale(1.25);transform-origin:center;' in s
+          assert 'max-height:clamp(230px,calc(100dvh - 490px),560px)!important' in s
+          assert "label += ' ∞';" in s
+          assert "label += ` · ${Math.ceil(remainingMs / 1000)}s`;" in s
+          decl=s.index('const stormRadius = this._currentStormRadius ?? Math.min(this._stormRadiusValue(),observationRadius);')
+          use=s.index('const inStorm = s.distance != null && s.distance <= stormRadius;')
+          assert decl < use
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert digest == 'd0115cbc3c4b7313b6faffcd3dd80f2b977b3ed4970758feea60166d422f6ae2', digest
+          print('Frontend SHA256',digest)
+          print('V4.08.08 A/B UI guards OK')
+          PY
+
+      - name: Create installable V4.08.08 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40808
+          mkdir -p build/v40808/native/custom_components build/v40808/dashboard
+          cp -a custom_components/gewitterradar build/v40808/native/custom_components/
+          cp -a dashboard/dist/. build/v40808/dashboard/
+          mv build/v40808/dashboard/gewitterradar.js build/v40808/dashboard/gewitterradar-v4.08.08.js
+          test -f build/v40808/dashboard/gewitterradar-v4.08.08.js
+          test ! -e build/v40808/dashboard/gewitterradar.js
+          cmp -s frontend/gewitterradar.js build/v40808/dashboard/gewitterradar-v4.08.08.js
+          cp docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md build/v40808/V4_08_DIAGNOSTIC_WEATHER_LAB.md
+          cp docs/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md build/v40808/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md
+          cp docs/V4_08_SESSION_CONTROL_POLISH_TEST.md build/v40808/V4_08_SESSION_CONTROL_POLISH_TEST.md
+          cat > build/v40808/README_V4.08.08_TEST.txt <<'TXT'
+          Gewitterradar V4.08.08 TEST
+          ===========================
+
+          Basis:
+          - V4.08.07 Sitzungszeit mit Hilfe-&-Hinweise-Einfassung
+          - Dartscheibe +25 Prozent
+          - Radien-Akkordeon mit internem Scrollbereich
+          - unveränderte V4.08 Diagnose-/Cluster-Testlogik
+
+          Neu in V4.08.08:
+          - Die Sitzungszeit wird im Radien-Menü doppelt als A/B-Vergleich angezeigt.
+          - Beide Varianten steuern exakt denselben Wert und werden synchron gehalten.
+          - Variante A: aktive Seite + richtungsabhängiger Goldverlauf:
+            Zeit = links nach rechts, Unendlich = rechts nach links.
+          - Variante B: aktive Seite wird betont, Goldverlauf bleibt immer
+            links nach rechts. Damit lässt sich direkt beurteilen, ob die
+            Richtungsumkehr tatsächlich einen Mehrwert bringt.
+          - Goldschimmer basiert auf dem Recorder-Bereich aus Hilfe & Hinweise.
+          - Das Unicode-Unendlich-Zeichen bleibt weiterhin nur Platzhalter für
+            die spätere Hi-Res-Grafik.
+
+          Dashboard-/Dev-Test:
+          Datei:
+            dashboard/gewitterradar-v4.08.08.js
+
+          Ziel:
+            /config/www/community/gewitterradar-dashboard/gewitterradar-v4.08.08.js
+
+          Ressource:
+            /hacsfiles/gewitterradar-dashboard/gewitterradar-v4.08.08.js?v=40808
+
+          Ressourcentyp:
+            JavaScript-Modul
+
+          Package:
+          app_gewitterradar_v4_07_pkg.yaml bleibt unverändert verwendbar.
+          TXT
+          (
+            cd build/v40808
+            zip -qr ../Gewitterradar_V4.08.08_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.08.08_TEST.zip
+          sha256sum build/Gewitterradar_V4.08.08_TEST.zip | tee build/Gewitterradar_V4.08.08_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40808-frontend.sha256
+          sha256sum dashboard/dist/app_gewitterradar_v4_07_pkg.yaml | tee build/app_gewitterradar_v4_07_pkg.sha256
+          test "$(cut -d' ' -f1 build/app_gewitterradar_v4_07_pkg.sha256)" = "1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694"
+
+      - name: Upload V4.08.08 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.08_TEST
+          path: |
+            build/Gewitterradar_V4.08.08_TEST.zip
+            build/Gewitterradar_V4.08.08_TEST.sha256
+            build/gewitterradar-v40808-frontend.sha256
+            build/app_gewitterradar_v4_07_pkg.sha256
+          if-no-files-found: error
+          retention-days: 30
