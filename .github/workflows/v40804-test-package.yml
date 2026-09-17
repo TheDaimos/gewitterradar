@@ -1,0 +1,160 @@
+name: V4.08.04 Cluster Session Countdown Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.08-cluster-zoom-and-cleanup
+    paths:
+      - 'scripts/build-v40801-cluster-test.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/run-v40802-diagnostic-weather-lab.mjs'
+      - 'scripts/build-v40802-diagnostic-weather-lab-pass2.mjs'
+      - 'scripts/build-v40803-storm-radius-fix.mjs'
+      - 'scripts/build-v40804-cluster-session-countdown.py'
+      - 'docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md'
+      - 'docs/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md'
+      - '.github/workflows/v40804-test-package.yml'
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V4.08 branch
+        uses: actions/checkout@v4
+
+      - name: Build deterministic V4.08.04 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          {
+            node scripts/build-v40803-storm-radius-fix.mjs
+            python scripts/build-v40804-cluster-session-countdown.py
+          } 2>&1 | tee build/v40804-build.log
+
+      - name: Upload V4.08.04 build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.04_BUILD_LOG
+          path: build/v40804-build.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify generated frontend and runtime guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('frontend/gewitterradar.js')
+          s=p.read_text(encoding='utf-8')
+          assert "const CARD_VERSION = '4.08.04';" in s
+          assert "V4.08.04-CLUSTER-SESSION-COUNTDOWN-2026-09-17" in s
+          assert 'settings-cluster-jump-seconds' in s
+          assert 'settings-cluster-jump-infinite' in s
+          assert 'Math.ceil(remainingMs / 1000)' in s
+          assert "label += '   ∞';" in s
+          assert '3600000' in s
+          assert 'data-v40804-custom' in s
+          decl=s.index('const stormRadius = this._currentStormRadius ?? Math.min(this._stormRadiusValue(),observationRadius);')
+          use=s.index('const inStorm = s.distance != null && s.distance <= stormRadius;')
+          assert decl < use
+          print('Frontend SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+          print('V4.08.04 guards OK')
+          PY
+
+      - name: Create installable V4.08.04 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40804
+          mkdir -p build/v40804/native/custom_components build/v40804/dashboard
+          cp -a custom_components/gewitterradar build/v40804/native/custom_components/
+          cp -a dashboard/dist/. build/v40804/dashboard/
+          mv build/v40804/dashboard/gewitterradar.js build/v40804/dashboard/gewitterradar-v4.08.04.js
+          test -f build/v40804/dashboard/gewitterradar-v4.08.04.js
+          test ! -e build/v40804/dashboard/gewitterradar.js
+          cmp -s frontend/gewitterradar.js build/v40804/dashboard/gewitterradar-v4.08.04.js
+          cp docs/V4_08_DIAGNOSTIC_WEATHER_LAB.md build/v40804/V4_08_DIAGNOSTIC_WEATHER_LAB.md
+          cp docs/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md build/v40804/V4_08_CLUSTER_SESSION_COUNTDOWN_TEST.md
+          cat > build/v40804/README_V4.08.04_TEST.txt <<'EOF'
+          Gewitterradar V4.08.04 TEST
+          ===========================
+
+          Basis:
+          - V4.08.03 mit behobenem stormRadius-Laufzeitfehler
+          - unveränderte V4.08.02 Diagnose-/Wetter-Labor-Funktionen
+          - unveränderte V4.08 Cluster-Schwellen
+
+          Neu in V4.08.04:
+          - Cluster-Sprung-Sitzungszeit im normalen Einstellungsbereich
+          - frei einstellbar von 5 bis 3600 Sekunden, Schrittweite 1 Sekunde
+          - alternativ unbegrenzt über ∞
+          - kompakte Anzeige direkt in der Cluster-Pille, z. B. "Cluster 17/407   10s"
+          - sichtbarer Countdown ohne kompletten Karten-Render
+          - jeder weitere Cluster-Sprung startet die eingestellte Zeit neu
+          - bei unbegrenzt zeigt die Testversion ein einfaches Unicode-∞
+          - noch KEIN Hi-Res-/Premium-Unendlichkeits-Symbol
+
+          Dashboard-/Dev-Test:
+          Datei:
+            dashboard/gewitterradar-v4.08.04.js
+
+          Ziel:
+            /config/www/community/gewitterradar-dashboard/gewitterradar-v4.08.04.js
+
+          Ressource:
+            /hacsfiles/gewitterradar-dashboard/gewitterradar-v4.08.04.js?v=40804
+
+          Ressourcentyp:
+            JavaScript-Modul
+
+          View:
+            title: Gewitterradar
+            path: gewitterradar
+            icon: mdi:weather-lightning
+            type: panel
+            cards:
+              - type: custom:gewitterradar-card
+
+          Package:
+          Das bestehende app_gewitterradar_v4_07_pkg.yaml ist weiterhin unverändert verwendbar.
+
+          Testhinweis:
+          Zunächst einen endlichen Wert, z. B. 10 oder 30 Sekunden, wählen.
+          Cluster-Pille anklicken und prüfen, dass der Countdown sichtbar herunterzählt.
+          Beim nächsten Sprung muss er wieder auf den konfigurierten Wert springen.
+          Danach ∞ testen: die Sitzung darf nicht zeitbedingt ablaufen.
+          EOF
+          (
+            cd build/v40804
+            zip -qr ../Gewitterradar_V4.08.04_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.08.04_TEST.zip
+          sha256sum build/Gewitterradar_V4.08.04_TEST.zip | tee build/Gewitterradar_V4.08.04_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40804-frontend.sha256
+          sha256sum dashboard/dist/app_gewitterradar_v4_07_pkg.yaml | tee build/app_gewitterradar_v4_07_pkg.sha256
+
+      - name: Upload V4.08.04 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08.04_TEST
+          path: |
+            build/Gewitterradar_V4.08.04_TEST.zip
+            build/Gewitterradar_V4.08.04_TEST.sha256
+            build/gewitterradar-v40804-frontend.sha256
+            build/app_gewitterradar_v4_07_pkg.sha256
+          if-no-files-found: error
+          retention-days: 30
