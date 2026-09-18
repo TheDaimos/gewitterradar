@@ -118,9 +118,9 @@ Verbindliche Schutzquellen:
 - `scripts/verify-hires-asset-retention.mjs`;
 - `.github/workflows/hires-asset-retention.yml`.
 
-## V4.08 · 2026/09 – Cluster-Auflösung und Cluster-Navigation (TEST)
+## V4.08 · 2026/09 – Cluster-Auflösung und Cluster-Navigation
 
-V4.08 entwickelt die Cluster-Darstellung auf dem geschützten V4.07.56-Stand weiter. Der frühere V4.08-Testschalter **„Cluster-Auflösung · V4.08 TEST“** wird durch eine echte Profilauswahl ersetzt. Die Einstellung beschreibt nun ausdrücklich, **wann Cluster in Einzelblitze aufgelöst werden**.
+V4.08 entwickelt die Cluster-Darstellung auf dem geschützten V4.07.56-Stand weiter und wurde auf Basis des akzeptierten internen Builds V4.08.40 RC als öffentliche V4.08 finalisiert. Der frühere V4.08-Testschalter **„Cluster-Auflösung · V4.08 TEST“** wird durch eine echte Profilauswahl ersetzt. Die Einstellung beschreibt nun ausdrücklich, **wann Cluster in Einzelblitze aufgelöst werden**.
 
 Die Testprofile sind **Früh**, **Ausgewogen**, **Spät** und **Klassisch · V4.07.56**. Ausgewogen entspricht der bisher erprobten zonenabhängigen V4.08-Abstimmung. Früh löst Cluster früher auf, Spät hält sie länger zusammen. Klassisch reproduziert weiterhin exakt den geschützten V4.07.56-Rückfallpfad. Ein adaptives Profil „Automatisch“ ist zu diesem Zeitpunkt bewusst noch nicht implementiert.
 
@@ -131,6 +131,8 @@ Die ornamentale Unendlichkeitsgrafik im gealterten Gold-/Messingstil bleibt als 
 ### Repository- & Web-Dokumentation optimiert
 
 Die Installations- und Projektdokumentation wurde visuell und inhaltlich überarbeitet. Der neue mehrsprachige Gewitterradar-Webauftritt stellt Installation und Einrichtung weiterhin in den Mittelpunkt und ergänzt eine kompakte Funktionsübersicht mit optimierten WebP-Grafiken, Galerieansicht und direkter Bildvergrößerung. Die Repository-Startseite nutzt zusätzlich absolute Bildpfade für Logo und Hero-Grafik, damit die Darstellung auch innerhalb von HACS zuverlässig funktioniert.
+
+Die öffentliche V4.08 normalisiert gegenüber dem akzeptierten V4.08.40 RC ausschließlich Release-Metadaten. Das finale Frontend besitzt 2.028.645 Bytes mit SHA256 `b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f`; das Locale-Modul besitzt 705.974 Bytes mit SHA256 `a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288`. Die native Integration wird als 0.20.0 veröffentlicht. Neue Entwicklung beginnt anschließend auf V4.09.xx.
 
 Detaillierte Testdokumentation:
 
