@@ -51,7 +51,7 @@ Die bereits abgenommene Funktion bleibt erhalten:
 
 ## Repository- & Web-Dokumentation
 
-Installationsanleitung und Gewitterradar-Webauftritt wurden überarbeitet, mehrsprachig vereinheitlicht und mit einer kompakten Funktionsgalerie sowie optimierten WebP-Grafiken ergänzt.
+Installationsanleitung und Gewitterradar-Webauftritt wurden überarbeitet, mehrsprachig vereinheitlicht und mit einer kompakten Funktionsgalerie sowie optimierten WebP-Grafiken ergänzt. Die Repository-Startseite verwendet HACS-taugliche absolute Bildpfade, damit Logo und bestehende Hero-Grafik auch direkt in der HACS-Detailansicht zuverlässig dargestellt werden.
 
 ## Dokumentation
 
