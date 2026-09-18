@@ -203,20 +203,24 @@ Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten 
 
 ## Aktueller Release-/Promotionsstand
 
-Aktueller öffentlicher Produktstand ist **2026/09 · V4.07.57 / native Integration 0.19.1**.
+Aktueller finaler Promotionsstand ist **2026/09 · V4.08 / native Integration 0.20.0**.
 
-V4.07.57 ist ein Dokumentations-/Installations-Patch auf der geschützten V4.07.56-Laufzeit- und Diagnosebasis. Die Produktlogik bleibt unverändert; im Frontend unterscheiden sich ausschließlich Versions- und Build-Metadatenanker.
+V4.08 basiert funktional auf dem ausdrücklich akzeptierten internen Build **V4.08.40 RC**. Für die öffentliche Version werden ausschließlich Release-Metadaten normalisiert; der deterministische Buildvertrag rekonstruiert RC40 aus dem finalen Frontend und blockiert jede darüber hinausgehende Abweichung.
 
-Kanonische V4.07.57-Identität:
+Kanonische V4.08-Identität:
 
-- Frontend: **1.955.144 Bytes**;
-- Frontend-SHA256: `ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571`;
-- geschützte V4.07.56-Basis-SHA256 nach Metadaten-Normalisierung: `249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a`;
-- Locale-SHA256: `997c4fe9b357935888fdb7bedc43cdd17f105b97241a000324891cea575dd436`;
-- Dashboard-Paket: `app_gewitterradar_v4_07_pkg.yaml`;
-- Dashboard-Paket-SHA256: `1b705c5686e6a7be6dfb36717903df551d4f9f93787c39bd12bddf00aefae694`.
+- Frontend: **2.028.645 Bytes**;
+- Frontend-SHA256: `b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f`;
+- akzeptierter RC40: **2.028.691 Bytes**, SHA256 `2c94af487b1142fd9da450e3bbe9751c3ac17631a621b3878fd9665b557d9570`;
+- Locale-Modul: **705.974 Bytes**, SHA256 `a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288`;
+- Build: `V4.08-RELEASE-2026-09-18`;
+- native Integration: **0.20.0**;
+- Dashboard-Pakete V4.06 und V4.07 bleiben als bestehende Rückfall-/Kompatibilitätsbestände erhalten;
+- HTML-v14 und acht lossless-WebP-Dokumentationsscreenshots sind Bestandteil des V4.08-Repository-Stands.
 
-Die V4.07.56-Tags, Freeze-Punkte und Schutzverträge bleiben unverändert historische Referenzen. V4.07.57 erhält einen eigenen Tag und einen eigenen eingefrorenen Release-Punkt.
+V4.08 ist nach Veröffentlichung funktional eingefroren. **Neue Entwicklung beginnt ausschließlich auf V4.09.xx.** Die Vorbereitung und Einreichung in den offiziellen HACS-Standardkatalog sowie das HACS-Update-Icon-Thema sind für V4.09.xx in `docs/ROADMAP.md` vorgemerkt.
+
+Die V4.07.56-/V4.07.57-Tags, Freeze-Punkte und Schutzverträge bleiben unverändert historische Referenzen.
 
 Verbindliche Dokumente:
 
@@ -226,9 +230,8 @@ Verbindliche Dokumente:
 - `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
 - `docs/GOLDEN_MASTER_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
-- `docs/RELEASE_NOTES_V4_07_56.md`
-- `docs/V4_07_RELEASE_TODO.md`
-
+- `docs/RELEASE_NOTES_V4_08.md`
+- `docs/ROADMAP.md`
 ## Dev-Toolkit
 
 Wiederverwendbare Entwicklungswerkzeuge und allgemeines Home-Assistant-/Frontend-Engineering-Wissen gehören nach `TheDaimos/home-assistant-dev-toolkit`. Dieses öffentliche Produktrepository darf zur Laufzeit keine Abhängigkeit von privaten Shared-Repositories besitzen.
