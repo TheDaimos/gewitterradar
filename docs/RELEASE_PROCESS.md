@@ -31,6 +31,24 @@ Vor dem Freeze müssen mindestens folgende Stellen gegen Version und Monat abgeg
 
 Die Release History darf keine veröffentlichte öffentliche Version überspringen. Historische Monatsangaben werden nicht stillschweigend umgeschrieben. Geplante Funktionen werden nur als `PLANNED` aufgenommen und dürfen nicht wie bereits ausgelieferte Funktionen formuliert sein.
 
+
+## Versionsverlauf – dauerhafte Zukunftssektion
+
+Der sichtbare Versionsverlauf der App enthält dauerhaft eine eigene, klar von veröffentlichten Versionen getrennte Sektion für geplante Funktionen.
+
+Verbindlich:
+
+- die Sektion steht **oberhalb** der veröffentlichten Versionshistorie;
+- deutsche Kennzeichnung: **„Zukünftige Entwicklungen · Geplant“**;
+- englische Kennzeichnung: **„Future Developments · Planned“**;
+- die Sektion ist ein- und ausklappbar;
+- zum Öffnen und Schließen wird der etablierte **goldene Chevron** des Gewitterradar-Premiumstils verwendet;
+- die Funktion und ihr grundsätzlicher Aufbau bleiben in zukünftigen Versionen erhalten;
+- geplante Punkte werden dort ergänzt, aktualisiert oder nach Umsetzung in den passenden veröffentlichten Release-Eintrag überführt;
+- die Sektion darf nicht so formuliert oder gestaltet werden, dass geplante Funktionen wie bereits veröffentlichte Funktionen erscheinen.
+
+Eine Entfernung oder grundlegende Änderung dieser Zukunftssektion ist eine bewusste Produktentscheidung und darf nicht als beiläufiges Aufräumen, Refactoring oder Release-History-Umbau erfolgen.
+
 ## Sprachumfang
 
 Der V4.06-Stand umfasst **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**. Bei zukünftigen Releases ist der tatsächlich unterstützte Sprachumfang im Changelog, in den Release Notes und bei Änderungen am Sprachumfang auch in der Release History abzugleichen.
