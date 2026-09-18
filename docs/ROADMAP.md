@@ -1,6 +1,6 @@
 # Gewitterradar – kanonische Roadmap
 
-Stand: **14.09.2026**
+Stand: **18.09.2026**
 
 Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und wird gegen den tatsächlich erreichten Produktstand gepflegt.
 
@@ -42,43 +42,27 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.07 · Near-Final-Testkandidat – Weltweite Orts-Suche / dynamischer Bezugsstandort
+### Kein aktiver Entwicklungsblock
 
-V4.07 ist mit **V4.07.31** funktional weit fortgeschritten und liegt nach aktueller Projektabschätzung bei ungefähr **95 % Reifegrad**. Diese Angabe ist keine Release-Garantie; bis zum Freeze gelten die verbleibenden realen Abnahme- und Release-Gates aus `docs/V4_07_RELEASE_TODO.md`.
+**V4.08 ist veröffentlicht und eingefroren.** Es läuft aktuell keine weitere funktionale Arbeit unter V4.08.
 
-Der ursprünglich geplante Kernumfang ist inzwischen weitgehend umgesetzt:
+Die nächste Entwicklungsline ist **V4.09.xx**. Sie beginnt erst mit einem klar abgegrenzten neuen Arbeitsblock. Der bereits versionierte HACS-Distributionsauftrag steht oben unter **NEXT / VERSIONIERT**.
 
-- weltweite Freitext-/PLZ-Suche;
-- Open-Meteo als primärer Geocoding-Dienst und kontrollierter Nominatim-Rückfall;
-- lokale Länder-Autovervollständigung und harte explizite Länderfilter;
-- ländergruppierte Suchtreffer und Ranking-Schutz für bedeutende globale Treffer;
-- Gewitterradar-eigener dynamischer GPS-`device_tracker`;
-- getrennte Tracker für native Integration und Dashboard-Testkoexistenz;
-- zentraler Gewitterradar-Bezugsstandort für Karte, Radien, Entfernungen, Kompass und Bewertung;
-- gespeicherte Orte über Local-To-do;
-- `★` Speichern, `×` Soft-Delete und `↶` Wiederherstellen ohne Duplikatbildung;
-- `Nutzen` übernimmt den Ort, schließt die Suche und fokussiert die Karte;
-- bewusste Trennung zwischen Bezugsstandort und aktivem Blitzdatenbereich;
-- halbautomatischer Blitzortung-Einrichtungsweg über eine einmalig konfigurierte `Location entity`;
-- Hilfe-/Netzwerktransparenz einschließlich Open-Meteo, Nominatim, Leaflet/unpkg, OSM-Kacheln und Blitzortung-MQTT;
-- vollständige Produktsprachmatrix mit 15 Sprachen + 4 Dialektvarianten;
-- V4.07.31 schließt die bekannten großen Standarddeutsch-Rückfälle in den vier Dialekt-Hilfen;
-- deterministische Kandidatenkette und fail-closed Regressionstests.
+Verbindlicher Abschlussstand von V4.08:
 
-#### V4.07 – noch offen bis zum Freeze
+`docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
 
-- finaler Realgeräte-Sprachaudit von V4.07.31;
-- finaler Desktop-/Android-/iPad-/iPad-Pro-Regressionslauf der Such-/Standort-/Saved-Places-Bedienung; iPhone/iOS ergänzen, sobald verfügbar;
-- Blitzortung-Datenregionswechsel: kleine/große Bewegung, Latenz, Neuabonnierung, Neustart/Restore und Recorder-/Datenbankauswirkungen;
-- robusten sichtbaren Status für Bezugsstandort versus tatsächlich synchronisierte Blitzdatenregion entscheiden/abschließen;
-- Netzwerk-/Firewall-/DNS-/Proxy-/TLS-Inspection-Hinweise real verproben, soweit eine geeignete Umgebung verfügbar ist;
-- finaler Shared-Frontend-/Browserlauf, Synchronisation beider Auslieferungsformen, Prüfsummen-/Asset-Inventar, Dokumentationsabgleich, Freeze/Tag und HACS-/Release-Promotion.
+---
 
-Bis diese Punkte abgeschlossen sind, gilt für V4.07 weitgehend **Feature-Freeze**. Neue Ideen werden nicht mehr automatisch in V4.07 aufgenommen.
+## DONE / SUPERSEDED
 
-### Nächste Versionslinie festgelegt: V4.09.xx
+### V4.07 – weltweite Orts-Suche / dynamischer Bezugsstandort
 
-Nach dem V4.08-Freeze beginnt die nächste Entwicklungsarbeit auf **V4.09.xx**. Unversionierte Backlog-Punkte werden dadurch nicht automatisch Teil von V4.09; die ausdrücklich oben unter NEXT / VERSIONIERT festgehaltene HACS-Distributionsarbeit ist jedoch für diese Linie vorgesehen.
+Der frühere V4.07-Roadmapblock ist abgeschlossen. Die Funktionen wurden über V4.07.56/V4.07.57 veröffentlicht und bilden zusammen mit den dauerhaft geschützten Diagnose-/Hi-Res-Verträgen die Basis für V4.08. Historische Details bleiben in `docs/HISTORY.md`, `docs/MILESTONES.md` und den V4.07-Release-Notes erhalten.
+
+### V4.08 – Cluster-Auflösung und Cluster-Navigation
+
+V4.08 wurde am 18.09.2026 veröffentlicht. Clusterprofile, Cluster-Navigation, HTML-v14/WebP-Dokumentation, Releaseverträge, Golden Master und beide Auslieferungsformen sind abgeschlossen. Neue funktionale Änderungen gehören nicht mehr in V4.08.
 
 ---
 
