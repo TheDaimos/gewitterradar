@@ -5,6 +5,7 @@
 ### Documentation and installation
 
 - Rework the canonical README into a visually structured, integration-first installation guide with logo, badges, clear navigation, callouts and troubleshooting.
+- Fix repository branding in HACS by using HACS-safe absolute image URLs and add the existing Gewitterradar hero artwork to the repository landing page.
 - Put the native HACS installation path first and document the required `/gewitterradar/gewitterradar.js` JavaScript module prominently.
 - Add the complete copy-ready native Dashboard View including `vertical-stack`, Blitzortung counter, native radius entity and native compass-mode entity.
 - Clarify the difference between a complete View, a whole-dashboard `views:` block and the content of a Manual card.
