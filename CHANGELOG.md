@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026/09 — V4.08 RELEASE CANDIDATE
+
+### Cluster-Auflösung & Cluster-Navigation
+
+- Add the cluster-resolution profiles **Früh**, **Ausgewogen**, **Spät** and **Klassisch · V4.07.56** while preserving the protected classic fallback behavior.
+- Rename the session control to **Cluster-Navigation · Sitzungszeit** and keep the accepted 5–3600 second plus unlimited navigation modes.
+- Preserve the reliable pointer-down mode switch for countdown/unlimited operation without triggering an additional cluster navigation step.
+- Keep the cluster browser session stable while navigating and reset it only for structural changes such as a profile switch.
+- Document the V4.08 cluster behavior consistently in Help, Release History and the dedicated V4.08 project documentation.
+
+### Repository- & Web-Dokumentation
+
+- Refresh the repository landing page for HACS with HACS-safe absolute branding paths so the Gewitterradar logo renders reliably in the HACS detail view.
+- Add the existing Gewitterradar hero artwork to the repository landing page without modifying protected master assets.
+- Redesign the separate HTML installation/overview guide around installation first, a compact feature gallery, integrated image enlargement and 15 regular documentation languages.
+- Prepare the documentation screenshots as lossless WebP assets to reduce repository/web payload while leaving the protected Hi-Res/master asset set untouched.
+- Keep the detailed repository/web presentation changes documented in `docs/RELEASE_NOTES_V4_08_TEST.md` and `docs/HISTORY.md`.
+
 ## 2026/09 — V4.07.56 FINAL CANDIDATE / native integration 0.19.0
 
 > **Noch nicht öffentlich veröffentlicht.** V4.07.56 ist der vom Benutzer abgenommene gemeinsame Produkt-/Diagnosestand. Die kontrollierte Promotion nach `main`, der post-merge Golden Master sowie der öffentliche Tag/HACS-/GitHub-Release stehen noch aus. V4.06 bleibt bis dahin die öffentliche Rückfallbasis.
