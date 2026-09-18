@@ -1,11 +1,21 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.07.57 – öffentlicher Dokumentations-/Installations-Patch.**  
-Native Integration: **0.19.1.**  
+Status: **2026/09 · V4.08 – finaler Release-Stand.**  
+Native Integration: **0.20.0.**  
+Akzeptierter interner Ausgangsbuild: **V4.08.40 RC.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
 
+### M21 – V4.08 Cluster-Auflösung, Navigation und Web-Dokumentation finalisiert
+- Cluster-Auflösungsprofile **Früh / Ausgewogen / Spät / Klassisch · V4.07.56** finalisiert;
+- Cluster-Navigation mit 5–3600 Sekunden bzw. ∞ und geschützter Pointer-/Touch-Umschaltung finalisiert;
+- akzeptierten internen Build V4.08.40 RC mit ausschließlich Release-Metadatenänderungen auf öffentliche **V4.08** normalisiert;
+- finales Frontend: **2.028.645 Bytes**, SHA256 `b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f`;
+- Locale-Modul: **705.974 Bytes**, SHA256 `a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288`;
+- native Integration auf **0.20.0** angehoben;
+- HTML-v14 mit 15 Dokumentationssprachen und acht verlustfreien WebP-Screenshots in den kanonischen Repository-Stand übernommen;
+- nächste Entwicklungsarbeit verbindlich auf **V4.09.xx** verschoben; HACS-Default-Aufnahme dort als eigener Arbeitsblock vorgemerkt.
 ### M20 – V4.07.57 verständliche öffentliche Installation
 - kanonische README visuell neu strukturiert und native Integration an erste Stelle gesetzt;
 - vollständigen kopierfertigen View-Block inklusive `vertical-stack` und nativer Entity-IDs prominent dokumentiert;
