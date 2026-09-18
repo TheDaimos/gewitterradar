@@ -217,6 +217,9 @@ Kanonische V4.08-Identität:
 - native Integration: **0.20.0**;
 - Dashboard-Pakete V4.06 und V4.07 bleiben als bestehende Rückfall-/Kompatibilitätsbestände erhalten;
 - HTML-v14 und acht lossless-WebP-Dokumentationsscreenshots sind Bestandteil des V4.08-Repository-Stands.
+- veröffentlichter Release-Commit: `27da94e5043a365dbe8ea5c5e2224327165750fa`;
+- unveränderliche Release-Referenzen: `v4.08` und `frozen/v4.08`;
+- abgeleiteter Dashboard-V4.08-Release-Commit: `cba234a37f20971c2f64b393202dbb70007dc19d`;
 
 V4.08 ist nach Veröffentlichung funktional eingefroren. **Neue Entwicklung beginnt ausschließlich auf V4.09.xx.** Die Vorbereitung und Einreichung in den offiziellen HACS-Standardkatalog sowie das HACS-Update-Icon-Thema sind für V4.09.xx in `docs/ROADMAP.md` vorgemerkt.
 
@@ -232,6 +235,8 @@ Verbindliche Dokumente:
 - `docs/RELEASE_PROCESS.md`
 - `docs/RELEASE_NOTES_V4_08.md`
 - `docs/ROADMAP.md`
+- `docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
+
 ## Dev-Toolkit
 
 Wiederverwendbare Entwicklungswerkzeuge und allgemeines Home-Assistant-/Frontend-Engineering-Wissen gehören nach `TheDaimos/home-assistant-dev-toolkit`. Dieses öffentliche Produktrepository darf zur Laufzeit keine Abhängigkeit von privaten Shared-Repositories besitzen.
