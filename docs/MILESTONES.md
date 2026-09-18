@@ -7,6 +7,18 @@ Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
 
+### M22 – V4.08 öffentlich veröffentlicht und archiviert
+- kanonischen Release-Commit `27da94e5043a365dbe8ea5c5e2224327165750fa` nach vollständig grünen Post-Merge-Gates veröffentlicht;
+- `v4.08` und `frozen/v4.08` auf exakt denselben Release-Commit gesetzt;
+- native Integration als **0.20.0** veröffentlicht;
+- GitHub Release **Gewitterradar V4.08** erfolgreich veröffentlicht;
+- PRE-MERGE-Snapshot des alten `main`-Commits `1928649627f81b2c2c6b0888f1f5ad8601205db5` erzeugt und extern gesichert;
+- Golden Master aus exakt `27da94e...` erzeugt, verifiziert und extern gesichert;
+- Dashboard-/Lovelace-Auslieferung als **V4.08** aus Commit `cba234a37f20971c2f64b393202dbb70007dc19d` veröffentlicht;
+- Dashboard-Frontend und Locale bytegleich mit der kanonischen V4.08-Ausleitung bestätigt;
+- verbindlichen Release-Abschluss/Handoff unter `docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md` abgelegt;
+- V4.08 funktional eingefroren; neue Produktarbeit ausschließlich auf **V4.09.xx**.
+
 ### M21 – V4.08 Cluster-Auflösung, Navigation und Web-Dokumentation finalisiert
 - Cluster-Auflösungsprofile **Früh / Ausgewogen / Spät / Klassisch · V4.07.56** finalisiert;
 - Cluster-Navigation mit 5–3600 Sekunden bzw. ∞ und geschützter Pointer-/Touch-Umschaltung finalisiert;
@@ -16,6 +28,7 @@ Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 - native Integration auf **0.20.0** angehoben;
 - HTML-v14 mit 15 Dokumentationssprachen und acht verlustfreien WebP-Screenshots in den kanonischen Repository-Stand übernommen;
 - nächste Entwicklungsarbeit verbindlich auf **V4.09.xx** verschoben; HACS-Default-Aufnahme dort als eigener Arbeitsblock vorgemerkt.
+
 ### M20 – V4.07.57 verständliche öffentliche Installation
 - kanonische README visuell neu strukturiert und native Integration an erste Stelle gesetzt;
 - vollständigen kopierfertigen View-Block inklusive `vertical-stack` und nativer Entity-IDs prominent dokumentiert;
