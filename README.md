@@ -1,10 +1,12 @@
 <div align="center">
 
-<img src="custom_components/gewitterradar/frontend/assets/gewitterradar-brand-icon.png" width="170" alt="Gewitterradar Logo">
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/frontend/assets/gewitterradar-brand-icon.png" width="180" alt="Gewitterradar Logo">
 
 # Gewitterradar
 
 ### Live-Blitz- und Gewitterdarstellung für Home Assistant
+
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/frontend/assets/gewitterradar-about-hero-v2.webp" width="920" alt="Gewitterradar · Gewitterlandschaft">
 
 **Native Home-Assistant-Integration · Dashboard-Karte · weltweite Referenzorte · 120-Minuten-Verlauf**
 
