@@ -7656,7 +7656,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   }
 };
 
-// V4.07.53 – finalized Help & Notes translations after the revised location workflow.
+// V4.08.31 – Help & Notes: cluster resolution and cluster-navigation help synchronized across all supported external languages.
 export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
@@ -7681,7 +7681,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Radierne",
         "paragraphs": [
-          "Radierne er kumulative: Et lyn i fareradius tæller også i tordenvejrs- og observationsradius. Områderne er afstandsgrænser, ikke separate datakilder."
+          "Radierne er kumulative: Et lyn i fareradius tæller også i tordenvejrs- og observationsradius. Områderne er afstandsgrænser, ikke separate datakilder.",
+          "Under „Klyngeopløsning“ vælger du, hvornår klynger opløses til enkelte lyn, når du zoomer ind. Tidlig opløser tidligere, Afbalanceret bruger den hidtidige zoneafhængige V4.08-indstilling, og Sen holder klynger samlet længere."
         ],
         "items": [
           "Observationsradius – ydre område til tidlig observation.",
@@ -7690,6 +7691,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Fareradius er begrænset til højst 250 km. Se “Anbefalede grundindstillinger” for anbefalede startværdier og den nødvendige koordinering med Blitzortung-appen."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Klyngenavigation · sessionstid",
+            "body": "bestemmer, hvor længe en startet klyngenavigation forbliver aktiv. Nedtællingstiden kan frit indstilles mellem 5 og 3600 sekunder. {{INFINITY}} holder sessionen åben uden tidsbegrænsning. Nedtælling og {{INFINITY}} kan skiftes direkte i statusvisningen under navigationen.",
+            "infinityAlt": "Ubegrænset"
+          }
         ]
       },
       {
@@ -7913,7 +7921,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Los radios",
         "paragraphs": [
-          "Los radios son acumulativos: un rayo dentro del radio de peligro también cuenta dentro de los radios de tormenta y observación. Son umbrales de distancia, no fuentes de datos separadas."
+          "Los radios son acumulativos: un rayo dentro del radio de peligro también cuenta dentro de los radios de tormenta y observación. Son umbrales de distancia, no fuentes de datos separadas.",
+          "En «Resolución de clústeres» eliges cuándo se deshacen los clústeres en rayos individuales al acercar el mapa. Temprana los deshace antes, Equilibrada utiliza el ajuste zonal de V4.08 probado hasta ahora y Tardía mantiene los clústeres agrupados durante más tiempo."
         ],
         "items": [
           "Radio de observación – zona exterior para la observación temprana.",
@@ -7922,6 +7931,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "El radio de peligro está limitado a un máximo de 250 km. Consulta “Ajustes básicos recomendados” para los valores iniciales aconsejados y la coordinación necesaria con la aplicación Blitzortung."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Navegación por clústeres · duración de la sesión",
+            "body": "determina cuánto tiempo permanece activa una navegación por clústeres iniciada. El tiempo de cuenta atrás puede ajustarse libremente entre 5 y 3600 segundos. {{INFINITY}} mantiene la sesión abierta sin límite. La cuenta atrás y {{INFINITY}} pueden alternarse directamente en la indicación de estado durante la navegación.",
+            "infinityAlt": "Sin límite"
+          }
         ]
       },
       {
@@ -8145,7 +8161,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Les rayons",
         "paragraphs": [
-          "Les rayons sont cumulatifs : un impact dans le rayon de danger compte aussi dans les rayons d’orage et d’observation. Ce sont des seuils de distance, pas des sources de données séparées."
+          "Les rayons sont cumulatifs : un impact dans le rayon de danger compte aussi dans les rayons d’orage et d’observation. Ce sont des seuils de distance, pas des sources de données séparées.",
+          "Sous « Résolution des clusters », vous définissez à quel moment les clusters sont dissociés en impacts individuels lors du zoom. Précoce les dissocie plus tôt, Équilibré reprend le réglage zonal V4.08 déjà éprouvé et Tardif maintient les clusters regroupés plus longtemps."
         ],
         "items": [
           "Rayon d’observation – zone extérieure pour l’observation précoce.",
@@ -8154,6 +8171,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Le rayon de danger est limité à 250 km maximum. Consultez « Réglages de base recommandés » pour les valeurs de départ conseillées et la coordination nécessaire avec l’application Blitzortung."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Navigation dans les clusters · durée de session",
+            "body": "détermine combien de temps une navigation dans les clusters déjà démarrée reste active. Le compte à rebours peut être réglé librement entre 5 et 3600 secondes. {{INFINITY}} maintient la session ouverte sans limite. Le compte à rebours et {{INFINITY}} peuvent être basculés directement dans l’indicateur d’état pendant la navigation.",
+            "infinityAlt": "Sans limite"
+          }
         ]
       },
       {
@@ -8377,7 +8401,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "De stralen",
         "paragraphs": [
-          "De stralen zijn cumulatief: een inslag binnen de gevarenradius telt ook binnen de onweers- en observatieradius. Het zijn afstandsdrempels, geen afzonderlijke gegevensbronnen."
+          "De stralen zijn cumulatief: een inslag binnen de gevarenradius telt ook binnen de onweers- en observatieradius. Het zijn afstandsdrempels, geen afzonderlijke gegevensbronnen.",
+          "Onder ‘Clusterresolutie’ bepaal je wanneer clusters bij het inzoomen worden opgesplitst in afzonderlijke blikseminslagen. Vroeg splitst eerder op, Evenwichtig gebruikt de tot nu toe beproefde zoneafhankelijke V4.08-afstemming en Laat houdt clusters langer bijeen."
         ],
         "items": [
           "Observatieradius – buitenste gebied voor vroege observatie.",
@@ -8386,6 +8411,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "De gevarenradius is beperkt tot maximaal 250 km. Zie “Aanbevolen basisinstellingen” voor aanbevolen startwaarden en de vereiste afstemming met de Blitzortung-app."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Clusternavigatie · sessieduur",
+            "body": "bepaalt hoe lang een gestarte clusternavigatie actief blijft. De afteltijd kan vrij worden ingesteld tussen 5 en 3600 seconden. {{INFINITY}} houdt de sessie onbeperkt open. Aftellen en {{INFINITY}} kunnen tijdens de navigatie rechtstreeks in de statusweergave worden omgeschakeld.",
+            "infinityAlt": "Onbeperkt"
+          }
         ]
       },
       {
@@ -8609,7 +8641,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Promienie",
         "paragraphs": [
-          "Promienie nakładają się: wyładowanie w promieniu zagrożenia liczy się także w promieniu burzy i obserwacji. Są to progi odległości, a nie oddzielne źródła danych."
+          "Promienie nakładają się: wyładowanie w promieniu zagrożenia liczy się także w promieniu burzy i obserwacji. Są to progi odległości, a nie oddzielne źródła danych.",
+          "W sekcji „Rozdzielanie klastrów” określasz, kiedy podczas przybliżania klastry mają zostać rozdzielone na pojedyncze wyładowania. Wcześnie rozdziela je szybciej, Zrównoważone korzysta z dotychczasowego, zależnego od stref strojenia V4.08, a Późno utrzymuje klastry razem dłużej."
         ],
         "items": [
           "Promień obserwacji – zewnętrzny obszar wczesnej obserwacji.",
@@ -8618,6 +8651,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Promień zagrożenia jest ograniczony do maksymalnie 250 km. Zalecane wartości początkowe i wymagane uzgodnienie z aplikacją Blitzortung opisano w sekcji „Zalecane ustawienia podstawowe”."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Nawigacja po klastrach · czas sesji",
+            "body": "określa, jak długo rozpoczęta nawigacja po klastrach pozostaje aktywna. Czas odliczania można dowolnie ustawić w zakresie od 5 do 3600 sekund. {{INFINITY}} utrzymuje sesję otwartą bez limitu. Odliczanie i {{INFINITY}} można przełączać bezpośrednio we wskaźniku stanu podczas nawigacji.",
+            "infinityAlt": "Bez limitu"
+          }
         ]
       },
       {
@@ -8841,7 +8881,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Os raios",
         "paragraphs": [
-          "Os raios são cumulativos: uma descarga dentro do raio de perigo também conta nos raios de tempestade e de observação. São limites de distância, não fontes de dados separadas."
+          "Os raios são cumulativos: uma descarga dentro do raio de perigo também conta nos raios de tempestade e de observação. São limites de distância, não fontes de dados separadas.",
+          "Em «Resolução de clusters» defines quando os clusters são desfeitos em descargas individuais ao ampliar o mapa. Cedo desfaz mais cedo, Equilibrado usa o ajuste V4.08 dependente de zonas já testado e Tarde mantém os clusters agrupados durante mais tempo."
         ],
         "items": [
           "Raio de observação – área exterior para observação antecipada.",
@@ -8850,6 +8891,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "O raio de perigo está limitado a um máximo de 250 km. Consulte “Definições básicas recomendadas” para valores iniciais recomendados e para a coordenação necessária com a aplicação Blitzortung."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Navegação por clusters · duração da sessão",
+            "body": "define durante quanto tempo uma navegação por clusters iniciada permanece ativa. O tempo da contagem decrescente pode ser definido livremente entre 5 e 3600 segundos. {{INFINITY}} mantém a sessão aberta sem limite. A contagem decrescente e {{INFINITY}} podem ser alternadas diretamente no indicador de estado durante a navegação.",
+            "infinityAlt": "Sem limite"
+          }
         ]
       },
       {
@@ -9073,7 +9121,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Radierna",
         "paragraphs": [
-          "Radierna är kumulativa: en blixt inom faroradien räknas även inom åsk- och observationsradien. Områdena är avståndsgränser, inte separata datakällor."
+          "Radierna är kumulativa: en blixt inom faroradien räknas även inom åsk- och observationsradien. Områdena är avståndsgränser, inte separata datakällor.",
+          "Under ”Klusterupplösning” väljer du när kluster ska lösas upp till enskilda blixtar när du zoomar in. Tidig löser upp tidigare, Balanserad använder den hittills beprövade zonberoende V4.08-inställningen och Sen håller kluster samlade längre."
         ],
         "items": [
           "Observationsradie – yttre område för tidig observation.",
@@ -9082,6 +9131,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Faroradien är begränsad till högst 250 km. Se “Rekommenderade grundinställningar” för rekommenderade startvärden och nödvändig samordning med Blitzortung-appen."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Klusternavigering · sessionstid",
+            "body": "bestämmer hur länge en påbörjad klusternavigering förblir aktiv. Nedräkningstiden kan ställas in fritt mellan 5 och 3600 sekunder. {{INFINITY}} håller sessionen öppen utan tidsgräns. Nedräkning och {{INFINITY}} kan växlas direkt i statusvisningen under navigeringen.",
+            "infinityAlt": "Obegränsad"
+          }
         ]
       },
       {
@@ -9305,7 +9361,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "I raggi",
         "paragraphs": [
-          "I raggi sono cumulativi: una scarica nel raggio di pericolo conta anche nei raggi di temporale e osservazione. Sono soglie di distanza, non sorgenti dati separate."
+          "I raggi sono cumulativi: una scarica nel raggio di pericolo conta anche nei raggi di temporale e osservazione. Sono soglie di distanza, non sorgenti dati separate.",
+          "In «Risoluzione dei cluster» scegli quando i cluster vengono separati in singole scariche durante lo zoom. Precoce li separa prima, Bilanciata usa la taratura V4.08 dipendente dalle zone già collaudata e Tardiva mantiene i cluster raggruppati più a lungo."
         ],
         "items": [
           "Raggio di osservazione – area esterna per l’osservazione anticipata.",
@@ -9314,6 +9371,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Il raggio di pericolo è limitato a un massimo di 250 km. Consulta “Impostazioni di base consigliate” per i valori iniziali raccomandati e il necessario coordinamento con l’app Blitzortung."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Navigazione dei cluster · durata sessione",
+            "body": "stabilisce per quanto tempo una navigazione dei cluster già avviata rimane attiva. Il conto alla rovescia può essere impostato liberamente tra 5 e 3600 secondi. {{INFINITY}} mantiene la sessione aperta senza limite. Il conto alla rovescia e {{INFINITY}} possono essere alternati direttamente nell’indicatore di stato durante la navigazione.",
+            "infinityAlt": "Senza limite"
+          }
         ]
       },
       {
@@ -9537,7 +9601,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Radiene",
         "paragraphs": [
-          "Radiene er kumulative: Et lynnedslag innenfor fareradiusen teller også innenfor torden- og observasjonsradiusen. Områdene er avstandsgrenser, ikke separate datakilder."
+          "Radiene er kumulative: Et lynnedslag innenfor fareradiusen teller også innenfor torden- og observasjonsradiusen. Områdene er avstandsgrenser, ikke separate datakilder.",
+          "Under «Klyngeoppløsning» velger du når klynger skal løses opp til enkeltlyn når du zoomer inn. Tidlig løser opp tidligere, Balansert bruker den hittil utprøvde soneavhengige V4.08-innstillingen, og Sen holder klynger samlet lenger."
         ],
         "items": [
           "Observasjonsradius – ytre område for tidlig observasjon.",
@@ -9546,6 +9611,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Fareradiusen er begrenset til maksimalt 250 km. Se “Anbefalte grunninnstillinger” for anbefalte startverdier og nødvendig samordning med Blitzortung-appen."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Klyngenavigasjon · øktvarighet",
+            "body": "bestemmer hvor lenge en påbegynt klyngenavigasjon forblir aktiv. Nedtellingstiden kan stilles fritt mellom 5 og 3600 sekunder. {{INFINITY}} holder økten åpen uten tidsbegrensning. Nedtelling og {{INFINITY}} kan byttes direkte i statusvisningen under navigasjonen.",
+            "infinityAlt": "Ubegrenset"
+          }
         ]
       },
       {
@@ -9769,7 +9841,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Säteet",
         "paragraphs": [
-          "Säteet ovat kumulatiivisia: vaarasäteen sisällä oleva salama lasketaan myös ukkos- ja havaintosäteeseen. Alueet ovat etäisyysrajoja, eivät erillisiä tietolähteitä."
+          "Säteet ovat kumulatiivisia: vaarasäteen sisällä oleva salama lasketaan myös ukkos- ja havaintosäteeseen. Alueet ovat etäisyysrajoja, eivät erillisiä tietolähteitä.",
+          "Kohdassa ”Klusterien purku” määrität, milloin klusterit puretaan yksittäisiksi salamoiksi lähennettäessä. Aikaisin purkaa aiemmin, Tasapainoinen käyttää tähän asti testattua aluekohtaista V4.08-säätöä ja Myöhään pitää klusterit koossa pidempään."
         ],
         "items": [
           "Havaintosäde – ulompi alue varhaiseen havainnointiin.",
@@ -9778,6 +9851,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Vaarasäde on rajoitettu enintään 250 kilometriin. Katso “Suositellut perusasetukset” suositelluista lähtöarvoista ja tarvittavasta yhteensovituksesta Blitzortung-sovelluksen kanssa."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Klusterinavigointi · istunnon kesto",
+            "body": "määrittää, kuinka kauan aloitettu klusterinavigointi pysyy aktiivisena. Lähtölaskennan ajan voi asettaa vapaasti 5–3600 sekunnin välille. {{INFINITY}} pitää istunnon avoinna ilman aikarajaa. Lähtölaskennan ja {{INFINITY}} välillä voi vaihtaa suoraan tilanäytöstä navigoinnin aikana.",
+            "infinityAlt": "Rajoittamaton"
+          }
         ]
       },
       {
@@ -10001,7 +10081,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Poloměry",
         "paragraphs": [
-          "Poloměry se překrývají: výboj v nebezpečném poloměru se počítá také do bouřkového a pozorovacího poloměru. Jde o prahové vzdálenosti, nikoli oddělené zdroje dat."
+          "Poloměry se překrývají: výboj v nebezpečném poloměru se počítá také do bouřkového a pozorovacího poloměru. Jde o prahové vzdálenosti, nikoli oddělené zdroje dat.",
+          "V části „Rozpad shluků“ určíte, kdy se mají shluky při přibližování rozdělit na jednotlivé výboje. Brzy je rozdělí dříve, Vyváženě používá dosud osvědčené zónové nastavení V4.08 a Pozdě je ponechá seskupené déle."
         ],
         "items": [
           "Pozorovací poloměr – vnější oblast pro včasné pozorování.",
@@ -10010,6 +10091,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Poloměr nebezpečí je omezen na maximálně 250 km. Doporučené výchozí hodnoty a nutné sladění s aplikací Blitzortung najdete v části „Doporučená základní nastavení“."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Navigace mezi shluky · doba relace",
+            "body": "určuje, jak dlouho zůstane zahájená navigace mezi shluky aktivní. Doba odpočtu je volně nastavitelná v rozsahu 5 až 3600 sekund. {{INFINITY}} ponechá relaci otevřenou bez časového omezení. Odpočet a {{INFINITY}} lze během navigace přepínat přímo ve stavovém zobrazení.",
+            "infinityAlt": "Bez omezení"
+          }
         ]
       },
       {
@@ -10233,7 +10321,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "Οι ακτίνες",
         "paragraphs": [
-          "Οι ακτίνες είναι αθροιστικές: ένας κεραυνός μέσα στην ακτίνα κινδύνου μετρά επίσης στις ακτίνες καταιγίδας και παρατήρησης. Πρόκειται για όρια απόστασης, όχι για ξεχωριστές πηγές δεδομένων."
+          "Οι ακτίνες είναι αθροιστικές: ένας κεραυνός μέσα στην ακτίνα κινδύνου μετρά επίσης στις ακτίνες καταιγίδας και παρατήρησης. Πρόκειται για όρια απόστασης, όχι για ξεχωριστές πηγές δεδομένων.",
+          "Στην «Ανάλυση συστάδων» ορίζετε πότε οι συστάδες διαχωρίζονται σε μεμονωμένους κεραυνούς κατά τη μεγέθυνση. Η επιλογή Νωρίς τις διαχωρίζει νωρίτερα, η Ισορροπημένη χρησιμοποιεί την έως τώρα δοκιμασμένη ρύθμιση V4.08 ανά ζώνη και η Αργά κρατά τις συστάδες ενωμένες περισσότερο."
         ],
         "items": [
           "Ακτίνα παρατήρησης – εξωτερική περιοχή για έγκαιρη παρατήρηση.",
@@ -10242,6 +10331,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Η ακτίνα κινδύνου περιορίζεται σε μέγιστο 250 km. Δείτε τις «Προτεινόμενες βασικές ρυθμίσεις» για προτεινόμενες αρχικές τιμές και τον απαραίτητο συντονισμό με την εφαρμογή Blitzortung."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Πλοήγηση συστάδων · διάρκεια συνεδρίας",
+            "body": "καθορίζει για πόσο χρόνο παραμένει ενεργή μια πλοήγηση συστάδων που έχει ξεκινήσει. Ο χρόνος αντίστροφης μέτρησης μπορεί να οριστεί ελεύθερα από 5 έως 3600 δευτερόλεπτα. {{INFINITY}} διατηρεί τη συνεδρία ανοικτή χωρίς χρονικό όριο. Η αντίστροφη μέτρηση και το {{INFINITY}} μπορούν να εναλλάσσονται απευθείας στην ένδειξη κατάστασης κατά την πλοήγηση.",
+            "infinityAlt": "Χωρίς όριο"
+          }
         ]
       },
       {
@@ -10465,7 +10561,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "A sugarak",
         "paragraphs": [
-          "A sugarak egymásra épülnek: a veszélyzónán belüli villám a vihar- és megfigyelési sugárba is beleszámít. Ezek távolsági küszöbök, nem külön adatforrások."
+          "A sugarak egymásra épülnek: a veszélyzónán belüli villám a vihar- és megfigyelési sugárba is beleszámít. Ezek távolsági küszöbök, nem külön adatforrások.",
+          "A „Klaszterfelbontás” alatt adhatod meg, mikor bomoljanak a klaszterek egyedi villámokra nagyításkor. A Korai hamarabb bontja fel őket, a Kiegyensúlyozott az eddig bevált, zónafüggő V4.08-hangolást használja, a Késői pedig tovább tartja együtt a klasztereket."
         ],
         "items": [
           "Megfigyelési sugár – külső terület a korai megfigyeléshez.",
@@ -10474,6 +10571,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "A veszélysugár legfeljebb 250 km lehet. Az ajánlott kezdőértékeket és a Blitzortung alkalmazással szükséges összehangolást az „Ajánlott alapbeállítások” rész ismerteti."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Klaszternavigáció · munkamenet ideje",
+            "body": "meghatározza, mennyi ideig marad aktív egy elindított klaszternavigáció. A visszaszámlálás ideje szabadon beállítható 5 és 3600 másodperc között. {{INFINITY}} időkorlát nélkül nyitva tartja a munkamenetet. A visszaszámlálás és a {{INFINITY}} közvetlenül az állapotkijelzésben váltható navigálás közben.",
+            "infinityAlt": "Korlátlan"
+          }
         ]
       },
       {
@@ -10697,7 +10801,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "De Radien",
         "paragraphs": [
-          "De Radien bauen aufeinander auf: A Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- und Beobachtungsradius. De Bereiche san Entfernungsschwellen, koane voneinander getrennten Datenquellen."
+          "De Radien bauen aufeinander auf: A Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- und Beobachtungsradius. De Bereiche san Entfernungsschwellen, koane voneinander getrennten Datenquellen.",
+          "Unter „Cluster-Auflösung“ stellst ei, wann de Cluster beim Einezoomen in einzelne Blitze aufglöst werdn. Friah löst friah auf, Ausglichen nimmt de bisher erprobte zonenabhängige V4.08-Abstimmung und Spat hält de Cluster länger zamm."
         ],
         "items": [
           "Beobachtungsradius – da äußere Bereich fürs friahzeitige Beobachtn.",
@@ -10706,6 +10811,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Da Gefahrenradius is auf maximal 250 km begrenzt. Hinwais zu empfohlenen Ausgangswerten und zur erforderlichen Abstimmung mit da Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Cluster-Navigation · Sitzungszeit",
+            "body": "legt fest, wia lang a begonnene Cluster-Navigation aktiv bleibt. De Countdown-Zeit kannst frei zwischen 5 und 3600 Sekunden einstellen. {{INFINITY}} hält de Sitzung ohne Zeitlimit offen. Countdown und {{INFINITY}} kannst während da Navigation direkt in da Statusanzeige umschalten.",
+            "infinityAlt": "Unbegrenzt"
+          }
         ]
       },
       {
@@ -10929,7 +11041,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "De Radien",
         "paragraphs": [
-          "De Radien bauen aufeinander auf: En Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- un Beobachtungsradius. De Bereiche sind Entfernungsschwellen, keen voneinander getrennten Datenquellen."
+          "De Radien bauen aufeinander auf: En Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- un Beobachtungsradius. De Bereiche sind Entfernungsschwellen, keen voneinander getrennten Datenquellen.",
+          "Ünner „Cluster-Uplösen“ stellst du in, wann de Cluster bi’t Rinzoomen in enkelte Blitzen oplööst warrt. Fröh lööst eher op, Utbalanciert bruukt de betherto bepröövte, zonenafhängige V4.08-Afstimmung un Laat höllt de Cluster länger tosamen."
         ],
         "items": [
           "Beobachtungsradius – äußerer Bereich för frühe Beobachtung.",
@@ -10938,6 +11051,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "De Gefahrenradius is auf maximal 250 km begrenzt. Henwiesen zu empfohlenen Ausgangswerten un zur erforderlichen Abstimmung mit de Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Cluster-Navigation · Sitzungstiet",
+            "body": "leggt fast, wo lang en anfungen Cluster-Navigation aktiv blifft. De Countdown-Tiet lett sik free twischen 5 un 3600 Sekunnen instellen. {{INFINITY}} höllt de Sitzung ahn Tietgrenz apen. Countdown un {{INFINITY}} laat sik wielt de Navigation direktemang in de Statuswies wesseln.",
+            "infinityAlt": "Ahn Tietgrenz"
+          }
         ]
       },
       {
@@ -11161,7 +11281,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "De Radien",
         "paragraphs": [
-          "De Radien bauen aufeinander auf: Een Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- un Beobachtungsradius. De Bereiche sin Entfernungsschwellen, keene voneinander getrennten Datenquellen."
+          "De Radien bauen aufeinander auf: Een Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- un Beobachtungsradius. De Bereiche sin Entfernungsschwellen, keene voneinander getrennten Datenquellen.",
+          "Unner „Cluster-Ufflösung“ legste fest, wann de Cluster beim Reinzohm in eenzelne Blitze uffgelöst werdn. Früh löst eher uff, Ausgewogn nimmt de bisher erbrobde zonenabhängische V4.08-Abstimmung un Schbäd hält de Cluster länger zusamm."
         ],
         "items": [
           "Beobachdungsradius – dr äußere Bereich fürs frühe Beobachdn.",
@@ -11170,6 +11291,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Dr Gefahrenradius is auf maximal 250 km begrenzt. Hinweese zu empfohlenen Ausgangswerten un zur erforderlichen Abstimmung mit dr Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Cluster-Navigation · Sitzungszeit",
+            "body": "legt fest, wie lange eene gestartete Cluster-Navigation aktiv bleibt. De Countdown-Zeit kannste frei zwischen 5 un 3600 Sekundn einstellen. {{INFINITY}} hält de Sitzung ohne Zeitbegrenzung offen. Countdown un {{INFINITY}} kannste während dr Navigation direkt in dr Statusanzeige umschalten.",
+            "infinityAlt": "Unbegrenzt"
+          }
         ]
       },
       {
@@ -11393,7 +11521,8 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         "key": "radii",
         "title": "D’Radien",
         "paragraphs": [
-          "D Radien bauen aufeinander auf: A Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- ond Beobachtungsradius. D Bereiche send Entfernungsschwellen, koi voneinander getrennten Datenquellen."
+          "D Radien bauen aufeinander auf: A Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- ond Beobachtungsradius. D Bereiche send Entfernungsschwellen, koi voneinander getrennten Datenquellen.",
+          "Unter „Cluster-Auflösung“ legsch fescht, wann d Cluster beim Reinzomma in einzelne Blitze aufglöst werdet. Früh löst früher auf, Ausglicha nimmt d bisher erprobte zonenabhängige V4.08-Abstimmung ond Spät hält d Cluster länger zamma."
         ],
         "items": [
           "Beobachtungsradius – dr äußere Bereich fürs frühe Beobachta.",
@@ -11402,6 +11531,13 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ],
         "notes": [
           "Dr Gefahrenradius isch auf maximal 250 km begrenzt. Hinweis zu empfohlenen Ausgangswerten ond zur erforderlichen Abstimmung mit dr Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“."
+        ],
+        "featureBlocks": [
+          {
+            "title": "Cluster-Navigation · Sitzungszeit",
+            "body": "legt fescht, wie lang a gestartete Cluster-Navigation aktiv bleibt. D Countdown-Zeit kannsch frei zwischa 5 ond 3600 Sekunda ei-stella. {{INFINITY}} hält d Sitzung ohne Zeitlimit offen. Countdown ond {{INFINITY}} kannsch während dr Navigation direkt in dr Statusanzeige umschalta.",
+            "infinityAlt": "Unbegrenzt"
+          }
         ]
       },
       {
