@@ -143,12 +143,31 @@ Detaillierte Testdokumentation:
 
 ## Qualitätssicherung und Promotion
 
-V4.07.56 wird durch deterministischen Frontend-Neubau, SHA-/Asset-Parität, Browserprofile, Sprach-/Locale-/Recorder-Prüfungen, V4.07.56-Golden-Vertrag, Diagnosevertrag, Hi-Res-Retentionsvertrag, Home-Assistant-Laufzeittests, HACS, Hassfest und Paketverträge abgesichert.
+V4.08 wurde am **18.09.2026** vollständig nach dem verbindlichen PRE-MERGE-/Golden-Master-Vertrag veröffentlicht.
 
-Der PRE-MERGE-Snapshot des bisherigen `main` wurde bereits gemäß Promotion-Audit erzeugt und außerhalb GitHub gesichert. `main` bleibt jedoch bis zur ausdrücklichen Benutzerfreigabe unverändert.
+Kanonischer öffentlicher Release-Commit:
 
-Nach einer kontrollierten Promotion müssen die relevanten Gates auf dem tatsächlichen neuen `main` erneut vollständig grün sein. Erst danach darf der Golden Master aus genau diesem Commit erzeugt und derselbe Commit öffentlich getaggt/veröffentlicht werden.
+`27da94e5043a365dbe8ea5c5e2224327165750fa`
 
-Detaillierte Abschlussnotizen: `docs/RELEASE_NOTES_V4_07_56.md`.
+Unveränderliche Referenzen:
 
-Externe Prüfungen des separat installierten Blitzortung-Datenregionswechsels sowie spezieller DNS-/Proxy-/TLS-Inspection-Umgebungen bleiben davon getrennt und werden nicht fälschlich als bereits abgeschlossen dargestellt.
+- Tag `v4.08`;
+- Freeze-Branch `frozen/v4.08`;
+- GitHub Release **Gewitterradar V4.08**;
+- native Integration **0.20.0**;
+- finales Frontend **2.028.645 Bytes**, SHA256 `b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f`;
+- Locale-Modul SHA256 `a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288`.
+
+Die Post-Merge-Gates auf dem tatsächlichen Release-Commit waren vollständig grün: gemeinsame Frontend-/Browserprüfung, Home-Assistant-/HACS-/Hassfest-Validierung, Diagnosevertrag, Hi-Res-Retention und Source-Archive-Vertrag.
+
+Der PRE-MERGE-Snapshot wurde aus dem alten `main`-Commit `1928649627f81b2c2c6b0888f1f5ad8601205db5` erzeugt. Der Golden Master wurde anschließend aus exakt dem veröffentlichten V4.08-Commit `27da94e...` erzeugt. Beide Archivstände wurden zusätzlich außerhalb des laufenden Repositorys gesichert.
+
+Die abgeleitete Dashboard-/Lovelace-Auslieferung wurde ebenfalls als **V4.08** veröffentlicht und ist bei Frontend und Locale bytegleich zur kanonischen Ausleitung. Dashboard-Release-Commit: `cba234a37f20971c2f64b393202dbb70007dc19d`.
+
+V4.08 ist damit abgeschlossen und funktional eingefroren. Neue Produktentwicklung beginnt ausschließlich auf **V4.09.xx**.
+
+Vollständiger Release-Abschluss und Übergabe:
+
+`docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
+
+Externe Prüfungen des separat installierten Blitzortung-Datenregionswechsels sowie spezieller DNS-/Proxy-/TLS-Inspection-Umgebungen bleiben fachlich getrennte Umgebungsprüfungen und sind keine nachträglichen V4.08-Release-Blocker.
