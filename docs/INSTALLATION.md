@@ -1,4 +1,4 @@
-# Gewitterradar V4.07.56 – Installation
+# Gewitterradar V4.07.57 – Installation
 
 Diese Anleitung beschreibt die beiden Auslieferungsformen von **Gewitterradar**:
 
@@ -7,8 +7,9 @@ Diese Anleitung beschreibt die beiden Auslieferungsformen von **Gewitterradar**:
 
 Beide gehören fachlich zu demselben Gewitterradar-Produktstand. Für eine produktive Installation sollte genau **eine** Auslieferungsform aktiv verwendet werden. Insbesondere dürfen nicht gleichzeitig mehrere Gewitterradar-JavaScript-Ressourcen oder mehrere aktive V4.06-/V4.07-Packages geladen werden.
 
-Aktueller abgenommener Produktkandidat: **V4.07.56**  
-Native Integration: **0.19.0**
+Aktueller öffentlicher Produktstand: **V4.07.57**  
+Native Integration: **0.19.1**  
+Geschützte Laufzeitbasis: **V4.07.56**
 
 ---
 
@@ -251,11 +252,11 @@ Veraltete oder parallele Einträge entfernen bzw. deaktivieren. Insbesondere his
 
 oder Testpfade dürfen nicht zusätzlich geladen werden.
 
-Kanonische V4.07.56-Frontendidentität:
+Kanonische V4.07.57-Frontendidentität:
 
 ```text
-Größe:  1.955.141 Bytes
-SHA256: 249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a
+Größe:  1.955.144 Bytes
+SHA256: ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571
 ```
 
 Nach einer Änderung an der Ressource den Browser vollständig neu laden. Bei hartnäckigem Frontend-Cache kann ein Hard-Reload des Browsers erforderlich sein.
@@ -266,7 +267,7 @@ Nach einer Änderung an der Ressource den Browser vollständig neu laden. Bei ha
 
 Nach Abschluss der Installation prüfen:
 
-- Gewitterradar zeigt **V4.07.56**;
+- Gewitterradar zeigt **V4.07.57**;
 - nur eine Gewitterradar-JavaScript-Ressource ist aktiv;
 - Karte und Radien werden dargestellt;
 - Live-Blitze bzw. vorhandene 120-Minuten-Historie erscheinen;
@@ -351,5 +352,6 @@ Danach Home Assistant vollständig neu starten, Gewitterradar über **Einstellun
 - [`RECORDER.md`](RECORDER.md) – Schutz der Home-Assistant-Datenbank
 - [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md) – Migration und Rückfall
 - [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md) – Erkenntnisse aus Real-Install-Tests
-- [`RELEASE_NOTES_V4_07_56.md`](RELEASE_NOTES_V4_07_56.md) – V4.07.56-Abschlussstand
+- [`RELEASE_NOTES_V4_07_57.md`](RELEASE_NOTES_V4_07_57.md) – V4.07.57-Dokumentations-/Installations-Patch
+- [`RELEASE_NOTES_V4_07_56.md`](RELEASE_NOTES_V4_07_56.md) – geschützte V4.07.56-Laufzeitbasis
 - [`GOLDEN_MASTER_POLICY.md`](GOLDEN_MASTER_POLICY.md) – Release-/Golden-Master-Prozess
