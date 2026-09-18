@@ -49,6 +49,10 @@ Die bereits abgenommene Funktion bleibt erhalten:
 - Ein Profilwechsel beendet bewusst eine laufende Cluster-Navigationssitzung und startet die Darstellung mit der gewählten Auflösungsrichtlinie neu.
 - V4.07.56 selbst und der geschützte Freeze werden nicht verändert.
 
+## Repository- & Web-Dokumentation
+
+Installationsanleitung und Gewitterradar-Webauftritt wurden überarbeitet, mehrsprachig vereinheitlicht und mit einer kompakten Funktionsgalerie sowie optimierten WebP-Grafiken ergänzt.
+
 ## Dokumentation
 
 Die Profilauswahl und die neue Benennung sind in der sichtbaren Release History, in **Hilfe & Hinweise**, in `docs/HISTORY.md` und in `docs/V4_08_CLUSTER_RESOLUTION_PROFILES.md` dokumentiert.
