@@ -20,6 +20,26 @@ Arbeitsregel aus den globalen Defaults:
 
 ---
 
+## NEXT / VERSIONIERT
+
+### V4.09.xx – HACS-Distribution und Update-Darstellung
+
+Nach dem V4.08-Freeze beginnen neue Arbeiten ausschließlich auf der **V4.09.xx**-Linie.
+
+Für V4.09.xx ist der Weg in den offiziellen HACS-Standardkatalog ausdrücklich vorgemerkt:
+
+- `TheDaimos/gewitterradar` für die Aufnahme in **hacs/default** vorbereiten und einreichen;
+- HACS- und Hassfest-Anforderungen unmittelbar vor der Einreichung erneut gegen den dann aktuellen HACS-Stand prüfen;
+- öffentliche Releases, Tags, `hacs.json`, Manifest, README, Branding und Repository-Metadaten auf die Standardrepository-Anforderungen abgleichen;
+- Ziel: die bei benutzerdefinierten HACS-Repositories beobachtete verzögerte automatische Update-Erkennung deutlich verkürzen; die konkreten HACS-Aktualisierungsintervalle vor Umsetzung erneut verifizieren und nicht dauerhaft hart voraussetzen;
+- das derzeit im HACS-Updateeintrag sichtbare **„icon not available“** separat verfolgen. Die native Home-Assistant-Integration zeigt das mitgelieferte Gewitterradar-Branding bereits korrekt; deshalb darf das funktionierende Integrationsbranding nicht als Workaround umgebaut werden;
+- aktuelle HACS-/Home-Assistant-Änderungen zur Brands-/Update-Entity-Darstellung vor einer eigenen Umgehungslösung prüfen;
+- nach Aufnahme in den Standardkatalog reale Update-Latenz auf einer Produktionsinstallation messen und dokumentieren.
+
+Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefrorenen V4.08-Funktionsumfangs.
+
+---
+
 ## ACTIVE / VERSIONIERT
 
 ### V4.07 · Near-Final-Testkandidat – Weltweite Orts-Suche / dynamischer Bezugsstandort
@@ -56,9 +76,9 @@ Der ursprünglich geplante Kernumfang ist inzwischen weitgehend umgesetzt:
 
 Bis diese Punkte abgeschlossen sind, gilt für V4.07 weitgehend **Feature-Freeze**. Neue Ideen werden nicht mehr automatisch in V4.07 aufgenommen.
 
-### Noch keine nächste Versionsnummer festgelegt
+### Nächste Versionslinie festgelegt: V4.09.xx
 
-Nach dem V4.07-Freeze werden die untenstehenden unversionierten Punkte neu priorisiert. Es ist **noch keine automatische Zuordnung zu V4.08** oder einer anderen Versionsnummer beschlossen.
+Nach dem V4.08-Freeze beginnt die nächste Entwicklungsarbeit auf **V4.09.xx**. Unversionierte Backlog-Punkte werden dadurch nicht automatisch Teil von V4.09; die ausdrücklich oben unter NEXT / VERSIONIERT festgehaltene HACS-Distributionsarbeit ist jedoch für diese Linie vorgesehen.
 
 ---
 
