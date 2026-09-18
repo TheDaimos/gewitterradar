@@ -1,0 +1,44 @@
+name: V4.08 PRE-MERGE snapshot
+
+on:
+  push:
+    branches:
+      - ops/v4.08-premerge-snapshot
+    paths:
+      - 'docs/archive-triggers/V4_08_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch exact main history
+        run: git fetch origin '+refs/heads/main:refs/remotes/origin/main' '+refs/tags/*:refs/tags/*' --force --prune
+      - name: Verify immutable pre-merge source
+        run: test "$(git rev-parse refs/remotes/origin/main^{commit})" = "1928649627f81b2c2c6b0888f1f5ad8601205db5"
+      - name: Create V4.08 PRE-MERGE archive
+        id: archive
+        run: |
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh PRE_MERGE 1928649627f81b2c2c6b0888f1f5ad8601205db5 V4.08 dist/source-archives
+      - name: Verify archive
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.archive.outputs.zip_path }}'
+          test -s '${{ steps.archive.outputs.bundle_path }}'
+          test -s '${{ steps.archive.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.archive.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.archive.outputs.zip_path }}'
+          git bundle verify '${{ steps.archive.outputs.bundle_path }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.08_PRE_MERGE
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
