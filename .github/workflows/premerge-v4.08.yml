@@ -1,0 +1,60 @@
+name: V4.08 PRE-MERGE snapshot
+
+on:
+  push:
+    branches:
+      - release/v4.08
+    paths:
+      - 'docs/archive-triggers/V4_08_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact old main identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fx 'VERSION=V4.08' docs/archive-triggers/V4_08_PRE_MERGE.trigger
+          expected=$(grep '^EXPECTED_MAIN_SHA=' docs/archive-triggers/V4_08_PRE_MERGE.trigger | cut -d= -f2)
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' --force
+          actual=$(git rev-parse refs/remotes/origin/main^{commit})
+          echo "Expected old main: $expected"
+          echo "Actual old main:   $actual"
+          test "$actual" = "$expected"
+
+      - name: Create PRE-MERGE ZIP and Git bundle
+        id: archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh PRE_MERGE refs/remotes/origin/main V4.08 dist/source-archives
+
+      - name: Verify PRE-MERGE archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.archive.outputs.zip_path }}'
+          test -s '${{ steps.archive.outputs.bundle_path }}'
+          test -s '${{ steps.archive.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.archive.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.archive.outputs.zip_path }}'
+          git bundle verify '${{ steps.archive.outputs.bundle_path }}'
+
+      - name: Upload immutable PRE-MERGE archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.archive_base_name }}
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
