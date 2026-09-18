@@ -128,6 +128,10 @@ Parallel wurde die bisherige Bezeichnung **„Cluster-Sprung · Sitzungszeit“*
 
 Die ornamentale Unendlichkeitsgrafik im gealterten Gold-/Messingstil bleibt als gemeinsames Bedien- und Statusmotiv erhalten. Die verkleinerte Runtime-Grafik ersetzt den später geschützten Hi-Res-Master ausdrücklich nicht.
 
+### Repository- & Web-Dokumentation optimiert
+
+Die Installations- und Projektdokumentation wurde visuell und inhaltlich überarbeitet. Der neue mehrsprachige Gewitterradar-Webauftritt stellt Installation und Einrichtung weiterhin in den Mittelpunkt und ergänzt eine kompakte Funktionsübersicht mit optimierten WebP-Grafiken, Galerieansicht und direkter Bildvergrößerung.
+
 Detaillierte Testdokumentation:
 
 - `docs/V4_08_CLUSTER_RESOLUTION_PROFILES.md`;
