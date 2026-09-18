@@ -13,7 +13,7 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.08%20RC-c9a45b)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.08-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
 ![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
