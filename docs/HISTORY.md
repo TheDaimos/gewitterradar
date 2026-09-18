@@ -130,7 +130,7 @@ Die ornamentale Unendlichkeitsgrafik im gealterten Gold-/Messingstil bleibt als 
 
 ### Repository- & Web-Dokumentation optimiert
 
-Die Installations- und Projektdokumentation wurde visuell und inhaltlich überarbeitet. Der neue mehrsprachige Gewitterradar-Webauftritt stellt Installation und Einrichtung weiterhin in den Mittelpunkt und ergänzt eine kompakte Funktionsübersicht mit optimierten WebP-Grafiken, Galerieansicht und direkter Bildvergrößerung.
+Die Installations- und Projektdokumentation wurde visuell und inhaltlich überarbeitet. Der neue mehrsprachige Gewitterradar-Webauftritt stellt Installation und Einrichtung weiterhin in den Mittelpunkt und ergänzt eine kompakte Funktionsübersicht mit optimierten WebP-Grafiken, Galerieansicht und direkter Bildvergrößerung. Die Repository-Startseite nutzt zusätzlich absolute Bildpfade für Logo und Hero-Grafik, damit die Darstellung auch innerhalb von HACS zuverlässig funktioniert.
 
 Detaillierte Testdokumentation:
 
