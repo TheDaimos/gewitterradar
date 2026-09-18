@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026/09 — V4.08 RELEASE CANDIDATE
+## 2026/09 — V4.08 FINAL / native integration 0.20.0
 
 ### Cluster-Auflösung & Cluster-Navigation
 
