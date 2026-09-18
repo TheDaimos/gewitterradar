@@ -1,0 +1,14 @@
+{
+  "contractVersion": 1,
+  "version": "4.08",
+  "nativeIntegration": "0.20.0",
+  "sha256": "b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f",
+  "sizeBytes": 2028645,
+  "acceptedCandidateVersion": "4.08.40",
+  "acceptedCandidateSha256": "2c94af487b1142fd9da450e3bbe9751c3ac17631a621b3878fd9665b557d9570",
+  "acceptedCandidateSizeBytes": 2028691,
+  "localeSha256": "a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288",
+  "localeSizeBytes": 705974,
+  "build": "V4.08-RELEASE-2026-09-18",
+  "allowedCandidateDelta": "release metadata only: public version/display/build markers and the two visible RC suffixes in Release History"
+}
