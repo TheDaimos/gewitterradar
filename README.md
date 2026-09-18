@@ -1,26 +1,41 @@
-<p align="center">
-  <img src="frontend/assets/gewitterradar-brand-icon.png" alt="Gewitterradar" width="170">
-</p>
+<div align="center">
 
-<h1 align="center">Gewitterradar</h1>
+<img
+  src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/custom_components/gewitterradar/brand/icon@2x.png"
+  width="170"
+  alt="Gewitterradar Logo">
 
-<p align="center"><strong>Live-Blitz- und Gewitterdarstellung für Home Assistant</strong></p>
+# Gewitterradar
 
-<p align="center">
-  Native Home-Assistant-Integration · Dashboard-Karte · weltweite Referenzorte · 120-Minuten-Verlauf
-</p>
+### Live-Blitz- und Gewitterdarstellung für Home Assistant
 
-<p align="center">
-  <strong>V4.08 Release Candidate</strong> · 19 Sprachvarianten · HACS · Home Assistant · GPL-3.0-only
-</p>
+**Native Home-Assistant-Integration · Dashboard-Karte · weltweite Referenzorte · 120-Minuten-Verlauf**
+
+![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
+![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.08%20RC-c9a45b)
+![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
+![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
+
+**[⚡ Native Integration installieren](#1-native-gewitterradar-integration)** ·
+**[🌩️ Funktionen](#was-gewitterradar-bereitstellt)** ·
+**[📖 HTML-Handbuch](docs/gewitterradar-overview.html)**
+
+</div>
 
 > [!IMPORTANT]
-> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**
-> Sie stellt eigene Home-Assistant-Entitäten für die Einstellungen bereit und benötigt kein YAML-Helferpaket.  
-> Die separate Dashboard-/Package-Variante bleibt weiterhin vollständig unterstützt.
+> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**  
+> Sie stellt eigene Home-Assistant-Entitäten für die Einstellungen bereit und benötigt kein YAML-Helferpaket. Die separate Dashboard-/Package-Variante bleibt weiterhin vollständig unterstützt.
 
-**HTML-Handbuch:** [Gewitterradar · Hilfe und Überblick](docs/gewitterradar-overview.html)  
-**Vollständige Installation:** [docs/INSTALLATION.md](docs/INSTALLATION.md)
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/frontend/assets/gewitterradar-about-hero-v2.webp"
+    width="900"
+    alt="Gewitterradar – Home Assistant">
+</p>
+
+**Vollständige Installation:** [docs/INSTALLATION.md](docs/INSTALLATION.md) ·
+**Hilfe & Überblick:** [docs/gewitterradar-overview.html](docs/gewitterradar-overview.html)
 
 ---
 
