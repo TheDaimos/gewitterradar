@@ -1,5 +1,7 @@
 # Übergabe – Gewitterradar V4.09.05 Android-Touch-Dragging
 
+> **SUPERSEDED:** Aktive Fortsetzung ist V4.09.06 auf `feature/v4.09.06-floating-location-pill`. Verbindliche Übergabe: `docs/HANDOFF_V4_09_06_FLOATING_LOCATION_PILL_2026-09-20.md`.
+
 Stand: **20.09.2026 · aktiver DEV/Testkandidat**
 
 ## Einstieg
