@@ -1,12 +1,13 @@
-/* Gewitterradar Card V4.08 FINAL – Diagnose- und Wetter-Labor auf Basis der reproduzierbaren V4.08.01 Cluster-Testversion.
+/* Gewitterradar Card V4.09.01 DEV – V4.08 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
-   ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt. */
+   ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
+   V4.09.01 ergänzt ausschließlich die Kartenansichten Standard/Groß/Vollbild sowie das separate Kartenfenster. */
 (function () {
   if (customElements.get('gewitterradar-card')) return;
 
-  const CARD_VERSION = '4.08';
-  const CARD_DISPLAY_VERSION = '4.08';
-  const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';
+  const CARD_VERSION = '4.09.01';
+  const CARD_DISPLAY_VERSION = '4.09.01';
+  const GEWITTERRADAR_BUILD = 'V4.09.01-DEV-2026-09-20';
   const GEWITTERRADAR_INFINITY_GFX = 'data:image/png;base64,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';
   const HELP_PREMIUM_ICON_VARIANT = 'B';
   const HELP_REFINED_ICONS = Object.freeze({"question":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDQ4IiBoZWlnaHQ9IjIwNDgiIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0icXVlc3Rpb24gcHJlbWl1bSB2MiI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJyaW0iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmY1YzgiLz48c3RvcCBvZmZzZXQ9Ii4xMiIgc3RvcC1jb2xvcj0iI2ZmZDk3ZCIvPjxzdG9wIG9mZnNldD0iLjMwIiBzdG9wLWNvbG9yPSIjYjk3YTFmIi8+PHN0b3Agb2Zmc2V0PSIuNTAiIHN0b3AtY29sb3I9IiM2ZDQwMGMiLz48c3RvcCBvZmZzZXQ9Ii42NiIgc3RvcC1jb2xvcj0iI2VmYmQ1MiIvPjxzdG9wIG9mZnNldD0iLjgyIiBzdG9wLWNvbG9yPSIjOWE1ZTE0Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjdkZjk4Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImdseXBoIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmOGQ5Ii8+PHN0b3Agb2Zmc2V0PSIuMjAiIHN0b3AtY29sb3I9IiNmZmUwOGIiLz48c3RvcCBvZmZzZXQ9Ii40OCIgc3RvcC1jb2xvcj0iI2Q2OWEzMSIvPjxzdG9wIG9mZnNldD0iLjcyIiBzdG9wLWNvbG9yPSIjOGI1MzE0Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjBiZDU4Ii8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9ImZhY2UiIGN4PSIzNCUiIGN5PSIyNCUiIHI9Ijc4JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjM2IzYTM4Ii8+PHN0b3Agb2Zmc2V0PSIuMjgiIHN0b3AtY29sb3I9IiMyMjIwMWUiLz48c3RvcCBvZmZzZXQ9Ii43MCIgc3RvcC1jb2xvcj0iIzBiMGQwZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAyMDUwNyIvPjwvcmFkaWFsR3JhZGllbnQ+PHJhZGlhbEdyYWRpZW50IGlkPSJ3YXJtIiBjeD0iNTAlIiBjeT0iNDUlIiByPSI1OCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2YxYjg0YiIgc3RvcC1vcGFjaXR5PSIuMTgiLz48c3RvcCBvZmZzZXQ9Ii43MCIgc3RvcC1jb2xvcj0iIzlkNWMxNSIgc3RvcC1vcGFjaXR5PSIuMDUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PGZpbHRlciBpZD0ic2hhZG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj48ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUFscGhhIiBzdGREZXZpYXRpb249IjE0IiByZXN1bHQ9ImIiLz48ZmVPZmZzZXQgaW49ImIiIGR5PSIxOCIgcmVzdWx0PSJvIi8+PGZlRmxvb2QgZmxvb2QtY29sb3I9IiMwMDAiIGZsb29kLW9wYWNpdHk9Ii43NSIgcmVzdWx0PSJmIi8+PGZlQ29tcG9zaXRlIGluPSJmIiBpbjI9Im8iIG9wZXJhdG9yPSJpbiIgcmVzdWx0PSJzIi8+PGZlTWVyZ2U+PGZlTWVyZ2VOb2RlIGluPSJzIi8+PGZlTWVyZ2VOb2RlIGluPSJTb3VyY2VHcmFwaGljIi8+PC9mZU1lcmdlPjwvZmlsdGVyPjxmaWx0ZXIgaWQ9ImdseXBoU2hhZG93IiB4PSItMzUlIiB5PSItMzUlIiB3aWR0aD0iMTcwJSIgaGVpZ2h0PSIxNzAlIj48ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUFscGhhIiBzdGREZXZpYXRpb249IjkiIHJlc3VsdD0iYiIvPjxmZU9mZnNldCBpbj0iYiIgZHk9IjEwIiByZXN1bHQ9Im8iLz48ZmVGbG9vZCBmbG9vZC1jb2xvcj0iIzAwMCIgZmxvb2Qtb3BhY2l0eT0iLjgyIiByZXN1bHQ9ImYiLz48ZmVDb21wb3NpdGUgaW49ImYiIGluMj0ibyIgb3BlcmF0b3I9ImluIiByZXN1bHQ9InMiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49InMiLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+PC9maWx0ZXI+PC9kZWZzPjxnIGZpbHRlcj0idXJsKCNzaGFkb3cpIj48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjQ1NiIgZmlsbD0idXJsKCNyaW0pIiBzdHJva2U9IiMzMjFiMDYiIHN0cm9rZS13aWR0aD0iMTEiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjQxNiIgZmlsbD0iIzQxMjcwYiIgb3BhY2l0eT0iLjc4Ii8+PGNpcmNsZSBjeD0iNTEyIiBjeT0iNTEyIiByPSIzOTIiIGZpbGw9InVybCgjZmFjZSkiIHN0cm9rZT0iI2U3Yjg1YSIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGNpcmNsZSBjeD0iNTEyIiBjeT0iNTEyIiByPSIzNjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJhMTcwNyIgc3Ryb2tlLXdpZHRoPSI5IiBvcGFjaXR5PSIuODIiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjM1NiIgZmlsbD0idXJsKCN3YXJtKSIvPjxwYXRoIGQ9Ik0yMTYgMzAwQTM4OCAzODggMCAwIDEgODA4IDI1OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmNWQyIiBzdHJva2Utd2lkdGg9IjExIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9Ii4zMCIvPjxwYXRoIGQ9Ik0yNzAgNzM2QTM1MCAzNTAgMCAwIDAgNzU1IDc3MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2U0YTExIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjM2Ii8+PC9nPjxnIGZpbHRlcj0idXJsKCNnbHlwaFNoYWRvdykiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTM4NCAzOTljOS0xMDIgODItMTY2IDE4Ny0xNjYgMTE2IDAgMjAwIDY4IDIwMCAxNjggMCA4Mi00NSAxMjgtMTE3IDE3MS02NyA0MS05MSA3OC05MSAxMzkiIHN0cm9rZT0iIzM1MWQwNiIgc3Ryb2tlLXdpZHRoPSI5NCIgb3BhY2l0eT0iLjk1Ii8+PHBhdGggZD0iTTM4NCAzOTljOS0xMDIgODItMTY2IDE4Ny0xNjYgMTE2IDAgMjAwIDY4IDIwMCAxNjggMCA4Mi00NSAxMjgtMTE3IDE3MS02NyA0MS05MSA3OC05MSAxMzkiIHN0cm9rZT0idXJsKCNnbHlwaCkiIHN0cm9rZS13aWR0aD0iNTgiLz48cGF0aCBkPSJNNDA2IDM2NWMyNy02NiA4My05OSAxNjItOTkiIHN0cm9rZT0iI2ZmZjRjMyIgc3Ryb2tlLXdpZHRoPSI5IiBvcGFjaXR5PSIuNDgiLz48L2c+PGNpcmNsZSBjeD0iNTYyIiBjeT0iNzkyIiByPSI0NiIgZmlsbD0iIzM1MWQwNiIgb3BhY2l0eT0iLjk1Ii8+PGNpcmNsZSBjeD0iNTYyIiBjeT0iNzgzIiByPSIzMSIgZmlsbD0idXJsKCNnbHlwaCkiLz48ZWxsaXBzZSBjeD0iNTUwIiBjeT0iNzcwIiByeD0iMTMiIHJ5PSI4IiBmaWxsPSIjZmZmNGNhIiBvcGFjaXR5PSIuNDUiLz48L3N2Zz4=","troubleshooting":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDQ4IiBoZWlnaHQ9IjIwNDgiIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0idHJvdWJsZXNob290aW5nIHByZW1pdW0gdjIiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0icmltIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmNWM4Ii8+PHN0b3Agb2Zmc2V0PSIuMTIiIHN0b3AtY29sb3I9IiNmZmQ5N2QiLz48c3RvcCBvZmZzZXQ9Ii4zMCIgc3RvcC1jb2xvcj0iI2I5N2ExZiIvPjxzdG9wIG9mZnNldD0iLjUwIiBzdG9wLWNvbG9yPSIjNmQ0MDBjIi8+PHN0b3Agb2Zmc2V0PSIuNjYiIHN0b3AtY29sb3I9IiNlZmJkNTIiLz48c3RvcCBvZmZzZXQ9Ii44MiIgc3RvcC1jb2xvcj0iIzlhNWUxNCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2Y3ZGY5OCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnb2xkIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmN2QwIi8+PHN0b3Agb2Zmc2V0PSIuMjAiIHN0b3AtY29sb3I9IiNmZmRjNzkiLz48c3RvcCBvZmZzZXQ9Ii41MiIgc3RvcC1jb2xvcj0iI2NhODYyNyIvPjxzdG9wIG9mZnNldD0iLjc2IiBzdG9wLWNvbG9yPSIjN2Q0OTBlIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZThhZDQyIi8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9ImZhY2UiIGN4PSIzNCUiIGN5PSIyNCUiIHI9Ijc4JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjM2IzYTM4Ii8+PHN0b3Agb2Zmc2V0PSIuMjgiIHN0b3AtY29sb3I9IiMyMjIwMWUiLz48c3RvcCBvZmZzZXQ9Ii43MCIgc3RvcC1jb2xvcj0iIzBiMGQwZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAyMDUwNyIvPjwvcmFkaWFsR3JhZGllbnQ+PHJhZGlhbEdyYWRpZW50IGlkPSJ3YXJtIiBjeD0iNTAlIiBjeT0iNDYlIiByPSI1OCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2YxYjg0YiIgc3RvcC1vcGFjaXR5PSIuMTgiLz48c3RvcCBvZmZzZXQ9Ii43MCIgc3RvcC1jb2xvcj0iIzlkNWMxNSIgc3RvcC1vcGFjaXR5PSIuMDUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPjwvcmFkaWFsR3JhZGllbnQ+PGZpbHRlciBpZD0ic2hhZG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj48ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUFscGhhIiBzdGREZXZpYXRpb249IjE0IiByZXN1bHQ9ImIiLz48ZmVPZmZzZXQgaW49ImIiIGR5PSIxOCIgcmVzdWx0PSJvIi8+PGZlRmxvb2QgZmxvb2QtY29sb3I9IiMwMDAiIGZsb29kLW9wYWNpdHk9Ii43NSIgcmVzdWx0PSJmIi8+PGZlQ29tcG9zaXRlIGluPSJmIiBpbjI9Im8iIG9wZXJhdG9yPSJpbiIgcmVzdWx0PSJzIi8+PGZlTWVyZ2U+PGZlTWVyZ2VOb2RlIGluPSJzIi8+PGZlTWVyZ2VOb2RlIGluPSJTb3VyY2VHcmFwaGljIi8+PC9mZU1lcmdlPjwvZmlsdGVyPjxmaWx0ZXIgaWQ9InN5bWJvbFNoYWRvdyIgeD0iLTM1JSIgeT0iLTM1JSIgd2lkdGg9IjE3MCUiIGhlaWdodD0iMTcwJSI+PGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VBbHBoYSIgc3RkRGV2aWF0aW9uPSIxMCIgcmVzdWx0PSJiIi8+PGZlT2Zmc2V0IGluPSJiIiBkeT0iMTIiIHJlc3VsdD0ibyIvPjxmZUZsb29kIGZsb29kLWNvbG9yPSIjMDAwIiBmbG9vZC1vcGFjaXR5PSIuODAiIHJlc3VsdD0iZiIvPjxmZUNvbXBvc2l0ZSBpbj0iZiIgaW4yPSJvIiBvcGVyYXRvcj0iaW4iIHJlc3VsdD0icyIvPjxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0icyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT48L2ZpbHRlcj48L2RlZnM+PGcgZmlsdGVyPSJ1cmwoI3NoYWRvdykiPjxjaXJjbGUgY3g9IjUxMiIgY3k9IjUxMiIgcj0iNDU2IiBmaWxsPSJ1cmwoI3JpbSkiIHN0cm9rZT0iIzMyMWIwNiIgc3Ryb2tlLXdpZHRoPSIxMSIvPjxjaXJjbGUgY3g9IjUxMiIgY3k9IjUxMiIgcj0iNDE2IiBmaWxsPSIjNDEyNzBiIiBvcGFjaXR5PSIuNzgiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjM5MiIgZmlsbD0idXJsKCNmYWNlKSIgc3Ryb2tlPSIjZTdiODVhIiBzdHJva2Utd2lkdGg9IjgiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI1MTIiIHI9IjM2OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmExNzA3IiBzdHJva2Utd2lkdGg9IjkiIG9wYWNpdHk9Ii44MiIvPjxjaXJjbGUgY3g9IjUxMiIgY3k9IjUxMiIgcj0iMzU2IiBmaWxsPSJ1cmwoI3dhcm0pIi8+PHBhdGggZD0iTTIxNiAzMDBBMzg4IDM4OCAwIDAgMSA4MDggMjU4IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmY1ZDIiIHN0cm9rZS13aWR0aD0iMTEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjMwIi8+PC9nPjxnIGZpbHRlcj0idXJsKCNzeW1ib2xTaGFkb3cpIj48cGF0aCBkPSJNNTEyIDI1MiA3ODUgNzQ0SDIzOVoiIGZpbGw9IiMyODE3MDgiIHN0cm9rZT0iIzJjMTgwNyIgc3Ryb2tlLXdpZHRoPSIzMCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik01MTIgMjc4IDc1NCA3MjBIMjcwWiIgZmlsbD0idXJsKCNnb2xkKSIgc3Ryb2tlPSIjZjBjNjZkIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTUxMiAzMjggNjkyIDY3MUgzMzJaIiBmaWxsPSIjMGEwYzBlIiBzdHJva2U9IiM2ZjQyMTAiIHN0cm9rZS13aWR0aD0iMTAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNNTEyIDM5MHYxNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzMyMWQwOCIgc3Ryb2tlLXdpZHRoPSI3MCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTUxMiAzODh2MTY0IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZ29sZCkiIHN0cm9rZS13aWR0aD0iNDIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjUxMiIgY3k9IjYyMCIgcj0iNDIiIGZpbGw9IiMzMjFkMDgiLz48Y2lyY2xlIGN4PSI1MTIiIGN5PSI2MTEiIHI9IjI3IiBmaWxsPSJ1cmwoI2dvbGQpIi8+PHBhdGggZD0iTTM5MCAzNTUgNTEyIDMwNCA2MzQgMzU1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmY0YzciIHN0cm9rZS13aWR0aD0iOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuMzgiLz48L2c+PC9zdmc+"});
@@ -69,6 +70,9 @@
     { id:'candidate_06', uiIndex:6, type:'frame', label:'Candidate 06', frame:COMPASS_METAL_FRAME_V5_IMAGE, visualStageScale:1.059, outerAlphaRatio:[.929825,.922648], fitContour:'protected circular opening', outerOverhangs:'four screw bosses and decorative outer metal', intrusionAngles:[0,90,180,270], calibrationRound:[626.22/1254,603.41/1254,414.42/1254], roundFitMode:'protected', local:true }
   ];
   const COMPASS_DESIGN_STORAGE_KEY = 'gewitterradar-last-compass-design';
+  const MAP_DISPLAY_MODE_STORAGE_KEY = 'gewitterradar:v409:map-display-mode';
+  const MAP_COMPASS_POSITION_STORAGE_KEY = 'gewitterradar:v409:map-compass-position';
+  const MAP_WINDOW_QUERY_KEY = 'gewitterradar_window';
   const LANGUAGE_INITIALIZATION_ENTITIES = Object.freeze({native:'switch.gewitterradar_language_initialized',legacy:'input_boolean.lightning_detection_language_initialized'});
   let languageOnboardingOwner = null;
   const ABOUT_ONBOARDING_VERSION = 1;
@@ -760,6 +764,17 @@
         'map.grouped':'Gruppiert',
         'map.individual':'Einzelblitze',
         'map.display_aria':'Darstellung der Blitzkarte',
+        'map.size_aria':'Kartengröße',
+        'map.size_standard':'Standard',
+        'map.size_large':'Groß',
+        'map.size_fullscreen':'Vollbild',
+        'map.compass_move':'Kompass auf der Karte verschieben',
+        'settings.map_display':'Kartendarstellung',
+        'settings.map_display_sub':'Kartengröße und separates Kartenfenster',
+        'settings.map_window':'Eigenes Kartenfenster',
+        'settings.map_window_note':'Karte mit ausgewähltem Kompass separat öffnen',
+        'settings.map_window_open':'Öffnen',
+        'settings.map_window_open_aria':'Karte in eigenem Fenster öffnen',
         'map.active_under':'Aktiv < {minutes} Min',
         'map.age_range':'{from}–{to} Min',
         'map.extreme_lightning':'Extreme Blitzaktivität',
@@ -974,6 +989,17 @@
         'map.grouped':'Grouped',
         'map.individual':'Individual strikes',
         'map.display_aria':'Lightning map display mode',
+        'map.size_aria':'Map size',
+        'map.size_standard':'Standard',
+        'map.size_large':'Large',
+        'map.size_fullscreen':'Fullscreen',
+        'map.compass_move':'Move compass on the map',
+        'settings.map_display':'Map display',
+        'settings.map_display_sub':'Map size and separate map window',
+        'settings.map_window':'Separate map window',
+        'settings.map_window_note':'Open the map with the selected compass separately',
+        'settings.map_window_open':'Open',
+        'settings.map_window_open_aria':'Open map in a separate window',
         'map.active_under':'Active < {minutes} Min',
         'map.age_range':'{from}–{to} Min',
         'map.extreme_lightning':'Extreme lightning activity',
@@ -5919,6 +5945,45 @@
         ? this._recentRadiusFilter
         : 'observation';
 
+      // V4.09.01 – Kartenansicht bleibt rein lokal und verändert keine HA-Helper.
+      // Standard/Groß werden gespeichert; Vollbild ist bewusst nur eine laufende UI-Sitzung.
+      if (!['standard','large','fullscreen'].includes(this._mapDisplayMode)) {
+        let storedMapMode = 'standard';
+        try {
+          const saved = localStorage.getItem(MAP_DISPLAY_MODE_STORAGE_KEY);
+          if (saved === 'large' || saved === 'standard') storedMapMode = saved;
+        } catch (_error) {}
+        this._mapDisplayMode = storedMapMode;
+      }
+      this._mapDisplayBeforeFullscreen = ['standard','large'].includes(this._mapDisplayBeforeFullscreen)
+        ? this._mapDisplayBeforeFullscreen
+        : (this._mapDisplayMode === 'large' ? 'large' : 'standard');
+      if (!this._mapCompassPosition || !Number.isFinite(this._mapCompassPosition.x) || !Number.isFinite(this._mapCompassPosition.y)) {
+        this._mapCompassPosition = { x:.96,y:.72 };
+        try {
+          const savedPosition = JSON.parse(localStorage.getItem(MAP_COMPASS_POSITION_STORAGE_KEY) || 'null');
+          if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
+            this._mapCompassPosition = {
+              x:clamp(savedPosition.x,0,1),
+              y:clamp(savedPosition.y,0,1)
+            };
+          }
+        } catch (_error) {}
+      }
+      this._mapWindowMode = !!this._mapWindowMode;
+      if (!this._mapWindowMode && typeof window !== 'undefined') {
+        let requested = false;
+        try {
+          requested = new URL(window.location.href).searchParams.get(MAP_WINDOW_QUERY_KEY) === '1';
+        } catch (_error) {}
+        if (requested && (!window.__gewitterradarMapWindowOwner || window.__gewitterradarMapWindowOwner === this)) {
+          window.__gewitterradarMapWindowOwner = this;
+          this._mapWindowMode = true;
+          this._mapDisplayMode = 'fullscreen';
+        }
+      }
+      this._mapCompassDragState = null;
+      this._mapCompassHomeParent = this._mapCompassHomeParent || null;
 
       // V3.990 – optional ausgewählter Treffer mit echter Cluster⇄Detail-
       // Umschaltung. Die Clusteransicht ist die ruhige erste Fokusstufe; erst der
@@ -6171,7 +6236,269 @@
       this._stopDiagnostics();
       if (this._compassAnimationFrame) cancelAnimationFrame(this._compassAnimationFrame);
       this._compassAnimationFrame = null;
+      this._teardownMapDisplayMode();
       this._removeOrientationListeners();
+    }
+
+    _teardownMapDisplayMode() {
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      try { if (dialog?.open) dialog.close(); } catch (_error) {}
+      this._restoreCompassFromMapOverlay();
+      this._restoreMapCardHome();
+      if (typeof window !== 'undefined' && window.__gewitterradarMapWindowOwner === this) {
+        window.__gewitterradarMapWindowOwner = null;
+      }
+    }
+
+    _restoreMapCardHome() {
+      const mapCard = this.shadow?.getElementById('map-card');
+      const anchor = this.shadow?.getElementById('map-card-anchor');
+      if (mapCard && anchor && mapCard.previousElementSibling !== anchor) anchor.after(mapCard);
+    }
+
+    _restoreCompassFromMapOverlay() {
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const fallback = this.shadow?.querySelector('.compass-wrap');
+      const home = this._mapCompassHomeParent?.isConnected ? this._mapCompassHomeParent : fallback;
+      if (instrument && home && instrument.parentElement !== home) home.appendChild(instrument);
+      if (overlay) {
+        overlay.hidden = true;
+        overlay.classList.remove('dragging');
+      }
+      this._mapCompassDragState = null;
+    }
+
+    _attachCompassToMapOverlay() {
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      if (!instrument || !overlay) return;
+      if (!this._mapCompassHomeParent || !this._mapCompassHomeParent.isConnected) {
+        this._mapCompassHomeParent = instrument.parentElement?.classList?.contains('compass-wrap')
+          ? instrument.parentElement
+          : (this.shadow?.querySelector('.compass-wrap') || null);
+      }
+      if (instrument.parentElement !== overlay) overlay.appendChild(instrument);
+      overlay.hidden = false;
+      requestAnimationFrame(() => this._positionMapCompassOverlay());
+    }
+
+    _positionMapCompassOverlay(position = this._mapCompassPosition) {
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 0;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 0;
+      if (!cardRect.width || !mapRect.width || !width || !height) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      const x = clamp(Number(position?.x) || 0,0,1);
+      const y = clamp(Number(position?.y) || 0,0,1);
+      overlay.style.left = `${minLeft+(maxLeft-minLeft)*x}px`;
+      overlay.style.top = `${minTop+(maxTop-minTop)*y}px`;
+    }
+
+    _persistMapCompassPosition() {
+      try { localStorage.setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
+    }
+
+    _scheduleMapDisplayResize() {
+      const kick = () => {
+        this._map?.invalidateSize?.();
+        this._positionMapCompassOverlay();
+      };
+      requestAnimationFrame(() => requestAnimationFrame(kick));
+      setTimeout(kick,120);
+      setTimeout(kick,360);
+    }
+
+    _syncMapDisplayUi() {
+      if (!this.shadow) return;
+      const mapCard = this.shadow.getElementById('map-card');
+      if (!mapCard) return;
+      const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      mapCard.classList.toggle('map-size-large',this._mapDisplayMode === 'large' && !fullscreenActive);
+      mapCard.classList.toggle('map-size-fullscreen',fullscreenActive);
+      mapCard.classList.toggle('map-window-mode',!!this._mapWindowMode);
+      const labels = {
+        standard:this._t('map.size_standard'),
+        large:this._t('map.size_large'),
+        fullscreen:this._t('map.size_fullscreen')
+      };
+      const switcher = this.shadow.getElementById('map-display-switch');
+      if (switcher) switcher.setAttribute('aria-label',this._t('map.size_aria'));
+      this.shadow.querySelectorAll('[data-map-display-mode]').forEach((button) => {
+        const mode = button.dataset.mapDisplayMode;
+        const active = mode === (fullscreenActive ? 'fullscreen' : this._mapDisplayMode);
+        button.textContent = labels[mode] || mode;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',active ? 'true' : 'false');
+        button.setAttribute('title',labels[mode] || mode);
+      });
+      const overlay = this.shadow.getElementById('map-compass-overlay');
+      if (overlay) overlay.setAttribute('aria-label',this._t('map.compass_move'));
+      const settingsTitle = this.shadow.getElementById('settings-map-section-title');
+      const settingsSub = this.shadow.getElementById('settings-map-section-sub');
+      const settingsWindowLabel = this.shadow.getElementById('settings-map-window-label');
+      const settingsWindowNote = this.shadow.getElementById('settings-map-window-note');
+      const settingsWindowOpen = this.shadow.getElementById('settings-map-window-open');
+      if (settingsTitle) settingsTitle.textContent = this._t('settings.map_display');
+      if (settingsSub) settingsSub.textContent = this._t('settings.map_display_sub');
+      if (settingsWindowLabel) settingsWindowLabel.textContent = this._t('settings.map_window');
+      if (settingsWindowNote) settingsWindowNote.textContent = this._t('settings.map_window_note');
+      if (settingsWindowOpen) {
+        settingsWindowOpen.textContent = this._t('settings.map_window_open');
+        settingsWindowOpen.setAttribute('aria-label',this._t('settings.map_window_open_aria'));
+      }
+    }
+
+    _setMapDisplayMode(mode,{persist=true}={}) {
+      if (!['standard','large','fullscreen'].includes(mode)) return;
+      if (this._mapWindowMode && mode !== 'fullscreen') return;
+      if (mode === 'fullscreen') {
+        if (this._mapDisplayMode !== 'fullscreen') {
+          this._mapDisplayBeforeFullscreen = this._mapDisplayMode === 'large' ? 'large' : 'standard';
+        }
+        this._mapDisplayMode = 'fullscreen';
+        const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+        const mapCard = this.shadow?.getElementById('map-card');
+        if (dialog && mapCard) {
+          if (mapCard.parentElement !== dialog) dialog.appendChild(mapCard);
+          if (!dialog.open) {
+            try { dialog.showModal(); } catch (_error) { try { dialog.setAttribute('open',''); } catch (__error) {} }
+          }
+          this._attachCompassToMapOverlay();
+        }
+        this._syncMapDisplayUi();
+        this._scheduleMapDisplayResize();
+        return;
+      }
+      this._mapDisplayMode = mode;
+      this._restoreCompassFromMapOverlay();
+      this._restoreMapCardHome();
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      if (dialog?.open) {
+        try { dialog.close(); } catch (_error) {}
+      } else if (dialog?.hasAttribute('open')) {
+        dialog.removeAttribute('open');
+      }
+      if (persist) {
+        try { localStorage.setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      }
+      this._syncMapDisplayUi();
+      this._scheduleMapDisplayResize();
+    }
+
+    _openMapWindow() {
+      if (this._mapWindowMode || typeof window === 'undefined') return;
+      let targetUrl = null;
+      try {
+        targetUrl = new URL(window.location.href);
+        targetUrl.searchParams.set(MAP_WINDOW_QUERY_KEY,'1');
+      } catch (_error) {}
+      if (!targetUrl) {
+        this._setMapDisplayMode('fullscreen');
+        return;
+      }
+      const popup = window.open(targetUrl.href,'gewitterradar-map-window','popup=yes,width=1280,height=820,resizable=yes,scrollbars=no');
+      if (popup) {
+        try { popup.focus(); } catch (_error) {}
+      } else {
+        this._setMapDisplayMode('fullscreen');
+      }
+    }
+
+    _bindMapDisplayControls() {
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      this.shadow?.querySelectorAll('[data-map-display-mode]').forEach((button) => {
+        button.addEventListener('click',(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this._setMapDisplayMode(button.dataset.mapDisplayMode || 'standard');
+        });
+      });
+      this.shadow?.getElementById('settings-map-window-open')?.addEventListener('click',(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._openMapWindow();
+      });
+      dialog?.addEventListener('cancel',(event) => {
+        event.preventDefault();
+        if (this._mapWindowMode) return;
+        this._setMapDisplayMode(this._mapDisplayBeforeFullscreen || 'standard');
+      });
+      overlay?.addEventListener('pointerdown',(event) => {
+        if (overlay.hidden || event.button > 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (!card || !mapEl) return;
+        this._mapCompassDragState = {
+          pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,
+          startLeft:overlay.offsetLeft,startTop:overlay.offsetTop
+        };
+        overlay.classList.add('dragging');
+        try { overlay.setPointerCapture(event.pointerId); } catch (_error) {}
+      });
+      overlay?.addEventListener('pointermove',(event) => {
+        const drag = this._mapCompassDragState;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (!card || !mapEl) return;
+        const cardRect = card.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        const inset = 10;
+        const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+        const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+        const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-overlay.offsetWidth-inset);
+        const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-overlay.offsetHeight-inset);
+        overlay.style.left = `${clamp(drag.startLeft+event.clientX-drag.startX,minLeft,maxLeft)}px`;
+        overlay.style.top = `${clamp(drag.startTop+event.clientY-drag.startY,minTop,maxTop)}px`;
+      });
+      const finishCompassDrag = (event) => {
+        const drag = this._mapCompassDragState;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (card && mapEl) {
+          const cardRect = card.getBoundingClientRect();
+          const mapRect = mapEl.getBoundingClientRect();
+          const inset = 10;
+          const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+          const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+          const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-overlay.offsetWidth-inset);
+          const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-overlay.offsetHeight-inset);
+          this._mapCompassPosition = {
+            x:maxLeft>minLeft ? clamp((overlay.offsetLeft-minLeft)/(maxLeft-minLeft),0,1) : 0,
+            y:maxTop>minTop ? clamp((overlay.offsetTop-minTop)/(maxTop-minTop),0,1) : 0
+          };
+          this._persistMapCompassPosition();
+        }
+        this._mapCompassDragState = null;
+        overlay.classList.remove('dragging');
+        try { overlay.releasePointerCapture(event.pointerId); } catch (_error) {}
+      };
+      overlay?.addEventListener('pointerup',finishCompassDrag);
+      overlay?.addEventListener('pointercancel',finishCompassDrag);
+      this._syncMapDisplayUi();
+      if (this._mapWindowMode) {
+        queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false}));
+      } else if (this._mapDisplayMode === 'large') {
+        this._setMapDisplayMode('large',{persist:false});
+      }
     }
 
     _sidebarGuardWindowY() {
@@ -9621,6 +9948,56 @@
             background:#0a0d12;
           }
 
+          /* V4.09.01 – dieselbe Leaflet-Instanz bleibt in allen Größen erhalten. */
+          .map-card.map-size-large #map { height:min(72dvh,820px);min-height:520px;aspect-ratio:auto; }
+          #map-fullscreen-dialog {
+            width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;
+            color:var(--b-text);background:#090b0f;overflow:hidden;
+          }
+          #map-fullscreen-dialog::backdrop { background:#020408; }
+          #map-fullscreen-dialog .map-card {
+            width:100%;height:100%;border:0;border-radius:0;display:flex;flex-direction:column;
+          }
+          #map-fullscreen-dialog .map-card #map {
+            flex:1 1 auto;width:100%;height:auto!important;min-height:0!important;aspect-ratio:auto!important;
+          }
+          #map-fullscreen-dialog .map-legend,
+          #map-fullscreen-dialog .map-display-bar { flex:0 0 auto; }
+          .map-card.map-window-mode .map-display-bar { display:none; }
+
+          .map-compass-overlay {
+            position:absolute;z-index:760;width:clamp(145px,24vmin,300px);aspect-ratio:1 / 1;
+            display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;
+            user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+            filter:drop-shadow(0 14px 30px rgba(0,0,0,.44));
+          }
+          .map-compass-overlay[hidden] { display:none!important; }
+          .map-compass-overlay.dragging { cursor:grabbing; }
+          .map-compass-overlay .compass-instrument {
+            width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;
+          }
+
+          .map-display-bar {
+            display:flex;align-items:center;justify-content:center;min-height:38px;padding:5px 8px 6px;
+            border-top:1px solid rgba(255,255,255,.055);
+            background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(0,0,0,.10));
+          }
+          .map-display-switch {
+            display:inline-flex;align-items:center;justify-content:center;padding:2px;
+            border:1px solid rgba(255,255,255,.105);border-radius:999px;background:rgba(8,11,16,.90);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+          }
+          .map-display-btn {
+            appearance:none;border:0;outline:0;min-height:25px;padding:0 12px;border-radius:999px;
+            background:transparent;color:#7f8897;font-family:inherit;font-size:8px;font-weight:820;line-height:1;
+            letter-spacing:.035em;cursor:pointer;touch-action:manipulation;white-space:nowrap;
+          }
+          .map-display-btn.active {
+            color:#ffe28b;background:rgba(246,195,68,.105);
+            box-shadow:inset 0 0 0 1px rgba(246,195,68,.24),0 0 11px rgba(246,195,68,.055);
+          }
+          .map-display-btn:focus-visible { outline:2px solid rgba(246,195,68,.72);outline-offset:1px; }
+
           .leaflet-container { background:#0a0d12 !important;font-family:inherit; }
           .leaflet-tile-pane { filter:invert(1) hue-rotate(180deg) brightness(.62) saturate(.55) contrast(1.12); }
           .leaflet-control-zoom { border:1px solid rgba(255,255,255,.12)!important;border-radius:10px!important;overflow:hidden; }
@@ -11603,6 +11980,9 @@
           }
 
           @media (max-width:720px) {
+            .map-card.map-size-large #map { height:min(70dvh,640px);min-height:430px; }
+            .map-compass-overlay { width:clamp(132px,36vmin,230px); }
+            .map-display-btn { padding:0 9px;font-size:7.5px; }
             .flash-ambient { --ambient-css-scale:1.08; }
             .shell { padding:13px; }
             ha-card { border-radius:20px; }
@@ -11869,6 +12249,7 @@
             .hit-caption { font-size:7.5px; }
             .hit-live { font-size:7.8px; }
             #map { height:305px; }
+            .map-card.map-size-large #map { height:min(68dvh,570px);min-height:390px; }
             .map-legend { gap:8px;font-size:8.9px;line-height:1.22;padding:8px 7px 9px; }
             .map-legend .legend-dot { width:6.5px;height:6.5px; }
             .map-legend .legend-line { width:15px; }
@@ -12688,7 +13069,8 @@
 
             <div class="main-grid">
               <div class="left-stack">
-                <div class="map-card">
+                <div id="map-card-anchor" hidden></div>
+                <div class="map-card" id="map-card">
                   <div class="map-top-controls">
                     <button class="warning-test-mini storm-test" id="warning-test-map-storm" type="button"
                             data-warning-test="storm"
@@ -12728,6 +13110,7 @@
                     <span class="recent-target-glyph map-strike-target-glyph" aria-hidden="true"></span>
                   </button>
                   <div id="map"></div>
+                  <div class="map-compass-overlay" id="map-compass-overlay" hidden></div>
                   <div class="map-legend" id="map-legend">
                     <span class="map-legend-group map-legend-primary">
                       <span class="legend-item"><i class="legend-dot" style="--legend-color:${C.gold}"></i>Aktiv &lt; 10 Min</span>
@@ -12738,6 +13121,13 @@
                       <span class="legend-item" style="color:${C.blue}"><i class="legend-line"></i>Gewitter <span id="legend-storm-radius">–</span></span>
                       <span class="legend-item" style="color:${C.danger}"><i class="legend-line"></i>Gefahr <span id="legend-danger-radius">–</span></span>
                     </span>
+                  </div>
+                  <div class="map-display-bar" id="map-display-bar">
+                    <div class="map-display-switch" id="map-display-switch" role="group" aria-label="Kartengröße">
+                      <button class="map-display-btn" type="button" data-map-display-mode="standard" aria-pressed="true">Standard</button>
+                      <button class="map-display-btn" type="button" data-map-display-mode="large" aria-pressed="false">Groß</button>
+                      <button class="map-display-btn" type="button" data-map-display-mode="fullscreen" aria-pressed="false">Vollbild</button>
+                    </div>
                   </div>
                 </div>
 
@@ -13379,6 +13769,8 @@
         <!-- V3.519 TEST – zusätzliches Einstellungs-Popup.
              Die Hauptansicht bleibt bewusst unverändert, damit beide Bedienkonzepte
              direkt gegeneinander verglichen werden können. -->
+        <dialog id="map-fullscreen-dialog" aria-label="Gewitterradar Karte"></dialog>
+
         <div class="settings-backdrop" id="settings-backdrop" role="presentation">
           <section class="settings-dialog" id="settings-dialog"
                    role="dialog" aria-modal="true" aria-labelledby="settings-dialog-title">
@@ -13448,6 +13840,25 @@
                     <button class="settings-switch" id="settings-location-main-toggle" type="button"
                             role="switch" aria-checked="false"
                             aria-label="Standortwahl in Hauptansicht anzeigen"></button>
+                  </div>
+                </div>
+              </details>
+
+              <details class="settings-section settings-collapsible" id="settings-map-section">
+                <summary class="settings-section-head">
+                  <div>
+                    <div class="settings-section-title" id="settings-map-section-title">Kartendarstellung</div>
+                    <div class="settings-section-sub" id="settings-map-section-sub">Kartengröße und separates Kartenfenster</div>
+                  </div>
+                </summary>
+                <div class="settings-section-content">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <span id="settings-map-window-label">Eigenes Kartenfenster</span>
+                      <span class="settings-row-note" id="settings-map-window-note">Karte mit ausgewähltem Kompass separat öffnen</span>
+                    </div>
+                    <button class="settings-language-button settings-control" id="settings-map-window-open" type="button"
+                            aria-label="Karte in eigenem Fenster öffnen">Öffnen</button>
                   </div>
                 </div>
               </details>
@@ -13825,12 +14236,12 @@
                   </summary>
                   <div class="release-history-future-content">
                     <ul class="release-history-plan-list">
-                      <li>Map size: Standard, Large, XL and Fullscreen.</li>
-                      <li>Separate map window with map and currently selected compass.</li>
+                      <li>Map size: Standard, Large and Fullscreen.</li>
+                      <li>Separate map window, opened deliberately from Settings, with map and currently selected compass.</li>
                       <li>Compass as an overlay in fullscreen or the separate map window.</li>
-                      <li>Compass movable by mouse and touch, optionally with saved position.</li>
-                      <li>Lock or reset the compass position.</li>
-                      <li>Prepared for a later freely adjustable compass size.</li>
+                      <li>Compass movable by mouse and touch with locally saved position.</li>
+                      <li>The same selected compass is reused; no parallel compass logic is introduced.</li>
+                      <li>Fullscreen and separate-window modes reuse the same live map state.</li>
                     </ul>
                   </div>
                 </details>
@@ -14331,6 +14742,7 @@
     }
 
     _bindControls() {
+      this._bindMapDisplayControls();
       this.shadow.getElementById('settings-about')?.addEventListener('click', () => this._openAbout(true));
       this.shadow.getElementById('settings-help')?.addEventListener('click', () => this._openHelp());
       const obsSlider = this.shadow.getElementById('observation-slider');
@@ -19419,7 +19831,10 @@ ${this._diagnosticStormText(8)}`;}
           this._render();
         });
 
-        const kick = () => this._map?.invalidateSize();
+        const kick = () => {
+          this._map?.invalidateSize();
+          this._positionMapCompassOverlay();
+        };
         requestAnimationFrame(kick);
         setTimeout(kick,100);
         setTimeout(kick,450);
@@ -21179,6 +21594,7 @@ ${this._diagnosticStormText(8)}`;}
       if(this._diagnostics.enabled){if(!Number.isFinite(this._diagnosticTimings.firstRenderStartAt)){this._diagnosticTimings.firstRenderStartAt=performance.now();requestAnimationFrame(()=>{if(this._diagnostics.enabled&&!Number.isFinite(this._diagnosticTimings.firstRenderCompleteAt))this._diagnosticTimings.firstRenderCompleteAt=performance.now();});}this._diagnostics.renderCount+=1;}
       const now = Date.now();
       const $ = (id) => this.shadow.getElementById(id);
+      this._syncMapDisplayUi();
 
       const language = this._languageValue();
       const languageHelperAvailable = !!this._hass.states[this._languageEntity()];
