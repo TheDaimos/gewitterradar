@@ -42,15 +42,25 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### Kein aktiver Entwicklungsblock
+### V4.09.01 – Kartenansicht Standard / Groß / Vollbild
 
-**V4.08 ist veröffentlicht und eingefroren.** Es läuft aktuell keine weitere funktionale Arbeit unter V4.08.
+Aktiver Testkandidat auf Basis der eingefrorenen V4.08-Linie.
 
-Die nächste Entwicklungsline ist **V4.09.xx**. Sie beginnt erst mit einem klar abgegrenzten neuen Arbeitsblock. Der bereits versionierte HACS-Distributionsauftrag steht oben unter **NEXT / VERSIONIERT**.
+Freigegebener Umfang:
 
-Verbindlicher Abschlussstand von V4.08:
+- direkter Kartenumschalter **Standard / Groß / Vollbild**;
+- **In eigenem Fenster öffnen** als separater Einstellungsbefehl;
+- aktuell gewählter Kompass als Vollbild-Overlay;
+- Kompass per Maus/Touch/Pointer verschiebbar;
+- lokale Speicherung der Kompassposition;
+- identische gemeinsame Frontend-Ausleitung für Integration und Dashboard;
+- keine neuen Home-Assistant-Helfer.
 
-`docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
+Technik- und Abnahmedokument:
+
+`docs/V4_09_MAP_VIEW_MODES.md`
+
+V4.08 bleibt veröffentlicht und eingefroren; diese Arbeit erfolgt ausschließlich auf der V4.09.xx-Linie.
 
 ---
 
@@ -245,13 +255,9 @@ Diese Idee ist ausdrücklich **noch keiner Version zugeordnet** und muss vor ein
 - zunächst Zusatzdesign, kein Ersatz akzeptierter Designs;
 - mobile Platz-/Bedienprobleme ausdrücklich prüfen.
 
-### Vollbildmodus für die Karte
+### Vollbildmodus für die Karte – in V4.09.01 überführt
 
-- engine-unabhängigen Vollbild-/Maximieren-Modus prüfen;
-- OSM/Leaflet und später MapLibre berücksichtigen;
-- Radien, Blitze, Cluster und relevante Layer-Schalter im Vollbild nutzbar halten;
-- klarer Rücksprung zum normalen Layout;
-- Desktop, Android, iOS/iPad Hoch-/Querformat prüfen.
+Die frühere Explorationsidee wurde am 20.09.2026 ausdrücklich zur Umsetzung freigegeben und ist jetzt als V4.09.01-Testkandidat unter **ACTIVE / VERSIONIERT** geführt. Die reale Geräteabnahme bleibt vor einer öffentlichen Veröffentlichung verpflichtend.
 
 ### Earth-/3D-Kartenansicht
 
