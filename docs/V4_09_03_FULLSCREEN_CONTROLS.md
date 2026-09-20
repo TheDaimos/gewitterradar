@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.03 — Vollbild-Bedienelemente
 
+> **SUPERSEDED durch V4.09.04.** Reale Touch- und Medaillon-Befunde werden in `docs/V4_09_04_OVERLAY_DRAG_FIXES.md` fortgeführt.
+
 Stand: **20.09.2026**  
 Status: **DEV/Testkandidat – nicht veröffentlicht**  
 Branch: `feature/v4.09.03-fullscreen-controls`  
