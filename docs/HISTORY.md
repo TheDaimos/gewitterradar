@@ -176,15 +176,23 @@ V4.09.05 bleibt ein **DEV-/Testkandidat**. Vor Promotion ist die reale Android-A
 
 V4.09.06 erweitert anschließend die bereits im Vollbild vorhandene Standortanzeige: Die Standort-Pille erhält eine eigene normalisierte, lokal gespeicherte Position und lässt sich mit Maus oder Touch frei über der Karte verschieben. Das bestehende Standortmenü bleibt dieselbe Datenquelle und Logik; nur seine Vollbilddarstellung wird adaptiv. Je nach vertikaler Pillenposition öffnet es bevorzugt nach unten oder oben. Befindet sich die Pille in der mittleren Zone oder reicht der Raum in der bevorzugten Richtung für den vollständigen Inhalt nicht aus, wechselt das Menü automatisch auf mehrere Spalten. Diese Berechnung wird bei geöffneter Liste während des Verschiebens fortlaufend aktualisiert. Erst wenn auch die verfügbaren Spalten nicht ausreichen, bleibt internes Scrollen als Rückfall.
 
+Die reale Vollbildsicht auf Android wurde anschließend als visueller Referenzstand festgeschrieben: **Kompass und Medaillon besitzen in der aktuellen V4.09.06-Darstellung die gewünschte Größe.** Insbesondere bleibt die in V4.09.05 eingeführte Android-Verkleinerung des Medaillons um 15 % erhalten. Beide Instrumentgrößen werden ohne neuen ausdrücklichen Auftrag nicht erneut verändert.
+
+Die frei bewegliche Standort-Pille bleibt ebenfalls im aktuell angenommenen Zustand. Die automatische Mehrspaltigkeit des Standortmenüs ist real nicht in allen Situationen zuverlässig; diese Einschränkung ist ausdrücklich akzeptiert und blockiert V4.09.06 nicht. Ohne neuen ausdrücklichen Auftrag wird dieser Teil nicht erneut geöffnet.
+
+Zum dokumentierten Übergabezeitpunkt sind die native Integrationsprüfung und der Hi-Res-Retentionsvertrag grün. Die Shared-Frontend-Prüfung ist noch rot, jedoch im bestehenden Diagnose-FREEZE-Lifecycle-Harness: Der Test meldet `mode=freeze`, Winkel `45` und gleichzeitig keine aktive CSS-Animation, Timer oder RAF-Schleife. Dieser Prüfpfad muss vor einer Promotion geklärt werden, ohne die visuell abgenommenen Instrumentgrößen wieder zu verändern.
+
 Verbindliche Detaildokumentation:
 
 - `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
 - `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md`;
 - `docs/V4_09_03_FULLSCREEN_CONTROLS.md` (historischer/superseded Zwischenstand);
 - `docs/V4_09_04_OVERLAY_DRAG_FIXES.md` (superseded Testzwischenstand);
-- `docs/V4_09_05_ANDROID_TOUCH_DRAG.md`;
-- `docs/RELEASE_NOTES_V4_09_05_TEST.md`;
-- `docs/HANDOFF_V4_09_05_ANDROID_TOUCH_DRAG_2026-09-20.md`.
+- `docs/V4_09_05_ANDROID_TOUCH_DRAG.md` (superseded Testzwischenstand);
+- `docs/V4_09_06_MOVABLE_LOCATION_PILL.md`;
+- `docs/RELEASE_NOTES_V4_09_06_TEST.md`;
+- `docs/HANDOFF_V4_09_06_MOVABLE_LOCATION_PILL_2026-09-20.md`;
+- `docs/CHAT_HANDOFF_V4_09_06_2026-09-20.md`.
 
 
 ## Qualitätssicherung und Promotion
