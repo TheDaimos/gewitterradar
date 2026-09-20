@@ -1,0 +1,82 @@
+name: Build Gewitterradar V4.09.01 Download
+
+on:
+  push:
+    branches:
+      - build/v4.09.01-download-2026-09-20
+    paths:
+      - '.github/workflows/v40901-download-package.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify candidate frontend parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+
+      - name: Create installable V4.09.01 test package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40901
+          mkdir -p build/v40901/native/custom_components build/v40901/dashboard
+          cp -a custom_components/gewitterradar build/v40901/native/custom_components/
+          cp -a dashboard/dist/. build/v40901/dashboard/
+          mv build/v40901/dashboard/gewitterradar.js build/v40901/dashboard/gewitterradar-v4.09.01.js
+          cp docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md build/v40901/
+          cat > build/v40901/README_V4.09.01_TEST.txt <<'TXT'
+          Gewitterradar V4.09.01 DEV / TEST
+          ==================================
+
+          Verbindlicher Kandidat:
+            feature/v4.09-map-display-modes
+            d6b2b68bb36f9e0e9f1a9b20d0526c81b47cc308
+
+          Basis:
+            V4.08 FINAL (eingefroren)
+
+          Neu in V4.09.01:
+          - Karte: Standard / Groß / Vollbild
+          - "In eigenem Fenster öffnen" in den Einstellungen
+          - aktuell gewählter Kompass im Vollbild
+          - Kompass per Maus/Touch verschiebbar
+          - normalisierte lokale Speicherung der Kompassposition
+          - Popup-Blocker-Rückfall auf integrierten Vollbildmodus
+
+          Native Testinstallation:
+            native/custom_components/gewitterradar/
+
+          Dashboard-Testdatei:
+            dashboard/gewitterradar-v4.09.01.js
+
+          Dies ist ein Testkandidat und kein öffentlicher Release.
+          Reale Geräteabnahme steht noch aus.
+          TXT
+          (
+            cd build/v40901
+            zip -qr ../Gewitterradar_V4.09.01_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.09.01_TEST.zip
+          sha256sum build/Gewitterradar_V4.09.01_TEST.zip > build/Gewitterradar_V4.09.01_TEST.sha256
+          sha256sum frontend/gewitterradar.js > build/gewitterradar-v40901-frontend.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09.01_TEST
+          path: |
+            build/Gewitterradar_V4.09.01_TEST.zip
+            build/Gewitterradar_V4.09.01_TEST.sha256
+            build/gewitterradar-v40901-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
