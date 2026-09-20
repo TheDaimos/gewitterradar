@@ -1,11 +1,23 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09.02 DEV/TEST – reale Geräteabnahme offen.**  
+Status: **2026/09 · V4.09.03 DEV/TEST – reale Geräteabnahme offen.**  
 Öffentliche Rückfallbasis: **V4.08 FINAL.**  
 Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M24 – V4.09.03 Vollbild-Bedienelemente vervollständigt
+- Vollbild-Testschaltflächen fail-closed an den echten Warnsystem-Simulationszustand gebunden, sodass das Reparenting der Karte die Sichtbarkeitsregel nicht mehr umgehen kann;
+- bestehende Standortanzeige samt bestehendem Dropdown im Vollbild automatisch oben rechts eingesetzt;
+- Layer-Schaltfläche auf die dauerhaft höchste Karten-Bedienebene gesetzt;
+- Vollbild-Kompass gegenüber V4.09.02 **exakt 30 %** vergrößert und freie Pointer-/Touch-Verschiebbarkeit beibehalten;
+- zwei stark verkleinerte Schalter oben links zum unabhängigen Ein-/Ausblenden von Kompass und Medaillon ergänzt;
+- Live-Tendenzmedaillon als zweites frei verschiebbares Vollbild-Instrument ergänzt und an die produktive Trendlogik gekoppelt;
+- lokale browser-/gerätespezifische Speicherung für Kompass-/Medaillon-Sichtbarkeit sowie beide normalisierten Overlaypositionen ergänzt;
+- statischen V4.09-Vertrag und Playwright-Gerätematrix um Sichtbarkeit, Dragging, Standortmenü, fail-closed Tests und Layer-Vordergrund erweitert;
+- sichtbare Release History in der App um bilingualen **V4.09.03 · DEV · 2026/09**-Eintrag ergänzt;
+- Release-/Freeze-/Golden-Schritte weiterhin bis zur realen Geräteabnahme gesperrt.
 
 ### M23 – V4.09.02 Kartenansichten nach erster Geräteprüfung gehärtet
 - V4.09.01 mit Standard/Groß/Vollbild, separatem Kartenfenster und verschiebbarem Vollbild-Kompass real auf Gerät geprüft;
