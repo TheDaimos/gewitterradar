@@ -1,6 +1,6 @@
 # Gewitterradar – kanonische Roadmap
 
-Stand: **18.09.2026**
+Stand: **20.09.2026**
 
 Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und wird gegen den tatsächlich erreichten Produktstand gepflegt.
 
@@ -42,11 +42,23 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### Kein aktiver Entwicklungsblock
+### V4.09.01 – Kartenansichten und Vollbild-Kompass
 
-**V4.08 ist veröffentlicht und eingefroren.** Es läuft aktuell keine weitere funktionale Arbeit unter V4.08.
+Der erste klar abgegrenzte V4.09-Arbeitsblock ist als **Testkandidat** auf `feature/v4.09-map-display-modes` umgesetzt. V4.08 bleibt unverändert eingefroren.
 
-Die nächste Entwicklungsline ist **V4.09.xx**. Sie beginnt erst mit einem klar abgegrenzten neuen Arbeitsblock. Der bereits versionierte HACS-Distributionsauftrag steht oben unter **NEXT / VERSIONIERT**.
+Umfang:
+
+- direkte Kartenansichten **Standard · Groß · Vollbild**;
+- dieselbe Leaflet-Instanz bleibt beim Größenwechsel erhalten;
+- der aktuell gewählte Kompass wird im Vollbild als Overlay weiterverwendet;
+- Kompass-Overlay per Maus und Touch/Pointer verschiebbar;
+- Position und gewählte Standard-/Groß-Ansicht lokal gespeichert;
+- **„In eigenem Fenster öffnen“** als separater Punkt in den Einstellungen;
+- Rückfall auf Vollbild, wenn ein separates Browserfenster blockiert wird;
+- gemeinsame Umsetzung für native Integration und Dashboard-Auslieferung;
+- Browserabdeckung für Desktop, iPad und Android sowie geschützte About-/Diagnose-/Hi-Res-Regressionen.
+
+Der Kandidat ist automatisiert grün geprüft. Vor Merge/Veröffentlichung bleibt die reale Geräteabnahme durch den Benutzer erforderlich.
 
 Verbindlicher Abschlussstand von V4.08:
 
@@ -244,14 +256,6 @@ Diese Idee ist ausdrücklich **noch keiner Version zugeordnet** und muss vor ein
 - bestehende Kompasslogik wiederverwenden;
 - zunächst Zusatzdesign, kein Ersatz akzeptierter Designs;
 - mobile Platz-/Bedienprobleme ausdrücklich prüfen.
-
-### Vollbildmodus für die Karte
-
-- engine-unabhängigen Vollbild-/Maximieren-Modus prüfen;
-- OSM/Leaflet und später MapLibre berücksichtigen;
-- Radien, Blitze, Cluster und relevante Layer-Schalter im Vollbild nutzbar halten;
-- klarer Rücksprung zum normalen Layout;
-- Desktop, Android, iOS/iPad Hoch-/Querformat prüfen.
 
 ### Earth-/3D-Kartenansicht
 
