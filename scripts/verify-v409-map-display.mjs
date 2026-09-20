@@ -15,9 +15,9 @@ const dashboard=await read('dashboard/dist/gewitterradar.js');
 
 assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
 assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
-assert.match(sourceText,/const CARD_VERSION = '4\.09\.02';/,'V4.09.03 card version missing');
-assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.02';/,'V4.09.03 display version missing');
-assert.match(sourceText,/V4\.09\.02-DEV-2026-09-20/,'V4.09.03 build marker missing');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.03';/,'V4.09.03 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.03';/,'V4.09.03 display version missing');
+assert.match(sourceText,/V4\.09\.03-DEV-2026-09-20/,'V4.09.03 build marker missing');
 
 for(const needle of [
   'data-map-display-mode="standard"',
@@ -48,7 +48,19 @@ for(const needle of [
   '.map-display-fab.menu-open',
   '[data-warning-test][hidden]',
   'width:clamp(189px,31.2vmin,390px)',
-  'width:clamp(172px,46.8vmin,299px)'
+  'width:clamp(172px,46.8vmin,299px)',
+  "MAP_COMPASS_VISIBLE_STORAGE_KEY = 'gewitterradar:v409:map-compass-visible'",
+  "MAP_MEDALLION_POSITION_STORAGE_KEY = 'gewitterradar:v409:map-medallion-position'",
+  "MAP_MEDALLION_VISIBLE_STORAGE_KEY = 'gewitterradar:v409:map-medallion-visible'",
+  'id="map-instrument-controls"',
+  'id="map-compass-toggle"',
+  'id="map-medallion-toggle"',
+  'id="map-medallion-overlay"',
+  '_positionMapMedallionOverlay',
+  '_persistMapMedallionPosition',
+  '_setMapInstrumentVisible(kind,visible)',
+  'position:absolute;z-index:2147483647;width:44px;height:44px',
+  '#map-fullscreen-dialog .location-dropdown { z-index:2147483645; }'
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
 assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
 assert.ok(!sourceText.includes('class="map-display-bar"'),'Old wide map display bar returned');
