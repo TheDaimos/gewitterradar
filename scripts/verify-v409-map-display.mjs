@@ -15,9 +15,9 @@ const dashboard=await read('dashboard/dist/gewitterradar.js');
 
 assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
 assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
-assert.match(sourceText,/const CARD_VERSION = '4\.09\.01';/,'V4.09.02 card version missing');
-assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.01';/,'V4.09.02 display version missing');
-assert.match(sourceText,/V4\.09\.01-DEV-2026-09-20/,'V4.09.02 build marker missing');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.02';/,'V4.09.02 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.02';/,'V4.09.02 display version missing');
+assert.match(sourceText,/V4\.09\.02-DEV-2026-09-20/,'V4.09.02 build marker missing');
 
 for(const needle of [
   'data-map-display-mode="standard"',
