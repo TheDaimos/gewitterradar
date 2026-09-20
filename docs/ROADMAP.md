@@ -42,28 +42,26 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.05 – Android-Touch-Dragging absichern
+### V4.09.06 – frei verschiebbare Standort-Pille und adaptives Menü
 
-Aktiver Teststand: `feature/v4.09.05-android-touch-drag`.
+Aktiver Teststand: `feature/v4.09.06-floating-location-pill`.
 
-Reale Abnahme von V4.09.04:
+Zusätzlich zu den V4.09.05-Touch-Korrekturen wird die Standort-Pille im Vollbild auf Desktop, Android und iPad/iPad Pro frei positionierbar.
 
-- Desktop: Kompass und Medaillon ein-/ausblendbar und frei verschiebbar – **bestätigt**.
-- Android: beide ein-/ausblendbar, aber Finger-Dragging funktioniert nicht – **offener Fehler**.
-- Android: Medaillon soll gegenüber V4.09.04 **15 % kleiner** dargestellt werden.
-- iPad/iPad Pro: bleibt verbindliche Zielplattform für freies Touch-Dragging.
+Verbindliches Verhalten:
 
-V4.09.05 ergänzt einen echten Touch-Event-Fallback neben dem bestehenden Pointer-Event-Pfad. `touchstart/touchmove/touchend/touchcancel` laufen nicht-passiv auf der jeweiligen Overlay-Fläche, damit Android/HA-WebView die Geste nicht an Leaflet oder das native Vollbild-`dialog` verliert. Pointer Events bleiben für Maus, Stift und kompatible Touch-Browser bestehen.
+- Position lokal normalisiert speichern;
+- oberes Drittel bevorzugt Öffnung nach unten;
+- unteres Drittel bevorzugt Öffnung nach oben;
+- mittlerer Bereich bevorzugt Mehrspaltigkeit;
+- tatsächlicher verfügbarer Raum hat Vorrang vor einer rein starren Bereichsregel;
+- wenn eine einspaltige Liste in der bevorzugten Richtung nicht vollständig passt, automatisch zusätzliche Spalten verwenden;
+- Android maximal 2 Spalten, breitere iPad-/Desktop-Ansichten bis zu 3;
+- wenn auch mehrspaltig nicht alles passt, nur die Liste intern scrollen;
+- bei geöffnetem Menü und bewegter Pille Layout, Richtung und Spaltenzahl live neu berechnen;
+- Drag darf keinen unbeabsichtigten Standort-Klick auslösen.
 
-Das Medaillon erhält eine Android-spezifische Größenklasse. Die Android-Abmessungen betragen exakt 85 % der bisherigen mobilen Werte; Desktop und iPad bleiben unverändert.
-
-Vor Promotion erforderlich:
-
-- reale Android-Prüfung beider Drag-Gesten;
-- Sichtprüfung der um 15 % reduzierten Android-Medaillongröße;
-- iPad/iPad Pro Touch-Regression;
-- Desktop Maus-Regression;
-- Layer-Control, Standort, Warnsystem-Test-Fail-Closed und separates Kartenfenster regressionsprüfen.
+Keine Promotion vor realer Abnahme auf Android, iPad/iPad Pro und Desktop.
 
 Verbindlicher Abschlussstand von V4.08:
 
