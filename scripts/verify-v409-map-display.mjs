@@ -31,9 +31,20 @@ for(const needle of [
   "MAP_WINDOW_QUERY_KEY = 'gewitterradar_window'",
   "MAP_WINDOW_VERSION_QUERY_KEY = 'gewitterradar_window_version'",
   "Kartenansicht",
-  "map-window-host"
+  "map-window-host",
+  "MAP_STARTUP_MODE_STORAGE_KEY = 'gewitterradar:v409:startup-map-display'",
+  "MAP_LAST_DISPLAY_MODE_STORAGE_KEY = 'gewitterradar:v409:last-map-display-mode'",
+  'id="map-display-menu-toggle"',
+  'id="map-display-control"',
+  'class="map-layer-symbol-layer gold"',
+  'class="map-layer-symbol-layer blue"',
+  'class="map-layer-symbol-layer red"',
+  'id="settings-map-startup-mode"',
+  '_setMapStartupMode(mode)',
+  '_positionMapDisplayControl()'
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
 assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
+assert.ok(!sourceText.includes('class="map-display-bar"'),'Old wide map display bar returned');
 
 const frozenRelease=JSON.parse((await read('tests/contracts/frontend-release-v4.08.json')).toString('utf8'));
 assert.equal(frozenRelease.version,'4.08','Frozen V4.08 release contract version changed');
@@ -54,4 +65,4 @@ for(const asset of inventory){
   assert.ok(canonical.equals(await read('dashboard/dist/'+asset.file)),'Dashboard asset differs: '+asset.file);
 }
 
-console.log('PASS: V4.09.02 map display contract, delivery parity and protected V4.08 assets/locales.');
+console.log('PASS: V4.09.02 floating map-view control, per-device startup contract, delivery parity and protected V4.08 assets/locales.');

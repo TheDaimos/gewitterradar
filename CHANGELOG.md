@@ -6,7 +6,12 @@
 
 ### Fixed
 
-- Make **Standard · Groß · Vollbild** deutlich sichtbar direkt oberhalb der Karte statt in einer unauffälligen Leiste unter der Kartenlegende.
+- Replace the temporary wide **Standard · Groß · Vollbild** bar with one compact floating map-view control inside the lower-right map area.
+- Use a three-layer icon following the radius colour structure: **small red** danger layer, **medium blue** thunderstorm layer and **large gold** observation layer.
+- Open the view selection as a compact context menu above/left of the in-map control and close it after selection or outside interaction.
+- Add **Startdarstellung** in Settings with **Standard / Groß / Vollbild / Zuletzt verwendet**; persist this preference only in the local browser profile of the current device.
+- Keep **Eigenes Kartenfenster** separate in Settings (Variant A) instead of mixing it into the in-map view menu.
+- Make **Standard · Groß · Vollbild** directly reachable from inside the map without adding another permanent card row.
 - Harden the separate-window presentation so the Gewitterradar card itself covers the Home-Assistant shell and the fullscreen dialog has a fixed viewport fallback.
 - Add a dedicated `gewitterradar_window_version=40902` marker to prevent ambiguity with the first V4.09.01 popup path during device retesting.
 - Keep the same Leaflet instance, selected compass reuse, pointer/touch dragging, radii, clustering and protected V4.08 baseline unchanged.

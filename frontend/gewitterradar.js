@@ -71,6 +71,8 @@
   ];
   const COMPASS_DESIGN_STORAGE_KEY = 'gewitterradar-last-compass-design';
   const MAP_DISPLAY_MODE_STORAGE_KEY = 'gewitterradar:v409:map-display-mode';
+  const MAP_LAST_DISPLAY_MODE_STORAGE_KEY = 'gewitterradar:v409:last-map-display-mode';
+  const MAP_STARTUP_MODE_STORAGE_KEY = 'gewitterradar:v409:startup-map-display';
   const MAP_COMPASS_POSITION_STORAGE_KEY = 'gewitterradar:v409:map-compass-position';
   const MAP_WINDOW_QUERY_KEY = 'gewitterradar_window';
   const MAP_WINDOW_VERSION_QUERY_KEY = 'gewitterradar_window_version';
@@ -769,8 +771,13 @@
         'map.size_standard':'Standard',
         'map.size_large':'Groß',
         'map.size_fullscreen':'Vollbild',
+        'map.view_menu':'Kartenansicht',
+        'map.view_menu_aria':'Kartenansicht auswählen',
         'map.compass_move':'Kompass auf der Karte verschieben',
         'settings.map_display':'Kartendarstellung',
+        'settings.map_startup':'Startdarstellung',
+        'settings.map_startup_note':'Nur auf diesem Gerät und in diesem Browserprofil gespeichert',
+        'settings.map_startup_last':'Zuletzt verwendet',
         'settings.map_display_sub':'Kartengröße und separates Kartenfenster',
         'settings.map_window':'Eigenes Kartenfenster',
         'settings.map_window_note':'Karte mit ausgewähltem Kompass separat öffnen',
@@ -994,8 +1001,13 @@
         'map.size_standard':'Standard',
         'map.size_large':'Large',
         'map.size_fullscreen':'Fullscreen',
+        'map.view_menu':'Map view',
+        'map.view_menu_aria':'Choose map view',
         'map.compass_move':'Move compass on the map',
         'settings.map_display':'Map display',
+        'settings.map_startup':'Startup view',
+        'settings.map_startup_note':'Stored only on this device and browser profile',
+        'settings.map_startup_last':'Last used',
         'settings.map_display_sub':'Map size and separate map window',
         'settings.map_window':'Separate map window',
         'settings.map_window_note':'Open the map with the selected compass separately',
@@ -5946,16 +5958,27 @@
         ? this._recentRadiusFilter
         : 'observation';
 
-      // V4.09.01 – Kartenansicht bleibt rein lokal und verändert keine HA-Helper.
-      // Standard/Groß werden gespeichert; Vollbild ist bewusst nur eine laufende UI-Sitzung.
-      if (!['standard','large','fullscreen'].includes(this._mapDisplayMode)) {
-        let storedMapMode = 'standard';
+      // V4.09.02 – Kartenansicht und Startdarstellung bleiben rein lokal.
+      // Die Startdarstellung wird ausschließlich im Browserprofil dieses Geräts gespeichert.
+      if (!['standard','large','fullscreen','last'].includes(this._mapStartupMode)) {
+        let storedStartupMode = 'last';
         try {
-          const saved = localStorage.getItem(MAP_DISPLAY_MODE_STORAGE_KEY);
-          if (saved === 'large' || saved === 'standard') storedMapMode = saved;
+          const savedStartup = localStorage.getItem(MAP_STARTUP_MODE_STORAGE_KEY);
+          if (['standard','large','fullscreen','last'].includes(savedStartup)) storedStartupMode = savedStartup;
         } catch (_error) {}
-        this._mapDisplayMode = storedMapMode;
+        this._mapStartupMode = storedStartupMode;
       }
+      if (!['standard','large','fullscreen'].includes(this._mapDisplayMode)) {
+        let lastMapMode = 'standard';
+        try {
+          const savedLast = localStorage.getItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY);
+          const legacySaved = localStorage.getItem(MAP_DISPLAY_MODE_STORAGE_KEY);
+          if (['standard','large','fullscreen'].includes(savedLast)) lastMapMode = savedLast;
+          else if (legacySaved === 'large' || legacySaved === 'standard') lastMapMode = legacySaved;
+        } catch (_error) {}
+        this._mapDisplayMode = this._mapStartupMode === 'last' ? lastMapMode : this._mapStartupMode;
+      }
+      this._mapDisplayMenuOpen = !!this._mapDisplayMenuOpen;
       this._mapDisplayBeforeFullscreen = ['standard','large'].includes(this._mapDisplayBeforeFullscreen)
         ? this._mapDisplayBeforeFullscreen
         : (this._mapDisplayMode === 'large' ? 'large' : 'standard');
@@ -6242,6 +6265,7 @@
     }
 
     _teardownMapDisplayMode() {
+      this._setMapDisplayMenuOpen(false);
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
       try { if (dialog?.open) dialog.close(); } catch (_error) {}
       this._restoreCompassFromMapOverlay();
@@ -6309,10 +6333,44 @@
       try { localStorage.setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
     }
 
+    _positionMapDisplayControl() {
+      const control = this.shadow?.getElementById('map-display-control');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!control || !mapCard || !mapEl || this._mapWindowMode) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = control.offsetWidth || 44;
+      const height = control.offsetHeight || 44;
+      if (!cardRect.width || !mapRect.width) return;
+      const rightInset = 10;
+      const bottomInset = 36;
+      const left = Math.max(8,mapRect.right-cardRect.left-width-rightInset);
+      const top = Math.max(mapRect.top-cardRect.top+8,mapRect.bottom-cardRect.top-height-bottomInset);
+      control.style.left = `${left}px`;
+      control.style.top = `${top}px`;
+    }
+
+    _setMapDisplayMenuOpen(open) {
+      this._mapDisplayMenuOpen = !!open && !this._mapWindowMode;
+      const menu = this.shadow?.getElementById('map-display-switch');
+      const toggle = this.shadow?.getElementById('map-display-menu-toggle');
+      if (menu) menu.hidden = !this._mapDisplayMenuOpen;
+      if (toggle) toggle.setAttribute('aria-expanded',this._mapDisplayMenuOpen ? 'true' : 'false');
+    }
+
+    _setMapStartupMode(mode) {
+      if (!['standard','large','fullscreen','last'].includes(mode)) return;
+      this._mapStartupMode = mode;
+      try { localStorage.setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      this._syncMapDisplayUi();
+    }
+
     _scheduleMapDisplayResize() {
       const kick = () => {
         this._map?.invalidateSize?.();
         this._positionMapCompassOverlay();
+        this._positionMapDisplayControl();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
       setTimeout(kick,120);
@@ -6333,25 +6391,54 @@
         large:this._t('map.size_large'),
         fullscreen:this._t('map.size_fullscreen')
       };
+      const activeMode = fullscreenActive ? 'fullscreen' : this._mapDisplayMode;
       const switcher = this.shadow.getElementById('map-display-switch');
-      if (switcher) switcher.setAttribute('aria-label',this._t('map.size_aria'));
+      const menuToggle = this.shadow.getElementById('map-display-menu-toggle');
+      const menuTitle = this.shadow.getElementById('map-display-menu-title');
+      if (switcher) switcher.setAttribute('aria-label',this._t('map.view_menu_aria'));
+      if (menuTitle) menuTitle.textContent = this._t('map.view_menu');
+      if (menuToggle) {
+        menuToggle.setAttribute('aria-label',`${this._t('map.view_menu_aria')} · ${labels[activeMode] || activeMode}`);
+        menuToggle.setAttribute('title',`${this._t('map.view_menu')} · ${labels[activeMode] || activeMode}`);
+        menuToggle.setAttribute('aria-expanded',this._mapDisplayMenuOpen ? 'true' : 'false');
+      }
+      if (switcher) switcher.hidden = !this._mapDisplayMenuOpen;
       this.shadow.querySelectorAll('[data-map-display-mode]').forEach((button) => {
         const mode = button.dataset.mapDisplayMode;
-        const active = mode === (fullscreenActive ? 'fullscreen' : this._mapDisplayMode);
+        const active = mode === activeMode;
         button.textContent = labels[mode] || mode;
         button.classList.toggle('active',active);
-        button.setAttribute('aria-pressed',active ? 'true' : 'false');
+        button.setAttribute('aria-checked',active ? 'true' : 'false');
         button.setAttribute('title',labels[mode] || mode);
       });
+      this._positionMapDisplayControl();
       const overlay = this.shadow.getElementById('map-compass-overlay');
       if (overlay) overlay.setAttribute('aria-label',this._t('map.compass_move'));
       const settingsTitle = this.shadow.getElementById('settings-map-section-title');
       const settingsSub = this.shadow.getElementById('settings-map-section-sub');
+      const settingsStartupLabel = this.shadow.getElementById('settings-map-startup-label');
+      const settingsStartupNote = this.shadow.getElementById('settings-map-startup-note');
+      const settingsStartupMode = this.shadow.getElementById('settings-map-startup-mode');
       const settingsWindowLabel = this.shadow.getElementById('settings-map-window-label');
       const settingsWindowNote = this.shadow.getElementById('settings-map-window-note');
       const settingsWindowOpen = this.shadow.getElementById('settings-map-window-open');
       if (settingsTitle) settingsTitle.textContent = this._t('settings.map_display');
       if (settingsSub) settingsSub.textContent = this._t('settings.map_display_sub');
+      if (settingsStartupLabel) settingsStartupLabel.textContent = this._t('settings.map_startup');
+      if (settingsStartupNote) settingsStartupNote.textContent = this._t('settings.map_startup_note');
+      if (settingsStartupMode) {
+        settingsStartupMode.value = this._mapStartupMode || 'last';
+        const optionLabels = {
+          standard:this._t('map.size_standard'),
+          large:this._t('map.size_large'),
+          fullscreen:this._t('map.size_fullscreen'),
+          last:this._t('settings.map_startup_last')
+        };
+        [...settingsStartupMode.options].forEach(option => {
+          if (optionLabels[option.value]) option.textContent = optionLabels[option.value];
+        });
+        settingsStartupMode.setAttribute('aria-label',this._t('settings.map_startup'));
+      }
       if (settingsWindowLabel) settingsWindowLabel.textContent = this._t('settings.map_window');
       if (settingsWindowNote) settingsWindowNote.textContent = this._t('settings.map_window_note');
       if (settingsWindowOpen) {
@@ -6360,9 +6447,13 @@
       }
     }
 
-    _setMapDisplayMode(mode,{persist=true}={}) {
+    _setMapDisplayMode(mode,{persist=true,remember=true,closeMenu=true}={}) {
       if (!['standard','large','fullscreen'].includes(mode)) return;
       if (this._mapWindowMode && mode !== 'fullscreen') return;
+      if (closeMenu) this._setMapDisplayMenuOpen(false);
+      if (remember && !this._mapWindowMode) {
+        try { localStorage.setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      }
       if (mode === 'fullscreen') {
         if (this._mapDisplayMode !== 'fullscreen') {
           this._mapDisplayBeforeFullscreen = this._mapDisplayMode === 'large' ? 'large' : 'standard';
@@ -6425,6 +6516,31 @@
     _bindMapDisplayControls() {
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
       const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const menuToggle = this.shadow?.getElementById('map-display-menu-toggle');
+      const menuWrap = this.shadow?.getElementById('map-display-control');
+      const startupSelect = this.shadow?.getElementById('settings-map-startup-mode');
+      menuToggle?.addEventListener('click',(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._setMapDisplayMenuOpen(!this._mapDisplayMenuOpen);
+      });
+      menuToggle?.addEventListener('keydown',(event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          this._setMapDisplayMenuOpen(false);
+        }
+      });
+      startupSelect?.addEventListener('change',(event) => {
+        this._setMapStartupMode(event.currentTarget.value);
+      });
+      if (!this._mapDisplayOutsidePointerHandler) {
+        this._mapDisplayOutsidePointerHandler = (event) => {
+          if (!this._mapDisplayMenuOpen) return;
+          if (menuWrap?.contains(event.target)) return;
+          this._setMapDisplayMenuOpen(false);
+        };
+        this.shadow?.addEventListener('pointerdown',this._mapDisplayOutsidePointerHandler);
+      }
       this.shadow?.querySelectorAll('[data-map-display-mode]').forEach((button) => {
         button.addEventListener('click',(event) => {
           event.preventDefault();
@@ -6503,9 +6619,9 @@
       overlay?.addEventListener('pointercancel',finishCompassDrag);
       this._syncMapDisplayUi();
       if (this._mapWindowMode) {
-        queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false}));
-      } else if (this._mapDisplayMode === 'large') {
-        this._setMapDisplayMode('large',{persist:false});
+        queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false,remember:false,closeMenu:true}));
+      } else if (['large','fullscreen'].includes(this._mapDisplayMode)) {
+        queueMicrotask(() => this._setMapDisplayMode(this._mapDisplayMode,{persist:false,remember:false,closeMenu:true}));
       }
     }
 
@@ -9981,9 +10097,7 @@
           #map-fullscreen-dialog .map-card #map {
             flex:1 1 auto;width:100%;height:auto!important;min-height:0!important;aspect-ratio:auto!important;
           }
-          #map-fullscreen-dialog .map-legend,
-          #map-fullscreen-dialog .map-display-bar { flex:0 0 auto; }
-          .map-card.map-window-mode .map-display-bar { display:none; }
+          #map-fullscreen-dialog .map-legend { flex:0 0 auto; }
 
           .map-compass-overlay {
             position:absolute;z-index:760;width:clamp(145px,24vmin,300px);aspect-ratio:1 / 1;
@@ -9997,30 +10111,83 @@
             width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;
           }
 
-          .map-display-bar {
-            display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:7px 10px;
-            border-bottom:1px solid rgba(255,255,255,.075);
-            border-top:1px solid rgba(246,195,68,.10);
-            background:linear-gradient(180deg,rgba(246,195,68,.055),rgba(0,0,0,.12));
+          .map-display-fab {
+            position:absolute;z-index:735;width:44px;height:44px;
+            left:auto;top:auto;right:10px;bottom:auto;
+            pointer-events:auto;
           }
-          .map-display-label {
-            color:#c7a857;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+          .map-display-fab[hidden],
+          .map-card.map-window-mode .map-display-fab { display:none!important; }
+          .map-display-fab-toggle {
+            appearance:none;border:1px solid rgba(246,195,68,.24);outline:0;
+            width:44px;height:44px;padding:0;border-radius:12px;
+            display:grid;place-items:center;
+            background:rgba(12,16,23,.94);
+            box-shadow:0 8px 24px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.04),0 0 14px rgba(246,195,68,.07);
+            backdrop-filter:blur(12px);cursor:pointer;touch-action:manipulation;
+            -webkit-tap-highlight-color:transparent;
+            transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .10s ease;
           }
-          .map-display-switch {
-            display:inline-flex;align-items:center;justify-content:center;padding:2px;
-            border:1px solid rgba(255,255,255,.105);border-radius:999px;background:rgba(8,11,16,.90);
-            box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+          .map-display-fab-toggle:hover,
+          .map-display-fab-toggle[aria-expanded="true"] {
+            border-color:rgba(246,195,68,.48);background:rgba(19,22,28,.97);
+            box-shadow:0 9px 26px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05),0 0 18px rgba(246,195,68,.15);
+          }
+          .map-display-fab-toggle:active { transform:scale(.95); }
+          .map-display-fab-toggle:focus-visible { outline:2px solid rgba(246,195,68,.78);outline-offset:2px; }
+          .map-layer-symbol { position:relative;display:block;width:26px;height:25px;pointer-events:none; }
+          .map-layer-symbol-layer {
+            position:absolute;left:50%;height:5px;border-radius:2px;
+            transform:translateX(-50%) skewX(-20deg);
+            border:1px solid currentColor;background:color-mix(in srgb,currentColor 20%,rgba(8,11,16,.92));
+            box-shadow:0 0 8px color-mix(in srgb,currentColor 30%,transparent);
+          }
+          .map-layer-symbol-layer.gold { top:2px;width:24px;color:${C.gold};z-index:3; }
+          .map-layer-symbol-layer.blue { top:10px;width:18px;color:${C.blue};z-index:2; }
+          .map-layer-symbol-layer.red { top:18px;width:12px;color:${C.danger};z-index:1; }
+          .map-display-menu {
+            position:absolute;right:0;bottom:52px;min-width:154px;padding:6px;
+            display:grid;gap:3px;
+            border:1px solid rgba(246,195,68,.24);border-radius:14px;
+            background:rgba(10,13,18,.97);
+            box-shadow:0 15px 38px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.035);
+            backdrop-filter:blur(16px);
+          }
+          .map-display-menu[hidden] { display:none!important; }
+          .map-display-menu::after {
+            content:'';position:absolute;right:15px;bottom:-5px;width:9px;height:9px;
+            background:rgba(10,13,18,.97);border-right:1px solid rgba(246,195,68,.24);
+            border-bottom:1px solid rgba(246,195,68,.24);transform:rotate(45deg);
+          }
+          .map-display-menu-title {
+            padding:4px 9px 5px;color:#c9a94e;font-size:8px;font-weight:820;
+            letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;
           }
           .map-display-btn {
-            appearance:none;border:0;outline:0;min-height:31px;padding:0 15px;border-radius:999px;
-            background:transparent;color:#9aa3b2;font-family:inherit;font-size:10px;font-weight:820;line-height:1;
-            letter-spacing:.035em;cursor:pointer;touch-action:manipulation;white-space:nowrap;
+            appearance:none;border:0;outline:0;min-height:36px;padding:0 11px;border-radius:9px;
+            display:flex;align-items:center;gap:9px;text-align:left;
+            background:transparent;color:#a0a8b6;font-family:inherit;font-size:10px;font-weight:780;
+            letter-spacing:.025em;cursor:pointer;touch-action:manipulation;white-space:nowrap;
           }
+          .map-display-btn::before {
+            content:'';width:7px;height:7px;flex:0 0 7px;border-radius:50%;
+            border:1px solid currentColor;opacity:.74;
+          }
+          .map-display-btn:hover { background:rgba(255,255,255,.045);color:#d6dae1; }
           .map-display-btn.active {
             color:#ffe28b;background:rgba(246,195,68,.105);
-            box-shadow:inset 0 0 0 1px rgba(246,195,68,.24),0 0 11px rgba(246,195,68,.055);
+            box-shadow:inset 0 0 0 1px rgba(246,195,68,.20);
+          }
+          .map-display-btn.active::before {
+            background:var(--b-gold);border-color:var(--b-gold);
+            box-shadow:0 0 7px rgba(246,195,68,.62);
           }
           .map-display-btn:focus-visible { outline:2px solid rgba(246,195,68,.72);outline-offset:1px; }
+          .settings-map-startup-select {
+            appearance:auto;min-width:156px;max-width:210px;min-height:36px;
+            padding:0 8px;border:1px solid rgba(255,255,255,.12);border-radius:10px;
+            background:#11151c;color:var(--b-text);font:inherit;font-size:10px;font-weight:720;
+          }
 
           .leaflet-container { background:#0a0d12 !important;font-family:inherit; }
           .leaflet-tile-pane { filter:invert(1) hue-rotate(180deg) brightness(.62) saturate(.55) contrast(1.12); }
@@ -13116,14 +13283,6 @@
                       <span class="danger"><i style="background:${C.danger}"></i><span id="map-danger-radius" role="button" tabindex="0" data-radius-input-kind="danger">–</span></span>
                     </div>
                   </div>
-                  <div class="map-display-bar" id="map-display-bar">
-                    <span class="map-display-label">Kartenansicht</span>
-                    <div class="map-display-switch" id="map-display-switch" role="group" aria-label="Kartengröße">
-                      <button class="map-display-btn" type="button" data-map-display-mode="standard" aria-pressed="true">Standard</button>
-                      <button class="map-display-btn" type="button" data-map-display-mode="large" aria-pressed="false">Groß</button>
-                      <button class="map-display-btn" type="button" data-map-display-mode="fullscreen" aria-pressed="false">Vollbild</button>
-                    </div>
-                  </div>
                   <button class="map-recenter-btn" id="map-recenter" type="button"
                           title="Ausgewählten Standort auf der Karte zentrieren"
                           aria-label="Ausgewählten Standort auf der Karte zentrieren">
@@ -13142,6 +13301,22 @@
                     <span class="recent-target-glyph map-strike-target-glyph" aria-hidden="true"></span>
                   </button>
                   <div id="map"></div>
+                  <div class="map-display-fab" id="map-display-control">
+                    <button class="map-display-fab-toggle" id="map-display-menu-toggle" type="button"
+                            aria-haspopup="menu" aria-expanded="false" aria-label="Kartenansicht auswählen">
+                      <span class="map-layer-symbol" aria-hidden="true">
+                        <i class="map-layer-symbol-layer gold"></i>
+                        <i class="map-layer-symbol-layer blue"></i>
+                        <i class="map-layer-symbol-layer red"></i>
+                      </span>
+                    </button>
+                    <div class="map-display-menu" id="map-display-switch" role="menu" hidden>
+                      <div class="map-display-menu-title" id="map-display-menu-title">Kartenansicht</div>
+                      <button class="map-display-btn" type="button" role="menuitemradio" data-map-display-mode="standard" aria-checked="true">Standard</button>
+                      <button class="map-display-btn" type="button" role="menuitemradio" data-map-display-mode="large" aria-checked="false">Groß</button>
+                      <button class="map-display-btn" type="button" role="menuitemradio" data-map-display-mode="fullscreen" aria-checked="false">Vollbild</button>
+                    </div>
+                  </div>
                   <div class="map-compass-overlay" id="map-compass-overlay" hidden></div>
                   <div class="map-legend" id="map-legend">
                     <span class="map-legend-group map-legend-primary">
@@ -13878,6 +14053,18 @@
                   </div>
                 </summary>
                 <div class="settings-section-content">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <span id="settings-map-startup-label">Startdarstellung</span>
+                      <span class="settings-row-note" id="settings-map-startup-note">Nur auf diesem Gerät und in diesem Browserprofil gespeichert</span>
+                    </div>
+                    <select class="settings-map-startup-select" id="settings-map-startup-mode" aria-label="Startdarstellung">
+                      <option value="standard">Standard</option>
+                      <option value="large">Groß</option>
+                      <option value="fullscreen">Vollbild</option>
+                      <option value="last">Zuletzt verwendet</option>
+                    </select>
+                  </div>
                   <div class="settings-row">
                     <div class="settings-row-label">
                       <span id="settings-map-window-label">Eigenes Kartenfenster</span>

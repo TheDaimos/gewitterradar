@@ -42,13 +42,17 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.01 – Kartenansichten und Vollbild-Kompass
+### V4.09.02 – Kartenansichten und Vollbild-Kompass
 
-Der erste klar abgegrenzte V4.09-Arbeitsblock ist als **Testkandidat** auf `feature/v4.09-map-display-modes` umgesetzt. V4.08 bleibt unverändert eingefroren.
+Der erste klar abgegrenzte V4.09-Arbeitsblock wurde nach der realen V4.09.01-Geräteprüfung als **V4.09.02-Testkandidat** auf `feature/v4.09.02-map-display-fixes` fortgeführt. V4.08 bleibt unverändert eingefroren.
 
 Umfang:
 
-- direkte Kartenansichten **Standard · Groß · Vollbild**;
+- direkte Kartenansichten **Standard · Groß · Vollbild** über eine kompakte Layer-Schaltfläche rechts unten innerhalb der Karte;
+- drei gestapelte Layer im Radius-Farbschema: klein rot, mittel blau, groß gold;
+- Kontextmenü öffnet an der Karten-Schaltfläche nach oben/links und enthält ausschließlich Standard · Groß · Vollbild;
+- gerätespezifische lokale Startdarstellung **Standard · Groß · Vollbild · Zuletzt verwendet** in den Einstellungen;
+- **Eigenes Kartenfenster** bleibt als getrennte Einstellungsfunktion außerhalb des Karten-Kontextmenüs;
 - dieselbe Leaflet-Instanz bleibt beim Größenwechsel erhalten;
 - der aktuell gewählte Kompass wird im Vollbild als Overlay weiterverwendet;
 - Kompass-Overlay per Maus und Touch/Pointer verschiebbar;

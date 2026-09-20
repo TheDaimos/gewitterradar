@@ -91,6 +91,20 @@ const server = http.createServer((req,res)=>{
           window.open=originalOpen;
           const openUrl=openArgs?.[0]||'';
 
+          const menuToggle=shadow.getElementById('map-display-menu-toggle');
+          const menu=shadow.getElementById('map-display-switch');
+          menuToggle.click();
+          const menuOpened=!menu.hidden && menuToggle.getAttribute('aria-expanded')==='true';
+          shadow.querySelector('[data-map-display-mode="large"]').click();
+          const menuClosedAfterChoice=menu.hidden && menuToggle.getAttribute('aria-expanded')==='false';
+
+          const startupSelect=shadow.getElementById('settings-map-startup-mode');
+          startupSelect.value='fullscreen';
+          startupSelect.dispatchEvent(new Event('change',{bubbles:true}));
+          const startupStored=localStorage.getItem('gewitterradar:v409:startup-map-display');
+          startupSelect.value='last';
+          startupSelect.dispatchEvent(new Event('change',{bubbles:true}));
+
           return {
             labels:buttons.map(node=>node.textContent.trim()),
             count:buttons.length,
@@ -100,7 +114,17 @@ const server = http.createServer((req,res)=>{
             windowParam:new URL(openUrl,location.href).searchParams.get('gewitterradar_window'),
             windowVersion:new URL(openUrl,location.href).searchParams.get('gewitterradar_window_version'),
             windowFeatures:openArgs?.[2]||'',
-            displayBarBeforeMap:shadow.getElementById('map-display-bar').nextElementSibling?.id==='map-recenter'
+            menuOpened,menuClosedAfterChoice,startupStored,
+            layerToggle:!!shadow.getElementById('map-display-menu-toggle'),
+            layerMenu:!!shadow.getElementById('map-display-switch'),
+            layerStack:[...shadow.querySelectorAll('.map-layer-symbol-layer')].map(node=>node.className),
+            startupSelect:!!shadow.getElementById('settings-map-startup-mode'),
+            controlInsideMap:(()=>{
+              const control=shadow.getElementById('map-display-control')?.getBoundingClientRect();
+              const mapRect=map.getBoundingClientRect();
+              return !!control && control.left>=mapRect.left-1 && control.right<=mapRect.right+1 &&
+                     control.top>=mapRect.top-1 && control.bottom<=mapRect.bottom+1;
+            })()
           };
         });
 
@@ -120,12 +144,59 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
         assert.equal(result.windowVersion,'40902',`${delivery}/${profile} separate window version`);
-        assert.equal(result.displayBarBeforeMap,true,`${delivery}/${profile} display controls promoted above map`);
+        assert.equal(result.menuOpened,true,`${delivery}/${profile} context menu opens`);
+        assert.equal(result.menuClosedAfterChoice,true,`${delivery}/${profile} context menu closes after choice`);
+        assert.equal(result.startupStored,'fullscreen',`${delivery}/${profile} startup preference stored locally`);
+        assert.equal(result.layerToggle,true,`${delivery}/${profile} layer toggle`);
+        assert.equal(result.layerMenu,true,`${delivery}/${profile} layer menu`);
+        assert.deepEqual(result.layerStack,[
+          'map-layer-symbol-layer gold','map-layer-symbol-layer blue','map-layer-symbol-layer red'
+        ],`${delivery}/${profile} gold/blue/red layer stack`);
+        assert.equal(result.startupSelect,true,`${delivery}/${profile} per-device startup selector`);
+        assert.equal(result.controlInsideMap,true,`${delivery}/${profile} layer control inside map bounds`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
         console.log(`${delivery}/${profile}: V4.09 map display PASS`);
       }
     }
+
+    const startupContext=await browser.newContext({viewport:{width:1280,height:800}});
+    const startupPage=await startupContext.newPage();
+    await startupPage.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=seen&delivery=dashboard`);
+    await startupPage.waitForFunction(()=>window.aboutResult);
+    await startupPage.evaluate(()=>{
+      localStorage.setItem('gewitterradar:v409:startup-map-display','fullscreen');
+      localStorage.setItem('gewitterradar:v409:last-map-display-mode','standard');
+    });
+    await startupPage.reload();
+    await startupPage.waitForFunction(()=>window.aboutResult);
+    const startupFullscreen=await startupPage.evaluate(async()=>{
+      await new Promise(resolve=>setTimeout(resolve,150));
+      const card=window.aboutCard;
+      card._closeAbout(false,false);
+      await new Promise(resolve=>setTimeout(resolve,60));
+      const shadow=card.shadowRoot;
+      return {
+        mode:card._mapDisplayMode,
+        dialog:shadow.getElementById('map-fullscreen-dialog').open
+      };
+    });
+    assert.deepEqual(startupFullscreen,{mode:'fullscreen',dialog:true},'per-device startup fullscreen');
+    await startupPage.evaluate(()=>{
+      localStorage.setItem('gewitterradar:v409:startup-map-display','last');
+      localStorage.setItem('gewitterradar:v409:last-map-display-mode','large');
+    });
+    await startupPage.reload();
+    await startupPage.waitForFunction(()=>window.aboutResult);
+    const startupLast=await startupPage.evaluate(async()=>{
+      await new Promise(resolve=>setTimeout(resolve,150));
+      const card=window.aboutCard;
+      card._closeAbout(false,false);
+      return {mode:card._mapDisplayMode,large:card.shadowRoot.getElementById('map-card').classList.contains('map-size-large')};
+    });
+    assert.deepEqual(startupLast,{mode:'large',large:true},'per-device startup last-used mode');
+    await startupContext.close();
+    console.log('dashboard/startup-preference: V4.09.02 map display PASS');
 
     const context=await browser.newContext({viewport:{width:1280,height:800}});
     const page=await context.newPage();
@@ -141,12 +212,12 @@ const server = http.createServer((req,res)=>{
         dialog:shadow.getElementById('map-fullscreen-dialog').open,
         cardInDialog:shadow.getElementById('map-card').parentElement===shadow.getElementById('map-fullscreen-dialog'),
         compassInOverlay:shadow.getElementById('compass-instrument').parentElement===shadow.getElementById('map-compass-overlay'),
-        barDisplay:getComputedStyle(shadow.getElementById('map-display-bar')).display,
+        controlDisplay:getComputedStyle(shadow.getElementById('map-display-control')).display,
         hostWindowClass:card.classList.contains('map-window-host'),
         dialogPosition:getComputedStyle(shadow.getElementById('map-fullscreen-dialog')).position
       };
     });
-    assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,barDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
+    assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,controlDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
     console.log('dashboard/detached-window: V4.09 map display PASS');
   } finally {
