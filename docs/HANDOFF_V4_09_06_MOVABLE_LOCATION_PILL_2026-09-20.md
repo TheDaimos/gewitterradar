@@ -51,6 +51,15 @@ Tests:
 - `scripts/verify-v409-map-display.mjs`
 - `scripts/test-v409-map-display.cjs`
 
+## Abnahme / bekannte Einschränkung
+
+**Realer Nutzerstand: angenommen.** Die frei verschiebbare Standort-Pille und die dynamische Öffnungsrichtung werden als gut/funktional bewertet.
+
+Bekannte und ausdrücklich akzeptierte Einschränkung:
+- die vorgesehene automatische Mehrspaltigkeit der Standortliste greift derzeit nicht zuverlässig;
+- dieser Punkt wird **nicht weiter nachgebessert** und blockiert V4.09.06 nicht;
+- zukünftige Arbeiten sollen diesen Bereich nicht ohne neuen ausdrücklichen Auftrag verändern.
+
 ## Nächste reale Prüfung
 
 Besonders wichtig:
