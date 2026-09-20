@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.02 — Kartenansichten Gerätefix
 
+> **Historischer Stand / superseded:** Die aktive Fortsetzung ist **V4.09.03** auf `feature/v4.09.03-fullscreen-controls`. Aktuelle Details: `docs/RELEASE_NOTES_V4_09_03_TEST.md` und `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
+
 Stand: 2026-09-20
 
 Basis: V4.09.01 Testkandidat auf V4.08 FINAL.
