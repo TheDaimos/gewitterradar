@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.02 DEV/TEST – Release Notes
 
+> **Historischer Stand / superseded:** Die aktive Fortsetzung ist **V4.09.03** auf `feature/v4.09.03-fullscreen-controls`. Aktuelle Details: `docs/RELEASE_NOTES_V4_09_03_TEST.md` und `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
+
 Stand: **20.09.2026**  
 Status: **DEV/Testkandidat – nicht veröffentlicht**  
 Öffentliche Rückfallbasis: **V4.08 FINAL**  
