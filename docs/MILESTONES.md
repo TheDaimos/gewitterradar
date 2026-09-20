@@ -1,11 +1,22 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09.04 DEV/TEST – erneute reale Geräteabnahme offen.**  
+Status: **2026/09 · V4.09.05 DEV/TEST – Android-Touch-Abnahme offen.**  
 Öffentliche Rückfallbasis: **V4.08 FINAL.**  
 Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M26 – V4.09.05 Android-Touch-Fallback umgesetzt
+- Desktop-Abnahme von V4.09.04 bestätigt: Kompass und Medaillon frei verschiebbar;
+- Android-Befund aufgenommen: Sichtbarkeit funktionierte, Dragging nicht;
+- nativen Touch-Event-Fallback für Kompass und Medaillon ergänzt;
+- Touchpfad mit `passive:false` und Capture gegen Leaflet-/WebView-Gesten abgesichert;
+- bestehende Pointer-Event-Unterstützung für Maus/Stift/kompatible Touchbrowser erhalten;
+- Android-Erkennung ergänzt und Medaillon dort exakt 15 % kleiner skaliert;
+- iPad-/Desktop-Größen unverändert gelassen;
+- Browsermatrix und statischen V4.09-Vertrag entsprechend erweitert;
+- V4.09.05 bleibt bis zur realen Android- und iPad-Abnahme gesperrt.
 
 ### M25 – V4.09.04 Touch-Dragging und reines Kartenmedaillon gehärtet
 - realen Android-Befund aus V4.09.03 aufgenommen: Kompass ließ sich trotz synthetischem Pointer-Test nicht zuverlässig per Finger verschieben;
