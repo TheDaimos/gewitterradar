@@ -45,6 +45,9 @@ for(const needle of [
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
 assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
 assert.ok(!sourceText.includes('class="map-display-bar"'),'Old wide map display bar returned');
+assert.ok(!sourceText.includes('Standard, Groß, XL und Vollbild'),'Obsolete German XL release-history plan returned');
+assert.ok(!sourceText.includes('Map size: Standard, Large and Fullscreen.'),'Obsolete V4.09 planning block returned');
+assert.ok(sourceText.includes('V4.09.02 · DEV · 2026/09'),'V4.09.02 DEV release-history entry missing');
 
 const frozenRelease=JSON.parse((await read('tests/contracts/frontend-release-v4.08.json')).toString('utf8'));
 assert.equal(frozenRelease.version,'4.08','Frozen V4.08 release contract version changed');

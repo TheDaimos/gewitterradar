@@ -14439,25 +14439,11 @@
             </div>
             <div class="release-history-body">
               <div class="release-history-lang-panel" data-release-history-lang="en">
-                <details class="release-history-future" open>
-                  <summary>
-                    <div class="release-history-future-heading">
-                      <div class="release-history-version">Future Developments · Planned</div>
-                      <h3>Planned next expansion stage</h3>
-                    </div>
-                    <span class="release-history-future-chevron" aria-hidden="true"></span>
-                  </summary>
-                  <div class="release-history-future-content">
-                    <ul class="release-history-plan-list">
-                      <li>Map size: Standard, Large and Fullscreen.</li>
-                      <li>Separate map window, opened deliberately from Settings, with map and currently selected compass.</li>
-                      <li>Compass as an overlay in fullscreen or the separate map window.</li>
-                      <li>Compass movable by mouse and touch with locally saved position.</li>
-                      <li>The same selected compass is reused; no parallel compass logic is introduced.</li>
-                      <li>Fullscreen and separate-window modes reuse the same live map state.</li>
-                    </ul>
-                  </div>
-                </details>
+                <article class="release-history-entry">
+                  <div class="release-history-version">V4.09.02 · DEV · 2026/09</div>
+                  <h3>Map views, compact layer control & device-specific startup</h3>
+                  <p>V4.09.01 introduced Standard, Large and Fullscreen map views, a separate map window and the currently selected compass as a movable fullscreen overlay. The first real-device check revealed two issues: the separate window could show the Home Assistant shell without the map, and the direct size selector was too inconspicuous. V4.09.02 replaces the wide selector with one compact three-layer control inside the lower-right map area (small red, medium blue, large gold), opens Standard / Large / Fullscreen in a local context menu, adds a per-device Startup view with Standard / Large / Fullscreen / Last used, and keeps the separate map window as a Settings-only action with a hardened map-only presentation. This is a development/test candidate and has not been released yet; real device acceptance remains pending.</p>
+                </article>
 
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.08 · 2026/09</div>
@@ -14532,25 +14518,11 @@
                 </article>
               </div>
               <div class="release-history-lang-panel" data-release-history-lang="de" hidden>
-                <details class="release-history-future" open>
-                  <summary>
-                    <div class="release-history-future-heading">
-                      <div class="release-history-version">Zukünftige Entwicklungen · Geplant</div>
-                      <h3>Geplante nächste Ausbaustufe</h3>
-                    </div>
-                    <span class="release-history-future-chevron" aria-hidden="true"></span>
-                  </summary>
-                  <div class="release-history-future-content">
-                    <ul class="release-history-plan-list">
-                      <li>Kartengröße: Standard, Groß, XL und Vollbild.</li>
-                      <li>Separates Kartenfenster mit Karte und aktuell gewähltem Kompass.</li>
-                      <li>Kompass als Overlay im Vollbild bzw. separaten Kartenfenster.</li>
-                      <li>Kompass per Maus und Touch verschiebbar; Position optional speicherbar.</li>
-                      <li>Kompass sperren bzw. auf Standardposition zurücksetzen.</li>
-                      <li>Vorbereitung auf eine später frei einstellbare Kompassgröße.</li>
-                    </ul>
-                  </div>
-                </details>
+                <article class="release-history-entry">
+                  <div class="release-history-version">V4.09.02 · DEV · 2026/09</div>
+                  <h3>Kartenansichten, Layer-Schaltfläche & gerätespezifischer Start</h3>
+                  <p>V4.09.01 führte Standard, Groß und Vollbild, ein separates Kartenfenster sowie den aktuell gewählten Kompass als verschiebbares Vollbild-Overlay ein. Die erste reale Geräteprüfung zeigte zwei Punkte: Das separate Fenster konnte die Home-Assistant-Oberfläche ohne die Karte anzeigen und die direkte Größenwahl war zu unauffällig. V4.09.02 ersetzt die breite Auswahl durch eine kompakte Layer-Schaltfläche rechts unten innerhalb der Karte (klein rot, mittel blau, groß gold), öffnet Standard / Groß / Vollbild in einem lokalen Kontextmenü, ergänzt die gerätespezifische Startdarstellung Standard / Groß / Vollbild / Zuletzt verwendet und lässt das separate Kartenfenster ausschließlich in den Einstellungen; dessen Kartenansicht wurde zusätzlich robust abgesichert. Dieser Stand ist ein DEV-/Testkandidat und noch nicht veröffentlicht; die reale Geräteabnahme steht weiterhin aus.</p>
+                </article>
 
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.08 · 2026/09</div>
