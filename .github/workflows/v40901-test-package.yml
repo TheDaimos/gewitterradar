@@ -1,0 +1,104 @@
+name: V4.09.01 Map View Modes Test Package
+
+on:
+  push:
+    branches:
+      - feature/v4.09-map-view-modes
+    paths:
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/**'
+      - 'dashboard/dist/**'
+      - 'tests/contracts/frontend-candidate-v4.09.01.json'
+      - 'scripts/build-frontend.mjs'
+      - 'scripts/verify-frontend.mjs'
+      - 'scripts/verify-v409-map-view-modes.mjs'
+      - 'docs/V4_09_MAP_VIEW_MODES.md'
+      - '.github/workflows/v40901-test-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Verify shared V4.09.01 frontend
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          node scripts/verify-frontend.mjs
+          node scripts/test-frontend-build.mjs
+          node scripts/verify-v409-map-view-modes.mjs
+          node scripts/verify-diagnostic-contract.mjs
+
+      - name: Verify Hi-Res retention
+        run: node scripts/verify-hires-asset-retention.mjs
+
+      - name: Create installable V4.09.01 test ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40901
+          mkdir -p build/v40901/native/custom_components build/v40901/dashboard
+          cp -a custom_components/gewitterradar build/v40901/native/custom_components/
+          cp -a dashboard/dist/. build/v40901/dashboard/
+          mv build/v40901/dashboard/gewitterradar.js build/v40901/dashboard/gewitterradar-v4.09.01.js
+          test -f build/v40901/dashboard/gewitterradar-v4.09.01.js
+          cmp -s frontend/gewitterradar.js build/v40901/native/custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js build/v40901/dashboard/gewitterradar-v4.09.01.js
+          cp docs/V4_09_MAP_VIEW_MODES.md build/v40901/
+          cat > build/v40901/README_V4.09.01_TEST.txt <<'TXT'
+          Gewitterradar V4.09.01 DEV / TEST
+          ==================================
+
+          Basis: V4.08 FINAL
+
+          Neu:
+          - Karte: Standard / Groß / Vollbild
+          - "In eigenem Fenster öffnen" in den Einstellungen
+          - aktuell gewählter Kompass im Vollbild
+          - Kompass per Maus/Touch verschiebbar
+          - lokale Speicherung der Kompassposition
+          - Popup-Blocker-Rückfall auf integrierten Vollbildmodus
+
+          Native Testdatei:
+            native/custom_components/gewitterradar/
+
+          Dashboard-Testdatei:
+            dashboard/gewitterradar-v4.09.01.js
+
+          Dashboard-Ziel bei manueller Testinstallation:
+            /config/www/community/gewitterradar-dashboard/gewitterradar-v4.09.01.js
+
+          Beispiel-Ressource:
+            /hacsfiles/gewitterradar-dashboard/gewitterradar-v4.09.01.js?v=40901
+
+          Das bestehende V4.07-Helferpackage bleibt unverändert verwendbar.
+
+          Dies ist kein öffentlicher Release.
+          TXT
+          (
+            cd build/v40901
+            zip -qr ../Gewitterradar_V4.09.01_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.09.01_TEST.zip
+          sha256sum build/Gewitterradar_V4.09.01_TEST.zip | tee build/Gewitterradar_V4.09.01_TEST.sha256
+          sha256sum frontend/gewitterradar.js | tee build/gewitterradar-v40901-frontend.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09.01_TEST
+          path: |
+            build/Gewitterradar_V4.09.01_TEST.zip
+            build/Gewitterradar_V4.09.01_TEST.sha256
+            build/gewitterradar-v40901-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
