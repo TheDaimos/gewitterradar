@@ -34,6 +34,8 @@ jobs:
       - name: Verify shared V4.09.01 frontend
         run: |
           set -euo pipefail
+          wc -c frontend/gewitterradar.js
+          sha256sum frontend/gewitterradar.js
           node --check frontend/gewitterradar.js
           node scripts/verify-frontend.mjs
           node scripts/test-frontend-build.mjs
