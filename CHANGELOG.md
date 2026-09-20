@@ -10,6 +10,16 @@
 - Keep the cluster browser session stable while navigating and reset it only for structural changes such as a profile switch.
 - Document the V4.08 cluster behavior consistently in Help, Release History and the dedicated V4.08 project documentation.
 
+### Kartendarstellung & Vollbild
+
+- Add the direct map-size selector **Standard · Groß · Vollbild** without changing the accepted Standard geometry.
+- Keep **Standard** and **Groß** as locally persistent browser choices while treating Vollbild as a temporary presentation state.
+- Move the existing live Leaflet map into a top-layer fullscreen dialog instead of cloning map state.
+- Embed the currently selected compass in fullscreen and make it freely movable with unified pointer/touch handling; persist its relative position locally.
+- Preserve iPad-specific compass geometry and the disabled-aura map appearance after moving the live map into fullscreen.
+- Add **Karte in eigenem Fenster öffnen** as a dedicated Settings action; blocked popups fall back to the same fullscreen view.
+- Cover Dashboard and Integration deliveries with a dedicated Chromium regression test for size switching, fullscreen restoration, compass dragging and popup fallback.
+
 ### Repository- & Web-Dokumentation
 
 - Refresh the repository landing page for HACS with HACS-safe absolute branding paths so the Gewitterradar logo renders reliably in the HACS detail view.

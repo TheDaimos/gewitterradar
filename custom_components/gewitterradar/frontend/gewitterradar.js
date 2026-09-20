@@ -5964,8 +5964,6 @@
       this._mapFullscreenCompassHome = this._mapFullscreenCompassHome || null;
       this._mapFullscreenCompassPosition = this._mapFullscreenCompassPosition || this._restoreMapFullscreenCompassPosition();
       this._mapFullscreenCompassDrag = null;
-      this._mapFullscreenDialogCancelHandler = this._mapFullscreenDialogCancelHandler || null;
-      this._mapFullscreenDialogCloseHandler = this._mapFullscreenDialogCloseHandler || null;
 
       this._compassSelectorFrameIndex = Number.isInteger(this._compassSelectorFrameIndex) ? this._compassSelectorFrameIndex : 1;
       this._compassSelectorDiagnostics = this._compassSelectorDiagnostics || {updates:0,resizeCallbacks:0,recent:[]};
@@ -9637,6 +9635,19 @@
             --compass-dial-shift-x:-0.08%;
             --compass-dial-shift-y:-1.22%;
           }
+          .map-fullscreen-dialog:not(.ipad-device) .map-strike-target-glyph {
+            width:12px;
+            height:12px;
+          }
+          .map-fullscreen-dialog.ipad-device .map-strike-target-btn { left:60px; }
+          .map-fullscreen-dialog.aura-none .cluster-bubble { box-shadow:none!important; }
+          .map-fullscreen-dialog.aura-none .cluster-bubble::before,
+          .map-fullscreen-dialog.aura-none .cluster-bubble::after { opacity:0!important;filter:none!important; }
+          .map-fullscreen-dialog.aura-none .reference-position-marker::before,
+          .map-fullscreen-dialog.aura-none .reference-position-marker::after,
+          .map-fullscreen-dialog.aura-none .map-strike-target-glyph,
+          .map-fullscreen-dialog.aura-none .map-strike-target-glyph::after { box-shadow:none!important; }
+          .map-fullscreen-dialog.aura-none .strike-spark { text-shadow:none!important; }
           @media (max-width:720px) and (orientation:portrait) {
             #card-root.map-size-large #map { height:clamp(420px,70dvh,720px); }
             .map-card.map-fullscreen-active .map-fullscreen-compass {
@@ -13332,8 +13343,6 @@
           </div>
         </ha-card>
 
-        <dialog class="map-fullscreen-dialog" id="map-fullscreen-dialog" aria-label="Gewitterradar Vollbildkarte"></dialog>
-
         <!-- V3.519 TEST – zusätzliches Einstellungs-Popup.
              Die Hauptansicht bleibt bewusst unverändert, damit beide Bedienkonzepte
              direkt gegeneinander verglichen werden können. -->
@@ -14071,9 +14080,28 @@
       host.addEventListener('pointercancel',finish);
     }
 
+    _ensureMapFullscreenDialog() {
+      if(!this.shadow)return null;
+      let dialog=this.shadow.getElementById('map-fullscreen-dialog');
+      if(dialog)return dialog;
+      dialog=document.createElement('dialog');
+      dialog.className='map-fullscreen-dialog';
+      dialog.id='map-fullscreen-dialog';
+      dialog.setAttribute('aria-label','Gewitterradar Vollbildkarte');
+      dialog.addEventListener('cancel',(event)=>{
+        event.preventDefault();
+        this._exitMapFullscreen(false);
+      });
+      dialog.addEventListener('close',()=>{
+        if(this._mapFullscreenActive)this._exitMapFullscreen(false);
+      });
+      this.shadow.appendChild(dialog);
+      return dialog;
+    }
+
     _enterMapFullscreen() {
       if(this._mapFullscreenActive||!this.shadow)return;
-      const dialog=this.shadow.getElementById('map-fullscreen-dialog');
+      const dialog=this._ensureMapFullscreenDialog();
       const mapCard=this.shadow.querySelector('.map-card');
       const compass=this.shadow.getElementById('compass-instrument');
       const compassHost=this.shadow.getElementById('map-fullscreen-compass');
@@ -14084,26 +14112,15 @@
       this._mapFullscreenCompassHome={parent:compass.parentElement,nextSibling:compass.nextSibling};
       this._mapFullscreenActive=true;
 
-      dialog.classList.toggle('ipad-device',!!root?.classList.contains('ipad-device'));
+      for(const className of ['ipad-device','aura-none']) {
+        dialog.classList.toggle(className,!!root?.classList.contains(className));
+      }
       mapCard.classList.add('map-fullscreen-active');
       compassHost.appendChild(compass);
       dialog.appendChild(mapCard);
       this._applyFullscreenCompassPosition();
       this._bindFullscreenCompassDrag();
 
-      if(!this._mapFullscreenDialogCancelHandler){
-        this._mapFullscreenDialogCancelHandler=(event)=>{
-          event.preventDefault();
-          this._exitMapFullscreen(false);
-        };
-        dialog.addEventListener('cancel',this._mapFullscreenDialogCancelHandler);
-      }
-      if(!this._mapFullscreenDialogCloseHandler){
-        this._mapFullscreenDialogCloseHandler=()=>{
-          if(this._mapFullscreenActive)this._exitMapFullscreen(false);
-        };
-        dialog.addEventListener('close',this._mapFullscreenDialogCloseHandler);
-      }
       try{
         if(!dialog.open)dialog.showModal();
       }catch(_){
@@ -14143,6 +14160,7 @@
       }catch(_){
         dialog?.removeAttribute('open');
       }
+      dialog?.remove();
       this._syncMapViewControls();
       this._scheduleMapResize();
       if(restoreFocus){

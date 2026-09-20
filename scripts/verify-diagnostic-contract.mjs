@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 
 const root = process.cwd();
 const protectedSince = [4, 7, 56];
-const expectedAcceptedSourceSha = 'b433b8d20a865f6a2fd507d37ca320818fbecb0a00d1d7633ab43906e4db80c8';
-const expectedAcceptedSourceSize = 1977250;
+const expectedAcceptedSourceSha = '326f9f2a1586f10df2a52b1c231cf69b949cafefc754b640c38fee5a8e7308cf';
+const expectedAcceptedSourceSize = 1978061;
 const manifestPath = resolve(root, 'tests/contracts/diagnostic-contract-v4.07.56.json');
 
 const errors = [];

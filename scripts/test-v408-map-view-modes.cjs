@@ -97,7 +97,7 @@ const server = http.createServer((req,res)=>{
           await sleep(40);
           window.open=originalOpen;
           const popupFallback={
-            dialogOpen:dialog.open,
+            dialogOpen:root.getElementById('map-fullscreen-dialog')?.open||false,
             fullscreenActive:card._mapFullscreenActive,
           };
           root.getElementById('map-size-standard').click();
