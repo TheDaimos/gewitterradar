@@ -141,7 +141,7 @@ Detaillierte Testdokumentation:
 - `docs/V4_08_CLUSTER_RESOLUTION_ANALYSIS.md`;
 - `docs/V4_08_INFINITY_GFX.md`.
 
-## V4.09.01–V4.09.03 · 2026/09 – Kartenansichten und Vollbild-Instrumente
+## V4.09.01–V4.09.04 · 2026/09 – Kartenansichten und Vollbild-Instrumente
 
 Nach dem V4.08-Freeze begann die V4.09.xx-Linie mit einem klar begrenzten Kartenansichtsblock. V4.09.01 ergänzte **Standard · Groß · Vollbild**, ein separates Kartenfenster in den Einstellungen sowie den aktuell ausgewählten Kompass als im Vollbild wiederverwendetes und per Maus/Touch verschiebbares Overlay. Standard/Groß und die normalisierte Kompassposition wurden lokal gespeichert; die Leaflet-Instanz blieb beim Größenwechsel erhalten.
 
@@ -162,15 +162,22 @@ Die anschließende Vollbildprüfung führte zu V4.09.03. Der Vollbildpfad wurde 
 - das Live-Tendenzmedaillon wird als eigenes Vollbild-Overlay gerendert, spiegelt die normale Trendlogik und ist ebenfalls frei verschiebbar;
 - Sichtbarkeit und Position beider Instrumente werden ausschließlich lokal pro Browserprofil gespeichert.
 
-Der separate Fensterpfad, die Leaflet-Instanz, Cluster-/Radienlogik und die geschützten V4.08-/V4.07.56-Verträge bleiben unverändert. V4.09.03 ist ein DEV-/Testkandidat; ein Merge nach `main`, Release-Tag, Freeze und Golden Master erfolgen erst nach realer Geräteabnahme.
+Der separate Fensterpfad, die Leaflet-Instanz, Cluster-/Radienlogik und die geschützten V4.08-/V4.07.56-Verträge bleiben unverändert.
+
+Die reale Android-Prüfung von V4.09.03 zeigte anschließend zwei weitere konkrete Vollbildfehler: Der Kompass ließ sich per Touch nicht zuverlässig verschieben, obwohl die synthetische Pointer-Prüfung bestand, und das Kartenmedaillon war durch die gemeinsame `.trend`-Klasse unnötig an die Layoutregeln der History-/Tendenzeinheit gekoppelt. Zusätzlich sollte die Layer-Schaltfläche näher an die OpenStreetMap-Attribution rücken.
+
+V4.09.04 härtet deshalb die tatsächlichen Hit-Flächen für **Desktop, Android und iPad/iPad Pro**. Beim Kompass empfängt der äußere Overlay-Container die Pointer-Ereignisse; die verschachtelte Instrumentgeometrie kann Touch-Ereignisse nicht mehr abfangen. Das Medaillon verwendet denselben Ansatz. Gleichzeitig wurde das Vollbild-Medaillon vollständig von der History-Struktur getrennt: Es besteht dort nur noch aus Medaillon-Basis und Trendpfeil und übernimmt ausschließlich die Zustände `none / up / stable / down`. Die Layer-Schaltfläche berechnet ihre untere Position nun aus der tatsächlichen Leaflet-Attributionshöhe und bleibt mit kleinem Sicherheitsabstand direkt darüber.
+
+V4.09.04 ist weiterhin ein **DEV-/Testkandidat**; ein Merge nach `main`, Release-Tag, Freeze und Golden Master erfolgen erst nach erneuter realer Geräteabnahme auf Desktop, Android und iPad/iPad Pro.
 
 Verbindliche Detaildokumentation:
 
 - `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
 - `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md`;
-- `docs/V4_09_03_FULLSCREEN_CONTROLS.md`;
-- `docs/RELEASE_NOTES_V4_09_03_TEST.md`;
-- `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
+- `docs/V4_09_03_FULLSCREEN_CONTROLS.md` (historischer/superseded Zwischenstand);
+- `docs/V4_09_04_OVERLAY_DRAG_FIXES.md`;
+- `docs/RELEASE_NOTES_V4_09_04_TEST.md`;
+- `docs/HANDOFF_V4_09_04_OVERLAY_DRAG_FIXES_2026-09-20.md`.
 
 
 ## Qualitätssicherung und Promotion
