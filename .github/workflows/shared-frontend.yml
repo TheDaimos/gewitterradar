@@ -19,8 +19,11 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Canonical V4.08 frontend contract
+      - name: Current shared frontend contract
         run: node scripts/verify-frontend.mjs
+
+      - name: V4.09.01 map view modes
+        run: node scripts/verify-v409-map-view-modes.mjs
 
       - name: Deterministic frontend build
         run: node scripts/test-frontend-build.mjs
