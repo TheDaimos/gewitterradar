@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+const read=relative=>readFile(resolve(root,relative));
+
+const source=await read('frontend/gewitterradar.js');
+const sourceText=source.toString('utf8');
+const integration=await read('custom_components/gewitterradar/frontend/gewitterradar.js');
+const dashboard=await read('dashboard/dist/gewitterradar.js');
+
+assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
+assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.01';/,'V4.09.01 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.01';/,'V4.09.01 display version missing');
+assert.match(sourceText,/V4\.09\.01-DEV-2026-09-20/,'V4.09.01 build marker missing');
+
+for(const needle of [
+  'data-map-display-mode="standard"',
+  'data-map-display-mode="large"',
+  'data-map-display-mode="fullscreen"',
+  'id="settings-map-window-open"',
+  'id="map-fullscreen-dialog"',
+  'id="map-compass-overlay"',
+  '_bindMapDisplayControls()',
+  '_positionMapCompassOverlay',
+  "MAP_WINDOW_QUERY_KEY = 'gewitterradar_window'"
+]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
+assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
+
+const frozenRelease=JSON.parse((await read('tests/contracts/frontend-release-v4.08.json')).toString('utf8'));
+assert.equal(frozenRelease.version,'4.08','Frozen V4.08 release contract version changed');
+assert.equal(frozenRelease.sha256,'b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f','Frozen V4.08 release SHA changed');
+
+const localeSource=await read('frontend/locales/about-locales.js');
+for(const relative of [
+  'custom_components/gewitterradar/frontend/locales/about-locales.js',
+  'dashboard/dist/locales/about-locales.js'
+]) assert.ok(localeSource.equals(await read(relative)),relative+' differs from canonical locale source');
+assert.equal(hash(localeSource),frozenRelease.localeSha256,'Protected About locale payload changed');
+
+const inventory=JSON.parse((await read('frontend/assets.json')).toString('utf8'));
+for(const asset of inventory){
+  const canonical=await read('frontend/'+asset.file);
+  assert.equal(hash(canonical),asset.sha256,'Canonical asset hash changed: '+asset.file);
+  assert.ok(canonical.equals(await read('custom_components/gewitterradar/frontend/'+asset.file)),'Integration asset differs: '+asset.file);
+  assert.ok(canonical.equals(await read('dashboard/dist/'+asset.file)),'Dashboard asset differs: '+asset.file);
+}
+
+console.log('PASS: V4.09.01 map display contract, delivery parity and protected V4.08 assets/locales.');
