@@ -1,11 +1,22 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09.05 DEV/TEST – Android-Touch-Abnahme offen.**  
+Status: **2026/09 · V4.09.06 DEV/TEST – Standort-Pille/Touch-Abnahme offen.**  
 Öffentliche Rückfallbasis: **V4.08 FINAL.**  
 Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M27 – V4.09.06 frei verschiebbare Standort-Pille
+- Standort-Pille als drittes frei positionierbares Vollbild-Bedienelement umgesetzt;
+- Position getrennt lokal gespeichert;
+- Dragging für Maus und Touch inklusive Klick-Unterdrückung nach realem Drag;
+- Menü öffnet abhängig von Position bevorzugt nach unten bzw. oben;
+- mittlere Position erzwingt bei verfügbarem Platz mehrspaltige Darstellung;
+- Platzmessung erweitert die Liste automatisch auf mehrere Spalten, wenn die bevorzugte Richtung einspaltig nicht ausreicht;
+- geöffnete Liste reagiert live auf das Verschieben der Pille;
+- interner Listen-Scroll bleibt letzter Fallback;
+- V4.09.06 bleibt bis zur realen Geräteabnahme gesperrt.
 
 ### M26 – V4.09.05 Android-Touch-Fallback umgesetzt
 - Desktop-Abnahme von V4.09.04 bestätigt: Kompass und Medaillon frei verschiebbar;
