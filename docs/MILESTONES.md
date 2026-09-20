@@ -1,11 +1,20 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09.06 DEV/TEST – Standort-Pille und Geräteabnahme offen.**  
+Status: **2026/09 · V4.09.06 DEV/TEST – UI-Stand angenommen; Promotion-/CI-Gates offen.**  
 Öffentliche Rückfallbasis: **V4.08 FINAL.**  
 Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M28 – V4.09.06 Instrumentgrößen real abgenommen
+- aktuelle Android-Vollbilddarstellung von Kompass und Medaillon als passend bestätigt;
+- Kompassgröße aus dem aktuellen V4.09.xx-Vollbildstand wird eingefroren;
+- Android-Medaillongröße mit der in V4.09.05 eingeführten 15-%-Reduktion wird eingefroren;
+- keine weitere Größenänderung ohne neuen ausdrücklichen Auftrag;
+- Standort-Pille bleibt im aktuell angenommenen Zustand;
+- automatische Mehrspaltigkeit der Standortliste bleibt als bekannte, akzeptierte Einschränkung dokumentiert;
+- Promotion bleibt wegen des roten Shared-Frontend-Diagnose-FREEZE-Harness gesperrt; Integration und Hi-Res-Retention sind grün.
 
 ### M27 – V4.09.06 Standort-Pille und adaptives Vollbildmenü
 - Standort-Pille als drittes frei verschiebbares Vollbild-Overlay ergänzt;
