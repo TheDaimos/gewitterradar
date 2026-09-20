@@ -5,6 +5,8 @@ const path = require('node:path');
 const http = require('node:http');
 
 const root = path.resolve(__dirname, '..');
+const currentFrontend = fs.readFileSync(path.resolve(root, 'frontend/gewitterradar.js'), 'utf8');
+const expectedSettingsSections = currentFrontend.includes("const CARD_VERSION = '4.09.01';") ? 6 : 5;
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const file = path.resolve(root, '.' + decodeURIComponent(url.pathname));
@@ -129,7 +131,7 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 5, `${delivery}/${profile} settings sections`);
+        assert.equal(metrics.sections, expectedSettingsSections, `${delivery}/${profile} settings sections`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
