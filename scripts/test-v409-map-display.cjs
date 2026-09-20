@@ -49,6 +49,7 @@ const server = http.createServer((req,res)=>{
           const medallionToggle=shadow.getElementById('map-medallion-toggle');
           const locationOverlay=shadow.getElementById('map-location-overlay');
           const locationRow=shadow.getElementById('location-main-row');
+          const locationMainButton=shadow.getElementById('location-main-button');
           const locationDropdown=shadow.getElementById('location-dropdown');
           const compass=shadow.getElementById('compass-instrument');
           const compassHome=shadow.querySelector('.compass-wrap');
@@ -81,6 +82,34 @@ const server = http.createServer((req,res)=>{
           medallionOverlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+52,clientY:medRect.top+42,pointerType:'touch',isPrimary:true}));
           await wait(40);
           const medAfter={left:medallionOverlay.offsetLeft,top:medallionOverlay.offsetTop};
+
+          const locationBefore={left:locationOverlay.offsetLeft,top:locationOverlay.offsetTop};
+          const locationRect=locationOverlay.getBoundingClientRect();
+          const locationPointerId=93;
+          locationOverlay.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:locationPointerId,button:0,clientX:locationRect.left+12,clientY:locationRect.top+12,pointerType:'mouse',isPrimary:true}));
+          locationOverlay.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId:locationPointerId,button:0,clientX:locationRect.left+66,clientY:locationRect.top+88,pointerType:'mouse',isPrimary:true}));
+          locationOverlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId:locationPointerId,button:0,clientX:locationRect.left+66,clientY:locationRect.top+88,pointerType:'mouse',isPrimary:true}));
+          await wait(40);
+          const locationAfter={left:locationOverlay.offsetLeft,top:locationOverlay.offsetTop};
+
+          card._mapLocationPosition={x:.52,y:.50};
+          card._positionMapLocationOverlay();
+          locationDropdown.replaceChildren(...Array.from({length:18},(_,index)=>{
+            const node=document.createElement('button');
+            node.type='button';node.className='location-option';node.textContent='Teststandort '+(index+1);
+            return node;
+          }));
+          locationDropdown.classList.add('open');
+          card._positionLocationDropdown?.(locationMainButton);
+          await wait(40);
+          const adaptiveLocation={
+            columns:Number(locationDropdown.dataset.columns||1),
+            direction:locationDropdown.dataset.direction||'',
+            multicolumn:locationDropdown.classList.contains('multicolumn'),
+            top:Number.parseFloat(locationDropdown.style.top||'0'),
+            width:locationDropdown.getBoundingClientRect().width
+          };
+          locationDropdown.classList.remove('open');
 
           compassToggle.click();
           const compassHiddenAfterToggle=overlay.hidden;
@@ -115,6 +144,9 @@ const server = http.createServer((req,res)=>{
             compassStoredVisible:localStorage.getItem('gewitterradar:v409:map-compass-visible'),
             medallionStoredVisible:localStorage.getItem('gewitterradar:v409:map-medallion-visible'),
             locationInOverlay:locationRow.parentElement===locationOverlay,
+            locationMoved:locationBefore.left!==locationAfter.left||locationBefore.top!==locationAfter.top,
+            locationStoredPosition:localStorage.getItem('gewitterradar:v409:map-location-position'),
+            adaptiveLocation,
             dropdownInDialog:locationDropdown.parentElement===dialog,
             warningTestsFailClosed:[...shadow.querySelectorAll('[data-warning-test]')].every(node=>node.hidden),
             layerZ,
@@ -211,7 +243,12 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.fullscreenState.medallionHiddenAfterToggle,true,`${delivery}/${profile} medallion toggle hides`);
         assert.equal(result.fullscreenState.compassStoredVisible,'1',`${delivery}/${profile} compass visibility stored`);
         assert.equal(result.fullscreenState.medallionStoredVisible,'1',`${delivery}/${profile} medallion visibility stored`);
-        assert.equal(result.fullscreenState.locationInOverlay,true,`${delivery}/${profile} fullscreen location top-right overlay`);
+        assert.equal(result.fullscreenState.locationInOverlay,true,`${delivery}/${profile} fullscreen location overlay`);
+        assert.equal(result.fullscreenState.locationMoved,true,`${delivery}/${profile} location pill movable`);
+        assert.ok(result.fullscreenState.locationStoredPosition,`${delivery}/${profile} location pill position stored`);
+        assert.ok(result.fullscreenState.adaptiveLocation.columns>=2,`${delivery}/${profile} middle location menu becomes multi-column`);
+        assert.equal(result.fullscreenState.adaptiveLocation.multicolumn,true,`${delivery}/${profile} adaptive location menu class`);
+        assert.match(result.fullscreenState.adaptiveLocation.direction,/^(up|down)$/,`${delivery}/${profile} adaptive direction selected`);
         assert.equal(result.fullscreenState.dropdownInDialog,true,`${delivery}/${profile} location menu promoted into fullscreen dialog`);
         assert.equal(result.fullscreenState.warningTestsFailClosed,true,`${delivery}/${profile} warning test controls fail closed`);
         assert.equal(result.fullscreenState.layerZ,2147483647,`${delivery}/${profile} layer control top z-index`);
@@ -232,7 +269,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.settingsSection,true,`${delivery}/${profile} map settings section`);
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
-        assert.equal(result.windowVersion,'40905',`${delivery}/${profile} separate window version`);
+        assert.equal(result.windowVersion,'40906',`${delivery}/${profile} separate window version`);
         assert.equal(result.menuOpened,true,`${delivery}/${profile} context menu opens`);
         assert.equal(result.menuClosedAfterChoice,true,`${delivery}/${profile} context menu closes after choice`);
         assert.equal(result.startupStored,'fullscreen',`${delivery}/${profile} startup preference stored locally`);
@@ -245,7 +282,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.controlInsideMap,true,`${delivery}/${profile} layer control inside map bounds`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
-        console.log(`${delivery}/${profile}: V4.09.05 map display PASS`);
+        console.log(`${delivery}/${profile}: V4.09.06 map display PASS`);
       }
     }
 
@@ -285,7 +322,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(startupLast,{mode:'large',large:true},'per-device startup last-used mode');
     await startupContext.close();
-    console.log('dashboard/startup-preference: V4.09.05 map display PASS');
+    console.log('dashboard/startup-preference: V4.09.06 map display PASS');
 
     const context=await browser.newContext({viewport:{width:1280,height:800}});
     const page=await context.newPage();
@@ -308,7 +345,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,controlDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
-    console.log('dashboard/detached-window: V4.09.05 map display PASS');
+    console.log('dashboard/detached-window: V4.09.06 map display PASS');
   } finally {
     await browser.close();
     server.close();
