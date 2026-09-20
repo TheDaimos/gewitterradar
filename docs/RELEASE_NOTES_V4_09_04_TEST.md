@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.04 – Test Release Notes
 
+> **Historischer Testzwischenstand / superseded durch V4.09.05.** Die reale Android-Prüfung führte zu `docs/RELEASE_NOTES_V4_09_05_TEST.md`.
+
 Status: **DEV/Testkandidat · nicht veröffentlicht**  
 Datum: **20.09.2026**  
 Öffentliche Rückfallbasis: **V4.08 FINAL / native Integration 0.20.0**
