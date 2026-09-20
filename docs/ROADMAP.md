@@ -62,7 +62,7 @@ Umfang:
 - gemeinsame Umsetzung für native Integration und Dashboard-Auslieferung;
 - Browserabdeckung für Desktop, iPad und Android sowie geschützte About-/Diagnose-/Hi-Res-Regressionen.
 
-Der Kandidat ist automatisiert grün geprüft. Vor Merge/Veröffentlichung bleibt die reale Geräteabnahme durch den Benutzer erforderlich.
+Der V4.09.01-Kandidat war automatisiert grün, zeigte in der ersten realen Geräteprüfung jedoch zwei UX-/Fensterfehler. Diese Befunde sind in V4.09.02 korrigiert; der aktuelle V4.09.02-Kandidat ist automatisiert grün geprüft. Vor Merge/Veröffentlichung bleibt die erneute reale Geräteabnahme durch den Benutzer erforderlich.
 
 Verbindlicher Abschlussstand von V4.08:
 
