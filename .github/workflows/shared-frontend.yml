@@ -48,6 +48,9 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
+      - name: V4.09.01 map view browser regression
+        run: node scripts/test-v409-map-view-modes.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
       - name: About locale registry and rendering
         run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
 
