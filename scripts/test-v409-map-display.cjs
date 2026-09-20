@@ -46,7 +46,13 @@ const server = http.createServer((req,res)=>{
           const compass=shadow.getElementById('compass-instrument');
           const compassHome=shadow.querySelector('.compass-wrap');
           const buttons=[...shadow.querySelectorAll('[data-map-display-mode]')];
+          const displayBar=shadow.getElementById('map-display-bar');
           const standardHeight=map.getBoundingClientRect().height;
+          const mainSelector={
+            parentId:displayBar?.parentElement?.id||null,
+            display:getComputedStyle(displayBar).display,
+            rect:displayBar?.getBoundingClientRect?.()||null
+          };
 
           card._setMapDisplayMode('large');
           await wait(160);
@@ -93,7 +99,7 @@ const server = http.createServer((req,res)=>{
 
           return {
             labels:buttons.map(node=>node.textContent.trim()),
-            count:buttons.length,
+            count:buttons.length,mainSelector,
             standardHeight,largeHeight,largeState,fullscreenState,restored,
             settingsSection:!!shadow.getElementById('settings-map-section'),
             windowButton:!!shadow.getElementById('settings-map-window-open'),
@@ -104,6 +110,9 @@ const server = http.createServer((req,res)=>{
 
         assert.equal(result.count,3,`${delivery}/${profile} three size modes`);
         assert.deepEqual(result.labels,['Standard','Groß','Vollbild'],`${delivery}/${profile} German labels`);
+        assert.equal(result.mainSelector.parentId,'map',`${delivery}/${profile} size selector lives directly on map`);
+        assert.equal(result.mainSelector.display,'flex',`${delivery}/${profile} size selector visible on map`);
+        assert.ok(result.mainSelector.rect?.width>0&&result.mainSelector.rect?.height>0,`${delivery}/${profile} size selector has visible geometry`);
         assert.equal(result.largeState.active,true,`${delivery}/${profile} large class`);
         assert.equal(result.largeState.stored,'large',`${delivery}/${profile} large persistence`);
         assert.ok(result.largeHeight>result.standardHeight+20,`${delivery}/${profile} large height ${JSON.stringify(result)}`);
@@ -132,15 +141,26 @@ const server = http.createServer((req,res)=>{
       const card=window.aboutCard;
       card._closeAbout(false,false);
       const shadow=card.shadowRoot;
+      const map=shadow.getElementById('map');
+      const mapCard=shadow.getElementById('map-card');
+      const anchor=shadow.getElementById('map-card-anchor');
+      const dialog=shadow.getElementById('map-fullscreen-dialog');
       return {
         mode:card._mapWindowMode,
-        dialog:shadow.getElementById('map-fullscreen-dialog').open,
-        cardInDialog:shadow.getElementById('map-card').parentElement===shadow.getElementById('map-fullscreen-dialog'),
+        dialog:dialog.open,
+        cardAtHome:mapCard.previousElementSibling===anchor,
+        rootWindowMode:shadow.getElementById('card-root').classList.contains('map-window-root'),
         compassInOverlay:shadow.getElementById('compass-instrument').parentElement===shadow.getElementById('map-compass-overlay'),
+        mapVisible:getComputedStyle(map).display!=='none'&&map.getBoundingClientRect().height>500,
+        topbarDisplay:getComputedStyle(shadow.querySelector('.topbar')).display,
+        weatherDisplay:getComputedStyle(shadow.getElementById('weather-message-panel')).display,
         barDisplay:getComputedStyle(shadow.getElementById('map-display-bar')).display
       };
     });
-    assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,barDisplay:'none'},'separate-window mode');
+    assert.deepEqual(detached,{
+      mode:true,dialog:false,cardAtHome:true,rootWindowMode:true,compassInOverlay:true,
+      mapVisible:true,topbarDisplay:'none',weatherDisplay:'none',barDisplay:'none'
+    },'separate-window map-only mode');
     await context.close();
     console.log('dashboard/detached-window: V4.09 map display PASS');
   } finally {

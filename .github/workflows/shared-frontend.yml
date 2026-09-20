@@ -21,7 +21,7 @@ jobs:
 
       - name: Canonical frontend contract
         run: |
-          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+          if grep -Fq "const CARD_VERSION = '4.09.02';" frontend/gewitterradar.js; then
             node scripts/verify-v409-map-display.mjs
           else
             node scripts/verify-frontend.mjs
@@ -29,7 +29,7 @@ jobs:
 
       - name: Frontend delivery parity / deterministic V4.08 build
         run: |
-          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+          if grep -Fq "const CARD_VERSION = '4.09.02';" frontend/gewitterradar.js; then
             node scripts/verify-v409-map-display.mjs
           else
             node scripts/test-frontend-build.mjs
@@ -57,7 +57,7 @@ jobs:
 
       - name: V4.09 map display modes
         run: |
-          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+          if grep -Fq "const CARD_VERSION = '4.09.02';" frontend/gewitterradar.js; then
             node scripts/test-v409-map-display.cjs "$(node -p "require('playwright').chromium.executablePath()")"
           fi
 

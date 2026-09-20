@@ -15,9 +15,9 @@ const dashboard=await read('dashboard/dist/gewitterradar.js');
 
 assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
 assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
-assert.match(sourceText,/const CARD_VERSION = '4\.09\.01';/,'V4.09.01 card version missing');
-assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.01';/,'V4.09.01 display version missing');
-assert.match(sourceText,/V4\.09\.01-DEV-2026-09-20/,'V4.09.01 build marker missing');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.02';/,'V4.09.02 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.02';/,'V4.09.02 display version missing');
+assert.match(sourceText,/V4\.09\.02-DEV-2026-09-20/,'V4.09.02 build marker missing');
 
 for(const needle of [
   'data-map-display-mode="standard"',
@@ -28,6 +28,8 @@ for(const needle of [
   'id="map-compass-overlay"',
   '_bindMapDisplayControls()',
   '_positionMapCompassOverlay',
+  "classList.toggle('map-window-root'",
+  "this.shadow.getElementById('map-display-bar')",
   "MAP_WINDOW_QUERY_KEY = 'gewitterradar_window'"
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
 assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
@@ -51,4 +53,4 @@ for(const asset of inventory){
   assert.ok(canonical.equals(await read('dashboard/dist/'+asset.file)),'Dashboard asset differs: '+asset.file);
 }
 
-console.log('PASS: V4.09.01 map display contract, delivery parity and protected V4.08 assets/locales.');
+console.log('PASS: V4.09.02 map display contract, delivery parity and protected V4.08 assets/locales.');
