@@ -141,7 +141,7 @@ Detaillierte Testdokumentation:
 - `docs/V4_08_CLUSTER_RESOLUTION_ANALYSIS.md`;
 - `docs/V4_08_INFINITY_GFX.md`.
 
-## V4.09.01/V4.09.02 · 2026/09 – Kartenansichten und gerätespezifischer Start
+## V4.09.01–V4.09.03 · 2026/09 – Kartenansichten und Vollbild-Instrumente
 
 Nach dem V4.08-Freeze begann die V4.09.xx-Linie mit einem klar begrenzten Kartenansichtsblock. V4.09.01 ergänzte **Standard · Groß · Vollbild**, ein separates Kartenfenster in den Einstellungen sowie den aktuell ausgewählten Kompass als im Vollbild wiederverwendetes und per Maus/Touch verschiebbares Overlay. Standard/Groß und die normalisierte Kompassposition wurden lokal gespeichert; die Leaflet-Instanz blieb beim Größenwechsel erhalten.
 
@@ -150,18 +150,28 @@ Die erste reale Geräteprüfung von V4.09.01 am 20.09.2026 lieferte zwei konkret
 - das separate Browserfenster zeigte die Home-Assistant-Oberfläche, die Karte wurde dort jedoch nicht zuverlässig in den vorgesehenen Vollbildpfad überführt;
 - die direkte Kartenansichtssteuerung war auf Android auffindbar, auf Desktop jedoch so unauffällig, dass sie real zunächst nicht gefunden wurde.
 
-Daraufhin wurde V4.09.02 als Gerätefix fortgeführt. Die zwischenzeitliche breite Größenleiste wird durch **eine kompakte Layer-Schaltfläche rechts unten innerhalb der Karte** ersetzt. Das Symbol verwendet verbindlich die Radien-Farblogik: **unten klein rot**, **Mitte mittel blau**, **oben groß gold**. Beim Tippen/Klicken öffnet sich unmittelbar an der Schaltfläche ein Kontextmenü nach oben/links mit **Standard · Groß · Vollbild**. „Eigenes Kartenfenster“ bleibt bewusst getrennt und ausschließlich in den Einstellungen.
+V4.09.02 ersetzte deshalb die breite Größenleiste durch **eine kompakte Layer-Schaltfläche rechts unten innerhalb der Karte**. Das Symbol verwendet verbindlich die Radien-Farblogik: **unten klein rot**, **Mitte mittel blau**, **oben groß gold**. Beim Tippen/Klicken öffnet sich unmittelbar an der Schaltfläche ein Kontextmenü mit **Standard · Groß · Vollbild**. „Eigenes Kartenfenster“ bleibt bewusst getrennt und ausschließlich in den Einstellungen. Zusätzlich kam die nur im lokalen Browserprofil gespeicherte **Startdarstellung** Standard / Groß / Vollbild / Zuletzt verwendet hinzu.
 
-Neu in den Einstellungen ist außerdem **Startdarstellung** mit **Standard · Groß · Vollbild · Zuletzt verwendet**. Diese Auswahl wird nur lokal im Browserprofil des jeweiligen Geräts gespeichert; sie verwendet keine Home-Assistant-Helfer und wird daher zwischen Desktop, Android, iPad oder getrennten Browserprofilen nicht synchronisiert.
+Die anschließende Vollbildprüfung führte zu V4.09.03. Der Vollbildpfad wurde dabei gezielt vervollständigt:
 
-Das separate Fenster wurde so gehärtet, dass der Gewitterradar-Host die Home-Assistant-Oberfläche bildschirmfüllend überlagert und der Vollbilddialog einen festen Viewport-Rückfallpfad besitzt. V4.09.02 bleibt ein DEV-/Testkandidat. Ein Merge nach `main`, Release-Tag, Freeze und Golden Master erfolgen erst nach erneuter realer Geräteabnahme.
+- Warnsystem-Testschaltflächen sind fail-closed und erscheinen nur bei ausdrücklich eingeschalteter Warnsystem-Simulation – unabhängig davon, ob die Kartenkarte im normalen DOM oder im Vollbilddialog liegt;
+- die bestehende Standortanzeige samt bestehendem Standortmenü wird im Vollbild automatisch oben rechts eingesetzt;
+- die Layer-Schaltfläche erhält dauerhaft die höchste Karten-Bedienebene;
+- der ausgewählte Vollbild-Kompass wird **exakt 30 % größer** und bleibt frei verschiebbar;
+- zwei stark verkleinerte Schalter oben links blenden Kompass und Medaillon unabhängig ein oder aus;
+- das Live-Tendenzmedaillon wird als eigenes Vollbild-Overlay gerendert, spiegelt die normale Trendlogik und ist ebenfalls frei verschiebbar;
+- Sichtbarkeit und Position beider Instrumente werden ausschließlich lokal pro Browserprofil gespeichert.
+
+Der separate Fensterpfad, die Leaflet-Instanz, Cluster-/Radienlogik und die geschützten V4.08-/V4.07.56-Verträge bleiben unverändert. V4.09.03 ist ein DEV-/Testkandidat; ein Merge nach `main`, Release-Tag, Freeze und Golden Master erfolgen erst nach realer Geräteabnahme.
 
 Verbindliche Detaildokumentation:
 
 - `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
 - `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md`;
-- `docs/RELEASE_NOTES_V4_09_02_TEST.md`;
-- `docs/HANDOFF_V4_09_02_MAP_VIEW_2026-09-20.md`.
+- `docs/V4_09_03_FULLSCREEN_CONTROLS.md`;
+- `docs/RELEASE_NOTES_V4_09_03_TEST.md`;
+- `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
+
 
 ## Qualitätssicherung und Promotion
 
