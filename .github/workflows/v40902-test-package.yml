@@ -1,0 +1,86 @@
+name: Build Gewitterradar V4.09.02 Test Package
+
+on:
+  push:
+    branches:
+      - build/v4.09.02-test-package-2026-09-20
+    paths:
+      - '.github/workflows/v40902-test-package.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify V4.09.02 candidate parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F "const CARD_VERSION = '4.09.02';" frontend/gewitterradar.js
+          node --check frontend/gewitterradar.js
+          node scripts/verify-v409-map-display.mjs
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+
+      - name: Create installable V4.09.02 test package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40902
+          mkdir -p build/v40902/native/custom_components build/v40902/dashboard
+          cp -a custom_components/gewitterradar build/v40902/native/custom_components/
+          cp -a dashboard/dist/. build/v40902/dashboard/
+          mv build/v40902/dashboard/gewitterradar.js build/v40902/dashboard/gewitterradar-v4.09.02.js
+          cp docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md build/v40902/
+          cat > build/v40902/README_V4.09.02_TEST.txt <<'TXT'
+          Gewitterradar V4.09.02 DEV / TEST
+          ==================================
+
+          Kandidatenquelle:
+            feature/v4.09.02-map-display-fixes
+            4d071b3cd21a2ba33a33ee6036f23430c8df6099
+
+          Basis:
+            V4.08 FINAL (eingefroren)
+
+          Neu / korrigiert:
+          - kompakte Layer-Schaltfläche rechts unten innerhalb der Karte
+          - Layer-Symbol: klein rot, mittel blau, groß gold
+          - Kontextmenü: Standard / Groß / Vollbild
+          - Startdarstellung pro Gerät/Browserprofil:
+            Standard / Groß / Vollbild / Zuletzt verwendet
+          - Eigenes Kartenfenster bleibt getrennt in den Einstellungen
+          - separates Kartenfenster robuster als bildschirmfüllende Kartenansicht
+          - ausgewählter Kompass bleibt im Vollbild/Fenster verschiebbar
+
+          Native Testinstallation:
+            native/custom_components/gewitterradar/
+
+          Dashboard-Testdatei:
+            dashboard/gewitterradar-v4.09.02.js
+
+          Dies ist ein Testkandidat und kein öffentlicher Release.
+          Reale Geräteabnahme steht noch aus.
+          TXT
+          (
+            cd build/v40902
+            zip -qr ../Gewitterradar_V4.09.02_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.09.02_TEST.zip
+          sha256sum build/Gewitterradar_V4.09.02_TEST.zip > build/Gewitterradar_V4.09.02_TEST.sha256
+          sha256sum frontend/gewitterradar.js > build/gewitterradar-v40902-frontend.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09.02_TEST
+          path: |
+            build/Gewitterradar_V4.09.02_TEST.zip
+            build/Gewitterradar_V4.09.02_TEST.sha256
+            build/gewitterradar-v40902-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
