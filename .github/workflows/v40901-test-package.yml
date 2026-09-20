@@ -9,6 +9,7 @@ on:
       - 'custom_components/gewitterradar/**'
       - 'dashboard/dist/**'
       - 'tests/contracts/frontend-candidate-v4.09.01.json'
+      - 'SHA256SUMS_FRONTEND.txt'
       - 'scripts/build-frontend.mjs'
       - 'scripts/verify-frontend.mjs'
       - 'scripts/verify-v409-map-view-modes.mjs'
