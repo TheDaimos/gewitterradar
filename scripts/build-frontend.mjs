@@ -5,14 +5,14 @@ import {createHash} from 'node:crypto';
 import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-const acceptedFrontendSha='249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a';
-const acceptedFrontendSize=1955141;
+const acceptedFrontendSha='b433b8d20a865f6a2fd507d37ca320818fbecb0a00d1d7633ab43906e4db80c8';
+const acceptedFrontendSize=1977250;
 export async function expectedPayload(){
  const contract=JSON.parse(await readFile(resolve(root,'tests/contracts/diagnostic-contract-v4.07.56.json'),'utf8'));
  const accepted=contract?.acceptedSource;
- if(accepted?.sha256!==acceptedFrontendSha||accepted?.sizeBytes!==acceptedFrontendSize)throw Error('Accepted V4.07.56 source contract changed');
+ if(accepted?.sha256!==acceptedFrontendSha||accepted?.sizeBytes!==acceptedFrontendSize)throw Error('Accepted V4.08 map-view source contract changed');
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
- if(source.length!==acceptedFrontendSize||hash(source)!==acceptedFrontendSha)throw Error('Frontend differs from accepted V4.07.56 baseline');
+ if(source.length!==acceptedFrontendSize||hash(source)!==acceptedFrontendSha)throw Error('Frontend differs from accepted V4.08 map-view baseline');
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  readAboutLocaleModel(source.toString(),localeSource.toString());
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
@@ -56,7 +56,7 @@ export async function build(){
  for(const dest of destinations)for(const [name,bytes] of payload)rows.push(hash(bytes)+'  '+dest+'/'+name);
  for(const [name,bytes] of packages)rows.push(hash(bytes)+'  dashboard/dist/'+name);
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
- console.log('Built accepted V4.07.56 frontend, one lazy About-locale module, 16 referenced assets and 1 retained legacy asset into both deliveries.');
+ console.log('Built accepted V4.08 map-view frontend, one lazy About-locale module, 16 referenced assets and 1 retained legacy asset into both deliveries.');
  for(const [name,bytes] of packages)console.log(`Dashboard package ${name}: ${bytes.length} bytes, SHA256 ${hash(bytes)}`);
  console.log('Protected legacy assets preserved; V4.06 fallback package retained and V4.07 package built deterministically.');
 }

@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Canonical V4.07.56 frontend contract
+      - name: Canonical V4.08 frontend contract
         run: node scripts/verify-frontend.mjs
 
       - name: Deterministic frontend build
@@ -52,8 +52,11 @@ jobs:
       - name: Language onboarding
         run: node scripts/test-language-onboarding.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
-      - name: V4.07.56 Settings and Help profiles
+      - name: V4.08 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: V4.08 map view modes
+        run: node scripts/test-v408-map-view-modes.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Accepted V4.07.56 About golden contract
         run: node scripts/verify-about-golden-v40756.cjs "$(node -p "require('playwright').chromium.executablePath()")"

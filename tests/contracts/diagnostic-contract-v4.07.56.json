@@ -1,15 +1,32 @@
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "protectedSince": "4.07.56",
   "acceptedSource": {
-    "filename": "gewitterradar-v4.07.56.js",
-    "sizeBytes": 1955141,
-    "sha256": "249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a",
-    "acceptedOn": "2026-09-16"
+    "filename": "gewitterradar-v4.08-map-view-modes.js",
+    "sizeBytes": 1977250,
+    "sha256": "b433b8d20a865f6a2fd507d37ca320818fbecb0a00d1d7633ab43906e4db80c8",
+    "acceptedOn": "2026-09-20"
   },
   "requiredLanguages": [
-    "Deutsch", "English", "Dansk", "Español", "Français", "Nederlands", "Polski", "Português", "Svenska",
-    "Italiano", "Norsk bokmål", "Suomi", "Čeština", "Ελληνικά", "Magyar", "Boarisch", "Plattdüütsch", "Sächs’sch", "Schwäbisch"
+    "Deutsch",
+    "English",
+    "Dansk",
+    "Español",
+    "Français",
+    "Nederlands",
+    "Polski",
+    "Português",
+    "Svenska",
+    "Italiano",
+    "Norsk bokmål",
+    "Suomi",
+    "Čeština",
+    "Ελληνικά",
+    "Magyar",
+    "Boarisch",
+    "Plattdüütsch",
+    "Sächs’sch",
+    "Schwäbisch"
   ],
   "protectedCapabilities": [
     "master diagnostic mode",

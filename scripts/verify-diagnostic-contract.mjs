@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 
 const root = process.cwd();
 const protectedSince = [4, 7, 56];
-const expectedAcceptedSourceSha = '249485f4bcf68c9b23b821cae9b507030ae09cff5a56f7e28d3d7f3b02eb4a1a';
-const expectedAcceptedSourceSize = 1955141;
+const expectedAcceptedSourceSha = 'b433b8d20a865f6a2fd507d37ca320818fbecb0a00d1d7633ab43906e4db80c8';
+const expectedAcceptedSourceSize = 1977250;
 const manifestPath = resolve(root, 'tests/contracts/diagnostic-contract-v4.07.56.json');
 
 const errors = [];
@@ -145,8 +145,8 @@ function verifyContract(source, label, languages) {
 }
 
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-if (manifest?.acceptedSource?.sha256 !== expectedAcceptedSourceSha) fail('accepted V4.07.56 source SHA in contract manifest changed');
-if (manifest?.acceptedSource?.sizeBytes !== expectedAcceptedSourceSize) fail('accepted V4.07.56 source size in contract manifest changed');
+if (manifest?.acceptedSource?.sha256 !== expectedAcceptedSourceSha) fail('accepted V4.08 map-view source SHA in contract manifest changed');
+if (manifest?.acceptedSource?.sizeBytes !== expectedAcceptedSourceSize) fail('accepted V4.08 map-view source size in contract manifest changed');
 if (manifest?.protectedSince !== '4.07.56') fail('protectedSince in contract manifest changed');
 if (!Array.isArray(manifest.requiredLanguages) || manifest.requiredLanguages.length !== 19) fail('diagnostic language contract must contain exactly 19 variants');
 
