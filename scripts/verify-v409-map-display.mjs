@@ -15,9 +15,9 @@ const dashboard=await read('dashboard/dist/gewitterradar.js');
 
 assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
 assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
-assert.match(sourceText,/const CARD_VERSION = '4\.09\.04';/,'V4.09.04 card version missing');
-assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.04';/,'V4.09.04 display version missing');
-assert.match(sourceText,/V4\.09\.04-DEV-2026-09-20/,'V4.09.04 build marker missing');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.05';/,'V4.09.05 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.05';/,'V4.09.05 display version missing');
+assert.match(sourceText,/V4\.09\.05-DEV-2026-09-20/,'V4.09.05 build marker missing');
 
 for(const needle of [
   'data-map-display-mode="standard"',
@@ -62,9 +62,14 @@ for(const needle of [
   'class="map-medallion-overlay none"',
   '.map-compass-overlay .compass-instrument * {',
   'pointer-events:none!important;',
+  "_isAndroidLike()",
+  "addEventListener('touchstart'",
+  "addEventListener('touchmove'",
+  "{passive:false,capture:true}",
+  "map-medallion-overlay.android-device { width:clamp(78.2px,23.8vmin,127.5px); }",
   "mapEl.querySelector?.('.leaflet-control-attribution')",
   'const bottomInset = Math.max(8,attributionHeight+4);',
-  "targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40904')",
+  "targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40905')",
   'position:absolute;z-index:2147483647;width:44px;height:44px',
   '#map-fullscreen-dialog .location-dropdown { z-index:2147483645; }'
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
@@ -72,7 +77,7 @@ assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size 
 assert.ok(!sourceText.includes('class="map-display-bar"'),'Old wide map display bar returned');
 assert.ok(!sourceText.includes('Standard, Groß, XL und Vollbild'),'Obsolete German XL release-history plan returned');
 assert.ok(!sourceText.includes('Map size: Standard, Large and Fullscreen.'),'Obsolete V4.09 planning block returned');
-assert.ok(sourceText.includes('V4.09.04 · DEV · 2026/09'),'V4.09.04 DEV release-history entry missing');
+assert.ok(sourceText.includes('V4.09.05 · DEV · 2026/09'),'V4.09.05 DEV release-history entry missing');
 assert.ok(!sourceText.includes('class="map-medallion-overlay trend'),'Fullscreen medallion must not inherit the History/Trend layout class');
 
 const frozenRelease=JSON.parse((await read('tests/contracts/frontend-release-v4.08.json')).toString('utf8'));
@@ -94,4 +99,4 @@ for(const asset of inventory){
   assert.ok(canonical.equals(await read('dashboard/dist/'+asset.file)),'Dashboard asset differs: '+asset.file);
 }
 
-console.log('PASS: V4.09.04 cross-device fullscreen overlays, pure trend medallion, attribution-aware layer control, delivery parity and protected V4.08 assets/locales.');
+console.log('PASS: V4.09.05 Android/iPad touch fallback, 15% smaller Android medallion, fullscreen overlay contract, delivery parity and protected V4.08 assets/locales.');
