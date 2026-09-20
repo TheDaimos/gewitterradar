@@ -1,5 +1,26 @@
 # Changelog
 
+## V4.09.04 TEST CANDIDATE — Vollbild-Overlay-Dragging und reines Trendmedaillon
+
+> **Noch nicht veröffentlicht.** Reale Android-Prüfung von V4.09.03 zeigte, dass der sichtbare Kompass-Touchbereich nicht zuverlässig als Drag-Fläche wirkte und das Kartenmedaillon durch die gemeinsame `.trend`-Layoutklasse den History-/Trendblock beeinflussen konnte. V4.08 bleibt unveränderte öffentliche Rückfallbasis; Merge, Freeze, Golden Master und öffentlicher Release bleiben bis zur erneuten Geräteabnahme gesperrt.
+
+### Fixed
+
+- Harden fullscreen **Compass dragging on Desktop, Android and iPad/iPad Pro** by making the overlay itself the pointer/touch hit surface and preventing the nested compass DOM from stealing drag input.
+- Apply the same cross-device pointer/touch model to the fullscreen **Medallion** while retaining independent normalized local position and visibility persistence.
+- Decouple the fullscreen Medallion from the History/Trend layout: the map overlay now contains **only the medallion artwork plus its trend arrow**, with dedicated `none / up / stable / down` state styling and no History label, copy or panel structure.
+- Move the red/blue/gold layer-view control further down and calculate its lower inset from the live Leaflet attribution height, leaving a compact safety gap immediately above **Leaflet / OpenStreetMap** without covering attribution.
+- Keep the layer-view control at the highest map interaction z-index and preserve the existing fullscreen location control, warning-test fail-closed behavior, Standard/Groß/Vollbild modes and separate-window path.
+- Advance the separate-window marker to `gewitterradar_window_version=40904`.
+
+### Validation and documentation
+
+- Extend the static V4.09 contract to reject any return of the History `.trend` class on the map Medallion and to require attribution-aware positioning plus protected pointer hit surfaces.
+- Extend the Playwright Desktop/iPad/Android matrix for Dashboard and Integration with pure-Medallion checks, overlay/child pointer-event checks and the small gap above Leaflet attribution.
+- Update the bilingual in-product Release History to **V4.09.04 · DEV · 2026/09**.
+- Add dedicated V4.09.04 implementation notes, test release notes and a new Git-backed handoff.
+
+
 ## V4.09.03 TEST CANDIDATE — Vollbild-Bedienelemente und Sichtbarkeit
 
 > **Noch nicht veröffentlicht.** Baut ausschließlich auf dem V4.09.02-Kartenansichtsblock auf. V4.08 bleibt unveränderte öffentliche Rückfallbasis; Merge, Freeze, Golden Master und öffentlicher Release bleiben bis zur realen Geräteabnahme gesperrt.
