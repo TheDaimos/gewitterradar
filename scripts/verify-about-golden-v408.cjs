@@ -23,8 +23,9 @@ const releaseContract = JSON.parse(
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const isV408 = frontendText.includes("const CARD_VERSION = '4.08';");
-const isV40901 = frontendText.includes("const CARD_VERSION = '4.09.01';");
-assert.ok(isV408 || isV40901, 'Expected protected V4.08 or V4.09.01 frontend');
+const v409Match = frontendText.match(/const CARD_VERSION = '(4\.09\.\d+)';/);
+const isV409 = !!v409Match;
+assert.ok(isV408 || isV409, 'Expected protected V4.08 or V4.09.xx frontend');
 if (isV408) {
   assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.08';"), 'Expected V4.08 CARD_DISPLAY_VERSION');
   assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';"), 'Expected V4.08 final build marker');
@@ -32,8 +33,15 @@ if (isV408) {
   assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.08 frontend size differs from release contract');
   assert.equal(frontendSha, releaseContract.sha256, 'V4.08 frontend differs from release contract');
 } else {
-  assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.09.01';"), 'Expected V4.09.01 CARD_DISPLAY_VERSION');
-  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.09.01-DEV-2026-09-20';"), 'Expected V4.09.01 development build marker');
+  const v409Version = v409Match[1];
+  assert.ok(
+    frontendText.includes(`const CARD_DISPLAY_VERSION = '${v409Version}';`),
+    `Expected ${v409Version} CARD_DISPLAY_VERSION`,
+  );
+  assert.ok(
+    frontendText.includes(`const GEWITTERRADAR_BUILD = 'V${v409Version}-DEV-2026-09-20';`),
+    `Expected V${v409Version} development build marker`,
+  );
   assert.equal(releaseContract.version, '4.08', 'Frozen V4.08 release contract version changed');
   assert.equal(
     releaseContract.sha256,
