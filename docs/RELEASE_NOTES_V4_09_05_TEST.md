@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.05 – Test Release Notes
 
+> **Historischer Testzwischenstand / superseded durch V4.09.06.** Aktiver Teststand: `docs/RELEASE_NOTES_V4_09_06_TEST.md`.
+
 > **Historischer Testzwischenstand / superseded durch V4.09.06.**
 
 Status: **DEV/Testkandidat · nicht veröffentlicht**  
