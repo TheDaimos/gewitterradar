@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.05 – Test Release Notes
 
+> **Historischer Testzwischenstand / superseded durch V4.09.06.**
+
 Status: **DEV/Testkandidat · nicht veröffentlicht**  
 Datum: **20.09.2026**  
 Öffentliche Rückfallbasis: **V4.08 FINAL / native Integration 0.20.0**
