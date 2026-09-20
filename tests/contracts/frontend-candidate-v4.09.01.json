@@ -4,8 +4,8 @@
   "status": "development-candidate",
   "baseReleaseVersion": "4.08",
   "baseReleaseSha256": "b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f",
-  "sha256": "39340e1f7279319c86240ce712cb1de6bfb395c6886b198a2e613ae14419412e",
-  "sizeBytes": 2055480,
+  "sha256": "e2811a95da40a5e694ba2f824895542bd135cf450a80c969271d28809c441ca0",
+  "sizeBytes": 2056794,
   "localeSha256": "a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288",
   "localeSizeBytes": 705974,
   "build": "V4.09.01-MAP-VIEW-MODES-2026-09-20",
@@ -18,7 +18,8 @@
     "id=\"settings-map-window\"",
     "_setMapViewMode(mode)",
     "_openMapWindow()",
-    "gewitterradar:v409:fullscreen-compass-position"
+    "gewitterradar:v409:fullscreen-compass-position",
+    "\"settings.map_window_label\""
   ],
   "scope": "Standard / Groß / Vollbild, separates Kartenfenster in Einstellungen, gewählter Kompass im Vollbild verschiebbar"
 }
