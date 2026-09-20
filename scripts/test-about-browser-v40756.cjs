@@ -54,6 +54,20 @@ assert.equal(
 );
 transformed = transformed.replace(keyboardFrom, keyboardTo);
 
+// Since V4.09.03 warning simulation is fail-closed. With simulation OFF the
+// diagnostic warning-test buttons are intentionally hidden, so zero-sized hidden
+// controls are not an overflow/accessibility regression. Keep the historical
+// geometry check for every button that is actually visible.
+const warningButtonsFrom = "const testGrid=content.querySelector(':scope > .settings-test-grid'),testGridRect=rect(testGrid),testButtons=[...testGrid.querySelectorAll('button')].map(node=>rect(node));";
+const warningButtonsTo = "const testGrid=content.querySelector(':scope > .settings-test-grid'),testGridRect=rect(testGrid),testButtons=[...testGrid.querySelectorAll('button')].filter(node=>!node.hidden&&getComputedStyle(node).display!=='none').map(node=>rect(node));";
+
+assert.equal(
+  transformed.split(warningButtonsFrom).length,
+  2,
+  'Historical warning-test geometry anchor changed; review before updating the V4.07.56 wrapper.',
+);
+transformed = transformed.replace(warningButtonsFrom, warningButtonsTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
