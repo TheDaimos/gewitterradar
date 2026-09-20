@@ -201,6 +201,44 @@ Verbindlich sind insbesondere:
 
 Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**. Änderungen am Sprachumfang müssen künftig ebenfalls in History und Release Notes nachvollziehbar sein.
 
+## Aktueller Entwicklungsstand nach V4.08 — V4.09.01 Kartenansichten
+
+Stand: **2026-09-20**. Der erste V4.09-Funktionsblock ist als **Testkandidat** vorhanden, aber noch nicht nach `main` gemergt oder veröffentlicht.
+
+Kanonischer aktiver Kandidat:
+
+- Branch: `feature/v4.09-map-display-modes`
+- aktueller Branch-Head: `d6b2b68bb36f9e0e9f1a9b20d0526c81b47cc308`
+- zuletzt vollständig automatisiert geprüfter Runtime-/Teststand: `fcfb6ddd114c96587312be35b7af4be92ed8af61`
+- Differenz `fcfb6ddd… → d6b2b68…`: ausschließlich Dokumentation (`CHANGELOG.md`, `docs/ROADMAP.md`, `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`)
+- `main` bleibt bis zur realen Geräteabnahme auf der veröffentlichten V4.08-Linie.
+
+Vom Benutzer festgelegter Umfang für V4.09.01:
+
+- direkte Kartenmodi **Standard · Groß · Vollbild**; keine zusätzliche XL-Stufe;
+- **„In eigenem Fenster öffnen“** als separater Punkt in den Einstellungen, nicht als vierter direkter Kartenmodus;
+- im Vollbild den **aktuell gewählten produktiven Kompass** einbetten;
+- Kompass im Vollbild per Maus und Touch/Pointer frei verschiebbar;
+- bestehende Leaflet-Karteninstanz weiterverwenden statt eine zweite Karte zu erzeugen;
+- Standard/Groß-Präferenz sowie normalisierte Kompassposition lokal speichern;
+- blockiertes separates Fenster fällt auf den integrierten Vollbildmodus zurück.
+
+Status des Kandidaten: automatisierte Frontend-, Integrations-, Diagnose-, Hi-Res-, Locale-, Golden- und Browserprüfungen sind dokumentiert grün; **reale Geräteabnahme durch den Benutzer steht aus**. Ohne diese Abnahme kein Merge nach `main`, kein V4.09-Tag und kein öffentlicher Release.
+
+Verbindliche aktuelle Dokumente:
+
+- `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`
+- `docs/HANDOFF_V4_09_01_MAP_DISPLAY_2026-09-20.md`
+- `docs/ROADMAP.md`
+
+Parallel existieren ältere/divergierende Kartenmodus-Zweige. Sie enthalten teils eindeutige Commits und werden bis zu einer bewussten Vergleichs-/Archiventscheidung **weder blind gemergt noch gelöscht**:
+
+- `feature/v4.08-map-view-modes` → `9c2760498bd284a0818392ee9012f5a7dfa9b4b2`
+- `feature/v4.09-map-view-modes` → `8fde20c5661dcfaa553eead3d76964e56ff1269e`
+- `feature/v4.09-map-viewport-modes` → `a9d76e43c8d7d2def69045f860f105cde16a27a4`
+
+Der aktive Fortsetzungspunkt ist ausschließlich `feature/v4.09-map-display-modes`, solange keine neuere ausdrücklich dokumentierte Benutzerentscheidung vorliegt.
+
 ## Aktueller Release-/Promotionsstand
 
 Aktueller finaler Promotionsstand ist **2026/09 · V4.08 / native Integration 0.20.0**.
