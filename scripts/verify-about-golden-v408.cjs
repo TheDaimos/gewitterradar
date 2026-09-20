@@ -22,12 +22,25 @@ const releaseContract = JSON.parse(
 );
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
-assert.ok(frontendText.includes("const CARD_VERSION = '4.08';"), 'Expected V4.08 CARD_VERSION');
-assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.08';"), 'Expected V4.08 CARD_DISPLAY_VERSION');
-assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';"), 'Expected V4.08 final build marker');
-const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.08 frontend size differs from release contract');
-assert.equal(frontendSha, releaseContract.sha256, 'V4.08 frontend differs from release contract');
+const isV408 = frontendText.includes("const CARD_VERSION = '4.08';");
+const isV40901 = frontendText.includes("const CARD_VERSION = '4.09.01';");
+assert.ok(isV408 || isV40901, 'Expected protected V4.08 or V4.09.01 frontend');
+if (isV408) {
+  assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.08';"), 'Expected V4.08 CARD_DISPLAY_VERSION');
+  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';"), 'Expected V4.08 final build marker');
+  const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
+  assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.08 frontend size differs from release contract');
+  assert.equal(frontendSha, releaseContract.sha256, 'V4.08 frontend differs from release contract');
+} else {
+  assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.09.01';"), 'Expected V4.09.01 CARD_DISPLAY_VERSION');
+  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.09.01-DEV-2026-09-20';"), 'Expected V4.09.01 development build marker');
+  assert.equal(releaseContract.version, '4.08', 'Frozen V4.08 release contract version changed');
+  assert.equal(
+    releaseContract.sha256,
+    'b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f',
+    'Frozen V4.08 release contract SHA changed',
+  );
+}
 
 const tolerance = contract.browserBaseline.geometryTolerancePx;
 assert.ok(Number.isFinite(tolerance) && tolerance >= 0 && tolerance <= 0.02);
@@ -255,7 +268,7 @@ async function rawRgbSha256(png) {
         ...pixels,
       });
       console.log(
-        `${name}: V4.08 About geometry PASS against protected V4.07.56 baseline; delivery pixel diff ${pixels.changedPixels} (${pixels.changedRatio})`,
+        `${name}: Protected About geometry PASS against V4.07.56 baseline; delivery pixel diff ${pixels.changedPixels} (${pixels.changedRatio})`,
       );
     }
 
@@ -274,7 +287,7 @@ async function rawRgbSha256(png) {
       ) + '\n',
     );
     console.log(
-      'PASS: V4.08 About geometry matches the protected V4.07.56 baseline and same-run delivery pixel contract.',
+      'PASS: About geometry matches the protected V4.07.56 baseline and same-run delivery pixel contract.',
     );
   } finally {
     await browser.close();
