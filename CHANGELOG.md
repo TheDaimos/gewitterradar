@@ -1,5 +1,23 @@
 # Changelog
 
+## V4.09.01 TEST CANDIDATE — Kartenansichten
+
+> **Noch nicht veröffentlicht.** Dieser Stand ist für die reale Geräteabnahme vorgesehen. V4.08 bleibt die unveränderte öffentliche Rückfallbasis.
+
+### Added
+
+- Add the direct map display modes **Standard**, **Groß** and **Vollbild** while keeping the existing Leaflet map instance alive across mode changes.
+- Reuse the currently selected compass as a draggable fullscreen overlay with Pointer Events for mouse and touch operation.
+- Persist the Standard/Groß map preference and normalized fullscreen compass position locally.
+- Add **In eigenem Fenster öffnen** as a separate Settings action with fullscreen fallback when the browser blocks the popup.
+- Keep native Integration and Dashboard frontend payloads byte-identical from the canonical source.
+
+### Validation
+
+- Add a dedicated V4.09 map-display contract and Playwright coverage for Desktop, iPad and Android across both delivery forms.
+- Preserve the V4.07.56 protected About geometry contract at the unchanged maximum tolerance of **0.02 px** while allowing the V4.09.01 development identity to execute the same regression suite.
+- Keep diagnostic, locale, Settings/Help, Hi-Res/master-retention and native-integration checks active.
+
 ## 2026/09 — V4.08 FINAL / native integration 0.20.0
 
 ### Cluster-Auflösung & Cluster-Navigation
