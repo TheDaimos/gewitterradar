@@ -22,13 +22,13 @@ const server = http.createServer((req,res)=>{
   const browser=await chromium.launch({executablePath:process.argv[2],headless:true});
   try{
     const profiles=[
-      ['desktop',1440,1000,false],
-      ['ipad',1024,768,true],
-      ['android',412,915,true]
+      ['desktop',1440,1000,false,null],
+      ['ipad',1024,768,true,'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'],
+      ['android',412,915,true,'Mozilla/5.0 (Linux; Android 15; Pixel 8) AppleWebKit/537.36 Chrome/151.0.0.0 Mobile Safari/537.36']
     ];
     for(const delivery of ['dashboard','integration']){
-      for(const [profile,width,height,hasTouch] of profiles){
-        const context=await browser.newContext({viewport:{width,height},hasTouch});
+      for(const [profile,width,height,hasTouch,userAgent] of profiles){
+        const context=await browser.newContext({viewport:{width,height},hasTouch,...(userAgent?{userAgent}:{})});
         const page=await context.newPage();
         await page.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=seen&delivery=${delivery}`);
         await page.waitForFunction(()=>window.aboutResult);
@@ -68,17 +68,17 @@ const server = http.createServer((req,res)=>{
           const before={left:overlay.offsetLeft,top:overlay.offsetTop};
           const rect=overlay.getBoundingClientRect();
           const pointerId=91;
-          overlay.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+20,clientY:rect.top+20,pointerType:'touch'}));
-          overlay.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+58,clientY:rect.top+46,pointerType:'touch'}));
-          overlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+58,clientY:rect.top+46,pointerType:'touch'}));
+          overlay.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+20,clientY:rect.top+20,pointerType:'touch',isPrimary:true}));
+          overlay.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+58,clientY:rect.top+46,pointerType:'touch',isPrimary:true}));
+          overlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId,button:0,clientX:rect.left+58,clientY:rect.top+46,pointerType:'touch',isPrimary:true}));
           await wait(40);
           const after={left:overlay.offsetLeft,top:overlay.offsetTop};
           const medBefore={left:medallionOverlay.offsetLeft,top:medallionOverlay.offsetTop};
           const medRect=medallionOverlay.getBoundingClientRect();
           const medPointerId=92;
-          medallionOverlay.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+18,clientY:medRect.top+18,pointerType:'touch'}));
-          medallionOverlay.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+52,clientY:medRect.top+42,pointerType:'touch'}));
-          medallionOverlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+52,clientY:medRect.top+42,pointerType:'touch'}));
+          medallionOverlay.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+18,clientY:medRect.top+18,pointerType:'touch',isPrimary:true}));
+          medallionOverlay.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+52,clientY:medRect.top+42,pointerType:'touch',isPrimary:true}));
+          medallionOverlay.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerId:medPointerId,button:0,clientX:medRect.left+52,clientY:medRect.top+42,pointerType:'touch',isPrimary:true}));
           await wait(40);
           const medAfter={left:medallionOverlay.offsetLeft,top:medallionOverlay.offsetTop};
 
@@ -127,6 +127,8 @@ const server = http.createServer((req,res)=>{
             compassChildPointerEvents:getComputedStyle(compass).pointerEvents,
             medallionOverlayPointerEvents:getComputedStyle(medallionOverlay).pointerEvents,
             medallionChildPointerEvents:medallionTrendIcon ? getComputedStyle(medallionTrendIcon).pointerEvents : null,
+            medallionAndroidClass:medallionOverlay.classList.contains('android-device'),
+            medallionWidth:medallionOverlay.getBoundingClientRect().width,
             medallionPure:!medallionOverlay.classList.contains('trend')
               && !!medallionTrendIcon
               && !medallionOverlay.querySelector('.tlabel,.trend-copy,.history-chart,.history-main')
@@ -221,12 +223,16 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.fullscreenState.compassChildPointerEvents,'none',`${delivery}/${profile} compass child cannot steal touch drag`);
         assert.equal(result.fullscreenState.medallionOverlayPointerEvents,'auto',`${delivery}/${profile} medallion overlay receives pointer events`);
         assert.equal(result.fullscreenState.medallionChildPointerEvents,'none',`${delivery}/${profile} medallion child cannot steal touch drag`);
+        assert.equal(result.fullscreenState.medallionAndroidClass,profile==='android',`${delivery}/${profile} Android-only medallion sizing class`);
+        if(profile==='android'){
+          assert.ok(Math.abs(result.fullscreenState.medallionWidth-98.056)<1.5,`${delivery}/${profile} medallion is 15% smaller on 412px viewport: ${result.fullscreenState.medallionWidth}`);
+        }
         assert.equal(result.fullscreenState.medallionPure,true,`${delivery}/${profile} fullscreen medallion is pure trend instrument`);
         assert.deepEqual(result.restored,{dialogClosed:true,cardAtHome:true,compassAtHome:true,medallionHidden:true,instrumentControlsHidden:true,locationRestored:true,standardActive:true},`${delivery}/${profile} fullscreen exit`);
         assert.equal(result.settingsSection,true,`${delivery}/${profile} map settings section`);
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
-        assert.equal(result.windowVersion,'40904',`${delivery}/${profile} separate window version`);
+        assert.equal(result.windowVersion,'40905',`${delivery}/${profile} separate window version`);
         assert.equal(result.menuOpened,true,`${delivery}/${profile} context menu opens`);
         assert.equal(result.menuClosedAfterChoice,true,`${delivery}/${profile} context menu closes after choice`);
         assert.equal(result.startupStored,'fullscreen',`${delivery}/${profile} startup preference stored locally`);
@@ -239,7 +245,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.controlInsideMap,true,`${delivery}/${profile} layer control inside map bounds`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
-        console.log(`${delivery}/${profile}: V4.09.04 map display PASS`);
+        console.log(`${delivery}/${profile}: V4.09.05 map display PASS`);
       }
     }
 
@@ -279,7 +285,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(startupLast,{mode:'large',large:true},'per-device startup last-used mode');
     await startupContext.close();
-    console.log('dashboard/startup-preference: V4.09.04 map display PASS');
+    console.log('dashboard/startup-preference: V4.09.05 map display PASS');
 
     const context=await browser.newContext({viewport:{width:1280,height:800}});
     const page=await context.newPage();
@@ -302,7 +308,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,controlDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
-    console.log('dashboard/detached-window: V4.09.04 map display PASS');
+    console.log('dashboard/detached-window: V4.09.05 map display PASS');
   } finally {
     await browser.close();
     server.close();
