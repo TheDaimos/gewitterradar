@@ -35,6 +35,8 @@ V4.09.06 verändert nur Vollbildposition und Darstellung des bestehenden Menüs.
 
 Die frei bewegliche Standort-Pille im Vollbild wird in ihrem aktuellen Stand beibehalten. Die automatische Mehrspaltigkeit der Standortliste ist als bekannte Einschränkung akzeptiert und soll ohne neuen ausdrücklichen Auftrag nicht weiter verändert werden.
 
+Zusätzlich ist die aktuelle Vollbildgröße der beiden frei positionierbaren Instrumente **Kompass und Medaillon** auf Android visuell abgenommen. Die in V4.09.05 eingeführte Android-Medaillonreduktion und die aktuelle Kompassgröße bleiben unverändert; keine erneute Größenoptimierung ohne neuen ausdrücklichen Auftrag.
+
 ## Abnahme
 
 1. Pille auf Desktop mit Maus verschieben.
