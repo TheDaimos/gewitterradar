@@ -39,3 +39,9 @@ V4.08-Basis, Leaflet-Instanz, Kompassauswahl, Kompass-Pointer/Touch, Radien, Clu
 7. Einstellungen → In eigenem Fenster öffnen: Karte füllt das Fenster; normale HA-Oberfläche darf nicht sichtbar im Vordergrund bleiben.
 8. Kompass im Vollbild/Fenster sichtbar und verschiebbar.
 9. Desktop, iPad und Android erneut prüfen.
+
+## Automatisierter Stand vor Chatübergabe
+
+Auf dem V4.09.02-Kandidaten wurden die gemeinsame Frontendprüfung, die native Integrationsprüfung und der Hi-Res-Retentionsvertrag erfolgreich ausgeführt. Die geschützte About-Golden-Prüfung wurde so angepasst, dass sie V4.09.xx-Entwicklungsidentitäten gegen denselben geschützten Geometrievertrag prüfen kann, ohne die V4.08-/V4.07.56-Basis zu verändern.
+
+Die reale Geräteabnahme der **finalen V4.09.02-Layer-Schaltfläche und Startdarstellung** steht noch aus. Deshalb kein Merge nach `main`, kein Tag, kein Release, kein Freeze und kein Golden Master.
