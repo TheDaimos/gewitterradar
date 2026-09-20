@@ -31,6 +31,10 @@ Nicht dupliziert oder ersetzt werden:
 
 V4.09.06 verändert nur Vollbildposition und Darstellung des bestehenden Menüs.
 
+## Akzeptierter Endstand
+
+Die frei bewegliche Standort-Pille im Vollbild wird in ihrem aktuellen Stand beibehalten. Die automatische Mehrspaltigkeit der Standortliste ist als bekannte Einschränkung akzeptiert und soll ohne neuen ausdrücklichen Auftrag nicht weiter verändert werden.
+
 ## Abnahme
 
 1. Pille auf Desktop mit Maus verschieben.
