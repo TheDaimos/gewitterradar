@@ -42,27 +42,37 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.02 – Kartenansichten und Vollbild-Kompass
+### V4.09.03 – Kartenansichten, Vollbild-Instrumente und Standortbedienung
 
-Der erste klar abgegrenzte V4.09-Arbeitsblock wurde nach der realen V4.09.01-Geräteprüfung als **V4.09.02-Testkandidat** auf `feature/v4.09.02-map-display-fixes` fortgeführt. V4.08 bleibt unverändert eingefroren.
+Der aktive V4.09-Arbeitsblock wird nach der nächsten realen Geräteprüfung als **V4.09.03-Testkandidat** auf `feature/v4.09.03-fullscreen-controls` fortgeführt. V4.08 bleibt unverändert eingefroren.
 
 Umfang:
 
-- direkte Kartenansichten **Standard · Groß · Vollbild** über eine kompakte Layer-Schaltfläche rechts unten innerhalb der Karte;
+- direkte Kartenansichten **Standard · Groß · Vollbild** über die kompakte Layer-Schaltfläche rechts unten innerhalb der Karte;
 - drei gestapelte Layer im Radius-Farbschema: klein rot, mittel blau, groß gold;
-- Kontextmenü öffnet an der Karten-Schaltfläche nach oben/links und enthält ausschließlich Standard · Groß · Vollbild;
+- die Layer-Schaltfläche besitzt innerhalb der Kartenansicht **dauerhaft die höchste Bedienebene**, nicht nur während eines geöffneten Menüs;
+- Kontextmenü enthält ausschließlich Standard · Groß · Vollbild;
 - gerätespezifische lokale Startdarstellung **Standard · Groß · Vollbild · Zuletzt verwendet** in den Einstellungen;
 - **Eigenes Kartenfenster** bleibt als getrennte Einstellungsfunktion außerhalb des Karten-Kontextmenüs;
 - dieselbe Leaflet-Instanz bleibt beim Größenwechsel erhalten;
-- der aktuell gewählte Kompass wird im Vollbild als Overlay weiterverwendet;
-- Kompass-Overlay per Maus und Touch/Pointer verschiebbar;
-- Position und gewählte Standard-/Groß-Ansicht lokal gespeichert;
-- **„In eigenem Fenster öffnen“** als separater Punkt in den Einstellungen;
-- Rückfall auf Vollbild, wenn ein separates Browserfenster blockiert wird;
+- der aktuell gewählte Kompass wird im Vollbild als Overlay weiterverwendet, per Maus/Touch frei verschiebbar und gegenüber V4.09.02 **exakt 30 % größer** dargestellt;
+- oben links stehen zwei stark verkleinerte Vollbild-Schalter zum unabhängigen Ein-/Ausblenden von **Kompass** und **Medaillon**;
+- das Live-Tendenzmedaillon wird zusätzlich im Vollbild angezeigt, übernimmt die produktiven Zustände **keine Aktivität / zunehmend / abnehmend / stabil** und ist ebenfalls frei verschiebbar;
+- Kompass-/Medaillon-Sichtbarkeit sowie beide normalisierten Positionen werden nur lokal im Browserprofil gespeichert;
+- die bestehende Standortanzeige samt bestehendem Standortmenü wird im Vollbild automatisch **oben rechts** eingesetzt;
+- Warnsystem-Testschaltflächen bleiben außerhalb einer ausdrücklich eingeschalteten Warnsystem-Simulation fail-closed verborgen – auch nach dem Vollbild-Reparenting;
 - gemeinsame Umsetzung für native Integration und Dashboard-Auslieferung;
 - Browserabdeckung für Desktop, iPad und Android sowie geschützte About-/Diagnose-/Hi-Res-Regressionen.
 
-Der V4.09.01-Kandidat war automatisiert grün, zeigte in der ersten realen Geräteprüfung jedoch zwei UX-/Fensterfehler. Diese Befunde sind in V4.09.02 korrigiert; der aktuelle V4.09.02-Kandidat ist automatisiert grün geprüft. Vor Merge/Veröffentlichung bleibt die erneute reale Geräteabnahme durch den Benutzer erforderlich.
+V4.09.03 bleibt ein **DEV-/Testkandidat**. Vor Merge/Veröffentlichung ist die reale Geräteabnahme erforderlich, insbesondere Vollbild auf Desktop/Android/iPad, Standortmenü, Layer-Vordergrund, beide Instrument-Schalter, Dragging und separates Kartenfenster.
+
+Verbindliche Detaildokumentation:
+
+- `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
+- `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md` (historischer Gerätefix);
+- `docs/V4_09_03_FULLSCREEN_CONTROLS.md`;
+- `docs/RELEASE_NOTES_V4_09_03_TEST.md`;
+- `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
 
 Verbindlicher Abschlussstand von V4.08:
 
