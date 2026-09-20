@@ -74,6 +74,9 @@
   const MAP_LAST_DISPLAY_MODE_STORAGE_KEY = 'gewitterradar:v409:last-map-display-mode';
   const MAP_STARTUP_MODE_STORAGE_KEY = 'gewitterradar:v409:startup-map-display';
   const MAP_COMPASS_POSITION_STORAGE_KEY = 'gewitterradar:v409:map-compass-position';
+  const MAP_COMPASS_VISIBLE_STORAGE_KEY = 'gewitterradar:v409:map-compass-visible';
+  const MAP_MEDALLION_POSITION_STORAGE_KEY = 'gewitterradar:v409:map-medallion-position';
+  const MAP_MEDALLION_VISIBLE_STORAGE_KEY = 'gewitterradar:v409:map-medallion-visible';
   const MAP_WINDOW_QUERY_KEY = 'gewitterradar_window';
   const MAP_WINDOW_VERSION_QUERY_KEY = 'gewitterradar_window_version';
   const LANGUAGE_INITIALIZATION_ENTITIES = Object.freeze({native:'switch.gewitterradar_language_initialized',legacy:'input_boolean.lightning_detection_language_initialized'});
@@ -5994,6 +5997,29 @@
           }
         } catch (_error) {}
       }
+      if (typeof this._mapCompassVisible !== 'boolean') {
+        this._mapCompassVisible = true;
+        try {
+          const saved = localStorage.getItem(MAP_COMPASS_VISIBLE_STORAGE_KEY);
+          if (saved === '0' || saved === 'false') this._mapCompassVisible = false;
+        } catch (_error) {}
+      }
+      if (typeof this._mapMedallionVisible !== 'boolean') {
+        this._mapMedallionVisible = true;
+        try {
+          const saved = localStorage.getItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY);
+          if (saved === '0' || saved === 'false') this._mapMedallionVisible = false;
+        } catch (_error) {}
+      }
+      if (!this._mapMedallionPosition || !Number.isFinite(this._mapMedallionPosition.x) || !Number.isFinite(this._mapMedallionPosition.y)) {
+        this._mapMedallionPosition = { x:.04,y:.72 };
+        try {
+          const savedPosition = JSON.parse(localStorage.getItem(MAP_MEDALLION_POSITION_STORAGE_KEY) || 'null');
+          if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
+            this._mapMedallionPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
+          }
+        } catch (_error) {}
+      }
       this._mapWindowMode = !!this._mapWindowMode;
       if (!this._mapWindowMode && typeof window !== 'undefined') {
         let requested = false;
@@ -6008,6 +6034,7 @@
       }
       this._mapCompassDragState = null;
       this._mapCompassHomeParent = this._mapCompassHomeParent || null;
+      this._mapMedallionDragState = null;
 
       // V3.990 – optional ausgewählter Treffer mit echter Cluster⇄Detail-
       // Umschaltung. Die Clusteransicht ist die ruhige erste Fokusstufe; erst der
@@ -6305,8 +6332,55 @@
           : (this.shadow?.querySelector('.compass-wrap') || null);
       }
       if (instrument.parentElement !== overlay) overlay.appendChild(instrument);
-      overlay.hidden = false;
-      requestAnimationFrame(() => this._positionMapCompassOverlay());
+      overlay.hidden = !this._mapCompassVisible;
+      if (!overlay.hidden) requestAnimationFrame(() => this._positionMapCompassOverlay());
+    }
+
+    _persistMapMedallionPosition() {
+      try { localStorage.setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
+    }
+
+    _positionMapMedallionOverlay(position = this._mapMedallionPosition) {
+      const overlay = this.shadow?.getElementById('map-medallion-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 0;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 0;
+      if (!cardRect.width || !mapRect.width || !width || !height) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      const x = clamp(Number(position?.x) || 0,0,1);
+      const y = clamp(Number(position?.y) || 0,0,1);
+      overlay.style.left = `${minLeft+(maxLeft-minLeft)*x}px`;
+      overlay.style.top = `${minTop+(maxTop-minTop)*y}px`;
+    }
+
+    _syncMapMedallionState() {
+      const source = this.shadow?.getElementById('trend-box');
+      const overlay = this.shadow?.getElementById('map-medallion-overlay');
+      if (!source || !overlay) return;
+      const state = ['up','down','stable','none'].find(name => source.classList.contains(name)) || 'none';
+      overlay.classList.remove('up','down','stable','none');
+      overlay.classList.add(state);
+    }
+
+    _setMapInstrumentVisible(kind,visible) {
+      const next = !!visible;
+      if (kind === 'compass') {
+        this._mapCompassVisible = next;
+        try { localStorage.setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+      } else if (kind === 'medallion') {
+        this._mapMedallionVisible = next;
+        try { localStorage.setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+      } else return;
+      this._syncMapDisplayUi();
+      this._scheduleMapDisplayResize();
     }
 
     _restoreLocationFromMapOverlay() {
@@ -6416,6 +6490,7 @@
       const kick = () => {
         this._map?.invalidateSize?.();
         this._positionMapCompassOverlay();
+        this._positionMapMedallionOverlay();
         this._positionMapDisplayControl();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
@@ -6459,7 +6534,32 @@
       });
       this._positionMapDisplayControl();
       const overlay = this.shadow.getElementById('map-compass-overlay');
-      if (overlay) overlay.setAttribute('aria-label',this._t('map.compass_move'));
+      const medallionOverlay = this.shadow.getElementById('map-medallion-overlay');
+      const instrumentControls = this.shadow.getElementById('map-instrument-controls');
+      const compassToggle = this.shadow.getElementById('map-compass-toggle');
+      const medallionToggle = this.shadow.getElementById('map-medallion-toggle');
+      if (overlay) {
+        overlay.setAttribute('aria-label',this._t('map.compass_move'));
+        overlay.hidden = !fullscreenActive || !this._mapCompassVisible;
+      }
+      if (medallionOverlay) {
+        medallionOverlay.setAttribute('aria-label',`${this._t('trend.label')} · verschieben`);
+        medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
+      }
+      if (instrumentControls) instrumentControls.hidden = !fullscreenActive;
+      if (compassToggle) {
+        compassToggle.classList.toggle('active',this._mapCompassVisible);
+        compassToggle.setAttribute('aria-pressed',this._mapCompassVisible ? 'true' : 'false');
+        compassToggle.setAttribute('aria-label',`${this._t('compass.device')} · ${this._t(this._mapCompassVisible ? 'toggle.on' : 'toggle.off')}`);
+        compassToggle.title = compassToggle.getAttribute('aria-label');
+      }
+      if (medallionToggle) {
+        medallionToggle.classList.toggle('active',this._mapMedallionVisible);
+        medallionToggle.setAttribute('aria-pressed',this._mapMedallionVisible ? 'true' : 'false');
+        medallionToggle.setAttribute('aria-label',`${this._t('trend.label')} · ${this._t(this._mapMedallionVisible ? 'toggle.on' : 'toggle.off')}`);
+        medallionToggle.title = medallionToggle.getAttribute('aria-label');
+      }
+      this._syncMapMedallionState();
       const settingsTitle = this.shadow.getElementById('settings-map-section-title');
       const settingsSub = this.shadow.getElementById('settings-map-section-sub');
       const settingsStartupLabel = this.shadow.getElementById('settings-map-startup-label');
@@ -6564,6 +6664,9 @@
     _bindMapDisplayControls() {
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
       const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const medallionOverlay = this.shadow?.getElementById('map-medallion-overlay');
+      const compassToggle = this.shadow?.getElementById('map-compass-toggle');
+      const medallionToggle = this.shadow?.getElementById('map-medallion-toggle');
       const menuToggle = this.shadow?.getElementById('map-display-menu-toggle');
       const menuWrap = this.shadow?.getElementById('map-display-control');
       const startupSelect = this.shadow?.getElementById('settings-map-startup-mode');
@@ -6580,6 +6683,14 @@
       });
       startupSelect?.addEventListener('change',(event) => {
         this._setMapStartupMode(event.currentTarget.value);
+      });
+      compassToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('compass',!this._mapCompassVisible);
+      });
+      medallionToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('medallion',!this._mapMedallionVisible);
       });
       if (!this._mapDisplayOutsidePointerHandler) {
         this._mapDisplayOutsidePointerHandler = (event) => {
@@ -6665,6 +6776,53 @@
       };
       overlay?.addEventListener('pointerup',finishCompassDrag);
       overlay?.addEventListener('pointercancel',finishCompassDrag);
+
+      medallionOverlay?.addEventListener('pointerdown',(event) => {
+        if (medallionOverlay.hidden || event.button > 0) return;
+        event.preventDefault(); event.stopPropagation();
+        this._mapMedallionDragState = {
+          pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,
+          startLeft:medallionOverlay.offsetLeft,startTop:medallionOverlay.offsetTop
+        };
+        medallionOverlay.classList.add('dragging');
+        try { medallionOverlay.setPointerCapture(event.pointerId); } catch (_error) {}
+      });
+      medallionOverlay?.addEventListener('pointermove',(event) => {
+        const drag = this._mapMedallionDragState;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        event.preventDefault(); event.stopPropagation();
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (!card || !mapEl) return;
+        const cardRect = card.getBoundingClientRect(),mapRect = mapEl.getBoundingClientRect(),inset = 10;
+        const minLeft = Math.max(0,mapRect.left-cardRect.left+inset),minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+        const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-medallionOverlay.offsetWidth-inset);
+        const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-medallionOverlay.offsetHeight-inset);
+        medallionOverlay.style.left = `${clamp(drag.startLeft+event.clientX-drag.startX,minLeft,maxLeft)}px`;
+        medallionOverlay.style.top = `${clamp(drag.startTop+event.clientY-drag.startY,minTop,maxTop)}px`;
+      });
+      const finishMedallionDrag = (event) => {
+        const drag = this._mapMedallionDragState;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        event.preventDefault(); event.stopPropagation();
+        const card = this.shadow?.getElementById('map-card'),mapEl = this.shadow?.getElementById('map');
+        if (card && mapEl) {
+          const cardRect = card.getBoundingClientRect(),mapRect = mapEl.getBoundingClientRect(),inset = 10;
+          const minLeft = Math.max(0,mapRect.left-cardRect.left+inset),minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+          const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-medallionOverlay.offsetWidth-inset);
+          const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-medallionOverlay.offsetHeight-inset);
+          this._mapMedallionPosition = {
+            x:maxLeft>minLeft ? clamp((medallionOverlay.offsetLeft-minLeft)/(maxLeft-minLeft),0,1) : 0,
+            y:maxTop>minTop ? clamp((medallionOverlay.offsetTop-minTop)/(maxTop-minTop),0,1) : 0
+          };
+          this._persistMapMedallionPosition();
+        }
+        this._mapMedallionDragState = null;
+        medallionOverlay.classList.remove('dragging');
+        try { medallionOverlay.releasePointerCapture(event.pointerId); } catch (_error) {}
+      };
+      medallionOverlay?.addEventListener('pointerup',finishMedallionDrag);
+      medallionOverlay?.addEventListener('pointercancel',finishMedallionDrag);
       this._syncMapDisplayUi();
       if (this._mapWindowMode) {
         queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false,remember:false,closeMenu:true}));
@@ -10163,18 +10321,50 @@
           }
 
           .map-display-fab {
-            position:absolute;z-index:735;width:44px;height:44px;
+            position:absolute;z-index:2147483647;width:44px;height:44px;
             left:auto;top:auto;right:10px;bottom:auto;
             pointer-events:auto;
           }
-          .map-display-fab.menu-open { z-index:2147483646; }
+          .map-display-fab.menu-open { z-index:2147483647; }
           .map-location-overlay {
-            position:absolute;z-index:900;top:10px;right:10px;
-            display:flex;align-items:center;justify-content:flex-end;
-            pointer-events:auto;
+            position:absolute;z-index:2147483644;top:10px;right:10px;
+            display:flex;align-items:center;justify-content:flex-end;pointer-events:auto;
           }
           .map-location-overlay[hidden] { display:none!important; }
           .map-location-overlay .location-main-row { display:flex!important; }
+          #map-fullscreen-dialog .location-dropdown { z-index:2147483645; }
+          #map-fullscreen-dialog .map-top-controls { top:54px; }
+          .map-instrument-controls {
+            position:absolute;z-index:2147483646;top:10px;left:10px;
+            display:flex;align-items:center;gap:5px;pointer-events:auto;
+          }
+          .map-instrument-controls[hidden] { display:none!important; }
+          .map-instrument-toggle {
+            appearance:none;-webkit-appearance:none;width:29px;height:29px;padding:0;border-radius:9px;
+            border:1px solid rgba(246,195,68,.20);background:rgba(10,14,20,.90);color:#aab5c3;
+            display:grid;place-items:center;cursor:pointer;touch-action:manipulation;
+            box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.035);
+            backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+          }
+          .map-instrument-toggle:hover { border-color:rgba(246,195,68,.44);background:rgba(20,23,29,.96); }
+          .map-instrument-toggle:active { transform:scale(.94); }
+          .map-instrument-toggle.active { color:#f5cf67;border-color:rgba(246,195,68,.55);box-shadow:0 6px 18px rgba(0,0,0,.30),0 0 12px rgba(246,195,68,.10),inset 0 1px 0 rgba(255,255,255,.05); }
+          .map-instrument-toggle:not(.active) { opacity:.52;filter:saturate(.55); }
+          .map-instrument-toggle ha-icon { --mdc-icon-size:17px;width:17px;height:17px; }
+          .map-instrument-toggle img { width:18px;height:18px;display:block;object-fit:contain;pointer-events:none; }
+          .map-medallion-overlay {
+            position:absolute;z-index:755;width:clamp(110px,18vmin,210px);aspect-ratio:1 / 1;
+            padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center;
+            cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+            background:transparent!important;filter:drop-shadow(0 12px 24px rgba(0,0,0,.38));
+          }
+          .map-medallion-overlay::before { display:none!important; }
+          .map-medallion-overlay[hidden] { display:none!important; }
+          .map-medallion-overlay.dragging { cursor:grabbing; }
+          .map-medallion-overlay .trend-icon {
+            width:100%!important;height:100%!important;max-width:none!important;margin:0!important;
+            transform:none!important;filter:drop-shadow(0 7px 10px rgba(0,0,0,.46)) drop-shadow(0 0 9px rgba(196,132,43,.10));
+          }
           .map-display-fab[hidden],
           .map-card.map-window-mode .map-display-fab { display:none!important; }
           .map-display-fab-toggle {
@@ -12232,6 +12422,8 @@
           @media (max-width:720px) {
             .map-card.map-size-large #map { height:min(70dvh,640px);min-height:430px; }
             .map-compass-overlay { width:clamp(172px,46.8vmin,299px); }
+            .map-medallion-overlay { width:clamp(92px,28vmin,150px); }
+            .map-instrument-toggle { width:27px;height:27px;border-radius:8px; }
             .map-display-btn { padding:0 9px;font-size:7.5px; }
             .flash-ambient { --ambient-css-scale:1.08; }
             .shell { padding:13px; }
@@ -13343,6 +13535,14 @@
                     </div>
                   </div>
                   <div class="map-location-overlay" id="map-location-overlay" hidden></div>
+                  <div class="map-instrument-controls" id="map-instrument-controls" hidden>
+                    <button class="map-instrument-toggle active" id="map-compass-toggle" type="button" aria-pressed="true" aria-label="Kompass">
+                      <ha-icon icon="mdi:compass-outline" aria-hidden="true"></ha-icon>
+                    </button>
+                    <button class="map-instrument-toggle active" id="map-medallion-toggle" type="button" aria-pressed="true" aria-label="Tendenz">
+                      <img src="${TREND_MEDALLION_IMAGE}" alt="" draggable="false" aria-hidden="true">
+                    </button>
+                  </div>
                   <button class="map-recenter-btn" id="map-recenter" type="button"
                           title="Ausgewählten Standort auf der Karte zentrieren"
                           aria-label="Ausgewählten Standort auf der Karte zentrieren">
@@ -13378,6 +13578,12 @@
                     </div>
                   </div>
                   <div class="map-compass-overlay" id="map-compass-overlay" hidden></div>
+                  <div class="map-medallion-overlay trend none" id="map-medallion-overlay" hidden>
+                    <div class="trend-icon" aria-hidden="true">
+                      <img class="trend-medallion-base" src="${TREND_MEDALLION_IMAGE}" alt="" draggable="false">
+                      <img class="trend-medallion-arrow" src="${TREND_ARROW_IMAGE}" alt="" draggable="false">
+                    </div>
+                  </div>
                   <div class="map-legend" id="map-legend">
                     <span class="map-legend-group map-legend-primary">
                       <span class="legend-item"><i class="legend-dot" style="--legend-color:${C.gold}"></i>Aktiv &lt; 10 Min</span>
@@ -14502,7 +14708,7 @@
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09.03 · DEV · 2026/09</div>
                   <h3>Fullscreen controls & visibility correction</h3>
-                  <p>Hides warning-test controls fail-closed when simulation is disabled even after the map is moved into fullscreen, places the existing reference-location control and menu at the upper-right of fullscreen, keeps the layer-view menu above every map overlay while open, and enlarges the movable fullscreen compass by exactly 30%.</p>
+                  <p>Hides warning-test controls fail-closed when simulation is disabled even after the map is moved into fullscreen, places the existing reference-location control and menu at the upper-right, keeps the layer-view control permanently above every map overlay, enlarges the movable fullscreen compass by exactly 30%, and adds tiny upper-left controls for independently showing or hiding the compass and a freely movable live trend medallion.</p>
                 </article>
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09.02 · DEV · 2026/09</div>
@@ -14586,7 +14792,7 @@
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09.03 · DEV · 2026/09</div>
                   <h3>Vollbild-Bedienelemente & Sichtbarkeitskorrektur</h3>
-                  <p>Testschaltflächen bleiben bei ausgeschalteter Warnsystem-Simulation auch nach dem Verschieben der Karte in den Vollbild-Dialog sicher verborgen. Die bestehende Standortanzeige samt Menü wird im Vollbild automatisch oben rechts eingesetzt, das Layer-Menü liegt geöffnet garantiert vor allen Karten-Overlays und der verschiebbare Vollbild-Kompass ist exakt 30 % größer.</p>
+                  <p>Testschaltflächen bleiben bei ausgeschalteter Warnsystem-Simulation auch nach dem Verschieben der Karte in den Vollbild-Dialog sicher verborgen. Die bestehende Standortanzeige samt Menü wird im Vollbild automatisch oben rechts eingesetzt, die Layer-Schaltfläche liegt dauerhaft über allen Karten-Overlays, der verschiebbare Vollbild-Kompass ist exakt 30 % größer und oben links stehen zwei stark verkleinerte Schalter für Kompass und ein ebenfalls frei verschiebbares Live-Tendenzmedaillon bereit.</p>
                 </article>
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09.02 · DEV · 2026/09</div>
@@ -22986,6 +23192,7 @@ ${this._diagnosticStormText(8)}`;}
         if (trendSub) trendSub.textContent = this._t('trend.stable_sub');
         if (trendBox) trendBox.className = 'trend stable';
       }
+      this._syncMapMedallionState();
     }
 
     _renderHistoryChart(strikes,dangerRadius,now) {
