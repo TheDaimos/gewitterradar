@@ -29,6 +29,15 @@ Datum: **20.09.2026**
 - Warnsystem-Test-Fail-Closed;
 - V4.08 FINAL.
 
+## Akzeptierter Stand
+
+Die aktuelle Bedienung und Darstellung der frei beweglichen Standort-Pille wird als **gut und ausreichend** angenommen.
+
+Bekannte und ausdrücklich akzeptierte Einschränkung:
+- die automatische Mehrspaltigkeit der Standortliste funktioniert derzeit nicht zuverlässig;
+- dieser Punkt bleibt bewusst unverändert und ist kein Blocker;
+- ohne neuen ausdrücklichen Auftrag soll hier keine weitere Nachbesserung erfolgen.
+
 ## Reale Abnahme
 
 1. Desktop: Standort-Pille mit Maus frei verschieben.
