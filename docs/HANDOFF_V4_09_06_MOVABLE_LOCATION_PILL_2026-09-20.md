@@ -1,49 +1,63 @@
-# Übergabe – Gewitterradar V4.09.06
+# Übergabe – Gewitterradar V4.09.06 Standort-Pille
 
 Stand: **20.09.2026 · aktiver DEV/Testkandidat**
+
+## Einstieg
 
 - Repository: `TheDaimos/gewitterradar`
 - aktiver Branch: `feature/v4.09.06-movable-location-pill`
 - Branch-HEAD immer live prüfen
 - öffentliche Rückfallbasis: **V4.08 FINAL / Integration 0.20.0**
+- keine Promotion vor realer Geräteabnahme
 
-## V4.09.06
+## Ausgangslage
 
-Die Standort-Pille ist im Vollbild frei verschiebbar und speichert ihre normalisierte Position lokal.
+V4.09.05 härtete Kompass und Medaillon für Touch und verkleinerte das Medaillon auf Android um 15 %.
 
-Schlüssel:
+V4.09.06 erweitert ausschließlich den Vollbild-Standortpfad:
+
+- Standort-Pille frei verschiebbar;
+- Position persistent pro Browserprofil;
+- bestehendes Standortmenü bleibt inhaltlich unverändert;
+- Menü reagiert dynamisch auf Pillenposition und real verfügbaren Raum.
+
+## Verhalten
+
+- obere Zone → bevorzugt nach unten;
+- untere Zone → bevorzugt nach oben;
+- mittlere Zone → mehrspaltig;
+- zu geringe Höhe → automatisch mehrspaltig, auch außerhalb der Mitte;
+- schmale Ansichten maximal 2 Spalten;
+- breite Ansichten bis zu 3 Spalten;
+- wenn selbst das nicht reicht: internes Scrollen;
+- geöffnete Liste wird während des Ziehens per requestAnimationFrame live neu positioniert.
+
+## Lokale Speicherung
+
 `gewitterradar:v409:map-location-position`
 
-Das vorhandene Standortmenü wird nicht dupliziert. Im Vollbild wird seine Darstellung automatisch berechnet:
-
-- oben → nach unten;
-- unten → nach oben;
-- Mitte → mehrspaltig;
-- zu geringe Höhe → ebenfalls mehrspaltig;
-- geöffnete Liste → Live-Neuberechnung während des Verschiebens;
-- 2 Spalten auf schmalen, bis zu 3 auf breiteren Ansichten;
-- internes Scrollen nur als Rückfall.
+Bestehende V4.09-Schlüssel für Kompass, Medaillon und Kartenmodus bleiben unverändert.
 
 ## Kanonische Dateien
 
+Quelle:
 - `frontend/gewitterradar.js`
+
+Bytegleiche Ausleitungen:
 - `custom_components/gewitterradar/frontend/gewitterradar.js`
 - `dashboard/dist/gewitterradar.js`
 
-Die drei Frontend-Dateien müssen bytegleich bleiben.
-
-## Tests
-
+Tests:
 - `scripts/verify-v409-map-display.mjs`
 - `scripts/test-v409-map-display.cjs`
 
 ## Nächste reale Prüfung
 
-Android, iPad/iPad Pro und Desktop:
-- Pille verschieben;
-- oben/unten/mittig prüfen;
-- lange Liste bei begrenzter Höhe prüfen;
-- Liste geöffnet lassen und Pille bewegen;
-- gespeicherte Position nach erneutem Vollbild prüfen.
+Besonders wichtig:
+- Android und iPad/iPad Pro mit echter Finger-Geste;
+- lange Standortliste bei Pille ca. 30 % oberhalb des unteren Randes;
+- geöffnete Liste während des Verschiebens beobachten;
+- Umschaltung einspaltig ↔ mehrspaltig sowie oben ↔ unten;
+- Standortauswahl, gespeicherte Orte und Suche regressionsprüfen.
 
-Keine Promotion vor ausdrücklicher Geräteabnahme.
+Erst danach Promotion/PR-Finalisierung.
