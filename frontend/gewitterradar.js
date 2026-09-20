@@ -5830,6 +5830,23 @@
       this._strikes = this._strikes || new Map();
       this._built = !!this.shadowRoot;
       this._mapReady = !!this._map;
+
+      // V4.09 DEV – Kartenansicht: Standard / Groß / Vollbild.
+      // Nur Standard/Groß werden als normale Kartenhöhe persistiert. Vollbild
+      // ist bewusst ein temporärer Sitzungszustand und erfordert keine HA-Helfer.
+      if (!['standard','large','fullscreen'].includes(this._mapViewportMode)) {
+        let storedMapViewportMode = 'standard';
+        try {
+          const stored = localStorage.getItem('gewitterradar:v409:map-viewport-mode');
+          if (stored === 'large') storedMapViewportMode = 'large';
+        } catch (_error) {}
+        this._mapViewportMode = storedMapViewportMode;
+      }
+      this._mapCompassDragState = this._mapCompassDragState || null;
+      this._mapCompassOriginalParent = this._mapCompassOriginalParent || null;
+      this._mapCompassOriginalNextSibling = this._mapCompassOriginalNextSibling || null;
+      this._mapPopoutWindow = this._mapPopoutWindow || null;
+      this._mapPopoutSyncTimer = this._mapPopoutSyncTimer || null;
       this._initialIngestDone = this._initialIngestDone || false;
       this._lastFlashAt = this._lastFlashAt || 0;
       this._deviceHeading = this._deviceHeading ?? null;
@@ -6158,6 +6175,8 @@
       this._closeLanguageOnboarding(false);
       this._closeHelp(false);
       this._closeAbout(false, false);
+      this._restoreCompassFromMapOverlay?.();
+      if (this._mapPopoutSyncTimer) { clearInterval(this._mapPopoutSyncTimer);this._mapPopoutSyncTimer = null; }
       if (this._tickInterval) clearInterval(this._tickInterval);
       if (this._clusterRenderDebounceTimer) {
         clearTimeout(this._clusterRenderDebounceTimer);
@@ -9620,6 +9639,94 @@
             aspect-ratio:1.58 / 1;
             background:#0a0d12;
           }
+          /* V4.09 DEV – gestufte Kartengröße und Vollbild-Kartenmodus. */
+          #card-root.map-size-large #map {
+            height:clamp(520px,72dvh,880px);
+            aspect-ratio:auto;
+          }
+          .map-size-switch {
+            display:inline-grid;
+            grid-template-columns:repeat(3,max-content);
+            align-items:center;
+            gap:2px;
+            padding:2px;
+            border:1px solid rgba(214,172,78,.28);
+            border-radius:999px;
+            background:rgba(4,9,14,.68);
+            box-shadow:inset 0 1px rgba(255,239,194,.05),0 6px 18px rgba(0,0,0,.16);
+            backdrop-filter:blur(9px);
+          }
+          .map-size-btn {
+            appearance:none;
+            min-height:25px;
+            padding:0 8px;
+            border:0;
+            border-radius:999px;
+            background:transparent;
+            color:#8f98a5;
+            font:800 7.6px/1 inherit;
+            letter-spacing:.035em;
+            cursor:pointer;
+            white-space:nowrap;
+          }
+          .map-size-btn[aria-pressed="true"] {
+            color:#ffe7a5;
+            background:linear-gradient(180deg,rgba(214,172,78,.18),rgba(214,172,78,.07));
+            box-shadow:inset 0 0 0 1px rgba(214,172,78,.28);
+          }
+          .map-card.map-viewport-fullscreen {
+            position:fixed;
+            inset:0;
+            z-index:2147483644;
+            width:100vw;
+            height:100dvh;
+            max-width:none;
+            border:0;
+            border-radius:0;
+            background:#070a0f;
+          }
+          .map-card.map-viewport-fullscreen #map {
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            min-height:100%;
+            aspect-ratio:auto;
+          }
+          .map-card.map-viewport-fullscreen .map-top-controls,
+          .map-card.map-viewport-fullscreen .map-legend {
+            z-index:780;
+          }
+          .map-card.map-viewport-fullscreen .map-top-controls [data-warning-test] {
+            display:none !important;
+          }
+          .map-fullscreen-compass-host {
+            position:absolute;
+            z-index:790;
+            left:82%;
+            top:76%;
+            width:clamp(170px,28vmin,340px);
+            aspect-ratio:1 / 1;
+            transform:translate(-50%,-50%);
+            touch-action:none;
+            user-select:none;
+            cursor:grab;
+            filter:drop-shadow(0 18px 34px rgba(0,0,0,.46));
+          }
+          .map-fullscreen-compass-host[hidden] { display:none !important; }
+          .map-fullscreen-compass-host.dragging { cursor:grabbing; }
+          .map-fullscreen-compass-host .compass-instrument {
+            width:100% !important;
+            max-width:none !important;
+            height:auto !important;
+            margin:0 !important;
+          }
+          @media (max-width:720px) {
+            .map-size-switch { gap:1px;padding:2px; }
+            .map-size-btn { min-height:24px;padding:0 6px;font-size:7px; }
+            #card-root.map-size-large #map { height:72dvh; }
+            .map-fullscreen-compass-host { width:clamp(145px,32vmin,230px); }
+          }
 
           .leaflet-container { background:#0a0d12 !important;font-family:inherit; }
           .leaflet-tile-pane { filter:invert(1) hue-rotate(180deg) brightness(.62) saturate(.55) contrast(1.12); }
@@ -12704,6 +12811,11 @@
                       <button class="map-mode-btn" id="map-mode-grouped" type="button" aria-pressed="true">Gruppiert</button>
                       <button class="map-mode-btn" id="map-mode-individual" type="button" aria-pressed="false">Einzelblitze</button>
                     </div>
+                    <div class="map-size-switch" id="map-size-switch" role="group" aria-label="Kartengröße">
+                      <button class="map-size-btn" id="map-size-standard" type="button" data-map-size="standard" aria-pressed="true">Standard</button>
+                      <button class="map-size-btn" id="map-size-large" type="button" data-map-size="large" aria-pressed="false">Groß</button>
+                      <button class="map-size-btn" id="map-size-fullscreen" type="button" data-map-size="fullscreen" aria-pressed="false">Vollbild</button>
+                    </div>
                     <div class="map-radius-chip">
                       <span class="obs"><i style="background:${C.gold}"></i><span id="map-observation-radius" role="button" tabindex="0" data-radius-input-kind="observation">–</span></span>
                       <span class="storm"><i style="background:${C.blue}"></i><span id="map-storm-radius" role="button" tabindex="0" data-radius-input-kind="storm">–</span></span>
@@ -12728,6 +12840,7 @@
                     <span class="recent-target-glyph map-strike-target-glyph" aria-hidden="true"></span>
                   </button>
                   <div id="map"></div>
+                  <div class="map-fullscreen-compass-host" id="map-fullscreen-compass-host" aria-label="Verschiebbarer Kompass" hidden></div>
                   <div class="map-legend" id="map-legend">
                     <span class="map-legend-group map-legend-primary">
                       <span class="legend-item"><i class="legend-dot" style="--legend-color:${C.gold}"></i>Aktiv &lt; 10 Min</span>
@@ -13506,6 +13619,25 @@
                 </div>
               </details>
 
+              <details class="settings-section settings-collapsible" id="settings-map-view-section">
+                <summary class="settings-section-head">
+                  <div>
+                    <div class="settings-section-title" id="settings-map-view-title">Kartendarstellung</div>
+                    <div class="settings-section-sub" id="settings-map-view-subtitle">Karte separat nutzen</div>
+                  </div>
+                </summary>
+                <div class="settings-section-content">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <div id="settings-map-window-label">Karte in eigenem Fenster</div>
+                      <div id="settings-map-window-note" style="font-size:.76rem;opacity:.68;margin-top:3px">Live-Karte mit aktuell gewähltem Kompass öffnen</div>
+                    </div>
+                    <button class="settings-language-button settings-control" id="settings-map-window-open" type="button" aria-label="Karte in eigenem Fenster öffnen">
+                      <span id="settings-map-window-open-label">Öffnen</span>
+                    </button>
+                  </div>
+                </div>
+              </details>
               <details class="settings-section settings-collapsible" id="settings-radii-section">
                 <summary class="settings-section-head">
                   <div>
@@ -14016,10 +14148,191 @@
       this._applyCompassDesign(this._persistedCompassDesign || 'C');
       this._applyStaticTranslations();
       this._bindControls();
+      this._syncMapViewportUi();
       this._initMap();
       this._setupOrientationCapabilityProbe();
     }
 
+    _isGermanUiLanguage() {
+      return new Set(['Deutsch','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch']).has(String(this._languageValue?.() || 'Deutsch'));
+    }
+
+    _syncMapViewportUi() {
+      const root = this.shadow?.getElementById('card-root');
+      const mapCard = this.shadow?.querySelector('.map-card');
+      const mode = ['standard','large','fullscreen'].includes(this._mapViewportMode) ? this._mapViewportMode : 'standard';
+      root?.classList.toggle('map-size-large',mode === 'large');
+      mapCard?.classList.toggle('map-viewport-fullscreen',mode === 'fullscreen');
+      for (const button of this.shadow?.querySelectorAll?.('[data-map-size]') || []) {
+        button.setAttribute('aria-pressed',button.dataset.mapSize === mode ? 'true' : 'false');
+      }
+      const german = this._isGermanUiLanguage();
+      const labels = german
+        ? { standard:'Standard',large:'Groß',fullscreen:'Vollbild',aria:'Kartengröße',drag:'Verschiebbarer Kompass' }
+        : { standard:'Standard',large:'Large',fullscreen:'Fullscreen',aria:'Map size',drag:'Movable compass' };
+      const switchEl = this.shadow?.getElementById('map-size-switch');
+      switchEl?.setAttribute('aria-label',labels.aria);
+      const standard = this.shadow?.getElementById('map-size-standard');
+      const large = this.shadow?.getElementById('map-size-large');
+      const fullscreen = this.shadow?.getElementById('map-size-fullscreen');
+      if (standard) standard.textContent = labels.standard;
+      if (large) large.textContent = labels.large;
+      if (fullscreen) fullscreen.textContent = labels.fullscreen;
+      this.shadow?.getElementById('map-fullscreen-compass-host')?.setAttribute('aria-label',labels.drag);
+      requestAnimationFrame(() => {
+        try { this._map?.invalidateSize?.({ pan:false,animate:false }); } catch (_error) {}
+      });
+    }
+
+    _setMapViewportMode(mode, options = {}) {
+      const next = ['standard','large','fullscreen'].includes(mode) ? mode : 'standard';
+      const persist = options.persist !== false;
+      if (this._mapViewportMode === 'fullscreen' && next !== 'fullscreen') this._restoreCompassFromMapOverlay();
+      this._mapViewportMode = next;
+      if (next === 'fullscreen') this._mountCompassInMapOverlay();
+      if (persist && next !== 'fullscreen') {
+        try { localStorage.setItem('gewitterradar:v409:map-viewport-mode',next); } catch (_error) {}
+      }
+      this._syncMapViewportUi();
+    }
+
+    _loadMapCompassPosition() {
+      let value = { x:82,y:76 };
+      try {
+        const stored = JSON.parse(localStorage.getItem('gewitterradar:v409:fullscreen-compass-position') || 'null');
+        if (stored && Number.isFinite(stored.x) && Number.isFinite(stored.y)) value = { x:stored.x,y:stored.y };
+      } catch (_error) {}
+      return { x:Math.max(8,Math.min(92,value.x)),y:Math.max(8,Math.min(92,value.y)) };
+    }
+
+    _applyMapCompassPosition(position) {
+      const host = this.shadow?.getElementById('map-fullscreen-compass-host');
+      if (!host || !position) return;
+      host.dataset.x = String(position.x);
+      host.dataset.y = String(position.y);
+      host.style.left = position.x + '%';
+      host.style.top = position.y + '%';
+    }
+
+    _setupMapCompassDrag() {
+      const host = this.shadow?.getElementById('map-fullscreen-compass-host');
+      const mapCard = this.shadow?.querySelector('.map-card');
+      if (!host || !mapCard || host.dataset.dragBound === '1') return;
+      host.dataset.dragBound = '1';
+      const finish = (event) => {
+        if (!this._mapCompassDragState) return;
+        event?.stopPropagation?.();
+        host.classList.remove('dragging');
+        try { if (event?.pointerId != null && host.hasPointerCapture?.(event.pointerId)) host.releasePointerCapture(event.pointerId); } catch (_error) {}
+        const position = { x:Number(host.dataset.x)||82,y:Number(host.dataset.y)||76 };
+        try { localStorage.setItem('gewitterradar:v409:fullscreen-compass-position',JSON.stringify(position)); } catch (_error) {}
+        this._mapCompassDragState = null;
+      };
+      host.addEventListener('pointerdown',(event) => {
+        if (event.button != null && event.button !== 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const rect = mapCard.getBoundingClientRect();
+        const current = { x:Number(host.dataset.x)||82,y:Number(host.dataset.y)||76 };
+        this._mapCompassDragState = { pointerId:event.pointerId,rect,startX:event.clientX,startY:event.clientY,x:current.x,y:current.y };
+        host.classList.add('dragging');
+        try { host.setPointerCapture?.(event.pointerId); } catch (_error) {}
+      });
+      host.addEventListener('pointermove',(event) => {
+        const drag = this._mapCompassDragState;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const rect = mapCard.getBoundingClientRect();
+        const hostRect = host.getBoundingClientRect();
+        const halfX = Math.min(44,(hostRect.width / Math.max(1,rect.width)) * 50);
+        const halfY = Math.min(44,(hostRect.height / Math.max(1,rect.height)) * 50);
+        const x = ((event.clientX - rect.left) / Math.max(1,rect.width)) * 100;
+        const y = ((event.clientY - rect.top) / Math.max(1,rect.height)) * 100;
+        this._applyMapCompassPosition({ x:Math.max(halfX,Math.min(100-halfX,x)),y:Math.max(halfY,Math.min(100-halfY,y)) });
+      });
+      host.addEventListener('pointerup',finish);
+      host.addEventListener('pointercancel',finish);
+      host.addEventListener('lostpointercapture',finish);
+      for (const type of ['click','dblclick','wheel']) host.addEventListener(type,(event)=>event.stopPropagation());
+    }
+
+    _mountCompassInMapOverlay() {
+      const host = this.shadow?.getElementById('map-fullscreen-compass-host');
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      if (!host || !instrument) return;
+      if (instrument.parentElement !== host) {
+        this._mapCompassOriginalParent = instrument.parentElement;
+        this._mapCompassOriginalNextSibling = instrument.nextSibling;
+        host.appendChild(instrument);
+      }
+      host.hidden = false;
+      this._applyMapCompassPosition(this._loadMapCompassPosition());
+      this._setupMapCompassDrag();
+    }
+
+    _restoreCompassFromMapOverlay() {
+      const host = this.shadow?.getElementById('map-fullscreen-compass-host');
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const parent = this._mapCompassOriginalParent;
+      if (instrument && parent && parent.isConnected && instrument.parentElement === host) {
+        const next = this._mapCompassOriginalNextSibling;
+        if (next && next.parentElement === parent) parent.insertBefore(instrument,next);
+        else parent.appendChild(instrument);
+      }
+      if (host) { host.hidden = true;host.classList.remove('dragging'); }
+      this._mapCompassDragState = null;
+      this._mapCompassOriginalParent = null;
+      this._mapCompassOriginalNextSibling = null;
+    }
+
+    _syncMapSettingsLabels() {
+      const german = this._isGermanUiLanguage();
+      const values = german
+        ? { title:'Kartendarstellung',sub:'Karte separat nutzen',label:'Karte in eigenem Fenster',note:'Live-Karte mit aktuell gewähltem Kompass öffnen',open:'Öffnen',aria:'Karte in eigenem Fenster öffnen' }
+        : { title:'Map display',sub:'Use the map separately',label:'Open map in separate window',note:'Open the live map with the currently selected compass',open:'Open',aria:'Open map in separate window' };
+      const set = (id,value) => { const el=this.shadow?.getElementById(id);if(el) el.textContent=value; };
+      set('settings-map-view-title',values.title);
+      set('settings-map-view-subtitle',values.sub);
+      set('settings-map-window-label',values.label);
+      set('settings-map-window-note',values.note);
+      set('settings-map-window-open-label',values.open);
+      this.shadow?.getElementById('settings-map-window-open')?.setAttribute('aria-label',values.aria);
+    }
+
+    _openMapPopout() {
+      let popup = null;
+      try { popup = window.open('','gewitterradar-map-window','popup=yes,width=1280,height=900,resizable=yes,scrollbars=no'); } catch (_error) {}
+      if (!popup) {
+        this._setMapViewportMode('fullscreen');
+        return false;
+      }
+      if (this._mapPopoutSyncTimer) { clearInterval(this._mapPopoutSyncTimer);this._mapPopoutSyncTimer = null; }
+      this._mapPopoutWindow = popup;
+      const moduleUrl = String(import.meta.url);
+      const safeModuleUrl = moduleUrl.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      popup.document.open();
+      popup.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Gewitterradar · Karte</title><style>html,body,#app{margin:0;width:100%;height:100%;overflow:hidden;background:#070a0f}gewitterradar-card{display:block;width:100%;height:100%}</style><script type="module" src="'+safeModuleUrl+'"><\/script></head><body><div id="app"></div></body></html>');
+      popup.document.close();
+      popup.customElements.whenDefined('gewitterradar-card').then(() => {
+        if (popup.closed) return;
+        const card = popup.document.createElement('gewitterradar-card');
+        popup.document.getElementById('app')?.appendChild(card);
+        card.setConfig?.({ ...(this._config || {}) });
+        card.hass = this._hass;
+        const enterFullscreenMap = () => card._setMapViewportMode?.('fullscreen',{ persist:false });
+        popup.requestAnimationFrame(() => popup.requestAnimationFrame(enterFullscreenMap));
+        this._mapPopoutSyncTimer = setInterval(() => {
+          if (popup.closed) { clearInterval(this._mapPopoutSyncTimer);this._mapPopoutSyncTimer=null;this._mapPopoutWindow=null;return; }
+          try { card.hass = this._hass; } catch (_error) {}
+        },1000);
+        try { popup.focus(); } catch (_error) {}
+      }).catch(() => {
+        try { popup.close(); } catch (_error) {}
+        this._setMapViewportMode('fullscreen');
+      });
+      return true;
+    }
     _buildCompassScale(design = this._activeCompassDesign || 'C') {
       const ringTicks = this.shadow.getElementById('compass-ring-ticks');
       const ticks = this.shadow.getElementById('compass-ticks');
@@ -14344,6 +14657,8 @@
       const settingsBackdrop = this.shadow.getElementById('settings-backdrop');
       const settingsDialog = this.shadow.getElementById('settings-dialog');
       const settingsClose = this.shadow.getElementById('settings-close');
+      const mapSizeButtons = [...this.shadow.querySelectorAll('[data-map-size]')];
+      const settingsMapWindowOpen = this.shadow.getElementById('settings-map-window-open');
       const releaseHistoryBadge = this.shadow.getElementById('app-version-badge');
       const releaseHistoryBackdrop = this.shadow.getElementById('release-history-backdrop');
       const releaseHistoryDialog = this.shadow.getElementById('release-history-dialog');
@@ -15797,6 +16112,7 @@
         closeClusterResolutionDropdown(false);
         closeLocationDropdown(false);
         this._syncHelpMenu();
+        this._syncMapSettingsLabels();
         settingsBackdrop?.classList.add('open');
         settingsClose?.focus?.({ preventScroll:true });
       };
@@ -15869,6 +16185,11 @@
         if (event.target === settingsBackdrop) closeSettings();
       });
       settingsDialog?.addEventListener('click',(event) => event.stopPropagation());
+      mapSizeButtons.forEach((button) => button.addEventListener('click',() => this._setMapViewportMode(button.dataset.mapSize || 'standard')));
+      settingsMapWindowOpen?.addEventListener('click',() => {
+        closeSettings();
+        this._openMapPopout();
+      });
 
       // V3.99316 – vollständiges Accordion für den knappen Einstellungsdialog.
       // Alle Gruppen starten geschlossen. Sobald eine Gruppe geöffnet wird,
@@ -15944,8 +16265,12 @@
           closeClusterResolutionDropdown(true);
           return;
         }
-        if (event.key === 'Escape' && settingsBackdrop?.classList.contains('open')) {
+        if (event.key === 'Escape' && this._mapViewportMode === 'fullscreen') {
           event.preventDefault();
+          this._setMapViewportMode('standard');
+          return;
+        }
+        if (event.key === 'Escape' && settingsBackdrop?.classList.contains('open')) {          event.preventDefault();
           closeSettings();
         }
       });
