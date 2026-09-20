@@ -55,10 +55,22 @@ Tests:
 
 **Realer Nutzerstand: angenommen.** Die frei verschiebbare Standort-Pille und die dynamische Öffnungsrichtung werden als gut/funktional bewertet.
 
+**Verbindlicher visueller Freeze:** Die aktuelle Vollbildgröße von **Kompass und Medaillon** wurde auf Android real angesehen und ausdrücklich als passend bestätigt. Diese Größen nicht mehr verändern, solange kein neuer ausdrücklicher Größenauftrag kommt.
+
 Bekannte und ausdrücklich akzeptierte Einschränkung:
 - die vorgesehene automatische Mehrspaltigkeit der Standortliste greift derzeit nicht zuverlässig;
 - dieser Punkt wird **nicht weiter nachgebessert** und blockiert V4.09.06 nicht;
 - zukünftige Arbeiten sollen diesen Bereich nicht ohne neuen ausdrücklichen Auftrag verändern.
+
+## Aktueller CI-Status
+
+Zum Übergabezeitpunkt:
+
+- `Validate Gewitterradar integration`: **PASS**;
+- `Hi-Res asset retention`: **PASS**;
+- `Validate shared Gewitterradar frontend`: **FAIL** im bestehenden Diagnose-FREEZE-Lifecycle-Harness. Meldung: `mode=freeze`, `angle=45`, `activeCssAnimations=0`, `activeTimers=0`, `activeRafLoops=0`.
+
+Vor Promotion muss dieser Prüfpfad geklärt werden. Nicht als Beleg für einen sichtbaren Fehler an Kompass, Medaillon oder Standort-Pille interpretieren.
 
 ## Nächste reale Prüfung
 
