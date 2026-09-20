@@ -54,6 +54,27 @@ assert.equal(
 );
 transformed = transformed.replace(keyboardFrom, keyboardTo);
 
+// V4.09.01 is deliberately a development/test candidate. The historical
+// browser suite rejects every visible DEV marker because it was written for
+// stable releases. Preserve that protection for all stable builds, but allow
+// the marker only while the exact locked V4.09.01 candidate identity is active.
+const frontendForVersionGate = fs.readFileSync(path.join(__dirname, '..', 'frontend', 'gewitterradar.js'), 'utf8');
+const isV40901DevelopmentCandidate =
+  frontendForVersionGate.includes("const CARD_VERSION = '4.09.01';") &&
+  frontendForVersionGate.includes("const CARD_DISPLAY_VERSION = '4.09.01 DEV';") &&
+  frontendForVersionGate.includes("const GEWITTERRADAR_BUILD = 'V4.09.01-MAP-VIEW-MODES-2026-09-20';");
+const stableLabelFrom = "if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');";
+const stableLabelTo = isV40901DevelopmentCandidate
+  ? "if(!(await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('V4.09.01 development label lost DEV marker');"
+  : stableLabelFrom;
+
+assert.equal(
+  transformed.split(stableLabelFrom).length,
+  2,
+  'Historical stable-label guard anchor changed; review before updating the V4.07.56 wrapper.',
+);
+transformed = transformed.replace(stableLabelFrom, stableLabelTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
