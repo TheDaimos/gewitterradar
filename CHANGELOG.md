@@ -1,5 +1,27 @@
 # Changelog
 
+## V4.09.03 TEST CANDIDATE — Vollbild-Bedienelemente und Sichtbarkeit
+
+> **Noch nicht veröffentlicht.** Baut ausschließlich auf dem V4.09.02-Kartenansichtsblock auf. V4.08 bleibt unveränderte öffentliche Rückfallbasis; Merge, Freeze, Golden Master und öffentlicher Release bleiben bis zur realen Geräteabnahme gesperrt.
+
+### Fixed
+
+- Hide all warning-test controls **fail-closed** whenever the Warnsystem-Simulation helper is not explicitly `on`; this remains effective after the map card is reparented into the fullscreen dialog.
+- Insert the existing reference-location control automatically at the **upper-right** of fullscreen and move its existing dropdown into the fullscreen top layer so the same location workflow remains usable there.
+- Keep the compact red/blue/gold **layer-view control permanently above every other map overlay**; its menu therefore remains operable even when Compass, Medallion or other map overlays overlap the same area.
+- Enlarge the movable fullscreen compass by **exactly 30 %** from the V4.09.02 dimensions while preserving the selected compass, pointer/touch dragging and normalized local position.
+- Add two strongly reduced fullscreen instrument buttons at the **upper-left** for independently showing/hiding Compass and Medallion.
+- Add a freely draggable **live trend Medallion** to fullscreen; it mirrors the normal trend states `none / up / down / stable` and stores its normalized position locally.
+- Persist fullscreen Compass and Medallion visibility locally per browser profile; no Home-Assistant helper is introduced for these view-only preferences.
+- Keep Standard / Groß / Vollbild, per-device startup mode and the separate Settings-only browser window from V4.09.02 unchanged.
+
+### Validation and documentation
+
+- Extend the static V4.09 map-display contract with exact 30-% Compass dimensions, instrument visibility keys, Medallion overlay/drag contract, fullscreen location promotion and permanent layer z-order.
+- Extend the Playwright device matrix for Desktop, iPad and Android across Dashboard and Integration with Compass/Medallion toggles, drag persistence, location-in-fullscreen, fail-closed warning tests and layer-control precedence.
+- Update Release History in the product itself with bilingual **V4.09.03 · DEV · 2026/09** notes.
+- Add dedicated V4.09.03 release notes, implementation note and handoff; mark V4.09.02 documents as superseded for active continuation.
+
 ## V4.09.02 TEST CANDIDATE — Kartenansichten Gerätefix
 
 > **Noch nicht veröffentlicht.** Korrigiert ausschließlich die bei der ersten realen V4.09.01-Geräteprüfung gefundenen Kartenansichtsfehler. V4.08 bleibt unveränderte öffentliche Rückfallbasis.
