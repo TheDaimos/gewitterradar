@@ -20,6 +20,19 @@
 - Statischer V4.09-Vertrag um Pillenposition, Live-Neupositionierung und adaptive Spaltenlogik erweitert.
 - Browser-Test um frei verschiebbare Standort-Pille, Positionsspeicherung und mittige Mehrspaltigkeit erweitert.
 
+### Reale Abnahme / festgeschriebener UI-Stand
+
+- Die aktuelle Vollbildgröße von **Kompass und Medaillon** wurde auf Android real angesehen und ausdrücklich als passend bestätigt.
+- Diese Instrumentgrößen gelten für den aktuellen V4.09.06-Stand als **visuell abgenommen** und sollen ohne neuen ausdrücklichen Auftrag nicht erneut verändert werden.
+- Die aktuelle frei bewegliche Standort-Pille bleibt ebenfalls in ihrem angenommenen Stand.
+- Bekannte akzeptierte Einschränkung: Die automatische Mehrspaltigkeit der Standortliste greift real nicht zuverlässig. Dieser Punkt blockiert V4.09.06 nicht und wird ohne neuen ausdrücklichen Auftrag nicht erneut geöffnet.
+
+### Aktueller CI-Hinweis
+
+- Native Integrationsprüfung: **PASS**.
+- Hi-Res-Asset-Retention: **PASS**.
+- Shared-Frontend-Prüfung: derzeit **FAIL** im bestehenden Diagnose-FREEZE-Lifecycle-Harness (`mode=freeze`, Winkel 45°, keine aktive CSS-Animation/Timer/RAF-Schleife). Vor Promotion muss dieser Prüfpfad geklärt werden.
+
 
 ## V4.09.05 TEST CANDIDATE — Android-Touch-Dragging
 
