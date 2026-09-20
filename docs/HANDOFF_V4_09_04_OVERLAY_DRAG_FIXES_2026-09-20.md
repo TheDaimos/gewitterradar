@@ -1,5 +1,7 @@
 # Übergabe – Gewitterradar V4.09.04 Overlay-Dragging
 
+> **SUPERSEDED:** Aktive Fortsetzung ist V4.09.05 auf `feature/v4.09.05-android-touch-drag`. Verbindliche Übergabe: `docs/HANDOFF_V4_09_05_ANDROID_TOUCH_DRAG_2026-09-20.md`.
+
 Stand: **20.09.2026 · aktiver DEV/Testkandidat**
 
 ## Sofortiger Einstieg
