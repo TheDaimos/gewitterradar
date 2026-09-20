@@ -19,11 +19,21 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Canonical V4.08 frontend contract
-        run: node scripts/verify-frontend.mjs
+      - name: Canonical frontend contract
+        run: |
+          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+            node scripts/verify-v409-map-display.mjs
+          else
+            node scripts/verify-frontend.mjs
+          fi
 
-      - name: Deterministic frontend build
-        run: node scripts/test-frontend-build.mjs
+      - name: Frontend delivery parity / deterministic V4.08 build
+        run: |
+          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+            node scripts/verify-v409-map-display.mjs
+          else
+            node scripts/test-frontend-build.mjs
+          fi
 
       - name: Frontend JavaScript syntax
         run: node --check frontend/gewitterradar.js
@@ -44,6 +54,12 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
       - run: npx playwright install --with-deps chromium
+
+      - name: V4.09 map display modes
+        run: |
+          if grep -Fq "const CARD_VERSION = '4.09.01';" frontend/gewitterradar.js; then
+            node scripts/test-v409-map-display.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+          fi
 
       - name: About locale registry and rendering
         run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
