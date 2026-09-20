@@ -1,5 +1,7 @@
 # Übergabe – Gewitterradar V4.09.03 Vollbild-Bedienelemente
 
+> **SUPERSEDED:** Aktive Fortsetzung ist V4.09.04 auf `feature/v4.09.04-overlay-drag-fixes`. Verbindliche Übergabe: `docs/HANDOFF_V4_09_04_OVERLAY_DRAG_FIXES_2026-09-20.md`.
+
 Stand: **20.09.2026 · aktiver DEV/Testkandidat**
 
 ## Sofortiger Einstieg
