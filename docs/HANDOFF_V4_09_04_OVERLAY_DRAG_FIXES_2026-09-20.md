@@ -70,6 +70,11 @@ Bytegleiche Ausleitungen:
 - `custom_components/gewitterradar/frontend/gewitterradar.js`;
 - `dashboard/dist/gewitterradar.js`.
 
+## Draft-PR / Testschleuse
+
+- Draft-PR: **#16** – `V4.09.04 DEV: fullscreen overlay drag fixes`;
+- der PR bleibt ausdrücklich Draft und darf vor realer Geräteabnahme nicht gemergt oder auf „Ready for review“ als Release-Promotion umgestellt werden.
+
 ## Tests
 
 Relevant:
