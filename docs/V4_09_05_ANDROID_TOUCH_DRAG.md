@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.05 – Android-Touch-Dragging
 
+> **SUPERSEDED durch V4.09.06.** Die Touch-Korrekturen bleiben Bestandteil des V4.09.06-Teststands.
+
 Stand: **20.09.2026 · DEV/Testkandidat**
 
 ## Reale Ausgangslage
