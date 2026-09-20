@@ -1,0 +1,90 @@
+name: Build Gewitterradar V4.09.02 Download
+
+on:
+  push:
+    branches:
+      - build/v4.09.02-download-2026-09-20
+    paths:
+      - '.github/workflows/v40902-download-package.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Verify V4.09.02 frontend contract
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          node scripts/verify-v409-map-display.mjs
+
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+
+      - name: Browser test V4.09.02 map display
+        run: node scripts/test-v409-map-display.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Build installable V4.09.02 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40902
+          mkdir -p build/v40902/native/custom_components build/v40902/dashboard
+          cp -a custom_components/gewitterradar build/v40902/native/custom_components/
+          cp -a dashboard/dist/. build/v40902/dashboard/
+          mv build/v40902/dashboard/gewitterradar.js build/v40902/dashboard/gewitterradar-v4.09.02.js
+          cp docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md build/v40902/
+          cat > build/v40902/README_V4.09.02_TEST.txt <<'TXT'
+          Gewitterradar V4.09.02 DEV / TEST
+          ==================================
+
+          Verbindlicher Kandidat:
+            feature/v4.09.02-map-display-fixes
+            4d071b3cd21a2ba33a33ee6036f23430c8df6099
+
+          Basis:
+            V4.08 FINAL (eingefroren)
+
+          Neu / korrigiert:
+          - kompakte Layer-Schaltfläche unten rechts direkt in der Karte
+          - drei Ebenen: oben groß Gold, Mitte Blau, unten klein Rot
+          - Kontextmenü: Standard / Groß / Vollbild
+          - "Eigenes Fenster" bleibt in den Einstellungen
+          - separates Kartenfenster zeigt die Karte bildschirmfüllend
+          - aktuell gewählter Kompass bleibt im Vollbild verschiebbar
+
+          Native Testinstallation:
+            native/custom_components/gewitterradar/
+
+          Dashboard-Testdatei:
+            dashboard/gewitterradar-v4.09.02.js
+
+          Dies ist kein öffentlicher Release.
+          Reale Geräteabnahme ist erforderlich.
+          TXT
+          (
+            cd build/v40902
+            zip -qr ../Gewitterradar_V4.09.02_TEST.zip .
+          )
+          unzip -t build/Gewitterradar_V4.09.02_TEST.zip
+          sha256sum build/Gewitterradar_V4.09.02_TEST.zip > build/Gewitterradar_V4.09.02_TEST.sha256
+          sha256sum frontend/gewitterradar.js > build/gewitterradar-v40902-frontend.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09.02_TEST
+          path: |
+            build/Gewitterradar_V4.09.02_TEST.zip
+            build/Gewitterradar_V4.09.02_TEST.sha256
+            build/gewitterradar-v40902-frontend.sha256
+          if-no-files-found: error
+          retention-days: 30
