@@ -55,6 +55,11 @@ Zusätzlich zu den bestehenden Verträgen gilt:
 
 - `tests/contracts/frontend-candidate-v4.09.01.json`
 - `scripts/verify-v409-map-view-modes.mjs`
+- `scripts/test-v409-map-view-modes.cjs`
+
+Der Browser-Regressionslauf prüft beide Auslieferungsformen auf Desktop, iPad und Android einschließlich Größenwechsel, Vollbild, Pointer-/Touch-Verschiebung des produktiven Kompasses, Positionsspeicherung, separates Fenster und Popup-Blocker-Rückfall.
+
+Der erste iPad-Lauf zeigte, dass `72dvh` im Querformat minimal kleiner als die vorhandene Standardkarte war. Der Großmodus wurde deshalb auf `clamp(600px, 78dvh, 900px)` korrigiert; der Test verlangt weiterhin, dass „Groß“ tatsächlich größer als „Standard“ ist.
 
 Der Kandidatenvertrag ist weiterhin ausdrücklich an den unveränderten V4.08-Releasevertrag gebunden.
 
