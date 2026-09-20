@@ -34,7 +34,7 @@ const server = http.createServer((req,res)=>{
         await page.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=seen&delivery=${delivery}`);
         await page.waitForFunction(()=>window.aboutResult);
 
-        const result=await page.evaluate(async()=>{
+        const result=await page.evaluate(async(hasTouch)=>{
           const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
           const card=window.aboutCard;
           card._closeAbout(false,false);
@@ -126,7 +126,7 @@ const server = http.createServer((req,res)=>{
             windowFeatures:openArgs?.[2]||'',
             blockedFallback
           };
-        });
+        }, hasTouch);
 
         assert.deepEqual(result.labels,['Standard','Groß','Vollbild'],`${delivery}/${profile} German labels`);
         assert.equal(result.largeState.mode,'large',`${delivery}/${profile} large state`);
