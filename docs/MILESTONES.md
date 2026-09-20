@@ -1,11 +1,24 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.08 – finaler Release-Stand.**  
-Native Integration: **0.20.0.**  
-Akzeptierter interner Ausgangsbuild: **V4.08.40 RC.**  
+Status: **2026/09 · V4.09.02 DEV/TEST – reale Geräteabnahme offen.**  
+Öffentliche Rückfallbasis: **V4.08 FINAL.**  
+Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M23 – V4.09.02 Kartenansichten nach erster Geräteprüfung gehärtet
+- V4.09.01 mit Standard/Groß/Vollbild, separatem Kartenfenster und verschiebbarem Vollbild-Kompass real auf Gerät geprüft;
+- reale Befunde dokumentiert: separates Fenster konnte HA-Oberfläche ohne Karte zeigen; Größenumschaltung war auf Desktop zu unauffällig;
+- V4.09.02 als kontrollierten Gerätefix auf `feature/v4.09.02-map-display-fixes` fortgeführt;
+- breite Größenleiste durch eine einzelne Layer-Schaltfläche rechts unten **innerhalb** der Karte ersetzt;
+- Layer-Symbol: klein rot / mittel blau / groß gold entsprechend Gefahr / Gewitter / Beobachtung;
+- Kontextmenü Standard / Groß / Vollbild direkt am Kartencontrol;
+- Startdarstellung Standard / Groß / Vollbild / Zuletzt verwendet gerätespezifisch im lokalen Browserprofil ergänzt;
+- „Eigenes Kartenfenster“ als separate Einstellungsfunktion beibehalten und Fensterdarstellung technisch gehärtet;
+- Integration und Dashboard weiterhin bytegleich aus derselben Frontend-Quelle;
+- automatisierte Shared-Frontend-, Integrations- und Hi-Res-Schutzprüfungen auf dem Runtime-/Teststand grün;
+- Release-/Freeze-/Golden-Schritte ausdrücklich bis zur erneuten realen Geräteabnahme gesperrt.
 
 ### M22 – V4.08 öffentlich veröffentlicht und archiviert
 - kanonischen Release-Commit `27da94e5043a365dbe8ea5c5e2224327165750fa` nach vollständig grünen Post-Merge-Gates veröffentlicht;
