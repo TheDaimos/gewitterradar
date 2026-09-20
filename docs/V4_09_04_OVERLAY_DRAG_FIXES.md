@@ -1,5 +1,7 @@
 # Gewitterradar V4.09.04 – Overlay-Dragging und reines Trendmedaillon
 
+> **SUPERSEDED durch V4.09.05.** Der reale Android-Touch-Befund wird in `docs/V4_09_05_ANDROID_TOUCH_DRAG.md` fortgeführt.
+
 Stand: **20.09.2026 · DEV/Testkandidat**
 
 ## Ausgangslage
