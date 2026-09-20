@@ -42,37 +42,38 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.03 – Kartenansichten, Vollbild-Instrumente und Standortbedienung
+### V4.09.04 – Vollbild-Instrumente systemübergreifend härten
 
-Der aktive V4.09-Arbeitsblock wird nach der nächsten realen Geräteprüfung als **V4.09.03-Testkandidat** auf `feature/v4.09.03-fullscreen-controls` fortgeführt. V4.08 bleibt unverändert eingefroren.
+Der aktive V4.09-Arbeitsblock wird als **V4.09.04-Testkandidat** auf `feature/v4.09.04-overlay-drag-fixes` fortgeführt. Grundlage ist V4.09.03; V4.08 bleibt unverändert eingefrorene öffentliche Rückfallbasis.
 
-Umfang:
+Reale Befunde aus der Android-Prüfung von V4.09.03:
 
-- direkte Kartenansichten **Standard · Groß · Vollbild** über die kompakte Layer-Schaltfläche rechts unten innerhalb der Karte;
-- drei gestapelte Layer im Radius-Farbschema: klein rot, mittel blau, groß gold;
-- die Layer-Schaltfläche besitzt innerhalb der Kartenansicht **dauerhaft die höchste Bedienebene**, nicht nur während eines geöffneten Menüs;
-- Kontextmenü enthält ausschließlich Standard · Groß · Vollbild;
-- gerätespezifische lokale Startdarstellung **Standard · Groß · Vollbild · Zuletzt verwendet** in den Einstellungen;
-- **Eigenes Kartenfenster** bleibt als getrennte Einstellungsfunktion außerhalb des Karten-Kontextmenüs;
-- dieselbe Leaflet-Instanz bleibt beim Größenwechsel erhalten;
-- der aktuell gewählte Kompass wird im Vollbild als Overlay weiterverwendet, per Maus/Touch frei verschiebbar und gegenüber V4.09.02 **exakt 30 % größer** dargestellt;
-- oben links stehen zwei stark verkleinerte Vollbild-Schalter zum unabhängigen Ein-/Ausblenden von **Kompass** und **Medaillon**;
-- das Live-Tendenzmedaillon wird zusätzlich im Vollbild angezeigt, übernimmt die produktiven Zustände **keine Aktivität / zunehmend / abnehmend / stabil** und ist ebenfalls frei verschiebbar;
-- Kompass-/Medaillon-Sichtbarkeit sowie beide normalisierten Positionen werden nur lokal im Browserprofil gespeichert;
-- die bestehende Standortanzeige samt bestehendem Standortmenü wird im Vollbild automatisch **oben rechts** eingesetzt;
-- Warnsystem-Testschaltflächen bleiben außerhalb einer ausdrücklich eingeschalteten Warnsystem-Simulation fail-closed verborgen – auch nach dem Vollbild-Reparenting;
-- gemeinsame Umsetzung für native Integration und Dashboard-Auslieferung;
-- Browserabdeckung für Desktop, iPad und Android sowie geschützte About-/Diagnose-/Hi-Res-Regressionen.
+- der Vollbild-Kompass war ein-/ausblendbar, ließ sich real per Touch jedoch nicht zuverlässig verschieben;
+- die Medaillon-Schaltfläche durfte ausschließlich die reine Trendanzeige steuern, das Kartenmedaillon war aber durch die gemeinsame `.trend`-Layoutklasse unnötig mit der History-/Tendenzeinheit gekoppelt;
+- die Layer-Schaltfläche soll näher an den unteren Kartenrand und knapp oberhalb von Leaflet/OpenStreetMap sitzen.
 
-V4.09.03 bleibt ein **DEV-/Testkandidat**. Vor Merge/Veröffentlichung ist die reale Geräteabnahme erforderlich, insbesondere Vollbild auf Desktop/Android/iPad, Standortmenü, Layer-Vordergrund, beide Instrument-Schalter, Dragging und separates Kartenfenster.
+Verbindlicher V4.09.04-Umfang:
+
+- **Kompass und Medaillon auf Desktop, Android und iPad/iPad Pro frei verschiebbar** über denselben Pointer-Event-Pfad;
+- äußere Overlay-Flächen sind die aktiven Drag-Hitflächen; verschachtelte Grafik-/Instrumentknoten dürfen Touch nicht abfangen;
+- Medaillon im Vollbild ist **nur das Medaillon als reine Trendanzeige**: Basisgrafik + Pfeil, keine History, kein Tendenztext, keine Panel-/Verlaufseinheit;
+- produktive Trendzustände **keine Aktivität / zunehmend / stabil / abnehmend** bleiben gespiegelt;
+- Kompass-/Medaillon-Sichtbarkeit und normalisierte Positionen bleiben getrennt lokal im Browserprofil gespeichert;
+- Layer-Schaltfläche bleibt dauerhaft oberste Karten-Bedienebene und sitzt mit kleinem dynamischen Sicherheitsabstand direkt oberhalb der Leaflet/OpenStreetMap-Attribution;
+- bestehende Standortanzeige oben rechts, Warnsystem-Test-Fail-Closed, Standard/Groß/Vollbild, Startdarstellung und separates Kartenfenster bleiben erhalten;
+- gemeinsame bytegleiche Frontend-Auslieferung für native Integration und Dashboard;
+- automatisierte Browserabdeckung für Desktop, iPad und Android plus geschützte About-/Diagnose-/Hi-Res-Regressionen.
+
+V4.09.04 bleibt ein **DEV-/Testkandidat**. Vor Merge/Veröffentlichung ist eine erneute reale Geräteabnahme erforderlich, insbesondere Dragging von Kompass und reinem Medaillon auf Desktop, Android und iPad/iPad Pro sowie die neue Layer-Position.
 
 Verbindliche Detaildokumentation:
 
 - `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
-- `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md` (historischer Gerätefix);
-- `docs/V4_09_03_FULLSCREEN_CONTROLS.md`;
-- `docs/RELEASE_NOTES_V4_09_03_TEST.md`;
-- `docs/HANDOFF_V4_09_03_FULLSCREEN_CONTROLS_2026-09-20.md`.
+- `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md` (historisch);
+- `docs/V4_09_03_FULLSCREEN_CONTROLS.md` (superseded);
+- `docs/V4_09_04_OVERLAY_DRAG_FIXES.md`;
+- `docs/RELEASE_NOTES_V4_09_04_TEST.md`;
+- `docs/HANDOFF_V4_09_04_OVERLAY_DRAG_FIXES_2026-09-20.md`.
 
 Verbindlicher Abschlussstand von V4.08:
 
