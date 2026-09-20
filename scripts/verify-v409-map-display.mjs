@@ -15,9 +15,9 @@ const dashboard=await read('dashboard/dist/gewitterradar.js');
 
 assert.ok(source.equals(integration),'V4.09 integration frontend differs from canonical source');
 assert.ok(source.equals(dashboard),'V4.09 dashboard frontend differs from canonical source');
-assert.match(sourceText,/const CARD_VERSION = '4\.09\.02';/,'V4.09.02 card version missing');
-assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.02';/,'V4.09.02 display version missing');
-assert.match(sourceText,/V4\.09\.02-DEV-2026-09-20/,'V4.09.02 build marker missing');
+assert.match(sourceText,/const CARD_VERSION = '4\.09\.02';/,'V4.09.03 card version missing');
+assert.match(sourceText,/const CARD_DISPLAY_VERSION = '4\.09\.02';/,'V4.09.03 display version missing');
+assert.match(sourceText,/V4\.09\.02-DEV-2026-09-20/,'V4.09.03 build marker missing');
 
 for(const needle of [
   'data-map-display-mode="standard"',
@@ -41,13 +41,20 @@ for(const needle of [
   'class="map-layer-symbol-layer red"',
   'id="settings-map-startup-mode"',
   '_setMapStartupMode(mode)',
-  '_positionMapDisplayControl()'
+  '_positionMapDisplayControl()',
+  'id="map-location-overlay"',
+  '_attachLocationToMapOverlay()',
+  '_restoreLocationFromMapOverlay()',
+  '.map-display-fab.menu-open',
+  '[data-warning-test][hidden]',
+  'width:clamp(189px,31.2vmin,390px)',
+  'width:clamp(172px,46.8vmin,299px)'
 ]) assert.ok(sourceText.includes(needle),'V4.09 map-display contract missing: '+needle);
 assert.ok(!sourceText.includes('Large, XL and Fullscreen'),'Removed XL map-size scope returned');
 assert.ok(!sourceText.includes('class="map-display-bar"'),'Old wide map display bar returned');
 assert.ok(!sourceText.includes('Standard, Groß, XL und Vollbild'),'Obsolete German XL release-history plan returned');
 assert.ok(!sourceText.includes('Map size: Standard, Large and Fullscreen.'),'Obsolete V4.09 planning block returned');
-assert.ok(sourceText.includes('V4.09.02 · DEV · 2026/09'),'V4.09.02 DEV release-history entry missing');
+assert.ok(sourceText.includes('V4.09.03 · DEV · 2026/09'),'V4.09.03 DEV release-history entry missing');
 
 const frozenRelease=JSON.parse((await read('tests/contracts/frontend-release-v4.08.json')).toString('utf8'));
 assert.equal(frozenRelease.version,'4.08','Frozen V4.08 release contract version changed');
@@ -68,4 +75,4 @@ for(const asset of inventory){
   assert.ok(canonical.equals(await read('dashboard/dist/'+asset.file)),'Dashboard asset differs: '+asset.file);
 }
 
-console.log('PASS: V4.09.02 floating map-view control, per-device startup contract, delivery parity and protected V4.08 assets/locales.');
+console.log('PASS: V4.09.03 floating map-view control, per-device startup contract, delivery parity and protected V4.08 assets/locales.');
