@@ -269,7 +269,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.settingsSection,true,`${delivery}/${profile} map settings section`);
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
-        assert.equal(result.windowVersion,'40906',`${delivery}/${profile} separate window version`);
+        assert.equal(result.windowVersion,'40907',`${delivery}/${profile} separate window version`);
         assert.equal(result.menuOpened,true,`${delivery}/${profile} context menu opens`);
         assert.equal(result.menuClosedAfterChoice,true,`${delivery}/${profile} context menu closes after choice`);
         assert.equal(result.startupStored,'fullscreen',`${delivery}/${profile} startup preference stored locally`);
@@ -282,7 +282,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.controlInsideMap,true,`${delivery}/${profile} layer control inside map bounds`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
-        console.log(`${delivery}/${profile}: V4.09.06 map display PASS`);
+        console.log(`${delivery}/${profile}: V4.09.07 map display PASS`);
       }
     }
 
@@ -322,7 +322,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(startupLast,{mode:'large',large:true},'per-device startup last-used mode');
     await startupContext.close();
-    console.log('dashboard/startup-preference: V4.09.06 map display PASS');
+    console.log('dashboard/startup-preference: V4.09.07 map display PASS');
 
     const context=await browser.newContext({viewport:{width:1280,height:800}});
     const page=await context.newPage();
@@ -345,7 +345,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,controlDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
-    console.log('dashboard/detached-window: V4.09.06 map display PASS');
+    console.log('dashboard/detached-window: V4.09.07 map display PASS');
   } finally {
     await browser.close();
     server.close();
