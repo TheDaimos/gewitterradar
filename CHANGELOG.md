@@ -1,5 +1,24 @@
 # Changelog
 
+## V4.09.06 TEST CANDIDATE — frei verschiebbare Standort-Pille
+
+> **Noch nicht veröffentlicht.** V4.09.06 erweitert die Vollbild-Bedienung um eine frei verschiebbare Standort-Pille und ein positions-/platzabhängig adaptives Standortmenü.
+
+### Added / Changed
+
+- Standort-Pille im Vollbild auf Desktop, Android und iPad/iPad Pro frei verschiebbar.
+- Normalisierte Position lokal gespeichert unter `gewitterradar:v409:map-location-position`.
+- Obere Position: Standortmenü bevorzugt nach unten.
+- Untere Position: Standortmenü bevorzugt nach oben.
+- Mittlere Position: Standortmenü bevorzugt mehrspaltig.
+- Reicht der Platz in der bevorzugten Öffnungsrichtung für eine einspaltige Liste nicht aus, wird automatisch auf 2 bzw. auf breiteren Geräten bis zu 3 Spalten erweitert.
+- Android bleibt auf maximal 2 Spalten begrenzt.
+- Reicht auch die Mehrspaltigkeit nicht aus, scrollt nur die Standortliste intern.
+- Bei geöffneter Standortliste wird die Anordnung **während des Verschiebens der Pille live neu berechnet**.
+- Drag-Geste verwendet denselben Pointer-/Touch-Schutz wie die V4.09.05-Instrumente; ein Drag löst anschließend nicht versehentlich den Standort-Klick aus.
+- Separate Fensterkennung auf `gewitterradar_window_version=40906` angehoben.
+
+
 ## V4.09.05 TEST CANDIDATE — Android-Touch-Dragging
 
 > **Noch nicht veröffentlicht.** V4.09.04 funktionierte auf Desktop vollständig, auf Android ließen sich Kompass und Medaillon jedoch nur ein-/ausblenden, nicht per Finger verschieben. V4.09.05 ergänzt deshalb einen nativen Touch-Event-Fallback und verkleinert das Vollbild-Medaillon ausschließlich auf Android um 15 %.
