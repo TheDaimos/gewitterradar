@@ -12,6 +12,7 @@ on:
       - 'scripts/build-frontend.mjs'
       - 'scripts/verify-frontend.mjs'
       - 'scripts/verify-v409-map-view-modes.mjs'
+      - 'scripts/test-v409-map-view-modes.cjs'
       - 'docs/V4_09_MAP_VIEW_MODES.md'
       - '.github/workflows/v40901-test-package.yml'
   workflow_dispatch:
@@ -41,6 +42,13 @@ jobs:
 
       - name: Verify Hi-Res retention
         run: node scripts/verify-hires-asset-retention.mjs
+
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Browser regression for map view modes
+        run: node scripts/test-v409-map-view-modes.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Create installable V4.09.01 test ZIP
         shell: bash
