@@ -42,28 +42,24 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.05 – Android-Touch-Dragging absichern
+### V4.09.06 – Frei bewegliche Standort-Pille und adaptives Menü
 
-Aktiver Teststand: `feature/v4.09.05-android-touch-drag`.
+Aktiver Teststand: `feature/v4.09.06-movable-location-pill`.
 
-Reale Abnahme von V4.09.04:
+V4.09.06 baut auf V4.09.05 auf und ergänzt ausschließlich den Vollbild-Standortpfad:
 
-- Desktop: Kompass und Medaillon ein-/ausblendbar und frei verschiebbar – **bestätigt**.
-- Android: beide ein-/ausblendbar, aber Finger-Dragging funktioniert nicht – **offener Fehler**.
-- Android: Medaillon soll gegenüber V4.09.04 **15 % kleiner** dargestellt werden.
-- iPad/iPad Pro: bleibt verbindliche Zielplattform für freies Touch-Dragging.
+- Standort-Pille frei verschiebbar auf Desktop, Android und iPad/iPad Pro;
+- lokale normalisierte Position `gewitterradar:v409:map-location-position`;
+- bestehende Standort-/Suchlogik unverändert weiterverwenden;
+- oben: Menü bevorzugt nach unten;
+- unten: Menü bevorzugt nach oben;
+- mittlere Zone: automatische Mehrspaltigkeit;
+- reicht die verfügbare Höhe nicht für die vollständige Liste, auch außerhalb der Mitte automatisch Mehrspaltigkeit;
+- auf schmalen Ansichten maximal 2 Spalten, bei genügend Breite bis zu 3;
+- geöffnete Liste richtet sich während des Verschiebens live neu aus;
+- internes Scrollen nur als letzter Rückfall.
 
-V4.09.05 ergänzt einen echten Touch-Event-Fallback neben dem bestehenden Pointer-Event-Pfad. `touchstart/touchmove/touchend/touchcancel` laufen nicht-passiv auf der jeweiligen Overlay-Fläche, damit Android/HA-WebView die Geste nicht an Leaflet oder das native Vollbild-`dialog` verliert. Pointer Events bleiben für Maus, Stift und kompatible Touch-Browser bestehen.
-
-Das Medaillon erhält eine Android-spezifische Größenklasse. Die Android-Abmessungen betragen exakt 85 % der bisherigen mobilen Werte; Desktop und iPad bleiben unverändert.
-
-Vor Promotion erforderlich:
-
-- reale Android-Prüfung beider Drag-Gesten;
-- Sichtprüfung der um 15 % reduzierten Android-Medaillongröße;
-- iPad/iPad Pro Touch-Regression;
-- Desktop Maus-Regression;
-- Layer-Control, Standort, Warnsystem-Test-Fail-Closed und separates Kartenfenster regressionsprüfen.
+Vor Promotion ist die reale Geräteabnahme auf Android, iPad/iPad Pro und Desktop erforderlich.
 
 Verbindlicher Abschlussstand von V4.08:
 
