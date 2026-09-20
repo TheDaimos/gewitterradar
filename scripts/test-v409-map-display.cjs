@@ -98,7 +98,9 @@ const server = http.createServer((req,res)=>{
             settingsSection:!!shadow.getElementById('settings-map-section'),
             windowButton:!!shadow.getElementById('settings-map-window-open'),
             windowParam:new URL(openUrl,location.href).searchParams.get('gewitterradar_window'),
-            windowFeatures:openArgs?.[2]||''
+            windowVersion:new URL(openUrl,location.href).searchParams.get('gewitterradar_window_version'),
+            windowFeatures:openArgs?.[2]||'',
+            displayBarBeforeMap:shadow.getElementById('map-display-bar').nextElementSibling?.id==='map-recenter'
           };
         });
 
@@ -117,6 +119,8 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.settingsSection,true,`${delivery}/${profile} map settings section`);
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
+        assert.equal(result.windowVersion,'40902',`${delivery}/${profile} separate window version`);
+        assert.equal(result.displayBarBeforeMap,true,`${delivery}/${profile} display controls promoted above map`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
         console.log(`${delivery}/${profile}: V4.09 map display PASS`);
@@ -137,10 +141,12 @@ const server = http.createServer((req,res)=>{
         dialog:shadow.getElementById('map-fullscreen-dialog').open,
         cardInDialog:shadow.getElementById('map-card').parentElement===shadow.getElementById('map-fullscreen-dialog'),
         compassInOverlay:shadow.getElementById('compass-instrument').parentElement===shadow.getElementById('map-compass-overlay'),
-        barDisplay:getComputedStyle(shadow.getElementById('map-display-bar')).display
+        barDisplay:getComputedStyle(shadow.getElementById('map-display-bar')).display,
+        hostWindowClass:card.classList.contains('map-window-host'),
+        dialogPosition:getComputedStyle(shadow.getElementById('map-fullscreen-dialog')).position
       };
     });
-    assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,barDisplay:'none'},'separate-window mode');
+    assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,barDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
     console.log('dashboard/detached-window: V4.09 map display PASS');
   } finally {

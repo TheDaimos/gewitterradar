@@ -1,5 +1,16 @@
 # Changelog
 
+## V4.09.02 TEST CANDIDATE — Kartenansichten Gerätefix
+
+> **Noch nicht veröffentlicht.** Korrigiert ausschließlich die bei der ersten realen V4.09.01-Geräteprüfung gefundenen Kartenansichtsfehler. V4.08 bleibt unveränderte öffentliche Rückfallbasis.
+
+### Fixed
+
+- Make **Standard · Groß · Vollbild** deutlich sichtbar direkt oberhalb der Karte statt in einer unauffälligen Leiste unter der Kartenlegende.
+- Harden the separate-window presentation so the Gewitterradar card itself covers the Home-Assistant shell and the fullscreen dialog has a fixed viewport fallback.
+- Add a dedicated `gewitterradar_window_version=40902` marker to prevent ambiguity with the first V4.09.01 popup path during device retesting.
+- Keep the same Leaflet instance, selected compass reuse, pointer/touch dragging, radii, clustering and protected V4.08 baseline unchanged.
+
 ## V4.09.01 TEST CANDIDATE — Kartenansichten
 
 > **Noch nicht veröffentlicht.** Dieser Stand ist für die reale Geräteabnahme vorgesehen. V4.08 bleibt die unveränderte öffentliche Rückfallbasis.
