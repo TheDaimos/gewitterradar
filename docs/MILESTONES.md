@@ -1,11 +1,23 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09.03 DEV/TEST – reale Geräteabnahme offen.**  
+Status: **2026/09 · V4.09.04 DEV/TEST – erneute reale Geräteabnahme offen.**  
 Öffentliche Rückfallbasis: **V4.08 FINAL.**  
 Native Integration bleibt bis zur späteren Release-Promotion: **0.20.0.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
 
 ## Erreicht
+
+### M25 – V4.09.04 Touch-Dragging und reines Kartenmedaillon gehärtet
+- realen Android-Befund aus V4.09.03 aufgenommen: Kompass ließ sich trotz synthetischem Pointer-Test nicht zuverlässig per Finger verschieben;
+- Kompass-Overlay selbst als systemübergreifende Maus-/Touch-Hitfläche gehärtet und verschachtelte Instrumentknoten aus der Pointer-Hitprüfung genommen;
+- denselben Pointer-/Touch-Pfad für das Medaillon auf Desktop, Android und iPad/iPad Pro verbindlich gemacht;
+- Vollbild-Medaillon von der History-/Tendenz-Layoutklasse entkoppelt und auf die reine Trendanzeige aus Medaillon + Pfeil reduziert;
+- produktive Trendzustände `none / up / stable / down` über eigene Overlay-Regeln erhalten;
+- Layer-Schaltfläche näher an den Kartenrand gesetzt und ihre Position dynamisch direkt oberhalb der Leaflet/OpenStreetMap-Attribution berechnet;
+- getrennte lokale Sichtbarkeits- und Positionsspeicherung für beide Instrumente beibehalten;
+- statischen Vertrag und Browsermatrix um Pointer-Hitflächen, reine Medaillonstruktur und Attributionsabstand erweitert;
+- sichtbare bilinguale Release History auf **V4.09.04 · DEV · 2026/09** erweitert;
+- V4.09.03 als superseded Testzwischenstand dokumentiert; Release-/Freeze-/Golden-Schritte bleiben gesperrt.
 
 ### M24 – V4.09.03 Vollbild-Bedienelemente vervollständigt
 - Vollbild-Testschaltflächen fail-closed an den echten Warnsystem-Simulationszustand gebunden, sodass das Reparenting der Karte die Sichtbarkeitsregel nicht mehr umgehen kann;
