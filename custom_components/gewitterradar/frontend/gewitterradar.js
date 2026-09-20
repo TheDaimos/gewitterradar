@@ -10309,7 +10309,7 @@
           #map-fullscreen-dialog .map-legend { flex:0 0 auto; }
 
           .map-compass-overlay {
-            position:absolute;z-index:760;width:clamp(189px,31.2vmin,390px);aspect-ratio:1 / 1;
+            position:absolute;z-index:760;width:clamp(188.5px,31.2vmin,390px);aspect-ratio:1 / 1;
             display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;
             user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
             filter:drop-shadow(0 14px 30px rgba(0,0,0,.44));
@@ -12421,7 +12421,7 @@
 
           @media (max-width:720px) {
             .map-card.map-size-large #map { height:min(70dvh,640px);min-height:430px; }
-            .map-compass-overlay { width:clamp(172px,46.8vmin,299px); }
+            .map-compass-overlay { width:clamp(171.6px,46.8vmin,299px); }
             .map-medallion-overlay { width:clamp(92px,28vmin,150px); }
             .map-instrument-toggle { width:27px;height:27px;border-radius:8px; }
             .map-display-btn { padding:0 9px;font-size:7.5px; }
