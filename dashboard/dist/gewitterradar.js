@@ -9809,7 +9809,7 @@
           /* V4.09.01 – drei bewusst klar getrennte Kartengrößen.
              Standard bleibt geometrisch exakt der bisherige Zustand. */
           .map-card.map-view-large #map {
-            height:clamp(520px,72dvh,900px);
+            height:clamp(600px,78dvh,900px);
             aspect-ratio:auto;
           }
           .map-view-switch {
