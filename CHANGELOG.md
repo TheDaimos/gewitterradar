@@ -1,5 +1,25 @@
 # Changelog
 
+## V4.09.05 TEST CANDIDATE — Android-Touch-Dragging
+
+> **Noch nicht veröffentlicht.** V4.09.04 funktionierte auf Desktop vollständig, auf Android ließen sich Kompass und Medaillon jedoch nur ein-/ausblenden, nicht per Finger verschieben. V4.09.05 ergänzt deshalb einen nativen Touch-Event-Fallback und verkleinert das Vollbild-Medaillon ausschließlich auf Android um 15 %.
+
+### Fixed
+
+- Add a real non-passive `touchstart/touchmove/touchend/touchcancel` fallback for fullscreen Compass and Medallion in addition to Pointer Events.
+- Keep Pointer Events as the normal mouse/pen path and as a fallback where touch pointer capture works.
+- Prevent Leaflet/browser panning from stealing the instrument gesture by handling the touch sequence on the overlay target with `passive:false` and capture enabled.
+- Preserve independent normalized saved positions and visibility for Compass and Medallion.
+- Render the fullscreen Medallion **exactly 15 % smaller on Android only**; Desktop and iPad sizing stay unchanged.
+- Advance the separate-window marker to `gewitterradar_window_version=40905`.
+
+### Validation
+
+- Browser matrix now supplies realistic Android/iPad user agents and validates the Android-only size class.
+- Fix the synthetic PointerEvent regression test to mark generated touch pointers as primary, matching real device behavior.
+- Static contract requires the native touch fallback, Android detection and the 15 % mobile size rule.
+
+
 ## V4.09.04 TEST CANDIDATE — Vollbild-Overlay-Dragging und reines Trendmedaillon
 
 > **Noch nicht veröffentlicht.** Reale Android-Prüfung von V4.09.03 zeigte, dass der sichtbare Kompass-Touchbereich nicht zuverlässig als Drag-Fläche wirkte und das Kartenmedaillon durch die gemeinsame `.trend`-Layoutklasse den History-/Trendblock beeinflussen konnte. V4.08 bleibt unveränderte öffentliche Rückfallbasis; Merge, Freeze, Golden Master und öffentlicher Release bleiben bis zur erneuten Geräteabnahme gesperrt.
