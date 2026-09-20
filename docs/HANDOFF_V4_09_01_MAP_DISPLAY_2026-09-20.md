@@ -32,7 +32,7 @@ Aktueller Head:
 
 `d6b2b68bb36f9e0e9f1a9b20d0526c81b47cc308`
 
-Dieser Zweig ist **14 Commits vor `main` und 0 Commits dahinter**.
+Dieser Zweig wurde von `main`-Commit `8f8d1a03df220588985ed2e59c0abc127dd32e4f` abgezweigt und enthält darauf **14 V4.09.01-Kandidaten-Commits**. Seit der anschließenden Handoff-Dokumentation kann `main` zusätzliche reine Dokumentations-Commits enthalten; diese formale Git-Divergenz ist **keine Runtime-Abweichung** und soll vor der Geräteabnahme nicht durch einen unkontrollierten Merge aufgelöst werden.
 
 Der zuletzt vollständig automatisiert geprüfte Runtime-/Teststand ist:
 
