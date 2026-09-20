@@ -10335,7 +10335,7 @@
           #map-fullscreen-dialog .location-dropdown { z-index:2147483645; }
           #map-fullscreen-dialog .map-top-controls { top:54px; }
           .map-instrument-controls {
-            position:absolute;z-index:2147483646;top:10px;left:10px;
+            position:absolute;z-index:2147483646;top:10px;left:54px;
             display:flex;align-items:center;gap:5px;pointer-events:auto;
           }
           .map-instrument-controls[hidden] { display:none!important; }
