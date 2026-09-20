@@ -9949,7 +9949,7 @@
           }
 
           /* V4.09.01 – dieselbe Leaflet-Instanz bleibt in allen Größen erhalten. */
-          .map-card.map-size-large #map { height:min(72dvh,820px);min-height:520px;aspect-ratio:auto; }
+          .map-card.map-size-large #map { height:min(82dvh,900px);min-height:600px;aspect-ratio:auto; }
           #map-fullscreen-dialog {
             width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;
             color:var(--b-text);background:#090b0f;overflow:hidden;
