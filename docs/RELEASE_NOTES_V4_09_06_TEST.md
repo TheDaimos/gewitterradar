@@ -33,6 +33,8 @@ Datum: **20.09.2026**
 
 Die aktuelle Bedienung und Darstellung der frei beweglichen Standort-Pille wird als **gut und ausreichend** angenommen.
 
+Die aktuelle Vollbilddarstellung von **Kompass und Medaillon** wurde auf Android real geprüft und die gezeigten Größen wurden ausdrücklich als passend bestätigt. Dieser Größenstand ist damit für V4.09.06 visuell abgenommen und wird ohne neuen ausdrücklichen Auftrag nicht mehr verändert.
+
 Bekannte und ausdrücklich akzeptierte Einschränkung:
 - die automatische Mehrspaltigkeit der Standortliste funktioniert derzeit nicht zuverlässig;
 - dieser Punkt bleibt bewusst unverändert und ist kein Blocker;
@@ -51,3 +53,10 @@ Bekannte und ausdrücklich akzeptierte Einschränkung:
 9. Position nach Verlassen/erneutem Öffnen des Vollbilds kontrollieren.
 
 Keine Promotion vor ausdrücklicher Geräteabnahme.
+
+## CI-Status zum Übergabezeitpunkt
+
+- `Validate Gewitterradar integration`: **PASS**.
+- `Hi-Res asset retention`: **PASS**.
+- `Validate shared Gewitterradar frontend`: **FAIL** im Diagnose-FREEZE-Lifecycle-Harness. Der gemeldete Zustand lautet `mode=freeze`, `angle=45`, `activeCssAnimations=0`, `activeTimers=0`, `activeRafLoops=0`.
+- Dieser offene Prüfpfad ist vor einer Release-Promotion zu klären; er ändert nicht den real bestätigten Größenstand der Vollbildinstrumente.
