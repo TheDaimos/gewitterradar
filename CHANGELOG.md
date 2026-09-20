@@ -15,6 +15,8 @@
 - Harden the separate-window presentation so the Gewitterradar card itself covers the Home-Assistant shell and the fullscreen dialog has a fixed viewport fallback.
 - Add a dedicated `gewitterradar_window_version=40902` marker to prevent ambiguity with the first V4.09.01 popup path during device retesting.
 - Keep the same Leaflet instance, selected compass reuse, pointer/touch dragging, radii, clustering and protected V4.08 baseline unchanged.
+- Replace the obsolete visible Release History planning block (including the abandoned XL wording) with the actual bilingual **V4.09.02 · DEV** test-candidate entry.
+- Document the complete V4.09.01 → V4.09.02 real-device findings, current test state, release gates and next-chat handoff in the canonical repository.
 
 ## V4.09.01 TEST CANDIDATE — Kartenansichten
 
