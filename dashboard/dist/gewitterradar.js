@@ -766,6 +766,7 @@
         "map.view_size_aria": "Kartengröße",
         "settings.map_display": "Kartendarstellung",
         "settings.map_display_sub": "Größe und separates Kartenfenster",
+        "settings.map_window_label": "Karte separat anzeigen",
         "settings.open_map_window": "In eigenem Fenster öffnen",
         'map.active_under':'Aktiv < {minutes} Min',
         'map.age_range':'{from}–{to} Min',
@@ -987,6 +988,7 @@
         "map.view_size_aria": "Map size",
         "settings.map_display": "Map display",
         "settings.map_display_sub": "Size and separate map window",
+        "settings.map_window_label": "Show map separately",
         "settings.open_map_window": "Open in separate window",
         'map.active_under':'Active < {minutes} Min',
         'map.age_range':'{from}–{to} Min',
@@ -1242,6 +1244,7 @@
         "map.view_size_aria": "Taille de la carte",
         "settings.map_display": "Affichage de la carte",
         "settings.map_display_sub": "Taille et fenêtre de carte séparée",
+        "settings.map_window_label": "Afficher la carte séparément",
         "settings.open_map_window": "Ouvrir dans une fenêtre séparée",
         "map.active_under": "Actifs < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -1496,6 +1499,7 @@
         "map.view_size_aria": "Tamaño del mapa",
         "settings.map_display": "Visualización del mapa",
         "settings.map_display_sub": "Tamaño y ventana de mapa separada",
+        "settings.map_window_label": "Mostrar mapa por separado",
         "settings.open_map_window": "Abrir en una ventana separada",
         "map.active_under": "Activos < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -1750,6 +1754,7 @@
         "map.view_size_aria": "Tamanho do mapa",
         "settings.map_display": "Visualização do mapa",
         "settings.map_display_sub": "Tamanho e janela de mapa separada",
+        "settings.map_window_label": "Mostrar mapa separadamente",
         "settings.open_map_window": "Abrir em janela separada",
         "map.active_under": "Ativas < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -2004,6 +2009,7 @@
         "map.view_size_aria": "Kortstørrelse",
         "settings.map_display": "Kortvisning",
         "settings.map_display_sub": "Størrelse og separat kortvindue",
+        "settings.map_window_label": "Vis kort separat",
         "settings.open_map_window": "Åbn i separat vindue",
         "map.active_under": "Aktive < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -2258,6 +2264,7 @@
         "map.view_size_aria": "Kartstorlek",
         "settings.map_display": "Kartvisning",
         "settings.map_display_sub": "Storlek och separat kartfönster",
+        "settings.map_window_label": "Visa karta separat",
         "settings.open_map_window": "Öppna i separat fönster",
         "map.active_under": "Aktiva < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -2512,6 +2519,7 @@
         "map.view_size_aria": "Kaartgrootte",
         "settings.map_display": "Kaartweergave",
         "settings.map_display_sub": "Grootte en apart kaartvenster",
+        "settings.map_window_label": "Kaart apart weergeven",
         "settings.open_map_window": "Openen in apart venster",
         "map.active_under": "Actief < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -2766,6 +2774,7 @@
         "map.view_size_aria": "Rozmiar mapy",
         "settings.map_display": "Widok mapy",
         "settings.map_display_sub": "Rozmiar i osobne okno mapy",
+        "settings.map_window_label": "Pokaż mapę osobno",
         "settings.open_map_window": "Otwórz w osobnym oknie",
         "map.active_under": "Aktywne < {minutes} Min",
         "map.age_range": "{from}–{to} Min",
@@ -3020,6 +3029,7 @@
           "map.view_size_aria": "Dimensione mappa",
           "settings.map_display": "Visualizzazione mappa",
           "settings.map_display_sub": "Dimensione e finestra mappa separata",
+          "settings.map_window_label": "Mostra mappa separatamente",
           "settings.open_map_window": "Apri in finestra separata",
           "map.active_under": "Attivi < {minutes} Min",
           "map.age_range": "{from}–{to} Min",
@@ -3273,6 +3283,7 @@
           "map.view_size_aria": "Kartstørrelse",
           "settings.map_display": "Kartvisning",
           "settings.map_display_sub": "Størrelse og separat kartvindu",
+          "settings.map_window_label": "Vis kart separat",
           "settings.open_map_window": "Åpne i eget vindu",
           "map.active_under": "Aktive < {minutes} Min",
           "map.age_range": "{from}–{to} Min",
@@ -3526,6 +3537,7 @@
           "map.view_size_aria": "Kartan koko",
           "settings.map_display": "Karttanäkymä",
           "settings.map_display_sub": "Koko ja erillinen karttaikkuna",
+          "settings.map_window_label": "Näytä kartta erikseen",
           "settings.open_map_window": "Avaa erilliseen ikkunaan",
           "map.active_under": "Aktiivinen < {minutes} Min",
           "map.age_range": "{from}–{to} Min",
@@ -3779,6 +3791,7 @@
           "map.view_size_aria": "Velikost mapy",
           "settings.map_display": "Zobrazení mapy",
           "settings.map_display_sub": "Velikost a samostatné okno mapy",
+          "settings.map_window_label": "Zobrazit mapu samostatně",
           "settings.open_map_window": "Otevřít v samostatném okně",
           "map.active_under": "Aktivní < {minutes} Min",
           "map.age_range": "{from}–{to} Min",
@@ -4032,6 +4045,7 @@
           "map.view_size_aria": "Μέγεθος χάρτη",
           "settings.map_display": "Προβολή χάρτη",
           "settings.map_display_sub": "Μέγεθος και ξεχωριστό παράθυρο χάρτη",
+          "settings.map_window_label": "Εμφάνιση χάρτη ξεχωριστά",
           "settings.open_map_window": "Άνοιγμα σε ξεχωριστό παράθυρο",
           "map.active_under": "Ενεργοί < {minutes} λεπτά",
           "map.age_range": "{from}–{to} λεπτά",
@@ -4285,6 +4299,7 @@
           "map.view_size_aria": "Térképméret",
           "settings.map_display": "Térképmegjelenítés",
           "settings.map_display_sub": "Méret és külön térképablak",
+          "settings.map_window_label": "Térkép külön megjelenítése",
           "settings.open_map_window": "Megnyitás külön ablakban",
           "map.active_under": "Aktív < {minutes} perc",
           "map.age_range": "{from}–{to} perc",
@@ -4538,6 +4553,7 @@
             "map.view_size_aria": "Kartengrößn",
             "settings.map_display": "Kartnansicht",
             "settings.map_display_sub": "Größ und a eigens Kartnfenster",
+            "settings.map_window_label": "Kartn extra anzeigen",
             "settings.open_map_window": "In am eign Fenster aufmachn",
             "map.active_under": "Frisch < {minutes} Min",
             "map.age_range": "{from}–{to} Min",
@@ -4792,6 +4808,7 @@
             "map.view_size_aria": "Koortgrött",
             "settings.map_display": "Koortansicht",
             "settings.map_display_sub": "Grött un egen Koortfinster",
+            "settings.map_window_label": "Koort extra wiesen",
             "settings.open_map_window": "In egen Finster opmaken",
             "map.active_under": "Frisch < {minutes} Min",
             "map.age_range": "{from}–{to} Min",
@@ -5046,6 +5063,7 @@
             "map.view_size_aria": "Kartngröße",
             "settings.map_display": "Kartnansicht",
             "settings.map_display_sub": "Größe un eisches Kartnfenster",
+            "settings.map_window_label": "Kartn extra zeischn",
             "settings.open_map_window": "In eischem Fenster uffmachn",
             "map.active_under": "Frisch < {minutes} Min",
             "map.age_range": "{from}–{to} Min",
@@ -5300,6 +5318,7 @@
             "map.view_size_aria": "Kartagröß",
             "settings.map_display": "Kartaansicht",
             "settings.map_display_sub": "Größ ond a eiges Kartafenster",
+            "settings.map_window_label": "Karta extra anzeiga",
             "settings.open_map_window": "In am eiga Fenschter aufmacha",
             "map.active_under": "Frisch < {minutes} Min",
             "map.age_range": "{from}–{to} Min",
@@ -19838,7 +19857,7 @@ ${this._diagnosticStormText(8)}`;}
       const settingsWindow=this.shadow.getElementById('settings-map-window');
       if (settingsTitle) settingsTitle.textContent=this._mapViewLabel('settings.map_display','Kartendarstellung');
       if (settingsSub) settingsSub.textContent=this._mapViewLabel('settings.map_display_sub','Größe und separates Kartenfenster');
-      if (settingsWindowLabel) settingsWindowLabel.textContent=this._mapViewLabel('settings.map_display','Kartendarstellung');
+      if (settingsWindowLabel) settingsWindowLabel.textContent=this._mapViewLabel('settings.map_window_label','Karte separat anzeigen');
       if (settingsWindow) {
         const label=this._mapViewLabel('settings.open_map_window','In eigenem Fenster öffnen');
         settingsWindow.textContent=label;
@@ -19946,7 +19965,8 @@ ${this._diagnosticStormText(8)}`;}
         // nicht mehr zur Zoomleiste bzw. zur darunterliegenden Legende.
         const mapActionButtons = [
           this.shadow.getElementById('map-recenter'),
-          this.shadow.getElementById('map-strike-target')
+          this.shadow.getElementById('map-strike-target'),
+          this.shadow.getElementById('map-view-switch')
         ].filter(Boolean);
         mapActionButtons.forEach((button) => {
           if (button.parentElement !== mapEl) mapEl.appendChild(button);
