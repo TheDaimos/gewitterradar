@@ -42,38 +42,28 @@ Dieser Punkt ist ein **V4.09-Arbeitsauftrag**, nicht Bestandteil des eingefroren
 
 ## ACTIVE / VERSIONIERT
 
-### V4.09.04 – Vollbild-Instrumente systemübergreifend härten
+### V4.09.05 – Android-Touch-Dragging absichern
 
-Der aktive V4.09-Arbeitsblock wird als **V4.09.04-Testkandidat** auf `feature/v4.09.04-overlay-drag-fixes` fortgeführt. Grundlage ist V4.09.03; V4.08 bleibt unverändert eingefrorene öffentliche Rückfallbasis.
+Aktiver Teststand: `feature/v4.09.05-android-touch-drag`.
 
-Reale Befunde aus der Android-Prüfung von V4.09.03:
+Reale Abnahme von V4.09.04:
 
-- der Vollbild-Kompass war ein-/ausblendbar, ließ sich real per Touch jedoch nicht zuverlässig verschieben;
-- die Medaillon-Schaltfläche durfte ausschließlich die reine Trendanzeige steuern, das Kartenmedaillon war aber durch die gemeinsame `.trend`-Layoutklasse unnötig mit der History-/Tendenzeinheit gekoppelt;
-- die Layer-Schaltfläche soll näher an den unteren Kartenrand und knapp oberhalb von Leaflet/OpenStreetMap sitzen.
+- Desktop: Kompass und Medaillon ein-/ausblendbar und frei verschiebbar – **bestätigt**.
+- Android: beide ein-/ausblendbar, aber Finger-Dragging funktioniert nicht – **offener Fehler**.
+- Android: Medaillon soll gegenüber V4.09.04 **15 % kleiner** dargestellt werden.
+- iPad/iPad Pro: bleibt verbindliche Zielplattform für freies Touch-Dragging.
 
-Verbindlicher V4.09.04-Umfang:
+V4.09.05 ergänzt einen echten Touch-Event-Fallback neben dem bestehenden Pointer-Event-Pfad. `touchstart/touchmove/touchend/touchcancel` laufen nicht-passiv auf der jeweiligen Overlay-Fläche, damit Android/HA-WebView die Geste nicht an Leaflet oder das native Vollbild-`dialog` verliert. Pointer Events bleiben für Maus, Stift und kompatible Touch-Browser bestehen.
 
-- **Kompass und Medaillon auf Desktop, Android und iPad/iPad Pro frei verschiebbar** über denselben Pointer-Event-Pfad;
-- äußere Overlay-Flächen sind die aktiven Drag-Hitflächen; verschachtelte Grafik-/Instrumentknoten dürfen Touch nicht abfangen;
-- Medaillon im Vollbild ist **nur das Medaillon als reine Trendanzeige**: Basisgrafik + Pfeil, keine History, kein Tendenztext, keine Panel-/Verlaufseinheit;
-- produktive Trendzustände **keine Aktivität / zunehmend / stabil / abnehmend** bleiben gespiegelt;
-- Kompass-/Medaillon-Sichtbarkeit und normalisierte Positionen bleiben getrennt lokal im Browserprofil gespeichert;
-- Layer-Schaltfläche bleibt dauerhaft oberste Karten-Bedienebene und sitzt mit kleinem dynamischen Sicherheitsabstand direkt oberhalb der Leaflet/OpenStreetMap-Attribution;
-- bestehende Standortanzeige oben rechts, Warnsystem-Test-Fail-Closed, Standard/Groß/Vollbild, Startdarstellung und separates Kartenfenster bleiben erhalten;
-- gemeinsame bytegleiche Frontend-Auslieferung für native Integration und Dashboard;
-- automatisierte Browserabdeckung für Desktop, iPad und Android plus geschützte About-/Diagnose-/Hi-Res-Regressionen.
+Das Medaillon erhält eine Android-spezifische Größenklasse. Die Android-Abmessungen betragen exakt 85 % der bisherigen mobilen Werte; Desktop und iPad bleiben unverändert.
 
-V4.09.04 bleibt ein **DEV-/Testkandidat**. Vor Merge/Veröffentlichung ist eine erneute reale Geräteabnahme erforderlich, insbesondere Dragging von Kompass und reinem Medaillon auf Desktop, Android und iPad/iPad Pro sowie die neue Layer-Position.
+Vor Promotion erforderlich:
 
-Verbindliche Detaildokumentation:
-
-- `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`;
-- `docs/V4_09_02_MAP_DISPLAY_DEVICE_FIX.md` (historisch);
-- `docs/V4_09_03_FULLSCREEN_CONTROLS.md` (superseded);
-- `docs/V4_09_04_OVERLAY_DRAG_FIXES.md`;
-- `docs/RELEASE_NOTES_V4_09_04_TEST.md`;
-- `docs/HANDOFF_V4_09_04_OVERLAY_DRAG_FIXES_2026-09-20.md`.
+- reale Android-Prüfung beider Drag-Gesten;
+- Sichtprüfung der um 15 % reduzierten Android-Medaillongröße;
+- iPad/iPad Pro Touch-Regression;
+- Desktop Maus-Regression;
+- Layer-Control, Standort, Warnsystem-Test-Fail-Closed und separates Kartenfenster regressionsprüfen.
 
 Verbindlicher Abschlussstand von V4.08:
 
