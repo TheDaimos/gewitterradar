@@ -93,6 +93,10 @@ const server = http.createServer((req,res)=>{
           const layerControl=shadow.getElementById('map-display-control');
           const layerZ=Number(getComputedStyle(layerControl).zIndex);
           const instrumentZ=Number(getComputedStyle(instrumentControls).zIndex);
+          const attribution=map.querySelector('.leaflet-control-attribution');
+          const layerRect=layerControl.getBoundingClientRect();
+          const attributionRect=attribution?.getBoundingClientRect?.() || null;
+          const medallionTrendIcon=medallionOverlay.querySelector('.trend-icon');
           const fullscreenState={
             open:dialog.open,
             cardInDialog:mapCard.parentElement===dialog,
@@ -115,7 +119,17 @@ const server = http.createServer((req,res)=>{
             warningTestsFailClosed:[...shadow.querySelectorAll('[data-warning-test]')].every(node=>node.hidden),
             layerZ,
             instrumentZ,
-            layerAboveInstruments:layerZ>instrumentZ
+            layerAboveInstruments:layerZ>instrumentZ,
+            attributionPresent:!!attributionRect,
+            layerAboveAttribution:!!attributionRect && layerRect.bottom<=attributionRect.top+1,
+            layerAttributionGap:attributionRect ? attributionRect.top-layerRect.bottom : null,
+            compassOverlayPointerEvents:getComputedStyle(overlay).pointerEvents,
+            compassChildPointerEvents:getComputedStyle(compass).pointerEvents,
+            medallionOverlayPointerEvents:getComputedStyle(medallionOverlay).pointerEvents,
+            medallionChildPointerEvents:medallionTrendIcon ? getComputedStyle(medallionTrendIcon).pointerEvents : null,
+            medallionPure:!medallionOverlay.classList.contains('trend')
+              && !!medallionTrendIcon
+              && !medallionOverlay.querySelector('.tlabel,.trend-copy,.history-chart,.history-main')
           };
 
           card._setMapDisplayMode('standard');
@@ -200,11 +214,19 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.fullscreenState.warningTestsFailClosed,true,`${delivery}/${profile} warning test controls fail closed`);
         assert.equal(result.fullscreenState.layerZ,2147483647,`${delivery}/${profile} layer control top z-index`);
         assert.equal(result.fullscreenState.layerAboveInstruments,true,`${delivery}/${profile} layer control above instruments`);
+        assert.equal(result.fullscreenState.attributionPresent,true,`${delivery}/${profile} Leaflet attribution present`);
+        assert.equal(result.fullscreenState.layerAboveAttribution,true,`${delivery}/${profile} layer control above attribution`);
+        assert.ok(result.fullscreenState.layerAttributionGap>=2 && result.fullscreenState.layerAttributionGap<=10,`${delivery}/${profile} compact attribution gap ${JSON.stringify(result.fullscreenState)}`);
+        assert.equal(result.fullscreenState.compassOverlayPointerEvents,'auto',`${delivery}/${profile} compass overlay receives pointer events`);
+        assert.equal(result.fullscreenState.compassChildPointerEvents,'none',`${delivery}/${profile} compass child cannot steal touch drag`);
+        assert.equal(result.fullscreenState.medallionOverlayPointerEvents,'auto',`${delivery}/${profile} medallion overlay receives pointer events`);
+        assert.equal(result.fullscreenState.medallionChildPointerEvents,'none',`${delivery}/${profile} medallion child cannot steal touch drag`);
+        assert.equal(result.fullscreenState.medallionPure,true,`${delivery}/${profile} fullscreen medallion is pure trend instrument`);
         assert.deepEqual(result.restored,{dialogClosed:true,cardAtHome:true,compassAtHome:true,medallionHidden:true,instrumentControlsHidden:true,locationRestored:true,standardActive:true},`${delivery}/${profile} fullscreen exit`);
         assert.equal(result.settingsSection,true,`${delivery}/${profile} map settings section`);
         assert.equal(result.windowButton,true,`${delivery}/${profile} separate window button`);
         assert.equal(result.windowParam,'1',`${delivery}/${profile} separate window URL`);
-        assert.equal(result.windowVersion,'40903',`${delivery}/${profile} separate window version`);
+        assert.equal(result.windowVersion,'40904',`${delivery}/${profile} separate window version`);
         assert.equal(result.menuOpened,true,`${delivery}/${profile} context menu opens`);
         assert.equal(result.menuClosedAfterChoice,true,`${delivery}/${profile} context menu closes after choice`);
         assert.equal(result.startupStored,'fullscreen',`${delivery}/${profile} startup preference stored locally`);
@@ -217,7 +239,7 @@ const server = http.createServer((req,res)=>{
         assert.equal(result.controlInsideMap,true,`${delivery}/${profile} layer control inside map bounds`);
         assert.match(result.windowFeatures,/width=1280/,`${delivery}/${profile} window features`);
         await context.close();
-        console.log(`${delivery}/${profile}: V4.09 map display PASS`);
+        console.log(`${delivery}/${profile}: V4.09.04 map display PASS`);
       }
     }
 
@@ -257,7 +279,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(startupLast,{mode:'large',large:true},'per-device startup last-used mode');
     await startupContext.close();
-    console.log('dashboard/startup-preference: V4.09.03 map display PASS');
+    console.log('dashboard/startup-preference: V4.09.04 map display PASS');
 
     const context=await browser.newContext({viewport:{width:1280,height:800}});
     const page=await context.newPage();
@@ -280,7 +302,7 @@ const server = http.createServer((req,res)=>{
     });
     assert.deepEqual(detached,{mode:true,dialog:true,cardInDialog:true,compassInOverlay:true,controlDisplay:'none',hostWindowClass:true,dialogPosition:'fixed'},'separate-window mode');
     await context.close();
-    console.log('dashboard/detached-window: V4.09 map display PASS');
+    console.log('dashboard/detached-window: V4.09.04 map display PASS');
   } finally {
     await browser.close();
     server.close();
