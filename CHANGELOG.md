@@ -1,5 +1,18 @@
 # Changelog
 
+## V4.09.07 TEST CANDIDATE — Breitere iPad-Standortspalten
+
+> **Noch nicht veröffentlicht.** Die Instrumentgrößen bleiben unverändert. Korrigiert wird ausschließlich die adaptive Mehrspaltigkeit des Standortmenüs im Vollbild auf dem iPad.
+
+### Fixed
+
+- iPad-Mehrspaltigkeit verwendet mindestens **300 px Spaltenbreite**.
+- Auf iPad/iPad Pro maximal **2 Spalten** statt bis zu 3 schmalen Spalten.
+- Lange gespeicherte Standortnamen dürfen im Mehrspaltenmodus umbrechen statt abgeschnitten/ellipsiert zu werden.
+- Desktop- und Android-Instrumentgrößen bleiben unverändert.
+- Separate Fensterkennung auf `40907` angehoben.
+
+
 ## V4.09.06 TEST CANDIDATE — Frei bewegliche Standort-Pille
 
 > **Noch nicht veröffentlicht.** V4.09.06 erweitert den Vollbildpfad um eine frei verschiebbare Standort-Pille und ein adaptives Standortmenü.
