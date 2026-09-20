@@ -141,7 +141,7 @@ Detaillierte Testdokumentation:
 - `docs/V4_08_CLUSTER_RESOLUTION_ANALYSIS.md`;
 - `docs/V4_08_INFINITY_GFX.md`.
 
-## V4.09.01–V4.09.05 · 2026/09 – Kartenansichten und Vollbild-Instrumente
+## V4.09.01–V4.09.06 · 2026/09 – Kartenansichten und Vollbild-Instrumente
 
 Nach dem V4.08-Freeze begann die V4.09.xx-Linie mit einem klar begrenzten Kartenansichtsblock. V4.09.01 ergänzte **Standard · Groß · Vollbild**, ein separates Kartenfenster in den Einstellungen sowie den aktuell ausgewählten Kompass als im Vollbild wiederverwendetes und per Maus/Touch verschiebbares Overlay. Standard/Groß und die normalisierte Kompassposition wurden lokal gespeichert; die Leaflet-Instanz blieb beim Größenwechsel erhalten.
 
@@ -173,6 +173,8 @@ V4.09.04 ist weiterhin ein **DEV-/Testkandidat**; ein Merge nach `main`, Release
 Die Geräteprüfung von V4.09.04 bestätigte Desktop vollständig: Kompass und Medaillon waren ein-/ausblendbar und frei verschiebbar. Auf Android funktionierte zwar die Sichtbarkeitssteuerung, die Drag-Geste selbst jedoch weiterhin nicht. V4.09.05 ergänzt deshalb neben Pointer Events einen expliziten nicht-passiven Touch-Event-Pfad für die komplette Finger-Geste. Dieser Pfad ist bewusst nicht Android-exklusiv und dient auch iPad/iPad Pro als robuster Touch-Fallback. Zusätzlich wird das Medaillon anhand der Android-Kennung ausschließlich dort um exakt 15 % verkleinert; Desktop und iPad bleiben unverändert.
 
 V4.09.05 bleibt ein **DEV-/Testkandidat**. Vor Promotion ist die reale Android-Abnahme des Finger-Draggings zwingend; iPad/iPad Pro und Desktop werden anschließend regressionsgeprüft.
+
+V4.09.06 erweitert das Vollbild zusätzlich um eine frei verschiebbare Standort-Pille. Ihre Position wird normalisiert lokal gespeichert. Das Standortmenü entscheidet nicht nur anhand eines starren oberen/mittleren/unteren Bereichs, sondern misst den real verfügbaren Platz. Oben wird nach unten, unten nach oben geöffnet; in der Mitte wird mehrspaltig angeordnet. Reicht der Platz beispielsweise bei einer Position etwa 30 % oberhalb des unteren Randes für die vollständige einspaltige Liste nicht aus, wird automatisch auf mehrere Spalten gewechselt. Bleibt die Liste geöffnet, wird diese Anordnung während des Draggings live neu berechnet.
 
 Verbindliche Detaildokumentation:
 
