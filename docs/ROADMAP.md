@@ -69,6 +69,11 @@ Verbindlicher Abschlussstand von V4.08:
 
 ## DONE / SUPERSEDED
 
+
+**Festgeschriebener UI-Stand:** Die aktuelle Vollbildgröße von Kompass und Medaillon ist auf Android real abgenommen und bleibt unverändert. Die automatische Mehrspaltigkeit der Standortliste ist als bekannte Einschränkung akzeptiert und wird ohne neuen ausdrücklichen Auftrag nicht erneut geöffnet.
+
+**Offenes Gate:** Die Shared-Frontend-Prüfung ist im Diagnose-FREEZE-Lifecycle-Harness rot; Integrationsprüfung und Hi-Res-Retention sind grün. Vor Promotion zuerst den Prüfpfad klären, nicht die abgenommenen Instrumentgrößen wieder öffnen.
+
 ### V4.07 – weltweite Orts-Suche / dynamischer Bezugsstandort
 
 Der frühere V4.07-Roadmapblock ist abgeschlossen. Die Funktionen wurden über V4.07.56/V4.07.57 veröffentlicht und bilden zusammen mit den dauerhaft geschützten Diagnose-/Hi-Res-Verträgen die Basis für V4.08. Historische Details bleiben in `docs/HISTORY.md`, `docs/MILESTONES.md` und den V4.07-Release-Notes erhalten.
