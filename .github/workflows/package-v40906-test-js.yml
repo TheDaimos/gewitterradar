@@ -1,0 +1,39 @@
+name: Package V4.09.06 test JS
+
+on:
+  push:
+    branches:
+      - feature/v4.09.06-movable-location-pill
+    paths:
+      - ".github/workflows/package-v40906-test-js.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch revision
+        uses: actions/checkout@v4
+      - name: Verify and package canonical V4.09.06 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp -s frontend/gewitterradar.js custom_components/gewitterradar/frontend/gewitterradar.js
+          cmp -s frontend/gewitterradar.js dashboard/dist/gewitterradar.js
+          grep -q "const CARD_VERSION = '4.09.06';" frontend/gewitterradar.js
+          mkdir -p artifact
+          cp frontend/gewitterradar.js artifact/gewitterradar-v4.09.06.js
+          cd artifact
+          zip -9 Gewitterradar_V4.09.06_TEST_JS.zip gewitterradar-v4.09.06.js
+          sha256sum Gewitterradar_V4.09.06_TEST_JS.zip > Gewitterradar_V4.09.06_TEST_JS.zip.sha256
+      - name: Upload V4.09.06 test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09.06_TEST_JS
+          path: |
+            artifact/Gewitterradar_V4.09.06_TEST_JS.zip
+            artifact/Gewitterradar_V4.09.06_TEST_JS.zip.sha256
+          if-no-files-found: error
+          retention-days: 7
