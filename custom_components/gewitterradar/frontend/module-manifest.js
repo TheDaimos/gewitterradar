@@ -2,6 +2,14 @@ import { registerModule } from "./modules/core/registry.js?v=41002";
 export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-2026-09-21"});
 export const EXPECTED_MODULES=Object.freeze([
   {
+    "id": "core.manifest",
+    "version": "1.1.0",
+    "group": "Kern",
+    "function": "Modulmanifest",
+    "subfunctions": ["Sollstand", "Produktversion", "Buildkennung"],
+    "file": "module-manifest.js"
+  },
+  {
     "id": "core.registry",
     "version": "1.0.0",
     "group": "Kern",
@@ -90,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -137,6 +145,14 @@ export const EXPECTED_MODULES=Object.freeze([
       "Diagnosegeometrie"
     ],
     "file": "modules/instruments/compass-selector.js"
+  },
+  {
+    "id": "diagnostics.module-view",
+    "version": "1.0.0",
+    "group": "Diagnose",
+    "function": "Module & Versionen",
+    "subfunctions": ["Geladene Module", "Soll/Ist-Vergleich", "Versionsstatus", "Diagnose kopieren", "JSON herunterladen"],
+    "file": "modules/diagnostics/module-view.js"
   },
   {
     "id": "diagnostics.cockpit",
@@ -238,4 +254,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.0.0",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.1.0",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

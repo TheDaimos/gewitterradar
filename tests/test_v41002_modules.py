@@ -10,10 +10,16 @@ def test_declared_modules_exist_in_all_delivery_trees():
 def test_modules_carry_own_versions():
  for name in CONTRACT["moduleFiles"]:
   text=(FRONTEND/name).read_text(encoding="utf-8")
-  if name=="modules/core/registry.js":assert "core.registry" in text
-  else:assert re.search(r'version\s*:\s*["\']1\.0\.0["\']',text)
+  assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
 def test_main_is_loader_not_monolithic_class():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  assert "class GewitterradarCard extends HTMLElement {}" in main
  assert "installSkeleton(GewitterradarCard,__moduleDeps);" in main
  assert len(main.encode("utf-8"))<1_400_000
+
+def test_module_version_view_is_part_of_the_contract():
+ assert "modules/diagnostics/module-view.js" in CONTRACT["moduleFiles"]
+ text=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
+ assert "Module & Versionen" in text
+ assert "moduleDiagnostics(EXPECTED_MODULES)" in text
+ assert "moduleRegistrySnapshot(EXPECTED_MODULES)" in text

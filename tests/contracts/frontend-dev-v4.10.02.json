@@ -4,8 +4,8 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "98621c9a65b412ff4d700abc12d589b3c9cde4105afa5b3abea17eb1794f6861",
-  "sizeBytes": 1027101,
+  "sha256": "aa9ef67ef636e5b2c242b47104da4f328546247fcdad43c548101dfa825a3fef",
+  "sizeBytes": 1027236,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
@@ -35,8 +35,8 @@
       "sizeBytes": 16917
     },
     "modules/ui/controls.js": {
-      "sha256": "1f638d17def1c55d4cc37383939fbbc3949ddcca2ec0570f54e5f36a53de5126",
-      "sizeBytes": 182423
+      "sha256": "8028e7c825828511454a4673f8f6b57703d9bfbb9290a977037675ef464affc9",
+      "sizeBytes": 182457
     },
     "modules/ui/i18n-settings.js": {
       "sha256": "c0fdda725d41e47e8b38dc4f1a43ac30fa5193888a707804f7da22b5c2167b3d",
@@ -87,8 +87,12 @@
       "sizeBytes": 4211
     },
     "module-manifest.js": {
-      "sha256": "57461e807639971914aaf34911f7f76d29967f1a0ed07834b423a65d7b111660",
-      "sizeBytes": 5748
+      "sha256": "0a4c43239b817316f2b10e04864e5a436bd2534330e9c2001032038e3b325097",
+      "sizeBytes": 6270
+    },
+    "modules/diagnostics/module-view.js": {
+      "sha256": "9ba89955bd46273ff3068f8c871b2921f985e48446d14ddb4e29a79a801c0b77",
+      "sizeBytes": 9258
     }
   }
 }
