@@ -87,11 +87,6 @@ jobs:
           s=p.read_text(encoding='utf-8').replace(old_sha,release_sha).replace('FRONTEND_SIZE=2234776','FRONTEND_SIZE='+str(release_size))
           p.write_text(s,encoding='utf-8')
 
-          p=Path('.github/workflows/publish-v4.09.yml')
-          s=p.read_text(encoding='utf-8')
-          if s.count(old_sha)<2: raise SystemExit('publisher SHA markers missing')
-          s=s.replace(old_sha,release_sha).replace('2234776',str(release_size))
-          p.write_text(s,encoding='utf-8')
 
           z=Path('Gewitterradar_V4.09.27_TEST_COORD_CLEAR_DROPDOWN.zip')
           if z.exists(): z.unlink()
