@@ -15,6 +15,25 @@ Bevorzugte Bootstrap-Mnemoniken, vollständig gleichwertig:
 
 Alle Bootstrap-Aliase sind fail-closed: Die aktuelle `TheDaimos/project-defaults/START_HERE.md` muss tatsächlich geladen und befolgt werden, bevor Arbeitsbereitschaft erklärt wird. Ein alleinstehendes `Deimos`/`Daimos` darf nicht zuerst aus Erinnerung oder nur als Projektbezug beantwortet werden.
 
+## Harte V4.10-Regel: Deploy Relay Agent ist Pflichtpfad
+
+Die V4.10-Modularisierung von Gewitterradar muss **vollständig über Deploy Relay Agent (DRA)** entwickelbar, installierbar, aktualisierbar, prüfbar und wiederherstellbar sein.
+
+Verbindlich gilt:
+
+- DRA muss den vollständigen modularen Frontend-Baum als einen konsistenten Gewitterradar-Stand deployen können.
+- DRA muss geänderte Module erkennen können, ohne dass der Benutzer einzelne JS-Dateien manuell registrieren oder kopieren muss.
+- Der stabile Gewitterradar-Einstiegspunkt bleibt erhalten; Unter-Module werden nicht einzeln in Home Assistant registriert.
+- DRA muss die installierte Gewitterradar-Anwendungsversion und den zugehörigen Commit nachvollziehen können.
+- DRA muss Snapshots vor Änderungen erstellen und gezielte Wiederherstellung älterer Gewitterradar-Stände ermöglichen.
+- Die Snapshot-Aufbewahrung ist pro Projekt konfigurierbar.
+- DRA muss Frontend-Neuladen, Integrations-Neuladen und vollständigen Home-Assistant-Neustart korrekt unterscheiden und anzeigen.
+- Das Gewitterradar-Menü `Module & Versionen` muss den tatsächlich im Browser geladenen Modulstand zeigen; DRA liefert dazu den installierten Sollstand.
+- Eine V4.10-Iteration ist **nicht abgeschlossen**, solange der zugehörige Stand nicht über DRA installier- und rücksetzbar ist.
+- Manuelles Kopieren einzelner Gewitterradar-JavaScript-Dateien ist nur noch ein dokumentierter Notfall-/Diagnoseweg und kein regulärer Entwicklungsablauf.
+
+Diese Regel ist ein Release-Gate für V4.10 und folgende modulare Stände.
+
 ## Schlüsselwort: „Schlachtplan“
 
 Für die V4.10-Modularisierung ist **„Schlachtplan“** ein verbindlicher Gewitterradar-Projektbegriff.
