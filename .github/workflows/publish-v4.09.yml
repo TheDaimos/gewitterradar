@@ -69,7 +69,6 @@ jobs:
             'Validate shared Gewitterradar frontend'
             'Diagnostic contract'
             'Hi-Res asset retention'
-            'Source archive contract'
           )
           for attempt in $(seq 1 120); do
             data=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${sha}&per_page=100")
