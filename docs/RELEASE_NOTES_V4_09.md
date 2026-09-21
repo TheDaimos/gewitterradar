@@ -2,7 +2,7 @@
 
 Status: **FINAL**  
 Öffentliche Produktversion: **V4.09**  
-Akzeptierter interner Ausgangsbuild: **V4.09.26**  
+Akzeptierter interner Ausgangsbuild: **V4.09.28**  
 Native Integration: **0.21.0**
 
 ## Neu in V4.09
@@ -19,13 +19,18 @@ Die bevorzugte **Standardansicht** wird lokal auf dem jeweiligen Gerät bzw. Bro
 
 Der kompakte 3D-Kartenansichtsschalter verwendet die freigegebene Gold-/Blau-/Rot-Darstellung und öffnet ein responsives Auswahlmenü. Titel und Ansichtsoptionen sind in allen 19 Produktsprachen übersetzt.
 
-In den Einstellungen stehen **Cluster-Auflösung** und **Cluster-Navigation** jetzt am Anfang von **Kartendarstellung**. Der Abschnitt **Radien** enthält nur noch die Radiussteuerung und nutzt den zentralen Scrollbereich des Einstellungsdialogs, sodass auch der Gefahrenradius bei niedriger Fensterhöhe vollständig erreichbar bleibt.
+In den Einstellungen stehen **Cluster-Auflösung** und **Cluster-Navigation** jetzt am Anfang von **Kartendarstellung**. Der Abschnitt **Radien** enthält nur noch die Radiussteuerung und besitzt einen eigenen viewportbasiert begrenzten Touch-Scrollbereich mit zusätzlichem unteren Scrollraum. Dadurch bleibt auch der Gefahrenradius auf kurzen Browser- und WebView-Flächen vollständig erreichbar.
 
 ### Eigenes Kartenfenster
 
 Über die Einstellungen kann die Gewitteransicht mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Fenster geöffnet werden. Die normale Dashboard-Ansicht bleibt davon getrennt.
 
 Die zugehörige Schaltfläche und die Standardansicht-Auswahl wurden an den Gewitterradar-Premiumstil angepasst.
+
+### Standortsuche und Koordinateneingabe
+
+- Die Eingabefelder für **Bezeichnung**, **Breitengrad** und **Längengrad** besitzen jetzt einheitliche `×`-Schaltflächen zum direkten Leeren.
+- Die vorhandene Ortssuche und die Übernahme von Koordinaten bleiben unverändert; die neuen Löschschaltflächen ergänzen ausschließlich die Bedienung der Eingabefelder.
 
 ### Vollbild-Instrumente
 
@@ -57,8 +62,8 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Release-Identität
 
-- Frontend: **2.234.776 Bytes**
-- Frontend SHA256: `44fb540e33e3d2428cd1c8b53cc9a256179831cb69eef877cd17997b7b58c048`
+- Frontend: **2.238.838 Bytes**
+- Frontend SHA256: `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`
 - Externes Locale-Modul: **741.069 Bytes**
 - Locale SHA256: `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`
 - Runtime-Kompassschalter SHA256: `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`
@@ -67,7 +72,7 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Provenienz und Schutz
 
-V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.26**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
+V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.28**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
 
 Die bestehenden Schutzverträge bleiben erhalten, insbesondere:
 
