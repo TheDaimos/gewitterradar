@@ -18,16 +18,16 @@ assert.equal(contract.acceptedFrontend.version, '4.07.56');
 assert.equal(contract.acceptedFrontend.build, 'V4.07-TEST56-2026-09-16');
 
 const releaseContract = JSON.parse(
-  fs.readFileSync(path.join(root, 'tests/contracts/frontend-release-v4.08.json'), 'utf8'),
+  fs.readFileSync(path.join(root, 'tests/contracts/frontend-release-v4.09.json'), 'utf8'),
 );
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
-assert.ok(frontendText.includes("const CARD_VERSION = '4.08';"), 'Expected V4.08 CARD_VERSION');
-assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.08';"), 'Expected V4.08 CARD_DISPLAY_VERSION');
-assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';"), 'Expected V4.08 final build marker');
+assert.ok(frontendText.includes("const CARD_VERSION = '4.09';"), 'Expected V4.09 CARD_VERSION');
+assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.09';"), 'Expected V4.09 CARD_DISPLAY_VERSION');
+assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"), 'Expected V4.09 final build marker');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.08 frontend size differs from release contract');
-assert.equal(frontendSha, releaseContract.sha256, 'V4.08 frontend differs from release contract');
+assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.09 frontend size differs from release contract');
+assert.equal(frontendSha, releaseContract.sha256, 'V4.09 frontend differs from release contract');
 
 const tolerance = contract.browserBaseline.geometryTolerancePx;
 assert.ok(Number.isFinite(tolerance) && tolerance >= 0 && tolerance <= 0.02);
