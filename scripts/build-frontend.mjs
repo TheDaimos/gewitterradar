@@ -7,8 +7,8 @@ import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 
-const acceptedCandidateFrontendSha='369b52240c2df2f9605b84c403570f3f3db45adb8a3151eddf5637f58ad2b288';
-const acceptedCandidateFrontendSize=2235794;
+const acceptedCandidateFrontendSha='d8a7e12390c3ca7089afbb7ef269cd8fd471a7f4c8bd1370afde86846297bc7c';
+const acceptedCandidateFrontendSize=2235681;
 const normalizeV409FinalToAcceptedCandidate=text=>text
  .replace('Gewitterradar Card V4.09 FINAL','Gewitterradar Card V4.09.25 DEV')
  .replace("const CARD_VERSION = '4.09';","const CARD_VERSION = '4.09.25';")
