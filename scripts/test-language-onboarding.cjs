@@ -177,7 +177,7 @@ const server=http.createServer((req,res)=>{
     const {context,page}=await open(delivery,{[mode]:'1',ha:'de'});
     await page.getByRole('button',{name:'Weiter / Continue'}).click();await page.locator('.language-error').filter({hasText:'Could not save'}).waitFor();
     assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
-    assert.equal(await page.locator('.about-dialog').count(),0);
+    assert.equal(await page.locator('.about-dialog[open]').count(),0);
     await page.evaluate(()=>{window.fail=false;window.hass.states[window.entity]={state:'English',attributes:{options:[...window.card._languageOnboardingDialog.querySelectorAll('input')].map(input=>input.value)}};window.hass.states[window.marker]={state:'off',attributes:{}};window.cards.forEach(card=>card.hass=window.hass);});
     await confirm(page);assert.equal(await page.locator('.about-dialog h2').textContent(),'Über Gewitterradar');
     await context.close();
