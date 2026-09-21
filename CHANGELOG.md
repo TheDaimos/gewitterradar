@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026/09 — V4.09 FINAL / native integration 0.21.0
+
+### Kartenansichten & separates Kartenfenster
+
+- Add the direct map views **Standard**, **Groß** and **Vollbild** with a device-/browser-profile-specific **Standardansicht**.
+- Add the compact 3D map-view selector with responsive placement and a fully localized 19-variant popup.
+- Add the separate storm-map window using the currently selected map state and compass while keeping the normal Dashboard view independent.
+- Replace the native device-specific map-view picker in Settings with the established Gewitterradar custom dropdown style.
+- Refine the Settings action for the separate map window into a clearly recognizable premium button.
+
+### Vollbild-Instrumente & Standortbedienung
+
+- Add independently showable/hideable **Kompass** and **Medaillon** instruments in fullscreen.
+- Keep Compass and Medallion freely movable by mouse and touch without changing their accepted instrument sizes.
+- Add the freely movable fullscreen location pill with locally stored position and an adaptive location menu.
+- Open the location menu downward near the top, upward near the bottom and use responsive multi-column/scroll behavior where useful.
+- Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.
+
+### Hilfe, Sprachen & Versionsverlauf
+
+- Expand **Hilfe & Hinweise** with map display, Standard view, fullscreen controls, 3D selector and the separate map window.
+- Synchronize the complete Help & Notes structure across **15 languages plus 4 German dialect variants = 19 variants**.
+- Localize the compact map-view popup itself across all 19 variants and center its heading.
+- Restore and protect the permanent **Zukünftige Entwicklungen · Geplant / Future Developments · Planned** section above the public Release History.
+- Keep internal V4.09.xx DEV/TEST iterations out of the public Release History; the public history contains only released versions plus the future-planning section.
+
+### Nächste geplante Entwicklung
+
+- Unterschiedliche Medaillions bereitstellen.
+- Verbesserungen der Kompass- und Medaillion-Auswahl.
+- Implementierung von Wetterdiensten via WeatherRouter.
+
 ## 2026/09 — V4.08 FINAL / native integration 0.20.0
 
 ### Cluster-Auflösung & Cluster-Navigation
