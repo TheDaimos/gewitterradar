@@ -153,11 +153,11 @@ Die Einstellungen bündeln **Cluster-Auflösung** und **Cluster-Navigation** nun
 
 Der sichtbare Versionsverlauf trennt seit V4.09 strikt zwischen öffentlichen Releases und internen Entwicklungsständen. Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“** bleibt oberhalb der veröffentlichten Historie erhalten; interne V4.09.xx-DEV-/TEST-Iterationen werden dort nicht als öffentliche Releases geführt.
 
-Nach der Radien-Scrollkorrektur und der Vereinheitlichung der `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad wurde **V4.09.28** vollständig geprüft und als finaler interner Ausgangsstand abgenommen. Die öffentliche V4.09 normalisiert gegenüber V4.09.28 ausschließlich Versions-/Build-Metadaten.
+Nach der Radien-Scrollkorrektur und der Vereinheitlichung der `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad wurde **V4.09.28** vollständig geprüft und als finaler interner Ausgangsstand abgenommen. Während der finalen Release-Gates wurde zusätzlich entdeckt, dass die geschützte Medaillon-Diagnose durch das parallel vorhandene Vollbild-Medaillon einen globalen DOM-Selektor falsch auflösen konnte. V4.09 korrigiert ausschließlich diesen Diagnose-Selektor auf das produktive `trend-icon`; zusätzlich werden die öffentlichen Versions-/Build-Metadaten normalisiert.
 
 Release-Identität:
 
-- Frontend: **2.238.838 Bytes**, SHA256 `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`;
+- Frontend: **2.238.824 Bytes**, SHA256 `c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2`;
 - externes Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
 - neuer Runtime-Kompassschalter: SHA256 `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`;
 - native Integration: **0.21.0**;
