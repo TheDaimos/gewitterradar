@@ -149,15 +149,15 @@ Im Vollbild wurden Kompass und Medaillon zu eigenständigen, ein-/ausblendbaren 
 
 Der neue 3D-Kartenansichtsschalter verwendet die freigegebene Gold-/Blau-/Rot-Darstellung und öffnet ein kompaktes responsives Auswahlmenü. Das Kartenansicht-Popup selbst sowie **Hilfe & Hinweise** wurden auf den vollständigen Produktumfang von **15 Sprachen plus 4 deutschen Dialektvarianten = 19 Varianten** synchronisiert.
 
-Die Einstellungen bündeln **Cluster-Auflösung** und **Cluster-Navigation** nun oben in **Kartendarstellung**. Die reale Geräteprüfung des V4.09.26-Ansatzes zeigte jedoch, dass die alleinige Übergabe des Scrollens an den äußeren Einstellungsdialog den letzten Radius nicht in jedem Browser-/WebView-Viewport zuverlässig erreichbar macht. **V4.09.27 TEST** führt deshalb für den Abschnitt **Radien** wieder einen eigenen, viewportbasiert begrenzten Touch-Scrollbereich mit zusätzlichem unteren Scrollraum ein. Die Cluster-Sortierung und ihre bestehenden Laufzeitbindungen bleiben unverändert.
+Die Einstellungen bündeln **Cluster-Auflösung** und **Cluster-Navigation** nun oben in **Kartendarstellung**. Für **Radien** verwendet V4.09 einen eigenen, viewportbasiert begrenzten Touch-Scrollbereich mit zusätzlichem unteren Scrollraum, sodass der Gefahrenradius auch in kurzen Browser- und WebView-Flächen vollständig erreichbar bleibt. Die Cluster-Sortierung und ihre bestehenden Laufzeitbindungen bleiben unverändert.
 
 Der sichtbare Versionsverlauf trennt seit V4.09 strikt zwischen öffentlichen Releases und internen Entwicklungsständen. Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“** bleibt oberhalb der veröffentlichten Historie erhalten; interne V4.09.xx-DEV-/TEST-Iterationen werden dort nicht als öffentliche Releases geführt.
 
-Der zuvor als Ausgangsstand geführte **V4.09.26** ist wegen der real gemeldeten Radien-Scrollregression nicht mehr abgenommen. Aktueller Prüfstand ist **V4.09.27 TEST**; eine erneute finale V4.09-Normalisierung bleibt bis zur Geräteabnahme blockiert.
+Nach der Radien-Scrollkorrektur und der Vereinheitlichung der `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad wurde **V4.09.28** vollständig geprüft und als finaler interner Ausgangsstand abgenommen. Die öffentliche V4.09 normalisiert gegenüber V4.09.28 ausschließlich Versions-/Build-Metadaten.
 
 Release-Identität:
 
-- Frontend: **2.234.776 Bytes**, SHA256 `44fb540e33e3d2428cd1c8b53cc9a256179831cb69eef877cd17997b7b58c048`;
+- Frontend: **2.238.838 Bytes**, SHA256 `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`;
 - externes Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
 - neuer Runtime-Kompassschalter: SHA256 `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`;
 - native Integration: **0.21.0**;
