@@ -1,0 +1,94 @@
+{
+  "contractVersion": 1,
+  "version": "4.10.02",
+  "status": "DEV",
+  "baseVersion": "4.10.01",
+  "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
+  "sha256": "98621c9a65b412ff4d700abc12d589b3c9cde4105afa5b3abea17eb1794f6861",
+  "sizeBytes": 1027101,
+  "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
+  "localeSizeBytes": 741069,
+  "build": "V4.10.02-MODULAR-DEV-2026-09-21",
+  "moduleFiles": {
+    "modules/core/runtime.js": {
+      "sha256": "b14bd0c1ab4a13a5fd39aea07e69855d7d8202bb07c8a8500d834b727209822b",
+      "sizeBytes": 553
+    },
+    "modules/core/card-lifecycle.js": {
+      "sha256": "e0ef08dc8127c6bef5c666b75ee7222562a7ea6fb285adb633a3a0bb48592595",
+      "sizeBytes": 32650
+    },
+    "modules/fullscreen/map-display.js": {
+      "sha256": "91c62fa8f04fdd92fc8da86ff0260f59b6155f1d17c675d8f21c4dda7a732346",
+      "sizeBytes": 58284
+    },
+    "modules/ui/scroll-guard.js": {
+      "sha256": "a1c723ef22b20b0bd5039d095fc19ce89711af6c27ec20639cab470ab747eb32",
+      "sizeBytes": 34300
+    },
+    "modules/ui/skeleton.js": {
+      "sha256": "ae3194f66b3c5b3244bdd17cb26287c50915a367f8591c19e188de54eac08b9f",
+      "sizeBytes": 418767
+    },
+    "modules/instruments/compass-scale.js": {
+      "sha256": "3fd2fd2ffe7feaf72f269a30516ac940ea35dbe128006766042cc0800c9cbf25",
+      "sizeBytes": 16917
+    },
+    "modules/ui/controls.js": {
+      "sha256": "1f638d17def1c55d4cc37383939fbbc3949ddcca2ec0570f54e5f36a53de5126",
+      "sizeBytes": 182423
+    },
+    "modules/ui/i18n-settings.js": {
+      "sha256": "c0fdda725d41e47e8b38dc4f1a43ac30fa5193888a707804f7da22b5c2167b3d",
+      "sizeBytes": 122279
+    },
+    "modules/core/source-status.js": {
+      "sha256": "9fddd7114bc4f751a4727b1174cf85375eaf2dcc1c9fea53b602903b71bddd80",
+      "sizeBytes": 4689
+    },
+    "modules/instruments/compass-selector.js": {
+      "sha256": "e016c01ae59aa801ef2b506894d48f12760a6857990c7fd37139c77ffe32067e",
+      "sizeBytes": 13610
+    },
+    "modules/diagnostics/cockpit.js": {
+      "sha256": "2bf4239887ce34f2ea7a96ad651a163e437d4cf1eb4e90b1c384bf74d1b109db",
+      "sizeBytes": 183508
+    },
+    "modules/instruments/compass-design.js": {
+      "sha256": "1d56acdec74f5b56cc804c4de448c4cdba229a9b1940df5cb24580735bf2f4bb",
+      "sizeBytes": 6300
+    },
+    "modules/location/radii-map.js": {
+      "sha256": "b3833c3d1f5dc9a521d46c359d175979c33b2204d396b122ef5d8a615ba49ce1",
+      "sizeBytes": 27435
+    },
+    "modules/map/strikes-warnings.js": {
+      "sha256": "d3095b28cb2dd340361a0b123e61f6bd38d3f3c384ea35222987fecad79be7dc",
+      "sizeBytes": 29124
+    },
+    "modules/map/clusters-recent.js": {
+      "sha256": "1c9a7e257b667a868398f751cf12cf025d8383b79b26d4a1fd80ad0efda0787c",
+      "sizeBytes": 51157
+    },
+    "modules/ui/render.js": {
+      "sha256": "7e3c0e0791689ed60c4c5968f7a979b820fee47f53779e4626e9e4b5216b1c1a",
+      "sizeBytes": 45839
+    },
+    "modules/instruments/compass.js": {
+      "sha256": "cb24b3cf0e5f3bf7b5cea273ded0cc293cd34a06b892fb4921aeeaccdb26988f",
+      "sizeBytes": 20460
+    },
+    "modules/history/chart.js": {
+      "sha256": "08f2827bfa7b405c939de2553349f1b36c521e719a1b86c4956bf78dcde309fa",
+      "sizeBytes": 39342
+    },
+    "modules/core/registry.js": {
+      "sha256": "fbb5395a8fd04e816469eaeabc8a330f26fc02c2347374e79bce5ed3304161b6",
+      "sizeBytes": 4211
+    },
+    "module-manifest.js": {
+      "sha256": "57461e807639971914aaf34911f7f76d29967f1a0ed07834b423a65d7b111660",
+      "sizeBytes": 5748
+    }
+  }
+}
