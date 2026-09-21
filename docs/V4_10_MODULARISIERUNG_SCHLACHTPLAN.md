@@ -1,0 +1,495 @@
+# Gewitterradar V4.10 – Schlachtplan Modularisierung
+
+> **Status:** AKTIV  
+> **Arbeitszweig:** `feature/v4.10.01-compass-picker`  
+> **Start:** 2026-09-21  
+> **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
+
+---
+
+## 0. Verbindliche Arbeitsregeln
+
+Diese Datei ist der **persistente Arbeitsstand** für die Modularisierung.
+
+Nach jedem abgeschlossenen Arbeitsschritt wird eine Schleife ausgeführt:
+
+1. Änderung implementieren.
+2. Syntax-/Struktur-/Regressionstests ausführen.
+3. Ergebnis und Auffälligkeiten prüfen.
+4. Diesen Schlachtplan aktualisieren:
+   - Checkbox des erledigten Punkts setzen,
+   - `NÄCHSTER SCHRITT` aktualisieren,
+   - Arbeitsprotokoll ergänzen,
+   - falls nötig neue Folgepunkte aufnehmen.
+5. Erst danach mit dem nächsten Punkt beginnen.
+
+Wenn ein Chat endet oder der Kontext knapp wird, gilt:
+> **„Schau in den Schlachtplan und führe ihn weiter fort.“**
+
+Dann ist diese Datei die maßgebliche Fortsetzungsquelle.
+
+### Sicherheitsregel
+
+Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine große gleichzeitige Neuimplementierung. Zuerst wird bestehende Logik 1:1 ausgelagert, getestet und erst danach funktional weiterentwickelt.
+
+---
+
+# NÄCHSTER SCHRITT
+
+**M01 – Bestandsaufnahme der aktuellen V4.10.01 und Modulgrenzen festlegen.**
+
+Dabei:
+- aktuelle Einstiegspunkte und Registrierungslogik erfassen,
+- große Funktionsblöcke der bestehenden JS-Datei inventarisieren,
+- Abhängigkeiten zwischen Karte, Vollbild, Instrumenten, Einstellungen, Providern und Diagnose dokumentieren,
+- endgültigen Zielbaum der Module festlegen.
+
+---
+
+# 1. Zielarchitektur
+
+Geplanter Grundaufbau:
+
+```text
+frontend/
+├── gewitterradar.js
+├── core/
+│   ├── app.js
+│   ├── registry.js
+│   ├── state.js
+│   └── constants.js
+├── map/
+│   ├── map.js
+│   ├── layers.js
+│   ├── clusters.js
+│   └── lightning.js
+├── fullscreen/
+│   ├── fullscreen.js
+│   ├── instruments.js
+│   └── location-pill.js
+├── instruments/
+│   ├── compass.js
+│   ├── compass-selector.js
+│   └── medallion.js
+├── ui/
+│   ├── settings.js
+│   ├── dialogs.js
+│   ├── controls.js
+│   └── styles.js
+├── providers/
+│   ├── providers.js
+│   ├── nasa.js
+│   └── eumetview.js
+├── diagnostics/
+│   ├── logging.js
+│   └── diagnostics.js
+└── utils/
+    ├── storage.js
+    ├── geometry.js
+    └── helpers.js
+```
+
+Der genaue Baum wird nach M01 verbindlich eingefroren.
+
+---
+
+# 2. Versionsmodell
+
+## 2.1 Anwendungsversion
+
+Gewitterradar behält seine sichtbare Gesamtversion:
+
+```text
+V4.10.01
+V4.10.02
+...
+```
+
+## 2.2 Modulversion
+
+Jedes eigenständige Modul besitzt zusätzlich eine **eigene Version**.
+
+Beispiel:
+
+```text
+Gewitterradar V4.10.07
+
+core/app             1.0.0
+map/clusters         1.3.0
+fullscreen           2.1.1
+compass              2.0.0
+compass-selector     1.2.0
+location-pill        1.4.2
+settings             3.0.1
+```
+
+Die Modulversion wird **im jeweiligen Modul selbst** geführt.
+
+Verbindliche Metadaten je Modul:
+
+```javascript
+export const MODULE_META = {
+  id: "compass-selector",
+  version: "1.0.0",
+  group: "instruments",
+  function: "Kompassauswahl",
+  subfunctions: [
+    "Popup-Steuerung",
+    "Vorheriger Kompass",
+    "Nächster Kompass"
+  ]
+};
+```
+
+Das Modul registriert sich beim tatsächlichen Laden selbst.
+
+---
+
+# 3. Modulregister
+
+Ein zentrales Laufzeitregister sammelt ausschließlich die von den **tatsächlich geladenen Modulen** gemeldeten Informationen.
+
+Anforderungen:
+
+- [ ] eindeutige Modul-ID
+- [ ] Modulversion
+- [ ] Funktionsgruppe
+- [ ] Hauptfunktion
+- [ ] Unterfunktionen
+- [ ] Dateipfad
+- [ ] optional Build-/Commit-Kennung
+- [ ] Ladezeitpunkt
+- [ ] Doppeltregistrierung erkennen
+- [ ] fehlende erwartete Module erkennen
+- [ ] Versionsabweichungen erkennen
+- [ ] Registry darf den Start von Gewitterradar bei rein diagnostischen Fehlern nicht unnötig blockieren
+
+---
+
+# 4. Hauptmenü „Module & Versionen“
+
+Neuer Hauptmenü-Unterpunkt:
+
+**Module & Versionen**
+
+Er zeigt nach Funktionsbereichen gruppiert die tatsächlich geladenen Module.
+
+Beispiel:
+
+```text
+Module & Versionen
+
+Gewitterradar V4.10.07
+18 / 18 Module geladen
+✓ Versionssatz konsistent
+
+Karte
+  map                 1.2.0
+  clusters            1.3.0
+  lightning           1.1.2
+
+Vollbild
+  fullscreen          2.1.1
+  location-pill       1.4.2
+
+Instrumente
+  compass             2.0.0
+  compass-selector    1.2.0
+  medallion           1.5.0
+```
+
+Detailansicht je Modul:
+
+- [ ] Name / ID
+- [ ] geladene Modulversion
+- [ ] Funktion
+- [ ] Unterfunktionen
+- [ ] Dateipfad
+- [ ] Ladezeitpunkt
+- [ ] erwartete Version
+- [ ] Status Soll/Ist
+- [ ] optional Git-/Build-Kennung
+
+Gesamtzustände:
+
+- [ ] **grün:** geladen und erwartete Version
+- [ ] **gold:** geladen, aber andere Version
+- [ ] **rot:** Modul fehlt / Ladefehler
+
+Diagnoseausgabe:
+
+- [ ] Diagnose kopieren
+- [ ] JSON herunterladen
+- [ ] vollständige Soll-/Ist-Liste ausgeben
+
+---
+
+# 5. Stabiler Einstiegspunkt
+
+`gewitterradar.js` bleibt der dauerhaft registrierte Einstiegspunkt.
+
+Ziele:
+
+- [ ] Home Assistant muss weiterhin nur **eine** Gewitterradar-Ressource kennen.
+- [ ] Keine manuelle Registrierung einzelner Module.
+- [ ] Module werden über ES-Module geladen.
+- [ ] HACS/Integration installiert weiterhin das Gesamtpaket.
+- [ ] Der Ressourcenpfad bleibt stabil.
+- [ ] Cache-Strategie verhindert Mischstände verschiedener Builds.
+
+Zu prüfen:
+
+- [ ] statischer Loader vs. versionsbewusster Loader
+- [ ] Cache-Busting für abhängige Module
+- [ ] Verhalten Home-Assistant-App / Android-WebView
+- [ ] Verhalten Desktop-Browser
+- [ ] Verhalten nach HACS-/DRA-Update
+
+---
+
+# 6. DRA-Kompatibilität
+
+Die neue Struktur wird von Beginn an für Deploy Relay Agent ausgelegt.
+
+Gewitterradar-Anforderungen an DRA:
+
+- [ ] kompletten Modulbaum deployen können
+- [ ] nur geänderte Dateien erkennen können
+- [ ] Deployment als konsistenten Versionssatz behandeln
+- [ ] installierte Anwendungsversion erkennen
+- [ ] Modulmanifest/Soll-Liste bereitstellen
+- [ ] Frontend-only-Änderungen erkennen
+- [ ] notwendigen HA-Neustart korrekt melden
+- [ ] Browser-/Frontend-Neuladen von HA-Neustart unterscheiden
+
+DRA-seitige Zusatzanforderungen aus der V4.10-Planung:
+
+- [ ] zuletzt verfügbare/installierte Versionen pro Projekt anzeigen
+- [ ] gezielte Wiederherstellung einer älteren Version
+- [ ] lokale Snapshots mit Version + Commit verknüpfen
+- [ ] Snapshot-Aufbewahrungszahl **pro Projekt** einstellbar
+- [ ] Bereinigung alter Snapshots erst nach erfolgreichem Deployment
+- [ ] unmittelbar vorherigen funktionierenden Stand schützen
+- [ ] Snapshot-Integrität vor Wiederherstellung prüfen
+
+Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumentiert; dieser Abschnitt definiert die Gewitterradar-Schnittstellenanforderungen.
+
+---
+
+# 7. Migrationsphasen
+
+## M01 – Bestandsaufnahme
+
+- [ ] aktuelle V4.10.01-Dateistruktur erfassen
+- [ ] aktuelle Haupt-JS ermitteln
+- [ ] Größe / grobe Funktionsblöcke bestimmen
+- [ ] globale Zustände erfassen
+- [ ] direkte DOM-Abhängigkeiten erfassen
+- [ ] Home-Assistant-Abhängigkeiten erfassen
+- [ ] Map-/Provider-Abhängigkeiten erfassen
+- [ ] Ziel-Modulbaum finalisieren
+- [ ] Reihenfolge der Extraktion festlegen
+
+**Abschlusskriterium:** Modulgrenzen und Abhängigkeiten sind dokumentiert.
+
+## M02 – Registry & Modulmetadaten
+
+- [ ] `core/registry.js` erstellen
+- [ ] Metadatenschema definieren
+- [ ] Registrierungsfunktion erstellen
+- [ ] Diagnosefunktion erstellen
+- [ ] Soll-/Ist-Vergleich vorbereiten
+- [ ] Test-Dummy oder erstes echtes Modul registrieren
+
+**Abschlusskriterium:** Ein geladenes Modul kann seine eigene Version zuverlässig melden.
+
+## M03 – Stabiler Loader
+
+- [ ] `gewitterradar.js` als stabilen Einstiegspunkt vorbereiten
+- [ ] erste Imports auslagern
+- [ ] Ladefehlerbehandlung
+- [ ] Cache-Konzept implementieren
+- [ ] App-/Desktop-Test
+
+**Abschlusskriterium:** Gewitterradar startet über den neuen Loader ohne Funktionsverlust.
+
+## M04 – Core auslagern
+
+- [ ] Konstanten
+- [ ] Zustandsverwaltung
+- [ ] allgemeine Helfer
+- [ ] Speicher-/Persistenzhelfer
+- [ ] Geometriehelfer
+
+**Abschlusskriterium:** Core-Bausteine sind getrennt, bestehendes Verhalten unverändert.
+
+## M05 – UI auslagern
+
+- [ ] Dialoge
+- [ ] Bedienelemente
+- [ ] Einstellungen
+- [ ] Styles soweit sinnvoll modularisieren
+- [ ] Hauptmenü-Anbindung
+
+**Abschlusskriterium:** UI läuft vollständig aus Modulen.
+
+## M06 – Instrumente auslagern
+
+- [ ] Kompass
+- [ ] Kompassauswahl / Popup
+- [ ] Medaillon
+- [ ] Verschieben / Touch
+- [ ] Sichtbarkeit
+- [ ] Instrument-Metadaten
+
+**Abschlusskriterium:** Desktop und Android funktionieren unverändert.
+
+## M07 – Vollbild auslagern
+
+- [ ] Vollbildsteuerung
+- [ ] Standort-Pille
+- [ ] Instrumentintegration
+- [ ] Layer-Prioritäten
+- [ ] Drag-/Touch-Logik
+- [ ] responsive Mehrspaltigkeit
+
+**Abschlusskriterium:** Vollbildregressionen ausgeschlossen.
+
+## M08 – Karte auslagern
+
+- [ ] Kartenkern
+- [ ] Layer
+- [ ] Cluster-Auflösung
+- [ ] Cluster-Navigation
+- [ ] Blitzdarstellung
+- [ ] Radien
+- [ ] Aura
+
+**Abschlusskriterium:** Kartenverhalten entspricht dem Ausgangsstand.
+
+## M09 – Provider auslagern
+
+- [ ] Provider-Basis
+- [ ] NASA
+- [ ] EUMETView
+- [ ] Playback
+- [ ] Pufferung / Wiederaufnahme
+- [ ] Provider-Informationen
+
+**Abschlusskriterium:** alle Provider-Testfälle bestanden.
+
+## M10 – Diagnose & Logging auslagern
+
+- [ ] Ereignisprotokoll
+- [ ] Diagnosefunktionen
+- [ ] Export
+- [ ] Moduldiagnose integrieren
+
+**Abschlusskriterium:** Diagnose ist vollständig modular.
+
+## M11 – Menü „Module & Versionen“
+
+- [ ] Menüeintrag
+- [ ] Gruppenansicht
+- [ ] Unterfunktionen
+- [ ] Modulversionen
+- [ ] Soll-/Ist-Prüfung
+- [ ] Statusfarben
+- [ ] Detailansicht
+- [ ] Diagnose kopieren
+- [ ] JSON herunterladen
+
+**Abschlusskriterium:** Der Nutzer kann nach einem Update eindeutig sehen, welche Modulversion tatsächlich geladen wurde.
+
+## M12 – DRA-Ende-zu-Ende-Test
+
+- [ ] Deployment des kompletten Modulbaums
+- [ ] Deployment nur eines geänderten Moduls
+- [ ] Soll-/Ist-Metadaten prüfen
+- [ ] Browsercache-Fall simulieren
+- [ ] veraltetes Modul erkennen
+- [ ] fehlendes Modul erkennen
+- [ ] Rollback testen
+- [ ] Neustart-/Frontend-Reload-Hinweis prüfen
+
+**Abschlusskriterium:** DRA und Gewitterradar liefern gemeinsam eine belastbare Ende-zu-Ende-Versionsprüfung.
+
+## M13 – Regression & Freigabe
+
+- [ ] Desktop
+- [ ] Android / HA Companion
+- [ ] Kartenansichten
+- [ ] Vollbild
+- [ ] Kompass
+- [ ] Medaillon
+- [ ] Standort-Pille
+- [ ] Layer-Menü
+- [ ] Cluster
+- [ ] Einstellungen
+- [ ] Provider
+- [ ] Logging
+- [ ] HACS
+- [ ] DRA
+- [ ] Cache-/Update-Pfade
+- [ ] Syntax/Lint/Tests
+- [ ] Checksummen
+- [ ] CHANGELOG
+- [ ] HISTORY / Release Notes
+
+**Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
+
+---
+
+# 8. Nicht verhandelbare Regressionen
+
+Während der Modularisierung dürfen insbesondere nicht verloren gehen:
+
+- bestehende Kartenfunktionen
+- Vollbildmodus
+- frei verschiebbare Instrumente
+- Touch-Unterstützung Android
+- Standort-Pille inklusive Öffnungsrichtung und Mehrspaltigkeit
+- Layer-Anzeige immer im Vordergrund
+- Diagnosemodus-Sichtbarkeitsregeln
+- Kompass-/Medaillon-Ein-/Ausblenden
+- gespeicherte Orte
+- bestehende Einstellungen
+- Provider/Playback
+- Logging
+- HACS-Installierbarkeit
+- DRA-Installierbarkeit
+
+---
+
+# 9. Entscheidungsprotokoll
+
+| Datum | Entscheidung | Grund |
+|---|---|---|
+| 2026-09-21 | Gewitterradar wird ab V4.10 modularisiert. | Monolithische JS-Datei ist zu groß und erschwert Wartung/gezielte Änderungen. |
+| 2026-09-21 | Nur ein stabiler HA-Einstiegspunkt bleibt registriert. | Keine Registrierung vieler Einzeldateien nötig. |
+| 2026-09-21 | Jedes Modul trägt seine eigene Version. | Geladene Teilstände werden unabhängig nachvollziehbar. |
+| 2026-09-21 | Module registrieren ihre Version selbst zur Laufzeit. | Anzeige soll tatsächlichen Browser-Ladestand statt nur Sollzustand zeigen. |
+| 2026-09-21 | Hauptmenü erhält „Module & Versionen“. | Direkte Prüfung nach Updates. |
+| 2026-09-21 | Modularisierung wird DRA-fähig entworfen. | Gezieltes Deployment und Rollback sollen möglich sein. |
+| 2026-09-21 | DRA-Snapshot-Aufbewahrung wird projektbezogen. | Unterschiedliche Projekte benötigen unterschiedliche Historientiefen. |
+
+---
+
+# 10. Arbeitsprotokoll
+
+## Schleife 000 – Schlachtplan angelegt
+
+**Datum:** 2026-09-21  
+**Status:** erledigt
+
+Ergebnis:
+- persistenter V4.10-Schlachtplan angelegt,
+- Zielarchitektur beschrieben,
+- Modulversionsmodell festgelegt,
+- Laufzeit-Selbstregistrierung verbindlich aufgenommen,
+- Menü „Module & Versionen“ spezifiziert,
+- DRA-Schnittstellenanforderungen aufgenommen,
+- Migrationsphasen M01–M13 definiert,
+- Fortsetzungsregel für neue Chats festgelegt.
+
+**Nächster Schritt:** M01 – Bestandsaufnahme.
