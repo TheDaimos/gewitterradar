@@ -2,7 +2,7 @@
 
 Status: **FINAL**  
 Öffentliche Produktversion: **V4.09**  
-Akzeptierter interner Ausgangsbuild: **V4.09.24**  
+Akzeptierter interner Ausgangsbuild: **V4.09.25**  
 Native Integration: **0.21.0**
 
 ## Neu in V4.09
@@ -32,7 +32,7 @@ Die zugehörige Schaltfläche und die Standardansicht-Auswahl wurden an den Gewi
 - Die akzeptierten Instrumentgrößen bleiben erhalten.
 - Die Standort-Pille ist ebenfalls frei beweglich und speichert ihre Position lokal.
 - Das Standortmenü passt Öffnungsrichtung, Spaltenzahl und Scrollverhalten an die verfügbare Bildschirmfläche an.
-- Layer-Schalter, Radiusdialoge und weltweite Ortssuche bleiben im Vollbild in der vorgesehenen Vordergrundreihenfolge bedienbar.
+- Layer-Schalter, Radiusdialoge und weltweite Ortssuche bleiben im Vollbild in der vorgesehenen Vordergrundreihenfolge bedienbar.\n- Warnanimationen bleiben auch im nativen Vollbild sichtbar: Gewitter = weißer Blitz, Gefahr = weißer Blitz plus roter Schleier.
 
 ### Hilfe & Hinweise und Mehrsprachigkeit
 
@@ -54,8 +54,8 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Release-Identität
 
-- Frontend: **2.234.030 Bytes**
-- Frontend SHA256: `2dad877e61654f5261650511f595820e55a8432fcdb0f7387f75bfb9e0271b1f`
+- Frontend: **2.235.675 Bytes**
+- Frontend SHA256: `c4a467c331f63136321bbf700fb756e3857ca9da2bae5e24f93d7cdd58066072`
 - Externes Locale-Modul: **741.069 Bytes**
 - Locale SHA256: `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`
 - Runtime-Kompassschalter SHA256: `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`
@@ -64,7 +64,7 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Provenienz und Schutz
 
-V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.24**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
+V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.25**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
 
 Die bestehenden Schutzverträge bleiben erhalten, insbesondere:
 
