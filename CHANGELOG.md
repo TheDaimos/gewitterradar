@@ -25,6 +25,7 @@
 ### Standortsuche & Koordinateneingabe
 
 - Add consistent `×` clear controls to the designation/name, latitude and longitude input fields without changing the existing location-search or coordinate-adoption behavior.
+- Scope the protected Medallion calibration image/arrow lookup to the production `trend-icon` so the new fullscreen Medallion cannot be mistaken for the diagnostic target.
 
 ### Hilfe, Sprachen & Versionsverlauf
 
