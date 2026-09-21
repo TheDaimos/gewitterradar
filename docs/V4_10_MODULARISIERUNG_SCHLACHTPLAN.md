@@ -247,9 +247,11 @@ Zu prüfen:
 
 ---
 
-# 6. DRA-Kompatibilität
+# 6. DRA-Kompatibilität – HARTE ABNAHMEBEDINGUNG
 
 Die neue Struktur wird von Beginn an für Deploy Relay Agent ausgelegt.
+
+> **Pflicht:** Keine V4.10-Iteration der Modularisierung gilt als abgeschlossen, wenn sie nicht vollständig über DRA installiert, geprüft und wiederhergestellt werden kann. Manuelles JS-Kopieren ist kein regulärer Entwicklungsweg mehr.
 
 Gewitterradar-Anforderungen an DRA:
 
@@ -261,6 +263,10 @@ Gewitterradar-Anforderungen an DRA:
 - [ ] Frontend-only-Änderungen erkennen
 - [ ] notwendigen HA-Neustart korrekt melden
 - [ ] Browser-/Frontend-Neuladen von HA-Neustart unterscheiden
+- [ ] stabilen Einstiegspunkt ohne manuelle Ressourcenänderung über DRA aktualisieren
+- [ ] kompletten Modulstand atomar/konsistent installieren
+- [ ] installierten Soll-Modulstand für Gewitterradar bereitstellen
+- [ ] DRA-Deployment als Pflichtprüfung jeder Iteration durchführen
 
 DRA-seitige Zusatzanforderungen aus der V4.10-Planung:
 
@@ -401,7 +407,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 **Abschlusskriterium:** Der Nutzer kann nach einem Update eindeutig sehen, welche Modulversion tatsächlich geladen wurde.
 
-## M12 – DRA-Ende-zu-Ende-Test
+## M12 – DRA-Ende-zu-Ende-Test – RELEASE-GATE
 
 - [ ] Deployment des kompletten Modulbaums
 - [ ] Deployment nur eines geänderten Moduls
@@ -493,3 +499,31 @@ Ergebnis:
 - Fortsetzungsregel für neue Chats festgelegt.
 
 **Nächster Schritt:** M01 – Bestandsaufnahme.
+
+
+## Schleife 001 – Schlüsselwort „Schlachtplan“ verankert
+
+**Datum:** 2026-09-21  
+**Status:** erledigt
+
+Ergebnis:
+- `PROJECT_DEFAULTS.md` kennt „Schlachtplan“ jetzt als verbindlichen Projektbegriff,
+- Verweis auf `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` ist fest hinterlegt,
+- neuer Chat muss den Repository-Stand laden und an `NÄCHSTER SCHRITT` fortsetzen,
+- Schleifenregel ist als verbindlicher Fortsetzungsmechanismus dokumentiert.
+
+Commit: `660707a4efffcdef8ffb7ca2e81d7e494ec3ff87`
+
+## Schleife 002 – DRA als Pflichtpfad festgeschrieben
+
+**Datum:** 2026-09-21  
+**Status:** erledigt
+
+Ergebnis:
+- DRA ist für V4.10 kein optionaler Zusatz mehr, sondern harte Abnahmebedingung,
+- reguläre Installation/Aktualisierung/Rollback müssen vollständig über DRA funktionieren,
+- manueller Austausch einzelner JS-Dateien ist nur Notfall-/Diagnoseweg,
+- DRA-Sollstand und Gewitterradar-Iststand der geladenen Module werden als Ende-zu-Ende-Prüfung gekoppelt,
+- M12 ist ausdrücklich als Release-Gate markiert.
+
+**Nächster Schritt bleibt:** M01 – Bestandsaufnahme und endgültige Modulgrenzen.
