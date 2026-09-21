@@ -1,4 +1,7 @@
-// V4.07.38 deterministic external locale registry. ABOUT content unchanged; location-help action wording aligned with Apply/Übernehmen.
+// Gewitterradar external About/Help locales
+// V4.09.23 – Help & Notes synchronized with the current DE/EN master for all 17 external language variants.
+// Deutsch and English intentionally remain embedded in gewitterradar-v4.09.23.js.
+
 export const ABOUT_EXTERNAL_LOCALES = {
   "Dansk": {
     "strings": {
@@ -1548,6 +1551,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
     }
   }
 };
+
 export const HELP_EXTERNAL_LOCALES = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
@@ -3777,6 +3781,7 @@ export const HELP_EXTERNAL_LOCALES = {
     ]
   }
 };
+
 export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
@@ -7656,7 +7661,6 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   }
 };
 
-// V4.08.31 – Help & Notes: cluster resolution and cluster-navigation help synchronized across all supported external languages.
 export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
@@ -7737,6 +7741,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kortvisninger & 3D-lagknap",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-lagknap i guld, blå og rød",
+        "layerGraphicCaption": "Med lagvælgeren kan kortvisningen når som helst skiftes mellem Standard, Stor og Fuld skærm.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Bruger den normale korthøjde i Gewitterradar-kortet."
+          ],
+          [
+            "Stor",
+            "Forstørrer kortet i dashboardet og giver mere kortplads uden at åbne fuldskærmstilstand."
+          ],
+          [
+            "Fuld skærm",
+            "Åbner kortet i fuldskærmsvisning. Lokationspillen, kompasset, medaljonen, signaturforklaringen og kortbetjeningen er fortsat tilgængelige."
+          ],
+          [
+            "Kortvisning i Indstillinger",
+            "Området „Kortvisning“ styrer standardvisningen for denne enhed eller browserprofil samt det separate kortvindue."
+          ],
+          [
+            "Standardvisning",
+            "Bestemmer, om Gewitterradar starter med Standard, Stor, Fuld skærm eller den senest anvendte kortvisning. Valget gemmes kun lokalt på den aktuelle enhed eller i den anvendte browserprofil."
+          ],
+          [
+            "Separat kortvindue",
+            "Åbner tordenvejrsvisningen med det aktuelt valgte kort og det aktuelt valgte kompas i et separat vindue. Den normale dashboardvisning forbliver adskilt. Funktionen er tilgængelig via menuen Indstillinger."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Eksterne tjenester & netværksadgang",
         "paragraphs": [
@@ -7808,6 +7847,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Enhedsretning",
             "kan bruge enhedens retning på understøttede mobilenheder."
+          ],
+          [
+            "Separat kortvindue",
+            "Åbner tordenvejrsvisningen med det aktuelt valgte kort og det aktuelt valgte kompas i et separat vindue. Den normale dashboardvisning forbliver adskilt. Funktionen er tilgængelig via menuen Indstillinger."
           ],
           [
             "Kalibrering og diagnosticering",
@@ -7977,6 +8020,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Vistas del mapa y botón de capas 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Botón de capas 3D en dorado, azul y rojo",
+        "layerGraphicCaption": "El selector de capas permite cambiar en cualquier momento la vista del mapa entre Estándar, Grande y Pantalla completa.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Estándar",
+            "Utiliza la altura normal del mapa dentro de la tarjeta de Gewitterradar."
+          ],
+          [
+            "Grande",
+            "Amplía el mapa dentro del panel y ofrece más superficie de mapa sin abrir el modo de pantalla completa."
+          ],
+          [
+            "Pantalla completa",
+            "Abre el mapa a pantalla completa. La píldora de ubicación, la brújula, el medallón, la leyenda y los controles del mapa siguen disponibles."
+          ],
+          [
+            "Visualización del mapa en Ajustes",
+            "La sección „Visualización del mapa“ controla la vista predeterminada para este dispositivo o perfil del navegador y la ventana de mapa separada."
+          ],
+          [
+            "Vista predeterminada",
+            "Define si Gewitterradar se inicia en Estándar, Grande, Pantalla completa o con la última vista de mapa utilizada. La selección se guarda únicamente de forma local en el dispositivo o perfil del navegador actual."
+          ],
+          [
+            "Ventana de mapa separada",
+            "Abre la vista de tormentas con el mapa y la brújula seleccionados actualmente en una ventana separada. La vista normal del panel permanece independiente. Esta función está disponible en el menú Ajustes."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Servicios externos y permisos de red",
         "paragraphs": [
@@ -8048,6 +8126,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientación del dispositivo",
             "puede usar la orientación en dispositivos móviles compatibles."
+          ],
+          [
+            "Ventana de mapa separada",
+            "Abre la vista de tormentas con el mapa y la brújula seleccionados actualmente en una ventana separada. La vista normal del panel permanece independiente. Esta función está disponible en el menú Ajustes."
           ],
           [
             "Calibración y diagnóstico",
@@ -8217,6 +8299,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Vues de la carte et bouton de calques 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Bouton de calques 3D en or, bleu et rouge",
+        "layerGraphicCaption": "Le sélecteur de calques permet de basculer à tout moment la vue de la carte entre Standard, Grande et Plein écran.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Utilise la hauteur normale de la carte dans la carte Gewitterradar."
+          ],
+          [
+            "Grande",
+            "Agrandit la carte dans le tableau de bord et offre davantage de surface cartographique sans ouvrir le mode plein écran."
+          ],
+          [
+            "Plein écran",
+            "Ouvre la carte en plein écran. La pastille de localisation, la boussole, le médaillon, la légende et les commandes de la carte restent disponibles."
+          ],
+          [
+            "Affichage de la carte dans les paramètres",
+            "La section « Affichage de la carte » définit la vue par défaut pour cet appareil ou ce profil de navigateur ainsi que la fenêtre de carte séparée."
+          ],
+          [
+            "Vue par défaut",
+            "Détermine si Gewitterradar démarre en mode Standard, Grande, Plein écran ou avec la dernière vue de carte utilisée. Le choix est enregistré uniquement en local sur l’appareil ou dans le profil de navigateur utilisé."
+          ],
+          [
+            "Fenêtre de carte séparée",
+            "Ouvre la vue des orages avec la carte et la boussole actuellement sélectionnées dans une fenêtre séparée. La vue normale du tableau de bord reste indépendante. Cette fonction est disponible dans le menu Paramètres."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Services externes et autorisations réseau",
         "paragraphs": [
@@ -8288,6 +8405,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientation de l’appareil",
             "peut utiliser l’orientation des appareils mobiles compatibles."
+          ],
+          [
+            "Fenêtre de carte séparée",
+            "Ouvre la vue des orages avec la carte et la boussole actuellement sélectionnées dans une fenêtre séparée. La vue normale du tableau de bord reste indépendante. Cette fonction est disponible dans le menu Paramètres."
           ],
           [
             "Étalonnage et diagnostic",
@@ -8457,6 +8578,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kaartweergaven en 3D-laagknop",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-laagknop in goud, blauw en rood",
+        "layerGraphicCaption": "Met de laagkiezer kan de kaartweergave op elk moment worden gewisseld tussen Standaard, Groot en Volledig scherm.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standaard",
+            "Gebruikt de normale kaarthoogte binnen de Gewitterradar-kaart."
+          ],
+          [
+            "Groot",
+            "Vergroot de kaart binnen het dashboard en geeft meer kaartruimte zonder de volledig-schermmodus te openen."
+          ],
+          [
+            "Volledig scherm",
+            "Opent de kaart op volledig scherm. De locatiepil, het kompas, het medaillon, de legenda en de kaartbediening blijven beschikbaar."
+          ],
+          [
+            "Kaartweergave in Instellingen",
+            "In het onderdeel „Kaartweergave“ worden de standaardweergave voor dit apparaat of browserprofiel en het aparte kaartvenster ingesteld."
+          ],
+          [
+            "Standaardweergave",
+            "Bepaalt of Gewitterradar start met Standaard, Groot, Volledig scherm of de laatst gebruikte kaartweergave. De keuze wordt alleen lokaal opgeslagen op het betreffende apparaat of in het gebruikte browserprofiel."
+          ],
+          [
+            "Apart kaartvenster",
+            "Opent de onweersweergave met de momenteel geselecteerde kaart en het momenteel geselecteerde kompas in een apart venster. De normale dashboardweergave blijft daarvan gescheiden. Deze functie is beschikbaar via het menu Instellingen."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Externe diensten & netwerktoegang",
         "paragraphs": [
@@ -8528,6 +8684,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Apparaatoriëntatie",
             "kan op ondersteunde mobiele apparaten de oriëntatie gebruiken."
+          ],
+          [
+            "Apart kaartvenster",
+            "Opent de onweersweergave met de momenteel geselecteerde kaart en het momenteel geselecteerde kompas in een apart venster. De normale dashboardweergave blijft daarvan gescheiden. Deze functie is beschikbaar via het menu Instellingen."
           ],
           [
             "Kalibratie en diagnose",
@@ -8697,6 +8857,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Widoki mapy i przycisk warstw 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Przycisk warstw 3D w kolorze złotym, niebieskim i czerwonym",
+        "layerGraphicCaption": "Selektor warstw pozwala w dowolnym momencie przełączać widok mapy między trybami Standard, Duży i Pełny ekran.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Używa normalnej wysokości mapy w karcie Gewitterradar."
+          ],
+          [
+            "Duży",
+            "Powiększa mapę w panelu i zapewnia więcej miejsca na mapę bez otwierania trybu pełnoekranowego."
+          ],
+          [
+            "Pełny ekran",
+            "Otwiera mapę na pełnym ekranie. Pigułka lokalizacji, kompas, medalion, legenda i elementy sterowania mapą pozostają dostępne."
+          ],
+          [
+            "Widok mapy w Ustawieniach",
+            "Sekcja „Widok mapy“ określa widok domyślny dla tego urządzenia lub profilu przeglądarki oraz osobne okno mapy."
+          ],
+          [
+            "Widok domyślny",
+            "Określa, czy Gewitterradar uruchamia się w trybie Standard, Duży, Pełny ekran czy z ostatnio używanym widokiem mapy. Wybór jest zapisywany wyłącznie lokalnie na danym urządzeniu lub w używanym profilu przeglądarki."
+          ],
+          [
+            "Osobne okno mapy",
+            "Otwiera widok burzowy z aktualnie wybraną mapą i aktualnie wybranym kompasem w osobnym oknie. Zwykły widok panelu pozostaje od niego oddzielony. Funkcja jest dostępna w menu Ustawienia."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Usługi zewnętrzne i dostęp sieciowy",
         "paragraphs": [
@@ -8768,6 +8963,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientacja urządzenia",
             "może uwzględniać orientację obsługiwanych urządzeń mobilnych."
+          ],
+          [
+            "Osobne okno mapy",
+            "Otwiera widok burzowy z aktualnie wybraną mapą i aktualnie wybranym kompasem w osobnym oknie. Zwykły widok panelu pozostaje od niego oddzielony. Funkcja jest dostępna w menu Ustawienia."
           ],
           [
             "Kalibracja i diagnostyka",
@@ -8937,6 +9136,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Vistas do mapa e botão de camadas 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Botão de camadas 3D em dourado, azul e vermelho",
+        "layerGraphicCaption": "O seletor de camadas permite alternar a qualquer momento a vista do mapa entre Padrão, Grande e Ecrã inteiro.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Padrão",
+            "Utiliza a altura normal do mapa dentro do cartão Gewitterradar."
+          ],
+          [
+            "Grande",
+            "Aumenta o mapa dentro do painel e disponibiliza mais área de mapa sem abrir o modo de ecrã inteiro."
+          ],
+          [
+            "Ecrã inteiro",
+            "Abre o mapa em ecrã inteiro. A pílula de localização, a bússola, o medalhão, a legenda e os controlos do mapa continuam disponíveis."
+          ],
+          [
+            "Apresentação do mapa nas Definições",
+            "A secção „Apresentação do mapa“ controla a vista predefinida para este dispositivo ou perfil do navegador e a janela de mapa separada."
+          ],
+          [
+            "Vista predefinida",
+            "Define se o Gewitterradar inicia em Padrão, Grande, Ecrã inteiro ou na última vista de mapa utilizada. A escolha é guardada apenas localmente no respetivo dispositivo ou perfil do navegador."
+          ],
+          [
+            "Janela de mapa separada",
+            "Abre a vista de trovoadas com o mapa e a bússola atualmente selecionados numa janela separada. A vista normal do painel permanece independente. Esta função está disponível através do menu Definições."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Serviços externos e permissões de rede",
         "paragraphs": [
@@ -9008,6 +9242,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientação do dispositivo",
             "pode utilizar a orientação em dispositivos móveis compatíveis."
+          ],
+          [
+            "Janela de mapa separada",
+            "Abre a vista de trovoadas com o mapa e a bússola atualmente selecionados numa janela separada. A vista normal do painel permanece independente. Esta função está disponível através do menu Definições."
           ],
           [
             "Calibração e diagnóstico",
@@ -9177,6 +9415,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kartvyer och 3D-lagerknapp",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-lagerknapp i guld, blått och rött",
+        "layerGraphicCaption": "Med lagerväljaren kan kartvyn när som helst växlas mellan Standard, Stor och Helskärm.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Använder normal karthöjd i Gewitterradar-kortet."
+          ],
+          [
+            "Stor",
+            "Förstorar kartan i instrumentpanelen och ger mer kartyta utan att öppna helskärmsläget."
+          ],
+          [
+            "Helskärm",
+            "Öppnar kartan i helskärmsläge. Platsknappen, kompassen, medaljongen, teckenförklaringen och kartkontrollerna är fortfarande tillgängliga."
+          ],
+          [
+            "Kartvisning i Inställningar",
+            "Avsnittet „Kartvisning“ styr standardvyn för den här enheten eller webbläsarprofilen samt det separata kartfönstret."
+          ],
+          [
+            "Standardvy",
+            "Bestämmer om Gewitterradar startar i Standard, Stor, Helskärm eller med den senast använda kartvyn. Valet sparas endast lokalt på den aktuella enheten eller i den använda webbläsarprofilen."
+          ],
+          [
+            "Separat kartfönster",
+            "Öppnar åskvyn med den för närvarande valda kartan och kompassen i ett separat fönster. Den vanliga instrumentpanelsvyn förblir separat. Funktionen är tillgänglig via menyn Inställningar."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Externa tjänster & nätverksåtkomst",
         "paragraphs": [
@@ -9248,6 +9521,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Enhetsorientering",
             "kan använda orienteringen på mobila enheter som stöds."
+          ],
+          [
+            "Separat kartfönster",
+            "Öppnar åskvyn med den för närvarande valda kartan och kompassen i ett separat fönster. Den vanliga instrumentpanelsvyn förblir separat. Funktionen är tillgänglig via menyn Inställningar."
           ],
           [
             "Kalibrering och diagnostik",
@@ -9417,6 +9694,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Viste mappa e pulsante livelli 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Pulsante livelli 3D in oro, blu e rosso",
+        "layerGraphicCaption": "Il selettore dei livelli consente di passare in qualsiasi momento tra le viste Standard, Grande e Schermo intero.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Utilizza l’altezza normale della mappa all’interno della scheda Gewitterradar."
+          ],
+          [
+            "Grande",
+            "Ingrandisce la mappa all’interno della dashboard e offre più spazio senza aprire la modalità a schermo intero."
+          ],
+          [
+            "Schermo intero",
+            "Apre la mappa a schermo intero. La pillola della posizione, la bussola, il medaglione, la legenda e i controlli della mappa restano disponibili."
+          ],
+          [
+            "Visualizzazione mappa nelle Impostazioni",
+            "La sezione „Visualizzazione mappa“ controlla la vista predefinita per questo dispositivo o profilo del browser e la finestra mappa separata."
+          ],
+          [
+            "Vista predefinita",
+            "Stabilisce se Gewitterradar si avvia in Standard, Grande, Schermo intero oppure con l’ultima vista mappa utilizzata. La scelta viene salvata solo localmente sul dispositivo o nel profilo del browser in uso."
+          ],
+          [
+            "Finestra mappa separata",
+            "Apre la vista dei temporali con la mappa e la bussola attualmente selezionate in una finestra separata. La normale vista della dashboard rimane distinta. Questa funzione è disponibile tramite il menu Impostazioni."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Servizi esterni e autorizzazioni di rete",
         "paragraphs": [
@@ -9488,6 +9800,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientamento dispositivo",
             "può utilizzare l’orientamento sui dispositivi mobili supportati."
+          ],
+          [
+            "Finestra mappa separata",
+            "Apre la vista dei temporali con la mappa e la bussola attualmente selezionate in una finestra separata. La normale vista della dashboard rimane distinta. Questa funzione è disponibile tramite il menu Impostazioni."
           ],
           [
             "Calibrazione e diagnostica",
@@ -9657,6 +9973,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kartvisninger og 3D-lagknapp",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-lagknapp i gull, blått og rødt",
+        "layerGraphicCaption": "Med lagvelgeren kan kartvisningen når som helst byttes mellom Standard, Stor og Fullskjerm.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Bruker normal karthøyde i Gewitterradar-kortet."
+          ],
+          [
+            "Stor",
+            "Forstørrer kartet i dashbordet og gir mer kartflate uten å åpne fullskjermmodus."
+          ],
+          [
+            "Fullskjerm",
+            "Åpner kartet i fullskjerm. Posisjonspillen, kompasset, medaljongen, tegnforklaringen og kartkontrollene er fortsatt tilgjengelige."
+          ],
+          [
+            "Kartvisning i Innstillinger",
+            "Området „Kartvisning“ styrer standardvisningen for denne enheten eller nettleserprofilen samt det separate kartvinduet."
+          ],
+          [
+            "Standardvisning",
+            "Bestemmer om Gewitterradar starter i Standard, Stor, Fullskjerm eller med sist brukte kartvisning. Valget lagres bare lokalt på den aktuelle enheten eller i nettleserprofilen som brukes."
+          ],
+          [
+            "Eget kartvindu",
+            "Åpner tordenværsvisningen med det valgte kartet og det valgte kompasset i et eget vindu. Den vanlige dashbordvisningen forblir separat. Funksjonen er tilgjengelig via menyen Innstillinger."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Eksterne tjenester og nettverkstilgang",
         "paragraphs": [
@@ -9728,6 +10079,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Enhetsretning",
             "kan bruke retningen på støttede mobilenheter."
+          ],
+          [
+            "Eget kartvindu",
+            "Åpner tordenværsvisningen med det valgte kartet og det valgte kompasset i et eget vindu. Den vanlige dashbordvisningen forblir separat. Funksjonen er tilgjengelig via menyen Innstillinger."
           ],
           [
             "Kalibrering og diagnostikk",
@@ -9897,6 +10252,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Karttanäkymät ja 3D-tasopainike",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-tasopainike kullanvärisenä, sinisenä ja punaisena",
+        "layerGraphicCaption": "Tasovalitsimella karttanäkymän voi vaihtaa milloin tahansa Vakio-, Suuri- ja Koko näyttö -tilojen välillä.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Vakio",
+            "Käyttää normaalia karttakorkeutta Gewitterradar-kortissa."
+          ],
+          [
+            "Suuri",
+            "Suurentaa karttaa hallintapaneelissa ja antaa enemmän karttatilaa avaamatta koko näytön tilaa."
+          ],
+          [
+            "Koko näyttö",
+            "Avaa kartan koko näytön tilassa. Sijaintipilleri, kompassi, medaljonki, selite ja kartan ohjaimet pysyvät käytettävissä."
+          ],
+          [
+            "Karttanäkymä asetuksissa",
+            "„Karttanäkymä“-osiossa määritetään tämän laitteen tai selainprofiilin oletusnäkymä sekä erillinen karttaikkuna."
+          ],
+          [
+            "Oletusnäkymä",
+            "Määrittää, käynnistyykö Gewitterradar Vakio-, Suuri- tai Koko näyttö -näkymässä vai viimeksi käytetyssä karttanäkymässä. Valinta tallennetaan vain paikallisesti kyseiselle laitteelle tai käytettyyn selainprofiiliin."
+          ],
+          [
+            "Erillinen karttaikkuna",
+            "Avaa ukkosnäkymän tällä hetkellä valitulla kartalla ja kompassilla erilliseen ikkunaan. Normaali hallintapaneelin näkymä pysyy erillään. Toiminto on käytettävissä Asetukset-valikosta."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Ulkoiset palvelut ja verkkoluvat",
         "paragraphs": [
@@ -9968,6 +10358,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Laitteen suunta",
             "voi käyttää tuettujen mobiililaitteiden suuntausta."
+          ],
+          [
+            "Erillinen karttaikkuna",
+            "Avaa ukkosnäkymän tällä hetkellä valitulla kartalla ja kompassilla erilliseen ikkunaan. Normaali hallintapaneelin näkymä pysyy erillään. Toiminto on käytettävissä Asetukset-valikosta."
           ],
           [
             "Kalibrointi ja diagnostiikka",
@@ -10137,6 +10531,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Zobrazení mapy a tlačítko 3D vrstev",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Tlačítko 3D vrstev ve zlaté, modré a červené barvě",
+        "layerGraphicCaption": "Pomocí voliče vrstev lze kdykoli přepnout zobrazení mapy mezi Standardní, Velká a Celá obrazovka.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standardní",
+            "Používá běžnou výšku mapy v kartě Gewitterradar."
+          ],
+          [
+            "Velká",
+            "Zvětší mapu v řídicím panelu a poskytne více prostoru pro mapu bez otevření režimu celé obrazovky."
+          ],
+          [
+            "Celá obrazovka",
+            "Otevře mapu na celé obrazovce. Pilulka polohy, kompas, medailon, legenda a ovládací prvky mapy zůstávají dostupné."
+          ],
+          [
+            "Zobrazení mapy v Nastavení",
+            "Sekce „Zobrazení mapy“ nastavuje výchozí zobrazení pro toto zařízení nebo profil prohlížeče a samostatné okno mapy."
+          ],
+          [
+            "Výchozí zobrazení",
+            "Určuje, zda se Gewitterradar spustí v režimu Standardní, Velká, Celá obrazovka nebo v naposledy použitém zobrazení mapy. Volba se ukládá pouze lokálně na daném zařízení nebo v použitém profilu prohlížeče."
+          ],
+          [
+            "Samostatné okno mapy",
+            "Otevře bouřkový pohled s aktuálně vybranou mapou a kompasem v samostatném okně. Běžné zobrazení řídicího panelu zůstává oddělené. Tato funkce je dostupná v nabídce Nastavení."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Externí služby a síťová povolení",
         "paragraphs": [
@@ -10208,6 +10637,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientace zařízení",
             "může využívat orientaci podporovaných mobilních zařízení."
+          ],
+          [
+            "Samostatné okno mapy",
+            "Otevře bouřkový pohled s aktuálně vybranou mapou a kompasem v samostatném okně. Běžné zobrazení řídicího panelu zůstává oddělené. Tato funkce je dostupná v nabídce Nastavení."
           ],
           [
             "Kalibrace a diagnostika",
@@ -10377,6 +10810,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Προβολές χάρτη και κουμπί επιπέδων 3D",
+        "layerGraphic": true,
+        "layerGraphicAlt": "Κουμπί επιπέδων 3D σε χρυσό, μπλε και κόκκινο",
+        "layerGraphicCaption": "Με τον επιλογέα επιπέδων μπορείτε να αλλάζετε ανά πάσα στιγμή την προβολή χάρτη μεταξύ Τυπικής, Μεγάλης και Πλήρους οθόνης.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Τυπική",
+            "Χρησιμοποιεί το κανονικό ύψος χάρτη μέσα στην κάρτα Gewitterradar."
+          ],
+          [
+            "Μεγάλη",
+            "Μεγεθύνει τον χάρτη μέσα στον πίνακα ελέγχου και προσφέρει περισσότερο χώρο χωρίς να ανοίγει λειτουργία πλήρους οθόνης."
+          ],
+          [
+            "Πλήρης οθόνη",
+            "Ανοίγει τον χάρτη σε πλήρη οθόνη. Η ένδειξη τοποθεσίας, η πυξίδα, το μενταγιόν, το υπόμνημα και τα χειριστήρια του χάρτη παραμένουν διαθέσιμα."
+          ],
+          [
+            "Προβολή χάρτη στις Ρυθμίσεις",
+            "Η ενότητα „Προβολή χάρτη“ ορίζει την προεπιλεγμένη προβολή για αυτή τη συσκευή ή το προφίλ προγράμματος περιήγησης και το ξεχωριστό παράθυρο χάρτη."
+          ],
+          [
+            "Προεπιλεγμένη προβολή",
+            "Ορίζει αν το Gewitterradar ξεκινά σε Τυπική, Μεγάλη, Πλήρη οθόνη ή στην τελευταία χρησιμοποιημένη προβολή χάρτη. Η επιλογή αποθηκεύεται μόνο τοπικά στη συγκεκριμένη συσκευή ή στο χρησιμοποιούμενο προφίλ προγράμματος περιήγησης."
+          ],
+          [
+            "Ξεχωριστό παράθυρο χάρτη",
+            "Ανοίγει την προβολή καταιγίδων με τον τρέχοντα επιλεγμένο χάρτη και την τρέχουσα επιλεγμένη πυξίδα σε ξεχωριστό παράθυρο. Η κανονική προβολή του πίνακα ελέγχου παραμένει ανεξάρτητη. Η λειτουργία είναι διαθέσιμη από το μενού Ρυθμίσεις."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Εξωτερικές υπηρεσίες και άδειες δικτύου",
         "paragraphs": [
@@ -10448,6 +10916,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Προσανατολισμός συσκευής",
             "μπορεί να χρησιμοποιεί τον προσανατολισμό υποστηριζόμενων κινητών συσκευών."
+          ],
+          [
+            "Ξεχωριστό παράθυρο χάρτη",
+            "Ανοίγει την προβολή καταιγίδων με τον τρέχοντα επιλεγμένο χάρτη και την τρέχουσα επιλεγμένη πυξίδα σε ξεχωριστό παράθυρο. Η κανονική προβολή του πίνακα ελέγχου παραμένει ανεξάρτητη. Η λειτουργία είναι διαθέσιμη από το μενού Ρυθμίσεις."
           ],
           [
             "Βαθμονόμηση και διάγνωση",
@@ -10617,6 +11089,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Térképnézetek és 3D rétegválasztó",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D rétegválasztó arany, kék és piros színben",
+        "layerGraphicCaption": "A rétegválasztóval a térképnézet bármikor átkapcsolható Normál, Nagy és Teljes képernyős mód között.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Normál",
+            "A Gewitterradar kártyán belüli normál térképmagasságot használja."
+          ],
+          [
+            "Nagy",
+            "A vezérlőpulton belül nagyobbra nyitja a térképet, így több térképfelület áll rendelkezésre teljes képernyős mód nélkül."
+          ],
+          [
+            "Teljes képernyő",
+            "Teljes képernyőn nyitja meg a térképet. A helyjelző, az iránytű, a medál, a jelmagyarázat és a térképvezérlők továbbra is elérhetők."
+          ],
+          [
+            "Térképmegjelenítés a Beállításokban",
+            "A „Térképmegjelenítés“ rész határozza meg az eszköz vagy böngészőprofil alapértelmezett nézetét és a külön térképablakot."
+          ],
+          [
+            "Alapértelmezett nézet",
+            "Meghatározza, hogy a Gewitterradar Normál, Nagy, Teljes képernyős vagy a legutóbb használt térképnézettel induljon. A választás csak helyileg, az adott eszközön vagy a használt böngészőprofilban kerül mentésre."
+          ],
+          [
+            "Külön térképablak",
+            "Külön ablakban nyitja meg a vihar nézetet az aktuálisan kiválasztott térképpel és iránytűvel. A normál vezérlőpult-nézet ettől külön marad. A funkció a Beállítások menüből érhető el."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Külső szolgáltatások és hálózati engedélyek",
         "paragraphs": [
@@ -10688,6 +11195,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Eszköz tájolása",
             "támogatott mobileszközökön felhasználhatja az eszköz tájolását."
+          ],
+          [
+            "Külön térképablak",
+            "Külön ablakban nyitja meg a vihar nézetet az aktuálisan kiválasztott térképpel és iránytűvel. A normál vezérlőpult-nézet ettől külön marad. A funkció a Beállítások menüből érhető el."
           ],
           [
             "Kalibrálás és diagnosztika",
@@ -10857,6 +11368,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kartnansichtn & 3D-Layer-Schalter",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-Layer-Schalter in Gold, Blau und Rot",
+        "layerGraphicCaption": "Übern Layer-Wähler kannst d Kartnansicht jederzeit zwischen Standard, Groß und Vollbild umschaltn.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Normale Kartnhöhe in da Gewitterradar-Kartn."
+          ],
+          [
+            "Groß",
+            "Macht d Kartn im Dashboard größer und schafft mehr Kartnfläch, ohne Vollbild aufzumacha."
+          ],
+          [
+            "Vollbild",
+            "Macht d Kartn im Vollbild auf. Standort-Pille, Kompass, Medaillon, Legende und Kartnbedienung bleibn verfügbar."
+          ],
+          [
+            "Kartndarstellung in de Einstellungen",
+            "Im Bereich „Kartndarstellung“ legst d Standardansicht für des Gerät bzw. Browserprofil und s eigene Kartnfenster fest."
+          ],
+          [
+            "Standardansicht",
+            "Legt fest, ob Gewitterradar mit Standard, Groß, Vollbild oder da zuletzt verwendeten Kartnansicht startet. D Auswahl wird bloß lokal auf dem jeweiligen Gerät bzw. im verwendeten Browserprofil gspeichert."
+          ],
+          [
+            "Eigens Kartnfenster",
+            "Macht d Gewitteransicht mit da aktuell ausgewählten Kartn und dem aktuell ausgewählten Kompass in am separaten Fenster auf. D normale Dashboard-Ansicht bleibt davon getrennt. De Funktion is über s Einstellungsmenü verfügbar."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Externe Dienst & Netzwerkzugriff",
         "paragraphs": [
@@ -10928,6 +11474,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "ko auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Eigens Kartnfenster",
+            "Macht d Gewitteransicht mit da aktuell ausgewählten Kartn und dem aktuell ausgewählten Kompass in am separaten Fenster auf. D normale Dashboard-Ansicht bleibt davon getrennt. De Funktion is über s Einstellungsmenü verfügbar."
           ],
           [
             "Kalibrierung & Diagnose",
@@ -11097,6 +11647,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Koortansichten & 3D-Lagen-Schalter",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-Lagen-Schalter in Gold, Blau un Root",
+        "layerGraphicCaption": "Mit den Lagen-Wähler kannst du de Koortansicht jümmers twischen Standard, Groot un Vullbild wesseln.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Normale Koorthööcht binnen de Gewitterradar-Koort."
+          ],
+          [
+            "Groot",
+            "Maakt de Koort binnen dat Dashboard groter un gifft mehr Koortflach, ahn den Vullbildmodus optomaken."
+          ],
+          [
+            "Vullbild",
+            "Maakt de Koort in Vullbild op. Oort-Pill, Kompass, Medaillon, Legende un Koortbedenen blievt dor verfügbar."
+          ],
+          [
+            "Koortdarstellen in de Instellen",
+            "In den Deel „Koortdarstellen“ warrt de Standardansicht för dit Reedschap oder Browserprofil un dat enkelte Koortfinster fastleggt."
+          ],
+          [
+            "Standardansicht",
+            "Leggt fast, wat Gewitterradar mit Standard, Groot, Vullbild oder de tolest bruukte Koortansicht start. De Utwahl warrt bloots lokaal op dat jeweilige Reedschap oder in dat bruukte Browserprofil spiekert."
+          ],
+          [
+            "Egen Koortfinster",
+            "Maakt de Gewitteransicht mit de opstunns utsöchte Koort un den opstunns utsöchten Kompass in en egen Finster op. De normale Dashboard-Ansicht blifft dorvun trennt. Disse Funkschoon is över dat Instellungsmenü verfügbar."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Buten-Deensten & Nettwark-Togrepen",
         "paragraphs": [
@@ -11168,6 +11753,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "kann auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Egen Koortfinster",
+            "Maakt de Gewitteransicht mit de opstunns utsöchte Koort un den opstunns utsöchten Kompass in en egen Finster op. De normale Dashboard-Ansicht blifft dorvun trennt. Disse Funkschoon is över dat Instellungsmenü verfügbar."
           ],
           [
             "Kalibreren & Diagnose",
@@ -11337,6 +11926,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kartenansischten & 3D-Layer-Schalter",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-Layer-Schalter in Gold, Blau und Rot",
+        "layerGraphicCaption": "Übern Layer-Wähler kannste de Kartenansischt jederzeit zwischen Standard, Groß und Vollbild umschaltn.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Normale Kartenhöhe in der Gewitterradar-Karte."
+          ],
+          [
+            "Groß",
+            "Macht de Karte im Dashboard größer und schafft mehr Kartenfläche, ohne den Vollbildmodus offzumachn."
+          ],
+          [
+            "Vollbild",
+            "Macht de Karte im Vollbild off. Standort-Pille, Kompass, Medaillon, Legende und Kartenbedienung bleibn dort verfügbar."
+          ],
+          [
+            "Kartendarstellung in den Einstellungen",
+            "Im Bereich „Kartendarstellung“ legste de Standardansischt für dieses Gerät bzw. Browserprofil und das eigene Kartenfenster fest."
+          ],
+          [
+            "Standardansischt",
+            "Legt fest, ob Gewitterradar mit Standard, Groß, Vollbild oder der zuletzt verwendeten Kartenansischt startet. De Auswahl wird nur lokal auf dem jeweiligen Gerät bzw. im verwendeten Browserprofil gespeichert."
+          ],
+          [
+            "Eigenes Kartenfenster",
+            "Macht de Gewitteransischt mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Fenster off. De normale Dashboard-Ansischt bleibt davon getrennt. Diese Funktion is über das Einstellungsmenü verfügbar."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Exderne Diensde & Netzwerkzugriffe",
         "paragraphs": [
@@ -11408,6 +12032,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "kann auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Eigenes Kartenfenster",
+            "Macht de Gewitteransischt mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Fenster off. De normale Dashboard-Ansischt bleibt davon getrennt. Diese Funktion is über das Einstellungsmenü verfügbar."
           ],
           [
             "Kalibrierung & Diagnose",
@@ -11577,6 +12205,41 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       },
       {
+        "key": "mapview",
+        "title": "Kartenansichte & 3D-Layer-Schalter",
+        "layerGraphic": true,
+        "layerGraphicAlt": "3D-Layer-Schalter in Gold, Blau ond Rot",
+        "layerGraphicCaption": "Über dr Layer-Wähler kannsch d Kartenansicht jederzeit zwischen Standard, Groß ond Vollbild umschalta.",
+        "paragraphs": [],
+        "entries": [
+          [
+            "Standard",
+            "Normale Kartenhöhe innerhalb dr Gewitterradar-Karte."
+          ],
+          [
+            "Groß",
+            "Macht d Karte em Dashboard größer ond schafft mehr Kartenfläche, ohne dr Vollbildmodus aufzumacha."
+          ],
+          [
+            "Vollbild",
+            "Macht d Karte em Vollbild auf. Standort-Pille, Kompass, Medaillon, Legende ond Kartenbedienung bleibet dort verfügbar."
+          ],
+          [
+            "Kartendarstellung in de Einstellungen",
+            "Em Bereich „Kartendarstellung“ wird d Standardansicht für des Gerät bzw. Browserprofil ond s eigene Kartenfenster festgelegt."
+          ],
+          [
+            "Standardansicht",
+            "Legt fest, ob Gewitterradar mit Standard, Groß, Vollbild oder dr zuletzt verwendete Kartenansicht startet. D Auswahl wird bloß lokal auf em jeweilige Gerät bzw. em verwendete Browserprofil gspeichert."
+          ],
+          [
+            "Eigenes Kartenfenster",
+            "Macht d Gewitteransicht mit dr aktuell gwählte Karte ond em aktuell gwählte Kompass in eme separaten Fenster auf. D normale Dashboard-Ansicht bleibt davon trennt. Die Funktion isch übers Einstellungsmenü verfügbar."
+          ]
+        ],
+        "notes": []
+      },
+      {
         "key": "external_services",
         "title": "Externe Dienschd & Netzwerkzugriff",
         "paragraphs": [
@@ -11648,6 +12311,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "kann auf unterstützten Mobilgeräten d Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Eigenes Kartenfenster",
+            "Macht d Gewitteransicht mit dr aktuell gwählte Karte ond em aktuell gwählte Kompass in eme separaten Fenster auf. D normale Dashboard-Ansicht bleibt davon trennt. Die Funktion isch übers Einstellungsmenü verfügbar."
           ],
           [
             "Kalibrierung & Diagnose",
