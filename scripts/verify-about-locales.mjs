@@ -53,6 +53,24 @@ export function loadAboutLocaleRuntime(source) {
   runInNewContext(script, context, {timeout: 3000, filename: 'gewitterradar.js'});
   const model = context.aboutLocaleModel;
   if (!model || registered.get('gewitterradar-card') !== model.Card) throw Error('About card registration was not reached');
+
+  // V4.10: production translation methods are installed by ui.i18n-settings.
+  // The isolated locale VM intentionally does not execute application modules,
+  // so install the exact translation semantics needed by this locale contract.
+  if (typeof model.Card.prototype._t !== 'function') {
+    model.Card.prototype._t = function (key, vars = {}) {
+      const language = this._languageValue();
+      const fallback = model.app[model.defaultLanguage]?.strings || {};
+      const table = model.app[language]?.strings || fallback;
+      const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
+      let text = aboutKey
+        ? model.resolve(language).strings[aboutKey] ?? key
+        : table[key] ?? fallback[key] ?? model.app.Deutsch?.strings?.[key] ?? key;
+      return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
+        Object.prototype.hasOwnProperty.call(vars,name) ? String(vars[name]) : `{${name}}`
+      );
+    };
+  }
   return model;
 }
 
