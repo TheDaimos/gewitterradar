@@ -24,4 +24,4 @@ if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChec
 }
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
-console.log('PASS: V4.09 final validated against accepted V4.09.26 provenance; exact delivery parity, assets and packages verified.');
+console.log('PASS: V4.09 final validated against accepted V4.09.28 provenance plus diagnostic selector scope correction; exact delivery parity, assets and packages verified.');

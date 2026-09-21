@@ -19685,7 +19685,7 @@ ${this._diagnosticStormText(8)}`;}
 
     async _measureMedallionCalibration() {
       if(!this._medallionCalibrationEnabled)return;
-      const icon=this.shadow?.getElementById('trend-icon'),image=this.shadow?.querySelector('.trend-medallion-base'),arrow=this.shadow?.querySelector('.trend-medallion-arrow'),overlay=this.shadow?.getElementById('medallion-calibration-overlay'),trend=this.shadow?.getElementById('trend-box');
+      const icon=this.shadow?.getElementById('trend-icon'),image=icon?.querySelector('.trend-medallion-base'),arrow=icon?.querySelector('.trend-medallion-arrow'),overlay=this.shadow?.getElementById('medallion-calibration-overlay'),trend=this.shadow?.getElementById('trend-box');
       if(!icon||!image||!arrow||!overlay||!trend)return;
       if(!image.complete||!image.naturalWidth){image.addEventListener('load',()=>this._measureMedallionCalibration(),{once:true});return;}
       const box=icon.getBoundingClientRect(),asset=image.getBoundingClientRect(),card=this.getBoundingClientRect(),style=getComputedStyle(image),wrapperStyle=getComputedStyle(icon);
