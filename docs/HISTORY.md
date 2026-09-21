@@ -145,17 +145,17 @@ Detaillierte Testdokumentation:
 
 V4.09 erweitert den veröffentlichten V4.08-Stand um eine neue, geräteübergreifende Kartenbedienung. Die direkte Kartendarstellung kann zwischen **Standard**, **Groß** und **Vollbild** wechseln; die bevorzugte **Standardansicht** wird lokal je Gerät bzw. Browserprofil gespeichert. Zusätzlich kann die Gewitteransicht mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Kartenfenster geöffnet werden, ohne die normale Dashboard-Ansicht zu ersetzen.
 
-Im Vollbild wurden Kompass und Medaillon zu eigenständigen, ein-/ausblendbaren und frei verschiebbaren Instrumenten weiterentwickelt. Die Standort-Pille ist ebenfalls frei beweglich; ihr Menü passt Öffnungsrichtung, Spaltenzahl und Scrollverhalten an die verfügbare Bildschirmfläche an. Kartenbedienung, Radiusdialoge, Ortssuche und Layer-Schalter bleiben dabei in der vorgesehenen Vordergrundreihenfolge bedienbar.
+Im Vollbild wurden Kompass und Medaillon zu eigenständigen, ein-/ausblendbaren und frei verschiebbaren Instrumenten weiterentwickelt. Die Standort-Pille ist ebenfalls frei beweglich; ihr Menü passt Öffnungsrichtung, Spaltenzahl und Scrollverhalten an die verfügbare Bildschirmfläche an. Kartenbedienung, Radiusdialoge, Ortssuche und Layer-Schalter bleiben dabei in der vorgesehenen Vordergrundreihenfolge bedienbar. Warnanimationen werden im Vollbild nun direkt innerhalb des nativen Dialogs gerendert, sodass Gewitter- und Gefahrenanimation nicht hinter der Browser-Top-Layer-Ebene verschwinden.
 
 Der neue 3D-Kartenansichtsschalter verwendet die freigegebene Gold-/Blau-/Rot-Darstellung und öffnet ein kompaktes responsives Auswahlmenü. Das Kartenansicht-Popup selbst sowie **Hilfe & Hinweise** wurden auf den vollständigen Produktumfang von **15 Sprachen plus 4 deutschen Dialektvarianten = 19 Varianten** synchronisiert.
 
 Der sichtbare Versionsverlauf trennt seit V4.09 strikt zwischen öffentlichen Releases und internen Entwicklungsständen. Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“** bleibt oberhalb der veröffentlichten Historie erhalten; interne V4.09.xx-DEV-/TEST-Iterationen werden dort nicht als öffentliche Releases geführt.
 
-Akzeptierter interner Ausgangsstand: **V4.09.24**. Die öffentliche V4.09 normalisiert daraus ausschließlich die öffentlichen Versions-/Build-Metadaten.
+Akzeptierter interner Ausgangsstand: **V4.09.25**. Die öffentliche V4.09 normalisiert daraus ausschließlich die öffentlichen Versions-/Build-Metadaten.
 
 Release-Identität:
 
-- Frontend: **2.234.030 Bytes**, SHA256 `2dad877e61654f5261650511f595820e55a8432fcdb0f7387f75bfb9e0271b1f`;
+- Frontend: **2.235.675 Bytes**, SHA256 `c4a467c331f63136321bbf700fb756e3857ca9da2bae5e24f93d7cdd58066072`;
 - externes Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
 - neuer Runtime-Kompassschalter: SHA256 `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`;
 - native Integration: **0.21.0**;
