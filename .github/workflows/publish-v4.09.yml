@@ -35,12 +35,12 @@ jobs:
           test -f docs/archive-triggers/V4_09_PUBLISH.trigger
           grep -Fx 'VERSION=V4.09' docs/archive-triggers/V4_09_PUBLISH.trigger
           grep -Fx 'NATIVE_INTEGRATION=0.21.0' docs/archive-triggers/V4_09_PUBLISH.trigger
-          grep -Fx 'FRONTEND_SHA256=e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d' docs/archive-triggers/V4_09_PUBLISH.trigger
-          grep -Fx 'FRONTEND_SIZE=2238838' docs/archive-triggers/V4_09_PUBLISH.trigger
+          grep -Fx 'FRONTEND_SHA256=c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2' docs/archive-triggers/V4_09_PUBLISH.trigger
+          grep -Fx 'FRONTEND_SIZE=2238824' docs/archive-triggers/V4_09_PUBLISH.trigger
           grep -Fx 'LOCALE_SHA256=dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e' docs/archive-triggers/V4_09_PUBLISH.trigger
           test "$(python -c "import json; print(json.load(open('custom_components/gewitterradar/manifest.json'))['version'])")" = '0.21.0'
-          test "$(sha256sum frontend/gewitterradar.js | awk '{print $1}')" = 'e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d'
-          test "$(wc -c < frontend/gewitterradar.js | tr -d ' ')" = '2238838'
+          test "$(sha256sum frontend/gewitterradar.js | awk '{print $1}')" = 'c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2'
+          test "$(wc -c < frontend/gewitterradar.js | tr -d ' ')" = '2238824'
           test "$(sha256sum frontend/locales/about-locales.js | awk '{print $1}')" = 'dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e'
 
       - name: Run release contracts on exact main commit
