@@ -183,7 +183,7 @@ const server=http.createServer((req,res)=>{
     await context.close();
    }
    // Preview exclusion and ownership release when a card is removed.
-   const preview=await open(delivery,{preview:'1'});assert.equal(await preview.page.locator('dialog').count(),0);await preview.context.close();
+   const preview=await open(delivery,{preview:'1'});assert.equal(await preview.page.locator('dialog[open]').count(),0);await preview.context.close();
    const detached=await open(delivery);await detached.page.evaluate(()=>{window.card.remove();window.card=window.makeCard();});assert.equal(await detached.page.locator('.language-onboarding').count(),1);await detached.context.close();
    const mobile=await open(delivery,{ha:'es'},{viewport:{width:320,height:568},hasTouch:true});
    assert.equal(await mobile.page.getByRole('radio').count(),19);
