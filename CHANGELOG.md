@@ -9,6 +9,8 @@
 - Add the separate storm-map window using the currently selected map state and compass while keeping the normal Dashboard view independent.
 - Replace the native device-specific map-view picker in Settings with the established Gewitterradar custom dropdown style.
 - Refine the Settings action for the separate map window into a clearly recognizable premium button.
+- Move **Cluster-Auflösung** and **Cluster-Navigation** to the top of **Kartendarstellung** while keeping their existing runtime bindings unchanged.
+- Remove the nested Radien scroll trap so the Settings shell owns scrolling and the final danger-radius control remains fully reachable on short viewports.
 
 ### Vollbild-Instrumente & Standortbedienung
 
@@ -16,7 +18,8 @@
 - Keep Compass and Medallion freely movable by mouse and touch without changing their accepted instrument sizes.
 - Add the freely movable fullscreen location pill with locally stored position and an adaptive location menu.
 - Open the location menu downward near the top, upward near the bottom and use responsive multi-column/scroll behavior where useful.
-- Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.\n- Keep storm and danger warning animations visible inside the native fullscreen dialog instead of rendering behind the browser top layer.
+- Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.
+- Keep storm and danger warning animations visible inside the native fullscreen dialog instead of rendering behind the browser top layer.
 
 ### Hilfe, Sprachen & Versionsverlauf
 

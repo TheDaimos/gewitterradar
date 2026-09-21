@@ -2,7 +2,7 @@
 
 Status: **FINAL**  
 Öffentliche Produktversion: **V4.09**  
-Akzeptierter interner Ausgangsbuild: **V4.09.25**  
+Akzeptierter interner Ausgangsbuild: **V4.09.26**  
 Native Integration: **0.21.0**
 
 ## Neu in V4.09
@@ -19,6 +19,8 @@ Die bevorzugte **Standardansicht** wird lokal auf dem jeweiligen Gerät bzw. Bro
 
 Der kompakte 3D-Kartenansichtsschalter verwendet die freigegebene Gold-/Blau-/Rot-Darstellung und öffnet ein responsives Auswahlmenü. Titel und Ansichtsoptionen sind in allen 19 Produktsprachen übersetzt.
 
+In den Einstellungen stehen **Cluster-Auflösung** und **Cluster-Navigation** jetzt am Anfang von **Kartendarstellung**. Der Abschnitt **Radien** enthält nur noch die Radiussteuerung und nutzt den zentralen Scrollbereich des Einstellungsdialogs, sodass auch der Gefahrenradius bei niedriger Fensterhöhe vollständig erreichbar bleibt.
+
 ### Eigenes Kartenfenster
 
 Über die Einstellungen kann die Gewitteransicht mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Fenster geöffnet werden. Die normale Dashboard-Ansicht bleibt davon getrennt.
@@ -32,7 +34,8 @@ Die zugehörige Schaltfläche und die Standardansicht-Auswahl wurden an den Gewi
 - Die akzeptierten Instrumentgrößen bleiben erhalten.
 - Die Standort-Pille ist ebenfalls frei beweglich und speichert ihre Position lokal.
 - Das Standortmenü passt Öffnungsrichtung, Spaltenzahl und Scrollverhalten an die verfügbare Bildschirmfläche an.
-- Layer-Schalter, Radiusdialoge und weltweite Ortssuche bleiben im Vollbild in der vorgesehenen Vordergrundreihenfolge bedienbar.\n- Warnanimationen bleiben auch im nativen Vollbild sichtbar: Gewitter = weißer Blitz, Gefahr = weißer Blitz plus roter Schleier.
+- Layer-Schalter, Radiusdialoge und weltweite Ortssuche bleiben im Vollbild in der vorgesehenen Vordergrundreihenfolge bedienbar.
+- Warnanimationen bleiben auch im nativen Vollbild sichtbar: Gewitter = weißer Blitz, Gefahr = weißer Blitz plus roter Schleier.
 
 ### Hilfe & Hinweise und Mehrsprachigkeit
 
@@ -54,8 +57,8 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Release-Identität
 
-- Frontend: **2.235.675 Bytes**
-- Frontend SHA256: `c4a467c331f63136321bbf700fb756e3857ca9da2bae5e24f93d7cdd58066072`
+- Frontend: **2.234.776 Bytes**
+- Frontend SHA256: `44fb540e33e3d2428cd1c8b53cc9a256179831cb69eef877cd17997b7b58c048`
 - Externes Locale-Modul: **741.069 Bytes**
 - Locale SHA256: `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`
 - Runtime-Kompassschalter SHA256: `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`
@@ -64,7 +67,7 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Provenienz und Schutz
 
-V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.25**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
+V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.26**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
 
 Die bestehenden Schutzverträge bleiben erhalten, insbesondere:
 

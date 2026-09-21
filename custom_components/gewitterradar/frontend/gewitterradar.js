@@ -6856,7 +6856,7 @@
       try {
         targetUrl = new URL(window.location.href);
         targetUrl.searchParams.set(MAP_WINDOW_QUERY_KEY,'1');
-        targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40925');
+        targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40926');
       } catch (_error) {}
       if (!targetUrl) {
         this._setMapDisplayMode('fullscreen');
@@ -13836,24 +13836,18 @@
             .status-infinity-gfx { width:30px;max-height:21px;margin-left:7px; }
           }
 
-          /* V4.08.05 – Radien-Akkordeon bleibt am Kopf verankert; nur sein
-             Inhalt scrollt, wenn die reale Fensterhoehe nicht ausreicht.
-             Die spaeteren Regeln stehen absichtlich am Ende des Stylesheets,
-             damit auch die historische Landscape-Ausnahme nicht mehr auf
-             max-height:none zurueckfaellt. */
+          /* V4.09.26 – Radien nutzt den zentralen Scrollbereich des Einstellungsdialogs.
+             Dadurch bleibt der letzte Radius auch bei niedrigen Viewports vollständig
+             erreichbar; verschachtelte Scrollflächen werden bewusst vermieden. */
           #settings-radii-section[open] > .settings-radius-list {
-            min-height:0;max-height:clamp(230px,calc(100dvh - 490px),560px)!important;
-            overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain;
-            -webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-gutter:stable;
-            scrollbar-width:thin;scrollbar-color:rgba(205,164,84,.42) transparent;scroll-padding-bottom:12px;
-          }
-          #settings-radii-section[open] > .settings-radius-list::-webkit-scrollbar { width:7px; }
-          #settings-radii-section[open] > .settings-radius-list::-webkit-scrollbar-track { background:transparent; }
-          #settings-radii-section[open] > .settings-radius-list::-webkit-scrollbar-thumb { border-radius:999px;background:rgba(205,164,84,.38); }
-          @media (orientation:landscape) and (hover:none) and (pointer:coarse) and (max-height:600px) {
-            #settings-radii-section[open] > .settings-radius-list {
-              max-height:clamp(180px,calc(100dvh - 210px),340px)!important;overflow-y:auto!important;
-            }
+            min-height:0;
+            max-height:none!important;
+            overflow:visible!important;
+            overscroll-behavior-y:auto;
+            -webkit-overflow-scrolling:auto;
+            touch-action:auto;
+            scrollbar-gutter:auto;
+            scroll-padding-bottom:72px;
           }
           /* V4.08.09 – gewählte Variante B: statische Goldbetonung, keine Animation. */
           .settings-cluster-session-static-gold .settings-cluster-session-mode { position:relative;overflow:visible; }
@@ -14878,6 +14872,31 @@
                 <div class="settings-section-content">
                   <div class="settings-row">
                     <div class="settings-row-label">
+                      <div>Cluster-Auflösung</div>
+                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Wann Cluster in Einzelblitze aufgelöst werden</div>
+                    </div>
+                    <div class="settings-cluster-resolution-control">
+                      <button class="settings-language-button settings-control settings-cluster-resolution-button" id="settings-cluster-resolution-button" type="button"
+                              aria-haspopup="listbox" aria-expanded="false" aria-label="Cluster-Auflösung auswählen">
+                        <span class="settings-language-current"><i class="settings-language-current-dot"></i><span id="settings-cluster-resolution-current">Ausgewogen</span></span>
+                        <span class="settings-language-chevron" aria-hidden="true">▾</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="settings-row settings-cluster-session-row">
+                    <div class="settings-row-label">
+                      <div>Cluster-Navigation · Sitzungszeit</div>
+                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">5 - 3600 Sek. <span style="color:#e0b44f;font-size:1.18em;line-height:0;vertical-align:-0.02em">·</span> unendlich</div>
+                    </div>
+                    <div class="settings-cluster-session-selector settings-cluster-session-static-gold" id="settings-cluster-jump-selector" data-mode="finite" role="group" aria-label="Sitzungszeit der Cluster-Navigation">
+                      <label class="settings-cluster-session-mode settings-cluster-session-finite" id="settings-cluster-jump-finite"><input id="settings-cluster-jump-seconds" type="number" min="5" max="3600" step="1" inputmode="numeric" value="10" aria-label="Sitzungszeit der Cluster-Navigation in Sekunden"><span class="settings-cluster-session-unit">s</span></label>
+                      <button class="settings-cluster-session-mode settings-cluster-session-infinite" id="settings-cluster-jump-infinite" type="button" aria-pressed="false" aria-label="Cluster-Navigation unbegrenzt beibehalten" title="Unbegrenzt"><img class="settings-cluster-session-infinity-gfx" src="${GEWITTERRADAR_INFINITY_GFX}" alt="" aria-hidden="true"></button>
+                    </div>
+                  </div>
+
+                  <div class="settings-row">
+                    <div class="settings-row-label">
                       <span id="settings-map-startup-label">Standardansicht</span>
                       <span class="settings-row-note" id="settings-map-startup-note">Nur auf diesem Gerät und in diesem Browserprofil gespeichert</span>
                     </div>
@@ -14967,31 +14986,6 @@
                     </div>
                     <button class="settings-switch" id="settings-radii-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Radien in Hauptansicht anzeigen"></button>
-                  </div>
-
-                  <div class="settings-row settings-radius-main-toggle-row">
-                    <div class="settings-row-label">
-                      <div>Cluster-Auflösung</div>
-                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Wann Cluster in Einzelblitze aufgelöst werden</div>
-                    </div>
-                    <div class="settings-cluster-resolution-control">
-                      <button class="settings-language-button settings-control settings-cluster-resolution-button" id="settings-cluster-resolution-button" type="button"
-                              aria-haspopup="listbox" aria-expanded="false" aria-label="Cluster-Auflösung auswählen">
-                        <span class="settings-language-current"><i class="settings-language-current-dot"></i><span id="settings-cluster-resolution-current">Ausgewogen</span></span>
-                        <span class="settings-language-chevron" aria-hidden="true">▾</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="settings-row settings-radius-main-toggle-row settings-cluster-session-row">
-                    <div class="settings-row-label">
-                      <div>Cluster-Navigation · Sitzungszeit</div>
-                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">5 - 3600 Sek. <span style="color:#e0b44f;font-size:1.18em;line-height:0;vertical-align:-0.02em">·</span> unendlich</div>
-                    </div>
-                    <div class="settings-cluster-session-selector settings-cluster-session-static-gold" id="settings-cluster-jump-selector" data-mode="finite" role="group" aria-label="Sitzungszeit der Cluster-Navigation">
-                      <label class="settings-cluster-session-mode settings-cluster-session-finite" id="settings-cluster-jump-finite"><input id="settings-cluster-jump-seconds" type="number" min="5" max="3600" step="1" inputmode="numeric" value="10" aria-label="Sitzungszeit der Cluster-Navigation in Sekunden"><span class="settings-cluster-session-unit">s</span></label>
-                      <button class="settings-cluster-session-mode settings-cluster-session-infinite" id="settings-cluster-jump-infinite" type="button" aria-pressed="false" aria-label="Cluster-Navigation unbegrenzt beibehalten" title="Unbegrenzt"><img class="settings-cluster-session-infinity-gfx" src="${GEWITTERRADAR_INFINITY_GFX}" alt="" aria-hidden="true"></button>
-                    </div>
                   </div>
 
                   <div class="settings-radius observation">
