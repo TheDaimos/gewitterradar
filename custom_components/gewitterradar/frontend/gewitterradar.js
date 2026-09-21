@@ -6856,7 +6856,7 @@
       try {
         targetUrl = new URL(window.location.href);
         targetUrl.searchParams.set(MAP_WINDOW_QUERY_KEY,'1');
-        targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40924');
+        targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'40925');
       } catch (_error) {}
       if (!targetUrl) {
         this._setMapDisplayMode('fullscreen');
@@ -21119,6 +21119,37 @@ ${this._diagnosticStormText(8)}`;}
       },remaining + 35);
     }
 
+    _ensureFullscreenWarningOverlay() {
+      // V4.09 pre-release fix – native <dialog>.showModal() lives in the browser
+      // top layer. Warning animations rendered in the card or on document.body
+      // are therefore visually behind fullscreen. Keep a dedicated, pointer-
+      // transparent warning layer inside the fullscreen dialog itself.
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      if (!dialog) return null;
+      if (this._fullscreenWarningOverlay?.isConnected &&
+          this._fullscreenWarningOverlay.parentElement === dialog) {
+        return this._fullscreenWarningOverlay;
+      }
+
+      const overlay = document.createElement('div');
+      overlay.className = 'alert-flash';
+      overlay.setAttribute('data-gewitterradar-fullscreen-warning-overlay','');
+      Object.assign(overlay.style,{
+        position:'fixed',
+        inset:'0',
+        width:'100vw',
+        height:'100dvh',
+        zIndex:'2147483644',
+        pointerEvents:'none',
+        overflow:'hidden',
+        borderRadius:'0'
+      });
+      overlay.innerHTML = '<div class="flash-red"></div><div class="flash-ambient"></div><div class="flash-white"></div>';
+      dialog.appendChild(overlay);
+      this._fullscreenWarningOverlay = overlay;
+      return overlay;
+    }
+
     _ensureMobileViewportWarningOverlay() {
       // V3.517 TEST – rein mobiles Overlay außerhalb des Karten-Shadow-DOMs.
       // Dadurch wird auch der Home-Assistant-Header sichtbar vom Blitz erfasst.
@@ -21255,13 +21286,19 @@ ${this._diagnosticStormText(8)}`;}
         cardWidth <= FLASH_MOBILE_VIEWPORT_MAX_WIDTH &&
         (maxTouchPoints > 0 || coarsePointer);
 
-      // V3.517:
-      // Mobile benutzt absichtlich ein festes Viewport-Overlay oberhalb der
-      // kompletten Home-Assistant-Oberfläche – inklusive Header/Titelleiste.
-      // Desktop und iPad bleiben exakt beim bisherigen lokalen Karten-Layer.
-      const overlay = isPhoneLike
-        ? this._ensureMobileViewportWarningOverlay()
-        : localOverlay;
+      // V4.09 pre-release fix:
+      // A modal fullscreen <dialog> is promoted into the browser top layer.
+      // Any warning layer that remains in the card or on document.body is then
+      // behind that dialog regardless of z-index. Fullscreen therefore always
+      // uses a warning overlay that is itself a child of the fullscreen dialog.
+      // Outside fullscreen the proven V3.517 behavior remains unchanged.
+      const fullscreenDialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      const fullscreenActive =
+        (this._mapDisplayMode === 'fullscreen' || this._mapWindowMode) &&
+        !!fullscreenDialog?.open;
+      const overlay = fullscreenActive
+        ? this._ensureFullscreenWarningOverlay()
+        : (isPhoneLike ? this._ensureMobileViewportWarningOverlay() : localOverlay);
 
       const ambient = overlay?.querySelector('.flash-ambient');
       const white = overlay?.querySelector('.flash-white');
