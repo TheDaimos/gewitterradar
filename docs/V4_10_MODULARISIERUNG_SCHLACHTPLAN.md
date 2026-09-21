@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M02 – Registry & Modulmetadaten implementieren.**
+**M03 – Stabilen Loader und modulare Build-Auslieferung herstellen.**
 
 Dabei:
 - aktuelle Einstiegspunkte und Registrierungslogik erfassen,
@@ -300,12 +300,12 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M02 – Registry & Modulmetadaten
 
-- [ ] `core/registry.js` erstellen
-- [ ] Metadatenschema definieren
-- [ ] Registrierungsfunktion erstellen
-- [ ] Diagnosefunktion erstellen
-- [ ] Soll-/Ist-Vergleich vorbereiten
-- [ ] Test-Dummy oder erstes echtes Modul registrieren
+- [x] `core/registry.js` erstellen
+- [x] Metadatenschema definieren
+- [x] Registrierungsfunktion erstellen
+- [x] Diagnosefunktion erstellen
+- [x] Soll-/Ist-Vergleich vorbereiten
+- [x] Test-Dummy oder erstes echtes Modul registrieren
 
 **Abschlusskriterium:** Ein geladenes Modul kann seine eigene Version zuverlässig melden.
 
@@ -544,3 +544,19 @@ Ergebnis:
 - fehlendes `deploy-relay.json` als zwingender DRA-Arbeitspunkt identifiziert.
 
 **Nächster Schritt:** M02 – Registry & Modulmetadaten.
+
+
+## Schleife 004 – M02 Registry & Modulmetadaten abgeschlossen
+
+**Datum:** 2026-09-21  
+**Status:** erledigt
+
+Ergebnis:
+- `frontend/modules/core/registry.js` angelegt,
+- Selbstregistrierung mit Modul-ID, eigener Version, Gruppe, Funktion, Unterfunktionen, Datei, Ladezeit und URL implementiert,
+- Soll-/Ist-Diagnose mit `ok`, `missing`, `version_mismatch`, `unexpected` implementiert,
+- Doppeltregistrierungen werden erkannt,
+- `frontend/module-manifest.js` definiert Produktstand V4.10.02 und erwartete Funktionsmodule,
+- `scripts/test-module-registry.mjs` prüft Selbstregistrierung und Diagnose.
+
+**Nächster Schritt:** M03 – stabiler Loader + Build-/Auslieferungspfad.
