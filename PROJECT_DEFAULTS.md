@@ -15,6 +15,34 @@ Bevorzugte Bootstrap-Mnemoniken, vollständig gleichwertig:
 
 Alle Bootstrap-Aliase sind fail-closed: Die aktuelle `TheDaimos/project-defaults/START_HERE.md` muss tatsächlich geladen und befolgt werden, bevor Arbeitsbereitschaft erklärt wird. Ein alleinstehendes `Deimos`/`Daimos` darf nicht zuerst aus Erinnerung oder nur als Projektbezug beantwortet werden.
 
+## Schlüsselwort: „Schlachtplan“
+
+Für die V4.10-Modularisierung ist **„Schlachtplan“** ein verbindlicher Gewitterradar-Projektbegriff.
+
+Wenn Christian in einem aktuellen oder neuen Chat sagt:
+
+> **„Schau in den Schlachtplan“**  
+> **„Führe den Schlachtplan weiter“**  
+> **„Weiter nach Schlachtplan“**
+
+ist damit ohne weitere Rückfrage die kanonische Datei
+
+`docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
+
+im jeweils aktiven V4.10-Arbeitszweig gemeint.
+
+Verbindliches Verhalten für ChatGPT/Codex:
+
+1. Den aktuellen Stand dieser Datei direkt aus dem Repository laden.
+2. `NÄCHSTER SCHRITT`, offene Checkboxen, Entscheidungsprotokoll und Arbeitsprotokoll als maßgeblichen Fortsetzungsstand behandeln.
+3. Die dort definierte Arbeitsschleife ausführen: **implementieren → prüfen → Schlachtplan aktualisieren → nächsten Punkt festlegen**.
+4. Nach jedem abgeschlossenen Teilpunkt den Schlachtplan im Repository aktualisieren und committen.
+5. Keine bereits als erledigt markierten Schritte aus Erinnerung erneut beginnen, außer ein Regressionstest oder eine neue Benutzerentscheidung verlangt dies.
+6. Bei Widersprüchen zwischen altem Chatkontext und dem aktuellen Repository-Stand gilt der aktuelle Schlachtplan zusammen mit dem aktuellen Branch-Stand als Fortsetzungsquelle; ausdrückliche neue Benutzeranweisungen haben Vorrang.
+
+Der Begriff **„Schlachtplan“** darf im Gewitterradar-Kontext daher nicht als allgemeine Redewendung interpretiert werden, wenn eine laufende V4.10-Modularisierung existiert.
+
+
 ## Verbindliche Produktregel: ein Gewitterradar, zwei Auslieferungsformen
 
 Für Christian und ChatGPT/Codex existiert fachlich nur **Gewitterradar**.
