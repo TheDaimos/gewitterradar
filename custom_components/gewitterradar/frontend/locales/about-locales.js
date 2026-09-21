@@ -7810,6 +7810,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "kan bruge enhedens retning på understøttede mobilenheder."
           ],
           [
+            "Eget kortvindue",
+            "åbner kortet separat med det valgte kompas. Funktionen findes kun i indstillingsmenuen."
+          ],
+          [
             "Kalibrering og diagnosticering",
             "stiller værktøjer til målrettet kontrol, måling og fejlsøgning af visningen og enkelte komponenter til rådighed. Det omfatter bl.a. kalibrering af kompas og medaljon, diagnosevisninger og testfunktioner som tordenvejrssimulering. Værktøjerne er beregnet til opsætning, udvikling og fejlsøgning og bør være deaktiveret under normal drift."
           ]
@@ -8048,6 +8052,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientación del dispositivo",
             "puede usar la orientación en dispositivos móviles compatibles."
+          ],
+          [
+            "Ventana de mapa independiente",
+            "abre el mapa por separado con la brújula seleccionada. Esta función solo está disponible en el menú de ajustes."
           ],
           [
             "Calibración y diagnóstico",
@@ -8290,6 +8298,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "peut utiliser l’orientation des appareils mobiles compatibles."
           ],
           [
+            "Fenêtre de carte séparée",
+            "ouvre la carte séparément avec la boussole sélectionnée. Cette fonction est disponible uniquement dans le menu des paramètres."
+          ],
+          [
             "Étalonnage et diagnostic",
             "fournit des outils de contrôle ciblé, de mesure et de diagnostic de l’affichage et de ses composants. Cela comprend notamment l’étalonnage de la boussole et du médaillon, des vues de diagnostic et des fonctions de test telles que la simulation d’orage. Ces outils sont destinés à la configuration, au développement et au dépannage et doivent rester désactivés en fonctionnement normal."
           ]
@@ -8528,6 +8540,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Apparaatoriëntatie",
             "kan op ondersteunde mobiele apparaten de oriëntatie gebruiken."
+          ],
+          [
+            "Eigen kaartvenster",
+            "opent de kaart afzonderlijk met het geselecteerde kompas. Deze functie is uitsluitend beschikbaar in het instellingenmenu."
           ],
           [
             "Kalibratie en diagnose",
@@ -8770,6 +8786,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "może uwzględniać orientację obsługiwanych urządzeń mobilnych."
           ],
           [
+            "Osobne okno mapy",
+            "otwiera mapę osobno z wybranym kompasem. Ta funkcja jest dostępna wyłącznie w menu ustawień."
+          ],
+          [
             "Kalibracja i diagnostyka",
             "udostępnia narzędzia do ukierunkowanej kontroli, pomiarów i diagnostyki widoku oraz poszczególnych elementów. Obejmują one m.in. kalibrację kompasu i medalionu, widoki diagnostyczne oraz funkcje testowe, takie jak symulacja burzy. Narzędzia te są przeznaczone do konfiguracji, rozwoju i rozwiązywania problemów i podczas normalnej pracy powinny pozostać wyłączone."
           ]
@@ -9008,6 +9028,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientação do dispositivo",
             "pode utilizar a orientação em dispositivos móveis compatíveis."
+          ],
+          [
+            "Janela de mapa separada",
+            "abre o mapa separadamente com a bússola selecionada. Esta função está disponível apenas no menu de definições."
           ],
           [
             "Calibração e diagnóstico",
@@ -9250,6 +9274,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "kan använda orienteringen på mobila enheter som stöds."
           ],
           [
+            "Eget kartfönster",
+            "öppnar kartan separat med den valda kompassen. Funktionen finns endast i inställningsmenyn."
+          ],
+          [
             "Kalibrering och diagnostik",
             "ger verktyg för riktad kontroll, mätning och felsökning av visningen och enskilda komponenter. Det omfattar bland annat kalibrering av kompass och medaljong, diagnosvyer och testfunktioner som åsksimulering. Verktygen är avsedda för konfiguration, utveckling och felsökning och bör vara avstängda under normal drift."
           ]
@@ -9488,6 +9516,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Orientamento dispositivo",
             "può utilizzare l’orientamento sui dispositivi mobili supportati."
+          ],
+          [
+            "Finestra mappa separata",
+            "apre la mappa separatamente con la bussola selezionata. Questa funzione è disponibile solo nel menu delle impostazioni."
           ],
           [
             "Calibrazione e diagnostica",
@@ -9730,6 +9762,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "kan bruke retningen på støttede mobilenheter."
           ],
           [
+            "Eget kartvindu",
+            "åpner kartet separat med det valgte kompasset. Funksjonen er bare tilgjengelig i innstillingsmenyen."
+          ],
+          [
             "Kalibrering og diagnostikk",
             "gir verktøy for målrettet kontroll, måling og feilsøking av visningen og enkeltkomponenter. Dette omfatter blant annet kalibrering av kompass og medaljong, diagnosevisninger og testfunksjoner som tordenværsimulering. Verktøyene er beregnet for oppsett, utvikling og feilsøking og bør være deaktivert under normal drift."
           ]
@@ -9968,6 +10004,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Laitteen suunta",
             "voi käyttää tuettujen mobiililaitteiden suuntausta."
+          ],
+          [
+            "Erillinen karttaikkuna",
+            "avaa kartan erikseen valitun kompassin kanssa. Toiminto on käytettävissä vain asetusvalikossa."
           ],
           [
             "Kalibrointi ja diagnostiikka",
@@ -10210,6 +10250,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "může využívat orientaci podporovaných mobilních zařízení."
           ],
           [
+            "Samostatné okno mapy",
+            "otevře mapu samostatně s vybraným kompasem. Tato funkce je dostupná pouze v nabídce nastavení."
+          ],
+          [
             "Kalibrace a diagnostika",
             "poskytuje nástroje pro cílenou kontrolu, měření a diagnostiku zobrazení a jednotlivých součástí. Patří sem mimo jiné kalibrace kompasu a medailonu, diagnostická zobrazení a testovací funkce, například simulace bouřky. Tyto nástroje jsou určeny pro nastavení, vývoj a řešení problémů a při běžném provozu by měly zůstat vypnuté."
           ]
@@ -10448,6 +10492,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Προσανατολισμός συσκευής",
             "μπορεί να χρησιμοποιεί τον προσανατολισμό υποστηριζόμενων κινητών συσκευών."
+          ],
+          [
+            "Ξεχωριστό παράθυρο χάρτη",
+            "ανοίγει τον χάρτη ξεχωριστά με την επιλεγμένη πυξίδα. Η λειτουργία είναι διαθέσιμη μόνο στο μενού ρυθμίσεων."
           ],
           [
             "Βαθμονόμηση και διάγνωση",
@@ -10690,6 +10738,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "támogatott mobileszközökön felhasználhatja az eszköz tájolását."
           ],
           [
+            "Külön térképablak",
+            "külön nyitja meg a térképet a kiválasztott iránytűvel. Ez a funkció kizárólag a beállítások menüben érhető el."
+          ],
+          [
             "Kalibrálás és diagnosztika",
             "eszközöket biztosít a megjelenítés és az egyes elemek célzott ellenőrzéséhez, méréséhez és hibakereséséhez. Ide tartozik többek között az iránytű és a medál kalibrálása, diagnosztikai nézetek, valamint tesztfunkciók, például a viharszimuláció. Ezek az eszközök beállításhoz, fejlesztéshez és hibakereséshez készültek, normál használatkor pedig maradjanak kikapcsolva."
           ]
@@ -10928,6 +10980,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "ko auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Eig'nes Kartnfenster",
+            "macht d' Kartn mit'm ausgewählten Kompass separat auf. De Funktion gibt's nur im Einstellungsmenü."
           ],
           [
             "Kalibrierung & Diagnose",
@@ -11170,6 +11226,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "kann auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
           ],
           [
+            "Egen Koortenfinster",
+            "maakt de Koort mit den utwählten Kompass apart op. Disse Funkschoon gifft dat bloots in't Instellungsmenü."
+          ],
+          [
             "Kalibreren & Diagnose",
             "stellt Werkzeuge zur gezielten Prüfung, Vermessung un Fehleranalyse de Darstellung un einzelner Komponenten bereit. Dazu gehören unter anderem Kompass- un Medaillon-Kalibrierung, Diagnoseansichten sowie Testfunktionen wie de Gewittersimulation. Diese Werkzeuge sind för Einrichtung, Entwicklung un Fehlersuche gedacht un sollten im normalen Betrieb deaktiviert bleiben."
           ]
@@ -11410,6 +11470,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
             "kann auf unterstützten Mobilgeräten de Geräteausrichtung einbeziehen."
           ],
           [
+            "Eesches Kartenfenster",
+            "macht de Karte mit'm ausgewähltn Kompass separat uff. Die Funktion gibt's nur im Einstellungsmenü."
+          ],
+          [
             "Kalibrierung & Diagnose",
             "stellt Werkzeuge zur gezielten Prüfung, Vermessung un Fehleranalyse dr Darstellung un einzelner Komponenten bereit. Dazu gehören unter anderem Kompass- un Medaillon-Kalibrierung, Diagnoseansichten sowie Testfunktionen wie de Gewittersimulation. Diese Werkzeuge sin für Einrichtung, Entwicklung un Fehlersuche gedacht un sollten im normalen Betrieb deaktiviert bleiben."
           ]
@@ -11648,6 +11712,10 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
           [
             "Geräteorientierung",
             "kann auf unterstützten Mobilgeräten d Geräteausrichtung einbeziehen."
+          ],
+          [
+            "Eigenes Karta-Fenschter",
+            "macht d' Karta mit em ausgewählte Kompass separat auf. Die Funktion gibt's bloß im Einstellungsmenü."
           ],
           [
             "Kalibrierung & Diagnose",
