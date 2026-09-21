@@ -2,7 +2,7 @@
 
 Status: **2026/09 · V4.09 – finaler Release-Stand.**  
 Native Integration: **0.21.0.**  
-Akzeptierter interner Ausgangsbuild: **V4.09.26.**  
+Akzeptierter interner Ausgangsbuild: **V4.09.28.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 
 ## Erreicht
@@ -10,7 +10,7 @@ Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 ### M23 – V4.09 Kartenansichten und Vollbildbedienung finalisiert
 - Kartenansichten **Standard / Groß / Vollbild** mit lokal gespeicherter gerätespezifischer Standardansicht finalisiert;
 - **Cluster-Auflösung** und **Cluster-Navigation** an den Anfang von **Kartendarstellung** verschoben;
-- Radien-Abschnitt vom verschachtelten Scrollbereich befreit; der zentrale Einstellungs-Scrollbereich hält den Gefahrenradius auch bei niedrigen Viewports vollständig erreichbar;
+- Radien-Abschnitt mit eigenem viewportbasiertem Touch-Scrollbereich und zusätzlichem unteren Scrollraum finalisiert; der Gefahrenradius bleibt auch bei kurzen Browser-/WebView-Flächen vollständig erreichbar;
 - separates Gewitter-Kartenfenster mit aktuell gewählter Karte und aktuell gewähltem Kompass real geprüft;
 - Kompass und Medaillon im Vollbild ein-/ausblendbar und frei verschiebbar;
 - frei bewegliche Standort-Pille mit adaptivem Standortmenü für Desktop, Android, iPad und iPad Pro;
@@ -18,8 +18,9 @@ Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 - 3D-Kartenansichtsschalter mit responsivem Menü und vollständiger 19-Varianten-Übersetzung;
 - Hilfe & Hinweise um Kartenansichten, Vollbildbedienung und separates Kartenfenster erweitert und auf alle 19 Sprachvarianten synchronisiert;
 - öffentliche Release History von internen V4.09.xx-DEV-/TEST-Einträgen bereinigt und dauerhafte Zukunftssektion geschützt;
-- akzeptierten internen Stand **V4.09.26** mit Metadaten-only-Normalisierung auf öffentliche **V4.09** vorbereitet;
-- finales Frontend: **2.234.776 Bytes**, SHA256 `44fb540e33e3d2428cd1c8b53cc9a256179831cb69eef877cd17997b7b58c048`;
+- einheitliche `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad der Koordinateneingabe finalisiert;
+- akzeptierten internen Stand **V4.09.28** mit Metadaten-only-Normalisierung auf öffentliche **V4.09** vorbereitet;
+- finales Frontend: **2.238.838 Bytes**, SHA256 `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`;
 - Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
 - native Integration auf **0.21.0** angehoben;
 - PRE-MERGE-Snapshot des bisherigen `main` aus Commit `56b87a3b2db7b4e546f5eabbd067d2547a8f999c` erfolgreich erzeugt.
