@@ -16,7 +16,7 @@
 - Keep Compass and Medallion freely movable by mouse and touch without changing their accepted instrument sizes.
 - Add the freely movable fullscreen location pill with locally stored position and an adaptive location menu.
 - Open the location menu downward near the top, upward near the bottom and use responsive multi-column/scroll behavior where useful.
-- Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.
+- Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.\n- Keep storm and danger warning animations visible inside the native fullscreen dialog instead of rendering behind the browser top layer.
 
 ### Hilfe, Sprachen & Versionsverlauf
 
