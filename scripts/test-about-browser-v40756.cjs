@@ -54,6 +54,20 @@ assert.equal(
 );
 transformed = transformed.replace(keyboardFrom, keyboardTo);
 
+// V4.09 deliberately hides the warning test buttons when diagnostic/test
+// settings are disabled. The historical suite required those buttons to be
+// visible at all times. Preserve its overflow checks, but accept exactly two
+// coherent states: both buttons hidden, or both visible and usable.
+const testButtonsFrom = "if(settingsRefinement.horizontalOverflow||settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1))throw Error(\`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}\`);";
+const testButtonsTo = "const hiddenTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width===0&&button.height===0);const usableTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width>=80&&button.height>0&&button.left>=settingsRefinement.content.left-1&&button.right<=settingsRefinement.content.right+1);if(settingsRefinement.horizontalOverflow||(!hiddenTestButtons&&!usableTestButtons))throw Error(\`${name}: settings overflow or inconsistent test-button visibility ${JSON.stringify(settingsRefinement)}\`);";
+
+assert.equal(
+  transformed.split(testButtonsFrom).length,
+  2,
+  'Historical diagnostic test-button anchor changed; review before updating the V4.09 compatibility wrapper.',
+);
+transformed = transformed.replace(testButtonsFrom, testButtonsTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 

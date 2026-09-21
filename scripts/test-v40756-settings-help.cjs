@@ -129,7 +129,7 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 5, `${delivery}/${profile} settings sections`);
+        assert.equal(metrics.sections, 6, `${delivery}/${profile} settings sections`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
@@ -154,7 +154,7 @@ const server = http.createServer((req, res) => {
             bottom: dialog.getBoundingClientRect().bottom,
           };
         });
-        assert.equal(help.sections, 8, `${delivery}/${profile} accepted Help sections`);
+        assert.equal(help.sections, 9, `${delivery}/${profile} accepted Help sections`);
         assert.deepEqual(help.close, [44, 44]);
         assert.equal(help.overflow, false);
         assert.ok(help.bottom <= height + 0.5, `${delivery}/${profile} Help viewport`);

@@ -1,0 +1,14 @@
+{
+  "contractVersion": 1,
+  "version": "4.09",
+  "nativeIntegration": "0.21.0",
+  "sha256": "c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2",
+  "sizeBytes": 2238824,
+  "acceptedCandidateVersion": "4.09.28",
+  "acceptedCandidateSha256": "0f85dd6866339745c9daabbf7356badf9c49e683a02d16856d86fdc998117fd8",
+  "acceptedCandidateSizeBytes": 2238844,
+  "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
+  "localeSizeBytes": 741069,
+  "build": "V4.09-RELEASE-2026-09-21",
+  "allowedCandidateDelta": "public version/display/build markers plus medallion diagnostic selector scoped to the production trend instrument"
+}

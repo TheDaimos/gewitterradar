@@ -13,7 +13,7 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.08-c9a45b)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.09-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
 ![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
@@ -336,7 +336,7 @@ Bei der nativen Variante zusätzlich prüfen, dass die Integration nach einem Ne
 
 # Projektstand, Qualität und Schutz
 
-Die V4.08-Entwicklung baut auf dem geschützten V4.07.56-Stand auf. Für Entwicklung und Produktpflege gibt es nur **ein Gewitterradar**; Integration und Dashboard müssen denselben Produktstand ausliefern.
+Die V4.09-Version baut auf dem geschützten V4.08-Release und der weiterhin geschützten V4.07.56-Diagnosebasis auf. Für Entwicklung und Produktpflege gibt es nur **ein Gewitterradar**; Integration und Dashboard müssen denselben Produktstand ausliefern.
 
 Besonders geschützt sind:
 

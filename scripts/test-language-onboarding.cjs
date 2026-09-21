@@ -177,13 +177,13 @@ const server=http.createServer((req,res)=>{
     const {context,page}=await open(delivery,{[mode]:'1',ha:'de'});
     await page.getByRole('button',{name:'Weiter / Continue'}).click();await page.locator('.language-error').filter({hasText:'Could not save'}).waitFor();
     assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
-    assert.equal(await page.locator('.about-dialog').count(),0);
+    assert.equal(await page.locator('.about-dialog[open]').count(),0);
     await page.evaluate(()=>{window.fail=false;window.hass.states[window.entity]={state:'English',attributes:{options:[...window.card._languageOnboardingDialog.querySelectorAll('input')].map(input=>input.value)}};window.hass.states[window.marker]={state:'off',attributes:{}};window.cards.forEach(card=>card.hass=window.hass);});
     await confirm(page);assert.equal(await page.locator('.about-dialog h2').textContent(),'Über Gewitterradar');
     await context.close();
    }
    // Preview exclusion and ownership release when a card is removed.
-   const preview=await open(delivery,{preview:'1'});assert.equal(await preview.page.locator('dialog').count(),0);await preview.context.close();
+   const preview=await open(delivery,{preview:'1'});assert.equal(await preview.page.locator('dialog[open]').count(),0);await preview.context.close();
    const detached=await open(delivery);await detached.page.evaluate(()=>{window.card.remove();window.card=window.makeCard();});assert.equal(await detached.page.locator('.language-onboarding').count(),1);await detached.context.close();
    const mobile=await open(delivery,{ha:'es'},{viewport:{width:320,height:568},hasTouch:true});
    assert.equal(await mobile.page.getByRole('radio').count(),19);

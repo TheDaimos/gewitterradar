@@ -30,7 +30,7 @@ def test_standard_hacs_staging_is_complete_and_byte_identical(tmp_path: Path) ->
     assert set(hashes) == PACKAGING.REQUIRED
     assert (tmp_path / "custom_components" / "gewitterradar" / "frontend" / "gewitterradar.js").is_file()
     assert (tmp_path / "custom_components" / "gewitterradar" / "frontend" / "locales" / "about-locales.js").is_file()
-    assert len([name for name in hashes if name.startswith("frontend/")]) == 19
+    assert len([name for name in hashes if name.startswith("frontend/")]) == 20
 
 
 def test_repository_contains_exactly_one_custom_integration() -> None:

@@ -15,6 +15,11 @@
     "protected": true
   },
   {
+    "file": "assets/gewitterradar-compass-toggle.png",
+    "sha256": "bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a",
+    "protected": false
+  },
+  {
     "file": "assets/gewitterradar-compass-frame-v1.png",
     "sha256": "b09df9142df89903e2150e4767ebe3bf8bba9caf4ca7f0c4b6b78cc24318fde5",
     "protected": true

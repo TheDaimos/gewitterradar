@@ -141,6 +141,30 @@ Detaillierte Testdokumentation:
 - `docs/V4_08_CLUSTER_RESOLUTION_ANALYSIS.md`;
 - `docs/V4_08_INFINITY_GFX.md`.
 
+## V4.09 · 2026/09 – Kartenansichten, Vollbildinstrumente und separates Kartenfenster
+
+V4.09 erweitert den veröffentlichten V4.08-Stand um eine neue, geräteübergreifende Kartenbedienung. Die direkte Kartendarstellung kann zwischen **Standard**, **Groß** und **Vollbild** wechseln; die bevorzugte **Standardansicht** wird lokal je Gerät bzw. Browserprofil gespeichert. Zusätzlich kann die Gewitteransicht mit der aktuell gewählten Karte und dem aktuell gewählten Kompass in einem separaten Kartenfenster geöffnet werden, ohne die normale Dashboard-Ansicht zu ersetzen.
+
+Im Vollbild wurden Kompass und Medaillon zu eigenständigen, ein-/ausblendbaren und frei verschiebbaren Instrumenten weiterentwickelt. Die Standort-Pille ist ebenfalls frei beweglich; ihr Menü passt Öffnungsrichtung, Spaltenzahl und Scrollverhalten an die verfügbare Bildschirmfläche an. Kartenbedienung, Radiusdialoge, Ortssuche und Layer-Schalter bleiben dabei in der vorgesehenen Vordergrundreihenfolge bedienbar. Warnanimationen werden im Vollbild nun direkt innerhalb des nativen Dialogs gerendert, sodass Gewitter- und Gefahrenanimation nicht hinter der Browser-Top-Layer-Ebene verschwinden.
+
+Der neue 3D-Kartenansichtsschalter verwendet die freigegebene Gold-/Blau-/Rot-Darstellung und öffnet ein kompaktes responsives Auswahlmenü. Das Kartenansicht-Popup selbst sowie **Hilfe & Hinweise** wurden auf den vollständigen Produktumfang von **15 Sprachen plus 4 deutschen Dialektvarianten = 19 Varianten** synchronisiert.
+
+Die Einstellungen bündeln **Cluster-Auflösung** und **Cluster-Navigation** nun oben in **Kartendarstellung**. Für **Radien** verwendet V4.09 einen eigenen, viewportbasiert begrenzten Touch-Scrollbereich mit zusätzlichem unteren Scrollraum, sodass der Gefahrenradius auch in kurzen Browser- und WebView-Flächen vollständig erreichbar bleibt. Die Cluster-Sortierung und ihre bestehenden Laufzeitbindungen bleiben unverändert.
+
+Der sichtbare Versionsverlauf trennt seit V4.09 strikt zwischen öffentlichen Releases und internen Entwicklungsständen. Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“** bleibt oberhalb der veröffentlichten Historie erhalten; interne V4.09.xx-DEV-/TEST-Iterationen werden dort nicht als öffentliche Releases geführt.
+
+Nach der Radien-Scrollkorrektur und der Vereinheitlichung der `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad wurde **V4.09.28** vollständig geprüft und als finaler interner Ausgangsstand abgenommen. Während der finalen Release-Gates wurde zusätzlich entdeckt, dass die geschützte Medaillon-Diagnose durch das parallel vorhandene Vollbild-Medaillon einen globalen DOM-Selektor falsch auflösen konnte. V4.09 korrigiert ausschließlich diesen Diagnose-Selektor auf das produktive `trend-icon`; zusätzlich werden die öffentlichen Versions-/Build-Metadaten normalisiert.
+
+Release-Identität:
+
+- Frontend: **2.238.824 Bytes**, SHA256 `c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2`;
+- externes Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
+- neuer Runtime-Kompassschalter: SHA256 `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`;
+- native Integration: **0.21.0**;
+- Build: `V4.09-RELEASE-2026-09-21`.
+
+Als nächste öffentliche Entwicklung sind unterschiedliche Medaillions, Verbesserungen der Kompass-/Medaillion-Auswahl und die Implementierung von Wetterdiensten über WeatherRouter vorgesehen.
+
 ## Qualitätssicherung und Promotion
 
 V4.08 wurde am **18.09.2026** vollständig nach dem verbindlichen PRE-MERGE-/Golden-Master-Vertrag veröffentlicht.
