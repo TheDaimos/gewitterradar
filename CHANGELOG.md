@@ -1,13 +1,5 @@
 # Changelog
 
-## Unreleased — V4.09.27 TEST
-
-### Einstellungen · Radien
-
-- Reopen the real-device radius scrolling regression reported after V4.09.26; V4.09.26 is no longer treated as accepted for release promotion.
-- Replace the outer-settings-scroll-only workaround with a dedicated viewport-aware **Radien** scroll surface, including touch scrolling, momentum scrolling and additional bottom scroll space so the **Gefahrenradius** can be reached completely.
-- Preserve **Cluster-Auflösung** and **Cluster-Navigation** as the first two controls under **Kartendarstellung**; no runtime binding or cluster behavior is changed.
-- Keep V4.09.27 as a test candidate until Desktop, Android, iPad and iPad Pro / short-landscape verification is complete.
 
 ## 2026/09 — V4.09 FINAL / native integration 0.21.0
 
@@ -19,7 +11,7 @@
 - Replace the native device-specific map-view picker in Settings with the established Gewitterradar custom dropdown style.
 - Refine the Settings action for the separate map window into a clearly recognizable premium button.
 - Move **Cluster-Auflösung** and **Cluster-Navigation** to the top of **Kartendarstellung** while keeping their existing runtime bindings unchanged.
-- Remove the nested Radien scroll trap so the Settings shell owns scrolling and the final danger-radius control remains fully reachable on short viewports.
+- Use a dedicated viewport-aware **Radien** scroll surface with touch/momentum scrolling and additional bottom space so the final danger-radius control remains fully reachable on short browser and WebView viewports.
 
 ### Vollbild-Instrumente & Standortbedienung
 
@@ -29,6 +21,10 @@
 - Open the location menu downward near the top, upward near the bottom and use responsive multi-column/scroll behavior where useful.
 - Preserve the accepted top-layer behavior of map controls, radius dialogs and worldwide place search in fullscreen.
 - Keep storm and danger warning animations visible inside the native fullscreen dialog instead of rendering behind the browser top layer.
+
+### Standortsuche & Koordinateneingabe
+
+- Add consistent `×` clear controls to the designation/name, latitude and longitude input fields without changing the existing location-search or coordinate-adoption behavior.
 
 ### Hilfe, Sprachen & Versionsverlauf
 
