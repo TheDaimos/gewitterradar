@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026/09 — V4.10.01 DEV
+
+### Kompassauswahl
+
+- Start the V4.10 development line at **V4.10.01** on top of the published V4.09 baseline.
+- Open a dedicated premium compass picker by tapping/clicking the compass itself.
+- Reuse the **Hi-Res premium close control** from “Über Gewitterradar” instead of a plain text ×.
+- Reuse the established dark metallic **gold premium frame** and add polished gold left/right chevrons below the compass.
+- Reparent the live compass instrument into the modal while it is open, so the preview always uses the real active compass geometry, frame and needle instead of a separate approximation.
+- Switch cyclically through all existing compass designs and apply/persist the selection immediately without an additional Apply button.
+- Preserve fullscreen mouse/touch dragging and distinguish a tap from a drag with a 6 px movement threshold; only a genuine tap opens the picker.
+- Keep the first iteration intentionally free of new visible translation strings; existing compass previous/next translations are reused for accessibility labels.
+- Keep all three frontend delivery paths byte-identical.
+
 
 ## 2026/09 — V4.09 FINAL / native integration 0.21.0
 
