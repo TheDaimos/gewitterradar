@@ -1,0 +1,56 @@
+name: Build V4.09.27 current download
+
+on:
+  push:
+    branches:
+      - build/v4.09.27-current-download-2026-09-21
+    paths:
+      - '.github/workflows/v40927-current-download.yml'
+      - 'frontend/gewitterradar.js'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout build branch
+        uses: actions/checkout@v4
+
+      - name: Verify current V4.09.27 frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check frontend/gewitterradar.js
+          grep -Fq "const CARD_VERSION = '4.09.27';" frontend/gewitterradar.js
+          grep -Fq "v407-coordinate-latitude-clear" frontend/gewitterradar.js
+          grep -Fq "v407-coordinate-longitude-clear" frontend/gewitterradar.js
+          grep -Fq ".settings-map-startup-button { width:156px;min-width:156px;max-width:156px; }" frontend/gewitterradar.js
+
+      - name: Create current V4.09.27 ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/v40927-current
+          mkdir -p build/v40927-current
+          cp frontend/gewitterradar.js build/v40927-current/gewitterradar-v4.09.27.js
+          (
+            cd build/v40927-current
+            zip -q ../Gewitterradar_v4.09.27.zip gewitterradar-v4.09.27.js
+          )
+          unzip -t build/Gewitterradar_v4.09.27.zip
+          sha256sum build/Gewitterradar_v4.09.27.zip > build/Gewitterradar_v4.09.27.zip.sha256
+          sha256sum build/v40927-current/gewitterradar-v4.09.27.js > build/gewitterradar-v4.09.27.js.sha256
+
+      - name: Upload current V4.09.27 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_v4.09.27_current
+          path: |
+            build/Gewitterradar_v4.09.27.zip
+            build/Gewitterradar_v4.09.27.zip.sha256
+            build/gewitterradar-v4.09.27.js.sha256
+          if-no-files-found: error
+          retention-days: 30
