@@ -165,6 +165,18 @@ Release-Identität:
 
 Als nächste öffentliche Entwicklung sind unterschiedliche Medaillions, Verbesserungen der Kompass-/Medaillion-Auswahl und die Implementierung von Wetterdiensten über WeatherRouter vorgesehen.
 
+## V4.10.01 · 2026/09 – neue direkte Kompassauswahl
+
+Mit **V4.10.01** beginnt die V4.10-Entwicklung auf der veröffentlichten V4.09-Basis. Die erste Iteration überarbeitet bewusst nur die Auswahl des Kompassdesigns und lässt Kompassberechnung, Kalibrierung, Vollbildgröße und die bereits abgenommene freie Positionierung unverändert.
+
+Ein kurzer Tipp bzw. Klick direkt auf den Kompass öffnet nun einen eigenen Premium-Auswahldialog. Der Dialog verwendet den etablierten dunklen Metall-/Goldstil aus **„Über Gewitterradar“** und das dort geschützte Hi-Res-Schließen-X. Der aktive Kompass selbst wird für die Dauer des Dialogs in die Auswahlfläche verschoben; dadurch zeigt die Vorschau exakt das laufende Instrument mit der aktuell aktiven Geometrie und nicht eine vereinfachte Kopie.
+
+Unter dem Instrument schalten zwei metallisch-goldene Chevron-Schaltflächen zyklisch durch alle vorhandenen Kompassvarianten. Die Auswahl wird unmittelbar angewendet und über den bestehenden Kompass-Speicherpfad persistiert. Ein zusätzlicher Übernehmen-Schritt ist nicht erforderlich.
+
+Für die Vollbildbedienung wurde die Gestenerkennung gezielt erweitert: Erst ab **6 px** Bewegung gilt die Geste als Verschieben. Eine Geste unterhalb dieser Schwelle wird als Tipp behandelt und öffnet die Kompassauswahl. Damit bleiben Desktop-, Android- und Home-Assistant-WebView-Dragpfade erhalten.
+
+V4.10.01 ist ein interner DEV-Stand und wird nicht als eigener Eintrag in der öffentlichen Release History der Karte geführt. Der technische Prüfstand ist in `docs/V4_10_01_COMPASS_PICKER_TEST_CANDIDATE.md` festgehalten.
+
 ## Qualitätssicherung und Promotion
 
 V4.08 wurde am **18.09.2026** vollständig nach dem verbindlichen PRE-MERGE-/Golden-Master-Vertrag veröffentlicht.
