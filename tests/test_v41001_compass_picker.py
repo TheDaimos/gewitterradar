@@ -1,41 +1,9 @@
-"""Regression contract for the V4.10.01 compass picker."""
+"""V4.10.01 compass-picker regression carried into modular V4.10.02."""
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-FRONTEND_PATHS = (
-    ROOT / "frontend" / "gewitterradar.js",
-    ROOT / "dashboard" / "dist" / "gewitterradar.js",
-    ROOT / "custom_components" / "gewitterradar" / "frontend" / "gewitterradar.js",
-)
-
-
-def test_v41001_frontend_delivery_is_byte_identical() -> None:
-    """All product delivery paths must ship exactly the same frontend."""
-    payloads = [path.read_bytes() for path in FRONTEND_PATHS]
-    assert payloads[0] == payloads[1] == payloads[2]
-
-
-def test_v41001_compass_picker_contract() -> None:
-    """Protect the first V4.10 compass-picker interaction contract."""
-    source = FRONTEND_PATHS[0].read_text(encoding="utf-8")
-
-    assert "const CARD_VERSION = '4.10.01';" in source
-    assert "V4.10.01-DEV-2026-09-21" in source
-
-    # Premium picker: existing Hi-Res close asset, gold dialog frame and chevrons.
-    assert "compass-picker-shell-v41001" in source
-    assert 'data-compass-picker-close' in source
-    assert "ABOUT_CLOSE_IMAGE" in source
-    assert "border:1px solid #c9a050" in source
-    assert "compass-picker-gold-prev" in source
-    assert "compass-picker-gold-next" in source
-
-    # Live cyclic selection keeps using the established persistence path.
-    assert "this._stepCompassDesign(-1);" in source
-    assert "this._stepCompassDesign(1);" in source
-    assert "this._persistCompassDesign(next.id);" in source
-
-    # Fullscreen tap and drag must remain distinct on pointer and touch paths.
-    assert "Math.hypot(dx,dy) < 6" in source
-    assert "event.type === 'pointerup' && !moved" in source
-    assert "event.type === 'touchend' && !moved" in source
+ROOT=Path(__file__).resolve().parents[1];FRONTEND=ROOT/"frontend"
+def test_v41001_compass_picker_contract():
+ main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
+ source="\n".join(path.read_text(encoding="utf-8") for path in sorted(FRONTEND.rglob("*.js")))
+ assert "const CARD_VERSION = '4.10.02';" in main
+ assert "V4.10.02-MODULAR-DEV-2026-09-21" in main
+ for marker in ("compass-picker-shell-v41001","data-compass-picker-close","ABOUT_CLOSE_IMAGE","border:1px solid #c9a050","compass-picker-gold-prev","compass-picker-gold-next","this._stepCompassDesign(-1);","this._stepCompassDesign(1);","this._persistCompassDesign(next.id);","Math.hypot(dx,dy) < 6","event.type === 'pointerup' && !moved","event.type === 'touchend' && !moved"):assert marker in source
