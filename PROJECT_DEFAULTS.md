@@ -201,79 +201,30 @@ Verbindlich sind insbesondere:
 
 Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten = 19 Sprachvarianten**. Änderungen am Sprachumfang müssen künftig ebenfalls in History und Release Notes nachvollziehbar sein.
 
-## Aktueller Entwicklungsstand nach V4.08 — V4.09.01 Kartenansichten
-
-Stand: **2026-09-20**. Der erste V4.09-Funktionsblock ist als **Testkandidat** vorhanden, aber noch nicht nach `main` gemergt oder veröffentlicht.
-
-Kanonischer aktiver Kandidat:
-
-- Branch: `feature/v4.09-map-display-modes`
-- aktueller Branch-Head: `d6b2b68bb36f9e0e9f1a9b20d0526c81b47cc308`
-- zuletzt vollständig automatisiert geprüfter Runtime-/Teststand: `fcfb6ddd114c96587312be35b7af4be92ed8af61`
-- Differenz `fcfb6ddd… → d6b2b68…`: ausschließlich Dokumentation (`CHANGELOG.md`, `docs/ROADMAP.md`, `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`)
-- `main` bleibt bis zur realen Geräteabnahme auf der veröffentlichten V4.08-Linie.
-
-Vom Benutzer festgelegter Umfang für V4.09.01:
-
-- direkte Kartenmodi **Standard · Groß · Vollbild**; keine zusätzliche XL-Stufe;
-- **„In eigenem Fenster öffnen“** als separater Punkt in den Einstellungen, nicht als vierter direkter Kartenmodus;
-- im Vollbild den **aktuell gewählten produktiven Kompass** einbetten;
-- Kompass im Vollbild per Maus und Touch/Pointer frei verschiebbar;
-- bestehende Leaflet-Karteninstanz weiterverwenden statt eine zweite Karte zu erzeugen;
-- Standard/Groß-Präferenz sowie normalisierte Kompassposition lokal speichern;
-- blockiertes separates Fenster fällt auf den integrierten Vollbildmodus zurück.
-
-Status des Kandidaten: automatisierte Frontend-, Integrations-, Diagnose-, Hi-Res-, Locale-, Golden- und Browserprüfungen sind dokumentiert grün; **reale Geräteabnahme durch den Benutzer steht aus**. Ohne diese Abnahme kein Merge nach `main`, kein V4.09-Tag und kein öffentlicher Release.
-
-Verbindliche aktuelle Dokumente:
-
-- `docs/V4_09_01_MAP_DISPLAY_TEST_CANDIDATE.md`
-- `docs/HANDOFF_V4_09_01_MAP_DISPLAY_2026-09-20.md`
-- `docs/ROADMAP.md`
-
-Parallel existieren ältere/divergierende Kartenmodus-Zweige. Sie enthalten teils eindeutige Commits und werden bis zu einer bewussten Vergleichs-/Archiventscheidung **weder blind gemergt noch gelöscht**:
-
-- `feature/v4.08-map-view-modes` → `9c2760498bd284a0818392ee9012f5a7dfa9b4b2`
-- `feature/v4.09-map-view-modes` → `8fde20c5661dcfaa553eead3d76964e56ff1269e`
-- `feature/v4.09-map-viewport-modes` → `a9d76e43c8d7d2def69045f860f105cde16a27a4`
-
-Der aktive Fortsetzungspunkt ist ausschließlich `feature/v4.09-map-display-modes`, solange keine neuere ausdrücklich dokumentierte Benutzerentscheidung vorliegt.
-
 ## Aktueller Release-/Promotionsstand
 
-Aktueller finaler Promotionsstand ist **2026/09 · V4.08 / native Integration 0.20.0**.
+Aktueller finaler Promotionsstand ist **2026/09 · V4.09 / native Integration 0.21.0**.
 
-V4.08 basiert funktional auf dem ausdrücklich akzeptierten internen Build **V4.08.40 RC**. Für die öffentliche Version werden ausschließlich Release-Metadaten normalisiert; der deterministische Buildvertrag rekonstruiert RC40 aus dem finalen Frontend und blockiert jede darüber hinausgehende Abweichung.
+V4.09 basiert funktional auf dem vollständig geprüften und vom Benutzer abgenommenen internen Stand **V4.09.28**. Die öffentliche V4.09 normalisiert gegenüber V4.09.28 ausschließlich Versions-/Build-Metadaten.
 
-Kanonische V4.08-Identität:
+Kanonische V4.09-Identität:
 
-- Frontend: **2.028.645 Bytes**;
-- Frontend-SHA256: `b75390652fae4aa98c77162fb207d97ece408ab617bbf107bcb0f3b9466a691f`;
-- akzeptierter RC40: **2.028.691 Bytes**, SHA256 `2c94af487b1142fd9da450e3bbe9751c3ac17631a621b3878fd9665b557d9570`;
-- Locale-Modul: **705.974 Bytes**, SHA256 `a57493b6291671696aeb87c267595e3ce5fede987546f702d7883ef6f07bd288`;
-- Build: `V4.08-RELEASE-2026-09-18`;
-- native Integration: **0.20.0**;
-- Dashboard-Pakete V4.06 und V4.07 bleiben als bestehende Rückfall-/Kompatibilitätsbestände erhalten;
-- HTML-v14 und acht lossless-WebP-Dokumentationsscreenshots sind Bestandteil des V4.08-Repository-Stands.
-- veröffentlichter Release-Commit: `27da94e5043a365dbe8ea5c5e2224327165750fa`;
-- unveränderliche Release-Referenzen: `v4.08` und `frozen/v4.08`;
-- abgeleiteter Dashboard-V4.08-Release-Commit: `cba234a37f20971c2f64b393202dbb70007dc19d`;
+- Frontend: **2.238.838 Bytes**;
+- Frontend-SHA256: `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`;
+- akzeptierter V4.09.28-Kandidat: **2.238.844 Bytes**, SHA256 `0f85dd6866339745c9daabbf7356badf9c49e683a02d16856d86fdc998117fd8`;
+- Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
+- Build: `V4.09-RELEASE-2026-09-21`;
+- native Integration: **0.21.0**;
+- PRE-MERGE-Snapshot des alten `main`: Commit `56b87a3b2db7b4e546f5eabbd067d2547a8f999c`.
 
-V4.08 ist nach Veröffentlichung funktional eingefroren. **Neue Entwicklung beginnt ausschließlich auf V4.09.xx.** Die Vorbereitung und Einreichung in den offiziellen HACS-Standardkatalog sowie das HACS-Update-Icon-Thema sind für V4.09.xx in `docs/ROADMAP.md` vorgemerkt.
+Die veröffentlichten V4.08-/V4.07-Tags, Freeze-Punkte und Schutzverträge bleiben unverändert historische Referenzen.
 
-Die V4.07.56-/V4.07.57-Tags, Freeze-Punkte und Schutzverträge bleiben unverändert historische Referenzen.
+Verbindliche aktuelle Release-Dokumente:
 
-Verbindliche Dokumente:
-
-- `docs/DELIVERY_ARCHITECTURE.md`
-- `docs/ABOUT_GEWITTERRADAR_ACCEPTANCE_BASELINE_V4_05.md`
-- `docs/ASSET_RETENTION_POLICY.md`
-- `docs/DIAGNOSTIC_PROTECTION_V4_07_56.md`
-- `docs/GOLDEN_MASTER_POLICY.md`
 - `docs/RELEASE_PROCESS.md`
-- `docs/RELEASE_NOTES_V4_08.md`
-- `docs/ROADMAP.md`
-- `docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
+- `docs/RELEASE_NOTES_V4_09.md`
+- `docs/HISTORY.md`
+- `docs/MILESTONES.md`
 
 ## Dev-Toolkit
 
