@@ -2,26 +2,97 @@
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
-import { APPLICATION_META, EXPECTED_MODULES } from "./module-manifest.js?v=41002";
-import { moduleDiagnostics, moduleRegistrySnapshot } from "./modules/core/registry.js?v=41002";
-import { installCardLifecycle } from "./modules/core/card-lifecycle.js?v=41002";
-import { installMapDisplay } from "./modules/fullscreen/map-display.js?v=41002";
-import { installScrollGuard } from "./modules/ui/scroll-guard.js?v=41002";
-import { installSkeleton } from "./modules/ui/skeleton.js?v=41002";
-import { installCompassScale } from "./modules/instruments/compass-scale.js?v=41002";
-import { installControls } from "./modules/ui/controls.js?v=41002";
-import { installI18nSettings } from "./modules/ui/i18n-settings.js?v=41002";
-import { installSourceStatus } from "./modules/core/source-status.js?v=41002";
-import { installCompassSelector } from "./modules/instruments/compass-selector.js?v=41002";
-import { installDiagnostics } from "./modules/diagnostics/cockpit.js?v=41002";
-import { installModuleView } from "./modules/diagnostics/module-view.js?v=41002";
-import { installCompassDesign } from "./modules/instruments/compass-design.js?v=41002";
-import { installLocationRadiiMap } from "./modules/location/radii-map.js?v=41002";
-import { installStrikesWarnings } from "./modules/map/strikes-warnings.js?v=41002";
-import { installClustersRecent } from "./modules/map/clusters-recent.js?v=41002";
-import { installRender } from "./modules/ui/render.js?v=41002";
-import { installCompass } from "./modules/instruments/compass.js?v=41002";
-import { installHistoryChart } from "./modules/history/chart.js?v=41002";
+const GEWITTERRADAR_MODULE_CACHE = '41002';
+const gewitterradarImport = (path) => import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
+
+let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot;
+let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
+let installCompassScale, installControls, installI18nSettings, installSourceStatus;
+let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
+let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
+let installCompass, installHistoryChart;
+let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
+
+try {
+  const [
+    manifest, registry, cardLifecycle, mapDisplay, scrollGuard, skeleton,
+    compassScale, controls, i18nSettings, sourceStatus, compassSelector,
+    diagnostics, moduleView, compassDesign, locationRadiiMap, strikesWarnings,
+    clustersRecent, render, compass, historyChart
+  ] = await Promise.all([
+    gewitterradarImport('./module-manifest.js'),
+    gewitterradarImport('./modules/core/registry.js'),
+    gewitterradarImport('./modules/core/card-lifecycle.js'),
+    gewitterradarImport('./modules/fullscreen/map-display.js'),
+    gewitterradarImport('./modules/ui/scroll-guard.js'),
+    gewitterradarImport('./modules/ui/skeleton.js'),
+    gewitterradarImport('./modules/instruments/compass-scale.js'),
+    gewitterradarImport('./modules/ui/controls.js'),
+    gewitterradarImport('./modules/ui/i18n-settings.js'),
+    gewitterradarImport('./modules/core/source-status.js'),
+    gewitterradarImport('./modules/instruments/compass-selector.js'),
+    gewitterradarImport('./modules/diagnostics/cockpit.js'),
+    gewitterradarImport('./modules/diagnostics/module-view.js'),
+    gewitterradarImport('./modules/instruments/compass-design.js'),
+    gewitterradarImport('./modules/location/radii-map.js'),
+    gewitterradarImport('./modules/map/strikes-warnings.js'),
+    gewitterradarImport('./modules/map/clusters-recent.js'),
+    gewitterradarImport('./modules/ui/render.js'),
+    gewitterradarImport('./modules/instruments/compass.js'),
+    gewitterradarImport('./modules/history/chart.js')
+  ]);
+  ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
+  ({ moduleDiagnostics, moduleRegistrySnapshot } = registry);
+  ({ installCardLifecycle } = cardLifecycle);
+  ({ installMapDisplay } = mapDisplay);
+  ({ installScrollGuard } = scrollGuard);
+  ({ installSkeleton } = skeleton);
+  ({ installCompassScale } = compassScale);
+  ({ installControls } = controls);
+  ({ installI18nSettings } = i18nSettings);
+  ({ installSourceStatus } = sourceStatus);
+  ({ installCompassSelector } = compassSelector);
+  ({ installDiagnostics } = diagnostics);
+  ({ installModuleView } = moduleView);
+  ({ installCompassDesign } = compassDesign);
+  ({ installLocationRadiiMap } = locationRadiiMap);
+  ({ installStrikesWarnings } = strikesWarnings);
+  ({ installClustersRecent } = clustersRecent);
+  ({ installRender } = render);
+  ({ installCompass } = compass);
+  ({ installHistoryChart } = historyChart);
+} catch (error) {
+  GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
+  console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
+}
+
+if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
+  const tag = 'gewitterradar-card';
+  if (!customElements.get(tag)) {
+    class GewitterradarModuleLoadError extends HTMLElement {
+      setConfig() {}
+      set hass(_value) {}
+      connectedCallback() {
+        const message = GEWITTERRADAR_MODULE_LOAD_ERROR?.message || String(GEWITTERRADAR_MODULE_LOAD_ERROR);
+        this.innerHTML = `
+          <ha-card style="display:block;padding:16px;border:1px solid rgba(224,180,79,.55);border-radius:16px">
+            <div style="font-weight:800;color:#e0b44f;margin-bottom:8px">Gewitterradar · Modul-Ladefehler</div>
+            <div style="font-size:13px;line-height:1.45">Mindestens ein V4.10-Modul konnte nicht geladen werden. Prüfe den installierten Modulbaum und lade das Frontend anschließend vollständig neu.</div>
+            <code style="display:block;margin-top:10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;opacity:.78">${message}</code>
+          </ha-card>`;
+      }
+      static getStubConfig() { return {}; }
+    }
+    customElements.define(tag, GewitterradarModuleLoadError);
+    window.customCards = window.customCards || [];
+    window.customCards.push({
+      type: tag,
+      name: 'Gewitterradar',
+      description: 'Gewitterradar V4.10.02 · Modul-Ladefehler'
+    });
+  }
+} else {
+
 (function () {
   if (customElements.get('gewitterradar-card')) return;
 
@@ -6026,5 +6097,6 @@ import { installHistoryChart } from "./modules/history/chart.js?v=41002";
     description:`Gewitterradar V${CARD_VERSION} · Live-Blitz- und Gewitterdarstellung für Home Assistant`
   });
 })();
+}
 
 /* END Gewitterradar Card V4.07.55 */

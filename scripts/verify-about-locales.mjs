@@ -27,8 +27,10 @@ export function readExternalAboutLocales(source) {
 // Evaluate production registration without constructing a card or providing Home Assistant.
 export function loadAboutLocaleRuntime(source) {
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
-  const runtimeSource = source
-    .replace(/^import\s+.*;\s*$/gm,'')
+  const iifeStart = source.indexOf('(function () {');
+  const iifeEnd = source.lastIndexOf('})();');
+  if (iifeStart < 0 || iifeEnd < iifeStart) throw Error('About verification app IIFE changed');
+  const runtimeSource = source.slice(iifeStart,iifeEnd + 5)
     .replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
     .replace(/^\s*Object\.defineProperties\(__moduleDeps,.*;\s*$/gm,'')
     .replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
