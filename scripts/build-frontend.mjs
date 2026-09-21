@@ -7,36 +7,35 @@ import {readAboutLocaleModel} from './verify-about-locales.mjs';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 
-const acceptedRcFrontendSha='2c94af487b1142fd9da450e3bbe9751c3ac17631a621b3878fd9665b557d9570';
-const acceptedRcFrontendSize=2028691;
-const normalizeV408FinalToAcceptedRc=text=>text
- .replace('Gewitterradar Card V4.08 FINAL','Gewitterradar Card V4.08.40 RELEASE CANDIDATE')
- .replace("const CARD_VERSION = '4.08';","const CARD_VERSION = '4.08.40';")
- .replace("const CARD_DISPLAY_VERSION = '4.08';","const CARD_DISPLAY_VERSION = '4.08.40';")
- .replace("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';","const GEWITTERRADAR_BUILD = 'V4.08.40-RELEASE-CANDIDATE-2026-09-18';")
- .replaceAll('<div class="release-history-version">V4.08 · 2026/09</div>','<div class="release-history-version">V4.08 · 2026/09 · RC</div>');
+const acceptedCandidateFrontendSha='6cdb09a16ef18fdb4df93d5492fd56699f3e93ebdca6be9c92ff1cfe714f67b3';
+const acceptedCandidateFrontendSize=2234036;
+const normalizeV409FinalToAcceptedCandidate=text=>text
+ .replace('Gewitterradar Card V4.09 FINAL','Gewitterradar Card V4.09.24 DEV')
+ .replace("const CARD_VERSION = '4.09';","const CARD_VERSION = '4.09.24';")
+ .replace("const CARD_DISPLAY_VERSION = '4.09';","const CARD_DISPLAY_VERSION = '4.09.24';")
+ .replace("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';","const GEWITTERRADAR_BUILD = 'V4.09.24-DEV-2026-09-21';");
 
 export async function expectedPayload(){
- const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.08.json'),'utf8'));
- if(release?.version!=='4.08'||release?.nativeIntegration!=='0.20.0')throw Error('V4.08 release contract identity changed');
- if(release?.acceptedCandidateVersion!=='4.08.40'||release?.acceptedCandidateSha256!==acceptedRcFrontendSha||release?.acceptedCandidateSizeBytes!==acceptedRcFrontendSize)throw Error('Accepted V4.08.40 provenance changed');
+ const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
+ if(release?.version!=='4.09'||release?.nativeIntegration!=='0.21.0')throw Error('V4.09 release contract identity changed');
+ if(release?.acceptedCandidateVersion!=='4.09.24'||release?.acceptedCandidateSha256!==acceptedCandidateFrontendSha||release?.acceptedCandidateSizeBytes!==acceptedCandidateFrontendSize)throw Error('Accepted V4.09.24 provenance changed');
 
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
- if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('Frontend differs from V4.08 final release contract');
+ if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('Frontend differs from V4.09 final release contract');
  const sourceText=source.toString('utf8');
- if(!sourceText.includes("const CARD_VERSION = '4.08';")||!sourceText.includes("const CARD_DISPLAY_VERSION = '4.08';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.08-RELEASE-2026-09-18';"))throw Error('V4.08 final version/build markers missing');
- const normalized=Buffer.from(normalizeV408FinalToAcceptedRc(sourceText),'utf8');
- if(normalized.length!==acceptedRcFrontendSize||hash(normalized)!==acceptedRcFrontendSha)throw Error('V4.08 final frontend contains changes beyond approved RC40 release metadata');
+ if(!sourceText.includes("const CARD_VERSION = '4.09';")||!sourceText.includes("const CARD_DISPLAY_VERSION = '4.09';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"))throw Error('V4.09 final version/build markers missing');
+ const normalized=Buffer.from(normalizeV409FinalToAcceptedCandidate(sourceText),'utf8');
+ if(normalized.length!==acceptedCandidateFrontendSize||hash(normalized)!==acceptedCandidateFrontendSha)throw Error('V4.09 final frontend contains changes beyond approved V4.09.24 release metadata');
 
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
- if(localeSource.length!==release.localeSizeBytes||hash(localeSource)!==release.localeSha256)throw Error('V4.08 locale differs from accepted RC40');
+ if(localeSource.length!==release.localeSizeBytes||hash(localeSource)!==release.localeSha256)throw Error('V4.09 locale differs from accepted V4.09.24');
  readAboutLocaleModel(sourceText,localeSource.toString());
 
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
  const referenced=[...new Set([...sourceText.matchAll(/new URL\('\.\/(assets\/[^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>m[1]))].sort();
  const activeInventory=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
  const retainedInventory=inventory.filter(a=>a.referenced===false);
- if(inventory.length!==17||new Set(inventory.map(a=>a.file)).size!==17||activeInventory.length!==16||JSON.stringify(referenced)!==JSON.stringify(activeInventory))throw Error('Asset inventory/reference mismatch');
+ if(inventory.length!==18||new Set(inventory.map(a=>a.file)).size!==18||activeInventory.length!==17||JSON.stringify(referenced)!==JSON.stringify(activeInventory))throw Error('Asset inventory/reference mismatch');
  if(retainedInventory.length!==1||retainedInventory[0].file!=='assets/gewitterradar-about-close-premium.webp'||retainedInventory[0].retention!=='legacy')throw Error('Retained legacy asset contract changed');
  const actual=(await readdir(resolve(root,'frontend/assets'))).map(n=>'assets/'+n).sort();
  const inventoried=inventory.map(a=>a.file).sort();
@@ -83,7 +82,7 @@ export async function build(){
  for(const [name,bytes] of packages)rows.push(hash(bytes)+'  dashboard/dist/'+name);
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
 
- console.log('Built Gewitterradar V4.08 final from the accepted V4.08.40 RC with release-metadata-only normalization.');
+ console.log('Built Gewitterradar V4.09 final from the accepted V4.09.24 candidate with release-metadata-only normalization.');
  for(const [name,bytes] of packages)console.log(`Dashboard package ${name}: ${bytes.length} bytes, SHA256 ${hash(bytes)}`);
  console.log('Protected diagnostic/assets baseline preserved; V4.06 fallback and V4.07 package retained.');
 }
