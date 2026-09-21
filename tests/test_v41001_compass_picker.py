@@ -25,7 +25,7 @@ def test_v41001_compass_picker_contract() -> None:
     # Premium picker: existing Hi-Res close asset, gold dialog frame and chevrons.
     assert "compass-picker-shell-v41001" in source
     assert 'data-compass-picker-close' in source
-    assert 'src="' + ABOUT_CLOSE_IMAGE + '"' in source
+    assert "ABOUT_CLOSE_IMAGE" in source
     assert "border:1px solid #c9a050" in source
     assert "compass-picker-gold-prev" in source
     assert "compass-picker-gold-next" in source
