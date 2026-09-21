@@ -62,8 +62,8 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Release-Identität
 
-- Frontend: **2.238.838 Bytes**
-- Frontend SHA256: `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`
+- Frontend: **2.238.824 Bytes**
+- Frontend SHA256: `c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2`
 - Externes Locale-Modul: **741.069 Bytes**
 - Locale SHA256: `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`
 - Runtime-Kompassschalter SHA256: `bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a`
@@ -72,7 +72,7 @@ Die dauerhafte Sektion **„Zukünftige Entwicklungen · Geplant“ / “Future 
 
 ## Provenienz und Schutz
 
-V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.28**. Die öffentliche Normalisierung verändert gegenüber diesem Stand ausschließlich die öffentlichen Versions-/Build-Metadaten.
+V4.09 FINAL basiert funktional auf dem ausdrücklich akzeptierten internen Stand **V4.09.28**. Neben der öffentlichen Versions-/Build-Normalisierung enthält der Release genau eine zusätzliche, durch die Release-Gates gefundene Diagnosekorrektur: Die Medaillon-Kalibrierung adressiert Basisbild und Pfeil jetzt innerhalb des produktiven `trend-icon`, damit das parallel vorhandene versteckte Vollbild-Medaillon nicht versehentlich vermessen wird. Die normale Produktdarstellung und das abgenommene Vollbildverhalten bleiben unverändert.
 
 Die bestehenden Schutzverträge bleiben erhalten, insbesondere:
 
