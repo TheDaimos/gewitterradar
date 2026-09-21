@@ -32,3 +32,12 @@ Vor Promotion nach V4.09 FINAL prüfen:
 6. Keine Änderung an Cluster-Profilen, Cluster-Sitzungszeit oder Radius-Helfern.
 
 Erst nach realer Abnahme darf V4.09.27 als neuer interner Ausgangsstand für die öffentliche V4.09-Normalisierung verwendet werden.
+
+## Kandidaten-Identität
+
+- Frontend: **2.236.084 Bytes**
+- SHA256: `8e8adf8851344ba031a79c0444f1cd47dd99b55a0e115e353900129685693bed`
+- Gemeinsamer Git-Blob für alle drei Frontend-Kopien: `69b2d9300f4d5e2f5baf6ebe332b00fd3fc0265b`
+- Parserprüfung des vollständigen Frontend-Quelltexts: **PASS** (ES-Modul-spezifisches `import.meta` bei der isolierten Parserprobe neutralisiert; übriger Quelltext vollständig kompiliert)
+- Strukturprüfung: **PASS** – Cluster-Auflösung und Cluster-Navigation stehen vor Standardansicht und separatem Kartenfenster; beide Cluster-Steuerelemente fehlen im Radien-Abschnitt.
+- Schutzgates auf Commit `fd475e0d9cdd061576fd9ab47affb09a53772212`: **Hi-Res PASS**, **Diagnosevertrag PASS**, **Home-Assistant-Integration PASS**. Der allgemeine Shared-Frontend-Workflow ist für diesen DEV-Zweig nicht aussagekräftig, weil sein öffentlicher Kanon vor der Syntaxstufe greift.
