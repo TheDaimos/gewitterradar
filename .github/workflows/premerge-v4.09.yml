@@ -1,0 +1,60 @@
+name: PRE-MERGE archive V4.09
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/archive-triggers/V4_09_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify trigger
+        run: |
+          set -euo pipefail
+          grep -Fx 'VERSION=V4.09' docs/archive-triggers/V4_09_PRE_MERGE.trigger
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+      - name: Verify archive contract
+        run: |
+          set -euo pipefail
+          node scripts/verify-source-archive-contract.mjs
+          bash -n scripts/create-source-archive.sh
+
+      - name: Create PRE-MERGE archive
+        id: archive
+        run: |
+          set -euo pipefail
+          rm -rf dist/source-archives
+          mkdir -p dist/source-archives
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh PRE_MERGE "$GITHUB_SHA" V4.09 dist/source-archives
+
+      - name: Verify archive
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.archive.outputs.zip_path }}'
+          test -s '${{ steps.archive.outputs.bundle_path }}'
+          test -s '${{ steps.archive.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.archive.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.archive.outputs.zip_path }}'
+          git bundle verify '${{ steps.archive.outputs.bundle_path }}'
+
+      - name: Upload PRE-MERGE archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.09_PRE_MERGE
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
