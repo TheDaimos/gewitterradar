@@ -25,7 +25,7 @@ export async function expectedPayload(){
  const sourceText=source.toString('utf8');
  if(!sourceText.includes("const CARD_VERSION = '4.09';")||!sourceText.includes("const CARD_DISPLAY_VERSION = '4.09';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"))throw Error('V4.09 final version/build markers missing');
  const normalized=Buffer.from(normalizeV409FinalToAcceptedCandidate(sourceText),'utf8');
- if(normalized.length!==acceptedCandidateFrontendSize||hash(normalized)!==acceptedCandidateFrontendSha)throw Error('V4.09 final frontend contains changes beyond approved V4.09.26 release metadata');
+ if(normalized.length!==acceptedCandidateFrontendSize||hash(normalized)!==acceptedCandidateFrontendSha)throw Error('V4.09 final frontend contains changes beyond approved V4.09.28 release metadata');
 
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  if(localeSource.length!==release.localeSizeBytes||hash(localeSource)!==release.localeSha256)throw Error('V4.09 locale differs from accepted V4.09.28');
