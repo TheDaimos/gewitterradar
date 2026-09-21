@@ -1,7 +1,7 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
 > **Status:** AKTIV  
-> **Arbeitszweig:** `feature/v4.10.01-compass-picker`  
+> **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
 
@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M01 – Bestandsaufnahme der aktuellen V4.10.01 und Modulgrenzen festlegen.**
+**M02 – Registry & Modulmetadaten implementieren.**
 
 Dabei:
 - aktuelle Einstiegspunkte und Registrierungslogik erfassen,
@@ -286,15 +286,15 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M01 – Bestandsaufnahme
 
-- [ ] aktuelle V4.10.01-Dateistruktur erfassen
-- [ ] aktuelle Haupt-JS ermitteln
-- [ ] Größe / grobe Funktionsblöcke bestimmen
-- [ ] globale Zustände erfassen
-- [ ] direkte DOM-Abhängigkeiten erfassen
-- [ ] Home-Assistant-Abhängigkeiten erfassen
-- [ ] Map-/Provider-Abhängigkeiten erfassen
-- [ ] Ziel-Modulbaum finalisieren
-- [ ] Reihenfolge der Extraktion festlegen
+- [x] aktuelle V4.10.01-Dateistruktur erfassen
+- [x] aktuelle Haupt-JS ermitteln
+- [x] Größe / grobe Funktionsblöcke bestimmen
+- [x] globale Zustände erfassen
+- [x] direkte DOM-Abhängigkeiten erfassen
+- [x] Home-Assistant-Abhängigkeiten erfassen
+- [x] Map-/Provider-Abhängigkeiten erfassen
+- [x] Ziel-Modulbaum finalisieren
+- [x] Reihenfolge der Extraktion festlegen
 
 **Abschlusskriterium:** Modulgrenzen und Abhängigkeiten sind dokumentiert.
 
@@ -527,3 +527,20 @@ Ergebnis:
 - M12 ist ausdrücklich als Release-Gate markiert.
 
 **Nächster Schritt bleibt:** M01 – Bestandsaufnahme und endgültige Modulgrenzen.
+
+
+## Schleife 003 – M01 Bestandsaufnahme abgeschlossen
+
+**Datum:** 2026-09-21  
+**Status:** erledigt
+
+Ergebnis:
+- V4.10.01 als unveränderte Rückfallbasis erhalten,
+- neuer Arbeitszweig `feature/v4.10.02-modularization` angelegt,
+- Hauptdatei mit 2.249.312 Bytes / 24.896 Zeilen / 299 Methodenblöcken vermessen,
+- funktionale Modulgrenzen und Extraktionsreihenfolge festgelegt,
+- bestehende statische Ordnerbereitstellung der nativen Integration als kompatibel bestätigt,
+- Architektur in `docs/V4_10_MODULE_ARCHITECTURE.md` dokumentiert,
+- fehlendes `deploy-relay.json` als zwingender DRA-Arbeitspunkt identifiziert.
+
+**Nächster Schritt:** M02 – Registry & Modulmetadaten.
