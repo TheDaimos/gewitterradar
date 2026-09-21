@@ -27,8 +27,13 @@ export function readExternalAboutLocales(source) {
 // Evaluate production registration without constructing a card or providing Home Assistant.
 export function loadAboutLocaleRuntime(source) {
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
-  if (source.split(anchor).length !== 2) throw Error('About verification registration anchor changed');
-  const script = source.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
+  const runtimeSource = source
+    .replace(/^import\s+.*;\s*$/gm,'')
+    .replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
+    .replace(/^\s*Object\.defineProperties\(__moduleDeps,.*;\s*$/gm,'')
+    .replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
+  if (runtimeSource.split(anchor).length !== 2) throw Error('About verification registration anchor changed');
+  const script = runtimeSource.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
     .replace(anchor, `  globalThis.aboutLocaleModel = {
       locales: ABOUT_LOCALES, settings: SETTING_ENTITIES, languages: LANGUAGE_DEFINITIONS,
       tables: {strings:ABOUT_STRINGS,settingLabels:ABOUT_SETTING_LABELS,settingPurposes:ABOUT_SETTING_PURPOSES,sourcePurposes:ABOUT_SOURCE_PURPOSES,help:HELP_STRINGS},
