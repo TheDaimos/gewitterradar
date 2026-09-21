@@ -9721,17 +9721,19 @@
             background:rgba(5,12,20,.78);color:#edf7ff;padding:8px 10px;font:500 12px/1.2 inherit;outline:none;
           }
           .v407-location-search-field input:focus { border-color:rgba(79,163,247,.62);box-shadow:0 0 0 2px rgba(79,163,247,.10); }
-          #v407-location-query,#v407-location-country { padding-right:40px;-webkit-appearance:none;appearance:none;position:relative;z-index:1; }
+          #v407-location-query,#v407-location-country,#v407-coordinate-latitude,#v407-coordinate-longitude { padding-right:40px;-webkit-appearance:none;appearance:none;position:relative;z-index:1; }
           #v407-location-query::-webkit-search-cancel-button,#v407-location-country::-webkit-search-cancel-button { -webkit-appearance:none;appearance:none; }
-          .v407-location-query-clear,.v407-location-country-clear {
+          .v407-location-query-clear,.v407-location-country-clear,.v407-coordinate-latitude-clear,.v407-coordinate-longitude-clear {
             appearance:none;-webkit-appearance:none;position:absolute;right:4px;bottom:4px;z-index:4;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
             width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:7px;background:transparent;
             color:#9fb8ce;font:700 18px/1 inherit;cursor:pointer;padding:0;opacity:0;visibility:hidden;pointer-events:none;
             transform:scale(.96);transition:background .15s ease,color .15s ease,opacity .15s ease,transform .15s ease;
           }
-          .v407-location-query-clear.is-visible,.v407-location-country-clear.is-visible,
-          #v407-location-query:not(:placeholder-shown) + .v407-location-query-clear { opacity:1;visibility:visible;pointer-events:auto;transform:none; }
-          .v407-location-query-clear:hover,.v407-location-query-clear:focus-visible,.v407-location-country-clear:hover,.v407-location-country-clear:focus-visible { outline:none;background:rgba(79,163,247,.10);color:#e7f4ff; }
+          .v407-location-query-clear.is-visible,.v407-location-country-clear.is-visible,.v407-coordinate-latitude-clear.is-visible,.v407-coordinate-longitude-clear.is-visible,
+          #v407-location-query:not(:placeholder-shown) + .v407-location-query-clear,
+          #v407-coordinate-latitude:not(:placeholder-shown) + .v407-coordinate-latitude-clear,
+          #v407-coordinate-longitude:not(:placeholder-shown) + .v407-coordinate-longitude-clear { opacity:1;visibility:visible;pointer-events:auto;transform:none; }
+          .v407-location-query-clear:hover,.v407-location-query-clear:focus-visible,.v407-location-country-clear:hover,.v407-location-country-clear:focus-visible,.v407-coordinate-latitude-clear:hover,.v407-coordinate-latitude-clear:focus-visible,.v407-coordinate-longitude-clear:hover,.v407-coordinate-longitude-clear:focus-visible { outline:none;background:rgba(79,163,247,.10);color:#e7f4ff; }
           .v407-location-search-submit {
             min-height:38px;border:1px solid rgba(79,163,247,.42);border-radius:9px;background:rgba(34,105,168,.26);
             color:#e7f4ff;padding:8px 13px;font:750 11px/1 inherit;cursor:pointer;
@@ -10948,13 +10950,13 @@
           /* V4.09.20 – Standardansicht verwendet keinen nativen Geräte-Picker mehr.
              Button und Liste übernehmen bewusst Geometrie, Farbe und Bedienlogik
              des bewährten Custom-Dropdowns der Standortauswahl. */
-          .settings-map-startup-button { min-width:176px;max-width:220px; }
+          .settings-map-startup-button { width:156px;min-width:156px;max-width:156px; }
           .settings-map-startup-button .settings-location-current { min-width:0;flex:1 1 auto; }
           .settings-map-startup-current-text { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-          .settings-map-startup-dropdown { min-width:190px; }
+          .settings-map-startup-dropdown { min-width:176px; }
           @media (max-width:720px) {
-            .settings-map-startup-button { min-width:154px;max-width:190px; }
-            .settings-map-startup-dropdown { width:190px;min-width:0; }
+            .settings-map-startup-button { width:146px;min-width:146px;max-width:146px; }
+            .settings-map-startup-dropdown { width:168px;min-width:0;max-width:calc(100vw - 16px); }
           }
 
           .leaflet-container { background:#0a0d12 !important;font-family:inherit; }
@@ -16944,7 +16946,7 @@
             <div class="v407-location-search-field"><label for="v407-location-query"></label><input id="v407-location-query" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" spellcheck="false"><button type="button" class="v407-location-query-clear" aria-label="${v407ClearQueryLabel()}" title="${v407ClearQueryLabel()}" aria-hidden="true" tabindex="-1">×</button></div>
             <div class="v407-location-search-field"><label for="v407-location-country"></label><input id="v407-location-country" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" spellcheck="false"><button type="button" class="v407-location-country-clear" aria-label="${v407ClearQueryLabel()}" title="${v407ClearQueryLabel()}" aria-hidden="true" tabindex="-1">×</button><div class="v407-country-suggestions"></div></div>
             <button type="submit" class="v407-location-search-submit"></button>
-          </form><form class="v407-location-coordinate-form" hidden><div class="v407-location-coordinate-grid"><div class="v407-location-search-field v407-location-coordinate-name"><label for="v407-coordinate-name">${coordinateText.label}</label><input id="v407-coordinate-name" type="text" autocomplete="off" placeholder="${coordinateText.labelPlaceholder}"></div><div class="v407-location-search-field"><label for="v407-coordinate-latitude">${coordinateText.latitude}</label><input id="v407-coordinate-latitude" type="text" inputmode="decimal" autocomplete="off" placeholder="53.83642"></div><div class="v407-location-search-field"><label for="v407-coordinate-longitude">${coordinateText.longitude}</label><input id="v407-coordinate-longitude" type="text" inputmode="decimal" autocomplete="off" placeholder="9.95817"></div><button type="submit" class="v407-location-search-submit v407-location-coordinate-submit">${coordinateText.apply}</button><button type="button" class="v407-location-search-submit v407-location-coordinate-save" title="${text.saveTitle}">${text.save}</button></div><div class="v407-location-coordinate-hint">${coordinateText.hint}</div></form><div class="v407-location-search-status" role="status" aria-live="polite"></div><div class="v407-location-results"></div>
+          </form><form class="v407-location-coordinate-form" hidden><div class="v407-location-coordinate-grid"><div class="v407-location-search-field v407-location-coordinate-name"><label for="v407-coordinate-name">${coordinateText.label}</label><input id="v407-coordinate-name" type="text" autocomplete="off" placeholder="${coordinateText.labelPlaceholder}"></div><div class="v407-location-search-field"><label for="v407-coordinate-latitude">${coordinateText.latitude}</label><input id="v407-coordinate-latitude" type="text" inputmode="decimal" autocomplete="off" placeholder="53.83642"><button type="button" class="v407-coordinate-latitude-clear" aria-label="${v407ClearQueryLabel()}" title="${v407ClearQueryLabel()}" aria-hidden="true" tabindex="-1">×</button></div><div class="v407-location-search-field"><label for="v407-coordinate-longitude">${coordinateText.longitude}</label><input id="v407-coordinate-longitude" type="text" inputmode="decimal" autocomplete="off" placeholder="9.95817"><button type="button" class="v407-coordinate-longitude-clear" aria-label="${v407ClearQueryLabel()}" title="${v407ClearQueryLabel()}" aria-hidden="true" tabindex="-1">×</button></div><button type="submit" class="v407-location-search-submit v407-location-coordinate-submit">${coordinateText.apply}</button><button type="button" class="v407-location-search-submit v407-location-coordinate-save" title="${text.saveTitle}">${text.save}</button></div><div class="v407-location-coordinate-hint">${coordinateText.hint}</div></form><div class="v407-location-search-status" role="status" aria-live="polite"></div><div class="v407-location-results"></div>
           <div class="v407-location-search-divider" aria-hidden="true"></div><div class="v407-location-safety-note"><span class="v407-location-safety-medallion" aria-hidden="true"><img src="${V407_LOCATION_SAFETY_ICON}" alt="" draggable="false"></span><span class="v407-location-safety-copy"></span></div><div class="v407-location-advice"><span class="v407-location-advice-medallion" aria-hidden="true"><img src="${V407_LOCATION_ADVICE_ICON}" alt="" draggable="false"></span><div class="v407-location-advice-copy"><strong>${coordinateText.adviceTitle}</strong><p>${coordinateText.helpBefore}<a href="https://www.maptiler.com/tools/coordinates/" target="_blank" rel="noopener noreferrer">MapTiler Coordinates ↗</a>${coordinateText.helpAfter}</p><div class="v407-location-provider-note"></div></div></div></div></section>`;
         const fullscreenDialog = this.shadow.getElementById('map-fullscreen-dialog');
         const overlayHost = this._mapDisplayMode === 'fullscreen' && fullscreenDialog?.open
@@ -16962,7 +16964,9 @@
         const submit = form.querySelector('.v407-location-search-submit');
         const coordinateName = backdrop.querySelector('#v407-coordinate-name');
         const coordinateLatitude = backdrop.querySelector('#v407-coordinate-latitude');
+        const clearCoordinateLatitudeButton = backdrop.querySelector('.v407-coordinate-latitude-clear');
         const coordinateLongitude = backdrop.querySelector('#v407-coordinate-longitude');
+        const clearCoordinateLongitudeButton = backdrop.querySelector('.v407-coordinate-longitude-clear');
         const coordinateSave = backdrop.querySelector('.v407-location-coordinate-save');
         const modeAddress = backdrop.querySelector('.v407-location-mode-address');
         const modeCoordinates = backdrop.querySelector('.v407-location-mode-coordinates');
@@ -17013,6 +17017,21 @@
         });
         syncV407CountryClear();
         const setStatus = (message,error=false) => { status.textContent=message || ''; status.classList.toggle('error',!!error); };
+        const syncV407CoordinateClear = (input,button) => {
+          const visible = !!String(input.value || '').length;
+          button.classList.toggle('is-visible',visible);
+          button.setAttribute('aria-hidden',visible ? 'false' : 'true');
+          button.tabIndex = visible ? 0 : -1;
+        };
+        [[coordinateLatitude,clearCoordinateLatitudeButton],[coordinateLongitude,clearCoordinateLongitudeButton]].forEach(([input,button]) => {
+          ['input','change','keyup','search','focus'].forEach((eventName) => input.addEventListener(eventName,() => syncV407CoordinateClear(input,button)));
+          button.addEventListener('click',() => {
+            input.value='';
+            syncV407CoordinateClear(input,button);
+            input.focus({preventScroll:true});
+          });
+          syncV407CoordinateClear(input,button);
+        });
         const v407CoordinateNumber = (value) => {
           const normalized=String(value??'').trim().replace(/\s+/g,'').replace(',','.');
           if(!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(normalized)) return NaN;
@@ -17037,7 +17056,7 @@
         };
         modeAddress.addEventListener('click',()=>setSearchMode('address'));
         modeCoordinates.addEventListener('click',()=>setSearchMode('coordinates'));
-        const pasteCoordinatePair=(event)=>{const pair=v407CoordinatePair(event.clipboardData?.getData('text')||'');if(!pair)return;event.preventDefault();coordinateLatitude.value=String(pair.latitude);coordinateLongitude.value=String(pair.longitude);};
+        const pasteCoordinatePair=(event)=>{const pair=v407CoordinatePair(event.clipboardData?.getData('text')||'');if(!pair)return;event.preventDefault();coordinateLatitude.value=String(pair.latitude);coordinateLongitude.value=String(pair.longitude);syncV407CoordinateClear(coordinateLatitude,clearCoordinateLatitudeButton);syncV407CoordinateClear(coordinateLongitude,clearCoordinateLongitudeButton);};
         coordinateLatitude.addEventListener('paste',pasteCoordinatePair);coordinateLongitude.addEventListener('paste',pasteCoordinatePair);
         setSearchMode('address',{focus:false});
         let v407ActiveResultCountry = '';
