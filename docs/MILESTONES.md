@@ -19,8 +19,9 @@ Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 - Hilfe & Hinweise um Kartenansichten, Vollbildbedienung und separates Kartenfenster erweitert und auf alle 19 Sprachvarianten synchronisiert;
 - öffentliche Release History von internen V4.09.xx-DEV-/TEST-Einträgen bereinigt und dauerhafte Zukunftssektion geschützt;
 - einheitliche `×`-Löschschaltflächen für Bezeichnung, Breitengrad und Längengrad der Koordinateneingabe finalisiert;
+- release-blockierenden DOM-Selektor der geschützten Medaillon-Diagnose auf das produktive `trend-icon` begrenzt; das parallele Vollbild-Medaillon kann die Kalibrierung damit nicht mehr verfälschen;
 - akzeptierten internen Stand **V4.09.28** mit Metadaten-only-Normalisierung auf öffentliche **V4.09** vorbereitet;
-- finales Frontend: **2.238.838 Bytes**, SHA256 `e349c01f55d22ea69d9c066df00b53c7910ec57e8234a8a423f8d680e6e30e7d`;
+- finales Frontend: **2.238.824 Bytes**, SHA256 `c9f01617d3a19519ecc44f84a7bf71aa3056dee57245af860becd893c652fce2`;
 - Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
 - native Integration auf **0.21.0** angehoben;
 - PRE-MERGE-Snapshot des bisherigen `main` aus Commit `56b87a3b2db7b4e546f5eabbd067d2547a8f999c` erfolgreich erzeugt.
