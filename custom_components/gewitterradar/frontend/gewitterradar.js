@@ -21120,10 +21120,10 @@ ${this._diagnosticStormText(8)}`;}
     }
 
     _ensureFullscreenWarningOverlay() {
-      // V4.09 pre-release fix – native <dialog>.showModal() lives in the browser
-      // top layer. Warning animations rendered in the card or on document.body
-      // are therefore visually behind fullscreen. Keep a dedicated, pointer-
-      // transparent warning layer inside the fullscreen dialog itself.
+      // V4.09.25 – native <dialog>.showModal() lives in the browser top layer.
+      // Warning animations rendered in the card or on document.body are therefore
+      // behind fullscreen. Keep a dedicated pointer-transparent warning layer
+      // inside the fullscreen dialog itself.
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
       if (!dialog) return null;
       if (this._fullscreenWarningOverlay?.isConnected &&
@@ -21286,12 +21286,10 @@ ${this._diagnosticStormText(8)}`;}
         cardWidth <= FLASH_MOBILE_VIEWPORT_MAX_WIDTH &&
         (maxTouchPoints > 0 || coarsePointer);
 
-      // V4.09 pre-release fix:
-      // A modal fullscreen <dialog> is promoted into the browser top layer.
-      // Any warning layer that remains in the card or on document.body is then
-      // behind that dialog regardless of z-index. Fullscreen therefore always
-      // uses a warning overlay that is itself a child of the fullscreen dialog.
-      // Outside fullscreen the proven V3.517 behavior remains unchanged.
+      // V4.09.25 – ein modaler Vollbild-Dialog liegt in der Browser-Top-Layer-Ebene.
+      // Warnlayer außerhalb dieses Dialogs bleiben unabhängig vom z-index dahinter.
+      // Im Vollbild wird die Warnanimation deshalb direkt im Dialog gerendert.
+      // Außerhalb des Vollbilds bleibt das bisherige Verhalten unverändert.
       const fullscreenDialog = this.shadow?.getElementById('map-fullscreen-dialog');
       const fullscreenActive =
         (this._mapDisplayMode === 'fullscreen' || this._mapWindowMode) &&
