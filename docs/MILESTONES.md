@@ -1,11 +1,25 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.08 – finaler Release-Stand.**  
-Native Integration: **0.20.0.**  
-Akzeptierter interner Ausgangsbuild: **V4.08.40 RC.**  
-Geschützte Laufzeit-/Diagnosebasis: **V4.07.56.**
+Status: **2026/09 · V4.09 – finaler Release-Stand.**  
+Native Integration: **0.21.0.**  
+Akzeptierter interner Ausgangsbuild: **V4.09.24.**  
+Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 
 ## Erreicht
+
+### M23 – V4.09 Kartenansichten und Vollbildbedienung finalisiert
+- Kartenansichten **Standard / Groß / Vollbild** mit lokal gespeicherter gerätespezifischer Standardansicht finalisiert;
+- separates Gewitter-Kartenfenster mit aktuell gewählter Karte und aktuell gewähltem Kompass real geprüft;
+- Kompass und Medaillon im Vollbild ein-/ausblendbar und frei verschiebbar;
+- frei bewegliche Standort-Pille mit adaptivem Standortmenü für Desktop, Android, iPad und iPad Pro;
+- 3D-Kartenansichtsschalter mit responsivem Menü und vollständiger 19-Varianten-Übersetzung;
+- Hilfe & Hinweise um Kartenansichten, Vollbildbedienung und separates Kartenfenster erweitert und auf alle 19 Sprachvarianten synchronisiert;
+- öffentliche Release History von internen V4.09.xx-DEV-/TEST-Einträgen bereinigt und dauerhafte Zukunftssektion geschützt;
+- akzeptierten internen Stand **V4.09.24** mit Metadaten-only-Normalisierung auf öffentliche **V4.09** vorbereitet;
+- finales Frontend: **2.234.030 Bytes**, SHA256 `2dad877e61654f5261650511f595820e55a8432fcdb0f7387f75bfb9e0271b1f`;
+- Locale-Modul: **741.069 Bytes**, SHA256 `dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e`;
+- native Integration auf **0.21.0** angehoben;
+- PRE-MERGE-Snapshot des bisherigen `main` aus Commit `56b87a3b2db7b4e546f5eabbd067d2547a8f999c` erfolgreich erzeugt.
 
 ### M22 – V4.08 öffentlich veröffentlicht und archiviert
 - kanonischen Release-Commit `27da94e5043a365dbe8ea5c5e2224327165750fa` nach vollständig grünen Post-Merge-Gates veröffentlicht;
