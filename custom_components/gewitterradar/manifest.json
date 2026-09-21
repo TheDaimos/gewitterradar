@@ -6,14 +6,18 @@
     "input_number",
     "input_select"
   ],
-  "codeowners": ["@TheDaimos"],
+  "codeowners": [
+    "@TheDaimos"
+  ],
   "config_flow": true,
-  "dependencies": ["http"],
+  "dependencies": [
+    "http"
+  ],
   "documentation": "https://github.com/TheDaimos/gewitterradar",
   "integration_type": "service",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/TheDaimos/gewitterradar/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.20.0"
+  "version": "0.21.0"
 }
