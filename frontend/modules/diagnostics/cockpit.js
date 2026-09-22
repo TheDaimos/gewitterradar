@@ -949,7 +949,7 @@ ${this._diagnosticStormText(8)}`;}
       const key=this._compassCalibrationCurrentGeometryKey();
       if(!key||key===this._compassCalibrationGeometryKey)return;
       this._refreshCompassCalibrationMeasurement(key);
-    }
+    },
 
     async _refreshCompassCalibrationMeasurement(requestedKey=this._compassCalibrationCurrentGeometryKey()) {
       if (!this._compassCalibrationEnabled) return;
