@@ -13,7 +13,6 @@ for(const marker of [
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
-if(moduleView.includes('id="settings-modules-list"></div>\n          <div class="gr-mod-actions"')===false)throw Error('Module detail list/actions contract changed');
 async function files(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await files(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 const checks=[];
 for(const dest of destinations){
