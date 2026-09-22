@@ -15,7 +15,7 @@ def test_main_is_loader_not_monolithic_class():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  assert "class GewitterradarCard extends HTMLElement {}" in main
  assert "installSkeleton(GewitterradarCard,__moduleDeps);" in main
- assert len(main.encode("utf-8"))<1_400_000
+ assert len(main.encode("utf-8"))<100_000
 
 def test_module_version_view_is_part_of_the_contract():
  assert "modules/diagnostics/module-view.js" in CONTRACT["moduleFiles"]
@@ -23,3 +23,11 @@ def test_module_version_view_is_part_of_the_contract():
  assert "Module & Versionen" in text
  assert "moduleDiagnostics(EXPECTED_MODULES)" in text
  assert "moduleRegistrySnapshot(EXPECTED_MODULES)" in text
+
+def test_core_context_is_extracted_from_loader():
+ assert "modules/core/base-context.js" in CONTRACT["moduleFiles"]
+ main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
+ core=(FRONTEND/"modules/core/base-context.js").read_text(encoding="utf-8")
+ assert "createBaseContext(import.meta.url)" in main
+ assert "BEGIN GEWITTERRADAR LEGACY CORE" in core
+ assert "new URL('./assets/" in core

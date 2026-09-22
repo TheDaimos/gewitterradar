@@ -25,15 +25,22 @@ export function readExternalAboutLocales(source) {
 }
 
 // Evaluate production registration without constructing a card or providing Home Assistant.
-export function loadAboutLocaleRuntime(source) {
+export function loadAboutLocaleRuntime(source,baseContextSource) {
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
   const iifeStart = source.indexOf('(function () {');
   const iifeEnd = source.lastIndexOf('})();');
   if (iifeStart < 0 || iifeEnd < iifeStart) throw Error('About verification app IIFE changed');
-  const runtimeSource = source.slice(iifeStart,iifeEnd + 5)
+  let runtimeSource = source.slice(iifeStart,iifeEnd + 5)
     .replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
-    .replace(/^\s*Object\.defineProperties\(__moduleDeps,.*;\s*$/gm,'')
+    .replace(/^\s*Object\.(?:defineProperties|assign)\(__moduleDeps,.*;\s*$/gm,'')
     .replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
+  if(baseContextSource){
+    const start='  // BEGIN GEWITTERRADAR LEGACY CORE',end='  // END GEWITTERRADAR LEGACY CORE';
+    const a=baseContextSource.indexOf(start),b=baseContextSource.indexOf(end);
+    if(a<0||b<=a)throw Error('About verification base-context markers changed');
+    const core=baseContextSource.slice(a+start.length,b);
+    runtimeSource=runtimeSource.replace('(function () {',`(function () {\n  const rootModuleUrl='https://frontend.test/gewitterradar.js';${core}`);
+  }
   if (runtimeSource.split(anchor).length !== 2) throw Error('About verification registration anchor changed');
   const script = runtimeSource.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
     .replace(anchor, `  globalThis.aboutLocaleModel = {
@@ -76,13 +83,13 @@ export function loadAboutLocaleRuntime(source) {
 
 // Verify the exact production external Help bundle, but return an uninstalled runtime so
 // the test suite can still exercise native fallback -> rejected install -> successful lazy install.
-export function readAboutLocaleModel(source, externalSource) {
-  const model = loadAboutLocaleRuntime(source);
+export function readAboutLocaleModel(source, externalSource, baseContextSource) {
+  const model = loadAboutLocaleRuntime(source,baseContextSource);
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
   if (externalSource !== undefined) {
     if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
     const external = readExternalAboutLocales(externalSource);
-    const validationModel = loadAboutLocaleRuntime(source);
+    const validationModel = loadAboutLocaleRuntime(source,baseContextSource);
     const installed = validationModel.installExternal(external.about,external.help);
     const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
     if (JSON.stringify(Object.keys(installed)) !== JSON.stringify(expected)) {
@@ -98,6 +105,7 @@ export function readAboutLocaleModel(source, externalSource) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const source = await readFile(new URL('../frontend/gewitterradar.js',import.meta.url),'utf8');
   const externalSource = await readFile(new URL('../frontend/locales/about-locales.js',import.meta.url),'utf8');
-  const model = readAboutLocaleModel(source,externalSource);
+  const baseContextSource = await readFile(new URL('../frontend/modules/core/base-context.js',import.meta.url),'utf8');
+  const model = readAboutLocaleModel(source,externalSource,baseContextSource);
   console.log(`PASS: ${Object.keys(model.locales).length} native and ${Object.keys(model.externalLocales).length} external About bundles; ${model.languages.length} registered languages.`);
 }

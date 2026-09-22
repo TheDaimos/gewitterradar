@@ -10,7 +10,8 @@ import {readAboutLocaleModel,readExternalAboutLocales} from './verify-about-loca
 const root = fileURLToPath(new URL('..',import.meta.url));
 const source = await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
 const externalSource = await readFile(resolve(root,'frontend/locales/about-locales.js'),'utf8');
-const model = readAboutLocaleModel(source,externalSource);
+const baseContextSource = await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8');
+const model = readAboutLocaleModel(source,externalSource,baseContextSource);
 const clone = value => JSON.parse(JSON.stringify(value));
 const validate = locales => model.validate(locales,model.settings,model.languages,model.recorderYaml);
 const allLocales = {...model.locales,...model.externalLocales};
@@ -50,7 +51,7 @@ invalid(locales => locales.Englisch = clone(locales.English));
 invalid(locales => locales.Dansk = {strings: clone(locales.English.strings)});
 invalid(locales => locales.English.extraGroup = {});
 // Exercise the strict build/verify entry point, not just a separately called validator.
-assert.throws(() => readAboutLocaleModel(source.replace('strings: ABOUT_STRINGS.English,','strings: {},'),externalSource),/About keys differ/);
+assert.throws(() => readAboutLocaleModel(source,externalSource,baseContextSource.replace('strings: ABOUT_STRINGS.English,','strings: {},')),/About keys differ/);
 assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/External About locale export changed/);
 
 for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes']) {

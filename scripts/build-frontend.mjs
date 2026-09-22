@@ -25,7 +25,7 @@ export async function expectedPayload(){
  }else throw Error('Frontend version is not covered by an active contract');
  const locale=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  if(locale.length!==localeSize||hash(locale)!==localeSha)throw Error('Locale contract mismatch');
- readAboutLocaleModel(text,locale.toString());
+ readAboutLocaleModel(text,locale.toString(),await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8'));
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
  const referenced=[...new Set([...text.matchAll(/new URL\('\.\/assets\/([^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>'assets/'+m[1]))].sort();
  const active=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
