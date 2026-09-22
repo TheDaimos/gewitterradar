@@ -860,3 +860,18 @@ Nachweis auf der realen Home-Assistant-DEV-Instanz im wieder gesperrten DRA-Betr
 **Bewusst noch nicht abgehakt:** `Soll-/Ist-Metadaten prüfen` auf M12-Ebene, weil zusätzlich die tatsächlich im Browser geladenen Gewitterradar-Module über **Module & Versionen** geprüft werden müssen. DRA-Dateisystemzustand und Gewitterradar-Laufzeitregister bleiben zwei getrennte Nachweise.
 
 **Nächster Schritt:** Gewitterradar auf HA DEV öffnen → **Module & Versionen** aufrufen → prüfen, dass alle erwarteten Module geladen sind und keine Zustände `missing`, `version_mismatch` oder `unexpected` vorliegen. Danach den M12-Soll-/Ist-Punkt abschließen.
+
+
+## Schleife 017 – Alte Lovelace-Ressourcenregistrierung als realer Migrationsblocker erkannt
+
+**Datum:** 2026-09-22  
+**Status:** reale Migrationsauffälligkeit erkannt; Laufzeitprüfung pausiert bis Ressourcenpfad korrigiert ist
+
+Nachweis auf der realen Home-Assistant-DEV-Instanz:
+- unter **Einstellungen → Dashboards → Ressourcen** ist noch die historische Dashboard-/HACS-Ressource `/hacsfiles/gewitterradar-dashboard/gewitterradar-v4.09.28.js?v=28` registriert,
+- DRA hat zwar den nativen V4.10.02-Integrationsbaum vollständig und bytegleich installiert, aber der Browser würde mit diesem alten Ressourceneintrag weiterhin die V4.09.28-Karte laden,
+- die native Integration stellt den stabilen Pfad `/gewitterradar/gewitterradar.js` bereit; dieser Pfad ist laut Installationsvertrag der kanonische Ressourceneintrag für die native Variante,
+- die Integration registriert die Lovelace-Ressource bewusst nicht automatisch und verändert keine privaten Home-Assistant-`.storage`-Dateien,
+- deshalb darf die M12-Laufzeit-Soll/Ist-Prüfung erst nach manueller Umstellung auf genau eine aktive native Ressource fortgesetzt werden.
+
+**Nächster Schritt:** historischen Ressourceneintrag entfernen und `/gewitterradar/gewitterradar.js` als **JavaScript-Modul** eintragen. Danach Browser/Companion vollständig neu laden und erst dann Gewitterradar → **Module & Versionen** prüfen.
