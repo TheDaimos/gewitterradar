@@ -8,7 +8,8 @@ const gewitterradarImport = async (path) => {
     return await import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
-    throw new Error(`Modul ${path}: ${detail}`, { cause:error });
+    const stack = error instanceof Error && error.stack ? `\n${error.stack}` : '';
+    throw new Error(`Modul ${path}: ${detail}${stack}`, { cause:error });
   }
 };
 
