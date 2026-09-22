@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.1.0",
+  version:"1.1.1",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -46,12 +46,14 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             #settings-modules-section .gr-mod-state{font-weight:850}
             #settings-modules-section .gr-mod-state[data-state="ok"]{color:#78d59b}
             #settings-modules-section .gr-mod-state[data-state="warn"]{color:#e0b44f}
-            #settings-modules-section .gr-mod-compact-actions{display:flex;justify-content:flex-end;margin-top:9px}
+            #settings-modules-section .gr-mod-summary-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px}
+            #settings-modules-section .gr-mod-summary-copy{display:grid;gap:4px;min-width:0}
             #settings-modules-section .gr-mod-details-button,
             .gr-module-dialog .gr-mod-action{appearance:none;border:1px solid rgba(214,180,95,.42);border-radius:999px;padding:8px 13px;background:linear-gradient(180deg,rgba(205,158,64,.16),rgba(113,78,24,.12));color:#f0d58e;font-size:8.5px;font-weight:850;letter-spacing:.02em;cursor:pointer;box-shadow:inset 0 1px rgba(255,244,213,.07),0 0 10px rgba(208,158,55,.04)}
             #settings-modules-section .gr-mod-details-button:focus-visible,
             .gr-module-dialog .gr-mod-action:focus-visible{outline:2px solid rgba(255,225,161,.92);outline-offset:2px}
             @media(hover:hover) and (pointer:fine){#settings-modules-section .gr-mod-details-button:hover,.gr-module-dialog .gr-mod-action:hover{filter:brightness(1.12)}}
+            @media(max-width:540px){#settings-modules-section .gr-mod-summary-compact{grid-template-columns:1fr;row-gap:9px}#settings-modules-section .gr-mod-summary-compact .gr-mod-details-button{justify-self:end}}
 
             .gr-module-backdrop{position:fixed;inset:0;z-index:2147483646;display:none;align-items:center;justify-content:center;padding:clamp(10px,2.5vw,28px);background:radial-gradient(circle at 50% 30%,rgba(31,44,66,.28),rgba(4,7,12,.76) 60%,rgba(1,2,4,.9) 100%);backdrop-filter:blur(10px) saturate(.86);-webkit-backdrop-filter:blur(10px) saturate(.86);overscroll-behavior:contain}
             .gr-module-backdrop.open{display:flex;animation:settingsBackdropIn .18s ease-out both}
@@ -85,8 +87,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             .gr-module-dialog .gr-mod-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)}
             @media(max-width:620px){.gr-module-backdrop{padding:7px}.gr-module-dialog{max-height:calc(100dvh - 14px);border-radius:17px}.gr-module-head{padding:10px 11px}.gr-module-title{font-size:16px}.gr-module-body{padding:11px 10px 14px}.gr-module-dialog .gr-mod-row>summary{gap:7px;padding:9px}.gr-module-dialog .gr-mod-heading{display:grid;gap:2px}.gr-module-dialog .gr-mod-detail{grid-template-columns:1fr;gap:2px;padding:0 9px 10px}.gr-module-dialog .gr-mod-detail dd{margin-bottom:5px}}
           </style>
-          <div id="settings-modules-summary" class="gr-mod-summary"></div>
-          <div class="gr-mod-compact-actions">
+          <div class="gr-mod-summary gr-mod-summary-compact">
+            <div id="settings-modules-summary" class="gr-mod-summary-copy"></div>
             <button id="settings-modules-details" class="gr-mod-details-button" type="button">Modul-Details</button>
           </div>
         </div>
