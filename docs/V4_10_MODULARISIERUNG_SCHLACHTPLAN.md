@@ -891,3 +891,19 @@ Realer Nachweis:
 - deshalb muss vor einer Codeänderung real geprüft werden, ob die native Gewitterradar-Integration auf HA DEV tatsächlich geladen ist bzw. ob ihr Setup beim Start fehlgeschlagen ist.
 
 **Nächster Schritt:** Home Assistant → **Einstellungen → Geräte & Dienste → Integrationen** öffnen und den Status des nativen Eintrags **Gewitterradar** prüfen. Falls kein Eintrag vorhanden ist, native Integration hinzufügen; falls der Eintrag fehlerhaft/nicht geladen ist, den konkreten Setup-Fehler aus HA ermitteln. Erst bei geladenem Config Entry + weiterhin 404 wird die Routenregistrierung im Produktionscode geändert.
+
+
+## Schleife 019 – Vorhandene HA-Core-Logs gegen den 404 geprüft
+
+**Datum:** 2026-09-22  
+**Status:** kein Gewitterradar-Setupfehler im vorhandenen Logauszug nachgewiesen
+
+Ergebnis:
+- aktueller Arbeitszweig-Head `7c3223dd9ed61c17475987f6745fb74a801c4fb5` erneut geprüft,
+- PR #24 weiterhin offen/Draft und mergebar,
+- alle fünf PR-Workflows auf diesem Head grün,
+- vorhandener HA-Memory-/Core-Logreport enthält im erfassten letzten Logfenster keinen Treffer für Gewitterradar bzw. `custom_components.gewitterradar`,
+- damit ist ein konkreter Setup-Trace bislang nicht belegt; der reale 404 bleibt mit einem nicht geladenen/noch nicht angelegten nativen Config Entry vereinbar,
+- kein Produktionscode wird ohne realen Setupfehler auf Verdacht geändert.
+
+**Nächster Schritt:** auf HA DEV unter **Einstellungen → Geräte & Dienste → Integrationen** prüfen, ob ein nativer Gewitterradar-Config-Entry existiert und geladen ist. Fehlt er, Gewitterradar einmal als native Integration hinzufügen; ist er fehlerhaft, den angezeigten Setupfehler auswerten. Danach `/gewitterradar/gewitterradar.js` erneut direkt testen.
