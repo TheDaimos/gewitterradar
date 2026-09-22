@@ -1078,3 +1078,19 @@ Ausgewerteter Git-Export:
 - Manifest-Lifecycle steht weiterhin pauschal auf `home_assistant_restart`, weshalb DRA auch bei reinen Frontend-Änderungen weiterhin unnötig einen Neustart fordert.
 
 **Nächster Schritt:** Vorschau gegen den aktuellen `deploy/dev`-Stand vollständig berechnen lassen, Entwicklungsmodus explizit aktivieren und Frontend-only-Delta installieren. Kein HA-Neustart ist als Voraussetzung für dieses Folgeupdate erforderlich.
+
+
+## Schleife 027 – Einzelnes Modul-Neuladen bewusst verworfen
+
+**Datum:** 2026-09-22  
+**Status:** Architekturentscheidung getroffen
+
+Entscheidung:
+- keine generische Schaltfläche **Neu laden** pro Modul,
+- Grund: einzelne Module installieren Methoden auf bestehende Karteninstanzen; bereits erzeugte UI-Zustände, Event-Listener, Timer oder Kartenobjekte würden dadurch nicht automatisch sauber entfernt,
+- ein Hot-Reload einzelner Module würde damit zusätzliche Lifecycle-/Dispose-Verträge pro Modul erfordern und die Architektur unnötig verkomplizieren,
+- Risiko von Mischständen, doppelten Listenern und schwer reproduzierbaren Laufzeitfehlern ist größer als der praktische Nutzen,
+- **Module & Versionen** bleibt Diagnose- und Transparenzoberfläche,
+- Aktualisierung erfolgt weiterhin kontrolliert über DRA; bei reinen Frontend-Änderungen genügt Frontend-/Browser-Neuladen, bei Integrations-/Python-Änderungen vollständiger Home-Assistant-Neustart.
+
+**Nächster Schritt:** M12 ohne Hot-Reload-Sonderpfad fortsetzen: Delta-/Fehlerfälle und Rollback sauber über DRA prüfen.
