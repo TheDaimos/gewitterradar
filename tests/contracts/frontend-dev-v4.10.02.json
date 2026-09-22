@@ -63,8 +63,8 @@
       "sizeBytes": 9258
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "73ce21cb09ded1fe64e81a608ebcf6a20d8ab65123eb0840172f37dd68c760d3",
-      "sizeBytes": 183509
+      "sha256": "884a18dd7ea05d822179038f6917878d8345427044ebf1475c1e5cd97bb05200",
+      "sizeBytes": 183599
     },
     "modules/instruments/compass-design.js": {
       "sha256": "6689fef3c92fcf387db423b04f73280d7ee395c036cc71c6f9dd4080177c5e12",
