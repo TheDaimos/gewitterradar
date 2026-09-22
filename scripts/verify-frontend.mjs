@@ -9,7 +9,7 @@ for(const marker of [
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
   'width:min(780px,calc(100vw - 32px))',
-  'if(backdrop)this.shadow.append(backdrop)'
+  'if(backdrop)this.shadow.append(backdrop)',
   'id="settings-modules-backdrop"',
   '>Diagnose kopieren</button>',
   '>JSON herunterladen</button>',
