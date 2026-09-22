@@ -1,1 +1,9 @@
-{"schema":"deploy-relay.channel.v1","project_id":"gewitterradar","recommended":{"channel":"dev","kind":"branch","ref":"feature/v4.10.02-modularization"}}
+{
+  "schema": "deploy-relay.channel.v1",
+  "project_id": "gewitterradar",
+  "recommended": {
+    "channel": "dev",
+    "kind": "branch",
+    "ref": "deploy/dev"
+  }
+}
