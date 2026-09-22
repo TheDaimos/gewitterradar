@@ -40,9 +40,9 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 Aktuell:
 - M03 ist nach vollständigem gemeinsamen Frontend-/Browser-Gate abgeschlossen,
-- aktueller vollständig geprüfter Feature-Head: `6223081c127baad5dae084aec2bb0a6061865416`,
+- aktueller vollständig geprüfter auslieferbarer Feature-Stand: `ced692d9a81fc863c5406abee876b0d2ec5fc78d`,
 - alle 5 PR-Workflows sind auf diesem Head grün: Source archive, Diagnostic contract, Hi-Res asset retention, Integration und gemeinsames Frontend,
-- `deploy/dev` ist exakt auf diesen vollständig grünen Commit promoviert,
+- `deploy/dev` ist nach der Modul-Details-Iteration exakt auf `ced692d9a81fc863c5406abee876b0d2ec5fc78d` promoviert,
 - der automatisierte DRA-Vertragsnachweis einschließlich V4.09-Rückfallquelle ist grün,
 - reale M12-Abnahme auf Home Assistant DEV gestartet: DRA V0.15.5 nutzt ein reines Lesetoken, erkennt Gewitterradar als `ready`, übernimmt den empfohlenen Kanal `deploy/dev` und friert ihn auf `6223081c127baad5dae084aec2bb0a6061865416` ein,
 - erste reale Vorschau auf HA DEV erfolgreich: **24 neu / 3 geändert / 0 entfernt / 30 unverändert**,
@@ -953,3 +953,33 @@ Technischer Stand vor CI:
 - `module-manifest.js`: SHA256 `8b60aa3b9b736463c5e14110beda1f5da320f37793419301745c2d4e6654c70a`, 6.575 Bytes.
 
 **Nächster Schritt:** alle PR-/Frontend-/Integrations-Gates auf dem neuen Head auswerten und Fehler sofort beheben. Erst bei vollständig grünem Stand `deploy/dev` auf den neuen geprüften Commit promoten; anschließend real über DRA auf HA DEV installieren und die neue Modul-Details-Ansicht prüfen.
+
+
+## Schleife 022 – Modul-Details vollständig grün und nach deploy/dev promoviert
+
+**Datum:** 2026-09-22  
+**Status:** Implementierung abgeschlossen und DRA-DEV-Kandidat promoviert
+
+Ergebnis der Prüfschleife:
+- erster CI-Lauf deckte einen zu whitespace-sensitiven neuen Strukturtest auf; Test auf inhaltliche Marker reduziert,
+- zweiter Lauf deckte ein unsortiertes Prüfsummen-Inventar auf; `SHA256SUMS_FRONTEND.txt` deterministisch neu sortiert,
+- Browser-Regressionslauf deckte anschließend einen echten Erstöffnungsfehler auf: `_syncModuleView()` erzeugte den dynamischen Modulbereich nicht mehr selbst,
+- Lazy-Erzeugung wiederhergestellt; beim ersten Öffnen wird **Module & Versionen** wieder zuverlässig angelegt,
+- anschließend alle fünf PR-Gates auf Commit `ced692d9a81fc863c5406abee876b0d2ec5fc78d` vollständig grün,
+- gemeinsames Frontend-Gate grün einschließlich Syntax, deterministischem Build, Locale-/Recorder-/Diagnosevertrag, Settings/Help-Profilen, Golden-Geometrie und beiden vollständigen Browser-Auslieferungssuiten,
+- Integrations-Gate grün einschließlich HACS, hassfest, Home-Assistant-Runtime und DRA-Vertrag,
+- Source-Archive-, Diagnose- und Hi-Res-Gates grün,
+- `deploy/dev` wurde exakt auf den vollständig geprüften Commit `ced692d9a81fc863c5406abee876b0d2ec5fc78d` verschoben.
+
+Aktueller Funktionsstand **Module & Versionen**:
+- kompakter Hauptblock ohne eingebettete Modulliste/innere Scrollfläche,
+- Gesamtstatus direkt im Hauptmenü sichtbar,
+- Hauptmenü-Reihenfolge: **Kalibrierung & Diagnose** vor **Module & Versionen**,
+- goldene Schaltfläche **Modul-Details**,
+- responsives großes Pop-up mit Premium-Metallrahmen und Hi-Res-Schließen-Symbol,
+- Diagnosegruppe zuerst, danach vollständige gruppierte Modulliste,
+- Modulzeilen zeigen eigene Modulversion + Status; technische Angaben sind je Modul aufklappbar,
+- **Diagnose kopieren** und **JSON herunterladen** im Detaildialog,
+- `diagnostics.module-view` steht auf **1.1.0**.
+
+**Nächster Schritt:** auf HA DEV in DRA den empfohlenen Stand `deploy/dev` neu übernehmen, Vorschau berechnen und installieren. Dabei ist der neue Kandidat exakt `ced692d9a81fc863c5406abee876b0d2ec5fc78d`. Nach Neustart die neue kompakte Hauptansicht und das **Modul-Details**-Pop-up real prüfen; anschließend M12 mit Delta-/Fehlerfällen und Rollback fortsetzen.
