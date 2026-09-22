@@ -875,3 +875,19 @@ Nachweis auf der realen Home-Assistant-DEV-Instanz:
 - deshalb darf die M12-Laufzeit-Soll/Ist-Prüfung erst nach manueller Umstellung auf genau eine aktive native Ressource fortgesetzt werden.
 
 **Nächster Schritt:** historischen Ressourceneintrag entfernen und `/gewitterradar/gewitterradar.js` als **JavaScript-Modul** eintragen. Danach Browser/Companion vollständig neu laden und erst dann Gewitterradar → **Module & Versionen** prüfen.
+
+
+## Schleife 018 – DRA-Dateibaum vorhanden, statische HA-Route liefert real 404
+
+**Datum:** 2026-09-22  
+**Status:** Ursache weiter eingegrenzt; kein Produktionsfix auf Verdacht
+
+Realer Nachweis:
+- unter `/config/custom_components/gewitterradar/frontend/` liegen `gewitterradar.js`, `module-manifest.js`, `assets/`, `locales/` und `modules/` vollständig am erwarteten DRA-Ziel,
+- direkter Aufruf `/gewitterradar/gewitterradar.js` liefert auf HA DEV dennoch **404 Not Found**,
+- damit ist ein falscher DRA-Zielpfad ausgeschlossen,
+- aktueller Integrationscode registriert `/gewitterradar` bereits in `async_setup()` über `StaticPathConfig(..., False)`,
+- vorhandener Home-Assistant-HTTP-Test `tests/test_frontend_delivery.py` prüft genau diesen Pfad erfolgreich nach `async_setup_component(hass, "gewitterradar", {})`,
+- deshalb muss vor einer Codeänderung real geprüft werden, ob die native Gewitterradar-Integration auf HA DEV tatsächlich geladen ist bzw. ob ihr Setup beim Start fehlgeschlagen ist.
+
+**Nächster Schritt:** Home Assistant → **Einstellungen → Geräte & Dienste → Integrationen** öffnen und den Status des nativen Eintrags **Gewitterradar** prüfen. Falls kein Eintrag vorhanden ist, native Integration hinzufügen; falls der Eintrag fehlerhaft/nicht geladen ist, den konkreten Setup-Fehler aus HA ermitteln. Erst bei geladenem Config Entry + weiterhin 404 wird die Routenregistrierung im Produktionscode geändert.
