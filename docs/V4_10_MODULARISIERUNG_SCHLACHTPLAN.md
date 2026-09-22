@@ -801,3 +801,25 @@ Nachweis aus der realen Deploy-Relay-Oberfläche:
 - damit sind die realen M12-Punkte **Deployment des kompletten Modulbaums** und **Neustart-/Frontend-Reload-Hinweis prüfen** abgeschlossen.
 
 **Nächster Schritt:** Home Assistant jetzt manuell vollständig neu starten. Danach zuerst DRA erneut öffnen und prüfen, dass es wie vorgesehen wieder **GESPERRT** ist; anschließend Gewitterradar starten und die reale `BUILD_VERSION = 4.10.02`- sowie Modul-Soll/Ist-Diagnose prüfen.
+
+
+## Schleife 014 – DRA-Diagnoseexport der realen Installation ausgewertet
+
+**Datum:** 2026-09-22  
+**Status:** Diagnose-/Transaktionsnachweis erfolgreich
+
+Ausgewerteter Export:
+- `.deploy-relay/diagnostics/gewitterradar/2026-09-22/20260922T085322Z-deploy-dev-6223081c127b-d24ccae2.json`
+- Deploy Relay V0.15.5 / Home Assistant 2026.9.2,
+- `error_history` ist leer,
+- empfohlener Kanal wurde vor Installation erneut erfolgreich gegen `deploy/dev` und Commit `6223081c127baad5dae084aec2bb0a6061865416` verifiziert,
+- eingefrorenes Quellinventar: **57 Dateien / 11.246.740 Bytes**,
+- frischer Zielvergleich direkt vor Installation: **24 neu / 3 geändert / 0 entfernt / 30 unverändert**,
+- Versionswächter meldete nur die bereits bekannte erwartete Legacy-Marker-Warnung; `regression=false`,
+- Staging vollständig, Sicherung erstellt, anschließend **27 betroffene Dateien** installiert,
+- `verify_install` bestätigte **27 geänderte Dateien**,
+- Transaktion endete mit `state=success`, `status=success`, `restart_required=true`,
+- Sicherungspfad: `/config/deploy_relay/backups/gewitterradar/dra-20260922T084812Z-gewitterradar-6223081c127b`,
+- Git-Export-Konfiguration und Export selbst wurden erfolgreich abgeschlossen; im Protokoll ist der übergebene Token als `<redacted>` maskiert.
+
+**Bewertung:** Der reale DRA-Installationspfad ist nicht nur optisch, sondern auch über den strukturierten Diagnoseexport konsistent und ohne Fehler nachgewiesen. Der laufende Home-Assistant-Neustart bleibt der nächste harte Prüfschritt; erst danach werden Laufzeitversion und Modul-Soll/Ist bewertet.
