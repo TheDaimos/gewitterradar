@@ -31,9 +31,16 @@ export function loadAboutLocaleRuntime(source,baseContextSource) {
   const iifeEnd = source.lastIndexOf('})();');
   if (iifeStart < 0 || iifeEnd < iifeStart) throw Error('About verification app IIFE changed');
   let runtimeSource = source.slice(iifeStart,iifeEnd + 5)
+    // The locale VM injects the exact legacy core from core/base-context.js below.
+    // Strip only the production module-bootstrap shell; production preflight remains intact.
     .replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
+    .replace(/^\s*if\(!__moduleDeps\s*\|\|\s*!Array\.isArray\(__moduleDeps\.LANGUAGE_DEFINITIONS\)\s*\|\|\s*!__moduleDeps\.LANGUAGE_DEFINITIONS\.length\)\{\s*\n\s*throw new Error\('Gewitterradar core\.base-context did not provide LANGUAGE_DEFINITIONS'\);\s*\n\s*\}\s*$/gm,'')
+    .replace(/^\s*window\.__GEWITTERRADAR_BOOT_DIAGNOSTICS=.*__moduleDeps\.LANGUAGE_DEFINITIONS\.length.*;\s*$/gm,'')
     .replace(/^\s*Object\.(?:defineProperties|assign)\(__moduleDeps,.*;\s*$/gm,'')
     .replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
+  if (runtimeSource.includes('__moduleDeps')) {
+    throw Error('About verification module-bootstrap stripping is incomplete');
+  }
   if(baseContextSource){
     const start='  // BEGIN GEWITTERRADAR LEGACY CORE',end='  // END GEWITTERRADAR LEGACY CORE';
     const a=baseContextSource.indexOf(start),b=baseContextSource.indexOf(end);
