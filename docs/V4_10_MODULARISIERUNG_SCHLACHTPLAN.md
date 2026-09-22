@@ -47,7 +47,9 @@ Aktuell:
 - reale M12-Abnahme auf Home Assistant DEV gestartet: DRA V0.15.5 nutzt ein reines Lesetoken, erkennt Gewitterradar als `ready`, übernimmt den empfohlenen Kanal `deploy/dev` und friert ihn auf `6223081c127baad5dae084aec2bb0a6061865416` ein,
 - erste reale Vorschau auf HA DEV erfolgreich: **24 neu / 3 geändert / 0 entfernt / 30 unverändert**,
 - der Versionswächter fällt beim ersten Übergang erwartungsgemäß auf den stärksten lokal gemeinsam vorhandenen Marker `CONF_LEGACY_IMPORT_VERSION` zurück; der neue Quellmarker `BUILD_VERSION = "4.10.02"` besitzt im bisherigen lokalen Stand noch kein Gegenstück,
-- offen bleiben Installation, Neustart, post-install Soll/Ist-/Versionsprüfung, Cache-/Mischstandprüfung und der reale DRA-Rückfall auf `deploy/v4.09`.
+- reale DRA-Installation des vollständigen verwalteten Baums ist erfolgreich abgeschlossen; Staging, Sicherung, Installation und `verify_install` liefen ohne Fehler,
+- DRA meldet ausdrücklich **NEUSTART ERFORDERLICH** und führt keinen stillen Neustart aus,
+- offen bleiben jetzt der manuelle Home-Assistant-Neustart, post-install Soll/Ist-/Versionsprüfung, Cache-/Mischstandprüfung, Einzelmodul-Delta sowie der reale DRA-Rückfall auf `deploy/v4.09`.
 
 ---
 
@@ -427,14 +429,14 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 
 ## M12 – DRA-Ende-zu-Ende-Test – RELEASE-GATE
 
-- [ ] Deployment des kompletten Modulbaums
+- [x] Deployment des kompletten Modulbaums
 - [ ] Deployment nur eines geänderten Moduls
 - [ ] Soll-/Ist-Metadaten prüfen
 - [ ] Browsercache-Fall simulieren
 - [ ] veraltetes Modul erkennen
 - [ ] fehlendes Modul erkennen
 - [ ] Rollback testen
-- [ ] Neustart-/Frontend-Reload-Hinweis prüfen
+- [x] Neustart-/Frontend-Reload-Hinweis prüfen
 
 **Automatisierter Repository-Vorabnachweis (kein Ersatz für die reale DRA-/HA-DEV-Abnahme):**
 - [x] Default-Branch besitzt DRA-Manifest und empfohlenen Kanal `deploy/dev`.
@@ -446,7 +448,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] DRA-Lifecycle bleibt `home_assistant_restart`; kein stiller Neustart ist erlaubt.
 - [x] aktueller verwalteter V4.10-Baum liegt mit 57 Dateien / 11.246.740 Bytes deutlich innerhalb der DRA-Policy (5.000 Dateien / 157.286.400 Bytes).
 
-Die acht eigentlichen M12-Abnahmehaken oben bleiben bewusst offen, bis derselbe Pfad auf der realen Home-Assistant-DEV-Instanz über DRA installiert, geprüft und auf `deploy/v4.09` zurückgesetzt wurde.
+Zwei reale M12-Abnahmepunkte sind inzwischen nachgewiesen: kompletter DRA-Installationslauf und korrekter manueller Neustarthinweis. Die übrigen sechs Haken bleiben offen, bis der neu gestartete HA-DEV-Stand geprüft, die verbleibenden Diagnose-/Deltafälle real nachgewiesen und anschließend über DRA auf `deploy/v4.09` zurückgesetzt wurde.
 
 **Abschlusskriterium:** DRA und Gewitterradar liefern gemeinsam eine belastbare Ende-zu-Ende-Versionsprüfung.
 
@@ -781,3 +783,21 @@ Nachweis auf der realen Home-Assistant-DEV-Instanz:
 - deshalb wurde noch keine M12-Installationscheckbox vorzeitig abgehakt.
 
 **Nächster Schritt:** Entwicklungsmodus explizit aktivieren, Installation des eingefrorenen `deploy/dev`-Commits über **Staging + Sicherung + Installieren** ausführen, DRA-Ergebnis und Neustarthinweis prüfen; erst danach Home Assistant manuell neu starten und die post-install Versions-/Moduldiagnose kontrollieren.
+
+
+## Schleife 013 – Reale DRA-Installation auf HA DEV erfolgreich
+
+**Datum:** 2026-09-22  
+**Status:** Installationspfad erfolgreich; Neustart und Laufzeitprüfung folgen
+
+Nachweis aus der realen Deploy-Relay-Oberfläche:
+- Entwicklungsmodus wurde explizit aktiviert; Schreibzugriff war nur für die ausdrücklich bestätigte Installation freigegeben,
+- Quelle blieb auf `deploy/dev` und den exakten Commit `6223081c127baad5dae084aec2bb0a6061865416` eingefroren,
+- DRA meldet **Installation erfolgreich**,
+- Transaktion wurde abgeschlossen und eine Sicherung unter `/config/deploy_relay/backups/gewitterradar/...` angelegt,
+- Diagnoseprotokoll zeigt die Phasen `staging`, `backup`, `install`, `verify_install` und `success` sowie anschließend `complete`,
+- Fehlerhistorie: **0 Fehler**; die vorhandene Versionswarnung stammt weiterhin aus dem erwarteten ersten Legacy-Marker-Vergleich vor dem Neustart,
+- DRA zeigt projektweit und im Gewitterradar-Eintrag deutlich **Neustart erforderlich** an und weist ausdrücklich darauf hin, dass Home Assistant manuell neu gestartet werden muss,
+- damit sind die realen M12-Punkte **Deployment des kompletten Modulbaums** und **Neustart-/Frontend-Reload-Hinweis prüfen** abgeschlossen.
+
+**Nächster Schritt:** Home Assistant jetzt manuell vollständig neu starten. Danach zuerst DRA erneut öffnen und prüfen, dass es wie vorgesehen wieder **GESPERRT** ist; anschließend Gewitterradar starten und die reale `BUILD_VERSION = 4.10.02`- sowie Modul-Soll/Ist-Diagnose prüfen.
