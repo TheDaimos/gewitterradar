@@ -36,16 +36,14 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M03 Browser-Gate abschließen, anschließend M12 DRA-Ende-zu-Ende.**
+**M12 – DRA-Ende-zu-Ende vollständig durchführen.**
 
 Aktuell:
-- technische Modularisierung M04–M11 ist umgesetzt,
-- 4/5 PR-Gates sind auf dem letzten geprüften Head grün,
-- einziges rotes Gate: `Validate shared Gewitterradar frontend`,
-- letzter bekannter Fehler: `ReferenceError: __moduleDeps is not defined` in der isolierten About-/Locale-VM von `scripts/verify-about-locales.mjs` nach der Boot-Preflight-Erweiterung,
-- Produktionslogik nicht zurückbauen: den Test-Harness modular-runtime-fähig machen,
-- danach gemeinsames Frontend-Gate erneut prüfen und M03 nur bei grünem Ergebnis schließen,
-- anschließend folgt der verpflichtende DRA-Ende-zu-Ende-Test M12.
+- M03 ist nach vollständigem gemeinsamen Frontend-/Browser-Gate abgeschlossen,
+- Head `15f007a32b4c424302eacbb865da224af84b32ff`: alle 5 PR-Workflows grün,
+- `Validate shared Gewitterradar frontend` einschließlich About/Help, Golden-Geometrie, Dashboard/Integration und Desktop/iPad/Android-Profilen ist grün,
+- Produktionslogik blieb unverändert; ausschließlich die modularen Test-Harnesses wurden an den echten `__moduleDeps`-Laufzeitkontext angepasst,
+- nächstes Release-Gate ist M12: DRA-Deployment, Soll/Ist, Cache-/Mischstand, Fehlererkennung und Rollback nachweisen.
 
 ---
 
@@ -318,9 +316,11 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 - [x] erste Imports auslagern
 - [x] Ladefehlerbehandlung
 - [x] Cache-Konzept implementieren
-- [ ] App-/Desktop-Test
+- [x] App-/Desktop-Test
 
 **Abschlusskriterium:** Gewitterradar startet über den neuen Loader ohne Funktionsverlust.
+
+**Stand:** abgeschlossen. Der gemeinsame Frontend-Workflow auf Head `15f007a32b4c424302eacbb865da224af84b32ff` besteht die vollständigen Dashboard-/Integrations-Browsersuiten einschließlich Desktop, iPad und Android-Portrait/-Landscape.
 
 ## M04 – Core auslagern
 
@@ -666,3 +666,25 @@ Ergebnis:
 5. danach M12 DRA-Ende-zu-Ende vollständig abarbeiten.
 
 **Fortsetzung:** `docs/V4_10_CHAT_HANDOFF_2026-09-22.md`
+
+## Schleife 009 – M03 Browser-Gate abgeschlossen
+
+**Datum:** 2026-09-22  
+**Status:** erledigt
+
+Ergebnis:
+- aktuellen PR-#24-Stand auf Head `f52b29eadbeffc9380b6ce487d5355fee0b7409a` neu verifiziert; der übergebene `__moduleDeps`-Fehler war weiterhin aktuell,
+- `scripts/verify-about-locales.mjs` an den modularen Boot-Preflight angepasst, ohne die Produktionslogik in `gewitterradar.js` zurückzubauen,
+- Browser-Harness in `scripts/test-about-locales.mjs` auf den realen modularen Laufzeitkontext `__moduleDeps` umgestellt,
+- Android-Landscape-Fehlalarm im historischen Fokus-Stabilitätstest behoben: Scrollbewegung des kurzen Viewports wird nicht mehr als Reflow gewertet; echte Layout-/Größenänderungen bleiben blockierend,
+- `Validate shared Gewitterradar frontend` vollständig grün: deterministischer Build, Syntax, About/Help-Locale-Verträge, Recorder-Audit, Diagnosevertrag, Sprach-Onboarding, Settings/Help, Golden-Geometrie und beide vollständigen Auslieferungs-Browsersuiten,
+- Dashboard und Integration bestanden Desktop, iPad sowie Android Portrait/Landscape,
+- alle fünf PR-Workflows auf Head `15f007a32b4c424302eacbb865da224af84b32ff` grün.
+
+Relevante Commits:
+- `0d3680957e971d88c6697dbfbc47046dff4faec2` – About-/Locale-Harness für modularen Preflight,
+- `b3b290fb491394976d171229fa4c67fa285b67b1` – Browser-Harness nutzt modularen Laufzeitkontext,
+- `15f007a32b4c424302eacbb865da224af84b32ff` – Fokus-Scroll von echtem About-Reflow getrennt.
+
+**Nächster Schritt:** M12 – DRA-Ende-zu-Ende vollständig durchführen.
+
