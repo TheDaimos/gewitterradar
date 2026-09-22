@@ -311,10 +311,10 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M03 – Stabiler Loader
 
-- [ ] `gewitterradar.js` als stabilen Einstiegspunkt vorbereiten
-- [ ] erste Imports auslagern
-- [ ] Ladefehlerbehandlung
-- [ ] Cache-Konzept implementieren
+- [x] `gewitterradar.js` als stabilen Einstiegspunkt vorbereiten
+- [x] erste Imports auslagern
+- [x] Ladefehlerbehandlung
+- [x] Cache-Konzept implementieren
 - [ ] App-/Desktop-Test
 
 **Abschlusskriterium:** Gewitterradar startet über den neuen Loader ohne Funktionsverlust.
@@ -373,16 +373,14 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 **Abschlusskriterium:** Kartenverhalten entspricht dem Ausgangsstand.
 
-## M09 – Provider auslagern
+## M09 – Provider auslagern – NICHT ANWENDBAR
 
-- [ ] Provider-Basis
-- [ ] NASA
-- [ ] EUMETView
-- [ ] Playback
-- [ ] Pufferung / Wiederaufnahme
-- [ ] Provider-Informationen
+Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterradar-Repository existieren keine NASA-/EUMETView-Provider und kein Satelliten-Playback. Es werden deshalb **keine fachfremden Provider künstlich in Gewitterradar eingeführt**.
 
-**Abschlusskriterium:** alle Provider-Testfälle bestanden.
+- [x] Repository auf NASA/EUMETView/Provider-Verweise geprüft
+- [x] Punkt als nicht anwendbar dokumentiert
+
+**Abschlusskriterium:** erfüllt – keine Provider-Migration für Gewitterradar erforderlich.
 
 ## M10 – Diagnose & Logging auslagern
 
@@ -560,3 +558,21 @@ Ergebnis:
 - `scripts/test-module-registry.mjs` prüft Selbstregistrierung und Diagnose.
 
 **Nächster Schritt:** M03 – stabiler Loader + Build-/Auslieferungspfad.
+
+
+## Schleife 005 – M03 Loader technisch umgesetzt, Browserabnahme läuft
+
+**Datum:** 2026-09-22  
+**Status:** technisch umgesetzt / Browserregression noch offen
+
+Ergebnis:
+- `gewitterradar.js` bleibt der einzige registrierte Home-Assistant-Einstiegspunkt,
+- Module werden parallel über einen zentralen Cache-Token geladen,
+- Ladefehler werden abgefangen und als sichtbarer Gewitterradar-Fehlerzustand dargestellt,
+- Modulbaum bleibt über HACS und DRA vollständig auslieferbar,
+- M09 als irrtümlich aus WeatherRouter übernommener Provider-Punkt identifiziert und als nicht anwendbar korrigiert.
+
+Offen:
+- Browser-Abnahmetest für den ersten About-Start; hierfür wurde der Testzustand erweitert protokolliert.
+
+**Nächster Schritt:** Browserregression beheben, danach M03 schließen und M04 weiterführen.
