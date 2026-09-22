@@ -4,8 +4,10 @@ import {root,hash,expectedPayload,expectedDashboardPackages,destinations} from '
 const payload=await expectedPayload();
 const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
 for(const marker of [
-  'version:"1.1.0"',
+  'version:"1.1.1"',
   '>Modul-Details</button>',
+  'gr-mod-summary-compact',
+  '@media(max-width:540px)'
   'id="settings-modules-backdrop"',
   '>Diagnose kopieren</button>',
   '>JSON herunterladen</button>',
