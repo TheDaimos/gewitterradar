@@ -66,6 +66,8 @@ def _verify_rollback_source(rollback_root: Path, current_integration: Path) -> N
 
     rollback_integration = rollback_root / "custom_components" / "gewitterradar"
     assert rollback_integration.is_dir()
+    rollback_build = (rollback_integration / "build_info.py").read_text(encoding="utf-8")
+    assert 'BUILD_VERSION = "4.09"' in rollback_build
     rollback_plan = _diff(rollback_integration, current_integration)
     modular_removals = [
         name for name in rollback_plan["remove"]
@@ -143,6 +145,8 @@ def main() -> None:
         )
 
     integration_root = ROOT / "custom_components" / "gewitterradar"
+    current_build = (integration_root / "build_info.py").read_text(encoding="utf-8")
+    assert 'BUILD_VERSION = "4.10.02"' in current_build
     parser = argparse.ArgumentParser()
     parser.add_argument("--rollback-root", type=Path)
     args = parser.parse_args()
