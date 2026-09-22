@@ -126,6 +126,11 @@ if (process.argv[2]) {
       </script><script type="module" src="/frontend/modules/diagnostics/cockpit.js"></script>`);
       return;
     }
+    if (url.pathname === '/module-parser-probe.html') {
+      res.setHeader('Content-Type','text/html');
+      res.end('<!doctype html><meta charset="utf-8"><script type="module" src="/dashboard/dist/modules/diagnostics/cockpit.js?v=41002"></script>');
+      return;
+    }
     if (url.pathname === '/about-locale-lazy-probe.html') {
       const delivery = url.searchParams.get('delivery');
       const mainQuery = url.searchParams.get('mainQuery');
