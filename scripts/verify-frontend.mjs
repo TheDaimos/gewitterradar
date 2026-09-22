@@ -2,6 +2,18 @@ import {readFile,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {root,hash,expectedPayload,expectedDashboardPackages,destinations} from './build-frontend.mjs';
 const payload=await expectedPayload();
+const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
+for(const marker of [
+  'version:"1.1.0"',
+  '>Modul-Details</button>',
+  'id="settings-modules-backdrop"',
+  '>Diagnose kopieren</button>',
+  '>JSON herunterladen</button>',
+  'if(diagnostic)diagnostic.after(section)'
+]){
+  if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
+}
+if(moduleView.includes('id="settings-modules-list"></div>\n          <div class="gr-mod-actions"')===false)throw Error('Module detail list/actions contract changed');
 async function files(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await files(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 const checks=[];
 for(const dest of destinations){
