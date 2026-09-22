@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {createRequire} from 'node:module';
+import {runInNewContext} from 'node:vm';
 import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readAboutLocaleModel,readExternalAboutLocales} from './verify-about-locales.mjs';
@@ -66,6 +67,26 @@ for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes
 model.installExternal(model.externalAboutLocales,model.externalHelpLocales);
 for (const {value: language} of model.languages) assert.deepEqual(clone(model.resolve(language)),clone(allLocales[language]));
 console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} invalid schema/runtime mutations; strict validation rejects every incomplete bundle.`);
+
+const i18nModuleSource = await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
+const i18nContext = {};
+const executableI18nModule = i18nModuleSource
+  .replace(/^import\s+.*;\s*$/gm,'')
+  .replace(/export const MODULE_META=/,'const MODULE_META=')
+  .replace(/export const installI18nSettings=/,'globalThis.installI18nSettings=');
+i18nContext.defineModule = (_meta,factory) => {
+  i18nContext.i18nFactory = factory;
+  return () => {};
+};
+runInNewContext(executableI18nModule,i18nContext,{timeout:3000,filename:'i18n-settings.js'});
+if (typeof i18nContext.i18nFactory !== 'function') throw Error('Modular i18n factory was not captured');
+const i18nMethods = i18nContext.i18nFactory({
+  I18N:model.app,
+  LANGUAGE_DEFAULT:model.defaultLanguage,
+  resolveAboutLocale:model.resolve
+});
+if (typeof i18nMethods?._t !== 'function') throw Error('Modular _t method missing');
+Object.defineProperty(model.Card.prototype,'_t',{configurable:true,writable:true,value:i18nMethods._t});
 
 const card = Object.create(model.Card.prototype);
 let appChecks = 0;
