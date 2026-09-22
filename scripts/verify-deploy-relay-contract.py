@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -46,6 +47,47 @@ def _diff(source: Path, target: Path) -> dict[str, list[str]]:
         else:
             result["unchanged"].append(name)
     return result
+
+
+def _verify_rollback_source(rollback_root: Path, current_integration: Path) -> None:
+    rollback_manifest = json.loads(
+        (rollback_root / "deploy-relay.json").read_text(encoding="utf-8")
+    )
+    assert rollback_manifest["project"]["id"] == "gewitterradar"
+    assert rollback_manifest["deployment"]["groups"] == [
+        {
+            "id": "integration",
+            "source": "custom_components/gewitterradar",
+            "target": "custom_components/gewitterradar",
+            "mode": "replace_directory",
+        }
+    ]
+
+    rollback_integration = rollback_root / "custom_components" / "gewitterradar"
+    assert rollback_integration.is_dir()
+    rollback_plan = _diff(rollback_integration, current_integration)
+    modular_removals = [
+        name for name in rollback_plan["remove"]
+        if name.startswith("frontend/modules/")
+    ]
+    assert modular_removals, (
+        "V4.09 rollback must remove V4.10 modular files instead of leaving a mixed tree"
+    )
+    assert (
+        "frontend/gewitterradar.js" in rollback_plan["change"]
+        or "frontend/gewitterradar.js" in rollback_plan["unchanged"]
+    )
+
+    with tempfile.TemporaryDirectory(prefix="gewitterradar-dra-rollback-") as tmp:
+        restored = Path(tmp) / "custom_components" / "gewitterradar"
+        shutil.copytree(current_integration, restored)
+        shutil.rmtree(restored)
+        shutil.copytree(rollback_integration, restored)
+        converged = _diff(rollback_integration, restored)
+        assert not converged["add"] and not converged["change"] and not converged["remove"]
+        assert not (restored / "frontend" / "modules").exists(), (
+            "rollback left V4.10 modular files behind"
+        )
 
 
 def main() -> None:
@@ -100,6 +142,11 @@ def main() -> None:
         )
 
     integration_root = ROOT / "custom_components" / "gewitterradar"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rollback-root", type=Path)
+    args = parser.parse_args()
+    if args.rollback_root is not None:
+        _verify_rollback_source(args.rollback_root.resolve(), integration_root)
     module_rel = "frontend/modules/core/base-context.js"
     module_path = integration_root / module_rel
     assert module_path.is_file(), f"representative module missing: {module_rel}"
@@ -150,8 +197,8 @@ def main() -> None:
 
     print(
         "Deploy Relay contract OK: complete tree, single-module delta, missing/stale "
-        f"module detection, cache-safe static serving, {len(source_modules)} modular "
-        "files and promoted deploy/dev channel."
+        f"module detection, rollback convergence, cache-safe static serving, "
+        f"{len(source_modules)} modular files and promoted deploy/dev channel."
     )
 
 
