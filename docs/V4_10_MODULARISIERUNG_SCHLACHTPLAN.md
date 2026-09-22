@@ -440,7 +440,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] Paketvertrag simuliert Komplettbaum, genau ein geändertes Modul, fehlendes Modul, veraltete Zusatzdatei und saubere Rückfall-Konvergenz ohne Mischstand.
 - [x] Home-Assistant-StaticPath-Vertrag bestätigt deaktivierte Cache-Header.
 - [x] DRA-Lifecycle bleibt `home_assistant_restart`; kein stiller Neustart ist erlaubt.
-- [x] aktueller verwalteter V4.10-Baum liegt mit 56 Dateien / 11.246.644 Bytes deutlich innerhalb der DRA-Policy (5.000 Dateien / 157.286.400 Bytes).
+- [x] aktueller verwalteter V4.10-Baum liegt mit 57 Dateien / 11.246.740 Bytes deutlich innerhalb der DRA-Policy (5.000 Dateien / 157.286.400 Bytes).
 
 Die acht eigentlichen M12-Abnahmehaken oben bleiben bewusst offen, bis derselbe Pfad auf der realen Home-Assistant-DEV-Instanz über DRA installiert, geprüft und auf `deploy/v4.09` zurückgesetzt wurde.
 
