@@ -116,6 +116,16 @@ if (process.argv[2]) {
   let rejectExternalLocales = false;
   const server = createServer(async (req,res) => {
     const url = new URL(req.url,'http://localhost');
+    if (url.pathname === '/cockpit-parser-probe.html') {
+      res.setHeader('Content-Type','text/html');
+      res.end(`<!doctype html><meta charset="utf-8"><script>
+        window.__cockpitParserError=null;
+        window.addEventListener('error',event=>{
+          window.__cockpitParserError={message:event.message,filename:event.filename,lineno:event.lineno,colno:event.colno};
+        });
+      </script><script type="module" src="/frontend/modules/diagnostics/cockpit.js"></script>`);
+      return;
+    }
     if (url.pathname === '/about-locale-lazy-probe.html') {
       const delivery = url.searchParams.get('delivery');
       const mainQuery = url.searchParams.get('mainQuery');
@@ -145,6 +155,21 @@ if (process.argv[2]) {
   let browser;
   try {
     browser = await chromium.launch({executablePath:process.argv[2],headless:true});
+
+    {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      const parserErrors = [];
+      page.on('pageerror',error => parserErrors.push({message:error.message,stack:error.stack}));
+      await page.goto(`http://127.0.0.1:${server.address().port}/cockpit-parser-probe.html`);
+      await page.waitForTimeout(500);
+      const browserError = await page.evaluate(() => window.__cockpitParserError || null);
+      if (browserError || parserErrors.length) {
+        throw Error('cockpit browser parser probe: '+JSON.stringify({browserError,parserErrors}));
+      }
+      await context.close();
+    }
+
     for (const delivery of ['dashboard','integration']) {
       const context = await browser.newContext({viewport:{width:900,height:1000}});
       const page = await context.newPage();
