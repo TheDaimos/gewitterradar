@@ -1027,3 +1027,35 @@ Prüfschleife:
 - `deploy/dev` zeigt exakt auf `ea97a11e90db3e99e9e649d33435174aafb429c0`.
 
 **Nächster Schritt:** bei Bedarf über DRA auf HA DEV aktualisieren und die Position auf Desktop sowie schmaler Android-Ansicht real ansehen; anschließend M12 mit den verbleibenden Delta-/Fehlerfällen und Rollback fortsetzen.
+
+
+## Schleife 025 – iPad Modul-Details isoliert und Breite reduziert
+
+**Datum:** 2026-09-22  
+**Status:** realer iPad-Fund behoben, automatisiert abgesichert und nach `deploy/dev` promoviert
+
+Realer Befund auf iPad:
+- bei geöffnetem **Modul-Details**-Dialog schien der darunterliegende Gewitterradar-Einstellungsdialog sichtbar durch,
+- der Detaildialog wirkte auf der iPad-Breite zusätzlich zu großzügig.
+
+Ursache und Korrektur:
+- Modul-Overlay war als `position:fixed` innerhalb des Einstellungsdialogs/Backdrop-Baums verschachtelt; diese Kombination ist für WebKit/iPad mit `backdrop-filter` stacking-/compositing-anfällig,
+- Overlay wird jetzt nach Erzeugung aus dem Einstellungsbereich herausgelöst und direkt an die Shadow-Root gehängt,
+- Dialog- und Kopfbereich besitzen jetzt vollständig deckende Hintergründe,
+- maximale Dialogbreite von **920 px auf 780 px** reduziert,
+- auf schmalen Ansichten bleibt die mobile Breite dynamisch bei `100vw - 14px`,
+- Status-/Listen-Synchronisierung greift nach dem Reparenting direkt über die Shadow-Root auf den Dialog zu,
+- `diagnostics.module-view` von **1.1.1 auf 1.1.2** angehoben.
+
+Regression:
+- Settings/Help-Browsertest prüft jetzt zusätzlich, dass der Modul-Backdrop direkter Shadow-Root-Nachbar ist,
+- maximale Breite <= 780 px,
+- kein horizontaler Überlauf,
+- deckender Dialog-/Header-Hintergrund,
+- erster CI-Anlauf scheiterte ausschließlich an einem Syntaxfehler im neu ergänzten Prüfskript (fehlendes Komma); Produktionscode war nicht betroffen,
+- Prüfskript korrigiert,
+- anschließend alle fünf Gates auf `f33b9a9882774a38191c64edf842e1f2f9fec1e2` vollständig grün,
+- insbesondere **Settings/Help profiles** inklusive iPad-Profil und beide vollständigen Browser-Auslieferungssuiten erfolgreich,
+- `deploy/dev` zeigt exakt auf `f33b9a9882774a38191c64edf842e1f2f9fec1e2`.
+
+**Nächster Schritt:** auf HA DEV über DRA auf den aktuellen `deploy/dev`-Stand aktualisieren und den iPad-Dialog real visuell gegenprüfen. Da ausschließlich Frontend-/Moduldateien geändert wurden, ist für diese Iteration technisch kein Home-Assistant-Neustart erforderlich; ein Frontend-/Browser-Neuladen genügt. Danach M12 mit Delta-/Fehlerfällen und Rollback fortsetzen.
