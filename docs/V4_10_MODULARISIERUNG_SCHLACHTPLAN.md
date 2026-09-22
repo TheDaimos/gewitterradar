@@ -44,7 +44,10 @@ Aktuell:
 - alle 5 PR-Workflows sind auf diesem Head grün: Source archive, Diagnostic contract, Hi-Res asset retention, Integration und gemeinsames Frontend,
 - `deploy/dev` ist exakt auf diesen vollständig grünen Commit promoviert,
 - der automatisierte DRA-Vertragsnachweis einschließlich V4.09-Rückfallquelle ist grün,
-- offen bleibt die reale M12-Abnahme auf Home Assistant DEV: V4.10.02 über DRA installieren, Soll/Ist + Cache/Mischstand prüfen, Neustart durchführen und über DRA auf `deploy/v4.09` zurücksetzen.
+- reale M12-Abnahme auf Home Assistant DEV gestartet: DRA V0.15.5 nutzt ein reines Lesetoken, erkennt Gewitterradar als `ready`, übernimmt den empfohlenen Kanal `deploy/dev` und friert ihn auf `6223081c127baad5dae084aec2bb0a6061865416` ein,
+- erste reale Vorschau auf HA DEV erfolgreich: **24 neu / 3 geändert / 0 entfernt / 30 unverändert**,
+- der Versionswächter fällt beim ersten Übergang erwartungsgemäß auf den stärksten lokal gemeinsam vorhandenen Marker `CONF_LEGACY_IMPORT_VERSION` zurück; der neue Quellmarker `BUILD_VERSION = "4.10.02"` besitzt im bisherigen lokalen Stand noch kein Gegenstück,
+- offen bleiben Installation, Neustart, post-install Soll/Ist-/Versionsprüfung, Cache-/Mischstandprüfung und der reale DRA-Rückfall auf `deploy/v4.09`.
 
 ---
 
@@ -761,3 +764,20 @@ Ergebnis:
 - keine der acht realen M12-Abnahme-Checkboxen wurde allein aufgrund von CI/Simulation abgehakt.
 
 **Nächster Schritt:** reale M12-Abnahme auf Home Assistant DEV ausschließlich über DRA durchführen: `deploy/dev` installieren, Neustart/Frontend-Neuladen und Modul-Soll/Ist prüfen, Fehler-/Mischstände nachweisen und anschließend über DRA auf `deploy/v4.09` zurücksetzen und erneut prüfen.
+
+
+## Schleife 012 – Reale DRA-Vorschau auf HA DEV erfolgreich
+
+**Datum:** 2026-09-22  
+**Status:** erster realer M12-Teilnachweis erledigt; noch keine Schreiboperation ausgeführt
+
+Nachweis auf der realen Home-Assistant-DEV-Instanz:
+- Deploy Relay V0.15.5 ist im gesperrten Betrieb aktiv; Vorschau und Diagnose funktionieren ohne Schreibfreigabe,
+- Gewitterradar wird mit Repository `TheDaimos/gewitterradar`, Manifest `deploy-relay.json`, Status `ready` und vorhandenem **Lesetoken** erkannt,
+- empfohlener Kanal `dev` / Ref `deploy/dev` wurde übernommen,
+- DRA hat die Quelle auf den exakten Commit `6223081c127baad5dae084aec2bb0a6061865416` eingefroren,
+- reale Dateivorschau: **24 neu, 3 geändert, 0 entfernt, 30 unverändert**,
+- Versions-/Regressionswächter meldet Quelle und lokalen Altstand noch über `CONF_LEGACY_IMPORT_VERSION`; das ist vor der ersten V4.10.02-Installation erwartbar, weil der neue `BUILD_VERSION`-Marker lokal noch fehlt,
+- deshalb wurde noch keine M12-Installationscheckbox vorzeitig abgehakt.
+
+**Nächster Schritt:** Entwicklungsmodus explizit aktivieren, Installation des eingefrorenen `deploy/dev`-Commits über **Staging + Sicherung + Installieren** ausführen, DRA-Ergebnis und Neustarthinweis prüfen; erst danach Home Assistant manuell neu starten und die post-install Versions-/Moduldiagnose kontrollieren.
