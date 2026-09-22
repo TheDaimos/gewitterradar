@@ -22,33 +22,27 @@ let installCompass, installHistoryChart;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const [
-    manifest, registry, cardLifecycle, mapDisplay, scrollGuard, skeleton,
-    compassScale, controls, i18nSettings, sourceStatus, compassSelector,
-    diagnostics, moduleView, compassDesign, locationRadiiMap, strikesWarnings,
-    clustersRecent, render, compass, historyChart
-  ] = await Promise.all([
-    gewitterradarImport('./module-manifest.js'),
-    gewitterradarImport('./modules/core/registry.js'),
-    gewitterradarImport('./modules/core/card-lifecycle.js'),
-    gewitterradarImport('./modules/fullscreen/map-display.js'),
-    gewitterradarImport('./modules/ui/scroll-guard.js'),
-    gewitterradarImport('./modules/ui/skeleton.js'),
-    gewitterradarImport('./modules/instruments/compass-scale.js'),
-    gewitterradarImport('./modules/ui/controls.js'),
-    gewitterradarImport('./modules/ui/i18n-settings.js'),
-    gewitterradarImport('./modules/core/source-status.js'),
-    gewitterradarImport('./modules/instruments/compass-selector.js'),
-    gewitterradarImport('./modules/diagnostics/cockpit.js'),
-    gewitterradarImport('./modules/diagnostics/module-view.js'),
-    gewitterradarImport('./modules/instruments/compass-design.js'),
-    gewitterradarImport('./modules/location/radii-map.js'),
-    gewitterradarImport('./modules/map/strikes-warnings.js'),
-    gewitterradarImport('./modules/map/clusters-recent.js'),
-    gewitterradarImport('./modules/ui/render.js'),
-    gewitterradarImport('./modules/instruments/compass.js'),
-    gewitterradarImport('./modules/history/chart.js')
-  ]);
+  const manifest = await gewitterradarImport('./module-manifest.js');
+  const registry = await gewitterradarImport('./modules/core/registry.js');
+  const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
+  const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js');
+  const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
+  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
+  const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
+  const controls = await gewitterradarImport('./modules/ui/controls.js');
+  const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');
+  const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
+  const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
+  const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
+  const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
+  const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
+  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js');
+  const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
+  const clustersRecent = await gewitterradarImport('./modules/map/clusters-recent.js');
+  const render = await gewitterradarImport('./modules/ui/render.js');
+  const compass = await gewitterradarImport('./modules/instruments/compass.js');
+  const historyChart = await gewitterradarImport('./modules/history/chart.js');
+
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   ({ moduleDiagnostics, moduleRegistrySnapshot } = registry);
   ({ installCardLifecycle } = cardLifecycle);
