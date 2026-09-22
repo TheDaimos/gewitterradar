@@ -925,3 +925,31 @@ Nachweis auf Home Assistant DEV:
 - M12-Punkt **Soll-/Ist-Metadaten prüfen** ist abgeschlossen.
 
 **Nächster Schritt:** M12 weiter mit kontrolliertem Delta-/Fehlerfall: genau ein geändertes Modul über DRA nachweisen und danach gezielt Cache-/Mischstand sowie fehlendes/veraltetes Modul prüfen. Anschließend realer Rollback auf `deploy/v4.09`.
+
+
+## Schleife 021 – Modulübersicht kompakt + Modul-Details-Pop-up umgesetzt
+
+**Datum:** 2026-09-22  
+**Status:** Implementierung und Strukturvertrag abgeschlossen; CI-Auswertung folgt
+
+Umgesetzt:
+- Hauptmenü **Module & Versionen** zeigt nur noch den kompakten Gesamtstatus: Anwendungsversion, geladene Module und Versionskonsistenz,
+- keine eingebettete Modulliste und keine innere Scrollfläche mehr im Hauptblock,
+- neue goldene Schaltfläche **Modul-Details**,
+- großer responsiver Detaildialog im bestehenden Premium-/Metallstil mit Hi-Res-Schließen-Symbol,
+- vollständige Modulliste ausschließlich im Detaildialog,
+- Diagnosegruppe wird im Detaildialog zuerst dargestellt,
+- jedes Modul besitzt eine kompakte Zeile mit eigener Version/Status und eine aufklappbare Detailansicht für Status, Ist-Version, Soll-Version, Dateipfad, Ladezeitpunkt und Funktionen,
+- **Diagnose kopieren** und **JSON herunterladen** befinden sich im Detaildialog,
+- Einstellungsbereich **Module & Versionen** wurde im Hauptmenü unter **Kalibrierung & Diagnose** verschoben,
+- `diagnostics.module-view` wurde wegen der eigenständigen Änderung von **1.0.0 auf 1.1.0** angehoben,
+- kanonisches Frontend, native Integrationsauslieferung und Dashboard-Auslieferung sind bytegleich,
+- V4.10.02-Modulvertrag und `SHA256SUMS_FRONTEND.txt` wurden auf die neuen Bytes aktualisiert,
+- `scripts/verify-frontend.mjs` erzwingt künftig Schaltfläche, Pop-up, Exportaktionen und die Reihenfolge unter Diagnose als CI-Vertrag.
+
+Technischer Stand vor CI:
+- Feature-Head: `31663a77282720419417b32319e65abaa9ffa973`,
+- `diagnostics.module-view`: **1.1.0**, SHA256 `75e5b9facd376765635979038c68200a39ee2862b88d0c435716c609318745af`, 16.777 Bytes,
+- `module-manifest.js`: SHA256 `8b60aa3b9b736463c5e14110beda1f5da320f37793419301745c2d4e6654c70a`, 6.575 Bytes.
+
+**Nächster Schritt:** alle PR-/Frontend-/Integrations-Gates auf dem neuen Head auswerten und Fehler sofort beheben. Erst bei vollständig grünem Stand `deploy/dev` auf den neuen geprüften Commit promoten; anschließend real über DRA auf HA DEV installieren und die neue Modul-Details-Ansicht prüfen.
