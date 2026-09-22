@@ -7,7 +7,7 @@ for(const marker of [
   'version:"1.1.1"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
-  '@media(max-width:540px)'
+  '@media(max-width:540px)',
   'id="settings-modules-backdrop"',
   '>Diagnose kopieren</button>',
   '>JSON herunterladen</button>',
