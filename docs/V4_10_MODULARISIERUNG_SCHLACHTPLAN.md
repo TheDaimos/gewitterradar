@@ -36,13 +36,13 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M03 – Stabilen Loader und modulare Build-Auslieferung herstellen.**
+**M03 Browser-Gate abschließen, anschließend M12 DRA-Ende-zu-Ende.**
 
-Dabei:
-- aktuelle Einstiegspunkte und Registrierungslogik erfassen,
-- große Funktionsblöcke der bestehenden JS-Datei inventarisieren,
-- Abhängigkeiten zwischen Karte, Vollbild, Instrumenten, Einstellungen, Providern und Diagnose dokumentieren,
-- endgültigen Zielbaum der Module festlegen.
+Aktuell:
+- technische Modularisierung M04–M11 ist umgesetzt,
+- statische Build-/Syntax-/Locale-/Diagnoseverträge sind grün,
+- gemeinsamer Playwright-/Browserlauf entscheidet den formalen Abschluss von M03,
+- danach folgt der verpflichtende DRA-Ende-zu-Ende-Test M12.
 
 ---
 
@@ -151,18 +151,18 @@ Ein zentrales Laufzeitregister sammelt ausschließlich die von den **tatsächlic
 
 Anforderungen:
 
-- [ ] eindeutige Modul-ID
-- [ ] Modulversion
-- [ ] Funktionsgruppe
-- [ ] Hauptfunktion
-- [ ] Unterfunktionen
-- [ ] Dateipfad
-- [ ] optional Build-/Commit-Kennung
-- [ ] Ladezeitpunkt
-- [ ] Doppeltregistrierung erkennen
-- [ ] fehlende erwartete Module erkennen
-- [ ] Versionsabweichungen erkennen
-- [ ] Registry darf den Start von Gewitterradar bei rein diagnostischen Fehlern nicht unnötig blockieren
+- [x] eindeutige Modul-ID
+- [x] Modulversion
+- [x] Funktionsgruppe
+- [x] Hauptfunktion
+- [x] Unterfunktionen
+- [x] Dateipfad
+- [x] Build-Kennung auf Anwendungsebene
+- [x] Ladezeitpunkt
+- [x] Doppeltregistrierung erkennen
+- [x] fehlende erwartete Module erkennen
+- [x] Versionsabweichungen erkennen
+- [x] Registry blockiert den Start bei rein diagnostischen Fehlern nicht unnötig
 
 ---
 
@@ -200,27 +200,27 @@ Instrumente
 
 Detailansicht je Modul:
 
-- [ ] Name / ID
-- [ ] geladene Modulversion
-- [ ] Funktion
-- [ ] Unterfunktionen
-- [ ] Dateipfad
-- [ ] Ladezeitpunkt
-- [ ] erwartete Version
-- [ ] Status Soll/Ist
-- [ ] optional Git-/Build-Kennung
+- [x] Name / ID
+- [x] geladene Modulversion
+- [x] Funktion
+- [x] Unterfunktionen
+- [x] Dateipfad
+- [x] Ladezeitpunkt
+- [x] erwartete Version
+- [x] Status Soll/Ist
+- [x] Build-Kennung über Anwendungsmetadaten im Diagnoseexport
 
 Gesamtzustände:
 
-- [ ] **grün:** geladen und erwartete Version
-- [ ] **gold:** geladen, aber andere Version
-- [ ] **rot:** Modul fehlt / Ladefehler
+- [x] **grün:** geladen und erwartete Version
+- [x] **gold:** geladen, aber andere Version
+- [x] **rot:** Modul fehlt / Ladefehler
 
 Diagnoseausgabe:
 
-- [ ] Diagnose kopieren
-- [ ] JSON herunterladen
-- [ ] vollständige Soll-/Ist-Liste ausgeben
+- [x] Diagnose kopieren
+- [x] JSON herunterladen
+- [x] vollständige Soll-/Ist-Liste ausgeben
 
 ---
 
@@ -230,17 +230,17 @@ Diagnoseausgabe:
 
 Ziele:
 
-- [ ] Home Assistant muss weiterhin nur **eine** Gewitterradar-Ressource kennen.
-- [ ] Keine manuelle Registrierung einzelner Module.
-- [ ] Module werden über ES-Module geladen.
-- [ ] HACS/Integration installiert weiterhin das Gesamtpaket.
-- [ ] Der Ressourcenpfad bleibt stabil.
-- [ ] Cache-Strategie verhindert Mischstände verschiedener Builds.
+- [x] Home Assistant kennt weiterhin nur **eine** Gewitterradar-Ressource.
+- [x] Keine manuelle Registrierung einzelner Module.
+- [x] Module werden über ES-Module geladen.
+- [x] HACS/Integration installiert weiterhin das Gesamtpaket.
+- [x] Der Ressourcenpfad bleibt stabil.
+- [x] Cache-Strategie verhindert Mischstände verschiedener Builds.
 
 Zu prüfen:
 
-- [ ] statischer Loader vs. versionsbewusster Loader
-- [ ] Cache-Busting für abhängige Module
+- [x] versionsbewusster Loader festgelegt
+- [x] Cache-Busting für abhängige Module
 - [ ] Verhalten Home-Assistant-App / Android-WebView
 - [ ] Verhalten Desktop-Browser
 - [ ] Verhalten nach HACS-/DRA-Update
@@ -334,47 +334,55 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M05 – UI auslagern
 
-- [ ] Dialoge
-- [ ] Bedienelemente
-- [ ] Einstellungen
-- [ ] Styles soweit sinnvoll modularisieren
-- [ ] Hauptmenü-Anbindung
+- [x] Dialoge
+- [x] Bedienelemente
+- [x] Einstellungen
+- [x] Styles soweit sinnvoll modularisiert
+- [x] Hauptmenü-Anbindung
 
 **Abschlusskriterium:** UI läuft vollständig aus Modulen.
 
+**Stand:** technisch umgesetzt über `ui/skeleton.js`, `ui/controls.js`, `ui/i18n-settings.js`, `ui/render.js` und `ui/scroll-guard.js`. Browser-/Geräteabnahme bleibt M13.
+
 ## M06 – Instrumente auslagern
 
-- [ ] Kompass
-- [ ] Kompassauswahl / Popup
-- [ ] Medaillon
-- [ ] Verschieben / Touch
-- [ ] Sichtbarkeit
-- [ ] Instrument-Metadaten
+- [x] Kompass
+- [x] Kompassauswahl / Popup
+- [x] Medaillon
+- [x] Verschieben / Touch
+- [x] Sichtbarkeit
+- [x] Instrument-Metadaten
 
-**Abschlusskriterium:** Desktop und Android funktionieren unverändert.
+**Abschlusskriterium:** technische Auslagerung abgeschlossen; Desktop-/Android-Regressionsabnahme bleibt M13.
+
+**Stand:** Kompass/Design/Skala/Selector liegen in Instrument-Modulen; Medaillon-, Touch- und Sichtbarkeitslogik ist funktionsgerecht auf Instrument-, UI-, Vollbild- und Diagnosemodule verteilt.
 
 ## M07 – Vollbild auslagern
 
-- [ ] Vollbildsteuerung
-- [ ] Standort-Pille
-- [ ] Instrumentintegration
-- [ ] Layer-Prioritäten
-- [ ] Drag-/Touch-Logik
-- [ ] responsive Mehrspaltigkeit
+- [x] Vollbildsteuerung
+- [x] Standort-Pille
+- [x] Instrumentintegration
+- [x] Layer-Prioritäten
+- [x] Drag-/Touch-Logik
+- [x] responsive Mehrspaltigkeit
 
-**Abschlusskriterium:** Vollbildregressionen ausgeschlossen.
+**Abschlusskriterium:** technische Auslagerung abgeschlossen; Vollbildregression bleibt M13.
+
+**Stand:** zentral in `fullscreen/map-display.js` und den zugehörigen UI-/Kartenmodulen umgesetzt.
 
 ## M08 – Karte auslagern
 
-- [ ] Kartenkern
-- [ ] Layer
-- [ ] Cluster-Auflösung
-- [ ] Cluster-Navigation
-- [ ] Blitzdarstellung
-- [ ] Radien
-- [ ] Aura
+- [x] Kartenkern
+- [x] Layer
+- [x] Cluster-Auflösung
+- [x] Cluster-Navigation
+- [x] Blitzdarstellung
+- [x] Radien
+- [x] Aura
 
-**Abschlusskriterium:** Kartenverhalten entspricht dem Ausgangsstand.
+**Abschlusskriterium:** technische Auslagerung abgeschlossen; Kartenregression bleibt M13.
+
+**Stand:** umgesetzt über `location/radii-map.js`, `map/strikes-warnings.js`, `map/clusters-recent.js` sowie die gemeinsamen Karten-/Vollbildbausteine.
 
 ## M09 – Provider auslagern – NICHT ANWENDBAR
 
@@ -387,12 +395,14 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 
 ## M10 – Diagnose & Logging auslagern
 
-- [ ] Ereignisprotokoll
-- [ ] Diagnosefunktionen
-- [ ] Export
-- [ ] Moduldiagnose integrieren
+- [x] Ereignisprotokoll
+- [x] Diagnosefunktionen
+- [x] Export
+- [x] Moduldiagnose integriert
 
 **Abschlusskriterium:** Diagnose ist vollständig modular.
+
+**Stand:** `diagnostics/cockpit.js` enthält Diagnose-/Logging-/Exportfunktionen; `diagnostics/module-view.js` ergänzt die Laufzeit-Moduldiagnose.
 
 ## M11 – Menü „Module & Versionen“
 
@@ -602,3 +612,28 @@ Offen:
 - anschließend M05–M10 gegen realen Modulbestand formal nachziehen und M12 DRA-Ende-zu-Ende starten.
 
 **Aktueller Prüfcommit:** `c6cf76277639907e2c306fa2242176dea9ca18da`
+
+
+## Schleife 007 – Abgeschlossene Modularisierungspunkte nachgezogen
+
+**Datum:** 2026-09-22  
+**Status:** erledigt
+
+Abgehakt wurden ausschließlich bereits im Repository nachweisbar umgesetzte Punkte:
+- vollständiges Laufzeit-Modulregister,
+- vollständige Modul-/Versionsdetailansicht,
+- stabiler einzelner Home-Assistant-Einstiegspunkt samt ES-Modulen und Cache-Busting,
+- M05 UI-Auslagerung,
+- M06 Instrument-Auslagerung,
+- M07 Vollbild-Auslagerung,
+- M08 Karten-Auslagerung,
+- M10 Diagnose-/Logging-Auslagerung,
+- M11 „Module & Versionen“ bereits zuvor vollständig abgeschlossen.
+
+Bewusst offen bleiben:
+- M03 App-/Desktop-Browserabnahme,
+- Android/HA-Companion-Regressionsprüfung,
+- DRA-Ende-zu-Ende M12,
+- vollständige Regression und Freigabe M13.
+
+**Nächster Schritt:** laufenden gemeinsamen Browser-Gate auswerten und M03 nur bei grünem Ergebnis schließen.
