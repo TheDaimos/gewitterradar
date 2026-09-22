@@ -725,3 +725,23 @@ Bewusst **nicht** als M12 erledigt markiert:
 
 **Nächster Schritt:** finalen CI-Head vollständig grün bekommen, anschließend als `deploy/dev` promoten und danach M12 auf der realen HA-DEV-Instanz über DRA ausführen.
 
+## Schleife 011 – DRA DEV-Promotion nach vollständigem CI
+
+**Datum:** 2026-09-22  
+**Status:** Promotion erledigt; reale M12-Abnahme weiterhin offen
+
+Nachweis:
+- exakter Kandidat `6223081c127baad5dae084aec2bb0a6061865416` bestand alle fünf PR-Gates,
+- gemeinsames Frontend-Gate einschließlich beider vollständigen Browser-Auslieferungssuiten grün,
+- Integrations-Gate einschließlich HACS, hassfest, Home-Assistant-2026.9.0-Runtime und DRA-Paketvertrag grün,
+- Source-Archive-, Diagnostic- und Hi-Res-Verträge grün,
+- PR #24 auf diesem Stand mergeable,
+- `deploy/dev` neu angelegt und exakt auf `6223081c127baad5dae084aec2bb0a6061865416` gesetzt,
+- Default-Branch-Policy `deploy-relay-channel.json` empfiehlt `branch: deploy/dev`,
+- Rückfallquelle `deploy/v4.09` steht auf `421426be1b98fd96bf1642a7601d2ceee02e11d9` und besitzt ein eigenes DRA-Manifest sowie `BUILD_VERSION = "4.09"`,
+- empfohlener V4.10-Stand besitzt `BUILD_VERSION = "4.10.02"`.
+
+**Harte Restbedingung M12:** auf der realen HA-DEV-Instanz Gewitterradar über DRA aus `deploy/dev` installieren/aktualisieren, Soll/Ist prüfen, Home Assistant manuell neu starten, anschließend über DRA auf `deploy/v4.09` zurücksetzen und erneut auf Mischstände/fehlende Module prüfen.
+
+**M13 bleibt gesperrt**, bis diese reale DRA-Abnahme nachweisbar erfolgreich ist.
+
