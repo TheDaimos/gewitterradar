@@ -432,6 +432,18 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [ ] Rollback testen
 - [ ] Neustart-/Frontend-Reload-Hinweis prüfen
 
+**Automatisierter Repository-Vorabnachweis (kein Ersatz für die reale DRA-/HA-DEV-Abnahme):**
+- [x] Default-Branch besitzt DRA-Manifest und empfohlenen Kanal `deploy/dev`.
+- [x] DRA-Zentralkatalog führt Gewitterradar als `ready` / `dev`.
+- [x] `deploy/v4.09` existiert als manifestfähiger älterer Rückfallstand.
+- [x] `BUILD_VERSION` ist für V4.10.02 und V4.09 DRA-lesbar und vergleichbar.
+- [x] Paketvertrag simuliert Komplettbaum, genau ein geändertes Modul, fehlendes Modul, veraltete Zusatzdatei und saubere Rückfall-Konvergenz ohne Mischstand.
+- [x] Home-Assistant-StaticPath-Vertrag bestätigt deaktivierte Cache-Header.
+- [x] DRA-Lifecycle bleibt `home_assistant_restart`; kein stiller Neustart ist erlaubt.
+- [x] aktueller verwalteter V4.10-Baum liegt mit 56 Dateien / 11.246.644 Bytes deutlich innerhalb der DRA-Policy (5.000 Dateien / 157.286.400 Bytes).
+
+Die acht eigentlichen M12-Abnahmehaken oben bleiben bewusst offen, bis derselbe Pfad auf der realen Home-Assistant-DEV-Instanz über DRA installiert, geprüft und auf `deploy/v4.09` zurückgesetzt wurde.
+
 **Abschlusskriterium:** DRA und Gewitterradar liefern gemeinsam eine belastbare Ende-zu-Ende-Versionsprüfung.
 
 ## M13 – Regression & Freigabe
@@ -687,4 +699,29 @@ Relevante Commits:
 - `15f007a32b4c424302eacbb865da224af84b32ff` – Fokus-Scroll von echtem About-Reflow getrennt.
 
 **Nächster Schritt:** M12 – DRA-Ende-zu-Ende vollständig durchführen.
+
+## Schleife 010 – M12 DRA-Vertrag vorbereitet und automatisiert abgesichert
+
+**Datum:** 2026-09-22  
+**Status:** automatisierter Vorabnachweis erledigt; reale DRA-/HA-DEV-Abnahme bleibt offen
+
+Ergebnis:
+- Gewitterradar-Default-Branch um reine DRA-Metadaten ergänzt; V4.09-Produktionscode blieb dabei unverändert,
+- DRA-Katalog in `TheDaimos/deploy-relay-agent` nach grünem CI auf `ready` / `dev` aktualisiert,
+- empfohlener Gewitterradar-Kanal auf den DRA-Promotionszweig `deploy/dev` umgestellt,
+- manifestfähiger Rückfallzweig `deploy/v4.09` angelegt,
+- deklarative DRA-Buildmarker `4.10.02` und `4.09` ergänzt, damit Upgrade/Downgrade semantisch erkannt werden kann,
+- `scripts/verify-deploy-relay-contract.py` ergänzt: Komplettbaum, Einzelmodul-Delta, fehlendes Modul, veraltete Zusatzdatei, Cachevertrag und Rollback-Konvergenz,
+- CI lädt für den Rückfalltest den echten Zweig `deploy/v4.09` und verlangt das Entfernen sämtlicher V4.10-Modulreste,
+- DRA-Paketvertrag auf dem Zwischenstand grün; HACS-Paketvertrag wurde anschließend um den neuen Buildmarker erweitert,
+- Feature-DRA-Manifest bytegleich zur auf `main` veröffentlichten Metadatenfassung ausgerichtet, um den späteren PR-Base-Abgleich zu entschärfen.
+
+Bewusst **nicht** als M12 erledigt markiert:
+- reale Installation von V4.10.02 über DRA auf HA DEV,
+- reale Soll-/Ist-Prüfung nach Installation,
+- realer Neustart und anschließende Prüfung,
+- realer Rückfall über DRA auf `deploy/v4.09`,
+- erneute Prüfung auf fehlende/veraltete Module nach dem realen Rückfall.
+
+**Nächster Schritt:** finalen CI-Head vollständig grün bekommen, anschließend als `deploy/dev` promoten und danach M12 auf der realen HA-DEV-Instanz über DRA ausführen.
 
