@@ -49,7 +49,9 @@ Aktuell:
 - der Versionswächter fällt beim ersten Übergang erwartungsgemäß auf den stärksten lokal gemeinsam vorhandenen Marker `CONF_LEGACY_IMPORT_VERSION` zurück; der neue Quellmarker `BUILD_VERSION = "4.10.02"` besitzt im bisherigen lokalen Stand noch kein Gegenstück,
 - reale DRA-Installation des vollständigen verwalteten Baums ist erfolgreich abgeschlossen; Staging, Sicherung, Installation und `verify_install` liefen ohne Fehler,
 - DRA meldet ausdrücklich **NEUSTART ERFORDERLICH** und führt keinen stillen Neustart aus,
-- offen bleiben jetzt der manuelle Home-Assistant-Neustart, post-install Soll/Ist-/Versionsprüfung, Cache-/Mischstandprüfung, Einzelmodul-Delta sowie der reale DRA-Rückfall auf `deploy/v4.09`.
+- Home Assistant wurde vollständig neu gestartet; DRA sperrte sich danach automatisch wieder,
+- post-install DRA-Datei-/Versionsprüfung ist erfolgreich: **0 neu / 0 geändert / 0 entfernt / 57 unverändert**, Quelle **4.10.02** = lokal **4.10.02** über `BUILD_VERSION`,
+- offen bleiben die Gewitterradar-Laufzeit-Soll/Ist-Prüfung der einzelnen Module, Cache-/Mischstandprüfung, Einzelmodul-Delta sowie der reale DRA-Rückfall auf `deploy/v4.09`.
 
 ---
 
@@ -839,3 +841,22 @@ Nachweis nach vollständigem Home-Assistant-DEV-Neustart:
 - damit ist der reale Neustartpfad inklusive automatischer Rückkehr in den gesperrten Zustand bestätigt.
 
 **Nächster Schritt:** im gesperrten DRA-Betrieb eine neue Vorschau gegen denselben eingefrorenen `deploy/dev`-Stand berechnen. Erwartung: keine Dateidifferenzen mehr und Versionswächter erkennt nun den installierten `BUILD_VERSION = 4.10.02`-Stand. Anschließend Gewitterradar öffnen und `Module & Versionen` auf vollständigen Soll-/Ist-Gleichstand prüfen.
+
+
+## Schleife 016 – Post-Install-Konvergenz und BUILD_VERSION real bestätigt
+
+**Datum:** 2026-09-22  
+**Status:** DRA-Dateibaum und Versionsidentität nach Neustart vollständig bestätigt
+
+Nachweis auf der realen Home-Assistant-DEV-Instanz im wieder gesperrten DRA-Betrieb:
+- neue Vorschau gegen den weiterhin eingefrorenen Stand `deploy/dev` / `6223081c127baad5dae084aec2bb0a6061865416`,
+- Ergebnis: **0 neu / 0 geändert / 0 entfernt / 57 unverändert**,
+- Versions- und Regressionsprüfung meldet **Versionsstand identisch**,
+- Git-Quelle: **4.10.02**,
+- lokal: **4.10.02**,
+- erkannt über **BUILD_VERSION**,
+- damit ist nach dem Neustart ausgeschlossen, dass im von DRA verwalteten Integrationsbaum ein Datei-Mischstand verblieben ist.
+
+**Bewusst noch nicht abgehakt:** `Soll-/Ist-Metadaten prüfen` auf M12-Ebene, weil zusätzlich die tatsächlich im Browser geladenen Gewitterradar-Module über **Module & Versionen** geprüft werden müssen. DRA-Dateisystemzustand und Gewitterradar-Laufzeitregister bleiben zwei getrennte Nachweise.
+
+**Nächster Schritt:** Gewitterradar auf HA DEV öffnen → **Module & Versionen** aufrufen → prüfen, dass alle erwarteten Module geladen sind und keine Zustände `missing`, `version_mismatch` oder `unexpected` vorliegen. Danach den M12-Soll-/Ist-Punkt abschließen.
