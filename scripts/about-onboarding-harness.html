@@ -102,7 +102,9 @@ try {
     maybeOpenType:typeof card._maybeOpenAbout,
     openAboutType:typeof card._openAbout,
     setHassOwn:Object.prototype.hasOwnProperty.call(card,'hass'),
-    prototypeHassSetter:typeof Object.getOwnPropertyDescriptor(Object.getPrototypeOf(card),'hass')?.set
+    prototypeHassSetter:typeof Object.getOwnPropertyDescriptor(Object.getPrototypeOf(card),'hass')?.set,
+    fallbackText:String(card.textContent||'').trim(),
+    fallbackHtml:String(card.innerHTML||'').slice(0,1200)
   }:null;
   window.aboutResult={status:'FAIL',message:error.stack,debug};
   document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);
