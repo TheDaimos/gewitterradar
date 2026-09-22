@@ -146,7 +146,7 @@ if (process.argv[2]) {
       if (file.endsWith(sep+'gewitterradar.js')) {
         const js = bytes.toString();
         if (js.split(anchor).length !== 2) throw Error('Browser registry anchor changed');
-        bytes = Buffer.from(js.replace(anchor,'  window.aboutLocaleRegistry = LANGUAGE_DEFINITIONS;\n  window.aboutLocaleDebug = {resolve:resolveAboutLocale};\n'+anchor));
+        bytes = Buffer.from(js.replace(anchor,'  window.aboutLocaleRegistry = __moduleDeps.LANGUAGE_DEFINITIONS;\n  window.aboutLocaleDebug = {resolve:__moduleDeps.resolveAboutLocale};\n'+anchor));
       }
       res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.png':'image/png','.webp':'image/webp'})[extname(file)]||'text/plain');
       res.end(bytes);
