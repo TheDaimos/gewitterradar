@@ -40,9 +40,12 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 Aktuell:
 - technische Modularisierung M04–M11 ist umgesetzt,
-- statische Build-/Syntax-/Locale-/Diagnoseverträge sind grün,
-- gemeinsamer Playwright-/Browserlauf entscheidet den formalen Abschluss von M03,
-- danach folgt der verpflichtende DRA-Ende-zu-Ende-Test M12.
+- 4/5 PR-Gates sind auf dem letzten geprüften Head grün,
+- einziges rotes Gate: `Validate shared Gewitterradar frontend`,
+- letzter bekannter Fehler: `ReferenceError: __moduleDeps is not defined` in der isolierten About-/Locale-VM von `scripts/verify-about-locales.mjs` nach der Boot-Preflight-Erweiterung,
+- Produktionslogik nicht zurückbauen: den Test-Harness modular-runtime-fähig machen,
+- danach gemeinsames Frontend-Gate erneut prüfen und M03 nur bei grünem Ergebnis schließen,
+- anschließend folgt der verpflichtende DRA-Ende-zu-Ende-Test M12.
 
 ---
 
@@ -637,3 +640,29 @@ Bewusst offen bleiben:
 - vollständige Regression und Freigabe M13.
 
 **Nächster Schritt:** laufenden gemeinsamen Browser-Gate auswerten und M03 nur bei grünem Ergebnis schließen.
+
+
+## Schleife 008 – Chat-Übergabe und aktueller Blocker gesichert
+
+**Datum:** 2026-09-22  
+**Status:** Übergabepunkt / Arbeit läuft im nächsten Chat weiter
+
+Ergebnis:
+- vollständige Übergabe in `docs/V4_10_CHAT_HANDOFF_2026-09-22.md` angelegt,
+- Arbeitsweise mit verbindlicher Schleife ausdrücklich dokumentiert,
+- DRA erneut als harte Abnahmebedingung festgehalten,
+- Draft-PR #24 bleibt offen,
+- letzter geprüfter Arbeits-Head vor der Übergabe: `a18adb21a7581de4909bf178bcfb18ae1b923535`,
+- 4/5 Gates grün: Source archive, Diagnostic contract, Hi-Res asset retention, Integration,
+- einziges rotes Gate: `Validate shared Gewitterradar frontend`,
+- aktueller konkreter Blocker: `ReferenceError: __moduleDeps is not defined` beim isolierten Ausführen von `gewitterradar.js` durch `scripts/verify-about-locales.mjs`,
+- Ursache: Boot-Preflight referenziert `__moduleDeps`, während der Locale-Harness den eigentlichen modularen Bootstrap für die isolierte VM entfernt.
+
+**Nächster Schritt:**
+1. aktuellen Branch-Head und CI nach Chatstart neu prüfen,
+2. `scripts/verify-about-locales.mjs` modular-runtime-fähig machen,
+3. gemeinsames Frontend-Gate erneut laufen lassen,
+4. M03 ausschließlich bei grünem Browser-/Frontend-Gate schließen,
+5. danach M12 DRA-Ende-zu-Ende vollständig abarbeiten.
+
+**Fortsetzung:** `docs/V4_10_CHAT_HANDOFF_2026-09-22.md`
