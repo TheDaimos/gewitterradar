@@ -22,11 +22,23 @@ export async function expectedPayload(){
  if(release?.acceptedCandidateVersion!=='4.09.28'||release?.acceptedCandidateSha256!==acceptedCandidateFrontendSha||release?.acceptedCandidateSizeBytes!==acceptedCandidateFrontendSize)throw Error('Accepted V4.09.28 provenance changed');
 
  const source=await readFile(resolve(root,'frontend/gewitterradar.js'));
- if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('Frontend differs from V4.09 final release contract');
  const sourceText=source.toString('utf8');
- if(!sourceText.includes("const CARD_VERSION = '4.09';")||!sourceText.includes("const CARD_DISPLAY_VERSION = '4.09';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"))throw Error('V4.09 final version/build markers missing');
- const normalized=Buffer.from(normalizeV409FinalToAcceptedCandidate(sourceText),'utf8');
- if(normalized.length!==acceptedCandidateFrontendSize||hash(normalized)!==acceptedCandidateFrontendSha)throw Error('V4.09 final frontend contains changes beyond approved V4.09.28 release metadata plus diagnostic selector scope');
+ const isV409Release=sourceText.includes("const CARD_VERSION = '4.09';");
+ const isV41001Dev=sourceText.includes("const CARD_VERSION = '4.10.01';");
+
+ if(isV409Release){
+  if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('Frontend differs from V4.09 final release contract');
+  if(!sourceText.includes("const CARD_DISPLAY_VERSION = '4.09';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"))throw Error('V4.09 final version/build markers missing');
+  const normalized=Buffer.from(normalizeV409FinalToAcceptedCandidate(sourceText),'utf8');
+  if(normalized.length!==acceptedCandidateFrontendSize||hash(normalized)!==acceptedCandidateFrontendSha)throw Error('V4.09 final frontend contains changes beyond approved V4.09.28 release metadata plus diagnostic selector scope');
+ }else if(isV41001Dev){
+  const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.01.json'),'utf8'));
+  if(dev?.version!=='4.10.01'||dev?.status!=='DEV'||dev?.baseRelease!=='4.09'||dev?.baseReleaseCommit!=='a6a5b68ebc289f04217bc5abb55c46422dce4e4c')throw Error('V4.10.01 development contract identity changed');
+  if(source.length!==dev.sizeBytes||hash(source)!==dev.sha256)throw Error('Frontend differs from V4.10.01 development contract');
+  if(!sourceText.includes("const CARD_DISPLAY_VERSION = '4.10.01';")||!sourceText.includes("const GEWITTERRADAR_BUILD = 'V4.10.01-DEV-2026-09-21';"))throw Error('V4.10.01 development version/build markers missing');
+ }else{
+  throw Error('Frontend version is not covered by an active release/development contract');
+ }
 
  const localeSource=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  if(localeSource.length!==release.localeSizeBytes||hash(localeSource)!==release.localeSha256)throw Error('V4.09 locale differs from accepted V4.09.28');
@@ -83,7 +95,7 @@ export async function build(){
  for(const [name,bytes] of packages)rows.push(hash(bytes)+'  dashboard/dist/'+name);
  await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),rows.sort().join('\n')+'\n');
 
- console.log('Built Gewitterradar V4.09 final from the accepted V4.09.28 candidate with release-metadata normalization plus diagnostic selector scope correction.');
+ console.log('Built Gewitterradar frontend from the active immutable-release or development contract.');
  for(const [name,bytes] of packages)console.log(`Dashboard package ${name}: ${bytes.length} bytes, SHA256 ${hash(bytes)}`);
  console.log('Protected diagnostic/assets baseline preserved; V4.06 fallback and V4.07 package retained.');
 }
