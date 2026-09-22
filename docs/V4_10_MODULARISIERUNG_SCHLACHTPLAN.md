@@ -321,13 +321,16 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M04 – Core auslagern
 
-- [ ] Konstanten
-- [ ] Zustandsverwaltung
-- [ ] allgemeine Helfer
-- [ ] Speicher-/Persistenzhelfer
-- [ ] Geometriehelfer
+- [x] Konstanten
+- [~] Zustandsverwaltung – gemeinsame Basis ausgelagert, fachlicher Karten-/UI-Zustand bleibt bewusst in Funktionsmodulen
+- [x] allgemeine Helfer
+- [x] Speicher-/Persistenzgrundlagen
+- [x] Geometriehelfer
+- [x] Leaflet-/Asset-Grundlagen
 
 **Abschlusskriterium:** Core-Bausteine sind getrennt, bestehendes Verhalten unverändert.
+
+**Stand:** technisch weitgehend umgesetzt über `modules/core/base-context.js`, `runtime.js`, `registry.js`, `card-lifecycle.js` und `source-status.js`. Browserregression bleibt Release-Gate.
 
 ## M05 – UI auslagern
 
@@ -393,15 +396,15 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 
 ## M11 – Menü „Module & Versionen“
 
-- [ ] Menüeintrag
-- [ ] Gruppenansicht
-- [ ] Unterfunktionen
-- [ ] Modulversionen
-- [ ] Soll-/Ist-Prüfung
-- [ ] Statusfarben
-- [ ] Detailansicht
-- [ ] Diagnose kopieren
-- [ ] JSON herunterladen
+- [x] Menüeintrag
+- [x] Gruppenansicht
+- [x] Unterfunktionen
+- [x] Modulversionen
+- [x] Soll-/Ist-Prüfung
+- [x] Statusfarben
+- [x] Detailansicht
+- [x] Diagnose kopieren
+- [x] JSON herunterladen
 
 **Abschlusskriterium:** Der Nutzer kann nach einem Update eindeutig sehen, welche Modulversion tatsächlich geladen wurde.
 
@@ -576,3 +579,26 @@ Offen:
 - Browser-Abnahmetest für den ersten About-Start; hierfür wurde der Testzustand erweitert protokolliert.
 
 **Nächster Schritt:** Browserregression beheben, danach M03 schließen und M04 weiterführen.
+
+
+## Schleife 006 – Modularer Browserpfad und Moduldiagnose konsolidiert
+
+**Datum:** 2026-09-22  
+**Status:** laufend / Browser-CI entscheidet M03-Abschluss
+
+Ergebnis:
+- modularer Loader bleibt einziger Home-Assistant-Einstiegspunkt,
+- Ladefehler-Fallback und Cache-Token sind aktiv,
+- Browserparser-Kompatibilität des Diagnosemoduls normalisiert,
+- Build-/Asset-Inventarprüfung auf den modularen Quellverbund erweitert,
+- About-Harness auf modulare Startzeiten erweitert und mit Browserdiagnose versehen,
+- `core.base-context` bestätigt Konstanten, Sprache, Speichergrundlagen, Geometrie, Leaflet- und Asset-Helfer als ausgelagert,
+- „Module & Versionen“ vollständig umgesetzt: Gruppen, Funktionen, Soll/Ist, Versionsstatus, Detailansicht, Kopieren und JSON-Export,
+- DRA-Manifest liefert weiterhin den kompletten Integrations-/Modulbaum per `replace_directory`.
+
+Offen:
+- gemeinsamer Frontend-/Browser-Gate muss grün werden,
+- danach M03 formell schließen,
+- anschließend M05–M10 gegen realen Modulbestand formal nachziehen und M12 DRA-Ende-zu-Ende starten.
+
+**Aktueller Prüfcommit:** `c6cf76277639907e2c306fa2242176dea9ca18da`
