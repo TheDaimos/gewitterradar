@@ -1000,3 +1000,30 @@ Realer HA-DEV-Nachweis nach DRA-Aktualisierung auf `deploy/dev` / `ced692d9a81fc
 **Folgepunkt für M12/DRA:** Deployment-Art bzw. geänderte Dateiklasse auswerten. Bei ausschließlich Frontend-Dateien darf DRA künftig nur Frontend-/Browser-Neuladen verlangen; bei Python-/Integrationsänderungen bleibt der vollständige Home-Assistant-Neustart erforderlich. Dieser Punkt bleibt bis zur DRA-Anpassung ausdrücklich offen.
 
 **Nächster Schritt:** M12 mit den verbleibenden realen Delta-/Fehlerfällen fortsetzen: Einzelmodul-Delta, Cache-/Mischstand, veraltetes Modul, fehlendes Modul und anschließend echter Rollback auf `deploy/v4.09`. Danach M13 Regression & Freigabe.
+
+
+## Schleife 024 – Modul-Details Variante A umgesetzt und freigegeben
+
+**Datum:** 2026-09-22  
+**Status:** vollständig umgesetzt, geprüft und nach `deploy/dev` promoviert
+
+Umgesetzt:
+- Schaltfläche **Modul-Details** aus dem unteren Außenbereich in den inneren Statuskasten verschoben,
+- Desktop-/Breitansicht: Schaltfläche rechts mittig neben Anwendungsversion, Modulanzahl und Gesamtstatus,
+- schmale Ansichten bis 540 px: Schaltfläche springt unter den Statustext, bleibt aber innerhalb desselben Statuskastens,
+- dynamisches Status-Rendering trennt Statusinhalt und Schaltfläche, damit Statusaktualisierungen die Schaltfläche nicht überschreiben,
+- `diagnostics.module-view` wegen der eigenständigen UI-Änderung von **1.1.0 auf 1.1.1** angehoben,
+- kanonisches Frontend, native Integration und Dashboard-Auslieferung bleiben bytegleich,
+- V4.10.02-Modulvertrag und SHA256-Inventar aktualisiert,
+- Frontend-Vertrag prüft jetzt zusätzlich die responsive Kompaktansicht und den 540-px-Umbruch.
+
+Prüfschleife:
+- erster CI-Anlauf fand ausschließlich einen Syntaxfehler im neu erweiterten Prüfskript (fehlendes Komma); Produktionscode war davon nicht betroffen,
+- Prüfskript korrigiert,
+- anschließend alle fünf Gates auf Commit `ea97a11e90db3e99e9e649d33435174aafb429c0` vollständig grün,
+- gemeinsames Frontend-Gate grün inklusive deterministischem Build, Syntax, Locale-/Diagnosevertrag, Settings/Help, Golden-Geometrie und beiden vollständigen Browser-Auslieferungssuiten,
+- Integrations-Gate grün inklusive HACS, hassfest, Home-Assistant-Runtime und DRA-Vertrag,
+- Hi-Res-, Diagnose- und Source-Archive-Gates grün,
+- `deploy/dev` zeigt exakt auf `ea97a11e90db3e99e9e649d33435174aafb429c0`.
+
+**Nächster Schritt:** bei Bedarf über DRA auf HA DEV aktualisieren und die Position auf Desktop sowie schmaler Android-Ansicht real ansehen; anschließend M12 mit den verbleibenden Delta-/Fehlerfällen und Rollback fortsetzen.
