@@ -823,3 +823,19 @@ Ausgewerteter Export:
 - Git-Export-Konfiguration und Export selbst wurden erfolgreich abgeschlossen; im Protokoll ist der übergebene Token als `<redacted>` maskiert.
 
 **Bewertung:** Der reale DRA-Installationspfad ist nicht nur optisch, sondern auch über den strukturierten Diagnoseexport konsistent und ohne Fehler nachgewiesen. Der laufende Home-Assistant-Neustart bleibt der nächste harte Prüfschritt; erst danach werden Laufzeitversion und Modul-Soll/Ist bewertet.
+
+
+## Schleife 015 – Neustart und erneute DRA-Sperre real bestätigt
+
+**Datum:** 2026-09-22  
+**Status:** Neustart erfolgreich; post-install Laufzeitprüfung läuft
+
+Nachweis nach vollständigem Home-Assistant-DEV-Neustart:
+- Deploy Relay V0.15.5 ist erwartungsgemäß wieder **GESPERRT**,
+- Deployment-Schreibzugriffe sind damit nach dem Neustart automatisch deaktiviert,
+- Gewitterradar bleibt im DRA-Katalog auf Status `ready`,
+- ausgewählte Quelle bleibt `branch: deploy/dev` auf Commit `6223081c127baad5dae084aec2bb0a6061865416`,
+- der vorherige Hinweis **Neustart erforderlich** ist nach dem Neustart verschwunden,
+- damit ist der reale Neustartpfad inklusive automatischer Rückkehr in den gesperrten Zustand bestätigt.
+
+**Nächster Schritt:** im gesperrten DRA-Betrieb eine neue Vorschau gegen denselben eingefrorenen `deploy/dev`-Stand berechnen. Erwartung: keine Dateidifferenzen mehr und Versionswächter erkennt nun den installierten `BUILD_VERSION = 4.10.02`-Stand. Anschließend Gewitterradar öffnen und `Module & Versionen` auf vollständigen Soll-/Ist-Gleichstand prüfen.
