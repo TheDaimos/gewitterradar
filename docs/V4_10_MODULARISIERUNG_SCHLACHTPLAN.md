@@ -51,7 +51,8 @@ Aktuell:
 - DRA meldet ausdrücklich **NEUSTART ERFORDERLICH** und führt keinen stillen Neustart aus,
 - Home Assistant wurde vollständig neu gestartet; DRA sperrte sich danach automatisch wieder,
 - post-install DRA-Datei-/Versionsprüfung ist erfolgreich: **0 neu / 0 geändert / 0 entfernt / 57 unverändert**, Quelle **4.10.02** = lokal **4.10.02** über `BUILD_VERSION`,
-- offen bleiben die Gewitterradar-Laufzeit-Soll/Ist-Prüfung der einzelnen Module, Cache-/Mischstandprüfung, Einzelmodul-Delta sowie der reale DRA-Rückfall auf `deploy/v4.09`.
+- Gewitterradar-Laufzeit-Soll/Ist ist real bestätigt: **V4.10.02**, **22/22 Module geladen**, **Versionssatz konsistent**,
+- offen bleiben Cache-/Mischstandprüfung, Einzelmodul-Delta, Erkennung veralteter/fehlender Module sowie der reale DRA-Rückfall auf `deploy/v4.09`.
 
 ---
 
@@ -433,7 +434,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 
 - [x] Deployment des kompletten Modulbaums
 - [ ] Deployment nur eines geänderten Moduls
-- [ ] Soll-/Ist-Metadaten prüfen
+- [x] Soll-/Ist-Metadaten prüfen
 - [ ] Browsercache-Fall simulieren
 - [ ] veraltetes Modul erkennen
 - [ ] fehlendes Modul erkennen
@@ -907,3 +908,20 @@ Ergebnis:
 - kein Produktionscode wird ohne realen Setupfehler auf Verdacht geändert.
 
 **Nächster Schritt:** auf HA DEV unter **Einstellungen → Geräte & Dienste → Integrationen** prüfen, ob ein nativer Gewitterradar-Config-Entry existiert und geladen ist. Fehlt er, Gewitterradar einmal als native Integration hinzufügen; ist er fehlerhaft, den angezeigten Setupfehler auswerten. Danach `/gewitterradar/gewitterradar.js` erneut direkt testen.
+
+
+## Schleife 020 – Native Integration und Modul-Soll/Ist real bestätigt
+
+**Datum:** 2026-09-22  
+**Status:** realer Laufzeitnachweis erfolgreich
+
+Nachweis auf Home Assistant DEV:
+- native Gewitterradar-Integration wurde erfolgreich als Config Entry eingerichtet,
+- der zuvor beobachtete 404 auf `/gewitterradar/gewitterradar.js` war damit auf den noch fehlenden nativen Integrationseintrag zurückzuführen, nicht auf einen DRA-Zielpfad- oder Frontend-Buildfehler,
+- Gewitterradar startet anschließend sichtbar als **V4.10.02**,
+- Bereich **Module & Versionen** meldet **22 / 22 Module geladen**,
+- Status: **Versionssatz konsistent**,
+- damit ist die reale Kopplung aus DRA-Dateisystemstand und tatsächlich geladenem Browser-Modulregister bestätigt,
+- M12-Punkt **Soll-/Ist-Metadaten prüfen** ist abgeschlossen.
+
+**Nächster Schritt:** M12 weiter mit kontrolliertem Delta-/Fehlerfall: genau ein geändertes Modul über DRA nachweisen und danach gezielt Cache-/Mischstand sowie fehlendes/veraltetes Modul prüfen. Anschließend realer Rollback auf `deploy/v4.09`.
