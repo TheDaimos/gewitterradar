@@ -174,8 +174,17 @@ if (process.argv[2]) {
     for (const delivery of ['dashboard','integration']) {
       const context = await browser.newContext({viewport:{width:900,height:1000}});
       const page = await context.newPage();
+      const browserDiagnostics={pageErrors:[],consoleErrors:[],requestFailures:[]};
+      page.on('pageerror',error=>browserDiagnostics.pageErrors.push({message:error.message,stack:error.stack}));
+      page.on('console',message=>{if(message.type()==='error')browserDiagnostics.consoleErrors.push(message.text());});
+      page.on('requestfailed',request=>browserDiagnostics.requestFailures.push({url:request.url(),failure:request.failure()}));
       await page.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=first&delivery=${delivery}`);
-      await page.waitForFunction(() => window.aboutResult);
+      try{
+        await page.waitForFunction(() => window.aboutResult,{timeout:90000});
+      }catch(error){
+        const harnessState=await page.evaluate(()=>({result:window.aboutResult||null,resultText:document.querySelector('#result')?.textContent||null,readyState:document.readyState,customElement:!!customElements.get('gewitterradar-card'),bodyText:document.body?.innerText?.slice(0,3000)||''}));
+        throw Error(delivery+' About harness timeout: '+JSON.stringify({harnessState,browserDiagnostics,cause:error.message}));
+      }
       const aboutResult = await page.evaluate(() => window.aboutResult);
       assert.equal(aboutResult.status,'PASS',delivery+': '+JSON.stringify(aboutResult));
       const languages = await page.evaluate(() => window.aboutLocaleRegistry.map(entry => entry.value));
