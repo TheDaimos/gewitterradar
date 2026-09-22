@@ -102,7 +102,12 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
 
 (function () {
   class GewitterradarCard extends HTMLElement {}
+  window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={phase:'base-context',version:CARD_VERSION,build:GEWITTERRADAR_BUILD};
   const __moduleDeps=createBaseContext(import.meta.url);
+  if(!__moduleDeps || !Array.isArray(__moduleDeps.LANGUAGE_DEFINITIONS) || !__moduleDeps.LANGUAGE_DEFINITIONS.length){
+    throw new Error('Gewitterradar core.base-context did not provide LANGUAGE_DEFINITIONS');
+  }
+  window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'install-modules',languageDefinitions:__moduleDeps.LANGUAGE_DEFINITIONS.length};
   Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot});
   installCardLifecycle(GewitterradarCard,__moduleDeps);
   installMapDisplay(GewitterradarCard,__moduleDeps);
@@ -123,7 +128,9 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installCompass(GewitterradarCard,__moduleDeps);
   installHistoryChart(GewitterradarCard,__moduleDeps);
 
+  window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'define-custom-element'};
   customElements.define('gewitterradar-card',GewitterradarCard);
+  window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'registered'};
 
   window.customCards = window.customCards || [];
   window.customCards.push({
