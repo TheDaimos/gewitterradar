@@ -1059,3 +1059,22 @@ Regression:
 - `deploy/dev` zeigt exakt auf `f33b9a9882774a38191c64edf842e1f2f9fec1e2`.
 
 **Nächster Schritt:** auf HA DEV über DRA auf den aktuellen `deploy/dev`-Stand aktualisieren und den iPad-Dialog real visuell gegenprüfen. Da ausschließlich Frontend-/Moduldateien geändert wurden, ist für diese Iteration technisch kein Home-Assistant-Neustart erforderlich; ein Frontend-/Browser-Neuladen genügt. Danach M12 mit Delta-/Fehlerfällen und Rollback fortsetzen.
+
+
+## Schleife 026 – DRA-Export nach Frontend-only-Update ausgewertet
+
+**Datum:** 2026-09-22  
+**Status:** fehlender HA-Neustart blockiert Folgeupdate nicht
+
+Ausgewerteter Git-Export:
+- `.deploy-relay/diagnostics/gewitterradar/2026-09-22/20260922T113501Z-deploy-dev-f33b9a988277-4ffa9839.json`,
+- DRA V0.15.5, Home Assistant 2026.9.2,
+- ausgewählte Quelle: `deploy/dev` / `f33b9a9882774a38191c64edf842e1f2f9fec1e2`,
+- empfohlener Kanal wird korrekt als `recommended_current` erkannt,
+- Projektstatus `ready`,
+- `restart_pending: false` – kein offener Neustartzustand blockiert das nächste Deployment,
+- `deployment_writes_enabled: false` – Schreibzugriffe sind aktuell separat gesperrt; für eine Installation muss der Entwicklungsmodus/Schreibzugriff erneut explizit aktiviert werden,
+- der Export wurde während einer laufenden Vorschau erzeugt: `preview/start` und validiertes Manifest sind enthalten, der Preview-Abschluss lag zum Exportzeitpunkt noch nicht im Bundle,
+- Manifest-Lifecycle steht weiterhin pauschal auf `home_assistant_restart`, weshalb DRA auch bei reinen Frontend-Änderungen weiterhin unnötig einen Neustart fordert.
+
+**Nächster Schritt:** Vorschau gegen den aktuellen `deploy/dev`-Stand vollständig berechnen lassen, Entwicklungsmodus explizit aktivieren und Frontend-only-Delta installieren. Kein HA-Neustart ist als Voraussetzung für dieses Folgeupdate erforderlich.
