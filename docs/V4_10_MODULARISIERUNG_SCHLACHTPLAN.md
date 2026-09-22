@@ -40,10 +40,11 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 Aktuell:
 - M03 ist nach vollständigem gemeinsamen Frontend-/Browser-Gate abgeschlossen,
-- Head `15f007a32b4c424302eacbb865da224af84b32ff`: alle 5 PR-Workflows grün,
-- `Validate shared Gewitterradar frontend` einschließlich About/Help, Golden-Geometrie, Dashboard/Integration und Desktop/iPad/Android-Profilen ist grün,
-- Produktionslogik blieb unverändert; ausschließlich die modularen Test-Harnesses wurden an den echten `__moduleDeps`-Laufzeitkontext angepasst,
-- nächstes Release-Gate ist M12: DRA-Deployment, Soll/Ist, Cache-/Mischstand, Fehlererkennung und Rollback nachweisen.
+- aktueller vollständig geprüfter Feature-Head: `6223081c127baad5dae084aec2bb0a6061865416`,
+- alle 5 PR-Workflows sind auf diesem Head grün: Source archive, Diagnostic contract, Hi-Res asset retention, Integration und gemeinsames Frontend,
+- `deploy/dev` ist exakt auf diesen vollständig grünen Commit promoviert,
+- der automatisierte DRA-Vertragsnachweis einschließlich V4.09-Rückfallquelle ist grün,
+- offen bleibt die reale M12-Abnahme auf Home Assistant DEV: V4.10.02 über DRA installieren, Soll/Ist + Cache/Mischstand prüfen, Neustart durchführen und über DRA auf `deploy/v4.09` zurücksetzen.
 
 ---
 
@@ -745,3 +746,18 @@ Nachweis:
 
 **M13 bleibt gesperrt**, bis diese reale DRA-Abnahme nachweisbar erfolgreich ist.
 
+## Schleife 011 – DRA-DEV-Kandidat vollständig grün und promoviert
+
+**Datum:** 2026-09-22  
+**Status:** Vorbereitung abgeschlossen; reale DRA-/HA-DEV-Abnahme bleibt M12-Gate
+
+Ergebnis:
+- finalen Feature-Head `6223081c127baad5dae084aec2bb0a6061865416` nach den M12-Vertragsänderungen neu geprüft,
+- alle fünf PR-Workflows auf exakt diesem Head grün,
+- Integrationsworkflow einschließlich Home-Assistant-Laufzeittests, HACS-Prüfung und `Verify Deploy Relay consumer contract` grün,
+- gemeinsamer Frontend-Workflow einschließlich beider Dashboard-/Integrations-Browsersuiten grün,
+- DRA-Promotionsregel eingehalten: `deploy/dev` zeigt exakt auf den vollständig geprüften Commit `6223081c127baad5dae084aec2bb0a6061865416`,
+- `deploy/v4.09` bleibt die manifestfähige ältere Rückfallquelle,
+- keine der acht realen M12-Abnahme-Checkboxen wurde allein aufgrund von CI/Simulation abgehakt.
+
+**Nächster Schritt:** reale M12-Abnahme auf Home Assistant DEV ausschließlich über DRA durchführen: `deploy/dev` installieren, Neustart/Frontend-Neuladen und Modul-Soll/Ist prüfen, Fehler-/Mischstände nachweisen und anschließend über DRA auf `deploy/v4.09` zurücksetzen und erneut prüfen.
