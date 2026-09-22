@@ -151,7 +151,7 @@ if (process.argv[2]) {
       await page.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=first&delivery=${delivery}`);
       await page.waitForFunction(() => window.aboutResult);
       const aboutResult = await page.evaluate(() => window.aboutResult);
-      assert.equal(aboutResult.status,'PASS',delivery+': '+(aboutResult.message || JSON.stringify(aboutResult)));
+      assert.equal(aboutResult.status,'PASS',delivery+': '+JSON.stringify(aboutResult));
       const languages = await page.evaluate(() => window.aboutLocaleRegistry.map(entry => entry.value));
       assert.deepEqual(languages,clone(model.languages).map(entry => entry.value));
       for (const language of languages) {
