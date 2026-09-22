@@ -27,7 +27,8 @@ export async function expectedPayload(){
  if(locale.length!==localeSize||hash(locale)!==localeSha)throw Error('Locale contract mismatch');
  readAboutLocaleModel(text,locale.toString(),await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8'));
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
- const referenced=[...new Set([...text.matchAll(/new URL\('\.\/assets\/([^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>'assets/'+m[1]))].sort();
+  const assetScanText=[text,...[...modular.values()].map(bytes=>bytes.toString('utf8'))].join('\n');
+  const referenced=[...new Set([...assetScanText.matchAll(/new URL\('\.\/assets\/([^'?]+)(?:\?[^']*)?', import.meta.url\)/g)].map(m=>'assets/'+m[1]))].sort();
  const active=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
  if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch');
  const payload=new Map([['gewitterradar.js',source],['locales/about-locales.js',locale],...modular]);
