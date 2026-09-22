@@ -3,7 +3,14 @@
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
 const GEWITTERRADAR_MODULE_CACHE = '41002';
-const gewitterradarImport = (path) => import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
+const gewitterradarImport = async (path) => {
+  try {
+    return await import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Modul ${path}: ${detail}`, { cause:error });
+  }
+};
 
 let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot;
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
