@@ -141,6 +141,33 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.match(metrics.signatureFilter, /sepia|drop-shadow/);
 
+        const moduleOverlay = await page.evaluate(() => {
+          const card = window.aboutCard;
+          const root = card.shadowRoot;
+          const section = root.getElementById('settings-modules-section');
+          section.open = true;
+          root.getElementById('settings-modules-details').click();
+          const backdrop = root.getElementById('settings-modules-backdrop');
+          const dialog = backdrop.querySelector('.gr-module-dialog');
+          const head = backdrop.querySelector('.gr-module-head');
+          const rect = dialog.getBoundingClientRect();
+          return {
+            open: backdrop.classList.contains('open'),
+            directShadowChild: backdrop.parentNode === root,
+            width: rect.width,
+            overflow: dialog.scrollWidth > dialog.clientWidth,
+            dialogBackground: getComputedStyle(dialog).backgroundImage,
+            headBackground: getComputedStyle(head).backgroundImage,
+          };
+        });
+        assert.equal(moduleOverlay.open, true, `${delivery}/${profile} module details open`);
+        assert.equal(moduleOverlay.directShadowChild, true, `${delivery}/${profile} module overlay isolated from settings dialog`);
+        assert.ok(moduleOverlay.width <= 780.5, `${delivery}/${profile} module details width`);
+        assert.equal(moduleOverlay.overflow, false, `${delivery}/${profile} module details horizontal overflow`);
+        assert.match(moduleOverlay.dialogBackground, /rgb\(20, 28, 38\)|rgb\(7, 12, 18\)/);
+        assert.match(moduleOverlay.headBackground, /rgb\(17, 23, 32\)|rgb\(14, 20, 28\)/);
+        await page.evaluate(() => window.aboutCard._closeModuleDetails());
+
         await page.evaluate(() => window.aboutCard._openHelp());
         await page.waitForFunction(() => window.aboutCard._helpDialog?.open);
         const help = await page.evaluate(() => {
