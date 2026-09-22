@@ -1,1 +1,30 @@
-{"schema":"deploy-relay.deployment.v1","project":{"id":"gewitterradar","name":"Gewitterradar"},"source":{"repository":"TheDaimos/gewitterradar","mode":"repository_contents"},"deployment":{"root":"/config","groups":[{"id":"integration","source":"custom_components/gewitterradar","target":"custom_components/gewitterradar","mode":"replace_directory"}]},"lifecycle":{"after_install":"home_assistant_restart"},"policy":{"allow_symlinks":false,"max_files":5000,"max_uncompressed_bytes":157286400}}
+{
+  "schema": "deploy-relay.deployment.v1",
+  "project": {
+    "id": "gewitterradar",
+    "name": "Gewitterradar"
+  },
+  "source": {
+    "repository": "TheDaimos/gewitterradar",
+    "mode": "repository_contents"
+  },
+  "deployment": {
+    "root": "/config",
+    "groups": [
+      {
+        "id": "integration",
+        "source": "custom_components/gewitterradar",
+        "target": "custom_components/gewitterradar",
+        "mode": "replace_directory"
+      }
+    ]
+  },
+  "lifecycle": {
+    "after_install": "home_assistant_restart"
+  },
+  "policy": {
+    "allow_symlinks": false,
+    "max_files": 5000,
+    "max_uncompressed_bytes": 157286400
+  }
+}
