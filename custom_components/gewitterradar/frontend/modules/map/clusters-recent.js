@@ -724,7 +724,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
 
       this._applyRecentRadiusMapEmphasis();
       this._syncRecentStrikeTargetButton(now,dangerRadius);
-    }
+    },
 
     _focusReferenceStormRadius(reference = this._home()) {
       if (!this._map || !reference) return;
@@ -799,7 +799,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         button.hidden = true;
         button.removeAttribute('data-focus-mode');
       }
-    }
+    },
 
     _syncRecentStrikeTargetButton(now = Date.now(),dangerRadius = this._currentDangerRadius ?? this._dangerRadiusValue()) {
       const button = this.shadow?.getElementById('map-strike-target');

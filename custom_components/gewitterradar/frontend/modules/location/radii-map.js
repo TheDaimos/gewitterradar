@@ -146,14 +146,14 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         entityId,
         available:false
       };
-    }
+    },
 
     _rebaseStrike(strike,reference = this._home()) {
       if (!strike || strike.lat == null || strike.lon == null) return strike;
       strike.distance = distanceBetweenKm(reference.lat,reference.lon,strike.lat,strike.lon);
       strike.azimuth = bearingBetween(reference.lat,reference.lon,strike.lat,strike.lon);
       return strike;
-    }
+    },
 
     _setRadiusCircleVisual(circle, radiusKm, reference = this._home()) {
       if (!circle || !this._map || !reference) return;
@@ -192,7 +192,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
 
     _clearAllRadiusAuraRings() {
       ['observation','storm','danger'].forEach(kind => this._clearRadiusAuraKind(kind));
-    }
+    },
 
     _syncRadiusAuraSvg(reference = this._home(), force = false) {
       if (!this._map || !reference) return;
@@ -233,22 +233,22 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       // Quellcode-Referenz erhalten.
       this._clearAllRadiusAuraRings();
       this._syncRadiusAuraSvg(reference);
-    }
+    },
 
     _setObservationRadiusVisual(radiusKm, reference = this._home()) {
       this._setRadiusCircleVisual(this._radiusCircle,radiusKm,reference);
       this._syncRadiusAuraKind('observation',radiusKm,reference,C.gold);
-    }
+    },
 
     _setStormRadiusVisual(radiusKm, reference = this._home()) {
       this._setRadiusCircleVisual(this._stormCircle,radiusKm,reference);
       this._syncRadiusAuraKind('storm',radiusKm,reference,C.blue);
-    }
+    },
 
     _setDangerRadiusVisual(radiusKm, reference = this._home()) {
       this._setRadiusCircleVisual(this._dangerCircle,radiusKm,reference);
       this._syncRadiusAuraKind('danger',radiusKm,reference,C.danger);
-    }
+    },
 
     _syncReferenceMap(reference = this._home()) {
       if (!this._map || !reference) return;

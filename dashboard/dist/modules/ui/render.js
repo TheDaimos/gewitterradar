@@ -728,7 +728,7 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       $('footer-update').textContent = this._formatClock(now);
       this._renderLightningSourceStatus();
       this._applyStaticTranslations();
-    }
+    },
 
     _renderWeatherMessage({active10=[],danger10=[],storm10=[],latestStrike=null,observationRadius=0,stormRadius=0,now=Date.now()} = {}) {
       const panel = this.shadow?.getElementById('weather-message-panel');
