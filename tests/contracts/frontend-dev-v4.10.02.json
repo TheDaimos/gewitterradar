@@ -59,8 +59,8 @@
       "sizeBytes": 13610
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "75e5b9facd376765635979038c68200a39ee2862b88d0c435716c609318745af",
-      "sizeBytes": 16777
+      "sha256": "c5137ec5685bdd975a2505a718d782dbdde077be500f9d191a3bb2917a5498ea",
+      "sizeBytes": 16716
     },
     "modules/diagnostics/cockpit.js": {
       "sha256": "884a18dd7ea05d822179038f6917878d8345427044ebf1475c1e5cd97bb05200",
