@@ -983,3 +983,20 @@ Aktueller Funktionsstand **Module & Versionen**:
 - `diagnostics.module-view` steht auf **1.1.0**.
 
 **Nächster Schritt:** auf HA DEV in DRA den empfohlenen Stand `deploy/dev` neu übernehmen, Vorschau berechnen und installieren. Dabei ist der neue Kandidat exakt `ced692d9a81fc863c5406abee876b0d2ec5fc78d`. Nach Neustart die neue kompakte Hauptansicht und das **Modul-Details**-Pop-up real prüfen; anschließend M12 mit Delta-/Fehlerfällen und Rollback fortsetzen.
+
+
+## Schleife 023 – Modul-Details real auf HA DEV bestätigt; Frontend-only-Neustarthinweis als DRA-Restpunkt erkannt
+
+**Datum:** 2026-09-22  
+**Status:** neue Modulansicht real erfolgreich; DRA-Lifecycle noch zu grob
+
+Realer HA-DEV-Nachweis nach DRA-Aktualisierung auf `deploy/dev` / `ced692d9a81fc863c5406abee876b0d2ec5fc78d`:
+- neue kompakte Hauptansicht **Module & Versionen** ist verfügbar,
+- **Modul-Details**-Pop-up ist verfügbar,
+- die reine Frontend-Aktualisierung wurde ohne Home-Assistant-Neustart wirksam,
+- DRA meldet dennoch pauschal **Neustart erforderlich**, weil der aktuelle Gewitterradar-Lifecycle noch global `home_assistant_restart` vorgibt,
+- damit ist funktional bestätigt, dass Frontend-only-Änderungen keinen HA-Neustart benötigen; offen bleibt die DRA-Unterscheidung **Frontend neu laden** vs. **Home Assistant neu starten**.
+
+**Folgepunkt für M12/DRA:** Deployment-Art bzw. geänderte Dateiklasse auswerten. Bei ausschließlich Frontend-Dateien darf DRA künftig nur Frontend-/Browser-Neuladen verlangen; bei Python-/Integrationsänderungen bleibt der vollständige Home-Assistant-Neustart erforderlich. Dieser Punkt bleibt bis zur DRA-Anpassung ausdrücklich offen.
+
+**Nächster Schritt:** M12 mit den verbleibenden realen Delta-/Fehlerfällen fortsetzen: Einzelmodul-Delta, Cache-/Mischstand, veraltetes Modul, fehlendes Modul und anschließend echter Rollback auf `deploy/v4.09`. Danach M13 Regression & Freigabe.
