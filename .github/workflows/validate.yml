@@ -37,6 +37,10 @@ jobs:
         run: |
           python -m json.tool hacs.json >/dev/null
           python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+          python -m json.tool deploy-relay.json >/dev/null
+          python -m json.tool deploy-relay-channel.json >/dev/null
+      - name: Verify Deploy Relay consumer contract
+        run: python scripts/verify-deploy-relay-contract.py
 
   home-assistant-runtime:
     runs-on: ubuntu-latest
