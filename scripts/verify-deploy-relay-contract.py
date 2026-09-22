@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -190,10 +191,21 @@ def main() -> None:
     init_source = (ROOT / "custom_components" / "gewitterradar" / "__init__.py").read_text(
         encoding="utf-8"
     )
-    assert 'StaticPathConfig(' in init_source
-    assert '"/gewitterradar"' in init_source
-    static_block = init_source.split('StaticPathConfig(', 1)[1].split(')', 1)[0]
-    assert "False" in static_block, "Gewitterradar static frontend cache headers must stay disabled"
+    tree = ast.parse(init_source)
+    static_calls = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "StaticPathConfig"
+        and len(node.args) >= 3
+        and isinstance(node.args[0], ast.Constant)
+        and node.args[0].value == "/gewitterradar"
+    ]
+    assert len(static_calls) == 1, "expected exactly one /gewitterradar StaticPathConfig"
+    cache_arg = static_calls[0].args[2]
+    assert isinstance(cache_arg, ast.Constant) and cache_arg.value is False, (
+        "Gewitterradar static frontend cache headers must stay disabled"
+    )
 
     print(
         "Deploy Relay contract OK: complete tree, single-module delta, missing/stale "
