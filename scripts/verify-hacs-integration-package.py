@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/"custom_components"/"gewitterradar"
 FRONTEND_SOURCE=ROOT/"frontend"
-REQUIRED={"__init__.py","brand/icon.png","brand/icon@2x.png","config_flow.py","const.py","device_tracker.py","manifest.json","number.py","select.py","services.yaml","strings.json","switch.py","translations/de.json","translations/en.json"}
+REQUIRED={"__init__.py","brand/icon.png","brand/icon@2x.png","build_info.py","config_flow.py","const.py","device_tracker.py","manifest.json","number.py","select.py","services.yaml","strings.json","switch.py","translations/de.json","translations/en.json"}
 REQUIRED|={"frontend/"+path.relative_to(FRONTEND_SOURCE).as_posix() for path in FRONTEND_SOURCE.rglob("*") if path.is_file() and path.name!="assets.json"}
 FORBIDDEN_SUFFIXES={".patch",".pyc"}
 def digest(path:Path)->str:return hashlib.sha256(path.read_bytes()).hexdigest()
