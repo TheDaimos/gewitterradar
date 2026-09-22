@@ -122,7 +122,6 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       backdrop?.addEventListener("click",event=>{if(event.target===backdrop)this._closeModuleDetails();});
       backdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDetails();}});
       section.addEventListener("toggle",()=>{if(section.open)this._syncModuleView();});
-      this._syncModuleView();
       return section;
     },
 
@@ -209,7 +208,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     },
 
     _syncModuleView(){
-      const section=this.shadow?.getElementById("settings-modules-section");
+      const section=this._ensureModuleView();
       if(!section)return;
       const result=moduleDiagnostics(EXPECTED_MODULES);
       this._renderModuleSummary(section.querySelector("#settings-modules-summary"),result);
