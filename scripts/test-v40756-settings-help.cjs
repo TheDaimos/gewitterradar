@@ -109,6 +109,7 @@ const server = http.createServer((req, res) => {
               return a.top + a.height / 2 - (b.top + b.height / 2);
             }),
             sections: sections.length,
+            moduleSection: !!root.querySelector('#settings-modules-section'),
             summaryHeight: summary.offsetHeight,
             chevron: [parseFloat(after.width), parseFloat(after.height), after.borderRightColor],
             closedState,
@@ -129,7 +130,8 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 6, `${delivery}/${profile} settings sections`);
+        assert.equal(metrics.sections, 7, `${delivery}/${profile} settings sections including Module & Versionen`);
+        assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
