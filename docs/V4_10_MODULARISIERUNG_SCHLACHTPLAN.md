@@ -36,26 +36,30 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – reale DRA-Abnahme fortsetzen.**
+**M12 – korrigierten V4.10.02-DRA-Stand real auf HA DEV abnehmen.**
 
-Aktueller geprüfter Entwicklungsstand:
-- `deploy/dev` → `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507`,
+Automatisiert vollständig geprüfter Code-Stand:
+- Code-/Test-Head `7dfa477c2a7fbd5789189a32a47cb0db82328a34`,
 - alle fünf CI-Gates grün,
-- zuletzt gemeldete UI-Abschlusskorrekturen (Scrollen, 19 Sprachen, Module-Akkordeon, Medaillon-iPad-Geometrie, Chevron-Animation) automatisiert abgesichert,
-- isolierter Einzelmodul-DRA-Testzweig vorbereitet:
-  - `test/dra-v4.10.02-single-module`,
-  - Commit `be28062d60a531cbeef6f03d6fa92fa838c305bd`,
-  - gegenüber `deploy/dev` exakt **eine** geänderte verwaltete Datei:
-    `custom_components/gewitterradar/frontend/modules/core/source-status.js`,
-  - Änderung ist ausschließlich ein Kommentar/Sentinel und verändert keine Laufzeitfunktion.
+- Modul-Details-Fenster auf Desktop/Tablet auf maximal **660 px** Breite und **760 px** Höhe verdichtet; mobile Höhe bleibt viewportgerecht,
+- Modulzeilen können wiederholt **öffnen → schließen → erneut öffnen**, ohne durch die äußere Akkordeon-/Synchronisationslogik sofort zurückgesetzt zu werden,
+- unnötiger unterer Leerraum in **Kalibrierung & Diagnose** reduziert,
+- Kartendarstellungs-Texte für alle **19 Sprachvarianten** vollständig ergänzt und gegen englische Rückfälle abgesichert,
+- Portugiesisch: Clusterprofil **Tardia**,
+- geänderte Modulversionen:
+  - `core.base-context 1.0.2`,
+  - `ui.skeleton 1.1.1`,
+  - `ui.i18n-settings 1.2.0`,
+  - `diagnostics.module-view 1.2.2`,
+- Manifest, V4.10.02-Modulvertrag und SHA256-Inventar aktualisiert.
 
-Reale Reihenfolge:
-1. `deploy/dev` / `9605a11…` über DRA auf HA DEV installieren und die vier zuletzt korrigierten UI-Punkte kurz visuell prüfen.
-2. Danach in DRA den Testzweig `test/dra-v4.10.02-single-module` wählen.
-3. Vorschau muss exakt **1 geändert / 0 neu / 0 entfernt** im verwalteten Integrationsbaum zeigen.
-4. Testzweig installieren; Gewitterradar muss weiter **V4.10.02**, **22/22 Module geladen** und **Versionssatz konsistent** melden.
-5. Danach zurück auf `deploy/dev`; Vorschau muss dieselbe eine Datei wieder zurückändern.
-6. Anschließend M12 mit Cache-/Mischstand, veraltetem/fehlendem Modul und echtem Rollback auf `deploy/v4.09` fortsetzen.
+Reale nächste Prüfung nach Promotion auf `deploy/dev`:
+1. DRA empfohlenen Kanal `deploy/dev` aktualisieren, Vorschau berechnen und installieren.
+2. **Kalibrierung & Diagnose** auf reduzierten Leerraum prüfen.
+3. **Modul-Details** auf kompaktere Breite/Höhe prüfen.
+4. Ein Modul mehrfach nacheinander öffnen, schließen und erneut öffnen.
+5. Portugiesisch und Griechisch unter **Kartendarstellung** prüfen; Überschrift, Standardansicht, zuletzt verwendete Ansicht, Hinweistext und separates Kartenfenster dürfen nicht mehr Englisch sein.
+6. Danach M12 mit neu auf den aktuellen `deploy/dev`-Stand basierendem Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
 
 ---
 
@@ -1275,3 +1279,49 @@ Verifikation:
 - damit ist der Zweig ein sauberer realer Kandidat für den M12-Punkt **Deployment nur eines geänderten Moduls**.
 
 **Nächster Schritt:** zunächst den aktuellen `deploy/dev`-Stand `9605a11…` real auf HA DEV prüfen. Danach den Testzweig über DRA auswählen, Vorschau **1 geändert / 0 neu / 0 entfernt** bestätigen, installieren und anschließend wieder auf `deploy/dev` zurückkonvergieren.
+
+
+## Schleife 035 – Moduldetails, Diagnose-Leerraum und Kartendarstellungs-Sprachen korrigiert
+
+**Datum:** 2026-09-23  
+**Status:** Code vollständig grün; Dokumentation abgeschlossen, DRA-Promotion folgt nach finalem Dokumentations-Gate
+
+Reale Befunde:
+- **Kalibrierung & Diagnose** zeigte am unteren Ende unnötig viel Leerraum,
+- das **Modul-Details**-Fenster war auf Tablet/iPad zu breit und zu hoch,
+- innere Modulzeilen öffneten kurz und schlossen unmittelbar wieder; anschließend war die Bedienung nicht zuverlässig wiederholbar,
+- **Kartendarstellung** mischte in Portugiesisch und Griechisch übersetzte Clustertexte mit englischen UI-Texten wie *Map display*, *Default view*, *Last used* und *Separate map window*,
+- Prüfung des Sprachregisters zeigte denselben fehlenden Map-Settings-Satz grundsätzlich in 17 nichtdeutschen/nichtenglischen Varianten.
+
+Korrektur:
+- Modul-Dialog Desktop/Tablet von 780 px auf **660 px** maximale Breite und von 860 px auf **760 px** maximale Höhe reduziert; mobiles Viewport-Verhalten bleibt erhalten,
+- Parent-Toggle von **Module & Versionen** reagiert nur noch auf den eigenen Toggle-Event,
+- innere Modul-Toggles werden nicht mehr in die äußere Akkordeonlogik weitergereicht,
+- geöffnete Modul-IDs werden bei einer Diagnosesynchronisierung erhalten,
+- Diagnose-Unterraum von 72 px auf **22 px** reduziert,
+- neun Kartendarstellungs-Schlüssel in alle **19** Settings-Sprachbündel aufgenommen,
+- Sprachwechsel ruft zusätzlich die Kartenanzeige-Synchronisierung auf,
+- Portugiesisch **Tarde → Tardia**,
+- neue Tests erzwingen für alle nichtenglischen Varianten, dass die Map-Settings nicht unbemerkt auf Englisch zurückfallen,
+- Browserprofiltest prüft Modulzeilen jetzt ausdrücklich mit **öffnen → schließen → erneut öffnen**,
+- Android behält bewusst die viewportfüllendere mobile Dialoghöhe; der Test unterscheidet deshalb Desktop/Tablet und Mobile.
+
+Modulversionen:
+- `core.base-context 1.0.2`,
+- `ui.skeleton 1.1.1`,
+- `ui.i18n-settings 1.2.0`,
+- `diagnostics.module-view 1.2.2`.
+
+Prüfschleife:
+- erster Locale-Lauf deckte einen veralteten Alt-Test auf, der für die neuen Settings-Schlüssel weiterhin englischen Rückfall erwartete; Test auf den modularen Übersetzungsvertrag umgestellt,
+- erster Browserprofil-Lauf deckte ausschließlich eine zu strenge neue 760-px-Höhenbedingung auf Android auf; die produktive mobile CSS-Regel war korrekt und nutzt bewusst den verfügbaren Viewport,
+- Höhenvertrag gerätespezifisch korrigiert,
+- anschließend auf Code-/Test-Head `7dfa477c2a7fbd5789189a32a47cb0db82328a34` alle fünf Gates vollständig grün:
+  - Validate shared Gewitterradar frontend,
+  - Validate Gewitterradar integration,
+  - Diagnostic contract,
+  - Hi-Res asset retention,
+  - Source archive contract,
+- insbesondere Settings/Help-Profile, Golden-Geometrie, beide vollständigen Browser-Auslieferungssuiten, HACS, hassfest und Home-Assistant-Runtime erfolgreich.
+
+**Nächster Schritt:** finalen dokumentierten Branch-Head nach grünem Dokumentations-Gate auf `deploy/dev` promoten und die oben genannten fünf realen UI-/Sprachpunkte auf HA DEV über DRA abnehmen.
