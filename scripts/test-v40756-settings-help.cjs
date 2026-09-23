@@ -168,6 +168,107 @@ const server = http.createServer((req, res) => {
         assert.match(moduleOverlay.headBackground, /rgb\(17, 23, 32\)|rgb\(14, 20, 28\)/);
         await page.evaluate(() => window.aboutCard._closeModuleDetails());
 
+        const modularSettings = await page.evaluate(async () => {
+          const card = window.aboutCard;
+          const root = card.shadowRoot;
+          const languages = ['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'];
+          const keys = [
+            'settings.cluster_resolution',
+            'settings.cluster_resolution_note',
+            'settings.cluster_navigation_session',
+            'settings.cluster_navigation_range',
+            'settings.cluster_navigation_infinite',
+            'modules.title','modules.subtitle','modules.details','modules.copy','modules.download'
+          ];
+          const translations = [];
+          for (const language of languages) {
+            card._languagePreview = language;
+            card._applyStaticTranslations();
+            card._syncModuleView();
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+            const resolutionRow = root.getElementById('settings-cluster-resolution-button')?.closest('.settings-row');
+            const navigationRow = root.getElementById('settings-cluster-jump-selector')?.closest('.settings-row');
+            translations.push({
+              language,
+              values:Object.fromEntries(keys.map((key) => [key,card._t(key)])),
+              resolutionTitle:resolutionRow?.querySelector('.settings-row-label > div:first-child')?.textContent?.trim() || '',
+              navigationTitle:navigationRow?.querySelector('.settings-row-label > div:first-child')?.textContent?.trim() || '',
+              moduleTitle:root.getElementById('settings-modules-title')?.textContent?.trim() || '',
+              currentProfile:root.getElementById('settings-cluster-resolution-current')?.textContent?.trim() || '',
+            });
+          }
+          card._languagePreview = '';
+          card._applyStaticTranslations();
+          card._syncModuleView();
+
+          const waitFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const diagnostic = root.getElementById('settings-diagnostic-section');
+          const modules = root.getElementById('settings-modules-section');
+          const map = root.getElementById('settings-map-section');
+          for (const section of root.querySelectorAll('.settings-collapsible')) section.open = false;
+          diagnostic.open = true;
+          await waitFrame();
+          modules.open = true;
+          await waitFrame();
+          const diagnosticClosedByModules = !diagnostic.open && modules.open;
+          map.open = true;
+          await waitFrame();
+          const modulesClosedByMap = !modules.open && map.open;
+          const chevron = getComputedStyle(map.querySelector(':scope > .settings-section-head'),'::after');
+
+          return {
+            translations,
+            diagnosticClosedByModules,
+            modulesClosedByMap,
+            chevronDuration:chevron.transitionDuration,
+            chevronTiming:chevron.transitionTimingFunction,
+          };
+        });
+        for (const row of modularSettings.translations) {
+          for (const [key,value] of Object.entries(row.values)) {
+            assert.ok(value && value !== key, delivery+'/'+profile+' '+row.language+' '+key+' translated');
+          }
+          assert.equal(row.resolutionTitle,row.values['settings.cluster_resolution'],delivery+'/'+profile+' '+row.language+' cluster resolution title');
+          assert.equal(row.navigationTitle,row.values['settings.cluster_navigation_session'],delivery+'/'+profile+' '+row.language+' cluster navigation title');
+          assert.equal(row.moduleTitle,row.values['modules.title'],delivery+'/'+profile+' '+row.language+' modules title');
+          assert.ok(row.currentProfile,delivery+'/'+profile+' '+row.language+' cluster profile label');
+        }
+        assert.equal(modularSettings.diagnosticClosedByModules,true,delivery+'/'+profile+' modules participates in accordion');
+        assert.equal(modularSettings.modulesClosedByMap,true,delivery+'/'+profile+' existing accordion section closes modules');
+        assert.match(modularSettings.chevronDuration,/0\.42s/,delivery+'/'+profile+' settings chevron release-history duration');
+        assert.match(modularSettings.chevronTiming,/cubic-bezier\(0\.22, 1, 0\.36, 1\)/,delivery+'/'+profile+' settings chevron release-history easing');
+
+        if (['ipad','ipad-pro'].includes(profile)) {
+          const medallionHeader = await page.evaluate(async () => {
+            const root = window.aboutCard.shadowRoot;
+            const backdrop = root.getElementById('medallion-calibration-modal-backdrop');
+            const modal = backdrop.querySelector('.medallion-calibration-modal');
+            const head = modal.querySelector('.compass-calibration-modal-head');
+            backdrop.classList.add('open');
+            backdrop.setAttribute('aria-hidden','false');
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const modalRect = modal.getBoundingClientRect();
+            const buttons = [...head.querySelectorAll('button')].map((button) => {
+              const rect = button.getBoundingClientRect();
+              return {left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom,width:rect.width};
+            });
+            const result = {
+              width:modalRect.width,
+              horizontalOverflow:modal.scrollWidth > modal.clientWidth,
+              headerOverflow:head.scrollWidth > head.clientWidth,
+              buttonsInside:buttons.every((rect) => rect.left >= modalRect.left - 1 && rect.right <= modalRect.right + 1),
+              buttons,
+            };
+            backdrop.classList.remove('open');
+            backdrop.setAttribute('aria-hidden','true');
+            return result;
+          });
+          assert.ok(medallionHeader.width > 430 && medallionHeader.width <= 560.5,delivery+'/'+profile+' medallion diagnostic responsive width');
+          assert.equal(medallionHeader.horizontalOverflow,false,delivery+'/'+profile+' medallion diagnostic no horizontal overflow');
+          assert.equal(medallionHeader.headerOverflow,false,delivery+'/'+profile+' medallion header no overflow');
+          assert.equal(medallionHeader.buttonsInside,true,delivery+'/'+profile+' medallion top buttons fully visible');
+        }
+
         if (['ipad', 'ipad-pro', 'android-portrait'].includes(profile)) {
           const settingsScroll = await page.evaluate(async () => {
             const root = window.aboutCard.shadowRoot;
