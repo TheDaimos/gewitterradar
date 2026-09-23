@@ -178,6 +178,14 @@ const server = http.createServer((req, res) => {
             };
             const reveal = async (sectionId, targetSelector) => {
               collapseAll();
+              for (const id of [
+                'settings-map-section',
+                'settings-radii-section',
+                'settings-diagnostic-section',
+              ]) {
+                const candidate = root.getElementById(id);
+                if (candidate) candidate.open = true;
+              }
               const section = root.getElementById(sectionId);
               section.open = true;
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
