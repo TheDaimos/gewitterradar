@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "df4e89ac96f1df8b5b680135c0c129da87678b9dda7165f0e5f8bd4cc7848dbb",
+      "sha256": "bee707cb079371d7b3847177b05384c6fd653115c67f3527cefbc653bbb048a6",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -35,8 +35,8 @@
       "sizeBytes": 34300
     },
     "modules/ui/skeleton.js": {
-      "sha256": "9989246154c671d976cce27517f2b875be4c871f3229e33d5ff2287364dc5214",
-      "sizeBytes": 418767
+      "sha256": "5300400dc93dc32f573ab58b8dc3c0c3fbee48b6ce24c5bdbb9e69c6b2b8f659",
+      "sizeBytes": 420653
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "7c9d8881b36ebebdf5fd8c33904939f0269159ccaffba717c0cb2106b736bdec",
