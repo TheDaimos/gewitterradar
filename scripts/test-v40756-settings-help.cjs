@@ -160,6 +160,21 @@ const server = http.createServer((req, res) => {
           const rowOpenFirst = await clickRow();
           const rowClosedSecond = !(await clickRow());
           const rowOpenThird = await clickRow();
+          const stableRow = row();
+          const backgroundCycles = [];
+          for (let index = 0; index < 10; index += 1) {
+            stableRow?.querySelector('summary')?.click();
+            await waitFrame();
+            card._syncModuleView();
+            card._applyStaticTranslations();
+            await waitFrame();
+            const current = row();
+            backgroundCycles.push({
+              sameNode: current === stableRow,
+              open: !!current?.open,
+              expectedOpen: index % 2 === 1,
+            });
+          }
           const rect = dialog.getBoundingClientRect();
           return {
             open: backdrop.classList.contains('open'),
@@ -172,6 +187,7 @@ const server = http.createServer((req, res) => {
             rowOpenFirst,
             rowClosedSecond,
             rowOpenThird,
+            backgroundCycles,
           };
         });
         assert.equal(moduleOverlay.open, true, `${delivery}/${profile} module details open`);
@@ -189,6 +205,9 @@ const server = http.createServer((req, res) => {
         assert.equal(moduleOverlay.rowOpenFirst, true, `${delivery}/${profile} module row opens`);
         assert.equal(moduleOverlay.rowClosedSecond, true, `${delivery}/${profile} module row closes again`);
         assert.equal(moduleOverlay.rowOpenThird, true, `${delivery}/${profile} module row reopens repeatedly`);
+        assert.equal(moduleOverlay.backgroundCycles.length,10,`${delivery}/${profile} module background stress cycles`);
+        assert.equal(moduleOverlay.backgroundCycles.every((entry) => entry.sameNode),true,`${delivery}/${profile} module row survives background sync without rebuild`);
+        assert.equal(moduleOverlay.backgroundCycles.every((entry) => entry.open === entry.expectedOpen),true,`${delivery}/${profile} module row toggles reliably during background sync`);
         assert.match(moduleOverlay.dialogBackground, /rgb\(20, 28, 38\)|rgb\(7, 12, 18\)/);
         assert.match(moduleOverlay.headBackground, /rgb\(17, 23, 32\)|rgb\(14, 20, 28\)/);
         await page.evaluate(() => window.aboutCard._closeModuleDetails());
@@ -203,14 +222,19 @@ const server = http.createServer((req, res) => {
             'settings.cluster_navigation_session',
             'settings.cluster_navigation_range',
             'settings.cluster_navigation_infinite',
-            'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last',
+            'settings.cluster_resolution_select','settings.cluster_navigation_session_aria','settings.cluster_navigation_seconds_aria',
+            'settings.cluster_navigation_infinite_aria','settings.cluster_navigation_to_session','settings.cluster_navigation_to_infinite',
+            'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_startup_select',
             'settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
+            'app.release_history','app.release_history_open','map.medallion_move','compass.picker_title','compass.picker_change',
+            'compass.fixed_compass_title',
             'modules.title','modules.subtitle','modules.details','modules.copy','modules.download'
           ];
           const translations = [];
           for (const language of languages) {
             card._languagePreview = language;
             card._applyStaticTranslations();
+            card._render();
             card._syncModuleView();
             await new Promise((resolve) => requestAnimationFrame(resolve));
             const resolutionRow = root.getElementById('settings-cluster-resolution-button')?.closest('.settings-row');
@@ -229,6 +253,18 @@ const server = http.createServer((req, res) => {
               mapWindowNote:root.getElementById('settings-map-window-note')?.textContent?.trim() || '',
               mapWindowOpen:root.getElementById('settings-map-window-open')?.textContent?.trim() || '',
               currentProfile:root.getElementById('settings-cluster-resolution-current')?.textContent?.trim() || '',
+              tooltipVersionTitle:root.getElementById('app-version-badge')?.getAttribute('title') || '',
+              tooltipVersionAria:root.getElementById('app-version-badge')?.getAttribute('aria-label') || '',
+              tooltipClusterTitle:root.getElementById('settings-cluster-resolution-button')?.getAttribute('title') || '',
+              tooltipClusterAria:root.getElementById('settings-cluster-resolution-button')?.getAttribute('aria-label') || '',
+              tooltipClusterSessionAria:root.getElementById('settings-cluster-jump-selector')?.getAttribute('aria-label') || '',
+              tooltipClusterSecondsAria:root.getElementById('settings-cluster-jump-seconds')?.getAttribute('aria-label') || '',
+              tooltipClusterInfiniteAria:root.getElementById('settings-cluster-jump-infinite')?.getAttribute('aria-label') || '',
+              tooltipClusterInfiniteTitle:root.getElementById('settings-cluster-jump-infinite')?.getAttribute('title') || '',
+              tooltipMapStartupDropdown:root.getElementById('settings-map-startup-dropdown')?.getAttribute('aria-label') || '',
+              tooltipMapWindowOpen:root.getElementById('settings-map-window-open')?.getAttribute('title') || '',
+              tooltipMedallionMove:root.getElementById('map-medallion-overlay')?.getAttribute('title') || '',
+              tooltipDevice:root.getElementById('device-toggle')?.getAttribute('title') || '',
             });
           }
           card._languagePreview = '';
@@ -260,15 +296,20 @@ const server = http.createServer((req, res) => {
         });
         const englishSettings = modularSettings.translations.find((row) => row.language === 'English')?.values || {};
         const mapLocaleKeys = [
-          'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last',
+          'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_startup_select',
           'settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria'
+        ];
+        const tooltipLocaleKeys = [
+          'settings.cluster_resolution_select','settings.cluster_navigation_session_aria','settings.cluster_navigation_seconds_aria',
+          'settings.cluster_navigation_infinite_aria','settings.cluster_navigation_to_session','settings.cluster_navigation_to_infinite',
+          'app.release_history','app.release_history_open','map.medallion_move','compass.picker_title','compass.picker_change'
         ];
         for (const row of modularSettings.translations) {
           for (const [key,value] of Object.entries(row.values)) {
             assert.ok(value && value !== key, delivery+'/'+profile+' '+row.language+' '+key+' translated');
           }
           if (row.language !== 'English') {
-            for (const key of mapLocaleKeys) {
+            for (const key of [...mapLocaleKeys,...tooltipLocaleKeys]) {
               assert.notEqual(row.values[key], englishSettings[key], delivery+'/'+profile+' '+row.language+' '+key+' must not fall back to English');
             }
           }
@@ -283,6 +324,18 @@ const server = http.createServer((req, res) => {
           assert.equal(row.mapWindowNote,row.values['settings.map_window_note'],delivery+'/'+profile+' '+row.language+' map window note');
           assert.equal(row.mapWindowOpen,row.values['settings.map_window_open'],delivery+'/'+profile+' '+row.language+' map window button');
           assert.ok(row.currentProfile,delivery+'/'+profile+' '+row.language+' cluster profile label');
+          assert.equal(row.tooltipVersionTitle,row.values['app.release_history'],delivery+'/'+profile+' '+row.language+' version hover title');
+          assert.equal(row.tooltipVersionAria,row.values['app.release_history_open'],delivery+'/'+profile+' '+row.language+' version aria label');
+          assert.equal(row.tooltipClusterAria,row.values['settings.cluster_resolution_select'],delivery+'/'+profile+' '+row.language+' cluster selector aria');
+          assert.equal(row.tooltipClusterTitle,`${row.values['settings.cluster_resolution']} · ${row.currentProfile}`,delivery+'/'+profile+' '+row.language+' cluster selector hover title');
+          assert.equal(row.tooltipClusterSessionAria,row.values['settings.cluster_navigation_session_aria'],delivery+'/'+profile+' '+row.language+' cluster session aria');
+          assert.equal(row.tooltipClusterSecondsAria,row.values['settings.cluster_navigation_seconds_aria'],delivery+'/'+profile+' '+row.language+' cluster seconds aria');
+          assert.equal(row.tooltipClusterInfiniteAria,row.values['settings.cluster_navigation_infinite_aria'],delivery+'/'+profile+' '+row.language+' cluster infinite aria');
+          assert.equal(row.tooltipClusterInfiniteTitle,row.values['settings.cluster_navigation_infinite'],delivery+'/'+profile+' '+row.language+' cluster infinite hover title');
+          assert.equal(row.tooltipMapStartupDropdown,row.values['settings.map_startup_select'],delivery+'/'+profile+' '+row.language+' startup dropdown aria');
+          assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
+          assert.equal(row.tooltipMedallionMove,row.values['map.medallion_move'],delivery+'/'+profile+' '+row.language+' medallion hover title');
+          assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
         }
         assert.equal(modularSettings.diagnosticClosedByModules,true,delivery+'/'+profile+' modules participates in accordion');
         assert.equal(modularSettings.modulesClosedByMap,true,delivery+'/'+profile+' existing accordion section closes modules');
