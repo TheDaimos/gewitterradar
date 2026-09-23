@@ -17,13 +17,15 @@
 - Refine Portuguese cluster-resolution **Tarde → Tardia**.
 - Extend browser regression coverage to reject English fallback text in non-English map-display and tooltip settings and to exercise repeated module-detail open/close/open behavior.
 - Keep canonical frontend, native integration delivery and Dashboard delivery byte-identical; refresh module manifest, deterministic contract and frontend SHA256 inventory.
+- Localize **all 22 Module Details entries end-to-end** across all 19 language variants: module display names and complete function lists now follow the active language while technical module IDs and file paths intentionally remain unchanged.
+- Fix the Module Details status header so application version, loaded-module count and consistency state are separated explicitly and keep their spacing after the overlay is reparented outside the Settings section.
 
 ### Modulversionen
 
 - `core.base-context` → **1.0.2**
 - `ui.skeleton` → **1.1.1**
 - `ui.i18n-settings` → **1.2.1**
-- `diagnostics.module-view` → **1.2.3**
+- `diagnostics.module-view` → **1.3.0**
 - `fullscreen.map-display` → **1.0.1**
 - `map.clusters-recent` → **1.0.1**
 - `ui.render` → **1.0.1**
