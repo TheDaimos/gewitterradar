@@ -4,9 +4,12 @@ import {root,hash,expectedPayload,expectedDashboardPackages,destinations} from '
 const payload=await expectedPayload();
 const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
 const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'utf8');
+const controls=await readFile(resolve(root,'frontend/modules/ui/controls.js'),'utf8');
+const i18nSettings=await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
+const baseContext=await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.0.3"',
+  '"version": "1.1.0"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -15,12 +18,16 @@ for(const marker of [
   '#settings-radii-section[open] > .settings-radius-list {',
   'max-height:none!important;',
   '#settings-map-section .settings-cluster-session-selector',
-  'margin-right:10px'
+  'margin-right:10px',
+  'width:min(560px,calc(100vw - 20px))',
+  'min-width:32px;width:auto;padding:5px 7px',
+  'width:min(520px,calc(100vw - 20px))',
+  'transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.1.2"',
+  'version:"1.2.1"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -29,10 +36,80 @@ for(const marker of [
   'id="settings-modules-backdrop"',
   '>Diagnose kopieren</button>',
   '>JSON herunterladen</button>',
-  'if(diagnostic)diagnostic.after(section)'
+  'if(diagnostic)diagnostic.after(section)',
+  'this._registerSettingsAccordionSection?.(section)',
+  '_syncModuleTranslations',
+  '"modules.title"',
+  '"modules.detail.functions"'
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
+
+for(const marker of [
+  '"id": "ui.controls"',
+  '"version": "1.1.1"',
+  'const settingsSections = new Set()',
+  'this._registerSettingsAccordionSection = registerSettingsSection'
+]){
+  if(!controls.includes(marker))throw Error('Dynamic settings accordion contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "ui.i18n-settings"',
+  '"version": "1.1.0"',
+  'const SETTINGS_UI_TRANSLATIONS=Object.freeze('
+]){
+  if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
+}
+for(const marker of [
+  'id:"core.base-context"',
+  'version:"1.0.1"',
+  'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
+  "['Cluster-Auflösung','settings.cluster_resolution']",
+  "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
+]){
+  if(!baseContext.includes(marker))throw Error('Cluster locale contract missing: '+marker);
+}
+
+const registeredLanguages=['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'];
+const requiredSettingsKeys=[
+  'settings.cluster_resolution','settings.cluster_resolution_note','settings.cluster_navigation_session','settings.cluster_navigation_range','settings.cluster_navigation_infinite',
+  'modules.title','modules.subtitle','modules.details','modules.kicker','modules.close','modules.copy','modules.download','modules.loaded','modules.consistent','modules.deviations',
+  'modules.status.ok','modules.status.missing','modules.status.version_mismatch','modules.status.unexpected',
+  'modules.group.other','modules.group.core','modules.group.fullscreen','modules.group.ui','modules.group.instruments','modules.group.diagnostics','modules.group.location','modules.group.map','modules.group.history',
+  'modules.detail.status','modules.detail.version','modules.detail.expected','modules.detail.file','modules.detail.loaded','modules.detail.functions'
+];
+const extractFrozenJson=(source,prefix,suffix)=>{
+  const start=source.indexOf(prefix);
+  if(start<0)throw Error('Locale registry prefix missing: '+prefix);
+  const from=start+prefix.length;
+  const end=source.indexOf(suffix,from);
+  if(end<0)throw Error('Locale registry suffix missing: '+suffix);
+  return JSON.parse(source.slice(from,end));
+};
+const settingsUiTranslations=extractFrozenJson(
+  i18nSettings,
+  'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
+  ');\nexport const installI18nSettings'
+);
+const clusterResolutionLabels=extractFrozenJson(
+  baseContext,
+  'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
+  ');\n\n  function getClusterResolutionProfileLabel'
+);
+for(const language of registeredLanguages){
+  const settingsBundle=settingsUiTranslations[language];
+  if(!settingsBundle)throw Error('Missing settings UI language: '+language);
+  for(const key of requiredSettingsKeys){
+    if(typeof settingsBundle[key]!=='string'||!settingsBundle[key].trim())throw Error('Missing settings UI translation: '+language+' / '+key);
+  }
+  const clusterBundle=clusterResolutionLabels[language];
+  if(!clusterBundle)throw Error('Missing cluster profile language: '+language);
+  for(const key of ['early','balanced','late','classic']){
+    if(typeof clusterBundle[key]!=='string'||!clusterBundle[key].trim())throw Error('Missing cluster profile translation: '+language+' / '+key);
+  }
+}
+if(Object.keys(settingsUiTranslations).length!==registeredLanguages.length)throw Error('Unexpected settings UI language count');
+if(Object.keys(clusterResolutionLabels).length!==registeredLanguages.length)throw Error('Unexpected cluster profile language count');
 async function files(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await files(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 const checks=[];
 for(const dest of destinations){
