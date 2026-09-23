@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.2.1",
+  version:"1.2.2",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -61,7 +61,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
 
             .gr-module-backdrop{position:fixed;inset:0;z-index:2147483646;display:none;align-items:center;justify-content:center;padding:clamp(10px,2.5vw,28px);background:radial-gradient(circle at 50% 30%,rgba(31,44,66,.28),rgba(4,7,12,.76) 60%,rgba(1,2,4,.9) 100%);backdrop-filter:blur(10px) saturate(.86);-webkit-backdrop-filter:blur(10px) saturate(.86);overscroll-behavior:contain}
             .gr-module-backdrop.open{display:flex;animation:settingsBackdropIn .18s ease-out both}
-            .gr-module-dialog{display:flex;flex-direction:column;width:min(780px,calc(100vw - 32px));max-height:min(860px,calc(100dvh - 20px));overflow:hidden;border:2px solid transparent;border-radius:22px;color:var(--b-text);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgb(20,28,38),rgb(7,12,18)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),0 0 22px rgba(215,164,67,.06)}
+            .gr-module-dialog{display:flex;flex-direction:column;width:min(660px,calc(100vw - 32px));max-height:min(760px,calc(100dvh - 32px));overflow:hidden;border:2px solid transparent;border-radius:22px;color:var(--b-text);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgb(20,28,38),rgb(7,12,18)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),0 0 22px rgba(215,164,67,.06)}
             .gr-module-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px 11px;border-bottom:1px solid rgba(255,255,255,.07);background:linear-gradient(180deg,rgb(17,23,32),rgb(14,20,28))}
             .gr-module-kicker{color:var(--b-gold);font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
             .gr-module-title{margin-top:2px;font-size:18px;line-height:1.05;font-weight:850;letter-spacing:-.02em}
@@ -129,7 +129,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       backdrop?.addEventListener("click",event=>{if(event.target===backdrop)this._closeModuleDetails();});
       backdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDetails();}});
       if(backdrop)this.shadow.append(backdrop);
-      section.addEventListener("toggle",()=>{if(section.open)this._syncModuleView();});
+      section.addEventListener("toggle",event=>{if(event.target===section&&section.open)this._syncModuleView();});
       this._syncModuleTranslations(section);
       return section;
     },
@@ -186,6 +186,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
 
     _renderModuleList(target,result){
       if(!target)return;
+      const openIds=new Set([...target.querySelectorAll(".gr-mod-row[open]")].map(item=>item.dataset.moduleId).filter(Boolean));
       target.replaceChildren();
       const grouped=new Map();
       for(const row of result.rows){
@@ -204,6 +205,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         for(const row of rows.sort((a,b)=>String(a.function).localeCompare(String(b.function),"de"))){
           const item=document.createElement("details");
           item.className="gr-mod-row";
+          item.dataset.moduleId=row.id;
+          item.open=openIds.has(row.id);
+          item.addEventListener("toggle",event=>event.stopPropagation());
 
           const head=document.createElement("summary");
           const heading=document.createElement("div");
