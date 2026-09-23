@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.1.2",
+  version:"1.2.0",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -12,15 +12,19 @@ export const MODULE_META=Object.freeze({
 export const installModuleView=defineModule(MODULE_META,(deps)=>{
   const { APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot, ABOUT_CLOSE_IMAGE }=deps;
 
-  const statusLabel=(status)=>({
-    ok:"korrekt",
-    missing:"fehlt",
-    version_mismatch:"abweichend",
-    unexpected:"unerwartet"
-  }[status]||status);
-
   const statusSymbol=(status)=>status==="ok"?"✓":status==="missing"?"✕":"!";
   const groupPriority=(group)=>group==="Diagnose"?-100:0;
+  const groupTranslationKey=(group)=>({
+    "Kern":"modules.group.core",
+    "Vollbild":"modules.group.fullscreen",
+    "Oberfläche":"modules.group.ui",
+    "Instrumente":"modules.group.instruments",
+    "Diagnose":"modules.group.diagnostics",
+    "Standort & Radien":"modules.group.location",
+    "Karte":"modules.group.map",
+    "Verlauf":"modules.group.history"
+  }[group]||"modules.group.other");
+
 
   return {
     _ensureModuleView(){
@@ -34,8 +38,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       section.innerHTML=`
         <summary class="settings-section-head">
           <div>
-            <div class="settings-section-title">Module &amp; Versionen</div>
-            <div class="settings-section-sub">Status der tatsächlich geladenen Komponenten</div>
+            <div class="settings-section-title" id="settings-modules-title">Module &amp; Versionen</div>
+            <div class="settings-section-sub" id="settings-modules-subtitle">Status der tatsächlich geladenen Komponenten</div>
           </div>
         </summary>
         <div class="settings-section-content gr-mod-compact-content">
@@ -96,7 +100,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           <section class="gr-module-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-modules-dialog-title" tabindex="-1">
             <header class="gr-module-head">
               <div>
-                <div class="gr-module-kicker">Gewitterradar · Diagnose</div>
+                <div class="gr-module-kicker" id="settings-modules-kicker">Gewitterradar · Diagnose</div>
                 <div class="gr-module-title" id="settings-modules-dialog-title">Modul-Details</div>
               </div>
               <button id="settings-modules-close" class="gr-module-close" type="button" aria-label="Modul-Details schließen"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></button>
@@ -125,7 +129,33 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       backdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDetails();}});
       if(backdrop)this.shadow.append(backdrop);
       section.addEventListener("toggle",()=>{if(section.open)this._syncModuleView();});
+      this._syncModuleTranslations(section);
       return section;
+    },
+
+    _syncModuleTranslations(section=this.shadow?.getElementById("settings-modules-section")){
+      if(!section)return;
+      const setText=(selector,key,root=section)=>{const el=root?.querySelector?.(selector);if(el)el.textContent=this._t?.(key)||key;};
+      setText("#settings-modules-title","modules.title");
+      setText("#settings-modules-subtitle","modules.subtitle");
+      setText("#settings-modules-details","modules.details");
+      const backdrop=this.shadow?.getElementById("settings-modules-backdrop");
+      setText("#settings-modules-kicker","modules.kicker",backdrop);
+      setText("#settings-modules-dialog-title","modules.details",backdrop);
+      setText("#settings-modules-copy","modules.copy",backdrop);
+      setText("#settings-modules-download","modules.download",backdrop);
+      const close=backdrop?.querySelector?.("#settings-modules-close");
+      if(close)close.setAttribute("aria-label",this._t?.("modules.close")||"modules.close");
+    },
+
+    _moduleStatusLabel(status){
+      const key={
+        ok:"modules.status.ok",
+        missing:"modules.status.missing",
+        version_mismatch:"modules.status.version_mismatch",
+        unexpected:"modules.status.unexpected"
+      }[status];
+      return key?(this._t?.(key)||status):status;
     },
 
     _moduleDiagnosticsPayload(){
@@ -143,11 +173,13 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const title=document.createElement("strong");
       title.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
       const counts=document.createElement("span");
-      counts.textContent=`${result.loadedCount} / ${result.expectedCount} Module geladen`;
+      counts.textContent=this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`;
       const state=document.createElement("span");
       state.className="gr-mod-state";
       state.dataset.state=issueCount?"warn":"ok";
-      state.textContent=issueCount?`! ${issueCount} Abweichung${issueCount===1?"":"en"} erkannt`:"✓ Versionssatz konsistent";
+      state.textContent=issueCount
+        ? `! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`
+        : `✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
       target.append(title,counts,state);
     },
 
@@ -166,7 +198,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         block.className="gr-mod-group";
         const groupTitle=document.createElement("div");
         groupTitle.className="gr-mod-group-title";
-        groupTitle.textContent=group;
+        groupTitle.textContent=this._t?.(groupTranslationKey(group))||group;
         block.append(groupTitle);
         for(const row of rows.sort((a,b)=>String(a.function).localeCompare(String(b.function),"de"))){
           const item=document.createElement("details");
@@ -186,7 +218,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           version.dataset.state=row.status;
           const loaded=row.loadedVersion||"—";
           version.textContent=`${statusSymbol(row.status)} ${loaded}`;
-          version.title=`Status: ${statusLabel(row.status)} · Erwartet: ${row.expectedVersion||"—"} · Geladen: ${loaded}`;
+          version.title=`${this._t?.("modules.detail.status")||"Status"}: ${this._moduleStatusLabel(row.status)} · ${this._t?.("modules.detail.expected")||"Expected"}: ${row.expectedVersion||"—"} · ${this._t?.("modules.detail.loaded")||"Loaded"}: ${loaded}`;
           head.append(heading,version);
 
           const detail=document.createElement("dl");
@@ -196,12 +228,12 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             const dd=document.createElement("dd");dd.textContent=value||"—";
             detail.append(dt,dd);
           };
-          appendDetail("Status",statusLabel(row.status));
-          appendDetail("Version",loaded);
-          appendDetail("Erwartet",row.expectedVersion||"—");
-          appendDetail("Datei",row.file||"—");
-          appendDetail("Geladen",row.loadedAt||"—");
-          appendDetail("Funktionen",(row.subfunctions||[]).join(" · ")||"—");
+          appendDetail(this._t?.("modules.detail.status")||"Status",this._moduleStatusLabel(row.status));
+          appendDetail(this._t?.("modules.detail.version")||"Version",loaded);
+          appendDetail(this._t?.("modules.detail.expected")||"Expected",row.expectedVersion||"—");
+          appendDetail(this._t?.("modules.detail.file")||"File",row.file||"—");
+          appendDetail(this._t?.("modules.detail.loaded")||"Loaded",row.loadedAt||"—");
+          appendDetail(this._t?.("modules.detail.functions")||"Functions",(row.subfunctions||[]).join(" · ")||"—");
 
           item.append(head,detail);
           block.append(item);
@@ -213,6 +245,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     _syncModuleView(){
       const section=this._ensureModuleView();
       if(!section)return;
+      this._syncModuleTranslations(section);
       const result=moduleDiagnostics(EXPECTED_MODULES);
       this._renderModuleSummary(section.querySelector("#settings-modules-summary"),result);
       this._renderModuleSummary(this.shadow?.getElementById("settings-modules-dialog-summary"),result);
