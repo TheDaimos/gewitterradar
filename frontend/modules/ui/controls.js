@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1597,6 +1597,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
       // V3.519 – Einstellungs-Popup öffnen/schließen.
       const openSettings = () => {
+        this._closeMapStartupDropdown?.(false);
         closeClusterResolutionDropdown(false);
         closeLocationDropdown(false);
         this._syncHelpMenu();
@@ -1605,6 +1606,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         settingsClose?.focus?.({ preventScroll:true });
       };
       const closeSettings = () => {
+        this._closeMapStartupDropdown?.(false);
         closeLanguageDropdown(false);
         closeClusterResolutionDropdown(false);
         closeLocationDropdown(false);
@@ -1667,6 +1669,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       settingsOpen?.addEventListener('click',openSettings);
       settingsClose?.addEventListener('click',closeSettings);
       settingsBackdrop?.addEventListener('click',(event) => {
+        this._closeMapStartupDropdown?.(false);
         closeLanguageDropdown(false);
         closeClusterResolutionDropdown(false);
         closeLocationDropdown(false);
@@ -1690,6 +1693,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           // Ein zugeklappter Abschnitt darf kein frei schwebendes Custom-Menü
           // zurücklassen. Die Dropdown-Mechanik selbst bleibt unverändert.
           if (!section.open) {
+            this._closeMapStartupDropdown?.(false);
             closeLanguageDropdown(false);
             closeClusterResolutionDropdown(false);
             closeLocationDropdown(false);
@@ -1697,6 +1701,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           if (settingsAccordionBusy) return;
           settingsAccordionBusy = true;
+          this._closeMapStartupDropdown?.(false);
           closeLanguageDropdown(false);
           closeClusterResolutionDropdown(false);
           closeLocationDropdown(false);
