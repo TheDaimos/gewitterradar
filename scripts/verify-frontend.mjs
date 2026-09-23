@@ -56,7 +56,8 @@ for(const marker of [
 for(const marker of [
   '"id": "ui.i18n-settings"',
   '"version": "1.2.0"',
-  'const SETTINGS_UI_TRANSLATIONS=Object.freeze('
+  'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
+  'this._syncMapDisplayUi?.()'
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
