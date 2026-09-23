@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -4434,16 +4434,22 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .medallion-calibration-modal-backdrop { display:none;position:fixed;inset:0;z-index:10030;background:transparent;padding:10px;align-items:flex-start;justify-content:flex-end;pointer-events:none; }
           .medallion-calibration-modal-backdrop.open { display:flex; }
           .medallion-calibration-modal-backdrop.dock-left { justify-content:flex-start; }
-          .medallion-calibration-modal { pointer-events:auto;width:min(430px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;overflow-anchor:none;border:1px solid rgba(74,197,255,.42);border-radius:14px;background:rgba(7,16,24,.97);color:#dceaf2;box-shadow:0 16px 52px rgba(0,0,0,.68);padding:12px; }
+          .medallion-calibration-modal { pointer-events:auto;width:min(560px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;overflow-anchor:none;border:1px solid rgba(74,197,255,.42);border-radius:14px;background:rgba(7,16,24,.97);color:#dceaf2;box-shadow:0 16px 52px rgba(0,0,0,.68);padding:12px; }
           .medallion-calibration-modal-backdrop.free-position .medallion-calibration-modal { position:fixed; }
-          .medallion-calibration-modal .compass-calibration-modal-head { cursor:move;touch-action:none;user-select:none; }
-          .medallion-calibration-modal .compass-calibration-modal-head button { cursor:pointer;touch-action:manipulation; }
-          .medallion-window-state { margin-left:auto;color:#74e9ff;font:800 8px/1.2 system-ui,sans-serif;white-space:nowrap; }
-          .medallion-window-level { min-width:31px;padding:5px!important;font-size:8px!important; }
+          .medallion-calibration-modal .compass-calibration-modal-head { cursor:move;touch-action:none;user-select:none;gap:6px; }
+          .medallion-calibration-modal .compass-calibration-modal-head h2 { flex:1 1 150px;min-width:0; }
+          .medallion-calibration-modal .compass-calibration-modal-head button { cursor:pointer;touch-action:manipulation;flex:0 0 auto; }
+          .medallion-calibration-modal .compass-calibration-modal-head .compass-calibration-close { min-width:32px;width:auto;padding:5px 7px; }
+          .medallion-window-state { margin-left:0;color:#74e9ff;font:800 8px/1.2 system-ui,sans-serif;white-space:nowrap;flex:0 0 auto; }
+          .medallion-window-level { min-width:34px!important;padding:5px 7px!important;font-size:8px!important; }
           .medallion-calibration-modal-backdrop.compact .compass-calibration-actions,
           .medallion-calibration-modal-backdrop.compact .compass-calibration-feedback,
           .medallion-calibration-modal-backdrop.compact .compass-calibration-report { display:none; }
-          .medallion-calibration-modal-backdrop.compact .medallion-calibration-modal { width:min(430px,calc(100vw - 20px));height:auto;overflow:hidden; }
+          .medallion-calibration-modal-backdrop.compact .medallion-calibration-modal { width:min(520px,calc(100vw - 20px));height:auto;overflow:hidden; }
+          @media(max-width:620px) {
+            .medallion-calibration-modal .compass-calibration-modal-head { flex-wrap:wrap; }
+            .medallion-calibration-modal .compass-calibration-modal-head h2 { flex-basis:100%; }
+          }
           .medallion-calibration-modal-backdrop.compact .medallion-diagnostic-controls { position:static;margin-bottom:0; }
           .medallion-calibration-modal-backdrop.collapsed .medallion-calibration-modal { width:auto;max-width:calc(100vw - 20px);height:auto;overflow:hidden;padding:7px 9px; }
           .medallion-calibration-modal-backdrop.collapsed .compass-calibration-actions,
