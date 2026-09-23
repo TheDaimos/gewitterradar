@@ -36,30 +36,31 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – korrigierten V4.10.02-DRA-Stand real auf HA DEV abnehmen.**
+**M12 – finalen Tooltip-/Modulstabilitätsstand über DRA real abnehmen.**
 
-Automatisiert vollständig geprüfter Code-Stand:
-- Code-/Test-Head `7dfa477c2a7fbd5789189a32a47cb0db82328a34`,
+Automatisiert vollständig geprüfter Code-/Test-Stand:
+- `60846e16bcec19ba2b9cfa9f516777bb69635c41`,
 - alle fünf CI-Gates grün,
-- Modul-Details-Fenster auf Desktop/Tablet auf maximal **660 px** Breite und **760 px** Höhe verdichtet; mobile Höhe bleibt viewportgerecht,
-- Modulzeilen können wiederholt **öffnen → schließen → erneut öffnen**, ohne durch die äußere Akkordeon-/Synchronisationslogik sofort zurückgesetzt zu werden,
-- unnötiger unterer Leerraum in **Kalibrierung & Diagnose** reduziert,
-- Kartendarstellungs-Texte für alle **19 Sprachvarianten** vollständig ergänzt und gegen englische Rückfälle abgesichert,
-- Portugiesisch: Clusterprofil **Tardia**,
+- die Modul-Detail-Liste wird bei normalen Hintergrund-Render-/Sprachläufen **nicht mehr neu aufgebaut**, solange Sprache und Diagnosedaten unverändert sind,
+- Browser-Stresstest: zusätzliche **10 Öffnen-/Schließen-Zyklen** mit `_syncModuleView()` und Sprachsynchronisierung zwischen jedem Klick; derselbe DOM-Knoten muss erhalten bleiben,
+- vollständiger Mouse-over-/`title`-/relevanter `aria-label`-Audit für alle **19 Sprachvarianten**,
+- hart codierte deutsche Cluster-Tooltips werden durch den Quellvertrag ausdrücklich verhindert,
 - geänderte Modulversionen:
   - `core.base-context 1.0.2`,
   - `ui.skeleton 1.1.1`,
-  - `ui.i18n-settings 1.2.0`,
-  - `diagnostics.module-view 1.2.2`,
-- Manifest, V4.10.02-Modulvertrag und SHA256-Inventar aktualisiert.
+  - `ui.controls 1.1.1`,
+  - `ui.i18n-settings 1.2.1`,
+  - `diagnostics.module-view 1.2.3`,
+  - `fullscreen.map-display 1.0.1`,
+  - `map.clusters-recent 1.0.1`,
+  - `ui.render 1.0.1`.
 
-Reale nächste Prüfung nach Promotion auf `deploy/dev`:
-1. DRA empfohlenen Kanal `deploy/dev` aktualisieren, Vorschau berechnen und installieren.
-2. **Kalibrierung & Diagnose** auf reduzierten Leerraum prüfen.
-3. **Modul-Details** auf kompaktere Breite/Höhe prüfen.
-4. Ein Modul mehrfach nacheinander öffnen, schließen und erneut öffnen.
-5. Portugiesisch und Griechisch unter **Kartendarstellung** prüfen; Überschrift, Standardansicht, zuletzt verwendete Ansicht, Hinweistext und separates Kartenfenster dürfen nicht mehr Englisch sein.
-6. Danach M12 mit neu auf den aktuellen `deploy/dev`-Stand basierendem Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
+Nach dem finalen Dokumentations-Gate:
+1. dokumentierten Head auf `deploy/dev` promoten,
+2. DRA-Vorschau aktualisieren und installieren,
+3. insbesondere Griechisch/Portugiesisch per Mouse-over auf Cluster-Auflösung, Cluster-Navigation, Standardansicht und Kartenfenster prüfen,
+4. im Modulfenster mehrere unterschiedliche Zeilen schnell und wiederholt öffnen/schließen,
+5. danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
 
 ---
 
@@ -1325,3 +1326,65 @@ Prüfschleife:
 - insbesondere Settings/Help-Profile, Golden-Geometrie, beide vollständigen Browser-Auslieferungssuiten, HACS, hassfest und Home-Assistant-Runtime erfolgreich.
 
 **Nächster Schritt:** finalen dokumentierten Branch-Head nach grünem Dokumentations-Gate auf `deploy/dev` promoten und die oben genannten fünf realen UI-/Sprachpunkte auf HA DEV über DRA abnehmen.
+
+
+## Schleife 036 – Tooltip-Audit und Modulzeilen gegen Hintergrund-Neuaufbau stabilisiert
+
+**Datum:** 2026-09-23  
+**Status:** Code/Test vollständig grün; finale Dokumentationsprüfung und DRA-Promotion folgen
+
+Reale Befunde:
+- im griechischen Kartenbereich war der sichtbare Profilwert korrekt übersetzt, der Mouse-over-Text enthielt aber weiterhin den deutschen Präfix **„Cluster-Auflösung“**,
+- weitere dynamische `title`-/`aria-label`-Pfade verwendeten teils fest codierte deutsche oder englische Ausgangstexte,
+- die Modulzeilen ließen sich nach Schleife 035 grundsätzlich wieder öffnen und schließen, reagierten aber bei einzelnen Klicks noch unzuverlässig,
+- Ursache der Modulunzuverlässigkeit bestätigt: `_applyStaticTranslations()` kann bei geöffnetem Modulbereich `_syncModuleView()` ausführen; die bisherige Methode ersetzte dabei die komplette Modulliste auch dann, wenn sich überhaupt keine Diagnosedaten geändert hatten. Ein Klick konnte dadurch zeitlich mit einem DOM-Neuaufbau kollidieren.
+
+Korrektur Modulansicht:
+- `diagnostics.module-view` → **1.2.3**,
+- neue `_moduleListSignature(result)` aus aktiver Sprache, Modulstatus, Soll-/Ist-Versionen, Ladezeitpunkt, Gruppe, Funktion, Datei und Unterfunktionen,
+- die Liste wird nur noch bei einer tatsächlich geänderten Signatur oder explizitem `forceList` neu erzeugt,
+- gewöhnliche Render-/Übersetzungssynchronisierungen aktualisieren Zusammenfassung und Texte, lassen die vorhandenen Modul-`<details>`-Knoten jedoch bestehen,
+- damit kann ein Benutzer-Klick nicht mehr von einem unmittelbar folgenden Hintergrund-Neuaufbau überschrieben werden.
+
+Korrektur Mouse-over / dynamische Attribute:
+- `ui.i18n-settings` → **1.2.1**,
+- `ui.render` → **1.0.1**,
+- `fullscreen.map-display` → **1.0.1**,
+- `map.clusters-recent` → **1.0.1**,
+- zwölf zusätzliche Pflichtschlüssel in allen **19 Sprachvarianten** für:
+  - Versionsverlauf,
+  - Cluster-Auflösung-Auswahl,
+  - Cluster-Navigations-Sitzungszeit / Sekunden / unbegrenzt,
+  - Umschaltung Sitzungszeit ↔ unbegrenzt,
+  - Standardansicht-Auswahl,
+  - Medaillon verschieben,
+  - Kompassauswahl / Kompass wechseln,
+- zusätzlich bestehende Übersetzungsschlüssel für Gerätekompass, Kartenansicht, separates Kartenfenster und weitere dynamische Mouse-over-Texte an den tatsächlichen Renderpfad gebunden,
+- die konkret gemeldete griechische Kombination wird jetzt aus **übersetztem Präfix + übersetztem Profilwert** zusammengesetzt.
+
+Regression:
+- Quellvertrag verlangt alle neuen Tooltip-Schlüssel für alle 19 Varianten,
+- Quellvertrag verbietet die bekannten fest codierten deutschen Runtime-Tooltips,
+- Browserprofiltest kontrolliert die tatsächlich im DOM gesetzten `title`-/`aria-label`-Werte je Sprache,
+- nichtenglische Sprachen dürfen auch bei diesen dynamischen Attributen nicht auf Englisch zurückfallen,
+- Modul-Stresstest führt nach dem ersten Öffnen/Schließen zusätzlich **10 Klickzyklen** aus und ruft zwischen jedem Klick sowohl `_syncModuleView()` als auch `_applyStaticTranslations()` auf,
+- dabei muss derselbe Modul-DOM-Knoten erhalten bleiben und der Offen-/Geschlossen-Zustand bei jedem einzelnen Klick korrekt wechseln.
+
+Geprüfter Code-/Test-Head:
+- `60846e16bcec19ba2b9cfa9f516777bb69635c41`.
+
+Alle fünf Gates grün:
+- Validate shared Gewitterradar frontend,
+- Validate Gewitterradar integration,
+- Diagnostic contract,
+- Hi-Res asset retention,
+- Source archive contract.
+
+Insbesondere erfolgreich:
+- Settings/Help-Profile einschließlich Tooltip-/Sprachmatrix,
+- Golden-Geometrie,
+- beide vollständigen Browser-Auslieferungssuiten,
+- HACS, hassfest und Home-Assistant-Runtime,
+- deterministische Dashboard-/Integrations-Ausleitung.
+
+**Nächster Schritt:** Dokumentation committen, denselben vollständigen Gate-Satz auf dem Dokumentations-Head abwarten und erst danach exakt diesen Head auf `deploy/dev` promoten.
