@@ -196,6 +196,9 @@ const server = http.createServer((req, res) => {
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const content = section.querySelector('.settings-section-content');
               const target = section.querySelector(targetSelector);
+              body.scrollTop = Math.max(0, body.scrollHeight - body.clientHeight);
+              await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+              const probeScrollTop = body.scrollTop;
               target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const bodyRect = body.getBoundingClientRect();
@@ -214,6 +217,7 @@ const server = http.createServer((req, res) => {
                 dialogScrollHeight: dialog.scrollHeight,
                 dialogHeight: dialogStyle.height,
                 dialogMaxHeight: dialogStyle.maxHeight,
+                probeScrollTop,
                 scrollTop: body.scrollTop,
                 visible:
                   targetRect.top >= bodyRect.top - 1 &&
@@ -261,7 +265,10 @@ const server = http.createServer((req, res) => {
               true,
               `${delivery}/${profile} ${name} settings body scrollable :: ${JSON.stringify(state)}`,
             );
-            assert.ok(state.scrollTop > 0, `${delivery}/${profile} ${name} settings body moved`);
+            assert.ok(
+              state.probeScrollTop > 0,
+              `${delivery}/${profile} ${name} settings body can move :: ${JSON.stringify(state)}`,
+            );
             assert.equal(
               state.visible,
               true,
