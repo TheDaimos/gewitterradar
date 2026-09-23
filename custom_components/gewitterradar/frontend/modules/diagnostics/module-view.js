@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.2.2",
+  version:"1.2.3",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -184,6 +184,18 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       target.append(title,counts,state);
     },
 
+    _moduleListSignature(result){
+      const language=this._languageValue?.()||"";
+      return JSON.stringify({
+        language,
+        duplicates:[...(result.duplicateIds||[])].sort(),
+        rows:(result.rows||[]).map(row=>[
+          row.id,row.status,row.loadedVersion||"",row.expectedVersion||"",row.loadedAt||"",
+          row.group||"",row.function||"",row.file||"",(row.subfunctions||[]).join("|")
+        ])
+      });
+    },
+
     _renderModuleList(target,result){
       if(!target)return;
       const openIds=new Set([...target.querySelectorAll(".gr-mod-row[open]")].map(item=>item.dataset.moduleId).filter(Boolean));
@@ -247,14 +259,19 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       }
     },
 
-    _syncModuleView(){
+    _syncModuleView({forceList=false}={}){
       const section=this._ensureModuleView();
       if(!section)return;
       this._syncModuleTranslations(section);
       const result=moduleDiagnostics(EXPECTED_MODULES);
       this._renderModuleSummary(section.querySelector("#settings-modules-summary"),result);
       this._renderModuleSummary(this.shadow?.getElementById("settings-modules-dialog-summary"),result);
-      this._renderModuleList(this.shadow?.getElementById("settings-modules-list"),result);
+      const list=this.shadow?.getElementById("settings-modules-list");
+      const signature=this._moduleListSignature(result);
+      if(list&&(forceList||list.dataset.moduleSignature!==signature)){
+        this._renderModuleList(list,result);
+        list.dataset.moduleSignature=signature;
+      }
     },
 
     _openModuleDetails(){
