@@ -141,6 +141,56 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.match(metrics.signatureFilter, /sepia|drop-shadow/);
 
+        const startupDropdownLifecycle = await page.evaluate(async () => {
+          const card = window.aboutCard;
+          const root = card.shadowRoot;
+          const waitFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const settingsBackdrop = root.getElementById('settings-backdrop');
+          const mapSection = root.getElementById('settings-map-section');
+          const startupButton = root.getElementById('settings-map-startup-button');
+          const startupDropdown = root.getElementById('settings-map-startup-dropdown');
+
+          if (!settingsBackdrop.classList.contains('open')) root.getElementById('settings-open').click();
+          for (const section of root.querySelectorAll('.settings-collapsible')) section.open = false;
+          mapSection.open = true;
+          await waitFrame();
+
+          startupButton.click();
+          await waitFrame();
+          const openedBeforeBackdrop = startupDropdown.classList.contains('open')
+            && startupButton.getAttribute('aria-expanded') === 'true';
+
+          settingsBackdrop.click();
+          await waitFrame();
+          const backdropClosedSettings = !settingsBackdrop.classList.contains('open');
+          const backdropClosedDropdown = !startupDropdown.classList.contains('open')
+            && startupButton.getAttribute('aria-expanded') === 'false';
+
+          root.getElementById('settings-open').click();
+          mapSection.open = true;
+          await waitFrame();
+          startupButton.click();
+          await waitFrame();
+          const reopenedBeforeAccordion = startupDropdown.classList.contains('open');
+          root.getElementById('settings-radii-section').open = true;
+          await waitFrame();
+          const accordionClosedDropdown = !startupDropdown.classList.contains('open')
+            && startupButton.getAttribute('aria-expanded') === 'false';
+
+          return {
+            openedBeforeBackdrop,
+            backdropClosedSettings,
+            backdropClosedDropdown,
+            reopenedBeforeAccordion,
+            accordionClosedDropdown,
+          };
+        });
+        assert.equal(startupDropdownLifecycle.openedBeforeBackdrop,true,`${delivery}/${profile} startup dropdown opens`);
+        assert.equal(startupDropdownLifecycle.backdropClosedSettings,true,`${delivery}/${profile} settings backdrop closes settings`);
+        assert.equal(startupDropdownLifecycle.backdropClosedDropdown,true,`${delivery}/${profile} settings backdrop closes startup dropdown`);
+        assert.equal(startupDropdownLifecycle.reopenedBeforeAccordion,true,`${delivery}/${profile} startup dropdown reopens`);
+        assert.equal(startupDropdownLifecycle.accordionClosedDropdown,true,`${delivery}/${profile} accordion switch closes startup dropdown`);
+
         const moduleOverlay = await page.evaluate(async () => {
           const card = window.aboutCard;
           const root = card.shadowRoot;
