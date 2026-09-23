@@ -55,9 +55,10 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.1"',
+  '"version": "1.1.2"',
   'const settingsSections = new Set()',
-  'this._registerSettingsAccordionSection = registerSettingsSection'
+  'this._registerSettingsAccordionSection = registerSettingsSection',
+  'this._closeMapStartupDropdown?.(false)'
 ]){
   if(!controls.includes(marker))throw Error('Dynamic settings accordion contract missing: '+marker);
 }
@@ -78,11 +79,12 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.1"',
+  '"id": "fullscreen.map-display"','"version": "1.0.2"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
-  "this._t('settings.map_startup_select')"
+  "this._t('settings.map_startup_select')",
+  '_closeMapStartupDropdown(returnFocus = false)'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
