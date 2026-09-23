@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.2.0",
+  version:"1.2.1",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -119,6 +119,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const diagnostic=this.shadow.getElementById("settings-diagnostic-section");
       const body=this.shadow.querySelector(".settings-body");
       if(diagnostic)diagnostic.after(section);else body?.append(section);
+      this._registerSettingsAccordionSection?.(section);
 
       section.querySelector("#settings-modules-details")?.addEventListener("click",()=>this._openModuleDetails());
       section.querySelector("#settings-modules-close")?.addEventListener("click",()=>this._closeModuleDetails());
