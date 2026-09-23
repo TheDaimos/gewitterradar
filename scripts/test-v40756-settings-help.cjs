@@ -178,6 +178,11 @@ const server = http.createServer((req, res) => {
             };
             const reveal = async (sectionId, targetSelector) => {
               collapseAll();
+              const dialog = root.getElementById('settings-dialog');
+              const previousHeight = dialog.style.height;
+              const previousMaxHeight = dialog.style.maxHeight;
+              dialog.style.height = '420px';
+              dialog.style.maxHeight = '420px';
               for (const id of [
                 'settings-map-section',
                 'settings-radii-section',
@@ -198,7 +203,7 @@ const server = http.createServer((req, res) => {
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const bodyRect = body.getBoundingClientRect();
               const targetRect = target.getBoundingClientRect();
-              return {
+              const state = {
                 bodyOverflowY: getComputedStyle(body).overflowY,
                 contentOverflowY: getComputedStyle(content).overflowY,
                 bodyScrollable: body.scrollHeight > body.clientHeight + 1,
@@ -207,6 +212,9 @@ const server = http.createServer((req, res) => {
                   targetRect.top >= bodyRect.top - 1 &&
                   targetRect.bottom <= bodyRect.bottom + 1,
               };
+              dialog.style.height = previousHeight;
+              dialog.style.maxHeight = previousMaxHeight;
+              return state;
             };
 
             const radii = await reveal('#settings-radii-section'.slice(1), '.settings-radius.danger');
