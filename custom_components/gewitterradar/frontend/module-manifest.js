@@ -156,7 +156,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.2.3",
+    "version": "1.3.0",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": ["Geladene Module", "Soll/Ist-Vergleich", "Versionsstatus", "Modul-Details", "Diagnose kopieren", "JSON herunterladen"],
