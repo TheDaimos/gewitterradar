@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "9cd6a8699ccea83e07cf89b8765918d5f5c36697c03cd202c3ce1b8dea255607",
+      "sha256": "fa0d794e971726fa88ba212f8d37b134ec07277d1543d9e818d3b1320719a587",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 32650
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "09f674af13a56b3327987891b0a590bb47423e4e559700a33ad7a3863b866c9d",
-      "sizeBytes": 59266
+      "sha256": "840a5f9f59db8fa90349ee1b1e13a9feb472f9729f91ba52c4ef001db7374bb7",
+      "sizeBytes": 59645
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
@@ -43,8 +43,8 @@
       "sizeBytes": 16917
     },
     "modules/ui/controls.js": {
-      "sha256": "1286078df6983b1234de7afd0da1d7a42d6d72bcceb71e28055c20a121cca0b2",
-      "sizeBytes": 182682
+      "sha256": "eb937070fb8c72c0193c89f81a32dc5d2c22d7f0decd9867e6717c85e2ac1b54",
+      "sizeBytes": 182928
     },
     "modules/ui/i18n-settings.js": {
       "sha256": "cc8b81ea27061eb0de67921aaf6909d262dc813db15137f1eb742d641f813591",
