@@ -165,6 +165,24 @@ Release-Identität:
 
 Als nächste öffentliche Entwicklung sind unterschiedliche Medaillions, Verbesserungen der Kompass-/Medaillion-Auswahl und die Implementierung von Wetterdiensten über WeatherRouter vorgesehen.
 
+## V4.10.02 · 2026/09 – Modularisierung und UI-Abschluss
+
+V4.10.02 führt die Gewitterradar-Oberfläche aus dem bisherigen großen JavaScript-Monolithen in einen selbstversionierten ES-Modulverbund über. Der Home-Assistant-Ressourcenpfad bleibt dabei stabil; die native Integration und die Dashboard-Auslieferung werden weiterhin aus derselben kanonischen Frontendquelle gebaut.
+
+Die Anwendung besitzt jetzt ein Laufzeit-Modulregister mit Soll-/Ist-Abgleich und den Einstellungsbereich **„Module & Versionen“**. Der reale HA-DEV-Stand wurde bereits mit **22/22 geladenen Modulen** und konsistentem Versionssatz nachgewiesen.
+
+Die Abschlusskorrekturen vom 23.09.2026 sichern insbesondere:
+- ein kompakteres Modul-Details-Fenster mit maximal 660 px Breite auf Desktop/Tablet;
+- wiederholt zuverlässig auf- und zuklappbare Modulzeilen ohne sofortiges Zurücksetzen durch den äußeren Einstellungs-Akkordeonvertrag;
+- weniger unnötigen Leerraum am Ende von **Kalibrierung & Diagnose**;
+- vollständige Kartendarstellungs-Texte für alle **19 Sprachvarianten**, einschließlich Standardansicht, zuletzt verwendeter Ansicht, Geräte-/Browserprofil-Hinweis und separatem Kartenfenster;
+- sofortige Neusynchronisierung der Kartendarstellungs-Texte beim Sprachwechsel;
+- die portugiesische Profilbezeichnung **„Tardia“** für die späte Cluster-Auflösung.
+
+Die Browserprüfung deckt Desktop, iPad, iPad Pro sowie Android Hoch-/Querformat ab und erzwingt zusätzlich, dass nichtenglische Sprachvarianten in diesem Bereich nicht still auf englische Texte zurückfallen. Der Moduldialog wird außerdem automatisiert mit dem Ablauf **öffnen → schließen → erneut öffnen** geprüft.
+
+V4.10.02 bleibt während dieser Abschlussphase ein interner DEV-Stand. Installation und reale Abnahme erfolgen über den Deploy Relay Agent auf dem empfohlenen Kanal `deploy/dev`.
+
 ## V4.10.01 · 2026/09 – neue direkte Kompassauswahl
 
 Mit **V4.10.01** beginnt die V4.10-Entwicklung auf der veröffentlichten V4.09-Basis. Die erste Iteration überarbeitet bewusst nur die Auswahl des Kompassdesigns und lässt Kompassberechnung, Kalibrierung, Vollbildgröße und die bereits abgenommene freie Positionierung unverändert.
