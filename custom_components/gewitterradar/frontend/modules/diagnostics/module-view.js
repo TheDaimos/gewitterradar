@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.2.3",
+  version:"1.3.0",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
@@ -24,6 +24,476 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Karte":"modules.group.map",
     "Verlauf":"modules.group.history"
   }[group]||"modules.group.other");
+
+  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart"]);
+  const MODULE_VIEW_META=Object.freeze({
+  "Deutsch": [
+    "Modulmanifest|Sollstand · Produktversion · Buildkennung",
+    "Konstanten & gemeinsame Helfer|Assets · Konstanten · Sprache · Speichergrundlagen · Geometrie · Leaflet-Helfer",
+    "Modulregister|Selbstregistrierung · Soll/Ist-Prüfung · Diagnoseexport",
+    "Modul-Laufzeit|Selbstregistrierung · Methodeninstallation · Abhängigkeitsübergabe",
+    "Karten-Lebenszyklus|Konfiguration · Verbinden · Trennen",
+    "Kartendarstellung|Standard · Groß · Vollbild · separates Fenster · Instrumentpositionen",
+    "Scrollschutz|Home-Assistant-Seitenleiste · Touch · iPad/WebKit · HA-State",
+    "Grundgerüst|HTML · CSS · Dialoge · Menüstruktur",
+    "Kompass-Skala|Skala · Geometrie",
+    "Bedienbindungen|Klick · Touch · Formulare · Menüaktionen",
+    "Sprache & Einstellungen|Übersetzung · About · Einstellungen · Hilfetexte",
+    "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
+    "Kompassauswahl|Designauswahl · Popup · Rahmenwahl · Diagnosegeometrie",
+    "Module & Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopieren · JSON herunterladen",
+    "Diagnose & Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
+    "Kompassdesign|Design anwenden · Grafikgeometrie",
+    "Standort, Radien & Kartenstart|Standort · Radien · Aura · Karteninitialisierung",
+    "Blitze & Warnungen|Blitzaufnahme · Warnanimation · Geräteorientierung",
+    "Cluster & letzte Blitze|Cluster · Marker · Recent-Liste · Navigation",
+    "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
+    "Kompass|Bewegungsprofil · Animation · Rendering",
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+  ],
+  "English": [
+    "Module manifest|Target state · Product version · Build identifier",
+    "Constants & shared helpers|Assets · Constants · Language · Storage foundations · Geometry · Leaflet helpers",
+    "Module registry|Self-registration · Target/actual check · Diagnostic export",
+    "Module runtime|Self-registration · Method installation · Dependency injection",
+    "Card lifecycle|Configuration · Connect · Disconnect",
+    "Map display|Standard · Large · Fullscreen · Separate window · Instrument positions",
+    "Scroll protection|Home Assistant sidebar · Touch · iPad/WebKit · HA state",
+    "UI skeleton|HTML · CSS · Dialogs · Menu structure",
+    "Compass scale|Scale · Geometry",
+    "Control bindings|Click · Touch · Forms · Menu actions",
+    "Language & settings|Translation · About · Settings · Help texts",
+    "Data source status|Blitzortung status · Status display",
+    "Compass selection|Design selection · Popup · Frame selection · Diagnostic geometry",
+    "Modules & versions|Loaded modules · Target/actual comparison · Version status · Module details · Copy diagnostics · Download JSON",
+    "Diagnostics & calibration|Diagnostic console · Virtual storm · Compass calibration · Medallion calibration · Performance",
+    "Compass design|Apply design · Graphic geometry",
+    "Location, radii & map start|Location · Radii · Aura · Map initialization",
+    "Strikes & warnings|Strike intake · Warning animation · Device orientation",
+    "Clusters & recent strikes|Clusters · Markers · Recent list · Navigation",
+    "Main rendering|Status · KPI · Lists · UI synchronization",
+    "Compass|Motion profile · Animation · Rendering",
+    "Trend & history|Trend calculation · 120-minute chart"
+  ],
+  "Dansk": [
+    "Modulmanifest|Måltilstand · Produktversion · Build-id",
+    "Konstanter og fælles hjælpefunktioner|Aktiver · Konstanter · Sprog · Lagringsgrundlag · Geometri · Leaflet-hjælpere",
+    "Modulregister|Selvregistrering · Mål/faktisk-kontrol · Diagnoseeksport",
+    "Modulkørsel|Selvregistrering · Metodeinstallation · Overførsel af afhængigheder",
+    "Kortets livscyklus|Konfiguration · Tilslut · Afbryd",
+    "Kortvisning|Standard · Stor · Fuld skærm · Separat vindue · Instrumentplaceringer",
+    "Rullebeskyttelse|Home Assistant-sidepanel · Berøring · iPad/WebKit · HA-tilstand",
+    "Grundstruktur|HTML · CSS · Dialoger · Menustruktur",
+    "Kompaskala|Skala · Geometri",
+    "Betjeningsbindinger|Klik · Berøring · Formularer · Menuhandlinger",
+    "Sprog og indstillinger|Oversættelse · Om · Indstillinger · Hjælpetekster",
+    "Datakildestatus|Blitzortung-status · Statusvisning",
+    "Kompasvalg|Designvalg · Popup · Rammevalg · Diagnosegeometri",
+    "Moduler og versioner|Indlæste moduler · Mål/faktisk-sammenligning · Versionsstatus · Moduldetaljer · Kopiér diagnose · Download JSON",
+    "Diagnose og kalibrering|Diagnosekonsol · Virtuelt tordenvejr · Kompaskalibrering · Medaljonkalibrering · Ydelse",
+    "Kompasdesign|Anvend design · Grafikgeometri",
+    "Placering, radier og kortstart|Placering · Radier · Aura · Kortinitialisering",
+    "Lynnedslag og advarsler|Registrering af lynnedslag · Advarselsanimation · Enhedsorientering",
+    "Klynger og seneste lynnedslag|Klynger · Markører · Liste over seneste · Navigation",
+    "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
+    "Kompas|Bevægelsesprofil · Animation · Rendering",
+    "Tendens og historik|Tendensberegning · 120-minutters diagram"
+  ],
+  "Español": [
+    "Manifiesto de módulos|Estado objetivo · Versión del producto · Identificador de compilación",
+    "Constantes y ayudas compartidas|Recursos · Constantes · Idioma · Bases de almacenamiento · Geometría · Ayudas de Leaflet",
+    "Registro de módulos|Autorregistro · Comprobación objetivo/real · Exportación de diagnóstico",
+    "Ejecución de módulos|Autorregistro · Instalación de métodos · Entrega de dependencias",
+    "Ciclo de vida de la tarjeta|Configuración · Conectar · Desconectar",
+    "Visualización del mapa|Estándar · Grande · Pantalla completa · Ventana separada · Posiciones de instrumentos",
+    "Protección de desplazamiento|Barra lateral de Home Assistant · Táctil · iPad/WebKit · Estado de HA",
+    "Estructura base|HTML · CSS · Diálogos · Estructura de menús",
+    "Escala de la brújula|Escala · Geometría",
+    "Enlaces de control|Clic · Táctil · Formularios · Acciones de menú",
+    "Idioma y ajustes|Traducción · Acerca de · Ajustes · Textos de ayuda",
+    "Estado de fuentes de datos|Estado de Blitzortung · Indicador de estado",
+    "Selección de brújula|Selección de diseño · Ventana emergente · Selección de marco · Geometría de diagnóstico",
+    "Módulos y versiones|Módulos cargados · Comparación objetivo/real · Estado de versiones · Detalles de módulos · Copiar diagnóstico · Descargar JSON",
+    "Diagnóstico y calibración|Consola de diagnóstico · Tormenta virtual · Calibración de brújula · Calibración de medallón · Rendimiento",
+    "Diseño de brújula|Aplicar diseño · Geometría gráfica",
+    "Ubicación, radios e inicio del mapa|Ubicación · Radios · Aura · Inicialización del mapa",
+    "Rayos y avisos|Recepción de rayos · Animación de aviso · Orientación del dispositivo",
+    "Clústeres y rayos recientes|Clústeres · Marcadores · Lista reciente · Navegación",
+    "Renderizado principal|Estado · KPI · Listas · Sincronización de interfaz",
+    "Brújula|Perfil de movimiento · Animación · Renderizado",
+    "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos"
+  ],
+  "Français": [
+    "Manifeste des modules|État cible · Version du produit · Identifiant de build",
+    "Constantes et aides communes|Ressources · Constantes · Langue · Bases de stockage · Géométrie · Aides Leaflet",
+    "Registre des modules|Auto-enregistrement · Contrôle cible/réel · Export du diagnostic",
+    "Exécution des modules|Auto-enregistrement · Installation des méthodes · Transmission des dépendances",
+    "Cycle de vie de la carte|Configuration · Connexion · Déconnexion",
+    "Affichage de la carte|Standard · Grande · Plein écran · Fenêtre séparée · Positions des instruments",
+    "Protection du défilement|Barre latérale Home Assistant · Tactile · iPad/WebKit · État HA",
+    "Structure de base|HTML · CSS · Dialogues · Structure des menus",
+    "Échelle de la boussole|Échelle · Géométrie",
+    "Liaisons de commande|Clic · Tactile · Formulaires · Actions de menu",
+    "Langue et paramètres|Traduction · À propos · Paramètres · Textes d’aide",
+    "État des sources de données|État Blitzortung · Affichage de l’état",
+    "Sélection de la boussole|Choix du design · Fenêtre contextuelle · Choix du cadre · Géométrie de diagnostic",
+    "Modules et versions|Modules chargés · Comparaison cible/réel · État des versions · Détails des modules · Copier le diagnostic · Télécharger le JSON",
+    "Diagnostic et étalonnage|Console de diagnostic · Orage virtuel · Étalonnage de la boussole · Étalonnage du médaillon · Performances",
+    "Design de la boussole|Appliquer le design · Géométrie graphique",
+    "Emplacement, rayons et démarrage de la carte|Emplacement · Rayons · Aura · Initialisation de la carte",
+    "Impacts et avertissements|Réception des impacts · Animation d’avertissement · Orientation de l’appareil",
+    "Clusters et impacts récents|Clusters · Marqueurs · Liste récente · Navigation",
+    "Rendu principal|État · KPI · Listes · Synchronisation de l’interface",
+    "Boussole|Profil de mouvement · Animation · Rendu",
+    "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes"
+  ],
+  "Nederlands": [
+    "Modulemanifest|Doelstatus · Productversie · Buildkenmerk",
+    "Constanten en gedeelde helpers|Assets · Constanten · Taal · Opslagbasis · Geometrie · Leaflet-helpers",
+    "Moduleregister|Zelfregistratie · Doel/werkelijk-controle · Diagnose-export",
+    "Module-runtime|Zelfregistratie · Methode-installatie · Overdracht van afhankelijkheden",
+    "Kaartlevenscyclus|Configuratie · Verbinden · Loskoppelen",
+    "Kaartweergave|Standaard · Groot · Volledig scherm · Apart venster · Instrumentposities",
+    "Scrollbeveiliging|Home Assistant-zijbalk · Aanraken · iPad/WebKit · HA-status",
+    "Basisstructuur|HTML · CSS · Dialogen · Menustructuur",
+    "Kompásschaal|Schaal · Geometrie",
+    "Bedieningskoppelingen|Klik · Aanraken · Formulieren · Menuacties",
+    "Taal en instellingen|Vertaling · Over · Instellingen · Helpteksten",
+    "Status van gegevensbronnen|Blitzortung-status · Statusweergave",
+    "Kompaskeuze|Ontwerpkeuze · Popup · Framekeuze · Diagnosegeometrie",
+    "Modules en versies|Geladen modules · Doel/werkelijk-vergelijking · Versiestatus · Moduledetails · Diagnose kopiëren · JSON downloaden",
+    "Diagnose en kalibratie|Diagnoseconsole · Virtueel onweer · Kompaskalibratie · Medaillonkalibratie · Prestaties",
+    "Kompasontwerp|Ontwerp toepassen · Grafische geometrie",
+    "Locatie, stralen en kaartstart|Locatie · Stralen · Aura · Kaartinitialisatie",
+    "Bliksem en waarschuwingen|Bliksemopname · Waarschuwingsanimatie · Apparaatoriëntatie",
+    "Clusters en recente bliksem|Clusters · Markeringen · Recente lijst · Navigatie",
+    "Hoofdweergave|Status · KPI · Lijsten · UI-synchronisatie",
+    "Kompas|Bewegingsprofiel · Animatie · Rendering",
+    "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten"
+  ],
+  "Polski": [
+    "Manifest modułów|Stan docelowy · Wersja produktu · Identyfikator kompilacji",
+    "Stałe i wspólne funkcje pomocnicze|Zasoby · Stałe · Język · Podstawy pamięci · Geometria · Pomocniki Leaflet",
+    "Rejestr modułów|Samorejestracja · Kontrola stan docelowy/rzeczywisty · Eksport diagnostyki",
+    "Środowisko modułów|Samorejestracja · Instalacja metod · Przekazywanie zależności",
+    "Cykl życia karty|Konfiguracja · Połącz · Rozłącz",
+    "Widok mapy|Standardowy · Duży · Pełny ekran · Osobne okno · Pozycje instrumentów",
+    "Ochrona przewijania|Pasek boczny Home Assistant · Dotyk · iPad/WebKit · Stan HA",
+    "Struktura podstawowa|HTML · CSS · Okna dialogowe · Struktura menu",
+    "Skala kompasu|Skala · Geometria",
+    "Powiązania sterowania|Kliknięcie · Dotyk · Formularze · Akcje menu",
+    "Język i ustawienia|Tłumaczenie · O programie · Ustawienia · Teksty pomocy",
+    "Stan źródeł danych|Stan Blitzortung · Wskaźnik stanu",
+    "Wybór kompasu|Wybór wyglądu · Okno podręczne · Wybór ramki · Geometria diagnostyczna",
+    "Moduły i wersje|Załadowane moduły · Porównanie stan docelowy/rzeczywisty · Stan wersji · Szczegóły modułu · Kopiuj diagnostykę · Pobierz JSON",
+    "Diagnostyka i kalibracja|Konsola diagnostyczna · Wirtualna burza · Kalibracja kompasu · Kalibracja medalionu · Wydajność",
+    "Wygląd kompasu|Zastosuj wygląd · Geometria grafiki",
+    "Lokalizacja, promienie i start mapy|Lokalizacja · Promienie · Aura · Inicjalizacja mapy",
+    "Wyładowania i ostrzeżenia|Odbiór wyładowań · Animacja ostrzeżenia · Orientacja urządzenia",
+    "Klastry i ostatnie wyładowania|Klastry · Znaczniki · Lista ostatnich · Nawigacja",
+    "Renderowanie główne|Stan · KPI · Listy · Synchronizacja interfejsu",
+    "Kompas|Profil ruchu · Animacja · Renderowanie",
+    "Trend i historia|Obliczanie trendu · Wykres 120-minutowy"
+  ],
+  "Português": [
+    "Manifesto de módulos|Estado pretendido · Versão do produto · Identificador da compilação",
+    "Constantes e auxiliares comuns|Recursos · Constantes · Idioma · Bases de armazenamento · Geometria · Auxiliares Leaflet",
+    "Registo de módulos|Autorregisto · Verificação pretendido/real · Exportação de diagnóstico",
+    "Execução de módulos|Autorregisto · Instalação de métodos · Transferência de dependências",
+    "Ciclo de vida do cartão|Configuração · Ligar · Desligar",
+    "Apresentação do mapa|Padrão · Grande · Ecrã inteiro · Janela separada · Posições dos instrumentos",
+    "Proteção de deslocamento|Barra lateral do Home Assistant · Toque · iPad/WebKit · Estado do HA",
+    "Estrutura base|HTML · CSS · Diálogos · Estrutura do menu",
+    "Escala da bússola|Escala · Geometria",
+    "Ligações de controlo|Clique · Toque · Formulários · Ações do menu",
+    "Idioma e definições|Tradução · Acerca de · Definições · Textos de ajuda",
+    "Estado das fontes de dados|Estado do Blitzortung · Indicação de estado",
+    "Seleção da bússola|Seleção de design · Janela emergente · Seleção de moldura · Geometria de diagnóstico",
+    "Módulos e versões|Módulos carregados · Comparação pretendido/real · Estado das versões · Detalhes dos módulos · Copiar diagnóstico · Transferir JSON",
+    "Diagnóstico e calibração|Consola de diagnóstico · Trovoada virtual · Calibração da bússola · Calibração do medalhão · Desempenho",
+    "Design da bússola|Aplicar design · Geometria gráfica",
+    "Localização, raios e início do mapa|Localização · Raios · Aura · Inicialização do mapa",
+    "Descargas e avisos|Receção de descargas · Animação de aviso · Orientação do dispositivo",
+    "Clusters e descargas recentes|Clusters · Marcadores · Lista recente · Navegação",
+    "Renderização principal|Estado · KPI · Listas · Sincronização da interface",
+    "Bússola|Perfil de movimento · Animação · Renderização",
+    "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos"
+  ],
+  "Svenska": [
+    "Modulmanifest|Måltillstånd · Produktversion · Byggidentifierare",
+    "Konstanter och gemensamma hjälpfunktioner|Resurser · Konstanter · Språk · Lagringsgrunder · Geometri · Leaflet-hjälpare",
+    "Modulregister|Självregistrering · Mål/faktisk-kontroll · Diagnostikexport",
+    "Modulkörning|Självregistrering · Metodinstallation · Överföring av beroenden",
+    "Kortets livscykel|Konfiguration · Anslut · Koppla från",
+    "Kartvisning|Standard · Stor · Helskärm · Separat fönster · Instrumentpositioner",
+    "Rullningsskydd|Home Assistant-sidofält · Pekning · iPad/WebKit · HA-tillstånd",
+    "Grundstruktur|HTML · CSS · Dialoger · Menystruktur",
+    "Kompasskala|Skala · Geometri",
+    "Styrbindningar|Klick · Pekning · Formulär · Menyåtgärder",
+    "Språk och inställningar|Översättning · Om · Inställningar · Hjälptexter",
+    "Datakällestatus|Blitzortung-status · Statusvisning",
+    "Kompassval|Designval · Popup · Ramval · Diagnostikgeometri",
+    "Moduler och versioner|Laddade moduler · Mål/faktisk-jämförelse · Versionsstatus · Moduldetaljer · Kopiera diagnostik · Hämta JSON",
+    "Diagnostik och kalibrering|Diagnostikkonsol · Virtuellt åskväder · Kompasskalibrering · Medaljongkalibrering · Prestanda",
+    "Kompassdesign|Tillämpa design · Grafikgeometri",
+    "Plats, radier och kartstart|Plats · Radier · Aura · Kartinitiering",
+    "Blixtar och varningar|Blixtmottagning · Varningsanimation · Enhetsorientering",
+    "Kluster och senaste blixtar|Kluster · Markörer · Senaste-lista · Navigering",
+    "Huvudrendering|Status · KPI · Listor · UI-synkronisering",
+    "Kompass|Rörelseprofil · Animation · Rendering",
+    "Trend och historik|Trendberäkning · 120-minutersdiagram"
+  ],
+  "Italiano": [
+    "Manifesto dei moduli|Stato previsto · Versione prodotto · Identificatore build",
+    "Costanti e helper condivisi|Risorse · Costanti · Lingua · Basi di memorizzazione · Geometria · Helper Leaflet",
+    "Registro moduli|Autoregistrazione · Controllo previsto/reale · Esportazione diagnostica",
+    "Runtime dei moduli|Autoregistrazione · Installazione metodi · Passaggio dipendenze",
+    "Ciclo di vita della scheda|Configurazione · Connetti · Disconnetti",
+    "Visualizzazione mappa|Standard · Grande · Schermo intero · Finestra separata · Posizioni strumenti",
+    "Protezione scorrimento|Barra laterale Home Assistant · Tocco · iPad/WebKit · Stato HA",
+    "Struttura base|HTML · CSS · Finestre di dialogo · Struttura menu",
+    "Scala bussola|Scala · Geometria",
+    "Associazioni dei controlli|Clic · Tocco · Moduli · Azioni menu",
+    "Lingua e impostazioni|Traduzione · Informazioni · Impostazioni · Testi di aiuto",
+    "Stato fonti dati|Stato Blitzortung · Indicatore di stato",
+    "Selezione bussola|Selezione design · Popup · Selezione cornice · Geometria diagnostica",
+    "Moduli e versioni|Moduli caricati · Confronto previsto/reale · Stato versioni · Dettagli moduli · Copia diagnostica · Scarica JSON",
+    "Diagnostica e calibrazione|Console diagnostica · Temporale virtuale · Calibrazione bussola · Calibrazione medaglione · Prestazioni",
+    "Design bussola|Applica design · Geometria grafica",
+    "Posizione, raggi e avvio mappa|Posizione · Raggi · Aura · Inizializzazione mappa",
+    "Fulmini e avvisi|Ricezione fulmini · Animazione di avviso · Orientamento dispositivo",
+    "Cluster e fulmini recenti|Cluster · Marcatori · Elenco recente · Navigazione",
+    "Rendering principale|Stato · KPI · Elenchi · Sincronizzazione UI",
+    "Bussola|Profilo di movimento · Animazione · Rendering",
+    "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti"
+  ],
+  "Norsk bokmål": [
+    "Modulmanifest|Måltilstand · Produktversjon · Bygg-ID",
+    "Konstanter og felles hjelpere|Ressurser · Konstanter · Språk · Lagringsgrunnlag · Geometri · Leaflet-hjelpere",
+    "Modulregister|Selvregistrering · Mål/faktisk-kontroll · Diagnoseeksport",
+    "Modulkjøring|Selvregistrering · Metodeinstallasjon · Overføring av avhengigheter",
+    "Kortets livssyklus|Konfigurasjon · Koble til · Koble fra",
+    "Kartvisning|Standard · Stor · Fullskjerm · Eget vindu · Instrumentposisjoner",
+    "Rullebeskyttelse|Home Assistant-sidefelt · Berøring · iPad/WebKit · HA-tilstand",
+    "Grunnstruktur|HTML · CSS · Dialoger · Menystruktur",
+    "Kompasskala|Skala · Geometri",
+    "Kontrollbindinger|Klikk · Berøring · Skjemaer · Menyhandlinger",
+    "Språk og innstillinger|Oversettelse · Om · Innstillinger · Hjelpetekster",
+    "Datakildestatus|Blitzortung-status · Statusvisning",
+    "Kompassvalg|Designvalg · Popup · Rammevalg · Diagnosegeometri",
+    "Moduler og versjoner|Lastede moduler · Mål/faktisk-sammenligning · Versjonsstatus · Moduldetaljer · Kopier diagnose · Last ned JSON",
+    "Diagnose og kalibrering|Diagnosekonsoll · Virtuelt tordenvær · Kompasskalibrering · Medaljongkalibrering · Ytelse",
+    "Kompassdesign|Bruk design · Grafikkgeometri",
+    "Plassering, radier og kartstart|Plassering · Radier · Aura · Kartinitialisering",
+    "Lyn og advarsler|Lynmottak · Advarselsanimasjon · Enhetsorientering",
+    "Klynger og siste lyn|Klynger · Markører · Siste-liste · Navigasjon",
+    "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
+    "Kompass|Bevegelsesprofil · Animasjon · Rendering",
+    "Trend og historikk|Trendberegning · 120-minuttersdiagram"
+  ],
+  "Suomi": [
+    "Moduuliluettelo|Tavoitetila · Tuoteversio · Koontitunniste",
+    "Vakiot ja yhteiset apufunktiot|Resurssit · Vakiot · Kieli · Tallennuksen perusteet · Geometria · Leaflet-apurit",
+    "Moduulirekisteri|Itserekisteröinti · Tavoite/toteuma-tarkistus · Diagnostiikan vienti",
+    "Moduulien suoritusympäristö|Itserekisteröinti · Menetelmien asennus · Riippuvuuksien välitys",
+    "Kortin elinkaari|Määritys · Yhdistä · Katkaise yhteys",
+    "Karttanäkymä|Vakio · Suuri · Koko näyttö · Erillinen ikkuna · Mittareiden sijainnit",
+    "Vierityssuojaus|Home Assistant -sivupalkki · Kosketus · iPad/WebKit · HA-tila",
+    "Perusrakenne|HTML · CSS · Dialogit · Valikkorakenne",
+    "Kompassiasteikko|Asteikko · Geometria",
+    "Ohjaussidokset|Napsautus · Kosketus · Lomakkeet · Valikkotoiminnot",
+    "Kieli ja asetukset|Käännös · Tietoja · Asetukset · Ohjetekstit",
+    "Tietolähteiden tila|Blitzortung-tila · Tilan näyttö",
+    "Kompassin valinta|Ulkoasun valinta · Ponnahdusikkuna · Kehyksen valinta · Diagnostiikkageometria",
+    "Moduulit ja versiot|Ladatut moduulit · Tavoite/toteuma-vertailu · Versiotila · Moduulin tiedot · Kopioi diagnostiikka · Lataa JSON",
+    "Diagnostiikka ja kalibrointi|Diagnostiikkakonsoli · Virtuaalinen ukkonen · Kompassin kalibrointi · Medaljongin kalibrointi · Suorituskyky",
+    "Kompassin ulkoasu|Käytä ulkoasua · Grafiikkageometria",
+    "Sijainti, säteet ja kartan käynnistys|Sijainti · Säteet · Aura · Kartan alustus",
+    "Salamat ja varoitukset|Salamoiden vastaanotto · Varoitusanimaatio · Laitteen suunta",
+    "Klusterit ja viimeisimmät salamat|Klusterit · Merkit · Viimeisimmät-lista · Navigointi",
+    "Päärenderöinti|Tila · KPI · Listat · Käyttöliittymän synkronointi",
+    "Kompassi|Liikeprofiili · Animaatio · Renderöinti",
+    "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio"
+  ],
+  "Čeština": [
+    "Manifest modulů|Cílový stav · Verze produktu · Identifikátor buildu",
+    "Konstanty a společné pomocné funkce|Prostředky · Konstanty · Jazyk · Základy úložiště · Geometrie · Pomocníci Leaflet",
+    "Registr modulů|Samoregistrace · Kontrola cílový/skutečný · Export diagnostiky",
+    "Běh modulů|Samoregistrace · Instalace metod · Předání závislostí",
+    "Životní cyklus karty|Konfigurace · Připojit · Odpojit",
+    "Zobrazení mapy|Standardní · Velké · Celá obrazovka · Samostatné okno · Pozice přístrojů",
+    "Ochrana posouvání|Postranní panel Home Assistant · Dotyk · iPad/WebKit · Stav HA",
+    "Základní struktura|HTML · CSS · Dialogy · Struktura nabídky",
+    "Stupnice kompasu|Stupnice · Geometrie",
+    "Vazby ovládání|Kliknutí · Dotyk · Formuláře · Akce nabídky",
+    "Jazyk a nastavení|Překlad · O aplikaci · Nastavení · Texty nápovědy",
+    "Stav zdrojů dat|Stav Blitzortung · Zobrazení stavu",
+    "Výběr kompasu|Výběr designu · Vyskakovací okno · Výběr rámečku · Diagnostická geometrie",
+    "Moduly a verze|Načtené moduly · Porovnání cílový/skutečný · Stav verzí · Podrobnosti modulů · Kopírovat diagnostiku · Stáhnout JSON",
+    "Diagnostika a kalibrace|Diagnostická konzole · Virtuální bouřka · Kalibrace kompasu · Kalibrace medailonu · Výkon",
+    "Design kompasu|Použít design · Grafická geometrie",
+    "Poloha, poloměry a start mapy|Poloha · Poloměry · Aura · Inicializace mapy",
+    "Blesky a varování|Příjem blesků · Animace varování · Orientace zařízení",
+    "Shluky a poslední blesky|Shluky · Značky · Seznam posledních · Navigace",
+    "Hlavní vykreslování|Stav · KPI · Seznamy · Synchronizace UI",
+    "Kompas|Profil pohybu · Animace · Vykreslování",
+    "Trend a historie|Výpočet trendu · 120minutový graf"
+  ],
+  "Ελληνικά": [
+    "Δηλωτικό λειτουργικών μονάδων|Αναμενόμενη κατάσταση · Έκδοση προϊόντος · Αναγνωριστικό build",
+    "Σταθερές & κοινά βοηθήματα|Πόροι · Σταθερές · Γλώσσα · Βασικά αποθήκευσης · Γεωμετρία · Βοηθήματα Leaflet",
+    "Μητρώο λειτουργικών μονάδων|Αυτοεγγραφή · Έλεγχος αναμενόμενου/πραγματικού · Εξαγωγή διαγνωστικών",
+    "Χρόνος εκτέλεσης λειτουργικών μονάδων|Αυτοεγγραφή · Εγκατάσταση μεθόδων · Μεταβίβαση εξαρτήσεων",
+    "Κύκλος ζωής κάρτας|Διαμόρφωση · Σύνδεση · Αποσύνδεση",
+    "Προβολή χάρτη|Τυπική · Μεγάλη · Πλήρης οθόνη · Ξεχωριστό παράθυρο · Θέσεις οργάνων",
+    "Προστασία κύλισης|Πλευρική γραμμή Home Assistant · Αφή · iPad/WebKit · Κατάσταση HA",
+    "Βασικός σκελετός διεπαφής|HTML · CSS · Διάλογοι · Δομή μενού",
+    "Κλίμακα πυξίδας|Κλίμακα · Γεωμετρία",
+    "Συνδέσεις χειριστηρίων|Κλικ · Αφή · Φόρμες · Ενέργειες μενού",
+    "Γλώσσα & ρυθμίσεις|Μετάφραση · Πληροφορίες · Ρυθμίσεις · Κείμενα βοήθειας",
+    "Κατάσταση πηγών δεδομένων|Κατάσταση Blitzortung · Ένδειξη κατάστασης",
+    "Επιλογή πυξίδας|Επιλογή σχεδίου · Αναδυόμενο παράθυρο · Επιλογή πλαισίου · Διαγνωστική γεωμετρία",
+    "Λειτουργικές μονάδες & εκδόσεις|Φορτωμένες λειτουργικές μονάδες · Σύγκριση αναμενόμενου/πραγματικού · Κατάσταση εκδόσεων · Λεπτομέρειες λειτουργικής μονάδας · Αντιγραφή διαγνωστικών · Λήψη JSON",
+    "Διαγνωστικά & βαθμονόμηση|Κονσόλα διαγνωστικών · Εικονική καταιγίδα · Βαθμονόμηση πυξίδας · Βαθμονόμηση μεταλλίου · Επιδόσεις",
+    "Σχεδίαση πυξίδας|Εφαρμογή σχεδίου · Γεωμετρία γραφικών",
+    "Τοποθεσία, ακτίνες & εκκίνηση χάρτη|Τοποθεσία · Ακτίνες · Άλως · Αρχικοποίηση χάρτη",
+    "Κεραυνοί & προειδοποιήσεις|Λήψη κεραυνών · Κινούμενη προειδοποίηση · Προσανατολισμός συσκευής",
+    "Συστάδες & πρόσφατοι κεραυνοί|Συστάδες · Δείκτες · Λίστα πρόσφατων · Πλοήγηση",
+    "Κύρια απόδοση|Κατάσταση · KPI · Λίστες · Συγχρονισμός διεπαφής",
+    "Πυξίδα|Προφίλ κίνησης · Κίνηση · Απόδοση",
+    "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών"
+  ],
+  "Magyar": [
+    "Moduljegyzék|Célállapot · Termékverzió · Buildazonosító",
+    "Konstansok és közös segédfunkciók|Erőforrások · Konstansok · Nyelv · Tárolási alapok · Geometria · Leaflet-segédek",
+    "Modulregiszter|Önregisztráció · Cél/tényleges ellenőrzés · Diagnosztikai export",
+    "Modulfuttatás|Önregisztráció · Metódustelepítés · Függőségek átadása",
+    "Kártya életciklusa|Konfiguráció · Csatlakozás · Leválasztás",
+    "Térképmegjelenítés|Normál · Nagy · Teljes képernyő · Külön ablak · Műszerpozíciók",
+    "Görgetésvédelem|Home Assistant oldalsáv · Érintés · iPad/WebKit · HA-állapot",
+    "Alapszerkezet|HTML · CSS · Párbeszédablakok · Menüstruktúra",
+    "Iránytűskála|Skála · Geometria",
+    "Vezérlési kötések|Kattintás · Érintés · Űrlapok · Menüparancsok",
+    "Nyelv és beállítások|Fordítás · Névjegy · Beállítások · Súgószövegek",
+    "Adatforrások állapota|Blitzortung-állapot · Állapotjelzés",
+    "Iránytű kiválasztása|Kialakítás választása · Felugró ablak · Keretválasztás · Diagnosztikai geometria",
+    "Modulok és verziók|Betöltött modulok · Cél/tényleges összehasonlítás · Verzióállapot · Modulrészletek · Diagnosztika másolása · JSON letöltése",
+    "Diagnosztika és kalibrálás|Diagnosztikai konzol · Virtuális vihar · Iránytű kalibrálása · Medál kalibrálása · Teljesítmény",
+    "Iránytű kialakítása|Kialakítás alkalmazása · Grafikai geometria",
+    "Hely, sugarak és térképindítás|Hely · Sugarak · Aura · Térkép inicializálása",
+    "Villámok és figyelmeztetések|Villámfogadás · Figyelmeztető animáció · Eszköz tájolása",
+    "Klaszterek és legutóbbi villámok|Klaszterek · Jelölők · Legutóbbi lista · Navigáció",
+    "Fő renderelés|Állapot · KPI · Listák · Felület szinkronizálása",
+    "Iránytű|Mozgásprofil · Animáció · Renderelés",
+    "Trend és előzmények|Trendszámítás · 120 perces diagram"
+  ],
+  "Boarisch": [
+    "Modulmanifest|Sollstand · Produktversion · Build-Kennung",
+    "Konstantn & gemeinsame Helfer|Assets · Konstantn · Sprach · Speichergrundlagn · Geometrie · Leaflet-Helfer",
+    "Modulregister|Selbstregistrierung · Soll/Ist-Prüfung · Diagnoseexport",
+    "Modul-Laufzeit|Selbstregistrierung · Methodeninstallation · Abhängigkeiten übergem",
+    "Kartn-Lebenszyklus|Konfiguration · Verbinden · Trennen",
+    "Kartndarstellung|Standard · Groß · Vollbild · eigenes Fenster · Instrumentpositionen",
+    "Scrollschutz|Home-Assistant-Seitenleiste · Touch · iPad/WebKit · HA-Status",
+    "Grundgerüst|HTML · CSS · Dialoge · Menüstruktur",
+    "Kompass-Skala|Skala · Geometrie",
+    "Bedienbindungen|Klick · Touch · Formulare · Menüaktionen",
+    "Sprach & Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
+    "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
+    "Kompassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Module & Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiern · JSON runterladn",
+    "Diagnose & Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
+    "Kompassdesign|Design anwenden · Grafikgeometrie",
+    "Standort, Radien & Kartnstart|Standort · Radien · Aura · Kartninitialisierung",
+    "Blitze & Warnungen|Blitzaufnahme · Warnanimation · Geräteorientierung",
+    "Cluster & letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
+    "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
+    "Kompass|Bewegungsprofil · Animation · Rendering",
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+  ],
+  "Plattdüütsch": [
+    "Modulmanifest|Sollstand · Produktverschoon · Build-Kennen",
+    "Konstanten un tosamen Hülpers|Assets · Konstanten · Spraak · Spiekergrundlagen · Geometrie · Leaflet-Hülpers",
+    "Modulregister|Sülvstregistreren · Soll/Ist-Prööv · Diagnoseexport",
+    "Modul-Lööptiet|Sülvstregistreren · Methoden installern · Afhängigkeiten övergeven",
+    "Koort-Levensloop|Instellen · Verbinden · Trennen",
+    "Koortdarstellung|Standard · Groot · Vullbild · egen Finster · Instrumentpositschonen",
+    "Rullschutz|Home-Assistant-Sietbalken · Touch · iPad/WebKit · HA-Status",
+    "Grundgerüst|HTML · CSS · Dialogen · Menüstruktur",
+    "Kompass-Skala|Skala · Geometrie",
+    "Bedienbinnen|Klick · Touch · Formularen · Menüaktionen",
+    "Spraak un Instellen|Översetten · Över · Instellen · Hülptexten",
+    "Datenquellenstatus|Blitzortung-Status · Statuswiesen",
+    "Kompassutwahl|Designutwahl · Popup · Rahmenutwahl · Diagnosegeometrie",
+    "Modulen un Verschoonen|Laden Modulen · Soll/Ist-Vergliek · Verschoonstatus · Modul-Details · Diagnose koperen · JSON dalladen",
+    "Diagnose un Kalibreren|Diagnosekonsole · Virtuell Gewitter · Kompass-Kalibreren · Medaillon-Kalibreren · Leistung",
+    "Kompassdesign|Design anwennen · Grafikgeometrie",
+    "Steed, Radien un Koortstart|Steed · Radien · Aura · Koort initialiseren",
+    "Blitze un Wohrschoen|Blitzopnahm · Wohrschoon-Animation · Reedschap-Utrichten",
+    "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liest · Navigation",
+    "Hööftrendering|Status · KPI · Listen · UI-Synchroniseren",
+    "Kompass|Bewegungsprofil · Animation · Rendering",
+    "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm"
+  ],
+  "Sächs’sch": [
+    "Modulmanifest|Sollstand · Produktversion · Buildkennung",
+    "Konstanten un gemeinsame Helfer|Assets · Konstanten · Sprache · Speichergrundlagen · Geometrie · Leaflet-Helfer",
+    "Modulregister|Selbstregistrierung · Soll/Ist-Prüfung · Diagnoseexport",
+    "Modul-Laufzeit|Selbstregistrierung · Methodeninstallation · Abhängigkeiten weitergeben",
+    "Karten-Lebenszyklus|Konfiguration · Verbinden · Trennen",
+    "Kartendarstellung|Standard · Groß · Vollbild · eignes Fenster · Instrumentpositionen",
+    "Scrollschutz|Home-Assistant-Seitenleiste · Touch · iPad/WebKit · HA-Status",
+    "Grundgerüst|HTML · CSS · Dialoge · Menüstruktur",
+    "Gombass-Skala|Skala · Geometrie",
+    "Bedienbindungen|Klick · Touch · Formulare · Menüaktionen",
+    "Sprache un Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
+    "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
+    "Gombassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Module un Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiern · JSON runterladen",
+    "Diagnose un Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Gombass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
+    "Gombassdesign|Design anwenden · Grafikgeometrie",
+    "Standort, Radien un Kartenstart|Standort · Radien · Aura · Karteninitialisierung",
+    "Blitze un Warnungen|Blitzaufnahme · Warnanimation · Geräteorientierung",
+    "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
+    "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
+    "Gombass|Bewegungsprofil · Animation · Rendering",
+    "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+  ],
+  "Schwäbisch": [
+    "Modulmanifest|Sollstand · Produktversion · Buildkennung",
+    "Konstanta ond gemeinsame Helfer|Assets · Konstanta · Sproch · Speichergrundlaga · Geometrie · Leaflet-Helfer",
+    "Modulregister|Selbstregistrierung · Soll/Ist-Prüfung · Diagnoseexport",
+    "Modul-Laufzeit|Selbstregistrierung · Methodeninstallation · Abhängigkeit weitergeba",
+    "Karta-Lebenszyklus|Konfiguration · Verbinda · Trenna",
+    "Kartadarstellung|Standard · Groß · Vollbild · eiges Fenster · Instrumentpositiona",
+    "Scrollschutz|Home-Assistant-Seitenleiste · Touch · iPad/WebKit · HA-Status",
+    "Grundgerüst|HTML · CSS · Dialoge · Menüstruktur",
+    "Kompass-Skala|Skala · Geometrie",
+    "Bedienbindungen|Klick · Touch · Formulare · Menüaktiona",
+    "Sproch ond Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
+    "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
+    "Kompassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Module ond Versiona|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiera · JSON runterlada",
+    "Diagnose ond Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
+    "Kompassdesign|Design anwenda · Grafikgeometrie",
+    "Standort, Radia ond Kartastart|Standort · Radia · Aura · Kartainitialisierung",
+    "Blitz ond Warnunga|Blitzaufnahme · Warnanimation · Geräteorientierung",
+    "Cluster ond letzte Blitz|Cluster · Marker · Letzte-Liste · Navigation",
+    "Hauptrendering|Status · KPI · Lista · UI-Synchronisierung",
+    "Kompass|Bewegungsprofil · Animation · Rendering",
+    "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm"
+  ]
+});
+  const modulePresentation=(language,row)=>{
+    const index=MODULE_VIEW_IDS.indexOf(row?.id);
+    const table=MODULE_VIEW_META[language]||MODULE_VIEW_META.Deutsch;
+    const packed=index>=0?table?.[index]:null;
+    if(!packed)return {name:row?.function||row?.id||"—",functions:(row?.subfunctions||[]).join(" · ")||"—"};
+    const divider=packed.indexOf("|");
+    return divider<0
+      ? {name:packed,functions:(row?.subfunctions||[]).join(" · ")||"—"}
+      : {name:packed.slice(0,divider),functions:packed.slice(divider+1)||"—"};
+  };
 
 
   return {
@@ -69,7 +539,11 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             .gr-module-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
             .gr-module-close:focus-visible{outline:2px solid rgba(255,225,161,.92);outline-offset:1px;border-radius:9px}
             .gr-module-body{min-height:0;overflow:auto;padding:14px 16px 18px;overscroll-behavior:contain}
-            .gr-module-dialog .gr-mod-summary{margin-bottom:12px}
+            .gr-module-dialog .gr-mod-summary{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;margin-bottom:12px;padding:10px 11px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025);font-size:9px}
+            .gr-module-dialog .gr-mod-summary strong{font-size:11px;color:#e9edf3}
+            .gr-module-dialog .gr-mod-summary .gr-mod-state{font-weight:850}
+            .gr-module-dialog .gr-mod-summary .gr-mod-state[data-state="ok"]{color:#78d59b}
+            .gr-module-dialog .gr-mod-summary .gr-mod-state[data-state="warn"]{color:#e0b44f}
             .gr-module-dialog .gr-mod-group{margin-top:13px}
             .gr-module-dialog .gr-mod-group:first-of-type{margin-top:0}
             .gr-module-dialog .gr-mod-group-title{padding:0 3px 6px;color:#d6b45f;font-size:8.5px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
@@ -174,13 +648,13 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const title=document.createElement("strong");
       title.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
       const counts=document.createElement("span");
-      counts.textContent=this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`;
+      counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
       const state=document.createElement("span");
       state.className="gr-mod-state";
       state.dataset.state=issueCount?"warn":"ok";
       state.textContent=issueCount
-        ? `! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`
-        : `✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
+        ? `· ! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`
+        : `· ✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
       target.append(title,counts,state);
     },
 
@@ -214,7 +688,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         groupTitle.className="gr-mod-group-title";
         groupTitle.textContent=this._t?.(groupTranslationKey(group))||group;
         block.append(groupTitle);
-        for(const row of rows.sort((a,b)=>String(a.function).localeCompare(String(b.function),"de"))){
+        for(const row of rows.sort((a,b)=>modulePresentation(this._languageValue?.()||"Deutsch",a).name.localeCompare(modulePresentation(this._languageValue?.()||"Deutsch",b).name,this._locale?.()||"de"))){
           const item=document.createElement("details");
           item.className="gr-mod-row";
           item.dataset.moduleId=row.id;
@@ -224,8 +698,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           const head=document.createElement("summary");
           const heading=document.createElement("div");
           heading.className="gr-mod-heading";
+          const presentation=modulePresentation(this._languageValue?.()||"Deutsch",row);
           const name=document.createElement("span");
-          name.className="gr-mod-name";name.textContent=row.function||row.id;
+          name.className="gr-mod-name";name.textContent=presentation.name;
           const id=document.createElement("span");
           id.className="gr-mod-id";id.textContent=row.id;
           heading.append(name,id);
@@ -250,7 +725,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           appendDetail(this._t?.("modules.detail.expected")||"Expected",row.expectedVersion||"—");
           appendDetail(this._t?.("modules.detail.file")||"File",row.file||"—");
           appendDetail(this._t?.("modules.detail.loaded")||"Loaded",row.loadedAt||"—");
-          appendDetail(this._t?.("modules.detail.functions")||"Functions",(row.subfunctions||[]).join(" · ")||"—");
+          appendDetail(this._t?.("modules.detail.functions")||"Functions",presentation.functions);
 
           item.append(head,detail);
           block.append(item);
