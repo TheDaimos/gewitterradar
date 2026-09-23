@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.0",
+  version:"1.0.1",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -33,12 +33,127 @@ export function createBaseContext(rootModuleUrl){
   const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   const LEAFLET_CSS_URL = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
 
+  const CLUSTER_RESOLUTION_LABELS=Object.freeze({
+  "Deutsch": {
+    "early": "Früh",
+    "balanced": "Ausgewogen",
+    "late": "Spät",
+    "classic": "Klassisch · V4.07.56"
+  },
+  "English": {
+    "early": "Early",
+    "balanced": "Balanced",
+    "late": "Late",
+    "classic": "Classic · V4.07.56"
+  },
+  "Dansk": {
+    "early": "Tidlig",
+    "balanced": "Afbalanceret",
+    "late": "Sen",
+    "classic": "Klassisk · V4.07.56"
+  },
+  "Español": {
+    "early": "Temprano",
+    "balanced": "Equilibrado",
+    "late": "Tardío",
+    "classic": "Clásico · V4.07.56"
+  },
+  "Français": {
+    "early": "Précoce",
+    "balanced": "Équilibré",
+    "late": "Tardif",
+    "classic": "Classique · V4.07.56"
+  },
+  "Nederlands": {
+    "early": "Vroeg",
+    "balanced": "Gebalanceerd",
+    "late": "Laat",
+    "classic": "Klassiek · V4.07.56"
+  },
+  "Polski": {
+    "early": "Wcześnie",
+    "balanced": "Zrównoważone",
+    "late": "Późno",
+    "classic": "Klasyczne · V4.07.56"
+  },
+  "Português": {
+    "early": "Cedo",
+    "balanced": "Equilibrado",
+    "late": "Tarde",
+    "classic": "Clássico · V4.07.56"
+  },
+  "Svenska": {
+    "early": "Tidigt",
+    "balanced": "Balanserat",
+    "late": "Sent",
+    "classic": "Klassisk · V4.07.56"
+  },
+  "Italiano": {
+    "early": "Presto",
+    "balanced": "Bilanciato",
+    "late": "Tardi",
+    "classic": "Classico · V4.07.56"
+  },
+  "Norsk bokmål": {
+    "early": "Tidlig",
+    "balanced": "Balansert",
+    "late": "Sent",
+    "classic": "Klassisk · V4.07.56"
+  },
+  "Suomi": {
+    "early": "Aikaisin",
+    "balanced": "Tasapainoinen",
+    "late": "Myöhään",
+    "classic": "Klassinen · V4.07.56"
+  },
+  "Čeština": {
+    "early": "Brzy",
+    "balanced": "Vyvážené",
+    "late": "Pozdě",
+    "classic": "Klasické · V4.07.56"
+  },
+  "Ελληνικά": {
+    "early": "Νωρίς",
+    "balanced": "Ισορροπημένο",
+    "late": "Αργά",
+    "classic": "Κλασικό · V4.07.56"
+  },
+  "Magyar": {
+    "early": "Korán",
+    "balanced": "Kiegyensúlyozott",
+    "late": "Későn",
+    "classic": "Klasszikus · V4.07.56"
+  },
+  "Boarisch": {
+    "early": "Friah",
+    "balanced": "Ausg'wogn",
+    "late": "Spad",
+    "classic": "Klassisch · V4.07.56"
+  },
+  "Plattdüütsch": {
+    "early": "Fröh",
+    "balanced": "Utbalanseert",
+    "late": "Laat",
+    "classic": "Klassisch · V4.07.56"
+  },
+  "Sächs’sch": {
+    "early": "Frieh",
+    "balanced": "Ausgewogen",
+    "late": "Spät",
+    "classic": "Klassisch · V4.07.56"
+  },
+  "Schwäbisch": {
+    "early": "Friah",
+    "balanced": "Ausgwoga",
+    "late": "Schbäd",
+    "classic": "Klassisch · V4.07.56"
+  }
+});
+
   function getClusterResolutionProfileLabel(profile, language = 'Deutsch') {
-    const english = /^english$/i.test(String(language || '').trim());
-    const labels = english
-      ? { early:'Early', balanced:'Balanced', late:'Late', classic:'Classic · V4.07.56' }
-      : { early:'Früh', balanced:'Ausgewogen', late:'Spät', classic:'Klassisch · V4.07.56' };
-    return labels[profile] || labels.balanced;
+    const table = CLUSTER_RESOLUTION_LABELS[String(language || '').trim()]
+      || CLUSTER_RESOLUTION_LABELS.English;
+    return table[profile] || table.balanced;
   }
 
   function loadLeafletJs() {
@@ -5473,6 +5588,11 @@ export function createBaseContext(rootModuleUrl){
     ['Radien','settings.radii'],['Zusätzliche Test-Bedienung · synchron mit den Reglern der Hauptansicht','settings.radii_sub'],
     ['Auswertung','settings.evaluation'],['Animation · weißer Blitz','settings.animation_white'],['Animation · weiß + rot','settings.animation_white_red'],
     ['Sprache','settings.language'],['Anzeigesprache der App','settings.language_sub'],
+    ['Cluster-Auflösung','settings.cluster_resolution'],
+    ['Wann Cluster in Einzelblitze aufgelöst werden','settings.cluster_resolution_note'],
+    ['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session'],
+    ['5 - 3600 Sek.','settings.cluster_navigation_range'],
+    ['unendlich','settings.cluster_navigation_infinite'],
     ['Gewitterradar · Radius','keypad.kicker'],['Radius eingeben','keypad.enter_radius'],['Löschen','keypad.delete'],['Abbrechen','keypad.cancel'],['Übernehmen','keypad.apply']
   ]);
 
