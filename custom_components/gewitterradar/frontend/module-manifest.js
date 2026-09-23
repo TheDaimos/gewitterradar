@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -106,7 +106,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
