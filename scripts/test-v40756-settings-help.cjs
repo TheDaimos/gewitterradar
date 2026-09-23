@@ -177,7 +177,14 @@ const server = http.createServer((req, res) => {
         assert.equal(moduleOverlay.open, true, `${delivery}/${profile} module details open`);
         assert.equal(moduleOverlay.directShadowChild, true, `${delivery}/${profile} module overlay isolated from settings dialog`);
         assert.ok(moduleOverlay.width <= 660.5, `${delivery}/${profile} module details width`);
-        assert.ok(moduleOverlay.height <= 760.5, `${delivery}/${profile} module details height`);
+        if (['android-portrait','android-landscape'].includes(profile)) {
+          assert.ok(
+            moduleOverlay.height <= height - 13,
+            `${delivery}/${profile} module details mobile viewport height`,
+          );
+        } else {
+          assert.ok(moduleOverlay.height <= 760.5, `${delivery}/${profile} module details height`);
+        }
         assert.equal(moduleOverlay.overflow, false, `${delivery}/${profile} module details horizontal overflow`);
         assert.equal(moduleOverlay.rowOpenFirst, true, `${delivery}/${profile} module row opens`);
         assert.equal(moduleOverlay.rowClosedSecond, true, `${delivery}/${profile} module row closes again`);
