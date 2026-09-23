@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -119,7 +119,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -156,7 +156,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": ["Geladene Module", "Soll/Ist-Vergleich", "Versionsstatus", "Modul-Details", "Diagnose kopieren", "JSON herunterladen"],
@@ -214,7 +214,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -227,7 +227,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.render",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Oberfläche",
     "function": "Hauptrendering",
     "subfunctions": [
