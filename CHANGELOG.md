@@ -19,6 +19,8 @@
 - Keep canonical frontend, native integration delivery and Dashboard delivery byte-identical; refresh module manifest, deterministic contract and frontend SHA256 inventory.
 - Localize **all 22 Module Details entries end-to-end** across all 19 language variants: module display names and complete function lists now follow the active language while technical module IDs and file paths intentionally remain unchanged.
 - Fix the Module Details status header so application version, loaded-module count and consistency state are separated explicitly and keep their spacing after the overlay is reparented outside the Settings section.
+- Fix the **Standardansicht** custom dropdown lifecycle: closing Settings via backdrop, close control or accordion transition now always closes the detached startup-view dropdown and resets `aria-expanded`, preventing an orphaned menu from remaining above the map.
+- Add browser regression coverage for both **Settings backdrop close** and **accordion switch** while the Standardansicht dropdown is open.
 
 ### Modulversionen
 
@@ -26,7 +28,7 @@
 - `ui.skeleton` → **1.1.1**
 - `ui.i18n-settings` → **1.2.1**
 - `diagnostics.module-view` → **1.3.0**
-- `fullscreen.map-display` → **1.0.1**
+- `fullscreen.map-display` → **1.0.2**
 - `map.clusters-recent` → **1.0.1**
 - `ui.render` → **1.0.1**
 
