@@ -9,7 +9,7 @@ const i18nSettings=await readFile(resolve(root,'frontend/modules/ui/i18n-setting
 const baseContext=await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.0"',
+  '"version": "1.1.1"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -27,11 +27,11 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.2.1"',
+  'version:"1.2.2"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
-  'width:min(780px,calc(100vw - 32px))',
+  'width:min(660px,calc(100vw - 32px))',
   'if(backdrop)this.shadow.append(backdrop)',
   'id="settings-modules-backdrop"',
   '>Diagnose kopieren</button>',
@@ -55,14 +55,14 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.1.1"',
+  '"version": "1.2.0"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze('
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.1"',
+  'version:"1.0.2"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
@@ -73,6 +73,7 @@ for(const marker of [
 const registeredLanguages=['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'];
 const requiredSettingsKeys=[
   'settings.cluster_resolution','settings.cluster_resolution_note','settings.cluster_navigation_session','settings.cluster_navigation_range','settings.cluster_navigation_infinite',
+  'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
   'modules.title','modules.subtitle','modules.details','modules.kicker','modules.close','modules.copy','modules.download','modules.loaded','modules.consistent','modules.deviations',
   'modules.status.ok','modules.status.missing','modules.status.version_mismatch','modules.status.unexpected',
   'modules.group.other','modules.group.core','modules.group.fullscreen','modules.group.ui','modules.group.instruments','modules.group.diagnostics','modules.group.location','modules.group.map','modules.group.history',
