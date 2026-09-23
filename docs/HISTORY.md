@@ -179,7 +179,11 @@ Die Abschlusskorrekturen vom 23.09.2026 sichern insbesondere:
 - sofortige Neusynchronisierung der Kartendarstellungs-Texte beim Sprachwechsel;
 - die portugiesische Profilbezeichnung **„Tardia“** für die späte Cluster-Auflösung.
 
-Die Browserprüfung deckt Desktop, iPad, iPad Pro sowie Android Hoch-/Querformat ab und erzwingt zusätzlich, dass nichtenglische Sprachvarianten in diesem Bereich nicht still auf englische Texte zurückfallen. Der Moduldialog wird außerdem automatisiert mit dem Ablauf **öffnen → schließen → erneut öffnen** geprüft.
+Die Browserprüfung deckt Desktop, iPad, iPad Pro sowie Android Hoch-/Querformat ab und erzwingt zusätzlich, dass nichtenglische Sprachvarianten in diesem Bereich nicht still auf englische Texte zurückfallen.
+
+Nach der realen HA-Abnahme wurde noch ein zweiter Stabilisierungsschritt notwendig. Die Detailzeilen im Modulfenster konnten bei einzelnen Klicks durch eine gleichzeitig laufende UI-/Sprachsynchronisierung neu erzeugt werden. Die Liste besitzt deshalb jetzt eine Signatur aus Sprache und tatsächlichem Diagnoseinhalt und wird nur noch dann neu aufgebaut, wenn sich dieser Inhalt wirklich ändert. Normale Hintergrund-Renderläufe behalten dieselben `<details>`-Knoten. Der Browservertrag belastet dies mit zehn zusätzlichen Öffnen-/Schließen-Zyklen, während zwischen den Klicks ausdrücklich Modul- und Sprachsynchronisierung ausgeführt werden.
+
+Zusätzlich wurde der gesamte dynamische Mouse-over-/Attributpfad auditiert. Cluster-Auflösung und Cluster-Navigation, Standardansicht, separates Kartenfenster, Versionsverlauf, Kompassauswahl, Vollbild-Kompass/-Medaillon und Gerätekompass beziehen ihre `title`- und relevanten `aria-label`-Texte nun aus dem aktiven Sprachsatz. Die dafür ergänzten Schlüssel sind in allen **19 Sprachvarianten** Pflichtbestandteil des Vertrags; verbliebene hart codierte deutsche Cluster-Tooltips werden im Quellvertrag ausdrücklich abgewiesen.
 
 V4.10.02 bleibt während dieser Abschlussphase ein interner DEV-Stand. Installation und reale Abnahme erfolgen über den Deploy Relay Agent auf dem empfohlenen Kanal `deploy/dev`.
 
