@@ -36,27 +36,24 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – vollständig lokalisierte Modulansicht über DRA real abnehmen.**
+**M12 – aktuellen V4.10.02-DRA-Stand real auf HA DEV abnehmen.**
 
-Automatisiert vollständig geprüfter Code-/Test-Stand:
-- `dff8145bf6a724a43fd13798f2833480b8f7f72f`,
-- alle fünf CI-Gates grün,
-- **22/22 Module** besitzen einen eigenen lokalisierten Anzeigenamen und eine lokalisierte vollständige Funktionsliste in allen **19 Sprachvarianten**,
-- technische Modul-IDs und Dateipfade bleiben absichtlich unverändert,
-- Griechisch wird im Browservertrag für **alle 22 Modulnamen und Funktionslisten** auf tatsächlich griechischen Inhalt geprüft; die konkret beobachteten deutschen Resttexte sind als Regression verboten,
-- Kopfstatus im Modulfenster ist jetzt explizit in drei Segmente getrennt:
-  - Gewitterradar + Version,
-  - geladene Module,
-  - Versionskonsistenz,
-- `diagnostics.module-view` → **1.3.0**,
-- Modulstabilitäts- und Tooltip-Korrekturen aus Schleife 036 bleiben vollständig erhalten.
+Neu vollständig automatisiert geprüft:
+- Standardansicht-Dropdown schließt gemeinsam mit dem Einstellungsdialog,
+- Hintergrundklick kann kein verwaistes Dropdown mehr über der Karte stehen lassen,
+- Wechsel auf einen anderen Einstellungsabschnitt schließt das Dropdown ebenfalls,
+- `aria-expanded` wird zuverlässig auf `false` zurückgesetzt,
+- Modulversionen:
+  - `fullscreen.map-display 1.0.2`,
+  - `ui.controls 1.1.2`,
+- Code-/Test-Head `a688ff38d18b90b38db88d586b217e1112347cde`: alle fünf Gates grün.
 
-Nach dem finalen Dokumentations-Gate:
-1. dokumentierten Head auf `deploy/dev` promoten,
-2. DRA-Vorschau aktualisieren und installieren,
-3. Griechisch im Modulfenster vollständig prüfen: Gruppen, alle Modulnamen, alle Funktionslisten, Statuslabels und Kopfstatus,
-4. stichprobenartig weitere Sprachen gegen gemischte Modulmetadaten prüfen,
-5. danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
+Nach Promotion des dokumentierten Heads auf `deploy/dev`:
+1. über DRA installieren,
+2. Einstellungen → Kartendarstellung → Standardansicht öffnen,
+3. bei geöffnetem Dropdown auf den Einstellungs-Hintergrund klicken; Einstellungen und Dropdown müssen gemeinsam verschwinden,
+4. Dropdown erneut öffnen und einen anderen Akkordeonabschnitt öffnen; Dropdown muss ebenfalls verschwinden,
+5. anschließend M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
 
 ---
 
@@ -1427,3 +1424,41 @@ Alle fünf Gates grün:
 - Source archive contract.
 
 **Nächster Schritt:** finalen Dokumentations-Head vollständig gaten und anschließend exakt diesen Stand auf `deploy/dev` promoten.
+
+
+## Schleife 038 – Standardansicht-Dropdown an Einstellungs-Lifecycle gebunden
+
+**Datum:** 2026-09-23  
+**Status:** Code/Test vollständig grün; finaler Dokumentations-Head wird gegatet und danach auf `deploy/dev` promotet
+
+Realer Befund:
+- **Standardansicht**-Dropdown geöffnet,
+- Klick außerhalb bzw. auf den Einstellungs-Hintergrund schloss den Einstellungsdialog,
+- das separat positionierte Dropdown blieb danach sichtbar über der Karte stehen.
+
+Ursache:
+- die Standardansicht-Auswahl wird im Modul `fullscreen.map-display` als frei positioniertes Custom-Dropdown verwaltet,
+- die Einstellungs-Schließlogik in `ui.controls` kannte bisher nur Sprache, Cluster-Auflösung, Standort und Radius-Ziffernblock,
+- damit fehlte der Standardansicht ein expliziter gemeinsamer Lifecycle-Pfad beim Schließen des Settings-Backdrops.
+
+Korrektur:
+- `fullscreen.map-display` → **1.0.2**,
+- zentrale Methode `_closeMapStartupDropdown(returnFocus)`,
+- Teardown schließt die Standardansicht ebenfalls,
+- `ui.controls` → **1.1.2**,
+- Settings öffnen/schließen, Hintergrundklick sowie Ein-/Ausklappen bzw. Wechsel eines Akkordeonabschnitts schließen das Dropdown explizit,
+- `aria-expanded` wird gleichzeitig zurückgesetzt.
+
+Regression:
+- Browserprüfung öffnet Einstellungen und Standardansicht,
+- bestätigt den geöffneten Zustand,
+- klickt den Settings-Backdrop und verlangt anschließend **Settings geschlossen + Dropdown geschlossen + aria-expanded=false**,
+- öffnet Einstellungen und Dropdown erneut,
+- wechselt auf **Radien** und verlangt ebenfalls **Dropdown geschlossen + aria-expanded=false**,
+- Prüfung läuft in beiden Auslieferungen und allen Geräteprofilen der bestehenden Browsermatrix.
+
+Geprüfter Code-/Test-Head:
+- `a688ff38d18b90b38db88d586b217e1112347cde`,
+- alle fünf Gates grün.
+
+**Nächster Schritt:** dokumentierten Head vollständig gaten und danach exakt auf `deploy/dev` promoten.
