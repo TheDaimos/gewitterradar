@@ -36,24 +36,26 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – aktuellen V4.10.02-DRA-Stand real auf HA DEV abnehmen.**
+**M12 – verbleibende reale DRA-Ende-zu-Ende-Fälle abnehmen.**
 
-Neu vollständig automatisiert geprüft:
-- Standardansicht-Dropdown schließt gemeinsam mit dem Einstellungsdialog,
-- Hintergrundklick kann kein verwaistes Dropdown mehr über der Karte stehen lassen,
-- Wechsel auf einen anderen Einstellungsabschnitt schließt das Dropdown ebenfalls,
-- `aria-expanded` wird zuverlässig auf `false` zurückgesetzt,
-- Modulversionen:
-  - `fullscreen.map-display 1.0.2`,
-  - `ui.controls 1.1.2`,
-- Code-/Test-Head `a688ff38d18b90b38db88d586b217e1112347cde`: alle fünf Gates grün.
+Reale UI-Abnahmen inzwischen bestätigt:
+- fremdsprachige Modulansicht vollständig korrekt,
+- Standardansicht-Dropdown-Lifecycle vollständig getestet:
+  - Klick auf den Einstellungs-Hintergrund schließt Einstellungen und Dropdown gemeinsam,
+  - Wechsel auf einen anderen Einstellungsabschnitt schließt das Dropdown ebenfalls,
+  - kein verwaister Dropdown-Layer mehr über der Karte.
 
-Nach Promotion des dokumentierten Heads auf `deploy/dev`:
-1. über DRA installieren,
-2. Einstellungen → Kartendarstellung → Standardansicht öffnen,
-3. bei geöffnetem Dropdown auf den Einstellungs-Hintergrund klicken; Einstellungen und Dropdown müssen gemeinsam verschwinden,
-4. Dropdown erneut öffnen und einen anderen Akkordeonabschnitt öffnen; Dropdown muss ebenfalls verschwinden,
-5. anschließend M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
+Damit ist der zuletzt offene gezielte UI-Punkt aus Schleife 038 real abgeschlossen.
+
+Als Nächstes M12 in dieser Reihenfolge:
+1. Deployment nur eines geänderten Moduls,
+2. Browsercache-/Mischstand real prüfen,
+3. veraltetes Modul real erkennen,
+4. fehlendes Modul real erkennen,
+5. Rollback auf `deploy/v4.09`,
+6. anschließend wieder sauber auf aktuellen `deploy/dev` zurückkehren.
+
+Erst danach folgt die kompakte M13-Endabnahme und das formale Schließen der Modularisierung.
 
 ---
 
@@ -1481,3 +1483,23 @@ Bewertung:
 - M13 **Einstellungen** bleibt insgesamt noch offen, weil die vollständige Einstellungsregression mehr als nur die Modulansicht umfasst.
 
 **Nächster realer UI-Punkt:** Standardansicht-Dropdown aus Schleife 038 prüfen; anschließend M12-DRA-Restfälle fortsetzen.
+
+
+## Schleife 040 – Standardansicht-Dropdown real vollständig abgenommen
+
+**Datum:** 2026-09-23  
+**Status:** real auf HA DEV bestätigt
+
+Reale Nutzerabnahme:
+- Standardansicht-Dropdown geöffnet,
+- Klick auf den Einstellungs-Hintergrund schließt **Einstellungen und Dropdown gemeinsam**,
+- Dropdown erneut geöffnet,
+- Wechsel auf einen anderen Einstellungsabschnitt schließt das Dropdown ebenfalls,
+- kein verwaister Dropdown-Layer bleibt über der Karte stehen.
+
+Bewertung:
+- der Lifecycle-Fix aus Schleife 038 ist real bestätigt,
+- Punkt 1 der abschließenden UI-Abnahme ist damit vollständig abgeschlossen,
+- für diesen Fehler ist keine weitere Korrektur offen.
+
+**Nächster Schritt:** M12-DRA-Restfälle real abarbeiten: Einzelmodul-Delta, Cache-/Mischstand, veraltet, fehlend, Rollback und Rückkehr auf aktuellen DEV-Stand.
