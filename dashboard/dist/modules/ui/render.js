@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.render",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Oberfläche",
   "function": "Hauptrendering",
   "subfunctions": [
@@ -23,6 +23,11 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       if(this._diagnostics.enabled){if(!Number.isFinite(this._diagnosticTimings.firstRenderStartAt)){this._diagnosticTimings.firstRenderStartAt=performance.now();requestAnimationFrame(()=>{if(this._diagnostics.enabled&&!Number.isFinite(this._diagnosticTimings.firstRenderCompleteAt))this._diagnosticTimings.firstRenderCompleteAt=performance.now();});}this._diagnostics.renderCount+=1;}
       const now = Date.now();
       const $ = (id) => this.shadow.getElementById(id);
+      const versionBadge = $('app-version-badge');
+      if (versionBadge) {
+        versionBadge.setAttribute('title',this._t('app.release_history'));
+        versionBadge.setAttribute('aria-label',this._t('app.release_history_open'));
+      }
       this._syncMapDisplayUi();
 
       const language = this._languageValue();
@@ -346,9 +351,10 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       const clusterResolutionLabel = getClusterResolutionProfileLabel(clusterResolutionProfile,this._languageValue?.() || 'Deutsch');
       if (settingsClusterResolutionCurrent) settingsClusterResolutionCurrent.textContent = clusterResolutionLabel;
       if (settingsClusterResolutionButton) {
-        settingsClusterResolutionButton.setAttribute('aria-label','Cluster-Auflösung auswählen');
-        settingsClusterResolutionButton.setAttribute('title',`Cluster-Auflösung · ${clusterResolutionLabel}`);
+        settingsClusterResolutionButton.setAttribute('aria-label',this._t('settings.cluster_resolution_select'));
+        settingsClusterResolutionButton.setAttribute('title',`${this._t('settings.cluster_resolution')} · ${clusterResolutionLabel}`);
       }
+      $('cluster-resolution-dropdown')?.setAttribute('aria-label',this._t('settings.cluster_resolution_select'));
       if ($('cluster-resolution-dropdown')?.classList.contains('open')) {
         $('cluster-resolution-dropdown').querySelectorAll('[data-cluster-resolution-profile]').forEach((option) => {
           const selected = option.dataset.clusterResolutionProfile === clusterResolutionProfile;
@@ -369,7 +375,13 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       }
       settingsClusterJumpSelector?.classList.toggle('is-infinite',clusterJumpInfinite);
       settingsClusterJumpSelector?.setAttribute('data-mode',clusterJumpInfinite ? 'infinite' : 'finite');
-      settingsClusterJumpInfinite?.setAttribute('aria-pressed',clusterJumpInfinite ? 'true' : 'false');
+      settingsClusterJumpSelector?.setAttribute('aria-label',this._t('settings.cluster_navigation_session_aria'));
+      settingsClusterJumpSeconds?.setAttribute('aria-label',this._t('settings.cluster_navigation_seconds_aria'));
+      if (settingsClusterJumpInfinite) {
+        settingsClusterJumpInfinite.setAttribute('aria-pressed',clusterJumpInfinite ? 'true' : 'false');
+        settingsClusterJumpInfinite.setAttribute('aria-label',this._t('settings.cluster_navigation_infinite_aria'));
+        settingsClusterJumpInfinite.setAttribute('title',this._t('settings.cluster_navigation_infinite'));
+      }
 
       // Popup-Radien spiegeln die aktuellen HA-Helfer einschließlich ihrer
       // dynamischen Grenzen: Gefahr <= Gewitter <= Beobachtung.
@@ -440,6 +452,11 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       const deviceMode = this._hass.states[this._deviceOrientationEntity()]?.state === 'on';
       const deviceToggle = $('device-toggle');
       deviceToggle?.classList.toggle('active',deviceMode);
+      if (deviceToggle) {
+        const deviceTitle=this._t('compass.fixed_compass_title');
+        deviceToggle.setAttribute('title',deviceTitle);
+        deviceToggle.setAttribute('aria-label',`${this._t('compass.device')}: ${deviceTitle}`);
+      }
       if (deviceMode) this._startOrientationListeners();
 
       const mapGrouped = this._hass.states[this._mapGroupingEntity()]?.state !== 'off';
