@@ -30,7 +30,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.2.3"',
+  'version:"1.3.0"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -45,7 +45,10 @@ for(const marker of [
   '"modules.title"',
   '"modules.detail.functions"',
   '_moduleListSignature(result)',
-  'list.dataset.moduleSignature!==signature'
+  'list.dataset.moduleSignature!==signature',
+  'const MODULE_VIEW_IDS=Object.freeze(',
+  'const MODULE_VIEW_META=Object.freeze(',
+  'const modulePresentation=(language,row)=>'
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
@@ -134,6 +137,32 @@ const clusterResolutionLabels=extractFrozenJson(
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   ');\n\n  function getClusterResolutionProfileLabel'
 );
+const moduleViewIds=extractFrozenJson(
+  moduleView,
+  'const MODULE_VIEW_IDS=Object.freeze(',
+  ');\n  const MODULE_VIEW_META'
+);
+const moduleViewMeta=extractFrozenJson(
+  moduleView,
+  'const MODULE_VIEW_META=Object.freeze(',
+  ');\n  const modulePresentation'
+);
+if(moduleViewIds.length!==22)throw Error('Unexpected module-view metadata id count');
+if(Object.keys(moduleViewMeta).length!==registeredLanguages.length)throw Error('Unexpected module-view language count');
+for(const language of registeredLanguages){
+  const entries=moduleViewMeta[language];
+  if(!Array.isArray(entries)||entries.length!==moduleViewIds.length)throw Error('Incomplete module-view locale: '+language);
+  for(let index=0;index<entries.length;index+=1){
+    const entry=String(entries[index]||'');
+    const divider=entry.indexOf('|');
+    if(divider<=0||!entry.slice(divider+1).trim())throw Error('Invalid module-view locale entry: '+language+' / '+moduleViewIds[index]);
+  }
+}
+for(const entry of moduleViewMeta['Ελληνικά']){
+  const [name,functions]=String(entry).split(/\|(.+)/).filter(Boolean);
+  if(!/[\u0370-\u03ff\u1f00-\u1fff]/u.test(name||''))throw Error('Greek module name lacks Greek text: '+entry);
+  if(!/[\u0370-\u03ff\u1f00-\u1fff]/u.test(functions||''))throw Error('Greek module functions lack Greek text: '+entry);
+}
 for(const language of registeredLanguages){
   const settingsBundle=settingsUiTranslations[language];
   if(!settingsBundle)throw Error('Missing settings UI language: '+language);
