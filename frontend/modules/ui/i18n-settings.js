@@ -1044,6 +1044,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         const profile=this._clusterResolutionProfileV40822||'balanced';
         clusterCurrent.textContent=getClusterResolutionProfileLabel(profile,this._languageValue());
       }
+      this._syncMapDisplayUi?.();
       this._syncModuleTranslations?.();
       if(this.shadow.getElementById('settings-modules-section')?.open)this._syncModuleView?.();
 
