@@ -6,7 +6,7 @@ const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/modul
 const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.0.2"',
+  '"version": "1.0.3"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
