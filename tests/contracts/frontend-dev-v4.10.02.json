@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "33d83510a6e7045d6b4616980402b3b1c07257047e8f5368bfbab694bb0e1db4",
+      "sha256": "01781abc619f40ad9bd5421c513f6d57769feba931f5865ba9a8ec0310900048",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -35,20 +35,20 @@
       "sizeBytes": 34300
     },
     "modules/ui/skeleton.js": {
-      "sha256": "d8f271ab852a3d863c33a386e9cd89edbc04885670cf9392d2e391fb22020ced",
-      "sizeBytes": 420727
+      "sha256": "ec26350f5ee6f9db29ffd924610ad08f9b194bf2f35307a97a9be8633689a086",
+      "sizeBytes": 421326
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "7c9d8881b36ebebdf5fd8c33904939f0269159ccaffba717c0cb2106b736bdec",
       "sizeBytes": 16917
     },
     "modules/ui/controls.js": {
-      "sha256": "8028e7c825828511454a4673f8f6b57703d9bfbb9290a977037675ef464affc9",
-      "sizeBytes": 182457
+      "sha256": "1286078df6983b1234de7afd0da1d7a42d6d72bcceb71e28055c20a121cca0b2",
+      "sizeBytes": 182682
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "4ac22e313064d5ee405d4b0740755bf4f461359b17e00ff344d7d989963e45b2",
-      "sizeBytes": 122279
+      "sha256": "b0e3fb4ddcc03ac2ec5d65b6c16aabadcc52964abfb9596271bb69910f8e5b77",
+      "sizeBytes": 155654
     },
     "modules/core/source-status.js": {
       "sha256": "d3f20890ea1cc1d77d7c8c8b477ad60df3f44ded165dc458c56cc40ff8fdb1c3",
@@ -59,8 +59,8 @@
       "sizeBytes": 13610
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "d1a3bd948f23854129d566bb64dabf792e883c8842d64cf23fb0fa68acf31bbd",
-      "sizeBytes": 17134
+      "sha256": "233925a29ab84bd9b3a4aba530386ebc8e14c70f462d74d563ef172d6ebbe724",
+      "sizeBytes": 19431
     },
     "modules/diagnostics/cockpit.js": {
       "sha256": "884a18dd7ea05d822179038f6917878d8345427044ebf1475c1e5cd97bb05200",
@@ -95,8 +95,8 @@
       "sizeBytes": 39342
     },
     "modules/core/base-context.js": {
-      "sha256": "54e31e8c49ae9499b322ea54c65826effa258baf1d618946724c49f262e40da9",
-      "sizeBytes": 1024228
+      "sha256": "229fb81ba8714652b7e33ddf72e4a1a8f5708363cea190401891fc0a5ec4ff14",
+      "sizeBytes": 1027069
     }
   }
 }
