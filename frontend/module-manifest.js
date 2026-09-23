@@ -119,7 +119,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
