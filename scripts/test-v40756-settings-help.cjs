@@ -239,6 +239,12 @@ const server = http.createServer((req, res) => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
             const resolutionRow = root.getElementById('settings-cluster-resolution-button')?.closest('.settings-row');
             const navigationRow = root.getElementById('settings-cluster-jump-selector')?.closest('.settings-row');
+            const localizedModuleRows = [...root.querySelectorAll('#settings-modules-list .gr-mod-row')].map((item) => ({
+              id:item.dataset.moduleId || '',
+              name:item.querySelector('.gr-mod-name')?.textContent?.trim() || '',
+              functions:item.querySelector('.gr-mod-detail dd:last-child')?.textContent?.trim() || '',
+            }));
+            const moduleSummaryParts = [...root.getElementById('settings-modules-dialog-summary')?.children || []].map((item) => item.textContent?.trim() || '');
             translations.push({
               language,
               values:Object.fromEntries(keys.map((key) => [key,card._t(key)])),
@@ -265,6 +271,8 @@ const server = http.createServer((req, res) => {
               tooltipMapWindowOpen:root.getElementById('settings-map-window-open')?.getAttribute('title') || '',
               tooltipMedallionMove:root.getElementById('map-medallion-overlay')?.getAttribute('title') || '',
               tooltipDevice:root.getElementById('device-toggle')?.getAttribute('title') || '',
+              localizedModuleRows,
+              moduleSummaryParts,
             });
           }
           card._languagePreview = '';
@@ -336,6 +344,21 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,row.values['map.medallion_move'],delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
+          assert.equal(row.localizedModuleRows.length,22,delivery+'/'+profile+' '+row.language+' all module rows localized');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,22,delivery+'/'+profile+' '+row.language+' unique localized module ids');
+          assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
+          assert.equal(row.moduleSummaryParts.length,3,delivery+'/'+profile+' '+row.language+' module summary segments');
+          assert.ok(row.moduleSummaryParts[1]?.startsWith('· '),delivery+'/'+profile+' '+row.language+' module summary count separator');
+          assert.ok(row.moduleSummaryParts[2]?.startsWith('· '),delivery+'/'+profile+' '+row.language+' module summary state separator');
+          if (row.language === 'Ελληνικά') {
+            const greek = /[\u0370-\u03ff\u1f00-\u1fff]/u;
+            assert.equal(row.localizedModuleRows.every((entry) => greek.test(entry.name)),true,delivery+'/'+profile+' Greek module names fully localized');
+            assert.equal(row.localizedModuleRows.every((entry) => greek.test(entry.functions)),true,delivery+'/'+profile+' Greek module functions fully localized');
+            const greekText = row.localizedModuleRows.map((entry) => entry.name+' '+entry.functions).join(' | ');
+            for (const forbidden of ['Diagnose & Kalibrierung','Module & Versionen','Kompass-Skala','Virtuelles Gewitter','Geladene Module','Soll/Ist-Vergleich','Bewegungsprofil','Trendberechnung']) {
+              assert.equal(greekText.includes(forbidden),false,delivery+'/'+profile+' Greek module view contains no German metadata: '+forbidden);
+            }
+          }
         }
         assert.equal(modularSettings.diagnosticClosedByModules,true,delivery+'/'+profile+' modules participates in accordion');
         assert.equal(modularSettings.modulesClosedByMap,true,delivery+'/'+profile+' existing accordion section closes modules');
