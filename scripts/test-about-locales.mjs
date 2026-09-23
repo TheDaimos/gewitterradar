@@ -70,6 +70,11 @@ for (const {value: language} of model.languages) assert.deepEqual(clone(model.re
 console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} invalid schema/runtime mutations; strict validation rejects every incomplete bundle.`);
 
 const i18nModuleSource = await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
+const settingsTranslationsPrefix = 'const SETTINGS_UI_TRANSLATIONS=Object.freeze(';
+const settingsTranslationsStart = i18nModuleSource.indexOf(settingsTranslationsPrefix);
+const settingsTranslationsEnd = i18nModuleSource.indexOf(');\nexport const installI18nSettings',settingsTranslationsStart);
+if (settingsTranslationsStart < 0 || settingsTranslationsEnd < 0) throw Error('Settings UI translation registry missing');
+const settingsUiTranslations = JSON.parse(i18nModuleSource.slice(settingsTranslationsStart + settingsTranslationsPrefix.length,settingsTranslationsEnd));
 const i18nContext = {};
 const executableI18nModule = i18nModuleSource
   .replace(/^import\s+.*;\s*$/gm,'')
@@ -100,7 +105,9 @@ for (const {value: language} of model.languages) {
   const table = model.app[language]?.strings || fallback;
   for (const key of new Set([...Object.keys(table),...Object.keys(fallback),...Object.keys(model.app.Deutsch.strings)])) {
     if (key.startsWith('about.')) continue;
-    assert.equal(card._t(key),String(table[key] ?? fallback[key] ?? model.app.Deutsch.strings[key] ?? key),language+': '+key);
+    const extra = settingsUiTranslations[language] || settingsUiTranslations[model.defaultLanguage] || {};
+    const extraFallback = settingsUiTranslations[model.defaultLanguage] || {};
+    assert.equal(card._t(key),String(extra[key] ?? table[key] ?? extraFallback[key] ?? fallback[key] ?? model.app.Deutsch.strings[key] ?? key),language+': '+key);
     appChecks++;
   }
 }
