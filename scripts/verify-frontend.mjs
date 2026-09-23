@@ -7,6 +7,9 @@ const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'u
 const controls=await readFile(resolve(root,'frontend/modules/ui/controls.js'),'utf8');
 const i18nSettings=await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
 const baseContext=await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8');
+const render=await readFile(resolve(root,'frontend/modules/ui/render.js'),'utf8');
+const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-display.js'),'utf8');
+const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-recent.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
   '"version": "1.1.1"',
@@ -27,7 +30,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.2.2"',
+  'version:"1.2.3"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -40,7 +43,9 @@ for(const marker of [
   'this._registerSettingsAccordionSection?.(section)',
   '_syncModuleTranslations',
   '"modules.title"',
-  '"modules.detail.functions"'
+  '"modules.detail.functions"',
+  '_moduleListSignature(result)',
+  'list.dataset.moduleSignature!==signature'
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
@@ -55,11 +60,40 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.2.0"',
+  '"version": "1.2.1"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()'
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "ui.render"','"version": "1.0.1"',
+  "this._t('app.release_history')",
+  "this._t('settings.cluster_resolution_select')",
+  "this._t('settings.cluster_navigation_session_aria')"
+]){
+  if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "fullscreen.map-display"','"version": "1.0.1"',
+  "this._t('compass.picker_title')",
+  "this._t('compass.picker_change')",
+  "this._t('map.medallion_move')",
+  "this._t('settings.map_startup_select')"
+]){
+  if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "map.clusters-recent"','"version": "1.0.1"',
+  "this._t('settings.cluster_navigation_to_session')",
+  "this._t('settings.cluster_navigation_to_infinite')"
+]){
+  if(!clustersRecent.includes(marker))throw Error('Cluster hover contract missing: '+marker);
+}
+for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clustersRecent,'clusters-recent']]){
+  for(const forbidden of ['Cluster-Auflösung auswählen','Cluster-Auflösung ·','Zur Sitzungszeit wechseln','Auf unbegrenzt wechseln',' · verschieben']){
+    if(source.includes(forbidden))throw Error('Hard-coded German tooltip remains in '+label+': '+forbidden);
+  }
 }
 for(const marker of [
   'id:"core.base-context"',
@@ -74,7 +108,9 @@ for(const marker of [
 const registeredLanguages=['Deutsch','English','Dansk','Español','Français','Nederlands','Polski','Português','Svenska','Italiano','Norsk bokmål','Suomi','Čeština','Ελληνικά','Magyar','Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'];
 const requiredSettingsKeys=[
   'settings.cluster_resolution','settings.cluster_resolution_note','settings.cluster_navigation_session','settings.cluster_navigation_range','settings.cluster_navigation_infinite',
-  'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
+  'settings.cluster_resolution_select','settings.cluster_navigation_session_aria','settings.cluster_navigation_seconds_aria','settings.cluster_navigation_infinite_aria','settings.cluster_navigation_to_session','settings.cluster_navigation_to_infinite',
+  'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_startup_select','settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
+  'app.release_history','app.release_history_open','map.medallion_move','compass.picker_title','compass.picker_change',
   'modules.title','modules.subtitle','modules.details','modules.kicker','modules.close','modules.copy','modules.download','modules.loaded','modules.consistent','modules.deviations',
   'modules.status.ok','modules.status.missing','modules.status.version_mismatch','modules.status.unexpected',
   'modules.group.other','modules.group.core','modules.group.fullscreen','modules.group.ui','modules.group.instruments','modules.group.diagnostics','modules.group.location','modules.group.map','modules.group.history',
