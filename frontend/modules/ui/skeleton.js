@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5965,6 +5965,48 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           @media(max-width:520px) and (orientation:portrait) {
             #settings-map-window-open { width:122px;min-width:122px;max-width:122px;margin-right:16px;font-size:10.5px; }
+          }
+
+          /* V4.10.02 – Settings-Scrollvertrag:
+             Genau ein vertikaler Scroller im Einstellungsdialog. Aufgeklappte
+             Bereiche wachsen vollständig in .settings-body hinein; damit können
+             iPad/WebKit und Android auch sehr hohe Bereiche zuverlässig bis zum
+             letzten Bedienelement erreichen. Historische innere Accordion- und
+             Radien-Scroller werden hier bewusst neutralisiert. */
+          .settings-body {
+            overflow-y:auto!important;
+            overflow-x:hidden!important;
+            overscroll-behavior-y:contain;
+            touch-action:pan-y;
+            -webkit-overflow-scrolling:touch;
+            scroll-padding-top:10px;
+            scroll-padding-bottom:72px;
+          }
+          .settings-collapsible[open] > .settings-section-content,
+          #settings-radii-section[open] > .settings-radius-list {
+            max-height:none!important;
+            overflow:visible!important;
+            overscroll-behavior:visible!important;
+            -webkit-overflow-scrolling:auto!important;
+            scrollbar-gutter:auto!important;
+            touch-action:auto!important;
+          }
+          #settings-radii-section[open] > .settings-radius-list {
+            padding-bottom:10px!important;
+            scroll-padding-bottom:0!important;
+          }
+
+          /* Kartendarstellung: Cluster-Navigation optisch vom äußeren
+             Bereichsrahmen lösen, ohne die Control-Geometrie zu verändern. */
+          #settings-map-section[open] > .settings-section-content {
+            padding-top:3px;
+            padding-bottom:4px;
+          }
+          #settings-map-section .settings-cluster-session-selector {
+            margin-right:6px;
+          }
+          @media(max-width:520px) {
+            #settings-map-section .settings-cluster-session-selector { margin-right:4px; }
           }
         </style>
 
