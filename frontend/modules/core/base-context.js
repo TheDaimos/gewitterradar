@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41002";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.1",
+  version:"1.0.2",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -79,7 +79,7 @@ export function createBaseContext(rootModuleUrl){
   "Português": {
     "early": "Cedo",
     "balanced": "Equilibrado",
-    "late": "Tarde",
+    "late": "Tardia",
     "classic": "Clássico · V4.07.56"
   },
   "Svenska": {
