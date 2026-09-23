@@ -141,7 +141,7 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.match(metrics.signatureFilter, /sepia|drop-shadow/);
 
-        const moduleOverlay = await page.evaluate(() => {
+        const moduleOverlay = await page.evaluate(async () => {
           const card = window.aboutCard;
           const root = card.shadowRoot;
           const section = root.getElementById('settings-modules-section');
@@ -150,20 +150,38 @@ const server = http.createServer((req, res) => {
           const backdrop = root.getElementById('settings-modules-backdrop');
           const dialog = backdrop.querySelector('.gr-module-dialog');
           const head = backdrop.querySelector('.gr-module-head');
+          const waitFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const row = () => backdrop.querySelector('.gr-mod-row');
+          const clickRow = async () => {
+            row()?.querySelector('summary')?.click();
+            await waitFrame();
+            return !!row()?.open;
+          };
+          const rowOpenFirst = await clickRow();
+          const rowClosedSecond = !(await clickRow());
+          const rowOpenThird = await clickRow();
           const rect = dialog.getBoundingClientRect();
           return {
             open: backdrop.classList.contains('open'),
             directShadowChild: backdrop.parentNode === root,
             width: rect.width,
+            height: rect.height,
             overflow: dialog.scrollWidth > dialog.clientWidth,
             dialogBackground: getComputedStyle(dialog).backgroundImage,
             headBackground: getComputedStyle(head).backgroundImage,
+            rowOpenFirst,
+            rowClosedSecond,
+            rowOpenThird,
           };
         });
         assert.equal(moduleOverlay.open, true, `${delivery}/${profile} module details open`);
         assert.equal(moduleOverlay.directShadowChild, true, `${delivery}/${profile} module overlay isolated from settings dialog`);
-        assert.ok(moduleOverlay.width <= 780.5, `${delivery}/${profile} module details width`);
+        assert.ok(moduleOverlay.width <= 660.5, `${delivery}/${profile} module details width`);
+        assert.ok(moduleOverlay.height <= 760.5, `${delivery}/${profile} module details height`);
         assert.equal(moduleOverlay.overflow, false, `${delivery}/${profile} module details horizontal overflow`);
+        assert.equal(moduleOverlay.rowOpenFirst, true, `${delivery}/${profile} module row opens`);
+        assert.equal(moduleOverlay.rowClosedSecond, true, `${delivery}/${profile} module row closes again`);
+        assert.equal(moduleOverlay.rowOpenThird, true, `${delivery}/${profile} module row reopens repeatedly`);
         assert.match(moduleOverlay.dialogBackground, /rgb\(20, 28, 38\)|rgb\(7, 12, 18\)/);
         assert.match(moduleOverlay.headBackground, /rgb\(17, 23, 32\)|rgb\(14, 20, 28\)/);
         await page.evaluate(() => window.aboutCard._closeModuleDetails());
@@ -178,6 +196,8 @@ const server = http.createServer((req, res) => {
             'settings.cluster_navigation_session',
             'settings.cluster_navigation_range',
             'settings.cluster_navigation_infinite',
+            'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last',
+            'settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
             'modules.title','modules.subtitle','modules.details','modules.copy','modules.download'
           ];
           const translations = [];
@@ -194,6 +214,13 @@ const server = http.createServer((req, res) => {
               resolutionTitle:resolutionRow?.querySelector('.settings-row-label > div:first-child')?.textContent?.trim() || '',
               navigationTitle:navigationRow?.querySelector('.settings-row-label > div:first-child')?.textContent?.trim() || '',
               moduleTitle:root.getElementById('settings-modules-title')?.textContent?.trim() || '',
+              mapTitle:root.getElementById('settings-map-section-title')?.textContent?.trim() || '',
+              mapSubtitle:root.getElementById('settings-map-section-sub')?.textContent?.trim() || '',
+              mapStartupLabel:root.getElementById('settings-map-startup-label')?.textContent?.trim() || '',
+              mapStartupNote:root.getElementById('settings-map-startup-note')?.textContent?.trim() || '',
+              mapWindowLabel:root.getElementById('settings-map-window-label')?.textContent?.trim() || '',
+              mapWindowNote:root.getElementById('settings-map-window-note')?.textContent?.trim() || '',
+              mapWindowOpen:root.getElementById('settings-map-window-open')?.textContent?.trim() || '',
               currentProfile:root.getElementById('settings-cluster-resolution-current')?.textContent?.trim() || '',
             });
           }
@@ -224,13 +251,30 @@ const server = http.createServer((req, res) => {
             chevronTiming:chevron.transitionTimingFunction,
           };
         });
+        const englishSettings = modularSettings.translations.find((row) => row.language === 'English')?.values || {};
+        const mapLocaleKeys = [
+          'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last',
+          'settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria'
+        ];
         for (const row of modularSettings.translations) {
           for (const [key,value] of Object.entries(row.values)) {
             assert.ok(value && value !== key, delivery+'/'+profile+' '+row.language+' '+key+' translated');
           }
+          if (row.language !== 'English') {
+            for (const key of mapLocaleKeys) {
+              assert.notEqual(row.values[key], englishSettings[key], delivery+'/'+profile+' '+row.language+' '+key+' must not fall back to English');
+            }
+          }
           assert.equal(row.resolutionTitle,row.values['settings.cluster_resolution'],delivery+'/'+profile+' '+row.language+' cluster resolution title');
           assert.equal(row.navigationTitle,row.values['settings.cluster_navigation_session'],delivery+'/'+profile+' '+row.language+' cluster navigation title');
           assert.equal(row.moduleTitle,row.values['modules.title'],delivery+'/'+profile+' '+row.language+' modules title');
+          assert.equal(row.mapTitle,row.values['settings.map_display'],delivery+'/'+profile+' '+row.language+' map display title');
+          assert.equal(row.mapSubtitle,row.values['settings.map_display_sub'],delivery+'/'+profile+' '+row.language+' map display subtitle');
+          assert.equal(row.mapStartupLabel,row.values['settings.map_startup'],delivery+'/'+profile+' '+row.language+' map startup label');
+          assert.equal(row.mapStartupNote,row.values['settings.map_startup_note'],delivery+'/'+profile+' '+row.language+' map startup note');
+          assert.equal(row.mapWindowLabel,row.values['settings.map_window'],delivery+'/'+profile+' '+row.language+' map window label');
+          assert.equal(row.mapWindowNote,row.values['settings.map_window_note'],delivery+'/'+profile+' '+row.language+' map window note');
+          assert.equal(row.mapWindowOpen,row.values['settings.map_window_open'],delivery+'/'+profile+' '+row.language+' map window button');
           assert.ok(row.currentProfile,delivery+'/'+profile+' '+row.language+' cluster profile label');
         }
         assert.equal(modularSettings.diagnosticClosedByModules,true,delivery+'/'+profile+' modules participates in accordion');
