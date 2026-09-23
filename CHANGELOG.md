@@ -10,16 +10,23 @@
 - Reduce unnecessary bottom space in **Kalibrierung & Diagnose** after the single-scroll-owner Settings refactor.
 - Complete the **Kartendarstellung** Settings translations across all **19 language variants**, including Default view, Last used, the per-device storage note and separate-map-window texts.
 - Refresh the map-display UI immediately when the application language changes so no stale English labels remain visible.
+- Complete a full dynamic **title / aria-label / mouse-over audit** across all **19 language variants** for cluster resolution, cluster-navigation session controls, map start view, separate map window, release-history badge, compass picker, fullscreen compass/medallion movement and the device compass.
+- Remove the remaining hard-coded German cluster hover texts such as `Cluster-Auflösung · …`, `Zur Sitzungszeit wechseln` and `Auf unbegrenzt wechseln`; source-contract tests now reject these regressions explicitly.
+- Stop rebuilding the Module Details list during ordinary render/translation synchronization when neither language nor diagnostic data changed; a stable content signature keeps the actual `<details>` nodes alive so clicks cannot be overwritten by a background refresh.
+- Stress-test module rows with repeated click cycles while `_syncModuleView()` and translation synchronization run between clicks.
 - Refine Portuguese cluster-resolution **Tarde → Tardia**.
-- Extend browser regression coverage to reject English fallback text in non-English map-display settings and to exercise repeated module-detail open/close/open behavior.
+- Extend browser regression coverage to reject English fallback text in non-English map-display and tooltip settings and to exercise repeated module-detail open/close/open behavior.
 - Keep canonical frontend, native integration delivery and Dashboard delivery byte-identical; refresh module manifest, deterministic contract and frontend SHA256 inventory.
 
 ### Modulversionen
 
 - `core.base-context` → **1.0.2**
 - `ui.skeleton` → **1.1.1**
-- `ui.i18n-settings` → **1.2.0**
-- `diagnostics.module-view` → **1.2.2**
+- `ui.i18n-settings` → **1.2.1**
+- `diagnostics.module-view` → **1.2.3**
+- `fullscreen.map-display` → **1.0.1**
+- `map.clusters-recent` → **1.0.1**
+- `ui.render` → **1.0.1**
 
 ## 2026/09 — V4.10.01 DEV
 
