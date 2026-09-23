@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026/09 — V4.10.02 DEV
+
+### Modularisierung · Abschlusskorrekturen
+
+- Stabilize **Module & Versionen** so individual module rows can be opened, closed and reopened repeatedly without an immediate re-render closing them again.
+- Preserve open module-detail rows across diagnostic list refreshes and isolate inner module toggles from the outer Settings accordion.
+- Reduce the Module Details dialog from 780 px to **660 px** maximum width and from 860 px to **760 px** maximum desktop/tablet height while retaining viewport-aware mobile sizing.
+- Reduce unnecessary bottom space in **Kalibrierung & Diagnose** after the single-scroll-owner Settings refactor.
+- Complete the **Kartendarstellung** Settings translations across all **19 language variants**, including Default view, Last used, the per-device storage note and separate-map-window texts.
+- Refresh the map-display UI immediately when the application language changes so no stale English labels remain visible.
+- Refine Portuguese cluster-resolution **Tarde → Tardia**.
+- Extend browser regression coverage to reject English fallback text in non-English map-display settings and to exercise repeated module-detail open/close/open behavior.
+- Keep canonical frontend, native integration delivery and Dashboard delivery byte-identical; refresh module manifest, deterministic contract and frontend SHA256 inventory.
+
+### Modulversionen
+
+- `core.base-context` → **1.0.2**
+- `ui.skeleton` → **1.1.1**
+- `ui.i18n-settings` → **1.2.0**
+- `diagnostics.module-view` → **1.2.2**
+
 ## 2026/09 — V4.10.01 DEV
 
 ### Kompassauswahl
