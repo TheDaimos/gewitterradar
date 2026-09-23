@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -44,6 +44,14 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const descriptor = COMPASS_DESIGNS.find((entry) => entry.id === this._activeCompassDesign)
         || COMPASS_DESIGNS.find((entry) => entry.id === this._compassDesignValue())
         || COMPASS_DESIGNS[0];
+      dialog.setAttribute('aria-label',this._t('compass.picker_title'));
+      const closeButton=dialog.querySelector('[data-compass-picker-close]');
+      if (closeButton) {
+        const closeLabel=this._t('about.close');
+        closeButton.setAttribute('aria-label',closeLabel);
+        closeButton.setAttribute('title',closeLabel);
+      }
+      dialog.querySelector('.compass-picker-nav')?.setAttribute('aria-label',this._t('compass.picker_change'));
       const output = dialog.querySelector('[data-compass-picker-index]');
       if (output) output.textContent = descriptor.uiIndex + ' / ' + COMPASS_DESIGNS.length;
       const calibrationNavigation = this._compassCalibrationEnabled && (!this._diagnostics.enabled || this._diagnostics.live);
@@ -113,10 +121,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-index{min-width:82px;text-align:center;color:#fff0b2;font:650 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;text-shadow:0 1px 3px #000}' +
         '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav{grid-template-columns:56px 72px 56px;gap:11px}.compass-picker-nav-button{width:56px;height:46px}}' +
         '</style>' +
-        '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="Kompassauswahl">' +
-        '<button class="compass-picker-close" type="button" data-compass-picker-close aria-label="Schließen"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
+        '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('compass.picker_title') + '">' +
+        '<button class="compass-picker-close" type="button" data-compass-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
         '<div class="compass-picker-stage" data-compass-picker-stage></div>' +
-        '<div class="compass-picker-nav" role="group" aria-label="Kompass wechseln">' +
+        '<div class="compass-picker-nav" role="group" aria-label="' + this._t('compass.picker_change') + '">' +
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev><svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="compass-picker-gold-prev" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".68" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><path d="M28.5 8.5 15 22l13.5 13.5" fill="none" stroke="url(#compass-picker-gold-prev)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
         '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-next><svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="compass-picker-gold-next" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".68" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><path d="M15.5 8.5 29 22 15.5 35.5" fill="none" stroke="url(#compass-picker-gold-next)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
@@ -462,11 +470,15 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const compassToggle = this.shadow.getElementById('map-compass-toggle');
       const medallionToggle = this.shadow.getElementById('map-medallion-toggle');
       if (overlay) {
-        overlay.setAttribute('aria-label',this._t('map.compass_move'));
+        const moveCompass=this._t('map.compass_move');
+        overlay.setAttribute('aria-label',moveCompass);
+        overlay.setAttribute('title',moveCompass);
         overlay.hidden = !fullscreenActive || !this._mapCompassVisible;
       }
       if (medallionOverlay) {
-        medallionOverlay.setAttribute('aria-label',`${this._t('trend.label')} · verschieben`);
+        const moveMedallion=this._t('map.medallion_move');
+        medallionOverlay.setAttribute('aria-label',moveMedallion);
+        medallionOverlay.setAttribute('title',moveMedallion);
         medallionOverlay.classList.toggle('android-device',this._isAndroidLike());
         medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
       }
@@ -509,11 +521,14 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         settingsStartupButton.setAttribute('aria-label',this._t('settings.map_startup'));
         settingsStartupButton.setAttribute('title',`${this._t('settings.map_startup')}: ${startupModeLabels[activeStartupMode] || startupModeLabels.last}`);
       }
+      this.shadow.getElementById('settings-map-startup-dropdown')?.setAttribute('aria-label',this._t('settings.map_startup_select'));
       if (settingsWindowLabel) settingsWindowLabel.textContent = this._t('settings.map_window');
       if (settingsWindowNote) settingsWindowNote.textContent = this._t('settings.map_window_note');
       if (settingsWindowOpen) {
         settingsWindowOpen.textContent = this._t('settings.map_window_open');
-        settingsWindowOpen.setAttribute('aria-label',this._t('settings.map_window_open_aria'));
+        const windowLabel=this._t('settings.map_window_open_aria');
+        settingsWindowOpen.setAttribute('aria-label',windowLabel);
+        settingsWindowOpen.setAttribute('title',windowLabel);
       }
     },
 
