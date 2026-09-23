@@ -15,7 +15,7 @@ for(const marker of [
   '#settings-radii-section[open] > .settings-radius-list {',
   'max-height:none!important;',
   '#settings-map-section .settings-cluster-session-selector',
-  'margin-right:6px'
+  'margin-right:10px'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
