@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5737,7 +5737,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:26px; }
             #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
           }
-          #settings-diagnostic-section[open]>.settings-section-content{padding-bottom:72px!important;scroll-padding-bottom:72px}
+          #settings-diagnostic-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
           /* V4.06 final premium settings shell and hierarchy. */
           .settings-dialog{--premium-gold:#c7a25b;--premium-gold-bright:#f1d58c;--premium-line:rgba(201,160,80,.34);border-color:var(--premium-line);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065)}
           .settings-premium-links{display:grid;grid-template-columns:1fr 1fr;gap:7px}.settings-premium-link{min-height:44px!important;border:1px solid rgba(190,149,69,.22)!important;border-radius:12px!important;background:linear-gradient(110deg,rgba(176,130,49,.08),rgba(12,22,29,.62))!important;box-shadow:inset 0 1px rgba(255,239,198,.055)}
