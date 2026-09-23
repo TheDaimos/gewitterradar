@@ -36,23 +36,26 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – DRA-Ende-zu-Ende vollständig durchführen.**
+**M12 – reale DRA-Abnahme fortsetzen.**
 
-Aktuell:
-- M03 ist nach vollständigem gemeinsamen Frontend-/Browser-Gate abgeschlossen,
-- aktueller vollständig geprüfter auslieferbarer Feature-Stand: `ced692d9a81fc863c5406abee876b0d2ec5fc78d`,
-- alle 5 PR-Workflows sind auf diesem Head grün: Source archive, Diagnostic contract, Hi-Res asset retention, Integration und gemeinsames Frontend,
-- `deploy/dev` ist nach der Modul-Details-Iteration exakt auf `ced692d9a81fc863c5406abee876b0d2ec5fc78d` promoviert,
-- der automatisierte DRA-Vertragsnachweis einschließlich V4.09-Rückfallquelle ist grün,
-- reale M12-Abnahme auf Home Assistant DEV gestartet: DRA V0.15.5 nutzt ein reines Lesetoken, erkennt Gewitterradar als `ready`, übernimmt den empfohlenen Kanal `deploy/dev` und friert ihn auf `6223081c127baad5dae084aec2bb0a6061865416` ein,
-- erste reale Vorschau auf HA DEV erfolgreich: **24 neu / 3 geändert / 0 entfernt / 30 unverändert**,
-- der Versionswächter fällt beim ersten Übergang erwartungsgemäß auf den stärksten lokal gemeinsam vorhandenen Marker `CONF_LEGACY_IMPORT_VERSION` zurück; der neue Quellmarker `BUILD_VERSION = "4.10.02"` besitzt im bisherigen lokalen Stand noch kein Gegenstück,
-- reale DRA-Installation des vollständigen verwalteten Baums ist erfolgreich abgeschlossen; Staging, Sicherung, Installation und `verify_install` liefen ohne Fehler,
-- DRA meldet ausdrücklich **NEUSTART ERFORDERLICH** und führt keinen stillen Neustart aus,
-- Home Assistant wurde vollständig neu gestartet; DRA sperrte sich danach automatisch wieder,
-- post-install DRA-Datei-/Versionsprüfung ist erfolgreich: **0 neu / 0 geändert / 0 entfernt / 57 unverändert**, Quelle **4.10.02** = lokal **4.10.02** über `BUILD_VERSION`,
-- Gewitterradar-Laufzeit-Soll/Ist ist real bestätigt: **V4.10.02**, **22/22 Module geladen**, **Versionssatz konsistent**,
-- offen bleiben Cache-/Mischstandprüfung, Einzelmodul-Delta, Erkennung veralteter/fehlender Module sowie der reale DRA-Rückfall auf `deploy/v4.09`.
+Aktueller geprüfter Entwicklungsstand:
+- `deploy/dev` → `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507`,
+- alle fünf CI-Gates grün,
+- zuletzt gemeldete UI-Abschlusskorrekturen (Scrollen, 19 Sprachen, Module-Akkordeon, Medaillon-iPad-Geometrie, Chevron-Animation) automatisiert abgesichert,
+- isolierter Einzelmodul-DRA-Testzweig vorbereitet:
+  - `test/dra-v4.10.02-single-module`,
+  - Commit `be28062d60a531cbeef6f03d6fa92fa838c305bd`,
+  - gegenüber `deploy/dev` exakt **eine** geänderte verwaltete Datei:
+    `custom_components/gewitterradar/frontend/modules/core/source-status.js`,
+  - Änderung ist ausschließlich ein Kommentar/Sentinel und verändert keine Laufzeitfunktion.
+
+Reale Reihenfolge:
+1. `deploy/dev` / `9605a11…` über DRA auf HA DEV installieren und die vier zuletzt korrigierten UI-Punkte kurz visuell prüfen.
+2. Danach in DRA den Testzweig `test/dra-v4.10.02-single-module` wählen.
+3. Vorschau muss exakt **1 geändert / 0 neu / 0 entfernt** im verwalteten Integrationsbaum zeigen.
+4. Testzweig installieren; Gewitterradar muss weiter **V4.10.02**, **22/22 Module geladen** und **Versionssatz konsistent** melden.
+5. Danach zurück auf `deploy/dev`; Vorschau muss dieselbe eine Datei wieder zurückändern.
+6. Anschließend M12 mit Cache-/Mischstand, veraltetem/fehlendem Modul und echtem Rollback auf `deploy/v4.09` fortsetzen.
 
 ---
 
@@ -1248,3 +1251,27 @@ Insbesondere erfolgreich:
 - HACS, hassfest, Home-Assistant-Runtime und DRA-Paketvertrag.
 
 **Nächster Schritt:** auf HA DEV mit DRA den empfohlenen Stand `deploy/dev` / `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507` installieren und die vier realen UI-Punkte kurz gegenprüfen. Danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback fortsetzen.
+
+
+## Schleife 034 – DRA-Einzelmodul-Testkandidat auf aktuellem DEV-Stand vorbereitet
+
+**Datum:** 2026-09-23  
+**Status:** Kandidat vorbereitet; reale DRA-Abnahme auf HA DEV steht aus
+
+Ausgang:
+- produktiver Entwicklungs-/Promotionsstand bleibt unverändert auf `deploy/dev` / `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507`,
+- der vorhandene Testzweig `test/dra-v4.10.02-single-module` war noch auf einem alten M12-Zwischenstand und 133 Commits hinter `deploy/dev`.
+
+Vorbereitung:
+- Testzweig kontrolliert auf den aktuellen `deploy/dev`-Head zurückgesetzt,
+- anschließend exakt eine verwaltete DRA-Datei geändert:
+  `custom_components/gewitterradar/frontend/modules/core/source-status.js`,
+- Änderung besteht nur aus einem Kommentar-Sentinel; kein Modulcode, keine Modulversion und kein Manifestverhalten wurden verändert,
+- Testcommit: `be28062d60a531cbeef6f03d6fa92fa838c305bd`.
+
+Verifikation:
+- Vergleich `deploy/dev...test/dra-v4.10.02-single-module`: **ahead 1 / behind 0**,
+- GitHub-Vergleich weist exakt **eine** geänderte Datei mit **+1 / -0** aus,
+- damit ist der Zweig ein sauberer realer Kandidat für den M12-Punkt **Deployment nur eines geänderten Moduls**.
+
+**Nächster Schritt:** zunächst den aktuellen `deploy/dev`-Stand `9605a11…` real auf HA DEV prüfen. Danach den Testzweig über DRA auswählen, Vorschau **1 geändert / 0 neu / 0 entfernt** bestätigen, installieren und anschließend wieder auf `deploy/dev` zurückkonvergieren.
