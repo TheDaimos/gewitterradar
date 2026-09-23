@@ -6,8 +6,10 @@ const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/modul
 const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.0.1"',
+  '"version": "1.0.2"',
   '.settings-body {',
+  'grid-auto-rows:max-content;',
+  'align-content:start;',
   'overflow-y:auto!important;',
   '.settings-collapsible[open] > .settings-section-content,',
   '#settings-radii-section[open] > .settings-radius-list {',
