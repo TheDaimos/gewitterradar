@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -6001,14 +6001,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* Kartendarstellung: Cluster-Navigation optisch vom äußeren
              Bereichsrahmen lösen, ohne die Control-Geometrie zu verändern. */
           #settings-map-section[open] > .settings-section-content {
-            padding-top:3px;
-            padding-bottom:4px;
+            padding-top:6px;
+            padding-bottom:8px;
           }
           #settings-map-section .settings-cluster-session-selector {
-            margin-right:6px;
+            margin-right:10px;
           }
           @media(max-width:520px) {
-            #settings-map-section .settings-cluster-session-selector { margin-right:4px; }
+            #settings-map-section .settings-cluster-session-selector { margin-right:8px; }
           }
         </style>
 
