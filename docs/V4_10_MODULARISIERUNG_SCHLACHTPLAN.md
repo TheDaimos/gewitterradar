@@ -36,30 +36,26 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – finalen Tooltip-/Modulstabilitätsstand über DRA real abnehmen.**
+**M12 – vollständig lokalisierte Modulansicht über DRA real abnehmen.**
 
 Automatisiert vollständig geprüfter Code-/Test-Stand:
-- `60846e16bcec19ba2b9cfa9f516777bb69635c41`,
+- `dff8145bf6a724a43fd13798f2833480b8f7f72f`,
 - alle fünf CI-Gates grün,
-- die Modul-Detail-Liste wird bei normalen Hintergrund-Render-/Sprachläufen **nicht mehr neu aufgebaut**, solange Sprache und Diagnosedaten unverändert sind,
-- Browser-Stresstest: zusätzliche **10 Öffnen-/Schließen-Zyklen** mit `_syncModuleView()` und Sprachsynchronisierung zwischen jedem Klick; derselbe DOM-Knoten muss erhalten bleiben,
-- vollständiger Mouse-over-/`title`-/relevanter `aria-label`-Audit für alle **19 Sprachvarianten**,
-- hart codierte deutsche Cluster-Tooltips werden durch den Quellvertrag ausdrücklich verhindert,
-- geänderte Modulversionen:
-  - `core.base-context 1.0.2`,
-  - `ui.skeleton 1.1.1`,
-  - `ui.controls 1.1.1`,
-  - `ui.i18n-settings 1.2.1`,
-  - `diagnostics.module-view 1.2.3`,
-  - `fullscreen.map-display 1.0.1`,
-  - `map.clusters-recent 1.0.1`,
-  - `ui.render 1.0.1`.
+- **22/22 Module** besitzen einen eigenen lokalisierten Anzeigenamen und eine lokalisierte vollständige Funktionsliste in allen **19 Sprachvarianten**,
+- technische Modul-IDs und Dateipfade bleiben absichtlich unverändert,
+- Griechisch wird im Browservertrag für **alle 22 Modulnamen und Funktionslisten** auf tatsächlich griechischen Inhalt geprüft; die konkret beobachteten deutschen Resttexte sind als Regression verboten,
+- Kopfstatus im Modulfenster ist jetzt explizit in drei Segmente getrennt:
+  - Gewitterradar + Version,
+  - geladene Module,
+  - Versionskonsistenz,
+- `diagnostics.module-view` → **1.3.0**,
+- Modulstabilitäts- und Tooltip-Korrekturen aus Schleife 036 bleiben vollständig erhalten.
 
 Nach dem finalen Dokumentations-Gate:
 1. dokumentierten Head auf `deploy/dev` promoten,
 2. DRA-Vorschau aktualisieren und installieren,
-3. insbesondere Griechisch/Portugiesisch per Mouse-over auf Cluster-Auflösung, Cluster-Navigation, Standardansicht und Kartenfenster prüfen,
-4. im Modulfenster mehrere unterschiedliche Zeilen schnell und wiederholt öffnen/schließen,
+3. Griechisch im Modulfenster vollständig prüfen: Gruppen, alle Modulnamen, alle Funktionslisten, Statuslabels und Kopfstatus,
+4. stichprobenartig weitere Sprachen gegen gemischte Modulmetadaten prüfen,
 5. danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback auf `deploy/v4.09` fortsetzen.
 
 ---
@@ -1388,3 +1384,46 @@ Insbesondere erfolgreich:
 - deterministische Dashboard-/Integrations-Ausleitung.
 
 **Nächster Schritt:** Dokumentation committen, denselben vollständigen Gate-Satz auf dem Dokumentations-Head abwarten und erst danach exakt diesen Head auf `deploy/dev` promoten.
+
+
+## Schleife 037 – komplette Modulmetadaten in 19 Sprachvarianten lokalisiert
+
+**Datum:** 2026-09-23  
+**Status:** Code/Test vollständig grün; Dokumentations-Head wird abschließend gegatet und danach auf `deploy/dev` promotet
+
+Realer Befund aus der griechischen Modulansicht:
+- Gruppen- und Detailfeldbezeichnungen waren bereits griechisch,
+- die eigentlichen Modulnamen kamen weiterhin direkt aus den deutschen `MODULE_META`-/Manifestdaten,
+- die Funktionslisten wurden ebenfalls unverändert deutsch gerendert,
+- dadurch waren **sämtliche Module** sprachlich gemischt, nicht nur `diagnostics.cockpit` oder `diagnostics.module-view`,
+- zusätzlich klebten im Dialogkopf Produktversion, Ladezahl und Konsistenztext optisch aneinander, weil die Dialog-Zusammenfassung nach dem Reparenting nicht mehr alle auf den Einstellungsabschnitt beschränkten Layoutregeln erbte.
+
+Korrektur:
+- `diagnostics.module-view` → **1.3.0**,
+- vollständiges lokales Modulmetadaten-Sprachregister für exakt **22 Modul-IDs × 19 Sprachvarianten**,
+- pro Modul werden Anzeigename und komplette Funktionsliste lokalisiert,
+- interne IDs wie `diagnostics.module-view`, `instruments.compass` sowie Dateipfade bleiben als technische Diagnoseinformationen unverändert,
+- Sortierung der Modulzeilen verwendet nun den lokalisierten Anzeigenamen,
+- Sprachwechsel bleibt Teil der bestehenden Listensignatur und erzeugt deshalb genau dann einen neuen sprachgerechten Listensatz, wenn die aktive Sprache wirklich wechselt,
+- Statuszusammenfassung des Dialogs besitzt eigene, nicht vom Einstellungsabschnitt abhängige Layoutregeln und explizite `·`-Trenner zwischen Version, Ladezahl und Status.
+
+Regression:
+- Quellvertrag parst das Modulmetadaten-Sprachregister direkt,
+- exakt 22 IDs und exakt 19 Sprachvarianten sind Pflicht,
+- jede Sprache muss für jede ID sowohl Anzeigename als auch Funktionsbeschreibung liefern,
+- für Griechisch muss jeder einzelne Modulname und jede Funktionsliste tatsächlich griechische Zeichen enthalten,
+- Browserprofiltest rendert die Modulansicht nacheinander in allen 19 Varianten und fordert **22 eindeutige, vollständig gefüllte Modulzeilen**,
+- für Griechisch werden bekannte deutsche Resttexte wie `Diagnose & Kalibrierung`, `Module & Versionen`, `Kompass-Skala`, `Virtuelles Gewitter`, `Geladene Module`, `Soll/Ist-Vergleich`, `Bewegungsprofil` und `Trendberechnung` ausdrücklich ausgeschlossen,
+- Browserprofiltest prüft außerdem die drei getrennten Kopfstatus-Segmente.
+
+Geprüfter Code-/Test-Head:
+- `dff8145bf6a724a43fd13798f2833480b8f7f72f`.
+
+Alle fünf Gates grün:
+- Validate shared Gewitterradar frontend,
+- Validate Gewitterradar integration,
+- Diagnostic contract,
+- Hi-Res asset retention,
+- Source archive contract.
+
+**Nächster Schritt:** finalen Dokumentations-Head vollständig gaten und anschließend exakt diesen Stand auf `deploy/dev` promoten.
