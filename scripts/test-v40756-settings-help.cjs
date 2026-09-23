@@ -181,16 +181,8 @@ const server = http.createServer((req, res) => {
               const dialog = root.getElementById('settings-dialog');
               const previousHeight = dialog.style.height;
               const previousMaxHeight = dialog.style.maxHeight;
-              dialog.style.height = '420px';
-              dialog.style.maxHeight = '420px';
-              for (const id of [
-                'settings-map-section',
-                'settings-radii-section',
-                'settings-diagnostic-section',
-              ]) {
-                const candidate = root.getElementById(id);
-                if (candidate) candidate.open = true;
-              }
+              dialog.style.height = '320px';
+              dialog.style.maxHeight = '320px';
               const section = root.getElementById(sectionId);
               section.open = true;
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -199,7 +191,7 @@ const server = http.createServer((req, res) => {
               body.scrollTop = Math.max(0, body.scrollHeight - body.clientHeight);
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const probeScrollTop = body.scrollTop;
-              target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+              target.scrollIntoView({ block: 'center', inline: 'nearest' });
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const bodyRect = body.getBoundingClientRect();
               const targetRect = target.getBoundingClientRect();
