@@ -196,10 +196,7 @@ const server = http.createServer((req, res) => {
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const content = section.querySelector('.settings-section-content');
               const target = section.querySelector(targetSelector);
-              const beforeBody = body.getBoundingClientRect();
-              const beforeTarget = target.getBoundingClientRect();
-              const delta = Math.max(0, beforeTarget.bottom - beforeBody.bottom + 10);
-              body.scrollTop += delta;
+              target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const bodyRect = body.getBoundingClientRect();
               const targetRect = target.getBoundingClientRect();
@@ -265,7 +262,11 @@ const server = http.createServer((req, res) => {
               `${delivery}/${profile} ${name} settings body scrollable :: ${JSON.stringify(state)}`,
             );
             assert.ok(state.scrollTop > 0, `${delivery}/${profile} ${name} settings body moved`);
-            assert.equal(state.visible, true, `${delivery}/${profile} ${name} final control reachable`);
+            assert.equal(
+              state.visible,
+              true,
+              `${delivery}/${profile} ${name} final control reachable :: ${JSON.stringify(state)}`,
+            );
           }
           assert.ok(settingsScroll.mapRightGap >= 12, `${delivery}/${profile} map cluster navigation frame clearance`);
           assert.ok(settingsScroll.mapPaddingTop >= 3, `${delivery}/${profile} map section top breathing room`);
