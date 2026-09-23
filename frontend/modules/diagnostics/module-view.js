@@ -156,7 +156,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Kaartweergave|Standaard · Groot · Volledig scherm · Apart venster · Instrumentposities",
     "Scrollbeveiliging|Home Assistant-zijbalk · Aanraken · iPad/WebKit · HA-status",
     "Basisstructuur|HTML · CSS · Dialogen · Menustructuur",
-    "Kompásschaal|Schaal · Geometrie",
+    "Kompasschaal|Schaal · Geometrie",
     "Bedieningskoppelingen|Klik · Aanraken · Formulieren · Menuacties",
     "Taal en instellingen|Vertaling · Over · Instellingen · Helpteksten",
     "Status van gegevensbronnen|Blitzortung-status · Statusweergave",
