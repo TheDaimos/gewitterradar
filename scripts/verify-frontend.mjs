@@ -3,6 +3,20 @@ import {resolve} from 'node:path';
 import {root,hash,expectedPayload,expectedDashboardPackages,destinations} from './build-frontend.mjs';
 const payload=await expectedPayload();
 const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
+const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'utf8');
+for(const marker of [
+  '"id": "ui.skeleton"',
+  '"version": "1.0.1"',
+  '.settings-body {',
+  'overflow-y:auto!important;',
+  '.settings-collapsible[open] > .settings-section-content,',
+  '#settings-radii-section[open] > .settings-radius-list {',
+  'max-height:none!important;',
+  '#settings-map-section .settings-cluster-session-selector',
+  'margin-right:6px'
+]){
+  if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
+}
 for(const marker of [
   'version:"1.1.2"',
   '>Modul-Details</button>',
