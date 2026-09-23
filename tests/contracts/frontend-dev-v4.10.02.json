@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "ec7e67f01a713cdf9e6547d96db860f29da05cfb152ac85684e074867abf6f90",
+      "sha256": "9666f823adb779fa9d95c7f1571a6887f2824abd0950b632f9f4fdf85ff2fdfa",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 32650
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "c1f389e180947f902ad9fae7194a3539411b8725a49fa03192726bffde983dfd",
-      "sizeBytes": 58284
+      "sha256": "09f674af13a56b3327987891b0a590bb47423e4e559700a33ad7a3863b866c9d",
+      "sizeBytes": 59266
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
@@ -47,8 +47,8 @@
       "sizeBytes": 182682
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "9b65c9aa4e3de4009d816ece7f9b379f8d1f41da1123163fcf3c974eb8790423",
-      "sizeBytes": 166834
+      "sha256": "cc8b81ea27061eb0de67921aaf6909d262dc813db15137f1eb742d641f813591",
+      "sizeBytes": 182940
     },
     "modules/core/source-status.js": {
       "sha256": "d3f20890ea1cc1d77d7c8c8b477ad60df3f44ded165dc458c56cc40ff8fdb1c3",
@@ -59,8 +59,8 @@
       "sizeBytes": 13610
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "b759bdc765410cfd22aa1b8825b3a6c45343bd887ee6f5663af747e55ab4cdbe",
-      "sizeBytes": 19742
+      "sha256": "99fa142742be9bed6beb67f591829ef50f9dd655b2e0260e4a60885eb1bcb37f",
+      "sizeBytes": 20411
     },
     "modules/diagnostics/cockpit.js": {
       "sha256": "884a18dd7ea05d822179038f6917878d8345427044ebf1475c1e5cd97bb05200",
@@ -79,12 +79,12 @@
       "sizeBytes": 29124
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "7cf6b1afc50594afa6124513207089810c2f2e794b6b05096238a7cdad6ade76",
-      "sizeBytes": 51159
+      "sha256": "860d2c67b579e329cc11e703d071ab89f937406df163236656704bff516b3f19",
+      "sizeBytes": 51206
     },
     "modules/ui/render.js": {
-      "sha256": "9bda55feab1067c90e06b53de7122b9ac28799b2e5e9551cf06bd8d881888868",
-      "sizeBytes": 45840
+      "sha256": "563bc3e2742b9a6bc7787c774c1a70e2e76b454919ac609ddc11d43bedb7424f",
+      "sizeBytes": 46991
     },
     "modules/instruments/compass.js": {
       "sha256": "baff3a5862ad509227ea6d8169ee5e8fe3685575c9c2968bc4dd523b82f2419f",
