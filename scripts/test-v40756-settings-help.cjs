@@ -267,9 +267,9 @@ const server = http.createServer((req, res) => {
               `${delivery}/${profile} ${name} final control reachable :: ${JSON.stringify(state)}`,
             );
           }
-          assert.ok(settingsScroll.mapRightGap >= 12, `${delivery}/${profile} map cluster navigation frame clearance`);
-          assert.ok(settingsScroll.mapPaddingTop >= 3, `${delivery}/${profile} map section top breathing room`);
-          assert.ok(settingsScroll.mapPaddingBottom >= 4, `${delivery}/${profile} map section bottom breathing room`);
+          assert.ok(settingsScroll.mapRightGap >= 16, `${delivery}/${profile} map cluster navigation frame clearance`);
+          assert.ok(settingsScroll.mapPaddingTop >= 6, `${delivery}/${profile} map section top breathing room`);
+          assert.ok(settingsScroll.mapPaddingBottom >= 8, `${delivery}/${profile} map section bottom breathing room`);
         }
 
         await page.evaluate(() => window.aboutCard._openHelp());
