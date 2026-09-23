@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5974,6 +5974,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              letzten Bedienelement erreichen. Historische innere Accordion- und
              Radien-Scroller werden hier bewusst neutralisiert. */
           .settings-body {
+            grid-auto-rows:max-content;
+            align-content:start;
             overflow-y:auto!important;
             overflow-x:hidden!important;
             overscroll-behavior-y:contain;
