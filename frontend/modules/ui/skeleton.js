@@ -5986,7 +5986,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-radii-section[open] > .settings-radius-list {
             max-height:none!important;
             overflow:visible!important;
-            overscroll-behavior:visible!important;
+            overscroll-behavior:auto!important;
             -webkit-overflow-scrolling:auto!important;
             scrollbar-gutter:auto!important;
             touch-action:auto!important;
