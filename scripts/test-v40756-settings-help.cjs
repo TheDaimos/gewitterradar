@@ -203,10 +203,20 @@ const server = http.createServer((req, res) => {
               await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
               const bodyRect = body.getBoundingClientRect();
               const targetRect = target.getBoundingClientRect();
+              const bodyStyle = getComputedStyle(body);
+              const dialogStyle = getComputedStyle(dialog);
               const state = {
-                bodyOverflowY: getComputedStyle(body).overflowY,
+                bodyOverflowY: bodyStyle.overflowY,
                 contentOverflowY: getComputedStyle(content).overflowY,
                 bodyScrollable: body.scrollHeight > body.clientHeight + 1,
+                bodyClientHeight: body.clientHeight,
+                bodyScrollHeight: body.scrollHeight,
+                bodyFlex: bodyStyle.flex,
+                bodyMinHeight: bodyStyle.minHeight,
+                dialogClientHeight: dialog.clientHeight,
+                dialogScrollHeight: dialog.scrollHeight,
+                dialogHeight: dialogStyle.height,
+                dialogMaxHeight: dialogStyle.maxHeight,
                 scrollTop: body.scrollTop,
                 visible:
                   targetRect.top >= bodyRect.top - 1 &&
@@ -249,7 +259,11 @@ const server = http.createServer((req, res) => {
               ['visible', 'clip'].includes(state.contentOverflowY),
               `${delivery}/${profile} ${name} no nested vertical scroller`,
             );
-            assert.equal(state.bodyScrollable, true, `${delivery}/${profile} ${name} settings body scrollable`);
+            assert.equal(
+              state.bodyScrollable,
+              true,
+              `${delivery}/${profile} ${name} settings body scrollable :: ${JSON.stringify(state)}`,
+            );
             assert.ok(state.scrollTop > 0, `${delivery}/${profile} ${name} settings body moved`);
             assert.equal(state.visible, true, `${delivery}/${profile} ${name} final control reachable`);
           }
