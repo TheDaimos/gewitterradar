@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -1095,7 +1095,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         infinityGfx.alt = '';
         infinityGfx.setAttribute('aria-hidden','true');
         infinityGfx.setAttribute('data-session-toggle','finite');
-        infinityGfx.title = 'Zur Sitzungszeit wechseln';
+        infinityGfx.title = this._t('settings.cluster_navigation_to_session');
         statusTextEl.appendChild(infinityGfx);
       } else if (useGoldCountdown) {
         const timeout = Number(this._statusClusterBrowseTimeoutMs) || 0;
@@ -1104,7 +1104,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         const countdown = document.createElement('span');
         countdown.className = 'status-cluster-countdown';
         countdown.setAttribute('data-session-toggle','infinite');
-        countdown.title = 'Auf unbegrenzt wechseln';
+        countdown.title = this._t('settings.cluster_navigation_to_infinite');
         countdown.textContent = ` · ${Math.ceil(remainingMs / 1000)}s`;
         statusTextEl.replaceChildren(document.createTextNode(baseLabel),countdown);
       } else {
