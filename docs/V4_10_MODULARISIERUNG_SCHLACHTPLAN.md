@@ -1462,3 +1462,22 @@ Geprüfter Code-/Test-Head:
 - alle fünf Gates grün.
 
 **Nächster Schritt:** dokumentierten Head vollständig gaten und danach exakt auf `deploy/dev` promoten.
+
+
+## Schleife 039 – reale Abnahme der fremdsprachigen Modulansicht
+
+**Datum:** 2026-09-23  
+**Status:** real auf HA DEV bestätigt
+
+Reale Nutzerabnahme nach DRA-Installation:
+- die **Moduldarstellung funktioniert in Fremdsprachen nun vollständig**,
+- die zuvor gemischten Modulnamen und Funktionslisten sind in der realen Home-Assistant-Oberfläche sprachkonsistent,
+- damit ist die reale UI-Abnahme der in Schleife 037 umgesetzten **22 Module × 19 Sprachvarianten** erfolgreich,
+- technische IDs und Dateipfade bleiben erwartungsgemäß technisch und sind davon nicht betroffen.
+
+Bewertung:
+- der Lokalisierungsblock der Modulansicht ist **real bestätigt**,
+- für diesen Punkt ist keine weitere Korrektur offen,
+- M13 **Einstellungen** bleibt insgesamt noch offen, weil die vollständige Einstellungsregression mehr als nur die Modulansicht umfasst.
+
+**Nächster realer UI-Punkt:** Standardansicht-Dropdown aus Schleife 038 prüfen; anschließend M12-DRA-Restfälle fortsetzen.
