@@ -1094,3 +1094,43 @@ Entscheidung:
 - Aktualisierung erfolgt weiterhin kontrolliert über DRA; bei reinen Frontend-Änderungen genügt Frontend-/Browser-Neuladen, bei Integrations-/Python-Änderungen vollständiger Home-Assistant-Neustart.
 
 **Nächster Schritt:** M12 ohne Hot-Reload-Sonderpfad fortsetzen: Delta-/Fehlerfälle und Rollback sauber über DRA prüfen.
+
+
+## Schleife 028 – Settings-Scrollregression iPad/Android behoben und abgesichert
+
+**Datum:** 2026-09-23  
+**Status:** vollständig umgesetzt, automatisiert geprüft und nach `deploy/dev` promoviert
+
+Reale Regression:
+- iPad: im Bereich **Radien** war der Gefahrenradius nicht vollständig sichtbar und der Inhalt ließ sich an dieser Stelle nicht zuverlässig weiter nach unten scrollen,
+- Android Hochformat: Gefahrenradius war teilweise gar nicht erreichbar; Scrollen innerhalb des geöffneten Bereichs schlug ebenfalls fehl,
+- **Kalibrierung & Diagnose** zeigte dasselbe Grundproblem bei nicht vollständig in den Viewport passendem Inhalt,
+- **Kartendarstellung** hatte zu wenig Innenabstand zwischen Cluster-Navigation und äußerem Bereichsrahmen.
+
+Technische Ursache:
+- historisch existierten mehrere vertikale Scroll-Eigentümer gleichzeitig: äußerer `.settings-body`, allgemeine geöffnete Accordion-Inhalte und zusätzlich ein eigener Radien-Scroller,
+- verschachtelte Touch-Scroller führten auf iPad/WebKit und Android-WebView zu abgeschnittenen bzw. nicht mehr erreichbaren unteren Bedienelementen.
+
+Korrektur:
+- Einstellungsdialog besitzt jetzt genau **einen vertikalen Scroll-Eigentümer**: `.settings-body`,
+- geöffnete `.settings-section-content`-Bereiche wachsen vollständig in diesen Scroller hinein,
+- historischer Radien-Innenscroller wird im finalen Vertrag neutralisiert,
+- `.settings-body` nutzt `grid-auto-rows:max-content`, `align-content:start`, `overflow-y:auto!important`, `touch-action:pan-y` und WebKit Momentum-Scrolling,
+- großzügiges unteres Scroll-Padding stellt sicher, dass letzte Bedienelemente vollständig über die Dialogkante gezogen werden können,
+- **Kartendarstellung** erhält 6 px oberen und 8 px unteren Innenraum; Cluster-Navigation erhält zusätzlichen rechten Abstand (10 px, schmal 8 px),
+- `ui.skeleton` wurde wegen der eigenständigen UI-/Layoutänderung auf **1.0.3** angehoben.
+
+Regressionstest:
+- Settings/Help-Profiltest erzwingt für iPad, iPad Pro und Android Hochformat einen künstlich nur 320 px hohen Einstellungsdialog,
+- **Radien** muss den Gefahrenradius über den äußeren Settings-Scroller vollständig erreichbar machen,
+- **Kalibrierung & Diagnose** muss das letzte Test-/Diagnoseelement vollständig erreichbar machen,
+- innere Accordion-Inhalte dürfen keinen eigenen vertikalen Scrollcontainer mehr bilden,
+- Test bestätigt tatsächliche Scrollbewegung des äußeren Settings-Scrollers,
+- Kartendarstellung wird zusätzlich auf Mindestabstand der Cluster-Navigation sowie oberen/unteren Innenraum geprüft,
+- erster CI-Lauf fand ausschließlich einen veralteten `ui.skeleton 1.0.2`-Marker im neuen Frontend-Prüfvertrag; Produktionscode war nicht betroffen,
+- Marker auf **1.0.3** korrigiert,
+- anschließend alle fünf Gates auf Commit `eb9d7fe042079b120292cabab88bca8acf38c335` vollständig grün,
+- insbesondere Settings/Help-Profile, Golden-Geometrie, beide vollständigen Browser-Auslieferungssuiten sowie HACS, hassfest, HA-Runtime und DRA-Paketvertrag erfolgreich,
+- `deploy/dev` zeigt exakt auf `eb9d7fe042079b120292cabab88bca8acf38c335`.
+
+**Nächster Schritt:** diesen Stand auf HA DEV über DRA installieren und die drei realen Fälle gegenprüfen: iPad Radien, Android Hochformat Radien sowie Kalibrierung & Diagnose. Danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback fortsetzen.
