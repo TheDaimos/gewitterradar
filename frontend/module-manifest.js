@@ -11,7 +11,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.base-context",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Kern",
     "function": "Konstanten & gemeinsame Helfer",
     "subfunctions": ["Assets", "Konstanten", "Sprache", "Speichergrundlagen", "Geometrie", "Leaflet-Helfer"],
@@ -82,7 +82,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -106,7 +106,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -119,7 +119,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -156,7 +156,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.1.2",
+    "version": "1.2.1",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": ["Geladene Module", "Soll/Ist-Vergleich", "Versionsstatus", "Modul-Details", "Diagnose kopieren", "JSON herunterladen"],
