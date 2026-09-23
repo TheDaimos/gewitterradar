@@ -1134,3 +1134,117 @@ Regressionstest:
 - `deploy/dev` zeigt exakt auf `eb9d7fe042079b120292cabab88bca8acf38c335`.
 
 **Nächster Schritt:** diesen Stand auf HA DEV über DRA installieren und die drei realen Fälle gegenprüfen: iPad Radien, Android Hochformat Radien sowie Kalibrierung & Diagnose. Danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback fortsetzen.
+
+
+## Schleife 029 – Cluster-/Einstellungsübersetzungen vollständig auf 19 Sprachen erweitert
+
+**Datum:** 2026-09-23  
+**Status:** abgeschlossen und automatisiert geprüft
+
+Umgesetzt:
+- **Cluster-Auflösung**, Beschreibung, **Cluster-Navigation · Sitzungszeit**, Zeitbereich und **unendlich** vollständig in die bestehende App-Lokalisierung aufgenommen,
+- Cluster-Profile **Früh / Ausgewogen / Spät / Klassisch** für alle 19 registrierten Sprachen hinterlegt,
+- aktuell ausgewähltes Cluster-Profil synchronisiert sich beim Sprachwechsel ebenfalls sofort,
+- **Module & Versionen** einschließlich Titel, Untertitel, Modul-Details, Statusmeldungen, Gruppenbezeichnungen, Detailfelder, Schließen, Diagnose kopieren und JSON-Download vollständig lokalisiert,
+- technische Modul-IDs und technische Manifest-Metadaten bleiben bewusst unverändert,
+- `core.base-context` → **1.0.1**,
+- `ui.i18n-settings` → **1.1.1**,
+- `diagnostics.module-view` enthält den lokalisierten UI-Vertrag.
+
+Regression:
+- Frontend-Vertrag prüft alle 19 Sprachbündel und alle neuen Pflichtschlüssel auf Vorhandensein und nichtleere Werte,
+- Cluster-Profilregister wird für alle 19 Sprachen auf `early/balanced/late/classic` geprüft,
+- Browserprofiltest durchläuft alle 19 Sprachen und vergleicht sichtbare Cluster-/Modulüberschriften mit dem aktiven Übersetzungswert.
+
+## Schleife 030 – Module & Versionen vollständig ins Einstellungs-Akkordeon integriert
+
+**Datum:** 2026-09-23  
+**Status:** abgeschlossen und automatisiert geprüft
+
+Ursache:
+- das Einstellungs-Akkordeon hatte beim Start nur einen statischen Snapshot der vorhandenen `details.settings-collapsible`-Elemente,
+- **Module & Versionen** wird modular erst später dynamisch erzeugt und war deshalb nicht Teil des Ein-Abschnitt-offen-Vertrags.
+
+Korrektur:
+- Akkordeonverwaltung nutzt jetzt ein dynamisches `Set`,
+- neue Methode `_registerSettingsAccordionSection` registriert später erzeugte Einstellungsbereiche,
+- `diagnostics.module-view` meldet seinen Bereich nach dem Einfügen dort an,
+- Öffnen von **Module & Versionen** schließt andere Bereiche; Öffnen eines anderen Bereichs schließt **Module & Versionen**,
+- `ui.controls` → **1.1.1**,
+- `diagnostics.module-view` → **1.2.1**.
+
+Regression:
+- Browserprofiltest öffnet zuerst Diagnose, danach Module und danach Kartendarstellung,
+- beide Richtungen des gegenseitigen Schließens werden explizit geprüft.
+
+## Schleife 031 – Medaillon-Diagnose auf iPad verbreitert und Kopfaktionen abgesichert
+
+**Datum:** 2026-09-23  
+**Status:** abgeschlossen und automatisiert geprüft
+
+Ursache:
+- Medaillon-Diagnose war auf 430 px begrenzt,
+- zusätzlich erbte die Kopfzeile von `.compass-calibration-close` eine generische Mindestbreite von 150 px je Schaltfläche,
+- dadurch konnten die rechten Kopfaktionen auf dem iPad außerhalb des sichtbaren Dialogbereichs liegen.
+
+Korrektur:
+- normale Medaillon-Diagnose auf maximal **560 px** verbreitert,
+- kompakte Ansicht auf maximal **520 px**,
+- Kopfzeilen-Schaltflächen erhalten medaillonspezifisch kompakte Mindestbreiten und Innenabstände,
+- Titel kann flexibel Platz abgeben; auf schmalen Ansichten darf die Kopfzeile umbrechen,
+- `ui.skeleton` ist Bestandteil des finalen **1.1.0**-Stands.
+
+Regression:
+- iPad und iPad Pro öffnen den Medaillon-Diagnosedialog im Browserprofiltest,
+- alle Kopf-Schaltflächen müssen vollständig innerhalb des Dialograhmens liegen,
+- kein horizontaler Überlauf des Dialogs oder der Kopfzeile erlaubt.
+
+## Schleife 032 – Chevron-Animation des Versionsverlaufs auf Einstellungen übernommen
+
+**Datum:** 2026-09-23  
+**Status:** abgeschlossen und automatisiert geprüft
+
+Umgesetzt:
+- Einstellungs-Akkordeon verwendet jetzt dieselbe weiche Chevron-Bewegung wie der Versionsverlauf,
+- Übergang: **0,42 s** mit `cubic-bezier(.22,1,.36,1)`,
+- Gold-/Leuchteffekt beim Öffnen/Schließen an den Versionsverlauf angeglichen,
+- vorhandene Position und 45°/225°-Geometrie bleiben unverändert,
+- `ui.skeleton` final → **1.1.0**.
+
+Regression:
+- Browserprofiltest prüft Dauer und Beschleunigungskurve des Pseudo-Element-Chevrons.
+
+## Schleife 033 – Gesamtprüfung grün und DRA-DEV-Stand promoviert
+
+**Datum:** 2026-09-23  
+**Status:** vollständig grün und für HA DEV über DRA bereit
+
+Final geprüfter Code-Stand:
+- Commit `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507`,
+- `deploy/dev` zeigt exakt auf diesen Commit,
+- aktualisierte Modulversionen:
+  - `core.base-context 1.0.1`,
+  - `ui.skeleton 1.1.0`,
+  - `ui.controls 1.1.1`,
+  - `ui.i18n-settings 1.1.1`,
+  - `diagnostics.module-view 1.2.1`,
+- deterministischer V4.10.02-Frontendvertrag und `SHA256SUMS_FRONTEND.txt` aktualisiert.
+
+Alle fünf Gates erfolgreich:
+- Validate shared Gewitterradar frontend,
+- Diagnostic contract,
+- Hi-Res asset retention,
+- Source archive contract,
+- Validate Gewitterradar integration.
+
+Insbesondere erfolgreich:
+- vollständige 19-Sprachen-Verträge,
+- Settings/Help-Profile,
+- dynamisches Modul-Akkordeon,
+- Medaillon-iPad-Geometrie,
+- Chevron-Animation,
+- Golden-Geometrie,
+- beide vollständigen Browser-Auslieferungssuiten,
+- HACS, hassfest, Home-Assistant-Runtime und DRA-Paketvertrag.
+
+**Nächster Schritt:** auf HA DEV mit DRA den empfohlenen Stand `deploy/dev` / `9605a11aa2c2fc98a00f1e79d1d28e42fbfe4507` installieren und die vier realen UI-Punkte kurz gegenprüfen. Danach M12 mit Einzelmodul-Delta, Cache-/Mischstand, veraltet/fehlend und Rollback fortsetzen.
