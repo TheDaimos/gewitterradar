@@ -168,6 +168,80 @@ const server = http.createServer((req, res) => {
         assert.match(moduleOverlay.headBackground, /rgb\(17, 23, 32\)|rgb\(14, 20, 28\)/);
         await page.evaluate(() => window.aboutCard._closeModuleDetails());
 
+        if (['ipad', 'ipad-pro', 'android-portrait'].includes(profile)) {
+          const settingsScroll = await page.evaluate(async () => {
+            const root = window.aboutCard.shadowRoot;
+            const body = root.querySelector('.settings-body');
+            const collapseAll = () => {
+              for (const section of root.querySelectorAll('.settings-collapsible')) section.open = false;
+              body.scrollTop = 0;
+            };
+            const reveal = async (sectionId, targetSelector) => {
+              collapseAll();
+              const section = root.getElementById(sectionId);
+              section.open = true;
+              await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+              const content = section.querySelector('.settings-section-content');
+              const target = section.querySelector(targetSelector);
+              const beforeBody = body.getBoundingClientRect();
+              const beforeTarget = target.getBoundingClientRect();
+              const delta = Math.max(0, beforeTarget.bottom - beforeBody.bottom + 10);
+              body.scrollTop += delta;
+              await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+              const bodyRect = body.getBoundingClientRect();
+              const targetRect = target.getBoundingClientRect();
+              return {
+                bodyOverflowY: getComputedStyle(body).overflowY,
+                contentOverflowY: getComputedStyle(content).overflowY,
+                bodyScrollable: body.scrollHeight > body.clientHeight + 1,
+                scrollTop: body.scrollTop,
+                visible:
+                  targetRect.top >= bodyRect.top - 1 &&
+                  targetRect.bottom <= bodyRect.bottom + 1,
+              };
+            };
+
+            const radii = await reveal('#settings-radii-section'.slice(1), '.settings-radius.danger');
+            const diagnostic = await reveal(
+              '#settings-diagnostic-section'.slice(1),
+              '.settings-test-grid',
+            );
+
+            collapseAll();
+            const mapSection = root.getElementById('settings-map-section');
+            mapSection.open = true;
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const selector = root.getElementById('settings-cluster-jump-selector');
+            const sectionRect = mapSection.getBoundingClientRect();
+            const selectorRect = selector.getBoundingClientRect();
+            const mapContent = mapSection.querySelector('.settings-section-content');
+            return {
+              radii,
+              diagnostic,
+              mapRightGap: sectionRect.right - selectorRect.right,
+              mapPaddingTop: parseFloat(getComputedStyle(mapContent).paddingTop),
+              mapPaddingBottom: parseFloat(getComputedStyle(mapContent).paddingBottom),
+            };
+          });
+
+          for (const [name, state] of [
+            ['radii', settingsScroll.radii],
+            ['diagnostic', settingsScroll.diagnostic],
+          ]) {
+            assert.equal(state.bodyOverflowY, 'auto', `${delivery}/${profile} ${name} outer settings scroller`);
+            assert.ok(
+              ['visible', 'clip'].includes(state.contentOverflowY),
+              `${delivery}/${profile} ${name} no nested vertical scroller`,
+            );
+            assert.equal(state.bodyScrollable, true, `${delivery}/${profile} ${name} settings body scrollable`);
+            assert.ok(state.scrollTop > 0, `${delivery}/${profile} ${name} settings body moved`);
+            assert.equal(state.visible, true, `${delivery}/${profile} ${name} final control reachable`);
+          }
+          assert.ok(settingsScroll.mapRightGap >= 12, `${delivery}/${profile} map cluster navigation frame clearance`);
+          assert.ok(settingsScroll.mapPaddingTop >= 3, `${delivery}/${profile} map section top breathing room`);
+          assert.ok(settingsScroll.mapPaddingBottom >= 4, `${delivery}/${profile} map section bottom breathing room`);
+        }
+
         await page.evaluate(() => window.aboutCard._openHelp());
         await page.waitForFunction(() => window.aboutCard._helpDialog?.open);
         const help = await page.evaluate(() => {
