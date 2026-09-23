@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -867,6 +867,14 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         else if (key === 'map.age_range') vars = {from:10,to:120};
         node.nodeValue = `${lead}${this._t(key,vars)}${trail}`;
       }
+
+      const clusterCurrent=this.shadow.getElementById('settings-cluster-resolution-current');
+      if(clusterCurrent){
+        const profile=this._clusterResolutionProfileV40822||'balanced';
+        clusterCurrent.textContent=getClusterResolutionProfileLabel(profile,this._languageValue());
+      }
+      this._syncModuleTranslations?.();
+      if(this.shadow.getElementById('settings-modules-section')?.open)this._syncModuleView?.();
 
       this.shadow.querySelectorAll('[title],[aria-label]').forEach((el) => {
         if (el.id && ['status-chip','map-recenter','settings-tests-toggle','settings-location-main-toggle'].includes(el.id)) return;
