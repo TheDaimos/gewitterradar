@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1680,9 +1680,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // auch auf kleineren Displays nicht durch mehrere gleichzeitig geöffnete
       // Bereiche unnötig in die Höhe wachsen. Der interne Scrollbereich bleibt
       // als Sicherheitsnetz für einzelne hohe Gruppen erhalten.
-      const settingsSections = [...this.shadow.querySelectorAll('details.settings-collapsible')];
+      const settingsSections = new Set();
       let settingsAccordionBusy = false;
-      settingsSections.forEach((section) => {
+      const registerSettingsSection = (section) => {
+        if (!section || settingsSections.has(section)) return;
+        settingsSections.add(section);
         section.open = false;
         section.addEventListener('toggle',() => {
           // Ein zugeklappter Abschnitt darf kein frei schwebendes Custom-Menü
@@ -1703,7 +1705,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           settingsAccordionBusy = false;
         });
-      });
+      };
+      this._registerSettingsAccordionSection = registerSettingsSection;
+      this.shadow.querySelectorAll('details.settings-collapsible').forEach(registerSettingsSection);
 
       this.shadow.addEventListener('keydown',(event) => {
         if (radiusKeypadBackdrop?.classList.contains('open')) {
