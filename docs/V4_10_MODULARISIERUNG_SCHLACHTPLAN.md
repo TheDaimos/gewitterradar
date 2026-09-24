@@ -1822,3 +1822,33 @@ Bewertung:
 - saubere Ausgangsbasis für den nächsten M12-Fehlerfall **fehlendes Modul erkennen** ist wiederhergestellt.
 
 **Nächster Schritt:** in DRA den Branch `test/dra-v4.10.02-missing-module` mit Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927` auswählen, installieren und danach `Strg+Shift+R` ausführen. Anschließend **Module & Versionen → history.chart** prüfen; erwartet wird **fehlend** für `history.chart` und zusätzlich die absichtliche Test-ID `history.chart.m12-missing-test` als **unerwartet**.
+
+
+## Schleife 053 – erster Missing-Modul-Lauf erreichte den Teststand nicht
+
+**Datum:** 2026-09-24  
+**Status:** nicht bestanden; Ursache auf Deployment-/Quellenauswahl eingegrenzt
+
+Realer Befund nach angeblicher Installation des Missing-Testzweigs und hartem Frontend-Neuladen:
+- Oberfläche weiterhin **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- frischer Diagnoseexport nach dem Reload zeigt `diagnostics.ok=true`,
+- `history.chart` ist weiterhin mit **geladen 1.0.0 / erwartet 1.0.0 / status ok** registriert,
+- damit wurde nachweislich die unveränderte `deploy/dev`-Datei geladen; der Missing-Teststand war lokal nicht aktiv.
+
+Repository-/DRA-Verifikation:
+- Testzweig `test/dra-v4.10.02-missing-module` steht weiterhin auf Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927`,
+- dort registriert `modules/history/chart.js` tatsächlich die absichtliche Test-ID `history.chart.m12-missing-test`,
+- Vergleich gegen `deploy/dev`: exakt **eine geänderte Datei**,
+- `deploy-relay.json` deployt den gesamten Ordner `custom_components/gewitterradar` per `replace_directory`; `history/chart.js` ist somit Bestandteil des verwalteten DRA-Baums.
+
+Bewertung:
+- kein Browsercache-Problem; der Registry-Startzeitpunkt stammt aus dem frischen Reload,
+- kein Fehler des Testzweigs oder DRA-Manifests,
+- vor dem nächsten Installationsversuch muss die aktive DRA-Quellenauswahl und die Vorschau eindeutig auf den Missing-Testbranch zeigen.
+
+**Nächster Schritt:** in DRA unter **Quelle & Version → Erweiterte Quellenauswahl** explizit `test/dra-v4.10.02-missing-module` wählen und **Quelle übernehmen**. Vor Installation muss angezeigt werden:
+- Art: `branch`,
+- Ref: `test/dra-v4.10.02-missing-module`,
+- Commit: `0bfaaf3bfda0...`.
+Danach Vorschau berechnen. Erwartung gegenüber dem aktuell sauberen `deploy/dev`-Dateibaum: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**. Erst wenn genau diese Vorschau vorliegt, installieren und anschließend hart neu laden.
