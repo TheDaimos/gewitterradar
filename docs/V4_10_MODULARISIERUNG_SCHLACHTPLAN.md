@@ -36,34 +36,24 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – reales Deployment nur eines geänderten Moduls abnehmen.**
+**M12 – Browsercache-/Mischstand real prüfen.**
 
-Vorbereiteter Testzweig:
-- `test/dra-v4.10.02-single-module`
-- Commit `a7ac91ed9880a0ba0ec60391b98cea4c33a6c325`
-- Basis exakt aktueller `deploy/dev`
-- Vergleich: **1 Commit voraus / 0 zurück**
-- exakt **eine geänderte Datei**:
-  - `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
-- **0 neue / 0 entfernte Dateien**
+Der reale Ein-Modul-DRA-Test ist abgeschlossen:
+- DRA-Vorschau: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**,
+- Installation über `test/dra-v4.10.02-single-module`,
+- sichtbarer Funktionsnachweis erfolgreich: Tippen/Klicken auf das Vollbild-Medaillon öffnet das provisorische M12-Popup,
+- damit ist **Deployment nur eines geänderten Moduls** real bestanden.
 
-Sichtbarer Testinhalt:
-- einfaches Tippen/Klicken auf das Medaillon öffnet ein provisorisches Popup im Stil der Kompassauswahl,
-- Verschieben bleibt erhalten; erst eine Geste unterhalb der vorhandenen 6-px-Drag-Schwelle gilt als Tap,
-- Maus/Pointer und nativer Touchpfad werden getrennt unterstützt,
-- Popup ist bewusst nur M12-Testträger und wird nach Abschluss von M12 nicht als fertige Medaillon-Funktion bewertet.
+Bewusst nicht als Fehlerblocker gewertet:
+- das Schließen-Symbol im provisorischen Medaillon-Popup zeigt einen unerwünschten Fokus-/Rahmenzustand,
+- dieser Testdialog ist nur M12-Abnahmeträger und wird nach M12 nicht als fertige Medaillon-Funktion übernommen,
+- die spätere echte Medaillon-Auswahl/-Bearbeitung wird als eigenes Thema umgesetzt; dabei kann das Medaillon ggf. in ein eigenes Modul ausgelagert werden.
 
-Reale Abnahme:
-1. in DRA den Zweig `test/dra-v4.10.02-single-module` wählen,
-2. Vorschau muss **1 geändert / 0 neu / 0 entfernt** anzeigen,
-3. installieren,
-4. Gewitterradar im Vollbild öffnen,
-5. Medaillon einmal tippen: Popup muss erscheinen,
-6. Medaillon ziehen: es darf sich nur verschieben und kein Popup öffnen,
-7. Modulansicht muss weiterhin V4.10.02 und einen konsistenten Versionssatz zeigen,
-8. danach zurück auf `deploy/dev`; DRA muss genau diese eine Datei wieder zurückändern.
-
-Nach erfolgreicher realer Abnahme kann der M12-Haken **Deployment nur eines geänderten Moduls** gesetzt werden.
+Vor dem nächsten Prüffall:
+1. in DRA wieder `deploy/dev` auswählen,
+2. Vorschau sollte den Teststand mit genau **1 geändert / 0 neu / 0 entfernt** zurück auf DEV setzen,
+3. installieren und Frontend neu laden,
+4. danach den M12-Punkt **Browsercache-/Mischstand** gezielt abnehmen.
 
 ---
 
@@ -444,7 +434,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 ## M12 – DRA-Ende-zu-Ende-Test – RELEASE-GATE
 
 - [x] Deployment des kompletten Modulbaums
-- [ ] Deployment nur eines geänderten Moduls
+- [x] Deployment nur eines geänderten Moduls
 - [x] Soll-/Ist-Metadaten prüfen
 - [ ] Browsercache-Fall simulieren
 - [ ] veraltetes Modul erkennen
@@ -1568,3 +1558,26 @@ Nächste reale Abnahme:
 4. Mouse-over am Vollbild-Medaillon muss den M12-Hinweis anzeigen,
 5. Klick öffnet Popup,
 6. Ziehen verschiebt nur.
+
+
+## Schleife 043 – realer Ein-Modul-DRA-Test erfolgreich
+
+**Datum:** 2026-09-24  
+**Status:** real bestanden
+
+Reale Abnahme:
+- DRA erkannte den aktualisierten Testzweig korrekt als **0 neu / 1 geändert / 0 entfernt / 56 unverändert**,
+- Installation wurde mit DRA durchgeführt,
+- nach Frontend-Neuladen öffnet ein Klick/Tipp auf das frei bewegliche Vollbild-Medaillon das provisorische M12-Popup,
+- damit ist die tatsächlich geänderte Einzeldatei im laufenden Home-Assistant-Frontend nachgewiesen,
+- M12-Haken **Deployment nur eines geänderten Moduls** gesetzt.
+
+Bekannter, bewusst aufgeschobener Darstellungsfehler des Testträgers:
+- das Schließen-Symbol wird mit einem unerwünschten Rahmen/Fokusrahmen dargestellt,
+- dies blockiert M12 nicht, weil der Dialog nur als sichtbarer Ein-Modul-Testträger dient,
+- die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
+
+Architekturhinweis für nach M12:
+- das Medaillon besitzt inzwischen genügend eigene Verantwortlichkeiten, um eine spätere Auslagerung in ein eigenes Modul wie `instruments.medallion` zu prüfen.
+
+**Nächster Schritt:** auf `deploy/dev` zurückkehren und danach M12 Browsercache-/Mischstand real prüfen.
