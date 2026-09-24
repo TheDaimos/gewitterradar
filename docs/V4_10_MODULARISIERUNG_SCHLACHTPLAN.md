@@ -516,7 +516,7 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [ ] Layer-Menü
 - [ ] Cluster
 - [ ] Einstellungen
-- [ ] Provider
+- [x] Provider
 - [ ] Logging
 - [x] HACS
 - [ ] DRA
@@ -2214,3 +2214,16 @@ Bewusst noch offen:
 - reale/visuelle M13-Funktionsmatrix: Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon, Standort-Pille, Layer-Menü, Cluster, Einstellungen, Provider, Logging.
 
 **Nächster Schritt:** aktuellen CI-Head vollständig auslaufen lassen. Bei vollständigem Grün **Syntax/Lint/Tests** setzen. Danach die verbleibende reale M13-Funktionsmatrix kompakt abnehmen.
+
+
+## Schleife 065 – M13 Provider-Punkt als nicht anwendbar geschlossen
+
+**Datum:** 2026-09-24  
+**Status:** M13-Punkt formal abgeschlossen
+
+Der M13-Altpunkt **Provider** ist für Gewitterradar V4.10.02 nicht anwendbar:
+- NASA GIBS, EUMETView und Provider-Playback gehören zum separaten Projekt **WeatherRouter**,
+- Gewitterradar V4.10.02 enthält in diesem Release-Gate keinen eigenen Provider-Playback-Ausbau,
+- der Punkt darf daher nicht als künstlicher Releaseblocker offen bleiben.
+
+M13-Haken **Provider** gesetzt als **nicht anwendbar / fachlich außerhalb dieses Projekts**.
