@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "dd29db508b87e422dde795a563b8ad5f6b408dc3552f764193e99829f3ad77ff",
+      "sha256": "e26ad1e66f0de6f9aa2276cd4e6329c060f205b35179e8456ee59b63676f030e",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -23,20 +23,20 @@
       "sizeBytes": 553
     },
     "modules/core/card-lifecycle.js": {
-      "sha256": "c6a5d943cac53c2fd32943053dedf3fb1634e28af0b7cd6975fe941d2e7eb060",
-      "sizeBytes": 32650
+      "sha256": "cae3bfb3e9b21b419adbdd88dbb4a5bfde5c9b550912d4bed8227b78a5036bca",
+      "sizeBytes": 33484
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "e7624b93c21302de9555e59c7d74bfbd1c01d56621b18bc6b92540815d6246e2",
-      "sizeBytes": 59873
+      "sha256": "21f18d1bde04cad50955bc6ae3e94902920f87006c472c0f1660f643a1aef6dd",
+      "sizeBytes": 66152
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
       "sizeBytes": 34300
     },
     "modules/ui/skeleton.js": {
-      "sha256": "64a5e731a286db2c438de296689fa7cc2b16b9dd8a860345363eb4a3b9e4bd13",
-      "sizeBytes": 421326
+      "sha256": "a8723832272fe43440be67b49e92abb7b60fd3b9a84f951f3f9a9720e6c4f372",
+      "sizeBytes": 423626
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "7c9d8881b36ebebdf5fd8c33904939f0269159ccaffba717c0cb2106b736bdec",
@@ -79,8 +79,8 @@
       "sizeBytes": 29124
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "860d2c67b579e329cc11e703d071ab89f937406df163236656704bff516b3f19",
-      "sizeBytes": 51206
+      "sha256": "ab64ebaf3680828e00fc97da8d5e3c1ed49fd132c90da9c7401a75be4959d807",
+      "sizeBytes": 51298
     },
     "modules/ui/render.js": {
       "sha256": "563bc3e2742b9a6bc7787c774c1a70e2e76b454919ac609ddc11d43bedb7424f",
