@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
-  "id": "history.chart",
+  "id": "history.chart.m12-missing-test",
   "version": "1.0.0",
   "group": "Verlauf",
   "function": "Trend & Verlauf",
