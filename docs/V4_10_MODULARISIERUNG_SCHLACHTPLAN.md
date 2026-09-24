@@ -1772,3 +1772,37 @@ Bewertung:
 - M12-Haken **Browsercache-Fall simulieren** gesetzt.
 
 **Nächster Schritt:** zunächst über DRA wieder `deploy/dev` herstellen und nach hartem Frontend-Neuladen `fullscreen.map-display 1.0.2 / korrekt` bestätigen. Danach einen kontrollierten Testzweig für **fehlendes Modul erkennen** erzeugen, der auf aktuellem `deploy/dev` basiert und genau ein erwartetes Modul aus dem DRA-Dateibaum entfernt, ohne das Manifest anzupassen.
+
+
+## Schleife 051 – Testträger für fehlendes Modul vorbereitet
+
+**Datum:** 2026-09-24  
+**Status:** Testkandidat bereit; reale DRA-Abnahme offen
+
+Ziel:
+- den M12-Punkt **fehlendes Modul erkennen** über die laufende Moduldiagnose prüfen,
+- ohne Gewitterradar durch eine tatsächlich fehlende Importdatei vollständig in den Modul-Ladefehlerpfad zu zwingen.
+
+Technische Entscheidung:
+- eine physisch gelöschte Moduldatei würde bereits im zentralen Loader den gesamten Start abbrechen,
+- deshalb wird für den realen Soll-/Ist-Test ein weiterhin ladbares Modul absichtlich unter einer falschen Modul-ID registriert,
+- das Manifest bleibt unverändert und erwartet weiterhin die echte ID.
+
+Testzweig:
+- Branch `test/dra-v4.10.02-missing-module`,
+- Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927`,
+- Basis exakt `deploy/dev` `08eec9c3f19c2680ede86336931be8f8e0029424`,
+- gegenüber `deploy/dev` exakt **eine geänderte Datei**:
+  `custom_components/gewitterradar/frontend/modules/history/chart.js`,
+- Änderung ausschließlich in `MODULE_META.id`:
+  - erwartet im Manifest: `history.chart`,
+  - tatsächlich registriert im Test: `history.chart.m12-missing-test`,
+- Funktionscode und Modulversion bleiben unverändert.
+
+Erwartung nach DRA-Installation und hartem Frontend-Neuladen:
+- Gewitterradar startet weiter,
+- Soll-/Ist-Diagnose meldet `history.chart` als **missing / fehlend**,
+- die absichtliche Test-ID erscheint zusätzlich als **unexpected / unerwartet**,
+- damit ist die fehlende erwartete Modul-ID real nachgewiesen.
+
+**Nächster Schritt:** zunächst wieder sauberes `deploy/dev` herstellen, dann in DRA den Branch `test/dra-v4.10.02-missing-module` / Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927` auswählen, installieren und `Strg+Shift+R` ausführen. Danach **Module & Versionen** öffnen und die Detailzeile `history.chart` auf **fehlend** prüfen.
