@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – fehlendes Modul real erkennen.**
+**M12 – realen DRA-Rollback auf V4.09 und Rückkehr auf DEV abschließen.**
 
 Aktueller Testzweig:
 - `test/dra-v4.10.02-cache-mixed-state`
@@ -461,7 +461,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] Soll-/Ist-Metadaten prüfen
 - [x] Browsercache-Fall simulieren
 - [x] veraltetes Modul erkennen
-- [ ] fehlendes Modul erkennen
+- [x] fehlendes Modul erkennen
 - [ ] Rollback testen
 - [x] Neustart-/Frontend-Reload-Hinweis prüfen
 
@@ -2001,3 +2001,35 @@ Bewertung:
 - `history.chart` → **fehlend / missing**,
 - `history.chart.m12-missing-test` → **unerwartet / unexpected**,
 - Gesamtstatus mit Abweichungen.
+
+
+## Schleife 059 – fehlendes Modul real vollständig erkannt
+
+**Datum:** 2026-09-24  
+**Status:** M12-Teilpunkt abgeschlossen
+
+Realer Laufzeitnachweis nach erfolgreicher DRA-Installation des Testzweigs
+`test/dra-v4.10.02-missing-module` / `0bfaaf3bfda0873b0e578895fa154857d3b47927`
+und anschließendem Frontend-Neuladen:
+
+Gesamtstatus:
+- **22 / 22 Module geladen**,
+- **2 Abweichungen erkannt**.
+
+Detailstatus Verlauf:
+- erwartetes Modul `history.chart`:
+  - Status: **fehlt**,
+  - geladen: **—**,
+  - erwartet: **1.0.0**,
+  - Datei: `modules/history/chart.js`,
+- absichtliche Testregistrierung `history.chart.m12-missing-test`:
+  - Status: **unerwartet**,
+  - geladen: **1.0.0**,
+  - kein erwarteter Soll-Eintrag.
+
+Bewertung:
+- die Soll-/Ist-Diagnose erkennt eine fehlende erwartete Modul-ID zuverlässig,
+- zusätzlich wird die unerwartete Ersatz-ID korrekt separat ausgewiesen,
+- damit ist der M12-Haken **fehlendes Modul erkennen** vollständig real bestanden und gesetzt.
+
+**Nächster Schritt:** Testzweig verlassen und in DRA zunächst wieder den empfohlenen `deploy/dev`-Stand herstellen. Danach den realen Rollback auf `deploy/v4.09` bzw. die vorgesehene V4.09-Quelle durchführen, Laufzeit/Funktion prüfen und anschließend wieder auf `deploy/dev` zurückkehren. Erst nach erfolgreicher Rückkehr M12 abschließen.
