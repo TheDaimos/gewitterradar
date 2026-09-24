@@ -31,3 +31,11 @@ def test_core_context_is_extracted_from_loader():
  assert "createBaseContext(import.meta.url)" in main
  assert "BEGIN GEWITTERRADAR LEGACY CORE" in core
  assert "new URL('./assets/" in core
+
+def test_radius_cascade_uses_persisted_state_before_dependent_write():
+ controls=(FRONTEND/"modules/ui/controls.js").read_text(encoding="utf-8")
+ radii=(FRONTEND/"modules/location/radii-map.js").read_text(encoding="utf-8")
+ assert "const storedDanger = finiteNumber(this._hass?.states?.[this._dangerEntity()]?.state) ?? dangerValue;" in controls
+ assert "if (storedDanger != null && storedDanger > value)" in controls
+ assert "const currentDanger = dangerStateValue ?? danger;" in radii
+ assert "if (currentDanger != null && currentDanger > next)" in radii
