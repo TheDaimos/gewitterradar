@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "0000ac64dade75732e49eca7af2bbf3ecdfdb2e6d6b74cbdc6b1a6d4df0365a8",
+  "sha256": "32ffd47695c09d2cb5f1fd712d0aa627707fd281bcdb2db226ec3a0e8faec6fb",
   "sizeBytes": 8123,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R1-2026-09-24",
+  "build": "V4.10.02-MODULAR-DEV-R2-2026-09-24",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "fe6f7a3f6a58c492c4ecd69afe89616c09cdc51541fa8d94394746b52a46e226",
+      "sha256": "23c25cb67c85d5a2a101399679c4a201dcfa7e22b61f4ca57419b783325d34db",
       "sizeBytes": 6738
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 33486
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "1bb695cab26eef9b1a8706ef4f816e5095dfda2f6a449aad632fd69c0cf6a1c7",
-      "sizeBytes": 67225
+      "sha256": "650ecc8108664b28efdd95c53a079b63d289d03cdc58b33ff125e0c768bb18a2",
+      "sizeBytes": 67364
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "2b4b83ddbc4636feec6e9140d689153ed30c7a3be972817ff526e7ba5090c4d6",
@@ -97,6 +97,22 @@
     "modules/core/base-context.js": {
       "sha256": "964d6b5dfcf76c174c0f64a6b0875143ef507a0446bd0b8c715bc83ad8640eba",
       "sizeBytes": 1027072
+    },
+    "modules/fullscreen/compass-picker-chevron-left-brass.js": {
+      "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
+      "sizeBytes": 14334
+    },
+    "modules/fullscreen/compass-picker-chevron-right-brass.js": {
+      "sha256": "4e95a35cb4dffd14c85993072e14f30bad7c9d429d8b6a873ee6c1b576e59cb2",
+      "sizeBytes": 14890
+    },
+    "modules/fullscreen/compass-picker-chevron-left-silver.js": {
+      "sha256": "54f37569f42106dd48eedc56dc8e7ac5807af337d815960215aa4ea648fca28b",
+      "sizeBytes": 11494
+    },
+    "modules/fullscreen/compass-picker-chevron-right-silver.js": {
+      "sha256": "7e58c3b8ab828f6115aa2cbac8740526f1979def3244255dda9703425b3cb082",
+      "sizeBytes": 12106
     }
   }
 }
