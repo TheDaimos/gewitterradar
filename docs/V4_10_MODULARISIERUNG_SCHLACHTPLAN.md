@@ -58,10 +58,18 @@ Saubere Ausgangsbasis real bestätigt:
 - **Versionssatz konsistent**,
 - `fullscreen.map-display`: **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**.
 
+Browsercache-/Mischstand – erster Halbtest real bestätigt:
+- Testzweig `test/dra-v4.10.02-cache-mixed-state` wurde per DRA installiert,
+- der bereits laufende Browser wurde danach bewusst **nicht** hart neu geladen,
+- **Module & Versionen** meldet weiterhin **22 / 22 Module geladen** und **Versionssatz konsistent**,
+- `fullscreen.map-display` zeigt weiterhin **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**,
+- damit ist belegt, dass der bereits geladene Browser-Laufzeitstand trotz geänderter Datei auf dem Dateisystem zunächst bestehen bleibt.
+
 Noch offen:
-1. **Browsercache-/Mischstand:** jetzt den Testzweig per DRA installieren und **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Laufzeitstand dokumentieren; erst nach `Strg+Shift+R` darf **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
-2. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
-3. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
+1. Jetzt `Strg+Shift+R` ausführen. Danach muss **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
+2. Erst dann den M12-Haken **Browsercache-Fall simulieren** setzen.
+3. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
+4. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
 
 Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
 
@@ -1701,3 +1709,36 @@ Bewertung:
 - der M12-Haken **Browsercache-Fall simulieren** bleibt bewusst offen.
 
 **Nächster Schritt:** in DRA erneut `test/dra-v4.10.02-cache-mixed-state` / `274d9304823be7a1ec8620ec6f157493813d0e47` installieren. Danach **nicht** neu laden und sofort `Module & Versionen` prüfen. Erwartung vor dem harten Neuladen: weiterhin **22 / 22**, **Versionssatz konsistent**, `fullscreen.map-display 1.0.2 / erwartet 1.0.2 / korrekt`. Erst danach `Strg+Shift+R`; anschließend muss **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
+
+
+## Schleife 049 – Browsercache-Test vor hartem Neuladen real bestätigt
+
+**Datum:** 2026-09-24  
+**Status:** erster Halbtest erfolgreich; Abschluss nach hartem Neuladen offen
+
+Realer Ablauf:
+- Ausgangsbasis war sauberer `deploy/dev`-Laufzeitstand mit `fullscreen.map-display 1.0.2 / erwartet 1.0.2 / korrekt`,
+- anschließend wurde per DRA der Testzweig `test/dra-v4.10.02-cache-mixed-state` / `274d9304823be7a1ec8620ec6f157493813d0e47` installiert,
+- danach wurde der bereits geöffnete Gewitterradar-Browser bewusst **nicht** neu geladen.
+
+Realer Nachweis vor hartem Frontend-Neuladen:
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- `fullscreen.map-display`:
+  - Status: **korrekt**,
+  - geladen: **1.0.2**,
+  - erwartet: **1.0.2**.
+
+Zusätzlicher Diagnoseexport:
+- Anwendung **V4.10.02**,
+- `diagnostics.ok=true`,
+- `loadedCount=22`,
+- `expectedCount=22`,
+- `fullscreen.map-display` im Export ebenfalls `loadedVersion=1.0.2`, `expectedVersion=1.0.2`, `status=ok`.
+
+Bewertung:
+- der Browser hält den bereits geladenen alten Modulstand weiter im Speicher, obwohl DRA den Testzweig auf das Dateisystem installiert hat,
+- damit ist der **Vorher-Zustand des Browsercache-/Mischstand-Tests real belegt**,
+- der M12-Haken bleibt bis zum Nachweis nach hartem Neuladen bewusst offen.
+
+**Nächster Schritt:** jetzt `Strg+Shift+R` ausführen und danach **Module & Versionen → fullscreen.map-display** prüfen. Erwartet: **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**, Gesamtstatus **1 Abweichung**.
