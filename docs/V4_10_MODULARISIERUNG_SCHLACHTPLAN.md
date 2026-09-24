@@ -36,33 +36,30 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – Browsercache-/Mischstand real prüfen; gleichzeitig veraltetes Modul erkennen.**
+**M12 – Cache-/Mischstand und veraltetes Modul vollständig real abschließen.**
 
-Ausgangslage:
-- der vorherige Gewitterradar-`deploy/dev`-Stand ist real wiederhergestellt,
-- der Ein-Modul-Test ist abgeschlossen.
-
-Vorbereiteter Cache-/Mischstand-Testzweig:
+Aktueller Testzweig:
 - `test/dra-v4.10.02-cache-mixed-state`
 - Commit `274d9304823be7a1ec8620ec6f157493813d0e47`
-- Basis exakt `deploy/dev`
+- Basis: `deploy/dev` `08eec9c3f19c2680ede86336931be8f8e0029424`
 - gegenüber `deploy/dev` exakt **eine geänderte Datei**:
   `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
-- Änderung ausschließlich: geladene Modulversion `fullscreen.map-display` wird absichtlich von **1.0.2 auf 1.0.1** gesetzt,
-- Manifest/Sollstand bleibt bewusst **1.0.2**.
+- geladene Modulversion dort absichtlich **1.0.1**; Manifest/Sollstand bleibt **1.0.2**.
 
-Reale Abnahme:
-1. in DRA den Branch `test/dra-v4.10.02-cache-mixed-state` auswählen,
-2. Vorschau prüfen: **0 neu / 1 geändert / 0 entfernt**,
-3. installieren, aber den bereits geöffneten Gewitterradar-Browser zunächst **nicht neu laden**,
-4. Moduldetails im bereits laufenden Stand prüfen: dort darf weiterhin der alte geladene Zustand **1.0.2 / korrekt** stehen,
-5. danach erst `Strg+Shift+R`,
-6. Moduldetails erneut öffnen:
-   - geladen muss **1.0.1** stehen,
-   - erwartet muss **1.0.2** stehen,
-   - Status muss die Versionsabweichung sichtbar erkennen,
-7. damit sind Browsercache-/Mischstand und die Erkennung eines veralteten Moduls gemeinsam real nachgewiesen,
-8. anschließend wieder auf `deploy/dev` zurücksetzen und Frontend neu laden; Status muss wieder **1.0.2 / korrekt** sein.
+Bereits real sichtbar:
+- **22 / 22 Module geladen**,
+- **1 Abweichung erkannt**.
+
+Für das formale Setzen der beiden M12-Haken fehlen noch die ausdrücklich dokumentierten Einzelbelege:
+1. **Browsercache-/Mischstand:** nach DRA-Installation im bereits geöffneten Browser vor einem harten Neuladen muss der zuvor geladene Stand weiter sichtbar sein; erst nach `Strg+Shift+R` darf der neue Dateistand aktiv werden.
+2. **Veraltetes Modul:** Detailzeile von `fullscreen.map-display` bestätigen:
+   - geladen **1.0.1**,
+   - erwartet **1.0.2**,
+   - Status Versionsabweichung.
+3. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
+4. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
+
+Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
 
 ---
 
@@ -461,7 +458,15 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] DRA-Lifecycle bleibt `home_assistant_restart`; kein stiller Neustart ist erlaubt.
 - [x] aktueller verwalteter V4.10-Baum liegt mit 57 Dateien / 11.246.740 Bytes deutlich innerhalb der DRA-Policy (5.000 Dateien / 157.286.400 Bytes).
 
-Zwei reale M12-Abnahmepunkte sind inzwischen nachgewiesen: kompletter DRA-Installationslauf und korrekter manueller Neustarthinweis. Die übrigen sechs Haken bleiben offen, bis der neu gestartete HA-DEV-Stand geprüft, die verbleibenden Diagnose-/Deltafälle real nachgewiesen und anschließend über DRA auf `deploy/v4.09` zurückgesetzt wurde.
+Realer M12-Stand:
+- kompletter Modulbaum über DRA installiert,
+- genau **ein geändertes Modul** real mit **0 neu / 1 geändert / 0 entfernt / 56 unverändert** installiert und funktional nachgewiesen,
+- Soll-/Ist-Metadaten real geprüft,
+- Frontend-/Companion-Neuladehinweis für reine Frontend-Änderung real bestätigt,
+- Cache-/Mischstand und veraltetes Modul sind teilweise nachgewiesen: die Laufzeit meldet bereits **22 / 22 Module** und **1 Abweichung**; die Detailzeile sowie der ausdrücklich dokumentierte Vorher/Nachher-Cachezustand fehlen noch,
+- fehlendes Modul und realer Rollback auf `deploy/v4.09` bleiben offen.
+
+Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popup des Einzelmodul-Tests bleibt auf dem Testzweig, einschließlich des bekannten unerwünschten Rahmens/Fokusrahmens am Schließen-Symbol. Die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
 
 **Abschlusskriterium:** DRA und Gewitterradar liefern gemeinsam eine belastbare Ende-zu-Ende-Versionsprüfung.
 
