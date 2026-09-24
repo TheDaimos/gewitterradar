@@ -12,7 +12,7 @@ const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-di
 const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-recent.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.1"',
+  '"version": "1.1.2"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -55,7 +55,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.2"',
+  '"version": "1.1.3"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
@@ -79,7 +79,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.2"',
+  '"id": "fullscreen.map-display"','"version": "1.0.4"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -89,7 +89,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "map.clusters-recent"','"version": "1.0.1"',
+  '"id": "map.clusters-recent"','"version": "1.0.2"',
   "this._t('settings.cluster_navigation_to_session')",
   "this._t('settings.cluster_navigation_to_infinite')"
 ]){
