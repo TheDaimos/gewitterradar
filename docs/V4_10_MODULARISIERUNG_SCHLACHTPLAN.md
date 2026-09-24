@@ -1852,3 +1852,32 @@ Bewertung:
 - Ref: `test/dra-v4.10.02-missing-module`,
 - Commit: `0bfaaf3bfda0...`.
 Danach Vorschau berechnen. Erwartung gegenüber dem aktuell sauberen `deploy/dev`-Dateibaum: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**. Erst wenn genau diese Vorschau vorliegt, installieren und anschließend hart neu laden.
+
+
+## Schleife 054 – Missing-Modul-Test vor DRA-Update pausiert
+
+**Datum:** 2026-09-24  
+**Status:** Test bewusst pausiert; DRA-Update und HA-Neustart vorgeschaltet
+
+Realer Befund:
+- DRA zeigt als ausgewählte Quelle korrekt:
+  - Art: `branch`,
+  - Ref: `test/dra-v4.10.02-missing-module`,
+  - Commit: `0bfaaf3bfda0...`,
+- die anschließend angezeigte Vorschau meldet dennoch **0 neu / 0 geändert / 0 entfernt / 57 unverändert**,
+- dies widerspricht dem verifizierten Git-Stand: der ausgewählte Commit unterscheidet sich von `deploy/dev` exakt in `custom_components/gewitterradar/frontend/modules/history/chart.js`,
+- GitHub liefert für denselben Pfad an `deploy/dev` die ID `history.chart` und am Testcommit die ID `history.chart.m12-missing-test`.
+
+DRA-Codeprüfung:
+- aktueller DRA-`deploy/dev`-Stand ist **0.15.19-dev**,
+- dort verwirft die Oberfläche nach einer neuen Quellenauswahl die bisherige Vorschau,
+- Backend-Vorschau liest Manifest und verwaltete Dateien aus dem **persistierten, eingefrorenen Commit-SHA**,
+- deshalb wird der reale Test vor weiterer Analyse bewusst mit einem ohnehin anstehenden DRA-Update und vollständigen Home-Assistant-Neustart neu angesetzt.
+
+**Nächster Schritt:** DRA auf den vorgesehenen aktuellen Stand aktualisieren und Home Assistant vollständig neu starten. Danach:
+1. prüfen, dass DRA erwartungsgemäß wieder **GESPERRT** startet,
+2. Gewitterradar zunächst auf sauberem `deploy/dev` belassen,
+3. Missing-Testbranch `test/dra-v4.10.02-missing-module` erneut über **Quelle übernehmen** auswählen,
+4. Commit `0bfaaf3bfda0...` bestätigen,
+5. Vorschau **neu** berechnen.
+Erwartung: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**. Falls weiterhin **0 / 0 / 0 / 57** erscheint, ist der DRA-Preview-Pfad selbst der nächste zu untersuchende Fehler und die Installation wird nicht ausgeführt.
