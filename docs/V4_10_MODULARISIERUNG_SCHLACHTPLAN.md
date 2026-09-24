@@ -2033,3 +2033,20 @@ Bewertung:
 - damit ist der M12-Haken **fehlendes Modul erkennen** vollständig real bestanden und gesetzt.
 
 **Nächster Schritt:** Testzweig verlassen und in DRA zunächst wieder den empfohlenen `deploy/dev`-Stand herstellen. Danach den realen Rollback auf `deploy/v4.09` bzw. die vorgesehene V4.09-Quelle durchführen, Laufzeit/Funktion prüfen und anschließend wieder auf `deploy/dev` zurückkehren. Erst nach erfolgreicher Rückkehr M12 abschließen.
+
+
+## Schleife 060 – DEV nach Missing-Modul-Test wieder sauber hergestellt
+
+**Datum:** 2026-09-24  
+**Status:** real bestätigt
+
+Realer Nachweis nach Rückkehr vom Missing-Testzweig auf `deploy/dev` und Frontend-Neuladen:
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- die absichtlichen Missing-/Unexpected-Abweichungen sind vollständig verschwunden.
+
+Bewertung:
+- der produktive DEV-Laufzeitstand ist wiederhergestellt,
+- saubere Ausgangsbasis für den letzten offenen M12-Punkt **realer Rollback auf V4.09 und Rückkehr auf DEV** ist bestätigt.
+
+**Nächster Schritt:** in DRA `deploy/v4.09` auswählen und installieren. Danach die von DRA geforderte Nachaktion vollständig ausführen und den realen V4.09-Laufzeitstand prüfen. Anschließend wieder `deploy/dev` installieren und erneut **22 / 22 Module geladen / Versionssatz konsistent** bestätigen.
