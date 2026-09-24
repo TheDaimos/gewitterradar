@@ -1939,3 +1939,19 @@ Bewertung:
 - erforderlich ist ein Gewitterradar-projektbezogener DRA-Diagnoseexport des konkreten Installationsversuchs.
 
 **Nächster Schritt:** in DRA das Projekt **Gewitterradar** auswählen und nach dem Missing-Modul-Installationsversuch einen Diagnose-/Supportexport für genau dieses Projekt erzeugen. Darin müssen mindestens Source-Ref/Commit, Pre-Install-Preview, Staging/Deployment, Install-Verifikation und der Pfad `modules/history/chart.js` enthalten sein. Danach den Installationspfad bytegenau auswerten.
+
+
+## Schleife 057 – Ursache des falschen DRA-Logs geklärt
+
+**Datum:** 2026-09-24  
+**Status:** Einordnung korrigiert
+
+Klarstellung zum zuvor ausgewerteten DRA-Supportexport:
+- der Export wurde im Zusammenhang mit dem **DRA-Update bzw. der Cache-Aktualisierung** erzeugt,
+- deshalb war der Projektscope korrekt auf `deploy_relay` / `TheDaimos/deploy-relay-agent` gesetzt,
+- dies war **kein** Fehlverhalten von DRA und kein Gewitterradar-spezifischer Installationsnachweis,
+- der Export bleibt für die Analyse des Missing-Modul-Tests bewusst unberücksichtigt.
+
+Weiterhin offen:
+- projektbezogener DRA-Diagnose-/Supportexport für **Gewitterradar** aus dem konkreten Missing-Modul-Installationsversuch,
+- danach Auswertung von Source-Ref/Commit, Pre-Install-Vorschau, Staging, Schreibvorgang und Install-Verifikation für `modules/history/chart.js`.
