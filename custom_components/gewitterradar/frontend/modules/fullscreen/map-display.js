@@ -17,6 +17,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _teardownMapDisplayMode() {
       this._setMapDisplayMenuOpen(false);
       this._closeMapStartupDropdown?.(false);
+      this._closeMedallionPicker?.(false);
       if (this._mapStartupOutsidePointerHandler) {
         document.removeEventListener('pointerdown',this._mapStartupOutsidePointerHandler,true);
         this._mapStartupOutsidePointerHandler = null;
@@ -168,6 +169,77 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
       this._syncCompassPicker();
       shell.querySelector('[data-compass-picker-close]')?.focus?.({preventScroll:true});
+    },
+
+    // M12 DRA single-module acceptance candidate:
+    // deliberately contained in fullscreen/map-display.js only.
+    _closeMedallionPicker(restoreFocus = true) {
+      const dialog=this._medallionPickerDialog;
+      if(!dialog) return;
+      try { if(dialog.open) dialog.close(); } catch (_error) {}
+      dialog.parentElement?.remove();
+      this._medallionPickerDialog=null;
+      const previousFocus=this._medallionPickerReturnFocus;
+      this._medallionPickerReturnFocus=null;
+      if(restoreFocus&&previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
+    },
+
+    _openMedallionPicker() {
+      if(this._medallionPickerDialog?.open||!this.shadow||!this.isConnected) return;
+      const overlay=this.shadow.getElementById('map-medallion-overlay');
+      if(!overlay||overlay.hidden) return;
+
+      const source=this.shadow.getElementById('trend-box');
+      const state=['up','down','stable','none'].find((name)=>source?.classList.contains(name))||'none';
+      const shell=document.createElement('div');
+      shell.id='medallion-picker-shell-m12';
+      shell.innerHTML=
+        '<style>'+
+        '.medallion-picker-dialog{--picker-gold:#dfbc72;box-sizing:border-box;width:min(520px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 16px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;overflow:visible;color-scheme:dark}'+
+        '.medallion-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.medallion-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}'+
+        '.medallion-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;cursor:pointer}.medallion-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}'+
+        '.medallion-picker-title{margin:2px 52px 0;color:#f0cf80;font:700 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.04em;text-align:center}'+
+        '.medallion-picker-stage{position:relative;width:min(390px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1/1;display:grid;place-items:center;margin:4px auto 0;filter:drop-shadow(0 12px 24px rgba(0,0,0,.38))}'+
+        '.medallion-picker-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}.medallion-picker-stage .arrow{left:50%;top:50%;inset:auto;width:59.667391%;height:59.667391%;transform-origin:50% 50%;filter:drop-shadow(0 1px 1px rgba(47,24,4,.40)) drop-shadow(0 0 5px rgba(246,195,68,.10))}'+
+        '.medallion-picker-stage.up .arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg)}.medallion-picker-stage.stable .arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg)}.medallion-picker-stage.down .arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg)}.medallion-picker-stage.none .arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84)}'+
+        '.medallion-picker-note{max-width:380px;color:#9ba7b4;font:500 11px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}'+
+        '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 14px}.medallion-picker-stage{width:min(350px,76vw);max-width:calc(100vw - 56px)}}'+
+        '</style>'+
+        '<dialog class="medallion-picker-dialog" role="dialog" aria-modal="true" aria-label="'+this._t('trend.label')+'">'+
+        '<button class="medallion-picker-close" type="button" data-medallion-picker-close aria-label="'+this._t('about.close')+'" title="'+this._t('about.close')+'"><img src="'+ABOUT_CLOSE_IMAGE+'" alt="" width="34" height="34" draggable="false"></button>'+
+        '<div class="medallion-picker-title">'+this._t('trend.label')+'</div>'+
+        '<div class="medallion-picker-stage '+state+'" data-medallion-picker-stage>'+
+        '<img src="'+TREND_MEDALLION_IMAGE+'" alt="" draggable="false">'+
+        '<img class="arrow" src="'+TREND_ARROW_IMAGE+'" alt="" draggable="false">'+
+        '</div>'+
+        '<div class="medallion-picker-note">M12 · DRA Ein-Modul-Test</div>'+
+        '</dialog>';
+
+      this._medallionPickerReturnFocus=this.shadow.activeElement;
+      this.shadow.append(shell);
+      const dialog=shell.querySelector('.medallion-picker-dialog');
+      if(!dialog){shell.remove();return;}
+      this._medallionPickerDialog=dialog;
+
+      shell.querySelector('[data-medallion-picker-close]')?.addEventListener('click',(event)=>{
+        event.preventDefault();event.stopPropagation();
+        this._closeMedallionPicker();
+      });
+      dialog.addEventListener('cancel',(event)=>{
+        event.preventDefault();event.stopPropagation();
+        this._closeMedallionPicker();
+      });
+      dialog.addEventListener('pointerdown',(event)=>{
+        if(event.target!==dialog) return;
+        const rect=dialog.getBoundingClientRect();
+        if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom){
+          event.preventDefault();
+          this._closeMedallionPicker();
+        }
+      });
+
+      try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      shell.querySelector('[data-medallion-picker-close]')?.focus?.({preventScroll:true});
     },
 
     _setFullscreenAuxiliaryOverlayHost(useFullscreen = false) {
@@ -840,7 +912,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           event.stopPropagation();
           const moved = finishDrag('pointer',event.pointerId);
           try { target.releasePointerCapture(event.pointerId); } catch (_error) {}
-          if (kind === 'compass' && event.type === 'pointerup' && !moved) this._openCompassPicker();
+          if (event.type === 'pointerup' && !moved) {
+            if (kind === 'compass') this._openCompassPicker();
+            else if (kind === 'medallion') this._openMedallionPicker();
+          }
         };
         target.addEventListener('pointerup',finishPointerDrag,{capture:true});
         target.addEventListener('pointercancel',finishPointerDrag,{capture:true});
@@ -885,7 +960,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           event.preventDefault();
           event.stopPropagation();
           const moved = finishDrag('touch',drag.inputId);
-          if (kind === 'compass' && event.type === 'touchend' && !moved) this._openCompassPicker();
+          if (event.type === 'touchend' && !moved) {
+            if (kind === 'compass') this._openCompassPicker();
+            else if (kind === 'medallion') this._openMedallionPicker();
+          }
         };
         target.addEventListener('touchend',finishTouchDrag,{passive:false,capture:true});
         target.addEventListener('touchcancel',finishTouchDrag,{passive:false,capture:true});
