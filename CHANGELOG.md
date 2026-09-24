@@ -4,6 +4,9 @@
 
 ### Modularisierung · Abschlusskorrekturen
 
+- Fix the radius cascade when lowering **Gewitterradius** below the persisted **Gefahrenradius**: the real Home Assistant danger state is now reduced first instead of trusting the already-previewed slider value, preventing `danger_radius <= storm_radius <= observation_radius` validation failures on Desktop, iPad and Android.
+- Apply the same persisted-state safeguard to direct storm-radius writes from keypad/step controls so all Gewitterradar radius entry paths preserve the intended inner-radius cascade.
+- Remove the unintended square focus/appearance frame around the premium compass-picker close control on iPad/Android while retaining a non-rectangular image glow as keyboard focus feedback.
 - Stabilize **Module & Versionen** so individual module rows can be opened, closed and reopened repeatedly without an immediate re-render closing them again.
 - Preserve open module-detail rows across diagnostic list refreshes and isolate inner module toggles from the outer Settings accordion.
 - Reduce the Module Details dialog from 780 px to **660 px** maximum width and from 860 px to **760 px** maximum desktop/tablet height while retaining viewport-aware mobile sizing.
@@ -28,9 +31,12 @@
 - `ui.skeleton` → **1.1.1**
 - `ui.i18n-settings` → **1.2.1**
 - `diagnostics.module-view` → **1.3.0**
-- `fullscreen.map-display` → **1.0.2**
+- `fullscreen.map-display` → **1.0.3**
 - `map.clusters-recent` → **1.0.1**
 - `ui.render` → **1.0.1**
+- `ui.controls` → **1.1.3**
+- `location.radii-map` → **1.0.1**
+- `core.manifest` → **1.2.1**
 
 ## 2026/09 — V4.10.01 DEV
 
