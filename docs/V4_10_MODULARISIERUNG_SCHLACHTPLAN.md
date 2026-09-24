@@ -36,24 +36,33 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – Browsercache-/Mischstand real prüfen.**
+**M12 – Browsercache-/Mischstand real prüfen; gleichzeitig veraltetes Modul erkennen.**
 
-Der reale Ein-Modul-DRA-Test ist abgeschlossen:
-- DRA-Vorschau: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**,
-- Installation über `test/dra-v4.10.02-single-module`,
-- sichtbarer Funktionsnachweis erfolgreich: Tippen/Klicken auf das Vollbild-Medaillon öffnet das provisorische M12-Popup,
-- damit ist **Deployment nur eines geänderten Moduls** real bestanden.
+Ausgangslage:
+- der vorherige Gewitterradar-`deploy/dev`-Stand ist real wiederhergestellt,
+- der Ein-Modul-Test ist abgeschlossen.
 
-Bewusst nicht als Fehlerblocker gewertet:
-- das Schließen-Symbol im provisorischen Medaillon-Popup zeigt einen unerwünschten Fokus-/Rahmenzustand,
-- dieser Testdialog ist nur M12-Abnahmeträger und wird nach M12 nicht als fertige Medaillon-Funktion übernommen,
-- die spätere echte Medaillon-Auswahl/-Bearbeitung wird als eigenes Thema umgesetzt; dabei kann das Medaillon ggf. in ein eigenes Modul ausgelagert werden.
+Vorbereiteter Cache-/Mischstand-Testzweig:
+- `test/dra-v4.10.02-cache-mixed-state`
+- Commit `274d9304823be7a1ec8620ec6f157493813d0e47`
+- Basis exakt `deploy/dev`
+- gegenüber `deploy/dev` exakt **eine geänderte Datei**:
+  `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
+- Änderung ausschließlich: geladene Modulversion `fullscreen.map-display` wird absichtlich von **1.0.2 auf 1.0.1** gesetzt,
+- Manifest/Sollstand bleibt bewusst **1.0.2**.
 
-Vor dem nächsten Prüffall:
-1. in DRA wieder `deploy/dev` auswählen,
-2. Vorschau sollte den Teststand mit genau **1 geändert / 0 neu / 0 entfernt** zurück auf DEV setzen,
-3. installieren und Frontend neu laden,
-4. danach den M12-Punkt **Browsercache-/Mischstand** gezielt abnehmen.
+Reale Abnahme:
+1. in DRA den Branch `test/dra-v4.10.02-cache-mixed-state` auswählen,
+2. Vorschau prüfen: **0 neu / 1 geändert / 0 entfernt**,
+3. installieren, aber den bereits geöffneten Gewitterradar-Browser zunächst **nicht neu laden**,
+4. Moduldetails im bereits laufenden Stand prüfen: dort darf weiterhin der alte geladene Zustand **1.0.2 / korrekt** stehen,
+5. danach erst `Strg+Shift+R`,
+6. Moduldetails erneut öffnen:
+   - geladen muss **1.0.1** stehen,
+   - erwartet muss **1.0.2** stehen,
+   - Status muss die Versionsabweichung sichtbar erkennen,
+7. damit sind Browsercache-/Mischstand und die Erkennung eines veralteten Moduls gemeinsam real nachgewiesen,
+8. anschließend wieder auf `deploy/dev` zurücksetzen und Frontend neu laden; Status muss wieder **1.0.2 / korrekt** sein.
 
 ---
 
@@ -1581,3 +1590,27 @@ Architekturhinweis für nach M12:
 - das Medaillon besitzt inzwischen genügend eigene Verantwortlichkeiten, um eine spätere Auslagerung in ein eigenes Modul wie `instruments.medallion` zu prüfen.
 
 **Nächster Schritt:** auf `deploy/dev` zurückkehren und danach M12 Browsercache-/Mischstand real prüfen.
+
+
+## Schleife 044 – DEV wiederhergestellt und Cache-/Mischstand-Test vorbereitet
+
+**Datum:** 2026-09-24  
+**Status:** Rückkehr auf DEV real bestätigt; nächster Testkandidat bereit
+
+Realer Befund:
+- nach dem erfolgreichen Ein-Modul-Test wurde über DRA wieder auf den vorherigen Gewitterradar-Stand `deploy/dev` zurückgestellt,
+- der ursprüngliche V4.10.02-Stand ist real wiederhergestellt.
+
+Neuer Testkandidat:
+- Branch `test/dra-v4.10.02-cache-mixed-state`,
+- Commit `274d9304823be7a1ec8620ec6f157493813d0e47`,
+- exakt eine geänderte Datei gegenüber `deploy/dev`,
+- `fullscreen.map-display` meldet absichtlich **1.0.1**, während das Manifest weiterhin **1.0.2** erwartet.
+
+Zweck:
+- nach Installation ohne Browserneuladen muss der bereits geladene alte Laufzeitstand zunächst bestehen bleiben,
+- nach hartem Frontend-Neuladen muss das absichtlich veraltete Modul **1.0.1** geladen werden,
+- die Moduldiagnose muss den Soll-/Ist-Unterschied **1.0.2 erwartet / 1.0.1 geladen** erkennen,
+- damit können die offenen M12-Punkte **Browsercache-Fall simulieren** und **veraltetes Modul erkennen** gemeinsam real abgenommen werden.
+
+**Nächster Schritt:** Testzweig über DRA installieren und die beiden Zustände vor und nach hartem Frontend-Neuladen dokumentieren.
