@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -361,7 +361,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const helperMax = finiteNumber(stormState?.attributes?.max) ?? 1000;
         const max = obs != null ? Math.min(helperMax,obs) : helperMax;
         const next = clamp(requested,min,max);
-        if (danger != null && danger > next) {
+        const currentDanger = dangerStateValue ?? danger;
+        if (currentDanger != null && currentDanger > next) {
           this._setInputNumber(this._dangerEntity(),next);
         }
         this._setInputNumber(this._stormEntity(),next);
