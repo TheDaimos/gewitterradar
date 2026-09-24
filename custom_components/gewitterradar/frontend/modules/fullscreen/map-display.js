@@ -870,6 +870,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           const moved = !!drag.moved;
           const bounds = mapInstrumentDragBounds(target);
           if (moved && bounds) {
+            if (kind === 'medallion') this._mapMedallionSuppressClickUntil = Date.now()+320;
             const position = {
               x:bounds.maxLeft>bounds.minLeft ? clamp((target.offsetLeft-bounds.minLeft)/(bounds.maxLeft-bounds.minLeft),0,1) : 0,
               y:bounds.maxTop>bounds.minTop ? clamp((target.offsetTop-bounds.minTop)/(bounds.maxTop-bounds.minTop),0,1) : 0
@@ -970,6 +971,16 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       };
       bindMapInstrumentDrag(overlay,'compass');
       bindMapInstrumentDrag(medallionOverlay,'medallion');
+      if (medallionOverlay) {
+        medallionOverlay.dataset.m12Picker = 'single-module';
+        medallionOverlay.setAttribute('title','Medaillon · M12 Ein-Modul-Test');
+        medallionOverlay.addEventListener('click',(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (Date.now() < Number(this._mapMedallionSuppressClickUntil||0)) return;
+          this._openMedallionPicker();
+        },{capture:true});
+      }
 
       const mapLocationDragBounds = () => {
         const card = this.shadow?.getElementById('map-card');
