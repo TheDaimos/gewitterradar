@@ -479,7 +479,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const title = sourceChip?.getAttribute('title') || this._t('settings.cluster_navigation_session');
       overlay.setAttribute('title',title);
       overlay.setAttribute('aria-label',title);
-      if (!overlay.hidden) requestAnimationFrame(() => this._positionMapClusterJumpOverlay());
+      if (!overlay.hidden && !this._mapClusterJumpDragState) requestAnimationFrame(() => this._positionMapClusterJumpOverlay());
     },
 
     _setMapDisplayMenuOpen(open) {
