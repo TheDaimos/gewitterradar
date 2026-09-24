@@ -27,26 +27,6 @@
     "protected": true
   },
   {
-    "file": "assets/gewitterradar-chevron-left-brass-runtime-2x.png",
-    "sha256": "8b7ed64f726503aefbe49963394580f52a72bc75f8f25466903863088389b05a",
-    "protected": false
-  },
-  {
-    "file": "assets/gewitterradar-chevron-left-silver-runtime-2x.png",
-    "sha256": "72160c5ced7204106ea5555f21ba9e587d4ea0479279892d203d92be30c9cf67",
-    "protected": false
-  },
-  {
-    "file": "assets/gewitterradar-chevron-right-brass-runtime-2x.png",
-    "sha256": "3256bf8a594dc89f99b5981651dcafd6cd74336137d776d3d845c350e76289ff",
-    "protected": false
-  },
-  {
-    "file": "assets/gewitterradar-chevron-right-silver-runtime-2x.png",
-    "sha256": "3725ca0b60ed1e246598e0639ee83daf8c1a93ce150b2d1f1b8aa3b0ac0a14b2",
-    "protected": false
-  },
-  {
     "file": "assets/gewitterradar-compass-frame-v1.png",
     "sha256": "b09df9142df89903e2150e4767ebe3bf8bba9caf4ca7f0c4b6b78cc24318fde5",
     "protected": true

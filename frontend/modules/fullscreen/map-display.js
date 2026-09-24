@@ -1,7 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41002r1";
+import { defineModule } from "../core/runtime.js?v=41002r2";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r2";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r2";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r2";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -105,15 +109,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const instrument = this.shadow.getElementById('compass-instrument');
       if (!instrument) return;
 
+      // Picker-only Retina assets. Other menu/accordion/UI chevrons intentionally remain untouched.
       const chevronAssets = {
-        brass: {
-          left: new URL('../../assets/gewitterradar-chevron-left-brass-runtime-2x.png', import.meta.url).href,
-          right: new URL('../../assets/gewitterradar-chevron-right-brass-runtime-2x.png', import.meta.url).href,
-        },
-        silver: {
-          left: new URL('../../assets/gewitterradar-chevron-left-silver-runtime-2x.png', import.meta.url).href,
-          right: new URL('../../assets/gewitterradar-chevron-right-silver-runtime-2x.png', import.meta.url).href,
-        },
+        brass: { left: COMPASS_PICKER_LEFT_BRASS, right: COMPASS_PICKER_RIGHT_BRASS },
+        silver: { left: COMPASS_PICKER_LEFT_SILVER, right: COMPASS_PICKER_RIGHT_SILVER },
       };
 
       const shell = document.createElement('div');
@@ -130,7 +129,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-nav-row{display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
         '.compass-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;color:var(--picker-gold);appearance:none;-webkit-appearance:none}' +
         '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
-        '.compass-picker-chevron{display:block;width:58px;height:58px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
+        '.compass-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.compass-picker-nav-row[data-chevron-material="silver"] .compass-picker-chevron{filter:drop-shadow(0 2px 5px #000c)}' +
         '.compass-picker-index{min-width:82px;text-align:center;color:#fff0b2;font:650 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;text-shadow:0 1px 3px #000}' +
         '.compass-picker-index-spacer{display:block;min-width:82px;height:1px}' +
