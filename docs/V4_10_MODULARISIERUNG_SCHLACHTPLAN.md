@@ -2390,8 +2390,13 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 
 
 ### Zwischenauftrag – Retina-Chevrons nur in der Kompassauswahl 2026-09-24
-- [x] Vier transparente 2x-Runtime-PNGs (Messing/Silber, links/rechts) als eigene Kompass-Picker-Assets eingebunden.
+- [x] Vier freigestellte 2x-Runtime-Chevrons (Messing/Silber, links/rechts) ausschließlich für die Kompassauswahl eingebunden.
+- [x] Laufzeitformat final als verlustfreie WebP-Datenmodule (VP8L) gekapselt: 104×104 Pixel für 52×52 CSS-Pixel = exakt 2× Retina; ca. 8,6–11,1 KB pro Chevron.
 - [x] Alte nicht freigestellte Runtime-SVGs aus den Auslieferungsbäumen entfernt.
-- [x] Änderung strikt auf `fullscreen.map-display::_openCompassPicker()` begrenzt; sämtliche anderen Chevron in Menüs und Oberfläche bleiben unverändert.
-- [x] Modulmanifest, Runtime-Manifest, Asset-Inventar, Frontend-Vertrag, Prüfsummen und Regressionstest nachgezogen.
-- [x] DRA-Bereitstellung erfolgt erst nach erfolgreicher CI durch Aktualisierung von `deploy/dev`.
+- [x] Änderung technisch auf `fullscreen.map-display::_openCompassPicker()` und vier lokale `compass-picker-chevron-*.js`-Datenmodule begrenzt; sämtliche anderen Chevron in Menüs, Akkordeons, Diagnose und sonstiger Oberfläche bleiben unverändert.
+- [x] Drei Auslieferungsbäume für alle vier Picker-Datenmodule bytegleich verifiziert.
+- [x] Runtime-Revision `41002r2`, `fullscreen.map-display 1.0.8`, `core.manifest 1.2.7`, Modulsatz `A6C8-9983`.
+- [x] Modulmanifest, Runtime-Manifest, Frontend-Vertrag, Prüfsummen und Regressionstests nachgezogen.
+- [x] Regressionstest erzwingt VP8L/lossless, 104×104, <15 KB und ausschließliche Referenzierung aus `map-display`.
+- [x] Implementierungskandidat `e27742be6f5c574693048a168fc58e8a87a54feb` vollständig grün: Diagnostic #715, Hi-Res #1165, Source Archive #377, Integration #1943, Shared Frontend #1924.
+- [ ] Nach finalem Dokumentations-CI `deploy/dev` auf den vollständig geprüften Endstand promoten und über DRA real installieren.
