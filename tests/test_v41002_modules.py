@@ -8,8 +8,17 @@ def test_declared_modules_exist_in_all_delivery_trees():
   assert (ROOT/"custom_components"/"gewitterradar"/"frontend"/name).read_bytes()==payload
   assert (ROOT/"dashboard"/"dist"/name).read_bytes()==payload
 def test_modules_carry_own_versions():
+ picker_data_modules={
+  "modules/fullscreen/compass-picker-chevron-left-brass.js",
+  "modules/fullscreen/compass-picker-chevron-right-brass.js",
+  "modules/fullscreen/compass-picker-chevron-left-silver.js",
+  "modules/fullscreen/compass-picker-chevron-right-silver.js",
+ }
  for name in CONTRACT["moduleFiles"]:
   text=(FRONTEND/name).read_text(encoding="utf-8")
+  if name in picker_data_modules:
+   assert text.startswith('export default "data:image/webp;base64,')
+   continue
   assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
 def test_main_is_loader_not_monolithic_class():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
@@ -61,12 +70,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r1'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r2'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r1"' in manifest
- assert 'moduleSetId:"F168-7C7E"' in manifest
- assert runtime["runtimeRevision"]=="41002r1"
- assert runtime["moduleSetId"]=="F168-7C7E"
+ assert 'runtimeRevision:"41002r2"' in manifest
+ assert 'moduleSetId:"A6C8-9983"' in manifest
+ assert runtime["runtimeRevision"]=="41002r2"
+ assert runtime["moduleSetId"]=="A6C8-9983"
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
