@@ -1,4 +1,4 @@
-import { registerModule } from "./registry.js?v=41002";
+import { registerModule } from "./registry.js?v=41002r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",

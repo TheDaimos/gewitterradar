@@ -102,6 +102,11 @@
     "protected": false
   },
   {
+    "file": "assets/gewitterradar-runtime-manifest.json",
+    "sha256": "233c03387a524222517655e04d43054aa679e0754c53b6e0c9b80abd1f41fc0d",
+    "protected": false
+  },
+  {
     "file": "assets/gewitterradar-trend-arrow.png",
     "sha256": "b781490b662970cdba20ce8f04b2e841807faa418a39873711b0bdac5f92c3ef",
     "protected": true

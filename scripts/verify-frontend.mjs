@@ -30,7 +30,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.0"',
+  'version:"1.3.1"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -48,7 +48,12 @@ for(const marker of [
   'list.dataset.moduleSignature!==signature',
   'const MODULE_VIEW_IDS=Object.freeze(',
   'const MODULE_VIEW_META=Object.freeze(',
-  'const modulePresentation=(language,row)=>'
+  'const modulePresentation=(language,row)=>',
+  'moduleRuntimeManifestUrl',
+  '_refreshModuleRuntimeProbe(result)',
+  'cache:"no-store"',
+  'modules.runtime_stale',
+  'modules.set_id'
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
@@ -64,7 +69,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.2.1"',
+  '"version": "1.2.2"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()'
 ]){
@@ -116,7 +121,7 @@ const requiredSettingsKeys=[
   'settings.cluster_resolution_select','settings.cluster_navigation_session_aria','settings.cluster_navigation_seconds_aria','settings.cluster_navigation_infinite_aria','settings.cluster_navigation_to_session','settings.cluster_navigation_to_infinite',
   'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_startup_select','settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
   'app.release_history','app.release_history_open','map.medallion_move','compass.picker_title','compass.picker_change',
-  'modules.title','modules.subtitle','modules.details','modules.kicker','modules.close','modules.copy','modules.download','modules.loaded','modules.consistent','modules.deviations',
+  'modules.title','modules.subtitle','modules.details','modules.kicker','modules.close','modules.copy','modules.download','modules.loaded','modules.consistent','modules.deviations','modules.set_id','modules.runtime_stale','modules.installed',
   'modules.status.ok','modules.status.missing','modules.status.version_mismatch','modules.status.unexpected',
   'modules.group.other','modules.group.core','modules.group.fullscreen','modules.group.ui','modules.group.instruments','modules.group.diagnostics','modules.group.location','modules.group.map','modules.group.history',
   'modules.detail.status','modules.detail.version','modules.detail.expected','modules.detail.file','modules.detail.loaded','modules.detail.functions'

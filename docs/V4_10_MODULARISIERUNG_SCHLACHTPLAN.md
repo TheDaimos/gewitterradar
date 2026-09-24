@@ -2376,3 +2376,14 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 **Danach weiter mit:** M13 – vollständige Regression & Freigabe.
 
 - [x] Hi-Res-Quellstand für späteren Master-Repo-Transfer nachvollziehbar über Commit `33d422eb6435ad29148681e4cc2846680f512706`; Gewitterradar liefert ausschließlich Runtime-Derivate aus.
+
+## Zwischenauftrag – Cache-Sicherheit & Modulsatz-ID 2026-09-24
+
+- [x] Ursache des auf Android weiter geladenen Altstands identifiziert: feste Modul-Cache-ID `41002` trotz weiterer V4.10.02-Iterationen.
+- [x] Runtime-Revision `41002r1` eingeführt und sämtliche internen ES-Modulimporte auf denselben Cache-Schlüssel umgestellt.
+- [x] Modulsatz-ID `FAC5-4376` für den aktuellen Sollstand eingeführt.
+- [x] Ungecachtes Runtime-Manifest `assets/gewitterradar-runtime-manifest.json` ergänzt.
+- [x] „Module & Versionen“ vergleicht geladenen Modulsatz gegen den tatsächlich installierten Runtime-Stand und meldet bei Abweichung eine notwendige Frontend-Neuladung.
+- [x] Neue Diagnoseanzeige in alle 19 Sprachvarianten integriert.
+- [x] Runtime-/Master-Trennung der Chevron beibehalten: nur verkleinerte verlustfreie Runtime-Derivate werden ausgeliefert.
+- [ ] DRA-Abnahme auf Android: nach Installation muss `core.manifest 1.2.5`, `fullscreen.map-display 1.0.6`, `diagnostics.module-view 1.3.1` und Modulsatz-ID `FAC5-4376` sichtbar sein.

@@ -13,7 +13,7 @@ def test_v41001_compass_picker_contract():
     )
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-2026-09-21" in main
+    assert "V4.10.02-MODULAR-DEV-R1-2026-09-24" in main
 
     # Preserve the established V4.10.01 picker behaviour while allowing
     # the V4.10.02 runtime Chevron material comparison to replace the old

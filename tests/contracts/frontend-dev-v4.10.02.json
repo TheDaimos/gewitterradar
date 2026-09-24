@@ -4,99 +4,99 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "b1a89b1020265bf1035a5df2b4935d95545150ed9c102826e7018efb376118e2",
-  "sizeBytes": 8118,
+  "sha256": "0000ac64dade75732e49eca7af2bbf3ecdfdb2e6d6b74cbdc6b1a6d4df0365a8",
+  "sizeBytes": 8123,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-2026-09-21",
+  "build": "V4.10.02-MODULAR-DEV-R1-2026-09-24",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "c3d5074801f98fe299456be1daf80217bf4b94c42e54aff4462a1987be4ff35a",
-      "sizeBytes": 6575
+      "sha256": "eacd84bb8b3bbffc7d19e2acacb0976fc366cc8c4d56776ddbe90ad62cec7c15",
+      "sizeBytes": 6738
     },
     "modules/core/registry.js": {
       "sha256": "04ed080b87528badf125bcaa0dd6abe4e006bc91f3701a62f528ae09ad9750d8",
       "sizeBytes": 4211
     },
     "modules/core/runtime.js": {
-      "sha256": "9ff5324a46925c5ac47ca66d7ba21fd351566210216a2a4cd7710c5c3689f825",
-      "sizeBytes": 553
+      "sha256": "bb856ae7dfe1372b98261195ae087c62c962d5e15d3a52d644516e863142a874",
+      "sizeBytes": 555
     },
     "modules/core/card-lifecycle.js": {
-      "sha256": "cae3bfb3e9b21b419adbdd88dbb4a5bfde5c9b550912d4bed8227b78a5036bca",
-      "sizeBytes": 33484
+      "sha256": "e58c4a3d8f533546c58ec120a726cfee7504408e0028dd64435954d30988622c",
+      "sizeBytes": 33486
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "cfdce9f65f1bc8e9a69ebe1cc130b67330b672e5272b938c012d2f4d8dca2eb0",
-      "sizeBytes": 67211
+      "sha256": "b8665c37c8fec400b8524ad6617df6f28e98f267dfbe05f7e9a1ccd604a073b5",
+      "sizeBytes": 67213
     },
     "modules/ui/scroll-guard.js": {
-      "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
-      "sizeBytes": 34300
+      "sha256": "2b4b83ddbc4636feec6e9140d689153ed30c7a3be972817ff526e7ba5090c4d6",
+      "sizeBytes": 34302
     },
     "modules/ui/skeleton.js": {
-      "sha256": "a8723832272fe43440be67b49e92abb7b60fd3b9a84f951f3f9a9720e6c4f372",
-      "sizeBytes": 423626
+      "sha256": "9557c2e472e57396704c04521a3b09f3d92deb7c7570c7e7b87c6608b9a16724",
+      "sizeBytes": 423628
     },
     "modules/instruments/compass-scale.js": {
-      "sha256": "7c9d8881b36ebebdf5fd8c33904939f0269159ccaffba717c0cb2106b736bdec",
-      "sizeBytes": 16917
+      "sha256": "aee5d263b088db4b95bf7839f368751b59457a6a6f3161cdada44bcda2f29304",
+      "sizeBytes": 16919
     },
     "modules/ui/controls.js": {
-      "sha256": "6c9dc72a96d664af8b9e2b6b4fddcdcd9bd433d3064cf69c419afb42b6e88b7d",
-      "sizeBytes": 183039
+      "sha256": "3c6df097e46e4de140e3832ce6d3e0c88dab10021fe294c3457e08bb7b8cb9e6",
+      "sizeBytes": 183041
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "cc8b81ea27061eb0de67921aaf6909d262dc813db15137f1eb742d641f813591",
-      "sizeBytes": 182940
+      "sha256": "7237a46fa50f8e0f9aed6c80bebcbefe8ae81355e5a2d3edb9a2184d44433669",
+      "sizeBytes": 185833
     },
     "modules/core/source-status.js": {
-      "sha256": "d3f20890ea1cc1d77d7c8c8b477ad60df3f44ded165dc458c56cc40ff8fdb1c3",
-      "sizeBytes": 4689
+      "sha256": "f34426bb65c5eea197da297a9c2e8f555760a2814ea11a5132bca077daacd8ae",
+      "sizeBytes": 4691
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "1964c53ae0011d983f37f32eeb8c131d5c283a1380c3e9e7853a2fe749721e96",
-      "sizeBytes": 13610
+      "sha256": "d0490d5e2348769bce6932d8c2e719ca40e93a1f3b73ac3ef6e4c4427cabdfaa",
+      "sizeBytes": 13612
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "e03f0c93faf2a123f8629a233fd81d535c49d84fc29f9fba53317b19c1375df7",
-      "sizeBytes": 59991
+      "sha256": "ff61e095e3ea9016a4d423e3fae1def140542da9775397624e684e7fb09fd056",
+      "sizeBytes": 64029
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "884a18dd7ea05d822179038f6917878d8345427044ebf1475c1e5cd97bb05200",
-      "sizeBytes": 183599
+      "sha256": "465ee150f914582bc9c0f0e2f774280b8d714df56c230be5214d63c98b54a743",
+      "sizeBytes": 183601
     },
     "modules/instruments/compass-design.js": {
-      "sha256": "6689fef3c92fcf387db423b04f73280d7ee395c036cc71c6f9dd4080177c5e12",
-      "sizeBytes": 6300
+      "sha256": "76498b0c260ffe77fac51a339aeadb4a3f7246c558d5427f8246539dd4a43056",
+      "sizeBytes": 6302
     },
     "modules/location/radii-map.js": {
-      "sha256": "36a03e389a25d26864826b857532952c0f234788a944ca5330e38d5162fdab56",
-      "sizeBytes": 27514
+      "sha256": "e95fdb462cd90fbeeaa4bb6ec43e480537db75504ab6c110100fd4bc0fea5a56",
+      "sizeBytes": 27516
     },
     "modules/map/strikes-warnings.js": {
-      "sha256": "263dc579d034fc66b2bb80e1bd116d5949f2c2f2a5c65deb146c956114f81fb5",
-      "sizeBytes": 29124
+      "sha256": "18cc37b69562b7153e582c4d2106abd31bf06996e201e61fe27df93643322989",
+      "sizeBytes": 29126
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "ab64ebaf3680828e00fc97da8d5e3c1ed49fd132c90da9c7401a75be4959d807",
-      "sizeBytes": 51298
+      "sha256": "a366a6bac77be27301238b1c9fb78f359d1ad8d446d5216f4173d9ffe3e9e174",
+      "sizeBytes": 51300
     },
     "modules/ui/render.js": {
-      "sha256": "563bc3e2742b9a6bc7787c774c1a70e2e76b454919ac609ddc11d43bedb7424f",
-      "sizeBytes": 46991
+      "sha256": "abb2131775fa4e6ea7abd3d1a92136f9efcb0ca9dbe18c5cd0bdbab680c76ac3",
+      "sizeBytes": 46993
     },
     "modules/instruments/compass.js": {
-      "sha256": "baff3a5862ad509227ea6d8169ee5e8fe3685575c9c2968bc4dd523b82f2419f",
-      "sizeBytes": 20460
+      "sha256": "e26069e55d4c840791d59758b8ce2ce7cf104abcee7c05e390945ca0ba18db79",
+      "sizeBytes": 20462
     },
     "modules/history/chart.js": {
-      "sha256": "eb1b2ee5af133e5396fa1f1a5c322b71d7e8ab6df1fdcd6d5453439a4d30e425",
-      "sizeBytes": 39342
+      "sha256": "df905245d81d19504b9c8710ddb51da2ddd113b37ad244c6147752d0290820ef",
+      "sizeBytes": 39344
     },
     "modules/core/base-context.js": {
-      "sha256": "6605b6e66c777e7bdaae0952bab3bca0c627660fd7741b29ed55860494e07447",
-      "sizeBytes": 1027070
+      "sha256": "964d6b5dfcf76c174c0f64a6b0875143ef507a0446bd0b8c715bc83ad8640eba",
+      "sizeBytes": 1027072
     }
   }
 }

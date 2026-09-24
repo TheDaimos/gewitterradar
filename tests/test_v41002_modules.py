@@ -54,3 +54,19 @@ def test_fullscreen_cluster_jump_pill_contract():
   "_persistMapClusterJumpPosition",
   "bindMapInstrumentDrag(clusterJumpOverlay,'clusterJump')",
  ): assert marker in source
+
+
+def test_runtime_revision_and_module_set_probe_contract():
+ main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
+ manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
+ view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
+ runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r1'" in main
+ assert '?v=41002r1' in main
+ assert 'runtimeRevision:"41002r1"' in manifest
+ assert 'moduleSetId:"FAC5-4376"' in manifest
+ assert runtime["runtimeRevision"]=="41002r1"
+ assert runtime["moduleSetId"]=="FAC5-4376"
+ assert "moduleRuntimeManifestUrl" in view
+ assert 'cache:"no-store"' in view
+ assert "_refreshModuleRuntimeProbe(result)" in view

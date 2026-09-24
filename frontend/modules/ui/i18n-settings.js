@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002";
+import { defineModule } from "../core/runtime.js?v=41002r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -68,7 +68,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Erwartet",
     "modules.detail.file": "Datei",
     "modules.detail.loaded": "Geladen",
-    "modules.detail.functions": "Funktionen"
+    "modules.detail.functions": "Funktionen",
+    "modules.set_id": "Modulsatz-ID",
+    "modules.runtime_stale": "Frontend-Neuladung erforderlich",
+    "modules.installed": "Installiert"
   },
   "English": {
     "settings.cluster_resolution": "Cluster resolution",
@@ -125,7 +128,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Expected",
     "modules.detail.file": "File",
     "modules.detail.loaded": "Loaded",
-    "modules.detail.functions": "Functions"
+    "modules.detail.functions": "Functions",
+    "modules.set_id": "Module set ID",
+    "modules.runtime_stale": "Frontend reload required",
+    "modules.installed": "Installed"
   },
   "Dansk": {
     "settings.cluster_resolution": "Klyngeopløsning",
@@ -182,7 +188,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Forventet",
     "modules.detail.file": "Fil",
     "modules.detail.loaded": "Indlæst",
-    "modules.detail.functions": "Funktioner"
+    "modules.detail.functions": "Funktioner",
+    "modules.set_id": "Modulsæt-ID",
+    "modules.runtime_stale": "Genindlæsning af frontend kræves",
+    "modules.installed": "Installeret"
   },
   "Español": {
     "settings.cluster_resolution": "Resolución de clústeres",
@@ -239,7 +248,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Esperado",
     "modules.detail.file": "Archivo",
     "modules.detail.loaded": "Cargado",
-    "modules.detail.functions": "Funciones"
+    "modules.detail.functions": "Funciones",
+    "modules.set_id": "ID del conjunto de módulos",
+    "modules.runtime_stale": "Es necesario recargar la interfaz",
+    "modules.installed": "Instalado"
   },
   "Français": {
     "settings.cluster_resolution": "Résolution des clusters",
@@ -296,7 +308,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Attendu",
     "modules.detail.file": "Fichier",
     "modules.detail.loaded": "Chargé",
-    "modules.detail.functions": "Fonctions"
+    "modules.detail.functions": "Fonctions",
+    "modules.set_id": "ID du jeu de modules",
+    "modules.runtime_stale": "Rechargement de l’interface requis",
+    "modules.installed": "Installé"
   },
   "Nederlands": {
     "settings.cluster_resolution": "Clusterresolutie",
@@ -353,7 +368,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Verwacht",
     "modules.detail.file": "Bestand",
     "modules.detail.loaded": "Geladen",
-    "modules.detail.functions": "Functies"
+    "modules.detail.functions": "Functies",
+    "modules.set_id": "Moduleset-ID",
+    "modules.runtime_stale": "Frontend opnieuw laden vereist",
+    "modules.installed": "Geïnstalleerd"
   },
   "Polski": {
     "settings.cluster_resolution": "Rozdzielczość klastrów",
@@ -410,7 +428,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Oczekiwana",
     "modules.detail.file": "Plik",
     "modules.detail.loaded": "Załadowano",
-    "modules.detail.functions": "Funkcje"
+    "modules.detail.functions": "Funkcje",
+    "modules.set_id": "ID zestawu modułów",
+    "modules.runtime_stale": "Wymagane ponowne wczytanie interfejsu",
+    "modules.installed": "Zainstalowano"
   },
   "Português": {
     "settings.cluster_resolution": "Resolução de clusters",
@@ -467,7 +488,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Esperado",
     "modules.detail.file": "Ficheiro",
     "modules.detail.loaded": "Carregado",
-    "modules.detail.functions": "Funções"
+    "modules.detail.functions": "Funções",
+    "modules.set_id": "ID do conjunto de módulos",
+    "modules.runtime_stale": "É necessário recarregar a interface",
+    "modules.installed": "Instalado"
   },
   "Svenska": {
     "settings.cluster_resolution": "Klusterupplösning",
@@ -524,7 +548,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Förväntad",
     "modules.detail.file": "Fil",
     "modules.detail.loaded": "Inläst",
-    "modules.detail.functions": "Funktioner"
+    "modules.detail.functions": "Funktioner",
+    "modules.set_id": "Moduluppsättnings-ID",
+    "modules.runtime_stale": "Omladdning av gränssnittet krävs",
+    "modules.installed": "Installerad"
   },
   "Italiano": {
     "settings.cluster_resolution": "Risoluzione cluster",
@@ -581,7 +608,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Prevista",
     "modules.detail.file": "File",
     "modules.detail.loaded": "Caricato",
-    "modules.detail.functions": "Funzioni"
+    "modules.detail.functions": "Funzioni",
+    "modules.set_id": "ID set moduli",
+    "modules.runtime_stale": "È necessario ricaricare l’interfaccia",
+    "modules.installed": "Installato"
   },
   "Norsk bokmål": {
     "settings.cluster_resolution": "Klyngeoppløsning",
@@ -638,7 +668,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Forventet",
     "modules.detail.file": "Fil",
     "modules.detail.loaded": "Lastet",
-    "modules.detail.functions": "Funksjoner"
+    "modules.detail.functions": "Funksjoner",
+    "modules.set_id": "Modulsett-ID",
+    "modules.runtime_stale": "Grensesnittet må lastes inn på nytt",
+    "modules.installed": "Installert"
   },
   "Suomi": {
     "settings.cluster_resolution": "Klusterien erottelu",
@@ -695,7 +728,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Odotettu",
     "modules.detail.file": "Tiedosto",
     "modules.detail.loaded": "Ladattu",
-    "modules.detail.functions": "Toiminnot"
+    "modules.detail.functions": "Toiminnot",
+    "modules.set_id": "Moduulijoukon tunnus",
+    "modules.runtime_stale": "Käyttöliittymä on ladattava uudelleen",
+    "modules.installed": "Asennettu"
   },
   "Čeština": {
     "settings.cluster_resolution": "Rozlišení shluků",
@@ -752,7 +788,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Očekáváno",
     "modules.detail.file": "Soubor",
     "modules.detail.loaded": "Načteno",
-    "modules.detail.functions": "Funkce"
+    "modules.detail.functions": "Funkce",
+    "modules.set_id": "ID sady modulů",
+    "modules.runtime_stale": "Je nutné znovu načíst rozhraní",
+    "modules.installed": "Nainstalováno"
   },
   "Ελληνικά": {
     "settings.cluster_resolution": "Ανάλυση συστάδων",
@@ -809,7 +848,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Αναμενόμενο",
     "modules.detail.file": "Αρχείο",
     "modules.detail.loaded": "Φορτώθηκε",
-    "modules.detail.functions": "Λειτουργίες"
+    "modules.detail.functions": "Λειτουργίες",
+    "modules.set_id": "ID συνόλου μονάδων",
+    "modules.runtime_stale": "Απαιτείται επαναφόρτωση της διεπαφής",
+    "modules.installed": "Εγκατεστημένο"
   },
   "Magyar": {
     "settings.cluster_resolution": "Klaszterfelbontás",
@@ -866,7 +908,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Elvárt",
     "modules.detail.file": "Fájl",
     "modules.detail.loaded": "Betöltve",
-    "modules.detail.functions": "Funkciók"
+    "modules.detail.functions": "Funkciók",
+    "modules.set_id": "Modulkészlet-azonosító",
+    "modules.runtime_stale": "A felület újratöltése szükséges",
+    "modules.installed": "Telepítve"
   },
   "Boarisch": {
     "settings.cluster_resolution": "Cluster-Auflösung",
@@ -923,7 +968,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Erwartet",
     "modules.detail.file": "Datei",
     "modules.detail.loaded": "Gladen",
-    "modules.detail.functions": "Funktionen"
+    "modules.detail.functions": "Funktionen",
+    "modules.set_id": "Modulsatz-ID",
+    "modules.runtime_stale": "Frontend muaß neu glodn werdn",
+    "modules.installed": "Installiert"
   },
   "Plattdüütsch": {
     "settings.cluster_resolution": "Cluster-Oplösen",
@@ -980,7 +1028,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Verwacht",
     "modules.detail.file": "Datei",
     "modules.detail.loaded": "Laadt",
-    "modules.detail.functions": "Funkschonen"
+    "modules.detail.functions": "Funkschonen",
+    "modules.set_id": "Modulsatz-ID",
+    "modules.runtime_stale": "Frontend mutt nieg laden warrn",
+    "modules.installed": "Installeert"
   },
   "Sächs’sch": {
     "settings.cluster_resolution": "Cluster-Ufflösung",
@@ -1037,7 +1088,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Erwartet",
     "modules.detail.file": "Datei",
     "modules.detail.loaded": "Geladen",
-    "modules.detail.functions": "Funktionen"
+    "modules.detail.functions": "Funktionen",
+    "modules.set_id": "Modulsatz-ID",
+    "modules.runtime_stale": "Frontend muss neu geladn werdn",
+    "modules.installed": "Installiert"
   },
   "Schwäbisch": {
     "settings.cluster_resolution": "Cluster-Uflösung",
@@ -1094,7 +1148,10 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.detail.expected": "Erwartet",
     "modules.detail.file": "Datei",
     "modules.detail.loaded": "Glade",
-    "modules.detail.functions": "Funktionen"
+    "modules.detail.functions": "Funktionen",
+    "modules.set_id": "Modulsatz-ID",
+    "modules.runtime_stale": "Frontend muss neu glada werda",
+    "modules.installed": "Installiert"
   }
 });
 export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {

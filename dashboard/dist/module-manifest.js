@@ -1,12 +1,16 @@
-import { registerModule } from "./modules/core/registry.js?v=41002";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-2026-09-21"});
+import { registerModule } from "./modules/core/registry.js?v=41002r1";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R1-2026-09-24",runtimeRevision:"41002r1",moduleSetId:"FAC5-4376"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "group": "Kern",
     "function": "Modulmanifest",
-    "subfunctions": ["Sollstand", "Produktversion", "Buildkennung"],
+    "subfunctions": [
+      "Sollstand",
+      "Produktversion",
+      "Buildkennung"
+    ],
     "file": "module-manifest.js"
   },
   {
@@ -14,7 +18,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "1.0.2",
     "group": "Kern",
     "function": "Konstanten & gemeinsame Helfer",
-    "subfunctions": ["Assets", "Konstanten", "Sprache", "Speichergrundlagen", "Geometrie", "Leaflet-Helfer"],
+    "subfunctions": [
+      "Assets",
+      "Konstanten",
+      "Sprache",
+      "Speichergrundlagen",
+      "Geometrie",
+      "Leaflet-Helfer"
+    ],
     "file": "modules/core/base-context.js"
   },
   {
@@ -119,7 +130,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -156,10 +167,17 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "group": "Diagnose",
     "function": "Module & Versionen",
-    "subfunctions": ["Geladene Module", "Soll/Ist-Vergleich", "Versionsstatus", "Modul-Details", "Diagnose kopieren", "JSON herunterladen"],
+    "subfunctions": [
+      "Geladene Module",
+      "Soll/Ist-Vergleich",
+      "Versionsstatus",
+      "Modul-Details",
+      "Diagnose kopieren",
+      "JSON herunterladen"
+    ],
     "file": "modules/diagnostics/module-view.js"
   },
   {
@@ -262,4 +280,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.4",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.5",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

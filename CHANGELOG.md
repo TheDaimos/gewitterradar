@@ -2,6 +2,15 @@
 
 ## 2026/09 — V4.10.02 DEV
 
+### Frontend-Cache-Sicherheit & Modulsatz-ID
+
+- Entkopple den internen ES-Modul-Cache von der sichtbaren Produktversion: Runtime-Revision `41002r1` erzwingt einen vollständigen, einheitlichen Modul-Neuladevorgang innerhalb V4.10.02.
+- Ergänze eine kompakte **Modulsatz-ID**; aktueller Sollstand: `FAC5-4376`.
+- Prüfe den geladenen Modulsatz gegen `assets/gewitterradar-runtime-manifest.json` mit ungecachtem Abruf. Ein bereits offenes Browser-/App-Fenster kann dadurch künftig einen auf Platte neueren Stand als **Frontend-Neuladung erforderlich** erkennen.
+- Übersetze Modulsatz-ID, Installationsstatus und Neuladehinweis in alle 19 unterstützten Sprachvarianten.
+- Halte die Chevron-Runtime-Derivate klein und verlustfrei; die vollständigen Hi-Res-Master bleiben außerhalb des ausgelieferten Frontends.
+
+
 ### Chevron-Materialvergleich im Kompass-Pop-up
 
 - Keep the full Hi-Res Chevron family as non-delivered artwork source pending transfer to the dedicated master repository; it is not a Gewitterradar runtime dependency.
@@ -39,14 +48,14 @@
 - `core.base-context` → **1.0.2**
 - `core.card-lifecycle` → **1.0.1**
 - `ui.skeleton` → **1.1.2**
-- `ui.i18n-settings` → **1.2.1**
-- `diagnostics.module-view` → **1.3.0**
+- `ui.i18n-settings` → **1.2.2**
+- `diagnostics.module-view` → **1.3.1**
 - `fullscreen.map-display` → **1.0.6**
 - `map.clusters-recent` → **1.0.2**
 - `ui.render` → **1.0.1**
 - `ui.controls` → **1.1.3**
 - `location.radii-map` → **1.0.1**
-- `core.manifest` → **1.2.4**
+- `core.manifest` → **1.2.5**
 
 ## 2026/09 — V4.10.01 DEV
 
