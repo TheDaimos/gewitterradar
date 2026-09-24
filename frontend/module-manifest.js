@@ -3,7 +3,7 @@ export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": ["Sollstand", "Produktversion", "Buildkennung"],
@@ -43,7 +43,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -82,7 +82,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -214,7 +214,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -262,4 +262,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.1",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.2",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
