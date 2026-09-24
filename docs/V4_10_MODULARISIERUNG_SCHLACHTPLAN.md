@@ -1614,3 +1614,22 @@ Zweck:
 - damit können die offenen M12-Punkte **Browsercache-Fall simulieren** und **veraltetes Modul erkennen** gemeinsam real abgenommen werden.
 
 **Nächster Schritt:** Testzweig über DRA installieren und die beiden Zustände vor und nach hartem Frontend-Neuladen dokumentieren.
+
+
+## Schleife 045 – Versionsabweichung im realen Laufzeitstand sichtbar
+
+**Datum:** 2026-09-24  
+**Status:** Teilnachweis erfolgreich; Detailzeile noch zu bestätigen
+
+Realer Befund aus der Gewitterradar-Oberfläche:
+- **22 / 22 Module geladen**,
+- **1 Abweichung erkannt**,
+- damit reagiert die reale Moduldiagnose auf den absichtlich erzeugten Soll-/Ist-Unterschied.
+
+Für den vollständigen M12-Nachweis des veralteten Moduls fehlt nur noch die Detailzeile:
+- `fullscreen.map-display`
+- geladen **1.0.1**
+- erwartet **1.0.2**
+- Status Versionsabweichung.
+
+Der Browsercache-/Mischstand-Haken wird erst gesetzt, wenn zusätzlich der Zustand vor dem harten Frontend-Neuladen bzw. dessen Verhalten real bestätigt ist.
