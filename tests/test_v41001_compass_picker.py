@@ -27,7 +27,7 @@ def _decode_lossless_webp_module(path: Path) -> bytes:
     packed = int.from_bytes(data[21:25], "little")
     width = (packed & 0x3FFF) + 1
     height = ((packed >> 14) & 0x3FFF) + 1
-    assert (width, height) == (128, 128), f"{path.name} must remain 128x128 Retina"
+    assert (width, height) == (104, 104), f"{path.name} must remain exact 2x Retina for 52px UI"
     return data
 
 
@@ -80,7 +80,7 @@ def test_v41001_compass_picker_contract():
         path = PICKER_DIR / module_name
         assert path.is_file()
         data = _decode_lossless_webp_module(path)
-        assert len(data) < 20_000, f"{module_name} should stay storage-optimised"
+        assert len(data) < 15_000, f"{module_name} should stay storage-optimised"
         references = [
             js_path
             for js_path in FRONTEND.rglob("*.js")
