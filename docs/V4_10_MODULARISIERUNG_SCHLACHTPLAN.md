@@ -387,7 +387,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 - [x] Dialoge
 - [x] Bedienelemente
-- [x] Einstellungen
+- [ ] Einstellungen
 - [x] Styles soweit sinnvoll modularisiert
 - [x] Hauptmenü-Anbindung
 
@@ -397,7 +397,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M06 – Instrumente auslagern
 
-- [x] Kompass
+- [ ] Kompass
 - [x] Kompassauswahl / Popup
 - [x] Medaillon
 - [x] Verschieben / Touch
@@ -506,7 +506,7 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 
 ## M13 – Regression & Freigabe
 
-- [x] Desktop
+- [ ] Desktop
 - [ ] Android / HA Companion
 - [x] Kartenansichten
 - [x] Vollbild
@@ -2259,3 +2259,59 @@ Weiterhin offen:
 - **Syntax/Lint/Tests** bis der aktuelle vollständige CI-Head vollständig grün ist.
 
 **Nächster Schritt:** Android / HA Companion kompakt vollständig durchtesten; parallel aktuellen CI-Head auf vollständiges Grün prüfen. Bei Erfolg M13 abschließen.
+
+
+## Schleife 067 – M13 reale Regressionen: Radiuskaskade und Kompass-Close
+
+**Datum:** 2026-09-24  
+**Status:** zwei reale M13-Regressionsfehler gefunden und im Featurezweig korrigiert; Wiederholungsabnahme offen
+
+### 1. Radiuskaskade
+
+Realer Fehler auf iPad und anschließend identisch auf Desktop bestätigt:
+- bei einem höheren gespeicherten **Gefahrenradius** lässt sich der **Gewitterradius** nicht darunter setzen,
+- Home Assistant meldet:
+  `Radius values must satisfy danger_radius <= storm_radius <= observation_radius`.
+
+Verbindliches Sollverhalten:
+- `Gefahr <= Gewitter <= Beobachtung` bleibt jederzeit gültig,
+- wird der Gewitterradius unter den bisherigen Gefahrenradius abgesenkt, muss der Gefahrenradius **zuerst automatisch auf den neuen Gewitterradius reduziert** werden,
+- wird der Beobachtungsradius unter innere Radien abgesenkt, werden die inneren Radien entsprechend mitgeführt.
+
+Ursache:
+- die UI-Vorschau setzte den sichtbaren Gefahrenregler bereits auf den neuen Gewitterwert,
+- der anschließende `change`-Pfad las diesen bereits reduzierten DOM-Wert statt des real noch höheren Home-Assistant-Istwerts,
+- dadurch wurde der notwendige erste Gefahrenradius-Write übersprungen und der folgende Gewitterradius-Write von der nativen Invariantenprüfung korrekt abgewiesen.
+
+Korrektur:
+- `ui.controls` **1.1.3** verwendet beim Commit des Gewitterradius den persistierten Home-Assistant-Istwert des Gefahrenradius,
+- `location.radii-map` **1.0.1** tut dasselbe für direkte Eingabe-/Schrittpfade,
+- Schreibreihenfolge bleibt: zuerst Gefahr reduzieren, danach Gewitter setzen,
+- Regressionstest schützt beide Pfade.
+
+### 2. Kompassauswahl Close-X
+
+Realer Fehler auf iPad und Android:
+- das runde Premium-X wurde von einem unerwünschten rechteckigen Fokus-/Appearance-Rahmen umgeben.
+
+Ursache:
+- die allgemeine `:focus-visible`-Regel der Kompassauswahl zeichnete beim automatisch fokussierten Close-Button einen rechteckigen Outline-Rahmen.
+
+Korrektur:
+- `fullscreen.map-display` **1.0.3** setzt für den Close-Button Browser-Appearance, Outline und Box-Shadow gezielt zurück,
+- Tastaturfokus bleibt über einen dezenten Glow direkt am runden X-Bild sichtbar,
+- Regressionstest schützt den rahmenlosen Close-Zustand.
+
+Manifest:
+- `core.manifest` → **1.2.1**,
+- `fullscreen.map-display` → **1.0.3**,
+- `ui.controls` → **1.1.3**,
+- `location.radii-map` → **1.0.1**.
+
+M13-Haken **Desktop**, **Kompass** und **Einstellungen** wurden bewusst wieder geöffnet. **Android / HA Companion** war ohnehin noch offen.
+
+**Nächster Schritt:** CI vollständig grün bekommen, den korrigierten Stand nach `deploy/dev` bereitstellen und über DRA installieren. Danach gezielt wiederholen:
+1. Desktop: Gefahrenradius über Gewitterziel setzen und Gewitterradius darunter absenken → Gefahr muss automatisch mit heruntergehen, kein Validierungsfehler.
+2. iPad/Android: identischer Radiusfall.
+3. iPad/Android: Kompassauswahl öffnen → ausschließlich rundes Premium-X ohne rechteckigen Außenrahmen.
+Danach betroffene M13-Haken wieder schließen.
