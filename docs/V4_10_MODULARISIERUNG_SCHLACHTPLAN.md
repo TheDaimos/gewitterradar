@@ -410,7 +410,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M07 – Vollbild auslagern
 
-- [x] Vollbildsteuerung
+- [ ] Vollbildsteuerung
 - [x] Standort-Pille
 - [x] Instrumentintegration
 - [x] Layer-Prioritäten
@@ -425,7 +425,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 - [x] Kartenkern
 - [x] Layer
-- [x] Cluster-Auflösung
+- [ ] Cluster-Auflösung
 - [x] Cluster-Navigation
 - [x] Blitzdarstellung
 - [x] Radien
@@ -2315,3 +2315,50 @@ M13-Haken **Desktop**, **Kompass** und **Einstellungen** wurden bewusst wieder g
 2. iPad/Android: identischer Radiusfall.
 3. iPad/Android: Kompassauswahl öffnen → ausschließlich rundes Premium-X ohne rechteckigen Außenrahmen.
 Danach betroffene M13-Haken wieder schließen.
+
+
+## Schleife 068 – Vollbild-Cluster-Jump als dritte Instrumentanzeige ergänzt
+
+**Datum:** 2026-09-24  
+**Status:** Implementierung im Featurezweig abgeschlossen; CI und reale Geräteabnahme offen
+
+Auf Basis der M13-Geräteabnahme wurde die bestehende Vollbild-Instrumentleiste gezielt erweitert.
+
+Umsetzung:
+- oben links im Vollbild jetzt **Kompass · Medaillon · Cluster-Jump**,
+- der dritte Umschalter verwendet das vorhandene **Hi-Res-Infinity-Symbol**,
+- der Umschalter blendet ausschließlich die neue Cluster-Jump-Pille ein bzw. aus,
+- Sichtbarkeit wird lokal pro Browser gespeichert,
+- die Pille verwendet **keine zweite Clusterlogik**, sondern spiegelt den bestehenden `status-chip`-/Cluster-Navigationszustand,
+- Tipp/Klick auf die Pille springt wie der bestehende Cluster-Jump zum nächsten Cluster,
+- der vorhandene Sitzungs-/Unendlich-Zustand samt Countdown/Infinity wird gespiegelt,
+- Standardposition ohne gespeicherte Benutzerposition: **direkt links neben dem 3D-Layer-Schalter**,
+- Pille ist per Maus, Pointer und echtem Touch frei innerhalb der Kartenfläche verschiebbar,
+- Position wird normalisiert gespeichert und bleibt über Neustart/Reload erhalten,
+- im Einzelblitzmodus wird die Cluster-Pille automatisch ausgeblendet,
+- im Vollbild und separaten Kartenfenster steht derselbe Zustand zur Verfügung.
+
+Modulstände:
+- `core.card-lifecycle` → **1.0.1**,
+- `ui.skeleton` → **1.1.2**,
+- `fullscreen.map-display` → **1.0.4**,
+- `map.clusters-recent` → **1.0.2**,
+- `core.manifest` → **1.2.2**.
+
+Regressionstest ergänzt:
+- Infinity-Schalter,
+- Cluster-Jump-Pille,
+- Sichtbarkeits-/Positionsspeicher,
+- Vollbild-Synchronisierung,
+- gemeinsame Cluster-Navigationslogik.
+
+M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewusst erneut geöffnet.
+
+**Nächster Schritt:** aktuellen Head vollständig durch CI laufen lassen, danach per DRA nach `deploy/dev` bereitstellen. Reale Abnahme:
+1. Vollbild öffnen → oben links drei Instrumentschalter sichtbar.
+2. Infinity-Schalter aus/ein → Cluster-Jump-Pille verschwindet/erscheint.
+3. Gruppiert-Modus mit Clustern → Pille zeigt denselben Clusterindex/Countdown/Infinity-Zustand wie der normale Status.
+4. Pille antippen → nächster Cluster.
+5. Pille verschieben → Position bleibt nach Frontend-Neuladen erhalten.
+6. Standardposition nach frischem Speicherzustand → links neben dem Layer-Schalter.
+7. Desktop, iPad und Android prüfen.
