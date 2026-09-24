@@ -2,10 +2,11 @@
 
 ## 2026/09 — V4.10.02 DEV
 ### Kompassauswahl – freigestellte Retina-Chevrons
-- Die beiden Navigationszeilen im Kompassauswahl-Pop-up verwenden jetzt ausschließlich die neuen transparenten 128×128-PNGs in doppelter Retina-Auflösung (Messing und Silber, jeweils links/rechts).
+- Die beiden Navigationszeilen im Kompassauswahl-Pop-up verwenden ausschließlich die neuen freigestellten Messing-/Silber-Chevrons für links/rechts.
+- Die Laufzeitdarstellung ist als picker-lokale, verlustfreie WebP-Datenmodule (VP8L) gekapselt: 104×104 Pixel bei 52×52 CSS-Pixeln, also exakt 2× Retina; Dateigrößen ca. 8,6–11,1 KB.
 - Die zuvor verwendeten nicht sauber freigestellten Runtime-SVGs wurden aus den drei Auslieferungsbäumen entfernt.
-- Der Austausch ist ausdrücklich auf die Kompassauswahl begrenzt; Chevron-Grafiken in Menüs, Akkordeons, Diagnose und sonstiger Oberfläche bleiben unverändert.
-- Modulstand: `fullscreen.map-display 1.0.7`, `core.manifest 1.2.6`, Modulsatz `F168-7C7E`.
+- Der Austausch ist technisch auf `fullscreen.map-display` und seine vier Picker-Datenmodule begrenzt; Chevron-Grafiken in Menüs, Akkordeons, Diagnose und sonstiger Oberfläche bleiben unverändert.
+- Runtime-Revision: `41002r2`; Modulstand: `fullscreen.map-display 1.0.8`, `core.manifest 1.2.7`, Modulsatz `A6C8-9983`.
 
 
 ### Frontend-Cache-Sicherheit & Modulsatz-ID
