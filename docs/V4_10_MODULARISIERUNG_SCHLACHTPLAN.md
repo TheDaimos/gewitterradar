@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – Browsercache-/Mischstand vollständig real abschließen.**
+**M12 – fehlendes Modul real erkennen.**
 
 Aktueller Testzweig:
 - `test/dra-v4.10.02-cache-mixed-state`
@@ -65,11 +65,16 @@ Browsercache-/Mischstand – erster Halbtest real bestätigt:
 - `fullscreen.map-display` zeigt weiterhin **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**,
 - damit ist belegt, dass der bereits geladene Browser-Laufzeitstand trotz geänderter Datei auf dem Dateisystem zunächst bestehen bleibt.
 
+Browsercache-/Mischstand vollständig real bestätigt:
+- vor hartem Frontend-Neuladen blieb trotz installiertem Testzweig der bereits geladene Stand **1.0.2 / erwartet 1.0.2 / korrekt** aktiv,
+- nach `Strg+Shift+R` meldet `fullscreen.map-display` **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
+- Gesamtstatus danach: **22 / 22 Module geladen**, **1 Abweichung erkannt**,
+- M12-Haken **Browsercache-Fall simulieren** gesetzt.
+
 Noch offen:
-1. Jetzt `Strg+Shift+R` ausführen. Danach muss **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
-2. Erst dann den M12-Haken **Browsercache-Fall simulieren** setzen.
-3. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
-4. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
+1. In DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
+2. Danach **fehlendes Modul erkennen** real testen.
+3. Anschließend **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** real durchführen.
 
 Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
 
@@ -454,7 +459,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] Deployment des kompletten Modulbaums
 - [x] Deployment nur eines geänderten Moduls
 - [x] Soll-/Ist-Metadaten prüfen
-- [ ] Browsercache-Fall simulieren
+- [x] Browsercache-Fall simulieren
 - [x] veraltetes Modul erkennen
 - [ ] fehlendes Modul erkennen
 - [ ] Rollback testen
@@ -476,7 +481,7 @@ Realer M12-Stand:
 - Soll-/Ist-Metadaten real geprüft,
 - Frontend-/Companion-Neuladehinweis für reine Frontend-Änderung real bestätigt,
 - **veraltetes Modul erkennen** ist real vollständig nachgewiesen: die Laufzeit meldet **22 / 22 Module**, **1 Abweichung**, und die Detailansicht von `fullscreen.map-display` zeigt **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
-- Browsercache-/Mischstand bleibt offen, weil der ausdrücklich dokumentierte Vorher/Nachher-Zustand vor bzw. nach hartem Frontend-Neuladen noch fehlt,
+- **Browsercache-Fall simulieren** ist real vollständig nachgewiesen: vor hartem Neuladen blieb der alte 1.0.2-Laufzeitstand aktiv; nach `Strg+Shift+R` wurde der installierte Teststand 1.0.1 geladen und korrekt als Abweichung gegen Soll 1.0.2 erkannt,
 - fehlendes Modul und realer Rollback auf `deploy/v4.09` bleiben offen.
 
 Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popup des Einzelmodul-Tests bleibt auf dem Testzweig, einschließlich des bekannten unerwünschten Rahmens/Fokusrahmens am Schließen-Symbol. Die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
@@ -1742,3 +1747,28 @@ Bewertung:
 - der M12-Haken bleibt bis zum Nachweis nach hartem Neuladen bewusst offen.
 
 **Nächster Schritt:** jetzt `Strg+Shift+R` ausführen und danach **Module & Versionen → fullscreen.map-display** prüfen. Erwartet: **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**, Gesamtstatus **1 Abweichung**.
+
+
+## Schleife 050 – Browsercache-/Mischstand real vollständig bestanden
+
+**Datum:** 2026-09-24  
+**Status:** M12-Teilpunkt abgeschlossen
+
+Realer Vorher-/Nachher-Nachweis:
+- DRA hatte den Testzweig `test/dra-v4.10.02-cache-mixed-state` installiert,
+- **vor** hartem Frontend-Neuladen blieb im bereits laufenden Browser `fullscreen.map-display 1.0.2 / erwartet 1.0.2 / korrekt` aktiv,
+- nach genau einem `Strg+Shift+R` meldet die Oberfläche:
+  - **22 / 22 Module geladen**,
+  - **1 Abweichung erkannt**,
+  - `fullscreen.map-display`: **geladen 1.0.1**,
+  - erwartet **1.0.2**,
+  - Status **abweichend**.
+- der Diagnoseexport bestätigt `diagnostics.ok=false`, `loadedCount=22`, `expectedCount=22` sowie `status=version_mismatch` für `fullscreen.map-display`.
+
+Bewertung:
+- Dateisystemstand und bereits geladener Browser-Laufzeitstand können kontrolliert auseinanderliegen,
+- ein hartes Frontend-Neuladen übernimmt den neuen Dateistand,
+- die Laufzeitdiagnose erkennt danach die Versionsabweichung zuverlässig,
+- M12-Haken **Browsercache-Fall simulieren** gesetzt.
+
+**Nächster Schritt:** zunächst über DRA wieder `deploy/dev` herstellen und nach hartem Frontend-Neuladen `fullscreen.map-display 1.0.2 / korrekt` bestätigen. Danach einen kontrollierten Testzweig für **fehlendes Modul erkennen** erzeugen, der auf aktuellem `deploy/dev` basiert und genau ein erwartetes Modul aus dem DRA-Dateibaum entfernt, ohne das Manifest anzupassen.
