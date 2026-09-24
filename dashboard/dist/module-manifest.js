@@ -3,7 +3,7 @@ export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": ["Sollstand", "Produktversion", "Buildkennung"],
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -106,7 +106,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -189,7 +189,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -262,4 +262,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.0",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.1",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
