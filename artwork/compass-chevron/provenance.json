@@ -1,0 +1,67 @@
+{
+  "assetFamily": "gewitterradar-compass-chevron",
+  "version": "v001",
+  "created": "2026-09-24",
+  "sourceDesign": "Gewitterradar Infinity Hi-Res design language",
+  "materials": [
+    "brass",
+    "silver"
+  ],
+  "directions": [
+    "left",
+    "right",
+    "up",
+    "down"
+  ],
+  "masters": [
+    {
+      "id": "brass-left",
+      "path": "hires/gewitterradar-chevron-left-brass-hires.svg",
+      "gitBlobSha1": "a13e77a25f8081a6ce1295e98c7411cbebd20c00",
+      "sizeBytes": 4909
+    },
+    {
+      "id": "brass-right",
+      "path": "hires/gewitterradar-chevron-right-brass-hires.svg",
+      "gitBlobSha1": "134ac99131f42b1d16f85e460a197355bc293ade",
+      "sizeBytes": 4912
+    },
+    {
+      "id": "brass-up",
+      "path": "hires/gewitterradar-chevron-up-brass-hires.svg",
+      "gitBlobSha1": "bac6b3702b9d9aa58a469869501f4e7b165e69b3",
+      "sizeBytes": 4908
+    },
+    {
+      "id": "brass-down",
+      "path": "hires/gewitterradar-chevron-down-brass-hires.svg",
+      "gitBlobSha1": "c1314dd530fd1c2b5cacef40651249261f861a20",
+      "sizeBytes": 4911
+    },
+    {
+      "id": "silver-left",
+      "path": "hires/gewitterradar-chevron-left-silver-hires.svg",
+      "gitBlobSha1": "fce7231f597e8644e049d7aaf62f096c7aa81499",
+      "sizeBytes": 4910
+    },
+    {
+      "id": "silver-right",
+      "path": "hires/gewitterradar-chevron-right-silver-hires.svg",
+      "gitBlobSha1": "6b192ea51fb19948b3396a2a3cb9211b46d9b464",
+      "sizeBytes": 4913
+    },
+    {
+      "id": "silver-up",
+      "path": "hires/gewitterradar-chevron-up-silver-hires.svg",
+      "gitBlobSha1": "9c2bd20fcc676807e2d30ab5154db0af2b88bb66",
+      "sizeBytes": 4909
+    },
+    {
+      "id": "silver-down",
+      "path": "hires/gewitterradar-chevron-down-silver-hires.svg",
+      "gitBlobSha1": "46e272513a9ba451a6bb25d77e1978813fba0e61",
+      "sizeBytes": 4912
+    }
+  ],
+  "retentionContract": "tests/contracts/hires-asset-retention-v4.07.56.json"
+}
