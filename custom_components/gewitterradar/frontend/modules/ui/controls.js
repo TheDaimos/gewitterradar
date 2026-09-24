@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -187,6 +187,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       stormSlider.addEventListener('change', () => {
         const obsValue = finiteNumber(obsSlider.value);
         const dangerValue = finiteNumber(dangerSlider.value);
+        const storedDanger = finiteNumber(this._hass?.states?.[this._dangerEntity()]?.state) ?? dangerValue;
         const helperMin = finiteNumber(this._hass?.states?.[this._stormEntity()]?.attributes?.min) ?? 1;
         const stormMin = Math.max(5,helperMin);
         let value = finiteNumber(stormSlider.value);
@@ -195,7 +196,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         value = clamp(value,Math.min(stormMin,upper),upper);
         stormSlider.value = String(value);
 
-        if (dangerValue != null && dangerValue > value) {
+        if (storedDanger != null && storedDanger > value) {
           this._setInputNumber(this._dangerEntity(), value);
         }
         this._setInputNumber(this._stormEntity(), value);
