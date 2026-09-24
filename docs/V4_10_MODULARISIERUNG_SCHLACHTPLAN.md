@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – realen DRA-Rollback auf V4.09 und Rückkehr auf DEV abschließen.**
+**M13 – Regression & Freigabe kompakt vollständig abarbeiten.**
 
 Aktueller Testzweig:
 - `test/dra-v4.10.02-cache-mixed-state`
@@ -78,13 +78,20 @@ Aktueller Rollback-Nachweis:
 - DRA verlangte korrekt einen vollständigen Home-Assistant-Neustart,
 - nach dem Neustart läuft real **V4.09**; Einstellungen und Versionsverlauf zeigen sichtbar **2026/09 · V4.09**.
 
-Noch offen:
-1. Über DRA wieder den empfohlenen Stand `deploy/dev` / `08eec9c3f19c2680ede86336931be8f8e0029424` installieren.
-2. Die von DRA geforderte Nachaktion vollständig ausführen.
-3. Abschließend **V4.10.02 · 22 / 22 Module geladen · Versionssatz konsistent** bestätigen.
-4. Erst dann den M12-Haken **Rollback testen** setzen und M12 abschließen.
+M12 ist vollständig real abgeschlossen:
+- Rückfall `V4.10.02 → V4.09` über DRA erfolgreich,
+- Rückkehr `V4.09 → V4.10.02` über DRA erfolgreich,
+- DRA erkannte die Rückkehr korrekt als Upgrade,
+- Rückkehr-Vorschau: **22 neu / 2 geändert / 0 entfernt / 33 unverändert**,
+- vollständiger Home-Assistant-Neustart wurde korrekt verlangt,
+- nach dem Neustart läuft wieder **V4.10.02**,
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- Versionsverlauf zeigt wieder **2026/09 · V4.10.02**.
 
-Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
+M12-Release-Gate ist damit vollständig bestanden.
+
+Jetzt ausschließlich **M13 – Regression & Freigabe** abarbeiten. Zuerst alle automatisierbaren Repository-/CI-/Paket-/Checksum-/Dokumentationsprüfungen durchführen und im Schlachtplan dokumentieren. Danach verbleibende reale UI-/Geräteprüfungen aus der M13-Liste gezielt abnehmen. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M13**.
 
 ---
 
@@ -470,7 +477,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] Browsercache-Fall simulieren
 - [x] veraltetes Modul erkennen
 - [x] fehlendes Modul erkennen
-- [ ] Rollback testen
+- [x] Rollback testen
 - [x] Neustart-/Frontend-Reload-Hinweis prüfen
 
 **Automatisierter Repository-Vorabnachweis (kein Ersatz für die reale DRA-/HA-DEV-Abnahme):**
@@ -491,7 +498,7 @@ Realer M12-Stand:
 - **veraltetes Modul erkennen** ist real vollständig nachgewiesen: die Laufzeit meldet **22 / 22 Module**, **1 Abweichung**, und die Detailansicht von `fullscreen.map-display` zeigt **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
 - **Browsercache-Fall simulieren** ist real vollständig nachgewiesen: vor hartem Neuladen blieb der alte 1.0.2-Laufzeitstand aktiv; nach `Strg+Shift+R` wurde der installierte Teststand 1.0.1 geladen und korrekt als Abweichung gegen Soll 1.0.2 erkannt,
 - **fehlendes Modul erkennen** ist real vollständig nachgewiesen: `history.chart` wurde als **fehlt** und die absichtliche Test-ID `history.chart.m12-missing-test` separat als **unerwartet** erkannt,
-- der reale Rollback auf `deploy/v4.09` ist bis zum laufenden V4.09-Zustand erfolgreich; offen ist nur noch die Rückkehr auf `deploy/dev` und die abschließende Konsistenzprüfung.
+- **Rollback testen** ist real vollständig nachgewiesen: Rückfall auf `deploy/v4.09` lief nach vollständigem HA-Neustart als V4.09; die anschließende Rückkehr auf `deploy/dev` wurde von DRA als Upgrade **4.09 → 4.10.02** erkannt und mit **22 neu / 2 geändert / 0 entfernt / 33 unverändert** installiert; nach erneutem vollständigem HA-Neustart läuft wieder **V4.10.02 · 22 / 22 Module geladen · Versionssatz konsistent**.
 
 Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popup des Einzelmodul-Tests bleibt auf dem Testzweig, einschließlich des bekannten unerwünschten Rahmens/Fokusrahmens am Schließen-Symbol. Die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
 
@@ -2112,3 +2119,39 @@ Bewertung:
 - der M12-Haken **Rollback testen** bleibt bewusst offen, bis auch die Rückkehr auf den aktuellen DEV-Stand erfolgreich bestätigt ist.
 
 **Nächster Schritt:** in DRA den empfohlenen Stand `deploy/dev` / Commit `08eec9c3f19c2680ede86336931be8f8e0029424` auswählen und installieren. Danach die von DRA geforderte Nachaktion ausführen und abschließend in Gewitterradar **V4.10.02**, **22 / 22 Module geladen** und **Versionssatz konsistent** bestätigen. Erst dann M12 vollständig abschließen.
+
+
+## Schleife 063 – M12 vollständig bestanden; Rückkehr auf DEV real bestätigt
+
+**Datum:** 2026-09-24  
+**Status:** M12 RELEASE-GATE vollständig abgeschlossen
+
+Realer Rückweg nach erfolgreichem V4.09-Rollback:
+- DRA-Quelle wieder `deploy/dev` / `08eec9c3f19c2680ede86336931be8f8e0029424`,
+- DRA-Vorschau:
+  - **22 neu**,
+  - **2 geändert**,
+  - **0 entfernt**,
+  - **33 unverändert**,
+  - insgesamt **24 Änderungen**,
+- Versionsprüfung:
+  - Git-Quelle **4.10.02**,
+  - lokal **4.09**,
+  - DRA erkennt korrekt **Upgrade**,
+- Nachaktion: **Home Assistant vollständig neu starten**,
+- Installation erfolgreich; DRA meldet Neustart erforderlich.
+
+Realer Laufzeitnachweis nach vollständigem Neustart:
+- Gewitterradar zeigt **V4.10.02**,
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- Versionsverlauf zeigt **2026/09 · V4.10.02**.
+
+Bewertung:
+- Rückfall und Rückkehr funktionieren beide real über DRA,
+- kein sichtbarer Mischstand nach der Rückkehr,
+- M12-Haken **Rollback testen** gesetzt,
+- damit sind **alle acht M12-Checkboxen abgeschlossen**,
+- M12 als RELEASE-GATE vollständig bestanden.
+
+**Nächster Schritt:** M13 – Regression & Freigabe. Zuerst automatisierbare Repository-, CI-, Paket-, HACS-, DRA-, Cache-, Syntax-/Test-, Checksummen- und Dokumentationsprüfungen ausführen. Danach verbleibende reale UI-/Geräteprüfungen gezielt abnehmen.
