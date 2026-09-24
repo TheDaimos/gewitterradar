@@ -1,5 +1,17 @@
 [
   {
+    "file": "assets/gewitterradar-about-close-premium.webp",
+    "sha256": "f78a0fe16dff96fccffb39606731e5d71b9f33c3facb51d92a5b7f1813b77e53",
+    "protected": false,
+    "referenced": false,
+    "retention": "legacy"
+  },
+  {
+    "file": "assets/gewitterradar-about-copy-scroll.webp",
+    "sha256": "d269784528e9da0aa2fdfee8252300e709c7415a76a57291071085342cf192c4",
+    "protected": false
+  },
+  {
     "file": "assets/gewitterradar-about-dedication-v4.webp",
     "sha256": "cb1e8f85ca9eef0f8831687464eb930087530bcc8ba5ed805832b9086697c6bb",
     "protected": true
@@ -15,8 +27,23 @@
     "protected": true
   },
   {
-    "file": "assets/gewitterradar-compass-toggle.png",
-    "sha256": "bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a",
+    "file": "assets/gewitterradar-chevron-left-brass-hires.svg",
+    "sha256": "d434bf7436307bbc2a069ebb3d125380400f19b66647273ed978bd40548fa9f4",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-chevron-left-silver-hires.svg",
+    "sha256": "2b66743479a6ca2f712341f0f0a945b4c94bca2fc27682884bb6a8955182728f",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-chevron-right-brass-hires.svg",
+    "sha256": "87774a4523eb7377122728bcd1bcddee971706b98d51e9f473ddcb7609e1e2f4",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-chevron-right-silver-hires.svg",
+    "sha256": "0d6760f3a7f7e20d013d5bd13f11ce39df911580cc999f3e17155190f54c2b1e",
     "protected": false
   },
   {
@@ -70,6 +97,11 @@
     "protected": true
   },
   {
+    "file": "assets/gewitterradar-compass-toggle.png",
+    "sha256": "bd6ce5bbd20a9db8af174f14ff284461c41e0ee620443f5e42b9c298e9072a0a",
+    "protected": false
+  },
+  {
     "file": "assets/gewitterradar-trend-arrow.png",
     "sha256": "b781490b662970cdba20ce8f04b2e841807faa418a39873711b0bdac5f92c3ef",
     "protected": true
@@ -78,17 +110,5 @@
     "file": "assets/gewitterradar-trend-medallion.png",
     "sha256": "e54c26288716286fef786710672c17d90417c014ae99ffdf19fea55e7a6612c5",
     "protected": true
-  },
-  {
-    "file": "assets/gewitterradar-about-close-premium.webp",
-    "sha256": "f78a0fe16dff96fccffb39606731e5d71b9f33c3facb51d92a5b7f1813b77e53",
-    "protected": false,
-    "referenced": false,
-    "retention": "legacy"
-  },
-  {
-    "file": "assets/gewitterradar-about-copy-scroll.webp",
-    "sha256": "d269784528e9da0aa2fdfee8252300e709c7415a76a57291071085342cf192c4",
-    "protected": false
   }
 ]
