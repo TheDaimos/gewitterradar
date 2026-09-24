@@ -71,10 +71,18 @@ Browsercache-/Mischstand vollständig real bestätigt:
 - Gesamtstatus danach: **22 / 22 Module geladen**, **1 Abweichung erkannt**,
 - M12-Haken **Browsercache-Fall simulieren** gesetzt.
 
+Aktueller Rollback-Nachweis:
+- `deploy/v4.09` wurde über DRA installiert,
+- DRA erkannte korrekt die Regression **4.10.02 → 4.09**,
+- die Rollback-Vorschau bestand aus **0 neu / 2 geändert / 22 entfernt / 33 unverändert**,
+- DRA verlangte korrekt einen vollständigen Home-Assistant-Neustart,
+- nach dem Neustart läuft real **V4.09**; Einstellungen und Versionsverlauf zeigen sichtbar **2026/09 · V4.09**.
+
 Noch offen:
-1. In DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
-2. Danach **fehlendes Modul erkennen** real testen.
-3. Anschließend **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** real durchführen.
+1. Über DRA wieder den empfohlenen Stand `deploy/dev` / `08eec9c3f19c2680ede86336931be8f8e0029424` installieren.
+2. Die von DRA geforderte Nachaktion vollständig ausführen.
+3. Abschließend **V4.10.02 · 22 / 22 Module geladen · Versionssatz konsistent** bestätigen.
+4. Erst dann den M12-Haken **Rollback testen** setzen und M12 abschließen.
 
 Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
 
@@ -482,7 +490,8 @@ Realer M12-Stand:
 - Frontend-/Companion-Neuladehinweis für reine Frontend-Änderung real bestätigt,
 - **veraltetes Modul erkennen** ist real vollständig nachgewiesen: die Laufzeit meldet **22 / 22 Module**, **1 Abweichung**, und die Detailansicht von `fullscreen.map-display` zeigt **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
 - **Browsercache-Fall simulieren** ist real vollständig nachgewiesen: vor hartem Neuladen blieb der alte 1.0.2-Laufzeitstand aktiv; nach `Strg+Shift+R` wurde der installierte Teststand 1.0.1 geladen und korrekt als Abweichung gegen Soll 1.0.2 erkannt,
-- fehlendes Modul und realer Rollback auf `deploy/v4.09` bleiben offen.
+- **fehlendes Modul erkennen** ist real vollständig nachgewiesen: `history.chart` wurde als **fehlt** und die absichtliche Test-ID `history.chart.m12-missing-test` separat als **unerwartet** erkannt,
+- der reale Rollback auf `deploy/v4.09` ist bis zum laufenden V4.09-Zustand erfolgreich; offen ist nur noch die Rückkehr auf `deploy/dev` und die abschließende Konsistenzprüfung.
 
 Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popup des Einzelmodul-Tests bleibt auf dem Testzweig, einschließlich des bekannten unerwünschten Rahmens/Fokusrahmens am Schließen-Symbol. Die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
 
@@ -2079,3 +2088,27 @@ Bewertung:
 - der Lifecycle wird korrekt nicht auf Frontend-Neuladen herabgestuft, sondern verlangt einen vollständigen HA-Neustart.
 
 **Nächster Schritt:** die **24 Änderungen** mit expliziter Regressionsfreigabe installieren, anschließend Home Assistant vollständig neu starten und den realen V4.09-Laufzeitstand prüfen. Danach wieder auf `deploy/dev` / V4.10.02 zurückkehren.
+
+
+## Schleife 062 – realer V4.09-Laufzeitstand nach DRA-Rollback bestätigt
+
+**Datum:** 2026-09-24  
+**Status:** Rollback-Hinweg erfolgreich; Rückkehr auf DEV noch offen
+
+Realer Nachweis nach Installation von `deploy/v4.09` und vollständigem Home-Assistant-Neustart:
+- Gewitterradar startet und die Oberfläche ist bedienbar,
+- im Einstellungsdialog steht sichtbar **2026/09 · V4.09**,
+- der Versionsverlauf steht ebenfalls sichtbar auf **2026/09 · V4.09**,
+- der Versionsverlauf enthält den Abschnitt **V4.09 · 2026/09** sowie die älteren V4.08-/V4.07-/V4.06-Einträge,
+- damit ist der tatsächliche Laufzeitwechsel von V4.10.02 auf V4.09 nach dem DRA-Rollback real bestätigt.
+
+Vorangegangener DRA-Nachweis:
+- Regression **4.10.02 → 4.09** korrekt erkannt,
+- Vorschau **0 neu / 2 geändert / 22 entfernt / 33 unverändert**,
+- vollständiger Home-Assistant-Neustart als Nachaktion gefordert.
+
+Bewertung:
+- der Rollback-Hinweg funktioniert real und ohne sichtbaren Mischstand,
+- der M12-Haken **Rollback testen** bleibt bewusst offen, bis auch die Rückkehr auf den aktuellen DEV-Stand erfolgreich bestätigt ist.
+
+**Nächster Schritt:** in DRA den empfohlenen Stand `deploy/dev` / Commit `08eec9c3f19c2680ede86336931be8f8e0029424` auswählen und installieren. Danach die von DRA geforderte Nachaktion ausführen und abschließend in Gewitterradar **V4.10.02**, **22 / 22 Module geladen** und **Versionssatz konsistent** bestätigen. Erst dann M12 vollständig abschließen.
