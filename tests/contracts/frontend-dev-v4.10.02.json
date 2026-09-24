@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-2026-09-21",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "fa0d794e971726fa88ba212f8d37b134ec07277d1543d9e818d3b1320719a587",
+      "sha256": "dd29db508b87e422dde795a563b8ad5f6b408dc3552f764193e99829f3ad77ff",
       "sizeBytes": 6575
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 32650
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "840a5f9f59db8fa90349ee1b1e13a9feb472f9729f91ba52c4ef001db7374bb7",
-      "sizeBytes": 59645
+      "sha256": "e7624b93c21302de9555e59c7d74bfbd1c01d56621b18bc6b92540815d6246e2",
+      "sizeBytes": 59873
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
@@ -43,8 +43,8 @@
       "sizeBytes": 16917
     },
     "modules/ui/controls.js": {
-      "sha256": "eb937070fb8c72c0193c89f81a32dc5d2c22d7f0decd9867e6717c85e2ac1b54",
-      "sizeBytes": 182928
+      "sha256": "6c9dc72a96d664af8b9e2b6b4fddcdcd9bd433d3064cf69c419afb42b6e88b7d",
+      "sizeBytes": 183039
     },
     "modules/ui/i18n-settings.js": {
       "sha256": "cc8b81ea27061eb0de67921aaf6909d262dc813db15137f1eb742d641f813591",
@@ -71,8 +71,8 @@
       "sizeBytes": 6300
     },
     "modules/location/radii-map.js": {
-      "sha256": "385e802bf8e8568a9cd820102b41f435369ee172c45da13bf5ff24b1f9a89a4d",
-      "sizeBytes": 27442
+      "sha256": "36a03e389a25d26864826b857532952c0f234788a944ca5330e38d5162fdab56",
+      "sizeBytes": 27514
     },
     "modules/map/strikes-warnings.js": {
       "sha256": "263dc579d034fc66b2bb80e1bd116d5949f2c2f2a5c65deb146c956114f81fb5",
