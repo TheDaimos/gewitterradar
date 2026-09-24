@@ -397,7 +397,8 @@ const server = http.createServer((req, res) => {
           assert.equal(row.localizedModuleRows.length,22,delivery+'/'+profile+' '+row.language+' all module rows localized');
           assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,22,delivery+'/'+profile+' '+row.language+' unique localized module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
-          assert.equal(row.moduleSummaryParts.length,3,delivery+'/'+profile+' '+row.language+' module summary segments');
+          assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
+          assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');
           assert.ok(row.moduleSummaryParts[1]?.startsWith('· '),delivery+'/'+profile+' '+row.language+' module summary count separator');
           assert.ok(row.moduleSummaryParts[2]?.startsWith('· '),delivery+'/'+profile+' '+row.language+' module summary state separator');
           if (row.language === 'Ελληνικά') {
