@@ -1,8 +1,34 @@
 """Compass-picker regression carried into modular V4.10.02."""
 from pathlib import Path
+import base64
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
+PICKER_DIR = FRONTEND / "modules" / "fullscreen"
+
+PICKER_MODULES = (
+    "compass-picker-chevron-left-brass.js",
+    "compass-picker-chevron-right-brass.js",
+    "compass-picker-chevron-left-silver.js",
+    "compass-picker-chevron-right-silver.js",
+)
+
+
+def _decode_lossless_webp_module(path: Path) -> bytes:
+    text = path.read_text(encoding="utf-8")
+    match = re.fullmatch(r'export default "data:image/webp;base64,([A-Za-z0-9+/=]+)";\n?', text)
+    assert match, f"{path.name} must remain a picker-local data URL module"
+    data = base64.b64decode(match.group(1), validate=True)
+    assert data[:4] == b"RIFF"
+    assert data[8:12] == b"WEBP"
+    assert data[12:16] == b"VP8L", f"{path.name} must remain lossless WebP"
+    assert data[20] == 0x2F
+    packed = int.from_bytes(data[21:25], "little")
+    width = (packed & 0x3FFF) + 1
+    height = ((packed >> 14) & 0x3FFF) + 1
+    assert (width, height) == (128, 128), f"{path.name} must remain 128x128 Retina"
+    return data
 
 
 def test_v41001_compass_picker_contract():
@@ -11,13 +37,13 @@ def test_v41001_compass_picker_contract():
         path.read_text(encoding="utf-8")
         for path in sorted(FRONTEND.rglob("*.js"))
     )
+    map_display = (PICKER_DIR / "map-display.js").read_text(encoding="utf-8")
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-R1-2026-09-24" in main
+    assert "V4.10.02-MODULAR-DEV-R2-2026-09-24" in main
+    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r2';" in main
 
-    # Preserve the established V4.10.01 picker behaviour while allowing
-    # the V4.10.02 runtime Chevron material comparison to replace the old
-    # inline gold SVG arrows.
+    # Preserve the established picker behaviour.
     for marker in (
         "compass-picker-shell-v41001",
         "data-compass-picker-close",
@@ -32,39 +58,51 @@ def test_v41001_compass_picker_contract():
         "compass-picker-close:focus-visible",
         "outline:0!important",
         "-webkit-appearance:none",
-    ):
-        assert marker in source
-
-    # V4.10.02 comparison contract: brass on top, aged silver underneath.
-    for marker in (
         'data-chevron-material="brass"',
         'data-chevron-material="silver"',
-        "gewitterradar-chevron-left-brass-runtime-2x.png",
-        "gewitterradar-chevron-right-brass-runtime-2x.png",
-        "gewitterradar-chevron-left-silver-runtime-2x.png",
-        "gewitterradar-chevron-right-silver-runtime-2x.png",
         "querySelectorAll('[data-compass-picker-prev]')",
         "querySelectorAll('[data-compass-picker-next]')",
     ):
         assert marker in source
 
-    # Runtime assets must exist in the canonical frontend source.
-    for asset in (
-        "gewitterradar-chevron-left-brass-runtime-2x.png",
-        "gewitterradar-chevron-right-brass-runtime-2x.png",
-        "gewitterradar-chevron-left-silver-runtime-2x.png",
-        "gewitterradar-chevron-right-silver-runtime-2x.png",
-    ):
-        assert (FRONTEND / "assets" / asset).is_file()
+    # Picker-only contract: four local Retina modules are imported only by map-display.
+    imports = (
+        'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r2";',
+        'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r2";',
+        'import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r2";',
+        'import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";',
+    )
+    for marker in imports:
+        assert marker in map_display
+    assert "Picker-only Retina assets. Other menu/accordion/UI chevrons intentionally remain untouched." in map_display
 
-    # The superseded inline-arrow implementation must not return unnoticed.
+    for module_name in PICKER_MODULES:
+        path = PICKER_DIR / module_name
+        assert path.is_file()
+        data = _decode_lossless_webp_module(path)
+        assert len(data) < 20_000, f"{module_name} should stay storage-optimised"
+        references = [
+            js_path
+            for js_path in FRONTEND.rglob("*.js")
+            if js_path.name != module_name and module_name in js_path.read_text(encoding="utf-8")
+        ]
+        assert references == [PICKER_DIR / "map-display.js"], (
+            f"{module_name} must only be referenced by the compass picker"
+        )
+
+    # Superseded picker implementations must not return unnoticed.
     assert "compass-picker-gold-prev" not in source
     assert "compass-picker-gold-next" not in source
-
-    # Hi-Res masters are not runtime dependencies of Gewitterradar.
     assert "-hires.svg" not in source
 
 
 def test_v41002_superseded_runtime_svg_assets_removed():
-    for asset in ("gewitterradar-chevron-left-brass-runtime.svg","gewitterradar-chevron-right-brass-runtime.svg","gewitterradar-chevron-left-silver-runtime.svg","gewitterradar-chevron-right-silver-runtime.svg"):
-        assert not (FRONTEND / "assets" / asset).exists(), "superseded runtime SVG assets must stay removed"
+    for asset in (
+        "gewitterradar-chevron-left-brass-runtime.svg",
+        "gewitterradar-chevron-right-brass-runtime.svg",
+        "gewitterradar-chevron-left-silver-runtime.svg",
+        "gewitterradar-chevron-right-silver-runtime.svg",
+    ):
+        assert not (FRONTEND / "assets" / asset).exists(), (
+            "superseded compass-picker runtime SVG assets must stay removed"
+        )
