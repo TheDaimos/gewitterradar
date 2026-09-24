@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -57,20 +57,20 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (output) output.textContent = descriptor.uiIndex + ' / ' + COMPASS_DESIGNS.length;
       const calibrationNavigation = this._compassCalibrationEnabled && (!this._diagnostics.enabled || this._diagnostics.live);
       const enabled = this._auraEnabled() || calibrationNavigation;
-      const previous = dialog.querySelector('[data-compass-picker-prev]');
-      const next = dialog.querySelector('[data-compass-picker-next]');
-      if (previous) {
-        previous.disabled = !enabled;
-        previous.setAttribute('aria-disabled',enabled ? 'false' : 'true');
-        previous.setAttribute('aria-label',this._t('compass.previous'));
-        previous.title = this._t('compass.previous');
-      }
-      if (next) {
-        next.disabled = !enabled;
-        next.setAttribute('aria-disabled',enabled ? 'false' : 'true');
-        next.setAttribute('aria-label',this._t('compass.next'));
-        next.title = this._t('compass.next');
-      }
+      const previous = [...dialog.querySelectorAll('[data-compass-picker-prev]')];
+      const next = [...dialog.querySelectorAll('[data-compass-picker-next]')];
+      previous.forEach((button) => {
+        button.disabled = !enabled;
+        button.setAttribute('aria-disabled',enabled ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      next.forEach((button) => {
+        button.disabled = !enabled;
+        button.setAttribute('aria-disabled',enabled ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
     },
 
     _closeCompassPicker(restoreFocus = true) {
@@ -105,6 +105,17 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const instrument = this.shadow.getElementById('compass-instrument');
       if (!instrument) return;
 
+      const chevronAssets = {
+        brass: {
+          left: new URL('../../assets/gewitterradar-chevron-left-brass-hires.svg', import.meta.url).href,
+          right: new URL('../../assets/gewitterradar-chevron-right-brass-hires.svg', import.meta.url).href,
+        },
+        silver: {
+          left: new URL('../../assets/gewitterradar-chevron-left-silver-hires.svg', import.meta.url).href,
+          right: new URL('../../assets/gewitterradar-chevron-right-silver-hires.svg', import.meta.url).href,
+        },
+      };
+
       const shell = document.createElement('div');
       shell.id = 'compass-picker-shell-v41001';
       shell.innerHTML =
@@ -115,21 +126,30 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.compass-picker-close:focus,.compass-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.compass-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.compass-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
         '.compass-picker-stage{width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}' +
         '.compass-picker-stage .compass-instrument{width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
-        '.compass-picker-nav{display:grid;grid-template-columns:60px 82px 60px;align-items:center;justify-content:center;gap:15px;margin-top:2px}' +
-        '.compass-picker-nav-button{width:60px;height:48px;padding:0;border:1px solid #8d713d87;border-radius:11px;background:linear-gradient(145deg,#1b1b17,#0b1116 52%,#17130c);box-shadow:inset 0 1px #ffe6ad15,inset 0 -1px #5d431d75,0 7px 18px #0007;display:grid;place-items:center;color:var(--picker-gold)}' +
-        '.compass-picker-nav-button:not(:disabled):hover{border-color:#d5ae5f;box-shadow:inset 0 1px #fff0bf25,0 0 18px #d1a54a20,0 7px 18px #0008}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.38;cursor:default}' +
-        '.compass-picker-nav-button svg{width:31px;height:31px;overflow:visible;filter:drop-shadow(0 1px 2px #000)}' +
+        '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
+        '.compass-picker-nav-row{display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
+        '.compass-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;color:var(--picker-gold);appearance:none;-webkit-appearance:none}' +
+        '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
+        '.compass-picker-chevron{display:block;width:58px;height:58px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
+        '.compass-picker-nav-row[data-chevron-material="silver"] .compass-picker-chevron{filter:drop-shadow(0 2px 5px #000c)}' +
         '.compass-picker-index{min-width:82px;text-align:center;color:#fff0b2;font:650 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;text-shadow:0 1px 3px #000}' +
-        '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav{grid-template-columns:56px 72px 56px;gap:11px}.compass-picker-nav-button{width:56px;height:46px}}' +
+        '.compass-picker-index-spacer{display:block;min-width:82px;height:1px}' +
+        '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav-row{grid-template-columns:58px 72px 58px;gap:9px}.compass-picker-nav-button{width:58px;height:50px}.compass-picker-chevron{width:52px;height:52px}}' +
         '</style>' +
         '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('compass.picker_title') + '">' +
         '<button class="compass-picker-close" type="button" data-compass-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
         '<div class="compass-picker-stage" data-compass-picker-stage></div>' +
         '<div class="compass-picker-nav" role="group" aria-label="' + this._t('compass.picker_change') + '">' +
-        '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev><svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="compass-picker-gold-prev" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".68" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><path d="M28.5 8.5 15 22l13.5 13.5" fill="none" stroke="url(#compass-picker-gold-prev)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
+        '<div class="compass-picker-nav-row" data-chevron-material="brass">' +
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev data-chevron-material="brass"><img class="compass-picker-chevron" src="' + chevronAssets.brass.left + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
-        '<button class="compass-picker-nav-button" type="button" data-compass-picker-next><svg viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="compass-picker-gold-next" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".68" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><path d="M15.5 8.5 29 22 15.5 35.5" fill="none" stroke="url(#compass-picker-gold-next)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
-        '</div></dialog>';
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="brass"><img class="compass-picker-chevron" src="' + chevronAssets.brass.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '</div>' +
+        '<div class="compass-picker-nav-row" data-chevron-material="silver">' +
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.left + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<span class="compass-picker-index-spacer" aria-hidden="true"></span>' +
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '</div></div></dialog>';
 
       this._compassPickerReturnParent = instrument.parentElement;
       this._compassPickerReturnNext = instrument.nextSibling;
@@ -142,16 +162,16 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       stage.appendChild(instrument);
 
       shell.querySelector('[data-compass-picker-close]')?.addEventListener('click',() => this._closeCompassPicker());
-      shell.querySelector('[data-compass-picker-prev]')?.addEventListener('click',(event) => {
+      shell.querySelectorAll('[data-compass-picker-prev]').forEach((button) => button.addEventListener('click',(event) => {
         event.preventDefault(); event.stopPropagation();
         this._stepCompassDesign(-1);
         this._syncCompassPicker();
-      });
-      shell.querySelector('[data-compass-picker-next]')?.addEventListener('click',(event) => {
+      }));
+      shell.querySelectorAll('[data-compass-picker-next]').forEach((button) => button.addEventListener('click',(event) => {
         event.preventDefault(); event.stopPropagation();
         this._stepCompassDesign(1);
         this._syncCompassPicker();
-      });
+      }));
       dialog.addEventListener('cancel',(event) => {
         event.preventDefault(); event.stopPropagation();
         this._closeCompassPicker();
