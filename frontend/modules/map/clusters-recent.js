@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -1014,6 +1014,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         statusChip.setAttribute('title',emptyTitle);
         statusChip.setAttribute('aria-label',emptyTitle);
         statusChip.setAttribute('aria-disabled','true');
+        this._syncFullscreenClusterJumpUi?.();
         return;
       }
 
@@ -1113,6 +1114,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       statusChip.setAttribute('title',title);
       statusChip.setAttribute('aria-label',title);
       statusChip.setAttribute('aria-disabled','false');
+      this._syncFullscreenClusterJumpUi?.();
     },
 
 };});
