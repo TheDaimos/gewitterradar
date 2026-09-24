@@ -506,18 +506,18 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 
 ## M13 – Regression & Freigabe
 
-- [ ] Desktop
+- [x] Desktop
 - [ ] Android / HA Companion
-- [ ] Kartenansichten
-- [ ] Vollbild
-- [ ] Kompass
-- [ ] Medaillon
-- [ ] Standort-Pille
-- [ ] Layer-Menü
-- [ ] Cluster
-- [ ] Einstellungen
+- [x] Kartenansichten
+- [x] Vollbild
+- [x] Kompass
+- [x] Medaillon
+- [x] Standort-Pille
+- [x] Layer-Menü
+- [x] Cluster
+- [x] Einstellungen
 - [x] Provider
-- [ ] Logging
+- [x] Logging
 - [x] HACS
 - [ ] DRA
 - [x] Cache-/Update-Pfade
@@ -2227,3 +2227,35 @@ Der M13-Altpunkt **Provider** ist für Gewitterradar V4.10.02 nicht anwendbar:
 - der Punkt darf daher nicht als künstlicher Releaseblocker offen bleiben.
 
 M13-Haken **Provider** gesetzt als **nicht anwendbar / fachlich außerhalb dieses Projekts**.
+
+
+## Schleife 066 – M13 Desktop-Regressionsrunde vollständig bestanden
+
+**Datum:** 2026-09-24  
+**Status:** Desktop- und Desktop-Funktionsmatrix real abgeschlossen
+
+Reale Benutzerabnahme:
+- Gewitterradar V4.10.02 wurde auf dem Desktop vollständig durchgetestet,
+- dabei wurden keine regressionsrelevanten Auffälligkeiten gemeldet.
+
+Damit auf Desktop real abgenommen und in M13 abgeschlossen:
+- **Desktop**,
+- **Kartenansichten**,
+- **Vollbild**,
+- **Kompass**,
+- **Medaillon**,
+- **Standort-Pille**,
+- **Layer-Menü**,
+- **Cluster**,
+- **Einstellungen**,
+- **Logging**.
+
+Bewertung:
+- die durch Modularisierung und UI-Abschluss besonders gefährdeten Bedienpfade funktionieren im realen Desktop-Lauf weiterhin,
+- keine erneute Detail-Neuabnahme einzelner bereits geschützter Altpfade erforderlich.
+
+Weiterhin offen:
+- **Android / HA Companion** als reale Touch-/WebView-Abnahme,
+- **Syntax/Lint/Tests** bis der aktuelle vollständige CI-Head vollständig grün ist.
+
+**Nächster Schritt:** Android / HA Companion kompakt vollständig durchtesten; parallel aktuellen CI-Head auf vollständiges Grün prüfen. Bei Erfolg M13 abschließen.
