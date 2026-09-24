@@ -2,6 +2,14 @@
 
 ## 2026/09 — V4.10.02 DEV
 
+### Chevron-Materialvergleich im Kompass-Pop-up
+
+- Add a permanently protected Hi-Res Chevron family in antique brass and aged silver for left, right, up and down.
+- Show two simultaneously active compass-navigation rows for direct visual acceptance: brass on top, aged silver directly below.
+- Keep both material rows functionally identical for previous/next compass selection; only the material presentation differs.
+- Mirror the left/right runtime assets byte-identically into native integration and Dashboard delivery while retaining the complete four-direction masters in protected artwork storage.
+
+
 ### Modularisierung · Abschlusskorrekturen
 
 - Fix the radius cascade when lowering **Gewitterradius** below the persisted **Gefahrenradius**: the real Home Assistant danger state is now reduced first instead of trusting the already-previewed slider value, preventing `danger_radius <= storm_radius <= observation_radius` validation failures on Desktop, iPad and Android.
@@ -33,12 +41,12 @@
 - `ui.skeleton` → **1.1.2**
 - `ui.i18n-settings` → **1.2.1**
 - `diagnostics.module-view` → **1.3.0**
-- `fullscreen.map-display` → **1.0.4**
+- `fullscreen.map-display` → **1.0.5**
 - `map.clusters-recent` → **1.0.2**
 - `ui.render` → **1.0.1**
 - `ui.controls` → **1.1.3**
 - `location.radii-map` → **1.0.1**
-- `core.manifest` → **1.2.2**
+- `core.manifest` → **1.2.3**
 
 ## 2026/09 — V4.10.01 DEV
 
