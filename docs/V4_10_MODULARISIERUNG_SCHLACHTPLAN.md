@@ -1539,3 +1539,32 @@ Wichtig:
 - dieser Zweig ist **nur** ein M12-Abnahmeträger,
 - nach erfolgreichem Ein-Modul-Test wird auf `deploy/dev` zurückgekehrt,
 - die eigentliche Medaillon-Auswahl/-Bearbeitung wird erst nach Abschluss von M12 als eigenes neues Thema sauber versioniert und vollständig umgesetzt.
+
+
+## Schleife 042 – Ein-Modul-Testkandidat robuster gemacht
+
+**Datum:** 2026-09-24  
+**Status:** aktualisierter Testkandidat bereit; reale DRA-Abnahme offen
+
+Realer Befund nach erster Installation:
+- DRA erkannte korrekt **0 neu / 1 geändert / 0 entfernt / 56 unverändert**,
+- Installation wurde durchgeführt,
+- `fullscreen.map-display` blieb erwartungsgemäß auf **1.0.2**, da für den M12-Ein-Datei-Test bewusst weder Manifest noch Versionsnummer verändert werden,
+- Medaillon blieb im Vollbild weiterhin nur verschiebbar; Popup öffnete sich noch nicht.
+
+Nachschärfung ausschließlich im selben verwalteten Modul:
+- Branch `test/dra-v4.10.02-single-module`,
+- neuer Commit `26b935870e5e871ece26fb724d9ef67a019668e7`,
+- gegenüber `deploy/dev` weiterhin exakt **eine geänderte Datei**:
+  `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`,
+- zusätzlicher echter `click`-Pfad für das Medaillon,
+- Drag-Gesten setzen eine kurze Klickunterdrückung, damit Verschieben kein Popup auslöst,
+- temporärer Mouse-over-Hinweis **„Medaillon · M12 Ein-Modul-Test“** bestätigt sichtbar, dass die aktualisierte Testdatei tatsächlich im Browser aktiv ist.
+
+Nächste reale Abnahme:
+1. DRA-Vorschau des aktualisierten Testbranches berechnen,
+2. weiterhin **1 geändert / 0 neu / 0 entfernt** erwarten,
+3. installieren und Frontend neu laden,
+4. Mouse-over am Vollbild-Medaillon muss den M12-Hinweis anzeigen,
+5. Klick öffnet Popup,
+6. Ziehen verschiebt nur.
