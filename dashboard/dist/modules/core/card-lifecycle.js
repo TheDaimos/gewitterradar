@@ -1,7 +1,7 @@
 import { defineModule } from "./runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -177,6 +177,22 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
           const savedPosition = JSON.parse(localStorage.getItem(MAP_LOCATION_POSITION_STORAGE_KEY) || 'null');
           if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
             this._mapLocationPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
+          }
+        } catch (_error) {}
+      }
+      if (typeof this._mapClusterJumpVisible !== 'boolean') {
+        this._mapClusterJumpVisible = true;
+        try {
+          const saved = localStorage.getItem('gewitterradar:v41002:map-cluster-jump-visible');
+          if (saved === '0' || saved === 'false') this._mapClusterJumpVisible = false;
+        } catch (_error) {}
+      }
+      if (this._mapClusterJumpPosition === undefined) {
+        this._mapClusterJumpPosition = null;
+        try {
+          const savedPosition = JSON.parse(localStorage.getItem('gewitterradar:v41002:map-cluster-jump-position') || 'null');
+          if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
+            this._mapClusterJumpPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
           }
         } catch (_error) {}
       }
