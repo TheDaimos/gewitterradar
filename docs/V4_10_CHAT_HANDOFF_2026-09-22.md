@@ -184,21 +184,20 @@ Im Schlachtplan ist bereits als realer Teilnachweis hinterlegt:
 - **22 / 22 Module geladen**
 - **1 Abweichung erkannt**
 
-Noch **nicht formal abgeschlossen** sind die beiden Haken, weil die Einzelbelege vollständig festgehalten werden müssen:
+Der M12-Haken **veraltetes Modul erkennen** ist inzwischen real abgeschlossen:
+
+- **22 / 22 Module geladen**
+- **1 Abweichung erkannt**
+- Detailzeile `fullscreen.map-display`:
+  - geladen **1.0.1**
+  - erwartet **1.0.2**
+  - Status **abweichend**
+
+Noch offen ist ausschließlich der separate Cache-/Mischstand-Nachweis:
 
 ### Browsercache-/Mischstand
 
-Nach DRA-Installation im bereits geöffneten Browser zunächst **nicht** hart neu laden. Der bereits laufende Browser soll weiterhin den vorher geladenen Zustand zeigen. Erst nach `Strg+Shift+R` soll die neue Moduldatei aktiv sein.
-
-### Veraltetes Modul
-
-Nach hartem Neuladen die Detailzeile `fullscreen.map-display` aufklappen und ausdrücklich bestätigen:
-
-- geladen **1.0.1**
-- erwartet **1.0.2**
-- Status Versionsabweichung
-
-Erst wenn beide Nachweise vollständig sind, im Schlachtplan die Haken **Browsercache-Fall simulieren** und **veraltetes Modul erkennen** setzen.
+Zunächst `deploy/dev` wiederherstellen und nach hartem Frontend-Neuladen **1.0.2 / korrekt** bestätigen. Danach den Testzweig erneut per DRA installieren, im bereits geöffneten Browser zunächst **nicht** hart neu laden und dokumentieren, dass der laufende Browser weiterhin den zuvor geladenen **1.0.2**-Stand zeigt. Erst nach `Strg+Shift+R` soll **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
 
 Danach wieder `deploy/dev` über DRA installieren und **1.0.2 / korrekt** bestätigen.
 
@@ -294,10 +293,10 @@ während das Manifest 1.0.2 erwartet.
 Im realen Laufzeitstand wurden bereits 22/22 geladene Module und 1 Abweichung gesehen.
 
 Führe jetzt exakt den NÄCHSTER-SCHRITT-Block des Schlachtplans fort:
-1. Browsercache-/Mischstand vor und nach hartem Frontend-Neuladen vollständig belegen.
-2. Detailzeile fullscreen.map-display mit geladen 1.0.1 / erwartet 1.0.2 bestätigen.
-3. Erst dann die beiden M12-Haken setzen.
-4. Wieder auf deploy/dev zurückstellen und 1.0.2 / korrekt bestätigen.
+1. Über DRA deploy/dev wiederherstellen und nach hartem Frontend-Neuladen fullscreen.map-display 1.0.2 / korrekt bestätigen.
+2. Cache-Testzweig erneut installieren, **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Stand dokumentieren.
+3. Danach Strg+Shift+R und den Wechsel auf geladen 1.0.1 / erwartet 1.0.2 / abweichend bestätigen.
+4. Erst dann den M12-Haken Browsercache-Fall simulieren setzen und wieder auf deploy/dev zurückstellen.
 5. Danach fehlendes Modul real testen.
 6. Danach realen DRA-Rollback auf deploy/v4.09 und Rückkehr auf deploy/dev testen.
 7. Anschließend M13 kompakt vollständig abarbeiten.
