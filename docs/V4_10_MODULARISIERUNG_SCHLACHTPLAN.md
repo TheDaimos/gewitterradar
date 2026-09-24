@@ -52,8 +52,14 @@ Bereits real vollständig bestätigt:
 - Detailzeile `fullscreen.map-display`: **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
 - damit ist der M12-Punkt **veraltetes Modul erkennen** abgeschlossen.
 
+Saubere Ausgangsbasis real bestätigt:
+- `deploy/dev` ist wiederhergestellt,
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- `fullscreen.map-display`: **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**.
+
 Noch offen:
-1. **Browsercache-/Mischstand:** kontrolliert von `deploy/dev` **1.0.2 / korrekt** starten, danach den Testzweig per DRA installieren und **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Laufzeitstand dokumentieren; erst nach `Strg+Shift+R` darf **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
+1. **Browsercache-/Mischstand:** jetzt den Testzweig per DRA installieren und **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Laufzeitstand dokumentieren; erst nach `Strg+Shift+R` darf **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
 2. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
 3. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
 
@@ -1673,3 +1679,25 @@ Bewusst weiterhin offen:
 - **Browsercache-Fall simulieren**, weil für diesen Haken der kontrollierte Zustand **vor** einem harten Frontend-Neuladen noch separat belegt werden muss.
 
 **Nächster Schritt:** über DRA zunächst `deploy/dev` wiederherstellen und nach hartem Frontend-Neuladen `fullscreen.map-display 1.0.2 / korrekt` bestätigen. Danach denselben Cache-/Mischstand-Test erneut installieren, vor dem harten Neuladen den weiterhin geladenen 1.0.2-Zustand dokumentieren und erst anschließend mit `Strg+Shift+R` den Wechsel auf 1.0.1 / erwartet 1.0.2 nachweisen.
+
+
+## Schleife 048 – saubere DEV-Ausgangsbasis für Browsercache-Test real bestätigt
+
+**Datum:** 2026-09-24  
+**Status:** Ausgangsbasis bestätigt; Browsercache-Haken bleibt offen
+
+Realer Nachweis nach Rückkehr auf `deploy/dev` und hartem Frontend-Neuladen:
+- **Module & Versionen** meldet **22 / 22 Module geladen**,
+- Gesamtstatus: **Versionssatz konsistent**,
+- in der geöffneten Detailzeile **Vollbild → Kartendarstellung / `fullscreen.map-display`** steht:
+  - Status: **korrekt**,
+  - Version / geladen: **1.0.2**,
+  - erwartet: **1.0.2**,
+  - Datei: `modules/fullscreen/map-display.js`.
+
+Bewertung:
+- der vorherige absichtlich veraltete Laufzeitstand ist vollständig aus dem Browser entfernt,
+- `deploy/dev` ist als saubere Referenz für den eigentlichen Browsercache-/Mischstand-Test bestätigt,
+- der M12-Haken **Browsercache-Fall simulieren** bleibt bewusst offen.
+
+**Nächster Schritt:** in DRA erneut `test/dra-v4.10.02-cache-mixed-state` / `274d9304823be7a1ec8620ec6f157493813d0e47` installieren. Danach **nicht** neu laden und sofort `Module & Versionen` prüfen. Erwartung vor dem harten Neuladen: weiterhin **22 / 22**, **Versionssatz konsistent**, `fullscreen.map-display 1.0.2 / erwartet 1.0.2 / korrekt`. Erst danach `Strg+Shift+R`; anschließend muss **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
