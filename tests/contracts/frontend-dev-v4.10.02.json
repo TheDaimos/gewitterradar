@@ -12,7 +12,7 @@
   "moduleFiles": {
     "module-manifest.js": {
       "sha256": "c3d5074801f98fe299456be1daf80217bf4b94c42e54aff4462a1987be4ff35a",
-      "sizeBytes": 6561
+      "sizeBytes": 6575
     },
     "modules/core/registry.js": {
       "sha256": "04ed080b87528badf125bcaa0dd6abe4e006bc91f3701a62f528ae09ad9750d8",
@@ -28,7 +28,7 @@
     },
     "modules/fullscreen/map-display.js": {
       "sha256": "cfdce9f65f1bc8e9a69ebe1cc130b67330b672e5272b938c012d2f4d8dca2eb0",
-      "sizeBytes": 67185
+      "sizeBytes": 67211
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "266e762cfa6003683ec1380128f059bbf6a433e2b9c856e2797860caf6a13308",
