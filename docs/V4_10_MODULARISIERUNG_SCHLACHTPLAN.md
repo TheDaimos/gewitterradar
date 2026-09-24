@@ -46,18 +46,16 @@ Aktueller Testzweig:
   `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
 - geladene Modulversion dort absichtlich **1.0.1**; Manifest/Sollstand bleibt **1.0.2**.
 
-Bereits real sichtbar:
+Bereits real vollständig bestätigt:
 - **22 / 22 Module geladen**,
-- **1 Abweichung erkannt**.
+- **1 Abweichung erkannt**,
+- Detailzeile `fullscreen.map-display`: **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
+- damit ist der M12-Punkt **veraltetes Modul erkennen** abgeschlossen.
 
-Für das formale Setzen der beiden M12-Haken fehlen noch die ausdrücklich dokumentierten Einzelbelege:
-1. **Browsercache-/Mischstand:** nach DRA-Installation im bereits geöffneten Browser vor einem harten Neuladen muss der zuvor geladene Stand weiter sichtbar sein; erst nach `Strg+Shift+R` darf der neue Dateistand aktiv werden.
-2. **Veraltetes Modul:** Detailzeile von `fullscreen.map-display` bestätigen:
-   - geladen **1.0.1**,
-   - erwartet **1.0.2**,
-   - Status Versionsabweichung.
-3. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
-4. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
+Noch offen:
+1. **Browsercache-/Mischstand:** kontrolliert von `deploy/dev` **1.0.2 / korrekt** starten, danach den Testzweig per DRA installieren und **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Laufzeitstand dokumentieren; erst nach `Strg+Shift+R` darf **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
+2. Danach in DRA wieder `deploy/dev` installieren und nach Frontend-Neuladen **1.0.2 / korrekt** bestätigen.
+3. Anschließend M12 mit **fehlendem Modul** und danach **Rollback auf `deploy/v4.09` + Rückkehr auf `deploy/dev`** fortsetzen.
 
 Nach M12 folgt ausschließlich die kompakte M13-Endabnahme. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M12**.
 
@@ -443,7 +441,7 @@ Dieser Punkt stammte aus einer WeatherRouter-Architekturvorlage. Im Gewitterrada
 - [x] Deployment nur eines geänderten Moduls
 - [x] Soll-/Ist-Metadaten prüfen
 - [ ] Browsercache-Fall simulieren
-- [ ] veraltetes Modul erkennen
+- [x] veraltetes Modul erkennen
 - [ ] fehlendes Modul erkennen
 - [ ] Rollback testen
 - [x] Neustart-/Frontend-Reload-Hinweis prüfen
@@ -463,7 +461,8 @@ Realer M12-Stand:
 - genau **ein geändertes Modul** real mit **0 neu / 1 geändert / 0 entfernt / 56 unverändert** installiert und funktional nachgewiesen,
 - Soll-/Ist-Metadaten real geprüft,
 - Frontend-/Companion-Neuladehinweis für reine Frontend-Änderung real bestätigt,
-- Cache-/Mischstand und veraltetes Modul sind teilweise nachgewiesen: die Laufzeit meldet bereits **22 / 22 Module** und **1 Abweichung**; die Detailzeile sowie der ausdrücklich dokumentierte Vorher/Nachher-Cachezustand fehlen noch,
+- **veraltetes Modul erkennen** ist real vollständig nachgewiesen: die Laufzeit meldet **22 / 22 Module**, **1 Abweichung**, und die Detailansicht von `fullscreen.map-display` zeigt **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
+- Browsercache-/Mischstand bleibt offen, weil der ausdrücklich dokumentierte Vorher/Nachher-Zustand vor bzw. nach hartem Frontend-Neuladen noch fehlt,
 - fehlendes Modul und realer Rollback auf `deploy/v4.09` bleiben offen.
 
 Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popup des Einzelmodul-Tests bleibt auf dem Testzweig, einschließlich des bekannten unerwünschten Rahmens/Fokusrahmens am Schließen-Symbol. Die eigentliche Medaillon-Funktion wird erst nach M12 weiterentwickelt.
@@ -1652,3 +1651,25 @@ Dokumentationspflege ohne Doppelablage:
 - die Übergabe verweist für Details auf diesen Schlachtplan und enthält nur aktuellen Einstiegspunkt, Branch-/Teststand, offene Gates und einen Starttext für den nächsten Chat.
 
 **Fortsetzung:** ausschließlich am Abschnitt **NÄCHSTER SCHRITT** oben weiterarbeiten.
+
+
+## Schleife 047 – veraltetes Modul real eindeutig nachgewiesen
+
+**Datum:** 2026-09-24  
+**Status:** M12-Teilpunkt abgeschlossen
+
+Realer Nachweis aus der Home-Assistant-DEV-Oberfläche:
+- **Module & Versionen** meldet **22 / 22 Module geladen**,
+- Gesamtstatus: **1 Abweichung erkannt**,
+- in der geöffneten Detailzeile **Vollbild → Kartendarstellung / `fullscreen.map-display`** steht:
+  - Status: **abweichend**,
+  - Version / geladen: **1.0.1**,
+  - erwartet: **1.0.2**,
+  - Datei: `modules/fullscreen/map-display.js`.
+- damit ist der kontrollierte veraltete Modulstand im tatsächlich laufenden Browser eindeutig nachgewiesen,
+- M12-Haken **veraltetes Modul erkennen** gesetzt.
+
+Bewusst weiterhin offen:
+- **Browsercache-Fall simulieren**, weil für diesen Haken der kontrollierte Zustand **vor** einem harten Frontend-Neuladen noch separat belegt werden muss.
+
+**Nächster Schritt:** über DRA zunächst `deploy/dev` wiederherstellen und nach hartem Frontend-Neuladen `fullscreen.map-display 1.0.2 / korrekt` bestätigen. Danach denselben Cache-/Mischstand-Test erneut installieren, vor dem harten Neuladen den weiterhin geladenen 1.0.2-Zustand dokumentieren und erst anschließend mit `Strg+Shift+R` den Wechsel auf 1.0.1 / erwartet 1.0.2 nachweisen.
