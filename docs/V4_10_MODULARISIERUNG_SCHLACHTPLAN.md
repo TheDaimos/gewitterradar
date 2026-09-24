@@ -1806,3 +1806,19 @@ Erwartung nach DRA-Installation und hartem Frontend-Neuladen:
 - damit ist die fehlende erwartete Modul-ID real nachgewiesen.
 
 **Nächster Schritt:** zunächst wieder sauberes `deploy/dev` herstellen, dann in DRA den Branch `test/dra-v4.10.02-missing-module` / Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927` auswählen, installieren und `Strg+Shift+R` ausführen. Danach **Module & Versionen** öffnen und die Detailzeile `history.chart` auf **fehlend** prüfen.
+
+
+## Schleife 052 – DEV nach Cache-Test wieder sauber hergestellt
+
+**Datum:** 2026-09-24  
+**Status:** real bestätigt
+
+Realer Nachweis nach Rückkehr auf `deploy/dev` und Frontend-Neuladen:
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- der absichtlich veraltete Cache-Teststand ist aus dem laufenden Browser entfernt.
+
+Bewertung:
+- saubere Ausgangsbasis für den nächsten M12-Fehlerfall **fehlendes Modul erkennen** ist wiederhergestellt.
+
+**Nächster Schritt:** in DRA den Branch `test/dra-v4.10.02-missing-module` mit Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927` auswählen, installieren und danach `Strg+Shift+R` ausführen. Anschließend **Module & Versionen → history.chart** prüfen; erwartet wird **fehlend** für `history.chart` und zusätzlich die absichtliche Test-ID `history.chart.m12-missing-test` als **unerwartet**.
