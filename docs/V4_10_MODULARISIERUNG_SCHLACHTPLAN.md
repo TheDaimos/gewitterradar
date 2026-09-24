@@ -1881,3 +1881,32 @@ DRA-Codeprüfung:
 4. Commit `0bfaaf3bfda0...` bestätigen,
 5. Vorschau **neu** berechnen.
 Erwartung: **0 neu / 1 geändert / 0 entfernt / 56 unverändert**. Falls weiterhin **0 / 0 / 0 / 57** erscheint, ist der DRA-Preview-Pfad selbst der nächste zu untersuchende Fehler und die Installation wird nicht ausgeführt.
+
+
+## Schleife 055 – Missing-Modul-Vorschau nach DRA-Update korrekt
+
+**Datum:** 2026-09-24  
+**Status:** DRA-Vorschau real bestätigt; Installation steht unmittelbar bevor
+
+Realer Befund nach DRA-Update und vollständigem Home-Assistant-Neustart:
+- ausgewählte Quelle:
+  - Art: `branch`,
+  - Ref: `test/dra-v4.10.02-missing-module`,
+  - Commit: `0bfaaf3bfda0...`,
+- Vorschau wird nun korrekt gegen den lokalen sauberen `deploy/dev`-Stand berechnet:
+  - **0 neu**,
+  - **1 geändert**,
+  - **0 entfernt**,
+  - **56 unverändert**,
+- Versions-/Regressionsprüfung erkennt erwartungsgemäß gleiche Anwendungsversion **4.10.02 → 4.10.02** bei geänderter verwalteter Datei,
+- DRA klassifiziert den Delta korrekt als **Frontend-only** und fordert nur **Frontend / Companion App neu laden**.
+
+Bewertung:
+- der vor dem DRA-Update beobachtete Widerspruch **0 geändert / 57 unverändert** ist nach Update + Neustart verschwunden,
+- Quellenauswahl, Commit-Pinning und Vorschau entsprechen jetzt wieder exakt dem Git-Stand,
+- der Missing-Modul-Test kann fortgesetzt werden.
+
+**Nächster Schritt:** Schreibzugriff explizit freigeben und genau die **1 Änderung** installieren. Danach `Strg+Shift+R` bzw. Companion-Frontend vollständig neu laden und **Module & Versionen** prüfen. Erwartung:
+- `history.chart` → **fehlend / missing**,
+- `history.chart.m12-missing-test` → **unerwartet / unexpected**,
+- Gesamtstatus mit Abweichungen.
