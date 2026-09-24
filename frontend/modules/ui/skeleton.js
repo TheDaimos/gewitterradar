@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -2865,6 +2865,25 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .map-instrument-toggle ha-icon { --mdc-icon-size:17px;width:17px;height:17px; }
           .map-instrument-toggle img { width:20px;height:20px;display:block;object-fit:contain;object-position:center;margin:0!important;padding:0!important;pointer-events:none; }
           .map-instrument-toggle .map-compass-toggle-icon { width:21px;height:21px; }
+          .map-instrument-toggle .map-cluster-jump-toggle-icon { width:23px!important;height:16px!important;object-fit:contain!important; }
+          .map-cluster-jump-overlay {
+            appearance:none;-webkit-appearance:none;position:absolute;z-index:2147483646;left:auto;top:auto;
+            min-width:106px;height:36px;padding:0 13px;border:1px solid rgba(246,195,68,.42);border-radius:18px;
+            display:inline-flex;align-items:center;justify-content:center;gap:5px;
+            background:rgba(10,14,20,.92);color:#f5d675;cursor:grab;touch-action:none;pointer-events:auto;
+            user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+            box-shadow:0 7px 20px rgba(0,0,0,.34),0 0 13px rgba(246,195,68,.08),inset 0 1px 0 rgba(255,255,255,.04);
+            backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+            font:800 10.5px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.015em;
+            white-space:nowrap;
+          }
+          .map-cluster-jump-overlay[hidden] { display:none!important; }
+          .map-cluster-jump-overlay.dragging { cursor:grabbing; }
+          .map-cluster-jump-overlay.disabled { opacity:.52;filter:saturate(.55); }
+          .map-cluster-jump-overlay:not(.disabled):hover { border-color:rgba(246,195,68,.68);background:rgba(18,21,27,.97); }
+          .map-cluster-jump-overlay:focus-visible { outline:2px solid rgba(246,195,68,.76);outline-offset:2px; }
+          .map-cluster-jump-overlay .status-infinity-gfx { width:28px;max-height:19px;margin-left:5px;pointer-events:auto; }
+          .map-cluster-jump-overlay .status-cluster-countdown { pointer-events:auto; }
           .map-medallion-overlay {
             position:absolute;z-index:755;width:clamp(110px,18vmin,210px);aspect-ratio:1 / 1;
             padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center;
@@ -6197,7 +6216,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                     <button class="map-instrument-toggle active" id="map-medallion-toggle" type="button" aria-pressed="true" aria-label="Tendenz">
                       <img src="${TREND_MEDALLION_IMAGE}" alt="" draggable="false" aria-hidden="true">
                     </button>
+                    <button class="map-instrument-toggle active" id="map-cluster-jump-toggle" type="button" aria-pressed="true" aria-label="Cluster-Navigation">
+                      <img class="map-cluster-jump-toggle-icon" src="${GEWITTERRADAR_INFINITY_GFX}" alt="" draggable="false" aria-hidden="true">
+                    </button>
                   </div>
+                  <button class="map-cluster-jump-overlay" id="map-cluster-jump-overlay" type="button" hidden aria-live="polite">
+                    <span id="map-cluster-jump-text">Cluster</span>
+                  </button>
                   <button class="map-recenter-btn" id="map-recenter" type="button"
                           title="Ausgewählten Standort auf der Karte zentrieren"
                           aria-label="Ausgewählten Standort auf der Karte zentrieren">
