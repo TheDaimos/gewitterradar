@@ -154,83 +154,76 @@ Das Gewitterradar-Manifest bleibt unverändert DRA-fähig; der empfohlene Kanal 
 
 ---
 
-## 7. Aktueller M12-Test: Cache-/Mischstand + veraltetes Modul
+## 7. M12 vollständig abgeschlossen
 
-Aktueller Testzweig:
+M12 – **DRA-Ende-zu-Ende-Test / RELEASE-GATE** ist seit 24.09.2026 vollständig real bestanden.
 
-`test/dra-v4.10.02-cache-mixed-state`
+Abgeschlossene reale Nachweise:
 
-Commit:
+- kompletter V4.10.02-Modulbaum über DRA installiert,
+- genau ein geändertes Modul real installiert und sichtbar nachgewiesen,
+- Soll-/Ist-Metadaten mit **22 / 22 Modulen** geprüft,
+- Browsercache-/Mischstand vor und nach hartem Frontend-Neuladen real nachgewiesen,
+- veraltetes Modul `fullscreen.map-display 1.0.1 / erwartet 1.0.2` korrekt erkannt,
+- fehlendes erwartetes Modul `history.chart` korrekt als **fehlt** erkannt,
+- absichtliche Ersatz-ID `history.chart.m12-missing-test` separat als **unerwartet** erkannt,
+- reine Frontend-Änderung verlangte korrekt nur Frontend-/Companion-Neuladen,
+- realer Rollback `V4.10.02 → V4.09` über DRA:
+  - Vorschau **0 neu / 2 geändert / 22 entfernt / 33 unverändert**,
+  - Regression **4.10.02 → 4.09** erkannt,
+  - vollständiger Home-Assistant-Neustart verlangt,
+  - danach real **V4.09** sichtbar,
+- reale Rückkehr `V4.09 → V4.10.02` über DRA:
+  - Vorschau **22 neu / 2 geändert / 0 entfernt / 33 unverändert**,
+  - Upgrade **4.09 → 4.10.02** erkannt,
+  - vollständiger Home-Assistant-Neustart verlangt,
+  - danach wieder **V4.10.02 · 22 / 22 Module geladen · Versionssatz konsistent**.
 
-`274d9304823be7a1ec8620ec6f157493813d0e47`
+Alle acht M12-Checkboxen sind damit abgeschlossen.
 
-Basis:
-
-`deploy/dev` `08eec9c3f19c2680ede86336931be8f8e0029424`
-
-Auch dieser Zweig verändert gegenüber DEV exakt **eine Datei**:
-
-`custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
-
-Absichtliche Teständerung:
-
-- tatsächlich geladene `MODULE_META.version`: **1.0.1**
-- im Manifest erwartete Version: **1.0.2**
-
-Damit wird ein kontrollierter veralteter Modulstand erzeugt, ohne weitere Dateien anzufassen.
-
-Im Schlachtplan ist bereits als realer Teilnachweis hinterlegt:
-
-- **22 / 22 Module geladen**
-- **1 Abweichung erkannt**
-
-Der M12-Haken **veraltetes Modul erkennen** ist inzwischen real abgeschlossen:
-
-- **22 / 22 Module geladen**
-- **1 Abweichung erkannt**
-- Detailzeile `fullscreen.map-display`:
-  - geladen **1.0.1**
-  - erwartet **1.0.2**
-  - Status **abweichend**
-
-Noch offen ist ausschließlich der separate Cache-/Mischstand-Nachweis:
-
-### Browsercache-/Mischstand
-
-Die saubere Ausgangsbasis ist real bestätigt:
-- `deploy/dev` wiederhergestellt,
-- **22 / 22 Module geladen**,
-- **Versionssatz konsistent**,
-- `fullscreen.map-display`: **1.0.2 geladen / 1.0.2 erwartet / korrekt**.
-
-Jetzt den Testzweig erneut per DRA installieren, im bereits geöffneten Browser zunächst **nicht** hart neu laden und dokumentieren, dass der laufende Browser weiterhin den zuvor geladenen **1.0.2**-Stand zeigt. Erst nach `Strg+Shift+R` soll **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
-
-Danach wieder `deploy/dev` über DRA installieren und **1.0.2 / korrekt** bestätigen.
+Die temporären M12-Testzweige bleiben reine Abnahmeträger und dürfen nicht in `deploy/dev` bzw. die Produkt-Historie übernommen werden.
 
 ---
 
-## 8. Danach noch offene M12-Punkte
+## 8. Aktueller Stand M13 – Regression & Freigabe
 
-Nach dem aktuellen Cache-/Mischstand-Test bleiben:
+M13 ist jetzt das einzige verbleibende Release-Gate.
 
-- **fehlendes Modul erkennen**
-- **Rollback testen**
+Bereits formal abgeschlossen:
 
-Der Rollback muss real über DRA auf `deploy/v4.09` erfolgen. Danach muss wieder sauber auf den aktuellen `deploy/dev`-Stand zurückgekehrt werden. Es darf kein gemischter V4.09/V4.10-Dateibaum zurückbleiben.
+- **HACS** – aktuelle HACS-Action erfolgreich; deterministische Integration-Stagingprüfung byteidentisch.
+- **DRA** – M12 vollständig real bestanden; aktueller DRA-Verbrauchervertrag in CI erfolgreich.
+- **Cache-/Update-Pfade** – Frontend-Neuladen, hartes Cache-Neuladen, vollständiger HA-Neustart, Rollback und Upgrade real geprüft.
+- **Checksummen** – `verify-frontend.mjs` prüft Delivery-Parität und `SHA256SUMS_FRONTEND.txt`; deterministischer Rebuild lässt die Prüfsummendatei unverändert.
+- **CHANGELOG** – V4.10.02-DEV-Abschnitt mit Modularisierung, Abschlusskorrekturen und Modulversionen vorhanden.
+- **HISTORY / Release Notes** – Abschnitt **V4.10.02 · 2026/09 – Modularisierung und UI-Abschluss** vorhanden und fortgeschrieben.
+- **Provider** ist für Gewitterradar in diesem Release-Gate **nicht anwendbar**; NASA/EUMETView/Provider-Playback gehören zum separaten WeatherRouter-Projekt und dürfen M13 nicht blockieren.
 
-Die Repository-Prüfung `scripts/verify-deploy-relay-contract.py` simuliert diese Fälle bereits, ersetzt aber die reale HA-DEV-/DRA-Abnahme nicht.
+Noch nicht pauschal abhaken:
+- Desktop,
+- Android / HA Companion,
+- Kartenansichten,
+- Vollbild,
+- Kompass,
+- Medaillon,
+- Standort-Pille,
+- Layer-Menü,
+- Cluster,
+- Einstellungen,
+- Logging,
+- Syntax/Lint/Tests bis der aktuelle vollständige CI-Head grün ist.
+
+Für die reale Restmatrix kompakt prüfen; keine bereits durch M12 oder aktuelle CI eindeutig belegten Punkte erneut künstlich aufblasen.
 
 ---
 
-## 9. M13 nach M12
+## 9. Arbeitsregeln nach M12
 
-M13 bleibt das letzte Release-Gate. Die dort noch offenen Haken nicht pauschal setzen.
-
-Nach M12 eine **kompakte gezielte Endrunde** durchführen, weil viele Pfade bereits automatisiert und während der Entwicklung real geprüft wurden. Zu prüfen bzw. formal zu verbuchen sind insbesondere Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon, Standort-Pille, Layer-Menü, Cluster, Einstellungen, Logging, HACS, DRA, Cache-/Update-Pfade, Tests, Checksummen sowie Abschluss von CHANGELOG/HISTORY.
-
-Der alte M13-Punkt „Provider“ ist für Gewitterradar fachlich nicht anwendbar; NASA/EUMETView gehören zu WeatherRouter. Dies nicht wieder als Releaseblocker behandeln.
-
-Keine V4.10-Veröffentlichung und kein Merge, bevor M12 und M13 vollständig abgeschlossen sind und der Benutzer die Freigabe ausdrücklich möchte.
+- M12 nicht erneut öffnen, außer eine echte Regression des abgeschlossenen Nachweises wird gefunden.
+- M13 gezielt und kompakt abschließen.
+- Die echte Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` sind **erst nach M13** ein neues Entwicklungsthema.
+- Keine neue parallele Übergabe- oder Statusdatei anlegen.
+- Keine Veröffentlichung und kein Merge ohne ausdrückliche Benutzerfreigabe.
 
 ---
 
@@ -285,33 +278,28 @@ docs/V4_10_CHAT_HANDOFF_2026-09-22.md.
 Keine neue parallele Übergabe- oder Statusdatei anlegen.
 Der Schlachtplan ist die verbindliche Detailquelle.
 
-Aktuell läuft M12.
-Der reale Ein-Modul-DRA-Test ist bestanden.
-Der normale deploy/dev-Stand wurde danach wiederhergestellt.
+M12 ist vollständig real bestanden, einschließlich:
+- kompletter DRA-Modulbaum,
+- Einzelmodul-Delta,
+- Soll/Ist,
+- Browsercache,
+- veraltetes und fehlendes Modul,
+- realer Rollback V4.10.02 → V4.09,
+- reale Rückkehr V4.09 → V4.10.02.
 
-Der aktuelle Testzweig ist:
-test/dra-v4.10.02-cache-mixed-state
-Commit:
-274d9304823be7a1ec8620ec6f157493813d0e47
+Der aktuelle reale Laufzeitstand ist wieder:
+V4.10.02 · 22/22 Module geladen · Versionssatz konsistent.
 
-Dort meldet ausschließlich fullscreen.map-display absichtlich Version 1.0.1,
-während das Manifest 1.0.2 erwartet.
-Im realen Laufzeitstand wurden bereits 22/22 geladene Module und 1 Abweichung gesehen.
+Aktuell läuft ausschließlich M13 – Regression & Freigabe.
+HACS, DRA, Cache-/Update-Pfade, Checksummen, CHANGELOG und HISTORY/Release Notes
+sind bereits abgeschlossen. Provider ist für Gewitterradar nicht anwendbar und
+gehört zu WeatherRouter.
 
-Führe jetzt exakt den NÄCHSTER-SCHRITT-Block des Schlachtplans fort:
-1. Über DRA deploy/dev wiederherstellen und nach hartem Frontend-Neuladen fullscreen.map-display 1.0.2 / korrekt bestätigen.
-2. Cache-Testzweig erneut installieren, **vor** hartem Neuladen den weiterhin geladenen 1.0.2-Stand dokumentieren.
-3. Danach Strg+Shift+R und den Wechsel auf geladen 1.0.1 / erwartet 1.0.2 / abweichend bestätigen.
-4. Erst dann den M12-Haken Browsercache-Fall simulieren setzen und wieder auf deploy/dev zurückstellen.
-5. Danach fehlendes Modul real testen.
-6. Danach realen DRA-Rollback auf deploy/v4.09 und Rückkehr auf deploy/dev testen.
-7. Anschließend M13 kompakt vollständig abarbeiten.
+Prüfe beim Start Branch-Heads, PR #24 und CI neu.
+Setze Syntax/Lint/Tests erst bei vollständig grünem aktuellen Head.
+Arbeite danach ohne Rückfrage die verbleibende kompakte reale M13-Matrix ab:
+Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon,
+Standort-Pille, Layer-Menü, Cluster, Einstellungen und Logging.
 
-Die provisorische Medaillon-Popup-Funktion aus dem früheren Einzelmodul-Test ist
-nur M12-Testträger und darf nicht als fertige Produktfunktion übernommen werden.
-Die echte Medaillon-Auswahl und eine mögliche Auslagerung nach instruments.medallion
-kommen erst nach M12.
-
-Prüfe beim Start Branch-Heads, PR #24 und CI neu und arbeite ohne Rückfrage nach
-dem Schlachtplan weiter.
+Keine Veröffentlichung und kein Merge ohne ausdrückliche Benutzerfreigabe.
 ```
