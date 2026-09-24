@@ -1638,3 +1638,17 @@ Für den vollständigen M12-Nachweis des veralteten Moduls fehlt nur noch die De
 - Status Versionsabweichung.
 
 Der Browsercache-/Mischstand-Haken wird erst gesetzt, wenn zusätzlich der Zustand vor dem harten Frontend-Neuladen bzw. dessen Verhalten real bestätigt ist.
+
+
+## Schleife 046 – Dokumentation und Chat-Übergabe konsolidiert
+
+**Datum:** 2026-09-24  
+**Status:** erledigt
+
+Dokumentationspflege ohne Doppelablage:
+- dieser Schlachtplan bleibt die einzige Detailquelle für M01–M13, reale Abnahmen und Schleifen,
+- die bereits vorhandene Datei `docs/V4_10_CHAT_HANDOFF_2026-09-22.md` wurde als **kanonische Übergabe fortgeschrieben**, statt eine zweite Übergabedatei anzulegen,
+- temporäre M12-Testträger bleiben aus CHANGELOG/HISTORY heraus; dort werden nur dauerhafte Produktänderungen gepflegt,
+- die Übergabe verweist für Details auf diesen Schlachtplan und enthält nur aktuellen Einstiegspunkt, Branch-/Teststand, offene Gates und einen Starttext für den nächsten Chat.
+
+**Fortsetzung:** ausschließlich am Abschnitt **NÄCHSTER SCHRITT** oben weiterarbeiten.
