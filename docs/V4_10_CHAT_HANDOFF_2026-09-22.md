@@ -1,339 +1,268 @@
 # Gewitterradar V4.10.02 – Chat-Übergabe Modularisierung
 
-Stand: 2026-09-22  
-Projekt: Gewitterradar  
-Repository: `TheDaimos/gewitterradar`  
-Arbeitszweig: `feature/v4.10.02-modularization`  
-Draft-PR: #24 – `V4.10.02: modular frontend architecture`  
-Letzter geprüfter Arbeits-Head vor dieser Übergabe: `a18adb21a7581de4909bf178bcfb18ae1b923535`
+**Fortgeschriebener Stand:** 2026-09-24  
+**Projekt:** Gewitterradar  
+**Repository:** `TheDaimos/gewitterradar`  
+**Arbeitszweig:** `feature/v4.10.02-modularization`  
+**Draft-PR:** #24 – `V4.10.02: modular frontend architecture`  
+**Empfohlener DRA-Kanal:** `deploy/dev`
 
-## 1. Startanweisung für den neuen Chat
+> Diese Datei ist die **kompakte Chat-Übergabe**. Sie wiederholt bewusst nicht das vollständige Arbeitsprotokoll.  
+> Die verbindliche Detailhistorie, Haken und Schleifen stehen ausschließlich in  
+> `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`.
 
-Der neue Chat soll **nicht aus Erinnerung weiterarbeiten**, sondern zuerst den aktuellen Repository-Stand laden.
+---
+
+## 1. Startanweisung für einen neuen Chat
+
+Nicht aus Chatgedächtnis fortsetzen. Zuerst den aktuellen Repository-Stand lesen.
 
 Verbindliche Reihenfolge:
 
-1. Bootstrap Daimos laden, falls der Benutzer ihn aufruft.
-2. Repository `TheDaimos/gewitterradar` lesen.
-3. Aktiven Zweig `feature/v4.10.02-modularization` prüfen.
-4. Zwingend `PROJECT_DEFAULTS.md` lesen.
-5. Zwingend den **Schlachtplan** laden:
-   `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
-6. Danach diese Übergabe lesen:
-   `docs/V4_10_CHAT_HANDOFF_2026-09-22.md`
-7. Aktuellen Branch-Head und aktuelle PR-/CI-Ergebnisse neu verifizieren.
-8. Am im Schlachtplan genannten `NÄCHSTER SCHRITT` fortsetzen.
+1. Repository `TheDaimos/gewitterradar` prüfen.
+2. `PROJECT_DEFAULTS.md` lesen.
+3. `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` vollständig lesen.
+4. Danach diese Übergabe lesen.
+5. Aktuellen Head von `feature/v4.10.02-modularization`, `deploy/dev`, den aktuellen M12-Testzweig und PR #24 neu verifizieren.
+6. CI-Status neu lesen; keine hier genannte frühere SHA als automatisch aktuell annehmen.
+7. Exakt am Abschnitt **NÄCHSTER SCHRITT** des Schlachtplans fortsetzen.
 
-Wenn Christian sagt:
+Wenn der Benutzer sagt:
 
 > „Schau in den Schlachtplan und führe ihn weiter fort.“
 
-ist damit ohne Rückfrage
-`docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
-gemeint.
+ist damit ohne Rückfrage  
+`docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` gemeint.
 
-## 2. Verbindliche Arbeitsweise
+---
 
-Die Modularisierung wird **nicht als großer einmaliger Umbau** behandelt, sondern als fortlaufende, fail-closed Arbeitsschleife.
+## 2. Dokumentationsprinzip – keine Doppelpflege
 
-Nach jedem abgeschlossenen Teilpunkt:
+Die Dokumentation ist bewusst getrennt:
 
-1. aktuellen Repository-Stand lesen,
-2. genau einen fachlich zusammenhängenden Punkt umsetzen,
-3. Syntax-/Struktur-/Regressionstests ausführen,
-4. GitHub-CI/PR-Gates prüfen,
-5. Fehler zuerst beheben – keinen roten Gate-Zustand als erledigt markieren,
-6. Ergebnis im Schlachtplan dokumentieren,
-7. Checkboxen nur für im Repository nachweisbar erledigte Punkte setzen,
-8. `NÄCHSTER SCHRITT` aktualisieren,
-9. Arbeitsprotokoll um eine neue Schleife ergänzen,
-10. erst danach den nächsten Punkt beginnen.
+- **Schlachtplan:** einziger Ort für M01–M13, Haken, reale Abnahmen, Testzweige und Schleifen.
+- **Diese Übergabe:** nur aktueller Einstiegspunkt, Zusammenfassung und Fortsetzungsanweisung.
+- **CHANGELOG / HISTORY:** nur dauerhafte Produktänderungen und Projektgeschichte; temporäre M12-Testträger werden dort nicht noch einmal beschrieben.
+- **Testzweige:** enthalten ausschließlich Prüfcode und sind keine Produktfreigaben.
 
-Wichtig:
+Beim Fortsetzen keine zweite M12-Übergabe, keine parallele Statusdatei und keine Kopie der Schleifen anlegen. Diese Datei bei Bedarf weiter fortschreiben.
 
-- Nicht aus altem Chatgedächtnis auf vermeintlich erledigte Schritte schließen.
-- Der aktuelle Branch + Schlachtplan sind die maßgebliche Wahrheit.
-- Bei Widerspruch gilt die ausdrückliche neue Benutzeranweisung vor dem Schlachtplan.
-- Bestehende Funktionen werden bei der Modularisierung zunächst **1:1 verhaltensneutral** ausgelagert.
-- Keine fachfremden Funktionen ergänzen, nur um einen Planpunkt abzuhaken.
-- Frühere Provider-Punkte NASA/EUMETView waren aus WeatherRouter übernommen und sind für Gewitterradar ausdrücklich **nicht anwendbar**.
-- Keine Veröffentlichung/kein Merge, solange die Release-Gates nicht erfüllt sind.
-- V4.10.01 bleibt Rückfallbasis.
+---
 
-## 3. DRA ist Pflicht, nicht optional
+## 3. Aktueller Produktstand
 
-Deploy Relay Agent ist für diese Modularisierung eine **harte Abnahmebedingung**.
+Der reale V4.10.02-DEV-Produktstand liegt auf:
 
-Die reguläre weitere Entwicklung soll über DRA funktionieren. Manuelles Kopieren einzelner JS-Dateien ist nur Notfall-/Diagnoseweg.
+`deploy/dev` → `08eec9c3f19c2680ede86336931be8f8e0029424`
 
-Verbindliche DRA-Ziele:
+Der Arbeitszweig `feature/v4.10.02-modularization` liegt darüber, enthält gegenüber `deploy/dev` aber derzeit nur fortgeschriebene Dokumentation. Produktcode für die aktuellen M12-Sonderfälle liegt ausschließlich auf den unten genannten Testzweigen.
 
-- kompletter modularer Frontendbaum muss über DRA installierbar sein,
-- DRA muss einen konsistenten Versionssatz installieren,
-- stabiler Einstiegspunkt bleibt erhalten,
-- keine Einzelregistrierung der Unter-Module in Home Assistant,
-- DRA muss den installierten Sollstand kennen,
-- Gewitterradar zeigt den tatsächlich im Browser geladenen Iststand,
-- Soll/Ist-Vergleich muss möglich sein,
-- Snapshot vor Änderungen,
-- gezielte Wiederherstellung älterer Stände,
-- Snapshot-Aufbewahrung pro Projekt konfigurierbar,
-- unmittelbar vorheriger funktionierender Stand darf nicht automatisch verloren gehen,
-- DRA soll Frontend-Neuladen, Integrations-Neuladen und vollständigen HA-Neustart unterscheiden,
-- M12 ist ein Release-Gate.
+Die Anwendung meldet im normalen DEV-Stand:
 
-Aktuell vorhanden:
+- Gewitterradar **V4.10.02**
+- **22 / 22 Module geladen**
+- Versionssatz konsistent
 
-`deploy-relay.json`
+Relevante aktuelle Modulversionen:
 
-mit Deployment des kompletten
-`custom_components/gewitterradar`
-nach
-`/config/custom_components/gewitterradar`
-im Modus `replace_directory`.
+- `fullscreen.map-display 1.0.2`
+- `ui.controls 1.1.2`
+- `diagnostics.module-view 1.3.0`
 
-Außerdem:
+Die vollständige Modulliste nicht hier doppeln; sie steht im Manifest und wird von „Module & Versionen“ zur Laufzeit geprüft.
 
-`deploy-relay-channel.json`
+---
 
-mit DEV-Referenz auf
-`feature/v4.10.02-modularization`.
+## 4. Seit der alten Übergabe abgeschlossene dauerhafte Korrekturen
 
-## 4. Architekturentscheidung
+Die folgenden Produktkorrekturen sind bereits im normalen DEV-Stand enthalten und im Schlachtplan bzw. bestehenden CHANGELOG/HISTORY dokumentiert:
 
-Home Assistant registriert weiterhin **nur eine einzige Datei**:
+- Einstellungen besitzen einen eindeutigen Scroll-Eigentümer; verschachtelte Scrollfehler auf iPad/kleinen Viewports wurden beseitigt.
+- fehlende Einstellungsübersetzungen wurden für alle **19 Sprachvarianten** vervollständigt.
+- „Module & Versionen“ ist vollständig in das Einstellungs-Akkordeon integriert.
+- Medaillon-Diagnose wurde für iPad verbreitert.
+- Einstellungs-Chevrons verwenden die gewünschte Animation.
+- Tooltip-/Mouse-over-Texte wurden über die 19 Sprachvarianten vollständig nachgezogen.
+- Modulzeilen bleiben beim Öffnen/Schließen stabil und werden nicht mehr durch Hintergrund-Synchronisierung sofort neu aufgebaut.
+- alle **22 Modulnamen und vollständigen Funktionslisten** sind in allen **19 Sprachvarianten** lokalisiert.
+- die fremdsprachige Moduldarstellung wurde real auf HA DEV bestätigt.
+- der Standardansicht-Dropdown-Lifecycle wurde korrigiert und real vollständig bestätigt: Hintergrundklick und Akkordeonwechsel hinterlassen keinen verwaisten Dropdown-Layer.
 
-`gewitterradar.js`
+Detaillierte Implementierungs- und Prüfhinweise stehen in den Schleifen 028–040 des Schlachtplans; nicht hier erneut ausführen.
 
-Diese bleibt der stabile Einstiegspunkt/Loader.
+---
 
-Die Funktionslogik liegt inzwischen in echten ES-Modulen unter:
+## 5. M12 – bisher real abgenommen
 
-`frontend/modules/`
+Im Schlachtplan sind real bestanden:
 
-Die Integration stellt weiterhin den vollständigen Frontendordner statisch bereit. Unter-Module müssen **nicht einzeln in Home Assistant registriert** werden.
+- Deployment des kompletten Modulbaums
+- Deployment nur eines geänderten Moduls
+- Soll-/Ist-Metadaten
+- Neustart-/Frontend-Neuladehinweis
 
-Die gleiche Struktur wird byte-identisch in den Auslieferungsbäumen gehalten:
+### Realer Ein-Modul-Test
 
-- `frontend/`
-- `custom_components/gewitterradar/frontend/`
-- `dashboard/dist/`
+Testzweig:
 
-## 5. Eigenständige Modulversionierung
+`test/dra-v4.10.02-single-module`
 
-Jedes Modul trägt seine **eigene Version im Modul selbst**.
+aktueller Test-Commit:
 
-Beispielprinzip:
+`26b935870e5e871ece26fb724d9ef67a019668e7`
 
-```javascript
-export const MODULE_META = {
-  id: "instruments.compass-selector",
-  version: "1.0.0",
-  group: "Instrumente",
-  function: "Kompassauswahl",
-  subfunctions: [...]
-};
-```
-
-Beim Laden registriert sich jedes Modul selbst.
-
-Die Registry liegt unter:
-
-`frontend/modules/core/registry.js`
-
-Sie erfasst unter anderem:
-
-- ID,
-- Modulversion,
-- Funktionsgruppe,
-- Hauptfunktion,
-- Unterfunktionen,
-- Dateipfad,
-- Ladezeitpunkt,
-- geladene URL,
-- Doppeltregistrierung,
-- fehlende Module,
-- Versionsabweichungen,
-- unerwartete Module.
+Der Zweig basiert auf `deploy/dev` und verändert gegenüber dem normalen DEV-Stand exakt:
 
-## 6. „Module & Versionen“
+`custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
 
-Der gewünschte neue Bereich ist technisch umgesetzt.
+Reale DRA-Vorschau:
 
-Modul:
+**0 neu / 1 geändert / 0 entfernt / 56 unverändert**
 
-`frontend/modules/diagnostics/module-view.js`
+Sichtbarer Funktionsbeweis:
 
-Funktionen:
+- Tippen/Klicken auf das frei bewegliche Medaillon im Vollbild öffnete das provisorische M12-Popup.
+- Ziehen blieb Drag und öffnete kein Popup.
+- damit wurde die tatsächlich geänderte Einzeldatei im laufenden HA-Frontend nachgewiesen.
+- danach wurde über DRA wieder der normale `deploy/dev`-Stand hergestellt.
 
-- Gruppierung nach Funktion,
-- Modul-ID,
-- geladene Modulversion,
-- erwartete Modulversion,
-- Funktion,
-- Unterfunktionen,
-- Dateipfad,
-- Ladezeit,
-- Soll-/Ist-Status,
-- grün = korrekt,
-- gold = Versionsabweichung/unerwartet,
-- rot = fehlt/Ladefehler,
-- Diagnose kopieren,
-- JSON herunterladen.
+Der erste Popup-Versuch reagierte noch nicht auf Tap; deshalb wurde derselbe Testzweig innerhalb **derselben einzigen Moduldatei** um einen robusten Klickpfad mit Drag-Unterdrückung ergänzt. Erst dieser Stand wurde real erfolgreich abgenommen.
 
-Ziel ist ausdrücklich, **die tatsächlich im Browser geladenen Modulversionen** zu sehen – nicht nur eine zentrale Solltabelle.
+### Bewusst nicht als Produktfunktion übernehmen
 
-## 7. Bereits umgesetzte Modularisierung
+Das Medaillon-Popup ist nur M12-Testträger.
 
-Im Schlachtplan sind bereits als technisch umgesetzt markiert:
+Bekannter Darstellungsfehler:
+- das Schließen-Symbol zeigt im Testdialog einen unerwünschten Rahmen/Fokusrahmen.
 
-- M01 Bestandsaufnahme,
-- M02 Registry & Modulmetadaten,
-- M04 Core weitgehend,
-- M05 UI,
-- M06 Instrumente,
-- M07 Vollbild,
-- M08 Karte,
-- M09 nicht anwendbar,
-- M10 Diagnose & Logging,
-- M11 Module & Versionen.
+Das blockiert M12 nicht und soll nicht separat im Produkt-Changelog dupliziert werden. Nach M12 wird die echte Medaillon-Auswahl/-Bearbeitung als neues Thema aufgebaut. Dabei ist ausdrücklich zu prüfen, ob ein eigenes Modul `instruments.medallion` sinnvoll ist.
 
-M03 Loader ist technisch umgesetzt, aber **noch nicht formal abgeschlossen**, weil der gemeinsame Browser-/Frontend-Gate noch rot ist.
+---
 
-Noch zwingend offen:
+## 6. DRA-Erkenntnisse aus dem Ein-Modul-Test
 
-- M03 Browser-/Desktop-Abnahme,
-- M12 DRA-Ende-zu-Ende,
-- M13 vollständige Regression/Freigabe,
-- Android/HA Companion,
-- reale HACS-/DRA-Updatepfade,
-- Release Notes / History / Changelog,
-- finale Checksummen/Freigabe.
+DRA konnte den Testzweig über **Erweiterte Quellenauswahl** laden.
 
-## 8. Aktueller CI-Stand
+Wichtige reale Beobachtungen:
 
-Für den letzten geprüften Head
-`a18adb21a7581de4909bf178bcfb18ae1b923535`
-waren 4 von 5 Pull-Request-Gates grün:
-
-- ✅ Source archive contract
-- ✅ Diagnostic contract
-- ✅ Hi-Res asset retention
-- ✅ Validate Gewitterradar integration
-- ❌ Validate shared Gewitterradar frontend
-
-Draft-PR #24 ist offen und mergebar, aber ausdrücklich noch Draft.
-
-## 9. Aktueller konkreter Blocker
-
-Der aktuelle rote Gate-Fehler ist **nicht mehr** der frühere Browserparserfehler im Diagnosemodul.
-
-Die früheren Probleme wurden bereits weiter eingegrenzt bzw. behoben:
-
-- fehlende Methodenseparatoren nach Extraktion,
-- `async`-Parserproblem in `diagnostics/cockpit.js`,
-- deterministischer Modulimport,
-- modularer Asset-Inventarscan,
-- Root-Modul-URL,
-- modularer About-Harness,
-- modularer Core/Base-Context,
-- Boot-Preflight-Diagnostik.
-
-Der aktuell letzte bekannte Fehler im gemeinsamen Frontend-Gate lautet:
-
-```text
-ReferenceError: __moduleDeps is not defined
-at gewitterradar.js:5979
-```
-
-Der Fehler tritt in:
-
-`scripts/verify-about-locales.mjs`
-
-beim isolierten VM-Ausführen des modularen Einstiegspunkts auf.
-
-Die neu hinzugefügte Boot-Preflight-Prüfung in `gewitterradar.js` greift auf `__moduleDeps` zu. Der Locale-Prüfer entfernt für seine isolierte Laufzeit bereits Teile des modularen Bootstraps:
-
-```javascript
-.replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
-.replace(/^\s*Object\.(?:defineProperties|assign)\(__moduleDeps,.*;\s*$/gm,'')
-.replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
-```
-
-Dadurch bleibt aktuell die Boot-Preflight-Zeile, die `__moduleDeps` referenziert, übrig.
-
-**Nächster technischer Schritt:**
-Den isolierten Locale-/About-Prüfer modular-runtime-fähig machen, sodass die Boot-Preflight-Logik entweder
-
-- im Test-Harness passend entfernt/neutralisiert wird, oder
-- mit einem minimalen, echten `__moduleDeps`-Kontext ausgeführt wird,
-
-ohne die Produktionslogik in `gewitterradar.js` wieder zurückzubauen.
-
-Danach:
-
-1. CI erneut laufen lassen,
-2. „Validate shared Gewitterradar frontend“ muss grün werden,
-3. M03 im Schlachtplan formell schließen,
-4. erst dann M12 DRA-Ende-zu-Ende starten.
-
-## 10. Wichtige zuletzt relevante Commits
-
-Historischer Modularisierungszweig enthält unter anderem:
-
-- `0527c4aa...` – erste echte Extraktion in selbstversionierte Module
-- `5634281e...` – Build/HACS/Regression-Gates modularisiert
-- `3a91e734...` – Module-&-Versionen-Ansicht + modularer Diagnosepfad
-- `a3f787f7...` – fail-safe dynamischer Modul-Loader
-- `30df9b19...` – Schlachtplan aktualisiert und fremder Provider-Scope entfernt
-- `6d8c2abf...` – fehlender Diagnose-Methodenseparator repariert
-- `a4d928a2...` – weitere extrahierte Methodenseparatoren repariert
-- `a0d6e5aa...` – deterministische V4.10.02-Modulladung
-- `904784e0...` – gemeinsamen Core-Kontext aus stabilem Loader extrahiert
-- `2b4507a5...` – Diagnose-async-Methoden für Browserparser normalisiert
-- `6c9db7ac...` – modularen Asset-Referenzscan erweitert
-- `c6cf7627...` – modularen About-Harness erweitert
-- `d2e9e795...` / `1faedf59...` – Schlachtplan mit verifiziertem Stand nachgezogen
-- `0025568a...` – modularen Boot-Preflight-Diagnosecheck ergänzt
-- `a18adb21...` – Loader-Vertrag nach Boot-Preflight aktualisiert
-
-**Wichtig:** Beim Start eines neuen Chats immer den aktuellen Head neu lesen. Die oben genannte SHA ist nur der Stand unmittelbar vor dieser Übergabe.
-
-## 11. Nicht verhandelbare Regressionen
-
-Die Modularisierung darf insbesondere nicht beschädigen:
-
-- bestehende Kartenfunktionen,
-- Vollbildmodus,
-- frei verschiebbare Instrumente,
-- Touch-Unterstützung Android,
-- Standort-Pille inklusive Öffnungsrichtung und Mehrspaltigkeit,
-- Layer-Anzeige immer im Vordergrund,
-- Diagnosemodus-Sichtbarkeitsregeln,
-- Kompass-/Medaillon-Ein-/Ausblenden,
-- gespeicherte Orte,
-- bestehende Einstellungen,
-- Cluster,
-- Radien,
-- Aura,
-- Logging,
-- Sprach-/About-/Help-System,
-- HACS-Installierbarkeit,
-- DRA-Installierbarkeit.
-
-## 12. Release-Disziplin
-
-Keine V4.10-Freigabe, solange:
-
-- Browser-/Desktop-Gate nicht grün ist,
-- Android/HA Companion nicht geprüft ist,
-- M12 DRA nicht vollständig bestanden ist,
-- Soll/Ist-Moduldiagnose nicht real getestet ist,
-- Rollback nicht getestet ist,
-- HACS/DRA-Pfade nicht geprüft sind,
-- Checksummen/History/Release Notes nicht finalisiert sind.
-
-## 13. Konkreter Starttext für den nächsten Chat
+- der ausgewählte Branch/Commit muss nach einem neuen Commit erneut über **„Quelle übernehmen“** aktualisiert werden; sonst kann DRA noch den zuvor ausgewählten Commit anzeigen.
+- bei einer reinen Frontend-Änderung zeigte DRA korrekt **„Frontend / Companion App neu laden“**.
+- die Änderungsstatistik **Neu / Geändert / Entfernt / Unverändert** war korrekt, lag in der damaligen Oberfläche aber teilweise unterhalb des zunächst sichtbaren Bereichs. Diese DRA-Oberflächenverbesserung wird im separaten DRA-Projekt behandelt und ist kein Gewitterradar-M12-Blocker.
+- die Warnung „Versionskennung ist gleich, aber verwaltete Dateien unterscheiden sich“ ist für diese Testfälle erwünscht.
+
+Das Gewitterradar-Manifest bleibt unverändert DRA-fähig; der empfohlene Kanal bleibt `deploy/dev`.
+
+---
+
+## 7. Aktueller M12-Test: Cache-/Mischstand + veraltetes Modul
+
+Aktueller Testzweig:
+
+`test/dra-v4.10.02-cache-mixed-state`
+
+Commit:
+
+`274d9304823be7a1ec8620ec6f157493813d0e47`
+
+Basis:
+
+`deploy/dev` `08eec9c3f19c2680ede86336931be8f8e0029424`
+
+Auch dieser Zweig verändert gegenüber DEV exakt **eine Datei**:
+
+`custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
+
+Absichtliche Teständerung:
+
+- tatsächlich geladene `MODULE_META.version`: **1.0.1**
+- im Manifest erwartete Version: **1.0.2**
+
+Damit wird ein kontrollierter veralteter Modulstand erzeugt, ohne weitere Dateien anzufassen.
+
+Im Schlachtplan ist bereits als realer Teilnachweis hinterlegt:
+
+- **22 / 22 Module geladen**
+- **1 Abweichung erkannt**
+
+Noch **nicht formal abgeschlossen** sind die beiden Haken, weil die Einzelbelege vollständig festgehalten werden müssen:
+
+### Browsercache-/Mischstand
+
+Nach DRA-Installation im bereits geöffneten Browser zunächst **nicht** hart neu laden. Der bereits laufende Browser soll weiterhin den vorher geladenen Zustand zeigen. Erst nach `Strg+Shift+R` soll die neue Moduldatei aktiv sein.
+
+### Veraltetes Modul
+
+Nach hartem Neuladen die Detailzeile `fullscreen.map-display` aufklappen und ausdrücklich bestätigen:
+
+- geladen **1.0.1**
+- erwartet **1.0.2**
+- Status Versionsabweichung
+
+Erst wenn beide Nachweise vollständig sind, im Schlachtplan die Haken **Browsercache-Fall simulieren** und **veraltetes Modul erkennen** setzen.
+
+Danach wieder `deploy/dev` über DRA installieren und **1.0.2 / korrekt** bestätigen.
+
+---
+
+## 8. Danach noch offene M12-Punkte
+
+Nach dem aktuellen Cache-/Mischstand-Test bleiben:
+
+- **fehlendes Modul erkennen**
+- **Rollback testen**
+
+Der Rollback muss real über DRA auf `deploy/v4.09` erfolgen. Danach muss wieder sauber auf den aktuellen `deploy/dev`-Stand zurückgekehrt werden. Es darf kein gemischter V4.09/V4.10-Dateibaum zurückbleiben.
+
+Die Repository-Prüfung `scripts/verify-deploy-relay-contract.py` simuliert diese Fälle bereits, ersetzt aber die reale HA-DEV-/DRA-Abnahme nicht.
+
+---
+
+## 9. M13 nach M12
+
+M13 bleibt das letzte Release-Gate. Die dort noch offenen Haken nicht pauschal setzen.
+
+Nach M12 eine **kompakte gezielte Endrunde** durchführen, weil viele Pfade bereits automatisiert und während der Entwicklung real geprüft wurden. Zu prüfen bzw. formal zu verbuchen sind insbesondere Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon, Standort-Pille, Layer-Menü, Cluster, Einstellungen, Logging, HACS, DRA, Cache-/Update-Pfade, Tests, Checksummen sowie Abschluss von CHANGELOG/HISTORY.
+
+Der alte M13-Punkt „Provider“ ist für Gewitterradar fachlich nicht anwendbar; NASA/EUMETView gehören zu WeatherRouter. Dies nicht wieder als Releaseblocker behandeln.
+
+Keine V4.10-Veröffentlichung und kein Merge, bevor M12 und M13 vollständig abgeschlossen sind und der Benutzer die Freigabe ausdrücklich möchte.
+
+---
+
+## 10. CI / PR
+
+PR #24 ist weiterhin:
+
+- **offen**
+- **Draft**
+- **mergeable**
+- Head: `feature/v4.10.02-modularization`
+- Base: `main`
+
+Vor der Dokumentationskonsolidierung waren auf dem damaligen Head vier der fünf bekannten Workflows bereits erfolgreich:
+
+- Diagnostic contract
+- Hi-Res asset retention
+- Source archive contract
+- Validate Gewitterradar integration
+
+„Validate shared Gewitterradar frontend“ lief zu diesem Zeitpunkt noch. Da Dokumentationscommits den Branch-Head verändern können, im neuen Chat **immer den aktuellen CI-Stand neu abfragen** statt diesen Zwischenstand als endgültig zu übernehmen.
+
+---
+
+## 11. Nicht verhandelbare Arbeitsregeln
+
+- DRA bleibt harte Abnahmebedingung.
+- Keine Tests als erledigt markieren, bevor der reale Nachweis vorliegt.
+- Keine temporären M12-Testzweige in `deploy/dev` oder Produkt-Historie übernehmen.
+- Keine Medaillon-Weiterentwicklung vor Abschluss von M12.
+- Keine doppelte Dokumentation anlegen; Schlachtplan ist Detailquelle, diese Datei ist Übergabe.
+- Nach jedem real abgeschlossenen Punkt: Ergebnis prüfen → Schlachtplan aktualisieren → erst dann weiter.
+- Keine Veröffentlichung/kein Merge ohne ausdrückliche Benutzerfreigabe.
+
+---
+
+## 12. Konkreter Starttext für den nächsten Chat
 
 ```text
 Bootstrap Daimos.
@@ -343,20 +272,41 @@ Wir machen mit Gewitterradar V4.10.02 und der Modularisierung weiter.
 Arbeite direkt im Repository TheDaimos/gewitterradar auf dem aktuellen Zweig
 feature/v4.10.02-modularization.
 
-Wichtig:
-Lies zuerst PROJECT_DEFAULTS.md und anschließend den Schlachtplan
-docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md.
-Lies danach
+Lies zuerst PROJECT_DEFAULTS.md, dann vollständig
+docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md
+und danach die bestehende fortgeschriebene Übergabe
 docs/V4_10_CHAT_HANDOFF_2026-09-22.md.
 
-Führe den Schlachtplan exakt nach der dort festgelegten Schleife fort:
-implementieren → prüfen → CI/Regression auswerten → Schlachtplan aktualisieren → nächsten Punkt nehmen.
+Keine neue parallele Übergabe- oder Statusdatei anlegen.
+Der Schlachtplan ist die verbindliche Detailquelle.
 
-DRA ist eine harte Abnahmebedingung. Keine Iteration gilt als fertig, solange sie nicht vollständig über DRA installierbar, prüfbar und wiederherstellbar ist.
+Aktuell läuft M12.
+Der reale Ein-Modul-DRA-Test ist bestanden.
+Der normale deploy/dev-Stand wurde danach wiederhergestellt.
 
-Der letzte bekannte Blocker war im gemeinsamen Frontend-Gate:
-ReferenceError: __moduleDeps is not defined
-im isolierten About-/Locale-Prüfer scripts/verify-about-locales.mjs nach dem Boot-Preflight.
+Der aktuelle Testzweig ist:
+test/dra-v4.10.02-cache-mixed-state
+Commit:
+274d9304823be7a1ec8620ec6f157493813d0e47
 
-Prüfe zuerst den aktuellen Branch-Head und die aktuellen PR-#24-CI-Ergebnisse, da der Repository-Stand neuer als diese Übergabe sein kann. Dann behebe den noch aktuellen Blocker und fahre ohne Rückfrage nach Schlachtplan fort.
+Dort meldet ausschließlich fullscreen.map-display absichtlich Version 1.0.1,
+während das Manifest 1.0.2 erwartet.
+Im realen Laufzeitstand wurden bereits 22/22 geladene Module und 1 Abweichung gesehen.
+
+Führe jetzt exakt den NÄCHSTER-SCHRITT-Block des Schlachtplans fort:
+1. Browsercache-/Mischstand vor und nach hartem Frontend-Neuladen vollständig belegen.
+2. Detailzeile fullscreen.map-display mit geladen 1.0.1 / erwartet 1.0.2 bestätigen.
+3. Erst dann die beiden M12-Haken setzen.
+4. Wieder auf deploy/dev zurückstellen und 1.0.2 / korrekt bestätigen.
+5. Danach fehlendes Modul real testen.
+6. Danach realen DRA-Rollback auf deploy/v4.09 und Rückkehr auf deploy/dev testen.
+7. Anschließend M13 kompakt vollständig abarbeiten.
+
+Die provisorische Medaillon-Popup-Funktion aus dem früheren Einzelmodul-Test ist
+nur M12-Testträger und darf nicht als fertige Produktfunktion übernommen werden.
+Die echte Medaillon-Auswahl und eine mögliche Auslagerung nach instruments.medallion
+kommen erst nach M12.
+
+Prüfe beim Start Branch-Heads, PR #24 und CI neu und arbeite ohne Rückfrage nach
+dem Schlachtplan weiter.
 ```
