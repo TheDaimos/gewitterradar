@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
