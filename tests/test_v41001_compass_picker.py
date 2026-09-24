@@ -39,10 +39,10 @@ def test_v41001_compass_picker_contract():
     for marker in (
         'data-chevron-material="brass"',
         'data-chevron-material="silver"',
-        "gewitterradar-chevron-left-brass-runtime.svg",
-        "gewitterradar-chevron-right-brass-runtime.svg",
-        "gewitterradar-chevron-left-silver-runtime.svg",
-        "gewitterradar-chevron-right-silver-runtime.svg",
+        "gewitterradar-chevron-left-brass-runtime-2x.png",
+        "gewitterradar-chevron-right-brass-runtime-2x.png",
+        "gewitterradar-chevron-left-silver-runtime-2x.png",
+        "gewitterradar-chevron-right-silver-runtime-2x.png",
         "querySelectorAll('[data-compass-picker-prev]')",
         "querySelectorAll('[data-compass-picker-next]')",
     ):
@@ -50,10 +50,10 @@ def test_v41001_compass_picker_contract():
 
     # Runtime assets must exist in the canonical frontend source.
     for asset in (
-        "gewitterradar-chevron-left-brass-runtime.svg",
-        "gewitterradar-chevron-right-brass-runtime.svg",
-        "gewitterradar-chevron-left-silver-runtime.svg",
-        "gewitterradar-chevron-right-silver-runtime.svg",
+        "gewitterradar-chevron-left-brass-runtime-2x.png",
+        "gewitterradar-chevron-right-brass-runtime-2x.png",
+        "gewitterradar-chevron-left-silver-runtime-2x.png",
+        "gewitterradar-chevron-right-silver-runtime-2x.png",
     ):
         assert (FRONTEND / "assets" / asset).is_file()
 
@@ -63,3 +63,8 @@ def test_v41001_compass_picker_contract():
 
     # Hi-Res masters are not runtime dependencies of Gewitterradar.
     assert "-hires.svg" not in source
+
+
+def test_v41002_superseded_runtime_svg_assets_removed():
+    for asset in ("gewitterradar-chevron-left-brass-runtime.svg","gewitterradar-chevron-right-brass-runtime.svg","gewitterradar-chevron-left-silver-runtime.svg","gewitterradar-chevron-right-silver-runtime.svg"):
+        assert not (FRONTEND / "assets" / asset).exists(), "superseded runtime SVG assets must stay removed"

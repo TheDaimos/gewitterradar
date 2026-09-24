@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-R1-2026-09-24",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "eacd84bb8b3bbffc7d19e2acacb0976fc366cc8c4d56776ddbe90ad62cec7c15",
+      "sha256": "fe6f7a3f6a58c492c4ecd69afe89616c09cdc51541fa8d94394746b52a46e226",
       "sizeBytes": 6738
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 33486
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "b8665c37c8fec400b8524ad6617df6f28e98f267dfbe05f7e9a1ccd604a073b5",
-      "sizeBytes": 67213
+      "sha256": "1bb695cab26eef9b1a8706ef4f816e5095dfda2f6a449aad632fd69c0cf6a1c7",
+      "sizeBytes": 67225
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "2b4b83ddbc4636feec6e9140d689153ed30c7a3be972817ff526e7ba5090c4d6",

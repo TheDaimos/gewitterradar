@@ -3,11 +3,11 @@
   "productVersion": "4.10.02",
   "build": "V4.10.02-MODULAR-DEV-R1-2026-09-24",
   "runtimeRevision": "41002r1",
-  "moduleSetId": "FAC5-4376",
+  "moduleSetId": "F168-7C7E",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.5"
+      "version": "1.2.6"
     },
     {
       "id": "core.base-context",
@@ -27,7 +27,7 @@
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.6"
+      "version": "1.0.7"
     },
     {
       "id": "ui.scroll-guard",

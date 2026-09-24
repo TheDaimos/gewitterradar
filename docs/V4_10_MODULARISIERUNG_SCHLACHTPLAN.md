@@ -2387,3 +2387,11 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 - [x] Neue Diagnoseanzeige in alle 19 Sprachvarianten integriert.
 - [x] Runtime-/Master-Trennung der Chevron beibehalten: nur verkleinerte verlustfreie Runtime-Derivate werden ausgeliefert.
 - [ ] DRA-Abnahme auf Android: nach Installation muss `core.manifest 1.2.5`, `fullscreen.map-display 1.0.6`, `diagnostics.module-view 1.3.1` und Modulsatz-ID `FAC5-4376` sichtbar sein.
+
+
+### Zwischenauftrag – Retina-Chevrons nur in der Kompassauswahl 2026-09-24
+- [x] Vier transparente 2x-Runtime-PNGs (Messing/Silber, links/rechts) als eigene Kompass-Picker-Assets eingebunden.
+- [x] Alte nicht freigestellte Runtime-SVGs aus den Auslieferungsbäumen entfernt.
+- [x] Änderung strikt auf `fullscreen.map-display::_openCompassPicker()` begrenzt; sämtliche anderen Chevron in Menüs und Oberfläche bleiben unverändert.
+- [x] Modulmanifest, Runtime-Manifest, Asset-Inventar, Frontend-Vertrag, Prüfsummen und Regressionstest nachgezogen.
+- [x] DRA-Bereitstellung erfolgt erst nach erfolgreicher CI durch Aktualisierung von `deploy/dev`.
