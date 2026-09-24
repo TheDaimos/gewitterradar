@@ -315,7 +315,7 @@ Gewitterradar-Anforderungen an DRA:
 - [ ] stabilen Einstiegspunkt ohne manuelle Ressourcenänderung über DRA aktualisieren
 - [ ] kompletten Modulstand atomar/konsistent installieren
 - [ ] installierten Soll-Modulstand für Gewitterradar bereitstellen
-- [ ] DRA-Deployment als Pflichtprüfung jeder Iteration durchführen
+- [x] DRA-Deployment als Pflichtprüfung jeder Iteration durchführen
 
 DRA-seitige Zusatzanforderungen aus der V4.10-Planung:
 
@@ -518,13 +518,13 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [ ] Einstellungen
 - [ ] Provider
 - [ ] Logging
-- [ ] HACS
+- [x] HACS
 - [ ] DRA
-- [ ] Cache-/Update-Pfade
+- [x] Cache-/Update-Pfade
 - [ ] Syntax/Lint/Tests
-- [ ] Checksummen
-- [ ] CHANGELOG
-- [ ] HISTORY / Release Notes
+- [x] Checksummen
+- [x] CHANGELOG
+- [x] HISTORY / Release Notes
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
 
@@ -2155,3 +2155,62 @@ Bewertung:
 - M12 als RELEASE-GATE vollständig bestanden.
 
 **Nächster Schritt:** M13 – Regression & Freigabe. Zuerst automatisierbare Repository-, CI-, Paket-, HACS-, DRA-, Cache-, Syntax-/Test-, Checksummen- und Dokumentationsprüfungen ausführen. Danach verbleibende reale UI-/Geräteprüfungen gezielt abnehmen.
+
+
+## Schleife 064 – M13 automatische Release-Prüfungen, Teil 1
+
+**Datum:** 2026-09-24  
+**Status:** sechs M13-Punkte automatisch bzw. durch M12-Realnachweise abgeschlossen; Gesamt-CI läuft noch
+
+Aktueller M13-/PR-Stand:
+- PR #24 ist weiterhin offen, Draft und mergefähig,
+- aktueller Head nach M12-Abschluss: `6a1ab56984ad4681bf0e904f877bee831ff59115`,
+- aktuelle Actions wurden für diesen Head neu gestartet.
+
+Bereits erfolgreiche aktuelle CI-Nachweise:
+- **Diagnostic contract** → erfolgreich,
+- **Hi-Res asset retention** → erfolgreich,
+- **Source archive contract** → erfolgreich,
+- Integrationsworkflow:
+  - **hassfest** → erfolgreich,
+  - **package-contract** → erfolgreich,
+  - darin **deterministische HACS-Integration-Stagingprüfung** → erfolgreich,
+  - JSON-Metadatenprüfung → erfolgreich,
+  - **Deploy-Relay-Verbrauchervertrag** inklusive `deploy/v4.09`-Rückfallwurzel → erfolgreich,
+  - **HACS integration validation** → erfolgreich.
+- Frontendworkflow bereits erfolgreich bis einschließlich:
+  - kanonischer Frontendvertrag,
+  - deterministischer Frontend-Build,
+  - JavaScript-Syntax,
+  - About-/Hilfe-Sprachvertrag,
+  - Recorder-Sprachaudit,
+  - geschützter Diagnosevertrag,
+  - Browserabhängigkeiten und Locale-Rendering.
+
+M13-Haken gesetzt:
+- **HACS**:
+  - HACS-Action erfolgreich,
+  - deterministische Stagingprüfung bestätigt byteidentische native Integration.
+- **DRA**:
+  - M12 Ende-zu-Ende inklusive vollständigem Modulbaum, Einzelmodul-Delta, Fehlerfällen, Cachefall, realem Rollback und Rückkehr bestanden,
+  - aktueller DRA-Verbrauchervertrag in CI erfolgreich.
+- **Cache-/Update-Pfade**:
+  - Browsercache-Fall real vor/nach hartem Neuladen nachgewiesen,
+  - reine Frontend-Änderung real mit Frontend-Neuladen,
+  - struktureller Rückfall/Upgrade real mit vollständigem HA-Neustart,
+  - Rückkehr ohne Mischstand bestätigt.
+- **Checksummen**:
+  - `scripts/verify-frontend.mjs` vergleicht kanonische Payload und beide Delivery-Ziele bytegenau und prüft `SHA256SUMS_FRONTEND.txt`,
+  - dieser Schritt ist im aktuellen Frontendworkflow erfolgreich,
+  - deterministischer Rebuild lässt die Prüfsummendatei unverändert.
+- **CHANGELOG**:
+  - V4.10.02-DEV-Abschnitt vorhanden und enthält Modularisierung, UI-Abschlusskorrekturen sowie Modulversionen.
+- **HISTORY / Release Notes**:
+  - eigener Abschnitt **V4.10.02 · 2026/09 – Modularisierung und UI-Abschluss** vorhanden,
+  - enthält Modulregister, 22/22-Laufzeitnachweis, Übersetzungs-/UI-Stabilisierung und DRA-`deploy/dev`-Abnahmeweg.
+
+Bewusst noch offen:
+- **Syntax/Lint/Tests**, bis die beiden noch laufenden aktuellen Hauptworkflows vollständig grün sind,
+- reale/visuelle M13-Funktionsmatrix: Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon, Standort-Pille, Layer-Menü, Cluster, Einstellungen, Provider, Logging.
+
+**Nächster Schritt:** aktuellen CI-Head vollständig auslaufen lassen. Bei vollständigem Grün **Syntax/Lint/Tests** setzen. Danach die verbleibende reale M13-Funktionsmatrix kompakt abnehmen.
