@@ -1910,3 +1910,32 @@ Bewertung:
 - `history.chart` → **fehlend / missing**,
 - `history.chart.m12-missing-test` → **unerwartet / unexpected**,
 - Gesamtstatus mit Abweichungen.
+
+
+## Schleife 056 – DRA-Diagnoseexport geprüft; falscher Projektscope
+
+**Datum:** 2026-09-24  
+**Status:** Export ausgewertet; Gewitterradar-Installationslauf darin nicht enthalten
+
+Ausgewerteter DRA-Supportexport:
+- DRA-Version **0.15.21**,
+- Home Assistant **2026.9.2**,
+- Bundle-Projekt: `deploy_relay`,
+- Repository: `TheDaimos/deploy-relay-agent`,
+- ausgewählte Quelle im Bundle: `deploy/dev`,
+- der Export enthält damit den DRA-Selbstprojekt-/Updatekontext, nicht den Gewitterradar-Installationslauf.
+
+Wichtig:
+- keine belastbare Installationsspur zu
+  `test/dra-v4.10.02-missing-module`,
+- kein Installationslauf zu Commit
+  `0bfaaf3bfda0873b0e578895fa154857d3b47927`,
+- keine Gewitterradar-Zielklassifikation für
+  `custom_components/gewitterradar/frontend/modules/history/chart.js`.
+
+Bewertung:
+- der Export kann den beobachteten Widerspruch **Vorschau 1 geändert, Laufzeit weiterhin history.chart/ok** nicht aufklären,
+- daraus wird ausdrücklich **kein** DRA-Installationsfehler als bewiesen markiert,
+- erforderlich ist ein Gewitterradar-projektbezogener DRA-Diagnoseexport des konkreten Installationsversuchs.
+
+**Nächster Schritt:** in DRA das Projekt **Gewitterradar** auswählen und nach dem Missing-Modul-Installationsversuch einen Diagnose-/Supportexport für genau dieses Projekt erzeugen. Darin müssen mindestens Source-Ref/Commit, Pre-Install-Preview, Staging/Deployment, Install-Verifikation und der Pfad `modules/history/chart.js` enthalten sein. Danach den Installationspfad bytegenau auswerten.
