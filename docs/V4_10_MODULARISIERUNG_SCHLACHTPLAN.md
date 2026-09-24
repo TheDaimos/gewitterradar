@@ -2050,3 +2050,32 @@ Bewertung:
 - saubere Ausgangsbasis für den letzten offenen M12-Punkt **realer Rollback auf V4.09 und Rückkehr auf DEV** ist bestätigt.
 
 **Nächster Schritt:** in DRA `deploy/v4.09` auswählen und installieren. Danach die von DRA geforderte Nachaktion vollständig ausführen und den realen V4.09-Laufzeitstand prüfen. Anschließend wieder `deploy/dev` installieren und erneut **22 / 22 Module geladen / Versionssatz konsistent** bestätigen.
+
+
+## Schleife 061 – V4.09-Rollback-Vorschau real bestätigt
+
+**Datum:** 2026-09-24  
+**Status:** Rollback-Vorschau erfolgreich; Installation offen
+
+Realer DRA-Nachweis für den Rückfall von V4.10.02 auf V4.09:
+- Quelle: `deploy/v4.09`,
+- Zielcommit: `421426be1b98fd96bf1642a7601d2ceee02e11d9`,
+- Vorschau:
+  - **0 neu**,
+  - **2 geändert**,
+  - **22 entfernt**,
+  - **33 unverändert**,
+  - insgesamt **24 Änderungen**,
+- Versions-/Regressionsprüfung:
+  - Git-Quelle **4.09**,
+  - lokal **4.10.02**,
+  - Erkennung über `BUILD_VERSION`,
+  - DRA meldet ausdrücklich **REGRESSIONSWARNUNG**,
+- Nachaktion: **Home Assistant vollständig neu starten**.
+
+Bewertung:
+- DRA erkennt den absichtlichen Rückfall korrekt als Versionsregression,
+- die 22 Entfernungen entsprechen dem Rückbau der V4.10.02-Modulstruktur,
+- der Lifecycle wird korrekt nicht auf Frontend-Neuladen herabgestuft, sondern verlangt einen vollständigen HA-Neustart.
+
+**Nächster Schritt:** die **24 Änderungen** mit expliziter Regressionsfreigabe installieren, anschließend Home Assistant vollständig neu starten und den realen V4.09-Laufzeitstand prüfen. Danach wieder auf `deploy/dev` / V4.10.02 zurückkehren.
