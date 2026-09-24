@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -259,6 +259,9 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       } else if (kind === 'medallion') {
         this._mapMedallionVisible = next;
         try { localStorage.setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+      } else if (kind === 'clusterJump') {
+        this._mapClusterJumpVisible = next;
+        try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
       } else return;
       this._syncMapDisplayUi();
       this._scheduleMapDisplayResize();
@@ -397,6 +400,88 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       control.style.top = `${top}px`;
     },
 
+    _persistMapClusterJumpPosition() {
+      if (!this._mapClusterJumpPosition) return;
+      try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
+    },
+
+    _positionMapClusterJumpOverlay(position = this._mapClusterJumpPosition) {
+      const overlay = this.shadow?.getElementById('map-cluster-jump-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 106;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 36;
+      if (!cardRect.width || !mapRect.width) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+
+      if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
+        overlay.style.left = `${minLeft+(maxLeft-minLeft)*clamp(position.x,0,1)}px`;
+        overlay.style.top = `${minTop+(maxTop-minTop)*clamp(position.y,0,1)}px`;
+        return;
+      }
+
+      const displayControl = this.shadow?.getElementById('map-display-control');
+      const displayVisible = displayControl && !this._mapWindowMode && !displayControl.hidden;
+      const fallbackTop = Math.max(minTop,maxTop);
+      const targetLeft = displayVisible
+        ? Math.max(minLeft,displayControl.offsetLeft-width-8)
+        : maxLeft;
+      const targetTop = displayVisible
+        ? clamp(displayControl.offsetTop + ((displayControl.offsetHeight || 44)-height)/2,minTop,maxTop)
+        : fallbackTop;
+      overlay.style.left = `${targetLeft}px`;
+      overlay.style.top = `${targetTop}px`;
+    },
+
+    _activateFullscreenClusterJump(event = null) {
+      const statusChip = this.shadow?.getElementById('status-chip');
+      if (!statusChip || statusChip.classList.contains('disabled') || this._statusFocusKind !== 'cluster') return false;
+      const sessionTarget = event?.target?.closest?.('[data-session-toggle]');
+      if (sessionTarget) {
+        const sourceToggle = statusChip.querySelector?.('[data-session-toggle]');
+        sourceToggle?.click?.();
+        return !!sourceToggle;
+      }
+      statusChip.click?.();
+      return true;
+    },
+
+    _syncFullscreenClusterJumpUi() {
+      const overlay = this.shadow?.getElementById('map-cluster-jump-overlay');
+      const text = this.shadow?.getElementById('map-cluster-jump-text');
+      const toggle = this.shadow?.getElementById('map-cluster-jump-toggle');
+      const sourceChip = this.shadow?.getElementById('status-chip');
+      const sourceText = this.shadow?.getElementById('header-status');
+      const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      const clusterMode = this._statusFocusKind === 'cluster';
+      const visible = this._mapClusterJumpVisible !== false;
+
+      if (toggle) {
+        toggle.classList.toggle('active',visible);
+        toggle.setAttribute('aria-pressed',visible ? 'true' : 'false');
+        const label = this._t('settings.cluster_navigation_session');
+        toggle.setAttribute('aria-label',`${label} · ${this._t(visible ? 'toggle.on' : 'toggle.off')}`);
+        toggle.title = toggle.getAttribute('aria-label');
+      }
+      if (!overlay) return;
+      overlay.hidden = !(fullscreenActive && visible && clusterMode);
+      if (text && sourceText) text.innerHTML = sourceText.innerHTML;
+      const disabled = !!sourceChip?.classList.contains('disabled');
+      overlay.classList.toggle('disabled',disabled);
+      overlay.setAttribute('aria-disabled',disabled ? 'true' : 'false');
+      const title = sourceChip?.getAttribute('title') || this._t('settings.cluster_navigation_session');
+      overlay.setAttribute('title',title);
+      overlay.setAttribute('aria-label',title);
+      if (!overlay.hidden) requestAnimationFrame(() => this._positionMapClusterJumpOverlay());
+    },
+
     _setMapDisplayMenuOpen(open) {
       this._mapDisplayMenuOpen = !!open && !this._mapWindowMode;
       const menu = this.shadow?.getElementById('map-display-switch');
@@ -421,6 +506,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         this._positionMapMedallionOverlay();
         this._positionMapLocationOverlay();
         this._positionMapDisplayControl();
+        this._positionMapClusterJumpOverlay();
         this._scheduleOpenLocationDropdownPosition();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
@@ -470,6 +556,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const instrumentControls = this.shadow.getElementById('map-instrument-controls');
       const compassToggle = this.shadow.getElementById('map-compass-toggle');
       const medallionToggle = this.shadow.getElementById('map-medallion-toggle');
+      const clusterJumpToggle = this.shadow.getElementById('map-cluster-jump-toggle');
       if (overlay) {
         const moveCompass=this._t('map.compass_move');
         overlay.setAttribute('aria-label',moveCompass);
@@ -496,7 +583,9 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         medallionToggle.setAttribute('aria-label',`${this._t('trend.label')} · ${this._t(this._mapMedallionVisible ? 'toggle.on' : 'toggle.off')}`);
         medallionToggle.title = medallionToggle.getAttribute('aria-label');
       }
+      if (clusterJumpToggle) clusterJumpToggle.hidden = !fullscreenActive;
       this._syncMapMedallionState();
+      this._syncFullscreenClusterJumpUi();
       const settingsTitle = this.shadow.getElementById('settings-map-section-title');
       const settingsSub = this.shadow.getElementById('settings-map-section-sub');
       const settingsStartupLabel = this.shadow.getElementById('settings-map-startup-label');
@@ -732,6 +821,12 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         event.preventDefault(); event.stopPropagation();
         this._setMapInstrumentVisible('medallion',!this._mapMedallionVisible);
       });
+      const clusterJumpToggle = this.shadow.getElementById('map-cluster-jump-toggle');
+      const clusterJumpOverlay = this.shadow.getElementById('map-cluster-jump-overlay');
+      clusterJumpToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('clusterJump',!this._mapClusterJumpVisible);
+      });
       if (!this._mapDisplayOutsidePointerHandler) {
         this._mapDisplayOutsidePointerHandler = (event) => {
           if (!this._mapDisplayMenuOpen) return;
@@ -772,7 +867,9 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       };
       const bindMapInstrumentDrag = (target,kind) => {
         if (!target) return;
-        const stateKey = kind === 'compass' ? '_mapCompassDragState' : '_mapMedallionDragState';
+        const stateKey = kind === 'compass'
+          ? '_mapCompassDragState'
+          : (kind === 'medallion' ? '_mapMedallionDragState' : '_mapClusterJumpDragState');
         const startDrag = (source,inputId,clientX,clientY) => {
           this[stateKey] = {
             source,inputId,startX:clientX,startY:clientY,
@@ -805,9 +902,12 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
             if (kind === 'compass') {
               this._mapCompassPosition = position;
               this._persistMapCompassPosition();
-            } else {
+            } else if (kind === 'medallion') {
               this._mapMedallionPosition = position;
               this._persistMapMedallionPosition();
+            } else {
+              this._mapClusterJumpPosition = position;
+              this._persistMapClusterJumpPosition();
             }
           }
           this[stateKey] = null;
@@ -841,6 +941,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           const moved = finishDrag('pointer',event.pointerId);
           try { target.releasePointerCapture(event.pointerId); } catch (_error) {}
           if (kind === 'compass' && event.type === 'pointerup' && !moved) this._openCompassPicker();
+          if (kind === 'clusterJump' && event.type === 'pointerup') {
+            this._mapClusterJumpSuppressClickUntil = performance.now()+500;
+            if (!moved) this._activateFullscreenClusterJump(event);
+          }
         };
         target.addEventListener('pointerup',finishPointerDrag,{capture:true});
         target.addEventListener('pointercancel',finishPointerDrag,{capture:true});
@@ -886,12 +990,23 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           event.stopPropagation();
           const moved = finishDrag('touch',drag.inputId);
           if (kind === 'compass' && event.type === 'touchend' && !moved) this._openCompassPicker();
+          if (kind === 'clusterJump' && event.type === 'touchend') {
+            this._mapClusterJumpSuppressClickUntil = performance.now()+500;
+            if (!moved) this._activateFullscreenClusterJump(event);
+          }
         };
         target.addEventListener('touchend',finishTouchDrag,{passive:false,capture:true});
         target.addEventListener('touchcancel',finishTouchDrag,{passive:false,capture:true});
       };
       bindMapInstrumentDrag(overlay,'compass');
       bindMapInstrumentDrag(medallionOverlay,'medallion');
+      bindMapInstrumentDrag(clusterJumpOverlay,'clusterJump');
+      clusterJumpOverlay?.addEventListener('click',(event) => {
+        if (Number(this._mapClusterJumpSuppressClickUntil || 0) > performance.now()) {
+          event.preventDefault();event.stopPropagation();return;
+        }
+        this._activateFullscreenClusterJump(event);
+      });
 
       const mapLocationDragBounds = () => {
         const card = this.shadow?.getElementById('map-card');
