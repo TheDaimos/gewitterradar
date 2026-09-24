@@ -63,5 +63,14 @@
       "sizeBytes": 4912
     }
   ],
-  "retentionContract": "tests/contracts/hires-asset-retention-v4.07.56.json"
+  "retentionContract": "tests/contracts/hires-asset-retention-v4.07.56.json",
+  "runtimePolicy": {
+    "masterRepositoryTransfer": "pending",
+    "sourceCommit": "33d422eb6435ad29148681e4cc2846680f512706",
+    "gewitterradarRuntime": "reduced lossless 256x256 SVG derivatives only",
+    "deliveredDirections": [
+      "left",
+      "right"
+    ]
+  }
 }

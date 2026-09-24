@@ -4,10 +4,10 @@
 
 ### Chevron-Materialvergleich im Kompass-Pop-up
 
-- Add a permanently protected Hi-Res Chevron family in antique brass and aged silver for left, right, up and down.
+- Keep the full Hi-Res Chevron family as non-delivered artwork source pending transfer to the dedicated master repository; it is not a Gewitterradar runtime dependency.
 - Show two simultaneously active compass-navigation rows for direct visual acceptance: brass on top, aged silver directly below.
 - Keep both material rows functionally identical for previous/next compass selection; only the material presentation differs.
-- Mirror the left/right runtime assets byte-identically into native integration and Dashboard delivery while retaining the complete four-direction masters in protected artwork storage.
+- Deliver only reduced, lossless 256×256 runtime SVGs for brass/silver left/right, byte-identically across native integration and Dashboard; the four-direction Hi-Res masters stay outside the delivered package.
 
 
 ### Modularisierung · Abschlusskorrekturen
@@ -41,12 +41,12 @@
 - `ui.skeleton` → **1.1.2**
 - `ui.i18n-settings` → **1.2.1**
 - `diagnostics.module-view` → **1.3.0**
-- `fullscreen.map-display` → **1.0.5**
+- `fullscreen.map-display` → **1.0.6**
 - `map.clusters-recent` → **1.0.2**
 - `ui.render` → **1.0.1**
 - `ui.controls` → **1.1.3**
 - `location.radii-map` → **1.0.1**
-- `core.manifest` → **1.2.3**
+- `core.manifest` → **1.2.4**
 
 ## 2026/09 — V4.10.01 DEV
 

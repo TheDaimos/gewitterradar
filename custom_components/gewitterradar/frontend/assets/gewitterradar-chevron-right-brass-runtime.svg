@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="left chevron brass">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="256" height="256" role="img" aria-label="right chevron brass runtime">
 <defs>
   <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5f3a10"/><stop offset="8%" stop-color="#c38727"/><stop offset="20%" stop-color="#ffe38a"/><stop offset="34%" stop-color="#8a5a18"/><stop offset="49%" stop-color="#e0aa45"/><stop offset="62%" stop-color="#fff0ad"/><stop offset="78%" stop-color="#9c681f"/><stop offset="91%" stop-color="#d9a03a"/><stop offset="100%" stop-color="#5d3b15"/></linearGradient>
   <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
@@ -23,7 +23,7 @@
     <feGaussianBlur stdDeviation="2.2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
 </defs>
-<g transform="rotate(0 512 512)" filter="url(#depth)">
+<g transform="rotate(180 512 512)" filter="url(#depth)">
   <!-- massive cast body -->
   <path d="M704 154 L292 512 L704 870" fill="none" stroke="#0a0805" stroke-width="226" stroke-linecap="round" stroke-linejoin="round" opacity=".78"/>
   <path d="M704 154 L292 512 L704 870" fill="none" stroke="url(#metal)" stroke-width="206" stroke-linecap="round" stroke-linejoin="round" filter="url(#patina)"/>

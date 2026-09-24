@@ -16,7 +16,7 @@ def test_v41001_compass_picker_contract():
     assert "V4.10.02-MODULAR-DEV-2026-09-21" in main
 
     # Preserve the established V4.10.01 picker behaviour while allowing
-    # the V4.10.02 Hi-Res Chevron material comparison to replace the old
+    # the V4.10.02 runtime Chevron material comparison to replace the old
     # inline gold SVG arrows.
     for marker in (
         "compass-picker-shell-v41001",
@@ -39,10 +39,10 @@ def test_v41001_compass_picker_contract():
     for marker in (
         'data-chevron-material="brass"',
         'data-chevron-material="silver"',
-        "gewitterradar-chevron-left-brass-hires.svg",
-        "gewitterradar-chevron-right-brass-hires.svg",
-        "gewitterradar-chevron-left-silver-hires.svg",
-        "gewitterradar-chevron-right-silver-hires.svg",
+        "gewitterradar-chevron-left-brass-runtime.svg",
+        "gewitterradar-chevron-right-brass-runtime.svg",
+        "gewitterradar-chevron-left-silver-runtime.svg",
+        "gewitterradar-chevron-right-silver-runtime.svg",
         "querySelectorAll('[data-compass-picker-prev]')",
         "querySelectorAll('[data-compass-picker-next]')",
     ):
@@ -50,13 +50,16 @@ def test_v41001_compass_picker_contract():
 
     # Runtime assets must exist in the canonical frontend source.
     for asset in (
-        "gewitterradar-chevron-left-brass-hires.svg",
-        "gewitterradar-chevron-right-brass-hires.svg",
-        "gewitterradar-chevron-left-silver-hires.svg",
-        "gewitterradar-chevron-right-silver-hires.svg",
+        "gewitterradar-chevron-left-brass-runtime.svg",
+        "gewitterradar-chevron-right-brass-runtime.svg",
+        "gewitterradar-chevron-left-silver-runtime.svg",
+        "gewitterradar-chevron-right-silver-runtime.svg",
     ):
         assert (FRONTEND / "assets" / asset).is_file()
 
     # The superseded inline-arrow implementation must not return unnoticed.
     assert "compass-picker-gold-prev" not in source
     assert "compass-picker-gold-next" not in source
+
+    # Hi-Res masters are not runtime dependencies of Gewitterradar.
+    assert "-hires.svg" not in source

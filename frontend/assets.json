@@ -27,23 +27,23 @@
     "protected": true
   },
   {
-    "file": "assets/gewitterradar-chevron-left-brass-hires.svg",
-    "sha256": "d434bf7436307bbc2a069ebb3d125380400f19b66647273ed978bd40548fa9f4",
+    "file": "assets/gewitterradar-chevron-left-brass-runtime.svg",
+    "sha256": "66421a4015d89255e260428122e7d27e85aa9827cab45af488fc8492fc1b595d",
     "protected": false
   },
   {
-    "file": "assets/gewitterradar-chevron-left-silver-hires.svg",
-    "sha256": "2b66743479a6ca2f712341f0f0a945b4c94bca2fc27682884bb6a8955182728f",
+    "file": "assets/gewitterradar-chevron-left-silver-runtime.svg",
+    "sha256": "aa9fff9e8aa0fcf6e0cdc06a6e83de7d91b4dce19331d7ed744aa02b91b27ff9",
     "protected": false
   },
   {
-    "file": "assets/gewitterradar-chevron-right-brass-hires.svg",
-    "sha256": "87774a4523eb7377122728bcd1bcddee971706b98d51e9f473ddcb7609e1e2f4",
+    "file": "assets/gewitterradar-chevron-right-brass-runtime.svg",
+    "sha256": "7a438fe2fb0425e2960e71c40512a0bd62b8cc02ca5277f26f3f206df0ce7896",
     "protected": false
   },
   {
-    "file": "assets/gewitterradar-chevron-right-silver-hires.svg",
-    "sha256": "0d6760f3a7f7e20d013d5bd13f11ce39df911580cc999f3e17155190f54c2b1e",
+    "file": "assets/gewitterradar-chevron-right-silver-runtime.svg",
+    "sha256": "96b16db6a8cd30b1d32640513d4f8a3218fd5cb4a91b04c2d4dbe9ec6abf3f7f",
     "protected": false
   },
   {

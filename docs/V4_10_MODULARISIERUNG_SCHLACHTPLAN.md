@@ -2366,11 +2366,13 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 
 ## Zwischenauftrag – Chevron-Materialvergleich 2026-09-24
 
-- [x] Acht Hi-Res-Chevrons als transparente SVG-Master erzeugt: Messing und Alt-Silber × links/rechts/oben/unten.
+- [x] Acht Hi-Res-Chevrons als transparente Master erzeugt: Messing und Alt-Silber × links/rechts/oben/unten; vollständige Masterfamilie ist für den späteren Transfer ins Master-Repo vorgemerkt.
 - [x] Masterklasse `artwork/compass-chevron/hires` in den Hi-Res-Retentionsvertrag aufgenommen.
-- [x] Links/rechts in Quelle, Integration und Dashboard als Laufzeit-Assets gespiegelt.
+- [x] Links/rechts als verkleinerte, verlustfreie 256×256 Runtime-SVGs in Quelle, Integration und Dashboard gespiegelt; keine Hi-Res-Datei wird von Gewitterradar zur Laufzeit geladen.
 - [x] Kompass-Pop-up: Messing oben, Alt-Silber direkt darunter; beide Reihen identische Vor-/Zurück-Funktion.
-- [x] Modulstände: `fullscreen.map-display 1.0.5`, `core.manifest 1.2.3`.
+- [x] Modulstände nach Runtime-Trennung: `fullscreen.map-display 1.0.6`, `core.manifest 1.2.4`.
 - [x] Checksummenbestand und Changelog synchronisiert.
 
 **Danach weiter mit:** M13 – vollständige Regression & Freigabe.
+
+- [x] Hi-Res-Quellstand für späteren Master-Repo-Transfer nachvollziehbar über Commit `33d422eb6435ad29148681e4cc2846680f512706`; Gewitterradar liefert ausschließlich Runtime-Derivate aus.

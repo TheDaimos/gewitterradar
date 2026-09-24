@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -107,12 +107,12 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
       const chevronAssets = {
         brass: {
-          left: new URL('../../assets/gewitterradar-chevron-left-brass-hires.svg', import.meta.url).href,
-          right: new URL('../../assets/gewitterradar-chevron-right-brass-hires.svg', import.meta.url).href,
+          left: new URL('../../assets/gewitterradar-chevron-left-brass-runtime.svg', import.meta.url).href,
+          right: new URL('../../assets/gewitterradar-chevron-right-brass-runtime.svg', import.meta.url).href,
         },
         silver: {
-          left: new URL('../../assets/gewitterradar-chevron-left-silver-hires.svg', import.meta.url).href,
-          right: new URL('../../assets/gewitterradar-chevron-right-silver-hires.svg', import.meta.url).href,
+          left: new URL('../../assets/gewitterradar-chevron-left-silver-runtime.svg', import.meta.url).href,
+          right: new URL('../../assets/gewitterradar-chevron-right-silver-runtime.svg', import.meta.url).href,
         },
       };
 
