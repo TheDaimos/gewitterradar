@@ -36,7 +36,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – Cache-/Mischstand und veraltetes Modul vollständig real abschließen.**
+**M12 – Browsercache-/Mischstand vollständig real abschließen.**
 
 Aktueller Testzweig:
 - `test/dra-v4.10.02-cache-mixed-state`
