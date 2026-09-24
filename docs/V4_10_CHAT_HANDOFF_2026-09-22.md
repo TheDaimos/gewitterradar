@@ -197,7 +197,13 @@ Noch offen ist ausschließlich der separate Cache-/Mischstand-Nachweis:
 
 ### Browsercache-/Mischstand
 
-Zunächst `deploy/dev` wiederherstellen und nach hartem Frontend-Neuladen **1.0.2 / korrekt** bestätigen. Danach den Testzweig erneut per DRA installieren, im bereits geöffneten Browser zunächst **nicht** hart neu laden und dokumentieren, dass der laufende Browser weiterhin den zuvor geladenen **1.0.2**-Stand zeigt. Erst nach `Strg+Shift+R` soll **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
+Die saubere Ausgangsbasis ist real bestätigt:
+- `deploy/dev` wiederhergestellt,
+- **22 / 22 Module geladen**,
+- **Versionssatz konsistent**,
+- `fullscreen.map-display`: **1.0.2 geladen / 1.0.2 erwartet / korrekt**.
+
+Jetzt den Testzweig erneut per DRA installieren, im bereits geöffneten Browser zunächst **nicht** hart neu laden und dokumentieren, dass der laufende Browser weiterhin den zuvor geladenen **1.0.2**-Stand zeigt. Erst nach `Strg+Shift+R` soll **1.0.1 / erwartet 1.0.2 / abweichend** erscheinen.
 
 Danach wieder `deploy/dev` über DRA installieren und **1.0.2 / korrekt** bestätigen.
 
