@@ -39,3 +39,18 @@ def test_radius_cascade_uses_persisted_state_before_dependent_write():
  assert "if (storedDanger != null && storedDanger > value)" in controls
  assert "const currentDanger = dangerStateValue ?? danger;" in radii
  assert "if (currentDanger != null && currentDanger > next)" in radii
+
+def test_fullscreen_cluster_jump_pill_contract():
+ source="\n".join(path.read_text(encoding="utf-8") for path in sorted(FRONTEND.rglob("*.js")))
+ for marker in (
+  "map-cluster-jump-toggle",
+  "map-cluster-jump-overlay",
+  "map-cluster-jump-toggle-icon",
+  "GEWITTERRADAR_INFINITY_GFX",
+  "gewitterradar:v41002:map-cluster-jump-visible",
+  "gewitterradar:v41002:map-cluster-jump-position",
+  "_syncFullscreenClusterJumpUi",
+  "_activateFullscreenClusterJump",
+  "_persistMapClusterJumpPosition",
+  "bindMapInstrumentDrag(clusterJumpOverlay,'clusterJump')",
+ ): assert marker in source
