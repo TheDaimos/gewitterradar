@@ -1955,3 +1955,49 @@ Klarstellung zum zuvor ausgewerteten DRA-Supportexport:
 Weiterhin offen:
 - projektbezogener DRA-Diagnose-/Supportexport für **Gewitterradar** aus dem konkreten Missing-Modul-Installationsversuch,
 - danach Auswertung von Source-Ref/Commit, Pre-Install-Vorschau, Staging, Schreibvorgang und Install-Verifikation für `modules/history/chart.js`.
+
+
+## Schleife 058 – Missing-Modul-Test: DRA-Installation vor Frontend-Neuladen eindeutig erfolgreich
+
+**Datum:** 2026-09-24  
+**Status:** Dateisystem-Installation erfolgreich verifiziert; Laufzeitprüfung nach Frontend-Neuladen offen
+
+Realer Testaufbau:
+- Gewitterradar-Projekt in DRA,
+- ausgewählte Quelle:
+  - Branch `test/dra-v4.10.02-missing-module`,
+  - Commit `0bfaaf3bfda0873b0e578895fa154857d3b47927`,
+- Vorschau unmittelbar vor Installation:
+  - **0 neu**,
+  - **1 geändert**,
+  - **0 entfernt**,
+  - **56 unverändert**.
+
+DRA-Supportexport direkt nach der Installation und **vor** Frontend-/Cache-Neuladen ausgewertet:
+- DRA **0.15.21**,
+- Installationslauf startet explizit mit dem Missing-Testbranch und Commit `0bfaaf3...`,
+- frische Pre-Install-Prüfung bestätigt erneut **0 / 1 / 0 / 56**,
+- Staging ist an denselben eingefrorenen Commit gebunden,
+- Installationsphase meldet **1 affected file**,
+- Installationsverifikation meldet **1 changed file**,
+- Deployment endet mit Status **success**,
+- effektiver Lifecycle: **frontend_reload**,
+- kein Home-Assistant-Neustart erforderlich.
+
+Datei-Nachweis aus der Vorschau:
+- Ziel: `custom_components/gewitterradar/frontend/modules/history/chart.js`,
+- lokaler DEV-Hash vor Installation:
+  `eb1b2ee5af133e5396fa1f1a5c322b71d7e8ab6df1fdcd6d5453439a4d30e425`,
+- Missing-Test-Quellhash:
+  `d94510e9691ca42f2637759fc99291f4188b3e3b7fc4031f4e529bdfbf3c7e99`,
+- die Datei wurde als `change` klassifiziert.
+
+Bewertung:
+- DRA-Quellenauswahl, Commit-Pinning, Vorschau, Staging, Schreibvorgang und abschließende Installationsverifikation sind für den Missing-Test jetzt real bestätigt,
+- der vorherige Verdacht auf einen DRA-Installationsfehler ist damit widerlegt,
+- der aktuell noch geöffnete Gewitterradar-Browser darf vor dem Frontend-Neuladen weiterhin den zuvor geladenen DEV-Laufzeitstand zeigen.
+
+**Nächster Schritt:** jetzt exakt einmal `Strg+Shift+R` bzw. Frontend/Companion vollständig neu laden. Danach **Module & Versionen** öffnen und den realen Laufzeitstand prüfen. Erwartung:
+- `history.chart` → **fehlend / missing**,
+- `history.chart.m12-missing-test` → **unerwartet / unexpected**,
+- Gesamtstatus mit Abweichungen.
