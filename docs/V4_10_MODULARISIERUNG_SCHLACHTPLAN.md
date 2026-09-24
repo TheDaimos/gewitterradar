@@ -36,26 +36,34 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M12 – verbleibende reale DRA-Ende-zu-Ende-Fälle abnehmen.**
+**M12 – reales Deployment nur eines geänderten Moduls abnehmen.**
 
-Reale UI-Abnahmen inzwischen bestätigt:
-- fremdsprachige Modulansicht vollständig korrekt,
-- Standardansicht-Dropdown-Lifecycle vollständig getestet:
-  - Klick auf den Einstellungs-Hintergrund schließt Einstellungen und Dropdown gemeinsam,
-  - Wechsel auf einen anderen Einstellungsabschnitt schließt das Dropdown ebenfalls,
-  - kein verwaister Dropdown-Layer mehr über der Karte.
+Vorbereiteter Testzweig:
+- `test/dra-v4.10.02-single-module`
+- Commit `a7ac91ed9880a0ba0ec60391b98cea4c33a6c325`
+- Basis exakt aktueller `deploy/dev`
+- Vergleich: **1 Commit voraus / 0 zurück**
+- exakt **eine geänderte Datei**:
+  - `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
+- **0 neue / 0 entfernte Dateien**
 
-Damit ist der zuletzt offene gezielte UI-Punkt aus Schleife 038 real abgeschlossen.
+Sichtbarer Testinhalt:
+- einfaches Tippen/Klicken auf das Medaillon öffnet ein provisorisches Popup im Stil der Kompassauswahl,
+- Verschieben bleibt erhalten; erst eine Geste unterhalb der vorhandenen 6-px-Drag-Schwelle gilt als Tap,
+- Maus/Pointer und nativer Touchpfad werden getrennt unterstützt,
+- Popup ist bewusst nur M12-Testträger und wird nach Abschluss von M12 nicht als fertige Medaillon-Funktion bewertet.
 
-Als Nächstes M12 in dieser Reihenfolge:
-1. Deployment nur eines geänderten Moduls,
-2. Browsercache-/Mischstand real prüfen,
-3. veraltetes Modul real erkennen,
-4. fehlendes Modul real erkennen,
-5. Rollback auf `deploy/v4.09`,
-6. anschließend wieder sauber auf aktuellen `deploy/dev` zurückkehren.
+Reale Abnahme:
+1. in DRA den Zweig `test/dra-v4.10.02-single-module` wählen,
+2. Vorschau muss **1 geändert / 0 neu / 0 entfernt** anzeigen,
+3. installieren,
+4. Gewitterradar im Vollbild öffnen,
+5. Medaillon einmal tippen: Popup muss erscheinen,
+6. Medaillon ziehen: es darf sich nur verschieben und kein Popup öffnen,
+7. Modulansicht muss weiterhin V4.10.02 und einen konsistenten Versionssatz zeigen,
+8. danach zurück auf `deploy/dev`; DRA muss genau diese eine Datei wieder zurückändern.
 
-Erst danach folgt die kompakte M13-Endabnahme und das formale Schließen der Modularisierung.
+Nach erfolgreicher realer Abnahme kann der M12-Haken **Deployment nur eines geänderten Moduls** gesetzt werden.
 
 ---
 
@@ -1503,3 +1511,31 @@ Bewertung:
 - für diesen Fehler ist keine weitere Korrektur offen.
 
 **Nächster Schritt:** M12-DRA-Restfälle real abarbeiten: Einzelmodul-Delta, Cache-/Mischstand, veraltet, fehlend, Rollback und Rückkehr auf aktuellen DEV-Stand.
+
+
+## Schleife 041 – echter Ein-Modul-DRA-Test mit Medaillon-Popup vorbereitet
+
+**Datum:** 2026-09-24  
+**Status:** Testkandidat vorbereitet; reale DRA-Abnahme offen
+
+Ziel:
+- M12 nicht nur mit einem unsichtbaren Kommentar-Delta testen, sondern mit einer direkt sichtbaren, später sinnvoll weiterentwickelbaren Funktion.
+
+Umsetzung ausschließlich im temporären DRA-Testzweig:
+- Branch `test/dra-v4.10.02-single-module`,
+- Basis exakt `deploy/dev`,
+- Commit `a7ac91ed9880a0ba0ec60391b98cea4c33a6c325`,
+- nur `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js` geändert,
+- Vergleich gegen `deploy/dev`: **1 Datei geändert, 0 neu, 0 entfernt**.
+
+Testfunktion:
+- vorhandener gemeinsame Drag-/Tap-Pfad von Kompass und Medaillon genutzt,
+- beim Medaillon führt eine echte Tap-Geste nun zu einem kleinen provisorischen Popup,
+- echte Drag-Gesten behalten die bestehende Positionsspeicherung bei,
+- Popup verwendet bereits vorhandene Medaillon-, Pfeil- und Schließen-Assets,
+- keine neue Übersetzung, kein Manifest und keine Versionsnummer geändert, damit der DRA-Test absichtlich exakt **ein verwaltetes Modul** verändert.
+
+Wichtig:
+- dieser Zweig ist **nur** ein M12-Abnahmeträger,
+- nach erfolgreichem Ein-Modul-Test wird auf `deploy/dev` zurückgekehrt,
+- die eigentliche Medaillon-Auswahl/-Bearbeitung wird erst nach Abschluss von M12 als eigenes neues Thema sauber versioniert und vollständig umgesetzt.
