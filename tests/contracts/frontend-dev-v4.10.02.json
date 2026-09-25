@@ -27,7 +27,7 @@
       "sizeBytes": 33486
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "6a5935c3d06c660384b68db4063ab4570dbc7fd8a97d10da1da012698a296b6d",
+      "sha256": "c4528eafb23dedff82c5bbb2bca8ca98b0ea870851ac050c9973a10942375f9d",
       "sizeBytes": 91148
     },
     "modules/ui/scroll-guard.js": {
