@@ -125,7 +125,7 @@ for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clust
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.3"',
+  'version:"1.0.4"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
