@@ -501,3 +501,21 @@ Reale DRA-/HA-Abnahme:
 **Einziger offener Abschlussgate:** Cluster-Jump-/Infinity-Instrument real auf Desktop, iPad und Android/HA Companion abnehmen. Danach Schlachtplan auf **ABGESCHLOSSEN** setzen und mit den weiteren Medaillon-Designs fortfahren.
 
 Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
+
+
+---
+
+## R11-Hinweis – nicht freigegebener Dragversuch
+
+Nach R10 wurde ein kurz gemeldeter Vollbild-Drag-Aussetzer vorsorglich mit einem experimentellen R11-Pfad untersucht. Die reale Nachprüfung zeigte anschließend, dass der abgenommene R10-Stand die Diagnosekonsole im Karten-Vollbild korrekt verschieben kann.
+
+Der experimentelle R11-Stand wurde nicht nach `deploy/dev` promotet. Sein Shared-Frontend-Test zeigte sogar eine Regression des bereits bestehenden Desktop-Vollbild-Dragvertrags. Deshalb wurde R11 vollständig verworfen und der Featurezweig mit Commit `9673bdced91f758dc51b8be82a0a0d5c0eacc023` auf den R10-Laufzeit-/Teststand zurückgeführt.
+
+Referenz bleibt:
+- R10 / `41002r10`
+- Modulsatz `CEA6-1ECF`
+- Produktkandidat `4f22f4be5841e47993226928405cc65cdd70e201`
+- `deploy/dev` weiterhin R10
+- reale Abnahme: 22/22, Versionssatz konsistent, keine Abweichungen, Vollbild-Diagnose verschiebbar
+
+Offen ist nur noch die iPad-Abnahme von Cluster-Jump/Infinity. Danach Schlachtplan abschließen und mit den vorbereiteten neuen Medaillon-Designs fortfahren.
