@@ -119,7 +119,7 @@ for(const marker of [
   "if(node.matches?.('svg'))node.replaceChildren();",
   "_diagnosticConsoleBounds()",
   "handle?.addEventListener('touchstart'",
-  "document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false})"
+  "handle?.addEventListener('touchmove'"
 ]){
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
