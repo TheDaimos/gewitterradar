@@ -1,305 +1,376 @@
 # Gewitterradar V4.10.02 – Chat-Übergabe Modularisierung
 
-**Fortgeschriebener Stand:** 2026-09-24  
+**Fortgeschriebener Stand:** 2026-09-25  
 **Projekt:** Gewitterradar  
 **Repository:** `TheDaimos/gewitterradar`  
 **Arbeitszweig:** `feature/v4.10.02-modularization`  
 **Draft-PR:** #24 – `V4.10.02: modular frontend architecture`  
-**Empfohlener DRA-Kanal:** `deploy/dev`
+**DRA-Kanal:** `deploy/dev`
 
-> Diese Datei ist die **kompakte Chat-Übergabe**. Sie wiederholt bewusst nicht das vollständige Arbeitsprotokoll.  
-> Die verbindliche Detailhistorie, Haken und Schleifen stehen ausschließlich in  
-> `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`.
+> Diese Datei ist ausschließlich die kompakte Chat-Übergabe.  
+> Der verbindliche Detailstand, Haken, Testnachweise und Schleifen liegen nur in  
+> `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`.  
+> Keine zweite Übergabe-/Statusdatei anlegen.
 
 ---
 
-## 1. Startanweisung für einen neuen Chat
+## 1. Startanweisung für den neuen Chat
 
-Nicht aus Chatgedächtnis fortsetzen. Zuerst den aktuellen Repository-Stand lesen.
+Nicht aus altem Chatgedächtnis weiterarbeiten.
 
-Verbindliche Reihenfolge:
+Zwingende Reihenfolge:
 
-1. Repository `TheDaimos/gewitterradar` prüfen.
+1. Repository `TheDaimos/gewitterradar` und PR #24 aktuell verifizieren.
 2. `PROJECT_DEFAULTS.md` lesen.
-3. `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` vollständig lesen.
-4. Danach diese Übergabe lesen.
-5. Aktuellen Head von `feature/v4.10.02-modularization`, `deploy/dev`, den aktuellen M12-Testzweig und PR #24 neu verifizieren.
-6. CI-Status neu lesen; keine hier genannte frühere SHA als automatisch aktuell annehmen.
-7. Exakt am Abschnitt **NÄCHSTER SCHRITT** des Schlachtplans fortsetzen.
+3. `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` **vollständig** lesen.
+4. Danach diese bestehende Übergabe lesen.
+5. Feature-Head, `deploy/dev` und CI neu prüfen.
+6. Exakt am Abschnitt **NÄCHSTER SCHRITT** des Schlachtplans fortfahren.
+7. Keine neue parallele Übergabe oder Statusdatei erstellen; diese Datei bei Bedarf fortschreiben.
 
 Wenn der Benutzer sagt:
 
 > „Schau in den Schlachtplan und führe ihn weiter fort.“
 
-ist damit ohne Rückfrage  
-`docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md` gemeint.
+ist genau die genannte Schlachtplan-Datei gemeint.
 
 ---
 
-## 2. Dokumentationsprinzip – keine Doppelpflege
+## 2. Was bereits abgeschlossen ist
 
-Die Dokumentation ist bewusst getrennt:
+Die V4.10.02-Modularisierung besitzt weiterhin **22 erwartete Module**. M12/DRA ist vollständig real bestanden, einschließlich kompletter Modulbaum, Einzelmodul-Delta, Soll/Ist, Cache-/Mischstand, fehlendes/veraltetes Modul, realer Rollback auf V4.09 und Rückkehr auf V4.10.02.
 
-- **Schlachtplan:** einziger Ort für M01–M13, Haken, reale Abnahmen, Testzweige und Schleifen.
-- **Diese Übergabe:** nur aktueller Einstiegspunkt, Zusammenfassung und Fortsetzungsanweisung.
-- **CHANGELOG / HISTORY:** nur dauerhafte Produktänderungen und Projektgeschichte; temporäre M12-Testträger werden dort nicht noch einmal beschrieben.
-- **Testzweige:** enthalten ausschließlich Prüfcode und sind keine Produktfreigaben.
+M13 ist weit fortgeschritten. Bereits dauerhaft umgesetzt bzw. geprüft sind unter anderem:
 
-Beim Fortsetzen keine zweite M12-Übergabe, keine parallele Statusdatei und keine Kopie der Schleifen anlegen. Diese Datei bei Bedarf weiter fortschreiben.
+- Scroll-/Akkordeonkorrekturen der Einstellungen,
+- vollständige 19-Sprachen-Verträge,
+- Module-&-Versionen-Ansicht,
+- Radiuskaskade,
+- rahmenloses Premium-Schließen-X,
+- Vollbild-Cluster-Jump mit Infinity-Umschalter,
+- Kompass-Picker mit **silbernen Retina-Chivron** und silberner Zähleranzeige,
+- Medaillon-Picker analog zum Kompass mit **goldenen/Messing-Retina-Chivron**,
+- Cache-/Runtime-Revision und Modulsatz-ID,
+- Diagnose-/Golden-/Hi-Res-/Source-Archive-/Integrationsverträge.
 
----
-
-## 3. Aktueller Produktstand
-
-Der reale V4.10.02-DEV-Produktstand liegt auf:
-
-`deploy/dev` → `08eec9c3f19c2680ede86336931be8f8e0029424`
-
-Der Arbeitszweig `feature/v4.10.02-modularization` liegt darüber, enthält gegenüber `deploy/dev` aber derzeit nur fortgeschriebene Dokumentation. Produktcode für die aktuellen M12-Sonderfälle liegt ausschließlich auf den unten genannten Testzweigen.
-
-Die Anwendung meldet im normalen DEV-Stand:
-
-- Gewitterradar **V4.10.02**
-- **22 / 22 Module geladen**
-- Versionssatz konsistent
-
-Relevante aktuelle Modulversionen:
-
-- `fullscreen.map-display 1.0.2`
-- `ui.controls 1.1.2`
-- `diagnostics.module-view 1.3.0`
-
-Die vollständige Modulliste nicht hier doppeln; sie steht im Manifest und wird von „Module & Versionen“ zur Laufzeit geprüft.
+Keine öffentliche V4.10-Freigabe, kein Merge nach `main` und kein Release ohne ausdrückliche Benutzerfreigabe.
 
 ---
 
-## 4. Seit der alten Übergabe abgeschlossene dauerhafte Korrekturen
+## 3. Aktueller Produktkandidat R5
 
-Die folgenden Produktkorrekturen sind bereits im normalen DEV-Stand enthalten und im Schlachtplan bzw. bestehenden CHANGELOG/HISTORY dokumentiert:
+Der automatisiert vollständig geprüfte Produktkandidat ist:
 
-- Einstellungen besitzen einen eindeutigen Scroll-Eigentümer; verschachtelte Scrollfehler auf iPad/kleinen Viewports wurden beseitigt.
-- fehlende Einstellungsübersetzungen wurden für alle **19 Sprachvarianten** vervollständigt.
-- „Module & Versionen“ ist vollständig in das Einstellungs-Akkordeon integriert.
-- Medaillon-Diagnose wurde für iPad verbreitert.
-- Einstellungs-Chevrons verwenden die gewünschte Animation.
-- Tooltip-/Mouse-over-Texte wurden über die 19 Sprachvarianten vollständig nachgezogen.
-- Modulzeilen bleiben beim Öffnen/Schließen stabil und werden nicht mehr durch Hintergrund-Synchronisierung sofort neu aufgebaut.
-- alle **22 Modulnamen und vollständigen Funktionslisten** sind in allen **19 Sprachvarianten** lokalisiert.
-- die fremdsprachige Moduldarstellung wurde real auf HA DEV bestätigt.
-- der Standardansicht-Dropdown-Lifecycle wurde korrigiert und real vollständig bestätigt: Hintergrundklick und Akkordeonwechsel hinterlassen keinen verwaisten Dropdown-Layer.
+`fe6fa77ab2d541ab04afc8f6a5ac3493275ce242`
 
-Detaillierte Implementierungs- und Prüfhinweise stehen in den Schleifen 028–040 des Schlachtplans; nicht hier erneut ausführen.
+Laufzeitidentität:
 
----
+- Build: `V4.10.02-MODULAR-DEV-R5-2026-09-25`
+- Runtime-Revision: `41002r5`
+- Modulsatz-ID: `EA13-2B8B`
+- `core.manifest 1.2.10`
+- `core.base-context 1.0.3`
+- `diagnostics.cockpit 1.1.1`
+- `fullscreen.map-display 1.0.11`
 
-## 5. M12 – bisher real abgenommen
+Exakte CI dieses Produktkandidaten:
 
-Im Schlachtplan sind real bestanden:
+- Diagnostic contract #867 → **success**
+- Source archive contract #468 → **success**
+- Hi-Res asset retention #1349 → **success**
+- Validate Gewitterradar integration #2130 → **success**
+- Validate shared Gewitterradar frontend #2111 → **success**
 
-- Deployment des kompletten Modulbaums
-- Deployment nur eines geänderten Moduls
-- Soll-/Ist-Metadaten
-- Neustart-/Frontend-Neuladehinweis
+Damit: **5/5 grün**.
 
-### Realer Ein-Modul-Test
+`deploy/dev` wurde anschließend auf exakt diesen Commit gesetzt und der Vergleich als **identisch** verifiziert.
 
-Testzweig:
-
-`test/dra-v4.10.02-single-module`
-
-aktueller Test-Commit:
-
-`26b935870e5e871ece26fb724d9ef67a019668e7`
-
-Der Zweig basiert auf `deploy/dev` und verändert gegenüber dem normalen DEV-Stand exakt:
-
-`custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
-
-Reale DRA-Vorschau:
-
-**0 neu / 1 geändert / 0 entfernt / 56 unverändert**
-
-Sichtbarer Funktionsbeweis:
-
-- Tippen/Klicken auf das frei bewegliche Medaillon im Vollbild öffnete das provisorische M12-Popup.
-- Ziehen blieb Drag und öffnete kein Popup.
-- damit wurde die tatsächlich geänderte Einzeldatei im laufenden HA-Frontend nachgewiesen.
-- danach wurde über DRA wieder der normale `deploy/dev`-Stand hergestellt.
-
-Der erste Popup-Versuch reagierte noch nicht auf Tap; deshalb wurde derselbe Testzweig innerhalb **derselben einzigen Moduldatei** um einen robusten Klickpfad mit Drag-Unterdrückung ergänzt. Erst dieser Stand wurde real erfolgreich abgenommen.
-
-### Bewusst nicht als Produktfunktion übernehmen
-
-Das Medaillon-Popup ist nur M12-Testträger.
-
-Bekannter Darstellungsfehler:
-- das Schließen-Symbol zeigt im Testdialog einen unerwünschten Rahmen/Fokusrahmen.
-
-Das blockiert M12 nicht und soll nicht separat im Produkt-Changelog dupliziert werden. Nach M12 wird die echte Medaillon-Auswahl/-Bearbeitung als neues Thema aufgebaut. Dabei ist ausdrücklich zu prüfen, ob ein eigenes Modul `instruments.medallion` sinnvoll ist.
+Wichtig: Nachfolgende reine Dokumentationscommits auf dem Featurezweig können dessen Head verändern. Für die reale DRA-Abnahme ist der oben genannte grüne Produktkandidat auf `deploy/dev` maßgeblich. Beim Start trotzdem alle Heads frisch prüfen.
 
 ---
 
-## 6. DRA-Erkenntnisse aus dem Ein-Modul-Test
+## 4. Neue Kompass-/Medaillon-Auswahl
 
-DRA konnte den Testzweig über **Erweiterte Quellenauswahl** laden.
+### Kompass
 
-Wichtige reale Beobachtungen:
+Die Kompassauswahl verwendet jetzt ausschließlich:
 
-- der ausgewählte Branch/Commit muss nach einem neuen Commit erneut über **„Quelle übernehmen“** aktualisiert werden; sonst kann DRA noch den zuvor ausgewählten Commit anzeigen.
-- bei einer reinen Frontend-Änderung zeigte DRA korrekt **„Frontend / Companion App neu laden“**.
-- die Änderungsstatistik **Neu / Geändert / Entfernt / Unverändert** war korrekt, lag in der damaligen Oberfläche aber teilweise unterhalb des zunächst sichtbaren Bereichs. Diese DRA-Oberflächenverbesserung wird im separaten DRA-Projekt behandelt und ist kein Gewitterradar-M12-Blocker.
-- die Warnung „Versionskennung ist gleich, aber verwaltete Dateien unterscheiden sich“ ist für diese Testfälle erwünscht.
+- silberne Retina-Chivron links/rechts,
+- metallisch-silberne Zähleranzeige, z. B. `3 / 6`,
+- rundes Premium-Schließen-X ohne rechteckigen Außenrahmen.
 
-Das Gewitterradar-Manifest bleibt unverändert DRA-fähig; der empfohlene Kanal bleibt `deploy/dev`.
+Die goldenen/Messing-Chivron wurden **nicht gelöscht** und bleiben im Repository.
 
----
+### Medaillon
 
-## 7. M12 vollständig abgeschlossen
+Das Medaillon besitzt jetzt die analoge Picker-Funktion:
 
-M12 – **DRA-Ende-zu-Ende-Test / RELEASE-GATE** ist seit 24.09.2026 vollständig real bestanden.
+- Klick/Tipp öffnet eigenes Popup,
+- goldene/Messing-Chivron links/rechts,
+- goldene Positionsanzeige,
+- Designauswahl wird gespeichert,
+- Vollbild-Tipp ist vom Drag getrennt.
 
-Abgeschlossene reale Nachweise:
-
-- kompletter V4.10.02-Modulbaum über DRA installiert,
-- genau ein geändertes Modul real installiert und sichtbar nachgewiesen,
-- Soll-/Ist-Metadaten mit **22 / 22 Modulen** geprüft,
-- Browsercache-/Mischstand vor und nach hartem Frontend-Neuladen real nachgewiesen,
-- veraltetes Modul `fullscreen.map-display 1.0.1 / erwartet 1.0.2` korrekt erkannt,
-- fehlendes erwartetes Modul `history.chart` korrekt als **fehlt** erkannt,
-- absichtliche Ersatz-ID `history.chart.m12-missing-test` separat als **unerwartet** erkannt,
-- reine Frontend-Änderung verlangte korrekt nur Frontend-/Companion-Neuladen,
-- realer Rollback `V4.10.02 → V4.09` über DRA:
-  - Vorschau **0 neu / 2 geändert / 22 entfernt / 33 unverändert**,
-  - Regression **4.10.02 → 4.09** erkannt,
-  - vollständiger Home-Assistant-Neustart verlangt,
-  - danach real **V4.09** sichtbar,
-- reale Rückkehr `V4.09 → V4.10.02` über DRA:
-  - Vorschau **22 neu / 2 geändert / 0 entfernt / 33 unverändert**,
-  - Upgrade **4.09 → 4.10.02** erkannt,
-  - vollständiger Home-Assistant-Neustart verlangt,
-  - danach wieder **V4.10.02 · 22 / 22 Module geladen · Versionssatz konsistent**.
-
-Alle acht M12-Checkboxen sind damit abgeschlossen.
-
-Die temporären M12-Testzweige bleiben reine Abnahmeträger und dürfen nicht in `deploy/dev` bzw. die Produkt-Historie übernommen werden.
+Aktuell existiert erst ein reales Medaillon-Design `trend_01`; deshalb zeigt die Auswahl momentan `1 / 1`. Die Mechanik ist bereits mehrvariantenfähig.
 
 ---
 
-## 8. Aktueller Stand M13 – Regression & Freigabe
+## 5. Diagnose-Erweiterung für die Picker
 
-M13 ist jetzt das einzige verbleibende Release-Gate.
+Vor dem Hinzufügen weiterer Medaillons wurde die Diagnose vollständig auf die Instrument-Picker erweitert.
 
-Bereits formal abgeschlossen:
+Bei aktivem globalen Diagnosemodus und sichtbarer Diagnosedarstellung besitzen **Kompass- und Medaillon-Picker ihre eigenen Messhilfen direkt innerhalb des nativen `<dialog>`-Top-Layers**. Dadurch verschwinden die Messwerkzeuge beim Öffnen der Popups nicht hinter dem Dialog.
 
-- **HACS** – aktuelle HACS-Action erfolgreich; deterministische Integration-Stagingprüfung byteidentisch.
-- **DRA** – M12 vollständig real bestanden; aktueller DRA-Verbrauchervertrag in CI erfolgreich.
-- **Cache-/Update-Pfade** – Frontend-Neuladen, hartes Cache-Neuladen, vollständiger HA-Neustart, Rollback und Upgrade real geprüft.
-- **Checksummen** – `verify-frontend.mjs` prüft Delivery-Parität und `SHA256SUMS_FRONTEND.txt`; deterministischer Rebuild lässt die Prüfsummendatei unverändert.
-- **CHANGELOG** – V4.10.02-DEV-Abschnitt mit Modularisierung, Abschlusskorrekturen und Modulversionen vorhanden.
-- **HISTORY / Release Notes** – Abschnitt **V4.10.02 · 2026/09 – Modularisierung und UI-Abschluss** vorhanden und fortgeschrieben.
-- **Provider** ist für Gewitterradar in diesem Release-Gate **nicht anwendbar**; NASA/EUMETView/Provider-Playback gehören zum separaten WeatherRouter-Projekt und dürfen M13 nicht blockieren.
+Gemessen werden:
 
-Noch nicht pauschal abhaken:
-- Desktop,
-- Android / HA Companion,
-- Kartenansichten,
-- Vollbild,
-- Kompass,
-- Medaillon,
-- Standort-Pille,
-- Layer-Menü,
-- Cluster,
-- Einstellungen,
-- Logging,
-- Syntax/Lint/Tests bis der aktuelle vollständige CI-Head grün ist.
+### Kompass-Picker
+- Instrumentzentrum,
+- Pivot,
+- horizontale/vertikale Achsen und Diagonalen,
+- Instrument-Bounding-Box,
+- Links-/Rechts-Chivron und Zähler,
+- Navigationssymmetrie,
+- vertikale Streuung,
+- Abstand Instrument → Navigation,
+- Overflow.
 
-Für die reale Restmatrix kompakt prüfen; keine bereits durch M12 oder aktuelle CI eindeutig belegten Punkte erneut künstlich aufblasen.
+### Medaillon-Picker
+- Medaillonzentrum,
+- designspezifische Apertur,
+- Soll-/Ist-Pfeilzentrum,
+- Pfeilgröße,
+- Achsen/Diagonalen/Bounding-Box,
+- goldene Links-/Rechts-Chivron und Zähler,
+- Navigationssymmetrie,
+- Abstand Stage → Navigation,
+- Overflow.
 
----
-
-## 9. Arbeitsregeln nach M12
-
-- M12 nicht erneut öffnen, außer eine echte Regression des abgeschlossenen Nachweises wird gefunden.
-- M13 gezielt und kompakt abschließen.
-- Die echte Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` sind **erst nach M13** ein neues Entwicklungsthema.
-- Keine neue parallele Übergabe- oder Statusdatei anlegen.
-- Keine Veröffentlichung und kein Merge ohne ausdrückliche Benutzerfreigabe.
+Die Picker-Messwerte werden zusätzlich im Diagnose-Snapshot unter `pickers.compass` bzw. `pickers.medallion` geführt.
 
 ---
 
-## 10. CI / PR
+## 6. Designfähige Medaillon-Diagnose
 
-PR #24 ist weiterhin:
+Die Diagnose ist nicht mehr fest auf `MEDALLION_DESIGNS[0]` verdrahtet.
 
-- **offen**
-- **Draft**
-- **mergeable**
-- Head: `feature/v4.10.02-modularization`
-- Base: `main`
+Jedes Medaillon kann in `MEDALLION_DESIGNS` ein eigenes `diagnosticProfile` tragen, unter anderem für:
 
-Vor der Dokumentationskonsolidierung waren auf dem damaligen Head vier der fünf bekannten Workflows bereits erfolgreich:
+- Quellgröße,
+- Aperturzentrum/-radius,
+- Motivzentrum/-radius,
+- Radialabstände,
+- Skalierung,
+- Mittelpunktkorrektur,
+- Pfeilzentrum,
+- Pfeilgröße,
+- Kompositionsregeln.
 
-- Diagnostic contract
-- Hi-Res asset retention
-- Source archive contract
-- Validate Gewitterradar integration
+`trend_01` übernimmt unverändert den bereits abgenommenen Referenzstand und dient als erstes Profil für die kommenden Medaillons.
 
-„Validate shared Gewitterradar frontend“ lief zu diesem Zeitpunkt noch. Da Dokumentationscommits den Branch-Head verändern können, im neuen Chat **immer den aktuellen CI-Stand neu abfragen** statt diesen Zwischenstand als endgültig zu übernehmen.
-
----
-
-## 11. Nicht verhandelbare Arbeitsregeln
-
-- DRA bleibt harte Abnahmebedingung.
-- Keine Tests als erledigt markieren, bevor der reale Nachweis vorliegt.
-- Keine temporären M12-Testzweige in `deploy/dev` oder Produkt-Historie übernehmen.
-- Keine Medaillon-Weiterentwicklung vor Abschluss von M12.
-- Keine doppelte Dokumentation anlegen; Schlachtplan ist Detailquelle, diese Datei ist Übergabe.
-- Nach jedem real abgeschlossenen Punkt: Ergebnis prüfen → Schlachtplan aktualisieren → erst dann weiter.
-- Keine Veröffentlichung/kein Merge ohne ausdrückliche Benutzerfreigabe.
+Damit muss beim Ergänzen weiterer Medaillons nicht erneut eine separate Diagnosearchitektur gebaut werden; jedes neue Design bekommt nur sein eigenes Profil.
 
 ---
 
-## 12. Konkreter Starttext für den nächsten Chat
+## 7. Letzter realer Fehlerfund und R5-Korrektur
+
+Der Benutzer hat beim realen Test zwei konkrete Probleme gefunden:
+
+1. Die Medaillon-Diagnosezustände **LEER / PFEIL / TREND / FREEZE** sprangen immer wieder auf **NORMAL** zurück.
+2. Beim Öffnen des Kompass-/Medaillon-Popups war die große Diagnosekonsole nicht mehr verfügbar; direkter Export im Popup fehlte.
+
+Ursache des Zustandsresets:
+
+- normale Renderläufe rufen `_syncMedallionCalibrationUi()` auf,
+- wenn die Medaillon-Kalibrierung nicht aktiv war, lief `_teardownMedallionCalibration()`,
+- dort wurde zuvor bedingungslos `_setMedallionDiagnosticMode('normal')` ausgeführt.
+
+R5 korrigiert dies:
+
+- NORMAL wird beim Teardown nur noch außerhalb eines aktiven globalen Diagnosemodus erzwungen,
+- während einer Diagnose-Sitzung bleibt der gewählte Zustand erhalten,
+- der Medaillon-Picker spiegelt den Zustand direkt.
+
+---
+
+## 8. Lokale Diagnosewerkzeuge und Export im Popup
+
+Beide Picker besitzen jetzt innerhalb des Dialogs eine eigene kompakte Werkzeugleiste.
+
+### Kompass-Picker
+- Diagnose-Messwerte bleiben sichtbar,
+- **KOPIEREN**
+- **JSON**
+- **CSV**
+
+### Medaillon-Picker
+Zusätzlich zu KOPIEREN/JSON/CSV:
+
+- LEER
+- PFEIL
+- TREND
+- FREEZE
+- NORMAL
+- PFEIL EIN/AUS
+- ANIMATION EIN/AUS
+- FREEZE EIN/AUS
+- 0° / 45° / 90° / 180° / 270°
+
+Der Export verwendet das Schema:
+
+`gewitterradar.picker-diagnostic.v1`
+
+Enthalten sind unter anderem:
+
+- Produkt-/Buildidentität,
+- Viewport und Device-Pixel-Ratio,
+- Picker und Design,
+- globaler Diagnosezustand,
+- Medaillon-Testzustand,
+- vollständige Picker-Messwerte,
+- vorhandener Kalibrierbericht.
+
+Formate:
+
+- Zwischenablage → formatiertes JSON,
+- JSON-Datei → vollständiger strukturierter Datensatz,
+- CSV-Datei → UTF-8 mit BOM, Semikolon-Trennung und flacher Feld/Wert-Darstellung.
+
+Bei niedrigen Querformat-Viewports kann der Picker intern scrollen, damit Messwerte und Werkzeuge erreichbar bleiben.
+
+---
+
+## 9. Automatische Regression
+
+Der Browservertrag wurde erweitert.
+
+`scripts/test-picker-diagnostics.cjs` prüft unter anderem Dashboard und native Integration auf Desktop und iPad:
+
+- lokale Diagnoseebene sichtbar,
+- Werkzeugleiste sichtbar,
+- exakt KOPIEREN/JSON/CSV,
+- globales Ein-/Ausblenden der Diagnosedarstellung,
+- Medaillon-Preset wird über den **realen dynamischen Popup-Button** gesetzt,
+- anschließende Kalibrier-Synchronisierung darf den Zustand nicht auf NORMAL zurücksetzen,
+- Picker muss den Diagnosezustand spiegeln,
+- JSON-/CSV-Payloads werden validiert,
+- Picker-Werte erscheinen im Diagnose-Snapshot.
+
+Zusätzlich schützen statische Python-/Frontend-Verträge:
+
+- designfähige Medaillon-Profile,
+- fehlende Festkopplung an `MEDALLION_DESIGNS[0]`,
+- lokale Picker-Diagnosehooks,
+- lokale Exportmethoden,
+- Versions-/Runtime-/Checksum-Verträge.
+
+---
+
+## 10. Jetzt noch offen – reale R5-Abnahme
+
+**Das ist der nächste Schritt. Nicht erneut implementieren, bevor der aktuelle DRA-Stand real geprüft wurde.**
+
+Über DRA `deploy/dev` installieren und danach:
+
+1. Diagnose starten.
+2. Medaillon **PFEIL** wählen und mehrere normale Render-/Kalibrierzyklen abwarten → darf nicht auf NORMAL springen.
+3. Gleiches mit **TREND** und **FREEZE**.
+4. Medaillon-Picker öffnen:
+   - lokale Diagnosewerkzeuge sichtbar,
+   - Zustand wird korrekt gespiegelt,
+   - Detailsteuerungen funktionieren,
+   - KOPIEREN/JSON/CSV funktionieren.
+5. Kompass-Picker öffnen:
+   - lokale Diagnosewerkzeuge/Messwerte sichtbar,
+   - KOPIEREN/JSON/CSV funktionieren.
+6. Diagnosedarstellung global aus/ein → Picker-Diagnose synchron aus/ein.
+7. Desktop, iPad und Android/HA Companion prüfen.
+
+Erst **danach** mit den zusätzlichen Medaillon-Designs weitermachen.
+
+---
+
+## 11. Repository-/Dokumentationsregeln
+
+Keine Dubletten erzeugen:
+
+- **Schlachtplan:** alleinige Detailquelle für M01–M13, reale Tests, CI und Schleifen.
+- **Diese Datei:** nur aktueller Chat-Einstieg und Fortsetzungsanweisung.
+- **CHANGELOG:** dauerhafte Produktänderungen.
+- **HISTORY:** dauerhafte Projekt-/Produktgeschichte.
+
+Für diese Diagnose-Picker-Änderung ist **kein DRA-Repository-Code geändert worden**. DRA ist nur der Installations-/Abnahmekanal; deshalb wurde bewusst kein redundanter DRA-Changelog-/Handoff-Eintrag erzeugt.
+
+Die relevanten Gewitterradar-Dokumente wurden fortgeschrieben, ohne eine neue parallele Datei anzulegen:
+
+- `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
+- `docs/V4_10_CHAT_HANDOFF_2026-09-22.md`
+- `CHANGELOG.md`
+- `docs/HISTORY.md`
+
+---
+
+## 12. Starttext für den neuen Chat
 
 ```text
 Bootstrap Daimos.
 
-Wir machen mit Gewitterradar V4.10.02 und der Modularisierung weiter.
+Wir setzen Gewitterradar V4.10.02 auf dem bestehenden Arbeitszweig
+feature/v4.10.02-modularization fort.
 
-Arbeite direkt im Repository TheDaimos/gewitterradar auf dem aktuellen Zweig
-feature/v4.10.02-modularization.
+Repository:
+TheDaimos/gewitterradar
 
-Lies zuerst PROJECT_DEFAULTS.md, dann vollständig
-docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md
-und danach die bestehende fortgeschriebene Übergabe
-docs/V4_10_CHAT_HANDOFF_2026-09-22.md.
+Bitte zuerst den aktuellen Repository-/PR-/CI-Stand verifizieren und danach zwingend lesen:
+1. PROJECT_DEFAULTS.md
+2. docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md vollständig
+3. docs/V4_10_CHAT_HANDOFF_2026-09-22.md
 
 Keine neue parallele Übergabe- oder Statusdatei anlegen.
 Der Schlachtplan ist die verbindliche Detailquelle.
 
-M12 ist vollständig real bestanden, einschließlich:
-- kompletter DRA-Modulbaum,
-- Einzelmodul-Delta,
-- Soll/Ist,
-- Browsercache,
-- veraltetes und fehlendes Modul,
-- realer Rollback V4.10.02 → V4.09,
-- reale Rückkehr V4.09 → V4.10.02.
+Wichtiger Produktkandidat:
+fe6fa77ab2d541ab04afc8f6a5ac3493275ce242
+Runtime 41002r5
+Modulsatz EA13-2B8B
+core.manifest 1.2.10
+core.base-context 1.0.3
+diagnostics.cockpit 1.1.1
+fullscreen.map-display 1.0.11
 
-Der aktuelle reale Laufzeitstand ist wieder:
-V4.10.02 · 22/22 Module geladen · Versionssatz konsistent.
+Dieser Produktkandidat ist 5/5 CI-grün:
+Shared Frontend #2111
+Integration #2130
+Diagnostic #867
+Source Archive #468
+Hi-Res #1349
 
-Aktuell läuft ausschließlich M13 – Regression & Freigabe.
-HACS, DRA, Cache-/Update-Pfade, Checksummen, CHANGELOG und HISTORY/Release Notes
-sind bereits abgeschlossen. Provider ist für Gewitterradar nicht anwendbar und
-gehört zu WeatherRouter.
+deploy/dev wurde exakt auf diesen grünen Produktkandidaten gesetzt.
 
-Prüfe beim Start Branch-Heads, PR #24 und CI neu.
-Setze Syntax/Lint/Tests erst bei vollständig grünem aktuellen Head.
-Arbeite danach ohne Rückfrage die verbleibende kompakte reale M13-Matrix ab:
-Desktop, Android/HA Companion, Kartenansichten, Vollbild, Kompass, Medaillon,
-Standort-Pille, Layer-Menü, Cluster, Einstellungen und Logging.
+Der letzte reale Benutzerfund betraf die Diagnose:
+- Medaillon-Zustände LEER/PFEIL/TREND/FREEZE sprangen auf NORMAL zurück.
+- Beim Öffnen der Kompass-/Medaillon-Popups war die außerhalb des Dialog-Top-Layers
+  liegende Diagnosekonsole nicht verfügbar.
+- Direkte Picker-Exporte fehlten.
 
-Keine Veröffentlichung und kein Merge ohne ausdrückliche Benutzerfreigabe.
+R5 enthält die Korrektur:
+- Diagnosezustand bleibt während aktiver Diagnose stabil.
+- Beide Picker besitzen lokale Diagnosewerkzeuge direkt im Popup.
+- Kompass: KOPIEREN / JSON / CSV.
+- Medaillon zusätzlich: LEER/PFEIL/TREND/FREEZE/NORMAL,
+  Pfeil/Animation/Freeze ein/aus, Winkel 0/45/90/180/270,
+  plus KOPIEREN / JSON / CSV.
+- Medaillon-Diagnose ist designfähig über MEDALLION_DESIGNS.diagnosticProfile.
+- trend_01 behält die bereits abgenommenen Referenzwerte.
+
+NÄCHSTER SCHRITT:
+Nicht weiter implementieren, sondern zuerst die reale DRA-Abnahme von deploy/dev durchführen:
+1. PFEIL/TREND/FREEZE dürfen nicht mehr auf NORMAL zurückspringen.
+2. Medaillon-Picker: lokale Diagnosewerkzeuge + Zustandsspiegelung + Export prüfen.
+3. Kompass-Picker: lokale Diagnosewerkzeuge + Export prüfen.
+4. Diagnosedarstellung global aus/ein prüfen.
+5. Desktop, iPad und Android/HA Companion prüfen.
+
+Erst danach mit den weiteren Medaillon-Designs fortfahren.
+
+Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
 ```
