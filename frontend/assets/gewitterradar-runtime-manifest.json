@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R7-2026-09-25",
-  "runtimeRevision": "41002r7",
-  "moduleSetId": "E2DF-E846",
+  "build": "V4.10.02-MODULAR-DEV-R8-2026-09-25",
+  "runtimeRevision": "41002r8",
+  "moduleSetId": "BA65-1226",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.12"
+      "version": "1.2.13"
     },
     {
       "id": "core.base-context",
