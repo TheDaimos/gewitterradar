@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.2"',
+  '"version": "1.1.4"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -31,7 +31,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.2"',
+  'version:"1.3.3"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -76,7 +76,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.2.3"',
+  '"version": "1.2.4"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -86,7 +86,7 @@ for(const marker of [
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "ui.render"','"version": "1.0.1"',
+  '"id": "ui.render"','"version": "1.0.2"',
   "this._t('app.release_history')",
   "this._t('settings.cluster_resolution_select')",
   "this._t('settings.cluster_navigation_session_aria')"
@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.12"',
+  '"id": "fullscreen.map-display"','"version": "1.0.13"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -104,7 +104,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.1.3"',
+  '"id": "diagnostics.cockpit"','"version": "1.1.4"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
@@ -121,7 +121,7 @@ for(const marker of [
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "map.clusters-recent"','"version": "1.0.2"',
+  '"id": "map.clusters-recent"','"version": "1.0.3"',
   "this._t('settings.cluster_navigation_to_session')",
   "this._t('settings.cluster_navigation_to_infinite')"
 ]){
@@ -134,7 +134,7 @@ for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clust
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.4"',
+  'version:"1.0.5"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
