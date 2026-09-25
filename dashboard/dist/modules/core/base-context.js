@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41002r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.2",
+  version:"1.0.3",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
