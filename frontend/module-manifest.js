@@ -1,9 +1,9 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r10";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R10-2026-09-25",runtimeRevision:"41002r10",moduleSetId:"CEA6-1ECF"});
+import { registerModule } from "./modules/core/registry.js?v=41002r11";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R11-2026-09-25",runtimeRevision:"41002r11",moduleSetId:"3553-A031"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.15",
+    "version": "1.2.16",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -15,7 +15,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.base-context",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "group": "Kern",
     "function": "Konstanten & gemeinsame Helfer",
     "subfunctions": [
@@ -42,7 +42,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.runtime",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Modul-Laufzeit",
     "subfunctions": [
@@ -54,7 +54,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -80,7 +80,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.scroll-guard",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Oberfläche",
     "function": "Scrollschutz",
     "subfunctions": [
@@ -93,7 +93,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -106,7 +106,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-scale",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Instrumente",
     "function": "Kompass-Skala",
     "subfunctions": [
@@ -117,7 +117,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -130,7 +130,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -143,7 +143,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.source-status",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Datenquellenstatus",
     "subfunctions": [
@@ -154,7 +154,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-selector",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Instrumente",
     "function": "Kompassauswahl",
     "subfunctions": [
@@ -167,7 +167,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -182,7 +182,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -196,7 +196,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-design",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Instrumente",
     "function": "Kompassdesign",
     "subfunctions": [
@@ -207,7 +207,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -220,7 +220,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.strikes-warnings",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Karte",
     "function": "Blitze & Warnungen",
     "subfunctions": [
@@ -232,7 +232,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -245,7 +245,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.render",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Oberfläche",
     "function": "Hauptrendering",
     "subfunctions": [
@@ -258,7 +258,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Instrumente",
     "function": "Kompass",
     "subfunctions": [
@@ -270,7 +270,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "history.chart",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Verlauf",
     "function": "Trend & Verlauf",
     "subfunctions": [
@@ -280,4 +280,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.15",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.16",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
