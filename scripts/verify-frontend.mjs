@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.3"',
+  '"version": "1.1.2"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -95,7 +95,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.1.2"',
+  '"id": "diagnostics.cockpit"','"version": "1.1.3"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
