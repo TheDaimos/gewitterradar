@@ -2558,7 +2558,7 @@ Promotion abgeschlossen: `deploy/dev` zeigt verifiziert auf `55e585482a2ea7b0ac4
 ## Schleife 072 – R7: Diagnose-Teardown im geöffneten Picker
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung und automatisierte Abnahme vollständig grün; finale Dokumentations-CI und Promotion nach `deploy/dev` offen
+**Status:** vollständig abgeschlossen; automatisiert 5/5 grün, nach `deploy/dev` promoviert und real über DRA/HA abgenommen
 
 Realer R6-Befund auf Android/HA Companion:
 - TREND-Animation funktioniert sichtbar,
@@ -2605,4 +2605,10 @@ Automatisierter R7-Abschluss des Produkt-/Teststands:
 - Source archive contract **#515** → success.
 - Hi-Res asset retention **#1461** → success.
 
-**NÄCHSTER SCHRITT:** diesen Dokumentationsstand vollständig durch CI prüfen und anschließend den exakt grünen finalen Head nach `deploy/dev` promoten. Danach reale R7-Nachprüfung: Diagnose im geöffneten Kompass- und Medaillon-Picker beenden; Raster/Messhilfen müssen sofort verschwinden, ohne das Popup zu schließen. Erst danach die restliche R6/R7-Geräteabnahme und anschließend weitere Medaillons.
+Promotion und reale Abnahme abgeschlossen:
+- finaler dokumentierter R7-Head `6e43561c5e5616b01f687f189817cecfd8635cbd` war **5/5 grün** (Shared Frontend #2232, Integration #2251, Diagnostic #955, Source Archive #518, Hi-Res #1468),
+- `deploy/dev` wurde exakt auf diesen R7-Head gesetzt und verifiziert,
+- reale DRA-/HA-Abnahme erfolgreich: Diagnose im geöffneten Picker beenden → Raster/Messhilfen verschwinden sofort, Picker bleibt offen,
+- der zuvor bestätigte R6-Funktionsumfang bleibt intakt: sichtbare TREND-Animation, korrekte absolute Winkel, sichtbare KP-/MP-Raster und erreichbare Diagnosekonsole.
+
+**NÄCHSTER SCHRITT:** Diagnose-/Picker-Korrekturblock R5–R7 ist abgeschlossen. Die Arbeit an den weiteren Medaillon-Designs darf nun fortgesetzt werden.
