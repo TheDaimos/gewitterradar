@@ -1,9 +1,9 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r8";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R8-2026-09-25",runtimeRevision:"41002r8",moduleSetId:"3541-2967"});
+import { registerModule } from "./modules/core/registry.js?v=41002r9";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R9-2026-09-25",runtimeRevision:"41002r9",moduleSetId:"9EBD-F27E"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.13",
+    "version": "1.2.14",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -30,7 +30,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.registry",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Kern",
     "function": "Modulregister",
     "subfunctions": [
@@ -130,7 +130,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -167,7 +167,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -280,4 +280,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.13",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.14",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
