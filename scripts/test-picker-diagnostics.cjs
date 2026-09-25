@@ -189,6 +189,46 @@ const server = http.createServer((req, res) => {
         const animB = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
         assert.notEqual(animA, animB, `${delivery}/${profile} medallion diagnostic animation visibly changes transform`);
 
+        const diagnosticExitInOpenPicker = await page.evaluate(() => {
+          const card=window.aboutCard,dialog=card._medallionPickerDialog;
+          card._stopDiagnostics();
+          const stage=dialog.querySelector('[data-medallion-picker-diagnostic-stage]');
+          const nav=dialog.querySelector('[data-medallion-picker-diagnostic-nav]');
+          const readout=dialog.querySelector('[data-medallion-picker-diagnostic-readout]');
+          const tools=dialog.querySelector('[data-medallion-picker-diagnostic-tools]');
+          return {
+            pickerOpen:!!dialog?.open,
+            enabled:!!card._diagnostics?.enabled,
+            stageHidden:stage.hidden,
+            navHidden:nav.hidden,
+            readoutHidden:readout.hidden,
+            toolsHidden:tools.hidden,
+            stageDisplay:getComputedStyle(stage).display,
+            navDisplay:getComputedStyle(nav).display,
+            stageMarkup:stage.innerHTML,
+            navMarkup:nav.innerHTML,
+          };
+        });
+        assert.equal(diagnosticExitInOpenPicker.pickerOpen, true, `${delivery}/${profile} diagnostic exit keeps medallion picker open`);
+        assert.equal(diagnosticExitInOpenPicker.enabled, false, `${delivery}/${profile} diagnostic exit disables diagnostics`);
+        assert.equal(diagnosticExitInOpenPicker.stageHidden, true, `${delivery}/${profile} diagnostic exit hides medallion stage overlay immediately`);
+        assert.equal(diagnosticExitInOpenPicker.navHidden, true, `${delivery}/${profile} diagnostic exit hides medallion nav overlay immediately`);
+        assert.equal(diagnosticExitInOpenPicker.readoutHidden, true, `${delivery}/${profile} diagnostic exit hides medallion readout immediately`);
+        assert.equal(diagnosticExitInOpenPicker.toolsHidden, true, `${delivery}/${profile} diagnostic exit hides medallion tools immediately`);
+        assert.equal(diagnosticExitInOpenPicker.stageDisplay, 'none', `${delivery}/${profile} hidden stage overlay wins over prior inline important display`);
+        assert.equal(diagnosticExitInOpenPicker.navDisplay, 'none', `${delivery}/${profile} hidden nav overlay wins over prior inline important display`);
+        assert.equal(diagnosticExitInOpenPicker.stageMarkup, '', `${delivery}/${profile} diagnostic exit clears stale medallion stage raster`);
+        assert.equal(diagnosticExitInOpenPicker.navMarkup, '', `${delivery}/${profile} diagnostic exit clears stale medallion nav raster`);
+
+        await page.evaluate(() => {
+          const card=window.aboutCard;
+          card._startDiagnostics();
+          card._diagnostics.visualsVisible=true;
+          card._diagnostics.grid='fine';
+          Object.assign(card._diagnostics.overlays,{ids:true,boxes:true,centers:true,axes:true,diagonals:true});
+          card._syncDiagnosticUi();
+        });
+
         const fullscreen = await page.evaluate(() => {
           const card=window.aboutCard;
           card._closeMedallionPicker(false);
