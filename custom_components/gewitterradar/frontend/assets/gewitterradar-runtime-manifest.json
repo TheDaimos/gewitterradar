@@ -3,7 +3,7 @@
   "productVersion": "4.10.02",
   "build": "V4.10.02-MODULAR-DEV-R8-2026-09-25",
   "runtimeRevision": "41002r8",
-  "moduleSetId": "BA65-1226",
+  "moduleSetId": "3541-2967",
   "modules": [
     {
       "id": "core.manifest",
@@ -11,7 +11,7 @@
     },
     {
       "id": "core.base-context",
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     {
       "id": "core.registry",
