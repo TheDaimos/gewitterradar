@@ -36,25 +36,36 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**Zwischenauftrag Diagnose-Erweiterung vor weiteren Medaillons vollständig abschließen.**
+**Zwischenauftrag Diagnose-Picker R5 vollständig abnehmen.**
 
-Aktueller Implementierungsstand:
-- Kompass-Picker besitzt bei aktiver globaler Diagnose eine lokale Diagnoseebene direkt im nativen Popup.
-- Medaillon-Picker besitzt dieselbe lokale Diagnoseebene und verwendet das aktuell ausgewählte Medaillon.
-- `MEDALLION_DESIGNS` ist um ein designspezifisches `diagnosticProfile` erweitert; `trend_01` übernimmt unverändert die bereits abgenommenen Geometriewerte.
-- Medaillon-Kalibrierung verwendet nicht mehr fest `MEDALLION_DESIGNS[0]`.
-- Diagnose-Snapshot exportiert zusätzlich die aktuell geöffneten Picker-Messwerte.
-- Browser-Regressionsprüfung für Dashboard/Integration auf Desktop und iPad ist ergänzt.
-- Runtime-Zielstand: `41002r4`; `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.0`, `fullscreen.map-display 1.0.10`, `core.manifest 1.2.9`, Modulsatz `02AE-EBFC`.
+Realer Befund vom 25.09.2026:
+- Medaillon-Zustände **LEER / PFEIL / TREND / FREEZE** sprangen während der Verprobung wieder auf **NORMAL** zurück.
+- Ursache: die bei normalen Renderläufen aufgerufene Kalibrier-Synchronisierung führte bei deaktivierter Medaillon-Kalibrierung die Aufräumroutine aus; diese setzte bislang immer den Diagnosezustand auf NORMAL.
+- Die große Diagnosekonsole liegt außerhalb des nativen `<dialog>`-Top-Layers und ist bei geöffnetem Kompass-/Medaillon-Picker daher nicht erreichbar.
+- Im Picker selbst fehlten direkte Exportwege für die dort gemessene Geometrie.
+
+Korrigierter R5-Zielstand:
+- Diagnosezustand bleibt während eines laufenden globalen Diagnosemodus stabil; NORMAL wird erst beim tatsächlichen Beenden der Diagnose bzw. außerhalb einer Diagnose-Sitzung wiederhergestellt.
+- Medaillon-Picker spiegelt den aktiven Diagnosezustand selbst: LEER, PFEIL, TREND, FREEZE, NORMAL sowie Pfeil/Animation/Freeze und 0°/45°/90°/180°/270°.
+- Kompass- und Medaillon-Picker besitzen innerhalb des Top-Layer-Dialogs eine kompakte Diagnose-Werkzeugleiste.
+- Beide Picker besitzen **KOPIEREN**, **JSON** und **CSV**.
+- Export enthält Build, Viewport, Design, Diagnosezustand, Picker-Messwerte und vorhandenen Kalibrierbericht.
+- Kurze Querformat-Viewports können den Picker intern scrollen.
+- Runtime-Zielstand: `41002r5`; `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.1`, `fullscreen.map-display 1.0.11`, `core.manifest 1.2.10`, Modulsatz `EA13-2B8B`.
 
 Jetzt in dieser Reihenfolge:
-1. Implementierungs-Head `66db3d941e0f9c41098fb4a18b48521b494ca8a9` ist vollständig 5/5 grün; jetzt nur noch den finalen Dokumentations-Head vollständig durch alle CI-Gates laufen lassen.
-2. Erst bei vollständig grünem finalen Head `deploy/dev` auf exakt diesen Commit setzen.
-3. Reale DRA-Abnahme: Diagnose aktivieren, Kompass-Picker und Medaillon-Picker öffnen und lokale Achsen/Messwerte prüfen; Diagnoseanzeige aus/ein muss die Picker-Diagnose mit aus/ein schalten.
-4. Medaillon-Diagnosebericht muss `trend_01` als aktives Profil melden und weiterhin den bestehenden Referenzstand messen.
-5. Danach können die weiteren Medaillonvarianten in denselben Design-/Diagnosevertrag aufgenommen werden.
+1. Exakten R5-Feature-Head vollständig durch alle CI-Gates laufen lassen; jeden Fehler direkt korrigieren.
+2. Erst bei vollständig grünem Head `deploy/dev` auf exakt diesen Commit setzen.
+3. Reale DRA-Abnahme:
+   - Diagnose starten, im Medaillon **PFEIL**, **TREND** und **FREEZE** wählen; Zustand darf bei normalen Render-/Kalibrier-Synchronisierungen nicht mehr auf NORMAL springen.
+   - Medaillon-Picker öffnen: lokale Diagnosewerkzeuge müssen sichtbar und bedienbar sein; der Picker muss den gewählten Zustand unmittelbar spiegeln.
+   - Kompass-Picker öffnen: lokale Diagnosewerkzeuge und Messwerte müssen sichtbar bleiben.
+   - KOPIEREN, JSON und CSV in beiden Pickern prüfen.
+   - iPad/Android sowie Desktop prüfen.
+4. Danach weitere Medaillonvarianten über denselben Design-/Diagnosevertrag aufnehmen.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
+
 ---
 
 # 1. Zielarchitektur
@@ -2408,3 +2419,58 @@ Automatisierte Abnahme des Implementierungsstands:
 - Neuer Picker-Diagnose-Browsertest ist für Dashboard und native Integration auf Desktop und iPad erfolgreich.
 
 **Nächster Schritt:** diesen Dokumentationsstand selbst noch einmal vollständig durch CI prüfen. Erst der danach vollständig grüne finale Head wird exakt nach `deploy/dev` promoviert. Anschließend reale DRA-/HA-Abnahme der Diagnose im Kompass-/Medaillon-Popup; danach weitere Medaillons.
+
+## Schleife 070 – Reale Diagnose-Picker-Regressionskorrektur und Export
+
+**Datum:** 2026-09-25  
+**Status:** Implementierung/Verträge abgeschlossen; exakte R5-CI und DRA-Abnahme offen
+
+Realer Befund anhand der HA-Diagnoseansicht und der geöffneten Instrument-Picker:
+1. Medaillon-Testzustände sprangen nach der Auswahl wieder auf **NORMAL** zurück.
+2. Die außerhalb des nativen Dialogs liegende Diagnosekonsole war bei geöffnetem Kompass-/Medaillon-Picker nicht mehr erreichbar.
+3. Die Picker-Diagnose besaß dort keinen direkten Export.
+
+Ursache Zustandsreset:
+- `ui.render` ruft regulär `_syncMedallionCalibrationUi()` auf,
+- bei nicht aktivierter Medaillon-Kalibrierung lief `_teardownMedallionCalibration()`,
+- diese Routine setzte bislang bedingungslos `_setMedallionDiagnosticMode('normal')`,
+- dadurch konnte jeder normale Renderzyklus einen aktiv gewählten Diagnosezustand überschreiben.
+
+Korrektur:
+- `_teardownMedallionCalibration()` setzt nur noch dann auf NORMAL zurück, wenn der globale Diagnosemodus **nicht** aktiv ist,
+- innerhalb einer Diagnose-Sitzung bleiben LEER/PFEIL/TREND/FREEZE über Render-/Kalibrier-Synchronisierungen stabil,
+- `_applyMedallionDiagnosticState()` synchronisiert den geöffneten Medaillon-Picker sofort mit,
+- der Picker besitzt eine eigene Diagnose-Darstellung für statische Winkel, Sweep-Animation und Freeze.
+
+Top-Layer-Werkzeuge:
+- Kompass-Picker: lokale Diagnose-Werkzeugleiste + KOPIEREN/JSON/CSV,
+- Medaillon-Picker: vollständige lokale Zustandssteuerung, Pfeil EIN/AUS, Animation EIN/AUS, Freeze EIN/AUS, Winkel 0/45/90/180/270 sowie KOPIEREN/JSON/CSV,
+- Werkzeugleisten und Messhilfen folgen dem globalen Schalter für die Diagnosedarstellung,
+- Dialoge erhalten bei niedriger Viewport-Höhe einen internen Scrollpfad, damit Werkzeuge erreichbar bleiben.
+
+Exportvertrag:
+- Schema `gewitterradar.picker-diagnostic.v1`,
+- Zwischenablage: formatiertes JSON,
+- JSON-Download: vollständiger strukturierter Picker-Datensatz,
+- CSV-Download: UTF-8/BOM, Semikolon-Trennung, flache Feld/Wert-Darstellung,
+- enthalten: Anwendung/Build, Viewport/DPR, Picker/Design, globaler Diagnosezustand, Medaillon-Zustand, Messwerte und vorhandener Kalibrierbericht.
+
+Automatisierte Regression erweitert:
+- Browserprüfung verlangt sichtbare lokale Werkzeugleisten im Kompass- und Medaillon-Picker,
+- je Picker genau KOPIEREN/JSON/CSV,
+- Medaillon-Preset **PFEIL/static** wird per echtem dynamischem Popup-Button gesetzt,
+- anschließende `_syncMedallionCalibrationUi()` darf diesen Zustand nicht auf NORMAL zurücksetzen,
+- Picker muss `data-trend-state="diagnostic"` / `data-diagnostic-mode="static"` spiegeln,
+- JSON-/CSV-Payload wird in der Browserprüfung validiert,
+- statischer Vertrag schützt die Exportmethoden und den bedingten NORMAL-Rückfall.
+
+R5-Zielstand:
+- `core.base-context` **1.0.3**,
+- `diagnostics.cockpit` **1.1.1**,
+- `fullscreen.map-display` **1.0.11**,
+- `core.manifest` **1.2.10**,
+- Runtime `41002r5`,
+- Modulsatz `EA13-2B8B`.
+
+**Nächster Schritt:** exakten R5-Head vollständig grün prüfen, danach nach `deploy/dev` promovieren und die oben definierte reale DRA-Abnahme durchführen. Erst anschließend mit den weiteren Medaillons fortfahren.
+
