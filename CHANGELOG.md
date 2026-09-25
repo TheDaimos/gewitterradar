@@ -1,6 +1,13 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### R11 – experimenteller Vollbild-Dragversuch verworfen
+- Nach der R10-Abnahme wurde ein kurzzeitig gemeldeter Drag-Aussetzer der Diagnosekonsole im Karten-Vollbild untersucht.
+- Die reale R10-Nachprüfung bestätigte den Drag als funktionsfähig; R10 blieb der freigegebene DRA-Stand.
+- Ein vorsorglicher R11-Zwischenstand wurde nie nach `deploy/dev` promoviert und zeigte im Shared-Frontend-Test selbst eine Desktop-Regression des bestehenden Vollbild-Dragvertrags.
+- R11 wurde deshalb vollständig verworfen; Feature-Laufzeit, Tests, Manifeste, Ausleitungen und Prüfsummen wurden auf den real abgenommenen R10-Stand zurückgeführt. Dokumentations-/Abnahmefortschritte bleiben erhalten.
+- Kanonische Referenz bleibt R10: Runtime `41002r10`, Modulsatz `CEA6-1ECF`, Kandidat `4f22f4be5841e47993226928405cc65cdd70e201`.
+
 ### R10 – interne Modul-Cachekennung vereinheitlicht
 - Der in R9 neu eingeführte Abweichungsdialog wurde real über DRA/HA abgenommen; Darstellung und kontextbezogene Exporte funktionieren wie vorgesehen.
 - Der R9-Export zeigte gemischte interne ES-Modul-URLs mit aktuellen und alten Cachekennungen (`r9`, `r1`, teilweise `r2`). Dadurch wurden `core.registry` und `core.runtime` mehrfach instanziiert.
