@@ -2790,6 +2790,7 @@ Reale DRA-/HA-Abnahme:
 - **✓ Versionssatz konsistent**,
 - **Modulsatz-ID `CEA6-1ECF`**,
 - keine Abweichungen mehr,
-- Modul-Details zeigen die erwarteten R10-Versionen.
+- Modul-Details zeigen die erwarteten R10-Versionen,
+- Diagnosefenster im Karten-Vollbild erneut real geprüft: **verschiebbar**; der zuvor beobachtete Drag-Aussetzer ist nach R10 nicht mehr reproduzierbar, daher kein zusätzlicher Fix erforderlich.
 
 **NÄCHSTER SCHRITT:** Es bleibt ausschließlich die reale Cluster-Jump-/Infinity-Abnahme aus Schleife 068 auf Desktop, iPad und Android/HA Companion. Danach Schlachtplanstatus **ABGESCHLOSSEN** und anschließend weitere Medaillon-Designs.
