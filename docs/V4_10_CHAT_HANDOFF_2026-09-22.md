@@ -459,8 +459,12 @@ Vom Benutzer ausdrücklich als erledigt bestätigt:
 - Radius-Kaskade,
 - Kompass-Schließen-X.
 
+Automatisierter R8-Abschluss:
+- Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` ist 5/5 grün: Shared Frontend #2304, Integration #2323, Diagnostic #1007, Source Archive #548, Hi-Res #1539.
+- `deploy/dev` zeigt verifiziert exakt auf diesen R8-Kandidaten.
+
 Tatsächlich noch offene Abschlussgates:
-1. R8 vollständig 5/5 CI-grün, nach `deploy/dev` promoten und real über DRA installieren; anschließend `22/22 Module geladen / Versionssatz konsistent` bestätigen.
+1. R8 real über DRA installieren; anschließend `22/22 Module geladen / Versionssatz konsistent` bestätigen.
 2. Cluster-Jump-Pille / Infinity-Schalter aus Schleife 068 real auf Desktop, iPad und Android/HA Companion prüfen: Ein/Aus, Statusspiegelung, nächster Cluster, Verschieben, Persistenz und Standardposition.
 
 Danach wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt und der nächste Produktblock sind die **weiteren Medaillon-Designs**.
