@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -92,8 +92,8 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       const dialog=this._compassPickerDialog;
       if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.compass=null;return null;}
       const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-compass-picker-stage]'),nav=dialog.querySelector('.compass-picker-nav-row'),
-        stageOverlay=dialog.querySelector('[data-compass-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-compass-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-compass-picker-diagnostic-readout]');
-      [stageOverlay,navOverlay,readout].forEach((node)=>{if(node)node.hidden=!enabled;});
+        stageOverlay=dialog.querySelector('[data-compass-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-compass-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-compass-picker-diagnostic-readout]'),tools=dialog.querySelector('[data-compass-picker-diagnostic-tools]');
+      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node)node.hidden=!enabled;});
       if(!enabled||!stage||!nav)return null;
       const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),instrument=stage.querySelector('.compass-instrument');
       if(!(stageRect.width>0&&stageRect.height>0&&instrument))return null;
@@ -131,8 +131,8 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       const dialog=this._medallionPickerDialog;
       if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.medallion=null;return null;}
       const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-medallion-picker-stage]'),nav=dialog.querySelector('.medallion-picker-nav'),
-        stageOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-medallion-picker-diagnostic-readout]');
-      [stageOverlay,navOverlay,readout].forEach((node)=>{if(node)node.hidden=!enabled;});
+        stageOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-medallion-picker-diagnostic-readout]'),tools=dialog.querySelector('[data-medallion-picker-diagnostic-tools]');
+      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node)node.hidden=!enabled;});
       if(!enabled||!stage||!nav)return null;
       const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),preview=stage.querySelector('.medallion-picker-preview'),base=stage.querySelector('[data-medallion-picker-base]'),arrow=stage.querySelector('.trend-medallion-arrow');
       if(!(stageRect.width>0&&stageRect.height>0&&preview&&base&&arrow))return null;
@@ -177,6 +177,78 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
 
     _clearPickerDiagnostic(kind) {
       if(this._pickerDiagnostics&&kind in this._pickerDiagnostics)this._pickerDiagnostics[kind]=null;
+    },
+
+    _pickerDiagnosticPayload(kind) {
+      const normalized=kind==='medallion'?'medallion':'compass';
+      const measurement=normalized==='medallion'?this._measureMedallionPickerDiagnostics():this._measureCompassPickerDiagnostics();
+      const designId=measurement?.designId||null;
+      const calibration=normalized==='medallion'
+        ? {enabled:!!this._medallionCalibrationEnabled,report:this._medallionCalibrationReportText||null,details:this._medallionCalibrationDetailText||null}
+        : {enabled:!!this._compassCalibrationEnabled,report:this._compassCalibrationReportText||null,details:this._compassCalibrationDetailText||null};
+      return {
+        schema:'gewitterradar.picker-diagnostic.v1',
+        generatedAt:new Date().toISOString(),
+        application:{name:'Gewitterradar',version:CARD_DISPLAY_VERSION,releaseVersion:CARD_VERSION,build:GEWITTERRADAR_BUILD},
+        picker:normalized,
+        designId,
+        viewport:{width:innerWidth,height:innerHeight,devicePixelRatio,visualScale:window.visualViewport?.scale??1},
+        diagnosticState:{enabled:!!this._diagnostics?.enabled,visualsVisible:!!this._diagnostics?.visualsVisible,live:!!this._diagnostics?.live},
+        medallionState:normalized==='medallion'?{...(this._medallionDiagnostic||{})}:null,
+        measurement:measurement||null,
+        calibration
+      };
+    },
+
+    _pickerDiagnosticCsv(kind) {
+      const payload=this._pickerDiagnosticPayload(kind),rows=[['Feld','Wert']];
+      const push=(value,path)=>{
+        if(value==null||typeof value!=='object'){rows.push([path,value==null?'':String(value)]);return;}
+        if(Array.isArray(value)){if(!value.length)rows.push([path,'[]']);else value.forEach((entry,index)=>push(entry,`${path}[${index}]`));return;}
+        const entries=Object.entries(value);if(!entries.length){rows.push([path,'{}']);return;}
+        entries.forEach(([key,entry])=>push(entry,path?`${path}.${key}`:key));
+      };
+      push(payload,'');
+      const quote=(value)=>`"${String(value).replace(/"/g,'""')}"`;
+      return rows.map(([field,value])=>`${quote(field)};${quote(value)}`).join('\r\n');
+    },
+
+    _pickerDiagnosticFilename(kind,extension) {
+      const normalized=kind==='medallion'?'medallion':'compass',measurement=this._pickerDiagnostics?.[normalized],design=(measurement?.designId||'unknown').replace(/[^a-z0-9_-]+/gi,'-'),stamp=new Date().toISOString().replace(/[:.]/g,'-');
+      return `gewitterradar_${normalized}_picker_${design}_${stamp}.${extension}`;
+    },
+
+    _downloadPickerDiagnostic(kind,format='json') {
+      const normalizedFormat=format==='csv'?'csv':'json',payload=normalizedFormat==='csv'?('\ufeff'+this._pickerDiagnosticCsv(kind)):JSON.stringify(this._pickerDiagnosticPayload(kind),null,2),
+        type=normalizedFormat==='csv'?'text/csv;charset=utf-8':'application/json;charset=utf-8',blob=new Blob([payload],{type}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
+      anchor.href=url;anchor.download=this._pickerDiagnosticFilename(kind,normalizedFormat);document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    },
+
+    _copyPickerDiagnostic: async function(kind,button=null) {
+      const text=JSON.stringify(this._pickerDiagnosticPayload(kind),null,2);let copied=false;
+      try{await navigator.clipboard.writeText(text);copied=true;}catch(_){
+        const area=document.createElement('textarea');area.value=text;area.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(area);area.select();
+        try{copied=document.execCommand('copy');}catch(_error){}finally{area.remove();}
+      }
+      if(button){
+        const old=button.textContent;button.textContent=copied?'✓ KOPIERT':'KOPIEREN FEHLGESCHLAGEN';
+        setTimeout(()=>{if(button.isConnected)button.textContent=old;},1200);
+      }
+      return copied;
+    },
+
+    _bindPickerDiagnosticActions(shell,kind) {
+      if(!shell)return;
+      shell.querySelector('[data-picker-diagnostic-copy]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._copyPickerDiagnostic(kind,event.currentTarget);});
+      shell.querySelector('[data-picker-diagnostic-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadPickerDiagnostic(kind,'json');});
+      shell.querySelector('[data-picker-diagnostic-csv]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadPickerDiagnostic(kind,'csv');});
+      if(kind==='medallion'){
+        shell.querySelectorAll('[data-medallion-preset]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticMode(button.dataset.medallionPreset);}));
+        shell.querySelectorAll('[data-medallion-angle]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticAngle(Number(button.dataset.medallionAngle));}));
+        shell.querySelectorAll('[data-medallion-arrow]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticArrow(button.dataset.medallionArrow==='on');}));
+        shell.querySelectorAll('[data-medallion-animation]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticAnimation(button.dataset.medallionAnimation==='on');}));
+        shell.querySelectorAll('[data-medallion-freeze]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticFreeze(button.dataset.medallionFreeze==='on');}));
+      }
     },
 
     _diagnosticRegistry() {
@@ -617,7 +689,7 @@ ${this._diagnosticStormText(8)}`;}
       const root=this.shadow?.getElementById('card-root'),state=this._medallionDiagnostic;if(!root||!state)return;
       root.classList.remove('medallion-diagnostic-active','medallion-diagnostic-arrow-off','medallion-diagnostic-static','medallion-diagnostic-animation','medallion-diagnostic-frozen');root.style.removeProperty('--medallion-diagnostic-angle');
       if(state.mode!=='normal'){root.classList.add('medallion-diagnostic-active');root.style.setProperty('--medallion-diagnostic-angle',`${state.angle}deg`);root.classList.toggle('medallion-diagnostic-arrow-off',state.arrowVisible===false);root.classList.toggle('medallion-diagnostic-static',state.animationEnabled===false&&state.arrowVisible!==false);root.classList.toggle('medallion-diagnostic-animation',state.animationEnabled===true);root.classList.toggle('medallion-diagnostic-frozen',state.frozen===true);}
-      this._syncMedallionDiagnosticUi();this._measureMedallionCalibration();
+      this._syncMedallionDiagnosticUi();this._syncMedallionPicker?.();this._syncPickerDiagnostics?.();this._measureMedallionCalibration();
     },
 
     _syncMedallionDiagnosticUi() {
@@ -651,7 +723,7 @@ ${this._diagnosticStormText(8)}`;}
     },
 
     _teardownMedallionCalibration() {
-      this._setMedallionDiagnosticMode('normal');
+      if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');
       this._medallionCalibrationResizeObserver?.disconnect();
       this._medallionCalibrationResizeObserver=null;
       this._closeMedallionCalibration(false);
