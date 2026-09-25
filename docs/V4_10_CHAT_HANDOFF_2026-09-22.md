@@ -470,3 +470,34 @@ Tatsächlich noch offene Abschlussgates:
 Danach wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt und der nächste Produktblock sind die **weiteren Medaillon-Designs**.
 
 Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
+
+
+---
+
+## R10-Abschluss – einheitliche interne Cachekennung
+
+R9 wurde real über DRA/HA abgenommen. Der neue Abweichungsdialog und der kontextbezogene JSON-Export funktionierten wie vorgesehen. Der Export zeigte, dass die scheinbar vier Abweichungen auf einen gemeinsamen technischen Ursprung zurückgingen: interne Modulimporte verwendeten gleichzeitig aktuelle und alte Cachekennungen (`r9`, `r1`, teilweise `r2`), wodurch der Browser identische Kernmodule als unterschiedliche ES-Modul-URLs mehrfach instanziierte.
+
+R10 vereinheitlicht alle statischen internen Modulimporte auf `41002r10` und ergänzt einen fail-closed Regressionstest, der jede abweichende interne Cachekennung künftig stoppt.
+
+Finaler R10-Kandidat:
+- Commit `4f22f4be5841e47993226928405cc65cdd70e201`
+- Runtime `41002r10`
+- Modulsatz `CEA6-1ECF`
+- Build `V4.10.02-MODULAR-DEV-R10-2026-09-25`
+- Shared Frontend #2441 ✅
+- Integration #2460 ✅
+- Diagnostic #1122 ✅
+- Source Archive #615 ✅
+- Hi-Res #1674 ✅
+- `deploy/dev` zeigt exakt auf diesen Kandidaten.
+
+Reale DRA-/HA-Abnahme:
+- 22/22 Module geladen,
+- Versionssatz konsistent,
+- Modulsatz-ID `CEA6-1ECF`,
+- keine Abweichungen mehr.
+
+**Einziger offener Abschlussgate:** Cluster-Jump-/Infinity-Instrument real auf Desktop, iPad und Android/HA Companion abnehmen. Danach Schlachtplan auf **ABGESCHLOSSEN** setzen und mit den weiteren Medaillon-Designs fortfahren.
+
+Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
