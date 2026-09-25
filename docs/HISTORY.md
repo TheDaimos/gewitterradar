@@ -246,3 +246,6 @@ Vollständiger Release-Abschluss und Übergabe:
 `docs/HANDOFF_V4_08_RELEASE_CLOSEOUT_2026-09-18.md`
 
 Externe Prüfungen des separat installierten Blitzortung-Datenregionswechsels sowie spezieller DNS-/Proxy-/TLS-Inspection-Umgebungen bleiben fachlich getrennte Umgebungsprüfungen und sind keine nachträglichen V4.08-Release-Blocker.
+
+
+Die reale Android-/HA-Companion-Abnahme des R6-Diagnosepfads bestätigte sichtbare TREND-Animation, korrekte absolute Winkel, lokale KP-/MP-Raster und die erreichbare große Diagnosekonsole. Dabei fiel noch ein letzter Teardown-Randfall auf: Wurde die globale Diagnose beendet, während ein Instrument-Picker geöffnet blieb, blieb dessen bereits gerendertes lokales Raster bis zum Schließen des Pickers sichtbar. R7 entfernt beim Diagnose-Ende die zuvor für den Top-Layer gesetzten Inline-Sichtbarkeitswerte und leert die lokalen SVG-Diagnoseebenen sofort. Ein eigener Browsertest beendet die Diagnose im geöffneten Picker, prüft das unmittelbare Verschwinden der Messhilfen ohne Dialogschließung und startet die Diagnose anschließend erneut.
