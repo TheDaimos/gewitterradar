@@ -70,12 +70,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r4'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r5'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r4"' in manifest
- assert 'moduleSetId:"02AE-EBFC"' in manifest
- assert runtime["runtimeRevision"]=="41002r4"
- assert runtime["moduleSetId"]=="02AE-EBFC"
+ assert 'runtimeRevision:"41002r5"' in manifest
+ assert 'moduleSetId:"EA13-2B8B"' in manifest
+ assert runtime["runtimeRevision"]=="41002r5"
+ assert runtime["moduleSetId"]=="EA13-2B8B"
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
@@ -114,3 +114,34 @@ def test_picker_diagnostics_are_design_aware_and_top_layer_local():
   assert marker in base
  assert "design=MEDALLION_DESIGNS[0]" not in diagnostics
  assert "inner.aperture.centerX/512" not in diagnostics
+
+
+def test_picker_diagnostic_state_persistence_and_exports_contract():
+ diagnostics=(FRONTEND/"modules/diagnostics/cockpit.js").read_text(encoding="utf-8")
+ map_display=(FRONTEND/"modules/fullscreen/map-display.js").read_text(encoding="utf-8")
+ for marker in (
+  "_pickerDiagnosticPayload(kind)",
+  "_pickerDiagnosticCsv(kind)",
+  "_downloadPickerDiagnostic(kind,format='json')",
+  "_copyPickerDiagnostic: async function(kind,button=null)",
+  "_bindPickerDiagnosticActions(shell,kind)",
+  "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
+  "this._syncMedallionPicker?.();this._syncPickerDiagnostics?.();",
+ ):
+  assert marker in diagnostics
+ for marker in (
+  "data-compass-picker-diagnostic-tools",
+  "data-medallion-picker-diagnostic-tools",
+  "data-picker-diagnostic-copy",
+  "data-picker-diagnostic-json",
+  "data-picker-diagnostic-csv",
+  "data-medallion-preset=\"empty\"",
+  "data-medallion-preset=\"static\"",
+  "data-medallion-preset=\"animation\"",
+  "data-medallion-preset=\"freeze\"",
+  "data-medallion-preset=\"normal\"",
+  "data-medallion-angle=\"270\"",
+  "medallion-picker-diagnostic-sweep",
+  "stage.dataset.diagnosticMode=diagnosticState.mode",
+ ):
+  assert marker in map_display
