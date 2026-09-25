@@ -147,6 +147,8 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "this._syncMedallionPicker?.();this._syncPickerDiagnostics?.();",
  ):
   assert marker in diagnostics
+ assert diagnostics.count("node.style?.removeProperty('display')")==2
+ assert diagnostics.count("if(node.matches?.('svg'))node.replaceChildren();")==2
  for marker in (
   "data-compass-picker-diagnostic-tools",
   "data-medallion-picker-diagnostic-tools",
