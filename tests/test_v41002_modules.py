@@ -70,12 +70,16 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r7'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r8'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r7"' in manifest
- assert 'moduleSetId:"E2DF-E846"' in manifest
- assert runtime["runtimeRevision"]=="41002r7"
- assert runtime["moduleSetId"]=="E2DF-E846"
+ assert 'runtimeRevision:"41002r8"' in manifest
+ assert 'moduleSetId:"BA65-1226"' in manifest
+ assert runtime["runtimeRevision"]=="41002r8"
+ assert runtime["moduleSetId"]=="BA65-1226"
+ expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
+ expected_manifest=re.search(r'"id": "core\\.manifest",[\\s\\S]*?"version": "([^"]+)"',manifest).group(1)
+ self_manifest=re.search(r'id:"core\\.manifest",version:"([^"]+)"',manifest).group(1)
+ assert expected_manifest==expected_core==self_manifest
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
