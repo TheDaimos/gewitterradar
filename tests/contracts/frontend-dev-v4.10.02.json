@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-R8-2026-09-25",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "3b82e79d950f0e9214a189323df2ab697191eba3402da5e8c23c4548cf05fde9",
+      "sha256": "bfb1663ceb4f5fb7a5168f5d6de94c00ad6584930c48aa917e03e5baba317e8d",
       "sizeBytes": 6741
     },
     "modules/core/registry.js": {
@@ -95,7 +95,7 @@
       "sizeBytes": 39344
     },
     "modules/core/base-context.js": {
-      "sha256": "63234cf29dea406bdafe664ba98154c207141222bf4ea7ad00ff447c7295d034",
+      "sha256": "28660c4dc9588ca76b05f3ff45fc2bebc68471c8c11da31fb1f284f2b8318f57",
       "sizeBytes": 1028175
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
