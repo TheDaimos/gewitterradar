@@ -5,7 +5,7 @@ import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?
 import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -98,6 +98,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       dialog.parentElement?.remove();
       this._compassPickerDialog = null;
       this._clearPickerDiagnostic?.('compass');
+      this._setPickerDiagnosticTopLayerHost?.(null);
       this._compassPickerReturnParent = null;
       this._compassPickerReturnNext = null;
       const previousFocus = this._compassPickerReturnFocus;
@@ -131,7 +132,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-stage .compass-instrument{width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
         '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
         '.compass-picker-nav-row{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
-        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(470px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;pointer-events:none!important;overflow:visible!important;opacity:1!important;isolation:isolate}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(470px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
         '.instrument-picker-diagnostic-tools{width:min(470px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
         '.compass-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;color:var(--picker-gold);appearance:none;-webkit-appearance:none}' +
         '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
@@ -191,6 +192,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       });
 
       try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      this._setPickerDiagnosticTopLayerHost?.(dialog);
       this._syncCompassPicker();
       shell.querySelector('[data-compass-picker-close]')?.focus?.({preventScroll:true});
     },
@@ -292,6 +294,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       dialog.parentElement?.remove();
       this._medallionPickerDialog = null;
       this._clearPickerDiagnostic?.('medallion');
+      this._setPickerDiagnosticTopLayerHost?.(null);
       const previousFocus = this._medallionPickerReturnFocus;
       this._medallionPickerReturnFocus = null;
       if (restoreFocus && previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
@@ -315,10 +318,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.medallion-picker-preview{position:relative;width:100%;height:100%;aspect-ratio:1 / 1;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 12px #c4842b18)}' +
         '.medallion-picker-preview .trend-medallion-base,.medallion-picker-preview .trend-medallion-arrow{position:absolute;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}.medallion-picker-preview .trend-medallion-base{inset:0;width:100%;height:100%;object-fit:contain;z-index:1}.medallion-picker-preview .trend-medallion-arrow{left:50.012238%;top:50.452396%;width:59.667391%;height:59.667391%;object-fit:contain;z-index:3;transform-origin:50% 50%;filter:drop-shadow(0 2px 1px #2f1804d1) drop-shadow(0 0 4px #f6c3442e)}' +
         '.medallion-picker-stage[data-trend-state="up"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}.medallion-picker-stage[data-trend-state="stable"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}.medallion-picker-stage[data-trend-state="down"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1)}.medallion-picker-stage[data-trend-state="none"] .trend-medallion-arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84)}' +
-        '@keyframes medallion-picker-diagnostic-sweep{0%{transform:translate(-50%,-50%) rotate(0deg) scale(1)}50%{transform:translate(-50%,-50%) rotate(90deg) scale(1)}100%{transform:translate(-50%,-50%) rotate(0deg) scale(1)}}' +
-        '.medallion-picker-stage[data-trend-state="diagnostic"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:none!important;transform:translate(-50%,-50%) rotate(var(--medallion-picker-diagnostic-angle,45deg)) scale(1)!important}.medallion-picker-stage[data-diagnostic-mode="animation"] .trend-medallion-arrow,.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:medallion-picker-diagnostic-sweep 3s ease-in-out infinite!important}.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{animation-play-state:paused!important}' +
+        '@keyframes medallion-picker-diagnostic-sweep{0%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}50%{transform:translate(-50%,-50%) rotate(135deg) scale(1)}100%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}}' +
+        '.medallion-picker-stage[data-trend-state="diagnostic"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:none!important;transform:translate(-50%,-50%) rotate(calc(var(--medallion-picker-diagnostic-angle,45deg) - 45deg)) scale(1)!important}.medallion-picker-stage[data-diagnostic-mode="animation"] .trend-medallion-arrow,.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:medallion-picker-diagnostic-sweep 3s ease-in-out infinite!important}.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{animation-play-state:paused!important}' +
         '.medallion-picker-nav{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px;margin-top:2px}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
-        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;pointer-events:none!important;overflow:visible!important;opacity:1!important;isolation:isolate}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
         '.instrument-picker-diagnostic-tools{width:min(430px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
         '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.medallion-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
@@ -367,6 +370,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         }
       });
       try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      this._setPickerDiagnosticTopLayerHost?.(dialog);
       this._syncMedallionPicker();
       shell.querySelector('[data-medallion-picker-close]')?.focus?.({preventScroll:true});
     },
@@ -375,11 +379,24 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
       if (!this.shadow || !dialog) return;
       const host = useFullscreen ? dialog : this.shadow;
-      ['radius-keypad-backdrop','v407-location-search-backdrop'].forEach((id) => {
+      ['radius-keypad-backdrop','v407-location-search-backdrop','diagnostic-overlay','diagnostic-console'].forEach((id) => {
         const overlay = this.shadow?.getElementById(id);
         if (!overlay || overlay.parentNode === host) return;
         try { host.appendChild(overlay); } catch (_error) {}
       });
+      if(this._diagnostics?.enabled)requestAnimationFrame(()=>{this._syncDiagnosticUi?.();this._scheduleDiagnosticMeasure?.();});
+    },
+
+    _setPickerDiagnosticTopLayerHost(dialog = null) {
+      if(!this.shadow)return;
+      const fullscreen=this.shadow.getElementById('map-fullscreen-dialog');
+      const fallback=this._mapDisplayMode==='fullscreen'&&fullscreen?.open?fullscreen:this.shadow;
+      const host=dialog?.open?dialog:fallback;
+      const consoleNode=this.shadow.getElementById('diagnostic-console');
+      if(consoleNode&&consoleNode.parentNode!==host){
+        try{host.appendChild(consoleNode);}catch(_error){}
+      }
+      if(this._diagnostics?.enabled)requestAnimationFrame(()=>{this._syncDiagnosticUi?.();this._scheduleDiagnosticMeasure?.();});
     },
 
     _restoreCompassFromMapOverlay() {
