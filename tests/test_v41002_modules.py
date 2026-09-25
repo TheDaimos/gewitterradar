@@ -70,12 +70,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r5'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r6'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r5"' in manifest
- assert 'moduleSetId:"EA13-2B8B"' in manifest
- assert runtime["runtimeRevision"]=="41002r5"
- assert runtime["moduleSetId"]=="EA13-2B8B"
+ assert 'runtimeRevision:"41002r6"' in manifest
+ assert 'moduleSetId:"37F8-9357"' in manifest
+ assert runtime["runtimeRevision"]=="41002r6"
+ assert runtime["moduleSetId"]=="37F8-9357"
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
@@ -114,6 +114,24 @@ def test_picker_diagnostics_are_design_aware_and_top_layer_local():
   assert marker in base
  assert "design=MEDALLION_DESIGNS[0]" not in diagnostics
  assert "inner.aperture.centerX/512" not in diagnostics
+ for marker in (
+  "angleConvention:'0° North, 90° East, clockwise'",
+  "assetZeroOffsetDeg:-45",
+  "_renderDiagnosticFullscreenGrid(overlay)",
+  "namespace:'KP'",
+  "namespace:'MP'",
+  "FS-A1–FS-J10",
+ ):
+  assert marker in diagnostics
+ for marker in (
+  "rotate(calc(var(--medallion-picker-diagnostic-angle,45deg) - 45deg))",
+  "rotate(-45deg)",
+  "rotate(135deg)",
+  "_setPickerDiagnosticTopLayerHost",
+  "'diagnostic-overlay','diagnostic-console'",
+  ':not([data-diagnostic-mode="animation"])',
+ ):
+  assert marker in map_display
 
 
 def test_picker_diagnostic_state_persistence_and_exports_contract():
