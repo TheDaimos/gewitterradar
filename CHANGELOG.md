@@ -1,6 +1,14 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### Diagnose R7 – sofortiger Teardown im geöffneten Picker
+- Behebt einen real auf Android/HA Companion gefundenen Randfall: Beim Beenden der globalen Diagnose in einem noch geöffneten Kompass-/Medaillon-Picker blieb das lokale Diagnose-Raster sichtbar, bis der Picker geschlossen wurde.
+- Ursache war ein zuvor gesetztes `display:block !important` an den lokalen Diagnose-SVGs; `hidden=true` allein konnte diese Inline-Regel nicht übersteuern.
+- Beim Diagnose-Ende werden nun `display`, `visibility`, `opacity` und `z-index` der lokalen Diagnoseebenen zurückgesetzt und die SVG-Inhalte sofort geleert.
+- Der Picker bleibt geöffnet; bei erneutem Start der Diagnose werden Raster und Messhilfen regulär neu aufgebaut.
+- Browserregression prüft den Diagnose-Ausstieg im geöffneten Medaillon-Picker inklusive sofortigem `display:none`, leerem SVG-Markup und anschließendem erfolgreichen Neustart der Diagnose.
+- Runtime-Revision: `41002r7`; Modulstände: `diagnostics.cockpit 1.1.3`, `fullscreen.map-display 1.0.12`, `core.manifest 1.2.12`; Modulsatz `E2DF-E846`.
+
 ### Diagnose R6 – sichtbare Top-Layer-Messung, Winkelkonvention und Vollbild
 - Reale R5-Abnahme zeigte drei zusätzliche Diagnosefehler: der Medaillon-Animationszustand war intern aktiv, ohne den sichtbaren Pfeil zu bewegen; die statischen Winkel bezogen sich fälschlich auf die bereits um 45° gedrehte Pfeilgrafik statt auf eine absolute Himmelsrichtung; lokale Raster/Messlinien waren trotz aktivem Diagnosezustand real nicht sichtbar.
 - Die Diagnosewinkel verwenden nun verbindlich **0° = Nord, 90° = Ost, 180° = Süd, 270° = West, im Uhrzeigersinn**. Der Hi-Res-Pfeil besitzt dafür einen expliziten Asset-Nullpunktversatz von **−45°**; der Export dokumentiert Winkelkonvention und Assetversatz.
