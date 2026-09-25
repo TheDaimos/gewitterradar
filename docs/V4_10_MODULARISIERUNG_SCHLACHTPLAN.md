@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – reale R8-DRA-Abnahme und Cluster-Jump-Geräteabnahme offen  
+> **Status:** ABSCHLUSSAUDIT – nur noch Cluster-Jump-/Infinity-Geräteabnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,51 +38,46 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**Abschlussaudit der Modularisierung beenden. Neue Medaillon-Designs bleiben direkt danach der nächste Produktblock.**
+**Der Modularisierungs-/Moduldiagnoseblock ist real abgeschlossen. Es bleibt genau ein letzter Abnahmepunkt: Cluster-Jump / Infinity.**
 
-Bereits im Audit als erledigt bestätigt:
+Abgeschlossen und real bestätigt:
 - M01–M12 vollständig abgeschlossen,
-- stabiler Loader auf Desktop sowie Android/HA Companion geprüft,
-- DRA-Ende-zu-Ende inklusive Einzeldatei-Delta, fehlendem/veraltetem Modul, Cachefall, Rollback V4.10.02 → V4.09 → V4.10.02 und korrekter Nachlaufaktion real bestanden,
-- HACS-/Paket-/Checksummen-/Dokumentationsverträge vorhanden,
-- Radius-Kaskade real erledigt,
-- Kompass-Schließen-X real erledigt,
-- R7-Diagnoseblock real über DRA/HA abgenommen.
+- stabiler Loader auf Desktop sowie Android/HA Companion,
+- DRA-Ende-zu-Ende einschließlich Delta, Cachefall, Rollback und Nachlaufaktion,
+- HACS-/Paket-/Checksummen-/Dokumentationsverträge,
+- Radius-Kaskade,
+- Kompass-Schließen-X,
+- Diagnosekorrekturen R5–R7,
+- R8-Abschlussaudit der Modulidentitäten,
+- R9-Abweichungsdialog inklusive kontextbezogenem Export,
+- R10-Korrektur der gemischten internen Cachekennungen.
 
-Der Audit hat zusätzlich zwei reale interne Identitätsreste gefunden:
-1. `core.manifest` erwartete **1.2.12**, registrierte sich selbst aber noch als **1.2.10**.
-2. `core.base-context` trug intern noch die alte Buildkennung **R5**.
+R10 real über DRA/HA abgenommen:
+- **22 / 22 Module geladen**,
+- **✓ Versionssatz konsistent**,
+- **Modulsatz-ID `CEA6-1ECF`**,
+- keine Abweichungen mehr,
+- Modul-Details zeigen die erwarteten R10-Modulversionen.
 
-Dafür wird ausschließlich der Konsistenzstand **R8** erstellt:
-- Runtime **41002r8**
-- Modulsatz **3541-2967**
-- Build **V4.10.02-MODULAR-DEV-R8-2026-09-25**
-- `core.manifest 1.2.13`
-- `core.base-context 1.0.4`
-- `diagnostics.cockpit 1.1.3`
-- `fullscreen.map-display 1.0.12`
-- neuer Vertrag: alle 22 Soll-Modulversionen müssen exakt den Selbstregistrierungen entsprechen.
+R10 automatisiert:
+- Kandidat `4f22f4be5841e47993226928405cc65cdd70e201` → **5/5 grün**,
+- Shared Frontend #2441 → success,
+- Integration #2460 → success,
+- Diagnostic #1122 → success,
+- Source Archive #615 → success,
+- Hi-Res #1674 → success,
+- `deploy/dev` zeigt verifiziert exakt auf diesen Kandidaten.
 
-Automatisierter R8-Abschluss:
-- Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` ist **5/5 grün**:
-  - Shared Frontend #2304,
-  - Integration #2323,
-  - Diagnostic #1007,
-  - Source Archive #548,
-  - Hi-Res #1539.
-- `deploy/dev` wurde exakt auf diesen Kandidaten gesetzt und verifiziert.
+**Einziger noch real offener Punkt:**
+- Cluster-Jump-Pille / Infinity-Instrumentanzeige auf **Desktop, iPad und Android/HA Companion**:
+  - Infinity-Schalter aus/ein,
+  - Clusterindex/Countdown/∞ identisch zum bestehenden Clusterstatus,
+  - Tipp/Klick → nächster Cluster,
+  - freie Positionierung,
+  - Position bleibt nach Frontend-Neuladen erhalten,
+  - frischer Standardstand links neben dem 3D-Layer-Schalter.
 
-Noch real offen:
-1. R8 über DRA installieren; danach **22/22 Module geladen / Versionssatz konsistent** bestätigen.
-2. Die in Schleife 068 ergänzte **Cluster-Jump-Pille / Infinity-Instrumentanzeige** real auf **Desktop, iPad und Android/HA Companion** abnehmen:
-   - Infinity-Schalter aus/ein,
-   - Clusterindex/Countdown/∞ identisch zum bestehenden Clusterstatus,
-   - Tipp/Klick → nächster Cluster,
-   - freie Positionierung,
-   - Position bleibt nach Frontend-Neuladen erhalten,
-   - frischer Standardstand links neben dem 3D-Layer-Schalter.
-
-Sind diese beiden Restpunkte bestanden, wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt. Danach: **weitere Medaillon-Designs auf dem bereits vorbereiteten designfähigen Diagnosevertrag**.
+Nach dieser Abnahme wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt. Danach beginnt wie vorbereitet der nächste Produktblock: **weitere Medaillon-Designs**.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
@@ -519,7 +514,7 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [x] Checksummen
 - [x] CHANGELOG
 - [x] HISTORY / Release Notes
-- [ ] **R8 real über DRA installieren und 22/22 Module / Versionssatz konsistent bestätigen**
+- [x] **R10 real über DRA installiert und 22/22 Module / Versionssatz konsistent bestätigt** – Modulsatz `CEA6-1ECF`, keine Abweichungen
 - [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – einziger noch unbelegter Funktionspunkt aus Schleife 068
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
@@ -2694,7 +2689,7 @@ Zusätzlicher Schutz:
 ## Schleife 074 – Abweichungs-Popup vor Duplikatkorrektur
 
 **Datum:** 2026-09-25  
-**Status:** R9 5/5 grün und nach `deploy/dev` promoviert; reale Popup-Abnahme offen
+**Status:** abgeschlossen; R9-Popup real abgenommen, Export ausgewertet und Ursache der Abweichungen eindeutig identifiziert
 
 Aus der realen R8-DRA-Abnahme:
 - Runtime `41002r8`, Modulsatz `3541-2967`, geladener/erwarteter/installierter Modulsatz identisch,
@@ -2734,4 +2729,67 @@ Automatisierte Abnahme des exakten Kandidaten `8884c18cc0dd9857fe4c29e8fd446aee6
 - damit **5/5 grün**
 - `deploy/dev` wurde exakt auf diesen Kandidaten gesetzt und verifiziert.
 
-**NÄCHSTER SCHRITT:** R9 über DRA installieren und den Abweichungsdialog mit den bewusst noch vorhandenen echten Fällen `core.registry` und `core.runtime` real abnehmen. Erst nach dieser Popup-Abnahme die Doppelregistrierungsursache korrigieren. Danach muss `22/22 Module geladen · Versionssatz konsistent` erreicht werden. Parallel bleibt nur noch die Cluster-Jump-/Infinity-Geräteabnahme aus Schleife 068 offen.
+Reale R9-Abnahme:
+- Abweichungsdialog öffnet korrekt über den anklickbaren Abweichungshinweis,
+- Darstellung, Karten, Scrollverhalten und Schließen-X passen,
+- **Diagnose kopieren** und **JSON herunterladen** funktionieren,
+- der Export zeigte vier Diagnoseeinträge, die auf denselben technischen Ursprung zurückgingen: alte interne Cachepfade erzeugten Versionsabweichung, Doppelregistrierungen und einen veralteten geladenen Modulsatz,
+- insbesondere war `core.registry` gleichzeitig über `?v=41002r9` und `?v=41002r1` geladen; weitere interne Imports verwendeten noch `r1`/`r2`.
+
+**Folge:** Popup-Abnahme bestanden; Ursache danach in R10 korrigiert.
+
+
+## Schleife 075 – R10: einheitliche interne Modul-Cachekennung
+
+**Datum:** 2026-09-25  
+**Status:** vollständig abgeschlossen; 5/5 grün, nach `deploy/dev` promoviert und real über DRA/HA abgenommen
+
+### Ausgangsbefund aus R9
+
+Der neue Abweichungsexport machte sichtbar, dass der Browser denselben modularen Kern unter unterschiedlichen URL-Identitäten geladen hatte:
+- `core.registry` einmal über `?v=41002r9`,
+- zusätzlich noch über alte `?v=41002r1`,
+- weitere interne Modulimporte verwendeten teilweise noch `41002r1` oder `41002r2`.
+
+Damit waren die Dateien inhaltlich zwar korrekt installiert, für den ES-Modul-Loader aber **verschiedene URLs und damit verschiedene Modulinstanzen**. Daraus entstanden:
+- Doppelregistrierung `core.registry`,
+- Doppelregistrierung `core.runtime`,
+- daraus abgeleitete Versionsabweichung,
+- scheinbar veralteter geladener Modulsatz.
+
+### R10-Korrektur
+
+- alle statischen internen Modulimporte verwenden nun einheitlich die aktuelle Cachekennung `41002r10`,
+- auch die vier lokalen Retina-Chevron-Module des Kompass-Pickers verwenden denselben Cachestand,
+- dadurch kann derselbe Kern nicht mehr parallel unter `r1`/`r2` und dem aktuellen Runtimepfad instanziiert werden,
+- neuer Regressionstest `test_internal_module_import_cache_is_coherent` scannt alle Frontend-JavaScriptdateien und schlägt fehl, sobald eine interne `?v=41002rN`-Kennung vom Loader-Cache abweicht,
+- der bestehende 22-Modul-Paritätsvertrag bleibt zusätzlich aktiv.
+
+R10-Identität:
+- Runtime `41002r10`
+- Modulsatz `CEA6-1ECF`
+- Build `V4.10.02-MODULAR-DEV-R10-2026-09-25`
+- `core.manifest 1.2.15`
+- `core.registry 1.0.1`
+- `core.runtime 1.0.1`
+- `diagnostics.module-view 1.3.3`
+- `diagnostics.cockpit 1.1.4`
+- `fullscreen.map-display 1.0.13`
+
+Automatisierte Abnahme des finalen Kandidaten `4f22f4be5841e47993226928405cc65cdd70e201`:
+- Shared Frontend #2441 → success,
+- Integration #2460 → success,
+- Diagnostic #1122 → success,
+- Source Archive #615 → success,
+- Hi-Res #1674 → success,
+- damit **5/5 grün**,
+- `deploy/dev` wurde exakt auf diesen Kandidaten gesetzt und verifiziert.
+
+Reale DRA-/HA-Abnahme:
+- **22 / 22 Module geladen**,
+- **✓ Versionssatz konsistent**,
+- **Modulsatz-ID `CEA6-1ECF`**,
+- keine Abweichungen mehr,
+- Modul-Details zeigen die erwarteten R10-Versionen.
+
+**NÄCHSTER SCHRITT:** Es bleibt ausschließlich die reale Cluster-Jump-/Infinity-Abnahme aus Schleife 068 auf Desktop, iPad und Android/HA Companion. Danach Schlachtplanstatus **ABGESCHLOSSEN** und anschließend weitere Medaillon-Designs.
