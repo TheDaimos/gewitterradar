@@ -312,7 +312,22 @@ export function createBaseContext(rootModuleUrl){
   const MEDALLION_DESIGNS = [{
     id:'trend_01',asset:TREND_MEDALLION_IMAGE,type:'image',size:'132px',x:'0px',y:'0px',
     visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
-    innerContour:'optional motif ring',calibrationProfile:'round-medallion-v1'
+    innerContour:'optional motif ring',calibrationProfile:'round-medallion-v1',
+    diagnosticProfile:{
+      geometryVersion:'round-medallion-v1',
+      method:'hi-res 360-degree aperture-mask coverage build',
+      sourceWidth:512,sourceHeight:512,
+      aperture:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},
+      motif:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},
+      gap:{mean:0,median:0,min:0,max:0,stdDev:0},
+      fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+      centerOffsetX:0,centerOffsetY:0,centerResidual:0,
+      normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+      recommended:{translateX:0,translateY:0,uniformScale:1},
+      status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+      composition:{outerFrame:'pixel-identical outside measured hi-res aperture mask',innerMotif:'hi-res coverage-scaled beneath measured aperture mask',arrow:'separate hi-res-derived image with identical geometric base factor 1.1933478262',sharedInnerStage:false},
+      arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+    }
   }];
   const MEDALLION_UI = {
     'Deutsch':['Kalibrierungstools','Medaillon-Kalibrierung','Medaillon-Messwerte','Medaillon-Diagnosebericht'],
