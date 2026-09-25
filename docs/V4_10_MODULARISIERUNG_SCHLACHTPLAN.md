@@ -2493,7 +2493,7 @@ Automatisierter Abschluss:
 ## Schleife 071 – R6: sichtbare Picker-/Vollbild-Diagnose und absolute Winkel
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung/Verträge + exakte R6-CI vollständig grün; finale Dokumentations-CI und reale DRA-Abnahme offen
+**Status:** Implementierung/Verträge + exakte R6-CI vollständig grün; `deploy/dev` auf R6 promoviert; reale DRA-Abnahme offen
 
 Realer R5-Befund:
 1. **TREND/ANIMATION EIN** wurde intern korrekt gemeldet, der sichtbare Medaillon-Pfeil bewegte sich jedoch nicht.
@@ -2550,4 +2550,6 @@ Automatisierter R6-Abschluss des Produkt-/Teststands:
 - Hi-Res asset retention **#1417** → success.
 - Ein während der ersten R6-CI gefundener Lifecycle-Fehler wurde vor diesem Abschluss korrigiert: Beim Picker-Schließen muss die große Diagnosekonsole vor dem Entfernen des Dialogcontainers zurück in Vollbild/Hauptansicht verschoben werden.
 
-**NÄCHSTER SCHRITT:** diesen dokumentierten Abschluss noch einmal vollständig durch CI prüfen und anschließend den exakt grünen finalen Head nach `deploy/dev` promoten. Danach reale DRA-Abnahme auf Desktop, iPad und Android/HA Companion: sichtbares KP-/MP-/FS-Raster und Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, KOPIEREN/JSON/CSV sowie Vollbild und Vollbild→Picker→Vollbild-Top-Layer prüfen. Erst danach weitere Medaillons.
+Promotion abgeschlossen: `deploy/dev` zeigt verifiziert auf `55e585482a2ea7b0ac446317ff1ade00cd55b9b8`; das Runtime-Manifest dort meldet Build `V4.10.02-MODULAR-DEV-R6-2026-09-25`, Runtime `41002r6`, Modulsatz `37F8-9357`, `diagnostics.cockpit 1.1.2` und `fullscreen.map-display 1.0.12`.
+
+**NÄCHSTER SCHRITT:** R6 über DRA aus `deploy/dev` installieren und die reale Abnahme auf Desktop, iPad und Android/HA Companion durchführen: sichtbares KP-/MP-/FS-Raster und Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, KOPIEREN/JSON/CSV sowie Vollbild und Vollbild→Picker→Vollbild-Top-Layer prüfen. Erst danach weitere Medaillons.
