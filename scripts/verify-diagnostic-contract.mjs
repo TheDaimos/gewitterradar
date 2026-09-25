@@ -109,9 +109,11 @@ function verifyContract(source, label, languages) {
   ], 'master hard-stop');
 
   requireAll(source, [
-    'handle.setPointerCapture?.(event.pointerId)',
-    "handle?.addEventListener('pointermove'",
-    'window.visualViewport', '_clampDiagnosticConsole()',
+    'handle?.setPointerCapture?.(id)',
+    "document.addEventListener('pointermove',onPointerMove,true)",
+    "document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false})",
+    "handle?.addEventListener('touchstart'",
+    '_diagnosticConsoleBounds()', '_clampDiagnosticConsole()',
     "localStorage.setItem('gewitterradar-diagnostic-position'"
   ], 'console mobility');
 
