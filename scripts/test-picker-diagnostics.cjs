@@ -243,6 +243,22 @@ const server = http.createServer((req, res) => {
         assert.equal(fullscreen.consoleHosted, true, `${delivery}/${profile} diagnostic console follows fullscreen top layer`);
         assert.match(fullscreen.grid, /FS-A1/, `${delivery}/${profile} fullscreen receives its own diagnostic numbering`);
 
+        const fullscreenDragStart = await page.evaluate(() => {
+          const card=window.aboutCard,consoleNode=card.shadow.getElementById('diagnostic-console'),handle=consoleNode?.querySelector('#diagnostic-console-drag');
+          const rect=consoleNode?.getBoundingClientRect(),head=handle?.getBoundingClientRect();
+          return {left:rect?.left||0,top:rect?.top||0,x:(head?.left||0)+Math.min(90,(head?.width||180)/2),y:(head?.top||0)+Math.min(18,(head?.height||36)/2)};
+        });
+        await page.mouse.move(fullscreenDragStart.x,fullscreenDragStart.y);
+        await page.mouse.down();
+        await page.mouse.move(fullscreenDragStart.x+96,fullscreenDragStart.y+64,{steps:4});
+        await page.mouse.up();
+        const fullscreenDragEnd = await page.evaluate(() => {
+          const card=window.aboutCard,consoleNode=card.shadow.getElementById('diagnostic-console'),rect=consoleNode?.getBoundingClientRect();
+          return {left:rect?.left||0,top:rect?.top||0,parentIsFullscreen:consoleNode?.parentNode===card.shadow.getElementById('map-fullscreen-dialog')};
+        });
+        assert.equal(fullscreenDragEnd.parentIsFullscreen,true,`${delivery}/${profile} fullscreen drag keeps diagnostic console in top-layer host`);
+        assert.ok(Math.hypot(fullscreenDragEnd.left-fullscreenDragStart.left,fullscreenDragEnd.top-fullscreenDragStart.top)>20,`${delivery}/${profile} diagnostic console remains draggable in fullscreen`);
+
         const fullscreenPickerHost = await page.evaluate(() => {
           const card=window.aboutCard,fullscreen=card.shadow.getElementById('map-fullscreen-dialog');
           card._openCompassPicker();
