@@ -105,6 +105,21 @@ export function moduleDiagnostics(expected = []) {
   }
 
   const duplicateIds = [...target.duplicates.keys()].sort();
+  const duplicateDetails = duplicateIds.map((id) => {
+    const previous = target.duplicates.get(id) || [];
+    const active = target.modules.get(id);
+    const registrations = [...previous, ...(active ? [active] : [])].map((entry,index) => Object.freeze({
+      index:index+1,
+      id:entry.id,
+      version:entry.version,
+      file:entry.file,
+      loadedAt:entry.loadedAt,
+      url:entry.url,
+      build:entry.build,
+      commit:entry.commit,
+    }));
+    return Object.freeze({id,count:registrations.length,registrations:Object.freeze(registrations)});
+  });
   const ok = rows.every((row) => row.status === "ok") && duplicateIds.length === 0;
   return Object.freeze({
     ok,
@@ -112,6 +127,7 @@ export function moduleDiagnostics(expected = []) {
     loadedCount: loaded.length,
     expectedCount: expectedMap.size,
     duplicateIds: Object.freeze(duplicateIds),
+    duplicateDetails:Object.freeze(duplicateDetails),
     rows: Object.freeze(rows.map((row) => Object.freeze(row))),
   });
 }
@@ -120,4 +136,4 @@ export function moduleRegistrySnapshot(expected = []) {
   return JSON.parse(JSON.stringify(moduleDiagnostics(expected)));
 }
 
-registerModule({id:"core.registry",version:"1.0.0",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});
+registerModule({id:"core.registry",version:"1.0.1",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});
