@@ -20,6 +20,30 @@ def test_modules_carry_own_versions():
    assert text.startswith('export default "data:image/webp;base64,')
    continue
   assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
+def test_expected_module_versions_match_self_registration():
+ manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
+ expected=dict(re.findall(r'"id": "([^"]+)",\s*"version": "([^"]+)"',manifest))
+ assert len(expected)==22
+ picker_data_modules={
+  "modules/fullscreen/compass-picker-chevron-left-brass.js",
+  "modules/fullscreen/compass-picker-chevron-right-brass.js",
+  "modules/fullscreen/compass-picker-chevron-left-silver.js",
+  "modules/fullscreen/compass-picker-chevron-right-silver.js",
+ }
+ actual={}
+ for name in CONTRACT["moduleFiles"]:
+  if name in picker_data_modules or name=="module-manifest.js":
+   continue
+  text=(FRONTEND/name).read_text(encoding="utf-8")
+  id_match=re.search(r'(?:"id"|id)\s*:\s*"([^"]+)"',text)
+  version_match=re.search(r'(?:"version"|version)\s*:\s*"([^"]+)"',text)
+  assert id_match and version_match, name
+  actual[id_match.group(1)]=version_match.group(1)
+ self_match=re.search(r'export const MODULE_META=.*?id:"core\.manifest",version:"([^"]+)"',manifest,re.S)
+ assert self_match
+ actual["core.manifest"]=self_match.group(1)
+ assert actual==expected
+
 def test_main_is_loader_not_monolithic_class():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  assert "class GewitterradarCard extends HTMLElement {}" in main
