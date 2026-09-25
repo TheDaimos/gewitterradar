@@ -94,12 +94,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r8'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r9'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r8"' in manifest
- assert 'moduleSetId:"3541-2967"' in manifest
- assert runtime["runtimeRevision"]=="41002r8"
- assert runtime["moduleSetId"]=="3541-2967"
+ assert 'runtimeRevision:"41002r9"' in manifest
+ assert 'moduleSetId:"9EBD-F27E"' in manifest
+ assert runtime["runtimeRevision"]=="41002r9"
+ assert runtime["moduleSetId"]=="9EBD-F27E"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
@@ -108,6 +108,34 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
 
+
+def test_module_deviation_popup_contract():
+ registry=(FRONTEND/"modules/core/registry.js").read_text(encoding="utf-8")
+ view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
+ i18n=(FRONTEND/"modules/ui/i18n-settings.js").read_text(encoding="utf-8")
+ for marker in (
+  "duplicateDetails:Object.freeze(duplicateDetails)",
+  "registrations:Object.freeze(registrations)",
+  'version:"1.0.1"',
+ ):
+  assert marker in registry
+ for marker in (
+  "settings-modules-deviations-backdrop",
+  "gr-mod-deviation-trigger",
+  "_moduleDeviationIssues(",
+  "_renderModuleDeviationDialog(",
+  "_openModuleDeviations()",
+  "_copyModuleDeviationDiagnostics()",
+  "_downloadModuleDeviationDiagnostics()",
+  "gewitterradar-module-deviations-",
+ ):
+  assert marker in view
+ for marker in (
+  "modules.status.duplicate",
+  "modules.deviation.registrations",
+  "modules.deviation.active_matches",
+ ):
+  assert i18n.count(marker)==19
 
 def test_picker_diagnostics_are_design_aware_and_top_layer_local():
  diagnostics=(FRONTEND/"modules/diagnostics/cockpit.js").read_text(encoding="utf-8")
