@@ -114,7 +114,6 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
       // Picker-only Retina assets. Other menu/accordion/UI chevrons intentionally remain untouched.
       const chevronAssets = {
-        brass: { left: COMPASS_PICKER_LEFT_BRASS, right: COMPASS_PICKER_RIGHT_BRASS },
         silver: { left: COMPASS_PICKER_LEFT_SILVER, right: COMPASS_PICKER_RIGHT_SILVER },
       };
 
