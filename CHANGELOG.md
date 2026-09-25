@@ -9,7 +9,8 @@
 - Ein neuer Vertrag vergleicht alle 22 erwarteten Modulversionen mit den jeweiligen Selbstregistrierungen und bezieht das selbstregistrierende Manifest ausdrücklich ein.
 - Der verbindliche Modularisierungs-Schlachtplan wurde gegen spätere reale DRA-/HA-/Browserabnahmen auditiert; alte Scheinoffenpunkte wurden geschlossen, ohne unbelegte Punkte künstlich abzuhaken.
 - Radius-Kaskade und Kompass-Schließen-X wurden im Abschlussaudit aufgrund der ausdrücklichen realen Benutzerbestätigung als erledigt geschlossen.
-- Als einziger noch unbelegter Funktionspunkt verbleibt vor dem formalen Abschluss die reale Cluster-Jump-/Infinity-Abnahme auf Desktop, iPad und Android/HA Companion; zusätzlich muss R8 den normalen CI-/DRA-Abschlussweg durchlaufen.
+- R8-Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` ist 5/5 CI-grün (Shared Frontend #2304, Integration #2323, Diagnostic #1007, Source Archive #548, Hi-Res #1539) und wurde exakt nach `deploy/dev` promoviert.
+- Als reale Abschlussgates verbleiben nur noch die DRA-Installation von R8 mit 22/22-konsistenter Laufzeit sowie die Cluster-Jump-/Infinity-Abnahme auf Desktop, iPad und Android/HA Companion.
 
 ### Diagnose R7 – sofortiger Teardown im geöffneten Picker
 - Behebt einen real auf Android/HA Companion gefundenen Randfall: Beim Beenden der globalen Diagnose in einem noch geöffneten Kompass-/Medaillon-Picker blieb das lokale Diagnose-Raster sichtbar, bis der Picker geschlossen wurde.
