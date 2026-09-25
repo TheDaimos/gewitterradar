@@ -4,99 +4,99 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "7e896a7518c60957b622882d72fc644c11f1a645c4e6a2319ce2b98589fcde9c",
-  "sizeBytes": 8123,
+  "sha256": "5c9511c0142cad6c9e6f799ed1b936d87a902ac37c873ab2b1c93c38eeb1480f",
+  "sizeBytes": 8125,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R9-2026-09-25",
+  "build": "V4.10.02-MODULAR-DEV-R10-2026-09-25",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "37cb2cf03b5e1c57bdf553e4b08cf4c19c0f4d81f2b7e25c14de060728310854",
-      "sizeBytes": 6741
+      "sha256": "b4c7a01ed302138b41b43f0bfa1ff27cb7aa53272f9c80ac66f945f730cd68be",
+      "sizeBytes": 6744
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
       "sizeBytes": 4835
     },
     "modules/core/runtime.js": {
-      "sha256": "bb856ae7dfe1372b98261195ae087c62c962d5e15d3a52d644516e863142a874",
-      "sizeBytes": 555
+      "sha256": "a583841c68a310596d1c333e10420f4195dee0077a260d662bfcef036ac827ff",
+      "sizeBytes": 556
     },
     "modules/core/card-lifecycle.js": {
-      "sha256": "e58c4a3d8f533546c58ec120a726cfee7504408e0028dd64435954d30988622c",
-      "sizeBytes": 33486
+      "sha256": "90454d5515e0ac203f3365f4ee3343f267c3e9ed0bf0a8473f1c6872b1dd6c66",
+      "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "c4528eafb23dedff82c5bbb2bca8ca98b0ea870851ac050c9973a10942375f9d",
-      "sizeBytes": 91148
+      "sha256": "45f83d5692ef05cbdfe505e62c7fa200f1b544f06c1583fa76efa37980597988",
+      "sizeBytes": 91153
     },
     "modules/ui/scroll-guard.js": {
-      "sha256": "2b4b83ddbc4636feec6e9140d689153ed30c7a3be972817ff526e7ba5090c4d6",
-      "sizeBytes": 34302
+      "sha256": "2bb1c69ba85ffd7b2dd41b0406ae4374744f1922a64d1124440e128abdcbb227",
+      "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "9557c2e472e57396704c04521a3b09f3d92deb7c7570c7e7b87c6608b9a16724",
-      "sizeBytes": 423628
+      "sha256": "b5a39aed9646740fceb1e24285699445cf556ee461dc0d63a755004c045a34d3",
+      "sizeBytes": 423629
     },
     "modules/instruments/compass-scale.js": {
-      "sha256": "aee5d263b088db4b95bf7839f368751b59457a6a6f3161cdada44bcda2f29304",
-      "sizeBytes": 16919
+      "sha256": "8e94aa82665dc0305a654f38e445373288cb49f22d51ab9e635fe32c92b02326",
+      "sizeBytes": 16920
     },
     "modules/ui/controls.js": {
-      "sha256": "3c6df097e46e4de140e3832ce6d3e0c88dab10021fe294c3457e08bb7b8cb9e6",
-      "sizeBytes": 183041
+      "sha256": "3f4a28552dfd0a41002f0028734d36eb053c7c1f7642295ddd3b3ae77da66738",
+      "sizeBytes": 183042
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "3e50b1c2dc37a1dcb360fd36ac92b1a084f4a76959989cdc7bacc70cde5b4986",
-      "sizeBytes": 189852
+      "sha256": "8f6171b06e0f5ac1e438030dff6b378c5128ced013ef0c7cd695fa1385d1c41a",
+      "sizeBytes": 189853
     },
     "modules/core/source-status.js": {
-      "sha256": "f34426bb65c5eea197da297a9c2e8f555760a2814ea11a5132bca077daacd8ae",
-      "sizeBytes": 4691
+      "sha256": "1fa860f1884882e3d190d3dc14d415a1a79c8c182c2e8744d126d3ec5bf35e00",
+      "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "d0490d5e2348769bce6932d8c2e719ca40e93a1f3b73ac3ef6e4c4427cabdfaa",
-      "sizeBytes": 13612
+      "sha256": "7f90dbbb15dae43dfc1312b57641d76f856a7e75314cbb6b125d497a17c6861f",
+      "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "d1bb83fa7564d9284ef0aa7bf6ff1092aba4607a8a3ad470468a4b1d15d8fa85",
-      "sizeBytes": 77654
+      "sha256": "1323373d66605a287b060d2b160073189d20dd899284716070883880a1b15040",
+      "sizeBytes": 77655
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "80cd523edb3cdcba4c2f500dc10c75acd2630c44c081b263a85a8405a79dc1cb",
-      "sizeBytes": 207708
+      "sha256": "e6081d3d44208845ea928cbea48cba649e8fba2220b227f4873dd6b17279135b",
+      "sizeBytes": 207709
     },
     "modules/instruments/compass-design.js": {
-      "sha256": "76498b0c260ffe77fac51a339aeadb4a3f7246c558d5427f8246539dd4a43056",
-      "sizeBytes": 6302
+      "sha256": "86af5e79ff707e65ca749bc0924aee8c802f74e137384f7b6011ed27997b39b1",
+      "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
-      "sha256": "e95fdb462cd90fbeeaa4bb6ec43e480537db75504ab6c110100fd4bc0fea5a56",
-      "sizeBytes": 27516
+      "sha256": "75fac351186ab14eef40d8a42ca7f486ea7a15bf86d0ab868a6cbf9c639b6a64",
+      "sizeBytes": 27517
     },
     "modules/map/strikes-warnings.js": {
-      "sha256": "18cc37b69562b7153e582c4d2106abd31bf06996e201e61fe27df93643322989",
-      "sizeBytes": 29126
+      "sha256": "0fda1167864209ebea6b45fc551db5d6924c8ac6e39bb995cf0cef78c412f3c6",
+      "sizeBytes": 29127
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "a366a6bac77be27301238b1c9fb78f359d1ad8d446d5216f4173d9ffe3e9e174",
-      "sizeBytes": 51300
+      "sha256": "ef62c30dce0983684814570906593049708fb5a3bae6c3656179ad589b52e3ab",
+      "sizeBytes": 51301
     },
     "modules/ui/render.js": {
-      "sha256": "abb2131775fa4e6ea7abd3d1a92136f9efcb0ca9dbe18c5cd0bdbab680c76ac3",
-      "sizeBytes": 46993
+      "sha256": "362f540e25e69e1989d6bf5bfec3949d0bdbcac7293ef863ea5deaad14cc3354",
+      "sizeBytes": 46994
     },
     "modules/instruments/compass.js": {
-      "sha256": "e26069e55d4c840791d59758b8ce2ce7cf104abcee7c05e390945ca0ba18db79",
-      "sizeBytes": 20462
+      "sha256": "c7ec222b31d2daef6e99a01874fb2a8ddb79620495855a2308cd94c92959af5b",
+      "sizeBytes": 20463
     },
     "modules/history/chart.js": {
-      "sha256": "df905245d81d19504b9c8710ddb51da2ddd113b37ad244c6147752d0290820ef",
-      "sizeBytes": 39344
+      "sha256": "5b39aa17a8c50685de3a94b6aededaef33ecfe44f6dd434841e15ff7d7616f0d",
+      "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
-      "sha256": "28660c4dc9588ca76b05f3ff45fc2bebc68471c8c11da31fb1f284f2b8318f57",
-      "sizeBytes": 1028175
+      "sha256": "05cefe39b69f256f5d21e32611f4bf069b65eef08e7bb9a202e19107d172d0cf",
+      "sizeBytes": 1028176
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
       "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
