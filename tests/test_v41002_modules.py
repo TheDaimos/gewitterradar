@@ -102,7 +102,7 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert runtime["moduleSetId"]=="3541-2967"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
- self_manifest=re.search(r'id:"core\\.manifest",version:"([^"]+)"',manifest).group(1)
+ self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
  assert expected_manifest==expected_core==self_manifest
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
