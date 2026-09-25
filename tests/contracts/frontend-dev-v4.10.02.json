@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "4b5d9fefd69f7417c6a11acd8976db385917cb2d29e722280462dcb371eca644",
+  "sha256": "cbe3c5ca0d58e66d7c868607feaa4b61e639527df5da616c41048a2702b8fce2",
   "sizeBytes": 8123,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R4-2026-09-25",
+  "build": "V4.10.02-MODULAR-DEV-R5-2026-09-25",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "81bcdad847f185484c6521cb00d20785c099347722dc6d69826d0d76457bbc3c",
-      "sizeBytes": 6739
+      "sha256": "f5b35255d6d2f995700b0222d531a676616e7f20850714aeb6bed7b38c5ea2b6",
+      "sizeBytes": 6741
     },
     "modules/core/registry.js": {
       "sha256": "04ed080b87528badf125bcaa0dd6abe4e006bc91f3701a62f528ae09ad9750d8",
@@ -27,8 +27,8 @@
       "sizeBytes": 33486
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "3f35bcd8a9aaeef291576e0304a0836555e54e2b48593a93a208465375b39fff",
-      "sizeBytes": 83542
+      "sha256": "c5723ae5cbda7217a02a77213bc7fa23c29ec74df11585d3c1687ed35bcdecfd",
+      "sizeBytes": 89793
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "2b4b83ddbc4636feec6e9140d689153ed30c7a3be972817ff526e7ba5090c4d6",
@@ -63,8 +63,8 @@
       "sizeBytes": 64029
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "893a845ea5fb5b9dcc4c8ec357163080935130fbf5182fc3d0e36f2d53f70234",
-      "sizeBytes": 198515
+      "sha256": "fa742e7e6ac3923c7b22ff30575ef8ef65089c2b37873ea559d0d9fde3c117d9",
+      "sizeBytes": 204554
     },
     "modules/instruments/compass-design.js": {
       "sha256": "76498b0c260ffe77fac51a339aeadb4a3f7246c558d5427f8246539dd4a43056",
@@ -95,8 +95,8 @@
       "sizeBytes": 39344
     },
     "modules/core/base-context.js": {
-      "sha256": "80fe4d533d5d2becf1f1a01f85b3355a6f942c058f20e26b814d8559b5784a25",
-      "sizeBytes": 1028172
+      "sha256": "63234cf29dea406bdafe664ba98154c207141222bf4ea7ad00ff447c7295d034",
+      "sizeBytes": 1028175
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
       "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
