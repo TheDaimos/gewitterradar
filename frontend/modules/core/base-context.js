@@ -1,8 +1,8 @@
-import { registerModule } from "./registry.js?v=41002r1";
+import { registerModule } from "./registry.js?v=41002r10";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.4",
+  version:"1.0.5",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
