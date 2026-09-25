@@ -2689,3 +2689,49 @@ Zusätzlicher Schutz:
 2. Schleife 068: Cluster-Jump-Pille / Infinity-Schalter real auf Desktop, iPad und Android/HA Companion prüfen.
 
 **Nach diesen zwei Gates:** Schlachtplanstatus **ABGESCHLOSSEN**. Anschließend beginnt wie bereits vorbereitet die Arbeit an den **weiteren Medaillon-Designs**.
+
+
+## Schleife 074 – Abweichungs-Popup vor Duplikatkorrektur
+
+**Datum:** 2026-09-25  
+**Status:** R9 5/5 grün und nach `deploy/dev` promoviert; reale Popup-Abnahme offen
+
+Aus der realen R8-DRA-Abnahme:
+- Runtime `41002r8`, Modulsatz `3541-2967`, geladener/erwarteter/installierter Modulsatz identisch,
+- alle 22 Modulzeilen zeigen Soll-/Ist-Version korrekt,
+- Diagnoseexport meldet dennoch `ok:false`, weil `core.registry` und `core.runtime` als Doppelregistrierungen erkannt werden,
+- diese beiden Abweichungen erscheinen nicht als Versionsfehler in den 22 Modulzeilen, sondern ausschließlich in `duplicateIds`.
+
+Vor der Fehlerkorrektur wurde auf ausdrücklichen Wunsch zuerst die Diagnosebedienung verbessert:
+
+R9:
+- `2 Abweichungen erkannt` ist bei vorhandenen Abweichungen als anklickbarer Diagnosehinweis ausgeführt,
+- eigener Abweichungsdialog im bestehenden Modul-Details-Design,
+- pro Abweichung eine Diagnosekarte,
+- unterstützt Doppelregistrierung, fehlendes Modul, Versionsabweichung, unerwartetes Modul und veralteten Runtime-Stand,
+- Doppelregistrierung zeigt aktive Soll-/Ist-Version, Registrierungsanzahl und die einzelnen Registrierungsquellen/URLs,
+- bei korrekter aktiver Version wird ausdrücklich angezeigt, dass die aktive Modulversion dem Sollstand entspricht,
+- dieselben Bedienknöpfe wie im Modul-Details-Fenster: **Diagnose kopieren** und **JSON herunterladen**,
+- diese beiden Knöpfe exportieren im Abweichungsdialog nur den kontextbezogenen Abweichungsbericht,
+- 19 Sprachvarianten um die neuen Abweichungsbegriffe erweitert,
+- Registry-Diagnose liefert zusätzlich strukturierte `duplicateDetails`; die Registrierungsursache selbst wurde bewusst **noch nicht** verändert.
+
+R9-Identität:
+- Runtime `41002r9`
+- Modulsatz `9EBD-F27E`
+- Build `V4.10.02-MODULAR-DEV-R9-2026-09-25`
+- `core.manifest 1.2.14`
+- `core.registry 1.0.1`
+- `ui.i18n-settings 1.2.3`
+- `diagnostics.module-view 1.3.2`
+
+Automatisierte Abnahme des exakten Kandidaten `8884c18cc0dd9857fe4c29e8fd446aee6108d32f`:
+- Shared Frontend #2368 → success
+- Integration #2387 → success
+- Diagnostic #1060 → success
+- Source Archive #579 → success
+- Hi-Res #1602 → success
+- damit **5/5 grün**
+- `deploy/dev` wurde exakt auf diesen Kandidaten gesetzt und verifiziert.
+
+**NÄCHSTER SCHRITT:** R9 über DRA installieren und den Abweichungsdialog mit den bewusst noch vorhandenen echten Fällen `core.registry` und `core.runtime` real abnehmen. Erst nach dieser Popup-Abnahme die Doppelregistrierungsursache korrigieren. Danach muss `22/22 Module geladen · Versionssatz konsistent` erreicht werden. Parallel bleibt nur noch die Cluster-Jump-/Infinity-Geräteabnahme aus Schleife 068 offen.
