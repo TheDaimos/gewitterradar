@@ -1,5 +1,5 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r8";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R8-2026-09-25",runtimeRevision:"41002r8",moduleSetId:"BA65-1226"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R8-2026-09-25",runtimeRevision:"41002r8",moduleSetId:"3541-2967"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
@@ -15,7 +15,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.base-context",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "group": "Kern",
     "function": "Konstanten & gemeinsame Helfer",
     "subfunctions": [
