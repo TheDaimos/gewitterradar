@@ -1,9 +1,9 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r5";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R5-2026-09-25",runtimeRevision:"41002r5",moduleSetId:"EA13-2B8B"});
+import { registerModule } from "./modules/core/registry.js?v=41002r6";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R6-2026-09-25",runtimeRevision:"41002r6",moduleSetId:"37F8-9357"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.10",
+    "version": "1.2.11",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -182,7 +182,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
