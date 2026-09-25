@@ -72,12 +72,20 @@ const server = http.createServer((req, res) => {
             stageHidden: dialog.querySelector('[data-compass-picker-diagnostic-stage]').hidden,
             navHidden: dialog.querySelector('[data-compass-picker-diagnostic-nav]').hidden,
             readoutHidden: dialog.querySelector('[data-compass-picker-diagnostic-readout]').hidden,
+            toolsHidden: dialog.querySelector('[data-compass-picker-diagnostic-tools]').hidden,
+            exportButtons: dialog.querySelectorAll('[data-picker-diagnostic-copy],[data-picker-diagnostic-json],[data-picker-diagnostic-csv]').length,
             readout: dialog.querySelector('[data-compass-picker-diagnostic-readout]').textContent,
+            payload: card._pickerDiagnosticPayload('compass'),
+            csv: card._pickerDiagnosticCsv('compass'),
           };
         });
         assert.equal(compass.stageHidden, false, `${delivery}/${profile} compass stage diagnostics visible`);
         assert.equal(compass.navHidden, false, `${delivery}/${profile} compass nav diagnostics visible`);
         assert.equal(compass.readoutHidden, false, `${delivery}/${profile} compass readout visible`);
+        assert.equal(compass.toolsHidden, false, `${delivery}/${profile} compass tools visible in top-layer dialog`);
+        assert.equal(compass.exportButtons, 3, `${delivery}/${profile} compass copy/json/csv actions`);
+        assert.equal(compass.payload.picker, 'compass');
+        assert.match(compass.csv, /"picker";"compass"/);
         assert.match(compass.readout, /KOMPASS-PICKER/);
         assert.ok(Number.isFinite(compass.state.centerDelta.residual));
         assert.ok(Number.isFinite(compass.state.navigation.symmetryDelta));
@@ -110,20 +118,42 @@ const server = http.createServer((req, res) => {
         const medallion = await page.evaluate(() => {
           const card = window.aboutCard;
           const dialog = card._medallionPickerDialog;
+          dialog.querySelector('[data-medallion-preset="static"]').click();
+          card._syncMedallionCalibrationUi();
+          card._syncMedallionPicker();
+          card._syncPickerDiagnostics();
           const state = card._pickerDiagnostics.medallion;
           const snapshot = card._buildDiagnosticSnapshot();
+          const stage = dialog.querySelector('[data-medallion-picker-stage]');
           return {
             state,
+            diagnosticMode: card._medallionDiagnostic.mode,
+            stageState: stage.dataset.trendState,
+            stageDiagnosticMode: stage.dataset.diagnosticMode,
+            staticActive: dialog.querySelector('[data-medallion-preset="static"]').classList.contains('active'),
             snapshotPicker: snapshot.pickers?.medallion || null,
             stageHidden: dialog.querySelector('[data-medallion-picker-diagnostic-stage]').hidden,
             navHidden: dialog.querySelector('[data-medallion-picker-diagnostic-nav]').hidden,
             readoutHidden: dialog.querySelector('[data-medallion-picker-diagnostic-readout]').hidden,
+            toolsHidden: dialog.querySelector('[data-medallion-picker-diagnostic-tools]').hidden,
+            exportButtons: dialog.querySelectorAll('[data-picker-diagnostic-copy],[data-picker-diagnostic-json],[data-picker-diagnostic-csv]').length,
             readout: dialog.querySelector('[data-medallion-picker-diagnostic-readout]').textContent,
+            payload: card._pickerDiagnosticPayload('medallion'),
+            csv: card._pickerDiagnosticCsv('medallion'),
           };
         });
         assert.equal(medallion.stageHidden, false, `${delivery}/${profile} medallion stage diagnostics visible`);
         assert.equal(medallion.navHidden, false, `${delivery}/${profile} medallion nav diagnostics visible`);
         assert.equal(medallion.readoutHidden, false, `${delivery}/${profile} medallion readout visible`);
+        assert.equal(medallion.toolsHidden, false, `${delivery}/${profile} medallion tools visible in top-layer dialog`);
+        assert.equal(medallion.exportButtons, 3, `${delivery}/${profile} medallion copy/json/csv actions`);
+        assert.equal(medallion.diagnosticMode, 'static', `${delivery}/${profile} preset survives calibration sync`);
+        assert.equal(medallion.stageState, 'diagnostic', `${delivery}/${profile} picker follows diagnostic state`);
+        assert.equal(medallion.stageDiagnosticMode, 'static');
+        assert.equal(medallion.staticActive, true);
+        assert.equal(medallion.payload.picker, 'medallion');
+        assert.equal(medallion.payload.medallionState.mode, 'static');
+        assert.match(medallion.csv, /"medallionState.mode";"static"/);
         assert.match(medallion.readout, /MEDAILLON-PICKER/);
         assert.equal(medallion.state.designId, 'trend_01');
         assert.equal(medallion.state.profile, 'round-medallion-v1');
