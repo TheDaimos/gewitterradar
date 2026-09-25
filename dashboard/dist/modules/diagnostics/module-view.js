@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41002r10";
+import { defineModule } from "../core/runtime.js?v=41002r11";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.3",
+  version:"1.3.4",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
