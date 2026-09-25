@@ -1,17 +1,17 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R11-2026-09-25",
-  "runtimeRevision": "41002r11",
-  "moduleSetId": "3553-A031",
+  "build": "V4.10.02-MODULAR-DEV-R10-2026-09-25",
+  "runtimeRevision": "41002r10",
+  "moduleSetId": "CEA6-1ECF",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.16"
+      "version": "1.2.15"
     },
     {
       "id": "core.base-context",
-      "version": "1.0.6"
+      "version": "1.0.5"
     },
     {
       "id": "core.registry",
@@ -19,79 +19,79 @@
     },
     {
       "id": "core.runtime",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.3"
+      "version": "1.0.2"
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.14"
+      "version": "1.0.13"
     },
     {
       "id": "ui.scroll-guard",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.4"
+      "version": "1.1.3"
     },
     {
       "id": "instruments.compass-scale",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "ui.controls",
-      "version": "1.1.5"
+      "version": "1.1.4"
     },
     {
       "id": "ui.i18n-settings",
-      "version": "1.2.5"
+      "version": "1.2.4"
     },
     {
       "id": "core.source-status",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "instruments.compass-selector",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "diagnostics.module-view",
-      "version": "1.3.4"
+      "version": "1.3.3"
     },
     {
       "id": "diagnostics.cockpit",
-      "version": "1.1.5"
+      "version": "1.1.4"
     },
     {
       "id": "instruments.compass-design",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.3"
+      "version": "1.0.2"
     },
     {
       "id": "map.strikes-warnings",
-      "version": "1.0.2"
+      "version": "1.0.1"
     },
     {
       "id": "map.clusters-recent",
-      "version": "1.0.4"
-    },
-    {
-      "id": "ui.render",
       "version": "1.0.3"
     },
     {
-      "id": "instruments.compass",
+      "id": "ui.render",
       "version": "1.0.2"
     },
     {
+      "id": "instruments.compass",
+      "version": "1.0.1"
+    },
+    {
       "id": "history.chart",
-      "version": "1.0.2"
+      "version": "1.0.1"
     }
   ]
 }

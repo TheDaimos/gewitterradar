@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r11";
+import { defineModule } from "../core/runtime.js?v=41002r10";
 export const MODULE_META=Object.freeze({
   "id": "ui.scroll-guard",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "group": "Oberfläche",
   "function": "Scrollschutz",
   "subfunctions": [

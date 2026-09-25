@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r11";
+import { defineModule } from "../core/runtime.js?v=41002r10";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.1.5",
+  "version": "1.1.4",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -378,51 +378,10 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       [1,2].forEach((columns)=>this.shadow.getElementById(`diagnostic-columns-${columns}`)?.addEventListener('click',()=>this._setDiagnosticColumnMode(columns)));
       this.shadow.querySelectorAll('#diagnostic-exit,#diagnostic-exit-top').forEach((button)=>button.addEventListener('click',()=>this._stopDiagnostics()));
       this.shadow.getElementById('diagnostic-minimize')?.addEventListener('click',()=>consoleNode.classList.toggle('minimized'));
-      const handle=consoleNode.querySelector('#diagnostic-console-drag');let drag=null;
-      const touchById=(list,id)=>[...(list||[])].find((touch)=>touch.identifier===id)||null;
-      const startDrag=(source,inputId,clientX,clientY)=>{
-        const rect=consoleNode.getBoundingClientRect();
-        drag={source,inputId,dx:clientX-rect.left,dy:clientY-rect.top};
-      };
-      const moveDrag=(source,inputId,clientX,clientY)=>{
-        if(!drag||drag.source!==source||drag.inputId!==inputId)return false;
-        const bounds=this._diagnosticConsoleBounds(),header=handle?.getBoundingClientRect(),reachableX=Math.max(80,Math.min(header?.width||80,bounds.width)),reachableY=Math.max(36,Math.min(header?.height||36,bounds.height));
-        const left=Math.max(bounds.left-consoleNode.offsetWidth+reachableX,Math.min(bounds.left+bounds.width-reachableX,clientX-drag.dx));
-        const top=Math.max(bounds.top,Math.min(bounds.top+bounds.height-reachableY,clientY-drag.dy));
-        consoleNode.style.left=`${Math.round(left)}px`;consoleNode.style.top=`${Math.round(top)}px`;this._diagnostics.position={left:Math.round(left),top:Math.round(top)};return true;
-      };
-      const finishDrag=(source,inputId)=>{
-        if(!drag||drag.source!==source||drag.inputId!==inputId)return;
-        drag=null;try{localStorage.setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}
-      };
-      handle?.addEventListener('pointerdown',(event)=>{
-        if((event.pointerType==='mouse'&&event.button!==0)||event.isPrimary===false||event.target.closest('button'))return;
-        if(event.pointerType!=='touch')event.preventDefault();event.stopPropagation();
-        startDrag('pointer',event.pointerId,event.clientX,event.clientY);
-        try{handle.setPointerCapture(event.pointerId);}catch(_){}
-      },{capture:true});
-      handle?.addEventListener('pointermove',(event)=>{
-        if(!drag||drag.source!=='pointer'||drag.inputId!==event.pointerId)return;
-        event.preventDefault();event.stopPropagation();moveDrag('pointer',event.pointerId,event.clientX,event.clientY);
-      },{capture:true});
-      const finishPointer=(event)=>{
-        if(!drag||drag.source!=='pointer'||drag.inputId!==event.pointerId)return;
-        event.preventDefault();event.stopPropagation();finishDrag('pointer',event.pointerId);try{handle.releasePointerCapture(event.pointerId);}catch(_){}
-      };
-      handle?.addEventListener('pointerup',finishPointer,{capture:true});handle?.addEventListener('pointercancel',finishPointer,{capture:true});
-      handle?.addEventListener('touchstart',(event)=>{
-        if(event.target.closest('button'))return;const touch=event.changedTouches?.[0]||event.touches?.[0];if(!touch)return;
-        event.preventDefault();event.stopPropagation();startDrag('touch',touch.identifier,touch.clientX,touch.clientY);
-      },{capture:true,passive:false});
-      handle?.addEventListener('touchmove',(event)=>{
-        if(!drag||drag.source!=='touch')return;const touch=touchById(event.touches,drag.inputId)||touchById(event.changedTouches,drag.inputId);if(!touch)return;
-        event.preventDefault();event.stopPropagation();moveDrag('touch',drag.inputId,touch.clientX,touch.clientY);
-      },{capture:true,passive:false});
-      const finishTouch=(event)=>{
-        if(!drag||drag.source!=='touch')return;if(event.type==='touchend'&&!touchById(event.changedTouches,drag.inputId))return;
-        event.preventDefault();event.stopPropagation();finishDrag('touch',drag.inputId);
-      };
-      handle?.addEventListener('touchend',finishTouch,{capture:true,passive:false});handle?.addEventListener('touchcancel',finishTouch,{capture:true,passive:false});
+      const handle=this.shadow.getElementById('diagnostic-console-drag');let drag=null;
+      handle?.addEventListener('pointerdown',(event)=>{if(event.target.closest('button'))return;const rect=consoleNode.getBoundingClientRect();drag={id:event.pointerId,dx:event.clientX-rect.left,dy:event.clientY-rect.top};handle.setPointerCapture?.(event.pointerId);});
+      handle?.addEventListener('pointermove',(event)=>{if(!drag||event.pointerId!==drag.id)return;const vv=window.visualViewport,width=vv?.width||innerWidth,height=vv?.height||innerHeight,header=handle.getBoundingClientRect(),reachableX=Math.max(80,Math.min(header.width,width)),reachableY=Math.max(36,Math.min(header.height,height)),left=Math.max(-consoleNode.offsetWidth+reachableX,Math.min(width-reachableX,event.clientX-drag.dx)),top=Math.max(0,Math.min(height-reachableY,event.clientY-drag.dy));consoleNode.style.left=`${Math.round(left)}px`;consoleNode.style.top=`${Math.round(top)}px`;this._diagnostics.position={left:Math.round(left),top:Math.round(top)};});
+      handle?.addEventListener('pointerup',(event)=>{if(drag?.id===event.pointerId){drag=null;try{localStorage.setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}}});
     },
 
     _startDiagnostics() {
@@ -461,14 +420,8 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       this._syncDiagnosticUi();
     },
 
-    _diagnosticConsoleBounds() {
-      const node=this.shadow?.getElementById('diagnostic-console'),fullscreen=this.shadow?.getElementById('map-fullscreen-dialog');
-      if(node&&fullscreen?.open&&node.parentNode===fullscreen){const rect=fullscreen.getBoundingClientRect();return {left:rect.left,top:rect.top,width:rect.width,height:rect.height};}
-      const vv=window.visualViewport;return {left:vv?.offsetLeft||0,top:vv?.offsetTop||0,width:vv?.width||innerWidth,height:vv?.height||innerHeight};
-    },
-
     _clampDiagnosticConsole() {
-      const node=this.shadow?.getElementById('diagnostic-console'),head=node?.querySelector?.('#diagnostic-console-drag');if(!node||!head)return;const bounds=this._diagnosticConsoleBounds(),rect=node.getBoundingClientRect(),headRect=head.getBoundingClientRect(),reachableX=Math.max(80,Math.min(headRect.width,bounds.width)),reachableY=Math.max(36,Math.min(headRect.height,bounds.height)),left=Math.max(bounds.left-rect.width+reachableX,Math.min(bounds.left+bounds.width-reachableX,rect.left)),top=Math.max(bounds.top,Math.min(bounds.top+bounds.height-reachableY,rect.top));node.style.left=`${Math.round(left)}px`;node.style.top=`${Math.round(top)}px`;
+      const node=this.shadow?.getElementById('diagnostic-console'),head=this.shadow?.getElementById('diagnostic-console-drag');if(!node||!head)return;const vv=window.visualViewport,width=vv?.width||innerWidth,height=vv?.height||innerHeight,rect=node.getBoundingClientRect(),headRect=head.getBoundingClientRect(),reachableX=Math.max(80,Math.min(headRect.width,width)),reachableY=Math.max(36,Math.min(headRect.height,height)),left=Math.max(-rect.width+reachableX,Math.min(width-reachableX,rect.left)),top=Math.max(0,Math.min(height-reachableY,rect.top));node.style.left=`${Math.round(left)}px`;node.style.top=`${Math.round(top)}px`;
     },
 
     _setDiagnosticColumnMode(columns) { this._diagnostics.columnMode=columns===1?1:2;try{localStorage.setItem('gewitterradar-diagnostic-columns',String(this._diagnostics.columnMode));}catch(_){}this._syncDiagnosticUi();this._clampDiagnosticConsole(); },

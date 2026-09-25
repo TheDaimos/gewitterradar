@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r11";
+import { defineModule } from "../core/runtime.js?v=41002r10";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.5",
+  "version": "1.1.4",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [

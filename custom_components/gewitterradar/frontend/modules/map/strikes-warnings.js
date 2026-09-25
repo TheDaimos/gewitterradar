@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r11";
+import { defineModule } from "../core/runtime.js?v=41002r10";
 export const MODULE_META=Object.freeze({
   "id": "map.strikes-warnings",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "group": "Karte",
   "function": "Blitze & Warnungen",
   "subfunctions": [

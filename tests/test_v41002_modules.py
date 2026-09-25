@@ -94,12 +94,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r11'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r10'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r11"' in manifest
- assert 'moduleSetId:"3553-A031"' in manifest
- assert runtime["runtimeRevision"]=="41002r11"
- assert runtime["moduleSetId"]=="3553-A031"
+ assert 'runtimeRevision:"41002r10"' in manifest
+ assert 'moduleSetId:"CEA6-1ECF"' in manifest
+ assert runtime["runtimeRevision"]=="41002r10"
+ assert runtime["moduleSetId"]=="CEA6-1ECF"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
@@ -119,23 +119,6 @@ def test_internal_module_import_cache_is_coherent():
    if match.group(1)!=cache:
     stale.append((str(path.relative_to(FRONTEND)),match.group(1),cache))
  assert stale==[]
-
-def test_internal_build_identity_matches_manifest():
- manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
- base=(FRONTEND/"modules/core/base-context.js").read_text(encoding="utf-8")
- build=re.search(r'build:"([^"]+)"',manifest).group(1)
- assert f"const GEWITTERRADAR_BUILD = '{build}';" in base
-
-def test_diagnostic_console_fullscreen_drag_contract():
- cockpit=(FRONTEND/"modules/diagnostics/cockpit.js").read_text(encoding="utf-8")
- for marker in (
-  "_diagnosticConsoleBounds()",
-  "handle?.addEventListener('pointermove'",
-  "handle?.addEventListener('touchmove'",
-  "handle?.addEventListener('touchstart'",
-  "node.parentNode===fullscreen",
- ):
-  assert marker in cockpit
 
 def test_module_deviation_popup_contract():
  registry=(FRONTEND/"modules/core/registry.js").read_text(encoding="utf-8")
