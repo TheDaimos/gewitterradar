@@ -48,8 +48,8 @@ Aktueller Implementierungsstand:
 - Runtime-Zielstand: `41002r4`; `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.0`, `fullscreen.map-display 1.0.10`, `core.manifest 1.2.9`, Modulsatz `02AE-EBFC`.
 
 Jetzt in dieser Reihenfolge:
-1. Exakten Feature-Head vollständig durch alle CI-Gates laufen lassen und jeden Fehler direkt korrigieren.
-2. Erst bei vollständig grünem Head `deploy/dev` auf exakt diesen Commit setzen.
+1. Implementierungs-Head `66db3d941e0f9c41098fb4a18b48521b494ca8a9` ist vollständig 5/5 grün; jetzt nur noch den finalen Dokumentations-Head vollständig durch alle CI-Gates laufen lassen.
+2. Erst bei vollständig grünem finalen Head `deploy/dev` auf exakt diesen Commit setzen.
 3. Reale DRA-Abnahme: Diagnose aktivieren, Kompass-Picker und Medaillon-Picker öffnen und lokale Achsen/Messwerte prüfen; Diagnoseanzeige aus/ein muss die Picker-Diagnose mit aus/ein schalten.
 4. Medaillon-Diagnosebericht muss `trend_01` als aktives Profil melden und weiterhin den bestehenden Referenzstand messen.
 5. Danach können die weiteren Medaillonvarianten in denselben Design-/Diagnosevertrag aufgenommen werden.
@@ -2366,7 +2366,7 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 ## Schleife 069 – Diagnose direkt in Kompass-/Medaillon-Picker erweitert
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung und Verträge abgeschlossen; CI/DRA-Abnahme offen
+**Status:** Implementierung und automatisierte Abnahme vollständig grün; finale Dokumentations-CI/DRA-Abnahme offen
 
 Ziel vor der nächsten Medaillon-Serie:
 - Diagnose muss auch im geöffneten Kompass- und Medaillon-Popup sichtbar und messfähig sein,
@@ -2400,4 +2400,11 @@ Regression/Verträge:
 - neuer Playwright-Test `scripts/test-picker-diagnostics.cjs` prüft Dashboard + Integration auf Desktop + iPad, einschließlich globalem Ein-/Ausblenden und Snapshot-Übernahme,
 - Frontend-Vertrag und Prüfsummenbestand auf R4 aktualisiert.
 
-**Nächster Schritt:** vollständige CI auf dem exakten Head auswerten; bei grünem Stand `deploy/dev` auf diesen Commit setzen und reale DRA-/HA-Abnahme durchführen. Danach weitere Medaillons.
+Automatisierte Abnahme des Implementierungsstands:
+- Head `66db3d941e0f9c41098fb4a18b48521b494ca8a9` vollständig **5/5 grün**.
+- `Validate shared Gewitterradar frontend` #2048: erfolgreich; darin insbesondere deterministischer Build, JavaScript-Syntax, Locale-/Diagnoseverträge, Settings/Help, neuer **Instrument picker diagnostics**-Browsertest, Golden-Geometrie und beide Delivery-Browsersuiten.
+- `Validate Gewitterradar integration` #2067: erfolgreich; HACS, hassfest, Paket-/DRA-Vertrag und Home-Assistant-Runtime grün.
+- `Diagnostic contract` #816, `Source archive contract` #437 und `Hi-Res asset retention` #1287: erfolgreich.
+- Neuer Picker-Diagnose-Browsertest ist für Dashboard und native Integration auf Desktop und iPad erfolgreich.
+
+**Nächster Schritt:** diesen Dokumentationsstand selbst noch einmal vollständig durch CI prüfen. Erst der danach vollständig grüne finale Head wird exakt nach `deploy/dev` promoviert. Anschließend reale DRA-/HA-Abnahme der Diagnose im Kompass-/Medaillon-Popup; danach weitere Medaillons.
