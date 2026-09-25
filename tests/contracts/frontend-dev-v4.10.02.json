@@ -4,19 +4,19 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "152651d02d11d64212098f18309f4dc53793c336ec01bb6c8f343d3ab2fd7c31",
+  "sha256": "7e896a7518c60957b622882d72fc644c11f1a645c4e6a2319ce2b98589fcde9c",
   "sizeBytes": 8123,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R8-2026-09-25",
+  "build": "V4.10.02-MODULAR-DEV-R9-2026-09-25",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "bfb1663ceb4f5fb7a5168f5d6de94c00ad6584930c48aa917e03e5baba317e8d",
+      "sha256": "37cb2cf03b5e1c57bdf553e4b08cf4c19c0f4d81f2b7e25c14de060728310854",
       "sizeBytes": 6741
     },
     "modules/core/registry.js": {
-      "sha256": "04ed080b87528badf125bcaa0dd6abe4e006bc91f3701a62f528ae09ad9750d8",
-      "sizeBytes": 4211
+      "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
+      "sizeBytes": 4835
     },
     "modules/core/runtime.js": {
       "sha256": "bb856ae7dfe1372b98261195ae087c62c962d5e15d3a52d644516e863142a874",
@@ -47,8 +47,8 @@
       "sizeBytes": 183041
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "7237a46fa50f8e0f9aed6c80bebcbefe8ae81355e5a2d3edb9a2184d44433669",
-      "sizeBytes": 185833
+      "sha256": "3e50b1c2dc37a1dcb360fd36ac92b1a084f4a76959989cdc7bacc70cde5b4986",
+      "sizeBytes": 189852
     },
     "modules/core/source-status.js": {
       "sha256": "f34426bb65c5eea197da297a9c2e8f555760a2814ea11a5132bca077daacd8ae",
@@ -59,8 +59,8 @@
       "sizeBytes": 13612
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "ff61e095e3ea9016a4d423e3fae1def140542da9775397624e684e7fb09fd056",
-      "sizeBytes": 64029
+      "sha256": "d1bb83fa7564d9284ef0aa7bf6ff1092aba4607a8a3ad470468a4b1d15d8fa85",
+      "sizeBytes": 77654
     },
     "modules/diagnostics/cockpit.js": {
       "sha256": "80cd523edb3cdcba4c2f500dc10c75acd2630c44c081b263a85a8405a79dc1cb",
