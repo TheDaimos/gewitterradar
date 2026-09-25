@@ -1,9 +1,9 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r2";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R2-2026-09-24",runtimeRevision:"41002r2",moduleSetId:"A6C8-9983"});
+import { registerModule } from "./modules/core/registry.js?v=41002r3";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R3-2026-09-25",runtimeRevision:"41002r3",moduleSetId:"D11F-2D80"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -280,4 +280,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.7",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.8",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
