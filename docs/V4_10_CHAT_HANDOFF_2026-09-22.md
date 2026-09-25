@@ -57,35 +57,35 @@ Keine öffentliche V4.10-Freigabe, kein Merge nach `main` und kein Release ohne 
 
 ---
 
-## 3. Aktueller Produktkandidat R5
+## 3. Aktueller Produktkandidat R6
 
-Der automatisiert vollständig geprüfte Produktkandidat ist:
+Der automatisiert vollständig geprüfte R6-Produkt-/Teststand ist:
 
-`fe6fa77ab2d541ab04afc8f6a5ac3493275ce242`
+`550f64e1db7585bfb1edd1ca5ee33fba357cd156`
 
 Laufzeitidentität:
 
-- Build: `V4.10.02-MODULAR-DEV-R5-2026-09-25`
-- Runtime-Revision: `41002r5`
-- Modulsatz-ID: `EA13-2B8B`
-- `core.manifest 1.2.10`
+- Build: `V4.10.02-MODULAR-DEV-R6-2026-09-25`
+- Runtime-Revision: `41002r6`
+- Modulsatz-ID: `37F8-9357`
+- `core.manifest 1.2.11`
 - `core.base-context 1.0.3`
-- `diagnostics.cockpit 1.1.1`
-- `fullscreen.map-display 1.0.11`
+- `diagnostics.cockpit 1.1.2`
+- `fullscreen.map-display 1.0.12`
 
-Exakte CI dieses Produktkandidaten:
+Exakte CI dieses Produkt-/Teststands:
 
-- Diagnostic contract #867 → **success**
-- Source archive contract #468 → **success**
-- Hi-Res asset retention #1349 → **success**
-- Validate Gewitterradar integration #2130 → **success**
-- Validate shared Gewitterradar frontend #2111 → **success**
+- Diagnostic contract #921 → **success**
+- Source archive contract #498 → **success**
+- Hi-Res asset retention #1417 → **success**
+- Validate Gewitterradar integration #2199 → **success**
+- Validate shared Gewitterradar frontend #2180 → **success**
 
 Damit: **5/5 grün**.
 
-`deploy/dev` wurde anschließend auf exakt diesen Commit gesetzt und der Vergleich als **identisch** verifiziert.
+Der verschärfte Picker-Browsertest ist darin für Dashboard und native Integration auf Desktop und iPad grün. Er prüft jetzt tatsächliches SVG-Raster, absolute Winkelkompensation, sichtbare TREND-Bewegung, Vollbild-Raster und die Top-Layer-Hostwechsel.
 
-Wichtig: Nachfolgende reine Dokumentationscommits auf dem Featurezweig können dessen Head verändern. Für die reale DRA-Abnahme ist der oben genannte grüne Produktkandidat auf `deploy/dev` maßgeblich. Beim Start trotzdem alle Heads frisch prüfen.
+Wichtig: `deploy/dev` zeigt bis zur finalen Promotion noch auf den vorherigen R5-Stand. Nach der Dokumentations-CI wird der exakt grüne finale R6-Head auf `deploy/dev` gesetzt und anschließend real über DRA abgenommen.
 
 ---
 
@@ -265,25 +265,40 @@ Zusätzlich schützen statische Python-/Frontend-Verträge:
 
 ---
 
-## 10. Jetzt noch offen – reale R5-Abnahme
+## 10. Jetzt noch offen – reale R6-Abnahme
 
-**Das ist der nächste Schritt. Nicht erneut implementieren, bevor der aktuelle DRA-Stand real geprüft wurde.**
+**Das ist der nächste Schritt. Keine weiteren Medaillon-Designs entwickeln, bevor R6 real über DRA geprüft wurde.**
 
-Über DRA `deploy/dev` installieren und danach:
+Nach der finalen Promotion über DRA `deploy/dev` installieren und danach:
 
-1. Diagnose starten.
-2. Medaillon **PFEIL** wählen und mehrere normale Render-/Kalibrierzyklen abwarten → darf nicht auf NORMAL springen.
-3. Gleiches mit **TREND** und **FREEZE**.
-4. Medaillon-Picker öffnen:
-   - lokale Diagnosewerkzeuge sichtbar,
-   - Zustand wird korrekt gespiegelt,
-   - Detailsteuerungen funktionieren,
-   - KOPIEREN/JSON/CSV funktionieren.
-5. Kompass-Picker öffnen:
-   - lokale Diagnosewerkzeuge/Messwerte sichtbar,
-   - KOPIEREN/JSON/CSV funktionieren.
-6. Diagnosedarstellung global aus/ein → Picker-Diagnose synchron aus/ein.
-7. Desktop, iPad und Android/HA Companion prüfen.
+1. Diagnose starten; Diagnosedarstellung und feines Raster aktivieren.
+2. Medaillon **PFEIL** wählen und normale Render-/Kalibrierzyklen abwarten → Zustand darf nicht auf NORMAL springen.
+3. **TREND** wählen → der Pfeil muss sich **sichtbar** bewegen, nicht nur intern als Animation gemeldet werden.
+4. **FREEZE** prüfen → die laufende Diagnoseanimation muss sichtbar eingefroren werden.
+5. Absolute Winkel prüfen:
+   - 0° = Nord / oben,
+   - 45° = Nordost,
+   - 90° = Ost / rechts,
+   - 180° = Süd / unten,
+   - 270° = West / links.
+6. Medaillon-Picker:
+   - Raster/Messlinien tatsächlich sichtbar,
+   - Zellkennungen `MP-A1…MP-J10`,
+   - vollständige große Diagnosekonsole erreichbar,
+   - Detailsteuerungen,
+   - KOPIEREN / JSON / CSV.
+7. Kompass-Picker:
+   - Raster/Messlinien tatsächlich sichtbar,
+   - Zellkennungen `KP-A1…KP-J10`,
+   - vollständige große Diagnosekonsole erreichbar,
+   - KOPIEREN / JSON / CSV.
+8. Vollbild:
+   - eigenes Raster `FS-A1…FS-J10`,
+   - Diagnose-Overlay und Diagnosekonsole sichtbar/bedienbar,
+   - anschließend Kompass- und Medaillon-Picker aus dem Vollbild öffnen,
+   - Diagnosekonsole muss dem obersten Picker folgen und nach Schließen wieder im Vollbild verfügbar sein.
+9. Diagnosedarstellung global aus/ein → Picker- und Vollbild-Diagnose synchron aus/ein.
+10. Desktop, iPad und Android/HA Companion prüfen.
 
 Erst **danach** mit den zusätzlichen Medaillon-Designs weitermachen.
 
@@ -328,47 +343,42 @@ Bitte zuerst den aktuellen Repository-/PR-/CI-Stand verifizieren und danach zwin
 Keine neue parallele Übergabe- oder Statusdatei anlegen.
 Der Schlachtplan ist die verbindliche Detailquelle.
 
-Wichtiger Produktkandidat:
-fe6fa77ab2d541ab04afc8f6a5ac3493275ce242
-Runtime 41002r5
-Modulsatz EA13-2B8B
-core.manifest 1.2.10
+Wichtiger Produktkandidat R6:
+550f64e1db7585bfb1edd1ca5ee33fba357cd156
+Runtime 41002r6
+Modulsatz 37F8-9357
+core.manifest 1.2.11
 core.base-context 1.0.3
-diagnostics.cockpit 1.1.1
-fullscreen.map-display 1.0.11
+diagnostics.cockpit 1.1.2
+fullscreen.map-display 1.0.12
 
-Dieser Produktkandidat ist 5/5 CI-grün:
-Shared Frontend #2111
-Integration #2130
-Diagnostic #867
-Source Archive #468
-Hi-Res #1349
+Dieser Produkt-/Teststand ist 5/5 CI-grün:
+Shared Frontend #2180
+Integration #2199
+Diagnostic #921
+Source Archive #498
+Hi-Res #1417
 
-deploy/dev wurde exakt auf diesen grünen Produktkandidaten gesetzt.
-
-Der letzte reale Benutzerfund betraf die Diagnose:
-- Medaillon-Zustände LEER/PFEIL/TREND/FREEZE sprangen auf NORMAL zurück.
-- Beim Öffnen der Kompass-/Medaillon-Popups war die außerhalb des Dialog-Top-Layers
-  liegende Diagnosekonsole nicht verfügbar.
-- Direkte Picker-Exporte fehlten.
-
-R5 enthält die Korrektur:
-- Diagnosezustand bleibt während aktiver Diagnose stabil.
-- Beide Picker besitzen lokale Diagnosewerkzeuge direkt im Popup.
-- Kompass: KOPIEREN / JSON / CSV.
-- Medaillon zusätzlich: LEER/PFEIL/TREND/FREEZE/NORMAL,
-  Pfeil/Animation/Freeze ein/aus, Winkel 0/45/90/180/270,
-  plus KOPIEREN / JSON / CSV.
-- Medaillon-Diagnose ist designfähig über MEDALLION_DESIGNS.diagnosticProfile.
-- trend_01 behält die bereits abgenommenen Referenzwerte.
+R6 korrigiert die reale R5-Diagnoseabnahme:
+- TREND bewegt den Pfeil jetzt sichtbar; der statische Transform blockiert die Keyframes nicht mehr.
+- Absolute Winkel: 0° Nord, 90° Ost, 180° Süd, 270° West; Pfeilasset wird um -45° kompensiert.
+- Kompass-Picker erhält KP-A1…KP-J10.
+- Medaillon-Picker erhält MP-A1…MP-J10.
+- Vollbild erhält FS-A1…FS-J10.
+- Raster, Achsen, Diagonalen und Messhilfen werden tatsächlich im jeweiligen Top-Layer gerendert.
+- Die große Diagnosekonsole folgt Vollbild und geöffnetem Picker und wird beim Schließen korrekt zurückgeführt.
+- Exporte enthalten zusätzlich die Winkelkonvention und den Asset-Nullpunktversatz.
+- Die Browserregression prüft tatsächliches SVG-Markup, reale Transformänderung und verschachtelte Top-Layer.
 
 NÄCHSTER SCHRITT:
-Nicht weiter implementieren, sondern zuerst die reale DRA-Abnahme von deploy/dev durchführen:
-1. PFEIL/TREND/FREEZE dürfen nicht mehr auf NORMAL zurückspringen.
-2. Medaillon-Picker: lokale Diagnosewerkzeuge + Zustandsspiegelung + Export prüfen.
-3. Kompass-Picker: lokale Diagnosewerkzeuge + Export prüfen.
-4. Diagnosedarstellung global aus/ein prüfen.
-5. Desktop, iPad und Android/HA Companion prüfen.
+Nicht weiter implementieren, sondern zuerst die reale R6-DRA-Abnahme von deploy/dev durchführen:
+1. PFEIL/TREND/FREEZE auf Stabilität und sichtbare Funktion prüfen.
+2. Winkel 0/45/90/180/270 gegen Nord/Ost/Süd/West prüfen.
+3. Medaillon-Picker: MP-Raster/Messlinien + große Diagnosekonsole + Export prüfen.
+4. Kompass-Picker: KP-Raster/Messlinien + große Diagnosekonsole + Export prüfen.
+5. Vollbild: FS-Raster, Diagnosekonsole und Vollbild→Picker→Vollbild prüfen.
+6. Diagnosedarstellung global aus/ein prüfen.
+7. Desktop, iPad und Android/HA Companion prüfen.
 
 Erst danach mit den weiteren Medaillon-Designs fortfahren.
 
