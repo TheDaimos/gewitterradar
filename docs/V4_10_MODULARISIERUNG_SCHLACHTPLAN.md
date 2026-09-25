@@ -36,63 +36,25 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**M13 – Regression & Freigabe kompakt vollständig abarbeiten.**
+**Zwischenauftrag Diagnose-Erweiterung vor weiteren Medaillons vollständig abschließen.**
 
-Aktueller Testzweig:
-- `test/dra-v4.10.02-cache-mixed-state`
-- Commit `274d9304823be7a1ec8620ec6f157493813d0e47`
-- Basis: `deploy/dev` `08eec9c3f19c2680ede86336931be8f8e0029424`
-- gegenüber `deploy/dev` exakt **eine geänderte Datei**:
-  `custom_components/gewitterradar/frontend/modules/fullscreen/map-display.js`
-- geladene Modulversion dort absichtlich **1.0.1**; Manifest/Sollstand bleibt **1.0.2**.
+Aktueller Implementierungsstand:
+- Kompass-Picker besitzt bei aktiver globaler Diagnose eine lokale Diagnoseebene direkt im nativen Popup.
+- Medaillon-Picker besitzt dieselbe lokale Diagnoseebene und verwendet das aktuell ausgewählte Medaillon.
+- `MEDALLION_DESIGNS` ist um ein designspezifisches `diagnosticProfile` erweitert; `trend_01` übernimmt unverändert die bereits abgenommenen Geometriewerte.
+- Medaillon-Kalibrierung verwendet nicht mehr fest `MEDALLION_DESIGNS[0]`.
+- Diagnose-Snapshot exportiert zusätzlich die aktuell geöffneten Picker-Messwerte.
+- Browser-Regressionsprüfung für Dashboard/Integration auf Desktop und iPad ist ergänzt.
+- Runtime-Zielstand: `41002r4`; `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.0`, `fullscreen.map-display 1.0.10`, `core.manifest 1.2.9`, Modulsatz `02AE-EBFC`.
 
-Bereits real vollständig bestätigt:
-- **22 / 22 Module geladen**,
-- **1 Abweichung erkannt**,
-- Detailzeile `fullscreen.map-display`: **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
-- damit ist der M12-Punkt **veraltetes Modul erkennen** abgeschlossen.
+Jetzt in dieser Reihenfolge:
+1. Exakten Feature-Head vollständig durch alle CI-Gates laufen lassen und jeden Fehler direkt korrigieren.
+2. Erst bei vollständig grünem Head `deploy/dev` auf exakt diesen Commit setzen.
+3. Reale DRA-Abnahme: Diagnose aktivieren, Kompass-Picker und Medaillon-Picker öffnen und lokale Achsen/Messwerte prüfen; Diagnoseanzeige aus/ein muss die Picker-Diagnose mit aus/ein schalten.
+4. Medaillon-Diagnosebericht muss `trend_01` als aktives Profil melden und weiterhin den bestehenden Referenzstand messen.
+5. Danach können die weiteren Medaillonvarianten in denselben Design-/Diagnosevertrag aufgenommen werden.
 
-Saubere Ausgangsbasis real bestätigt:
-- `deploy/dev` ist wiederhergestellt,
-- **22 / 22 Module geladen**,
-- **Versionssatz konsistent**,
-- `fullscreen.map-display`: **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**.
-
-Browsercache-/Mischstand – erster Halbtest real bestätigt:
-- Testzweig `test/dra-v4.10.02-cache-mixed-state` wurde per DRA installiert,
-- der bereits laufende Browser wurde danach bewusst **nicht** hart neu geladen,
-- **Module & Versionen** meldet weiterhin **22 / 22 Module geladen** und **Versionssatz konsistent**,
-- `fullscreen.map-display` zeigt weiterhin **geladen 1.0.2 / erwartet 1.0.2 / Status korrekt**,
-- damit ist belegt, dass der bereits geladene Browser-Laufzeitstand trotz geänderter Datei auf dem Dateisystem zunächst bestehen bleibt.
-
-Browsercache-/Mischstand vollständig real bestätigt:
-- vor hartem Frontend-Neuladen blieb trotz installiertem Testzweig der bereits geladene Stand **1.0.2 / erwartet 1.0.2 / korrekt** aktiv,
-- nach `Strg+Shift+R` meldet `fullscreen.map-display` **geladen 1.0.1 / erwartet 1.0.2 / Status abweichend**,
-- Gesamtstatus danach: **22 / 22 Module geladen**, **1 Abweichung erkannt**,
-- M12-Haken **Browsercache-Fall simulieren** gesetzt.
-
-Aktueller Rollback-Nachweis:
-- `deploy/v4.09` wurde über DRA installiert,
-- DRA erkannte korrekt die Regression **4.10.02 → 4.09**,
-- die Rollback-Vorschau bestand aus **0 neu / 2 geändert / 22 entfernt / 33 unverändert**,
-- DRA verlangte korrekt einen vollständigen Home-Assistant-Neustart,
-- nach dem Neustart läuft real **V4.09**; Einstellungen und Versionsverlauf zeigen sichtbar **2026/09 · V4.09**.
-
-M12 ist vollständig real abgeschlossen:
-- Rückfall `V4.10.02 → V4.09` über DRA erfolgreich,
-- Rückkehr `V4.09 → V4.10.02` über DRA erfolgreich,
-- DRA erkannte die Rückkehr korrekt als Upgrade,
-- Rückkehr-Vorschau: **22 neu / 2 geändert / 0 entfernt / 33 unverändert**,
-- vollständiger Home-Assistant-Neustart wurde korrekt verlangt,
-- nach dem Neustart läuft wieder **V4.10.02**,
-- **22 / 22 Module geladen**,
-- **Versionssatz konsistent**,
-- Versionsverlauf zeigt wieder **2026/09 · V4.10.02**.
-
-M12-Release-Gate ist damit vollständig bestanden.
-
-Jetzt ausschließlich **M13 – Regression & Freigabe** abarbeiten. Zuerst alle automatisierbaren Repository-/CI-/Paket-/Checksum-/Dokumentationsprüfungen durchführen und im Schlachtplan dokumentieren. Danach verbleibende reale UI-/Geräteprüfungen aus der M13-Liste gezielt abnehmen. Die eigentliche Medaillon-Auswahl/-Bearbeitung und eine mögliche Auslagerung nach `instruments.medallion` bleiben bewusst ein Thema **nach M13**.
-
+Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
 
 # 1. Zielarchitektur
@@ -2400,3 +2362,42 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 - [x] Regressionstest erzwingt VP8L/lossless, 104×104, <15 KB und ausschließliche Referenzierung aus `map-display`.
 - [x] Implementierungskandidat `e27742be6f5c574693048a168fc58e8a87a54feb` vollständig grün: Diagnostic #715, Hi-Res #1165, Source Archive #377, Integration #1943, Shared Frontend #1924.
 - [ ] Nach finalem Dokumentations-CI `deploy/dev` auf den vollständig geprüften Endstand promoten und über DRA real installieren.
+
+## Schleife 069 – Diagnose direkt in Kompass-/Medaillon-Picker erweitert
+
+**Datum:** 2026-09-25  
+**Status:** Implementierung und Verträge abgeschlossen; CI/DRA-Abnahme offen
+
+Ziel vor der nächsten Medaillon-Serie:
+- Diagnose muss auch im geöffneten Kompass- und Medaillon-Popup sichtbar und messfähig sein,
+- Medaillon-Diagnose darf nicht mehr auf den ersten Design-Eintrag fest verdrahtet sein,
+- kommende Medaillons müssen jeweils eigene Sollgeometrien hinterlegen können.
+
+Umgesetzt:
+- lokale Diagnose-SVGs direkt innerhalb beider nativer Picker-Dialoge, damit Top-Layer/`<dialog>` keine Messhilfen verdeckt,
+- Achsen, Diagonalen, Bounding-Box und Mittelpunktmarken im Instrumentbereich,
+- separate Navigationsmessung für Links-Chivron, Zähler und Rechts-Chivron,
+- Kompass: Instrumentzentrum, Pivot, Chivron-/Zählersymmetrie, vertikale Streuung, Instrument→Navigation-Abstand und Overflow,
+- Medaillon: Zentrum, designspezifische Apertur, Soll-/Ist-Pfeilzentrum, Pfeilgrößenabweichung, Chivron-/Zählersymmetrie, Stage→Navigation-Abstand und Overflow,
+- lokaler Live-Messwertblock in beiden Popups, nur wenn globale Diagnose **und** Diagnosedarstellung aktiv sind,
+- globales Ausblenden der Diagnosedarstellung blendet die lokalen Picker-Messhilfen sofort mit aus,
+- Diagnose-Snapshot enthält `pickers.compass` und `pickers.medallion`,
+- `MEDALLION_DESIGNS.trend_01.diagnosticProfile` enthält den bisherigen abgenommenen Referenzstand für Apertur, Motiv, Pfeilzentrum, Pfeilgröße und Komposition,
+- Medaillon-Kalibrierung löst aktives Design/Profil dynamisch auf; festes `MEDALLION_DESIGNS[0]` entfernt,
+- bei Medaillon-Wechsel werden Picker-Diagnose und – sofern aktiv – Medaillon-Kalibrierung unmittelbar neu gemessen.
+
+Modul-/Runtime-Zielstand:
+- `core.base-context` → **1.0.3**
+- `diagnostics.cockpit` → **1.1.0**
+- `fullscreen.map-display` → **1.0.10**
+- `core.manifest` → **1.2.9**
+- Runtime-Revision → **41002r4**
+- Modulsatz → **02AE-EBFC**
+
+Regression/Verträge:
+- statischer Python-Vertrag schützt Picker-Hooks, designfähige Profile und Entfernen der festen Medaillon-Index-0-Kopplung,
+- `scripts/verify-frontend.mjs` schützt Diagnosemodul und Picker-Diagnosemethoden,
+- neuer Playwright-Test `scripts/test-picker-diagnostics.cjs` prüft Dashboard + Integration auf Desktop + iPad, einschließlich globalem Ein-/Ausblenden und Snapshot-Übernahme,
+- Frontend-Vertrag und Prüfsummenbestand auf R4 aktualisiert.
+
+**Nächster Schritt:** vollständige CI auf dem exakten Head auswerten; bei grünem Stand `deploy/dev` auf diesen Commit setzen und reale DRA-/HA-Abnahme durchführen. Danach weitere Medaillons.
