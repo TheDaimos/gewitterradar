@@ -670,6 +670,11 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       setText("#settings-modules-download","modules.download",backdrop);
       const close=backdrop?.querySelector?.("#settings-modules-close");
       if(close)close.setAttribute("aria-label",this._t?.("modules.close")||"modules.close");
+      const deviationBackdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      setText("#settings-modules-deviations-copy","modules.copy",deviationBackdrop);
+      setText("#settings-modules-deviations-download","modules.download",deviationBackdrop);
+      const deviationClose=deviationBackdrop?.querySelector?.("#settings-modules-deviations-close");
+      if(deviationClose)deviationClose.setAttribute("aria-label",this._t?.("modules.close")||"modules.close");
     },
 
     _moduleStatusLabel(status){
@@ -677,13 +682,45 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         ok:"modules.status.ok",
         missing:"modules.status.missing",
         version_mismatch:"modules.status.version_mismatch",
-        unexpected:"modules.status.unexpected"
+        unexpected:"modules.status.unexpected",
+        duplicate:"modules.status.duplicate"
       }[status];
       return key?(this._t?.(key)||status):status;
     },
 
+    _moduleDeviationIssues(result=moduleRegistrySnapshot(EXPECTED_MODULES)){
+      const issues=[];
+      for(const row of result?.rows||[]){
+        if(row.status!=="ok")issues.push({type:row.status,id:row.id,row});
+      }
+      for(const duplicate of result?.duplicateDetails||[]){
+        const row=(result?.rows||[]).find(item=>item.id===duplicate.id)||null;
+        issues.push({type:"duplicate",id:duplicate.id,count:duplicate.count,registrations:duplicate.registrations||[],row});
+      }
+      const probe=this._moduleRuntimeProbe||null;
+      if(probe?.stale)issues.push({type:"runtime_stale",id:"runtime",runtimeProbe:probe});
+      return issues;
+    },
+
     _moduleDiagnosticsPayload(){
       return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES)};
+    },
+
+    _moduleDeviationPayload(){
+      const diagnostics=moduleRegistrySnapshot(EXPECTED_MODULES);
+      const issues=this._moduleDeviationIssues(diagnostics);
+      return {
+        application:APPLICATION_META,
+        capturedAt:new Date().toISOString(),
+        runtimeProbe:this._moduleRuntimeProbe||null,
+        summary:{
+          loadedCount:diagnostics.loadedCount,
+          expectedCount:diagnostics.expectedCount,
+          issueCount:issues.length,
+          moduleSetId:this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||null,
+        },
+        deviations:issues
+      };
     },
 
     _refreshModuleRuntimeProbe(result){
@@ -716,7 +753,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       target.replaceChildren();
       const title=document.createElement("strong");title.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
       const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
-      const state=document.createElement("span");state.className="gr-mod-state";state.dataset.state=issueCount||runtimeStale?"warn":"ok";
+      const hasIssue=Boolean(issueCount||runtimeStale);
+      const state=document.createElement(hasIssue?"button":"span");state.className="gr-mod-state";state.dataset.state=hasIssue?"warn":"ok";
+      if(state.tagName==="BUTTON"){state.type="button";state.classList.add("gr-mod-deviation-trigger");state.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._openModuleDeviations();});}
       state.textContent=issueCount?`· ! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`:runtimeStale?`· ! ${this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich"}`:`· ✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
       const fingerprint=document.createElement("span");fingerprint.className="gr-mod-fingerprint";fingerprint.dataset.state=runtimeStale?"warn":"ok";
       fingerprint.textContent=runtimeStale?`· ${this._t?.("modules.set_id")||"ID"} ${loadedId} → ${installedId}`:`· ${this._t?.("modules.set_id")||"ID"} ${loadedId}`;
@@ -806,9 +845,99 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const result=moduleDiagnostics(EXPECTED_MODULES);
       this._renderModuleSummary(section.querySelector("#settings-modules-summary"),result);
       this._renderModuleSummary(this.shadow?.getElementById("settings-modules-dialog-summary"),result);
+      if(this.shadow?.getElementById("settings-modules-deviations-backdrop")?.classList.contains("open"))this._renderModuleDeviationDialog(result);
       this._refreshModuleRuntimeProbe(result);
       const list=this.shadow?.getElementById("settings-modules-list"),signature=this._moduleListSignature(result);
       if(list&&(forceList||list.dataset.moduleSignature!==signature)){this._renderModuleList(list,result);list.dataset.moduleSignature=signature;}
+    },
+
+    _renderModuleDeviationDialog(result=moduleDiagnostics(EXPECTED_MODULES)){
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      const issues=this._moduleDeviationIssues(result);
+      const title=backdrop.querySelector("#settings-modules-deviations-title");
+      if(title)title.textContent=this._t?.("modules.deviations",{count:issues.length})||`${issues.length} Abweichung(en) erkannt`;
+      const summary=backdrop.querySelector("#settings-modules-deviations-summary");
+      if(summary){
+        summary.replaceChildren();
+        const strong=document.createElement("strong");strong.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
+        const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
+        const set=document.createElement("span");set.className="gr-mod-fingerprint";set.dataset.state="ok";set.textContent=`· ${this._t?.("modules.set_id")||"ID"} ${this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||"—"}`;
+        summary.append(strong,counts,set);
+      }
+      const list=backdrop.querySelector("#settings-modules-deviations-list");
+      if(!list)return;
+      list.replaceChildren();
+      const appendDetail=(detail,label,value)=>{
+        const dt=document.createElement("dt");dt.textContent=label;
+        const dd=document.createElement("dd");dd.textContent=value==null||value===""?"—":String(value);
+        detail.append(dt,dd);
+      };
+      for(const issue of issues){
+        const card=document.createElement("article");card.className="gr-deviation-card";card.dataset.deviationType=issue.type;card.dataset.moduleId=issue.id;
+        const head=document.createElement("div");head.className="gr-deviation-head";
+        const heading=document.createElement("div");heading.className="gr-deviation-title";
+        const row=issue.row||null;
+        const presentation=row?modulePresentation(this._languageValue?.()||"Deutsch",row):{name:issue.id,functions:""};
+        const name=document.createElement("strong");name.textContent=presentation.name||issue.id;
+        const id=document.createElement("code");id.textContent=issue.id;
+        heading.append(name,id);
+        const badge=document.createElement("span");badge.className="gr-deviation-badge";badge.textContent=issue.type==="runtime_stale"?(this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich"):this._moduleStatusLabel(issue.type);
+        head.append(heading,badge);card.append(head);
+        const detail=document.createElement("dl");detail.className="gr-deviation-detail";
+        if(issue.type==="duplicate"){
+          appendDetail(detail,this._t?.("modules.detail.status")||"Status",this._moduleStatusLabel("duplicate"));
+          appendDetail(detail,this._t?.("modules.detail.version")||"Version",row?.loadedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.expected")||"Erwartet",row?.expectedVersion||"—");
+          appendDetail(detail,this._t?.("modules.deviation.registrations")||"Registrierungen",issue.count||issue.registrations?.length||0);
+          appendDetail(detail,this._t?.("modules.detail.file")||"Datei",row?.file||issue.registrations?.[0]?.file||"—");
+          card.append(detail);
+          if(row?.status==="ok"){
+            const note=document.createElement("div");note.className="gr-deviation-note";note.textContent=this._t?.("modules.deviation.active_matches")||"Aktive Modulversion entspricht dem Sollstand";card.append(note);
+          }
+          const registrations=document.createElement("div");registrations.className="gr-deviation-registrations";
+          for(const registration of issue.registrations||[]){
+            const entry=document.createElement("div");entry.className="gr-deviation-registration";
+            entry.textContent=`#${registration.index||"?"} · v${registration.version||"—"} · ${registration.url||registration.file||"—"}`;
+            registrations.append(entry);
+          }
+          card.append(registrations);
+        }else if(issue.type==="runtime_stale"){
+          const probe=issue.runtimeProbe||{};
+          appendDetail(detail,this._t?.("modules.detail.loaded")||"Geladen",probe.loadedId||"—");
+          appendDetail(detail,this._t?.("modules.installed")||"Installiert",probe.installedId||"—");
+          appendDetail(detail,"Runtime",`${probe.localRevision||"—"} → ${probe.installedRevision||"—"}`);
+          card.append(detail);
+        }else{
+          appendDetail(detail,this._t?.("modules.detail.status")||"Status",this._moduleStatusLabel(issue.type));
+          appendDetail(detail,this._t?.("modules.detail.version")||"Version",row?.loadedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.expected")||"Erwartet",row?.expectedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.file")||"Datei",row?.file||"—");
+          card.append(detail);
+        }
+        list.append(card);
+      }
+    },
+
+    _openModuleDeviations(){
+      this._ensureModuleView();
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      const result=moduleDiagnostics(EXPECTED_MODULES);
+      const issues=this._moduleDeviationIssues(result);
+      if(!issues.length)return;
+      this._renderModuleDeviationDialog(result);
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden","false");
+      requestAnimationFrame(()=>backdrop.querySelector("#settings-modules-deviations-close")?.focus());
+    },
+
+    _closeModuleDeviations(){
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden","true");
+      requestAnimationFrame(()=>this.shadow?.querySelector(".gr-mod-deviation-trigger")?.focus());
     },
 
     _openModuleDetails(){
@@ -847,6 +976,28 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const link=document.createElement("a");
       link.href=url;
       link.download=`gewitterradar-module-${APPLICATION_META.version}.json`;
+      document.body.append(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),0);
+    },
+
+    async _copyModuleDeviationDiagnostics(){
+      const text=JSON.stringify(this._moduleDeviationPayload(),null,2);
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(_error){
+        const area=document.createElement("textarea");
+        area.value=text;area.style.position="fixed";area.style.opacity="0";
+        document.body.append(area);area.select();document.execCommand("copy");area.remove();
+      }
+    },
+
+    _downloadModuleDeviationDiagnostics(){
+      const payload=JSON.stringify(this._moduleDeviationPayload(),null,2);
+      const blob=new Blob([payload],{type:"application/json;charset=utf-8"});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`gewitterradar-module-deviations-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),0);
     }
