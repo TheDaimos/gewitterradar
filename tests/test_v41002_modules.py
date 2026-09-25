@@ -130,8 +130,8 @@ def test_diagnostic_console_fullscreen_drag_contract():
  cockpit=(FRONTEND/"modules/diagnostics/cockpit.js").read_text(encoding="utf-8")
  for marker in (
   "_diagnosticConsoleBounds()",
-  "document.addEventListener('pointermove',onPointerMove,true)",
-  "document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false})",
+  "handle?.addEventListener('pointermove'",
+  "handle?.addEventListener('touchmove'",
   "handle?.addEventListener('touchstart'",
   "node.parentNode===fullscreen",
  ):
