@@ -11,7 +11,12 @@
 - `MEDALLION_DESIGNS` trägt ab jetzt pro Medaillon ein eigenes `diagnosticProfile`; die Medaillon-Kalibrierung verwendet nicht mehr fest `MEDALLION_DESIGNS[0]`, sondern immer das aktuell ausgewählte Design.
 - Das bestehende `trend_01`-Profil übernimmt unverändert die bereits abgenommenen Mittelpunkt-, Apertur-, Pfeil- und Skalierungswerte und dient als Vorlage für kommende Medaillons.
 - Browser-Regression prüft Dashboard und native Integration auf Desktop und iPad mit sichtbarer/ausblendbarer Picker-Diagnose sowie Snapshot-Übernahme.
-- Runtime-Revision: `41002r4`; Modulstände: `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.0`, `fullscreen.map-display 1.0.10`, `core.manifest 1.2.9`; Modulsatz `02AE-EBFC`.
+- Reale Nachprüfung: Medaillon-Diagnosezustände bleiben jetzt auch bei normalen Render-/Kalibrier-Synchronisierungen erhalten; **NORMAL** wird erst wiederhergestellt, wenn der Diagnosemodus tatsächlich beendet ist.
+- Der Medaillon-Picker spiegelt LEER/PFEIL/TREND/FREEZE/NORMAL einschließlich Winkelsteuerung direkt im geöffneten Top-Layer-Dialog; damit können Zustände geprüft werden, ohne das Popup schließen zu müssen.
+- Kompass- und Medaillon-Picker besitzen bei aktiver Diagnose eine kompakte lokale Werkzeugleiste im Popup. Beide bieten **KOPIEREN**, **JSON** und **CSV**; das Medaillon zusätzlich die vollständigen Diagnosezustands-, Pfeil-, Animations-, Freeze- und Winkelsteuerungen.
+- CSV-Export ist semikolongetrennt und UTF-8/BOM-tauglich; Zwischenablage und JSON enthalten denselben strukturierten Picker-Messdatensatz einschließlich Build, Viewport, Design, Diagnosezustand, Messwerten und vorhandenem Kalibrierbericht.
+- Kurze/Querformat-Viewports können die erweiterten Picker bei Bedarf intern scrollen, ohne die normale Popup-Geometrie zu verändern.
+- Runtime-Revision: `41002r5`; Modulstände: `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.1`, `fullscreen.map-display 1.0.11`, `core.manifest 1.2.10`; Modulsatz `EA13-2B8B`.
 ### Kompassauswahl – freigestellte Retina-Chevrons
 - Die Kompassauswahl verwendet ausschließlich die freigestellten **Silber-Chivron**; die Messing-/Gold-Variante bleibt im Repository und wird von der analogen Medaillon-Auswahl verwendet.
 - Die Laufzeitdarstellung ist als picker-lokale, verlustfreie WebP-Datenmodule (VP8L) gekapselt: 104×104 Pixel bei 52×52 CSS-Pixeln, also exakt 2× Retina; Dateigrößen ca. 8,6–11,1 KB.
@@ -68,11 +73,12 @@
 - `ui.skeleton` → **1.1.2**
 - `ui.i18n-settings` → **1.2.2**
 - `diagnostics.module-view` → **1.3.1**
-- `diagnostics.cockpit` → **1.1.0**
-- `fullscreen.map-display` → **1.0.10**
+- `diagnostics.cockpit` → **1.1.1**
+- `fullscreen.map-display` → **1.0.11**
 - `map.clusters-recent` → **1.0.2**
 - `ui.render` → **1.0.1**
 - `ui.controls` → **1.1.3**
+- `core.manifest` → **1.2.10**
 - `location.radii-map` → **1.0.1**
 - `core.manifest` → **1.2.9**
 
