@@ -5,7 +5,7 @@ import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?
 import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -26,6 +26,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         this._mapStartupOutsidePointerHandler = null;
       }
       const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      this._closeCompassPicker?.(false);
+      this._closeMedallionPicker?.(false);
       this._setFullscreenAuxiliaryOverlayHost(false);
       try { if (dialog?.open) dialog.close(); } catch (_error) {}
       this._restoreCompassFromMapOverlay();
@@ -106,6 +108,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
     _openCompassPicker() {
       if (this._compassPickerDialog?.open || !this.shadow || !this.isConnected) return;
+      if (this._medallionPickerDialog?.open) this._closeMedallionPicker(false);
       const instrument = this.shadow.getElementById('compass-instrument');
       if (!instrument) return;
 
@@ -131,22 +134,16 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
         '.compass-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.compass-picker-nav-row[data-chevron-material="silver"] .compass-picker-chevron{filter:drop-shadow(0 2px 5px #000c)}' +
-        '.compass-picker-index{min-width:82px;text-align:center;color:#fff0b2;font:650 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;text-shadow:0 1px 3px #000}' +
-        '.compass-picker-index-spacer{display:block;min-width:82px;height:1px}' +
+        '.compass-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fbfdff 0%,#c8ced4 26%,#f5f7f8 47%,#8e969e 72%,#d8dde1 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 3px #dce4ea24)}' +
         '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav-row{grid-template-columns:58px 72px 58px;gap:9px}.compass-picker-nav-button{width:58px;height:50px}.compass-picker-chevron{width:52px;height:52px}}' +
         '</style>' +
         '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('compass.picker_title') + '">' +
         '<button class="compass-picker-close" type="button" data-compass-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
         '<div class="compass-picker-stage" data-compass-picker-stage></div>' +
         '<div class="compass-picker-nav" role="group" aria-label="' + this._t('compass.picker_change') + '">' +
-        '<div class="compass-picker-nav-row" data-chevron-material="brass">' +
-        '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev data-chevron-material="brass"><img class="compass-picker-chevron" src="' + chevronAssets.brass.left + '" alt="" aria-hidden="true" draggable="false"></button>' +
-        '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
-        '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="brass"><img class="compass-picker-chevron" src="' + chevronAssets.brass.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
-        '</div>' +
         '<div class="compass-picker-nav-row" data-chevron-material="silver">' +
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.left + '" alt="" aria-hidden="true" draggable="false"></button>' +
-        '<span class="compass-picker-index-spacer" aria-hidden="true"></span>' +
+        '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '</div></div></dialog>';
 
@@ -187,6 +184,153 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
       this._syncCompassPicker();
       shell.querySelector('[data-compass-picker-close]')?.focus?.({preventScroll:true});
+    },
+
+    _medallionDesignValue() {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      if (!designs.length) return '';
+      const active = String(this._activeMedallionDesign || '').trim();
+      if (designs.some((entry) => entry.id === active)) return active;
+      let stored = '';
+      try { stored = String(localStorage.getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
+      const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
+      this._activeMedallionDesign = resolved;
+      return resolved;
+    },
+
+    _applyMedallionDesign(designId,{persist=true}={}) {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      const descriptor = designs.find((entry) => entry.id === designId) || designs[0] || null;
+      if (!descriptor) return null;
+      this._activeMedallionDesign = descriptor.id;
+      this.shadow?.querySelectorAll('.trend-medallion-base').forEach((image) => {
+        if (descriptor.asset && image.getAttribute('src') !== descriptor.asset) image.setAttribute('src',descriptor.asset);
+        image.dataset.medallionDesign = descriptor.id;
+      });
+      if (persist) {
+        try { localStorage.setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
+      }
+      return descriptor;
+    },
+
+    _stepMedallionDesign(step) {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      if (!designs.length) return;
+      const currentId = this._medallionDesignValue();
+      const currentIndex = Math.max(0,designs.findIndex((entry) => entry.id === currentId));
+      const nextIndex = (currentIndex + Number(step || 0) + designs.length) % designs.length;
+      this._applyMedallionDesign(designs[nextIndex].id,{persist:true});
+      this._syncMedallionPicker();
+      this._syncMapMedallionState();
+    },
+
+    _syncMedallionPicker() {
+      const dialog = this._medallionPickerDialog;
+      if (!dialog) return;
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      const descriptor = this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
+      if (!descriptor) return;
+      const index = Math.max(0,designs.findIndex((entry) => entry.id === descriptor.id));
+      const base = dialog.querySelector('[data-medallion-picker-base]');
+      if (base && descriptor.asset) base.setAttribute('src',descriptor.asset);
+      const output = dialog.querySelector('[data-medallion-picker-index]');
+      if (output) output.textContent = (index + 1) + ' / ' + designs.length;
+      const stage = dialog.querySelector('[data-medallion-picker-stage]');
+      const source = this.shadow?.getElementById('trend-box');
+      const state = ['up','down','stable','none'].find((name) => source?.classList.contains(name)) || 'none';
+      if (stage) stage.dataset.trendState = state;
+      dialog.setAttribute('aria-label',this._t('trend.label'));
+      const closeButton = dialog.querySelector('[data-medallion-picker-close]');
+      if (closeButton) {
+        const closeLabel = this._t('about.close');
+        closeButton.setAttribute('aria-label',closeLabel);
+        closeButton.setAttribute('title',closeLabel);
+      }
+      dialog.querySelector('.medallion-picker-nav')?.setAttribute('aria-label',this._t('trend.label'));
+      dialog.querySelectorAll('[data-medallion-picker-prev]').forEach((button) => {
+        button.disabled = !designs.length;
+        button.setAttribute('aria-disabled',designs.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      dialog.querySelectorAll('[data-medallion-picker-next]').forEach((button) => {
+        button.disabled = !designs.length;
+        button.setAttribute('aria-disabled',designs.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
+    },
+
+    _closeMedallionPicker(restoreFocus = true) {
+      const dialog = this._medallionPickerDialog;
+      if (!dialog) return;
+      try { if (dialog.open) dialog.close(); } catch (_error) {}
+      dialog.parentElement?.remove();
+      this._medallionPickerDialog = null;
+      const previousFocus = this._medallionPickerReturnFocus;
+      this._medallionPickerReturnFocus = null;
+      if (restoreFocus && previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
+    },
+
+    _openMedallionPicker() {
+      if (this._medallionPickerDialog?.open || !this.shadow || !this.isConnected) return;
+      if (this._compassPickerDialog?.open) this._closeCompassPicker(false);
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      if (!designs.length) return;
+
+      const shell = document.createElement('div');
+      shell.id = 'medallion-picker-shell-v41002';
+      shell.innerHTML =
+        '<style>' +
+        '.medallion-picker-dialog{--picker-gold:#dfbc72;box-sizing:border-box;width:min(500px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#3b302045,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;overflow:visible;color-scheme:dark}' +
+        '.medallion-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.medallion-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
+        '.medallion-picker-dialog *{box-sizing:border-box}.medallion-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.medallion-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
+        '.medallion-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.medallion-picker-close:focus,.medallion-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.medallion-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.medallion-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
+        '.medallion-picker-stage{width:min(320px,60vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:12px auto 0;isolation:isolate}' +
+        '.medallion-picker-preview{position:relative;width:100%;height:100%;aspect-ratio:1 / 1;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 12px #c4842b18)}' +
+        '.medallion-picker-preview .trend-medallion-base,.medallion-picker-preview .trend-medallion-arrow{position:absolute;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}.medallion-picker-preview .trend-medallion-base{inset:0;width:100%;height:100%;object-fit:contain;z-index:1}.medallion-picker-preview .trend-medallion-arrow{left:50.012238%;top:50.452396%;width:59.667391%;height:59.667391%;object-fit:contain;z-index:3;transform-origin:50% 50%;filter:drop-shadow(0 2px 1px #2f1804d1) drop-shadow(0 0 4px #f6c3442e)}' +
+        '.medallion-picker-stage[data-trend-state="up"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}.medallion-picker-stage[data-trend-state="stable"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}.medallion-picker-stage[data-trend-state="down"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1)}.medallion-picker-stage[data-trend-state="none"] .trend-medallion-arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84)}' +
+        '.medallion-picker-nav{display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px;margin-top:2px}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
+        '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
+        '.medallion-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
+        '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-nav{grid-template-columns:58px 72px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
+        '</style>' +
+        '<dialog class="medallion-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('trend.label') + '">' +
+        '<button class="medallion-picker-close" type="button" data-medallion-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
+        '<div class="medallion-picker-stage" data-medallion-picker-stage data-trend-state="none"><div class="medallion-picker-preview">' +
+        '<img class="trend-medallion-base" data-medallion-picker-base src="' + (designs[0].asset || TREND_MEDALLION_IMAGE) + '" alt="" draggable="false">' +
+        '<img class="trend-medallion-arrow" src="' + TREND_ARROW_IMAGE + '" alt="" draggable="false"></div></div>' +
+        '<div class="medallion-picker-nav" role="group" aria-label="' + this._t('trend.label') + '">' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_BRASS + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<output class="medallion-picker-index" data-medallion-picker-index aria-live="polite"></output>' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_BRASS + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '</div></dialog>';
+
+      this._medallionPickerReturnFocus = this.shadow.activeElement;
+      this.shadow.append(shell);
+      const dialog = shell.querySelector('.medallion-picker-dialog');
+      if (!dialog) { shell.remove(); return; }
+      this._medallionPickerDialog = dialog;
+      shell.querySelector('[data-medallion-picker-close]')?.addEventListener('click',() => this._closeMedallionPicker());
+      shell.querySelector('[data-medallion-picker-prev]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepMedallionDesign(-1);
+      });
+      shell.querySelector('[data-medallion-picker-next]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepMedallionDesign(1);
+      });
+      dialog.addEventListener('cancel',(event) => {
+        event.preventDefault();event.stopPropagation();this._closeMedallionPicker();
+      });
+      dialog.addEventListener('pointerdown',(event) => {
+        if (event.target !== dialog) return;
+        const rect = dialog.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+          event.preventDefault();this._closeMedallionPicker();
+        }
+      });
+      try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      this._syncMedallionPicker();
+      shell.querySelector('[data-medallion-picker-close]')?.focus?.({preventScroll:true});
     },
 
     _setFullscreenAuxiliaryOverlayHost(useFullscreen = false) {
@@ -259,6 +403,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const state = ['up','down','stable','none'].find(name => source.classList.contains(name)) || 'none';
       overlay.classList.remove('up','down','stable','none');
       overlay.classList.add(state);
+      this._syncMedallionPicker?.();
     },
 
     _setMapLayerSymbolStyle(_style,{persist=true}={}) {
@@ -538,6 +683,17 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const mapCard = this.shadow.getElementById('map-card');
       if (!mapCard) return;
       const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
+      const trendIcon = this.shadow.getElementById('trend-icon');
+      if (trendIcon) {
+        const medallionLabel = this._t('trend.label');
+        trendIcon.removeAttribute('aria-hidden');
+        trendIcon.setAttribute('role','button');
+        trendIcon.setAttribute('tabindex','0');
+        trendIcon.setAttribute('aria-label',medallionLabel);
+        trendIcon.setAttribute('title',medallionLabel);
+        trendIcon.style.cursor = 'pointer';
+      }
       this.classList.toggle('map-window-host',!!this._mapWindowMode);
       mapCard.classList.toggle('map-size-large',this._mapDisplayMode === 'large' && !fullscreenActive);
       mapCard.classList.toggle('map-size-fullscreen',fullscreenActive);
@@ -584,8 +740,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       }
       if (medallionOverlay) {
         const moveMedallion=this._t('map.medallion_move');
-        medallionOverlay.setAttribute('aria-label',moveMedallion);
-        medallionOverlay.setAttribute('title',moveMedallion);
+        medallionOverlay.setAttribute('role','button');
+        medallionOverlay.setAttribute('tabindex','0');
+        medallionOverlay.setAttribute('aria-label',`${moveMedallion} · ${this._t('trend.label')}`);
+        medallionOverlay.setAttribute('title',`${moveMedallion} · ${this._t('trend.label')}`);
         medallionOverlay.classList.toggle('android-device',this._isAndroidLike());
         medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
       }
@@ -731,6 +889,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const locationMainButton = this.shadow?.getElementById('location-main-button');
       const compassToggle = this.shadow?.getElementById('map-compass-toggle');
       const medallionToggle = this.shadow?.getElementById('map-medallion-toggle');
+      const trendIcon = this.shadow?.getElementById('trend-icon');
       const menuToggle = this.shadow?.getElementById('map-display-menu-toggle');
       const menuWrap = this.shadow?.getElementById('map-display-control');
       const startupButton = this.shadow?.getElementById('settings-map-startup-button');
@@ -839,6 +998,20 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       medallionToggle?.addEventListener('click',(event) => {
         event.preventDefault(); event.stopPropagation();
         this._setMapInstrumentVisible('medallion',!this._mapMedallionVisible);
+      });
+      if (trendIcon && trendIcon.dataset.medallionPickerBound !== '1') {
+        trendIcon.dataset.medallionPickerBound = '1';
+        trendIcon.addEventListener('click',(event) => {
+          event.preventDefault();event.stopPropagation();this._openMedallionPicker();
+        });
+        trendIcon.addEventListener('keydown',(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();event.stopPropagation();this._openMedallionPicker();
+        });
+      }
+      medallionOverlay?.addEventListener('keydown',(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();event.stopPropagation();this._openMedallionPicker();
       });
       const clusterJumpToggle = this.shadow.getElementById('map-cluster-jump-toggle');
       const clusterJumpOverlay = this.shadow.getElementById('map-cluster-jump-overlay');
@@ -960,6 +1133,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           const moved = finishDrag('pointer',event.pointerId);
           try { target.releasePointerCapture(event.pointerId); } catch (_error) {}
           if (kind === 'compass' && event.type === 'pointerup' && !moved) this._openCompassPicker();
+          if (kind === 'medallion' && event.type === 'pointerup' && !moved) this._openMedallionPicker();
           if (kind === 'clusterJump' && event.type === 'pointerup') {
             this._mapClusterJumpSuppressClickUntil = performance.now()+500;
             if (!moved) this._activateFullscreenClusterJump(event);
@@ -1009,6 +1183,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           event.stopPropagation();
           const moved = finishDrag('touch',drag.inputId);
           if (kind === 'compass' && event.type === 'touchend' && !moved) this._openCompassPicker();
+          if (kind === 'medallion' && event.type === 'touchend' && !moved) this._openMedallionPicker();
           if (kind === 'clusterJump' && event.type === 'touchend') {
             this._mapClusterJumpSuppressClickUntil = performance.now()+500;
             if (!moved) this._activateFullscreenClusterJump(event);
