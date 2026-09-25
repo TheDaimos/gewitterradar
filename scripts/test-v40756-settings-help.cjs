@@ -276,7 +276,7 @@ const server = http.createServer((req, res) => {
             'settings.cluster_navigation_infinite_aria','settings.cluster_navigation_to_session','settings.cluster_navigation_to_infinite',
             'settings.map_display','settings.map_startup','settings.map_startup_note','settings.map_startup_last','settings.map_startup_select',
             'settings.map_display_sub','settings.map_window','settings.map_window_note','settings.map_window_open','settings.map_window_open_aria',
-            'app.release_history','app.release_history_open','map.medallion_move','compass.picker_title','compass.picker_change',
+            'app.release_history','app.release_history_open','map.medallion_move','trend.label','compass.picker_title','compass.picker_change',
             'compass.fixed_compass_title',
             'modules.title','modules.subtitle','modules.details','modules.copy','modules.download'
           ];
@@ -392,7 +392,7 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipClusterInfiniteTitle,row.values['settings.cluster_navigation_infinite'],delivery+'/'+profile+' '+row.language+' cluster infinite hover title');
           assert.equal(row.tooltipMapStartupDropdown,row.values['settings.map_startup_select'],delivery+'/'+profile+' '+row.language+' startup dropdown aria');
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
-          assert.equal(row.tooltipMedallionMove,row.values['map.medallion_move'],delivery+'/'+profile+' '+row.language+' medallion hover title');
+          assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
           assert.equal(row.localizedModuleRows.length,22,delivery+'/'+profile+' '+row.language+' all module rows localized');
           assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,22,delivery+'/'+profile+' '+row.language+' unique localized module ids');
