@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – R8-CI/DRA und reale Cluster-Jump-Geräteabnahme offen  
+> **Status:** ABSCHLUSSAUDIT – reale R8-DRA-Abnahme und Cluster-Jump-Geräteabnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -63,8 +63,17 @@ Dafür wird ausschließlich der Konsistenzstand **R8** erstellt:
 - `fullscreen.map-display 1.0.12`
 - neuer Vertrag: alle 22 Soll-Modulversionen müssen exakt den Selbstregistrierungen entsprechen.
 
+Automatisierter R8-Abschluss:
+- Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` ist **5/5 grün**:
+  - Shared Frontend #2304,
+  - Integration #2323,
+  - Diagnostic #1007,
+  - Source Archive #548,
+  - Hi-Res #1539.
+- `deploy/dev` wurde exakt auf diesen Kandidaten gesetzt und verifiziert.
+
 Noch real offen:
-1. R8 vollständig **5/5 CI-grün** bekommen, finalen Head nach `deploy/dev` promoten und über DRA installieren; danach **22/22 Module geladen / Versionssatz konsistent** bestätigen.
+1. R8 über DRA installieren; danach **22/22 Module geladen / Versionssatz konsistent** bestätigen.
 2. Die in Schleife 068 ergänzte **Cluster-Jump-Pille / Infinity-Instrumentanzeige** real auf **Desktop, iPad und Android/HA Companion** abnehmen:
    - Infinity-Schalter aus/ein,
    - Clusterindex/Countdown/∞ identisch zum bestehenden Clusterstatus,
@@ -506,10 +515,11 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [x] HACS
 - [x] DRA
 - [x] Cache-/Update-Pfade
-- [ ] Syntax/Lint/Tests
+- [x] Syntax/Lint/Tests
 - [x] Checksummen
 - [x] CHANGELOG
 - [x] HISTORY / Release Notes
+- [ ] **R8 real über DRA installieren und 22/22 Module / Versionssatz konsistent bestätigen**
 - [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – einziger noch unbelegter Funktionspunkt aus Schleife 068
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
@@ -2620,7 +2630,7 @@ Promotion und reale Abnahme abgeschlossen:
 ## Schleife 073 – Abschlussaudit Modularisierung
 
 **Datum:** 2026-09-25  
-**Status:** Audit durchgeführt; R8-CI/DRA und reale Cluster-Jump-Geräteabnahme verbleiben als letzte Gates
+**Status:** Audit durchgeführt; R8 5/5 CI-grün und nach `deploy/dev` promoviert; reale R8-DRA-Abnahme und Cluster-Jump-Geräteabnahme verbleiben
 
 ### Auditprinzip
 
@@ -2663,9 +2673,19 @@ Zusätzlicher Schutz:
 - `core.manifest` wird ausdrücklich als selbstregistrierendes Manifest in denselben Paritätsvertrag einbezogen,
 - kanonische Quelle, native Integration und Dashboard-Ausleitung bleiben bytegleich geschützt.
 
+### R8-CI und Promotion
+
+- Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` → **5/5 grün**.
+- Shared Frontend #2304 → success.
+- Integration #2323 → success.
+- Diagnostic #1007 → success.
+- Source Archive #548 → success.
+- Hi-Res #1539 → success.
+- `deploy/dev` wurde anschließend exakt auf `8ee2b6fbc30213ead936e622cc886afd995dcff6` gesetzt; Runtime-Manifest dort: `41002r8` / `3541-2967` / `core.manifest 1.2.13` / `core.base-context 1.0.4`.
+
 ### Tatsächlich noch offen
 
-1. R8 final 5/5 CI-grün → `deploy/dev` → reale DRA-Installation → **22/22 / Versionssatz konsistent**.
+1. R8 real über DRA installieren und anschließend **22/22 Module geladen / Versionssatz konsistent** bestätigen.
 2. Schleife 068: Cluster-Jump-Pille / Infinity-Schalter real auf Desktop, iPad und Android/HA Companion prüfen.
 
 **Nach diesen zwei Gates:** Schlachtplanstatus **ABGESCHLOSSEN**. Anschließend beginnt wie bereits vorbereitet die Arbeit an den **weiteren Medaillon-Designs**.
