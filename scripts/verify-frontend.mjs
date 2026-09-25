@@ -85,7 +85,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.10"',
+  '"id": "fullscreen.map-display"','"version": "1.0.11"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -95,12 +95,17 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.1.0"',
+  '"id": "diagnostics.cockpit"','"version": "1.1.1"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
   '_medallionDiagnosticProfile(',
-  'pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}'
+  'pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}',
+  '_pickerDiagnosticPayload(kind)',
+  '_pickerDiagnosticCsv(kind)',
+  "_downloadPickerDiagnostic(kind,format='json')",
+  '_bindPickerDiagnosticActions(shell,kind)',
+  "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');"
 ]){
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
