@@ -50,7 +50,7 @@ if (isV409Release) {
   assert.equal(modularContract.status, 'DEV', 'Unexpected V4.10.02 modular contract status');
   assert.equal(modularContract.baseVersion, '4.10.01', 'Unexpected V4.10.02 modular base version');
   assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.10.02';"), 'Expected V4.10.02 CARD_DISPLAY_VERSION');
-  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R3-2026-09-25';"), 'Expected V4.10.02 modular build marker');
+  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R4-2026-09-25';"), 'Expected V4.10.02 modular build marker');
   assert.equal(frontend.length, modularContract.sizeBytes, 'V4.10.02 frontend size differs from modular contract');
   assert.equal(frontendSha, modularContract.sha256, 'V4.10.02 frontend differs from modular contract');
 } else {
