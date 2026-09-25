@@ -2493,7 +2493,7 @@ Automatisierter Abschluss:
 ## Schleife 071 – R6: sichtbare Picker-/Vollbild-Diagnose und absolute Winkel
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung und Verträge abgeschlossen; CI und reale DRA-Abnahme offen
+**Status:** Implementierung/Verträge + exakte R6-CI vollständig grün; finale Dokumentations-CI und reale DRA-Abnahme offen
 
 Realer R5-Befund:
 1. **TREND/ANIMATION EIN** wurde intern korrekt gemeldet, der sichtbare Medaillon-Pfeil bewegte sich jedoch nicht.
@@ -2541,4 +2541,13 @@ Automatisierte Regression:
 - Test verlangt eine reale Transformänderung nach Start von TREND,
 - Test öffnet Vollbild, verlangt `FS-A1`, prüft Overlay/Diagnosekonsole im Vollbild-Top-Layer und anschließend den Hostwechsel in einen Kompass-Picker und zurück.
 
-**NÄCHSTER SCHRITT:** vollständige CI für den finalen R6-Head abwarten. Nur bei 5/5 grün `deploy/dev` exakt auf diesen geprüften Commit setzen. Danach reale DRA-Abnahme auf Desktop, iPad und Android/HA Companion: sichtbares Raster/Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, Export sowie Vollbild und Vollbild→Picker-Top-Layer prüfen. Erst danach weitere Medaillons.
+Automatisierter R6-Abschluss des Produkt-/Teststands:
+- Produktkandidat `550f64e1db7585bfb1edd1ca5ee33fba357cd156` ist **5/5 grün**.
+- Validate shared Gewitterradar frontend **#2180** → success; darin insbesondere die verschärfte Picker-Diagnose auf Dashboard/Integration × Desktop/iPad einschließlich real gerendertem KP/MP-Raster, Winkelkompensation, sichtbarer TREND-Transformänderung, Vollbild-FS-Raster und Top-Layer-Hostwechsel.
+- Validate Gewitterradar integration **#2199** → success.
+- Diagnostic contract **#921** → success.
+- Source archive contract **#498** → success.
+- Hi-Res asset retention **#1417** → success.
+- Ein während der ersten R6-CI gefundener Lifecycle-Fehler wurde vor diesem Abschluss korrigiert: Beim Picker-Schließen muss die große Diagnosekonsole vor dem Entfernen des Dialogcontainers zurück in Vollbild/Hauptansicht verschoben werden.
+
+**NÄCHSTER SCHRITT:** diesen dokumentierten Abschluss noch einmal vollständig durch CI prüfen und anschließend den exakt grünen finalen Head nach `deploy/dev` promoten. Danach reale DRA-Abnahme auf Desktop, iPad und Android/HA Companion: sichtbares KP-/MP-/FS-Raster und Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, KOPIEREN/JSON/CSV sowie Vollbild und Vollbild→Picker→Vollbild-Top-Layer prüfen. Erst danach weitere Medaillons.
