@@ -430,3 +430,39 @@ Abschlussstand R7:
 **Nächster Schritt:** Der Diagnoseblock R5–R7 ist abgeschlossen. Weitere Medaillon-Designs dürfen wieder entwickelt werden.
 
 Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
+
+
+---
+
+## R8-Abschlussaudit – Modulidentität und Schlachtplanbereinigung
+
+Der vollständige Abschlussaudit des verbindlichen Schlachtplans hat gezeigt, dass zahlreiche alte offene Checkboxen durch spätere reale Tests bereits längst erfüllt waren. Diese wurden gegen die späteren Schleifen, M12-DRA-Ende-zu-Ende-Nachweise, M13-Tests und R5–R7-Abnahmen abgeglichen und im Schlachtplan bereinigt.
+
+Zusätzlich wurden zwei echte interne Identitätsreste gefunden:
+- `core.manifest`: Sollstand war bereits 1.2.12, die Selbstregistrierung meldete noch 1.2.10.
+- `core.base-context`: interne Buildkennung stand noch auf R5, obwohl Anwendung/Runtime bereits R7 meldeten.
+
+R8 korrigiert ausschließlich diese Konsistenz:
+- Runtime: `41002r8`
+- Modulsatz: `3541-2967`
+- Build: `V4.10.02-MODULAR-DEV-R8-2026-09-25`
+- `core.manifest 1.2.13`
+- `core.base-context 1.0.4`
+- `diagnostics.cockpit 1.1.3`
+- `fullscreen.map-display 1.0.12`
+
+Neu geschützt:
+- Alle 22 erwarteten Modulversionen müssen exakt mit ihren Selbstregistrierungen übereinstimmen.
+- Das selbstregistrierende `core.manifest` ist ausdrücklich Teil dieser Paritätsprüfung.
+
+Vom Benutzer ausdrücklich als erledigt bestätigt:
+- Radius-Kaskade,
+- Kompass-Schließen-X.
+
+Tatsächlich noch offene Abschlussgates:
+1. R8 vollständig 5/5 CI-grün, nach `deploy/dev` promoten und real über DRA installieren; anschließend `22/22 Module geladen / Versionssatz konsistent` bestätigen.
+2. Cluster-Jump-Pille / Infinity-Schalter aus Schleife 068 real auf Desktop, iPad und Android/HA Companion prüfen: Ein/Aus, Statusspiegelung, nächster Cluster, Verschieben, Persistenz und Standardposition.
+
+Danach wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt und der nächste Produktblock sind die **weiteren Medaillon-Designs**.
+
+Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
