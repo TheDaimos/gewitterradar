@@ -40,8 +40,8 @@ def test_v41001_compass_picker_contract():
     map_display = (PICKER_DIR / "map-display.js").read_text(encoding="utf-8")
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-R2-2026-09-24" in main
-    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r2';" in main
+    assert "V4.10.02-MODULAR-DEV-R3-2026-09-25" in main
+    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r3';" in main
 
     # Preserve the established picker behaviour.
     for marker in (
@@ -58,7 +58,6 @@ def test_v41001_compass_picker_contract():
         "compass-picker-close:focus-visible",
         "outline:0!important",
         "-webkit-appearance:none",
-        'data-chevron-material="brass"',
         'data-chevron-material="silver"',
         "querySelectorAll('[data-compass-picker-prev]')",
         "querySelectorAll('[data-compass-picker-next]')",
@@ -89,6 +88,20 @@ def test_v41001_compass_picker_contract():
         assert references == [PICKER_DIR / "map-display.js"], (
             f"{module_name} must only be referenced by the compass picker"
         )
+
+    # Compass uses only the silver pair; brass stays available for the analogous Medallion picker.
+    assert 'data-chevron-material="brass"' not in map_display
+    for marker in (
+        "medallion-picker-shell-v41002",
+        "data-medallion-picker-close",
+        "data-medallion-picker-index",
+        "COMPASS_PICKER_LEFT_BRASS",
+        "COMPASS_PICKER_RIGHT_BRASS",
+        "this._stepMedallionDesign(-1)",
+        "this._stepMedallionDesign(1)",
+        "gewitterradar:v41002:medallion-design",
+    ):
+        assert marker in map_display
 
     # Superseded picker implementations must not return unnoticed.
     assert "compass-picker-gold-prev" not in source
