@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -94,7 +94,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.compass=null;return null;}
       const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-compass-picker-stage]'),nav=dialog.querySelector('.compass-picker-nav-row'),
         stageOverlay=dialog.querySelector('[data-compass-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-compass-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-compass-picker-diagnostic-readout]'),tools=dialog.querySelector('[data-compass-picker-diagnostic-tools]');
-      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node){node.hidden=!enabled;if(enabled){node.style?.setProperty('visibility','visible','important');node.style?.setProperty('opacity','1','important');}else{node.style?.removeProperty('visibility');node.style?.removeProperty('opacity');}}});
+      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node){node.hidden=!enabled;if(enabled){node.style?.setProperty('visibility','visible','important');node.style?.setProperty('opacity','1','important');}else{node.style?.removeProperty('display');node.style?.removeProperty('visibility');node.style?.removeProperty('opacity');node.style?.removeProperty('z-index');if(node.matches?.('svg'))node.replaceChildren();}}});
       if(!enabled||!stage||!nav)return null;
       const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),instrument=stage.querySelector('.compass-instrument');
       if(!(stageRect.width>0&&stageRect.height>0&&instrument))return null;
@@ -133,7 +133,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.medallion=null;return null;}
       const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-medallion-picker-stage]'),nav=dialog.querySelector('.medallion-picker-nav'),
         stageOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-medallion-picker-diagnostic-readout]'),tools=dialog.querySelector('[data-medallion-picker-diagnostic-tools]');
-      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node){node.hidden=!enabled;if(enabled){node.style?.setProperty('visibility','visible','important');node.style?.setProperty('opacity','1','important');}else{node.style?.removeProperty('visibility');node.style?.removeProperty('opacity');}}});
+      [stageOverlay,navOverlay,readout,tools].forEach((node)=>{if(node){node.hidden=!enabled;if(enabled){node.style?.setProperty('visibility','visible','important');node.style?.setProperty('opacity','1','important');}else{node.style?.removeProperty('display');node.style?.removeProperty('visibility');node.style?.removeProperty('opacity');node.style?.removeProperty('z-index');if(node.matches?.('svg'))node.replaceChildren();}}});
       if(!enabled||!stage||!nav)return null;
       const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),preview=stage.querySelector('.medallion-picker-preview'),base=stage.querySelector('[data-medallion-picker-base]'),arrow=stage.querySelector('.trend-medallion-arrow');
       if(!(stageRect.width>0&&stageRect.height>0&&preview&&base&&arrow))return null;
