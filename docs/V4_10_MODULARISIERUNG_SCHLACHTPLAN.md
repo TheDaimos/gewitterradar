@@ -515,7 +515,7 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [x] CHANGELOG
 - [x] HISTORY / Release Notes
 - [x] **R10 real über DRA installiert und 22/22 Module / Versionssatz konsistent bestätigt** – Modulsatz `CEA6-1ECF`, keine Abweichungen
-- [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – Android/HA Companion real bestanden; Desktop und iPad noch offen
+- [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – Android/HA Companion und Desktop real bestanden; iPad noch offen
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
 
@@ -2795,7 +2795,7 @@ Reale DRA-/HA-Abnahme:
 
 Reale Cluster-Jump-Abnahme nach R10:
 - **Android/HA Companion:** bestanden; mit aktivem Diagnosemodus geprüft, Cluster-Jump funktioniert.
-- **Desktop:** noch offen.
+- **Desktop:** bestanden; real verprobt.
 - **iPad:** noch offen.
 
-**NÄCHSTER SCHRITT:** Cluster-Jump/Infinity noch auf Desktop und iPad real prüfen. Danach Schlachtplanstatus **ABGESCHLOSSEN** und anschließend weitere Medaillon-Designs.
+**NÄCHSTER SCHRITT:** Cluster-Jump/Infinity nur noch auf iPad real prüfen. Danach Schlachtplanstatus **ABGESCHLOSSEN** und anschließend weitere Medaillon-Designs.
