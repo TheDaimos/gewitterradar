@@ -2,10 +2,10 @@ import { defineModule } from "../core/runtime.js?v=41002r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.1",
+  version:"1.3.2",
   group:"Diagnose",
   function:"Module & Versionen",
-  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
+  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
   file:"modules/diagnostics/module-view.js"
 });
 
@@ -526,6 +526,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             #settings-modules-section .gr-mod-summary{display:grid;gap:4px;padding:10px 11px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025);font-size:9px}
             #settings-modules-section .gr-mod-summary strong{font-size:11px;color:#e9edf3}
             #settings-modules-section .gr-mod-state{font-weight:850}
+            #settings-modules-section button.gr-mod-state{appearance:none;border:0;padding:0;background:transparent;font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+            #settings-modules-section button.gr-mod-state:focus-visible{outline:2px solid rgba(255,225,161,.92);outline-offset:2px;border-radius:4px}
             #settings-modules-section .gr-mod-state[data-state="ok"]{color:#78d59b}
             #settings-modules-section .gr-mod-state[data-state="warn"]{color:#e0b44f}#settings-modules-section .gr-mod-fingerprint{font:800 8.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:#78d59b;letter-spacing:.02em}#settings-modules-section .gr-mod-fingerprint[data-state="warn"]{color:#e0b44f}
             #settings-modules-section .gr-mod-summary-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px}
@@ -571,6 +573,19 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             .gr-module-dialog .gr-mod-detail dt{color:#6f7884;font-weight:800}
             .gr-module-dialog .gr-mod-detail dd{margin:0;overflow-wrap:anywhere}
             .gr-module-dialog .gr-mod-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)}
+            .gr-deviation-backdrop{z-index:2147483647}
+            .gr-deviation-list{display:grid;gap:9px}
+            .gr-deviation-card{padding:11px 12px;border:1px solid rgba(224,180,79,.25);border-radius:13px;background:linear-gradient(180deg,rgba(224,180,79,.055),rgba(255,255,255,.018));box-shadow:inset 0 1px rgba(255,244,213,.035)}
+            .gr-deviation-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+            .gr-deviation-title{min-width:0}
+            .gr-deviation-title strong{display:block;color:#e5e9ef;font-size:10.5px}
+            .gr-deviation-title code{display:block;margin-top:2px;color:#7f8996;font:7.8px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+            .gr-deviation-badge{flex:0 0 auto;padding:4px 7px;border:1px solid rgba(224,180,79,.35);border-radius:999px;color:#e0b44f;background:rgba(224,180,79,.08);font-size:7.5px;font-weight:900}
+            .gr-deviation-detail{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 11px;margin:0;font-size:8px;line-height:1.45;color:#a0a9b5}
+            .gr-deviation-detail dt{font-weight:850;color:#6f7884}.gr-deviation-detail dd{margin:0;overflow-wrap:anywhere}
+            .gr-deviation-note{margin-top:8px;padding:7px 8px;border-left:2px solid rgba(120,213,155,.65);background:rgba(120,213,155,.045);color:#92cfa8;font-size:8px;line-height:1.4}
+            .gr-deviation-registrations{display:grid;gap:5px;margin-top:8px}
+            .gr-deviation-registration{padding:7px 8px;border:1px solid rgba(255,255,255,.055);border-radius:9px;background:rgba(0,0,0,.12);font:7.5px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;color:#8e98a6;overflow-wrap:anywhere}
             @media(max-width:620px){.gr-module-backdrop{padding:7px}.gr-module-dialog{width:calc(100vw - 14px);max-height:calc(100dvh - 14px);border-radius:17px}.gr-module-head{padding:10px 11px}.gr-module-title{font-size:16px}.gr-module-body{padding:11px 10px 14px}.gr-module-dialog .gr-mod-row>summary{gap:7px;padding:9px}.gr-module-dialog .gr-mod-heading{display:grid;gap:2px}.gr-module-dialog .gr-mod-detail{grid-template-columns:1fr;gap:2px;padding:0 9px 10px}.gr-module-dialog .gr-mod-detail dd{margin-bottom:5px}}
           </style>
           <div class="gr-mod-summary gr-mod-summary-compact">
@@ -596,6 +611,25 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
               </div>
             </div>
           </section>
+        </div>
+        <div id="settings-modules-deviations-backdrop" class="gr-module-backdrop gr-deviation-backdrop" aria-hidden="true">
+          <section class="gr-module-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-modules-deviations-title" tabindex="-1">
+            <header class="gr-module-head">
+              <div>
+                <div class="gr-module-kicker">Gewitterradar · Diagnose</div>
+                <div class="gr-module-title" id="settings-modules-deviations-title">Abweichungen</div>
+              </div>
+              <button id="settings-modules-deviations-close" class="gr-module-close" type="button" aria-label="Abweichungen schließen"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></button>
+            </header>
+            <div class="gr-module-body">
+              <div id="settings-modules-deviations-summary" class="gr-mod-summary"></div>
+              <div id="settings-modules-deviations-list" class="gr-deviation-list"></div>
+              <div class="gr-mod-actions">
+                <button id="settings-modules-deviations-copy" class="gr-mod-action" type="button">Diagnose kopieren</button>
+                <button id="settings-modules-deviations-download" class="gr-mod-action" type="button">JSON herunterladen</button>
+              </div>
+            </div>
+          </section>
         </div>`;
 
       const diagnostic=this.shadow.getElementById("settings-diagnostic-section");
@@ -607,10 +641,17 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       section.querySelector("#settings-modules-close")?.addEventListener("click",()=>this._closeModuleDetails());
       section.querySelector("#settings-modules-copy")?.addEventListener("click",()=>this._copyModuleDiagnostics());
       section.querySelector("#settings-modules-download")?.addEventListener("click",()=>this._downloadModuleDiagnostics());
+      section.querySelector("#settings-modules-deviations-copy")?.addEventListener("click",()=>this._copyModuleDeviationDiagnostics());
+      section.querySelector("#settings-modules-deviations-download")?.addEventListener("click",()=>this._downloadModuleDeviationDiagnostics());
+      section.querySelector("#settings-modules-deviations-close")?.addEventListener("click",()=>this._closeModuleDeviations());
       const backdrop=section.querySelector("#settings-modules-backdrop");
+      const deviationBackdrop=section.querySelector("#settings-modules-deviations-backdrop");
       backdrop?.addEventListener("click",event=>{if(event.target===backdrop)this._closeModuleDetails();});
       backdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDetails();}});
+      deviationBackdrop?.addEventListener("click",event=>{if(event.target===deviationBackdrop)this._closeModuleDeviations();});
+      deviationBackdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDeviations();}});
       if(backdrop)this.shadow.append(backdrop);
+      if(deviationBackdrop)this.shadow.append(deviationBackdrop);
       section.addEventListener("toggle",event=>{if(event.target===section&&section.open)this._syncModuleView();});
       this._syncModuleTranslations(section);
       return section;
