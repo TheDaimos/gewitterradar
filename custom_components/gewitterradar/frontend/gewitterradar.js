@@ -4,8 +4,8 @@
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
 const CARD_VERSION = '4.10.02';
 const CARD_DISPLAY_VERSION = '4.10.02';
-const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R2-2026-09-24';
-const GEWITTERRADAR_MODULE_CACHE = '41002r2';
+const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R3-2026-09-25';
+const GEWITTERRADAR_MODULE_CACHE = '41002r3';
 const gewitterradarImport = async (path) => {
   try {
     return await import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
