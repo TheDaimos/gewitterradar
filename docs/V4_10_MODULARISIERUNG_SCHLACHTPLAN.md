@@ -2490,4 +2490,55 @@ Automatisierter Abschluss:
 - `deploy/dev` wurde anschließend exakt auf diesen Commit gesetzt und als identisch verifiziert.
 
 **Nächster Schritt:** ausschließlich die oben definierte reale DRA-/HA-Abnahme auf Desktop, iPad und Android durchführen. Erst anschließend mit den weiteren Medaillons fortfahren.
+## Schleife 071 – R6: sichtbare Picker-/Vollbild-Diagnose und absolute Winkel
 
+**Datum:** 2026-09-25  
+**Status:** Implementierung und Verträge abgeschlossen; CI und reale DRA-Abnahme offen
+
+Realer R5-Befund:
+1. **TREND/ANIMATION EIN** wurde intern korrekt gemeldet, der sichtbare Medaillon-Pfeil bewegte sich jedoch nicht.
+2. Die Winkelbuttons waren relativ zur bereits vororientierten Pfeilgrafik; dadurch zeigte z. B. 0° optisch nach rechts oben und 45° nach rechts.
+3. Lokale Raster, Linien und eigentliche Messhilfen blieben trotz aktiver Diagnosedarstellung im Picker unsichtbar.
+4. Die große Diagnosekonsole blieb bei nativen Picker-Top-Layern nicht vollständig erreichbar.
+5. Vollbild war für diese Top-Layer-Diagnose noch nicht real abgenommen und wurde deshalb in denselben Korrekturblock aufgenommen.
+6. Die bestehenden Diagnose-Raster verwenden räumliche Zellkennungen; Picker und Vollbild benötigten eigene eindeutige Kennungen.
+
+Technische Ursache:
+- der statische Diagnose-Pfeil setzte `transform: ... !important`; CSS-Keyframes konnten dieselbe wichtige Author-Deklaration nicht sichtbar übersteuern,
+- die Pfeilgrafik besitzt bereits eine visuelle Grundausrichtung von +45°,
+- die Browserregression prüfte bei lokalen SVGs bislang hauptsächlich `hidden=false`, nicht den tatsächlich gerenderten SVG-Inhalt bzw. eine sichtbare Transformänderung,
+- ein nativer `<dialog>.showModal()` liegt im Browser-Top-Layer und schlägt normales `z-index`; Diagnosekonsole/Overlay müssen deshalb explizit in den jeweils obersten Dialog verschoben werden.
+
+R6-Korrektur:
+- absolute Diagnose-Winkel: **0° Nord · 90° Ost · 180° Süd · 270° West · im Uhrzeigersinn**,
+- Asset-Nullpunktkompensation: **−45°**,
+- statischer Transform gilt ausdrücklich nicht für `animation` und `freeze`,
+- TREND-Keyframes: Nord → Süd → Nord unter Berücksichtigung des Assetversatzes,
+- Export ergänzt `angleConvention` und `assetZeroOffsetDeg`,
+- Picker-SVGs erhalten explizite Sichtbarkeit/Opacity und lokale höchste Stapelreihenfolge,
+- Raster-/Overlay-Darstellung folgt dem globalen Diagnosezustand,
+- Kompass-Picker: Raster **KP-A1…KP-J10**,
+- Medaillon-Picker: Raster **MP-A1…MP-J10**,
+- Vollbild: eigenes Raster **FS-A1…FS-J10**,
+- Diagnose-Overlay + Diagnosekonsole werden im Vollbild in den Vollbild-`<dialog>` verschoben,
+- bei geöffnetem Picker folgt die große Diagnosekonsole dem obersten Picker; nach Schließen wird sie in Vollbild bzw. Hauptansicht zurückgeführt,
+- verschachtelter Vollbild→Picker→Vollbild-Hostwechsel wird als eigener Browservertrag geprüft.
+
+R6-Zielstand:
+- `core.manifest` **1.2.11**
+- `core.base-context` **1.0.3**
+- `diagnostics.cockpit` **1.1.2**
+- `fullscreen.map-display` **1.0.12**
+- Runtime **41002r6**
+- Modulsatz **37F8-9357**
+- Build **V4.10.02-MODULAR-DEV-R6-2026-09-25**
+
+Automatisierte Regression:
+- statischer Modulvertrag schützt Winkelkonvention, −45°-Assetversatz, Keyframe-Endpunkte, statischen `:not(animation/freeze)`-Pfad, Vollbild-Raster und Top-Layer-Hostfunktionen,
+- Playwright setzt nun explizit ein feines Diagnoseraster plus ID/Achsen/Diagonalen,
+- Test verlangt tatsächliches SVG-Markup mit `KP-A1` / `MP-A1`,
+- Test misst 0°/90° über den berechneten CSS-Transform,
+- Test verlangt eine reale Transformänderung nach Start von TREND,
+- Test öffnet Vollbild, verlangt `FS-A1`, prüft Overlay/Diagnosekonsole im Vollbild-Top-Layer und anschließend den Hostwechsel in einen Kompass-Picker und zurück.
+
+**NÄCHSTER SCHRITT:** vollständige CI für den finalen R6-Head abwarten. Nur bei 5/5 grün `deploy/dev` exakt auf diesen geprüften Commit setzen. Danach reale DRA-Abnahme auf Desktop, iPad und Android/HA Companion: sichtbares Raster/Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, Export sowie Vollbild und Vollbild→Picker-Top-Layer prüfen. Erst danach weitere Medaillons.
