@@ -2,10 +2,10 @@ import { defineModule } from "../core/runtime.js?v=41002r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.1",
+  version:"1.3.2",
   group:"Diagnose",
   function:"Module & Versionen",
-  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Diagnose kopieren","JSON herunterladen"],
+  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
   file:"modules/diagnostics/module-view.js"
 });
 
@@ -526,6 +526,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             #settings-modules-section .gr-mod-summary{display:grid;gap:4px;padding:10px 11px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025);font-size:9px}
             #settings-modules-section .gr-mod-summary strong{font-size:11px;color:#e9edf3}
             #settings-modules-section .gr-mod-state{font-weight:850}
+            #settings-modules-section button.gr-mod-state{appearance:none;border:0;padding:0;background:transparent;font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+            #settings-modules-section button.gr-mod-state:focus-visible{outline:2px solid rgba(255,225,161,.92);outline-offset:2px;border-radius:4px}
             #settings-modules-section .gr-mod-state[data-state="ok"]{color:#78d59b}
             #settings-modules-section .gr-mod-state[data-state="warn"]{color:#e0b44f}#settings-modules-section .gr-mod-fingerprint{font:800 8.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:#78d59b;letter-spacing:.02em}#settings-modules-section .gr-mod-fingerprint[data-state="warn"]{color:#e0b44f}
             #settings-modules-section .gr-mod-summary-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px}
@@ -571,6 +573,19 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
             .gr-module-dialog .gr-mod-detail dt{color:#6f7884;font-weight:800}
             .gr-module-dialog .gr-mod-detail dd{margin:0;overflow-wrap:anywhere}
             .gr-module-dialog .gr-mod-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)}
+            .gr-deviation-backdrop{z-index:2147483647}
+            .gr-deviation-list{display:grid;gap:9px}
+            .gr-deviation-card{padding:11px 12px;border:1px solid rgba(224,180,79,.25);border-radius:13px;background:linear-gradient(180deg,rgba(224,180,79,.055),rgba(255,255,255,.018));box-shadow:inset 0 1px rgba(255,244,213,.035)}
+            .gr-deviation-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+            .gr-deviation-title{min-width:0}
+            .gr-deviation-title strong{display:block;color:#e5e9ef;font-size:10.5px}
+            .gr-deviation-title code{display:block;margin-top:2px;color:#7f8996;font:7.8px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+            .gr-deviation-badge{flex:0 0 auto;padding:4px 7px;border:1px solid rgba(224,180,79,.35);border-radius:999px;color:#e0b44f;background:rgba(224,180,79,.08);font-size:7.5px;font-weight:900}
+            .gr-deviation-detail{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 11px;margin:0;font-size:8px;line-height:1.45;color:#a0a9b5}
+            .gr-deviation-detail dt{font-weight:850;color:#6f7884}.gr-deviation-detail dd{margin:0;overflow-wrap:anywhere}
+            .gr-deviation-note{margin-top:8px;padding:7px 8px;border-left:2px solid rgba(120,213,155,.65);background:rgba(120,213,155,.045);color:#92cfa8;font-size:8px;line-height:1.4}
+            .gr-deviation-registrations{display:grid;gap:5px;margin-top:8px}
+            .gr-deviation-registration{padding:7px 8px;border:1px solid rgba(255,255,255,.055);border-radius:9px;background:rgba(0,0,0,.12);font:7.5px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;color:#8e98a6;overflow-wrap:anywhere}
             @media(max-width:620px){.gr-module-backdrop{padding:7px}.gr-module-dialog{width:calc(100vw - 14px);max-height:calc(100dvh - 14px);border-radius:17px}.gr-module-head{padding:10px 11px}.gr-module-title{font-size:16px}.gr-module-body{padding:11px 10px 14px}.gr-module-dialog .gr-mod-row>summary{gap:7px;padding:9px}.gr-module-dialog .gr-mod-heading{display:grid;gap:2px}.gr-module-dialog .gr-mod-detail{grid-template-columns:1fr;gap:2px;padding:0 9px 10px}.gr-module-dialog .gr-mod-detail dd{margin-bottom:5px}}
           </style>
           <div class="gr-mod-summary gr-mod-summary-compact">
@@ -596,6 +611,25 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
               </div>
             </div>
           </section>
+        </div>
+        <div id="settings-modules-deviations-backdrop" class="gr-module-backdrop gr-deviation-backdrop" aria-hidden="true">
+          <section class="gr-module-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-modules-deviations-title" tabindex="-1">
+            <header class="gr-module-head">
+              <div>
+                <div class="gr-module-kicker">Gewitterradar · Diagnose</div>
+                <div class="gr-module-title" id="settings-modules-deviations-title">Abweichungen</div>
+              </div>
+              <button id="settings-modules-deviations-close" class="gr-module-close" type="button" aria-label="Abweichungen schließen"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></button>
+            </header>
+            <div class="gr-module-body">
+              <div id="settings-modules-deviations-summary" class="gr-mod-summary"></div>
+              <div id="settings-modules-deviations-list" class="gr-deviation-list"></div>
+              <div class="gr-mod-actions">
+                <button id="settings-modules-deviations-copy" class="gr-mod-action" type="button">Diagnose kopieren</button>
+                <button id="settings-modules-deviations-download" class="gr-mod-action" type="button">JSON herunterladen</button>
+              </div>
+            </div>
+          </section>
         </div>`;
 
       const diagnostic=this.shadow.getElementById("settings-diagnostic-section");
@@ -607,10 +641,17 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       section.querySelector("#settings-modules-close")?.addEventListener("click",()=>this._closeModuleDetails());
       section.querySelector("#settings-modules-copy")?.addEventListener("click",()=>this._copyModuleDiagnostics());
       section.querySelector("#settings-modules-download")?.addEventListener("click",()=>this._downloadModuleDiagnostics());
+      section.querySelector("#settings-modules-deviations-copy")?.addEventListener("click",()=>this._copyModuleDeviationDiagnostics());
+      section.querySelector("#settings-modules-deviations-download")?.addEventListener("click",()=>this._downloadModuleDeviationDiagnostics());
+      section.querySelector("#settings-modules-deviations-close")?.addEventListener("click",()=>this._closeModuleDeviations());
       const backdrop=section.querySelector("#settings-modules-backdrop");
+      const deviationBackdrop=section.querySelector("#settings-modules-deviations-backdrop");
       backdrop?.addEventListener("click",event=>{if(event.target===backdrop)this._closeModuleDetails();});
       backdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDetails();}});
+      deviationBackdrop?.addEventListener("click",event=>{if(event.target===deviationBackdrop)this._closeModuleDeviations();});
+      deviationBackdrop?.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();this._closeModuleDeviations();}});
       if(backdrop)this.shadow.append(backdrop);
+      if(deviationBackdrop)this.shadow.append(deviationBackdrop);
       section.addEventListener("toggle",event=>{if(event.target===section&&section.open)this._syncModuleView();});
       this._syncModuleTranslations(section);
       return section;
@@ -629,6 +670,11 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       setText("#settings-modules-download","modules.download",backdrop);
       const close=backdrop?.querySelector?.("#settings-modules-close");
       if(close)close.setAttribute("aria-label",this._t?.("modules.close")||"modules.close");
+      const deviationBackdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      setText("#settings-modules-deviations-copy","modules.copy",deviationBackdrop);
+      setText("#settings-modules-deviations-download","modules.download",deviationBackdrop);
+      const deviationClose=deviationBackdrop?.querySelector?.("#settings-modules-deviations-close");
+      if(deviationClose)deviationClose.setAttribute("aria-label",this._t?.("modules.close")||"modules.close");
     },
 
     _moduleStatusLabel(status){
@@ -636,13 +682,45 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         ok:"modules.status.ok",
         missing:"modules.status.missing",
         version_mismatch:"modules.status.version_mismatch",
-        unexpected:"modules.status.unexpected"
+        unexpected:"modules.status.unexpected",
+        duplicate:"modules.status.duplicate"
       }[status];
       return key?(this._t?.(key)||status):status;
     },
 
+    _moduleDeviationIssues(result=moduleRegistrySnapshot(EXPECTED_MODULES)){
+      const issues=[];
+      for(const row of result?.rows||[]){
+        if(row.status!=="ok")issues.push({type:row.status,id:row.id,row});
+      }
+      for(const duplicate of result?.duplicateDetails||[]){
+        const row=(result?.rows||[]).find(item=>item.id===duplicate.id)||null;
+        issues.push({type:"duplicate",id:duplicate.id,count:duplicate.count,registrations:duplicate.registrations||[],row});
+      }
+      const probe=this._moduleRuntimeProbe||null;
+      if(probe?.stale)issues.push({type:"runtime_stale",id:"runtime",runtimeProbe:probe});
+      return issues;
+    },
+
     _moduleDiagnosticsPayload(){
       return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES)};
+    },
+
+    _moduleDeviationPayload(){
+      const diagnostics=moduleRegistrySnapshot(EXPECTED_MODULES);
+      const issues=this._moduleDeviationIssues(diagnostics);
+      return {
+        application:APPLICATION_META,
+        capturedAt:new Date().toISOString(),
+        runtimeProbe:this._moduleRuntimeProbe||null,
+        summary:{
+          loadedCount:diagnostics.loadedCount,
+          expectedCount:diagnostics.expectedCount,
+          issueCount:issues.length,
+          moduleSetId:this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||null,
+        },
+        deviations:issues
+      };
     },
 
     _refreshModuleRuntimeProbe(result){
@@ -675,7 +753,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       target.replaceChildren();
       const title=document.createElement("strong");title.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
       const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
-      const state=document.createElement("span");state.className="gr-mod-state";state.dataset.state=issueCount||runtimeStale?"warn":"ok";
+      const hasIssue=Boolean(issueCount||runtimeStale);
+      const state=document.createElement(hasIssue?"button":"span");state.className="gr-mod-state";state.dataset.state=hasIssue?"warn":"ok";
+      if(state.tagName==="BUTTON"){state.type="button";state.classList.add("gr-mod-deviation-trigger");state.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._openModuleDeviations();});}
       state.textContent=issueCount?`· ! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`:runtimeStale?`· ! ${this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich"}`:`· ✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
       const fingerprint=document.createElement("span");fingerprint.className="gr-mod-fingerprint";fingerprint.dataset.state=runtimeStale?"warn":"ok";
       fingerprint.textContent=runtimeStale?`· ${this._t?.("modules.set_id")||"ID"} ${loadedId} → ${installedId}`:`· ${this._t?.("modules.set_id")||"ID"} ${loadedId}`;
@@ -765,9 +845,99 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const result=moduleDiagnostics(EXPECTED_MODULES);
       this._renderModuleSummary(section.querySelector("#settings-modules-summary"),result);
       this._renderModuleSummary(this.shadow?.getElementById("settings-modules-dialog-summary"),result);
+      if(this.shadow?.getElementById("settings-modules-deviations-backdrop")?.classList.contains("open"))this._renderModuleDeviationDialog(result);
       this._refreshModuleRuntimeProbe(result);
       const list=this.shadow?.getElementById("settings-modules-list"),signature=this._moduleListSignature(result);
       if(list&&(forceList||list.dataset.moduleSignature!==signature)){this._renderModuleList(list,result);list.dataset.moduleSignature=signature;}
+    },
+
+    _renderModuleDeviationDialog(result=moduleDiagnostics(EXPECTED_MODULES)){
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      const issues=this._moduleDeviationIssues(result);
+      const title=backdrop.querySelector("#settings-modules-deviations-title");
+      if(title)title.textContent=this._t?.("modules.deviations",{count:issues.length})||`${issues.length} Abweichung(en) erkannt`;
+      const summary=backdrop.querySelector("#settings-modules-deviations-summary");
+      if(summary){
+        summary.replaceChildren();
+        const strong=document.createElement("strong");strong.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
+        const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
+        const set=document.createElement("span");set.className="gr-mod-fingerprint";set.dataset.state="ok";set.textContent=`· ${this._t?.("modules.set_id")||"ID"} ${this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||"—"}`;
+        summary.append(strong,counts,set);
+      }
+      const list=backdrop.querySelector("#settings-modules-deviations-list");
+      if(!list)return;
+      list.replaceChildren();
+      const appendDetail=(detail,label,value)=>{
+        const dt=document.createElement("dt");dt.textContent=label;
+        const dd=document.createElement("dd");dd.textContent=value==null||value===""?"—":String(value);
+        detail.append(dt,dd);
+      };
+      for(const issue of issues){
+        const card=document.createElement("article");card.className="gr-deviation-card";card.dataset.deviationType=issue.type;card.dataset.moduleId=issue.id;
+        const head=document.createElement("div");head.className="gr-deviation-head";
+        const heading=document.createElement("div");heading.className="gr-deviation-title";
+        const row=issue.row||null;
+        const presentation=row?modulePresentation(this._languageValue?.()||"Deutsch",row):{name:issue.id,functions:""};
+        const name=document.createElement("strong");name.textContent=presentation.name||issue.id;
+        const id=document.createElement("code");id.textContent=issue.id;
+        heading.append(name,id);
+        const badge=document.createElement("span");badge.className="gr-deviation-badge";badge.textContent=issue.type==="runtime_stale"?(this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich"):this._moduleStatusLabel(issue.type);
+        head.append(heading,badge);card.append(head);
+        const detail=document.createElement("dl");detail.className="gr-deviation-detail";
+        if(issue.type==="duplicate"){
+          appendDetail(detail,this._t?.("modules.detail.status")||"Status",this._moduleStatusLabel("duplicate"));
+          appendDetail(detail,this._t?.("modules.detail.version")||"Version",row?.loadedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.expected")||"Erwartet",row?.expectedVersion||"—");
+          appendDetail(detail,this._t?.("modules.deviation.registrations")||"Registrierungen",issue.count||issue.registrations?.length||0);
+          appendDetail(detail,this._t?.("modules.detail.file")||"Datei",row?.file||issue.registrations?.[0]?.file||"—");
+          card.append(detail);
+          if(row?.status==="ok"){
+            const note=document.createElement("div");note.className="gr-deviation-note";note.textContent=this._t?.("modules.deviation.active_matches")||"Aktive Modulversion entspricht dem Sollstand";card.append(note);
+          }
+          const registrations=document.createElement("div");registrations.className="gr-deviation-registrations";
+          for(const registration of issue.registrations||[]){
+            const entry=document.createElement("div");entry.className="gr-deviation-registration";
+            entry.textContent=`#${registration.index||"?"} · v${registration.version||"—"} · ${registration.url||registration.file||"—"}`;
+            registrations.append(entry);
+          }
+          card.append(registrations);
+        }else if(issue.type==="runtime_stale"){
+          const probe=issue.runtimeProbe||{};
+          appendDetail(detail,this._t?.("modules.detail.loaded")||"Geladen",probe.loadedId||"—");
+          appendDetail(detail,this._t?.("modules.installed")||"Installiert",probe.installedId||"—");
+          appendDetail(detail,"Runtime",`${probe.localRevision||"—"} → ${probe.installedRevision||"—"}`);
+          card.append(detail);
+        }else{
+          appendDetail(detail,this._t?.("modules.detail.status")||"Status",this._moduleStatusLabel(issue.type));
+          appendDetail(detail,this._t?.("modules.detail.version")||"Version",row?.loadedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.expected")||"Erwartet",row?.expectedVersion||"—");
+          appendDetail(detail,this._t?.("modules.detail.file")||"Datei",row?.file||"—");
+          card.append(detail);
+        }
+        list.append(card);
+      }
+    },
+
+    _openModuleDeviations(){
+      this._ensureModuleView();
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      const result=moduleDiagnostics(EXPECTED_MODULES);
+      const issues=this._moduleDeviationIssues(result);
+      if(!issues.length)return;
+      this._renderModuleDeviationDialog(result);
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden","false");
+      requestAnimationFrame(()=>backdrop.querySelector("#settings-modules-deviations-close")?.focus());
+    },
+
+    _closeModuleDeviations(){
+      const backdrop=this.shadow?.getElementById("settings-modules-deviations-backdrop");
+      if(!backdrop)return;
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden","true");
+      requestAnimationFrame(()=>this.shadow?.querySelector(".gr-mod-deviation-trigger")?.focus());
     },
 
     _openModuleDetails(){
@@ -806,6 +976,28 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const link=document.createElement("a");
       link.href=url;
       link.download=`gewitterradar-module-${APPLICATION_META.version}.json`;
+      document.body.append(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),0);
+    },
+
+    async _copyModuleDeviationDiagnostics(){
+      const text=JSON.stringify(this._moduleDeviationPayload(),null,2);
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(_error){
+        const area=document.createElement("textarea");
+        area.value=text;area.style.position="fixed";area.style.opacity="0";
+        document.body.append(area);area.select();document.execCommand("copy");area.remove();
+      }
+    },
+
+    _downloadModuleDeviationDiagnostics(){
+      const payload=JSON.stringify(this._moduleDeviationPayload(),null,2);
+      const blob=new Blob([payload],{type:"application/json;charset=utf-8"});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`gewitterradar-module-deviations-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),0);
     }
