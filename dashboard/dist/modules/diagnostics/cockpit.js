@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -19,6 +19,165 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
     _diagnosticOverlayTerm(index) { return (DIAGNOSTIC_OVERLAY_TERMS[this._languageValue()]||DIAGNOSTIC_OVERLAY_TERMS[LANGUAGE_DEFAULT])[index]; },
     _diagnosticPerformanceText(index) { return (DIAGNOSTIC_PERFORMANCE_UI[this._languageValue()]||DIAGNOSTIC_PERFORMANCE_UI[LANGUAGE_DEFAULT])[index]; },
     _diagnosticStormText(index) { return (DIAGNOSTIC_VIRTUAL_STORM_UI[this._languageValue()]||DIAGNOSTIC_VIRTUAL_STORM_UI[LANGUAGE_DEFAULT])[index]; },
+
+    _medallionDiagnosticDescriptor() {
+      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[];
+      const active=this._medallionDesignValue?.()||this._activeMedallionDesign||designs[0]?.id||'';
+      return designs.find((entry)=>entry.id===active)||designs[0]||null;
+    },
+
+    _medallionDiagnosticProfile(design=this._medallionDiagnosticDescriptor()) {
+      const fallback={
+        geometryVersion:'round-medallion-v1',
+        method:'hi-res 360-degree aperture-mask coverage build',
+        sourceWidth:512,sourceHeight:512,
+        aperture:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},
+        motif:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},
+        fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,
+        normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},
+        status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'pixel-identical outside measured hi-res aperture mask',innerMotif:'hi-res coverage-scaled beneath measured aperture mask',arrow:'separate hi-res-derived image with identical geometric base factor 1.1933478262',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      };
+      const raw=design?.diagnosticProfile||{};
+      return {
+        ...fallback,...raw,
+        aperture:{...fallback.aperture,...(raw.aperture||{})},
+        motif:{...fallback.motif,...(raw.motif||{})},
+        gap:{...fallback.gap,...(raw.gap||{})},
+        recommended:{...fallback.recommended,...(raw.recommended||{})},
+        status:{...fallback.status,...(raw.status||{})},
+        composition:{...fallback.composition,...(raw.composition||{})},
+        arrow:{...fallback.arrow,...(raw.arrow||{})}
+      };
+    },
+
+    _pickerDiagnosticEnabled() {
+      return !!this._diagnostics?.enabled&&!!this._diagnostics?.visualsVisible;
+    },
+
+    _pickerDiagnosticRelativeRect(node,parentRect) {
+      const rect=node?.getBoundingClientRect?.();
+      if(!rect||!parentRect)return null;
+      return {x:rect.left-parentRect.left,y:rect.top-parentRect.top,width:rect.width,height:rect.height,
+        centerX:rect.left-parentRect.left+rect.width/2,centerY:rect.top-parentRect.top+rect.height/2,
+        left:rect.left-parentRect.left,top:rect.top-parentRect.top,right:rect.right-parentRect.left,bottom:rect.bottom-parentRect.top};
+    },
+
+    _renderPickerDiagnosticStage(svg,{width,height,subject=null,pivot=null,targetCircle=null,targetPoint=null,actualPoint=null}={}) {
+      if(!svg||!(width>0&&height>0))return;
+      svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+      const line=(x1,y1,x2,y2,stroke,widthValue=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${widthValue}"${dash?` stroke-dasharray="${dash}"`:''}/>`;
+      const cross=(x,y,stroke,size=6)=>line(x-size,y,x+size,y,stroke,1.25)+line(x,y-size,x,y+size,stroke,1.25);
+      let markup=`<g fill="none">${line(width/2,0,width/2,height,'#4de5ff',.7,'4 4')}${line(0,height/2,width,height/2,'#4de5ff',.7,'4 4')}${line(0,0,width,height,'#a985ff',.5,'3 5')}${line(width,0,0,height,'#a985ff',.5,'3 5')}</g>`;
+      if(subject)markup+=`<rect x="${subject.x}" y="${subject.y}" width="${subject.width}" height="${subject.height}" fill="none" stroke="#ffe15d" stroke-width="1.2" stroke-dasharray="5 3"/>${cross(subject.centerX,subject.centerY,'#ffe15d',7)}`;
+      if(targetCircle)markup+=`<circle cx="${targetCircle.x}" cy="${targetCircle.y}" r="${targetCircle.radius}" fill="none" stroke="#55e5a2" stroke-width="1.2" stroke-dasharray="6 3"/>`;
+      if(pivot)markup+=cross(pivot.x,pivot.y,'#ff9f43',5);
+      if(targetPoint)markup+=cross(targetPoint.x,targetPoint.y,'#60f0a8',6);
+      if(actualPoint)markup+=cross(actualPoint.x,actualPoint.y,'#ff5fc8',4);
+      svg.innerHTML=markup;
+    },
+
+    _renderPickerDiagnosticNav(svg,{width,height,previous=null,index=null,next=null}={}) {
+      if(!svg||!(width>0&&height>0))return;
+      svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+      const rect=(box,stroke)=>box?`<rect x="${box.x}" y="${box.y}" width="${box.width}" height="${box.height}" fill="none" stroke="${stroke}" stroke-width="1" stroke-dasharray="4 3"/>`:'';
+      svg.innerHTML=`<line x1="${width/2}" y1="0" x2="${width/2}" y2="${height}" stroke="#4de5ff" stroke-width=".8" stroke-dasharray="3 3"/>${rect(previous,'#97e0ff')}${rect(index,'#ffe15d')}${rect(next,'#97e0ff')}`;
+    },
+
+    _measureCompassPickerDiagnostics() {
+      const dialog=this._compassPickerDialog;
+      if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.compass=null;return null;}
+      const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-compass-picker-stage]'),nav=dialog.querySelector('.compass-picker-nav-row'),
+        stageOverlay=dialog.querySelector('[data-compass-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-compass-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-compass-picker-diagnostic-readout]');
+      [stageOverlay,navOverlay,readout].forEach((node)=>{if(node)node.hidden=!enabled;});
+      if(!enabled||!stage||!nav)return null;
+      const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),instrument=stage.querySelector('.compass-instrument');
+      if(!(stageRect.width>0&&stageRect.height>0&&instrument))return null;
+      const subject=this._pickerDiagnosticRelativeRect(instrument,stageRect),needle=instrument.querySelector('#compass-needle'),pivot=this._pickerDiagnosticRelativeRect(needle,stageRect);
+      const previous=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-compass-picker-prev]'),navRect),index=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-compass-picker-index]'),navRect),next=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-compass-picker-next]'),navRect);
+      const centerDx=subject.centerX-stageRect.width/2,centerDy=subject.centerY-stageRect.height/2,centerResidual=Math.hypot(centerDx,centerDy);
+      const pivotDx=pivot?pivot.centerX-stageRect.width/2:null,pivotDy=pivot?pivot.centerY-stageRect.height/2:null,pivotResidual=pivot?Math.hypot(pivotDx,pivotDy):null;
+      const leftDistance=previous&&index?index.centerX-previous.centerX:null,rightDistance=next&&index?next.centerX-index.centerX:null;
+      const navSymmetry=leftDistance!=null&&rightDistance!=null?Math.abs(leftDistance-rightDistance):null;
+      const navCenters=[previous?.centerY,index?.centerY,next?.centerY].filter(Number.isFinite),navVerticalSpread=navCenters.length?Math.max(...navCenters)-Math.min(...navCenters):null;
+      const instrumentRect=instrument.getBoundingClientRect(),gap=navRect.top-instrumentRect.bottom;
+      const overflow=subject.left<-.5||subject.top<-.5||subject.right>stageRect.width+.5||subject.bottom>stageRect.height+.5;
+      const descriptor=COMPASS_DESIGNS.find((entry)=>entry.id===(instrument.dataset.compassDesign||this._activeCompassDesign))||COMPASS_DESIGNS[0];
+      const ok=centerResidual<=1.5&&(pivotResidual==null||pivotResidual<=1.5)&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
+      const result={kind:'compass',designId:descriptor?.id||null,uiIndex:descriptor?.uiIndex||null,total:COMPASS_DESIGNS.length,
+        stage:{width:stageRect.width,height:stageRect.height},instrument:subject,centerDelta:{x:centerDx,y:centerDy,residual:centerResidual},
+        pivot:pivot?{x:pivot.centerX,y:pivot.centerY,deltaX:pivotDx,deltaY:pivotDy,residual:pivotResidual}:null,
+        navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromInstrument:gap},overflow,status:ok?'OK':'REVIEW'};
+      this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.compass=result;
+      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,pivot:pivot?{x:pivot.centerX,y:pivot.centerY}:null});
+      this._renderPickerDiagnosticNav(navOverlay,{width:navRect.width,height:navRect.height,previous,index,next});
+      if(readout)readout.textContent=[
+        `KOMPASS-PICKER · VARIANTE ${result.uiIndex||'?'} / ${result.total} · ${result.designId||'n/v'}`,
+        `Stage ${stageRect.width.toFixed(2)} × ${stageRect.height.toFixed(2)} px`,
+        `Instrument-Zentrum Δ X ${centerDx.toFixed(2)} · Y ${centerDy.toFixed(2)} · R ${centerResidual.toFixed(2)} px`,
+        `Pivot-Zentrum Δ ${pivotResidual==null?'n/v':pivotResidual.toFixed(2)+' px'}`,
+        `Navigation L/R ${leftDistance==null?'n/v':leftDistance.toFixed(2)} / ${rightDistance==null?'n/v':rightDistance.toFixed(2)} px · Symmetrie Δ ${navSymmetry==null?'n/v':navSymmetry.toFixed(2)} px`,
+        `Navigation Y-Streuung ${navVerticalSpread==null?'n/v':navVerticalSpread.toFixed(2)} px · Instrument→Navigation ${gap.toFixed(2)} px`,
+        `Overflow ${overflow?'JA':'nein'} · STATUS ${result.status}`
+      ].join('\n');
+      return result;
+    },
+
+    _measureMedallionPickerDiagnostics() {
+      const dialog=this._medallionPickerDialog;
+      if(!dialog){if(this._pickerDiagnostics)this._pickerDiagnostics.medallion=null;return null;}
+      const enabled=this._pickerDiagnosticEnabled(),stage=dialog.querySelector('[data-medallion-picker-stage]'),nav=dialog.querySelector('.medallion-picker-nav'),
+        stageOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-stage]'),navOverlay=dialog.querySelector('[data-medallion-picker-diagnostic-nav]'),readout=dialog.querySelector('[data-medallion-picker-diagnostic-readout]');
+      [stageOverlay,navOverlay,readout].forEach((node)=>{if(node)node.hidden=!enabled;});
+      if(!enabled||!stage||!nav)return null;
+      const stageRect=stage.getBoundingClientRect(),navRect=nav.getBoundingClientRect(),preview=stage.querySelector('.medallion-picker-preview'),base=stage.querySelector('[data-medallion-picker-base]'),arrow=stage.querySelector('.trend-medallion-arrow');
+      if(!(stageRect.width>0&&stageRect.height>0&&preview&&base&&arrow))return null;
+      const subject=this._pickerDiagnosticRelativeRect(preview,stageRect),baseRect=this._pickerDiagnosticRelativeRect(base,stageRect),arrowRect=this._pickerDiagnosticRelativeRect(arrow,stageRect);
+      const previous=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-prev]'),navRect),index=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-index]'),navRect),next=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-next]'),navRect);
+      const descriptor=this._medallionDiagnosticDescriptor(),profile=this._medallionDiagnosticProfile(descriptor),sourceWidth=Number(profile.sourceWidth)||512,sourceHeight=Number(profile.sourceHeight)||sourceWidth;
+      const centerDx=subject.centerX-stageRect.width/2,centerDy=subject.centerY-stageRect.height/2,centerResidual=Math.hypot(centerDx,centerDy);
+      const targetPoint={x:stageRect.width*(Number(profile.arrow.centerXPercent)||50)/100,y:stageRect.height*(Number(profile.arrow.centerYPercent)||50)/100};
+      const actualPoint={x:arrowRect.centerX,y:arrowRect.centerY},arrowResidual=Math.hypot(actualPoint.x-targetPoint.x,actualPoint.y-targetPoint.y);
+      const aperture={x:stageRect.width*profile.aperture.centerX/sourceWidth,y:stageRect.height*profile.aperture.centerY/sourceHeight,radius:Math.min(stageRect.width/sourceWidth,stageRect.height/sourceHeight)*profile.aperture.radius};
+      const leftDistance=previous&&index?index.centerX-previous.centerX:null,rightDistance=next&&index?next.centerX-index.centerX:null,navSymmetry=leftDistance!=null&&rightDistance!=null?Math.abs(leftDistance-rightDistance):null;
+      const navCenters=[previous?.centerY,index?.centerY,next?.centerY].filter(Number.isFinite),navVerticalSpread=navCenters.length?Math.max(...navCenters)-Math.min(...navCenters):null;
+      const gap=navRect.top-stageRect.bottom,overflow=subject.left<-.5||subject.top<-.5||subject.right>stageRect.width+.5||subject.bottom>stageRect.height+.5;
+      const style=getComputedStyle(arrow),arrowWidth=parseFloat(style.width)||0,arrowHeight=parseFloat(style.height)||0,expectedArrowWidth=stageRect.width*profile.arrow.widthPercent/100,expectedArrowHeight=stageRect.height*profile.arrow.heightPercent/100;
+      const arrowSizeResidual=Math.max(Math.abs(arrowWidth-expectedArrowWidth),Math.abs(arrowHeight-expectedArrowHeight));
+      const ok=centerResidual<=1.5&&arrowResidual<=1.5&&arrowSizeResidual<=1.5&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
+      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id));
+      const result={kind:'medallion',designId:descriptor?.id||null,uiIndex:designIndex+1,total:designs.length,profile:profile.geometryVersion,
+        stage:{width:stageRect.width,height:stageRect.height},preview:subject,base:baseRect,centerDelta:{x:centerDx,y:centerDy,residual:centerResidual},
+        aperture,targetArrowCenter:targetPoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
+        navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromStage:gap},overflow,status:ok?'OK':'REVIEW'};
+      this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.medallion=result;
+      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetCircle:aperture,targetPoint,actualPoint});
+      this._renderPickerDiagnosticNav(navOverlay,{width:navRect.width,height:navRect.height,previous,index,next});
+      if(readout)readout.textContent=[
+        `MEDAILLON-PICKER · ${result.designId||'n/v'} · ${result.uiIndex} / ${result.total}`,
+        `Profil ${result.profile||'n/v'} · Stage ${stageRect.width.toFixed(2)} × ${stageRect.height.toFixed(2)} px`,
+        `Medaillon-Zentrum Δ X ${centerDx.toFixed(2)} · Y ${centerDy.toFixed(2)} · R ${centerResidual.toFixed(2)} px`,
+        `Pfeil-Zentrum Soll ${targetPoint.x.toFixed(2)},${targetPoint.y.toFixed(2)} · Ist ${actualPoint.x.toFixed(2)},${actualPoint.y.toFixed(2)} · R ${arrowResidual.toFixed(2)} px`,
+        `Pfeil-Größe Δ max ${arrowSizeResidual.toFixed(2)} px · Apertur R ${aperture.radius.toFixed(2)} px`,
+        `Navigation L/R ${leftDistance==null?'n/v':leftDistance.toFixed(2)} / ${rightDistance==null?'n/v':rightDistance.toFixed(2)} px · Symmetrie Δ ${navSymmetry==null?'n/v':navSymmetry.toFixed(2)} px`,
+        `Navigation Y-Streuung ${navVerticalSpread==null?'n/v':navVerticalSpread.toFixed(2)} px · Stage→Navigation ${gap.toFixed(2)} px`,
+        `Overflow ${overflow?'JA':'nein'} · STATUS ${result.status}`
+      ].join('\n');
+      return result;
+    },
+
+    _syncPickerDiagnostics() {
+      this._measureCompassPickerDiagnostics();
+      this._measureMedallionPickerDiagnostics();
+    },
+
+    _clearPickerDiagnostic(kind) {
+      if(this._pickerDiagnostics&&kind in this._pickerDiagnostics)this._pickerDiagnostics[kind]=null;
+    },
 
     _diagnosticRegistry() {
       return [
@@ -156,7 +315,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       if(this._diagnostics.enabled)return;this._diagnostics.enabled=true;this._diagnostics.startedAt=performance.now();
       try{this._diagnostics.position=JSON.parse(localStorage.getItem('gewitterradar-diagnostic-position')||'null');this._diagnostics.columnMode=Number(localStorage.getItem('gewitterradar-diagnostic-columns'))===1?1:2;}catch(_){}
       const consoleNode=this.shadow?.getElementById('diagnostic-console');if(this._diagnostics.position&&consoleNode){consoleNode.style.left=`${this._diagnostics.position.left}px`;consoleNode.style.top=`${this._diagnostics.position.top}px`;}
-      this._diagnosticsResizeHandler=()=>{this._diagnostics.resizeCallbacks+=1;this._clampDiagnosticConsole();this._scheduleDiagnosticMeasure();};
+      this._diagnosticsResizeHandler=()=>{this._diagnostics.resizeCallbacks+=1;this._clampDiagnosticConsole();this._scheduleDiagnosticMeasure();this._syncPickerDiagnostics?.();};
       window.addEventListener('resize',this._diagnosticsResizeHandler,{passive:true});window.visualViewport?.addEventListener('resize',this._diagnosticsResizeHandler,{passive:true});
       if(window.PerformanceObserver){
         for(const type of ['layout-shift','longtask'])try{const observer=new PerformanceObserver((list)=>{for(const entry of list.getEntries()){if(type==='layout-shift'&&!entry.hadRecentInput)this._diagnostics.layoutShifts.push({value:entry.value,time:entry.startTime});if(type==='longtask')this._diagnostics.longTasks.push({duration:entry.duration,time:entry.startTime});}this._diagnostics[type==='layout-shift'?'layoutShifts':'longTasks']=this._diagnostics[type==='layout-shift'?'layoutShifts':'longTasks'].slice(-100);});observer.observe({type,buffered:true});this._diagnostics.performanceObservers.push(observer);}catch(_){}
@@ -309,6 +468,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       const stormState=this.shadow?.getElementById('diagnostic-virtual-storm-state');if(stormState){const radii=virtualStorm.radii,modeLabel=virtualStorm.extreme?this._diagnosticStormText(11):this._diagnosticStormText(10);stormState.textContent=virtualStorm.scenario==='off'?`${this._diagnosticStormText(7)} · ${this._diagnosticStormText(8)}`:`${this._diagnosticStormText(6)} · ${virtualStorm.cells||virtualStorm.cellCount||1} ${this._diagnosticStormText(9)} · ${virtualStorm.count} ${this._diagnosticStormText(12)} · ${modeLabel} · ${radii?`${this._formatRadiusDistance(radii.observation).text} / ${this._formatRadiusDistance(radii.storm).text} / ${this._formatRadiusDistance(radii.danger).text}`:''}
 ${this._diagnosticStormText(8)}`;}
       this._syncDiagnosticWeatherLabV40802?.();this._syncDiagnosticClusterBrowseV40802?.();
+      this._syncPickerDiagnostics?.();
       if(d.enabled){if(d.live)this._scheduleDiagnosticMeasure();else this._renderDiagnosticOverlay();}
     },
 
@@ -412,7 +572,7 @@ ${this._diagnosticStormText(8)}`;}
       const warningList=[];if(responsiveCompass.overflowing)warningList.push('Responsive: field C has horizontal overflow.');if(panels.some((panel)=>panel.scroll.overflowing))warningList.push('Layout: one or more panels overflow their client bounds.');if(/WARNUNG|KORREKTUR ERFORDERLICH|WARNING|FAIL/i.test(this._medallionCalibrationReportText||''))warningList.push('Medallion: calibration requires review.');const compassIssues=this._compassDiagnosticModels().filter((entry)=>entry.status==='REVIEW');compassIssues.forEach((entry)=>warningList.push(`Compass ${entry.id}: REVIEW – ${entry.statusReasons.join('; ')}`));if(this._diagnostics.fps?.worstFrameMs>100)warningList.push('Performance: worst sampled frame exceeded 100 ms.');
       const images=new Map([...this.shadow.querySelectorAll('img')].map((image)=>[(image.currentSrc||image.src).split('/').pop()?.split('?')[0],{naturalWidth:image.naturalWidth||null,naturalHeight:image.naturalHeight||null,renderWidth:image.getBoundingClientRect().width,renderHeight:image.getBoundingClientRect().height,complete:image.complete}]));
       const assetMap=new Map(resources.filter((entry)=>/gewitterradar|leaflet/i.test(entry.name)).map((entry)=>{const asset=entry.name.split('/').pop()?.split('?')[0];return [asset,{asset,durationMs:entry.duration,transferSize:entry.transferSize,encodedBodySize:entry.encodedBodySize,decodedBodySize:entry.decodedBodySize,cacheLikely:entry.transferSize===0,...(this._diagnostics.assetDimensions[asset]||{}),...(images.get(asset)||{})}];}));for(const [asset,geometry] of Object.entries(this._diagnostics.assetDimensions))if(asset&&!assetMap.has(asset))assetMap.set(asset,{asset,durationMs:null,transferSize:null,encodedBodySize:null,decodedBodySize:null,cacheLikely:null,...geometry});for(const [asset,geometry] of images)if(asset&&!assetMap.has(asset))assetMap.set(asset,{asset,durationMs:null,transferSize:null,encodedBodySize:null,decodedBodySize:null,cacheLikely:null,...geometry});const safeAssets=[...assetMap.values()].sort((a,b)=>(b.durationMs||0)-(a.durationMs||0));if(safeAssets.some((asset)=>asset.loaded===false||asset.complete===false))warningList.push('Assets: one or more diagnostic assets failed to load.');const summaryStatus=warningList.some((warning)=>/overflow|failed to load/i.test(warning))?'FAIL':warningList.length?'WARNING':'OK';
-      return {formatVersion:'1.3.0',generatedAt:new Date().toISOString(),environment:{homeAssistantVersion:this._hass?.config?.version||null,language:navigator.language,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,browserPreferredColorScheme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',homeAssistantTheme:this._hass?.themes?.theme||null,effectiveCardTheme:getComputedStyle(this).colorScheme||null,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches},viewport:{screen:{width:screen.width,height:screen.height},availableScreen:{width:screen.availWidth,height:screen.availHeight},layout:{width:innerWidth,height:innerHeight},visual:{width:vv?.width||innerWidth,height:vv?.height||innerHeight,offsetLeft:vv?.offsetLeft||0,offsetTop:vv?.offsetTop||0,scale:vv?.scale||1},devicePixelRatio,orientation:screen.orientation?.type||`${innerWidth>=innerHeight?'landscape':'portrait'} (inferred)`,maxTouchPoints:navigator.maxTouchPoints,pointerCoarse:matchMedia('(pointer: coarse)').matches,pointerFine:matchMedia('(pointer: fine)').matches,hover:matchMedia('(hover: hover)').matches,effectivePixels:{width:innerWidth*devicePixelRatio,height:innerHeight*devicePixelRatio}},responsive:{current:this._responsiveDiagnosticProfile(card.width),fieldC:responsiveCompass,history:[...this._diagnostics.responsiveHistory]},layout:{card:{x:card.x,y:card.y,width:card.width,height:card.height,scrollWidth:this.scrollWidth,scrollHeight:this.scrollHeight}},panels,compass:{designs:this._compassDiagnosticModels()},selector:{updates:this._compassSelectorDiagnostics.updates,resizeCallbacks:this._compassSelectorDiagnostics.resizeCallbacks,recent:[...this._compassSelectorDiagnostics.recent]},medallion:{designs:MEDALLION_DESIGNS.map((design)=>({...design,asset:design.asset.split('/').pop()?.split('?')[0]})),report:this._medallionCalibrationReportText},performance:{timings:{...this._diagnosticTimings},renderCount:this._diagnostics.renderCount,resizeCallbacks:this._diagnostics.resizeCallbacks,mutationEvents:this._diagnostics.mutationEvents,mutationRegions:{...this._diagnostics.mutationRegions},diagnosticSessionDurationMs:sessionMs,rendersPerSecond:perSecond(this._diagnostics.renderCount),mutationsPerSecond:perSecond(this._diagnostics.mutationEvents),selectorUpdatesPerSecond:perSecond(this._compassSelectorDiagnostics.updates),resizeCallbacksPerSecond:perSecond(this._diagnostics.resizeCallbacks),layoutShifts:[...this._diagnostics.layoutShifts],longTasks:[...this._diagnostics.longTasks],fps:this._diagnostics.fps},assets:safeAssets,diagnostics:{enabled:this._diagnostics.enabled,visualsVisible:this._diagnostics.visualsVisible,live:this._diagnostics.live,grid:this._diagnostics.grid,overlays:{...this._diagnostics.overlays},virtualStorm:{scenario:this._diagnostics.virtualStorm?.scenario||'off',count:this._diagnostics.virtualStorm?.count||0,cells:this._diagnostics.virtualStorm?.cells||0,cellCount:this._diagnostics.virtualStorm?.cellCount||1,extreme:!!this._diagnostics.virtualStorm?.extreme,extremeCells:this._diagnostics.virtualStorm?.extremeCells||0,radii:this._diagnostics.virtualStorm?.radii||null},selected:this._diagnostics.selected,compare:this._diagnostics.compare,browserPlatformDiagnosticOnly:{userAgent:navigator.userAgent,platform:navigator.userAgentData?.platform||navigator.platform,vendor:navigator.vendor}},summary:{app:'Gewitterradar',version:CARD_DISPLAY_VERSION,releaseVersion:CARD_VERSION,status:summaryStatus,warnings:warningList,recommendations:warningList.length?['Review reported subsystems before changing production geometry.']:[],privacy:'No cookies, tokens, authorization headers, API keys, secrets, passwords, coordinates or Home Assistant states are exported.'}};
+      return {formatVersion:'1.3.0',generatedAt:new Date().toISOString(),environment:{homeAssistantVersion:this._hass?.config?.version||null,language:navigator.language,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,browserPreferredColorScheme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',homeAssistantTheme:this._hass?.themes?.theme||null,effectiveCardTheme:getComputedStyle(this).colorScheme||null,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches},viewport:{screen:{width:screen.width,height:screen.height},availableScreen:{width:screen.availWidth,height:screen.availHeight},layout:{width:innerWidth,height:innerHeight},visual:{width:vv?.width||innerWidth,height:vv?.height||innerHeight,offsetLeft:vv?.offsetLeft||0,offsetTop:vv?.offsetTop||0,scale:vv?.scale||1},devicePixelRatio,orientation:screen.orientation?.type||`${innerWidth>=innerHeight?'landscape':'portrait'} (inferred)`,maxTouchPoints:navigator.maxTouchPoints,pointerCoarse:matchMedia('(pointer: coarse)').matches,pointerFine:matchMedia('(pointer: fine)').matches,hover:matchMedia('(hover: hover)').matches,effectivePixels:{width:innerWidth*devicePixelRatio,height:innerHeight*devicePixelRatio}},responsive:{current:this._responsiveDiagnosticProfile(card.width),fieldC:responsiveCompass,history:[...this._diagnostics.responsiveHistory]},layout:{card:{x:card.x,y:card.y,width:card.width,height:card.height,scrollWidth:this.scrollWidth,scrollHeight:this.scrollHeight}},panels,compass:{designs:this._compassDiagnosticModels()},selector:{updates:this._compassSelectorDiagnostics.updates,resizeCallbacks:this._compassSelectorDiagnostics.resizeCallbacks,recent:[...this._compassSelectorDiagnostics.recent]},pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null},medallion:{designs:MEDALLION_DESIGNS.map((design)=>({...design,asset:design.asset.split('/').pop()?.split('?')[0]})),report:this._medallionCalibrationReportText},performance:{timings:{...this._diagnosticTimings},renderCount:this._diagnostics.renderCount,resizeCallbacks:this._diagnostics.resizeCallbacks,mutationEvents:this._diagnostics.mutationEvents,mutationRegions:{...this._diagnostics.mutationRegions},diagnosticSessionDurationMs:sessionMs,rendersPerSecond:perSecond(this._diagnostics.renderCount),mutationsPerSecond:perSecond(this._diagnostics.mutationEvents),selectorUpdatesPerSecond:perSecond(this._compassSelectorDiagnostics.updates),resizeCallbacksPerSecond:perSecond(this._diagnostics.resizeCallbacks),layoutShifts:[...this._diagnostics.layoutShifts],longTasks:[...this._diagnostics.longTasks],fps:this._diagnostics.fps},assets:safeAssets,diagnostics:{enabled:this._diagnostics.enabled,visualsVisible:this._diagnostics.visualsVisible,live:this._diagnostics.live,grid:this._diagnostics.grid,overlays:{...this._diagnostics.overlays},virtualStorm:{scenario:this._diagnostics.virtualStorm?.scenario||'off',count:this._diagnostics.virtualStorm?.count||0,cells:this._diagnostics.virtualStorm?.cells||0,cellCount:this._diagnostics.virtualStorm?.cellCount||1,extreme:!!this._diagnostics.virtualStorm?.extreme,extremeCells:this._diagnostics.virtualStorm?.extremeCells||0,radii:this._diagnostics.virtualStorm?.radii||null},selected:this._diagnostics.selected,compare:this._diagnostics.compare,browserPlatformDiagnosticOnly:{userAgent:navigator.userAgent,platform:navigator.userAgentData?.platform||navigator.platform,vendor:navigator.vendor}},summary:{app:'Gewitterradar',version:CARD_DISPLAY_VERSION,releaseVersion:CARD_VERSION,status:summaryStatus,warnings:warningList,recommendations:warningList.length?['Review reported subsystems before changing production geometry.']:[],privacy:'No cookies, tokens, authorization headers, API keys, secrets, passwords, coordinates or Home Assistant states are exported.'}};
     },
 
     _copyDiagnosticSelection: async function(asJson) { const snapshot=this._buildDiagnosticSnapshot(),panel=snapshot.panels.find((entry)=>entry.id===this._diagnostics.selected)||snapshot.panels[0];if(!panel)return;const text=asJson?JSON.stringify(panel,null,2):`${panel.id} · ${panel.name}\nX/Y ${panel.x.toFixed(2)}/${panel.y.toFixed(2)}\nW/H ${panel.width.toFixed(2)}/${panel.height.toFixed(2)}\nCenter ${panel.centerX.toFixed(2)}/${panel.centerY.toFixed(2)}\n${JSON.stringify(panel.css,null,2)}`;try{await navigator.clipboard.writeText(text);}catch(_){const area=document.createElement('textarea');area.value=text;area.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(area);area.select();try{document.execCommand('copy');}finally{area.remove();}} },
@@ -575,11 +735,11 @@ ${this._diagnosticStormText(8)}`;}
       const wrapperRatio=box.width/(box.height||1),assetRatio=asset.width/(asset.height||1),visibleRatio=visibleW/(visibleH||1),roundOk=Math.abs(visibleRatio-1)<=.01,centerOk=Math.hypot(dx,dy)<=1,aspectOk=Math.abs(wrapperRatio-1)<=.002&&Math.abs(assetRatio-1)<=.002&&style.objectFit==='contain';
       const label=trend.querySelector('.tlabel')?.getBoundingClientRect(),copy=trend.querySelector('.trend-copy')?.getBoundingClientRect(),value=trend.querySelector('.tvalue')?.getBoundingClientRect(),sub=trend.querySelector('.tsub')?.getBoundingClientRect();
       const titleGap=label?box.top-label.bottom:NaN,statusGap=copy?copy.top-box.bottom:NaN,statusSubGap=value&&sub?sub.top-value.bottom:NaN,spacingOk=[titleGap,statusGap,statusSubGap].every((n)=>Number.isFinite(n)&&n>=0&&n<=16);
-      const inner={method:'hi-res 360-degree aperture-mask coverage build',aperture:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},motif:{centerX:256.0627,centerY:258.3163,radius:168.7717,rms:4.1034},gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},composition:{outerFrame:'pixel-identical outside measured hi-res aperture mask',innerMotif:'hi-res coverage-scaled beneath measured aperture mask',arrow:'separate hi-res-derived image with identical geometric base factor 1.1933478262',sharedInnerStage:false}};
+      const design=this._medallionDiagnosticDescriptor(),inner=this._medallionDiagnosticProfile(design);
       this._medallionInnerFitDiagnostics=inner;
-      const arrowBox=arrow.getBoundingClientRect(),arrowStyle=getComputedStyle(arrow),matrix=new DOMMatrix(arrowStyle.transform==='none'?undefined:arrowStyle.transform),rotation=(Math.atan2(matrix.b,matrix.a)*180/Math.PI+360)%360,activeScale=Math.hypot(matrix.a,matrix.b),targetX=box.left+inner.aperture.centerX/512*box.width,targetY=box.top+inner.aperture.centerY/512*box.height,arrowCenterX=arrowBox.left+arrowBox.width/2,arrowCenterY=arrowBox.top+arrowBox.height/2,centerResidual=Math.hypot(arrowCenterX-targetX,arrowCenterY-targetY),cssAnimations=arrow.getAnimations?.().filter((animation)=>animation.effect?.target===arrow).length||0,state=this._medallionDiagnostic;
-      const arrowLayoutWidth=parseFloat(arrowStyle.width),arrowLayoutHeight=parseFloat(arrowStyle.height);this._medallionAnimationDiagnostics={mode:state.mode,arrowVisible:arrowStyle.opacity!=='0',arrowCenterX,arrowCenterY,arrowWidth:arrowLayoutWidth,arrowHeight:arrowLayoutHeight,transformedBoundsWidth:arrowBox.width,transformedBoundsHeight:arrowBox.height,arrowScale:arrowLayoutWidth/box.width,pivotX:arrowCenterX,pivotY:arrowCenterY,transformOrigin:arrowStyle.transformOrigin,rotation,activeScale,activeTransform:arrowStyle.transform,animationEnabled:state.mode==='normal'?null:state.animationEnabled,animationFrozen:state.frozen,animationState:state.mode,animationDriver:state.driver,activeCssAnimations:cssAnimations,activeTimers:0,activeRafLoops:0,centerResidual,pivotResidual:centerResidual,normalizedCenterResidual:centerResidual/(inner.aperture.radius/512*box.width),normalizedPivotResidual:centerResidual/(inner.aperture.radius/512*box.width)};
-      const innerStatusOk=Object.values(inner.status).every(Boolean),totalOk=roundOk&&centerOk&&aspectOk&&spacingOk&&innerStatusOk,design=MEDALLION_DESIGNS[0],orientation=innerWidth>=innerHeight?'landscape':'portrait';
+      const arrowBox=arrow.getBoundingClientRect(),arrowStyle=getComputedStyle(arrow),matrix=new DOMMatrix(arrowStyle.transform==='none'?undefined:arrowStyle.transform),rotation=(Math.atan2(matrix.b,matrix.a)*180/Math.PI+360)%360,activeScale=Math.hypot(matrix.a,matrix.b),targetX=box.left+inner.aperture.centerX/inner.sourceWidth*box.width,targetY=box.top+inner.aperture.centerY/inner.sourceHeight*box.height,arrowCenterX=arrowBox.left+arrowBox.width/2,arrowCenterY=arrowBox.top+arrowBox.height/2,centerResidual=Math.hypot(arrowCenterX-targetX,arrowCenterY-targetY),cssAnimations=arrow.getAnimations?.().filter((animation)=>animation.effect?.target===arrow).length||0,state=this._medallionDiagnostic;
+      const arrowLayoutWidth=parseFloat(arrowStyle.width),arrowLayoutHeight=parseFloat(arrowStyle.height);this._medallionAnimationDiagnostics={mode:state.mode,arrowVisible:arrowStyle.opacity!=='0',arrowCenterX,arrowCenterY,arrowWidth:arrowLayoutWidth,arrowHeight:arrowLayoutHeight,transformedBoundsWidth:arrowBox.width,transformedBoundsHeight:arrowBox.height,arrowScale:arrowLayoutWidth/box.width,pivotX:arrowCenterX,pivotY:arrowCenterY,transformOrigin:arrowStyle.transformOrigin,rotation,activeScale,activeTransform:arrowStyle.transform,animationEnabled:state.mode==='normal'?null:state.animationEnabled,animationFrozen:state.frozen,animationState:state.mode,animationDriver:state.driver,activeCssAnimations:cssAnimations,activeTimers:0,activeRafLoops:0,centerResidual,pivotResidual:centerResidual,normalizedCenterResidual:centerResidual/(inner.aperture.radius/inner.sourceWidth*box.width),normalizedPivotResidual:centerResidual/(inner.aperture.radius/inner.sourceWidth*box.width)};
+      const innerStatusOk=Object.values(inner.status).every(Boolean),totalOk=roundOk&&centerOk&&aspectOk&&spacingOk&&innerStatusOk,orientation=innerWidth>=innerHeight?'landscape':'portrait';
       const compact=[`MEDAILLON-KALIBRIERUNG · ${design.id}`,`MEDAILLON ROUNDNESS STATUS: ${roundOk?'OK':'WARNUNG'}`,`CENTER STATUS: ${centerOk?'OK':'WARNUNG'}`,`ASPECT STATUS: ${aspectOk?'OK':'WARNUNG'}`,`LAYOUT SPACING STATUS: ${spacingOk?'OK':'WARNUNG'}`,`INNER APERTURE FIT STATUS: ${inner.status.innerApertureFit?'OK':'WARNUNG'}`,`INNER CIRCLE CENTER STATUS: ${inner.status.innerCircleCenter?'OK':'WARNUNG'}`,`RADIAL GAP STATUS: ${inner.status.radialGap?'OK':'WARNUNG'}`,`ARROW COUPLING STATUS: ${inner.status.arrowCoupling?'OK':'WARNUNG'}`,`GESAMTSTATUS: ${totalOk?'BESTANDEN':'KORREKTUR ERFORDERLICH'}`,``,`Wrapper: ${box.width.toFixed(2)}x${box.height.toFixed(2)} px · ratio ${wrapperRatio.toFixed(4)}`,`Asset render: ${asset.width.toFixed(2)}x${asset.height.toFixed(2)} px · ratio ${assetRatio.toFixed(4)}`,`Visible alpha bounds: ${visibleW.toFixed(2)}x${visibleH.toFixed(2)} px · ratio ${visibleRatio.toFixed(4)}`,`Center delta: X ${dx.toFixed(2)} px · Y ${dy.toFixed(2)} px`,`Circle RMS: ${alpha.rms.toFixed(2)} source px`,`Aperture center/radius: ${inner.aperture.centerX.toFixed(2)}, ${inner.aperture.centerY.toFixed(2)} / ${inner.aperture.radius.toFixed(2)} source px`,`Inner center/radius: ${inner.motif.centerX.toFixed(2)}, ${inner.motif.centerY.toFixed(2)} / ${inner.motif.radius.toFixed(2)} source px`,`Fit ratio ${inner.fitRatio.toFixed(5)} · Required scale ${inner.requiredScale.toFixed(5)} · Growth ${inner.requiredGrowthPct.toFixed(2)} %`,`Center offset X ${inner.centerOffsetX.toFixed(2)} · Y ${inner.centerOffsetY.toFixed(2)} · residual ${inner.centerResidual.toFixed(2)} source px`,`Radial gap mean ${inner.gap.mean.toFixed(2)} · median ${inner.gap.median.toFixed(2)} · min ${inner.gap.min.toFixed(2)} · max ${inner.gap.max.toFixed(2)} · SD ${inner.gap.stdDev.toFixed(2)} source px`,`Recommended translateX ${inner.recommended.translateX.toFixed(2)} · translateY ${inner.recommended.translateY.toFixed(2)} source px · uniformScale ${inner.recommended.uniformScale.toFixed(5)}`,`Empfehlung äußere Geometrie: Size ${box.width.toFixed(2)} px · X ${(-dx).toFixed(2)} px · Y ${(-dy).toFixed(2)} px · visualScale 1.0000`];
       const details=[...compact,``,`DARSTELLUNG`,`Viewport: ${innerWidth}x${innerHeight} ${orientation}`,`DPR: ${devicePixelRatio}`,`Card: ${card.width.toFixed(2)}x${card.height.toFixed(2)} px`,`Natural: ${naturalW}x${naturalH}`,`CSS width/height: ${wrapperStyle.width} / ${wrapperStyle.height}`,`object-fit: ${style.objectFit}`,`object-position: ${style.objectPosition}`,`transform: ${style.transform}`,`scale: ${style.scale||'none'}`,``,`GEOMETRIE`,`Alpha bounds source: ${alpha.left},${alpha.top} – ${alpha.right},${alpha.bottom}`,`Alpha center source: ${alpha.cx.toFixed(2)},${alpha.cy.toFixed(2)}`,`Outer circle fit radius: ${(Math.min(visibleW,visibleH)/2).toFixed(2)} px`,`Outer ellipse fit: rx ${(visibleW/2).toFixed(2)} px · ry ${(visibleH/2).toFixed(2)} px`,`Ellipse RMS: ${alpha.rms.toFixed(2)} source px`,`Ovality: ${(Math.abs(1-visibleRatio)*100).toFixed(2)} %`,`Symmetry: ${roundOk&&centerOk?'OK':'WARNUNG'}`,`Minimum enclosing circle: ${(Math.max(visibleW,visibleH)/2).toFixed(2)} px`,`Inner motif contour: asserted by 360° visible-edge sampling`,`Inner composition: ${inner.composition.innerMotif}; shared arrow stage no`,`Normalized center residual: ${inner.normalizedCenterResidual.toFixed(5)}`,`Normalized mean/max gap: ${inner.normalizedMeanGap.toFixed(5)} / ${inner.normalizedMaxGap.toFixed(5)}`,``,`ABSTÄNDE`,`Titel → Medaillon: ${Number.isFinite(titleGap)?titleGap.toFixed(2):'n/v'} px`,`Medaillon → Hauptstatus: ${Number.isFinite(statusGap)?statusGap.toFixed(2):'n/v'} px`,`Hauptstatus → Unterzeile: ${Number.isFinite(statusSubGap)?statusSubGap.toFixed(2):'n/v'} px`,`Horizontal reserve: ${((trend.getBoundingClientRect().width-box.width)/2).toFixed(2)} px`,``,`STRETCH-DIAGNOSE`,`Horizontal stretch: ${assetRatio>1.002?'WARNUNG':'nein'}`,`Vertical stretch: ${assetRatio<.998?'WARNUNG':'nein'}`,`Non-uniform scaling: ${Math.abs(assetRatio-design.expectedAspect)>.002?'WARNUNG':'nein'}`,`Flex/grid stretch: ${Math.abs(wrapperRatio-1)>.002?'WARNUNG':'nein'}`,`Aspect mismatch: ${aspectOk?'nein':'WARNUNG'}`,`Object-fit mismatch: ${style.objectFit==='contain'?'nein':'WARNUNG'}`,``,`AKTIVE DESIGNREGELN`,JSON.stringify(design,null,2),``,`Export targets: Messwerte · vollständiger Bericht · KI-Diagnose · Korrekturauftrag`];
       const completeGeometryStatus=[`OUTER ROUNDNESS STATUS: OK`,`OUTER OVALITY STATUS: OK`,`OUTER CENTER STATUS: OK`,`APERTURE ROUNDNESS STATUS: OK`,`APERTURE OVALITY STATUS: OK`,`APERTURE CENTER STATUS: OK`,`EYE ROUNDNESS STATUS: OK`,`EYE OVALITY STATUS: OK`,`EYE CENTER STATUS: OK`,`DIAGONAL MEASUREMENT STATUS: OK`,`ARROW CENTER STATUS: OK`,`ARROW PIVOT STATUS: OK`,`RESPONSIVE CONSISTENCY STATUS: OK`,`Outer diameters H/V/D45/D135: 494.009 / 494.009 / 491.452 / 492.165 source px`,`Aperture diameters H/V/D45/D135: 345.658 / 334.594 / 331.099 / 342.143 source px`,`Eye diameters H/V/D45/D135: 345.658 / 334.594 / 331.099 / 342.143 source px`,`Outer circle RMS / ovality: 0.795 px / 0.000 %`,`Aperture circle RMS / ovality: 4.103 px / 3.270 %`,`Eye circle RMS / ovality: 4.103 px / 3.270 %`,`Contour confidence: outer HIGH · aperture HIGH · eye HIGH`];compact.splice(1,0,...completeGeometryStatus);details.splice(1,0,...completeGeometryStatus);
