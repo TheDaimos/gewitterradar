@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** AKTIV  
+> **Status:** ABSCHLUSSAUDIT – R8-CI/DRA und reale Cluster-Jump-Geräteabnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -28,6 +28,8 @@ Wenn ein Chat endet oder der Kontext knapp wird, gilt:
 
 Dann ist diese Datei die maßgebliche Fortsetzungsquelle.
 
+> **Audit-Hinweis:** `NÄCHSTER SCHRITT`-Angaben innerhalb älterer Schleifen sind historische Momentaufnahmen des damaligen Arbeitsstands. Für den aktuellen Arbeitsauftrag gilt ausschließlich der oberste Abschnitt **NÄCHSTER SCHRITT** sowie die neueste Schleife.
+
 ### Sicherheitsregel
 
 Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine große gleichzeitige Neuimplementierung. Zuerst wird bestehende Logik 1:1 ausgelagert, getestet und erst danach funktional weiterentwickelt.
@@ -36,48 +38,44 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R5 ist automatisiert vollständig grün und über DRA bereitgestellt. Jetzt ausschließlich reale Diagnose-Picker-Abnahme durchführen.**
+**Abschlussaudit der Modularisierung beenden. Neue Medaillon-Designs bleiben direkt danach der nächste Produktblock.**
 
-Automatisch vollständig bestätigter Produktkandidat:
-- Commit: `fe6fa77ab2d541ab04afc8f6a5ac3493275ce242`
-- Runtime: `41002r5`
-- Modulsatz: `EA13-2B8B`
-- `core.base-context 1.0.3`
-- `diagnostics.cockpit 1.1.1`
-- `fullscreen.map-display 1.0.11`
-- `core.manifest 1.2.10`
+Bereits im Audit als erledigt bestätigt:
+- M01–M12 vollständig abgeschlossen,
+- stabiler Loader auf Desktop sowie Android/HA Companion geprüft,
+- DRA-Ende-zu-Ende inklusive Einzeldatei-Delta, fehlendem/veraltetem Modul, Cachefall, Rollback V4.10.02 → V4.09 → V4.10.02 und korrekter Nachlaufaktion real bestanden,
+- HACS-/Paket-/Checksummen-/Dokumentationsverträge vorhanden,
+- Radius-Kaskade real erledigt,
+- Kompass-Schließen-X real erledigt,
+- R7-Diagnoseblock real über DRA/HA abgenommen.
 
-CI für exakt diesen Produktkandidaten:
-- **Diagnostic contract** #867 → erfolgreich
-- **Source archive contract** #468 → erfolgreich
-- **Hi-Res asset retention** #1349 → erfolgreich
-- **Validate Gewitterradar integration** #2130 → erfolgreich
-- **Validate shared Gewitterradar frontend** #2111 → erfolgreich
-- damit **5/5 grün**
+Der Audit hat zusätzlich zwei reale interne Identitätsreste gefunden:
+1. `core.manifest` erwartete **1.2.12**, registrierte sich selbst aber noch als **1.2.10**.
+2. `core.base-context` trug intern noch die alte Buildkennung **R5**.
 
-DRA:
-- `deploy/dev` wurde auf exakt `fe6fa77ab2d541ab04afc8f6a5ac3493275ce242` gesetzt,
-- Vergleich Feature-Produktkandidat ↔ `deploy/dev`: **identisch** zum Zeitpunkt der Promotion,
-- nachfolgende reine Dokumentationscommits im Featurezweig dürfen den Produktkandidaten nicht künstlich als veraltet erscheinen lassen.
+Dafür wird ausschließlich der Konsistenzstand **R8** erstellt:
+- Runtime **41002r8**
+- Modulsatz **3541-2967**
+- Build **V4.10.02-MODULAR-DEV-R8-2026-09-25**
+- `core.manifest 1.2.13`
+- `core.base-context 1.0.4`
+- `diagnostics.cockpit 1.1.3`
+- `fullscreen.map-display 1.0.12`
+- neuer Vertrag: alle 22 Soll-Modulversionen müssen exakt den Selbstregistrierungen entsprechen.
 
-Reale Abnahme jetzt:
-1. DRA-Projekt **Gewitterradar** aktualisieren und `deploy/dev` installieren.
-2. Diagnose starten.
-3. Medaillon-Zustände **PFEIL**, **TREND** und **FREEZE** nacheinander wählen; sie dürfen bei normalen Render-/Kalibrier-Synchronisierungen nicht mehr auf **NORMAL** zurückspringen.
-4. Medaillon-Picker öffnen:
-   - lokale Diagnosewerkzeuge müssen im Popup sichtbar und bedienbar bleiben,
-   - Zustand muss direkt im Picker gespiegelt werden,
-   - Pfeil EIN/AUS, Animation EIN/AUS, Freeze EIN/AUS sowie 0°/45°/90°/180°/270° prüfen,
-   - **KOPIEREN**, **JSON** und **CSV** prüfen.
-5. Kompass-Picker öffnen:
-   - lokale Diagnosewerkzeuge und Messwerte müssen sichtbar bleiben,
-   - **KOPIEREN**, **JSON** und **CSV** prüfen.
-6. Global **Diagnosedarstellung aus/ein** schalten; lokale Picker-Diagnose muss synchron verschwinden/erscheinen.
-7. Desktop, iPad und Android/HA Companion prüfen.
-8. Erst nach erfolgreicher realer Abnahme mit den weiteren Medaillonvarianten über denselben Design-/Diagnosevertrag fortfahren.
+Noch real offen:
+1. R8 vollständig **5/5 CI-grün** bekommen, finalen Head nach `deploy/dev` promoten und über DRA installieren; danach **22/22 Module geladen / Versionssatz konsistent** bestätigen.
+2. Die in Schleife 068 ergänzte **Cluster-Jump-Pille / Infinity-Instrumentanzeige** real auf **Desktop, iPad und Android/HA Companion** abnehmen:
+   - Infinity-Schalter aus/ein,
+   - Clusterindex/Countdown/∞ identisch zum bestehenden Clusterstatus,
+   - Tipp/Klick → nächster Cluster,
+   - freie Positionierung,
+   - Position bleibt nach Frontend-Neuladen erhalten,
+   - frischer Standardstand links neben dem 3D-Layer-Schalter.
+
+Sind diese beiden Restpunkte bestanden, wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt. Danach: **weitere Medaillon-Designs auf dem bereits vorbereiteten designfähigen Diagnosevertrag**.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
-
 ---
 
 # 1. Zielarchitektur
@@ -275,9 +273,9 @@ Zu prüfen:
 
 - [x] versionsbewusster Loader festgelegt
 - [x] Cache-Busting für abhängige Module
-- [ ] Verhalten Home-Assistant-App / Android-WebView
-- [ ] Verhalten Desktop-Browser
-- [ ] Verhalten nach HACS-/DRA-Update
+- [x] Verhalten Home-Assistant-App / Android-WebView
+- [x] Verhalten Desktop-Browser
+- [x] Verhalten nach HACS-/DRA-Update
 
 ---
 
@@ -289,30 +287,32 @@ Die neue Struktur wird von Beginn an für Deploy Relay Agent ausgelegt.
 
 Gewitterradar-Anforderungen an DRA:
 
-- [ ] kompletten Modulbaum deployen können
-- [ ] nur geänderte Dateien erkennen können
-- [ ] Deployment als konsistenten Versionssatz behandeln
-- [ ] installierte Anwendungsversion erkennen
-- [ ] Modulmanifest/Soll-Liste bereitstellen
-- [ ] Frontend-only-Änderungen erkennen
-- [ ] notwendigen HA-Neustart korrekt melden
-- [ ] Browser-/Frontend-Neuladen von HA-Neustart unterscheiden
-- [ ] stabilen Einstiegspunkt ohne manuelle Ressourcenänderung über DRA aktualisieren
-- [ ] kompletten Modulstand atomar/konsistent installieren
-- [ ] installierten Soll-Modulstand für Gewitterradar bereitstellen
+- [x] kompletten Modulbaum deployen können
+- [x] nur geänderte Dateien erkennen können
+- [x] Deployment als konsistenten Versionssatz behandeln
+- [x] installierte Anwendungsversion erkennen
+- [x] Modulmanifest/Soll-Liste bereitstellen
+- [x] Frontend-only-Änderungen erkennen
+- [x] notwendigen HA-Neustart korrekt melden
+- [x] Browser-/Frontend-Neuladen von HA-Neustart unterscheiden
+- [x] stabilen Einstiegspunkt ohne manuelle Ressourcenänderung über DRA aktualisieren
+- [x] kompletten Modulstand atomar/konsistent installieren
+- [x] installierten Soll-Modulstand für Gewitterradar bereitstellen
 - [x] DRA-Deployment als Pflichtprüfung jeder Iteration durchführen
 
 DRA-seitige Zusatzanforderungen aus der V4.10-Planung:
 
-- [ ] zuletzt verfügbare/installierte Versionen pro Projekt anzeigen
-- [ ] gezielte Wiederherstellung einer älteren Version
-- [ ] lokale Snapshots mit Version + Commit verknüpfen
-- [ ] Snapshot-Aufbewahrungszahl **pro Projekt** einstellbar
-- [ ] Bereinigung alter Snapshots erst nach erfolgreichem Deployment
-- [ ] unmittelbar vorherigen funktionierenden Stand schützen
-- [ ] Snapshot-Integrität vor Wiederherstellung prüfen
+- [x] zuletzt verfügbare/installierte Versionen pro Projekt anzeigen
+- [x] gezielte Wiederherstellung einer älteren Version
+- [x] lokale Snapshots mit Version + Commit verknüpfen
+- [x] Snapshot-Aufbewahrungszahl **pro Projekt** einstellbar
+- [x] Bereinigung alter Snapshots erst nach erfolgreichem Deployment
+- [x] unmittelbar vorherigen funktionierenden Stand schützen
+- [x] Snapshot-Integrität vor Wiederherstellung prüfen
 
 Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumentiert; dieser Abschnitt definiert die Gewitterradar-Schnittstellenanforderungen.
+
+**Abschlussaudit 2026-09-25:** Die Gewitterradar-seitigen Anforderungen sind durch M12 real belegt. Die späteren DRA-Anforderungen sind im aktuellen DRA-Stand ebenfalls umgesetzt: Quell-/Versionsauswahl, vollständige projektbezogene Sicherungen, gezielte Wiederherstellung, Version/Commit-Metadaten, projektbezogene Retention, Aufräumung erst nach Erfolg, geschützter Sicherheitsstand und SHA-256-/Scope-Prüfung vor/nach Wiederherstellung.
 
 ---
 
@@ -358,7 +358,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 ## M04 – Core auslagern
 
 - [x] Konstanten
-- [~] Zustandsverwaltung – gemeinsame Basis ausgelagert, fachlicher Karten-/UI-Zustand bleibt bewusst in Funktionsmodulen
+- [x] Zustandsverwaltung – gemeinsame Basis ausgelagert; fachlicher Karten-/UI-Zustand bleibt **bewusst** in den zuständigen Funktionsmodulen (abgenommene Zielarchitektur)
 - [x] allgemeine Helfer
 - [x] Speicher-/Persistenzgrundlagen
 - [x] Geometriehelfer
@@ -372,7 +372,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 - [x] Dialoge
 - [x] Bedienelemente
-- [ ] Einstellungen
+- [x] Einstellungen
 - [x] Styles soweit sinnvoll modularisiert
 - [x] Hauptmenü-Anbindung
 
@@ -382,7 +382,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M06 – Instrumente auslagern
 
-- [ ] Kompass
+- [x] Kompass
 - [x] Kompassauswahl / Popup
 - [x] Medaillon
 - [x] Verschieben / Touch
@@ -395,7 +395,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 ## M07 – Vollbild auslagern
 
-- [ ] Vollbildsteuerung
+- [x] Vollbildsteuerung
 - [x] Standort-Pille
 - [x] Instrumentintegration
 - [x] Layer-Prioritäten
@@ -410,7 +410,7 @@ Hinweis: Die konkrete DRA-Implementierung wird im DRA-Repository separat dokumen
 
 - [x] Kartenkern
 - [x] Layer
-- [ ] Cluster-Auflösung
+- [x] Cluster-Auflösung
 - [x] Cluster-Navigation
 - [x] Blitzdarstellung
 - [x] Radien
@@ -491,8 +491,8 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 
 ## M13 – Regression & Freigabe
 
-- [ ] Desktop
-- [ ] Android / HA Companion
+- [x] Desktop
+- [x] Android / HA Companion
 - [x] Kartenansichten
 - [x] Vollbild
 - [x] Kompass
@@ -504,12 +504,13 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [x] Provider
 - [x] Logging
 - [x] HACS
-- [ ] DRA
+- [x] DRA
 - [x] Cache-/Update-Pfade
 - [ ] Syntax/Lint/Tests
 - [x] Checksummen
 - [x] CHANGELOG
 - [x] HISTORY / Release Notes
+- [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – einziger noch unbelegter Funktionspunkt aus Schleife 068
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
 
@@ -2249,7 +2250,7 @@ Weiterhin offen:
 ## Schleife 067 – M13 reale Regressionen: Radiuskaskade und Kompass-Close
 
 **Datum:** 2026-09-24  
-**Status:** zwei reale M13-Regressionsfehler gefunden und im Featurezweig korrigiert; Wiederholungsabnahme offen
+**Status:** abgeschlossen; Radius-Kaskade und Kompass-Schließen-X real erneut geprüft und vom Benutzer als erledigt bestätigt
 
 ### 1. Radiuskaskade
 
@@ -2301,11 +2302,13 @@ M13-Haken **Desktop**, **Kompass** und **Einstellungen** wurden bewusst wieder g
 3. iPad/Android: Kompassauswahl öffnen → ausschließlich rundes Premium-X ohne rechteckigen Außenrahmen.
 Danach betroffene M13-Haken wieder schließen.
 
+**Abschlussaudit 2026-09-25:** Benutzer bestätigt ausdrücklich, dass **Radius-Kaskade** und **Kompass-Schließen-X** erledigt sind. Diese beiden Punkte sind keine offenen M13-Restarbeiten mehr.
+
 
 ## Schleife 068 – Vollbild-Cluster-Jump als dritte Instrumentanzeige ergänzt
 
 **Datum:** 2026-09-24  
-**Status:** Implementierung im Featurezweig abgeschlossen; CI und reale Geräteabnahme offen
+**Status:** Implementierung und automatisierte Verträge durch spätere R7/R8-Stände geschützt; reale Geräteabnahme der Cluster-Jump-Pille weiterhin offen
 
 Auf Basis der M13-Geräteabnahme wurde die bestehende Vollbild-Instrumentleiste gezielt erweitert.
 
@@ -2371,7 +2374,7 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 - [x] „Module & Versionen“ vergleicht geladenen Modulsatz gegen den tatsächlich installierten Runtime-Stand und meldet bei Abweichung eine notwendige Frontend-Neuladung.
 - [x] Neue Diagnoseanzeige in alle 19 Sprachvarianten integriert.
 - [x] Runtime-/Master-Trennung der Chevron beibehalten: nur verkleinerte verlustfreie Runtime-Derivate werden ausgeliefert.
-- [ ] DRA-Abnahme auf Android: nach Installation muss `core.manifest 1.2.5`, `fullscreen.map-display 1.0.6`, `diagnostics.module-view 1.3.1` und Modulsatz-ID `FAC5-4376` sichtbar sein.
+- [x] DRA-Abnahme auf Android – durch die späteren realen R5–R7-/HA-Companion-Abnahmen mit neueren Runtime-/Modulständen vollständig überholt und stärker nachgewiesen.
 
 
 ### Zwischenauftrag – Retina-Chevrons nur in der Kompassauswahl 2026-09-24
@@ -2384,12 +2387,12 @@ M13-Haken **Vollbild** und **Cluster** wurden wegen dieser neuen Funktion bewuss
 - [x] Modulmanifest, Runtime-Manifest, Frontend-Vertrag, Prüfsummen und Regressionstests nachgezogen.
 - [x] Regressionstest erzwingt VP8L/lossless, 104×104, <15 KB und ausschließliche Referenzierung aus `map-display`.
 - [x] Implementierungskandidat `e27742be6f5c574693048a168fc58e8a87a54feb` vollständig grün: Diagnostic #715, Hi-Res #1165, Source Archive #377, Integration #1943, Shared Frontend #1924.
-- [ ] Nach finalem Dokumentations-CI `deploy/dev` auf den vollständig geprüften Endstand promoten und über DRA real installieren.
+- [x] Promotion/Installation – durch die späteren R5–R7-Promotionen und reale DRA-/HA-Abnahme mit neueren Ständen vollständig überholt.
 
 ## Schleife 069 – Diagnose direkt in Kompass-/Medaillon-Picker erweitert
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung und automatisierte Abnahme vollständig grün; finale Dokumentations-CI/DRA-Abnahme offen
+**Status:** historisch abgeschlossen; durch R5–R7 weitergeführt und in R7 real über DRA/HA abgenommen
 
 Ziel vor der nächsten Medaillon-Serie:
 - Diagnose muss auch im geöffneten Kompass- und Medaillon-Popup sichtbar und messfähig sein,
@@ -2435,7 +2438,7 @@ Automatisierte Abnahme des Implementierungsstands:
 ## Schleife 070 – Reale Diagnose-Picker-Regressionskorrektur und Export
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung/Verträge + exakte R5-CI abgeschlossen; DRA bereitgestellt; reale Geräteabnahme offen
+**Status:** historisch abgeschlossen; reale Befunde führten zu R6/R7, deren Endstand anschließend real abgenommen wurde
 
 Realer Befund anhand der HA-Diagnoseansicht und der geöffneten Instrument-Picker:
 1. Medaillon-Testzustände sprangen nach der Auswahl wieder auf **NORMAL** zurück.
@@ -2493,7 +2496,7 @@ Automatisierter Abschluss:
 ## Schleife 071 – R6: sichtbare Picker-/Vollbild-Diagnose und absolute Winkel
 
 **Datum:** 2026-09-25  
-**Status:** Implementierung/Verträge + exakte R6-CI vollständig grün; `deploy/dev` auf R6 promoviert; reale DRA-Abnahme offen
+**Status:** historisch abgeschlossen; R6 real geprüft, letzter Teardown-Randfall in R7 korrigiert und anschließend real abgenommen
 
 Realer R5-Befund:
 1. **TREND/ANIMATION EIN** wurde intern korrekt gemeldet, der sichtbare Medaillon-Pfeil bewegte sich jedoch nicht.
@@ -2612,3 +2615,57 @@ Promotion und reale Abnahme abgeschlossen:
 - der zuvor bestätigte R6-Funktionsumfang bleibt intakt: sichtbare TREND-Animation, korrekte absolute Winkel, sichtbare KP-/MP-Raster und erreichbare Diagnosekonsole.
 
 **NÄCHSTER SCHRITT:** Diagnose-/Picker-Korrekturblock R5–R7 ist abgeschlossen. Die Arbeit an den weiteren Medaillon-Designs darf nun fortgesetzt werden.
+
+
+## Schleife 073 – Abschlussaudit Modularisierung
+
+**Datum:** 2026-09-25  
+**Status:** Audit durchgeführt; R8-CI/DRA und reale Cluster-Jump-Geräteabnahme verbleiben als letzte Gates
+
+### Auditprinzip
+
+Alle noch vorhandenen `[ ]`-/`[~]`-Markierungen wurden gegen **spätere** Schleifen, reale Benutzerabnahmen, DRA-Nachweise, Modulstruktur und CI-Verträge geprüft. Ein alter offener Haken blieb nicht allein deshalb offen, weil der ursprüngliche Abschnitt später nicht zurückgepflegt wurde.
+
+### Im Audit nachträglich als bereits erledigt geschlossen
+
+- stabiler Einstiegspunkt: Desktop und Android/WebView durch Browsermatrix sowie reale HA-Companion-Nutzung,
+- Verhalten nach Updates: reale DRA-Frontend-Updates, Cachefall, struktureller Rollback/Upgrade und HACS-/Paketverträge,
+- kompletter DRA-Anforderungskatalog aus Abschnitt 6,
+- DRA-Zusatzanforderungen zu Versionen/Sicherungen/Wiederherstellung/Retention/Integrität anhand des aktuellen DRA-Standes,
+- M04 Zustandsverwaltung als **bewusste verteilte Zielarchitektur** statt künstlichem zentralen Store,
+- M05 Einstellungen,
+- M06 Kompass,
+- M07 Vollbildsteuerung,
+- M08 Cluster-Auflösung,
+- M13 Desktop,
+- M13 Android/HA Companion für die bereits vorhandenen Funktionspfade,
+- M13 DRA,
+- alte FAC5-/Retina-DRA-Zwischenaufträge als durch deutlich neuere reale R5–R7-Stände überholt,
+- Radius-Kaskade und Kompass-Schließen-X aufgrund der ausdrücklichen realen Benutzerbestätigung.
+
+### Im Audit neu gefundene echte Konsistenzfehler
+
+1. `frontend/module-manifest.js`:
+   - Sollwert `core.manifest 1.2.12`,
+   - Selbstregistrierung noch `core.manifest 1.2.10`.
+2. `frontend/modules/core/base-context.js`:
+   - interne `GEWITTERRADAR_BUILD`-Kennung noch auf R5, obwohl Anwendung/Runtime bereits R7 waren.
+
+R8 korrigiert ausschließlich diese Abschlusskonsistenz:
+- `core.manifest 1.2.13`,
+- `core.base-context 1.0.4`,
+- Runtime `41002r8`,
+- Modulsatz `3541-2967`,
+- Build `V4.10.02-MODULAR-DEV-R8-2026-09-25`.
+
+Zusätzlicher Schutz:
+- neuer Regressionstest vergleicht **alle 22** erwarteten Modulversionen mit der jeweiligen Selbstregistrierung,
+- `core.manifest` wird ausdrücklich als selbstregistrierendes Manifest in denselben Paritätsvertrag einbezogen,
+- kanonische Quelle, native Integration und Dashboard-Ausleitung bleiben bytegleich geschützt.
+
+### Tatsächlich noch offen
+
+1. R8 final 5/5 CI-grün → `deploy/dev` → reale DRA-Installation → **22/22 / Versionssatz konsistent**.
+2. Schleife 068: Cluster-Jump-Pille / Infinity-Schalter real auf Desktop, iPad und Android/HA Companion prüfen.
+
+**Nach diesen zwei Gates:** Schlachtplanstatus **ABGESCHLOSSEN**. Anschließend beginnt wie bereits vorbereitet die Arbeit an den **weiteren Medaillon-Designs**.
