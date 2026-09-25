@@ -2799,3 +2799,40 @@ Reale Cluster-Jump-Abnahme nach R10:
 - **iPad:** noch offen.
 
 **NÄCHSTER SCHRITT:** Cluster-Jump/Infinity nur noch auf iPad real prüfen. Danach Schlachtplanstatus **ABGESCHLOSSEN** und anschließend weitere Medaillon-Designs.
+
+
+## Schleife 076 – R11-Versuch verworfen, R10 bleibt Referenz
+
+**Datum:** 2026-09-25  
+**Status:** abgeschlossen; experimenteller R11-Dragversuch verworfen und vollständig auf den real abgenommenen R10-Code zurückgeführt
+
+Ausgang:
+- Nach der realen R10-Abnahme wurde kurzzeitig gemeldet, dass sich die Diagnosekonsole im Karten-Vollbild nicht verschieben lasse.
+- Der vorhandene Browservertrag prüfte den Vollbild-Drag bereits mit Maus und war auf R10 grün.
+- Eine spätere reale Nachprüfung auf R10 bestätigte ebenfalls: Diagnosekonsole im Vollbild **verschiebbar**; der Fehler war auf dem real installierten R10 nicht reproduzierbar.
+
+Experimenteller R11-Zwischenstand:
+- Es wurde vorsorglich ein erweiterter Drag-/Touch-/Top-Layer-Pfad aufgebaut und als Runtime `41002r11` versioniert.
+- R11 wurde **nie nach `deploy/dev` promoviert** und nie als Produktstand freigegeben.
+- Vier CI-Gates waren grün; Shared Frontend schlug jedoch im bestehenden Vollbild-Drag-Test bereits auf **dashboard/desktop** fehl:
+  `diagnostic console remains draggable in fullscreen`.
+- Damit hätte R11 einen auf R10 real funktionierenden Pfad verschlechtert.
+
+Entscheidung:
+- R11 wird als **nicht freigegebener, verworfener Diagnoseversuch** behandelt.
+- Sämtliche R11-Laufzeit-, Manifest-, Ausleitungs-, Prüf- und Checksummenänderungen wurden aus dem Featurezweig entfernt.
+- Die späteren Dokumentations- und realen Abnahmen bleiben erhalten.
+- Kanonischer Produkt-/DRA-Stand bleibt R10:
+  - Runtime `41002r10`
+  - Modulsatz `CEA6-1ECF`
+  - Kandidat `4f22f4be5841e47993226928405cc65cdd70e201`
+  - 5/5 CI-grün
+  - 22/22 Module geladen
+  - Versionssatz konsistent
+  - keine Abweichungen
+  - Diagnosekonsole im Karten-Vollbild real verschiebbar
+
+Rückführung:
+- Commit `9673bdced91f758dc51b8be82a0a0d5c0eacc023` setzt den Featurezweig auf den R10-Laufzeit-/Teststand zurück, ohne die späteren Abnahmedokumentationen zu verlieren.
+
+**NÄCHSTER SCHRITT:** Nur die noch offene iPad-Abnahme der Cluster-Jump-/Infinity-Funktion durchführen. Danach kann der Modularisierungs-Schlachtplan formal auf **ABGESCHLOSSEN** gesetzt werden und es geht mit den neuen Medaillon-Designs weiter.
