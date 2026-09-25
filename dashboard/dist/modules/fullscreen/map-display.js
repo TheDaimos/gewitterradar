@@ -95,10 +95,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         else returnParent.appendChild(instrument);
       }
       try { if (dialog.open) dialog.close(); } catch (_error) {}
+      this._setPickerDiagnosticTopLayerHost?.(null);
       dialog.parentElement?.remove();
       this._compassPickerDialog = null;
       this._clearPickerDiagnostic?.('compass');
-      this._setPickerDiagnosticTopLayerHost?.(null);
       this._compassPickerReturnParent = null;
       this._compassPickerReturnNext = null;
       const previousFocus = this._compassPickerReturnFocus;
@@ -291,10 +291,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const dialog = this._medallionPickerDialog;
       if (!dialog) return;
       try { if (dialog.open) dialog.close(); } catch (_error) {}
+      this._setPickerDiagnosticTopLayerHost?.(null);
       dialog.parentElement?.remove();
       this._medallionPickerDialog = null;
       this._clearPickerDiagnostic?.('medallion');
-      this._setPickerDiagnosticTopLayerHost?.(null);
       const previousFocus = this._medallionPickerReturnFocus;
       this._medallionPickerReturnFocus = null;
       if (restoreFocus && previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
