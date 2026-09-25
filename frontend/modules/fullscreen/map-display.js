@@ -5,7 +5,7 @@ import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?
 import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -123,7 +123,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       shell.id = 'compass-picker-shell-v41001';
       shell.innerHTML =
         '<style>' +
-        '.compass-picker-dialog{--picker-gold:#dfbc72;--picker-bright:#f7dfa1;box-sizing:border-box;width:min(560px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;overflow:visible;color-scheme:dark}' +
+        '.compass-picker-dialog{--picker-gold:#dfbc72;--picker-bright:#f7dfa1;box-sizing:border-box;width:min(560px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
         '.compass-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.compass-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
         '.compass-picker-dialog *{box-sizing:border-box}.compass-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.compass-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
         '.compass-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.compass-picker-close:focus,.compass-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.compass-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.compass-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
@@ -131,7 +131,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-stage .compass-instrument{width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
         '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
         '.compass-picker-nav-row{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
-        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(470px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(470px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-tools{width:min(470px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
         '.compass-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;color:var(--picker-gold);appearance:none;-webkit-appearance:none}' +
         '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
         '.compass-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
@@ -148,7 +149,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<svg class="instrument-picker-diagnostic-svg" data-compass-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
-        '</div></div><pre class="instrument-picker-diagnostic-readout" data-compass-picker-diagnostic-readout hidden></pre></dialog>';
+        '</div></div>' +
+        '<div class="instrument-picker-diagnostic-tools" data-compass-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Kompass-Diagnose</div><div class="instrument-picker-diagnostic-row export">' +
+        '<button type="button" data-picker-diagnostic-copy>KOPIEREN</button><button type="button" data-picker-diagnostic-json>JSON</button><button type="button" data-picker-diagnostic-csv>CSV</button>' +
+        '</div></div>' +
+        '<pre class="instrument-picker-diagnostic-readout" data-compass-picker-diagnostic-readout hidden></pre></dialog>';
 
       this._compassPickerReturnParent = instrument.parentElement;
       this._compassPickerReturnNext = instrument.nextSibling;
@@ -159,6 +164,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (!dialog || !stage) { shell.remove(); return; }
       this._compassPickerDialog = dialog;
       stage.appendChild(instrument);
+      this._bindPickerDiagnosticActions?.(shell,'compass');
 
       shell.querySelector('[data-compass-picker-close]')?.addEventListener('click',() => this._closeCompassPicker());
       shell.querySelectorAll('[data-compass-picker-prev]').forEach((button) => button.addEventListener('click',(event) => {
@@ -243,9 +249,19 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const output = dialog.querySelector('[data-medallion-picker-index]');
       if (output) output.textContent = (index + 1) + ' / ' + designs.length;
       const stage = dialog.querySelector('[data-medallion-picker-stage]');
-      const source = this.shadow?.getElementById('trend-box');
-      const state = ['up','down','stable','none'].find((name) => source?.classList.contains(name)) || 'none';
-      if (stage) stage.dataset.trendState = state;
+      const source = this.shadow?.getElementById('trend-box'),diagnosticState=this._diagnostics?.enabled?this._medallionDiagnostic:null;
+      const productionState = ['up','down','stable','none'].find((name) => source?.classList.contains(name)) || 'none';
+      if (stage) {
+        if(diagnosticState&&diagnosticState.mode!=='normal'){
+          stage.dataset.trendState=diagnosticState.arrowVisible===false?'none':'diagnostic';
+          stage.dataset.diagnosticMode=diagnosticState.mode;
+          stage.style.setProperty('--medallion-picker-diagnostic-angle',`${diagnosticState.angle??45}deg`);
+        }else{
+          stage.dataset.trendState=productionState;
+          delete stage.dataset.diagnosticMode;
+          stage.style.removeProperty('--medallion-picker-diagnostic-angle');
+        }
+      }
       dialog.setAttribute('aria-label',this._t('trend.label'));
       const closeButton = dialog.querySelector('[data-medallion-picker-close]');
       if (closeButton) {
@@ -291,7 +307,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       shell.id = 'medallion-picker-shell-v41002';
       shell.innerHTML =
         '<style>' +
-        '.medallion-picker-dialog{--picker-gold:#dfbc72;box-sizing:border-box;width:min(500px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#3b302045,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;overflow:visible;color-scheme:dark}' +
+        '.medallion-picker-dialog{--picker-gold:#dfbc72;box-sizing:border-box;width:min(500px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#3b302045,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
         '.medallion-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.medallion-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
         '.medallion-picker-dialog *{box-sizing:border-box}.medallion-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.medallion-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
         '.medallion-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.medallion-picker-close:focus,.medallion-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.medallion-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.medallion-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
@@ -299,8 +315,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.medallion-picker-preview{position:relative;width:100%;height:100%;aspect-ratio:1 / 1;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 12px #c4842b18)}' +
         '.medallion-picker-preview .trend-medallion-base,.medallion-picker-preview .trend-medallion-arrow{position:absolute;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}.medallion-picker-preview .trend-medallion-base{inset:0;width:100%;height:100%;object-fit:contain;z-index:1}.medallion-picker-preview .trend-medallion-arrow{left:50.012238%;top:50.452396%;width:59.667391%;height:59.667391%;object-fit:contain;z-index:3;transform-origin:50% 50%;filter:drop-shadow(0 2px 1px #2f1804d1) drop-shadow(0 0 4px #f6c3442e)}' +
         '.medallion-picker-stage[data-trend-state="up"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}.medallion-picker-stage[data-trend-state="stable"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}.medallion-picker-stage[data-trend-state="down"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1)}.medallion-picker-stage[data-trend-state="none"] .trend-medallion-arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84)}' +
+        '@keyframes medallion-picker-diagnostic-sweep{0%{transform:translate(-50%,-50%) rotate(0deg) scale(1)}50%{transform:translate(-50%,-50%) rotate(90deg) scale(1)}100%{transform:translate(-50%,-50%) rotate(0deg) scale(1)}}' +
+        '.medallion-picker-stage[data-trend-state="diagnostic"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:none!important;transform:translate(-50%,-50%) rotate(var(--medallion-picker-diagnostic-angle,45deg)) scale(1)!important}.medallion-picker-stage[data-diagnostic-mode="animation"] .trend-medallion-arrow,.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:medallion-picker-diagnostic-sweep 3s ease-in-out infinite!important}.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{animation-play-state:paused!important}' +
         '.medallion-picker-nav{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px;margin-top:2px}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
-        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-svg{position:absolute;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-tools{width:min(430px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
         '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.medallion-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
         '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-nav{grid-template-columns:58px 72px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
@@ -315,13 +334,21 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '<output class="medallion-picker-index" data-medallion-picker-index aria-live="polite"></output>' +
         '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_BRASS + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
-        '</div><pre class="instrument-picker-diagnostic-readout" data-medallion-picker-diagnostic-readout hidden></pre></dialog>';
+        '</div>' +
+        '<div class="instrument-picker-diagnostic-tools" data-medallion-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Medaillon-Diagnose</div>' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-preset="empty">LEER</button><button type="button" data-medallion-preset="static">PFEIL</button><button type="button" data-medallion-preset="animation">TREND</button><button type="button" data-medallion-preset="freeze">FREEZE</button><button type="button" data-medallion-preset="normal">NORMAL</button></div>' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-arrow="on">PFEIL EIN</button><button type="button" data-medallion-arrow="off">PFEIL AUS</button><button type="button" data-medallion-animation="on">ANIMATION EIN</button><button type="button" data-medallion-animation="off">ANIMATION AUS</button><button type="button" data-medallion-freeze="on">FREEZE EIN</button><button type="button" data-medallion-freeze="off">FREEZE AUS</button></div>' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-angle="0">0°</button><button type="button" data-medallion-angle="45">45°</button><button type="button" data-medallion-angle="90">90°</button><button type="button" data-medallion-angle="180">180°</button><button type="button" data-medallion-angle="270">270°</button></div>' +
+        '<div class="instrument-picker-diagnostic-row export"><button type="button" data-picker-diagnostic-copy>KOPIEREN</button><button type="button" data-picker-diagnostic-json>JSON</button><button type="button" data-picker-diagnostic-csv>CSV</button></div></div>' +
+        '<pre class="instrument-picker-diagnostic-readout" data-medallion-picker-diagnostic-readout hidden></pre></dialog>';
 
       this._medallionPickerReturnFocus = this.shadow.activeElement;
       this.shadow.append(shell);
       const dialog = shell.querySelector('.medallion-picker-dialog');
       if (!dialog) { shell.remove(); return; }
       this._medallionPickerDialog = dialog;
+      this._bindPickerDiagnosticActions?.(shell,'medallion');
+      this._syncMedallionDiagnosticUi?.();
       shell.querySelector('[data-medallion-picker-close]')?.addEventListener('click',() => this._closeMedallionPicker());
       shell.querySelector('[data-medallion-picker-prev]')?.addEventListener('click',(event) => {
         event.preventDefault();event.stopPropagation();this._stepMedallionDesign(-1);
