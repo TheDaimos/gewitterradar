@@ -70,12 +70,47 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r3'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r4'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r3"' in manifest
- assert 'moduleSetId:"D11F-2D80"' in manifest
- assert runtime["runtimeRevision"]=="41002r3"
- assert runtime["moduleSetId"]=="D11F-2D80"
+ assert 'runtimeRevision:"41002r4"' in manifest
+ assert 'moduleSetId:"02AE-EBFC"' in manifest
+ assert runtime["runtimeRevision"]=="41002r4"
+ assert runtime["moduleSetId"]=="02AE-EBFC"
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
+
+
+def test_picker_diagnostics_are_design_aware_and_top_layer_local():
+ diagnostics=(FRONTEND/"modules/diagnostics/cockpit.js").read_text(encoding="utf-8")
+ map_display=(FRONTEND/"modules/fullscreen/map-display.js").read_text(encoding="utf-8")
+ base=(FRONTEND/"modules/core/base-context.js").read_text(encoding="utf-8")
+ for marker in (
+  "_measureCompassPickerDiagnostics()",
+  "_measureMedallionPickerDiagnostics()",
+  "_syncPickerDiagnostics()",
+  "_medallionDiagnosticDescriptor()",
+  "_medallionDiagnosticProfile(",
+  "pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}",
+ ):
+  assert marker in diagnostics
+ for marker in (
+  "data-compass-picker-diagnostic-stage",
+  "data-compass-picker-diagnostic-nav",
+  "data-compass-picker-diagnostic-readout",
+  "data-medallion-picker-diagnostic-stage",
+  "data-medallion-picker-diagnostic-nav",
+  "data-medallion-picker-diagnostic-readout",
+  "this._clearPickerDiagnostic?.('compass')",
+  "this._clearPickerDiagnostic?.('medallion')",
+ ):
+  assert marker in map_display
+ for marker in (
+  "diagnosticProfile:{",
+  "geometryVersion:'round-medallion-v1'",
+  "sourceWidth:512,sourceHeight:512",
+  "arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}",
+ ):
+  assert marker in base
+ assert "design=MEDALLION_DESIGNS[0]" not in diagnostics
+ assert "inner.aperture.centerX/512" not in diagnostics
