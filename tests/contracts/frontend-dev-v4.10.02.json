@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "e77019bc187351dc37ca3eea52ac629121d6c2c1837f74d5f53d04cb2ff86d04",
+  "sha256": "152651d02d11d64212098f18309f4dc53793c336ec01bb6c8f343d3ab2fd7c31",
   "sizeBytes": 8123,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R7-2026-09-25",
+  "build": "V4.10.02-MODULAR-DEV-R8-2026-09-25",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "6f9744a3ba6debf79a2f1cbc3f512ad6b4a50a488f820dc2688d39afbfe2a939",
+      "sha256": "3b82e79d950f0e9214a189323df2ab697191eba3402da5e8c23c4548cf05fde9",
       "sizeBytes": 6741
     },
     "modules/core/registry.js": {
