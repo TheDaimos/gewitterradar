@@ -59,6 +59,9 @@ jobs:
       - name: V4.08 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
+      - name: Instrument picker diagnostics
+        run: node scripts/test-picker-diagnostics.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
       - name: V4.08 About geometry against protected V4.07.56 golden contract
         run: node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
