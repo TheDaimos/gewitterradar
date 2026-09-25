@@ -419,11 +419,14 @@ Automatisierter Produkt-/Teststand: **5/5 grün**
 - Source Archive #515
 - Hi-Res #1461
 
-Nächster Schritt nach finaler Dokumentations-CI und Promotion:
-1. R7 über DRA aus `deploy/dev` installieren.
-2. Medaillon-Picker öffnen, Diagnose beenden → MP-Raster/Messhilfen müssen sofort verschwinden, Picker bleibt offen.
-3. Dasselbe im Kompass-Picker.
-4. Diagnose wieder starten → Raster/Messhilfen müssen normal zurückkehren.
-5. Danach Vollbild-/Geräteabnahme weiterführen.
+Abschlussstand R7:
+- finaler dokumentierter R7-Head: `6e43561c5e5616b01f687f189817cecfd8635cbd`,
+- finale CI: **5/5 grün** (Shared Frontend #2232, Integration #2251, Diagnostic #955, Source Archive #518, Hi-Res #1468),
+- `deploy/dev` wurde auf diesen Head promoviert und verifiziert,
+- reale DRA-/HA-Abnahme erfolgreich,
+- beim Beenden der Diagnose im geöffneten Picker verschwinden Raster und Messhilfen sofort, ohne das Popup zu schließen,
+- zuvor bestätigte R6-Funktionen bleiben erfolgreich: sichtbare TREND-Animation, korrekte absolute Winkel, sichtbare KP-/MP-Raster und erreichbare Diagnosekonsole.
+
+**Nächster Schritt:** Der Diagnoseblock R5–R7 ist abgeschlossen. Weitere Medaillon-Designs dürfen wieder entwickelt werden.
 
 Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
