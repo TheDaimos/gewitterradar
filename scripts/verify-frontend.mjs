@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.2"',
+  '"version": "1.1.3"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -105,7 +105,9 @@ for(const marker of [
   '_pickerDiagnosticCsv(kind)',
   "_downloadPickerDiagnostic(kind,format='json')",
   '_bindPickerDiagnosticActions(shell,kind)',
-  "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');"
+  "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
+  "node.style?.removeProperty('display')",
+  "if(node.matches?.('svg'))node.replaceChildren();"
 ]){
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
