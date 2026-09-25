@@ -54,6 +54,8 @@ const server = http.createServer((req, res) => {
           card._closeAbout(false, false);
           card._startDiagnostics();
           card._diagnostics.visualsVisible = true;
+          card._diagnostics.grid = 'fine';
+          Object.assign(card._diagnostics.overlays,{ids:true,boxes:true,centers:true,axes:true,diagonals:true});
           card._syncDiagnosticUi();
           card._openCompassPicker();
         });
@@ -77,6 +79,8 @@ const server = http.createServer((req, res) => {
             readout: dialog.querySelector('[data-compass-picker-diagnostic-readout]').textContent,
             payload: card._pickerDiagnosticPayload('compass'),
             csv: card._pickerDiagnosticCsv('compass'),
+            stageMarkup: dialog.querySelector('[data-compass-picker-diagnostic-stage]').innerHTML,
+            consoleInDialog: card.shadow.getElementById('diagnostic-console')?.parentNode === dialog,
           };
         });
         assert.equal(compass.stageHidden, false, `${delivery}/${profile} compass stage diagnostics visible`);
@@ -90,6 +94,8 @@ const server = http.createServer((req, res) => {
         assert.ok(Number.isFinite(compass.state.centerDelta.residual));
         assert.ok(Number.isFinite(compass.state.navigation.symmetryDelta));
         assert.ok(compass.state.designId);
+        assert.match(compass.stageMarkup, /KP-A1/, `${delivery}/${profile} compass local diagnostic grid is actually rendered`);
+        assert.equal(compass.consoleInDialog, true, `${delivery}/${profile} full diagnostic console follows compass top layer`);
 
         await page.evaluate(() => {
           const card = window.aboutCard;
@@ -140,6 +146,8 @@ const server = http.createServer((req, res) => {
             readout: dialog.querySelector('[data-medallion-picker-diagnostic-readout]').textContent,
             payload: card._pickerDiagnosticPayload('medallion'),
             csv: card._pickerDiagnosticCsv('medallion'),
+            stageMarkup: dialog.querySelector('[data-medallion-picker-diagnostic-stage]').innerHTML,
+            consoleInDialog: card.shadow.getElementById('diagnostic-console')?.parentNode === dialog,
           };
         });
         assert.equal(medallion.stageHidden, false, `${delivery}/${profile} medallion stage diagnostics visible`);
@@ -160,10 +168,56 @@ const server = http.createServer((req, res) => {
         assert.ok(Number.isFinite(medallion.state.arrowCenterResidual));
         assert.ok(Number.isFinite(medallion.state.navigation.symmetryDelta));
         assert.equal(medallion.snapshotPicker.designId, 'trend_01');
+        assert.match(medallion.stageMarkup, /MP-A1/, `${delivery}/${profile} medallion local diagnostic grid is actually rendered`);
+        assert.equal(medallion.consoleInDialog, true, `${delivery}/${profile} full diagnostic console follows medallion top layer`);
+        assert.equal(medallion.payload.medallionState.angleConvention, '0° North, 90° East, clockwise');
+        assert.equal(medallion.payload.medallionState.assetZeroOffsetDeg, -45);
+
+        const staticAngles = await page.evaluate(() => {
+          const card=window.aboutCard,dialog=card._medallionPickerDialog,arrow=dialog.querySelector('.trend-medallion-arrow');
+          const angleOf=()=>{const value=getComputedStyle(arrow).transform,m=value.match(/^matrix\(([^)]+)\)$/);if(!m)return null;const [a,b]=m[1].split(',').map(Number);return Math.atan2(b,a)*180/Math.PI;};
+          dialog.querySelector('[data-medallion-angle="0"]').click();const north=angleOf();
+          dialog.querySelector('[data-medallion-angle="90"]').click();const east=angleOf();
+          return {north,east};
+        });
+        assert.ok(Math.abs(staticAngles.north + 45) < 1, `${delivery}/${profile} diagnostic 0° compensates the +45° source asset`);
+        assert.ok(Math.abs(staticAngles.east - 45) < 1, `${delivery}/${profile} diagnostic 90° points East`);
+
+        await page.evaluate(() => window.aboutCard._medallionPickerDialog.querySelector('[data-medallion-preset="animation"]').click());
+        const animA = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
+        await page.waitForTimeout(420);
+        const animB = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
+        assert.notEqual(animA, animB, `${delivery}/${profile} medallion diagnostic animation visibly changes transform`);
+
+        const fullscreen = await page.evaluate(() => {
+          const card=window.aboutCard;
+          card._closeMedallionPicker(false);
+          card._setMapDisplayMode('fullscreen',{persist:false,remember:false,closeMenu:false});
+          card._syncDiagnosticUi();
+          card._renderDiagnosticOverlay();
+          const dialog=card.shadow.getElementById('map-fullscreen-dialog'),overlay=card.shadow.getElementById('diagnostic-overlay'),consoleNode=card.shadow.getElementById('diagnostic-console');
+          return {open:!!dialog?.open,overlayHosted:overlay?.parentNode===dialog,consoleHosted:consoleNode?.parentNode===dialog,grid:overlay?.textContent||''};
+        });
+        assert.equal(fullscreen.open, true, `${delivery}/${profile} fullscreen dialog opens`);
+        assert.equal(fullscreen.overlayHosted, true, `${delivery}/${profile} diagnostic overlay follows fullscreen top layer`);
+        assert.equal(fullscreen.consoleHosted, true, `${delivery}/${profile} diagnostic console follows fullscreen top layer`);
+        assert.match(fullscreen.grid, /FS-A1/, `${delivery}/${profile} fullscreen receives its own diagnostic numbering`);
+
+        const fullscreenPickerHost = await page.evaluate(() => {
+          const card=window.aboutCard,fullscreen=card.shadow.getElementById('map-fullscreen-dialog');
+          card._openCompassPicker();
+          const picker=card._compassPickerDialog,consoleNode=card.shadow.getElementById('diagnostic-console');
+          const inPicker=consoleNode?.parentNode===picker;
+          card._closeCompassPicker(false);
+          const restored=consoleNode?.parentNode===fullscreen;
+          card._setMapDisplayMode('standard',{persist:false,remember:false,closeMenu:false});
+          return {inPicker,restored};
+        });
+        assert.equal(fullscreenPickerHost.inPicker, true, `${delivery}/${profile} fullscreen picker keeps diagnostic console reachable`);
+        assert.equal(fullscreenPickerHost.restored, true, `${delivery}/${profile} closing fullscreen picker restores diagnostic console to fullscreen`);
 
         await page.evaluate(() => {
           const card = window.aboutCard;
-          card._closeMedallionPicker(false);
           card._stopDiagnostics();
         });
         await context.close();
