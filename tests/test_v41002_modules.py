@@ -70,12 +70,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r2'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r3'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r2"' in manifest
- assert 'moduleSetId:"A6C8-9983"' in manifest
- assert runtime["runtimeRevision"]=="41002r2"
- assert runtime["moduleSetId"]=="A6C8-9983"
+ assert 'runtimeRevision:"41002r3"' in manifest
+ assert 'moduleSetId:"D11F-2D80"' in manifest
+ assert runtime["runtimeRevision"]=="41002r3"
+ assert runtime["moduleSetId"]=="D11F-2D80"
  assert "moduleRuntimeManifestUrl" in view
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
