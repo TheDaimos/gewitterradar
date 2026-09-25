@@ -1,11 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41002r2";
-import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r2";
-import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r2";
-import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r2";
-import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r2";
+import { defineModule } from "../core/runtime.js?v=41002r10";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r10";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r10";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r10";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r10";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
