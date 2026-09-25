@@ -2553,3 +2553,56 @@ Automatisierter R6-Abschluss des Produkt-/Teststands:
 Promotion abgeschlossen: `deploy/dev` zeigt verifiziert auf `55e585482a2ea7b0ac446317ff1ade00cd55b9b8`; das Runtime-Manifest dort meldet Build `V4.10.02-MODULAR-DEV-R6-2026-09-25`, Runtime `41002r6`, Modulsatz `37F8-9357`, `diagnostics.cockpit 1.1.2` und `fullscreen.map-display 1.0.12`.
 
 **NÄCHSTER SCHRITT:** R6 über DRA aus `deploy/dev` installieren und die reale Abnahme auf Desktop, iPad und Android/HA Companion durchführen: sichtbares KP-/MP-/FS-Raster und Messlinien, korrekte absolute Winkel, tatsächlich bewegte TREND-Animation, KOPIEREN/JSON/CSV sowie Vollbild und Vollbild→Picker→Vollbild-Top-Layer prüfen. Erst danach weitere Medaillons.
+
+
+## Schleife 072 – R7: Diagnose-Teardown im geöffneten Picker
+
+**Datum:** 2026-09-25  
+**Status:** Implementierung und automatisierte Abnahme vollständig grün; finale Dokumentations-CI und Promotion nach `deploy/dev` offen
+
+Realer R6-Befund auf Android/HA Companion:
+- TREND-Animation funktioniert sichtbar,
+- absolute Winkel sind korrekt,
+- KP-/MP-Raster und Diagnosewerkzeuge sind sichtbar,
+- große Diagnosekonsole bleibt im nativen Picker erreichbar,
+- beim Beenden des globalen Diagnosemodus **im noch geöffneten Picker** blieb das bereits gerenderte lokale Raster jedoch sichtbar, bis der Picker selbst geschlossen wurde.
+
+Ursache:
+- der Picker-Renderer setzte das Diagnose-SVG zur sicheren Top-Layer-Darstellung mit `display:block !important`,
+- beim Diagnose-Ende wurde zwar `hidden=true` gesetzt, der wichtige Inline-`display`-Wert aber nicht entfernt,
+- dadurch gewann die alte Inline-Darstellung gegen `[hidden]`.
+
+R7-Korrektur:
+- beim Deaktivieren der Picker-Diagnose werden `display`, `visibility`, `opacity` und `z-index` der lokalen Diagnoseebenen vollständig zurückgesetzt,
+- lokale SVG-Diagnoseebenen werden zusätzlich geleert, sodass kein altes Raster-Markup bestehen bleibt,
+- der geöffnete Kompass-/Medaillon-Picker bleibt dabei unverändert offen,
+- beim erneuten Start der Diagnose wird die lokale Diagnose normal neu aufgebaut.
+
+Regression:
+- `scripts/test-picker-diagnostics.cjs` beendet die Diagnose jetzt explizit bei geöffnetem Medaillon-Picker und verlangt:
+  - Picker bleibt offen,
+  - Diagnose ist wirklich deaktiviert,
+  - Stage-/Navigationsraster, Messwertblock und Werkzeugleiste sind sofort verborgen,
+  - berechnetes `display` ist `none`,
+  - altes Stage-/Navigations-SVG-Markup ist leer,
+  - Diagnose kann anschließend wieder gestartet und für die weiteren Vollbildtests benutzt werden.
+- statischer Vertrag verlangt den Teardown in beiden Pickerpfaden.
+
+R7-Zielstand:
+- `core.manifest` **1.2.12**
+- `core.base-context` **1.0.3**
+- `diagnostics.cockpit` **1.1.3**
+- `fullscreen.map-display` **1.0.12**
+- Runtime **41002r7**
+- Modulsatz **E2DF-E846**
+- Build **V4.10.02-MODULAR-DEV-R7-2026-09-25**
+
+Automatisierter R7-Abschluss des Produkt-/Teststands:
+- Produkt-/Testkandidat `b7cfb07a6fce9b66d5614eb4f6486ffe0426226d` ist **5/5 grün**.
+- Validate shared Gewitterradar frontend **#2225** → success; darin insbesondere der neue offene-Picker-Diagnose-Teardown-Test.
+- Validate Gewitterradar integration **#2244** → success.
+- Diagnostic contract **#952** → success.
+- Source archive contract **#515** → success.
+- Hi-Res asset retention **#1461** → success.
+
+**NÄCHSTER SCHRITT:** diesen Dokumentationsstand vollständig durch CI prüfen und anschließend den exakt grünen finalen Head nach `deploy/dev` promoten. Danach reale R7-Nachprüfung: Diagnose im geöffneten Kompass- und Medaillon-Picker beenden; Raster/Messhilfen müssen sofort verschwinden, ohne das Popup zu schließen. Erst danach die restliche R6/R7-Geräteabnahme und anschließend weitere Medaillons.
