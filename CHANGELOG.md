@@ -1,6 +1,16 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### Diagnose R6 – sichtbare Top-Layer-Messung, Winkelkonvention und Vollbild
+- Reale R5-Abnahme zeigte drei zusätzliche Diagnosefehler: der Medaillon-Animationszustand war intern aktiv, ohne den sichtbaren Pfeil zu bewegen; die statischen Winkel bezogen sich fälschlich auf die bereits um 45° gedrehte Pfeilgrafik statt auf eine absolute Himmelsrichtung; lokale Raster/Messlinien waren trotz aktivem Diagnosezustand real nicht sichtbar.
+- Die Diagnosewinkel verwenden nun verbindlich **0° = Nord, 90° = Ost, 180° = Süd, 270° = West, im Uhrzeigersinn**. Der Hi-Res-Pfeil besitzt dafür einen expliziten Asset-Nullpunktversatz von **−45°**; der Export dokumentiert Winkelkonvention und Assetversatz.
+- Die TREND-Animation besitzt wieder einen tatsächlich animierbaren `transform`: die statische `!important`-Transformation gilt nicht mehr für ANIMATION/FREEZE. Der Diagnosesweep läuft absolut von Nord über Ost nach Süd und zurück.
+- Picker-SVGs werden im nativen Dialog-Top-Layer mit expliziter Sichtbarkeit und oberster lokaler Stapelreihenfolge gerendert. Raster, Achsen, Diagonalen, Begrenzungen und Mittelpunktmarken folgen den globalen Diagnoseeinstellungen.
+- Kompass- und Medaillon-Picker erhalten eindeutige lokale Rasterkennungen `KP-A1…KP-J10` bzw. `MP-A1…MP-J10`.
+- Der Vollbildmodus erhält ein eigenes Diagnose-Raster `FS-A1…FS-J10`. Diagnose-Overlay und große Diagnosekonsole werden beim Eintritt in Vollbild in dessen nativen `<dialog>`-Top-Layer verschoben.
+- Öffnet sich aus dem Vollbild heraus ein Kompass- oder Medaillon-Picker, folgt die große Diagnosekonsole dem obersten Picker-Dialog und kehrt beim Schließen wieder in den Vollbild-Dialog zurück.
+- Der Browservertrag prüft jetzt tatsächliches SVG-Markup, lokale Rasterkennungen, die reale Änderung des berechneten Pfeil-Transforms während der Animation, die absolute Winkelkompensation sowie den Top-Layer-Hostwechsel in Vollbild und Picker.
+- Runtime-Revision: `41002r6`; Modulstände: `diagnostics.cockpit 1.1.2`, `fullscreen.map-display 1.0.12`, `core.manifest 1.2.11`; Modulsatz `37F8-9357`.
 ### Diagnose – Kompass-/Medaillon-Picker und designfähige Medaillon-Profile
 - Die globale Diagnose wird jetzt direkt **innerhalb** des geöffneten Kompass- und Medaillon-Pop-ups gespiegelt, damit die Messhilfen auch im nativen Dialog-Top-Layer sichtbar bleiben.
 - Beide Picker erhalten lokale Achsen, Diagonalen, Bounding-Boxen, Mittelpunktmarken, Navigationsmessung und einen kompakten Live-Messwertblock.
