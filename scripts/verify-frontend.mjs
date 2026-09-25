@@ -31,7 +31,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.1"',
+  'version:"1.3.2"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -54,7 +54,13 @@ for(const marker of [
   '_refreshModuleRuntimeProbe(result)',
   'cache:"no-store"',
   'modules.runtime_stale',
-  'modules.set_id'
+  'modules.set_id',
+  'settings-modules-deviations-backdrop',
+  'gr-mod-deviation-trigger',
+  '_moduleDeviationPayload()',
+  '_renderModuleDeviationDialog(',
+  '_copyModuleDeviationDiagnostics()',
+  '_downloadModuleDeviationDiagnostics()'
 ]){
   if(!moduleView.includes(marker))throw Error('Module details UI contract missing: '+marker);
 }
@@ -70,9 +76,12 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.2.2"',
+  '"version": "1.2.3"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
-  'this._syncMapDisplayUi?.()'
+  'this._syncMapDisplayUi?.()',
+  'modules.status.duplicate',
+  'modules.deviation.registrations',
+  'modules.deviation.active_matches'
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
