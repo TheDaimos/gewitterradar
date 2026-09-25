@@ -10,6 +10,7 @@ const baseContext=await readFile(resolve(root,'frontend/modules/core/base-contex
 const render=await readFile(resolve(root,'frontend/modules/ui/render.js'),'utf8');
 const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-display.js'),'utf8');
 const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-recent.js'),'utf8');
+const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
   '"version": "1.1.2"',
@@ -84,7 +85,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.9"',
+  '"id": "fullscreen.map-display"','"version": "1.0.10"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -92,6 +93,16 @@ for(const marker of [
   '_closeMapStartupDropdown(returnFocus = false)'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "diagnostics.cockpit"','"version": "1.1.0"',
+  '_syncPickerDiagnostics()',
+  '_measureCompassPickerDiagnostics()',
+  '_measureMedallionPickerDiagnostics()',
+  '_medallionDiagnosticProfile(',
+  'pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}'
+]){
+  if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
 for(const marker of [
   '"id": "map.clusters-recent"','"version": "1.0.2"',
@@ -107,7 +118,7 @@ for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clust
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.2"',
+  'version:"1.0.3"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
