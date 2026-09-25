@@ -1,12 +1,23 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### Diagnose – Kompass-/Medaillon-Picker und designfähige Medaillon-Profile
+- Die globale Diagnose wird jetzt direkt **innerhalb** des geöffneten Kompass- und Medaillon-Pop-ups gespiegelt, damit die Messhilfen auch im nativen Dialog-Top-Layer sichtbar bleiben.
+- Beide Picker erhalten lokale Achsen, Diagonalen, Bounding-Boxen, Mittelpunktmarken, Navigationsmessung und einen kompakten Live-Messwertblock.
+- Die Kompassauswahl misst Instrumentzentrum, Pivot, Links-/Rechts-Symmetrie der silbernen Chivron, vertikale Ausrichtung, Abstand Instrument → Navigation und Überlauf.
+- Die Medaillon-Auswahl misst Medaillonzentrum, profilspezifische Apertur, Soll-/Ist-Pfeilzentrum, Pfeilgröße, Links-/Rechts-Symmetrie der goldenen Chivron, vertikale Ausrichtung und Abstand Stage → Navigation.
+- Picker-Diagnose folgt dem globalen Schalter **Diagnosedarstellung anzeigen/ausblenden** und bleibt bei ausgeschalteter Diagnose vollständig unsichtbar.
+- Diagnose-Snapshots enthalten jetzt zusätzlich die aktuell geöffneten Picker-Messwerte.
+- `MEDALLION_DESIGNS` trägt ab jetzt pro Medaillon ein eigenes `diagnosticProfile`; die Medaillon-Kalibrierung verwendet nicht mehr fest `MEDALLION_DESIGNS[0]`, sondern immer das aktuell ausgewählte Design.
+- Das bestehende `trend_01`-Profil übernimmt unverändert die bereits abgenommenen Mittelpunkt-, Apertur-, Pfeil- und Skalierungswerte und dient als Vorlage für kommende Medaillons.
+- Browser-Regression prüft Dashboard und native Integration auf Desktop und iPad mit sichtbarer/ausblendbarer Picker-Diagnose sowie Snapshot-Übernahme.
+- Runtime-Revision: `41002r4`; Modulstände: `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.0`, `fullscreen.map-display 1.0.10`, `core.manifest 1.2.9`; Modulsatz `02AE-EBFC`.
 ### Kompassauswahl – freigestellte Retina-Chevrons
-- Die beiden Navigationszeilen im Kompassauswahl-Pop-up verwenden ausschließlich die neuen freigestellten Messing-/Silber-Chevrons für links/rechts.
+- Die Kompassauswahl verwendet ausschließlich die freigestellten **Silber-Chivron**; die Messing-/Gold-Variante bleibt im Repository und wird von der analogen Medaillon-Auswahl verwendet.
 - Die Laufzeitdarstellung ist als picker-lokale, verlustfreie WebP-Datenmodule (VP8L) gekapselt: 104×104 Pixel bei 52×52 CSS-Pixeln, also exakt 2× Retina; Dateigrößen ca. 8,6–11,1 KB.
 - Die zuvor verwendeten nicht sauber freigestellten Runtime-SVGs wurden aus den drei Auslieferungsbäumen entfernt.
 - Der Austausch ist technisch auf `fullscreen.map-display` und seine vier Picker-Datenmodule begrenzt; Chevron-Grafiken in Menüs, Akkordeons, Diagnose und sonstiger Oberfläche bleiben unverändert.
-- Runtime-Revision: `41002r2`; Modulstand: `fullscreen.map-display 1.0.8`, `core.manifest 1.2.7`, Modulsatz `A6C8-9983`.
+- Der damalige Retina-Zwischenstand war `41002r2`; der aktuelle Diagnose-/Picker-Stand ist oben separat dokumentiert.
 
 
 ### Frontend-Cache-Sicherheit & Modulsatz-ID
@@ -52,17 +63,18 @@
 
 ### Modulversionen
 
-- `core.base-context` → **1.0.2**
+- `core.base-context` → **1.0.3**
 - `core.card-lifecycle` → **1.0.1**
 - `ui.skeleton` → **1.1.2**
 - `ui.i18n-settings` → **1.2.2**
 - `diagnostics.module-view` → **1.3.1**
-- `fullscreen.map-display` → **1.0.6**
+- `diagnostics.cockpit` → **1.1.0**
+- `fullscreen.map-display` → **1.0.10**
 - `map.clusters-recent` → **1.0.2**
 - `ui.render` → **1.0.1**
 - `ui.controls` → **1.1.3**
 - `location.radii-map` → **1.0.1**
-- `core.manifest` → **1.2.5**
+- `core.manifest` → **1.2.9**
 
 ## 2026/09 — V4.10.01 DEV
 
