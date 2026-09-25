@@ -380,40 +380,49 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       this.shadow.getElementById('diagnostic-minimize')?.addEventListener('click',()=>consoleNode.classList.toggle('minimized'));
       const handle=consoleNode.querySelector('#diagnostic-console-drag');let drag=null;
       const touchById=(list,id)=>[...(list||[])].find((touch)=>touch.identifier===id)||null;
-      const cleanupDragListeners=()=>{
-        document.removeEventListener('pointermove',onPointerMove,true);document.removeEventListener('pointerup',onPointerEnd,true);document.removeEventListener('pointercancel',onPointerEnd,true);
-        document.removeEventListener('touchmove',onTouchMove,true);document.removeEventListener('touchend',onTouchEnd,true);document.removeEventListener('touchcancel',onTouchEnd,true);
-      };
-      const beginDrag=(source,id,clientX,clientY)=>{
-        if(drag?.source==='pointer')try{handle?.releasePointerCapture?.(drag.id);}catch(_){}
-        cleanupDragListeners();
+      const startDrag=(source,inputId,clientX,clientY)=>{
         const rect=consoleNode.getBoundingClientRect();
-        drag={source,id,dx:clientX-rect.left,dy:clientY-rect.top};
-        if(source==='pointer'){
-          document.addEventListener('pointermove',onPointerMove,true);document.addEventListener('pointerup',onPointerEnd,true);document.addEventListener('pointercancel',onPointerEnd,true);
-          try{handle?.setPointerCapture?.(id);}catch(_){}
-        }else{
-          document.addEventListener('touchmove',onTouchMove,{capture:true,passive:false});document.addEventListener('touchend',onTouchEnd,true);document.addEventListener('touchcancel',onTouchEnd,true);
-        }
+        drag={source,inputId,dx:clientX-rect.left,dy:clientY-rect.top};
       };
-      const moveDrag=(clientX,clientY)=>{
-        if(!drag)return;
+      const moveDrag=(source,inputId,clientX,clientY)=>{
+        if(!drag||drag.source!==source||drag.inputId!==inputId)return false;
         const bounds=this._diagnosticConsoleBounds(),header=handle?.getBoundingClientRect(),reachableX=Math.max(80,Math.min(header?.width||80,bounds.width)),reachableY=Math.max(36,Math.min(header?.height||36,bounds.height));
         const left=Math.max(bounds.left-consoleNode.offsetWidth+reachableX,Math.min(bounds.left+bounds.width-reachableX,clientX-drag.dx));
         const top=Math.max(bounds.top,Math.min(bounds.top+bounds.height-reachableY,clientY-drag.dy));
-        consoleNode.style.left=`${Math.round(left)}px`;consoleNode.style.top=`${Math.round(top)}px`;this._diagnostics.position={left:Math.round(left),top:Math.round(top)};
+        consoleNode.style.left=`${Math.round(left)}px`;consoleNode.style.top=`${Math.round(top)}px`;this._diagnostics.position={left:Math.round(left),top:Math.round(top)};return true;
       };
-      const finishDrag=()=>{
-        if(!drag)return;
-        if(drag.source==='pointer')try{handle?.releasePointerCapture?.(drag.id);}catch(_){}
-        drag=null;cleanupDragListeners();try{localStorage.setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}
+      const finishDrag=(source,inputId)=>{
+        if(!drag||drag.source!==source||drag.inputId!==inputId)return;
+        drag=null;try{localStorage.setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}
       };
-      function onPointerMove(event){if(!drag||drag.source!=='pointer'||event.pointerId!==drag.id)return;moveDrag(event.clientX,event.clientY);event.preventDefault();}
-      function onPointerEnd(event){if(!drag||drag.source!=='pointer'||event.pointerId!==drag.id)return;finishDrag();}
-      function onTouchMove(event){if(!drag||drag.source!=='touch')return;const touch=touchById(event.touches,drag.id)||touchById(event.changedTouches,drag.id);if(!touch)return;moveDrag(touch.clientX,touch.clientY);event.preventDefault();}
-      function onTouchEnd(event){if(!drag||drag.source!=='touch')return;if(event.type==='touchend'&&!touchById(event.changedTouches,drag.id))return;finishDrag();}
-      handle?.addEventListener('pointerdown',(event)=>{if((event.button!==undefined&&event.button!==0)||event.target.closest('button'))return;beginDrag('pointer',event.pointerId,event.clientX,event.clientY);});
-      handle?.addEventListener('touchstart',(event)=>{if(event.target.closest('button'))return;const touch=event.changedTouches?.[0]||event.touches?.[0];if(!touch)return;beginDrag('touch',touch.identifier,touch.clientX,touch.clientY);event.preventDefault();},{passive:false});
+      handle?.addEventListener('pointerdown',(event)=>{
+        if((event.pointerType==='mouse'&&event.button!==0)||event.isPrimary===false||event.target.closest('button'))return;
+        if(event.pointerType!=='touch')event.preventDefault();event.stopPropagation();
+        startDrag('pointer',event.pointerId,event.clientX,event.clientY);
+        try{handle.setPointerCapture(event.pointerId);}catch(_){}
+      },{capture:true});
+      handle?.addEventListener('pointermove',(event)=>{
+        if(!drag||drag.source!=='pointer'||drag.inputId!==event.pointerId)return;
+        event.preventDefault();event.stopPropagation();moveDrag('pointer',event.pointerId,event.clientX,event.clientY);
+      },{capture:true});
+      const finishPointer=(event)=>{
+        if(!drag||drag.source!=='pointer'||drag.inputId!==event.pointerId)return;
+        event.preventDefault();event.stopPropagation();finishDrag('pointer',event.pointerId);try{handle.releasePointerCapture(event.pointerId);}catch(_){}
+      };
+      handle?.addEventListener('pointerup',finishPointer,{capture:true});handle?.addEventListener('pointercancel',finishPointer,{capture:true});
+      handle?.addEventListener('touchstart',(event)=>{
+        if(event.target.closest('button'))return;const touch=event.changedTouches?.[0]||event.touches?.[0];if(!touch)return;
+        event.preventDefault();event.stopPropagation();startDrag('touch',touch.identifier,touch.clientX,touch.clientY);
+      },{capture:true,passive:false});
+      handle?.addEventListener('touchmove',(event)=>{
+        if(!drag||drag.source!=='touch')return;const touch=touchById(event.touches,drag.inputId)||touchById(event.changedTouches,drag.inputId);if(!touch)return;
+        event.preventDefault();event.stopPropagation();moveDrag('touch',drag.inputId,touch.clientX,touch.clientY);
+      },{capture:true,passive:false});
+      const finishTouch=(event)=>{
+        if(!drag||drag.source!=='touch')return;if(event.type==='touchend'&&!touchById(event.changedTouches,drag.inputId))return;
+        event.preventDefault();event.stopPropagation();finishDrag('touch',drag.inputId);
+      };
+      handle?.addEventListener('touchend',finishTouch,{capture:true,passive:false});handle?.addEventListener('touchcancel',finishTouch,{capture:true,passive:false});
     },
 
     _startDiagnostics() {
