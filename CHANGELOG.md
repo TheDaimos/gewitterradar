@@ -8,6 +8,7 @@
 - Der Picker bleibt geöffnet; bei erneutem Start der Diagnose werden Raster und Messhilfen regulär neu aufgebaut.
 - Browserregression prüft den Diagnose-Ausstieg im geöffneten Medaillon-Picker inklusive sofortigem `display:none`, leerem SVG-Markup und anschließendem erfolgreichen Neustart der Diagnose.
 - Runtime-Revision: `41002r7`; Modulstände: `diagnostics.cockpit 1.1.3`, `fullscreen.map-display 1.0.12`, `core.manifest 1.2.12`; Modulsatz `E2DF-E846`.
+- R7 wurde anschließend über `deploy/dev` real in Home Assistant abgenommen. Das Beenden der Diagnose bei geöffnetem Picker entfernt Raster/Messhilfen sofort, ohne den Dialog zu schließen; die zuvor bestätigten R6-Funktionen (sichtbare TREND-Animation, absolute Winkel und sichtbare KP-/MP-Diagnose) bleiben intakt.
 
 ### Diagnose R6 – sichtbare Top-Layer-Messung, Winkelkonvention und Vollbild
 - Reale R5-Abnahme zeigte drei zusätzliche Diagnosefehler: der Medaillon-Animationszustand war intern aktiv, ohne den sichtbaren Pfeil zu bewegen; die statischen Winkel bezogen sich fälschlich auf die bereits um 45° gedrehte Pfeilgrafik statt auf eine absolute Himmelsrichtung; lokale Raster/Messlinien waren trotz aktivem Diagnosezustand real nicht sichtbar.
