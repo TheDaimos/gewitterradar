@@ -1,6 +1,16 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### Abschlussaudit R8 – Modulidentität und Schlachtplan
+- Der vollständige Modularisierungs-Audit hat zwei interne Identitätsreste gefunden, die die bisherigen Funktions-/Browserprüfungen nicht sichtbar gemacht hatten.
+- `core.manifest` führt seinen Sollstand und seine Selbstregistrierung nun identisch; die Selbstregistrierung war noch auf 1.2.10 stehen geblieben, während Soll-/Runtime-Manifest bereits 1.2.12 erwarteten.
+- `core.base-context` trägt nun dieselbe aktuelle Buildkennung wie Loader und Runtime-Manifest; dort war intern noch die R5-Kennung vorhanden.
+- Auditstand: Runtime `41002r8`, Modulsatz `3541-2967`, Build `V4.10.02-MODULAR-DEV-R8-2026-09-25`, `core.manifest 1.2.13`, `core.base-context 1.0.4`.
+- Ein neuer Vertrag vergleicht alle 22 erwarteten Modulversionen mit den jeweiligen Selbstregistrierungen und bezieht das selbstregistrierende Manifest ausdrücklich ein.
+- Der verbindliche Modularisierungs-Schlachtplan wurde gegen spätere reale DRA-/HA-/Browserabnahmen auditiert; alte Scheinoffenpunkte wurden geschlossen, ohne unbelegte Punkte künstlich abzuhaken.
+- Radius-Kaskade und Kompass-Schließen-X wurden im Abschlussaudit aufgrund der ausdrücklichen realen Benutzerbestätigung als erledigt geschlossen.
+- Als einziger noch unbelegter Funktionspunkt verbleibt vor dem formalen Abschluss die reale Cluster-Jump-/Infinity-Abnahme auf Desktop, iPad und Android/HA Companion; zusätzlich muss R8 den normalen CI-/DRA-Abschlussweg durchlaufen.
+
 ### Diagnose R7 – sofortiger Teardown im geöffneten Picker
 - Behebt einen real auf Android/HA Companion gefundenen Randfall: Beim Beenden der globalen Diagnose in einem noch geöffneten Kompass-/Medaillon-Picker blieb das lokale Diagnose-Raster sichtbar, bis der Picker geschlossen wurde.
 - Ursache war ein zuvor gesetztes `display:block !important` an den lokalen Diagnose-SVGs; `hidden=true` allein konnte diese Inline-Regel nicht übersteuern.
