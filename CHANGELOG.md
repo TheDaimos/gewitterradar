@@ -1,6 +1,14 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### R10 – interne Modul-Cachekennung vereinheitlicht
+- Der in R9 neu eingeführte Abweichungsdialog wurde real über DRA/HA abgenommen; Darstellung und kontextbezogene Exporte funktionieren wie vorgesehen.
+- Der R9-Export zeigte gemischte interne ES-Modul-URLs mit aktuellen und alten Cachekennungen (`r9`, `r1`, teilweise `r2`). Dadurch wurden `core.registry` und `core.runtime` mehrfach instanziiert.
+- R10 setzt alle statischen internen Modulimporte einheitlich auf `41002r10`.
+- Neuer Regressionstest verhindert künftig jede interne Cachekennung, die vom Loader-Cache abweicht.
+- Finaler Kandidat `4f22f4be5841e47993226928405cc65cdd70e201` ist 5/5 CI-grün und nach `deploy/dev` promoviert.
+- Reale Abnahme bestätigt: **22/22 Module geladen**, **Versionssatz konsistent**, **Modulsatz-ID `CEA6-1ECF`**, keine Abweichungen.
+
 ### Abschlussaudit R8 – Modulidentität und Schlachtplan
 - Der vollständige Modularisierungs-Audit hat zwei interne Identitätsreste gefunden, die die bisherigen Funktions-/Browserprüfungen nicht sichtbar gemacht hatten.
 - `core.manifest` führt seinen Sollstand und seine Selbstregistrierung nun identisch; die Selbstregistrierung war noch auf 1.2.10 stehen geblieben, während Soll-/Runtime-Manifest bereits 1.2.12 erwarteten.
