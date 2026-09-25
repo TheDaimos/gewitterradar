@@ -94,12 +94,12 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r9'" in main
+ assert "GEWITTERRADAR_MODULE_CACHE = '41002r10'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
- assert 'runtimeRevision:"41002r9"' in manifest
- assert 'moduleSetId:"9EBD-F27E"' in manifest
- assert runtime["runtimeRevision"]=="41002r9"
- assert runtime["moduleSetId"]=="9EBD-F27E"
+ assert 'runtimeRevision:"41002r10"' in manifest
+ assert 'moduleSetId:"CEA6-1ECF"' in manifest
+ assert runtime["runtimeRevision"]=="41002r10"
+ assert runtime["moduleSetId"]=="CEA6-1ECF"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
@@ -108,6 +108,17 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
 
+
+def test_internal_module_import_cache_is_coherent():
+ main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
+ cache=re.search(r"GEWITTERRADAR_MODULE_CACHE = '([^']+)'",main).group(1)
+ stale=[]
+ for path in sorted(FRONTEND.rglob("*.js")):
+  text=path.read_text(encoding="utf-8")
+  for match in re.finditer(r'import[^\n]*?["\'][^"\']+\?v=(41002r\d+)["\']',text):
+   if match.group(1)!=cache:
+    stale.append((str(path.relative_to(FRONTEND)),match.group(1),cache))
+ assert stale==[]
 
 def test_module_deviation_popup_contract():
  registry=(FRONTEND/"modules/core/registry.js").read_text(encoding="utf-8")
