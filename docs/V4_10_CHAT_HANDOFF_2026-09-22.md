@@ -384,3 +384,46 @@ Erst danach mit den weiteren Medaillon-Designs fortfahren.
 
 Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
 ```
+
+
+---
+
+## R7-Nachtrag – Diagnose-Teardown im geöffneten Picker
+
+Realer R6-Befund auf Android/HA Companion:
+- TREND sichtbar funktionsfähig,
+- absolute Winkel korrekt,
+- lokale KP-/MP-Raster und Diagnosewerkzeuge sichtbar,
+- große Diagnosekonsole bleibt im nativen Picker erreichbar,
+- beim Beenden der globalen Diagnose im noch geöffneten Picker blieb das lokale Raster bis zum Schließen des Pickers sichtbar.
+
+R7 behebt ausschließlich diesen Teardown-Randfall:
+- lokale Picker-Diagnoseebenen verlieren beim Diagnose-Ende ihre erzwungenen Inline-Sichtbarkeitswerte,
+- Stage-/Navigations-SVGs werden sofort geleert,
+- Picker bleibt geöffnet,
+- erneutes Starten der Diagnose baut die Messhilfen regulär neu auf.
+
+R7:
+- Produkt-/Testkandidat: `b7cfb07a6fce9b66d5614eb4f6486ffe0426226d`
+- Runtime: `41002r7`
+- Modulsatz: `E2DF-E846`
+- `core.manifest 1.2.12`
+- `diagnostics.cockpit 1.1.3`
+- `fullscreen.map-display 1.0.12`
+- Build: `V4.10.02-MODULAR-DEV-R7-2026-09-25`
+
+Automatisierter Produkt-/Teststand: **5/5 grün**
+- Shared Frontend #2225
+- Integration #2244
+- Diagnostic #952
+- Source Archive #515
+- Hi-Res #1461
+
+Nächster Schritt nach finaler Dokumentations-CI und Promotion:
+1. R7 über DRA aus `deploy/dev` installieren.
+2. Medaillon-Picker öffnen, Diagnose beenden → MP-Raster/Messhilfen müssen sofort verschwinden, Picker bleibt offen.
+3. Dasselbe im Kompass-Picker.
+4. Diagnose wieder starten → Raster/Messhilfen müssen normal zurückkehren.
+5. Danach Vollbild-/Geräteabnahme weiterführen.
+
+Keine Veröffentlichung, kein Merge nach main und kein Release ohne ausdrückliche Benutzerfreigabe.
