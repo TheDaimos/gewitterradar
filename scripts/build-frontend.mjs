@@ -15,7 +15,7 @@ export async function expectedPayload(){
   const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.02.json'),'utf8'));
   if(dev.version!=='4.10.02'||dev.status!=='DEV'||dev.baseVersion!=='4.10.01')throw Error('V4.10.02 contract identity changed');
   if(source.length!==dev.sizeBytes||hash(source)!==dev.sha256)throw Error('V4.10.02 frontend contract mismatch');
-  if(!text.includes("const CARD_DISPLAY_VERSION = '4.10.02';")||!text.includes("V4.10.02-MODULAR-DEV-R10-2026-09-25"))throw Error('V4.10.02 markers missing');
+  if(!text.includes("const CARD_DISPLAY_VERSION = '4.10.02';")||!text.includes("V4.10.02-MODULAR-DEV-R11-2026-09-25"))throw Error('V4.10.02 markers missing');
   modular=await modularPayload(dev);localeSha=dev.localeSha256;localeSize=dev.localeSizeBytes;
  }else if(text.includes("const CARD_VERSION = '4.10.01';")){
   const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.01.json'),'utf8'));
