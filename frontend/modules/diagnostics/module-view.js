@@ -33,7 +33,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Verlauf":"modules.group.history"
   }[group]||"modules.group.other");
 
-  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart"]);
+  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart"]);
   const MODULE_VIEW_META=Object.freeze({
   "Deutsch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -49,6 +49,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Sprache & Einstellungen|Übersetzung · About · Einstellungen · Hilfetexte",
     "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
     "Kompassauswahl|Designauswahl · Popup · Rahmenwahl · Diagnosegeometrie",
+    "Medaillon-Designkatalog|Designvarianten · Assetzuordnung · Diagnosegrundprofile",
     "Module & Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopieren · JSON herunterladen",
     "Diagnose & Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
     "Kompassdesign|Design anwenden · Grafikgeometrie",
@@ -73,6 +74,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Language & settings|Translation · About · Settings · Help texts",
     "Data source status|Blitzortung status · Status display",
     "Compass selection|Design selection · Popup · Frame selection · Diagnostic geometry",
+    "Medallion design catalog|Design variants · Asset mapping · Diagnostic base profiles",
     "Modules & versions|Loaded modules · Target/actual comparison · Version status · Module details · Copy diagnostics · Download JSON",
     "Diagnostics & calibration|Diagnostic console · Virtual storm · Compass calibration · Medallion calibration · Performance",
     "Compass design|Apply design · Graphic geometry",
@@ -97,6 +99,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Sprog og indstillinger|Oversættelse · Om · Indstillinger · Hjælpetekster",
     "Datakildestatus|Blitzortung-status · Statusvisning",
     "Kompasvalg|Designvalg · Popup · Rammevalg · Diagnosegeometri",
+    "Medaljondesignkatalog|Designvarianter · Aktivtilknytning · Grundprofiler til diagnostik",
     "Moduler og versioner|Indlæste moduler · Mål/faktisk-sammenligning · Versionsstatus · Moduldetaljer · Kopiér diagnose · Download JSON",
     "Diagnose og kalibrering|Diagnosekonsol · Virtuelt tordenvejr · Kompaskalibrering · Medaljonkalibrering · Ydelse",
     "Kompasdesign|Anvend design · Grafikgeometri",
@@ -121,6 +124,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Idioma y ajustes|Traducción · Acerca de · Ajustes · Textos de ayuda",
     "Estado de fuentes de datos|Estado de Blitzortung · Indicador de estado",
     "Selección de brújula|Selección de diseño · Ventana emergente · Selección de marco · Geometría de diagnóstico",
+    "Catálogo de diseños de medallón|Variantes de diseño · Asignación de recursos · Perfiles base de diagnóstico",
     "Módulos y versiones|Módulos cargados · Comparación objetivo/real · Estado de versiones · Detalles de módulos · Copiar diagnóstico · Descargar JSON",
     "Diagnóstico y calibración|Consola de diagnóstico · Tormenta virtual · Calibración de brújula · Calibración de medallón · Rendimiento",
     "Diseño de brújula|Aplicar diseño · Geometría gráfica",
@@ -145,6 +149,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Langue et paramètres|Traduction · À propos · Paramètres · Textes d’aide",
     "État des sources de données|État Blitzortung · Affichage de l’état",
     "Sélection de la boussole|Choix du design · Fenêtre contextuelle · Choix du cadre · Géométrie de diagnostic",
+    "Catalogue de designs de médaillon|Variantes de design · Affectation des ressources · Profils de base de diagnostic",
     "Modules et versions|Modules chargés · Comparaison cible/réel · État des versions · Détails des modules · Copier le diagnostic · Télécharger le JSON",
     "Diagnostic et étalonnage|Console de diagnostic · Orage virtuel · Étalonnage de la boussole · Étalonnage du médaillon · Performances",
     "Design de la boussole|Appliquer le design · Géométrie graphique",
@@ -169,6 +174,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Taal en instellingen|Vertaling · Over · Instellingen · Helpteksten",
     "Status van gegevensbronnen|Blitzortung-status · Statusweergave",
     "Kompaskeuze|Ontwerpkeuze · Popup · Framekeuze · Diagnosegeometrie",
+    "Catalogus met medaillonontwerpen|Ontwerpvarianten · Toewijzing van assets · Basisprofielen voor diagnose",
     "Modules en versies|Geladen modules · Doel/werkelijk-vergelijking · Versiestatus · Moduledetails · Diagnose kopiëren · JSON downloaden",
     "Diagnose en kalibratie|Diagnoseconsole · Virtueel onweer · Kompaskalibratie · Medaillonkalibratie · Prestaties",
     "Kompasontwerp|Ontwerp toepassen · Grafische geometrie",
@@ -193,6 +199,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Język i ustawienia|Tłumaczenie · O programie · Ustawienia · Teksty pomocy",
     "Stan źródeł danych|Stan Blitzortung · Wskaźnik stanu",
     "Wybór kompasu|Wybór wyglądu · Okno podręczne · Wybór ramki · Geometria diagnostyczna",
+    "Katalog wzorów medalionu|Warianty wzoru · Przypisanie zasobów · Bazowe profile diagnostyczne",
     "Moduły i wersje|Załadowane moduły · Porównanie stan docelowy/rzeczywisty · Stan wersji · Szczegóły modułu · Kopiuj diagnostykę · Pobierz JSON",
     "Diagnostyka i kalibracja|Konsola diagnostyczna · Wirtualna burza · Kalibracja kompasu · Kalibracja medalionu · Wydajność",
     "Wygląd kompasu|Zastosuj wygląd · Geometria grafiki",
@@ -217,6 +224,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Idioma e definições|Tradução · Acerca de · Definições · Textos de ajuda",
     "Estado das fontes de dados|Estado do Blitzortung · Indicação de estado",
     "Seleção da bússola|Seleção de design · Janela emergente · Seleção de moldura · Geometria de diagnóstico",
+    "Catálogo de designs do medalhão|Variantes de design · Associação de recursos · Perfis base de diagnóstico",
     "Módulos e versões|Módulos carregados · Comparação pretendido/real · Estado das versões · Detalhes dos módulos · Copiar diagnóstico · Transferir JSON",
     "Diagnóstico e calibração|Consola de diagnóstico · Trovoada virtual · Calibração da bússola · Calibração do medalhão · Desempenho",
     "Design da bússola|Aplicar design · Geometria gráfica",
@@ -241,6 +249,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Språk och inställningar|Översättning · Om · Inställningar · Hjälptexter",
     "Datakällestatus|Blitzortung-status · Statusvisning",
     "Kompassval|Designval · Popup · Ramval · Diagnostikgeometri",
+    "Katalog för medaljongdesigner|Designvarianter · Resurskoppling · Grundprofiler för diagnostik",
     "Moduler och versioner|Laddade moduler · Mål/faktisk-jämförelse · Versionsstatus · Moduldetaljer · Kopiera diagnostik · Hämta JSON",
     "Diagnostik och kalibrering|Diagnostikkonsol · Virtuellt åskväder · Kompasskalibrering · Medaljongkalibrering · Prestanda",
     "Kompassdesign|Tillämpa design · Grafikgeometri",
@@ -265,6 +274,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Lingua e impostazioni|Traduzione · Informazioni · Impostazioni · Testi di aiuto",
     "Stato fonti dati|Stato Blitzortung · Indicatore di stato",
     "Selezione bussola|Selezione design · Popup · Selezione cornice · Geometria diagnostica",
+    "Catalogo dei design del medaglione|Varianti di design · Associazione risorse · Profili diagnostici di base",
     "Moduli e versioni|Moduli caricati · Confronto previsto/reale · Stato versioni · Dettagli moduli · Copia diagnostica · Scarica JSON",
     "Diagnostica e calibrazione|Console diagnostica · Temporale virtuale · Calibrazione bussola · Calibrazione medaglione · Prestazioni",
     "Design bussola|Applica design · Geometria grafica",
@@ -289,6 +299,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Språk og innstillinger|Oversettelse · Om · Innstillinger · Hjelpetekster",
     "Datakildestatus|Blitzortung-status · Statusvisning",
     "Kompassvalg|Designvalg · Popup · Rammevalg · Diagnosegeometri",
+    "Katalog for medaljongdesign|Designvarianter · Ressurstilknytning · Grunnprofiler for diagnostikk",
     "Moduler og versjoner|Lastede moduler · Mål/faktisk-sammenligning · Versjonsstatus · Moduldetaljer · Kopier diagnose · Last ned JSON",
     "Diagnose og kalibrering|Diagnosekonsoll · Virtuelt tordenvær · Kompasskalibrering · Medaljongkalibrering · Ytelse",
     "Kompassdesign|Bruk design · Grafikkgeometri",
@@ -313,6 +324,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Kieli ja asetukset|Käännös · Tietoja · Asetukset · Ohjetekstit",
     "Tietolähteiden tila|Blitzortung-tila · Tilan näyttö",
     "Kompassin valinta|Ulkoasun valinta · Ponnahdusikkuna · Kehyksen valinta · Diagnostiikkageometria",
+    "Medaljonkimuotoilujen luettelo|Muotoiluversiot · Resurssikytkentä · Diagnostiikan perusprofiilit",
     "Moduulit ja versiot|Ladatut moduulit · Tavoite/toteuma-vertailu · Versiotila · Moduulin tiedot · Kopioi diagnostiikka · Lataa JSON",
     "Diagnostiikka ja kalibrointi|Diagnostiikkakonsoli · Virtuaalinen ukkonen · Kompassin kalibrointi · Medaljongin kalibrointi · Suorituskyky",
     "Kompassin ulkoasu|Käytä ulkoasua · Grafiikkageometria",
@@ -337,6 +349,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Jazyk a nastavení|Překlad · O aplikaci · Nastavení · Texty nápovědy",
     "Stav zdrojů dat|Stav Blitzortung · Zobrazení stavu",
     "Výběr kompasu|Výběr designu · Vyskakovací okno · Výběr rámečku · Diagnostická geometrie",
+    "Katalog návrhů medailonu|Varianty návrhu · Přiřazení prostředků · Základní diagnostické profily",
     "Moduly a verze|Načtené moduly · Porovnání cílový/skutečný · Stav verzí · Podrobnosti modulů · Kopírovat diagnostiku · Stáhnout JSON",
     "Diagnostika a kalibrace|Diagnostická konzole · Virtuální bouřka · Kalibrace kompasu · Kalibrace medailonu · Výkon",
     "Design kompasu|Použít design · Grafická geometrie",
@@ -361,6 +374,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Γλώσσα & ρυθμίσεις|Μετάφραση · Πληροφορίες · Ρυθμίσεις · Κείμενα βοήθειας",
     "Κατάσταση πηγών δεδομένων|Κατάσταση Blitzortung · Ένδειξη κατάστασης",
     "Επιλογή πυξίδας|Επιλογή σχεδίου · Αναδυόμενο παράθυρο · Επιλογή πλαισίου · Διαγνωστική γεωμετρία",
+    "Κατάλογος σχεδίων μεταλλίου|Παραλλαγές σχεδίου · Αντιστοίχιση πόρων · Βασικά διαγνωστικά προφίλ",
     "Λειτουργικές μονάδες & εκδόσεις|Φορτωμένες λειτουργικές μονάδες · Σύγκριση αναμενόμενου/πραγματικού · Κατάσταση εκδόσεων · Λεπτομέρειες λειτουργικής μονάδας · Αντιγραφή διαγνωστικών · Λήψη JSON",
     "Διαγνωστικά & βαθμονόμηση|Κονσόλα διαγνωστικών · Εικονική καταιγίδα · Βαθμονόμηση πυξίδας · Βαθμονόμηση μεταλλίου · Επιδόσεις",
     "Σχεδίαση πυξίδας|Εφαρμογή σχεδίου · Γεωμετρία γραφικών",
@@ -385,6 +399,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Nyelv és beállítások|Fordítás · Névjegy · Beállítások · Súgószövegek",
     "Adatforrások állapota|Blitzortung-állapot · Állapotjelzés",
     "Iránytű kiválasztása|Kialakítás választása · Felugró ablak · Keretválasztás · Diagnosztikai geometria",
+    "Medáltervek katalógusa|Tervváltozatok · Erőforrás-hozzárendelés · Diagnosztikai alapprofilok",
     "Modulok és verziók|Betöltött modulok · Cél/tényleges összehasonlítás · Verzióállapot · Modulrészletek · Diagnosztika másolása · JSON letöltése",
     "Diagnosztika és kalibrálás|Diagnosztikai konzol · Virtuális vihar · Iránytű kalibrálása · Medál kalibrálása · Teljesítmény",
     "Iránytű kialakítása|Kialakítás alkalmazása · Grafikai geometria",
@@ -409,6 +424,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Sprach & Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
     "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
     "Kompassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
     "Module & Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiern · JSON runterladn",
     "Diagnose & Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
     "Kompassdesign|Design anwenden · Grafikgeometrie",
@@ -433,6 +449,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Spraak un Instellen|Översetten · Över · Instellen · Hülptexten",
     "Datenquellenstatus|Blitzortung-Status · Statuswiesen",
     "Kompassutwahl|Designutwahl · Popup · Rahmenutwahl · Diagnosegeometrie",
+    "Medaillon-Designkataloog|Designvarianten · Asset-Towiesen · Diagnose-Grundprofile",
     "Modulen un Verschoonen|Laden Modulen · Soll/Ist-Vergliek · Verschoonstatus · Modul-Details · Diagnose koperen · JSON dalladen",
     "Diagnose un Kalibreren|Diagnosekonsole · Virtuell Gewitter · Kompass-Kalibreren · Medaillon-Kalibreren · Leistung",
     "Kompassdesign|Design anwennen · Grafikgeometrie",
@@ -457,6 +474,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Sprache un Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
     "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
     "Gombassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
     "Module un Versionen|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiern · JSON runterladen",
     "Diagnose un Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Gombass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
     "Gombassdesign|Design anwenden · Grafikgeometrie",
@@ -481,6 +499,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Sproch ond Einstellungen|Übersetzung · Über · Einstellungen · Hilfetexte",
     "Datenquellenstatus|Blitzortung-Status · Statusanzeige",
     "Kompassauswahl|Designauswahl · Popup · Rahmenauswahl · Diagnosegeometrie",
+    "Medaillon-Designkatalog|Designvarianta · Asset-Zuordnung · Diagnose-Grundprofile",
     "Module ond Versiona|Geladene Module · Soll/Ist-Vergleich · Versionsstatus · Modul-Details · Diagnose kopiera · JSON runterlada",
     "Diagnose ond Kalibrierung|Diagnosekonsole · Virtuelles Gewitter · Kompass-Kalibrierung · Medaillon-Kalibrierung · Leistung",
     "Kompassdesign|Design anwenda · Grafikgeometrie",
@@ -492,33 +511,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm"
   ]
 });
-  const MEDALLION_MODULE_VIEW_META=Object.freeze({
-    "Deutsch":"Medaillon-Designkatalog|Designvarianten · Assetzuordnung · Diagnosegrundprofile",
-    "English":"Medallion design catalog|Design variants · Asset mapping · Diagnostic base profiles",
-    "Dansk":"Medaljondesignkatalog|Designvarianter · Aktivtilknytning · Grundprofiler til diagnostik",
-    "Español":"Catálogo de diseños de medallón|Variantes de diseño · Asignación de recursos · Perfiles base de diagnóstico",
-    "Français":"Catalogue de designs de médaillon|Variantes de design · Affectation des ressources · Profils de base de diagnostic",
-    "Nederlands":"Catalogus met medaillonontwerpen|Ontwerpvarianten · Toewijzing van assets · Basisprofielen voor diagnose",
-    "Polski":"Katalog wzorów medalionu|Warianty wzoru · Przypisanie zasobów · Bazowe profile diagnostyczne",
-    "Português":"Catálogo de designs do medalhão|Variantes de design · Associação de recursos · Perfis base de diagnóstico",
-    "Svenska":"Katalog för medaljongdesigner|Designvarianter · Resurskoppling · Grundprofiler för diagnostik",
-    "Italiano":"Catalogo dei design del medaglione|Varianti di design · Associazione risorse · Profili diagnostici di base",
-    "Norsk bokmål":"Katalog for medaljongdesign|Designvarianter · Ressurstilknytning · Grunnprofiler for diagnostikk",
-    "Suomi":"Medaljonkimuotoilujen luettelo|Muotoiluversiot · Resurssikytkentä · Diagnostiikan perusprofiilit",
-    "Čeština":"Katalog návrhů medailonu|Varianty návrhu · Přiřazení prostředků · Základní diagnostické profily",
-    "Ελληνικά":"Κατάλογος σχεδίων μεταλλίου|Παραλλαγές σχεδίου · Αντιστοίχιση πόρων · Βασικά διαγνωστικά προφίλ",
-    "Magyar":"Medáltervek katalógusa|Tervváltozatok · Erőforrás-hozzárendelés · Diagnosztikai alapprofilok",
-    "Boarisch":"Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
-    "Plattdüütsch":"Medaillon-Designkataloog|Designvarianten · Asset-Towiesen · Diagnose-Grundprofile",
-    "Sächs’sch":"Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
-    "Schwäbisch":"Medaillon-Designkatalog|Designvarianta · Asset-Zuordnung · Diagnose-Grundprofile"
-  });
   const modulePresentation=(language,row)=>{
-    if(row?.id==="instruments.medallion-designs"){
-      const packed=MEDALLION_MODULE_VIEW_META[language]||MEDALLION_MODULE_VIEW_META.Deutsch;
-      const divider=packed.indexOf("|");
-      return {name:packed.slice(0,divider),functions:packed.slice(divider+1)||"—"};
-    }
     const index=MODULE_VIEW_IDS.indexOf(row?.id);
     const table=MODULE_VIEW_META[language]||MODULE_VIEW_META.Deutsch;
     const packed=index>=0?table?.[index]:null;
