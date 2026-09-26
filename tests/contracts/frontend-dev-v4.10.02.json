@@ -55,7 +55,7 @@
       "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "7f90dbbb15dae43dfc1312b57641d76f856a7e75314cbb6b125d497a17c6861f",
+      "sha256": "b915273fbd74f04c84b3d44b68057aaaca27f85d420d913ea3298a21b14a3b11",
       "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
@@ -71,7 +71,7 @@
       "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
-      "sha256": "75fac351186ab14eef40d8a42ca7f486ea7a15bf86d0ab868a6cbf9c639b6a64",
+      "sha256": "3b120bb8adef40837ed0301e8cfcc8c91b26cbbc537f1d8b34d26d92920f754f",
       "sizeBytes": 27517
     },
     "modules/map/strikes-warnings.js": {
@@ -79,7 +79,7 @@
       "sizeBytes": 29127
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "ef62c30dce0983684814570906593049708fb5a3bae6c3656179ad589b52e3ab",
+      "sha256": "5a68490baf652440963006d4853a7aa756b55c2dffbc884197ac8ae80c1dd79e",
       "sizeBytes": 51301
     },
     "modules/ui/render.js": {
@@ -87,7 +87,7 @@
       "sizeBytes": 46994
     },
     "modules/instruments/compass.js": {
-      "sha256": "c7ec222b31d2daef6e99a01874fb2a8ddb79620495855a2308cd94c92959af5b",
+      "sha256": "1801aa8427aae3b66fb6235a3c56d0571ad870d7efbb450a4e7eda53dcf49db1",
       "sizeBytes": 20463
     },
     "modules/history/chart.js": {
