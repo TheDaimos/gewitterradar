@@ -37,6 +37,16 @@ jobs:
         run: |
           python -m json.tool hacs.json >/dev/null
           python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+          python -m json.tool deploy-relay.json >/dev/null
+          python -m json.tool deploy-relay-channel.json >/dev/null
+      - name: Verify Deploy Relay consumer contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          rollback_root="$(mktemp -d)"
+          git fetch --no-tags --depth=1 origin deploy/v4.09
+          git archive FETCH_HEAD deploy-relay.json custom_components/gewitterradar | tar -x -C "$rollback_root"
+          python scripts/verify-deploy-relay-contract.py --rollback-root "$rollback_root"
 
   home-assistant-runtime:
     runs-on: ubuntu-latest

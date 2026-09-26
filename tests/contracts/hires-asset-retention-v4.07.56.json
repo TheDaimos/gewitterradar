@@ -7,49 +7,258 @@
     "artwork/help-icons/legacy",
     "artwork/location-search/hires",
     "artwork/location-search/legacy",
-    "artwork/about-controls"
+    "artwork/about-controls",
+    "artwork/compass-chevron/hires"
   ],
   "requiredMetadataPaths": [
     "docs/ASSET_RETENTION_POLICY.md",
     "artwork/help-icons/README.md",
     "artwork/help-icons/provenance.json",
     "artwork/location-search/README.md",
-    "artwork/about-controls/provenance.json"
+    "artwork/about-controls/provenance.json",
+    "artwork/compass-chevron/README.md",
+    "artwork/compass-chevron/provenance.json"
   ],
   "protectedBlobs": [
-    {"label":"Help close master","preferredPath":"artwork/help-icons/hires/help-close.svg","gitBlobSha1":"2c14ad0df9251012faff039758406495b491f806","sizeBytes":2535},
-    {"label":"Help coordinate target master","preferredPath":"artwork/help-icons/hires/help-coordinate-target.svg","gitBlobSha1":"5134e71451b717cd7ffa2b0b68465d51b60845f4","sizeBytes":2822},
-    {"label":"Help defaults master","preferredPath":"artwork/help-icons/hires/help-defaults.svg","gitBlobSha1":"0254d61a87c3149ca6c906385133574bb96f02bc","sizeBytes":2766},
-    {"label":"Help external RJ45 master","preferredPath":"artwork/help-icons/hires/help-external-rj45.svg","gitBlobSha1":"6c8c507f0b64069e856dd939f9a6cfe36f66f34c","sizeBytes":3246},
-    {"label":"Help external shield master","preferredPath":"artwork/help-icons/hires/help-external-shield2.svg","gitBlobSha1":"39162def8e09fda8a5693fdfccc8a64f3673e99f","sizeBytes":3237},
-    {"label":"Help functions master","preferredPath":"artwork/help-icons/hires/help-functions.svg","gitBlobSha1":"cc9f740ca9f808dd2e6778516780c9508697603a","sizeBytes":2914},
-    {"label":"Help location master","preferredPath":"artwork/help-icons/hires/help-location.svg","gitBlobSha1":"8301ad8fb0981126c86c1192aafdbebf03c14934","sizeBytes":2897},
-    {"label":"Help prerequisites master","preferredPath":"artwork/help-icons/hires/help-prerequisites.svg","gitBlobSha1":"bfef020500874ef67e0c8709357b22d6e01ab4c5","sizeBytes":2802},
-    {"label":"Help question v2 master","preferredPath":"artwork/help-icons/hires/help-question-v2.svg","gitBlobSha1":"c24e5075293fe24e738a8327991c7d21bc452c8d","sizeBytes":3299},
-    {"label":"Help question v3 master","preferredPath":"artwork/help-icons/hires/help-question-v3.svg","gitBlobSha1":"85b561bb790ef6aaaa9ddb45a81c07976b9bbe68","sizeBytes":2866},
-    {"label":"Help question v4 master","preferredPath":"artwork/help-icons/hires/help-question-v4.svg","gitBlobSha1":"04489cb45530edb7c5ba320a35841960a7ba230a","sizeBytes":2374},
-    {"label":"Help question v5 master","preferredPath":"artwork/help-icons/hires/help-question-v5.svg","gitBlobSha1":"de3cee756321065ff202e0112c4d7a89694ed1f2","sizeBytes":2399},
-    {"label":"Help question original master","preferredPath":"artwork/help-icons/hires/help-question.svg","gitBlobSha1":"646f6db339f4606ae0d21fe15977b0d8d3e782c6","sizeBytes":2884},
-    {"label":"Help radii v2 master","preferredPath":"artwork/help-icons/hires/help-radii-v2.svg","gitBlobSha1":"1a580c0db33fd4da2ede1e3a033c6c15d8fd8a24","sizeBytes":1215},
-    {"label":"Help radii original master","preferredPath":"artwork/help-icons/hires/help-radii.svg","gitBlobSha1":"2a465ff35eb124ee3672691289ffa83f0d188524","sizeBytes":2903},
-    {"label":"Help recorder master","preferredPath":"artwork/help-icons/hires/help-recorder.svg","gitBlobSha1":"b3e0016ed518ccd24451afec8c004213b1da501e","sizeBytes":2834},
-    {"label":"Help troubleshooting v2 master","preferredPath":"artwork/help-icons/hires/help-troubleshooting-v2.svg","gitBlobSha1":"4b48a625dac7d63e21698cc561f4dbd9cb96ab4f","sizeBytes":3294},
-    {"label":"Help troubleshooting v3 master","preferredPath":"artwork/help-icons/hires/help-troubleshooting-v3.svg","gitBlobSha1":"0b64680fcb831f71b2fb34d10230e1a0eeb29061","sizeBytes":2998},
-    {"label":"Help troubleshooting v4 master","preferredPath":"artwork/help-icons/hires/help-troubleshooting-v4.svg","gitBlobSha1":"b49fc0589f3997c4c3f5bf2e1746dbb4033dadac","sizeBytes":2338},
-    {"label":"Help troubleshooting v5 master","preferredPath":"artwork/help-icons/hires/help-troubleshooting-v5.svg","gitBlobSha1":"6791804b7d95ebb66d495d82bdb5bbd1bde58916","sizeBytes":2329},
-    {"label":"Help troubleshooting original master","preferredPath":"artwork/help-icons/hires/help-troubleshooting.svg","gitBlobSha1":"fd2bfd57aab7942ca0d61b34decfa7a15f46b53f","sizeBytes":2833},
-
-    {"label":"Location premium close master","preferredPath":"artwork/location-search/hires/gewitterradar-close-premium-v1.png","gitBlobSha1":"c73ec10425b9f412b3d910469bbb09fd2e5b305b","sizeBytes":1505813},
-    {"label":"Location coordinate target V4.07.38 master","preferredPath":"artwork/location-search/hires/gewitterradar-coordinate-target-master-v40738.svg","gitBlobSha1":"4ff90f550f3c3401b234ca3c6effb6dce39f02f7","sizeBytes":4701},
-    {"label":"Location coordinate target current master","preferredPath":"artwork/location-search/hires/gewitterradar-coordinate-target-master.svg","gitBlobSha1":"b1775079e8027c4a5f2188ac8ce44f78019cab0a","sizeBytes":2821},
-    {"label":"Location coordinate target premium master","preferredPath":"artwork/location-search/hires/gewitterradar-coordinate-target-premium-v1.png","gitBlobSha1":"ab99687c5f3fab6d89db51c6d6d698ad36a7c26e","sizeBytes":1427541},
-    {"label":"Location help info premium master","preferredPath":"artwork/location-search/hires/gewitterradar-help-info-premium-v1.png","gitBlobSha1":"86202eca9747d92d7840c256cd0f86150451a4a6","sizeBytes":1504290},
-    {"label":"Location hint bulb premium master","preferredPath":"artwork/location-search/hires/gewitterradar-hint-bulb-premium-v1.png","gitBlobSha1":"2cccca599b1e322a42fae71b31c86677abdd3131","sizeBytes":1228572},
-    {"label":"Location globe premium master","preferredPath":"artwork/location-search/hires/gewitterradar-location-globe-premium-v1.png","gitBlobSha1":"0b9fc5bd234f40b3c713ab056c95a35083f0638e","sizeBytes":1752025},
-    {"label":"Location search loupe premium master","preferredPath":"artwork/location-search/hires/gewitterradar-search-loupe-premium-v1.png","gitBlobSha1":"5636cf997a113305bb2d9d3d04fa3dc2efd1f84b","sizeBytes":971024},
-
-    {"label":"About close original Hi-Res master","preferredPath":"artwork/about-controls/closing.png","gitBlobSha1":"3ff0b617c30289351a3a0e876dd34651a1b6080d","sizeBytes":2124661},
-    {"label":"About copy original Hi-Res master","preferredPath":"artwork/about-controls/copy.png","gitBlobSha1":"9b0e4788eb2419608113f846d5466d05c64ea816","sizeBytes":1978349},
-    {"label":"About close V4.06 retained legacy artwork","preferredPath":"artwork/about-controls/legacy/v4.06/gewitterradar-about-close-premium.webp","gitBlobSha1":"53e1b5e12fc660db172853a7b3d243b2d7c25dd8","sizeBytes":59276}
+    {
+      "label": "Help close master",
+      "preferredPath": "artwork/help-icons/hires/help-close.svg",
+      "gitBlobSha1": "2c14ad0df9251012faff039758406495b491f806",
+      "sizeBytes": 2535
+    },
+    {
+      "label": "Help coordinate target master",
+      "preferredPath": "artwork/help-icons/hires/help-coordinate-target.svg",
+      "gitBlobSha1": "5134e71451b717cd7ffa2b0b68465d51b60845f4",
+      "sizeBytes": 2822
+    },
+    {
+      "label": "Help defaults master",
+      "preferredPath": "artwork/help-icons/hires/help-defaults.svg",
+      "gitBlobSha1": "0254d61a87c3149ca6c906385133574bb96f02bc",
+      "sizeBytes": 2766
+    },
+    {
+      "label": "Help external RJ45 master",
+      "preferredPath": "artwork/help-icons/hires/help-external-rj45.svg",
+      "gitBlobSha1": "6c8c507f0b64069e856dd939f9a6cfe36f66f34c",
+      "sizeBytes": 3246
+    },
+    {
+      "label": "Help external shield master",
+      "preferredPath": "artwork/help-icons/hires/help-external-shield2.svg",
+      "gitBlobSha1": "39162def8e09fda8a5693fdfccc8a64f3673e99f",
+      "sizeBytes": 3237
+    },
+    {
+      "label": "Help functions master",
+      "preferredPath": "artwork/help-icons/hires/help-functions.svg",
+      "gitBlobSha1": "cc9f740ca9f808dd2e6778516780c9508697603a",
+      "sizeBytes": 2914
+    },
+    {
+      "label": "Help location master",
+      "preferredPath": "artwork/help-icons/hires/help-location.svg",
+      "gitBlobSha1": "8301ad8fb0981126c86c1192aafdbebf03c14934",
+      "sizeBytes": 2897
+    },
+    {
+      "label": "Help prerequisites master",
+      "preferredPath": "artwork/help-icons/hires/help-prerequisites.svg",
+      "gitBlobSha1": "bfef020500874ef67e0c8709357b22d6e01ab4c5",
+      "sizeBytes": 2802
+    },
+    {
+      "label": "Help question v2 master",
+      "preferredPath": "artwork/help-icons/hires/help-question-v2.svg",
+      "gitBlobSha1": "c24e5075293fe24e738a8327991c7d21bc452c8d",
+      "sizeBytes": 3299
+    },
+    {
+      "label": "Help question v3 master",
+      "preferredPath": "artwork/help-icons/hires/help-question-v3.svg",
+      "gitBlobSha1": "85b561bb790ef6aaaa9ddb45a81c07976b9bbe68",
+      "sizeBytes": 2866
+    },
+    {
+      "label": "Help question v4 master",
+      "preferredPath": "artwork/help-icons/hires/help-question-v4.svg",
+      "gitBlobSha1": "04489cb45530edb7c5ba320a35841960a7ba230a",
+      "sizeBytes": 2374
+    },
+    {
+      "label": "Help question v5 master",
+      "preferredPath": "artwork/help-icons/hires/help-question-v5.svg",
+      "gitBlobSha1": "de3cee756321065ff202e0112c4d7a89694ed1f2",
+      "sizeBytes": 2399
+    },
+    {
+      "label": "Help question original master",
+      "preferredPath": "artwork/help-icons/hires/help-question.svg",
+      "gitBlobSha1": "646f6db339f4606ae0d21fe15977b0d8d3e782c6",
+      "sizeBytes": 2884
+    },
+    {
+      "label": "Help radii v2 master",
+      "preferredPath": "artwork/help-icons/hires/help-radii-v2.svg",
+      "gitBlobSha1": "1a580c0db33fd4da2ede1e3a033c6c15d8fd8a24",
+      "sizeBytes": 1215
+    },
+    {
+      "label": "Help radii original master",
+      "preferredPath": "artwork/help-icons/hires/help-radii.svg",
+      "gitBlobSha1": "2a465ff35eb124ee3672691289ffa83f0d188524",
+      "sizeBytes": 2903
+    },
+    {
+      "label": "Help recorder master",
+      "preferredPath": "artwork/help-icons/hires/help-recorder.svg",
+      "gitBlobSha1": "b3e0016ed518ccd24451afec8c004213b1da501e",
+      "sizeBytes": 2834
+    },
+    {
+      "label": "Help troubleshooting v2 master",
+      "preferredPath": "artwork/help-icons/hires/help-troubleshooting-v2.svg",
+      "gitBlobSha1": "4b48a625dac7d63e21698cc561f4dbd9cb96ab4f",
+      "sizeBytes": 3294
+    },
+    {
+      "label": "Help troubleshooting v3 master",
+      "preferredPath": "artwork/help-icons/hires/help-troubleshooting-v3.svg",
+      "gitBlobSha1": "0b64680fcb831f71b2fb34d10230e1a0eeb29061",
+      "sizeBytes": 2998
+    },
+    {
+      "label": "Help troubleshooting v4 master",
+      "preferredPath": "artwork/help-icons/hires/help-troubleshooting-v4.svg",
+      "gitBlobSha1": "b49fc0589f3997c4c3f5bf2e1746dbb4033dadac",
+      "sizeBytes": 2338
+    },
+    {
+      "label": "Help troubleshooting v5 master",
+      "preferredPath": "artwork/help-icons/hires/help-troubleshooting-v5.svg",
+      "gitBlobSha1": "6791804b7d95ebb66d495d82bdb5bbd1bde58916",
+      "sizeBytes": 2329
+    },
+    {
+      "label": "Help troubleshooting original master",
+      "preferredPath": "artwork/help-icons/hires/help-troubleshooting.svg",
+      "gitBlobSha1": "fd2bfd57aab7942ca0d61b34decfa7a15f46b53f",
+      "sizeBytes": 2833
+    },
+    {
+      "label": "Location premium close master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-close-premium-v1.png",
+      "gitBlobSha1": "c73ec10425b9f412b3d910469bbb09fd2e5b305b",
+      "sizeBytes": 1505813
+    },
+    {
+      "label": "Location coordinate target V4.07.38 master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-coordinate-target-master-v40738.svg",
+      "gitBlobSha1": "4ff90f550f3c3401b234ca3c6effb6dce39f02f7",
+      "sizeBytes": 4701
+    },
+    {
+      "label": "Location coordinate target current master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-coordinate-target-master.svg",
+      "gitBlobSha1": "b1775079e8027c4a5f2188ac8ce44f78019cab0a",
+      "sizeBytes": 2821
+    },
+    {
+      "label": "Location coordinate target premium master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-coordinate-target-premium-v1.png",
+      "gitBlobSha1": "ab99687c5f3fab6d89db51c6d6d698ad36a7c26e",
+      "sizeBytes": 1427541
+    },
+    {
+      "label": "Location help info premium master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-help-info-premium-v1.png",
+      "gitBlobSha1": "86202eca9747d92d7840c256cd0f86150451a4a6",
+      "sizeBytes": 1504290
+    },
+    {
+      "label": "Location hint bulb premium master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-hint-bulb-premium-v1.png",
+      "gitBlobSha1": "2cccca599b1e322a42fae71b31c86677abdd3131",
+      "sizeBytes": 1228572
+    },
+    {
+      "label": "Location globe premium master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-location-globe-premium-v1.png",
+      "gitBlobSha1": "0b9fc5bd234f40b3c713ab056c95a35083f0638e",
+      "sizeBytes": 1752025
+    },
+    {
+      "label": "Location search loupe premium master",
+      "preferredPath": "artwork/location-search/hires/gewitterradar-search-loupe-premium-v1.png",
+      "gitBlobSha1": "5636cf997a113305bb2d9d3d04fa3dc2efd1f84b",
+      "sizeBytes": 971024
+    },
+    {
+      "label": "About close original Hi-Res master",
+      "preferredPath": "artwork/about-controls/closing.png",
+      "gitBlobSha1": "3ff0b617c30289351a3a0e876dd34651a1b6080d",
+      "sizeBytes": 2124661
+    },
+    {
+      "label": "About copy original Hi-Res master",
+      "preferredPath": "artwork/about-controls/copy.png",
+      "gitBlobSha1": "9b0e4788eb2419608113f846d5466d05c64ea816",
+      "sizeBytes": 1978349
+    },
+    {
+      "label": "About close V4.06 retained legacy artwork",
+      "preferredPath": "artwork/about-controls/legacy/v4.06/gewitterradar-about-close-premium.webp",
+      "gitBlobSha1": "53e1b5e12fc660db172853a7b3d243b2d7c25dd8",
+      "sizeBytes": 59276
+    },
+    {
+      "label": "Compass chevron brass left Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-left-brass-hires.svg",
+      "gitBlobSha1": "a13e77a25f8081a6ce1295e98c7411cbebd20c00",
+      "sizeBytes": 4909
+    },
+    {
+      "label": "Compass chevron brass right Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-right-brass-hires.svg",
+      "gitBlobSha1": "134ac99131f42b1d16f85e460a197355bc293ade",
+      "sizeBytes": 4912
+    },
+    {
+      "label": "Compass chevron brass up Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-up-brass-hires.svg",
+      "gitBlobSha1": "bac6b3702b9d9aa58a469869501f4e7b165e69b3",
+      "sizeBytes": 4908
+    },
+    {
+      "label": "Compass chevron brass down Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-down-brass-hires.svg",
+      "gitBlobSha1": "c1314dd530fd1c2b5cacef40651249261f861a20",
+      "sizeBytes": 4911
+    },
+    {
+      "label": "Compass chevron silver left Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-left-silver-hires.svg",
+      "gitBlobSha1": "fce7231f597e8644e049d7aaf62f096c7aa81499",
+      "sizeBytes": 4910
+    },
+    {
+      "label": "Compass chevron silver right Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-right-silver-hires.svg",
+      "gitBlobSha1": "6b192ea51fb19948b3396a2a3cb9211b46d9b464",
+      "sizeBytes": 4913
+    },
+    {
+      "label": "Compass chevron silver up Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-up-silver-hires.svg",
+      "gitBlobSha1": "9c2bd20fcc676807e2d30ab5154db0af2b88bb66",
+      "sizeBytes": 4909
+    },
+    {
+      "label": "Compass chevron silver down Hi-Res master",
+      "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-down-silver-hires.svg",
+      "gitBlobSha1": "46e272513a9ba451a6bb25d77e1978813fba0e61",
+      "sizeBytes": 4912
+    }
   ]
 }

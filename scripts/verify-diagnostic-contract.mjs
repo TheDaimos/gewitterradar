@@ -1,5 +1,5 @@
-import { readFile, access } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, access, readdir } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
 
 const root = process.cwd();
 const protectedSince = [4, 7, 56];
@@ -34,6 +34,26 @@ function section(source, startMarker, endMarker, label) {
     return '';
   }
   return source.slice(start, end);
+}
+
+
+async function readModularSource(entryPath, source) {
+  const version = parseVersion(source);
+  if (!version || !atLeast(version, [4, 10, 2])) return source;
+  const moduleRoot = resolve(dirname(entryPath), 'modules');
+  const chunks = [source];
+  async function walk(dir) {
+    let entries = [];
+    try { entries = await readdir(dir, { withFileTypes: true }); } catch { return; }
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const path = resolve(dir, entry.name);
+      if (entry.isDirectory()) await walk(path);
+      else if (entry.isFile() && entry.name.endsWith('.js')) chunks.push(await readFile(path, 'utf8'));
+    }
+  }
+  await walk(moduleRoot);
+  return chunks.join('\n');
 }
 
 function verifyContract(source, label, languages) {
@@ -163,7 +183,8 @@ for (const rel of [...new Set(candidates)]) {
   const source = await readFile(path, 'utf8');
   const version = parseVersion(source);
   if (process.env.DIAGNOSTIC_SOURCE || atLeast(version, protectedSince)) {
-    verifyContract(source, `${rel}${version ? ` @ ${version.join('.')}` : ''}`, manifest.requiredLanguages);
+    const contractSource = await readModularSource(path, source);
+    verifyContract(contractSource, `${rel}${version ? ` @ ${version.join('.')}` : ''}`, manifest.requiredLanguages);
     checkedCurrent += 1;
   }
 }

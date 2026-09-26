@@ -26,7 +26,12 @@ jobs:
         run: node scripts/test-frontend-build.mjs
 
       - name: Frontend JavaScript syntax
-        run: node --check frontend/gewitterradar.js
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            echo "syntax: $file"
+            node --check "$file"
+          done < <(find frontend -type f -name '*.js' -print0 | sort -z)
 
       - name: About and Help locale contract
         run: node scripts/test-about-locales.mjs
@@ -53,6 +58,12 @@ jobs:
 
       - name: V4.08 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Medallion asset contract
+        run: node scripts/test-medallion-assets.cjs
+
+      - name: Instrument picker diagnostics
+        run: node scripts/test-picker-diagnostics.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: V4.08 About geometry against protected V4.07.56 golden contract
         run: node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")"

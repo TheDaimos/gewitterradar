@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {createRequire} from 'node:module';
+import {runInNewContext} from 'node:vm';
 import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readAboutLocaleModel,readExternalAboutLocales} from './verify-about-locales.mjs';
@@ -9,7 +10,8 @@ import {readAboutLocaleModel,readExternalAboutLocales} from './verify-about-loca
 const root = fileURLToPath(new URL('..',import.meta.url));
 const source = await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
 const externalSource = await readFile(resolve(root,'frontend/locales/about-locales.js'),'utf8');
-const model = readAboutLocaleModel(source,externalSource);
+const baseContextSource = await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8');
+const model = readAboutLocaleModel(source,externalSource,baseContextSource);
 const clone = value => JSON.parse(JSON.stringify(value));
 const validate = locales => model.validate(locales,model.settings,model.languages,model.recorderYaml);
 const allLocales = {...model.locales,...model.externalLocales};
@@ -49,7 +51,7 @@ invalid(locales => locales.Englisch = clone(locales.English));
 invalid(locales => locales.Dansk = {strings: clone(locales.English.strings)});
 invalid(locales => locales.English.extraGroup = {});
 // Exercise the strict build/verify entry point, not just a separately called validator.
-assert.throws(() => readAboutLocaleModel(source.replace('strings: ABOUT_STRINGS.English,','strings: {},'),externalSource),/About keys differ/);
+assert.throws(() => readAboutLocaleModel(source,externalSource,baseContextSource.replace('strings: ABOUT_STRINGS.English,','strings: {},')),/About keys differ/);
 assert.throws(() => readExternalAboutLocales(externalSource.replace('export const ABOUT_EXTERNAL_LOCALES = ','const ABOUT_EXTERNAL_LOCALES = ')),/External About locale export changed/);
 
 for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes']) {
@@ -67,6 +69,31 @@ model.installExternal(model.externalAboutLocales,model.externalHelpLocales);
 for (const {value: language} of model.languages) assert.deepEqual(clone(model.resolve(language)),clone(allLocales[language]));
 console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} invalid schema/runtime mutations; strict validation rejects every incomplete bundle.`);
 
+const i18nModuleSource = await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
+const settingsTranslationsPrefix = 'const SETTINGS_UI_TRANSLATIONS=Object.freeze(';
+const settingsTranslationsStart = i18nModuleSource.indexOf(settingsTranslationsPrefix);
+const settingsTranslationsEnd = i18nModuleSource.indexOf(');\nexport const installI18nSettings',settingsTranslationsStart);
+if (settingsTranslationsStart < 0 || settingsTranslationsEnd < 0) throw Error('Settings UI translation registry missing');
+const settingsUiTranslations = JSON.parse(i18nModuleSource.slice(settingsTranslationsStart + settingsTranslationsPrefix.length,settingsTranslationsEnd));
+const i18nContext = {};
+const executableI18nModule = i18nModuleSource
+  .replace(/^import\s+.*;\s*$/gm,'')
+  .replace(/export const MODULE_META=/,'const MODULE_META=')
+  .replace(/export const installI18nSettings=/,'globalThis.installI18nSettings=');
+i18nContext.defineModule = (_meta,factory) => {
+  i18nContext.i18nFactory = factory;
+  return () => {};
+};
+runInNewContext(executableI18nModule,i18nContext,{timeout:3000,filename:'i18n-settings.js'});
+if (typeof i18nContext.i18nFactory !== 'function') throw Error('Modular i18n factory was not captured');
+const i18nMethods = i18nContext.i18nFactory({
+  I18N:model.app,
+  LANGUAGE_DEFAULT:model.defaultLanguage,
+  resolveAboutLocale:model.resolve
+});
+if (typeof i18nMethods?._t !== 'function') throw Error('Modular _t method missing');
+Object.defineProperty(model.Card.prototype,'_t',{configurable:true,writable:true,value:i18nMethods._t});
+
 const card = Object.create(model.Card.prototype);
 let appChecks = 0;
 for (const {value: language} of model.languages) {
@@ -78,7 +105,9 @@ for (const {value: language} of model.languages) {
   const table = model.app[language]?.strings || fallback;
   for (const key of new Set([...Object.keys(table),...Object.keys(fallback),...Object.keys(model.app.Deutsch.strings)])) {
     if (key.startsWith('about.')) continue;
-    assert.equal(card._t(key),String(table[key] ?? fallback[key] ?? model.app.Deutsch.strings[key] ?? key),language+': '+key);
+    const extra = settingsUiTranslations[language] || settingsUiTranslations[model.defaultLanguage] || {};
+    const extraFallback = settingsUiTranslations[model.defaultLanguage] || {};
+    assert.equal(card._t(key),String(extra[key] ?? table[key] ?? extraFallback[key] ?? fallback[key] ?? model.app.Deutsch.strings[key] ?? key),language+': '+key);
     appChecks++;
   }
 }
@@ -95,6 +124,16 @@ if (process.argv[2]) {
   let rejectExternalLocales = false;
   const server = createServer(async (req,res) => {
     const url = new URL(req.url,'http://localhost');
+    if (url.pathname === '/cockpit-parser-probe.html') {
+      res.setHeader('Content-Type','text/html');
+      res.end(`<!doctype html><meta charset="utf-8"><script>
+        window.__cockpitParserError=null;
+        window.addEventListener('error',event=>{
+          window.__cockpitParserError={message:event.message,filename:event.filename,lineno:event.lineno,colno:event.colno};
+        });
+      </script><script type="module" src="/frontend/modules/diagnostics/cockpit.js"></script>`);
+      return;
+    }
     if (url.pathname === '/about-locale-lazy-probe.html') {
       const delivery = url.searchParams.get('delivery');
       const mainQuery = url.searchParams.get('mainQuery');
@@ -114,7 +153,7 @@ if (process.argv[2]) {
       if (file.endsWith(sep+'gewitterradar.js')) {
         const js = bytes.toString();
         if (js.split(anchor).length !== 2) throw Error('Browser registry anchor changed');
-        bytes = Buffer.from(js.replace(anchor,'  window.aboutLocaleRegistry = LANGUAGE_DEFINITIONS;\n  window.aboutLocaleDebug = {resolve:resolveAboutLocale};\n'+anchor));
+        bytes = Buffer.from(js.replace(anchor,'  window.aboutLocaleRegistry = __moduleDeps.LANGUAGE_DEFINITIONS;\n  window.aboutLocaleDebug = {resolve:__moduleDeps.resolveAboutLocale};\n'+anchor));
       }
       res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.png':'image/png','.webp':'image/webp'})[extname(file)]||'text/plain');
       res.end(bytes);
@@ -124,12 +163,37 @@ if (process.argv[2]) {
   let browser;
   try {
     browser = await chromium.launch({executablePath:process.argv[2],headless:true});
+
+    {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      const parserErrors = [];
+      page.on('pageerror',error => parserErrors.push({message:error.message,stack:error.stack}));
+      await page.goto(`http://127.0.0.1:${server.address().port}/cockpit-parser-probe.html`);
+      await page.waitForTimeout(500);
+      const browserError = await page.evaluate(() => window.__cockpitParserError || null);
+      if (browserError || parserErrors.length) {
+        throw Error('cockpit browser parser probe: '+JSON.stringify({browserError,parserErrors}));
+      }
+      await context.close();
+    }
+
     for (const delivery of ['dashboard','integration']) {
       const context = await browser.newContext({viewport:{width:900,height:1000}});
       const page = await context.newPage();
+      const browserDiagnostics={pageErrors:[],consoleErrors:[],requestFailures:[]};
+      page.on('pageerror',error=>browserDiagnostics.pageErrors.push({message:error.message,stack:error.stack}));
+      page.on('console',message=>{if(message.type()==='error')browserDiagnostics.consoleErrors.push(message.text());});
+      page.on('requestfailed',request=>browserDiagnostics.requestFailures.push({url:request.url(),failure:request.failure()}));
       await page.goto(`http://127.0.0.1:${server.address().port}/scripts/about-onboarding-harness.html?scenario=first&delivery=${delivery}`);
-      await page.waitForFunction(() => window.aboutResult);
-      assert.equal((await page.evaluate(() => window.aboutResult)).status,'PASS');
+      try{
+        await page.waitForFunction(() => window.aboutResult,{timeout:90000});
+      }catch(error){
+        const harnessState=await page.evaluate(()=>({result:window.aboutResult||null,resultText:document.querySelector('#result')?.textContent||null,readyState:document.readyState,customElement:!!customElements.get('gewitterradar-card'),bodyText:document.body?.innerText?.slice(0,3000)||''}));
+        throw Error(delivery+' About harness timeout: '+JSON.stringify({harnessState,browserDiagnostics,cause:error.message}));
+      }
+      const aboutResult = await page.evaluate(() => window.aboutResult);
+      assert.equal(aboutResult.status,'PASS',delivery+': '+JSON.stringify(aboutResult));
       const languages = await page.evaluate(() => window.aboutLocaleRegistry.map(entry => entry.value));
       assert.deepEqual(languages,clone(model.languages).map(entry => entry.value));
       for (const language of languages) {

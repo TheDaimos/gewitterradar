@@ -1,0 +1,122 @@
+{
+  "contractVersion": 1,
+  "version": "4.10.02",
+  "status": "DEV",
+  "baseVersion": "4.10.01",
+  "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
+  "sha256": "62ebcd415d97a1c79c91a93655953ada792f1d3cb36f580444fd4fbc9efa0ca6",
+  "sizeBytes": 8365,
+  "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
+  "localeSizeBytes": 741069,
+  "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
+  "moduleFiles": {
+    "module-manifest.js": {
+      "sha256": "a4b66d23a527e9575d306b837017c752391d603e5f19d22839a845f6d6250e1c",
+      "sizeBytes": 7053
+    },
+    "modules/core/registry.js": {
+      "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
+      "sizeBytes": 4835
+    },
+    "modules/core/runtime.js": {
+      "sha256": "d53660245a4fb015c70ef6be7358920dd3837ee2e4a44cf3624a4b0b28070827",
+      "sizeBytes": 556
+    },
+    "modules/core/card-lifecycle.js": {
+      "sha256": "942d14535e287699790a54ea5aaca1329b98d7cd9a82b137d978b56a605f36e6",
+      "sizeBytes": 33487
+    },
+    "modules/fullscreen/map-display.js": {
+      "sha256": "81c519929c34aed3ff4201d5ca47ee34ca3348c9b971e5d467758001389ca2b9",
+      "sizeBytes": 91178
+    },
+    "modules/ui/scroll-guard.js": {
+      "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
+      "sizeBytes": 34303
+    },
+    "modules/ui/skeleton.js": {
+      "sha256": "de9e435fd84baae889b7c5cfe878e59e7fd6dfecbffd02595ee4965bc3af51d9",
+      "sizeBytes": 423629
+    },
+    "modules/instruments/compass-scale.js": {
+      "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
+      "sizeBytes": 16920
+    },
+    "modules/ui/controls.js": {
+      "sha256": "a0e787a1cc1c5128dc1d8275f48cdb2e18873814b036c0b98369fcaf4e4dba44",
+      "sizeBytes": 183042
+    },
+    "modules/ui/i18n-settings.js": {
+      "sha256": "47c90186a06689f555a6618d7a207eecc198a794810ab0b63b67d45c02eb9ba6",
+      "sizeBytes": 189853
+    },
+    "modules/core/source-status.js": {
+      "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",
+      "sizeBytes": 4692
+    },
+    "modules/instruments/compass-selector.js": {
+      "sha256": "76f63f03381423376fb72bb51bf9ee1d3c9ff1acbb08c295d612b81660f9a7ea",
+      "sizeBytes": 13613
+    },
+    "modules/diagnostics/module-view.js": {
+      "sha256": "a63d84bb194f0ecf4102bfb3cdd5eeb30e6ca76ebf6a7d471cb9533c8d3037ca",
+      "sizeBytes": 77655
+    },
+    "modules/diagnostics/cockpit.js": {
+      "sha256": "383d3fde972c4a44ab2803a831a836bb536264262814ee0c548239aeecde9156",
+      "sizeBytes": 207709
+    },
+    "modules/instruments/compass-design.js": {
+      "sha256": "6f871d4f93c13bf95e38474c886a536bba29f28e708da72859c1a562e24356ee",
+      "sizeBytes": 6303
+    },
+    "modules/location/radii-map.js": {
+      "sha256": "8a9fbc5ad22593ecc93db2eddfc345e1943fe830f4d5b88ff8a64c6af34fb437",
+      "sizeBytes": 27517
+    },
+    "modules/map/strikes-warnings.js": {
+      "sha256": "9b8004abaef7a1f754bc69f23a68d71c9b8141205d84f966edef1523a08cc746",
+      "sizeBytes": 29127
+    },
+    "modules/map/clusters-recent.js": {
+      "sha256": "a938a26ca9f48ebd74ae2587dfbf7e2c43857fa755bc28336d39f63d43653288",
+      "sizeBytes": 51301
+    },
+    "modules/ui/render.js": {
+      "sha256": "b4f4c27c1345e02d09caf0b15a1443fe2e4e5509c7e3ed6a0a8e8d48fe73ee8e",
+      "sizeBytes": 46994
+    },
+    "modules/instruments/compass.js": {
+      "sha256": "d2707343b9ae86b4a8268c761cc2967ac1c427e3a40b533609af1785b310ab71",
+      "sizeBytes": 20463
+    },
+    "modules/history/chart.js": {
+      "sha256": "018eaa20a1ba726b03652c8cd62225e98ab63ba8ee4ddb70f9b7c755b5832ad6",
+      "sizeBytes": 39345
+    },
+    "modules/core/base-context.js": {
+      "sha256": "f652bbdc2dbea876a1b7b986a42998c34226b130e30121afc5e173de44f7de17",
+      "sizeBytes": 1052907
+    },
+    "modules/fullscreen/compass-picker-chevron-left-brass.js": {
+      "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
+      "sizeBytes": 14334
+    },
+    "modules/fullscreen/compass-picker-chevron-right-brass.js": {
+      "sha256": "4e95a35cb4dffd14c85993072e14f30bad7c9d429d8b6a873ee6c1b576e59cb2",
+      "sizeBytes": 14890
+    },
+    "modules/fullscreen/compass-picker-chevron-left-silver.js": {
+      "sha256": "54f37569f42106dd48eedc56dc8e7ac5807af337d815960215aa4ea648fca28b",
+      "sizeBytes": 11494
+    },
+    "modules/fullscreen/compass-picker-chevron-right-silver.js": {
+      "sha256": "7e58c3b8ab828f6115aa2cbac8740526f1979def3244255dda9703425b3cb082",
+      "sizeBytes": 12106
+    },
+    "modules/instruments/medallion-designs.js": {
+      "sha256": "01921a5dc6a125a40d8ef96d9507675491799ef07b26024f3eb512e9d4d19180",
+      "sizeBytes": 3448
+    }
+  }
+}

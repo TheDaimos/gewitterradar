@@ -99,3 +99,8 @@ Vor jedem Merge in `main` und vor jedem öffentlichen Release muss ein Asset-Aud
 ## Fail-safe-Regel
 
 Im Zweifel gilt immer: **behalten, archivieren, nicht löschen.**
+
+
+## Geschützte Kompass-Chevrons
+
+Die Hi-Res-Chevrons der Kompassauswahl liegen dauerhaft unter `artwork/compass-chevron/hires/`. Die Materialfamilien **Messing** und **Alt-Silber** sowie die Richtungen **links/rechts/oben/unten** sind eigenständige geschützte Master-Assets. Laufzeitkopien ersetzen diese Master ausdrücklich nicht. Neue oder ersetzte Chevron-Master müssen vor Aufnahme in den geschützten Repositoryzustand im Hi-Res-Retentionsvertrag registriert werden.

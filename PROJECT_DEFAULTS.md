@@ -15,6 +15,53 @@ Bevorzugte Bootstrap-Mnemoniken, vollständig gleichwertig:
 
 Alle Bootstrap-Aliase sind fail-closed: Die aktuelle `TheDaimos/project-defaults/START_HERE.md` muss tatsächlich geladen und befolgt werden, bevor Arbeitsbereitschaft erklärt wird. Ein alleinstehendes `Deimos`/`Daimos` darf nicht zuerst aus Erinnerung oder nur als Projektbezug beantwortet werden.
 
+## Harte V4.10-Regel: Deploy Relay Agent ist Pflichtpfad
+
+Die V4.10-Modularisierung von Gewitterradar muss **vollständig über Deploy Relay Agent (DRA)** entwickelbar, installierbar, aktualisierbar, prüfbar und wiederherstellbar sein.
+
+Verbindlich gilt:
+
+- DRA muss den vollständigen modularen Frontend-Baum als einen konsistenten Gewitterradar-Stand deployen können.
+- DRA muss geänderte Module erkennen können, ohne dass der Benutzer einzelne JS-Dateien manuell registrieren oder kopieren muss.
+- Der stabile Gewitterradar-Einstiegspunkt bleibt erhalten; Unter-Module werden nicht einzeln in Home Assistant registriert.
+- DRA muss die installierte Gewitterradar-Anwendungsversion und den zugehörigen Commit nachvollziehen können.
+- DRA muss Snapshots vor Änderungen erstellen und gezielte Wiederherstellung älterer Gewitterradar-Stände ermöglichen.
+- Die Snapshot-Aufbewahrung ist pro Projekt konfigurierbar.
+- DRA muss Frontend-Neuladen, Integrations-Neuladen und vollständigen Home-Assistant-Neustart korrekt unterscheiden und anzeigen.
+- Das Gewitterradar-Menü `Module & Versionen` muss den tatsächlich im Browser geladenen Modulstand zeigen; DRA liefert dazu den installierten Sollstand.
+- Eine V4.10-Iteration ist **nicht abgeschlossen**, solange der zugehörige Stand nicht über DRA installier- und rücksetzbar ist.
+- Manuelles Kopieren einzelner Gewitterradar-JavaScript-Dateien ist nur noch ein dokumentierter Notfall-/Diagnoseweg und kein regulärer Entwicklungsablauf.
+
+Diese Regel ist ein Release-Gate für V4.10 und folgende modulare Stände.
+
+## Schlüsselwort: „Schlachtplan“
+
+Für die V4.10-Modularisierung ist **„Schlachtplan“** ein verbindlicher Gewitterradar-Projektbegriff.
+
+Wenn Christian in einem aktuellen oder neuen Chat sagt:
+
+> **„Schau in den Schlachtplan“**  
+> **„Führe den Schlachtplan weiter“**  
+> **„Weiter nach Schlachtplan“**
+
+ist damit ohne weitere Rückfrage die kanonische Datei
+
+`docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
+
+im jeweils aktiven V4.10-Arbeitszweig gemeint.
+
+Verbindliches Verhalten für ChatGPT/Codex:
+
+1. Den aktuellen Stand dieser Datei direkt aus dem Repository laden.
+2. `NÄCHSTER SCHRITT`, offene Checkboxen, Entscheidungsprotokoll und Arbeitsprotokoll als maßgeblichen Fortsetzungsstand behandeln.
+3. Die dort definierte Arbeitsschleife ausführen: **implementieren → prüfen → Schlachtplan aktualisieren → nächsten Punkt festlegen**.
+4. Nach jedem abgeschlossenen Teilpunkt den Schlachtplan im Repository aktualisieren und committen.
+5. Keine bereits als erledigt markierten Schritte aus Erinnerung erneut beginnen, außer ein Regressionstest oder eine neue Benutzerentscheidung verlangt dies.
+6. Bei Widersprüchen zwischen altem Chatkontext und dem aktuellen Repository-Stand gilt der aktuelle Schlachtplan zusammen mit dem aktuellen Branch-Stand als Fortsetzungsquelle; ausdrückliche neue Benutzeranweisungen haben Vorrang.
+
+Der Begriff **„Schlachtplan“** darf im Gewitterradar-Kontext daher nicht als allgemeine Redewendung interpretiert werden, wenn eine laufende V4.10-Modularisierung existiert.
+
+
 ## Verbindliche Produktregel: ein Gewitterradar, zwei Auslieferungsformen
 
 Für Christian und ChatGPT/Codex existiert fachlich nur **Gewitterradar**.
