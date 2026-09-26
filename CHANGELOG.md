@@ -1,6 +1,17 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### R13 – Medaillon-Katalog auf 18 Varianten erweitert
+- Acht weitere Medaillons als `trend_11` bis `trend_18` ergänzt; `trend_01` bis `trend_10` bleiben unverändert erhalten.
+- Picker zeigt die eindeutige ID direkt an, z. B. `trend_14 · 14 / 18`, damit spätere Auswahl/Aussortierung zweifelsfrei möglich ist.
+- Laufzeitgrafiken: 264 × 264 px, freigestellt, verlustfreies WebP/VP8L, mindestens 2× Retina für die 132-px-Instrumentdarstellung.
+- Kein Beschnitt und keine Seitenverhältnisverzerrung. `trend_18` wird wegen der nichtquadratischen 1284×1225-Quelle proportional auf 264×252 skaliert und transparent auf 264×264 zentriert.
+- Runtime `41002r13`, Build `V4.10.02-MODULAR-DEV-R13-2026-09-26`, Modulsatz `C91E-5A27`.
+- Eindeutige Zuordnung dauerhaft in `docs/MEDALLION_CATALOG.md` dokumentiert.
+- Hi-Res-Originale bleiben verbindliche Masterquellen und werden später separat im Master-Repository abgelegt.
+
+
+## 2026/09 — V4.10.02 DEV
 ### R12 – neun zusätzliche Trend-Medaillons
 - Bestehendes `trend_01` unverändert beibehalten.
 - Neue Varianten `trend_02` bis `trend_10` ergänzt.

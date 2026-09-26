@@ -530,3 +530,17 @@ Offen ist nur noch die iPad-Abnahme von Cluster-Jump/Infinity. Danach Schlachtpl
 - Runtime `41002r12`, Build `V4.10.02-MODULAR-DEV-R12-2026-09-26`, Modulsatz `7A2C-91D4`.
 - Hi-Res-Originale bleiben geschützte Masterquellen und werden später verbindlich separat im Master-Repository abgelegt.
 - Nach DRA-Promotion: Medaillon-Picker muss `1 / 10` zeigen; Varianten 02–10 real visuell durchschalten und abnehmen.
+
+---
+
+## R13 – zusätzliche Medaillons 11–18
+
+- Bestand bleibt vollständig erhalten: `trend_01` bis `trend_10` werden nicht ersetzt.
+- Neu: `trend_11` bis `trend_18`; Gesamtbestand damit 18 Varianten.
+- Picker-Ausgabe enthält die eindeutige ID (`trend_XX · X / 18`).
+- Zuordnung Quelle ↔ ID ↔ Laufzeitdatei: `docs/MEDALLION_CATALOG.md`.
+- Laufzeit: 264 × 264 px, verlustfreies WebP/VP8L, Transparenz erhalten, kein Beschnitt/keine Verzerrung.
+- Sonderfall `trend_18`: 264 × 252 Inhalt proportional, mittig auf transparentem 264 × 264 Canvas.
+- Runtime `41002r13`, Build `V4.10.02-MODULAR-DEV-R13-2026-09-26`, Modulsatz `C91E-5A27`.
+- Hi-Res-Originale bleiben Masterquellen und werden später separat im Master-Repository archiviert.
+- Reale Sichtprüfung nach DRA-Installation: alle Varianten 01–18 durchschalten; danach können einzelne IDs gezielt aussortiert werden.

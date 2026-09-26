@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – Cluster-Jump-/Infinity-Geräteabnahme weiter offen; Medaillon-Erweiterung R12 umgesetzt  
+> **Status:** ABSCHLUSSAUDIT – Cluster-Jump-/Infinity-Geräteabnahme weiter offen; Medaillon-Erweiterung R13 umgesetzt  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -2856,3 +2856,20 @@ Rückführung:
 **Verbindliche Master-Regel:** Die gelieferten Hi-Res-Originale sind geschützte Masterquellen. Sie werden später separat im vorgesehenen Master-Repository abgelegt. Runtime-Ableitungen ersetzen die Hi-Res-Originale niemals.
 
 **Unverändert offen:** Die bereits zuvor offene reale Cluster-Jump-/Infinity-Geräteabnahme auf Desktop, iPad und Android/HA Companion bleibt bestehen.
+
+---
+
+## Schleife R13 – Medaillon-Katalog 11–18 (2026-09-26)
+
+- [x] acht neue Uploads auf Alphakanal/Freistellung geprüft.
+- [x] eindeutige IDs `trend_11` bis `trend_18` vergeben; bestehende IDs bleiben stabil.
+- [x] Laufzeit-Ableitungen als 264 × 264 px, verlustfreies WebP/VP8L erstellt.
+- [x] Seitenverhältnis vollständig erhalten; kein Beschnitt. Nichtquadratische Quelle `trend_18` transparent gepolstert.
+- [x] alle acht Assets in Frontend, Dashboard und nativer Integration byte-identisch eingebunden.
+- [x] Picker auf 18 Varianten erweitert und sichtbare ID-Ausgabe ergänzt.
+- [x] Katalog `docs/MEDALLION_CATALOG.md` für spätere eindeutige Aussortierung angelegt.
+- [x] Runtime/Build auf `41002r13` / `V4.10.02-MODULAR-DEV-R13-2026-09-26` angehoben; Modulsatz `C91E-5A27`.
+- [x] Verträge, Inventar, Tests und Prüfsummen auf R13 nachgeführt.
+- [ ] reale Sichtprüfung `trend_11`–`trend_18` über DRA/HA.
+
+**Master-Regel unverändert:** Hi-Res-Originale werden nicht durch Runtime-Derivate ersetzt und später verbindlich separat im Master-Repository abgelegt.
