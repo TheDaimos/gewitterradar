@@ -336,8 +336,9 @@ export function createBaseContext(rootModuleUrl){
       status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
       composition:{outerFrame:'pixel-identical outside measured hi-res aperture mask',innerMotif:'hi-res coverage-scaled beneath measured aperture mask',arrow:'separate hi-res-derived image with identical geometric base factor 1.1933478262',sharedInnerStage:false},
       arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
-    },
-    {
+    }
+  },
+  {
       id:'trend_02',asset:TREND_MEDALLION_IMAGE_02,type:'image',size:'132px',x:'0px',y:'0px',
       visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
       innerContour:'central amber lens',calibrationProfile:'round-medallion-02-runtime-v1',

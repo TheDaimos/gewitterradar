@@ -95,8 +95,8 @@
       "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
-      "sha256": "ab9e5283db6c6c51834863eead17dc7c957585a69654d47bfa3538fcf757462e",
-      "sizeBytes": 1041290
+      "sha256": "58c7cd3619ea038296a086ae15e47072aa0c27100e8c86fc932d05504e187b0e",
+      "sizeBytes": 1041292
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
       "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
