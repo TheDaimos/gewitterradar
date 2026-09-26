@@ -97,9 +97,9 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`' in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"A14E-28D1"' in manifest
+ assert 'moduleSetId:"477A-87C8"' in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="A14E-28D1"
+ assert runtime["moduleSetId"]=="477A-87C8"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
