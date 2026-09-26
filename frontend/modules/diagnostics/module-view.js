@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.3",
+  version:"1.3.4",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
@@ -492,7 +492,33 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm"
   ]
 });
+  const MEDALLION_MODULE_VIEW_META=Object.freeze({
+    "Deutsch":"Medaillon-Designkatalog|Designvarianten · Assetzuordnung · Diagnosegrundprofile",
+    "English":"Medallion design catalog|Design variants · Asset mapping · Diagnostic base profiles",
+    "Dansk":"Medaljondesignkatalog|Designvarianter · Aktivtilknytning · Grundprofiler til diagnostik",
+    "Español":"Catálogo de diseños de medallón|Variantes de diseño · Asignación de recursos · Perfiles base de diagnóstico",
+    "Français":"Catalogue de designs de médaillon|Variantes de design · Affectation des ressources · Profils de base de diagnostic",
+    "Nederlands":"Catalogus met medaillonontwerpen|Ontwerpvarianten · Toewijzing van assets · Basisprofielen voor diagnose",
+    "Polski":"Katalog wzorów medalionu|Warianty wzoru · Przypisanie zasobów · Bazowe profile diagnostyczne",
+    "Português":"Catálogo de designs do medalhão|Variantes de design · Associação de recursos · Perfis base de diagnóstico",
+    "Svenska":"Katalog för medaljongdesigner|Designvarianter · Resurskoppling · Grundprofiler för diagnostik",
+    "Italiano":"Catalogo dei design del medaglione|Varianti di design · Associazione risorse · Profili diagnostici di base",
+    "Norsk bokmål":"Katalog for medaljongdesign|Designvarianter · Ressurstilknytning · Grunnprofiler for diagnostikk",
+    "Suomi":"Medaljonkimuotoilujen luettelo|Muotoiluversiot · Resurssikytkentä · Diagnostiikan perusprofiilit",
+    "Čeština":"Katalog návrhů medailonu|Varianty návrhu · Přiřazení prostředků · Základní diagnostické profily",
+    "Ελληνικά":"Κατάλογος σχεδίων μεταλλίου|Παραλλαγές σχεδίου · Αντιστοίχιση πόρων · Βασικά διαγνωστικά προφίλ",
+    "Magyar":"Medáltervek katalógusa|Tervváltozatok · Erőforrás-hozzárendelés · Diagnosztikai alapprofilok",
+    "Boarisch":"Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
+    "Plattdüütsch":"Medaillon-Designkataloog|Designvarianten · Asset-Towiesen · Diagnose-Grundprofile",
+    "Sächs’sch":"Medaillon-Designkatalog|Designvarianten · Asset-Zuordnung · Diagnose-Grundprofile",
+    "Schwäbisch":"Medaillon-Designkatalog|Designvarianta · Asset-Zuordnung · Diagnose-Grundprofile"
+  });
   const modulePresentation=(language,row)=>{
+    if(row?.id==="instruments.medallion-designs"){
+      const packed=MEDALLION_MODULE_VIEW_META[language]||MEDALLION_MODULE_VIEW_META.Deutsch;
+      const divider=packed.indexOf("|");
+      return {name:packed.slice(0,divider),functions:packed.slice(divider+1)||"—"};
+    }
     const index=MODULE_VIEW_IDS.indexOf(row?.id);
     const table=MODULE_VIEW_META[language]||MODULE_VIEW_META.Deutsch;
     const packed=index>=0?table?.[index]:null;
