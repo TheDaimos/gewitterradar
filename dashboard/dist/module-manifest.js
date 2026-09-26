@@ -1,4 +1,4 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r10";
+import { registerModule } from "./modules/core/registry.js?v=41002r12";
 export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R12-2026-09-26",runtimeRevision:"41002r12",moduleSetId:"7A2C-91D4"});
 export const EXPECTED_MODULES=Object.freeze([
   {
