@@ -509,7 +509,7 @@ export function createBaseContext(rootModuleUrl){
         arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
       }
     }
-  }];
+  ];
   const MEDALLION_UI = {
     'Deutsch':['Kalibrierungstools','Medaillon-Kalibrierung','Medaillon-Messwerte','Medaillon-Diagnosebericht'],
     'English':['Calibration tools','Medallion calibration','Medallion measurements','Medallion diagnostic report'],
