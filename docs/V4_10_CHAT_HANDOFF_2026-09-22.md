@@ -1,6 +1,6 @@
 # Gewitterradar V4.10.02 – Chat-Übergabe Modularisierung
 
-**Fortgeschriebener Stand:** 2026-09-25  
+**Fortgeschriebener Stand:** 2026-09-26  
 **Projekt:** Gewitterradar  
 **Repository:** `TheDaimos/gewitterradar`  
 **Arbeitszweig:** `feature/v4.10.02-modularization`  
@@ -519,3 +519,14 @@ Referenz bleibt:
 - reale Abnahme: 22/22, Versionssatz konsistent, keine Abweichungen, Vollbild-Diagnose verschiebbar
 
 Offen ist nur noch die iPad-Abnahme von Cluster-Jump/Infinity. Danach Schlachtplan abschließen und mit den vorbereiteten neuen Medaillon-Designs fortfahren.
+
+---
+
+## R12 – zusätzliche Trend-Medaillons (26.09.2026)
+
+- `trend_01` bleibt unverändert.
+- `trend_02` bis `trend_10` wurden ergänzt.
+- Runtime-Grafiken: 264 × 264 px, freigestellt, verlustfreies WebP/VP8L, 2x bezogen auf die 132-px-Instrumentdarstellung, ohne Beschnitt und ohne Seitenverhältnisänderung.
+- Runtime `41002r12`, Build `V4.10.02-MODULAR-DEV-R12-2026-09-26`, Modulsatz `7A2C-91D4`.
+- Hi-Res-Originale bleiben geschützte Masterquellen und werden später verbindlich separat im Master-Repository abgelegt.
+- Nach DRA-Promotion: Medaillon-Picker muss `1 / 10` zeigen; Varianten 02–10 real visuell durchschalten und abnehmen.

@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – nur noch Cluster-Jump-/Infinity-Geräteabnahme offen  
+> **Status:** ABSCHLUSSAUDIT – Cluster-Jump-/Infinity-Geräteabnahme weiter offen; Medaillon-Erweiterung R12 umgesetzt  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -2836,3 +2836,23 @@ Rückführung:
 - Commit `9673bdced91f758dc51b8be82a0a0d5c0eacc023` setzt den Featurezweig auf den R10-Laufzeit-/Teststand zurück, ohne die späteren Abnahmedokumentationen zu verlieren.
 
 **NÄCHSTER SCHRITT:** Nur die noch offene iPad-Abnahme der Cluster-Jump-/Infinity-Funktion durchführen. Danach kann der Modularisierungs-Schlachtplan formal auf **ABGESCHLOSSEN** gesetzt werden und es geht mit den neuen Medaillon-Designs weiter.
+
+---
+
+## Schleife R12 – zusätzliche Trend-Medaillons (2026-09-26)
+
+- [x] `trend_01` bleibt unverändert; kein Ersatz des bestehenden Medaillons.
+- [x] neun neue Varianten als `trend_02` bis `trend_10` ergänzt.
+- [x] die gelieferten Freisteller auf vorhandenen Alphakanal/transparente Außenbereiche geprüft.
+- [x] Laufzeit-Ableitungen exakt 264 × 264 px erzeugt (= 2x bezogen auf die 132-px-Instrumentdarstellung).
+- [x] Laufzeit-Ableitungen ohne Beschnitt und ohne Seitenverhältnisänderung erzeugt.
+- [x] Laufzeitformat verlustfrei als WebP/VP8L; Transparenz bleibt erhalten.
+- [x] identische Asset-Bytes in `frontend`, `dashboard/dist` und `custom_components/gewitterradar/frontend` integriert.
+- [x] `MEDALLION_DESIGNS` auf zehn Varianten erweitert; Picker/Persistenz bleiben unverändert nutzbar.
+- [x] Runtime auf `41002r12`, Build `V4.10.02-MODULAR-DEV-R12-2026-09-26`, Modulsatz `7A2C-91D4` angehoben.
+- [x] automatischer Medaillon-Assetvertrag ergänzt.
+- [ ] reale Sichtprüfung der Varianten 02–10 nach DRA-Installation.
+
+**Verbindliche Master-Regel:** Die gelieferten Hi-Res-Originale sind geschützte Masterquellen. Sie werden später separat im vorgesehenen Master-Repository abgelegt. Runtime-Ableitungen ersetzen die Hi-Res-Originale niemals.
+
+**Unverändert offen:** Die bereits zuvor offene reale Cluster-Jump-/Infinity-Geräteabnahme auf Desktop, iPad und Android/HA Companion bleibt bestehen.

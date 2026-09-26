@@ -1,6 +1,16 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### R12 – neun zusätzliche Trend-Medaillons
+- Bestehendes `trend_01` unverändert beibehalten.
+- Neue Varianten `trend_02` bis `trend_10` ergänzt.
+- Freigestellte Laufzeitgrafiken als 264 × 264 px große 2x-Retina-Ableitungen integriert; verlustfreies WebP/VP8L, kein Beschnitt, keine Seitenverhältnisänderung.
+- Assets byte-identisch in kanonischem Frontend, Dashboard und nativer Integration.
+- Runtime `41002r12`, Build `V4.10.02-MODULAR-DEV-R12-2026-09-26`, Modulsatz `7A2C-91D4`.
+- Hi-Res-Originale bleiben verbindliche Masterquellen und werden später separat im Master-Repository abgelegt.
+
+
+## 2026/09 — V4.10.02 DEV
 ### R11 – experimenteller Vollbild-Dragversuch verworfen
 - Nach der R10-Abnahme wurde ein kurzzeitig gemeldeter Drag-Aussetzer der Diagnosekonsole im Karten-Vollbild untersucht.
 - Die reale R10-Nachprüfung bestätigte den Drag als funktionsfähig; R10 blieb der freigegebene DRA-Stand.
