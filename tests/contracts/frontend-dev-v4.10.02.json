@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "5c9511c0142cad6c9e6f799ed1b936d87a902ac37c873ab2b1c93c38eeb1480f",
+  "sha256": "7469450c89e4966402dec9c702cdf6a26e57eeadc9e8fe61a532e8a5c5509ff5",
   "sizeBytes": 8125,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R10-2026-09-25",
+  "build": "V4.10.02-MODULAR-DEV-R12-2026-09-26",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "b4c7a01ed302138b41b43f0bfa1ff27cb7aa53272f9c80ac66f945f730cd68be",
+      "sha256": "9dfef77c021ff9b9355279bf41e8fb747ddf8c2113ad09858b78eaff5630f37f",
       "sizeBytes": 6744
     },
     "modules/core/registry.js": {
@@ -95,8 +95,8 @@
       "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
-      "sha256": "05cefe39b69f256f5d21e32611f4bf069b65eef08e7bb9a202e19107d172d0cf",
-      "sizeBytes": 1028176
+      "sha256": "ab9e5283db6c6c51834863eead17dc7c957585a69654d47bfa3538fcf757462e",
+      "sizeBytes": 1041290
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
       "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",

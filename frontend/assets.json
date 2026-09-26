@@ -83,13 +83,58 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "7c7901b90792cc2c77768e9e04087e135e28e9ec85c5385b45a36bef408df2ad",
+    "sha256": "98cae741a2eabb51ca25d424a1c9b704e7c0bbe22cc8263b521eec85ef2d772c",
     "protected": false
   },
   {
     "file": "assets/gewitterradar-trend-arrow.png",
     "sha256": "b781490b662970cdba20ce8f04b2e841807faa418a39873711b0bdac5f92c3ef",
     "protected": true
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-02.webp",
+    "sha256": "9eec655fdbbc88634594f653eb83573cb3de8f9d3fe35bad3030cdaede3e061f",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-03.webp",
+    "sha256": "bd53cfa3abe9d5904ae15314bd01a86c20401fe56c552cc549026999eac2e2ae",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-04.webp",
+    "sha256": "28c8a3fe1130a400302e024003941c80c3da95375ac78ebc5d0fa431e9d5a147",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-05.webp",
+    "sha256": "4cff6c87d74e275c5f42073ff2ab1ef7f198fa2e28cb2386d1b067e51d496c69",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-06.webp",
+    "sha256": "b10db6c5bf2ef528b04a48f8058189e9fe32e24974edf430518120b774aeb178",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-07.webp",
+    "sha256": "acc671d4e01118ec4358340385db8450ec82dbb2b239fcd5d800dcd60f06bccd",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-08.webp",
+    "sha256": "9a3560ca26416126295681799b7e68699d32716e91f9cccd5a5031cf2c210fb8",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-09.webp",
+    "sha256": "0fdfbe27e0fc71b67312d69a111dd48f27df1e2a4ca0997c70a017f1cea350a4",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-10.webp",
+    "sha256": "5c57200b522a4edea1da687c832cb91998ae848c81b8095a95c993d1b18648e6",
+    "protected": false
   },
   {
     "file": "assets/gewitterradar-trend-medallion.png",
