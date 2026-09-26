@@ -11,7 +11,7 @@
   "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "a4b66d23a527e9575d306b837017c752391d603e5f19d22839a845f6d6250e1c",
+      "sha256": "2d8b375bc8e9067cbb93f838e5767c503b5936fe3c07ade98e6f69f896839fb6",
       "sizeBytes": 7053
     },
     "modules/core/registry.js": {
@@ -59,8 +59,8 @@
       "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "a63d84bb194f0ecf4102bfb3cdd5eeb30e6ca76ebf6a7d471cb9533c8d3037ca",
-      "sizeBytes": 77655
+      "sha256": "09b8a63b78c75f19682852eecb160f3ae784c30fdfd730dc1e16d188a1f2521b",
+      "sizeBytes": 80290
     },
     "modules/diagnostics/cockpit.js": {
       "sha256": "383d3fde972c4a44ab2803a831a836bb536264262814ee0c548239aeecde9156",
