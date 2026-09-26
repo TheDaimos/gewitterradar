@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.13"',
+  '"id": "fullscreen.map-display"','"version": "1.0.14"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -134,7 +134,7 @@ for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clust
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.6"',
+  'version:"1.0.7"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"

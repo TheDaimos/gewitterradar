@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "7469450c89e4966402dec9c702cdf6a26e57eeadc9e8fe61a532e8a5c5509ff5",
+  "sha256": "6685b3454a66173625c0f4c6122bb88fb12cdac5ba4c23b3469dabd708277351",
   "sizeBytes": 8125,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R12-2026-09-26",
+  "build": "V4.10.02-MODULAR-DEV-R13-2026-09-26",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "bc5ff55e93a21026aeded8f365538367bb8b817a41203581f1f2464f02b40d91",
+      "sha256": "e871dd64950ed602607b134765bf6a0a5e312fcc7ca99899424860383bbec232",
       "sizeBytes": 6744
     },
     "modules/core/registry.js": {
@@ -19,84 +19,84 @@
       "sizeBytes": 4835
     },
     "modules/core/runtime.js": {
-      "sha256": "ccc10d5e1f798ade95c192f2b06e9c713a49476955cc834f965deef8aa402294",
+      "sha256": "d53660245a4fb015c70ef6be7358920dd3837ee2e4a44cf3624a4b0b28070827",
       "sizeBytes": 556
     },
     "modules/core/card-lifecycle.js": {
-      "sha256": "17c2c18387c77738dd6d18c14204cd3d04efadc75f9f92e97b3d956057e66cc8",
+      "sha256": "942d14535e287699790a54ea5aaca1329b98d7cd9a82b137d978b56a605f36e6",
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "aabaeded734c8944482982c31299c4a338c4749d4918b5b8a0d655fe184906eb",
-      "sizeBytes": 91153
+      "sha256": "9f5bf53b8bb80d86a04774e59d147d0eaceaa655c7b7c44a2b6e423cb75bba0a",
+      "sizeBytes": 91178
     },
     "modules/ui/scroll-guard.js": {
-      "sha256": "4b0a99fd184eadb448e13ac3d896995261ba6b33a7400445086daa2806c80c33",
+      "sha256": "abe3e150be9da11cc35598b6112a26420549fc4a07de8acfbdd9fa6452e1ec12",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "7094d792b38976370460e1dce1ac1141de9ff7c1b3a51084bf80b2e2f6b7a996",
+      "sha256": "2ac652f55b8d08ed0e6d63e3f5285f37b85c9280a868ed9f89b3f51ee0bf80d8",
       "sizeBytes": 423629
     },
     "modules/instruments/compass-scale.js": {
-      "sha256": "b9192d87d1f417669c7bc4071678abbf3c5c00c6f73a0ef405877d4c4797c4c5",
+      "sha256": "c9a53f799451061546f7f28f141304e703f521082598e0b645b632136a9ee1dd",
       "sizeBytes": 16920
     },
     "modules/ui/controls.js": {
-      "sha256": "00b32bb876f1660ea323339661130091284a6fdaa8cdab107fffc33fea5d7687",
+      "sha256": "fceaed307722bf5c96ecef4f5eb1671dc579145c86206bec61ac725b46ef9b35",
       "sizeBytes": 183042
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "9f763e4b6026eba944dd35f13eb3a8fda5c30454b13dfaf3063ff48bbdb1c281",
+      "sha256": "f272b97e69cc8a2cb7eb56e77cbf5dc28b098bc495c3193fe370aa312c785f39",
       "sizeBytes": 189853
     },
     "modules/core/source-status.js": {
-      "sha256": "9614e4478378c474e0b1dfbf76640cb9be5cb07c9eb393dafd5373fd51dae79a",
+      "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",
       "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "b915273fbd74f04c84b3d44b68057aaaca27f85d420d913ea3298a21b14a3b11",
+      "sha256": "17a61b7bbe3da089f0f28dea8806ca00b9e09f2cc76e150d2c880fe1717a05a8",
       "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "e4e02783c8fb94e42bde8e2964a27303b3f0101ee1a1bcd400a347957a27c25d",
+      "sha256": "865c1cab35f76d93df9927ba55f311db31eefec7a47ad20281e264f049af8405",
       "sizeBytes": 77655
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "7a9fcf918cff4f019615dda00877647ea22fd80ddefdf75a4a84198ac06dc743",
+      "sha256": "383d3fde972c4a44ab2803a831a836bb536264262814ee0c548239aeecde9156",
       "sizeBytes": 207709
     },
     "modules/instruments/compass-design.js": {
-      "sha256": "7e1d8b680087fa26eed8855589dbb4c55d3c0021688ca189c0f01a8c77cd5f5d",
+      "sha256": "6c5102b25fcba94e0ad077c0d2d1cc6dc5797311f59b23dcf5616c8223a7d82f",
       "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
-      "sha256": "3b120bb8adef40837ed0301e8cfcc8c91b26cbbc537f1d8b34d26d92920f754f",
+      "sha256": "1a76e78be5e1f6f850609acf551ea5ab0e74a768b4cc9c38dbe27d125f4500b1",
       "sizeBytes": 27517
     },
     "modules/map/strikes-warnings.js": {
-      "sha256": "927c26fab222643aade6a43836efe2f074e0bb02b818ce66ae43ecda3f5ea386",
+      "sha256": "104d68e43861f75d5285ace1a014ce69c61ab2a1c9db035c860fc7ad4e3653b3",
       "sizeBytes": 29127
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "5a68490baf652440963006d4853a7aa756b55c2dffbc884197ac8ae80c1dd79e",
+      "sha256": "b027f01ed9876d403396e7bd09b6b87764df09bf004b8b25243165b46c0d153b",
       "sizeBytes": 51301
     },
     "modules/ui/render.js": {
-      "sha256": "82e7da9a84c8ee483de564dfc47317a9769b23515944c23b0edd6f9e75a39cc6",
+      "sha256": "c3997da3b5d294ca62c2fe8d9ffb654809cf54d1150811696e0b5aa70e1ffc92",
       "sizeBytes": 46994
     },
     "modules/instruments/compass.js": {
-      "sha256": "1801aa8427aae3b66fb6235a3c56d0571ad870d7efbb450a4e7eda53dcf49db1",
+      "sha256": "0bfe8968847a1bd931fc82408e0c8560510190ff44c47f21d27502d40f239c13",
       "sizeBytes": 20463
     },
     "modules/history/chart.js": {
-      "sha256": "0b35526f5cc2b9bfa895eedd58b80eb10b09720d1174ded97210001553f648f9",
+      "sha256": "60adc6ff361d0b94e60932416bcc48fd330f81b843e65051f4c6e73cff322ade",
       "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
-      "sha256": "fe21fff2a78e824659d5560137474d88c519f80e54938e9b75a8adde34b035d2",
-      "sizeBytes": 1041291
+      "sha256": "f652bbdc2dbea876a1b7b986a42998c34226b130e30121afc5e173de44f7de17",
+      "sizeBytes": 1052907
     },
     "modules/fullscreen/compass-picker-chevron-left-brass.js": {
       "sha256": "e5da17cd4229aeab8f64ae26798b697c880954aec89b3111b3fcc29908a63cb2",
