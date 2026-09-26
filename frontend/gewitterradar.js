@@ -18,7 +18,7 @@ const gewitterradarImport = async (path) => {
 
 let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot, createBaseContext;
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
-let extendMedallionDesigns;
+let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
@@ -61,7 +61,7 @@ try {
   ({ installI18nSettings } = i18nSettings);
   ({ installSourceStatus } = sourceStatus);
   ({ installCompassSelector } = compassSelector);
-  ({ extendMedallionDesigns } = medallionDesigns);
+  ({ installMedallionDesigns } = medallionDesigns);
   ({ installDiagnostics } = diagnostics);
   ({ installModuleView } = moduleView);
   ({ installCompassDesign } = compassDesign);
@@ -112,7 +112,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   }
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'install-modules',languageDefinitions:__moduleDeps.LANGUAGE_DEFINITIONS.length};
   Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot});
-  extendMedallionDesigns(__moduleDeps,import.meta.url);
+  installMedallionDesigns(GewitterradarCard,__moduleDeps);
   installCardLifecycle(GewitterradarCard,__moduleDeps);
   installMapDisplay(GewitterradarCard,__moduleDeps);
   installScrollGuard(GewitterradarCard,__moduleDeps);

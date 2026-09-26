@@ -4,8 +4,8 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "435b0f3ee4bdf9224e96f10d9f92f26e9c83f440240d6349614c05c41b938aca",
-  "sizeBytes": 8360,
+  "sha256": "62ebcd415d97a1c79c91a93655953ada792f1d3cb36f580444fd4fbc9efa0ca6",
+  "sizeBytes": 8365,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
   "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
@@ -115,8 +115,8 @@
       "sizeBytes": 12106
     },
     "modules/instruments/medallion-designs.js": {
-      "sha256": "90da6ade070dce0cfe5417ca922e5cb5353ed4f77b0aa22fb77fac8388b86620",
-      "sizeBytes": 2510
+      "sha256": "0d235ca38d80181a8c8c51848a4f5128b48fbda89915b81a41f19575a97f99d2",
+      "sizeBytes": 2424
     }
   }
 }

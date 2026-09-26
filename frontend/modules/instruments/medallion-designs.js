@@ -12,9 +12,8 @@ registerModule(MODULE_META);
 
 const ARROW_PROFILE=Object.freeze({centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391});
 
-export function extendMedallionDesigns(context,rootModuleUrl){
+export function installMedallionDesigns(_Card,context){
   if(!context||!Array.isArray(context.MEDALLION_DESIGNS))throw new TypeError("medallion-designs requires MEDALLION_DESIGNS");
-  if(!rootModuleUrl)throw new TypeError("medallion-designs requires rootModuleUrl");
   const existing=new Set(context.MEDALLION_DESIGNS.map(item=>item?.id));
   const extras=[];
   for(let number=19;number<=28;number++){
@@ -23,7 +22,7 @@ export function extendMedallionDesigns(context,rootModuleUrl){
     if(existing.has(id))continue;
     extras.push({
       id,label:id,
-      asset:new URL("./assets/gewitterradar-trend-medallion-"+suffix+".webp?v=41002r14",rootModuleUrl).href,
+      asset:new URL("../../assets/gewitterradar-trend-medallion-"+suffix+".webp?v=41002r14",import.meta.url).href,
       type:"image",size:"132px",x:"0px",y:"0px",
       visualScale:1,fitMode:"contain",expectedAspect:1,outerContour:"alpha bounds",
       innerContour:"central blue lens",calibrationProfile:"round-medallion-"+suffix+"-runtime-v1",
