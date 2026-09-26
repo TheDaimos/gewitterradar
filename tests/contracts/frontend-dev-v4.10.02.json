@@ -31,11 +31,11 @@
       "sizeBytes": 91153
     },
     "modules/ui/scroll-guard.js": {
-      "sha256": "2bb1c69ba85ffd7b2dd41b0406ae4374744f1922a64d1124440e128abdcbb227",
+      "sha256": "4b0a99fd184eadb448e13ac3d896995261ba6b33a7400445086daa2806c80c33",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "b5a39aed9646740fceb1e24285699445cf556ee461dc0d63a755004c045a34d3",
+      "sha256": "7094d792b38976370460e1dce1ac1141de9ff7c1b3a51084bf80b2e2f6b7a996",
       "sizeBytes": 423629
     },
     "modules/instruments/compass-scale.js": {
