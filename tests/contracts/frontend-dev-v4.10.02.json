@@ -39,7 +39,7 @@
       "sizeBytes": 423629
     },
     "modules/instruments/compass-scale.js": {
-      "sha256": "8e94aa82665dc0305a654f38e445373288cb49f22d51ab9e635fe32c92b02326",
+      "sha256": "b9192d87d1f417669c7bc4071678abbf3c5c00c6f73a0ef405877d4c4797c4c5",
       "sizeBytes": 16920
     },
     "modules/ui/controls.js": {
@@ -67,7 +67,7 @@
       "sizeBytes": 207709
     },
     "modules/instruments/compass-design.js": {
-      "sha256": "86af5e79ff707e65ca749bc0924aee8c802f74e137384f7b6011ed27997b39b1",
+      "sha256": "7e1d8b680087fa26eed8855589dbb4c55d3c0021688ca189c0f01a8c77cd5f5d",
       "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
@@ -91,7 +91,7 @@
       "sizeBytes": 20463
     },
     "modules/history/chart.js": {
-      "sha256": "5b39aa17a8c50685de3a94b6aededaef33ecfe44f6dd434841e15ff7d7616f0d",
+      "sha256": "0b35526f5cc2b9bfa895eedd58b80eb10b09720d1174ded97210001553f648f9",
       "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
