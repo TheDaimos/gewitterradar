@@ -31,23 +31,23 @@
       "sizeBytes": 91178
     },
     "modules/ui/scroll-guard.js": {
-      "sha256": "abe3e150be9da11cc35598b6112a26420549fc4a07de8acfbdd9fa6452e1ec12",
+      "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "2ac652f55b8d08ed0e6d63e3f5285f37b85c9280a868ed9f89b3f51ee0bf80d8",
+      "sha256": "de9e435fd84baae889b7c5cfe878e59e7fd6dfecbffd02595ee4965bc3af51d9",
       "sizeBytes": 423629
     },
     "modules/instruments/compass-scale.js": {
-      "sha256": "c9a53f799451061546f7f28f141304e703f521082598e0b645b632136a9ee1dd",
+      "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
       "sizeBytes": 16920
     },
     "modules/ui/controls.js": {
-      "sha256": "fceaed307722bf5c96ecef4f5eb1671dc579145c86206bec61ac725b46ef9b35",
+      "sha256": "a0e787a1cc1c5128dc1d8275f48cdb2e18873814b036c0b98369fcaf4e4dba44",
       "sizeBytes": 183042
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "f272b97e69cc8a2cb7eb56e77cbf5dc28b098bc495c3193fe370aa312c785f39",
+      "sha256": "47c90186a06689f555a6618d7a207eecc198a794810ab0b63b67d45c02eb9ba6",
       "sizeBytes": 189853
     },
     "modules/core/source-status.js": {
@@ -55,11 +55,11 @@
       "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "17a61b7bbe3da089f0f28dea8806ca00b9e09f2cc76e150d2c880fe1717a05a8",
+      "sha256": "76f63f03381423376fb72bb51bf9ee1d3c9ff1acbb08c295d612b81660f9a7ea",
       "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "865c1cab35f76d93df9927ba55f311db31eefec7a47ad20281e264f049af8405",
+      "sha256": "a63d84bb194f0ecf4102bfb3cdd5eeb30e6ca76ebf6a7d471cb9533c8d3037ca",
       "sizeBytes": 77655
     },
     "modules/diagnostics/cockpit.js": {
@@ -67,31 +67,31 @@
       "sizeBytes": 207709
     },
     "modules/instruments/compass-design.js": {
-      "sha256": "6c5102b25fcba94e0ad077c0d2d1cc6dc5797311f59b23dcf5616c8223a7d82f",
+      "sha256": "6f871d4f93c13bf95e38474c886a536bba29f28e708da72859c1a562e24356ee",
       "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
-      "sha256": "1a76e78be5e1f6f850609acf551ea5ab0e74a768b4cc9c38dbe27d125f4500b1",
+      "sha256": "8a9fbc5ad22593ecc93db2eddfc345e1943fe830f4d5b88ff8a64c6af34fb437",
       "sizeBytes": 27517
     },
     "modules/map/strikes-warnings.js": {
-      "sha256": "104d68e43861f75d5285ace1a014ce69c61ab2a1c9db035c860fc7ad4e3653b3",
+      "sha256": "9b8004abaef7a1f754bc69f23a68d71c9b8141205d84f966edef1523a08cc746",
       "sizeBytes": 29127
     },
     "modules/map/clusters-recent.js": {
-      "sha256": "b027f01ed9876d403396e7bd09b6b87764df09bf004b8b25243165b46c0d153b",
+      "sha256": "a938a26ca9f48ebd74ae2587dfbf7e2c43857fa755bc28336d39f63d43653288",
       "sizeBytes": 51301
     },
     "modules/ui/render.js": {
-      "sha256": "c3997da3b5d294ca62c2fe8d9ffb654809cf54d1150811696e0b5aa70e1ffc92",
+      "sha256": "b4f4c27c1345e02d09caf0b15a1443fe2e4e5509c7e3ed6a0a8e8d48fe73ee8e",
       "sizeBytes": 46994
     },
     "modules/instruments/compass.js": {
-      "sha256": "0bfe8968847a1bd931fc82408e0c8560510190ff44c47f21d27502d40f239c13",
+      "sha256": "d2707343b9ae86b4a8268c761cc2967ac1c427e3a40b533609af1785b310ab71",
       "sizeBytes": 20463
     },
     "modules/history/chart.js": {
-      "sha256": "60adc6ff361d0b94e60932416bcc48fd330f81b843e65051f4c6e73cff322ade",
+      "sha256": "018eaa20a1ba726b03652c8cd62225e98ab63ba8ee4ddb70f9b7c755b5832ad6",
       "sizeBytes": 39345
     },
     "modules/core/base-context.js": {
