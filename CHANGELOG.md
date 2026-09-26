@@ -7,8 +7,10 @@
 - Laufzeitgrafiken: 264 × 264 px, Alphakanal erhalten, verlustfreies WebP/VP8L, kein Beschnitt und keine Seitenverhältnisverzerrung.
 - Die neuen Hi-Res-Quellen sind 1254 × 1254 px; Runtime-Derivate ersetzen die geschützten Masterquellen nicht.
 - R14 erweitert die bestehende Modularisierung um `instruments.medallion-designs 1.0.0`; der bereits abgenommene Kern-Cache bleibt bewusst auf Runtime `41002r13`.
-- Build `V4.10.02-MODULAR-DEV-R14-2026-09-26`, Modulsatz `A14E-28D1`.
+- Build `V4.10.02-MODULAR-DEV-R14-2026-09-26`, Runtime-Cache `41002r13`, finaler Modulsatz `477A-87C8`.
 - Die spätere per-Medaillon-Geometrie für Schauglas und Trendpfeil wird aus Diagnoseexporten statt aus Screenshots abgeleitet.
+- Die Modularisierung umfasst nun 23 Module; `instruments.medallion-designs 1.0.0` ist in der Modulansicht in allen 19 unterstützten Sprachen vollständig hinterlegt.
+- Finaler R14-Kandidat `012fdfc62127b6db47cc1d87000217e5f286f7b0`: 5/5 Hauptprüfungen grün und exakt nach `deploy/dev` promoviert.
 
 ## 2026/09 — V4.10.02 DEV
 ### R13 – Medaillon-Katalog auf 18 Varianten erweitert
