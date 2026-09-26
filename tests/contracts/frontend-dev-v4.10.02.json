@@ -19,7 +19,7 @@
       "sizeBytes": 4835
     },
     "modules/core/runtime.js": {
-      "sha256": "a583841c68a310596d1c333e10420f4195dee0077a260d662bfcef036ac827ff",
+      "sha256": "ccc10d5e1f798ade95c192f2b06e9c713a49476955cc834f965deef8aa402294",
       "sizeBytes": 556
     },
     "modules/core/card-lifecycle.js": {
@@ -51,7 +51,7 @@
       "sizeBytes": 189853
     },
     "modules/core/source-status.js": {
-      "sha256": "1fa860f1884882e3d190d3dc14d415a1a79c8c182c2e8744d126d3ec5bf35e00",
+      "sha256": "9614e4478378c474e0b1dfbf76640cb9be5cb07c9eb393dafd5373fd51dae79a",
       "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
@@ -59,11 +59,11 @@
       "sizeBytes": 13613
     },
     "modules/diagnostics/module-view.js": {
-      "sha256": "1323373d66605a287b060d2b160073189d20dd899284716070883880a1b15040",
+      "sha256": "e4e02783c8fb94e42bde8e2964a27303b3f0101ee1a1bcd400a347957a27c25d",
       "sizeBytes": 77655
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "e6081d3d44208845ea928cbea48cba649e8fba2220b227f4873dd6b17279135b",
+      "sha256": "7a9fcf918cff4f019615dda00877647ea22fd80ddefdf75a4a84198ac06dc743",
       "sizeBytes": 207709
     },
     "modules/instruments/compass-design.js": {
