@@ -41,7 +41,7 @@ def test_v41001_compass_picker_contract():
 
     assert "const CARD_VERSION = '4.10.02';" in main
     assert "V4.10.02-MODULAR-DEV-R12-2026-09-26" in main
-    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r10';" in main
+    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r12';" in main
 
     # Preserve the established picker behaviour.
     for marker in (
@@ -66,10 +66,10 @@ def test_v41001_compass_picker_contract():
 
     # Picker-only contract: four local Retina modules are imported only by map-display.
     imports = (
-        'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r10";',
-        'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r10";',
-        'import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r10";',
-        'import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r10";',
+        'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r12";',
+        'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r12";',
+        'import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r12";',
+        'import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r12";',
     )
     for marker in imports:
         assert marker in map_display
