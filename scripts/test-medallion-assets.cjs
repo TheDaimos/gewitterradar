@@ -22,8 +22,14 @@ for (let i=2;i<=28;i++) {
     else reference=data;
   }
 }
-const source=fs.readFileSync(path.join(root,'frontend/modules/core/base-context.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'frontend/modules/instruments/medallion-designs.js'),'utf8');
-for (let i=1;i<=28;i++) assert.ok(source.includes("id:'trend_"+String(i).padStart(2,'0')+"'"));
-assert.ok(source.includes("gewitterradar-trend-medallion.png?v=409"),'trend_01 asset reference changed');
-assert.ok(source.includes("id:'trend_28'"),'trend_28 descriptor missing');
+const baseSource=fs.readFileSync(path.join(root,'frontend/modules/core/base-context.js'),'utf8');
+const extensionSource=fs.readFileSync(path.join(root,'frontend/modules/instruments/medallion-designs.js'),'utf8');
+for (let i=1;i<=18;i++) assert.ok(baseSource.includes("id:'trend_"+String(i).padStart(2,'0')+"'"));
+assert.ok(baseSource.includes("gewitterradar-trend-medallion.png?v=409"),'trend_01 asset reference changed');
+assert.ok(extensionSource.includes('for(let number=19;number<=28;number++)'),'R14 medallion range contract missing');
+assert.ok(extensionSource.includes('const id="trend_"+suffix;'),'R14 stable medallion id construction missing');
+for (let i=19;i<=28;i++) {
+  const id=String(i).padStart(2,'0');
+  assert.ok(extensionSource.includes('trend_'+id+":new URL('../../assets/gewitterradar-trend-medallion-"+id+".webp?v=41002r14'"),'trend_'+id+' asset mapping missing');
+}
 console.log('Medallion asset contract: PASS');
