@@ -2871,5 +2871,6 @@ Rückführung:
 - [x] Runtime/Build auf `41002r13` / `V4.10.02-MODULAR-DEV-R13-2026-09-26` angehoben; Modulsatz `C91E-5A27`.
 - [x] Verträge, Inventar, Tests und Prüfsummen auf R13 nachgeführt.
 - [ ] reale Sichtprüfung `trend_11`–`trend_18` über DRA/HA.
+- [x] iPad-Darstellung im laufenden R13-Abnahmestand real geprüft: optisch ordentlich, keine auffälligen Layout-/Darstellungsprobleme gemeldet.
 
 **Master-Regel unverändert:** Hi-Res-Originale werden nicht durch Runtime-Derivate ersetzt und später verbindlich separat im Master-Repository abgelegt.
