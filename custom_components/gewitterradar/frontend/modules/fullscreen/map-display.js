@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41002r12";
-import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r12";
-import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r12";
-import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r12";
-import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r12";
+import { defineModule } from "../core/runtime.js?v=41002r13";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r13";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r13";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r13";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
   "version": "1.0.13",
@@ -249,7 +249,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const base = dialog.querySelector('[data-medallion-picker-base]');
       if (base && descriptor.asset) base.setAttribute('src',descriptor.asset);
       const output = dialog.querySelector('[data-medallion-picker-index]');
-      if (output) output.textContent = (index + 1) + ' / ' + designs.length;
+      if (output) output.textContent = descriptor.id + ' · ' + (index + 1) + ' / ' + designs.length;
       const stage = dialog.querySelector('[data-medallion-picker-stage]');
       const source = this.shadow?.getElementById('trend-box'),diagnosticState=this._diagnostics?.enabled?this._medallionDiagnostic:null;
       const productionState = ['up','down','stable','none'].find((name) => source?.classList.contains(name)) || 'none';

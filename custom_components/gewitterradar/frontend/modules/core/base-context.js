@@ -1,8 +1,8 @@
-import { registerModule } from "./registry.js?v=41002r12";
+import { registerModule } from "./registry.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.6",
+  version:"1.0.7",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -172,15 +172,23 @@ export function createBaseContext(rootModuleUrl){
   }
 
   const TREND_MEDALLION_IMAGE = new URL('./assets/gewitterradar-trend-medallion.png?v=409', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41002r12', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41002r12', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_11 = new URL('./assets/gewitterradar-trend-medallion-11.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_12 = new URL('./assets/gewitterradar-trend-medallion-12.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_13 = new URL('./assets/gewitterradar-trend-medallion-13.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_14 = new URL('./assets/gewitterradar-trend-medallion-14.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_15 = new URL('./assets/gewitterradar-trend-medallion-15.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_16 = new URL('./assets/gewitterradar-trend-medallion-16.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_17 = new URL('./assets/gewitterradar-trend-medallion-17.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_18 = new URL('./assets/gewitterradar-trend-medallion-18.webp?v=41002r13', rootModuleUrl).href;
   const TREND_ARROW_IMAGE = new URL('./assets/gewitterradar-trend-arrow.png?v=409', rootModuleUrl).href;
   const MAP_COMPASS_TOGGLE_IMAGE = new URL('./assets/gewitterradar-compass-toggle.png?v=40910', rootModuleUrl).href;
   const COMPASS_METAL_FRAME_V1_IMAGE = new URL('./assets/gewitterradar-compass-frame-v1.png?v=404', rootModuleUrl).href;
@@ -505,6 +513,142 @@ export function createBaseContext(rootModuleUrl){
         centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
         recommended:{translateX:0,translateY:0,uniformScale:1},
         status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_11',label:'trend_11',asset:TREND_MEDALLION_IMAGE_11,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-11-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-11-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_12',label:'trend_12',asset:TREND_MEDALLION_IMAGE_12,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-12-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-12-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_13',label:'trend_13',asset:TREND_MEDALLION_IMAGE_13,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-13-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-13-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_14',label:'trend_14',asset:TREND_MEDALLION_IMAGE_14,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-14-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-14-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_15',label:'trend_15',asset:TREND_MEDALLION_IMAGE_15,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-15-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-15-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_16',label:'trend_16',asset:TREND_MEDALLION_IMAGE_16,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-16-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-16-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_17',label:'trend_17',asset:TREND_MEDALLION_IMAGE_17,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-17-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-17-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
+        composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
+        arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
+      }
+    },
+    {
+      id:'trend_18',label:'trend_18',asset:TREND_MEDALLION_IMAGE_18,type:'image',size:'132px',x:'0px',y:'0px',
+      visualScale:1,fitMode:'contain',expectedAspect:1,outerContour:'alpha bounds',
+      innerContour:'central lens',calibrationProfile:'round-medallion-18-runtime-v1',
+      diagnosticProfile:{
+        geometryVersion:'round-medallion-18-runtime-v1',
+        method:'2x lossless runtime derivative; full source canvas preserved, no crop or aspect distortion',
+        sourceWidth:264,sourceHeight:264,
+        aperture:{centerX:132,centerY:132,radius:87,rms:0},
+        motif:{centerX:132,centerY:132,radius:87,rms:0},
+        gap:{mean:0,median:0,min:0,max:0,stdDev:0},fitRatio:1,requiredScale:1,requiredGrowthPct:0,
+        centerOffsetX:0,centerOffsetY:0,centerResidual:0,normalizedCenterResidual:0,normalizedMeanGap:0,normalizedMaxGap:0,
+        recommended:{translateX:0,translateY:0,uniformScale:1},status:{innerApertureFit:true,innerCircleCenter:true,radialGap:true,arrowCoupling:true},
         composition:{outerFrame:'full alpha contour retained',innerMotif:'lossless 2x runtime derivative without crop',arrow:'shared hi-res-derived trend arrow',sharedInnerStage:false},
         arrow:{centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391}
       }
