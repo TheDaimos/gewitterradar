@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "6685b3454a66173625c0f4c6122bb88fb12cdac5ba4c23b3469dabd708277351",
-  "sizeBytes": 8125,
+  "sha256": "435b0f3ee4bdf9224e96f10d9f92f26e9c83f440240d6349614c05c41b938aca",
+  "sizeBytes": 8360,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R13-2026-09-26",
+  "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "e871dd64950ed602607b134765bf6a0a5e312fcc7ca99899424860383bbec232",
-      "sizeBytes": 6744
+      "sha256": "a4b66d23a527e9575d306b837017c752391d603e5f19d22839a845f6d6250e1c",
+      "sizeBytes": 7053
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -113,6 +113,10 @@
     "modules/fullscreen/compass-picker-chevron-right-silver.js": {
       "sha256": "7e58c3b8ab828f6115aa2cbac8740526f1979def3244255dda9703425b3cb082",
       "sizeBytes": 12106
+    },
+    "modules/instruments/medallion-designs.js": {
+      "sha256": "90da6ade070dce0cfe5417ca922e5cb5353ed4f77b0aa22fb77fac8388b86620",
+      "sizeBytes": 2510
     }
   }
 }

@@ -4,7 +4,7 @@
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
 const CARD_VERSION = '4.10.02';
 const CARD_DISPLAY_VERSION = '4.10.02';
-const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R13-2026-09-26';
+const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R14-2026-09-26';
 const GEWITTERRADAR_MODULE_CACHE = '41002r13';
 const gewitterradarImport = async (path) => {
   try {
@@ -18,6 +18,7 @@ const gewitterradarImport = async (path) => {
 
 let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot, createBaseContext;
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
+let extendMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
@@ -37,6 +38,7 @@ try {
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
   const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
+  const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js');
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
@@ -59,6 +61,7 @@ try {
   ({ installI18nSettings } = i18nSettings);
   ({ installSourceStatus } = sourceStatus);
   ({ installCompassSelector } = compassSelector);
+  ({ extendMedallionDesigns } = medallionDesigns);
   ({ installDiagnostics } = diagnostics);
   ({ installModuleView } = moduleView);
   ({ installCompassDesign } = compassDesign);
@@ -109,6 +112,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   }
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'install-modules',languageDefinitions:__moduleDeps.LANGUAGE_DEFINITIONS.length};
   Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot});
+  extendMedallionDesigns(__moduleDeps,import.meta.url);
   installCardLifecycle(GewitterradarCard,__moduleDeps);
   installMapDisplay(GewitterradarCard,__moduleDeps);
   installScrollGuard(GewitterradarCard,__moduleDeps);

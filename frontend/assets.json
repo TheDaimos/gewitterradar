@@ -83,7 +83,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "f7b3208ab0acf1d1a2be5b75f9882bddad499eb4348c6c02d07ce2b41f24e4a4",
+    "sha256": "14f378e201d46dcf838cfac17332aa353acf1a9e197c94ded7b3952648ac0560",
     "protected": false
   },
   {
@@ -174,6 +174,56 @@
   {
     "file": "assets/gewitterradar-trend-medallion-18.webp",
     "sha256": "90110d16ae35708e3c529996cc6aa098c2286a32067f941b9065e0870a1a96e0",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-19.webp",
+    "sha256": "c13468a6b2988c7a2b19c7a68e8461a3cc70f51aa67fa3153f6d748536c75143",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-20.webp",
+    "sha256": "4d9ad406ad644df9bff22f761ff46ab8f3ff09c8cf66f548b77b402687c673f2",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-21.webp",
+    "sha256": "dd6998b4ae92b09a4fa482f9fcc35f7161542fef907acf2cea072f1d76a156db",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-22.webp",
+    "sha256": "e965de1ba8b011e433183c48213f9540e7bdb96537924c762b14bfc985884c43",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-23.webp",
+    "sha256": "d81a4fdc1c66b8f4543d629a306d16ba1938a67465711a41c9c65c9fef277abd",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-24.webp",
+    "sha256": "5b18f41627cd5284bec110bec2561a527919d0c445a2b4bfe597642b08551ffa",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-25.webp",
+    "sha256": "bf4a2632b55045035828b772f12ad91029afbf1e04ddee60d96bea041cd6d04b",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-26.webp",
+    "sha256": "58f73f391d42c0d2151c21c76fb76c60fcb28099a6171ac2cb08819608f01d98",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-27.webp",
+    "sha256": "a997807d114ddde6da02d17b10a8b1529f790a23c21232e3b7d3eb32cec17235",
+    "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-medallion-28.webp",
+    "sha256": "addc3fb472f89e5673943801d2cddb87d619e85f807b2fd2ca900825e59d4b39",
     "protected": false
   },
   {
