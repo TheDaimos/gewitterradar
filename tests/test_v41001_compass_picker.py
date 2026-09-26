@@ -40,7 +40,7 @@ def test_v41001_compass_picker_contract():
     map_display = (PICKER_DIR / "map-display.js").read_text(encoding="utf-8")
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-R10-2026-09-25" in main
+    assert "V4.10.02-MODULAR-DEV-R12-2026-09-26" in main
     assert "const GEWITTERRADAR_MODULE_CACHE = '41002r10';" in main
 
     # Preserve the established picker behaviour.
