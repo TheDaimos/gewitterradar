@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – Cluster-Jump-/Infinity-Geräteabnahme weiter offen; Medaillon-Erweiterung R13 umgesetzt  
+> **Status:** ABSCHLUSSAUDIT – Medaillon-Erweiterung R14 umgesetzt und per DRA bereitgestellt; reale Sichtprüfung `trend_19`–`trend_28` sowie Cluster-Jump/Infinity auf iPad weiter offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -2874,3 +2874,32 @@ Rückführung:
 - [x] iPad-Darstellung im laufenden R13-Abnahmestand real geprüft: optisch ordentlich, keine auffälligen Layout-/Darstellungsprobleme gemeldet.
 
 **Master-Regel unverändert:** Hi-Res-Originale werden nicht durch Runtime-Derivate ersetzt und später verbindlich separat im Master-Repository abgelegt.
+
+
+---
+
+## Schleife R14 – Medaillon-Katalog 19–28 (2026-09-26)
+
+- [x] zehn neue Uploads in eindeutiger Upload-Reihenfolge als `trend_19` bis `trend_28` vergeben; bestehende IDs bleiben dauerhaft stabil.
+- [x] Laufzeit-Ableitungen als exakt 264 × 264 px große, verlustfreie WebP/VP8L-Dateien mit erhaltenem Alphakanal erzeugt.
+- [x] kein Beschnitt und keine Seitenverhältnisverzerrung; alle neuen Quellen sind quadratische 1254 × 1254-px-Hi-Res-Freisteller.
+- [x] alle zehn Assets byte-identisch in `frontend`, `dashboard/dist` und `custom_components/gewitterradar/frontend` eingebunden.
+- [x] Picker auf 28 eindeutig identifizierbare Varianten erweitert; die sichtbare ID bleibt die maßgebliche Referenz für spätere Auswahl/Aussortierung.
+- [x] `docs/MEDALLION_CATALOG.md` auf `trend_19` bis `trend_28` erweitert.
+- [x] neues Modul `instruments.medallion-designs 1.0.0` eingeführt; Gesamtstand nun 23 Module.
+- [x] Modulansicht für das neue Medaillon-Modul in allen 19 unterstützten Sprachen vollständig ergänzt; `diagnostics.module-view 1.3.4`.
+- [x] `core.manifest 1.2.19`, Build `V4.10.02-MODULAR-DEV-R14-2026-09-26`, Runtime-Cache bewusst weiterhin `41002r13`, finaler Modulsatz `477A-87C8`.
+- [x] Frontendvertrag, Runtime-Manifest, Asset-Inventar, Medaillon-Assetvertrag und Prüfsummen vollständig nachgeführt.
+- [x] finaler Produktkandidat `012fdfc62127b6db47cc1d87000217e5f286f7b0` mit 5/5 Hauptprüfungen grün:
+  - Validate shared Gewitterradar frontend → success
+  - Validate Gewitterradar integration → success
+  - Diagnostic contract → success
+  - Source archive contract → success
+  - Hi-Res asset retention → success
+- [x] `deploy/dev` exakt auf `012fdfc62127b6db47cc1d87000217e5f286f7b0` gesetzt und als identisch verifiziert.
+- [ ] reale Sichtprüfung `trend_19` bis `trend_28` nach DRA-Installation.
+- [ ] individuelle Schauglas-/Trendpfeil-Geometrien später aus echten Diagnoseexporten je Medaillon-ID übernehmen; keine Messwerte aus Smartphone-Screenshots ableiten.
+
+**Master-Regel unverändert:** Hi-Res-Originale bleiben geschützte Masterquellen und werden niemals durch Runtime-Derivate ersetzt.
+
+**Weiterhin separat offen:** Cluster-Jump/Infinity ist auf Android/HA Companion und Desktop real bestanden; die iPad-Abnahme dieses Instruments bleibt offen.
