@@ -1,6 +1,16 @@
 # Changelog
 
 ## 2026/09 — V4.10.02 DEV
+### R14 – Medaillon-Katalog auf 28 Varianten erweitert
+- Zehn weitere Medaillons als `trend_19` bis `trend_28` ergänzt; bestehende IDs bleiben dauerhaft unverändert.
+- Picker zählt dynamisch über den Katalog und zeigt die eindeutige ID, z. B. `trend_24 · 24 / 28`.
+- Laufzeitgrafiken: 264 × 264 px, Alphakanal erhalten, verlustfreies WebP/VP8L, kein Beschnitt und keine Seitenverhältnisverzerrung.
+- Die neuen Hi-Res-Quellen sind 1254 × 1254 px; Runtime-Derivate ersetzen die geschützten Masterquellen nicht.
+- R14 erweitert die bestehende Modularisierung um `instruments.medallion-designs 1.0.0`; der bereits abgenommene Kern-Cache bleibt bewusst auf Runtime `41002r13`.
+- Build `V4.10.02-MODULAR-DEV-R14-2026-09-26`, Modulsatz `A14E-28D1`.
+- Die spätere per-Medaillon-Geometrie für Schauglas und Trendpfeil wird aus Diagnoseexporten statt aus Screenshots abgeleitet.
+
+## 2026/09 — V4.10.02 DEV
 ### R13 – Medaillon-Katalog auf 18 Varianten erweitert
 - Acht weitere Medaillons als `trend_11` bis `trend_18` ergänzt; `trend_01` bis `trend_10` bleiben unverändert erhalten.
 - Picker zeigt die eindeutige ID direkt an, z. B. `trend_14 · 14 / 18`, damit spätere Auswahl/Aussortierung zweifelsfrei möglich ist.

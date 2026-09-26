@@ -12,7 +12,7 @@ function vp8lSize(buf) {
   const b1=buf[21], b2=buf[22], b3=buf[23], b4=buf[24];
   return [1+(b1|((b2&0x3f)<<8)),1+((b2>>6)|(b3<<2)|((b4&0x0f)<<10))];
 }
-for (let i=2;i<=18;i++) {
+for (let i=2;i<=28;i++) {
   const id=String(i).padStart(2,'0');
   let reference=null;
   for (const dir of deliveries) {
@@ -22,8 +22,8 @@ for (let i=2;i<=18;i++) {
     else reference=data;
   }
 }
-const source=fs.readFileSync(path.join(root,'frontend/modules/core/base-context.js'),'utf8');
-for (let i=1;i<=18;i++) assert.ok(source.includes("id:'trend_"+String(i).padStart(2,'0')+"'"));
+const source=fs.readFileSync(path.join(root,'frontend/modules/core/base-context.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'frontend/modules/instruments/medallion-designs.js'),'utf8');
+for (let i=1;i<=28;i++) assert.ok(source.includes("id:'trend_"+String(i).padStart(2,'0')+"'"));
 assert.ok(source.includes("gewitterradar-trend-medallion.png?v=409"),'trend_01 asset reference changed');
-assert.ok(source.includes("id:'trend_18'"),'trend_18 descriptor missing');
+assert.ok(source.includes("id:'trend_28'"),'trend_28 descriptor missing');
 console.log('Medallion asset contract: PASS');

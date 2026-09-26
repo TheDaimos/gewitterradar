@@ -6,7 +6,7 @@ Diese Datei ist die eindeutige Zuordnung der Trend-Medaillons. Die **ID ist daue
 
 - `trend_01` wird nicht ersetzt.
 - Neue Varianten werden ausschließlich fortlaufend ergänzt.
-- Der Picker zeigt ab R13 die ID direkt an, z. B. `trend_14 · 14 / 18`.
+- Der Picker zeigt ab R13 die ID direkt an, z. B. `trend_24 · 24 / 28`.
 - Laufzeitgrafiken sind 264 × 264 px und damit 2× Retina für die 132-px-Instrumentdarstellung.
 - Die Laufzeitdateien sind verlustfreies WebP/VP8L mit Transparenz.
 - Die Hi-Res-Originale bleiben verbindliche Masterquellen und werden später separat im Master-Repository abgelegt.
@@ -35,6 +35,21 @@ Diese Datei ist die eindeutige Zuordnung der Trend-Medaillons. Die **ID ist daue
 | `trend_17` | `gewitterradar-trend-medallion-17.webp` | R13 – Quelle: `ChatGPT-Bild 26. Sept. 2026, 10_15_52-10.png` |
 | `trend_18` | `gewitterradar-trend-medallion-18.webp` | R13 – Quelle: `ChatGPT-Bild 26. Sept. 2026, 12_17_19.png` |
 
+| `trend_19` | `gewitterradar-trend-medallion-19.webp` | R14 – Quelle: `70539.png` · silberner Rahmen, vier lange Spitzen, dunkles blaues Schauglas |
+| `trend_20` | `gewitterradar-trend-medallion-20.webp` | R14 – Quelle: `70538.png` · silber-goldener Rahmen, runde Goldpunkte, hellblaues Schauglas |
+| `trend_21` | `gewitterradar-trend-medallion-21.webp` | R14 – Quelle: `70537.png` · silberner Rahmen, blaue Rauten, verflochtene Ornamente, dunkles Schauglas |
+| `trend_22` | `gewitterradar-trend-medallion-22.webp` | R14 – Quelle: `70536.png` · silberner Rahmen, vier seitliche Goldpunkte, helles Schauglas |
+| `trend_23` | `gewitterradar-trend-medallion-23.webp` | R14 – Quelle: `70534.png` · silberner Rahmen, blaue Rauten, organische Außenform, dunkles Schauglas |
+| `trend_24` | `gewitterradar-trend-medallion-24.webp` | R14 – Quelle: `70535.png` · silberner Runenring, vier Spitzen, helles Schauglas |
+| `trend_25` | `gewitterradar-trend-medallion-25.webp` | R14 – Quelle: `70533.png` · silberner Rahmen, roter Innenring, helles Schauglas |
+| `trend_26` | `gewitterradar-trend-medallion-26.webp` | R14 – Quelle: `70531.png` · silberner achteckiger Rahmen, facettierte Eckelemente, hellblaues Schauglas |
+| `trend_27` | `gewitterradar-trend-medallion-27.webp` | R14 – Quelle: `70532.png` · silberner Rahmen, runde Goldpunkte, keltische Ornamente, helles Schauglas |
+| `trend_28` | `gewitterradar-trend-medallion-28.webp` | R14 – Quelle: `70530.png` · silberner Rahmen, blaue Rauten, klare Rundform, blaues Schauglas |
+
 ### Besonderheit `trend_18`
 
 Die Quelle von `trend_18` ist 1284 × 1225 px. Zur Vermeidung von Beschnitt oder Verzerrung wird sie proportional auf 264 × 252 px skaliert und mittig auf einer transparenten 264 × 264-px-Fläche platziert.
+
+### R14-Hinweis
+
+Die Quellen `trend_19` bis `trend_28` sind quadratische 1254 × 1254-px-Hi-Res-Uploads mit Alphakanal. Die Laufzeitfassungen sind 264 × 264 px, verlustfreies WebP/VP8L, ohne Beschnitt und ohne Seitenverhältnisverzerrung. Individuelle Schauglas-/Pfeilgeometrien werden später aus echten Diagnoseexporten je ID kalibriert; Smartphone-Screenshots dienen dafür nicht als Messquelle.
