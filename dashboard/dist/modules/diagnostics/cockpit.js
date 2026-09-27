@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -10,11 +10,14 @@ export const MODULE_META=Object.freeze({
     "Kompass-Kalibrierung",
     "Medaillon-Kalibrierung",
     "Pfeil/Auge-Fit-Matrix",
+    "Visuelle Pfeilkalibrierung",
     "Leistung"
   ],
   "file": "modules/diagnostics/cockpit.js"
 });
-export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLICATION_META, CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, TREND_ARROW_GEOMETRY, MEDALLION_ARROW_GEOMETRY_DB, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLICATION_META, CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, TREND_ARROW_GEOMETRY, MEDALLION_ARROW_GEOMETRY_DB, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;
+const MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY='gewitterradar:v41002:medallion-arrow-visual-calibration-v2';
+return {
     _diagnosticTerm(index) { return (DIAGNOSTIC_TERMS[this._languageValue()]||DIAGNOSTIC_TERMS[LANGUAGE_DEFAULT])[index]; },
     _diagnosticAux(index) { return (DIAGNOSTIC_AUX[this._languageValue()]||DIAGNOSTIC_AUX[LANGUAGE_DEFAULT])[index]; },
     _diagnosticOverlayTerm(index) { return (DIAGNOSTIC_OVERLAY_TERMS[this._languageValue()]||DIAGNOSTIC_OVERLAY_TERMS[LANGUAGE_DEFAULT])[index]; },
@@ -75,10 +78,11 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
           eyeSearchMinRatio:Number(config.eyeSearchMinRatio)||0.18,
           eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.36,
           eyeSeedMode:String(config.eyeSeedMode||'runtime-asset-center-parity-v1'),
-          eyeSeedRadiusRatio:Number(config.eyeSeedRadiusRatio)||(87/264)
+          eyeSeedRadiusRatio:Number(config.eyeSeedRadiusRatio)||(87/264),
+          centerFitMode:String(config.centerFitMode||'eye-center-plus-render-origin-v1')
         },
         provenance:{
-          mode:'ha-webview-r18-first-consistent-eye-ring',
+          mode:'ha-webview-r19-center-aware-fit',
           build:GEWITTERRADAR_BUILD,
           browserUserAgent:navigator.userAgent,
           source:'runtime-assets'
@@ -123,6 +127,147 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
       if(record){
         node.textContent=`FIT ${key} · Ratio ${Number(record.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(record.recommendedUniformScale).toFixed(4)} · ${record.contained360?'360° OK':`Überstand ${Number(record.maxOverflowPx).toFixed(2)} px`}\nDB ${fitCount}/${expected} Kombinationen`;
       }else node.textContent=`FIT ${key} · noch nicht gemessen · DB ${fitCount}/${expected}`;
+    },
+
+    _emptyMedallionVisualCalibrationDatabase() {
+      return {schema:'gewitterradar.medallion-arrow-visual-calibration.v2',version:2,build:GEWITTERRADAR_BUILD,updatedAt:null,entries:{}};
+    },
+
+    _loadMedallionVisualCalibrationDatabase() {
+      if(this._medallionVisualCalibrationDb&&this._medallionVisualCalibrationDb.schema==='gewitterradar.medallion-arrow-visual-calibration.v2')return this._medallionVisualCalibrationDb;
+      let database=this._emptyMedallionVisualCalibrationDatabase();
+      try{
+        const parsed=JSON.parse(localStorage.getItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY)||'null');
+        if(parsed&&parsed.schema===database.schema&&parsed.entries&&typeof parsed.entries==='object')database={...database,...parsed,entries:{...parsed.entries}};
+      }catch(_error){}
+      this._medallionVisualCalibrationDb=database;return database;
+    },
+
+    _persistMedallionVisualCalibrationDatabase(database=this._medallionVisualCalibrationDb) {
+      if(!database)return null;
+      database.build=GEWITTERRADAR_BUILD;database.updatedAt=new Date().toISOString();this._medallionVisualCalibrationDb=database;
+      try{localStorage.setItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY,JSON.stringify(database));}catch(_error){}
+      return database;
+    },
+
+    _medallionVisualScaleClamp(value) {
+      const number=Number(value);return Number.isFinite(number)?Math.max(.35,Math.min(1.10,number)):1;
+    },
+
+    _medallionVisualCenterClamp(value) {
+      const number=Number(value);return Number.isFinite(number)?Math.max(40,Math.min(60,number)):50;
+    },
+
+    _currentMedallionVisualCalibrationState() {
+      const fitState=this._currentMedallionArrowFitRecord(),record=fitState.record,database=this._loadMedallionVisualCalibrationDatabase(),entry=database.entries?.[fitState.key]||null;
+      const autoScaleRaw=record?.recommendedUniformScale,autoScale=autoScaleRaw!=null&&Number.isFinite(Number(autoScaleRaw))?this._medallionVisualScaleClamp(autoScaleRaw):null;
+      const manualScaleRaw=entry?.manualScale,manualScale=manualScaleRaw!=null&&Number.isFinite(Number(manualScaleRaw))?this._medallionVisualScaleClamp(manualScaleRaw):null;
+      const baseCenterX=Number(record?.baseArrowLayout?.centerXPercent??TREND_ARROW_GEOMETRY?.centerXPercent??50.012238),baseCenterY=Number(record?.baseArrowLayout?.centerYPercent??TREND_ARROW_GEOMETRY?.centerYPercent??50.452396);
+      const autoCenterXRaw=record?.recommendedCenter?.xPercent,autoCenterYRaw=record?.recommendedCenter?.yPercent;
+      const autoCenterX=autoCenterXRaw!=null&&Number.isFinite(Number(autoCenterXRaw))?this._medallionVisualCenterClamp(autoCenterXRaw):this._medallionVisualCenterClamp(baseCenterX);
+      const autoCenterY=autoCenterYRaw!=null&&Number.isFinite(Number(autoCenterYRaw))?this._medallionVisualCenterClamp(autoCenterYRaw):this._medallionVisualCenterClamp(baseCenterY);
+      const manualCenterXRaw=entry?.manualCenterXPercent,manualCenterYRaw=entry?.manualCenterYPercent;
+      const manualCenterX=manualCenterXRaw!=null&&Number.isFinite(Number(manualCenterXRaw))?this._medallionVisualCenterClamp(manualCenterXRaw):null;
+      const manualCenterY=manualCenterYRaw!=null&&Number.isFinite(Number(manualCenterYRaw))?this._medallionVisualCenterClamp(manualCenterYRaw):null;
+      const effectiveScale=manualScale??autoScale??1,effectiveCenterX=manualCenterX??autoCenterX,effectiveCenterY=manualCenterY??autoCenterY,baseWidthPercent=Number(record?.baseArrowLayout?.widthPercent)||59.667391;
+      const source=manualScale!=null||manualCenterX!=null||manualCenterY!=null?'manual':record?'auto':'base';
+      return {key:fitState.key,medallionId:fitState.medallionId,arrowId:fitState.arrowId,autoScale,manualScale,effectiveScale,
+        baseCenterXPercent:baseCenterX,baseCenterYPercent:baseCenterY,autoCenterXPercent:autoCenterX,autoCenterYPercent:autoCenterY,
+        manualCenterXPercent:manualCenterX,manualCenterYPercent:manualCenterY,effectiveCenterXPercent:effectiveCenterX,effectiveCenterYPercent:effectiveCenterY,
+        centerDeltaXPercent:effectiveCenterX-baseCenterX,centerDeltaYPercent:effectiveCenterY-baseCenterY,
+        reductionPct:(1-effectiveScale)*100,baseWidthPercent,effectiveWidthPercent:baseWidthPercent*effectiveScale,
+        reviewed:!!entry?.reviewed,updatedAt:entry?.updatedAt||null,source,fitRecord:record||null};
+    },
+
+    _setMedallionVisualCalibrationScale(value,{source='manual',reviewed=false}={}) {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase(),entry={...(database.entries?.[state.key]||{})};
+      if(source==='auto')delete entry.manualScale;else entry.manualScale=this._medallionVisualScaleClamp(value);
+      entry.reviewed=!!reviewed;entry.autoScale=state.autoScale;entry.updatedAt=new Date().toISOString();
+      database.entries[state.key]=entry;this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _setMedallionVisualCalibrationCenter(axis,value,{source='manual',reviewed=false}={}) {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase(),entry={...(database.entries?.[state.key]||{})},key=axis==='y'?'manualCenterYPercent':'manualCenterXPercent';
+      if(source==='auto')delete entry[key];else entry[key]=this._medallionVisualCenterClamp(value);
+      entry.reviewed=!!reviewed;entry.autoCenterXPercent=state.autoCenterXPercent;entry.autoCenterYPercent=state.autoCenterYPercent;entry.updatedAt=new Date().toISOString();
+      database.entries[state.key]=entry;this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _setMedallionVisualCalibrationAuto() {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase(),entry={...(database.entries?.[state.key]||{})};
+      delete entry.manualScale;delete entry.manualCenterXPercent;delete entry.manualCenterYPercent;entry.reviewed=false;entry.updatedAt=new Date().toISOString();
+      database.entries[state.key]=entry;this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _setMedallionVisualCalibrationBaseline() {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase(),entry={...(database.entries?.[state.key]||{})};
+      entry.manualScale=1;entry.manualCenterXPercent=this._medallionVisualCenterClamp(state.baseCenterXPercent);entry.manualCenterYPercent=this._medallionVisualCenterClamp(state.baseCenterYPercent);entry.reviewed=false;entry.updatedAt=new Date().toISOString();
+      database.entries[state.key]=entry;this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _acceptMedallionVisualCalibration() {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase(),entry={...(database.entries?.[state.key]||{})};
+      entry.reviewed=true;entry.autoScale=state.autoScale;entry.autoCenterXPercent=state.autoCenterXPercent;entry.autoCenterYPercent=state.autoCenterYPercent;entry.effectiveScale=state.effectiveScale;entry.effectiveCenterXPercent=state.effectiveCenterXPercent;entry.effectiveCenterYPercent=state.effectiveCenterYPercent;entry.updatedAt=new Date().toISOString();
+      database.entries[state.key]=entry;this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _resetMedallionVisualCalibration() {
+      const state=this._currentMedallionVisualCalibrationState(),database=this._loadMedallionVisualCalibrationDatabase();
+      if(database.entries?.[state.key])delete database.entries[state.key];
+      this._persistMedallionVisualCalibrationDatabase(database);this._syncMedallionVisualCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionVisualCalibrationState();
+    },
+
+    _nextUnreviewedMedallionVisualCalibration() {
+      const fitDb=this._currentMedallionArrowFitRecord().database,keys=Object.keys(fitDb?.fits||{}),database=this._loadMedallionVisualCalibrationDatabase();
+      if(!keys.length)return null;
+      const current=this._currentMedallionVisualCalibrationState().key,start=Math.max(-1,keys.indexOf(current));
+      let target=null;for(let offset=1;offset<=keys.length;offset+=1){const key=keys[(start+offset)%keys.length];if(!database.entries?.[key]?.reviewed){target=key;break;}}
+      if(!target)return null;
+      const [medallionId,arrowId]=target.split('::');this._applyMedallionDesign?.(medallionId,{persist:true});this._applyTrendArrowDesign?.(arrowId,{persist:true});this._syncMedallionPicker?.();
+      requestAnimationFrame(()=>{this._syncMedallionVisualCalibration?.();this._syncPickerDiagnostics?.();});return target;
+    },
+
+    _medallionVisualCalibrationPayload() {
+      const fitState=this._currentMedallionArrowFitRecord(),fitDb=fitState.database,calDb=this._loadMedallionVisualCalibrationDatabase(),fits=Object.values(fitDb?.fits||{});
+      const rows=fits.map((fit)=>{
+        const entry=calDb.entries?.[fit.key]||null,autoScale=this._medallionVisualScaleClamp(fit.recommendedUniformScale),manualRaw=Number(entry?.manualScale),manualScale=entry?.manualScale!=null&&Number.isFinite(manualRaw)?this._medallionVisualScaleClamp(manualRaw):null,effectiveScale=manualScale??autoScale,baseWidthPercent=Number(fit.baseArrowLayout?.widthPercent)||59.667391;
+        const baseCenterXPercent=Number(fit.baseArrowLayout?.centerXPercent??50.012238),baseCenterYPercent=Number(fit.baseArrowLayout?.centerYPercent??50.452396),autoCenterXPercent=this._medallionVisualCenterClamp(fit.recommendedCenter?.xPercent??baseCenterXPercent),autoCenterYPercent=this._medallionVisualCenterClamp(fit.recommendedCenter?.yPercent??baseCenterYPercent);
+        const manualCenterXPercent=entry?.manualCenterXPercent!=null?this._medallionVisualCenterClamp(entry.manualCenterXPercent):null,manualCenterYPercent=entry?.manualCenterYPercent!=null?this._medallionVisualCenterClamp(entry.manualCenterYPercent):null,effectiveCenterXPercent=manualCenterXPercent??autoCenterXPercent,effectiveCenterYPercent=manualCenterYPercent??autoCenterYPercent;
+        return {key:fit.key,medallionId:fit.medallionId,arrowId:fit.arrowId,autoScale,manualScale,effectiveScale,reductionPct:(1-effectiveScale)*100,effectiveWidthPercent:baseWidthPercent*effectiveScale,
+          baseCenterXPercent,baseCenterYPercent,autoCenterXPercent,autoCenterYPercent,manualCenterXPercent,manualCenterYPercent,effectiveCenterXPercent,effectiveCenterYPercent,centerDeltaXPercent:effectiveCenterXPercent-baseCenterXPercent,centerDeltaYPercent:effectiveCenterYPercent-baseCenterYPercent,
+          reviewed:!!entry?.reviewed,updatedAt:entry?.updatedAt||null};
+      });
+      const reviewed=rows.filter(row=>row.reviewed).length,manualOverrides=rows.filter(row=>row.manualScale!=null).length;
+      return {schema:'gewitterradar.medallion-arrow-visual-calibration-export.v2',generatedAt:new Date().toISOString(),build:GEWITTERRADAR_BUILD,
+        sourceFit:{schema:fitDb?.schema||null,generatedAt:fitDb?.generatedAt||null,fitCount:fits.length},
+        storageKey:MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY,summary:{total:rows.length,reviewed,open:Math.max(0,rows.length-reviewed),manualOverrides,autoOnly:rows.length-manualOverrides},
+        current:this._currentMedallionVisualCalibrationState(),entries:rows};
+    },
+
+    _downloadMedallionVisualCalibration(format='json') {
+      const payload=this._medallionVisualCalibrationPayload(),stamp=new Date().toISOString().replace(/[:.]/g,'-'),normalized=format==='csv'?'csv':'json';let content,type;
+      if(normalized==='csv'){
+        const quote=(value)=>`"${String(value??'').replace(/"/g,'""')}"`,header=['key','medallionId','arrowId','autoScale','manualScale','effectiveScale','reductionPct','effectiveWidthPercent','baseCenterXPercent','baseCenterYPercent','autoCenterXPercent','autoCenterYPercent','manualCenterXPercent','manualCenterYPercent','effectiveCenterXPercent','effectiveCenterYPercent','centerDeltaXPercent','centerDeltaYPercent','reviewed','updatedAt'];
+        content='\ufeff'+[header,...payload.entries.map(row=>header.map(key=>row[key]??''))].map(row=>row.map(quote).join(';')).join('\r\n');type='text/csv;charset=utf-8';
+      }else{content=JSON.stringify(payload,null,2);type='application/json;charset=utf-8';}
+      const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=`gewitterradar_medallion_arrow_visual_calibration_${stamp}.${normalized}`;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    },
+
+    _syncMedallionVisualCalibration(scope=this._medallionPickerDialog) {
+      const stage=scope?.querySelector?.('[data-medallion-picker-stage]'),scaleSlider=scope?.querySelector?.('[data-medallion-scale]'),scaleOutput=scope?.querySelector?.('[data-medallion-scale-value]'),
+        xSlider=scope?.querySelector?.('[data-medallion-center-x]'),xOutput=scope?.querySelector?.('[data-medallion-center-x-value]'),ySlider=scope?.querySelector?.('[data-medallion-center-y]'),yOutput=scope?.querySelector?.('[data-medallion-center-y-value]'),status=scope?.querySelector?.('[data-medallion-scale-status]');
+      if(!stage)return null;
+      const state=this._currentMedallionVisualCalibrationState(),percent=state.effectiveScale*100;
+      stage.style.setProperty('--medallion-diagnostic-scale',String(state.effectiveScale));
+      stage.style.setProperty('--medallion-diagnostic-center-x',`${state.effectiveCenterXPercent}%`);
+      stage.style.setProperty('--medallion-diagnostic-center-y',`${state.effectiveCenterYPercent}%`);
+      if(scaleSlider)scaleSlider.value=percent.toFixed(1);if(scaleOutput)scaleOutput.textContent=`${percent.toFixed(1).replace('.',',')} %`;
+      if(xSlider)xSlider.value=state.effectiveCenterXPercent.toFixed(2);if(xOutput)xOutput.textContent=`${state.effectiveCenterXPercent.toFixed(2).replace('.',',')} %`;
+      if(ySlider)ySlider.value=state.effectiveCenterYPercent.toFixed(2);if(yOutput)yOutput.textContent=`${state.effectiveCenterYPercent.toFixed(2).replace('.',',')} %`;
+      const database=this._loadMedallionVisualCalibrationDatabase(),fitDb=this._currentMedallionArrowFitRecord().database,total=Object.keys(fitDb?.fits||{}).length,reviewed=Object.values(database.entries||{}).filter(entry=>entry?.reviewed).length;
+      if(status)status.textContent=`${state.key} · AUTO Größe ${state.autoScale==null?'n/v':(state.autoScale*100).toFixed(1)+' %'} · X/Y ${state.autoCenterXPercent.toFixed(2)} / ${state.autoCenterYPercent.toFixed(2)} %\nAKTUELL Größe ${percent.toFixed(1)} % · X/Y ${state.effectiveCenterXPercent.toFixed(2)} / ${state.effectiveCenterYPercent.toFixed(2)} % · ΔZentrum ${state.centerDeltaXPercent>=0?'+':''}${state.centerDeltaXPercent.toFixed(2)} / ${state.centerDeltaYPercent>=0?'+':''}${state.centerDeltaYPercent.toFixed(2)} %\nPfeilbreite ${state.effectiveWidthPercent.toFixed(2)} % · ${state.source.toUpperCase()} · Abgenommen ${reviewed}/${total}`;
+      const autoButton=scope?.querySelector?.('[data-medallion-scale-auto]'),acceptButton=scope?.querySelector?.('[data-medallion-scale-accept]');
+      autoButton?.classList.toggle('active',state.source==='auto');acceptButton?.classList.toggle('active',state.reviewed);return state;
     },
 
     _geometryLoadImage(src) {
@@ -237,32 +382,44 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
       }
       if(right<left)throw new Error(`${design.id}: keine sichtbaren Pfeilpixel`);
       const maxPoints=720,stride=Math.max(1,Math.ceil(points.length/maxPoints)),sampled=points.filter((_,index)=>index%stride===0);
-      const geometry=TREND_ARROW_GEOMETRY||{centerXPercent:50,centerYPercent:50,widthPercent:59.667391,heightPercent:59.667391};
-      const pivotX=data.width*(Number(geometry.centerXPercent)||50)/100,pivotY=data.height*(Number(geometry.centerYPercent)||50)/100;
+      const geometry=TREND_ARROW_GEOMETRY||{centerXPercent:50,centerYPercent:50,widthPercent:59.667391,heightPercent:59.667391,transformOriginXPercent:50,transformOriginYPercent:50};
+      const pivotX=data.width*(Number(geometry.transformOriginXPercent)||50)/100,pivotY=data.height*(Number(geometry.transformOriginYPercent)||50)/100;
       const maxRadius=Math.max(...sampled.map(point=>Math.hypot(point.x-pivotX,point.y-pivotY)));
       return {id:design.id,sourceWidth:data.width,sourceHeight:data.height,pivotX,pivotY,alphaBounds:{left,top,right,bottom,width:right-left+1,height:bottom-top+1},alphaPixels,boundaryPoints:sampled,maxRadius,method:'alpha-contour-v1'};
     },
 
     _computeMedallionArrowFit(eye,arrow) {
       const config=MEDALLION_ARROW_GEOMETRY_DB||{},safeInsetRatio=Number(config.safeInsetRatio)||.04,step=Math.max(1,Number(config.rotationStepDeg)||5),geometry=TREND_ARROW_GEOMETRY||{};
-      const safeRadiusX=eye.radiusX*(1-safeInsetRatio),safeRadiusY=eye.radiusY*(1-safeInsetRatio),baseWidth=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.widthPercent)||59.667391)/100,baseHeight=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.heightPercent)||59.667391)/100,scaleX=baseWidth/arrow.sourceWidth,scaleY=baseHeight/arrow.sourceHeight;
-      let worstNorm=0,worstAngleDeg=0;
-      for(let angle=0;angle<360;angle+=step){
-        const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let angleNorm=0;
-        for(const point of arrow.boundaryPoints){
-          const x=(point.x-arrow.pivotX)*scaleX,y=(point.y-arrow.pivotY)*scaleY,rx=x*cos-y*sin,ry=x*sin+y*cos,norm=Math.hypot(rx/safeRadiusX,ry/safeRadiusY);
-          if(norm>angleNorm)angleNorm=norm;
+      const safeRadiusX=eye.radiusX*(1-safeInsetRatio),safeRadiusY=eye.radiusY*(1-safeInsetRatio);
+      const baseWidth=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.widthPercent)||59.667391)/100,baseHeight=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.heightPercent)||59.667391)/100,scaleX=baseWidth/arrow.sourceWidth,scaleY=baseHeight/arrow.sourceHeight;
+      const currentCenterX=eye.sourceWidth*(Number(geometry.centerXPercent)||50)/100,currentCenterY=eye.sourceHeight*(Number(geometry.centerYPercent)||50)/100;
+      const autoCenterX=eye.centerX,autoCenterY=eye.centerY,currentOffsetX=currentCenterX-eye.centerX,currentOffsetY=currentCenterY-eye.centerY;
+      const evaluate=(offsetX,offsetY,uniformScale=1)=>{
+        let worstNorm=0,worstAngleDeg=0;
+        for(let angle=0;angle<360;angle+=step){
+          const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let angleNorm=0;
+          for(const point of arrow.boundaryPoints){
+            const x=(point.x-arrow.pivotX)*scaleX*uniformScale,y=(point.y-arrow.pivotY)*scaleY*uniformScale;
+            const rx=offsetX+x*cos-y*sin,ry=offsetY+x*sin+y*cos,norm=Math.hypot(rx/safeRadiusX,ry/safeRadiusY);
+            if(norm>angleNorm)angleNorm=norm;
+          }
+          if(angleNorm>worstNorm){worstNorm=angleNorm;worstAngleDeg=angle;}
         }
-        if(angleNorm>worstNorm){worstNorm=angleNorm;worstAngleDeg=angle;}
-      }
-      const recommendedUniformScale=worstNorm>0?1/worstNorm:1,minorSafeRadius=Math.min(safeRadiusX,safeRadiusY),clearance=(1-worstNorm)*minorSafeRadius;
+        return {worstNorm,worstAngleDeg};
+      };
+      const current=evaluate(currentOffsetX,currentOffsetY,1),centered=evaluate(0,0,1),recommendedUniformScale=centered.worstNorm>0?1/centered.worstNorm:1,recommended=evaluate(0,0,recommendedUniformScale);
+      const minorSafeRadius=Math.min(safeRadiusX,safeRadiusY),currentClearance=(1-current.worstNorm)*minorSafeRadius,centeredClearance=(1-centered.worstNorm)*minorSafeRadius;
       return {
         medallionId:eye.id,arrowId:arrow.id,key:this._medallionArrowFitKey(eye.id,arrow.id),
         eye:{centerX:eye.centerX,centerY:eye.centerY,radiusX:eye.radiusX,radiusY:eye.radiusY,safeRadiusX,safeRadiusY,diameters:eye.diameters,confidence:eye.confidence},
-        arrow:{pivotX:arrow.pivotX,pivotY:arrow.pivotY,alphaBounds:arrow.alphaBounds,maxRadius:arrow.maxRadius,sourceWidth:arrow.sourceWidth,sourceHeight:arrow.sourceHeight},
-        baseArrowLayout:{widthPercent:Number(geometry.widthPercent)||59.667391,heightPercent:Number(geometry.heightPercent)||59.667391,widthPx:baseWidth,heightPx:baseHeight},
-        arrowToEyeRatioCurrent:worstNorm,eyeToArrowScaleRatio:recommendedUniformScale,recommendedUniformScale,
-        contained360:worstNorm<=1+1e-6,minClearancePx:Math.max(0,clearance),maxOverflowPx:Math.max(0,-clearance),worstAngleDeg,rotationStepDeg:step,safeInsetRatio
+        arrow:{pivotX:arrow.pivotX,pivotY:arrow.pivotY,alphaBounds:arrow.alphaBounds,maxRadius:arrow.maxRadius,sourceWidth:arrow.sourceWidth,sourceHeight:arrow.sourceHeight,transformOriginXPercent:Number(geometry.transformOriginXPercent)||50,transformOriginYPercent:Number(geometry.transformOriginYPercent)||50},
+        baseArrowLayout:{centerXPercent:Number(geometry.centerXPercent)||50,centerYPercent:Number(geometry.centerYPercent)||50,widthPercent:Number(geometry.widthPercent)||59.667391,heightPercent:Number(geometry.heightPercent)||59.667391,widthPx:baseWidth,heightPx:baseHeight},
+        recommendedCenter:{x:autoCenterX,y:autoCenterY,xPercent:autoCenterX/eye.sourceWidth*100,yPercent:autoCenterY/eye.sourceHeight*100,deltaXPercent:(autoCenterX-currentCenterX)/eye.sourceWidth*100,deltaYPercent:(autoCenterY-currentCenterY)/eye.sourceHeight*100},
+        currentCenterOffsetPx:{x:currentOffsetX,y:currentOffsetY,residual:Math.hypot(currentOffsetX,currentOffsetY)},
+        arrowToEyeRatioCurrent:current.worstNorm,arrowToEyeRatioCentered:centered.worstNorm,eyeToArrowScaleRatio:recommendedUniformScale,recommendedUniformScale,
+        contained360:current.worstNorm<=1+1e-6,centeredContained360:centered.worstNorm<=1+1e-6,recommendedContained360:recommended.worstNorm<=1+1e-6,
+        minClearancePx:Math.max(0,currentClearance),maxOverflowPx:Math.max(0,-currentClearance),centeredMinClearancePx:Math.max(0,centeredClearance),centeredMaxOverflowPx:Math.max(0,-centeredClearance),
+        worstAngleDeg:current.worstAngleDeg,centeredWorstAngleDeg:centered.worstAngleDeg,recommendedWorstAngleDeg:recommended.worstAngleDeg,rotationStepDeg:step,safeInsetRatio
       };
     },
 
@@ -314,7 +471,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
         left:rect.left-parentRect.left,top:rect.top-parentRect.top,right:rect.right-parentRect.left,bottom:rect.bottom-parentRect.top};
     },
 
-    _renderPickerDiagnosticStage(svg,{width,height,subject=null,pivot=null,targetCircle=null,targetPoint=null,actualPoint=null,namespace='P'}={}) {
+    _renderPickerDiagnosticStage(svg,{width,height,subject=null,pivot=null,targetCircle=null,targetEllipse=null,safeEllipse=null,reachCircle=null,targetPoint=null,actualPoint=null,namespace='P'}={}) {
       if(!svg||!(width>0&&height>0))return;
       svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
       svg.style.setProperty('display','block','important');svg.style.setProperty('opacity','1','important');svg.style.setProperty('z-index','2147483000','important');
@@ -326,7 +483,11 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
         markup+='</g>';if(overlays.ids!==false){const cw=width/10,ch=height/10;markup+='<g fill="#79e8ff" font-family="ui-monospace,monospace" font-size="6.5" opacity=".82">';for(let row=0;row<10;row+=1)for(let col=0;col<10;col+=1){const label=`${namespace}-${String.fromCharCode(65+col)}${row+1}`;markup+=`<text x="${col*cw+2}" y="${row*ch+8}">${label}</text>`;}markup+='</g>';}}
       markup+='<g fill="none">';if(overlays.axes!==false)markup+=line(width/2,0,width/2,height,'#4de5ff',.9,'4 4')+line(0,height/2,width,height/2,'#4de5ff',.9,'4 4');if(overlays.diagonals!==false)markup+=line(0,0,width,height,'#a985ff',.7,'3 5')+line(width,0,0,height,'#a985ff',.7,'3 5');markup+='</g>';
       if(subject&&overlays.boxes!==false)markup+=`<rect x="${subject.x}" y="${subject.y}" width="${subject.width}" height="${subject.height}" fill="none" stroke="#ffe15d" stroke-width="1.2" stroke-dasharray="5 3"/>`;if(subject&&overlays.centers!==false)markup+=cross(subject.centerX,subject.centerY,'#ffe15d',7);
-      if(targetCircle)markup+=`<circle cx="${targetCircle.x}" cy="${targetCircle.y}" r="${targetCircle.radius}" fill="none" stroke="#55e5a2" stroke-width="1.2" stroke-dasharray="6 3"/>`;if(pivot)markup+=cross(pivot.x,pivot.y,'#ff9f43',5);if(targetPoint)markup+=cross(targetPoint.x,targetPoint.y,'#60f0a8',6);if(actualPoint)markup+=cross(actualPoint.x,actualPoint.y,'#ff5fc8',4);svg.innerHTML=markup;
+      if(targetCircle)markup+=`<circle cx="${targetCircle.x}" cy="${targetCircle.y}" r="${targetCircle.radius}" fill="none" stroke="#55e5a2" stroke-width="1.2" stroke-dasharray="6 3"/>`;
+      if(targetEllipse)markup+=`<ellipse cx="${targetEllipse.x}" cy="${targetEllipse.y}" rx="${targetEllipse.rx}" ry="${targetEllipse.ry}" fill="none" stroke="#35d9ff" stroke-width="1.45"/>`;
+      if(safeEllipse)markup+=`<ellipse cx="${safeEllipse.x}" cy="${safeEllipse.y}" rx="${safeEllipse.rx}" ry="${safeEllipse.ry}" fill="none" stroke="#55e5a2" stroke-width="1.35" stroke-dasharray="6 3"/>`;
+      if(reachCircle)markup+=`<circle cx="${reachCircle.x}" cy="${reachCircle.y}" r="${reachCircle.radius}" fill="none" stroke="#ff5fc8" stroke-width="1.25" stroke-dasharray="3 3"/>`;
+      if(pivot)markup+=cross(pivot.x,pivot.y,'#ff9f43',5);if(targetPoint)markup+=cross(targetPoint.x,targetPoint.y,'#60f0a8',6);if(actualPoint)markup+=cross(actualPoint.x,actualPoint.y,'#ff5fc8',4);svg.innerHTML=markup;
     },
 
     _renderPickerDiagnosticNav(svg,{width,height,previous=null,index=null,next=null}={}) {
@@ -386,10 +547,10 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
       if(!(stageRect.width>0&&stageRect.height>0&&preview&&base&&arrow))return null;
       const subject=this._pickerDiagnosticRelativeRect(preview,stageRect),baseRect=this._pickerDiagnosticRelativeRect(base,stageRect),arrowRect=this._pickerDiagnosticRelativeRect(arrow,stageRect);
       const previous=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-prev]'),navRect),index=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-index]'),navRect),next=this._pickerDiagnosticRelativeRect(nav.querySelector('[data-medallion-picker-next]'),navRect);
-      const descriptor=this._medallionDiagnosticDescriptor(),profile=this._medallionDiagnosticProfile(descriptor),sourceWidth=Number(profile.sourceWidth)||512,sourceHeight=Number(profile.sourceHeight)||sourceWidth;
+      const fitState=this._currentMedallionArrowFitRecord(),fitRecord=fitState.record,descriptor=this._medallionDiagnosticDescriptor(),profile=this._medallionDiagnosticProfile(descriptor),sourceWidth=Number(profile.sourceWidth)||512,sourceHeight=Number(profile.sourceHeight)||sourceWidth;
       const centerDx=subject.centerX-stageRect.width/2,centerDy=subject.centerY-stageRect.height/2,centerResidual=Math.hypot(centerDx,centerDy);
-      const targetPoint={x:stageRect.width*(Number(profile.arrow.centerXPercent)||50)/100,y:stageRect.height*(Number(profile.arrow.centerYPercent)||50)/100};
-      const actualPoint={x:arrowRect.centerX,y:arrowRect.centerY},arrowResidual=Math.hypot(actualPoint.x-targetPoint.x,actualPoint.y-targetPoint.y);
+      const baselinePoint={x:stageRect.width*(Number(profile.arrow.centerXPercent)||50)/100,y:stageRect.height*(Number(profile.arrow.centerYPercent)||50)/100};
+      const actualPoint={x:arrowRect.centerX,y:arrowRect.centerY};
       const aperture={x:stageRect.width*profile.aperture.centerX/sourceWidth,y:stageRect.height*profile.aperture.centerY/sourceHeight,radius:Math.min(stageRect.width/sourceWidth,stageRect.height/sourceHeight)*profile.aperture.radius};
       const leftDistance=previous&&index?index.centerX-previous.centerX:null,rightDistance=next&&index?next.centerX-index.centerX:null,navSymmetry=leftDistance!=null&&rightDistance!=null?Math.abs(leftDistance-rightDistance):null;
       const navCenters=[previous?.centerY,index?.centerY,next?.centerY].filter(Number.isFinite),navVerticalSpread=navCenters.length?Math.max(...navCenters)-Math.min(...navCenters):null;
@@ -397,21 +558,28 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
       const style=getComputedStyle(arrow),arrowWidth=parseFloat(style.width)||0,arrowHeight=parseFloat(style.height)||0,expectedArrowWidth=stageRect.width*profile.arrow.widthPercent/100,expectedArrowHeight=stageRect.height*profile.arrow.heightPercent/100;
       const arrowSizeResidual=Math.max(Math.abs(arrowWidth-expectedArrowWidth),Math.abs(arrowHeight-expectedArrowHeight));
       const ok=centerResidual<=1.5&&arrowResidual<=1.5&&arrowSizeResidual<=1.5&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
-      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id)),arrowDesignId=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||null,fitState=this._currentMedallionArrowFitRecord(),fitRecord=fitState.record;
+      const eyeProfile=fitState.database?.medallions?.[descriptor?.id]||null,eyeScaleX=eyeProfile?stageRect.width/Number(eyeProfile.sourceWidth||stageRect.width):1,eyeScaleY=eyeProfile?stageRect.height/Number(eyeProfile.sourceHeight||stageRect.height):1;
+      const measuredEye=eyeProfile?{x:Number(eyeProfile.centerX)*eyeScaleX,y:Number(eyeProfile.centerY)*eyeScaleY,rx:Number(eyeProfile.radiusX)*eyeScaleX,ry:Number(eyeProfile.radiusY)*eyeScaleY}:null;
+      const safeEye=fitRecord?.eye?{x:Number(fitRecord.eye.centerX)*eyeScaleX,y:Number(fitRecord.eye.centerY)*eyeScaleY,rx:Number(fitRecord.eye.safeRadiusX)*eyeScaleX,ry:Number(fitRecord.eye.safeRadiusY)*eyeScaleY}:null;
+      const visualCalibration=this._syncMedallionVisualCalibration(dialog)||this._currentMedallionVisualCalibrationState(),autoPoint={x:stageRect.width*visualCalibration.autoCenterXPercent/100,y:stageRect.height*visualCalibration.autoCenterYPercent/100},effectivePoint={x:stageRect.width*visualCalibration.effectiveCenterXPercent/100,y:stageRect.height*visualCalibration.effectiveCenterYPercent/100};
+      const arrowResidual=Math.hypot(actualPoint.x-effectivePoint.x),arrowSourceWidth=Number(fitRecord?.arrow?.sourceWidth)||1,baseRenderedArrowWidth=stageRect.width*((Number(fitRecord?.baseArrowLayout?.widthPercent)||59.667391)/100);
+      const arrowReachRadius=fitRecord?Number(fitRecord.arrow.maxRadius)*baseRenderedArrowWidth/arrowSourceWidth*visualCalibration.effectiveScale:null;
+      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id)),arrowDesignId=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||null;
       const result={kind:'medallion',designId:descriptor?.id||null,arrowDesignId,uiIndex:designIndex+1,total:designs.length,profile:profile.geometryVersion,
         stage:{width:stageRect.width,height:stageRect.height},preview:subject,base:baseRect,centerDelta:{x:centerDx,y:centerDy,residual:centerResidual},
-        aperture,targetArrowCenter:targetPoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
-        eyeArrowFit:fitRecord||{key:fitState.key,status:'PENDING'},
+        aperture,measuredEye,safeEye,arrowReachRadius,baselineArrowCenter:baselinePoint,autoArrowCenter:autoPoint,effectiveArrowCenter:effectivePoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
+        eyeArrowFit:fitRecord||{key:fitState.key,status:'PENDING'},visualCalibration,
         navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromStage:gap},overflow,status:ok?'OK':'REVIEW'};
       this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.medallion=result;
-      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetCircle:aperture,targetPoint,actualPoint,namespace:'MP'});
+      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetEllipse:measuredEye,safeEllipse:safeEye,reachCircle:arrowReachRadius!=null?{x:effectivePoint.x,y:effectivePoint.y,radius:arrowReachRadius}:null,targetPoint:autoPoint,actualPoint:effectivePoint,namespace:'MP'});
       this._renderPickerDiagnosticNav(navOverlay,{width:navRect.width,height:navRect.height,previous,index,next});
       if(readout)readout.textContent=[
         `MEDAILLON-PICKER · ${result.designId||'n/v'} · ${result.uiIndex} / ${result.total}`,
         `Profil ${result.profile||'n/v'} · Stage ${stageRect.width.toFixed(2)} × ${stageRect.height.toFixed(2)} px`,
         `Medaillon-Zentrum Δ X ${centerDx.toFixed(2)} · Y ${centerDy.toFixed(2)} · R ${centerResidual.toFixed(2)} px`,
-        `Pfeil-Zentrum Soll ${targetPoint.x.toFixed(2)},${targetPoint.y.toFixed(2)} · Ist ${actualPoint.x.toFixed(2)},${actualPoint.y.toFixed(2)} · R ${arrowResidual.toFixed(2)} px`,
-        `Pfeil-Größe Δ max ${arrowSizeResidual.toFixed(2)} px · Apertur R ${aperture.radius.toFixed(2)} px`,
+        `Pfeil-Zentrum Basis ${baselinePoint.x.toFixed(2)},${baselinePoint.y.toFixed(2)} · Auto ${autoPoint.x.toFixed(2)},${autoPoint.y.toFixed(2)} · Kalibriert ${effectivePoint.x.toFixed(2)},${effectivePoint.y.toFixed(2)} px`,
+        measuredEye?`Gemessenes Auge Rx/Ry ${measuredEye.rx.toFixed(2)} / ${measuredEye.ry.toFixed(2)} px · 4-%-Zone ${safeEye.rx.toFixed(2)} / ${safeEye.ry.toFixed(2)} px`:`Gemessenes Auge · noch nicht verfügbar`,
+        `Pfeilgröße aktuell ${(visualCalibration.effectiveScale*100).toFixed(1)} % · Auto ${visualCalibration.autoScale==null?'n/v':(visualCalibration.autoScale*100).toFixed(1)+' %'} · Pfeilreichweite ${arrowReachRadius==null?'n/v':arrowReachRadius.toFixed(2)+' px'}`,
         fitRecord?`Pfeil/Auge Ratio ${Number(fitRecord.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(fitRecord.recommendedUniformScale).toFixed(4)} · 360° ${fitRecord.contained360?'OK':'ÜBERSTAND'}`:`Pfeil/Auge Fit ${fitState.key} · noch nicht gemessen`,
         `Navigation L/R ${leftDistance==null?'n/v':leftDistance.toFixed(2)} / ${rightDistance==null?'n/v':rightDistance.toFixed(2)} px · Symmetrie Δ ${navSymmetry==null?'n/v':navSymmetry.toFixed(2)} px`,
         `Navigation Y-Streuung ${navVerticalSpread==null?'n/v':navVerticalSpread.toFixed(2)} px · Stage→Navigation ${gap.toFixed(2)} px`,
@@ -448,6 +616,7 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
         diagnosticState:{enabled:!!this._diagnostics?.enabled,visualsVisible:!!this._diagnostics?.visualsVisible,live:!!this._diagnostics?.live},
         medallionState:normalized==='medallion'?{...(this._medallionDiagnostic||{}),angleConvention:'0° North, 90° East, clockwise',assetZeroOffsetDeg:-45}:null,
         measurement:measurement||null,
+        visualCalibration:normalized==='medallion'?this._currentMedallionVisualCalibrationState():null,
         geometryDatabase:fitState?{
           schema:fitDb?.schema||MEDALLION_ARROW_GEOMETRY_DB?.schema||null,
           storageKey:MEDALLION_ARROW_GEOMETRY_DB?.storageKey||null,
@@ -530,7 +699,17 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
         shell.querySelectorAll('[data-medallion-freeze]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticFreeze(button.dataset.medallionFreeze==='on');}));
         shell.querySelector('[data-medallion-fit-matrix]')?.addEventListener('click',async(event)=>{event.preventDefault();event.stopPropagation();try{await this._measureMedallionArrowFitMatrix(event.currentTarget);}catch(error){console.error('[Gewitterradar] FIT-MATRIX',error);}});
         shell.querySelector('[data-medallion-fit-db-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionArrowFitDatabase();});
-        this._syncMedallionFitStatus(shell);
+        shell.querySelector('[data-medallion-scale]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationScale(Number(event.currentTarget.value)/100,{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-center-x]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationCenter('x',Number(event.currentTarget.value),{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-center-y]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationCenter('y',Number(event.currentTarget.value),{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-scale-auto]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionVisualCalibrationAuto();});
+        shell.querySelector('[data-medallion-scale-base]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionVisualCalibrationBaseline();});
+        shell.querySelector('[data-medallion-scale-accept]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._acceptMedallionVisualCalibration();});
+        shell.querySelector('[data-medallion-scale-reset]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._resetMedallionVisualCalibration();});
+        shell.querySelector('[data-medallion-scale-next]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._nextUnreviewedMedallionVisualCalibration();});
+        shell.querySelector('[data-medallion-calibration-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionVisualCalibration('json');});
+        shell.querySelector('[data-medallion-calibration-csv]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionVisualCalibration('csv');});
+        this._syncMedallionFitStatus(shell);this._syncMedallionVisualCalibration(shell);
       }
     },
 

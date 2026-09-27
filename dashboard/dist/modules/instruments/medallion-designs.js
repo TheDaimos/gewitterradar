@@ -2,19 +2,19 @@ import { registerModule } from "../core/registry.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"instruments.medallion-designs",
-  version:"1.2.2",
+  version:"1.3.0",
   group:"Instrumente",
   function:"Medaillon-Designkatalog",
-  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank"],
+  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank","Zentrums-Kalibrierung"],
   file:"modules/instruments/medallion-designs.js"
 });
 registerModule(MODULE_META);
 
-const ARROW_PROFILE=Object.freeze({centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391});
+const ARROW_PROFILE=Object.freeze({centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391,transformOriginXPercent:50,transformOriginYPercent:50});
 const MEDALLION_ARROW_GEOMETRY_DB_CONFIG=Object.freeze({
-  schema:"gewitterradar.medallion-arrow-geometry.v1",
-  version:1,
-  storageKey:"gewitterradar:v41002:medallion-arrow-fit-db",
+  schema:"gewitterradar.medallion-arrow-geometry.v2",
+  version:2,
+  storageKey:"gewitterradar:v41002:medallion-arrow-fit-db-v2",
   safeInsetRatio:0.04,
   rotationStepDeg:5,
   eyeAngleStepDeg:2,
@@ -22,6 +22,7 @@ const MEDALLION_ARROW_GEOMETRY_DB_CONFIG=Object.freeze({
   eyeSearchMinRatio:0.18,
   eyeSearchMaxRatio:0.36,
   eyeSeedMode:"first-consistent-eye-ring-v2",
+  centerFitMode:"eye-center-plus-render-origin-v1",
   eyeSeedRadiusRatio:87/264
 });
 
