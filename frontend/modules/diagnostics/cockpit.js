@@ -540,7 +540,9 @@ return {
         const total=medallions.length+arrows.length+medallions.length*arrows.length;let done=0;
         const progress=(label)=>{done+=1;this._medallionArrowFitMatrixProgress=`FIT-MATRIX ${done}/${total} · ${label}`;this._syncMedallionFitStatus();};
         const arrowMeasurements={};
-        for(const design of medallions){db.medallions[design.id]=await this._measureMedallionEyeAsset(design);progress(design.id);await new Promise(requestAnimationFrame);}
+        const eyeCalibrationDb=this._loadMedallionEyeCalibrationDatabase(),reviewedEyeIds=Object.entries(eyeCalibrationDb.entries||{}).filter(([,entry])=>entry?.reviewed).map(([id])=>id);
+        db.provenance={...(db.provenance||{}),manualEyeReferenceSchema:'gewitterradar.medallion-eye-calibration.v1',manualEyeReferenceCount:reviewedEyeIds.length,manualEyeReferenceIds:reviewedEyeIds};
+        for(const design of medallions){const automatic=await this._measureMedallionEyeAsset(design);db.medallions[design.id]=this._resolvedMedallionEyeReference(automatic);progress(design.id);await new Promise(requestAnimationFrame);}
         for(const design of arrows){
           const measured=await this._measureTrendArrowAsset(design),{boundaryPoints,...stored}=measured;
           arrowMeasurements[design.id]=measured;db.arrows[design.id]=stored;progress(design.id);await new Promise(requestAnimationFrame);
@@ -550,7 +552,7 @@ return {
           const record=this._computeMedallionArrowFit(db.medallions[medallion.id],arrowMeasurements[arrow.id]);db.fits[record.key]=record;progress(record.key);
           fitIndex+=1;if(fitIndex%4===0)await new Promise(requestAnimationFrame);
         }
-        db.generatedAt=new Date().toISOString();db.build=GEWITTERRADAR_BUILD;this._persistMedallionArrowGeometryDatabase(db);this._medallionArrowFitMatrixProgress=null;this._syncMedallionFitStatus();
+        db.generatedAt=new Date().toISOString();db.build=GEWITTERRADAR_BUILD;this._persistMedallionArrowGeometryDatabase(db);this._medallionArrowFitMatrixProgress=null;this._syncMedallionFitStatus();this._syncMedallionEyeCalibration();this._syncMedallionVisualCalibration();
         return db;
       }catch(error){
         this._medallionArrowFitMatrixProgress=`FIT-MATRIX FEHLER · ${error instanceof Error?error.message:String(error)}`;this._syncMedallionFitStatus();throw error;
