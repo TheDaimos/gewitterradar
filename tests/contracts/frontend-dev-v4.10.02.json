@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "88420eefef5b5ba3f89daebb342326fec59a51d6102c27056f1197fb2a6e7a9e",
+  "sha256": "1dcb19c7020e88a4afe57cb62cb73e96b95a4679827bc971591664863a27f598",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R17-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R18-2026-09-27",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "c8d72e99a85a8545ee021861b0b995bfb86cc177a8719f3d00a45e4329c5b03a",
+      "sha256": "a75b0c4f4a3d2242c50158f289f1186a25071f9d5ca1712cfca8095da7f11f0a",
       "sizeBytes": 7169
     },
     "modules/core/registry.js": {
@@ -63,8 +63,8 @@
       "sizeBytes": 79761
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "744afbb9ff7283f03edf9aa3a757c70b8f66805f738ef9bdfee4958e1eb103af",
-      "sizeBytes": 226162
+      "sha256": "77660125dd3f9640142ec6f8d6a7a1fcda8d649242c06ecf22a56b5545bbd99e",
+      "sizeBytes": 227370
     },
     "modules/instruments/compass-design.js": {
       "sha256": "6f871d4f93c13bf95e38474c886a536bba29f28e708da72859c1a562e24356ee",
@@ -115,8 +115,8 @@
       "sizeBytes": 12106
     },
     "modules/instruments/medallion-designs.js": {
-      "sha256": "c52f3279256333559b03034bb46c54469dcd8fee5f30b5c257da6f2d53312597",
-      "sizeBytes": 6896
+      "sha256": "f5d7a05d56ef59bda4f8b797dbeaad100671f798b0057fd92b22f0ff0b4090a2",
+      "sizeBytes": 6894
     }
   }
 }
