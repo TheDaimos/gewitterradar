@@ -3105,9 +3105,9 @@ Rückführung:
 - [x] AUGE-JSON sowie erweiterte KAL-JSON/KAL-CSV-Exporte ergänzt.
 - [x] Produktdarstellung außerhalb der Diagnose bleibt unverändert; keine stille Auto-Anwendung.
 - [x] Bedien- und Datenfluss unter `docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md` dokumentiert.
-- [ ] vollständige CI des finalen R19-Kandidaten grün bestätigen.
-- [ ] finalen Kandidaten exakt nach `deploy/dev` promoten.
-- [ ] R19 real per DRA installieren.
+- [x] vollständige CI des finalen R19-Kandidaten grün bestätigt: 14/14 Checks erfolgreich.
+- [x] finalen Kandidaten `cf1565149e8420e52db4d6f140e5f45e87e9ab99` exakt nach `deploy/dev` promotet und verifiziert.
+- [ ] R19 real per DRA installieren. Erwarteter verwalteter Delta gegenüber R18: **0 neu / 7 geändert / 0 entfernt / 101 unverändert**.
 - [ ] AUTO-FIT-MATRIX einmal ausführen.
 - [ ] 28/28 Augenreferenzen visuell setzen und abnehmen.
 - [ ] AUGE-JSON exportieren.
