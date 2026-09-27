@@ -222,7 +222,13 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.36",
   "const centerX=data.width/2,centerY=data.height/2;",
   "first-consistent-eye-ring-ellipse-v2",
-  "mode:'ha-webview-r18-first-consistent-eye-ring'",
+  "gewitterradar.medallion-arrow-visual-calibration-export.v2",
+  "recommendedCenter",
+  "arrowToEyeRatioCentered",
+  "eye-center-plus-render-origin-v1",
+  "_setMedallionVisualCalibrationCenter(",
+  "_nextUnreviewedMedallionVisualCalibration()",
+  "mode:'ha-webview-r19-center-aware-fit'",
   "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
   "this._syncMedallionPicker?.();this._syncPickerDiagnostics?.();",
  ):
@@ -243,5 +249,13 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "data-medallion-angle=\"270\"",
   "medallion-picker-diagnostic-sweep",
   "stage.dataset.diagnosticMode=diagnosticState.mode",
+  "data-medallion-scale",
+  "data-medallion-center-x",
+  "data-medallion-center-y",
+  "data-medallion-scale-auto",
+  "data-medallion-scale-accept",
+  "data-medallion-scale-next",
+  "data-medallion-calibration-json",
+  "data-medallion-calibration-csv",
  ):
   assert marker in map_display
