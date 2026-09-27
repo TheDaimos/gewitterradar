@@ -1,21 +1,25 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R16-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R17-2026-09-27",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "F48F-1C26",
+  "moduleSetId": "7C31-AE42",
   "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
-    "mode": "ci-offline-r16-parity",
+    "mode": "ci-offline-r17-parity",
     "medallions": 28,
     "arrows": 18,
-    "expectedFits": 504
+    "expectedFits": 504,
+    "eyeSeedMode": "runtime-asset-center-parity-v1",
+    "eyeSeedRadiusRatio": 0.32954545454545453
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R16 real Home Assistant/WebView fit-matrix acceptance",
+    "purpose": "R17 real Home Assistant/WebView fit-matrix parity acceptance",
     "productBehaviorUnchanged": true,
-    "fitDataAutoApply": false
+    "fitDataAutoApply": false,
+    "previousRealMatrixAccepted": false,
+    "previousRealMatrixReason": "R12 provenance and non-parity eye seed; rerun required"
   }
 }
