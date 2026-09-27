@@ -2,10 +2,10 @@ import { registerModule } from "../core/registry.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"instruments.medallion-designs",
-  version:"1.3.0",
+  version:"1.3.1",
   group:"Instrumente",
   function:"Medaillon-Designkatalog",
-  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank","Zentrums-Kalibrierung"],
+  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank","Zentrums-Kalibrierung","Augen-Referenzkreis"],
   file:"modules/instruments/medallion-designs.js"
 });
 registerModule(MODULE_META);
