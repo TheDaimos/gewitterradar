@@ -494,3 +494,15 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - Loader übergibt Build-/Versionsidentität explizit an den Modulkontext.
 - FIT-MATRIX blockiert bei Loader-/Manifest-Mischstand statt eine falsch zuordenbare Matrix zu erzeugen.
 - Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
+
+
+### V4.10.02 DEV R18 – identischer Real-/CI-Augenalgorithmus
+- Reale R17-FIT-JSON vollständig ausgewertet: 28 Medaillons, 18 Pfeile, 504/504 Fits.
+- R17-Provenienz ist korrekt, Real-/CI-Parität aber weiterhin klar verfehlt.
+- Root Cause auf unterschiedliche Augenalgorithmen eingegrenzt: HA/WebView `radial-color-edge-ellipse-v1` vs. CI `first-consistent-eye-ring-ellipse-v2`.
+- CI-v2-Algorithmus 1:1 in die HA/WebView-Diagnose portiert.
+- Suchbereich auf identische 18–36 % vereinheitlicht.
+- Diagnosemodul auf 1.3.0, Medaillon-Designmodul auf 1.2.2 und Manifest auf 1.2.23 angehoben.
+- Build `V4.10.02-MODULAR-DEV-R18-2026-09-27`, Modulsatz `A84D-29F7`.
+- 14/14 CI-Prüfungen erfolgreich.
+- Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
