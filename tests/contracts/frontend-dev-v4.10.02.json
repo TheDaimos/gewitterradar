@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "105802103d100797df1c8fc2ce920bade1236afb0eb7f9ba966f06c347944d71",
+  "sha256": "09c9338dfbda6293ad4f234e8003cd6e982e0bda07c474ecda500b296d2c7415",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R18-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R19-2026-09-27",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "8638fdb9e16d91040de58b6e8fa8bd4172d3e04c1431373cb53a1560a4d3f14e",
+      "sha256": "d0196ecf25d0228bcad68bd29eb213fe6fa335933ca705f586613d061865f7b2",
       "sizeBytes": 7169
     },
     "modules/core/registry.js": {
@@ -27,8 +27,8 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "f96aab238271039b82cb85fa1a8ce606fa5335eba0c89de9dba7a4152f302713",
-      "sizeBytes": 96376
+      "sha256": "a061d95b966609df5b4c0517f4ddf2997f6e4009c96272f5d385284ba74c3240",
+      "sizeBytes": 99688
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
@@ -63,8 +63,8 @@
       "sizeBytes": 79761
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "5e79511a8ebe30ba37eca90b99fc15b5fb74c83a642d443aaad74b07e09007a0",
-      "sizeBytes": 227370
+      "sha256": "cac62dbd7739ff18e2d8476fa0edf678478c5c80e0d1bdc792d6fc7a9595f6d4",
+      "sizeBytes": 250289
     },
     "modules/instruments/compass-design.js": {
       "sha256": "6f871d4f93c13bf95e38474c886a536bba29f28e708da72859c1a562e24356ee",
@@ -115,8 +115,8 @@
       "sizeBytes": 12106
     },
     "modules/instruments/medallion-designs.js": {
-      "sha256": "0adb777cfbcdd42ad777d91dd462e87e93930ae57f4cad4bdd29e50e43e340bc",
-      "sizeBytes": 6894
+      "sha256": "18d40ef07ce7f159c4d81432b1649bb091a0d4b9ba9a1533eba1bd12149e652e",
+      "sizeBytes": 7027
     }
   }
 }
