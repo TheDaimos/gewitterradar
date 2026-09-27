@@ -390,3 +390,8 @@ Für die aktuelle V4.10.02-Entwicklung enthält die Diagnose ein vollständiges 
 Die Diagnosewerte verändern die Produktdarstellung nicht automatisch.
 
 Dokumentation: [R19 Augenreferenz und Pfeilkalibrierung](docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md), [Medaillon-/Pfeil-Geometriedatenbank](docs/MEDALLION_ARROW_GEOMETRY_DB.md), [Medaillon-/Pfeil-Katalog](docs/MEDALLION_CATALOG.md).
+
+
+### Projektstatistik
+
+Die historische Entwicklungsmenge von der Vor-Git-V3.x-Phase bis zur aktuellen V4.10-Linie wird separat und mit ausgewiesener Unsicherheit dokumentiert: [Projektstatistik](docs/PROJECT_STATISTICS.md).
