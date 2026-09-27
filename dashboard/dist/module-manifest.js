@@ -178,7 +178,7 @@ export const EXPECTED_MODULES=Object.freeze([
       "Pfeilauswahl",
       "Pfeil/Auge-Geometriedatenbank"
     ],
-    "file": "modules/instruments/medallion-designs.js
+    "file": "modules/instruments/medallion-designs.js"
   },
   {
     "id": "diagnostics.module-view",
