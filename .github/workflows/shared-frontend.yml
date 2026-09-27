@@ -35,6 +35,14 @@ jobs:
       - name: Canonical V4.08 frontend contract
         run: node scripts/verify-frontend.mjs
 
+      - name: Emit regenerated checksum inventory on failure
+        if: failure()
+        run: |
+          node scripts/build-frontend.mjs
+          echo '---SHA256SUMS_FRONTEND_BEGIN---'
+          cat SHA256SUMS_FRONTEND.txt
+          echo '---SHA256SUMS_FRONTEND_END---'
+
       - name: Deterministic frontend build
         run: node scripts/test-frontend-build.mjs
 
