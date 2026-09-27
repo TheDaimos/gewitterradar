@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -73,7 +73,15 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
           eyeAngleStepDeg:Number(config.eyeAngleStepDeg)||2,
           alphaThreshold:Number(config.alphaThreshold)||8,
           eyeSearchMinRatio:Number(config.eyeSearchMinRatio)||0.18,
-          eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.45
+          eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.45,
+          eyeSeedMode:String(config.eyeSeedMode||'runtime-asset-center-parity-v1'),
+          eyeSeedRadiusRatio:Number(config.eyeSeedRadiusRatio)||(87/264)
+        },
+        provenance:{
+          mode:'ha-webview-r17-parity',
+          build:GEWITTERRADAR_BUILD,
+          browserUserAgent:navigator.userAgent,
+          source:'runtime-assets'
         },
         medallions:{},arrows:{},fits:{}
       };
@@ -143,9 +151,9 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
 
     _measureMedallionEyeAsset: async function(design) {
       const image=await this._geometryLoadImage(design.asset),data=this._geometryCanvasData(image),profile=this._medallionDiagnosticProfile(design),config=MEDALLION_ARROW_GEOMETRY_DB||{};
-      const minDim=Math.min(data.width,data.height),sourceWidth=Number(profile.sourceWidth)||data.width,sourceHeight=Number(profile.sourceHeight)||data.height;
-      const centerX=(Number(profile.aperture?.centerX)||sourceWidth/2)/sourceWidth*data.width,centerY=(Number(profile.aperture?.centerY)||sourceHeight/2)/sourceHeight*data.height;
-      const expected=(Number(profile.aperture?.radius)||sourceWidth*.33)/sourceWidth*data.width;
+      const minDim=Math.min(data.width,data.height),seedRatio=Number(config.eyeSeedRadiusRatio)||(87/264);
+      const centerX=data.width/2,centerY=data.height/2;
+      const expected=data.width*seedRatio;
       const minR=Math.max(4,Math.min(expected*.62,minDim*(Number(config.eyeSearchMinRatio)||.18)));
       const maxR=Math.min(minDim*.49,Math.max(expected*1.38,minDim*(Number(config.eyeSearchMaxRatio)||.45)));
       const angleStep=Math.max(1,Number(config.eyeAngleStepDeg)||2),points=[],scores=[],radii=[];

@@ -8,7 +8,7 @@ const sharp=require('sharp');
 const ROOT=path.resolve(__dirname,'..');
 const ASSET_DIR=path.join(ROOT,'frontend','assets');
 const OUT_DIR=path.join(ROOT,'artwork','acceptance','medallion-arrow-fit');
-const BUILD='V4.10.02-MODULAR-DEV-R16-2026-09-27';
+const BUILD='V4.10.02-MODULAR-DEV-R17-2026-09-27';
 const CONFIG=Object.freeze({
   schema:'gewitterradar.medallion-arrow-geometry.v1',
   version:1,
