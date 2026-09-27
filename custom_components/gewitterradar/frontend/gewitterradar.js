@@ -4,11 +4,12 @@
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
 const CARD_VERSION = '4.10.02';
 const CARD_DISPLAY_VERSION = '4.10.02';
-const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R14-2026-09-26';
+const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R15-2026-09-27';
 const GEWITTERRADAR_MODULE_CACHE = '41002r13';
-const gewitterradarImport = async (path) => {
+const GEWITTERRADAR_FEATURE_CACHE = '41002r15';
+const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) => {
   try {
-    return await import(`${path}?v=${GEWITTERRADAR_MODULE_CACHE}`);
+    return await import(`${path}?v=${revision}`);
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     const stack = error instanceof Error && error.stack ? `\n${error.stack}` : '';
@@ -26,11 +27,11 @@ let installCompass, installHistoryChart;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js');
+  const manifest = await gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE);
   const registry = await gewitterradarImport('./modules/core/registry.js');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
-  const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js');
+  const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE);
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
@@ -38,7 +39,7 @@ try {
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
   const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
-  const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js');
+  const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE);
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');

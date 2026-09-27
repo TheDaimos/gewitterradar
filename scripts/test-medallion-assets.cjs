@@ -22,12 +22,26 @@ for (let i=2;i<=28;i++) {
     else reference=data;
   }
 }
+
+for (let i=1;i<=17;i++) {
+  const id=String(i).padStart(2,'0');
+  let reference=null;
+  for (const dir of deliveries) {
+    const data=fs.readFileSync(path.join(root,dir,'gewitterradar-trend-arrow-'+id+'.webp'));
+    assert.deepEqual(vp8lSize(data),[264,264],'arrow_'+id+' must be exact 2x lossless runtime size');
+    if (reference) assert.ok(data.equals(reference),'arrow_'+id+' differs between delivery trees');
+    else reference=data;
+  }
+}
 const baseSource=fs.readFileSync(path.join(root,'frontend/modules/core/base-context.js'),'utf8');
 const extensionSource=fs.readFileSync(path.join(root,'frontend/modules/instruments/medallion-designs.js'),'utf8');
 for (let i=1;i<=18;i++) assert.ok(baseSource.includes("id:'trend_"+String(i).padStart(2,'0')+"'"));
 assert.ok(baseSource.includes("gewitterradar-trend-medallion.png?v=409"),'trend_01 asset reference changed');
 assert.ok(extensionSource.includes('for(let number=19;number<=28;number++)'),'R14 medallion range contract missing');
 assert.ok(extensionSource.includes('const id="trend_"+suffix;'),'R14 stable medallion id construction missing');
+assert.ok(extensionSource.includes('for(let number=1;number<=17;number++)'),'R15 arrow range contract missing');
+assert.ok(extensionSource.includes('id="arrow_"+suffix'),'R15 stable arrow id construction missing');
+assert.ok(extensionSource.includes('context.TREND_ARROW_DESIGNS=Object.freeze'),'R15 arrow catalog export missing');
 for (let i=19;i<=28;i++) {
   const id=String(i).padStart(2,'0');
   assert.ok(extensionSource.includes('trend_'+id+":new URL('../../assets/gewitterradar-trend-medallion-"+id+".webp?v=41002r14'"),'trend_'+id+' asset mapping missing');

@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
+  "build": "V4.10.02-MODULAR-DEV-R15-2026-09-27",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "477A-87C8",
+  "moduleSetId": "8F15-A271",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.19"
+      "version": "1.2.20"
     },
     {
       "id": "core.base-context",
@@ -27,7 +27,7 @@
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.14"
+      "version": "1.0.15"
     },
     {
       "id": "ui.scroll-guard",
@@ -59,7 +59,7 @@
     },
     {
       "id": "instruments.medallion-designs",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "diagnostics.module-view",

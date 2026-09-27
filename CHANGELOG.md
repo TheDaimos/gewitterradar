@@ -1,5 +1,14 @@
 # Changelog
 
+## V4.10.02 DEV R15 – Trendpfeilauswahl (2026-09-27)
+
+- Medaillon-Pop-up um eine zweite, persistent gespeicherte Pfeilauswahl erweitert.
+- Geschützter Standard `arrow_00` plus 17 eindeutig nummerierte Kandidaten `arrow_01`–`arrow_17`.
+- Kandidaten als verlustfreie 264×264-WebP-Laufzeitgrafiken in Frontend, Dashboard und nativer Integration.
+- Medaillon- und Pfeilnavigation verwenden die silbernen Hi-Res-Chevrons.
+- Assetinventar, Laufzeitmanifest, Modulvertrag, Prüfsummen und Medaillon-/Pfeiltests erweitert.
+- Hi-Res-Originale werden erst nach der finalen Auswahl in das Master-Repository übernommen.
+
 ## 2026/09 — V4.10.02 DEV
 ### R14 – Medaillon-Katalog auf 28 Varianten erweitert
 - Zehn weitere Medaillons als `trend_19` bis `trend_28` ergänzt; bestehende IDs bleiben dauerhaft unverändert.

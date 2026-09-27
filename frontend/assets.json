@@ -83,8 +83,110 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "296149e9f35b5da228ad1efcde6082141ea4c3f81df6ff02c831ce5abe95e29d",
+    "sha256": "e009a7c35f58c6565f6c86576e8f9fd3b6503afafe6e2d0eb87e62f10b11318d",
     "protected": false
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-01.webp",
+    "sha256": "4fb0dcc61a282ae5b69f392cc6567da4b8ea87e47a85f58a14be627429e82232",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-02.webp",
+    "sha256": "17ed77499615d975d9c11a41b153e81e20f6cd3d83387a739f184d38b080d488",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-03.webp",
+    "sha256": "1f7b7cb831baeb44c4a0fc9990a0b828959579190a3861997d92118be7e95b33",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-04.webp",
+    "sha256": "80dabd470d9c93f480a5260c956f65c9fa534f503d10ac7b4de12ea3fe49dc6b",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-05.webp",
+    "sha256": "58d92f62ce91eb89add90efc1ab4b6ba1d86c295a22ddbd4cea350da2df56a53",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-06.webp",
+    "sha256": "2ffa5a2b4925cfd8abb0d83002167ef732a225da300388ad0830ee4317c78b6b",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-07.webp",
+    "sha256": "8ff428cad9e200a5ba0c8c6e77d2bb8139a4152845c1edb3efc665763ed2e966",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-08.webp",
+    "sha256": "9bb747997e2949b367219eb638cb46a349f624f9db873dee1d9d1554d2c54461",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-09.webp",
+    "sha256": "60a63d15867c4552c9fbdf90e463a50bf366d92f8a57778c20da20c93a47820e",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-10.webp",
+    "sha256": "2e269281c0ae8e40abbb45fa1e7891a6acba2b793e0938b54a1a3b405b3d067d",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-11.webp",
+    "sha256": "c26985c2d2108854df29dae1e1de6432a76f5a8521af264cb832ab8e69e87298",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-12.webp",
+    "sha256": "6697e7ca6cb30e0af01ed4d0c59cf92e48fc05d3c051272860319cd67b401b84",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-13.webp",
+    "sha256": "8c71d64ffdc6a992e7ebeb1be85008c2b24a481d8046b3c553f4b28261953887",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-14.webp",
+    "sha256": "65c7a43c19f02dbc3284c23b32dbe42abbc4e2f8e6a36a7ef1af194c261c6530",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-15.webp",
+    "sha256": "d226927bd466ead04714fef9c1f2965782743326033c8a756f1ee75f3b0c47dc",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-16.webp",
+    "sha256": "4682dd8b85dac9e44372971f81cd05d2e9fb83cbac1e6b183657f3f908c6dc0c",
+    "protected": false,
+    "retention": "candidate"
+  },
+  {
+    "file": "assets/gewitterradar-trend-arrow-17.webp",
+    "sha256": "44d4c181f608b4c480dd9aef1623bb4101bd646d0b62e940b3b146a828c4c444",
+    "protected": false,
+    "retention": "candidate"
   },
   {
     "file": "assets/gewitterradar-trend-arrow.png",

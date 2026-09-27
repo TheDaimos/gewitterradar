@@ -1,9 +1,9 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R14-2026-09-26",runtimeRevision:"41002r13",moduleSetId:"477A-87C8"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R15-2026-09-27",runtimeRevision:"41002r13",moduleSetId:"8F15-A271"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -167,13 +167,15 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.medallion-designs",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "group": "Instrumente",
     "function": "Medaillon-Designkatalog",
     "subfunctions": [
       "Designvarianten",
       "Assetzuordnung",
-      "Diagnosegrundprofile"
+      "Diagnosegrundprofile",
+      "Pfeilvarianten",
+      "Pfeilauswahl"
     ],
     "file": "modules/instruments/medallion-designs.js"
   },
@@ -292,4 +294,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.19",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.20",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

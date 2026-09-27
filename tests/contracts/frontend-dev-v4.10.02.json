@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "62ebcd415d97a1c79c91a93655953ada792f1d3cb36f580444fd4fbc9efa0ca6",
-  "sizeBytes": 8365,
+  "sha256": "d0d1eba1fac64982039289671ec5363e0553dbce6d780a910d841689cc0fbdd0",
+  "sizeBytes": 8518,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R14-2026-09-26",
+  "build": "V4.10.02-MODULAR-DEV-R15-2026-09-27",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "2d8b375bc8e9067cbb93f838e5767c503b5936fe3c07ade98e6f69f896839fb6",
-      "sizeBytes": 7053
+      "sha256": "105bf592ab061a368a626f2291c41c2c0ee69f0d55adc12396f34b5fa0d6d08f",
+      "sizeBytes": 7099
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -27,8 +27,8 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "81c519929c34aed3ff4201d5ca47ee34ca3348c9b971e5d467758001389ca2b9",
-      "sizeBytes": 91178
+      "sha256": "a76de4bba58247e56b60a22cb088d10ca459ed87c3f362d8927be185761c2b4d",
+      "sizeBytes": 95951
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
@@ -115,8 +115,8 @@
       "sizeBytes": 12106
     },
     "modules/instruments/medallion-designs.js": {
-      "sha256": "01921a5dc6a125a40d8ef96d9507675491799ef07b26024f3eb512e9d4d19180",
-      "sizeBytes": 3448
+      "sha256": "1a2fc8e81641e31f2892be2a69be760e577fce0a69c8e783b2f98984d3395016",
+      "sizeBytes": 6206
     }
   }
 }

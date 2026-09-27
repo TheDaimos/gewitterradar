@@ -5,7 +5,7 @@ import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?
 import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -17,7 +17,7 @@ export const MODULE_META=Object.freeze({
   ],
   "file": "modules/fullscreen/map-display.js"
 });
-export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _teardownMapDisplayMode() {
       this._setMapDisplayMenuOpen(false);
       this._closeMapStartupDropdown?.(false);
@@ -197,6 +197,48 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       shell.querySelector('[data-compass-picker-close]')?.focus?.({preventScroll:true});
     },
 
+    _trendArrowDesignValue() {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length) return '';
+      const active = String(this._activeTrendArrowDesign || '').trim();
+      if (designs.some((entry) => entry.id === active)) return active;
+      let stored = '';
+      try { stored = String(localStorage.getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
+      const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
+      this._activeTrendArrowDesign = resolved;
+      return resolved;
+    },
+
+    _applyTrendArrowDesign(designId,{persist=true}={}) {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      const descriptor = designs.find((entry) => entry.id === designId) || designs[0] || null;
+      if (!descriptor) return null;
+      this._activeTrendArrowDesign = descriptor.id;
+      this.shadow?.querySelectorAll('.trend-medallion-arrow').forEach((image) => {
+        if (descriptor.asset && image.getAttribute('src') !== descriptor.asset) image.setAttribute('src',descriptor.asset);
+        image.dataset.trendArrowDesign = descriptor.id;
+      });
+      if (persist) {
+        try { localStorage.setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
+      }
+      return descriptor;
+    },
+
+    _stepTrendArrowDesign(step) {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length) return;
+      const currentId = this._trendArrowDesignValue();
+      const currentIndex = Math.max(0,designs.findIndex((entry) => entry.id === currentId));
+      const nextIndex = (currentIndex + Number(step || 0) + designs.length) % designs.length;
+      this._applyTrendArrowDesign(designs[nextIndex].id,{persist:true});
+      this._syncMedallionPicker();
+      this._syncMapMedallionState();
+      requestAnimationFrame(()=>{
+        this._syncPickerDiagnostics?.();
+        if(this._medallionCalibrationEnabled)this._measureMedallionCalibration?.();
+      });
+    },
+
     _medallionDesignValue() {
       const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
       if (!designs.length) return '';
@@ -245,11 +287,16 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
       const descriptor = this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
       if (!descriptor) return;
+      const arrowDesigns = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      const arrowDescriptor = this._applyTrendArrowDesign(this._trendArrowDesignValue(),{persist:false});
       const index = Math.max(0,designs.findIndex((entry) => entry.id === descriptor.id));
+      const arrowIndex = arrowDescriptor ? Math.max(0,arrowDesigns.findIndex((entry) => entry.id === arrowDescriptor.id)) : 0;
       const base = dialog.querySelector('[data-medallion-picker-base]');
       if (base && descriptor.asset) base.setAttribute('src',descriptor.asset);
       const output = dialog.querySelector('[data-medallion-picker-index]');
       if (output) output.textContent = descriptor.id + ' · ' + (index + 1) + ' / ' + designs.length;
+      const arrowOutput = dialog.querySelector('[data-trend-arrow-index]');
+      if (arrowOutput && arrowDescriptor) arrowOutput.textContent = arrowDescriptor.id + ' · ' + (arrowIndex + 1) + ' / ' + arrowDesigns.length;
       const stage = dialog.querySelector('[data-medallion-picker-stage]');
       const source = this.shadow?.getElementById('trend-box'),diagnosticState=this._diagnostics?.enabled?this._medallionDiagnostic:null;
       const productionState = ['up','down','stable','none'].find((name) => source?.classList.contains(name)) || 'none';
@@ -284,6 +331,18 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         button.setAttribute('aria-label',this._t('compass.next'));
         button.title = this._t('compass.next');
       });
+      dialog.querySelectorAll('[data-trend-arrow-prev]').forEach((button) => {
+        button.disabled = !arrowDesigns.length;
+        button.setAttribute('aria-disabled',arrowDesigns.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      dialog.querySelectorAll('[data-trend-arrow-next]').forEach((button) => {
+        button.disabled = !arrowDesigns.length;
+        button.setAttribute('aria-disabled',arrowDesigns.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
       requestAnimationFrame(()=>this._syncPickerDiagnostics?.());
     },
 
@@ -304,7 +363,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (this._medallionPickerDialog?.open || !this.shadow || !this.isConnected) return;
       if (this._compassPickerDialog?.open) this._closeCompassPicker(false);
       const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
-      if (!designs.length) return;
+      const arrowDesigns = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length || !arrowDesigns.length) return;
 
       const shell = document.createElement('div');
       shell.id = 'medallion-picker-shell-v41002';
@@ -320,23 +380,28 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.medallion-picker-stage[data-trend-state="up"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1)}.medallion-picker-stage[data-trend-state="stable"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1)}.medallion-picker-stage[data-trend-state="down"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1)}.medallion-picker-stage[data-trend-state="none"] .trend-medallion-arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84)}' +
         '@keyframes medallion-picker-diagnostic-sweep{0%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}50%{transform:translate(-50%,-50%) rotate(135deg) scale(1)}100%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}}' +
         '.medallion-picker-stage[data-trend-state="diagnostic"]:not([data-diagnostic-mode="animation"]):not([data-diagnostic-mode="freeze"]) .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:none!important;transform:translate(-50%,-50%) rotate(calc(var(--medallion-picker-diagnostic-angle,45deg) - 45deg)) scale(1)!important}.medallion-picker-stage[data-diagnostic-mode="animation"] .trend-medallion-arrow,.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:medallion-picker-diagnostic-sweep 3s ease-in-out infinite!important}.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{animation-play-state:paused!important}' +
-        '.medallion-picker-nav{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px;margin-top:2px}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
+        '.medallion-picker-nav{position:relative;display:grid;grid-template-columns:64px 96px 64px;align-items:center;justify-content:center;gap:13px;margin-top:2px}.medallion-picker-nav.arrow-select{margin-top:-5px;padding-top:3px;border-top:1px solid #d6ad5a24}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
         '.instrument-picker-diagnostic-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;pointer-events:none!important;overflow:visible!important;opacity:1!important;isolation:isolate}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
         '.instrument-picker-diagnostic-tools{width:min(430px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
         '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
-        '.medallion-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
-        '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-nav{grid-template-columns:58px 72px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
+        '.medallion-picker-index{min-width:96px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
+        '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-nav{grid-template-columns:58px 86px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
         '</style>' +
         '<dialog class="medallion-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('trend.label') + '">' +
         '<button class="medallion-picker-close" type="button" data-medallion-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
         '<div class="medallion-picker-stage" data-medallion-picker-stage data-trend-state="none"><div class="medallion-picker-preview">' +
         '<img class="trend-medallion-base" data-medallion-picker-base src="' + (designs[0].asset || TREND_MEDALLION_IMAGE) + '" alt="" draggable="false">' +
-        '<img class="trend-medallion-arrow" src="' + TREND_ARROW_IMAGE + '" alt="" draggable="false"></div><svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-stage hidden aria-hidden="true"></svg></div>' +
+        '<img class="trend-medallion-arrow" src="' + (arrowDesigns[0].asset || TREND_ARROW_IMAGE) + '" alt="" draggable="false"></div><svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-stage hidden aria-hidden="true"></svg></div>' +
         '<div class="medallion-picker-nav" role="group" aria-label="' + this._t('trend.label') + '">' +
-        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_BRASS + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<output class="medallion-picker-index" data-medallion-picker-index aria-live="polite"></output>' +
-        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_BRASS + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
+        '</div>' +
+        '<div class="medallion-picker-nav arrow-select" data-trend-arrow-nav role="group" aria-label="' + this._t('trend.label') + '">' +
+        '<button class="medallion-picker-nav-button" type="button" data-trend-arrow-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<output class="medallion-picker-index" data-trend-arrow-index aria-live="polite"></output>' +
+        '<button class="medallion-picker-nav-button" type="button" data-trend-arrow-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '</div>' +
         '<div class="instrument-picker-diagnostic-tools" data-medallion-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Medaillon-Diagnose</div>' +
         '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-preset="empty">LEER</button><button type="button" data-medallion-preset="static">PFEIL</button><button type="button" data-medallion-preset="animation">TREND</button><button type="button" data-medallion-preset="freeze">FREEZE</button><button type="button" data-medallion-preset="normal">NORMAL</button></div>' +
@@ -358,6 +423,12 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       });
       shell.querySelector('[data-medallion-picker-next]')?.addEventListener('click',(event) => {
         event.preventDefault();event.stopPropagation();this._stepMedallionDesign(1);
+      });
+      shell.querySelector('[data-trend-arrow-prev]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepTrendArrowDesign(-1);
+      });
+      shell.querySelector('[data-trend-arrow-next]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepTrendArrowDesign(1);
       });
       dialog.addEventListener('cancel',(event) => {
         event.preventDefault();event.stopPropagation();this._closeMedallionPicker();
@@ -455,6 +526,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const source = this.shadow?.getElementById('trend-box');
       const overlay = this.shadow?.getElementById('map-medallion-overlay');
       if (!source || !overlay) return;
+      this._applyTrendArrowDesign?.(this._trendArrowDesignValue?.(),{persist:false});
       const state = ['up','down','stable','none'].find(name => source.classList.contains(name)) || 'none';
       overlay.classList.remove('up','down','stable','none');
       overlay.classList.add(state);

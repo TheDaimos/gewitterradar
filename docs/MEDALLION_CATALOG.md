@@ -53,3 +53,31 @@ Die Quelle von `trend_18` ist 1284 × 1225 px. Zur Vermeidung von Beschnitt oder
 ### R14-Hinweis
 
 Die Quellen `trend_19` bis `trend_28` sind quadratische 1254 × 1254-px-Hi-Res-Uploads mit Alphakanal. Die Laufzeitfassungen sind 264 × 264 px, verlustfreies WebP/VP8L, ohne Beschnitt und ohne Seitenverhältnisverzerrung. Individuelle Schauglas-/Pfeilgeometrien werden später aus echten Diagnoseexporten je ID kalibriert; Smartphone-Screenshots dienen dafür nicht als Messquelle.
+
+## R15 – Trendpfeil-Kandidaten
+
+Die Pfeilauswahl gehört direkt zum Medaillon-Pop-up. Bestehende IDs werden nicht umnummeriert. `arrow_00` bleibt der geschützte bisherige Gewitterradar-Standardpfeil. Die neuen Kandidaten `arrow_01` bis `arrow_17` sind als verlustfreie 264×264-WebP-Laufzeitgrafiken hinterlegt (mindestens 2× Retina für das 132-px-Instrument). Die Hi-Res-Originale bleiben bis zur finalen Auswahl außerhalb des Master-Repositories; aussortierte Kandidaten können dadurch ohne Master-Ballast entfernt werden.
+
+| ID | Bezeichnung | Laufzeitdatei | Status |
+| --- | --- | --- | --- |
+| `arrow_00` | Standard geschützt | `gewitterradar-trend-arrow.png` | geschützt |
+| `arrow_01` | Keltisch Silber | `gewitterradar-trend-arrow-01.webp` | Kandidat |
+| `arrow_02` | Silber Blau | `gewitterradar-trend-arrow-02.webp` | Kandidat |
+| `arrow_03` | Eisjuwelen | `gewitterradar-trend-arrow-03.webp` | Kandidat |
+| `arrow_04` | Technisch Silber | `gewitterradar-trend-arrow-04.webp` | Kandidat |
+| `arrow_05` | Keltisch Warm | `gewitterradar-trend-arrow-05.webp` | Kandidat |
+| `arrow_06` | Blattwerk Silber | `gewitterradar-trend-arrow-06.webp` | Kandidat |
+| `arrow_07` | Nordisch Runen | `gewitterradar-trend-arrow-07.webp` | Kandidat |
+| `arrow_08` | Saphir Silber | `gewitterradar-trend-arrow-08.webp` | Kandidat |
+| `arrow_09` | Cyberpunk Gold | `gewitterradar-trend-arrow-09.webp` | Kandidat |
+| `arrow_10` | Tron Silber | `gewitterradar-trend-arrow-10.webp` | Kandidat |
+| `arrow_11` | Energie Blau Kern | `gewitterradar-trend-arrow-11.webp` | Kandidat |
+| `arrow_12` | Energie Blau Geflecht | `gewitterradar-trend-arrow-12.webp` | Kandidat |
+| `arrow_13` | Energie Blau Gold | `gewitterradar-trend-arrow-13.webp` | Kandidat |
+| `arrow_14` | Energie Cyan | `gewitterradar-trend-arrow-14.webp` | Kandidat |
+| `arrow_15` | Energie Blau Violett | `gewitterradar-trend-arrow-15.webp` | Kandidat |
+| `arrow_16` | Energie Blau Magenta | `gewitterradar-trend-arrow-16.webp` | Kandidat |
+| `arrow_17` | Energie Blau Softviolett | `gewitterradar-trend-arrow-17.webp` | Kandidat |
+
+Gemeinsame technische Zielgeometrie bleibt bis zur späteren medaillonspezifischen Messkalibrierung unverändert: Mittelpunkt X **50,012238 %**, Mittelpunkt Y **50,452396 %**, Breite/Höhe **59,667391 %**. Die Auswahl wird unter `gewitterradar:v41002:trend-arrow-design` gespeichert.
+
