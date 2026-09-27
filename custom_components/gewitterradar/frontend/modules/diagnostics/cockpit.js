@@ -244,7 +244,7 @@ return {
     _syncMedallionEyeCalibration(scope=this._medallionPickerDialog) {
       const stage=scope?.querySelector?.('[data-medallion-picker-stage]'),circle=scope?.querySelector?.('[data-medallion-eye-circle]'),x=scope?.querySelector?.('[data-medallion-eye-x]'),y=scope?.querySelector?.('[data-medallion-eye-y]'),r=scope?.querySelector?.('[data-medallion-eye-radius]'),xo=scope?.querySelector?.('[data-medallion-eye-x-value]'),yo=scope?.querySelector?.('[data-medallion-eye-y-value]'),ro=scope?.querySelector?.('[data-medallion-eye-radius-value]'),status=scope?.querySelector?.('[data-medallion-eye-status]');
       if(!stage)return null;const state=this._currentMedallionEyeCalibrationState();
-      if(circle){circle.hidden=!this._diagnostics?.enabled;circle.style.left=`${state.effectiveCenterXPercent}%`;circle.style.top=`${state.effectiveCenterYPercent}%`;circle.style.width=`${state.effectiveRadiusPercent*2}%`;circle.style.height=`${state.effectiveRadiusPercent*2}%`;}
+      if(circle){circle.hidden=!this._pickerDiagnosticEnabled();circle.style.left=`${state.effectiveCenterXPercent}%`;circle.style.top=`${state.effectiveCenterYPercent}%`;circle.style.width=`${state.effectiveRadiusPercent*2}%`;circle.style.height=`${state.effectiveRadiusPercent*2}%`;}
       if(x)x.value=state.effectiveCenterXPercent.toFixed(2);if(y)y.value=state.effectiveCenterYPercent.toFixed(2);if(r)r.value=state.effectiveRadiusPercent.toFixed(2);
       if(xo)xo.textContent=`${state.effectiveCenterXPercent.toFixed(2).replace('.',',')} %`;if(yo)yo.textContent=`${state.effectiveCenterYPercent.toFixed(2).replace('.',',')} %`;if(ro)ro.textContent=`${state.effectiveRadiusPercent.toFixed(2).replace('.',',')} %`;
       const database=this._loadMedallionEyeCalibrationDatabase(),reviewed=Object.values(database.entries||{}).filter(entry=>entry?.reviewed).length,total=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS.length:0;
@@ -380,10 +380,10 @@ return {
       const stage=scope?.querySelector?.('[data-medallion-picker-stage]'),scaleSlider=scope?.querySelector?.('[data-medallion-scale]'),scaleOutput=scope?.querySelector?.('[data-medallion-scale-value]'),
         xSlider=scope?.querySelector?.('[data-medallion-center-x]'),xOutput=scope?.querySelector?.('[data-medallion-center-x-value]'),ySlider=scope?.querySelector?.('[data-medallion-center-y]'),yOutput=scope?.querySelector?.('[data-medallion-center-y-value]'),status=scope?.querySelector?.('[data-medallion-scale-status]');
       if(!stage)return null;
-      const state=this._currentMedallionVisualCalibrationState(),percent=state.effectiveScale*100;
-      stage.style.setProperty('--medallion-diagnostic-scale',String(state.effectiveScale));
-      stage.style.setProperty('--medallion-diagnostic-center-x',`${state.effectiveCenterXPercent}%`);
-      stage.style.setProperty('--medallion-diagnostic-center-y',`${state.effectiveCenterYPercent}%`);
+      const state=this._currentMedallionVisualCalibrationState(),percent=state.effectiveScale*100,diagnosticActive=!!this._diagnostics?.enabled;
+      stage.style.setProperty('--medallion-diagnostic-scale',String(diagnosticActive?state.effectiveScale:1));
+      stage.style.setProperty('--medallion-diagnostic-center-x',`${diagnosticActive?state.effectiveCenterXPercent:state.baseCenterXPercent}%`);
+      stage.style.setProperty('--medallion-diagnostic-center-y',`${diagnosticActive?state.effectiveCenterYPercent:state.baseCenterYPercent}%`);
       if(scaleSlider)scaleSlider.value=percent.toFixed(1);if(scaleOutput)scaleOutput.textContent=`${percent.toFixed(1).replace('.',',')} %`;
       if(xSlider)xSlider.value=state.effectiveCenterXPercent.toFixed(2);if(xOutput)xOutput.textContent=`${state.effectiveCenterXPercent.toFixed(2).replace('.',',')} %`;
       if(ySlider)ySlider.value=state.effectiveCenterYPercent.toFixed(2);if(yOutput)yOutput.textContent=`${state.effectiveCenterYPercent.toFixed(2).replace('.',',')} %`;
