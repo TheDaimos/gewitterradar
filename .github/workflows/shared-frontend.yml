@@ -19,6 +19,17 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Print V4.10.02 contract hashes
+        run: |
+          sha256sum frontend/gewitterradar.js
+          wc -c frontend/gewitterradar.js
+          sha256sum frontend/module-manifest.js
+          wc -c frontend/module-manifest.js
+          sha256sum frontend/modules/diagnostics/cockpit.js
+          wc -c frontend/modules/diagnostics/cockpit.js
+          sha256sum frontend/modules/instruments/medallion-designs.js
+          wc -c frontend/modules/instruments/medallion-designs.js
+
       - name: Canonical V4.08 frontend contract
         run: node scripts/verify-frontend.mjs
 
