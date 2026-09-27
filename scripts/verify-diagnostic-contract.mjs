@@ -87,9 +87,14 @@ function verifyContract(source, label, languages) {
     'data-medallion-angle="90"', 'data-medallion-angle="180"',
     'data-medallion-angle="270"',
     'data-medallion-fit-matrix', 'data-medallion-fit-db-json',
+    'data-medallion-scale', 'data-medallion-center-x', 'data-medallion-center-y',
+    'data-medallion-scale-auto', 'data-medallion-scale-accept', 'data-medallion-scale-next',
+    'data-medallion-calibration-json', 'data-medallion-calibration-csv',
     '_measureMedallionArrowFitMatrix', '_measureMedallionEyeAsset',
     '_measureTrendArrowAsset', '_computeMedallionArrowFit',
-    'gewitterradar.medallion-arrow-geometry.v1',
+    '_setMedallionVisualCalibrationCenter', '_nextUnreviewedMedallionVisualCalibration',
+    'gewitterradar.medallion-arrow-visual-calibration-export.v2', 'recommendedCenter',
+    'gewitterradar.medallion-arrow-geometry.v2',
     '_copyTextReliable'
   ], 'medallion states');
 
