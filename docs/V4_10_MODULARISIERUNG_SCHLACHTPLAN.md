@@ -2981,8 +2981,8 @@ Rückführung:
 - [x] DRA-Provenance-Datei `custom_components/gewitterradar/dra-deployment-provenance.json` ergänzt, damit der geprüfte Paritätsstand als echte verwaltete Dateiänderung über `deploy/dev` installiert und commitgenau nachvollzogen werden kann.
 - [x] Provenance hält 28 Medaillons, 18 Pfeile, 504 Soll-Fits und `ci-offline-r16-parity` fest.
 - [x] Produktverhalten bleibt unverändert; Fit-Daten werden weiterhin nicht automatisch auf die Pfeildarstellung angewendet.
-- [ ] neuen R16P1-Stand nach vollständig grüner CI exakt nach `deploy/dev` promoten.
+- [x] neuen R16P1-Stand nach vollständig grüner CI exakt nach `deploy/dev` promoten – Kandidat `19aa830a7d19bbe00bf953e442a3d625085788de`, 14/14 Checks erfolgreich.
 - [ ] R16P1 real über DRA installieren.
 - [ ] danach vollständige FIT-MATRIX ausführen und genau eine FIT-JSON für die reale Auswertung exportieren.
 
-**NÄCHSTER SCHRITT:** CI des R16P1-Kandidaten vollständig auslaufen lassen. Bei Grün `deploy/dev` exakt auf diesen Kandidaten setzen; anschließend DRA-Installation und realer 504er-FIT-MATRIX-Lauf.
+**NÄCHSTER SCHRITT:** R16P1 über DRA aus `deploy/dev` / `19aa830a7d19bbe00bf953e442a3d625085788de` installieren. Erwarteter verwalteter Delta gegenüber `ba3083c7d3ace5a986aeabe9327f1f5128122a59`: **1 neu / 0 geändert / 0 entfernt / 107 unverändert**. Danach vollständige FIT-MATRIX ausführen und genau eine FIT-JSON exportieren.
