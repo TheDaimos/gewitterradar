@@ -2953,6 +2953,15 @@ Rückführung:
 - [x] Kalibrierungs-Logdatei verwendet dynamische `trend_XX`- und `arrow_XX`-IDs.
 - [x] automatisierter Browservertrag um eine reale Einzelmessung Auge + Pfeil + Fit erweitert.
 - [x] Spezifikation in `docs/MEDALLION_ARROW_GEOMETRY_DB.md` dokumentiert.
+- [x] Modulstände: `core.manifest 1.2.21`, `fullscreen.map-display 1.0.16`, `instruments.medallion-designs 1.2.0`, `diagnostics.cockpit 1.2.0`.
+- [x] Build `V4.10.02-MODULAR-DEV-R16-2026-09-27`; stabiler Kerncache `41002r13`, gezielter R16-Featurecache `41002r16`, Modulsatz `F48F-1C26`.
+- [x] finaler R16-Produktkandidat `ba3083c7d3ace5a986aeabe9327f1f5128122a59` mit 5/5 Hauptprüfungen grün:
+  - Validate shared Gewitterradar frontend → success
+  - Validate Gewitterradar integration → success
+  - Diagnostic contract → success
+  - Source archive contract → success
+  - Hi-Res asset retention → success
+- [x] `deploy/dev` exakt auf `ba3083c7d3ace5a986aeabe9327f1f5128122a59` gesetzt und verifiziert.
 - [ ] vollständige 504er-FIT-MATRIX real nach DRA-Installation ausführen und `FIT-JSON` exportieren.
 - [ ] erkannte Augenradien je `trend_XX` visuell/plausibilisieren; Fehlmessungen nicht als finale Datenbank übernehmen.
 - [ ] empfohlene Skalierung mehrerer stark unterschiedlicher `arrow_XX` in kleinen/großen Augen real prüfen.

@@ -9,6 +9,8 @@
 - Augenmessung erfolgt aus dem echten Laufzeitasset; Pfeilgeometrie aus der sichtbaren Alpha-Kontur.
 - Zwischenablagepfad für HA-WebViews robuster gemacht und Export-/Lognamen auf aktive Medaillon-/Pfeil-IDs umgestellt.
 - Vollständige Matrix und automatische Anwendung der Messdaten bleiben bis zur realen DRA-Abnahme getrennt.
+- Build `V4.10.02-MODULAR-DEV-R16-2026-09-27`, Modulsatz `F48F-1C26`; `core.manifest 1.2.21`, `fullscreen.map-display 1.0.16`, `instruments.medallion-designs 1.2.0`, `diagnostics.cockpit 1.2.0`.
+- Finaler R16-Kandidat `ba3083c7d3ace5a986aeabe9327f1f5128122a59`: 5/5 Hauptprüfungen grün und exakt nach `deploy/dev` promoviert.
 
 ## V4.10.02 DEV R15 – Trendpfeilauswahl (2026-09-27)
 
