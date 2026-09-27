@@ -17,7 +17,8 @@ const CONFIG=Object.freeze({
   eyeAngleStepDeg:2,
   alphaThreshold:8,
   eyeSearchMinRatio:0.18,
-  eyeSearchMaxRatio:0.36
+  eyeSearchMaxRatio:0.36,
+  centerFitMode:'eye-center-plus-render-origin-v1'
 });
 const ARROW_PROFILE=Object.freeze({
   centerXPercent:50.012238,
@@ -250,6 +251,7 @@ function fit(eye,arrow){
   const scales=fits.map(x=>x.recommendedUniformScale);
   const ratios=fits.map(x=>x.arrowToEyeRatioCurrent);
   const contained=fits.filter(x=>x.contained360).length;
+  const centerX=fits.map(x=>x.recommendedCenter.xPercent),centerY=fits.map(x=>x.recommendedCenter.yPercent),centerDx=fits.map(x=>x.recommendedCenter.deltaXPercent),centerDy=fits.map(x=>x.recommendedCenter.deltaYPercent);
   const confidenceCounts=Object.values(db.medallions).reduce((acc,x)=>(acc[x.confidence]=(acc[x.confidence]||0)+1,acc),{});
   const summary={
     schema:'gewitterradar.medallion-arrow-fit-summary.v1',
@@ -261,6 +263,7 @@ function fit(eye,arrow){
     confidenceCounts,
     recommendedScale:{min:Math.min(...scales),max:Math.max(...scales),mean:scales.reduce((a,b)=>a+b,0)/scales.length},
     ratio:{min:Math.min(...ratios),max:Math.max(...ratios),mean:ratios.reduce((a,b)=>a+b,0)/ratios.length},
+    recommendedCenter:{xPercent:{min:Math.min(...centerX),max:Math.max(...centerX)},yPercent:{min:Math.min(...centerY),max:Math.max(...centerY)},deltaXPercent:{min:Math.min(...centerDx),max:Math.max(...centerDx)},deltaYPercent:{min:Math.min(...centerDy),max:Math.max(...centerDy)}},
     lowestConfidence:Object.values(db.medallions).filter(x=>x.confidence!=='HIGH').map(x=>x.id),
     mostRestrictive:fits.slice().sort((a,b)=>a.recommendedUniformScale-b.recommendedUniformScale).slice(0,20).map(x=>({key:x.key,scale:x.recommendedUniformScale,ratio:x.arrowToEyeRatioCurrent,overflow:x.maxOverflowPx,worstAngleDeg:x.worstAngleDeg})),
     mostPermissive:fits.slice().sort((a,b)=>b.recommendedUniformScale-a.recommendedUniformScale).slice(0,20).map(x=>({key:x.key,scale:x.recommendedUniformScale,ratio:x.arrowToEyeRatioCurrent,clearance:x.minClearancePx,worstAngleDeg:x.worstAngleDeg}))
