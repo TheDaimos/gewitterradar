@@ -108,3 +108,15 @@ V4.10.02 ist nur abnahmefähig, wenn:
 4. ein vorheriger Stand wiederherstellbar ist,
 5. der installierte Sollstand mit dem im Browser gemeldeten Iststand vergleichbar ist,
 6. keine manuelle Einzeldatei-Registrierung erforderlich ist.
+
+### R19 Diagnose-/Kalibrierungsverantwortung
+
+Die R19-Kalibrierung bleibt modular aufgeteilt:
+
+- `instruments.medallion-designs` — stabile Medaillon-/Pfeil-IDs, Basisgeometrie, Geometriedatenbank-Konfiguration und Rotationsursprung;
+- `fullscreen.map-display` — Picker-Darstellung, sichtbarer Referenzkreis, Regler/Schaltflächen und lokale Kalibrieroberfläche;
+- `diagnostics.cockpit` — automatische Augen-/Alpha-Messung, 360°-Fit, Referenzauflösung, Invalidierung, Persistenz, Exporte und Diagnose-Overlays.
+
+Neue Diagnosefunktionen umfassen automatische Augenmessung, manuelle X/Y/Radius-Augenreferenz, direkten Kreis-/Radiusgriff, 4-%-Sicherheitsgrenze, zentrumssensitive Pfeilkonturrotation, AUTO-Pfeilzentrum X/Y, manuelle Pfeilgröße und Mittelpunkt X/Y, 28er-Augenabnahme, 504er-Paarabnahme sowie FIT-/AUGE-/KAL-Exporte.
+
+Das Diagnosesystem darf bei ausgeschalteter Diagnose keine dieser Kalibrierungen als produktive Darstellung anwenden oder im Hintergrund neu berechnen.
