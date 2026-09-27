@@ -101,6 +101,7 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
+ assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
  assert 'moduleSetId:"7C31-AE42"' in manifest
  assert runtime["runtimeRevision"]=="41002r13"
