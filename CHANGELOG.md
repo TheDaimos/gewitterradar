@@ -478,3 +478,8 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - trigger/re-check dynamic `person.*` / `zone.*` changes with no thread-safety error;
 - real HACS rollback and re-update proof;
 - final Android/iPad frontend spot checks, including Android last-compass persistence.
+
+
+### V4.10.02 DEV R16P1 – DRA/CI parity acceptance
+- Added `custom_components/gewitterradar/dra-deployment-provenance.json` as a DRA-managed provenance record for the R16 real fit-matrix acceptance path.
+- Records the 28 × 18 = 504 expected fit matrix and `ci-offline-r16-parity` provenance without changing runtime fit behavior or automatically applying calibration data.
