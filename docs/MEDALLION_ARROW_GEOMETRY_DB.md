@@ -168,3 +168,23 @@ Vollständiger Abnahmebeleg:
 `docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md`
 
 Wichtig: Die Messparität ist freigegeben; eine automatische Produktanwendung der ermittelten Scale-Werte ist damit **nicht automatisch freigegeben**.
+
+
+## R19 – manuell abgenommener Referenzkreis je Medaillon
+
+R18 bestätigt die technische Parität der automatischen Pixelerkennung. R19 ergänzt darüber eine fachliche Referenzebene: Der gewünschte nutzbare Innenraum eines Medaillons kann je Design bewusst von der automatisch erkannten Kante abweichen.
+
+Deshalb kann für jedes `trend_XX` ein manueller Kreis aus Mittelpunkt X/Y und Radius abgenommen werden. Nur ein mit **AUGE ABNEHMEN** bestätigter Kreis ersetzt die automatische Ellipse in der Fit-Matrix.
+
+Referenzhierarchie:
+1. `manual-reviewed-circle-v1`, wenn für das Medaillon abgenommen,
+2. sonst `first-consistent-eye-ring-ellipse-v2`.
+
+Die automatische Ellipse wird auch bei manueller Referenz als `autoMeasurement` mitgeführt und bleibt diagnostisch sichtbar.
+
+R19 trennt außerdem die Pfeilplatzierung vom tatsächlichen Rotationsursprung. Die CSS-Platzierung bleibt eine Laufzeitgröße; die Konturrotation erfolgt geometrisch um `transform-origin: 50% 50%`.
+
+Ein Wechsel der Augenreferenz invalidiert die 18 davon abhängigen Paar-Fits und hebt bestehende Paarabnahmen auf, ohne manuell eingegebene Paarwerte zu löschen.
+
+Vollständige Bedien- und Exportbeschreibung:
+`docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md`.
