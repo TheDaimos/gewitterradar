@@ -161,18 +161,18 @@ return {
     },
 
     _medallionEyeCalibrationStateForId(medallionId) {
-      const fitDb=this._loadMedallionArrowGeometryDatabase(),profile=fitDb?.medallions?.[medallionId]||null,database=this._loadMedallionEyeCalibrationDatabase(),entry=database.entries?.[medallionId]||null;
+      const fitDb=this._loadMedallionArrowGeometryDatabase(),profile=fitDb?.medallions?.[medallionId]||null,automatic=profile?.autoMeasurement||profile,database=this._loadMedallionEyeCalibrationDatabase(),entry=database.entries?.[medallionId]||null;
       const sourceWidth=Number(profile?.sourceWidth||512),sourceHeight=Number(profile?.sourceHeight||sourceWidth),minDim=Math.min(sourceWidth,sourceHeight);
-      const autoCenterX=this._medallionEyeCenterClamp(profile?Number(profile.centerX)/sourceWidth*100:50);
-      const autoCenterY=this._medallionEyeCenterClamp(profile?Number(profile.centerY)/sourceHeight*100:50);
-      const autoRadius=this._medallionEyeRadiusClamp(profile?Math.min(Number(profile.radiusX),Number(profile.radiusY))/minDim*100:30);
+      const autoCenterX=this._medallionEyeCenterClamp(automatic?Number(automatic.centerX)/sourceWidth*100:50);
+      const autoCenterY=this._medallionEyeCenterClamp(automatic?Number(automatic.centerY)/sourceHeight*100:50);
+      const autoRadius=this._medallionEyeRadiusClamp(automatic?Math.min(Number(automatic.radiusX),Number(automatic.radiusY))/minDim*100:30);
       const manualCenterX=entry?.centerXPercent!=null?this._medallionEyeCenterClamp(entry.centerXPercent):null,manualCenterY=entry?.centerYPercent!=null?this._medallionEyeCenterClamp(entry.centerYPercent):null,manualRadius=entry?.radiusPercent!=null?this._medallionEyeRadiusClamp(entry.radiusPercent):null;
       const effectiveCenterX=manualCenterX??autoCenterX,effectiveCenterY=manualCenterY??autoCenterY,effectiveRadius=manualRadius??autoRadius;
       return {medallionId,sourceWidth,sourceHeight,autoCenterXPercent:autoCenterX,autoCenterYPercent:autoCenterY,autoRadiusPercent:autoRadius,
         manualCenterXPercent:manualCenterX,manualCenterYPercent:manualCenterY,manualRadiusPercent:manualRadius,
         effectiveCenterXPercent:effectiveCenterX,effectiveCenterYPercent:effectiveCenterY,effectiveRadiusPercent:effectiveRadius,
         effectiveDiameterPercent:effectiveRadius*2,reviewed:!!entry?.reviewed,updatedAt:entry?.updatedAt||null,source:manualCenterX!=null||manualCenterY!=null||manualRadius!=null?'manual':'auto',
-        autoMeasurement:profile?{centerX:Number(profile.centerX),centerY:Number(profile.centerY),radiusX:Number(profile.radiusX),radiusY:Number(profile.radiusY),confidence:profile.confidence||null,method:profile.method||null,referenceSource:profile.referenceSource||null}:null};
+        autoMeasurement:automatic?{centerX:Number(automatic.centerX),centerY:Number(automatic.centerY),radiusX:Number(automatic.radiusX),radiusY:Number(automatic.radiusY),confidence:automatic.confidence||null,method:automatic.method||null,referenceSource:profile?.referenceSource||null}:null};
     },
 
     _currentMedallionEyeCalibrationState() {
@@ -180,9 +180,19 @@ return {
       return this._medallionEyeCalibrationStateForId(medallionId);
     },
 
+    _invalidateMedallionEyeDependentFits(medallionId,reason='Augenreferenz geändert') {
+      const fitDb=this._loadMedallionArrowGeometryDatabase();let removed=0;
+      for(const key of Object.keys(fitDb?.fits||{}))if(key.startsWith(`${medallionId}::`)){delete fitDb.fits[key];removed+=1;}
+      if(removed){fitDb.generatedAt=null;fitDb.provenance={...(fitDb.provenance||{}),staleReason:reason,staleMedallionId:medallionId};this._persistMedallionArrowGeometryDatabase(fitDb);}
+      const pairDb=this._loadMedallionVisualCalibrationDatabase();
+      for(const [key,entry] of Object.entries(pairDb.entries||{}))if(key.startsWith(`${medallionId}::`)&&entry){entry.reviewed=false;entry.eyeReferenceChangedAt=new Date().toISOString();}
+      this._persistMedallionVisualCalibrationDatabase(pairDb);
+      this._medallionArrowFitMatrixProgress=`${reason} · FIT-MATRIX erneut ausführen`;this._syncMedallionFitStatus();return removed;
+    },
+
     _setMedallionEyeCalibration(values,{source='manual',reviewed=false}={}) {
       const state=this._currentMedallionEyeCalibrationState(),database=this._loadMedallionEyeCalibrationDatabase(),entry={...(database.entries?.[state.medallionId]||{})};
-      if(source==='auto'){delete entry.centerXPercent;delete entry.centerYPercent;delete entry.radiusPercent;}
+      if(source==='auto'){const wasReviewed=!!entry.reviewed;delete entry.centerXPercent;delete entry.centerYPercent;delete entry.radiusPercent;if(wasReviewed)this._invalidateMedallionEyeDependentFits(state.medallionId,'Augenreferenz auf AUTO zurückgesetzt');}
       else{
         if(values?.centerXPercent!=null)entry.centerXPercent=this._medallionEyeCenterClamp(values.centerXPercent);
         if(values?.centerYPercent!=null)entry.centerYPercent=this._medallionEyeCenterClamp(values.centerYPercent);
@@ -195,13 +205,13 @@ return {
     _acceptMedallionEyeCalibration() {
       const state=this._currentMedallionEyeCalibrationState(),database=this._loadMedallionEyeCalibrationDatabase(),entry={...(database.entries?.[state.medallionId]||{})};
       entry.centerXPercent=state.effectiveCenterXPercent;entry.centerYPercent=state.effectiveCenterYPercent;entry.radiusPercent=state.effectiveRadiusPercent;entry.reviewed=true;entry.updatedAt=new Date().toISOString();
-      database.entries[state.medallionId]=entry;this._persistMedallionEyeCalibrationDatabase(database);this._syncMedallionEyeCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionEyeCalibrationState();
+      database.entries[state.medallionId]=entry;this._persistMedallionEyeCalibrationDatabase(database);this._invalidateMedallionEyeDependentFits(state.medallionId,'Manueller Augen-Referenzkreis abgenommen');this._syncMedallionEyeCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionEyeCalibrationState();
     },
 
     _resetMedallionEyeCalibration() {
       const state=this._currentMedallionEyeCalibrationState(),database=this._loadMedallionEyeCalibrationDatabase();
-      if(database.entries?.[state.medallionId])delete database.entries[state.medallionId];
-      this._persistMedallionEyeCalibrationDatabase(database);this._syncMedallionEyeCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionEyeCalibrationState();
+      const wasReviewed=!!database.entries?.[state.medallionId]?.reviewed;if(database.entries?.[state.medallionId])delete database.entries[state.medallionId];
+      this._persistMedallionEyeCalibrationDatabase(database);if(wasReviewed)this._invalidateMedallionEyeDependentFits(state.medallionId,'Manuelle Augenreferenz verworfen');this._syncMedallionEyeCalibration();this._syncPickerDiagnostics?.();return this._currentMedallionEyeCalibrationState();
     },
 
     _nextUnreviewedMedallionEyeCalibration() {
