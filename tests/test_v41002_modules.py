@@ -219,7 +219,7 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "_measureMedallionArrowFitMatrix: async function",
   "_computeMedallionArrowFit(eye,arrow)",
   "gewitterradar.medallion-arrow-geometry.v1",
-  "first-consistent-eye-ring-v2",
+  "eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.36",
   "const centerX=data.width/2,centerY=data.height/2;",
   "first-consistent-eye-ring-ellipse-v2",
   "mode:'ha-webview-r18-first-consistent-eye-ring'",
