@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -11,6 +11,7 @@ export const MODULE_META=Object.freeze({
     "Medaillon-Kalibrierung",
     "Pfeil/Auge-Fit-Matrix",
     "Visuelle Pfeilkalibrierung",
+    "Augen-Referenzkreis",
     "Leistung"
   ],
   "file": "modules/diagnostics/cockpit.js"
