@@ -2969,3 +2969,20 @@ Rückführung:
 
 **R16-Regel:** Die Diagnose erzeugt Messdaten; sie überschreibt die Produktdarstellung noch nicht automatisch. Erst nach realer Abnahme wird entschieden, wann die gespeicherten Fit-Ratios die Laufzeitskalierung der Pfeile steuern.
 
+
+
+---
+
+## Schleife R16P1 – CI-Parität als DRA-Abnahmestand (2026-09-27)
+
+- [x] Folge-Head nach R16 gegen den installierten Produktkandidaten `ba3083c7d3ace5a986aeabe9327f1f5128122a59` verglichen.
+- [x] bestätigt: die vier bisherigen Folge-Commits enthalten nur CI-Paritätsgenerator, Workflow, Changelog, Schlachtplan und Übergabe; keine unbeabsichtigte Änderung der R16-Produktlogik.
+- [x] aktueller Feature-Head vor Promotion vollständig CI-grün; insbesondere beide Shared-Frontend-Läufe erfolgreich.
+- [x] DRA-Provenance-Datei `custom_components/gewitterradar/dra-deployment-provenance.json` ergänzt, damit der geprüfte Paritätsstand als echte verwaltete Dateiänderung über `deploy/dev` installiert und commitgenau nachvollzogen werden kann.
+- [x] Provenance hält 28 Medaillons, 18 Pfeile, 504 Soll-Fits und `ci-offline-r16-parity` fest.
+- [x] Produktverhalten bleibt unverändert; Fit-Daten werden weiterhin nicht automatisch auf die Pfeildarstellung angewendet.
+- [ ] neuen R16P1-Stand nach vollständig grüner CI exakt nach `deploy/dev` promoten.
+- [ ] R16P1 real über DRA installieren.
+- [ ] danach vollständige FIT-MATRIX ausführen und genau eine FIT-JSON für die reale Auswertung exportieren.
+
+**NÄCHSTER SCHRITT:** CI des R16P1-Kandidaten vollständig auslaufen lassen. Bei Grün `deploy/dev` exakt auf diesen Kandidaten setzen; anschließend DRA-Installation und realer 504er-FIT-MATRIX-Lauf.
