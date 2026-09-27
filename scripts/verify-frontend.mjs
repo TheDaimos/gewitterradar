@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.17"',
+  '"id": "fullscreen.map-display"','"version": "1.0.18"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -107,12 +107,20 @@ for(const marker of [
   'data-medallion-scale-accept',
   'data-medallion-scale-next',
   'data-medallion-calibration-json',
-  'data-medallion-calibration-csv'
+  'data-medallion-calibration-csv',
+  'data-medallion-eye-circle',
+  'data-medallion-eye-x',
+  'data-medallion-eye-y',
+  'data-medallion-eye-radius',
+  'data-medallion-eye-auto',
+  'data-medallion-eye-accept',
+  'data-medallion-eye-next',
+  'data-medallion-eye-json'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.4.0"',
+  '"id": "diagnostics.cockpit"','"version": "1.5.0"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
@@ -135,6 +143,11 @@ for(const marker of [
   'recommendedCenter',
   'arrowToEyeRatioCentered',
   'eye-center-plus-render-origin-v1',
+  'gewitterradar.medallion-eye-calibration.v1',
+  'manual-user-circle-v1',
+  '_resolvedMedallionEyeReference(',
+  '_bindMedallionEyeCircleDrag(',
+  'manualEyeReferenceCount',
   "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
   "node.style?.removeProperty('display')",
   "if(node.matches?.('svg'))node.replaceChildren();"
