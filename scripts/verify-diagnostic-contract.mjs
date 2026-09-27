@@ -90,10 +90,14 @@ function verifyContract(source, label, languages) {
     'data-medallion-scale', 'data-medallion-center-x', 'data-medallion-center-y',
     'data-medallion-scale-auto', 'data-medallion-scale-accept', 'data-medallion-scale-next',
     'data-medallion-calibration-json', 'data-medallion-calibration-csv',
+    'data-medallion-eye-circle', 'data-medallion-eye-x', 'data-medallion-eye-y', 'data-medallion-eye-radius',
+    'data-medallion-eye-auto', 'data-medallion-eye-accept', 'data-medallion-eye-next', 'data-medallion-eye-json',
     '_measureMedallionArrowFitMatrix', '_measureMedallionEyeAsset',
     '_measureTrendArrowAsset', '_computeMedallionArrowFit',
     '_setMedallionVisualCalibrationCenter', '_nextUnreviewedMedallionVisualCalibration',
     'gewitterradar.medallion-arrow-visual-calibration-export.v2', 'recommendedCenter',
+    'gewitterradar.medallion-eye-calibration.v1', '_resolvedMedallionEyeReference',
+    '_bindMedallionEyeCircleDrag', 'manual-user-circle-v1',
     'gewitterradar.medallion-arrow-geometry.v2',
     '_copyTextReliable'
   ], 'medallion states');
