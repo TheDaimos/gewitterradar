@@ -515,7 +515,7 @@ Temporäre M12-Testfunktionen sind **keine Produktfreigabe**: Das Medaillon-Popu
 - [x] CHANGELOG
 - [x] HISTORY / Release Notes
 - [x] **R10 real über DRA installiert und 22/22 Module / Versionssatz konsistent bestätigt** – Modulsatz `CEA6-1ECF`, keine Abweichungen
-- [ ] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – Android/HA Companion und Desktop real bestanden; iPad noch offen
+- [x] **Cluster-Jump-Pille / Infinity-Schalter real auf Desktop · iPad · Android/HA Companion** – Android/HA Companion und Desktop real bestanden; iPad anschließend ebenfalls real als ordentlich/unauffällig bestätigt
 
 **Abschlusskriterium:** modularer V4.10-Stand ist releasefähig.
 
@@ -2902,4 +2902,33 @@ Rückführung:
 
 **Master-Regel unverändert:** Hi-Res-Originale bleiben geschützte Masterquellen und werden niemals durch Runtime-Derivate ersetzt.
 
-**Weiterhin separat offen:** Cluster-Jump/Infinity ist auf Android/HA Companion und Desktop real bestanden; die iPad-Abnahme dieses Instruments bleibt offen.
+**Cluster-Jump/Infinity abgeschlossen:** Android/HA Companion, Desktop und iPad sind real bestanden; der zuvor offene iPad-Punkt ist damit geschlossen.
+
+---
+
+## Schleife R15 – Trendpfeil-Kandidaten und Medaillon-Pop-up (2026-09-27)
+
+- [x] bestehender geschützter Gewitterradar-Trendpfeil bleibt unverändert als stabile ID `arrow_00`.
+- [x] 17 neue Pfeilkandidaten eindeutig als `arrow_01` bis `arrow_17` hinterlegt; bestehende IDs werden bei späterem Aussortieren nicht umnummeriert.
+- [x] alle neuen Kandidaten als exakt 264 × 264 px große, verlustfreie WebP/VP8L-Laufzeitgrafiken mit erhaltenem Alphakanal erzeugt; damit mindestens 2× Retina für das 132-px-Instrument.
+- [x] alle 17 Kandidaten byte-identisch in `frontend`, `dashboard/dist` und `custom_components/gewitterradar/frontend` hinterlegt.
+- [x] Medaillon-Pop-up um eine zweite Pfeilauswahl ergänzt; Medaillon- und Pfeilnavigation verwenden die silbernen lokalen Hi-Res-/2×-Retina-Chevrons.
+- [x] Pfeilauswahl wird unter `gewitterradar:v41002:trend-arrow-design` persistent gespeichert und auf alle `.trend-medallion-arrow`-Darstellungen angewendet.
+- [x] gemeinsame technische Pfeilgeometrie bleibt zunächst unverändert: Mittelpunkt X 50,012238 %, Y 50,452396 %, Breite/Höhe 59,667391 %.
+- [x] `docs/MEDALLION_CATALOG.md`, Changelog, Assetinventar, Runtime-Manifest, Frontendvertrag, Prüfsummen sowie Medaillon-/Pfeil-Assettests nachgeführt.
+- [x] Modulstände: `core.manifest 1.2.20`, `fullscreen.map-display 1.0.15`, `instruments.medallion-designs 1.1.0`.
+- [x] Build `V4.10.02-MODULAR-DEV-R15-2026-09-27`; Kern-Laufzeitcache bleibt bewusst `41002r13`, die drei geänderten R15-Dateien werden gezielt über `41002r15` cachegebrochen; Modulsatz `8F15-A271`.
+- [x] finaler R15-Produktkandidat `b7d1c04a15915b164ca645aded3165cdb4019cbe` mit 5/5 Hauptprüfungen grün:
+  - Validate shared Gewitterradar frontend → success
+  - Validate Gewitterradar integration → success
+  - Diagnostic contract → success
+  - Source archive contract → success
+  - Hi-Res asset retention → success
+- [x] `deploy/dev` exakt auf `b7d1c04a15915b164ca645aded3165cdb4019cbe` gesetzt und verifiziert.
+- [ ] reale Sichtprüfung über DRA/HA: `arrow_00` bis `arrow_17`, Vor/Zurück, sichtbare ID, Transparenz, Persistenz nach Frontend-Neuladen und Zusammenspiel mit unterschiedlichen Medaillons.
+- [ ] individuelle Schauglas-/Pfeilgeometrien später ausschließlich aus echten Diagnoseexporten je `trend_XX` übernehmen; Smartphone-Screenshots bleiben nur Sichtreferenz.
+
+**Master-Regel:** Die Hi-Res-Originale der neuen Pfeilkandidaten werden erst nach der finalen Auswahl in das Master-Repository übernommen. Bis dahin bleiben ausschließlich die optimierten Laufzeitderivate im Produktbestand.
+
+**Gerätegate Cluster-Jump:** Desktop, Android/HA Companion und iPad sind nun real bestanden.
+
