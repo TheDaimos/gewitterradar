@@ -544,3 +544,15 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - Paarweise Kalibrierung für Größe und Mittelpunkt X/Y mit AUTO/BASIS/ABNEHMEN/RESET/NÄCHSTER OFFEN beibehalten.
 - KAL-JSON enthält zusätzlich die Medaillon-Augenreferenzen.
 - Keine automatische Übernahme der Kalibrierung in die produktive Pfeildarstellung.
+
+### V4.10.02 DEV R19 – Augen-Referenzkreis und manuelle Pfeilkalibrierung dokumentiert
+- Automatische Augenellipse und fachlich abnehmbaren Referenzkreis als getrennte Diagnoseebenen dokumentiert.
+- Direkte Kreisverschiebung, Radiusgriff und X/Y/Radius-Regler beschrieben.
+- 4-%-Sicherheitsbereich als verbindliche Fit-Grenze nach Auswahl der aktiven Augenreferenz dokumentiert.
+- Pfeil-Platzierung und tatsächlichen CSS-Rotationsursprung getrennt beschrieben.
+- Automatisch empfohlenes und manuell korrigierbares Pfeilzentrum X/Y dokumentiert.
+- Manuelle Pfeilgröße, AUTO/BASIS/ABNEHMEN/RESET/NÄCHSTER-OFFEN und persistente Paarwerte dokumentiert.
+- Fit-Invalidierung nach Änderung einer abgenommenen Augenreferenz dokumentiert.
+- AUGE-JSON, FIT-JSON und KAL-JSON/KAL-CSV samt Provenienz-/Abnahmeanforderungen dokumentiert.
+- Querverweise in Geometriedatenbank, Katalog, Modularchitektur und README ergänzt.
+- Projektneutrale Erkenntnisse parallel in `TheDaimos/home-assistant-dev-toolkit` übernommen.
