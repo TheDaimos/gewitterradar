@@ -8,7 +8,7 @@ const sharp=require('sharp');
 const ROOT=path.resolve(__dirname,'..');
 const ASSET_DIR=path.join(ROOT,'frontend','assets');
 const OUT_DIR=path.join(ROOT,'artwork','acceptance','medallion-arrow-fit');
-const BUILD='V4.10.02-MODULAR-DEV-R17-2026-09-27';
+const BUILD='V4.10.02-MODULAR-DEV-R18-2026-09-27';
 const CONFIG=Object.freeze({
   schema:'gewitterradar.medallion-arrow-geometry.v1',
   version:1,
@@ -197,7 +197,7 @@ function fit(eye,arrow){
   const db={
     schema:CONFIG.schema,version:CONFIG.version,
     generatedAt:new Date().toISOString(),build:BUILD,
-    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r17-first-consistent-eye-ring'},
+    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r18-first-consistent-eye-ring'},
     config:{...CONFIG},medallions:{},arrows:{},fits:{}
   };
   for(let n=1;n<=28;n++){
