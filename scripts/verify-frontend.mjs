@@ -99,7 +99,15 @@ for(const marker of [
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
   "this._t('settings.map_startup_select')",
-  '_closeMapStartupDropdown(returnFocus = false)'
+  '_closeMapStartupDropdown(returnFocus = false)',
+  'data-medallion-scale',
+  'data-medallion-center-x',
+  'data-medallion-center-y',
+  'data-medallion-scale-auto',
+  'data-medallion-scale-accept',
+  'data-medallion-scale-next',
+  'data-medallion-calibration-json',
+  'data-medallion-calibration-csv'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
@@ -123,14 +131,6 @@ for(const marker of [
   'gewitterradar.medallion-arrow-geometry.v2',
   'data-medallion-fit-matrix',
   'data-medallion-fit-db-json',
-  'data-medallion-scale',
-  'data-medallion-center-x',
-  'data-medallion-center-y',
-  'data-medallion-scale-auto',
-  'data-medallion-scale-accept',
-  'data-medallion-scale-next',
-  'data-medallion-calibration-json',
-  'data-medallion-calibration-csv',
   'gewitterradar.medallion-arrow-visual-calibration-export.v2',
   'recommendedCenter',
   'arrowToEyeRatioCentered',
