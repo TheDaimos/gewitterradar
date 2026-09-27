@@ -3010,3 +3010,30 @@ Rückführung:
 - [ ] R17 Real-/CI-Matrix vergleichen und erst danach über produktive Fit-Ratios entscheiden.
 
 **NÄCHSTER SCHRITT:** R17 aus `deploy/dev` / `4786698f1e9a0eaa4660eec4363de7da6a46c9e5` per DRA installieren. Gegen R16P1 `19aa830a7d19bbe00bf953e442a3d625085788de` werden im verwalteten Integrationsbaum **0 neu / 6 geändert / 0 entfernt / 102 unverändert** erwartet. Danach Home-Assistant-Frontend vollständig neu laden, FIT-MATRIX erneut vollständig ausführen und genau eine neue FIT-JSON exportieren. Erst diese R17-Matrix gegen CI-R17 vergleichen.
+
+
+---
+
+## Schleife R18 – R17 Real-/CI-Vergleich / identischer Messalgorithmus (2026-09-27)
+
+- [x] reale R17-FIT-JSON vollständig analysiert: 28 Medaillons, 18 Pfeile, 504/504 Fits, keine fehlenden/zusätzlichen Schlüssel.
+- [x] R17-Provenienz korrekt: `ha-webview-r17-parity`, Build R17, Runtime-Assets.
+- [x] reale Statistik: Scale 0.820099–1.181956, Mittel 0.980788; 196 contained / 308 overflowing.
+- [x] Confidence weiterhin auffällig: 25 LOW / 3 MEDIUM / 0 HIGH.
+- [x] exakte CI-R17-Artefaktdatenbank aus GitHub Actions geladen und profilweise verglichen.
+- [x] systematische Abweichung bestätigt: reale Scale im Mittel ca. Faktor 1.407 über CI.
+- [x] Root Cause: unterschiedliche Messalgorithmen trotz gemeinsamer Seed-Idee.
+- [x] CI `first-consistent-eye-ring-ellipse-v2` 1:1 in HA/WebView portiert.
+- [x] Suchraum auf 18–36 % vereinheitlicht.
+- [x] R18 Build/Modulsatz/Modulversionen und Provenienz aktualisiert.
+- [x] Quelle, native Integration und Dashboard synchronisiert.
+- [x] Frontendvertrag, Assetinventar und Checksummen aktualisiert.
+- [x] Regressionstests nachgezogen.
+- [x] finaler R18-Kandidat `a85f803422543f62ab6c94a02b085526a5abd23a` mit 14/14 Checks grün.
+- [x] R18 exakt nach `deploy/dev` promotet.
+- [ ] R18 real über DRA installieren und Frontend vollständig neu laden.
+- [ ] FIT-MATRIX erneut vollständig ausführen und eine neue FIT-JSON exportieren.
+- [ ] reale R18-Matrix gegen CI-R18 auf Profil- und Fit-Ebene vergleichen.
+- [ ] erst bei plausibler Konvergenz über automatische Produktanwendung entscheiden.
+
+**NÄCHSTER SCHRITT:** R18 aus `deploy/dev` / `a85f803422543f62ab6c94a02b085526a5abd23a` per DRA installieren. Erwarteter verwalteter Delta gegenüber R17 `4786698f1e9a0eaa4660eec4363de7da6a46c9e5`: **0 neu / 6 geändert / 0 entfernt / 102 unverändert**. Danach vollständige R18-FIT-MATRIX ausführen und genau eine FIT-JSON exportieren.
