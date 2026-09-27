@@ -160,7 +160,7 @@ const server = http.createServer((req, res) => {
         assert.equal(medallion.fitButtons, 2, `${delivery}/${profile} medallion fit-matrix/json actions`);
         assert.match(medallion.fitStatus, /FIT/, `${delivery}/${profile} medallion fit status visible`);
         assert.equal(medallion.payload.schema, 'gewitterradar.picker-diagnostic.v2');
-        assert.equal(medallion.payload.geometryDatabase.schema, 'gewitterradar.medallion-arrow-geometry.v1');
+        assert.equal(medallion.payload.geometryDatabase.schema, 'gewitterradar.medallion-arrow-geometry.v2');
         assert.equal(medallion.payload.geometryDatabase.currentFitKey, 'trend_01::arrow_00');
         assert.equal(medallion.state.arrowDesignId, 'arrow_00');
         assert.equal(medallion.diagnosticMode, 'static', `${delivery}/${profile} preset survives calibration sync`);
@@ -197,6 +197,9 @@ const server = http.createServer((req, res) => {
         assert.ok(Number.isFinite(geometryFit.eye.radiusY) && geometryFit.eye.radiusY > 0, `${delivery}/${profile} eye radius Y measured`);
         assert.ok(Number.isFinite(geometryFit.fit.arrowToEyeRatioCurrent) && geometryFit.fit.arrowToEyeRatioCurrent > 0, `${delivery}/${profile} arrow/eye ratio measured`);
         assert.ok(Number.isFinite(geometryFit.fit.recommendedUniformScale) && geometryFit.fit.recommendedUniformScale > 0, `${delivery}/${profile} recommended arrow scale measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.recommendedCenter?.xPercent), `${delivery}/${profile} recommended arrow center X measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.recommendedCenter?.yPercent), `${delivery}/${profile} recommended arrow center Y measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.arrowToEyeRatioCentered), `${delivery}/${profile} centered arrow/eye ratio measured`);
         assert.ok(Number.isFinite(geometryFit.fit.worstAngleDeg), `${delivery}/${profile} worst rotation angle measured`);
         assert.equal(typeof geometryFit.fit.contained360, 'boolean', `${delivery}/${profile} 360-degree containment status measured`);
 
