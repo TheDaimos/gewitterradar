@@ -3004,9 +3004,9 @@ Rückführung:
 - [x] FIT-MATRIX-Mischstandblocker ergänzt.
 - [x] Regressionstest für R17-Featurecache, Seed-Parität und Provenance-Blocker ergänzt.
 - [x] R16-Realbefund dauerhaft in `docs/R16_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md` dokumentiert.
-- [ ] finalen R17-Head vollständig CI-grün bestätigen.
-- [ ] R17 nach `deploy/dev` promoten.
+- [x] finalen R17-Kandidaten `4786698f1e9a0eaa4660eec4363de7da6a46c9e5` vollständig CI-grün bestätigt – 14/14 Checks erfolgreich.
+- [x] R17 exakt nach `deploy/dev` promoviert und Branch-Ref auf `4786698f1e9a0eaa4660eec4363de7da6a46c9e5` verifiziert.
 - [ ] R17 real per DRA installieren, Frontend vollständig neu laden, FIT-MATRIX erneut vollständig ausführen und neue FIT-JSON exportieren.
 - [ ] R17 Real-/CI-Matrix vergleichen und erst danach über produktive Fit-Ratios entscheiden.
 
-**NÄCHSTER SCHRITT:** finalen R17-Head vollständig durch CI laufen lassen. Nur bei vollständigem Grün exakt nach `deploy/dev` promoten. Danach reale 504er-Matrix erneut erzeugen.
+**NÄCHSTER SCHRITT:** R17 aus `deploy/dev` / `4786698f1e9a0eaa4660eec4363de7da6a46c9e5` per DRA installieren. Gegen R16P1 `19aa830a7d19bbe00bf953e442a3d625085788de` werden im verwalteten Integrationsbaum **0 neu / 6 geändert / 0 entfernt / 102 unverändert** erwartet. Danach Home-Assistant-Frontend vollständig neu laden, FIT-MATRIX erneut vollständig ausführen und genau eine neue FIT-JSON exportieren. Erst diese R17-Matrix gegen CI-R17 vergleichen.
