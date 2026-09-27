@@ -138,3 +138,63 @@ Exportiert die 504 Paar-Kalibrierungen. KAL-JSON enthält zusätzlich den vollst
 R19 verändert die produktive Pfeildarstellung außerhalb der Diagnose **nicht automatisch**.
 
 Die abgenommenen Augenreferenzen und Paarwerte sind zunächst lokale Kalibrierungsdaten. Erst nach Sichtabnahme und Auswertung werden die gewünschten Referenzen als reproduzierbare Projektkalibrierung ins Repository übernommen und anschließend in einer eigenen Produktstufe aktiviert.
+
+## Diagnoseoberfläche und Messhilfen
+
+R19 macht die verwendete Geometrie im Medaillon-Picker sichtbar, damit automatische Messung und gestalterische Referenz nicht verwechselt werden.
+
+Sichtbare Ebenen:
+
+- **automatische Augenellipse**: Ergebnis der Pixelmessung `first-consistent-eye-ring-ellipse-v2`;
+- **gelber Augen-Referenzkreis**: fachlich gewünschter nutzbarer Innenraum; Mittelpunkt und Radius sind direkt manipulierbar;
+- **4-%-Sicherheitsbereich**: aus der aktiven Augenreferenz abgeleitete innere Fit-Grenze;
+- **Pfeilreichweite**: maximale sichtbare Entfernung der Alpha-Kontur vom tatsächlichen Rotationsursprung;
+- **Basis-Mittelpunkt**: bisherige CSS-Platzierung;
+- **AUTO-Mittelpunkt**: geometrisch empfohlenes Zentrum;
+- **kalibrierter Mittelpunkt**: aktuell manuell wirksamer X/Y-Wert.
+
+Der gelbe Kreis ist absichtlich **keine automatische Messung**. Er ist ein einmalig visuell abnehmbares fachliches Ziel: Der sichtbare Pfeil soll bei voller 360°-Rotation den daraus abgeleiteten Sicherheitsbereich nicht überschreiten.
+
+### Direkte Bedienung
+
+Für das Auge:
+
+- Kreis direkt verschieben → Mittelpunkt X/Y;
+- rechten Kreisgriff ziehen → Radius;
+- alternativ X/Y/Radius über Regler setzen;
+- `AUTO` → automatische Augenmessung als Ausgangspunkt;
+- `AUGE ABNEHMEN` → Referenz verbindlich für dieses Medaillon;
+- `RESET` → lokale manuelle Referenz verwerfen;
+- `NÄCHSTES AUGE` → nächste noch nicht abgenommene Medaillon-ID;
+- `AUGE-JSON` → alle 28 Augenreferenzen exportieren.
+
+Für ein Medaillon/Pfeil-Paar:
+
+- Größe per Regler;
+- Pfeilmittelpunkt X/Y per Regler;
+- `AUTO` → berechnete Größe und berechnetes Zentrum;
+- `BASIS` → bisherige Produktwerte;
+- `ABNEHMEN` → Paar visuell bestätigen;
+- `RESET` → Paar-Override verwerfen;
+- `NÄCHSTER OFFEN` → nächstes noch nicht abgenommenes Paar;
+- `KAL-JSON` / `KAL-CSV` → vollständige Paarmatrix mit Auto-/manuellen/effektiven Werten.
+
+## Abhängigkeits- und Invalidierungsregel
+
+Die Augenreferenz ist die übergeordnete Geometrie. Wird ein bereits abgenommenes Auge verändert, sind die 18 davon abhängigen Pfeil-Fits nicht mehr gültig.
+
+Deshalb invalidiert R19 für dieses Medaillon automatisch:
+
+1. die 18 Fit-Datensätze,
+2. deren Paar-Abnahmestatus,
+3. den Zeitstempel der vollständigen Fit-Matrix.
+
+Die manuell eingegebenen Paarwerte werden dabei nicht still gelöscht. Sie bleiben als Diagnosehistorie erhalten, gelten aber erst nach erneuter `FIT-MATRIX` und erneuter Sichtprüfung wieder als abgenommen.
+
+## Dokumentationsbeziehungen
+
+- Geometriedatenmodell: `docs/MEDALLION_ARROW_GEOMETRY_DB.md`
+- dauerhafte Medaillon-/Pfeil-IDs: `docs/MEDALLION_CATALOG.md`
+- Modulzuständigkeiten: `docs/V4_10_MODULE_ARCHITECTURE.md`
+- Arbeits-/Abnahmeschleife: `docs/V4_10_MODULARISIERUNG_SCHLACHTPLAN.md`
+- allgemeines, projektneutrales Verfahren: `TheDaimos/home-assistant-dev-toolkit/docs/ROTATING_OVERLAY_APERTURE_FIT_DIAGNOSTICS.md`
