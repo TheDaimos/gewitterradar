@@ -8,10 +8,10 @@ const sharp=require('sharp');
 const ROOT=path.resolve(__dirname,'..');
 const ASSET_DIR=path.join(ROOT,'frontend','assets');
 const OUT_DIR=path.join(ROOT,'artwork','acceptance','medallion-arrow-fit');
-const BUILD='V4.10.02-MODULAR-DEV-R18-2026-09-27';
+const BUILD='V4.10.02-MODULAR-DEV-R19-2026-09-27';
 const CONFIG=Object.freeze({
-  schema:'gewitterradar.medallion-arrow-geometry.v1',
-  version:1,
+  schema:'gewitterradar.medallion-arrow-geometry.v2',
+  version:2,
   safeInsetRatio:0.04,
   rotationStepDeg:5,
   eyeAngleStepDeg:2,
@@ -23,7 +23,9 @@ const ARROW_PROFILE=Object.freeze({
   centerXPercent:50.012238,
   centerYPercent:50.452396,
   widthPercent:59.667391,
-  heightPercent:59.667391
+  heightPercent:59.667391,
+  transformOriginXPercent:50,
+  transformOriginYPercent:50
 });
 
 function medallionPath(number){
@@ -139,8 +141,8 @@ async function measureArrow(id,file){
   if(right<left)throw new Error(`${id}: no visible alpha pixels`);
   const maxPoints=720,stride=Math.max(1,Math.ceil(points.length/maxPoints));
   const boundaryPoints=points.filter((_,index)=>index%stride===0);
-  const pivotX=image.width*ARROW_PROFILE.centerXPercent/100;
-  const pivotY=image.height*ARROW_PROFILE.centerYPercent/100;
+  const pivotX=image.width*ARROW_PROFILE.transformOriginXPercent/100;
+  const pivotY=image.height*ARROW_PROFILE.transformOriginYPercent/100;
   const maxRadius=Math.max(...boundaryPoints.map(p=>Math.hypot(p.x-pivotX,p.y-pivotY)));
   return {
     id,sourceWidth:image.width,sourceHeight:image.height,pivotX,pivotY,
@@ -154,21 +156,31 @@ function fit(eye,arrow){
   const baseWidth=Math.min(eye.sourceWidth,eye.sourceHeight)*ARROW_PROFILE.widthPercent/100;
   const baseHeight=Math.min(eye.sourceWidth,eye.sourceHeight)*ARROW_PROFILE.heightPercent/100;
   const scaleX=baseWidth/arrow.sourceWidth,scaleY=baseHeight/arrow.sourceHeight;
-  let worstNorm=0,worstAngleDeg=0;
-  for(let angle=0;angle<360;angle+=CONFIG.rotationStepDeg){
-    const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);
-    let angleNorm=0;
-    for(const point of arrow.boundaryPoints){
-      const x=(point.x-arrow.pivotX)*scaleX,y=(point.y-arrow.pivotY)*scaleY;
-      const rx=x*cos-y*sin,ry=x*sin+y*cos;
-      const norm=Math.hypot(rx/safeRadiusX,ry/safeRadiusY);
-      if(norm>angleNorm)angleNorm=norm;
+  const currentCenterX=eye.sourceWidth*ARROW_PROFILE.centerXPercent/100;
+  const currentCenterY=eye.sourceHeight*ARROW_PROFILE.centerYPercent/100;
+  const autoCenterX=eye.centerX,autoCenterY=eye.centerY;
+  const currentOffsetX=currentCenterX-eye.centerX,currentOffsetY=currentCenterY-eye.centerY;
+  const evaluate=(offsetX,offsetY,uniformScale=1)=>{
+    let worstNorm=0,worstAngleDeg=0;
+    for(let angle=0;angle<360;angle+=CONFIG.rotationStepDeg){
+      const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let angleNorm=0;
+      for(const point of arrow.boundaryPoints){
+        const x=(point.x-arrow.pivotX)*scaleX*uniformScale,y=(point.y-arrow.pivotY)*scaleY*uniformScale;
+        const rx=offsetX+x*cos-y*sin,ry=offsetY+x*sin+y*cos;
+        const norm=Math.hypot(rx/safeRadiusX,ry/safeRadiusY);
+        if(norm>angleNorm)angleNorm=norm;
+      }
+      if(angleNorm>worstNorm){worstNorm=angleNorm;worstAngleDeg=angle;}
     }
-    if(angleNorm>worstNorm){worstNorm=angleNorm;worstAngleDeg=angle;}
-  }
-  const recommendedUniformScale=worstNorm>0?1/worstNorm:1;
+    return {worstNorm,worstAngleDeg};
+  };
+  const current=evaluate(currentOffsetX,currentOffsetY,1);
+  const centered=evaluate(0,0,1);
+  const recommendedUniformScale=centered.worstNorm>0?1/centered.worstNorm:1;
+  const recommended=evaluate(0,0,recommendedUniformScale);
   const minorSafeRadius=Math.min(safeRadiusX,safeRadiusY);
-  const clearance=(1-worstNorm)*minorSafeRadius;
+  const currentClearance=(1-current.worstNorm)*minorSafeRadius;
+  const centeredClearance=(1-centered.worstNorm)*minorSafeRadius;
   return {
     medallionId:eye.id,arrowId:arrow.id,key:`${eye.id}::${arrow.id}`,
     eye:{
@@ -177,19 +189,36 @@ function fit(eye,arrow){
     },
     arrow:{
       pivotX:arrow.pivotX,pivotY:arrow.pivotY,alphaBounds:arrow.alphaBounds,
-      maxRadius:arrow.maxRadius,sourceWidth:arrow.sourceWidth,sourceHeight:arrow.sourceHeight
+      maxRadius:arrow.maxRadius,sourceWidth:arrow.sourceWidth,sourceHeight:arrow.sourceHeight,
+      transformOriginXPercent:ARROW_PROFILE.transformOriginXPercent,transformOriginYPercent:ARROW_PROFILE.transformOriginYPercent
     },
     baseArrowLayout:{
+      centerXPercent:ARROW_PROFILE.centerXPercent,centerYPercent:ARROW_PROFILE.centerYPercent,
       widthPercent:ARROW_PROFILE.widthPercent,heightPercent:ARROW_PROFILE.heightPercent,
       widthPx:baseWidth,heightPx:baseHeight
     },
-    arrowToEyeRatioCurrent:worstNorm,
+    recommendedCenter:{
+      x:autoCenterX,y:autoCenterY,
+      xPercent:autoCenterX/eye.sourceWidth*100,yPercent:autoCenterY/eye.sourceHeight*100,
+      deltaXPercent:(autoCenterX-currentCenterX)/eye.sourceWidth*100,
+      deltaYPercent:(autoCenterY-currentCenterY)/eye.sourceHeight*100
+    },
+    currentCenterOffsetPx:{x:currentOffsetX,y:currentOffsetY,residual:Math.hypot(currentOffsetX,currentOffsetY)},
+    arrowToEyeRatioCurrent:current.worstNorm,
+    arrowToEyeRatioCentered:centered.worstNorm,
     eyeToArrowScaleRatio:recommendedUniformScale,
     recommendedUniformScale,
-    contained360:worstNorm<=1+1e-6,
-    minClearancePx:Math.max(0,clearance),
-    maxOverflowPx:Math.max(0,-clearance),
-    worstAngleDeg,rotationStepDeg:CONFIG.rotationStepDeg,safeInsetRatio:CONFIG.safeInsetRatio
+    contained360:current.worstNorm<=1+1e-6,
+    centeredContained360:centered.worstNorm<=1+1e-6,
+    recommendedContained360:recommended.worstNorm<=1+1e-6,
+    minClearancePx:Math.max(0,currentClearance),
+    maxOverflowPx:Math.max(0,-currentClearance),
+    centeredMinClearancePx:Math.max(0,centeredClearance),
+    centeredMaxOverflowPx:Math.max(0,-centeredClearance),
+    worstAngleDeg:current.worstAngleDeg,
+    centeredWorstAngleDeg:centered.worstAngleDeg,
+    recommendedWorstAngleDeg:recommended.worstAngleDeg,
+    rotationStepDeg:CONFIG.rotationStepDeg,safeInsetRatio:CONFIG.safeInsetRatio
   };
 }
 (async()=>{
@@ -197,7 +226,7 @@ function fit(eye,arrow){
   const db={
     schema:CONFIG.schema,version:CONFIG.version,
     generatedAt:new Date().toISOString(),build:BUILD,
-    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r18-first-consistent-eye-ring'},
+    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r19-center-aware-fit'},
     config:{...CONFIG},medallions:{},arrows:{},fits:{}
   };
   for(let n=1;n<=28;n++){
@@ -238,8 +267,8 @@ function fit(eye,arrow){
   };
   fs.writeFileSync(path.join(OUT_DIR,'gewitterradar-medallion-arrow-fit-db.json'),JSON.stringify(db,null,2)+'\n');
   fs.writeFileSync(path.join(OUT_DIR,'gewitterradar-medallion-arrow-fit-summary.json'),JSON.stringify(summary,null,2)+'\n');
-  const csv=['key,medallionId,arrowId,ratio,recommendedScale,contained360,minClearancePx,maxOverflowPx,worstAngleDeg,eyeRadiusX,eyeRadiusY,eyeConfidence'];
-  for(const x of fits)csv.push([x.key,x.medallionId,x.arrowId,x.arrowToEyeRatioCurrent,x.recommendedUniformScale,x.contained360,x.minClearancePx,x.maxOverflowPx,x.worstAngleDeg,x.eye.radiusX,x.eye.radiusY,x.eye.confidence].join(','));
+  const csv=['key,medallionId,arrowId,currentRatio,centeredRatio,recommendedScale,currentCenterXPercent,currentCenterYPercent,recommendedCenterXPercent,recommendedCenterYPercent,contained360,recommendedContained360,minClearancePx,maxOverflowPx,worstAngleDeg,eyeRadiusX,eyeRadiusY,eyeConfidence'];
+  for(const x of fits)csv.push([x.key,x.medallionId,x.arrowId,x.arrowToEyeRatioCurrent,x.arrowToEyeRatioCentered,x.recommendedUniformScale,x.baseArrowLayout.centerXPercent,x.baseArrowLayout.centerYPercent,x.recommendedCenter.xPercent,x.recommendedCenter.yPercent,x.contained360,x.recommendedContained360,x.minClearancePx,x.maxOverflowPx,x.worstAngleDeg,x.eye.radiusX,x.eye.radiusY,x.eye.confidence].join(','));
   fs.writeFileSync(path.join(OUT_DIR,'gewitterradar-medallion-arrow-fit-matrix.csv'),csv.join('\n')+'\n');
   console.log(JSON.stringify(summary,null,2));
   if(Object.keys(db.medallions).length!==28||Object.keys(db.arrows).length!==18||fits.length!==504)process.exitCode=1;
