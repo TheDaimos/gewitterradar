@@ -13,7 +13,8 @@ export const MODULE_META=Object.freeze({
     "Groß",
     "Vollbild",
     "separates Fenster",
-    "Instrumentpositionen"
+    "Instrumentpositionen",
+    "Medaillon-Augenreferenz"
   ],
   "file": "modules/fullscreen/map-display.js"
 });
