@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.15"',
+  '"id": "fullscreen.map-display"','"version": "1.0.16"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -104,7 +104,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.1.4"',
+  '"id": "diagnostics.cockpit"','"version": "1.2.0"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
@@ -112,8 +112,17 @@ for(const marker of [
   'pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}',
   '_pickerDiagnosticPayload(kind)',
   '_pickerDiagnosticCsv(kind)',
-  "_downloadPickerDiagnostic(kind,format='json')",
+  "_downloadPickerDiagnostic: async function(kind,format='json')",
   '_bindPickerDiagnosticActions(shell,kind)',
+  "schema:'gewitterradar.picker-diagnostic.v2'",
+  '_measureMedallionArrowFitMatrix: async function',
+  '_computeMedallionArrowFit(eye,arrow)',
+  '_measureMedallionEyeAsset: async function',
+  '_measureTrendArrowAsset: async function',
+  '_copyTextReliable: async function',
+  'gewitterradar.medallion-arrow-geometry.v1',
+  'data-medallion-fit-matrix',
+  'data-medallion-fit-db-json',
   "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
   "node.style?.removeProperty('display')",
   "if(node.matches?.('svg'))node.replaceChildren();"

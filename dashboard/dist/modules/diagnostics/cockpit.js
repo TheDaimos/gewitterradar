@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -9,11 +9,12 @@ export const MODULE_META=Object.freeze({
     "Virtuelles Gewitter",
     "Kompass-Kalibrierung",
     "Medaillon-Kalibrierung",
+    "Pfeil/Auge-Fit-Matrix",
     "Leistung"
   ],
   "file": "modules/diagnostics/cockpit.js"
 });
-export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, TREND_ARROW_GEOMETRY, MEDALLION_ARROW_GEOMETRY_DB, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _diagnosticTerm(index) { return (DIAGNOSTIC_TERMS[this._languageValue()]||DIAGNOSTIC_TERMS[LANGUAGE_DEFAULT])[index]; },
     _diagnosticAux(index) { return (DIAGNOSTIC_AUX[this._languageValue()]||DIAGNOSTIC_AUX[LANGUAGE_DEFAULT])[index]; },
     _diagnosticOverlayTerm(index) { return (DIAGNOSTIC_OVERLAY_TERMS[this._languageValue()]||DIAGNOSTIC_OVERLAY_TERMS[LANGUAGE_DEFAULT])[index]; },
@@ -53,6 +54,198 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
         composition:{...fallback.composition,...(raw.composition||{})},
         arrow:{...fallback.arrow,...(raw.arrow||{})}
       };
+    },
+
+    _medallionArrowFitKey(medallionId,arrowId) {
+      return `${medallionId||'unknown'}::${arrowId||'unknown'}`;
+    },
+
+    _emptyMedallionArrowGeometryDatabase() {
+      const config=MEDALLION_ARROW_GEOMETRY_DB||{};
+      return {
+        schema:config.schema||'gewitterradar.medallion-arrow-geometry.v1',
+        version:Number(config.version)||1,
+        generatedAt:null,
+        build:GEWITTERRADAR_BUILD,
+        config:{
+          safeInsetRatio:Number(config.safeInsetRatio)||0.04,
+          rotationStepDeg:Number(config.rotationStepDeg)||5,
+          eyeAngleStepDeg:Number(config.eyeAngleStepDeg)||2,
+          alphaThreshold:Number(config.alphaThreshold)||8,
+          eyeSearchMinRatio:Number(config.eyeSearchMinRatio)||0.18,
+          eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.45
+        },
+        medallions:{},arrows:{},fits:{}
+      };
+    },
+
+    _loadMedallionArrowGeometryDatabase() {
+      const config=MEDALLION_ARROW_GEOMETRY_DB||{},key=config.storageKey||'gewitterradar:v41002:medallion-arrow-fit-db';
+      if(this._medallionArrowGeometryDatabase?.schema===(config.schema||'gewitterradar.medallion-arrow-geometry.v1'))return this._medallionArrowGeometryDatabase;
+      let db=null;
+      try{db=JSON.parse(localStorage.getItem(key)||'null');}catch(_){}
+      if(!db||db.schema!==(config.schema||'gewitterradar.medallion-arrow-geometry.v1'))db=this._emptyMedallionArrowGeometryDatabase();
+      db.medallions=db.medallions&&typeof db.medallions==='object'?db.medallions:{};
+      db.arrows=db.arrows&&typeof db.arrows==='object'?db.arrows:{};
+      db.fits=db.fits&&typeof db.fits==='object'?db.fits:{};
+      this._medallionArrowGeometryDatabase=db;
+      return db;
+    },
+
+    _persistMedallionArrowGeometryDatabase(db=this._medallionArrowGeometryDatabase) {
+      if(!db)return false;
+      const key=MEDALLION_ARROW_GEOMETRY_DB?.storageKey||'gewitterradar:v41002:medallion-arrow-fit-db';
+      try{localStorage.setItem(key,JSON.stringify(db));this._medallionArrowGeometryDatabase=db;return true;}catch(_){return false;}
+    },
+
+    _currentMedallionArrowFitRecord() {
+      const medallionId=this._medallionDesignValue?.()||this._activeMedallionDesign||null;
+      const arrowId=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||null;
+      const db=this._loadMedallionArrowGeometryDatabase();
+      const key=this._medallionArrowFitKey(medallionId,arrowId);
+      return {key,record:db?.fits?.[key]||null,database:db,medallionId,arrowId};
+    },
+
+    _syncMedallionFitStatus(scope=this._medallionPickerDialog) {
+      const node=scope?.querySelector?.('[data-medallion-fit-status]');
+      if(!node)return;
+      const {key,record,database}=this._currentMedallionArrowFitRecord();
+      const fitCount=Object.keys(database?.fits||{}).length,expected=(MEDALLION_DESIGNS?.length||0)*(TREND_ARROW_DESIGNS?.length||0);
+      if(this._medallionArrowFitMatrixRunning){node.textContent=this._medallionArrowFitMatrixProgress||'FIT-MATRIX · Messung läuft …';return;}
+      if(record){
+        node.textContent=`FIT ${key} · Ratio ${Number(record.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(record.recommendedUniformScale).toFixed(4)} · ${record.contained360?'360° OK':`Überstand ${Number(record.maxOverflowPx).toFixed(2)} px`}\nDB ${fitCount}/${expected} Kombinationen`;
+      }else node.textContent=`FIT ${key} · noch nicht gemessen · DB ${fitCount}/${expected}`;
+    },
+
+    _geometryLoadImage(src) {
+      return new Promise((resolve,reject)=>{
+        const image=new Image();image.decoding='async';
+        image.onload=()=>resolve(image);image.onerror=()=>reject(new Error(`Asset konnte nicht geladen werden: ${src}`));image.src=src;
+      });
+    },
+
+    _geometryCanvasData(image) {
+      const canvas=document.createElement('canvas');canvas.width=image.naturalWidth||image.width;canvas.height=image.naturalHeight||image.height;
+      const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)throw new Error('Canvas-Kontext nicht verfügbar');
+      context.drawImage(image,0,0,canvas.width,canvas.height);
+      return {width:canvas.width,height:canvas.height,pixels:context.getImageData(0,0,canvas.width,canvas.height).data};
+    },
+
+    _geometryPixel(data,x,y) {
+      const ix=Math.max(0,Math.min(data.width-1,Math.round(x))),iy=Math.max(0,Math.min(data.height-1,Math.round(y))),offset=(iy*data.width+ix)*4,p=data.pixels;
+      return [p[offset],p[offset+1],p[offset+2],p[offset+3]];
+    },
+
+    _geometryColorDistance(a,b) {
+      const dr=a[0]-b[0],dg=a[1]-b[1],db=a[2]-b[2],da=(a[3]-b[3])*.45;
+      return Math.hypot(dr,dg,db,da);
+    },
+
+    _measureMedallionEyeAsset: async function(design) {
+      const image=await this._geometryLoadImage(design.asset),data=this._geometryCanvasData(image),profile=this._medallionDiagnosticProfile(design),config=MEDALLION_ARROW_GEOMETRY_DB||{};
+      const minDim=Math.min(data.width,data.height),sourceWidth=Number(profile.sourceWidth)||data.width,sourceHeight=Number(profile.sourceHeight)||data.height;
+      const centerX=(Number(profile.aperture?.centerX)||sourceWidth/2)/sourceWidth*data.width,centerY=(Number(profile.aperture?.centerY)||sourceHeight/2)/sourceHeight*data.height;
+      const expected=(Number(profile.aperture?.radius)||sourceWidth*.33)/sourceWidth*data.width;
+      const minR=Math.max(4,Math.min(expected*.62,minDim*(Number(config.eyeSearchMinRatio)||.18)));
+      const maxR=Math.min(minDim*.49,Math.max(expected*1.38,minDim*(Number(config.eyeSearchMaxRatio)||.45)));
+      const angleStep=Math.max(1,Number(config.eyeAngleStepDeg)||2),points=[],scores=[],radii=[];
+      for(let angle=0;angle<360;angle+=angleStep){
+        const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let bestR=expected,bestScore=-1;
+        for(let radius=Math.floor(minR);radius<=Math.ceil(maxR);radius+=1){
+          const p1=this._geometryPixel(data,centerX+cos*(radius-2),centerY+sin*(radius-2)),p2=this._geometryPixel(data,centerX+cos*(radius+2),centerY+sin*(radius+2));
+          const raw=this._geometryColorDistance(p1,p2),distancePenalty=1-.22*Math.min(1,Math.abs(radius-expected)/Math.max(1,maxR-minR)),score=raw*distancePenalty;
+          if(score>bestScore){bestScore=score;bestR=radius;}
+        }
+        points.push({x:centerX+cos*bestR,y:centerY+sin*bestR,angle,radius:bestR});scores.push(bestScore);radii.push(bestR);
+      }
+      let fitCenterX=0,fitCenterY=0,pairs=0,half=Math.round(180/angleStep);
+      for(let i=0;i<half&&i+half<points.length;i+=1){fitCenterX+=(points[i].x+points[i+half].x)/2;fitCenterY+=(points[i].y+points[i+half].y)/2;pairs+=1;}
+      fitCenterX=pairs?fitCenterX/pairs:centerX;fitCenterY=pairs?fitCenterY/pairs:centerY;
+      let sx4=0,sy4=0,sx2y2=0,sx2=0,sy2=0;
+      for(const point of points){const dx=point.x-fitCenterX,dy=point.y-fitCenterY,x2=dx*dx,y2=dy*dy;sx4+=x2*x2;sy4+=y2*y2;sx2y2+=x2*y2;sx2+=x2;sy2+=y2;}
+      const determinant=sx4*sy4-sx2y2*sx2y2;
+      let radiusX=expected,radiusY=expected;
+      if(Math.abs(determinant)>1e-9){
+        const a=(sx2*sy4-sy2*sx2y2)/determinant,b=(sy2*sx4-sx2*sx2y2)/determinant;
+        if(a>0&&b>0){radiusX=Math.sqrt(1/a);radiusY=Math.sqrt(1/b);}
+      }
+      const residuals=points.map(point=>Math.abs(Math.hypot((point.x-fitCenterX)/radiusX,(point.y-fitCenterY)/radiusY)-1)),rms=Math.sqrt(residuals.reduce((sum,value)=>sum+value*value,0)/(residuals.length||1));
+      const meanScore=scores.reduce((sum,value)=>sum+value,0)/(scores.length||1),confidence=rms<=.06&&meanScore>=18?'HIGH':rms<=.12&&meanScore>=10?'MEDIUM':'LOW';
+      const radiusAt=(target)=>{let best=points[0];for(const p of points){const delta=Math.abs((((p.angle-target)+540)%360)-180);if(delta<Math.abs((((best.angle-target)+540)%360)-180))best=p;}return best?.radius||expected;};
+      const diameters={horizontal:radiusAt(0)+radiusAt(180),vertical:radiusAt(90)+radiusAt(270),diagonal45:radiusAt(45)+radiusAt(225),diagonal135:radiusAt(135)+radiusAt(315)};
+      return {id:design.id,sourceWidth:data.width,sourceHeight:data.height,centerX:fitCenterX,centerY:fitCenterY,radiusX,radiusY,diameters,rmsNormalized:rms,edgeScoreMean:meanScore,confidence,method:'radial-color-edge-ellipse-v1'};
+    },
+
+    _measureTrendArrowAsset: async function(design) {
+      const image=await this._geometryLoadImage(design.asset),data=this._geometryCanvasData(image),threshold=Number(MEDALLION_ARROW_GEOMETRY_DB?.alphaThreshold)||8,points=[];
+      let left=data.width,top=data.height,right=-1,bottom=-1,alphaPixels=0;
+      for(let y=0;y<data.height;y+=1)for(let x=0;x<data.width;x+=1){
+        const index=(y*data.width+x)*4;if(data.pixels[index+3]<=threshold)continue;alphaPixels+=1;left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);
+        const boundary=x===0||y===0||x===data.width-1||y===data.height-1||
+          data.pixels[(y*data.width+Math.max(0,x-1))*4+3]<=threshold||data.pixels[(y*data.width+Math.min(data.width-1,x+1))*4+3]<=threshold||
+          data.pixels[(Math.max(0,y-1)*data.width+x)*4+3]<=threshold||data.pixels[(Math.min(data.height-1,y+1)*data.width+x)*4+3]<=threshold;
+        if(boundary)points.push({x:x+.5,y:y+.5});
+      }
+      if(right<left)throw new Error(`${design.id}: keine sichtbaren Pfeilpixel`);
+      const maxPoints=720,stride=Math.max(1,Math.ceil(points.length/maxPoints)),sampled=points.filter((_,index)=>index%stride===0);
+      const geometry=TREND_ARROW_GEOMETRY||{centerXPercent:50,centerYPercent:50,widthPercent:59.667391,heightPercent:59.667391};
+      const pivotX=data.width*(Number(geometry.centerXPercent)||50)/100,pivotY=data.height*(Number(geometry.centerYPercent)||50)/100;
+      const maxRadius=Math.max(...sampled.map(point=>Math.hypot(point.x-pivotX,point.y-pivotY)));
+      return {id:design.id,sourceWidth:data.width,sourceHeight:data.height,pivotX,pivotY,alphaBounds:{left,top,right,bottom,width:right-left+1,height:bottom-top+1},alphaPixels,boundaryPoints:sampled,maxRadius,method:'alpha-contour-v1'};
+    },
+
+    _computeMedallionArrowFit(eye,arrow) {
+      const config=MEDALLION_ARROW_GEOMETRY_DB||{},safeInsetRatio=Number(config.safeInsetRatio)||.04,step=Math.max(1,Number(config.rotationStepDeg)||5),geometry=TREND_ARROW_GEOMETRY||{};
+      const safeRadiusX=eye.radiusX*(1-safeInsetRatio),safeRadiusY=eye.radiusY*(1-safeInsetRatio),baseWidth=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.widthPercent)||59.667391)/100,baseHeight=Math.min(eye.sourceWidth,eye.sourceHeight)*(Number(geometry.heightPercent)||59.667391)/100,scaleX=baseWidth/arrow.sourceWidth,scaleY=baseHeight/arrow.sourceHeight;
+      let worstNorm=0,worstAngleDeg=0;
+      for(let angle=0;angle<360;angle+=step){
+        const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let angleNorm=0;
+        for(const point of arrow.boundaryPoints){
+          const x=(point.x-arrow.pivotX)*scaleX,y=(point.y-arrow.pivotY)*scaleY,rx=x*cos-y*sin,ry=x*sin+y*cos,norm=Math.hypot(rx/safeRadiusX,ry/safeRadiusY);
+          if(norm>angleNorm)angleNorm=norm;
+        }
+        if(angleNorm>worstNorm){worstNorm=angleNorm;worstAngleDeg=angle;}
+      }
+      const recommendedUniformScale=worstNorm>0?1/worstNorm:1,minorSafeRadius=Math.min(safeRadiusX,safeRadiusY),clearance=(1-worstNorm)*minorSafeRadius;
+      return {
+        medallionId:eye.id,arrowId:arrow.id,key:this._medallionArrowFitKey(eye.id,arrow.id),
+        eye:{centerX:eye.centerX,centerY:eye.centerY,radiusX:eye.radiusX,radiusY:eye.radiusY,safeRadiusX,safeRadiusY,diameters:eye.diameters,confidence:eye.confidence},
+        arrow:{pivotX:arrow.pivotX,pivotY:arrow.pivotY,alphaBounds:arrow.alphaBounds,maxRadius:arrow.maxRadius,sourceWidth:arrow.sourceWidth,sourceHeight:arrow.sourceHeight},
+        baseArrowLayout:{widthPercent:Number(geometry.widthPercent)||59.667391,heightPercent:Number(geometry.heightPercent)||59.667391,widthPx:baseWidth,heightPx:baseHeight},
+        arrowToEyeRatioCurrent:worstNorm,eyeToArrowScaleRatio:recommendedUniformScale,recommendedUniformScale,
+        contained360:worstNorm<=1+1e-6,minClearancePx:Math.max(0,clearance),maxOverflowPx:Math.max(0,-clearance),worstAngleDeg,rotationStepDeg:step,safeInsetRatio
+      };
+    },
+
+    _measureMedallionArrowFitMatrix: async function(button=null) {
+      if(this._medallionArrowFitMatrixRunning)return this._medallionArrowGeometryDatabase;
+      this._medallionArrowFitMatrixRunning=true;
+      const original=button?.textContent;if(button){button.disabled=true;button.textContent='MESSUNG …';}
+      try{
+        const medallions=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],arrows=Array.isArray(TREND_ARROW_DESIGNS)?TREND_ARROW_DESIGNS:[],db=this._emptyMedallionArrowGeometryDatabase();
+        const total=medallions.length+arrows.length+medallions.length*arrows.length;let done=0;
+        const progress=(label)=>{done+=1;this._medallionArrowFitMatrixProgress=`FIT-MATRIX ${done}/${total} · ${label}`;this._syncMedallionFitStatus();};
+        const arrowMeasurements={};
+        for(const design of medallions){db.medallions[design.id]=await this._measureMedallionEyeAsset(design);progress(design.id);await new Promise(requestAnimationFrame);}
+        for(const design of arrows){
+          const measured=await this._measureTrendArrowAsset(design),{boundaryPoints,...stored}=measured;
+          arrowMeasurements[design.id]=measured;db.arrows[design.id]=stored;progress(design.id);await new Promise(requestAnimationFrame);
+        }
+        let fitIndex=0;
+        for(const medallion of medallions)for(const arrow of arrows){
+          const record=this._computeMedallionArrowFit(db.medallions[medallion.id],arrowMeasurements[arrow.id]);db.fits[record.key]=record;progress(record.key);
+          fitIndex+=1;if(fitIndex%4===0)await new Promise(requestAnimationFrame);
+        }
+        db.generatedAt=new Date().toISOString();db.build=GEWITTERRADAR_BUILD;this._persistMedallionArrowGeometryDatabase(db);this._medallionArrowFitMatrixProgress=null;this._syncMedallionFitStatus();
+        return db;
+      }catch(error){
+        this._medallionArrowFitMatrixProgress=`FIT-MATRIX FEHLER · ${error instanceof Error?error.message:String(error)}`;this._syncMedallionFitStatus();throw error;
+      }finally{this._medallionArrowFitMatrixRunning=false;if(button){button.disabled=false;button.textContent=original||'FIT-MATRIX';}this._syncMedallionFitStatus();}
+    },
+
+    _downloadMedallionArrowFitDatabase() {
+      const db=this._loadMedallionArrowGeometryDatabase(),stamp=new Date().toISOString().replace(/[:.]/g,'-'),blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
+      anchor.href=url;anchor.download=`gewitterradar_medallion_arrow_fit_db_${stamp}.json`;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     },
 
     _pickerDiagnosticEnabled() {
@@ -150,10 +343,11 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       const style=getComputedStyle(arrow),arrowWidth=parseFloat(style.width)||0,arrowHeight=parseFloat(style.height)||0,expectedArrowWidth=stageRect.width*profile.arrow.widthPercent/100,expectedArrowHeight=stageRect.height*profile.arrow.heightPercent/100;
       const arrowSizeResidual=Math.max(Math.abs(arrowWidth-expectedArrowWidth),Math.abs(arrowHeight-expectedArrowHeight));
       const ok=centerResidual<=1.5&&arrowResidual<=1.5&&arrowSizeResidual<=1.5&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
-      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id));
-      const result={kind:'medallion',designId:descriptor?.id||null,uiIndex:designIndex+1,total:designs.length,profile:profile.geometryVersion,
+      const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id)),arrowDesignId=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||null,fitState=this._currentMedallionArrowFitRecord(),fitRecord=fitState.record;
+      const result={kind:'medallion',designId:descriptor?.id||null,arrowDesignId,uiIndex:designIndex+1,total:designs.length,profile:profile.geometryVersion,
         stage:{width:stageRect.width,height:stageRect.height},preview:subject,base:baseRect,centerDelta:{x:centerDx,y:centerDy,residual:centerResidual},
         aperture,targetArrowCenter:targetPoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
+        eyeArrowFit:fitRecord||{key:fitState.key,status:'PENDING'},
         navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromStage:gap},overflow,status:ok?'OK':'REVIEW'};
       this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.medallion=result;
       this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetCircle:aperture,targetPoint,actualPoint,namespace:'MP'});
@@ -164,10 +358,12 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
         `Medaillon-Zentrum Δ X ${centerDx.toFixed(2)} · Y ${centerDy.toFixed(2)} · R ${centerResidual.toFixed(2)} px`,
         `Pfeil-Zentrum Soll ${targetPoint.x.toFixed(2)},${targetPoint.y.toFixed(2)} · Ist ${actualPoint.x.toFixed(2)},${actualPoint.y.toFixed(2)} · R ${arrowResidual.toFixed(2)} px`,
         `Pfeil-Größe Δ max ${arrowSizeResidual.toFixed(2)} px · Apertur R ${aperture.radius.toFixed(2)} px`,
+        fitRecord?`Pfeil/Auge Ratio ${Number(fitRecord.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(fitRecord.recommendedUniformScale).toFixed(4)} · 360° ${fitRecord.contained360?'OK':'ÜBERSTAND'}`:`Pfeil/Auge Fit ${fitState.key} · noch nicht gemessen`,
         `Navigation L/R ${leftDistance==null?'n/v':leftDistance.toFixed(2)} / ${rightDistance==null?'n/v':rightDistance.toFixed(2)} px · Symmetrie Δ ${navSymmetry==null?'n/v':navSymmetry.toFixed(2)} px`,
         `Navigation Y-Streuung ${navVerticalSpread==null?'n/v':navVerticalSpread.toFixed(2)} px · Stage→Navigation ${gap.toFixed(2)} px`,
         `Overflow ${overflow?'JA':'nein'} · STATUS ${result.status}`
       ].join('\n');
+      this._syncMedallionFitStatus();
       return result;
     },
 
@@ -185,10 +381,11 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
       const measurement=normalized==='medallion'?this._measureMedallionPickerDiagnostics():this._measureCompassPickerDiagnostics();
       const designId=measurement?.designId||null;
       const calibration=normalized==='medallion'
-        ? {enabled:!!this._medallionCalibrationEnabled,report:this._medallionCalibrationReportText||null,details:this._medallionCalibrationDetailText||null}
+        ? {enabled:!!this._medallionCalibrationEnabled,report:this._medallionCalibrationEnabled?(this._medallionCalibrationReportText||null):null,details:this._medallionCalibrationEnabled?(this._medallionCalibrationDetailText||null):null}
         : {enabled:!!this._compassCalibrationEnabled,report:this._compassCalibrationReportText||null,details:this._compassCalibrationDetailText||null};
+      const fitState=normalized==='medallion'?this._currentMedallionArrowFitRecord():null,fitDb=fitState?.database;
       return {
-        schema:'gewitterradar.picker-diagnostic.v1',
+        schema:'gewitterradar.picker-diagnostic.v2',
         generatedAt:new Date().toISOString(),
         application:{name:'Gewitterradar',version:CARD_DISPLAY_VERSION,releaseVersion:CARD_VERSION,build:GEWITTERRADAR_BUILD},
         picker:normalized,
@@ -197,6 +394,15 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
         diagnosticState:{enabled:!!this._diagnostics?.enabled,visualsVisible:!!this._diagnostics?.visualsVisible,live:!!this._diagnostics?.live},
         medallionState:normalized==='medallion'?{...(this._medallionDiagnostic||{}),angleConvention:'0° North, 90° East, clockwise',assetZeroOffsetDeg:-45}:null,
         measurement:measurement||null,
+        geometryDatabase:fitState?{
+          schema:fitDb?.schema||MEDALLION_ARROW_GEOMETRY_DB?.schema||null,
+          storageKey:MEDALLION_ARROW_GEOMETRY_DB?.storageKey||null,
+          generatedAt:fitDb?.generatedAt||null,
+          fitCount:Object.keys(fitDb?.fits||{}).length,
+          expectedFitCount:(MEDALLION_DESIGNS?.length||0)*(TREND_ARROW_DESIGNS?.length||0),
+          currentFitKey:fitState.key,
+          currentFit:fitState.record||null
+        }:null,
         calibration
       };
     },
@@ -215,22 +421,41 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
     },
 
     _pickerDiagnosticFilename(kind,extension) {
-      const normalized=kind==='medallion'?'medallion':'compass',measurement=this._pickerDiagnostics?.[normalized],design=(measurement?.designId||'unknown').replace(/[^a-z0-9_-]+/gi,'-'),stamp=new Date().toISOString().replace(/[:.]/g,'-');
-      return `gewitterradar_${normalized}_picker_${design}_${stamp}.${extension}`;
+      const normalized=kind==='medallion'?'medallion':'compass',measurement=this._pickerDiagnostics?.[normalized],design=(measurement?.designId||'unknown').replace(/[^a-z0-9_-]+/gi,'-'),arrow=normalized==='medallion'?String(measurement?.arrowDesignId||this._trendArrowDesignValue?.()||'arrow_unknown').replace(/[^a-z0-9_-]+/gi,'-'):null,stamp=new Date().toISOString().replace(/[:.]/g,'-');
+      return `gewitterradar_${normalized}_picker_${design}${arrow?'_'+arrow:''}_${stamp}.${extension}`;
     },
 
-    _downloadPickerDiagnostic(kind,format='json') {
+    _refreshPickerDiagnosticForExport: async function(kind) {
+      if(kind==='medallion'&&this._medallionCalibrationEnabled)await this._measureMedallionCalibration?.();
+      return this._pickerDiagnosticPayload(kind);
+    },
+
+    _downloadPickerDiagnostic: async function(kind,format='json') {
+      await this._refreshPickerDiagnosticForExport(kind);
       const normalizedFormat=format==='csv'?'csv':'json',payload=normalizedFormat==='csv'?('\ufeff'+this._pickerDiagnosticCsv(kind)):JSON.stringify(this._pickerDiagnosticPayload(kind),null,2),
         type=normalizedFormat==='csv'?'text/csv;charset=utf-8':'application/json;charset=utf-8',blob=new Blob([payload],{type}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
       anchor.href=url;anchor.download=this._pickerDiagnosticFilename(kind,normalizedFormat);document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     },
 
+    _copyTextReliable: async function(text) {
+      const previousFocus=this.shadow?.activeElement||document.activeElement,area=document.createElement('textarea');
+      area.value=text;area.readOnly=true;area.setAttribute('aria-hidden','true');Object.assign(area.style,{position:'fixed',left:'-9999px',top:'0',opacity:'0',pointerEvents:'none'});
+      let legacy=false;
+      try{document.body.append(area);area.focus();area.select();area.setSelectionRange(0,text.length);legacy=!!document.execCommand?.('copy');}
+      catch(_){legacy=false;}finally{area.remove();try{previousFocus?.focus?.({preventScroll:true});}catch(_){}}
+      if(legacy)return true;
+      let modernWritten=false,verified=false;
+      try{
+        if(navigator.clipboard?.writeText){
+          await navigator.clipboard.writeText(text);modernWritten=true;
+          if(navigator.clipboard?.readText){try{verified=(await navigator.clipboard.readText())===text;}catch(_){verified=false;}}
+        }
+      }catch(_){}
+      return verified||(modernWritten&&!navigator.clipboard?.readText);
+    },
+
     _copyPickerDiagnostic: async function(kind,button=null) {
-      const text=JSON.stringify(this._pickerDiagnosticPayload(kind),null,2);let copied=false;
-      try{await navigator.clipboard.writeText(text);copied=true;}catch(_){
-        const area=document.createElement('textarea');area.value=text;area.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(area);area.select();
-        try{copied=document.execCommand('copy');}catch(_error){}finally{area.remove();}
-      }
+      const text=JSON.stringify(this._pickerDiagnosticPayload(kind),null,2),copied=await this._copyTextReliable(text);
       if(button){
         const old=button.textContent;button.textContent=copied?'✓ KOPIERT':'KOPIEREN FEHLGESCHLAGEN';
         setTimeout(()=>{if(button.isConnected)button.textContent=old;},1200);
@@ -249,6 +474,9 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { CARD_V
         shell.querySelectorAll('[data-medallion-arrow]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticArrow(button.dataset.medallionArrow==='on');}));
         shell.querySelectorAll('[data-medallion-animation]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticAnimation(button.dataset.medallionAnimation==='on');}));
         shell.querySelectorAll('[data-medallion-freeze]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticFreeze(button.dataset.medallionFreeze==='on');}));
+        shell.querySelector('[data-medallion-fit-matrix]')?.addEventListener('click',async(event)=>{event.preventDefault();event.stopPropagation();try{await this._measureMedallionArrowFitMatrix(event.currentTarget);}catch(error){console.error('[Gewitterradar] FIT-MATRIX',error);}});
+        shell.querySelector('[data-medallion-fit-db-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionArrowFitDatabase();});
+        this._syncMedallionFitStatus(shell);
       }
     },
 
@@ -785,11 +1013,7 @@ ${this._diagnosticStormText(8)}`;}
     },
 
     _copyMedallionCalibrationText: async function(text,button) {
-      let copied=false;
-      try{await navigator.clipboard.writeText(text);copied=true;}catch(_){
-        const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();
-        try{copied=!!document.execCommand?.('copy');}catch(__){}finally{area.remove();}
-      }
+      const copied=await this._copyTextReliable(text);
       const feedback=this.shadow?.getElementById('medallion-calibration-feedback');
       if(feedback)feedback.textContent=this._t(copied?'calibration.copied':'calibration.copy_failed');
       if(copied&&button){const old=button.textContent;button.textContent=`✓ ${this._t('calibration.copied')}`;setTimeout(()=>{button.textContent=old;},1200);}
@@ -798,7 +1022,7 @@ ${this._diagnosticStormText(8)}`;}
     _downloadMedallionCalibrationLog() {
       try{
         const blob=new Blob([this._medallionCalibrationDetailText],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
-        anchor.href=url;anchor.download=`gewitterradar_medallion_trend_01_${new Date().toISOString().replace(/[:.]/g,'-')}.log`;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+        const design=this._medallionDesignValue?.()||this._activeMedallionDesign||'trend_unknown',arrow=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||'arrow_unknown';anchor.href=url;anchor.download=`gewitterradar_medallion_${design}_${arrow}_${new Date().toISOString().replace(/[:.]/g,'-')}.log`;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       }catch(_){const feedback=this.shadow?.getElementById('medallion-calibration-feedback');if(feedback)feedback.textContent=this._t('calibration.log_failed');}
     },
 

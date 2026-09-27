@@ -4,9 +4,9 @@
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
 const CARD_VERSION = '4.10.02';
 const CARD_DISPLAY_VERSION = '4.10.02';
-const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R15-2026-09-27';
+const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R16-2026-09-27';
 const GEWITTERRADAR_MODULE_CACHE = '41002r13';
-const GEWITTERRADAR_FEATURE_CACHE = '41002r15';
+const GEWITTERRADAR_FEATURE_CACHE = '41002r16';
 const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) => {
   try {
     return await import(`${path}?v=${revision}`);
@@ -40,7 +40,7 @@ try {
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
   const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
   const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE);
-  const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
+  const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE);
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js');

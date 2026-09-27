@@ -138,6 +138,8 @@ const server = http.createServer((req, res) => {
             stageDiagnosticMode: stage.dataset.diagnosticMode,
             staticActive: dialog.querySelector('[data-medallion-preset="static"]').classList.contains('active'),
             snapshotPicker: snapshot.pickers?.medallion || null,
+            fitButtons: dialog.querySelectorAll('[data-medallion-fit-matrix],[data-medallion-fit-db-json]').length,
+            fitStatus: dialog.querySelector('[data-medallion-fit-status]')?.textContent || '',
             stageHidden: dialog.querySelector('[data-medallion-picker-diagnostic-stage]').hidden,
             navHidden: dialog.querySelector('[data-medallion-picker-diagnostic-nav]').hidden,
             readoutHidden: dialog.querySelector('[data-medallion-picker-diagnostic-readout]').hidden,
@@ -155,6 +157,12 @@ const server = http.createServer((req, res) => {
         assert.equal(medallion.readoutHidden, false, `${delivery}/${profile} medallion readout visible`);
         assert.equal(medallion.toolsHidden, false, `${delivery}/${profile} medallion tools visible in top-layer dialog`);
         assert.equal(medallion.exportButtons, 3, `${delivery}/${profile} medallion copy/json/csv actions`);
+        assert.equal(medallion.fitButtons, 2, `${delivery}/${profile} medallion fit-matrix/json actions`);
+        assert.match(medallion.fitStatus, /FIT/, `${delivery}/${profile} medallion fit status visible`);
+        assert.equal(medallion.payload.schema, 'gewitterradar.picker-diagnostic.v2');
+        assert.equal(medallion.payload.geometryDatabase.schema, 'gewitterradar.medallion-arrow-geometry.v1');
+        assert.equal(medallion.payload.geometryDatabase.currentFitKey, 'trend_01::arrow_00');
+        assert.equal(medallion.state.arrowDesignId, 'arrow_00');
         assert.equal(medallion.diagnosticMode, 'static', `${delivery}/${profile} preset survives calibration sync`);
         assert.equal(medallion.stageState, 'diagnostic', `${delivery}/${profile} picker follows diagnostic state`);
         assert.equal(medallion.stageDiagnosticMode, 'static');
@@ -172,6 +180,25 @@ const server = http.createServer((req, res) => {
         assert.equal(medallion.consoleInDialog, true, `${delivery}/${profile} full diagnostic console follows medallion top layer`);
         assert.equal(medallion.payload.medallionState.angleConvention, '0° North, 90° East, clockwise');
         assert.equal(medallion.payload.medallionState.assetZeroOffsetDeg, -45);
+
+        const geometryFit = await page.evaluate(async () => {
+          const card=window.aboutCard;
+          const medallionDesign=card._medallionDiagnosticDescriptor();
+          const activeArrow=card._activeTrendArrowDesign||card._trendArrowDesignValue();
+          // Resolve through the asset currently rendered in the picker so the test does not depend on private catalog exposure.
+          const image=card._medallionPickerDialog.querySelector('.trend-medallion-arrow');
+          const arrow={id:activeArrow,asset:image.src};
+          const eye=await card._measureMedallionEyeAsset(medallionDesign);
+          const arrowGeometry=await card._measureTrendArrowAsset(arrow);
+          const fit=card._computeMedallionArrowFit(eye,arrowGeometry);
+          return {eye,arrow:{...arrowGeometry,boundaryPoints:undefined},fit};
+        });
+        assert.ok(Number.isFinite(geometryFit.eye.radiusX) && geometryFit.eye.radiusX > 0, `${delivery}/${profile} eye radius X measured`);
+        assert.ok(Number.isFinite(geometryFit.eye.radiusY) && geometryFit.eye.radiusY > 0, `${delivery}/${profile} eye radius Y measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.arrowToEyeRatioCurrent) && geometryFit.fit.arrowToEyeRatioCurrent > 0, `${delivery}/${profile} arrow/eye ratio measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.recommendedUniformScale) && geometryFit.fit.recommendedUniformScale > 0, `${delivery}/${profile} recommended arrow scale measured`);
+        assert.ok(Number.isFinite(geometryFit.fit.worstAngleDeg), `${delivery}/${profile} worst rotation angle measured`);
+        assert.equal(typeof geometryFit.fit.contained360, 'boolean', `${delivery}/${profile} 360-degree containment status measured`);
 
         const staticAngles = await page.evaluate(() => {
           const card=window.aboutCard,dialog=card._medallionPickerDialog,arrow=dialog.querySelector('.trend-medallion-arrow');

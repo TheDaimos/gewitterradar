@@ -40,7 +40,7 @@ def test_v41001_compass_picker_contract():
     map_display = (PICKER_DIR / "map-display.js").read_text(encoding="utf-8")
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-R15-2026-09-27" in main
+    assert "V4.10.02-MODULAR-DEV-R16-2026-09-27" in main
     assert "const GEWITTERRADAR_MODULE_CACHE = '41002r13';" in main
 
     # Preserve the established picker behaviour.
@@ -105,6 +105,8 @@ def test_v41001_compass_picker_contract():
         "this._stepTrendArrowDesign(-1)",
         "this._stepTrendArrowDesign(1)",
         "gewitterradar:v41002:trend-arrow-design",
+        "data-medallion-fit-matrix",
+        "data-medallion-fit-db-json",
     ):
         assert marker in map_display
 

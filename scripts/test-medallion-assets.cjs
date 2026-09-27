@@ -42,6 +42,9 @@ assert.ok(extensionSource.includes('const id="trend_"+suffix;'),'R14 stable meda
 assert.ok(extensionSource.includes('for(let number=1;number<=17;number++)'),'R15 arrow range contract missing');
 assert.ok(extensionSource.includes('id="arrow_"+suffix'),'R15 stable arrow id construction missing');
 assert.ok(extensionSource.includes('context.TREND_ARROW_DESIGNS=Object.freeze'),'R15 arrow catalog export missing');
+assert.ok(extensionSource.includes('gewitterradar.medallion-arrow-geometry.v1'),'R16 geometry database schema missing');
+assert.ok(extensionSource.includes('storageKey:"gewitterradar:v41002:medallion-arrow-fit-db"'),'R16 geometry database storage key missing');
+assert.ok(extensionSource.includes('rotationStepDeg:5'),'R16 360-degree rotation sampling contract missing');
 for (let i=19;i<=28;i++) {
   const id=String(i).padStart(2,'0');
   assert.ok(extensionSource.includes('trend_'+id+":new URL('../../assets/gewitterradar-trend-medallion-"+id+".webp?v=41002r14'"),'trend_'+id+' asset mapping missing');

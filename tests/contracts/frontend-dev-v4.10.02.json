@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "d0d1eba1fac64982039289671ec5363e0553dbce6d780a910d841689cc0fbdd0",
-  "sizeBytes": 8518,
+  "sha256": "11b35ffbb4e361fc43151b3caf1e73157b51b8aa9eef0ec4d77b107f151c9045",
+  "sizeBytes": 8546,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R15-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R16-2026-09-27",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "105bf592ab061a368a626f2291c41c2c0ee69f0d55adc12396f34b5fa0d6d08f",
-      "sizeBytes": 7099
+      "sha256": "d3914ff4680d1ed26e64a39edd6d6bbf6dd7a938ab010e660b7a9bde7c485d61",
+      "sizeBytes": 7168
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -27,8 +27,8 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "a76de4bba58247e56b60a22cb088d10ca459ed87c3f362d8927be185761c2b4d",
-      "sizeBytes": 95951
+      "sha256": "f96aab238271039b82cb85fa1a8ce606fa5335eba0c89de9dba7a4152f302713",
+      "sizeBytes": 96376
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
@@ -63,8 +63,8 @@
       "sizeBytes": 79761
     },
     "modules/diagnostics/cockpit.js": {
-      "sha256": "383d3fde972c4a44ab2803a831a836bb536264262814ee0c548239aeecde9156",
-      "sizeBytes": 207709
+      "sha256": "119f5704cb81bb36dd68c8872994e8f804af87d96d2cf601f82e4781a7c7eb8a",
+      "sizeBytes": 225570
     },
     "modules/instruments/compass-design.js": {
       "sha256": "6f871d4f93c13bf95e38474c886a536bba29f28e708da72859c1a562e24356ee",
@@ -115,8 +115,8 @@
       "sizeBytes": 12106
     },
     "modules/instruments/medallion-designs.js": {
-      "sha256": "1a2fc8e81641e31f2892be2a69be760e577fce0a69c8e783b2f98984d3395016",
-      "sizeBytes": 6206
+      "sha256": "d3cda5ad147e797222107b062b018442fa9c3f7d94b4904a889a07701036e4b1",
+      "sizeBytes": 6819
     }
   }
 }

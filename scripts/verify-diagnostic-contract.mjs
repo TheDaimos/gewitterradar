@@ -85,7 +85,12 @@ function verifyContract(source, label, languages) {
     'data-medallion-freeze="on"', 'data-medallion-freeze="off"',
     'data-medallion-angle="0"', 'data-medallion-angle="45"',
     'data-medallion-angle="90"', 'data-medallion-angle="180"',
-    'data-medallion-angle="270"'
+    'data-medallion-angle="270"',
+    'data-medallion-fit-matrix', 'data-medallion-fit-db-json',
+    '_measureMedallionArrowFitMatrix', '_measureMedallionEyeAsset',
+    '_measureTrendArrowAsset', '_computeMedallionArrowFit',
+    'gewitterradar.medallion-arrow-geometry.v1',
+    '_copyTextReliable'
   ], 'medallion states');
 
   requireAll(source, [

@@ -81,3 +81,9 @@ Die Pfeilauswahl gehört direkt zum Medaillon-Pop-up. Bestehende IDs werden nich
 
 Gemeinsame technische Zielgeometrie bleibt bis zur späteren medaillonspezifischen Messkalibrierung unverändert: Mittelpunkt X **50,012238 %**, Mittelpunkt Y **50,452396 %**, Breite/Höhe **59,667391 %**. Die Auswahl wird unter `gewitterradar:v41002:trend-arrow-design` gespeichert.
 
+## R16 – Pfeil/Auge-Geometriedatenbank
+
+Ab R16 wird die Pfeilskalierung nicht mehr nur aus einer globalen Prozentgröße abgeleitet. Die Diagnose kann pro Medaillon das tatsächliche Auge vermessen, pro Pfeil die sichtbare Alpha-Kontur bestimmen und daraus für jede Kombination `trend_XX::arrow_XX` eine dimensionslose Fit-Ratio sowie eine empfohlene einheitliche Skalierung berechnen.
+
+Die vollständige Spezifikation steht in `docs/MEDALLION_ARROW_GEOMETRY_DB.md`. Die Matrix umfasst aktuell 28 × 18 = 504 Kombinationen. Messwerte werden unter `gewitterradar:v41002:medallion-arrow-fit-db` gespeichert und über **FIT-JSON** exportiert. Bestehende IDs bleiben unverändert.
+

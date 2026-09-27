@@ -1,5 +1,15 @@
 # Changelog
 
+## V4.10.02 DEV R16 – Pfeil/Auge-Geometriedatenbank (2026-09-27)
+
+- Diagnose um eine persistente Geometriedatenbank für Medaillonaugen, Pfeilgeometrien und Kombinationen erweitert.
+- **FIT-MATRIX** vermisst 28 Medaillons × 18 Pfeile = 504 Kombinationen.
+- Je Kombination werden Pfeil/Auge-Ratio, empfohlene Skalierung, 360°-Containment, Freiraum/Überstand und ungünstigster Winkel ermittelt.
+- **FIT-JSON** exportiert die vollständige Datenbank; Picker-Export verwendet `gewitterradar.picker-diagnostic.v2`.
+- Augenmessung erfolgt aus dem echten Laufzeitasset; Pfeilgeometrie aus der sichtbaren Alpha-Kontur.
+- Zwischenablagepfad für HA-WebViews robuster gemacht und Export-/Lognamen auf aktive Medaillon-/Pfeil-IDs umgestellt.
+- Vollständige Matrix und automatische Anwendung der Messdaten bleiben bis zur realen DRA-Abnahme getrennt.
+
 ## V4.10.02 DEV R15 – Trendpfeilauswahl (2026-09-27)
 
 - Medaillon-Pop-up um eine zweite, persistent gespeicherte Pfeilauswahl erweitert.

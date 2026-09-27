@@ -2,15 +2,27 @@ import { registerModule } from "../core/registry.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"instruments.medallion-designs",
-  version:"1.1.0",
+  version:"1.2.0",
   group:"Instrumente",
   function:"Medaillon-Designkatalog",
-  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl"],
+  subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank"],
   file:"modules/instruments/medallion-designs.js"
 });
 registerModule(MODULE_META);
 
 const ARROW_PROFILE=Object.freeze({centerXPercent:50.012238,centerYPercent:50.452396,widthPercent:59.667391,heightPercent:59.667391});
+const MEDALLION_ARROW_GEOMETRY_DB_CONFIG=Object.freeze({
+  schema:"gewitterradar.medallion-arrow-geometry.v1",
+  version:1,
+  storageKey:"gewitterradar:v41002:medallion-arrow-fit-db",
+  safeInsetRatio:0.04,
+  rotationStepDeg:5,
+  eyeAngleStepDeg:2,
+  alphaThreshold:8,
+  eyeSearchMinRatio:0.18,
+  eyeSearchMaxRatio:0.45
+});
+
 const MEDALLION_ASSETS=Object.freeze({
   trend_19:new URL('../../assets/gewitterradar-trend-medallion-19.webp?v=41002r14', import.meta.url).href,
   trend_20:new URL('../../assets/gewitterradar-trend-medallion-20.webp?v=41002r14', import.meta.url).href,
@@ -83,5 +95,10 @@ export function installMedallionDesigns(_Card,context){
     });
   }
   context.MEDALLION_DESIGNS.push(...extras);
+  context.MEDALLION_ARROW_GEOMETRY_DB=Object.freeze({
+    ...MEDALLION_ARROW_GEOMETRY_DB_CONFIG,
+    medallionIds:Object.freeze(context.MEDALLION_DESIGNS.map(item=>item.id)),
+    arrowIds:Object.freeze(context.TREND_ARROW_DESIGNS.map(item=>item.id))
+  });
   return context.MEDALLION_DESIGNS;
 }

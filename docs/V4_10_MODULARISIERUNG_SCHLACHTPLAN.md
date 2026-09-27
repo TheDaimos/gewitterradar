@@ -2932,3 +2932,31 @@ Rückführung:
 
 **Gerätegate Cluster-Jump:** Desktop, Android/HA Companion und iPad sind nun real bestanden.
 
+---
+
+## Schleife R16 – Pfeil/Auge-Geometriedatenbank und erweiterte Diagnose (2026-09-27)
+
+- [x] Datenbankschema `gewitterradar.medallion-arrow-geometry.v1` definiert.
+- [x] Medaillonprofile, Pfeilprofile und Fit-Datensätze logisch getrennt.
+- [x] Augenmessung aus dem tatsächlichen Medaillon-Laufzeitasset vorbereitet; Mittelpunkt, Ellipsenradien und vier Durchmesser werden ermittelt.
+- [x] Pfeilmessung über sichtbare Alpha-Kontur und Drehpunkt vorbereitet.
+- [x] Fit-Berechnung über den vollständigen Drehbereich mit dokumentierter Winkelschrittweite und Sicherheitsreserve umgesetzt.
+- [x] aktuelle Pfeil-/Augen-Ratio, empfohlene Skalierung, Freiraum, Überstand und ungünstigster Winkel werden pro Kombination gespeichert.
+- [x] Matrix für 28 Medaillons × 18 Pfeile = 504 Kombinationen vorbereitet.
+- [x] Matrixberechnung in Browser-freundliche Blöcke aufgeteilt, damit iPad/Android während längerer Messungen weiter rendern können.
+- [x] Browser-Persistenz unter `gewitterradar:v41002:medallion-arrow-fit-db`.
+- [x] Medaillon-Picker um **FIT-MATRIX** und **FIT-JSON** ergänzt.
+- [x] Picker-Diagnoseexport auf `gewitterradar.picker-diagnostic.v2` erweitert; aktive Medaillon-/Pfeil-ID und aktueller Fit-Datensatz werden exportiert.
+- [x] Exportdateinamen enthalten Medaillon- und Pfeil-ID.
+- [x] veralteter/starrer Kalibrierungsbezug wird beim JSON/CSV-Export vor dem Schreiben neu gemessen.
+- [x] Zwischenablagepfad robust umgebaut: synchroner Legacy-Kopierweg zuerst, moderne Clipboard-API als Rückfallweg.
+- [x] Kalibrierungs-Logdatei verwendet dynamische `trend_XX`- und `arrow_XX`-IDs.
+- [x] automatisierter Browservertrag um eine reale Einzelmessung Auge + Pfeil + Fit erweitert.
+- [x] Spezifikation in `docs/MEDALLION_ARROW_GEOMETRY_DB.md` dokumentiert.
+- [ ] vollständige 504er-FIT-MATRIX real nach DRA-Installation ausführen und `FIT-JSON` exportieren.
+- [ ] erkannte Augenradien je `trend_XX` visuell/plausibilisieren; Fehlmessungen nicht als finale Datenbank übernehmen.
+- [ ] empfohlene Skalierung mehrerer stark unterschiedlicher `arrow_XX` in kleinen/großen Augen real prüfen.
+- [ ] Kopieren-Funktion im HA-WebView/iPad real bestätigen.
+
+**R16-Regel:** Die Diagnose erzeugt Messdaten; sie überschreibt die Produktdarstellung noch nicht automatisch. Erst nach realer Abnahme wird entschieden, wann die gespeicherten Fit-Ratios die Laufzeitskalierung der Pfeile steuern.
+

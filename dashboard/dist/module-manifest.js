@@ -1,9 +1,9 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R15-2026-09-27",runtimeRevision:"41002r13",moduleSetId:"8F15-A271"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R16-2026-09-27",runtimeRevision:"41002r13",moduleSetId:"F48F-1C26"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.20",
+    "version": "1.2.21",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -167,7 +167,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.medallion-designs",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "group": "Instrumente",
     "function": "Medaillon-Designkatalog",
     "subfunctions": [
@@ -175,9 +175,10 @@ export const EXPECTED_MODULES=Object.freeze([
       "Assetzuordnung",
       "Diagnosegrundprofile",
       "Pfeilvarianten",
-      "Pfeilauswahl"
+      "Pfeilauswahl",
+      "Pfeil/Auge-Geometriedatenbank"
     ],
-    "file": "modules/instruments/medallion-designs.js"
+    "file": "modules/instruments/medallion-designs.js
   },
   {
     "id": "diagnostics.module-view",
@@ -196,7 +197,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.1.4",
+    "version": "1.2.0",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -204,6 +205,7 @@ export const EXPECTED_MODULES=Object.freeze([
       "Virtuelles Gewitter",
       "Kompass-Kalibrierung",
       "Medaillon-Kalibrierung",
+      "Pfeil/Auge-Fit-Matrix",
       "Leistung"
     ],
     "file": "modules/diagnostics/cockpit.js"
@@ -294,4 +296,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.20",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.21",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
