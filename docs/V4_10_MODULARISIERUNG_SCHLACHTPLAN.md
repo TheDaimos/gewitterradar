@@ -2986,3 +2986,27 @@ Rückführung:
 - [ ] danach vollständige FIT-MATRIX ausführen und genau eine FIT-JSON für die reale Auswertung exportieren.
 
 **NÄCHSTER SCHRITT:** R16P1 über DRA aus `deploy/dev` / `19aa830a7d19bbe00bf953e442a3d625085788de` installieren. Erwarteter verwalteter Delta gegenüber `ba3083c7d3ace5a986aeabe9327f1f5128122a59`: **1 neu / 0 geändert / 0 entfernt / 107 unverändert**. Danach vollständige FIT-MATRIX ausführen und genau eine FIT-JSON exportieren.
+
+
+---
+
+## Schleife R17 – reale R16-Matrix analysiert / Messparität korrigiert (2026-09-27)
+
+- [x] reale FIT-JSON vollständig ausgewertet: 28 Medaillons, 18 Pfeile, 504/504 Fits, keine fehlenden/zusätzlichen Schlüssel.
+- [x] reale Statistik ermittelt: Scale 0.820099–1.181956, Mittel 0.980892; 196 contained / 308 overflowing.
+- [x] Confidence geprüft: 25 LOW / 3 MEDIUM / 0 HIGH.
+- [x] kritische Provenance erkannt: Export meldet R12 statt R16/R16P1.
+- [x] reale Matrix gegen CI-R16-Paritätsmatrix verglichen; Abweichung systematisch und nicht freigabefähig.
+- [x] Root Cause: Browser nutzte designspezifische ältere Diagnose-Seeds, CI einen neutralen Asset-Seed.
+- [x] R17 Browser/CI auf `runtime-asset-center-parity-v1` und `87/264` Seed-Radius vereinheitlicht.
+- [x] R17 HA-Provenance `ha-webview-r17-parity` ergänzt.
+- [x] Build-/Versionsidentität explizit aus dem Hauptloader in den Modulkontext gebunden.
+- [x] FIT-MATRIX-Mischstandblocker ergänzt.
+- [x] Regressionstest für R17-Featurecache, Seed-Parität und Provenance-Blocker ergänzt.
+- [x] R16-Realbefund dauerhaft in `docs/R16_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md` dokumentiert.
+- [ ] finalen R17-Head vollständig CI-grün bestätigen.
+- [ ] R17 nach `deploy/dev` promoten.
+- [ ] R17 real per DRA installieren, Frontend vollständig neu laden, FIT-MATRIX erneut vollständig ausführen und neue FIT-JSON exportieren.
+- [ ] R17 Real-/CI-Matrix vergleichen und erst danach über produktive Fit-Ratios entscheiden.
+
+**NÄCHSTER SCHRITT:** finalen R17-Head vollständig durch CI laufen lassen. Nur bei vollständigem Grün exakt nach `deploy/dev` promoten. Danach reale 504er-Matrix erneut erzeugen.
