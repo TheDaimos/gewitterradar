@@ -160,18 +160,24 @@ return {
       const number=Number(value);return Number.isFinite(number)?Math.max(5,Math.min(45,number)):30;
     },
 
-    _currentMedallionEyeCalibrationState() {
-      const medallionId=this._medallionDesignValue?.()||this._activeMedallionDesign||null,fitDb=this._loadMedallionArrowGeometryDatabase(),profile=fitDb?.medallions?.[medallionId]||null,database=this._loadMedallionEyeCalibrationDatabase(),entry=database.entries?.[medallionId]||null;
-      const descriptor=this._medallionDiagnosticDescriptor?.(),fallback=this._medallionDiagnosticProfile?.(descriptor),sourceWidth=Number(profile?.sourceWidth||fallback?.sourceWidth||512),sourceHeight=Number(profile?.sourceHeight||fallback?.sourceHeight||sourceWidth),minDim=Math.min(sourceWidth,sourceHeight);
-      const autoCenterX=this._medallionEyeCenterClamp(profile?Number(profile.centerX)/sourceWidth*100:Number(fallback?.aperture?.centerX||sourceWidth/2)/sourceWidth*100);
-      const autoCenterY=this._medallionEyeCenterClamp(profile?Number(profile.centerY)/sourceHeight*100:Number(fallback?.aperture?.centerY||sourceHeight/2)/sourceHeight*100);
-      const autoRadius=this._medallionEyeRadiusClamp(profile?Math.min(Number(profile.radiusX),Number(profile.radiusY))/minDim*100:Number(fallback?.aperture?.radius||minDim*.30)/minDim*100);
+    _medallionEyeCalibrationStateForId(medallionId) {
+      const fitDb=this._loadMedallionArrowGeometryDatabase(),profile=fitDb?.medallions?.[medallionId]||null,database=this._loadMedallionEyeCalibrationDatabase(),entry=database.entries?.[medallionId]||null;
+      const sourceWidth=Number(profile?.sourceWidth||512),sourceHeight=Number(profile?.sourceHeight||sourceWidth),minDim=Math.min(sourceWidth,sourceHeight);
+      const autoCenterX=this._medallionEyeCenterClamp(profile?Number(profile.centerX)/sourceWidth*100:50);
+      const autoCenterY=this._medallionEyeCenterClamp(profile?Number(profile.centerY)/sourceHeight*100:50);
+      const autoRadius=this._medallionEyeRadiusClamp(profile?Math.min(Number(profile.radiusX),Number(profile.radiusY))/minDim*100:30);
       const manualCenterX=entry?.centerXPercent!=null?this._medallionEyeCenterClamp(entry.centerXPercent):null,manualCenterY=entry?.centerYPercent!=null?this._medallionEyeCenterClamp(entry.centerYPercent):null,manualRadius=entry?.radiusPercent!=null?this._medallionEyeRadiusClamp(entry.radiusPercent):null;
       const effectiveCenterX=manualCenterX??autoCenterX,effectiveCenterY=manualCenterY??autoCenterY,effectiveRadius=manualRadius??autoRadius;
       return {medallionId,sourceWidth,sourceHeight,autoCenterXPercent:autoCenterX,autoCenterYPercent:autoCenterY,autoRadiusPercent:autoRadius,
         manualCenterXPercent:manualCenterX,manualCenterYPercent:manualCenterY,manualRadiusPercent:manualRadius,
         effectiveCenterXPercent:effectiveCenterX,effectiveCenterYPercent:effectiveCenterY,effectiveRadiusPercent:effectiveRadius,
-        effectiveDiameterPercent:effectiveRadius*2,reviewed:!!entry?.reviewed,updatedAt:entry?.updatedAt||null,source:manualCenterX!=null||manualCenterY!=null||manualRadius!=null?'manual':'auto'};
+        effectiveDiameterPercent:effectiveRadius*2,reviewed:!!entry?.reviewed,updatedAt:entry?.updatedAt||null,source:manualCenterX!=null||manualCenterY!=null||manualRadius!=null?'manual':'auto',
+        autoMeasurement:profile?{centerX:Number(profile.centerX),centerY:Number(profile.centerY),radiusX:Number(profile.radiusX),radiusY:Number(profile.radiusY),confidence:profile.confidence||null,method:profile.method||null,referenceSource:profile.referenceSource||null}:null};
+    },
+
+    _currentMedallionEyeCalibrationState() {
+      const medallionId=this._medallionDesignValue?.()||this._activeMedallionDesign||MEDALLION_DESIGNS?.[0]?.id||null;
+      return this._medallionEyeCalibrationStateForId(medallionId);
     },
 
     _setMedallionEyeCalibration(values,{source='manual',reviewed=false}={}) {
@@ -215,10 +221,13 @@ return {
     },
 
     _medallionEyeCalibrationPayload() {
-      const database=this._loadMedallionEyeCalibrationDatabase(),designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[];
-      const entries=designs.map(design=>{const currentId=this._activeMedallionDesign,restore=currentId;this._activeMedallionDesign=design.id;const state=this._currentMedallionEyeCalibrationState();this._activeMedallionDesign=restore;return state;});
-      const reviewed=entries.filter(entry=>entry.reviewed).length;
+      const database=this._loadMedallionEyeCalibrationDatabase(),designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],entries=designs.map(design=>this._medallionEyeCalibrationStateForId(design.id)),reviewed=entries.filter(entry=>entry.reviewed).length;
       return {schema:'gewitterradar.medallion-eye-calibration-export.v1',generatedAt:new Date().toISOString(),build:GEWITTERRADAR_BUILD,storageKey:MEDALLION_EYE_CALIBRATION_STORAGE_KEY,summary:{total:entries.length,reviewed,open:Math.max(0,entries.length-reviewed)},entries};
+    },
+
+    _downloadMedallionEyeCalibration() {
+      const payload=this._medallionEyeCalibrationPayload(),stamp=new Date().toISOString().replace(/[:.]/g,'-'),blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
+      anchor.href=url;anchor.download=`gewitterradar_medallion_eye_calibration_${stamp}.json`;document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     },
 
     _syncMedallionEyeCalibration(scope=this._medallionPickerDialog) {
@@ -344,7 +353,7 @@ return {
       return {schema:'gewitterradar.medallion-arrow-visual-calibration-export.v2',generatedAt:new Date().toISOString(),build:GEWITTERRADAR_BUILD,
         sourceFit:{schema:fitDb?.schema||null,generatedAt:fitDb?.generatedAt||null,fitCount:fits.length},
         storageKey:MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY,summary:{total:rows.length,reviewed,open:Math.max(0,rows.length-reviewed),manualOverrides,autoOnly:rows.length-manualOverrides},
-        current:this._currentMedallionVisualCalibrationState(),entries:rows};
+        medallionEyes:this._medallionEyeCalibrationPayload(),current:this._currentMedallionVisualCalibrationState(),entries:rows};
     },
 
     _downloadMedallionVisualCalibration(format='json') {
