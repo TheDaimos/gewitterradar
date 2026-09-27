@@ -3,7 +3,7 @@
   "productVersion": "4.10.02",
   "build": "V4.10.02-MODULAR-DEV-R19-2026-09-27",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D61A-4C90",
+  "moduleSetId": "C82F-640A",
   "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,11 +18,13 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R19 visual medallion-arrow size and center calibration diagnostics",
+    "purpose": "R19 per-medallion eye-reference circle plus arrow size/center calibration diagnostics",
     "productBehaviorUnchanged": true,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
-    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 adds center-aware fit geometry and diagnostic-only manual size/X/Y calibration",
-    "visualCalibrationAutoAppliesToProduction": false
+    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 adds center-aware fit geometry, per-medallion reviewed eye circles and diagnostic-only manual arrow size/X/Y calibration",
+    "visualCalibrationAutoAppliesToProduction": false,
+    "manualEyeReferencesAutoApply": false,
+    "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides"
   }
 }
