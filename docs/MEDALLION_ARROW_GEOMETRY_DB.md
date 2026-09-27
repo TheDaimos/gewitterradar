@@ -108,3 +108,23 @@ Der Startwert begrenzt nur die Kantensuche; das Messergebnis wird weiterhin aus 
 Der HA/WebView-Export trägt zusätzlich die Provenance `ha-webview-r17-parity`. FIT-MATRIX wird blockiert, wenn die geladene Buildidentität nicht mit dem erwarteten Manifest-Build übereinstimmt. Dadurch kann ein Browser-Mischstand nicht mehr unbemerkt als gültige Geometriedatenbank exportiert werden.
 
 Analysebeleg: `docs/R16_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md`.
+
+
+## R18 – identischer Real-/CI-Messalgorithmus
+
+Die R17-Abnahme bewies, dass ein gemeinsamer Seed allein keine Messparität garantiert. R17 verwendete im HA/WebView weiterhin `radial-color-edge-ellipse-v1`, während CI bereits `first-consistent-eye-ring-ellipse-v2` verwendete.
+
+Ab R18 gilt deshalb für **beide** Messwege verbindlich:
+- `first-consistent-eye-ring-ellipse-v2`
+- Suchbereich 18–36 % der kleinsten Assetdimension
+- radialer Median über alle Winkel
+- geglättete lokale Peak-Suche
+- erster starker konsistenter Ring
+- lokale Mittelpunktoptimierung ±4 px
+- lokale Ringabtastung ±4 px
+- RadiusX/RadiusY per Sektormedian
+- identische Confidence-Schwellen
+
+Die Produktdarstellung bleibt weiterhin von den Messdaten entkoppelt. Erst eine reale R18-Matrix darf gegen CI-R18 abgenommen werden.
+
+Analysebeleg: `docs/R17_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md`.
