@@ -92,3 +92,19 @@ Der Picker-Export verwendet ab R16 `gewitterradar.picker-diagnostic.v2` und enth
 Automatisiert wird mindestens eine echte Kombination durch Augenmessung, Pfeil-Alpha-Messung und Fit-Berechnung geführt. Die vollständige 504er-Matrix bleibt ein realer DRA-/HA-Test, weil dort die tatsächliche Browser-/WebView-Umgebung maßgeblich ist.
 
 Die endgültige Geometriedatenbank gilt erst nach Sichtprüfung der erkannten Augenradien und der empfohlenen Pfeilskalierungen als freigegeben.
+
+
+## R17 – Real-/CI-Paritätskorrektur
+
+Die erste reale 504er-Matrix zeigte eine systematische Abweichung zur synthetischen CI-Matrix und eine veraltete R12-Buildprovenance. Sie wird deshalb nicht als freigegebene Kalibrierung verwendet.
+
+Ab R17 verwenden beide Messwege denselben Startzustand:
+- `eyeSeedMode = runtime-asset-center-parity-v1`
+- Mittelpunkt = Zentrum des tatsächlichen Runtime-Assets
+- `eyeSeedRadiusRatio = 87 / 264`
+
+Der Startwert begrenzt nur die Kantensuche; das Messergebnis wird weiterhin aus den tatsächlichen Pixeln ermittelt.
+
+Der HA/WebView-Export trägt zusätzlich die Provenance `ha-webview-r17-parity`. FIT-MATRIX wird blockiert, wenn die geladene Buildidentität nicht mit dem erwarteten Manifest-Build übereinstimmt. Dadurch kann ein Browser-Mischstand nicht mehr unbemerkt als gültige Geometriedatenbank exportiert werden.
+
+Analysebeleg: `docs/R16_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md`.
