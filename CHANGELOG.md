@@ -483,3 +483,14 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 ### V4.10.02 DEV R16P1 – DRA/CI parity acceptance
 - Added `custom_components/gewitterradar/dra-deployment-provenance.json` as a DRA-managed provenance record for the R16 real fit-matrix acceptance path.
 - Records the 28 × 18 = 504 expected fit matrix and `ci-offline-r16-parity` provenance without changing runtime fit behavior or automatically applying calibration data.
+
+
+### V4.10.02 DEV R17 – Fit-Matrix Real/CI-Parität
+- Erste reale 504er-FIT-JSON vollständig ausgewertet; 28 Medaillons, 18 Pfeile und 504 Fit-Schlüssel vorhanden.
+- Reale R16-Matrix wegen R12-Provenance, 25/28 LOW-Confidence-Augenprofilen und massiver CI-Abweichung ausdrücklich nicht als Produktkalibrierung freigegeben.
+- Browser- und CI-Augenmessung auf denselben neutralen Runtime-Asset-Seed `runtime-asset-center-parity-v1` vereinheitlicht.
+- Seed-Radius als `87/264` der Runtime-Assetbreite festgelegt und im Export nachvollziehbar gemacht.
+- HA/WebView-Provenance `ha-webview-r17-parity` ergänzt.
+- Loader übergibt Build-/Versionsidentität explizit an den Modulkontext.
+- FIT-MATRIX blockiert bei Loader-/Manifest-Mischstand statt eine falsch zuordenbare Matrix zu erzeugen.
+- Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
