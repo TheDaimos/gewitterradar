@@ -212,9 +212,12 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
  for marker in (
   "_pickerDiagnosticPayload(kind)",
   "_pickerDiagnosticCsv(kind)",
-  "_downloadPickerDiagnostic(kind,format='json')",
+  "_downloadPickerDiagnostic: async function(kind,format='json')",
   "_copyPickerDiagnostic: async function(kind,button=null)",
   "_bindPickerDiagnosticActions(shell,kind)",
+  "_measureMedallionArrowFitMatrix: async function",
+  "_computeMedallionArrowFit(eye,arrow)",
+  "gewitterradar.medallion-arrow-geometry.v1",
   "if(!this._diagnostics?.enabled)this._setMedallionDiagnosticMode('normal');",
   "this._syncMedallionPicker?.();this._syncPickerDiagnostics?.();",
  ):
