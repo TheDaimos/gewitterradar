@@ -127,6 +127,9 @@ async function measureEye(id,file){
     method:'first-consistent-eye-ring-ellipse-v2'
   };
 }
+function resolveEyeReference(autoEye){
+  return {...autoEye,referenceSource:'auto-ellipse-v2',autoMeasurement:{centerX:autoEye.centerX,centerY:autoEye.centerY,radiusX:autoEye.radiusX,radiusY:autoEye.radiusY,confidence:autoEye.confidence,method:autoEye.method}};
+}
 async function measureArrow(id,file){
   const image=await rawImage(file),threshold=CONFIG.alphaThreshold,points=[];
   let left=image.width,top=image.height,right=-1,bottom=-1,alphaPixels=0;
@@ -227,12 +230,12 @@ function fit(eye,arrow){
   const db={
     schema:CONFIG.schema,version:CONFIG.version,
     generatedAt:new Date().toISOString(),build:BUILD,
-    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r19-center-aware-fit'},
+    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r19-center-aware-fit',manualEyeReferenceSchema:'gewitterradar.medallion-eye-calibration.v1',manualEyeReferenceCount:0,manualEyeReferenceIds:[]},
     config:{...CONFIG},medallions:{},arrows:{},fits:{}
   };
   for(let n=1;n<=28;n++){
     const id=`trend_${String(n).padStart(2,'0')}`;
-    db.medallions[id]=await measureEye(id,medallionPath(n));
+    db.medallions[id]=resolveEyeReference(await measureEye(id,medallionPath(n)));
   }
   const arrowMeasurements={};
   for(let n=0;n<=17;n++){
