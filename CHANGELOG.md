@@ -528,3 +528,19 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - R18 Real-/CI-Parität bestanden.
 - Worst-Angle-Abweichungen bei Gleichständen als numerisch unkritisch klassifiziert.
 - Automatische Produktanwendung der Fit-Skalierung bleibt weiterhin gesperrt und benötigt eine getrennte Kalibrierungsfreigabe.
+
+
+### V4.10.02 DEV R19 – Augenreferenz + visuelle Pfeilkalibrierung
+- R18 Real-/CI-Parität als technische Grundlage beibehalten.
+- Fit-Geometrie auf Schema `gewitterradar.medallion-arrow-geometry.v2` erweitert.
+- Pfeil-Platzierung und tatsächlichen CSS-Rotationsursprung (`50% 50%`) getrennt.
+- Fit-Matrix berechnet jetzt zusätzlich zentrierte Ratio und empfohlenes Pfeilzentrum X/Y.
+- Pro Medaillon einen eigenen, manuell abnehmbaren Referenzkreis eingeführt: Mittelpunkt X/Y + Radius/Durchmesser.
+- Gelben Referenzkreis im Picker direkt verschiebbar gemacht; Radius zusätzlich per Griff oder Regler einstellbar.
+- Automatisch erkannte Augenellipse bleibt als Vergleichsdiagnose sichtbar.
+- Nur abgenommene Referenzkreise ersetzen die automatische Ellipse in der 504er-Matrix.
+- Änderung einer Augenreferenz invalidiert die 18 abhängigen Paar-Fits und hebt deren Sichtabnahme auf.
+- AUGE-JSON für alle 28 Referenzkreise ergänzt.
+- Paarweise Kalibrierung für Größe und Mittelpunkt X/Y mit AUTO/BASIS/ABNEHMEN/RESET/NÄCHSTER OFFEN beibehalten.
+- KAL-JSON enthält zusätzlich die Medaillon-Augenreferenzen.
+- Keine automatische Übernahme der Kalibrierung in die produktive Pfeildarstellung.
