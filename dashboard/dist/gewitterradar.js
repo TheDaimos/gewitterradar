@@ -112,7 +112,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
     throw new Error('Gewitterradar core.base-context did not provide LANGUAGE_DEFINITIONS');
   }
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'install-modules',languageDefinitions:__moduleDeps.LANGUAGE_DEFINITIONS.length};
-  Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot});
+  Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});
   installMedallionDesigns(GewitterradarCard,__moduleDeps);
   installCardLifecycle(GewitterradarCard,__moduleDeps);
   installMapDisplay(GewitterradarCard,__moduleDeps);
