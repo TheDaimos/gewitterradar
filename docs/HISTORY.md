@@ -260,3 +260,16 @@ Nach der realen R9-Abnahme des neuen Abweichungsdialogs zeigte dessen Export, da
 
 
 Nach der realen R10-Abnahme wurde ein kurz gemeldeter Vollbild-Drag-Aussetzer der Diagnosekonsole vorsorglich in einem R11-Arbeitsstand untersucht. Die reale R10-Nachprüfung bestätigte die Verschiebbarkeit jedoch erneut. Der experimentelle R11-Pfad wurde nicht ausgeliefert und scheiterte im Shared-Frontend-Test selbst am bestehenden Desktop-Vollbild-Dragvertrag. R11 wurde daher verworfen und der Featurezweig auf den bewiesenen R10-Laufzeitstand zurückgeführt; die späteren Abnahmedokumentationen bleiben erhalten.
+
+
+## Projektstatistik
+
+Eine separate rekonstruierte Gesamtstatistik hält die Entwicklungsmenge von den frühen V3.x-Ständen vor Git bis zur aktuellen V4.10-Linie fest:
+
+- rekonstruierter Arbeitswert: ca. **210 Entwicklungsiterationen/Versionen**;
+- konservativ direkt belegbare Mindestzahl: **135** benannte Stände/Iterationsmarker;
+- aktuelle V4.10.02-Feature-Linie: **1.672 Git-Commits** seit 2026-09-06.
+
+Die Zählmethode, Unsicherheitsgrenzen und Phasenaufschlüsselung stehen in:
+
+- `docs/PROJECT_STATISTICS.md`
