@@ -519,3 +519,12 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - Abweichende `worstAngleDeg`-Tie-Winkel bei 122 Kombinationen als numerisch gleichwertig und nicht produktrelevant klassifiziert.
 - R18 Real-/CI-Parität technisch freigegeben.
 - Produktive paarweise Pfeilskalierung bleibt separat und weiterhin deaktiviert.
+
+
+### V4.10.02 DEV R18 – Real-/CI-Parität abgenommen
+- Reale R18-FIT-Matrix vollständig mit dem CI-R18-Artefakt verglichen.
+- 28/28 Medaillonprofile numerisch identisch.
+- 504/504 Fits fachlich identisch; maximale Scale-Abweichung 3.33e-16.
+- R18 Real-/CI-Parität bestanden.
+- Worst-Angle-Abweichungen bei Gleichständen als numerisch unkritisch klassifiziert.
+- Automatische Produktanwendung der Fit-Skalierung bleibt weiterhin gesperrt und benötigt eine getrennte Kalibrierungsfreigabe.
