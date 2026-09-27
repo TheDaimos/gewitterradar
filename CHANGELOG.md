@@ -506,3 +506,16 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - Build `V4.10.02-MODULAR-DEV-R18-2026-09-27`, Modulsatz `A84D-29F7`.
 - 14/14 CI-Prüfungen erfolgreich.
 - Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
+
+
+### V4.10.02 DEV R18 – Real-/CI-Fit-Parität bestanden
+- Neue reale R18-Matrix vollständig ausgewertet: 28 Medaillons, 18 Pfeile, 504/504 Fits.
+- 28/28 Augenprofile geometrisch exakt identisch zum CI-R18-Artefakt.
+- Pfeilprofile identisch bis auf IEEE-754-Rundung im Bereich ~1e-14 px.
+- Alle produktrelevanten 504 Fit-Metriken stimmen bis auf Maschinenrundung überein.
+- Confidence real und CI: 26 HIGH / 2 MEDIUM.
+- Scale real und CI: 0.4845504–0.9924283, Mittel 0.7065788.
+- 504/504 Kombinationen überschreiten bei der bisherigen einheitlichen Pfeilgröße den 4-%-Sicherheitsbereich.
+- Abweichende `worstAngleDeg`-Tie-Winkel bei 122 Kombinationen als numerisch gleichwertig und nicht produktrelevant klassifiziert.
+- R18 Real-/CI-Parität technisch freigegeben.
+- Produktive paarweise Pfeilskalierung bleibt separat und weiterhin deaktiviert.
