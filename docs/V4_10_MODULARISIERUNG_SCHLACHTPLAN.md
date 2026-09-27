@@ -3037,3 +3037,27 @@ Rückführung:
 - [ ] erst bei plausibler Konvergenz über automatische Produktanwendung entscheiden.
 
 **NÄCHSTER SCHRITT:** R18 aus `deploy/dev` / `a85f803422543f62ab6c94a02b085526a5abd23a` per DRA installieren. Erwarteter verwalteter Delta gegenüber R17 `4786698f1e9a0eaa4660eec4363de7da6a46c9e5`: **0 neu / 6 geändert / 0 entfernt / 102 unverändert**. Danach vollständige R18-FIT-MATRIX ausführen und genau eine FIT-JSON exportieren.
+
+
+---
+
+## Schleife R18.1 – reale Paritätsabnahme (2026-09-27)
+
+- [x] reale R18-FIT-JSON eingelesen und Provenienz geprüft.
+- [x] 28 Medaillons / 18 Pfeile / 504 Fits vollständig.
+- [x] exakt das CI-R18-Artefakt des DRA-Kandidaten `a85f803422543f62ab6c94a02b085526a5abd23a` geladen.
+- [x] 28/28 Medaillonprofile feldweise verglichen: geometrisch exakt identisch.
+- [x] 18/18 Pfeilprofile verglichen: identisch bis auf IEEE-754-Rundung im `maxRadius`.
+- [x] 504/504 Fit-Datensätze verglichen.
+- [x] Ratio/Scale/Overflow/Containment innerhalb Maschinenrundung identisch.
+- [x] Confidence 26 HIGH / 2 MEDIUM real und CI identisch.
+- [x] `worstAngleDeg`-Differenzen bei 122 Ties als geometrisch gleichwertig bewertet.
+- [x] **R18 REAL-/CI-PARITÄT BESTANDEN.**
+- [x] Abnahmebericht unter `docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md` hinterlegt.
+- [x] Geometriedokumentation und Changelog nachgezogen.
+- [ ] produktive paarweise Skalierungslogik separat implementieren; Messdaten dürfen nicht implizit aktiv werden.
+- [ ] Skalierungslogik per CI gegen alle 504 Kombinationen beweisen.
+- [ ] neue DRA-Version bereitstellen.
+- [ ] visuelle Realabnahme repräsentativer Extrem- und Normalfälle durchführen.
+
+**NÄCHSTER SCHRITT:** aus der bestandenen R18-Matrix eine explizite, reproduzierbare paarweise Produktkalibrierung ableiten. Die Basisgröße bleibt 59.667391 %; der Fit-Faktor wird medaillon-/pfeilspezifisch angewendet. Der vorhandene 4-%-Sicherheitsabstand ist bereits in `recommendedUniformScale` enthalten. Keine stille Aktivierung vor eigener CI- und DRA-Schleife.
