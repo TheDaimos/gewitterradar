@@ -1,0 +1,21 @@
+{
+  "schema": "gewitterradar.dra-deployment-provenance.v1",
+  "productVersion": "4.10.02",
+  "build": "V4.10.02-MODULAR-DEV-R16-2026-09-27",
+  "runtimeRevision": "41002r13",
+  "moduleSetId": "F48F-1C26",
+  "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
+  "parity": {
+    "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
+    "mode": "ci-offline-r16-parity",
+    "medallions": 28,
+    "arrows": 18,
+    "expectedFits": 504
+  },
+  "deployment": {
+    "channel": "deploy/dev",
+    "purpose": "R16 real Home Assistant/WebView fit-matrix acceptance",
+    "productBehaviorUnchanged": true,
+    "fitDataAutoApply": false
+  }
+}
