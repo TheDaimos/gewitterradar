@@ -128,3 +128,22 @@ Ab R18 gilt deshalb für **beide** Messwege verbindlich:
 Die Produktdarstellung bleibt weiterhin von den Messdaten entkoppelt. Erst eine reale R18-Matrix darf gegen CI-R18 abgenommen werden.
 
 Analysebeleg: `docs/R17_REAL_FIT_MATRIX_ANALYSIS_2026-09-27.md`.
+
+
+## R18 Real-/CI-Abnahme – bestanden
+
+Die reale R18-Matrix vom 2026-09-27 wurde gegen das CI-R18-Artefakt des exakt nach `deploy/dev` promovierten Kandidaten `a85f803422543f62ab6c94a02b085526a5abd23a` verglichen.
+
+Ergebnis:
+- 28/28 Medaillonprofile geometrisch exakt identisch
+- 18/18 Pfeilprofile identisch bis auf reine IEEE-754-Rundung im `maxRadius`
+- 504/504 Fit-Schlüssel identisch
+- Scale/Ratio/Overflow nur mit Maschinenrundung bis maximal ca. 4e-14 abweichend
+- Containment in allen 504 Fällen identisch
+- 26 HIGH / 2 MEDIUM auf beiden Seiten
+
+`worstAngleDeg` kann bei numerisch gleichwertigen Rotationsmaxima zwischen Browser und Node einen anderen Tie-Winkel enthalten. Dieses Feld ist deshalb **kein alleiniger Paritäts-Gatekeeper**, solange die eigentlichen Fit-Metriken übereinstimmen.
+
+Die technische Messparität ist ab R18 freigegeben. Details: `docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md`.
+
+Produktive Pfeilskalierung bleibt ein separater Schritt; die Messdaten verändern die Darstellung weiterhin nicht automatisch.
