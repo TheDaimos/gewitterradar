@@ -113,6 +113,12 @@ def test_v41001_compass_picker_contract():
         "data-medallion-scale-auto",
         "data-medallion-scale-accept",
         "data-medallion-calibration-json",
+        "data-medallion-eye-circle",
+        "data-medallion-eye-x",
+        "data-medallion-eye-y",
+        "data-medallion-eye-radius",
+        "data-medallion-eye-accept",
+        "data-medallion-eye-json",
     ):
         assert marker in map_display
 
