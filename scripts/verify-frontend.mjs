@@ -104,7 +104,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.2.1"',
+  '"id": "diagnostics.cockpit"','"version": "1.3.0"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
