@@ -3061,3 +3061,26 @@ Rückführung:
 - [ ] visuelle Realabnahme repräsentativer Extrem- und Normalfälle durchführen.
 
 **NÄCHSTER SCHRITT:** aus der bestandenen R18-Matrix eine explizite, reproduzierbare paarweise Produktkalibrierung ableiten. Die Basisgröße bleibt 59.667391 %; der Fit-Faktor wird medaillon-/pfeilspezifisch angewendet. Der vorhandene 4-%-Sicherheitsabstand ist bereits in `recommendedUniformScale` enthalten. Keine stille Aktivierung vor eigener CI- und DRA-Schleife.
+
+
+---
+
+## Schleife R18 – Real-/CI-Paritätsabnahme abgeschlossen (2026-09-27)
+
+- [x] reale R18-FIT-JSON eingelesen.
+- [x] Build/Provenienz/Messmethode geprüft.
+- [x] 28/28 Medaillons, 18/18 Pfeile und 504/504 Fits vollständig.
+- [x] keine fehlenden oder zusätzlichen Fit-Schlüssel.
+- [x] 28 Medaillonprofile exakt gegen CI-R18 verglichen: maximale numerische Abweichung 0.
+- [x] 18 Pfeilprofile verglichen: nur unkritische Gleitkomma-Rundung im letzten Bit bei sechs maxRadius-Werten.
+- [x] 504 Fits verglichen: Containment vollständig identisch.
+- [x] maximale Ratio-Abweichung 4.44e-16.
+- [x] maximale Scale-Abweichung 3.33e-16.
+- [x] maximale Overflow-Abweichung 3.91e-14.
+- [x] 122 Worst-Angle-Abweichungen als reine Gleichstandsentscheidungen verifiziert; keine Geometrieabweichung.
+- [x] R18 Real-/CI-Parität **BESTANDEN**.
+- [x] Abnahmebeleg in `docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md` hinterlegt.
+- [ ] Kalibrierungsstrategie für Produktdarstellung separat festlegen.
+- [ ] keine automatische Scale-Anwendung ohne explizite Freigabe.
+
+**NÄCHSTER SCHRITT:** Auf Basis der jetzt validierten 504er-Daten eine Produktkalibrierungsstrategie festlegen. Messung/CI-Parität ist abgeschlossen; R18 bleibt Referenzstand für die Geometriedatenbank.
