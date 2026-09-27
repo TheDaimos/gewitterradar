@@ -800,6 +800,26 @@ return {
       return copied;
     },
 
+    _bindMedallionEyeCircleDrag(shell) {
+      const stage=shell?.querySelector?.('[data-medallion-picker-stage]'),circle=shell?.querySelector?.('[data-medallion-eye-circle]'),radiusHandle=shell?.querySelector?.('[data-medallion-eye-radius-handle]');
+      if(!stage||!circle||circle.dataset.dragBound==='true')return;circle.dataset.dragBound='true';
+      const point=(event)=>{const rect=stage.getBoundingClientRect();return {rect,x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};};
+      let mode=null,pointerId=null;
+      const move=(event)=>{
+        if(pointerId!==event.pointerId||!mode)return;event.preventDefault();event.stopPropagation();
+        const p=point(event),state=this._currentMedallionEyeCalibrationState();
+        if(mode==='center')this._setMedallionEyeCalibration({centerXPercent:p.x,centerYPercent:p.y},{source:'manual',reviewed:false});
+        else{
+          const dx=(p.x-state.effectiveCenterXPercent)*p.rect.width/100,dy=(p.y-state.effectiveCenterYPercent)*p.rect.height/100,radiusPx=Math.hypot(dx,dy),radiusPercent=radiusPx/Math.min(p.rect.width,p.rect.height)*100;
+          this._setMedallionEyeCalibration({radiusPercent},{source:'manual',reviewed:false});
+        }
+      };
+      const up=(event)=>{if(pointerId!==event.pointerId)return;try{circle.releasePointerCapture?.(pointerId);}catch(_error){}mode=null;pointerId=null;};
+      circle.addEventListener('pointerdown',(event)=>{if(event.target===radiusHandle)return;event.preventDefault();event.stopPropagation();mode='center';pointerId=event.pointerId;circle.setPointerCapture?.(pointerId);});
+      radiusHandle?.addEventListener('pointerdown',(event)=>{event.preventDefault();event.stopPropagation();mode='radius';pointerId=event.pointerId;circle.setPointerCapture?.(pointerId);});
+      circle.addEventListener('pointermove',move);circle.addEventListener('pointerup',up);circle.addEventListener('pointercancel',up);
+    },
+
     _bindPickerDiagnosticActions(shell,kind) {
       if(!shell)return;
       shell.querySelector('[data-picker-diagnostic-copy]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._copyPickerDiagnostic(kind,event.currentTarget);});
@@ -813,6 +833,15 @@ return {
         shell.querySelectorAll('[data-medallion-freeze]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionDiagnosticFreeze(button.dataset.medallionFreeze==='on');}));
         shell.querySelector('[data-medallion-fit-matrix]')?.addEventListener('click',async(event)=>{event.preventDefault();event.stopPropagation();try{await this._measureMedallionArrowFitMatrix(event.currentTarget);}catch(error){console.error('[Gewitterradar] FIT-MATRIX',error);}});
         shell.querySelector('[data-medallion-fit-db-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionArrowFitDatabase();});
+        shell.querySelector('[data-medallion-eye-x]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionEyeCalibration({centerXPercent:Number(event.currentTarget.value)},{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-eye-y]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionEyeCalibration({centerYPercent:Number(event.currentTarget.value)},{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-eye-radius]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionEyeCalibration({radiusPercent:Number(event.currentTarget.value)},{source:'manual',reviewed:false});});
+        shell.querySelector('[data-medallion-eye-auto]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionEyeCalibration(null,{source:'auto',reviewed:false});});
+        shell.querySelector('[data-medallion-eye-accept]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._acceptMedallionEyeCalibration();});
+        shell.querySelector('[data-medallion-eye-reset]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._resetMedallionEyeCalibration();});
+        shell.querySelector('[data-medallion-eye-next]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._nextUnreviewedMedallionEyeCalibration();});
+        shell.querySelector('[data-medallion-eye-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionEyeCalibration();});
+        this._bindMedallionEyeCircleDrag(shell);
         shell.querySelector('[data-medallion-scale]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationScale(Number(event.currentTarget.value)/100,{source:'manual',reviewed:false});});
         shell.querySelector('[data-medallion-center-x]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationCenter('x',Number(event.currentTarget.value),{source:'manual',reviewed:false});});
         shell.querySelector('[data-medallion-center-y]')?.addEventListener('input',(event)=>{event.stopPropagation();this._setMedallionVisualCalibrationCenter('y',Number(event.currentTarget.value),{source:'manual',reviewed:false});});
@@ -823,7 +852,7 @@ return {
         shell.querySelector('[data-medallion-scale-next]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._nextUnreviewedMedallionVisualCalibration();});
         shell.querySelector('[data-medallion-calibration-json]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionVisualCalibration('json');});
         shell.querySelector('[data-medallion-calibration-csv]')?.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._downloadMedallionVisualCalibration('csv');});
-        this._syncMedallionFitStatus(shell);this._syncMedallionVisualCalibration(shell);
+        this._syncMedallionFitStatus(shell);this._syncMedallionEyeCalibration(shell);this._syncMedallionVisualCalibration(shell);
       }
     },
 
