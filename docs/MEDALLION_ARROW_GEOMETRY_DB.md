@@ -147,3 +147,24 @@ Ergebnis:
 Die technische Messparität ist ab R18 freigegeben. Details: `docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md`.
 
 Produktive Pfeilskalierung bleibt ein separater Schritt; die Messdaten verändern die Darstellung weiterhin nicht automatisch.
+
+
+## R18 – Real-/CI-Paritätsabnahme bestanden
+
+Die reale R18-HA/WebView-Matrix vom 2026-09-27 wurde vollständig gegen das CI-R18-Artefakt des Kandidaten `a85f803422543f62ab6c94a02b085526a5abd23a` verglichen.
+
+Ergebnis:
+- 28/28 Medaillonprofile numerisch identisch
+- 18/18 Pfeilprofile geometrisch identisch; nur Gleitkomma-Rundung im letzten Bit bei sechs `maxRadius`-Werten
+- 504/504 Fits fachlich identisch
+- Containment 504/504 identisch
+- maximale Scale-Abweichung 3.33e-16
+- maximale Ratio-Abweichung 4.44e-16
+- maximale Overflow-Abweichung 3.91e-14
+
+Abweichende `worstAngleDeg`-Werte bei Gleichständen gelten nicht als Paritätsfehler, solange Norm/Scale/Overflow/Containment identisch bleiben.
+
+Vollständiger Abnahmebeleg:
+`docs/R18_REAL_FIT_MATRIX_ACCEPTANCE_2026-09-27.md`
+
+Wichtig: Die Messparität ist freigegeben; eine automatische Produktanwendung der ermittelten Scale-Werte ist damit **nicht automatisch freigegeben**.
