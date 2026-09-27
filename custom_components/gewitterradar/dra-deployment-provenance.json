@@ -1,25 +1,25 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R17-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R18-2026-09-27",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "7C31-AE42",
+  "moduleSetId": "A84D-29F7",
   "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
-    "mode": "ci-offline-r17-parity",
+    "mode": "ci-offline-r18-first-consistent-eye-ring",
     "medallions": 28,
     "arrows": 18,
     "expectedFits": 504,
-    "eyeSeedMode": "runtime-asset-center-parity-v1",
+    "eyeSeedMode": "first-consistent-eye-ring-v2",
     "eyeSeedRadiusRatio": 0.32954545454545453
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R17 real Home Assistant/WebView fit-matrix parity acceptance",
+    "purpose": "R18 real Home Assistant/WebView first-consistent-eye-ring parity acceptance",
     "productBehaviorUnchanged": true,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": false,
-    "previousRealMatrixReason": "R12 provenance and non-parity eye seed; rerun required"
+    "previousRealMatrixReason": "R17 browser used radial-color-edge-ellipse-v1 while CI used first-consistent-eye-ring-ellipse-v2"
   }
 }
