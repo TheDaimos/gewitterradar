@@ -96,16 +96,16 @@ def test_runtime_revision_and_module_set_probe_contract():
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${revision}`' in main
- assert "GEWITTERRADAR_FEATURE_CACHE = '41002r18'" in main
+ assert "GEWITTERRADAR_FEATURE_CACHE = '41002r19'" in main
  assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"A84D-29F7"' in manifest
+ assert 'moduleSetId:"D61A-4C90"' in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="A84D-29F7"
+ assert runtime["moduleSetId"]=="D61A-4C90"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
@@ -218,7 +218,7 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "_bindPickerDiagnosticActions(shell,kind)",
   "_measureMedallionArrowFitMatrix: async function",
   "_computeMedallionArrowFit(eye,arrow)",
-  "gewitterradar.medallion-arrow-geometry.v1",
+  "gewitterradar.medallion-arrow-geometry.v2",
   "eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.36",
   "const centerX=data.width/2,centerY=data.height/2;",
   "first-consistent-eye-ring-ellipse-v2",
