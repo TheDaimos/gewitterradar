@@ -1,6 +1,6 @@
 # Medaillon-/Pfeil-Geometriedatenbank
 
-Stand: V4.10.02 DEV R16
+Stand: V4.10.02 DEV R19
 
 ## Zweck
 
@@ -14,10 +14,10 @@ Damit kann Gewitterradar Pfeile unabhängig von der absoluten Instrumentgröße 
 
 ## Persistenz
 
-Schema: `gewitterradar.medallion-arrow-geometry.v1`
+Schema: `gewitterradar.medallion-arrow-geometry.v2`
 
 Browser-Speicher:
-`gewitterradar:v41002:medallion-arrow-fit-db`
+`gewitterradar:v41002:medallion-arrow-fit-db-v2`
 
 Die Datenbank wird durch die Diagnosefunktion **FIT-MATRIX** erzeugt und aktualisiert. **FIT-JSON** exportiert den vollständigen Messstand.
 
@@ -66,7 +66,7 @@ Gespeichert werden mindestens:
 - `worstAngleDeg`,
 - verwendete Winkelschrittweite und Sicherheitsreserve.
 
-Die R16-Grundeinstellung prüft den kompletten Drehbereich in 5°-Schritten und reserviert 4 % Sicherheitsabstand zum erkannten Augenrand. Diese Parameter sind Bestandteil der Datenbankkonfiguration und damit im Export nachvollziehbar.
+Die aktuelle R19-Grundeinstellung prüft den kompletten Drehbereich in 5°-Schritten und reserviert 4 % Sicherheitsabstand zum erkannten Augenrand. Diese Parameter sind Bestandteil der Datenbankkonfiguration und damit im Export nachvollziehbar.
 
 ## Laufzeitprinzip
 
@@ -188,3 +188,39 @@ Ein Wechsel der Augenreferenz invalidiert die 18 davon abhängigen Paar-Fits und
 
 Vollständige Bedien- und Exportbeschreibung:
 `docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md`.
+
+## R19 – Diagnosewerkzeuge, Referenzkreis und paarweise Sichtabnahme
+
+R19 erweitert die Geometriedatenbank auf Schema `gewitterradar.medallion-arrow-geometry.v2`. Der entscheidende Unterschied ist die Trennung von **automatisch gemessener Geometrie**, **fachlich abgenommenem Auge** und **paarweiser Sichtkorrektur**.
+
+### Augenreferenz je Medaillon
+
+Separater Speicher: `gewitterradar:v41002:medallion-eye-calibration-v1`  
+Schema: `gewitterradar.medallion-eye-calibration.v1`
+
+Je `trend_XX` werden AUTO- und manuelle Werte für Mittelpunkt X/Y und Radius geführt. Erst ein mit **AUGE ABNEHMEN** bestätigter Kreis erhält `referenceSource = manual-reviewed-circle-v1` und ersetzt die automatische Ellipse als Fit-Grenze.
+
+Die automatische Messung bleibt als `autoMeasurement` erhalten und wird weiterhin exportiert.
+
+### Zentrumssensitive Pfeilberechnung
+
+R19 unterscheidet CSS-Platzierung des Pfeilelements, tatsächliches `transform-origin: 50% 50%`, automatisch empfohlenes Pfeilzentrum und optional manuell korrigiertes Pfeilzentrum.
+
+Der Fit-Datensatz enthält zusätzlich mindestens `recommendedCenter.xPercent/yPercent`, `currentCenterOffsetPx`, `arrowToEyeRatioCentered`, `centeredContained360`, zentrierte Überstand-/Freiraumwerte und den empfohlenen Scale-Faktor des zentrierten Rotationsenvelopes.
+
+### Sichtbare Prüfebenen
+
+Die Diagnose zeichnet automatische Augenellipse, manuellen Referenzkreis, Sicherheitsbereich, Pfeilreichweite sowie Basis-/AUTO-/kalibrierten Mittelpunkt getrennt. Dadurch ist direkt prüfbar, ob eine Abweichung aus der Augenmessung, dem gewählten Zielkreis, der Pfeilgröße oder dem Pfeilzentrum stammt.
+
+### Paarweise Kalibrierung
+
+Separater Speicher: `gewitterradar:v41002:medallion-arrow-visual-calibration-v2`  
+Schema: `gewitterradar.medallion-arrow-visual-calibration.v2`
+
+Je `trend_XX::arrow_XX` können Größe sowie Mittelpunkt X/Y manuell korrigiert und abgenommen werden. Diese Werte bleiben von der produktiven Darstellung entkoppelt, bis eine eigene Produktstufe sie explizit übernimmt.
+
+### Invalidierung
+
+Eine Änderung einer abgenommenen Augenreferenz invalidiert alle 18 zugehörigen Fits und hebt deren Paarabnahme auf. Dadurch kann eine alte 504er-Matrix nicht versehentlich als weiterhin gültig erscheinen.
+
+Vollständige Bedienbeschreibung: `docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md`.
