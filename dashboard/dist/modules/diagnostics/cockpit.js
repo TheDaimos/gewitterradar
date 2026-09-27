@@ -125,7 +125,8 @@ return {
       const fitCount=Object.keys(database?.fits||{}).length,expected=(MEDALLION_DESIGNS?.length||0)*(TREND_ARROW_DESIGNS?.length||0);
       if(this._medallionArrowFitMatrixRunning){node.textContent=this._medallionArrowFitMatrixProgress||'FIT-MATRIX · Messung läuft …';return;}
       if(record){
-        node.textContent=`FIT ${key} · Ratio ${Number(record.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(record.recommendedUniformScale).toFixed(4)} · ${record.contained360?'360° OK':`Überstand ${Number(record.maxOverflowPx).toFixed(2)} px`}\nDB ${fitCount}/${expected} Kombinationen`;
+        const centered=Number(record.arrowToEyeRatioCentered),cx=Number(record.recommendedCenter?.xPercent),cy=Number(record.recommendedCenter?.yPercent);
+        node.textContent=`FIT ${key} · Ratio aktuell ${Number(record.arrowToEyeRatioCurrent).toFixed(4)} · zentriert ${Number.isFinite(centered)?centered.toFixed(4):'n/v'} · Scale ${Number(record.recommendedUniformScale).toFixed(4)}\nAUTO Zentrum ${Number.isFinite(cx)?cx.toFixed(2):'n/v'} / ${Number.isFinite(cy)?cy.toFixed(2):'n/v'} % · ${record.contained360?'360° aktuell OK':`Überstand aktuell ${Number(record.maxOverflowPx).toFixed(2)} px`} · DB ${fitCount}/${expected}`;
       }else node.textContent=`FIT ${key} · noch nicht gemessen · DB ${fitCount}/${expected}`;
     },
 
@@ -471,7 +472,7 @@ return {
         left:rect.left-parentRect.left,top:rect.top-parentRect.top,right:rect.right-parentRect.left,bottom:rect.bottom-parentRect.top};
     },
 
-    _renderPickerDiagnosticStage(svg,{width,height,subject=null,pivot=null,targetCircle=null,targetEllipse=null,safeEllipse=null,reachCircle=null,targetPoint=null,actualPoint=null,namespace='P'}={}) {
+    _renderPickerDiagnosticStage(svg,{width,height,subject=null,pivot=null,targetCircle=null,targetEllipse=null,safeEllipse=null,reachCircle=null,baselinePoint=null,targetPoint=null,actualPoint=null,namespace='P'}={}) {
       if(!svg||!(width>0&&height>0))return;
       svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
       svg.style.setProperty('display','block','important');svg.style.setProperty('opacity','1','important');svg.style.setProperty('z-index','2147483000','important');
@@ -487,7 +488,7 @@ return {
       if(targetEllipse)markup+=`<ellipse cx="${targetEllipse.x}" cy="${targetEllipse.y}" rx="${targetEllipse.rx}" ry="${targetEllipse.ry}" fill="none" stroke="#35d9ff" stroke-width="1.45"/>`;
       if(safeEllipse)markup+=`<ellipse cx="${safeEllipse.x}" cy="${safeEllipse.y}" rx="${safeEllipse.rx}" ry="${safeEllipse.ry}" fill="none" stroke="#55e5a2" stroke-width="1.35" stroke-dasharray="6 3"/>`;
       if(reachCircle)markup+=`<circle cx="${reachCircle.x}" cy="${reachCircle.y}" r="${reachCircle.radius}" fill="none" stroke="#ff5fc8" stroke-width="1.25" stroke-dasharray="3 3"/>`;
-      if(pivot)markup+=cross(pivot.x,pivot.y,'#ff9f43',5);if(targetPoint)markup+=cross(targetPoint.x,targetPoint.y,'#60f0a8',6);if(actualPoint)markup+=cross(actualPoint.x,actualPoint.y,'#ff5fc8',4);svg.innerHTML=markup;
+      if(pivot)markup+=cross(pivot.x,pivot.y,'#ff9f43',5);if(baselinePoint)markup+=cross(baselinePoint.x,baselinePoint.y,'#ffb347',7);if(targetPoint)markup+=cross(targetPoint.x,targetPoint.y,'#60f0a8',6);if(actualPoint)markup+=cross(actualPoint.x,actualPoint.y,'#ff5fc8',4);svg.innerHTML=markup;
     },
 
     _renderPickerDiagnosticNav(svg,{width,height,previous=null,index=null,next=null}={}) {
@@ -571,7 +572,7 @@ return {
         eyeArrowFit:fitRecord||{key:fitState.key,status:'PENDING'},visualCalibration,
         navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromStage:gap},overflow,status:ok?'OK':'REVIEW'};
       this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.medallion=result;
-      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetEllipse:measuredEye,safeEllipse:safeEye,reachCircle:arrowReachRadius!=null?{x:effectivePoint.x,y:effectivePoint.y,radius:arrowReachRadius}:null,targetPoint:autoPoint,actualPoint:effectivePoint,namespace:'MP'});
+      this._renderPickerDiagnosticStage(stageOverlay,{width:stageRect.width,height:stageRect.height,subject,targetEllipse:measuredEye,safeEllipse:safeEye,reachCircle:arrowReachRadius!=null?{x:effectivePoint.x,y:effectivePoint.y,radius:arrowReachRadius}:null,baselinePoint,targetPoint:autoPoint,actualPoint:effectivePoint,namespace:'MP'});
       this._renderPickerDiagnosticNav(navOverlay,{width:navRect.width,height:navRect.height,previous,index,next});
       if(readout)readout.textContent=[
         `MEDAILLON-PICKER · ${result.designId||'n/v'} · ${result.uiIndex} / ${result.total}`,
