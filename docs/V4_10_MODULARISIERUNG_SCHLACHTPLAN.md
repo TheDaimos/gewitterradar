@@ -3084,3 +3084,34 @@ Rückführung:
 - [ ] keine automatische Scale-Anwendung ohne explizite Freigabe.
 
 **NÄCHSTER SCHRITT:** Auf Basis der jetzt validierten 504er-Daten eine Produktkalibrierungsstrategie festlegen. Messung/CI-Parität ist abgeschlossen; R18 bleibt Referenzstand für die Geometriedatenbank.
+
+
+---
+
+## Schleife R19 – fachlicher Augen-Referenzkreis + manuelle Pfeilkalibrierung (2026-09-27)
+
+- [x] R18-Sichtprüfung ausgewertet: technische Real-/CI-Parität allein garantiert noch nicht den gestalterisch gewünschten Augenbereich.
+- [x] Kalibrierungsmodell von potentiell 504 manuellen Paaren auf **28 primäre Medaillon-Augenreferenzen** erweitert.
+- [x] pro Medaillon Mittelpunkt X/Y und Radius/Durchmesser als eigenen Referenzkreis speicherbar.
+- [x] gelben Referenzkreis direkt verschiebbar gemacht; Radius per Griff und Regler veränderbar.
+- [x] automatische Augenellipse als unabhängige Vergleichsebene erhalten.
+- [x] explizite Abnahme eingeführt: nur `AUGE ABNEHMEN` macht den manuellen Kreis zur Fit-Referenz.
+- [x] Referenzhierarchie `manual-reviewed-circle-v1` vor `first-consistent-eye-ring-ellipse-v2` implementiert.
+- [x] 4-%-Sicherheitsabstand bleibt nach Auswahl der Referenz erhalten.
+- [x] Fit-Invalidierung implementiert: Augenänderung entfernt die 18 abhängigen Fits und setzt Paarabnahmen zurück.
+- [x] Pfeil-Platzierung und realen CSS-Rotationsursprung 50/50 getrennt.
+- [x] 504er-Fitmodell um zentrierte Ratio und empfohlenes Mittelpunkt-X/Y erweitert.
+- [x] manuelle Paarwerkzeuge Größe + Mittelpunkt X/Y als zweite/optionale Korrekturebene beibehalten.
+- [x] AUGE-JSON sowie erweiterte KAL-JSON/KAL-CSV-Exporte ergänzt.
+- [x] Produktdarstellung außerhalb der Diagnose bleibt unverändert; keine stille Auto-Anwendung.
+- [x] Bedien- und Datenfluss unter `docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md` dokumentiert.
+- [ ] vollständige CI des finalen R19-Kandidaten grün bestätigen.
+- [ ] finalen Kandidaten exakt nach `deploy/dev` promoten.
+- [ ] R19 real per DRA installieren.
+- [ ] AUTO-FIT-MATRIX einmal ausführen.
+- [ ] 28/28 Augenreferenzen visuell setzen und abnehmen.
+- [ ] AUGE-JSON exportieren.
+- [ ] FIT-MATRIX mit den abgenommenen Referenzkreisen erneut erzeugen und FIT-JSON exportieren.
+- [ ] danach nur tatsächlich notwendige Paarabweichungen per Größe/X/Y korrigieren und KAL-JSON exportieren.
+
+**R19-Abnahmeregel:** Der manuell abgenommene Kreis definiert den fachlich gewünschten nutzbaren Innenraum des jeweiligen Medaillons. Die automatische Ellipse bleibt Beleg und Vergleich, aber nicht zwingend die gestalterische Wahrheit. Erst die nach 28/28 Augenabnahmen neu berechnete 504er-Matrix ist Grundlage für eine spätere Produktkalibrierung.
