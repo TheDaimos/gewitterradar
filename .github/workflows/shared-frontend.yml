@@ -48,6 +48,9 @@ jobs:
 
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
+      - name: Generate medallion/arrow fit matrix evidence
+        run: node scripts/generate-medallion-arrow-fit-matrix.cjs
+
       - run: npx playwright install --with-deps chromium
 
       - name: About locale registry and rendering
@@ -81,5 +84,7 @@ jobs:
         if: always()
         with:
           name: shared-frontend-browser-evidence
-          path: artwork/acceptance/premium-controls/
+          path: |
+            artwork/acceptance/premium-controls/
+            artwork/acceptance/medallion-arrow-fit/
           if-no-files-found: warn
