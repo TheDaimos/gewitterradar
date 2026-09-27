@@ -1,25 +1,28 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R18-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R19-2026-09-27",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "A84D-29F7",
+  "moduleSetId": "D61A-4C90",
   "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
-    "mode": "ci-offline-r18-first-consistent-eye-ring",
+    "mode": "ci-offline-r19-center-aware-fit",
     "medallions": 28,
     "arrows": 18,
     "expectedFits": 504,
     "eyeSeedMode": "first-consistent-eye-ring-v2",
-    "eyeSeedRadiusRatio": 0.32954545454545453
+    "eyeSeedRadiusRatio": 0.32954545454545453,
+    "geometrySchema": "gewitterradar.medallion-arrow-geometry.v2",
+    "centerFitMode": "eye-center-plus-render-origin-v1"
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R18 real Home Assistant/WebView first-consistent-eye-ring parity acceptance",
+    "purpose": "R19 visual medallion-arrow size and center calibration diagnostics",
     "productBehaviorUnchanged": true,
     "fitDataAutoApply": false,
-    "previousRealMatrixAccepted": false,
-    "previousRealMatrixReason": "R17 browser used radial-color-edge-ellipse-v1 while CI used first-consistent-eye-ring-ellipse-v2"
+    "previousRealMatrixAccepted": true,
+    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 adds center-aware fit geometry and diagnostic-only manual size/X/Y calibration",
+    "visualCalibrationAutoAppliesToProduction": false
   }
 }
