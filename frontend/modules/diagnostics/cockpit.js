@@ -681,17 +681,19 @@ return {
       const gap=navRect.top-stageRect.bottom,overflow=subject.left<-.5||subject.top<-.5||subject.right>stageRect.width+.5||subject.bottom>stageRect.height+.5;
       const style=getComputedStyle(arrow),arrowWidth=parseFloat(style.width)||0,arrowHeight=parseFloat(style.height)||0,expectedArrowWidth=stageRect.width*profile.arrow.widthPercent/100,expectedArrowHeight=stageRect.height*profile.arrow.heightPercent/100;
       const arrowSizeResidual=Math.max(Math.abs(arrowWidth-expectedArrowWidth),Math.abs(arrowHeight-expectedArrowHeight));
-      const ok=centerResidual<=1.5&&arrowResidual<=1.5&&arrowSizeResidual<=1.5&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
-      const eyeProfile=fitState.database?.medallions?.[descriptor?.id]||null,eyeScaleX=eyeProfile?stageRect.width/Number(eyeProfile.sourceWidth||stageRect.width):1,eyeScaleY=eyeProfile?stageRect.height/Number(eyeProfile.sourceHeight||stageRect.height):1;
-      const measuredEye=eyeProfile?{x:Number(eyeProfile.centerX)*eyeScaleX,y:Number(eyeProfile.centerY)*eyeScaleY,rx:Number(eyeProfile.radiusX)*eyeScaleX,ry:Number(eyeProfile.radiusY)*eyeScaleY}:null;
+      const eyeProfile=fitState.database?.medallions?.[descriptor?.id]||null,automaticEye=eyeProfile?.autoMeasurement||eyeProfile,eyeScaleX=eyeProfile?stageRect.width/Number(eyeProfile.sourceWidth||stageRect.width):1,eyeScaleY=eyeProfile?stageRect.height/Number(eyeProfile.sourceHeight||stageRect.height):1;
+      const measuredEye=automaticEye?{x:Number(automaticEye.centerX)*eyeScaleX,y:Number(automaticEye.centerY)*eyeScaleY,rx:Number(automaticEye.radiusX)*eyeScaleX,ry:Number(automaticEye.radiusY)*eyeScaleY}:null;
       const safeEye=fitRecord?.eye?{x:Number(fitRecord.eye.centerX)*eyeScaleX,y:Number(fitRecord.eye.centerY)*eyeScaleY,rx:Number(fitRecord.eye.safeRadiusX)*eyeScaleX,ry:Number(fitRecord.eye.safeRadiusY)*eyeScaleY}:null;
+      const eyeCalibration=this._syncMedallionEyeCalibration(dialog)||this._currentMedallionEyeCalibrationState();
+      const calibratedEyeCircle={x:stageRect.width*eyeCalibration.effectiveCenterXPercent/100,y:stageRect.height*eyeCalibration.effectiveCenterYPercent/100,radius:Math.min(stageRect.width,stageRect.height)*eyeCalibration.effectiveRadiusPercent/100,reviewed:eyeCalibration.reviewed,source:eyeCalibration.source};
       const visualCalibration=this._syncMedallionVisualCalibration(dialog)||this._currentMedallionVisualCalibrationState(),autoPoint={x:stageRect.width*visualCalibration.autoCenterXPercent/100,y:stageRect.height*visualCalibration.autoCenterYPercent/100},effectivePoint={x:stageRect.width*visualCalibration.effectiveCenterXPercent/100,y:stageRect.height*visualCalibration.effectiveCenterYPercent/100};
       const arrowResidual=Math.hypot(actualPoint.x-effectivePoint.x),arrowSourceWidth=Number(fitRecord?.arrow?.sourceWidth)||1,baseRenderedArrowWidth=stageRect.width*((Number(fitRecord?.baseArrowLayout?.widthPercent)||59.667391)/100);
       const arrowReachRadius=fitRecord?Number(fitRecord.arrow.maxRadius)*baseRenderedArrowWidth/arrowSourceWidth*visualCalibration.effectiveScale:null;
+      const ok=centerResidual<=1.5&&arrowResidual<=1.5&&arrowSizeResidual<=1.5&&(navSymmetry==null||navSymmetry<=1.5)&&(navVerticalSpread==null||navVerticalSpread<=1.5)&&!overflow;
       const designs=Array.isArray(MEDALLION_DESIGNS)?MEDALLION_DESIGNS:[],designIndex=Math.max(0,designs.findIndex((entry)=>entry.id===descriptor?.id)),arrowDesignId=this._trendArrowDesignValue?.()||this._activeTrendArrowDesign||null;
       const result={kind:'medallion',designId:descriptor?.id||null,arrowDesignId,uiIndex:designIndex+1,total:designs.length,profile:profile.geometryVersion,
         stage:{width:stageRect.width,height:stageRect.height},preview:subject,base:baseRect,centerDelta:{x:centerDx,y:centerDy,residual:centerResidual},
-        aperture,measuredEye,safeEye,arrowReachRadius,baselineArrowCenter:baselinePoint,autoArrowCenter:autoPoint,effectiveArrowCenter:effectivePoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
+        aperture,measuredEye,safeEye,calibratedEyeCircle,eyeCalibration,arrowReachRadius,baselineArrowCenter:baselinePoint,autoArrowCenter:autoPoint,effectiveArrowCenter:effectivePoint,actualArrowCenter:actualPoint,arrowCenterResidual:arrowResidual,arrowSizeResidual,
         eyeArrowFit:fitRecord||{key:fitState.key,status:'PENDING'},visualCalibration,
         navigation:{leftDistance,rightDistance,symmetryDelta:navSymmetry,verticalSpread:navVerticalSpread,gapFromStage:gap},overflow,status:ok?'OK':'REVIEW'};
       this._pickerDiagnostics=this._pickerDiagnostics||{};this._pickerDiagnostics.medallion=result;
@@ -702,7 +704,9 @@ return {
         `Profil ${result.profile||'n/v'} · Stage ${stageRect.width.toFixed(2)} × ${stageRect.height.toFixed(2)} px`,
         `Medaillon-Zentrum Δ X ${centerDx.toFixed(2)} · Y ${centerDy.toFixed(2)} · R ${centerResidual.toFixed(2)} px`,
         `Pfeil-Zentrum Basis ${baselinePoint.x.toFixed(2)},${baselinePoint.y.toFixed(2)} · Auto ${autoPoint.x.toFixed(2)},${autoPoint.y.toFixed(2)} · Kalibriert ${effectivePoint.x.toFixed(2)},${effectivePoint.y.toFixed(2)} px`,
-        measuredEye?`Gemessenes Auge Rx/Ry ${measuredEye.rx.toFixed(2)} / ${measuredEye.ry.toFixed(2)} px · 4-%-Zone ${safeEye.rx.toFixed(2)} / ${safeEye.ry.toFixed(2)} px`:`Gemessenes Auge · noch nicht verfügbar`,
+        measuredEye?`AUTO-Auge Rx/Ry ${measuredEye.rx.toFixed(2)} / ${measuredEye.ry.toFixed(2)} px`:`AUTO-Auge · noch nicht gemessen`,
+        `REFERENZKREIS ${eyeCalibration.reviewed?'ABGENOMMEN':'VORSCHAU'} · X/Y/R ${eyeCalibration.effectiveCenterXPercent.toFixed(2)} / ${eyeCalibration.effectiveCenterYPercent.toFixed(2)} / ${eyeCalibration.effectiveRadiusPercent.toFixed(2)} % · Ø ${eyeCalibration.effectiveDiameterPercent.toFixed(2)} %`,
+        safeEye?`Aktive 4-%-Fit-Zone Rx/Ry ${safeEye.rx.toFixed(2)} / ${safeEye.ry.toFixed(2)} px`:`Fit-Zone · FIT-MATRIX nach Augenabnahme erneut ausführen`,
         `Pfeilgröße aktuell ${(visualCalibration.effectiveScale*100).toFixed(1)} % · Auto ${visualCalibration.autoScale==null?'n/v':(visualCalibration.autoScale*100).toFixed(1)+' %'} · Pfeilreichweite ${arrowReachRadius==null?'n/v':arrowReachRadius.toFixed(2)+' px'}`,
         fitRecord?`Pfeil/Auge Ratio ${Number(fitRecord.arrowToEyeRatioCurrent).toFixed(4)} · Scale ${Number(fitRecord.recommendedUniformScale).toFixed(4)} · 360° ${fitRecord.contained360?'OK':'ÜBERSTAND'}`:`Pfeil/Auge Fit ${fitState.key} · noch nicht gemessen`,
         `Navigation L/R ${leftDistance==null?'n/v':leftDistance.toFixed(2)} / ${rightDistance==null?'n/v':rightDistance.toFixed(2)} px · Symmetrie Δ ${navSymmetry==null?'n/v':navSymmetry.toFixed(2)} px`,
