@@ -29,6 +29,8 @@ jobs:
           wc -c frontend/modules/diagnostics/cockpit.js
           sha256sum frontend/modules/instruments/medallion-designs.js
           wc -c frontend/modules/instruments/medallion-designs.js
+          sha256sum frontend/modules/fullscreen/map-display.js
+          wc -c frontend/modules/fullscreen/map-display.js
           sha256sum frontend/assets/gewitterradar-runtime-manifest.json
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
