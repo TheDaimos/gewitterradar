@@ -311,7 +311,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
           stage.style.removeProperty('--medallion-picker-diagnostic-angle');
         }
       }
-      this._syncMedallionVisualCalibration?.(dialog);
+      this._syncMedallionEyeCalibration?.(dialog);this._syncMedallionVisualCalibration?.(dialog);
       dialog.setAttribute('aria-label',this._t('trend.label'));
       const closeButton = dialog.querySelector('[data-medallion-picker-close]');
       if (closeButton) {
