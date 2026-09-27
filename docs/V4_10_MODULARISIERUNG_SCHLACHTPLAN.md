@@ -3115,3 +3115,20 @@ Rückführung:
 - [ ] danach nur tatsächlich notwendige Paarabweichungen per Größe/X/Y korrigieren und KAL-JSON exportieren.
 
 **R19-Abnahmeregel:** Der manuell abgenommene Kreis definiert den fachlich gewünschten nutzbaren Innenraum des jeweiligen Medaillons. Die automatische Ellipse bleibt Beleg und Vergleich, aber nicht zwingend die gestalterische Wahrheit. Erst die nach 28/28 Augenabnahmen neu berechnete 504er-Matrix ist Grundlage für eine spätere Produktkalibrierung.
+
+---
+
+## Schleife R19.1 – Diagnosewerkzeuge dokumentiert (2026-09-27)
+
+- [x] R19 Augen-Referenzkreis vollständig in der Projekt-Dokumentation beschrieben.
+- [x] direkte X/Y-/Radius-Manipulation und Sichtlegende dokumentiert.
+- [x] Pfeilgröße und Pfeilmittelpunkt X/Y inklusive AUTO/BASIS/ABNEHMEN dokumentiert.
+- [x] 4-%-Sicherheitsbereich und 360°-Containment klar als getrennte Stufen beschrieben.
+- [x] Geometriedatenbank auf aktuellen R19/v2-Stand nachgezogen.
+- [x] stabile `trend_XX`-/`arrow_XX`-Schlüssel im Katalog mit Kalibrierungsrolle ergänzt.
+- [x] Modulzuständigkeiten für `medallion-designs`, `map-display` und `diagnostics.cockpit` ergänzt.
+- [x] README und Changelog nachgezogen.
+- [x] wiederverwendbare R19-Erkenntnisse in das Dev-Tools-Repo übertragen.
+- [x] Produktdarstellung weiterhin ausdrücklich von Diagnose-/Kalibrierwerten entkoppelt.
+
+**Dokumentationsregel:** Automatische Messung, manuell abgenommene Augenreferenz und paarweiser visueller Override müssen dauerhaft als drei getrennte Ebenen beschrieben und exportiert bleiben.
