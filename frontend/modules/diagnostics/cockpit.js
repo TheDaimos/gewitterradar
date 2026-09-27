@@ -66,7 +66,7 @@ return {
     _emptyMedallionArrowGeometryDatabase() {
       const config=MEDALLION_ARROW_GEOMETRY_DB||{};
       return {
-        schema:config.schema||'gewitterradar.medallion-arrow-geometry.v1',
+        schema:config.schema||'gewitterradar.medallion-arrow-geometry.v2',
         version:Number(config.version)||1,
         generatedAt:null,
         build:GEWITTERRADAR_BUILD,
@@ -93,10 +93,10 @@ return {
 
     _loadMedallionArrowGeometryDatabase() {
       const config=MEDALLION_ARROW_GEOMETRY_DB||{},key=config.storageKey||'gewitterradar:v41002:medallion-arrow-fit-db';
-      if(this._medallionArrowGeometryDatabase?.schema===(config.schema||'gewitterradar.medallion-arrow-geometry.v1'))return this._medallionArrowGeometryDatabase;
+      if(this._medallionArrowGeometryDatabase?.schema===(config.schema||'gewitterradar.medallion-arrow-geometry.v2'))return this._medallionArrowGeometryDatabase;
       let db=null;
       try{db=JSON.parse(localStorage.getItem(key)||'null');}catch(_){}
-      if(!db||db.schema!==(config.schema||'gewitterradar.medallion-arrow-geometry.v1'))db=this._emptyMedallionArrowGeometryDatabase();
+      if(!db||db.schema!==(config.schema||'gewitterradar.medallion-arrow-geometry.v2'))db=this._emptyMedallionArrowGeometryDatabase();
       db.medallions=db.medallions&&typeof db.medallions==='object'?db.medallions:{};
       db.arrows=db.arrows&&typeof db.arrows==='object'?db.arrows:{};
       db.fits=db.fits&&typeof db.fits==='object'?db.fits:{};
