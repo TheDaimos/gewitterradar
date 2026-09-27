@@ -87,4 +87,8 @@ jobs:
           path: |
             artwork/acceptance/premium-controls/
             artwork/acceptance/medallion-arrow-fit/
+            frontend/assets/gewitterradar-trend-medallion.png
+            frontend/assets/gewitterradar-trend-medallion-*.webp
+            frontend/assets/gewitterradar-trend-arrow.png
+            frontend/assets/gewitterradar-trend-arrow-*.webp
           if-no-files-found: warn
