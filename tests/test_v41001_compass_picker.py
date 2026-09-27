@@ -40,7 +40,7 @@ def test_v41001_compass_picker_contract():
     map_display = (PICKER_DIR / "map-display.js").read_text(encoding="utf-8")
 
     assert "const CARD_VERSION = '4.10.02';" in main
-    assert "V4.10.02-MODULAR-DEV-R14-2026-09-26" in main
+    assert "V4.10.02-MODULAR-DEV-R15-2026-09-27" in main
     assert "const GEWITTERRADAR_MODULE_CACHE = '41002r13';" in main
 
     # Preserve the established picker behaviour.
@@ -89,17 +89,22 @@ def test_v41001_compass_picker_contract():
             f"{module_name} must only be referenced by the compass picker"
         )
 
-    # Compass uses only the silver pair; brass stays available for the analogous Medallion picker.
+    # Kompass und Medaillon verwenden die lokalen silbernen 2x-Retina-Chevrons.
     assert 'data-chevron-material="brass"' not in map_display
     for marker in (
         "medallion-picker-shell-v41002",
         "data-medallion-picker-close",
         "data-medallion-picker-index",
-        "COMPASS_PICKER_LEFT_BRASS",
-        "COMPASS_PICKER_RIGHT_BRASS",
+        "COMPASS_PICKER_LEFT_SILVER",
+        "COMPASS_PICKER_RIGHT_SILVER",
         "this._stepMedallionDesign(-1)",
         "this._stepMedallionDesign(1)",
         "gewitterradar:v41002:medallion-design",
+        "data-trend-arrow-prev",
+        "data-trend-arrow-next",
+        "this._stepTrendArrowDesign(-1)",
+        "this._stepTrendArrowDesign(1)",
+        "gewitterradar:v41002:trend-arrow-design",
     ):
         assert marker in map_display
 
