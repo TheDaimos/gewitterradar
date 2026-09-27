@@ -17,7 +17,7 @@ const CONFIG=Object.freeze({
   eyeAngleStepDeg:2,
   alphaThreshold:8,
   eyeSearchMinRatio:0.18,
-  eyeSearchMaxRatio:0.45
+  eyeSearchMaxRatio:0.36
 });
 const ARROW_PROFILE=Object.freeze({
   centerXPercent:50.012238,
@@ -49,70 +49,79 @@ function colorDistance(a,b){
   return Math.hypot(dr,dg,db,da);
 }
 async function measureEye(id,file){
-  const image=await rawImage(file);
-  const minDim=Math.min(image.width,image.height);
+  const image=await rawImage(file),minDim=Math.min(image.width,image.height);
   const centerX=image.width/2,centerY=image.height/2;
-  const expected=image.width*(87/264);
-  const minR=Math.max(4,Math.min(expected*.62,minDim*CONFIG.eyeSearchMinRatio));
-  const maxR=Math.min(minDim*.49,Math.max(expected*1.38,minDim*CONFIG.eyeSearchMaxRatio));
-  const points=[],scores=[],angleStep=CONFIG.eyeAngleStepDeg;
-  for(let angle=0;angle<360;angle+=angleStep){
-    const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);
-    let bestR=expected,bestScore=-1;
-    for(let radius=Math.floor(minR);radius<=Math.ceil(maxR);radius+=1){
-      const p1=pixel(image,centerX+cos*(radius-2),centerY+sin*(radius-2));
-      const p2=pixel(image,centerX+cos*(radius+2),centerY+sin*(radius+2));
-      const raw=colorDistance(p1,p2);
-      const distancePenalty=1-.22*Math.min(1,Math.abs(radius-expected)/Math.max(1,maxR-minR));
-      const score=raw*distancePenalty;
-      if(score>bestScore){bestScore=score;bestR=radius;}
-    }
-    points.push({x:centerX+cos*bestR,y:centerY+sin*bestR,angle,radius:bestR});
-    scores.push(bestScore);
-  }
-  let fitCenterX=0,fitCenterY=0,pairs=0,half=Math.round(180/angleStep);
-  for(let i=0;i<half&&i+half<points.length;i++){
-    fitCenterX+=(points[i].x+points[i+half].x)/2;
-    fitCenterY+=(points[i].y+points[i+half].y)/2;
-    pairs++;
-  }
-  fitCenterX=pairs?fitCenterX/pairs:centerX;
-  fitCenterY=pairs?fitCenterY/pairs:centerY;
-  let sx4=0,sy4=0,sx2y2=0,sx2=0,sy2=0;
-  for(const point of points){
-    const dx=point.x-fitCenterX,dy=point.y-fitCenterY,x2=dx*dx,y2=dy*dy;
-    sx4+=x2*x2;sy4+=y2*y2;sx2y2+=x2*y2;sx2+=x2;sy2+=y2;
-  }
-  const determinant=sx4*sy4-sx2y2*sx2y2;
-  let radiusX=expected,radiusY=expected;
-  if(Math.abs(determinant)>1e-9){
-    const a=(sx2*sy4-sy2*sx2y2)/determinant;
-    const b=(sy2*sx4-sx2*sx2y2)/determinant;
-    if(a>0&&b>0){radiusX=Math.sqrt(1/a);radiusY=Math.sqrt(1/b);}
-  }
-  const residuals=points.map(point=>Math.abs(Math.hypot((point.x-fitCenterX)/radiusX,(point.y-fitCenterY)/radiusY)-1));
-  const rms=Math.sqrt(residuals.reduce((sum,value)=>sum+value*value,0)/(residuals.length||1));
-  const meanScore=scores.reduce((sum,value)=>sum+value,0)/(scores.length||1);
-  const confidence=rms<=.06&&meanScore>=18?'HIGH':rms<=.12&&meanScore>=10?'MEDIUM':'LOW';
-  const radiusAt=(target)=>{
-    let best=points[0];
-    for(const p of points){
-      const delta=Math.abs((((p.angle-target)+540)%360)-180);
-      if(delta<Math.abs((((best.angle-target)+540)%360)-180))best=p;
-    }
-    return best?.radius||expected;
+  const minR=Math.max(4,Math.floor(minDim*.18)),maxR=Math.min(Math.floor(minDim*.36),Math.floor(minDim*.49)),angleStep=2;
+  const median=(values)=>{
+    const sorted=values.slice().sort((a,b)=>a-b),mid=Math.floor(sorted.length/2);
+    return sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;
   };
+  const angleDiff=(a,b)=>Math.abs((((a-b)+540)%360)-180);
+  const radialScore=(cx,cy,radius)=>{
+    const values=[];
+    for(let angle=0;angle<360;angle+=angleStep){
+      const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);
+      values.push(colorDistance(
+        pixel(image,cx+cos*(radius-2),cy+sin*(radius-2)),
+        pixel(image,cx+cos*(radius+2),cy+sin*(radius+2))
+      ));
+    }
+    return median(values);
+  };
+  const radii=[];for(let r=minR;r<=maxR;r+=1)radii.push(r);
+  const rawScores=radii.map(r=>radialScore(centerX,centerY,r));
+  const scores=rawScores.map((value,index)=>{
+    const from=Math.max(0,index-1),to=Math.min(rawScores.length,index+2);
+    return rawScores.slice(from,to).reduce((sum,item)=>sum+item,0)/(to-from);
+  });
+  const peaks=[];
+  for(let i=1;i<scores.length-1;i+=1)if(scores[i]>=scores[i-1]&&scores[i]>=scores[i+1])peaks.push({radius:radii[i],score:scores[i]});
+  const globalPeak=Math.max(...(peaks.length?peaks.map(x=>x.score):scores));
+  const strong=peaks.filter(x=>x.score>=globalPeak*.55);
+  let baseRadius;
+  if(strong.length){
+    const first=Math.min(...strong.map(x=>x.radius)),cluster=strong.filter(x=>x.radius<=first+8);
+    baseRadius=cluster.slice().sort((a,b)=>b.score-a.score)[0].radius;
+  }else baseRadius=radii[scores.indexOf(Math.max(...scores))];
+
+  let best=null;
+  for(let dx=-4;dx<=4;dx+=1)for(let dy=-4;dy<=4;dy+=1){
+    const cx=centerX+dx,cy=centerY+dy;
+    for(let radius=Math.max(minR,baseRadius-3);radius<=Math.min(maxR,baseRadius+3);radius+=1){
+      const score=radialScore(cx,cy,radius),prior=1-.015*Math.hypot(dx,dy)/Math.hypot(4,4),objective=score*prior;
+      if(!best||objective>best.objective)best={objective,cx,cy,radius,score};
+    }
+  }
+  const fitCenterX=best.cx,fitCenterY=best.cy;baseRadius=best.radius;
+  const points=[],edgeScores=[];
+  for(let angle=0;angle<360;angle+=angleStep){
+    const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let selected=null;
+    for(let radius=Math.max(4,baseRadius-4);radius<=Math.min(Math.floor(minDim*.49),baseRadius+4);radius+=1){
+      const score=colorDistance(
+        pixel(image,fitCenterX+cos*(radius-2),fitCenterY+sin*(radius-2)),
+        pixel(image,fitCenterX+cos*(radius+2),fitCenterY+sin*(radius+2))
+      );
+      if(!selected||score>selected.score)selected={score,radius};
+    }
+    points.push({angle,radius:selected.radius});edgeScores.push(selected.score);
+  }
+  const sectorMedian=(target,halfWidth)=>median(points.filter(p=>angleDiff(p.angle,target)<=halfWidth).map(p=>p.radius));
+  const radiusX=(sectorMedian(0,10)+sectorMedian(180,10))/2;
+  const radiusY=(sectorMedian(90,10)+sectorMedian(270,10))/2;
+  const radiusAt=(target)=>sectorMedian(target,2);
+  const edgeScoreMedian=median(edgeScores),radialMad=median(points.map(p=>Math.abs(p.radius-baseRadius)));
+  const confidence=edgeScoreMedian>=12&&radialMad<=2.5?'HIGH':edgeScoreMedian>=8&&radialMad<=4?'MEDIUM':'LOW';
   return {
     id,sourceWidth:image.width,sourceHeight:image.height,
-    centerX:fitCenterX,centerY:fitCenterY,radiusX,radiusY,
+    centerX:fitCenterX,centerY:fitCenterY,radiusX,radiusY,baseRadius,
     diameters:{
       horizontal:radiusAt(0)+radiusAt(180),
       vertical:radiusAt(90)+radiusAt(270),
       diagonal45:radiusAt(45)+radiusAt(225),
       diagonal135:radiusAt(135)+radiusAt(315)
     },
-    rmsNormalized:rms,edgeScoreMean:meanScore,confidence,
-    method:'radial-color-edge-ellipse-v1'
+    rmsNormalized:radialMad/Math.max(1,baseRadius),edgeScoreMedian,radialMad,confidence,
+    method:'first-consistent-eye-ring-ellipse-v2'
   };
 }
 async function measureArrow(id,file){
@@ -188,7 +197,7 @@ function fit(eye,arrow){
   const db={
     schema:CONFIG.schema,version:CONFIG.version,
     generatedAt:new Date().toISOString(),build:BUILD,
-    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r16-parity'},
+    provenance:{generator:'scripts/generate-medallion-arrow-fit-matrix.cjs',source:'frontend/assets',mode:'ci-offline-r17-first-consistent-eye-ring'},
     config:{...CONFIG},medallions:{},arrows:{},fits:{}
   };
   for(let n=1;n<=28;n++){
