@@ -87,3 +87,13 @@ Ab R16 wird die Pfeilskalierung nicht mehr nur aus einer globalen Prozentgröße
 
 Die vollständige Spezifikation steht in `docs/MEDALLION_ARROW_GEOMETRY_DB.md`. Die Matrix umfasst aktuell 28 × 18 = 504 Kombinationen. Messwerte werden unter `gewitterradar:v41002:medallion-arrow-fit-db` gespeichert und über **FIT-JSON** exportiert. Bestehende IDs bleiben unverändert.
 
+
+## R19 – Kalibrierungsstatus der IDs
+
+Die dauerhaften IDs `trend_01..trend_28` und `arrow_00..arrow_17` sind ab R19 zugleich die stabilen Schlüssel aller Diagnose- und Kalibrierungsdaten.
+
+Für jedes Medaillon existiert höchstens eine abgenommene Augenreferenz aus Mittelpunkt X, Mittelpunkt Y und Radius. Für jedes Paar `trend_XX::arrow_XX` existiert optional eine Sichtkalibrierung aus Pfeilgröße, Pfeilmittelpunkt X/Y und Abnahmestatus.
+
+Wichtig: Screenshots dienen weiterhin **nicht als Pixel-Messquelle**. Sie sind jedoch zulässige Sichtbelege dafür, dass die automatisch gemessene Kontur gestalterisch nicht dem gewünschten nutzbaren Auge entspricht. Die fachliche Korrektur erfolgt anschließend reproduzierbar über den R19-Referenzkreis und dessen exportierte numerische Werte.
+
+Siehe `docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md` und `docs/MEDALLION_ARROW_GEOMETRY_DB.md`.
