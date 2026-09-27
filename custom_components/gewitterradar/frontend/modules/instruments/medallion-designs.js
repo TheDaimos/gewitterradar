@@ -2,7 +2,7 @@ import { registerModule } from "../core/registry.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"instruments.medallion-designs",
-  version:"1.2.1",
+  version:"1.2.2",
   group:"Instrumente",
   function:"Medaillon-Designkatalog",
   subfunctions:["Designvarianten","Assetzuordnung","Diagnosegrundprofile","Pfeilvarianten","Pfeilauswahl","Pfeil/Auge-Geometriedatenbank"],
@@ -20,8 +20,8 @@ const MEDALLION_ARROW_GEOMETRY_DB_CONFIG=Object.freeze({
   eyeAngleStepDeg:2,
   alphaThreshold:8,
   eyeSearchMinRatio:0.18,
-  eyeSearchMaxRatio:0.45,
-  eyeSeedMode:"runtime-asset-center-parity-v1",
+  eyeSearchMaxRatio:0.36,
+  eyeSeedMode:"first-consistent-eye-ring-v2",
   eyeSeedRadiusRatio:87/264
 });
 

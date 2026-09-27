@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -73,12 +73,12 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
           eyeAngleStepDeg:Number(config.eyeAngleStepDeg)||2,
           alphaThreshold:Number(config.alphaThreshold)||8,
           eyeSearchMinRatio:Number(config.eyeSearchMinRatio)||0.18,
-          eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.45,
+          eyeSearchMaxRatio:Number(config.eyeSearchMaxRatio)||0.36,
           eyeSeedMode:String(config.eyeSeedMode||'runtime-asset-center-parity-v1'),
           eyeSeedRadiusRatio:Number(config.eyeSeedRadiusRatio)||(87/264)
         },
         provenance:{
-          mode:'ha-webview-r17-parity',
+          mode:'ha-webview-r18-first-consistent-eye-ring',
           build:GEWITTERRADAR_BUILD,
           browserUserAgent:navigator.userAgent,
           source:'runtime-assets'
@@ -150,38 +150,79 @@ export const installDiagnostics=defineModule(MODULE_META,(deps)=>{const { APPLIC
     },
 
     _measureMedallionEyeAsset: async function(design) {
-      const image=await this._geometryLoadImage(design.asset),data=this._geometryCanvasData(image),profile=this._medallionDiagnosticProfile(design),config=MEDALLION_ARROW_GEOMETRY_DB||{};
-      const minDim=Math.min(data.width,data.height),seedRatio=Number(config.eyeSeedRadiusRatio)||(87/264);
+      const image=await this._geometryLoadImage(design.asset),data=this._geometryCanvasData(image),config=MEDALLION_ARROW_GEOMETRY_DB||{},minDim=Math.min(data.width,data.height);
       const centerX=data.width/2,centerY=data.height/2;
-      const expected=data.width*seedRatio;
-      const minR=Math.max(4,Math.min(expected*.62,minDim*(Number(config.eyeSearchMinRatio)||.18)));
-      const maxR=Math.min(minDim*.49,Math.max(expected*1.38,minDim*(Number(config.eyeSearchMaxRatio)||.45)));
-      const angleStep=Math.max(1,Number(config.eyeAngleStepDeg)||2),points=[],scores=[],radii=[];
-      for(let angle=0;angle<360;angle+=angleStep){
-        const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let bestR=expected,bestScore=-1;
-        for(let radius=Math.floor(minR);radius<=Math.ceil(maxR);radius+=1){
-          const p1=this._geometryPixel(data,centerX+cos*(radius-2),centerY+sin*(radius-2)),p2=this._geometryPixel(data,centerX+cos*(radius+2),centerY+sin*(radius+2));
-          const raw=this._geometryColorDistance(p1,p2),distancePenalty=1-.22*Math.min(1,Math.abs(radius-expected)/Math.max(1,maxR-minR)),score=raw*distancePenalty;
-          if(score>bestScore){bestScore=score;bestR=radius;}
+      const minR=Math.max(4,Math.floor(minDim*(Number(config.eyeSearchMinRatio)||.18)));
+      const maxR=Math.min(Math.floor(minDim*(Number(config.eyeSearchMaxRatio)||.36)),Math.floor(minDim*.49));
+      const angleStep=Math.max(1,Number(config.eyeAngleStepDeg)||2);
+      const median=(values)=>{const sorted=values.slice().sort((a,b)=>a-b),mid=Math.floor(sorted.length/2);return sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;};
+      const angleDiff=(a,b)=>Math.abs((((a-b)+540)%360)-180);
+      const radialScore=(cx,cy,radius)=>{
+        const values=[];
+        for(let angle=0;angle<360;angle+=angleStep){
+          const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);
+          values.push(this._geometryColorDistance(
+            this._geometryPixel(data,cx+cos*(radius-2),cy+sin*(radius-2)),
+            this._geometryPixel(data,cx+cos*(radius+2),cy+sin*(radius+2))
+          ));
         }
-        points.push({x:centerX+cos*bestR,y:centerY+sin*bestR,angle,radius:bestR});scores.push(bestScore);radii.push(bestR);
+        return median(values);
+      };
+      const radii=[];for(let r=minR;r<=maxR;r+=1)radii.push(r);
+      const rawScores=radii.map(r=>radialScore(centerX,centerY,r));
+      const smoothed=rawScores.map((value,index)=>{
+        const from=Math.max(0,index-1),to=Math.min(rawScores.length,index+2);
+        return rawScores.slice(from,to).reduce((sum,item)=>sum+item,0)/(to-from);
+      });
+      const peaks=[];
+      for(let i=1;i<smoothed.length-1;i+=1)if(smoothed[i]>=smoothed[i-1]&&smoothed[i]>=smoothed[i+1])peaks.push({radius:radii[i],score:smoothed[i]});
+      const globalPeak=Math.max(...(peaks.length?peaks.map(x=>x.score):smoothed));
+      const strong=peaks.filter(x=>x.score>=globalPeak*.55);
+      let baseRadius;
+      if(strong.length){
+        const first=Math.min(...strong.map(x=>x.radius)),cluster=strong.filter(x=>x.radius<=first+8);
+        baseRadius=cluster.slice().sort((a,b)=>b.score-a.score)[0].radius;
+      }else baseRadius=radii[smoothed.indexOf(Math.max(...smoothed))];
+
+      let best=null;
+      for(let dx=-4;dx<=4;dx+=1)for(let dy=-4;dy<=4;dy+=1){
+        const cx=centerX+dx,cy=centerY+dy;
+        for(let radius=Math.max(minR,baseRadius-3);radius<=Math.min(maxR,baseRadius+3);radius+=1){
+          const score=radialScore(cx,cy,radius),prior=1-.015*Math.hypot(dx,dy)/Math.hypot(4,4),objective=score*prior;
+          if(!best||objective>best.objective)best={objective,cx,cy,radius,score};
+        }
       }
-      let fitCenterX=0,fitCenterY=0,pairs=0,half=Math.round(180/angleStep);
-      for(let i=0;i<half&&i+half<points.length;i+=1){fitCenterX+=(points[i].x+points[i+half].x)/2;fitCenterY+=(points[i].y+points[i+half].y)/2;pairs+=1;}
-      fitCenterX=pairs?fitCenterX/pairs:centerX;fitCenterY=pairs?fitCenterY/pairs:centerY;
-      let sx4=0,sy4=0,sx2y2=0,sx2=0,sy2=0;
-      for(const point of points){const dx=point.x-fitCenterX,dy=point.y-fitCenterY,x2=dx*dx,y2=dy*dy;sx4+=x2*x2;sy4+=y2*y2;sx2y2+=x2*y2;sx2+=x2;sy2+=y2;}
-      const determinant=sx4*sy4-sx2y2*sx2y2;
-      let radiusX=expected,radiusY=expected;
-      if(Math.abs(determinant)>1e-9){
-        const a=(sx2*sy4-sy2*sx2y2)/determinant,b=(sy2*sx4-sx2*sx2y2)/determinant;
-        if(a>0&&b>0){radiusX=Math.sqrt(1/a);radiusY=Math.sqrt(1/b);}
+      const fitCenterX=best.cx,fitCenterY=best.cy;baseRadius=best.radius;
+      const points=[],edgeScores=[];
+      for(let angle=0;angle<360;angle+=angleStep){
+        const rad=angle*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);let selected=null;
+        for(let radius=Math.max(4,baseRadius-4);radius<=Math.min(Math.floor(minDim*.49),baseRadius+4);radius+=1){
+          const score=this._geometryColorDistance(
+            this._geometryPixel(data,fitCenterX+cos*(radius-2),fitCenterY+sin*(radius-2)),
+            this._geometryPixel(data,fitCenterX+cos*(radius+2),fitCenterY+sin*(radius+2))
+          );
+          if(!selected||score>selected.score)selected={score,radius};
+        }
+        points.push({angle,radius:selected.radius});edgeScores.push(selected.score);
       }
-      const residuals=points.map(point=>Math.abs(Math.hypot((point.x-fitCenterX)/radiusX,(point.y-fitCenterY)/radiusY)-1)),rms=Math.sqrt(residuals.reduce((sum,value)=>sum+value*value,0)/(residuals.length||1));
-      const meanScore=scores.reduce((sum,value)=>sum+value,0)/(scores.length||1),confidence=rms<=.06&&meanScore>=18?'HIGH':rms<=.12&&meanScore>=10?'MEDIUM':'LOW';
-      const radiusAt=(target)=>{let best=points[0];for(const p of points){const delta=Math.abs((((p.angle-target)+540)%360)-180);if(delta<Math.abs((((best.angle-target)+540)%360)-180))best=p;}return best?.radius||expected;};
-      const diameters={horizontal:radiusAt(0)+radiusAt(180),vertical:radiusAt(90)+radiusAt(270),diagonal45:radiusAt(45)+radiusAt(225),diagonal135:radiusAt(135)+radiusAt(315)};
-      return {id:design.id,sourceWidth:data.width,sourceHeight:data.height,centerX:fitCenterX,centerY:fitCenterY,radiusX,radiusY,diameters,rmsNormalized:rms,edgeScoreMean:meanScore,confidence,method:'radial-color-edge-ellipse-v1'};
+      const sectorMedian=(target,halfWidth)=>median(points.filter(p=>angleDiff(p.angle,target)<=halfWidth).map(p=>p.radius));
+      const radiusX=(sectorMedian(0,10)+sectorMedian(180,10))/2;
+      const radiusY=(sectorMedian(90,10)+sectorMedian(270,10))/2;
+      const radiusAt=(target)=>sectorMedian(target,2);
+      const edgeScoreMedian=median(edgeScores),radialMad=median(points.map(p=>Math.abs(p.radius-baseRadius)));
+      const confidence=edgeScoreMedian>=12&&radialMad<=2.5?'HIGH':edgeScoreMedian>=8&&radialMad<=4?'MEDIUM':'LOW';
+      return {
+        id:design.id,sourceWidth:data.width,sourceHeight:data.height,
+        centerX:fitCenterX,centerY:fitCenterY,radiusX,radiusY,baseRadius,
+        diameters:{
+          horizontal:radiusAt(0)+radiusAt(180),
+          vertical:radiusAt(90)+radiusAt(270),
+          diagonal45:radiusAt(45)+radiusAt(225),
+          diagonal135:radiusAt(135)+radiusAt(315)
+        },
+        rmsNormalized:radialMad/Math.max(1,baseRadius),edgeScoreMedian,radialMad,confidence,
+        method:'first-consistent-eye-ring-ellipse-v2'
+      };
     },
 
     _measureTrendArrowAsset: async function(design) {
