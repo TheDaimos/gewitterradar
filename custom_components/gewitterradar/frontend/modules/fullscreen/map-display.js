@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -21,7 +21,9 @@ export const MODULE_META=Object.freeze({
     "separates Fenster",
     "Instrumentpositionen",
     "Medaillon-Augenreferenz",
-    "Medaillon-Diagnose-Akkordeon"
+    "Medaillon-Diagnose-Akkordeon",
+    "Produktive Pfeilkalibrierung",
+    "Vollbild-Instrumentskalierung"
   ],
   "file": "modules/fullscreen/map-display.js"
 });
