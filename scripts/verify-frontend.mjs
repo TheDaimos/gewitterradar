@@ -126,19 +126,19 @@ for(const marker of [
   'data-fullscreen-scale-custom',
   'gewitterradar:v41002:fullscreen-compass-scale',
   'gewitterradar:v41002:fullscreen-medallion-scale',
-  'MEDALLION_ARROW_PRODUCTION_CALIBRATION',
-  'productCalibration=this._productMedallionCalibration?.()',
-  'previewScale=!diagnosticActive&&Number.isFinite(productScale)?productScale:state.effectiveScale'
+  'MEDALLION_ARROW_PRODUCTION_CALIBRATION'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.5.0"',
+  '"id": "diagnostics.cockpit"','"version": "1.5.1"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
   '_medallionDiagnosticProfile(',
   'pickers:{compass:this._pickerDiagnostics?.compass||null,medallion:this._pickerDiagnostics?.medallion||null}',
+  'productCalibration=this._productMedallionCalibration?.()',
+  'previewScale=!diagnosticActive&&Number.isFinite(productScale)?productScale:state.effectiveScale',
   '_pickerDiagnosticPayload(kind)',
   '_pickerDiagnosticCsv(kind)',
   "_downloadPickerDiagnostic: async function(kind,format='json')",
