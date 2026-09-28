@@ -126,7 +126,9 @@ for(const marker of [
   'data-fullscreen-scale-custom',
   'gewitterradar:v41002:fullscreen-compass-scale',
   'gewitterradar:v41002:fullscreen-medallion-scale',
-  'MEDALLION_ARROW_PRODUCTION_CALIBRATION'
+  'MEDALLION_ARROW_PRODUCTION_CALIBRATION',
+  'productCalibration=this._productMedallionCalibration?.()',
+  'previewScale=!diagnosticActive&&Number.isFinite(productScale)?productScale:state.effectiveScale'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
