@@ -3167,10 +3167,10 @@ Rückführung:
 - [x] Diagnose-Browservertrag weiterhin mit fester Referenzgeometrie bestanden.
 - [x] finaler technischer Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` mit 5/5 zentralen CI-Prüfungen grün.
 - [x] technische Dokumentation unter `docs/R21_PRODUCT_CALIBRATION_FULLSCREEN_SCALE_2026-09-28.md` ergänzt.
-- [ ] finalen R21-Kandidaten exakt nach `deploy/dev` promoten und Ref verifizieren.
+- [x] finalen R21-Kandidaten exakt nach `deploy/dev` promotet und Ref auf `71d0ba949afa3ff6a2b31d91d8f88e9140379353` identisch verifiziert.
 - [ ] reale DRA-/HA-Abnahme der Produktkalibrierung.
 - [ ] reale DRA-/HA-Abnahme der Vollbild-Größensteuerung auf Desktop, iPad und Android/HA Companion.
 
 **R21-Abnahmeregel:** Die 504er-Kalibrierung ist jetzt Produktlogik. Diagnose und Produktdarstellung bleiben bewusst getrennte Geometrieebenen. Eine spätere Änderung an Auge/Pfeil darf die bestätigte Produktkalibrierung nur über einen neuen expliziten Kalibrierungs-/Abnahmezyklus verändern.
 
-**NÄCHSTER SCHRITT:** Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` nach `deploy/dev` promoten, anschließend per DRA installieren und reale Sicht-/Skalenabnahme durchführen.
+**NÄCHSTER SCHRITT:** R21 aus `deploy/dev` / `71d0ba949afa3ff6a2b31d91d8f88e9140379353` per DRA installieren, Frontend vollständig neu laden und die produktive Kalibrierung sowie die neue Vollbild-Größensteuerung auf Desktop, iPad und Android/HA Companion real abnehmen.
