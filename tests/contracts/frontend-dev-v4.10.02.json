@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "ab9794e2f0d5e0b13b08e10d8a877ac993cb7c00b65d58d70b7101a1e86b7e22",
+  "sha256": "f42ab1079e01e23e0d7a190e13887ad10b6a9049fa494543df56ba8964318c97",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R20-2026-09-28",
+  "build": "V4.10.02-MODULAR-DEV-R21-2026-09-28",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "5f5da49f8cd2089a8cd3eeca61e9f3c919b964005977f1e2823cbca8e51fde01",
-      "sizeBytes": 7365
+      "sha256": "97831f3027d5f74bb1ecb56b947bcfbb7cc275e8bdb8a7ed205584c822cdb037",
+      "sizeBytes": 7484
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -27,16 +27,16 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "eb6f7d58b6c33bc159f3f28df4b20c3bd60936663e9c174810ccb33edb7ca0ab",
-      "sizeBytes": 105150
+      "sha256": "7daabcd8888028d68830d5e68db6dc661ecc52ebfc2b2f9f12500108011366dc",
+      "sizeBytes": 115414
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "de9e435fd84baae889b7c5cfe878e59e7fd6dfecbffd02595ee4965bc3af51d9",
-      "sizeBytes": 423629
+      "sha256": "a898780149ddec39b91f7ab5b468fd5be8b262fb2a4cd98ce977320fa2525274",
+      "sizeBytes": 423921
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
@@ -117,6 +117,22 @@
     "modules/instruments/medallion-designs.js": {
       "sha256": "af9e71e3c8ff1fe7ec4e55be0ffacdf75bc791afc06cd3ce832a2e463cd68810",
       "sizeBytes": 7049
+    },
+    "modules/instruments/medallion-arrow-calibration-1.js": {
+      "sha256": "005ae99f74e915cbc50f4694d0f67388813f9a9d1a256d4d70278748097fa170",
+      "sizeBytes": 6706
+    },
+    "modules/instruments/medallion-arrow-calibration-2.js": {
+      "sha256": "4978df9a4c91cba7d90e0bdc2dec9d44db8296fc00a4aed342967d5ddb8ec6fe",
+      "sizeBytes": 5944
+    },
+    "modules/instruments/medallion-arrow-calibration-3.js": {
+      "sha256": "65b782c6eaecff1620355e680d66ad8315b448b0bab8512287fd7f88dfe7b46e",
+      "sizeBytes": 6368
+    },
+    "modules/instruments/medallion-arrow-calibration-4.js": {
+      "sha256": "7ff28cb1d26d125f780a25d815ca3ebbe7b6c9a283ccac066216bd7e6ba0a9cd",
+      "sizeBytes": 6648
     }
   }
 }
