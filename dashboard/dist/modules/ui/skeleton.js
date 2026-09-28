@@ -5433,7 +5433,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             50% { transform:translate(-50%,-50%) rotate(90deg) scale(1); }
             100% { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
           }
-          #card-root.medallion-diagnostic-active .trend-medallion-arrow { opacity:1!important;filter:drop-shadow(0 2px 1px rgba(47,24,4,.82)) drop-shadow(0 0 4px rgba(246,195,68,.18))!important; }
+          #card-root.medallion-diagnostic-active .trend-medallion-arrow { left:50.012238%!important;top:50.452396%!important;opacity:1!important;filter:drop-shadow(0 2px 1px rgba(47,24,4,.82)) drop-shadow(0 0 4px rgba(246,195,68,.18))!important; }
           #card-root.medallion-diagnostic-arrow-off .trend-medallion-arrow { opacity:0!important;animation:none!important;transition:none!important; }
           #card-root.medallion-diagnostic-static .trend-medallion-arrow { animation:none!important;transition:none!important;transform:translate(-50%,-50%) rotate(var(--medallion-diagnostic-angle,45deg)) scale(1)!important; }
           #card-root.medallion-diagnostic-animation .trend-medallion-arrow { transition:none!important;animation:medallion-diagnostic-sweep 3s ease-in-out infinite!important; }
