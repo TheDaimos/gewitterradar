@@ -1,5 +1,22 @@
 # Changelog
 
+## V4.10.02 DEV R25 – kompakte Auswahl + robuste 15–300-%-Eingabe (2026-09-28)
+
+- Medaillon-Pop-up auf einen kompakten Umschalter **Medaillon / Pfeil** umgestellt; nur die aktive Chevron-Navigation wird angezeigt.
+- normale Hauptanzeige bewusst reduziert auf **Medaillon · x / 28** bzw. **Arrow · x / 18**.
+- technische IDs erscheinen nur noch bei aktiver Diagnose als Zusatzzeile, z. B. **Medaillon: trend_17 · 17 / 28** bzw. **Pfeil: arrow_02 · 3 / 18**.
+- zuletzt aktiver Auswahlmodus wird sitzungsbezogen gespeichert.
+- freie Vollbild-Größeneingabe gegen laufende UI-Synchronisierung geschützt: das Feld darf während der Bearbeitung nicht mehr überschrieben werden.
+- Prozentfeld als dreistelliges numerisches Textfeld umgesetzt, damit ein Wert wie `100` vollständig gelöscht und anschließend z. B. `300` eingegeben werden kann.
+- Übernahme der Direkteingabe erst bei Enter oder Fokusverlust; Escape verwirft die noch nicht bestätigte Eingabe.
+- Schieberegler 15–300 % bleibt für Live-Anpassung erhalten; Schnellwahltasten 50/75/100/125/150 % bleiben ebenfalls erhalten.
+- produktive 504er-Medaillon-/Pfeilkalibrierung und geschützte Diagnosegeometrie bleiben unverändert getrennt.
+- Build `V4.10.02-MODULAR-DEV-R25-2026-09-28`, Feature-Cache `41002r25`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E95`.
+- Modulstände: `core.manifest 1.2.31`, `fullscreen.map-display 1.0.23`.
+- finaler technischer R25-Kandidat `860100d2e95ce706404b7fe8c93ad807e4a905e8`: **5/5 zentrale CI-Prüfungen grün**.
+- `deploy/dev` exakt auf den R25-Kandidaten gesetzt und mit **ahead 0 / behind 0 / identical** verifiziert.
+- reale DRA-/HA-Abnahme der neuen kompakten Auswahl und der Direkteingabe bleibt offen.
+
 ## V4.10.02 DEV R21 – produktive Medaillonkalibrierung + Vollbild-Instrumentskalierung (2026-09-28)
 
 - finale reale Kalibrierung vollständig übernommen: 28/28 Augenreferenzen und 504/504 Medaillon-/Pfeil-Kombinationen.
