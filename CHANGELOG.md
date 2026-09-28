@@ -556,3 +556,13 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - AUGE-JSON, FIT-JSON und KAL-JSON/KAL-CSV samt Provenienz-/Abnahmeanforderungen dokumentiert.
 - Querverweise in Geometriedatenbank, Katalog, Modularchitektur und README ergänzt.
 - Projektneutrale Erkenntnisse parallel in `TheDaimos/home-assistant-dev-toolkit` übernommen.
+
+
+### V4.10.02 DEV R20 – Medaillon-Diagnose kompakter
+- Medaillon-Diagnose in vier einklappbare Akkordeonbereiche gegliedert.
+- Bereiche: Darstellung/Testzustand, Augen-Referenzkreis, Pfeilgröße/Mittelpunkt sowie Fit-Matrix/Export.
+- Beim ersten Öffnen sind alle Bereiche eingeklappt; maximal ein Bereich bleibt gleichzeitig geöffnet.
+- Der zuletzt geöffnete Bereich wird für die laufende Browsersitzung gespeichert.
+- Mess-, Fit- und Kalibrierungslogik aus R19 bleibt unverändert; keine automatische Produkt-Skalierung.
+- Build `V4.10.02-MODULAR-DEV-R20-2026-09-28`, Modul-Set `D31A-5E90`.
+- Finaler Kandidat `372ae36d27b5ac503fd9ab37c7542d4284575ac9` vollständig geprüft und über `deploy/dev` bereitgestellt.
