@@ -65,6 +65,21 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       return this[property];
     },
 
+    _fullscreenInstrumentBaseSize(kind) {
+      const viewport=window.visualViewport,width=Number(viewport?.width)||window.innerWidth||1024,height=Number(viewport?.height)||window.innerHeight||768;
+      const vmin=Math.min(width,height)/100,mobile=width<=720;
+      if(kind==='compass')return clamp((mobile?46.8:31.2)*vmin,mobile?171.6:188.5,mobile?299:390);
+      let base=clamp((mobile?28:18)*vmin,mobile?92:110,mobile?150:210);
+      if(this._isAndroidLike?.())base*=.85;
+      return base;
+    },
+
+    _applyFullscreenInstrumentScaleStyle(kind) {
+      const overlay=this.shadow?.getElementById(kind==='compass'?'map-compass-overlay':'map-medallion-overlay');
+      if(!overlay)return;
+      overlay.style.width=`${this._fullscreenInstrumentBaseSize(kind)*this._fullscreenInstrumentScale(kind)}px`;
+    },
+
     _syncFullscreenScaleControls(dialog,kind) {
       if(!dialog)return;
       const scale=this._fullscreenInstrumentScale(kind),percent=Math.round(scale*1000)/10;
@@ -87,8 +102,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
       this[property]=scale;
       if(persist){try{localStorage.setItem(key,String(scale));}catch(_error){}}
-      const overlay=this.shadow?.getElementById(isCompass?'map-compass-overlay':'map-medallion-overlay');
-      overlay?.style.setProperty(isCompass?'--fullscreen-compass-scale':'--fullscreen-medallion-scale',String(scale));
+      this._applyFullscreenInstrumentScaleStyle(kind);
       this._syncFullscreenScaleControls(isCompass?this._compassPickerDialog:this._medallionPickerDialog,kind);
       this._scheduleMapDisplayResize?.();
       return scale;
@@ -892,6 +906,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
     _scheduleMapDisplayResize() {
       const kick = () => {
+        this._applyFullscreenInstrumentScaleStyle?.('compass');
+        this._applyFullscreenInstrumentScaleStyle?.('medallion');
         this._map?.invalidateSize?.();
         this._positionMapCompassOverlay();
         this._positionMapMedallionOverlay();
