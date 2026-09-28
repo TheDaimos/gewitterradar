@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.22"',
+  '"id": "fullscreen.map-display"','"version": "1.0.23"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -125,6 +125,9 @@ for(const marker of [
   'data-fullscreen-scale-preset="150"',
   'data-fullscreen-scale-custom',
   'data-fullscreen-scale-range',
+  'input.dataset.fullscreenScaleEditing',
+  'data-medallion-selection-mode="medallion"',
+  'data-medallion-selection-mode="arrow"',
   'type="number" min="15" max="300" step="1" inputmode="numeric" data-fullscreen-scale-custom',
   "input.matches?.(':focus')",
   'stage.style.setProperty(\'--medallion-diagnostic-scale\',String(productScale))',
