@@ -3,9 +3,15 @@ import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=
 import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r13";
 import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r13";
 import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";
+import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41002r21";
+import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41002r21";
+import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41002r21";
+import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41002r21";
+
+const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -15,7 +21,9 @@ export const MODULE_META=Object.freeze({
     "separates Fenster",
     "Instrumentpositionen",
     "Medaillon-Augenreferenz",
-    "Medaillon-Diagnose-Akkordeon"
+    "Medaillon-Diagnose-Akkordeon",
+    "Produktive Pfeilkalibrierung",
+    "Vollbild-Instrumentskalierung"
   ],
   "file": "modules/fullscreen/map-display.js"
 });
@@ -46,6 +54,89 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (mapCard && anchor && mapCard.previousElementSibling !== anchor) anchor.after(mapCard);
     },
 
+
+    _fullscreenInstrumentScale(kind) {
+      const isCompass=kind==='compass',property=isCompass?'_mapCompassScale':'_mapMedallionScale';
+      if(Number.isFinite(this[property]))return clamp(this[property],.15,3);
+      const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
+      let value=1;
+      try{const stored=Number(localStorage.getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
+      this[property]=clamp(value,.15,3);
+      return this[property];
+    },
+
+    _fullscreenInstrumentBaseSize(kind) {
+      const viewport=window.visualViewport,width=Number(viewport?.width)||window.innerWidth||1024,height=Number(viewport?.height)||window.innerHeight||768;
+      const vmin=Math.min(width,height)/100,mobile=width<=720;
+      if(kind==='compass')return clamp((mobile?46.8:31.2)*vmin,mobile?171.6:188.5,mobile?299:390);
+      let base=clamp((mobile?28:18)*vmin,mobile?92:110,mobile?150:210);
+      if(this._isAndroidLike?.())base*=.85;
+      return base;
+    },
+
+    _applyFullscreenInstrumentScaleStyle(kind) {
+      const overlay=this.shadow?.getElementById(kind==='compass'?'map-compass-overlay':'map-medallion-overlay');
+      if(!overlay)return;
+      overlay.style.width=`${this._fullscreenInstrumentBaseSize(kind)*this._fullscreenInstrumentScale(kind)}px`;
+    },
+
+    _syncFullscreenScaleControls(dialog,kind) {
+      if(!dialog)return;
+      const scale=this._fullscreenInstrumentScale(kind),percent=Math.round(scale*1000)/10;
+      const output=dialog.querySelector('[data-fullscreen-scale-value]');
+      const input=dialog.querySelector('[data-fullscreen-scale-custom]');
+      if(output)output.textContent=(Number.isInteger(percent)?String(percent):percent.toFixed(1).replace('.',','))+' %';
+      if(input&&document.activeElement!==input)input.value=String(Math.round(percent));
+      dialog.querySelectorAll('[data-fullscreen-scale-preset]').forEach((button)=>{
+        const active=Math.abs(Number(button.dataset.fullscreenScalePreset)-percent)<.05;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',active?'true':'false');
+      });
+    },
+
+    _setFullscreenInstrumentScale(kind,percent,{persist=true}={}) {
+      const numeric=Number(percent);
+      if(!Number.isFinite(numeric))return this._fullscreenInstrumentScale(kind);
+      const scale=clamp(numeric/100,.15,3),isCompass=kind==='compass';
+      const property=isCompass?'_mapCompassScale':'_mapMedallionScale';
+      const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
+      this[property]=scale;
+      if(persist){try{localStorage.setItem(key,String(scale));}catch(_error){}}
+      this._applyFullscreenInstrumentScaleStyle(kind);
+      this._syncFullscreenScaleControls(isCompass?this._compassPickerDialog:this._medallionPickerDialog,kind);
+      this._scheduleMapDisplayResize?.();
+      return scale;
+    },
+
+    _bindFullscreenScaleControls(shell,kind) {
+      if(!shell)return;
+      shell.querySelectorAll('[data-fullscreen-scale-preset]').forEach((button)=>button.addEventListener('click',(event)=>{
+        event.preventDefault();event.stopPropagation();this._setFullscreenInstrumentScale(kind,button.dataset.fullscreenScalePreset);
+      }));
+      const input=shell.querySelector('[data-fullscreen-scale-custom]');
+      const apply=()=>{if(!input)return;const value=clamp(Number(input.value)||100,15,300);input.value=String(Math.round(value));this._setFullscreenInstrumentScale(kind,value);};
+      input?.addEventListener('change',apply);
+      input?.addEventListener('keydown',(event)=>{if(event.key==='Enter'){event.preventDefault();apply();input.blur?.();}});
+      this._syncFullscreenScaleControls(shell.querySelector('dialog'),kind);
+    },
+
+    _productMedallionCalibration() {
+      const key=`${this._medallionDesignValue?.()||''}::${this._trendArrowDesignValue?.()||''}`;
+      return MEDALLION_ARROW_PRODUCTION_CALIBRATION[key]||null;
+    },
+
+    _applyProductMedallionCalibration() {
+      const entry=this._productMedallionCalibration();
+      if(!entry)return;
+      const scale=Number(entry[0]),x=Number(entry[1]),y=Number(entry[2]);
+      if(!Number.isFinite(scale)||!Number.isFinite(x)||!Number.isFinite(y))return;
+      [this.shadow?.getElementById('trend-box'),this.shadow?.getElementById('map-medallion-overlay')].forEach((target)=>{
+        if(!target)return;
+        target.style.setProperty('--trend-arrow-scale',String(scale));
+        target.style.setProperty('--trend-arrow-center-x',`${x}%`);
+        target.style.setProperty('--trend-arrow-center-y',`${y}%`);
+      });
+    },
 
     _syncCompassPicker() {
       const dialog = this._compassPickerDialog;
@@ -79,6 +170,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         button.setAttribute('aria-label',this._t('compass.next'));
         button.title = this._t('compass.next');
       });
+      this._syncFullscreenScaleControls(dialog,'compass');
       requestAnimationFrame(()=>this._syncPickerDiagnostics?.());
     },
 
@@ -141,6 +233,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.compass-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.compass-picker-nav-row[data-chevron-material="silver"] .compass-picker-chevron{filter:drop-shadow(0 2px 5px #000c)}' +
         '.compass-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fbfdff 0%,#c8ced4 26%,#f5f7f8 47%,#8e969e 72%,#d8dde1 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 3px #dce4ea24)}' +
+        '.fullscreen-scale-control{width:min(470px,calc(100vw - 54px));padding:9px 10px;border:1px solid #d6ad5a38;border-radius:9px;background:#17140d99}.fullscreen-scale-title{font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:#f0d18b}.fullscreen-scale-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}.fullscreen-scale-presets button{min-width:48px;min-height:30px;padding:5px 8px;border:1px solid #d6ad5a55;border-radius:7px;background:#161b20;color:#e5e8eb;font:750 9px/1 system-ui,sans-serif}.fullscreen-scale-presets button.active{border-color:#ffe39a;color:#ffe39a;background:#302710}.fullscreen-scale-custom{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;color:#cfd4d8;font:700 9px/1.2 system-ui,sans-serif}.fullscreen-scale-custom input{width:76px;min-height:31px;padding:5px 7px;border:1px solid #74808a;border-radius:7px;background:#071018;color:#fff;text-align:right;font:750 10px/1 ui-monospace,monospace}.fullscreen-scale-value{min-width:55px;color:#ffe39a;text-align:right;font:750 10px/1 ui-monospace,monospace}' +
         '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav-row{grid-template-columns:58px 72px 58px;gap:9px}.compass-picker-nav-button{width:58px;height:50px}.compass-picker-chevron{width:52px;height:52px}}' +
         '</style>' +
         '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('compass.picker_title') + '">' +
@@ -153,6 +246,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '<svg class="instrument-picker-diagnostic-svg" data-compass-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
         '</div></div>' +
+        '<div class="fullscreen-scale-control" data-fullscreen-scale-control><div class="fullscreen-scale-title">Vollbild-Größe</div><div class="fullscreen-scale-presets" role="group" aria-label="Vollbild-Größe"><button type="button" data-fullscreen-scale-preset="50">50 %</button><button type="button" data-fullscreen-scale-preset="75">75 %</button><button type="button" data-fullscreen-scale-preset="100">100 %</button><button type="button" data-fullscreen-scale-preset="125">125 %</button><button type="button" data-fullscreen-scale-preset="150">150 %</button></div><label class="fullscreen-scale-custom"><span>Eigene Größe</span><input type="number" min="15" max="300" step="1" inputmode="numeric" data-fullscreen-scale-custom aria-label="Eigene Vollbild-Größe in Prozent"><span>%</span><output class="fullscreen-scale-value" data-fullscreen-scale-value>100 %</output></label></div>' +
         '<div class="instrument-picker-diagnostic-tools" data-compass-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Kompass-Diagnose</div><div class="instrument-picker-diagnostic-row export">' +
         '<button type="button" data-picker-diagnostic-copy>KOPIEREN</button><button type="button" data-picker-diagnostic-json>JSON</button><button type="button" data-picker-diagnostic-csv>CSV</button>' +
         '</div></div>' +
@@ -168,6 +262,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       this._compassPickerDialog = dialog;
       stage.appendChild(instrument);
       this._bindPickerDiagnosticActions?.(shell,'compass');
+      this._bindFullscreenScaleControls(shell,'compass');
 
       shell.querySelector('[data-compass-picker-close]')?.addEventListener('click',() => this._closeCompassPicker());
       shell.querySelectorAll('[data-compass-picker-prev]').forEach((button) => button.addEventListener('click',(event) => {
@@ -223,6 +318,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (persist) {
         try { localStorage.setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
       }
+      this._applyProductMedallionCalibration?.();
       return descriptor;
     },
 
@@ -265,6 +361,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (persist) {
         try { localStorage.setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
       }
+      this._applyProductMedallionCalibration?.();
       return descriptor;
     },
 
@@ -346,6 +443,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         button.setAttribute('aria-label',this._t('compass.next'));
         button.title = this._t('compass.next');
       });
+      this._syncFullscreenScaleControls(dialog,'medallion');
       requestAnimationFrame(()=>this._syncPickerDiagnostics?.());
     },
 
@@ -391,6 +489,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '.medallion-visual-calibration{margin-top:7px;padding:7px 8px;border:1px solid rgba(85,229,162,.28);border-radius:8px;background:rgba(4,16,21,.72)}.medallion-visual-calibration-title{color:#9ff0c8;font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;text-align:center}.medallion-scale-line{display:grid;grid-template-columns:52px minmax(120px,1fr) 62px;align-items:center;gap:7px;margin-top:7px;color:#bfefff;font:700 8px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}.medallion-scale-line input[type="range"]{width:100%;accent-color:#55e5a2}.medallion-scale-value{color:#ffe39a;text-align:right;font-variant-numeric:tabular-nums}.medallion-scale-status{margin-top:6px;color:#9bdff2;font:700 7.7px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;white-space:pre-wrap}.instrument-picker-diagnostic-row.calibration button{border-color:rgba(85,229,162,.42);color:#baf4d5;background:#0b211c}.instrument-picker-diagnostic-row.calibration button.active{border-color:#ffe18a;background:#2a2210;color:#ffe7a8}.instrument-picker-diagnostic-row.calibration-export button{border-color:rgba(169,133,255,.45);color:#d6c5ff;background:#171126}' +
         '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
         '.medallion-picker-index{min-width:96px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
+        '.fullscreen-scale-control{width:min(430px,calc(100vw - 54px));padding:9px 10px;border:1px solid #d6ad5a38;border-radius:9px;background:#17140d99}.fullscreen-scale-title{font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:#f0d18b}.fullscreen-scale-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}.fullscreen-scale-presets button{min-width:48px;min-height:30px;padding:5px 8px;border:1px solid #d6ad5a55;border-radius:7px;background:#161b20;color:#e5e8eb;font:750 9px/1 system-ui,sans-serif}.fullscreen-scale-presets button.active{border-color:#ffe39a;color:#ffe39a;background:#302710}.fullscreen-scale-custom{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;color:#cfd4d8;font:700 9px/1.2 system-ui,sans-serif}.fullscreen-scale-custom input{width:76px;min-height:31px;padding:5px 7px;border:1px solid #74808a;border-radius:7px;background:#071018;color:#fff;text-align:right;font:750 10px/1 ui-monospace,monospace}.fullscreen-scale-value{min-width:55px;color:#ffe39a;text-align:right;font:750 10px/1 ui-monospace,monospace}' +
         '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-nav{grid-template-columns:58px 86px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
         '</style>' +
         '<dialog class="medallion-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('trend.label') + '">' +
@@ -409,6 +508,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         '<output class="medallion-picker-index" data-trend-arrow-index aria-live="polite"></output>' +
         '<button class="medallion-picker-nav-button" type="button" data-trend-arrow-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
         '</div>' +
+        '<div class="fullscreen-scale-control" data-fullscreen-scale-control><div class="fullscreen-scale-title">Vollbild-Größe</div><div class="fullscreen-scale-presets" role="group" aria-label="Vollbild-Größe"><button type="button" data-fullscreen-scale-preset="50">50 %</button><button type="button" data-fullscreen-scale-preset="75">75 %</button><button type="button" data-fullscreen-scale-preset="100">100 %</button><button type="button" data-fullscreen-scale-preset="125">125 %</button><button type="button" data-fullscreen-scale-preset="150">150 %</button></div><label class="fullscreen-scale-custom"><span>Eigene Größe</span><input type="number" min="15" max="300" step="1" inputmode="numeric" data-fullscreen-scale-custom aria-label="Eigene Vollbild-Größe in Prozent"><span>%</span><output class="fullscreen-scale-value" data-fullscreen-scale-value>100 %</output></label></div>' +
         '<div class="instrument-picker-diagnostic-tools" data-medallion-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Medaillon-Diagnose</div>' +
         '<details class="medallion-diagnostic-accordion" data-medallion-diagnostic-group="display"><summary>Darstellung &amp; Testzustand</summary><div class="medallion-diagnostic-accordion-body">' +
         '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-preset="empty">LEER</button><button type="button" data-medallion-preset="static">PFEIL</button><button type="button" data-medallion-preset="animation">TREND</button><button type="button" data-medallion-preset="freeze">FREEZE</button><button type="button" data-medallion-preset="normal">NORMAL</button></div>' +
@@ -425,6 +525,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (!dialog) { shell.remove(); return; }
       this._medallionPickerDialog = dialog;
       this._bindPickerDiagnosticActions?.(shell,'medallion');
+      this._bindFullscreenScaleControls(shell,'medallion');
       const diagnosticAccordionKey='gewitterradar:v41002:medallion-diagnostic-accordion',diagnosticGroups=[...shell.querySelectorAll('details[data-medallion-diagnostic-group]')];
       let rememberedDiagnosticGroup='';try{rememberedDiagnosticGroup=sessionStorage.getItem(diagnosticAccordionKey)||'';}catch(_error){}
       diagnosticGroups.forEach((group)=>{group.open=group.dataset.medallionDiagnosticGroup===rememberedDiagnosticGroup;group.addEventListener('toggle',()=>{if(group.open){diagnosticGroups.forEach((other)=>{if(other!==group)other.open=false;});try{sessionStorage.setItem(diagnosticAccordionKey,group.dataset.medallionDiagnosticGroup||'');}catch(_error){}}else{try{if(sessionStorage.getItem(diagnosticAccordionKey)===group.dataset.medallionDiagnosticGroup)sessionStorage.removeItem(diagnosticAccordionKey);}catch(_error){}}});});
@@ -542,6 +643,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const state = ['up','down','stable','none'].find(name => source.classList.contains(name)) || 'none';
       overlay.classList.remove('up','down','stable','none');
       overlay.classList.add(state);
+      this._applyProductMedallionCalibration?.();
       this._syncMedallionPicker?.();
     },
 
@@ -804,6 +906,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
     _scheduleMapDisplayResize() {
       const kick = () => {
+        this._applyFullscreenInstrumentScaleStyle?.('compass');
+        this._applyFullscreenInstrumentScaleStyle?.('medallion');
         this._map?.invalidateSize?.();
         this._positionMapCompassOverlay();
         this._positionMapMedallionOverlay();
@@ -822,6 +926,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const mapCard = this.shadow.getElementById('map-card');
       if (!mapCard) return;
       const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      this._setFullscreenInstrumentScale('compass',this._fullscreenInstrumentScale('compass')*100,{persist:false});
+      this._setFullscreenInstrumentScale('medallion',this._fullscreenInstrumentScale('medallion')*100,{persist:false});
       this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
       const trendIcon = this.shadow.getElementById('trend-icon');
       if (trendIcon) {
