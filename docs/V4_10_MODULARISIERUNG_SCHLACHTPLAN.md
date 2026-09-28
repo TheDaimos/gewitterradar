@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** R21 – finale Medaillon-/Pfeilkalibrierung produktiv integriert; Vollbild-Skalierung für Kompass und Medaillon implementiert; technische CI 5/5 grün; reale DRA-/HA-Abnahme offen  
+> **Status:** R25 – kompakte Medaillon-/Pfeilauswahl und robuste 15–300-%-Eingabe fertig; technische CI 5/5 grün; `deploy/dev` exakt auf R25; reale DRA-/HA-Abnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,29 +38,44 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R21 real über DRA installieren und auf Desktop, iPad sowie Android/HA Companion abnehmen.**
+**R25 aus `deploy/dev` per DRA installieren und die kompakte Auswahl sowie die korrigierte Prozent-Eingabe real abnehmen.**
 
 Technisch abgeschlossen:
-- finale Kalibrierung: **28/28 Augen**, **504/504 Paare**, **0 offen**,
-- produktive paarweise Pfeilskalierung und X/Y-Mittelpunkte integriert,
-- geschützte Diagnosegeometrie von der Produktkalibrierung getrennt,
-- Kompass- und Medaillon-Pop-up jeweils mit Vollbild-Größe **50 / 75 / 100 / 125 / 150 %**,
-- freie Eingabe **15–300 %**,
-- getrennte persistente Speicherung für Kompass und Medaillon,
-- Build `V4.10.02-MODULAR-DEV-R21-2026-09-28`,
-- Feature-Cache `41002r21`, Runtime-Cache `41002r13`,
-- Modulsatz `D31A-5E91`,
-- technischer Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` mit **5/5 zentralen CI-Prüfungen grün**.
+- Umschalter **Medaillon / Pfeil** im Medaillon-Pop-up,
+- nur eine aktive Chevron-Navigation gleichzeitig sichtbar,
+- normale Anzeige **Medaillon · x / 28** bzw. **Arrow · x / 18**,
+- technische ID-Zusatzzeile nur bei aktiver Diagnose,
+- sitzungsbezogene Speicherung des aktiven Auswahlmodus,
+- freie Vollbild-Größeneingabe als dreistelliges numerisches Textfeld,
+- laufende UI-Synchronisierung überschreibt das Feld während der Bearbeitung nicht mehr,
+- Übernahme erst bei Enter oder Fokusverlust,
+- Escape verwirft den unbestätigten Eingabestand,
+- Schieberegler 15–300 % sowie Schnellwahl 50/75/100/125/150 % bleiben erhalten,
+- produktive 504er-Kalibrierung unverändert,
+- Build `V4.10.02-MODULAR-DEV-R25-2026-09-28`,
+- Feature-Cache `41002r25`, Runtime-Cache `41002r13`,
+- Modulsatz `D31A-5E95`,
+- `core.manifest 1.2.31`,
+- `fullscreen.map-display 1.0.23`,
+- finaler technischer Kandidat `860100d2e95ce706404b7fe8c93ad807e4a905e8`,
+- **5/5 zentrale CI-Prüfungen grün**,
+- `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
 
-Reale R21-Abnahme:
-- [ ] R21 aus `deploy/dev` per DRA installieren.
+Reale R25-Abnahme:
+- [ ] R25 per DRA installieren.
 - [ ] Frontend vollständig neu laden.
-- [ ] repräsentative normale Medaillon-/Pfeil-Kombinationen gegen die abgenommene Kalibrierung prüfen.
-- [ ] Kompass: 50/75/100/125/150 % sowie mindestens einen freien Wert im Bereich 15–300 % prüfen.
-- [ ] Medaillon: 50/75/100/125/150 % sowie mindestens einen freien Wert im Bereich 15–300 % prüfen.
-- [ ] Persistenz nach Frontend-Neuladen bestätigen.
-- [ ] Desktop, iPad und Android/HA Companion bestätigen.
-- [ ] Cluster-Jump / Infinity weiterhin als separaten alten Abschlussgate prüfen.
+- [ ] Umschalter Medaillon/Pfeil prüfen.
+- [ ] nur eine Chevron-Navigation gleichzeitig sichtbar.
+- [ ] Normalmodus zeigt nur kompakte Hauptzeile.
+- [ ] Diagnosemodus ergänzt korrekte technische ID-Zeile.
+- [ ] vorhandene `100` vollständig löschen und `300` ohne Rücksetzen eintippen.
+- [ ] Enter übernimmt `300`.
+- [ ] Fokusverlust übernimmt einen gültigen Eingabewert.
+- [ ] Schieberegler 15–300 % arbeitet live.
+- [ ] Schnellwahl 50/75/100/125/150 % weiterhin korrekt.
+- [ ] Kompass- und Medaillon-Werte getrennt persistent.
+- [ ] Desktop, iPad und Android/HA Companion prüfen.
+- [ ] Cluster-Jump / Infinity bleibt separates älteres Abschlussgate.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
@@ -3174,3 +3189,35 @@ Rückführung:
 **R21-Abnahmeregel:** Die 504er-Kalibrierung ist jetzt Produktlogik. Diagnose und Produktdarstellung bleiben bewusst getrennte Geometrieebenen. Eine spätere Änderung an Auge/Pfeil darf die bestätigte Produktkalibrierung nur über einen neuen expliziten Kalibrierungs-/Abnahmezyklus verändern.
 
 **NÄCHSTER SCHRITT:** R21 aus `deploy/dev` / `71d0ba949afa3ff6a2b31d91d8f88e9140379353` per DRA installieren, Frontend vollständig neu laden und die produktive Kalibrierung sowie die neue Vollbild-Größensteuerung auf Desktop, iPad und Android/HA Companion real abnehmen.
+
+
+---
+
+## Schleife R25 – kompakte Auswahl + robuste Prozent-Eingabe (2026-09-28)
+
+- [x] Schreibzugriff auf `TheDaimos/gewitterradar` durch erfolgreiche sequenzielle Repository-Updates praktisch bestätigt.
+- [x] bisherige doppelte Medaillon-/Pfeil-Navigation analysiert und auf einen Umschalter reduziert.
+- [x] Modi `Medaillon` und `Pfeil` implementiert.
+- [x] nur die aktive Chevron-Zeile sichtbar.
+- [x] Produktanzeige auf `Medaillon · x / 28` bzw. `Arrow · x / 18` verdichtet.
+- [x] Diagnosezusatzzeile mit stabiler technischer ID implementiert.
+- [x] letzter Auswahlmodus sitzungsbezogen gespeichert.
+- [x] Ursache des Prozent-Eingabefehlers identifiziert: laufende Synchronisierung schrieb den gespeicherten Wert während der Texteingabe zurück.
+- [x] Bearbeitungszustand `data-fullscreen-scale-editing` eingeführt.
+- [x] Prozentfeld auf numerisches Textfeld mit maximal drei Ziffern umgestellt.
+- [x] vollständiges Löschen von `100` vor Eingabe eines neuen Werts technisch ermöglicht.
+- [x] Übernahme auf Enter/Fokusverlust verlagert.
+- [x] Escape stellt den gespeicherten Wert wieder her.
+- [x] Schieberegler 15–300 % parallel erhalten.
+- [x] Schnellwahl 50/75/100/125/150 % erhalten.
+- [x] Frontend, native Integration und Dashboard-Ausleitung bytegleich nachgezogen.
+- [x] Build-/Feature-/Modulsatz-Kennungen auf R25 angehoben.
+- [x] Frontendvertrag, Assethashes und Prüfsummen aktualisiert.
+- [x] finaler technischer Kandidat `860100d2e95ce706404b7fe8c93ad807e4a905e8` mit 5/5 zentralen CI-Prüfungen grün.
+- [x] `deploy/dev` auf `860100d2e95ce706404b7fe8c93ad807e4a905e8` gesetzt und `ahead 0 / behind 0 / identical` verifiziert.
+- [x] technische Dokumentation unter `docs/R25_COMPACT_MEDALLION_SELECTOR_PERCENT_INPUT_2026-09-28.md` ergänzt.
+- [ ] reale DRA-/HA-Abnahme der R25-Bedienung.
+
+**R25-Abnahmeregel:** Kein realer Abschluss, bevor die Texteingabe auf mindestens einem Desktop-Browser und Android/HA Companion mit vollständigem Löschen des bestehenden Werts sowie anschließender Eingabe von `300` bestätigt wurde.
+
+**NÄCHSTER SCHRITT:** R25 direkt aus DRA installieren, Frontend neu laden und die kompakte Auswahl sowie die Eingabe `100 → leer → 300` real prüfen.
