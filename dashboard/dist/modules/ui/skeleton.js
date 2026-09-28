@@ -1,14 +1,15 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
     "HTML",
     "CSS",
     "Dialoge",
-    "Menüstruktur"
+    "Menüstruktur",
+    "skalierbare Vollbild-Instrumente"
   ],
   "file": "modules/ui/skeleton.js"
 });
@@ -2904,16 +2905,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              Trendinstrument. Es erbt keine Layout-/History-Eigenschaften von
              .trend; lediglich die vier produktiven Pfeilzustände werden gespiegelt. */
           .map-medallion-overlay.up .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.stable .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.down .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.none .trend-medallion-arrow {
-            opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84);
+            opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
             filter:drop-shadow(0 1px 1px rgba(47,24,4,.40)) drop-shadow(0 0 0 rgba(246,195,68,0));
           }
           .map-medallion-overlay.none .trend-icon {
@@ -4604,8 +4605,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* Der Pfeil ist ein eigenes freigestelltes Asset.
              Die Grafik selbst zeigt in der Basis nach rechts-oben (↗). */
           .trend-medallion-arrow {
-            left:50.012238%;
-            top:50.452396%;
+            left:var(--trend-arrow-center-x,50.012238%);
+            top:var(--trend-arrow-center-y,50.452396%);
             width:59.667391%;
             height:59.667391%;
             object-fit:contain;
@@ -4629,15 +4630,15 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* Basis-Pfeil = ↗. Nur das Overlay dreht sich; das Medaillon bleibt unbewegt. */
           .trend.up .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(0deg) scale(1);
+            transform:translate(-50%,-50%) rotate(0deg) scale(var(--trend-arrow-scale,1));
           }
           .trend.stable .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(45deg) scale(1);
+            transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
           }
           .trend.down .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(90deg) scale(1);
+            transform:translate(-50%,-50%) rotate(90deg) scale(var(--trend-arrow-scale,1));
           }
 
           /* V3.50 – keine Blitzaktivität:
@@ -4646,7 +4647,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              weich ein und dreht gleichzeitig in die neue Tendenzrichtung. */
           .trend.none .trend-medallion-arrow {
             opacity:0;
-            transform:translate(-50%,-50%) rotate(45deg) scale(.84);
+            transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
             filter:
               drop-shadow(0 1px 1px rgba(47,24,4,.40))
               drop-shadow(0 0 0 rgba(246,195,68,0));
