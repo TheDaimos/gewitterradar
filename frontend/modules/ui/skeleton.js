@@ -2792,7 +2792,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
 
           .map-compass-overlay {
-            position:absolute;z-index:760;width:clamp(188.5px,31.2vmin,390px);aspect-ratio:1 / 1;
+            position:absolute;z-index:760;width:clamp(calc(188.5px * var(--fullscreen-compass-scale,1)),calc(31.2vmin * var(--fullscreen-compass-scale,1)),calc(390px * var(--fullscreen-compass-scale,1)));aspect-ratio:1 / 1;
             display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;pointer-events:auto;
             user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;
             overscroll-behavior:none;filter:drop-shadow(0 14px 30px rgba(0,0,0,.44));
@@ -2885,13 +2885,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .map-cluster-jump-overlay .status-infinity-gfx { width:28px;max-height:19px;margin-left:5px;pointer-events:auto; }
           .map-cluster-jump-overlay .status-cluster-countdown { pointer-events:auto; }
           .map-medallion-overlay {
-            position:absolute;z-index:755;width:clamp(110px,18vmin,210px);aspect-ratio:1 / 1;
+            position:absolute;z-index:755;width:clamp(calc(110px * var(--fullscreen-medallion-scale,1)),calc(18vmin * var(--fullscreen-medallion-scale,1)),calc(210px * var(--fullscreen-medallion-scale,1)));aspect-ratio:1 / 1;
             padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center;
             cursor:grab;touch-action:none;pointer-events:auto;user-select:none;-webkit-user-select:none;
             -webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;overscroll-behavior:none;
             background:transparent!important;filter:drop-shadow(0 12px 24px rgba(0,0,0,.38));
           }
-          .map-medallion-overlay.android-device { width:clamp(93.5px,15.3vmin,178.5px); }
+          .map-medallion-overlay.android-device { width:clamp(calc(93.5px * var(--fullscreen-medallion-scale,1)),calc(15.3vmin * var(--fullscreen-medallion-scale,1)),calc(178.5px * var(--fullscreen-medallion-scale,1))); }
           .map-medallion-overlay::before { display:none!important; }
           .map-medallion-overlay[hidden] { display:none!important; }
           .map-medallion-overlay.dragging { cursor:grabbing; }
@@ -2904,16 +2904,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              Trendinstrument. Es erbt keine Layout-/History-Eigenschaften von
              .trend; lediglich die vier produktiven Pfeilzustände werden gespiegelt. */
           .map-medallion-overlay.up .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.stable .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.down .trend-medallion-arrow {
-            opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(1);
+            opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(var(--trend-arrow-scale,1));
           }
           .map-medallion-overlay.none .trend-medallion-arrow {
-            opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(.84);
+            opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
             filter:drop-shadow(0 1px 1px rgba(47,24,4,.40)) drop-shadow(0 0 0 rgba(246,195,68,0));
           }
           .map-medallion-overlay.none .trend-icon {
@@ -4604,8 +4604,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* Der Pfeil ist ein eigenes freigestelltes Asset.
              Die Grafik selbst zeigt in der Basis nach rechts-oben (↗). */
           .trend-medallion-arrow {
-            left:50.012238%;
-            top:50.452396%;
+            left:var(--trend-arrow-center-x,50.012238%);
+            top:var(--trend-arrow-center-y,50.452396%);
             width:59.667391%;
             height:59.667391%;
             object-fit:contain;
@@ -4629,15 +4629,15 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* Basis-Pfeil = ↗. Nur das Overlay dreht sich; das Medaillon bleibt unbewegt. */
           .trend.up .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(0deg) scale(1);
+            transform:translate(-50%,-50%) rotate(0deg) scale(var(--trend-arrow-scale,1));
           }
           .trend.stable .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(45deg) scale(1);
+            transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
           }
           .trend.down .trend-medallion-arrow {
             opacity:1;
-            transform:translate(-50%,-50%) rotate(90deg) scale(1);
+            transform:translate(-50%,-50%) rotate(90deg) scale(var(--trend-arrow-scale,1));
           }
 
           /* V3.50 – keine Blitzaktivität:
@@ -4646,7 +4646,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              weich ein und dreht gleichzeitig in die neue Tendenzrichtung. */
           .trend.none .trend-medallion-arrow {
             opacity:0;
-            transform:translate(-50%,-50%) rotate(45deg) scale(.84);
+            transform:translate(-50%,-50%) rotate(45deg) scale(var(--trend-arrow-scale,1));
             filter:
               drop-shadow(0 1px 1px rgba(47,24,4,.40))
               drop-shadow(0 0 0 rgba(246,195,68,0));
@@ -4994,9 +4994,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
           @media (max-width:720px) {
             .map-card.map-size-large #map { height:min(70dvh,640px);min-height:430px; }
-            .map-compass-overlay { width:clamp(171.6px,46.8vmin,299px); }
-            .map-medallion-overlay { width:clamp(92px,28vmin,150px); }
-            .map-medallion-overlay.android-device { width:clamp(78.2px,23.8vmin,127.5px); }
+            .map-compass-overlay { width:clamp(calc(171.6px * var(--fullscreen-compass-scale,1)),calc(46.8vmin * var(--fullscreen-compass-scale,1)),calc(299px * var(--fullscreen-compass-scale,1))); }
+            .map-medallion-overlay { width:clamp(calc(92px * var(--fullscreen-medallion-scale,1)),calc(28vmin * var(--fullscreen-medallion-scale,1)),calc(150px * var(--fullscreen-medallion-scale,1))); }
+            .map-medallion-overlay.android-device { width:clamp(calc(78.2px * var(--fullscreen-medallion-scale,1)),calc(23.8vmin * var(--fullscreen-medallion-scale,1)),calc(127.5px * var(--fullscreen-medallion-scale,1))); }
             .map-instrument-toggle { width:27px;height:27px;border-radius:8px; }
             /* V4.09.14 – Android/kleine Viewports: weniger Leerbreite, aber
                bewusst größere Schrift und ausreichend große Touch-Zeilen. */
