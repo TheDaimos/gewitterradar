@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "09c9338dfbda6293ad4f234e8003cd6e982e0bda07c474ecda500b296d2c7415",
+  "sha256": "ab9794e2f0d5e0b13b08e10d8a877ac993cb7c00b65d58d70b7101a1e86b7e22",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R19-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R20-2026-09-28",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "2f27824eda9804316ba463669d3b699e2ca46b7c898ddce2e1cf1cce31670425",
-      "sizeBytes": 7327
+      "sha256": "5f5da49f8cd2089a8cd3eeca61e9f3c919b964005977f1e2823cbca8e51fde01",
+      "sizeBytes": 7365
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -27,8 +27,8 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "3ca2fc19483c5f29cf38e191084852045c527088b6f4e8aafda3ef366576a01e",
-      "sizeBytes": 102579
+      "sha256": "61e050804580064800bc451642cae011032cd889f3bb2a6d422f7441b3560bb3",
+      "sizeBytes": 105137
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",

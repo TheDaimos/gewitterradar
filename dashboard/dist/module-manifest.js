@@ -1,9 +1,9 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R19-2026-09-27",runtimeRevision:"41002r13",moduleSetId:"C82F-640A"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R20-2026-09-28",runtimeRevision:"41002r13",moduleSetId:"D31A-5E90"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.25",
+    "version": "1.2.26",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -75,7 +75,8 @@ export const EXPECTED_MODULES=Object.freeze([
       "Vollbild",
       "separates Fenster",
       "Instrumentpositionen",
-      "Medaillon-Augenreferenz"
+      "Medaillon-Augenreferenz",
+      "Medaillon-Diagnose-Akkordeon"
     ],
     "file": "modules/fullscreen/map-display.js"
   },
@@ -301,4 +302,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.25",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.26",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

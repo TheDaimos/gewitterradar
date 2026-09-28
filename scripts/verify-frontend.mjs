@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.18"',
+  '"id": "fullscreen.map-display"','"version": "1.0.19"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -115,7 +115,12 @@ for(const marker of [
   'data-medallion-eye-auto',
   'data-medallion-eye-accept',
   'data-medallion-eye-next',
-  'data-medallion-eye-json'
+  'data-medallion-eye-json',
+  'data-medallion-diagnostic-group="display"',
+  'data-medallion-diagnostic-group="eye"',
+  'data-medallion-diagnostic-group="arrow"',
+  'data-medallion-diagnostic-group="fit"',
+  'gewitterradar:v41002:medallion-diagnostic-accordion'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }

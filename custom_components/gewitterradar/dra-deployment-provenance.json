@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R19-2026-09-27",
+  "build": "V4.10.02-MODULAR-DEV-R20-2026-09-28",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "C82F-640A",
-  "baselineFeatureHead": "93184222af79c41a38c3b93834c34c22545b9afe",
+  "moduleSetId": "D31A-5E90",
+  "baselineFeatureHead": "db1fa8f5f6a4e14b98bb2ff37744549910123358",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,13 +18,14 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R19 per-medallion eye-reference circle plus arrow size/center calibration diagnostics",
+    "purpose": "R20 compact medallion diagnostic accordions; medallion remains visually in focus",
     "productBehaviorUnchanged": true,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
-    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 adds center-aware fit geometry, per-medallion reviewed eye circles and diagnostic-only manual arrow size/X/Y calibration",
+    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 geometry/calibration remains unchanged; R20 is a diagnostic UI-only accordion refinement",
     "visualCalibrationAutoAppliesToProduction": false,
     "manualEyeReferencesAutoApply": false,
-    "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides"
+    "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
+    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group"
   }
 }

@@ -96,16 +96,16 @@ def test_runtime_revision_and_module_set_probe_contract():
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${revision}`' in main
- assert "GEWITTERRADAR_FEATURE_CACHE = '41002r19'" in main
+ assert "GEWITTERRADAR_FEATURE_CACHE = '41002r20'" in main
  assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"C82F-640A"' in manifest
+ assert 'moduleSetId:"D31A-5E90"' in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="C82F-640A"
+ assert runtime["moduleSetId"]=="D31A-5E90"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
@@ -273,5 +273,10 @@ def test_picker_diagnostic_state_persistence_and_exports_contract():
   "data-medallion-eye-accept",
   "data-medallion-eye-next",
   "data-medallion-eye-json",
+  'data-medallion-diagnostic-group="display"',
+  'data-medallion-diagnostic-group="eye"',
+  'data-medallion-diagnostic-group="arrow"',
+  'data-medallion-diagnostic-group="fit"',
+  "gewitterradar:v41002:medallion-diagnostic-accordion",
  ):
   assert marker in map_display
