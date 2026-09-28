@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R21-2026-09-28",
+  "build": "V4.10.02-MODULAR-DEV-R22-2026-09-28",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D31A-5E91",
+  "moduleSetId": "D31A-5E92",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.27"
+      "version": "1.2.28"
     },
     {
       "id": "core.base-context",
@@ -67,7 +67,7 @@
     },
     {
       "id": "diagnostics.cockpit",
-      "version": "1.5.0"
+      "version": "1.5.1"
     },
     {
       "id": "instruments.compass-design",
