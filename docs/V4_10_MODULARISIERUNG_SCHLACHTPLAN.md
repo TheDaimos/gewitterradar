@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** ABSCHLUSSAUDIT – Medaillon-Erweiterung R14 umgesetzt und per DRA bereitgestellt; reale Sichtprüfung `trend_19`–`trend_28` sowie Cluster-Jump/Infinity auf iPad weiter offen  
+> **Status:** R21 – finale Medaillon-/Pfeilkalibrierung produktiv integriert; Vollbild-Skalierung für Kompass und Medaillon implementiert; technische CI 5/5 grün; reale DRA-/HA-Abnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,46 +38,29 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**Der Modularisierungs-/Moduldiagnoseblock ist real abgeschlossen. Es bleibt genau ein letzter Abnahmepunkt: Cluster-Jump / Infinity.**
+**R21 real über DRA installieren und auf Desktop, iPad sowie Android/HA Companion abnehmen.**
 
-Abgeschlossen und real bestätigt:
-- M01–M12 vollständig abgeschlossen,
-- stabiler Loader auf Desktop sowie Android/HA Companion,
-- DRA-Ende-zu-Ende einschließlich Delta, Cachefall, Rollback und Nachlaufaktion,
-- HACS-/Paket-/Checksummen-/Dokumentationsverträge,
-- Radius-Kaskade,
-- Kompass-Schließen-X,
-- Diagnosekorrekturen R5–R7,
-- R8-Abschlussaudit der Modulidentitäten,
-- R9-Abweichungsdialog inklusive kontextbezogenem Export,
-- R10-Korrektur der gemischten internen Cachekennungen.
+Technisch abgeschlossen:
+- finale Kalibrierung: **28/28 Augen**, **504/504 Paare**, **0 offen**,
+- produktive paarweise Pfeilskalierung und X/Y-Mittelpunkte integriert,
+- geschützte Diagnosegeometrie von der Produktkalibrierung getrennt,
+- Kompass- und Medaillon-Pop-up jeweils mit Vollbild-Größe **50 / 75 / 100 / 125 / 150 %**,
+- freie Eingabe **15–300 %**,
+- getrennte persistente Speicherung für Kompass und Medaillon,
+- Build `V4.10.02-MODULAR-DEV-R21-2026-09-28`,
+- Feature-Cache `41002r21`, Runtime-Cache `41002r13`,
+- Modulsatz `D31A-5E91`,
+- technischer Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` mit **5/5 zentralen CI-Prüfungen grün**.
 
-R10 real über DRA/HA abgenommen:
-- **22 / 22 Module geladen**,
-- **✓ Versionssatz konsistent**,
-- **Modulsatz-ID `CEA6-1ECF`**,
-- keine Abweichungen mehr,
-- Modul-Details zeigen die erwarteten R10-Modulversionen.
-
-R10 automatisiert:
-- Kandidat `4f22f4be5841e47993226928405cc65cdd70e201` → **5/5 grün**,
-- Shared Frontend #2441 → success,
-- Integration #2460 → success,
-- Diagnostic #1122 → success,
-- Source Archive #615 → success,
-- Hi-Res #1674 → success,
-- `deploy/dev` zeigt verifiziert exakt auf diesen Kandidaten.
-
-**Einziger noch real offener Punkt:**
-- Cluster-Jump-Pille / Infinity-Instrumentanzeige auf **Desktop, iPad und Android/HA Companion**:
-  - Infinity-Schalter aus/ein,
-  - Clusterindex/Countdown/∞ identisch zum bestehenden Clusterstatus,
-  - Tipp/Klick → nächster Cluster,
-  - freie Positionierung,
-  - Position bleibt nach Frontend-Neuladen erhalten,
-  - frischer Standardstand links neben dem 3D-Layer-Schalter.
-
-Nach dieser Abnahme wird der Schlachtplan auf **ABGESCHLOSSEN** gesetzt. Danach beginnt wie vorbereitet der nächste Produktblock: **weitere Medaillon-Designs**.
+Reale R21-Abnahme:
+- [ ] R21 aus `deploy/dev` per DRA installieren.
+- [ ] Frontend vollständig neu laden.
+- [ ] repräsentative normale Medaillon-/Pfeil-Kombinationen gegen die abgenommene Kalibrierung prüfen.
+- [ ] Kompass: 50/75/100/125/150 % sowie mindestens einen freien Wert im Bereich 15–300 % prüfen.
+- [ ] Medaillon: 50/75/100/125/150 % sowie mindestens einen freien Wert im Bereich 15–300 % prüfen.
+- [ ] Persistenz nach Frontend-Neuladen bestätigen.
+- [ ] Desktop, iPad und Android/HA Companion bestätigen.
+- [ ] Cluster-Jump / Infinity weiterhin als separaten alten Abschlussgate prüfen.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
@@ -3158,6 +3141,36 @@ Rückführung:
 - [x] Prüfläufe des finalen Kandidaten `372ae36d27b5ac503fd9ab37c7542d4284575ac9` vollständig grün.
 - [x] `deploy/dev` exakt auf den finalen Kandidaten gesetzt.
 - [x] technische Dokumentation in `docs/R20_MEDALLION_DIAGNOSTIC_ACCORDION_2026-09-28.md`.
-- [ ] reale HA-/DRA-Abnahme: kompakte Ausgangsansicht, Öffnen/Schließen, Ein-Gruppen-Logik, Sitzungswiederherstellung und Bedienbarkeit prüfen.
+- [x] reale HA-/DRA-Abnahme: kompakte Ausgangsansicht sowie Akkordeon Öffnen/Schließen vom Nutzer bestätigt.
+- [ ] R20-Restbeleg: Sitzungswiederherstellung und vollständige Bedienbarkeit aller Diagnoseaktionen separat bestätigen.
 
 **NÄCHSTER SCHRITT:** R20 über DRA installieren, Frontend vollständig neu laden und die vier Akkordeonbereiche im Medaillon-Picker visuell sowie funktional prüfen.
+
+
+---
+
+## Schleife R21 – produktive Kalibrierung + Vollbild-Instrumentskalierung (2026-09-28)
+
+- [x] finale reale Kalibrierung als Ausgangsbasis übernommen: 28/28 Augenreferenzen, 504/504 Medaillon-/Pfeil-Paare, 0 offen.
+- [x] 504 bestätigte Paarwerte in vier statische Produktdatenmodule überführt.
+- [x] stabile `trend_XX::arrow_XX`-IDs unverändert beibehalten.
+- [x] produktive Pfeilskalierung und produktive X/Y-Mittelpunkte an Medaillon- und Pfeilauswahl gekoppelt.
+- [x] Diagnose-/Messmodus explizit von der Produktkalibrierung getrennt; geschützte Referenzgeometrie bleibt unverändert.
+- [x] Kompass-Pop-up um Vollbild-Größe 50/75/100/125/150 % ergänzt.
+- [x] Medaillon-Pop-up um Vollbild-Größe 50/75/100/125/150 % ergänzt.
+- [x] freie Skaleneingabe 15–300 % für beide Instrumente ergänzt.
+- [x] Kompass- und Medaillon-Skalierung getrennt persistent gespeichert.
+- [x] responsive Ausgangsgröße für Desktop/iPad/Android als Basis der Skalierung erhalten.
+- [x] Frontend, native Integration und Dashboard-Ausleitung synchronisiert.
+- [x] Modulmanifest, Runtime-Manifest, Frontendvertrag, Assethashes und Prüfsummen aktualisiert.
+- [x] Browservertrag auf produktiv kalibrierten Mittelpunkt erweitert.
+- [x] Diagnose-Browservertrag weiterhin mit fester Referenzgeometrie bestanden.
+- [x] finaler technischer Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` mit 5/5 zentralen CI-Prüfungen grün.
+- [x] technische Dokumentation unter `docs/R21_PRODUCT_CALIBRATION_FULLSCREEN_SCALE_2026-09-28.md` ergänzt.
+- [ ] finalen R21-Kandidaten exakt nach `deploy/dev` promoten und Ref verifizieren.
+- [ ] reale DRA-/HA-Abnahme der Produktkalibrierung.
+- [ ] reale DRA-/HA-Abnahme der Vollbild-Größensteuerung auf Desktop, iPad und Android/HA Companion.
+
+**R21-Abnahmeregel:** Die 504er-Kalibrierung ist jetzt Produktlogik. Diagnose und Produktdarstellung bleiben bewusst getrennte Geometrieebenen. Eine spätere Änderung an Auge/Pfeil darf die bestätigte Produktkalibrierung nur über einen neuen expliziten Kalibrierungs-/Abnahmezyklus verändern.
+
+**NÄCHSTER SCHRITT:** Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353` nach `deploy/dev` promoten, anschließend per DRA installieren und reale Sicht-/Skalenabnahme durchführen.
