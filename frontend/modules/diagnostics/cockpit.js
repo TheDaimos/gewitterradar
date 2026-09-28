@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
