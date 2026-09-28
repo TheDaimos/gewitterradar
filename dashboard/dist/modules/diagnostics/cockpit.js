@@ -380,10 +380,14 @@ return {
       const stage=scope?.querySelector?.('[data-medallion-picker-stage]'),scaleSlider=scope?.querySelector?.('[data-medallion-scale]'),scaleOutput=scope?.querySelector?.('[data-medallion-scale-value]'),
         xSlider=scope?.querySelector?.('[data-medallion-center-x]'),xOutput=scope?.querySelector?.('[data-medallion-center-x-value]'),ySlider=scope?.querySelector?.('[data-medallion-center-y]'),yOutput=scope?.querySelector?.('[data-medallion-center-y-value]'),status=scope?.querySelector?.('[data-medallion-scale-status]');
       if(!stage)return null;
-      const state=this._currentMedallionVisualCalibrationState(),percent=state.effectiveScale*100,diagnosticActive=!!this._diagnostics?.enabled;
-      stage.style.setProperty('--medallion-diagnostic-scale',String(diagnosticActive?state.effectiveScale:1));
-      stage.style.setProperty('--medallion-diagnostic-center-x',`${diagnosticActive?state.effectiveCenterXPercent:state.baseCenterXPercent}%`);
-      stage.style.setProperty('--medallion-diagnostic-center-y',`${diagnosticActive?state.effectiveCenterYPercent:state.baseCenterYPercent}%`);
+      const state=this._currentMedallionVisualCalibrationState(),percent=state.effectiveScale*100,diagnosticActive=!!this._diagnostics?.enabled,
+        productCalibration=this._productMedallionCalibration?.(),productScale=Number(productCalibration?.[0]),productCenterX=Number(productCalibration?.[1]),productCenterY=Number(productCalibration?.[2]),
+        previewScale=!diagnosticActive&&Number.isFinite(productScale)?productScale:state.effectiveScale,
+        previewCenterX=!diagnosticActive&&Number.isFinite(productCenterX)?productCenterX:state.effectiveCenterXPercent,
+        previewCenterY=!diagnosticActive&&Number.isFinite(productCenterY)?productCenterY:state.effectiveCenterYPercent;
+      stage.style.setProperty('--medallion-diagnostic-scale',String(previewScale));
+      stage.style.setProperty('--medallion-diagnostic-center-x',`${previewCenterX}%`);
+      stage.style.setProperty('--medallion-diagnostic-center-y',`${previewCenterY}%`);
       if(scaleSlider)scaleSlider.value=percent.toFixed(1);if(scaleOutput)scaleOutput.textContent=`${percent.toFixed(1).replace('.',',')} %`;
       if(xSlider)xSlider.value=state.effectiveCenterXPercent.toFixed(2);if(xOutput)xOutput.textContent=`${state.effectiveCenterXPercent.toFixed(2).replace('.',',')} %`;
       if(ySlider)ySlider.value=state.effectiveCenterYPercent.toFixed(2);if(yOutput)yOutput.textContent=`${state.effectiveCenterYPercent.toFixed(2).replace('.',',')} %`;
