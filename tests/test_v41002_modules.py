@@ -2,6 +2,12 @@
 import json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];FRONTEND=ROOT/"frontend";CONTRACT=json.loads((ROOT/"tests/contracts/frontend-dev-v4.10.02.json").read_text())
+CALIBRATION_DATA_MODULES={
+ "modules/instruments/medallion-arrow-calibration-1.js",
+ "modules/instruments/medallion-arrow-calibration-2.js",
+ "modules/instruments/medallion-arrow-calibration-3.js",
+ "modules/instruments/medallion-arrow-calibration-4.js",
+}
 def test_declared_modules_exist_in_all_delivery_trees():
  for name in CONTRACT["moduleFiles"]:
   payload=(FRONTEND/name).read_bytes()
@@ -13,15 +19,14 @@ def test_modules_carry_own_versions():
   "modules/fullscreen/compass-picker-chevron-right-brass.js",
   "modules/fullscreen/compass-picker-chevron-left-silver.js",
   "modules/fullscreen/compass-picker-chevron-right-silver.js",
-  "modules/instruments/medallion-arrow-calibration-1.js",
-  "modules/instruments/medallion-arrow-calibration-2.js",
-  "modules/instruments/medallion-arrow-calibration-3.js",
-  "modules/instruments/medallion-arrow-calibration-4.js",
  }
  for name in CONTRACT["moduleFiles"]:
   text=(FRONTEND/name).read_text(encoding="utf-8")
   if name in picker_data_modules:
    assert text.startswith('export default "data:image/webp;base64,')
+   continue
+  if name in CALIBRATION_DATA_MODULES:
+   assert text.startswith("export const MEDALLION_ARROW_CALIBRATION_")
    continue
   assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
 def test_expected_module_versions_match_self_registration():
@@ -33,14 +38,10 @@ def test_expected_module_versions_match_self_registration():
   "modules/fullscreen/compass-picker-chevron-right-brass.js",
   "modules/fullscreen/compass-picker-chevron-left-silver.js",
   "modules/fullscreen/compass-picker-chevron-right-silver.js",
-  "modules/instruments/medallion-arrow-calibration-1.js",
-  "modules/instruments/medallion-arrow-calibration-2.js",
-  "modules/instruments/medallion-arrow-calibration-3.js",
-  "modules/instruments/medallion-arrow-calibration-4.js",
  }
  actual={}
  for name in CONTRACT["moduleFiles"]:
-  if name in picker_data_modules or name=="module-manifest.js":
+  if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
    continue
   text=(FRONTEND/name).read_text(encoding="utf-8")
   id_match=re.search(r'(?:"id"|id)\s*:\s*"([^"]+)"',text)
