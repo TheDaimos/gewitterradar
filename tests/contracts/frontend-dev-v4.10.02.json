@@ -35,8 +35,8 @@
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "a898780149ddec39b91f7ab5b468fd5be8b262fb2a4cd98ce977320fa2525274",
-      "sizeBytes": 423921
+      "sha256": "fd49ca4b005816ec846fdd2e1dc9de82b974b741ec3aff98fc5f71adac0c005a",
+      "sizeBytes": 423972
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
