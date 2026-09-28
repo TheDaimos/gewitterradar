@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.3"',
+  '"version": "1.1.4"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.19"',
+  '"id": "fullscreen.map-display"','"version": "1.0.20"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -120,7 +120,13 @@ for(const marker of [
   'data-medallion-diagnostic-group="eye"',
   'data-medallion-diagnostic-group="arrow"',
   'data-medallion-diagnostic-group="fit"',
-  'gewitterradar:v41002:medallion-diagnostic-accordion'
+  'gewitterradar:v41002:medallion-diagnostic-accordion',
+  'data-fullscreen-scale-preset="50"',
+  'data-fullscreen-scale-preset="150"',
+  'data-fullscreen-scale-custom',
+  'gewitterradar:v41002:fullscreen-compass-scale',
+  'gewitterradar:v41002:fullscreen-medallion-scale',
+  'MEDALLION_ARROW_PRODUCTION_CALIBRATION'
 ]){
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
