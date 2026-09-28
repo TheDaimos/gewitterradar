@@ -1,14 +1,15 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
     "HTML",
     "CSS",
     "Dialoge",
-    "Menüstruktur"
+    "Menüstruktur",
+    "skalierbare Vollbild-Instrumente"
   ],
   "file": "modules/ui/skeleton.js"
 });
