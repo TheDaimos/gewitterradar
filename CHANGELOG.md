@@ -1,5 +1,18 @@
 # Changelog
 
+## V4.10.02 DEV R21 – produktive Medaillonkalibrierung + Vollbild-Instrumentskalierung (2026-09-28)
+
+- finale reale Kalibrierung vollständig übernommen: 28/28 Augenreferenzen und 504/504 Medaillon-/Pfeil-Kombinationen.
+- 504 bestätigte Paarwerte als stabile Produktdatenmodule integriert; bestehende `trend_XX`-/`arrow_XX`-IDs bleiben unverändert.
+- Produktdarstellung verwendet nun paarweise Pfeilgröße sowie X/Y-Mittelpunkt aus dem final abgenommenen Datensatz.
+- Diagnosegeometrie bleibt ausdrücklich entkoppelt und verwendet weiterhin die geschützte Referenzlage; produktive Kalibrierung beeinflusst Mess-/Diagnoseverträge nicht.
+- Kompass- und Medaillon-Pop-up jeweils um **Vollbild-Größe** erweitert: 50 / 75 / 100 / 125 / 150 % sowie freie Eingabe 15–300 %.
+- Kompass- und Medaillon-Skalierung werden getrennt persistent gespeichert und auf die responsive Vollbild-/Fenster-Ausgangsgröße angewendet.
+- Build `V4.10.02-MODULAR-DEV-R21-2026-09-28`, Feature-Cache `41002r21`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E91`.
+- Modulstände: `core.manifest 1.2.27`, `fullscreen.map-display 1.0.20`, `ui.skeleton 1.1.4`.
+- Finaler technischer R21-Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353`: 5/5 zentrale CI-Prüfungen grün.
+- Reale DRA-/HA-Abnahme der produktiven Kalibrierung und der neuen 15–300-%-Vollbildskalierung bleibt als nächster Schritt offen.
+
 ## V4.10.02 DEV R16 – Pfeil/Auge-Geometriedatenbank (2026-09-27)
 
 - Diagnose um eine persistente Geometriedatenbank für Medaillonaugen, Pfeilgeometrien und Kombinationen erweitert.
