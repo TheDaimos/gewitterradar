@@ -3132,3 +3132,32 @@ Rückführung:
 - [x] Produktdarstellung weiterhin ausdrücklich von Diagnose-/Kalibrierwerten entkoppelt.
 
 **Dokumentationsregel:** Automatische Messung, manuell abgenommene Augenreferenz und paarweiser visueller Override müssen dauerhaft als drei getrennte Ebenen beschrieben und exportiert bleiben.
+
+
+---
+
+## Schleife R20 – Medaillon-Diagnose kompakt / Akkordeons (2026-09-28)
+
+- [x] R19-Medaillon-Diagnose anhand realer HA-Darstellung und Exportzustand geprüft.
+- [x] lange Diagnose-Werkzeugliste in vier einklappbare Bereiche aufgeteilt:
+  - Darstellung & Testzustand
+  - Auge · Referenzkreis pro Medaillon
+  - Pfeil · Größe & Mittelpunkt kalibrieren
+  - Fit-Matrix & Export
+- [x] alle Bereiche beim erstmaligen Öffnen eingeklappt.
+- [x] maximal ein Bereich gleichzeitig geöffnet.
+- [x] zuletzt geöffneter Bereich sitzungsbezogen gespeichert.
+- [x] bestehende Datenattribute/Aktionsbindungen erhalten.
+- [x] Mess-, Fit- und Kalibrierungslogik unverändert.
+- [x] Produktdarstellung weiterhin ohne automatische Fit-Skalierung.
+- [x] Build auf `V4.10.02-MODULAR-DEV-R20-2026-09-28` angehoben.
+- [x] Feature-Cache `41002r20`; Runtime-Cache weiterhin `41002r13`.
+- [x] Modul-Set `D31A-5E90`.
+- [x] `core.manifest` 1.2.26.
+- [x] `fullscreen.map-display` 1.0.19.
+- [x] Prüfläufe des finalen Kandidaten `372ae36d27b5ac503fd9ab37c7542d4284575ac9` vollständig grün.
+- [x] `deploy/dev` exakt auf den finalen Kandidaten gesetzt.
+- [x] technische Dokumentation in `docs/R20_MEDALLION_DIAGNOSTIC_ACCORDION_2026-09-28.md`.
+- [ ] reale HA-/DRA-Abnahme: kompakte Ausgangsansicht, Öffnen/Schließen, Ein-Gruppen-Logik, Sitzungswiederherstellung und Bedienbarkeit prüfen.
+
+**NÄCHSTER SCHRITT:** R20 über DRA installieren, Frontend vollständig neu laden und die vier Akkordeonbereiche im Medaillon-Picker visuell sowie funktional prüfen.
