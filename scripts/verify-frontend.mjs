@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.24"',
+  '"id": "fullscreen.map-display"','"version": "1.0.25"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -131,6 +131,9 @@ for(const marker of [
   'data-medallion-preview-mode="static"',
   'data-medallion-preview-mode="animation"',
   'gewitterradar:v41002:medallion-picker-preview-mode',
+  'if (this._mapCompassDragState) return;',
+  'if (this._mapMedallionDragState) return;',
+  'if (this._mapLocationDragState) return;',
   "stage.dataset.trendState='diagnostic'",
   "previewMode==='animation'?'animation':'preview-static'",
   'type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"',
