@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "072ed635fd92916a92def2de25dd5f5be488422a7ae489d3de917902bfd0a355",
+  "sha256": "2dfeaba62a62a110ddbb5c9a979cbe324a032de1ac403899c0152c919142343b",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R31-2026-09-29",
+  "build": "V4.10.02-MODULAR-DEV-R32-2026-09-29",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "7f779a97de73ca86fd09b14df6e21f0f47ecb54e4c68a07385f96dbf74907ed7",
-      "sizeBytes": 7484
+      "sha256": "a244759924643c5b6e78f71a6d5397928d1c407672d6b9190076fbdd8ab5bfcb",
+      "sizeBytes": 7478
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -27,36 +27,36 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "e2d7c258ec0fbe539e98bd0db44f8b7375ad74e204c1eca917b38d3e8763c43d",
-      "sizeBytes": 126187
+      "sha256": "3adea29b5e96e2e64fb028a6258a98031b485ecc17fc94dbc9b1ed9680983299",
+      "sizeBytes": 126367
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "6c472f9ee08a75e5a71385571197a612bdcea095358624659a77e691374d2bc4",
-      "sizeBytes": 428264
+      "sha256": "d19cb5bb1fcc750385041804698bf1ab4a616885b457e3657b04f5547a87e4fa",
+      "sizeBytes": 426845
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
       "sizeBytes": 16920
     },
     "modules/ui/controls.js": {
-      "sha256": "a0e787a1cc1c5128dc1d8275f48cdb2e18873814b036c0b98369fcaf4e4dba44",
-      "sizeBytes": 183042
+      "sha256": "1636cac19df09ede76f75c5db6146d6fc3754369d19770aa1ab5e800ad13dba0",
+      "sizeBytes": 181819
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "47c90186a06689f555a6618d7a207eecc198a794810ab0b63b67d45c02eb9ba6",
-      "sizeBytes": 189853
+      "sha256": "ddffc0e81f839d6f52d133048e0236c9d70731f8a67b3a90382df7a1a1625e92",
+      "sizeBytes": 227855
     },
     "modules/core/source-status.js": {
       "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",
       "sizeBytes": 4692
     },
     "modules/instruments/compass-selector.js": {
-      "sha256": "76f63f03381423376fb72bb51bf9ee1d3c9ff1acbb08c295d612b81660f9a7ea",
-      "sizeBytes": 13613
+      "sha256": "12da20c0cb7e01d4cbe81bb21c66c7b00a1c7ac0ac1cc4404a4dead94b66c604",
+      "sizeBytes": 13505
     },
     "modules/diagnostics/module-view.js": {
       "sha256": "834e555bae4da889a6b933ae85742b1e4c6520375e106733b9dd9fb48e7f0d44",
