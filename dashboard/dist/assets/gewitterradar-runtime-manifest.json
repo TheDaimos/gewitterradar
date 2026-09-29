@@ -3,7 +3,7 @@
   "productVersion": "4.10.02",
   "build": "V4.10.02-MODULAR-DEV-R30-2026-09-29",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D31A-5E100",
+  "moduleSetId": "D31A-5E9A",
   "modules": [
     {
       "id": "core.manifest",
