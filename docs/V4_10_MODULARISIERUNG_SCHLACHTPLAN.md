@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** R25 – kompakte Medaillon-/Pfeilauswahl und robuste 15–300-%-Eingabe fertig; technische CI 5/5 grün; `deploy/dev` exakt auf R25; reale DRA-/HA-Abnahme offen  
+> **Status:** R26 – immer sichtbare Starr/Animation-Vorschau, kompakte xx/xx-Zähler und veredelte Medaillon-Darstellung fertig; technische CI 5/5 grün; `deploy/dev` exakt auf R26; reale DRA-/HA-Abnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,43 +38,39 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R25 aus `deploy/dev` per DRA installieren und die kompakte Auswahl sowie die korrigierte Prozent-Eingabe real abnehmen.**
+**R26 aus `deploy/dev` per DRA installieren und die neue Vorschau-/Picker-Darstellung real abnehmen.**
 
 Technisch abgeschlossen:
-- Umschalter **Medaillon / Pfeil** im Medaillon-Pop-up,
-- nur eine aktive Chevron-Navigation gleichzeitig sichtbar,
-- normale Anzeige **Medaillon · x / 28** bzw. **Arrow · x / 18**,
-- technische ID-Zusatzzeile nur bei aktiver Diagnose,
-- sitzungsbezogene Speicherung des aktiven Auswahlmodus,
-- freie Vollbild-Größeneingabe als dreistelliges numerisches Textfeld,
-- laufende UI-Synchronisierung überschreibt das Feld während der Bearbeitung nicht mehr,
-- Übernahme erst bei Enter oder Fokusverlust,
-- Escape verwirft den unbestätigten Eingabestand,
-- Schieberegler 15–300 % sowie Schnellwahl 50/75/100/125/150 % bleiben erhalten,
-- produktive 504er-Kalibrierung unverändert,
-- Build `V4.10.02-MODULAR-DEV-R25-2026-09-28`,
-- Feature-Cache `41002r25`, Runtime-Cache `41002r13`,
-- Modulsatz `D31A-5E95`,
-- `core.manifest 1.2.31`,
-- `fullscreen.map-display 1.0.23`,
-- finaler technischer Kandidat `860100d2e95ce706404b7fe8c93ad807e4a905e8`,
+- Navigationszähler auf reine **`xx / xx`**-Anzeige verkürzt,
+- Zähler einzeilig und Mittelspalte kompakter,
+- Vorschau-Umschalter **Starr / Animation** ergänzt,
+- Standardmodus **Starr**,
+- Pfeil im normalen Auswahl-Pop-up immer sichtbar, auch ohne aktuellen Gewittertrend,
+- Vorschau bleibt auf der produktiven 504er-Paar-Kalibrierung für Größe und X/Y-Mittelpunkt,
+- Animation verwendet die vorhandene Diagnose-Sweep-Bewegung, ohne den Live-Zustand zu verändern,
+- Vorschau mit dezentem warmweiß-goldenem Halo und zusätzlicher Tiefenwirkung veredelt,
+- doppelte Prozentanzeige rechts neben der freien Vollbild-Größeneingabe entfernt,
+- Schnellwahl, Schieberegler 15–300 % und direkte Eingabe bleiben erhalten,
+- Build `V4.10.02-MODULAR-DEV-R26-2026-09-29`,
+- Feature-Cache `41002r26`, Runtime-Cache `41002r13`,
+- Modulsatz `D31A-5E96`,
+- `core.manifest 1.2.32`,
+- `fullscreen.map-display 1.0.24`,
+- finaler technischer Kandidat `efabc9cbff47b29e0f173e557ad9d1338bc51a5d`,
 - **5/5 zentrale CI-Prüfungen grün**,
 - `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
 
-Reale R25-Abnahme:
-- [ ] R25 per DRA installieren.
+Reale R26-Abnahme:
+- [ ] R26 per DRA installieren.
 - [ ] Frontend vollständig neu laden.
-- [ ] Umschalter Medaillon/Pfeil prüfen.
-- [ ] nur eine Chevron-Navigation gleichzeitig sichtbar.
-- [ ] Normalmodus zeigt nur kompakte Hauptzeile.
-- [ ] Diagnosemodus ergänzt korrekte technische ID-Zeile.
-- [ ] vorhandene `100` vollständig löschen und `300` ohne Rücksetzen eintippen.
-- [ ] Enter übernimmt `300`.
-- [ ] Fokusverlust übernimmt einen gültigen Eingabewert.
-- [ ] Schieberegler 15–300 % arbeitet live.
-- [ ] Schnellwahl 50/75/100/125/150 % weiterhin korrekt.
-- [ ] Kompass- und Medaillon-Werte getrennt persistent.
-- [ ] Desktop, iPad und Android/HA Companion prüfen.
+- [ ] Medaillon-Zähler als `x / 28` ohne Zeilenumbruch prüfen.
+- [ ] Pfeil-Zähler als `x / 18` ohne Zeilenumbruch prüfen.
+- [ ] Vorschau **Starr** ohne aktiven Gewittertrend prüfen.
+- [ ] Vorschau **Animation** prüfen.
+- [ ] Größe und X/Y-Lage der Vorschau gegen die normale Tendenzanzeige vergleichen.
+- [ ] Halo/Tiefenwirkung auf Desktop, iPad und Android/HA Companion prüfen.
+- [ ] Vollbild-Größensteuerung ohne doppelte Prozentanzeige prüfen.
+- [ ] vorhandene direkte 15–300-%-Eingabe und Schieberegler erneut kurz gegenprüfen.
 - [ ] Cluster-Jump / Infinity bleibt separates älteres Abschlussgate.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
@@ -3221,3 +3217,29 @@ Rückführung:
 **R25-Abnahmeregel:** Kein realer Abschluss, bevor die Texteingabe auf mindestens einem Desktop-Browser und Android/HA Companion mit vollständigem Löschen des bestehenden Werts sowie anschließender Eingabe von `300` bestätigt wurde.
 
 **NÄCHSTER SCHRITT:** R25 direkt aus DRA installieren, Frontend neu laden und die kompakte Auswahl sowie die Eingabe `100 → leer → 300` real prüfen.
+
+
+---
+
+## Schleife R26 – Vorschau-Modus + kompakter Picker (2026-09-29)
+
+- [x] redundante Bezeichnungen aus den normalen Medaillon-/Pfeil-Zählern entfernt.
+- [x] Zähler auf `xx / xx` verkürzt und gegen Zeilenumbruch abgesichert.
+- [x] Navigationsmittelspalte verkleinert.
+- [x] separaten Vorschau-Umschalter **Starr / Animation** ergänzt.
+- [x] Vorschau-Modus lokal persistent gespeichert.
+- [x] normale Picker-Vorschau vom realen Gewittertrend entkoppelt; Pfeil bleibt sichtbar.
+- [x] produktive Paar-Kalibrierung für Größe und X/Y-Mittelpunkt in beiden Vorschau-Modi beibehalten.
+- [x] Animationsmodus auf vorhandene Diagnose-Sweep-Bewegung aufgesetzt, ohne Live-Zustand zu verändern.
+- [x] warmweiß-goldenen Halo und dezente Tiefenwirkung ergänzt.
+- [x] keine zusätzliche harte Innenrahmung eingeführt.
+- [x] doppelte Prozentwert-Ausgabe bei Vollbild-Größe entfernt.
+- [x] Schnellwahl, 15–300-%-Regler und direkte Eingabe unverändert erhalten.
+- [x] Integrations-/Dashboard-Ausleitungen synchronisiert.
+- [x] Build-/Modul-/Runtime-Verträge und Prüfsummen auf R26 aktualisiert.
+- [x] technischer Kandidat `efabc9cbff47b29e0f173e557ad9d1338bc51a5d` mit 5/5 zentralen CI-Prüfungen grün.
+- [x] Kandidat exakt nach `deploy/dev` promotet und Ref als `identical` verifiziert.
+- [x] technische Dokumentation `docs/R26_MEDALLION_PREVIEW_UI_2026-09-29.md` erstellt.
+- [ ] reale R26-Abnahme über DRA auf Desktop, iPad und Android/HA Companion.
+
+**NÄCHSTER SCHRITT:** R26 aus `deploy/dev` installieren, Frontend vollständig neu laden und die neue Starr/Animation-Vorschau sowie die kompakte Navigation real abnehmen.
