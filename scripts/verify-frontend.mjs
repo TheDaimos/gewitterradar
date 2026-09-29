@@ -11,9 +11,10 @@ const render=await readFile(resolve(root,'frontend/modules/ui/render.js'),'utf8'
 const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-display.js'),'utf8');
 const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-recent.js'),'utf8');
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
+const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.8"',
+  '"version": "1.1.9"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -32,8 +33,9 @@ for(const marker of [
   '#trend-box:focus-visible',
   'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
   'Vom Monolithen zum modularen Gewitterradar',
-  '28 Designs und 18 Pfeilvarianten',
-  '504 Kombinationen'
+  '23 klar abgegrenzte Module',
+  'Weitere Verbesserungen an Oberfläche und Bedienung:',
+  '28 Medaillon-Designs und 18 Pfeilvarianten'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
@@ -74,7 +76,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.4"',
+  '"version": "1.1.5"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
@@ -83,12 +85,17 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.2.4"',
+  '"version": "1.3.0"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
   'modules.deviation.registrations',
-  'modules.deviation.active_matches'
+  'modules.deviation.active_matches',
+  'const V410_UI_TRANSLATIONS=Object.freeze(',
+  'const V410_HELP_INSTRUMENTS=Object.freeze(',
+  '_syncV410Tooltips()',
+  '_helpWithV410(language,help)',
+  "help=this._helpWithV410(language,locale.help)"
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
@@ -101,11 +108,20 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.29"',
+  '"id": "fullscreen.map-display"','"version": "1.0.30"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
   "this._t('settings.map_startup_select')",
+  "this._t('picker.fullscreen_size')",
+  "this._t('picker.fullscreen_size_range')",
+  "this._t('picker.custom_size')",
+  "this._t('picker.selection')",
+  "this._t('picker.medallion')",
+  "this._t('picker.arrow')",
+  "this._t('picker.preview')",
+  "this._t('picker.static')",
+  "this._t('picker.animation')",
   '_closeMapStartupDropdown(returnFocus = false)',
   'data-medallion-scale',
   'data-medallion-center-x',
@@ -242,7 +258,17 @@ const extractFrozenJson=(source,prefix,suffix)=>{
 const settingsUiTranslations=extractFrozenJson(
   i18nSettings,
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
-  ');\nexport const installI18nSettings'
+  ');\nconst V410_UI_TRANSLATIONS'
+);
+const v410UiTranslations=extractFrozenJson(
+  i18nSettings,
+  'const V410_UI_TRANSLATIONS=Object.freeze(',
+  ');\nconst V410_HELP_INSTRUMENTS'
+);
+const v410HelpInstruments=extractFrozenJson(
+  i18nSettings,
+  'const V410_HELP_INSTRUMENTS=Object.freeze(',
+  ');\n\nexport const installI18nSettings'
 );
 const clusterResolutionLabels=extractFrozenJson(
   baseContext,
@@ -281,14 +307,33 @@ for(const language of registeredLanguages){
   for(const key of requiredSettingsKeys){
     if(typeof settingsBundle[key]!=='string'||!settingsBundle[key].trim())throw Error('Missing settings UI translation: '+language+' / '+key);
   }
-  const clusterBundle=clusterResolutionLabels[language];
+  const v410UiBundle=v410UiTranslations[language];
+  if(!v410UiBundle)throw Error('Missing V4.10 UI language: '+language);
+  for(const key of ['picker.fullscreen_size','picker.fullscreen_size_range','picker.custom_size','picker.selection','picker.medallion','picker.arrow','picker.preview','picker.static','picker.animation','tooltip.animation_toggle','tooltip.test_storm','tooltip.test_danger','tooltip.settings_open','tooltip.compass_north','tooltip.card_version']){
+    if(typeof v410UiBundle[key]!=='string'||!v410UiBundle[key].trim())throw Error('Missing V4.10 UI translation: '+language+' / '+key);
+  }
+  const helpBundle=v410HelpInstruments[language];
+  if(!helpBundle||typeof helpBundle.title!=='string'||!helpBundle.title.trim()||typeof helpBundle.intro!=='string'||!helpBundle.intro.trim())throw Error('Missing V4.10 help translation: '+language);
+  if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==5||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete V4.10 help entries: '+language);
+    const clusterBundle=clusterResolutionLabels[language];
   if(!clusterBundle)throw Error('Missing cluster profile language: '+language);
   for(const key of ['early','balanced','late','classic']){
     if(typeof clusterBundle[key]!=='string'||!clusterBundle[key].trim())throw Error('Missing cluster profile translation: '+language+' / '+key);
   }
 }
 if(Object.keys(settingsUiTranslations).length!==registeredLanguages.length)throw Error('Unexpected settings UI language count');
+if(Object.keys(v410UiTranslations).length!==registeredLanguages.length)throw Error('Unexpected V4.10 UI language count');
+if(Object.keys(v410HelpInstruments).length!==registeredLanguages.length)throw Error('Unexpected V4.10 help language count');
 if(Object.keys(clusterResolutionLabels).length!==registeredLanguages.length)throw Error('Unexpected cluster profile language count');
+for(const forbidden of ['if(!this._auraEnabled())return \'A\';','if(!this._auraEnabled()&&!calibrationNavigation)return']){
+  if(compassSelector.includes(forbidden))throw Error('Aura still blocks compass selection: '+forbidden);
+}
+for(const forbidden of ['id="compass-design-selector"','id="settings-selector-design-row"','id="settings-selector-preview"','id="selector-frame-prev"','id="selector-frame-next"']){
+  if(skeleton.includes(forbidden))throw Error('Obsolete compass selector UI remains: '+forbidden);
+}
+for(const marker of ['animation-toggle','warning-test-top-storm','warning-test-top-danger','settings-open','warning-test-map-storm','warning-test-map-danger','warning-test-history-storm','warning-test-history-danger','warning-test-compass-storm','warning-test-compass-danger','device-toggle','settings-cluster-jump-infinite']){
+  if(!i18nSettings.includes("set('"+marker+"'")&&!i18nSettings.includes("['"+marker+"'"))throw Error('V4.10 tooltip mapping missing: '+marker);
+}
 async function files(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await files(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 const checks=[];
 for(const dest of destinations){
