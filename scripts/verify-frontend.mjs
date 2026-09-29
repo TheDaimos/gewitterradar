@@ -26,7 +26,8 @@ for(const marker of [
   'width:min(560px,calc(100vw - 20px))',
   'min-width:32px;width:auto;padding:5px 7px',
   'width:min(520px,calc(100vw - 20px))',
-  'transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease'
+  'transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease',
+  '#trend-box:focus-visible'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
@@ -94,7 +95,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.27"',
+  '"id": "fullscreen.map-display"','"version": "1.0.28"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -139,6 +140,9 @@ for(const marker of [
   '-webkit-tap-highlight-color:transparent',
   '.trend-icon:focus-visible',
   "previousFocus.id === 'trend-icon'",
+  "classList.contains('ipad-device')",
+  "trendIcon.removeAttribute('tabindex')",
+  "requestAnimationFrame(()=>trendIcon.blur?.())",
   "stage.dataset.trendState='diagnostic'",
   "previewMode==='animation'?'animation':'preview-static'",
   'type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"',
