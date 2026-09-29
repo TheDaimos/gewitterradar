@@ -6,9 +6,10 @@ Stand: 2026-09-29 19:17 CEST
 
 - Repository: `TheDaimos/gewitterradar`
 - Entwicklungszweig: `feature/v4.10.02-modularization`
-- HEAD: `017c46062121d0720563aa79bf828124c994fa2d`
+- technischer R33-Kandidat / DRA-HEAD: `017c46062121d0720563aa79bf828124c994fa2d`
+- Übergabe-Commit auf dem Entwicklungszweig: `1c22716f4d9e74951dc8782492742fbe05cd1df8`
 - DRA-Zweig: `deploy/dev`
-- `deploy/dev` zeigt auf denselben Commit `017c46062121d0720563aa79bf828124c994fa2d`.
+- `deploy/dev` bleibt auf dem vollständig geprüften technischen Kandidaten `017c46062121d0720563aa79bf828124c994fa2d`; der Entwicklungszweig liegt nur durch diese Dokumentationsübergabe einen Commit davor.
 - Build: `V4.10.02-MODULAR-DEV-R33-2026-09-29`
 - sichtbare Version: `V4.10.02`
 - Feature-Cache: `41002r33`
@@ -19,7 +20,7 @@ Stand: 2026-09-29 19:17 CEST
 
 ## CI-Status des exakten HEAD
 
-Der exakte Commit `017c46062121d0720563aa79bf828124c994fa2d` ist in allen fünf zentralen Prüfpfaden grün:
+Der exakte **technische R33-Kandidat** `017c46062121d0720563aa79bf828124c994fa2d` ist in allen fünf zentralen Prüfpfaden grün:
 
 - Validate shared Gewitterradar frontend — SUCCESS
 - Validate Gewitterradar integration — SUCCESS
@@ -158,8 +159,9 @@ Roadmap nach V4.10:
 R33 ist bereits über den normalen DEV-Kanal erreichbar:
 
 - DRA-Zweig: `deploy/dev`
-- DRA und Entwicklungszweig zeigen auf denselben geprüften HEAD:
+- DRA zeigt auf den vollständig geprüften technischen Kandidaten:
   `017c46062121d0720563aa79bf828124c994fa2d`
+- Der Entwicklungszweig enthält darüber hinaus nur diese Übergabedokumentation.
 
 Keine weitere Promotion ist für den aktuellen Realtest nötig.
 
