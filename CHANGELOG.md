@@ -1,5 +1,19 @@
 # Changelog
 
+## V4.10.02 DEV R26 – Vorschau unabhängig vom Live-Trend + kompakter Picker (2026-09-29)
+
+- Medaillon-/Pfeil-Zähler im Auswahl-Pop-up auf reine `xx / xx`-Anzeige verkürzt; einzeilig und mit kompakterer Mittelspalte.
+- neuer Vorschau-Umschalter **Starr / Animation**; Standard ist **Starr**.
+- Pfeil im Auswahl-Pop-up ist außerhalb des Diagnosemodus immer sichtbar, auch wenn aktuell kein Gewittertrend vorhanden ist.
+- Vorschau verwendet weiterhin die produktive 504er-Paar-Kalibrierung für Pfeilgröße und X/Y-Mittelpunkt.
+- Animation nutzt die vorhandene Diagnose-Sweep-Bewegung, ohne den Live-Zustand der Karte zu verändern.
+- Vorschau optisch mit dezentem warmweiß-goldenem Halo und zusätzlicher Tiefenwirkung veredelt.
+- doppelte Prozentanzeige bei der Vollbild-Größe entfernt; Schnellwahl, 15–300-%-Regler und direkte Eingabe bleiben bestehen.
+- Build `V4.10.02-MODULAR-DEV-R26-2026-09-29`, Feature-Cache `41002r26`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E96`.
+- Modulstände: `core.manifest 1.2.32`, `fullscreen.map-display 1.0.24`.
+- technischer Kandidat `efabc9cbff47b29e0f173e557ad9d1338bc51a5d`: 5/5 zentrale CI-Prüfungen grün und exakt nach `deploy/dev` promotet.
+- reale DRA-/HA-Sichtprüfung bleibt offen.
+
 ## V4.10.02 DEV R25 – kompakte Auswahl + robuste 15–300-%-Eingabe (2026-09-28)
 
 - Medaillon-Pop-up auf einen kompakten Umschalter **Medaillon / Pfeil** umgestellt; nur die aktive Chevron-Navigation wird angezeigt.
