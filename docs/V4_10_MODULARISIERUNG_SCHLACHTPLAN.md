@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** R31 – iPad Trend-Fokus-/Tap-Ring korrigiert; veralteter Shared-Frontend-Vertrag auf `ui.skeleton 1.1.7` nachgezogen; technische CI 5/5 grün; `deploy/dev` exakt auf R31-Kandidat; reale DRA-/iPad-Abnahme offen  
+> **Status:** R31 – iPad Trend-Fokus-/Tap-Ring real bestanden; technische CI 5/5 grün; `deploy/dev` exakt auf R31-Kandidat; nur Desktop-/Android-Regressionsgegenprobe noch offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,7 +38,7 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R31 aus `deploy/dev` per DRA installieren und den iPad-Focus-Ring-Fix real abnehmen.**
+**R31-iPad-Abnahme ist bestanden. Noch offen ist nur die kurze Desktop-/Android-Regressionsgegenprobe; danach kann der aktuelle R31-Schlachtplan formal abgeschlossen werden.**
 
 Technisch abgeschlossen:
 - iPad/WebKit-Fokus-/Tap-Umrandung der Trendanzeige in R31 korrigiert,
@@ -57,13 +57,13 @@ Technisch abgeschlossen:
 - `diagnostics.cockpit 1.5.1`.
 
 Reale R31-Abnahme:
-- [ ] R31 per DRA installieren.
-- [ ] Frontend auf dem iPad vollständig neu laden.
-- [ ] einmal auf die Trendanzeige tippen; kein blauer Fokus-/Tap-Rahmen bleibt sichtbar.
-- [ ] Medaillon-/Pfeil-Popup öffnen und schließen; Fokusrahmen darf nicht zurückkehren.
+- [x] R31 per DRA installiert.
+- [x] Frontend auf dem iPad vollständig neu geladen und R31 real geprüft.
+- [x] Trendanzeige angetippt; kein blauer Fokus-/Tap-Rahmen bleibt sichtbar.
+- [x] Medaillon-/Pfeil-Popup geöffnet und geschlossen; Fokusrahmen kehrt nicht zurück.
 - [ ] Kompass unverändert gegenprüfen.
 - [ ] Desktop und Android/HA Companion kurz auf Regressionen prüfen.
-- [ ] erst nach realer Nutzerbestätigung R31 als geräteseitig abgenommen markieren.
+- [x] iPad-Focus-Ring-Fix durch reale Nutzerbestätigung abgenommen.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
@@ -3277,9 +3277,9 @@ Rückführung:
 - [x] `deploy/dev` exakt auf diesen Kandidaten promotet.
 - [x] Kandidat ↔ `deploy/dev` als **identical** verifiziert (0 voraus / 0 zurück).
 - [x] Changelog und Schlachtplan auf den finalen technischen R31-Stand nachgezogen.
-- [ ] reale R31-Abnahme über DRA auf iPad.
+- [x] reale R31-Abnahme über DRA auf iPad; Focus-/Tap-Rahmen bleibt nach Tippen sowie Picker Öffnen/Schließen verschwunden.
 - [ ] Desktop und Android/HA Companion als kurze Regression-Gegenprobe real bestätigen.
 
-**R31-Abnahmeregel:** Technisch ist R31 abgeschlossen und als DRA-Kandidat freigegeben. Die reale Geräteabnahme bleibt offen, bis der Nutzer auf dem iPad bestätigt, dass nach Tippen sowie Öffnen/Schließen des Medaillon-/Pfeil-Pickers keine blaue Fokus-/Tap-Umrandung zurückbleibt.
+**R31-Abnahmeregel:** Technisch ist R31 abgeschlossen und als DRA-Kandidat freigegeben. Die reale iPad-Abnahme ist bestanden: Nach Tippen sowie Öffnen/Schließen des Medaillon-/Pfeil-Pickers bleibt keine blaue Fokus-/Tap-Umrandung zurück. Offen bleibt nur die kurze Desktop-/Android-Regressionsgegenprobe.
 
-**NÄCHSTER SCHRITT:** R31 aus `deploy/dev` per DRA installieren, Frontend vollständig neu laden und die reale iPad-Abnahme durchführen.
+**NÄCHSTER SCHRITT:** R31 kurz auf Desktop und Android/HA Companion gegenprüfen; anschließend den aktuellen Modularisierungs-Schlachtplan formal auf **ABGESCHLOSSEN** setzen.
