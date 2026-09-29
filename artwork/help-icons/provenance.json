@@ -10,5 +10,17 @@
     "A": "help-external-shield2.svg",
     "B": "help-external-rj45.svg"
   },
-  "rule": "The hi-res/vector masters in artwork/help-icons/hires are authoritative and must remain in the canonical Gewitterradar repository. Runtime/test derivatives must never replace these originals."
+  "rule": "The hi-res/vector masters in artwork/help-icons/hires are authoritative and must remain in the canonical Gewitterradar repository. Runtime/test derivatives must never replace these originals.",
+  "v410InstrumentIcon": {
+    "master": "artwork/help-icons/hires/help-instruments-v410-compass.svg",
+    "masterFormat": "SVG",
+    "masterCanvas": "2048x2048",
+    "transparentBackground": true,
+    "runtimeFormat": "PNG",
+    "runtimePixels": "68x68",
+    "cssPixels": "34x34",
+    "density": "2x Retina",
+    "runtimeEmbedding": "data:image/png;base64 embedded in frontend/modules/ui/skeleton.js",
+    "section": "Kompass, Medaillon & Pfeile"
+  }
 }
