@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7435,12 +7435,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </summary>
                   <div class="release-history-future-content">
                     <ul class="release-history-plan-list">
-                      <li>Provide different Medallion designs.</li>
-                      <li>Improve Compass and Medallion selection.</li>
-                      <li>Implement weather services via WeatherRouter.</li>
+                      <li>Implement weather services &amp; weather events through WeatherRouter.</li>
                     </ul>
                   </div>
                 </details>
+
+                <article class="release-history-entry">
+                  <div class="release-history-version">V4.10 · 2026/09</div>
+                  <h3>From monolith to modular Gewitterradar</h3>
+                  <p>V4.10 rebuilds the foundation of Gewitterradar without turning the familiar interface upside down. The historically grown frontend was split into clearly defined ES modules with their own identities and versions, while the stable entry point and the synchronized Native Integration/Dashboard delivery model remain intact. This makes individual functions easier to isolate, test, diagnose and evolve without having to touch the entire application for every change. At the same time, the instrument layer grew substantially: Compass and Medallion became independently selectable, movable and scalable fullscreen instruments; the Medallion catalogue expanded to 28 designs and 18 arrow variants, backed by a measured 504-combination geometry and fit matrix. Dedicated diagnostic tools, module/version visibility, stricter regression contracts and DRA-based deployment and rollback turn the modularization into more than a code cleanup: V4.10 creates the technical foundation on which the next major capabilities of Gewitterradar can be built safely.</p>
+                </article>
 
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09 · 2026/09</div>
@@ -7532,12 +7536,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </summary>
                   <div class="release-history-future-content">
                     <ul class="release-history-plan-list">
-                      <li>Unterschiedliche Medaillions bereitstellen.</li>
-                      <li>Verbesserungen der Kompass- und Medaillion-Auswahl.</li>
-                      <li>Implementierung von Wetterdiensten via WeatherRouter.</li>
+                      <li>Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.</li>
                     </ul>
                   </div>
                 </details>
+
+                <article class="release-history-entry">
+                  <div class="release-history-version">V4.10 · 2026/09</div>
+                  <h3>Vom Monolithen zum modularen Gewitterradar</h3>
+                  <p>V4.10 baut das Fundament von Gewitterradar grundlegend neu auf, ohne die vertraute Oberfläche auf den Kopf zu stellen. Aus dem über Jahre gewachsenen großen Frontend wurde ein klar gegliederter Verbund eigenständiger ES-Module mit eigener Identität und Versionierung; der stabile Einstiegspunkt sowie die synchronen Auslieferungswege als native Integration und Dashboard bleiben dabei erhalten. Funktionen lassen sich dadurch gezielter isolieren, prüfen, diagnostizieren und weiterentwickeln, ohne für jede Änderung das gesamte Gewitterradar anfassen zu müssen. Gleichzeitig ist die Instrumentenebene deutlich gewachsen: Kompass und Medaillon wurden zu eigenständig auswählbaren, verschiebbaren und skalierbaren Vollbild-Instrumenten; der Medaillon-Katalog umfasst inzwischen 28 Designs und 18 Pfeilvarianten, abgesichert durch eine vermessene Geometrie- und Fit-Matrix mit 504 Kombinationen. Eigene Diagnosewerkzeuge, sichtbare Modul- und Versionsstände, strengere Regressionstests sowie Bereitstellung und Rückfall über DRA machen die Modularisierung deshalb zu weit mehr als einer Aufräumaktion im Quellcode: V4.10 schafft das technische Fundament, auf dem die nächsten großen Fähigkeiten von Gewitterradar kontrolliert weiterwachsen können.</p>
+                </article>
 
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.09 · 2026/09</div>
