@@ -2,7 +2,7 @@
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
   "build": "V4.10.02-MODULAR-DEV-R32-2026-09-29",
-  "runtimeRevision": "41002r14",
+  "runtimeRevision": "41002r13",
   "moduleSetId": "D32A-5E9B",
   "modules": [
     {
