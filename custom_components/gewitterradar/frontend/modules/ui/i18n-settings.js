@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -1211,6 +1211,828 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installiert"
   }
 });
+const V410_UI_TRANSLATIONS=Object.freeze({
+  "Deutsch": {
+    "picker.fullscreen_size": "Vollbild-Größe",
+    "picker.fullscreen_size_range": "Vollbild-Größe von 15 bis 300 Prozent",
+    "picker.custom_size": "Eigene Größe",
+    "picker.selection": "Auswahl",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Pfeil",
+    "picker.preview": "Vorschau",
+    "picker.static": "Starr",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Vollflächige Warnanimation ein- oder ausschalten",
+    "tooltip.test_storm": "Gewitterstufe testweise auslösen",
+    "tooltip.test_danger": "Gefahrenstufe testweise auslösen",
+    "tooltip.settings_open": "Gewitterradar-Einstellungen öffnen",
+    "tooltip.compass_north": "Feste Nordausrichtung des Kompasses verwenden",
+    "tooltip.card_version": "Kartenversion"
+  },
+  "English": {
+    "picker.fullscreen_size": "Fullscreen size",
+    "picker.fullscreen_size_range": "Fullscreen size from 15 to 300 percent",
+    "picker.custom_size": "Custom size",
+    "picker.selection": "Selection",
+    "picker.medallion": "Medallion",
+    "picker.arrow": "Arrow",
+    "picker.preview": "Preview",
+    "picker.static": "Static",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Turn the full-screen warning animation on or off",
+    "tooltip.test_storm": "Trigger the storm level for testing",
+    "tooltip.test_danger": "Trigger the danger level for testing",
+    "tooltip.settings_open": "Open Gewitterradar settings",
+    "tooltip.compass_north": "Use the compass fixed north orientation",
+    "tooltip.card_version": "Card version"
+  },
+  "Dansk": {
+    "picker.fullscreen_size": "Fuldskærmsstørrelse",
+    "picker.fullscreen_size_range": "Fuldskærmsstørrelse fra 15 til 300 procent",
+    "picker.custom_size": "Egen størrelse",
+    "picker.selection": "Valg",
+    "picker.medallion": "Medaljon",
+    "picker.arrow": "Pil",
+    "picker.preview": "Forhåndsvisning",
+    "picker.static": "Statisk",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Slå advarselsanimationen på hele fladen til eller fra",
+    "tooltip.test_storm": "Udløs tordenvejrsniveauet som test",
+    "tooltip.test_danger": "Udløs fareniveauet som test",
+    "tooltip.settings_open": "Åbn Gewitterradar-indstillinger",
+    "tooltip.compass_north": "Brug kompassets faste nordretning",
+    "tooltip.card_version": "Kortversion"
+  },
+  "Español": {
+    "picker.fullscreen_size": "Tamaño en pantalla completa",
+    "picker.fullscreen_size_range": "Tamaño en pantalla completa del 15 al 300 por ciento",
+    "picker.custom_size": "Tamaño personalizado",
+    "picker.selection": "Selección",
+    "picker.medallion": "Medallón",
+    "picker.arrow": "Flecha",
+    "picker.preview": "Vista previa",
+    "picker.static": "Estática",
+    "picker.animation": "Animación",
+    "tooltip.animation_toggle": "Activar o desactivar la animación de aviso a pantalla completa",
+    "tooltip.test_storm": "Activar el nivel de tormenta como prueba",
+    "tooltip.test_danger": "Activar el nivel de peligro como prueba",
+    "tooltip.settings_open": "Abrir los ajustes de Gewitterradar",
+    "tooltip.compass_north": "Usar la orientación norte fija de la brújula",
+    "tooltip.card_version": "Versión de la tarjeta"
+  },
+  "Français": {
+    "picker.fullscreen_size": "Taille en plein écran",
+    "picker.fullscreen_size_range": "Taille en plein écran de 15 à 300 pour cent",
+    "picker.custom_size": "Taille personnalisée",
+    "picker.selection": "Sélection",
+    "picker.medallion": "Médaillon",
+    "picker.arrow": "Flèche",
+    "picker.preview": "Aperçu",
+    "picker.static": "Statique",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Activer ou désactiver l’animation d’alerte plein écran",
+    "tooltip.test_storm": "Déclencher le niveau orage à des fins de test",
+    "tooltip.test_danger": "Déclencher le niveau danger à des fins de test",
+    "tooltip.settings_open": "Ouvrir les réglages de Gewitterradar",
+    "tooltip.compass_north": "Utiliser l’orientation nord fixe de la boussole",
+    "tooltip.card_version": "Version de la carte"
+  },
+  "Nederlands": {
+    "picker.fullscreen_size": "Grootte volledig scherm",
+    "picker.fullscreen_size_range": "Grootte volledig scherm van 15 tot 300 procent",
+    "picker.custom_size": "Eigen grootte",
+    "picker.selection": "Selectie",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Pijl",
+    "picker.preview": "Voorbeeld",
+    "picker.static": "Statisch",
+    "picker.animation": "Animatie",
+    "tooltip.animation_toggle": "Waarschuwingsanimatie over het hele scherm in- of uitschakelen",
+    "tooltip.test_storm": "Onweersniveau als test activeren",
+    "tooltip.test_danger": "Gevarenniveau als test activeren",
+    "tooltip.settings_open": "Gewitterradar-instellingen openen",
+    "tooltip.compass_north": "Vaste noordoriëntatie van het kompas gebruiken",
+    "tooltip.card_version": "Kaartversie"
+  },
+  "Polski": {
+    "picker.fullscreen_size": "Rozmiar pełnoekranowy",
+    "picker.fullscreen_size_range": "Rozmiar pełnoekranowy od 15 do 300 procent",
+    "picker.custom_size": "Własny rozmiar",
+    "picker.selection": "Wybór",
+    "picker.medallion": "Medalion",
+    "picker.arrow": "Strzałka",
+    "picker.preview": "Podgląd",
+    "picker.static": "Statyczny",
+    "picker.animation": "Animacja",
+    "tooltip.animation_toggle": "Włącz lub wyłącz pełnoekranową animację ostrzegawczą",
+    "tooltip.test_storm": "Uruchom poziom burzy testowo",
+    "tooltip.test_danger": "Uruchom poziom zagrożenia testowo",
+    "tooltip.settings_open": "Otwórz ustawienia Gewitterradar",
+    "tooltip.compass_north": "Użyj stałej orientacji kompasu na północ",
+    "tooltip.card_version": "Wersja karty"
+  },
+  "Português": {
+    "picker.fullscreen_size": "Tamanho em ecrã inteiro",
+    "picker.fullscreen_size_range": "Tamanho em ecrã inteiro de 15 a 300 por cento",
+    "picker.custom_size": "Tamanho personalizado",
+    "picker.selection": "Seleção",
+    "picker.medallion": "Medalhão",
+    "picker.arrow": "Seta",
+    "picker.preview": "Pré-visualização",
+    "picker.static": "Estática",
+    "picker.animation": "Animação",
+    "tooltip.animation_toggle": "Ativar ou desativar a animação de aviso em ecrã inteiro",
+    "tooltip.test_storm": "Ativar o nível de trovoada para teste",
+    "tooltip.test_danger": "Ativar o nível de perigo para teste",
+    "tooltip.settings_open": "Abrir as definições do Gewitterradar",
+    "tooltip.compass_north": "Usar a orientação fixa a norte da bússola",
+    "tooltip.card_version": "Versão do cartão"
+  },
+  "Svenska": {
+    "picker.fullscreen_size": "Fullskärmsstorlek",
+    "picker.fullscreen_size_range": "Fullskärmsstorlek från 15 till 300 procent",
+    "picker.custom_size": "Egen storlek",
+    "picker.selection": "Val",
+    "picker.medallion": "Medaljong",
+    "picker.arrow": "Pil",
+    "picker.preview": "Förhandsvisning",
+    "picker.static": "Statisk",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Slå på eller av varningsanimationen över hela skärmen",
+    "tooltip.test_storm": "Aktivera åsknivån som test",
+    "tooltip.test_danger": "Aktivera faronivån som test",
+    "tooltip.settings_open": "Öppna Gewitterradars inställningar",
+    "tooltip.compass_north": "Använd kompassens fasta nordriktning",
+    "tooltip.card_version": "Kortversion"
+  },
+  "Italiano": {
+    "picker.fullscreen_size": "Dimensione a schermo intero",
+    "picker.fullscreen_size_range": "Dimensione a schermo intero dal 15 al 300 percento",
+    "picker.custom_size": "Dimensione personalizzata",
+    "picker.selection": "Selezione",
+    "picker.medallion": "Medaglione",
+    "picker.arrow": "Freccia",
+    "picker.preview": "Anteprima",
+    "picker.static": "Statica",
+    "picker.animation": "Animazione",
+    "tooltip.animation_toggle": "Attiva o disattiva l’animazione di avviso a schermo intero",
+    "tooltip.test_storm": "Attiva il livello temporale per prova",
+    "tooltip.test_danger": "Attiva il livello di pericolo per prova",
+    "tooltip.settings_open": "Apri le impostazioni di Gewitterradar",
+    "tooltip.compass_north": "Usa l’orientamento nord fisso della bussola",
+    "tooltip.card_version": "Versione della scheda"
+  },
+  "Norsk bokmål": {
+    "picker.fullscreen_size": "Fullskjermstørrelse",
+    "picker.fullscreen_size_range": "Fullskjermstørrelse fra 15 til 300 prosent",
+    "picker.custom_size": "Egen størrelse",
+    "picker.selection": "Valg",
+    "picker.medallion": "Medaljong",
+    "picker.arrow": "Pil",
+    "picker.preview": "Forhåndsvisning",
+    "picker.static": "Statisk",
+    "picker.animation": "Animasjon",
+    "tooltip.animation_toggle": "Slå varselanimasjonen over hele skjermen av eller på",
+    "tooltip.test_storm": "Utløs tordenværnivået som test",
+    "tooltip.test_danger": "Utløs farenivået som test",
+    "tooltip.settings_open": "Åpne innstillingene for Gewitterradar",
+    "tooltip.compass_north": "Bruk kompassens faste nordretning",
+    "tooltip.card_version": "Kortversjon"
+  },
+  "Suomi": {
+    "picker.fullscreen_size": "Koko näytön koko",
+    "picker.fullscreen_size_range": "Koko näytön koko 15–300 prosenttia",
+    "picker.custom_size": "Oma koko",
+    "picker.selection": "Valinta",
+    "picker.medallion": "Medaljonki",
+    "picker.arrow": "Nuoli",
+    "picker.preview": "Esikatselu",
+    "picker.static": "Staattinen",
+    "picker.animation": "Animaatio",
+    "tooltip.animation_toggle": "Ota koko näytön varoitusanimaatio käyttöön tai pois käytöstä",
+    "tooltip.test_storm": "Käynnistä ukkostaso testinä",
+    "tooltip.test_danger": "Käynnistä vaarataso testinä",
+    "tooltip.settings_open": "Avaa Gewitterradarin asetukset",
+    "tooltip.compass_north": "Käytä kompassin kiinteää pohjoissuuntaa",
+    "tooltip.card_version": "Kortin versio"
+  },
+  "Čeština": {
+    "picker.fullscreen_size": "Velikost na celou obrazovku",
+    "picker.fullscreen_size_range": "Velikost na celou obrazovku od 15 do 300 procent",
+    "picker.custom_size": "Vlastní velikost",
+    "picker.selection": "Výběr",
+    "picker.medallion": "Medailon",
+    "picker.arrow": "Šipka",
+    "picker.preview": "Náhled",
+    "picker.static": "Statický",
+    "picker.animation": "Animace",
+    "tooltip.animation_toggle": "Zapnout nebo vypnout celoobrazovkovou výstražnou animaci",
+    "tooltip.test_storm": "Zkušebně aktivovat úroveň bouřky",
+    "tooltip.test_danger": "Zkušebně aktivovat úroveň nebezpečí",
+    "tooltip.settings_open": "Otevřít nastavení Gewitterradaru",
+    "tooltip.compass_north": "Použít pevnou severní orientaci kompasu",
+    "tooltip.card_version": "Verze karty"
+  },
+  "Ελληνικά": {
+    "picker.fullscreen_size": "Μέγεθος πλήρους οθόνης",
+    "picker.fullscreen_size_range": "Μέγεθος πλήρους οθόνης από 15 έως 300 τοις εκατό",
+    "picker.custom_size": "Προσαρμοσμένο μέγεθος",
+    "picker.selection": "Επιλογή",
+    "picker.medallion": "Μετάλλιο",
+    "picker.arrow": "Βέλος",
+    "picker.preview": "Προεπισκόπηση",
+    "picker.static": "Στατική",
+    "picker.animation": "Κίνηση",
+    "tooltip.animation_toggle": "Ενεργοποίηση ή απενεργοποίηση της κινούμενης προειδοποίησης πλήρους οθόνης",
+    "tooltip.test_storm": "Δοκιμαστική ενεργοποίηση επιπέδου καταιγίδας",
+    "tooltip.test_danger": "Δοκιμαστική ενεργοποίηση επιπέδου κινδύνου",
+    "tooltip.settings_open": "Άνοιγμα ρυθμίσεων Gewitterradar",
+    "tooltip.compass_north": "Χρήση σταθερού βόρειου προσανατολισμού πυξίδας",
+    "tooltip.card_version": "Έκδοση κάρτας"
+  },
+  "Magyar": {
+    "picker.fullscreen_size": "Teljes képernyős méret",
+    "picker.fullscreen_size_range": "Teljes képernyős méret 15 és 300 százalék között",
+    "picker.custom_size": "Egyéni méret",
+    "picker.selection": "Kiválasztás",
+    "picker.medallion": "Medalion",
+    "picker.arrow": "Nyíl",
+    "picker.preview": "Előnézet",
+    "picker.static": "Álló",
+    "picker.animation": "Animáció",
+    "tooltip.animation_toggle": "A teljes képernyős figyelmeztető animáció be- vagy kikapcsolása",
+    "tooltip.test_storm": "Viharszint próbaindítása",
+    "tooltip.test_danger": "Veszélyszint próbaindítása",
+    "tooltip.settings_open": "A Gewitterradar beállításainak megnyitása",
+    "tooltip.compass_north": "Az iránytű rögzített északi tájolásának használata",
+    "tooltip.card_version": "Kártyaverzió"
+  },
+  "Boarisch": {
+    "picker.fullscreen_size": "Vollbild-Größ",
+    "picker.fullscreen_size_range": "Vollbild-Größ vo 15 bis 300 Prozent",
+    "picker.custom_size": "Eigene Größ",
+    "picker.selection": "Auswahl",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Pfeil",
+    "picker.preview": "Vorschau",
+    "picker.static": "Starr",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Warnanimation über d’ganze Fläch ei- oder ausschalten",
+    "tooltip.test_storm": "Gewitterstuf zum Test auslösen",
+    "tooltip.test_danger": "Gefahrenstuf zum Test auslösen",
+    "tooltip.settings_open": "Gewitterradar-Einstellungen aufmachn",
+    "tooltip.compass_north": "Feste Nordausrichtung vom Kompass verwenden",
+    "tooltip.card_version": "Kartenversion"
+  },
+  "Plattdüütsch": {
+    "picker.fullscreen_size": "Vullbill-Grött",
+    "picker.fullscreen_size_range": "Vullbill-Grött vun 15 bet 300 Prozent",
+    "picker.custom_size": "Egen Grött",
+    "picker.selection": "Utwahl",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Piel",
+    "picker.preview": "Vöransicht",
+    "picker.static": "Fast",
+    "picker.animation": "Animatschoon",
+    "tooltip.animation_toggle": "Warnanimatschoon över de hele Fläch an- oder utmaken",
+    "tooltip.test_storm": "Gewitterstoop för’n Test utlösen",
+    "tooltip.test_danger": "Gefahrenstoop för’n Test utlösen",
+    "tooltip.settings_open": "Gewitterradar-Instellungen opmaken",
+    "tooltip.compass_north": "Faste Noordutrichtung vun’n Kompass bruken",
+    "tooltip.card_version": "Kortverschoon"
+  },
+  "Sächs’sch": {
+    "picker.fullscreen_size": "Vollbild-Größe",
+    "picker.fullscreen_size_range": "Vollbild-Größe von 15 bis 300 Prozent",
+    "picker.custom_size": "Eeschne Größe",
+    "picker.selection": "Auswahl",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Pfeil",
+    "picker.preview": "Vorschau",
+    "picker.static": "Starr",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Warnanimation über de ganze Fläche an- oder ausmachn",
+    "tooltip.test_storm": "Gewidderstufe zum Test auslösen",
+    "tooltip.test_danger": "Gefahrenstufe zum Test auslösen",
+    "tooltip.settings_open": "Gewidderradar-Einstellungen uffmachn",
+    "tooltip.compass_north": "Feste Nordausrichtung vom Kompass nehmn",
+    "tooltip.card_version": "Kartenversion"
+  },
+  "Schwäbisch": {
+    "picker.fullscreen_size": "Vollbild-Größ",
+    "picker.fullscreen_size_range": "Vollbild-Größ von 15 bis 300 Prozent",
+    "picker.custom_size": "Eigene Größ",
+    "picker.selection": "Auswahl",
+    "picker.medallion": "Medaillon",
+    "picker.arrow": "Pfeil",
+    "picker.preview": "Vorschau",
+    "picker.static": "Starr",
+    "picker.animation": "Animation",
+    "tooltip.animation_toggle": "Warnanimation über d’ganze Fläch ei- oder ausschalta",
+    "tooltip.test_storm": "Gewitterstuf zom Test auslösa",
+    "tooltip.test_danger": "Gefahrenstuf zom Test auslösa",
+    "tooltip.settings_open": "Gewitterradar-Einstellunga aufmacha",
+    "tooltip.compass_north": "Feste Nordausrichtung vom Kompass benutza",
+    "tooltip.card_version": "Kartaversion"
+  }
+});
+const V410_HELP_INSTRUMENTS=Object.freeze({
+  "Deutsch": {
+    "title": "Kompass, Medaillon & Pfeile",
+    "intro": "V4.10 erweitert die Instrumente deutlich. Kompass, Medaillon und Pfeil können unabhängig voneinander ausgewählt und an die eigene Darstellung angepasst werden.",
+    "entries": [
+      [
+        "Kompass auswählen",
+        "Auf den Kompass tippen oder klicken, um die Kompassauswahl zu öffnen. Die gewählte Variante bleibt auch bei ausgeschalteten Aura-Effekten erhalten."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
+      ],
+      [
+        "Medaillon auswählen",
+        "Auf das Medaillon tippen oder klicken, um aus 28 Medaillon-Designs auszuwählen."
+      ],
+      [
+        "Pfeil auswählen",
+        "In derselben Auswahl auf „Pfeil“ wechseln. Dort stehen 18 Pfeilvarianten unabhängig vom Medaillon zur Verfügung."
+      ],
+      [
+        "Vollbild-Instrumente",
+        "Kompass und Medaillon lassen sich im Vollbild frei verschieben und in ihrer Größe anpassen."
+      ]
+    ]
+  },
+  "English": {
+    "title": "Compass, Medallion & arrows",
+    "intro": "V4.10 significantly expands the instruments. Compass, Medallion and arrow can be selected independently and adapted to your preferred appearance.",
+    "entries": [
+      [
+        "Choose compass",
+        "Tap or click the compass to open compass selection. The selected variant remains active even when aura effects are disabled."
+      ],
+      [
+        "Aura effects",
+        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
+      ],
+      [
+        "Choose Medallion",
+        "Tap or click the Medallion to choose from 28 Medallion designs."
+      ],
+      [
+        "Choose arrow",
+        "Switch to “Arrow” in the same selection. 18 arrow variants are available independently of the Medallion."
+      ],
+      [
+        "Fullscreen instruments",
+        "Compass and Medallion can be moved freely and resized in fullscreen mode."
+      ]
+    ]
+  },
+  "Dansk": {
+    "title": "Kompas, medaljon & pile",
+    "intro": "V4.10 udvider instrumenterne markant. Kompas, medaljon og pil kan vælges uafhængigt og tilpasses den ønskede visning.",
+    "entries": [
+      [
+        "Vælg kompas",
+        "Tryk eller klik på kompasset for at åbne kompasvalget. Den valgte variant bevares også, når aura-effekter er slået fra."
+      ],
+      [
+        "Aura-effekter",
+        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
+      ],
+      [
+        "Vælg medaljon",
+        "Tryk eller klik på medaljonen for at vælge mellem 28 medaljondesigns."
+      ],
+      [
+        "Vælg pil",
+        "Skift til “Pil” i samme valg. Her findes 18 pilvarianter uafhængigt af medaljonen."
+      ],
+      [
+        "Fuldskærmsinstrumenter",
+        "Kompas og medaljon kan flyttes frit og ændres i størrelse i fuldskærm."
+      ]
+    ]
+  },
+  "Español": {
+    "title": "Brújula, medallón y flechas",
+    "intro": "V4.10 amplía considerablemente los instrumentos. La brújula, el medallón y la flecha pueden seleccionarse de forma independiente y adaptarse a la visualización preferida.",
+    "entries": [
+      [
+        "Elegir brújula",
+        "Toca o haz clic en la brújula para abrir la selección. La variante elegida se mantiene incluso con los efectos de aura desactivados."
+      ],
+      [
+        "Efectos de aura",
+        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
+      ],
+      [
+        "Elegir medallón",
+        "Toca o haz clic en el medallón para elegir entre 28 diseños."
+      ],
+      [
+        "Elegir flecha",
+        "Cambia a “Flecha” en la misma selección. Hay 18 variantes independientes del medallón."
+      ],
+      [
+        "Instrumentos a pantalla completa",
+        "La brújula y el medallón pueden moverse libremente y cambiar de tamaño en pantalla completa."
+      ]
+    ]
+  },
+  "Français": {
+    "title": "Boussole, médaillon et flèches",
+    "intro": "V4.10 enrichit fortement les instruments. La boussole, le médaillon et la flèche peuvent être choisis indépendamment et adaptés à l’affichage souhaité.",
+    "entries": [
+      [
+        "Choisir la boussole",
+        "Touchez ou cliquez sur la boussole pour ouvrir la sélection. La variante choisie reste active même lorsque les effets d’aura sont désactivés."
+      ],
+      [
+        "Effets d’aura",
+        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
+      ],
+      [
+        "Choisir le médaillon",
+        "Touchez ou cliquez sur le médaillon pour choisir parmi 28 designs."
+      ],
+      [
+        "Choisir la flèche",
+        "Passez à « Flèche » dans la même sélection. 18 variantes sont disponibles indépendamment du médaillon."
+      ],
+      [
+        "Instruments plein écran",
+        "La boussole et le médaillon peuvent être déplacés librement et redimensionnés en plein écran."
+      ]
+    ]
+  },
+  "Nederlands": {
+    "title": "Kompas, medaillon & pijlen",
+    "intro": "V4.10 breidt de instrumenten sterk uit. Kompas, medaillon en pijl kunnen onafhankelijk worden gekozen en aan de gewenste weergave worden aangepast.",
+    "entries": [
+      [
+        "Kompas kiezen",
+        "Tik of klik op het kompas om de keuze te openen. De gekozen variant blijft actief wanneer aura-effecten zijn uitgeschakeld."
+      ],
+      [
+        "Aura-effecten",
+        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
+      ],
+      [
+        "Medaillon kiezen",
+        "Tik of klik op het medaillon om uit 28 ontwerpen te kiezen."
+      ],
+      [
+        "Pijl kiezen",
+        "Schakel in dezelfde keuze naar “Pijl”. Er zijn 18 pijlvarianten onafhankelijk van het medaillon."
+      ],
+      [
+        "Volledig-scherminstrumenten",
+        "Kompas en medaillon kunnen in volledig scherm vrij worden verplaatst en van grootte worden veranderd."
+      ]
+    ]
+  },
+  "Polski": {
+    "title": "Kompas, medalion i strzałki",
+    "intro": "V4.10 znacznie rozbudowuje instrumenty. Kompas, medalion i strzałkę można wybierać niezależnie i dopasować do preferowanego wyglądu.",
+    "entries": [
+      [
+        "Wybór kompasu",
+        "Dotknij lub kliknij kompas, aby otworzyć wybór. Wybrany wariant pozostaje aktywny także po wyłączeniu efektów aury."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
+      ],
+      [
+        "Wybór medalionu",
+        "Dotknij lub kliknij medalion, aby wybrać jeden z 28 wzorów."
+      ],
+      [
+        "Wybór strzałki",
+        "W tym samym oknie przełącz na „Strzałka”. Dostępnych jest 18 wariantów niezależnych od medalionu."
+      ],
+      [
+        "Instrumenty pełnoekranowe",
+        "Kompas i medalion można swobodnie przesuwać i skalować w trybie pełnoekranowym."
+      ]
+    ]
+  },
+  "Português": {
+    "title": "Bússola, medalhão e setas",
+    "intro": "A V4.10 amplia significativamente os instrumentos. Bússola, medalhão e seta podem ser escolhidos de forma independente e adaptados à apresentação pretendida.",
+    "entries": [
+      [
+        "Escolher bússola",
+        "Toque ou clique na bússola para abrir a seleção. A variante escolhida mantém-se ativa mesmo com os efeitos de aura desligados."
+      ],
+      [
+        "Efeitos de aura",
+        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
+      ],
+      [
+        "Escolher medalhão",
+        "Toque ou clique no medalhão para escolher entre 28 designs."
+      ],
+      [
+        "Escolher seta",
+        "Na mesma seleção, mude para “Seta”. Existem 18 variantes independentes do medalhão."
+      ],
+      [
+        "Instrumentos em ecrã inteiro",
+        "A bússola e o medalhão podem ser movidos livremente e redimensionados em ecrã inteiro."
+      ]
+    ]
+  },
+  "Svenska": {
+    "title": "Kompass, medaljong & pilar",
+    "intro": "V4.10 bygger ut instrumenten rejält. Kompass, medaljong och pil kan väljas oberoende och anpassas till önskat utseende.",
+    "entries": [
+      [
+        "Välj kompass",
+        "Tryck eller klicka på kompassen för att öppna valet. Den valda varianten behålls även när auraeffekter är avstängda."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
+      ],
+      [
+        "Välj medaljong",
+        "Tryck eller klicka på medaljongen för att välja bland 28 designer."
+      ],
+      [
+        "Välj pil",
+        "Byt till “Pil” i samma val. Det finns 18 pilvarianter oberoende av medaljongen."
+      ],
+      [
+        "Fullskärmsinstrument",
+        "Kompass och medaljong kan flyttas fritt och ändras i storlek i fullskärm."
+      ]
+    ]
+  },
+  "Italiano": {
+    "title": "Bussola, medaglione e frecce",
+    "intro": "V4.10 amplia notevolmente gli strumenti. Bussola, medaglione e freccia possono essere selezionati in modo indipendente e adattati alla visualizzazione preferita.",
+    "entries": [
+      [
+        "Scegliere la bussola",
+        "Tocca o fai clic sulla bussola per aprire la selezione. La variante scelta rimane attiva anche quando gli effetti aura sono disattivati."
+      ],
+      [
+        "Effetti aura",
+        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
+      ],
+      [
+        "Scegliere il medaglione",
+        "Tocca o fai clic sul medaglione per scegliere tra 28 design."
+      ],
+      [
+        "Scegliere la freccia",
+        "Nella stessa selezione passa a “Freccia”. Sono disponibili 18 varianti indipendenti dal medaglione."
+      ],
+      [
+        "Strumenti a schermo intero",
+        "Bussola e medaglione possono essere spostati liberamente e ridimensionati a schermo intero."
+      ]
+    ]
+  },
+  "Norsk bokmål": {
+    "title": "Kompass, medaljong og piler",
+    "intro": "V4.10 utvider instrumentene betydelig. Kompass, medaljong og pil kan velges uavhengig og tilpasses ønsket visning.",
+    "entries": [
+      [
+        "Velg kompass",
+        "Trykk eller klikk på kompasset for å åpne valget. Den valgte varianten beholdes også når auraeffekter er slått av."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
+      ],
+      [
+        "Velg medaljong",
+        "Trykk eller klikk på medaljongen for å velge mellom 28 design."
+      ],
+      [
+        "Velg pil",
+        "Bytt til “Pil” i samme valg. Her finnes 18 varianter uavhengig av medaljongen."
+      ],
+      [
+        "Fullskjermsinstrumenter",
+        "Kompass og medaljong kan flyttes fritt og endres i størrelse i fullskjerm."
+      ]
+    ]
+  },
+  "Suomi": {
+    "title": "Kompassi, medaljonki ja nuolet",
+    "intro": "V4.10 laajentaa instrumentteja merkittävästi. Kompassi, medaljonki ja nuoli voidaan valita toisistaan riippumatta ja mukauttaa haluttuun ulkoasuun.",
+    "entries": [
+      [
+        "Valitse kompassi",
+        "Napauta tai napsauta kompassia avataksesi valinnan. Valittu vaihtoehto säilyy myös auraefektien ollessa pois käytöstä."
+      ],
+      [
+        "Auraefektit",
+        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
+      ],
+      [
+        "Valitse medaljonki",
+        "Napauta tai napsauta medaljonkia valitaksesi 28 mallista."
+      ],
+      [
+        "Valitse nuoli",
+        "Vaihda samassa valinnassa kohtaan “Nuoli”. Saatavilla on 18 medaljongista riippumatonta vaihtoehtoa."
+      ],
+      [
+        "Koko näytön instrumentit",
+        "Kompassia ja medaljonkia voi siirtää vapaasti ja niiden kokoa voi muuttaa koko näytön tilassa."
+      ]
+    ]
+  },
+  "Čeština": {
+    "title": "Kompas, medailon a šipky",
+    "intro": "V4.10 výrazně rozšiřuje nástroje. Kompas, medailon a šipku lze vybírat nezávisle a přizpůsobit požadovanému vzhledu.",
+    "entries": [
+      [
+        "Výběr kompasu",
+        "Klepněte nebo klikněte na kompas a otevřete výběr. Zvolená varianta zůstane aktivní i při vypnutých efektech aury."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
+      ],
+      [
+        "Výběr medailonu",
+        "Klepněte nebo klikněte na medailon a vyberte z 28 designů."
+      ],
+      [
+        "Výběr šipky",
+        "Ve stejném výběru přepněte na „Šipka“. K dispozici je 18 variant nezávislých na medailonu."
+      ],
+      [
+        "Nástroje na celou obrazovku",
+        "Kompas a medailon lze v režimu celé obrazovky volně přesouvat a měnit jejich velikost."
+      ]
+    ]
+  },
+  "Ελληνικά": {
+    "title": "Πυξίδα, μετάλλιο και βέλη",
+    "intro": "Η V4.10 επεκτείνει σημαντικά τα όργανα. Η πυξίδα, το μετάλλιο και το βέλος μπορούν να επιλέγονται ανεξάρτητα και να προσαρμόζονται στην επιθυμητή εμφάνιση.",
+    "entries": [
+      [
+        "Επιλογή πυξίδας",
+        "Πατήστε ή κάντε κλικ στην πυξίδα για να ανοίξετε την επιλογή. Η επιλεγμένη παραλλαγή παραμένει ενεργή ακόμη και όταν τα εφέ αύρας είναι απενεργοποιημένα."
+      ],
+      [
+        "Εφέ αύρας",
+        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
+      ],
+      [
+        "Επιλογή μεταλλίου",
+        "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε ανάμεσα σε 28 σχέδια."
+      ],
+      [
+        "Επιλογή βέλους",
+        "Στην ίδια επιλογή μεταβείτε στο «Βέλος». Υπάρχουν 18 παραλλαγές ανεξάρτητες από το μετάλλιο."
+      ],
+      [
+        "Όργανα πλήρους οθόνης",
+        "Η πυξίδα και το μετάλλιο μπορούν να μετακινούνται ελεύθερα και να αλλάζουν μέγεθος σε πλήρη οθόνη."
+      ]
+    ]
+  },
+  "Magyar": {
+    "title": "Iránytű, medalion és nyilak",
+    "intro": "A V4.10 jelentősen kibővíti a műszereket. Az iránytű, a medalion és a nyíl egymástól függetlenül választható és a kívánt megjelenéshez igazítható.",
+    "entries": [
+      [
+        "Iránytű kiválasztása",
+        "Koppints vagy kattints az iránytűre a választó megnyitásához. A kiválasztott változat az auraeffektek kikapcsolásakor is megmarad."
+      ],
+      [
+        "Auraeffektek",
+        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
+      ],
+      [
+        "Medalion kiválasztása",
+        "Koppints vagy kattints a medalionra, és válassz a 28 dizájn közül."
+      ],
+      [
+        "Nyíl kiválasztása",
+        "Ugyanebben a választóban válts a „Nyíl” módra. 18, a medaliontól független változat érhető el."
+      ],
+      [
+        "Teljes képernyős műszerek",
+        "Az iránytű és a medalion teljes képernyőn szabadon mozgatható és átméretezhető."
+      ]
+    ]
+  },
+  "Boarisch": {
+    "title": "Kompass, Medaillon & Pfeile",
+    "intro": "V4.10 baut d’Instrumente deutlich aus. Kompass, Medaillon und Pfeil lassen si unabhängig voneinander auswählen und an d’eigene Darstellung anpassen.",
+    "entries": [
+      [
+        "Kompass auswählen",
+        "Auf’n Kompass tippen oder klicken, dann geht d’Kompassauswahl auf. Die gewählte Variante bleibt aa bei ausgeschalteter Aura erhalten."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
+      ],
+      [
+        "Medaillon auswählen",
+        "Aufs Medaillon tippen oder klicken und aus 28 Designs auswählen."
+      ],
+      [
+        "Pfeil auswählen",
+        "In derselben Auswahl auf „Pfeil“ wechseln. Dort gibt’s 18 Varianten unabhängig vom Medaillon."
+      ],
+      [
+        "Vollbild-Instrumente",
+        "Kompass und Medaillon lassen si im Vollbild frei verschieben und in da Größe ändern."
+      ]
+    ]
+  },
+  "Plattdüütsch": {
+    "title": "Kompass, Medaillon & Pielen",
+    "intro": "V4.10 boot de Instrumenten düchtig ut. Kompass, Medaillon un Piel köönt unabhängig utwählt un an de egen Dorstellen anpasst warrn.",
+    "entries": [
+      [
+        "Kompass utwählen",
+        "Op den Kompass tippen oder klicken, üm de Utwahl optomaken. De utsöchte Variant blifft ok bi utmaakte Aura-Effekten aktiv."
+      ],
+      [
+        "Aura-Effekten",
+        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
+      ],
+      [
+        "Medaillon utwählen",
+        "Op dat Medaillon tippen oder klicken un ut 28 Designs wählen."
+      ],
+      [
+        "Piel utwählen",
+        "In de sülvige Utwahl op „Piel“ wesseln. Dor gifft dat 18 Varianten, unabhängig vun’t Medaillon."
+      ],
+      [
+        "Vullbill-Instrumenten",
+        "Kompass un Medaillon köönt in Vullbill free verschaven un in de Grött anpasst warrn."
+      ]
+    ]
+  },
+  "Sächs’sch": {
+    "title": "Kompass, Medaillon & Pfeile",
+    "intro": "V4.10 baut de Instrumente deutlich aus. Kompass, Medaillon und Pfeil könn unabhängig voneinander ausgewählt und an de eigene Darstellung angepasst werdn.",
+    "entries": [
+      [
+        "Kompass auswählen",
+        "Uff’n Kompass tippen oder klicken, um de Kompassauswahl zu öffn. Die gewählte Variante bleibt ooch bei ausgeschalteter Aura erhalten."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
+      ],
+      [
+        "Medaillon auswählen",
+        "Uffs Medaillon tippen oder klicken und aus 28 Designs auswählen."
+      ],
+      [
+        "Pfeil auswählen",
+        "In derselben Auswahl uff „Pfeil“ wechseln. Dort gibt’s 18 Varianten unabhängig vom Medaillon."
+      ],
+      [
+        "Vollbild-Instrumente",
+        "Kompass und Medaillon könn im Vollbild frei verschoben und in de Größe angepasst werdn."
+      ]
+    ]
+  },
+  "Schwäbisch": {
+    "title": "Kompass, Medaillon & Pfeile",
+    "intro": "V4.10 baut d’Instrumente deutlich aus. Kompass, Medaillon ond Pfeil könnet unabhängig voneinander ausgewählt ond an d’eigene Darstellung angepasst werda.",
+    "entries": [
+      [
+        "Kompass auswählen",
+        "Auf dr Kompass tippa oder klicka, dann goht d’Kompassauswahl auf. D’gewählte Variante bleibt au bei ausgeschalteter Aura erhalten."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
+      ],
+      [
+        "Medaillon auswählen",
+        "Aufs Medaillon tippa oder klicka ond aus 28 Designs auswähla."
+      ],
+      [
+        "Pfeil auswählen",
+        "In dr gleiche Auswahl auf „Pfeil“ wechsla. Do gibt’s 18 Varianten unabhängig vom Medaillon."
+      ],
+      [
+        "Vollbild-Instrumente",
+        "Kompass ond Medaillon könnet im Vollbild frei verschoba ond in dr Größe angepasst werda."
+      ]
+    ]
+  }
+});
+
 export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _languageEntity() {
       return this._resolveSettingEntity('language',this._config.language_entity);
@@ -1300,10 +2122,12 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const table = I18N[language]?.strings || fallback;
       const extraFallback = SETTINGS_UI_TRANSLATIONS[LANGUAGE_DEFAULT] || SETTINGS_UI_TRANSLATIONS.English || {};
       const extra = SETTINGS_UI_TRANSLATIONS[language] || extraFallback;
+      const v410Fallback = V410_UI_TRANSLATIONS[LANGUAGE_DEFAULT] || V410_UI_TRANSLATIONS.English || {};
+      const v410 = V410_UI_TRANSLATIONS[language] || v410Fallback;
       const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
       let text = aboutKey
         ? resolveAboutLocale(language).strings[aboutKey] ?? key
-        : extra[key] ?? table[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
+        : v410[key] ?? extra[key] ?? table[key] ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
       return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
         Object.prototype.hasOwnProperty.call(vars,name) ? String(vars[name]) : `{${name}}`
       );
@@ -1407,6 +2231,32 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           if (key) el.setAttribute(attr,this._t(key));
         });
       });
+      this._syncV410Tooltips();
+    },
+
+    _syncV410Tooltips() {
+      if (!this.shadow) return;
+      const set = (id,key,{aria=true}={}) => {
+        const el=this.shadow.getElementById(id);if(!el)return;
+        const value=this._t(key);el.setAttribute('title',value);
+        if(aria)el.setAttribute('aria-label',value);
+      };
+      set('animation-toggle','tooltip.animation_toggle');
+      ['warning-test-top-storm','warning-test-map-storm','warning-test-history-storm','warning-test-compass-storm'].forEach((id)=>set(id,'tooltip.test_storm'));
+      ['warning-test-top-danger','warning-test-map-danger','warning-test-history-danger','warning-test-compass-danger'].forEach((id)=>set(id,'tooltip.test_danger'));
+      set('settings-open','tooltip.settings_open');
+      set('device-toggle','tooltip.compass_north');
+      set('settings-cluster-jump-infinite','settings.cluster_navigation_infinite');
+      const footer=this.shadow.querySelector('.settings-footer-version');
+      if(footer)footer.setAttribute('title',this._t('tooltip.card_version'));
+    },
+
+    _helpWithV410(language,help) {
+      const addition=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
+      if(!addition||!help)return help;
+      const sections=Array.isArray(help.sections)?help.sections:[];
+      if(sections.some((section)=>section?.key==='instruments-v410'))return help;
+      return {...help,sections:[...sections,{key:'instruments-v410',title:addition.title,paragraphs:[addition.intro],entries:addition.entries}]};
     },
 
     _resolveSettingEntity(key,configured) {
@@ -1585,14 +2435,14 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
     _syncHelp() {
       const dialog=this._helpDialog;
       if(!dialog)return;
-      const language=this._languageValue(),locale=resolveAboutLocale(language),help=locale.help;
+      const language=this._languageValue(),locale=resolveAboutLocale(language),help=this._helpWithV410(language,locale.help);
       dialog.querySelector('h2').textContent=help.title;
       dialog.querySelector('.help-subtitle').textContent=help.subtitle;
       dialog.querySelector('.help-close').setAttribute('aria-label',help.close);
       if(this._helpLocale!==help){
         const content=dialog.querySelector('.help-content'),openKeys=new Set([...content.querySelectorAll('details[open]')].map(node=>node.dataset.helpSection)),scrollTop=content.scrollTop;
         content.textContent='';
-        const icons={prerequisites:'⌂',radii:'◎',location:'⌖',mapview:'▱',functions:'⚙',defaults:'✓',troubleshooting:'!',recorder:'▤'};
+        const icons={prerequisites:'⌂',radii:'◎',location:'⌖',mapview:'▱',functions:'⚙','instruments-v410':'◆',defaults:'✓',troubleshooting:'!',recorder:'▤'};
         /* Deterministic Help icons remove platform font-baseline drift on iPad/iPad Pro. */
         const premiumFunctionsIcon='<svg class="help-functions-welcome-gear" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><defs><linearGradient id="help-functions-welcome-metal" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".62" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><g stroke="url(#help-functions-welcome-metal)"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/><circle cx="32" cy="32" r="17" opacity=".25"/></g></svg>';
         const deterministicHelpIcons={prerequisites:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 10.5 12 3.5l8.5 7v9h-6v-5h-5v5h-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>',radii:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.7" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.25" fill="currentColor"/></svg>',location:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.8v4M12 17.2v4M2.8 12h4M17.2 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',functions:premiumFunctionsIcon,defaults:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.8 12.5 4.2 4.2 10.2-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',troubleshooting:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4.3v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="18.4" r="1.35" fill="currentColor"/></svg>',external_services:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.8c2.25 1.76 4.62 2.75 7.35 3.06v5.25c0 4.72-2.88 8.27-7.35 10.09-4.47-1.82-7.35-5.37-7.35-10.09V5.86C7.38 5.55 9.75 4.56 12 2.8Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><rect x="7.7" y="7.55" width="8.6" height="8.15" rx="1" fill="none" stroke="currentColor" stroke-width="1.45"/><path d="M9.35 9v1.55M10.7 9v1.55M12 9v1.55M13.3 9v1.55M14.65 9v1.55M9.1 11.7h5.8v2.05h-1.35v1.05h-3.1v-1.05H9.1Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',recorder:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3.8" width="14" height="16.4" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h8M8 12h8M8 16h8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'};
