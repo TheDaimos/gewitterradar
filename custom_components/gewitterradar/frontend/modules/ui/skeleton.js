@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -4401,14 +4401,26 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             border-left:1px solid rgba(255,255,255,.055);
             position:relative;
           }
-          /* R30 – iPad/WebKit: ein Tap auf die klickbare Tendenz darf keinen
-             systemblauen Fokus-/Tap-Ring um das Medaillon hinterlassen. Auf
-             Tastatur-/Desktop-Geraeten bleiben normale Fokuspfade unberuehrt. */
+          /* R31 – iPad/WebKit: Tap-/Focus-Ring an der klickbaren Tendenz
+             konsequent unterdruecken. Die iPad-Erkennung ist absichtlich
+             klassenbasiert, weil Safari mit Trackpad/Pointer nicht immer
+             (hover:none)/(pointer:coarse) meldet. */
           #trend-box,
           #trend-box .trend-icon,
           #trend-box .trend-medallion-base,
           #trend-box .trend-medallion-arrow {
             -webkit-tap-highlight-color:transparent;
+          }
+          #card-root.ipad-device #trend-box,
+          #card-root.ipad-device #trend-box:focus,
+          #card-root.ipad-device #trend-box:focus-visible,
+          #card-root.ipad-device #trend-icon,
+          #card-root.ipad-device #trend-icon:focus,
+          #card-root.ipad-device #trend-icon:focus-visible {
+            outline:none!important;
+            box-shadow:none!important;
+            -webkit-tap-highlight-color:transparent!important;
+            -webkit-focus-ring-color:transparent!important;
           }
           @media (hover:none) and (pointer:coarse) {
             #trend-box:focus,
@@ -4417,6 +4429,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #trend-box .trend-icon:focus-visible {
               outline:none!important;
               box-shadow:none!important;
+              -webkit-tap-highlight-color:transparent!important;
             }
           }
           .trend::before {
