@@ -1,5 +1,14 @@
 # Changelog
 
+## V4.10.02 DEV – Modularisierungs-Schlachtplan offiziell abgeschlossen (2026-09-29)
+
+- Nutzer hat den Gewitterradar-V4.10.02-Modularisierungs-Schlachtplan ausdrücklich als **offiziell abgeschlossen** erklärt.
+- R31 bleibt der vollständig geprüfte technische DEV-Kandidat mit 5/5 zentralen CI-Prüfungen.
+- iPad-Focus-/Tap-Ring-Fix real bestanden.
+- ältere, durch spätere Schleifen überholte offene Zwischen-Checkboxen gelten nicht mehr als aktive Restarbeiten.
+- neue Arbeiten beginnen als neuer separater Arbeitsblock.
+- kein Merge nach `main`, keine Veröffentlichung und kein Release durch diesen Abschluss ausgelöst.
+
 ## V4.10.02 DEV R31 – iPad Trend-Fokusrahmen + Shared-Frontend-Vertrag (2026-09-29)
 
 - iPad/WebKit-Fokus-/Tap-Artefakt an der Trendanzeige bereits in R31 produktiv korrigiert; keine erneute Ursachenanalyse oder Änderung der abgenommenen Medaillon-/Pfeil-Logik.
