@@ -97,7 +97,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
