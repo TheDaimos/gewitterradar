@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.6"',
+  '"version": "1.1.7"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
