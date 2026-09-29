@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -6504,13 +6504,6 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
                 <div class="panel compass-panel">
                   <div class="compass-head">
-                    <div class="compass-design-switch compass-design-left" id="compass-design-selector" role="group" aria-label="Kompassvariante">
-                      <img class="compass-selector-frame-image" id="compass-selector-frame-image" alt="" aria-hidden="true">
-                      <button class="compass-design-button" id="compass-design-prev" type="button" title="Vorherige Kompassvariante" aria-label="Vorherige Kompassvariante"><span class="compass-design-fallback-arrow" aria-hidden="true">◀</span></button>
-                      <output class="compass-design-index" id="compass-design-index" aria-live="polite">1 / 6</output>
-                      <button class="compass-design-button" id="compass-design-next" type="button" title="Nächste Kompassvariante" aria-label="Nächste Kompassvariante"><span class="compass-design-fallback-arrow" aria-hidden="true">▶</span></button>
-                    </div>
-
                     <div class="compass-actions">
                       <button class="warning-test-mini storm-test" id="warning-test-compass-storm" type="button"
                               data-warning-test="storm"
@@ -7125,15 +7118,6 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                     <button class="settings-switch" id="settings-animation-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Warnanimation ein oder aus"></button>
                   </div>
-                  <div class="settings-row" id="settings-selector-design-row">
-                    <div class="settings-row-label" data-selector-design-label>Selector-Design</div>
-                    <div class="compass-design-switch settings-selector-preview" id="settings-selector-preview" role="group" aria-label="Selector-Design">
-                      <img class="compass-selector-frame-image" id="settings-selector-frame-image" alt="" aria-hidden="true">
-                      <button class="compass-design-button" id="selector-frame-prev" type="button" aria-label="Vorheriges Selector-Design"><span class="compass-design-fallback-arrow" aria-hidden="true">◀</span></button>
-                      <output class="compass-design-index" id="selector-frame-index" aria-live="polite">2 / 6</output>
-                      <button class="compass-design-button" id="selector-frame-next" type="button" aria-label="Nächstes Selector-Design"><span class="compass-design-fallback-arrow" aria-hidden="true">▶</span></button>
-                    </div>
-                  </div>
                 </div>
               </details>
 
@@ -7443,7 +7427,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.10 · 2026/09</div>
                   <h3>From monolith to modular Gewitterradar</h3>
-                  <p>V4.10 rebuilds the foundation of Gewitterradar without turning the familiar interface upside down. The historically grown frontend was split into clearly defined ES modules with their own identities and versions, while the stable entry point and the synchronized Native Integration/Dashboard delivery model remain intact. This makes individual functions easier to isolate, test, diagnose and evolve without having to touch the entire application for every change. At the same time, the instrument layer grew substantially: Compass and Medallion became independently selectable, movable and scalable fullscreen instruments; the Medallion catalogue expanded to 28 designs and 18 arrow variants, backed by a measured 504-combination geometry and fit matrix. Dedicated diagnostic tools, module/version visibility, stricter regression contracts and DRA-based deployment and rollback turn the modularization into more than a code cleanup: V4.10 creates the technical foundation on which the next major capabilities of Gewitterradar can be built safely.</p>
+                  <p>In only a few months, Gewitterradar has grown enormously in functionality. V4.10 therefore makes a major change under the hood: the rapidly growing frontend was transformed from a monolith into a clearly structured modular architecture with independent functional building blocks. The former monolith was split into <strong>23 clearly separated modules</strong>. Each module has its own identity and version, allowing individual areas to be developed, tested and diagnosed much more precisely without having to touch large parts of the application for every change.</p>
+                  <p><strong>Further interface and usability improvements:</strong> Compass and Medallion have evolved into independent instruments with their own selection, new designs and improved controls. Both can be positioned freely and resized in fullscreen mode. Settings and diagnostics have been structured more clearly, operation on desktop, iPad and Android has been further harmonized, and numerous details from tooltips to pop-ups and instrument controls have been refined. With the expanded compass selection plus 28 Medallion designs and 18 arrow variants, Gewitterradar can also be adapted much more closely to personal preferences.</p>
+                  <p>V4.10 therefore changes more than Gewitterradar itself – it changes how Gewitterradar can be developed from now on.</p>
                 </article>
 
                 <article class="release-history-entry">
@@ -7544,7 +7530,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <article class="release-history-entry">
                   <div class="release-history-version">V4.10 · 2026/09</div>
                   <h3>Vom Monolithen zum modularen Gewitterradar</h3>
-                  <p>V4.10 baut das Fundament von Gewitterradar grundlegend neu auf, ohne die vertraute Oberfläche auf den Kopf zu stellen. Aus dem über Jahre gewachsenen großen Frontend wurde ein klar gegliederter Verbund eigenständiger ES-Module mit eigener Identität und Versionierung; der stabile Einstiegspunkt sowie die synchronen Auslieferungswege als native Integration und Dashboard bleiben dabei erhalten. Funktionen lassen sich dadurch gezielter isolieren, prüfen, diagnostizieren und weiterentwickeln, ohne für jede Änderung das gesamte Gewitterradar anfassen zu müssen. Gleichzeitig ist die Instrumentenebene deutlich gewachsen: Kompass und Medaillon wurden zu eigenständig auswählbaren, verschiebbaren und skalierbaren Vollbild-Instrumenten; der Medaillon-Katalog umfasst inzwischen 28 Designs und 18 Pfeilvarianten, abgesichert durch eine vermessene Geometrie- und Fit-Matrix mit 504 Kombinationen. Eigene Diagnosewerkzeuge, sichtbare Modul- und Versionsstände, strengere Regressionstests sowie Bereitstellung und Rückfall über DRA machen die Modularisierung deshalb zu weit mehr als einer Aufräumaktion im Quellcode: V4.10 schafft das technische Fundament, auf dem die nächsten großen Fähigkeiten von Gewitterradar kontrolliert weiterwachsen können.</p>
+                  <p>In nur wenigen Monaten ist Gewitterradar funktional enorm gewachsen. V4.10 zieht daraus unter der Haube die Konsequenz: Aus dem schnell gewachsenen Frontend wurde eine klar gegliederte modulare Architektur mit eigenständigen Funktionsbausteinen. Der bisherige Monolith wurde dabei in <strong>23 klar abgegrenzte Module</strong> aufgeteilt. Jedes Modul besitzt eine eigene Identität und Versionierung und kann dadurch gezielter weiterentwickelt, geprüft und diagnostiziert werden. Änderungen an einzelnen Bereichen lassen sich so wesentlich sauberer durchführen, ohne für jede Anpassung große Teile der Anwendung gleichzeitig anfassen zu müssen.</p>
+                  <p><strong>Weitere Verbesserungen an Oberfläche und Bedienung:</strong> Kompass und Medaillon wurden zu eigenständigen Instrumenten mit eigener Auswahl, neuen Designs und verbesserten Bedienmöglichkeiten. Beide lassen sich im Vollbild frei positionieren und in ihrer Größe anpassen. Einstellungen und Diagnosebereiche wurden übersichtlicher strukturiert, die Bedienung auf Desktop, iPad und Android weiter vereinheitlicht und zahlreiche kleinere Details – von Mouse-over-Texten über Pop-ups bis zu Instrumentsteuerungen – überarbeitet. Mit der erweiterten Kompassauswahl sowie 28 Medaillon-Designs und 18 Pfeilvarianten lässt sich Gewitterradar zudem stärker an den eigenen Geschmack anpassen.</p>
+                  <p>V4.10 verändert damit nicht nur Gewitterradar – es verändert, wie Gewitterradar künftig weiterentwickelt werden kann.</p>
                 </article>
 
                 <article class="release-history-entry">
