@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** R27 – Vollbild-Drag gegen Blitz-/Render-Synchronisierung geschützt; Vorschau-Umschalter nach unten verschoben und Glow deutlich weißer; technische CI 5/5 grün; `deploy/dev` exakt auf R27; reale DRA-/HA-Abnahme offen  
+> **Status:** R31 – iPad Trend-Fokus-/Tap-Ring korrigiert; veralteter Shared-Frontend-Vertrag auf `ui.skeleton 1.1.7` nachgezogen; technische CI 5/5 grün; `deploy/dev` exakt auf R31-Kandidat; reale DRA-/iPad-Abnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,38 +38,32 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R27 aus `deploy/dev` per DRA installieren und den Drag-Schutz unter echten Blitzereignissen sowie die neue Vorschauoptik real abnehmen.**
+**R31 aus `deploy/dev` per DRA installieren und den iPad-Focus-Ring-Fix real abnehmen.**
 
 Technisch abgeschlossen:
-- Lokations-Pille während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
-- Kompass während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
-- Trend/Medaillon während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
-- Positionsfunktionen brechen bei aktivem Drag-Zustand ab und dürfen die Live-Position nicht mit dem gespeicherten Ausgangswert überschreiben,
-- neue Position wird weiterhin erst am Drag-Ende normalisiert und persistiert,
-- Vorschau-Umschalter **Starr / Animation** unterhalb der aktiven Chevron-Navigation angeordnet,
-- Vorschau-Umschalter optisch kompakter und sekundärer gestaltet,
-- Glow deutlich weißer: nahezu weißer Kern, warmweiße Mitte, nur minimal warmer Außenanteil,
-- Produktkalibrierung, Vorschauverhalten und Vollbild-Größensteuerung bleiben erhalten,
-- Build `V4.10.02-MODULAR-DEV-R27-2026-09-29`,
-- Feature-Cache `41002r27`, Runtime-Cache `41002r13`,
-- Modulsatz `D31A-5E97`,
-- `core.manifest 1.2.33`,
-- `fullscreen.map-display 1.0.25`,
-- finaler technischer Kandidat `64b8805a661b7f7e7212fc1017ed1ece58cfe98c`,
-- **5/5 zentrale CI-Prüfungen grün**,
-- `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
+- iPad/WebKit-Fokus-/Tap-Umrandung der Trendanzeige in R31 korrigiert,
+- `ui.skeleton 1.1.7` aktiv,
+- Touch-Fokus wird vor Picker-Öffnung entfernt und auf groben Touch-Geräten beim Schließen nicht künstlich wiederhergestellt,
+- veralteter Shared-Frontend-Testvertrag von `"version": "1.1.6"` auf `"version": "1.1.7"` aktualisiert,
+- vollständige zentrale CI für Kandidat `e2040a4afffa04da87d8cc4421becac7576217a7`: **5/5 grün**,
+- `deploy/dev` auf exakt diesen Kandidaten fast-forward-promotet,
+- Compare Kandidat ↔ `deploy/dev`: **identical**, 0 voraus / 0 zurück,
+- Build `V4.10.02-MODULAR-DEV-R31-2026-09-29`,
+- Feature-Cache `41002r31`, Runtime-Cache `41002r13`,
+- Modulsatz `D31A-5E9B`,
+- `core.manifest 1.2.37`,
+- `fullscreen.map-display 1.0.29`,
+- `ui.skeleton 1.1.7`,
+- `diagnostics.cockpit 1.5.1`.
 
-Reale R27-Abnahme:
-- [ ] R27 per DRA installieren.
-- [ ] Frontend vollständig neu laden.
-- [ ] bei laufenden Blitzereignissen Lokations-Pille ziehen; kein Rücksprung während des Drags.
-- [ ] bei laufenden Blitzereignissen Kompass ziehen; kein Rücksprung während des Drags.
-- [ ] bei laufenden Blitzereignissen Trend/Medaillon ziehen; kein Rücksprung während des Drags.
-- [ ] nach Drag-Ende Position persistiert und bei folgenden Blitzereignissen stabil.
-- [ ] Vorschau-Umschalter unterhalb der Chevron-Navigation prüfen.
-- [ ] Starr- und Animationsmodus erneut prüfen.
-- [ ] weißeren Glow auf Desktop, iPad und Android/HA Companion bewerten.
-- [ ] Cluster-Jump / Infinity bleibt separates älteres Abschlussgate.
+Reale R31-Abnahme:
+- [ ] R31 per DRA installieren.
+- [ ] Frontend auf dem iPad vollständig neu laden.
+- [ ] einmal auf die Trendanzeige tippen; kein blauer Fokus-/Tap-Rahmen bleibt sichtbar.
+- [ ] Medaillon-/Pfeil-Popup öffnen und schließen; Fokusrahmen darf nicht zurückkehren.
+- [ ] Kompass unverändert gegenprüfen.
+- [ ] Desktop und Android/HA Companion kurz auf Regressionen prüfen.
+- [ ] erst nach realer Nutzerbestätigung R31 als geräteseitig abgenommen markieren.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
 ---
@@ -3266,3 +3260,26 @@ Rückführung:
 - [ ] reale Sichtabnahme des weißeren Halos und der neuen Vorschauposition.
 
 **NÄCHSTER SCHRITT:** R27 aus `deploy/dev` installieren, Frontend vollständig neu laden und während realer Blitzereignisse alle drei verschiebbaren Vollbildinstrumente bewegen.
+
+
+---
+
+## Schleife R31 – iPad Trend-Focus-Ring + Shared-Frontend-Vertrag (2026-09-29)
+
+- [x] iPad-Fehler mit blauer Fokus-/Tap-Umrandung der Trendanzeige in R31 implementativ korrigiert.
+- [x] `ui.skeleton` auf **1.1.7** angehoben und WebKit/Tap-/Focus-Regeln für Trendanzeige geschützt.
+- [x] Touch-Fokusbehandlung in `fullscreen.map-display` ergänzt, ohne Kompass-/Medaillon-Produktlogik zurückzubauen.
+- [x] Frontend, native Integration und Dashboard-Ausleitung synchronisiert.
+- [x] Build `V4.10.02-MODULAR-DEV-R31-2026-09-29`, Feature-Cache `41002r31`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E9B`.
+- [x] verbleibenden CI-Fehler auf veralteten Testvertrag in `scripts/verify-frontend.mjs` eingegrenzt.
+- [x] erwartete Skeleton-Version von **1.1.6** auf **1.1.7** korrigiert; keine Produktlogik dafür verändert.
+- [x] finaler technischer Kandidat `e2040a4afffa04da87d8cc4421becac7576217a7` mit **5/5 zentralen CI-Prüfungen grün**.
+- [x] `deploy/dev` exakt auf diesen Kandidaten promotet.
+- [x] Kandidat ↔ `deploy/dev` als **identical** verifiziert (0 voraus / 0 zurück).
+- [x] Changelog und Schlachtplan auf den finalen technischen R31-Stand nachgezogen.
+- [ ] reale R31-Abnahme über DRA auf iPad.
+- [ ] Desktop und Android/HA Companion als kurze Regression-Gegenprobe real bestätigen.
+
+**R31-Abnahmeregel:** Technisch ist R31 abgeschlossen und als DRA-Kandidat freigegeben. Die reale Geräteabnahme bleibt offen, bis der Nutzer auf dem iPad bestätigt, dass nach Tippen sowie Öffnen/Schließen des Medaillon-/Pfeil-Pickers keine blaue Fokus-/Tap-Umrandung zurückbleibt.
+
+**NÄCHSTER SCHRITT:** R31 aus `deploy/dev` per DRA installieren, Frontend vollständig neu laden und die reale iPad-Abnahme durchführen.
