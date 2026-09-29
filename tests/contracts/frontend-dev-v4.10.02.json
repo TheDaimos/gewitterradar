@@ -47,8 +47,8 @@
       "sizeBytes": 181819
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "0ed8827a701bcad389030589ea77beb0ce357e06014b231a20d861efc6ef2d03",
-      "sizeBytes": 228043
+      "sha256": "43e83cd340816e7a943f6603431ccfe9ed43486d960f3b658b70cab1406cb8c8",
+      "sizeBytes": 227991
     },
     "modules/core/source-status.js": {
       "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",
