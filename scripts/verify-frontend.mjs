@@ -32,7 +32,7 @@ for(const marker of [
   '.trend-icon:focus-visible',
   '#trend-box:focus-visible',
   'R33 – sehr schmale Touch-Anzeigen',
-  '.compass-head:not(:has([data-warning-test]:not([hidden])))'
+  '.compass-head:not(:has([data-warning-test]:not([hidden])))',
   'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
   'Vom Monolithen zum modularen Gewitterradar',
   '23 klar abgegrenzte Module',
