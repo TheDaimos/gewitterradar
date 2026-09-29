@@ -185,6 +185,25 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 - [ ] bestehende To-do-Einträge bei Deaktivierung oder Entfernen der Überwachung nicht automatisch löschen.
 - [ ] in Hilfe & Hinweise klarstellen, dass diese Aufzeichnung eine lokale Ereignisdokumentation und kein amtlicher Blitznachweis ist.
 
+### Protokoll-Export & Bereinigung
+
+- [ ] im Detail-Pop-up eines überwachten Ortes einen eigenen Protokollbereich ergänzen.
+- [ ] **CSV herunterladen** direkt anbieten.
+- [ ] **PDF herunterladen** direkt anbieten.
+- [ ] CSV mindestens mit Zeitstempel, Monitored Area, Ortsname, Blitzkoordinaten, Entfernung, Gefahrenradius und verfügbarer Ereignis-/Quelleninformation erzeugen.
+- [ ] PDF als menschenlesbaren Bericht mit Orts-/Trackerbezug, Zeitraum, Gefahrenradius, Zusammenfassung und tabellarischer Ereignisliste erzeugen.
+- [ ] Export klar auf den aktuell ausgewählten überwachten Ort beziehen; kein unbeabsichtigter Misch-Export mehrerer Areas.
+- [ ] optionalen Zeitraumfilter für Export vorbereiten, damit später nicht zwingend immer die gesamte Historie ausgegeben werden muss.
+- [ ] **„Protokoll zurücksetzen“** direkt im selben Bereich anbieten.
+- [ ] Zurücksetzen löscht ausschließlich die gespeicherten Ereignis-/Protokolleinträge dieses überwachten Ortes.
+- [ ] Zurücksetzen darf weder den gespeicherten Ort noch dessen Tracker, Blitzortung-Kopplung, Überwachungsstatus oder Protokollierungs-Schalter entfernen.
+- [ ] Zurücksetzen als destruktive Aktion mit eindeutiger Bestätigung absichern.
+- [ ] im Bestätigungsdialog die Anzahl der zu löschenden Einträge und den betroffenen Ort anzeigen.
+- [ ] bei leerem Protokoll CSV/PDF/Reset sinnvoll deaktivieren bzw. mit klarer Statusmeldung versehen.
+- [ ] Exporte dürfen nach Möglichkeit ohne Veränderung des gespeicherten Protokolls erzeugt werden.
+- [ ] vorhandene Schutzlogik **„Protokollierung aktiv = geschütztes Objekt“** bleibt unabhängig von Export und Reset bestehen.
+- [ ] nach Reset bleibt aktive Protokollierung aktiv und neue Treffer werden wieder normal aufgezeichnet.
+
 ### Ressourcen und Grenzen
 
 - [ ] Auswirkungen mehrerer Blitzortung-Einträge auf MQTT-Abonnements, Geo-Location-Entitäten, Speicher und Home-Assistant-Ressourcen messen.
