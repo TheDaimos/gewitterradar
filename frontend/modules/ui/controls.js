@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -92,22 +92,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const mapRecenter = this.shadow.getElementById('map-recenter');
       const mapStrikeTarget = this.shadow.getElementById('map-strike-target');
       const recentRadiusButtons = [...this.shadow.querySelectorAll('[data-recent-radius-filter]')];
-      this.shadow.getElementById('compass-design-prev')?.addEventListener('click',()=>this._stepCompassDesign(-1));
-      this.shadow.getElementById('compass-design-next')?.addEventListener('click',()=>this._stepCompassDesign(1));
       this.shadow.getElementById('compass-instrument')?.addEventListener('click',(event) => {
         if (this._compassPickerDialog?.open || this._mapDisplayMode === 'fullscreen') return;
         event.preventDefault(); event.stopPropagation();
         this._openCompassPicker();
       });
-      this.shadow.getElementById('selector-frame-prev')?.addEventListener('click',()=>this._stepCompassSelectorFrame(-1));
-      this.shadow.getElementById('selector-frame-next')?.addEventListener('click',()=>this._stepCompassSelectorFrame(1));
-      const selectorFrameImage=this.shadow.getElementById('compass-selector-frame-image');
-      selectorFrameImage?.addEventListener('load',()=>this._setCompassSelectorAssetState('compass-design-selector',true));
-      selectorFrameImage?.addEventListener('error',()=>this._setCompassSelectorAssetState('compass-design-selector',false));
-      const settingsSelectorFrameImage=this.shadow.getElementById('settings-selector-frame-image');
-      settingsSelectorFrameImage?.addEventListener('load',()=>this._setCompassSelectorAssetState('settings-selector-preview',true));
-      settingsSelectorFrameImage?.addEventListener('error',()=>this._setCompassSelectorAssetState('settings-selector-preview',false));
-      this._syncCompassSelectorFrame();
 
       const previewRadius = (kind, value) => {
         const obsValue = finiteNumber(obsSlider?.value);
