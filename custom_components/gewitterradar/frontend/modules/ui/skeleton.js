@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -4400,6 +4400,24 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             padding:3px 6px 3px 17px;
             border-left:1px solid rgba(255,255,255,.055);
             position:relative;
+          }
+          /* R30 – iPad/WebKit: ein Tap auf die klickbare Tendenz darf keinen
+             systemblauen Fokus-/Tap-Ring um das Medaillon hinterlassen. Auf
+             Tastatur-/Desktop-Geraeten bleiben normale Fokuspfade unberuehrt. */
+          #trend-box,
+          #trend-box .trend-icon,
+          #trend-box .trend-medallion-base,
+          #trend-box .trend-medallion-arrow {
+            -webkit-tap-highlight-color:transparent;
+          }
+          @media (hover:none) and (pointer:coarse) {
+            #trend-box:focus,
+            #trend-box:focus-visible,
+            #trend-box .trend-icon:focus,
+            #trend-box .trend-icon:focus-visible {
+              outline:none!important;
+              box-shadow:none!important;
+            }
           }
           .trend::before {
             content:'';
