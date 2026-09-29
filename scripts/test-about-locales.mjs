@@ -72,7 +72,7 @@ console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} inval
 const i18nModuleSource = await readFile(resolve(root,'frontend/modules/ui/i18n-settings.js'),'utf8');
 const settingsTranslationsPrefix = 'const SETTINGS_UI_TRANSLATIONS=Object.freeze(';
 const settingsTranslationsStart = i18nModuleSource.indexOf(settingsTranslationsPrefix);
-const settingsTranslationsEnd = i18nModuleSource.indexOf(');\nexport const installI18nSettings',settingsTranslationsStart);
+const settingsTranslationsEnd = i18nModuleSource.indexOf(');\nconst V410_UI_TRANSLATIONS',settingsTranslationsStart);
 if (settingsTranslationsStart < 0 || settingsTranslationsEnd < 0) throw Error('Settings UI translation registry missing');
 const settingsUiTranslations = JSON.parse(i18nModuleSource.slice(settingsTranslationsStart + settingsTranslationsPrefix.length,settingsTranslationsEnd));
 const i18nContext = {};
