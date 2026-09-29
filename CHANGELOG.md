@@ -1,5 +1,18 @@
 # Changelog
 
+## V4.10.02 DEV R31 – iPad Trend-Fokusrahmen + Shared-Frontend-Vertrag (2026-09-29)
+
+- iPad/WebKit-Fokus-/Tap-Artefakt an der Trendanzeige bereits in R31 produktiv korrigiert; keine erneute Ursachenanalyse oder Änderung der abgenommenen Medaillon-/Pfeil-Logik.
+- `ui.skeleton` auf **1.1.7** mit explizitem Unterdrücken des blauen Tap-/Focus-Rings für `#trend-box` / `#trend-icon` und relevante Focus-Zustände.
+- Touch-Pfad in `fullscreen.map-display` entfernt den Trendfokus vor dem Öffnen des Medaillon-/Pfeil-Pickers und stellt ihn beim Schließen auf groben Touch-Geräten nicht künstlich wieder her.
+- Build `V4.10.02-MODULAR-DEV-R31-2026-09-29`, Feature-Cache `41002r31`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E9B`.
+- Modulstände: `core.manifest 1.2.37`, `fullscreen.map-display 1.0.29`, `ui.skeleton 1.1.7`, `diagnostics.cockpit 1.5.1`.
+- veralteten Shared-Frontend-Testvertrag von `ui.skeleton 1.1.6` auf **1.1.7** aktualisiert.
+- finaler technischer Kandidat `e2040a4afffa04da87d8cc4421becac7576217a7`: **5/5 zentrale CI-Prüfungen grün**.
+- `deploy/dev` exakt auf diesen Kandidaten gesetzt und per Compare als **identical** verifiziert (0 voraus / 0 zurück).
+- reale DRA-/iPad-Abnahme des Focus-Ring-Fixes bleibt offen.
+- kein Merge nach `main` und keine Veröffentlichung erfolgt.
+
 ## V4.10.02 DEV R27 – Drag-Schutz bei Blitzupdates + weißerer Vorschau-Glow (2026-09-29)
 
 - Vollbild-Drag für Lokations-Pille, Kompass und Trend/Medaillon gegen asynchrone Positions-Synchronisierung während aktiver Blitzereignisse geschützt.
