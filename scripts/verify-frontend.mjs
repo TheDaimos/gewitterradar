@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.25"',
+  '"id": "fullscreen.map-display"','"version": "1.0.26"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -134,6 +134,8 @@ for(const marker of [
   'if (this._mapCompassDragState) return;',
   'if (this._mapMedallionDragState) return;',
   'if (this._mapLocationDragState) return;',
+  'rgba(255,255,255,.40)',
+  'drop-shadow(0 0 11px rgba(255,255,255,.32))',
   "stage.dataset.trendState='diagnostic'",
   "previewMode==='animation'?'animation':'preview-static'",
   'type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"',
