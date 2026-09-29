@@ -1,14 +1,14 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "instruments.compass-selector",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "group": "Instrumente",
   "function": "Kompassauswahl",
   "subfunctions": [
     "Designauswahl",
     "Popup",
-    "Rahmenwahl",
-    "Diagnosegeometrie"
+    "Popup",
+    "Aura-unabhängige Designauswahl"
   ],
   "file": "modules/instruments/compass-selector.js"
 });
@@ -51,7 +51,6 @@ export const installCompassSelector=defineModule(MODULE_META,(deps)=>{const { CA
 
     _compassDesignValue(hass = this._hass) {
       if(this._compassCalibrationEnabled&&COMPASS_DESIGNS.some((entry)=>entry.id===this._calibrationCompassDesign))return this._calibrationCompassDesign;
-      if(!this._auraEnabled())return 'A';
       if(COMPASS_DESIGNS.some((entry)=>entry.id===this._persistedCompassDesign))return this._persistedCompassDesign;
       if(COMPASS_DESIGNS.some((entry)=>entry.id===this._localCompassDesign))return this._localCompassDesign;
       return this._normalizeCompassDesign(
@@ -61,7 +60,6 @@ export const installCompassSelector=defineModule(MODULE_META,(deps)=>{const { CA
 
     _stepCompassDesign(direction) {
       const calibrationNavigation=this._compassCalibrationEnabled&&(!this._diagnostics.enabled||this._diagnostics.live);
-      if(!this._auraEnabled()&&!calibrationNavigation)return;
       const currentIndex=Math.max(0,COMPASS_DESIGNS.findIndex((entry)=>entry.id===this._activeCompassDesign));
       const next=COMPASS_DESIGNS[(currentIndex+direction+COMPASS_DESIGNS.length)%COMPASS_DESIGNS.length];
       this._persistCompassDesign(next.id);
