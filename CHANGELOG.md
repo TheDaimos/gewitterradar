@@ -1,5 +1,21 @@
 # Changelog
 
+## V4.10.02 DEV – R32 · V4.10-Abschlussblock (2026-09-29)
+
+- **Kompasswahl und Aura-Effekte entkoppelt:** Das gewählte Kompassdesign bleibt jetzt auch bei ausgeschalteten Aura-Effekten erhalten und kann weiterhin über das Kompass-Popup gewechselt werden.
+- den alten Kompass-Selector oberhalb des Instruments entfernt; die Kompassauswahl erfolgt ausschließlich über das Instrument-Popup.
+- den nicht mehr benötigten Punkt **Selector-Design** aus den Einstellungen entfernt.
+- Kompass-Popup bleibt unabhängig vom Aura-Zustand vollständig bedienbar.
+- **V4.10-Hilfe auf 19 Sprachvarianten erweitert:** eigener Abschnitt für Kompass-, Medaillon- und Pfeilauswahl, Aura-Trennung sowie verschiebbare und skalierbare Vollbild-Instrumente.
+- **Mouse-over-/Tooltip-Audit:** alle benutzerseitigen festen Mouse-over-Texte der Hauptoberfläche auf die gewählte Sprache umgestellt beziehungsweise durch dynamisch übersetzte Texte abgesichert.
+- sichtbare Bedienelemente der Kompass-/Medaillon-Auswahl wie Vollbild-Größe, Auswahl, Medaillon, Pfeil und Vorschau ebenfalls mehrsprachig gemacht.
+- automatischen V4.10-Mehrsprachen-Vertrag erweitert: alle 19 Sprachvarianten müssen die neuen Picker-, Tooltip- und Hilfetexte vollständig enthalten.
+- Versionshinweise zu V4.10 überarbeitet: **„Vom Monolithen zur modularen Architektur“**, Aufteilung in **23 Module** mit eigener Identität und Versionierung sowie zusätzlicher Abschnitt zu den sichtbaren UI- und Bedienverbesserungen.
+- überzogene beziehungsweise interne Formulierungen wie „über Jahre gewachsen“, die 504er-Fit-Matrix und DRA aus dem öffentlichen V4.10-Beitrag entfernt.
+- Roadmap bleibt nach V4.10 auf **„Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.“** fokussiert.
+- technischer Stand: **V4.10.02-MODULAR-DEV-R32-2026-09-29**, Runtime **41002r14**, Feature-Cache **41002r32**, Modulsatz **D32A-5E9B**.
+- kein Merge nach `main` und keine Veröffentlichung durch diesen Abschlussblock ausgelöst.
+
 ## V4.10.02 DEV – Roadmap-Bereinigung & V4.10-Beitrag (2026-09-29)
 
 - Zukunfts-Roadmap in der Release-History auf einen einzigen nächsten Hauptblock reduziert: **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter**.
