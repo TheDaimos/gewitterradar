@@ -332,7 +332,7 @@ for(const forbidden of ['id="compass-design-selector"','id="settings-selector-de
   if(skeleton.includes(forbidden))throw Error('Obsolete compass selector UI remains: '+forbidden);
 }
 for(const marker of ['animation-toggle','warning-test-top-storm','warning-test-top-danger','settings-open','warning-test-map-storm','warning-test-map-danger','warning-test-history-storm','warning-test-history-danger','warning-test-compass-storm','warning-test-compass-danger','device-toggle','settings-cluster-jump-infinite']){
-  if(!i18nSettings.includes("set('"+marker+"'")&&!i18nSettings.includes("['"+marker+"'"))throw Error('V4.10 tooltip mapping missing: '+marker);
+  if(!i18nSettings.includes("'"+marker+"'"))throw Error('V4.10 tooltip mapping missing: '+marker);
 }
 async function files(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await files(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 const checks=[];
