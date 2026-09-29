@@ -14,7 +14,7 @@ const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cock
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.9"',
+  '"version": "1.1.10"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -31,6 +31,8 @@ for(const marker of [
   '-webkit-tap-highlight-color:transparent',
   '.trend-icon:focus-visible',
   '#trend-box:focus-visible',
+  'R33 – sehr schmale Touch-Anzeigen',
+  '.compass-head:not(:has([data-warning-test]:not([hidden])))'
   'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
   'Vom Monolithen zum modularen Gewitterradar',
   '23 klar abgegrenzte Module',
@@ -85,7 +87,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.3.0"',
+  '"version": "1.3.1"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -95,7 +97,9 @@ for(const marker of [
   'const V410_HELP_INSTRUMENTS=Object.freeze(',
   '_syncV410Tooltips()',
   '_helpWithV410(language,help)',
-  "help=this._helpWithV410(language,locale.help)"
+  "help=this._helpWithV410(language,locale.help)",
+  "const v410InstrumentHelpIcon='data:image/png;base64,",
+  "'instruments-v410':v410InstrumentHelpIcon"
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
 }
@@ -315,6 +319,8 @@ for(const language of registeredLanguages){
   const helpBundle=v410HelpInstruments[language];
   if(!helpBundle||typeof helpBundle.title!=='string'||!helpBundle.title.trim()||typeof helpBundle.intro!=='string'||!helpBundle.intro.trim())throw Error('Missing V4.10 help translation: '+language);
   if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==5||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete V4.10 help entries: '+language);
+  if(/aura/i.test(String(helpBundle.entries[1]?.[0]||'')))throw Error('Aura help entry still interrupts instrument selection flow: '+language);
+  if(!/aura/i.test(String(helpBundle.entries[4]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
     const clusterBundle=clusterResolutionLabels[language];
   if(!clusterBundle)throw Error('Missing cluster profile language: '+language);
   for(const key of ['early','balanced','late','classic']){
