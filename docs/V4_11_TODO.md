@@ -204,6 +204,42 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 - [ ] vorhandene Schutzlogik **„Protokollierung aktiv = geschütztes Objekt“** bleibt unabhängig von Export und Reset bestehen.
 - [ ] nach Reset bleibt aktive Protokollierung aktiv und neue Treffer werden wieder normal aufgezeichnet.
 
+### Laufzeitmodell – Überwachung und Protokollierung unabhängig vom Frontend
+
+- [ ] **Überwachung** und **Protokollierung** fachlich strikt trennen:
+  - Überwachung erkennt und bewertet Ereignisse für eine Monitored Area.
+  - Protokollierung speichert qualifizierte Ereignisse dauerhaft für Nachvollziehbarkeit, Export und spätere Auswertung.
+- [ ] die eigentliche Überwachungslogik vollständig backend-seitig in der nativen Home-Assistant-Integration ausführen.
+- [ ] das Gewitterradar-Frontend darf nur Anzeige, Konfiguration, Status, Export und Reset übernehmen; ein geschlossenes Dashboard darf die Überwachung nicht stoppen.
+- [ ] aktive Monitored Areas müssen weiter überwacht und protokolliert werden, wenn:
+  - die Gewitterradar-Karte geschlossen ist;
+  - das Dashboard nicht geöffnet ist;
+  - der Browser bzw. die Companion-App Gewitterradar nicht anzeigt;
+  - das Frontend neu geladen wird.
+- [ ] Überwachung/Protokollierung darf nur von tatsächlich notwendigen Backend-Abhängigkeiten abhängen, insbesondere laufendem Home Assistant, verfügbarem Blitzortung-Datenstrom und funktionsfähiger Persistenz.
+- [ ] Ereignisverarbeitung im Backend ausführen: Blitz empfangen → betroffene Monitored Areas bestimmen → Gefahrenradius prüfen → deduplizieren/bündeln → optional protokollieren.
+- [ ] Status des Hintergrunddienstes selbst diagnostizierbar machen, damit „Frontend geschlossen“ nicht mit „Überwachung inaktiv“ verwechselt wird.
+- [ ] Neustart-/Restore-Verhalten definieren: aktive Monitored Areas und Protokollierungszustände müssen nach Home-Assistant-Neustart reproduzierbar wiederhergestellt werden.
+- [ ] keine flüchtige Browser-/LocalStorage-Konfiguration als alleinige Quelle für aktive Überwachungsobjekte verwenden.
+
+### Verbindliche UI-Referenz für Monitored Areas
+
+- [ ] die am 29.09.2026 erstellte Standortdetail-Vorlage für **„Standortdetails – Havanna“** als verbindliche V4.11-Designreferenz verwenden und bei der Umsetzung möglichst **1:1** nachbauen.
+- [ ] Referenzgrafik dauerhaft archiviert als **`V4_11_Monitored_Area_UI_Referenz_Havanna.png`**.
+- [ ] persistente Referenzablage: ChatGPT Library **`/Gewitterradar/V4.11/V4_11_Monitored_Area_UI_Referenz_Havanna.png`**.
+- [ ] die Vorlage definiert insbesondere:
+  - linke Liste **Standorte & Speichern** ohne direkte Löschaktion für geschützte/überwachte Orte;
+  - Detail-Pop-up **Standortdetails – <Ort>**;
+  - Bereiche Grunddaten, Tracker, Blitzortung & Kopplung, Gefahrenradius & Protokollierung, letzte Protokolleinträge, Aktionen sowie Systemstatus & Hinweise;
+  - Status-Chips **Gespeichert / Überwachung aktiv / Protokollierung aktiv / Geschütztes Objekt**;
+  - Trackername und Entity-ID-Vorschau;
+  - Blitzortung-Kopplung, Radius, Counter, letzter Treffer und Geo-Location-Status;
+  - Gefahrenradius, Ziel-To-do-Liste und lokale Ereignisvorschau;
+  - CSV/PDF-Export, Protokoll-Reset sowie getrennte Deaktivierung von Überwachung und Protokollierung;
+  - gesperrte Löschfunktion bei aktiver Protokollierung mit verständlicher Begründung;
+  - kompakten Systemstatus des Standortobjekts.
+- [ ] Abweichungen von dieser Vorlage nur bewusst und begründet vornehmen; die Grafik ist kein unverbindlicher Stimmungsentwurf, sondern die gewünschte Produktvorlage.
+
 ### Ressourcen und Grenzen
 
 - [ ] Auswirkungen mehrerer Blitzortung-Einträge auf MQTT-Abonnements, Geo-Location-Entitäten, Speicher und Home-Assistant-Ressourcen messen.
