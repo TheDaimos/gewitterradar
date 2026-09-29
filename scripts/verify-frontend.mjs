@@ -30,7 +30,10 @@ for(const marker of [
   '-webkit-tap-highlight-color:transparent',
   '.trend-icon:focus-visible',
   '#trend-box:focus-visible',
-  'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.'
+  'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
+  'Vom Monolithen zum modularen Gewitterradar',
+  '28 Designs und 18 Pfeilvarianten',
+  '504 Kombinationen'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
