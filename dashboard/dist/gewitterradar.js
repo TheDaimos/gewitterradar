@@ -5,7 +5,7 @@
 const CARD_VERSION = '4.10.02';
 const CARD_DISPLAY_VERSION = '4.10.02';
 const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R32-2026-09-29';
-const GEWITTERRADAR_MODULE_CACHE = '41002r14';
+const GEWITTERRADAR_MODULE_CACHE = '41002r13';
 const GEWITTERRADAR_FEATURE_CACHE = '41002r32';
 const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) => {
   try {
@@ -33,12 +33,12 @@ try {
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE);
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
-  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
+  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js',GEWITTERRADAR_FEATURE_CACHE);
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
-  const controls = await gewitterradarImport('./modules/ui/controls.js');
-  const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');
+  const controls = await gewitterradarImport('./modules/ui/controls.js',GEWITTERRADAR_FEATURE_CACHE);
+  const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js',GEWITTERRADAR_FEATURE_CACHE);
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
-  const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
+  const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js',GEWITTERRADAR_FEATURE_CACHE);
   const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE);
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE);
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
