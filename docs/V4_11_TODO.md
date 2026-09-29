@@ -124,14 +124,30 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 
 ### Bedienidee
 
-- [ ] in **Gespeicherte Orte** eine Funktion **„Überwachen“** / **„Überwachung aktiv“** vorsehen.
-- [ ] ein gespeicherter Ort kann dadurch zu einem dauerhaft überwachten Standort werden.
-- [ ] der normale device_tracker.gewitterradar bleibt der bewegliche Karten-/Suchstandort.
+- [ ] **Überwachen** direkt in den Ablauf **Ort suchen & speichern** integrieren, ohne jeden gespeicherten Ort automatisch zu überwachen.
+- [ ] gespeicherter Ort bleibt zunächst ein normaler Favorit; Überwachung ist eine ausdrücklich aktivierbare Zusatzfunktion.
+- [ ] Tippen/Klicken auf einen gespeicherten Ort öffnet ein eigenes Detail-Pop-up für diesen Ort.
+- [ ] im Pop-up mindestens anzeigen:
+  - Name des gespeicherten Ortes und Koordinaten;
+  - Überwachungsstatus aktiv/inaktiv;
+  - vorgeschlagener Tracker-Anzeigename;
+  - daraus abgeleitete/stabile Tracker-Entity-ID als Vorschau;
+  - ob der Tracker bereits existiert;
+  - ob der Tracker gültige Koordinaten liefert;
+  - ob ein passender Blitzortung-Eintrag existiert und gekoppelt ist;
+  - aktueller Blitzortung-Radius und Datenstatus;
+  - zugeordnete Local-To-do-Liste bzw. deren Verfügbarkeit.
+- [ ] Tracker-Anzeigenamen sinnvoll aus dem Ortsnamen vorschlagen und editierbar machen.
+- [ ] rohe Entity-ID nicht unkontrolliert frei eingeben lassen; stabile ID aus dem Namen ableiten, Kollisionen erkennen und die resultierende ID transparent anzeigen.
+- [ ] ein gespeicherter Ort kann über das Pop-up zu einem dauerhaft überwachten Standort werden.
+- [ ] der normale `device_tracker.gewitterradar` bleibt unabhängig davon der bewegliche Karten-/Suchstandort.
 - [ ] überwachte Orte erhalten eigene, dauerhafte Standort-Tracker mit stabilen IDs.
 - [ ] Beispielkonzept:
-  - device_tracker.gewitterradar_monitored_havanna
-  - device_tracker.gewitterradar_monitored_tromso
+  - `device_tracker.gewitterradar_monitored_havanna`
+  - `device_tracker.gewitterradar_monitored_tromso`
 - [ ] mehrere überwachte Orte sollen parallel möglich sein.
+- [ ] Überwachung eines Ortes wieder deaktivieren/entfernen können, ohne den gespeicherten Ort selbst löschen zu müssen.
+- [ ] bei Deaktivierung klar zwischen „Überwachung abschalten“, „Tracker entfernen“ und „gespeicherten Ort löschen“ unterscheiden.
 
 ### Blitzortung-Anbindung
 
@@ -139,6 +155,20 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 - [ ] keinen einzelnen Tracker zyklisch zwischen Orten verschieben; das wäre keine echte parallele Überwachung.
 - [ ] pro überwachten Ort Kopplungsstatus, Radius und Datenstatus anzeigen.
 - [ ] Einrichtungsassistent bzw. verständliche Schritt-für-Schritt-Hilfe für die notwendige Blitzortung-Kopplung prüfen.
+
+### Gefahrenradius & Local-To-do-Protokoll
+
+- [ ] pro Monitored Area optional **„Blitze im Gefahrenradius protokollieren“** aktivieren/deaktivieren.
+- [ ] Gefahrenradius je überwachten Ort eindeutig anzeigen; gemeinsame globale Vorgaben nur verwenden, wenn fachlich passend.
+- [ ] Ziel-To-do-Liste im Orts-Pop-up anzeigen und ihre Existenz/Funktionsfähigkeit vor Aktivierung prüfen.
+- [ ] fehlende oder nicht erreichbare To-do-Liste als klaren Systemstatus-/Ortsfehler melden.
+- [ ] Treffer im Gefahrenradius mit mindestens Zeitstempel, Ort/Monitored Area, Blitzkoordinaten und Entfernung dokumentieren.
+- [ ] Ereignisse deduplizieren; derselbe Blitz darf innerhalb derselben Monitored Area nicht mehrfach protokolliert werden.
+- [ ] bei sich überlappenden Monitored Areas festlegen, ob derselbe Blitz je betroffenem Ort jeweils einmal dokumentiert werden darf.
+- [ ] Cooldown/Bündelung vorsehen, damit ein Gewitter nicht hunderte einzelne To-do-Einträge erzeugt.
+- [ ] Protokollierung jederzeit deaktivierbar machen, ohne die eigentliche Standortüberwachung zwangsläufig abzuschalten.
+- [ ] bestehende To-do-Einträge bei Deaktivierung oder Entfernen der Überwachung nicht automatisch löschen.
+- [ ] in Hilfe & Hinweise klarstellen, dass diese Aufzeichnung eine lokale Ereignisdokumentation und kein amtlicher Blitznachweis ist.
 
 ### Ressourcen und Grenzen
 
