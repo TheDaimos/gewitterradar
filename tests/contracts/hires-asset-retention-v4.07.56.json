@@ -259,6 +259,12 @@
       "preferredPath": "artwork/compass-chevron/hires/gewitterradar-chevron-down-silver-hires.svg",
       "gitBlobSha1": "46e272513a9ba451a6bb25d77e1978813fba0e61",
       "sizeBytes": 4912
+    },
+    {
+      "label": "Help V4.10 instruments compass master",
+      "preferredPath": "artwork/help-icons/hires/help-instruments-v410-compass.svg",
+      "gitBlobSha1": "82a3d4ac5d0cf20652414bef35415b3dbae4e3b7",
+      "sizeBytes": 7034
     }
   ]
 }
