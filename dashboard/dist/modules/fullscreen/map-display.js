@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -1006,8 +1006,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         const ipadTouch=!!cardRoot?.classList.contains('ipad-device');
         trendIcon.removeAttribute('aria-hidden');
         trendIcon.setAttribute('role','button');
-        if(ipadTouch)trendIcon.removeAttribute('tabindex');
-        else trendIcon.setAttribute('tabindex','0');
+        if(ipadTouch){
+          trendIcon.removeAttribute('tabindex');
+          trendIcon.style.outline='none';
+          trendIcon.style.webkitTapHighlightColor='transparent';
+        }else trendIcon.setAttribute('tabindex','0');
         trendIcon.setAttribute('aria-label',medallionLabel);
         trendIcon.setAttribute('title',medallionLabel);
         trendIcon.style.cursor = 'pointer';
@@ -1319,6 +1322,14 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       });
       if (trendIcon && trendIcon.dataset.medallionPickerBound !== '1') {
         trendIcon.dataset.medallionPickerBound = '1';
+        trendIcon.addEventListener('pointerdown',() => {
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+        },{capture:true});
+        trendIcon.addEventListener('touchstart',() => {
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+        },{passive:true,capture:true});
         trendIcon.addEventListener('click',(event) => {
           event.preventDefault();event.stopPropagation();
           const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
