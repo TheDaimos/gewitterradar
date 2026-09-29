@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "fa21f2cdbd616847d301be1ddc2e75838cb8a4e2f2ba8c6aa72e40987141dca3",
+  "sha256": "072ed635fd92916a92def2de25dd5f5be488422a7ae489d3de917902bfd0a355",
   "sizeBytes": 8600,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R30-2026-09-29",
+  "build": "V4.10.02-MODULAR-DEV-R31-2026-09-29",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "907de78aa994dbae2e23b9dc4e1afc620c0a71d39ff1af4d9d43f48213821f1e",
+      "sha256": "6d85c35c0f36ee4ab8ce70417df1c94b4a5580feb45f56e008a18ad24085cfcd",
       "sizeBytes": 7484
     },
     "modules/core/registry.js": {
@@ -27,16 +27,16 @@
       "sizeBytes": 33487
     },
     "modules/fullscreen/map-display.js": {
-      "sha256": "6291750d4380c04680ce0185a5e0a8fe70e167eec4ddd6269a8c54f661925eaf",
-      "sizeBytes": 125591
+      "sha256": "e2d7c258ec0fbe539e98bd0db44f8b7375ad74e204c1eca917b38d3e8763c43d",
+      "sizeBytes": 126187
     },
     "modules/ui/scroll-guard.js": {
       "sha256": "0fa211fa285d54b4427cf16f146769f264872a71eb7ad0f2a5c88b3e6f543b5e",
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "0604201ea37c980dd98fa14ec040b02fe393c7f7c14b1e2a331e93ed90e40cdc",
-      "sizeBytes": 425062
+      "sha256": "354b5c3a302290bf04d0ea39c140262bfe347a1d7738067e23f9601832768b5b",
+      "sizeBytes": 425690
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
