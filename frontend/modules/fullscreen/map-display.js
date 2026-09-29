@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -1002,9 +1002,12 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const trendIcon = this.shadow.getElementById('trend-icon');
       if (trendIcon) {
         const medallionLabel = this._t('trend.label');
+        const cardRoot=this.shadow.getElementById('card-root');
+        const ipadTouch=!!cardRoot?.classList.contains('ipad-device');
         trendIcon.removeAttribute('aria-hidden');
         trendIcon.setAttribute('role','button');
-        trendIcon.setAttribute('tabindex','0');
+        if(ipadTouch)trendIcon.removeAttribute('tabindex');
+        else trendIcon.setAttribute('tabindex','0');
         trendIcon.setAttribute('aria-label',medallionLabel);
         trendIcon.setAttribute('title',medallionLabel);
         trendIcon.style.cursor = 'pointer';
@@ -1317,7 +1320,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (trendIcon && trendIcon.dataset.medallionPickerBound !== '1') {
         trendIcon.dataset.medallionPickerBound = '1';
         trendIcon.addEventListener('click',(event) => {
-          event.preventDefault();event.stopPropagation();this._openMedallionPicker();
+          event.preventDefault();event.stopPropagation();
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+          this._openMedallionPicker();
+          if(ipadTouch)requestAnimationFrame(()=>trendIcon.blur?.());
         });
         trendIcon.addEventListener('keydown',(event) => {
           if (event.key !== 'Enter' && event.key !== ' ') return;
