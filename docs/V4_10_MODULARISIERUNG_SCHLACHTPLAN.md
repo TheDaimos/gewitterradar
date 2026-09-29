@@ -1,6 +1,6 @@
 # Gewitterradar V4.10 – Schlachtplan Modularisierung
 
-> **Status:** R26 – immer sichtbare Starr/Animation-Vorschau, kompakte xx/xx-Zähler und veredelte Medaillon-Darstellung fertig; technische CI 5/5 grün; `deploy/dev` exakt auf R26; reale DRA-/HA-Abnahme offen  
+> **Status:** R27 – Vollbild-Drag gegen Blitz-/Render-Synchronisierung geschützt; Vorschau-Umschalter nach unten verschoben und Glow deutlich weißer; technische CI 5/5 grün; `deploy/dev` exakt auf R27; reale DRA-/HA-Abnahme offen  
 > **Arbeitszweig:** `feature/v4.10.02-modularization`  
 > **Start:** 2026-09-21  
 > **Ziel:** Die bisherige große Gewitterradar-JavaScript-Datei in klar abgegrenzte ES-Module zerlegen, ohne die Installation als eine Home-Assistant-/HACS-Integration zu verändern. Die dauerhaft registrierte Hauptdatei bleibt als stabiler Einstiegspunkt bestehen. Jedes Modul trägt seine eigene Version und registriert seine tatsächlich geladene Identität selbst.
@@ -38,39 +38,37 @@ Die Modularisierung erfolgt **verhaltensneutral in kleinen Schritten**. Keine gr
 
 # NÄCHSTER SCHRITT
 
-**R26 aus `deploy/dev` per DRA installieren und die neue Vorschau-/Picker-Darstellung real abnehmen.**
+**R27 aus `deploy/dev` per DRA installieren und den Drag-Schutz unter echten Blitzereignissen sowie die neue Vorschauoptik real abnehmen.**
 
 Technisch abgeschlossen:
-- Navigationszähler auf reine **`xx / xx`**-Anzeige verkürzt,
-- Zähler einzeilig und Mittelspalte kompakter,
-- Vorschau-Umschalter **Starr / Animation** ergänzt,
-- Standardmodus **Starr**,
-- Pfeil im normalen Auswahl-Pop-up immer sichtbar, auch ohne aktuellen Gewittertrend,
-- Vorschau bleibt auf der produktiven 504er-Paar-Kalibrierung für Größe und X/Y-Mittelpunkt,
-- Animation verwendet die vorhandene Diagnose-Sweep-Bewegung, ohne den Live-Zustand zu verändern,
-- Vorschau mit dezentem warmweiß-goldenem Halo und zusätzlicher Tiefenwirkung veredelt,
-- doppelte Prozentanzeige rechts neben der freien Vollbild-Größeneingabe entfernt,
-- Schnellwahl, Schieberegler 15–300 % und direkte Eingabe bleiben erhalten,
-- Build `V4.10.02-MODULAR-DEV-R26-2026-09-29`,
-- Feature-Cache `41002r26`, Runtime-Cache `41002r13`,
-- Modulsatz `D31A-5E96`,
-- `core.manifest 1.2.32`,
-- `fullscreen.map-display 1.0.24`,
-- finaler technischer Kandidat `efabc9cbff47b29e0f173e557ad9d1338bc51a5d`,
+- Lokations-Pille während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
+- Kompass während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
+- Trend/Medaillon während eines aktiven Drags gegen asynchrone Neupositionierung geschützt,
+- Positionsfunktionen brechen bei aktivem Drag-Zustand ab und dürfen die Live-Position nicht mit dem gespeicherten Ausgangswert überschreiben,
+- neue Position wird weiterhin erst am Drag-Ende normalisiert und persistiert,
+- Vorschau-Umschalter **Starr / Animation** unterhalb der aktiven Chevron-Navigation angeordnet,
+- Vorschau-Umschalter optisch kompakter und sekundärer gestaltet,
+- Glow deutlich weißer: nahezu weißer Kern, warmweiße Mitte, nur minimal warmer Außenanteil,
+- Produktkalibrierung, Vorschauverhalten und Vollbild-Größensteuerung bleiben erhalten,
+- Build `V4.10.02-MODULAR-DEV-R27-2026-09-29`,
+- Feature-Cache `41002r27`, Runtime-Cache `41002r13`,
+- Modulsatz `D31A-5E97`,
+- `core.manifest 1.2.33`,
+- `fullscreen.map-display 1.0.25`,
+- finaler technischer Kandidat `64b8805a661b7f7e7212fc1017ed1ece58cfe98c`,
 - **5/5 zentrale CI-Prüfungen grün**,
 - `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
 
-Reale R26-Abnahme:
-- [ ] R26 per DRA installieren.
+Reale R27-Abnahme:
+- [ ] R27 per DRA installieren.
 - [ ] Frontend vollständig neu laden.
-- [ ] Medaillon-Zähler als `x / 28` ohne Zeilenumbruch prüfen.
-- [ ] Pfeil-Zähler als `x / 18` ohne Zeilenumbruch prüfen.
-- [ ] Vorschau **Starr** ohne aktiven Gewittertrend prüfen.
-- [ ] Vorschau **Animation** prüfen.
-- [ ] Größe und X/Y-Lage der Vorschau gegen die normale Tendenzanzeige vergleichen.
-- [ ] Halo/Tiefenwirkung auf Desktop, iPad und Android/HA Companion prüfen.
-- [ ] Vollbild-Größensteuerung ohne doppelte Prozentanzeige prüfen.
-- [ ] vorhandene direkte 15–300-%-Eingabe und Schieberegler erneut kurz gegenprüfen.
+- [ ] bei laufenden Blitzereignissen Lokations-Pille ziehen; kein Rücksprung während des Drags.
+- [ ] bei laufenden Blitzereignissen Kompass ziehen; kein Rücksprung während des Drags.
+- [ ] bei laufenden Blitzereignissen Trend/Medaillon ziehen; kein Rücksprung während des Drags.
+- [ ] nach Drag-Ende Position persistiert und bei folgenden Blitzereignissen stabil.
+- [ ] Vorschau-Umschalter unterhalb der Chevron-Navigation prüfen.
+- [ ] Starr- und Animationsmodus erneut prüfen.
+- [ ] weißeren Glow auf Desktop, iPad und Android/HA Companion bewerten.
 - [ ] Cluster-Jump / Infinity bleibt separates älteres Abschlussgate.
 
 Keine Veröffentlichung, kein Merge nach `main` und kein Release ohne ausdrückliche Freigabe.
@@ -3243,3 +3241,28 @@ Rückführung:
 - [ ] reale R26-Abnahme über DRA auf Desktop, iPad und Android/HA Companion.
 
 **NÄCHSTER SCHRITT:** R26 aus `deploy/dev` installieren, Frontend vollständig neu laden und die neue Starr/Animation-Vorschau sowie die kompakte Navigation real abnehmen.
+
+
+---
+
+## Schleife R27 – Drag-Schutz + weißerer Preview-Glow (2026-09-29)
+
+- [x] reales Fehlerbild aufgenommen: Vollbildinstrument springt bei Blitzupdate während aktivem Drag auf Ausgangsposition zurück.
+- [x] Ursache auf asynchrones Neupositionieren während noch nicht persistiertem Drag eingegrenzt.
+- [x] `_positionMapCompassOverlay()` gegen aktiven `_mapCompassDragState` geschützt.
+- [x] `_positionMapMedallionOverlay()` gegen aktiven `_mapMedallionDragState` geschützt.
+- [x] `_positionMapLocationOverlay()` gegen aktiven `_mapLocationDragState` geschützt.
+- [x] bestehende Drag-Ende-Persistenz unverändert erhalten.
+- [x] Vorschau-Umschalter unter die Chevron-Navigation verschoben.
+- [x] Vorschau-Umschalter kleiner und optisch sekundärer gestaltet.
+- [x] Halo deutlich weißer und sichtbarer abgestimmt.
+- [x] Gold-/Messinganteil des Glows deutlich reduziert; Assets selbst unverändert.
+- [x] Frontend, native Integration und Dashboard-Ausleitung synchronisiert.
+- [x] Build-/Modul-/Runtime-Verträge und Prüfsummen auf R27 aktualisiert.
+- [x] technischer Kandidat `64b8805a661b7f7e7212fc1017ed1ece58cfe98c` mit 5/5 zentralen CI-Prüfungen grün.
+- [x] Kandidat exakt nach `deploy/dev` promotet und als `identical` verifiziert.
+- [x] technische Dokumentation `docs/R27_DRAG_GUARD_AND_PREVIEW_POLISH_2026-09-29.md` erstellt.
+- [ ] reale R27-Abnahme über DRA unter tatsächlichen Blitzereignissen.
+- [ ] reale Sichtabnahme des weißeren Halos und der neuen Vorschauposition.
+
+**NÄCHSTER SCHRITT:** R27 aus `deploy/dev` installieren, Frontend vollständig neu laden und während realer Blitzereignisse alle drei verschiebbaren Vollbildinstrumente bewegen.
