@@ -1,5 +1,19 @@
 # Changelog
 
+## V4.10.02 DEV R27 – Drag-Schutz bei Blitzupdates + weißerer Vorschau-Glow (2026-09-29)
+
+- Vollbild-Drag für Lokations-Pille, Kompass und Trend/Medaillon gegen asynchrone Positions-Synchronisierung während aktiver Blitzereignisse geschützt.
+- `_positionMapCompassOverlay()`, `_positionMapMedallionOverlay()` und `_positionMapLocationOverlay()` verändern die Position nicht mehr, solange der jeweilige Drag-Zustand aktiv ist.
+- dadurch dürfen Blitz-/Resize-/Renderzyklen das gerade gezogene Instrument nicht mehr auf seine gespeicherte Ausgangsposition zurücksetzen.
+- Vorschau-Umschalter **Starr / Animation** unter die aktive Chevron-Navigation verschoben und optisch zurückgenommen.
+- Vorschau-Halo deutlich in Richtung Weiß verschoben: nahezu weißer Kern, warmweiße Zwischenzone, nur noch minimal warmer Außenanteil.
+- zusätzlicher weißer Lichtsaum verbessert die Trennung des gold-/messingfarbenen Medaillons vom dunklen Hintergrund.
+- Build `V4.10.02-MODULAR-DEV-R27-2026-09-29`, Feature-Cache `41002r27`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E97`.
+- Modulstände: `core.manifest 1.2.33`, `fullscreen.map-display 1.0.25`.
+- technischer Kandidat `64b8805a661b7f7e7212fc1017ed1ece58cfe98c`: 5/5 zentrale CI-Prüfungen grün.
+- `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
+- reale DRA-/HA-Abnahme unter echten Blitzereignissen bleibt offen.
+
 ## V4.10.02 DEV R26 – Vorschau unabhängig vom Live-Trend + kompakter Picker (2026-09-29)
 
 - Medaillon-/Pfeil-Zähler im Auswahl-Pop-up auf reine `xx / xx`-Anzeige verkürzt; einzeilig und mit kompakterer Mittelspalte.
