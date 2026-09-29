@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R28-2026-09-29",
+  "build": "V4.10.02-MODULAR-DEV-R29-2026-09-29",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D31A-5E98",
+  "moduleSetId": "D31A-5E99",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.34"
+      "version": "1.2.35"
     },
     {
       "id": "core.base-context",
@@ -27,7 +27,7 @@
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.26"
+      "version": "1.0.27"
     },
     {
       "id": "ui.scroll-guard",
@@ -35,7 +35,7 @@
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.4"
+      "version": "1.1.5"
     },
     {
       "id": "instruments.compass-scale",
