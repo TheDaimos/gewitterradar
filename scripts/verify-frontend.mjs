@@ -27,6 +27,8 @@ for(const marker of [
   'min-width:32px;width:auto;padding:5px 7px',
   'width:min(520px,calc(100vw - 20px))',
   'transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease',
+  '-webkit-tap-highlight-color:transparent',
+  '.trend-icon:focus-visible',
   '#trend-box:focus-visible'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
@@ -137,8 +139,6 @@ for(const marker of [
   'if (this._mapLocationDragState) return;',
   'rgba(255,255,255,.40)',
   'drop-shadow(0 0 11px rgba(255,255,255,.32))',
-  '-webkit-tap-highlight-color:transparent',
-  '.trend-icon:focus-visible',
   "previousFocus.id === 'trend-icon'",
   "classList.contains('ipad-device')",
   "trendIcon.removeAttribute('tabindex')",
