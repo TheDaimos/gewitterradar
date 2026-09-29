@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R32-2026-09-29",
+  "build": "V4.10.02-MODULAR-DEV-R33-2026-09-29",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D32A-5E9B",
+  "moduleSetId": "D33A-5E9B",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.38"
+      "version": "1.2.39"
     },
     {
       "id": "core.base-context",
@@ -35,7 +35,7 @@
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.9"
+      "version": "1.1.10"
     },
     {
       "id": "instruments.compass-scale",
@@ -47,7 +47,7 @@
     },
     {
       "id": "ui.i18n-settings",
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     {
       "id": "core.source-status",
