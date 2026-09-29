@@ -7,7 +7,6 @@ export const MODULE_META=Object.freeze({
   "subfunctions": [
     "Designauswahl",
     "Popup",
-    "Popup",
     "Aura-unabhängige Designauswahl"
   ],
   "file": "modules/instruments/compass-selector.js"
