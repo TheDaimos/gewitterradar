@@ -20,7 +20,7 @@
     "runtimePixels": "68x68",
     "cssPixels": "34x34",
     "density": "2x Retina",
-    "runtimeEmbedding": "data:image/png;base64 embedded in frontend/modules/ui/skeleton.js",
+    "runtimeEmbedding": "data:image/png;base64 embedded in frontend/modules/ui/i18n-settings.js",
     "section": "Kompass, Medaillon & Pfeile"
   }
 }
