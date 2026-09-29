@@ -156,6 +156,21 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 - [ ] pro überwachten Ort Kopplungsstatus, Radius und Datenstatus anzeigen.
 - [ ] Einrichtungsassistent bzw. verständliche Schritt-für-Schritt-Hilfe für die notwendige Blitzortung-Kopplung prüfen.
 
+### Schutzmodell für protokollierte Orte
+
+- [ ] aktive Protokollierung macht den gespeicherten Ort zu einem **geschützten Objekt**.
+- [ ] solange **„Blitze im Gefahrenradius protokollieren“** aktiv ist, darf der Ort nicht gelöscht werden.
+- [ ] die Protokollierungs-Schaltfläche dient damit gleichzeitig als bewusster Löschschutz.
+- [ ] im Detail-Pop-up den Schutzstatus sichtbar anzeigen, z. B. **„Geschützt – Protokollierung aktiv“**.
+- [ ] Löschaktion im Detail-Pop-up bei aktiver Protokollierung deaktivieren und den Grund direkt erklären.
+- [ ] zum Löschen muss zuerst die Protokollierung deaktiviert werden; erst danach wird die Löschaktion freigegeben.
+- [ ] für überwachte/protokollierbare Orte keine direkte Löschfunktion mehr in der Ortsübersicht anbieten.
+- [ ] Löschen solcher Orte ausschließlich über ihr Detail-Pop-up zulassen, damit Tracker-, Blitzortung-, To-do- und Protokollstatus vor dem Löschen sichtbar sind.
+- [ ] Deaktivieren der Protokollierung löscht keine vorhandenen Protokolleinträge.
+- [ ] Löschen des gespeicherten Ortes darf nicht automatisch bestehende To-do-/Ereignisprotokolle entfernen.
+- [ ] beim Löschen eines überwachten Ortes klar anzeigen, welche abhängigen Objekte bestehen (Tracker, Blitzortung-Kopplung, Protokollierung, To-do-Ziel) und welche davon bestehen bleiben bzw. separat entfernt werden müssen.
+- [ ] keine automatische Löschung fremder Blitzortung-ConfigEntries ohne unterstützte öffentliche Schnittstelle.
+
 ### Gefahrenradius & Local-To-do-Protokoll
 
 - [ ] pro Monitored Area optional **„Blitze im Gefahrenradius protokollieren“** aktivieren/deaktivieren.
