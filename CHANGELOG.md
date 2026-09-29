@@ -1,5 +1,16 @@
 # Changelog
 
+## V4.10.02 DEV – R33 · Mobile-Kompass & Hilfe-Feinschliff (2026-09-29)
+
+- sehr schmale Touch-Anzeigen bis **520 px** nutzen nach Entfernung des alten Kompass-Selectors den frei gewordenen Kopfraum; Kompassfeld und nachfolgende Inhalte rücken geschlossen nach oben.
+- iPad, Tablet und Desktop bleiben von dieser Geometrieänderung ausdrücklich unberührt; sichtbare Diagnose-Testtaster verhindern zusätzlich das mobile Zusammenklappen.
+- im Hilfeabschnitt **„Kompass, Medaillon & Pfeile“** wurden die **Aura-Effekte ans Ende** verschoben, damit Auswahl und Bedienung der Instrumente zuerst zusammenhängend erklärt werden.
+- neues Premium-Icon für den Instrument-Hilfeabschnitt ergänzt: eigener transparenter **2048×2048 Hi-Res/Vektor-Master** unter `artwork/help-icons/hires/`.
+- für die tatsächliche Hilfeanzeige wird eine **68×68-PNG-Ableitung als 2× Retina für 34×34 CSS-Pixel** direkt eingebettet.
+- der neue Hi-Res-Master ist in den verbindlichen Asset-Retentionsvertrag aufgenommen und damit dauerhaft geschützt.
+- technischer Stand: **V4.10.02-MODULAR-DEV-R33-2026-09-29**, Runtime **41002r13**, Feature-Cache **41002r33**, Modulsatz **D33A-5E9B**.
+- kein Merge nach `main` und keine öffentliche Veröffentlichung durch diese Änderung ausgelöst.
+
 ## V4.10.02 DEV – R32 · V4.10-Abschlussblock (2026-09-29)
 
 - **Kompasswahl und Aura-Effekte entkoppelt:** Das gewählte Kompassdesign bleibt jetzt auch bei ausgeschalteten Aura-Effekten erhalten und kann weiterhin über das Kompass-Popup gewechselt werden.
