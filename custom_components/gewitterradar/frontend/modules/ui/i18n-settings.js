@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -1546,10 +1546,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf den Kompass tippen oder klicken, um die Kompassauswahl zu öffnen. Die gewählte Variante bleibt auch bei ausgeschalteten Aura-Effekten erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
-      ],
-      [
         "Medaillon auswählen",
         "Auf das Medaillon tippen oder klicken, um aus 28 Medaillon-Designs auszuwählen."
       ],
@@ -1560,6 +1556,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon lassen sich im Vollbild frei verschieben und in ihrer Größe anpassen."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
       ]
     ]
   },
@@ -1572,10 +1572,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tap or click the compass to open compass selection. The selected variant remains active even when aura effects are disabled."
       ],
       [
-        "Aura effects",
-        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
-      ],
-      [
         "Choose Medallion",
         "Tap or click the Medallion to choose from 28 Medallion designs."
       ],
@@ -1586,6 +1582,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullscreen instruments",
         "Compass and Medallion can be moved freely and resized in fullscreen mode."
+      ],
+      [
+        "Aura effects",
+        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
       ]
     ]
   },
@@ -1598,10 +1598,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tryk eller klik på kompasset for at åbne kompasvalget. Den valgte variant bevares også, når aura-effekter er slået fra."
       ],
       [
-        "Aura-effekter",
-        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
-      ],
-      [
         "Vælg medaljon",
         "Tryk eller klik på medaljonen for at vælge mellem 28 medaljondesigns."
       ],
@@ -1612,6 +1608,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fuldskærmsinstrumenter",
         "Kompas og medaljon kan flyttes frit og ændres i størrelse i fuldskærm."
+      ],
+      [
+        "Aura-effekter",
+        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
       ]
     ]
   },
@@ -1624,10 +1624,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Toca o haz clic en la brújula para abrir la selección. La variante elegida se mantiene incluso con los efectos de aura desactivados."
       ],
       [
-        "Efectos de aura",
-        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
-      ],
-      [
         "Elegir medallón",
         "Toca o haz clic en el medallón para elegir entre 28 diseños."
       ],
@@ -1638,6 +1634,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumentos a pantalla completa",
         "La brújula y el medallón pueden moverse libremente y cambiar de tamaño en pantalla completa."
+      ],
+      [
+        "Efectos de aura",
+        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
       ]
     ]
   },
@@ -1650,10 +1650,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Touchez ou cliquez sur la boussole pour ouvrir la sélection. La variante choisie reste active même lorsque les effets d’aura sont désactivés."
       ],
       [
-        "Effets d’aura",
-        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
-      ],
-      [
         "Choisir le médaillon",
         "Touchez ou cliquez sur le médaillon pour choisir parmi 28 designs."
       ],
@@ -1664,6 +1660,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instruments plein écran",
         "La boussole et le médaillon peuvent être déplacés librement et redimensionnés en plein écran."
+      ],
+      [
+        "Effets d’aura",
+        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
       ]
     ]
   },
@@ -1676,10 +1676,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tik of klik op het kompas om de keuze te openen. De gekozen variant blijft actief wanneer aura-effecten zijn uitgeschakeld."
       ],
       [
-        "Aura-effecten",
-        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
-      ],
-      [
         "Medaillon kiezen",
         "Tik of klik op het medaillon om uit 28 ontwerpen te kiezen."
       ],
@@ -1690,6 +1686,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Volledig-scherminstrumenten",
         "Kompas en medaillon kunnen in volledig scherm vrij worden verplaatst en van grootte worden veranderd."
+      ],
+      [
+        "Aura-effecten",
+        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
       ]
     ]
   },
@@ -1702,10 +1702,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Dotknij lub kliknij kompas, aby otworzyć wybór. Wybrany wariant pozostaje aktywny także po wyłączeniu efektów aury."
       ],
       [
-        "Efekty aury",
-        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
-      ],
-      [
         "Wybór medalionu",
         "Dotknij lub kliknij medalion, aby wybrać jeden z 28 wzorów."
       ],
@@ -1716,6 +1712,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumenty pełnoekranowe",
         "Kompas i medalion można swobodnie przesuwać i skalować w trybie pełnoekranowym."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
       ]
     ]
   },
@@ -1728,10 +1728,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Toque ou clique na bússola para abrir a seleção. A variante escolhida mantém-se ativa mesmo com os efeitos de aura desligados."
       ],
       [
-        "Efeitos de aura",
-        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
-      ],
-      [
         "Escolher medalhão",
         "Toque ou clique no medalhão para escolher entre 28 designs."
       ],
@@ -1742,6 +1738,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumentos em ecrã inteiro",
         "A bússola e o medalhão podem ser movidos livremente e redimensionados em ecrã inteiro."
+      ],
+      [
+        "Efeitos de aura",
+        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
       ]
     ]
   },
@@ -1754,10 +1754,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tryck eller klicka på kompassen för att öppna valet. Den valda varianten behålls även när auraeffekter är avstängda."
       ],
       [
-        "Auraeffekter",
-        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
-      ],
-      [
         "Välj medaljong",
         "Tryck eller klicka på medaljongen för att välja bland 28 designer."
       ],
@@ -1768,6 +1764,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullskärmsinstrument",
         "Kompass och medaljong kan flyttas fritt och ändras i storlek i fullskärm."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
       ]
     ]
   },
@@ -1780,10 +1780,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tocca o fai clic sulla bussola per aprire la selezione. La variante scelta rimane attiva anche quando gli effetti aura sono disattivati."
       ],
       [
-        "Effetti aura",
-        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
-      ],
-      [
         "Scegliere il medaglione",
         "Tocca o fai clic sul medaglione per scegliere tra 28 design."
       ],
@@ -1794,6 +1790,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Strumenti a schermo intero",
         "Bussola e medaglione possono essere spostati liberamente e ridimensionati a schermo intero."
+      ],
+      [
+        "Effetti aura",
+        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
       ]
     ]
   },
@@ -1806,10 +1806,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Trykk eller klikk på kompasset for å åpne valget. Den valgte varianten beholdes også når auraeffekter er slått av."
       ],
       [
-        "Auraeffekter",
-        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
-      ],
-      [
         "Velg medaljong",
         "Trykk eller klikk på medaljongen for å velge mellom 28 design."
       ],
@@ -1820,6 +1816,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullskjermsinstrumenter",
         "Kompass og medaljong kan flyttes fritt og endres i størrelse i fullskjerm."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
       ]
     ]
   },
@@ -1832,10 +1832,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Napauta tai napsauta kompassia avataksesi valinnan. Valittu vaihtoehto säilyy myös auraefektien ollessa pois käytöstä."
       ],
       [
-        "Auraefektit",
-        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
-      ],
-      [
         "Valitse medaljonki",
         "Napauta tai napsauta medaljonkia valitaksesi 28 mallista."
       ],
@@ -1846,6 +1842,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Koko näytön instrumentit",
         "Kompassia ja medaljonkia voi siirtää vapaasti ja niiden kokoa voi muuttaa koko näytön tilassa."
+      ],
+      [
+        "Auraefektit",
+        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
       ]
     ]
   },
@@ -1858,10 +1858,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Klepněte nebo klikněte na kompas a otevřete výběr. Zvolená varianta zůstane aktivní i při vypnutých efektech aury."
       ],
       [
-        "Efekty aury",
-        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
-      ],
-      [
         "Výběr medailonu",
         "Klepněte nebo klikněte na medailon a vyberte z 28 designů."
       ],
@@ -1872,6 +1868,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Nástroje na celou obrazovku",
         "Kompas a medailon lze v režimu celé obrazovky volně přesouvat a měnit jejich velikost."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
       ]
     ]
   },
@@ -1884,10 +1884,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Πατήστε ή κάντε κλικ στην πυξίδα για να ανοίξετε την επιλογή. Η επιλεγμένη παραλλαγή παραμένει ενεργή ακόμη και όταν τα εφέ αύρας είναι απενεργοποιημένα."
       ],
       [
-        "Εφέ αύρας",
-        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
-      ],
-      [
         "Επιλογή μεταλλίου",
         "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε ανάμεσα σε 28 σχέδια."
       ],
@@ -1898,6 +1894,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Όργανα πλήρους οθόνης",
         "Η πυξίδα και το μετάλλιο μπορούν να μετακινούνται ελεύθερα και να αλλάζουν μέγεθος σε πλήρη οθόνη."
+      ],
+      [
+        "Εφέ αύρας",
+        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
       ]
     ]
   },
@@ -1910,10 +1910,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Koppints vagy kattints az iránytűre a választó megnyitásához. A kiválasztott változat az auraeffektek kikapcsolásakor is megmarad."
       ],
       [
-        "Auraeffektek",
-        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
-      ],
-      [
         "Medalion kiválasztása",
         "Koppints vagy kattints a medalionra, és válassz a 28 dizájn közül."
       ],
@@ -1924,6 +1920,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Teljes képernyős műszerek",
         "Az iránytű és a medalion teljes képernyőn szabadon mozgatható és átméretezhető."
+      ],
+      [
+        "Auraeffektek",
+        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
       ]
     ]
   },
@@ -1936,10 +1936,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf’n Kompass tippen oder klicken, dann geht d’Kompassauswahl auf. Die gewählte Variante bleibt aa bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
-      ],
-      [
         "Medaillon auswählen",
         "Aufs Medaillon tippen oder klicken und aus 28 Designs auswählen."
       ],
@@ -1950,6 +1946,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon lassen si im Vollbild frei verschieben und in da Größe ändern."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
       ]
     ]
   },
@@ -1962,10 +1962,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Op den Kompass tippen oder klicken, üm de Utwahl optomaken. De utsöchte Variant blifft ok bi utmaakte Aura-Effekten aktiv."
       ],
       [
-        "Aura-Effekten",
-        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
-      ],
-      [
         "Medaillon utwählen",
         "Op dat Medaillon tippen oder klicken un ut 28 Designs wählen."
       ],
@@ -1976,6 +1972,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vullbill-Instrumenten",
         "Kompass un Medaillon köönt in Vullbill free verschaven un in de Grött anpasst warrn."
+      ],
+      [
+        "Aura-Effekten",
+        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
       ]
     ]
   },
@@ -1988,10 +1988,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Uff’n Kompass tippen oder klicken, um de Kompassauswahl zu öffn. Die gewählte Variante bleibt ooch bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
-      ],
-      [
         "Medaillon auswählen",
         "Uffs Medaillon tippen oder klicken und aus 28 Designs auswählen."
       ],
@@ -2002,6 +1998,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon könn im Vollbild frei verschoben und in de Größe angepasst werdn."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
       ]
     ]
   },
@@ -2014,10 +2014,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf dr Kompass tippa oder klicka, dann goht d’Kompassauswahl auf. D’gewählte Variante bleibt au bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
-      ],
-      [
         "Medaillon auswählen",
         "Aufs Medaillon tippa oder klicka ond aus 28 Designs auswähla."
       ],
@@ -2028,6 +2024,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass ond Medaillon könnet im Vollbild frei verschoba ond in dr Größe angepasst werda."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
       ]
     ]
   }
@@ -2446,7 +2446,8 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         /* Deterministic Help icons remove platform font-baseline drift on iPad/iPad Pro. */
         const premiumFunctionsIcon='<svg class="help-functions-welcome-gear" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><defs><linearGradient id="help-functions-welcome-metal" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".62" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><g stroke="url(#help-functions-welcome-metal)"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/><circle cx="32" cy="32" r="17" opacity=".25"/></g></svg>';
         const deterministicHelpIcons={prerequisites:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 10.5 12 3.5l8.5 7v9h-6v-5h-5v5h-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>',radii:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.7" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.25" fill="currentColor"/></svg>',location:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.8v4M12 17.2v4M2.8 12h4M17.2 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',functions:premiumFunctionsIcon,defaults:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.8 12.5 4.2 4.2 10.2-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',troubleshooting:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4.3v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="18.4" r="1.35" fill="currentColor"/></svg>',external_services:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.8c2.25 1.76 4.62 2.75 7.35 3.06v5.25c0 4.72-2.88 8.27-7.35 10.09-4.47-1.82-7.35-5.37-7.35-10.09V5.86C7.38 5.55 9.75 4.56 12 2.8Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><rect x="7.7" y="7.55" width="8.6" height="8.15" rx="1" fill="none" stroke="currentColor" stroke-width="1.45"/><path d="M9.35 9v1.55M10.7 9v1.55M12 9v1.55M13.3 9v1.55M14.65 9v1.55M9.1 11.7h5.8v2.05h-1.35v1.05h-3.1v-1.05H9.1Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',recorder:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3.8" width="14" height="16.4" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h8M8 12h8M8 16h8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'};
-        const premiumHelpIconImages={...HELP_PREMIUM_ICONS.sections,radii:HELP_REFINED_ICONS_V6.radii,mapview:MAP_LAYER_SYMBOL_STACK3D_IMAGE,troubleshooting:HELP_PREMIUM_ICONS.sections.recorder,recorder:HELP_REFINED_ICONS_V5.troubleshooting};
+        const v410InstrumentHelpIcon='data:image/png;base64,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';
+        const premiumHelpIconImages={...HELP_PREMIUM_ICONS.sections,radii:HELP_REFINED_ICONS_V6.radii,mapview:MAP_LAYER_SYMBOL_STACK3D_IMAGE,troubleshooting:HELP_PREMIUM_ICONS.sections.recorder,recorder:HELP_REFINED_ICONS_V5.troubleshooting,'instruments-v410':v410InstrumentHelpIcon};
         const helpNetworkTokenPattern=/https:\/\/www\.maptiler\.com\/tools\/coordinates\/|53\.837691,\s*9\.956105|★ Speichern|★ Save|Location entity|×|↶|device_tracker\.gewitterradar(?:_dashboard)?|gewitterradar\.set_reference_coordinates|a\/b\/c\.tile\.openstreetmap\.org|(?:\*\.)?(?:[a-z0-9-]+\.)+[a-z]{2,24}(?::\d{1,5})?|\b(?:HTTPS|HTTP|MQTT)\/TCP\s+\d{1,5}\b|\b(?:TCP|UDP)[ -]?\d{1,5}\b|\b(?:Open-Meteo(?: Geocoding)?|OpenStreetMap(?: Nominatim|-Kacheln|-Kachelserver|-tiles| tiles)?|Nominatim|Leaflet(?: 1\.9\.4)?|GitHub\/HACS|GitHub|HACS|Local(?:-|\s)to-do(?:-Liste|-list)?|Dashboard-Setz-Script|Companion App|DNS|TLS-Inspection|CORS)\b/gi;
         const helpTokenQuotePattern=/[„“”‚‘’"'«»‹›]/;
         const appendHelpNetworkText=(target,text)=>{
