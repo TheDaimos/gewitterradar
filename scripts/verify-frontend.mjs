@@ -94,7 +94,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.23"',
+  '"id": "fullscreen.map-display"','"version": "1.0.24"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -128,10 +128,15 @@ for(const marker of [
   'input.dataset.fullscreenScaleEditing',
   'data-medallion-selection-mode="medallion"',
   'data-medallion-selection-mode="arrow"',
+  'data-medallion-preview-mode="static"',
+  'data-medallion-preview-mode="animation"',
+  'gewitterradar:v41002:medallion-picker-preview-mode',
+  "stage.dataset.trendState='diagnostic'",
+  "previewMode==='animation'?'animation':'preview-static'",
   'type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"',
   "input?.dataset?.fullscreenScaleEditing==='1'",
-  "'Medaillon · ' + (index + 1) + ' / ' + designs.length",
-  "'Arrow · ' + (arrowIndex + 1) + ' / ' + arrowDesigns.length",
+  "output.textContent = (index + 1) + ' / ' + designs.length",
+  "arrowOutput.textContent = (arrowIndex + 1) + ' / ' + arrowDesigns.length",
   "'Pfeil: '+arrowDescriptor.id+' · '",
   'stage.style.setProperty(\'--medallion-diagnostic-scale\',String(productScale))',
   'gewitterradar:v41002:fullscreen-compass-scale',
