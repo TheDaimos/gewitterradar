@@ -10,7 +10,7 @@
 - veralteten Shared-Frontend-Testvertrag von `ui.skeleton 1.1.6` auf **1.1.7** aktualisiert.
 - finaler technischer Kandidat `e2040a4afffa04da87d8cc4421becac7576217a7`: **5/5 zentrale CI-Prüfungen grün**.
 - `deploy/dev` exakt auf diesen Kandidaten gesetzt und per Compare als **identical** verifiziert (0 voraus / 0 zurück).
-- reale DRA-/iPad-Abnahme des Focus-Ring-Fixes bleibt offen.
+- reale DRA-/iPad-Abnahme bestanden: Nach Tippen auf die Trendanzeige sowie Öffnen/Schließen des Medaillon-/Pfeil-Pickers tritt der blaue Focus-/Tap-Rahmen nicht wieder auf; Desktop-/Android-Regressionsgegenprobe bleibt offen.
 - kein Merge nach `main` und keine Veröffentlichung erfolgt.
 
 ## V4.10.02 DEV R27 – Drag-Schutz bei Blitzupdates + weißerer Vorschau-Glow (2026-09-29)
