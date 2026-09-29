@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -1546,10 +1546,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf den Kompass tippen oder klicken, um die Kompassauswahl zu öffnen. Die gewählte Variante bleibt auch bei ausgeschalteten Aura-Effekten erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
-      ],
-      [
         "Medaillon auswählen",
         "Auf das Medaillon tippen oder klicken, um aus 28 Medaillon-Designs auszuwählen."
       ],
@@ -1560,6 +1556,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon lassen sich im Vollbild frei verschieben und in ihrer Größe anpassen."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
       ]
     ]
   },
@@ -1572,10 +1572,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tap or click the compass to open compass selection. The selected variant remains active even when aura effects are disabled."
       ],
       [
-        "Aura effects",
-        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
-      ],
-      [
         "Choose Medallion",
         "Tap or click the Medallion to choose from 28 Medallion designs."
       ],
@@ -1586,6 +1582,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullscreen instruments",
         "Compass and Medallion can be moved freely and resized in fullscreen mode."
+      ],
+      [
+        "Aura effects",
+        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
       ]
     ]
   },
@@ -1598,10 +1598,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tryk eller klik på kompasset for at åbne kompasvalget. Den valgte variant bevares også, når aura-effekter er slået fra."
       ],
       [
-        "Aura-effekter",
-        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
-      ],
-      [
         "Vælg medaljon",
         "Tryk eller klik på medaljonen for at vælge mellem 28 medaljondesigns."
       ],
@@ -1612,6 +1608,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fuldskærmsinstrumenter",
         "Kompas og medaljon kan flyttes frit og ændres i størrelse i fuldskærm."
+      ],
+      [
+        "Aura-effekter",
+        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
       ]
     ]
   },
@@ -1624,10 +1624,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Toca o haz clic en la brújula para abrir la selección. La variante elegida se mantiene incluso con los efectos de aura desactivados."
       ],
       [
-        "Efectos de aura",
-        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
-      ],
-      [
         "Elegir medallón",
         "Toca o haz clic en el medallón para elegir entre 28 diseños."
       ],
@@ -1638,6 +1634,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumentos a pantalla completa",
         "La brújula y el medallón pueden moverse libremente y cambiar de tamaño en pantalla completa."
+      ],
+      [
+        "Efectos de aura",
+        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
       ]
     ]
   },
@@ -1650,10 +1650,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Touchez ou cliquez sur la boussole pour ouvrir la sélection. La variante choisie reste active même lorsque les effets d’aura sont désactivés."
       ],
       [
-        "Effets d’aura",
-        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
-      ],
-      [
         "Choisir le médaillon",
         "Touchez ou cliquez sur le médaillon pour choisir parmi 28 designs."
       ],
@@ -1664,6 +1660,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instruments plein écran",
         "La boussole et le médaillon peuvent être déplacés librement et redimensionnés en plein écran."
+      ],
+      [
+        "Effets d’aura",
+        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
       ]
     ]
   },
@@ -1676,10 +1676,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tik of klik op het kompas om de keuze te openen. De gekozen variant blijft actief wanneer aura-effecten zijn uitgeschakeld."
       ],
       [
-        "Aura-effecten",
-        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
-      ],
-      [
         "Medaillon kiezen",
         "Tik of klik op het medaillon om uit 28 ontwerpen te kiezen."
       ],
@@ -1690,6 +1686,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Volledig-scherminstrumenten",
         "Kompas en medaillon kunnen in volledig scherm vrij worden verplaatst en van grootte worden veranderd."
+      ],
+      [
+        "Aura-effecten",
+        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
       ]
     ]
   },
@@ -1702,10 +1702,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Dotknij lub kliknij kompas, aby otworzyć wybór. Wybrany wariant pozostaje aktywny także po wyłączeniu efektów aury."
       ],
       [
-        "Efekty aury",
-        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
-      ],
-      [
         "Wybór medalionu",
         "Dotknij lub kliknij medalion, aby wybrać jeden z 28 wzorów."
       ],
@@ -1716,6 +1712,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumenty pełnoekranowe",
         "Kompas i medalion można swobodnie przesuwać i skalować w trybie pełnoekranowym."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
       ]
     ]
   },
@@ -1728,10 +1728,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Toque ou clique na bússola para abrir a seleção. A variante escolhida mantém-se ativa mesmo com os efeitos de aura desligados."
       ],
       [
-        "Efeitos de aura",
-        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
-      ],
-      [
         "Escolher medalhão",
         "Toque ou clique no medalhão para escolher entre 28 designs."
       ],
@@ -1742,6 +1738,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Instrumentos em ecrã inteiro",
         "A bússola e o medalhão podem ser movidos livremente e redimensionados em ecrã inteiro."
+      ],
+      [
+        "Efeitos de aura",
+        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
       ]
     ]
   },
@@ -1754,10 +1754,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tryck eller klicka på kompassen för att öppna valet. Den valda varianten behålls även när auraeffekter är avstängda."
       ],
       [
-        "Auraeffekter",
-        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
-      ],
-      [
         "Välj medaljong",
         "Tryck eller klicka på medaljongen för att välja bland 28 designer."
       ],
@@ -1768,6 +1764,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullskärmsinstrument",
         "Kompass och medaljong kan flyttas fritt och ändras i storlek i fullskärm."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
       ]
     ]
   },
@@ -1780,10 +1780,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Tocca o fai clic sulla bussola per aprire la selezione. La variante scelta rimane attiva anche quando gli effetti aura sono disattivati."
       ],
       [
-        "Effetti aura",
-        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
-      ],
-      [
         "Scegliere il medaglione",
         "Tocca o fai clic sul medaglione per scegliere tra 28 design."
       ],
@@ -1794,6 +1790,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Strumenti a schermo intero",
         "Bussola e medaglione possono essere spostati liberamente e ridimensionati a schermo intero."
+      ],
+      [
+        "Effetti aura",
+        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
       ]
     ]
   },
@@ -1806,10 +1806,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Trykk eller klikk på kompasset for å åpne valget. Den valgte varianten beholdes også når auraeffekter er slått av."
       ],
       [
-        "Auraeffekter",
-        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
-      ],
-      [
         "Velg medaljong",
         "Trykk eller klikk på medaljongen for å velge mellom 28 design."
       ],
@@ -1820,6 +1816,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Fullskjermsinstrumenter",
         "Kompass og medaljong kan flyttes fritt og endres i størrelse i fullskjerm."
+      ],
+      [
+        "Auraeffekter",
+        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
       ]
     ]
   },
@@ -1832,10 +1832,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Napauta tai napsauta kompassia avataksesi valinnan. Valittu vaihtoehto säilyy myös auraefektien ollessa pois käytöstä."
       ],
       [
-        "Auraefektit",
-        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
-      ],
-      [
         "Valitse medaljonki",
         "Napauta tai napsauta medaljonkia valitaksesi 28 mallista."
       ],
@@ -1846,6 +1842,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Koko näytön instrumentit",
         "Kompassia ja medaljonkia voi siirtää vapaasti ja niiden kokoa voi muuttaa koko näytön tilassa."
+      ],
+      [
+        "Auraefektit",
+        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
       ]
     ]
   },
@@ -1858,10 +1858,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Klepněte nebo klikněte na kompas a otevřete výběr. Zvolená varianta zůstane aktivní i při vypnutých efektech aury."
       ],
       [
-        "Efekty aury",
-        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
-      ],
-      [
         "Výběr medailonu",
         "Klepněte nebo klikněte na medailon a vyberte z 28 designů."
       ],
@@ -1872,6 +1868,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Nástroje na celou obrazovku",
         "Kompas a medailon lze v režimu celé obrazovky volně přesouvat a měnit jejich velikost."
+      ],
+      [
+        "Efekty aury",
+        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
       ]
     ]
   },
@@ -1884,10 +1884,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Πατήστε ή κάντε κλικ στην πυξίδα για να ανοίξετε την επιλογή. Η επιλεγμένη παραλλαγή παραμένει ενεργή ακόμη και όταν τα εφέ αύρας είναι απενεργοποιημένα."
       ],
       [
-        "Εφέ αύρας",
-        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
-      ],
-      [
         "Επιλογή μεταλλίου",
         "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε ανάμεσα σε 28 σχέδια."
       ],
@@ -1898,6 +1894,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Όργανα πλήρους οθόνης",
         "Η πυξίδα και το μετάλλιο μπορούν να μετακινούνται ελεύθερα και να αλλάζουν μέγεθος σε πλήρη οθόνη."
+      ],
+      [
+        "Εφέ αύρας",
+        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
       ]
     ]
   },
@@ -1910,10 +1910,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Koppints vagy kattints az iránytűre a választó megnyitásához. A kiválasztott változat az auraeffektek kikapcsolásakor is megmarad."
       ],
       [
-        "Auraeffektek",
-        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
-      ],
-      [
         "Medalion kiválasztása",
         "Koppints vagy kattints a medalionra, és válassz a 28 dizájn közül."
       ],
@@ -1924,6 +1920,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Teljes képernyős műszerek",
         "Az iránytű és a medalion teljes képernyőn szabadon mozgatható és átméretezhető."
+      ],
+      [
+        "Auraeffektek",
+        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
       ]
     ]
   },
@@ -1936,10 +1936,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf’n Kompass tippen oder klicken, dann geht d’Kompassauswahl auf. Die gewählte Variante bleibt aa bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
-      ],
-      [
         "Medaillon auswählen",
         "Aufs Medaillon tippen oder klicken und aus 28 Designs auswählen."
       ],
@@ -1950,6 +1946,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon lassen si im Vollbild frei verschieben und in da Größe ändern."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
       ]
     ]
   },
@@ -1962,10 +1962,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Op den Kompass tippen oder klicken, üm de Utwahl optomaken. De utsöchte Variant blifft ok bi utmaakte Aura-Effekten aktiv."
       ],
       [
-        "Aura-Effekten",
-        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
-      ],
-      [
         "Medaillon utwählen",
         "Op dat Medaillon tippen oder klicken un ut 28 Designs wählen."
       ],
@@ -1976,6 +1972,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vullbill-Instrumenten",
         "Kompass un Medaillon köönt in Vullbill free verschaven un in de Grött anpasst warrn."
+      ],
+      [
+        "Aura-Effekten",
+        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
       ]
     ]
   },
@@ -1988,10 +1988,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Uff’n Kompass tippen oder klicken, um de Kompassauswahl zu öffn. Die gewählte Variante bleibt ooch bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
-      ],
-      [
         "Medaillon auswählen",
         "Uffs Medaillon tippen oder klicken und aus 28 Designs auswählen."
       ],
@@ -2002,6 +1998,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass und Medaillon könn im Vollbild frei verschoben und in de Größe angepasst werdn."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
       ]
     ]
   },
@@ -2014,10 +2014,6 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
         "Auf dr Kompass tippa oder klicka, dann goht d’Kompassauswahl auf. D’gewählte Variante bleibt au bei ausgeschalteter Aura erhalten."
       ],
       [
-        "Aura-Effekte",
-        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
-      ],
-      [
         "Medaillon auswählen",
         "Aufs Medaillon tippa oder klicka ond aus 28 Designs auswähla."
       ],
@@ -2028,6 +2024,10 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       [
         "Vollbild-Instrumente",
         "Kompass ond Medaillon könnet im Vollbild frei verschoba ond in dr Größe angepasst werda."
+      ],
+      [
+        "Aura-Effekte",
+        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
       ]
     ]
   }
