@@ -1,5 +1,14 @@
 # Gewitterradar – kanonische Roadmap
 
+
+## Aktuelle nächste Ausbaustufe nach V4.10
+
+- **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.**
+
+Die zuvor als Zukunftspunkte geführten Themen **unterschiedliche Medaillons** sowie **Verbesserungen der Kompass- und Medaillon-Auswahl** sind Bestandteil von V4.10 und werden nicht länger als zukünftige Roadmap-Punkte geführt.
+
+---
+
 Stand: **20.09.2026**
 
 Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und wird gegen den tatsächlich erreichten Produktstand gepflegt.
