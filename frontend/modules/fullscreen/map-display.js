@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -163,8 +163,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       dialog.querySelector('.compass-picker-nav')?.setAttribute('aria-label',this._t('compass.picker_change'));
       const output = dialog.querySelector('[data-compass-picker-index]');
       if (output) output.textContent = descriptor.uiIndex + ' / ' + COMPASS_DESIGNS.length;
-      const calibrationNavigation = this._compassCalibrationEnabled && (!this._diagnostics.enabled || this._diagnostics.live);
-      const enabled = this._auraEnabled() || calibrationNavigation;
+      const enabled = true;
       const previous = [...dialog.querySelectorAll('[data-compass-picker-prev]')];
       const next = [...dialog.querySelectorAll('[data-compass-picker-next]')];
       previous.forEach((button) => {
