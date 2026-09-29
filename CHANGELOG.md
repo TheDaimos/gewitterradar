@@ -1,5 +1,14 @@
 # Changelog
 
+## V4.10.02 DEV – Roadmap-Bereinigung & V4.10-Beitrag (2026-09-29)
+
+- Zukunfts-Roadmap in der Release-History auf einen einzigen nächsten Hauptblock reduziert: **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter**.
+- unterschiedliche Medaillons sowie die verbesserte Kompass-/Medaillon-Auswahl sind ausdrücklich Bestandteil von V4.10 und keine zukünftigen Roadmap-Punkte mehr.
+- neuer V4.10-Beitrag **„Vom Monolithen zum modularen Gewitterradar“** beschreibt Umfang und Bedeutung der Modularisierung einschließlich Modularchitektur, Instrumentenausbau, 28 Medaillons, 18 Pfeilvarianten, 504er-Fit-Matrix, Diagnose-/Regression-Schutz und DRA-Bereitstellung.
+- englische Release-History parallel aktualisiert.
+- `ui.skeleton` auf **1.1.8** angehoben und Frontend-Vertrag entsprechend nachgezogen.
+- kein Merge nach `main`, keine Veröffentlichung und kein Release durch diese Änderung ausgelöst.
+
 ## V4.10.02 DEV – Modularisierungs-Schlachtplan offiziell abgeschlossen (2026-09-29)
 
 - Nutzer hat den Gewitterradar-V4.10.02-Modularisierungs-Schlachtplan ausdrücklich als **offiziell abgeschlossen** erklärt.
