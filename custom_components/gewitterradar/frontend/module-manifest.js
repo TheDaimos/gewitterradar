@@ -1,9 +1,9 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R31-2026-09-29",runtimeRevision:"41002r13",moduleSetId:"D31A-5E9B"});
+import { registerModule } from "./modules/core/registry.js?v=41002r14";
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R32-2026-09-29",runtimeRevision:"41002r14",moduleSetId:"D32A-5E9B"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.37",
+    "version": "1.2.38",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.29",
+    "version": "1.0.30",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -97,7 +97,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -122,7 +122,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -135,7 +135,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.2.4",
+    "version": "1.3.0",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -159,14 +159,13 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-selector",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "group": "Instrumente",
     "function": "Kompassauswahl",
     "subfunctions": [
       "Designauswahl",
       "Popup",
-      "Rahmenwahl",
-      "Diagnosegeometrie"
+      "Aura-unabhängige Designauswahl"
     ],
     "file": "modules/instruments/compass-selector.js"
   },
