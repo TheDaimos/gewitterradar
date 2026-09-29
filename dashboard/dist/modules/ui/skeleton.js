@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -3901,6 +3901,21 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             justify-content:center;
             position:relative;
             padding:3px 0 0;
+          }
+
+          /* R33 – sehr schmale Touch-Anzeigen: nach Wegfall des alten
+             Kompass-Selectors wird nur dessen ungenutzter Kopfraum
+             zurueckgenommen. iPad/Tablet/Desktop bleiben geometrisch unveraendert.
+             Sichtbare Diagnose-Testtaster verhindern das Zusammenklappen. */
+          @media (max-width:520px) and (hover:none) and (pointer:coarse) {
+            .compass-head:not(:has([data-warning-test]:not([hidden]))) {
+              min-height:6px;
+              height:6px;
+              margin-bottom:0;
+            }
+            .compass-head:not(:has([data-warning-test]:not([hidden]))) + .compass-wrap {
+              padding-top:0;
+            }
           }
 
           /* Mittlere reale Kartenbreite: der komplette quadratische Instrument-
