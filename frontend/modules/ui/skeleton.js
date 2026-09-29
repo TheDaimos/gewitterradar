@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -4446,6 +4446,15 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             filter:
               drop-shadow(0 7px 10px rgba(0,0,0,.46))
               drop-shadow(0 0 9px rgba(196,132,43,.10));
+            -webkit-tap-highlight-color:transparent;
+            -webkit-touch-callout:none;
+          }
+          @media(hover:none) and (pointer:coarse) {
+            .trend-icon:focus,
+            .trend-icon:focus-visible {
+              outline:none!important;
+              box-shadow:none!important;
+            }
           }
           .medallion-calibration-overlay { display:none;position:absolute;inset:0;z-index:5;width:100%;height:100%;pointer-events:none;overflow:visible; }
           #card-root.medallion-calibration .medallion-calibration-overlay { display:block; }
