@@ -66,7 +66,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.27",
+    "version": "1.0.28",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
