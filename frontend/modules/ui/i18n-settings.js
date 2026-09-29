@@ -1532,7 +1532,7 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_storm": "Gewitterstuf zom Test auslösa",
     "tooltip.test_danger": "Gefahrenstuf zom Test auslösa",
     "tooltip.settings_open": "Gewitterradar-Einstellunga aufmacha",
-    "tooltip.compass_north": "Feste Nordausrichtung vom Kompass benutzա",
+    "tooltip.compass_north": "Feste Nordausrichtung vom Kompass benutza",
     "tooltip.card_version": "Kartaversion"
   }
 });
