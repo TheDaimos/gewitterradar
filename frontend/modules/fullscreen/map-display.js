@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -515,7 +515,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       this._clearPickerDiagnostic?.('medallion');
       const previousFocus = this._medallionPickerReturnFocus;
       this._medallionPickerReturnFocus = null;
-      if (restoreFocus && previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
+      const coarseTouch = typeof window !== 'undefined' && !!window.matchMedia?.('(hover:none) and (pointer:coarse)')?.matches;
+      if (restoreFocus && previousFocus?.isConnected) {
+        if (coarseTouch && previousFocus.id === 'trend-icon') previousFocus.blur?.();
+        else previousFocus.focus?.({preventScroll:true});
+      }
     },
 
     _openMedallionPicker() {
