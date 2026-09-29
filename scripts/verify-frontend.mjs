@@ -13,7 +13,7 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.7"',
+  '"version": "1.1.8"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -29,7 +29,8 @@ for(const marker of [
   'transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease',
   '-webkit-tap-highlight-color:transparent',
   '.trend-icon:focus-visible',
-  '#trend-box:focus-visible'
+  '#trend-box:focus-visible',
+  'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.'
 ]){
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
