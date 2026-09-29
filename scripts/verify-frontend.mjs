@@ -320,7 +320,7 @@ for(const language of registeredLanguages){
   if(!helpBundle||typeof helpBundle.title!=='string'||!helpBundle.title.trim()||typeof helpBundle.intro!=='string'||!helpBundle.intro.trim())throw Error('Missing V4.10 help translation: '+language);
   if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==5||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete V4.10 help entries: '+language);
   if(/aura/i.test(String(helpBundle.entries[1]?.[0]||'')))throw Error('Aura help entry still interrupts instrument selection flow: '+language);
-  if(!/aura/i.test(String(helpBundle.entries[4]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
+  if(!/(?:aur|αύρ)/i.test(String(helpBundle.entries[4]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
     const clusterBundle=clusterResolutionLabels[language];
   if(!clusterBundle)throw Error('Missing cluster profile language: '+language);
   for(const key of ['early','balanced','late','classic']){
