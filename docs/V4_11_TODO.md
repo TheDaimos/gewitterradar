@@ -1,0 +1,168 @@
+# Gewitterradar V4.11 – To-do-Sammlung
+
+Stand: 29.09.2026
+
+Status: **NEXT / VERSIONIERT – Sammlung, noch keine Umsetzung**
+
+Diese Datei bündelt die für V4.11 vorgemerkten Themen. Sie ist bewusst eine To-do- und Planungsgrundlage. Umsetzung beginnt erst nach ausdrücklicher Freigabe.
+
+## Leitmotiv V4.11
+
+V4.11 konzentriert sich auf drei zusammenhängende Bereiche:
+
+1. **WeatherRouter-Anbindung und Wetter-/Gefahreninformationen**
+2. **Fehler-, Warn- und Statusmeldungen mit verständlicher Ursachenanzeige**
+3. **passende Lösungshinweise sowie bessere Hilfe und Fehlerbehebung**
+
+Zusätzlich wird die bereits vorgemerkte Idee fester Überwachungsstandorte als V4.11-Prüf- und Planungsblock aufgenommen.
+
+---
+
+## 1. WeatherRouter
+
+- [ ] WeatherRouter als vorgesehene Daten- und Provider-Schicht für zusätzliche Wetterdienste und Wetterereignisse in Gewitterradar anbinden.
+- [ ] klare Trennung zwischen Blitzortung-Livedaten, WeatherRouter-Daten und Karten-/Darstellungsebene beibehalten.
+- [ ] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen.
+- [ ] Datenquellen, Attribution, Aktualität und eingeschränkte Verfügbarkeit in Diagnose und Hilfe sichtbar machen.
+- [ ] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen.
+
+---
+
+## 2. Zentraler Systemstatus am Einstellungs-Zahnrad
+
+- [ ] statusabhängigen Warnindikator am Kopf beim Einstellungs-Zahnrad ergänzen.
+- [ ] **kein Symbol**, wenn keine relevanten Probleme vorliegen.
+- [ ] **orangefarbenes Warndreieck** für Hinweise, eingeschränkte Funktion oder Konfigurationsprobleme.
+- [ ] **rotes Warndreieck** für Fehler oder echten Funktionsausfall.
+- [ ] kleine Ziffer/Badge mit der Anzahl aller aktuell relevanten Warnungen und Fehler.
+- [ ] Rot hat Vorrang vor Orange, die Ziffer zeigt trotzdem die Gesamtzahl.
+- [ ] Tippen/Klicken öffnet ein eigenes Pop-up **„Systemstatus & Hinweise“**.
+- [ ] Einträge im Pop-up kategorisch gruppieren, nicht als ungegliederte Liste.
+- [ ] jeder Eintrag enthält mindestens: Status, betroffene Funktion, kurze Ursache und konkrete Handlungsempfehlung.
+- [ ] Statusänderungen automatisch nachführen; behobene Zustände verschwinden ohne manuellen Neustart, soweit technisch möglich.
+
+### Vorgesehene Kategorien
+
+- [ ] Blitzortung & Tracker
+- [ ] Standorte & Speichern
+- [ ] WeatherRouter & Datenquellen
+- [ ] Module & Integration
+- [ ] Darstellung & Bedienung
+- [ ] Installation / Update / DRA, soweit ein Produktzustand daraus ableitbar ist
+
+---
+
+## 3. Blitzortung- und Tracker-Diagnose
+
+### Tracker nicht gekoppelt
+
+- [ ] device_tracker.gewitterradar weiterhin als kanonischen beweglichen Gewitterradar-Tracker verwenden.
+- [ ] installed, linked, setup_required, matching_entries und tracker_entity_id zentral auswerten.
+- [ ] wenn linked: false bzw. setup_required: true, direkt sichtbare Warnung in Gewitterradar anzeigen.
+- [ ] Beispieltext:
+  - **„Blitzortung folgt dem gewählten Standort nicht. Datenbereich und Kartenstandort können voneinander abweichen.“**
+- [ ] Lösungshinweis anbieten:
+  - Blitzortung einmalig mit device_tracker.gewitterradar als Standort-Entität einrichten.
+
+### Erfassungsradius zu klein
+
+- [ ] aktuellen Blitzortung-Erfassungsradius aus dem tatsächlich passenden Integrationseintrag ermitteln.
+- [ ] auffällig kleinen Radius als Hinweis ausgeben, insbesondere bei weit entfernten Such-/Zielorten.
+- [ ] Meldung dynamisch mit realem Wert erzeugen, z. B.:
+  - **„Blitzortung ist gekoppelt, der aktuelle Erfassungsradius beträgt jedoch nur 100 km. Entfernte Gewitter können außerhalb des Datenbereichs liegen.“**
+- [ ] keinen festen 100-km-Wert verdrahten.
+- [ ] Radius-Hinweis klar von einem echten Verbindungsfehler unterscheiden.
+
+### Gekoppelt, aber keine Daten
+
+- [ ] Zustand „Tracker gekoppelt, aber aktuell keine Blitzdaten“ separat erkennen.
+- [ ] dabei nicht automatisch einen Fehler behaupten: mögliche Ursachen sind ruhiges Wetter, zu kleiner Radius, Datenquelle/MQTT oder Integrationsproblem.
+- [ ] verfügbare Messwerte wie Counter, letzte Aktivität, Radius und Trackerzustand für die Ursachenanzeige zusammenführen.
+
+### Falsch fest verdrahtete Sensor-IDs
+
+- [ ] alte Annahme sensor.home_lightning_counter entfernen bzw. migrieren.
+- [ ] passende Blitzortung-Sensoren dynamisch aus dem tatsächlich mit Gewitterradar gekoppelten Blitzortung-Eintrag bestimmen.
+- [ ] bei mehreren Blitzortung-Einträgen den zum verwendeten Tracker gehörenden Eintrag eindeutig zuordnen.
+- [ ] Statusanzeige darf nicht „Blitzortung nicht verfügbar“ melden, wenn Blitzdaten über einen anders benannten gültigen Sensor vorhanden sind.
+
+---
+
+## 4. Hilfe & Hinweise – Fehlerbehebung neu strukturieren
+
+- [ ] Bereich **„Wenn etwas nicht stimmt“ / „Fehlerbehebung“** ausbauen.
+- [ ] dort Kategorien statt einer langen, ungegliederten Liste verwenden.
+- [ ] Tracker und Blitzortung ausführlich dokumentieren:
+  - Zweck von device_tracker.gewitterradar
+  - Unterschied zwischen Karten-/Bezugsstandort und aktivem Blitzdatenbereich
+  - Bedeutung von linked, setup_required, matching_entries
+  - einmalige Kopplung an Blitzortung
+  - Verhalten des Erfassungsradius
+  - typische Fehlerbilder und deren Behebung
+  - Hinweis, dass ein neu angelegter Blitzortung-Eintrag wieder mit Standardradius starten kann
+- [ ] neue Systemstatus-Meldungen mit passenden Hilfeabschnitten verknüpfen.
+- [ ] Lösungstexte so formulieren, dass konkrete nächste Schritte erkennbar sind.
+
+---
+
+## 5. Standorte & Speichern – Local-To-do prüfen
+
+- [ ] beim Öffnen bzw. Verwenden von **„Standorte & Speichern“** prüfen, ob die erwartete Local-To-do-Liste existiert und erreichbar ist.
+- [ ] fehlende Liste nicht stillschweigend akzeptieren.
+- [ ] wenn Speichern dadurch nicht möglich ist, klare Warnung direkt im Bereich anzeigen.
+- [ ] denselben Zustand zusätzlich im zentralen Systemstatus ausgeben.
+- [ ] Beispiel:
+  - **„Die für gespeicherte Standorte benötigte To-do-Liste wurde nicht gefunden. Standorte können derzeit nicht gespeichert werden.“**
+- [ ] passende Handlungsempfehlung anzeigen: konfigurierte Local-To-do-Liste prüfen oder neu anlegen.
+- [ ] Status nach Wiederherstellung automatisch zurücknehmen.
+
+---
+
+## 6. Überwachte Orte / Monitored Areas
+
+V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in die Planungs- und Prüfphase auf.
+
+### Bedienidee
+
+- [ ] in **Gespeicherte Orte** eine Funktion **„Überwachen“** / **„Überwachung aktiv“** vorsehen.
+- [ ] ein gespeicherter Ort kann dadurch zu einem dauerhaft überwachten Standort werden.
+- [ ] der normale device_tracker.gewitterradar bleibt der bewegliche Karten-/Suchstandort.
+- [ ] überwachte Orte erhalten eigene, dauerhafte Standort-Tracker mit stabilen IDs.
+- [ ] Beispielkonzept:
+  - device_tracker.gewitterradar_monitored_havanna
+  - device_tracker.gewitterradar_monitored_tromso
+- [ ] mehrere überwachte Orte sollen parallel möglich sein.
+
+### Blitzortung-Anbindung
+
+- [ ] prüfen und dokumentieren, dass pro unabhängig überwachtem Gebiet ein eigener Blitzortung-Konfigurationseintrag mit eigener Standort-Entität erforderlich ist.
+- [ ] keinen einzelnen Tracker zyklisch zwischen Orten verschieben; das wäre keine echte parallele Überwachung.
+- [ ] pro überwachten Ort Kopplungsstatus, Radius und Datenstatus anzeigen.
+- [ ] Einrichtungsassistent bzw. verständliche Schritt-für-Schritt-Hilfe für die notwendige Blitzortung-Kopplung prüfen.
+
+### Ressourcen und Grenzen
+
+- [ ] Auswirkungen mehrerer Blitzortung-Einträge auf MQTT-Abonnements, Geo-Location-Entitäten, Speicher und Home-Assistant-Ressourcen messen.
+- [ ] große Radien und viele parallele Überwachungsorte nicht kommentarlos zulassen.
+- [ ] Warnschwellen bzw. Ressourcenhinweise fachlich begründen.
+- [ ] Recorder-Ausschluss für geo_location weiterhin berücksichtigen und in der Hilfe erklären.
+- [ ] Deduplizierung und Zuordnung von Blitzereignissen zu mehreren sich überlappenden Überwachungsgebieten entwerfen.
+- [ ] spätere Benachrichtigungen pro überwachten Ort mit Cooldown/Bündelung vorsehen.
+
+---
+
+## 7. Fehler- und Lösungsmeldungen – Grundregeln
+
+- [ ] keine Warnung nur aufgrund fehlender Aktivität erzeugen, wenn „kein Ereignis“ ein normaler Zustand sein kann.
+- [ ] Fehler, Einschränkung und Information semantisch unterscheiden.
+- [ ] Meldungen sollen möglichst die tatsächlich betroffene Quelle/Funktion nennen.
+- [ ] bekannte Lösung direkt anbieten, aber keine automatische Reparatur fremder Integrationsdaten ohne unterstützte öffentliche Schnittstelle durchführen.
+- [ ] keine direkte Manipulation fremder ConfigEntries oder .storage.
+- [ ] Statusdiagnose für native Integration und Dashboard-Auslieferung fachlich sauber trennen, wo deren Tracker verschieden sind.
+- [ ] Mehrsprachigkeit für alle neuen Meldungen, Tooltips, Hilfe- und Lösungstexte von Anfang an mitplanen.
+
+---
+
+## Abgrenzung zu V4.10
+
+Diese Punkte sind **nicht Bestandteil der V4.10-Finalisierung**. V4.10 bleibt auf seinem abgeschlossenen Modularisierungs-/UI-Stand. Neue funktionale Arbeiten aus dieser Datei beginnen erst in der V4.11-Linie nach ausdrücklicher Freigabe.
