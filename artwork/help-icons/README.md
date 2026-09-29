@@ -12,3 +12,11 @@ All icons in `hires/` are the canonical, resolution-independent originals for th
 - `help-external-rj45.svg` — TEST11B, premium shield with RJ45/network-plug motif.
 
 All other icons are shared by both V4.07.11 variants.
+
+
+## V4.10 instrument icon
+
+- `help-instruments-v410-compass.svg` — Hi-Res/Vektor-Master für den Hilfeabschnitt **Kompass, Medaillon & Pfeile**.
+- Master-Canvas: **2048×2048**, transparenter Hintergrund.
+- Laufzeitdarstellung: verlustfreies **68×68 PNG** als 2×-Retina-Ableitung für 34×34 CSS-Pixel; die PNG-Ableitung wird direkt in die Hilfe eingebettet.
+- Der Master bleibt gemäß Retentionsrichtlinie dauerhaft erhalten.
