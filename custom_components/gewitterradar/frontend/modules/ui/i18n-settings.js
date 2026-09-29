@@ -2246,7 +2246,8 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       ['warning-test-top-danger','warning-test-map-danger','warning-test-history-danger','warning-test-compass-danger'].forEach((id)=>set(id,'tooltip.test_danger'));
       set('settings-open','tooltip.settings_open');
       set('device-toggle','tooltip.compass_north');
-      set('settings-cluster-jump-infinite','settings.cluster_navigation_infinite');
+      const infinite=this.shadow.getElementById('settings-cluster-jump-infinite');
+      if(infinite){infinite.setAttribute('title',this._t('settings.cluster_navigation_infinite'));infinite.setAttribute('aria-label',this._t('settings.cluster_navigation_infinite_aria'));}
       const footer=this.shadow.querySelector('.settings-footer-version');
       if(footer)footer.setAttribute('title',this._t('tooltip.card_version'));
     },
