@@ -20,11 +20,11 @@ jobs:
           node-version: "24"
 
       - name: One-shot V4.11.03 source and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v4' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v5' }}"
         shell: bash
         run: |
           python -c 'from pathlib import Path; p=Path("frontend/modules/core/base-context.js"); s=p.read_text(encoding="utf-8"); n=s.count("41102r1"); assert n>0, "Expected V4.11.02 base-context cache anchors"; p.write_text(s.replace("41102r1","41103r1"),encoding="utf-8"); print("Updated",n,"base-context cache anchors")'
-          python -c 'from pathlib import Path; import json,hashlib; p=Path("frontend/assets.json"); items=json.loads(p.read_text(encoding="utf-8")); item=next(x for x in items if x["file"]=="assets/gewitterradar-runtime-manifest.json"); item["sha256"]=hashlib.sha256(Path("frontend/assets/gewitterradar-runtime-manifest.json").read_bytes()).hexdigest(); p.write_text(json.dumps(items,indent=2,ensure_ascii=False)+"\\n",encoding="utf-8"); print("Updated runtime-manifest asset SHA",item["sha256"])'
+          python -c 'from pathlib import Path; import json,hashlib; p=Path("frontend/assets.json"); items=json.loads(p.read_text(encoding="utf-8")); item=next(x for x in items if x["file"]=="assets/gewitterradar-runtime-manifest.json"); item["sha256"]=hashlib.sha256(Path("frontend/assets/gewitterradar-runtime-manifest.json").read_bytes()).hexdigest(); p.write_text(json.dumps(items,indent=2,ensure_ascii=False),encoding="utf-8"); print("Updated runtime-manifest asset SHA",item["sha256"])'
           node scripts/build-frontend.mjs
 
       - name: Print frontend contract hashes
@@ -121,7 +121,7 @@ jobs:
           done
 
       - name: Commit one-shot V4.11.03 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v4' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v5' }}"
         shell: bash
         run: |
           set -euo pipefail
