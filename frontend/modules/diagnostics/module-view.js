@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.5",
+  version:"1.3.6",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
@@ -33,7 +33,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Verlauf":"modules.group.history"
   }[group]||"modules.group.other");
 
-  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart"]);
+  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart","weather.consumer-client"]);
   const MODULE_VIEW_META=Object.freeze({
   "Deutsch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -58,7 +58,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster & letzte Blitze|Cluster · Marker · Recent-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbindung|Verbindungserkennung · Fähigkeitenkatalog · Datenabruf · Quellenstatus"
   ],
   "English": [
     "Module manifest|Target state · Product version · Build identifier",
@@ -83,7 +84,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters & recent strikes|Clusters · Markers · Recent list · Navigation",
     "Main rendering|Status · KPI · Lists · UI synchronization",
     "Compass|Motion profile · Animation · Rendering",
-    "Trend & history|Trend calculation · 120-minute chart"
+    "Trend & history|Trend calculation · 120-minute chart",
+    "WeatherRouter integration|Discovery · Capability catalog · Data request · Source status"
   ],
   "Dansk": [
     "Modulmanifest|Måltilstand · Produktversion · Build-id",
@@ -108,7 +110,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klynger og seneste lynnedslag|Klynger · Markører · Liste over seneste · Navigation",
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompas|Bevægelsesprofil · Animation · Rendering",
-    "Tendens og historik|Tendensberegning · 120-minutters diagram"
+    "Tendens og historik|Tendensberegning · 120-minutters diagram",
+    "WeatherRouter-integration|Forbindelseskontrol · Funktionskatalog · Dataforespørgsel · Kildestatus"
   ],
   "Español": [
     "Manifiesto de módulos|Estado objetivo · Versión del producto · Identificador de compilación",
@@ -133,7 +136,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clústeres y rayos recientes|Clústeres · Marcadores · Lista reciente · Navegación",
     "Renderizado principal|Estado · KPI · Listas · Sincronización de interfaz",
     "Brújula|Perfil de movimiento · Animación · Renderizado",
-    "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos"
+    "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos",
+    "Integración WeatherRouter|Detección · Catálogo de capacidades · Consulta de datos · Estado de la fuente"
   ],
   "Français": [
     "Manifeste des modules|État cible · Version du produit · Identifiant de build",
@@ -158,7 +162,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters et impacts récents|Clusters · Marqueurs · Liste récente · Navigation",
     "Rendu principal|État · KPI · Listes · Synchronisation de l’interface",
     "Boussole|Profil de mouvement · Animation · Rendu",
-    "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes"
+    "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes",
+    "Intégration WeatherRouter|Détection · Catalogue des capacités · Requête de données · État de la source"
   ],
   "Nederlands": [
     "Modulemanifest|Doelstatus · Productversie · Buildkenmerk",
@@ -183,7 +188,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters en recente bliksem|Clusters · Markeringen · Recente lijst · Navigatie",
     "Hoofdweergave|Status · KPI · Lijsten · UI-synchronisatie",
     "Kompas|Bewegingsprofiel · Animatie · Rendering",
-    "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten"
+    "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten",
+    "WeatherRouter-koppeling|Detectie · Functiecatalogus · Gegevensaanvraag · Bronstatus"
   ],
   "Polski": [
     "Manifest modułów|Stan docelowy · Wersja produktu · Identyfikator kompilacji",
@@ -208,7 +214,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klastry i ostatnie wyładowania|Klastry · Znaczniki · Lista ostatnich · Nawigacja",
     "Renderowanie główne|Stan · KPI · Listy · Synchronizacja interfejsu",
     "Kompas|Profil ruchu · Animacja · Renderowanie",
-    "Trend i historia|Obliczanie trendu · Wykres 120-minutowy"
+    "Trend i historia|Obliczanie trendu · Wykres 120-minutowy",
+    "Integracja WeatherRouter|Wykrywanie · Katalog możliwości · Pobieranie danych · Stan źródła"
   ],
   "Português": [
     "Manifesto de módulos|Estado pretendido · Versão do produto · Identificador da compilação",
@@ -233,7 +240,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters e descargas recentes|Clusters · Marcadores · Lista recente · Navegação",
     "Renderização principal|Estado · KPI · Listas · Sincronização da interface",
     "Bússola|Perfil de movimento · Animação · Renderização",
-    "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos"
+    "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos",
+    "Integração WeatherRouter|Deteção · Catálogo de capacidades · Consulta de dados · Estado da fonte"
   ],
   "Svenska": [
     "Modulmanifest|Måltillstånd · Produktversion · Byggidentifierare",
@@ -258,7 +266,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Kluster och senaste blixtar|Kluster · Markörer · Senaste-lista · Navigering",
     "Huvudrendering|Status · KPI · Listor · UI-synkronisering",
     "Kompass|Rörelseprofil · Animation · Rendering",
-    "Trend och historik|Trendberäkning · 120-minutersdiagram"
+    "Trend och historik|Trendberäkning · 120-minutersdiagram",
+    "WeatherRouter-integration|Identifiering · Funktionskatalog · Dataförfrågan · Källstatus"
   ],
   "Italiano": [
     "Manifesto dei moduli|Stato previsto · Versione prodotto · Identificatore build",
@@ -283,7 +292,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster e fulmini recenti|Cluster · Marcatori · Elenco recente · Navigazione",
     "Rendering principale|Stato · KPI · Elenchi · Sincronizzazione UI",
     "Bussola|Profilo di movimento · Animazione · Rendering",
-    "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti"
+    "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti",
+    "Integrazione WeatherRouter|Rilevamento · Catalogo funzionalità · Richiesta dati · Stato della fonte"
   ],
   "Norsk bokmål": [
     "Modulmanifest|Måltilstand · Produktversjon · Bygg-ID",
@@ -308,7 +318,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klynger og siste lyn|Klynger · Markører · Siste-liste · Navigasjon",
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompass|Bevegelsesprofil · Animasjon · Rendering",
-    "Trend og historikk|Trendberegning · 120-minuttersdiagram"
+    "Trend og historikk|Trendberegning · 120-minuttersdiagram",
+    "WeatherRouter-integrasjon|Oppdagelse · Funksjonskatalog · Dataforespørsel · Kildestatus"
   ],
   "Suomi": [
     "Moduuliluettelo|Tavoitetila · Tuoteversio · Koontitunniste",
@@ -333,7 +344,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klusterit ja viimeisimmät salamat|Klusterit · Merkit · Viimeisimmät-lista · Navigointi",
     "Päärenderöinti|Tila · KPI · Listat · Käyttöliittymän synkronointi",
     "Kompassi|Liikeprofiili · Animaatio · Renderöinti",
-    "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio"
+    "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio",
+    "WeatherRouter-liitäntä|Tunnistus · Ominaisuusluettelo · Tietopyyntö · Lähteen tila"
   ],
   "Čeština": [
     "Manifest modulů|Cílový stav · Verze produktu · Identifikátor buildu",
@@ -358,7 +370,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Shluky a poslední blesky|Shluky · Značky · Seznam posledních · Navigace",
     "Hlavní vykreslování|Stav · KPI · Seznamy · Synchronizace UI",
     "Kompas|Profil pohybu · Animace · Vykreslování",
-    "Trend a historie|Výpočet trendu · 120minutový graf"
+    "Trend a historie|Výpočet trendu · 120minutový graf",
+    "Integrace WeatherRouter|Zjištění připojení · Katalog funkcí · Dotaz na data · Stav zdroje"
   ],
   "Ελληνικά": [
     "Δηλωτικό λειτουργικών μονάδων|Αναμενόμενη κατάσταση · Έκδοση προϊόντος · Αναγνωριστικό build",
@@ -383,7 +396,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Συστάδες & πρόσφατοι κεραυνοί|Συστάδες · Δείκτες · Λίστα πρόσφατων · Πλοήγηση",
     "Κύρια απόδοση|Κατάσταση · KPI · Λίστες · Συγχρονισμός διεπαφής",
     "Πυξίδα|Προφίλ κίνησης · Κίνηση · Απόδοση",
-    "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών"
+    "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών",
+    "Ενσωμάτωση δρομολόγησης καιρού|Ανακάλυψη · Κατάλογος δυνατοτήτων · Αίτημα δεδομένων · Κατάσταση πηγής"
   ],
   "Magyar": [
     "Moduljegyzék|Célállapot · Termékverzió · Buildazonosító",
@@ -408,7 +422,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klaszterek és legutóbbi villámok|Klaszterek · Jelölők · Legutóbbi lista · Navigáció",
     "Fő renderelés|Állapot · KPI · Listák · Felület szinkronizálása",
     "Iránytű|Mozgásprofil · Animáció · Renderelés",
-    "Trend és előzmények|Trendszámítás · 120 perces diagram"
+    "Trend és előzmények|Trendszámítás · 120 perces diagram",
+    "WeatherRouter-integráció|Felderítés · Képességkatalógus · Adatkérés · Forrásállapot"
   ],
   "Boarisch": [
     "Modulmanifest|Sollstand · Produktversion · Build-Kennung",
@@ -433,7 +448,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster & letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Einbindung|Verbindungssuach · Fähigkeiten-Übersicht · Datenabfrog · Quellenstand"
   ],
   "Plattdüütsch": [
     "Modulmanifest|Sollstand · Produktverschoon · Build-Kennen",
@@ -458,7 +474,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liest · Navigation",
     "Hööftrendering|Status · KPI · Listen · UI-Synchroniseren",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm"
+    "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbinnen|Verbinnen prüfen · Funkschoonen-Kataloog · Datenafraag · Quellenstand"
   ],
   "Sächs’sch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -483,7 +500,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Gombass|Bewegungsprofil · Animation · Rendering",
-    "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbindung|Verbindung prüfn · Fähichkeiten-Übersicht · Datenabfrage · Quellenstatus"
   ],
   "Schwäbisch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -508,7 +526,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster ond letzte Blitz|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Lista · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm"
+    "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm",
+    "WeatherRouter-Einbindung|Verbindung prüfa · Fähigkeita-Katalog · Datenaafrog · Quellastatus"
   ]
 });
   const modulePresentation=(language,row)=>{
@@ -820,7 +839,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         block.className="gr-mod-group";
         const groupTitle=document.createElement("div");
         groupTitle.className="gr-mod-group-title";
-        groupTitle.textContent=this._t?.(groupTranslationKey(group))||group;
+        groupTitle.textContent=group==="Weather-Engine"?"Weather-Engine":(this._t?.(groupTranslationKey(group))||group);
         block.append(groupTitle);
         for(const row of rows.sort((a,b)=>modulePresentation(this._languageValue?.()||"Deutsch",a).name.localeCompare(modulePresentation(this._languageValue?.()||"Deutsch",b).name,this._locale?.()||"de"))){
           const item=document.createElement("details");
