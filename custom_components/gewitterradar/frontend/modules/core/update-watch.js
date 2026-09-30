@@ -11,12 +11,14 @@ export const MODULE_META=Object.freeze({
 
 const RUNTIME_MANIFEST_URL=new URL("../../assets/gewitterradar-runtime-manifest.json",import.meta.url).href;
 const CHECK_INTERVAL_MS=60000;
+const AUTO_RELOAD_DELAY_MS=1800;
+const AUTO_RELOAD_GUARD_PREFIX="gewitterradar:runtime-auto-reload:";
 
 export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
   const {APPLICATION_META}=deps;
   return {
     _runtimeUpdateWatchState(){
-      if(!this.__runtimeUpdateWatchState)this.__runtimeUpdateWatchState={timer:null,visibilityHandler:null,pending:false,last:null};
+      if(!this.__runtimeUpdateWatchState)this.__runtimeUpdateWatchState={timer:null,autoReloadTimer:null,visibilityHandler:null,pending:false,last:null};
       return this.__runtimeUpdateWatchState;
     },
 
@@ -47,6 +49,24 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
       }finally{state.pending=false;}
     },
 
+    _runtimeUpdateTargetKey(installed){
+      return String(installed?.moduleSetId||installed?.runtimeRevision||installed?.build||installed?.productVersion||"").trim();
+    },
+
+    _scheduleInstalledRuntimeReload(installed){
+      const state=this._runtimeUpdateWatchState();
+      if(state.autoReloadTimer||typeof window==="undefined")return;
+      if(typeof document!=="undefined"&&document.visibilityState==="hidden")return;
+      const target=this._runtimeUpdateTargetKey(installed);if(!target)return;
+      const guard=AUTO_RELOAD_GUARD_PREFIX+target;
+      try{if(sessionStorage.getItem(guard)==="1")return;}catch(_error){}
+      state.autoReloadTimer=setTimeout(()=>{
+        state.autoReloadTimer=null;
+        try{sessionStorage.setItem(guard,"1");}catch(_error){}
+        this._reloadInstalledRuntime();
+      },AUTO_RELOAD_DELAY_MS);
+    },
+
     _showInstalledRuntimeChanged(installed){
       const root=this.shadow;
       if(!root)return;
@@ -75,9 +95,12 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
         button.setAttribute("aria-label",phrase);
       }
       banner.hidden=false;
+      this._scheduleInstalledRuntimeReload(installed);
     },
 
     _hideInstalledRuntimeChanged(){
+      const state=this._runtimeUpdateWatchState();
+      if(state.autoReloadTimer){clearTimeout(state.autoReloadTimer);state.autoReloadTimer=null;}
       const banner=this.shadow?.getElementById("gewitterradar-runtime-update-banner");
       if(banner)banner.hidden=true;
     },
@@ -103,6 +126,7 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
     _stopRuntimeUpdateWatch(){
       const state=this._runtimeUpdateWatchState();
       if(state.timer){clearInterval(state.timer);state.timer=null;}
+      if(state.autoReloadTimer){clearTimeout(state.autoReloadTimer);state.autoReloadTimer=null;}
       if(state.visibilityHandler&&typeof document!=="undefined")document.removeEventListener("visibilitychange",state.visibilityHandler);
       state.visibilityHandler=null;
     }

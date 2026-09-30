@@ -106,7 +106,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       pane.style.zIndex="230";
       pane.style.pointerEvents="none";
     }
-    const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
+    const displayMaxZoom=Math.max(maxZoom,finite(map.getMaxZoom?.())??maxZoom);
+    const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom:displayMaxZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
     const template=String(payload.tile_url||"");
     layer.createTile=(coords,done)=>{
       const img=document.createElement("img");
@@ -219,7 +220,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const contexts=Array.isArray(capability.spatial_contexts)?capability.spatial_contexts:[];
       const context=contexts.includes("bbox")?viewport.context:contexts.includes("global")?{type:"global"}:null;
       if(!context){this._weatherRadarHandleUnavailable({unavailable:{code:"requirements_not_met"}});return;}
-      const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"],source_classes:["observation"],max_age_seconds:900}});
+      const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]}});
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
       this._weatherRadarApplyReady(answer,viewport);
     }catch(_error){

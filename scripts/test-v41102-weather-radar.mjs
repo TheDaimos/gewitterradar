@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import {readFile} from "node:fs/promises";
 import {expandWeatherRasterTileUrl,weatherRasterBbox3857} from "../frontend/modules/weather/precipitation-layer.js";
 
 assert.equal(
@@ -19,4 +20,9 @@ const wms=expandWeatherRasterTileUrl(
 );
 assert.equal(wms,"https://example.test/wms?bbox=0,-20037508.342789,20037508.342789,0&width=256&height=256");
 
-console.log("PASS: V4.11.02 provider-neutral raster adapter expands XYZ and EPSG:3857 BBOX tile templates.");
+const source=await readFile(new URL("../frontend/modules/weather/precipitation-layer.js",import.meta.url),"utf8");
+assert.match(source,/requirements:\{resource_types:\["raster_tile"\]\}/);
+assert.doesNotMatch(source,/source_classes:\["observation"\]/);
+assert.match(source,/maxNativeZoom:maxZoom/);
+
+console.log("PASS: V4.11.02 provider-neutral raster adapter expands XYZ/EPSG:3857 templates without excluding observation_forecast radar and preserves the layer above native zoom.");

@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js";
+import { APPLICATION_RELEASE } from "./version.js?v=41102r1";
 import { registerModule } from "./modules/core/registry.js?v=41102r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
