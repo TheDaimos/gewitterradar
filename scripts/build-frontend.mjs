@@ -11,7 +11,23 @@ export async function expectedPayload(){
  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("const CARD_VERSION = '4.10';")){
+ if(text.includes("const GEWITTERRADAR_FEATURE_CACHE = '41101r1';")){
+  const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  if(!manifestText.includes('version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30"')||!text.includes("CARD_VERSION=APPLICATION_META.version;")||!text.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"))throw Error('V4.11.01 canonical version mismatch');
+  const old=final.moduleFiles,additional='modules/weather/consumer-client.js';
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  const expected=[...Object.keys(old),additional].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.01 module inventory mismatch');
+  const entry=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
+  if(!entry.includes("id:'weather.consumer-client',version:'1.0.0'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
+  for(const name of actual){
+    const bytes=await readFile(resolve(root,'frontend',name));
+    if(name!=='module-manifest.js'&&name!==additional&&(bytes.length!==old[name]?.sizeBytes||hash(bytes)!==old[name]?.sha256))throw Error('V4.10 protected module changed without explicit V4.11 contract: '+name);
+    modular.set(name,bytes);
+  }
+  localeSha=final.localeSha256;localeSize=final.localeSizeBytes;
+ }else if(text.includes("const CARD_VERSION = '4.10';")){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   if(final.version!=='4.10'||final.status!=='FINAL'||final.acceptedCandidateSha256!=='c9940895892e05d0c424cc2d2b6d27f43c24d345f81f1227c4716f3d6404943e')throw Error('V4.10 contract provenance mismatch');
   if(source.length!==final.sizeBytes||hash(source)!==final.sha256)throw Error('V4.10 frontend checksum mismatch');
