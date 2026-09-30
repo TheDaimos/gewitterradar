@@ -1,6 +1,6 @@
 # Gewitterradar V4.11.01 DEV · Kandidatenhinweise (nicht öffentlich)
 
-Status: **Entwicklungsfassung / reale WeatherRouter-Consumer-Abnahme noch ausstehend**  
+Status: **Entwicklungsfassung / erste reale Discovery- und Resolve-Abnahme am 30.09.2026 bestanden; vollständige API-, Karten-, Geräte- und Ersatzversorgungsabnahme noch ausstehend**  
 Zweig: `feature/v4.11-development`  
 Ursprung: V4.10 FINAL, Tag `v4.10`, Commit `3111e9d27a62adf97d37cccb8066cc9a0803c128`.  
 Bereitstellung nur über bestehenden Kanal `deploy/dev` nach vollständiger Prüfung; kein neuer Entwicklungskanal.
@@ -27,3 +27,7 @@ Keine produktiven Niederschlags-/Satelliten-Layer, keine automatische Ersatzvers
 6. Desktop, Android und iPad sowie vollständiger DRA-Rollback bleiben reale Abnahmebedingungen.
 
 Die Consumer-API V1 darf erst nach tatsächlicher externer Gewitterradar-/Home-Assistant-Verprobung als abgenommen gelten.
+
+## Realtest – erster Consumer-Durchlauf (30.09.2026)
+
+Der Nutzer hat V4.11.01 DEV mit 24/24 Modulen sowie eine erfolgreiche WeatherRouter-Verbindung auf Consumer API V1 dokumentiert. Der gefilterte Wetterkatalog zeigte 70 verfügbare Wetterfähigkeiten. Drei echte Resolve-Antworten wurden angezeigt: DWD-Niederschlag als `raster_tile` (Alter 248 s), FMI Lightning Open Data als `event_feed` (0 Ereignisse), amtliche Warnungen als `hazard_feed` (65 Rohereignisse; angezeigte Quellen DWD und NOAA/NWS). Leere Blitzliste ist kein Fehler; die Zahl der Warnereignisse belegt ohne räumliche/zeitliche Geometrieprüfung keine lokale Gefahrenlage. Verbindliche Einordnung und nächste Abnahmeschritte: [V4_11_WEATHER_ROUTER_REALTEST_2026-09-30.md](V4_11_WEATHER_ROUTER_REALTEST_2026-09-30.md).
