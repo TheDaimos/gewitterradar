@@ -294,7 +294,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
     "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus"],
