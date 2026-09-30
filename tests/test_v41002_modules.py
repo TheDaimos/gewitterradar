@@ -47,8 +47,8 @@ def test_expected_module_versions_match_self_registration():
   if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
    continue
   text=(FRONTEND/name).read_text(encoding="utf-8")
-  id_match=re.search(r"""(?:["']?id["']?)\\s*:\\s*["']([^"']+)["']""",text)
-  version_match=re.search(r"""(?:["']?version["']?)\\s*:\\s*["']([^"']+)["']""",text)
+  id_match=re.search(r"""(?:["']?id["']?)\s*:\s*["']([^"']+)["']""",text)
+  version_match=re.search(r"""(?:["']?version["']?)\s*:\s*["']([^"']+)["']""",text)
   assert id_match and version_match, name
   actual[id_match.group(1)]=version_match.group(1)
  self_match=re.search(r'export const MODULE_META=.*?id:"core\.manifest",version:"([^"]+)"',manifest,re.S)
