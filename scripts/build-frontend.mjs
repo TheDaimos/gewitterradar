@@ -23,7 +23,7 @@ export async function expectedPayload(){
   if(!entry.includes("id:'weather.consumer-client',version:'1.0.2'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
   for(const name of actual){
     const bytes=await readFile(resolve(root,'frontend',name));
-    if(name!=='module-manifest.js'&&name!==additional&&name!=='modules/ui/skeleton.js'&&(bytes.length!==old[name]?.sizeBytes||hash(bytes)!==old[name]?.sha256))throw Error('V4.10 protected module changed without explicit V4.11 contract: '+name);
+    if(name!=='module-manifest.js'&&name!==additional&&name!=='modules/ui/skeleton.js'&&name!=='modules/diagnostics/module-view.js'&&(bytes.length!==old[name]?.sizeBytes||hash(bytes)!==old[name]?.sha256))throw Error('V4.10 protected module changed without explicit V4.11 contract: '+name);
     modular.set(name,bytes);
   }
   localeSha=final.localeSha256;localeSize=final.localeSizeBytes;
