@@ -92,6 +92,20 @@ assert.equal(
 );
 transformed = transformed.replace(focusShiftFrom, focusShiftTo);
 
+// V4.11 is deliberately a DEV build, whereas the immutable V4.10 FINAL build
+// must continue to reject a development label. Adapt only this historical
+// footer assertion and require the exact active DEV identifier.
+const versionSource = fs.readFileSync(path.join(__dirname, '..', 'frontend/module-manifest.js'), 'utf8');
+if (versionSource.includes('displayVersion:"V4.11.01 DEV"')) {
+  const stableFrom = "if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');";
+  const devTo = "if(!(await page.locator('.about-dev').innerText()).includes('V4.11.01 DEV'))throw Error('V4.11.01 DEV About footer version missing');";
+  assert.equal(
+    transformed.split(stableFrom).length, 2,
+    'Historical About version-label assertion changed; check V4.11 DEV acceptance.',
+  );
+  transformed = transformed.replace(stableFrom, devTo);
+}
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
