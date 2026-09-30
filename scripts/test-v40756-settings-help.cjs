@@ -110,6 +110,7 @@ const server = http.createServer((req, res) => {
             }),
             sections: sections.length,
             moduleSection: !!root.querySelector('#settings-modules-section'),
+            weatherEngineSection: !!root.querySelector('#weather-engine-section'),
             summaryHeight: summary.offsetHeight,
             chevron: [parseFloat(after.width), parseFloat(after.height), after.borderRightColor],
             closedState,
@@ -130,7 +131,8 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 7, `${delivery}/${profile} settings sections including Module & Versionen`);
+        assert.equal(metrics.sections, 8, `${delivery}/${profile} settings sections including Weather-Engine and Module & Versionen`);
+        assert.equal(metrics.weatherEngineSection, true, `${delivery}/${profile} Weather-Engine section`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
