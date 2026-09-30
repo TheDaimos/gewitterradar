@@ -6,6 +6,8 @@ Status: **NEXT / VERSIONIERT – Sammlung, noch keine Umsetzung**
 
 Diese Datei bündelt die für V4.11 vorgemerkten Themen. Sie ist bewusst eine To-do- und Planungsgrundlage. Umsetzung beginnt erst nach ausdrücklicher Freigabe.
 
+> **Verbindlicher Planungsbeschluss vom 30.09.2026:** Die hybride Weather-Engine (unabhängige Blitzortung-/WeatherRouter-Schalter, parallele Anreicherung, weitere unabhängige Blitzbeobachtungen, kontrollierte Ersatzversorgung, Provenienz, Monitored-Area-Bezug und API-/Modulgrenzen) ist in [V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md](V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md) festgehalten. Bei diesem Themenbereich ist das Beschlussdokument die maßgebliche Planungsquelle. Änderungen bleiben durch ausdrücklichen neuen Beschluss möglich; noch keine Implementierungsfreigabe.
+
 ## Leitmotiv V4.11
 
 V4.11 konzentriert sich auf drei zusammenhängende Bereiche:
