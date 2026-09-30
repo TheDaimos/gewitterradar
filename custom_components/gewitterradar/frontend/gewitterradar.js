@@ -1,12 +1,10 @@
-/* Gewitterradar Card V4.10 FINAL – V4.09 FINAL als regressionsgeschützte Basis.
+/* Gewitterradar Card V4.11.01 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
-const CARD_VERSION = '4.10';
-const CARD_DISPLAY_VERSION = '4.10';
-const GEWITTERRADAR_BUILD = 'V4.10-RELEASE-2026-09-30';
+let CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD;
 const GEWITTERRADAR_MODULE_CACHE = '41002r13';
-const GEWITTERRADAR_FEATURE_CACHE = '41002r40';
+const GEWITTERRADAR_FEATURE_CACHE = '41101r1';
 const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) => {
   try {
     return await import(`${path}?v=${revision}`);
@@ -23,7 +21,7 @@ let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
-let installCompass, installHistoryChart;
+let installCompass, installHistoryChart, installWeatherRouter;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
@@ -49,8 +47,12 @@ try {
   const render = await gewitterradarImport('./modules/ui/render.js');
   const compass = await gewitterradarImport('./modules/instruments/compass.js');
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
+  const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js',GEWITTERRADAR_FEATURE_CACHE);
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
+  CARD_VERSION=APPLICATION_META.version;
+  CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');
+  GEWITTERRADAR_BUILD=APPLICATION_META.build;
   ({ moduleDiagnostics, moduleRegistrySnapshot } = registry);
   ({ createBaseContext } = baseContext);
   ({ installCardLifecycle } = cardLifecycle);
@@ -72,6 +74,7 @@ try {
   ({ installRender } = render);
   ({ installCompass } = compass);
   ({ installHistoryChart } = historyChart);
+  ({ installWeatherRouter } = weatherRouter);
 } catch (error) {
   GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
   console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
@@ -88,7 +91,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
         this.innerHTML = `
           <ha-card style="display:block;padding:16px;border:1px solid rgba(224,180,79,.55);border-radius:16px">
             <div style="font-weight:800;color:#e0b44f;margin-bottom:8px">Gewitterradar · Modul-Ladefehler</div>
-            <div style="font-size:13px;line-height:1.45">Mindestens ein V4.10-Modul konnte nicht geladen werden. Prüfe den installierten Modulbaum und lade das Frontend anschließend vollständig neu.</div>
+            <div style="font-size:13px;line-height:1.45">Mindestens ein V4.11-Modul konnte nicht geladen werden. Prüfe den installierten Modulbaum und lade das Frontend anschließend vollständig neu.</div>
             <code style="display:block;margin-top:10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;opacity:.78">${message}</code>
           </ha-card>`;
       }
@@ -99,7 +102,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
     window.customCards.push({
       type: tag,
       name: 'Gewitterradar',
-      description: 'Gewitterradar V4.10 · Modul-Ladefehler'
+      description: 'Gewitterradar V4.11 DEV · Modul-Ladefehler'
     });
   }
 } else {
@@ -132,6 +135,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installRender(GewitterradarCard,__moduleDeps);
   installCompass(GewitterradarCard,__moduleDeps);
   installHistoryChart(GewitterradarCard,__moduleDeps);
+  installWeatherRouter(GewitterradarCard,__moduleDeps);
 
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'define-custom-element'};
   customElements.define('gewitterradar-card',GewitterradarCard);

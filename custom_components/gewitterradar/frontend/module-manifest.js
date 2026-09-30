@@ -1,9 +1,9 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10",displayVersion:"V4.10",build:"V4.10-RELEASE-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D40A-5E9B"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"E411-01A0"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.46",
+    "version": "1.2.47",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -293,6 +293,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/instruments/compass.js"
   },
   {
+    "id": "weather.consumer-client",
+    "version": "1.0.0",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter Consumer V1",
+    "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus"],
+    "file": "modules/weather/consumer-client.js"
+  },
+  {
     "id": "history.chart",
     "version": "1.0.1",
     "group": "Verlauf",
@@ -304,4 +312,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.46",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.47",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
