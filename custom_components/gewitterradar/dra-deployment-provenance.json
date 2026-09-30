@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R20-2026-09-28",
+  "productVersion": "4.10",
+  "build": "V4.10-RELEASE-2026-09-30",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D31A-5E90",
-  "baselineFeatureHead": "db1fa8f5f6a4e14b98bb2ff37744549910123358",
+  "moduleSetId": "D40A-5E9B",
+  "baselineFeatureHead": "bcf30fe2dc1b6b56625edf209b2373b956fb7fd4",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "R20 compact medallion diagnostic accordions; medallion remains visually in focus",
+    "purpose": "V4.10 public release identity from accepted R40; existing DRA channel unchanged",
     "productBehaviorUnchanged": true,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
