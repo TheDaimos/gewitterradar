@@ -15,7 +15,7 @@ def test_manifest_is_valid_and_single_entry() -> None:
 
     assert manifest["domain"] == "gewitterradar"
     build_info = (INTEGRATION / "build_info.py").read_text(encoding="utf-8")
-    expected = "0.22.0" if 'BUILD_VERSION = "4.10"' in build_info else "0.21.0"
+    expected = "0.23.0" if 'BUILD_VERSION = "4.11.01"' in build_info else "0.22.0" if 'BUILD_VERSION = "4.10"' in build_info else "0.21.0"
     assert manifest["version"] == expected
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True

@@ -32,7 +32,8 @@ def test_modules_carry_own_versions():
 def test_expected_module_versions_match_self_registration():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  expected=dict(re.findall(r'"id": "([^"]+)",\s*"version": "([^"]+)"',manifest))
- assert len(expected)==23
+ is_v411='version:"4.11.01"' in manifest
+ assert len(expected)==(24 if is_v411 else 23)
  picker_data_modules={
   "modules/fullscreen/compass-picker-chevron-left-brass.js",
   "modules/fullscreen/compass-picker-chevron-right-brass.js",
@@ -40,12 +41,14 @@ def test_expected_module_versions_match_self_registration():
   "modules/fullscreen/compass-picker-chevron-right-silver.js",
  }
  actual={}
- for name in CONTRACT["moduleFiles"]:
+ checked_files=list(CONTRACT["moduleFiles"])
+ if is_v411: checked_files.append("modules/weather/consumer-client.js")
+ for name in checked_files:
   if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
    continue
   text=(FRONTEND/name).read_text(encoding="utf-8")
-  id_match=re.search(r'(?:"id"|id)\s*:\s*"([^"]+)"',text)
-  version_match=re.search(r'(?:"version"|version)\s*:\s*"([^"]+)"',text)
+  id_match=re.search(r"""(?:["']?id["']?)\\s*:\\s*["']([^"']+)["']""",text)
+  version_match=re.search(r"""(?:["']?version["']?)\\s*:\\s*["']([^"']+)["']""",text)
   assert id_match and version_match, name
   actual[id_match.group(1)]=version_match.group(1)
  self_match=re.search(r'export const MODULE_META=.*?id:"core\.manifest",version:"([^"]+)"',manifest,re.S)
@@ -105,7 +108,8 @@ def test_runtime_revision_and_module_set_probe_contract():
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${revision}`' in main
- assert "GEWITTERRADAR_FEATURE_CACHE = '41002r40'" in main
+ is_v411='version:"4.11.01"' in manifest
+ assert ("GEWITTERRADAR_FEATURE_CACHE = '41101r1'" if is_v411 else "GEWITTERRADAR_FEATURE_CACHE = '41002r40'") in main
  assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/instruments/compass-selector.js',GEWITTERRADAR_FEATURE_CACHE)" in main
@@ -116,9 +120,9 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"D40A-5E9B"' in manifest
+ assert ('moduleSetId:"E411-01A1"' if is_v411 else 'moduleSetId:"D40A-5E9B"') in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="D40A-5E9B"
+ assert runtime["moduleSetId"]==("E411-01A1" if is_v411 else "D40A-5E9B")
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)

@@ -41,9 +41,13 @@ def test_v41001_compass_picker_contract():
 
     # The protected R40 behaviour applies unchanged to both its DEV build and V4.10 FINAL.
     is_final = "const CARD_VERSION = '4.10';" in main
+    is_v411 = "CARD_VERSION=APPLICATION_META.version;" in main
     if is_final:
         assert "const CARD_DISPLAY_VERSION = '4.10';" in main
         assert "V4.10-RELEASE-2026-09-30" in main
+    elif is_v411:
+        assert "CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');" in main
+        assert "GEWITTERRADAR_FEATURE_CACHE = '41101r1'" in main
     else:
         assert "const CARD_VERSION = '4.10.02';" in main
         assert "V4.10.02-MODULAR-DEV-R40-2026-09-30" in main
