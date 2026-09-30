@@ -20,7 +20,7 @@ jobs:
           node-version: "24"
 
       - name: One-shot V4.11.04 identity and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v3' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v4' }}"
         shell: bash
         run: |
           python - <<'PY'
@@ -45,7 +45,9 @@ jobs:
                       .replace('"id": "ui.skeleton",\n    "version": "1.1.16"', '"id": "ui.skeleton",\n    "version": "1.1.17"')
                       .replace('id:"core.manifest",version:"1.2.49"', 'id:"core.manifest",version:"1.2.50"'))
               if path == frontend / "modules/ui/skeleton.js":
-                  next_text = next_text.replace('version:"1.1.16"', 'version:"1.1.17"', 1)
+                  next_text = (next_text
+                      .replace('version:"1.1.16"', 'version:"1.1.17"', 1)
+                      .replace('"version": "1.1.16"', '"version": "1.1.17"', 1))
               if path == frontend / "gewitterradar.js":
                   next_text = next_text.replace("Gewitterradar Card V4.11.03 DEV", "Gewitterradar Card V4.11.04 DEV")
               if next_text != text:
@@ -189,7 +191,7 @@ jobs:
           done
 
       - name: Commit one-shot V4.11.04 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v3' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v4' }}"
         shell: bash
         run: |
           set -euo pipefail
