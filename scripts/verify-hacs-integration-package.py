@@ -20,7 +20,9 @@ def verify(stage_root:Path)->dict[str,str]:
  forbidden=sorted(name for name,path in files.items() if path.suffix in FORBIDDEN_SUFFIXES)
  if forbidden:raise RuntimeError(f"Forbidden staged files: {forbidden}")
  manifest=json.loads(files["manifest.json"].read_text(encoding="utf-8"))
- if manifest["domain"]!="gewitterradar" or manifest["version"]!="0.21.0":raise RuntimeError("Unexpected integration manifest identity")
+ build_version=(target/"build_info.py").read_text(encoding="utf-8")
+ expected="0.22.0" if 'BUILD_VERSION = "4.10"' in build_version else "0.21.0" if 'BUILD_VERSION = "4.10.02"' in build_version else None
+ if manifest["domain"]!="gewitterradar" or manifest["version"]!=expected:raise RuntimeError("Unexpected integration manifest identity")
  source_hashes={name:digest(SOURCE/name) for name in sorted(files)}
  staged_hashes={name:digest(path) for name,path in sorted(files.items())}
  if staged_hashes!=source_hashes:raise RuntimeError("Staged integration is not byte-identical to its source")
