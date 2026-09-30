@@ -92,6 +92,19 @@ assert.equal(
 );
 transformed = transformed.replace(focusShiftFrom, focusShiftTo);
 
+// Preserve the immutable stable-release assertion in the historical source.
+// Only adapt the generated browser test when the actual product identity is DEV.
+const activeManifest = fs.readFileSync(path.join(__dirname, '..', 'frontend/module-manifest.js'), 'utf8');
+if (activeManifest.includes('displayVersion:"V4.11.01 DEV"')) {
+  const historical = "if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');";
+  const development = "if(!(await page.locator('.about-dev').innerText()).includes('V4.11.01 DEV'))throw Error('V4.11.01 DEV footer missing');";
+  if (transformed.includes(historical)) transformed = transformed.replace(historical, development);
+  assert.ok(
+    transformed.includes(development) || transformed.includes("aboutVersionLabel.includes('V4.11.01 DEV')"),
+    'V4.11.01 DEV About footer must have an explicit browser assertion',
+  );
+}
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 
