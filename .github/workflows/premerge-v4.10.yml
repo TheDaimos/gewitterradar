@@ -28,7 +28,7 @@ jobs:
           rm -rf dist/source-archives && mkdir -p dist/source-archives
           chmod +x scripts/create-source-archive.sh
           scripts/create-source-archive.sh PRE_MERGE "$old_main" V4.10 dist/source-archives
-          cd dist/source-archives && sha256sum -c SHA256SUMS.txt
+          cd dist/source-archives && checksum_file=$(ls *_SHA256SUMS.txt) && sha256sum -c "$checksum_file"
       - uses: actions/upload-artifact@v4
         with:
           name: Gewitterradar_V4.10_PRE_MERGE
