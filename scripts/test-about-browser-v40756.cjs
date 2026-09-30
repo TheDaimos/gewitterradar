@@ -92,16 +92,19 @@ assert.equal(
 );
 transformed = transformed.replace(focusShiftFrom, focusShiftTo);
 
-// Preserve the immutable stable-release assertion in the historical source.
-// Only adapt the generated browser test when the actual product identity is DEV.
-const activeManifest = fs.readFileSync(path.join(__dirname, '..', 'frontend/module-manifest.js'), 'utf8');
-if (activeManifest.includes('displayVersion:"V4.11.01 DEV"')) {
-  const historical = "if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');";
-  const development = "if(!(await page.locator('.about-dev').innerText()).includes('V4.11.01 DEV'))throw Error('V4.11.01 DEV footer missing');";
-  if (transformed.includes(historical)) transformed = transformed.replace(historical, development);
+// Preserve the stable-release assertion while allowing any canonical DEV
+// runtime to assert its own displayVersion. The source browser contract now
+// derives this from the runtime manifest, so the wrapper only verifies that
+// the generic protection survived the compatibility transformations above.
+const activeRuntime = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'),
+);
+if (String(activeRuntime.displayVersion || '').endsWith(' DEV')) {
   assert.ok(
-    transformed.includes(development) || transformed.includes("aboutVersionLabel.includes('V4.11.01 DEV')"),
-    'V4.11.01 DEV About footer must have an explicit browser assertion',
+    transformed.includes("const isDevelopmentRuntime=")
+      && transformed.includes("activeRuntime.displayVersion")
+      && transformed.includes("Stable release label still contains DEV"),
+    'Canonical DEV/stable release identity browser contract missing',
   );
 }
 
