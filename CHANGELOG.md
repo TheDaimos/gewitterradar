@@ -1,5 +1,19 @@
 # Changelog
 
+## V4.11.02 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Erster produktiver, providerneutraler **Niederschlagsradar als Kartenebene** über WeatherRouter Consumer V1 (`weather.radar.precipitation`, Ressourcentyp `raster_tile`).
+- WeatherRouter entscheidet Quelle und Abdeckung; Gewitterradar enthält keine DWD-spezifische Routinglogik. XYZ- und WMS/BBOX-Kacheln werden unterstützt.
+- Kartenebene mit eigenem Leaflet-Bereich, konservativer Kachelpufferung, nativer Zoomgrenze mit sauberem Hochskalieren, schaltbarer Darstellung sowie Quelle, Datenalter, Abdeckung, Attribution und optionaler Provider-Legende.
+- Radar-Abfragen ressourcenschonend begrenzt: globaler Neuabruf, Ansichtswechsel und identische Ansichten besitzen getrennte Mindestintervalle; Kartenbewegungen werden entprellt.
+- Neue Module `weather.precipitation-layer@1.0.0` und `core.update-watch@1.0.0`; insgesamt **26 Laufzeitmodule** mit vollständiger Modulansicht in allen 19 Sprach-/Dialektvarianten.
+- Versions- und Cache-Vertrag vereinheitlicht: Produkt `4.11.02`, Anzeige `V4.11.02 DEV`, Build `V4.11.02-DEV-2026-09-30`, Runtime `41102r1`, Modulsatz `E411-02A1`, native Integration `0.23.1`.
+- Neuer Laufzeit-Updatewächter prüft das installierte Laufzeitmanifest ohne Browsercache und kann nach einem DRA-Update einmalig kontrolliert neu laden; die stabile Home-Assistant-Ressource bleibt unverändert registriert.
+- Der historische Browservertrag unterscheidet jetzt kanonische DEV-Laufzeiten von stabilen Veröffentlichungen, ohne den Schutz `stabile Version darf kein DEV tragen` aufzuweichen.
+- WeatherRouter Consumer V1 wurde ergänzend korrigiert, damit bereits vorhandene sichere Raster-Legenden nicht mehr beim Normalisieren verworfen werden.
+- Blitzortung bleibt als unabhängiger Datenpfad unverändert; die hybride Weather-Engine wird durch den neuen Radar-Layer nicht ersetzt.
+- Entwicklungs-PR #28 bleibt Entwurf; `main` und die eingefrorene V4.10 FINAL bleiben unverändert.
+
 ## V4.11.01 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
 
 - Start auf der eingefrorenen Veröffentlichung `v4.10` / `3111e9d27a62adf97d37cccb8066cc9a0803c128` im Zweig `feature/v4.11-development`; V4.10 FINAL bleibt unverändert.
