@@ -5075,7 +5075,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #card-root .compass-corner-controls {
               order:-1;
               margin-top:0;
-              margin-bottom:8px;
+              margin-bottom:24px;
               transform:none;
             }
             #card-root .compass-instrument {
