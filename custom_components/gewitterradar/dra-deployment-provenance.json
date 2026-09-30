@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.02",
-  "build": "V4.11.02-DEV-2026-09-30",
-  "runtimeRevision": "41102r1",
-  "moduleSetId": "E411-02A1",
-  "baselineFeatureHead": "e123cba153c4d383add57408edb951af9f22de68",
+  "productVersion": "4.11.03",
+  "build": "V4.11.03-DEV-2026-09-30",
+  "runtimeRevision": "41103r1",
+  "moduleSetId": "E411-03A1",
+  "baselineFeatureHead": "669272bcbe3282ac8cf9759765ab4cb5dc113401",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.02 DEV: consistent runtime/cache identity, guarded frontend auto-refresh and first provider-neutral WeatherRouter precipitation-radar map layer; existing deploy/dev channel only",
+    "purpose": "V4.11.03 DEV: configurable bounded spatial precipitation-radar preload buffer, canonical runtime/cache identity and guarded frontend auto-refresh; existing deploy/dev channel only",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
