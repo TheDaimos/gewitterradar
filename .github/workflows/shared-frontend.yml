@@ -124,3 +124,41 @@ jobs:
             frontend/assets/gewitterradar-trend-arrow.png
             frontend/assets/gewitterradar-trend-arrow-*.webp
           if-no-files-found: warn
+
+
+  sync-v41103:
+    if: github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v4.11-development
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Promote oversized base-context cache revision
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("frontend/modules/core/base-context.js")
+          text = path.read_text(encoding="utf-8")
+          count = text.count("41102r1")
+          if count < 1:
+              raise SystemExit("Expected V4.11.02 base-context cache anchors were not found")
+          path.write_text(text.replace("41102r1", "41103r1"), encoding="utf-8")
+          print(f"Updated {count} base-context cache anchors")
+          PY
+      - name: Build deterministic delivery
+        run: node scripts/build-frontend.mjs
+      - name: Commit generated V4.11.03 parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/modules/core/base-context.js custom_components/gewitterradar/frontend dashboard/dist SHA256SUMS_FRONTEND.txt
+          git commit -m "chore: sync V4.11.03 frontend"
+          git push origin HEAD:feature/v4.11-development
