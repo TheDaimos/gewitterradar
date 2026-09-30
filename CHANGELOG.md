@@ -1,5 +1,20 @@
 # Changelog
 
+## V4.11.03 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Niederschlagsradar um einen **konfigurierbaren räumlichen Vorladepuffer** erweitert, damit beim Verschieben und Zoomen der Karte bereits angrenzende Radarkacheln bereitstehen können.
+- Verständliche Pufferprofile: **Aus**, **Klein (+15 % je Seite)**, **Normal (+30 % je Seite, empfohlen)**, **Groß (+50 % je Seite)** und **Benutzerdefiniert (0–100 % je Seite)**.
+- Der Prozentwert bezieht sich bewusst auf jede Seite des aktuell sichtbaren Kartenausschnitts. `Normal` entspricht damit theoretisch bis zu 2,56× sichtbarer Fläche; die tatsächliche Vorladung wird zusätzlich begrenzt.
+- Harte Ressourcengrenzen verhindern unkontrolliertes Vorladen großer Ansichten: Klein max. 24 Zusatzkacheln / ca. 8 MiB, Normal 48 / ca. 16 MiB, Groß 96 / ca. 32 MiB, Benutzerdefiniert max. 128 Kacheln und ca. 40 MiB geschätzter dekodierter Bildspeicher.
+- Die Speichergrenze berücksichtigt die reale Kachelgröße; bei 512px-Kacheln reduziert sich deshalb automatisch die zulässige Kachelanzahl.
+- Maximal vier Vorladeanforderungen gleichzeitig; bei unsichtbarer Anwendung wird nicht aggressiv vorgeladen.
+- Bereits fertig vorgeladene Kacheln werden beim späteren echten Kartenbedarf wiederverwendet; alte, nicht mehr relevante Einträge werden begrenzt verdrängt.
+- Einstellungen zeigen Profil, Prozentwert, theoretischen Flächenfaktor, Kachel-/Speichergrenze sowie aktuelle Anzahl vorbereiteter und ladender Zusatzkacheln.
+- Kanonische DEV-Identität: Produkt `4.11.03`, Anzeige `V4.11.03 DEV`, Build `V4.11.03-DEV-2026-09-30`, Runtime `41103r1`, Modulsatz `E411-03A1`, native Integration `0.23.2`.
+- `weather.precipitation-layer` auf `1.1.0`, `core.manifest` auf `1.2.49`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Zeitliche Radar-Pufferung mehrerer Vergangenheit-/Vorhersageframes ist bewusst noch nicht Bestandteil dieses Schritts; V4.11.03 puffert räumlich den aktuellen Radarzeitstand.
+- V4.10 FINAL und `main` bleiben unverändert; Entwicklungs-PR #28 bleibt Entwurf.
+
 ## V4.11.02 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
 
 - Erster produktiver, providerneutraler **Niederschlagsradar als Kartenebene** über WeatherRouter Consumer V1 (`weather.radar.precipitation`, Ressourcentyp `raster_tile`).
