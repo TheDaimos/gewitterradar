@@ -30,12 +30,28 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
+const isV41101Dev = frontendText.includes("const GEWITTERRADAR_FEATURE_CACHE = '41101r1';")
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV410Release = frontendText.includes("const CARD_VERSION = '4.10';");
 const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV410Release) {
+if (isV41101Dev) {
+  // New DEV builds retain the immutable V4.10 source contract as historical evidence,
+  // while the actual V4.11 About geometry is still verified against the protected
+  // V4.07.56 baseline by the browser portion of this test (below).
+  const appManifest = fs.readFileSync(path.join(root, 'frontend/module-manifest.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(appManifest.includes('version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30"'));
+  assert.ok(appManifest.includes('moduleSetId:"E411-01A3"'));
+  assert.equal(runtime.productVersion, '4.11.01');
+  assert.equal(runtime.build, 'V4.11.01-DEV-2026-09-30');
+  assert.equal(runtime.moduleSetId, 'E411-01A3');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV410Release) {
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
   assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.10';"));
@@ -63,7 +79,7 @@ if (isV410Release) {
   assert.equal(frontend.length, modularContract.sizeBytes, 'V4.10.02 frontend size differs from modular contract');
   assert.equal(frontendSha, modularContract.sha256, 'V4.10.02 frontend differs from modular contract');
 } else {
-  assert.fail('Frontend is not covered by the V4.09 release, V4.10.01 development, or V4.10.02 modular contract');
+  assert.fail('Frontend is not covered by V4.09/V4.10 historical or V4.11.01 DEV identity contracts');
 }
 
 const tolerance = contract.browserBaseline.geometryTolerancePx;
