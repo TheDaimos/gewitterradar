@@ -1,5 +1,17 @@
 # Changelog
 
+## V4.11.01 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Start auf der eingefrorenen Veröffentlichung `v4.10` / `3111e9d27a62adf97d37cccb8066cc9a0803c128` im Zweig `feature/v4.11-development`; V4.10 FINAL bleibt unverändert.
+- Eindeutige sichtbare DEV-Kennung aus dem Anwendungsmanifest; Hauptfenster, Build, DRA-`BUILD_VERSION`, Modul- und Laufzeitmanifest werden konsistent geprüft. Native Integration als Entwicklungsfassung 0.23.0.
+- Eigenständiger, optionaler WeatherRouter-Consumer-V1-Adapter über den authentifizierten Home-Assistant-WebSocket-Kanal: Discovery, Capability-Abfrage, Resolve, Ressourcentyp-Validierung und kontrollierte fachliche Nichtverfügbarkeit.
+- Neuer Einstellungsabschnitt „Weather-Engine“ mit Verbindungstest und expliziten, nur auf Anforderung ausgeführten Abfragen von Niederschlag, zusätzlichen Blitzbeobachtungen und amtlichen Warnungen, inklusive Quelle und Aktualität.
+- Transparentes WeatherRouter-V004-Emblem aus dem WeatherRouter-Grafikarchiv als 256px-PNG in beiden Auslieferungen; separate geschützte 512px-Rendition. Originalmaster im WeatherRouter-Repository unverändert.
+- Nun 24 Laufzeitmodule; Modulansicht für alle 19 Sprach-/Dialektvarianten um das WeatherRouter-Modul ergänzt.
+- Keine automatische Blitzquellen-Umschaltung, keine neue Niederschlags-Kartenebene und keine Monitored-Area-Backendaktivierung durch diesen ersten DEV-Kandidaten. Realer externer WeatherRouter-Consumer-Test und DRA-Abnahme stehen noch aus.
+- Entwicklungs-PR #28 bleibt Entwurf; weder `main` noch `v4.10` werden durch diesen Eintrag verändert.
+
+
 ## V4.10 FINAL · 2026/09 (2026-09-30)
 
 - Öffentliche Produktversion V4.10 aus dem vollständig real abgenommenen technischen R40-Stand.

@@ -2,6 +2,12 @@
 
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
 
+## V4.11.01 DEV · 2026/09 – hybride Weather-Engine im Aufbau
+
+Auf Grundlage der veröffentlichten V4.10 FINAL beginnt die eigenständige V4.11-Entwicklung. Ziel ist eine hybride Weather-Engine: Blitzortung-Ereignisse werden künftig mit geeigneten WeatherRouter-Informationen über Niederschlag, Satelliten und Wettergefahren ergänzt; kontrollierte zusätzliche Blitzbeobachtungen und eine fachlich abgesicherte Ersatzversorgung sind nachfolgenden Schritten vorbehalten. Die Produktvision und ihre Modulgrenzen sind in `docs/V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md` verbindlich beschrieben.
+
+Der erste technische DEV-Stand bringt eine eindeutige Versionskennung, die optionale read-only Consumer-V1-Anbindung und einen ersten Einstellungsabschnitt für Verbindung und gezielte Datenabfragen. Beide Auslieferungsformen werden weiterhin bytegleich aus einer Quelle erzeugt. Das neue WeatherRouter-Modul ist in der Diagnose mit nun 24 Modulen und 19 lokalisierten Metadatensätzen enthalten. Noch keine automatische Umschaltung oder produktive Mischbewertung; der reale Ende-zu-Ende-Test mit installierter WeatherRouter-Integration steht aus. V4.10 bleibt der öffentliche, unveränderte Release.
+
 ## V4.10 · 2026/09 – Modularisierungsabschluss
 
 Nach sechs bestätigten Realtestpunkten und abschließender R40-Sichtprüfung wurde V4.10 zur öffentlichen Finalisierung freigegeben. Die Architektur enthält 23 Module, mit eigenständiger Kompass-, Medaillon- und Pfeilauswahl sowie 28 Medaillon-Designs und 18 Pfeilvarianten. Sieben V4.11-Punkte bleiben sichtbar als Planung und nicht als ausgelieferte Funktion markiert. Technischer Ausgangspunkt: `bcf30fe2dc1b6b56625edf209b2373b956fb7fd4`. Öffentliche Plakette: V4.10; native Integration: 0.22.0.
