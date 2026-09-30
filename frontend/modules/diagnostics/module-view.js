@@ -33,7 +33,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Verlauf":"modules.group.history"
   }[group]||"modules.group.other");
 
-  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart","weather.consumer-client"]);
+  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart","weather.consumer-client","core.update-watch","weather.precipitation-layer"]);
   const MODULE_VIEW_META=Object.freeze({
   "Deutsch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -59,7 +59,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
     "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
-    "WeatherRouter-Anbindung|Verbindungserkennung · Fähigkeitenkatalog · Datenabruf · Quellenstatus"
+    "WeatherRouter-Anbindung|Verbindungserkennung · Fähigkeitenkatalog · Datenabruf · Quellenstatus",
+    "Oberflächen-Aktualisierung|Installierten Stand prüfen · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kartenebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle & Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "English": [
     "Module manifest|Target state · Product version · Build identifier",
@@ -85,7 +87,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Main rendering|Status · KPI · Lists · UI synchronization",
     "Compass|Motion profile · Animation · Rendering",
     "Trend & history|Trend calculation · 120-minute chart",
-    "WeatherRouter integration|Discovery · Capability catalog · Data request · Source status"
+    "WeatherRouter integration|Discovery · Capability catalog · Data request · Source status",
+    "Interface updates|Check installed version · Update notice · Controlled full reload",
+    "Precipitation radar map layer|Raster tile adapter · Web Mercator BBOX · Source & freshness · Coverage · Legend · Request limiting"
   ],
   "Dansk": [
     "Modulmanifest|Måltilstand · Produktversion · Build-id",
@@ -111,7 +115,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompas|Bevægelsesprofil · Animation · Rendering",
     "Tendens og historik|Tendensberegning · 120-minutters diagram",
-    "WeatherRouter-integration|Forbindelseskontrol · Funktionskatalog · Dataforespørgsel · Kildestatus"
+    "WeatherRouter-integration|Forbindelseskontrol · Funktionskatalog · Dataforespørgsel · Kildestatus",
+    "Opdatering af brugerfladen|Kontrollér installeret version · Opdateringsmeddelelse · Kontrolleret fuld genindlæsning",
+    "Nedbørsradarlag på kortet|Rasterfliseadapter · Web-Mercator-BBOX · Kilde og aktualitet · Dækning · Signaturforklaring · Forespørgselsbegrænsning"
   ],
   "Español": [
     "Manifiesto de módulos|Estado objetivo · Versión del producto · Identificador de compilación",
@@ -137,7 +143,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Renderizado principal|Estado · KPI · Listas · Sincronización de interfaz",
     "Brújula|Perfil de movimiento · Animación · Renderizado",
     "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos",
-    "Integración WeatherRouter|Detección · Catálogo de capacidades · Consulta de datos · Estado de la fuente"
+    "Integración WeatherRouter|Detección · Catálogo de capacidades · Consulta de datos · Estado de la fuente",
+    "Actualización de la interfaz|Comprobar versión instalada · Aviso de actualización · Recarga completa controlada",
+    "Capa de radar de precipitación|Adaptador de teselas ráster · BBOX Web Mercator · Fuente y actualidad · Cobertura · Leyenda · Límite de consultas"
   ],
   "Français": [
     "Manifeste des modules|État cible · Version du produit · Identifiant de build",
@@ -163,7 +171,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Rendu principal|État · KPI · Listes · Synchronisation de l’interface",
     "Boussole|Profil de mouvement · Animation · Rendu",
     "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes",
-    "Intégration WeatherRouter|Détection · Catalogue des capacités · Requête de données · État de la source"
+    "Intégration WeatherRouter|Détection · Catalogue des capacités · Requête de données · État de la source",
+    "Mise à jour de l’interface|Vérifier la version installée · Avis d’actualisation · Rechargement complet contrôlé",
+    "Couche cartographique du radar de précipitations|Adaptateur de tuiles raster · BBOX Web Mercator · Source et fraîcheur · Couverture · Légende · Limitation des requêtes"
   ],
   "Nederlands": [
     "Modulemanifest|Doelstatus · Productversie · Buildkenmerk",
@@ -189,7 +199,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hoofdweergave|Status · KPI · Lijsten · UI-synchronisatie",
     "Kompas|Bewegingsprofiel · Animatie · Rendering",
     "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten",
-    "WeatherRouter-koppeling|Detectie · Functiecatalogus · Gegevensaanvraag · Bronstatus"
+    "WeatherRouter-koppeling|Detectie · Functiecatalogus · Gegevensaanvraag · Bronstatus",
+    "Update van de interface|Geïnstalleerde versie controleren · Updatemelding · Gecontroleerd volledig herladen",
+    "Neerslagradarlaag|Rastertegeladapter · Web Mercator-BBOX · Bron en actualiteit · Dekking · Legenda · Aanvraagbegrenzing"
   ],
   "Polski": [
     "Manifest modułów|Stan docelowy · Wersja produktu · Identyfikator kompilacji",
@@ -215,7 +227,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Renderowanie główne|Stan · KPI · Listy · Synchronizacja interfejsu",
     "Kompas|Profil ruchu · Animacja · Renderowanie",
     "Trend i historia|Obliczanie trendu · Wykres 120-minutowy",
-    "Integracja WeatherRouter|Wykrywanie · Katalog możliwości · Pobieranie danych · Stan źródła"
+    "Integracja WeatherRouter|Wykrywanie · Katalog możliwości · Pobieranie danych · Stan źródła",
+    "Aktualizacja interfejsu|Sprawdzenie zainstalowanej wersji · Powiadomienie o aktualizacji · Kontrolowane pełne przeładowanie",
+    "Warstwa radaru opadów|Adapter kafli rastrowych · BBOX Web Mercator · Źródło i aktualność · Zasięg · Legenda · Ograniczanie zapytań"
   ],
   "Português": [
     "Manifesto de módulos|Estado pretendido · Versão do produto · Identificador da compilação",
@@ -241,7 +255,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Renderização principal|Estado · KPI · Listas · Sincronização da interface",
     "Bússola|Perfil de movimento · Animação · Renderização",
     "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos",
-    "Integração WeatherRouter|Deteção · Catálogo de capacidades · Consulta de dados · Estado da fonte"
+    "Integração WeatherRouter|Deteção · Catálogo de capacidades · Consulta de dados · Estado da fonte",
+    "Atualização da interface|Verificar versão instalada · Aviso de atualização · Recarregamento completo controlado",
+    "Camada de radar de precipitação|Adaptador de mosaicos raster · BBOX Web Mercator · Fonte e atualidade · Cobertura · Legenda · Limite de pedidos"
   ],
   "Svenska": [
     "Modulmanifest|Måltillstånd · Produktversion · Byggidentifierare",
@@ -267,7 +283,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Huvudrendering|Status · KPI · Listor · UI-synkronisering",
     "Kompass|Rörelseprofil · Animation · Rendering",
     "Trend och historik|Trendberäkning · 120-minutersdiagram",
-    "WeatherRouter-integration|Identifiering · Funktionskatalog · Dataförfrågan · Källstatus"
+    "WeatherRouter-integration|Identifiering · Funktionskatalog · Dataförfrågan · Källstatus",
+    "Uppdatering av gränssnittet|Kontrollera installerad version · Uppdateringsmeddelande · Kontrollerad full omladdning",
+    "Kartlager för nederbördsradar|Rasterplatteadapter · Web Mercator-BBOX · Källa och aktualitet · Täckning · Teckenförklaring · Begränsning av förfrågningar"
   ],
   "Italiano": [
     "Manifesto dei moduli|Stato previsto · Versione prodotto · Identificatore build",
@@ -293,7 +311,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Rendering principale|Stato · KPI · Elenchi · Sincronizzazione UI",
     "Bussola|Profilo di movimento · Animazione · Rendering",
     "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti",
-    "Integrazione WeatherRouter|Rilevamento · Catalogo funzionalità · Richiesta dati · Stato della fonte"
+    "Integrazione WeatherRouter|Rilevamento · Catalogo funzionalità · Richiesta dati · Stato della fonte",
+    "Aggiornamento dell’interfaccia|Controllo versione installata · Avviso di aggiornamento · Ricaricamento completo controllato",
+    "Livello mappa radar precipitazioni|Adattatore tessere raster · BBOX Web Mercator · Fonte e attualità · Copertura · Legenda · Limitazione richieste"
   ],
   "Norsk bokmål": [
     "Modulmanifest|Måltilstand · Produktversjon · Bygg-ID",
@@ -319,7 +339,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompass|Bevegelsesprofil · Animasjon · Rendering",
     "Trend og historikk|Trendberegning · 120-minuttersdiagram",
-    "WeatherRouter-integrasjon|Oppdagelse · Funksjonskatalog · Dataforespørsel · Kildestatus"
+    "WeatherRouter-integrasjon|Oppdagelse · Funksjonskatalog · Dataforespørsel · Kildestatus",
+    "Oppdatering av grensesnittet|Kontroller installert versjon · Oppdateringsvarsel · Kontrollert full omlasting",
+    "Kartlag for nedbørsradar|Rasterflisadapter · Web Mercator-BBOX · Kilde og aktualitet · Dekning · Tegnforklaring · Begrensning av forespørsler"
   ],
   "Suomi": [
     "Moduuliluettelo|Tavoitetila · Tuoteversio · Koontitunniste",
@@ -345,7 +367,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Päärenderöinti|Tila · KPI · Listat · Käyttöliittymän synkronointi",
     "Kompassi|Liikeprofiili · Animaatio · Renderöinti",
     "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio",
-    "WeatherRouter-liitäntä|Tunnistus · Ominaisuusluettelo · Tietopyyntö · Lähteen tila"
+    "WeatherRouter-liitäntä|Tunnistus · Ominaisuusluettelo · Tietopyyntö · Lähteen tila",
+    "Käyttöliittymän päivitys|Asennetun version tarkistus · Päivitysilmoitus · Hallittu täysi uudelleenlataus",
+    "Sadetutkan karttataso|Rasteritiilisovitin · Web Mercator -BBOX · Lähde ja ajantasaisuus · Kattavuus · Selite · Pyyntöjen rajoitus"
   ],
   "Čeština": [
     "Manifest modulů|Cílový stav · Verze produktu · Identifikátor buildu",
@@ -371,7 +395,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hlavní vykreslování|Stav · KPI · Seznamy · Synchronizace UI",
     "Kompas|Profil pohybu · Animace · Vykreslování",
     "Trend a historie|Výpočet trendu · 120minutový graf",
-    "Integrace WeatherRouter|Zjištění připojení · Katalog funkcí · Dotaz na data · Stav zdroje"
+    "Integrace WeatherRouter|Zjištění připojení · Katalog funkcí · Dotaz na data · Stav zdroje",
+    "Aktualizace rozhraní|Kontrola nainstalované verze · Oznámení o aktualizaci · Řízené úplné znovunačtení",
+    "Mapová vrstva srážkového radaru|Adaptér rastrových dlaždic · BBOX Web Mercator · Zdroj a aktuálnost · Pokrytí · Legenda · Omezení požadavků"
   ],
   "Ελληνικά": [
     "Δηλωτικό λειτουργικών μονάδων|Αναμενόμενη κατάσταση · Έκδοση προϊόντος · Αναγνωριστικό build",
@@ -397,7 +423,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Κύρια απόδοση|Κατάσταση · KPI · Λίστες · Συγχρονισμός διεπαφής",
     "Πυξίδα|Προφίλ κίνησης · Κίνηση · Απόδοση",
     "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών",
-    "Ενσωμάτωση δρομολόγησης καιρού|Ανακάλυψη · Κατάλογος δυνατοτήτων · Αίτημα δεδομένων · Κατάσταση πηγής"
+    "Ενσωμάτωση δρομολόγησης καιρού|Ανακάλυψη · Κατάλογος δυνατοτήτων · Αίτημα δεδομένων · Κατάσταση πηγής",
+    "Ενημέρωση διεπαφής|Έλεγχος εγκατεστημένης έκδοσης · Ειδοποίηση ενημέρωσης · Ελεγχόμενη πλήρης επαναφόρτωση",
+    "Χαρτογραφικό επίπεδο ραντάρ υετού|Προσαρμογέας ψηφιδωτών ράστερ · Πλαίσιο Web Mercator · Πηγή και επικαιρότητα · Κάλυψη · Υπόμνημα · Περιορισμός αιτημάτων"
   ],
   "Magyar": [
     "Moduljegyzék|Célállapot · Termékverzió · Buildazonosító",
@@ -423,7 +451,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Fő renderelés|Állapot · KPI · Listák · Felület szinkronizálása",
     "Iránytű|Mozgásprofil · Animáció · Renderelés",
     "Trend és előzmények|Trendszámítás · 120 perces diagram",
-    "WeatherRouter-integráció|Felderítés · Képességkatalógus · Adatkérés · Forrásállapot"
+    "WeatherRouter-integráció|Felderítés · Képességkatalógus · Adatkérés · Forrásállapot",
+    "Felületfrissítés|Telepített verzió ellenőrzése · Frissítési értesítés · Vezérelt teljes újratöltés",
+    "Csapadékradar térképréteg|Rasztercsempe-adapter · Web Mercator BBOX · Forrás és frissesség · Lefedettség · Jelmagyarázat · Kérések korlátozása"
   ],
   "Boarisch": [
     "Modulmanifest|Sollstand · Produktversion · Build-Kennung",
@@ -449,7 +479,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
     "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
-    "WeatherRouter-Einbindung|Verbindungssuach · Fähigkeiten-Übersicht · Datenabfrog · Quellenstand"
+    "WeatherRouter-Einbindung|Verbindungssuach · Fähigkeiten-Übersicht · Datenabfrog · Quellenstand",
+    "Oberfläch-Aktualisierung|Installiertn Stand prüffa · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kortnlag|Raster-Kacheladapter · Web-Mercator-BBOX · Quelln und Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "Plattdüütsch": [
     "Modulmanifest|Sollstand · Produktverschoon · Build-Kennen",
@@ -475,7 +507,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hööftrendering|Status · KPI · Listen · UI-Synchroniseren",
     "Kompass|Bewegungsprofil · Animation · Rendering",
     "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm",
-    "WeatherRouter-Anbinnen|Verbinnen prüfen · Funkschoonen-Kataloog · Datenafraag · Quellenstand"
+    "WeatherRouter-Anbinnen|Verbinnen prüfen · Funkschoonen-Kataloog · Datenafraag · Quellenstand",
+    "Böversiet-Aktualiseren|Installeerten Stand pröven · Aktualiseern-Henwies · Kuntrulleert heel neeladen",
+    "Nedderslagradar-Koortenlaag|Raster-Kacheladapter · Web-Mercator-BBOX · Born un Aktualität · Afdecken · Legenn · Anfraagbegrenzen"
   ],
   "Sächs’sch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -501,7 +535,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Gombass|Bewegungsprofil · Animation · Rendering",
     "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm",
-    "WeatherRouter-Anbindung|Verbindung prüfn · Fähichkeiten-Übersicht · Datenabfrage · Quellenstatus"
+    "WeatherRouter-Anbindung|Verbindung prüfn · Fähichkeiten-Übersicht · Datenabfrage · Quellenstatus",
+    "Oberfläschn-Aktualisierung|Installierten Stand brüfn · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kartenebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle un Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "Schwäbisch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -527,7 +563,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Hauptrendering|Status · KPI · Lista · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
     "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm",
-    "WeatherRouter-Einbindung|Verbindung prüfa · Fähigkeita-Katalog · Datenaafrog · Quellastatus"
+    "WeatherRouter-Einbindung|Verbindung prüfa · Fähigkeita-Katalog · Datenaafrog · Quellastatus",
+    "Oberfläch-Aktualisierung|Installierta Stand prüafa · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kardaebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle ond Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ]
 });
   const modulePresentation=(language,row)=>{
