@@ -96,7 +96,14 @@ const server=http.createServer((req,res)=>{
         });
       });
       if(controls.length!==2||controls.some(c=>!c.label||c.hit.some(v=>v<44)||!c.visible||!c.contained||Math.abs(c.ratio-1)>.001))throw Error(name+': premium image/hit-area regression '+JSON.stringify(controls));
-      if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');
+      // Public releases must not show a DEV label; active V4.11 DEV explicitly must.
+      const activeRuntime=JSON.parse(fs.readFileSync(path.join(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
+      const aboutVersionLabel=await page.locator('.about-dev').innerText();
+      if(activeRuntime.productVersion==='4.11.01'){
+        if(!aboutVersionLabel.includes('V4.11.01 DEV'))throw Error('Expected V4.11.01 DEV in About footer: '+aboutVersionLabel);
+      }else if(aboutVersionLabel.includes('DEV')){
+        throw Error('Stable release label still contains DEV: '+aboutVersionLabel);
+      }
       if(!visualOnly){
         // Exercise real user inputs and return-focus instead of calling the close handler directly.
         await page.locator('.about-close').click();
