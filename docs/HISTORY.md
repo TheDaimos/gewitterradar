@@ -1,3 +1,9 @@
+## V4.10 · 2026/09 – Modularisierung finalisiert
+
+V4.10 veröffentlicht den vollständig abgenommenen R40-Stand. Das Frontend ist in **23 klar abgegrenzte Module** aufgeteilt; Modulstand, Installationsstand und tatsächlich geladener Laufzeitstand sind diagnostizierbar. Kompass-, Medaillon- und Pfeilauswahl wurden vereinheitlicht, produktive Kalibrierung und Vollbildskalierung abgeschlossen und die Bedien-/Hilfetexte über 19 Sprachvarianten synchronisiert.
+
+Zum historischen Releaseumfang gehören **28 Medaillon-Designs und 18 Pfeilvarianten**. Die native Integration trägt die Version **0.22.0**. Geplante V4.11-Funktionen bleiben in der Zukunftssektion ausdrücklich als Planung getrennt.
+
 # Gewitterradar – Projektgeschichte
 
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
