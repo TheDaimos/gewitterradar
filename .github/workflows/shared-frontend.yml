@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Print V4.10.02 contract hashes
+      - name: Print frontend contract hashes
         run: |
           sha256sum frontend/gewitterradar.js
           wc -c frontend/gewitterradar.js
@@ -34,7 +34,7 @@ jobs:
           sha256sum frontend/assets/gewitterradar-runtime-manifest.json
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
-      - name: Canonical V4.08 frontend contract
+      - name: V4.11 WeatherRouter Consumer V1 contract\n        run: node scripts/test-v411-weather-router.mjs\n\n      - name: V4.11 canonical DEV identity\n        run: node scripts/test-v411-identity.mjs\n\n      - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
       - name: Emit regenerated checksum inventory on failure
