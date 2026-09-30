@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   shared-frontend:
@@ -18,14 +18,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-
-      - name: One-shot V4.11.03 source and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v7' }}"
-        shell: bash
-        run: |
-          python -c 'from pathlib import Path; p=Path("frontend/modules/core/base-context.js"); s=p.read_text(encoding="utf-8"); n=s.count("41102r1"); assert n>0, "Expected V4.11.02 base-context cache anchors"; p.write_text(s.replace("41102r1","41103r1"),encoding="utf-8"); print("Updated",n,"base-context cache anchors")'
-          python -c 'from pathlib import Path; import json,hashlib; p=Path("frontend/assets.json"); items=json.loads(p.read_text(encoding="utf-8")); item=next(x for x in items if x["file"]=="assets/gewitterradar-runtime-manifest.json"); item["sha256"]=hashlib.sha256(Path("frontend/assets/gewitterradar-runtime-manifest.json").read_bytes()).hexdigest(); p.write_text(json.dumps(items,indent=2,ensure_ascii=False),encoding="utf-8"); print("Updated runtime-manifest asset SHA",item["sha256"])'
-          node scripts/build-frontend.mjs
 
       - name: Print frontend contract hashes
         run: |
@@ -119,17 +111,6 @@ jobs:
             mkdir -p "artwork/acceptance/premium-controls/$delivery"
             ABOUT_DELIVERY="$delivery" node scripts/test-about-browser-v40756.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
           done
-
-      - name: Commit one-shot V4.11.03 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.03 frontend sync v7' }}"
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add frontend/modules/core/base-context.js frontend/assets.json custom_components/gewitterradar/frontend dashboard/dist SHA256SUMS_FRONTEND.txt
-          git commit -m "chore: sync V4.11.03 frontend"
-          git push origin HEAD:feature/v4.11-development
 
       - uses: actions/upload-artifact@v4
         if: always()
