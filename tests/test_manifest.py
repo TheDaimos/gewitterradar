@@ -14,7 +14,9 @@ def test_manifest_is_valid_and_single_entry() -> None:
     manifest = json.loads((INTEGRATION / "manifest.json").read_text(encoding="utf-8"))
 
     assert manifest["domain"] == "gewitterradar"
-    assert manifest["version"] == "0.21.0"
+    build_info = (INTEGRATION / "build_info.py").read_text(encoding="utf-8")
+    expected = "0.22.0" if 'BUILD_VERSION = "4.10"' in build_info else "0.21.0"
+    assert manifest["version"] == expected
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
     # Gewitterradar is a user-visible service integration, not a Helper-tab
