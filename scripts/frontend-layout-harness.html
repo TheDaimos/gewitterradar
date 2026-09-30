@@ -141,16 +141,24 @@
       if(card._map?.zoomControl?.options&&[card._map.zoomControl.options.zoomInTitle,card._map.zoomControl.options.zoomOutTitle].join('|')!==[zoomInLabel,zoomOutLabel].join('|'))failures.push('R38 Leaflet zoom options locale '+language);
     }
     card._languagePreview=oldLanguagePreview;card._syncV410Tooltips();temporaryZoom?.remove();
-    // R39: release-set ID and calculated module-version fingerprints are distinct namespaces.
+    // R39 contract, future-proofed: release-set ID and calculated module-version fingerprints are distinct namespaces.
+    // Read the current release-set ID from the actual delivery rather than pinning it to a past build.
+    const runtimeManifestPath=new URLSearchParams(location.search).get('delivery')==='integration'
+      ? '../custom_components/gewitterradar/frontend/assets/gewitterradar-runtime-manifest.json'
+      : '../dashboard/dist/assets/gewitterradar-runtime-manifest.json';
+    const releaseManifestResponse=await fetch(runtimeManifestPath,{cache:'no-store'});
+    if(!releaseManifestResponse.ok)throw new Error('R39: runtime manifest unavailable in browser harness: '+releaseManifestResponse.status);
+    const releaseId=String((await releaseManifestResponse.json()).moduleSetId||'').trim();
+    if(!releaseId)throw new Error('R39: missing current release-set ID in runtime manifest');
     const previousRuntimeProbe=card._moduleRuntimeProbe;
     const summaryProbe=document.createElement('div');
     const moduleSnapshot=card._moduleDiagnosticsPayload().diagnostics;
-    card._moduleRuntimeProbe={stale:false,loadedId:'A4D6-144F',expectedId:'A4D6-144F',installedId:'D39A-5E9B',releaseId:'D39A-5E9B',fingerprintMismatch:false,installedReleaseMismatch:false,revisionMismatch:false};
+    card._moduleRuntimeProbe={stale:false,loadedId:'A4D6-144F',expectedId:'A4D6-144F',installedId:releaseId,releaseId,fingerprintMismatch:false,installedReleaseMismatch:false,revisionMismatch:false};
     card._renderModuleSummary(summaryProbe,moduleSnapshot);
-    if(!summaryProbe.textContent.includes('D39A-5E9B')||summaryProbe.textContent.includes(' → '))failures.push('R39: consistent module summary must display release ID, not a fingerprint mismatch');
-    card._moduleRuntimeProbe={stale:true,loadedId:'717A-ADEA',expectedId:'A4D6-144F',installedId:'D39A-5E9B',releaseId:'D39A-5E9B',fingerprintMismatch:true,installedReleaseMismatch:false,revisionMismatch:false};
+    if(!summaryProbe.textContent.includes(releaseId)||summaryProbe.textContent.includes(' → '))failures.push('R39: consistent module summary must display current release ID, not a fingerprint mismatch');
+    card._moduleRuntimeProbe={stale:true,loadedId:'717A-ADEA',expectedId:'A4D6-144F',installedId:releaseId,releaseId,fingerprintMismatch:true,installedReleaseMismatch:false,revisionMismatch:false};
     card._renderModuleSummary(summaryProbe,moduleSnapshot);
-    if(!summaryProbe.textContent.includes(' → A4D6-144F')||summaryProbe.textContent.includes(' → D39A-5E9B'))failures.push('R39: stale module fingerprint should be compared to expected fingerprint, never the release ID');
+    if(!summaryProbe.textContent.includes(' → A4D6-144F')||summaryProbe.textContent.includes(' → '+releaseId))failures.push('R39: stale module fingerprint should be compared to expected fingerprint, never the release ID');
     card._moduleRuntimeProbe=previousRuntimeProbe;
     if(failures.length)throw new Error(failures.join('\n'));
     shadow.getElementById('diagnostic-exit-top').click();const stopped={enabled:card._diagnostics.enabled,selecting:card._diagnostics.selecting,compassCalibration:card._compassCalibrationEnabled,medallionCalibration:card._medallionCalibrationEnabled};
