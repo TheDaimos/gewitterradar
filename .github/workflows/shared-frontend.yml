@@ -20,7 +20,7 @@ jobs:
           node-version: "24"
 
       - name: One-shot V4.11.04 identity and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v4' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v5' }}"
         shell: bash
         run: |
           python - <<'PY'
@@ -191,7 +191,7 @@ jobs:
           done
 
       - name: Commit one-shot V4.11.04 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v4' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v5' }}"
         shell: bash
         run: |
           set -euo pipefail
