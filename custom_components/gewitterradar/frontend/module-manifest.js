@@ -1,5 +1,5 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R40-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D40A-5E9B"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10",displayVersion:"V4.10",build:"V4.10-RELEASE-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D40A-5E9B"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",

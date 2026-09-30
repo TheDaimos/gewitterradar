@@ -11,7 +11,13 @@ export async function expectedPayload(){
  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("const CARD_VERSION = '4.10.02';")){
+ if(text.includes("const CARD_VERSION = '4.10';")){
+  const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
+  if(final.version!=='4.10'||final.status!=='FINAL'||final.acceptedCandidateSha256!=='c9940895892e05d0c424cc2d2b6d27f43c24d345f81f1227c4716f3d6404943e')throw Error('V4.10 contract provenance mismatch');
+  if(source.length!==final.sizeBytes||hash(source)!==final.sha256)throw Error('V4.10 frontend checksum mismatch');
+  if(!text.includes("const CARD_DISPLAY_VERSION = '4.10';")||!text.includes('V4.10-RELEASE-2026-09-30'))throw Error('V4.10 release markers missing');
+  modular=await modularPayload(final);localeSha=final.localeSha256;localeSize=final.localeSizeBytes;
+ }else if(text.includes("const CARD_VERSION = '4.10.02';")){
   const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.02.json'),'utf8'));
   if(dev.version!=='4.10.02'||dev.status!=='DEV'||dev.baseVersion!=='4.10.01')throw Error('V4.10.02 contract identity changed');
   if(source.length!==dev.sizeBytes||hash(source)!==dev.sha256)throw Error('V4.10.02 frontend contract mismatch');

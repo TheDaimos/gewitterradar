@@ -1,10 +1,10 @@
-/* Gewitterradar Card V4.10.02 MODULAR DEV – V4.09 FINAL als regressionsgeschützte Basis.
+/* Gewitterradar Card V4.10 FINAL – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
-const CARD_VERSION = '4.10.02';
-const CARD_DISPLAY_VERSION = '4.10.02';
-const GEWITTERRADAR_BUILD = 'V4.10.02-MODULAR-DEV-R40-2026-09-30';
+const CARD_VERSION = '4.10';
+const CARD_DISPLAY_VERSION = '4.10';
+const GEWITTERRADAR_BUILD = 'V4.10-RELEASE-2026-09-30';
 const GEWITTERRADAR_MODULE_CACHE = '41002r13';
 const GEWITTERRADAR_FEATURE_CACHE = '41002r40';
 const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) => {
@@ -99,7 +99,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
     window.customCards.push({
       type: tag,
       name: 'Gewitterradar',
-      description: 'Gewitterradar V4.10.02 · Modul-Ladefehler'
+      description: 'Gewitterradar V4.10 · Modul-Ladefehler'
     });
   }
 } else {
