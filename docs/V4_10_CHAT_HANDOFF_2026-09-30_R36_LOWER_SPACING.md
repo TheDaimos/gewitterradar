@@ -29,6 +29,11 @@ Stand: 2026-09-30
 - Christian hat einen aktuellen Desktop-Screenshot der R36-Kompassansicht zur Verfügung gestellt und bestätigt: „Passt und sitzt.“
 - Sichtgeprüft und vom Nutzer akzeptiert: obere Bedienknöpfe oberhalb des Instruments; zentriertes, nicht beschnittenes Instrument; deutlich besserer Abstand zu Gradzahl/Himmelsrichtung und Zusatzinfos; Azimut-/Distanzkarten weit unten mit sauberer Restkante und ohne sichtbare Überlappung. **Desktop-Kompasslayout R36: abgenommen.**
 - Nicht automatisch damit abgenommen: Desktop-Hilfe-Icon, Hilfeabschnitt und sprachabhängige Mouse-over-Texte; Standard-iPad/iPad-Pro mit R36, Android sowie Aura-/Kompass-Regression. Kein Gesamt-FINAL.
-- Nächster Realtest: Standard-iPad, danach iPad Pro mit R36, unter besonderer Beachtung derselben unteren Abstandskorrektur.
+## Teilabnahme – Standard-iPad R36 (2026-09-30)
+- Christian hat ein aktuelles Foto der Standard-iPad-Querformatansicht nach DRA-R36 gezeigt und ausdrücklich bestätigt: „iPad passt auch“.
+- Sichtgeprüft und akzeptiert: R35-Schalter oberhalb des Instruments; zentriertes, vollständig sichtbares Instrument; Gradzahl/Himmelsrichtung und Legende mit mehr vertikalem Abstand zum Kompass; Azimut-/Distanzkarten weiter unten, nahe der Feldunterkante; keine sichtbare Überlappung oder Beschneidung. **Standard-iPad Kompasslayout R36: abgenommen.**
+- Layout-Teilabnahme, keine technische pixelgenaue Instrumentkalibrierung aus Foto abgeleitet.
+- Bereits dokumentiert: Desktop-Kompasslayout R36 abgenommen. **Noch offen:** iPad Pro mit R36, Hilfe-Icon/Hilfeabschnitt, sprachabhängige Desktop-Mouse-over-Texte, Android/schmales Mobilgerät sowie Aura-/Designwechsel. Kein V4.10 FINAL.
+- Nächster Realtest: iPad Pro mit R36, danach restliche offene Prüfpunkte.
 
 - Erinnerungsschutz aktiv; wichtige neue Befunde rechtzeitig erneut in Git sichern.
