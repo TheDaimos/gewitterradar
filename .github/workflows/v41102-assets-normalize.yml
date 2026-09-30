@@ -1,0 +1,43 @@
+name: Normalize V4.11.02 R13 asset revisions
+
+on:
+  push:
+    branches:
+      - feature/v4.11-development
+    paths:
+      - .github/v41102-assets-normalize.trigger
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v4.11-development
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Normalize remaining R13 cache keys and rebuild mirrors
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path=Path("frontend/modules/core/base-context.js")
+          text=path.read_text(encoding="utf-8")
+          count=text.count("41002r13")
+          if count < 1:
+              raise SystemExit("no remaining 41002r13 markers found")
+          path.write_text(text.replace("41002r13","41102r1"),encoding="utf-8")
+          print(f"normalized {count} remaining R13 marker(s)")
+          PY
+          node scripts/build-frontend.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/modules/core/base-context.js custom_components/gewitterradar/frontend/modules/core/base-context.js dashboard/dist/modules/core/base-context.js SHA256SUMS_FRONTEND.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(v4.11.02): normalize remaining R13 cache keys"
+          git push origin HEAD:feature/v4.11-development
