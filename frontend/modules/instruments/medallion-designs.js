@@ -1,4 +1,4 @@
-import { registerModule } from "../core/registry.js?v=41102r1";
+import { registerModule } from "../core/registry.js?v=41103r1";
 
 export const MODULE_META=Object.freeze({
   id:"instruments.medallion-designs",
