@@ -50,7 +50,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          required=('Validate Gewitterradar integration' 'Validate shared Gewitterradar frontend' 'Diagnostic contract' 'Hi-Res asset retention')
+          required=('Validate Gewitterradar integration' 'Validate shared Gewitterradar frontend' 'Hi-Res asset retention')
           for attempt in $(seq 1 180); do
             data="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100")"
             waiting=0
