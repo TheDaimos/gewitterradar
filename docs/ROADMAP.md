@@ -1,5 +1,16 @@
 # Gewitterradar – kanonische Roadmap
 
+
+## Aktuelle nächste Ausbaustufe nach V4.10
+
+- **V4.11: WeatherRouter, Fehler-/Warn-/Statusmeldungen, Lösungshinweise und überwachte Orte.**
+- **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.**
+- Verbindliche Detail-To-dos: docs/V4_11_TODO.md
+
+Die zuvor als Zukunftspunkte geführten Themen **unterschiedliche Medaillons** sowie **Verbesserungen der Kompass- und Medaillon-Auswahl** sind Bestandteil von V4.10 und werden nicht länger als zukünftige Roadmap-Punkte geführt.
+
+---
+
 Stand: **20.09.2026**
 
 Diese Datei ist die verbindliche Zukunfts-/Backlog-Liste für **Gewitterradar**. Sie wurde aus der früheren Roadmap in `TheDaimos/gewitterradar-dev` in das heutige kanonische Produktrepository überführt und wird gegen den tatsächlich erreichten Produktstand gepflegt.
@@ -21,6 +32,25 @@ Arbeitsregel aus den globalen Defaults:
 ---
 
 ## NEXT / VERSIONIERT
+
+### V4.11 – WeatherRouter, Systemstatus, Fehlerbehebung und überwachte Orte
+
+V4.11 ist die nächste funktionale Ausbaustufe nach V4.10. Der Schwerpunkt liegt nicht nur auf zusätzlichen Wetterdaten, sondern auf einem nachvollziehbaren Betriebs- und Fehlerbild für Gewitterradar.
+
+Vorgemerkt:
+
+- WeatherRouter als Daten- und Provider-Schicht für zusätzliche Wetter-/Gefahreninformationen anbinden;
+- zentralen Systemstatus am Einstellungs-Zahnrad mit orange/rot, Fehleranzahl und kategorisiertem Status-Pop-up einführen;
+- Fehler, Einschränkungen und Hinweise mit konkreten Ursachen und passenden Lösungsschritten darstellen;
+- Blitzortung-/Tracker-Kopplung prüfen und bei fehlender Kopplung sichtbar warnen;
+- den tatsächlichen Blitzortung-Erfassungsradius diagnostisch einbeziehen und bei auffällig kleinem Radius verständlich hinweisen;
+- veraltete feste Annahmen wie sensor.home_lightning_counter durch dynamische Zuordnung zum tatsächlich gekoppelten Blitzortung-Eintrag ersetzen;
+- Hilfe & Hinweise um strukturierte Fehlerbehebung einschließlich Tracker-, Radius- und Datenquellen-Dokumentation erweitern;
+- unter Standorte & Speichern die benötigte Local-To-do-Liste aktiv prüfen und fehlende Persistenz sichtbar melden;
+- gespeicherte Orte als mögliche dauerhafte **überwachte Orte** vorsehen; mehrere parallele Standort-Tracker und zugehörige Blitzortung-Einträge fachlich und ressourcenseitig prüfen;
+- Ressourcenwirkung mehrerer Blitzortung-Abonnements, großer Radien und vieler Geo-Location-Ereignisse messen und verständlich absichern.
+
+Die vollständige V4.11-Sammlung einschließlich Textbeispielen, Diagnosezuständen, Bedienidee und technischen Leitplanken liegt in docs/V4_11_TODO.md.
 
 ### V4.09.xx – HACS-Distribution und Update-Darstellung
 

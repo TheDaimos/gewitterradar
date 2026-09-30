@@ -25,10 +25,31 @@ export function readExternalAboutLocales(source) {
 }
 
 // Evaluate production registration without constructing a card or providing Home Assistant.
-export function loadAboutLocaleRuntime(source) {
+export function loadAboutLocaleRuntime(source,baseContextSource) {
   const anchor = "  customElements.define('gewitterradar-card',GewitterradarCard);";
-  if (source.split(anchor).length !== 2) throw Error('About verification registration anchor changed');
-  const script = source.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
+  const iifeStart = source.indexOf('(function () {');
+  const iifeEnd = source.lastIndexOf('})();');
+  if (iifeStart < 0 || iifeEnd < iifeStart) throw Error('About verification app IIFE changed');
+  let runtimeSource = source.slice(iifeStart,iifeEnd + 5)
+    // The locale VM injects the exact legacy core from core/base-context.js below.
+    // Strip only the production module-bootstrap shell; production preflight remains intact.
+    .replace(/^\s*const __moduleDeps=.*;\s*$/gm,'')
+    .replace(/^\s*if\(!__moduleDeps\s*\|\|\s*!Array\.isArray\(__moduleDeps\.LANGUAGE_DEFINITIONS\)\s*\|\|\s*!__moduleDeps\.LANGUAGE_DEFINITIONS\.length\)\{\s*\n\s*throw new Error\('Gewitterradar core\.base-context did not provide LANGUAGE_DEFINITIONS'\);\s*\n\s*\}\s*$/gm,'')
+    .replace(/^\s*window\.__GEWITTERRADAR_BOOT_DIAGNOSTICS=.*__moduleDeps\.LANGUAGE_DEFINITIONS\.length.*;\s*$/gm,'')
+    .replace(/^\s*Object\.(?:defineProperties|assign)\(__moduleDeps,.*;\s*$/gm,'')
+    .replace(/^\s*install[A-Za-z0-9_]+\(GewitterradarCard,__moduleDeps\);\s*$/gm,'');
+  if (runtimeSource.includes('__moduleDeps')) {
+    throw Error('About verification module-bootstrap stripping is incomplete');
+  }
+  if(baseContextSource){
+    const start='  // BEGIN GEWITTERRADAR LEGACY CORE',end='  // END GEWITTERRADAR LEGACY CORE';
+    const a=baseContextSource.indexOf(start),b=baseContextSource.indexOf(end);
+    if(a<0||b<=a)throw Error('About verification base-context markers changed');
+    const core=baseContextSource.slice(a+start.length,b);
+    runtimeSource=runtimeSource.replace('(function () {',`(function () {\n  const rootModuleUrl='https://frontend.test/gewitterradar.js';${core}`);
+  }
+  if (runtimeSource.split(anchor).length !== 2) throw Error('About verification registration anchor changed');
+  const script = runtimeSource.replaceAll('import.meta.url', "'https://frontend.test/gewitterradar.js'")
     .replace(anchor, `  globalThis.aboutLocaleModel = {
       locales: ABOUT_LOCALES, settings: SETTING_ENTITIES, languages: LANGUAGE_DEFINITIONS,
       tables: {strings:ABOUT_STRINGS,settingLabels:ABOUT_SETTING_LABELS,settingPurposes:ABOUT_SETTING_PURPOSES,sourcePurposes:ABOUT_SOURCE_PURPOSES,help:HELP_STRINGS},
@@ -46,18 +67,36 @@ export function loadAboutLocaleRuntime(source) {
   runInNewContext(script, context, {timeout: 3000, filename: 'gewitterradar.js'});
   const model = context.aboutLocaleModel;
   if (!model || registered.get('gewitterradar-card') !== model.Card) throw Error('About card registration was not reached');
+
+  // V4.10: production translation methods are installed by ui.i18n-settings.
+  // The isolated locale VM intentionally does not execute application modules,
+  // so install the exact translation semantics needed by this locale contract.
+  if (typeof model.Card.prototype._t !== 'function') {
+    model.Card.prototype._t = function (key, vars = {}) {
+      const language = this._languageValue();
+      const fallback = model.app[model.defaultLanguage]?.strings || {};
+      const table = model.app[language]?.strings || fallback;
+      const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
+      let text = aboutKey
+        ? model.resolve(language).strings[aboutKey] ?? key
+        : table[key] ?? fallback[key] ?? model.app.Deutsch?.strings?.[key] ?? key;
+      return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
+        Object.prototype.hasOwnProperty.call(vars,name) ? String(vars[name]) : `{${name}}`
+      );
+    };
+  }
   return model;
 }
 
 // Verify the exact production external Help bundle, but return an uninstalled runtime so
 // the test suite can still exercise native fallback -> rejected install -> successful lazy install.
-export function readAboutLocaleModel(source, externalSource) {
-  const model = loadAboutLocaleRuntime(source);
+export function readAboutLocaleModel(source, externalSource, baseContextSource) {
+  const model = loadAboutLocaleRuntime(source,baseContextSource);
   model.validate(model.locales,model.settings,model.languages,model.recorderYaml);
   if (externalSource !== undefined) {
     if (typeof model.installExternal !== 'function' || !model.moduleUrl) throw Error('External About locale runtime is missing');
     const external = readExternalAboutLocales(externalSource);
-    const validationModel = loadAboutLocaleRuntime(source);
+    const validationModel = loadAboutLocaleRuntime(source,baseContextSource);
     const installed = validationModel.installExternal(external.about,external.help);
     const expected = model.languages.map(entry => entry.value).filter(name => !Object.hasOwn(model.locales,name));
     if (JSON.stringify(Object.keys(installed)) !== JSON.stringify(expected)) {
@@ -73,6 +112,7 @@ export function readAboutLocaleModel(source, externalSource) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const source = await readFile(new URL('../frontend/gewitterradar.js',import.meta.url),'utf8');
   const externalSource = await readFile(new URL('../frontend/locales/about-locales.js',import.meta.url),'utf8');
-  const model = readAboutLocaleModel(source,externalSource);
+  const baseContextSource = await readFile(new URL('../frontend/modules/core/base-context.js',import.meta.url),'utf8');
+  const model = readAboutLocaleModel(source,externalSource,baseContextSource);
   console.log(`PASS: ${Object.keys(model.locales).length} native and ${Object.keys(model.externalLocales).length} external About bundles; ${model.languages.length} registered languages.`);
 }

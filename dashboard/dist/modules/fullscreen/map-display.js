@@ -1,0 +1,1657 @@
+import { defineModule } from "../core/runtime.js?v=41002r13";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r13";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r13";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r13";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";
+import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41002r13";
+import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41002r13";
+import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41002r13";
+import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41002r13";
+
+const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
+export const MODULE_META=Object.freeze({
+  "id": "fullscreen.map-display",
+  "version": "1.0.30",
+  "group": "Vollbild",
+  "function": "Kartendarstellung",
+  "subfunctions": [
+    "Standard",
+    "Groß",
+    "Vollbild",
+    "separates Fenster",
+    "Instrumentpositionen",
+    "Medaillon-Augenreferenz",
+    "Medaillon-Diagnose-Akkordeon",
+    "Produktive Pfeilkalibrierung",
+    "Vollbild-Instrumentskalierung"
+  ],
+  "file": "modules/fullscreen/map-display.js"
+});
+export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _teardownMapDisplayMode() {
+      this._setMapDisplayMenuOpen(false);
+      this._closeMapStartupDropdown?.(false);
+      if (this._mapStartupOutsidePointerHandler) {
+        document.removeEventListener('pointerdown',this._mapStartupOutsidePointerHandler,true);
+        this._mapStartupOutsidePointerHandler = null;
+      }
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      this._closeCompassPicker?.(false);
+      this._closeMedallionPicker?.(false);
+      this._setFullscreenAuxiliaryOverlayHost(false);
+      try { if (dialog?.open) dialog.close(); } catch (_error) {}
+      this._restoreCompassFromMapOverlay();
+      this._restoreLocationFromMapOverlay();
+      this._restoreMapCardHome();
+      if (typeof window !== 'undefined' && window.__gewitterradarMapWindowOwner === this) {
+        window.__gewitterradarMapWindowOwner = null;
+      }
+    },
+
+    _restoreMapCardHome() {
+      const mapCard = this.shadow?.getElementById('map-card');
+      const anchor = this.shadow?.getElementById('map-card-anchor');
+      if (mapCard && anchor && mapCard.previousElementSibling !== anchor) anchor.after(mapCard);
+    },
+
+
+    _fullscreenInstrumentScale(kind) {
+      const isCompass=kind==='compass',property=isCompass?'_mapCompassScale':'_mapMedallionScale';
+      if(Number.isFinite(this[property]))return clamp(this[property],.15,3);
+      const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
+      let value=1;
+      try{const stored=Number(localStorage.getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
+      this[property]=clamp(value,.15,3);
+      return this[property];
+    },
+
+    _fullscreenInstrumentBaseSize(kind) {
+      const viewport=window.visualViewport,width=Number(viewport?.width)||window.innerWidth||1024,height=Number(viewport?.height)||window.innerHeight||768;
+      const vmin=Math.min(width,height)/100,mobile=width<=720;
+      if(kind==='compass')return clamp((mobile?46.8:31.2)*vmin,mobile?171.6:188.5,mobile?299:390);
+      let base=clamp((mobile?28:18)*vmin,mobile?92:110,mobile?150:210);
+      if(this._isAndroidLike?.())base*=.85;
+      return base;
+    },
+
+    _applyFullscreenInstrumentScaleStyle(kind) {
+      const overlay=this.shadow?.getElementById(kind==='compass'?'map-compass-overlay':'map-medallion-overlay');
+      if(!overlay)return;
+      overlay.style.width=`${this._fullscreenInstrumentBaseSize(kind)*this._fullscreenInstrumentScale(kind)}px`;
+    },
+
+    _syncFullscreenScaleControls(dialog,kind) {
+      if(!dialog)return;
+      const scale=this._fullscreenInstrumentScale(kind),percent=Math.round(scale*1000)/10;
+      const output=dialog.querySelector('[data-fullscreen-scale-value]');
+      const input=dialog.querySelector('[data-fullscreen-scale-custom]');
+      const range=dialog.querySelector('[data-fullscreen-scale-range]');
+      const inputEditing=input?.dataset?.fullscreenScaleEditing==='1';
+      if(output)output.textContent=(Number.isInteger(percent)?String(percent):percent.toFixed(1).replace('.',','))+' %';
+      if(range)range.value=String(Math.round(percent));
+      if(input&&!inputEditing)input.value=String(Math.round(percent));
+      dialog.querySelectorAll('[data-fullscreen-scale-preset]').forEach((button)=>{
+        const active=Math.abs(Number(button.dataset.fullscreenScalePreset)-percent)<.05;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',active?'true':'false');
+      });
+    },
+
+    _setFullscreenInstrumentScale(kind,percent,{persist=true}={}) {
+      const numeric=Number(percent);
+      if(!Number.isFinite(numeric))return this._fullscreenInstrumentScale(kind);
+      const scale=clamp(numeric/100,.15,3),isCompass=kind==='compass';
+      const property=isCompass?'_mapCompassScale':'_mapMedallionScale';
+      const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
+      this[property]=scale;
+      if(persist){try{localStorage.setItem(key,String(scale));}catch(_error){}}
+      this._applyFullscreenInstrumentScaleStyle(kind);
+      this._syncFullscreenScaleControls(isCompass?this._compassPickerDialog:this._medallionPickerDialog,kind);
+      this._scheduleMapDisplayResize?.();
+      return scale;
+    },
+
+    _bindFullscreenScaleControls(shell,kind) {
+      if(!shell)return;
+      shell.querySelectorAll('[data-fullscreen-scale-preset]').forEach((button)=>button.addEventListener('click',(event)=>{
+        event.preventDefault();event.stopPropagation();this._setFullscreenInstrumentScale(kind,button.dataset.fullscreenScalePreset);
+      }));
+      const input=shell.querySelector('[data-fullscreen-scale-custom]');
+      const range=shell.querySelector('[data-fullscreen-scale-range]');
+      const dialog=shell.querySelector('dialog');
+      const commitInput=()=>{if(!input)return;const raw=String(input.value??'').trim();if(raw!==''){const numeric=Number(raw);if(Number.isFinite(numeric)){const value=clamp(Math.round(numeric),15,300);this._setFullscreenInstrumentScale(kind,value);}}delete input.dataset.fullscreenScaleEditing;this._syncFullscreenScaleControls(dialog,kind);};
+      range?.addEventListener('input',()=>this._setFullscreenInstrumentScale(kind,range.value));
+      range?.addEventListener('change',()=>this._setFullscreenInstrumentScale(kind,range.value));
+      input?.addEventListener('focus',()=>{input.dataset.fullscreenScaleEditing='1';});
+      input?.addEventListener('input',()=>{input.dataset.fullscreenScaleEditing='1';const cleaned=String(input.value??'').replace(/[^0-9]/g,'').slice(0,3);if(input.value!==cleaned)input.value=cleaned;});
+      input?.addEventListener('blur',commitInput);
+      input?.addEventListener('keydown',(event)=>{if(event.key==='Enter'){event.preventDefault();commitInput();input.blur?.();}else if(event.key==='Escape'){event.preventDefault();delete input.dataset.fullscreenScaleEditing;this._syncFullscreenScaleControls(dialog,kind);input.blur?.();}});
+      this._syncFullscreenScaleControls(dialog,kind);
+    },
+
+    _productMedallionCalibration() {
+      const key=`${this._medallionDesignValue?.()||''}::${this._trendArrowDesignValue?.()||''}`;
+      return MEDALLION_ARROW_PRODUCTION_CALIBRATION[key]||null;
+    },
+
+    _applyProductMedallionCalibration() {
+      const entry=this._productMedallionCalibration();
+      if(!entry)return;
+      const scale=Number(entry[0]),x=Number(entry[1]),y=Number(entry[2]);
+      if(!Number.isFinite(scale)||!Number.isFinite(x)||!Number.isFinite(y))return;
+      [this.shadow?.getElementById('trend-box'),this.shadow?.getElementById('map-medallion-overlay')].forEach((target)=>{
+        if(!target)return;
+        target.style.setProperty('--trend-arrow-scale',String(scale));
+        target.style.setProperty('--trend-arrow-center-x',`${x}%`);
+        target.style.setProperty('--trend-arrow-center-y',`${y}%`);
+      });
+    },
+
+    _syncCompassPicker() {
+      const dialog = this._compassPickerDialog;
+      if (!dialog) return;
+      const descriptor = COMPASS_DESIGNS.find((entry) => entry.id === this._activeCompassDesign)
+        || COMPASS_DESIGNS.find((entry) => entry.id === this._compassDesignValue())
+        || COMPASS_DESIGNS[0];
+      dialog.setAttribute('aria-label',this._t('compass.picker_title'));
+      const closeButton=dialog.querySelector('[data-compass-picker-close]');
+      if (closeButton) {
+        const closeLabel=this._t('about.close');
+        closeButton.setAttribute('aria-label',closeLabel);
+        closeButton.setAttribute('title',closeLabel);
+      }
+      dialog.querySelector('.compass-picker-nav')?.setAttribute('aria-label',this._t('compass.picker_change'));
+      const output = dialog.querySelector('[data-compass-picker-index]');
+      if (output) output.textContent = descriptor.uiIndex + ' / ' + COMPASS_DESIGNS.length;
+      const enabled = true;
+      const previous = [...dialog.querySelectorAll('[data-compass-picker-prev]')];
+      const next = [...dialog.querySelectorAll('[data-compass-picker-next]')];
+      previous.forEach((button) => {
+        button.disabled = !enabled;
+        button.setAttribute('aria-disabled',enabled ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      next.forEach((button) => {
+        button.disabled = !enabled;
+        button.setAttribute('aria-disabled',enabled ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
+      this._syncFullscreenScaleControls(dialog,'compass');
+      requestAnimationFrame(()=>this._syncPickerDiagnostics?.());
+    },
+
+    _closeCompassPicker(restoreFocus = true) {
+      const dialog = this._compassPickerDialog;
+      if (!dialog) return;
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const returnParent = this._compassPickerReturnParent?.isConnected
+        ? this._compassPickerReturnParent
+        : (this._mapDisplayMode === 'fullscreen'
+          ? this.shadow?.getElementById('map-compass-overlay')
+          : this.shadow?.querySelector('.compass-wrap'));
+      const returnNext = this._compassPickerReturnNext;
+      if (instrument && returnParent) {
+        if (returnNext?.parentNode === returnParent) returnParent.insertBefore(instrument,returnNext);
+        else returnParent.appendChild(instrument);
+      }
+      try { if (dialog.open) dialog.close(); } catch (_error) {}
+      this._setPickerDiagnosticTopLayerHost?.(null);
+      dialog.parentElement?.remove();
+      this._compassPickerDialog = null;
+      this._clearPickerDiagnostic?.('compass');
+      this._compassPickerReturnParent = null;
+      this._compassPickerReturnNext = null;
+      const previousFocus = this._compassPickerReturnFocus;
+      this._compassPickerReturnFocus = null;
+      if (returnParent?.id === 'map-compass-overlay' && !returnParent.hidden) {
+        requestAnimationFrame(() => this._positionMapCompassOverlay());
+      }
+      if (restoreFocus && previousFocus?.isConnected) previousFocus.focus?.({preventScroll:true});
+    },
+
+    _openCompassPicker() {
+      if (this._compassPickerDialog?.open || !this.shadow || !this.isConnected) return;
+      if (this._medallionPickerDialog?.open) this._closeMedallionPicker(false);
+      const instrument = this.shadow.getElementById('compass-instrument');
+      if (!instrument) return;
+
+      // Picker-only Retina assets. Other menu/accordion/UI chevrons intentionally remain untouched.
+      const chevronAssets = {
+        silver: { left: COMPASS_PICKER_LEFT_SILVER, right: COMPASS_PICKER_RIGHT_SILVER },
+      };
+
+      const shell = document.createElement('div');
+      shell.id = 'compass-picker-shell-v41001';
+      shell.innerHTML =
+        '<style>' +
+        '.compass-picker-dialog{--picker-gold:#dfbc72;--picker-bright:#f7dfa1;box-sizing:border-box;width:min(560px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
+        '.compass-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.compass-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
+        '.compass-picker-dialog *{box-sizing:border-box}.compass-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.compass-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
+        '.compass-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.compass-picker-close:focus,.compass-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.compass-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.compass-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
+        '.compass-picker-stage{position:relative;width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}.compass-picker-stage::before{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.40) 0%,rgba(255,255,252,.30) 20%,rgba(255,251,240,.18) 42%,rgba(255,247,230,.08) 60%,transparent 76%);filter:blur(16px);pointer-events:none;z-index:0}' +
+        '.compass-picker-stage .compass-instrument{position:relative;z-index:1;width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 11px rgba(255,255,255,.32)) drop-shadow(0 0 26px rgba(255,250,236,.17))}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
+        '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
+        '.compass-picker-nav-row{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
+        '.instrument-picker-diagnostic-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;pointer-events:none!important;overflow:visible!important;opacity:1!important;isolation:isolate}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(470px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-tools{width:min(470px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}' +
+        '.compass-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;color:var(--picker-gold);appearance:none;-webkit-appearance:none}' +
+        '.compass-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.compass-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.compass-picker-nav-button:disabled{opacity:.34;cursor:default}' +
+        '.compass-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
+        '.compass-picker-nav-row[data-chevron-material="silver"] .compass-picker-chevron{filter:drop-shadow(0 2px 5px #000c)}' +
+        '.compass-picker-index{min-width:82px;text-align:center;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fbfdff 0%,#c8ced4 26%,#f5f7f8 47%,#8e969e 72%,#d8dde1 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 3px #dce4ea24)}' +
+        '.fullscreen-scale-control{width:min(470px,calc(100vw - 54px));padding:9px 10px;border:1px solid #d6ad5a38;border-radius:9px;background:#17140d99}.fullscreen-scale-title{font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:#f0d18b}.fullscreen-scale-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}.fullscreen-scale-presets button{min-width:48px;min-height:30px;padding:5px 8px;border:1px solid #d6ad5a55;border-radius:7px;background:#161b20;color:#e5e8eb;font:750 9px/1 system-ui,sans-serif}.fullscreen-scale-presets button.active{border-color:#ffe39a;color:#ffe39a;background:#302710}.fullscreen-scale-range{display:grid;grid-template-columns:auto minmax(150px,1fr) auto;align-items:center;gap:8px;margin-top:8px}.fullscreen-scale-range input[type="range"]{width:100%;min-width:150px;accent-color:#d8ae52;cursor:pointer}.fullscreen-scale-edge{color:#aeb5bb;font:700 8px/1 ui-monospace,monospace}.fullscreen-scale-custom{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;color:#cfd4d8;font:700 9px/1.2 system-ui,sans-serif}.fullscreen-scale-custom input[type="text"]{width:82px;min-height:31px;padding:5px 7px;border:1px solid #74808a;border-radius:7px;background:#071018;color:#fff;text-align:right;font:750 10px/1 ui-monospace,monospace}.fullscreen-scale-value{min-width:55px;color:#ffe39a;text-align:right;font:750 10px/1 ui-monospace,monospace}' +
+        '@media(max-width:520px){.compass-picker-dialog{padding:14px 12px 13px}.compass-picker-stage{width:min(390px,78vw);max-width:calc(100vw - 56px)}.compass-picker-nav-row{grid-template-columns:58px 72px 58px;gap:9px}.compass-picker-nav-button{width:58px;height:50px}.compass-picker-chevron{width:52px;height:52px}}' +
+        '</style>' +
+        '<dialog class="compass-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('compass.picker_title') + '">' +
+        '<button class="compass-picker-close" type="button" data-compass-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
+        '<div class="compass-picker-stage" data-compass-picker-stage><svg class="instrument-picker-diagnostic-svg" data-compass-picker-diagnostic-stage hidden aria-hidden="true"></svg></div>' +
+        '<div class="compass-picker-nav" role="group" aria-label="' + this._t('compass.picker_change') + '">' +
+        '<div class="compass-picker-nav-row" data-chevron-material="silver">' +
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-prev data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.left + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<output class="compass-picker-index" data-compass-picker-index aria-live="polite"></output>' +
+        '<button class="compass-picker-nav-button" type="button" data-compass-picker-next data-chevron-material="silver"><img class="compass-picker-chevron" src="' + chevronAssets.silver.right + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<svg class="instrument-picker-diagnostic-svg" data-compass-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
+        '</div></div>' +
+        '<div class="fullscreen-scale-control" data-fullscreen-scale-control><div class="fullscreen-scale-title">' + this._t('picker.fullscreen_size') + '</div><div class="fullscreen-scale-presets" role="group" aria-label="' + this._t('picker.fullscreen_size') + '"><button type="button" data-fullscreen-scale-preset="50">50 %</button><button type="button" data-fullscreen-scale-preset="75">75 %</button><button type="button" data-fullscreen-scale-preset="100">100 %</button><button type="button" data-fullscreen-scale-preset="125">125 %</button><button type="button" data-fullscreen-scale-preset="150">150 %</button></div><div class="fullscreen-scale-range"><span class="fullscreen-scale-edge">15 %</span><input type="range" min="15" max="300" step="1" value="100" data-fullscreen-scale-range aria-label="' + this._t('picker.fullscreen_size_range') + '"><span class="fullscreen-scale-edge">300 %</span></div><label class="fullscreen-scale-custom"><span>' + this._t('picker.custom_size') + '</span><input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" enterkeyhint="done" data-fullscreen-scale-custom aria-label="' + this._t('picker.fullscreen_size_range') + '"><span>%</span></label></div>' +
+        '<div class="instrument-picker-diagnostic-tools" data-compass-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Kompass-Diagnose</div><div class="instrument-picker-diagnostic-row export">' +
+        '<button type="button" data-picker-diagnostic-copy>KOPIEREN</button><button type="button" data-picker-diagnostic-json>JSON</button><button type="button" data-picker-diagnostic-csv>CSV</button>' +
+        '</div></div>' +
+        '<pre class="instrument-picker-diagnostic-readout" data-compass-picker-diagnostic-readout hidden></pre></dialog>';
+
+      this._compassPickerReturnParent = instrument.parentElement;
+      this._compassPickerReturnNext = instrument.nextSibling;
+      this._compassPickerReturnFocus = this.shadow.activeElement;
+      this.shadow.append(shell);
+      const dialog = shell.querySelector('.compass-picker-dialog');
+      const stage = shell.querySelector('[data-compass-picker-stage]');
+      if (!dialog || !stage) { shell.remove(); return; }
+      this._compassPickerDialog = dialog;
+      stage.appendChild(instrument);
+      this._bindPickerDiagnosticActions?.(shell,'compass');
+      this._bindFullscreenScaleControls(shell,'compass');
+
+      shell.querySelector('[data-compass-picker-close]')?.addEventListener('click',() => this._closeCompassPicker());
+      shell.querySelectorAll('[data-compass-picker-prev]').forEach((button) => button.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._stepCompassDesign(-1);
+        this._syncCompassPicker();
+      }));
+      shell.querySelectorAll('[data-compass-picker-next]').forEach((button) => button.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._stepCompassDesign(1);
+        this._syncCompassPicker();
+      }));
+      dialog.addEventListener('cancel',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._closeCompassPicker();
+      });
+      dialog.addEventListener('pointerdown',(event) => {
+        if (event.target !== dialog) return;
+        const rect = dialog.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+          event.preventDefault();
+          this._closeCompassPicker();
+        }
+      });
+
+      try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      this._setPickerDiagnosticTopLayerHost?.(dialog);
+      this._syncCompassPicker();
+      shell.querySelector('[data-compass-picker-close]')?.focus?.({preventScroll:true});
+    },
+
+    _trendArrowDesignValue() {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length) return '';
+      const active = String(this._activeTrendArrowDesign || '').trim();
+      if (designs.some((entry) => entry.id === active)) return active;
+      let stored = '';
+      try { stored = String(localStorage.getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
+      const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
+      this._activeTrendArrowDesign = resolved;
+      return resolved;
+    },
+
+    _applyTrendArrowDesign(designId,{persist=true}={}) {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      const descriptor = designs.find((entry) => entry.id === designId) || designs[0] || null;
+      if (!descriptor) return null;
+      this._activeTrendArrowDesign = descriptor.id;
+      this.shadow?.querySelectorAll('.trend-medallion-arrow').forEach((image) => {
+        if (descriptor.asset && image.getAttribute('src') !== descriptor.asset) image.setAttribute('src',descriptor.asset);
+        image.dataset.trendArrowDesign = descriptor.id;
+      });
+      if (persist) {
+        try { localStorage.setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
+      }
+      this._applyProductMedallionCalibration?.();
+      return descriptor;
+    },
+
+    _stepTrendArrowDesign(step) {
+      const designs = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length) return;
+      const currentId = this._trendArrowDesignValue();
+      const currentIndex = Math.max(0,designs.findIndex((entry) => entry.id === currentId));
+      const nextIndex = (currentIndex + Number(step || 0) + designs.length) % designs.length;
+      this._applyTrendArrowDesign(designs[nextIndex].id,{persist:true});
+      this._syncMedallionPicker();
+      this._syncMapMedallionState();
+      requestAnimationFrame(()=>{
+        this._syncPickerDiagnostics?.();
+        if(this._medallionCalibrationEnabled)this._measureMedallionCalibration?.();
+      });
+    },
+
+    _medallionDesignValue() {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      if (!designs.length) return '';
+      const active = String(this._activeMedallionDesign || '').trim();
+      if (designs.some((entry) => entry.id === active)) return active;
+      let stored = '';
+      try { stored = String(localStorage.getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
+      const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
+      this._activeMedallionDesign = resolved;
+      return resolved;
+    },
+
+    _applyMedallionDesign(designId,{persist=true}={}) {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      const descriptor = designs.find((entry) => entry.id === designId) || designs[0] || null;
+      if (!descriptor) return null;
+      this._activeMedallionDesign = descriptor.id;
+      this.shadow?.querySelectorAll('.trend-medallion-base').forEach((image) => {
+        if (descriptor.asset && image.getAttribute('src') !== descriptor.asset) image.setAttribute('src',descriptor.asset);
+        image.dataset.medallionDesign = descriptor.id;
+      });
+      if (persist) {
+        try { localStorage.setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
+      }
+      this._applyProductMedallionCalibration?.();
+      return descriptor;
+    },
+
+    _stepMedallionDesign(step) {
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      if (!designs.length) return;
+      const currentId = this._medallionDesignValue();
+      const currentIndex = Math.max(0,designs.findIndex((entry) => entry.id === currentId));
+      const nextIndex = (currentIndex + Number(step || 0) + designs.length) % designs.length;
+      this._applyMedallionDesign(designs[nextIndex].id,{persist:true});
+      this._syncMedallionPicker();
+      this._syncMapMedallionState();
+      requestAnimationFrame(()=>{
+        this._syncPickerDiagnostics?.();
+        if(this._medallionCalibrationEnabled)this._measureMedallionCalibration?.();
+      });
+    },
+
+    _medallionPickerPreviewMode() {
+      let mode=String(this._medallionPickerPreviewModeValue||'').trim();
+      if(mode!=='static'&&mode!=='animation'){
+        try{mode=String(localStorage.getItem('gewitterradar:v41002:medallion-picker-preview-mode')||'static').trim();}catch(_error){mode='static';}
+      }
+      if(mode!=='animation')mode='static';
+      this._medallionPickerPreviewModeValue=mode;
+      return mode;
+    },
+
+    _setMedallionPickerPreviewMode(mode,{persist=true}={}) {
+      const next=mode==='animation'?'animation':'static';
+      this._medallionPickerPreviewModeValue=next;
+      if(persist){try{localStorage.setItem('gewitterradar:v41002:medallion-picker-preview-mode',next);}catch(_error){}}
+      this._syncMedallionPicker?.();
+      return next;
+    },
+
+    _syncMedallionPicker() {
+      const dialog = this._medallionPickerDialog;
+      if (!dialog) return;
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      const descriptor = this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
+      if (!descriptor) return;
+      const arrowDesigns = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      const arrowDescriptor = this._applyTrendArrowDesign(this._trendArrowDesignValue(),{persist:false});
+      const index = Math.max(0,designs.findIndex((entry) => entry.id === descriptor.id));
+      const arrowIndex = arrowDescriptor ? Math.max(0,arrowDesigns.findIndex((entry) => entry.id === arrowDescriptor.id)) : 0;
+      const base = dialog.querySelector('[data-medallion-picker-base]');
+      if (base && descriptor.asset) base.setAttribute('src',descriptor.asset);
+      let selectionMode=this._medallionPickerSelectionMode;
+      if(selectionMode!=='medallion'&&selectionMode!=='arrow'){try{selectionMode=sessionStorage.getItem('gewitterradar:v41002:medallion-picker-selection-mode')||'medallion';}catch(_error){selectionMode='medallion';}}
+      if(selectionMode!=='arrow')selectionMode='medallion';
+      this._medallionPickerSelectionMode=selectionMode;
+      const output = dialog.querySelector('[data-medallion-picker-index]');
+      if (output) output.textContent = (index + 1) + ' / ' + designs.length;
+      const arrowOutput = dialog.querySelector('[data-trend-arrow-index]');
+      if (arrowOutput && arrowDescriptor) arrowOutput.textContent = (arrowIndex + 1) + ' / ' + arrowDesigns.length;
+      const medallionNav=dialog.querySelector('[data-medallion-selection-nav="medallion"]'),arrowNav=dialog.querySelector('[data-medallion-selection-nav="arrow"]');
+      if(medallionNav)medallionNav.hidden=selectionMode!=='medallion';
+      if(arrowNav)arrowNav.hidden=selectionMode!=='arrow';
+      dialog.querySelectorAll('[data-medallion-selection-mode]').forEach((button)=>{const active=button.dataset.medallionSelectionMode===selectionMode;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active?'true':'false');});
+      const detail=dialog.querySelector('[data-medallion-selection-detail]');
+      if(detail){detail.hidden=!this._diagnostics?.enabled;detail.textContent=selectionMode==='arrow'&&arrowDescriptor?'Pfeil: '+arrowDescriptor.id+' · '+(arrowIndex+1)+' / '+arrowDesigns.length:'Medaillon: '+descriptor.id+' · '+(index+1)+' / '+designs.length;}
+      const stage = dialog.querySelector('[data-medallion-picker-stage]');
+      const diagnosticState=this._diagnostics?.enabled?this._medallionDiagnostic:null;
+      const previewMode=this._medallionPickerPreviewMode();
+      if (stage) {
+        if(diagnosticState&&diagnosticState.mode!=='normal'){
+          stage.dataset.trendState=diagnosticState.arrowVisible===false?'none':'diagnostic';
+          stage.dataset.diagnosticMode=diagnosticState.mode;
+          stage.style.setProperty('--medallion-picker-diagnostic-angle',`${diagnosticState.angle??45}deg`);
+        }else{
+          stage.dataset.trendState='diagnostic';
+          stage.dataset.diagnosticMode=previewMode==='animation'?'animation':'preview-static';
+          stage.style.setProperty('--medallion-picker-diagnostic-angle','45deg');
+          const productCalibration=this._productMedallionCalibration?.();
+          const productScale=Number(productCalibration?.[0]),productX=Number(productCalibration?.[1]),productY=Number(productCalibration?.[2]);
+          if(Number.isFinite(productScale)&&Number.isFinite(productX)&&Number.isFinite(productY)){
+            stage.style.setProperty('--medallion-diagnostic-scale',String(productScale));
+            stage.style.setProperty('--medallion-diagnostic-center-x',`${productX}%`);
+            stage.style.setProperty('--medallion-diagnostic-center-y',`${productY}%`);
+          }
+        }
+      }
+      dialog.querySelectorAll('[data-medallion-preview-mode]').forEach((button)=>{
+        const active=button.dataset.medallionPreviewMode===previewMode;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-pressed',active?'true':'false');
+      });
+      this._syncMedallionEyeCalibration?.(dialog);this._syncMedallionVisualCalibration?.(dialog);
+      if(stage&&!this._diagnostics?.enabled){
+        const productCalibration=this._productMedallionCalibration?.();
+        const productScale=Number(productCalibration?.[0]),productX=Number(productCalibration?.[1]),productY=Number(productCalibration?.[2]);
+        if(Number.isFinite(productScale)&&Number.isFinite(productX)&&Number.isFinite(productY)){
+          stage.style.setProperty('--medallion-diagnostic-scale',String(productScale));
+          stage.style.setProperty('--medallion-diagnostic-center-x',`${productX}%`);
+          stage.style.setProperty('--medallion-diagnostic-center-y',`${productY}%`);
+        }
+      }
+      dialog.setAttribute('aria-label',this._t('trend.label'));
+      const closeButton = dialog.querySelector('[data-medallion-picker-close]');
+      if (closeButton) {
+        const closeLabel = this._t('about.close');
+        closeButton.setAttribute('aria-label',closeLabel);
+        closeButton.setAttribute('title',closeLabel);
+      }
+      dialog.querySelector('.medallion-picker-nav')?.setAttribute('aria-label',this._t('trend.label'));
+      dialog.querySelectorAll('[data-medallion-picker-prev]').forEach((button) => {
+        button.disabled = !designs.length;
+        button.setAttribute('aria-disabled',designs.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      dialog.querySelectorAll('[data-medallion-picker-next]').forEach((button) => {
+        button.disabled = !designs.length;
+        button.setAttribute('aria-disabled',designs.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
+      dialog.querySelectorAll('[data-trend-arrow-prev]').forEach((button) => {
+        button.disabled = !arrowDesigns.length;
+        button.setAttribute('aria-disabled',arrowDesigns.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.previous'));
+        button.title = this._t('compass.previous');
+      });
+      dialog.querySelectorAll('[data-trend-arrow-next]').forEach((button) => {
+        button.disabled = !arrowDesigns.length;
+        button.setAttribute('aria-disabled',arrowDesigns.length ? 'false' : 'true');
+        button.setAttribute('aria-label',this._t('compass.next'));
+        button.title = this._t('compass.next');
+      });
+      this._syncFullscreenScaleControls(dialog,'medallion');
+      requestAnimationFrame(()=>this._syncPickerDiagnostics?.());
+    },
+
+    _closeMedallionPicker(restoreFocus = true) {
+      const dialog = this._medallionPickerDialog;
+      if (!dialog) return;
+      try { if (dialog.open) dialog.close(); } catch (_error) {}
+      this._setPickerDiagnosticTopLayerHost?.(null);
+      dialog.parentElement?.remove();
+      this._medallionPickerDialog = null;
+      this._clearPickerDiagnostic?.('medallion');
+      const previousFocus = this._medallionPickerReturnFocus;
+      this._medallionPickerReturnFocus = null;
+      const coarseTouch = typeof window !== 'undefined' && !!window.matchMedia?.('(hover:none) and (pointer:coarse)')?.matches;
+      if (restoreFocus && previousFocus?.isConnected) {
+        if (coarseTouch && previousFocus.id === 'trend-icon') previousFocus.blur?.();
+        else previousFocus.focus?.({preventScroll:true});
+      }
+    },
+
+    _openMedallionPicker() {
+      if (this._medallionPickerDialog?.open || !this.shadow || !this.isConnected) return;
+      if (this._compassPickerDialog?.open) this._closeCompassPicker(false);
+      const designs = Array.isArray(MEDALLION_DESIGNS) ? MEDALLION_DESIGNS : [];
+      const arrowDesigns = Array.isArray(TREND_ARROW_DESIGNS) ? TREND_ARROW_DESIGNS : [];
+      if (!designs.length || !arrowDesigns.length) return;
+
+      const shell = document.createElement('div');
+      shell.id = 'medallion-picker-shell-v41002';
+      shell.innerHTML =
+        '<style>' +
+        '.medallion-picker-dialog{--picker-gold:#dfbc72;box-sizing:border-box;width:min(500px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#3b302045,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
+        '.medallion-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.medallion-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
+        '.medallion-picker-dialog *{box-sizing:border-box}.medallion-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.medallion-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
+        '.medallion-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.medallion-picker-close:focus,.medallion-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.medallion-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.medallion-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
+        '.medallion-picker-stage{position:relative;width:min(320px,60vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:12px auto 0;isolation:isolate}.medallion-picker-stage::before{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.40) 0%,rgba(255,255,252,.30) 20%,rgba(255,251,240,.18) 42%,rgba(255,247,230,.08) 60%,transparent 76%);filter:blur(16px);pointer-events:none;z-index:0}' +
+        '.medallion-picker-preview{position:relative;width:100%;height:100%;aspect-ratio:1 / 1;z-index:1;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 11px rgba(255,255,255,.32)) drop-shadow(0 0 26px rgba(255,250,236,.17))}' +
+        '.medallion-picker-preview .trend-medallion-base,.medallion-picker-preview .trend-medallion-arrow{position:absolute;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}.medallion-picker-preview .trend-medallion-base{inset:0;width:100%;height:100%;object-fit:contain;z-index:1}.medallion-picker-preview .trend-medallion-arrow{left:var(--medallion-diagnostic-center-x,50.012238%);top:var(--medallion-diagnostic-center-y,50.452396%);width:59.667391%;height:59.667391%;object-fit:contain;z-index:3;transform-origin:50% 50%;filter:drop-shadow(0 2px 1px #2f1804d1) drop-shadow(0 0 4px #f6c3442e)}' +
+        '.medallion-eye-circle{position:absolute;z-index:2147482999;border:2px dashed #ffe36c;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1px #0009,0 0 10px #ffe36c44;background:rgba(255,227,108,.025);pointer-events:auto;cursor:move;touch-action:none}.medallion-eye-circle[hidden]{display:none!important}.medallion-eye-center-handle{position:absolute;left:50%;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);pointer-events:none}.medallion-eye-center-handle::before,.medallion-eye-center-handle::after{content:"";position:absolute;background:#ffe36c;box-shadow:0 0 3px #000}.medallion-eye-center-handle::before{left:0;right:0;top:6px;height:2px}.medallion-eye-center-handle::after{top:0;bottom:0;left:6px;width:2px}.medallion-eye-radius-handle{position:absolute;right:-7px;top:50%;width:14px;height:14px;border:2px solid #ffe36c;border-radius:50%;background:#10212a;transform:translateY(-50%);cursor:ew-resize;pointer-events:auto;touch-action:none;box-shadow:0 0 5px #000}' +
+        '.medallion-picker-stage[data-trend-state="up"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(0deg) scale(var(--medallion-diagnostic-scale,1))}.medallion-picker-stage[data-trend-state="stable"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(var(--medallion-diagnostic-scale,1))}.medallion-picker-stage[data-trend-state="down"] .trend-medallion-arrow{opacity:1;transform:translate(-50%,-50%) rotate(90deg) scale(var(--medallion-diagnostic-scale,1))}.medallion-picker-stage[data-trend-state="none"] .trend-medallion-arrow{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(var(--medallion-diagnostic-scale,1))}' +
+        '@keyframes medallion-picker-diagnostic-sweep{0%{transform:translate(-50%,-50%) rotate(-45deg) scale(var(--medallion-diagnostic-scale,1))}50%{transform:translate(-50%,-50%) rotate(135deg) scale(var(--medallion-diagnostic-scale,1))}100%{transform:translate(-50%,-50%) rotate(-45deg) scale(var(--medallion-diagnostic-scale,1))}}' +
+        '.medallion-picker-stage[data-trend-state="diagnostic"]:not([data-diagnostic-mode="animation"]):not([data-diagnostic-mode="freeze"]) .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:none!important;transform:translate(-50%,-50%) rotate(calc(var(--medallion-picker-diagnostic-angle,45deg) - 45deg)) scale(var(--medallion-diagnostic-scale,1))!important}.medallion-picker-stage[data-diagnostic-mode="animation"] .trend-medallion-arrow,.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{opacity:1!important;transition:none!important;animation:medallion-picker-diagnostic-sweep 3s ease-in-out infinite!important}.medallion-picker-stage[data-diagnostic-mode="freeze"] .trend-medallion-arrow{animation-play-state:paused!important}' +
+        '.medallion-picker-selector{display:flex;align-items:center;justify-content:center;gap:4px;padding:3px;border:1px solid #d6ad5a35;border-radius:10px;background:#11161bcc}.medallion-picker-selector button{min-width:92px;min-height:30px;padding:5px 12px;border:1px solid transparent;border-radius:7px;background:transparent;color:#aeb5bb;font:800 9px/1 system-ui,sans-serif;letter-spacing:.04em}.medallion-picker-selector button.active{border-color:#d6ad5a88;background:#2b2414;color:#ffe29a;box-shadow:inset 0 0 0 1px #f0cf7440}.medallion-picker-preview-selector{display:flex;align-items:center;justify-content:center;gap:4px;margin:-3px 0 3px}.medallion-picker-preview-selector>span{margin-right:3px;color:#77838b;font:750 7.5px/1 system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase}.medallion-picker-preview-selector button{min-width:58px;min-height:23px;padding:3px 8px;border:1px solid #565d6350;border-radius:6px;background:#0f1418;color:#9ba4aa;font:800 7.5px/1 system-ui,sans-serif}.medallion-picker-preview-selector button.active{border-color:#bfa35f78;background:#221d12;color:#f7dfaa;box-shadow:inset 0 0 0 1px #f0cf7420}.medallion-picker-nav{position:relative;display:grid;grid-template-columns:64px 78px 64px;align-items:center;justify-content:center;gap:13px;margin-top:0}.medallion-picker-nav[hidden]{display:none!important}.medallion-picker-selection-detail{min-height:14px;margin-top:-6px;color:#8fdcff;font:700 8px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center}.medallion-picker-selection-detail[hidden]{display:none!important}.medallion-picker-nav-button{width:64px;height:54px;padding:0;border:0;border-radius:11px;background:transparent;box-shadow:none;display:grid;place-items:center;appearance:none;-webkit-appearance:none}.medallion-picker-nav-button:not(:disabled):hover{background:#ffffff08;box-shadow:0 0 18px #d1a54a18}.medallion-picker-nav-button:active:not(:disabled){transform:translateY(1px)}.medallion-picker-nav-button:disabled{opacity:.34;cursor:default}' +
+        '.instrument-picker-diagnostic-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147483000!important;pointer-events:none!important;overflow:visible!important;opacity:1!important;isolation:isolate}.instrument-picker-diagnostic-svg[hidden],.instrument-picker-diagnostic-readout[hidden],.instrument-picker-diagnostic-tools[hidden]{display:none!important}.instrument-picker-diagnostic-readout{width:min(430px,calc(100vw - 54px));margin:3px auto 0;padding:8px 10px;border:1px solid rgba(77,229,255,.50);border-radius:8px;background:rgba(2,9,15,.94);color:#bfefff;box-shadow:inset 0 0 0 1px rgba(169,133,255,.10);font:700 8.5px/1.38 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}' +
+        '.instrument-picker-diagnostic-tools{width:min(430px,calc(100vw - 54px));margin:2px auto 0;padding:8px;border:1px solid rgba(74,197,255,.34);border-radius:9px;background:rgba(5,18,28,.96);box-shadow:inset 0 0 0 1px rgba(74,197,255,.06)}.instrument-picker-diagnostic-title{color:#75dcff;font:850 9px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.instrument-picker-diagnostic-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px;margin-top:5px}.instrument-picker-diagnostic-row button{min-height:27px;padding:5px 8px;border:1px solid rgba(74,197,255,.38);border-radius:7px;background:#0a1b28;color:#bfeeff;font:750 8px/1 system-ui,sans-serif;cursor:pointer}.instrument-picker-diagnostic-row button.active{border-color:#ff4fc5;background:#25152a;color:#ff66d4;box-shadow:0 0 0 1px rgba(255,79,197,.16) inset}.instrument-picker-diagnostic-row.export button{border-color:rgba(223,188,114,.55);color:#f4d997;background:#1c180e}.instrument-picker-diagnostic-row.export button:active{transform:translateY(1px)}.instrument-picker-diagnostic-fit-status{margin-top:7px;color:#8fdcff;font:700 8px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;white-space:pre-wrap}' +
+        '.medallion-diagnostic-accordion{margin-top:7px;border:1px solid rgba(74,197,255,.24);border-radius:8px;background:rgba(3,13,20,.72);overflow:hidden}.medallion-diagnostic-accordion>summary{list-style:none;display:flex;align-items:center;gap:7px;min-height:31px;padding:7px 9px;color:#a9eaff;font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;user-select:none}.medallion-diagnostic-accordion>summary::-webkit-details-marker{display:none}.medallion-diagnostic-accordion>summary::before{content:"›";display:inline-grid;place-items:center;width:13px;height:13px;color:#e1bd68;font:900 15px/1 system-ui,sans-serif;transform:rotate(0deg);transform-origin:center;transition:transform .16s ease}.medallion-diagnostic-accordion[open]>summary::before{transform:rotate(90deg)}.medallion-diagnostic-accordion[open]>summary{border-bottom:1px solid rgba(74,197,255,.16);color:#d1f4ff}.medallion-diagnostic-accordion-body{padding:1px 8px 8px}.medallion-diagnostic-accordion .instrument-picker-diagnostic-row:first-child{margin-top:7px}' +
+        '.medallion-visual-calibration{margin-top:7px;padding:7px 8px;border:1px solid rgba(85,229,162,.28);border-radius:8px;background:rgba(4,16,21,.72)}.medallion-visual-calibration-title{color:#9ff0c8;font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;text-align:center}.medallion-scale-line{display:grid;grid-template-columns:52px minmax(120px,1fr) 62px;align-items:center;gap:7px;margin-top:7px;color:#bfefff;font:700 8px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}.medallion-scale-line input[type="range"]{width:100%;accent-color:#55e5a2}.medallion-scale-value{color:#ffe39a;text-align:right;font-variant-numeric:tabular-nums}.medallion-scale-status{margin-top:6px;color:#9bdff2;font:700 7.7px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;white-space:pre-wrap}.instrument-picker-diagnostic-row.calibration button{border-color:rgba(85,229,162,.42);color:#baf4d5;background:#0b211c}.instrument-picker-diagnostic-row.calibration button.active{border-color:#ffe18a;background:#2a2210;color:#ffe7a8}.instrument-picker-diagnostic-row.calibration-export button{border-color:rgba(169,133,255,.45);color:#d6c5ff;background:#171126}' +
+        '.medallion-picker-chevron{display:block;width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 2px 5px #000b)}' +
+        '.medallion-picker-index{min-width:78px;text-align:center;white-space:nowrap;font:720 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.08em;background:linear-gradient(180deg,#fff2bd 0%,#d0a852 27%,#ffe6a0 48%,#8d6726 73%,#e2bd68 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px #d5a84a36)}' +
+        '.fullscreen-scale-control{width:min(430px,calc(100vw - 54px));padding:9px 10px;border:1px solid #d6ad5a38;border-radius:9px;background:#17140d99}.fullscreen-scale-title{font:800 9px/1.2 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:#f0d18b}.fullscreen-scale-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}.fullscreen-scale-presets button{min-width:48px;min-height:30px;padding:5px 8px;border:1px solid #d6ad5a55;border-radius:7px;background:#161b20;color:#e5e8eb;font:750 9px/1 system-ui,sans-serif}.fullscreen-scale-presets button.active{border-color:#ffe39a;color:#ffe39a;background:#302710}.fullscreen-scale-range{display:grid;grid-template-columns:auto minmax(150px,1fr) auto;align-items:center;gap:8px;margin-top:8px}.fullscreen-scale-range input[type="range"]{width:100%;min-width:150px;accent-color:#d8ae52;cursor:pointer}.fullscreen-scale-edge{color:#aeb5bb;font:700 8px/1 ui-monospace,monospace}.fullscreen-scale-custom{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;color:#cfd4d8;font:700 9px/1.2 system-ui,sans-serif}.fullscreen-scale-custom input[type="text"]{width:82px;min-height:31px;padding:5px 7px;border:1px solid #74808a;border-radius:7px;background:#071018;color:#fff;text-align:right;font:750 10px/1 ui-monospace,monospace}.fullscreen-scale-value{min-width:55px;color:#ffe39a;text-align:right;font:750 10px/1 ui-monospace,monospace}' +
+        '@media(max-width:520px){.medallion-picker-dialog{padding:14px 12px 13px}.medallion-picker-stage{width:min(290px,66vw);max-width:calc(100vw - 56px)}.medallion-picker-selector button{min-width:84px}.medallion-picker-nav{grid-template-columns:58px 74px 58px;gap:9px}.medallion-picker-nav-button{width:58px;height:50px}.medallion-picker-chevron{width:52px;height:52px}}' +
+        '</style>' +
+        '<dialog class="medallion-picker-dialog" role="dialog" aria-modal="true" aria-label="' + this._t('trend.label') + '">' +
+        '<button class="medallion-picker-close" type="button" data-medallion-picker-close aria-label="' + this._t('about.close') + '" title="' + this._t('about.close') + '"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button>' +
+        '<div class="medallion-picker-stage" data-medallion-picker-stage data-trend-state="none"><div class="medallion-picker-preview">' +
+        '<img class="trend-medallion-base" data-medallion-picker-base src="' + (designs[0].asset || TREND_MEDALLION_IMAGE) + '" alt="" draggable="false">' +
+        '<img class="trend-medallion-arrow" src="' + (arrowDesigns[0].asset || TREND_ARROW_IMAGE) + '" alt="" draggable="false"></div><div class="medallion-eye-circle" data-medallion-eye-circle hidden><span class="medallion-eye-center-handle" aria-hidden="true"></span><span class="medallion-eye-radius-handle" data-medallion-eye-radius-handle aria-hidden="true"></span></div><svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-stage hidden aria-hidden="true"></svg></div>' +
+        '<div class="medallion-picker-selector" role="group" aria-label="' + this._t('picker.selection') + '"><button type="button" data-medallion-selection-mode="medallion" aria-pressed="true">' + this._t('picker.medallion') + '</button><button type="button" data-medallion-selection-mode="arrow" aria-pressed="false">' + this._t('picker.arrow') + '</button></div>' +
+        '<div class="medallion-picker-nav" data-medallion-selection-nav="medallion" role="group" aria-label="' + this._t('trend.label') + '">' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<output class="medallion-picker-index" data-medallion-picker-index aria-live="polite"></output>' +
+        '<button class="medallion-picker-nav-button" type="button" data-medallion-picker-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<svg class="instrument-picker-diagnostic-svg" data-medallion-picker-diagnostic-nav hidden aria-hidden="true"></svg>' +
+        '</div>' +
+        '<div class="medallion-picker-nav" data-medallion-selection-nav="arrow" data-trend-arrow-nav role="group" aria-label="' + this._t('trend.label') + '" hidden>' +
+        '<button class="medallion-picker-nav-button" type="button" data-trend-arrow-prev><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_LEFT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '<output class="medallion-picker-index" data-trend-arrow-index aria-live="polite"></output>' +
+        '<button class="medallion-picker-nav-button" type="button" data-trend-arrow-next><img class="medallion-picker-chevron" src="' + COMPASS_PICKER_RIGHT_SILVER + '" alt="" aria-hidden="true" draggable="false"></button>' +
+        '</div>' +
+        '<div class="medallion-picker-preview-selector" role="group" aria-label="' + this._t('picker.preview') + '"><span>' + this._t('picker.preview') + '</span><button type="button" data-medallion-preview-mode="static" aria-pressed="true">' + this._t('picker.static') + '</button><button type="button" data-medallion-preview-mode="animation" aria-pressed="false">' + this._t('picker.animation') + '</button></div>' +
+        '<div class="medallion-picker-selection-detail" data-medallion-selection-detail hidden></div>' +
+        '<div class="fullscreen-scale-control" data-fullscreen-scale-control><div class="fullscreen-scale-title">' + this._t('picker.fullscreen_size') + '</div><div class="fullscreen-scale-presets" role="group" aria-label="' + this._t('picker.fullscreen_size') + '"><button type="button" data-fullscreen-scale-preset="50">50 %</button><button type="button" data-fullscreen-scale-preset="75">75 %</button><button type="button" data-fullscreen-scale-preset="100">100 %</button><button type="button" data-fullscreen-scale-preset="125">125 %</button><button type="button" data-fullscreen-scale-preset="150">150 %</button></div><div class="fullscreen-scale-range"><span class="fullscreen-scale-edge">15 %</span><input type="range" min="15" max="300" step="1" value="100" data-fullscreen-scale-range aria-label="' + this._t('picker.fullscreen_size_range') + '"><span class="fullscreen-scale-edge">300 %</span></div><label class="fullscreen-scale-custom"><span>' + this._t('picker.custom_size') + '</span><input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" enterkeyhint="done" data-fullscreen-scale-custom aria-label="' + this._t('picker.fullscreen_size_range') + '"><span>%</span></label></div>' +
+        '<div class="instrument-picker-diagnostic-tools" data-medallion-picker-diagnostic-tools hidden><div class="instrument-picker-diagnostic-title">Medaillon-Diagnose</div>' +
+        '<details class="medallion-diagnostic-accordion" data-medallion-diagnostic-group="display"><summary>Darstellung &amp; Testzustand</summary><div class="medallion-diagnostic-accordion-body">' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-preset="empty">LEER</button><button type="button" data-medallion-preset="static">PFEIL</button><button type="button" data-medallion-preset="animation">TREND</button><button type="button" data-medallion-preset="freeze">FREEZE</button><button type="button" data-medallion-preset="normal">NORMAL</button></div>' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-arrow="on">PFEIL EIN</button><button type="button" data-medallion-arrow="off">PFEIL AUS</button><button type="button" data-medallion-animation="on">ANIMATION EIN</button><button type="button" data-medallion-animation="off">ANIMATION AUS</button><button type="button" data-medallion-freeze="on">FREEZE EIN</button><button type="button" data-medallion-freeze="off">FREEZE AUS</button></div>' +
+        '<div class="instrument-picker-diagnostic-row"><button type="button" data-medallion-angle="0">0°</button><button type="button" data-medallion-angle="45">45°</button><button type="button" data-medallion-angle="90">90°</button><button type="button" data-medallion-angle="180">180°</button><button type="button" data-medallion-angle="270">270°</button></div></div></details>' +
+        '<details class="medallion-visual-calibration medallion-diagnostic-accordion" data-medallion-eye-calibration data-medallion-diagnostic-group="eye"><summary>Auge · Referenzkreis pro Medaillon</summary><div class="medallion-diagnostic-accordion-body"><label class="medallion-scale-line"><span>Mitte X</span><input type="range" min="30" max="70" step="0.05" value="50" data-medallion-eye-x aria-label="Augenmittelpunkt X in Prozent"><output class="medallion-scale-value" data-medallion-eye-x-value>50,00 %</output></label><label class="medallion-scale-line"><span>Mitte Y</span><input type="range" min="30" max="70" step="0.05" value="50" data-medallion-eye-y aria-label="Augenmittelpunkt Y in Prozent"><output class="medallion-scale-value" data-medallion-eye-y-value>50,00 %</output></label><label class="medallion-scale-line"><span>Radius</span><input type="range" min="5" max="45" step="0.05" value="30" data-medallion-eye-radius aria-label="Augenradius in Prozent"><output class="medallion-scale-value" data-medallion-eye-radius-value>30,00 %</output></label><div class="instrument-picker-diagnostic-row calibration"><button type="button" data-medallion-eye-auto>AUTO</button><button type="button" data-medallion-eye-accept>AUGE ABNEHMEN</button><button type="button" data-medallion-eye-reset>RESET</button><button type="button" data-medallion-eye-next>NÄCHSTES AUGE</button></div><div class="instrument-picker-diagnostic-row calibration-export"><button type="button" data-medallion-eye-json>AUGE-JSON</button></div><div class="medallion-scale-status" data-medallion-eye-status>Auge · automatische Referenz bis zur Abnahme</div></div></details>' +
+        '<details class="medallion-visual-calibration medallion-diagnostic-accordion" data-medallion-visual-calibration data-medallion-diagnostic-group="arrow"><summary>Pfeil · Größe &amp; Mittelpunkt kalibrieren</summary><div class="medallion-diagnostic-accordion-body"><label class="medallion-scale-line"><span>Größe</span><input type="range" min="35" max="110" step="0.5" value="100" data-medallion-scale aria-label="Pfeilgröße in Prozent"><output class="medallion-scale-value" data-medallion-scale-value>100,0 %</output></label><label class="medallion-scale-line"><span>Mitte X</span><input type="range" min="40" max="60" step="0.05" value="50.01" data-medallion-center-x aria-label="Pfeilmittelpunkt X in Prozent"><output class="medallion-scale-value" data-medallion-center-x-value>50,01 %</output></label><label class="medallion-scale-line"><span>Mitte Y</span><input type="range" min="40" max="60" step="0.05" value="50.45" data-medallion-center-y aria-label="Pfeilmittelpunkt Y in Prozent"><output class="medallion-scale-value" data-medallion-center-y-value>50,45 %</output></label><div class="instrument-picker-diagnostic-row calibration"><button type="button" data-medallion-scale-auto>AUTO</button><button type="button" data-medallion-scale-base>BASIS</button><button type="button" data-medallion-scale-accept>ABNEHMEN</button><button type="button" data-medallion-scale-reset>RESET</button><button type="button" data-medallion-scale-next>NÄCHSTER OFFEN</button></div><div class="instrument-picker-diagnostic-row calibration-export"><button type="button" data-medallion-calibration-json>KAL-JSON</button><button type="button" data-medallion-calibration-csv>KAL-CSV</button></div><div class="medallion-scale-status" data-medallion-scale-status>Kalibrierung · FIT-MATRIX ausführen</div></div></details>' +
+        '<details class="medallion-diagnostic-accordion" data-medallion-diagnostic-group="fit"><summary>Fit-Matrix &amp; Export</summary><div class="medallion-diagnostic-accordion-body"><div class="instrument-picker-diagnostic-row export"><button type="button" data-picker-diagnostic-copy>KOPIEREN</button><button type="button" data-picker-diagnostic-json>JSON</button><button type="button" data-picker-diagnostic-csv>CSV</button><button type="button" data-medallion-fit-matrix>FIT-MATRIX</button><button type="button" data-medallion-fit-db-json>FIT-JSON</button></div><div class="instrument-picker-diagnostic-fit-status" data-medallion-fit-status>FIT-DATENBANK · noch nicht gemessen</div></div></details></div>' +
+        '<pre class="instrument-picker-diagnostic-readout" data-medallion-picker-diagnostic-readout hidden></pre></dialog>';
+
+      this._medallionPickerReturnFocus = this.shadow.activeElement;
+      this.shadow.append(shell);
+      const dialog = shell.querySelector('.medallion-picker-dialog');
+      if (!dialog) { shell.remove(); return; }
+      this._medallionPickerDialog = dialog;
+      this._bindPickerDiagnosticActions?.(shell,'medallion');
+      this._bindFullscreenScaleControls(shell,'medallion');
+      shell.querySelectorAll('[data-medallion-selection-mode]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();const mode=button.dataset.medallionSelectionMode==='arrow'?'arrow':'medallion';this._medallionPickerSelectionMode=mode;try{sessionStorage.setItem('gewitterradar:v41002:medallion-picker-selection-mode',mode);}catch(_error){}this._syncMedallionPicker();}));
+      shell.querySelectorAll('[data-medallion-preview-mode]').forEach((button)=>button.addEventListener('click',(event)=>{event.preventDefault();event.stopPropagation();this._setMedallionPickerPreviewMode(button.dataset.medallionPreviewMode,{persist:true});}));
+      const diagnosticAccordionKey='gewitterradar:v41002:medallion-diagnostic-accordion',diagnosticGroups=[...shell.querySelectorAll('details[data-medallion-diagnostic-group]')];
+      let rememberedDiagnosticGroup='';try{rememberedDiagnosticGroup=sessionStorage.getItem(diagnosticAccordionKey)||'';}catch(_error){}
+      diagnosticGroups.forEach((group)=>{group.open=group.dataset.medallionDiagnosticGroup===rememberedDiagnosticGroup;group.addEventListener('toggle',()=>{if(group.open){diagnosticGroups.forEach((other)=>{if(other!==group)other.open=false;});try{sessionStorage.setItem(diagnosticAccordionKey,group.dataset.medallionDiagnosticGroup||'');}catch(_error){}}else{try{if(sessionStorage.getItem(diagnosticAccordionKey)===group.dataset.medallionDiagnosticGroup)sessionStorage.removeItem(diagnosticAccordionKey);}catch(_error){}}});});
+      this._syncMedallionDiagnosticUi?.();
+      shell.querySelector('[data-medallion-picker-close]')?.addEventListener('click',() => this._closeMedallionPicker());
+      shell.querySelector('[data-medallion-picker-prev]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepMedallionDesign(-1);
+      });
+      shell.querySelector('[data-medallion-picker-next]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepMedallionDesign(1);
+      });
+      shell.querySelector('[data-trend-arrow-prev]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepTrendArrowDesign(-1);
+      });
+      shell.querySelector('[data-trend-arrow-next]')?.addEventListener('click',(event) => {
+        event.preventDefault();event.stopPropagation();this._stepTrendArrowDesign(1);
+      });
+      dialog.addEventListener('cancel',(event) => {
+        event.preventDefault();event.stopPropagation();this._closeMedallionPicker();
+      });
+      dialog.addEventListener('pointerdown',(event) => {
+        if (event.target !== dialog) return;
+        const rect = dialog.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+          event.preventDefault();this._closeMedallionPicker();
+        }
+      });
+      try { dialog.showModal(); } catch (_error) { dialog.setAttribute('open',''); }
+      this._setPickerDiagnosticTopLayerHost?.(dialog);
+      this._syncMedallionPicker();
+      shell.querySelector('[data-medallion-picker-close]')?.focus?.({preventScroll:true});
+    },
+
+    _setFullscreenAuxiliaryOverlayHost(useFullscreen = false) {
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      if (!this.shadow || !dialog) return;
+      const host = useFullscreen ? dialog : this.shadow;
+      ['radius-keypad-backdrop','v407-location-search-backdrop','diagnostic-overlay','diagnostic-console'].forEach((id) => {
+        const overlay = this.shadow?.getElementById(id);
+        if (!overlay || overlay.parentNode === host) return;
+        try { host.appendChild(overlay); } catch (_error) {}
+      });
+      if(this._diagnostics?.enabled)requestAnimationFrame(()=>{this._syncDiagnosticUi?.();this._scheduleDiagnosticMeasure?.();});
+    },
+
+    _setPickerDiagnosticTopLayerHost(dialog = null) {
+      if(!this.shadow)return;
+      const fullscreen=this.shadow.getElementById('map-fullscreen-dialog');
+      const fallback=this._mapDisplayMode==='fullscreen'&&fullscreen?.open?fullscreen:this.shadow;
+      const host=dialog?.open?dialog:fallback;
+      const consoleNode=this.shadow.getElementById('diagnostic-console');
+      if(consoleNode&&consoleNode.parentNode!==host){
+        try{host.appendChild(consoleNode);}catch(_error){}
+      }
+      if(this._diagnostics?.enabled)requestAnimationFrame(()=>{this._syncDiagnosticUi?.();this._scheduleDiagnosticMeasure?.();});
+    },
+
+    _restoreCompassFromMapOverlay() {
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const fallback = this.shadow?.querySelector('.compass-wrap');
+      const home = this._mapCompassHomeParent?.isConnected ? this._mapCompassHomeParent : fallback;
+      if (instrument && home && instrument.parentElement !== home) home.appendChild(instrument);
+      if (overlay) {
+        overlay.hidden = true;
+        overlay.classList.remove('dragging');
+      }
+      this._mapCompassDragState = null;
+    },
+
+    _attachCompassToMapOverlay() {
+      const instrument = this.shadow?.getElementById('compass-instrument');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      if (!instrument || !overlay) return;
+      if (!this._mapCompassHomeParent || !this._mapCompassHomeParent.isConnected) {
+        this._mapCompassHomeParent = instrument.parentElement?.classList?.contains('compass-wrap')
+          ? instrument.parentElement
+          : (this.shadow?.querySelector('.compass-wrap') || null);
+      }
+      if (instrument.parentElement !== overlay) overlay.appendChild(instrument);
+      overlay.hidden = !this._mapCompassVisible;
+      if (!overlay.hidden) requestAnimationFrame(() => this._positionMapCompassOverlay());
+    },
+
+    _persistMapMedallionPosition() {
+      try { localStorage.setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
+    },
+
+    _positionMapMedallionOverlay(position = this._mapMedallionPosition) {
+      if (this._mapMedallionDragState) return;
+      const overlay = this.shadow?.getElementById('map-medallion-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 0;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 0;
+      if (!cardRect.width || !mapRect.width || !width || !height) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      const x = clamp(Number(position?.x) || 0,0,1);
+      const y = clamp(Number(position?.y) || 0,0,1);
+      overlay.style.left = `${minLeft+(maxLeft-minLeft)*x}px`;
+      overlay.style.top = `${minTop+(maxTop-minTop)*y}px`;
+    },
+
+    _syncMapMedallionState() {
+      const source = this.shadow?.getElementById('trend-box');
+      const overlay = this.shadow?.getElementById('map-medallion-overlay');
+      if (!source || !overlay) return;
+      this._applyTrendArrowDesign?.(this._trendArrowDesignValue?.(),{persist:false});
+      const state = ['up','down','stable','none'].find(name => source.classList.contains(name)) || 'none';
+      overlay.classList.remove('up','down','stable','none');
+      overlay.classList.add(state);
+      this._applyProductMedallionCalibration?.();
+      this._syncMedallionPicker?.();
+    },
+
+    _setMapLayerSymbolStyle(_style,{persist=true}={}) {
+      // V4.09.12 – bewusst nur noch der verbindliche 3D-Layerstapel.
+      this._mapLayerSymbolStyle = 'stack3d';
+      if (persist) {
+        try { localStorage.setItem(MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,'stack3d'); } catch (_error) {}
+      }
+      this._syncMapDisplayUi();
+    },
+
+    _setMapInstrumentVisible(kind,visible) {
+      const next = !!visible;
+      if (kind === 'compass') {
+        this._mapCompassVisible = next;
+        try { localStorage.setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+      } else if (kind === 'medallion') {
+        this._mapMedallionVisible = next;
+        try { localStorage.setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+      } else if (kind === 'clusterJump') {
+        this._mapClusterJumpVisible = next;
+        try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
+      } else return;
+      this._syncMapDisplayUi();
+      this._scheduleMapDisplayResize();
+    },
+
+    _persistMapLocationPosition() {
+      try { localStorage.setItem(MAP_LOCATION_POSITION_STORAGE_KEY,JSON.stringify(this._mapLocationPosition)); } catch (_error) {}
+    },
+
+    _positionMapLocationOverlay(position = this._mapLocationPosition) {
+      if (this._mapLocationDragState) return;
+      const overlay = this.shadow?.getElementById('map-location-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 0;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 0;
+      if (!cardRect.width || !mapRect.width || !width || !height) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      const x = clamp(Number(position?.x) || 0,0,1);
+      const y = clamp(Number(position?.y) || 0,0,1);
+      overlay.style.left = `${minLeft+(maxLeft-minLeft)*x}px`;
+      overlay.style.top = `${minTop+(maxTop-minTop)*y}px`;
+    },
+
+    _scheduleOpenLocationDropdownPosition() {
+      if (this._mapLocationDropdownRaf || typeof requestAnimationFrame !== 'function') return;
+      this._mapLocationDropdownRaf = requestAnimationFrame(() => {
+        this._mapLocationDropdownRaf = null;
+        const dropdown = this.shadow?.getElementById('location-dropdown');
+        const button = this.shadow?.getElementById('location-main-button');
+        if (!dropdown?.classList.contains('open') || !button) return;
+        this._positionLocationDropdown?.(button);
+      });
+    },
+
+    _restoreLocationFromMapOverlay() {
+      const row = this.shadow?.getElementById('location-main-row');
+      const overlay = this.shadow?.getElementById('map-location-overlay');
+      const dropdown = this.shadow?.getElementById('location-dropdown');
+      const rowHome = this._mapLocationHomeParent?.isConnected
+        ? this._mapLocationHomeParent
+        : (this.shadow?.querySelector('.header-control-row') || null);
+      if (row && rowHome && row.parentElement !== rowHome) {
+        const settingsButton = rowHome.querySelector?.('#settings-open') || null;
+        rowHome.insertBefore(row,settingsButton);
+      }
+      const dropdownHome = this._mapLocationDropdownHomeParent?.isConnected
+        ? this._mapLocationDropdownHomeParent
+        : null;
+      if (dropdown && dropdownHome && dropdown.parentElement !== dropdownHome) {
+        dropdown.classList.remove('open','map-adaptive','multicolumn','open-up','open-down');
+        dropdown.style.visibility = '';
+        ['column-count','column-gap','column-fill','height','overflow-x'].forEach(name => dropdown.style.removeProperty(name));
+        dropdownHome.appendChild(dropdown);
+      }
+      if (overlay) {
+        overlay.hidden = true;
+        overlay.classList.remove('dragging');
+      }
+      this._mapLocationDragState = null;
+    },
+
+    _attachLocationToMapOverlay() {
+      const row = this.shadow?.getElementById('location-main-row');
+      const overlay = this.shadow?.getElementById('map-location-overlay');
+      const dropdown = this.shadow?.getElementById('location-dropdown');
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      if (!row || !overlay) return;
+      if (!this._mapLocationHomeParent || !this._mapLocationHomeParent.isConnected) {
+        this._mapLocationHomeParent = row.parentElement || this.shadow?.querySelector('.header-control-row') || null;
+      }
+      if (dropdown && (!this._mapLocationDropdownHomeParent || !this._mapLocationDropdownHomeParent.isConnected)) {
+        this._mapLocationDropdownHomeParent = dropdown.parentElement || null;
+      }
+      if (row.parentElement !== overlay) overlay.appendChild(row);
+      overlay.hidden = false;
+      if (dropdown && dialog && dropdown.parentElement !== dialog) {
+        dropdown.classList.remove('open');
+        dropdown.style.visibility = '';
+        dialog.appendChild(dropdown);
+      }
+      requestAnimationFrame(() => {
+        this._positionMapLocationOverlay();
+        this._scheduleOpenLocationDropdownPosition();
+      });
+    },
+
+    _positionMapCompassOverlay(position = this._mapCompassPosition) {
+      if (this._mapCompassDragState) return;
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 0;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 0;
+      if (!cardRect.width || !mapRect.width || !width || !height) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      const x = clamp(Number(position?.x) || 0,0,1);
+      const y = clamp(Number(position?.y) || 0,0,1);
+      overlay.style.left = `${minLeft+(maxLeft-minLeft)*x}px`;
+      overlay.style.top = `${minTop+(maxTop-minTop)*y}px`;
+    },
+
+    _persistMapCompassPosition() {
+      try { localStorage.setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
+    },
+
+    _positionMapDisplayControl() {
+      const control = this.shadow?.getElementById('map-display-control');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!control || !mapCard || !mapEl || this._mapWindowMode) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = control.offsetWidth || 44;
+      const height = control.offsetHeight || 44;
+      if (!cardRect.width || !mapRect.width) return;
+      const rightInset = 10;
+      const attribution = mapEl.querySelector?.('.leaflet-control-attribution');
+      const attributionHeight = attribution?.getBoundingClientRect?.().height || 18;
+      const bottomInset = Math.max(8,attributionHeight+4);
+      const left = Math.max(8,mapRect.right-cardRect.left-width-rightInset);
+      const top = Math.max(mapRect.top-cardRect.top+8,mapRect.bottom-cardRect.top-height-bottomInset);
+      control.style.left = `${left}px`;
+      control.style.top = `${top}px`;
+    },
+
+    _persistMapClusterJumpPosition() {
+      if (!this._mapClusterJumpPosition) return;
+      try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
+    },
+
+    _positionMapClusterJumpOverlay(position = this._mapClusterJumpPosition) {
+      const overlay = this.shadow?.getElementById('map-cluster-jump-overlay');
+      const mapCard = this.shadow?.getElementById('map-card');
+      const mapEl = this.shadow?.getElementById('map');
+      if (!overlay || overlay.hidden || !mapCard || !mapEl) return;
+      const cardRect = mapCard.getBoundingClientRect();
+      const mapRect = mapEl.getBoundingClientRect();
+      const width = overlay.offsetWidth || overlay.getBoundingClientRect().width || 106;
+      const height = overlay.offsetHeight || overlay.getBoundingClientRect().height || 36;
+      if (!cardRect.width || !mapRect.width) return;
+      const inset = 10;
+      const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+      const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-width-inset);
+      const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+
+      if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
+        overlay.style.left = `${minLeft+(maxLeft-minLeft)*clamp(position.x,0,1)}px`;
+        overlay.style.top = `${minTop+(maxTop-minTop)*clamp(position.y,0,1)}px`;
+        return;
+      }
+
+      const displayControl = this.shadow?.getElementById('map-display-control');
+      const displayVisible = displayControl && !this._mapWindowMode && !displayControl.hidden;
+      const fallbackTop = Math.max(minTop,maxTop);
+      const targetLeft = displayVisible
+        ? Math.max(minLeft,displayControl.offsetLeft-width-8)
+        : maxLeft;
+      const targetTop = displayVisible
+        ? clamp(displayControl.offsetTop + ((displayControl.offsetHeight || 44)-height)/2,minTop,maxTop)
+        : fallbackTop;
+      overlay.style.left = `${targetLeft}px`;
+      overlay.style.top = `${targetTop}px`;
+    },
+
+    _activateFullscreenClusterJump(event = null) {
+      const statusChip = this.shadow?.getElementById('status-chip');
+      if (!statusChip || statusChip.classList.contains('disabled') || this._statusFocusKind !== 'cluster') return false;
+      const sessionTarget = event?.target?.closest?.('[data-session-toggle]');
+      if (sessionTarget) {
+        const sourceToggle = statusChip.querySelector?.('[data-session-toggle]');
+        sourceToggle?.click?.();
+        return !!sourceToggle;
+      }
+      statusChip.click?.();
+      return true;
+    },
+
+    _syncFullscreenClusterJumpUi() {
+      const overlay = this.shadow?.getElementById('map-cluster-jump-overlay');
+      const text = this.shadow?.getElementById('map-cluster-jump-text');
+      const toggle = this.shadow?.getElementById('map-cluster-jump-toggle');
+      const sourceChip = this.shadow?.getElementById('status-chip');
+      const sourceText = this.shadow?.getElementById('header-status');
+      const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      const clusterMode = this._statusFocusKind === 'cluster';
+      const visible = this._mapClusterJumpVisible !== false;
+
+      if (toggle) {
+        toggle.classList.toggle('active',visible);
+        toggle.setAttribute('aria-pressed',visible ? 'true' : 'false');
+        const label = this._t('settings.cluster_navigation_session');
+        toggle.setAttribute('aria-label',`${label} · ${this._t(visible ? 'toggle.on' : 'toggle.off')}`);
+        toggle.title = toggle.getAttribute('aria-label');
+      }
+      if (!overlay) return;
+      overlay.hidden = !(fullscreenActive && visible && clusterMode);
+      if (text && sourceText) text.innerHTML = sourceText.innerHTML;
+      const disabled = !!sourceChip?.classList.contains('disabled');
+      overlay.classList.toggle('disabled',disabled);
+      overlay.setAttribute('aria-disabled',disabled ? 'true' : 'false');
+      const title = sourceChip?.getAttribute('title') || this._t('settings.cluster_navigation_session');
+      overlay.setAttribute('title',title);
+      overlay.setAttribute('aria-label',title);
+      if (!overlay.hidden && !this._mapClusterJumpDragState) requestAnimationFrame(() => this._positionMapClusterJumpOverlay());
+    },
+
+    _setMapDisplayMenuOpen(open) {
+      this._mapDisplayMenuOpen = !!open && !this._mapWindowMode;
+      const menu = this.shadow?.getElementById('map-display-switch');
+      const toggle = this.shadow?.getElementById('map-display-menu-toggle');
+      const wrap = this.shadow?.getElementById('map-display-control');
+      if (menu) menu.hidden = !this._mapDisplayMenuOpen;
+      if (toggle) toggle.setAttribute('aria-expanded',this._mapDisplayMenuOpen ? 'true' : 'false');
+      wrap?.classList.toggle('menu-open',this._mapDisplayMenuOpen);
+    },
+
+    _setMapStartupMode(mode) {
+      if (!['standard','large','fullscreen','last'].includes(mode)) return;
+      this._mapStartupMode = mode;
+      try { localStorage.setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      this._syncMapDisplayUi();
+    },
+
+    _scheduleMapDisplayResize() {
+      const kick = () => {
+        this._applyFullscreenInstrumentScaleStyle?.('compass');
+        this._applyFullscreenInstrumentScaleStyle?.('medallion');
+        this._map?.invalidateSize?.();
+        this._positionMapCompassOverlay();
+        this._positionMapMedallionOverlay();
+        this._positionMapLocationOverlay();
+        this._positionMapDisplayControl();
+        this._positionMapClusterJumpOverlay();
+        this._scheduleOpenLocationDropdownPosition();
+      };
+      requestAnimationFrame(() => requestAnimationFrame(kick));
+      setTimeout(kick,120);
+      setTimeout(kick,360);
+    },
+
+    _syncMapDisplayUi() {
+      if (!this.shadow) return;
+      const mapCard = this.shadow.getElementById('map-card');
+      if (!mapCard) return;
+      const fullscreenActive = this._mapDisplayMode === 'fullscreen' || this._mapWindowMode;
+      this._setFullscreenInstrumentScale('compass',this._fullscreenInstrumentScale('compass')*100,{persist:false});
+      this._setFullscreenInstrumentScale('medallion',this._fullscreenInstrumentScale('medallion')*100,{persist:false});
+      this._applyMedallionDesign(this._medallionDesignValue(),{persist:false});
+      const trendIcon = this.shadow.getElementById('trend-icon');
+      if (trendIcon) {
+        const medallionLabel = this._t('trend.label');
+        const cardRoot=this.shadow.getElementById('card-root');
+        const ipadTouch=!!cardRoot?.classList.contains('ipad-device');
+        trendIcon.removeAttribute('aria-hidden');
+        trendIcon.setAttribute('role','button');
+        if(ipadTouch){
+          trendIcon.removeAttribute('tabindex');
+          trendIcon.style.outline='none';
+          trendIcon.style.webkitTapHighlightColor='transparent';
+        }else trendIcon.setAttribute('tabindex','0');
+        trendIcon.setAttribute('aria-label',medallionLabel);
+        trendIcon.setAttribute('title',medallionLabel);
+        trendIcon.style.cursor = 'pointer';
+      }
+      this.classList.toggle('map-window-host',!!this._mapWindowMode);
+      mapCard.classList.toggle('map-size-large',this._mapDisplayMode === 'large' && !fullscreenActive);
+      mapCard.classList.toggle('map-size-fullscreen',fullscreenActive);
+      mapCard.classList.toggle('map-window-mode',!!this._mapWindowMode);
+      const labels = {
+        standard:this._t('map.size_standard'),
+        large:this._t('map.size_large'),
+        fullscreen:this._t('map.size_fullscreen')
+      };
+      const activeMode = fullscreenActive ? 'fullscreen' : this._mapDisplayMode;
+      const switcher = this.shadow.getElementById('map-display-switch');
+      const menuToggle = this.shadow.getElementById('map-display-menu-toggle');
+      const menuTitle = this.shadow.getElementById('map-display-menu-title');
+      if (switcher) switcher.setAttribute('aria-label',this._t('map.view_menu_aria'));
+      if (menuTitle) menuTitle.textContent = this._t('map.view_menu');
+      if (menuToggle) {
+        menuToggle.setAttribute('aria-label',`${this._t('map.view_menu_aria')} · ${labels[activeMode] || activeMode}`);
+        menuToggle.setAttribute('title',`${this._t('map.view_menu')} · ${labels[activeMode] || activeMode}`);
+        menuToggle.setAttribute('aria-expanded',this._mapDisplayMenuOpen ? 'true' : 'false');
+      }
+      if (switcher) switcher.hidden = !this._mapDisplayMenuOpen;
+      // V4.09.12 – keine Layer-Symbolauswahl mehr: 3D-Layer ist fest gesetzt.
+      menuToggle?.classList.remove('use-infinity');
+      this.shadow.querySelectorAll('[data-map-display-mode]').forEach((button) => {
+        const mode = button.dataset.mapDisplayMode;
+        const active = mode === activeMode;
+        button.textContent = labels[mode] || mode;
+        button.classList.toggle('active',active);
+        button.setAttribute('aria-checked',active ? 'true' : 'false');
+        button.setAttribute('title',labels[mode] || mode);
+      });
+      this._positionMapDisplayControl();
+      const overlay = this.shadow.getElementById('map-compass-overlay');
+      const medallionOverlay = this.shadow.getElementById('map-medallion-overlay');
+      const instrumentControls = this.shadow.getElementById('map-instrument-controls');
+      const compassToggle = this.shadow.getElementById('map-compass-toggle');
+      const medallionToggle = this.shadow.getElementById('map-medallion-toggle');
+      const clusterJumpToggle = this.shadow.getElementById('map-cluster-jump-toggle');
+      if (overlay) {
+        const moveCompass=this._t('map.compass_move');
+        overlay.setAttribute('aria-label',moveCompass);
+        overlay.setAttribute('title',moveCompass);
+        overlay.hidden = !fullscreenActive || !this._mapCompassVisible;
+      }
+      if (medallionOverlay) {
+        const moveMedallion=this._t('map.medallion_move');
+        medallionOverlay.setAttribute('role','button');
+        medallionOverlay.setAttribute('tabindex','0');
+        medallionOverlay.setAttribute('aria-label',`${moveMedallion} · ${this._t('trend.label')}`);
+        medallionOverlay.setAttribute('title',`${moveMedallion} · ${this._t('trend.label')}`);
+        medallionOverlay.classList.toggle('android-device',this._isAndroidLike());
+        medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
+      }
+      if (instrumentControls) instrumentControls.hidden = !fullscreenActive;
+      if (compassToggle) {
+        compassToggle.classList.toggle('active',this._mapCompassVisible);
+        compassToggle.setAttribute('aria-pressed',this._mapCompassVisible ? 'true' : 'false');
+        compassToggle.setAttribute('aria-label',`${this._t('compass.device')} · ${this._t(this._mapCompassVisible ? 'toggle.on' : 'toggle.off')}`);
+        compassToggle.title = compassToggle.getAttribute('aria-label');
+      }
+      if (medallionToggle) {
+        medallionToggle.classList.toggle('active',this._mapMedallionVisible);
+        medallionToggle.setAttribute('aria-pressed',this._mapMedallionVisible ? 'true' : 'false');
+        medallionToggle.setAttribute('aria-label',`${this._t('trend.label')} · ${this._t(this._mapMedallionVisible ? 'toggle.on' : 'toggle.off')}`);
+        medallionToggle.title = medallionToggle.getAttribute('aria-label');
+      }
+      if (clusterJumpToggle) clusterJumpToggle.hidden = !fullscreenActive;
+      this._syncMapMedallionState();
+      this._syncFullscreenClusterJumpUi();
+      const settingsTitle = this.shadow.getElementById('settings-map-section-title');
+      const settingsSub = this.shadow.getElementById('settings-map-section-sub');
+      const settingsStartupLabel = this.shadow.getElementById('settings-map-startup-label');
+      const settingsStartupNote = this.shadow.getElementById('settings-map-startup-note');
+      const settingsStartupButton = this.shadow.getElementById('settings-map-startup-button');
+      const settingsStartupCurrent = this.shadow.getElementById('settings-map-startup-current');
+      const settingsWindowLabel = this.shadow.getElementById('settings-map-window-label');
+      const settingsWindowNote = this.shadow.getElementById('settings-map-window-note');
+      const settingsWindowOpen = this.shadow.getElementById('settings-map-window-open');
+      if (settingsTitle) settingsTitle.textContent = this._t('settings.map_display');
+      if (settingsSub) settingsSub.textContent = this._t('settings.map_display_sub');
+      if (settingsStartupLabel) settingsStartupLabel.textContent = this._t('settings.map_startup');
+      if (settingsStartupNote) settingsStartupNote.textContent = this._t('settings.map_startup_note');
+      const startupModeLabels = {
+        standard:this._t('map.size_standard'),
+        large:this._t('map.size_large'),
+        fullscreen:this._t('map.size_fullscreen'),
+        last:this._t('settings.map_startup_last')
+      };
+      const activeStartupMode = ['standard','large','fullscreen','last'].includes(this._mapStartupMode) ? this._mapStartupMode : 'last';
+      if (settingsStartupCurrent) settingsStartupCurrent.textContent = startupModeLabels[activeStartupMode] || startupModeLabels.last;
+      if (settingsStartupButton) {
+        settingsStartupButton.setAttribute('aria-label',this._t('settings.map_startup'));
+        settingsStartupButton.setAttribute('title',`${this._t('settings.map_startup')}: ${startupModeLabels[activeStartupMode] || startupModeLabels.last}`);
+      }
+      this.shadow.getElementById('settings-map-startup-dropdown')?.setAttribute('aria-label',this._t('settings.map_startup_select'));
+      if (settingsWindowLabel) settingsWindowLabel.textContent = this._t('settings.map_window');
+      if (settingsWindowNote) settingsWindowNote.textContent = this._t('settings.map_window_note');
+      if (settingsWindowOpen) {
+        settingsWindowOpen.textContent = this._t('settings.map_window_open');
+        const windowLabel=this._t('settings.map_window_open_aria');
+        settingsWindowOpen.setAttribute('aria-label',windowLabel);
+        settingsWindowOpen.setAttribute('title',windowLabel);
+      }
+    },
+
+    _setMapDisplayMode(mode,{persist=true,remember=true,closeMenu=true}={}) {
+      if (!['standard','large','fullscreen'].includes(mode)) return;
+      if (this._mapWindowMode && mode !== 'fullscreen') return;
+      if (closeMenu) this._setMapDisplayMenuOpen(false);
+      if (remember && !this._mapWindowMode) {
+        try { localStorage.setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      }
+      if (mode === 'fullscreen') {
+        if (this._mapDisplayMode !== 'fullscreen') {
+          this._mapDisplayBeforeFullscreen = this._mapDisplayMode === 'large' ? 'large' : 'standard';
+        }
+        this._mapDisplayMode = 'fullscreen';
+        const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+        const mapCard = this.shadow?.getElementById('map-card');
+        if (dialog && mapCard) {
+          if (mapCard.parentElement !== dialog) dialog.appendChild(mapCard);
+          if (!dialog.open) {
+            try { dialog.showModal(); } catch (_error) {
+              try { dialog.setAttribute('open',''); } catch (__error) {}
+            }
+          }
+          if (this._mapWindowMode && !dialog.hasAttribute('open')) {
+            try { dialog.setAttribute('open',''); } catch (_error) {}
+          }
+          this._attachCompassToMapOverlay();
+          this._attachLocationToMapOverlay();
+          // V4.09.13 – Native <dialog>.showModal() lives in the browser top layer.
+          // Auxiliary popups must be children of that dialog while fullscreen is active,
+          // otherwise even a maximal z-index remains visually behind the map dialog.
+          this._setFullscreenAuxiliaryOverlayHost(true);
+        }
+        this._syncMapDisplayUi();
+        this._scheduleMapDisplayResize();
+        return;
+      }
+      this._mapDisplayMode = mode;
+      this._restoreCompassFromMapOverlay();
+      this._restoreLocationFromMapOverlay();
+      this._restoreMapCardHome();
+      this._setFullscreenAuxiliaryOverlayHost(false);
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      if (dialog?.open) {
+        try { dialog.close(); } catch (_error) {}
+      } else if (dialog?.hasAttribute('open')) {
+        dialog.removeAttribute('open');
+      }
+      if (persist) {
+        try { localStorage.setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      }
+      this._syncMapDisplayUi();
+      this._scheduleMapDisplayResize();
+    },
+
+    _openMapWindow() {
+      if (this._mapWindowMode || typeof window === 'undefined') return;
+      let targetUrl = null;
+      try {
+        targetUrl = new URL(window.location.href);
+        targetUrl.searchParams.set(MAP_WINDOW_QUERY_KEY,'1');
+        targetUrl.searchParams.set(MAP_WINDOW_VERSION_QUERY_KEY,'41001');
+      } catch (_error) {}
+      if (!targetUrl) {
+        this._setMapDisplayMode('fullscreen');
+        return;
+      }
+      const popup = window.open(targetUrl.href,'gewitterradar-map-window','popup=yes,width=1280,height=820,resizable=yes,scrollbars=no');
+      if (popup) {
+        try { popup.focus(); } catch (_error) {}
+      } else {
+        this._setMapDisplayMode('fullscreen');
+      }
+    },
+
+    _closeMapStartupDropdown(returnFocus = false) {
+      const startupButton = this.shadow?.getElementById('settings-map-startup-button');
+      const startupDropdown = this.shadow?.getElementById('settings-map-startup-dropdown');
+      startupDropdown?.classList.remove('open');
+      if (startupDropdown) startupDropdown.style.visibility = '';
+      startupButton?.setAttribute('aria-expanded','false');
+      if (returnFocus) startupButton?.focus?.({preventScroll:true});
+    },
+
+    _bindMapDisplayControls() {
+      const dialog = this.shadow?.getElementById('map-fullscreen-dialog');
+      const overlay = this.shadow?.getElementById('map-compass-overlay');
+      const medallionOverlay = this.shadow?.getElementById('map-medallion-overlay');
+      const locationOverlay = this.shadow?.getElementById('map-location-overlay');
+      const locationMainButton = this.shadow?.getElementById('location-main-button');
+      const compassToggle = this.shadow?.getElementById('map-compass-toggle');
+      const medallionToggle = this.shadow?.getElementById('map-medallion-toggle');
+      const trendIcon = this.shadow?.getElementById('trend-icon');
+      const menuToggle = this.shadow?.getElementById('map-display-menu-toggle');
+      const menuWrap = this.shadow?.getElementById('map-display-control');
+      const startupButton = this.shadow?.getElementById('settings-map-startup-button');
+      const startupDropdown = this.shadow?.getElementById('settings-map-startup-dropdown');
+      menuToggle?.addEventListener('click',(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._setMapDisplayMenuOpen(!this._mapDisplayMenuOpen);
+      });
+      menuToggle?.addEventListener('keydown',(event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          this._setMapDisplayMenuOpen(false);
+        }
+      });
+      const startupModeLabels = () => ({
+        standard:this._t('map.size_standard'),
+        large:this._t('map.size_large'),
+        fullscreen:this._t('map.size_fullscreen'),
+        last:this._t('settings.map_startup_last')
+      });
+      const closeStartupDropdown = (returnFocus = false) => this._closeMapStartupDropdown(returnFocus);
+      const renderStartupDropdown = () => {
+        if (!startupDropdown) return;
+        const selected = ['standard','large','fullscreen','last'].includes(this._mapStartupMode) ? this._mapStartupMode : 'last';
+        const labels = startupModeLabels();
+        const frag = document.createDocumentFragment();
+        ['standard','large','fullscreen','last'].forEach((mode) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = `location-option${mode === selected ? ' selected' : ''}`;
+          button.dataset.mapStartupOption = mode;
+          button.setAttribute('role','option');
+          button.setAttribute('aria-selected',mode === selected ? 'true' : 'false');
+          const dot = document.createElement('i');
+          dot.className = 'location-option-dot';
+          dot.setAttribute('aria-hidden','true');
+          const label = document.createElement('span');
+          label.textContent = labels[mode] || mode;
+          button.append(dot,label);
+          frag.appendChild(button);
+        });
+        startupDropdown.replaceChildren(frag);
+      };
+      const positionStartupDropdown = () => {
+        if (!startupButton || !startupDropdown) return;
+        const rect = startupButton.getBoundingClientRect();
+        const viewport = window.visualViewport;
+        const viewportLeft = Number(viewport?.offsetLeft) || 0;
+        const viewportTop = Number(viewport?.offsetTop) || 0;
+        const viewportWidth = Number(viewport?.width) || window.innerWidth;
+        const viewportHeight = Number(viewport?.height) || window.innerHeight;
+        const margin = 8;
+        const gap = 6;
+        const width = Math.min(Math.max(190,Math.round(rect.width)),Math.max(1,viewportWidth-(margin*2)));
+        const rightAlignedLeft = rect.right-width;
+        const minLeft = viewportLeft+margin;
+        const maxLeft = Math.max(minLeft,viewportLeft+viewportWidth-width-margin);
+        startupDropdown.style.width = `${width}px`;
+        startupDropdown.style.left = `${clamp(Math.round(rightAlignedLeft),minLeft,maxLeft)}px`;
+        startupDropdown.style.visibility = 'hidden';
+        startupDropdown.classList.add('open');
+        startupButton.setAttribute('aria-expanded','true');
+        const menuRect = startupDropdown.getBoundingClientRect();
+        const viewportBottom = viewportTop+viewportHeight;
+        const below = rect.bottom+gap;
+        const above = rect.top-gap-menuRect.height;
+        const top = below+menuRect.height <= viewportBottom-margin ? below : Math.max(viewportTop+margin,above);
+        startupDropdown.style.top = `${Math.round(top)}px`;
+        startupDropdown.style.visibility = '';
+      };
+      startupButton?.addEventListener('click',(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const open = startupDropdown?.classList.contains('open');
+        if (open) {
+          closeStartupDropdown(false);
+          return;
+        }
+        renderStartupDropdown();
+        positionStartupDropdown();
+      });
+      startupDropdown?.addEventListener('click',(event) => {
+        const option = event.target?.closest?.('[data-map-startup-option]');
+        const mode = option?.dataset?.mapStartupOption;
+        if (!['standard','large','fullscreen','last'].includes(mode)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this._setMapStartupMode(mode);
+        closeStartupDropdown(true);
+      });
+      if (this._mapStartupOutsidePointerHandler) {
+        document.removeEventListener('pointerdown',this._mapStartupOutsidePointerHandler,true);
+      }
+      this._mapStartupOutsidePointerHandler = (event) => {
+        if (!startupDropdown?.classList.contains('open')) return;
+        const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+        if (path.includes(startupDropdown) || path.includes(startupButton)) return;
+        closeStartupDropdown(false);
+      };
+      document.addEventListener('pointerdown',this._mapStartupOutsidePointerHandler,true);
+      compassToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('compass',!this._mapCompassVisible);
+      });
+      medallionToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('medallion',!this._mapMedallionVisible);
+      });
+      if (trendIcon && trendIcon.dataset.medallionPickerBound !== '1') {
+        trendIcon.dataset.medallionPickerBound = '1';
+        trendIcon.addEventListener('pointerdown',() => {
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+        },{capture:true});
+        trendIcon.addEventListener('touchstart',() => {
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+        },{passive:true,capture:true});
+        trendIcon.addEventListener('click',(event) => {
+          event.preventDefault();event.stopPropagation();
+          const ipadTouch=!!this.shadow?.getElementById('card-root')?.classList.contains('ipad-device');
+          if(ipadTouch)trendIcon.blur?.();
+          this._openMedallionPicker();
+          if(ipadTouch)requestAnimationFrame(()=>trendIcon.blur?.());
+        });
+        trendIcon.addEventListener('keydown',(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();event.stopPropagation();this._openMedallionPicker();
+        });
+      }
+      medallionOverlay?.addEventListener('keydown',(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();event.stopPropagation();this._openMedallionPicker();
+      });
+      const clusterJumpToggle = this.shadow.getElementById('map-cluster-jump-toggle');
+      const clusterJumpOverlay = this.shadow.getElementById('map-cluster-jump-overlay');
+      clusterJumpToggle?.addEventListener('click',(event) => {
+        event.preventDefault(); event.stopPropagation();
+        this._setMapInstrumentVisible('clusterJump',!this._mapClusterJumpVisible);
+      });
+      if (!this._mapDisplayOutsidePointerHandler) {
+        this._mapDisplayOutsidePointerHandler = (event) => {
+          if (!this._mapDisplayMenuOpen) return;
+          if (menuWrap?.contains(event.target)) return;
+          this._setMapDisplayMenuOpen(false);
+        };
+        this.shadow?.addEventListener('pointerdown',this._mapDisplayOutsidePointerHandler);
+      }
+      this.shadow?.querySelectorAll('[data-map-display-mode]').forEach((button) => {
+        button.addEventListener('click',(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this._setMapDisplayMode(button.dataset.mapDisplayMode || 'standard');
+        });
+      });
+      this.shadow?.getElementById('settings-map-window-open')?.addEventListener('click',(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._openMapWindow();
+      });
+      dialog?.addEventListener('cancel',(event) => {
+        event.preventDefault();
+        if (this._mapWindowMode) return;
+        this._setMapDisplayMode(this._mapDisplayBeforeFullscreen || 'standard');
+      });
+      const mapInstrumentDragBounds = (target) => {
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (!card || !mapEl || !target) return null;
+        const cardRect = card.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        const inset = 10;
+        const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+        const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+        const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-target.offsetWidth-inset);
+        const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-target.offsetHeight-inset);
+        return {minLeft,minTop,maxLeft,maxTop};
+      };
+      const bindMapInstrumentDrag = (target,kind) => {
+        if (!target) return;
+        const stateKey = kind === 'compass'
+          ? '_mapCompassDragState'
+          : (kind === 'medallion' ? '_mapMedallionDragState' : '_mapClusterJumpDragState');
+        const startDrag = (source,inputId,clientX,clientY) => {
+          this[stateKey] = {
+            source,inputId,startX:clientX,startY:clientY,
+            startLeft:target.offsetLeft,startTop:target.offsetTop,moved:false
+          };
+          target.classList.add('dragging');
+        };
+        const moveDrag = (source,inputId,clientX,clientY) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== source || drag.inputId !== inputId) return false;
+          const dx = clientX-drag.startX, dy = clientY-drag.startY;
+          if (!drag.moved && Math.hypot(dx,dy) < 6) return false;
+          drag.moved = true;
+          const bounds = mapInstrumentDragBounds(target);
+          if (!bounds) return false;
+          target.style.left = `${clamp(drag.startLeft+dx,bounds.minLeft,bounds.maxLeft)}px`;
+          target.style.top = `${clamp(drag.startTop+dy,bounds.minTop,bounds.maxTop)}px`;
+          return true;
+        };
+        const finishDrag = (source,inputId) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== source || drag.inputId !== inputId) return false;
+          const moved = !!drag.moved;
+          const bounds = mapInstrumentDragBounds(target);
+          if (moved && bounds) {
+            const position = {
+              x:bounds.maxLeft>bounds.minLeft ? clamp((target.offsetLeft-bounds.minLeft)/(bounds.maxLeft-bounds.minLeft),0,1) : 0,
+              y:bounds.maxTop>bounds.minTop ? clamp((target.offsetTop-bounds.minTop)/(bounds.maxTop-bounds.minTop),0,1) : 0
+            };
+            if (kind === 'compass') {
+              this._mapCompassPosition = position;
+              this._persistMapCompassPosition();
+            } else if (kind === 'medallion') {
+              this._mapMedallionPosition = position;
+              this._persistMapMedallionPosition();
+            } else {
+              this._mapClusterJumpPosition = position;
+              this._persistMapClusterJumpPosition();
+            }
+          }
+          this[stateKey] = null;
+          target.classList.remove('dragging');
+          return moved;
+        };
+
+        // Pointer Events bleiben der Primärpfad für Maus/Stift und Browser,
+        // die Touch-Pointer inklusive Capture zuverlässig an das <dialog>-Overlay liefern.
+        target.addEventListener('pointerdown',(event) => {
+          if (target.hidden || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
+          // Touch wird zusätzlich durch native Touch Events abgesichert. Pointerdown
+          // darf diese Android-/WebView-Fallbackkette deshalb nicht weg-canceln.
+          if (event.pointerType !== 'touch') event.preventDefault();
+          event.stopPropagation();
+          startDrag('pointer',event.pointerId,event.clientX,event.clientY);
+          try { target.setPointerCapture(event.pointerId); } catch (_error) {}
+        },{capture:true});
+        target.addEventListener('pointermove',(event) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== 'pointer' || drag.inputId !== event.pointerId) return;
+          event.preventDefault();
+          event.stopPropagation();
+          moveDrag('pointer',event.pointerId,event.clientX,event.clientY);
+        },{capture:true});
+        const finishPointerDrag = (event) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== 'pointer' || drag.inputId !== event.pointerId) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const moved = finishDrag('pointer',event.pointerId);
+          try { target.releasePointerCapture(event.pointerId); } catch (_error) {}
+          if (kind === 'compass' && event.type === 'pointerup' && !moved) this._openCompassPicker();
+          if (kind === 'medallion' && event.type === 'pointerup' && !moved) this._openMedallionPicker();
+          if (kind === 'clusterJump' && event.type === 'pointerup') {
+            this._mapClusterJumpSuppressClickUntil = performance.now()+500;
+            if (!moved) this._activateFullscreenClusterJump(event);
+          }
+        };
+        target.addEventListener('pointerup',finishPointerDrag,{capture:true});
+        target.addEventListener('pointercancel',finishPointerDrag,{capture:true});
+
+        // V4.09.05 – echter Touch-Fallback. Android/HA-WebView kann Pointer-Capture
+        // im nativen <dialog> verlieren, obwohl Tap/Toggle weiterhin funktioniert.
+        // Touch Events bleiben dagegen über die komplette Geste an dasselbe Target
+        // gebunden. passive:false ist zwingend, damit Leaflet/Browser-Panning sicher
+        // unterdrückt und das Instrument selbst verschoben wird.
+        const findTouch = (touchList,inputId = null) => {
+          if (!touchList) return null;
+          for (let index=0;index<touchList.length;index+=1) {
+            const touch = touchList[index];
+            if (inputId == null || touch.identifier === inputId) return touch;
+          }
+          return null;
+        };
+        target.addEventListener('touchstart',(event) => {
+          if (target.hidden) return;
+          const touch = findTouch(event.changedTouches) || findTouch(event.touches);
+          if (!touch) return;
+          event.preventDefault();
+          event.stopPropagation();
+          // Falls derselbe Finger vorher bereits pointerdown ausgelöst hat, übernimmt
+          // bewusst der robuste Touchpfad und der Pointerpfad wird danach ignoriert.
+          startDrag('touch',touch.identifier,touch.clientX,touch.clientY);
+        },{passive:false,capture:true});
+        target.addEventListener('touchmove',(event) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== 'touch') return;
+          const touch = findTouch(event.touches,drag.inputId) || findTouch(event.changedTouches,drag.inputId);
+          if (!touch) return;
+          event.preventDefault();
+          event.stopPropagation();
+          moveDrag('touch',drag.inputId,touch.clientX,touch.clientY);
+        },{passive:false,capture:true});
+        const finishTouchDrag = (event) => {
+          const drag = this[stateKey];
+          if (!drag || drag.source !== 'touch') return;
+          const changedTouch = findTouch(event.changedTouches,drag.inputId);
+          if (event.type === 'touchend' && !changedTouch) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const moved = finishDrag('touch',drag.inputId);
+          if (kind === 'compass' && event.type === 'touchend' && !moved) this._openCompassPicker();
+          if (kind === 'medallion' && event.type === 'touchend' && !moved) this._openMedallionPicker();
+          if (kind === 'clusterJump' && event.type === 'touchend') {
+            this._mapClusterJumpSuppressClickUntil = performance.now()+500;
+            if (!moved) this._activateFullscreenClusterJump(event);
+          }
+        };
+        target.addEventListener('touchend',finishTouchDrag,{passive:false,capture:true});
+        target.addEventListener('touchcancel',finishTouchDrag,{passive:false,capture:true});
+      };
+      bindMapInstrumentDrag(overlay,'compass');
+      bindMapInstrumentDrag(medallionOverlay,'medallion');
+      bindMapInstrumentDrag(clusterJumpOverlay,'clusterJump');
+      clusterJumpOverlay?.addEventListener('click',(event) => {
+        if (Number(this._mapClusterJumpSuppressClickUntil || 0) > performance.now()) {
+          event.preventDefault();event.stopPropagation();return;
+        }
+        this._activateFullscreenClusterJump(event);
+      });
+
+      const mapLocationDragBounds = () => {
+        const card = this.shadow?.getElementById('map-card');
+        const mapEl = this.shadow?.getElementById('map');
+        if (!card || !mapEl || !locationOverlay) return null;
+        const cardRect = card.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        const inset = 10;
+        const minLeft = Math.max(0,mapRect.left-cardRect.left+inset);
+        const minTop = Math.max(0,mapRect.top-cardRect.top+inset);
+        const maxLeft = Math.max(minLeft,mapRect.right-cardRect.left-locationOverlay.offsetWidth-inset);
+        const maxTop = Math.max(minTop,mapRect.bottom-cardRect.top-locationOverlay.offsetHeight-inset);
+        return {minLeft,minTop,maxLeft,maxTop};
+      };
+      const startLocationDrag = (source,inputId,clientX,clientY) => {
+        if (!locationOverlay || locationOverlay.hidden) return;
+        this._mapLocationDragState = {
+          source,inputId,startX:clientX,startY:clientY,
+          startLeft:locationOverlay.offsetLeft,startTop:locationOverlay.offsetTop,moved:false
+        };
+        locationOverlay.classList.add('dragging');
+      };
+      const moveLocationDrag = (source,inputId,clientX,clientY) => {
+        const drag = this._mapLocationDragState;
+        if (!drag || drag.source !== source || drag.inputId !== inputId) return false;
+        const dx = clientX-drag.startX,dy = clientY-drag.startY;
+        if (!drag.moved && Math.hypot(dx,dy) < 5) return false;
+        drag.moved = true;
+        const bounds = mapLocationDragBounds();
+        if (!bounds) return false;
+        locationOverlay.style.left = `${clamp(drag.startLeft+dx,bounds.minLeft,bounds.maxLeft)}px`;
+        locationOverlay.style.top = `${clamp(drag.startTop+dy,bounds.minTop,bounds.maxTop)}px`;
+        this._scheduleOpenLocationDropdownPosition();
+        return true;
+      };
+      const finishLocationDrag = (source,inputId,{tap=false}={}) => {
+        const drag = this._mapLocationDragState;
+        if (!drag || drag.source !== source || drag.inputId !== inputId) return false;
+        const moved = !!drag.moved;
+        const bounds = mapLocationDragBounds();
+        if (moved && bounds) {
+          this._mapLocationPosition = {
+            x:bounds.maxLeft>bounds.minLeft ? clamp((locationOverlay.offsetLeft-bounds.minLeft)/(bounds.maxLeft-bounds.minLeft),0,1) : 0,
+            y:bounds.maxTop>bounds.minTop ? clamp((locationOverlay.offsetTop-bounds.minTop)/(bounds.maxTop-bounds.minTop),0,1) : 0
+          };
+          this._persistMapLocationPosition();
+          this._mapLocationSuppressClickUntil = performance.now()+350;
+        }
+        this._mapLocationDragState = null;
+        locationOverlay?.classList.remove('dragging');
+        this._scheduleOpenLocationDropdownPosition();
+        if (!moved && tap && locationMainButton) setTimeout(() => locationMainButton.click(),0);
+        return moved;
+      };
+
+      locationOverlay?.addEventListener('pointerdown',(event) => {
+        if (locationOverlay.hidden || event.isPrimary === false || event.pointerType === 'touch' || (event.pointerType === 'mouse' && event.button !== 0)) return;
+        // V4.09.11 – der Overlay-Drag darf den Desktop-Klick auf die Standort-Pille
+        // nicht verschlucken. Den nativen Klick unterdrücken und bei einer echten
+        // Tap/Klick-Geste nach pointerup genau einmal kontrolliert auslösen.
+        event.preventDefault();
+        event.stopPropagation();
+        startLocationDrag('pointer',event.pointerId,event.clientX,event.clientY);
+        try { locationOverlay.setPointerCapture(event.pointerId); } catch (_error) {}
+      },{capture:true});
+      locationOverlay?.addEventListener('pointermove',(event) => {
+        const moved = moveLocationDrag('pointer',event.pointerId,event.clientX,event.clientY);
+        if (!moved) return;
+        event.preventDefault();event.stopPropagation();
+      },{capture:true});
+      const finishLocationPointer = (event) => {
+        const drag = this._mapLocationDragState;
+        if (!drag || drag.source !== 'pointer' || drag.inputId !== event.pointerId) return;
+        event.preventDefault();event.stopPropagation();
+        finishLocationDrag('pointer',event.pointerId,{tap:true});
+        try { locationOverlay.releasePointerCapture(event.pointerId); } catch (_error) {}
+      };
+      locationOverlay?.addEventListener('pointerup',finishLocationPointer,{capture:true});
+      locationOverlay?.addEventListener('pointercancel',finishLocationPointer,{capture:true});
+
+      const locationTouchById = (list,id=null) => {
+        if (!list) return null;
+        for (let index=0;index<list.length;index+=1) {
+          const touch=list[index];
+          if (id==null || touch.identifier===id) return touch;
+        }
+        return null;
+      };
+      locationOverlay?.addEventListener('touchstart',(event) => {
+        if (locationOverlay.hidden) return;
+        const touch=locationTouchById(event.changedTouches) || locationTouchById(event.touches);
+        if (!touch) return;
+        event.preventDefault();event.stopPropagation();
+        startLocationDrag('touch',touch.identifier,touch.clientX,touch.clientY);
+      },{passive:false,capture:true});
+      locationOverlay?.addEventListener('touchmove',(event) => {
+        const drag=this._mapLocationDragState;
+        if (!drag || drag.source!=='touch') return;
+        const touch=locationTouchById(event.touches,drag.inputId) || locationTouchById(event.changedTouches,drag.inputId);
+        if (!touch) return;
+        event.preventDefault();event.stopPropagation();
+        moveLocationDrag('touch',drag.inputId,touch.clientX,touch.clientY);
+      },{passive:false,capture:true});
+      const finishLocationTouch = (event) => {
+        const drag=this._mapLocationDragState;
+        if (!drag || drag.source!=='touch') return;
+        if (event.type==='touchend' && !locationTouchById(event.changedTouches,drag.inputId)) return;
+        event.preventDefault();event.stopPropagation();
+        finishLocationDrag('touch',drag.inputId,{tap:event.type==='touchend'});
+      };
+      locationOverlay?.addEventListener('touchend',finishLocationTouch,{passive:false,capture:true});
+      locationOverlay?.addEventListener('touchcancel',finishLocationTouch,{passive:false,capture:true});
+
+      this._syncMapDisplayUi();
+      if (this._mapWindowMode) {
+        queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false,remember:false,closeMenu:true}));
+      } else if (['large','fullscreen'].includes(this._mapDisplayMode)) {
+        queueMicrotask(() => this._setMapDisplayMode(this._mapDisplayMode,{persist:false,remember:false,closeMenu:true}));
+      }
+    },
+
+};});

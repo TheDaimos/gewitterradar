@@ -1,11 +1,19 @@
 # Gewitterradar – Meilensteine
 
-Status: **2026/09 · V4.09 – finaler Release-Stand.**  
-Native Integration: **0.21.0.**  
-Akzeptierter interner Ausgangsbuild: **V4.09.28.**  
+Status: **2026/09 · V4.10 – öffentlicher Finalisierungsstand.**  
+Native Integration: **0.22.0.**  
+Akzeptierter interner Ausgangsbuild: **V4.10.02 R40.**  
 Geschützte Laufzeit-/Diagnosebasis: **V4.08 / V4.07.56.**
 
 ## Erreicht
+
+### M24 – V4.10 Modularisierung und R40-Abnahme
+- 23 Funktionsmodule; beide Auslieferungsformen aus einer kanonischen Quelle.
+- Sämtliche sechs Realtests und die zusätzliche deutsch-/englischsprachige R40-Sichtprüfung ausdrücklich abgenommen.
+- Historischer Rückblick einschließlich 28 Medaillon-Designs und 18 Pfeilvarianten unverändert.
+- Sieben klar als geplant gekennzeichnete V4.11-Vorhaben.
+- Öffentliche Version V4.10 und native Integration 0.22.0 zur Normalisierung vorgesehen; tatsächliche Veröffentlichung erst nach allen Release-Gates.
+
 
 ### M23 – V4.09 Kartenansichten und Vollbildbedienung finalisiert
 - Kartenansichten **Standard / Groß / Vollbild** mit lokal gespeicherter gerätespezifischer Standardansicht finalisiert;

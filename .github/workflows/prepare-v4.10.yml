@@ -1,0 +1,58 @@
+name: Prepare V4.10 public metadata candidate
+
+on:
+  push:
+    branches:
+      - feature/v4.10-finalization
+    paths:
+      - 'docs/archive-triggers/V4_10_PREPARE.trigger'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify exact input and completed pre-merge archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fx 'VERSION=V4.10' docs/archive-triggers/V4_10_PREPARE.trigger
+          grep -Fx 'ACCEPTED_R40=bcf30fe2dc1b6b56625edf209b2373b956fb7fd4' docs/archive-triggers/V4_10_PREPARE.trigger
+          test "$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/36713110734 --jq '.conclusion')" = 'success'
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = '17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c'
+      - name: Generate public metadata and both deliverables
+        run: |
+          set -euo pipefail
+          node scripts/prepare-v410-final.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-source-archive-contract.mjs
+          python scripts/verify-hacs-integration-package.py
+          node --check frontend/gewitterradar.js
+          node --check frontend/module-manifest.js
+          git diff --check
+      - name: Commit normalized release candidate to current branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add frontend/gewitterradar.js frontend/module-manifest.js frontend/assets/gewitterradar-runtime-manifest.json frontend/assets.json scripts/build-frontend.mjs scripts/verify-frontend.mjs tests/contracts/frontend-release-v4.10.json custom_components/gewitterradar/build_info.py custom_components/gewitterradar/manifest.json README.md SHA256SUMS_FRONTEND.txt custom_components/gewitterradar/frontend dashboard/dist
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git commit -m 'release: normalize accepted R40 to V4.10 FINAL candidate'
+          git push origin HEAD:refs/heads/feature/v4.10-finalization

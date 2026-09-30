@@ -19,14 +19,42 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Print V4.10.02 contract hashes
+        run: |
+          sha256sum frontend/gewitterradar.js
+          wc -c frontend/gewitterradar.js
+          sha256sum frontend/module-manifest.js
+          wc -c frontend/module-manifest.js
+          sha256sum frontend/modules/diagnostics/cockpit.js
+          wc -c frontend/modules/diagnostics/cockpit.js
+          sha256sum frontend/modules/instruments/medallion-designs.js
+          wc -c frontend/modules/instruments/medallion-designs.js
+          sha256sum frontend/modules/fullscreen/map-display.js
+          wc -c frontend/modules/fullscreen/map-display.js
+          sha256sum frontend/assets/gewitterradar-runtime-manifest.json
+          wc -c frontend/assets/gewitterradar-runtime-manifest.json
+
       - name: Canonical V4.08 frontend contract
         run: node scripts/verify-frontend.mjs
+
+      - name: Emit regenerated checksum inventory on failure
+        if: failure()
+        run: |
+          node scripts/build-frontend.mjs
+          echo '---SHA256SUMS_FRONTEND_BEGIN---'
+          cat SHA256SUMS_FRONTEND.txt
+          echo '---SHA256SUMS_FRONTEND_END---'
 
       - name: Deterministic frontend build
         run: node scripts/test-frontend-build.mjs
 
       - name: Frontend JavaScript syntax
-        run: node --check frontend/gewitterradar.js
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            echo "syntax: $file"
+            node --check "$file"
+          done < <(find frontend -type f -name '*.js' -print0 | sort -z)
 
       - name: About and Help locale contract
         run: node scripts/test-about-locales.mjs
@@ -43,6 +71,9 @@ jobs:
 
       - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
+      - name: Generate medallion/arrow fit matrix evidence
+        run: node scripts/generate-medallion-arrow-fit-matrix.cjs
+
       - run: npx playwright install --with-deps chromium
 
       - name: About locale registry and rendering
@@ -53,6 +84,12 @@ jobs:
 
       - name: V4.08 Settings and Help profiles
         run: node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Medallion asset contract
+        run: node scripts/test-medallion-assets.cjs
+
+      - name: Instrument picker diagnostics
+        run: node scripts/test-picker-diagnostics.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: V4.08 About geometry against protected V4.07.56 golden contract
         run: node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")"
@@ -70,5 +107,11 @@ jobs:
         if: always()
         with:
           name: shared-frontend-browser-evidence
-          path: artwork/acceptance/premium-controls/
+          path: |
+            artwork/acceptance/premium-controls/
+            artwork/acceptance/medallion-arrow-fit/
+            frontend/assets/gewitterradar-trend-medallion.png
+            frontend/assets/gewitterradar-trend-medallion-*.webp
+            frontend/assets/gewitterradar-trend-arrow.png
+            frontend/assets/gewitterradar-trend-arrow-*.webp
           if-no-files-found: warn

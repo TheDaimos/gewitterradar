@@ -1,0 +1,31 @@
+{
+  "schema": "gewitterradar.dra-deployment-provenance.v1",
+  "productVersion": "4.10",
+  "build": "V4.10-RELEASE-2026-09-30",
+  "runtimeRevision": "41002r13",
+  "moduleSetId": "D40A-5E9B",
+  "baselineFeatureHead": "bcf30fe2dc1b6b56625edf209b2373b956fb7fd4",
+  "parity": {
+    "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
+    "mode": "ci-offline-r19-center-aware-fit",
+    "medallions": 28,
+    "arrows": 18,
+    "expectedFits": 504,
+    "eyeSeedMode": "first-consistent-eye-ring-v2",
+    "eyeSeedRadiusRatio": 0.32954545454545453,
+    "geometrySchema": "gewitterradar.medallion-arrow-geometry.v2",
+    "centerFitMode": "eye-center-plus-render-origin-v1"
+  },
+  "deployment": {
+    "channel": "deploy/dev",
+    "purpose": "V4.10 public release identity from accepted R40; existing DRA channel unchanged",
+    "productBehaviorUnchanged": true,
+    "fitDataAutoApply": false,
+    "previousRealMatrixAccepted": true,
+    "previousRealMatrixReason": "R18 real/CI parity accepted; R19 geometry/calibration remains unchanged; R20 is a diagnostic UI-only accordion refinement",
+    "visualCalibrationAutoAppliesToProduction": false,
+    "manualEyeReferencesAutoApply": false,
+    "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
+    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group"
+  }
+}

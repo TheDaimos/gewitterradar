@@ -1,5 +1,326 @@
 # Changelog
 
+## V4.10 FINAL · 2026/09 (2026-09-30)
+
+- Öffentliche Produktversion V4.10 aus dem vollständig real abgenommenen technischen R40-Stand.
+- Sichtbare Hauptfenster-Plakette V4.10; Release-Build V4.10-RELEASE-2026-09-30; native Integration 0.22.0.
+- 23 Module; historische V4.10-Mengenangaben 28 Medaillon-Designs und 18 Pfeilvarianten unverändert.
+- Sieben ausdrücklich geplante V4.11-Vorhaben im deutsch-/englischsprachigen Versionsverlauf.
+- Reine Release-Normalisierung ohne funktionale Erweiterung der akzeptierten R40-Produktfunktionen.
+- PRE-MERGE-, Post-Merge-, Diagnose-, Hi-Res- und Golden-Master-Gates bleiben verbindlich.
+
+
+## V4.10.02 DEV – R33 · Mobile-Kompass & Hilfe-Feinschliff (2026-09-29)
+
+- sehr schmale Touch-Anzeigen bis **520 px** nutzen nach Entfernung des alten Kompass-Selectors den frei gewordenen Kopfraum; Kompassfeld und nachfolgende Inhalte rücken geschlossen nach oben.
+- iPad, Tablet und Desktop bleiben von dieser Geometrieänderung ausdrücklich unberührt; sichtbare Diagnose-Testtaster verhindern zusätzlich das mobile Zusammenklappen.
+- im Hilfeabschnitt **„Kompass, Medaillon & Pfeile“** wurden die **Aura-Effekte ans Ende** verschoben, damit Auswahl und Bedienung der Instrumente zuerst zusammenhängend erklärt werden.
+- neues Premium-Icon für den Instrument-Hilfeabschnitt ergänzt: eigener transparenter **2048×2048 Hi-Res/Vektor-Master** unter `artwork/help-icons/hires/`.
+- für die tatsächliche Hilfeanzeige wird eine **68×68-PNG-Ableitung als 2× Retina für 34×34 CSS-Pixel** direkt eingebettet.
+- der neue Hi-Res-Master ist in den verbindlichen Asset-Retentionsvertrag aufgenommen und damit dauerhaft geschützt.
+- technischer Stand: **V4.10.02-MODULAR-DEV-R33-2026-09-29**, Runtime **41002r13**, Feature-Cache **41002r33**, Modulsatz **D33A-5E9B**.
+- kein Merge nach `main` und keine öffentliche Veröffentlichung durch diese Änderung ausgelöst.
+
+## V4.10.02 DEV – R32 · V4.10-Abschlussblock (2026-09-29)
+
+- **Kompasswahl und Aura-Effekte entkoppelt:** Das gewählte Kompassdesign bleibt jetzt auch bei ausgeschalteten Aura-Effekten erhalten und kann weiterhin über das Kompass-Popup gewechselt werden.
+- den alten Kompass-Selector oberhalb des Instruments entfernt; die Kompassauswahl erfolgt ausschließlich über das Instrument-Popup.
+- den nicht mehr benötigten Punkt **Selector-Design** aus den Einstellungen entfernt.
+- Kompass-Popup bleibt unabhängig vom Aura-Zustand vollständig bedienbar.
+- **V4.10-Hilfe auf 19 Sprachvarianten erweitert:** eigener Abschnitt für Kompass-, Medaillon- und Pfeilauswahl, Aura-Trennung sowie verschiebbare und skalierbare Vollbild-Instrumente.
+- **Mouse-over-/Tooltip-Audit:** alle benutzerseitigen festen Mouse-over-Texte der Hauptoberfläche auf die gewählte Sprache umgestellt beziehungsweise durch dynamisch übersetzte Texte abgesichert.
+- sichtbare Bedienelemente der Kompass-/Medaillon-Auswahl wie Vollbild-Größe, Auswahl, Medaillon, Pfeil und Vorschau ebenfalls mehrsprachig gemacht.
+- automatischen V4.10-Mehrsprachen-Vertrag erweitert: alle 19 Sprachvarianten müssen die neuen Picker-, Tooltip- und Hilfetexte vollständig enthalten.
+- Versionshinweise zu V4.10 überarbeitet: **„Vom Monolithen zur modularen Architektur“**, Aufteilung in **23 Module** mit eigener Identität und Versionierung sowie zusätzlicher Abschnitt zu den sichtbaren UI- und Bedienverbesserungen.
+- überzogene beziehungsweise interne Formulierungen wie „über Jahre gewachsen“, die 504er-Fit-Matrix und DRA aus dem öffentlichen V4.10-Beitrag entfernt.
+- Roadmap bleibt nach V4.10 auf **„Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.“** fokussiert.
+- technischer Stand: **V4.10.02-MODULAR-DEV-R32-2026-09-29**, Runtime **41002r14**, Feature-Cache **41002r32**, Modulsatz **D32A-5E9B**.
+- kein Merge nach `main` und keine Veröffentlichung durch diesen Abschlussblock ausgelöst.
+
+## V4.10.02 DEV – Roadmap-Bereinigung & V4.10-Beitrag (2026-09-29)
+
+- Zukunfts-Roadmap in der Release-History auf einen einzigen nächsten Hauptblock reduziert: **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter**.
+- unterschiedliche Medaillons sowie die verbesserte Kompass-/Medaillon-Auswahl sind ausdrücklich Bestandteil von V4.10 und keine zukünftigen Roadmap-Punkte mehr.
+- neuer V4.10-Beitrag **„Vom Monolithen zum modularen Gewitterradar“** beschreibt Umfang und Bedeutung der Modularisierung einschließlich Modularchitektur, Instrumentenausbau, 28 Medaillons, 18 Pfeilvarianten, 504er-Fit-Matrix, Diagnose-/Regression-Schutz und DRA-Bereitstellung.
+- englische Release-History parallel aktualisiert.
+- `ui.skeleton` auf **1.1.8** angehoben und Frontend-Vertrag entsprechend nachgezogen.
+- kein Merge nach `main`, keine Veröffentlichung und kein Release durch diese Änderung ausgelöst.
+
+## V4.10.02 DEV – Modularisierungs-Schlachtplan offiziell abgeschlossen (2026-09-29)
+
+- Nutzer hat den Gewitterradar-V4.10.02-Modularisierungs-Schlachtplan ausdrücklich als **offiziell abgeschlossen** erklärt.
+- R31 bleibt der vollständig geprüfte technische DEV-Kandidat mit 5/5 zentralen CI-Prüfungen.
+- iPad-Focus-/Tap-Ring-Fix real bestanden.
+- ältere, durch spätere Schleifen überholte offene Zwischen-Checkboxen gelten nicht mehr als aktive Restarbeiten.
+- neue Arbeiten beginnen als neuer separater Arbeitsblock.
+- kein Merge nach `main`, keine Veröffentlichung und kein Release durch diesen Abschluss ausgelöst.
+
+## V4.10.02 DEV R31 – iPad Trend-Fokusrahmen + Shared-Frontend-Vertrag (2026-09-29)
+
+- iPad/WebKit-Fokus-/Tap-Artefakt an der Trendanzeige bereits in R31 produktiv korrigiert; keine erneute Ursachenanalyse oder Änderung der abgenommenen Medaillon-/Pfeil-Logik.
+- `ui.skeleton` auf **1.1.7** mit explizitem Unterdrücken des blauen Tap-/Focus-Rings für `#trend-box` / `#trend-icon` und relevante Focus-Zustände.
+- Touch-Pfad in `fullscreen.map-display` entfernt den Trendfokus vor dem Öffnen des Medaillon-/Pfeil-Pickers und stellt ihn beim Schließen auf groben Touch-Geräten nicht künstlich wieder her.
+- Build `V4.10.02-MODULAR-DEV-R31-2026-09-29`, Feature-Cache `41002r31`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E9B`.
+- Modulstände: `core.manifest 1.2.37`, `fullscreen.map-display 1.0.29`, `ui.skeleton 1.1.7`, `diagnostics.cockpit 1.5.1`.
+- veralteten Shared-Frontend-Testvertrag von `ui.skeleton 1.1.6` auf **1.1.7** aktualisiert.
+- finaler technischer Kandidat `e2040a4afffa04da87d8cc4421becac7576217a7`: **5/5 zentrale CI-Prüfungen grün**.
+- `deploy/dev` exakt auf diesen Kandidaten gesetzt und per Compare als **identical** verifiziert (0 voraus / 0 zurück).
+- reale DRA-/iPad-Abnahme bestanden: Nach Tippen auf die Trendanzeige sowie Öffnen/Schließen des Medaillon-/Pfeil-Pickers tritt der blaue Focus-/Tap-Rahmen nicht wieder auf; Desktop-/Android-Regressionsgegenprobe bleibt offen.
+- kein Merge nach `main` und keine Veröffentlichung erfolgt.
+
+## V4.10.02 DEV R27 – Drag-Schutz bei Blitzupdates + weißerer Vorschau-Glow (2026-09-29)
+
+- Vollbild-Drag für Lokations-Pille, Kompass und Trend/Medaillon gegen asynchrone Positions-Synchronisierung während aktiver Blitzereignisse geschützt.
+- `_positionMapCompassOverlay()`, `_positionMapMedallionOverlay()` und `_positionMapLocationOverlay()` verändern die Position nicht mehr, solange der jeweilige Drag-Zustand aktiv ist.
+- dadurch dürfen Blitz-/Resize-/Renderzyklen das gerade gezogene Instrument nicht mehr auf seine gespeicherte Ausgangsposition zurücksetzen.
+- Vorschau-Umschalter **Starr / Animation** unter die aktive Chevron-Navigation verschoben und optisch zurückgenommen.
+- Vorschau-Halo deutlich in Richtung Weiß verschoben: nahezu weißer Kern, warmweiße Zwischenzone, nur noch minimal warmer Außenanteil.
+- zusätzlicher weißer Lichtsaum verbessert die Trennung des gold-/messingfarbenen Medaillons vom dunklen Hintergrund.
+- Build `V4.10.02-MODULAR-DEV-R27-2026-09-29`, Feature-Cache `41002r27`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E97`.
+- Modulstände: `core.manifest 1.2.33`, `fullscreen.map-display 1.0.25`.
+- technischer Kandidat `64b8805a661b7f7e7212fc1017ed1ece58cfe98c`: 5/5 zentrale CI-Prüfungen grün.
+- `deploy/dev` exakt auf diesen Kandidaten gesetzt und als `identical` verifiziert.
+- reale DRA-/HA-Abnahme unter echten Blitzereignissen bleibt offen.
+
+## V4.10.02 DEV R26 – Vorschau unabhängig vom Live-Trend + kompakter Picker (2026-09-29)
+
+- Medaillon-/Pfeil-Zähler im Auswahl-Pop-up auf reine `xx / xx`-Anzeige verkürzt; einzeilig und mit kompakterer Mittelspalte.
+- neuer Vorschau-Umschalter **Starr / Animation**; Standard ist **Starr**.
+- Pfeil im Auswahl-Pop-up ist außerhalb des Diagnosemodus immer sichtbar, auch wenn aktuell kein Gewittertrend vorhanden ist.
+- Vorschau verwendet weiterhin die produktive 504er-Paar-Kalibrierung für Pfeilgröße und X/Y-Mittelpunkt.
+- Animation nutzt die vorhandene Diagnose-Sweep-Bewegung, ohne den Live-Zustand der Karte zu verändern.
+- Vorschau optisch mit dezentem warmweiß-goldenem Halo und zusätzlicher Tiefenwirkung veredelt.
+- doppelte Prozentanzeige bei der Vollbild-Größe entfernt; Schnellwahl, 15–300-%-Regler und direkte Eingabe bleiben bestehen.
+- Build `V4.10.02-MODULAR-DEV-R26-2026-09-29`, Feature-Cache `41002r26`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E96`.
+- Modulstände: `core.manifest 1.2.32`, `fullscreen.map-display 1.0.24`.
+- technischer Kandidat `efabc9cbff47b29e0f173e557ad9d1338bc51a5d`: 5/5 zentrale CI-Prüfungen grün und exakt nach `deploy/dev` promotet.
+- reale DRA-/HA-Sichtprüfung bleibt offen.
+
+## V4.10.02 DEV R25 – kompakte Auswahl + robuste 15–300-%-Eingabe (2026-09-28)
+
+- Medaillon-Pop-up auf einen kompakten Umschalter **Medaillon / Pfeil** umgestellt; nur die aktive Chevron-Navigation wird angezeigt.
+- normale Hauptanzeige bewusst reduziert auf **Medaillon · x / 28** bzw. **Arrow · x / 18**.
+- technische IDs erscheinen nur noch bei aktiver Diagnose als Zusatzzeile, z. B. **Medaillon: trend_17 · 17 / 28** bzw. **Pfeil: arrow_02 · 3 / 18**.
+- zuletzt aktiver Auswahlmodus wird sitzungsbezogen gespeichert.
+- freie Vollbild-Größeneingabe gegen laufende UI-Synchronisierung geschützt: das Feld darf während der Bearbeitung nicht mehr überschrieben werden.
+- Prozentfeld als dreistelliges numerisches Textfeld umgesetzt, damit ein Wert wie `100` vollständig gelöscht und anschließend z. B. `300` eingegeben werden kann.
+- Übernahme der Direkteingabe erst bei Enter oder Fokusverlust; Escape verwirft die noch nicht bestätigte Eingabe.
+- Schieberegler 15–300 % bleibt für Live-Anpassung erhalten; Schnellwahltasten 50/75/100/125/150 % bleiben ebenfalls erhalten.
+- produktive 504er-Medaillon-/Pfeilkalibrierung und geschützte Diagnosegeometrie bleiben unverändert getrennt.
+- Build `V4.10.02-MODULAR-DEV-R25-2026-09-28`, Feature-Cache `41002r25`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E95`.
+- Modulstände: `core.manifest 1.2.31`, `fullscreen.map-display 1.0.23`.
+- finaler technischer R25-Kandidat `860100d2e95ce706404b7fe8c93ad807e4a905e8`: **5/5 zentrale CI-Prüfungen grün**.
+- `deploy/dev` exakt auf den R25-Kandidaten gesetzt und mit **ahead 0 / behind 0 / identical** verifiziert.
+- reale DRA-/HA-Abnahme der neuen kompakten Auswahl und der Direkteingabe bleibt offen.
+
+## V4.10.02 DEV R21 – produktive Medaillonkalibrierung + Vollbild-Instrumentskalierung (2026-09-28)
+
+- finale reale Kalibrierung vollständig übernommen: 28/28 Augenreferenzen und 504/504 Medaillon-/Pfeil-Kombinationen.
+- 504 bestätigte Paarwerte als stabile Produktdatenmodule integriert; bestehende `trend_XX`-/`arrow_XX`-IDs bleiben unverändert.
+- Produktdarstellung verwendet nun paarweise Pfeilgröße sowie X/Y-Mittelpunkt aus dem final abgenommenen Datensatz.
+- Diagnosegeometrie bleibt ausdrücklich entkoppelt und verwendet weiterhin die geschützte Referenzlage; produktive Kalibrierung beeinflusst Mess-/Diagnoseverträge nicht.
+- Kompass- und Medaillon-Pop-up jeweils um **Vollbild-Größe** erweitert: 50 / 75 / 100 / 125 / 150 % sowie freie Eingabe 15–300 %.
+- Kompass- und Medaillon-Skalierung werden getrennt persistent gespeichert und auf die responsive Vollbild-/Fenster-Ausgangsgröße angewendet.
+- Build `V4.10.02-MODULAR-DEV-R21-2026-09-28`, Feature-Cache `41002r21`, Runtime-Cache `41002r13`, Modulsatz `D31A-5E91`.
+- Modulstände: `core.manifest 1.2.27`, `fullscreen.map-display 1.0.20`, `ui.skeleton 1.1.4`.
+- Finaler technischer R21-Kandidat `71d0ba949afa3ff6a2b31d91d8f88e9140379353`: 5/5 zentrale CI-Prüfungen grün.
+- Reale DRA-/HA-Abnahme der produktiven Kalibrierung und der neuen 15–300-%-Vollbildskalierung bleibt als nächster Schritt offen.
+
+## V4.10.02 DEV R16 – Pfeil/Auge-Geometriedatenbank (2026-09-27)
+
+- Diagnose um eine persistente Geometriedatenbank für Medaillonaugen, Pfeilgeometrien und Kombinationen erweitert.
+- **FIT-MATRIX** vermisst 28 Medaillons × 18 Pfeile = 504 Kombinationen.
+- Je Kombination werden Pfeil/Auge-Ratio, empfohlene Skalierung, 360°-Containment, Freiraum/Überstand und ungünstigster Winkel ermittelt.
+- **FIT-JSON** exportiert die vollständige Datenbank; Picker-Export verwendet `gewitterradar.picker-diagnostic.v2`.
+- Augenmessung erfolgt aus dem echten Laufzeitasset; Pfeilgeometrie aus der sichtbaren Alpha-Kontur.
+- Zwischenablagepfad für HA-WebViews robuster gemacht und Export-/Lognamen auf aktive Medaillon-/Pfeil-IDs umgestellt.
+- Vollständige Matrix und automatische Anwendung der Messdaten bleiben bis zur realen DRA-Abnahme getrennt.
+- Build `V4.10.02-MODULAR-DEV-R16-2026-09-27`, Modulsatz `F48F-1C26`; `core.manifest 1.2.21`, `fullscreen.map-display 1.0.16`, `instruments.medallion-designs 1.2.0`, `diagnostics.cockpit 1.2.0`.
+- Finaler R16-Kandidat `ba3083c7d3ace5a986aeabe9327f1f5128122a59`: 5/5 Hauptprüfungen grün und exakt nach `deploy/dev` promoviert.
+
+## V4.10.02 DEV R15 – Trendpfeilauswahl (2026-09-27)
+
+- Medaillon-Pop-up um eine zweite, persistent gespeicherte Pfeilauswahl erweitert.
+- Geschützter Standard `arrow_00` plus 17 eindeutig nummerierte Kandidaten `arrow_01`–`arrow_17`.
+- Kandidaten als verlustfreie 264×264-WebP-Laufzeitgrafiken in Frontend, Dashboard und nativer Integration.
+- Medaillon- und Pfeilnavigation verwenden die silbernen Hi-Res-Chevrons.
+- Assetinventar, Laufzeitmanifest, Modulvertrag, Prüfsummen und Medaillon-/Pfeiltests erweitert.
+- Hi-Res-Originale werden erst nach der finalen Auswahl in das Master-Repository übernommen.
+
+## 2026/09 — V4.10.02 DEV
+### R14 – Medaillon-Katalog auf 28 Varianten erweitert
+- Zehn weitere Medaillons als `trend_19` bis `trend_28` ergänzt; bestehende IDs bleiben dauerhaft unverändert.
+- Picker zählt dynamisch über den Katalog und zeigt die eindeutige ID, z. B. `trend_24 · 24 / 28`.
+- Laufzeitgrafiken: 264 × 264 px, Alphakanal erhalten, verlustfreies WebP/VP8L, kein Beschnitt und keine Seitenverhältnisverzerrung.
+- Die neuen Hi-Res-Quellen sind 1254 × 1254 px; Runtime-Derivate ersetzen die geschützten Masterquellen nicht.
+- R14 erweitert die bestehende Modularisierung um `instruments.medallion-designs 1.0.0`; der bereits abgenommene Kern-Cache bleibt bewusst auf Runtime `41002r13`.
+- Build `V4.10.02-MODULAR-DEV-R14-2026-09-26`, Runtime-Cache `41002r13`, finaler Modulsatz `477A-87C8`.
+- Die spätere per-Medaillon-Geometrie für Schauglas und Trendpfeil wird aus Diagnoseexporten statt aus Screenshots abgeleitet.
+- Die Modularisierung umfasst nun 23 Module; `instruments.medallion-designs 1.0.0` ist in der Modulansicht in allen 19 unterstützten Sprachen vollständig hinterlegt.
+- Finaler R14-Kandidat `012fdfc62127b6db47cc1d87000217e5f286f7b0`: 5/5 Hauptprüfungen grün und exakt nach `deploy/dev` promoviert.
+
+## 2026/09 — V4.10.02 DEV
+### R13 – Medaillon-Katalog auf 18 Varianten erweitert
+- Acht weitere Medaillons als `trend_11` bis `trend_18` ergänzt; `trend_01` bis `trend_10` bleiben unverändert erhalten.
+- Picker zeigt die eindeutige ID direkt an, z. B. `trend_14 · 14 / 18`, damit spätere Auswahl/Aussortierung zweifelsfrei möglich ist.
+- Laufzeitgrafiken: 264 × 264 px, freigestellt, verlustfreies WebP/VP8L, mindestens 2× Retina für die 132-px-Instrumentdarstellung.
+- Kein Beschnitt und keine Seitenverhältnisverzerrung. `trend_18` wird wegen der nichtquadratischen 1284×1225-Quelle proportional auf 264×252 skaliert und transparent auf 264×264 zentriert.
+- Runtime `41002r13`, Build `V4.10.02-MODULAR-DEV-R13-2026-09-26`, Modulsatz `C91E-5A27`.
+- Eindeutige Zuordnung dauerhaft in `docs/MEDALLION_CATALOG.md` dokumentiert.
+- Hi-Res-Originale bleiben verbindliche Masterquellen und werden später separat im Master-Repository abgelegt.
+
+
+## 2026/09 — V4.10.02 DEV
+### R12 – neun zusätzliche Trend-Medaillons
+- Bestehendes `trend_01` unverändert beibehalten.
+- Neue Varianten `trend_02` bis `trend_10` ergänzt.
+- Freigestellte Laufzeitgrafiken als 264 × 264 px große 2x-Retina-Ableitungen integriert; verlustfreies WebP/VP8L, kein Beschnitt, keine Seitenverhältnisänderung.
+- Assets byte-identisch in kanonischem Frontend, Dashboard und nativer Integration.
+- Runtime `41002r12`, Build `V4.10.02-MODULAR-DEV-R12-2026-09-26`, Modulsatz `7A2C-91D4`.
+- Hi-Res-Originale bleiben verbindliche Masterquellen und werden später separat im Master-Repository abgelegt.
+
+
+## 2026/09 — V4.10.02 DEV
+### R11 – experimenteller Vollbild-Dragversuch verworfen
+- Nach der R10-Abnahme wurde ein kurzzeitig gemeldeter Drag-Aussetzer der Diagnosekonsole im Karten-Vollbild untersucht.
+- Die reale R10-Nachprüfung bestätigte den Drag als funktionsfähig; R10 blieb der freigegebene DRA-Stand.
+- Ein vorsorglicher R11-Zwischenstand wurde nie nach `deploy/dev` promoviert und zeigte im Shared-Frontend-Test selbst eine Desktop-Regression des bestehenden Vollbild-Dragvertrags.
+- R11 wurde deshalb vollständig verworfen; Feature-Laufzeit, Tests, Manifeste, Ausleitungen und Prüfsummen wurden auf den real abgenommenen R10-Stand zurückgeführt. Dokumentations-/Abnahmefortschritte bleiben erhalten.
+- Kanonische Referenz bleibt R10: Runtime `41002r10`, Modulsatz `CEA6-1ECF`, Kandidat `4f22f4be5841e47993226928405cc65cdd70e201`.
+
+### R10 – interne Modul-Cachekennung vereinheitlicht
+- Der in R9 neu eingeführte Abweichungsdialog wurde real über DRA/HA abgenommen; Darstellung und kontextbezogene Exporte funktionieren wie vorgesehen.
+- Der R9-Export zeigte gemischte interne ES-Modul-URLs mit aktuellen und alten Cachekennungen (`r9`, `r1`, teilweise `r2`). Dadurch wurden `core.registry` und `core.runtime` mehrfach instanziiert.
+- R10 setzt alle statischen internen Modulimporte einheitlich auf `41002r10`.
+- Neuer Regressionstest verhindert künftig jede interne Cachekennung, die vom Loader-Cache abweicht.
+- Finaler Kandidat `4f22f4be5841e47993226928405cc65cdd70e201` ist 5/5 CI-grün und nach `deploy/dev` promoviert.
+- Reale Abnahme bestätigt: **22/22 Module geladen**, **Versionssatz konsistent**, **Modulsatz-ID `CEA6-1ECF`**, keine Abweichungen.
+
+### Abschlussaudit R8 – Modulidentität und Schlachtplan
+- Der vollständige Modularisierungs-Audit hat zwei interne Identitätsreste gefunden, die die bisherigen Funktions-/Browserprüfungen nicht sichtbar gemacht hatten.
+- `core.manifest` führt seinen Sollstand und seine Selbstregistrierung nun identisch; die Selbstregistrierung war noch auf 1.2.10 stehen geblieben, während Soll-/Runtime-Manifest bereits 1.2.12 erwarteten.
+- `core.base-context` trägt nun dieselbe aktuelle Buildkennung wie Loader und Runtime-Manifest; dort war intern noch die R5-Kennung vorhanden.
+- Auditstand: Runtime `41002r8`, Modulsatz `3541-2967`, Build `V4.10.02-MODULAR-DEV-R8-2026-09-25`, `core.manifest 1.2.13`, `core.base-context 1.0.4`.
+- Ein neuer Vertrag vergleicht alle 22 erwarteten Modulversionen mit den jeweiligen Selbstregistrierungen und bezieht das selbstregistrierende Manifest ausdrücklich ein.
+- Der verbindliche Modularisierungs-Schlachtplan wurde gegen spätere reale DRA-/HA-/Browserabnahmen auditiert; alte Scheinoffenpunkte wurden geschlossen, ohne unbelegte Punkte künstlich abzuhaken.
+- Radius-Kaskade und Kompass-Schließen-X wurden im Abschlussaudit aufgrund der ausdrücklichen realen Benutzerbestätigung als erledigt geschlossen.
+- R8-Kandidat `8ee2b6fbc30213ead936e622cc886afd995dcff6` ist 5/5 CI-grün (Shared Frontend #2304, Integration #2323, Diagnostic #1007, Source Archive #548, Hi-Res #1539) und wurde exakt nach `deploy/dev` promoviert.
+- Als reale Abschlussgates verbleiben nur noch die DRA-Installation von R8 mit 22/22-konsistenter Laufzeit sowie die Cluster-Jump-/Infinity-Abnahme auf Desktop, iPad und Android/HA Companion.
+
+### Diagnose R7 – sofortiger Teardown im geöffneten Picker
+- Behebt einen real auf Android/HA Companion gefundenen Randfall: Beim Beenden der globalen Diagnose in einem noch geöffneten Kompass-/Medaillon-Picker blieb das lokale Diagnose-Raster sichtbar, bis der Picker geschlossen wurde.
+- Ursache war ein zuvor gesetztes `display:block !important` an den lokalen Diagnose-SVGs; `hidden=true` allein konnte diese Inline-Regel nicht übersteuern.
+- Beim Diagnose-Ende werden nun `display`, `visibility`, `opacity` und `z-index` der lokalen Diagnoseebenen zurückgesetzt und die SVG-Inhalte sofort geleert.
+- Der Picker bleibt geöffnet; bei erneutem Start der Diagnose werden Raster und Messhilfen regulär neu aufgebaut.
+- Browserregression prüft den Diagnose-Ausstieg im geöffneten Medaillon-Picker inklusive sofortigem `display:none`, leerem SVG-Markup und anschließendem erfolgreichen Neustart der Diagnose.
+- Runtime-Revision: `41002r7`; Modulstände: `diagnostics.cockpit 1.1.3`, `fullscreen.map-display 1.0.12`, `core.manifest 1.2.12`; Modulsatz `E2DF-E846`.
+- R7 wurde anschließend über `deploy/dev` real in Home Assistant abgenommen. Das Beenden der Diagnose bei geöffnetem Picker entfernt Raster/Messhilfen sofort, ohne den Dialog zu schließen; die zuvor bestätigten R6-Funktionen (sichtbare TREND-Animation, absolute Winkel und sichtbare KP-/MP-Diagnose) bleiben intakt.
+
+### Diagnose R6 – sichtbare Top-Layer-Messung, Winkelkonvention und Vollbild
+- Reale R5-Abnahme zeigte drei zusätzliche Diagnosefehler: der Medaillon-Animationszustand war intern aktiv, ohne den sichtbaren Pfeil zu bewegen; die statischen Winkel bezogen sich fälschlich auf die bereits um 45° gedrehte Pfeilgrafik statt auf eine absolute Himmelsrichtung; lokale Raster/Messlinien waren trotz aktivem Diagnosezustand real nicht sichtbar.
+- Die Diagnosewinkel verwenden nun verbindlich **0° = Nord, 90° = Ost, 180° = Süd, 270° = West, im Uhrzeigersinn**. Der Hi-Res-Pfeil besitzt dafür einen expliziten Asset-Nullpunktversatz von **−45°**; der Export dokumentiert Winkelkonvention und Assetversatz.
+- Die TREND-Animation besitzt wieder einen tatsächlich animierbaren `transform`: die statische `!important`-Transformation gilt nicht mehr für ANIMATION/FREEZE. Der Diagnosesweep läuft absolut von Nord über Ost nach Süd und zurück.
+- Picker-SVGs werden im nativen Dialog-Top-Layer mit expliziter Sichtbarkeit und oberster lokaler Stapelreihenfolge gerendert. Raster, Achsen, Diagonalen, Begrenzungen und Mittelpunktmarken folgen den globalen Diagnoseeinstellungen.
+- Kompass- und Medaillon-Picker erhalten eindeutige lokale Rasterkennungen `KP-A1…KP-J10` bzw. `MP-A1…MP-J10`.
+- Der Vollbildmodus erhält ein eigenes Diagnose-Raster `FS-A1…FS-J10`. Diagnose-Overlay und große Diagnosekonsole werden beim Eintritt in Vollbild in dessen nativen `<dialog>`-Top-Layer verschoben.
+- Öffnet sich aus dem Vollbild heraus ein Kompass- oder Medaillon-Picker, folgt die große Diagnosekonsole dem obersten Picker-Dialog und kehrt beim Schließen wieder in den Vollbild-Dialog zurück.
+- Der Browservertrag prüft jetzt tatsächliches SVG-Markup, lokale Rasterkennungen, die reale Änderung des berechneten Pfeil-Transforms während der Animation, die absolute Winkelkompensation sowie den Top-Layer-Hostwechsel in Vollbild und Picker.
+- Runtime-Revision: `41002r6`; Modulstände: `diagnostics.cockpit 1.1.2`, `fullscreen.map-display 1.0.12`, `core.manifest 1.2.11`; Modulsatz `37F8-9357`.
+### Diagnose – Kompass-/Medaillon-Picker und designfähige Medaillon-Profile
+- Die globale Diagnose wird jetzt direkt **innerhalb** des geöffneten Kompass- und Medaillon-Pop-ups gespiegelt, damit die Messhilfen auch im nativen Dialog-Top-Layer sichtbar bleiben.
+- Beide Picker erhalten lokale Achsen, Diagonalen, Bounding-Boxen, Mittelpunktmarken, Navigationsmessung und einen kompakten Live-Messwertblock.
+- Die Kompassauswahl misst Instrumentzentrum, Pivot, Links-/Rechts-Symmetrie der silbernen Chivron, vertikale Ausrichtung, Abstand Instrument → Navigation und Überlauf.
+- Die Medaillon-Auswahl misst Medaillonzentrum, profilspezifische Apertur, Soll-/Ist-Pfeilzentrum, Pfeilgröße, Links-/Rechts-Symmetrie der goldenen Chivron, vertikale Ausrichtung und Abstand Stage → Navigation.
+- Picker-Diagnose folgt dem globalen Schalter **Diagnosedarstellung anzeigen/ausblenden** und bleibt bei ausgeschalteter Diagnose vollständig unsichtbar.
+- Diagnose-Snapshots enthalten jetzt zusätzlich die aktuell geöffneten Picker-Messwerte.
+- `MEDALLION_DESIGNS` trägt ab jetzt pro Medaillon ein eigenes `diagnosticProfile`; die Medaillon-Kalibrierung verwendet nicht mehr fest `MEDALLION_DESIGNS[0]`, sondern immer das aktuell ausgewählte Design.
+- Das bestehende `trend_01`-Profil übernimmt unverändert die bereits abgenommenen Mittelpunkt-, Apertur-, Pfeil- und Skalierungswerte und dient als Vorlage für kommende Medaillons.
+- Browser-Regression prüft Dashboard und native Integration auf Desktop und iPad mit sichtbarer/ausblendbarer Picker-Diagnose sowie Snapshot-Übernahme.
+- Reale Nachprüfung: Medaillon-Diagnosezustände bleiben jetzt auch bei normalen Render-/Kalibrier-Synchronisierungen erhalten; **NORMAL** wird erst wiederhergestellt, wenn der Diagnosemodus tatsächlich beendet ist.
+- Der Medaillon-Picker spiegelt LEER/PFEIL/TREND/FREEZE/NORMAL einschließlich Winkelsteuerung direkt im geöffneten Top-Layer-Dialog; damit können Zustände geprüft werden, ohne das Popup schließen zu müssen.
+- Kompass- und Medaillon-Picker besitzen bei aktiver Diagnose eine kompakte lokale Werkzeugleiste im Popup. Beide bieten **KOPIEREN**, **JSON** und **CSV**; das Medaillon zusätzlich die vollständigen Diagnosezustands-, Pfeil-, Animations-, Freeze- und Winkelsteuerungen.
+- CSV-Export ist semikolongetrennt und UTF-8/BOM-tauglich; Zwischenablage und JSON enthalten denselben strukturierten Picker-Messdatensatz einschließlich Build, Viewport, Design, Diagnosezustand, Messwerten und vorhandenem Kalibrierbericht.
+- Kurze/Querformat-Viewports können die erweiterten Picker bei Bedarf intern scrollen, ohne die normale Popup-Geometrie zu verändern.
+- Runtime-Revision: `41002r5`; Modulstände: `core.base-context 1.0.3`, `diagnostics.cockpit 1.1.1`, `fullscreen.map-display 1.0.11`, `core.manifest 1.2.10`; Modulsatz `EA13-2B8B`.
+### Kompassauswahl – freigestellte Retina-Chevrons
+- Die Kompassauswahl verwendet ausschließlich die freigestellten **Silber-Chivron**; die Messing-/Gold-Variante bleibt im Repository und wird von der analogen Medaillon-Auswahl verwendet.
+- Die Laufzeitdarstellung ist als picker-lokale, verlustfreie WebP-Datenmodule (VP8L) gekapselt: 104×104 Pixel bei 52×52 CSS-Pixeln, also exakt 2× Retina; Dateigrößen ca. 8,6–11,1 KB.
+- Die zuvor verwendeten nicht sauber freigestellten Runtime-SVGs wurden aus den drei Auslieferungsbäumen entfernt.
+- Der Austausch ist technisch auf `fullscreen.map-display` und seine vier Picker-Datenmodule begrenzt; Chevron-Grafiken in Menüs, Akkordeons, Diagnose und sonstiger Oberfläche bleiben unverändert.
+- Der damalige Retina-Zwischenstand war `41002r2`; der aktuelle Diagnose-/Picker-Stand ist oben separat dokumentiert.
+
+
+### Frontend-Cache-Sicherheit & Modulsatz-ID
+
+- Entkopple den internen ES-Modul-Cache von der sichtbaren Produktversion: Runtime-Revision `41002r1` erzwingt einen vollständigen, einheitlichen Modul-Neuladevorgang innerhalb V4.10.02.
+- Ergänze eine kompakte **Modulsatz-ID**; aktueller Sollstand: `FAC5-4376`.
+- Prüfe den geladenen Modulsatz gegen `assets/gewitterradar-runtime-manifest.json` mit ungecachtem Abruf. Ein bereits offenes Browser-/App-Fenster kann dadurch künftig einen auf Platte neueren Stand als **Frontend-Neuladung erforderlich** erkennen.
+- Übersetze Modulsatz-ID, Installationsstatus und Neuladehinweis in alle 19 unterstützten Sprachvarianten.
+- Halte die Chevron-Runtime-Derivate klein und verlustfrei; die vollständigen Hi-Res-Master bleiben außerhalb des ausgelieferten Frontends.
+
+
+### Chevron-Materialvergleich im Kompass-Pop-up
+
+- Keep the full Hi-Res Chevron family as non-delivered artwork source pending transfer to the dedicated master repository; it is not a Gewitterradar runtime dependency.
+- Show two simultaneously active compass-navigation rows for direct visual acceptance: brass on top, aged silver directly below.
+- Keep both material rows functionally identical for previous/next compass selection; only the material presentation differs.
+- Deliver only reduced, lossless 256×256 runtime SVGs for brass/silver left/right, byte-identically across native integration and Dashboard; the four-direction Hi-Res masters stay outside the delivered package.
+
+
+### Modularisierung · Abschlusskorrekturen
+
+- Fix the radius cascade when lowering **Gewitterradius** below the persisted **Gefahrenradius**: the real Home Assistant danger state is now reduced first instead of trusting the already-previewed slider value, preventing `danger_radius <= storm_radius <= observation_radius` validation failures on Desktop, iPad and Android.
+- Apply the same persisted-state safeguard to direct storm-radius writes from keypad/step controls so all Gewitterradar radius entry paths preserve the intended inner-radius cascade.
+- Remove the unintended square focus/appearance frame around the premium compass-picker close control on iPad/Android while retaining a non-rectangular image glow as keyboard focus feedback.
+- Add a dedicated **fullscreen Cluster-Jump pill** that mirrors the existing cluster-navigation state, can be freely moved by mouse/touch, starts directly left of the 3D layer selector, persists its position/visibility per browser and is toggled from the existing top-left instrument strip with the Hi-Res infinity symbol.
+- Stabilize **Module & Versionen** so individual module rows can be opened, closed and reopened repeatedly without an immediate re-render closing them again.
+- Preserve open module-detail rows across diagnostic list refreshes and isolate inner module toggles from the outer Settings accordion.
+- Reduce the Module Details dialog from 780 px to **660 px** maximum width and from 860 px to **760 px** maximum desktop/tablet height while retaining viewport-aware mobile sizing.
+- Reduce unnecessary bottom space in **Kalibrierung & Diagnose** after the single-scroll-owner Settings refactor.
+- Complete the **Kartendarstellung** Settings translations across all **19 language variants**, including Default view, Last used, the per-device storage note and separate-map-window texts.
+- Refresh the map-display UI immediately when the application language changes so no stale English labels remain visible.
+- Complete a full dynamic **title / aria-label / mouse-over audit** across all **19 language variants** for cluster resolution, cluster-navigation session controls, map start view, separate map window, release-history badge, compass picker, fullscreen compass/medallion movement and the device compass.
+- Remove the remaining hard-coded German cluster hover texts such as `Cluster-Auflösung · …`, `Zur Sitzungszeit wechseln` and `Auf unbegrenzt wechseln`; source-contract tests now reject these regressions explicitly.
+- Stop rebuilding the Module Details list during ordinary render/translation synchronization when neither language nor diagnostic data changed; a stable content signature keeps the actual `<details>` nodes alive so clicks cannot be overwritten by a background refresh.
+- Stress-test module rows with repeated click cycles while `_syncModuleView()` and translation synchronization run between clicks.
+- Refine Portuguese cluster-resolution **Tarde → Tardia**.
+- Extend browser regression coverage to reject English fallback text in non-English map-display and tooltip settings and to exercise repeated module-detail open/close/open behavior.
+- Keep canonical frontend, native integration delivery and Dashboard delivery byte-identical; refresh module manifest, deterministic contract and frontend SHA256 inventory.
+- Localize **all 22 Module Details entries end-to-end** across all 19 language variants: module display names and complete function lists now follow the active language while technical module IDs and file paths intentionally remain unchanged.
+- Fix the Module Details status header so application version, loaded-module count and consistency state are separated explicitly and keep their spacing after the overlay is reparented outside the Settings section.
+- Fix the **Standardansicht** custom dropdown lifecycle: closing Settings via backdrop, close control or accordion transition now always closes the detached startup-view dropdown and resets `aria-expanded`, preventing an orphaned menu from remaining above the map.
+- Add browser regression coverage for both **Settings backdrop close** and **accordion switch** while the Standardansicht dropdown is open.
+
+### Modulversionen
+
+- `core.base-context` → **1.0.3**
+- `core.card-lifecycle` → **1.0.1**
+- `ui.skeleton` → **1.1.2**
+- `ui.i18n-settings` → **1.2.2**
+- `diagnostics.module-view` → **1.3.1**
+- `diagnostics.cockpit` → **1.1.1**
+- `fullscreen.map-display` → **1.0.11**
+- `map.clusters-recent` → **1.0.2**
+- `ui.render` → **1.0.1**
+- `ui.controls` → **1.1.3**
+- `core.manifest` → **1.2.10**
+- `location.radii-map` → **1.0.1**
+- `core.manifest` → **1.2.9**
+
+## 2026/09 — V4.10.01 DEV
+
+### Kompassauswahl
+
+- Start the V4.10 development line at **V4.10.01** on top of the published V4.09 baseline.
+- Open a dedicated premium compass picker by tapping/clicking the compass itself.
+- Reuse the **Hi-Res premium close control** from “Über Gewitterradar” instead of a plain text ×.
+- Reuse the established dark metallic **gold premium frame** and add polished gold left/right chevrons below the compass.
+- Reparent the live compass instrument into the modal while it is open, so the preview always uses the real active compass geometry, frame and needle instead of a separate approximation.
+- Switch cyclically through all existing compass designs and apply/persist the selection immediately without an additional Apply button.
+- Preserve fullscreen mouse/touch dragging and distinguish a tap from a drag with a 6 px movement threshold; only a genuine tap opens the picker.
+- Keep the first iteration intentionally free of new visible translation strings; existing compass previous/next translations are reused for accessibility labels.
+- Keep all three frontend delivery paths byte-identical.
+
 
 ## 2026/09 — V4.09 FINAL / native integration 0.21.0
 
@@ -283,3 +604,91 @@ The following gates belonged to the earlier 0.17.0 candidate phase and are retai
 - trigger/re-check dynamic `person.*` / `zone.*` changes with no thread-safety error;
 - real HACS rollback and re-update proof;
 - final Android/iPad frontend spot checks, including Android last-compass persistence.
+
+
+### V4.10.02 DEV R16P1 – DRA/CI parity acceptance
+- Added `custom_components/gewitterradar/dra-deployment-provenance.json` as a DRA-managed provenance record for the R16 real fit-matrix acceptance path.
+- Records the 28 × 18 = 504 expected fit matrix and `ci-offline-r16-parity` provenance without changing runtime fit behavior or automatically applying calibration data.
+
+
+### V4.10.02 DEV R17 – Fit-Matrix Real/CI-Parität
+- Erste reale 504er-FIT-JSON vollständig ausgewertet; 28 Medaillons, 18 Pfeile und 504 Fit-Schlüssel vorhanden.
+- Reale R16-Matrix wegen R12-Provenance, 25/28 LOW-Confidence-Augenprofilen und massiver CI-Abweichung ausdrücklich nicht als Produktkalibrierung freigegeben.
+- Browser- und CI-Augenmessung auf denselben neutralen Runtime-Asset-Seed `runtime-asset-center-parity-v1` vereinheitlicht.
+- Seed-Radius als `87/264` der Runtime-Assetbreite festgelegt und im Export nachvollziehbar gemacht.
+- HA/WebView-Provenance `ha-webview-r17-parity` ergänzt.
+- Loader übergibt Build-/Versionsidentität explizit an den Modulkontext.
+- FIT-MATRIX blockiert bei Loader-/Manifest-Mischstand statt eine falsch zuordenbare Matrix zu erzeugen.
+- Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
+
+
+### V4.10.02 DEV R18 – identischer Real-/CI-Augenalgorithmus
+- Reale R17-FIT-JSON vollständig ausgewertet: 28 Medaillons, 18 Pfeile, 504/504 Fits.
+- R17-Provenienz ist korrekt, Real-/CI-Parität aber weiterhin klar verfehlt.
+- Root Cause auf unterschiedliche Augenalgorithmen eingegrenzt: HA/WebView `radial-color-edge-ellipse-v1` vs. CI `first-consistent-eye-ring-ellipse-v2`.
+- CI-v2-Algorithmus 1:1 in die HA/WebView-Diagnose portiert.
+- Suchbereich auf identische 18–36 % vereinheitlicht.
+- Diagnosemodul auf 1.3.0, Medaillon-Designmodul auf 1.2.2 und Manifest auf 1.2.23 angehoben.
+- Build `V4.10.02-MODULAR-DEV-R18-2026-09-27`, Modulsatz `A84D-29F7`.
+- 14/14 CI-Prüfungen erfolgreich.
+- Keine automatische Anwendung von Fit-Ratios auf die Produktdarstellung.
+
+
+### V4.10.02 DEV R18 – Real-/CI-Fit-Parität bestanden
+- Neue reale R18-Matrix vollständig ausgewertet: 28 Medaillons, 18 Pfeile, 504/504 Fits.
+- 28/28 Augenprofile geometrisch exakt identisch zum CI-R18-Artefakt.
+- Pfeilprofile identisch bis auf IEEE-754-Rundung im Bereich ~1e-14 px.
+- Alle produktrelevanten 504 Fit-Metriken stimmen bis auf Maschinenrundung überein.
+- Confidence real und CI: 26 HIGH / 2 MEDIUM.
+- Scale real und CI: 0.4845504–0.9924283, Mittel 0.7065788.
+- 504/504 Kombinationen überschreiten bei der bisherigen einheitlichen Pfeilgröße den 4-%-Sicherheitsbereich.
+- Abweichende `worstAngleDeg`-Tie-Winkel bei 122 Kombinationen als numerisch gleichwertig und nicht produktrelevant klassifiziert.
+- R18 Real-/CI-Parität technisch freigegeben.
+- Produktive paarweise Pfeilskalierung bleibt separat und weiterhin deaktiviert.
+
+
+### V4.10.02 DEV R18 – Real-/CI-Parität abgenommen
+- Reale R18-FIT-Matrix vollständig mit dem CI-R18-Artefakt verglichen.
+- 28/28 Medaillonprofile numerisch identisch.
+- 504/504 Fits fachlich identisch; maximale Scale-Abweichung 3.33e-16.
+- R18 Real-/CI-Parität bestanden.
+- Worst-Angle-Abweichungen bei Gleichständen als numerisch unkritisch klassifiziert.
+- Automatische Produktanwendung der Fit-Skalierung bleibt weiterhin gesperrt und benötigt eine getrennte Kalibrierungsfreigabe.
+
+
+### V4.10.02 DEV R19 – Augenreferenz + visuelle Pfeilkalibrierung
+- R18 Real-/CI-Parität als technische Grundlage beibehalten.
+- Fit-Geometrie auf Schema `gewitterradar.medallion-arrow-geometry.v2` erweitert.
+- Pfeil-Platzierung und tatsächlichen CSS-Rotationsursprung (`50% 50%`) getrennt.
+- Fit-Matrix berechnet jetzt zusätzlich zentrierte Ratio und empfohlenes Pfeilzentrum X/Y.
+- Pro Medaillon einen eigenen, manuell abnehmbaren Referenzkreis eingeführt: Mittelpunkt X/Y + Radius/Durchmesser.
+- Gelben Referenzkreis im Picker direkt verschiebbar gemacht; Radius zusätzlich per Griff oder Regler einstellbar.
+- Automatisch erkannte Augenellipse bleibt als Vergleichsdiagnose sichtbar.
+- Nur abgenommene Referenzkreise ersetzen die automatische Ellipse in der 504er-Matrix.
+- Änderung einer Augenreferenz invalidiert die 18 abhängigen Paar-Fits und hebt deren Sichtabnahme auf.
+- AUGE-JSON für alle 28 Referenzkreise ergänzt.
+- Paarweise Kalibrierung für Größe und Mittelpunkt X/Y mit AUTO/BASIS/ABNEHMEN/RESET/NÄCHSTER OFFEN beibehalten.
+- KAL-JSON enthält zusätzlich die Medaillon-Augenreferenzen.
+- Keine automatische Übernahme der Kalibrierung in die produktive Pfeildarstellung.
+
+### V4.10.02 DEV R19 – Augen-Referenzkreis und manuelle Pfeilkalibrierung dokumentiert
+- Automatische Augenellipse und fachlich abnehmbaren Referenzkreis als getrennte Diagnoseebenen dokumentiert.
+- Direkte Kreisverschiebung, Radiusgriff und X/Y/Radius-Regler beschrieben.
+- 4-%-Sicherheitsbereich als verbindliche Fit-Grenze nach Auswahl der aktiven Augenreferenz dokumentiert.
+- Pfeil-Platzierung und tatsächlichen CSS-Rotationsursprung getrennt beschrieben.
+- Automatisch empfohlenes und manuell korrigierbares Pfeilzentrum X/Y dokumentiert.
+- Manuelle Pfeilgröße, AUTO/BASIS/ABNEHMEN/RESET/NÄCHSTER-OFFEN und persistente Paarwerte dokumentiert.
+- Fit-Invalidierung nach Änderung einer abgenommenen Augenreferenz dokumentiert.
+- AUGE-JSON, FIT-JSON und KAL-JSON/KAL-CSV samt Provenienz-/Abnahmeanforderungen dokumentiert.
+- Querverweise in Geometriedatenbank, Katalog, Modularchitektur und README ergänzt.
+- Projektneutrale Erkenntnisse parallel in `TheDaimos/home-assistant-dev-toolkit` übernommen.
+
+
+### V4.10.02 DEV R20 – Medaillon-Diagnose kompakter
+- Medaillon-Diagnose in vier einklappbare Akkordeonbereiche gegliedert.
+- Bereiche: Darstellung/Testzustand, Augen-Referenzkreis, Pfeilgröße/Mittelpunkt sowie Fit-Matrix/Export.
+- Beim ersten Öffnen sind alle Bereiche eingeklappt; maximal ein Bereich bleibt gleichzeitig geöffnet.
+- Der zuletzt geöffnete Bereich wird für die laufende Browsersitzung gespeichert.
+- Mess-, Fit- und Kalibrierungslogik aus R19 bleibt unverändert; keine automatische Produkt-Skalierung.
+- Build `V4.10.02-MODULAR-DEV-R20-2026-09-28`, Modul-Set `D31A-5E90`.
+- Finaler Kandidat `372ae36d27b5ac503fd9ab37c7542d4284575ac9` vollständig geprüft und über `deploy/dev` bereitgestellt.

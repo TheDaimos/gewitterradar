@@ -26,8 +26,9 @@ const hass={config:{version:'harness',unit_system:{length:'km'},latitude:0,longi
 let fixture=document.querySelector('#fixture');
 if(scenario==='preview'){const preview=document.createElement('hui-card-preview');fixture.append(preview);fixture=preview;localStorage.removeItem(key);}
 const make=()=>{const card=document.createElement('gewitterradar-card');card.setConfig({});card.hass=hass;fixture.append(card);return card;};
+let card, second;
 try {
-  const card=make(), second=make();
+  card=make(); second=make();
   window.aboutCard=card;
   const assert=(value,message)=>{if(!value)throw Error(message);};
   const expected=!['seen','future','preview'].includes(scenario);
@@ -89,5 +90,23 @@ try {
   second.remove();card._openAbout();
   window.aboutResult={status:'PASS',scenario,cycles:20,settings:16};
   document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);
-}catch(error){window.aboutResult={status:'FAIL',message:error.stack};document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);}
+}catch(error){
+  const debug=card?{
+    built:!!card._built,
+    hasHass:!!card._hass,
+    connected:!!card.isConnected,
+    shadow:!!card.shadowRoot,
+    aboutDialog:!!card._aboutDialog,
+    aboutOpen:!!card._aboutDialog?.open,
+    languageComplete:typeof card._languageOnboardingComplete==='function'?card._languageOnboardingComplete():null,
+    maybeOpenType:typeof card._maybeOpenAbout,
+    openAboutType:typeof card._openAbout,
+    setHassOwn:Object.prototype.hasOwnProperty.call(card,'hass'),
+    prototypeHassSetter:typeof Object.getOwnPropertyDescriptor(Object.getPrototypeOf(card),'hass')?.set,
+    fallbackText:String(card.textContent||'').trim(),
+    fallbackHtml:String(card.innerHTML||'').slice(0,1200)
+  }:null;
+  window.aboutResult={status:'FAIL',message:error.stack,debug};
+  document.querySelector('#result').textContent=JSON.stringify(window.aboutResult);
+}
 </script>

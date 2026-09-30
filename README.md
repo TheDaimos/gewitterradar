@@ -13,7 +13,7 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.09-c9a45b)
+![Version](https://img.shields.io/badge/Gewitterradar-V4.10-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
 ![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
@@ -382,3 +382,16 @@ Copyright © 2026 **Christian Köhler / TheDaimos**.
 Siehe [LICENSE](LICENSE), [COPYRIGHT.md](COPYRIGHT.md), [AUTHORS.md](AUTHORS.md) und [BRANDING.md](BRANDING.md).
 
 Der Name **Gewitterradar**, Logos, Icons, Artwork und die visuelle Identität sind nicht Bestandteil der GPL-3.0-only-Freigabe. Forks und abgeleitete Projekte müssen ein eigenes Branding verwenden, sofern keine separate Erlaubnis vorliegt.
+
+### R19 Medaillon-/Pfeil-Kalibrierung
+
+Für die aktuelle V4.10.02-Entwicklung enthält die Diagnose ein vollständiges Kalibrierwerkzeug für die 28 Trend-Medaillons und 18 Pfeile: automatische Augenmessung, frei verschiebbarer Augen-Referenzkreis mit Radiusgriff, manuelle X/Y/Radius-Abnahme, 360°-Fit gegen den 4-%-Sicherheitsbereich, automatische/manuelle Pfeilgröße, automatischer/manueller Pfeilmittelpunkt X/Y, 504er-Fit-Matrix, Abnahme-/Invalidierungslogik sowie FIT-, AUGE- und KAL-Exporte.
+
+Die Diagnosewerte verändern die Produktdarstellung nicht automatisch.
+
+Dokumentation: [R19 Augenreferenz und Pfeilkalibrierung](docs/R19_MEDALLION_EYE_CALIBRATION_2026-09-27.md), [Medaillon-/Pfeil-Geometriedatenbank](docs/MEDALLION_ARROW_GEOMETRY_DB.md), [Medaillon-/Pfeil-Katalog](docs/MEDALLION_CATALOG.md).
+
+
+### Projektstatistik
+
+Die historische Entwicklungsmenge von der Vor-Git-V3.x-Phase bis zur aktuellen V4.10-Linie wird separat und mit ausgewiesener Unsicherheit dokumentiert: [Projektstatistik](docs/PROJECT_STATISTICS.md).

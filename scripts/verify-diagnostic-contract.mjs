@@ -1,5 +1,5 @@
-import { readFile, access } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, access, readdir } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
 
 const root = process.cwd();
 const protectedSince = [4, 7, 56];
@@ -36,6 +36,26 @@ function section(source, startMarker, endMarker, label) {
   return source.slice(start, end);
 }
 
+
+async function readModularSource(entryPath, source) {
+  const version = parseVersion(source);
+  if (!version || !atLeast(version, [4, 10, 2])) return source;
+  const moduleRoot = resolve(dirname(entryPath), 'modules');
+  const chunks = [source];
+  async function walk(dir) {
+    let entries = [];
+    try { entries = await readdir(dir, { withFileTypes: true }); } catch { return; }
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const path = resolve(dir, entry.name);
+      if (entry.isDirectory()) await walk(path);
+      else if (entry.isFile() && entry.name.endsWith('.js')) chunks.push(await readFile(path, 'utf8'));
+    }
+  }
+  await walk(moduleRoot);
+  return chunks.join('\n');
+}
+
 function verifyContract(source, label, languages) {
   const before = errors.length;
   requireAll(source, [
@@ -65,7 +85,21 @@ function verifyContract(source, label, languages) {
     'data-medallion-freeze="on"', 'data-medallion-freeze="off"',
     'data-medallion-angle="0"', 'data-medallion-angle="45"',
     'data-medallion-angle="90"', 'data-medallion-angle="180"',
-    'data-medallion-angle="270"'
+    'data-medallion-angle="270"',
+    'data-medallion-fit-matrix', 'data-medallion-fit-db-json',
+    'data-medallion-scale', 'data-medallion-center-x', 'data-medallion-center-y',
+    'data-medallion-scale-auto', 'data-medallion-scale-accept', 'data-medallion-scale-next',
+    'data-medallion-calibration-json', 'data-medallion-calibration-csv',
+    'data-medallion-eye-circle', 'data-medallion-eye-x', 'data-medallion-eye-y', 'data-medallion-eye-radius',
+    'data-medallion-eye-auto', 'data-medallion-eye-accept', 'data-medallion-eye-next', 'data-medallion-eye-json',
+    '_measureMedallionArrowFitMatrix', '_measureMedallionEyeAsset',
+    '_measureTrendArrowAsset', '_computeMedallionArrowFit',
+    '_setMedallionVisualCalibrationCenter', '_nextUnreviewedMedallionVisualCalibration',
+    'gewitterradar.medallion-arrow-visual-calibration-export.v2', 'recommendedCenter',
+    'gewitterradar.medallion-eye-calibration.v1', '_resolvedMedallionEyeReference',
+    '_bindMedallionEyeCircleDrag', 'manual-user-circle-v1',
+    'gewitterradar.medallion-arrow-geometry.v2',
+    '_copyTextReliable'
   ], 'medallion states');
 
   requireAll(source, [
@@ -163,7 +197,8 @@ for (const rel of [...new Set(candidates)]) {
   const source = await readFile(path, 'utf8');
   const version = parseVersion(source);
   if (process.env.DIAGNOSTIC_SOURCE || atLeast(version, protectedSince)) {
-    verifyContract(source, `${rel}${version ? ` @ ${version.join('.')}` : ''}`, manifest.requiredLanguages);
+    const contractSource = await readModularSource(path, source);
+    verifyContract(contractSource, `${rel}${version ? ` @ ${version.join('.')}` : ''}`, manifest.requiredLanguages);
     checkedCurrent += 1;
   }
 }

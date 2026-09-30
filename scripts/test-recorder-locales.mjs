@@ -7,7 +7,8 @@ import {readAboutLocaleModel} from './verify-about-locales.mjs';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const source = await readFile(resolve(root, 'frontend/gewitterradar.js'), 'utf8');
 const externalSource = await readFile(resolve(root, 'frontend/locales/about-locales.js'), 'utf8');
-const model = readAboutLocaleModel(source, externalSource);
+const baseContextSource = await readFile(resolve(root, 'frontend/modules/core/base-context.js'), 'utf8');
+const model = readAboutLocaleModel(source, externalSource, baseContextSource);
 
 model.installExternal(model.externalAboutLocales, model.externalHelpLocales);
 

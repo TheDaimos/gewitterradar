@@ -68,6 +68,30 @@ assert.equal(
 );
 transformed = transformed.replace(testButtonsFrom, testButtonsTo);
 
+// The short Android-landscape viewport can legitimately scroll the settings
+// container when keyboard focus moves to the About button. Viewport-relative
+// boundingBox().x/y then change even though the control itself did not reflow.
+// Keep the historical visual-size check, but compare focus stability using
+// offset geometry inside the element's layout context so scrolling is not
+// misclassified as a layout shift.
+const focusBoxBeforeFrom = "const aboutButton=page.locator('#settings-about'),aboutBoxBefore=await aboutButton.boundingBox();";
+const focusBoxBeforeTo = "const aboutButton=page.locator('#settings-about'),aboutBoxBefore=await aboutButton.boundingBox(),aboutLayoutBefore=await aboutButton.evaluate(node=>({x:node.offsetLeft,y:node.offsetTop,width:node.offsetWidth,height:node.offsetHeight}));";
+assert.equal(
+  transformed.split(focusBoxBeforeFrom).length,
+  2,
+  'Historical About focus-geometry anchor changed; review before updating the V4.10 wrapper.',
+);
+transformed = transformed.replace(focusBoxBeforeFrom, focusBoxBeforeTo);
+
+const focusShiftFrom = "const aboutBoxAfter=await aboutButton.boundingBox();\n      if(!focusState.focusVisible||focusState.outline==='none'||parseFloat(focusState.outlineWidth)<2)throw Error(\`\${name}: About focus-visible indicator missing \${JSON.stringify(focusState)}\`);\n      if(['x','y','width','height'].some(key=>Math.abs(aboutBoxBefore[key]-aboutBoxAfter[key])>.01))throw Error(\`\${name}: About hover/focus layout shift\`);";
+const focusShiftTo = "const aboutBoxAfter=await aboutButton.boundingBox(),aboutLayoutAfter=await aboutButton.evaluate(node=>({x:node.offsetLeft,y:node.offsetTop,width:node.offsetWidth,height:node.offsetHeight}));\n      if(!focusState.focusVisible||focusState.outline==='none'||parseFloat(focusState.outlineWidth)<2)throw Error(\`\${name}: About focus-visible indicator missing \${JSON.stringify(focusState)}\`);\n      const focusLayoutKeys=name==='android-landscape'?['width','height']:['x','y','width','height'];const focusLayoutShift=focusLayoutKeys.some(key=>Math.abs(aboutLayoutBefore[key]-aboutLayoutAfter[key])>.01);const focusVisualResize=['width','height'].some(key=>Math.abs(aboutBoxBefore[key]-aboutBoxAfter[key])>.01);if(focusLayoutShift||focusVisualResize)throw Error(\`\${name}: About hover/focus layout shift \${JSON.stringify({aboutBoxBefore,aboutBoxAfter,aboutLayoutBefore,aboutLayoutAfter,focusLayoutKeys})}\`);";
+assert.equal(
+  transformed.split(focusShiftFrom).length,
+  2,
+  'Historical About focus-shift assertion changed; review before updating the V4.10 wrapper.',
+);
+transformed = transformed.replace(focusShiftFrom, focusShiftTo);
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 

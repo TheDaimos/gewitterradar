@@ -1,0 +1,54 @@
+name: V4.10 PRE-MERGE source protection
+
+on:
+  push:
+    branches:
+      - feature/v4.10-finalization
+    paths:
+      - 'docs/archive-triggers/V4_10_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  premerge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout full source history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify expected pre-promotion main and trigger
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fx 'VERSION=V4.10' docs/archive-triggers/V4_10_PRE_MERGE.trigger
+          grep -Fx 'EXPECTED_MAIN=17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c' docs/archive-triggers/V4_10_PRE_MERGE.trigger
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = '17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c'
+      - name: Create exact PRE-MERGE ZIP and Git bundle
+        id: snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh PRE_MERGE 17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c V4.10 dist/source-archives
+      - name: Verify immutable PRE-MERGE artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s '${{ steps.snapshot.outputs.zip_path }}'
+          test -s '${{ steps.snapshot.outputs.bundle_path }}'
+          test -s '${{ steps.snapshot.outputs.checksum_path }}'
+          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.snapshot.outputs.checksum_path }}')")
+          unzip -tq '${{ steps.snapshot.outputs.zip_path }}'
+          git bundle verify '${{ steps.snapshot.outputs.bundle_path }}'
+      - name: Upload PRE-MERGE source preservation
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.10_MAIN_PRE_17f8e7be
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90

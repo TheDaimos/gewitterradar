@@ -1,0 +1,13 @@
+{
+  "contractVersion": 1,
+  "version": "4.10.01",
+  "status": "DEV",
+  "baseRelease": "4.09",
+  "baseReleaseCommit": "a6a5b68ebc289f04217bc5abb55c46422dce4e4c",
+  "sha256": "186ce9e48261419fee9e7c0625f35230e5b5c699c0742e2e699db5ec04f54db5",
+  "sizeBytes": 2249312,
+  "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
+  "localeSizeBytes": 741069,
+  "build": "V4.10.01-DEV-2026-09-21",
+  "scope": "premium compass picker, live cyclic selection, Hi-Res close control, gold frame/chevrons and fullscreen tap-vs-drag separation"
+}
