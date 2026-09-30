@@ -34,7 +34,13 @@ jobs:
           sha256sum frontend/assets/gewitterradar-runtime-manifest.json
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
-      - name: V4.11 WeatherRouter Consumer V1 contract\n        run: node scripts/test-v411-weather-router.mjs\n\n      - name: V4.11 canonical DEV identity\n        run: node scripts/test-v411-identity.mjs\n\n      - name: Canonical frontend contract
+      - name: V4.11 WeatherRouter Consumer V1 contract
+        run: node scripts/test-v411-weather-router.mjs
+
+      - name: V4.11 canonical DEV identity
+        run: node scripts/test-v411-identity.mjs
+
+      - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
       - name: Emit regenerated checksum inventory on failure
