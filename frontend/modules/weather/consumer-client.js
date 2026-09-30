@@ -1,3 +1,5 @@
+import { defineModule } from '../core/runtime.js?v=41002r13';
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -85,3 +87,18 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
   function reset(){discovery=null;catalog=null;}
   return Object.freeze({discover,capabilities,resolve,reset,get discovery(){return discovery;},get profileId(){return profile;}});
 }
+
+/* Lazily bound to the CURRENT Home Assistant connection; no calls during boot. */
+export const installWeatherRouter=defineModule(MODULE_META,()=>({
+  _weatherRouterClient(){
+    if(!this.__weatherRouterClient)this.__weatherRouterClient=createWeatherRouterClient(message=>{
+      if(!this._hass||typeof this._hass.callWS!=='function')throw new Error('Home Assistant WebSocket unavailable');
+      return this._hass.callWS(message);
+    });
+    return this.__weatherRouterClient;
+  },
+  _weatherRouterDiscovery(options){return this._weatherRouterClient().discover(options);},
+  _weatherRouterCapabilities(options){return this._weatherRouterClient().capabilities(options);},
+  _weatherRouterResolve(capability,context,options){return this._weatherRouterClient().resolve(capability,context,options);},
+  _weatherRouterReset(){this.__weatherRouterClient?.reset();}
+}));
