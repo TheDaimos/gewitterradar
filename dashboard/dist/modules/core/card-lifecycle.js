@@ -1,4 +1,4 @@
-import { defineModule } from "./runtime.js?v=41103r1";
+import { defineModule } from "./runtime.js?v=41104r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
   "version": "1.0.3",

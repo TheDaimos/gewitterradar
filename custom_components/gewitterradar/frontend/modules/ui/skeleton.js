@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41103r1";
+import { defineModule } from "../core/runtime.js?v=41104r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7742,6 +7742,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       this._applyStaticTranslations();
       this._bindControls();
       this._mountWeatherRouterSettings?.();
+      this._mountWeatherRadarSettings?.();
       this._initMap();
       this._setupOrientationCapabilityProbe();
     },
