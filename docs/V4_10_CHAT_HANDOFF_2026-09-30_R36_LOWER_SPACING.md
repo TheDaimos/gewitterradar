@@ -19,8 +19,9 @@ Stand: 2026-09-30
 - Quellfassung, native Auslieferung, Dashboard-Auslieferung, Modul- und Laufzeitmanifest, Cache, Vertragsdatei, Prüfsummen sowie die vorhandene Layout-Testumgebung wurden abgeglichen.
 
 ## Prüfung und Bereitstellung
-- Zentrale CI-Ergebnisse für R36 **erst nach der Code-Übertragung ermitteln**. Hier wird keine erfolgreiche Prüfung vorweggenommen.
-- `deploy/dev` erst nach den erfolgreich verifizierten zentralen CI-Pfaden auf den genauen technischen R36-Code-Commit setzen. DRA ist verbindlich.
+- Fünf zentrale CI-Prüfpfade am R36-Code-Commit `c80509d52f18e1d8b508caea08acef0404c7d2e6`: SUCCESS. Nachweise: Shared Frontend Run 36684673296 (zusätzlich 36684680159 SUCCESS), Integration Run 36684679988, Diagnostic contract Run 36684680173, Source archive contract Run 36684680007, Hi-Res asset retention Run 36684680176.
+- `deploy/dev` wurde nach bestätigtem CI-Erfolg ohne Force auf exakt `c80509d52f18e1d8b508caea08acef0404c7d2e6` gesetzt und anschließend per GitHub-Zweigabfrage verifiziert. DRA ist verbindlich; eine reale Installation/Abnahme wird hier nicht vorweggenommen.
+- Durch die Aktualisierung von `deploy/dev` können weitere CI-Durchläufe desselben unveränderten Code-Commits anlaufen; diese sind gesondert zu beobachten.
 - Bei der Realabnahme zuerst Standard-iPad und iPad Pro: obere R35-Anordnung erhalten; Gradzahl und Zusatzinformationen tiefer, mehr Freiraum unter dem Kompass; Azimut/Distanz nahe der unteren Feldkante ohne Anschnitt.
 - Danach Desktop mit gleicher Zielwirkung, anschließend Android ohne Regression und noch offener Hilfe-Abschnitt, anschließend Aura AUS → Designwechsel → Aura AN mit persistentem Design.
 - Keine Realabnahme vorweg als bestanden darstellen; keine Änderung an `main`, kein Merge, Release oder Tag ohne ausdrückliche Freigabe.
