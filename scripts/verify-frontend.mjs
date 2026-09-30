@@ -14,7 +14,7 @@ const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cock
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.13"',
+  '"version": "1.1.14"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -33,9 +33,9 @@ for(const marker of [
   '#trend-box:focus-visible',
   'R33 – sehr schmale Touch-Anzeigen',
   'R34: Auf dem iPad im Querformat',
-  'R35: In zweispaltigen Querformatansichten',
-  'order:-1;',
-  'margin-bottom:24px;',
+  'R37: Einheitliche Android-Reihenfolge',
+  'Die R35-Umordnung',
+  '.compass-corner-controls gelten jetzt auch hier unveraendert.',
   '#card-root:not(.ipad-device) .compass-panel',
   'R36: Die bisherige untere Reserve',
   'padding-bottom:16px;',
@@ -101,7 +101,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.3.1"',
+  '"version": "1.3.2"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -333,6 +333,8 @@ for(const language of registeredLanguages){
   const helpBundle=v410HelpInstruments[language];
   if(!helpBundle||typeof helpBundle.title!=='string'||!helpBundle.title.trim()||typeof helpBundle.intro!=='string'||!helpBundle.intro.trim())throw Error('Missing V4.10 help translation: '+language);
   if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==5||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete V4.10 help entries: '+language);
+  // R37: Counts of designs/arrows must remain absent as catalogs grow.
+  if([1,2].some((index)=>/\d/u.test(helpBundle.entries[index][1])))throw Error('Fixed instrument design count in help: '+language);
   if(/aura/i.test(String(helpBundle.entries[1]?.[0]||'')))throw Error('Aura help entry still interrupts instrument selection flow: '+language);
   if(!/(?:aur|αύρ)/i.test(String(helpBundle.entries[4]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
     const clusterBundle=clusterResolutionLabels[language];

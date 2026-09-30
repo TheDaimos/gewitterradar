@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "9299569d91eedc05b68a00d4c19bd289c2271386bf67ac5741341c0d28dee63a",
+  "sha256": "d8c6c94315e53dfa0972a095ef3d9a4d49c02f3d4ff0c473fbb1dca8491c0c51",
   "sizeBytes": 8712,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R36-2026-09-30",
+  "build": "V4.10.02-MODULAR-DEV-R37-2026-09-30",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "a03e60e1a60ff9f75d024b731a85d5dfaab96de35e997ac446ab1489ec3f0e51",
+      "sha256": "54016abbdcc295567bd5aa52406366f6f8505cf3cdd5489654f3d458f1e0718c",
       "sizeBytes": 7479
     },
     "modules/core/registry.js": {
@@ -35,8 +35,8 @@
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "84c2d77d4b50cd8a4b83897c84f936aa179c9f527506a9a4ddace599f8e5261c",
-      "sizeBytes": 429732
+      "sha256": "cc0a06d75c516a1f6f8709d947b5a5c7eb959a044ec39bf72d1360b8550c7083",
+      "sizeBytes": 429777
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",
@@ -47,8 +47,8 @@
       "sizeBytes": 181819
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "478333fab88f5522d974baf2568b381d16205e76c45c779dfaa18bf1317fbcbb",
-      "sizeBytes": 238620
+      "sha256": "e2ad7fdfea8f0bfc8610d5b1cf1f7f72ac4245d7743e09ba8800ddaac8f413a5",
+      "sizeBytes": 238523
     },
     "modules/core/source-status.js": {
       "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",

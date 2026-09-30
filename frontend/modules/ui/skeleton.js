@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5065,9 +5065,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             }
           }
 
-          /* R35: In zweispaltigen Querformatansichten stehen die beiden
-             Bedienknöpfe wieder oberhalb des Kompasses. Ohne Diagnoseknöpfe
-             entfällt der alte Selector-Kopfraum auf iPad und Desktop. */
+          /* R37: Einheitliche Android-Reihenfolge fuer alle Ansichten:
+             Instrument oben, darunter beide Bedienknoepfe und mit Abstand
+             Gradzahl, Legende sowie Azimut-/Distanzkarten. Die R35-Umordnung
+             oberhalb des Instruments entfaellt; die R36-Unterkante bleibt. */
           @media (min-width:960px) and (orientation:landscape) {
             /* R36: Den Desktop-Fussraum nach innen verlagern. Die Summe
                54 - 4 + 11 bleibt mit 16 + 20 + 25 unveraendert. */
@@ -5088,12 +5089,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #card-root .compass-head:not(:has([data-warning-test]:not([hidden]))) + .compass-wrap {
               padding-top:0;
             }
-            #card-root .compass-corner-controls {
-              order:-1;
-              margin-top:0;
-              margin-bottom:24px;
-              transform:none;
-            }
+            /* Die DOM-Reihenfolge und der gemeinsame Grundstil der
+               .compass-corner-controls gelten jetzt auch hier unveraendert. */
             #card-root .compass-instrument {
               margin-inline:auto;
             }

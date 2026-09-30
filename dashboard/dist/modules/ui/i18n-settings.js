@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -1547,11 +1547,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon auswählen",
-        "Auf das Medaillon tippen oder klicken, um aus 28 Medaillon-Designs auszuwählen."
+        "Auf das Medaillon tippen oder klicken, um ein Design auszuwählen."
       ],
       [
         "Pfeil auswählen",
-        "In derselben Auswahl auf „Pfeil“ wechseln. Dort stehen 18 Pfeilvarianten unabhängig vom Medaillon zur Verfügung."
+        "In derselben Auswahl auf „Pfeil“ wechseln. Die Pfeilvariante lässt sich unabhängig vom Medaillon auswählen."
       ],
       [
         "Vollbild-Instrumente",
@@ -1573,11 +1573,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Choose Medallion",
-        "Tap or click the Medallion to choose from 28 Medallion designs."
+        "Tap or click the Medallion to choose a design."
       ],
       [
         "Choose arrow",
-        "Switch to “Arrow” in the same selection. 18 arrow variants are available independently of the Medallion."
+        "Switch to “Arrow” in the same selection. Choose an arrow variant independently of the Medallion."
       ],
       [
         "Fullscreen instruments",
@@ -1599,11 +1599,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Vælg medaljon",
-        "Tryk eller klik på medaljonen for at vælge mellem 28 medaljondesigns."
+        "Tryk eller klik på medaljonen for at vælge et design."
       ],
       [
         "Vælg pil",
-        "Skift til “Pil” i samme valg. Her findes 18 pilvarianter uafhængigt af medaljonen."
+        "Skift til “Pil” i samme valg. Vælg pilvarianten uafhængigt af medaljonen."
       ],
       [
         "Fuldskærmsinstrumenter",
@@ -1625,11 +1625,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Elegir medallón",
-        "Toca o haz clic en el medallón para elegir entre 28 diseños."
+        "Toca o haz clic en el medallón para elegir un diseño."
       ],
       [
         "Elegir flecha",
-        "Cambia a “Flecha” en la misma selección. Hay 18 variantes independientes del medallón."
+        "Cambia a “Flecha” en la misma selección. Puedes elegir la variante de flecha independientemente del medallón."
       ],
       [
         "Instrumentos a pantalla completa",
@@ -1651,11 +1651,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Choisir le médaillon",
-        "Touchez ou cliquez sur le médaillon pour choisir parmi 28 designs."
+        "Touchez ou cliquez sur le médaillon pour choisir un design."
       ],
       [
         "Choisir la flèche",
-        "Passez à « Flèche » dans la même sélection. 18 variantes sont disponibles indépendamment du médaillon."
+        "Passez à « Flèche » dans la même sélection. Choisissez la variante de flèche indépendamment du médaillon."
       ],
       [
         "Instruments plein écran",
@@ -1677,11 +1677,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon kiezen",
-        "Tik of klik op het medaillon om uit 28 ontwerpen te kiezen."
+        "Tik of klik op het medaillon om een ontwerp te kiezen."
       ],
       [
         "Pijl kiezen",
-        "Schakel in dezelfde keuze naar “Pijl”. Er zijn 18 pijlvarianten onafhankelijk van het medaillon."
+        "Schakel in dezelfde keuze naar “Pijl”. Kies de pijlvariant onafhankelijk van het medaillon."
       ],
       [
         "Volledig-scherminstrumenten",
@@ -1703,11 +1703,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Wybór medalionu",
-        "Dotknij lub kliknij medalion, aby wybrać jeden z 28 wzorów."
+        "Dotknij lub kliknij medalion, aby wybrać wzór."
       ],
       [
         "Wybór strzałki",
-        "W tym samym oknie przełącz na „Strzałka”. Dostępnych jest 18 wariantów niezależnych od medalionu."
+        "W tym samym oknie przełącz na „Strzałka”. Wariant strzałki można wybrać niezależnie od medalionu."
       ],
       [
         "Instrumenty pełnoekranowe",
@@ -1729,11 +1729,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Escolher medalhão",
-        "Toque ou clique no medalhão para escolher entre 28 designs."
+        "Toque ou clique no medalhão para escolher um design."
       ],
       [
         "Escolher seta",
-        "Na mesma seleção, mude para “Seta”. Existem 18 variantes independentes do medalhão."
+        "Na mesma seleção, mude para “Seta”. Escolha a variante da seta independentemente do medalhão."
       ],
       [
         "Instrumentos em ecrã inteiro",
@@ -1755,11 +1755,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Välj medaljong",
-        "Tryck eller klicka på medaljongen för att välja bland 28 designer."
+        "Tryck eller klicka på medaljongen för att välja en design."
       ],
       [
         "Välj pil",
-        "Byt till “Pil” i samma val. Det finns 18 pilvarianter oberoende av medaljongen."
+        "Byt till “Pil” i samma val. Välj pilvarianten oberoende av medaljongen."
       ],
       [
         "Fullskärmsinstrument",
@@ -1781,11 +1781,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Scegliere il medaglione",
-        "Tocca o fai clic sul medaglione per scegliere tra 28 design."
+        "Tocca o fai clic sul medaglione per scegliere un design."
       ],
       [
         "Scegliere la freccia",
-        "Nella stessa selezione passa a “Freccia”. Sono disponibili 18 varianti indipendenti dal medaglione."
+        "Nella stessa selezione passa a “Freccia”. Scegli la variante della freccia indipendentemente dal medaglione."
       ],
       [
         "Strumenti a schermo intero",
@@ -1807,11 +1807,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Velg medaljong",
-        "Trykk eller klikk på medaljongen for å velge mellom 28 design."
+        "Trykk eller klikk på medaljongen for å velge et design."
       ],
       [
         "Velg pil",
-        "Bytt til “Pil” i samme valg. Her finnes 18 varianter uavhengig av medaljongen."
+        "Bytt til “Pil” i samme valg. Velg pilvarianten uavhengig av medaljongen."
       ],
       [
         "Fullskjermsinstrumenter",
@@ -1833,11 +1833,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Valitse medaljonki",
-        "Napauta tai napsauta medaljonkia valitaksesi 28 mallista."
+        "Napauta tai napsauta medaljonkia valitaksesi mallin."
       ],
       [
         "Valitse nuoli",
-        "Vaihda samassa valinnassa kohtaan “Nuoli”. Saatavilla on 18 medaljongista riippumatonta vaihtoehtoa."
+        "Vaihda samassa valinnassa kohtaan “Nuoli”. Valitse nuolivaihtoehto medaljongista riippumatta."
       ],
       [
         "Koko näytön instrumentit",
@@ -1859,11 +1859,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Výběr medailonu",
-        "Klepněte nebo klikněte na medailon a vyberte z 28 designů."
+        "Klepněte nebo klikněte na medailon a vyberte design."
       ],
       [
         "Výběr šipky",
-        "Ve stejném výběru přepněte na „Šipka“. K dispozici je 18 variant nezávislých na medailonu."
+        "Ve stejném výběru přepněte na „Šipka“. Varianty šipek lze vybrat nezávisle na medailonu."
       ],
       [
         "Nástroje na celou obrazovku",
@@ -1885,11 +1885,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Επιλογή μεταλλίου",
-        "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε ανάμεσα σε 28 σχέδια."
+        "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε σχέδιο."
       ],
       [
         "Επιλογή βέλους",
-        "Στην ίδια επιλογή μεταβείτε στο «Βέλος». Υπάρχουν 18 παραλλαγές ανεξάρτητες από το μετάλλιο."
+        "Στην ίδια επιλογή μεταβείτε στο «Βέλος». Επιλέξτε την παραλλαγή βέλους ανεξάρτητα από το μετάλλιο."
       ],
       [
         "Όργανα πλήρους οθόνης",
@@ -1911,11 +1911,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medalion kiválasztása",
-        "Koppints vagy kattints a medalionra, és válassz a 28 dizájn közül."
+        "Koppints vagy kattints a medalionra, és válassz egy dizájnt."
       ],
       [
         "Nyíl kiválasztása",
-        "Ugyanebben a választóban válts a „Nyíl” módra. 18, a medaliontól független változat érhető el."
+        "Ugyanebben a választóban válts a „Nyíl” módra. A nyíl változata a medaliontól függetlenül választható ki."
       ],
       [
         "Teljes képernyős műszerek",
@@ -1937,11 +1937,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon auswählen",
-        "Aufs Medaillon tippen oder klicken und aus 28 Designs auswählen."
+        "Aufs Medaillon tippen oder klicken und a Design auswählen."
       ],
       [
         "Pfeil auswählen",
-        "In derselben Auswahl auf „Pfeil“ wechseln. Dort gibt’s 18 Varianten unabhängig vom Medaillon."
+        "In derselben Auswahl auf „Pfeil“ wechseln. D’Pfeilvariante lässt si unabhängig vom Medaillon auswählen."
       ],
       [
         "Vollbild-Instrumente",
@@ -1963,11 +1963,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon utwählen",
-        "Op dat Medaillon tippen oder klicken un ut 28 Designs wählen."
+        "Op dat Medaillon tippen oder klicken un en Design utwählen."
       ],
       [
         "Piel utwählen",
-        "In de sülvige Utwahl op „Piel“ wesseln. Dor gifft dat 18 Varianten, unabhängig vun’t Medaillon."
+        "In de sülvige Utwahl op „Piel“ wesseln. De Pielvariant lett sik unabhängig vun’t Medaillon utwählen."
       ],
       [
         "Vullbill-Instrumenten",
@@ -1989,11 +1989,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon auswählen",
-        "Uffs Medaillon tippen oder klicken und aus 28 Designs auswählen."
+        "Uffs Medaillon tippen oder klicken und e Design auswähln."
       ],
       [
         "Pfeil auswählen",
-        "In derselben Auswahl uff „Pfeil“ wechseln. Dort gibt’s 18 Varianten unabhängig vom Medaillon."
+        "In derselben Auswahl uff „Pfeil“ wechseln. De Pfeilvariante kann unabhängig vom Medaillon ausgewählt werdn."
       ],
       [
         "Vollbild-Instrumente",
@@ -2015,11 +2015,11 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
       ],
       [
         "Medaillon auswählen",
-        "Aufs Medaillon tippa oder klicka ond aus 28 Designs auswähla."
+        "Aufs Medaillon tippa oder klicka ond a Design auswähla."
       ],
       [
         "Pfeil auswählen",
-        "In dr gleiche Auswahl auf „Pfeil“ wechsla. Do gibt’s 18 Varianten unabhängig vom Medaillon."
+        "In dr gleiche Auswahl auf „Pfeil“ wechsla. D’Pfeilvariante lässt sich unabhängig vom Medaillon auswähla."
       ],
       [
         "Vollbild-Instrumente",
