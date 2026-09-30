@@ -8,10 +8,16 @@ export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function walk(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await walk(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
 async function modularPayload(contract){const wanted=Object.keys(contract.moduleFiles||{}).sort();const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();if(JSON.stringify(actual)!==JSON.stringify(wanted))throw Error('Modular source inventory mismatch');const payload=new Map();for(const name of wanted){const bytes=await readFile(resolve(root,'frontend',name)),expected=contract.moduleFiles[name];if(bytes.length!==expected.sizeBytes||hash(bytes)!==expected.sha256)throw Error('Module contract mismatch '+name);payload.set(name,bytes);}return payload;}
 export async function expectedPayload(){
- const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
+ const releaseV409=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
- let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("const CARD_VERSION = '4.10.02';")){
+ let modular=new Map(),localeSha=releaseV409.localeSha256,localeSize=releaseV409.localeSizeBytes;
+ if(text.includes("const CARD_VERSION = '4.10';")){
+  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
+  if(release.version!=='4.10'||release.nativeIntegration!=='0.22.0')throw Error('V4.10 release contract identity changed');
+  if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('V4.10 frontend release contract mismatch');
+  if(!text.includes("const CARD_DISPLAY_VERSION = '4.10';")||!text.includes('V4.10-RELEASE-2026-09-30'))throw Error('V4.10 release markers missing');
+  modular=await modularPayload(release);localeSha=release.localeSha256;localeSize=release.localeSizeBytes;
+ }else if(text.includes("const CARD_VERSION = '4.10.02';")){
   const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.02.json'),'utf8'));
   if(dev.version!=='4.10.02'||dev.status!=='DEV'||dev.baseVersion!=='4.10.01')throw Error('V4.10.02 contract identity changed');
   if(source.length!==dev.sizeBytes||hash(source)!==dev.sha256)throw Error('V4.10.02 frontend contract mismatch');
@@ -21,7 +27,7 @@ export async function expectedPayload(){
   const dev=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-dev-v4.10.01.json'),'utf8'));
   if(source.length!==dev.sizeBytes||hash(source)!==dev.sha256)throw Error('V4.10.01 contract mismatch');
  }else if(text.includes("const CARD_VERSION = '4.09';")){
-  if(source.length!==release.sizeBytes||hash(source)!==release.sha256)throw Error('V4.09 release contract mismatch');
+  if(source.length!==releaseV409.sizeBytes||hash(source)!==releaseV409.sha256)throw Error('V4.09 release contract mismatch');
  }else throw Error('Frontend version is not covered by an active contract');
  const locale=await readFile(resolve(root,'frontend/locales/about-locales.js'));
  if(locale.length!==localeSize||hash(locale)!==localeSha)throw Error('Locale contract mismatch');
