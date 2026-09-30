@@ -25,4 +25,10 @@ Stand: 2026-09-30
 - Bei der Realabnahme zuerst Standard-iPad und iPad Pro: obere R35-Anordnung erhalten; Gradzahl und Zusatzinformationen tiefer, mehr Freiraum unter dem Kompass; Azimut/Distanz nahe der unteren Feldkante ohne Anschnitt.
 - Danach Desktop mit gleicher Zielwirkung, anschließend Android ohne Regression und noch offener Hilfe-Abschnitt, anschließend Aura AUS → Designwechsel → Aura AN mit persistentem Design.
 - Keine Realabnahme vorweg als bestanden darstellen; keine Änderung an `main`, kein Merge, Release oder Tag ohne ausdrückliche Freigabe.
+## Teilabnahme – Desktop R36 (2026-09-30)
+- Christian hat einen aktuellen Desktop-Screenshot der R36-Kompassansicht zur Verfügung gestellt und bestätigt: „Passt und sitzt.“
+- Sichtgeprüft und vom Nutzer akzeptiert: obere Bedienknöpfe oberhalb des Instruments; zentriertes, nicht beschnittenes Instrument; deutlich besserer Abstand zu Gradzahl/Himmelsrichtung und Zusatzinfos; Azimut-/Distanzkarten weit unten mit sauberer Restkante und ohne sichtbare Überlappung. **Desktop-Kompasslayout R36: abgenommen.**
+- Nicht automatisch damit abgenommen: Desktop-Hilfe-Icon, Hilfeabschnitt und sprachabhängige Mouse-over-Texte; Standard-iPad/iPad-Pro mit R36, Android sowie Aura-/Kompass-Regression. Kein Gesamt-FINAL.
+- Nächster Realtest: Standard-iPad, danach iPad Pro mit R36, unter besonderer Beachtung derselben unteren Abstandskorrektur.
+
 - Erinnerungsschutz aktiv; wichtige neue Befunde rechtzeitig erneut in Git sichern.
