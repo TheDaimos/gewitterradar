@@ -8,7 +8,8 @@
     "artwork/location-search/hires",
     "artwork/location-search/legacy",
     "artwork/about-controls",
-    "artwork/compass-chevron/hires"
+    "artwork/compass-chevron/hires",
+    "artwork/weather-router/retained-renditions"
   ],
   "requiredMetadataPaths": [
     "docs/ASSET_RETENTION_POLICY.md",
@@ -17,7 +18,8 @@
     "artwork/location-search/README.md",
     "artwork/about-controls/provenance.json",
     "artwork/compass-chevron/README.md",
-    "artwork/compass-chevron/provenance.json"
+    "artwork/compass-chevron/provenance.json",
+    "artwork/weather-router/README.md"
   ],
   "protectedBlobs": [
     {
@@ -265,6 +267,12 @@
       "preferredPath": "artwork/help-icons/hires/help-instruments-v410-compass.svg",
       "gitBlobSha1": "82a3d4ac5d0cf20652414bef35415b3dbae4e3b7",
       "sizeBytes": 7034
+    },
+    {
+      "label": "Official WeatherRouter emblem V004 protected 512px rendition (master retained in WeatherRouter repository)",
+      "preferredPath": "artwork/weather-router/retained-renditions/weather-router-emblem-v004-512.png",
+      "gitBlobSha1": "2e4f3f09eaf242f55374a45abe27a2368640a40e",
+      "sizeBytes": 448948
     }
   ]
 }

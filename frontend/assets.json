@@ -83,7 +83,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "557eaee3a86a7fa2b893c530e6ec130cf66391af5938c78ccdfa0f91d13e4423",
+    "sha256": "9ddcc5eb4ea34d9ce36f651e0ea3c9262f9bacc2f6fa04ebb1eebd7e09560cc7",
     "protected": false
   },
   {
@@ -332,5 +332,10 @@
     "file": "assets/gewitterradar-trend-medallion.png",
     "sha256": "e54c26288716286fef786710672c17d90417c014ae99ffdf19fea55e7a6612c5",
     "protected": true
+  },
+  {
+    "file": "assets/weather-router-emblem-v004-256.png",
+    "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
+    "protected": false
   }
 ]

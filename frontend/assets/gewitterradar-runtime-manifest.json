@@ -3,7 +3,7 @@
   "productVersion": "4.11.01",
   "build": "V4.11.01-DEV-2026-09-30",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "E411-01A1",
+  "moduleSetId": "E411-01A2",
   "modules": [
     {
       "id": "core.manifest",
@@ -99,7 +99,7 @@
     },
     {
       "id": "weather.consumer-client",
-      "version": "1.0.1"
+      "version": "1.0.2"
     }
   ]
 }

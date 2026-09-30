@@ -1,9 +1,10 @@
 import { defineModule } from '../core/runtime.js?v=41002r13';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.1',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.2',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
  */
+export const WEATHER_ROUTER_LOGO_IMAGE = new URL('../../assets/weather-router-emblem-v004-256.png', import.meta.url).href;
 export const WEATHER_ROUTER_CONTRACT=1;
 export const WEATHER_ROUTER_CAPABILITIES=Object.freeze({
   lightningEvents:'weather.lightning.observed.events',
@@ -103,6 +104,16 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
   _weatherRouterReset(){this.__weatherRouterClient?.reset();},
   _mountWeatherRouterSettings(){
     const root=this.shadow;
+    const title=root?.querySelector('#weather-engine-section .settings-section-title');
+    if(title&&!title.querySelector('[data-weather-router-logo]')){
+      const logo=document.createElement('img');
+      logo.src=WEATHER_ROUTER_LOGO_IMAGE;
+      logo.alt='';
+      logo.setAttribute('aria-hidden','true');
+      logo.dataset.weatherRouterLogo='true';
+      logo.style.cssText='width:34px;height:34px;object-fit:contain;vertical-align:middle;margin-right:9px;flex-shrink:0;';
+      title.prepend(logo);
+    }
     const check=root?.getElementById('weather-engine-check');
     const inspect=root?.getElementById('weather-engine-inspect');
     const status=root?.getElementById('weather-engine-status');
