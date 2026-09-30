@@ -30,3 +30,10 @@ Stand: 2026-09-30
 
 ## Erinnerungsschutz
 - Frühwarnung rechtzeitig vor knappem Chatkontext, nicht mit erfundener Prozentzahl; neue dauerhafte Befunde nach Prüfung in Git sichern.
+
+## Realabnahme R37 – einheitliche Kompassanordnung (2026-09-30)
+- Nach Bereitstellung des technischen R37-Kandidaten über DRA bestätigt Christian ausdrücklich: „Passt, ist nun überall einheitlich“.
+- Damit ist die neue, auf Android basierende Kompass-Anordnung **auf den verwendeten Geräten durch den Nutzer abgenommen**: Instrument zuerst; „Letzter Treffer“ und „Kompass“ darunter; anschließend Gradzahl/Himmelsrichtung, Legende und untere Azimut-/Distanzkarten. Die frühere R35-Schalteranordnung oberhalb des Instruments ist damit ersetzt.
+- Dies ist die **Layout-Teilabnahme R37**. Keine neue Aussage über pixelgenaue Kalibrierung oder noch nicht gezeigte Hilfe- und Funktionszustände daraus ableiten.
+- Gesondert **OFFEN**: goldenes Hilfe-Icon, Hilfe-Reihenfolge und die neuen mengenfreien Texte auf Deutsch und in einer weiteren Sprache; Desktop-Mouse-over in der gewählten Sprache; Aura-/Kompass-Regression (Design wählen → Aura AUS, Design bleibt → bei Aura AUS anderes Design → Aura AN, neues Design bleibt).
+- Nachfolgende reine Dokumentations-Commits sind keine neuen technischen DRA-Kandidaten. `deploy/dev` bleibt auf `bbe2730c57030b0bb72d0d1f74de3c949fb3e294`. Keine V4.10-FINAL-Freigabe, kein Merge/Tag/Release ohne ausdrückliche Entscheidung.
