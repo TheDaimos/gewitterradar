@@ -1,3 +1,12 @@
+# V4.10 FINAL · 2026-09-30
+
+- vollständig real abgenommenen R40-Stand als öffentliche **V4.10** normalisiert;
+- Hauptfenster-Plakette, Build-, Modul- und Laufzeitidentität auf **V4.10 / 2026/09** vereinheitlicht;
+- native Home-Assistant-Integration auf **0.22.0** angehoben;
+- sechs vereinbarte Realtests und abschließende DE/EN-Sichtprüfung bestanden;
+- historische V4.10-Angaben **28 Medaillon-Designs und 18 Pfeilvarianten** unverändert erhalten;
+- keine neuen Funktionen gegenüber dem abgenommenen R40-Kandidaten.
+
 # Changelog
 
 ## V4.10.02 DEV – R33 · Mobile-Kompass & Hilfe-Feinschliff (2026-09-29)
