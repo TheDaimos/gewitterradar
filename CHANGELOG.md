@@ -1,5 +1,14 @@
 # Changelog
 
+## V4.11.04 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Behebt einen real entdeckten V4.11.02/V4.11.03-Fehler: Das Modul `weather.precipitation-layer` war geladen und vollständig implementiert, aber sein Einstellungsblock wurde beim Aufbau des Dialogs nicht eingehängt.
+- `ui.skeleton` ruft nun nach `_mountWeatherRouterSettings()` zusätzlich `_mountWeatherRadarSettings()` auf. Dadurch erscheinen in der Weather-Engine tatsächlich **„Niederschlagsradar · Kartenebene“** und **„Radar-Vorladebereich“**.
+- Regressionstest verschärft: Beide Auslieferungen werden auf Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat explizit auf Radar-Schalter, Pufferprofil und Pufferstatus geprüft.
+- Kanonische DEV-Identität: Produkt `4.11.04`, Anzeige `V4.11.04 DEV`, Build `V4.11.04-DEV-2026-09-30`, Runtime `41104r1`, Modulsatz `E411-04A1`, native Integration `0.23.3`.
+- `ui.skeleton` auf `1.1.17`, `core.manifest` auf `1.2.50`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Der bereits in V4.11.03 erfolgreich real geprüfte automatische Updatewächter bleibt unverändert und soll beim Wechsel V4.11.03 → V4.11.04 erneut im Realbetrieb bestätigt werden.
+
 ## V4.11.03 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
 
 - Niederschlagsradar um einen **konfigurierbaren räumlichen Vorladepuffer** erweitert, damit beim Verschieben und Zoomen der Karte bereits angrenzende Radarkacheln bereitstehen können.
