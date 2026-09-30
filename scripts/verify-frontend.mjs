@@ -57,7 +57,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.4"',
+  'version:"1.3.5"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -78,6 +78,9 @@ for(const marker of [
   'const modulePresentation=(language,row)=>',
   'moduleRuntimeManifestUrl',
   '_refreshModuleRuntimeProbe(result)',
+  'const fingerprintMismatch=loadedId!==expectedId;',
+  'const installedReleaseMismatch=Boolean(installedId&&releaseId&&installedId!==releaseId);',
+  'if(probe?.installedReleaseMismatch||probe?.revisionMismatch)',
   'cache:"no-store"',
   'modules.runtime_stale',
   'modules.set_id',
@@ -130,6 +133,12 @@ for(const marker of [
   'this._syncMapZoomTooltips?.();'
 ]){
   if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
+}
+for(const marker of [
+  "'./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE",
+  "'./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE"
+]){
+  if(!(await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8')).includes(marker))throw Error('R39 changed module must use feature cache: '+marker);
 }
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',

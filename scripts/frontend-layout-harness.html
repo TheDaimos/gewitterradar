@@ -141,6 +141,17 @@
       if(card._map?.zoomControl?.options&&[card._map.zoomControl.options.zoomInTitle,card._map.zoomControl.options.zoomOutTitle].join('|')!==[zoomInLabel,zoomOutLabel].join('|'))failures.push('R38 Leaflet zoom options locale '+language);
     }
     card._languagePreview=oldLanguagePreview;card._syncV410Tooltips();temporaryZoom?.remove();
+    // R39: release-set ID and calculated module-version fingerprints are distinct namespaces.
+    const previousRuntimeProbe=card._moduleRuntimeProbe;
+    const summaryProbe=document.createElement('div');
+    const moduleSnapshot=card._moduleDiagnosticsPayload().diagnostics;
+    card._moduleRuntimeProbe={stale:false,loadedId:'A4D6-144F',expectedId:'A4D6-144F',installedId:'D39A-5E9B',releaseId:'D39A-5E9B',fingerprintMismatch:false,installedReleaseMismatch:false,revisionMismatch:false};
+    card._renderModuleSummary(summaryProbe,moduleSnapshot);
+    if(!summaryProbe.textContent.includes('D39A-5E9B')||summaryProbe.textContent.includes(' → '))failures.push('R39: consistent module summary must display release ID, not a fingerprint mismatch');
+    card._moduleRuntimeProbe={stale:true,loadedId:'717A-ADEA',expectedId:'A4D6-144F',installedId:'D39A-5E9B',releaseId:'D39A-5E9B',fingerprintMismatch:true,installedReleaseMismatch:false,revisionMismatch:false};
+    card._renderModuleSummary(summaryProbe,moduleSnapshot);
+    if(!summaryProbe.textContent.includes('717A-ADEA → A4D6-144F'))failures.push('R39: stale module fingerprint should be compared to expected fingerprint');
+    card._moduleRuntimeProbe=previousRuntimeProbe;
     if(failures.length)throw new Error(failures.join('\n'));
     shadow.getElementById('diagnostic-exit-top').click();const stopped={enabled:card._diagnostics.enabled,selecting:card._diagnostics.selecting,compassCalibration:card._compassCalibrationEnabled,medallionCalibration:card._medallionCalibrationEnabled};
     result.textContent=JSON.stringify({resolver,medallion,medallionLifecycle,medallionWindowLifecycle,persistence,desktop,desktop422,desktopLower,desktopButtonsBefore,desktopButtonsAfter,desktop422ButtonsBefore,desktop422ButtonsAfter,normalIPadClosed,normalIPadOpen,ipadPro,ipadProLower,ipadProButtonsBefore,ipadProButtonsAfter,android,androidButtonsBefore,androidButtonsAfter,ipad609,ipad783,compass,interactions,overlay:{width:overlayBox.width,height:overlayBox.height,instrumentWidth:instrumentBox.width,instrumentHeight:instrumentBox.height},diagnostics:{columns1,columns2,visualsColor,summary:snapshot.summary,compass:snapshot.compass,stopped}},null,2);

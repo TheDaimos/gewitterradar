@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41002r13";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.4",
+  version:"1.3.5",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
@@ -717,7 +717,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         issues.push({type:"duplicate",id:duplicate.id,count:duplicate.count,registrations:duplicate.registrations||[],row});
       }
       const probe=this._moduleRuntimeProbe||null;
-      if(probe?.stale)issues.push({type:"runtime_stale",id:"runtime",runtimeProbe:probe});
+      if(probe?.installedReleaseMismatch||probe?.revisionMismatch)issues.push({type:"runtime_stale",id:"runtime",runtimeProbe:probe});
       return issues;
     },
 
@@ -736,7 +736,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           loadedCount:diagnostics.loadedCount,
           expectedCount:diagnostics.expectedCount,
           issueCount:issues.length,
-          moduleSetId:this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||null,
+          moduleSetId:APPLICATION_META.moduleSetId||null,
+          loadedFingerprint:this._moduleRuntimeProbe?.loadedId||null,
+          expectedFingerprint:this._moduleRuntimeProbe?.expectedId||null,
         },
         deviations:issues
       };
@@ -753,9 +755,14 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       const probeUrl=new URL(moduleRuntimeManifestUrl());probeUrl.searchParams.set("_gr_probe",String(Date.now()));
       fetch(probeUrl.href,{cache:"no-store",credentials:"same-origin"}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}).then(manifest=>{
         const installedId=String(manifest?.moduleSetId||"").trim(),installedRevision=String(manifest?.runtimeRevision||"").trim();
-        this._moduleRuntimeProbe={available:Boolean(installedId),signature,checkedAt:Date.now(),loadedId,expectedId,installedId,installedRevision,localRevision:String(localRevision||""),stale:Boolean((installedId&&installedId!==loadedId)||(installedRevision&&String(localRevision||"")&&installedRevision!==String(localRevision)))};
+        // Compare like with like: the release ID is deliberately not a version fingerprint.
+        const releaseId=String(APPLICATION_META.moduleSetId||"").trim();
+        const fingerprintMismatch=loadedId!==expectedId;
+        const installedReleaseMismatch=Boolean(installedId&&releaseId&&installedId!==releaseId);
+        const revisionMismatch=Boolean(installedRevision&&String(localRevision||"")&&installedRevision!==String(localRevision));
+        this._moduleRuntimeProbe={available:Boolean(installedId),signature,checkedAt:Date.now(),loadedId,expectedId,releaseId,installedId,installedRevision,localRevision:String(localRevision||""),fingerprintMismatch,installedReleaseMismatch,revisionMismatch,stale:Boolean(fingerprintMismatch||installedReleaseMismatch||revisionMismatch)};
       }).catch(error=>{
-        this._moduleRuntimeProbe={available:false,signature,checkedAt:Date.now(),loadedId,expectedId,installedId:"",installedRevision:"",localRevision:String(localRevision||""),stale:false,error:error instanceof Error?error.message:String(error)};
+        this._moduleRuntimeProbe={available:false,signature,checkedAt:Date.now(),loadedId,expectedId,releaseId:String(APPLICATION_META.moduleSetId||""),installedId:"",installedRevision:"",localRevision:String(localRevision||""),fingerprintMismatch:loadedId!==expectedId,installedReleaseMismatch:false,revisionMismatch:false,stale:loadedId!==expectedId,error:error instanceof Error?error.message:String(error)};
       }).finally(()=>{
         if(this._moduleRuntimeProbePending===signature)this._moduleRuntimeProbePending=null;
         const current=moduleDiagnostics(EXPECTED_MODULES);
@@ -768,7 +775,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       if(!target)return;
       const issueCount=result.rows.filter(row=>row.status!=="ok").length+result.duplicateIds.length;
       const loadedId=moduleSetFingerprint(result.rows,"loadedVersion"),probe=this._moduleRuntimeProbe,runtimeStale=Boolean(probe?.stale);
-      const installedId=probe?.installedId||APPLICATION_META.moduleSetId||moduleSetFingerprint(result.rows,"expectedVersion");
+      const expectedId=probe?.expectedId||moduleSetFingerprint(result.rows,"expectedVersion");
+      const releaseId=String(APPLICATION_META.moduleSetId||"");
+      const installedId=probe?.installedId||releaseId;
       target.replaceChildren();
       const title=document.createElement("strong");title.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
       const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
@@ -777,8 +786,9 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       if(state.tagName==="BUTTON"){state.type="button";state.classList.add("gr-mod-deviation-trigger");state.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._openModuleDeviations();});}
       state.textContent=issueCount?`· ! ${this._t?.("modules.deviations",{count:issueCount})||issueCount}`:runtimeStale?`· ! ${this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich"}`:`· ✓ ${this._t?.("modules.consistent")||"modules.consistent"}`;
       const fingerprint=document.createElement("span");fingerprint.className="gr-mod-fingerprint";fingerprint.dataset.state=runtimeStale?"warn":"ok";
-      fingerprint.textContent=runtimeStale?`· ${this._t?.("modules.set_id")||"ID"} ${loadedId} → ${installedId}`:`· ${this._t?.("modules.set_id")||"ID"} ${loadedId}`;
-      fingerprint.title=runtimeStale?`${this._t?.("modules.detail.loaded")||"Loaded"}: ${loadedId} · ${this._t?.("modules.installed")||"Installed"}: ${installedId}`:`${this._t?.("modules.set_id")||"ID"}: ${loadedId}`;
+      const displayed=probe?.fingerprintMismatch?`${loadedId} → ${expectedId}`:probe?.installedReleaseMismatch?`${installedId} → ${releaseId}`:releaseId;
+      fingerprint.textContent=`· ${this._t?.("modules.set_id")||"ID"} ${displayed}`;
+      fingerprint.title=`${this._t?.("modules.set_id")||"ID"}: ${releaseId} · ${this._t?.("modules.detail.loaded")||"Loaded"}: ${loadedId} · ${this._t?.("modules.detail.expected")||"Expected"}: ${expectedId} · ${this._t?.("modules.installed")||"Installed"}: ${installedId}`;
       target.append(title,counts,state,fingerprint);
     },
 
@@ -881,7 +891,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         summary.replaceChildren();
         const strong=document.createElement("strong");strong.textContent=`Gewitterradar ${APPLICATION_META.displayVersion}`;
         const counts=document.createElement("span");counts.textContent=`· ${this._t?.("modules.loaded",{loaded:result.loadedCount,expected:result.expectedCount})||`${result.loadedCount} / ${result.expectedCount}`}`;
-        const set=document.createElement("span");set.className="gr-mod-fingerprint";set.dataset.state="ok";set.textContent=`· ${this._t?.("modules.set_id")||"ID"} ${this._moduleRuntimeProbe?.loadedId||APPLICATION_META.moduleSetId||"—"}`;
+        const set=document.createElement("span");set.className="gr-mod-fingerprint";set.dataset.state="ok";set.textContent=`· ${this._t?.("modules.set_id")||"ID"} ${APPLICATION_META.moduleSetId||"—"}`;
         summary.append(strong,counts,set);
       }
       const list=backdrop.querySelector("#settings-modules-deviations-list");
