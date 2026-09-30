@@ -20,8 +20,9 @@ Stand: 2026-09-30
 - Quell- und beide Auslieferungsfassungen, Versions-/Modulmanifest, Laufzeitmanifest, Datei- und SHA256-Verträge sind synchron.
 
 ## Freigaberegeln und Realabnahme
-- Nach dem technischen R37-Commit fünf zentrale CI-Prüfpfade prüfen: Shared Frontend (inkl. beide Browserauslieferungen), Integration, Diagnostic contract, Source archive contract, Hi-Res asset retention.
-- Erst nach nachgewiesenem Erfolg den verbindlichen DRA-Zweig `deploy/dev` ohne Force auf **genau den technischen Code-Commit** setzen, Referenz erneut abfragen. Spätere reine Übergabe-Commits gehören nicht auf den DRA-Zweig.
+- Technischer R37-Code-Commit: `bbe2730c57030b0bb72d0d1f74de3c949fb3e294`. Fünf zentrale CI-Prüfpfade **SUCCESS** am exakten Code-Commit: Shared Frontend Runs 36688040679 und 36688033968 (beide inklusive Auslieferungs-Browserprüfungen), Integration Runs 36688040664 und 36688033990, Diagnostic contract Run 36688040662, Source archive contract Run 36688040676, Hi-Res asset retention Run 36688040674.
+- `deploy/dev` wurde nach dem grünen CI-Ergebnis **ohne Force** auf exakt `bbe2730c57030b0bb72d0d1f74de3c949fb3e294` gesetzt und per GitHub-Zweigabfrage verifiziert. Der Entwicklungszweig erhält folgende reine Dokumentations-Commits, diese gehören ausdrücklich nicht auf `deploy/dev`.
+- `main` beim Gegencheck unverändert auf `17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c`. Realgeräte-Abnahme **noch offen**, trotz erfolgreicher technischer Browserprüfungen.
 - DRA-Realtest: Standard-iPad, iPad Pro, Desktop und Android. Je Gerät: zentriertes Instrument zuerst, Schalter nebeneinander darunter, Abstand zur Gradzahl/Legende, untere Azimut-/Distanzkarten nahe der Panelunterkante ohne Anschnitt, keine Geometrieänderung.
 - Auf Desktop gesondert Hilfe-Icon, Reihenfolge und sprachabhängige Mouse-over-Texte; Hilfe auf Deutsch und einer zweiten Sprache mit mengenfreien Medaillon-/Pfeiltexten prüfen.
 - Aura-/Kompass-Regression weiter offen: Design wählen → Aura AUS (Design bleibt) → bei Aura AUS anderes Design → Aura AN (neues Design bleibt).
