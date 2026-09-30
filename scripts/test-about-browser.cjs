@@ -96,16 +96,7 @@ const server=http.createServer((req,res)=>{
         });
       });
       if(controls.length!==2||controls.some(c=>!c.label||c.hit.some(v=>v<44)||!c.visible||!c.contained||Math.abs(c.ratio-1)>.001))throw Error(name+': premium image/hit-area regression '+JSON.stringify(controls));
-      // A public release must not show DEV; a V4.11 development build must.
-      // Derive the expectation from the actual shipped product identity, not an
-      // assumption that every branch being browser-tested is a stable release.
-      const runtimeIdentity=JSON.parse(fs.readFileSync(path.join(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
-      const aboutVersionLabel=await page.locator('.about-dev').innerText();
-      if(runtimeIdentity.productVersion==='4.11.01'){
-        if(!aboutVersionLabel.includes('V4.11.01 DEV'))throw Error('V4.11.01 DEV About identity missing: '+aboutVersionLabel);
-      }else if(aboutVersionLabel.includes('DEV')){
-        throw Error('Stable label still contains DEV: '+aboutVersionLabel);
-      }
+      if((await page.locator('.about-dev').innerText()).includes('DEV'))throw Error('Stable label still contains DEV');
       if(!visualOnly){
         // Exercise real user inputs and return-focus instead of calling the close handler directly.
         await page.locator('.about-close').click();
