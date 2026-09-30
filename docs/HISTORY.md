@@ -2,6 +2,10 @@
 
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
 
+## V4.10 · 2026/09 – Modularisierungsabschluss
+
+Nach sechs bestätigten Realtestpunkten und abschließender R40-Sichtprüfung wurde V4.10 zur öffentlichen Finalisierung freigegeben. Die Architektur enthält 23 Module, mit eigenständiger Kompass-, Medaillon- und Pfeilauswahl sowie 28 Medaillon-Designs und 18 Pfeilvarianten. Sieben V4.11-Punkte bleiben sichtbar als Planung und nicht als ausgelieferte Funktion markiert. Technischer Ausgangspunkt: `bcf30fe2dc1b6b56625edf209b2373b956fb7fd4`. Öffentliche Plakette: V4.10; native Integration: 0.22.0.
+
 ## Zeitachse
 
 Das Gewitterradar-Projekt begann **2026/08**. Die sichtbaren V3.x-Meilensteine der Release History gehören zur Entwicklungsphase `2026/08`. Die erste stabile V4.00 und die darauf folgenden öffentlichen V4.01 bis V4.06 gehören zur Release-Phase `2026/09`.
