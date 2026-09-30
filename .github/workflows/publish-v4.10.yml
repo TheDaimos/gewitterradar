@@ -69,12 +69,15 @@ jobs:
           set -euo pipefail
           chmod +x scripts/create-source-archive.sh
           scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.10 dist/source-archives
-          test -s '${{ steps.golden.outputs.zip_path }}'
-          test -s '${{ steps.golden.outputs.bundle_path }}'
-          test -s '${{ steps.golden.outputs.checksum_path }}'
-          (cd dist/source-archives && sha256sum -c "$(basename '${{ steps.golden.outputs.checksum_path }}')")
-          unzip -tq '${{ steps.golden.outputs.zip_path }}'
-          git bundle verify '${{ steps.golden.outputs.bundle_path }}'
+          zip="$(find dist/source-archives -maxdepth 1 -type f -name 'Gewitterradar_V4.10_GOLDEN_MASTER_*.zip' -print -quit)"
+          bundle="$(find dist/source-archives -maxdepth 1 -type f -name 'Gewitterradar_V4.10_GOLDEN_MASTER_*.bundle' -print -quit)"
+          checksums="$(find dist/source-archives -maxdepth 1 -type f -name 'Gewitterradar_V4.10_GOLDEN_MASTER_*_SHA256SUMS.txt' -print -quit)"
+          test -n "$zip" && test -s "$zip"
+          test -n "$bundle" && test -s "$bundle"
+          test -n "$checksums" && test -s "$checksums"
+          (cd dist/source-archives && sha256sum -c "$(basename "$checksums")")
+          unzip -tq "$zip"
+          git bundle verify "$bundle"
       - name: Upload immutable Golden Master
         uses: actions/upload-artifact@v4
         with:

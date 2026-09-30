@@ -152,6 +152,8 @@ Automatisiert verfügbar über:
 
 Golden Master und HACS-/Installationspaket bleiben ausdrücklich unterschiedliche Artefakte.
 
+Der Golden-Master-Erzeugungs- und Prüfschritt muss die tatsächlich erzeugten Archivpfade verifizieren. Ausgaben eines Arbeitsschritts dürfen nicht bereits innerhalb desselben Schritts als verfügbare Ergebniswerte vorausgesetzt werden. Ein solcher Orchestrierungsfehler blockiert die Veröffentlichung, auch wenn die Quellarchive bereits erfolgreich erzeugt wurden.
+
 ## Release-Gates
 
 Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfungen grün sind. Dazu gehören je nach betroffenem Bereich insbesondere:
