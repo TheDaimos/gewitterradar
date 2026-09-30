@@ -350,7 +350,7 @@ const moduleViewMeta=extractFrozenJson(
   'const MODULE_VIEW_META=Object.freeze(',
   ');\n  const modulePresentation'
 );
-if(moduleViewIds.length!==24)throw Error('Unexpected module-view metadata id count');
+if(moduleViewIds.length!==26)throw Error('Unexpected module-view metadata id count');
 if(Object.keys(moduleViewMeta).length!==registeredLanguages.length)throw Error('Unexpected module-view language count');
 for(const language of registeredLanguages){
   const entries=moduleViewMeta[language];
