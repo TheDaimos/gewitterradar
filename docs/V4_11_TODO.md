@@ -2,9 +2,9 @@
 
 Stand: 29.09.2026
 
-Status: **NEXT / VERSIONIERT – Sammlung, noch keine Umsetzung**
+Status: **V4.11 in Entwicklung; V4.11.01 DEV mit erster realer WeatherRouter-Abnahme, weitere Arbeitsblöcke gemäß Übergabe**
 
-Diese Datei bündelt die für V4.11 vorgemerkten Themen. Sie ist bewusst eine To-do- und Planungsgrundlage. Umsetzung beginnt erst nach ausdrücklicher Freigabe.
+Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. Der erste Teilumfang ist in V4.11.01 DEV implementiert und real geprüft; offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md).
 
 > **Verbindlicher Planungsbeschluss vom 30.09.2026:** Die hybride Weather-Engine (unabhängige Blitzortung-/WeatherRouter-Schalter, parallele Anreicherung, weitere unabhängige Blitzbeobachtungen, kontrollierte Ersatzversorgung, Provenienz, Monitored-Area-Bezug und API-/Modulgrenzen) ist in [V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md](V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md) festgehalten. Bei diesem Themenbereich ist das Beschlussdokument die maßgebliche Planungsquelle. Änderungen bleiben durch ausdrücklichen neuen Beschluss möglich; noch keine Implementierungsfreigabe.
 
