@@ -1,0 +1,38 @@
+name: PRE-MERGE archive V4.10
+
+on:
+  push:
+    branches:
+      - feature/v4.10.02-modularization
+    paths:
+      - 'docs/archive-triggers/V4_10_PRE_MERGE.trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Archive exact old main
+        run: |
+          set -euo pipefail
+          grep -Fx 'VERSION=V4.10' docs/archive-triggers/V4_10_PRE_MERGE.trigger
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' --force
+          old_main=$(git rev-parse refs/remotes/origin/main^{commit})
+          node scripts/verify-source-archive-contract.mjs
+          bash -n scripts/create-source-archive.sh
+          rm -rf dist/source-archives && mkdir -p dist/source-archives
+          chmod +x scripts/create-source-archive.sh
+          scripts/create-source-archive.sh PRE_MERGE "$old_main" V4.10 dist/source-archives
+          cd dist/source-archives && sha256sum -c SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gewitterradar_V4.10_PRE_MERGE
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
