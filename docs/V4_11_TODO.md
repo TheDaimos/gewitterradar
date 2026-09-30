@@ -1,10 +1,10 @@
 # Gewitterradar V4.11 – To-do-Sammlung
 
-Stand: 29.09.2026
+Stand: 30.09.2026
 
-Status: **V4.11 in Entwicklung; V4.11.01 DEV mit erster realer WeatherRouter-Abnahme, weitere Arbeitsblöcke gemäß Übergabe**
+Status: **V4.11 in Entwicklung; V4.11.02 DEV als technischer Kandidat mit erstem produktiven WeatherRouter-Niederschlagsradar, DRA-/Realabnahme noch offen**
 
-Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. Der erste Teilumfang ist in V4.11.01 DEV implementiert und real geprüft; offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md).
+Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. V4.11.01 DEV hat den Consumer-V1-Vertrag real bestätigt; V4.11.02 DEV ergänzt den ersten produktiven, providerneutralen Niederschlagsradar sowie den neuen Versions-/Cache-Updatepfad. Die reale DRA-/Geräteabnahme von V4.11.02 steht noch aus; offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md).
 
 > **Verbindlicher Planungsbeschluss vom 30.09.2026:** Die hybride Weather-Engine (unabhängige Blitzortung-/WeatherRouter-Schalter, parallele Anreicherung, weitere unabhängige Blitzbeobachtungen, kontrollierte Ersatzversorgung, Provenienz, Monitored-Area-Bezug und API-/Modulgrenzen) ist in [V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md](V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md) festgehalten. Bei diesem Themenbereich ist das Beschlussdokument die maßgebliche Planungsquelle. Änderungen bleiben durch ausdrücklichen neuen Beschluss möglich; noch keine Implementierungsfreigabe.
 
@@ -22,11 +22,11 @@ Zusätzlich wird die bereits vorgemerkte Idee fester Überwachungsstandorte als 
 
 ## 1. WeatherRouter
 
-- [ ] WeatherRouter als vorgesehene Daten- und Provider-Schicht für zusätzliche Wetterdienste und Wetterereignisse in Gewitterradar anbinden.
-- [ ] klare Trennung zwischen Blitzortung-Livedaten, WeatherRouter-Daten und Karten-/Darstellungsebene beibehalten.
-- [ ] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen.
+- [x] WeatherRouter als vorgesehene Daten- und Provider-Schicht für zusätzliche Wetterdienste und Wetterereignisse in Gewitterradar anbinden. Consumer V1 ist real angebunden; V4.11.02 nutzt ihn erstmals produktiv für `weather.radar.precipitation`.
+- [x] klare Trennung zwischen Blitzortung-Livedaten, WeatherRouter-Daten und Karten-/Darstellungsebene beibehalten. Der Niederschlagsradar besitzt einen eigenen Layer und ersetzt den Blitzortung-Pfad nicht.
+- [x] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen. Der Radar-Layer zeigt Quelle, Abdeckung, Datenalter, eingeschränkte Routen und fachliche Nichtverfügbarkeit.
 - [ ] Datenquellen, Attribution, Aktualität und eingeschränkte Verfügbarkeit in Diagnose und Hilfe sichtbar machen.
-- [ ] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen.
+- [x] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen. Der neue Radarstatus bleibt auf die WeatherRouter-/Niederschlagsfunktion begrenzt.
 
 ---
 
