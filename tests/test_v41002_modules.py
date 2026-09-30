@@ -120,9 +120,9 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert ('moduleSetId:"E411-01A1"' if is_v411 else 'moduleSetId:"D40A-5E9B"') in manifest
+ assert ('moduleSetId:"E411-01A2"' if is_v411 else 'moduleSetId:"D40A-5E9B"') in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]==("E411-01A1" if is_v411 else "D40A-5E9B")
+ assert runtime["moduleSetId"]==("E411-01A2" if is_v411 else "D40A-5E9B")
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
