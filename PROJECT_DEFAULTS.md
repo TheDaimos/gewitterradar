@@ -250,7 +250,9 @@ Der aktuelle V4.07.56-Sprachumfang bleibt **15 Sprachen plus 4 Dialektvarianten 
 
 ## Aktueller Release-/Promotionsstand
 
-Aktueller finaler Promotionsstand ist **2026/09 · V4.09 / native Integration 0.21.0**.
+Aktueller zur Veröffentlichung ausdrücklich freigegebener Promotionsstand ist **2026/09 · V4.10 / native Integration 0.22.0**. Technischer Ausgangspunkt ist der vollständig real abgenommene R40-Commit `bcf30fe2dc1b6b56625edf209b2373b956fb7fd4`. Öffentliche Hauptfenster-Plakette: **V4.10**. V4.11 beginnt erst nach der tatsächlichen V4.10-Veröffentlichung; `deploy/dev` bleibt der gemeinsame, bestehende Kanal. Die Veröffentlichung ist nur bei vollständig grünen Release-Gates, gesichertem PRE-MERGE-Snapshot und Golden Master des exakten neuen `main`-Commits gültig.
+
+Vorheriger veröffentlichter Promotionsstand ist **2026/09 · V4.09 / native Integration 0.21.0**.
 
 V4.09 basiert funktional auf dem vollständig geprüften und vom Benutzer abgenommenen internen Stand **V4.09.28**. Zusätzlich zur öffentlichen Versions-/Build-Normalisierung enthält der Release genau die während der finalen Release-Gates gefundene Diagnosekorrektur, welche die Medaillon-Kalibrierung auf das produktive `trend-icon` begrenzt.
 
