@@ -59,7 +59,7 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
     })();
     return inFlightDiscovery;
   }
-  async function capabilities({refresh=false,filter={domains:['weather'],families:['radar','lightning']}}={}){
+  async function capabilities({refresh=false,filter={domains:['weather']}}={}){
     const state=await discover({refresh});
     if(!state.ready)return absent(state.compatible?'router_not_ready':'capability_not_supported','WeatherRouter not ready');
     if(catalog&&!refresh)return catalog;
