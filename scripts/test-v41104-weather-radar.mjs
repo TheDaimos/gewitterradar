@@ -67,6 +67,6 @@ assert.match(source,/Groß · \+50 % je Seite/);
 assert.match(source,/document\.hidden/);
 assert.match(source,/_weatherRadarPumpPreload/);
 assert.match(source,/maxTiles:48,maxBytes:16\*1024\*1024/);
-assert.match(skeleton,/_mountWeatherRouterSettings\?\.\(\);\s*_mountWeatherRadarSettings\?\.\(\);/);
+assert.match(skeleton,/this\._mountWeatherRouterSettings\?\.\(\);\s*this\._mountWeatherRadarSettings\?\.\(\);/);
 
 console.log("PASS: V4.11.04 provider-neutral precipitation radar mounts its controls in the real Weather-Engine settings path and supports bounded configurable spatial preloading with explicit percentage, tile and memory guards.");
