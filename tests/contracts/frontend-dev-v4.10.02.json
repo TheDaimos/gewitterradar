@@ -4,15 +4,15 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "d8c6c94315e53dfa0972a095ef3d9a4d49c02f3d4ff0c473fbb1dca8491c0c51",
+  "sha256": "149e42ab523085bc4655030c8dc78935ffb93ccf9306c82d3c7aab6fc8e25f40",
   "sizeBytes": 8712,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R37-2026-09-30",
+  "build": "V4.10.02-MODULAR-DEV-R38-2026-09-30",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "54016abbdcc295567bd5aa52406366f6f8505cf3cdd5489654f3d458f1e0718c",
-      "sizeBytes": 7479
+      "sha256": "ff8b7f7a1c9b845cee38d8a2e8d8b27bab42fdadfb35f504afa1036e9b7e99c8",
+      "sizeBytes": 7481
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",
@@ -47,8 +47,8 @@
       "sizeBytes": 181819
     },
     "modules/ui/i18n-settings.js": {
-      "sha256": "e2ad7fdfea8f0bfc8610d5b1cf1f7f72ac4245d7743e09ba8800ddaac8f413a5",
-      "sizeBytes": 238523
+      "sha256": "3f3a83c503ddae9abb3b1d70d290e2e5fa578f1d5b49069909ca82ebb6d8b254",
+      "sizeBytes": 243365
     },
     "modules/core/source-status.js": {
       "sha256": "055d83b841a83f60f4dd5f6bf460eeeac317d2e62ff549101a7a0292f0daf93d",
@@ -71,8 +71,8 @@
       "sizeBytes": 6303
     },
     "modules/location/radii-map.js": {
-      "sha256": "8a9fbc5ad22593ecc93db2eddfc345e1943fe830f4d5b88ff8a64c6af34fb437",
-      "sizeBytes": 27517
+      "sha256": "ad3294873542c364b11f64db13c9e29af9c61180733166da5a55130beae6e6fb",
+      "sizeBytes": 27731
     },
     "modules/map/strikes-warnings.js": {
       "sha256": "9b8004abaef7a1f754bc69f23a68d71c9b8141205d84f966edef1523a08cc746",

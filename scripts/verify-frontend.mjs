@@ -12,6 +12,7 @@ const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-di
 const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-recent.js'),'utf8');
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
+const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
   '"version": "1.1.14"',
@@ -101,7 +102,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.3.2"',
+  '"version": "1.3.3"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -110,12 +111,25 @@ for(const marker of [
   'const V410_UI_TRANSLATIONS=Object.freeze(',
   'const V410_HELP_INSTRUMENTS=Object.freeze(',
   '_syncV410Tooltips()',
+  '_syncMapZoomTooltips()',
+  "'.leaflet-control-zoom-in'",
+  "'.leaflet-control-zoom-out'",
+  "'tooltip.map_zoom_in'",
+  "'tooltip.map_zoom_out'",
   '_helpWithV410(language,help)',
   "help=this._helpWithV410(language,locale.help)",
   "const v410InstrumentHelpIcon='data:image/png;base64,",
   "'instruments-v410':v410InstrumentHelpIcon"
 ]){
   if(!i18nSettings.includes(marker))throw Error('Settings i18n contract missing: '+marker);
+}
+for(const marker of [
+  '"id": "location.radii-map"',
+  '"version": "1.0.3"',
+  'zoomControl:true',
+  'this._syncMapZoomTooltips?.();'
+]){
+  if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
 }
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
@@ -327,16 +341,16 @@ for(const language of registeredLanguages){
   }
   const v410UiBundle=v410UiTranslations[language];
   if(!v410UiBundle)throw Error('Missing V4.10 UI language: '+language);
-  for(const key of ['picker.fullscreen_size','picker.fullscreen_size_range','picker.custom_size','picker.selection','picker.medallion','picker.arrow','picker.preview','picker.static','picker.animation','tooltip.animation_toggle','tooltip.test_storm','tooltip.test_danger','tooltip.settings_open','tooltip.compass_north','tooltip.card_version']){
+  for(const key of ['picker.fullscreen_size','picker.fullscreen_size_range','picker.custom_size','picker.selection','picker.medallion','picker.arrow','picker.preview','picker.static','picker.animation','tooltip.animation_toggle','tooltip.test_storm','tooltip.test_danger','tooltip.settings_open','tooltip.compass_north','tooltip.card_version','tooltip.map_zoom_in','tooltip.map_zoom_out']){
     if(typeof v410UiBundle[key]!=='string'||!v410UiBundle[key].trim())throw Error('Missing V4.10 UI translation: '+language+' / '+key);
   }
   const helpBundle=v410HelpInstruments[language];
   if(!helpBundle||typeof helpBundle.title!=='string'||!helpBundle.title.trim()||typeof helpBundle.intro!=='string'||!helpBundle.intro.trim())throw Error('Missing V4.10 help translation: '+language);
-  if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==5||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete V4.10 help entries: '+language);
-  // R37: Counts of designs/arrows must remain absent as catalogs grow.
-  if([1,2].some((index)=>/\d/u.test(helpBundle.entries[index][1])))throw Error('Fixed instrument design count in help: '+language);
-  if(/aura/i.test(String(helpBundle.entries[1]?.[0]||'')))throw Error('Aura help entry still interrupts instrument selection flow: '+language);
-  if(!/(?:aur|αύρ)/i.test(String(helpBundle.entries[4]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
+  if(!Array.isArray(helpBundle.entries)||helpBundle.entries.length!==4||helpBundle.entries.some((entry)=>!Array.isArray(entry)||entry.length!==2||entry.some((value)=>typeof value!=='string'||!value.trim())))throw Error('Incomplete R38 four-entry instrument help: '+language);
+  // All four R38 descriptions remain independent of growing design/arrow catalogs.
+  if(helpBundle.entries.some((entry)=>/\d/u.test(entry[1])))throw Error('Fixed instrument quantity in help: '+language);
+  if(!/(?:aur|αύρ)/i.test(String(helpBundle.entries[3]?.[0]||'')))throw Error('Aura help entry must be last: '+language);
+  if(!/(?:&| und | and | og | et | y | en | i | e | och | ja | a | και | és | un | ond )/iu.test(String(helpBundle.entries[1]?.[0]||'')))throw Error('Medallion/arrow help must be combined: '+language);
     const clusterBundle=clusterResolutionLabels[language];
   if(!clusterBundle)throw Error('Missing cluster profile language: '+language);
   for(const key of ['early','balanced','late','classic']){

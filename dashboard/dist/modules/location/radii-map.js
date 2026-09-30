@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -489,6 +489,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           attributionControl:true,
           preferCanvas:true
         }).setView([home.lat,home.lon],initialZoom);
+        // Leaflet's native zoom control exists only after asynchronous map creation.
+        // Synchronize title AND aria-label now; language changes reuse the same method.
+        this._syncMapZoomTooltips?.();
 
         this._individualStrikeLayer = L.strikeCanvasLayer().addTo(this._map);
         this._radiusAuraSvgLayer = L.radiusAuraSvgLayer().addTo(this._map);

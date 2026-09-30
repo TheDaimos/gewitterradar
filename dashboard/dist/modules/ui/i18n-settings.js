@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -1227,7 +1227,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gefahrenstufe testweise auslösen",
     "tooltip.settings_open": "Gewitterradar-Einstellungen öffnen",
     "tooltip.compass_north": "Feste Nordausrichtung des Kompasses verwenden",
-    "tooltip.card_version": "Kartenversion"
+    "tooltip.card_version": "Kartenversion",
+    "tooltip.map_zoom_in": "Karte vergrößern",
+    "tooltip.map_zoom_out": "Karte verkleinern"
   },
   "English": {
     "picker.fullscreen_size": "Fullscreen size",
@@ -1244,7 +1246,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Trigger the danger level for testing",
     "tooltip.settings_open": "Open Gewitterradar settings",
     "tooltip.compass_north": "Use the compass fixed north orientation",
-    "tooltip.card_version": "Card version"
+    "tooltip.card_version": "Card version",
+    "tooltip.map_zoom_in": "Zoom in",
+    "tooltip.map_zoom_out": "Zoom out"
   },
   "Dansk": {
     "picker.fullscreen_size": "Fuldskærmsstørrelse",
@@ -1261,7 +1265,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Udløs fareniveauet som test",
     "tooltip.settings_open": "Åbn Gewitterradar-indstillinger",
     "tooltip.compass_north": "Brug kompassets faste nordretning",
-    "tooltip.card_version": "Kortversion"
+    "tooltip.card_version": "Kortversion",
+    "tooltip.map_zoom_in": "Zoom ind",
+    "tooltip.map_zoom_out": "Zoom ud"
   },
   "Español": {
     "picker.fullscreen_size": "Tamaño en pantalla completa",
@@ -1278,7 +1284,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Activar el nivel de peligro como prueba",
     "tooltip.settings_open": "Abrir los ajustes de Gewitterradar",
     "tooltip.compass_north": "Usar la orientación norte fija de la brújula",
-    "tooltip.card_version": "Versión de la tarjeta"
+    "tooltip.card_version": "Versión de la tarjeta",
+    "tooltip.map_zoom_in": "Acercar mapa",
+    "tooltip.map_zoom_out": "Alejar mapa"
   },
   "Français": {
     "picker.fullscreen_size": "Taille en plein écran",
@@ -1295,7 +1303,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Déclencher le niveau danger à des fins de test",
     "tooltip.settings_open": "Ouvrir les réglages de Gewitterradar",
     "tooltip.compass_north": "Utiliser l’orientation nord fixe de la boussole",
-    "tooltip.card_version": "Version de la carte"
+    "tooltip.card_version": "Version de la carte",
+    "tooltip.map_zoom_in": "Zoom avant",
+    "tooltip.map_zoom_out": "Zoom arrière"
   },
   "Nederlands": {
     "picker.fullscreen_size": "Grootte volledig scherm",
@@ -1312,7 +1322,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gevarenniveau als test activeren",
     "tooltip.settings_open": "Gewitterradar-instellingen openen",
     "tooltip.compass_north": "Vaste noordoriëntatie van het kompas gebruiken",
-    "tooltip.card_version": "Kaartversie"
+    "tooltip.card_version": "Kaartversie",
+    "tooltip.map_zoom_in": "Inzoomen",
+    "tooltip.map_zoom_out": "Uitzoomen"
   },
   "Polski": {
     "picker.fullscreen_size": "Rozmiar pełnoekranowy",
@@ -1329,7 +1341,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Uruchom poziom zagrożenia testowo",
     "tooltip.settings_open": "Otwórz ustawienia Gewitterradar",
     "tooltip.compass_north": "Użyj stałej orientacji kompasu na północ",
-    "tooltip.card_version": "Wersja karty"
+    "tooltip.card_version": "Wersja karty",
+    "tooltip.map_zoom_in": "Przybliż mapę",
+    "tooltip.map_zoom_out": "Oddal mapę"
   },
   "Português": {
     "picker.fullscreen_size": "Tamanho em ecrã inteiro",
@@ -1346,7 +1360,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Ativar o nível de perigo para teste",
     "tooltip.settings_open": "Abrir as definições do Gewitterradar",
     "tooltip.compass_north": "Usar a orientação fixa a norte da bússola",
-    "tooltip.card_version": "Versão do cartão"
+    "tooltip.card_version": "Versão do cartão",
+    "tooltip.map_zoom_in": "Ampliar mapa",
+    "tooltip.map_zoom_out": "Reduzir mapa"
   },
   "Svenska": {
     "picker.fullscreen_size": "Fullskärmsstorlek",
@@ -1363,7 +1379,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Aktivera faronivån som test",
     "tooltip.settings_open": "Öppna Gewitterradars inställningar",
     "tooltip.compass_north": "Använd kompassens fasta nordriktning",
-    "tooltip.card_version": "Kortversion"
+    "tooltip.card_version": "Kortversion",
+    "tooltip.map_zoom_in": "Zooma in",
+    "tooltip.map_zoom_out": "Zooma ut"
   },
   "Italiano": {
     "picker.fullscreen_size": "Dimensione a schermo intero",
@@ -1380,7 +1398,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Attiva il livello di pericolo per prova",
     "tooltip.settings_open": "Apri le impostazioni di Gewitterradar",
     "tooltip.compass_north": "Usa l’orientamento nord fisso della bussola",
-    "tooltip.card_version": "Versione della scheda"
+    "tooltip.card_version": "Versione della scheda",
+    "tooltip.map_zoom_in": "Ingrandisci mappa",
+    "tooltip.map_zoom_out": "Riduci mappa"
   },
   "Norsk bokmål": {
     "picker.fullscreen_size": "Fullskjermstørrelse",
@@ -1397,7 +1417,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Utløs farenivået som test",
     "tooltip.settings_open": "Åpne innstillingene for Gewitterradar",
     "tooltip.compass_north": "Bruk kompassens faste nordretning",
-    "tooltip.card_version": "Kortversjon"
+    "tooltip.card_version": "Kortversjon",
+    "tooltip.map_zoom_in": "Zoom inn",
+    "tooltip.map_zoom_out": "Zoom ut"
   },
   "Suomi": {
     "picker.fullscreen_size": "Koko näytön koko",
@@ -1414,7 +1436,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Käynnistä vaarataso testinä",
     "tooltip.settings_open": "Avaa Gewitterradarin asetukset",
     "tooltip.compass_north": "Käytä kompassin kiinteää pohjoissuuntaa",
-    "tooltip.card_version": "Kortin versio"
+    "tooltip.card_version": "Kortin versio",
+    "tooltip.map_zoom_in": "Lähennä karttaa",
+    "tooltip.map_zoom_out": "Loitonna karttaa"
   },
   "Čeština": {
     "picker.fullscreen_size": "Velikost na celou obrazovku",
@@ -1431,7 +1455,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Zkušebně aktivovat úroveň nebezpečí",
     "tooltip.settings_open": "Otevřít nastavení Gewitterradaru",
     "tooltip.compass_north": "Použít pevnou severní orientaci kompasu",
-    "tooltip.card_version": "Verze karty"
+    "tooltip.card_version": "Verze karty",
+    "tooltip.map_zoom_in": "Přiblížit mapu",
+    "tooltip.map_zoom_out": "Oddálit mapu"
   },
   "Ελληνικά": {
     "picker.fullscreen_size": "Μέγεθος πλήρους οθόνης",
@@ -1448,7 +1474,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Δοκιμαστική ενεργοποίηση επιπέδου κινδύνου",
     "tooltip.settings_open": "Άνοιγμα ρυθμίσεων Gewitterradar",
     "tooltip.compass_north": "Χρήση σταθερού βόρειου προσανατολισμού πυξίδας",
-    "tooltip.card_version": "Έκδοση κάρτας"
+    "tooltip.card_version": "Έκδοση κάρτας",
+    "tooltip.map_zoom_in": "Μεγέθυνση χάρτη",
+    "tooltip.map_zoom_out": "Σμίκρυνση χάρτη"
   },
   "Magyar": {
     "picker.fullscreen_size": "Teljes képernyős méret",
@@ -1465,7 +1493,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Veszélyszint próbaindítása",
     "tooltip.settings_open": "A Gewitterradar beállításainak megnyitása",
     "tooltip.compass_north": "Az iránytű rögzített északi tájolásának használata",
-    "tooltip.card_version": "Kártyaverzió"
+    "tooltip.card_version": "Kártyaverzió",
+    "tooltip.map_zoom_in": "Térkép nagyítása",
+    "tooltip.map_zoom_out": "Térkép kicsinyítése"
   },
   "Boarisch": {
     "picker.fullscreen_size": "Vollbild-Größ",
@@ -1482,7 +1512,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gefahrenstuf zum Test auslösen",
     "tooltip.settings_open": "Gewitterradar-Einstellungen aufmachn",
     "tooltip.compass_north": "Feste Nordausrichtung vom Kompass verwenden",
-    "tooltip.card_version": "Kartenversion"
+    "tooltip.card_version": "Kartenversion",
+    "tooltip.map_zoom_in": "Kartn vergrößern",
+    "tooltip.map_zoom_out": "Kartn verkleinern"
   },
   "Plattdüütsch": {
     "picker.fullscreen_size": "Vullbill-Grött",
@@ -1499,7 +1531,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gefahrenstoop för’n Test utlösen",
     "tooltip.settings_open": "Gewitterradar-Instellungen opmaken",
     "tooltip.compass_north": "Faste Noordutrichtung vun’n Kompass bruken",
-    "tooltip.card_version": "Kortverschoon"
+    "tooltip.card_version": "Kortverschoon",
+    "tooltip.map_zoom_in": "Koort grötter maken",
+    "tooltip.map_zoom_out": "Koort lütter maken"
   },
   "Sächs’sch": {
     "picker.fullscreen_size": "Vollbild-Größe",
@@ -1516,7 +1550,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gefahrenstufe zum Test auslösen",
     "tooltip.settings_open": "Gewidderradar-Einstellungen uffmachn",
     "tooltip.compass_north": "Feste Nordausrichtung vom Kompass nehmn",
-    "tooltip.card_version": "Kartenversion"
+    "tooltip.card_version": "Kartenversion",
+    "tooltip.map_zoom_in": "Karte vergrößern",
+    "tooltip.map_zoom_out": "Karte verkleinern"
   },
   "Schwäbisch": {
     "picker.fullscreen_size": "Vollbild-Größ",
@@ -1533,7 +1569,9 @@ const V410_UI_TRANSLATIONS=Object.freeze({
     "tooltip.test_danger": "Gefahrenstuf zom Test auslösa",
     "tooltip.settings_open": "Gewitterradar-Einstellunga aufmacha",
     "tooltip.compass_north": "Feste Nordausrichtung vom Kompass benutza",
-    "tooltip.card_version": "Kartaversion"
+    "tooltip.card_version": "Kartaversion",
+    "tooltip.map_zoom_in": "Karta vergrößra",
+    "tooltip.map_zoom_out": "Karta verkleinra"
   }
 });
 const V410_HELP_INSTRUMENTS=Object.freeze({
@@ -1543,23 +1581,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Kompass auswählen",
-        "Auf den Kompass tippen oder klicken, um die Kompassauswahl zu öffnen. Die gewählte Variante bleibt auch bei ausgeschalteten Aura-Effekten erhalten."
+        "Tippe oder klicke auf den Kompass, um zwischen den unterschiedlichen Designvorlagen zu wählen."
       ],
       [
-        "Medaillon auswählen",
-        "Auf das Medaillon tippen oder klicken, um ein Design auszuwählen."
+        "Medaillon & Pfeil auswählen",
+        "Genau wie bei der Kompassauswahl genügt es, auf das Medaillon zu tippen oder zu klicken, um die Designauswahl zu öffnen. Medaillon und Pfeil können unabhängig voneinander ausgewählt und frei miteinander kombiniert werden."
       ],
       [
-        "Pfeil auswählen",
-        "In derselben Auswahl auf „Pfeil“ wechseln. Die Pfeilvariante lässt sich unabhängig vom Medaillon auswählen."
-      ],
-      [
-        "Vollbild-Instrumente",
-        "Kompass und Medaillon lassen sich im Vollbild frei verschieben und in ihrer Größe anpassen."
+        "Vollbilddarstellung",
+        "Die Darstellungsgröße von Kompass und Medaillon lässt sich im jeweiligen Auswahlmenü individuell einstellen. Diese Einstellung gilt ausschließlich für die Vollbilddarstellung und das separate Kartenfenster."
       ],
       [
         "Aura-Effekte",
-        "Aura-Effekte steuern ausschließlich Leucht-, Halo- und Aura-Darstellungen. Sie beeinflussen die Kompassauswahl nicht."
+        "Aura-Effekte steuern die zusätzlichen Leucht- und Lichteffekte des Kompasses. Das ausgewählte Kompassdesign bleibt beim Ausschalten der Aura erhalten und kann auch bei deaktivierten Aura-Effekten jederzeit geändert werden."
       ]
     ]
   },
@@ -1569,23 +1603,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Choose compass",
-        "Tap or click the compass to open compass selection. The selected variant remains active even when aura effects are disabled."
+        "Tap or click the compass to choose from the different design templates."
       ],
       [
-        "Choose Medallion",
-        "Tap or click the Medallion to choose a design."
+        "Choose medallion & arrow",
+        "As with compass selection, simply tap or click the medallion to open the design selection. Medallion and arrow can be selected independently and freely combined."
       ],
       [
-        "Choose arrow",
-        "Switch to “Arrow” in the same selection. Choose an arrow variant independently of the Medallion."
-      ],
-      [
-        "Fullscreen instruments",
-        "Compass and Medallion can be moved freely and resized in fullscreen mode."
+        "Fullscreen display",
+        "Set the display size of the compass and medallion individually in their respective selection menus. This setting applies only to fullscreen display and the separate map window."
       ],
       [
         "Aura effects",
-        "Aura effects control only glow, halo and aura visuals. They do not affect compass selection."
+        "Aura effects control the compass's additional glow and lighting. The selected compass design remains in place when aura is disabled and can be changed at any time while aura effects are off."
       ]
     ]
   },
@@ -1595,23 +1625,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Vælg kompas",
-        "Tryk eller klik på kompasset for at åbne kompasvalget. Den valgte variant bevares også, når aura-effekter er slået fra."
+        "Tryk eller klik på kompasset for at vælge mellem de forskellige designskabeloner."
       ],
       [
-        "Vælg medaljon",
-        "Tryk eller klik på medaljonen for at vælge et design."
+        "Vælg medaljon og pil",
+        "Ligesom med kompasset åbner du designvalget ved at trykke eller klikke på medaljonen. Medaljon og pil kan vælges uafhængigt af hinanden og kombineres frit."
       ],
       [
-        "Vælg pil",
-        "Skift til “Pil” i samme valg. Vælg pilvarianten uafhængigt af medaljonen."
+        "Fuldskærmsvisning",
+        "Størrelsen på kompas og medaljon kan indstilles individuelt i deres respektive valgmenuer. Indstillingen gælder kun fuldskærmsvisningen og det separate kortvindue."
       ],
       [
-        "Fuldskærmsinstrumenter",
-        "Kompas og medaljon kan flyttes frit og ændres i størrelse i fuldskærm."
-      ],
-      [
-        "Aura-effekter",
-        "Aura-effekter styrer kun glød, halo og aura. De påvirker ikke kompasvalget."
+        "Auraeffekter",
+        "Auraeffekterne styrer kompassets ekstra lys og glød. Det valgte kompasdesign bevares, når auraen slås fra, og kan også ændres, mens auraeffekterne er deaktiveret."
       ]
     ]
   },
@@ -1621,23 +1647,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Elegir brújula",
-        "Toca o haz clic en la brújula para abrir la selección. La variante elegida se mantiene incluso con los efectos de aura desactivados."
+        "Toca o haz clic en la brújula para elegir entre las diferentes plantillas de diseño."
       ],
       [
-        "Elegir medallón",
-        "Toca o haz clic en el medallón para elegir un diseño."
+        "Elegir medallón y flecha",
+        "Al igual que con la brújula, basta con tocar o hacer clic en el medallón para abrir la selección de diseños. El medallón y la flecha se pueden elegir por separado y combinar libremente."
       ],
       [
-        "Elegir flecha",
-        "Cambia a “Flecha” en la misma selección. Puedes elegir la variante de flecha independientemente del medallón."
-      ],
-      [
-        "Instrumentos a pantalla completa",
-        "La brújula y el medallón pueden moverse libremente y cambiar de tamaño en pantalla completa."
+        "Vista a pantalla completa",
+        "El tamaño de la brújula y del medallón se puede ajustar por separado en sus respectivos menús de selección. Este ajuste solo afecta a la vista a pantalla completa y a la ventana de mapa independiente."
       ],
       [
         "Efectos de aura",
-        "Los efectos de aura controlan únicamente el brillo, el halo y la representación del aura. No afectan a la selección de brújula."
+        "Los efectos de aura controlan la iluminación y el resplandor adicionales de la brújula. El diseño elegido se conserva al desactivar el aura y puede cambiarse en cualquier momento mientras esté desactivada."
       ]
     ]
   },
@@ -1647,23 +1669,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Choisir la boussole",
-        "Touchez ou cliquez sur la boussole pour ouvrir la sélection. La variante choisie reste active même lorsque les effets d’aura sont désactivés."
+        "Touchez ou cliquez sur la boussole pour choisir parmi les différents modèles."
       ],
       [
-        "Choisir le médaillon",
-        "Touchez ou cliquez sur le médaillon pour choisir un design."
+        "Choisir le médaillon et la flèche",
+        "Comme pour la boussole, touchez ou cliquez simplement sur le médaillon pour ouvrir le choix des modèles. Le médaillon et la flèche peuvent être choisis indépendamment et combinés librement."
       ],
       [
-        "Choisir la flèche",
-        "Passez à « Flèche » dans la même sélection. Choisissez la variante de flèche indépendamment du médaillon."
+        "Affichage plein écran",
+        "La taille de la boussole et du médaillon se règle individuellement dans leurs menus de sélection respectifs. Ce réglage ne concerne que l'affichage plein écran et la fenêtre de carte séparée."
       ],
       [
-        "Instruments plein écran",
-        "La boussole et le médaillon peuvent être déplacés librement et redimensionnés en plein écran."
-      ],
-      [
-        "Effets d’aura",
-        "Les effets d’aura contrôlent uniquement les lueurs, halos et effets visuels. Ils n’influencent pas le choix de la boussole."
+        "Effets d'aura",
+        "Les effets d'aura contrôlent l'éclairage et les lueurs supplémentaires de la boussole. Le modèle choisi reste conservé lorsque l'aura est désactivée et peut être modifié à tout moment, même sans aura."
       ]
     ]
   },
@@ -1673,23 +1691,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Kompas kiezen",
-        "Tik of klik op het kompas om de keuze te openen. De gekozen variant blijft actief wanneer aura-effecten zijn uitgeschakeld."
+        "Tik of klik op het kompas om uit de verschillende ontwerpen te kiezen."
       ],
       [
-        "Medaillon kiezen",
-        "Tik of klik op het medaillon om een ontwerp te kiezen."
+        "Medaillon en pijl kiezen",
+        "Net als bij het kompas open je de ontwerpkeuze door op het medaillon te tikken of te klikken. Medaillon en pijl zijn onafhankelijk te kiezen en vrij te combineren."
       ],
       [
-        "Pijl kiezen",
-        "Schakel in dezelfde keuze naar “Pijl”. Kies de pijlvariant onafhankelijk van het medaillon."
-      ],
-      [
-        "Volledig-scherminstrumenten",
-        "Kompas en medaillon kunnen in volledig scherm vrij worden verplaatst en van grootte worden veranderd."
+        "Volledig scherm",
+        "De weergavegrootte van kompas en medaillon is afzonderlijk instelbaar in hun eigen keuzemenu. Deze instelling geldt uitsluitend voor de weergave op volledig scherm en het aparte kaartvenster."
       ],
       [
         "Aura-effecten",
-        "Aura-effecten regelen alleen gloed-, halo- en auraweergaven. Ze beïnvloeden de kompaskeuze niet."
+        "Aura-effecten regelen de extra licht- en gloedeffecten van het kompas. Het gekozen kompasontwerp blijft behouden wanneer de aura is uitgeschakeld en kan ook dan op elk moment worden gewijzigd."
       ]
     ]
   },
@@ -1699,23 +1713,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Wybór kompasu",
-        "Dotknij lub kliknij kompas, aby otworzyć wybór. Wybrany wariant pozostaje aktywny także po wyłączeniu efektów aury."
+        "Dotknij lub kliknij kompas, aby wybrać jeden z dostępnych wzorów."
       ],
       [
-        "Wybór medalionu",
-        "Dotknij lub kliknij medalion, aby wybrać wzór."
+        "Wybór medalionu i strzałki",
+        "Tak jak w przypadku kompasu, dotknij lub kliknij medalion, aby otworzyć wybór wzoru. Medalion i strzałkę można wybierać niezależnie i dowolnie ze sobą łączyć."
       ],
       [
-        "Wybór strzałki",
-        "W tym samym oknie przełącz na „Strzałka”. Wariant strzałki można wybrać niezależnie od medalionu."
-      ],
-      [
-        "Instrumenty pełnoekranowe",
-        "Kompas i medalion można swobodnie przesuwać i skalować w trybie pełnoekranowym."
+        "Widok pełnoekranowy",
+        "Rozmiar wyświetlania kompasu i medalionu można ustawić osobno w odpowiednich menu wyboru. Ustawienie dotyczy wyłącznie widoku pełnoekranowego i oddzielnego okna mapy."
       ],
       [
         "Efekty aury",
-        "Efekty aury sterują wyłącznie poświatą, halo i aurą. Nie wpływają na wybór kompasu."
+        "Efekty aury sterują dodatkowymi efektami świetlnymi i poświatą kompasu. Wybrany wzór kompasu pozostaje zachowany po wyłączeniu aury i można go w dowolnej chwili zmienić także przy wyłączonych efektach."
       ]
     ]
   },
@@ -1725,23 +1735,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Escolher bússola",
-        "Toque ou clique na bússola para abrir a seleção. A variante escolhida mantém-se ativa mesmo com os efeitos de aura desligados."
+        "Toque ou clique na bússola para escolher entre os diferentes modelos de design."
       ],
       [
-        "Escolher medalhão",
-        "Toque ou clique no medalhão para escolher um design."
+        "Escolher medalhão e seta",
+        "Tal como na seleção da bússola, basta tocar ou clicar no medalhão para abrir a seleção de designs. O medalhão e a seta podem ser escolhidos de forma independente e combinados livremente."
       ],
       [
-        "Escolher seta",
-        "Na mesma seleção, mude para “Seta”. Escolha a variante da seta independentemente do medalhão."
-      ],
-      [
-        "Instrumentos em ecrã inteiro",
-        "A bússola e o medalhão podem ser movidos livremente e redimensionados em ecrã inteiro."
+        "Vista em ecrã completo",
+        "O tamanho da bússola e do medalhão pode ser ajustado individualmente nos respetivos menus de seleção. Esta definição aplica-se apenas à vista em ecrã completo e à janela do mapa separada."
       ],
       [
         "Efeitos de aura",
-        "Os efeitos de aura controlam apenas brilhos, halos e a representação da aura. Não afetam a seleção da bússola."
+        "Os efeitos de aura controlam o brilho e os efeitos de luz adicionais da bússola. O design escolhido mantém-se quando a aura é desativada e pode ser alterado a qualquer momento, mesmo com os efeitos desligados."
       ]
     ]
   },
@@ -1751,23 +1757,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Välj kompass",
-        "Tryck eller klicka på kompassen för att öppna valet. Den valda varianten behålls även när auraeffekter är avstängda."
+        "Tryck eller klicka på kompassen för att välja mellan de olika designmallarna."
       ],
       [
-        "Välj medaljong",
-        "Tryck eller klicka på medaljongen för att välja en design."
+        "Välj medaljong och pil",
+        "Precis som med kompassen öppnar du designvalet genom att trycka eller klicka på medaljongen. Medaljong och pil kan väljas oberoende av varandra och kombineras fritt."
       ],
       [
-        "Välj pil",
-        "Byt till “Pil” i samma val. Välj pilvarianten oberoende av medaljongen."
-      ],
-      [
-        "Fullskärmsinstrument",
-        "Kompass och medaljong kan flyttas fritt och ändras i storlek i fullskärm."
+        "Helskärmsvisning",
+        "Visningsstorleken för kompass och medaljong kan ställas in individuellt i respektive valmeny. Inställningen gäller endast helskärmsvisningen och det separata kartfönstret."
       ],
       [
         "Auraeffekter",
-        "Auraeffekter styr endast glöd, halo och aura. De påverkar inte kompassvalet."
+        "Auraeffekterna styr kompassens extra ljus- och glödeffekter. Den valda kompassdesignen bevaras när auran stängs av och kan ändras när som helst även när auraeffekterna är avstängda."
       ]
     ]
   },
@@ -1777,23 +1779,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Scegliere la bussola",
-        "Tocca o fai clic sulla bussola per aprire la selezione. La variante scelta rimane attiva anche quando gli effetti aura sono disattivati."
+        "Tocca o fai clic sulla bussola per scegliere tra i diversi modelli di design."
       ],
       [
-        "Scegliere il medaglione",
-        "Tocca o fai clic sul medaglione per scegliere un design."
+        "Scegliere medaglione e freccia",
+        "Come per la bussola, basta toccare o fare clic sul medaglione per aprire la scelta dei design. Medaglione e freccia possono essere selezionati indipendentemente e combinati liberamente."
       ],
       [
-        "Scegliere la freccia",
-        "Nella stessa selezione passa a “Freccia”. Scegli la variante della freccia indipendentemente dal medaglione."
-      ],
-      [
-        "Strumenti a schermo intero",
-        "Bussola e medaglione possono essere spostati liberamente e ridimensionati a schermo intero."
+        "Visualizzazione a schermo intero",
+        "La dimensione di visualizzazione della bussola e del medaglione può essere impostata separatamente nei rispettivi menu di selezione. Questa impostazione vale solo per la visualizzazione a schermo intero e per la finestra della mappa separata."
       ],
       [
         "Effetti aura",
-        "Gli effetti aura controllano soltanto bagliori, aloni e rappresentazioni dell’aura. Non influenzano la scelta della bussola."
+        "Gli effetti aura controllano i riflessi e le luci aggiuntive della bussola. Il design scelto rimane memorizzato quando l'aura viene disattivata e può essere modificato in qualsiasi momento anche con gli effetti disattivati."
       ]
     ]
   },
@@ -1803,23 +1801,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Velg kompass",
-        "Trykk eller klikk på kompasset for å åpne valget. Den valgte varianten beholdes også når auraeffekter er slått av."
+        "Trykk eller klikk på kompasset for å velge mellom de ulike designmalene."
       ],
       [
-        "Velg medaljong",
-        "Trykk eller klikk på medaljongen for å velge et design."
+        "Velg medaljong og pil",
+        "Som ved kompassvalget åpner du designvalget ved å trykke eller klikke på medaljongen. Medaljong og pil kan velges uavhengig av hverandre og kombineres fritt."
       ],
       [
-        "Velg pil",
-        "Bytt til “Pil” i samme valg. Velg pilvarianten uavhengig av medaljongen."
-      ],
-      [
-        "Fullskjermsinstrumenter",
-        "Kompass og medaljong kan flyttes fritt og endres i størrelse i fullskjerm."
+        "Fullskjermsvisning",
+        "Visningsstørrelsen til kompass og medaljong kan angis individuelt i hver sin valgmeny. Innstillingen gjelder bare fullskjermsvisningen og det separate kartvinduet."
       ],
       [
         "Auraeffekter",
-        "Auraeffekter styrer bare glød, halo og aura. De påvirker ikke kompassvalget."
+        "Auraeffektene styrer kompassets ekstra lys- og glødeeffekter. Det valgte kompassdesignet beholdes når auraen slås av og kan endres når som helst også mens auraeffektene er deaktivert."
       ]
     ]
   },
@@ -1829,23 +1823,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Valitse kompassi",
-        "Napauta tai napsauta kompassia avataksesi valinnan. Valittu vaihtoehto säilyy myös auraefektien ollessa pois käytöstä."
+        "Napauta tai napsauta kompassia valitaksesi eri ulkoasumalleista."
       ],
       [
-        "Valitse medaljonki",
-        "Napauta tai napsauta medaljonkia valitaksesi mallin."
+        "Valitse medaljonki ja nuoli",
+        "Kompassin tavoin avaat ulkoasuvalinnan napauttamalla tai napsauttamalla medaljonkia. Medaljongin ja nuolen voi valita toisistaan riippumatta ja yhdistellä vapaasti."
       ],
       [
-        "Valitse nuoli",
-        "Vaihda samassa valinnassa kohtaan “Nuoli”. Valitse nuolivaihtoehto medaljongista riippumatta."
-      ],
-      [
-        "Koko näytön instrumentit",
-        "Kompassia ja medaljonkia voi siirtää vapaasti ja niiden kokoa voi muuttaa koko näytön tilassa."
+        "Koko näytön näkymä",
+        "Kompassin ja medaljongin näyttökoko voidaan määrittää erikseen niiden omissa valintavalikoissa. Asetus koskee vain koko näytön näkymää ja erillistä karttaikkunaa."
       ],
       [
         "Auraefektit",
-        "Auraefektit ohjaavat vain hehkua, haloa ja auraa. Ne eivät vaikuta kompassin valintaan."
+        "Auraefektit ohjaavat kompassin lisävalo- ja hehkutehosteita. Valittu kompassin ulkoasu säilyy, kun aura poistetaan käytöstä, ja sitä voi vaihtaa milloin tahansa myös tehosteiden ollessa pois päältä."
       ]
     ]
   },
@@ -1855,23 +1845,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Výběr kompasu",
-        "Klepněte nebo klikněte na kompas a otevřete výběr. Zvolená varianta zůstane aktivní i při vypnutých efektech aury."
+        "Klepněte nebo klikněte na kompas a vyberte si z různých návrhů vzhledu."
       ],
       [
-        "Výběr medailonu",
-        "Klepněte nebo klikněte na medailon a vyberte design."
+        "Výběr medailonu a šipky",
+        "Stejně jako u kompasu stačí klepnout nebo kliknout na medailon a otevře se výběr vzhledu. Medailon a šipku lze vybírat nezávisle a libovolně kombinovat."
       ],
       [
-        "Výběr šipky",
-        "Ve stejném výběru přepněte na „Šipka“. Varianty šipek lze vybrat nezávisle na medailonu."
-      ],
-      [
-        "Nástroje na celou obrazovku",
-        "Kompas a medailon lze v režimu celé obrazovky volně přesouvat a měnit jejich velikost."
+        "Zobrazení na celou obrazovku",
+        "Velikost zobrazení kompasu a medailonu lze nastavit samostatně v jejich příslušných nabídkách výběru. Nastavení platí pouze pro zobrazení na celou obrazovku a samostatné okno mapy."
       ],
       [
         "Efekty aury",
-        "Efekty aury řídí pouze záři, halo a vizuální auru. Výběr kompasu neovlivňují."
+        "Efekty aury ovládají doplňkové světelné a zářivé efekty kompasu. Vybraný vzhled kompasu zůstane zachován i po vypnutí aury a lze jej kdykoli změnit, i když jsou efekty vypnuté."
       ]
     ]
   },
@@ -1881,23 +1867,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Επιλογή πυξίδας",
-        "Πατήστε ή κάντε κλικ στην πυξίδα για να ανοίξετε την επιλογή. Η επιλεγμένη παραλλαγή παραμένει ενεργή ακόμη και όταν τα εφέ αύρας είναι απενεργοποιημένα."
+        "Αγγίξτε ή κάντε κλικ στην πυξίδα για να επιλέξετε ανάμεσα στα διαφορετικά σχέδια εμφάνισης."
       ],
       [
-        "Επιλογή μεταλλίου",
-        "Πατήστε ή κάντε κλικ στο μετάλλιο για να επιλέξετε σχέδιο."
+        "Επιλογή μεταλλίου και βέλους",
+        "Όπως και με την πυξίδα, αγγίξτε ή κάντε κλικ στο μετάλλιο για να ανοίξετε την επιλογή σχεδίου. Το μετάλλιο και το βέλος επιλέγονται ανεξάρτητα και συνδυάζονται ελεύθερα."
       ],
       [
-        "Επιλογή βέλους",
-        "Στην ίδια επιλογή μεταβείτε στο «Βέλος». Επιλέξτε την παραλλαγή βέλους ανεξάρτητα από το μετάλλιο."
-      ],
-      [
-        "Όργανα πλήρους οθόνης",
-        "Η πυξίδα και το μετάλλιο μπορούν να μετακινούνται ελεύθερα και να αλλάζουν μέγεθος σε πλήρη οθόνη."
+        "Προβολή πλήρους οθόνης",
+        "Το μέγεθος εμφάνισης της πυξίδας και του μεταλλίου ρυθμίζεται ξεχωριστά από το αντίστοιχο μενού επιλογής. Η ρύθμιση ισχύει αποκλειστικά για την προβολή πλήρους οθόνης και το ξεχωριστό παράθυρο χάρτη."
       ],
       [
         "Εφέ αύρας",
-        "Τα εφέ αύρας ελέγχουν μόνο λάμψη, halo και οπτική αύρα. Δεν επηρεάζουν την επιλογή πυξίδας."
+        "Τα εφέ αύρας ελέγχουν τις πρόσθετες φωτεινές και λαμπερές επιδράσεις της πυξίδας. Το επιλεγμένο σχέδιο διατηρείται όταν απενεργοποιείται η αύρα και μπορεί να αλλάξει οποιαδήποτε στιγμή ακόμη και με τα εφέ κλειστά."
       ]
     ]
   },
@@ -1907,23 +1889,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Iránytű kiválasztása",
-        "Koppints vagy kattints az iránytűre a választó megnyitásához. A kiválasztott változat az auraeffektek kikapcsolásakor is megmarad."
+        "Koppints vagy kattints az iránytűre a különböző minták közötti választáshoz."
       ],
       [
-        "Medalion kiválasztása",
-        "Koppints vagy kattints a medalionra, és válassz egy dizájnt."
+        "Medalion és nyíl kiválasztása",
+        "Az iránytűhöz hasonlóan koppints vagy kattints a medalionra a mintaválasztó megnyitásához. A medalion és a nyíl egymástól függetlenül választható és szabadon kombinálható."
       ],
       [
-        "Nyíl kiválasztása",
-        "Ugyanebben a választóban válts a „Nyíl” módra. A nyíl változata a medaliontól függetlenül választható ki."
-      ],
-      [
-        "Teljes képernyős műszerek",
-        "Az iránytű és a medalion teljes képernyőn szabadon mozgatható és átméretezhető."
+        "Teljes képernyős nézet",
+        "Az iránytű és a medalion megjelenítési mérete külön-külön állítható a saját választómenüjükben. Ez a beállítás kizárólag a teljes képernyős nézetre és a külön térképablakra vonatkozik."
       ],
       [
         "Auraeffektek",
-        "Az auraeffektek csak a ragyogást, a halót és az aura megjelenését szabályozzák. Az iránytű kiválasztását nem befolyásolják."
+        "Az auraeffektek az iránytű további fény- és ragyogáshatásait szabályozzák. A kiválasztott iránytűminta az aura kikapcsolása után is megmarad, és kikapcsolt effekteknél is bármikor módosítható."
       ]
     ]
   },
@@ -1933,23 +1911,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Kompass auswählen",
-        "Auf’n Kompass tippen oder klicken, dann geht d’Kompassauswahl auf. Die gewählte Variante bleibt aa bei ausgeschalteter Aura erhalten."
+        "Tipp oder klick auf’n Kompass, damitst zwischen de verschiedenen Designvorlagen wählen kannst."
       ],
       [
-        "Medaillon auswählen",
-        "Aufs Medaillon tippen oder klicken und a Design auswählen."
+        "Medaillon & Pfeil auswählen",
+        "Wia beim Kompass langt a Tippen oder Klicken aufs Medaillon, damit d’Designauswahl aufgeht. Medaillon und Pfeil kannst unabhängig voneinander auswählen und frei kombinieren."
       ],
       [
-        "Pfeil auswählen",
-        "In derselben Auswahl auf „Pfeil“ wechseln. D’Pfeilvariante lässt si unabhängig vom Medaillon auswählen."
-      ],
-      [
-        "Vollbild-Instrumente",
-        "Kompass und Medaillon lassen si im Vollbild frei verschieben und in da Größe ändern."
+        "Vollbilddarstellung",
+        "D’Darstellungsgröß von Kompass und Medaillon kannst im jeweiligen Auswahlmenü extra einstellen. Des gilt bloß fürs Vollbild und fürs eigene Kartenfenster."
       ],
       [
         "Aura-Effekte",
-        "Aura-Effekte steuern bloß Leuchten, Halo und Aura. Mit da Kompassauswahl ham’s nix zum doa."
+        "D’Aura-Effekte steuern s’zusätzliche Leuchten und Licht vom Kompass. S’ausgewählte Kompassdesign bleibt beim Ausschalten erhalten und lässt si aa bei ausgschalteter Aura jederzeit ändern."
       ]
     ]
   },
@@ -1959,23 +1933,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Kompass utwählen",
-        "Op den Kompass tippen oder klicken, üm de Utwahl optomaken. De utsöchte Variant blifft ok bi utmaakte Aura-Effekten aktiv."
+        "Tipp oder klick op den Kompass, üm twischen de verschedenen Designvorlagen uttowählen."
       ],
       [
-        "Medaillon utwählen",
-        "Op dat Medaillon tippen oder klicken un en Design utwählen."
+        "Medaillon un Piel utwählen",
+        "As bi de Kompassutwahl langt dat, op dat Medaillon to tippen oder to klicken, üm de Designutwahl optomaken. Medaillon un Piel köönt unabhängig vunanner utwählt un free kombineert warrn."
       ],
       [
-        "Piel utwählen",
-        "In de sülvige Utwahl op „Piel“ wesseln. De Pielvariant lett sik unabhängig vun’t Medaillon utwählen."
-      ],
-      [
-        "Vullbill-Instrumenten",
-        "Kompass un Medaillon köönt in Vullbill free verschaven un in de Grött anpasst warrn."
+        "Vullbild-Dorstellen",
+        "De Grött vun Kompass un Medaillon lett sik in ehr egen Utwahlmenü instellen. Disse Instellen gellt bloots för Vullbild un dat aparte Koortfinster."
       ],
       [
         "Aura-Effekten",
-        "Aura-Effekten stüürt bloots Glöön, Halo un Aura. Se ännert de Kompassutwahl nich."
+        "De Aura-Effekten stüürt dat extra Leuchten un Licht vun’n Kompass. Dat utsöchte Kompassdesign blifft ok bi utmaakte Aura bestahn un kann ok denn jümmers ännert warrn."
       ]
     ]
   },
@@ -1985,23 +1955,19 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "entries": [
       [
         "Kompass auswählen",
-        "Uff’n Kompass tippen oder klicken, um de Kompassauswahl zu öffn. Die gewählte Variante bleibt ooch bei ausgeschalteter Aura erhalten."
+        "Tipp oder klick uff’n Kompass, um zwischen de verschiedenen Designvorlagen zu wählen."
       ],
       [
-        "Medaillon auswählen",
-        "Uffs Medaillon tippen oder klicken und e Design auswähln."
+        "Medaillon & Pfeil auswählen",
+        "Wie beim Kompass reicht e Tippen oder Klicken uffs Medaillon, um de Designauswahl zu öffn. Medaillon und Pfeil könn unabhängig voneinander ausgewählt und frei kombiniert werdn."
       ],
       [
-        "Pfeil auswählen",
-        "In derselben Auswahl uff „Pfeil“ wechseln. De Pfeilvariante kann unabhängig vom Medaillon ausgewählt werdn."
-      ],
-      [
-        "Vollbild-Instrumente",
-        "Kompass und Medaillon könn im Vollbild frei verschoben und in de Größe angepasst werdn."
+        "Vollbilddarstellung",
+        "De Größe von Kompass und Medaillon kannste im jeweiligen Auswahlmenü einzeln einstellen. Des gilt nur fürs Vollbild und fürs separate Kartenfenster."
       ],
       [
         "Aura-Effekte",
-        "Aura-Effekte steuern nur Leuchten, Halo und Aura. De Kompassauswahl bleibt davon unberührt."
+        "De Aura-Effekte steuern s’zusätzliche Leuchten und Licht vom Kompass. Das ausgewählte Kompassdesign bleibt beim Ausschalten erhalten und kann ooch bei deaktivierter Aura jederzeit geändert werdn."
       ]
     ]
   },
@@ -2010,24 +1976,20 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
     "intro": "V4.10 baut d’Instrumente deutlich aus. Kompass, Medaillon ond Pfeil könnet unabhängig voneinander ausgewählt ond an d’eigene Darstellung angepasst werda.",
     "entries": [
       [
-        "Kompass auswählen",
-        "Auf dr Kompass tippa oder klicka, dann goht d’Kompassauswahl auf. D’gewählte Variante bleibt au bei ausgeschalteter Aura erhalten."
+        "Kompass auswähla",
+        "Tipp oder klick auf dr Kompass, um zwischa de verschiedene Designvorlage auszuwähla."
       ],
       [
-        "Medaillon auswählen",
-        "Aufs Medaillon tippa oder klicka ond a Design auswähla."
+        "Medaillon & Pfeil auswähla",
+        "Wie beim Kompass langt’s, aufs Medaillon z’tippa oder z’klicka, um d’Designauswahl aufzumacha. Medaillon ond Pfeil könnet unabhängig voneinander ausgewählt ond frei kombiniert werda."
       ],
       [
-        "Pfeil auswählen",
-        "In dr gleiche Auswahl auf „Pfeil“ wechsla. D’Pfeilvariante lässt sich unabhängig vom Medaillon auswähla."
-      ],
-      [
-        "Vollbild-Instrumente",
-        "Kompass ond Medaillon könnet im Vollbild frei verschoba ond in dr Größe angepasst werda."
+        "Vollbilddarstellung",
+        "D’Größ von Kompass ond Medaillon kannsch im jeweilige Auswahlmenü einzeln eistella. Des gilt bloß fürs Vollbild ond fürs separate Kartafenster."
       ],
       [
         "Aura-Effekte",
-        "Aura-Effekte steuret bloß Leuchta, Halo ond Aura. D’Kompassauswahl bleibt davo unabhängig."
+        "D’Aura-Effekte steuret s’zusätzliche Leuchta ond Licht vom Kompass. S’ausgewählte Kompassdesign bleibt beim Ausschalta erhalta ond kann au bei deaktivierter Aura jederzeit gändert werda."
       ]
     ]
   }
@@ -2234,6 +2196,23 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncV410Tooltips();
     },
 
+    _syncMapZoomTooltips() {
+      // Leaflet creates + / - asynchronously and does not use Gewitterradar's language.
+      if (!this.shadow) return;
+      const control=this._map?.zoomControl;
+      for (const [selector,key,option] of [
+        ['.leaflet-control-zoom-in','tooltip.map_zoom_in','zoomInTitle'],
+        ['.leaflet-control-zoom-out','tooltip.map_zoom_out','zoomOutTitle']
+      ]) {
+        const value=this._t(key);
+        const button=this.shadow.querySelector('#map '+selector);
+        if (control?.options) control.options[option]=value;
+        if (!button) continue;
+        button.setAttribute('title',value);
+        button.setAttribute('aria-label',value);
+      }
+    },
+
     _syncV410Tooltips() {
       if (!this.shadow) return;
       const set = (id,key,{aria=true}={}) => {
@@ -2249,6 +2228,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if(infinite){infinite.setAttribute('title',this._t('settings.cluster_navigation_infinite'));infinite.setAttribute('aria-label',this._t('settings.cluster_navigation_infinite_aria'));}
       const footer=this.shadow.querySelector('.settings-footer-version');
       if(footer)footer.setAttribute('title',this._t('tooltip.card_version'));
+      this._syncMapZoomTooltips();
     },
 
     _helpWithV410(language,help) {

@@ -1,9 +1,9 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R37-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D37A-5E9B"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10.02",displayVersion:"V4.10.02",build:"V4.10.02-MODULAR-DEV-R38-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D38A-5E9B"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.43",
+    "version": "1.2.44",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -134,8 +134,8 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/ui/controls.js"
   },
   {
-    "id": "ui.i18n-settings",
-    "version": "1.3.2",
+    ""id": "ui.i18n-settings",
+    "version": "1.3.3",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -230,8 +230,8 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/instruments/compass-design.js"
   },
   {
-    "id": "location.radii-map",
-    "version": "1.0.2",
+    ""id": "location.radii-map",
+    "version": "1.0.3",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -304,4 +304,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.43",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.44",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

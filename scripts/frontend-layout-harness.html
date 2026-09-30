@@ -121,6 +121,26 @@
     shadow.getElementById('diagnostic-columns-1').click();const columns1=shadow.getElementById('diagnostic-console').classList.contains('columns-1');shadow.getElementById('diagnostic-columns-2').click();const columns2=!shadow.getElementById('diagnostic-console').classList.contains('columns-1');const visualsColor=getComputedStyle(shadow.getElementById('diagnostic-visuals')).color;const snapshot=card._buildDiagnosticSnapshot();
     for(const id of ['D','candidate_05','candidate_06']){const measured=snapshot.compass.designs.find((entry)=>entry.id===id);if(measured?.fitMeasurementStatus!=='MEASURED')failures.push(`${id}: live fit was not persisted in the diagnostic snapshot`);if(measured?.status!=='OK')failures.push(`${id}: snapshot status ${measured?.status||'missing'}`);}
     if(snapshot.summary.warnings.some((warning)=>/one or more designs/i.test(warning)))failures.push('diagnostic summary contains a generic compass warning');
+    // R38: both Leaflet zoom titles and accessibility labels follow language changes.
+    const zoomHost=shadow.getElementById('map'),existingZoomIn=zoomHost?.querySelector('.leaflet-control-zoom-in'),existingZoomOut=zoomHost?.querySelector('.leaflet-control-zoom-out');
+    let temporaryZoom=null;
+    if(!existingZoomIn&&!existingZoomOut){
+      temporaryZoom=document.createElement('div');
+      temporaryZoom.innerHTML='<a class="leaflet-control-zoom-in" title="Zoom in">+</a><a class="leaflet-control-zoom-out" title="Zoom out">−</a>';
+      zoomHost?.append(temporaryZoom);
+    }
+    const zoomIn=zoomHost?.querySelector('.leaflet-control-zoom-in'),zoomOut=zoomHost?.querySelector('.leaflet-control-zoom-out'),oldLanguagePreview=card._languagePreview;
+    if(!zoomIn||!zoomOut)failures.push('R38 Leaflet zoom controls absent');
+    const zoomLocales=[['Deutsch','Karte vergrößern','Karte verkleinern'],['English','Zoom in','Zoom out'],['Français','Zoom avant','Zoom arrière']];
+    for(const [language,zoomInLabel,zoomOutLabel] of zoomLocales){
+      card._languagePreview=language;
+      card._syncV410Tooltips();
+      for(const [element,value] of [[zoomIn,zoomInLabel],[zoomOut,zoomOutLabel]]){
+        if(element?.getAttribute('title')!==value||element?.getAttribute('aria-label')!==value)failures.push('R38 Leaflet zoom locale '+language+': '+element?.getAttribute('title')+'/'+element?.getAttribute('aria-label'));
+      }
+      if(card._map?.zoomControl?.options&&[card._map.zoomControl.options.zoomInTitle,card._map.zoomControl.options.zoomOutTitle].join('|')!==[zoomInLabel,zoomOutLabel].join('|'))failures.push('R38 Leaflet zoom options locale '+language);
+    }
+    card._languagePreview=oldLanguagePreview;card._syncV410Tooltips();temporaryZoom?.remove();
     if(failures.length)throw new Error(failures.join('\n'));
     shadow.getElementById('diagnostic-exit-top').click();const stopped={enabled:card._diagnostics.enabled,selecting:card._diagnostics.selecting,compassCalibration:card._compassCalibrationEnabled,medallionCalibration:card._medallionCalibrationEnabled};
     result.textContent=JSON.stringify({resolver,medallion,medallionLifecycle,medallionWindowLifecycle,persistence,desktop,desktop422,desktopLower,desktopButtonsBefore,desktopButtonsAfter,desktop422ButtonsBefore,desktop422ButtonsAfter,normalIPadClosed,normalIPadOpen,ipadPro,ipadProLower,ipadProButtonsBefore,ipadProButtonsAfter,android,androidButtonsBefore,androidButtonsAfter,ipad609,ipad783,compass,interactions,overlay:{width:overlayBox.width,height:overlayBox.height,instrumentWidth:instrumentBox.width,instrumentHeight:instrumentBox.height},diagnostics:{columns1,columns2,visualsColor,summary:snapshot.summary,compass:snapshot.compass,stopped}},null,2);
