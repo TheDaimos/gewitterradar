@@ -96,11 +96,17 @@ const server=http.createServer((req,res)=>{
         });
       });
       if(controls.length!==2||controls.some(c=>!c.label||c.hit.some(v=>v<44)||!c.visible||!c.contained||Math.abs(c.ratio-1)>.001))throw Error(name+': premium image/hit-area regression '+JSON.stringify(controls));
-      // Public releases must not show a DEV label; active V4.11 DEV explicitly must.
+      // Stable public releases must never show DEV. Development builds must
+      // expose their canonical runtime displayVersion instead of hard-coding a
+      // single V4.11 iteration into this long-lived browser contract.
       const activeRuntime=JSON.parse(fs.readFileSync(path.join(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
       const aboutVersionLabel=await page.locator('.about-dev').innerText();
-      if(activeRuntime.productVersion==='4.11.01'){
-        if(!aboutVersionLabel.includes('V4.11.01 DEV'))throw Error('Expected V4.11.01 DEV in About footer: '+aboutVersionLabel);
+      const isDevelopmentRuntime=typeof activeRuntime.displayVersion==='string'
+        && activeRuntime.displayVersion.endsWith(' DEV')
+        && typeof activeRuntime.build==='string'
+        && activeRuntime.build.includes('-DEV-');
+      if(isDevelopmentRuntime){
+        if(!aboutVersionLabel.includes(activeRuntime.displayVersion))throw Error('Expected '+activeRuntime.displayVersion+' in About footer: '+aboutVersionLabel);
       }else if(aboutVersionLabel.includes('DEV')){
         throw Error('Stable release label still contains DEV: '+aboutVersionLabel);
       }
