@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5048,9 +5048,17 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             }
             /* R34: Auf dem iPad im Querformat nimmt der Kompassblock mehr
                Platz unterhalb des Instruments ein. Die gemeinsame Unterkante
-               bleibt erhalten; Treffer-Umschalter und Kompass ruecken nach oben. */
+               bleibt erhalten; Treffer-Umschalter und Kompass ruecken nach oben.
+               R36: Die bisherige untere Reserve wird zwischen Legende und Karten
+               verteilt, bei gleichbleibender Gesamthoehe des Kompassfelds. */
             #card-root.ipad-device .compass-panel {
-              padding-bottom:calc(clamp(34px,6vh,64px) + 40px);
+              padding-bottom:16px;
+            }
+            #card-root.ipad-device .compass-readout {
+              margin-top:20px;
+            }
+            #card-root.ipad-device .compass-chips {
+              margin-top:calc(clamp(34px,6vh,64px) + 11px);
             }
             #card-root.ipad-device .compass-instrument {
               margin-inline:auto;
@@ -5061,8 +5069,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              Bedienknöpfe wieder oberhalb des Kompasses. Ohne Diagnoseknöpfe
              entfällt der alte Selector-Kopfraum auf iPad und Desktop. */
           @media (min-width:960px) and (orientation:landscape) {
+            /* R36: Den Desktop-Fussraum nach innen verlagern. Die Summe
+               54 - 4 + 11 bleibt mit 16 + 20 + 25 unveraendert. */
             #card-root:not(.ipad-device) .compass-panel {
-              padding-bottom:54px;
+              padding-bottom:16px;
+            }
+            #card-root:not(.ipad-device) .compass-readout {
+              margin-top:20px;
+            }
+            #card-root:not(.ipad-device) .compass-chips {
+              margin-top:25px;
             }
             #card-root .compass-head:not(:has([data-warning-test]:not([hidden]))) {
               min-height:6px;
