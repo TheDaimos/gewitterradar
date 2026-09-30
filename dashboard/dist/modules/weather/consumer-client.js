@@ -1,4 +1,4 @@
-import { defineModule } from '../core/runtime.js?v=41102r1';
+import { defineModule } from '../core/runtime.js?v=41103r1';
 export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.3',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
