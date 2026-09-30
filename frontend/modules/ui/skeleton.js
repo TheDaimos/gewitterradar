@@ -7742,6 +7742,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       this._applyStaticTranslations();
       this._bindControls();
       this._mountWeatherRouterSettings?.();
+      this._mountWeatherRadarSettings?.();
       this._initMap();
       this._setupOrientationCapabilityProbe();
     },
