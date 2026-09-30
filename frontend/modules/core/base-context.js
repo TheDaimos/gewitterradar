@@ -1,4 +1,4 @@
-import { registerModule } from "./registry.js?v=41102r1";
+import { registerModule } from "./registry.js?v=41103r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
@@ -172,23 +172,23 @@ export function createBaseContext(rootModuleUrl){
   }
 
   const TREND_MEDALLION_IMAGE = new URL('./assets/gewitterradar-trend-medallion.png?v=409', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_11 = new URL('./assets/gewitterradar-trend-medallion-11.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_12 = new URL('./assets/gewitterradar-trend-medallion-12.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_13 = new URL('./assets/gewitterradar-trend-medallion-13.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_14 = new URL('./assets/gewitterradar-trend-medallion-14.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_15 = new URL('./assets/gewitterradar-trend-medallion-15.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_16 = new URL('./assets/gewitterradar-trend-medallion-16.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_17 = new URL('./assets/gewitterradar-trend-medallion-17.webp?v=41102r1', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_18 = new URL('./assets/gewitterradar-trend-medallion-18.webp?v=41102r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_11 = new URL('./assets/gewitterradar-trend-medallion-11.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_12 = new URL('./assets/gewitterradar-trend-medallion-12.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_13 = new URL('./assets/gewitterradar-trend-medallion-13.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_14 = new URL('./assets/gewitterradar-trend-medallion-14.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_15 = new URL('./assets/gewitterradar-trend-medallion-15.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_16 = new URL('./assets/gewitterradar-trend-medallion-16.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_17 = new URL('./assets/gewitterradar-trend-medallion-17.webp?v=41103r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_18 = new URL('./assets/gewitterradar-trend-medallion-18.webp?v=41103r1', rootModuleUrl).href;
   const TREND_ARROW_IMAGE = new URL('./assets/gewitterradar-trend-arrow.png?v=409', rootModuleUrl).href;
   const MAP_COMPASS_TOGGLE_IMAGE = new URL('./assets/gewitterradar-compass-toggle.png?v=40910', rootModuleUrl).href;
   const COMPASS_METAL_FRAME_V1_IMAGE = new URL('./assets/gewitterradar-compass-frame-v1.png?v=404', rootModuleUrl).href;
