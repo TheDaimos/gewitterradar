@@ -2,9 +2,9 @@
 
 Stand: 30.09.2026
 
-Status: **V4.11 in Entwicklung; V4.11.02 DEV als technischer Kandidat mit erstem produktiven WeatherRouter-Niederschlagsradar, DRA-/Realabnahme noch offen**
+Status: **V4.11 in Entwicklung; V4.11.03 DEV mit konfigurierbarem räumlichem Niederschlagsradar-Puffer in technischer Abnahme**
 
-Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. V4.11.01 DEV hat den Consumer-V1-Vertrag real bestätigt; V4.11.02 DEV ergänzt den ersten produktiven, providerneutralen Niederschlagsradar sowie den neuen Versions-/Cache-Updatepfad. Die reale DRA-/Geräteabnahme von V4.11.02 steht noch aus; offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md).
+Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. V4.11.01 DEV hat den Consumer-V1-Vertrag real bestätigt; V4.11.02 DEV ergänzt den ersten produktiven, providerneutralen Niederschlagsradar sowie den neuen Versions-/Cache-Updatepfad. V4.11.03 DEV erweitert den Radar um einen konfigurierbaren, durch Kachel- und Speichergrenzen abgesicherten räumlichen Vorladepuffer. Die reale DRA-/Geräteabnahme von V4.11.03 steht noch aus; offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md).
 
 > **Verbindlicher Planungsbeschluss vom 30.09.2026:** Die hybride Weather-Engine (unabhängige Blitzortung-/WeatherRouter-Schalter, parallele Anreicherung, weitere unabhängige Blitzbeobachtungen, kontrollierte Ersatzversorgung, Provenienz, Monitored-Area-Bezug und API-/Modulgrenzen) ist in [V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md](V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md) festgehalten. Bei diesem Themenbereich ist das Beschlussdokument die maßgebliche Planungsquelle. Änderungen bleiben durch ausdrücklichen neuen Beschluss möglich; noch keine Implementierungsfreigabe.
 
@@ -27,6 +27,9 @@ Zusätzlich wird die bereits vorgemerkte Idee fester Überwachungsstandorte als 
 - [x] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen. Der Radar-Layer zeigt Quelle, Abdeckung, Datenalter, eingeschränkte Routen und fachliche Nichtverfügbarkeit.
 - [ ] Datenquellen, Attribution, Aktualität und eingeschränkte Verfügbarkeit in Diagnose und Hilfe sichtbar machen.
 - [x] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen. Der neue Radarstatus bleibt auf die WeatherRouter-/Niederschlagsfunktion begrenzt.
+- [x] räumlichen Niederschlagsradar-Puffer konfigurierbar machen: Aus, Klein (+15 % je Seite), Normal (+30 %, empfohlen), Groß (+50 %) und Benutzerdefiniert (0–100 %).
+- [x] Vorladebereich zusätzlich durch maximale Zusatzkacheln und geschätzten dekodierten Bildspeicher begrenzen; große Europa-/Deutschlandansichten dürfen nicht allein durch den Prozentwert unkontrolliert wachsen.
+- [ ] zeitliche Radar-Pufferung mehrerer Vergangenheit-/Vorhersageframes separat bewerten; V4.11.03 puffert zunächst nur räumlich den aktuellen Radarzeitstand.
 
 ---
 
