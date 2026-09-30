@@ -146,7 +146,8 @@ def main() -> None:
 
     integration_root = ROOT / "custom_components" / "gewitterradar"
     current_build = (integration_root / "build_info.py").read_text(encoding="utf-8")
-    assert 'BUILD_VERSION = "4.10.02"' in current_build
+    expected = "4.10" if (ROOT / "tests/contracts/frontend-release-v4.10.json").exists() else "4.10.02"
+    assert f'BUILD_VERSION = "{expected}"' in current_build
     parser = argparse.ArgumentParser()
     parser.add_argument("--rollback-root", type=Path)
     args = parser.parse_args()
