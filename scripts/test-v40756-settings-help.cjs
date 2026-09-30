@@ -396,8 +396,8 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
-          assert.equal(row.localizedModuleRows.length,24,delivery+'/'+profile+' '+row.language+' all module rows localized');
-          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,24,delivery+'/'+profile+' '+row.language+' unique localized module ids');
+          assert.equal(row.localizedModuleRows.length,26,delivery+'/'+profile+' '+row.language+' all module rows localized');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,26,delivery+'/'+profile+' '+row.language+' unique localized module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');
