@@ -4,14 +4,14 @@
   "status": "DEV",
   "baseVersion": "4.10.01",
   "baseCommit": "b85d61a4aa294fca83b4078c0b8a35321746f945",
-  "sha256": "0dc46ba24bd0ab73217c6b443e569272c0599a9508ac12c55ea4fcd94072b1c4",
+  "sha256": "b477bbcaeb299f2c8d0030d7ee84bc1299499b918cf9c9b12aad3c0df0b52c7f",
   "sizeBytes": 8712,
   "localeSha256": "dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e",
   "localeSizeBytes": 741069,
-  "build": "V4.10.02-MODULAR-DEV-R34-2026-09-30",
+  "build": "V4.10.02-MODULAR-DEV-R35-2026-09-30",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "e419cff23843c270278e79f0d0a7f99233cb748593440afa466f5120c248864f",
+      "sha256": "c07a74915e3bb341f303b88bfcabb887ff46c92b12c4ee21d7d70f496ffeb148",
       "sizeBytes": 7479
     },
     "modules/core/registry.js": {
@@ -35,8 +35,8 @@
       "sizeBytes": 34303
     },
     "modules/ui/skeleton.js": {
-      "sha256": "f8f71b2b022a9d9491a49dbb6f22702fa04dac16db21aac25e99557ac76f9228",
-      "sizeBytes": 428003
+      "sha256": "a59798459c35a1f56f14210e7bf916ec047efa9c15b1238c2f8026eb38c7885c",
+      "sizeBytes": 429028
     },
     "modules/instruments/compass-scale.js": {
       "sha256": "2284c556edc784a84df791b97df13f8354ca11c11b6f19415537b68a1798b62a",

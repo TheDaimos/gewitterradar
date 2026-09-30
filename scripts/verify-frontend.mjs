@@ -14,7 +14,7 @@ const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cock
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.11"',
+  '"version": "1.1.12"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -33,7 +33,10 @@ for(const marker of [
   '#trend-box:focus-visible',
   'R33 – sehr schmale Touch-Anzeigen',
   'R34: Auf dem iPad im Querformat',
-  'padding-bottom:clamp(34px,6vh,64px);',
+  'R35: In zweispaltigen Querformatansichten',
+  'order:-1;',
+  '#card-root:not(.ipad-device) .compass-panel'
+  'padding-bottom:calc(clamp(34px,6vh,64px) + 40px);',
   '.compass-head:not(:has([data-warning-test]:not([hidden])))',
   'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
   'Vom Monolithen zum modularen Gewitterradar',

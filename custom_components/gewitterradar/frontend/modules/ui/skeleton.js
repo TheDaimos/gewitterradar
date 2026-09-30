@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5050,9 +5050,35 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                Platz unterhalb des Instruments ein. Die gemeinsame Unterkante
                bleibt erhalten; Treffer-Umschalter und Kompass ruecken nach oben. */
             #card-root.ipad-device .compass-panel {
-              padding-bottom:clamp(34px,6vh,64px);
+              padding-bottom:calc(clamp(34px,6vh,64px) + 40px);
             }
             #card-root.ipad-device .compass-instrument {
+              margin-inline:auto;
+            }
+          }
+
+          /* R35: In zweispaltigen Querformatansichten stehen die beiden
+             Bedienknöpfe wieder oberhalb des Kompasses. Ohne Diagnoseknöpfe
+             entfällt der alte Selector-Kopfraum auf iPad und Desktop. */
+          @media (min-width:960px) and (orientation:landscape) {
+            #card-root:not(.ipad-device) .compass-panel {
+              padding-bottom:54px;
+            }
+            #card-root .compass-head:not(:has([data-warning-test]:not([hidden]))) {
+              min-height:6px;
+              height:6px;
+              margin-bottom:0;
+            }
+            #card-root .compass-head:not(:has([data-warning-test]:not([hidden]))) + .compass-wrap {
+              padding-top:0;
+            }
+            #card-root .compass-corner-controls {
+              order:-1;
+              margin-top:0;
+              margin-bottom:8px;
+              transform:none;
+            }
+            #card-root .compass-instrument {
               margin-inline:auto;
             }
           }
