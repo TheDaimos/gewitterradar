@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   shared-frontend:
@@ -18,84 +18,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-
-      - name: One-shot V4.11.04 identity and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v5' }}"
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json, hashlib
-
-          frontend = Path("frontend")
-          changed = 0
-          for path in frontend.rglob("*.js"):
-              text = path.read_text(encoding="utf-8")
-              next_text = text.replace("41103r1", "41104r1")
-              if path == frontend / "version.js":
-                  next_text = (next_text
-                      .replace('version:"4.11.03"', 'version:"4.11.04"')
-                      .replace('displayVersion:"V4.11.03 DEV"', 'displayVersion:"V4.11.04 DEV"')
-                      .replace('build:"V4.11.03-DEV-2026-09-30"', 'build:"V4.11.04-DEV-2026-09-30"')
-                      .replace('moduleSetId:"E411-03A1"', 'moduleSetId:"E411-04A1"')
-                      .replace('integrationVersion:"0.23.2"', 'integrationVersion:"0.23.3"'))
-              if path == frontend / "module-manifest.js":
-                  next_text = (next_text
-                      .replace('"id": "core.manifest",\n    "version": "1.2.49"', '"id": "core.manifest",\n    "version": "1.2.50"')
-                      .replace('"id": "ui.skeleton",\n    "version": "1.1.16"', '"id": "ui.skeleton",\n    "version": "1.1.17"')
-                      .replace('id:"core.manifest",version:"1.2.49"', 'id:"core.manifest",version:"1.2.50"'))
-              if path == frontend / "modules/ui/skeleton.js":
-                  next_text = (next_text
-                      .replace('version:"1.1.16"', 'version:"1.1.17"', 1)
-                      .replace('"version": "1.1.16"', '"version": "1.1.17"', 1))
-              if path == frontend / "gewitterradar.js":
-                  next_text = next_text.replace("Gewitterradar Card V4.11.03 DEV", "Gewitterradar Card V4.11.04 DEV")
-              if next_text != text:
-                  path.write_text(next_text, encoding="utf-8")
-                  changed += 1
-
-          runtime_path = frontend / "assets/gewitterradar-runtime-manifest.json"
-          runtime = json.loads(runtime_path.read_text(encoding="utf-8"))
-          runtime["productVersion"] = "4.11.04"
-          runtime["displayVersion"] = "V4.11.04 DEV"
-          runtime["build"] = "V4.11.04-DEV-2026-09-30"
-          runtime["runtimeRevision"] = "41104r1"
-          runtime["moduleSetId"] = "E411-04A1"
-          for module in runtime["modules"]:
-              if module["id"] == "core.manifest":
-                  module["version"] = "1.2.50"
-              elif module["id"] == "ui.skeleton":
-                  module["version"] = "1.1.17"
-          runtime_path.write_text(json.dumps(runtime, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-          assets_path = frontend / "assets.json"
-          assets = json.loads(assets_path.read_text(encoding="utf-8"))
-          item = next(x for x in assets if x["file"] == "assets/gewitterradar-runtime-manifest.json")
-          item["sha256"] = hashlib.sha256(runtime_path.read_bytes()).hexdigest()
-          assets_path.write_text(json.dumps(assets, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-          build_info = Path("custom_components/gewitterradar/build_info.py")
-          build_info.write_text(build_info.read_text(encoding="utf-8").replace('BUILD_VERSION = "4.11.03"', 'BUILD_VERSION = "4.11.04"'), encoding="utf-8")
-
-          manifest_path = Path("custom_components/gewitterradar/manifest.json")
-          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-          manifest["version"] = "0.23.3"
-          manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-          provenance_path = Path("custom_components/gewitterradar/dra-deployment-provenance.json")
-          provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
-          provenance["productVersion"] = "4.11.04"
-          provenance["build"] = "V4.11.04-DEV-2026-09-30"
-          provenance["runtimeRevision"] = "41104r1"
-          provenance["moduleSetId"] = "E411-04A1"
-          provenance["deployment"]["purpose"] = "V4.11.04 DEV: mount precipitation-radar and preload controls in the real Weather-Engine settings UI; existing deploy/dev channel only"
-          for key in ("publishedAt","publicationSourceCommit","publicationRevision"):
-              provenance["deployment"].pop(key, None)
-          provenance_path.write_text(json.dumps(provenance, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-          print("Updated frontend JS files:", changed)
-          PY
-          node scripts/build-frontend.mjs
 
       - name: Print frontend contract hashes
         run: |
@@ -189,17 +111,6 @@ jobs:
             mkdir -p "artwork/acceptance/premium-controls/$delivery"
             ABOUT_DELIVERY="$delivery" node scripts/test-about-browser-v40756.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
           done
-
-      - name: Commit one-shot V4.11.04 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.04 identity sync v5' }}"
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add frontend custom_components/gewitterradar dashboard/dist SHA256SUMS_FRONTEND.txt
-          git commit -m "chore: sync V4.11.04 frontend"
-          git push origin HEAD:feature/v4.11-development
 
       - uses: actions/upload-artifact@v4
         if: always()
