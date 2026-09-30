@@ -11,8 +11,8 @@
   "build": "V4.10.02-MODULAR-DEV-R38-2026-09-30",
   "moduleFiles": {
     "module-manifest.js": {
-      "sha256": "ff8b7f7a1c9b845cee38d8a2e8d8b27bab42fdadfb35f504afa1036e9b7e99c8",
-      "sizeBytes": 7481
+      "sha256": "f798edb34b7bc0cb7392a46be67a4f2f97d1c87ea3f58cc7fe612445819f4bf0",
+      "sizeBytes": 7479
     },
     "modules/core/registry.js": {
       "sha256": "314cbc2cc0ccc7d82f4bb2483320b86dca7c7a7c3f5fbdd89c0aa331272c04c4",

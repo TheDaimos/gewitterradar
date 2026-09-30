@@ -134,7 +134,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/ui/controls.js"
   },
   {
-    ""id": "ui.i18n-settings",
+    "id": "ui.i18n-settings",
     "version": "1.3.3",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
@@ -230,7 +230,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/instruments/compass-design.js"
   },
   {
-    ""id": "location.radii-map",
+    "id": "location.radii-map",
     "version": "1.0.3",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
