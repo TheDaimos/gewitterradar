@@ -14,7 +14,7 @@ assert.match(entry,/CARD_VERSION=APPLICATION_META.version;/);
 assert.match(entry,/CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace\(\/\^V\/,' '\);|CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace\(\/\^V\/,''\);/);
 assert.match(manifest,/version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30"/);
 assert.equal(runtime.productVersion,'4.11.01');assert.equal(runtime.build,expected);
-assert.equal(runtime.moduleSetId,'E411-01A2');
+assert.equal(runtime.moduleSetId,'E411-01A3');
 assert.equal(JSON.parse(await read('custom_components/gewitterradar/manifest.json')).version,'0.23.0');
 assert.equal(runtime.modules.filter(x=>x.id==='weather.consumer-client').length,1);
 assert.equal(build.includes('BUILD_VERSION = "4.11.01"'),true);
