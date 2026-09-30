@@ -1,5 +1,5 @@
-import { defineModule } from '../core/runtime.js?v=41002r13';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.2',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
+import { defineModule } from '../core/runtime.js?v=41102r1';
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.3',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -40,7 +40,7 @@ export function parseWeatherResolution(response,capability){
 }
 export function createWeatherRouterClient(callWS,{profileId=null}={}){
   if(typeof callWS!=='function')throw new TypeError('Home Assistant callWS function required');
-  let discovery=null,catalog=null,profile=profileId;
+  let discovery=null,catalogCache=new Map(),profile=profileId;
   let inFlightDiscovery=null;
   async function discover({refresh=false}={}){
     if(discovery&&!refresh)return discovery;
@@ -63,13 +63,15 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
   async function capabilities({refresh=false,filter={domains:['weather']}}={}){
     const state=await discover({refresh});
     if(!state.ready)return absent(state.compatible?'router_not_ready':'capability_not_supported','WeatherRouter not ready');
-    if(catalog&&!refresh)return catalog;
+    const catalogKey=JSON.stringify(filter||{});
+    if(!refresh&&catalogCache.has(catalogKey))return catalogCache.get(catalogKey);
     const query={type:'weather_router/consumer/capabilities',contract_version:WEATHER_ROUTER_CONTRACT,filter};
     if(profile)query.profile_id=profile;
     try{
       const response=await callWS(query);
       if(response?.schema!=='weather_router.consumer.capabilities.v1'||response.contract_version!==1||!Array.isArray(response.capabilities))throw new TypeError('Invalid capability response');
-      catalog={status:'ready',capabilities:response.capabilities,generated_at:response.generated_at??null};
+      const catalog={status:'ready',capabilities:response.capabilities,generated_at:response.generated_at??null};
+      catalogCache.set(catalogKey,catalog);
       return catalog;
     }catch(error){return absent('temporarily_unavailable','Capability discovery failed',true);}
   }
@@ -85,7 +87,7 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
     try{return parseWeatherResolution(await callWS(request),capability);}
     catch(error){return absent('temporarily_unavailable','WeatherRouter request or response failed',true);}
   }
-  function reset(){discovery=null;catalog=null;}
+  function reset(){discovery=null;catalogCache.clear();}
   return Object.freeze({discover,capabilities,resolve,reset,get discovery(){return discovery;},get profileId(){return profile;}});
 }
 

@@ -1,9 +1,10 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"E411-01A3"});
+import { APPLICATION_RELEASE } from "./version.js";
+import { registerModule } from "./modules/core/registry.js?v=41102r1";
+export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.47",
+    "version": "1.2.48",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -54,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -145,6 +146,18 @@ export const EXPECTED_MODULES=Object.freeze([
       "Hilfetexte"
     ],
     "file": "modules/ui/i18n-settings.js"
+  },
+  {
+    "id": "core.update-watch",
+    "version": "1.0.0",
+    "group": "Kern",
+    "function": "Frontend-Aktualisierung",
+    "subfunctions": [
+      "Installierten Stand prüfen",
+      "Aktualisierungshinweis",
+      "Kontrollierte Vollneuladung"
+    ],
+    "file": "modules/core/update-watch.js"
   },
   {
     "id": "core.source-status",
@@ -294,11 +307,26 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
     "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus"],
     "file": "modules/weather/consumer-client.js"
+  },
+  {
+    "id": "weather.precipitation-layer",
+    "version": "1.0.0",
+    "group": "Weather-Engine",
+    "function": "Niederschlagsradar-Kartenebene",
+    "subfunctions": [
+      "Raster-Kacheladapter",
+      "Web-Mercator-BBOX",
+      "Quelle & Aktualität",
+      "Abdeckung",
+      "Legende",
+      "Anfragebegrenzung"
+    ],
+    "file": "modules/weather/precipitation-layer.js"
   },
   {
     "id": "history.chart",
@@ -312,4 +340,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.47",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.48",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

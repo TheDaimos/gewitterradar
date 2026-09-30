@@ -147,11 +147,18 @@ for(const marker of [
 ]){
   if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
 }
-for(const marker of [
-  "'./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE",
-  "'./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE"
-]){
-  if(!(await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8')).includes(marker))throw Error('R39 changed module must use feature cache: '+marker);
+{
+  const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
+  const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
+  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.02 must use one canonical module runtime revision');
+  for(const marker of ['version:"4.11.02"','displayVersion:"V4.11.02 DEV"','runtimeRevision:"41102r1"','moduleSetId:"E411-02A1"']){
+    if(!version.includes(marker))throw Error('V4.11.02 canonical identity missing: '+marker);
+  }
+  const runtimeImport=/\?v=(\d+r\d+)/g;
+  for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
+    const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
+    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&match[1]!== '41102r1'&&!['41002r14','41002r15'].includes(match[1]))throw Error('Stale module runtime revision in '+relative+': '+match[1]);
+  }
 }
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',

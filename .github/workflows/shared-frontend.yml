@@ -40,6 +40,9 @@ jobs:
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
+      - name: V4.11.02 precipitation raster adapter
+        run: node scripts/test-v41102-weather-radar.mjs
+
       - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
