@@ -63,12 +63,16 @@ jobs:
             sleep 15
           done
           exit 1
-      - name: Build and verify Golden Master of exact new main
+      - name: Build Golden Master of exact new main
         id: golden
         run: |
           set -euo pipefail
           chmod +x scripts/create-source-archive.sh
           scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.10 dist/source-archives
+
+      - name: Verify Golden Master
+        run: |
+          set -euo pipefail
           test -s '${{ steps.golden.outputs.zip_path }}'
           test -s '${{ steps.golden.outputs.bundle_path }}'
           test -s '${{ steps.golden.outputs.checksum_path }}'
