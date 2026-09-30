@@ -105,7 +105,7 @@ def test_runtime_revision_and_module_set_probe_contract():
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${revision}`' in main
- assert "GEWITTERRADAR_FEATURE_CACHE = '41002r39'" in main
+ assert "GEWITTERRADAR_FEATURE_CACHE = '41002r40'" in main
  assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "gewitterradarImport('./modules/instruments/compass-selector.js',GEWITTERRADAR_FEATURE_CACHE)" in main
@@ -116,9 +116,9 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
  assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"D39A-5E9B"' in manifest
+ assert 'moduleSetId:"D40A-5E9B"' in manifest
  assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="D39A-5E9B"
+ assert runtime["moduleSetId"]=="D40A-5E9B"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)

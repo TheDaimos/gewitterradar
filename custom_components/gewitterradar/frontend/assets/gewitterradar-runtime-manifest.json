@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
   "productVersion": "4.10.02",
-  "build": "V4.10.02-MODULAR-DEV-R39-2026-09-30",
+  "build": "V4.10.02-MODULAR-DEV-R40-2026-09-30",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "D39A-5E9B",
+  "moduleSetId": "D40A-5E9B",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.45"
+      "version": "1.2.46"
     },
     {
       "id": "core.base-context",
@@ -35,7 +35,7 @@
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.14"
+      "version": "1.1.15"
     },
     {
       "id": "instruments.compass-scale",

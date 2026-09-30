@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7482,7 +7482,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </summary>
                   <div class="release-history-future-content">
                     <ul class="release-history-plan-list">
-                      <li>Implement weather services &amp; weather events through WeatherRouter.</li>
+                      <li>Integrate additional weather services, weather events and hazard information through WeatherRouter.</li>
+                      <li>Introduce a central system status with context-sensitive notices, error messages and concrete suggestions for resolving problems.</li>
+                      <li>Expand Blitzortung and tracker diagnostics to identify coupling, data-source and detection-range problems.</li>
+                      <li>Extend Help &amp; Notes with a troubleshooting section organized by topic.</li>
+                      <li>Improve checks and error detection for saved locations and the associated local To-do list.</li>
+                      <li>Introduce monitored areas with independent background monitoring, optional event logging, deletion protection, and CSV/PDF export.</li>
+                      <li>Standardize multilingual status, warning and error messages across all functions.</li>
                     </ul>
                   </div>
                 </details>
@@ -7585,7 +7591,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </summary>
                   <div class="release-history-future-content">
                     <ul class="release-history-plan-list">
-                      <li>Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.</li>
+                      <li>Integration zusätzlicher Wetterdienste, Wetterereignisse und Gefahreninformationen durch WeatherRouter.</li>
+                      <li>Einführung eines zentralen Systemstatus mit zustandsabhängigen Hinweisen, Fehlermeldungen und konkreten Lösungsvorschlägen.</li>
+                      <li>Erweiterte Blitzortung- und Tracker-Diagnose zur Erkennung von Kopplungs-, Datenquellen- und Erfassungsproblemen.</li>
+                      <li>Ausbau von „Hilfe &amp; Hinweise“ um eine thematisch strukturierte Fehlerbehebung.</li>
+                      <li>Verbesserte Prüfung und Fehlererkennung für gespeicherte Standorte und die zugehörige lokale To-do-Liste.</li>
+                      <li>Einführung überwachter Standorte (Monitored Areas) mit eigenständiger Hintergrundüberwachung, optionaler Ereignisprotokollierung, Löschschutz sowie CSV- und PDF-Export.</li>
+                      <li>Vereinheitlichung der mehrsprachigen Status-, Warn- und Fehlermeldungen über sämtliche Funktionen hinweg.</li>
                     </ul>
                   </div>
                 </details>
