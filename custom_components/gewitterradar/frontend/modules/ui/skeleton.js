@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41002r13";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5045,6 +5045,15 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               flex-direction:column;
               min-width:0;
               gap:10px;
+            }
+            /* R34: Auf dem iPad im Querformat nimmt der Kompassblock mehr
+               Platz unterhalb des Instruments ein. Die gemeinsame Unterkante
+               bleibt erhalten; Treffer-Umschalter und Kompass ruecken nach oben. */
+            #card-root.ipad-device .compass-panel {
+              padding-bottom:clamp(34px,6vh,64px);
+            }
+            #card-root.ipad-device .compass-instrument {
+              margin-inline:auto;
             }
           }
 
