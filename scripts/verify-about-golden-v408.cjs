@@ -26,14 +26,23 @@ const devContract = JSON.parse(
 const modularContract = JSON.parse(
   fs.readFileSync(path.join(root, 'tests/contracts/frontend-dev-v4.10.02.json'), 'utf8'),
 );
+const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/contracts/frontend-release-v4.10.json'), 'utf8'));
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
+const isV410Release = frontendText.includes("const CARD_VERSION = '4.10';");
 const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV409Release) {
+if (isV410Release) {
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.10';"));
+  assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.10-RELEASE-2026-09-30';"));
+  assert.equal(frontend.length, v410ReleaseContract.sizeBytes);
+  assert.equal(frontendSha, v410ReleaseContract.sha256);
+} else if (isV409Release) {
   assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.09';"), 'Expected V4.09 CARD_DISPLAY_VERSION');
   assert.ok(frontendText.includes("const GEWITTERRADAR_BUILD = 'V4.09-RELEASE-2026-09-21';"), 'Expected V4.09 final build marker');
   assert.equal(frontend.length, releaseContract.sizeBytes, 'V4.09 frontend size differs from release contract');
