@@ -157,7 +157,11 @@ for(const marker of [
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
-    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&match[1]!== '41102r1'&&!['41002r14','41002r15'].includes(match[1]))throw Error('Stale module runtime revision in '+relative+': '+match[1]);
+    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&match[1]!== '41102r1'&&!['41002r14','41002r15'].includes(match[1])){
+      const line=moduleText.slice(0,match.index).split('\n').length;
+      const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
+      throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
+    }
   }
 }
 for(const marker of [
