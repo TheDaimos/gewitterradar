@@ -1,0 +1,45 @@
+name: Normalize V4.11.02 generated frontend
+
+on:
+  push:
+    branches:
+      - feature/v4.11-development
+    paths:
+      - .github/v41102-normalize.trigger
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    if: github.event.head_commit.message != 'chore(v4.11.02): normalize generated frontend payload'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v4.11-development
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Normalize runtime revision and rebuild mirrors
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path=Path("frontend/modules/core/base-context.js")
+          text=path.read_text(encoding="utf-8")
+          old='import { registerModule } from "./registry.js?v=41002r13";'
+          new='import { registerModule } from "./registry.js?v=41102r1";'
+          if old not in text:
+              raise SystemExit("base-context old runtime import not found")
+          path.write_text(text.replace(old,new,1),encoding="utf-8")
+          PY
+          node scripts/build-frontend.mjs
+          rm -f .github/v41102-normalize.trigger
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/modules/core/base-context.js custom_components/gewitterradar/frontend/modules/core/base-context.js dashboard/dist/modules/core/base-context.js SHA256SUMS_FRONTEND.txt .github/v41102-normalize.trigger
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(v4.11.02): normalize generated frontend payload"
+          git push origin HEAD:feature/v4.11-development

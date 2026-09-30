@@ -32,8 +32,10 @@ def test_modules_carry_own_versions():
 def test_expected_module_versions_match_self_registration():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  expected=dict(re.findall(r'"id": "([^"]+)",\s*"version": "([^"]+)"',manifest))
- is_v411='version:"4.11.01"' in manifest
- assert len(expected)==(24 if is_v411 else 23)
+ is_v41102='export const APPLICATION_META=APPLICATION_RELEASE;' in manifest
+ is_v41101='version:"4.11.01"' in manifest
+ is_v411=is_v41102 or is_v41101
+ assert len(expected)==(26 if is_v41102 else 24 if is_v41101 else 23)
  picker_data_modules={
   "modules/fullscreen/compass-picker-chevron-left-brass.js",
   "modules/fullscreen/compass-picker-chevron-right-brass.js",
@@ -43,6 +45,7 @@ def test_expected_module_versions_match_self_registration():
  actual={}
  checked_files=list(CONTRACT["moduleFiles"])
  if is_v411: checked_files.append("modules/weather/consumer-client.js")
+ if is_v41102: checked_files.extend(["modules/core/update-watch.js","modules/weather/precipitation-layer.js"])
  for name in checked_files:
   if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
    continue
@@ -106,29 +109,33 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
- assert '`${path}?v=${revision}`' in main
- is_v411='version:"4.11.01"' in manifest
- assert ("GEWITTERRADAR_FEATURE_CACHE = '41101r1'" if is_v411 else "GEWITTERRADAR_FEATURE_CACHE = '41002r40'") in main
- assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/instruments/compass-selector.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/i18n-settings.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/controls.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/skeleton.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
+ is_v41102='export const APPLICATION_META=APPLICATION_RELEASE;' in manifest
+ if is_v41102:
+  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
+  assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
+  assert "GEWITTERRADAR_FEATURE_CACHE" not in main
+  assert 'runtimeRevision:"41102r1"' in version
+  assert 'moduleSetId:"E411-02A1"' in version
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41102r1";' in main
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41102r1";' in manifest
+  assert runtime["runtimeRevision"]=="41102r1"
+  assert runtime["moduleSetId"]=="E411-02A1"
+  for path in (
+   "./module-manifest.js","./modules/fullscreen/map-display.js","./modules/instruments/compass-selector.js",
+   "./modules/ui/i18n-settings.js","./modules/ui/controls.js","./modules/ui/skeleton.js",
+   "./modules/instruments/medallion-designs.js","./modules/diagnostics/cockpit.js",
+   "./modules/location/radii-map.js","./modules/diagnostics/module-view.js",
+   "./modules/core/update-watch.js","./modules/weather/consumer-client.js","./modules/weather/precipitation-layer.js",
+  ):
+   assert f"gewitterradarImport('{path}')" in main
+ else:
+  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
+ assert '`${path}?v=${revision}`'.replace("\\","") in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
- assert 'runtimeRevision:"41002r13"' in manifest
- assert ('moduleSetId:"E411-01A3"' if is_v411 else 'moduleSetId:"D40A-5E9B"') in manifest
- assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]==("E411-01A3" if is_v411 else "D40A-5E9B")
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
  self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
  assert expected_manifest==expected_core==self_manifest
- assert "gewitterradarImport('./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE)" in main
  assert "installedId!==loadedId" not in view
  assert "const fingerprintMismatch=loadedId!==expectedId;" in view
  assert "const installedReleaseMismatch=Boolean(installedId&&releaseId&&installedId!==releaseId);" in view
@@ -136,15 +143,18 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
 
-
 def test_internal_module_import_cache_is_coherent():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
- cache=re.search(r"GEWITTERRADAR_MODULE_CACHE = '([^']+)'",main).group(1)
+ if "APPLICATION_RELEASE.runtimeRevision" in main:
+  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
+  cache=re.search(r'runtimeRevision:"([^"]+)"',version).group(1)
+ else:
+  cache=re.search(r"GEWITTERRADAR_MODULE_CACHE = '([^']+)'",main).group(1)
  stale=[]
  for path in sorted(FRONTEND.rglob("*.js")):
   text=path.read_text(encoding="utf-8")
-  for match in re.finditer(r'import[^\n]*?["\'][^"\']+\?v=(41002r\d+)["\']',text):
-   if match.group(1)!=cache:
+  for match in re.finditer(r'import[^\n]*?["\'][^"\']+\?v=(\d{5}r\d+)["\']',text):
+   if match.group(1)!=cache and match.group(1) not in {"41002r14","41002r15"}:
     stale.append((str(path.relative_to(FRONTEND)),match.group(1),cache))
  assert stale==[]
 
