@@ -1,5 +1,5 @@
 import { defineModule } from '../core/runtime.js?v=41002r13';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.1',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -100,5 +100,67 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
   _weatherRouterDiscovery(options){return this._weatherRouterClient().discover(options);},
   _weatherRouterCapabilities(options){return this._weatherRouterClient().capabilities(options);},
   _weatherRouterResolve(capability,context,options){return this._weatherRouterClient().resolve(capability,context,options);},
-  _weatherRouterReset(){this.__weatherRouterClient?.reset();}
+  _weatherRouterReset(){this.__weatherRouterClient?.reset();},
+  _mountWeatherRouterSettings(){
+    const root=this.shadow;
+    const check=root?.getElementById('weather-engine-check');
+    const inspect=root?.getElementById('weather-engine-inspect');
+    const status=root?.getElementById('weather-engine-status');
+    const results=root?.getElementById('weather-engine-results');
+    if(!check||!inspect||!status||!results)return;
+    const show=value=>{status.textContent=value;};
+    let currentCatalog=null;
+    check.addEventListener('click',async()=>{
+      check.disabled=true;inspect.disabled=true;currentCatalog=null;
+      show('WeatherRouter: prüfe die Home-Assistant-Verbindung …');
+      try{
+        this._weatherRouterReset();
+        const state=await this._weatherRouterDiscovery({refresh:true});
+        if(!state.present){show('WeatherRouter nicht erreichbar oder nicht installiert. Blitzortung bleibt unverändert.');return;}
+        if(!state.compatible){show('WeatherRouter vorhanden, Consumer API V1 nicht kompatibel.');return;}
+        if(!state.ready){show('WeatherRouter vorhanden, aber noch nicht betriebsbereit oder deaktiviert.');return;}
+        const found=await this._weatherRouterCapabilities({filter:{domains:['weather']}});
+        if(found.status!=='ready'){show('Consumer API erreichbar, Capability-Katalog derzeit nicht verfügbar.');return;}
+        currentCatalog=found.capabilities;
+        const usable=currentCatalog.filter(item=>item.enabled&&item.available);
+        show('WeatherRouter bereit · Consumer API V1 · '+usable.length+' verfügbare Wetterfähigkeiten im Katalog.');
+        inspect.disabled=false;
+      }catch(_error){show('Die Routerabfrage ist fehlgeschlagen. Blitzortung bleibt unverändert.');}
+      finally{check.disabled=false;}
+    });
+    inspect.addEventListener('click',async()=>{
+      if(!currentCatalog)return;
+      const map=this._map;
+      if(!map||typeof map.getBounds!=='function'){results.textContent='Die Karte ist noch nicht bereit. Bitte später erneut prüfen.';return;}
+      const bounds=map.getBounds(),center=map.getCenter();
+      const wrap=n=>((n+180)%360+360)%360-180;
+      const bbox={type:'bbox',west:wrap(bounds.getWest()),south:Math.max(-90,bounds.getSouth()),east:wrap(bounds.getEast()),north:Math.min(90,bounds.getNorth())};
+      const point={type:'point',latitude:center.lat,longitude:wrap(center.lng)};
+      results.textContent='Frage drei Wetterinformationen für den sichtbaren Kartenausschnitt ab …';
+      inspect.disabled=true;
+      const wanted=[
+        ['weather.radar.precipitation','Niederschlag'],
+        ['weather.lightning.observed.events','Zusätzliche Blitzbeobachtungen'],
+        ['weather.warning.official','Amtliche Warnungen']
+      ];
+      const output=[];
+      try{
+        for(const [id,label] of wanted){
+          const entry=currentCatalog.find(item=>item.id===id);
+          if(!entry||!entry.enabled||!entry.available){output.push(label+': derzeit kein verfügbarer Ressourcenadapter.');continue;}
+          const supported=entry.spatial_contexts||[];
+          const context=supported.includes('bbox')?bbox:supported.includes('point')?point:supported.includes('global')?{type:'global'}:null;
+          if(!context){output.push(label+': kein passender räumlicher Anfragekontext.');continue;}
+          const answer=await this._weatherRouterResolve(id,context);
+          if(answer.status!=='ready'){output.push(label+': '+(answer.unavailable?.code||'nicht verfügbar'));continue;}
+          const provider=answer.provenance?.mode==='aggregate'?(answer.provenance.sources||[]).map(x=>x.provider_name).join(', '):(answer.provenance?.provider_name||'Quelle nicht benannt');
+          const count=answer.resource.type==='event_feed'?answer.resource.payload.event_count:answer.resource.type==='hazard_feed'?answer.resource.payload.events.length:null;
+          const age=Number.isFinite(answer.freshness?.age_seconds)?' · Alter '+Math.round(answer.freshness.age_seconds)+' s':'';
+          output.push(label+': '+answer.resource.type+(count===null?'':' · '+count+' Ereignisse')+' · '+provider+age+(answer.routing?.degraded?' · eingeschränkt':''));
+        }
+        results.textContent=output.join('\n');
+      }catch(_error){results.textContent='Abfrage fehlgeschlagen. Die bestehende Blitzüberwachung bleibt unbeeinflusst.';}
+      finally{inspect.disabled=false;}
+    });
+  }
 }));

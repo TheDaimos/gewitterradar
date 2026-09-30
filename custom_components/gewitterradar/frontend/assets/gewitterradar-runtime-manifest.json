@@ -3,7 +3,7 @@
   "productVersion": "4.11.01",
   "build": "V4.11.01-DEV-2026-09-30",
   "runtimeRevision": "41002r13",
-  "moduleSetId": "E411-01A0",
+  "moduleSetId": "E411-01A1",
   "modules": [
     {
       "id": "core.manifest",
@@ -35,7 +35,7 @@
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.15"
+      "version": "1.1.16"
     },
     {
       "id": "instruments.compass-scale",
@@ -99,7 +99,7 @@
     },
     {
       "id": "weather.consumer-client",
-      "version": "1.0.0"
+      "version": "1.0.1"
     }
   ]
 }

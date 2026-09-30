@@ -1,5 +1,5 @@
 import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"E411-01A0"});
+export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"E411-01A1"});
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
@@ -97,7 +97,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -294,7 +294,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
     "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus"],
