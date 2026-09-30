@@ -33,7 +33,13 @@ Stand: 2026-09-30
 - Christian hat ein aktuelles Foto der Standard-iPad-Querformatansicht nach DRA-R36 gezeigt und ausdrücklich bestätigt: „iPad passt auch“.
 - Sichtgeprüft und akzeptiert: R35-Schalter oberhalb des Instruments; zentriertes, vollständig sichtbares Instrument; Gradzahl/Himmelsrichtung und Legende mit mehr vertikalem Abstand zum Kompass; Azimut-/Distanzkarten weiter unten, nahe der Feldunterkante; keine sichtbare Überlappung oder Beschneidung. **Standard-iPad Kompasslayout R36: abgenommen.**
 - Layout-Teilabnahme, keine technische pixelgenaue Instrumentkalibrierung aus Foto abgeleitet.
-- Bereits dokumentiert: Desktop-Kompasslayout R36 abgenommen. **Noch offen:** iPad Pro mit R36, Hilfe-Icon/Hilfeabschnitt, sprachabhängige Desktop-Mouse-over-Texte, Android/schmales Mobilgerät sowie Aura-/Designwechsel. Kein V4.10 FINAL.
-- Nächster Realtest: iPad Pro mit R36, danach restliche offene Prüfpunkte.
+- Bereits dokumentiert: Desktop-Kompasslayout R36 abgenommen. Die iPad-Pro-Abnahme folgt im nächsten Abschnitt.
+
+## Teilabnahme – iPad Pro R36 (2026-09-30)
+- Christian hat ein aktuelles Foto der iPad-Pro-Querformatansicht nach R36 gezeigt und ausdrücklich bestätigt: „iPad pro passt auch“.
+- Sichtgeprüft und akzeptiert: Bedienknöpfe oberhalb des Instruments; Kompass horizontal zentriert und vollständig sichtbar; tiefer angeordnete Gradzahl, Himmelsrichtung und Legende mit mehr Luft zum Instrument; Azimut-/Distanzkarten weiter unten und mit sauberem Restabstand zur Panelunterkante. Keine sichtbare Überlappung oder Beschneidung.
+- **iPad-Pro-Kompasslayout R36: vom Nutzer abgenommen.** Diese Sichtprüfung ersetzt keine pixelgenaue Kalibrierung.
+- Abgenommene Layout-Teilprüfungen R36: Desktop, Standard-iPad, iPad Pro. Nicht automatisch abgenommen sind Hilfe-Icon/Hilfeabschnitt, sprachabhängige Desktop-Mouse-over-Texte, Android/schmales Mobilgerät sowie Aura-/Kompass-Regression. Kein V4.10 FINAL.
+- Nächster Realtest: Android/schmales Mobilgerät mit R36; danach die offenen Hilfe-/Mouse-over- und Aura-Prüfpunkte.
 
 - Erinnerungsschutz aktiv; wichtige neue Befunde rechtzeitig erneut in Git sichern.
