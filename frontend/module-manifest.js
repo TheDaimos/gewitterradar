@@ -188,7 +188,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
