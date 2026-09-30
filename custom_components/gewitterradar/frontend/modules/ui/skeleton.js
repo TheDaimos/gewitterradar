@@ -1,4 +1,4 @@
-import { defineModule } from "../core/runtime.js?v=41102r1";
+import { defineModule } from "../core/runtime.js?v=41103r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
   "version": "1.1.16",
