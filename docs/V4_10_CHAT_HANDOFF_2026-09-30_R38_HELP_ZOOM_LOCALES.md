@@ -26,10 +26,12 @@ Stand: 2026-09-30
 - Quellfassung, native Integration und Dashboard, Manifest und Laufzeitmanifest, versionsgebundene Cachekennung, JSON-Vertrag, Assetindex und SHA256-Liste synchron.
 
 ## Technische Prüfungen und weitere Schritte
-- R38-Code-Commit und GitHub-CI-Ergebnisse nach Erstellung gesondert nachtragen. Keine Prüfung oder Bereitstellung vorzeitig als erfolgreich bezeichnen.
-- Prüfungen: Shared Frontend einschließlich beide Auslieferungs-Browserläufe; Integration; Diagnostic contract; Source archive contract; Hi-Res asset retention.
+- **Verbindlicher technischer R38-Code-Commit / DRA-Kandidat:** `4a51acbba65af7eff7186b1d3608366840a22e1f`.
+- Prüfverlauf: Ursprünglicher Code-Commit `5e4601f3b8fe05bbf2761398e96b1aec9d9d3f13` scheiterte an zwei versehentlich doppelten Anführungszeichen im Modulmanifest. Commit `07a56967213cff697b856e90ed42f99fe13662ae` korrigierte das Manifest und die daraus folgenden Prüfsummen; dort wurde lediglich die Reihenfolge von zwei SHA256-Einträgen beanstandet. Finaler Commit `4a51acbba65af7eff7186b1d3608366840a22e1f` sortiert den Index identisch zur deterministischen CI-Ausgabe. Die beiden Zwischenstände wurden **nicht** für DRA bereitgestellt.
+- **Alle fünf zentralen CI-Prüfpfade SUCCESS am finalen exakten technischen Commit**: Shared Frontend Runs 36693885291 und 36693893606 (beide SUCCESS, einschließlich Browserprüfungen beider Auslieferungsformen und R38-Zoom-Sprachtest); Integration Runs 36693885361 und 36693893582 (SUCCESS); Diagnostic contract Run 36693893639 (SUCCESS); Source archive contract Run 36693893600 (SUCCESS); Hi-Res asset retention Runs 36693885278 und 36693893668 (SUCCESS).
 - R38-Browser-Rückfalltest: +/− Mouse-over `title` und `aria-label` beim Wechsel Deutsch → Englisch → Französisch und zurück. Sprach- und Hilfevertrag fordert vier Einträge je Sprache und verhindert harte Design-/Pfeilmengen.
-- Erst nach CI-Erfolg `deploy/dev` ohne Force auf genau den technischen R38-Code-Commit bewegen und Referenz erneut prüfen. Reine Dokumentations-Commits bleiben ausschließlich auf dem Entwicklungszweig.
+- `deploy/dev` wurde **erst nach bestätigtem CI-Erfolg**, ohne Force, auf exakt `4a51acbba65af7eff7186b1d3608366840a22e1f` gesetzt und per GitHub-Zweigabfrage bestätigt. `main` blieb dabei auf `17f8e7be5f41d7a4f27bf2343f3c462be8a6e28c`. Die erneute DRA-Zweigaktualisierung kann weitere CI-Durchläufe desselben unveränderten Codes auslösen; ursprüngliche Prüfnachweise siehe oben. Reine Dokumentations-Commits bleiben ausschließlich auf dem Entwicklungszweig; der DRA-Stand ist technischer Code-Commit.
+- Die technische Prüfung ersetzt keine Realgeräte-Abnahme; Realabnahmen erst nach Nutzerbestätigung als erfolgreich kennzeichnen.
 - Realabnahme offen: Hilfe-R38-Inhalt und Reihenfolge; Zoom-Mouse-over in mehreren Sprachen bei Erststart und Sprachwechsel sowie in separatem Kartenfenster; goldenes Hilfe-Icon, übrige Desktop-Mouse-over-Texte; Aura-/Kompass-Regression (Design wählen, Aura AUS, Design erhalten, anderes Design bei Aura AUS wählen, Aura AN, neues Design erhalten).
 - Kein V4.10 FINAL ohne vollständige Realtests und ausdrückliche Freigabe.
 
