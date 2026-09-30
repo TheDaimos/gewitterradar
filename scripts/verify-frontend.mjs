@@ -35,7 +35,7 @@ for(const marker of [
   'R34: Auf dem iPad im Querformat',
   'R35: In zweispaltigen Querformatansichten',
   'order:-1;',
-  '#card-root:not(.ipad-device) .compass-panel'
+  '#card-root:not(.ipad-device) .compass-panel',
   'padding-bottom:calc(clamp(34px,6vh,64px) + 40px);',
   '.compass-head:not(:has([data-warning-test]:not([hidden])))',
   'Implementierung von Wetterdiensten &amp; Wetterereignissen durch WeatherRouter.',
