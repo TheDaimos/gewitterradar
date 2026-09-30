@@ -33,3 +33,7 @@ Aktueller Adapter verwendet für die drei Anfragen `bbox`, ansonsten `point`, an
 ## Schutzregeln
 
 V4.10 FINAL / `v4.10` bleibt unverändert. DRA verwendet ausschließlich `deploy/dev`; dieser Dokumentationsstand ist keine automatische DEV-Auslieferung und keine API-V1-Finalfreigabe.
+
+## Nachtrag: Android-Companion-App und Ladepfad
+
+Der Nutzer bestätigt nach Abschluss der ersten Prüfung: Längeres vollständiges Schließen und erneutes Öffnen der Companion-App reichte aus, um die korrekt installierte V4.11.01 DEV anzuzeigen. **Eine erneute Ressourcenregistrierung war nicht nötig.** Der ursprünglich geladene 4.10.02-Altstand war somit ein veralteter App-/Browser-Laufzeitstand bei bereits installiertem neuem Dateistand, nicht ein Beleg für eine fehlerhafte DRA-Dateiübertragung. Als neue verbindliche Folgeaufgabe ist ein verlässlich fortgeschriebenes Cache-/Versionskonzept mit einmaliger stabiler Registrierung vorgesehen; siehe [V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-09-30_R1_WEATHER_ENGINE_REALTEST.md). Das automatische Verändern der HA-Ressourcenregistrierung durch DRA bleibt eine zu prüfende Möglichkeit, keine implementierte Tatsache.
