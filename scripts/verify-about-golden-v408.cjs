@@ -30,6 +30,8 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
+const isV41103Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41103r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41102Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41102r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41101Dev = frontendText.includes("const GEWITTERRADAR_FEATURE_CACHE = '41101r1';")
@@ -39,7 +41,24 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV41102Dev) {
+if (isV41103Dev) {
+  // V4.11.03 adds bounded precipitation-radar preloading only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.03"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.03 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.03-DEV-2026-09-30"'));
+  assert.ok(versionText.includes('runtimeRevision:"41103r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-03A1"'));
+  assert.equal(runtime.productVersion, '4.11.03');
+  assert.equal(runtime.build, 'V4.11.03-DEV-2026-09-30');
+  assert.equal(runtime.runtimeRevision, '41103r1');
+  assert.equal(runtime.moduleSetId, 'E411-03A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41102Dev) {
   // V4.11.02 changes delivery/versioning and Weather-Engine modules only.
   // About geometry remains protected by the same immutable browser baseline below.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
