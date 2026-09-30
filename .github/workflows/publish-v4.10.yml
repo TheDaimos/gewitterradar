@@ -38,7 +38,7 @@ jobs:
           grep -Fx 'FRONTEND_SHA256=62f692b07e1bda236b956d9254215da0762396e67606297cfa52e6c26b20704e' docs/archive-triggers/V4_10_PUBLISH.trigger
           grep -Fx 'FRONTEND_SIZE=8739' docs/archive-triggers/V4_10_PUBLISH.trigger
           grep -Fx 'LOCALE_SHA256=dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e' docs/archive-triggers/V4_10_PUBLISH.trigger
-          test "$(python -c "import json; print(json.load(open('custom_components/gewitterradar/manifest.json'))['version'])")" = '0.21.0'
+          test "$(python -c "import json; print(json.load(open('custom_components/gewitterradar/manifest.json'))['version'])")" = '0.22.0'
           test "$(sha256sum frontend/gewitterradar.js | awk '{print $1}')" = '62f692b07e1bda236b956d9254215da0762396e67606297cfa52e6c26b20704e'
           test "$(wc -c < frontend/gewitterradar.js | tr -d ' ')" = '8739'
           test "$(sha256sum frontend/locales/about-locales.js | awk '{print $1}')" = 'dc6506291dd4cfe75e3b9c829fb42f21062511fb574d335af438e6c42711802e'
