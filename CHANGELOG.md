@@ -1,5 +1,15 @@
 # Changelog
 
+## V4.10 FINAL · 2026/09 (2026-09-30)
+
+- Öffentliche Produktversion V4.10 aus dem vollständig real abgenommenen technischen R40-Stand.
+- Sichtbare Hauptfenster-Plakette V4.10; Release-Build V4.10-RELEASE-2026-09-30; native Integration 0.22.0.
+- 23 Module; historische V4.10-Mengenangaben 28 Medaillon-Designs und 18 Pfeilvarianten unverändert.
+- Sieben ausdrücklich geplante V4.11-Vorhaben im deutsch-/englischsprachigen Versionsverlauf.
+- Reine Release-Normalisierung ohne funktionale Erweiterung der akzeptierten R40-Produktfunktionen.
+- PRE-MERGE-, Post-Merge-, Diagnose-, Hi-Res- und Golden-Master-Gates bleiben verbindlich.
+
+
 ## V4.10.02 DEV – R33 · Mobile-Kompass & Hilfe-Feinschliff (2026-09-29)
 
 - sehr schmale Touch-Anzeigen bis **520 px** nutzen nach Entfernung des alten Kompass-Selectors den frei gewordenen Kopfraum; Kompassfeld und nachfolgende Inhalte rücken geschlossen nach oben.
