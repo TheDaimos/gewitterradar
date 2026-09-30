@@ -263,6 +263,21 @@ V4.11 nimmt die bereits vorhandene Roadmap-Idee **Monitored Areas** konkret in d
 
 ---
 
+## 8. Durchgängige und erkennbare Versionsanzeige (neu, verbindlich für V4.11)
+
+Aus R40/V4.10: Die kleine Versionsplakette neben „Gewitterradar“ zeigte über viele DEV-Iterationen unverändert `V4.10.02`, da sie `CARD_DISPLAY_VERSION` verwendet, während nur `GEWITTERRADAR_BUILD`/`Rxx` und die DRA-Quellkennung fortgeschrieben wurden. Diese Mehrdeutigkeit ab V4.11 vermeiden.
+
+- [ ] Jede tatsächlich bereitgestellte V4.11-Entwicklungsversion erhält eine eindeutige, **sichtbar fortgeschriebene** Entwicklungsversionskennung (beispielsweise `V4.11.01 DEV` → `V4.11.02 DEV`); die Versionsplakette im Hauptfenster bleibt nicht auf einer übergeordneten alten Versionsnummer stehen.
+- [ ] Hauptfenster-Plakette, „Über“, Einstellungen, Release-History-Kopf, Diagnose, Modulmanifest, Buildkennung und DRA-Bereitstellung müssen aus einer kanonischen Versionsquelle stammen bzw. maschinell dagegen geprüft werden. Keine auseinanderlaufenden manuell gepflegten Werte.
+- [ ] Eine neue DRA-Auslieferung muss über die sichtbare Versionskennung **und** bei Bedarf die vollständige Buildkennung eindeutig von der zuvor installierten Ausgabe unterscheidbar sein – auch nach einem Frontend-/Browser-Neuladen.
+- [ ] Im Hauptfenster bleibt die Darstellung kompakt; per Klick oder Mouse-over kann die präzise Buildkennung/Commitinformation in den Versionsdetails eingesehen werden.
+- [ ] DEV/TEST-Kennungen von öffentlichen Release-Versionen trennen. Ein freigegebener öffentlicher Release trägt die kurze veröffentlichte Versionsnummer (beispielsweise **V4.11**), während DEV-Stände eindeutig als nicht final gekennzeichnet sind.
+- [ ] Versionsgleichlauf und Änderung pro neuem Bereitstellungskandidaten in automatisierten Vertragsprüfungen absichern, einschließlich nativer und Dashboard-Auslieferung sowie des DRA-Kanals.
+
+**V4.10-Abschluss:** Die öffentliche Final-Version soll in der Plakette **V4.10** anzeigen, nicht dauerhaft `V4.10.02`. Der bisherige R40-Kandidat bleibt bis zur ausdrücklichen Finalfreigabe ein DEV-Stand; diese V4.11-To-do-Ergänzung löst keinen Release aus.
+
+---
+
 ## Abgrenzung zu V4.10
 
 Diese Punkte sind **nicht Bestandteil der V4.10-Finalisierung**. V4.10 bleibt auf seinem abgeschlossenen Modularisierungs-/UI-Stand. Neue funktionale Arbeiten aus dieser Datei beginnen erst in der V4.11-Linie nach ausdrücklicher Freigabe.
