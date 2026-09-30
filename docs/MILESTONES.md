@@ -1,3 +1,18 @@
+# V4.10 Release-Meilenstein
+
+Status: **2026/09 · V4.10 – final freigegeben.**  
+Native Integration: **0.22.0.**  
+Akzeptierter technischer Ausgangsstand: **V4.10.02 R40.**  
+Laufzeitbasis: **41002r13**, Feature-Stand **41002r40**, Modulsatz **D40A-5E9B**.
+
+## M24 – V4.10 Modularisierung veröffentlicht
+- 23 Module und Moduldiagnose finalisiert;
+- sechs Realtests sowie abschließende Versionsverlauf-Sichtprüfung bestanden;
+- Kompass-, Medaillon-/Pfeil- und Vollbildfunktionen geräteübergreifend abgenommen;
+- 28 Medaillon-Designs und 18 Pfeilvarianten als historischer Releaseumfang festgehalten;
+- öffentlicher Versionsstand auf V4.10 normalisiert;
+- V4.11 bleibt getrennte Folgeentwicklung.
+
 # Gewitterradar – Meilensteine
 
 Status: **2026/09 · V4.09 – finaler Release-Stand.**  
