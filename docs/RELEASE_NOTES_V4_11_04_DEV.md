@@ -1,6 +1,6 @@
 # Gewitterradar V4.11.04 DEV
 
-Stand: 30.09.2026
+Stand: 01.10.2026
 
 ## Anlass
 
@@ -64,17 +64,21 @@ Zusätzlich bleibt der eigenständige Radarvertrag für XYZ/WMS, Web-Mercator-BB
 - `ui.skeleton`: `1.1.17`
 - `weather.precipitation-layer`: `1.1.0`
 
-## Reale Abnahme
+## Reale Abnahme · bestanden am 01.10.2026
 
-1. V4.11.04 über den bestehenden DRA-Kanal `deploy/dev` installieren.
-2. Den bereits in V4.11.03 funktionierenden Updatewächter beobachten: V4.11.03 soll V4.11.04 selbst erkennen und kontrolliert neu laden.
-3. Prüfen, dass sichtbar `V4.11.04 DEV` läuft.
-4. Einstellungen → Weather-Engine öffnen.
-5. Prüfen, dass **„Niederschlagsradar · Kartenebene“** und **„Radar-Vorladebereich“** sichtbar sind.
-6. Niederschlagsradar einschalten.
-7. Quelle, Datenalter, Abdeckung und Kartenebene prüfen.
-8. Pufferprofile Aus / Normal / Groß bei identischem Kartenausschnitt vergleichen.
-9. Standardansicht und Vollbild auf Verschieben, Zoomen und Nachladen prüfen.
-10. Blitzortung, Radien, Cluster, letzter Treffer, Kompass und Medaillon müssen unabhängig weiter funktionieren.
+Die reale Android-Abnahme von V4.11.04 ist bestanden.
+
+Bestätigt wurden:
+
+- **„Niederschlagsradar · Kartenebene“** ist im Weather-Engine-Dialog sichtbar und aktivierbar;
+- **„Radar-Vorladebereich“** ist sichtbar und arbeitet mit dem Profil **Normal · +30 % je Seite**;
+- der Live-Pufferstatus wird angezeigt und meldete im Realtest vorbereitete Zusatzkacheln sowie einen realen Speicherverbrauch von rund **5,3 MB**;
+- WeatherRouter wählte für den aktuellen Deutschland-/Mitteleuropa-Ausschnitt **DWD** als Quelle;
+- die Niederschlagsdarstellung wird sichtbar, geographisch korrekt und zusammenhängend auf der Gewitterradar-Karte gerendert;
+- Attribution für OpenStreetMap und DWD wird angezeigt;
+- Blitzortung, Radien, Standort, Clusteranzeige, Kompass und Medaillon bleiben parallel sichtbar und funktionsfähig;
+- die neue Radar-Ebene beeinträchtigt die bestehende Blitzüberwachung nicht.
+
+Damit ist der Mount-Fehler aus V4.11.02/V4.11.03 real behoben und der erste produktive WeatherRouter-Rasterlayer im Gewitterradar praktisch bestätigt.
 
 V4.10 FINAL und `main` bleiben unverändert.
