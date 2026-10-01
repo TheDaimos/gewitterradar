@@ -377,9 +377,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarStopTimelinePlayback(){
     const state=this._weatherRadarState();
+    const wasPlaying=state.timelinePlaying;
     state.timelinePlaying=false;
     if(state.timelineTimer){clearTimeout(state.timelineTimer);state.timelineTimer=null;}
     this._weatherRadarRenderTimelinePlayer();
+    if(wasPlaying&&state.enabled)this._scheduleWeatherRadarPreload("timeline-stop",120);
   },
 
   _weatherRadarClearTimelineStage(){
@@ -421,6 +423,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       root=document.createElement("div");
       root.dataset.weatherRadarPlayer="true";
       root.id="weather-radar-player";
+      root.setAttribute("role","group");
+      root.setAttribute("aria-label","Niederschlagsradar-Zeitverlauf");
       root.style.cssText="position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:750;width:min(560px,calc(100% - 22px));box-sizing:border-box;padding:7px 9px 8px;border:1px solid rgba(125,184,239,.36);border-radius:14px;background:rgba(8,13,20,.88);box-shadow:0 8px 26px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e7edf5;pointer-events:auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
       const top=document.createElement("div");top.style.cssText="display:flex;align-items:center;gap:6px;min-width:0";
       const prev=document.createElement("button");prev.type="button";prev.dataset.timelineAction="prev";prev.textContent="‹";prev.title="Vorheriger Radarzeitpunkt";
@@ -560,7 +564,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(old&&old!==next)try{old.remove();}catch(_error){}
     state.layer=next;state.timelineIndex=target;state.timelineLoadMessage=null;
     this._weatherRadarClearPreload({resetMetrics:false});
-    this._scheduleWeatherRadarPreload("timeline",120);
+    if(!state.timelinePlaying)this._scheduleWeatherRadarPreload("timeline",120);
     this._weatherRadarRenderTimelinePlayer();
     this._weatherRadarRenderCurrentLegend();
     if(state.timelinePlaying)this._weatherRadarPrimeNextTimelineFrame();
