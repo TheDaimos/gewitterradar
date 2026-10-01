@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   shared-frontend:
@@ -18,6 +18,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+
+      - name: One-shot V4.11.05 player delivery sync
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: sync V4.11.05 player geometry' }}"
+        run: node scripts/build-frontend.mjs
 
       - name: Print frontend contract hashes
         run: |
@@ -111,6 +115,21 @@ jobs:
             mkdir -p "artwork/acceptance/premium-controls/$delivery"
             ABOUT_DELIVERY="$delivery" node scripts/test-about-browser-v40756.cjs "$chrome" "artwork/acceptance/premium-controls/$delivery"
           done
+
+      - name: Commit one-shot V4.11.05 player delivery sync
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: sync V4.11.05 player geometry' }}"
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/gewitterradar/frontend dashboard/dist SHA256SUMS_FRONTEND.txt
+          if git diff --cached --quiet; then
+            echo "No generated delivery changes."
+            exit 0
+          fi
+          git commit -m "chore: sync V4.11.05 player delivery"
+          git push origin HEAD:feature/v4.11-development
 
       - uses: actions/upload-artifact@v4
         if: always()
