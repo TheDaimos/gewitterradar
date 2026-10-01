@@ -20,7 +20,7 @@ jobs:
           node-version: "24"
 
       - name: One-shot V4.11.05 identity and delivery sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.05 identity sync' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.05 identity sync v2' }}"
         shell: bash
         run: |
           python - <<'PY'
@@ -84,7 +84,7 @@ jobs:
           provenance["build"] = "V4.11.05-DEV-2026-10-01"
           provenance["runtimeRevision"] = "41105r1"
           provenance["moduleSetId"] = "E411-05A1"
-          provenance["deployment"]["purpose"] = "V4.11.05 DEV: provider-neutral precipitation radar timeline player with past/current/forecast controls and double-buffered frame switching; existing deploy/dev channel only"
+          provenance["deployment"]["purpose"] = "V4.11.05 DEV: provider-neutral precipitation-radar timeline player with past/current/forecast controls and double-buffered frame switching; existing deploy/dev channel only"
           for key in ("publishedAt","publicationSourceCommit","publicationRevision"):
               provenance["deployment"].pop(key, None)
           provenance_path.write_text(json.dumps(provenance, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -187,7 +187,7 @@ jobs:
           done
 
       - name: Commit one-shot V4.11.05 sync
-        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.05 identity sync' }}"
+        if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'ci: run V4.11.05 identity sync v2' }}"
         shell: bash
         run: |
           set -euo pipefail
