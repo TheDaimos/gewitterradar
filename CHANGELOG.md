@@ -8,6 +8,7 @@
 - Kanonische DEV-Identität: Produkt `4.11.04`, Anzeige `V4.11.04 DEV`, Build `V4.11.04-DEV-2026-09-30`, Runtime `41104r1`, Modulsatz `E411-04A1`, native Integration `0.23.3`.
 - `ui.skeleton` auf `1.1.17`, `core.manifest` auf `1.2.50`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
 - Der bereits in V4.11.03 erfolgreich real geprüfte automatische Updatewächter bleibt unverändert und soll beim Wechsel V4.11.03 → V4.11.04 erneut im Realbetrieb bestätigt werden.
+- Reale Android-Abnahme am 01.10.2026 bestanden: Radar-Schalter und Vorladepuffer sichtbar, DWD-Radardaten auf der Karte dargestellt, Attribution vorhanden und paralleler Blitzortung-/Instrumentenbetrieb ohne erkennbare Regression.
 
 ## V4.11.03 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
 
