@@ -114,12 +114,12 @@ def test_runtime_revision_and_module_set_probe_contract():
   version=(FRONTEND/"version.js").read_text(encoding="utf-8")
   assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
   assert "GEWITTERRADAR_FEATURE_CACHE" not in main
-  assert 'runtimeRevision:"41104r1"' in version
-  assert 'moduleSetId:"E411-04A1"' in version
-  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41104r1";' in main
-  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41104r1";' in manifest
-  assert runtime["runtimeRevision"]=="41104r1"
-  assert runtime["moduleSetId"]=="E411-04A1"
+  assert 'runtimeRevision:"41105r1"' in version
+  assert 'moduleSetId:"E411-05A1"' in version
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41105r1";' in main
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41105r1";' in manifest
+  assert runtime["runtimeRevision"]=="41105r1"
+  assert runtime["moduleSetId"]=="E411-05A1"
   for path in (
    "./module-manifest.js","./modules/fullscreen/map-display.js","./modules/instruments/compass-selector.js",
    "./modules/ui/i18n-settings.js","./modules/ui/controls.js","./modules/ui/skeleton.js",
