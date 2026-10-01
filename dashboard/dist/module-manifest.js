@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.51",
+    "version": "1.2.52",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.17",
+    "version": "1.1.18",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -310,7 +310,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "1.1.0",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
-    "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus", "Diagnose-Trace"],
+    "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus", "Diagnose-Trace", "Weather Engine Diagnose"],
     "file": "modules/weather/consumer-client.js"
   },
   {
@@ -340,4 +340,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.51",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.52",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
