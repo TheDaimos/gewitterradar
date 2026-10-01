@@ -144,14 +144,46 @@ const statusLabel=answer=>{
 /* Lazily bound to the CURRENT Home Assistant connection; no calls during boot. */
 export const installWeatherRouter=defineModule(MODULE_META,()=>({
   _weatherRouterClient(){
-    if(!this.__weatherRouterClient)this.__weatherRouterClient=createWeatherRouterClient(message=>{
+    if(!this.__weatherRouterClient)this.__weatherRouterClient=createWeatherRouterClient(async message=>{
       if(!this._hass||typeof this._hass.callWS!=='function')throw new Error('Home Assistant WebSocket unavailable');
-      return this._hass.callWS(message);
+      const capture=String(message?.type||'').startsWith('weather_router/consumer/');
+      const store=capture?this._weatherEngineTraceStore():null;
+      const started=performance.now(),startedAt=new Date().toISOString();
+      try{
+        const response=await this._hass.callWS(message);
+        if(store){
+          store.rawExchanges.push({
+            id:'gr-ws-'+String(++store.exchangeSequence).padStart(5,'0'),
+            started_at:startedAt,
+            completed_at:new Date().toISOString(),
+            duration_ms:Math.round((performance.now()-started)*1000)/1000,
+            request:JSON.parse(JSON.stringify(message)),
+            response:response==null?null:JSON.parse(JSON.stringify(response)),
+            error:null
+          });
+          if(store.rawExchanges.length>store.max)store.rawExchanges.splice(0,store.rawExchanges.length-store.max);
+        }
+        return response;
+      }catch(error){
+        if(store){
+          store.rawExchanges.push({
+            id:'gr-ws-'+String(++store.exchangeSequence).padStart(5,'0'),
+            started_at:startedAt,
+            completed_at:new Date().toISOString(),
+            duration_ms:Math.round((performance.now()-started)*1000)/1000,
+            request:JSON.parse(JSON.stringify(message)),
+            response:null,
+            error:{name:error?.name||'Error',message:error?.message||String(error)}
+          });
+          if(store.rawExchanges.length>store.max)store.rawExchanges.splice(0,store.rawExchanges.length-store.max);
+        }
+        throw error;
+      }
     });
     return this.__weatherRouterClient;
   },
   _weatherEngineTraceStore(){
-    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],max:80,sequence:0,lastDiscovery:null,lastCatalog:null};
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
     return this.__weatherEngineTraceStore;
   },
   async _weatherRouterDiscovery(options){
@@ -216,6 +248,7 @@ _weatherEngineDiagnosticPayload(){
       discovery:store.lastDiscovery||null,
       capability_catalog:store.lastCatalog||null,
       traces:[...(store.items||[])],
+      raw_consumer_exchanges:[...(store.rawExchanges||[])],
       local:{precipitation_radar:currentLayer}
     });
   },
