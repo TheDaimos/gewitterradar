@@ -1,5 +1,5 @@
-import { defineModule } from '../core/runtime.js?v=41105r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.0.3',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus'],file:'modules/weather/consumer-client.js'});
+import { defineModule } from '../core/runtime.js?v=41106r1';
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.1.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -100,10 +100,45 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     });
     return this.__weatherRouterClient;
   },
-  _weatherRouterDiscovery(options){return this._weatherRouterClient().discover(options);},
-  _weatherRouterCapabilities(options){return this._weatherRouterClient().capabilities(options);},
-  _weatherRouterResolve(capability,context,options){return this._weatherRouterClient().resolve(capability,context,options);},
-  _weatherRouterReset(){this.__weatherRouterClient?.reset();},
+  _weatherEngineTraceStore(){
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],max:80,sequence:0,lastDiscovery:null,lastCatalog:null};
+    return this.__weatherEngineTraceStore;
+  },
+  async _weatherRouterDiscovery(options){
+    const answer=await this._weatherRouterClient().discover(options);
+    this._weatherEngineTraceStore().lastDiscovery={...answer,checked_at:new Date().toISOString()};
+    return answer;
+  },
+  async _weatherRouterCapabilities(options){
+    const answer=await this._weatherRouterClient().capabilities(options);
+    this._weatherEngineTraceStore().lastCatalog=answer?.status==='ready'?{...answer,checked_at:new Date().toISOString()}:answer;
+    return answer;
+  },
+  async _weatherRouterResolve(capability,context,options){
+    const store=this._weatherEngineTraceStore();
+    const started=performance.now(),startedAt=new Date().toISOString();
+    let answer;
+    try{
+      answer=await this._weatherRouterClient().resolve(capability,context,options);
+      return answer;
+    }finally{
+      const finished=performance.now();
+      const entry={
+        id:'gr-we-'+String(++store.sequence).padStart(5,'0'),
+        started_at:startedAt,
+        completed_at:new Date().toISOString(),
+        duration_ms:Math.round((finished-started)*1000)/1000,
+        capability,
+        context:context?JSON.parse(JSON.stringify(context)):null,
+        options:options?JSON.parse(JSON.stringify(options)):null,
+        answer:answer?JSON.parse(JSON.stringify(answer)):{status:'unavailable',unavailable:{code:'client_exception',retryable:true,message:'Resolve failed before a valid answer was returned'}}
+      };
+      store.items.push(entry);
+      if(store.items.length>store.max)store.items.splice(0,store.items.length-store.max);
+      try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
+    }
+  },
+  _weatherRouterReset(){this.__weatherRouterClient?.reset();const store=this._weatherEngineTraceStore();store.lastDiscovery=null;store.lastCatalog=null;},
   _mountWeatherRouterSettings(){
     const root=this.shadow;
     const title=root?.querySelector('#weather-engine-section .settings-section-title');
