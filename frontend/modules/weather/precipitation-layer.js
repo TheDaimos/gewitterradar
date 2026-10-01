@@ -134,7 +134,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this.__weatherRadarState={
         enabled,preloadProfile,preloadCustomPercent,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
-        timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineLoadMessage:null,
+        timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
       };
     }
@@ -386,7 +386,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     state.timelineStageToken+=1;
     if(state.timelineStageLayer){try{state.timelineStageLayer.remove();}catch(_error){}}
-    state.timelineStageLayer=null;state.timelineStageIndex=-1;
+    state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;state.timelineStagePromise=null;
   },
 
   _weatherRadarRemoveTimelinePlayer(){
@@ -493,38 +493,51 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   async _weatherRadarStageTimelineFrame(index){
     const state=this._weatherRadarState(),model=state.timelineModel;
     if(!state.enabled||!this._map||!model?.frames?.[index])return false;
-    if(state.timelineStageLayer&&state.timelineStageIndex===index)return true;
+    if(state.timelineStageLayer&&state.timelineStageIndex===index){
+      if(state.timelineStageReady)return true;
+      if(state.timelineStagePromise)return state.timelineStagePromise;
+    }
     this._weatherRadarClearTimelineStage();
     const token=state.timelineStageToken;
     const base=state.lastReady?.answer?.resource?.payload;
     if(!base)return false;
     const frame=model.frames[index],payload={...base,tile_url:frame.tile_url};
     const attribution=base.attribution||state.lastReady?.answer?.provenance?.attribution||state.lastReady?.answer?.provenance?.provider_name||"";
-    try{
-      const L=await loadLeafletJs();
-      if(token!==state.timelineStageToken||!state.enabled||!this._map)return false;
-      const layer=this._weatherRadarCreateLayer(L,payload,attribution,0.001);
-      state.timelineStageLayer=layer;state.timelineStageIndex=index;
-      const loaded=await new Promise(resolve=>{
-        let settled=false;
-        const finish=value=>{if(settled)return;settled=true;clearTimeout(timeout);resolve(value);};
-        const timeout=setTimeout(()=>finish(false),TIMELINE_STAGE_TIMEOUT_MS);
-        layer.once?.("load",()=>finish(true));
-        layer.addTo(this._map);
-      });
-      if(token!==state.timelineStageToken||state.timelineStageLayer!==layer){
-        try{layer.remove();}catch(_error){}
+    const promise=(async()=>{
+      try{
+        const L=await loadLeafletJs();
+        if(token!==state.timelineStageToken||!state.enabled||!this._map)return false;
+        const layer=this._weatherRadarCreateLayer(L,payload,attribution,0.001);
+        state.timelineStageLayer=layer;state.timelineStageIndex=index;state.timelineStageReady=false;
+        const loaded=await new Promise(resolve=>{
+          let settled=false;
+          const finish=value=>{if(settled)return;settled=true;clearTimeout(timeout);resolve(value);};
+          const timeout=setTimeout(()=>finish(false),TIMELINE_STAGE_TIMEOUT_MS);
+          layer.once?.("load",()=>finish(true));
+          layer.addTo(this._map);
+        });
+        if(token!==state.timelineStageToken||state.timelineStageLayer!==layer){
+          try{layer.remove();}catch(_error){}
+          return false;
+        }
+        if(!loaded){
+          try{layer.remove();}catch(_error){}
+          state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;
+          return false;
+        }
+        state.timelineStageReady=true;
+        return true;
+      }catch(_error){
+        if(token===state.timelineStageToken){
+          state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;
+        }
         return false;
+      }finally{
+        if(token===state.timelineStageToken)state.timelineStagePromise=null;
       }
-      if(!loaded){
-        try{layer.remove();}catch(_error){}
-        state.timelineStageLayer=null;state.timelineStageIndex=-1;
-      }
-      return loaded;
-    }catch(_error){
-      if(token===state.timelineStageToken){state.timelineStageLayer=null;state.timelineStageIndex=-1;}
-      return false;
-    }
+    })();
+    state.timelineStagePromise=promise;
+    return promise;
   },
 
   async _weatherRadarSetTimelineFrame(index){
@@ -541,7 +554,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return false;
     }
     const next=state.timelineStageLayer,old=state.layer;
-    state.timelineStageLayer=null;state.timelineStageIndex=-1;
+    state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;state.timelineStagePromise=null;
     try{next.setOpacity?.(next.__grRadarNaturalOpacity??0.58);}catch(_error){}
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     if(old&&old!==next)try{old.remove();}catch(_error){}
