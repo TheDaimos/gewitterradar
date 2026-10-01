@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41105r1";
-/* Gewitterradar Card V4.11.05 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41106r1";
+/* Gewitterradar Card V4.11.06 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -21,7 +21,7 @@ let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
-let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installUpdateWatch;
+let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherEngineDiagnostics, installUpdateWatch;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
@@ -50,6 +50,7 @@ try {
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js');
+  const weatherEngineDiagnostics = await gewitterradarImport('./modules/weather/engine-diagnostics.js');
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   CARD_VERSION=APPLICATION_META.version;
@@ -79,6 +80,7 @@ try {
   ({ installHistoryChart } = historyChart);
   ({ installWeatherRouter } = weatherRouter);
   ({ installWeatherRadar } = weatherRadar);
+  ({ installWeatherEngineDiagnostics } = weatherEngineDiagnostics);
 } catch (error) {
   GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
   console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
@@ -142,6 +144,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installHistoryChart(GewitterradarCard,__moduleDeps);
   installWeatherRouter(GewitterradarCard,__moduleDeps);
   installWeatherRadar(GewitterradarCard,__moduleDeps);
+  installWeatherEngineDiagnostics(GewitterradarCard,__moduleDeps);
 
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'define-custom-element'};
   customElements.define('gewitterradar-card',GewitterradarCard);
