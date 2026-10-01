@@ -40,8 +40,8 @@ jobs:
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
-      - name: V4.11.04 mounted precipitation radar controls
-        run: node scripts/test-v41104-weather-radar.mjs
+      - name: V4.11.05 precipitation radar timeline player
+        run: node scripts/test-v41105-weather-radar-player.mjs
 
       - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
