@@ -150,14 +150,14 @@ for(const marker of [
 {
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
-  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.04 must use one canonical module runtime revision');
-  for(const marker of ['version:"4.11.04"','displayVersion:"V4.11.04 DEV"','runtimeRevision:"41104r1"','moduleSetId:"E411-04A1"']){
-    if(!version.includes(marker))throw Error('V4.11.04 canonical identity missing: '+marker);
+  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.05 must use one canonical module runtime revision');
+  for(const marker of ['version:"4.11.05"','displayVersion:"V4.11.05 DEV"','runtimeRevision:"41105r1"','moduleSetId:"E411-05A1"']){
+    if(!version.includes(marker))throw Error('V4.11.05 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
-    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&match[1]!== '41104r1'&&!['41002r14','41002r15'].includes(match[1])){
+    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&match[1]!== '41105r1'&&!['41002r14','41002r15'].includes(match[1])){
       const line=moduleText.slice(0,match.index).split('\n').length;
       const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
       throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
