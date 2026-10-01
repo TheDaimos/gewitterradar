@@ -394,7 +394,7 @@ _weatherEngineDiagnosticPayload(){
     toggle?.setAttribute('aria-checked','false');
   },
 
-  _mountWeatherEngineDiagnostics(){this._weatherEngineDiagnosticEnsureUi();,
+  _mountWeatherEngineDiagnostics(){this._weatherEngineDiagnosticEnsureUi();},
   _mountWeatherRouterSettings(){
     const root=this.shadow;
     const title=root?.querySelector('#weather-engine-section .settings-section-title');
