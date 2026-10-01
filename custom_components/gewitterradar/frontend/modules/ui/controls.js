@@ -1,4 +1,4 @@
-import { defineModule } from "../core/runtime.js?v=41104r1";
+import { defineModule } from "../core/runtime.js?v=41105r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
   "version": "1.1.5",

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.04",
-  "build": "V4.11.04-DEV-2026-09-30",
-  "runtimeRevision": "41104r1",
-  "moduleSetId": "E411-04A1",
+  "productVersion": "4.11.05",
+  "build": "V4.11.05-DEV-2026-10-01",
+  "runtimeRevision": "41105r1",
+  "moduleSetId": "E411-05A1",
   "baselineFeatureHead": "669272bcbe3282ac8cf9759765ab4cb5dc113401",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.04 DEV: mount precipitation-radar and preload controls in the real Weather-Engine settings UI; existing deploy/dev channel only",
+    "purpose": "V4.11.05 DEV: provider-neutral precipitation-radar timeline player with past/current/forecast controls and double-buffered frame switching; existing deploy/dev channel only",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

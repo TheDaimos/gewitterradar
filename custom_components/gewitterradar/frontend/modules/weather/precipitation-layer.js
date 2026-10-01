@@ -1,11 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41104r1";
+import { defineModule } from "../core/runtime.js?v=41105r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.1.0",
+  version:"1.2.0",
   group:"Weather-Engine",
   function:"Niederschlagsradar-Kartenebene",
-  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Ressourcenschutz"],
+  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Radar-Zeitplayer","Frame-Doppelpuffer","Ressourcenschutz"],
   file:"modules/weather/precipitation-layer.js"
 });
 
@@ -17,6 +17,8 @@ const REFRESH_MS=300000;
 const VIEWPORT_MIN_MS=15000;
 const SAME_VIEW_MIN_MS=240000;
 const PRELOAD_CONCURRENCY=4;
+const TIMELINE_STAGE_TIMEOUT_MS=6000;
+const TIMELINE_PLAY_INTERVAL_MS=950;
 
 export const WEATHER_RADAR_PRELOAD_PROFILES=Object.freeze({
   off:Object.freeze({label:"Aus",percent:0,maxTiles:0,maxBytes:0}),
@@ -75,6 +77,28 @@ export const weatherRadarPreloadTilePlan=(pixelBounds,policy)=>{
   const tiles=ordered.slice(0,policy.maxTiles).map(({x,y,z})=>({x,y,z}));
   return {tiles,visibleCount:visible.size,expandedCount:visible.size+candidates.size,availableExtra:candidates.size,selectedExtra:tiles.length,percent:policy.percent,areaFactor:policy.areaFactor};
 };
+export const weatherRadarTimelineModel=(payload,referenceTime=Date.now())=>{
+  const raw=Array.isArray(payload?.timeline?.frames)?payload.timeline.frames:[];
+  const frames=raw.map((frame,index)=>{
+    const time=typeof frame?.time==="string"?frame.time:null;
+    const tileUrl=typeof frame?.tile_url==="string"?frame.tile_url:null;
+    const timeMs=time?Date.parse(time):NaN;
+    return time&&tileUrl&&Number.isFinite(timeMs)?{time,tile_url:tileUrl,timeMs,sourceIndex:index}:null;
+  }).filter(Boolean).sort((a,b)=>a.timeMs-b.timeMs||a.sourceIndex-b.sourceIndex);
+  if(!frames.length)return {frames:[],currentIndex:-1,loop:false};
+  let currentIndex=frames.findIndex(frame=>frame.tile_url===payload?.tile_url);
+  if(currentIndex<0){
+    const ref=Number.isFinite(Number(referenceTime))?Number(referenceTime):Date.now();
+    const notFuture=frames.map((frame,index)=>({frame,index})).filter(item=>item.frame.timeMs<=ref);
+    currentIndex=notFuture.length?notFuture.at(-1).index:frames.reduce((best,frame,index)=>Math.abs(frame.timeMs-ref)<Math.abs(frames[best].timeMs-ref)?index:best,0);
+  }
+  return {
+    frames:frames.map((frame,index)=>({...frame,kind:index<currentIndex?"past":index===currentIndex?"current":"forecast"})),
+    currentIndex,
+    loop:payload?.timeline?.loop!==false
+  };
+};
+
 export const weatherRasterBbox3857=({x,y,z})=>{
   const origin=20037508.342789244;
   const span=(origin*2)/(2**z);
@@ -110,6 +134,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this.__weatherRadarState={
         enabled,preloadProfile,preloadCustomPercent,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
+        timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
       };
     }
@@ -164,11 +189,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
 
-  _weatherRadarCreateLayer(L,payload,attribution){
+  _weatherRadarCreateLayer(L,payload,attribution,opacityOverride=null){
     const tileSize=Math.max(1,Math.round(finite(payload.tile_size)||256));
     const minZoom=Math.max(0,finite(payload.min_zoom)||0);
     const maxZoom=Math.max(minZoom,finite(payload.max_zoom)||18);
-    const opacity=clamp(finite(payload.default_opacity)??0.58,0,1);
+    const naturalOpacity=clamp(finite(payload.default_opacity)??0.58,0,1);
+    const opacity=opacityOverride==null?naturalOpacity:clamp(finite(opacityOverride)??naturalOpacity,0,1);
     const map=this._map;
     if(!map.getPane("gr-weather-radar")){
       const pane=map.createPane("gr-weather-radar");
@@ -177,6 +203,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     const displayMaxZoom=Math.max(maxZoom,finite(map.getMaxZoom?.())??maxZoom);
     const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom:displayMaxZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
+    layer.__grRadarNaturalOpacity=naturalOpacity;
     const template=String(payload.tile_url||"");
     layer.createTile=(coords,done)=>{
       const url=expandWeatherRasterTileUrl(template,coords);
@@ -202,6 +229,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return img;
     };
     return layer;
+  },
+
+  _weatherRadarActivePayload(){
+    const state=this._weatherRadarState();
+    const payload=state.lastReady?.answer?.resource?.payload;
+    const frame=state.timelineModel?.frames?.[state.timelineIndex];
+    return payload&&frame?{...payload,tile_url:frame.tile_url}:payload||null;
   },
 
   _weatherRadarPreloadPolicy(payload=null){
@@ -268,7 +302,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarRunPreload(){
     const state=this._weatherRadarState();
-    const answer=state.lastReady?.answer,payload=answer?.resource?.payload;
+    const payload=this._weatherRadarActivePayload();
     if(!state.enabled||!payload||!this._map)return;
     const policy=this._weatherRadarPreloadPolicy(payload);
     if(policy.percent<=0||policy.maxTiles<=0){this._weatherRadarClearPreload();return;}
@@ -341,8 +375,244 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     status.textContent=prefix+guard+live;
   },
 
+  _weatherRadarStopTimelinePlayback(){
+    const state=this._weatherRadarState();
+    const wasPlaying=state.timelinePlaying;
+    state.timelinePlaying=false;
+    if(state.timelineTimer){clearTimeout(state.timelineTimer);state.timelineTimer=null;}
+    this._weatherRadarRenderTimelinePlayer();
+    if(wasPlaying&&state.enabled)this._scheduleWeatherRadarPreload("timeline-stop",120);
+  },
+
+  _weatherRadarClearTimelineStage(){
+    const state=this._weatherRadarState();
+    state.timelineStageToken+=1;
+    if(state.timelineStageLayer){try{state.timelineStageLayer.remove();}catch(_error){}}
+    state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;state.timelineStagePromise=null;
+  },
+
+  _weatherRadarRemoveTimelinePlayer(){
+    this._weatherRadarStopTimelinePlayback();
+    this._weatherRadarClearTimelineStage();
+    this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
+  },
+
+  _weatherRadarTimelineTimeLabel(frame){
+    if(!frame)return "—";
+    try{
+      const date=new Date(frame.timeMs);
+      const now=new Date();
+      const sameDay=date.getFullYear()===now.getFullYear()&&date.getMonth()===now.getMonth()&&date.getDate()===now.getDate();
+      return new Intl.DateTimeFormat(undefined,sameDay?{hour:"2-digit",minute:"2-digit"}:{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).format(date);
+    }catch(_error){return frame.time||"—";}
+  },
+
+  _weatherRadarTimelineKindLabel(index){
+    const state=this._weatherRadarState();
+    const current=state.timelineModel?.currentIndex??-1;
+    return index<current?"Vergangenheit":index===current?"Jetzt":"Vorhersage";
+  },
+
+  _weatherRadarMountTimelinePlayer(){
+    const state=this._weatherRadarState();
+    const model=state.timelineModel;
+    const card=this.shadow?.getElementById("map-card");
+    if(!card||!model||model.frames.length<2){this._weatherRadarRemoveTimelinePlayer();return;}
+    let root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
+    if(!root){
+      root=document.createElement("div");
+      root.dataset.weatherRadarPlayer="true";
+      root.id="weather-radar-player";
+      root.setAttribute("role","group");
+      root.setAttribute("aria-label","Niederschlagsradar-Zeitverlauf");
+      root.style.cssText="position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:750;width:min(560px,calc(100% - 22px));box-sizing:border-box;padding:7px 9px 8px;border:1px solid rgba(125,184,239,.36);border-radius:14px;background:rgba(8,13,20,.88);box-shadow:0 8px 26px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e7edf5;pointer-events:auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+      const top=document.createElement("div");top.style.cssText="display:flex;align-items:center;gap:6px;min-width:0";
+      const prev=document.createElement("button");prev.type="button";prev.dataset.timelineAction="prev";prev.textContent="‹";prev.title="Vorheriger Radarzeitpunkt";
+      const play=document.createElement("button");play.type="button";play.dataset.timelineAction="play";play.title="Radarfolge abspielen";
+      const next=document.createElement("button");next.type="button";next.dataset.timelineAction="next";next.textContent="›";next.title="Nächster Radarzeitpunkt";
+      const now=document.createElement("button");now.type="button";now.dataset.timelineAction="now";now.textContent="Jetzt";now.title="Zum aktuellen Radarzeitpunkt";
+      [prev,play,next,now].forEach(button=>button.style.cssText="appearance:none;-webkit-appearance:none;min-width:34px;height:30px;padding:0 9px;border-radius:9px;border:1px solid rgba(246,195,68,.34);background:rgba(16,22,31,.92);color:#f3d16d;font-weight:850;font-size:13px;line-height:1;cursor:pointer;touch-action:manipulation");
+      const label=document.createElement("div");label.dataset.timelineLabel="true";label.style.cssText="min-width:0;flex:1;text-align:center;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      top.append(prev,play,next,label,now);
+      const range=document.createElement("input");range.type="range";range.min="0";range.step="1";range.value="0";range.dataset.timelineRange="true";range.setAttribute("aria-label","Radarzeitpunkt");range.style.cssText="display:block;width:100%;height:22px;margin:2px 0 0;accent-color:#79bfff";
+      const footer=document.createElement("div");footer.style.cssText="display:flex;justify-content:space-between;gap:8px;margin-top:-1px;font-size:9.5px;font-weight:700;letter-spacing:.02em;opacity:.68";
+      footer.innerHTML="<span>Vergangenheit</span><span>Jetzt</span><span>Vorhersage</span>";
+      root.append(top,range,footer);
+      root.addEventListener("click",event=>{
+        const action=event.target?.closest?.("[data-timeline-action]")?.dataset?.timelineAction;
+        if(!action)return;
+        if(action==="play"){this._weatherRadarToggleTimelinePlayback();return;}
+        this._weatherRadarStopTimelinePlayback();
+        const s=this._weatherRadarState(),m=s.timelineModel;if(!m?.frames?.length)return;
+        if(action==="now"){this._weatherRadarSetTimelineFrame(m.currentIndex);return;}
+        const delta=action==="prev"?-1:1;
+        const target=clamp((s.timelineIndex<0?m.currentIndex:s.timelineIndex)+delta,0,m.frames.length-1);
+        this._weatherRadarSetTimelineFrame(target);
+      });
+      range.addEventListener("change",()=>{
+        this._weatherRadarStopTimelinePlayback();
+        this._weatherRadarSetTimelineFrame(Number(range.value));
+      });
+      card.append(root);
+    }
+    this._weatherRadarRenderTimelinePlayer();
+  },
+
+  _weatherRadarRenderTimelinePlayer(){
+    const state=this._weatherRadarState(),model=state.timelineModel;
+    const root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
+    if(!root||!model?.frames?.length)return;
+    const index=clamp(state.timelineIndex<0?model.currentIndex:state.timelineIndex,0,model.frames.length-1);
+    const frame=model.frames[index];
+    const range=root.querySelector('[data-timeline-range="true"]');
+    if(range){range.max=String(model.frames.length-1);range.value=String(index);}
+    const label=root.querySelector('[data-timeline-label="true"]');
+    if(label){
+      const status=state.timelineLoadMessage||this._weatherRadarTimelineKindLabel(index);
+      label.textContent=status+" · "+this._weatherRadarTimelineTimeLabel(frame)+" · "+(index+1)+"/"+model.frames.length;
+      label.title=frame.time;
+    }
+    const play=root.querySelector('[data-timeline-action="play"]');
+    if(play){play.textContent=state.timelinePlaying?"❚❚":"▶";play.title=state.timelinePlaying?"Wiedergabe anhalten":"Radarfolge abspielen";}
+  },
+
+  _weatherRadarRenderCurrentLegend(){
+    const state=this._weatherRadarState(),answer=state.lastReady?.answer;
+    if(!answer)return;
+    const payload=answer.resource?.payload||{},description=this._weatherRadarDescribe(answer);
+    const frame=state.timelineModel?.frames?.[state.timelineIndex];
+    const timePart=frame?this._weatherRadarTimelineKindLabel(state.timelineIndex)+" · "+this._weatherRadarTimelineTimeLabel(frame):description.ageText;
+    const legend=payload.legend&&typeof payload.legend==="object"?payload.legend:null;
+    const label="Niederschlag · "+description.provider+" · "+timePart;
+    const title=[
+      label,
+      "Datenalter: "+description.ageText,
+      "Abdeckung: "+description.coverage,
+      answer.routing?.degraded?"Datenweg eingeschränkt":null,
+      ...description.limitations
+    ].filter(Boolean).join(" · ");
+    this._weatherRadarRenderLegend({label,title,legendUrl:legend?.url||null,legendTitle:legend?.title||"Niederschlagslegende"});
+  },
+
+  async _weatherRadarStageTimelineFrame(index){
+    const state=this._weatherRadarState(),model=state.timelineModel;
+    if(!state.enabled||!this._map||!model?.frames?.[index])return false;
+    if(state.timelineStageLayer&&state.timelineStageIndex===index){
+      if(state.timelineStageReady)return true;
+      if(state.timelineStagePromise)return state.timelineStagePromise;
+    }
+    this._weatherRadarClearTimelineStage();
+    const token=state.timelineStageToken;
+    const base=state.lastReady?.answer?.resource?.payload;
+    if(!base)return false;
+    const frame=model.frames[index],payload={...base,tile_url:frame.tile_url};
+    const attribution=base.attribution||state.lastReady?.answer?.provenance?.attribution||state.lastReady?.answer?.provenance?.provider_name||"";
+    const promise=(async()=>{
+      try{
+        const L=await loadLeafletJs();
+        if(token!==state.timelineStageToken||!state.enabled||!this._map)return false;
+        const layer=this._weatherRadarCreateLayer(L,payload,attribution,0.001);
+        state.timelineStageLayer=layer;state.timelineStageIndex=index;state.timelineStageReady=false;
+        const loaded=await new Promise(resolve=>{
+          let settled=false;
+          const finish=value=>{if(settled)return;settled=true;clearTimeout(timeout);resolve(value);};
+          const timeout=setTimeout(()=>finish(false),TIMELINE_STAGE_TIMEOUT_MS);
+          layer.once?.("load",()=>finish(true));
+          layer.addTo(this._map);
+        });
+        if(token!==state.timelineStageToken||state.timelineStageLayer!==layer){
+          try{layer.remove();}catch(_error){}
+          return false;
+        }
+        if(!loaded){
+          try{layer.remove();}catch(_error){}
+          state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;
+          return false;
+        }
+        state.timelineStageReady=true;
+        return true;
+      }catch(_error){
+        if(token===state.timelineStageToken){
+          state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;
+        }
+        return false;
+      }finally{
+        if(token===state.timelineStageToken)state.timelineStagePromise=null;
+      }
+    })();
+    state.timelineStagePromise=promise;
+    return promise;
+  },
+
+  async _weatherRadarSetTimelineFrame(index){
+    const state=this._weatherRadarState(),model=state.timelineModel;
+    if(!model?.frames?.length)return false;
+    const target=clamp(Math.round(Number(index)||0),0,model.frames.length-1);
+    if(target===state.timelineIndex){this._weatherRadarRenderTimelinePlayer();return true;}
+    state.timelineLoadMessage="Lade Radarzeitpunkt …";this._weatherRadarRenderTimelinePlayer();
+    const staged=await this._weatherRadarStageTimelineFrame(target);
+    if(!staged||!state.timelineStageLayer){
+      state.timelineLoadMessage="Radarzeitpunkt konnte nicht geladen werden";
+      state.timelinePlaying=false;
+      this._weatherRadarRenderTimelinePlayer();
+      return false;
+    }
+    const next=state.timelineStageLayer,old=state.layer;
+    state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;state.timelineStagePromise=null;
+    try{next.setOpacity?.(next.__grRadarNaturalOpacity??0.58);}catch(_error){}
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    if(old&&old!==next)try{old.remove();}catch(_error){}
+    state.layer=next;state.timelineIndex=target;state.timelineLoadMessage=null;
+    this._weatherRadarClearPreload({resetMetrics:false});
+    if(!state.timelinePlaying)this._scheduleWeatherRadarPreload("timeline",120);
+    this._weatherRadarRenderTimelinePlayer();
+    this._weatherRadarRenderCurrentLegend();
+    if(state.timelinePlaying)this._weatherRadarPrimeNextTimelineFrame();
+    return true;
+  },
+
+  _weatherRadarNextTimelineIndex(){
+    const state=this._weatherRadarState(),model=state.timelineModel;
+    if(!model?.frames?.length)return -1;
+    const current=state.timelineIndex<0?model.currentIndex:state.timelineIndex;
+    if(current<model.frames.length-1)return current+1;
+    return model.loop?0:-1;
+  },
+
+  _weatherRadarPrimeNextTimelineFrame(){
+    const next=this._weatherRadarNextTimelineIndex();
+    if(next>=0)this._weatherRadarStageTimelineFrame(next);
+  },
+
+  _weatherRadarScheduleTimelinePlayback(){
+    const state=this._weatherRadarState();
+    if(!state.timelinePlaying)return;
+    if(state.timelineTimer)clearTimeout(state.timelineTimer);
+    state.timelineTimer=setTimeout(async()=>{
+      state.timelineTimer=null;
+      if(!state.timelinePlaying)return;
+      const next=this._weatherRadarNextTimelineIndex();
+      if(next<0){this._weatherRadarStopTimelinePlayback();return;}
+      const ok=await this._weatherRadarSetTimelineFrame(next);
+      if(!ok){this._weatherRadarStopTimelinePlayback();return;}
+      this._weatherRadarScheduleTimelinePlayback();
+    },TIMELINE_PLAY_INTERVAL_MS);
+  },
+
+  _weatherRadarToggleTimelinePlayback(){
+    const state=this._weatherRadarState(),model=state.timelineModel;
+    if(!model?.frames?.length)return;
+    if(state.timelinePlaying){this._weatherRadarStopTimelinePlayback();return;}
+    state.timelinePlaying=true;state.timelineLoadMessage=null;
+    this._weatherRadarRenderTimelinePlayer();
+    this._weatherRadarPrimeNextTimelineFrame();
+    this._weatherRadarScheduleTimelinePlayback();
+  },
+
   _weatherRadarRemoveLayer(){
     const state=this._weatherRadarState();
+    this._weatherRadarRemoveTimelinePlayer();
+    state.timelineModel=null;state.timelineIndex=-1;state.timelineLoadMessage=null;
     if(state.layer){try{state.layer.remove();}catch(_error){}state.layer=null;}
     this._weatherRadarRenderLegend(null);
   },
@@ -395,16 +665,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }).catch(()=>{});
     state.lastReady={answer,viewport,at:Date.now()};
     state.lastUnavailable=null;
+    this._weatherRadarStopTimelinePlayback();
+    this._weatherRadarClearTimelineStage();
+    const referenceTime=Date.parse(answer?.freshness?.data_time||"");
+    state.timelineModel=weatherRadarTimelineModel(payload,Number.isFinite(referenceTime)?referenceTime:Date.now());
+    state.timelineIndex=state.timelineModel.currentIndex;
+    this._weatherRadarMountTimelinePlayer();
     this._scheduleWeatherRadarPreload("ready",180);
-    const legend=payload.legend&&typeof payload.legend==="object"?payload.legend:null;
-    const label="Niederschlag · "+description.provider+" · "+description.ageText;
-    const title=[
-      label,
-      "Abdeckung: "+description.coverage,
-      answer.routing?.degraded?"Datenweg eingeschränkt":null,
-      ...description.limitations
-    ].filter(Boolean).join(" · ");
-    this._weatherRadarRenderLegend({label,title,legendUrl:legend?.url||null,legendTitle:legend?.title||"Niederschlagslegende"});
+    this._weatherRadarRenderCurrentLegend();
     this._weatherRadarUpdateControls();
   },
 
@@ -455,17 +723,27 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
     const status=this.shadow?.getElementById("weather-radar-status");
+    const timelineStatus=this.shadow?.getElementById("weather-radar-timeline-status");
     if(toggle){
       toggle.setAttribute("aria-pressed",state.enabled?"true":"false");
       toggle.textContent=state.enabled?"Ein":"Aus";
       toggle.dataset.active=state.enabled?"1":"0";
+    }
+    if(timelineStatus){
+      const frames=state.timelineModel?.frames?.length||0;
+      timelineStatus.textContent=!state.enabled
+        ?"Aus · Zeitverlauf wird mit dem Radar aktiviert"
+        :frames>1
+          ?"Verfügbar · "+frames+" Radarzeitpunkte · Vergangenheit, Jetzt und Vorhersage"
+          :"Aktive Quelle liefert derzeit keine mehrteilige Radarzeitreihe";
     }
     if(!status)return;
     if(message){status.textContent=message;return;}
     if(!state.enabled){status.textContent="Aus · keine zusätzlichen Radar-Anfragen";return;}
     if(state.lastReady){
       const d=this._weatherRadarDescribe(state.lastReady.answer);
-      status.textContent="Aktiv · "+d.provider+" · "+d.ageText+" · Abdeckung: "+d.coverage+(state.lastReady.answer.routing?.degraded?" · eingeschränkt":"");
+      const frames=state.timelineModel?.frames?.length||0;
+      status.textContent="Aktiv · "+d.provider+" · "+d.ageText+(frames>1?" · "+frames+" Radarzeitpunkte":"")+" · Abdeckung: "+d.coverage+(state.lastReady.answer.routing?.degraded?" · eingeschränkt":"");
       return;
     }
     const code=state.lastUnavailable?.code;
@@ -527,9 +805,16 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const preloadStatus=document.createElement("div");preloadStatus.className="settings-row-label";preloadStatus.id="weather-radar-preload-status";preloadStatus.setAttribute("role","status");preloadStatus.setAttribute("aria-live","polite");
     preloadStatusRow.append(preloadStatus);
 
+    const timelineRow=document.createElement("div");timelineRow.className="settings-row";
+    const timelineLabel=document.createElement("div");timelineLabel.className="settings-row-label";
+    const timelineTitle=document.createElement("div");timelineTitle.textContent="Radar-Zeitverlauf";
+    const timelineHint=document.createElement("div");timelineHint.textContent="Die Zeitsteuerung erscheint automatisch auf der Karte, wenn WeatherRouter mehrere Radarzeitpunkte liefert.";timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const timelineStatus=document.createElement("div");timelineStatus.id="weather-radar-timeline-status";timelineStatus.setAttribute("role","status");timelineStatus.setAttribute("aria-live","polite");timelineStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
+    timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel);
+
     const statusRow=document.createElement("div");statusRow.className="settings-row";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,statusRow);
+    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,timelineRow,statusRow);
     const results=this.shadow?.getElementById("weather-engine-results")?.closest(".settings-row");
     if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
     this._weatherRadarUpdateControls();
@@ -554,7 +839,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.mapWaitTimer)clearTimeout(state.mapWaitTimer);
     if(state.refreshTimer)clearInterval(state.refreshTimer);
     if(state.preloadTimer)clearTimeout(state.preloadTimer);
-    state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=null;
+    if(state.timelineTimer)clearTimeout(state.timelineTimer);
+    state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=state.timelineTimer=null;
+    state.timelinePlaying=false;
+    this._weatherRadarClearTimelineStage();
+    this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
     state.preloadGeneration+=1;state.preloadQueue=[];state.preloadCache.clear();
     if(state.map&&state.onMove)try{state.map.off("moveend",state.onMove);state.map.off("zoomend",state.onMove);}catch(_error){}
     state.map=null;state.onMove=null;state.inFlight=false;state.pending=false;
