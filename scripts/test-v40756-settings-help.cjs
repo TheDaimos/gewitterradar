@@ -153,6 +153,51 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.match(metrics.signatureFilter, /sepia|drop-shadow/);
 
+        const radarPlayerGeometry = await page.evaluate(() => {
+          const card = window.aboutCard;
+          const root = card.shadowRoot;
+          const state = card._weatherRadarState();
+          const previousModel = state.timelineModel;
+          const previousIndex = state.timelineIndex;
+          state.timelineModel = {
+            currentIndex: 1,
+            loop: true,
+            frames: [
+              { time: '2026-10-01T06:30:00Z', timeMs: Date.parse('2026-10-01T06:30:00Z'), tile_url: 'past', kind: 'past' },
+              { time: '2026-10-01T06:40:00Z', timeMs: Date.parse('2026-10-01T06:40:00Z'), tile_url: 'now', kind: 'current' },
+              { time: '2026-10-01T06:50:00Z', timeMs: Date.parse('2026-10-01T06:50:00Z'), tile_url: 'future', kind: 'forecast' },
+            ],
+          };
+          state.timelineIndex = 1;
+          card._weatherRadarMountTimelinePlayer();
+          const player = root.querySelector('[data-weather-radar-player="true"]');
+          const mapCard = root.getElementById('map-card');
+          const legend = root.getElementById('map-legend');
+          const p = player?.getBoundingClientRect();
+          const m = mapCard?.getBoundingClientRect();
+          const l = legend?.getBoundingClientRect();
+          const result = {
+            exists: !!player,
+            leftInside: !!(p && m) && p.left >= m.left - 1,
+            rightInside: !!(p && m) && p.right <= m.right + 1,
+            aboveLegend: !!(p && l) && p.bottom <= l.top - 4,
+            play: player?.querySelector('[data-timeline-action="play"]')?.textContent || '',
+            now: player?.querySelector('[data-timeline-action="now"]')?.textContent || '',
+            rangeMax: player?.querySelector('[data-timeline-range="true"]')?.max || '',
+          };
+          card._weatherRadarRemoveTimelinePlayer();
+          state.timelineModel = previousModel;
+          state.timelineIndex = previousIndex;
+          return result;
+        });
+        assert.equal(radarPlayerGeometry.exists, true, `${delivery}/${profile} radar timeline player mounts`);
+        assert.equal(radarPlayerGeometry.leftInside, true, `${delivery}/${profile} radar player left boundary`);
+        assert.equal(radarPlayerGeometry.rightInside, true, `${delivery}/${profile} radar player right boundary`);
+        assert.equal(radarPlayerGeometry.aboveLegend, true, `${delivery}/${profile} radar player above legend`);
+        assert.equal(radarPlayerGeometry.play, '▶', `${delivery}/${profile} radar play control`);
+        assert.equal(radarPlayerGeometry.now, 'Jetzt', `${delivery}/${profile} radar current-frame control`);
+        assert.equal(radarPlayerGeometry.rangeMax, '2', `${delivery}/${profile} radar timeline range`);
+
         const startupDropdownLifecycle = await page.evaluate(async () => {
           const card = window.aboutCard;
           const root = card.shadowRoot;
