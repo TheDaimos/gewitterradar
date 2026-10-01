@@ -115,6 +115,7 @@ const server = http.createServer((req, res) => {
             weatherRadarToggle: !!root.getElementById('weather-radar-toggle'),
             weatherRadarPreloadProfile: !!root.getElementById('weather-radar-preload-profile'),
             weatherRadarPreloadStatus: !!root.getElementById('weather-radar-preload-status'),
+            weatherRadarTimelineStatus: !!root.getElementById('weather-radar-timeline-status'),
             summaryHeight: summary.offsetHeight,
             chevron: [parseFloat(after.width), parseFloat(after.height), after.borderRightColor],
             closedState,
@@ -141,6 +142,7 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.weatherRadarToggle, true, `${delivery}/${profile} precipitation radar toggle mounted`);
         assert.equal(metrics.weatherRadarPreloadProfile, true, `${delivery}/${profile} radar preload profile mounted`);
         assert.equal(metrics.weatherRadarPreloadStatus, true, `${delivery}/${profile} radar preload status mounted`);
+        assert.equal(metrics.weatherRadarTimelineStatus, true, `${delivery}/${profile} radar timeline status mounted`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
