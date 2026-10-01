@@ -96,7 +96,7 @@ assert.match(source,/maxNativeZoom:maxZoom/);
 assert.match(source,/PRELOAD_CONCURRENCY=4/);
 assert.match(source,/TIMELINE_STAGE_TIMEOUT_MS=6000/);
 assert.match(source,/TIMELINE_PLAY_INTERVAL_MS=950/);
-assert.match(source,/data\.weatherRadarPlayer="true"/);
+assert.match(source,/dataset\.weatherRadarPlayer="true"/);
 assert.match(source,/aria-label","Niederschlagsradar-Zeitverlauf"/);
 assert.match(source,/_weatherRadarStageTimelineFrame/);
 assert.match(source,/timelineStagePromise/);
