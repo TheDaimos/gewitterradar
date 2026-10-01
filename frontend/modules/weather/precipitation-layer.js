@@ -462,6 +462,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),model=state.timelineModel;
     const root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
     if(!root||!model?.frames?.length)return;
+    const legend=this.shadow?.getElementById("map-legend");
+    const legendHeight=Math.max(0,Math.round(legend?.getBoundingClientRect?.().height||legend?.offsetHeight||48));
+    root.style.bottom=(legendHeight+10)+"px";
     const index=clamp(state.timelineIndex<0?model.currentIndex:state.timelineIndex,0,model.frames.length-1);
     const frame=model.frames[index];
     const range=root.querySelector('[data-timeline-range="true"]');
