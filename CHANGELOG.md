@@ -1,5 +1,19 @@
 # Changelog
 
+## V4.11.05 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
+
+- Erster providerneutraler **Radar-Zeitverlauf** direkt auf der Gewitterradar-Karte: Vergangenheit, aktueller Zeitpunkt und Vorhersage werden aus der vom WeatherRouter gelieferten Raster-Timeline abgeleitet.
+- Bedienung mit Zurück/Vor, **Jetzt**, Wiedergabe/Pause und Zeitregler. Der Player erscheint nur, wenn die geroutete Quelle tatsächlich mehrere Radarzeitpunkte liefert; Einzelbild-Quellen bleiben vollständig nutzbar.
+- Keine DWD-Sonderlogik im Gewitterradar: Anzahl und Zeitpunkte stammen vollständig aus Consumer V1. DWD kann aktuell bis zu 72 Analyse-/Vorhersageframes liefern, der Player nimmt jedoch keine feste Framezahl an.
+- Framewechsel mit **Doppelpufferung**: der nächste Rasterzeitpunkt wird unsichtbar vorbereitet und erst nach erfolgreichem Laden eingeblendet, um leere/helle Zwischenbilder zu vermeiden.
+- Während laufender Wiedergabe erhält die zeitliche Vorladung Vorrang vor dem großen räumlichen Zusatzpuffer; nach Pause oder manueller Auswahl wird der konfigurierte räumliche Puffer für den gewählten Zeitpunkt wieder aufgebaut.
+- Kartenlegende zeigt abhängig vom gewählten Frame **Vergangenheit / Jetzt / Vorhersage** sowie die zugehörige Uhrzeit.
+- Zeitplayer richtet seinen Abstand dynamisch nach der realen Höhe der Kartenlegende aus und wird in den Browserprofilen auf Desktop, iPad und Android auf Kartenbegrenzung und Überlappungsfreiheit geprüft.
+- Weather-Engine zeigt zusätzlich den Status **Radar-Zeitverlauf** und die tatsächlich verfügbare Anzahl von Radarzeitpunkten.
+- Kanonische DEV-Identität: Produkt `4.11.05`, Anzeige `V4.11.05 DEV`, Build `V4.11.05-DEV-2026-10-01`, Runtime `41105r1`, Modulsatz `E411-05A1`, native Integration `0.23.4`.
+- `weather.precipitation-layer` auf `1.2.0`, `core.manifest` auf `1.2.51`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- V4.11.04 bleibt die real abgenommene Radar-/Pufferbasis; V4.11.05 benötigt noch die reale Android-/DRA-Abnahme des Zeitverlaufs.
+
 ## V4.11.04 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
 
 - Behebt einen real entdeckten V4.11.02/V4.11.03-Fehler: Das Modul `weather.precipitation-layer` war geladen und vollständig implementiert, aber sein Einstellungsblock wurde beim Aufbau des Dialogs nicht eingehängt.
