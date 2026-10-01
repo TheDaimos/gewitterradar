@@ -12,19 +12,19 @@ export async function expectedPayload(){
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.05"')){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.06"')){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
-  if(!versionText.includes('displayVersion:"V4.11.05 DEV"')||!versionText.includes('build:"V4.11.05-DEV-2026-10-01"')||!versionText.includes('runtimeRevision:"41105r1"')||!versionText.includes('moduleSetId:"E411-05A1"'))throw Error('V4.11.05 canonical version mismatch');
-  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.05 runtime revision source mismatch');
+  if(!versionText.includes('displayVersion:"V4.11.06 DEV"')||!versionText.includes('build:"V4.11.06-DEV-2026-10-01"')||!versionText.includes('runtimeRevision:"41106r1"')||!versionText.includes('moduleSetId:"E411-06A1"'))throw Error('V4.11.06 canonical version mismatch');
+  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.06 runtime revision source mismatch');
   const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js'];
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
   const expected=[...Object.keys(old),...additional].sort();
-  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.05 module inventory mismatch');
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.06 module inventory mismatch');
   const consumer=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
   const radar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
   const watch=await readFile(resolve(root,'frontend/modules/core/update-watch.js'),'utf8');
-  if(!consumer.includes("id:'weather.consumer-client',version:'1.0.3'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
+  if(!consumer.includes("id:'weather.consumer-client',version:'1.1.0'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.2.0"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
   const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/weather/precipitation-layer.js']);
