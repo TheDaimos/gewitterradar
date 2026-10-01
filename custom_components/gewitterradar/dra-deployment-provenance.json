@@ -26,7 +26,10 @@
     "visualCalibrationAutoAppliesToProduction": false,
     "manualEyeReferencesAutoApply": false,
     "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
-    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group"
+    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group",
+    "publishedAt": "2026-10-01T06:42:16.065Z",
+    "publicationSourceCommit": "49641d145d716bb7eef270ad67e25d3426458204",
+    "publicationRevision": 5
   },
   "sourceReleaseTag": "v4.10"
 }
