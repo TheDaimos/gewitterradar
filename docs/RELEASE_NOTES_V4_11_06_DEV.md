@@ -92,7 +92,7 @@ WeatherRouter-Dienste erscheinen automatisch in demselben Diagnosepfad.
 - Produkt: **V4.11.06 DEV**
 - Runtime: **41106r1**
 - Modulsatz: **E411-06A1**
-- neues Modul: `weather.engine-diagnostics@1.0.0`
-- `weather.consumer-client@1.1.0`
-- `core.manifest@1.2.52`
+- Diagnose bleibt im bestehenden Modul `weather.consumer-client@1.1.0`
+- Modulsatz bleibt bei 26 Laufzeitmodulen
+- `core.manifest@1.2.51`
 - native Integration bleibt **0.23.4**, da ausschließlich das Frontend erweitert wurde.
