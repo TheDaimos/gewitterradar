@@ -21,7 +21,7 @@ let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
-let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherEngineDiagnostics, installUpdateWatch;
+let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installUpdateWatch;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
@@ -50,7 +50,6 @@ try {
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js');
-  const weatherEngineDiagnostics = await gewitterradarImport('./modules/weather/engine-diagnostics.js');
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   CARD_VERSION=APPLICATION_META.version;
@@ -80,7 +79,6 @@ try {
   ({ installHistoryChart } = historyChart);
   ({ installWeatherRouter } = weatherRouter);
   ({ installWeatherRadar } = weatherRadar);
-  ({ installWeatherEngineDiagnostics } = weatherEngineDiagnostics);
 } catch (error) {
   GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
   console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
@@ -144,7 +142,6 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installHistoryChart(GewitterradarCard,__moduleDeps);
   installWeatherRouter(GewitterradarCard,__moduleDeps);
   installWeatherRadar(GewitterradarCard,__moduleDeps);
-  installWeatherEngineDiagnostics(GewitterradarCard,__moduleDeps);
 
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'define-custom-element'};
   customElements.define('gewitterradar-card',GewitterradarCard);
