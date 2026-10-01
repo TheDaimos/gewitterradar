@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41106r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
