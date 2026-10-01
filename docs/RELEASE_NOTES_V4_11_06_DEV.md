@@ -55,6 +55,7 @@ Aufgezeichnet werden die letzten maximal 80 Consumer-Resolve-Vorgänge:
 - Start- und Endzeit;
 - Dauer;
 - normalisierte WeatherRouter-Antwort;
+- exakter Consumer-WebSocket-Request und die rohe WeatherRouter-Response als getrennte, secret-safe Diagnoseaustausche;
 - Status bzw. Unavailable-Code;
 - Provider-Provenienz.
 
