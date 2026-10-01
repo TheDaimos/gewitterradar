@@ -723,10 +723,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
     const status=this.shadow?.getElementById("weather-radar-status");
+    const timelineStatus=this.shadow?.getElementById("weather-radar-timeline-status");
     if(toggle){
       toggle.setAttribute("aria-pressed",state.enabled?"true":"false");
       toggle.textContent=state.enabled?"Ein":"Aus";
       toggle.dataset.active=state.enabled?"1":"0";
+    }
+    if(timelineStatus){
+      const frames=state.timelineModel?.frames?.length||0;
+      timelineStatus.textContent=!state.enabled
+        ?"Aus · Zeitverlauf wird mit dem Radar aktiviert"
+        :frames>1
+          ?"Verfügbar · "+frames+" Radarzeitpunkte · Vergangenheit, Jetzt und Vorhersage"
+          :"Aktive Quelle liefert derzeit keine mehrteilige Radarzeitreihe";
     }
     if(!status)return;
     if(message){status.textContent=message;return;}
@@ -796,9 +805,16 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const preloadStatus=document.createElement("div");preloadStatus.className="settings-row-label";preloadStatus.id="weather-radar-preload-status";preloadStatus.setAttribute("role","status");preloadStatus.setAttribute("aria-live","polite");
     preloadStatusRow.append(preloadStatus);
 
+    const timelineRow=document.createElement("div");timelineRow.className="settings-row";
+    const timelineLabel=document.createElement("div");timelineLabel.className="settings-row-label";
+    const timelineTitle=document.createElement("div");timelineTitle.textContent="Radar-Zeitverlauf";
+    const timelineHint=document.createElement("div");timelineHint.textContent="Die Zeitsteuerung erscheint automatisch auf der Karte, wenn WeatherRouter mehrere Radarzeitpunkte liefert.";timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const timelineStatus=document.createElement("div");timelineStatus.id="weather-radar-timeline-status";timelineStatus.setAttribute("role","status");timelineStatus.setAttribute("aria-live","polite");timelineStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
+    timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel);
+
     const statusRow=document.createElement("div");statusRow.className="settings-row";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,statusRow);
+    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,timelineRow,statusRow);
     const results=this.shadow?.getElementById("weather-engine-results")?.closest(".settings-row");
     if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
     this._weatherRadarUpdateControls();
