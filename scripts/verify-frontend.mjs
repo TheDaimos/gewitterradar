@@ -15,7 +15,7 @@ const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.17"',
+  '"version": "1.1.18"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
