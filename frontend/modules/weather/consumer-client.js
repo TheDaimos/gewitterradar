@@ -1,5 +1,5 @@
-import { defineModule } from '../core/runtime.js?v=41106r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.1.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+import { defineModule } from '../core/runtime.js?v=41107r1';
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -9,7 +9,7 @@ export const WEATHER_ROUTER_CONTRACT=1;
 export const WEATHER_ROUTER_CAPABILITIES=Object.freeze({
   lightningEvents:'weather.lightning.observed.events',
   lightningDensity:'weather.lightning.observed.density',
-  precipitation:'weather.radar.precipitation',
+  precipitation:'weather.precipitation.layer',
   warnings:'weather.warning.official'
 });
 export const WEATHER_ROUTER_RESOURCE_TYPES=Object.freeze([
@@ -30,13 +30,23 @@ export function parseWeatherResolution(response,capability){
   if(!response||response.schema!=='weather_router.consumer.resolution.v1'||response.contract_version!==1||response.capability!==capability)throw new TypeError('Invalid Consumer V1 resolution');
   if(response.status==='unavailable'&&response.unavailable&&typeof response.unavailable.code==='string')return {status:'unavailable',capability,unavailable:{...response.unavailable}};
   if(response.status!=='ready'||!response.resource||!WEATHER_ROUTER_RESOURCE_TYPES.includes(response.resource.type)||!response.resource.payload||typeof response.resource.payload!=='object'||!response.provenance||!response.routing)throw new TypeError('Invalid Consumer V1 ready resource');
-  const {type,payload}=response.resource;
+  const {type,payload,semantics}=response.resource;
   if(type==='event_feed'&&(!Array.isArray(payload.events)||!Number.isInteger(payload.event_count)))throw new TypeError('Invalid event feed');
   if(type==='hazard_feed'&&!Array.isArray(payload.events))throw new TypeError('Invalid hazard feed');
-  if(type==='raster_tile'&&(!payload.tile_url||!numberBetween(payload.tile_size,1,Number.MAX_SAFE_INTEGER)||!numberBetween(payload.max_zoom,0,Number.MAX_SAFE_INTEGER)))throw new TypeError('Invalid radar tile descriptor');
+  if(type==='raster_tile'&&(!payload.tile_url||!numberBetween(payload.tile_size,1,Number.MAX_SAFE_INTEGER)||!numberBetween(payload.max_zoom,0,Number.MAX_SAFE_INTEGER)))throw new TypeError('Invalid raster tile descriptor');
   if(type==='value'&&(!payload.values||typeof payload.values!=='object'))throw new TypeError('Invalid value payload');
   if(type==='image_sequence'&&(!Array.isArray(payload.frames)||typeof payload.georeferenced!=='boolean'))throw new TypeError('Invalid image sequence');
-  return {status:'ready',capability,resource:response.resource,provenance:response.provenance,freshness:response.freshness??null,routing:response.routing,profile:response.profile??null};
+
+  if(capability===WEATHER_ROUTER_CAPABILITIES.precipitation){
+    const intent=response.intent_contract;
+    const requiredSemantics=['data_origin','measurement_method','observation_kind','quantity','unit'];
+    if(type!=='raster_tile'||!intent||intent.kind!=='visual_layer'||intent.resource_type!=='raster_tile'||intent.render_interchangeable!==true||intent.numeric_interchangeable!==false)throw new TypeError('Invalid precipitation visual-layer intent contract');
+    if(!semantics||typeof semantics!=='object'||requiredSemantics.some(key=>!Object.hasOwn(semantics,key)))throw new TypeError('Incomplete precipitation candidate semantics');
+    if(!payload.legend||typeof payload.legend!=='object'||typeof payload.legend.url!=='string'||!payload.legend.url)throw new TypeError('Precipitation layer requires a legend');
+    if(typeof payload.attribution!=='string'||!payload.attribution.trim())throw new TypeError('Precipitation layer requires attribution');
+  }
+
+  return {status:'ready',capability,resource:response.resource,provenance:response.provenance,freshness:response.freshness??null,routing:response.routing,profile:response.profile??null,intent_contract:response.intent_contract??null};
 }
 export function createWeatherRouterClient(callWS,{profileId=null}={}){
   if(typeof callWS!=='function')throw new TypeError('Home Assistant callWS function required');
@@ -228,7 +238,7 @@ _weatherEngineDiagnosticPayload(){
       enabled:Boolean(radar.enabled),
       layer_present:Boolean(radar.layer),
       current_provider:radar.lastReady?.answer?.provenance?.provider_name||null,
-      current_capability:radar.lastReady?.answer?.capability||'weather.radar.precipitation',
+      current_capability:radar.lastReady?.answer?.capability||'weather.precipitation.layer',
       last_ready_at:radar.lastReady?.at?new Date(radar.lastReady.at).toISOString():null,
       last_unavailable:radar.lastUnavailable||null,
       retained_previous_layer:Boolean(radar.layer&&radar.lastUnavailable),
@@ -322,7 +332,7 @@ _weatherEngineDiagnosticPayload(){
             <div class="we-card"><b>Sichtbarer Layer</b><span id="weather-engine-diagnostic-layer">—</span></div>
           </div>
           <div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
-          <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Radar neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
+          <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Niederschlag neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
           <div class="we-diagnostic-note">Die Filter beeinflussen nur die Diagnoseansicht. Providerwahl und WeatherRouter-Routing werden nicht verändert.</div>
           <details><summary>Rohdaten</summary><pre class="we-diagnostic-raw" id="weather-engine-diagnostic-raw"></pre></details>
         </div>
@@ -476,7 +486,7 @@ _weatherEngineDiagnosticPayload(){
       results.textContent='Frage drei Wetterinformationen für den sichtbaren Kartenausschnitt ab …';
       inspect.disabled=true;
       const wanted=[
-        ['weather.radar.precipitation','Niederschlag'],
+        ['weather.precipitation.layer','Niederschlag'],
         ['weather.lightning.observed.events','Zusätzliche Blitzbeobachtungen'],
         ['weather.warning.official','Amtliche Warnungen']
       ];
