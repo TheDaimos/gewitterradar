@@ -19,7 +19,7 @@ assert.match(consumer,/Temperatur/);
 assert.match(consumer,/raw_consumer_exchanges/);
 assert.match(consumer,/weather_router\/consumer\//);
 assert.match(consumer,/retained_previous_layer/);
-assert.match(consumer,/Radar neu auflösen/);
+assert.match(consumer,/Niederschlag neu auflösen/);
 assert.match(consumer,/Diagnose kopieren/);
 assert.match(consumer,/JSON exportieren/);
 assert.match(consumer,/Die Filter beeinflussen nur die Diagnoseansicht/);
