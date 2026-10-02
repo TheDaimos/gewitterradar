@@ -20,3 +20,14 @@ All other icons are shared by both V4.07.11 variants.
 - Master-Canvas: **2048×2048**, transparenter Hintergrund.
 - Laufzeitdarstellung: verlustfreies **68×68 PNG** als 2×-Retina-Ableitung für 34×34 CSS-Pixel; die PNG-Ableitung wird direkt in die Hilfe eingebettet.
 - Der Master bleibt gemäß Retentionsrichtlinie dauerhaft erhalten.
+
+
+## V4.11 hero backgrounds
+
+Die folgenden PNG-Dateien werden als kanonische Hi-Res-Master für den Gewitterradar-Hero-Bereich dauerhaft aufbewahrt:
+
+- `Gewitter über dem alpinen Abendtal.png` — eigenständige alpine Gewittervariante.
+- `Goldenes Tal zwischen Sonne und Sturm.png` — warme Panorama-Variante mit Übergang zum Gewitter.
+- `gewitterradar-hero-forest-storm-master-v1.png` — kanonischer Wald/Lagerfeuer- und Gewitter/Kirche-Master für die aktuelle Hero-Variante.
+
+Alle drei Dateien sind geschützte Hi-Res-Master gemäß `docs/ASSET_RETENTION_POLICY.md`. Laufzeitkopien oder konvertierte Webvarianten ersetzen die Master ausdrücklich nicht.
