@@ -1,0 +1,33 @@
+{
+  "runtime_version": "0.2.0-rc1",
+  "minimum_retina_factor": 2,
+  "offline_bundle": {
+    "path": "runtime/offline/index.html",
+    "self_contained": false,
+    "external_image_dependencies": false,
+    "local_assets_only": true
+  },
+  "local_assets": [
+    {
+      "name": "ck-logo",
+      "path": "runtime/offline/assets/ck-logo.webp",
+      "format": "WebP",
+      "source_px": "384x384",
+      "css_px": "142x142",
+      "effective_factor": 2.7
+    },
+    {
+      "name": "project-icons-sprite",
+      "path": "runtime/offline/assets/project-icons.webp",
+      "format": "WebP",
+      "cell_px": "128x128",
+      "css_px": "64x64 (Mail 46x46)",
+      "minimum_factor": 2
+    }
+  ],
+  "master_policy": {
+    "archive_originals_separately": true,
+    "no_upscaling": true,
+    "runtime_minimum_retina_factor": 2
+  }
+}
