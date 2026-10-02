@@ -39,7 +39,7 @@ let treeOutput = '';
 try {
   treeOutput = execFileSync(
     'git',
-    ['ls-tree', '-r', '-l', '--full-tree', 'HEAD', 'artwork'],
+    ['-c', 'core.quotepath=false', 'ls-tree', '-r', '-l', '--full-tree', 'HEAD', 'artwork'],
     { cwd: root, encoding: 'utf8' },
   );
 } catch (error) {
