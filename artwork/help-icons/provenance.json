@@ -22,5 +22,17 @@
     "density": "2x Retina",
     "runtimeEmbedding": "data:image/png;base64 embedded in frontend/modules/ui/i18n-settings.js",
     "section": "Kompass, Medaillon & Pfeile"
+  },
+  "v411HeroBackgrounds": {
+    "date": "2026-10-02",
+    "scope": "Gewitterradar HTML help / GitHub Pages hero backgrounds",
+    "masterFormat": "PNG",
+    "canonicalMaster": "artwork/help-icons/hires/gewitterradar-hero-forest-storm-master-v1.png",
+    "alternatives": [
+      "artwork/help-icons/hires/Gewitter über dem alpinen Abendtal.png",
+      "artwork/help-icons/hires/Goldenes Tal zwischen Sonne und Sturm.png"
+    ],
+    "runtimeUsage": "The current HTML hero may use a repository copy of the canonical master as a single background image.",
+    "retention": "All listed files are protected Hi-Res masters; runtime copies or derivatives do not replace the masters."
   }
 }
