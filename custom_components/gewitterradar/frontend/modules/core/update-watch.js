@@ -1,4 +1,4 @@
-import { defineModule } from "./runtime.js?v=41107r1";
+import { defineModule } from "./runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.update-watch",
