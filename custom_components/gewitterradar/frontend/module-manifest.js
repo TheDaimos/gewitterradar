@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.52",
+    "version": "1.2.53",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [

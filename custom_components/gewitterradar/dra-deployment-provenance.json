@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.06",
-  "build": "V4.11.06-DEV-2026-10-01",
-  "runtimeRevision": "41106r1",
-  "moduleSetId": "E411-06A1",
+  "productVersion": "4.11.07",
+  "build": "V4.11.07-DEV-2026-10-01",
+  "runtimeRevision": "41107r1",
+  "moduleSetId": "E411-07A1",
   "baselineFeatureHead": "669272bcbe3282ac8cf9759765ab4cb5dc113401",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.06 DEV: Weather Engine diagnostics for provider-neutral Consumer V1 request/response, routing, coverage and retained-layer analysis; existing deploy/dev channel only",
+    "purpose": "V4.11.07 DEV: migrate productive precipitation layer to provider-neutral weather.precipitation.layer with Weather Engine diagnostics; existing deploy/dev channel only",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
