@@ -1,5 +1,12 @@
 # Changelog
 
+## V4.11.08 DEV · Project Hub Popup-Nachlauf · 2026-10-02
+
+- `ui.project-hub` auf **1.1.1**: Host-Popup liegt jetzt auf der obersten reservierten Ebene `2147483647` und damit sicher vor Settings (`2147483645`) sowie Moduldiagnose (`2147483646`).
+- Popup-Geometrie nutzt `visualViewport`/Viewport-Höhe dynamisch und darf auf großen Bildschirmen bis **1080 px** hoch werden; bei Rotation/Viewport-Änderung wird die Größe nachgeführt.
+- Inhalt und zentrale Project-Hub-Runtime V0.2 RC1 bleiben unverändert.
+- Modulsatz **E411-08A3**, native Integration **0.23.7**; gezielter Project-Hub-/Manifest-Cache-Buster **41108r3**.
+
 ## V4.11.08 DEV · Project Hub V0.2 RC1 Nachlauf · 2026-10-02
 
 - `ui.project-hub` auf **1.1.0**: Signatur öffnet die lokale Project-Hub-Runtime unmittelbar als internes Host-Popup; kein verzögertes `window.open()` mehr.
