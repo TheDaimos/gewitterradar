@@ -33,7 +33,7 @@ export async function expectedPayload(){
   for(const name of actual){
     const bytes=await readFile(resolve(root,'frontend',name));
     if(old[name]&&!allowedModified.has(name)){
-      const normalized=Buffer.from(bytes.toString('utf8').replaceAll('41107r1','41002r13'),'utf8');
+      const normalized=Buffer.from(bytes.toString('utf8').replaceAll('41108r1','41002r13'),'utf8');
       if(normalized.length!==old[name].sizeBytes||hash(normalized)!==old[name].sha256)throw Error('V4.10 protected module changed beyond runtime revision: '+name);
     }
     modular.set(name,bytes);

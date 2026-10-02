@@ -35,7 +35,7 @@ def test_expected_module_versions_match_self_registration():
  is_v41103='export const APPLICATION_META=APPLICATION_RELEASE;' in manifest
  is_v41101='version:"4.11.01"' in manifest
  is_v411=is_v41103 or is_v41101
- assert len(expected)==(26 if is_v41103 else 24 if is_v41101 else 23)
+ assert len(expected)==(27 if is_v41103 else 24 if is_v41101 else 23)
  picker_data_modules={
   "modules/fullscreen/compass-picker-chevron-left-brass.js",
   "modules/fullscreen/compass-picker-chevron-right-brass.js",
@@ -45,7 +45,7 @@ def test_expected_module_versions_match_self_registration():
  actual={}
  checked_files=list(CONTRACT["moduleFiles"])
  if is_v411: checked_files.append("modules/weather/consumer-client.js")
- if is_v41103: checked_files.extend(["modules/core/update-watch.js","modules/weather/precipitation-layer.js"])
+ if is_v41103: checked_files.extend(["modules/core/update-watch.js","modules/weather/precipitation-layer.js","modules/ui/project-hub.js"])
  for name in checked_files:
   if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
    continue
@@ -114,12 +114,12 @@ def test_runtime_revision_and_module_set_probe_contract():
   version=(FRONTEND/"version.js").read_text(encoding="utf-8")
   assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
   assert "GEWITTERRADAR_FEATURE_CACHE" not in main
-  assert 'runtimeRevision:"41107r1"' in version
-  assert 'moduleSetId:"E411-07A1"' in version
-  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41107r1";' in main
-  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41107r1";' in manifest
-  assert runtime["runtimeRevision"]=="41107r1"
-  assert runtime["moduleSetId"]=="E411-07A1"
+  assert 'runtimeRevision:"41108r1"' in version
+  assert 'moduleSetId:"E411-08A1"' in version
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41108r1";' in main
+  assert 'import { APPLICATION_RELEASE } from "./version.js?v=41108r1";' in manifest
+  assert runtime["runtimeRevision"]=="41108r1"
+  assert runtime["moduleSetId"]=="E411-08A1"
   for path in (
    "./module-manifest.js","./modules/fullscreen/map-display.js","./modules/instruments/compass-selector.js",
    "./modules/ui/i18n-settings.js","./modules/ui/controls.js","./modules/ui/skeleton.js",
