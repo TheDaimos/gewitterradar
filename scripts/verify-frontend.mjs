@@ -14,6 +14,9 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
+const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
+const projectHubConfig=JSON.parse(await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'),'utf8'));
+const projectHubOffline=await readFile(resolve(root,'frontend/project-hub/offline/index.html'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
   '"version": "1.1.18"',
@@ -151,20 +154,25 @@ for(const marker of [
 {
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
-  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.07 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.07"','displayVersion:"V4.11.07 DEV"','runtimeRevision:"41107r1"','moduleSetId:"E411-07A1"']){
-    if(!version.includes(marker))throw Error('V4.11.07 canonical identity missing: '+marker);
+  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.08 must use the canonical entry runtime revision');
+  for(const marker of ['version:"4.11.07"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41107r1"','moduleSetId:"E411-07A1"']){
+    if(!version.includes(marker))throw Error('V4.11.08 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
-    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&!['41107r1','41105r1','41002r14','41002r15'].includes(match[1])){
+    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&!['41108r1','41107r1','41105r1','41002r14','41002r15'].includes(match[1])){
       const line=moduleText.slice(0,match.index).split('\n').length;
       const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
       throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
     }
   }
 }
+for(const marker of ['id:"ui.project-hub"','version:"1.0.0"','.settings-signature-wrap','new Image()','noopener,noreferrer','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');
+if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='external')throw Error('Project Hub runtime configuration mismatch');
+if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
+if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar'))throw Error('Project Hub offline view contract incomplete');
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
   "this._t('app.release_history')",

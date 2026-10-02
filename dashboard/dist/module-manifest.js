@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41107r1";
-import { registerModule } from "./modules/core/registry.js?v=41107r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41108r1";
+import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.53",
+    "version": "1.2.54",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -109,6 +109,14 @@ export const EXPECTED_MODULES=Object.freeze([
       "skalierbare Vollbild-Instrumente"
     ],
     "file": "modules/ui/skeleton.js"
+  },
+  {
+    "id": "ui.project-hub",
+    "version": "1.0.0",
+    "group": "Oberfläche",
+    "function": "Daimos Project Hub",
+    "subfunctions": ["Signatur-Einstieg","Health-Probe","Online-/Offline-Auflösung","Lokale Rückfallansicht"],
+    "file": "modules/ui/project-hub.js"
   },
   {
     "id": "instruments.compass-scale",

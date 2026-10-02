@@ -40,6 +40,9 @@ jobs:
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
+      - name: V4.11.08 Daimos Project Hub integration
+        run: node scripts/test-v41108-project-hub.mjs
+
       - name: V4.11.05 precipitation radar timeline player
         run: node scripts/test-v41105-weather-radar-player.mjs
 

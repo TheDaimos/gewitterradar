@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41107r1";
-/* Gewitterradar Card V4.11.07 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41108r1";
+/* Gewitterradar Card V4.11.08 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -18,7 +18,7 @@ const gewitterradarImport = async (path, revision = GEWITTERRADAR_MODULE_CACHE) 
 let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapshot, createBaseContext;
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
 let installMedallionDesigns;
-let installCompassScale, installControls, installI18nSettings, installSourceStatus;
+let installCompassScale, installControls, installI18nSettings, installSourceStatus, installProjectHub;
 let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
 let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installUpdateWatch;
@@ -32,6 +32,7 @@ try {
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
+  const projectHub = await gewitterradarImport('./modules/ui/project-hub.js');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
   const controls = await gewitterradarImport('./modules/ui/controls.js');
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');
@@ -61,6 +62,7 @@ try {
   ({ installMapDisplay } = mapDisplay);
   ({ installScrollGuard } = scrollGuard);
   ({ installSkeleton } = skeleton);
+  ({ installProjectHub } = projectHub);
   ({ installCompassScale } = compassScale);
   ({ installControls } = controls);
   ({ installI18nSettings } = i18nSettings);
@@ -125,6 +127,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installMapDisplay(GewitterradarCard,__moduleDeps);
   installScrollGuard(GewitterradarCard,__moduleDeps);
   installSkeleton(GewitterradarCard,__moduleDeps);
+  installProjectHub(GewitterradarCard,__moduleDeps);
   installCompassScale(GewitterradarCard,__moduleDeps);
   installControls(GewitterradarCard,__moduleDeps);
   installI18nSettings(GewitterradarCard,__moduleDeps);

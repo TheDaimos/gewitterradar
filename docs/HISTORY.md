@@ -1,5 +1,9 @@
 # Gewitterradar – Projektgeschichte
 
+## V4.11.08 DEV · 2026/10 – Daimos Project Hub
+
+Die Gewitterradar-Signatur erhält einen isolierten Einstieg in den zentralen Daimos Project Hub. `ui.project-hub` prüft nur ein technisches Health-Bild und öffnet entweder die separate GitHub-Pages-Projektübersicht oder eine lokal mitgelieferte Rückfallansicht. Remote-Inhalte werden nicht eingebettet. Dashboard und native Integration bleiben synchron; DRA nutzt unverändert den vollständigen Verzeichnisersatz. Die geschützte About-Darstellung bleibt unberührt.
+
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
 
 ## V4.11.01 DEV · 2026/09 – hybride Weather-Engine im Aufbau

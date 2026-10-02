@@ -1,5 +1,15 @@
 # Changelog
 
+## V4.11.08 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
+
+- Daimos Project Hub als eigenständiges Laufzeitmodul `ui.project-hub@1.0.0`; die bestehende Signatur bleibt Darstellung und Einstiegspunkt.
+- Passive HTTPS-Bildprobe auf `health.svg`; kein Remote-HTML/JavaScript im Gewitterradar-Kontext.
+- Online wird die Pages-Root separat mit `noopener,noreferrer` geöffnet; offline/ungültig/Timeout nutzt die autarke lokale Miniansicht.
+- Dashboard und native Integration erhalten denselben Modul-, Konfigurations- und Offlinebestand; DRA transportiert ihn über den bestehenden `replace_directory`-Vertrag.
+- Rückfallpunkt: `freeze/v4.11-pre-project-hub-2026-10-02` auf `d5113b164046e478fe018cb12cea91eb85697a3f`.
+- Identität: `4.11.08`, `V4.11.08 DEV`, `V4.11.08-DEV-2026-10-02`, Runtime `41108r1`, Modulsatz `E411-08A1`, native Integration `0.23.5`.
+- `core.manifest` 1.2.54; **27 Laufzeitmodule**. About, Karte, Weather-Engine und Signaturgrafik bleiben unverändert.
+
 ## V4.11.05 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
 
 - Erster providerneutraler **Radar-Zeitverlauf** direkt auf der Gewitterradar-Karte: Vergangenheit, aktueller Zeitpunkt und Vorhersage werden aus der vom WeatherRouter gelieferten Raster-Timeline abgeleitet.
