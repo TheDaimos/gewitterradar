@@ -1,12 +1,12 @@
-import { defineModule } from "../core/runtime.js?v=41105r1";
-import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41105r1";
-import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41105r1";
-import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41105r1";
-import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41105r1";
-import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41105r1";
-import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41105r1";
-import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41105r1";
-import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41105r1";
+import { defineModule } from "../core/runtime.js?v=41107r1";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41107r1";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41107r1";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41107r1";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41107r1";
+import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41107r1";
+import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41107r1";
+import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41107r1";
+import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41107r1";
 
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({

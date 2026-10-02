@@ -1,4 +1,4 @@
-import { defineModule } from "../core/runtime.js?v=41105r1";
+import { defineModule } from "../core/runtime.js?v=41107r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
   "version": "1.5.1",

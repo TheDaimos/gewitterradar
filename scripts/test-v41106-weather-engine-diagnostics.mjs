@@ -5,9 +5,9 @@ const consumer=await readFile(new URL("../frontend/modules/weather/consumer-clie
 const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",import.meta.url),"utf8");
 const version=await readFile(new URL("../frontend/version.js",import.meta.url),"utf8");
 
-assert.match(version,/version:"4\.11\.06"/);
-assert.match(version,/runtimeRevision:"41106r1"/);
-assert.match(consumer,/id:'weather\.consumer-client',version:'1\.1\.0'/);
+assert.match(version,/version:"4\.11\.07"/);
+assert.match(version,/runtimeRevision:"41107r1"/);
+assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.0'/);
 assert.match(consumer,/gewitterradar\.weather_engine_diagnostic\.v1/);
 assert.match(consumer,/settings-weather-engine-diagnostics-toggle/);
 assert.match(consumer,/weather-engine-diagnostic-area/);
@@ -27,4 +27,4 @@ assert.match(consumer,/api\[_-\]\?key|apikey|access\[_-\]\?token/);
 assert.match(skeleton,/this\._mountWeatherRouterSettings\?\.\(\);\s*this\._mountWeatherRadarSettings\?\.\(\);\s*this\._mountWeatherEngineDiagnostics\?\.\(\);/);
 assert.doesNotMatch(consumer,/selected_provider\s*=\s*['"]dwd/i);
 
-console.log("PASS: V4.11.06 Weather Engine diagnostics expose provider-neutral service/capability filters, exact Consumer API exchanges, retained-layer state and secret-safe export controls.");
+console.log("PASS: V4.11.07 Weather Engine diagnostics expose provider-neutral service/capability filters, exact Consumer API exchanges, retained-layer state and secret-safe export controls.");

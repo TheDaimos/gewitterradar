@@ -1,4 +1,4 @@
-import { defineModule } from "../core/runtime.js?v=41105r1";
+import { defineModule } from "../core/runtime.js?v=41107r1";
 export const MODULE_META=Object.freeze({
   "id": "instruments.compass-selector",
   "version": "1.1.0",
