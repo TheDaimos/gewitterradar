@@ -273,6 +273,24 @@
       "preferredPath": "artwork/weather-router/retained-renditions/weather-router-emblem-v004-512.png",
       "gitBlobSha1": "2e4f3f09eaf242f55374a45abe27a2368640a40e",
       "sizeBytes": 448948
+    },
+    {
+      "label": "Gewitterradar hero background - alpine storm variant",
+      "preferredPath": "artwork/help-icons/hires/Gewitter über dem alpinen Abendtal.png",
+      "gitBlobSha1": "294b9c1f192a90b756aa9a0a2fc4f37412aff896",
+      "sizeBytes": 2310963
+    },
+    {
+      "label": "Gewitterradar hero background - golden valley variant",
+      "preferredPath": "artwork/help-icons/hires/Goldenes Tal zwischen Sonne und Sturm.png",
+      "gitBlobSha1": "574a3ebee3ab7239ce8977f73efdcaf5a28ddd03",
+      "sizeBytes": 2187671
+    },
+    {
+      "label": "Gewitterradar hero background - forest storm master v1",
+      "preferredPath": "artwork/help-icons/hires/gewitterradar-hero-forest-storm-master-v1.png",
+      "gitBlobSha1": "0c6486a43e8aa20c8a632ad6b856ae0936eca7ff",
+      "sizeBytes": 2321853
     }
   ]
 }
