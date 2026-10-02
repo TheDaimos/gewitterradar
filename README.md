@@ -19,7 +19,7 @@
 
 **[⚡ Native Integration installieren](#1-native-gewitterradar-integration)** ·
 **[🌩️ Funktionen](#was-gewitterradar-bereitstellt)** ·
-**[📖 HTML-Handbuch](docs/gewitterradar-overview.html)**
+**[📖 HTML-Handbuch](https://thedaimos.github.io/gewitterradar/)**
 
 </div>
 
@@ -35,7 +35,7 @@
 </p>
 
 **Vollständige Installation:** [docs/INSTALLATION.md](docs/INSTALLATION.md) ·
-**Hilfe & Überblick:** [docs/gewitterradar-overview.html](docs/gewitterradar-overview.html)
+**Hilfe & Überblick:** [docs/gewitterradar-overview.html](https://thedaimos.github.io/gewitterradar/)
 
 ---
 
@@ -362,7 +362,7 @@ Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische P
 
 # Dokumentation
 
-- [HTML-Handbuch](docs/gewitterradar-overview.html)
+- [HTML-Handbuch](https://thedaimos.github.io/gewitterradar/)
 - [Installation](docs/INSTALLATION.md)
 - [Recorder](docs/RECORDER.md)
 - [Migration und Rückfall](docs/MIGRATION_AND_ROLLBACK.md)
