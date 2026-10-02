@@ -41,8 +41,13 @@ export async function expectedPayload(){
  for(const asset of inventory){const bytes=await readFile(resolve(root,'frontend',asset.file));if(hash(bytes)!==asset.sha256)throw Error('Asset SHA mismatch '+asset.file);payload.set(asset.file,bytes);}
  return payload;
 }
+export async function expectedHelpPayload(){
+ const payload=new Map([['help/index.html',await readFile(resolve(root,'docs/gewitterradar-overview.html'))]]);
+ for(const name of await walk(resolve(root,'docs/assets')))payload.set('help/assets/'+name,await readFile(resolve(root,'docs/assets',name)));
+ return payload;
+}
 export const destinations=['custom_components/gewitterradar/frontend','dashboard/dist'];
 export const dashboardPackages=[['home-assistant/app_gewitterradar_v4_06_pkg.yaml','app_gewitterradar_v4_06_pkg.yaml'],['home-assistant/app_gewitterradar_v4_07_pkg.yaml','app_gewitterradar_v4_07_pkg.yaml']];
 export async function expectedDashboardPackages(){const packages=new Map();for(const[sourceName,targetName]of dashboardPackages){packages.set(targetName,Buffer.from((await readFile(resolve(root,sourceName),'utf8')).replace(/\r\n?/g,'\n'),'utf8'));}return packages;}
-export async function build(){const payload=await expectedPayload();for(const destination of destinations)for(const[name,bytes]of payload){const target=resolve(root,destination,name);await mkdir(dirname(target),{recursive:true});await writeFile(target,bytes);}const packages=await expectedDashboardPackages();for(const[name,bytes]of packages)await writeFile(resolve(root,'dashboard/dist',name),bytes);const checksumRows=[];for(const dest of destinations)for(const[name,bytes]of payload)checksumRows.push(hash(bytes)+'  '+dest+'/'+name);for(const[name,bytes]of packages)checksumRows.push(hash(bytes)+'  dashboard/dist/'+name);await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),checksumRows.sort().join('\n')+'\n');console.log('Built modular Gewitterradar frontend.');}
+export async function build(){const payload=await expectedPayload(),help=await expectedHelpPayload();for(const destination of destinations)for(const[name,bytes]of [...payload,...help]){const target=resolve(root,destination,name);await mkdir(dirname(target),{recursive:true});await writeFile(target,bytes);}const packages=await expectedDashboardPackages();for(const[name,bytes]of packages)await writeFile(resolve(root,'dashboard/dist',name),bytes);const checksumRows=[];for(const dest of destinations)for(const[name,bytes]of payload)checksumRows.push(hash(bytes)+'  '+dest+'/'+name);for(const[name,bytes]of packages)checksumRows.push(hash(bytes)+'  dashboard/dist/'+name);await writeFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),checksumRows.sort().join('\n')+'\n');console.log('Built modular Gewitterradar frontend.');}
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await build();
