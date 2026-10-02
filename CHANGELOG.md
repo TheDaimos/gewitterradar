@@ -1,5 +1,13 @@
 # Changelog
 
+## V4.11.08 DEV · Project Hub V0.2 RC1 Nachlauf · 2026-10-02
+
+- `ui.project-hub` auf **1.1.0**: Signatur öffnet die lokale Project-Hub-Runtime unmittelbar als internes Host-Popup; kein verzögertes `window.open()` mehr.
+- Health-Probe aktualisiert nur den Online-/Offline-Status; Remote-HTML/JS wird weiterhin nicht in Gewitterradar eingebettet.
+- Zentralen Project-Hub-Stand **V0.2 RC1** übernommen: schlanke Runtime-HTML, lokale Retina-WebP-Assets, Desktop-Kopf weiter rechts, mobile Zentrierung.
+- Projektkarten besitzen zwei vertikale Aktionen: **GitHub** und **Projektseite**. Gewitterradar verweist auf seine Pages-Projektseite; übrige Projektseiten zeigen deaktiviert `Projektseite · folgt`.
+- Modulsatz **E411-08A2**, native Integration **0.23.6**. Produktversion und Runtime-Basis bleiben V4.11.08 / 41108r1.
+
 ## V4.11.08 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
 
 - Daimos Project Hub als eigenständiges Laufzeitmodul `ui.project-hub@1.0.0`; die bestehende Signatur bleibt Darstellung und Einstiegspunkt.

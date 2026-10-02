@@ -3,7 +3,7 @@
   "productVersion": "4.11.08",
   "build": "V4.11.08-DEV-2026-10-02",
   "runtimeRevision": "41108r1",
-  "moduleSetId": "E411-08A1",
+  "moduleSetId": "E411-08A2",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV: isolated Daimos Project Hub module with passive health probe and self-contained offline fallback; existing deploy/dev channel only",
+    "purpose": "V4.11.08 DEV Project Hub V0.2 RC1: immediate host popup, passive health status, double project actions and local Retina runtime assets; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
