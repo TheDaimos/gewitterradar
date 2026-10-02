@@ -155,7 +155,7 @@ for(const marker of [
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.08 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.07"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41107r1"','moduleSetId:"E411-07A1"']){
+  for(const marker of ['version:"4.11.08"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41108r1"','moduleSetId:"E411-08A1"']){
     if(!version.includes(marker))throw Error('V4.11.08 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
