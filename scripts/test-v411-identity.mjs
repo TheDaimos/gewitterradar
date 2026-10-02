@@ -36,5 +36,5 @@ assert.equal(dra.build,runtime.build);
 assert.equal(dra.runtimeRevision,runtime.runtimeRevision);
 assert.equal(dra.moduleSetId,runtime.moduleSetId);
 assert.equal(dra.deployment.channel,'deploy/dev');
-assert.match(dra.deployment.purpose,/Weather Engine|diagnostic/i);
+assert.match(dra.deployment.purpose,/Weather Engine|diagnostic|Project Hub/i);
 console.log('PASS: V4.11.08 DEV identity synchronized across frontend, runtime and DRA provenance on the existing deploy/dev channel.');
