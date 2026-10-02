@@ -279,8 +279,29 @@
 }
 .project-action:hover{border-color:rgba(240,197,119,.70);background:linear-gradient(145deg,rgba(239,199,126,.18),rgba(103,66,30,.10))}
 .project-action.is-disabled{color:#77838d;border-color:rgba(132,119,95,.24);background:rgba(255,255,255,.018);cursor:not-allowed}
+/* Offline Mini V0.2 RC2 – Mobile-Kompaktlayout */
 @media(max-width:620px){
-  .project-card{grid-template-columns:64px minmax(0,1fr) !important;min-height:118px !important}
+  .project-card{
+    grid-template-columns:80px minmax(0,1fr) !important;
+    min-height:118px !important;
+    align-items:center !important;
+    column-gap:10px !important;
+  }
+  .project-logo{
+    width:72px !important;
+    height:72px !important;
+    background-size:72px 432px !important;
+    align-self:center !important;
+    justify-self:center !important;
+  }
+  .logo-gr{background-position:0 0 !important}
+  .logo-wr{background-position:0 -72px !important}
+  .logo-aurora{background-position:0 -144px !important}
+  .logo-dra{background-position:0 -216px !important}
+  .logo-gps{background-position:0 -288px !important}
+  .project-main{gap:7px !important;align-self:center !important}
+  .project-actions{width:68% !important;align-self:center !important;gap:5px !important}
+  .project-action{min-height:25px !important;padding:4px 8px !important;font-size:9px !important}
 }
 </style></head><body><section class="card" aria-label="Gewitterradar Offline-Vorstellung"><div class="top"><span class="icon ck-icon ck-sprite" role="img" aria-label="C.K. – persönliches Entwicklerlogo"></span><div><div class="origin">Ein gemeinsamer Ursprung</div>
       <div class="dots" aria-hidden="true">· · ·</div>

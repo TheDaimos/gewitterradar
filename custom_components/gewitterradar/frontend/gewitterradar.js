@@ -25,14 +25,14 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41108r3');
+  const manifest = await gewitterradarImport('./module-manifest.js','41108r4');
   const registry = await gewitterradarImport('./modules/core/registry.js');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
-  const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41108r3');
+  const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41108r4');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
   const controls = await gewitterradarImport('./modules/ui/controls.js');
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js');

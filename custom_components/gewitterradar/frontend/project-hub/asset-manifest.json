@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc1",
+  "runtime_version": "0.2.0-rc2",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -21,8 +21,10 @@
       "path": "runtime/offline/assets/project-icons.webp",
       "format": "WebP",
       "cell_px": "128x128",
-      "css_px": "64x64 (Mail 46x46)",
-      "minimum_factor": 2
+      "css_px": "64x64 Desktop; 72x72 Mobile (Mail 46x46)",
+      "minimum_factor": 1.78,
+      "final_target_factor": 2,
+      "note": "RC2 vergroessert Projektlogos auf Mobile; Sprite-Anhebung vor finaler 2x-Abnahme vorgesehen."
     }
   ],
   "master_policy": {
