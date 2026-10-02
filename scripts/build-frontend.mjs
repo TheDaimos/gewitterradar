@@ -28,7 +28,7 @@ export async function expectedPayload(){
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.0"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
   const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
-  if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.0"')||!projectHub.includes('noopener,noreferrer')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');
+  if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.0"')||!projectHub.includes('createElement("iframe")')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');
   const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/weather/precipitation-layer.js']);
   for(const name of actual){
     const bytes=await readFile(resolve(root,'frontend',name));
