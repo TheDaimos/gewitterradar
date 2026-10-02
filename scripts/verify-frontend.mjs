@@ -15,7 +15,7 @@ const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.15"',
+  '"version": "1.1.18"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -70,7 +70,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.5"',
+  'version:"1.3.6"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -147,11 +147,22 @@ for(const marker of [
 ]){
   if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
 }
-for(const marker of [
-  "'./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE",
-  "'./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE"
-]){
-  if(!(await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8')).includes(marker))throw Error('R39 changed module must use feature cache: '+marker);
+{
+  const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
+  const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
+  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.07 must use the canonical entry runtime revision');
+  for(const marker of ['version:"4.11.07"','displayVersion:"V4.11.07 DEV"','runtimeRevision:"41107r1"','moduleSetId:"E411-07A1"']){
+    if(!version.includes(marker))throw Error('V4.11.07 canonical identity missing: '+marker);
+  }
+  const runtimeImport=/\?v=(\d+r\d+)/g;
+  for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
+    const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
+    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&!['41107r1','41105r1','41002r14','41002r15'].includes(match[1])){
+      const line=moduleText.slice(0,match.index).split('\n').length;
+      const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
+      throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
+    }
+  }
 }
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
@@ -339,7 +350,7 @@ const moduleViewMeta=extractFrozenJson(
   'const MODULE_VIEW_META=Object.freeze(',
   ');\n  const modulePresentation'
 );
-if(moduleViewIds.length!==23)throw Error('Unexpected module-view metadata id count');
+if(moduleViewIds.length!==26)throw Error('Unexpected module-view metadata id count');
 if(Object.keys(moduleViewMeta).length!==registeredLanguages.length)throw Error('Unexpected module-view language count');
 for(const language of registeredLanguages){
   const entries=moduleViewMeta[language];

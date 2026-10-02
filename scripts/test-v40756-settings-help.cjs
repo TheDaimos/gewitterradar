@@ -110,6 +110,12 @@ const server = http.createServer((req, res) => {
             }),
             sections: sections.length,
             moduleSection: !!root.querySelector('#settings-modules-section'),
+            weatherEngineSection: !!root.querySelector('#weather-engine-section'),
+            weatherRadarSettings: !!root.querySelector('[data-weather-radar-settings="true"]'),
+            weatherRadarToggle: !!root.getElementById('weather-radar-toggle'),
+            weatherRadarPreloadProfile: !!root.getElementById('weather-radar-preload-profile'),
+            weatherRadarPreloadStatus: !!root.getElementById('weather-radar-preload-status'),
+            weatherRadarTimelineStatus: !!root.getElementById('weather-radar-timeline-status'),
             summaryHeight: summary.offsetHeight,
             chevron: [parseFloat(after.width), parseFloat(after.height), after.borderRightColor],
             closedState,
@@ -130,7 +136,13 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 7, `${delivery}/${profile} settings sections including Module & Versionen`);
+        assert.equal(metrics.sections, 8, `${delivery}/${profile} settings sections including Weather-Engine and Module & Versionen`);
+        assert.equal(metrics.weatherEngineSection, true, `${delivery}/${profile} Weather-Engine section`);
+        assert.equal(metrics.weatherRadarSettings, true, `${delivery}/${profile} precipitation radar settings mounted`);
+        assert.equal(metrics.weatherRadarToggle, true, `${delivery}/${profile} precipitation radar toggle mounted`);
+        assert.equal(metrics.weatherRadarPreloadProfile, true, `${delivery}/${profile} radar preload profile mounted`);
+        assert.equal(metrics.weatherRadarPreloadStatus, true, `${delivery}/${profile} radar preload status mounted`);
+        assert.equal(metrics.weatherRadarTimelineStatus, true, `${delivery}/${profile} radar timeline status mounted`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
@@ -140,6 +152,51 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.sameNode, true, `${delivery}/${profile} stable settings node`);
         assert.equal(metrics.selectorMatched, true, `${delivery}/${profile} open selector`);
         assert.match(metrics.signatureFilter, /sepia|drop-shadow/);
+
+        const radarPlayerGeometry = await page.evaluate(() => {
+          const card = window.aboutCard;
+          const root = card.shadowRoot;
+          const state = card._weatherRadarState();
+          const previousModel = state.timelineModel;
+          const previousIndex = state.timelineIndex;
+          state.timelineModel = {
+            currentIndex: 1,
+            loop: true,
+            frames: [
+              { time: '2026-10-01T06:30:00Z', timeMs: Date.parse('2026-10-01T06:30:00Z'), tile_url: 'past', kind: 'past' },
+              { time: '2026-10-01T06:40:00Z', timeMs: Date.parse('2026-10-01T06:40:00Z'), tile_url: 'now', kind: 'current' },
+              { time: '2026-10-01T06:50:00Z', timeMs: Date.parse('2026-10-01T06:50:00Z'), tile_url: 'future', kind: 'forecast' },
+            ],
+          };
+          state.timelineIndex = 1;
+          card._weatherRadarMountTimelinePlayer();
+          const player = root.querySelector('[data-weather-radar-player="true"]');
+          const mapCard = root.getElementById('map-card');
+          const legend = root.getElementById('map-legend');
+          const p = player?.getBoundingClientRect();
+          const m = mapCard?.getBoundingClientRect();
+          const l = legend?.getBoundingClientRect();
+          const result = {
+            exists: !!player,
+            leftInside: !!(p && m) && p.left >= m.left - 1,
+            rightInside: !!(p && m) && p.right <= m.right + 1,
+            aboveLegend: !!(p && l) && p.bottom <= l.top - 4,
+            play: player?.querySelector('[data-timeline-action="play"]')?.textContent || '',
+            now: player?.querySelector('[data-timeline-action="now"]')?.textContent || '',
+            rangeMax: player?.querySelector('[data-timeline-range="true"]')?.max || '',
+          };
+          card._weatherRadarRemoveTimelinePlayer();
+          state.timelineModel = previousModel;
+          state.timelineIndex = previousIndex;
+          return result;
+        });
+        assert.equal(radarPlayerGeometry.exists, true, `${delivery}/${profile} radar timeline player mounts`);
+        assert.equal(radarPlayerGeometry.leftInside, true, `${delivery}/${profile} radar player left boundary`);
+        assert.equal(radarPlayerGeometry.rightInside, true, `${delivery}/${profile} radar player right boundary`);
+        assert.equal(radarPlayerGeometry.aboveLegend, true, `${delivery}/${profile} radar player above legend`);
+        assert.equal(radarPlayerGeometry.play, '▶', `${delivery}/${profile} radar play control`);
+        assert.equal(radarPlayerGeometry.now, 'Jetzt', `${delivery}/${profile} radar current-frame control`);
+        assert.equal(radarPlayerGeometry.rangeMax, '2', `${delivery}/${profile} radar timeline range`);
 
         const startupDropdownLifecycle = await page.evaluate(async () => {
           const card = window.aboutCard;
@@ -394,8 +451,8 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
-          assert.equal(row.localizedModuleRows.length,23,delivery+'/'+profile+' '+row.language+' all module rows localized');
-          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,23,delivery+'/'+profile+' '+row.language+' unique localized module ids');
+          assert.equal(row.localizedModuleRows.length,26,delivery+'/'+profile+' '+row.language+' all module rows localized');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id)).size,26,delivery+'/'+profile+' '+row.language+' unique localized module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');

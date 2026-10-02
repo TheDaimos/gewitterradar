@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Print V4.10.02 contract hashes
+      - name: Print frontend contract hashes
         run: |
           sha256sum frontend/gewitterradar.js
           wc -c frontend/gewitterradar.js
@@ -34,7 +34,19 @@ jobs:
           sha256sum frontend/assets/gewitterradar-runtime-manifest.json
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
-      - name: Canonical V4.08 frontend contract
+      - name: V4.11 WeatherRouter Consumer V1 contract
+        run: node scripts/test-v411-weather-router.mjs
+
+      - name: V4.11 canonical DEV identity
+        run: node scripts/test-v411-identity.mjs
+
+      - name: V4.11.05 precipitation radar timeline player
+        run: node scripts/test-v41105-weather-radar-player.mjs
+
+      - name: V4.11.06 Weather Engine diagnostics
+        run: node scripts/test-v41106-weather-engine-diagnostics.mjs
+
+      - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
       - name: Emit regenerated checksum inventory on failure
@@ -115,3 +127,4 @@ jobs:
             frontend/assets/gewitterradar-trend-arrow.png
             frontend/assets/gewitterradar-trend-arrow-*.webp
           if-no-files-found: warn
+

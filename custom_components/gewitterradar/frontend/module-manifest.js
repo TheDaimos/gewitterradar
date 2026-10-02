@@ -1,9 +1,10 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10",displayVersion:"V4.10",build:"V4.10-RELEASE-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D40A-5E9B"});
+import { APPLICATION_RELEASE } from "./version.js?v=41107r1";
+import { registerModule } from "./modules/core/registry.js?v=41107r1";
+export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.46",
+    "version": "1.2.53",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -54,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -97,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.15",
+    "version": "1.1.18",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -147,6 +148,18 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/ui/i18n-settings.js"
   },
   {
+    "id": "core.update-watch",
+    "version": "1.0.0",
+    "group": "Kern",
+    "function": "Frontend-Aktualisierung",
+    "subfunctions": [
+      "Installierten Stand prüfen",
+      "Aktualisierungshinweis",
+      "Kontrollierte Vollneuladung"
+    ],
+    "file": "modules/core/update-watch.js"
+  },
+  {
     "id": "core.source-status",
     "version": "1.0.1",
     "group": "Kern",
@@ -188,7 +201,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -293,6 +306,29 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/instruments/compass.js"
   },
   {
+    "id": "weather.consumer-client",
+    "version": "1.2.0",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter Consumer V1",
+    "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus", "Diagnose-Trace", "Weather Engine Diagnose"],
+    "file": "modules/weather/consumer-client.js"
+  },
+  {
+    "id": "weather.precipitation-layer",
+    "version": "1.3.0",
+    "group": "Weather-Engine",
+    "function": "Niederschlags-Kartenebene",
+    "subfunctions": [
+      "Raster-Kacheladapter",
+      "Web-Mercator-BBOX",
+      "Quelle & Aktualität",
+      "Abdeckung",
+      "Legende",
+      "Anfragebegrenzung"
+    ],
+    "file": "modules/weather/precipitation-layer.js"
+  },
+  {
     "id": "history.chart",
     "version": "1.0.1",
     "group": "Verlauf",
@@ -304,4 +340,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.46",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.53",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

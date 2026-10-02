@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import { defineModule } from "../core/runtime.js?v=41107r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.15",
+  "version": "1.1.18",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7027,6 +7027,43 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
             <div class="settings-body">
               <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true">ⓘ</span><span id="settings-about-label">Über Gewitterradar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
+              <details class="settings-section settings-collapsible" id="weather-engine-section">
+                <summary class="settings-section-head">
+                  <div>
+                    <div class="settings-section-title">Weather-Engine</div>
+                    <div class="settings-section-sub">Blitzortung.org &amp; WeatherRouter · hybride Datenquellen</div>
+                  </div>
+                </summary>
+                <div class="settings-section-content">
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <div>Blitzortung.org · bestehende Primärquelle</div>
+                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Die produktive Blitzüberwachung bleibt unverändert aktiv.</div>
+                    </div>
+                    <span id="weather-engine-blitz-status" style="font-size:.76rem;color:#c8d7ce">Bestehende Quelle</span>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <div>WeatherRouter · Consumer API V1</div>
+                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Optionaler, unabhängiger Datenweg über Home Assistant.</div>
+                    </div>
+                    <button class="settings-language-button settings-control" id="weather-engine-check" type="button">Verbindung prüfen</button>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label" id="weather-engine-status" role="status" aria-live="polite">Noch nicht geprüft</div>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label">
+                      <div>Datenangebot für den aktuellen Kartenausschnitt</div>
+                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Niederschlag, zusätzliche Blitzereignisse und amtliche Wetterwarnungen getrennt abfragen. Noch keine Aktivierung einer Kartenebene oder automatischen Ersatzversorgung.</div>
+                    </div>
+                    <button class="settings-language-button settings-control" id="weather-engine-inspect" type="button" disabled>Abfragen</button>
+                  </div>
+                  <div class="settings-row">
+                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite" style="white-space:pre-line;overflow-wrap:anywhere">Datenquellen bleiben bis zur Abfrage unberührt.</div>
+                  </div>
+                </div>
+              </details>
               <details class="settings-section settings-collapsible">
                 <summary class="settings-section-head">
                   <div>
@@ -7704,6 +7741,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       this._applyCompassDesign(this._persistedCompassDesign || 'C');
       this._applyStaticTranslations();
       this._bindControls();
+      this._mountWeatherRouterSettings?.();
+      this._mountWeatherRadarSettings?.();
+      this._mountWeatherEngineDiagnostics?.();
       this._initMap();
       this._setupOrientationCapabilityProbe();
     },

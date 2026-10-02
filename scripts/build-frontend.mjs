@@ -10,8 +10,34 @@ async function modularPayload(contract){const wanted=Object.keys(contract.module
 export async function expectedPayload(){
  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
+ const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("const CARD_VERSION = '4.10';")){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.07"')){
+  const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  if(!versionText.includes('displayVersion:"V4.11.07 DEV"')||!versionText.includes('build:"V4.11.07-DEV-2026-10-01"')||!versionText.includes('runtimeRevision:"41107r1"')||!versionText.includes('moduleSetId:"E411-07A1"'))throw Error('V4.11.07 canonical version mismatch');
+  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.07 runtime revision source mismatch');
+  const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js'];
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  const expected=[...Object.keys(old),...additional].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.07 module inventory mismatch');
+  const consumer=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
+  const radar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
+  const watch=await readFile(resolve(root,'frontend/modules/core/update-watch.js'),'utf8');
+  if(!consumer.includes("id:'weather.consumer-client',version:'1.2.0'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
+  if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.0"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
+  if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
+  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/weather/precipitation-layer.js']);
+  for(const name of actual){
+    const bytes=await readFile(resolve(root,'frontend',name));
+    if(old[name]&&!allowedModified.has(name)){
+      const normalized=Buffer.from(bytes.toString('utf8').replaceAll('41107r1','41002r13'),'utf8');
+      if(normalized.length!==old[name].sizeBytes||hash(normalized)!==old[name].sha256)throw Error('V4.10 protected module changed beyond runtime revision: '+name);
+    }
+    modular.set(name,bytes);
+  }
+  localeSha=final.localeSha256;localeSize=final.localeSizeBytes;
+ }else if(text.includes("const CARD_VERSION = '4.10';")){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   if(final.version!=='4.10'||final.status!=='FINAL'||final.acceptedCandidateSha256!=='c9940895892e05d0c424cc2d2b6d27f43c24d345f81f1227c4716f3d6404943e')throw Error('V4.10 contract provenance mismatch');
   if(source.length!==final.sizeBytes||hash(source)!==final.sha256)throw Error('V4.10 frontend checksum mismatch');
@@ -37,7 +63,7 @@ export async function expectedPayload(){
   const referenced=[...new Set([...assetScanText.matchAll(/new URL\('(?:\.\/|\.\.\/\.\.\/)assets\/([^'?]+)(?:\?[^']*)?', (?:import\.meta\.url|rootModuleUrl)\)/g)].map(m=>'assets/'+m[1]))].sort();
  const active=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
  if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch');
- const payload=new Map([['gewitterradar.js',source],['locales/about-locales.js',locale],...modular]);
+ const payload=new Map([['gewitterradar.js',source],...(versionSource?[['version.js',versionSource]]:[]),['locales/about-locales.js',locale],...modular]);
  for(const asset of inventory){const bytes=await readFile(resolve(root,'frontend',asset.file));if(hash(bytes)!==asset.sha256)throw Error('Asset SHA mismatch '+asset.file);payload.set(asset.file,bytes);}
  return payload;
 }

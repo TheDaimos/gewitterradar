@@ -1,10 +1,12 @@
 # Gewitterradar V4.11 – To-do-Sammlung
 
-Stand: 29.09.2026
+Stand: 01.10.2026
 
-Status: **NEXT / VERSIONIERT – Sammlung, noch keine Umsetzung**
+Status: **V4.11 in Entwicklung; V4.11.07 DEV als technischer P0-090-Kandidat für providerneutrales Niederschlags-Routing**
 
-Diese Datei bündelt die für V4.11 vorgemerkten Themen. Sie ist bewusst eine To-do- und Planungsgrundlage. Umsetzung beginnt erst nach ausdrücklicher Freigabe.
+Diese Datei bündelt die für V4.11 vorgemerkten Themen und bleibt die thematische To-do-Grundlage. V4.11.07 DEV migriert die produktive Niederschlags-Kartenebene auf `weather.precipitation.layer`; die reale Deutschland-/Karibik-/Ozean-Abnahme gemäß WeatherRouter P0-090 steht noch aus. V4.11.01 DEV hat den Consumer-V1-Vertrag real bestätigt; V4.11.02 DEV ergänzt den ersten produktiven, providerneutralen Niederschlagsradar sowie den neuen Versions-/Cache-Updatepfad. V4.11.03 DEV erweitert den Radar um einen konfigurierbaren, durch Kachel- und Speichergrenzen abgesicherten räumlichen Vorladepuffer und bestätigte den automatischen Updatewächter real. Beim Android-Realtest wurde jedoch festgestellt, dass der Radar-Bedienblock nicht in den Einstellungsdialog eingehängt war. V4.11.04 DEV behebt genau diesen Mount-Fehler und schützt ihn künftig durch echte Geräte-/Browserprüfungen. Die reale DRA-/Android-Abnahme von V4.11.04 ist bestanden: Radar-Schalter, räumlicher Puffer, DWD-Rasterdarstellung und paralleler Blitzortung-Betrieb wurden erfolgreich bestätigt. V4.11.05 DEV erweitert diese Basis um Vergangenheit/Jetzt/Vorhersage mit Zeitregler und Wiedergabe; die reale Abnahme dieses Zeitverlaufs steht noch aus. Offene Aufgaben sind weiterhin nicht pauschal freigegeben. Siehe aktuelle Arbeitsübergabe [V4_11_CHAT_HANDOFF_2026-10-01_R2_RADAR_TIMELINE_REALTEST.md](V4_11_CHAT_HANDOFF_2026-10-01_R2_RADAR_TIMELINE_REALTEST.md).
+
+> **Verbindlicher Planungsbeschluss vom 30.09.2026:** Die hybride Weather-Engine (unabhängige Blitzortung-/WeatherRouter-Schalter, parallele Anreicherung, weitere unabhängige Blitzbeobachtungen, kontrollierte Ersatzversorgung, Provenienz, Monitored-Area-Bezug und API-/Modulgrenzen) ist in [V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md](V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md) festgehalten. Bei diesem Themenbereich ist das Beschlussdokument die maßgebliche Planungsquelle. Änderungen bleiben durch ausdrücklichen neuen Beschluss möglich; noch keine Implementierungsfreigabe.
 
 ## Leitmotiv V4.11
 
@@ -20,11 +22,20 @@ Zusätzlich wird die bereits vorgemerkte Idee fester Überwachungsstandorte als 
 
 ## 1. WeatherRouter
 
-- [ ] WeatherRouter als vorgesehene Daten- und Provider-Schicht für zusätzliche Wetterdienste und Wetterereignisse in Gewitterradar anbinden.
-- [ ] klare Trennung zwischen Blitzortung-Livedaten, WeatherRouter-Daten und Karten-/Darstellungsebene beibehalten.
-- [ ] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen.
+- [x] WeatherRouter als vorgesehene Daten- und Provider-Schicht für zusätzliche Wetterdienste und Wetterereignisse in Gewitterradar anbinden. Consumer V1 ist real angebunden; V4.11.07 nutzt für die produktive Niederschlags-Kartenebene den providerneutralen Intent `weather.precipitation.layer`.
+- [x] klare Trennung zwischen Blitzortung-Livedaten, WeatherRouter-Daten und Karten-/Darstellungsebene beibehalten. Der Niederschlagsradar besitzt einen eigenen Layer und ersetzt den Blitzortung-Pfad nicht.
+- [x] Provider-, Capability-, Abdeckungs- und Ausfallzustände nachvollziehbar darstellen. Der Radar-Layer zeigt Quelle, Abdeckung, Datenalter, eingeschränkte Routen und fachliche Nichtverfügbarkeit.
 - [ ] Datenquellen, Attribution, Aktualität und eingeschränkte Verfügbarkeit in Diagnose und Hilfe sichtbar machen.
-- [ ] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen.
+- [x] eigenen Diagnosezugang **Weather Engine** unter „Kalibrierung & Diagnose“ ergänzen: dynamische Bereichs-/Capability-Filter, Consumer-Request/Response, rohe Consumer-WebSocket-Austausche, Provider/Provenienz, lokaler Layer- und Rückfallzustand, Timeline sowie secret-safe Text-/JSON-Export.
+- [x] WeatherRouter-Fehler nicht als allgemeines Gewitterradar-Problem ausgeben, sondern Quelle und betroffene Funktion benennen. Der neue Radarstatus bleibt auf die WeatherRouter-/Niederschlagsfunktion begrenzt.
+- [x] räumlichen Niederschlagsradar-Puffer konfigurierbar machen: Aus, Klein (+15 % je Seite), Normal (+30 %, empfohlen), Groß (+50 %) und Benutzerdefiniert (0–100 %).
+- [x] Vorladebereich zusätzlich durch maximale Zusatzkacheln und geschätzten dekodierten Bildspeicher begrenzen; große Europa-/Deutschlandansichten dürfen nicht allein durch den Prozentwert unkontrolliert wachsen.
+- [x] Radar-Bedienblock im realen Weather-Engine-Einstellungsdialog einhängen. V4.11.04 ruft `_mountWeatherRadarSettings()` nach dem WeatherRouter-Block auf; CI prüft Schalter und Puffersteuerung auf Desktop, iPad und Android ausdrücklich.
+- [x] reale Android-Abnahme von V4.11.04 bestanden: Radar sichtbar, DWD als geroutete Quelle, Attribution vorhanden, räumlicher Puffer aktiv und bestehende Blitzortung-/Instrumentenfunktionen unbeeinträchtigt.
+- [x] zeitlichen Radar-Zeitverlauf technisch umsetzen: Consumer-V1-Timeline providerneutral in Vergangenheit / Jetzt / Vorhersage einordnen, manuelle Auswahl und Wiedergabe anbieten.
+- [x] Framewechsel doppelt puffern: nächster Zeitstand wird unsichtbar geladen und erst nach erfolgreichem Laden übernommen; zeitliche Vorladung erhält während der Wiedergabe Vorrang vor dem räumlichen Zusatzpuffer.
+- [x] Zeitplayer auf allen bestehenden Desktop-/iPad-/Android-Browserprofilen testweise real in die Karte einsetzen und auf Kartenbegrenzung sowie Abstand zur Legende prüfen.
+- [ ] V4.11.05 Radar-Zeitverlauf real über DRA auf Android prüfen: tatsächliche Framezahl, Vergangenheit/Jetzt/Vorhersage, Jetzt-Taste, Regler, Vor/Zurück, Wiedergabe/Pause und flackerfreier Wechsel.
 
 ---
 

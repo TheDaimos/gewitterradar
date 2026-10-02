@@ -1,5 +1,70 @@
 # Changelog
 
+## V4.11.05 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
+
+- Erster providerneutraler **Radar-Zeitverlauf** direkt auf der Gewitterradar-Karte: Vergangenheit, aktueller Zeitpunkt und Vorhersage werden aus der vom WeatherRouter gelieferten Raster-Timeline abgeleitet.
+- Bedienung mit Zurück/Vor, **Jetzt**, Wiedergabe/Pause und Zeitregler. Der Player erscheint nur, wenn die geroutete Quelle tatsächlich mehrere Radarzeitpunkte liefert; Einzelbild-Quellen bleiben vollständig nutzbar.
+- Keine DWD-Sonderlogik im Gewitterradar: Anzahl und Zeitpunkte stammen vollständig aus Consumer V1. DWD kann aktuell bis zu 72 Analyse-/Vorhersageframes liefern, der Player nimmt jedoch keine feste Framezahl an.
+- Framewechsel mit **Doppelpufferung**: der nächste Rasterzeitpunkt wird unsichtbar vorbereitet und erst nach erfolgreichem Laden eingeblendet, um leere/helle Zwischenbilder zu vermeiden.
+- Während laufender Wiedergabe erhält die zeitliche Vorladung Vorrang vor dem großen räumlichen Zusatzpuffer; nach Pause oder manueller Auswahl wird der konfigurierte räumliche Puffer für den gewählten Zeitpunkt wieder aufgebaut.
+- Kartenlegende zeigt abhängig vom gewählten Frame **Vergangenheit / Jetzt / Vorhersage** sowie die zugehörige Uhrzeit.
+- Zeitplayer richtet seinen Abstand dynamisch nach der realen Höhe der Kartenlegende aus und wird in den Browserprofilen auf Desktop, iPad und Android auf Kartenbegrenzung und Überlappungsfreiheit geprüft.
+- Weather-Engine zeigt zusätzlich den Status **Radar-Zeitverlauf** und die tatsächlich verfügbare Anzahl von Radarzeitpunkten.
+- Kanonische DEV-Identität: Produkt `4.11.05`, Anzeige `V4.11.05 DEV`, Build `V4.11.05-DEV-2026-10-01`, Runtime `41105r1`, Modulsatz `E411-05A1`, native Integration `0.23.4`.
+- `weather.precipitation-layer` auf `1.2.0`, `core.manifest` auf `1.2.51`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- V4.11.04 bleibt die real abgenommene Radar-/Pufferbasis; V4.11.05 benötigt noch die reale Android-/DRA-Abnahme des Zeitverlaufs.
+
+## V4.11.04 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Behebt einen real entdeckten V4.11.02/V4.11.03-Fehler: Das Modul `weather.precipitation-layer` war geladen und vollständig implementiert, aber sein Einstellungsblock wurde beim Aufbau des Dialogs nicht eingehängt.
+- `ui.skeleton` ruft nun nach `_mountWeatherRouterSettings()` zusätzlich `_mountWeatherRadarSettings()` auf. Dadurch erscheinen in der Weather-Engine tatsächlich **„Niederschlagsradar · Kartenebene“** und **„Radar-Vorladebereich“**.
+- Regressionstest verschärft: Beide Auslieferungen werden auf Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat explizit auf Radar-Schalter, Pufferprofil und Pufferstatus geprüft.
+- Kanonische DEV-Identität: Produkt `4.11.04`, Anzeige `V4.11.04 DEV`, Build `V4.11.04-DEV-2026-09-30`, Runtime `41104r1`, Modulsatz `E411-04A1`, native Integration `0.23.3`.
+- `ui.skeleton` auf `1.1.17`, `core.manifest` auf `1.2.50`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Der bereits in V4.11.03 erfolgreich real geprüfte automatische Updatewächter bleibt unverändert und soll beim Wechsel V4.11.03 → V4.11.04 erneut im Realbetrieb bestätigt werden.
+- Reale Android-Abnahme am 01.10.2026 bestanden: Radar-Schalter und Vorladepuffer sichtbar, DWD-Radardaten auf der Karte dargestellt, Attribution vorhanden und paralleler Blitzortung-/Instrumentenbetrieb ohne erkennbare Regression.
+
+## V4.11.03 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Niederschlagsradar um einen **konfigurierbaren räumlichen Vorladepuffer** erweitert, damit beim Verschieben und Zoomen der Karte bereits angrenzende Radarkacheln bereitstehen können.
+- Verständliche Pufferprofile: **Aus**, **Klein (+15 % je Seite)**, **Normal (+30 % je Seite, empfohlen)**, **Groß (+50 % je Seite)** und **Benutzerdefiniert (0–100 % je Seite)**.
+- Der Prozentwert bezieht sich bewusst auf jede Seite des aktuell sichtbaren Kartenausschnitts. `Normal` entspricht damit theoretisch bis zu 2,56× sichtbarer Fläche; die tatsächliche Vorladung wird zusätzlich begrenzt.
+- Harte Ressourcengrenzen verhindern unkontrolliertes Vorladen großer Ansichten: Klein max. 24 Zusatzkacheln / ca. 8 MiB, Normal 48 / ca. 16 MiB, Groß 96 / ca. 32 MiB, Benutzerdefiniert max. 128 Kacheln und ca. 40 MiB geschätzter dekodierter Bildspeicher.
+- Die Speichergrenze berücksichtigt die reale Kachelgröße; bei 512px-Kacheln reduziert sich deshalb automatisch die zulässige Kachelanzahl.
+- Maximal vier Vorladeanforderungen gleichzeitig; bei unsichtbarer Anwendung wird nicht aggressiv vorgeladen.
+- Bereits fertig vorgeladene Kacheln werden beim späteren echten Kartenbedarf wiederverwendet; alte, nicht mehr relevante Einträge werden begrenzt verdrängt.
+- Einstellungen zeigen Profil, Prozentwert, theoretischen Flächenfaktor, Kachel-/Speichergrenze sowie aktuelle Anzahl vorbereiteter und ladender Zusatzkacheln.
+- Kanonische DEV-Identität: Produkt `4.11.03`, Anzeige `V4.11.03 DEV`, Build `V4.11.03-DEV-2026-09-30`, Runtime `41103r1`, Modulsatz `E411-03A1`, native Integration `0.23.2`.
+- `weather.precipitation-layer` auf `1.1.0`, `core.manifest` auf `1.2.49`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Zeitliche Radar-Pufferung mehrerer Vergangenheit-/Vorhersageframes ist bewusst noch nicht Bestandteil dieses Schritts; V4.11.03 puffert räumlich den aktuellen Radarzeitstand.
+- V4.10 FINAL und `main` bleiben unverändert; Entwicklungs-PR #28 bleibt Entwurf.
+
+## V4.11.02 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Erster produktiver, providerneutraler **Niederschlagsradar als Kartenebene** über WeatherRouter Consumer V1 (`weather.radar.precipitation`, Ressourcentyp `raster_tile`).
+- WeatherRouter entscheidet Quelle und Abdeckung; Gewitterradar enthält keine DWD-spezifische Routinglogik. XYZ- und WMS/BBOX-Kacheln werden unterstützt.
+- Kartenebene mit eigenem Leaflet-Bereich, konservativer Kachelpufferung, nativer Zoomgrenze mit sauberem Hochskalieren, schaltbarer Darstellung sowie Quelle, Datenalter, Abdeckung, Attribution und optionaler Provider-Legende.
+- Radar-Abfragen ressourcenschonend begrenzt: globaler Neuabruf, Ansichtswechsel und identische Ansichten besitzen getrennte Mindestintervalle; Kartenbewegungen werden entprellt.
+- Neue Module `weather.precipitation-layer@1.0.0` und `core.update-watch@1.0.0`; insgesamt **26 Laufzeitmodule** mit vollständiger Modulansicht in allen 19 Sprach-/Dialektvarianten.
+- Versions- und Cache-Vertrag vereinheitlicht: Produkt `4.11.02`, Anzeige `V4.11.02 DEV`, Build `V4.11.02-DEV-2026-09-30`, Runtime `41102r1`, Modulsatz `E411-02A1`, native Integration `0.23.1`.
+- Neuer Laufzeit-Updatewächter prüft das installierte Laufzeitmanifest ohne Browsercache und kann nach einem DRA-Update einmalig kontrolliert neu laden; die stabile Home-Assistant-Ressource bleibt unverändert registriert.
+- Der historische Browservertrag unterscheidet jetzt kanonische DEV-Laufzeiten von stabilen Veröffentlichungen, ohne den Schutz `stabile Version darf kein DEV tragen` aufzuweichen.
+- WeatherRouter Consumer V1 wurde ergänzend korrigiert, damit bereits vorhandene sichere Raster-Legenden nicht mehr beim Normalisieren verworfen werden.
+- Blitzortung bleibt als unabhängiger Datenpfad unverändert; die hybride Weather-Engine wird durch den neuen Radar-Layer nicht ersetzt.
+- Entwicklungs-PR #28 bleibt Entwurf; `main` und die eingefrorene V4.10 FINAL bleiben unverändert.
+
+## V4.11.01 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Start auf der eingefrorenen Veröffentlichung `v4.10` / `3111e9d27a62adf97d37cccb8066cc9a0803c128` im Zweig `feature/v4.11-development`; V4.10 FINAL bleibt unverändert.
+- Eindeutige sichtbare DEV-Kennung aus dem Anwendungsmanifest; Hauptfenster, Build, DRA-`BUILD_VERSION`, Modul- und Laufzeitmanifest werden konsistent geprüft. Native Integration als Entwicklungsfassung 0.23.0.
+- Eigenständiger, optionaler WeatherRouter-Consumer-V1-Adapter über den authentifizierten Home-Assistant-WebSocket-Kanal: Discovery, Capability-Abfrage, Resolve, Ressourcentyp-Validierung und kontrollierte fachliche Nichtverfügbarkeit.
+- Neuer Einstellungsabschnitt „Weather-Engine“ mit Verbindungstest und expliziten, nur auf Anforderung ausgeführten Abfragen von Niederschlag, zusätzlichen Blitzbeobachtungen und amtlichen Warnungen, inklusive Quelle und Aktualität.
+- Transparentes WeatherRouter-V004-Emblem aus dem WeatherRouter-Grafikarchiv als 256px-PNG in beiden Auslieferungen; separate geschützte 512px-Rendition. Originalmaster im WeatherRouter-Repository unverändert.
+- Nun 24 Laufzeitmodule; Modulansicht für alle 19 Sprach-/Dialektvarianten um das WeatherRouter-Modul ergänzt.
+- Keine automatische Blitzquellen-Umschaltung, keine neue Niederschlags-Kartenebene und keine Monitored-Area-Backendaktivierung durch diesen ersten DEV-Kandidaten. Realer externer WeatherRouter-Consumer-Test und DRA-Abnahme stehen noch aus.
+- Entwicklungs-PR #28 bleibt Entwurf; weder `main` noch `v4.10` werden durch diesen Eintrag verändert.
+
+
 ## V4.10 FINAL · 2026/09 (2026-09-30)
 
 - Öffentliche Produktversion V4.10 aus dem vollständig real abgenommenen technischen R40-Stand.

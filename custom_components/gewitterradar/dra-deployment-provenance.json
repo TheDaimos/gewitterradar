@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.10",
-  "build": "V4.10-RELEASE-2026-09-30",
-  "runtimeRevision": "41002r13",
-  "moduleSetId": "D40A-5E9B",
-  "baselineFeatureHead": "bcf30fe2dc1b6b56625edf209b2373b956fb7fd4",
+  "productVersion": "4.11.07",
+  "build": "V4.11.07-DEV-2026-10-01",
+  "runtimeRevision": "41107r1",
+  "moduleSetId": "E411-07A1",
+  "baselineFeatureHead": "669272bcbe3282ac8cf9759765ab4cb5dc113401",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,8 +18,8 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.10 public release identity from accepted R40; existing DRA channel unchanged",
-    "productBehaviorUnchanged": true,
+    "purpose": "V4.11.07 DEV: migrate productive precipitation layer to provider-neutral weather.precipitation.layer with Weather Engine diagnostics; existing deploy/dev channel only",
+    "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
     "previousRealMatrixReason": "R18 real/CI parity accepted; R19 geometry/calibration remains unchanged; R20 is a diagnostic UI-only accordion refinement",
@@ -27,5 +27,6 @@
     "manualEyeReferencesAutoApply": false,
     "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
     "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group"
-  }
+  },
+  "sourceReleaseTag": "v4.10"
 }

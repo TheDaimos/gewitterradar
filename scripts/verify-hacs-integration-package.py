@@ -21,7 +21,7 @@ def verify(stage_root:Path)->dict[str,str]:
  if forbidden:raise RuntimeError(f"Forbidden staged files: {forbidden}")
  manifest=json.loads(files["manifest.json"].read_text(encoding="utf-8"))
  build_version=(target/"build_info.py").read_text(encoding="utf-8")
- expected="0.22.0" if 'BUILD_VERSION = "4.10"' in build_version else "0.21.0" if 'BUILD_VERSION = "4.10.02"' in build_version else None
+ expected="0.23.4" if 'BUILD_VERSION = "4.11.07"' in build_version else "0.23.4" if 'BUILD_VERSION = "4.11.06"' in build_version else "0.23.4" if 'BUILD_VERSION = "4.11.05"' in build_version else "0.23.3" if 'BUILD_VERSION = "4.11.04"' in build_version else "0.23.2" if 'BUILD_VERSION = "4.11.03"' in build_version else "0.23.1" if 'BUILD_VERSION = "4.11.02"' in build_version else "0.23.0" if 'BUILD_VERSION = "4.11.01"' in build_version else "0.22.0" if 'BUILD_VERSION = "4.10"' in build_version else "0.21.0" if 'BUILD_VERSION = "4.10.02"' in build_version else None
  if manifest["domain"]!="gewitterradar" or manifest["version"]!=expected:raise RuntimeError("Unexpected integration manifest identity")
  source_hashes={name:digest(SOURCE/name) for name in sorted(files)}
  staged_hashes={name:digest(path) for name,path in sorted(files.items())}
