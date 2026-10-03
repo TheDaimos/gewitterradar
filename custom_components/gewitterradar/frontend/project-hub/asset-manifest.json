@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc2",
+  "runtime_version": "0.2.0-rc3",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -24,7 +24,7 @@
       "css_px": "64x64 Desktop; 72x72 Mobile (Mail 46x46)",
       "minimum_factor": 1.78,
       "final_target_factor": 2,
-      "note": "RC2 vergroessert Projektlogos auf Mobile; Sprite-Anhebung vor finaler 2x-Abnahme vorgesehen."
+      "note": "RC3 richtet Projektname/Repo und Aktionspillen an derselben Inhaltsachse aus; mobiles 72px-Logo bleibt vor finaler 2x-Abnahme als offener Sprite-Punkt markiert."
     }
   ],
   "master_policy": {

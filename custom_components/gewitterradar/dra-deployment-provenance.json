@@ -3,7 +3,7 @@
   "productVersion": "4.11.08",
   "build": "V4.11.08-DEV-2026-10-02",
   "runtimeRevision": "41108r1",
-  "moduleSetId": "E411-08A3",
+  "moduleSetId": "E411-08A4",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV Project Hub RC1 host-popup layering/viewport fix: topmost popup above Settings, adaptive visual viewport height; deploy/dev",
+    "purpose": "V4.11.08 DEV Project Hub V0.2 RC3: aligned title/repository/actions, centered project logos, narrower tablet/mobile action pills",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
