@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc7",
+  "runtime_version": "0.2.0-rc8",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -24,7 +24,7 @@
       "css_px": "64x64 Desktop; 72x72 Tablet; 76x76 Mobile (Mail 46x46)",
       "minimum_factor": 1.68,
       "final_target_factor": 2,
-      "note": "RC7: Projekttitel, Repository und beide Aktionspillen verwenden auf Mobile und Tablet/Desktop exakt dieselbe linke Inhaltsachse. Das Logo bleibt im linken freien Bereich zentriert."
+      "note": "RC8: Projektlogo liegt in einer festen linken Kartenzone; Projektname, Repository und beide Aktionspillen beginnen exakt an der zweiten Grid-Spalte. Keine separate Zentrierung oder Margin-Verschiebung des Aktionsblocks."
     }
   ],
   "master_policy": {

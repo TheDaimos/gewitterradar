@@ -279,7 +279,7 @@
 }
 .project-action:hover{border-color:rgba(240,197,119,.70);background:linear-gradient(145deg,rgba(239,199,126,.18),rgba(103,66,30,.10))}
 .project-action.is-disabled{color:#77838d;border-color:rgba(132,119,95,.24);background:rgba(255,255,255,.018);cursor:not-allowed}
-/* Offline Mini V0.2 RC7 – Achsen, schlankere Aktionen und sichere Innenabstände */
+/* Offline Mini V0.2 RC8 – Achsen, schlankere Aktionen und sichere Innenabstände */
 .project-card{
   grid-template-columns:minmax(88px,34%) minmax(0,66%) !important;
   align-items:center !important;
@@ -373,7 +373,7 @@
   }
 }
 
-/* Offline Mini V0.2 RC7 – gemeinsame linke Achse für Titel, Repository und Pillen */
+/* Offline Mini V0.2 RC8 – gemeinsame linke Achse für Titel, Repository und Pillen */
 .project-main{display:contents !important;}
 .project-meta,
 .project-actions{
@@ -416,6 +416,93 @@
   .project-actions{
     width:66% !important;
     max-width:146px !important;
+  }
+}
+
+
+/* Offline Mini V0.2 RC8 – eindeutige Karten-Geometrie ohne konkurrierende Zentrierung */
+.project-card{
+  grid-template-columns:40% minmax(0,60%) !important;
+  column-gap:0 !important;
+  align-items:center !important;
+  min-height:118px !important;
+}
+.project-logo{
+  grid-column:1 !important;
+  align-self:center !important;
+  justify-self:center !important;
+}
+.project-main{
+  display:contents !important;
+}
+.project-meta,
+.project-actions{
+  grid-column:2 !important;
+  justify-self:start !important;
+  margin-left:0 !important;
+  box-sizing:border-box !important;
+  min-width:0 !important;
+}
+.project-meta{
+  width:100% !important;
+  padding-right:10px !important;
+}
+.project-meta strong,
+.project-meta small{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+.project-actions{
+  width:82% !important;
+  max-width:160px !important;
+  align-self:start !important;
+  gap:5px !important;
+}
+.project-action{
+  width:100% !important;
+  min-width:0 !important;
+}
+@media(max-width:620px){
+  .project-card{
+    grid-template-columns:40% minmax(0,60%) !important;
+  }
+  .project-logo{
+    width:76px !important;
+    height:76px !important;
+    background-size:76px 456px !important;
+  }
+  .logo-gr{background-position:0 0 !important}
+  .logo-wr{background-position:0 -76px !important}
+  .logo-aurora{background-position:0 -152px !important}
+  .logo-dra{background-position:0 -228px !important}
+  .logo-gps{background-position:0 -304px !important}
+  .project-actions{
+    width:84% !important;
+    max-width:156px !important;
+  }
+}
+@media(min-width:621px) and (max-width:900px){
+  .project-card{
+    grid-template-columns:39% minmax(0,61%) !important;
+  }
+  .project-logo{
+    width:72px !important;
+    height:72px !important;
+    background-size:72px 432px !important;
+  }
+  .logo-gr{background-position:0 0 !important}
+  .logo-wr{background-position:0 -72px !important}
+  .logo-aurora{background-position:0 -144px !important}
+  .logo-dra{background-position:0 -216px !important}
+  .logo-gps{background-position:0 -288px !important}
+  .project-actions{
+    width:80% !important;
+    max-width:150px !important;
   }
 }
 

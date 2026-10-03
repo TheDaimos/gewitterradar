@@ -1,12 +1,12 @@
 import { registerModule } from "../core/registry.js?v=41108r1";
 export const MODULE_META=Object.freeze({
-  id:"ui.project-hub",version:"1.1.5",group:"Oberfläche",function:"Daimos Project Hub",
-  subfunctions:["Signatur-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC7-Runtime"],
+  id:"ui.project-hub",version:"1.1.6",group:"Oberfläche",function:"Daimos Project Hub",
+  subfunctions:["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC8-Runtime"],
   file:"modules/ui/project-hub.js"
 });
 const PROJECT_HUB_BASE_URL=new URL("../../project-hub/",import.meta.url);
 const PROJECT_HUB_CONFIG_URL=new URL("project-hub-config.json",PROJECT_HUB_BASE_URL);
-const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc7";
+const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc8";
 const isHttpsUrl=v=>{try{return new URL(v).protocol==="https:";}catch{return false;}};
 const isLocalFallbackPath=v=>{if(typeof v!=="string")return false;const p=v.trim();return !!p&&!p.startsWith("/")&&!p.startsWith("//")&&!/^[a-z][a-z0-9+.-]*:/i.test(p);};
 const normalizedTimeout=v=>Number.isFinite(v)?Math.max(500,Math.min(10000,Number(v))):DEFAULT_PROBE_TIMEOUT_MS;
@@ -36,11 +36,13 @@ function showPopup(card,status="checking",fallback=DEFAULT_FALLBACK_PATH){
   panel.append(frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
 }
 function activateSignature(card){const sig=card?.shadow?.querySelector?.(".settings-signature-wrap");if(!sig||sig.dataset.projectHubBound==="1")return false;sig.dataset.projectHubBound="1";sig.removeAttribute("aria-hidden");sig.setAttribute("role","button");sig.setAttribute("tabindex","0");sig.setAttribute("aria-label","Daimos Project Hub öffnen");sig.setAttribute("title","Daimos Project Hub");sig.style.cursor="pointer";sig.style.touchAction="manipulation";sig.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};sig.addEventListener("click",open);sig.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
+function activateMainTitle(card){const title=card?.shadow?.querySelector?.(".topbar .brand .title > span:first-child");if(!title||title.dataset.projectHubBound==="1")return false;title.dataset.projectHubBound="1";title.setAttribute("role","button");title.setAttribute("tabindex","0");title.setAttribute("aria-label","Daimos Project Hub öffnen");title.setAttribute("title","Daimos Project Hub");title.style.cursor="pointer";title.style.touchAction="manipulation";title.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};title.addEventListener("click",open);title.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
 export function installProjectHub(CardClass){registerModule(MODULE_META);const proto=CardClass?.prototype;if(!proto)throw new TypeError("ui.project-hub requires a card class");if(proto.__projectHubInstalled)return CardClass;const originalBuildSkeleton=proto._buildSkeleton;if(typeof originalBuildSkeleton!=="function")throw new TypeError("ui.project-hub requires ui.skeleton before installation");
   Object.defineProperties(proto,{__projectHubInstalled:{value:true,configurable:false,enumerable:false,writable:false},
     _bindProjectHubSignature:{configurable:true,writable:true,value:function(){return activateSignature(this);}},
+    _bindProjectHubMainTitle:{configurable:true,writable:true,value:function(){return activateMainTitle(this);}},
     _closeProjectHub:{configurable:true,writable:true,value:function(){closePopup(this);}},
     _openProjectHub:{configurable:true,writable:true,value:async function(){showPopup(this,"checking",DEFAULT_FALLBACK_PATH);if(this._projectHubOpening)return true;this._projectHubOpening=true;try{const config=await loadProjectHubConfig();const resolved=await resolveProjectHub(config);if(this._projectHubFrame?.isConnected)this._projectHubFrame.src=localViewUrl(resolved.mode,config?.fallback_path||DEFAULT_FALLBACK_PATH);return true;}catch{if(this._projectHubFrame?.isConnected)this._projectHubFrame.src=localViewUrl("offline",DEFAULT_FALLBACK_PATH);return true;}finally{this._projectHubOpening=false;}}},
-    _buildSkeleton:{configurable:true,writable:true,value:function(...args){const result=originalBuildSkeleton.apply(this,args);this._bindProjectHubSignature();return result;}}});
+    _buildSkeleton:{configurable:true,writable:true,value:function(...args){const result=originalBuildSkeleton.apply(this,args);this._bindProjectHubSignature();this._bindProjectHubMainTitle();return result;}}});
   return CardClass;
 }

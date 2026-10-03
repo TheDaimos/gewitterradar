@@ -30,7 +30,7 @@ assert.equal(build.includes('BUILD_VERSION = "4.11.08"'),true);
 assert.equal(runtime.modules.filter(x=>x.id==='core.update-watch').length,1);
 assert.equal(runtime.modules.filter(x=>x.id==='weather.precipitation-layer').length,1);
 assert.equal(runtime.modules.filter(x=>x.id==='ui.project-hub').length,1);
-assert.equal(runtime.modules.find(x=>x.id==='ui.project-hub')?.version,'1.1.5');
+assert.equal(runtime.modules.find(x=>x.id==='ui.project-hub')?.version,'1.1.6');
 assert.equal(dra.productVersion,runtime.productVersion);
 assert.equal(dra.build,runtime.build);
 assert.equal(dra.runtimeRevision,runtime.runtimeRevision);

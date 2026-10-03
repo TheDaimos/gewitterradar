@@ -112,10 +112,10 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.project-hub",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "group": "Oberfläche",
     "function": "Daimos Project Hub",
-    "subfunctions": ["Signatur-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC7-Runtime"],
+    "subfunctions": ["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC8-Runtime"],
     "file": "modules/ui/project-hub.js"
   },
   {
