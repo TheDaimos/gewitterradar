@@ -171,13 +171,13 @@ for(const marker of [
     }
   }
 }
-for(const marker of ['id:"ui.project-hub"','version:"1.1.4"','.settings-signature-wrap','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+for(const marker of ['id:"ui.project-hub"','version:"1.1.5"','.settings-signature-wrap','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
 if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');
 if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
-if(projectHubAssetManifest.runtime_version!=='0.2.0-rc4'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC4 local asset contract mismatch');
+if(projectHubAssetManifest.runtime_version!=='0.2.0-rc7'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC7 local asset contract mismatch');
 if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
-if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('Offline Mini V0.2 RC4'))throw Error('Project Hub RC4 central runtime contract incomplete');
+if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('Offline Mini V0.2 RC4'))throw Error('Project Hub RC7 central runtime contract incomplete');
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
   "this._t('app.release_history')",

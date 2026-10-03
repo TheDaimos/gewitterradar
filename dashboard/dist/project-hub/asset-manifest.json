@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc4",
+  "runtime_version": "0.2.0-rc7",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -24,7 +24,7 @@
       "css_px": "64x64 Desktop; 72x72 Tablet; 76x76 Mobile (Mail 46x46)",
       "minimum_factor": 1.68,
       "final_target_factor": 2,
-      "note": "RC4 richtet Projektname und Repository an der linken Pillenachse aus, begrenzt Aktionsbreiten separat und zentriert das Logo im freien linken Kartenbereich. Der 128px-Sprite bleibt bis zur finalen 2x-Asset-Anhebung als offener Punkt markiert."
+      "note": "RC7: Projekttitel, Repository und beide Aktionspillen verwenden auf Mobile und Tablet/Desktop exakt dieselbe linke Inhaltsachse. Das Logo bleibt im linken freien Bereich zentriert."
     }
   ],
   "master_policy": {
