@@ -15,6 +15,7 @@ const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cock
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
 const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
+const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
 const projectHubConfig=JSON.parse(await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'),'utf8'));
 const projectHubOffline=await readFile(resolve(root,'frontend/project-hub/offline/index.html'),'utf8');
 const projectHubAssetManifest=JSON.parse(await readFile(resolve(root,'frontend/project-hub/asset-manifest.json'),'utf8'));
@@ -158,7 +159,7 @@ for(const marker of [
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.08 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.08"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41108r1"','moduleSetId:"E411-08A5"']){
+  for(const marker of ['version:"4.11.08"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41108r1"','moduleSetId:"E411-08A6"']){
     if(!version.includes(marker))throw Error('V4.11.08 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
@@ -171,7 +172,8 @@ for(const marker of [
     }
   }
 }
-for(const marker of ['id:"ui.project-hub"','version:"1.1.6"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+for(const marker of ['id:"weather.layer-menu"','version:"1.0.0"','buildWeatherLayerCatalog','_bindMapDisplayMenuExtension','_setWeatherRadarEnabled','available_only:true'])if(!layerMenu.includes(marker))throw Error('WeatherRouter Layer Hub contract missing: '+marker);
+for(const marker of ['id:"ui.project-hub",'version:"1.1.6"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
 if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');
 if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
@@ -187,7 +189,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.30"',
+  '"id": "fullscreen.map-display"','"version": "1.0.31"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",

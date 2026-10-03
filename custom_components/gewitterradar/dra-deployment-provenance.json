@@ -3,7 +3,7 @@
   "productVersion": "4.11.08",
   "build": "V4.11.08-DEV-2026-10-02",
   "runtimeRevision": "41108r1",
-  "moduleSetId": "E411-08A5",
+  "moduleSetId": "E411-08A6",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV Project Hub V0.2 RC8 central runtime sync plus main-title Project Hub entry; deploy/dev",
+    "purpose": "V4.11.08 DEV Weather Engine · WeatherRouter Layer Hub DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

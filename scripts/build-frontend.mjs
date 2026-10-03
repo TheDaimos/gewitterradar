@@ -15,21 +15,23 @@ export async function expectedPayload(){
  if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.08"')){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
-  if(!versionText.includes('displayVersion:"V4.11.08 DEV"')||!versionText.includes('build:"V4.11.08-DEV-2026-10-02"')||!versionText.includes('runtimeRevision:"41108r1"')||!versionText.includes('moduleSetId:"E411-08A5"'))throw Error('V4.11.08 canonical version mismatch');
+  if(!versionText.includes('displayVersion:"V4.11.08 DEV"')||!versionText.includes('build:"V4.11.08-DEV-2026-10-02"')||!versionText.includes('runtimeRevision:"41108r1"')||!versionText.includes('moduleSetId:"E411-08A6"'))throw Error('V4.11.08 canonical version mismatch');
   if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.08 runtime revision source mismatch');
-  const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js','modules/ui/project-hub.js'];
+  const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js','modules/weather/layer-menu.js','modules/ui/project-hub.js'];
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
   const expected=[...Object.keys(old),...additional].sort();
   if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.08 module inventory mismatch');
   const consumer=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
   const radar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
+  const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
   const watch=await readFile(resolve(root,'frontend/modules/core/update-watch.js'),'utf8');
   if(!consumer.includes("id:'weather.consumer-client',version:'1.2.0'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.0"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
+  if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.0.0"')||!layerMenu.includes('buildWeatherLayerCatalog')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
   const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
   if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.6"')||!projectHub.includes('createElement("iframe")')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');
-  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/weather/precipitation-layer.js']);
+  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/fullscreen/map-display.js','modules/weather/precipitation-layer.js']);
   for(const name of actual){
     const bytes=await readFile(resolve(root,'frontend',name));
     if(old[name]&&!allowedModified.has(name)){

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability} from '../frontend/modules/weather/layer-menu.js';
 
 const calls=[];
 const mock=async request=>{
@@ -42,4 +43,17 @@ assert.equal((await unsupported.resolve(WEATHER_ROUTER_CAPABILITIES.lightningEve
 const filtered=createWeatherRouterClient(mock,{profileId:'gewitterradar'});await filtered.discover();await filtered.resolve(WEATHER_ROUTER_CAPABILITIES.lightningEvents,context);
 assert.equal(calls.at(-1).profile_id,'gewitterradar');
 assert.equal(calls.some(x=>Object.hasOwn(x,'provider')),false,'No provider selection in consumer requests');
-console.log('PASS: WeatherRouter Consumer V1 discovery, cache, explicit coordinates, read-only resolves, compatibility and controlled degradation.');
+const layerCatalog=buildWeatherLayerCatalog([
+  {id:WEATHER_ROUTER_CAPABILITIES.precipitation,domain:'weather',name:'Niederschlag',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['bbox'],phenomena:['precipitation'],family:'precipitation'},
+  {id:'weather.satellite.clouds',domain:'weather',name:'Wolken',enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],phenomena:['clouds'],family:'satellite',intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}},
+  {id:'weather.model.wind_10m.layer',domain:'weather',name:'Wind',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['bbox'],phenomena:['wind'],family:'model'},
+  {id:'weather.point.uv_index',domain:'weather',name:'UV',enabled:true,available:true,resource_types:['value'],spatial_contexts:['point'],phenomena:['uv'],family:'point'},
+  {id:'space.moon.tiles',domain:'space',name:'Mond',enabled:true,available:true,resource_types:['planetary_tile'],spatial_contexts:['global'],phenomena:[],family:'moon'},
+  {id:'natural_hazards.disabled',domain:'natural_hazards',name:'Aus',enabled:false,available:true,resource_types:['hazard_feed'],spatial_contexts:['bbox'],phenomena:[],family:'hazard'}
+]);
+assert.deepEqual(layerCatalog.quick.map(x=>x.id),['precipitation','clouds','wind'],'Quick access must be capability-driven and must not expose point-only UV as a map layer');
+assert.deepEqual(layerCatalog.categories.map(x=>x.id),['weather','space'],'Categories must derive from catalog domain metadata');
+assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'precipitation','Existing precipitation renderer must be reused');
+assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
+assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}}),true,'Explicit visual image sequences are map-suitable');
+console.log('PASS: WeatherRouter Consumer V1 plus provider-neutral Layer Hub catalog, map suitability and precipitation renderer reuse.');
