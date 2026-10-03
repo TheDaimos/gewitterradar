@@ -62,11 +62,11 @@ if (isV41108Dev) {
   assert.ok(versionText.includes('displayVersion:"V4.11.08 DEV"'));
   assert.ok(versionText.includes('build:"V4.11.08-DEV-2026-10-02"'));
   assert.ok(versionText.includes('runtimeRevision:"41108r1"'));
-  assert.ok(versionText.includes('moduleSetId:"E411-08A5"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-08A6"'));
   assert.equal(runtime.productVersion, '4.11.08');
   assert.equal(runtime.build, 'V4.11.08-DEV-2026-10-02');
   assert.equal(runtime.runtimeRevision, '41108r1');
-  assert.equal(runtime.moduleSetId, 'E411-08A5');
+  assert.equal(runtime.moduleSetId, 'E411-08A6');
   assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
 } else if (isV41107Dev) {
   // V4.11.07 changes WeatherRouter precipitation routing and diagnostics only.
