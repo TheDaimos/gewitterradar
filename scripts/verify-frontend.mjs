@@ -173,7 +173,7 @@ for(const marker of [
   }
 }
 for(const marker of ['id:"weather.layer-menu"','version:"1.0.0"','buildWeatherLayerCatalog','_bindMapDisplayMenuExtension','_setWeatherRadarEnabled','available_only:true'])if(!layerMenu.includes(marker))throw Error('WeatherRouter Layer Hub contract missing: '+marker);
-for(const marker of ['id:"ui.project-hub",'version:"1.1.6"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+for(const marker of ['id:"ui.project-hub"','version:"1.1.6"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
 if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');
 if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
