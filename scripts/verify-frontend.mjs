@@ -158,7 +158,7 @@ for(const marker of [
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.08 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.08"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41108r1"','moduleSetId:"E411-08A3"']){
+  for(const marker of ['version:"4.11.08"','displayVersion:"V4.11.08 DEV"','runtimeRevision:"41108r1"','moduleSetId:"E411-08A4"']){
     if(!version.includes(marker))throw Error('V4.11.08 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
@@ -171,13 +171,13 @@ for(const marker of [
     }
   }
 }
-for(const marker of ['id:"ui.project-hub"','version:"1.1.2"','.settings-signature-wrap','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+for(const marker of ['id:"ui.project-hub"','version:"1.1.3"','.settings-signature-wrap','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
 if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');
 if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
-if(projectHubAssetManifest.runtime_version!=='0.2.0-rc2'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC2 local asset contract mismatch');
+if(projectHubAssetManifest.runtime_version!=='0.2.0-rc3'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC3 local asset contract mismatch');
 if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
-if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('Offline Mini V0.2 RC2')||!projectHubOffline.includes('grid-template-columns:80px')||!projectHubOffline.includes('width:72px')||!projectHubOffline.includes('width:68%'))throw Error('Project Hub RC2 offline/mobile contract incomplete');
+if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('Offline Mini V0.2 RC3')||!projectHubOffline.includes('minmax(88px,34%)')||!projectHubOffline.includes('width:72px')||!projectHubOffline.includes('width:82%'))throw Error('Project Hub RC3 offline/mobile contract incomplete');
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
   "this._t('app.release_history')",
