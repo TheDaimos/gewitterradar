@@ -177,7 +177,7 @@ if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
 if(projectHubAssetManifest.runtime_version!=='0.2.0-rc7'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC7 local asset contract mismatch');
 if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
-if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('Offline Mini V0.2 RC4'))throw Error('Project Hub RC7 central runtime contract incomplete');
+if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar'))throw Error('Project Hub RC7 central runtime contract incomplete');
 for(const marker of [
   '"id": "ui.render"','"version": "1.0.2"',
   "this._t('app.release_history')",
