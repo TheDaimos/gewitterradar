@@ -1,12 +1,12 @@
 import { registerModule } from "../core/registry.js?v=41108r1";
 export const MODULE_META=Object.freeze({
-  id:"ui.project-hub",version:"1.1.3",group:"Oberfläche",function:"Daimos Project Hub",
-  subfunctions:["Signatur-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC3-Runtime"],
+  id:"ui.project-hub",version:"1.1.4",group:"Oberfläche",function:"Daimos Project Hub",
+  subfunctions:["Signatur-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC4-Runtime"],
   file:"modules/ui/project-hub.js"
 });
 const PROJECT_HUB_BASE_URL=new URL("../../project-hub/",import.meta.url);
 const PROJECT_HUB_CONFIG_URL=new URL("project-hub-config.json",PROJECT_HUB_BASE_URL);
-const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc3";
+const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc4";
 const isHttpsUrl=v=>{try{return new URL(v).protocol==="https:";}catch{return false;}};
 const isLocalFallbackPath=v=>{if(typeof v!=="string")return false;const p=v.trim();return !!p&&!p.startsWith("/")&&!p.startsWith("//")&&!/^[a-z][a-z0-9+.-]*:/i.test(p);};
 const normalizedTimeout=v=>Number.isFinite(v)?Math.max(500,Math.min(10000,Number(v))):DEFAULT_PROBE_TIMEOUT_MS;

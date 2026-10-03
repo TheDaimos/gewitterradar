@@ -279,33 +279,81 @@
 }
 .project-action:hover{border-color:rgba(240,197,119,.70);background:linear-gradient(145deg,rgba(239,199,126,.18),rgba(103,66,30,.10))}
 .project-action.is-disabled{color:#77838d;border-color:rgba(132,119,95,.24);background:rgba(255,255,255,.018);cursor:not-allowed}
-/* Offline Mini V0.2 RC3 – gemeinsame Inhaltsachse für Titel und Aktionen */
+/* Offline Mini V0.2 RC4 – Achsen, schlankere Aktionen und sichere Innenabstände */
 .project-card{
   grid-template-columns:minmax(88px,34%) minmax(0,66%) !important;
   align-items:center !important;
   column-gap:0 !important;
+  min-height:118px !important;
 }
 .project-logo{
   align-self:center !important;
   justify-self:center !important;
 }
 .project-main{
-  width:82% !important;
-  justify-self:center !important;
+  width:86% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  justify-self:start !important;
   align-self:center !important;
+  gap:7px !important;
 }
-.project-meta,
-.project-actions{
+.project-meta{
+  display:block !important;
   width:100% !important;
+  min-width:0 !important;
+}
+.project-meta strong,
+.project-meta small{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
 }
 .project-actions{
-  align-self:stretch !important;
+  width:74% !important;
+  max-width:168px !important;
+  min-width:0 !important;
+  align-self:flex-start !important;
+  gap:5px !important;
+}
+.project-action{
+  width:100% !important;
+  min-width:0 !important;
 }
 @media(max-width:620px){
   .project-card{
-    grid-template-columns:minmax(88px,34%) minmax(0,66%) !important;
+    grid-template-columns:minmax(92px,34%) minmax(0,66%) !important;
     min-height:118px !important;
   }
+  .project-logo{
+    width:76px !important;
+    height:76px !important;
+    background-size:76px 456px !important;
+  }
+  .logo-gr{background-position:0 0 !important}
+  .logo-wr{background-position:0 -76px !important}
+  .logo-aurora{background-position:0 -152px !important}
+  .logo-dra{background-position:0 -228px !important}
+  .logo-gps{background-position:0 -304px !important}
+  .project-main{
+    width:88% !important;
+    gap:7px !important;
+  }
+  .project-actions{
+    width:72% !important;
+    max-width:164px !important;
+  }
+  .project-action{
+    min-height:25px !important;
+    padding:4px 8px !important;
+    font-size:9px !important;
+  }
+}
+@media(min-width:621px) and (max-width:900px){
   .project-logo{
     width:72px !important;
     height:72px !important;
@@ -317,15 +365,11 @@
   .logo-dra{background-position:0 -216px !important}
   .logo-gps{background-position:0 -288px !important}
   .project-main{
-    gap:7px !important;
+    width:86% !important;
   }
   .project-actions{
-    gap:5px !important;
-  }
-  .project-action{
-    min-height:25px !important;
-    padding:4px 8px !important;
-    font-size:9px !important;
+    width:70% !important;
+    max-width:154px !important;
   }
 }
 </style></head><body><section class="card" aria-label="Gewitterradar Offline-Vorstellung"><div class="top"><span class="icon ck-icon ck-sprite" role="img" aria-label="C.K. – persönliches Entwicklerlogo"></span><div><div class="origin">Ein gemeinsamer Ursprung</div>

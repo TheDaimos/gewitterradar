@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc3",
+  "runtime_version": "0.2.0-rc4",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -21,10 +21,10 @@
       "path": "runtime/offline/assets/project-icons.webp",
       "format": "WebP",
       "cell_px": "128x128",
-      "css_px": "64x64 Desktop; 72x72 Mobile (Mail 46x46)",
-      "minimum_factor": 1.78,
+      "css_px": "64x64 Desktop; 72x72 Tablet; 76x76 Mobile (Mail 46x46)",
+      "minimum_factor": 1.68,
       "final_target_factor": 2,
-      "note": "RC3 richtet Projektname/Repo und Aktionspillen an derselben Inhaltsachse aus; mobiles 72px-Logo bleibt vor finaler 2x-Abnahme als offener Sprite-Punkt markiert."
+      "note": "RC4 richtet Projektname und Repository an der linken Pillenachse aus, begrenzt Aktionsbreiten separat und zentriert das Logo im freien linken Kartenbereich. Der 128px-Sprite bleibt bis zur finalen 2x-Asset-Anhebung als offener Punkt markiert."
     }
   ],
   "master_policy": {
