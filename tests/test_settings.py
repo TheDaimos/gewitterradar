@@ -649,7 +649,7 @@ async def test_legacy_sidebar_switch_registry_entry_is_removed(
         "switch",
         DOMAIN,
         CONF_SHOW_SIDEBAR_PANEL,
-        config_entry=entry.entry_id,
+        config_entry=entry,
     )
     assert registry.async_get(legacy.entity_id) is not None
 

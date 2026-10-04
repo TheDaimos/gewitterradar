@@ -78,7 +78,6 @@ EXPECTED_NATIVE_ENTITY_IDS = {
     "switch.gewitterradar_warning_animation",
     "switch.gewitterradar_storm_simulation",
     "switch.gewitterradar_show_location_selector",
-    "switch.gewitterradar_show_sidebar_panel",
     "switch.gewitterradar_compass_nearest_strike",
     "switch.gewitterradar_compass_device_orientation",
     "switch.gewitterradar_map_grouping",
