@@ -7,7 +7,7 @@
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.70"
+      "version": "1.2.71"
     },
     {
       "id": "core.base-context",
@@ -23,11 +23,11 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.31"
+      "version": "1.0.32"
     },
     {
       "id": "ui.scroll-guard",
@@ -83,7 +83,7 @@
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     {
       "id": "map.strikes-warnings",

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -467,6 +467,138 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       if (l) l.textContent = formatted.text;
     },
 
+    _mapGestureSyntheticPointerCancel(pointerId,pointerType='touch') {
+      const state=this._mapGestureRecovery;
+      const target=state?.mapEl;
+      if(!state||!target||state.synthesizing||typeof PointerEvent!=='function')return false;
+      state.synthesizing=true;
+      try{
+        target.dispatchEvent(new PointerEvent('pointercancel',{
+          pointerId:Number(pointerId),pointerType:pointerType||'touch',
+          bubbles:true,cancelable:false,isPrimary:false
+        }));
+        return true;
+      }catch(_error){return false;}
+      finally{state.synthesizing=false;}
+    },
+
+    _recoverMapGestureState(reason,{force=false,invalidate=false}={}) {
+      const state=this._mapGestureRecovery,map=this._map,L=state?.L||window.L;
+      if(!state||!map||!L||state.recovering)return false;
+      const touchZoom=map.touchZoom,draggable=map.dragging?._draggable;
+      const stalePinch=!!touchZoom?._zooming,staleDrag=!!(draggable?._moving||L.Draggable?._dragging);
+      if(!force&&!stalePinch&&!staleDrag){
+        if(invalidate)requestAnimationFrame(()=>map.invalidateSize?.({animate:false}));
+        return false;
+      }
+      state.recovering=true;
+      try{
+        if(force&&state.pointers.size){
+          for(const [pointerId,meta] of [...state.pointers])this._mapGestureSyntheticPointerCancel(pointerId,meta?.pointerType||'touch');
+        }
+        try{
+          if(touchZoom){
+            if(touchZoom._onTouchMove)L.DomEvent?.off?.(document,'touchmove',touchZoom._onTouchMove,touchZoom);
+            if(touchZoom._onTouchEnd)L.DomEvent?.off?.(document,'touchend touchcancel',touchZoom._onTouchEnd,touchZoom);
+            if(touchZoom._animRequest!=null)L.Util?.cancelAnimFrame?.(touchZoom._animRequest);
+            touchZoom._animRequest=null;touchZoom._zooming=false;touchZoom._moved=false;
+          }
+        }catch(_error){}
+        if(force||staleDrag){try{draggable?.finishDrag?.(true);}catch(_error){}}
+        if(force||stalePinch||staleDrag){try{map.stop?.();}catch(_error){}}
+        if(force){state.pointers.clear();state.touchIds.clear();}
+        state.lastRecovery={reason:String(reason||'unknown'),at:Date.now(),stalePinch,staleDrag,forced:!!force};
+      }finally{state.recovering=false;}
+      if(invalidate)requestAnimationFrame(()=>{try{map.invalidateSize?.({animate:false});}catch(_error){}});
+      return true;
+    },
+
+    _setupMapGestureRecovery(L,mapEl) {
+      if(!L||!mapEl||!this._map)return;
+      this._teardownMapGestureRecovery?.();
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,synthesizing:false,lastRecovery:null};
+      this._mapGestureRecovery=state;
+      const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
+      const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
+      const postGestureEnd=()=>queueMicrotask(()=>requestAnimationFrame(()=>{
+        if(this._mapGestureRecovery===state&&!state.pointers.size&&!state.touchIds.size)this._recoverMapGestureState('gesture-end',{force:false});
+      }));
+      state.handlers.pointerdown=event=>{
+        if(!touchPointer(event)||state.synthesizing)return;
+        const existing=[...state.pointers.keys()].filter(id=>id!==event.pointerId);
+        const stalePrimary=event.isPrimary===true&&existing.length>0;
+        const stalePinch=!!this._map?.touchZoom?._zooming&&existing.length===0;
+        if(stalePrimary||stalePinch)this._recoverMapGestureState(stalePrimary?'new-primary-pointer':'stale-pinch-before-pointerdown',{force:true});
+        state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:now()});
+      };
+      state.handlers.pointermove=event=>{
+        if(!touchPointer(event)||state.synthesizing)return;
+        const meta=state.pointers.get(event.pointerId);if(meta)meta.lastSeen=now();
+        if(!!this._map?.touchZoom?._zooming&&state.pointers.size<=1&&event.isPrimary===true){
+          const pointerType=event.pointerType||'touch';
+          this._recoverMapGestureState('single-primary-pointer-during-pinch',{force:true});
+          state.pointers.set(event.pointerId,{pointerType,lastSeen:now()});
+        }
+      };
+      state.handlers.pointerend=event=>{
+        if(!touchPointer(event))return;
+        const meta=state.pointers.get(event.pointerId);state.pointers.delete(event.pointerId);
+        if(state.synthesizing||state.recovering)return;
+        queueMicrotask(()=>{
+          if(this._mapGestureRecovery!==state)return;
+          this._mapGestureSyntheticPointerCancel(event.pointerId,meta?.pointerType||event.pointerType||'touch');
+          if(!state.pointers.size&&!state.touchIds.size)postGestureEnd();
+        });
+      };
+      const syncTouches=event=>{state.touchIds.clear();for(const touch of Array.from(event?.touches||[]))state.touchIds.add(touch.identifier);};
+      state.handlers.touchstart=event=>{
+        if(event?.touches?.length===1&&this._map?.touchZoom?._zooming)this._recoverMapGestureState('single-touch-during-stale-pinch',{force:true});
+        syncTouches(event);
+      };
+      state.handlers.touchend=event=>{syncTouches(event);if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();};
+      state.handlers.touchcancel=event=>{syncTouches(event);this._recoverMapGestureState('touchcancel',{force:true});};
+      state.handlers.pointercancel=event=>{
+        if(touchPointer(event))state.pointers.delete(event.pointerId);
+        if(state.synthesizing||state.recovering)return;
+        this._recoverMapGestureState('pointercancel',{force:true});
+      };
+      state.handlers.blur=()=>this._recoverMapGestureState('window-blur',{force:true});
+      state.handlers.pagehide=()=>this._recoverMapGestureState('pagehide',{force:true});
+      state.handlers.focus=()=>this._recoverMapGestureState('window-focus',{force:true,invalidate:true});
+      state.handlers.pageshow=()=>this._recoverMapGestureState('pageshow',{force:true,invalidate:true});
+      state.handlers.visibility=()=>this._recoverMapGestureState(document.visibilityState==='hidden'?'visibility-hidden':'visibility-visible',{force:true,invalidate:document.visibilityState==='visible'});
+      mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
+      mapEl.addEventListener('pointermove',state.handlers.pointermove,true);
+      window.addEventListener('pointerup',state.handlers.pointerend,true);
+      window.addEventListener('pointercancel',state.handlers.pointercancel,true);
+      mapEl.addEventListener('touchstart',state.handlers.touchstart,{capture:true,passive:true});
+      window.addEventListener('touchend',state.handlers.touchend,{capture:true,passive:true});
+      window.addEventListener('touchcancel',state.handlers.touchcancel,{capture:true,passive:true});
+      window.addEventListener('blur',state.handlers.blur,true);window.addEventListener('focus',state.handlers.focus,true);
+      window.addEventListener('pagehide',state.handlers.pagehide,true);window.addEventListener('pageshow',state.handlers.pageshow,true);
+      document.addEventListener('visibilitychange',state.handlers.visibility,true);
+    },
+
+    _resumeMapGestureRecovery() {
+      const state=this._mapGestureRecovery,L=state?.L||window.L,mapEl=this.shadow?.getElementById('map');
+      if(this._map&&L&&mapEl&&(!state?.handlers||state.mapEl!==mapEl))this._setupMapGestureRecovery(L,mapEl);
+    },
+
+    _teardownMapGestureRecovery() {
+      const state=this._mapGestureRecovery;if(!state)return;
+      this._recoverMapGestureState('gesture-guard-teardown',{force:true});
+      const {mapEl,handlers}=state;
+      if(handlers){
+        mapEl?.removeEventListener('pointerdown',handlers.pointerdown,true);mapEl?.removeEventListener('pointermove',handlers.pointermove,true);
+        window.removeEventListener('pointerup',handlers.pointerend,true);window.removeEventListener('pointercancel',handlers.pointercancel,true);
+        mapEl?.removeEventListener('touchstart',handlers.touchstart,true);window.removeEventListener('touchend',handlers.touchend,true);
+        window.removeEventListener('touchcancel',handlers.touchcancel,true);window.removeEventListener('blur',handlers.blur,true);
+        window.removeEventListener('focus',handlers.focus,true);window.removeEventListener('pagehide',handlers.pagehide,true);
+        window.removeEventListener('pageshow',handlers.pageshow,true);document.removeEventListener('visibilitychange',handlers.visibility,true);
+      }
+      state.handlers=null;state.pointers.clear();state.touchIds.clear();
+    },
+
     _initMap() {
       const cssLink = this.shadow.getElementById('leaflet-css-link');
       const cssReady = new Promise((resolve) => {
@@ -489,6 +621,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           attributionControl:true,
           preferCanvas:true
         }).setView([home.lat,home.lon],initialZoom);
+        this._setupMapGestureRecovery(L,mapEl);
         // Leaflet's native zoom control exists only after asynchronous map creation.
         // Synchronize title AND aria-label now; language changes reuse the same method.
         this._syncMapZoomTooltips?.();
