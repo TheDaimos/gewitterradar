@@ -30,9 +30,15 @@ export async function expectedPayload(){
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.1"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
   if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.0.2"')||!layerMenu.includes('buildWeatherLayerCatalog')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
+  const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-display.js'),'utf8');
+  const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
+  const cardLifecycle=await readFile(resolve(root,'frontend/modules/core/card-lifecycle.js'),'utf8');
+  if(!mapDisplay.includes('"version": "1.0.32"')||!mapDisplay.includes("'display-mode-change',{force:true}"))throw Error('Map display gesture-recovery contract mismatch');
+  if(!radiiMap.includes('"version": "1.0.4"')||!radiiMap.includes('_setupMapGestureRecovery')||!radiiMap.includes("'touchend touchcancel'")||!radiiMap.includes('visibilitychange'))throw Error('Android map gesture-recovery contract mismatch');
+  if(!cardLifecycle.includes('"version": "1.0.4"')||!cardLifecycle.includes('_resumeMapGestureRecovery')||!cardLifecycle.includes('_teardownMapGestureRecovery'))throw Error('Map gesture-recovery lifecycle contract mismatch');
   const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
   if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.15"')||!projectHub.includes('createElement("iframe")')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');
-  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/fullscreen/map-display.js','modules/weather/precipitation-layer.js']);
+  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/fullscreen/map-display.js','modules/location/radii-map.js','modules/weather/precipitation-layer.js']);
   for(const name of actual){
     const bytes=await readFile(resolve(root,'frontend',name));
     if(old[name]&&!allowedModified.has(name)){

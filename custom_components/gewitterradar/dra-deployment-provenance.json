@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV · native Gewitterradar-Seitenleiste per Integrations-Options-Flow · direkte Kartenansicht ohne separate View · veraltete Sidebar-Switch-Entität wird migriert · DRA test candidate; deploy/dev",
+    "purpose": "V4.11.08 DEV · Android/Companion Karten-Gesten-Selbstheilung für Leaflet bei verlorenen Pointer-/Touch-Enden, Fokuswechseln und Kartenmoduswechseln · native Gewitterradar-Seitenleiste per Integrations-Options-Flow · DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
