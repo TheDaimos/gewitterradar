@@ -32,7 +32,7 @@ assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.vers
 assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.0.2');
 assert.equal(runtime.modules.find(x=>x.id==='fullscreen.map-display')?.version,'1.0.31');
 assert.equal(runtime.modules.filter(x=>x.id==='ui.project-hub').length,1);
-assert.equal(runtime.modules.find(x=>x.id==='ui.project-hub')?.version,'1.1.9');
+assert.equal(runtime.modules.find(x=>x.id==='ui.project-hub')?.version,'1.1.11');
 assert.equal(dra.productVersion,runtime.productVersion);
 assert.equal(dra.build,runtime.build);
 assert.equal(dra.runtimeRevision,runtime.runtimeRevision);
