@@ -116,6 +116,7 @@ const server = http.createServer((req, res) => {
             weatherRadarPreloadProfile: !!root.getElementById('weather-radar-preload-profile'),
             weatherRadarPreloadStatus: !!root.getElementById('weather-radar-preload-status'),
             weatherRadarTimelineStatus: !!root.getElementById('weather-radar-timeline-status'),
+            weatherRadarTimelineToggle: !!root.getElementById('weather-radar-timeline-toggle'),
             summaryHeight: summary.offsetHeight,
             chevron: [parseFloat(after.width), parseFloat(after.height), after.borderRightColor],
             closedState,
@@ -143,6 +144,7 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.weatherRadarPreloadProfile, true, `${delivery}/${profile} radar preload profile mounted`);
         assert.equal(metrics.weatherRadarPreloadStatus, true, `${delivery}/${profile} radar preload status mounted`);
         assert.equal(metrics.weatherRadarTimelineStatus, true, `${delivery}/${profile} radar timeline status mounted`);
+        assert.equal(metrics.weatherRadarTimelineToggle, true, `${delivery}/${profile} radar timeline toggle mounted`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
@@ -159,6 +161,10 @@ const server = http.createServer((req, res) => {
           const state = card._weatherRadarState();
           const previousModel = state.timelineModel;
           const previousIndex = state.timelineIndex;
+          const previousVisible = state.timelineVisible;
+          const previousPosition = state.timelinePosition;
+          state.timelineVisible = true;
+          state.timelinePosition = null;
           state.timelineModel = {
             currentIndex: 1,
             loop: true,
@@ -184,10 +190,13 @@ const server = http.createServer((req, res) => {
             play: player?.querySelector('[data-timeline-action="play"]')?.textContent || '',
             now: player?.querySelector('[data-timeline-action="now"]')?.textContent || '',
             rangeMax: player?.querySelector('[data-timeline-range="true"]')?.max || '',
+            dragHandle: !!player?.querySelector('[data-timeline-drag="true"]'),
           };
           card._weatherRadarRemoveTimelinePlayer();
           state.timelineModel = previousModel;
           state.timelineIndex = previousIndex;
+          state.timelineVisible = previousVisible;
+          state.timelinePosition = previousPosition;
           return result;
         });
         assert.equal(radarPlayerGeometry.exists, true, `${delivery}/${profile} radar timeline player mounts`);
@@ -197,6 +206,7 @@ const server = http.createServer((req, res) => {
         assert.equal(radarPlayerGeometry.play, '▶', `${delivery}/${profile} radar play control`);
         assert.equal(radarPlayerGeometry.now, 'Jetzt', `${delivery}/${profile} radar current-frame control`);
         assert.equal(radarPlayerGeometry.rangeMax, '2', `${delivery}/${profile} radar timeline range`);
+        assert.equal(radarPlayerGeometry.dragHandle, true, `${delivery}/${profile} draggable radar timeline handle`);
 
         const startupDropdownLifecycle = await page.evaluate(async () => {
           const card = window.aboutCard;

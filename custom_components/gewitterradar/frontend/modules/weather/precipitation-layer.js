@@ -2,10 +2,10 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.0",
+  version:"1.3.1",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
-  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Ressourcenschutz"],
+  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
   file:"modules/weather/precipitation-layer.js"
 });
 
@@ -19,6 +19,8 @@ const SAME_VIEW_MIN_MS=240000;
 const PRELOAD_CONCURRENCY=4;
 const TIMELINE_STAGE_TIMEOUT_MS=6000;
 const TIMELINE_PLAY_INTERVAL_MS=950;
+const TIMELINE_VISIBLE_STORAGE_KEY="gewitterradar:weather-engine:timeline-visible";
+const TIMELINE_POSITION_STORAGE_KEY="gewitterradar:weather-engine:timeline-position";
 
 export const WEATHER_RADAR_PRELOAD_PROFILES=Object.freeze({
   off:Object.freeze({label:"Aus",percent:0,maxTiles:0,maxBytes:0}),
@@ -123,18 +125,25 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
     if(!this.__weatherRadarState){
-      let enabled=false,preloadProfile="normal",preloadCustomPercent=30;
+      let enabled=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null;
       try{
         enabled=localStorage.getItem(STORAGE_KEY)==="1";
         const storedProfile=localStorage.getItem(PRELOAD_PROFILE_STORAGE_KEY);
         if(storedProfile&&WEATHER_RADAR_PRELOAD_PROFILES[storedProfile])preloadProfile=storedProfile;
         const storedCustom=finite(localStorage.getItem(PRELOAD_CUSTOM_STORAGE_KEY));
         if(storedCustom!=null)preloadCustomPercent=clamp(Math.round(storedCustom),0,100);
+        const storedTimelineVisible=localStorage.getItem(TIMELINE_VISIBLE_STORAGE_KEY);
+        if(storedTimelineVisible==="0")timelineVisible=false;
+        if(storedTimelineVisible==="1")timelineVisible=true;
+        const storedTimelinePosition=JSON.parse(localStorage.getItem(TIMELINE_POSITION_STORAGE_KEY)||"null");
+        if(storedTimelinePosition&&finite(storedTimelinePosition.x)!=null&&finite(storedTimelinePosition.y)!=null){
+          timelinePosition={x:clamp(finite(storedTimelinePosition.x),0,1),y:clamp(finite(storedTimelinePosition.y),0,1)};
+        }
       }catch(_error){}
       this.__weatherRadarState={
         enabled,preloadProfile,preloadCustomPercent,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
-        timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
+        timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
       };
     }
@@ -375,6 +384,75 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     status.textContent=prefix+guard+live;
   },
 
+  _setWeatherRadarTimelineVisible(visible,{persist=true}={}){
+    const state=this._weatherRadarState();
+    state.timelineVisible=Boolean(visible);
+    if(persist)try{localStorage.setItem(TIMELINE_VISIBLE_STORAGE_KEY,state.timelineVisible?"1":"0");}catch(_error){}
+    if(state.timelineVisible){
+      if(state.timelineModel?.frames?.length>1)this._weatherRadarMountTimelinePlayer();
+    }else{
+      this._weatherRadarRemoveTimelinePlayer();
+    }
+    this._weatherRadarUpdateControls();
+    this._syncMapDisplayMenuExtension?.();
+  },
+
+  _weatherRadarPersistTimelinePosition(){
+    const position=this._weatherRadarState().timelinePosition;
+    try{
+      if(position)localStorage.setItem(TIMELINE_POSITION_STORAGE_KEY,JSON.stringify(position));
+      else localStorage.removeItem(TIMELINE_POSITION_STORAGE_KEY);
+    }catch(_error){}
+  },
+
+  _weatherRadarApplyTimelinePosition(root){
+    const state=this._weatherRadarState(),card=this.shadow?.getElementById("map-card");
+    if(!root||!card)return;
+    if(!state.timelinePosition){
+      const legend=this.shadow?.getElementById("map-legend");
+      const legendHeight=Math.max(0,Math.round(legend?.getBoundingClientRect?.().height||legend?.offsetHeight||48));
+      root.style.left="50%";root.style.top="auto";root.style.bottom=(legendHeight+10)+"px";root.style.transform="translateX(-50%)";
+      return;
+    }
+    const maxX=Math.max(0,card.clientWidth-root.offsetWidth),maxY=Math.max(0,card.clientHeight-root.offsetHeight);
+    const px=Math.round(clamp(state.timelinePosition.x,0,1)*maxX),py=Math.round(clamp(state.timelinePosition.y,0,1)*maxY);
+    root.style.left=px+"px";root.style.top=py+"px";root.style.bottom="auto";root.style.transform="none";
+  },
+
+  _weatherRadarBindTimelineDrag(root,handle){
+    if(!root||!handle||handle.dataset.timelineDragBound==="1")return;
+    handle.dataset.timelineDragBound="1";
+    const move=event=>{
+      const state=this._weatherRadarState(),drag=state.timelineDragging;
+      if(!drag||drag.pointerId!==event.pointerId)return;
+      const card=this.shadow?.getElementById("map-card");if(!card)return;
+      const cardRect=card.getBoundingClientRect(),maxX=Math.max(0,card.clientWidth-root.offsetWidth),maxY=Math.max(0,card.clientHeight-root.offsetHeight);
+      const px=clamp(event.clientX-cardRect.left-drag.offsetX,0,maxX),py=clamp(event.clientY-cardRect.top-drag.offsetY,0,maxY);
+      state.timelinePosition={x:maxX>0?px/maxX:0.5,y:maxY>0?py/maxY:0.5};
+      root.style.left=Math.round(px)+"px";root.style.top=Math.round(py)+"px";root.style.bottom="auto";root.style.transform="none";
+      event.preventDefault();event.stopPropagation();
+    };
+    const finish=event=>{
+      const state=this._weatherRadarState(),drag=state.timelineDragging;
+      if(!drag||drag.pointerId!==event.pointerId)return;
+      state.timelineDragging=null;
+      try{handle.releasePointerCapture?.(event.pointerId);}catch(_error){}
+      this._weatherRadarPersistTimelinePosition();
+      event.preventDefault();event.stopPropagation();
+    };
+    handle.addEventListener("pointerdown",event=>{
+      if(event.button!=null&&event.button!==0)return;
+      const card=this.shadow?.getElementById("map-card");if(!card)return;
+      const rect=root.getBoundingClientRect(),state=this._weatherRadarState();
+      state.timelineDragging={pointerId:event.pointerId,offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top};
+      try{handle.setPointerCapture?.(event.pointerId);}catch(_error){}
+      event.preventDefault();event.stopPropagation();
+    });
+    handle.addEventListener("pointermove",move);
+    handle.addEventListener("pointerup",finish);
+    handle.addEventListener("pointercancel",finish);
+  },
+
   _weatherRadarStopTimelinePlayback(){
     const state=this._weatherRadarState();
     const wasPlaying=state.timelinePlaying;
@@ -392,8 +470,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   },
 
   _weatherRadarRemoveTimelinePlayer(){
+    const state=this._weatherRadarState();
     this._weatherRadarStopTimelinePlayback();
     this._weatherRadarClearTimelineStage();
+    if(state.timelineResizeObserver){try{state.timelineResizeObserver.disconnect();}catch(_error){}state.timelineResizeObserver=null;}
+    state.timelineDragging=null;
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
   },
 
@@ -421,7 +502,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const model=state.timelineModel;
     const card=this.shadow?.getElementById("map-card");
-    if(!card||!model||model.frames.length<2){this._weatherRadarRemoveTimelinePlayer();return;}
+    if(!card||!model||model.frames.length<2||!state.timelineVisible){this._weatherRadarRemoveTimelinePlayer();return;}
     let root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
     if(!root){
       root=document.createElement("div");
@@ -431,17 +512,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       root.setAttribute("aria-label","Niederschlags-Zeitverlauf");
       root.style.cssText="position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:750;width:min(560px,calc(100% - 22px));box-sizing:border-box;padding:7px 9px 8px;border:1px solid rgba(125,184,239,.36);border-radius:14px;background:rgba(8,13,20,.88);box-shadow:0 8px 26px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e7edf5;pointer-events:auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
       const top=document.createElement("div");top.style.cssText="display:flex;align-items:center;gap:6px;min-width:0";
+      const drag=document.createElement("button");drag.type="button";drag.dataset.timelineDrag="true";drag.textContent="⠿";drag.title="Zeitachse verschieben";drag.setAttribute("aria-label","Zeitachse verschieben");drag.style.cssText="appearance:none;-webkit-appearance:none;width:30px;min-width:30px;height:30px;padding:0;border-radius:9px;border:1px solid rgba(125,184,239,.26);background:rgba(16,22,31,.92);color:#a9cceb;font-weight:900;font-size:15px;line-height:1;cursor:grab;touch-action:none";
       const prev=document.createElement("button");prev.type="button";prev.dataset.timelineAction="prev";prev.textContent="‹";prev.title="Vorheriger Niederschlagszeitpunkt";
       const play=document.createElement("button");play.type="button";play.dataset.timelineAction="play";play.title="Niederschlagsfolge abspielen";
       const next=document.createElement("button");next.type="button";next.dataset.timelineAction="next";next.textContent="›";next.title="Nächster Niederschlagszeitpunkt";
       const now=document.createElement("button");now.type="button";now.dataset.timelineAction="now";now.textContent="Jetzt";now.title="Zum aktuellen Niederschlagszeitpunkt";
       [prev,play,next,now].forEach(button=>button.style.cssText="appearance:none;-webkit-appearance:none;min-width:34px;height:30px;padding:0 9px;border-radius:9px;border:1px solid rgba(246,195,68,.34);background:rgba(16,22,31,.92);color:#f3d16d;font-weight:850;font-size:13px;line-height:1;cursor:pointer;touch-action:manipulation");
       const label=document.createElement("div");label.dataset.timelineLabel="true";label.style.cssText="min-width:0;flex:1;text-align:center;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
-      top.append(prev,play,next,label,now);
+      top.append(drag,prev,play,next,label,now);
       const range=document.createElement("input");range.type="range";range.min="0";range.step="1";range.value="0";range.dataset.timelineRange="true";range.setAttribute("aria-label","Radarzeitpunkt");range.style.cssText="display:block;width:100%;height:22px;margin:2px 0 0;accent-color:#79bfff";
       const footer=document.createElement("div");footer.style.cssText="display:flex;justify-content:space-between;gap:8px;margin-top:-1px;font-size:9.5px;font-weight:700;letter-spacing:.02em;opacity:.68";
       footer.innerHTML="<span>Vergangenheit</span><span>Jetzt</span><span>Vorhersage</span>";
       root.append(top,range,footer);
+      this._weatherRadarBindTimelineDrag(root,drag);
       root.addEventListener("click",event=>{
         const action=event.target?.closest?.("[data-timeline-action]")?.dataset?.timelineAction;
         if(!action)return;
@@ -458,6 +541,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         this._weatherRadarSetTimelineFrame(Number(range.value));
       });
       card.append(root);
+      if(typeof ResizeObserver==="function"&&!state.timelineResizeObserver){state.timelineResizeObserver=new ResizeObserver(()=>this._weatherRadarRenderTimelinePlayer());state.timelineResizeObserver.observe(card);}
     }
     this._weatherRadarRenderTimelinePlayer();
   },
@@ -466,9 +550,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),model=state.timelineModel;
     const root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
     if(!root||!model?.frames?.length)return;
-    const legend=this.shadow?.getElementById("map-legend");
-    const legendHeight=Math.max(0,Math.round(legend?.getBoundingClientRect?.().height||legend?.offsetHeight||48));
-    root.style.bottom=(legendHeight+10)+"px";
+    this._weatherRadarApplyTimelinePosition(root);
     const index=clamp(state.timelineIndex<0?model.currentIndex:state.timelineIndex,0,model.frames.length-1);
     const frame=model.frames[index];
     const range=root.querySelector('[data-timeline-range="true"]');
@@ -731,18 +813,22 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
     const status=this.shadow?.getElementById("weather-radar-status");
     const timelineStatus=this.shadow?.getElementById("weather-radar-timeline-status");
+    const timelineToggle=this.shadow?.getElementById("weather-radar-timeline-toggle");
     if(toggle){
       toggle.setAttribute("aria-pressed",state.enabled?"true":"false");
       toggle.textContent=state.enabled?"Ein":"Aus";
       toggle.dataset.active=state.enabled?"1":"0";
     }
+    if(timelineToggle){timelineToggle.setAttribute("aria-pressed",state.timelineVisible?"true":"false");timelineToggle.textContent=state.timelineVisible?"Ein":"Aus";timelineToggle.dataset.active=state.timelineVisible?"1":"0";}
     if(timelineStatus){
       const frames=state.timelineModel?.frames?.length||0;
-      timelineStatus.textContent=!state.enabled
-        ?"Aus · Zeitverlauf wird mit dem Niederschlags-Layer aktiviert"
-        :frames>1
-          ?"Verfügbar · "+frames+" Niederschlagszeitpunkte · Vergangenheit, Jetzt und Vorhersage"
-          :"Aktive Quelle liefert derzeit keine mehrteilige Niederschlags-Zeitreihe";
+      timelineStatus.textContent=!state.timelineVisible
+        ?"Aus · Zeitachse bleibt ausgeblendet"
+        :!state.enabled
+          ?"Ein · erscheint, sobald Niederschlag und eine Zeitreihe aktiv sind"
+          :frames>1
+            ?"Ein · "+frames+" Niederschlagszeitpunkte · Vergangenheit, Jetzt und Vorhersage"
+            :"Ein · aktive Quelle liefert derzeit keine mehrteilige Niederschlags-Zeitreihe";
     }
     if(!status)return;
     if(message){status.textContent=message;return;}
@@ -815,9 +901,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const timelineRow=document.createElement("div");timelineRow.className="settings-row";
     const timelineLabel=document.createElement("div");timelineLabel.className="settings-row-label";
     const timelineTitle=document.createElement("div");timelineTitle.textContent="Niederschlags-Zeitverlauf";
-    const timelineHint=document.createElement("div");timelineHint.textContent="Die Zeitsteuerung erscheint automatisch auf der Karte, wenn WeatherRouter mehrere Niederschlagszeitpunkte liefert.";timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const timelineHint=document.createElement("div");timelineHint.textContent="Ein-/ausblendbar, zusätzlich im WeatherRouter-Menü schaltbar und direkt auf der Karte verschiebbar.";timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
     const timelineStatus=document.createElement("div");timelineStatus.id="weather-radar-timeline-status";timelineStatus.setAttribute("role","status");timelineStatus.setAttribute("aria-live","polite");timelineStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
-    timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel);
+    const timelineToggle=document.createElement("button");timelineToggle.className="settings-language-button settings-control";timelineToggle.id="weather-radar-timeline-toggle";timelineToggle.type="button";timelineToggle.addEventListener("click",()=>this._setWeatherRadarTimelineVisible(!this._weatherRadarState().timelineVisible));
+    timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel,timelineToggle);
 
     const statusRow=document.createElement("div");statusRow.className="settings-row";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
@@ -847,6 +934,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.refreshTimer)clearInterval(state.refreshTimer);
     if(state.preloadTimer)clearTimeout(state.preloadTimer);
     if(state.timelineTimer)clearTimeout(state.timelineTimer);
+    if(state.timelineResizeObserver){try{state.timelineResizeObserver.disconnect();}catch(_error){}state.timelineResizeObserver=null;}
     state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=state.timelineTimer=null;
     state.timelinePlaying=false;
     this._weatherRadarClearTimelineStage();

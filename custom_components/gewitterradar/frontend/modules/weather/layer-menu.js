@@ -2,8 +2,8 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.0.0",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
-  subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Niederschlags-Layer","Status & Rücknavigation"],
+  id:"weather.layer-menu",version:"1.0.1",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Niederschlags-Layer","Zeitachse","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
 
@@ -147,9 +147,22 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
     if(radar.layer)return {enabled:true,label:"Ein"};if(code)return {enabled:true,label:"Ein · Daten warten"};return {enabled:true,label:"Ein · lädt"};
   },
 
+  _weatherLayerMenuTimelineState(){
+    const radar=typeof this._weatherRadarState==="function"?this._weatherRadarState():null;if(!radar)return {enabled:false,label:"nicht angebunden"};
+    const frames=radar.timelineModel?.frames?.length||0;
+    if(!radar.timelineVisible)return {enabled:false,label:"Aus"};
+    if(!radar.enabled)return {enabled:true,label:"Ein · mit Niederschlag"};
+    if(frames>1)return {enabled:true,label:"Ein · "+frames+" Zeitpunkte"};
+    return {enabled:true,label:"Ein · wartet auf Zeitreihe"};
+  },
+
   _weatherLayerMenuQuickMarkup(){
     const state=this._weatherLayerMenuState();if(!state.model.quick.length)return "";
-    return `<div class="weather-layer-section"><div class="weather-layer-section-title">Schnellzugriff</div><div class="weather-layer-quick">${state.model.quick.map(item=>{const capability=item.capability;if(item.renderer==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(layerState.label)}</small></button>`;}return `<button class="weather-layer-action" type="button" data-weather-layer-action="focus" data-category="${escapeHtml(capability.domain)}" data-capability="${escapeHtml(capability.id)}"><strong>${escapeHtml(item.label)}</strong><small>${item.count>1?`${item.count} passende Kartenfähigkeiten`:`verfügbar · ${escapeHtml(resourceSummary(capability))}`}</small></button>`;}).join("")}</div></div>`;
+    const quick=state.model.quick.map(item=>{const capability=item.capability;if(item.renderer==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(layerState.label)}</small></button>`;}return `<button class="weather-layer-action" type="button" data-weather-layer-action="focus" data-category="${escapeHtml(capability.domain)}" data-capability="${escapeHtml(capability.id)}"><strong>${escapeHtml(item.label)}</strong><small>${item.count>1?`${item.count} passende Kartenfähigkeiten`:`verfügbar · ${escapeHtml(resourceSummary(capability))}`}</small></button>`;}).join("");
+    const hasPrecipitation=state.model.quick.some(item=>item.renderer==="precipitation");
+    const timelineState=hasPrecipitation?this._weatherLayerMenuTimelineState():null;
+    const timeline=timelineState?`<button class="weather-layer-action${timelineState.enabled?" active":""}" type="button" data-weather-layer-action="timeline"><strong>Zeitachse</strong><small>${escapeHtml(timelineState.label)}</small></button>`:"";
+    return `<div class="weather-layer-section"><div class="weather-layer-section-title">Schnellzugriff</div><div class="weather-layer-quick">${quick}${timeline}</div></div>`;
   },
 
   _weatherLayerMenuCategoriesMarkup(){
@@ -177,7 +190,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
 
   _weatherLayerMenuHandleAction(event){
     const button=event.target?.closest?.("[data-weather-layer-action]");if(!button)return;event.preventDefault();event.stopPropagation();const action=button.dataset.weatherLayerAction;
-    if(action==="back-map"){this._weatherLayerMenuSetView("map-display");return;}if(action==="back-hub"){this._weatherLayerMenuSetView("weather-router");return;}if(action==="refresh"){this._weatherLayerMenuProbe({refresh:true});return;}if(action==="toggle"){this._weatherLayerMenuToggle(button.dataset.capability);return;}
+    if(action==="back-map"){this._weatherLayerMenuSetView("map-display");return;}if(action==="back-hub"){this._weatherLayerMenuSetView("weather-router");return;}if(action==="refresh"){this._weatherLayerMenuProbe({refresh:true});return;}if(action==="toggle"){this._weatherLayerMenuToggle(button.dataset.capability);return;}if(action==="timeline"){const radar=this._weatherRadarState?.();this._setWeatherRadarTimelineVisible?.(!radar?.timelineVisible);return;}
     if(action==="category"||action==="focus"){const category=button.dataset.category;if(!category)return;this._weatherLayerMenuSetView(`weather-router-category:${category}`,{category,focusCapability:action==="focus"?button.dataset.capability:null});requestAnimationFrame(()=>this.shadow?.querySelector(".weather-layer-capability.focus")?.scrollIntoView?.({block:"nearest"}));}
   },
 

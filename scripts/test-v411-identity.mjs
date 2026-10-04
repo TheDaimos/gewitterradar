@@ -28,8 +28,8 @@ assert.equal(JSON.parse(await read('custom_components/gewitterradar/manifest.jso
 assert.equal(runtime.modules.filter(x=>x.id==='weather.consumer-client').length,1);
 assert.equal(build.includes('BUILD_VERSION = "4.11.08"'),true);
 assert.equal(runtime.modules.filter(x=>x.id==='core.update-watch').length,1);
-assert.equal(runtime.modules.filter(x=>x.id==='weather.precipitation-layer').length,1);
-assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.0.0');
+assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.version,'1.3.1');
+assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.0.1');
 assert.equal(runtime.modules.find(x=>x.id==='fullscreen.map-display')?.version,'1.0.31');
 assert.equal(runtime.modules.filter(x=>x.id==='ui.project-hub').length,1);
 assert.equal(runtime.modules.find(x=>x.id==='ui.project-hub')?.version,'1.1.6');

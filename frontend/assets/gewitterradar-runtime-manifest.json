@@ -7,7 +7,7 @@
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.59"
+      "version": "1.2.60"
     },
     {
       "id": "core.base-context",
@@ -103,11 +103,11 @@
     },
     {
       "id": "weather.precipitation-layer",
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     {
       "id": "weather.layer-menu",
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "id": "history.chart",
