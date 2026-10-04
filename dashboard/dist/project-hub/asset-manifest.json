@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc11",
+  "runtime_version": "0.2.0-rc12",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -24,7 +24,7 @@
       "css_px": "64x64 Desktop; 72x72 Tablet; 76x76 Mobile (Mail 46x46)",
       "minimum_factor": 1.68,
       "final_target_factor": 2,
-      "note": "RC11: RC10-Kartenlayout unverändert; WeatherRouter-Projektseite ist jetzt aktiv unter https://thedaimos.github.io/weather-router-pub/ und verwendet den blauen Projektseiten-Stil."
+      "note": "RC12: RC11-Geometrie unverändert. Vollständiger Basisstil der Aktionspillen wiederhergestellt: GitHub gold/metallisch, aktive Projektseite blau und abgerundet, fehlende Projektseite grau mit · FOLGT ·."
     }
   ],
   "master_policy": {

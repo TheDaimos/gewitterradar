@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.62",
+    "version": "1.2.63",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -112,10 +112,10 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.project-hub",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "group": "Oberfläche",
     "function": "Daimos Project Hub",
-    "subfunctions": ["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC11-Runtime"],
+    "subfunctions": ["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC12-Runtime"],
     "file": "modules/ui/project-hub.js"
   },
   {
@@ -366,4 +366,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.62",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.63",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
