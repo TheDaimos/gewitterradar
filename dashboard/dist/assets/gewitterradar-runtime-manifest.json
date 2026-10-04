@@ -7,7 +7,7 @@
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.66"
+      "version": "1.2.67"
     },
     {
       "id": "core.base-context",
@@ -39,7 +39,7 @@
     },
     {
       "id": "ui.project-hub",
-      "version": "1.1.11"
+      "version": "1.1.12"
     },
     {
       "id": "instruments.compass-scale",

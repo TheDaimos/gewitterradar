@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "runtime_version": "0.2.0-rc13",
+  "runtime_version": "0.2.0-rc14",
   "project_hub_url": "https://thedaimos.github.io/gewitterradar/",
   "health_asset_url": "https://thedaimos.github.io/gewitterradar/health.svg",
   "fallback_path": "offline/index.html",

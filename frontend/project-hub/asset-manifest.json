@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc13",
+  "runtime_version": "0.2.0-rc14",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -24,7 +24,7 @@
       "css_px": "80x80 Desktop; 94x94 Tablet; 104x104 Mobile (Mail 46x46)",
       "minimum_factor": 1.23,
       "final_target_factor": 2,
-      "note": "RC13: Android-abgenommene Logo-Skalierung zentral übernommen. Projektkarten erhalten einen dezenteren metallischen Innenrahmen; äußerer Hauptrahmen bleibt visuell dominant."
+      "note": "RC14: Android-abgenommene Logos, Texte und Schaltflächen unverändert. Projektkarten-Innenrahmen erhält rund 10–15 % mehr metallischen Glanz mit heller Reflexkante und sehr dezentem warmem Leuchten; der äußere Hauptrahmen bleibt dominant."
     }
   ],
   "master_policy": {
