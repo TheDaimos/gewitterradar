@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
 import {buildWeatherLayerCatalog,isWeatherLayerCapability} from '../frontend/modules/weather/layer-menu.js';
 
@@ -56,4 +57,8 @@ assert.deepEqual(layerCatalog.categories.map(x=>x.id),['weather','space'],'Categ
 assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'precipitation','Existing precipitation renderer must be reused');
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}}),true,'Explicit visual image sequences are map-suitable');
-console.log('PASS: WeatherRouter Consumer V1 plus provider-neutral Layer Hub catalog, map suitability and precipitation renderer reuse.');
+const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
+for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"']){
+  assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
+}
+console.log('PASS: WeatherRouter Consumer V1 plus provider-neutral Layer Hub catalog, map suitability, precipitation renderer reuse and stable scrollable menu.');

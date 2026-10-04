@@ -25,7 +25,7 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41108r10');
+  const manifest = await gewitterradarImport('./module-manifest.js','41108r11');
   const registry = await gewitterradarImport('./modules/core/registry.js');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
@@ -51,7 +51,7 @@ try {
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','41108r10');
-  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41108r10');
+  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41108r11');
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   CARD_VERSION=APPLICATION_META.version;

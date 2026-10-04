@@ -2,8 +2,8 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.0.1",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
-  subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Niederschlags-Layer","Zeitachse","Status & Rücknavigation"],
+  id:"weather.layer-menu",version:"1.0.2",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Niederschlags-Layer","Zeitachse","scrollbares Menü","stabile Desktop-Navigation","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
 
@@ -55,7 +55,7 @@ export function buildWeatherLayerCatalog(capabilities){
 
 export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
   _weatherLayerMenuState(){
-    if(!this.__weatherLayerMenuState)this.__weatherLayerMenuState={bound:false,view:"map-display",category:null,focusCapability:null,discovery:null,catalog:null,model:{capabilities:[],categories:[],quick:[]},probing:false,lastProbeAt:0,generation:0,busyCapability:null};
+    if(!this.__weatherLayerMenuState)this.__weatherLayerMenuState={bound:false,view:"map-display",category:null,focusCapability:null,discovery:null,catalog:null,model:{capabilities:[],categories:[],quick:[]},probing:false,lastProbeAt:0,generation:0,busyCapability:null,renderSignature:null};
     return this.__weatherLayerMenuState;
   },
 
@@ -71,15 +71,15 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
       .weather-layer-dot{width:7px;height:7px;border-radius:50%;flex:0 0 7px;background:#b17447;box-shadow:0 0 7px rgba(231,151,74,.36)}.weather-layer-dot.ready{background:#6bd9a3;box-shadow:0 0 8px rgba(82,223,157,.52)}.weather-layer-dot.busy{background:#d28cff;box-shadow:0 0 8px rgba(204,96,255,.58)}
       .map-display-menu.weather-layer-view{width:min(304px,calc(100vw - 28px));min-width:min(304px,calc(100vw - 28px));max-width:min(304px,calc(100vw - 28px));padding:8px;border-color:rgba(255,88,126,.34);background:radial-gradient(circle at 86% 10%,rgba(174,55,225,.14),transparent 46%),linear-gradient(160deg,rgba(55,12,27,.97),rgba(17,11,28,.97) 58%,rgba(9,13,19,.98));box-shadow:0 18px 46px rgba(0,0,0,.55),0 0 28px rgba(205,57,242,.12),inset 0 1px 0 rgba(255,174,199,.055);backdrop-filter:blur(18px)}
       .map-display-menu.weather-layer-view::after{background:rgba(22,11,24,.98);border-right-color:rgba(255,88,126,.34);border-bottom-color:rgba(255,88,126,.34)}
-      .weather-layer-panel{display:grid;gap:8px;min-width:0;color:#ebdfe6;font-family:inherit}
-      .weather-layer-head{display:grid;grid-template-columns:34px 1fr 26px;gap:6px;align-items:center;min-height:38px}.weather-layer-back{appearance:none;width:34px;height:34px;border:1px solid rgba(255,118,151,.22);border-radius:9px;background:rgba(255,255,255,.035);color:#efb3c4;font:900 18px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-layer-head-main{min-width:0;text-align:center}.weather-layer-kicker{font-size:7.5px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:#d989b2}.weather-layer-title{margin-top:2px;font-size:12px;font-weight:860;color:#ffe4ec;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-layer-logo{width:25px;height:25px;object-fit:contain;opacity:.92;filter:drop-shadow(0 0 8px rgba(211,74,255,.22))}
+      .weather-layer-panel{display:grid;gap:8px;min-width:0;max-height:min(68vh,520px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:rgba(255,112,149,.34) transparent;-webkit-overflow-scrolling:touch;touch-action:pan-y;color:#ebdfe6;font-family:inherit}
+      .weather-layer-head{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:34px 1fr 26px;gap:6px;align-items:center;min-height:38px;padding-bottom:4px;background:linear-gradient(180deg,rgba(43,12,27,.98) 0%,rgba(32,11,25,.94) 78%,rgba(32,11,25,0) 100%)}.weather-layer-back{appearance:none;width:34px;height:34px;border:1px solid rgba(255,118,151,.22);border-radius:9px;background:rgba(255,255,255,.035);color:#efb3c4;font:900 18px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-layer-head-main{min-width:0;text-align:center}.weather-layer-kicker{font-size:7.5px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:#d989b2}.weather-layer-title{margin-top:2px;font-size:12px;font-weight:860;color:#ffe4ec;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-layer-logo{width:25px;height:25px;object-fit:contain;opacity:.92;filter:drop-shadow(0 0 8px rgba(211,74,255,.22))}
       .weather-layer-status{padding:7px 9px;border:1px solid rgba(255,106,145,.14);border-radius:10px;background:rgba(255,255,255,.025);font-size:9px;line-height:1.35;color:#d7c9d0}.weather-layer-status b{color:#ffb8cb}.weather-layer-status.ready b{color:#8be7b8}.weather-layer-status.warn b{color:#f2b377}
       .weather-layer-section{display:grid;gap:5px}.weather-layer-section-title{padding:0 3px;font-size:7.5px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:#b989a3}
       .weather-layer-quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.weather-layer-action,.weather-layer-category{appearance:none;border:1px solid rgba(255,112,149,.18);border-radius:10px;background:rgba(255,255,255,.028);color:#e8dce2;min-height:44px;padding:7px 8px;font:760 9.5px/1.2 inherit;cursor:pointer;touch-action:manipulation;text-align:left}.weather-layer-action[disabled]{cursor:default;opacity:.72}.weather-layer-action strong,.weather-layer-category strong{display:block;color:#ffd5e0;font-size:10px}.weather-layer-action small,.weather-layer-category small{display:block;margin-top:3px;opacity:.65;font-size:7.8px;font-weight:650}.weather-layer-action.active{border-color:rgba(103,226,168,.38);background:rgba(46,141,102,.12)}.weather-layer-action.busy{border-color:rgba(210,140,255,.42);box-shadow:0 0 14px rgba(203,84,255,.08)}
       .weather-layer-categories{display:grid;gap:4px}.weather-layer-category{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:42px}.weather-layer-category-count{font-size:8px;color:#cb92ad;padding-left:8px}
-      .weather-layer-capabilities{display:grid;gap:5px;max-height:min(48vh,390px);overflow:auto;overscroll-behavior:contain}.weather-layer-capability{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;padding:7px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(5,7,12,.22)}.weather-layer-capability.focus{border-color:rgba(255,115,151,.35);box-shadow:0 0 16px rgba(203,84,255,.08)}.weather-layer-capability-name{font-size:9.5px;font-weight:800;color:#f8dae3}.weather-layer-capability-meta{margin-top:3px;font-size:7.5px;line-height:1.3;color:#ad9da5;overflow-wrap:anywhere}.weather-layer-capability-state{font-size:7.4px;line-height:1.25;text-align:right;color:#a98d9b;white-space:nowrap}
+      .weather-layer-capabilities{display:grid;gap:5px}.weather-layer-capability{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;padding:7px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(5,7,12,.22)}.weather-layer-capability.focus{border-color:rgba(255,115,151,.35);box-shadow:0 0 16px rgba(203,84,255,.08)}.weather-layer-capability-name{font-size:9.5px;font-weight:800;color:#f8dae3}.weather-layer-capability-meta{margin-top:3px;font-size:7.5px;line-height:1.3;color:#ad9da5;overflow-wrap:anywhere}.weather-layer-capability-state{font-size:7.4px;line-height:1.25;text-align:right;color:#a98d9b;white-space:nowrap}
       .weather-layer-empty{padding:10px;border:1px dashed rgba(255,114,151,.17);border-radius:10px;font-size:8.5px;line-height:1.4;color:#bfaab4}.weather-layer-refresh{appearance:none;border:0;background:transparent;color:#b788a0;font:720 8px/1 inherit;padding:5px;cursor:pointer}
-      @media(max-width:720px){.map-display-menu.weather-layer-view{width:min(290px,calc(100vw - 20px));min-width:min(290px,calc(100vw - 20px));max-width:min(290px,calc(100vw - 20px))}.weather-layer-entry,.weather-layer-action,.weather-layer-category{min-height:46px}.weather-layer-capabilities{max-height:min(43vh,330px)}}
+      @media(max-width:720px){.map-display-menu.weather-layer-view{width:min(290px,calc(100vw - 20px));min-width:min(290px,calc(100vw - 20px));max-width:min(290px,calc(100vw - 20px))}.weather-layer-panel{max-height:min(60vh,460px)}.weather-layer-entry,.weather-layer-action,.weather-layer-category{min-height:46px}}
       #card-root.ipad-device .weather-layer-entry,#card-root.ipad-device .weather-layer-action,#card-root.ipad-device .weather-layer-category,#card-root.ipad-device .weather-layer-back{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     `;root.append(style);
   },
@@ -117,14 +117,23 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
 
   _weatherLayerMenuSetView(view,{category=null,focusCapability=null}={}){
     const state=this._weatherLayerMenuState(),menu=this.shadow?.getElementById("map-display-switch");if(!menu)return;
+    const viewChanged=state.view!==view||state.category!==category||state.focusCapability!==focusCapability;
     state.view=view;state.category=category;state.focusCapability=focusCapability;
+    if(viewChanged)state.renderSignature=null;
     const weatherView=view!=="map-display";menu.classList.toggle("weather-layer-view",weatherView);
     const title=this.shadow?.getElementById("map-display-menu-title");if(title)title.hidden=weatherView;
     menu.querySelectorAll("[data-map-display-mode]").forEach(node=>{node.hidden=weatherView;});
     const entry=menu.querySelector('[data-weather-layer-entry-wrap="true"]');if(entry)entry.hidden=weatherView;
     let panel=menu.querySelector('[data-weather-layer-panel="true"]');
-    if(!weatherView){panel?.remove();return;}
-    if(!panel){panel=document.createElement("div");panel.className="weather-layer-panel";panel.dataset.weatherLayerPanel="true";panel.addEventListener("click",event=>this._weatherLayerMenuHandleAction(event));panel.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();this._setMapDisplayMenuOpen?.(false);}});menu.append(panel);}
+    if(!weatherView){state.renderSignature=null;panel?.remove();return;}
+    if(!panel){
+      panel=document.createElement("div");panel.className="weather-layer-panel";panel.dataset.weatherLayerPanel="true";
+      panel.addEventListener("click",event=>this._weatherLayerMenuHandleAction(event));
+      panel.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();this._setMapDisplayMenuOpen?.(false);}});
+      panel.addEventListener("wheel",event=>event.stopPropagation(),{passive:true});
+      panel.addEventListener("touchmove",event=>event.stopPropagation(),{passive:true});
+      menu.append(panel);
+    }
     this._weatherLayerMenuRender();
   },
 
@@ -179,7 +188,13 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
     const state=this._weatherLayerMenuState();if(state.view==="map-display")return;
     const panel=this.shadow?.querySelector('[data-weather-layer-panel="true"]');if(!panel)return;
     const category=state.view.startsWith("weather-router-category:")?state.category:null,title=category?(state.model.categories.find(item=>item.id===category)?.label||"Fachbereich"):"WeatherRouter";
-    panel.innerHTML=`<div class="weather-layer-head"><button class="weather-layer-back" type="button" data-weather-layer-action="${category?"back-hub":"back-map"}" aria-label="Zurück">‹</button><div class="weather-layer-head-main"><div class="weather-layer-kicker">Kartenebenen</div><div class="weather-layer-title">${escapeHtml(title)}</div></div><img class="weather-layer-logo" src="${escapeHtml(WEATHER_ROUTER_LOGO_IMAGE)}" alt="" aria-hidden="true"></div>${this._weatherLayerMenuStatusMarkup()}${category?this._weatherLayerMenuCategoryMarkup(category):`${this._weatherLayerMenuQuickMarkup()}${state.discovery?.ready&&state.catalog?.status==="ready"?this._weatherLayerMenuCategoriesMarkup():""}`}${state.discovery?.present&&state.discovery.compatible?'<button class="weather-layer-refresh" type="button" data-weather-layer-action="refresh">WeatherRouter neu prüfen</button>':""}`;
+    const markup=`<div class="weather-layer-head"><button class="weather-layer-back" type="button" data-weather-layer-action="${category?"back-hub":"back-map"}" aria-label="Zurück">‹</button><div class="weather-layer-head-main"><div class="weather-layer-kicker">Kartenebenen</div><div class="weather-layer-title">${escapeHtml(title)}</div></div><img class="weather-layer-logo" src="${escapeHtml(WEATHER_ROUTER_LOGO_IMAGE)}" alt="" aria-hidden="true"></div>${this._weatherLayerMenuStatusMarkup()}${category?this._weatherLayerMenuCategoryMarkup(category):`${this._weatherLayerMenuQuickMarkup()}${state.discovery?.ready&&state.catalog?.status==="ready"?this._weatherLayerMenuCategoriesMarkup():""}`}${state.discovery?.present&&state.discovery.compatible?'<button class="weather-layer-refresh" type="button" data-weather-layer-action="refresh">WeatherRouter neu prüfen</button>':""}`;
+    if(state.renderSignature===markup&&panel.dataset.weatherLayerRendered==="true")return;
+    const scrollTop=panel.scrollTop;
+    panel.innerHTML=markup;
+    panel.dataset.weatherLayerRendered="true";
+    state.renderSignature=markup;
+    if(scrollTop>0)requestAnimationFrame(()=>{if(panel.isConnected)panel.scrollTop=Math.min(scrollTop,Math.max(0,panel.scrollHeight-panel.clientHeight));});
   },
 
   async _weatherLayerMenuToggle(capabilityId){
@@ -197,5 +212,5 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
   _bindMapDisplayMenuExtension(){const state=this._weatherLayerMenuState();if(state.bound||!this.shadow)return;state.bound=true;this._weatherLayerMenuEnsureStyle();this._weatherLayerMenuSyncEntry();if(this._hass)this._weatherLayerMenuProbe();},
   _mapDisplayMenuExtensionOpenChanged(open){const state=this._weatherLayerMenuState();if(!open){if(state.view!=="map-display")this._weatherLayerMenuSetView("map-display");return;}this._weatherLayerMenuProbe();},
   _syncMapDisplayMenuExtension(){this._weatherLayerMenuSyncEntry();if(this._weatherLayerMenuState().view!=="map-display")this._weatherLayerMenuRender();},
-  _teardownMapDisplayMenuExtension(){const state=this._weatherLayerMenuState();state.generation+=1;state.probing=false;state.bound=false;state.view="map-display";state.category=null;state.focusCapability=null;}
+  _teardownMapDisplayMenuExtension(){const state=this._weatherLayerMenuState();state.generation+=1;state.probing=false;state.bound=false;state.view="map-display";state.category=null;state.focusCapability=null;state.renderSignature=null;}
 }));

@@ -27,7 +27,7 @@ export async function expectedPayload(){
   const watch=await readFile(resolve(root,'frontend/modules/core/update-watch.js'),'utf8');
   if(!consumer.includes("id:'weather.consumer-client',version:'1.2.0'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.1"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
-  if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.0.1"')||!layerMenu.includes('buildWeatherLayerCatalog')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
+  if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.0.2"')||!layerMenu.includes('buildWeatherLayerCatalog')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
   const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
   if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.6"')||!projectHub.includes('createElement("iframe")')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');

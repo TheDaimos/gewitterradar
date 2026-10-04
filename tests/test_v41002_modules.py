@@ -120,9 +120,9 @@ def test_runtime_revision_and_module_set_probe_contract():
   assert 'import { APPLICATION_RELEASE } from "./version.js?v=41108r1";' in manifest
   assert runtime["runtimeRevision"]=="41108r1"
   assert runtime["moduleSetId"]=="E411-08A6"
-  assert "gewitterradarImport('./module-manifest.js','41108r10')" in main
+  assert "gewitterradarImport('./module-manifest.js','41108r11')" in main
   assert "gewitterradarImport('./modules/fullscreen/map-display.js','41108r9')" in main
-  assert "gewitterradarImport('./modules/weather/layer-menu.js','41108r10')" in main
+  assert "gewitterradarImport('./modules/weather/layer-menu.js','41108r11')" in main
   assert "gewitterradarImport('./modules/weather/precipitation-layer.js','41108r10')" in main
   assert "gewitterradarImport('./modules/ui/project-hub.js','41108r8')" in main
   for path in (
