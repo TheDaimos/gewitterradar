@@ -153,7 +153,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "location.radii-map"',
-  '"version": "1.0.3"',
+  '"version": "1.0.4"',
   'zoomControl:true',
   'this._syncMapZoomTooltips?.();'
 ]){
