@@ -1,5 +1,5 @@
 {
-  "runtime_version": "0.2.0-rc12",
+  "runtime_version": "0.2.0-rc13",
   "minimum_retina_factor": 2,
   "offline_bundle": {
     "path": "runtime/offline/index.html",
@@ -21,10 +21,10 @@
       "path": "runtime/offline/assets/project-icons.webp",
       "format": "WebP",
       "cell_px": "128x128",
-      "css_px": "64x64 Desktop; 72x72 Tablet; 76x76 Mobile (Mail 46x46)",
-      "minimum_factor": 1.68,
+      "css_px": "80x80 Desktop; 94x94 Tablet; 104x104 Mobile (Mail 46x46)",
+      "minimum_factor": 1.23,
       "final_target_factor": 2,
-      "note": "RC12: RC11-Geometrie unverändert. Vollständiger Basisstil der Aktionspillen wiederhergestellt: GitHub gold/metallisch, aktive Projektseite blau und abgerundet, fehlende Projektseite grau mit · FOLGT ·."
+      "note": "RC13: Android-abgenommene Logo-Skalierung zentral übernommen. Projektkarten erhalten einen dezenteren metallischen Innenrahmen; äußerer Hauptrahmen bleibt visuell dominant."
     }
   ],
   "master_policy": {
