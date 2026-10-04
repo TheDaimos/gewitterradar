@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV Weather Engine · WeatherRouter Layer Hub scroll/stable desktop navigation + schaltbare/verschiebbare Zeitachse DRA test candidate; deploy/dev",
+    "purpose": "V4.11.08 DEV · Daimos Project Hub 0.2.0-rc11 central runtime integration DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
