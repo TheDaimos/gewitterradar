@@ -111,7 +111,6 @@ ENTITY_IDS_BY_KEY = {
     "warning_animation": "switch.gewitterradar_warning_animation",
     "storm_simulation": "switch.gewitterradar_storm_simulation",
     "show_location_selector": "switch.gewitterradar_show_location_selector",
-    "show_sidebar_panel": "switch.gewitterradar_show_sidebar_panel",
     "compass_nearest_strike": "switch.gewitterradar_compass_nearest_strike",
     "compass_device_orientation": "switch.gewitterradar_compass_device_orientation",
     "map_grouping": "switch.gewitterradar_map_grouping",
@@ -173,7 +172,7 @@ async def _call_service(
 
 
 async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None:
-    """Test all defaults and exactly 18 settings plus the reference tracker."""
+    """Test all defaults and exactly 17 setting entities plus the reference tracker."""
     entry = await _setup_entry(hass)
 
     assert DEFAULT_OPTIONS == EXPECTED_DEFAULT_OPTIONS
@@ -188,7 +187,7 @@ async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None
     registry = er.async_get(hass)
     registry_entries = er.async_entries_for_config_entry(registry, entry.entry_id)
     assert {registry_entry.entity_id for registry_entry in registry_entries} == NATIVE_ENTITY_IDS
-    assert len(registry_entries) == 19
+    assert len(registry_entries) == 18
     for key, entity_id in ENTITY_IDS_BY_KEY.items():
         registry_entry = registry.async_get(entity_id)
         assert registry_entry is not None
@@ -611,28 +610,51 @@ async def test_global_legacy_confirmation_migrates_without_overwriting_native(ha
     await hass.async_block_till_done()
     assert entry.options["language_initialized"] is False
 
-async def test_sidebar_panel_switch_registers_direct_card_and_persists(
+async def test_sidebar_panel_option_registers_direct_card_and_persists(
     hass: HomeAssistant,
 ) -> None:
-    """Toggle the direct Gewitterradar sidebar panel without a dashboard view."""
-    entry = await _setup_entry(hass)
-    entity_id = ENTITY_IDS_BY_KEY[CONF_SHOW_SIDEBAR_PANEL]
-    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is False
-    assert hass.states.get(entity_id).state == STATE_OFF
-    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
-    await _call_service(hass, "switch", "turn_on", entity_id)
+    """Load the direct sidebar panel from ConfigEntry options without an entity."""
+    entry = await _setup_entry(
+        hass,
+        options={CONF_SHOW_SIDEBAR_PANEL: True},
+    )
     assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
-    assert hass.states.get(entity_id).state == STATE_ON
+    assert hass.states.get("switch.gewitterradar_show_sidebar_panel") is None
     assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+
     assert await hass.config_entries.async_unload(entry.entry_id)
     await hass.async_block_till_done()
     assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
     assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
-    await _call_service(hass, "switch", "turn_off", entity_id)
-    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is False
-    assert hass.states.get(entity_id).state == STATE_OFF
-    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
 
+
+async def test_legacy_sidebar_switch_registry_entry_is_removed(
+    hass: HomeAssistant,
+) -> None:
+    """Remove the obsolete 0.24 switch record during the integration upgrade."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=NAME,
+        data={},
+        options={},
+    )
+    entry.add_to_hass(hass)
+
+    registry = er.async_get(hass)
+    legacy = registry.async_get_or_create(
+        "switch",
+        DOMAIN,
+        CONF_SHOW_SIDEBAR_PANEL,
+        config_entry=entry.entry_id,
+    )
+    assert registry.async_get(legacy.entity_id) is not None
+
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert registry.async_get(legacy.entity_id) is None
+    assert hass.states.get(legacy.entity_id) is None

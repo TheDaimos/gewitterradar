@@ -67,9 +67,17 @@
       },
       "map_grouping": {
         "name": "Map grouping"
-      },
-      "show_sidebar_panel": {
-        "name": "Show in sidebar"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Gewitterradar",
+        "description": "Control direct access to Gewitterradar from the Home Assistant sidebar.",
+        "data": {
+          "show_sidebar_panel": "Show in sidebar"
+        }
       }
     }
   }

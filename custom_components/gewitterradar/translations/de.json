@@ -67,9 +67,17 @@
       },
       "map_grouping": {
         "name": "Kartengruppierung"
-      },
-      "show_sidebar_panel": {
-        "name": "In Seitenleiste anzeigen"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gewitterradar konfigurieren",
+        "description": "Steuert den direkten Zugriff auf Gewitterradar über die Home-Assistant-Seitenleiste.",
+        "data": {
+          "show_sidebar_panel": "In Seitenleiste anzeigen"
+        }
       }
     }
   }

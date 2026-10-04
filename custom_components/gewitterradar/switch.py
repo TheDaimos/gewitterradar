@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import GewitterradarRuntimeData
-from .const import CONF_SHOW_SIDEBAR_PANEL, DOMAIN, SWITCH_KEYS
+from .const import DOMAIN, SWITCH_KEYS
 
 
 async def async_setup_entry(
@@ -49,16 +49,10 @@ class GewitterradarSwitch(SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Enable this setting."""
-        if self._key == CONF_SHOW_SIDEBAR_PANEL:
-            await self._runtime.async_set_sidebar_panel(True)
-        else:
-            self._runtime.async_set(self._key, True)
+        self._runtime.async_set(self._key, True)
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Disable this setting."""
-        if self._key == CONF_SHOW_SIDEBAR_PANEL:
-            await self._runtime.async_set_sidebar_panel(False)
-        else:
-            self._runtime.async_set(self._key, False)
+        self._runtime.async_set(self._key, False)
         self.async_write_ha_state()

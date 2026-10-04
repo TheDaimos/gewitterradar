@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV · native Gewitterradar-Seitenleiste per Integration-Schalter · direkte Kartenansicht ohne separate View · GitHub Page in 15 Sprachen · DRA test candidate; deploy/dev",
+    "purpose": "V4.11.08 DEV · native Gewitterradar-Seitenleiste per Integrations-Options-Flow · direkte Kartenansicht ohne separate View · veraltete Sidebar-Switch-Entität wird migriert · DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

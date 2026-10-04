@@ -56,7 +56,7 @@ BLITZORTUNG_LOCATION_ENTITY_KEY: Final = "location_entity"
 # /gewitterradar static asset path.
 SIDEBAR_PANEL_URL_PATH: Final = "gewitterradar-panel"
 SIDEBAR_PANEL_WEB_COMPONENT: Final = "gewitterradar-panel"
-SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=0.24.0"
+SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=0.25.0"
 SIDEBAR_PANEL_ICON: Final = "mdi:weather-lightning"
 
 LANGUAGE_OPTIONS: Final = (
@@ -118,13 +118,26 @@ NUMBER_LIMITS: Final = {
     CONF_AURA_INTENSITY: (0.0, 70.0, "%"),
 }
 
-SWITCH_KEYS: Final = (
+# Boolean ConfigEntry options and actual switch entities are deliberately
+# separate. The sidebar flag is configured through the integration Options Flow.
+BOOLEAN_OPTION_KEYS: Final = (
     CONF_LANGUAGE_INITIALIZED,
     CONF_AURA_EFFECTS,
     CONF_WARNING_ANIMATION,
     CONF_STORM_SIMULATION,
     CONF_SHOW_LOCATION_SELECTOR,
     CONF_SHOW_SIDEBAR_PANEL,
+    CONF_COMPASS_NEAREST_STRIKE,
+    CONF_COMPASS_DEVICE_ORIENTATION,
+    CONF_MAP_GROUPING,
+)
+
+SWITCH_KEYS: Final = (
+    CONF_LANGUAGE_INITIALIZED,
+    CONF_AURA_EFFECTS,
+    CONF_WARNING_ANIMATION,
+    CONF_STORM_SIMULATION,
+    CONF_SHOW_LOCATION_SELECTOR,
     CONF_COMPASS_NEAREST_STRIKE,
     CONF_COMPASS_DEVICE_ORIENTATION,
     CONF_MAP_GROUPING,

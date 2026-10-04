@@ -16,12 +16,14 @@ from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, ServiceCall, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     BLITZORTUNG_DOMAIN,
     BLITZORTUNG_LOCATION_ENTITY_KEY,
+    BOOLEAN_OPTION_KEYS,
     COMPASS_DESIGN_OPTIONS,
     CONF_COMPASS_DESIGN,
     CONF_DANGER_RADIUS,
@@ -57,7 +59,6 @@ from .const import (
     SIDEBAR_PANEL_MODULE_URL,
     SIDEBAR_PANEL_URL_PATH,
     SIDEBAR_PANEL_WEB_COMPONENT,
-    SWITCH_KEYS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -117,6 +118,19 @@ def _async_remove_sidebar_panel(hass: HomeAssistant) -> None:
         )
 
 
+@callback
+def _async_remove_legacy_sidebar_switch_entity(hass: HomeAssistant) -> None:
+    """Remove the obsolete 0.24 sidebar switch registry record."""
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id(
+        "switch",
+        DOMAIN,
+        CONF_SHOW_SIDEBAR_PANEL,
+    )
+    if entity_id is not None:
+        registry.async_remove(entity_id)
+
+
 def _validate_options(options: dict[str, Any]) -> None:
     """Validate the complete canonical options model."""
     for key, allowed in _FIXED_SELECT_OPTIONS.items():
@@ -150,7 +164,7 @@ def _validate_options(options: dict[str, Any]) -> None:
             "<= observation_radius"
         )
 
-    for key in SWITCH_KEYS:
+    for key in BOOLEAN_OPTION_KEYS:
         if not isinstance(options[key], bool):
             raise ValueError(f"Invalid {key}: {options[key]!r}")
 
@@ -213,7 +227,7 @@ def _legacy_value(hass: HomeAssistant, key: str) -> Any:
             return _NO_LEGACY_VALUE
         return int(value) if value.is_integer() else value
 
-    if key in SWITCH_KEYS:
+    if key in BOOLEAN_OPTION_KEYS:
         if raw == "on":
             return True
         if raw == "off":
@@ -311,21 +325,6 @@ class GewitterradarRuntimeData:
             _validate_options(options)
         except ValueError as err:
             raise ServiceValidationError(str(err)) from err
-        self.hass.config_entries.async_update_entry(self.entry, options=options)
-
-    async def async_set_sidebar_panel(self, enabled: bool) -> None:
-        """Persist and immediately reconcile the optional sidebar panel."""
-        options = {**self.entry.options, CONF_SHOW_SIDEBAR_PANEL: enabled}
-        try:
-            _validate_options(options)
-        except ValueError as err:
-            raise ServiceValidationError(str(err)) from err
-
-        if enabled:
-            await _async_register_sidebar_panel(self.hass)
-        else:
-            _async_remove_sidebar_panel(self.hass)
-
         self.hass.config_entries.async_update_entry(self.entry, options=options)
 
     @callback
@@ -432,6 +431,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
     if options != entry.options or data != entry.data:
         hass.config_entries.async_update_entry(entry, data=data, options=options)
 
+    _async_remove_legacy_sidebar_switch_entity(hass)
     entry.runtime_data = GewitterradarRuntimeData(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     if options[CONF_SHOW_SIDEBAR_PANEL]:
