@@ -396,6 +396,27 @@
   }
 }
 
+
+/* Gewitterradar: ausschließlich größere Projektlogo-Bounding-Boxen; RC12-Kartengeometrie bleibt unverändert. */
+.project-logo.sprite-icon{
+  inline-size:min(80px,calc(100% - 16px)) !important;
+  block-size:auto !important;
+  aspect-ratio:1 / 1 !important;
+  background-size:100% 600% !important;
+  background-repeat:no-repeat !important;
+}
+.project-logo.logo-gr{background-position:0 0% !important}
+.project-logo.logo-wr{background-position:0 20% !important}
+.project-logo.logo-aurora{background-position:0 40% !important}
+.project-logo.logo-dra{background-position:0 60% !important}
+.project-logo.logo-gps{background-position:0 80% !important}
+@media(min-width:621px) and (max-width:900px){
+  .project-logo.sprite-icon{inline-size:min(94px,calc(100% - 16px)) !important}
+}
+@media(max-width:620px){
+  .project-logo.sprite-icon{inline-size:min(104px,calc(100% - 14px)) !important}
+}
+
 </style></head><body><section class="card" aria-label="Gewitterradar Offline-Vorstellung"><div class="top"><span class="icon ck-icon ck-sprite" role="img" aria-label="C.K. – persönliches Entwicklerlogo"></span><div><div class="origin">Ein gemeinsamer Ursprung</div>
       <div class="dots" aria-hidden="true">· · ·</div>
       <div class="brand-slogan">Eine Idee weiter gedacht.</div></div></div><div class="rule"></div><div class="copy"><p>Hinter Gewitterradar entstehen mehrere eigenständig entwickelte Projekte rund um Home Assistant, Wetterdaten, Visualisierung, Automatisierung und technische Werkzeuge.</p><p>Die vollständige Projektübersicht ist momentan nicht erreichbar. Diese kompakte Vorstellung wird direkt mit Gewitterradar ausgeliefert und steht deshalb auch ohne Internetverbindung zur Verfügung.</p></div><div class="projects-section">
