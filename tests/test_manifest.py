@@ -28,7 +28,7 @@ def test_manifest_is_valid_and_single_entry() -> None:
         "input_select",
     ]
     assert manifest["requirements"] == []
-    assert manifest["dependencies"] == ["http", "panel_custom"]
+    assert manifest["dependencies"] == ["http"]
 
 
 def test_python_sources_parse() -> None:

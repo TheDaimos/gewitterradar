@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.components import frontend, panel_custom
+from homeassistant.components import frontend
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
@@ -79,22 +79,29 @@ _SET_REFERENCE_COORDINATES_SCHEMA = vol.Schema(
         vol.Required(SERVICE_FIELD_LONGITUDE): cv.longitude,
         vol.Optional(SERVICE_FIELD_NAME, default=DEFAULT_TRACKER_NAME): cv.string,
     }
-) 
+)
+
 
 async def _async_register_sidebar_panel(hass: HomeAssistant) -> None:
     """Expose the normal Gewitterradar card directly in the HA sidebar."""
     if frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH):
         return
-    await panel_custom.async_register_panel(
-        hass=hass,
-        frontend_url_path=SIDEBAR_PANEL_URL_PATH,
-        webcomponent_name=SIDEBAR_PANEL_WEB_COMPONENT,
+    frontend.async_register_built_in_panel(
+        hass,
+        component_name="custom",
         sidebar_title=NAME,
         sidebar_icon=SIDEBAR_PANEL_ICON,
-        module_url=SIDEBAR_PANEL_MODULE_URL,
-        embed_iframe=False,
+        frontend_url_path=SIDEBAR_PANEL_URL_PATH,
+        config={
+            "_panel_custom": {
+                "name": SIDEBAR_PANEL_WEB_COMPONENT,
+                "embed_iframe": False,
+                "trust_external": False,
+                "handle_safe_area": False,
+                "module_url": SIDEBAR_PANEL_MODULE_URL,
+            }
+        },
         require_admin=False,
-        handle_safe_area=False,
     )
 
 
