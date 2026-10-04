@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Set up Gewitterradar",
-        "description": "Create the Gewitterradar integration entry. Settings and migration will be added in later milestones."
+        "description": "Create the Gewitterradar integration entry with native settings, reference tracker and optional sidebar access."
       }
     },
     "abort": {
@@ -44,7 +44,9 @@
       }
     },
     "switch": {
-      "language_initialized": { "name": "Language initialized" },
+      "language_initialized": {
+        "name": "Language initialized"
+      },
       "aura_effects": {
         "name": "Aura effects"
       },
@@ -65,6 +67,9 @@
       },
       "map_grouping": {
         "name": "Map grouping"
+      },
+      "show_sidebar_panel": {
+        "name": "Show in sidebar"
       }
     }
   }

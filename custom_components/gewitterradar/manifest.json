@@ -11,7 +11,8 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "http"
+    "http",
+    "panel_custom"
   ],
   "documentation": "https://github.com/TheDaimos/gewitterradar",
   "integration_type": "service",
@@ -19,5 +20,5 @@
   "issue_tracker": "https://github.com/TheDaimos/gewitterradar/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.23.9"
+  "version": "0.24.0"
 }

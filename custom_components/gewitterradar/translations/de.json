@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Gewitterradar einrichten",
-        "description": "Erstellt den Integrationseintrag für Gewitterradar. Einstellungen und Migration folgen in späteren Meilensteinen."
+        "description": "Erstellt den Gewitterradar-Integrationseintrag mit nativen Einstellungen, Referenztracker und optionalem Seitenleisten-Zugriff."
       }
     },
     "abort": {
@@ -44,7 +44,9 @@
       }
     },
     "switch": {
-      "language_initialized": { "name": "Language initialized" },
+      "language_initialized": {
+        "name": "Language initialized"
+      },
       "aura_effects": {
         "name": "Aura-Effekte"
       },
@@ -65,6 +67,9 @@
       },
       "map_grouping": {
         "name": "Kartengruppierung"
+      },
+      "show_sidebar_panel": {
+        "name": "In Seitenleiste anzeigen"
       }
     }
   }

@@ -30,6 +30,7 @@ CONF_AURA_EFFECTS: Final = "aura_effects"
 CONF_WARNING_ANIMATION: Final = "warning_animation"
 CONF_STORM_SIMULATION: Final = "storm_simulation"
 CONF_SHOW_LOCATION_SELECTOR: Final = "show_location_selector"
+CONF_SHOW_SIDEBAR_PANEL: Final = "show_sidebar_panel"
 CONF_COMPASS_NEAREST_STRIKE: Final = "compass_nearest_strike"
 CONF_COMPASS_DEVICE_ORIENTATION: Final = "compass_device_orientation"
 CONF_MAP_GROUPING: Final = "map_grouping"
@@ -50,6 +51,13 @@ SIGNAL_REFERENCE_COORDINATES_UPDATED: Final = f"{DOMAIN}_reference_coordinates_u
 # integration's ConfigEntry or Home Assistant's .storage data.
 BLITZORTUNG_DOMAIN: Final = "blitzortung"
 BLITZORTUNG_LOCATION_ENTITY_KEY: Final = "location_entity"
+
+# Native direct-access panel. Its route intentionally differs from the
+# /gewitterradar static asset path.
+SIDEBAR_PANEL_URL_PATH: Final = "gewitterradar-panel"
+SIDEBAR_PANEL_WEB_COMPONENT: Final = "gewitterradar-panel"
+SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=0.24.0"
+SIDEBAR_PANEL_ICON: Final = "mdi:weather-lightning"
 
 LANGUAGE_OPTIONS: Final = (
     "Deutsch",
@@ -96,6 +104,7 @@ DEFAULT_OPTIONS: Final = {
     CONF_WARNING_ANIMATION: True,
     CONF_STORM_SIMULATION: False,
     CONF_SHOW_LOCATION_SELECTOR: False,
+    CONF_SHOW_SIDEBAR_PANEL: False,
     CONF_COMPASS_NEAREST_STRIKE: False,
     CONF_COMPASS_DEVICE_ORIENTATION: False,
     CONF_MAP_GROUPING: True,
@@ -115,6 +124,7 @@ SWITCH_KEYS: Final = (
     CONF_WARNING_ANIMATION,
     CONF_STORM_SIMULATION,
     CONF_SHOW_LOCATION_SELECTOR,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_COMPASS_NEAREST_STRIKE,
     CONF_COMPASS_DEVICE_ORIENTATION,
     CONF_MAP_GROUPING,

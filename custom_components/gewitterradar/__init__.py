@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
@@ -30,6 +31,7 @@ from .const import (
     CONF_LANGUAGE_INITIALIZED,
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_STORM_RADIUS,
     CONF_TRACKER_LATITUDE,
     CONF_TRACKER_LONGITUDE,
@@ -50,6 +52,10 @@ from .const import (
     SERVICE_FIELD_NAME,
     SERVICE_SET_REFERENCE_COORDINATES,
     SIGNAL_REFERENCE_COORDINATES_UPDATED,
+    SIDEBAR_PANEL_ICON,
+    SIDEBAR_PANEL_MODULE_URL,
+    SIDEBAR_PANEL_URL_PATH,
+    SIDEBAR_PANEL_WEB_COMPONENT,
     SWITCH_KEYS,
 )
 
@@ -73,7 +79,34 @@ _SET_REFERENCE_COORDINATES_SCHEMA = vol.Schema(
         vol.Required(SERVICE_FIELD_LONGITUDE): cv.longitude,
         vol.Optional(SERVICE_FIELD_NAME, default=DEFAULT_TRACKER_NAME): cv.string,
     }
-)
+) 
+
+async def _async_register_sidebar_panel(hass: HomeAssistant) -> None:
+    """Expose the normal Gewitterradar card directly in the HA sidebar."""
+    if frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH):
+        return
+    await panel_custom.async_register_panel(
+        hass=hass,
+        frontend_url_path=SIDEBAR_PANEL_URL_PATH,
+        webcomponent_name=SIDEBAR_PANEL_WEB_COMPONENT,
+        sidebar_title=NAME,
+        sidebar_icon=SIDEBAR_PANEL_ICON,
+        module_url=SIDEBAR_PANEL_MODULE_URL,
+        embed_iframe=False,
+        require_admin=False,
+        handle_safe_area=False,
+    )
+
+
+@callback
+def _async_remove_sidebar_panel(hass: HomeAssistant) -> None:
+    """Remove the Gewitterradar sidebar panel if it is registered."""
+    if frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH):
+        frontend.async_remove_panel(
+            hass,
+            SIDEBAR_PANEL_URL_PATH,
+            warn_if_unknown=False,
+        )
 
 
 def _validate_options(options: dict[str, Any]) -> None:
@@ -272,6 +305,21 @@ class GewitterradarRuntimeData:
             raise ServiceValidationError(str(err)) from err
         self.hass.config_entries.async_update_entry(self.entry, options=options)
 
+    async def async_set_sidebar_panel(self, enabled: bool) -> None:
+        """Persist and immediately reconcile the optional sidebar panel."""
+        options = {**self.entry.options, CONF_SHOW_SIDEBAR_PANEL: enabled}
+        try:
+            _validate_options(options)
+        except ValueError as err:
+            raise ServiceValidationError(str(err)) from err
+
+        if enabled:
+            await _async_register_sidebar_panel(self.hass)
+        else:
+            _async_remove_sidebar_panel(self.hass)
+
+        self.hass.config_entries.async_update_entry(self.entry, options=options)
+
     @callback
     def async_set_reference_coordinates(
         self, latitude: float, longitude: float, name: str
@@ -378,9 +426,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
 
     entry.runtime_data = GewitterradarRuntimeData(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    if options[CONF_SHOW_SIDEBAR_PANEL]:
+        await _async_register_sidebar_panel(hass)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry) -> bool:
     """Unload a Gewitterradar config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unloaded:
+        _async_remove_sidebar_panel(hass)
+    return unloaded
