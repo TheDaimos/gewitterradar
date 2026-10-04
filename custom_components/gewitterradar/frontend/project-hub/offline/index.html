@@ -417,6 +417,26 @@
   .project-logo.sprite-icon{inline-size:min(104px,calc(100% - 14px)) !important}
 }
 
+
+/* Gewitterradar Android-Abnahme: ausschließlich innerer Rahmen mit leichterem Metallglanz. */
+.card:after{
+  border:1px solid transparent !important;
+  background:
+    linear-gradient(transparent,transparent) padding-box,
+    linear-gradient(135deg,
+      rgba(75,45,20,.58) 0%,
+      rgba(223,184,112,.54) 12%,
+      rgba(128,83,38,.48) 27%,
+      rgba(240,211,153,.60) 46%,
+      rgba(151,101,47,.48) 63%,
+      rgba(218,176,103,.52) 82%,
+      rgba(72,43,20,.56) 100%) border-box !important;
+  box-shadow:
+    0 0 7px rgba(211,162,84,.08),
+    inset 0 0 18px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,241,207,.07) !important;
+}
+
 </style></head><body><section class="card" aria-label="Gewitterradar Offline-Vorstellung"><div class="top"><span class="icon ck-icon ck-sprite" role="img" aria-label="C.K. – persönliches Entwicklerlogo"></span><div><div class="origin">Ein gemeinsamer Ursprung</div>
       <div class="dots" aria-hidden="true">· · ·</div>
       <div class="brand-slogan">Eine Idee weiter gedacht.</div></div></div><div class="rule"></div><div class="copy"><p>Hinter Gewitterradar entstehen mehrere eigenständig entwickelte Projekte rund um Home Assistant, Wetterdaten, Visualisierung, Automatisierung und technische Werkzeuge.</p><p>Die vollständige Projektübersicht ist momentan nicht erreichbar. Diese kompakte Vorstellung wird direkt mit Gewitterradar ausgeliefert und steht deshalb auch ohne Internetverbindung zur Verfügung.</p></div><div class="projects-section">
