@@ -1,11 +1,12 @@
 import { registerModule } from "../core/registry.js?v=41108r1";
 export const MODULE_META=Object.freeze({
-  id:"ui.project-hub",version:"1.1.12",group:"Oberfläche",function:"Daimos Project Hub",
+  id:"ui.project-hub",version:"1.1.13",group:"Oberfläche",function:"Daimos Project Hub",
   subfunctions:["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC14-Runtime"],
   file:"modules/ui/project-hub.js"
 });
 const PROJECT_HUB_BASE_URL=new URL("../../project-hub/",import.meta.url);
 const PROJECT_HUB_CONFIG_URL=new URL("project-hub-config.json",PROJECT_HUB_BASE_URL);
+const SETTINGS_CLOSE_IMAGE_URL=new URL("../../assets/gewitterradar-about-close-premium.webp",import.meta.url).href;
 const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc14";
 const isHttpsUrl=v=>{try{return new URL(v).protocol==="https:";}catch{return false;}};
 const isLocalFallbackPath=v=>{if(typeof v!=="string")return false;const p=v.trim();return !!p&&!p.startsWith("/")&&!p.startsWith("//")&&!/^[a-z][a-z0-9+.-]*:/i.test(p);};
@@ -31,9 +32,18 @@ function showPopup(card,status="checking",fallback=DEFAULT_FALLBACK_PATH){
   Object.assign(overlay.style,{position:"fixed",inset:"0",zIndex:"2147483647",display:"grid",placeItems:"center",padding:"4px",background:"rgba(2,8,14,.76)",backdropFilter:"blur(5px)",overscrollBehavior:"contain"});
   const panel=document.createElement("div");Object.assign(panel.style,{position:"relative",width:"min(780px,calc(100vw - 8px))",height:"calc(100dvh - 8px)",maxHeight:"1080px",borderRadius:"20px",overflow:"hidden",background:"#08111b",boxShadow:"0 24px 80px rgba(0,0,0,.58),0 0 0 1px rgba(233,187,102,.28)"});
   const frame=document.createElement("iframe");frame.src=localViewUrl(status,fallback);frame.title="Daimos Project Hub";frame.setAttribute("loading","eager");frame.setAttribute("referrerpolicy","no-referrer");Object.assign(frame.style,{display:"block",width:"100%",height:"100%",border:"0",background:"#08111b"});
-  const close=document.createElement("button");close.type="button";close.setAttribute("aria-label","Project Hub schließen");close.textContent="×";Object.assign(close.style,{position:"absolute",top:"10px",right:"10px",zIndex:"2",width:"40px",height:"40px",borderRadius:"50%",border:"1px solid rgba(233,187,102,.48)",background:"rgba(8,17,27,.92)",color:"#f3d49b",fontSize:"28px",lineHeight:"34px",cursor:"pointer",boxShadow:"0 4px 16px rgba(0,0,0,.35)"});
+  const closeStyle=document.createElement("style");closeStyle.textContent=`
+.project-hub-close-premium{position:absolute!important;top:10px!important;right:10px!important;margin:0!important;z-index:60!important;display:grid!important;place-items:center;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border:0!important;border-radius:8px!important;background:transparent!important;color:transparent!important;font-size:0!important;line-height:0!important;overflow:visible!important;box-shadow:none!important;cursor:pointer}
+.project-hub-close-premium img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}
+.project-hub-close-premium:focus-visible{outline:2px solid #e7c16e!important;outline-offset:-2px!important}
+.project-hub-close-premium:active img{transform:scale(.97);filter:brightness(.92)}
+@media(hover:hover) and (pointer:fine){.project-hub-close-premium:hover{background:transparent!important}.project-hub-close-premium:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
+@media(hover:none) and (pointer:coarse){.project-hub-close-premium:focus-visible{outline:none!important}}
+`;
+  const close=document.createElement("button");close.type="button";close.className="project-hub-close-premium";close.setAttribute("aria-label","Project Hub schließen");
+  const closeIcon=document.createElement("img");closeIcon.src=SETTINGS_CLOSE_IMAGE_URL;closeIcon.alt="";closeIcon.width=34;closeIcon.height=34;closeIcon.draggable=false;close.append(closeIcon);
   close.addEventListener("click",()=>closePopup(card));overlay.addEventListener("pointerdown",e=>{if(e.target===overlay)closePopup(card);});overlay.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closePopup(card);}});
-  panel.append(frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
+  panel.append(closeStyle,frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
 }
 function activateSignature(card){const sig=card?.shadow?.querySelector?.(".settings-signature-wrap");if(!sig||sig.dataset.projectHubBound==="1")return false;sig.dataset.projectHubBound="1";sig.removeAttribute("aria-hidden");sig.setAttribute("role","button");sig.setAttribute("tabindex","0");sig.setAttribute("aria-label","Daimos Project Hub öffnen");sig.setAttribute("title","Daimos Project Hub");sig.style.cursor="pointer";sig.style.touchAction="manipulation";sig.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};sig.addEventListener("click",open);sig.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
 function activateMainTitle(card){const title=card?.shadow?.querySelector?.(".topbar .brand .title > span:first-child");if(!title||title.dataset.projectHubBound==="1")return false;title.dataset.projectHubBound="1";title.setAttribute("role","button");title.setAttribute("tabindex","0");title.setAttribute("aria-label","Daimos Project Hub öffnen");title.setAttribute("title","Daimos Project Hub");title.style.cursor="pointer";title.style.touchAction="manipulation";title.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};title.addEventListener("click",open);title.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
