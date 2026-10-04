@@ -1,7 +1,7 @@
 import { defineModule } from "./runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -444,6 +444,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._maybeOpenAbout();
       this._startRuntimeUpdateWatch?.();
       this._resumeWeatherRadar?.();
+      this._resumeMapGestureRecovery?.();
       // V3.86 – normaler Produktivbetrieb wieder aktiv.
       // Die alten Scroll-Gegenmechanismen werden bewusst NICHT aktiviert;
       // die Ursache wird direkt im Recent-DOM behoben.
@@ -454,6 +455,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     disconnectedCallback() {
       this._stopRuntimeUpdateWatch?.();
       this._teardownWeatherRadar?.();
+      this._teardownMapGestureRecovery?.();
       this._closeLanguageOnboarding(false);
       this._closeHelp(false);
       this._closeAbout(false, false);

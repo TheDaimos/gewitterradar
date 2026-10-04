@@ -28,8 +28,8 @@ try {
   const manifest = await gewitterradarImport('./module-manifest.js','41108r20');
   const registry = await gewitterradarImport('./modules/core/registry.js');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
-  const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js');
-  const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r9');
+  const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41108r2');
+  const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r10');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
   const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41108r20');
@@ -43,7 +43,7 @@ try {
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
-  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js');
+  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41108r2');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
   const clustersRecent = await gewitterradarImport('./modules/map/clusters-recent.js');
   const render = await gewitterradarImport('./modules/ui/render.js');
