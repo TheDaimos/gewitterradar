@@ -5,6 +5,7 @@ import json
 
 import pytest
 
+from homeassistant.components import frontend
 from homeassistant.components.number import ATTR_MAX, ATTR_MIN, ATTR_MODE, ATTR_STEP
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
@@ -36,6 +37,7 @@ from custom_components.gewitterradar.const import (
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
     CONF_SHOW_LOCATION_SELECTOR,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_STORM_RADIUS,
     CONF_STORM_SIMULATION,
     CONF_TRACKER_LATITUDE,
@@ -47,6 +49,7 @@ from custom_components.gewitterradar.const import (
     DOMAIN,
     LEGACY_IMPORT_VERSION,
     NAME,
+    SIDEBAR_PANEL_URL_PATH,
 )
 
 EXPECTED_DEFAULT_OPTIONS = {
@@ -64,6 +67,7 @@ EXPECTED_DEFAULT_OPTIONS = {
     "warning_animation": True,
     "storm_simulation": False,
     "show_location_selector": False,
+    "show_sidebar_panel": False,
     "compass_nearest_strike": False,
     "compass_device_orientation": False,
     "map_grouping": True,
@@ -107,6 +111,7 @@ ENTITY_IDS_BY_KEY = {
     "warning_animation": "switch.gewitterradar_warning_animation",
     "storm_simulation": "switch.gewitterradar_storm_simulation",
     "show_location_selector": "switch.gewitterradar_show_location_selector",
+    "show_sidebar_panel": "switch.gewitterradar_show_sidebar_panel",
     "compass_nearest_strike": "switch.gewitterradar_compass_nearest_strike",
     "compass_device_orientation": "switch.gewitterradar_compass_device_orientation",
     "map_grouping": "switch.gewitterradar_map_grouping",
@@ -168,12 +173,12 @@ async def _call_service(
 
 
 async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None:
-    """Test all defaults and exactly 18 stable V4.07 native entities."""
+    """Test all defaults and exactly 18 settings plus the reference tracker."""
     entry = await _setup_entry(hass)
 
     assert DEFAULT_OPTIONS == EXPECTED_DEFAULT_OPTIONS
     assert entry.options == EXPECTED_DEFAULT_OPTIONS
-    assert len(entry.options) == 17
+    assert len(entry.options) == 18
     _assert_v407_entry_data(
         hass,
         entry,
@@ -183,7 +188,7 @@ async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None
     registry = er.async_get(hass)
     registry_entries = er.async_entries_for_config_entry(registry, entry.entry_id)
     assert {registry_entry.entity_id for registry_entry in registry_entries} == NATIVE_ENTITY_IDS
-    assert len(registry_entries) == 18
+    assert len(registry_entries) == 19
     for key, entity_id in ENTITY_IDS_BY_KEY.items():
         registry_entry = registry.async_get(entity_id)
         assert registry_entry is not None
@@ -605,3 +610,29 @@ async def test_global_legacy_confirmation_migrates_without_overwriting_native(ha
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.options["language_initialized"] is False
+
+async def test_sidebar_panel_switch_registers_direct_card_and_persists(
+    hass: HomeAssistant,
+) -> None:
+    """Toggle the direct Gewitterradar sidebar panel without a dashboard view."""
+    entry = await _setup_entry(hass)
+    entity_id = ENTITY_IDS_BY_KEY[CONF_SHOW_SIDEBAR_PANEL]
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is False
+    assert hass.states.get(entity_id).state == STATE_OFF
+    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+    await _call_service(hass, "switch", "turn_on", entity_id)
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
+    assert hass.states.get(entity_id).state == STATE_ON
+    assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
+    assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+    await _call_service(hass, "switch", "turn_off", entity_id)
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is False
+    assert hass.states.get(entity_id).state == STATE_OFF
+    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+

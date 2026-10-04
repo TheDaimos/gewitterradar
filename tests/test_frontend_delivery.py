@@ -15,6 +15,7 @@ async def test_shared_frontend_routes_serve_exact_dashboard_bytes(hass: HomeAssi
     client = await hass_client()
     for name in (
         "gewitterradar.js",
+        "panel.js",
         "assets/gewitterradar-about-close-premium.webp",
         "assets/gewitterradar-about-copy-scroll.webp",
         "assets/gewitterradar-about-hero-v2.webp",

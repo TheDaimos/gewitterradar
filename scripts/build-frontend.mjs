@@ -10,6 +10,7 @@ async function modularPayload(contract){const wanted=Object.keys(contract.module
 export async function expectedPayload(){
  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
+ const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
  if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.08"')){
@@ -74,7 +75,7 @@ export async function expectedPayload(){
   ['project-hub/offline/assets/ck-logo.webp',await readFile(resolve(root,'frontend/project-hub/offline/assets/ck-logo.webp'))],
   ['project-hub/offline/assets/project-icons.webp',await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'))]
  ]);
- const payload=new Map([['gewitterradar.js',source],...(versionSource?[['version.js',versionSource]]:[]),['locales/about-locales.js',locale],...modular,...projectHubRuntime]);
+ const payload=new Map([['gewitterradar.js',source],['panel.js',panel],...(versionSource?[['version.js',versionSource]]:[]),['locales/about-locales.js',locale],...modular,...projectHubRuntime]);
  for(const asset of inventory){const bytes=await readFile(resolve(root,'frontend',asset.file));if(hash(bytes)!==asset.sha256)throw Error('Asset SHA mismatch '+asset.file);payload.set(asset.file,bytes);}
  return payload;
 }

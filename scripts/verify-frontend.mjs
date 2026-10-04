@@ -15,6 +15,7 @@ const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cock
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
 const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
+const nativePanel=await readFile(resolve(root,'frontend/panel.js'),'utf8');
 const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
 const projectHubConfig=JSON.parse(await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'),'utf8'));
 const projectHubOffline=await readFile(resolve(root,'frontend/project-hub/offline/index.html'),'utf8');
@@ -179,6 +180,7 @@ if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
 if(projectHubAssetManifest.runtime_version!=='0.2.0-rc14'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC14 local asset contract mismatch');
 if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
+for(const marker of ['gewitterradar-panel','gewitterradar-card','await import("./gewitterradar.js")','card.setConfig({type:"custom:gewitterradar-card"})','set hass(value)'])if(!nativePanel.includes(marker))throw Error('Native sidebar panel contract missing: '+marker);
 if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('https://thedaimos.github.io/weather-router-pub/')||!projectHubOffline.includes('project-page-action'))throw Error('Project Hub RC14 central runtime contract incomplete');
 for(const marker of ['inline-size:min(80px,calc(100% - 16px))','inline-size:min(94px,calc(100% - 16px))','inline-size:min(104px,calc(100% - 14px))','background-size:100% 600%'])if(!projectHubOffline.includes(marker))throw Error('Project Hub responsive project-logo scaling contract missing: '+marker);
 for(const marker of [
