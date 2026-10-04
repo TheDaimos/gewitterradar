@@ -166,6 +166,7 @@ async def test_complete_valid_legacy_import_is_non_destructive(
         "warning_animation": False,
         "storm_simulation": True,
         "show_location_selector": True,
+        "show_sidebar_panel": False,
         "compass_nearest_strike": True,
         "compass_device_orientation": True,
         "map_grouping": False,
