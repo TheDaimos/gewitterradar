@@ -121,7 +121,9 @@ def test_runtime_revision_and_module_set_probe_contract():
   assert runtime["runtimeRevision"]=="41108r1"
   assert runtime["moduleSetId"]=="E411-08A6"
   assert "gewitterradarImport('./module-manifest.js','41108r20')" in main
-  assert "gewitterradarImport('./modules/fullscreen/map-display.js','41108r9')" in main
+  assert "gewitterradarImport('./modules/fullscreen/map-display.js','41108r10')" in main
+  assert "gewitterradarImport('./modules/core/card-lifecycle.js','41108r2')" in main
+  assert "gewitterradarImport('./modules/location/radii-map.js','41108r2')" in main
   assert "gewitterradarImport('./modules/weather/layer-menu.js','41108r11')" in main
   assert "gewitterradarImport('./modules/weather/precipitation-layer.js','41108r10')" in main
   assert "gewitterradarImport('./modules/ui/project-hub.js','41108r20')" in main
@@ -129,7 +131,7 @@ def test_runtime_revision_and_module_set_probe_contract():
    "./modules/instruments/compass-selector.js",
    "./modules/ui/i18n-settings.js","./modules/ui/controls.js","./modules/ui/skeleton.js",
    "./modules/instruments/medallion-designs.js","./modules/diagnostics/cockpit.js",
-   "./modules/location/radii-map.js","./modules/diagnostics/module-view.js",
+   "./modules/diagnostics/module-view.js",
    "./modules/core/update-watch.js","./modules/weather/consumer-client.js",
   ):
    assert f"gewitterradarImport('{path}')" in main
