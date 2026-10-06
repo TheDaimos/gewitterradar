@@ -160,7 +160,9 @@ for(const marker of [
   'leaflet-stale-pointer-cache',
   "mapEl.addEventListener('touchmove'",
   'visibility-visible-resume',
-  'blockUntilPrimaryUp:false,anomaly:false',
+  'blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true',
+  'map.options?.touchZoom!==false',
+  'map.options?.dragging!==false',
   'zoomControl:true',
   'this._syncMapZoomTooltips?.();'
 ]){
