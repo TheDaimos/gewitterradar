@@ -1,7 +1,7 @@
-import { defineModule } from "./runtime.js?v=41109r1";
+import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -445,6 +445,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._startRuntimeUpdateWatch?.();
       this._resumeWeatherRadar?.();
       this._resumeWeatherDisplay?.();
+      this._resumeWeatherLegend?.();
       this._resumeMapGestureRecovery?.();
       // V3.86 – normaler Produktivbetrieb wieder aktiv.
       // Die alten Scroll-Gegenmechanismen werden bewusst NICHT aktiviert;
@@ -457,6 +458,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._stopRuntimeUpdateWatch?.();
       this._teardownWeatherRadar?.();
       this._teardownWeatherDisplay?.();
+      this._teardownWeatherLegend?.();
       this._teardownMapGestureRecovery?.();
       this._closeLanguageOnboarding(false);
       this._closeHelp(false);
