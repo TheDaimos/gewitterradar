@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.1.0",
+  version:"0.1.1",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","Layer-Schnellzugriff"],
@@ -366,7 +366,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       block.querySelectorAll("[data-weather-display-setting]").forEach(button=>{
         const key=button.dataset.weatherDisplaySetting,on=Boolean(config[key]);
         button.classList.toggle("on",on);button.setAttribute("aria-checked",on?"true":"false");
-        button.disabled=key==="enabled"&&!available;
+        button.disabled=!available;
       });
       const precipRow=block.querySelector("[data-weather-display-precipitation-row]");
       if(precipRow)precipRow.hidden=!available;
@@ -409,6 +409,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     this._setMapDisplayMenuOpen?.(false);
     requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
     return true;
+  },
+
+  _resumeWeatherDisplay(){
+    if(!this.shadow)return;
+    this._weatherDisplayEnsureMapUi();
+    this._weatherDisplaySyncUi();
+    this._weatherDisplayProbe({refresh:true});
   },
 
   _teardownWeatherDisplay(){
