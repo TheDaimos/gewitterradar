@@ -1,11 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41109r1";
+import { defineModule } from "../core/runtime.js?v=41110r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.2",
+  version:"1.3.3",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
-  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
+  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
   file:"modules/weather/precipitation-layer.js"
 });
 
@@ -413,7 +413,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.timelinePosition){
       const legend=this.shadow?.getElementById("map-legend");
       const legendHeight=Math.max(0,Math.round(legend?.getBoundingClientRect?.().height||legend?.offsetHeight||48));
-      root.style.left="50%";root.style.top="auto";root.style.bottom=(legendHeight+10)+"px";root.style.transform="translateX(-50%)";
+      const weatherLegend=this.shadow?.getElementById("weather-legend-overlay");
+      const weatherLegendHeight=weatherLegend&&!weatherLegend.hidden?Math.max(0,Math.round(weatherLegend.getBoundingClientRect?.().height||weatherLegend.offsetHeight||0)):0;
+      root.style.left="50%";root.style.top="auto";root.style.bottom=(legendHeight+10+(weatherLegendHeight?weatherLegendHeight+8:0))+"px";root.style.transform="translateX(-50%)";
       return;
     }
     const maxX=Math.max(0,card.clientWidth-root.offsetWidth),maxY=Math.max(0,card.clientHeight-root.offsetHeight);
@@ -582,7 +584,21 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       answer.routing?.degraded?"Datenweg eingeschränkt":null,
       ...description.limitations
     ].filter(Boolean).join(" · ");
-    this._weatherRadarRenderLegend({label,title,legendUrl:legend?.url||null,legendTitle:legend?.title||"Niederschlagslegende"});
+    const semantics=answer.resource?.semantics&&typeof answer.resource.semantics==="object"?answer.resource.semantics:{};
+    const entries=Array.isArray(legend?.entries)?legend.entries:Array.isArray(legend?.stops)?legend.stops:[];
+    this._weatherRadarRenderLegend({
+      family:"precipitation",
+      capability:CAPABILITY,
+      heading:"Niederschlag",
+      label,
+      subtitle:description.provider+" · "+timePart,
+      title,
+      legendUrl:legend?.url||null,
+      legendTitle:legend?.title||"Niederschlagslegende",
+      unit:typeof semantics.unit==="string"?semantics.unit:"",
+      entries,
+      priority:100
+    });
   },
 
   async _weatherRadarStageTimelineFrame(index){
@@ -709,28 +725,33 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   },
 
   _weatherRadarRenderLegend(model){
+    const legacy=this.shadow?.querySelector?.('[data-weather-radar-legend="true"]');legacy?.remove?.();
+    if(typeof this._weatherLegendSetModel==="function"){
+      if(!model){this._weatherLegendClear?.("precipitation");return;}
+      this._weatherLegendSetModel("precipitation",{
+        family:model.family||"precipitation",
+        capability:model.capability||CAPABILITY,
+        title:model.heading||"Niederschlag",
+        subtitle:model.subtitle||model.label||"",
+        details:model.title||model.label||"",
+        legendUrl:model.legendUrl||"",
+        legendTitle:model.legendTitle||"Niederschlagslegende",
+        unit:model.unit||"",
+        entries:Array.isArray(model.entries)?model.entries:[],
+        priority:Number.isFinite(Number(model.priority))?Number(model.priority):100,
+        active:true
+      });
+      return;
+    }
     const host=this.shadow?.getElementById("map-legend");
     if(!host)return;
     let item=host.querySelector('[data-weather-radar-legend="true"]');
     if(!model){item?.remove();return;}
-    if(!item){
-      item=document.createElement("span");
-      item.className="legend-item";
-      item.dataset.weatherRadarLegend="true";
-      item.style.cssText="align-items:center;gap:5px;max-width:100%;";
-      host.append(item);
-    }
-    item.replaceChildren();
-    const icon=document.createElement("span");icon.textContent="▦";icon.setAttribute("aria-hidden","true");icon.style.cssText="color:#8fc7ff;font-weight:900";
-    const text=document.createElement("span");text.textContent=model.label;text.style.cssText="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px";
-    item.append(icon,text);
-    if(model.legendUrl){
-      const img=document.createElement("img");
-      img.src=model.legendUrl;img.alt=model.legendTitle||"Niederschlagslegende";img.loading="lazy";img.referrerPolicy="strict-origin-when-cross-origin";
-      img.style.cssText="height:20px;max-width:120px;object-fit:contain;border-radius:3px;background:rgba(255,255,255,.86)";
-      item.append(img);
-    }
-    item.title=model.title;
+    item=document.createElement("span");
+    item.className="legend-item";
+    item.dataset.weatherRadarLegend="true";
+    const text=document.createElement("span");text.textContent=model.label||"Niederschlag";
+    item.append(text);host.append(item);item.title=model.title||model.label||"";
   },
 
   _weatherRadarDescribe(answer){
