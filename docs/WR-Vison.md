@@ -918,4 +918,55 @@ Neue Entscheidungen sollen anschließend wieder in dieses Dokument eingepflegt w
 
 ---
 
+## 31. Implementierungsstand V4.11.09 DEV
+
+Die Umsetzung wurde am 2026-10-06 auf `feature/v4.11-development` begonnen.
+
+### Technische Modulgrenze
+
+Die Visualisierungssteuerung erhält bewusst ein eigenes Modul:
+
+- `weather.display-menu` **0.1.0**
+- Datei: `frontend/modules/weather/display-menu.js`
+- persistenter gemeinsamer Zustand unter `gewitterradar:weather-display:v1`
+
+Das Modul ist Eigentümer von Darstellungszustand, Einstellungen, Augen-Bedienelement, schwebendem Menü, Minimierung, Drag/Position und Darstellungsstil. Die eigentlichen Datenrenderer bleiben weiterhin in ihren Fachmodulen; Niederschlag bleibt in `weather.precipitation-layer`.
+
+### WeatherRouter-Zustände
+
+Der Consumer unterscheidet nun einen fehlenden Consumer-Endpunkt (`integration_not_installed`) von sonstigen Discovery-/Transportfehlern (`discovery_unreachable`). Damit kann die Oberfläche „nicht installiert“ von „vorhanden bzw. erreichbar gewesen, momentan nicht verfügbar“ trennen, ohne eine zweite WeatherRouter-Erkennung einzuführen.
+
+### Temporäre Augen-Platzhalter
+
+Bis die bereits abgenommenen PNG-Dateien in das Repository geladen werden, verwendet `weather.display-menu` ausschließlich klar markierte Inline-SVG-Platzhalter (`data-weather-display-eye-placeholder`). Diese Platzhalter sind **nicht** die finale Bildsprache und dürfen die dokumentierten Entwurf-Nr.-4-Master nicht ersetzen.
+
+Nach Bereitstellung werden die Platzhalter gegen die kanonischen Dateien ausgetauscht und die Master-Hashes aus Abschnitt 22 geprüft.
+
+### Touch-/Drag-Entscheidung
+
+Das schwebende Menü verwendet Pointer Events und Pointer Capture ausschließlich an seiner Griffzone. Die Griffzone besitzt `touch-action:none`; normale Schaltflächen bleiben bei `touch-action:manipulation`. Es werden keine globalen `touchmove`-Listener eingeführt. Das schützt die bestehende Android-/Leaflet-Gesten-Selbstheilung vor einer zweiten konkurrierenden Touch-Logik.
+
+Die gespeicherte Position wird normiert (0..1) und beim Rendern immer auf den tatsächlich sichtbaren Kartenbereich begrenzt. Dadurch kann das Menü nach Größen-, Geräte- oder Vollbildwechseln nicht außerhalb des sichtbaren Kartenbereichs verloren gehen.
+
+### Erste Darstellungsfamilie
+
+Niederschlag ist der erste angeschlossene Renderer. Die Zustände sind:
+
+- `precise` → Präzise
+- `balanced` → Ausgewogen
+- `soft` → Weich
+
+Die Umschaltung verändert ausschließlich CSS-Eigenschaften der gerenderten Rasterbilder. Consumer-Request, Capability, Tile-URL, Messwerte, Rasterauflösung, Routing und Warnstatus werden nicht verändert.
+
+Der Standard bleibt in dieser ersten Implementierung **Präzise**, weil dies dem bisherigen Verhalten am nächsten kommt. Die endgültige Entscheidung „Präzise oder Ausgewogen“ bleibt weiterhin ein Realtest-Punkt.
+
+### Noch ausstehend
+
+- echte Entwurf-Nr.-4-Augenassets einspielen und Hashes prüfen
+- visuelle Realabnahme der drei Niederschlagsstile
+- Android/iPad/Desktop-Realabnahme von Drag, Minimieren, Karten-Pan und Pinch-Zoom
+- weitere Darstellungsfamilien erst nach dieser Abnahme anschließen
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
