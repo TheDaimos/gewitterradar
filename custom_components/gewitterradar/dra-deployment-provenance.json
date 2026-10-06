@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.08",
-  "build": "V4.11.08-DEV-2026-10-02",
-  "runtimeRevision": "41108r1",
-  "moduleSetId": "E411-08A6",
+  "productVersion": "4.11.09",
+  "build": "V4.11.09-DEV-2026-10-06",
+  "runtimeRevision": "41109r1",
+  "moduleSetId": "E411-09A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.08 DEV · Android/Companion Karten-Gesten-Selbstheilung für Leaflet bei verlorenen Pointer-/Touch-Enden, Fokuswechseln und Kartenmoduswechseln · native Gewitterradar-Seitenleiste per Integrations-Options-Flow · DRA test candidate; deploy/dev",
+    "purpose": "V4.11.09 DEV · WeatherRouter-Visualisierung Phase A-D: Statusmodell, persistente Darstellung, Augen-Platzhalter, schwebendes Touch-/Pointer-Menü, Niederschlagsstile und Layer-Schnellzugriff · DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
