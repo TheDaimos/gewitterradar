@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.1.1",
+  version:"0.1.2",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","Layer-Schnellzugriff"],
@@ -54,6 +54,7 @@ const normalizeState=input=>{
 const errorStatus=discovery=>{
   if(!discovery)return "checking";
   if(discovery.present===false)return "missing";
+  if(discovery.compatible===false)return "incompatible";
   if(!discovery.ready)return "offline";
   return "ready";
 };
@@ -79,6 +80,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       generation:0,
       drag:null,
       resizeHandler:null,
+      lifecycleAbortHandler:null,
       mounted:false
     };
     return this.__weatherDisplayState;
@@ -203,7 +205,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const state=this._weatherDisplayState();
     if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprüft",note:"Status und Darstellungsfähigkeiten werden abgefragt."};
     if(state.status==="missing")return {title:"WeatherRouter nicht installiert",note:"Die Darstellung bleibt sichtbar angekündigt, wird auf der Karte aber nicht als funktionslose Bedienung angeboten."};
-    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht erreichbar",note:"Darstellungsfunktionen sind vorübergehend nicht verfügbar. Gewitterradar läuft unverändert weiter."};
+    if(state.status==="incompatible")return {title:"WeatherRouter erkannt, Consumer API nicht kompatibel",note:"Die Darstellungsfunktion bleibt deaktiviert, bis ein kompatibler Consumer-V1-Vertrag verfügbar ist."};
+    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht bereit",note:"WeatherRouter ist offline, deaktiviert, startet noch oder die Consumer-Verbindung ist vorübergehend nicht erreichbar. Gewitterradar läuft unverändert weiter."};
     if(state.status==="ready-empty")return {title:"WeatherRouter bereit",note:"Der aktuelle Katalog enthält noch keine von dieser Ausbaustufe unterstützte Darstellungsfähigkeit."};
     return {title:"WeatherRouter bereit",note:"Darstellungsmenü verfügbar · aktuell Niederschlag als erster Renderer."};
   },
@@ -293,6 +296,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
+    if(!state.lifecycleAbortHandler){
+      state.lifecycleAbortHandler=()=>this._weatherDisplayCancelDrag?.();
+      window.addEventListener("blur",state.lifecycleAbortHandler,true);
+      window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
+      document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
+    }
     state.mounted=true;
   },
 
@@ -308,6 +317,17 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const source=state.config.rememberPosition?position:DEFAULT_POSITION;
     panel.style.left=(minLeft+(maxLeft-minLeft)*clamp(source?.x??DEFAULT_POSITION.x,0,1))+"px";
     panel.style.top=(minTop+(maxTop-minTop)*clamp(source?.y??DEFAULT_POSITION.y,0,1))+"px";
+  },
+
+  _weatherDisplayCancelDrag(){
+    const state=this.__weatherDisplayState;if(!state?.drag)return;
+    const panel=this.shadow?.getElementById("weather-display-panel");
+    const handle=panel?.querySelector?.("[data-weather-display-drag-handle]");
+    const pointerId=state.drag.pointerId;
+    state.drag=null;
+    panel?.classList.remove("dragging");
+    try{if(pointerId!=null&&handle?.hasPointerCapture?.(pointerId))handle.releasePointerCapture(pointerId);}catch(_error){}
+    requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
   },
 
   _weatherDisplayBindPanelDrag(panel,handle){
@@ -353,6 +373,10 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     handle.addEventListener("pointermove",move);
     handle.addEventListener("pointerup",end);
     handle.addEventListener("pointercancel",end);
+    handle.addEventListener("lostpointercapture",event=>{
+      const state=this._weatherDisplayState();
+      if(state.drag?.pointerId===event.pointerId)this._weatherDisplayCancelDrag();
+    });
   },
 
   _weatherDisplaySyncUi(){
@@ -420,11 +444,18 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
 
   _teardownWeatherDisplay(){
     const state=this.__weatherDisplayState;if(!state)return;
-    state.generation+=1;state.probing=false;state.drag=null;
+    state.generation+=1;state.probing=false;
+    this._weatherDisplayCancelDrag();
     if(state.resizeHandler){
       window.removeEventListener("resize",state.resizeHandler);
       window.visualViewport?.removeEventListener?.("resize",state.resizeHandler);
       state.resizeHandler=null;
+    }
+    if(state.lifecycleAbortHandler){
+      window.removeEventListener("blur",state.lifecycleAbortHandler,true);
+      window.removeEventListener("pagehide",state.lifecycleAbortHandler,true);
+      document.removeEventListener("visibilitychange",state.lifecycleAbortHandler,true);
+      state.lifecycleAbortHandler=null;
     }
     state.mounted=false;
   }
