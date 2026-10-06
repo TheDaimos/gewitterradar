@@ -83,9 +83,9 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "54a09c51c82d5b7cc1dfcf9dcfed8a85edc7e10e9c063a893729f631d8e8744e",
+    "sha256": "911bde68b92370f8dd1bcedafddbef9958c275d0a8464d08aa85418f0991bdc4",
     "protected": false,
-    "sizeBytes": 2333
+    "sizeBytes": 2409
   },
   {
     "file": "assets/gewitterradar-trend-arrow-01.webp",
