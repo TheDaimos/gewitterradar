@@ -28,7 +28,7 @@ try {
   const manifest = await gewitterradarImport('./module-manifest.js','41109r1');
   const registry = await gewitterradarImport('./modules/core/registry.js');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
-  const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41108r2');
+  const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41109r1');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r10');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js');
