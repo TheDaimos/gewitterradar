@@ -23,7 +23,7 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.4"
+      "version": "1.0.5"
     },
     {
       "id": "fullscreen.map-display",
@@ -111,7 +111,7 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.1.0"
+      "version": "0.1.1"
     },
     {
       "id": "history.chart",
