@@ -1012,4 +1012,89 @@ Die Entwurf-Nr.-4-Augen-PNGs sind weiterhin ausstehend. Bis zu deren Einspielung
 
 ---
 
+## 32. V4.11.10 DEV – generische WeatherRouter-Darstellungslegende
+
+Stand: **2026-10-06**
+
+Die in der Visualisierungsplanung vorgesehene Legende ist jetzt als eigene, erweiterbare WeatherRouter-Komponente umgesetzt.
+
+### Architektur
+
+Neues Modul:
+
+- `weather.legend-overlay` **0.1.0**
+
+Die Legende ist bewusst nicht im Niederschlagsrenderer fest verdrahtet. Renderer registrieren stattdessen ein neutrales Legendenmodell mit:
+
+- Quelle
+- Familie
+- Capability
+- Titel
+- Untertitel
+- Einheit
+- optionaler Bildlegende
+- optionalen strukturierten Legendenwerten
+- Priorität
+- Aktivstatus
+
+Dadurch kann dieselbe Darstellung später für Niederschlag, Schnee, Wind, Temperatur, UV, Luftqualität, Gefahrenstufen und weitere WeatherRouter-Datenfamilien verwendet werden.
+
+### Sichtbarkeitsmodi
+
+Der gemeinsame persistente Darstellungszustand enthält jetzt `legendMode`:
+
+- `auto` → zeigt die wichtigste aktuell aktive und verfügbare Legende
+- `on` → zeigt alle aktuell aktiven und verfügbaren WeatherRouter-Legenden
+- `off` → blendet nur die WeatherRouter-Legende aus
+
+Das Ausblenden der Legende verändert weder den Wetterlayer noch WeatherRouter-Daten, Routing, Messwerte, Warnstatus oder Zeitachse.
+
+Die Auswahl ist sowohl in den Einstellungen als auch im schwebenden Darstellungsmenü verfügbar.
+
+### Kartenoverlay
+
+Die WeatherRouter-Legende ist ein eigenständiges dunkles Kartenoverlay mit:
+
+- anthrazit-schwarzer Glasoptik
+- feinem goldenen Rahmen
+- dezenter Goldaura
+- responsiver Breite
+- automatischer Position unmittelbar oberhalb der bestehenden Gewitterradar-Kartenlegende
+- direkter Schaltfläche zum Ausblenden
+- automatischer Anpassung bei Fenster-/Viewport-Änderungen
+- keiner eigenen Drag-Geste und keinen globalen `touchmove`-Listenern
+
+Damit bleibt der neue Overlaybereich Android-/Leaflet-sicher.
+
+### Niederschlag
+
+Der vorhandene Niederschlagsrenderer verwendet jetzt das neue generische Overlay.
+
+Die Skalierung bzw. Farblegende wird **nicht erfunden**. Gewitterradar übernimmt primär die von WeatherRouter gelieferte `payload.legend`-Information:
+
+- `legend.url` für eine Bildlegende
+- optional `legend.entries` bzw. `legend.stops` für strukturierte Skalen
+- die Einheit wird aus `resource.semantics.unit` übernommen, sofern vorhanden
+
+Die bisherige kleine WR-Sonderzeile in der normalen Gewitterradar-Kartenlegende wird nicht mehr als primäre Darstellung verwendet. Die bestehende Blitz-/Radius-Legende selbst bleibt unangetastet.
+
+### Zeitachse
+
+Die Niederschlags-Zeitachse berücksichtigt die Höhe des WeatherRouter-Legendenoverlays. In ihrer automatischen Standardposition liegt sie oberhalb der sichtbaren WR-Legende und überdeckt diese nicht.
+
+### Technischer Stand
+
+- Produkt: **V4.11.10 DEV**
+- Runtime: **41110r1**
+- Modulsatz: **E411-10A1**
+- `core.manifest` **1.2.81**
+- `core.card-lifecycle` **1.0.6**
+- `weather.precipitation-layer` **1.3.3**
+- `weather.display-menu` **0.2.0**
+- `weather.legend-overlay` **0.1.0**
+
+Die finalen Entwurf-Nr.-4-Augenassets bleiben der einzige bewusst noch nicht ersetzte Grafikpunkt; bis zu deren Einspielung bleiben die klar markierten SVG-Platzhalter aktiv.
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
