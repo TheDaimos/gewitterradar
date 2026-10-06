@@ -81,7 +81,7 @@ assert.deepEqual(
   'Provider-led capability names must be reordered for human scanning'
 );
 const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
-for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}','grid-template-columns:42px 1fr 42px','min-height:52px']){
+for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start']){
   assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
 }
 console.log('PASS: WeatherRouter Consumer V1 plus hierarchical Layer Hub catalog, human-first capability labels, map suitability, precipitation renderer reuse and stable scrollable menu.');
