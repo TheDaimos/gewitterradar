@@ -9,7 +9,7 @@ Erste umgesetzte Stufe der in `docs/WR-Vison.md` festgelegten WeatherRouter-Visu
 
 ## Neu
 
-- eigenes Modul `weather.display-menu` 0.1.1
+- eigenes Modul `weather.display-menu` 0.1.2
 - persistenter gemeinsamer Darstellungszustand für Einstellungen, Kartenmenü und Schnellzugriff
 - Unterscheidung WeatherRouter „nicht installiert“ und Discovery/Verbindung derzeit nicht erreichbar
 - Einstellungen mit Offline-Teaser und Status
@@ -18,6 +18,8 @@ Erste umgesetzte Stufe der in `docs/WR-Vison.md` festgelegten WeatherRouter-Visu
 - schwebendes Darstellungsmenü
 - minimierter und aufgeklappter Zustand
 - Pointer-Drag ausschließlich über die Griffzone
+- Drag-Lebenszyklus räumt jetzt auch bei verlorenem Pointer-Capture, App-Fokusverlust, `pagehide` und Sichtbarkeitswechsel zuverlässig auf
+- inkompatibler WeatherRouter-Consumer-Vertrag wird getrennt von „derzeit nicht bereit/offline“ dargestellt
 - normierte Positionsspeicherung mit Begrenzung auf den sichtbaren Kartenbereich
 - Schnellzugriff über WeatherRouter-Hub → Darstellung
 - erster echter Darstellungsrenderer: Niederschlag
