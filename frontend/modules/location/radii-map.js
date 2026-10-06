@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -482,6 +482,53 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       finally{state.synthesizing=false;}
     },
 
+    _mapGestureSurfacePointerCount(state=this._mapGestureRecovery) {
+      if(!state?.pointers)return 0;
+      let count=0;
+      for(const meta of state.pointers.values())if(meta?.surface)count+=1;
+      return count;
+    },
+
+    _hardResetMapGestureHandlers(reason,{invalidate=true}={}) {
+      const state=this._mapGestureRecovery,map=this._map;
+      if(!state||!map||state.hardResetting)return false;
+      state.hardResetting=true;
+      const touchZoom=map.touchZoom,dragging=map.dragging;
+      const touchWasEnabled=!!touchZoom?.enabled?.();
+      const dragWasEnabled=!!dragging?.enabled?.();
+      const now=Date.now();
+      state.anomalyCount=(state.anomalyCount||0)+1;
+      state.lastAnomaly={reason:String(reason||'unknown'),at:now,pointers:this._mapGestureSurfacePointerCount(state),touches:state.lastReportedTouches??null};
+      this._mapGestureRecoveryHistory={
+        anomalyCount:(this._mapGestureRecoveryHistory?.anomalyCount||0)+1,
+        lastAnomaly:state.lastAnomaly
+      };
+      try{
+        this._recoverMapGestureState(reason,{force:true});
+        try{touchZoom?.disable?.();}catch(_error){}
+        try{dragging?.disable?.();}catch(_error){}
+        try{
+          if(touchZoom){
+            touchZoom._zooming=false;
+            touchZoom._moved=false;
+            touchZoom._animRequest=null;
+          }
+        }catch(_error){}
+        try{map.stop?.();}catch(_error){}
+        try{if(dragWasEnabled)dragging?.enable?.();}catch(_error){}
+        try{if(touchWasEnabled)touchZoom?.enable?.();}catch(_error){}
+        state.blockUntilPrimaryUp=true;
+        if(!state.lastWarnAt||now-state.lastWarnAt>5000){
+          state.lastWarnAt=now;
+          console.warn('[Gewitterradar] Karten-Gestenstatus automatisch neu initialisiert:',reason,state.lastAnomaly);
+        }
+      }finally{
+        state.hardResetting=false;
+      }
+      if(invalidate)requestAnimationFrame(()=>{try{map.invalidateSize?.({animate:false});}catch(_error){}});
+      return true;
+    },
+
     _recoverMapGestureState(reason,{force=false,invalidate=false}={}) {
       const state=this._mapGestureRecovery,map=this._map,L=state?.L||window.L;
       if(!state||!map||!L||state.recovering)return false;
@@ -516,34 +563,71 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,synthesizing:false,lastRecovery:null};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
+      const surfacePointer=event=>{
+        const target=event?.target;
+        if(!target)return false;
+        if(target===mapEl)return true;
+        if(target?.closest?.('.leaflet-control,button,a,input,select,textarea,[role="button"]'))return false;
+        return !!target?.closest?.('.leaflet-pane');
+      };
+      const reportedTouches=event=>Number(event?.touches?.length??0);
+      const detectTouchPointerMismatch=(event,phase)=>{
+        if(typeof PointerEvent!=='function'||state.hardResetting)return false;
+        const surfaceCount=this._mapGestureSurfacePointerCount(state),touchCount=reportedTouches(event);
+        state.lastReportedTouches=touchCount;
+        if(surfaceCount!==1||touchCount<2||now()-state.lastMultiPointerAt<450)return false;
+        if(event?.cancelable)event.preventDefault();
+        event?.stopImmediatePropagation?.();
+        this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`);
+        return true;
+      };
       const postGestureEnd=()=>queueMicrotask(()=>requestAnimationFrame(()=>{
         if(this._mapGestureRecovery===state&&!state.pointers.size&&!state.touchIds.size)this._recoverMapGestureState('gesture-end',{force:false});
       }));
       state.handlers.pointerdown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
+        if(state.blockUntilPrimaryUp&&event.isPrimary===true)state.blockUntilPrimaryUp=false;
         const existing=[...state.pointers.keys()].filter(id=>id!==event.pointerId);
         const stalePrimary=event.isPrimary===true&&existing.length>0;
         const stalePinch=!!this._map?.touchZoom?._zooming&&existing.length===0;
         if(stalePrimary||stalePinch)this._recoverMapGestureState(stalePrimary?'new-primary-pointer':'stale-pinch-before-pointerdown',{force:true});
-        state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:now()});
+        state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:now(),surface:surfacePointer(event)});
+        if(this._mapGestureSurfacePointerCount(state)>=2)state.lastMultiPointerAt=now();
+        queueMicrotask(()=>{
+          if(this._mapGestureRecovery!==state||state.hardResetting)return;
+          const touches=Array.from(event?.touches||[]);
+          if(!touches.length)return;
+          const known=new Set(state.pointers.keys());
+          const stale=touches.filter(item=>Number.isFinite(item?.pointerId)&&!known.has(item.pointerId));
+          if(!stale.length)return;
+          for(const item of stale)this._mapGestureSyntheticPointerCancel(item.pointerId,item.pointerType||'touch');
+          this._hardResetMapGestureHandlers('leaflet-stale-pointer-cache');
+        });
       };
       state.handlers.pointermove=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
-        const meta=state.pointers.get(event.pointerId);if(meta)meta.lastSeen=now();
-        if(!!this._map?.touchZoom?._zooming&&state.pointers.size<=1&&event.isPrimary===true){
-          const pointerType=event.pointerType||'touch';
-          this._recoverMapGestureState('single-primary-pointer-during-pinch',{force:true});
-          state.pointers.set(event.pointerId,{pointerType,lastSeen:now()});
+        const stamp=now();
+        const meta=state.pointers.get(event.pointerId);
+        if(meta){
+          meta.lastSeen=stamp;
+          if(meta.surface)state.lastSurfaceMoveAt=stamp;
+        }
+        if(this._mapGestureSurfacePointerCount(state)>=2)state.lastMultiPointerAt=stamp;
+        if(!!this._map?.touchZoom?._zooming&&this._mapGestureSurfacePointerCount(state)<=1&&event.isPrimary===true){
+          const pointerType=event.pointerType||'touch',surface=meta?.surface??surfacePointer(event);
+          this._hardResetMapGestureHandlers('single-primary-pointer-during-pinch');
+          state.pointers.set(event.pointerId,{pointerType,lastSeen:stamp,surface});
         }
       };
       state.handlers.pointerend=event=>{
         if(!touchPointer(event))return;
         const meta=state.pointers.get(event.pointerId);state.pointers.delete(event.pointerId);
-        if(state.synthesizing||state.recovering)return;
+        if(event.isPrimary===true)state.blockUntilPrimaryUp=false;
+        if(state.synthesizing||state.recovering||state.hardResetting)return;
         queueMicrotask(()=>{
           if(this._mapGestureRecovery!==state)return;
           this._mapGestureSyntheticPointerCancel(event.pointerId,meta?.pointerType||event.pointerType||'touch');
@@ -552,11 +636,24 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       const syncTouches=event=>{state.touchIds.clear();for(const touch of Array.from(event?.touches||[]))state.touchIds.add(touch.identifier);};
       state.handlers.touchstart=event=>{
-        if(event?.touches?.length===1&&this._map?.touchZoom?._zooming)this._recoverMapGestureState('single-touch-during-stale-pinch',{force:true});
+        if(detectTouchPointerMismatch(event,'start'))return;
+        if(event?.touches?.length===1&&this._map?.touchZoom?._zooming){
+          if(event?.cancelable)event.preventDefault();
+          event?.stopImmediatePropagation?.();
+          this._hardResetMapGestureHandlers('single-touch-during-stale-pinch');
+          return;
+        }
         syncTouches(event);
       };
+      state.handlers.touchmove=event=>{
+        if(!mapEl.contains(event?.target)||state.blockUntilPrimaryUp){
+          if(state.blockUntilPrimaryUp&&event?.cancelable)event.preventDefault();
+          return;
+        }
+        detectTouchPointerMismatch(event,'move');
+      };
       state.handlers.touchend=event=>{syncTouches(event);if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();};
-      state.handlers.touchcancel=event=>{syncTouches(event);this._recoverMapGestureState('touchcancel',{force:true});};
+      state.handlers.touchcancel=event=>{syncTouches(event);this._hardResetMapGestureHandlers('touchcancel');};
       state.handlers.pointercancel=event=>{
         if(touchPointer(event))state.pointers.delete(event.pointerId);
         if(state.synthesizing||state.recovering)return;
@@ -567,16 +664,25 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.focus=()=>this._recoverMapGestureState('window-focus',{force:true,invalidate:true});
       state.handlers.pageshow=()=>this._recoverMapGestureState('pageshow',{force:true,invalidate:true});
       state.handlers.visibility=()=>this._recoverMapGestureState(document.visibilityState==='hidden'?'visibility-hidden':'visibility-visible',{force:true,invalidate:document.visibilityState==='visible'});
+      state.handlers.mapZoom=()=>{
+        if(state.recovering||state.hardResetting||state.blockUntilPrimaryUp)return;
+        const stamp=now(),surfaceCount=this._mapGestureSurfacePointerCount(state);
+        if(surfaceCount===1&&stamp-state.lastSurfaceMoveAt<180&&stamp-state.lastMultiPointerAt>550){
+          this._hardResetMapGestureHandlers('rogue-single-pointer-zoom');
+        }
+      };
       mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
       mapEl.addEventListener('pointermove',state.handlers.pointermove,true);
       window.addEventListener('pointerup',state.handlers.pointerend,true);
       window.addEventListener('pointercancel',state.handlers.pointercancel,true);
-      mapEl.addEventListener('touchstart',state.handlers.touchstart,{capture:true,passive:true});
+      mapEl.addEventListener('touchstart',state.handlers.touchstart,{capture:true,passive:false});
+      window.addEventListener('touchmove',state.handlers.touchmove,{capture:true,passive:false});
       window.addEventListener('touchend',state.handlers.touchend,{capture:true,passive:true});
       window.addEventListener('touchcancel',state.handlers.touchcancel,{capture:true,passive:true});
       window.addEventListener('blur',state.handlers.blur,true);window.addEventListener('focus',state.handlers.focus,true);
       window.addEventListener('pagehide',state.handlers.pagehide,true);window.addEventListener('pageshow',state.handlers.pageshow,true);
       document.addEventListener('visibilitychange',state.handlers.visibility,true);
+      this._map.on?.('zoom',state.handlers.mapZoom);
     },
 
     _resumeMapGestureRecovery() {
@@ -591,10 +697,11 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       if(handlers){
         mapEl?.removeEventListener('pointerdown',handlers.pointerdown,true);mapEl?.removeEventListener('pointermove',handlers.pointermove,true);
         window.removeEventListener('pointerup',handlers.pointerend,true);window.removeEventListener('pointercancel',handlers.pointercancel,true);
-        mapEl?.removeEventListener('touchstart',handlers.touchstart,true);window.removeEventListener('touchend',handlers.touchend,true);
+        mapEl?.removeEventListener('touchstart',handlers.touchstart,true);window.removeEventListener('touchmove',handlers.touchmove,true);window.removeEventListener('touchend',handlers.touchend,true);
         window.removeEventListener('touchcancel',handlers.touchcancel,true);window.removeEventListener('blur',handlers.blur,true);
         window.removeEventListener('focus',handlers.focus,true);window.removeEventListener('pagehide',handlers.pagehide,true);
         window.removeEventListener('pageshow',handlers.pageshow,true);document.removeEventListener('visibilitychange',handlers.visibility,true);
+        this._map?.off?.('zoom',handlers.mapZoom);
       }
       state.handlers=null;state.pointers.clear();state.touchIds.clear();
     },

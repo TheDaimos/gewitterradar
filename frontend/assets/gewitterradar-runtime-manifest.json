@@ -7,7 +7,7 @@
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.76"
+      "version": "1.2.77"
     },
     {
       "id": "core.base-context",
@@ -83,7 +83,7 @@
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.4"
+      "version": "1.0.5"
     },
     {
       "id": "map.strikes-warnings",

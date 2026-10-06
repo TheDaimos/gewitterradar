@@ -43,7 +43,7 @@ try {
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
-  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41108r2');
+  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41108r3');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
   const clustersRecent = await gewitterradarImport('./modules/map/clusters-recent.js');
   const render = await gewitterradarImport('./modules/ui/render.js');
