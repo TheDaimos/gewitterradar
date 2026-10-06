@@ -32,8 +32,8 @@ assert.equal(runtime.modules.filter(x=>x.id==='weather.consumer-client').length,
 assert.equal(build.includes('BUILD_VERSION = "4.11.08"'),true);
 assert.equal(runtime.modules.filter(x=>x.id==='core.update-watch').length,1);
 assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.version,'1.3.1');
-assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.0.3');
-assert.match(entry,/modules\/weather\/layer-menu\.js','41108r12'/);
+assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.1.0');
+assert.match(entry,/modules\/weather\/layer-menu\.js','41108r13'/);
 assert.equal(runtime.modules.find(x=>x.id==='fullscreen.map-display')?.version,'1.0.32');
 assert.equal(runtime.modules.find(x=>x.id==='location.radii-map')?.version,'1.0.4');
 assert.equal(runtime.modules.find(x=>x.id==='core.card-lifecycle')?.version,'1.0.4');

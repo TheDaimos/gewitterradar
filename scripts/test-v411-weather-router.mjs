@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory} from '../frontend/modules/weather/layer-menu.js';
 
 const calls=[];
 const mock=async request=>{
@@ -57,8 +57,31 @@ assert.deepEqual(layerCatalog.categories.map(x=>x.id),['weather','space'],'Categ
 assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'precipitation','Existing precipitation renderer must be reused');
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}}),true,'Explicit visual image sequences are map-suitable');
+const biologicalFixture=[
+  {id:'biological_hazards.occurrence.false_morel.density',domain:'biological_hazards',name:'GBIF · Vorkommensdichte · Frühjahrs-Giftlorchel',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['global'],phenomena:['toxic_fungus','toxic'],family:'biological_occurrence_density'},
+  {id:'biological_hazards.occurrence.cheetah.density',domain:'biological_hazards',name:'GBIF · Vorkommensdichte · Gepard',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['global'],phenomena:['wildlife','predator'],family:'biological_occurrence_density'},
+  {id:'biological_hazards.occurrence.elapidae.density',domain:'biological_hazards',name:'GBIF · Vorkommensdichte · Giftnattern (Elapidae)',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['global'],phenomena:['wildlife','snake','venomous'],family:'biological_occurrence_density'},
+];
+const hierarchyCatalog=buildWeatherLayerCatalog([
+  ...biologicalFixture,
+  {id:'natural_hazards.flood.warning',domain:'natural_hazards',name:'Hochwasserwarnungen',enabled:true,available:true,resource_types:['hazard_feed'],spatial_contexts:['bbox'],phenomena:[],family:'flood'},
+  {id:'natural_hazards.tsunami.warnings',domain:'natural_hazards',name:'Tsunamiwarnungen',enabled:true,available:true,resource_types:['hazard_feed'],spatial_contexts:['bbox'],phenomena:[],family:'tsunami'},
+]);
+const biologicalCategory=hierarchyCatalog.categories.find(x=>x.id==='biological_hazards');
+const naturalCategory=hierarchyCatalog.categories.find(x=>x.id==='natural_hazards');
+assert.equal(biologicalCategory?.grouped,true,'Large biological catalog must be split into subcategories');
+assert.deepEqual(biologicalCategory?.groups.map(x=>x.id),['predators','venomous_snakes','toxic_fungi'],'Biological grouping must follow public phenomena');
+assert.deepEqual(naturalCategory?.groups.map(x=>x.id),['flood','tsunami'],'Natural-hazard grouping must follow public families');
+assert.equal(weatherLayerSubcategory(biologicalFixture[0]),'toxic_fungi');
+assert.equal(weatherLayerSubcategory(biologicalFixture[1]),'predators');
+assert.equal(weatherLayerSubcategory(biologicalFixture[2]),'venomous_snakes');
+assert.deepEqual(
+  formatWeatherLayerCapabilityLabel(biologicalFixture[0]),
+  {primary:'Frühjahrs-Giftlorchel',secondary:'Vorkommensdichte · GBIF',full:'Frühjahrs-Giftlorchel · Vorkommensdichte · GBIF'},
+  'Provider-led capability names must be reordered for human scanning'
+);
 const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
-for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"']){
+for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"']){
   assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
 }
-console.log('PASS: WeatherRouter Consumer V1 plus provider-neutral Layer Hub catalog, map suitability, precipitation renderer reuse and stable scrollable menu.');
+console.log('PASS: WeatherRouter Consumer V1 plus hierarchical Layer Hub catalog, human-first capability labels, map suitability, precipitation renderer reuse and stable scrollable menu.');
