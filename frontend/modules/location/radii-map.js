@@ -489,13 +489,15 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       return count;
     },
 
-    _hardResetMapGestureHandlers(reason,{invalidate=true,blockUntilPrimaryUp=true,anomaly=true}={}) {
+    _hardResetMapGestureHandlers(reason,{invalidate=true,blockUntilPrimaryUp=true,anomaly=true,forceEnableConfigured=false}={}) {
       const state=this._mapGestureRecovery,map=this._map;
       if(!state||!map||state.hardResetting)return false;
       state.hardResetting=true;
       const touchZoom=map.touchZoom,dragging=map.dragging;
       const touchWasEnabled=!!touchZoom?.enabled?.();
       const dragWasEnabled=!!dragging?.enabled?.();
+      const touchShouldEnable=forceEnableConfigured?map.options?.touchZoom!==false:touchWasEnabled;
+      const dragShouldEnable=forceEnableConfigured?map.options?.dragging!==false:dragWasEnabled;
       const now=Date.now();
       if(anomaly){
         state.anomalyCount=(state.anomalyCount||0)+1;
@@ -517,8 +519,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           }
         }catch(_error){}
         try{map.stop?.();}catch(_error){}
-        try{if(dragWasEnabled)dragging?.enable?.();}catch(_error){}
-        try{if(touchWasEnabled)touchZoom?.enable?.();}catch(_error){}
+        try{if(dragShouldEnable)dragging?.enable?.();}catch(_error){}
+        try{if(touchShouldEnable)touchZoom?.enable?.();}catch(_error){}
         state.blockUntilPrimaryUp=!!blockUntilPrimaryUp;
         if(anomaly&&(!state.lastWarnAt||now-state.lastWarnAt>5000)){
           state.lastWarnAt=now;
@@ -672,12 +674,10 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(stamp-state.lastLifecycleResetAt<180)return;
         state.lastLifecycleResetAt=stamp;
         state.blockUntilPrimaryUp=false;
-        state.pointers.clear();
-        state.touchIds.clear();
         state.lastReportedTouches=null;
         state.lastMultiPointerAt=0;
         state.lastSurfaceMoveAt=0;
-        this._hardResetMapGestureHandlers(reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false});
+        this._hardResetMapGestureHandlers(reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
       };
       state.handlers.blur=()=>suspendLifecycle('window-blur');
       state.handlers.pagehide=()=>suspendLifecycle('pagehide');
