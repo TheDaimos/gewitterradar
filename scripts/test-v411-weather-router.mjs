@@ -83,9 +83,11 @@ assert.deepEqual(
   'Provider-led capability names must be reordered for human scanning'
 );
 const displayMenuSource=await readFile(new URL('../frontend/modules/weather/display-menu.js',import.meta.url),'utf8');
-for(const marker of ['id:"weather.display-menu"','version:"0.1.2"','data-weather-display-eye-placeholder','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
+for(const marker of ['id:"weather.display-menu"','version:"0.2.0"','data-weather-display-eye-placeholder','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
+const legendOverlaySource=await readFile(new URL('../frontend/modules/weather/legend-overlay.js',import.meta.url),'utf8');
+for(const marker of ['id:"weather.legend-overlay"','version:"0.1.0"','_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','data-weather-legend-hide','strict-origin-when-cross-origin'])assert.ok(legendOverlaySource.includes(marker),'WeatherRouter legend overlay contract missing: '+marker);
 const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
 for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start']){
   assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
 }
-console.log('PASS: WeatherRouter Consumer V1, missing/offline distinction, hierarchical Layer Hub and WR display-menu foundation.');
+console.log('PASS: WeatherRouter Consumer V1, missing/offline distinction, hierarchical Layer Hub, WR display-menu and generic legend overlay.');
