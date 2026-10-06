@@ -38,6 +38,8 @@ assert.equal(unavailable.status,'unavailable');
 const missing=createWeatherRouterClient(async()=>{throw Error('unknown_command')});
 assert.equal((await missing.discover()).present,false);
 assert.equal((await missing.resolve(WEATHER_ROUTER_CAPABILITIES.lightningEvents,context)).status,'unavailable');
+const offline=createWeatherRouterClient(async()=>{throw Error('connection_lost')});
+const offlineState=await offline.discover();assert.equal(offlineState.present,true);assert.equal(offlineState.ready,false);assert.equal(offlineState.reason,'discovery_unreachable');
 const unsupported=createWeatherRouterClient(async()=>({schema:'weather_router.consumer.discovery.v1',contract:{name:'weather_router.consumer',supported_versions:[2]},router:{ready:true,enabled:true},domains:[]}));
 assert.equal((await unsupported.discover()).compatible,false);
 assert.equal((await unsupported.resolve(WEATHER_ROUTER_CAPABILITIES.lightningEvents,context)).status,'unavailable');
@@ -80,8 +82,10 @@ assert.deepEqual(
   {primary:'Frühjahrs-Giftlorchel',secondary:'Vorkommensdichte · GBIF',full:'Frühjahrs-Giftlorchel · Vorkommensdichte · GBIF'},
   'Provider-led capability names must be reordered for human scanning'
 );
+const displayMenuSource=await readFile(new URL('../frontend/modules/weather/display-menu.js',import.meta.url),'utf8');
+for(const marker of ['id:"weather.display-menu"','version:"0.1.0"','data-weather-display-eye-placeholder','_weatherDisplayBindPanelDrag','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
 const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
 for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start']){
   assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
 }
-console.log('PASS: WeatherRouter Consumer V1 plus hierarchical Layer Hub catalog, human-first capability labels, map suitability, precipitation renderer reuse and stable scrollable menu.');
+console.log('PASS: WeatherRouter Consumer V1, missing/offline distinction, hierarchical Layer Hub and WR display-menu foundation.');
