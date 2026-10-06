@@ -969,4 +969,47 @@ Der Standard bleibt in dieser ersten Implementierung **Präzise**, weil dies dem
 
 ---
 
+## 31. Umsetzungsfortschritt V4.11.09 DEV – Drag-/Status-Härtung
+
+Stand: **2026-10-06**
+
+Die erste WR-Vision-Implementierung wurde nach der Grundintegration technisch nachgehärtet.
+
+### WeatherRouter-Status
+
+Die Darstellungssteuerung unterscheidet jetzt intern zusätzlich einen inkompatiblen Consumer-Vertrag von einem nur vorübergehend nicht bereiten WeatherRouter:
+
+- nicht installiert
+- Consumer API vorhanden, aber inkompatibel
+- vorhanden, derzeit nicht bereit / offline / deaktiviert / Verbindung vorübergehend nicht erreichbar
+- bereit, aber noch keine in Gewitterradar implementierte Darstellungsfähigkeit
+- bereit und mindestens eine implementierte Darstellungsfähigkeit verfügbar
+
+Damit wird ein inkompatibler Consumer-Vertrag nicht mehr irreführend als reine Offline-Situation bezeichnet.
+
+### Drag-Lebenszyklus
+
+Der Pointer-Drag des schwebenden Darstellungsmenüs bleibt weiterhin ausschließlich auf die Griffzone beschränkt.
+
+Zusätzlich wird ein aktiver Drag jetzt auch dann sicher beendet, wenn ein normaler `pointerup` nicht mehr eintrifft, insbesondere bei:
+
+- `lostpointercapture`
+- Fenster-/App-Fokusverlust
+- `pagehide`
+- `visibilitychange`
+
+Es wurden weiterhin **keine globalen `touchmove`-Listener** ergänzt. Die vorhandene Leaflet-/Android-Gesten-Selbstheilung bleibt unangetastet.
+
+Modulstand:
+
+- `weather.display-menu` **0.1.2**
+- `core.manifest` **1.2.80**
+- Modulsatz **E411-09A2**
+- gezielter Display-Menu-Cache-Buster **41109r2**
+- Produktstand bleibt **V4.11.09 DEV**
+
+Die Entwurf-Nr.-4-Augen-PNGs sind weiterhin ausstehend. Bis zu deren Einspielung werden ausschließlich die klar als Platzhalter markierten Inline-SVG-Dummys verwendet.
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
