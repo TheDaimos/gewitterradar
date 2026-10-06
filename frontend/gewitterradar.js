@@ -51,7 +51,7 @@ try {
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','41108r10');
-  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41108r12');
+  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41108r13');
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   CARD_VERSION=APPLICATION_META.version;
