@@ -926,7 +926,7 @@ Die Umsetzung wurde am 2026-10-06 auf `feature/v4.11-development` begonnen.
 
 Die Visualisierungssteuerung erhält bewusst ein eigenes Modul:
 
-- `weather.display-menu` **0.1.0**
+- `weather.display-menu` **0.1.1**
 - Datei: `frontend/modules/weather/display-menu.js`
 - persistenter gemeinsamer Zustand unter `gewitterradar:weather-display:v1`
 
