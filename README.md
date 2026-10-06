@@ -1,41 +1,90 @@
 <div align="center">
 
+<a href="https://thedaimos.github.io/gewitterradar/">
+  <img
+    src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/gewitterradar-hero-forest-storm-master-v1.png"
+    width="100%"
+    alt="Gewitterradar – Gewitter über dem alpinen Abendtal">
+</a>
+
+<br>
+
 <img
-  src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/custom_components/gewitterradar/brand/icon@2x.png"
-  width="170"
+  src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/gewitterradar-brand-icon.png"
+  width="150"
   alt="Gewitterradar Logo">
 
 # Gewitterradar
 
 ### Live-Blitz- und Gewitterdarstellung für Home Assistant
 
-**Native Home-Assistant-Integration · Dashboard-Karte · weltweite Referenzorte · 120-Minuten-Verlauf**
+**Eine eigenständige Kartenoberfläche für Blitzaktivität, Gewitterlage, Wetterebenen und weltweite Beobachtung – direkt in Home Assistant.**
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.10-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
+![WeatherRouter](https://img.shields.io/badge/WeatherRouter-Integration-7B3FF2)
 ![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
 
-**[⚡ Native Integration installieren](#1-native-gewitterradar-integration)** ·
-**[🌩️ Funktionen](#was-gewitterradar-bereitstellt)** ·
-**[📖 HTML-Handbuch](https://thedaimos.github.io/gewitterradar/)**
+**[🌩️ Vollständige Projektseite](https://thedaimos.github.io/gewitterradar/)** ·
+**[⚡ Installation](https://github.com/TheDaimos/gewitterradar/blob/main/docs/INSTALLATION.md)** ·
+**[📖 Dokumentation](https://thedaimos.github.io/gewitterradar/)**
 
 </div>
 
 > [!IMPORTANT]
-> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**  
-> Sie stellt eigene Home-Assistant-Entitäten für die Einstellungen bereit und benötigt kein YAML-Helferpaket. Die separate Dashboard-/Package-Variante bleibt weiterhin vollständig unterstützt.
+> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**
+> Nach der Installation kann Gewitterradar direkt als eigene Oberfläche in der Home-Assistant-Seitenleiste aktiviert werden. Die separate Dashboard-/Package-Variante bleibt weiterhin unterstützt.
 
-<p align="center">
-  <img
-    src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/frontend/assets/gewitterradar-about-hero-v2.webp"
-    width="900"
-    alt="Gewitterradar – Home Assistant">
-</p>
+## Gewitterradar auf einen Blick
 
-**Vollständige Installation:** [docs/INSTALLATION.md](docs/INSTALLATION.md) ·
-**Hilfe & Überblick:** [docs/gewitterradar-overview.html](https://thedaimos.github.io/gewitterradar/)
+<table>
+<tr>
+<td width="50%" valign="top">
+<a href="https://thedaimos.github.io/gewitterradar/">
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/map-radii-clusters.webp" width="100%" alt="Gewitterradar Karte mit Radien und Clustern">
+</a>
+<br><strong>Live-Karte & Cluster</strong><br>
+Blitze, Beobachtungsradien, Gewitterbereiche und Cluster-Navigation auf einer gemeinsamen Kartenoberfläche.
+</td>
+<td width="50%" valign="top">
+<a href="https://thedaimos.github.io/gewitterradar/">
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/world-map-clusters.webp" width="100%" alt="Gewitterradar weltweite Kartenansicht">
+</a>
+<br><strong>Weltweite Beobachtung</strong><br>
+Referenzorte und direkte Koordinaten ermöglichen den Wechsel von der lokalen Gewitterlage bis zur globalen Übersicht.
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="https://thedaimos.github.io/gewitterradar/">
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/compass.webp" width="100%" alt="Gewitterradar Kompass">
+</a>
+<br><strong>Kompass & Trend</strong><br>
+Richtung, Distanz und Aktivität werden in einer für die schnelle Lageeinschätzung optimierten Darstellung zusammengeführt.
+</td>
+<td width="50%" valign="top">
+<a href="https://thedaimos.github.io/gewitterradar/">
+<img src="https://raw.githubusercontent.com/TheDaimos/gewitterradar/main/docs/assets/history-trend.webp" width="100%" alt="Gewitterradar Verlauf und Trend">
+</a>
+<br><strong>120-Minuten-Verlauf</strong><br>
+Die zeitliche Entwicklung der Blitzaktivität bleibt direkt in Gewitterradar nachvollziehbar.
+</td>
+</tr>
+</table>
+
+### Mehr als eine Blitzkarte
+
+- **Native Home-Assistant-Integration** mit persistenten Einstellungen und optionalem direkten Seitenleisten-Einstieg.
+- **WeatherRouter-Anbindung** für zusätzliche Wetterebenen und Fachbereiche direkt im Layer-Menü.
+- **Standard, Groß und Vollbild** mit derselben Gewitterradar-Oberfläche.
+- **Weltweite Standortsuche**, gespeicherte Orte und direkte Koordinateneingabe.
+- **Kompass, Trend-Medaillon, Cluster-Navigation und 120-Minuten-Historie**.
+- **19 Sprachvarianten** sowie Kilometer-/Meilen-Unterstützung.
+- Gemeinsamer, deterministisch geprüfter Frontend-Code für native Integration und Dashboard-Auslieferung.
+
+> **Die vollständige visuelle Produktvorstellung, Galerie und Installationshilfe befindet sich auf der
+> [Gewitterradar-Projektseite](https://thedaimos.github.io/gewitterradar/).**
 
 ---
 
