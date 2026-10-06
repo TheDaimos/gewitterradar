@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41108r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41109r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.78",
+    "version": "1.2.79",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.18",
+    "version": "1.1.19",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -315,7 +315,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
     "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus", "Diagnose-Trace", "Weather Engine Diagnose"],
@@ -323,7 +323,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -338,7 +338,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -355,6 +355,23 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/weather/layer-menu.js"
   },
   {
+    "id": "weather.display-menu",
+    "version": "0.1.1",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter-Darstellung",
+    "subfunctions": [
+      "gemeinsamer Darstellungszustand",
+      "Offline-Teaser",
+      "Augen-Bedienelement",
+      "schwebendes Kartenmenü",
+      "Pointer-Drag",
+      "Positionsspeicherung",
+      "Niederschlagsstile",
+      "Layer-Schnellzugriff"
+    ],
+    "file": "modules/weather/display-menu.js"
+  },
+  {
     "id": "history.chart",
     "version": "1.0.1",
     "group": "Verlauf",
@@ -366,4 +383,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.78",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.79",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
