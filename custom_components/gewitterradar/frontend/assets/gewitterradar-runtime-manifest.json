@@ -3,7 +3,7 @@
   "productVersion": "4.11.09",
   "build": "V4.11.09-DEV-2026-10-06",
   "runtimeRevision": "41109r1",
-  "moduleSetId": "E411-09A1",
+  "moduleSetId": "E411-09A2",
   "modules": [
     {
       "id": "core.manifest",
@@ -111,7 +111,7 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "id": "history.chart",
