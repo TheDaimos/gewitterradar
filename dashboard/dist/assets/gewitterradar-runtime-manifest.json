@@ -7,7 +7,7 @@
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.79"
+      "version": "1.2.80"
     },
     {
       "id": "core.base-context",
