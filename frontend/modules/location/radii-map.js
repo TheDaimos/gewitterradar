@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -489,7 +489,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       return count;
     },
 
-    _hardResetMapGestureHandlers(reason,{invalidate=true}={}) {
+    _hardResetMapGestureHandlers(reason,{invalidate=true,blockUntilPrimaryUp=true,anomaly=true}={}) {
       const state=this._mapGestureRecovery,map=this._map;
       if(!state||!map||state.hardResetting)return false;
       state.hardResetting=true;
@@ -497,12 +497,14 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const touchWasEnabled=!!touchZoom?.enabled?.();
       const dragWasEnabled=!!dragging?.enabled?.();
       const now=Date.now();
-      state.anomalyCount=(state.anomalyCount||0)+1;
-      state.lastAnomaly={reason:String(reason||'unknown'),at:now,pointers:this._mapGestureSurfacePointerCount(state),touches:state.lastReportedTouches??null};
-      this._mapGestureRecoveryHistory={
-        anomalyCount:(this._mapGestureRecoveryHistory?.anomalyCount||0)+1,
-        lastAnomaly:state.lastAnomaly
-      };
+      if(anomaly){
+        state.anomalyCount=(state.anomalyCount||0)+1;
+        state.lastAnomaly={reason:String(reason||'unknown'),at:now,pointers:this._mapGestureSurfacePointerCount(state),touches:state.lastReportedTouches??null};
+        this._mapGestureRecoveryHistory={
+          anomalyCount:(this._mapGestureRecoveryHistory?.anomalyCount||0)+1,
+          lastAnomaly:state.lastAnomaly
+        };
+      }
       try{
         this._recoverMapGestureState(reason,{force:true});
         try{touchZoom?.disable?.();}catch(_error){}
@@ -517,8 +519,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         try{map.stop?.();}catch(_error){}
         try{if(dragWasEnabled)dragging?.enable?.();}catch(_error){}
         try{if(touchWasEnabled)touchZoom?.enable?.();}catch(_error){}
-        state.blockUntilPrimaryUp=true;
-        if(!state.lastWarnAt||now-state.lastWarnAt>5000){
+        state.blockUntilPrimaryUp=!!blockUntilPrimaryUp;
+        if(anomaly&&(!state.lastWarnAt||now-state.lastWarnAt>5000)){
           state.lastWarnAt=now;
           console.warn('[Gewitterradar] Karten-Gestenstatus automatisch neu initialisiert:',reason,state.lastAnomaly);
         }
@@ -563,7 +565,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
@@ -646,8 +648,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         syncTouches(event);
       };
       state.handlers.touchmove=event=>{
-        if(!mapEl.contains(event?.target)||state.blockUntilPrimaryUp){
-          if(state.blockUntilPrimaryUp&&event?.cancelable)event.preventDefault();
+        if(!mapEl.contains(event?.target))return;
+        if(state.blockUntilPrimaryUp){
+          if(event?.cancelable)event.preventDefault();
           return;
         }
         detectTouchPointerMismatch(event,'move');
@@ -659,11 +662,30 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.synthesizing||state.recovering)return;
         this._recoverMapGestureState('pointercancel',{force:true});
       };
-      state.handlers.blur=()=>this._recoverMapGestureState('window-blur',{force:true});
-      state.handlers.pagehide=()=>this._recoverMapGestureState('pagehide',{force:true});
-      state.handlers.focus=()=>this._recoverMapGestureState('window-focus',{force:true,invalidate:true});
-      state.handlers.pageshow=()=>this._recoverMapGestureState('pageshow',{force:true,invalidate:true});
-      state.handlers.visibility=()=>this._recoverMapGestureState(document.visibilityState==='hidden'?'visibility-hidden':'visibility-visible',{force:true,invalidate:document.visibilityState==='visible'});
+      const suspendLifecycle=reason=>{
+        state.blockUntilPrimaryUp=false;
+        this._recoverMapGestureState(reason,{force:true});
+      };
+      const resumeLifecycle=reason=>{
+        if(document.visibilityState==='hidden')return;
+        const stamp=Date.now();
+        if(stamp-state.lastLifecycleResetAt<180)return;
+        state.lastLifecycleResetAt=stamp;
+        state.blockUntilPrimaryUp=false;
+        state.pointers.clear();
+        state.touchIds.clear();
+        state.lastReportedTouches=null;
+        state.lastMultiPointerAt=0;
+        state.lastSurfaceMoveAt=0;
+        this._hardResetMapGestureHandlers(reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false});
+      };
+      state.handlers.blur=()=>suspendLifecycle('window-blur');
+      state.handlers.pagehide=()=>suspendLifecycle('pagehide');
+      state.handlers.focus=()=>resumeLifecycle('window-focus-resume');
+      state.handlers.pageshow=()=>resumeLifecycle('pageshow-resume');
+      state.handlers.visibility=()=>document.visibilityState==='hidden'
+        ?suspendLifecycle('visibility-hidden')
+        :resumeLifecycle('visibility-visible-resume');
       state.handlers.mapZoom=()=>{
         if(state.recovering||state.hardResetting||state.blockUntilPrimaryUp)return;
         const stamp=now(),surfaceCount=this._mapGestureSurfacePointerCount(state);
@@ -676,7 +698,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       window.addEventListener('pointerup',state.handlers.pointerend,true);
       window.addEventListener('pointercancel',state.handlers.pointercancel,true);
       mapEl.addEventListener('touchstart',state.handlers.touchstart,{capture:true,passive:false});
-      window.addEventListener('touchmove',state.handlers.touchmove,{capture:true,passive:false});
+      mapEl.addEventListener('touchmove',state.handlers.touchmove,{capture:true,passive:false});
       window.addEventListener('touchend',state.handlers.touchend,{capture:true,passive:true});
       window.addEventListener('touchcancel',state.handlers.touchcancel,{capture:true,passive:true});
       window.addEventListener('blur',state.handlers.blur,true);window.addEventListener('focus',state.handlers.focus,true);
@@ -697,7 +719,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       if(handlers){
         mapEl?.removeEventListener('pointerdown',handlers.pointerdown,true);mapEl?.removeEventListener('pointermove',handlers.pointermove,true);
         window.removeEventListener('pointerup',handlers.pointerend,true);window.removeEventListener('pointercancel',handlers.pointercancel,true);
-        mapEl?.removeEventListener('touchstart',handlers.touchstart,true);window.removeEventListener('touchmove',handlers.touchmove,true);window.removeEventListener('touchend',handlers.touchend,true);
+        mapEl?.removeEventListener('touchstart',handlers.touchstart,true);mapEl?.removeEventListener('touchmove',handlers.touchmove,true);window.removeEventListener('touchend',handlers.touchend,true);
         window.removeEventListener('touchcancel',handlers.touchcancel,true);window.removeEventListener('blur',handlers.blur,true);
         window.removeEventListener('focus',handlers.focus,true);window.removeEventListener('pagehide',handlers.pagehide,true);
         window.removeEventListener('pageshow',handlers.pageshow,true);document.removeEventListener('visibilitychange',handlers.visibility,true);
