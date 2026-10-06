@@ -9,7 +9,7 @@ Erste umgesetzte Stufe der in `docs/WR-Vison.md` festgelegten WeatherRouter-Visu
 
 ## Neu
 
-- eigenes Modul `weather.display-menu` 0.1.0
+- eigenes Modul `weather.display-menu` 0.1.1
 - persistenter gemeinsamer Darstellungszustand für Einstellungen, Kartenmenü und Schnellzugriff
 - Unterscheidung WeatherRouter „nicht installiert“ und Discovery/Verbindung derzeit nicht erreichbar
 - Einstellungen mit Offline-Teaser und Status
