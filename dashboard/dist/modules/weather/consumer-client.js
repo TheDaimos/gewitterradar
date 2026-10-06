@@ -1,5 +1,5 @@
-import { defineModule } from '../core/runtime.js?v=41108r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.0',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+import { defineModule } from '../core/runtime.js?v=41109r1';
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.1',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -19,6 +19,13 @@ export const WEATHER_ROUTER_RESOURCE_TYPES=Object.freeze([
 const validId=id=>typeof id==='string'&&/^[a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+$/.test(id);
 const numberBetween=(n,min,max)=>typeof n==='number'&&Number.isFinite(n)&&n>=min&&n<=max;
 const absent=(code,message,retryable=false)=>({status:'unavailable',unavailable:{code,message,retryable}});
+const discoveryFailure=error=>{
+  const code=String(error?.code??error?.error?.code??error?.data?.code??'').trim().toLowerCase();
+  const message=String(error?.message??error??'').trim().toLowerCase();
+  const missing=code==='unknown_command'||code==='not_found'||message.includes('unknown_command')||message.includes('unknown command')||message.includes('command not found');
+  if(missing)return {present:false,compatible:false,ready:false,router:null,domains:[],reason:'integration_not_installed',error_code:code||'unknown_command'};
+  return {present:true,compatible:true,ready:false,router:null,domains:[],reason:'discovery_unreachable',error_code:code||'transport_error'};
+};
 export function validateWeatherContext(context){
   if(!context||typeof context!=='object')throw new TypeError('Explicit spatial context required');
   if(context.type==='global'&&Object.keys(context).length===1)return {...context};
@@ -64,7 +71,7 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
         return discovery;
       }catch(error){
         // A missing optional integration never breaks Gewitterradar.
-        discovery={present:false,compatible:false,ready:false,router:null,domains:[],reason:'discovery_failed'};
+        discovery=discoveryFailure(error);
         return discovery;
       }finally{inFlightDiscovery=null;}
     })();
