@@ -83,7 +83,7 @@ assert.deepEqual(
   'Provider-led capability names must be reordered for human scanning'
 );
 const displayMenuSource=await readFile(new URL('../frontend/modules/weather/display-menu.js',import.meta.url),'utf8');
-for(const marker of ['id:"weather.display-menu"','version:"0.1.1"','data-weather-display-eye-placeholder','_weatherDisplayBindPanelDrag','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
+for(const marker of ['id:"weather.display-menu"','version:"0.1.2"','data-weather-display-eye-placeholder','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
 const layerMenuSource=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
 for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:contain','scrollbar-gutter:stable','panel.addEventListener("wheel"','panel.addEventListener("touchmove"','weather-layer-back-slot','data-weather-layer-action="subcategory"','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start']){
   assert.ok(layerMenuSource.includes(marker),'WeatherRouter Layer Hub must keep stable DOM and own its scrolling: '+marker);
