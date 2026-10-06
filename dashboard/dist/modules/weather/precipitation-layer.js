@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41108r1";
+import { defineModule } from "../core/runtime.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.1",
+  version:"1.3.2",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Legende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -223,6 +223,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         cached.lastUsed=Date.now();
         const img=cached.img;
         img.onload=null;img.onerror=null;
+        this._weatherDisplayApplyRasterStyle?.("precipitation",img);
         queueMicrotask(()=>done?.(null,img));
         this._weatherRadarUpdatePreloadControls();
         return img;
@@ -232,6 +233,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       img.setAttribute("role","presentation");
       img.referrerPolicy="strict-origin-when-cross-origin";
       img.style.width="100%";img.style.height="100%";
+      this._weatherDisplayApplyRasterStyle?.("precipitation",img);
       img.onload=()=>done?.(null,img);
       img.onerror=()=>done?.(new Error("Raster tile failed"),img);
       img.src=url;
