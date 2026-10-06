@@ -10,10 +10,11 @@ export const MODULE_META=Object.freeze({
 });
 
 const safeText=value=>typeof value==="string"&&value.trim()?value.trim():"";
+const safeValueText=value=>typeof value==="number"&&Number.isFinite(value)?String(value):safeText(value);
 const safeEntries=value=>Array.isArray(value)?value.map(entry=>({
   label:safeText(entry?.label),
   color:safeText(entry?.color),
-  value:safeText(entry?.value)
+  value:safeValueText(entry?.value)
 })).filter(entry=>entry.label||entry.value):[];
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 
