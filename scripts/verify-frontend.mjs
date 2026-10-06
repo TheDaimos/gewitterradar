@@ -153,16 +153,20 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "location.radii-map"',
-  '"version": "1.0.5"',
+  '"version": "1.0.6"',
   '_hardResetMapGestureHandlers',
   'rogue-single-pointer-zoom',
   'touch-pointer-mismatch',
   'leaflet-stale-pointer-cache',
+  "mapEl.addEventListener('touchmove'",
+  'visibility-visible-resume',
+  'blockUntilPrimaryUp:false,anomaly:false',
   'zoomControl:true',
   'this._syncMapZoomTooltips?.();'
 ]){
   if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
 }
+if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map gesture recovery must never globally capture touchmove outside the Leaflet surface');
 {
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
