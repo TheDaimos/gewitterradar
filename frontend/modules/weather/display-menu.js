@@ -212,7 +212,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       ".weather-display-panel-head{min-height:46px;padding:5px 6px 5px 9px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;background:linear-gradient(90deg,rgba(177,128,36,.10),rgba(112,34,92,.08))}.weather-display-panel.dragging .weather-display-panel-head{cursor:grabbing}.weather-display-panel-title{font-size:11px;font-weight:860;color:#f1d38a}.weather-display-panel-sub{margin-top:2px;font-size:7.8px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-display-minimize{appearance:none;width:36px;height:34px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025);color:#d9c999;font:900 18px/1 inherit;cursor:pointer;touch-action:manipulation}",
       ".weather-display-panel-body{display:grid;gap:8px;padding:9px}.weather-display-card{padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.024)}.weather-display-card-title{font-size:10px;font-weight:840;color:#f1d48c;margin-bottom:6px}.weather-display-card-note{font-size:8px;line-height:1.42;opacity:.64;margin-top:6px}",
       ".weather-layer-display-entry{grid-column:1/-1;border-color:rgba(236,185,91,.27)!important;background:linear-gradient(135deg,rgba(126,86,22,.17),rgba(108,35,92,.12))!important}.weather-layer-display-entry strong{color:#f2d48c!important}",
-      "@media(max-width:720px){.weather-display-panel{width:min(272px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-style-button{min-height:36px}.weather-display-eye-control{width:46px;height:46px;bottom:52px}}"
+      "@media(max-width:720px){.weather-display-panel{width:min(272px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-style-button,.weather-display-legend-button{min-height:36px}.weather-display-eye-control{width:46px;height:46px;bottom:52px}}"
     ].join("");
     this.shadow.append(style);
   },
@@ -274,6 +274,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
         this._weatherDisplayPersist();
         this._weatherDisplaySyncUi();
         this._weatherDisplayRefreshRenderedLayers();
+        this._weatherLegendSyncUi?.();
       });
       block.querySelector("[data-weather-display-refresh]")?.addEventListener("click",()=>this._weatherDisplayProbe({refresh:true}));
     }
