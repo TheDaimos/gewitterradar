@@ -356,7 +356,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
