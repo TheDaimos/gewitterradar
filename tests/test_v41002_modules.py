@@ -123,7 +123,7 @@ def test_runtime_revision_and_module_set_probe_contract():
   assert "gewitterradarImport('./module-manifest.js','41108r20')" in main
   assert "gewitterradarImport('./modules/fullscreen/map-display.js','41108r10')" in main
   assert "gewitterradarImport('./modules/core/card-lifecycle.js','41108r2')" in main
-  assert "gewitterradarImport('./modules/location/radii-map.js','41108r2')" in main
+  assert "gewitterradarImport('./modules/location/radii-map.js','41108r3')" in main
   assert "gewitterradarImport('./modules/weather/layer-menu.js','41108r16')" in main
   assert "gewitterradarImport('./modules/weather/precipitation-layer.js','41108r10')" in main
   assert "gewitterradarImport('./modules/ui/project-hub.js','41108r20')" in main
