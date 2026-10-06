@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41109r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41110r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.80",
+    "version": "1.2.81",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -323,7 +323,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -331,7 +331,7 @@ export const EXPECTED_MODULES=Object.freeze([
       "Web-Mercator-BBOX",
       "Quelle & Aktualität",
       "Abdeckung",
-      "Legende",
+      "Darstellungslegende",
       "Anfragebegrenzung"
     ],
     "file": "modules/weather/precipitation-layer.js"
@@ -356,7 +356,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -367,9 +367,27 @@ export const EXPECTED_MODULES=Object.freeze([
       "Pointer-Drag",
       "Positionsspeicherung",
       "Niederschlagsstile",
+      "Legendenmodus",
       "Layer-Schnellzugriff"
     ],
     "file": "modules/weather/display-menu.js"
+  },
+  {
+    "id": "weather.legend-overlay",
+    "version": "0.1.0",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter-Darstellungslegende",
+    "subfunctions": [
+      "generisches Legendenmodell",
+      "Auto/Ein/Aus",
+      "WR-Metadaten",
+      "Bildlegenden",
+      "strukturierte Skalen",
+      "Kartenoverlay",
+      "mehrere aktive Legenden",
+      "sichere Kartenposition"
+    ],
+    "file": "modules/weather/legend-overlay.js"
   },
   {
     "id": "history.chart",
@@ -383,4 +401,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.80",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.81",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
