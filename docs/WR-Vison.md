@@ -1283,4 +1283,60 @@ Dadurch können untergeordnete Basiskarten und Kartenebenen wie OpenStreetMap, M
 
 ---
 
+## 36. V4.11.14 DEV – kompakte Legende und Karten-Transparenz
+
+Stand: **2026-10-07**
+
+Der HA-Realtest von V4.11.13 bestätigte, dass der Niederschlagslayer beim Bedienen des Darstellungsmenüs nicht mehr neu aufgebaut wird. Auf Basis der visuellen Abnahme wurden Legende, Karten-Transparenz und das Profil **Weich** weiter verfeinert.
+
+### Kartenlegende
+
+Die WeatherRouter-Kartenlegende ist jetzt kompakter aufgebaut:
+
+- maximale Desktopbreite ca. 430 px statt 620 px
+- Titel, Quelle/Zeit, Einheit und Schließen bilden eine gemeinsame Kopfzeile
+- die eigentliche vom WeatherRouter gelieferte Legendenabbildung liegt darunter und wird deutlich größer dargestellt
+- mehrere aktive Legenden werden weiterhin sauber untereinander gestapelt
+- mobile Breiten werden separat begrenzt
+
+Damit entfällt der bisherige Eindruck einer sehr breiten Leiste mit einer kleinen Legendenabbildung in der Mitte.
+
+### Transparenz direkt im Darstellungsmenü
+
+Der persistente Niederschlags-Transparenzwert kann jetzt zusätzlich direkt im schwebenden Kartenmenü geändert werden.
+
+Der Kartenregler und der Regler in den Einstellungen verwenden dieselbe Zustandsquelle:
+
+- Änderung an einer Stelle wird an der anderen sofort gespiegelt
+- Bereich 0–100 %
+- Schaltfläche **WR** stellt die WeatherRouter-Standarddeckkraft wieder her
+- keine neue WeatherRouter-Anfrage
+- kein Layer-Neuaufbau
+- keine Änderung an Messwerten, Routing oder Warnstatus
+
+### Weich – stärkere Flächendarstellung mit Hotspot-Erhalt
+
+Das Profil **Weich** wurde nochmals stärker von **Ausgewogen** getrennt.
+
+- stärkere Pane-weite Glättung
+- größere Blur-Radien bei Leaflet-Übervergrößerung
+- höhere Sättigung und moderat angehobener Kontrast nach der Glättung
+- starke Niederschlags- und Ereigniskerne bleiben dadurch klarer erkennbar
+- die sichtbare Rasterstruktur soll stärker verschwinden
+
+Die Kachelgeometrie bleibt unverändert und vollständig unter Kontrolle von Leaflet.
+
+### Modulstände
+
+- Produkt: **V4.11.14 DEV**
+- Build: **V4.11.14-DEV-2026-10-07**
+- Runtime: **41114r1**
+- Modulsatz: **E411-14A1**
+- `core.manifest` **1.2.85**
+- `weather.display-menu` **0.3.1**
+- `weather.legend-overlay` **0.1.1**
+- `weather.precipitation-layer` **1.3.4**
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
