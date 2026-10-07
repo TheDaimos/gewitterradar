@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41108r1";
+import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.render",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "group": "Oberfläche",
   "function": "Hauptrendering",
   "subfunctions": [
@@ -478,6 +478,9 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
              <span class="map-legend-group map-legend-radii">
                <span class="legend-item" style="color:${C.blue}"><i class="legend-line"></i>${this._t('map.storm')} <span id="legend-storm-radius">${this._formatRadiusDistance(stormRadius).text}</span></span>
                <span class="legend-item" style="color:${C.danger}"><i class="legend-line"></i>${this._t('map.danger')} <span id="legend-danger-radius">${this._formatRadiusDistance(dangerRadius).text}</span></span>
+             </span>
+             <span class="map-legend-group map-legend-display">
+               <span class="legend-item legend-display-mode" id="legend-weather-display-mode">Darstellung: Auto</span>
              </span>`
           : `<span class="map-legend-group map-legend-primary">
                <span class="legend-item"><i class="legend-dot" style="--legend-color:#F3B51B"></i>${this._t('map.active_under',{minutes:ACTIVE_MINUTES})}</span>
@@ -488,7 +491,11 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
              <span class="map-legend-group map-legend-radii">
                <span class="legend-item" style="color:${C.blue}"><i class="legend-line"></i>${this._t('map.storm')} ${this._formatRadiusDistance(stormRadius).text}</span>
                <span class="legend-item" style="color:${C.danger}"><i class="legend-dot" style="--legend-color:${C.danger}"></i>${this._t('map.danger')} ${this._formatRadiusDistance(dangerRadius).text}</span>
+             </span>
+             <span class="map-legend-group map-legend-display">
+               <span class="legend-item legend-display-mode" id="legend-weather-display-mode">Darstellung: Auto</span>
              </span>`;
+        this._weatherDisplaySyncLegendBadge?.();
       }
 
       const allHistory = [...this._strikes.values()]
