@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41125r1";
+import { defineModule } from "../core/runtime.js?v=41126r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.7",
+  version:"0.4.8",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -171,8 +171,21 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const badge=this.shadow?.getElementById("legend-weather-display-mode");
     if(!badge)return;
     const style=this._weatherDisplayStyle("precipitation");
-    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto");
+    const zoom=Number(this._map?.getZoom?.());
+    const zoomLabel=Number.isFinite(zoom)?(Number.isInteger(zoom)?String(zoom):zoom.toFixed(1)):"–";
+    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
     badge.dataset.weatherDisplayStyle=style;
+    badge.dataset.weatherDisplayZoom=zoomLabel;
+    if(style==="auto"){
+      const tuning=this._weatherDisplayRasterTuning("precipitation");
+      const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
+      badge.title="Auto · Zoom "+zoomLabel+
+        (Number.isFinite(maxNative)?" · native "+maxNative:"")+
+        (Number.isFinite(tuning.overscale)?" · Overzoom "+tuning.overscale.toFixed(2)+"×":"")+
+        (Number.isFinite(tuning.blur)?" · Glättung "+tuning.blur.toFixed(1)+" px":"");
+    }else{
+      badge.title="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
+    }
   },
 
   _weatherDisplayLegendMode(){
@@ -223,9 +236,9 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     // und steigert sie danach deutlich. So werden Zellkanten frueh abgerundet,
     // waehrend stark vergroesserte Quellpixel im Nahzoom praktisch vollstaendig
     // zu einem zusammenhaengenden Wetterfeld verschmelzen.
-    const cloud=smoothstep(-0.65,3.20,relativeZoom);
-    const cloudBlur=clamp(4.0+Math.max(0,overscale-1)*10.0,4.0,220);
-    const blur=lerp(1.10,cloudBlur,cloud);
+    const cloud=smoothstep(-1.80,1.60,relativeZoom);
+    const cloudBlur=clamp(8.0+Math.max(0,overscale-1)*12.0,8.0,220);
+    const blur=lerp(1.05,cloudBlur,cloud);
 
     return {
       blur,
@@ -284,6 +297,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       try{state.zoomMap.off("zoomend",state.zoomHandler);}catch(_error){}
     }
     state.zoomHandler=()=>{
+      this._weatherDisplaySyncLegendBadge();
       if(this._weatherDisplayStyle("precipitation")!=="auto")return;
       this._weatherDisplayRefreshRenderedLayers();
     };
