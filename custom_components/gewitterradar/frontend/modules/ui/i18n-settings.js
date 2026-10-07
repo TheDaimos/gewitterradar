@@ -1995,6 +1995,29 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
   }
 });
 
+const V411_HELP_WEATHER_DISPLAY=Object.freeze({
+  Deutsch:Object.freeze({
+    title:"WeatherRouter · Wetterdarstellung",
+    intro:"Die Darstellungsprofile verändern ausschließlich die optische Aufbereitung der Wetterebene. Wetterdaten, Providerwahl und WeatherRouter-Routing bleiben unverändert.",
+    entries:Object.freeze([
+      Object.freeze({term:"Auto",description:"Komfortmodus mit gleitender Anpassung an die Zoomstufe. In der Fernsicht werden Wetterflächen stärker geglättet; beim Heranzoomen werden Konturen und Übergänge schrittweise klarer. Auto bleibt bewusst weich und geht nicht in die technische Pixelansicht über."}),
+      Object.freeze({term:"Präzise",description:"Zeigt die Rasterstruktur möglichst unverändert und eignet sich für die technisch genaueste Betrachtung."}),
+      Object.freeze({term:"Ausgewogen",description:"Reduziert harte Rasterkanten moderat und behält mehr Struktur als Weich."}),
+      Object.freeze({term:"Weich",description:"Stärker flächige und ruhige Darstellung mit bewusster optischer Glättung."})
+    ])
+  }),
+  English:Object.freeze({
+    title:"WeatherRouter · Weather display",
+    intro:"Display profiles only change the visual treatment of the weather layer. Weather data, provider selection and WeatherRouter routing remain unchanged.",
+    entries:Object.freeze([
+      Object.freeze({term:"Auto",description:"Comfort mode with smooth zoom-dependent adjustment. Weather areas are softened more in the wide view; contours and transitions become gradually clearer while zooming in. Auto deliberately remains visually smooth instead of becoming the technical pixel view."}),
+      Object.freeze({term:"Precise",description:"Keeps the raster structure as unchanged as possible for the most technical view."}),
+      Object.freeze({term:"Balanced",description:"Moderately reduces hard raster edges while retaining more structure than Soft."}),
+      Object.freeze({term:"Soft",description:"Provides a more area-based and calm presentation with deliberate visual smoothing."})
+    ])
+  })
+});
+
 const V411_HELP_WEATHER_REFRESH=Object.freeze({
   Deutsch:Object.freeze({
     title:"WeatherRouter · Wetterinformationen aktualisieren",
@@ -2263,6 +2286,10 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const sections=Array.isArray(help.sections)?[...help.sections]:[];
       if(instruments&&!sections.some((section)=>section?.key==='instruments-v410')){
         sections.push({key:'instruments-v410',title:instruments.title,paragraphs:[instruments.intro],entries:instruments.entries});
+      }
+      const weatherDisplay=V411_HELP_WEATHER_DISPLAY[language]||V411_HELP_WEATHER_DISPLAY[LANGUAGE_DEFAULT]||V411_HELP_WEATHER_DISPLAY.English;
+      if(weatherDisplay&&!sections.some((section)=>section?.key==='weather-display-v411')){
+        sections.push({key:'weather-display-v411',title:weatherDisplay.title,paragraphs:[weatherDisplay.intro],entries:weatherDisplay.entries});
       }
       if(weatherRefresh&&!sections.some((section)=>section?.key==='weather-refresh-v411')){
         sections.push({key:'weather-refresh-v411',title:weatherRefresh.title,paragraphs:[weatherRefresh.intro],entries:weatherRefresh.entries});
