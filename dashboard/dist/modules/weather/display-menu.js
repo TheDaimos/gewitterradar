@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41121r1";
+import { defineModule } from "../core/runtime.js?v=41122r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.3",
+  version:"0.4.4",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -106,6 +106,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       generation:0,
       drag:null,
       resizeHandler:null,
+      zoomHandler:null,
+      zoomMap:null,
       lifecycleAbortHandler:null,
       mounted:false
     };
@@ -209,11 +211,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     // Nahsicht = zunehmend weich/flächig, weil das Raster beim Hineinzoomen stärker stört.
     // Präzise bleibt jederzeit als eigener technischer Modus verfügbar.
     const t=smoothstep(4.5,11.5,safeZoom);
+    const near=smoothstep(7.0,12.5,safeZoom);
     return {
-      blur:lerp(1.35,5.6,t),
-      saturate:lerp(1.07,1.18,t),
-      contrast:lerp(1.13,1.32,t),
-      brightness:lerp(1.0,.99,t)
+      blur:lerp(1.25,7.4,t),
+      saturate:lerp(1.06,1.20,t),
+      contrast:lerp(1.12,1.38,near),
+      brightness:lerp(1.0,.985,near)
     };
   },
 
@@ -246,6 +249,22 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     node.style.imageRendering="auto";
     node.style.filter="none";
     node.style.willChange="auto";
+  },
+
+  _weatherDisplayEnsureZoomSync(){
+    const state=this._weatherDisplayState();
+    const map=this._map;
+    if(!map?.on)return;
+    if(state.zoomMap===map&&state.zoomHandler)return;
+    if(state.zoomMap&&state.zoomHandler&&state.zoomMap?.off){
+      try{state.zoomMap.off("zoomend",state.zoomHandler);}catch(_error){}
+    }
+    state.zoomHandler=()=>{
+      if(this._weatherDisplayStyle("precipitation")!=="auto")return;
+      this._weatherDisplayRefreshRenderedLayers();
+    };
+    state.zoomMap=map;
+    map.on("zoomend",state.zoomHandler);
   },
 
   _weatherDisplayRefreshRenderedLayers(){
@@ -315,12 +334,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       ".weather-display-style-picker{display:flex;justify-content:flex-end;min-width:0}.weather-display-style-select{appearance:auto;min-height:34px;min-width:132px;max-width:100%;padding:5px 8px;border:1px solid rgba(240,202,112,.38);border-radius:8px;background:#111820;color:#f0d18b;font:760 10px/1.15 inherit;cursor:pointer;touch-action:manipulation;box-sizing:border-box}.weather-display-style-select:disabled{opacity:.42;cursor:default}",
       ".weather-display-panel .weather-display-style-picker{width:auto;justify-content:flex-start}.weather-display-panel .weather-display-style-select{width:150px;min-width:0;min-height:36px;font-size:10.5px}.weather-display-panel .weather-display-legend-picker{display:flex;gap:6px;width:auto;justify-content:flex-start;flex-wrap:nowrap}.weather-display-panel .weather-display-legend-button{flex:0 0 64px;width:64px;min-width:64px;min-height:36px;padding:6px 5px;font-size:10px;line-height:1.1;box-sizing:border-box}",
       ".weather-display-legend-picker{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.weather-display-legend-button{appearance:none;min-height:31px;padding:5px 9px;border:1px solid rgba(255,255,255,.11);border-radius:8px;background:#111820;color:#bfc8d2;font:760 8.5px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-legend-button.active{border-color:rgba(240,202,112,.58);background:rgba(145,105,31,.20);color:#f2d88e;box-shadow:0 0 12px rgba(223,173,68,.08)}",
-      ".weather-display-opacity{display:flex;align-items:center;gap:7px;min-width:190px;justify-content:flex-end}.weather-display-opacity input[type=range]{width:118px;accent-color:#d8aa4e;touch-action:manipulation}.weather-display-opacity output{min-width:39px;text-align:right;font-size:9px;font-weight:820;color:#f1d38a}.weather-display-opacity-reset{appearance:none;min-height:28px;padding:4px 7px;border:1px solid rgba(225,181,83,.24);border-radius:7px;background:rgba(255,255,255,.025);color:#d7c590;font:740 8px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-opacity-reset:disabled{opacity:.4;cursor:default}",
+      ".weather-display-opacity{display:flex;align-items:center;gap:7px;min-width:190px;justify-content:flex-end}.weather-display-opacity input[type=range]{width:118px;accent-color:#d8aa4e;touch-action:manipulation}.weather-display-opacity output{min-width:39px;margin-right:7px;text-align:right;font-size:9px;font-weight:820;color:#f1d38a}.weather-display-opacity-reset{appearance:none;min-height:28px;padding:4px 7px;border:1px solid rgba(225,181,83,.24);border-radius:7px;background:rgba(255,255,255,.025);color:#d7c590;font:740 8px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-opacity-reset:disabled{opacity:.4;cursor:default}",
       ".weather-display-panel .weather-display-opacity{min-width:0;justify-content:stretch;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.065)}.weather-display-panel .weather-display-opacity input[type=range]{flex:1 1 auto;width:auto;min-width:0}.weather-display-opacity-label{font-size:8px;font-weight:760;color:#c9d0d8;white-space:nowrap}",
       ".weather-display-eye-control{position:absolute;z-index:2147483645;left:10px;bottom:54px;width:44px;height:44px;padding:0;border:1px solid rgba(232,188,91,.35);border-radius:13px;background:rgba(10,14,20,.94);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 15px rgba(222,166,58,.09);backdrop-filter:blur(10px);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.weather-display-eye-control[hidden]{display:none!important}.weather-display-eye-control.active{border-color:rgba(240,202,112,.68);box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 18px rgba(240,202,112,.18)}",
       ".weather-display-eye-glyph{display:grid;place-items:center;width:34px;height:34px;color:#e8c56b;pointer-events:none}.weather-display-eye-glyph img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7));pointer-events:none;user-select:none;-webkit-user-drag:none}",
       ".weather-display-panel{position:absolute;z-index:2147483644;width:min(286px,calc(100% - 20px));box-sizing:border-box;border:1px solid rgba(231,190,96,.34);border-radius:15px;background:linear-gradient(155deg,rgba(17,20,27,.97),rgba(12,13,20,.95));box-shadow:0 18px 46px rgba(0,0,0,.52),0 0 22px rgba(219,161,51,.08);backdrop-filter:blur(15px);color:#e7ebf0;overflow:hidden;pointer-events:auto}.weather-display-panel[hidden]{display:none!important}.weather-display-panel.minimized{width:min(184px,calc(100% - 20px))}.weather-display-panel.minimized .weather-display-panel-body{display:none}",
-      ".weather-display-panel-head{min-height:46px;padding:5px 6px 5px 9px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;background:linear-gradient(90deg,rgba(177,128,36,.10),rgba(112,34,92,.08))}.weather-display-panel.dragging .weather-display-panel-head{cursor:grabbing}.weather-display-panel-title{font-size:11px;font-weight:860;color:#f1d38a}.weather-display-panel-sub{margin-top:2px;font-size:7.8px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-display-minimize{appearance:none;width:36px;height:34px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025);color:#d9c999;font:900 18px/1 inherit;cursor:pointer;touch-action:manipulation}",
+      ".weather-display-panel-head{min-height:46px;padding:5px 6px 5px 9px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;background:linear-gradient(90deg,rgba(177,128,36,.10),rgba(112,34,92,.08))}.weather-display-panel.dragging .weather-display-panel-head{cursor:grabbing}.weather-display-panel-title{font-size:11px;font-weight:860;color:#f1d38a}.weather-display-panel-sub{margin-top:2px;font-size:7.8px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-display-minimize{appearance:none;width:34px;height:32px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025);color:#d9c999;font:900 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-panel.minimized .weather-display-minimize{width:31px;height:29px;font-size:13px}",
       ".weather-display-panel-body{display:grid;gap:8px;padding:9px}.weather-display-card{padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.024)}.weather-display-card-title{font-size:10px;font-weight:840;color:#f1d48c;margin-bottom:6px}.weather-display-card-note{font-size:8px;line-height:1.42;opacity:.64;margin-top:6px}",
       ".weather-layer-display-entry{grid-column:1/-1;border-color:rgba(236,185,91,.27)!important;background:linear-gradient(135deg,rgba(126,86,22,.17),rgba(108,35,92,.12))!important}.weather-layer-display-entry strong{color:#f2d48c!important}",
       "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}.weather-display-eye-control{width:46px;height:46px;bottom:52px}}"
@@ -409,6 +428,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const state=this._weatherDisplayState(),mapCard=this.shadow?.getElementById("map-card");
     if(!mapCard)return;
     this._weatherDisplayEnsureStyle();
+    this._weatherDisplayEnsureZoomSync();
     let eye=this.shadow.getElementById("weather-display-eye-control");
     if(!eye){
       eye=document.createElement("button");
