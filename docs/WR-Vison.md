@@ -1211,4 +1211,76 @@ Nur beim Wechsel des Niederschlagsstils darf eine optische Neuberechnung der ber
 
 ---
 
+## 35. V4.11.13 DEV – flächige Darstellung und Transparenz
+
+Stand: **2026-10-07**
+
+Die drei Darstellungsprofile und die Layer-Transparenz wurden fachlich erweitert.
+
+### Präzise / Ausgewogen / Weich
+
+Die Profile unterscheiden sich nun deutlich stärker:
+
+- **Präzise**: unveränderte Rasterstruktur ohne Glättungsfilter.
+- **Ausgewogen**: sichtbare, aber moderate flächige Glättung.
+- **Weich**: deutlich weichere zusammenhängende Wetterfläche mit auslaufenden Kanten und fließenderen Farbübergängen.
+
+Die Glättung wird nicht mehr pro Rasterbild einzeln angewandt, sondern auf der gesamten WeatherRouter-Niederschlagsebene. Dadurch kann der Effekt über Kachelgrenzen hinweg wirken.
+
+Die Stärke reagiert auf eine mögliche Leaflet-Übervergrößerung oberhalb der nativen Raster-Zoomstufe. Dadurch bleibt `Weich` auch dann sichtbar weich, wenn die zugrunde liegenden Rasterzellen auf dem Bildschirm stark vergrößert werden.
+
+Unverändert gilt:
+
+- keine Änderung der gelieferten Messwerte
+- keine Änderung der Rasterauflösung
+- keine Interpolation oder Neuberechnung im WeatherRouter
+- kein Eingriff in Routing oder Warnstatus
+- kein `transform` auf Leaflet-Kacheln
+
+### Transparenz
+
+Der gemeinsame persistente Darstellungszustand besitzt jetzt zusätzlich `opacities`.
+
+Die Struktur ist bewusst familienbezogen angelegt. Aktuell verwendet:
+
+- `precipitation`
+
+Vorbereitet für weitere Raster-/Flächendarstellungen:
+
+- Wolken
+- Satellitenbilder
+- Schnee
+- Temperatur
+- UV
+- Luftqualität
+- weitere WeatherRouter-Flächenlayer
+
+In den Einstellungen steht für Niederschlag ein Regler **Transparenz 0–100 %** zur Verfügung:
+
+- **0 %** = vollständig deckend
+- **100 %** = unsichtbar
+- solange der Benutzer keinen eigenen Wert setzt, gilt die vom WeatherRouter gelieferte Standarddeckkraft
+- **WR** setzt die Benutzeranpassung zurück und stellt den aktuellen WeatherRouter-Standard wieder her
+
+Der Regler wirkt live auf die bestehende Leaflet-Ebene über `setOpacity()`. Es wird dabei:
+
+- keine neue WeatherRouter-Anfrage ausgelöst
+- kein Raster neu aufgelöst
+- keine Kachelposition verändert
+- kein Layer entfernt und neu erzeugt
+
+Dadurch können untergeordnete Basiskarten und Kartenebenen wie OpenStreetMap, Meteo- oder Earth-Darstellungen je nach Bedarf stärker sichtbar gemacht werden.
+
+### Modulstände
+
+- Produkt: **V4.11.13 DEV**
+- Build: **V4.11.13-DEV-2026-10-07**
+- Runtime: **41113r1**
+- Modulsatz: **E411-13A1**
+- `core.manifest` **1.2.84**
+- `weather.precipitation-layer` **1.3.4**
+- `weather.display-menu` **0.3.0**
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
