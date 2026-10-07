@@ -1,0 +1,179 @@
+{
+  "asset_family": "help-display-eye",
+  "source": "accepted Nr. 4-derived isolated pair from current conversation",
+  "masters": {
+    "help-display-eye-closed-master-1254.png": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "db78b467fb2dc91bb469390b68bb98968e615d6f721f98a743394ab4dd50d49f",
+      "bytes": 1654280,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    "help-display-eye-open-master-1254.png": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
+      "bytes": 1697307,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    }
+  },
+  "runtime": [
+    {
+      "name": "help-display-eye-closed-256.png",
+      "size_px": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "sha256": "0c537a805fd4a37af80d9d99d4765c6ee43da5215817a11cce4f3b7edb51ce4b",
+      "bytes": 80328,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-closed-34.png",
+      "size_px": [
+        34,
+        34
+      ],
+      "mode": "RGBA",
+      "sha256": "c334d95a818313e19da7110b415af944e2c5c74ecf31d2764ce29eab727111f5",
+      "bytes": 3012,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-closed-512.png",
+      "size_px": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "cef4ac18ad2adbc249515f6b366b83b411c46816e6231df037b341122b6917aa",
+      "bytes": 280267,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-closed-@2x-68.png",
+      "size_px": [
+        68,
+        68
+      ],
+      "mode": "RGBA",
+      "sha256": "4f6eddd0a564ebbf7cc6ea4e876af88f1f1fa45b0d436daa1120bf32cb2e8ee6",
+      "bytes": 8889,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-closed-@4x-136.png",
+      "size_px": [
+        136,
+        136
+      ],
+      "mode": "RGBA",
+      "sha256": "e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047",
+      "bytes": 27957,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-open-256.png",
+      "size_px": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "sha256": "02e7d618e057a16f8f7e80cfb6af7111ba04a657238eff3f3806fea9b13b3f24",
+      "bytes": 88769,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-open-34.png",
+      "size_px": [
+        34,
+        34
+      ],
+      "mode": "RGBA",
+      "sha256": "b0f01381ad91505c80e321074c0cfdb606c18496bdcf2c3ff9642c0c10e53abc",
+      "bytes": 3150,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-open-512.png",
+      "size_px": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "7b9d451df1354bedc8a6e196411c787c2f767cb912098b91722ec84a5c42a2b8",
+      "bytes": 304720,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-open-@2x-68.png",
+      "size_px": [
+        68,
+        68
+      ],
+      "mode": "RGBA",
+      "sha256": "b9dbb76cc029b4539b5d3059d27c35d49d60d31f50d1970fdb30b7be3ec9269a",
+      "bytes": 9649,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "name": "help-display-eye-open-@4x-136.png",
+      "size_px": [
+        136,
+        136
+      ],
+      "mode": "RGBA",
+      "sha256": "78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066",
+      "bytes": 30553,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    }
+  ],
+  "notes": [
+    "Master PNGs are byte-for-byte copies of the accepted 1254x1254 transparent generated assets.",
+    "Runtime derivatives preserve RGBA transparency and are PNG (lossless compression); resizing uses LANCZOS resampling.",
+    "68x68 is the 2x Retina derivative for a 34x34 CSS display size; 136x136 is 4x."
+  ]
+}

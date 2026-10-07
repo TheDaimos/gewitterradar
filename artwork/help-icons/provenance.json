@@ -34,5 +34,40 @@
     ],
     "runtimeUsage": "The current HTML hero may use a repository copy of the canonical master as a single background image.",
     "retention": "All listed files are protected Hi-Res masters; runtime copies or derivatives do not replace the masters."
+  },
+  "v411WeatherDisplayEyeIcons": {
+    "date": "2026-10-07",
+    "scope": "WeatherRouter visualization / floating display menu",
+    "masterFormat": "PNG",
+    "masterCanvas": "1254x1254",
+    "transparentBackground": true,
+    "masters": {
+      "open": {
+        "path": "artwork/help-icons/hires/help-display-eye-open-master-1254.png",
+        "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
+        "gitBlobSha1": "42da67baf569283badd646477b089dc1b8475b73",
+        "sizeBytes": 1697307
+      },
+      "closed": {
+        "path": "artwork/help-icons/hires/help-display-eye-closed-master-1254.png",
+        "sha256": "db78b467fb2dc91bb469390b68bb98968e615d6f721f98a743394ab4dd50d49f",
+        "gitBlobSha1": "8ab2541227d9dbc49a1e2f93ec95c60ea87be620",
+        "sizeBytes": 1654280
+      }
+    },
+    "runtimeDirectory": "artwork/help-icons/runtime",
+    "runtimeDerivatives": [
+      "34x34",
+      "68x68 (2x Retina for 34x34 CSS pixels)",
+      "136x136 (4x Retina)",
+      "256x256",
+      "512x512"
+    ],
+    "runtimeRule": "Derived PNG files preserve RGBA transparency and use lossless PNG encoding. Resizing uses LANCZOS resampling. Runtime derivatives never replace the canonical 1254x1254 masters.",
+    "stateSemantics": {
+      "open": "WeatherRouter display menu enabled",
+      "closed": "WeatherRouter display menu disabled",
+      "weatherRouterUnavailable": "Closed-eye artwork may be rendered disabled/desaturated in settings; no active map control is exposed."
+    }
   }
 }

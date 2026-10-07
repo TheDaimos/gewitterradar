@@ -291,6 +291,18 @@
       "preferredPath": "artwork/help-icons/hires/gewitterradar-hero-forest-storm-master-v1.png",
       "gitBlobSha1": "0c6486a43e8aa20c8a632ad6b856ae0936eca7ff",
       "sizeBytes": 2321853
+    },
+    {
+      "label": "V4.11 Weather display eye open master",
+      "preferredPath": "artwork/help-icons/hires/help-display-eye-open-master-1254.png",
+      "gitBlobSha1": "42da67baf569283badd646477b089dc1b8475b73",
+      "sizeBytes": 1697307
+    },
+    {
+      "label": "V4.11 Weather display eye closed master",
+      "preferredPath": "artwork/help-icons/hires/help-display-eye-closed-master-1254.png",
+      "gitBlobSha1": "8ab2541227d9dbc49a1e2f93ec95c60ea87be620",
+      "sizeBytes": 1654280
     }
   ]
 }
