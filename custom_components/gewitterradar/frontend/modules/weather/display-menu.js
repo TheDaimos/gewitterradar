@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41120r1";
+import { defineModule } from "../core/runtime.js?v=41121r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.2",
+  version:"0.4.3",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -165,6 +165,14 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     if(kind==="precipitation")this._weatherRadarApplyDisplayOpacity?.();
   },
 
+  _weatherDisplaySyncLegendBadge(){
+    const badge=this.shadow?.getElementById("legend-weather-display-mode");
+    if(!badge)return;
+    const style=this._weatherDisplayStyle("precipitation");
+    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto");
+    badge.dataset.weatherDisplayStyle=style;
+  },
+
   _weatherDisplayLegendMode(){
     return this._weatherDisplayState().config.legendMode||"auto";
   },
@@ -197,13 +205,15 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     }
 
     // Auto ist bewusst eine Komfortdarstellung:
-    // Fernsicht = flächiger, Nahsicht = klarer/konturierter, aber nie technisch-pixelig.
+    // Fernsicht = strukturbetonter, weil kleine Wetterzellen sonst verschwinden.
+    // Nahsicht = zunehmend weich/flächig, weil das Raster beim Hineinzoomen stärker stört.
+    // Präzise bleibt jederzeit als eigener technischer Modus verfügbar.
     const t=smoothstep(4.5,11.5,safeZoom);
     return {
-      blur:lerp(6.2,1.55,t),
-      saturate:lerp(1.18,1.08,t),
-      contrast:lerp(1.31,1.15,t),
-      brightness:lerp(.99,1.0,t)
+      blur:lerp(1.35,5.6,t),
+      saturate:lerp(1.07,1.18,t),
+      contrast:lerp(1.13,1.32,t),
+      brightness:lerp(1.0,.99,t)
     };
   },
 
@@ -520,6 +530,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   _weatherDisplaySyncUi(){
     if(!this.shadow)return;
     const state=this._weatherDisplayState(),available=state.status==="ready",copy=this._weatherDisplayStatusCopy(),config=state.config;
+    this._weatherDisplaySyncLegendBadge();
     const block=this.shadow.querySelector('[data-weather-display-settings="true"]');
     if(block){
       block.classList.toggle("offline",!available);
