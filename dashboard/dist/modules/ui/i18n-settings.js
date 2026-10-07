@@ -1995,6 +1995,31 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
   }
 });
 
+const V411_HELP_WEATHER_REFRESH=Object.freeze({
+  Deutsch:Object.freeze({
+    title:"WeatherRouter · Wetterinformationen aktualisieren",
+    intro:"Das Aktualisierungsintervall bestimmt, wie schnell Gewitterradar nach einer Kartenbewegung neue Wetterinformationen über WeatherRouter anfordern darf.",
+    entries:Object.freeze([
+      Object.freeze({term:"Aktualisierungsintervall – Wetterinformationen",description:"Einstellbar von 2 bis 60 Sekunden. Standard sind 15 Sekunden."}),
+      Object.freeze({term:"Kleine Werte",description:"2–5 Sekunden reagieren besonders schnell auf Kartenbewegungen, erzeugen aber mehr WeatherRouter-Anfragen."}),
+      Object.freeze({term:"Standard",description:"15 Sekunden ist der ausgewogene Standardwert für Reaktionszeit und Anfragelast."}),
+      Object.freeze({term:"Große Werte",description:"30–60 Sekunden reduzieren die Anzahl der Anfragen und sind besonders schonend."}),
+      Object.freeze({term:"Wichtig",description:"Der kurze Bewegungsfilter nach dem Verschieben der Karte bleibt unabhängig davon aktiv. Eine ausdrücklich manuell ausgelöste Aktualisierung wird nicht durch dieses Intervall ausgebremst."})
+    ])
+  }),
+  English:Object.freeze({
+    title:"WeatherRouter · Updating weather information",
+    intro:"The update interval controls how quickly Gewitterradar may request new weather information through WeatherRouter after the map is moved.",
+    entries:Object.freeze([
+      Object.freeze({term:"Weather information update interval",description:"Adjustable from 2 to 60 seconds. The default is 15 seconds."}),
+      Object.freeze({term:"Low values",description:"2–5 seconds reacts quickly to map movement but causes more WeatherRouter requests."}),
+      Object.freeze({term:"Default",description:"15 seconds is the balanced default for responsiveness and request load."}),
+      Object.freeze({term:"High values",description:"30–60 seconds reduces requests and is more conservative."}),
+      Object.freeze({term:"Important",description:"The short movement debounce remains active independently. An explicitly triggered manual refresh is not delayed by this interval."})
+    ])
+  })
+});
+
 export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _languageEntity() {
       return this._resolveSettingEntity('language',this._config.language_entity);
@@ -2232,11 +2257,17 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
     },
 
     _helpWithV410(language,help) {
-      const addition=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
-      if(!addition||!help)return help;
-      const sections=Array.isArray(help.sections)?help.sections:[];
-      if(sections.some((section)=>section?.key==='instruments-v410'))return help;
-      return {...help,sections:[...sections,{key:'instruments-v410',title:addition.title,paragraphs:[addition.intro],entries:addition.entries}]};
+      const instruments=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
+      const weatherRefresh=V411_HELP_WEATHER_REFRESH[language]||V411_HELP_WEATHER_REFRESH[LANGUAGE_DEFAULT]||V411_HELP_WEATHER_REFRESH.English;
+      if(!help)return help;
+      const sections=Array.isArray(help.sections)?[...help.sections]:[];
+      if(instruments&&!sections.some((section)=>section?.key==='instruments-v410')){
+        sections.push({key:'instruments-v410',title:instruments.title,paragraphs:[instruments.intro],entries:instruments.entries});
+      }
+      if(weatherRefresh&&!sections.some((section)=>section?.key==='weather-refresh-v411')){
+        sections.push({key:'weather-refresh-v411',title:weatherRefresh.title,paragraphs:[weatherRefresh.intro],entries:weatherRefresh.entries});
+      }
+      return {...help,sections};
     },
 
     _resolveSettingEntity(key,configured) {
