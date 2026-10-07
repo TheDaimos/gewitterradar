@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41124r1";
+import { defineModule } from "../core/runtime.js?v=41125r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.6",
+  version:"0.4.7",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -215,25 +215,24 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     // Farbstufen gehen kontinuierlich ineinander ueber.
     const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
     const nativeZoom=Number.isFinite(maxNative)?maxNative:7;
-    const overZoom=clamp(safeZoom-nativeZoom,0,5);
+    const relativeZoom=safeZoom-nativeZoom;
+    const overZoom=clamp(relativeZoom,0,5);
     const overscale=Math.pow(2,overZoom);
 
-    // Ab dem ersten echten Overzoom muss die Glättung mit der auf dem Bildschirm
-    // sichtbaren Quellzellengroesse wachsen. Ein fixer 20-30px-Blur kann bei
-    // 8x/16x/32x vergroesserten Rasterzellen keine eckigen Kanten beseitigen.
-    // Die folgende Kennlinie feathered deshalb die komplette Radar-Pane
-    // proportional zur Overzoom-Skalierung und erzeugt im Nahbereich einen
-    // kontinuierlichen Wolken-/Regenbogenverlauf statt vergroesserter Pixel.
-    const cloud=smoothstep(1.15,8.0,overscale);
-    const cloudBlur=clamp(overscale*4.6,7.0,150);
-    const blur=lerp(1.15,cloudBlur,cloud);
+    // Auto beginnt die Entpixelung bereits kurz vor dem eigentlichen Overzoom
+    // und steigert sie danach deutlich. So werden Zellkanten frueh abgerundet,
+    // waehrend stark vergroesserte Quellpixel im Nahzoom praktisch vollstaendig
+    // zu einem zusammenhaengenden Wetterfeld verschmelzen.
+    const cloud=smoothstep(-0.65,3.20,relativeZoom);
+    const cloudBlur=clamp(4.0+Math.max(0,overscale-1)*10.0,4.0,220);
+    const blur=lerp(1.10,cloudBlur,cloud);
 
     return {
       blur,
-      saturate:lerp(1.05,1.16,cloud),
-      // Im Nahzoom keinen zusaetzlichen Kontrast aufbauen: das wuerde die
-      // geglaetteten Farbstufen wieder optisch voneinander trennen.
-      contrast:lerp(1.08,.98,cloud),
+      saturate:lerp(1.04,1.14,cloud),
+      // Mit wachsender Glättung sinkt der Kontrast leicht, damit Gruen, Gelb,
+      // Orange und Rot ohne erneut harte Stufenkanten ineinander uebergehen.
+      contrast:lerp(1.07,.95,cloud),
       brightness:lerp(1.0,.995,cloud),
       overscale,
       cloud
