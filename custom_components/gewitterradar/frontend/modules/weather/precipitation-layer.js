@@ -1,11 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41110r1";
+import { defineModule } from "../core/runtime.js?v=41113r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.3",
+  version:"1.3.4",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
-  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
+  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
   file:"modules/weather/precipitation-layer.js"
 });
 
@@ -167,11 +167,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return false;
     }
     if(state.map===this._map)return true;
-    if(state.map&&state.onMove)try{state.map.off("moveend",state.onMove);state.map.off("zoomend",state.onMove);}catch(_error){}
+    if(state.map){
+      try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
+    }
     state.map=this._map;
     state.onMove=()=>{this._scheduleWeatherRadarRefresh("viewport",900);this._scheduleWeatherRadarPreload("viewport",220);};
+    state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();state.onMove?.();};
     state.map.on("moveend",state.onMove);
-    state.map.on("zoomend",state.onMove);
+    state.map.on("zoomend",state.onZoom);
     return true;
   },
 
@@ -198,18 +201,39 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
 
+  _weatherRadarNaturalOpacity(){
+    const state=this._weatherRadarState();
+    const live=finite(state.layer?.__grRadarNaturalOpacity);
+    if(live!=null)return clamp(live,0,1);
+    const payload=state.lastReady?.answer?.resource?.payload;
+    return clamp(finite(payload?.default_opacity)??0.58,0,1);
+  },
+
+  _weatherRadarEffectiveOpacity(naturalOpacity=this._weatherRadarNaturalOpacity()){
+    return this._weatherDisplayOpacity?.("precipitation",naturalOpacity)??clamp(naturalOpacity,0,1);
+  },
+
+  _weatherRadarApplyDisplayOpacity(){
+    const state=this._weatherRadarState();
+    if(!state.layer)return;
+    try{state.layer.setOpacity?.(this._weatherRadarEffectiveOpacity(state.layer.__grRadarNaturalOpacity??0.58));}catch(_error){}
+    this._weatherDisplaySyncUi?.();
+  },
+
   _weatherRadarCreateLayer(L,payload,attribution,opacityOverride=null){
     const tileSize=Math.max(1,Math.round(finite(payload.tile_size)||256));
     const minZoom=Math.max(0,finite(payload.min_zoom)||0);
     const maxZoom=Math.max(minZoom,finite(payload.max_zoom)||18);
     const naturalOpacity=clamp(finite(payload.default_opacity)??0.58,0,1);
-    const opacity=opacityOverride==null?naturalOpacity:clamp(finite(opacityOverride)??naturalOpacity,0,1);
+    const effectiveOpacity=this._weatherRadarEffectiveOpacity(naturalOpacity);
+    const opacity=opacityOverride==null?effectiveOpacity:clamp(finite(opacityOverride)??effectiveOpacity,0,1);
     const map=this._map;
     if(!map.getPane("gr-weather-radar")){
       const pane=map.createPane("gr-weather-radar");
       pane.style.zIndex="230";
       pane.style.pointerEvents="none";
     }
+    this._weatherDisplayApplyRasterPaneStyle?.("precipitation",map.getPane("gr-weather-radar"));
     const displayMaxZoom=Math.max(maxZoom,finite(map.getMaxZoom?.())??maxZoom);
     const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom:displayMaxZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
     layer.__grRadarNaturalOpacity=naturalOpacity;
@@ -666,7 +690,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     const next=state.timelineStageLayer,old=state.layer;
     state.timelineStageLayer=null;state.timelineStageIndex=-1;state.timelineStageReady=false;state.timelineStagePromise=null;
-    try{next.setOpacity?.(next.__grRadarNaturalOpacity??0.58);}catch(_error){}
+    try{next.setOpacity?.(this._weatherRadarEffectiveOpacity(next.__grRadarNaturalOpacity??0.58));}catch(_error){}
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     if(old&&old!==next)try{old.remove();}catch(_error){}
     state.layer=next;state.timelineIndex=target;state.timelineLoadMessage=null;
@@ -774,6 +798,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       next.addTo(this._map);
       const old=state.layer;state.layer=next;
       if(old)try{old.remove();}catch(_error){}
+      this._weatherDisplayRefreshRenderedLayers?.();
+      this._weatherDisplaySyncUi?.();
     }).catch(()=>{});
     state.lastReady={answer,viewport,at:Date.now()};
     state.lastUnavailable=null;
@@ -963,7 +989,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarClearTimelineStage();
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
     state.preloadGeneration+=1;state.preloadQueue=[];state.preloadCache.clear();
-    if(state.map&&state.onMove)try{state.map.off("moveend",state.onMove);state.map.off("zoomend",state.onMove);}catch(_error){}
-    state.map=null;state.onMove=null;state.inFlight=false;state.pending=false;
+    if(state.map)try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
+    state.map=null;state.onMove=null;state.onZoom=null;state.inFlight=false;state.pending=false;
   }
 });});
