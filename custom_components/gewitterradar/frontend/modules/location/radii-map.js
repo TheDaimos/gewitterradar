@@ -614,6 +614,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!touchPointer(event)||state.synthesizing)return;
         const stamp=now();
         if(state.lastSystemGestureAt&&stamp-state.lastSystemGestureAt<3000){
+          for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
+          state.systemGestureTimers=[];
           this._hardResetMapGestureHandlers('post-system-gesture-pointerdown',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
           state.lastSystemGestureAt=0;
         }
