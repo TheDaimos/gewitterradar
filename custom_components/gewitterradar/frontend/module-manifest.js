@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41112r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41113r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.83",
+    "version": "1.2.84",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -323,7 +323,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -356,7 +356,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -370,6 +370,8 @@ export const EXPECTED_MODULES=Object.freeze([
       "Legendenmodus",
       "finale Augenassets",
       "Leaflet-sichere Rasterstile",
+      "flächige Glättung",
+      "Transparenz je Darstellungsfamilie",
       "entkoppelter UI-Zustand",
       "Layer-Schnellzugriff"
     ],
@@ -404,4 +406,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.83",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.84",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
