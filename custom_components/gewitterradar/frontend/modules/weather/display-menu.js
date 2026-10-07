@@ -1,12 +1,12 @@
-import { defineModule } from "../core/runtime.js?v=41111r1";
+import { defineModule } from "../core/runtime.js?v=41112r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.2.1",
+  version:"0.2.2",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
-  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","Legendenmodus","finale Augenassets","Layer-Schnellzugriff"],
+  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
   file:"modules/weather/display-menu.js"
 });
 
@@ -112,12 +112,15 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
 
   _weatherDisplayPatch(patch,{persist=true}={}){
     const state=this._weatherDisplayState();
-    const next=normalizeState({...state.config,...safeObject(patch),styles:{...state.config.styles,...safeObject(patch?.styles)},position:{...state.config.position,...safeObject(patch?.position)}});
+    const previous=state.config;
+    const next=normalizeState({...previous,...safeObject(patch),styles:{...previous.styles,...safeObject(patch?.styles)},position:{...previous.position,...safeObject(patch?.position)}});
+    const precipitationStyleChanged=next.styles?.precipitation!==previous.styles?.precipitation;
+    const legendModeChanged=next.legendMode!==previous.legendMode;
     state.config=next;
     if(persist)this._weatherDisplayPersist();
     this._weatherDisplaySyncUi();
-    this._weatherDisplayRefreshRenderedLayers();
-    this._weatherLegendSyncUi?.();
+    if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();
+    if(legendModeChanged)this._weatherLegendSyncUi?.();
     return next;
   },
 
@@ -139,20 +142,14 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     if(!node?.style)return;
     const style=this._weatherDisplayStyle(kind);
     node.dataset.weatherDisplayStyle=style;
-    node.style.transformOrigin="50% 50%";
-    node.style.willChange=style==="precise"?"auto":"filter,transform";
+    node.style.imageRendering="auto";
+    node.style.willChange=style==="precise"?"auto":"filter";
     if(style==="balanced"){
-      node.style.imageRendering="auto";
       node.style.filter="blur(.32px)";
-      node.style.transform="scale(1.004)";
     }else if(style==="soft"){
-      node.style.imageRendering="auto";
       node.style.filter="blur(.72px) saturate(1.015)";
-      node.style.transform="scale(1.008)";
     }else{
-      node.style.imageRendering="auto";
       node.style.filter="none";
-      node.style.transform="none";
     }
   },
 
