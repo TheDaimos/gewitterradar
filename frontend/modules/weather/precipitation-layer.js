@@ -2,10 +2,10 @@ import { defineModule } from "../core/runtime.js?v=41113r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.4",
+  version:"1.3.5",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
-  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
+  subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
   file:"modules/weather/precipitation-layer.js"
 });
 
@@ -14,7 +14,10 @@ const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
-const VIEWPORT_MIN_MS=15000;
+const VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY="gewitterradar:weather-engine:viewport-refresh-interval-seconds";
+const VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS=15;
+const VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS=2;
+const VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS=60;
 const SAME_VIEW_MIN_MS=240000;
 const PRELOAD_CONCURRENCY=4;
 const TIMELINE_STAGE_TIMEOUT_MS=6000;
@@ -125,13 +128,15 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
     if(!this.__weatherRadarState){
-      let enabled=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null;
+      let enabled=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
       try{
         enabled=localStorage.getItem(STORAGE_KEY)==="1";
         const storedProfile=localStorage.getItem(PRELOAD_PROFILE_STORAGE_KEY);
         if(storedProfile&&WEATHER_RADAR_PRELOAD_PROFILES[storedProfile])preloadProfile=storedProfile;
         const storedCustom=finite(localStorage.getItem(PRELOAD_CUSTOM_STORAGE_KEY));
         if(storedCustom!=null)preloadCustomPercent=clamp(Math.round(storedCustom),0,100);
+        const storedViewportRefreshInterval=finite(localStorage.getItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY));
+        if(storedViewportRefreshInterval!=null)viewportRefreshIntervalSeconds=clamp(Math.round(storedViewportRefreshInterval),VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS,VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);
         const storedTimelineVisible=localStorage.getItem(TIMELINE_VISIBLE_STORAGE_KEY);
         if(storedTimelineVisible==="0")timelineVisible=false;
         if(storedTimelineVisible==="1")timelineVisible=true;
@@ -141,7 +146,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       }catch(_error){}
       this.__weatherRadarState={
-        enabled,preloadProfile,preloadCustomPercent,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
+        enabled,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
@@ -382,6 +387,23 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarClearPreload();
     this._weatherRadarUpdatePreloadControls();
     if(state.preloadProfile==="custom")this._scheduleWeatherRadarPreload("custom",120);
+  },
+
+  _setWeatherRadarViewportRefreshInterval(value){
+    const state=this._weatherRadarState();
+    state.viewportRefreshIntervalSeconds=clamp(Math.round(finite(value)??VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS),VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS,VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);
+    try{localStorage.setItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY,String(state.viewportRefreshIntervalSeconds));}catch(_error){}
+    this._weatherRadarUpdateRefreshIntervalControls();
+  },
+
+  _weatherRadarUpdateRefreshIntervalControls(){
+    const state=this._weatherRadarState();
+    const range=this.shadow?.getElementById("weather-radar-refresh-interval-range");
+    const number=this.shadow?.getElementById("weather-radar-refresh-interval-number");
+    const status=this.shadow?.getElementById("weather-radar-refresh-interval-status");
+    if(range)range.value=String(state.viewportRefreshIntervalSeconds);
+    if(number)number.value=String(state.viewportRefreshIntervalSeconds);
+    if(status)status.textContent=state.viewportRefreshIntervalSeconds+" Sek. · "+(state.viewportRefreshIntervalSeconds<=5?"schnell":state.viewportRefreshIntervalSeconds<=20?"ausgewogen":"schonend");
   },
 
   _weatherRadarUpdatePreloadControls(){
@@ -828,7 +850,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600);return;}
     const viewport=this._weatherRadarViewport();if(!viewport)return;
     const now=Date.now();
-    const minWait=state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:VIEWPORT_MIN_MS;
+    const minWait=state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
     if(!force&&state.lastRequestAt&&now-state.lastRequestAt<minWait){
       this._scheduleWeatherRadarRefresh(reason,minWait-(now-state.lastRequestAt)+50);
       return;
@@ -947,6 +969,21 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const preloadStatus=document.createElement("div");preloadStatus.className="settings-row-label";preloadStatus.id="weather-radar-preload-status";preloadStatus.setAttribute("role","status");preloadStatus.setAttribute("aria-live","polite");
     preloadStatusRow.append(preloadStatus);
 
+    const refreshIntervalRow=document.createElement("div");refreshIntervalRow.className="settings-row";
+    const refreshIntervalLabel=document.createElement("div");refreshIntervalLabel.className="settings-row-label";
+    const refreshIntervalTitle=document.createElement("div");refreshIntervalTitle.textContent="Aktualisierungsintervall – Wetterinformationen";
+    const refreshIntervalHint=document.createElement("div");refreshIntervalHint.textContent="Legt fest, wie schnell WeatherRouter nach einer Kartenbewegung neue Wetterinformationen anfordern darf. Kürzer reagiert schneller, erzeugt aber mehr Anfragen.";refreshIntervalHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const refreshIntervalStatus=document.createElement("div");refreshIntervalStatus.id="weather-radar-refresh-interval-status";refreshIntervalStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
+    refreshIntervalLabel.append(refreshIntervalTitle,refreshIntervalHint,refreshIntervalStatus);
+    const refreshIntervalControls=document.createElement("div");refreshIntervalControls.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end";
+    const refreshIntervalRange=document.createElement("input");refreshIntervalRange.type="range";refreshIntervalRange.min=String(VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS);refreshIntervalRange.max=String(VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);refreshIntervalRange.step="1";refreshIntervalRange.id="weather-radar-refresh-interval-range";refreshIntervalRange.setAttribute("aria-label","Aktualisierungsintervall Wetterinformationen in Sekunden");
+    const refreshIntervalNumber=document.createElement("input");refreshIntervalNumber.type="number";refreshIntervalNumber.min=String(VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS);refreshIntervalNumber.max=String(VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);refreshIntervalNumber.step="1";refreshIntervalNumber.id="weather-radar-refresh-interval-number";refreshIntervalNumber.className="settings-control";refreshIntervalNumber.style.cssText="width:72px";
+    const refreshIntervalUnit=document.createElement("span");refreshIntervalUnit.textContent="Sek.";refreshIntervalUnit.style.cssText="font-size:.78rem;opacity:.72";
+    refreshIntervalRange.addEventListener("input",()=>{refreshIntervalNumber.value=refreshIntervalRange.value;refreshIntervalStatus.textContent=refreshIntervalRange.value+" Sek.";});
+    refreshIntervalRange.addEventListener("change",()=>this._setWeatherRadarViewportRefreshInterval(refreshIntervalRange.value));
+    refreshIntervalNumber.addEventListener("change",()=>this._setWeatherRadarViewportRefreshInterval(refreshIntervalNumber.value));
+    refreshIntervalControls.append(refreshIntervalRange,refreshIntervalNumber,refreshIntervalUnit);refreshIntervalRow.append(refreshIntervalLabel,refreshIntervalControls);
+
     const timelineRow=document.createElement("div");timelineRow.className="settings-row";
     const timelineLabel=document.createElement("div");timelineLabel.className="settings-row-label";
     const timelineTitle=document.createElement("div");timelineTitle.textContent="Niederschlags-Zeitverlauf";
@@ -957,11 +994,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const statusRow=document.createElement("div");statusRow.className="settings-row";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,timelineRow,statusRow);
+    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
     const results=this.shadow?.getElementById("weather-engine-results")?.closest(".settings-row");
     if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
     this._weatherRadarUpdateControls();
     this._weatherRadarUpdatePreloadControls();
+    this._weatherRadarUpdateRefreshIntervalControls();
     this._weatherRadarEnsureMapHooks();
     if(this._weatherRadarState().enabled)this._setWeatherRadarEnabled(true,{persist:false});
   },
