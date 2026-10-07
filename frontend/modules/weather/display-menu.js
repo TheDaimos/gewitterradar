@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41122r1";
+import { defineModule } from "../core/runtime.js?v=41123r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.4",
+  version:"0.4.5",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -206,17 +206,26 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       return {blur:clamp(5.6*zoomFactor,5.6,11.5),saturate:1.18,contrast:1.34,brightness:.99};
     }
 
-    // Auto ist bewusst eine Komfortdarstellung:
-    // Fernsicht = strukturbetonter, weil kleine Wetterzellen sonst verschwinden.
-    // Nahsicht = zunehmend weich/flächig, weil das Raster beim Hineinzoomen stärker stört.
-    // Präzise bleibt jederzeit als eigener technischer Modus verfügbar.
-    const t=smoothstep(4.5,11.5,safeZoom);
-    const near=smoothstep(7.0,12.5,safeZoom);
+    // Auto ist bewusst eine Komfortdarstellung.
+    // Entscheidend ist nicht allein die absolute Zoomstufe, sondern wie weit
+    // Leaflet die Wetterdaten bereits ueber ihre native Rasteraufloesung hinaus
+    // vergroessert. Je groesser eine Quellzelle auf dem Bildschirm wird, desto
+    // staerker wird die komplette Pane als zusammenhaengende Wetterflaeche
+    // geglaettet. Dadurch verschwinden im Nahzoom rechteckige Zellkanten und
+    // Farbstufen gehen kontinuierlich ineinander ueber.
+    const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
+    const nativeZoom=Number.isFinite(maxNative)?maxNative:7;
+    const overZoom=clamp(safeZoom-nativeZoom,0,5);
+    const overscale=Math.pow(2,overZoom);
+    const cloud=smoothstep(1,24,overscale);
+    const blur=clamp(1.20+Math.max(0,overscale-1)*1.05,1.20,28);
     return {
-      blur:lerp(1.25,7.4,t),
-      saturate:lerp(1.06,1.20,t),
-      contrast:lerp(1.12,1.38,near),
-      brightness:lerp(1.0,.985,near)
+      blur,
+      saturate:lerp(1.06,1.24,cloud),
+      contrast:lerp(1.10,1.26,cloud),
+      brightness:lerp(1.0,.985,cloud),
+      overscale,
+      cloud
     };
   },
 
@@ -232,8 +241,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     if(style==="auto"){
       const zoom=Number(this._map?.getZoom?.());
       pane.dataset.weatherDisplayAutoZoom=Number.isFinite(zoom)?zoom.toFixed(2):"";
+      pane.dataset.weatherDisplayAutoOverscale=Number.isFinite(tuning.overscale)?tuning.overscale.toFixed(2):"";
+      pane.dataset.weatherDisplayAutoBlur=Number.isFinite(tuning.blur)?tuning.blur.toFixed(2):"";
     }else{
       delete pane.dataset.weatherDisplayAutoZoom;
+      delete pane.dataset.weatherDisplayAutoOverscale;
+      delete pane.dataset.weatherDisplayAutoBlur;
     }
     pane.style.willChange=style==="precise"?"auto":"filter";
     if(style==="precise"){
