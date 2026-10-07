@@ -1097,4 +1097,59 @@ Die finalen Entwurf-Nr.-4-Augenassets bleiben der einzige bewusst noch nicht ers
 
 ---
 
+## 33. V4.11.11 DEV – finale WeatherRouter-Augenassets
+
+Stand: **2026-10-07**
+
+Die zuvor als Platzhalter verwendeten Inline-SVG-Augen wurden vollständig durch die freigegebenen **Entwurf-Nr.-4-PNGs** ersetzt.
+
+### Verwendete Laufzeitassets
+
+Für die eigentliche Darstellung werden die verlustfreien 136×136-4×-Ableitungen direkt im Modul eingebettet:
+
+- offen: `help-display-eye-open-@4x-136.png`
+  - SHA-256: `78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066`
+- geschlossen: `help-display-eye-closed-@4x-136.png`
+  - SHA-256: `e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047`
+
+Die eingebettete 136×136-Variante bleibt bei 34–46 CSS-Pixeln auch auf hochauflösenden Displays scharf und funktioniert vollständig offline innerhalb der Home-Assistant-Auslieferung.
+
+### Master-Retention
+
+Die kanonischen transparenten 1254×1254-RGBA-Master bleiben unverändert und dauerhaft unter:
+
+- `artwork/help-icons/hires/help-display-eye-open-master-1254.png`
+- `artwork/help-icons/hires/help-display-eye-closed-master-1254.png`
+
+Die Laufzeitdateien ersetzen diese Master ausdrücklich nicht.
+
+### Zustandssemantik
+
+- offenes Auge = Darstellungsmenü aktiviert
+- geschlossenes Auge = Darstellungsmenü deaktiviert
+- WeatherRouter nicht verfügbar = kein funktionsloser aktiver Kartenknopf; in den Einstellungen darf das geschlossene Auge deaktiviert/desaturiert dargestellt werden
+
+### Implementierung
+
+- `weather.display-menu` **0.2.1**
+- die bisherige Funktion `eyeSvg()` ist entfernt
+- der Marker `data-weather-display-eye-placeholder` existiert nicht mehr
+- die finalen Assets werden über `WEATHER_DISPLAY_EYE_ASSETS` verwaltet
+- die SHA-256-Identitäten und Masterpfade sind Bestandteil des Laufzeitvertrags
+- keine Änderung an Pointer-/Touch-Gestenlogik
+- keine Änderung an WeatherRouter-Daten, Routing oder Rendersemantik
+
+### Technischer Stand
+
+- Produkt: **V4.11.11 DEV**
+- Build: **V4.11.11-DEV-2026-10-07**
+- Runtime: **41111r1**
+- Modulsatz: **E411-11A1**
+- `core.manifest` **1.2.82**
+- `weather.display-menu` **0.2.1**
+
+Damit ist der bislang letzte bewusst offene Grafikpunkt der WR-Visualisierung geschlossen.
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
