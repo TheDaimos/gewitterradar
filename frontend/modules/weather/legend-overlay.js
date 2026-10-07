@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41110r1";
+import { defineModule } from "../core/runtime.js?v=41114r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.0",
+  version:"0.1.1",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -89,14 +89,14 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     const style=document.createElement("style");
     style.id="weather-legend-style";
     style.textContent=[
-      ".weather-legend-overlay{position:absolute;z-index:710;left:50%;transform:translateX(-50%);width:min(620px,calc(100% - 20px));box-sizing:border-box;padding:7px 9px;border:1px solid rgba(231,190,96,.32);border-radius:13px;background:linear-gradient(155deg,rgba(13,17,23,.95),rgba(8,11,16,.93));box-shadow:0 12px 32px rgba(0,0,0,.44),0 0 18px rgba(219,161,51,.07);backdrop-filter:blur(13px);color:#e7ebf0;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}",
-      ".weather-legend-overlay[hidden]{display:none!important}.weather-legend-list{display:grid;gap:6px}.weather-legend-item{display:grid;grid-template-columns:minmax(92px,.7fr) minmax(120px,1.6fr) auto;align-items:center;gap:9px;min-width:0}.weather-legend-main{min-width:0}.weather-legend-title{font-size:10px;font-weight:850;color:#f1d38a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-legend-subtitle{margin-top:2px;font-size:7.7px;line-height:1.25;color:#aeb7c2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
-      ".weather-legend-visual{min-width:0;display:flex;align-items:center;justify-content:center}.weather-legend-image{display:block;max-width:100%;width:auto;height:auto;max-height:34px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.90);box-shadow:inset 0 0 0 1px rgba(0,0,0,.10)}",
-      ".weather-legend-entries{display:flex;align-items:flex-start;justify-content:center;gap:7px;min-width:0;overflow:hidden}.weather-legend-entry{display:grid;justify-items:center;gap:2px;min-width:0;font-size:7.2px;color:#c9d0d8}.weather-legend-swatch{width:28px;height:5px;border-radius:999px;background:var(--weather-legend-color,rgba(255,255,255,.18));box-shadow:0 0 7px color-mix(in srgb,var(--weather-legend-color,transparent) 35%,transparent)}.weather-legend-entry-label{max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
-      ".weather-legend-side{display:flex;align-items:center;gap:6px}.weather-legend-unit{font-size:8px;font-weight:800;color:#d6c184;white-space:nowrap}.weather-legend-hide{appearance:none;width:28px;height:28px;padding:0;border:1px solid rgba(255,255,255,.10);border-radius:8px;background:rgba(255,255,255,.025);color:#d9c999;font:850 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-legend-hide:hover{border-color:rgba(240,202,112,.42);background:rgba(145,105,31,.12)}",
-      ".weather-legend-overlay.multiple{padding-block:8px}.weather-legend-overlay.multiple .weather-legend-item+.weather-legend-item{padding-top:6px;border-top:1px solid rgba(255,255,255,.07)}",
-      "@media(max-width:720px){.weather-legend-overlay{width:calc(100% - 16px);padding:6px 7px;border-radius:12px}.weather-legend-item{grid-template-columns:minmax(78px,.68fr) minmax(100px,1.45fr) auto;gap:6px}.weather-legend-title{font-size:9px}.weather-legend-subtitle{font-size:6.9px}.weather-legend-image{max-height:28px}.weather-legend-unit{font-size:7.4px}.weather-legend-hide{width:30px;height:30px}.weather-legend-entry{font-size:6.7px}.weather-legend-swatch{width:23px}}",
-      "@media(max-width:430px){.weather-legend-item{grid-template-columns:minmax(70px,.62fr) minmax(88px,1.35fr) auto}.weather-legend-subtitle{display:none}.weather-legend-image{max-height:25px}.weather-legend-entries{gap:4px}.weather-legend-swatch{width:18px}.weather-legend-entry-label{max-width:42px}}"
+      ".weather-legend-overlay{position:absolute;z-index:710;left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 20px));box-sizing:border-box;padding:8px 10px;border:1px solid rgba(231,190,96,.32);border-radius:13px;background:linear-gradient(155deg,rgba(13,17,23,.96),rgba(8,11,16,.94));box-shadow:0 12px 32px rgba(0,0,0,.44),0 0 18px rgba(219,161,51,.07);backdrop-filter:blur(13px);color:#e7ebf0;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}",
+      ".weather-legend-overlay[hidden]{display:none!important}.weather-legend-list{display:grid;gap:8px}.weather-legend-item{display:grid;grid-template-columns:1fr;gap:7px;min-width:0}.weather-legend-header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}.weather-legend-main{min-width:0;flex:1 1 auto}.weather-legend-title{font-size:10px;font-weight:850;color:#f1d38a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-legend-subtitle{margin-top:2px;font-size:7.7px;line-height:1.25;color:#aeb7c2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+      ".weather-legend-visual{min-width:0;display:flex;align-items:center;justify-content:center;padding:1px 0 2px}.weather-legend-image{display:block;width:min(240px,100%);height:auto;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.92);box-shadow:inset 0 0 0 1px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.16)}",
+      ".weather-legend-entries{display:flex;align-items:flex-start;justify-content:center;gap:7px;min-width:0;overflow:hidden;width:100%}.weather-legend-entry{display:grid;justify-items:center;gap:2px;min-width:0;font-size:7.2px;color:#c9d0d8}.weather-legend-swatch{width:32px;height:6px;border-radius:999px;background:var(--weather-legend-color,rgba(255,255,255,.18));box-shadow:0 0 7px color-mix(in srgb,var(--weather-legend-color,transparent) 35%,transparent)}.weather-legend-entry-label{max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      ".weather-legend-side{display:flex;align-items:center;gap:7px;flex:0 0 auto}.weather-legend-unit{font-size:8px;font-weight:800;color:#d6c184;white-space:nowrap}.weather-legend-hide{appearance:none;width:28px;height:28px;padding:0;border:1px solid rgba(255,255,255,.10);border-radius:8px;background:rgba(255,255,255,.025);color:#d9c999;font:850 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-legend-hide:hover{border-color:rgba(240,202,112,.42);background:rgba(145,105,31,.12)}",
+      ".weather-legend-overlay.multiple{padding-block:8px}.weather-legend-overlay.multiple .weather-legend-item+.weather-legend-item{padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}",
+      "@media(max-width:720px){.weather-legend-overlay{width:min(390px,calc(100% - 16px));padding:7px 8px;border-radius:12px}.weather-legend-title{font-size:9.3px}.weather-legend-subtitle{font-size:7px}.weather-legend-image{width:min(220px,100%)}.weather-legend-unit{font-size:7.5px}.weather-legend-hide{width:30px;height:30px}.weather-legend-entry{font-size:6.8px}.weather-legend-swatch{width:26px}}",
+      "@media(max-width:430px){.weather-legend-overlay{width:calc(100% - 14px)}.weather-legend-image{width:min(190px,100%)}.weather-legend-subtitle{max-width:220px}.weather-legend-entries{gap:4px}.weather-legend-swatch{width:20px}.weather-legend-entry-label{max-width:44px}}"
     ].join("");
     this.shadow.append(style);
   },
@@ -193,15 +193,16 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       const title=document.createElement("div");title.className="weather-legend-title";title.textContent=model.title;
       main.append(title);
       if(model.subtitle){const sub=document.createElement("div");sub.className="weather-legend-subtitle";sub.textContent=model.subtitle;main.append(sub);}
-      const visual=document.createElement("div");visual.className="weather-legend-visual";
-      const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
       const side=document.createElement("div");side.className="weather-legend-side";
       if(model.unit){const unit=document.createElement("span");unit.className="weather-legend-unit";unit.textContent=model.unit;side.append(unit);}
       if(index===0){
         const hide=document.createElement("button");hide.type="button";hide.className="weather-legend-hide";hide.dataset.weatherLegendHide="true";hide.setAttribute("aria-label","WeatherRouter-Legende ausblenden");hide.title="Legende ausblenden";hide.textContent="×";side.append(hide);
       }
+      const header=document.createElement("div");header.className="weather-legend-header";header.append(main,side);
+      const visual=document.createElement("div");visual.className="weather-legend-visual";
+      const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
       item.title=model.details||[model.title,model.subtitle].filter(Boolean).join(" · ");
-      item.append(main,visual,side);fragment.append(item);
+      item.append(header,visual);fragment.append(item);
     });
     list?.replaceChildren(fragment);
     requestAnimationFrame(()=>this._weatherLegendPosition());
