@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41113r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41114r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.84",
+    "version": "1.2.85",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -364,7 +364,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -379,6 +379,8 @@ export const EXPECTED_MODULES=Object.freeze([
       "finale Augenassets",
       "Leaflet-sichere Rasterstile",
       "flächige Glättung",
+      "Hotspot-Erhalt",
+      "Transparenz im Kartenmenü",
       "Transparenz je Darstellungsfamilie",
       "entkoppelter UI-Zustand",
       "Layer-Schnellzugriff"
@@ -387,7 +389,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -414,4 +416,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.84",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.85",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
