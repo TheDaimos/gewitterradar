@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41108r1";
+import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -3271,6 +3271,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-size:10px;
           }
           .legend-item { display:inline-flex;align-items:center;gap:6px;white-space:nowrap; }
+          .legend-display-mode { color:rgba(224,190,111,.90);font-weight:760;letter-spacing:.01em; }
+          .legend-display-mode::before { content:"◉";color:#d9ad4e;font-size:8px;opacity:.88; }
           /* V4.07.54 – Legendenstruktur: Radien bilden nur im Hochformat eine
              feste zweite Zeile. Im Querformat bleiben beide Gruppen Bestandteil
              derselben Zeile. Keine Geraete-Sonderlogik, nur Ausrichtung. */
