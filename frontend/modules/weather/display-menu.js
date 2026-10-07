@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.3.2",
+  version:"0.3.3",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -179,7 +179,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
     const overscale=Number.isFinite(mapZoom)&&Number.isFinite(maxNative)?Math.pow(2,clamp(mapZoom-maxNative,0,3)):1;
     const zoomFactor=Math.sqrt(overscale);
-    return style==="soft"?clamp(8.5*zoomFactor,8.5,18):clamp(2.2*zoomFactor,2.2,5.5);
+    return style==="soft"?clamp(5.6*zoomFactor,5.6,11.5):clamp(2.2*zoomFactor,2.2,5.5);
   },
 
   _weatherDisplayApplyRasterPaneStyle(kind,pane){
@@ -191,7 +191,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     if(style==="balanced"){
       pane.style.filter="blur("+blur.toFixed(2)+"px) saturate(1.02) contrast(1.015)";
     }else if(style==="soft"){
-      pane.style.filter="blur("+blur.toFixed(2)+"px) saturate(1.065) contrast(1.075)";
+      pane.style.filter="blur("+blur.toFixed(2)+"px) saturate(1.18) contrast(1.34) brightness(.99)";
     }else{
       pane.style.filter="none";
     }
