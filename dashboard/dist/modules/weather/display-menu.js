@@ -349,6 +349,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
         this._weatherDisplayPersist();
         this._weatherDisplaySyncUi();
         this._weatherDisplayRefreshRenderedLayers();
+        this._weatherDisplayRefreshLayerOpacity("precipitation");
         this._weatherLegendSyncUi?.();
       });
       block.querySelector("[data-weather-display-refresh]")?.addEventListener("click",()=>this._weatherDisplayProbe({refresh:true}));
