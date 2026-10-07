@@ -2000,7 +2000,7 @@ const V411_HELP_WEATHER_DISPLAY=Object.freeze({
     title:"WeatherRouter · Wetterdarstellung",
     intro:"Die Darstellungsprofile verändern ausschließlich die optische Aufbereitung der Wetterebene. Wetterdaten, Providerwahl und WeatherRouter-Routing bleiben unverändert.",
     entries:Object.freeze([
-      Object.freeze({term:"Auto",description:"Komfortmodus mit gleitender Anpassung an die Zoomstufe. In der Fernsicht werden Wetterflächen stärker geglättet; beim Heranzoomen werden Konturen und Übergänge schrittweise klarer. Auto bleibt bewusst weich und geht nicht in die technische Pixelansicht über."}),
+      Object.freeze({term:"Auto",description:"Komfortmodus mit gleitender Anpassung an die Zoomstufe. In der Fernsicht bleiben kleine Wetterstrukturen erhalten. Beim Heranzoomen werden vergrößerte Rasterzellen zunehmend zu einer fließenden, wolkenartigen Fläche geglättet; Farben und Intensitäten gehen weich ineinander über. Präzise bleibt separat wählbar."}),
       Object.freeze({term:"Präzise",description:"Zeigt die Rasterstruktur möglichst unverändert und eignet sich für die technisch genaueste Betrachtung."}),
       Object.freeze({term:"Ausgewogen",description:"Reduziert harte Rasterkanten moderat und behält mehr Struktur als Weich."}),
       Object.freeze({term:"Weich",description:"Stärker flächige und ruhige Darstellung mit bewusster optischer Glättung."})
@@ -2010,7 +2010,7 @@ const V411_HELP_WEATHER_DISPLAY=Object.freeze({
     title:"WeatherRouter · Weather display",
     intro:"Display profiles only change the visual treatment of the weather layer. Weather data, provider selection and WeatherRouter routing remain unchanged.",
     entries:Object.freeze([
-      Object.freeze({term:"Auto",description:"Comfort mode with smooth zoom-dependent adjustment. Weather areas are softened more in the wide view; contours and transitions become gradually clearer while zooming in. Auto deliberately remains visually smooth instead of becoming the technical pixel view."}),
+      Object.freeze({term:"Auto",description:"Comfort mode with smooth zoom-dependent adjustment. Small weather structures remain visible in the wide view. As you zoom in, enlarged raster cells are increasingly blended into a continuous cloud-like field with smooth color and intensity transitions. Precise remains available separately."}),
       Object.freeze({term:"Precise",description:"Keeps the raster structure as unchanged as possible for the most technical view."}),
       Object.freeze({term:"Balanced",description:"Moderately reduces hard raster edges while retaining more structure than Soft."}),
       Object.freeze({term:"Soft",description:"Provides a more area-based and calm presentation with deliberate visual smoothing."})
