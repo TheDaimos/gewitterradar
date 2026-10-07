@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.12",
-  "build": "V4.11.12-DEV-2026-10-07",
-  "runtimeRevision": "41112r1",
-  "moduleSetId": "E411-12A1",
+  "productVersion": "4.11.13",
+  "build": "V4.11.13-DEV-2026-10-07",
+  "runtimeRevision": "41113r1",
+  "moduleSetId": "E411-13A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.12 DEV · WeatherRouter-Visualisierung: Menü-/Raster-Entkopplung, Leaflet-sichere Niederschlagsstile, finale Augenassets, generisches schaltbares Legendenoverlay und Layer-Schnellzugriff · DRA test candidate; deploy/dev",
+    "purpose": "V4.11.13 DEV · WeatherRouter-Visualisierung: flächige Niederschlagsdarstellung, generische Transparenzsteuerung, Menü-/Raster-Entkopplung, finale Augenassets und schaltbares Legendenoverlay · DRA test candidate; deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
