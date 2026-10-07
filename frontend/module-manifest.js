@@ -332,7 +332,15 @@ export const EXPECTED_MODULES=Object.freeze([
       "Quelle & Aktualität",
       "Abdeckung",
       "Darstellungslegende",
-      "Anfragebegrenzung"
+      "Darstellungstransparenz",
+      "Flächenglättung",
+      "Anfragebegrenzung",
+      "Räumlicher Vorladepuffer",
+      "Niederschlags-Zeitplayer",
+      "Frame-Doppelpuffer",
+      "Zeitachse ein/aus",
+      "verschiebbare Zeitachse",
+      "Ressourcenschutz"
     ],
     "file": "modules/weather/precipitation-layer.js"
   },
