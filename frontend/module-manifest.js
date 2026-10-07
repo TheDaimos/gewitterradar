@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41120r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41121r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.91",
+    "version": "1.2.92",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -290,7 +290,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.render",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Oberfläche",
     "function": "Hauptrendering",
     "subfunctions": [
@@ -364,7 +364,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -416,4 +416,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.91",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.92",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
