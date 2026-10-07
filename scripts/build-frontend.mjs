@@ -13,15 +13,15 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.10"')){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.11"')){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
-  if(!versionText.includes('displayVersion:"V4.11.10 DEV"')||!versionText.includes('build:"V4.11.10-DEV-2026-10-06"')||!versionText.includes('runtimeRevision:"41110r1"')||!versionText.includes('moduleSetId:"E411-10A1"'))throw Error('V4.11.10 canonical version mismatch');
-  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.10 runtime revision source mismatch');
+  if(!versionText.includes('displayVersion:"V4.11.11 DEV"')||!versionText.includes('build:"V4.11.11-DEV-2026-10-07"')||!versionText.includes('runtimeRevision:"41111r1"')||!versionText.includes('moduleSetId:"E411-11A1"'))throw Error('V4.11.11 canonical version mismatch');
+  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.11 runtime revision source mismatch');
   const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js','modules/weather/layer-menu.js','modules/weather/display-menu.js','modules/weather/legend-overlay.js','modules/ui/project-hub.js'];
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
   const expected=[...Object.keys(old),...additional].sort();
-  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.10 module inventory mismatch');
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.11 module inventory mismatch');
   const consumer=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
   const radar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
   const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
@@ -30,7 +30,7 @@ export async function expectedPayload(){
   if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.3"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster module identity mismatch');
   if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.1.4"')||!layerMenu.includes('buildWeatherLayerCatalog')||!layerMenu.includes('SUBCATEGORY_LABELS')||!layerMenu.includes('formatWeatherLayerCapabilityLabel')||!layerMenu.includes('weather-router-subcategory')||!layerMenu.includes('weather-layer-back-slot')||!layerMenu.includes('grid-template-columns:42px 1fr 42px')||!layerMenu.includes('min-height:52px')||!layerMenu.includes('width:calc(100% + 5px)')||!layerMenu.includes('margin-right:-5px')||!layerMenu.includes('padding-right:8px')||!layerMenu.includes('.weather-layer-logo{width:27px;height:27px;justify-self:start')||!layerMenu.includes('.weather-layer-view [data-map-display-mode]{display:none!important}')||!layerMenu.includes('.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
   const displayMenu=await readFile(resolve(root,'frontend/modules/weather/display-menu.js'),'utf8');
-  if(!displayMenu.includes('id:"weather.display-menu"')||!displayMenu.includes('version:"0.2.0"')||!displayMenu.includes('data-weather-display-eye-placeholder')||!displayMenu.includes('_weatherDisplayBindPanelDrag')||!manifestText.includes('"id": "weather.display-menu"'))throw Error('WeatherRouter display-menu module identity mismatch');
+  if(!displayMenu.includes('id:"weather.display-menu"')||!displayMenu.includes('version:"0.2.1"')||!displayMenu.includes('data-weather-display-eye=')||!displayMenu.includes('_weatherDisplayBindPanelDrag')||!manifestText.includes('"id": "weather.display-menu"'))throw Error('WeatherRouter display-menu module identity mismatch');
   const legendOverlay=await readFile(resolve(root,'frontend/modules/weather/legend-overlay.js'),'utf8');
   if(!legendOverlay.includes('id:"weather.legend-overlay"')||!legendOverlay.includes('version:"0.1.0"')||!legendOverlay.includes('_weatherLegendSetModel')||!legendOverlay.includes('_weatherLegendVisibleModels')||!legendOverlay.includes('data-weather-legend-hide')||!manifestText.includes('"id": "weather.legend-overlay"'))throw Error('WeatherRouter legend-overlay module identity mismatch');
   if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
