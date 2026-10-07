@@ -1152,4 +1152,63 @@ Damit ist der bislang letzte bewusst offene Grafikpunkt der WR-Visualisierung ge
 
 ---
 
+## 34. V4.11.12 DEV – Menü-/Raster-Entkopplung
+
+Stand: **2026-10-07**
+
+Im HA-Realtest wurde festgestellt, dass das Auf-/Zuklappen des schwebenden Darstellungsmenüs einen sichtbaren Neuaufbau des Niederschlagslayers provozierte.
+
+### Ursache
+
+Zwei Kopplungen waren dafür verantwortlich:
+
+1. `_weatherDisplayPatch()` rief bei **jeder** Konfigurationsänderung `_weatherDisplayRefreshRenderedLayers()` auf. Damit wurden auch reine UI-Zustände wie `minimized`, Position, Augenstatus oder Legendenmodus auf alle vorhandenen Niederschlagskacheln angewendet.
+2. Die Darstellungsstile `Ausgewogen` und `Weich` setzten direkt `node.style.transform = scale(...)`; `Präzise` setzte `transform = none`. Leaflet verwendet das `transform` der Kacheln selbst zur räumlichen Positionierung. Der Darstellungsrenderer durfte diese Eigenschaft daher niemals überschreiben.
+
+### Korrektur
+
+`weather.display-menu` **0.2.2** trennt nun strikt zwischen UI-Zustand und Rasterdarstellung:
+
+- Auf-/Zuklappen des Menüs → nur UI
+- Verschieben / Positionsspeicherung → nur UI
+- Auge aktiv/inaktiv → nur UI
+- Legendenmodus → nur Legende
+- nur ein tatsächlicher Wechsel von `Präzise / Ausgewogen / Weich` ruft die Raster-Stilaktualisierung auf
+
+Die Niederschlagsstile verwenden nur noch:
+
+- `image-rendering`
+- `filter`
+- `will-change: filter`
+
+Explizit verboten sind im WeatherRouter-Rasterstil:
+
+- `node.style.transform`
+- `transformOrigin`
+
+Damit bleibt die vollständige Leaflet-Kachelgeometrie ausschließlich unter Kontrolle von Leaflet.
+
+### Erwartetes Realtest-Verhalten
+
+Bei sichtbarem Niederschlag müssen jetzt folgende Aktionen ohne Flackern, Kachelversatz oder Layer-Neuaufbau funktionieren:
+
+- Menü minimieren
+- Menü aufklappen
+- Menü verschieben
+- Auge umschalten
+- Legende Auto / Ein / Aus
+
+Nur beim Wechsel des Niederschlagsstils darf eine optische Neuberechnung der bereits sichtbaren Kacheln stattfinden; es darf dabei ebenfalls kein geometrischer Neuaufbau ausgelöst werden.
+
+### Technischer Stand
+
+- Produkt: **V4.11.12 DEV**
+- Build: **V4.11.12-DEV-2026-10-07**
+- Runtime: **41112r1**
+- Modulsatz: **E411-12A1**
+- `core.manifest` **1.2.83**
+- `weather.display-menu` **0.2.2**
+
+---
+
 **C.K. – Eine Idee weiter gedacht.**
