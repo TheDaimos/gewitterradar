@@ -596,7 +596,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }catch(_error){}
         if(force||staleDrag){try{draggable?.finishDrag?.(true);}catch(_error){}}
         if(force||stalePinch||staleDrag){try{map.stop?.();}catch(_error){}}
-        if(force){state.pointers.clear();state.touchIds.clear();stopFallback("recovery");}
+        if(force){state.pointers.clear();state.touchIds.clear();if(state.browserTouchFallback?.frame!=null)cancelAnimationFrame(state.browserTouchFallback.frame);state.browserTouchFallback=null;}
         state.lastRecovery={reason:String(reason||'unknown'),at:Date.now(),stalePinch,staleDrag,forced:!!force};
       }finally{state.recovering=false;this._mapDiagnosticLog?.("gesture.recovery.end",{reason:String(reason||"unknown"),stalePinch,staleDrag});}
       if(invalidate)requestAnimationFrame(()=>{try{map.invalidateSize?.({animate:false});}catch(_error){}});
