@@ -1,18 +1,11 @@
-name: V4.11.34 mobile map regression
-
+name: V4.11.34 mobile map regression (historical)
 on:
-  push:
-    branches: [feature/v4.11-development, deploy/dev]
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   v41134-mobile-map:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Check mobile map and Geo diagnostics contracts
-        run: node scripts/test-v41134-mobile-map.mjs
+      - run: node scripts/test-v41134-mobile-map.mjs

@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41134r1";
+import { defineModule } from "../core/runtime.js?v=41135r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.2",
+  version:"1.0.3",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -73,6 +73,14 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         lastMultiPointerAt:safeNumber(state.lastMultiPointerAt),
         lastGlobalMultiAt:safeNumber(state.lastGlobalMultiAt),
         multitouchDirty:!!state.multitouchDirty,
+        ghostPointerObserved:!!state.ghostPointerObserved,
+        browserTouchFallback:state.browserTouchFallback?{
+          mode:state.browserTouchFallback.mode,
+          active:!!state.browserTouchFallback.active,
+          contacts:state.browserTouchFallback.points?.size??0,
+          pendingFrame:state.browserTouchFallback.frame!=null,
+          durationMs:Math.max(0,Math.round(now-Number(state.browserTouchFallback.startedAt||now)))
+        }:null,
         quarantineTouchSequence:!!state.quarantineTouchSequence,
         quarantineUntil:safeNumber(state.quarantineUntil),
         quarantineRemainingMs:state.quarantineTouchSequence?Math.max(0,Number(state.quarantineUntil||0)-now):0,
