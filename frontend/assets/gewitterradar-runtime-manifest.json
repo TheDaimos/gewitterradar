@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.35",
-  "build": "V4.11.35-DEV-2026-10-08",
-  "runtimeRevision": "41135r1",
-  "moduleSetId": "E411-35A1",
+  "productVersion": "4.11.36",
+  "build": "V4.11.36-DEV-2026-10-08",
+  "runtimeRevision": "41136r1",
+  "moduleSetId": "E411-36A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.106"
+      "version": "1.2.107"
     },
     {
       "id": "core.base-context",
@@ -87,7 +87,7 @@
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.15"
+      "version": "1.0.16"
     },
     {
       "id": "map.strikes-warnings",

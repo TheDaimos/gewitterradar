@@ -1,4 +1,4 @@
-import { defineModule } from "../core/runtime.js?v=41135r1";
+import { defineModule } from "../core/runtime.js?v=41136r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",

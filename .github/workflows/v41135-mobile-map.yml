@@ -1,15 +1,11 @@
-name: V4.11.35 mobile map regression
+name: V4.11.35 mobile map regression (historical)
 on:
-  push:
-    branches: [feature/v4.11-development, deploy/dev]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  v41135-mobile-map:
+  legacy:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Validate mobile map touch, Geo and DRA identity
-        run: node scripts/test-v41135-mobile-map.mjs
+      - run: node scripts/test-v41135-mobile-map.mjs

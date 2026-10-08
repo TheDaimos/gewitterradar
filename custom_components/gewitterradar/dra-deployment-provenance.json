@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.35",
-  "build": "V4.11.35-DEV-2026-10-08",
-  "runtimeRevision": "41135r1",
-  "moduleSetId": "E411-35A1",
+  "productVersion": "4.11.36",
+  "build": "V4.11.36-DEV-2026-10-08",
+  "runtimeRevision": "41136r1",
+  "moduleSetId": "E411-36A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.35 DEV · Android/HyperOS: Phantomkontakt-Erkennung ohne Sperrschleife, lokaler Touch-Ersatz bei fehlenden PointerEvents, begrenzte Kartenbewegungen, Geo-Diagnose · DRA-Test über deploy/dev",
+    "purpose": "V4.11.36 DEV · Karten-Zweifingerzoom: Abstand statt diagonaler Drift, Doppeltipp-/Doppelklick-Zoom, beibehaltene Einzel-Finger-Bedienung und GPS · DRA-Test via deploy/dev",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
