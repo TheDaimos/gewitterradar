@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -640,18 +640,14 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         return true;
       };
-      const interactiveMapTarget=event=>{
-        const target=event?.target;
-        if(!target||target===mapEl)return false;
-        return !!target?.closest?.('.leaflet-control,button,a,input,select,textarea,[role="button"]');
+      const eventPath=event=>{
+        const path=event?.composedPath?.();
+        return Array.isArray(path)&&path.length?path:[event?.target];
       };
-      const surfacePointer=event=>{
-        const target=event?.target;
-        if(!target)return false;
-        if(target===mapEl)return true;
-        if(target?.closest?.('.leaflet-control,button,a,input,select,textarea,[role="button"]'))return false;
-        return !!target?.closest?.('.leaflet-pane');
-      };
+      const interactiveMapTarget=event=>eventPath(event).some(node=>
+        !!node?.matches?.('.leaflet-control,button,a,input,select,textarea,[role="button"]'));
+      const mapSurfaceEvent=event=>eventPath(event).includes(mapEl)&&!interactiveMapTarget(event);
+      const surfacePointer=event=>mapSurfaceEvent(event);
       const reportedTouches=event=>Number(event?.touches?.length??0);
       const detectTouchPointerMismatch=(event,phase)=>{
         if(typeof PointerEvent!=='function'||state.hardResetting)return false;
@@ -673,22 +669,25 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       }));
       const scheduleSystemGestureReset=(reason)=>{
         const stamp=now();
-        diag("gesture.system-reset.schedule",{reason:String(reason||"unknown")});
-        if(stamp-state.lastSystemGestureAt<180&&state.systemGestureResetQueued)return;
+        if(state.systemGestureResetQueued||stamp-state.lastSystemGestureAt<1200){
+          diag("gesture.system-reset.coalesced",{reason});
+          return;
+        }
         state.lastSystemGestureAt=stamp;
         state.systemGestureResetQueued=true;
+        diag("gesture.system-reset.schedule",{reason});
         for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
         state.systemGestureTimers=[];
-        const run=(suffix)=>{
+        // Nur eine verzoegerte Ruecksetzung statt sofort + 220 ms + 700 ms.
+        state.systemGestureTimers.push(setTimeout(()=>{
           if(this._mapGestureRecovery!==state)return;
-          this._hardResetMapGestureHandlers(reason+(suffix?"-"+suffix:""),{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
-        };
-        queueMicrotask(()=>{
           state.systemGestureResetQueued=false;
-          run("immediate");
-        });
-        state.systemGestureTimers.push(setTimeout(()=>run("settle"),220));
-        state.systemGestureTimers.push(setTimeout(()=>run("post-animation"),700));
+          state.systemGestureTimers=[];
+          const stale=!!(this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving);
+          if(stale||!state.pointers.size){
+            this._hardResetMapGestureHandlers(reason+"-settle",{invalidate:stale,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:stale});
+          }else diag("gesture.system-reset.deferred",{reason,livePointers:state.pointers.size});
+        },220));
       };
       state.handlers.pointerdown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
@@ -698,16 +697,18 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.lastSystemGestureAt&&stamp-state.lastSystemGestureAt<3000){
           for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
           state.systemGestureTimers=[];
-          this._hardResetMapGestureHandlers('post-system-gesture-pointerdown',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
+          state.systemGestureResetQueued=false;
+          if(this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving)
+            this._recoverMapGestureState('post-system-gesture-stale',{force:true});
           state.lastSystemGestureAt=0;
           state.lastGlobalMultiAt=0;
         }
         const recentGlobalMulti=state.lastGlobalMultiAt&&stamp-state.lastGlobalMultiAt>120&&stamp-state.lastGlobalMultiAt<6000;
         const staleGlobalPointers=state.pointers.size===0&&state.globalPointers.size>1;
         const loneNonPrimary=event.isPrimary===false&&state.pointers.size===0;
-        if((recentGlobalMulti&&state.globalPointers.size<=1)||staleGlobalPointers||loneNonPrimary){
+        if(loneNonPrimary)diag("gesture.non-primary-first-map-pointer",{pointerId:event.pointerId});
+        if((recentGlobalMulti&&state.globalPointers.size<=1)||staleGlobalPointers){
           this._hardResetMapGestureHandlers(
-            loneNonPrimary?'non-primary-first-pointer-after-system-gesture':
             staleGlobalPointers?'stale-global-pointers-before-map-touch':
             'fresh-touch-after-recent-multitouch',
             {invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true}
@@ -782,6 +783,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           return;
         }
         if(touchCount>=3){
+          const tracked=this._mapGestureSurfacePointerCount(state);
+          if(tracked<=2&&state.globalPointers.size<=2){
+            diag("gesture.browser-touch-count-mismatch",{reportedTouches:touchCount,trackedPointers:tracked});
+            // Phantomkontakte im WebView duerfen keinen neuen Neustart ausloesen.
+            // Normale Leaflet-Gesten nicht global unterdruecken.
+            return;
+          }
           syncTouches(event);
           scheduleSystemGestureReset('three-finger-touch-system-gesture');
           return;
@@ -884,13 +892,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.globalPointerDown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
         diag("input.global-pointerdown",diagEvent(event));
-        if(interactiveMapTarget(event)){
-          state.globalPointers.add(event.pointerId);
-          return;
-        }
+        if(!mapSurfaceEvent(event))return;
         const stamp=now();
         const newPointer=!state.globalPointers.has(event.pointerId);
-        if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true||stamp-state.lastGlobalMultiAt>700)){
+        if(state.multitouchDirty&&newPointer&&event.isPrimary===false&&!state.globalPointers.size){
+          diag("gesture.non-primary-global-pointer",{pointerId:event.pointerId});
+          state.multitouchDirty=false;
+        }else if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true||stamp-state.lastGlobalMultiAt>700)){
           for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
           state.systemGestureTimers=[];
           this._hardResetMapGestureHandlers('dirty-multitouch-before-new-pointer',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
@@ -925,8 +933,12 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.globalTouchStart=event=>{
         diag("input.global-touchstart",diagEvent(event));
-        if(interactiveMapTarget(event))return;
+        if(!mapSurfaceEvent(event))return;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
+        if(touchCount>=3&&state.globalPointers.size<=2){
+          diag("gesture.browser-touch-count-mismatch",{reportedTouches:touchCount,trackedPointers:state.globalPointers.size});
+          return;
+        }
         if(state.multitouchDirty&&touchCount>=1&&stamp-state.lastGlobalMultiAt>700){
           this._hardResetMapGestureHandlers('dirty-multitouch-before-new-touch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.lastDirtyRecoveryAt=stamp;
@@ -936,7 +948,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           state.multitouchDirty=true;
           state.lastGlobalMultiAt=stamp;
         }
-        if(touchCount>=3)scheduleSystemGestureReset('global-three-finger-touch');
+        if(touchCount>=3&&state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-touch');
       };
       mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
       mapEl.addEventListener('pointermove',state.handlers.pointermove,true);
