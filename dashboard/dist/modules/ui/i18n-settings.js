@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41108r1";
+import { defineModule } from "../core/runtime.js?v=41128r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.3",
+  "version": "1.3.6",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
