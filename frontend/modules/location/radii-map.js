@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41129r1";
+import { defineModule } from "../core/runtime.js?v=41130r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -489,11 +489,11 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       return count;
     },
 
-    _hardResetMapGestureHandlers(reason,{invalidate=true,blockUntilPrimaryUp=true,anomaly=true,forceEnableConfigured=false}={}) {
+    _hardResetMapGestureHandlers(reason,{invalidate=true,blockUntilPrimaryUp=true,anomaly=true,forceEnableConfigured=false,rebuildHandlers=false}={}) {
       const state=this._mapGestureRecovery,map=this._map;
       if(!state||!map||state.hardResetting)return false;
       state.hardResetting=true;
-      const touchZoom=map.touchZoom,dragging=map.dragging;
+      let touchZoom=map.touchZoom,dragging=map.dragging;
       const touchWasEnabled=!!touchZoom?.enabled?.();
       const dragWasEnabled=!!dragging?.enabled?.();
       const touchShouldEnable=forceEnableConfigured?map.options?.touchZoom!==false:touchWasEnabled;
@@ -532,8 +532,28 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           map._mapPane?.classList?.remove?.('leaflet-zoom-anim');
         }catch(_error){}
         try{map.stop?.();}catch(_error){}
-        try{if(dragShouldEnable)dragging?.enable?.();}catch(_error){}
-        try{if(touchShouldEnable)touchZoom?.enable?.();}catch(_error){}
+        if(rebuildHandlers){
+          const L=state.L||window.L;
+          const replaceHandler=(key,Ctor,oldHandler,shouldEnable)=>{
+            if(typeof Ctor!=='function')return oldHandler;
+            try{oldHandler?.disable?.();}catch(_error){}
+            let fresh=null;
+            try{fresh=new Ctor(map);}catch(_error){return oldHandler;}
+            if(Array.isArray(map._handlers)){
+              const index=map._handlers.indexOf(oldHandler);
+              if(index>=0)map._handlers[index]=fresh;
+              else map._handlers.push(fresh);
+            }
+            map[key]=fresh;
+            try{if(shouldEnable)fresh.enable?.();}catch(_error){}
+            return fresh;
+          };
+          dragging=replaceHandler('dragging',L?.Map?.Drag,dragging,dragShouldEnable);
+          touchZoom=replaceHandler('touchZoom',L?.Map?.TouchZoom,touchZoom,touchShouldEnable);
+        }else{
+          try{if(dragShouldEnable)dragging?.enable?.();}catch(_error){}
+          try{if(touchShouldEnable)touchZoom?.enable?.();}catch(_error){}
+        }
         state.globalPointers?.clear?.();
         state.lastReportedTouches=null;
         state.blockUntilPrimaryUp=!!blockUntilPrimaryUp;
@@ -586,6 +606,11 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
+      const interactiveMapTarget=event=>{
+        const target=event?.target;
+        if(!target||target===mapEl)return false;
+        return !!target?.closest?.('.leaflet-control,button,a,input,select,textarea,[role="button"]');
+      };
       const surfacePointer=event=>{
         const target=event?.target;
         if(!target)return false;
@@ -621,7 +646,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         state.systemGestureTimers=[];
         const run=(suffix)=>{
           if(this._mapGestureRecovery!==state)return;
-          this._hardResetMapGestureHandlers(reason+(suffix?"-"+suffix:""),{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers(reason+(suffix?"-"+suffix:""),{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
         };
         queueMicrotask(()=>{
           state.systemGestureResetQueued=false;
@@ -632,11 +657,12 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.pointerdown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
+        if(interactiveMapTarget(event))return;
         const stamp=now();
         if(state.lastSystemGestureAt&&stamp-state.lastSystemGestureAt<3000){
           for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
           state.systemGestureTimers=[];
-          this._hardResetMapGestureHandlers('post-system-gesture-pointerdown',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers('post-system-gesture-pointerdown',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.lastSystemGestureAt=0;
           state.lastGlobalMultiAt=0;
         }
@@ -708,6 +734,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       const syncTouches=event=>{state.touchIds.clear();for(const touch of Array.from(event?.touches||[]))state.touchIds.add(touch.identifier);};
       state.handlers.touchstart=event=>{
+        if(interactiveMapTarget(event))return;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
         if(state.quarantineTouchSequence||(state.lastDirtyRecoveryAt&&stamp-state.lastDirtyRecoveryAt<300&&touchCount>=2)){
           state.quarantineTouchSequence=true;
@@ -722,7 +749,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           return;
         }
         if(touchCount===1&&state.lastGlobalMultiAt&&stamp-state.lastGlobalMultiAt>120&&stamp-state.lastGlobalMultiAt<6000){
-          this._hardResetMapGestureHandlers('single-touch-after-recent-multitouch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers('single-touch-after-recent-multitouch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.lastGlobalMultiAt=0;
         }
         if(detectTouchPointerMismatch(event,'start'))return;
@@ -735,7 +762,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         syncTouches(event);
       };
       state.handlers.touchmove=event=>{
-        if(!mapEl.contains(event?.target))return;
+        if(!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
         if(state.quarantineTouchSequence){
           if(event?.cancelable)event.preventDefault();
           event?.stopImmediatePropagation?.();
@@ -755,10 +782,19 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           state.pointers.clear();
           state.globalPointers.clear();
           state.multitouchDirty=false;
-          this._hardResetMapGestureHandlers('quarantined-touch-sequence-end',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers('quarantined-touch-sequence-end',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           return;
         }
-        if(Number(event?.touches?.length||0)===0)state.multitouchDirty=false;
+        if(Number(event?.touches?.length||0)===0){
+          const completedMulti=state.multitouchDirty;
+          state.multitouchDirty=false;
+          if(completedMulti){
+            queueMicrotask(()=>requestAnimationFrame(()=>{
+              if(this._mapGestureRecovery===state)this._hardResetMapGestureHandlers('multitouch-end-rehydrate',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
+            }));
+            return;
+          }
+        }
         if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();
       };
       state.handlers.touchcancel=event=>{
@@ -805,12 +841,16 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.globalPointerDown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
+        if(interactiveMapTarget(event)){
+          state.globalPointers.add(event.pointerId);
+          return;
+        }
         const stamp=now();
         const newPointer=!state.globalPointers.has(event.pointerId);
         if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true||stamp-state.lastGlobalMultiAt>700)){
           for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
           state.systemGestureTimers=[];
-          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-pointer',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-pointer',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.multitouchDirty=false;
           state.lastDirtyRecoveryAt=stamp;
           state.globalPointers.clear();
@@ -823,12 +863,20 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-pointer');
       };
       state.handlers.globalPointerEnd=event=>{
-        if(touchPointer(event))state.globalPointers.delete(event.pointerId);
+        if(!touchPointer(event))return;
+        state.globalPointers.delete(event.pointerId);
+        if(!state.globalPointers.size&&state.multitouchDirty&&!state.touchIds.size){
+          state.multitouchDirty=false;
+          queueMicrotask(()=>requestAnimationFrame(()=>{
+            if(this._mapGestureRecovery===state)this._hardResetMapGestureHandlers('multipointer-end-rehydrate',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
+          }));
+        }
       };
       state.handlers.globalTouchStart=event=>{
+        if(interactiveMapTarget(event))return;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
         if(state.multitouchDirty&&touchCount>=1&&stamp-state.lastGlobalMultiAt>700){
-          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-touch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-touch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.lastDirtyRecoveryAt=stamp;
           state.multitouchDirty=false;
         }
