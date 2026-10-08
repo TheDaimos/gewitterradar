@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41127r1";
+import { defineModule } from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -582,7 +582,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,systemGestureTimers:[]};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,systemGestureTimers:[]};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
@@ -596,12 +596,17 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const reportedTouches=event=>Number(event?.touches?.length??0);
       const detectTouchPointerMismatch=(event,phase)=>{
         if(typeof PointerEvent!=='function'||state.hardResetting)return false;
-        const surfaceCount=this._mapGestureSurfacePointerCount(state),touchCount=reportedTouches(event);
+        const surfaceCount=this._mapGestureSurfacePointerCount(state),touchCount=reportedTouches(event),stamp=now();
         state.lastReportedTouches=touchCount;
-        if(surfaceCount!==1||touchCount<2||now()-state.lastMultiPointerAt<450)return false;
+        const staleAfterMulti=state.multitouchDirty&&touchCount>=2&&surfaceCount<=1&&stamp-state.lastGlobalMultiAt>350;
+        const classicMismatch=surfaceCount===1&&touchCount>=2&&stamp-state.lastMultiPointerAt>=450;
+        if(!staleAfterMulti&&!classicMismatch)return false;
         if(event?.cancelable)event.preventDefault();
         event?.stopImmediatePropagation?.();
-        this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`);
+        state.quarantineTouchSequence=true;
+        state.lastDirtyRecoveryAt=stamp;
+        state.multitouchDirty=false;
+        this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`,{invalidate:true,blockUntilPrimaryUp:false,anomaly:true,forceEnableConfigured:true});
         return true;
       };
       const postGestureEnd=()=>queueMicrotask(()=>requestAnimationFrame(()=>{
@@ -704,6 +709,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const syncTouches=event=>{state.touchIds.clear();for(const touch of Array.from(event?.touches||[]))state.touchIds.add(touch.identifier);};
       state.handlers.touchstart=event=>{
         const touchCount=Number(event?.touches?.length||0),stamp=now();
+        if(state.quarantineTouchSequence||(state.lastDirtyRecoveryAt&&stamp-state.lastDirtyRecoveryAt<300&&touchCount>=2)){
+          state.quarantineTouchSequence=true;
+          if(event?.cancelable)event.preventDefault();
+          event?.stopImmediatePropagation?.();
+          syncTouches(event);
+          return;
+        }
         if(touchCount>=3){
           syncTouches(event);
           scheduleSystemGestureReset('three-finger-touch-system-gesture');
@@ -724,14 +736,37 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.touchmove=event=>{
         if(!mapEl.contains(event?.target))return;
+        if(state.quarantineTouchSequence){
+          if(event?.cancelable)event.preventDefault();
+          event?.stopImmediatePropagation?.();
+          return;
+        }
         if(state.blockUntilPrimaryUp){
           if(event?.cancelable)event.preventDefault();
           return;
         }
         detectTouchPointerMismatch(event,'move');
       };
-      state.handlers.touchend=event=>{syncTouches(event);if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();};
-      state.handlers.touchcancel=event=>{syncTouches(event);this._hardResetMapGestureHandlers('touchcancel');};
+      state.handlers.touchend=event=>{
+        syncTouches(event);
+        if(state.quarantineTouchSequence){
+          state.quarantineTouchSequence=false;
+          state.touchIds.clear();
+          state.pointers.clear();
+          state.globalPointers.clear();
+          state.multitouchDirty=false;
+          this._hardResetMapGestureHandlers('quarantined-touch-sequence-end',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          return;
+        }
+        if(Number(event?.touches?.length||0)===0)state.multitouchDirty=false;
+        if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();
+      };
+      state.handlers.touchcancel=event=>{
+        syncTouches(event);
+        state.quarantineTouchSequence=false;
+        if(Number(event?.touches?.length||0)===0)state.multitouchDirty=false;
+        this._hardResetMapGestureHandlers('touchcancel');
+      };
       state.handlers.pointercancel=event=>{
         if(touchPointer(event))state.pointers.delete(event.pointerId);
         if(state.synthesizing||state.recovering)return;
@@ -770,16 +805,37 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.globalPointerDown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
+        const stamp=now();
+        const newPointer=!state.globalPointers.has(event.pointerId);
+        if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true||stamp-state.lastGlobalMultiAt>700)){
+          for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
+          state.systemGestureTimers=[];
+          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-pointer',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          state.multitouchDirty=false;
+          state.lastDirtyRecoveryAt=stamp;
+          state.globalPointers.clear();
+        }
         state.globalPointers.add(event.pointerId);
-        if(state.globalPointers.size>=2)state.lastGlobalMultiAt=now();
+        if(state.globalPointers.size>=2){
+          state.multitouchDirty=true;
+          state.lastGlobalMultiAt=stamp;
+        }
         if(state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-pointer');
       };
       state.handlers.globalPointerEnd=event=>{
         if(touchPointer(event))state.globalPointers.delete(event.pointerId);
       };
       state.handlers.globalTouchStart=event=>{
-        const touchCount=Number(event?.touches?.length||0);
-        if(touchCount>=2)state.lastGlobalMultiAt=now();
+        const touchCount=Number(event?.touches?.length||0),stamp=now();
+        if(state.multitouchDirty&&touchCount>=1&&stamp-state.lastGlobalMultiAt>700){
+          this._hardResetMapGestureHandlers('dirty-multitouch-before-new-touch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+          state.lastDirtyRecoveryAt=stamp;
+          state.multitouchDirty=false;
+        }
+        if(touchCount>=2){
+          state.multitouchDirty=true;
+          state.lastGlobalMultiAt=stamp;
+        }
         if(touchCount>=3)scheduleSystemGestureReset('global-three-finger-touch');
       };
       mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
