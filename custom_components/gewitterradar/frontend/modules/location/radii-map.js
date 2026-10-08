@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -612,7 +612,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[],browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0,lastSingleTap:null,lastDoubleTapAt:0};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[],browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0,lastSingleTap:null,lastDoubleTapAt:0,touchTapCandidate:null};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
@@ -743,31 +743,73 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         fallback.framePoints=[...fallback.points.values()].map(p=>({...p}));
         fallback.targetZoom=this._map?.getZoom?.()??fallback.targetZoom;
       };
+      const anchorForDoubleTap=(map,L,x,y,target)=>{
+        const rect=(map.getContainer?.()||mapEl)?.getBoundingClientRect?.(),size=map.getSize?.();
+        if(!rect||!size||rect.width<=0||rect.height<=0||size.x<=0||size.y<=0)return null;
+        const px=(x-rect.left)*size.x/rect.width,py=(y-rect.top)*size.y/rect.height;
+        if(!Number.isFinite(px)||!Number.isFinite(py)||px<0||py<0||px>size.x||py>size.y)return null;
+        const touchPoint=L.point(px,py),geographicPoint=map.containerPointToLatLng(touchPoint);
+        const projected=map.project(geographicPoint,target);
+        const center=map.unproject(L.point(projected.x-px+size.x/2,projected.y-py+size.y/2),target);
+        if(!Number.isFinite(center?.lat)||!Number.isFinite(center?.lng))return null;
+        return {center,geographicPoint,point:{x:px,y:py}};
+      };
       const mapDoubleTap=(x,y,source)=>{
-        const map=this._map;if(!map||state.hardResetting||state.recovering||state.pointers.size)return false;
+        const map=this._map;
+        if(!map||state.hardResetting||state.recovering||state.pointers.size)return false;
         const zoom=map.getZoom?.()??0,target=Math.min(map.getMaxZoom?.()??18,Math.floor(zoom+1.00001));
         if(target<=zoom)return false;
-        // Home-Assistant-WebView liefert nach der Systemgeste teilweise
-        // Pointerkoordinaten aus einem anderen Koordinatenraum. Deshalb NICHT
-        // setZoomAround(clientX - rect.left, clientY - rect.top) verwenden:
-        // das versetzt die Karte bei Europa-Taps bis Russland/Arktis.
-        // Zunaechst sicher um den bestehenden geografischen Mittelpunkt.
-        const center=map.getCenter?.();
-        const before=center?{lat:center.lat,lon:center.lng}:null;
+        const view=anchorForDoubleTap(map,L,x,y,target);
         state.lastDoubleTapAt=now();
-        map.setZoom(target,{animate:true});
+        if(view)map.setView(view.center,target,{animate:true});
+        else map.setZoom(target,{animate:true});
         diag("gesture.doubletap.zoom",{source,fromZoom:zoom,toZoom:target,
-          anchor:"map-center",centerBefore:before,client:{x,y}});
+          anchor:view?"tap-geographic":"fallback-map-center",client:{x,y},
+          tappedGeo:view?{lat:view.geographicPoint.lat,lon:view.geographicPoint.lng}:null,
+          targetCenter:view?{lat:view.center.lat,lon:view.center.lng}:null,point:view?.point||null});
         return true;
       };
-      const observeTap=(x,y,stamp)=>{
+      const observeTap=(x,y,stamp,source="pointer")=>{
         const previous=state.lastSingleTap;
-        state.lastSingleTap={x,y,at:stamp};
-        if(previous&&stamp-previous.at>45&&stamp-previous.at<350&&
-            Math.hypot(x-previous.x,y-previous.y)<28){
+        state.lastSingleTap={x,y,at:stamp,source};
+        diag("gesture.tap.observed",{source,client:{x,y},
+          sincePreviousMs:previous?Math.round(stamp-previous.at):null});
+        if(previous&&previous.source===source&&stamp-previous.at>45&&stamp-previous.at<350&&
+          Math.hypot(x-previous.x,y-previous.y)<32){
           state.lastSingleTap=null;
-          mapDoubleTap(x,y,"pointer");
+          mapDoubleTap(x,y,source);
         }
+      };
+      const prepareTouchTap=(event,stamp)=>{
+        if(!state.ghostPointerObserved||state.pointers.size||state.globalPointers.size)return;
+        const touches=Array.from(event.changedTouches||[]),fallback=state.browserTouchFallback;
+        if(touches.length!==1||fallback?.mode!=="touch"||fallback.points.size!==1){
+          state.touchTapCandidate=null;state.lastSingleTap=null;return;
+        }
+        const touch=touches[0];
+        state.touchTapCandidate={id:touch.identifier,x:touch.clientX,y:touch.clientY,startAt:stamp,moved:false};
+        diag("gesture.touch-tap.start",{id:String(touch.identifier),client:{x:touch.clientX,y:touch.clientY},
+          reportedTouches:event.touches?.length??null});
+      };
+      const markTouchTapMove=event=>{
+        const tap=state.touchTapCandidate;if(!tap)return;
+        for(const touch of Array.from(event.changedTouches||[])){
+          if(touch.identifier===tap.id&&Math.hypot(touch.clientX-tap.x,touch.clientY-tap.y)>15)
+            tap.moved=true;
+        }
+      };
+      const finishTouchTap=(event,stamp)=>{
+        const tap=state.touchTapCandidate;if(!tap)return;
+        const touch=Array.from(event.changedTouches||[]).find(t=>t.identifier===tap.id);
+        if(!touch)return;
+        state.touchTapCandidate=null;
+        const ms=stamp-tap.startAt,dist=Math.hypot(touch.clientX-tap.x,touch.clientY-tap.y);
+        const valid=ms<350&&!tap.moved&&dist<16&&
+          state.pointers.size===0&&state.globalPointers.size===0&&state.ghostPointerObserved;
+        diag("gesture.touch-tap.end",{valid,ms:Math.round(ms),distance:Math.round(dist),
+          reportedTouches:event.touches?.length??null});
+        if(valid)observeTap(tap.x,tap.y,stamp,"touch");
+        else state.lastSingleTap=null;
       };
       const reportedTouches=event=>Number(event?.touches?.length??0);
       const detectTouchPointerMismatch=(event,phase)=>{
@@ -800,6 +842,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(this._mapGestureRecovery===state&&!state.pointers.size&&!state.touchIds.size)this._recoverMapGestureState('gesture-end',{force:false});
       }));
       const scheduleSystemGestureReset=(reason)=>{
+        state.touchTapCandidate=null;state.lastSingleTap=null;
         const stamp=now();
         if(state.systemGestureResetQueued||stamp-state.lastSystemGestureAt<1200){
           diag("gesture.system-reset.coalesced",{reason});
@@ -871,7 +914,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           fallbackContactsChanged(state.browserTouchFallback);
         }
         if(state.pointers.size>=2){
-          state.lastSingleTap=null;
+          state.touchTapCandidate=null;state.lastSingleTap=null;
           for(const item of state.pointers.values())item.hadMulti=true;
         }
         const surfaceCount=this._mapGestureSurfacePointerCount(state);
@@ -924,7 +967,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
             stopFallback("pointer-end");state.touchIds.clear();state.multitouchDirty=false;
           }else fallbackContactsChanged(state.browserTouchFallback);
         }
-        if(singleTap)observeTap(event.clientX,event.clientY,stamp);
+        if(singleTap)observeTap(event.clientX,event.clientY,stamp,"pointer");
         if(event.isPrimary===true)state.blockUntilPrimaryUp=false;
         if(state.synthesizing||state.recovering||state.hardResetting)return;
         queueMicrotask(()=>{
@@ -947,6 +990,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         const tracked=this._mapGestureSurfacePointerCount(state);
         if(state.browserTouchFallback?.mode==="touch"){
+          state.touchTapCandidate=null;state.lastSingleTap=null;
           for(const touch of Array.from(event.changedTouches||[]))
             state.browserTouchFallback.points.set(touch.identifier,{x:touch.clientX,y:touch.clientY});
           fallbackContactsChanged(state.browserTouchFallback);
@@ -979,6 +1023,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.ghostPointerObserved&&tracked===0&&state.globalPointers.size===0&&touchCount===2&&event.changedTouches?.length===1){
           const touch=event.changedTouches[0];
           newFallback("touch",new Map([[touch.identifier,{x:touch.clientX,y:touch.clientY}]]),touchCount);
+          prepareTouchTap(event,stamp);
           if(event.cancelable)event.preventDefault();
           event.stopImmediatePropagation?.();
           return;
@@ -1006,6 +1051,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
         if(state.browserTouchFallback?.active){
           if(state.browserTouchFallback.mode==="touch"){
+            markTouchTapMove(event);
             for(const touch of Array.from(event.changedTouches||[]))
               moveFallback(touch.identifier,touch.clientX,touch.clientY);
           }
@@ -1029,6 +1075,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.browserTouchFallback?.active){
           const fallback=state.browserTouchFallback;
           if(fallback.mode==="touch"){
+            finishTouchTap(event,now());
             for(const touch of Array.from(event.changedTouches||[]))fallback.points.delete(touch.identifier);
             if(!fallback.points.size)stopFallback("touch-end");
             else fallbackContactsChanged(fallback);
@@ -1060,6 +1107,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();
       };
       state.handlers.touchcancel=event=>{
+        state.touchTapCandidate=null;state.lastSingleTap=null;
         diag("input.touchcancel",diagEvent(event));
         syncTouches(event);
         clearTouchQuarantine();
@@ -1073,6 +1121,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         this._recoverMapGestureState('pointercancel',{force:true});
       };
       const suspendLifecycle=reason=>{
+        state.touchTapCandidate=null;state.lastSingleTap=null;
         state.blockUntilPrimaryUp=false;
         this._recoverMapGestureState(reason,{force:true});
       };
@@ -1087,6 +1136,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       const resumeLifecycle=reason=>{
         if(document.visibilityState==='hidden')return;
+        state.touchTapCandidate=null;state.lastSingleTap=null;
         const stamp=Date.now();
         if(stamp-state.lastLifecycleResetAt<180)return;
         state.lastLifecycleResetAt=stamp;

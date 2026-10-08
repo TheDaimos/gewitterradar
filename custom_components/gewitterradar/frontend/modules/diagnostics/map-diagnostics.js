@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41137r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.4",
+  version:"1.0.5",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -74,6 +74,10 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         lastGlobalMultiAt:safeNumber(state.lastGlobalMultiAt),
         multitouchDirty:!!state.multitouchDirty,
         ghostPointerObserved:!!state.ghostPointerObserved,
+        touchTapCandidate:state.touchTapCandidate?{id:String(state.touchTapCandidate.id),
+          moved:!!state.touchTapCandidate.moved,ageMs:Math.max(0,Math.round(now-state.touchTapCandidate.startAt))}:null,
+        lastSingleTap:state.lastSingleTap?{source:state.lastSingleTap.source,
+          ageMs:Math.max(0,Math.round(now-state.lastSingleTap.at))}:null,
         browserTouchFallback:state.browserTouchFallback?{
           mode:state.browserTouchFallback.mode,
           active:!!state.browserTouchFallback.active,
@@ -230,6 +234,8 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         buttons:event?.buttons??null,
         touches:event?.touches?.length??null,
         changedTouches:event?.changedTouches?.length??null,
+        changedTouchPositions:Array.from(event?.changedTouches||[]).slice(0,3).map(t=>({
+          id:String(t.identifier),x:safeNumber(t.clientX),y:safeNumber(t.clientY)})),
         cancelable:event?.cancelable??null,
         defaultPrevented:event?.defaultPrevented??null,
         target:targetText(event?.target),
