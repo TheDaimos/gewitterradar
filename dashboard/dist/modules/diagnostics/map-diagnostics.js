@@ -166,7 +166,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
       // Bei Ersatzbedienung feuert Leaflet pro Bildaufbau mehrere Start-/End-
       // Ereignisse. Jede Einzelmeldung belegt sonst den 800er-Ringpuffer.
       // Stattdessen Stichproben plus Anzahl ausgelassener Meldungen festhalten.
-      const motionType=/^leaflet\\.(?:movestart|moveend|zoomstart|zoomend|zoom)$/.test(String(type));
+      const motionType=/^leaflet\.(?:movestart|moveend|zoomstart|zoomend)$/.test(String(type));
       if(motionType&&this._mapGestureRecovery?.browserTouchFallback?.active){
         const stamp=typeof performance!=="undefined"?performance.now():Date.now();
         if(stamp-Number(state.lastMotionSampleAt||0)<160){
