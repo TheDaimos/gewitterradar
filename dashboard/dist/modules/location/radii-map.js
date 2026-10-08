@@ -528,7 +528,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           map._animatingZoom=false;
           map._animateToCenter=null;
           map._animateToZoom=null;
-          mapEl?.classList?.remove?.('leaflet-zoom-anim');
+          state.mapEl?.classList?.remove?.('leaflet-zoom-anim');
           map._mapPane?.classList?.remove?.('leaflet-zoom-anim');
         }catch(_error){}
         try{map.stop?.();}catch(_error){}
