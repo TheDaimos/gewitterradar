@@ -1,9 +1,9 @@
-import { defineModule } from "../core/runtime.js?v=41126r1";
+import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.8",
+  version:"0.4.9",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -12,6 +12,7 @@ export const MODULE_META=Object.freeze({
 
 const STORAGE_KEY="gewitterradar:weather-display:v1";
 const DEFAULT_POSITION=Object.freeze({x:.72,y:.16});
+const DEFAULT_EYE_POSITION=Object.freeze({x:0,y:1});
 const DEFAULT_STATE=Object.freeze({
   enabled:false,
   controlVisible:true,
@@ -19,6 +20,7 @@ const DEFAULT_STATE=Object.freeze({
   rememberPosition:true,
   legendMode:"auto",
   position:DEFAULT_POSITION,
+  eyePosition:DEFAULT_EYE_POSITION,
   styles:Object.freeze({precipitation:"auto"}),
   opacities:Object.freeze({precipitation:null})
 });
@@ -43,11 +45,12 @@ const cloneDefault=()=>({
   rememberPosition:DEFAULT_STATE.rememberPosition,
   legendMode:DEFAULT_STATE.legendMode,
   position:{...DEFAULT_POSITION},
+  eyePosition:{...DEFAULT_EYE_POSITION},
   styles:{precipitation:"auto"},
   opacities:{precipitation:null}
 });
 const normalizeState=input=>{
-  const source=safeObject(input),styles=safeObject(source.styles),opacities=safeObject(source.opacities),position=safeObject(source.position);
+  const source=safeObject(input),styles=safeObject(source.styles),opacities=safeObject(source.opacities),position=safeObject(source.position),eyePosition=safeObject(source.eyePosition);
   const precipitation=WEATHER_DISPLAY_STYLES.precipitation.includes(styles.precipitation)?styles.precipitation:"auto";
   const legendMode=["auto","on","off"].includes(source.legendMode)?source.legendMode:"auto";
   const precipitationOpacity=opacities.precipitation==null?null:clamp(opacities.precipitation,0,1);
@@ -58,6 +61,7 @@ const normalizeState=input=>{
     rememberPosition:bool(source.rememberPosition,true),
     legendMode,
     position:{x:clamp(position.x??DEFAULT_POSITION.x,0,1),y:clamp(position.y??DEFAULT_POSITION.y,0,1)},
+    eyePosition:{x:clamp(eyePosition.x??DEFAULT_EYE_POSITION.x,0,1),y:clamp(eyePosition.y??DEFAULT_EYE_POSITION.y,0,1)},
     styles:{precipitation},
     opacities:{precipitation:precipitationOpacity}
   };
@@ -105,6 +109,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       probing:false,
       generation:0,
       drag:null,
+      eyeDrag:null,
+      eyeSuppressClickUntil:0,
       resizeHandler:null,
       zoomHandler:null,
       zoomMap:null,
@@ -122,7 +128,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   _weatherDisplayPatch(patch,{persist=true}={}){
     const state=this._weatherDisplayState();
     const previous=state.config;
-    const next=normalizeState({...previous,...safeObject(patch),styles:{...previous.styles,...safeObject(patch?.styles)},opacities:{...previous.opacities,...safeObject(patch?.opacities)},position:{...previous.position,...safeObject(patch?.position)}});
+    const next=normalizeState({...previous,...safeObject(patch),styles:{...previous.styles,...safeObject(patch?.styles)},opacities:{...previous.opacities,...safeObject(patch?.opacities)},position:{...previous.position,...safeObject(patch?.position)},eyePosition:{...previous.eyePosition,...safeObject(patch?.eyePosition)}});
     const precipitationStyleChanged=next.styles?.precipitation!==previous.styles?.precipitation;
     const precipitationOpacityChanged=next.opacities?.precipitation!==previous.opacities?.precipitation;
     const legendModeChanged=next.legendMode!==previous.legendMode;
@@ -228,7 +234,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     // Farbstufen gehen kontinuierlich ineinander ueber.
     const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
     const nativeZoom=Number.isFinite(maxNative)?maxNative:7;
-    const relativeZoom=safeZoom-nativeZoom;
+    const relativeZoom=safeZoom-nativeZoom+2;
     const overZoom=clamp(relativeZoom,0,5);
     const overscale=Math.pow(2,overZoom);
 
@@ -374,13 +380,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       ".weather-display-legend-picker{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.weather-display-legend-button{appearance:none;min-height:31px;padding:5px 9px;border:1px solid rgba(255,255,255,.11);border-radius:8px;background:#111820;color:#bfc8d2;font:760 8.5px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-legend-button.active{border-color:rgba(240,202,112,.58);background:rgba(145,105,31,.20);color:#f2d88e;box-shadow:0 0 12px rgba(223,173,68,.08)}",
       ".weather-display-opacity{display:flex;align-items:center;gap:7px;min-width:190px;justify-content:flex-end}.weather-display-opacity input[type=range]{width:118px;accent-color:#d8aa4e;touch-action:manipulation}.weather-display-opacity output{min-width:39px;margin-right:7px;text-align:right;font-size:9px;font-weight:820;color:#f1d38a}.weather-display-opacity-reset{appearance:none;min-height:28px;padding:4px 7px;border:1px solid rgba(225,181,83,.24);border-radius:7px;background:rgba(255,255,255,.025);color:#d7c590;font:740 8px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-opacity-reset:disabled{opacity:.4;cursor:default}",
       ".weather-display-panel .weather-display-opacity{min-width:0;justify-content:stretch;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.065)}.weather-display-panel .weather-display-opacity input[type=range]{flex:1 1 auto;width:auto;min-width:0}.weather-display-opacity-label{font-size:8px;font-weight:760;color:#c9d0d8;white-space:nowrap}",
-      ".weather-display-eye-control{position:absolute;z-index:2147483645;left:10px;bottom:54px;width:44px;height:44px;padding:0;border:1px solid rgba(232,188,91,.35);border-radius:13px;background:rgba(10,14,20,.94);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 15px rgba(222,166,58,.09);backdrop-filter:blur(10px);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.weather-display-eye-control[hidden]{display:none!important}.weather-display-eye-control.active{border-color:rgba(240,202,112,.68);box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 18px rgba(240,202,112,.18)}",
+      ".weather-display-eye-control{position:absolute;z-index:2147483645;left:10px;top:10px;bottom:auto;width:44px;height:44px;padding:0;border:1px solid rgba(232,188,91,.35);border-radius:13px;background:rgba(10,14,20,.94);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 15px rgba(222,166,58,.09);backdrop-filter:blur(10px);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.weather-display-eye-control[hidden]{display:none!important}.weather-display-eye-control.active{border-color:rgba(240,202,112,.68);box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 18px rgba(240,202,112,.18)}",
       ".weather-display-eye-glyph{display:grid;place-items:center;width:34px;height:34px;color:#e8c56b;pointer-events:none}.weather-display-eye-glyph img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7));pointer-events:none;user-select:none;-webkit-user-drag:none}",
       ".weather-display-panel{position:absolute;z-index:2147483644;width:min(286px,calc(100% - 20px));box-sizing:border-box;border:1px solid rgba(231,190,96,.34);border-radius:15px;background:linear-gradient(155deg,rgba(17,20,27,.97),rgba(12,13,20,.95));box-shadow:0 18px 46px rgba(0,0,0,.52),0 0 22px rgba(219,161,51,.08);backdrop-filter:blur(15px);color:#e7ebf0;overflow:hidden;pointer-events:auto}.weather-display-panel[hidden]{display:none!important}.weather-display-panel.minimized{width:min(184px,calc(100% - 20px))}.weather-display-panel.minimized .weather-display-panel-body{display:none}",
       ".weather-display-panel-head{min-height:46px;padding:5px 6px 5px 9px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;background:linear-gradient(90deg,rgba(177,128,36,.10),rgba(112,34,92,.08))}.weather-display-panel.dragging .weather-display-panel-head{cursor:grabbing}.weather-display-panel-title{font-size:11px;font-weight:860;color:#f1d38a}.weather-display-panel-sub{margin-top:2px;font-size:7.8px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-display-minimize{appearance:none;width:34px;height:32px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025);color:#d9c999;font:900 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-panel.minimized .weather-display-minimize{width:31px;height:29px;font-size:13px}",
       ".weather-display-panel-body{display:grid;gap:8px;padding:9px}.weather-display-card{padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.024)}.weather-display-card-title{font-size:10px;font-weight:840;color:#f1d48c;margin-bottom:6px}.weather-display-card-note{font-size:8px;line-height:1.42;opacity:.64;margin-top:6px}",
       ".weather-layer-display-entry{grid-column:1/-1;border-color:rgba(236,185,91,.27)!important;background:linear-gradient(135deg,rgba(126,86,22,.17),rgba(108,35,92,.12))!important}.weather-layer-display-entry strong{color:#f2d48c!important}",
-      "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}.weather-display-eye-control{width:46px;height:46px;bottom:52px}}"
+      "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}.weather-display-eye-control{width:46px;height:46px}}"
     ].join("");
     this.shadow.append(style);
   },
@@ -474,8 +480,11 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       eye.className="weather-display-eye-control";
       eye.type="button";
       eye.setAttribute("aria-label","WeatherRouter-Darstellungsmenü");
-      eye.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();if(!this._weatherDisplayIsAvailable())return;this._weatherDisplayPatch({enabled:!this._weatherDisplayState().config.enabled});});
+      eye.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();const state=this._weatherDisplayState();if(performance.now()<Number(state.eyeSuppressClickUntil||0))return;if(!this._weatherDisplayIsAvailable())return;this._weatherDisplayPatch({enabled:!state.config.enabled});});
       mapCard.append(eye);
+      this._weatherDisplayBindEyeDrag(eye);
+    }else{
+      this._weatherDisplayBindEyeDrag(eye);
     }
     let panel=this.shadow.getElementById("weather-display-panel");
     if(!panel){
@@ -498,17 +507,33 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       this._weatherDisplayBindPanelDrag(panel,panel.querySelector("[data-weather-display-drag-handle]"));
     }
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
     if(!state.lifecycleAbortHandler){
-      state.lifecycleAbortHandler=()=>this._weatherDisplayCancelDrag?.();
+      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();};
       window.addEventListener("blur",state.lifecycleAbortHandler,true);
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
     }
+    requestAnimationFrame(()=>this._weatherDisplayPositionEye());
     state.mounted=true;
+  },
+
+  _weatherDisplayPositionEye(position=this._weatherDisplayState().config.eyePosition){
+    const state=this._weatherDisplayState();
+    if(state.eyeDrag)return;
+    const eye=this.shadow?.getElementById("weather-display-eye-control"),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+    if(!eye||eye.hidden||!mapCard||!mapEl)return;
+    const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),width=eye.offsetWidth||eye.getBoundingClientRect().width,height=eye.offsetHeight||eye.getBoundingClientRect().height;
+    if(!cardRect.width||!mapRect.width||!width||!height)return;
+    const inset=10,minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
+    const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+    const source=state.config.rememberPosition?position:DEFAULT_EYE_POSITION;
+    eye.style.left=(minLeft+(maxLeft-minLeft)*clamp(source?.x??DEFAULT_EYE_POSITION.x,0,1))+"px";
+    eye.style.top=(minTop+(maxTop-minTop)*clamp(source?.y??DEFAULT_EYE_POSITION.y,0,1))+"px";
+    eye.style.bottom="auto";
   },
 
   _weatherDisplayPositionPanel(position=this._weatherDisplayState().config.position){
@@ -523,6 +548,66 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const source=state.config.rememberPosition?position:DEFAULT_POSITION;
     panel.style.left=(minLeft+(maxLeft-minLeft)*clamp(source?.x??DEFAULT_POSITION.x,0,1))+"px";
     panel.style.top=(minTop+(maxTop-minTop)*clamp(source?.y??DEFAULT_POSITION.y,0,1))+"px";
+  },
+
+  _weatherDisplayCancelEyeDrag(){
+    const state=this.__weatherDisplayState;if(!state?.eyeDrag)return;
+    const eye=this.shadow?.getElementById("weather-display-eye-control"),pointerId=state.eyeDrag.pointerId;
+    state.eyeDrag=null;eye?.classList.remove("dragging");
+    try{if(pointerId!=null&&eye?.hasPointerCapture?.(pointerId))eye.releasePointerCapture(pointerId);}catch(_error){}
+    requestAnimationFrame(()=>this._weatherDisplayPositionEye());
+  },
+
+  _weatherDisplayBindEyeDrag(eye){
+    if(!eye||eye.dataset.weatherDisplayEyeDragBound==="1")return;
+    eye.dataset.weatherDisplayEyeDragBound="1";
+    const begin=event=>{
+      if(event.button!==undefined&&event.button!==0)return;
+      const state=this._weatherDisplayState(),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+      if(!mapCard||!mapEl)return;
+      event.stopPropagation();
+      const rect=eye.getBoundingClientRect(),cardRect=mapCard.getBoundingClientRect();
+      state.eyeDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,moved:false};
+      eye.classList.add("dragging");
+      try{eye.setPointerCapture?.(event.pointerId);}catch(_error){}
+    };
+    const move=event=>{
+      const state=this._weatherDisplayState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      event.preventDefault();event.stopPropagation();
+      const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
+      const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
+      if(Math.hypot(dx,dy)>4)drag.moved=true;
+      const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),width=eye.offsetWidth,height=eye.offsetHeight,inset=10;
+      const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
+      eye.style.left=clamp(drag.startLeft+dx,minLeft,maxLeft)+"px";
+      eye.style.top=clamp(drag.startTop+dy,minTop,maxTop)+"px";
+      eye.style.bottom="auto";
+    };
+    const end=event=>{
+      const state=this._weatherDisplayState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      event.stopPropagation();
+      const moved=!!drag.moved,mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+      state.eyeDrag=null;eye.classList.remove("dragging");
+      try{eye.releasePointerCapture?.(event.pointerId);}catch(_error){}
+      if(moved)state.eyeSuppressClickUntil=performance.now()+450;
+      if(!mapCard||!mapEl)return;
+      const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),rect=eye.getBoundingClientRect(),inset=10;
+      const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
+      const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-rect.width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-rect.height-inset);
+      const left=clamp(rect.left-cardRect.left,minLeft,maxLeft),top=clamp(rect.top-cardRect.top,minTop,maxTop);
+      const x=maxLeft>minLeft?(left-minLeft)/(maxLeft-minLeft):0,y=maxTop>minTop?(top-minTop)/(maxTop-minTop):0;
+      if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});
+      else this._weatherDisplayPositionEye(DEFAULT_EYE_POSITION);
+    };
+    eye.addEventListener("pointerdown",begin);
+    eye.addEventListener("pointermove",move);
+    eye.addEventListener("pointerup",end);
+    eye.addEventListener("pointercancel",end);
+    eye.addEventListener("lostpointercapture",event=>{
+      const state=this._weatherDisplayState();
+      if(state.eyeDrag?.pointerId===event.pointerId)this._weatherDisplayCancelEyeDrag();
+    });
   },
 
   _weatherDisplayCancelDrag(){
@@ -630,6 +715,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.querySelectorAll("[data-weather-display-transparency-reset]").forEach(button=>{button.disabled=config.opacities?.[button.dataset.weatherDisplayTransparencyReset]==null;});
       panel.querySelectorAll("[data-weather-display-legend-mode]").forEach(button=>{const active=button.dataset.weatherDisplayLegendMode===config.legendMode;button.classList.toggle("active",active);button.setAttribute("aria-pressed",active?"true":"false");});
       if(!panel.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
+      if(!eye.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionEye());
     }
   },
 
