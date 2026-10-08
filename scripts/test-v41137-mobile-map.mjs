@@ -106,7 +106,7 @@ assert.ok(dblCode.includes('map.setZoom(target,{animate:true})'),'Doppeltipp mus
 assert.ok(!dblCode.includes('map.setZoomAround('),'Doppeltipp must not call zoomAround with WebView coordinates');
 const diagCode=String(await read('frontend/modules/diagnostics/map-diagnostics.js'));
 assert.ok(diagCode.includes('suppressedSinceLast'),'Diagnostics must condense Leaflet motion noise');
-const rx=/^leaflet\\.(?:movestart|moveend|zoomstart|zoomend)$/;
+const rx=/^leaflet\.(?:movestart|moveend|zoomstart|zoomend)$/;
 assert.ok(rx.test('leaflet.zoomend')&&rx.test('leaflet.moveend')&&!rx.test('geo.focus.moveend'),
   'Motion samples are limited to transient Leaflet events');
 console.log('PASS V4.11.37: stable double tap, combined pinch+pan, geographic center, mirrored modules and DRA identity');
