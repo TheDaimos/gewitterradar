@@ -103,7 +103,7 @@ const dblEnd=source.indexOf('const observeTap=',dblStart);
 assert.ok(dblStart>=0&&dblEnd>dblStart,'Double tap handler absent');
 const dblCode=source.slice(dblStart,dblEnd);
 assert.ok(dblCode.includes('map.setZoom(target,{animate:true})'),'Doppeltipp must keep the geographical map center stable');
-assert.ok(!dblCode.includes('setZoomAround'),'Doppeltipp must not use displaced WebView client coordinates');
+assert.ok(!dblCode.includes('map.setZoomAround('),'Doppeltipp must not call zoomAround with WebView coordinates');
 const diagCode=String(await read('frontend/modules/diagnostics/map-diagnostics.js'));
 assert.ok(diagCode.includes('suppressedSinceLast'),'Diagnostics must condense Leaflet motion noise');
 const rx=/^leaflet\\.(?:movestart|moveend|zoomstart|zoomend)$/;
