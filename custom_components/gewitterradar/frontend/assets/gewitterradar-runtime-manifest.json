@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.31",
-  "build": "V4.11.31-DEV-2026-10-08",
-  "runtimeRevision": "41131r1",
-  "moduleSetId": "E411-31A1",
+  "productVersion": "4.11.32",
+  "build": "V4.11.32-DEV-2026-10-08",
+  "runtimeRevision": "41132r1",
+  "moduleSetId": "E411-32A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.102"
+      "version": "1.2.103"
     },
     {
       "id": "core.base-context",
@@ -47,7 +47,7 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.5"
+      "version": "1.1.6"
     },
     {
       "id": "ui.i18n-settings",
@@ -74,6 +74,10 @@
       "version": "1.3.6"
     },
     {
+      "id": "diagnostics.map",
+      "version": "1.0.0"
+    },
+    {
       "id": "diagnostics.cockpit",
       "version": "1.5.1"
     },
@@ -83,7 +87,7 @@
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.12"
+      "version": "1.0.13"
     },
     {
       "id": "map.strikes-warnings",
@@ -126,5 +130,5 @@
       "version": "1.2.1"
     }
   ],
-  "displayVersion": "V4.11.31 DEV"
+  "displayVersion": "V4.11.32 DEV"
 }
