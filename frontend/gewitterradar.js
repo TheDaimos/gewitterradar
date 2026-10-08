@@ -19,7 +19,7 @@ let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapsho
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
 let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus, installProjectHub;
-let installCompassSelector, installDiagnostics, installModuleView, installCompassDesign;
+let installCompassSelector, installDiagnostics, installModuleView, installMapDiagnostics, installCompassDesign;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
 let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherLayerMenu, installWeatherDisplayMenu, installWeatherLegendOverlay, installUpdateWatch;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
@@ -42,6 +42,7 @@ try {
   const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js');
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
+  const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41132r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41131r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
@@ -75,6 +76,7 @@ try {
   ({ installMedallionDesigns } = medallionDesigns);
   ({ installDiagnostics } = diagnostics);
   ({ installModuleView } = moduleView);
+  ({ installMapDiagnostics } = mapDiagnostics);
   ({ installCompassDesign } = compassDesign);
   ({ installLocationRadiiMap } = locationRadiiMap);
   ({ installStrikesWarnings } = strikesWarnings);
@@ -142,6 +144,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installCompassSelector(GewitterradarCard,__moduleDeps);
   installDiagnostics(GewitterradarCard,__moduleDeps);
   installModuleView(GewitterradarCard,__moduleDeps);
+  installMapDiagnostics(GewitterradarCard,__moduleDeps);
   installCompassDesign(GewitterradarCard,__moduleDeps);
   installLocationRadiiMap(GewitterradarCard,__moduleDeps);
   installStrikesWarnings(GewitterradarCard,__moduleDeps);
