@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -685,6 +685,14 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           pinchMove:Math.abs(afterDistance-beforeDistance),
           zoomDelta:beforeDistance>12&&afterDistance>12?Math.log2(afterDistance/beforeDistance):0};
       };
+      // Eine einzige geografische Zielansicht fuer Zoom UND Verschiebung.
+      // Zoomen allein behaelt den Kartenmittelpunkt unveraendert; eine
+      // tatsaechliche Schwerpunktsbewegung wird als Pan-Versatz uebernommen.
+      const combinedGestureCenter=(map,zoom,dx,dy)=>{
+        const current=map.getCenter();
+        const projected=map.project(current,zoom);
+        return map.unproject([projected.x-dx,projected.y-dy],zoom);
+      };
       const applyFallbackFrame=fallback=>{
         if(fallback.frame!=null)return;
         fallback.frame=requestAnimationFrame(()=>{
@@ -698,19 +706,23 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
             const target=Math.max(map.getMinZoom?.()??0,Math.min(map.getMaxZoom?.()??18,
               fallback.targetZoom+delta.zoomDelta));
             fallback.targetZoom=target;
-            if(Math.abs(delta.zoomDelta)>0.0001){
-              const rect=mapEl.getBoundingClientRect();
-              map.setZoomAround([delta.center.x-rect.left,delta.center.y-rect.top],target,{animate:false});
+            // Abstand veraendert Zoom; der geografische Kartenmittelpunkt
+            // verschiebt sich NUR bei einer Bewegung des Fingerscherpunkts.
+            // Eine Bildaktualisierung statt setZoomAround() + panBy().
+            // Leichtes Wackeln bei reinem Pinch nicht als Translation behandeln.
+            const panThreshold=Math.max(3,Math.min(8,delta.pinchMove*.18));
+            const pan=delta.centroidMove>panThreshold;
+            if(Math.abs(delta.zoomDelta)>0.0001||pan){
+              const nextCenter=combinedGestureCenter(map,target,pan?delta.dx:0,pan?delta.dy:0);
+              map.setView(nextCenter,target,{animate:false});
             }
-            // Abstand veraendert Zoom; nur gemeinsame Fingerbewegung verschiebt.
-            const pan=delta.centroidMove>Math.max(2.5,delta.pinchMove*.55);
-            if(pan)map.panBy([-delta.dx,-delta.dy],{animate:false});
             const stamp=now();
             if(stamp-state.lastFallbackLogAt>300){
               state.lastFallbackLogAt=stamp;
               diag("gesture.browser-touch-fallback-pinch",{zoomDelta:delta.zoomDelta,
                 targetZoom:target,actualZoom:map.getZoom?.(),pinchMove:delta.pinchMove,
-                centroidMove:delta.centroidMove,panApplied:pan,contacts:after.length});
+                centroidMove:delta.centroidMove,panThreshold,panDx:pan?delta.dx:0,panDy:pan?delta.dy:0,
+                panApplied:pan,center:map.getCenter?.(),contacts:after.length});
             }
           }else if(after.length===1&&before?.length===1){
             const dx=after[0].x-before[0].x,dy=after[0].y-before[0].y;
@@ -735,10 +747,17 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const map=this._map;if(!map||state.hardResetting||state.recovering||state.pointers.size)return false;
         const zoom=map.getZoom?.()??0,target=Math.min(map.getMaxZoom?.()??18,Math.floor(zoom+1.00001));
         if(target<=zoom)return false;
-        const rect=mapEl.getBoundingClientRect();
+        // Home-Assistant-WebView liefert nach der Systemgeste teilweise
+        // Pointerkoordinaten aus einem anderen Koordinatenraum. Deshalb NICHT
+        // setZoomAround(clientX - rect.left, clientY - rect.top) verwenden:
+        // das versetzt die Karte bei Europa-Taps bis Russland/Arktis.
+        // Zunaechst sicher um den bestehenden geografischen Mittelpunkt.
+        const center=map.getCenter?.();
+        const before=center?{lat:center.lat,lon:center.lng}:null;
         state.lastDoubleTapAt=now();
-        map.setZoomAround([x-rect.left,y-rect.top],target,{animate:true});
-        diag("gesture.doubletap.zoom",{source,fromZoom:zoom,toZoom:target});
+        map.setZoom(target,{animate:true});
+        diag("gesture.doubletap.zoom",{source,fromZoom:zoom,toZoom:target,
+          anchor:"map-center",centerBefore:before,client:{x,y}});
         return true;
       };
       const observeTap=(x,y,stamp)=>{
