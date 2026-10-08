@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -2165,7 +2165,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       mapRecenter?.addEventListener('click', (event) => {
         event?.preventDefault?.();
         event?.stopPropagation?.();
-        if (!this._map) return;
+        this._mapDiagnosticLog?.("geo.button.click",{mapReady:!!this._map});
+        if (!this._map){this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"map-not-ready"});return;}
         this._clearRecentStrikeTarget();
         this._resetStatusClusterBrowse();
         this._statusFocusIndex = -1;

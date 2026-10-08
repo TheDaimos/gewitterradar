@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -727,15 +727,25 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
     },
 
     _focusReferenceStormRadius(reference = this._home()) {
-      if (!this._map || !reference) return;
+      if (!this._map || !reference){
+        this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"map-or-reference-missing"});
+        return;
+      }
       const lat = finiteNumber(reference.lat);
       const lon = finiteNumber(reference.lon);
-      if (lat == null || lon == null) return;
+      if (lat == null || lon == null){
+        this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"invalid-coordinates",lat,lon});
+        return;
+      }
 
       const observationRadius = Math.max(1,this._observationRadiusValue());
       const stormRadius = Math.max(5,Math.min(this._stormRadiusValue(),observationRadius));
       const L = window.L;
       const center = [lat,lon];
+      const requestId=(this._mapDiagnosticGeoRequestId||0)+1;
+      this._mapDiagnosticGeoRequestId=requestId;
+      this._mapDiagnosticGeoPending={requestId,lat,lon,startedAt:Date.now(),zoomBefore:this._map.getZoom?.()};
+      this._mapDiagnosticLog?.("geo.focus.request",{requestId,lat,lon,stormRadius,observationRadius});
 
       /* V3.988 – Geo-Location ist jetzt ein echter räumlicher Recenter:
          nicht nur den Mittelpunkt setzen, sondern den eingestellten Gewitterradius
@@ -745,6 +755,8 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         const centerLatLng = L.latLng(lat,lon);
         const bounds = centerLatLng?.toBounds?.(stormRadius*2000);
         if (bounds?.isValid?.()) {
+          const c=bounds.getCenter?.();
+          this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"flyToBounds",center:c?{lat:c.lat,lon:c.lng}:null});
           this._map.flyToBounds(bounds,{
             padding:[34,34],
             animate:true,
@@ -758,12 +770,14 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       // Robuster Fallback für ungewöhnliche Leaflet-Builds.
       const currentZoom = finiteNumber(this._map.getZoom?.()) ?? 7;
       if (typeof this._map.flyTo === 'function') {
+        this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"flyTo",zoom:currentZoom});
         this._map.flyTo(center,currentZoom,{
           animate:true,
           duration:1.22,
           easeLinearity:.22
         });
       } else {
+        this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"setView",zoom:currentZoom});
         this._map.setView(center,currentZoom,{ animate:true });
       }
     },

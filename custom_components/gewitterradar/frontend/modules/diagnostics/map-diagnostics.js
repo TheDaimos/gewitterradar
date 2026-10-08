@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41133r1";
+import { defineModule } from "../core/runtime.js?v=41134r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.1",
+  version:"1.0.2",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -253,7 +253,19 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
       add("dragstart",event=>this._mapDiagnosticLog("leaflet.dragstart",{original:this._mapDiagnosticEventData(event?.originalEvent)}));
       add("dragend",event=>this._mapDiagnosticLog("leaflet.dragend",{distance:safeNumber(event?.distance),original:this._mapDiagnosticEventData(event?.originalEvent)}));
       add("movestart",()=>this._mapDiagnosticLog("leaflet.movestart"));
-      add("moveend",()=>this._mapDiagnosticLog("leaflet.moveend"));
+      add("moveend",()=>{
+        this._mapDiagnosticLog("leaflet.moveend");
+        const pending=this._mapDiagnosticGeoPending;
+        if(pending){
+          const c=map.getCenter?.();
+          this._mapDiagnosticLog("geo.focus.moveend",{
+            requestId:pending.requestId,elapsedMs:Date.now()-pending.startedAt,
+            zoomBefore:pending.zoomBefore,zoomAfter:map.getZoom?.(),
+            center:c?{lat:c.lat,lon:c.lng}:null,target:{lat:pending.lat,lon:pending.lon}
+          });
+          this._mapDiagnosticGeoPending=null;
+        }
+      });
       add("zoomstart",()=>this._mapDiagnosticLog("leaflet.zoomstart"));
       add("zoomend",()=>this._mapDiagnosticLog("leaflet.zoomend"));
       add("zoom",()=>{

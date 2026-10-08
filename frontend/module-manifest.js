@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41133r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41134r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.104",
+    "version": "1.2.105",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -224,7 +224,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.map",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Diagnose",
     "function": "Kartendiagnose",
     "subfunctions": [
@@ -269,7 +269,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -294,7 +294,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -433,4 +433,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.104",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.105",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
