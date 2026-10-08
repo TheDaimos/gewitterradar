@@ -1,0 +1,23 @@
+name: V4.11.40 module consistency and Android map preservation
+on:
+  push:
+    branches: [feature/v4.11-development, deploy/dev]
+    paths:
+      - 'frontend/**'
+      - 'dashboard/dist/**'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'custom_components/gewitterradar/build_info.py'
+      - 'custom_components/gewitterradar/dra-deployment-provenance.json'
+      - 'scripts/test-v41140-module-manifest.mjs'
+      - '.github/workflows/v41140-module-manifest.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  module-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check actual manifest registry, DRA identity, code mirroring and mobile gestures
+        run: node scripts/test-v41140-module-manifest.mjs
