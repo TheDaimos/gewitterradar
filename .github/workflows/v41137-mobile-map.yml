@@ -1,15 +1,11 @@
-name: V4.11.37 mobile gestures and geo stability
+name: V4.11.37 mobile map (historical)
 on:
-  push:
-    branches: [feature/v4.11-development, deploy/dev]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  map-gesture-contract:
+  historical:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Check geo-stable double tap and simultaneous two-finger zoom and pan
-        run: node scripts/test-v41137-mobile-map.mjs
+      - run: node scripts/test-v41137-mobile-map.mjs

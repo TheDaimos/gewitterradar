@@ -1,0 +1,15 @@
+name: V4.11.38 double tap after screenshot
+on:
+  push:
+    branches: [feature/v4.11-development, deploy/dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  map-tap-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Android touch-only double-tap, anchor, regression and build
+        run: node scripts/test-v41138-mobile-map.mjs
