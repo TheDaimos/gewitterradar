@@ -40,7 +40,7 @@ const gesture=String(await read('frontend/modules/location/radii-map.js'));
 const geo=String(await read('frontend/modules/map/clusters-recent.js'));
 const control=String(await read('frontend/modules/ui/controls.js'));
 const diag=String(await read('frontend/modules/diagnostics/map-diagnostics.js'));
-for(const marker of ['event?.composedPath?.()','mapSurfaceEvent','gesture.browser-touch-count-mismatch','gesture.browser-touch-fallback-start','gesture.browser-touch-fallback-move','gesture.system-reset.coalesced'])assert.ok(gesture.includes(marker),'Touch guard missing: '+marker);
+for(const marker of ['event?.composedPath?.()','mapSurfaceEvent','gesture.browser-touch-count-mismatch','gesture.browser-touch-fallback-start','gesture.browser-touch-fallback-pinch','gesture.system-reset.coalesced'])assert.ok(gesture.includes(marker),'Touch guard missing: '+marker);
 assert.ok(!gesture.includes('window.addEventListener(\'touchmove\''),'No global touchmove blockade');
 assert.ok(control.includes('geo.button.click'));
 for(const marker of ['geo.focus.skipped','geo.focus.request','geo.focus.method'])assert.ok(geo.includes(marker));
