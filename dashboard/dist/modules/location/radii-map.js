@@ -707,7 +707,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const staleGlobalPointers=state.pointers.size===0&&state.globalPointers.size>1;
         const loneNonPrimary=event.isPrimary===false&&state.pointers.size===0;
         if(loneNonPrimary)diag("gesture.non-primary-first-map-pointer",{pointerId:event.pointerId});
-        if((recentGlobalMulti&&state.globalPointers.size<=1)||staleGlobalPointers){
+        // Ein falscher nicht-primaerer Erstkontakt aus dem WebView darf nicht
+        // vor der Ersatzbedienung erneut die Leaflet-Handler verlieren.
+        if((recentGlobalMulti&&event.isPrimary!==false&&state.globalPointers.size<=1)||staleGlobalPointers){
           this._hardResetMapGestureHandlers(
             staleGlobalPointers?'stale-global-pointers-before-map-touch':
             'fresh-touch-after-recent-multitouch',
