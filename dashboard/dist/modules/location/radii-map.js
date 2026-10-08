@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -749,9 +749,10 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const px=(x-rect.left)*size.x/rect.width,py=(y-rect.top)*size.y/rect.height;
         if(!Number.isFinite(px)||!Number.isFinite(py)||px<0||py<0||px>size.x||py>size.y)return null;
         const touchPoint=L.point(px,py),geographicPoint=map.containerPointToLatLng(touchPoint);
-        const projected=map.project(geographicPoint,target);
-        const center=map.unproject(L.point(projected.x-px+size.x/2,projected.y-py+size.y/2),target);
-        if(!Number.isFinite(center?.lat)||!Number.isFinite(center?.lng))return null;
+        // Der angetippte Ort wird beim Zoom neuer geografischer Kartenmittelpunkt.
+        // Vorher blieb er am alten Bildschirmpunkt und wurde nicht wirklich fokussiert.
+        if(!Number.isFinite(geographicPoint?.lat)||!Number.isFinite(geographicPoint?.lng))return null;
+        const center=geographicPoint;
         return {center,geographicPoint,point:{x:px,y:py}};
       };
       const mapDoubleTap=(x,y,source)=>{
@@ -764,7 +765,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(view)map.setView(view.center,target,{animate:true});
         else map.setZoom(target,{animate:true});
         diag("gesture.doubletap.zoom",{source,fromZoom:zoom,toZoom:target,
-          anchor:view?"tap-geographic":"fallback-map-center",client:{x,y},
+          anchor:view?"tap-geographic-centered":"fallback-map-center",client:{x,y},
           tappedGeo:view?{lat:view.geographicPoint.lat,lon:view.geographicPoint.lng}:null,
           targetCenter:view?{lat:view.center.lat,lon:view.center.lng}:null,point:view?.point||null});
         return true;

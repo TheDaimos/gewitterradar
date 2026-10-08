@@ -1,7 +1,5 @@
 name: V4.11.38 double tap after screenshot
 on:
-  push:
-    branches: [feature/v4.11-development, deploy/dev]
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.38",
-  "build": "V4.11.38-DEV-2026-10-08",
-  "runtimeRevision": "41138r1",
-  "moduleSetId": "E411-38A1",
+  "productVersion": "4.11.39",
+  "build": "V4.11.39-DEV-2026-10-08",
+  "runtimeRevision": "41139r1",
+  "moduleSetId": "E411-39A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.38 DEV · Doppeltipp-Position auf geografischen Kartenpunkt; Touch-Only-Doppeltipp nach Android-Drei-Finger-Bildschirmfoto · getrennt von bestehendem Zwei-Finger-Zoom und Kartenverschiebung",
+    "purpose": "V4.11.39 DEV · Doppeltipp fokussiert und zentriert den angetippten geografischen Ort bei gleichzeitiger Vergroesserung; Android-Screenshot-Erkennung und Zwei-Finger-Zoom bleiben unveraendert",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
