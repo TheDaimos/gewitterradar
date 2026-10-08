@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41130r1";
+import { defineModule } from "../core/runtime.js?v=41131r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -602,10 +602,35 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,systemGestureTimers:[]};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[]};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
+      const clearTouchQuarantine=()=>{
+        if(state.quarantineTimer!=null)clearTimeout(state.quarantineTimer);
+        state.quarantineTimer=null;
+        state.quarantineTouchSequence=false;
+        state.quarantineUntil=0;
+      };
+      const armTouchQuarantine=(duration=650)=>{
+        clearTouchQuarantine();
+        state.quarantineTouchSequence=true;
+        state.quarantineUntil=now()+Math.max(180,Number(duration)||650);
+        state.quarantineTimer=setTimeout(()=>{
+          if(this._mapGestureRecovery!==state)return;
+          clearTouchQuarantine();
+          state.touchIds.clear();
+          if(!state.globalPointers.size)state.pointers.clear();
+        },Math.max(180,Number(duration)||650));
+      };
+      const touchQuarantineActive=()=>{
+        if(!state.quarantineTouchSequence)return false;
+        if(now()>=Number(state.quarantineUntil||0)){
+          clearTouchQuarantine();
+          return false;
+        }
+        return true;
+      };
       const interactiveMapTarget=event=>{
         const target=event?.target;
         if(!target||target===mapEl)return false;
@@ -628,7 +653,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!staleAfterMulti&&!classicMismatch)return false;
         if(event?.cancelable)event.preventDefault();
         event?.stopImmediatePropagation?.();
-        state.quarantineTouchSequence=true;
+        armTouchQuarantine(650);
         state.lastDirtyRecoveryAt=stamp;
         state.multitouchDirty=false;
         this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`,{invalidate:true,blockUntilPrimaryUp:false,anomaly:true,forceEnableConfigured:true});
@@ -736,8 +761,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.touchstart=event=>{
         if(interactiveMapTarget(event))return;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
-        if(state.quarantineTouchSequence||(state.lastDirtyRecoveryAt&&stamp-state.lastDirtyRecoveryAt<300&&touchCount>=2)){
-          state.quarantineTouchSequence=true;
+        if(touchQuarantineActive()||(state.lastDirtyRecoveryAt&&stamp-state.lastDirtyRecoveryAt<300&&touchCount>=2)){
+          if(!touchQuarantineActive())armTouchQuarantine(650);
           if(event?.cancelable)event.preventDefault();
           event?.stopImmediatePropagation?.();
           syncTouches(event);
@@ -763,7 +788,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.touchmove=event=>{
         if(!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
-        if(state.quarantineTouchSequence){
+        if(touchQuarantineActive()){
           if(event?.cancelable)event.preventDefault();
           event?.stopImmediatePropagation?.();
           return;
@@ -777,7 +802,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.touchend=event=>{
         syncTouches(event);
         if(state.quarantineTouchSequence){
-          state.quarantineTouchSequence=false;
+          clearTouchQuarantine();
           state.touchIds.clear();
           state.pointers.clear();
           state.globalPointers.clear();
@@ -799,7 +824,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.touchcancel=event=>{
         syncTouches(event);
-        state.quarantineTouchSequence=false;
+        clearTouchQuarantine();
         if(Number(event?.touches?.length||0)===0)state.multitouchDirty=false;
         this._hardResetMapGestureHandlers('touchcancel');
       };
@@ -818,6 +843,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(stamp-state.lastLifecycleResetAt<180)return;
         state.lastLifecycleResetAt=stamp;
         state.blockUntilPrimaryUp=false;
+        clearTouchQuarantine();
         state.lastReportedTouches=null;
         state.lastMultiPointerAt=0;
         state.lastGlobalMultiAt=0;
@@ -865,6 +891,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.globalPointerEnd=event=>{
         if(!touchPointer(event))return;
         state.globalPointers.delete(event.pointerId);
+        if(!state.globalPointers.size&&state.quarantineTouchSequence){
+          clearTouchQuarantine();
+          state.touchIds.clear();
+          state.pointers.clear();
+          this._hardResetMapGestureHandlers('quarantine-pointer-end-release',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
+          return;
+        }
         if(!state.globalPointers.size&&state.multitouchDirty&&!state.touchIds.size){
           state.multitouchDirty=false;
           queueMicrotask(()=>requestAnimationFrame(()=>{
@@ -924,6 +957,8 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         this._map?.off?.('zoom',handlers.mapZoom);
       }
       for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
+      if(state.quarantineTimer!=null)clearTimeout(state.quarantineTimer);
+      state.quarantineTimer=null;state.quarantineTouchSequence=false;state.quarantineUntil=0;
       state.systemGestureTimers=[];state.globalPointers?.clear?.();
       state.handlers=null;state.pointers.clear();state.touchIds.clear();
     },
