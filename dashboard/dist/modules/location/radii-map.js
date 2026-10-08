@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -596,7 +596,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }catch(_error){}
         if(force||staleDrag){try{draggable?.finishDrag?.(true);}catch(_error){}}
         if(force||stalePinch||staleDrag){try{map.stop?.();}catch(_error){}}
-        if(force){state.pointers.clear();state.touchIds.clear();if(state.browserTouchFallback?.frame!=null)cancelAnimationFrame(state.browserTouchFallback.frame);state.browserTouchFallback=null;}
+        if(force){
+          state.pointers.clear();state.touchIds.clear();
+          const fallback=state.browserTouchFallback;
+          if(fallback?.frame!=null)cancelAnimationFrame(fallback.frame);
+          if(fallback?.previousZoomSnap!=null&&map?.options)map.options.zoomSnap=fallback.previousZoomSnap;
+          state.browserTouchFallback=null;
+        }
         state.lastRecovery={reason:String(reason||'unknown'),at:Date.now(),stalePinch,staleDrag,forced:!!force};
       }finally{state.recovering=false;this._mapDiagnosticLog?.("gesture.recovery.end",{reason:String(reason||"unknown"),stalePinch,staleDrag});}
       if(invalidate)requestAnimationFrame(()=>{try{map.invalidateSize?.({animate:false});}catch(_error){}});
@@ -606,7 +612,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[],browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0};
+      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[],browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0,lastSingleTap:null,lastDoubleTapAt:0};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
@@ -656,55 +662,93 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!fallback)return;
         if(fallback.frame!=null)cancelAnimationFrame(fallback.frame);
         state.browserTouchFallback=null;
+        if(this._map?.options&&fallback.previousZoomSnap!=null)
+          this._map.options.zoomSnap=fallback.previousZoomSnap;
         diag("gesture.browser-touch-fallback-end",{reason,mode:fallback.mode});
       };
       const newFallback=(mode,points,touchCount)=>{
         stopFallback("replace");
-        const fallback={active:true,mode,points,frame:null,panX:0,panY:0,zoomDelta:0,
-          centerX:null,centerY:null,startedAt:now()};
+        const map=this._map,previousZoomSnap=map?.options?.zoomSnap??1;
+        if(map?.options)map.options.zoomSnap=0;
+        const fallback={active:true,mode,points,frame:null,targetZoom:map?.getZoom?.()??0,
+          framePoints:[...points.values()].map(p=>({...p})),previousZoomSnap,startedAt:now()};
         state.browserTouchFallback=fallback;
         diag("gesture.browser-touch-fallback-start",{mode,reportedTouches:touchCount,trackedPointers:state.pointers.size,contacts:points.size});
         return fallback;
+      };
+      const twoFingerMotion=(before,after)=>{
+        const center=p=>({x:(p[0].x+p[1].x)/2,y:(p[0].y+p[1].y)/2});
+        const distance=p=>Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+        const a=center(before),b=center(after),beforeDistance=distance(before),afterDistance=distance(after);
+        const dx=b.x-a.x,dy=b.y-a.y;
+        return {center:b,dx,dy,beforeDistance,afterDistance,centroidMove:Math.hypot(dx,dy),
+          pinchMove:Math.abs(afterDistance-beforeDistance),
+          zoomDelta:beforeDistance>12&&afterDistance>12?Math.log2(afterDistance/beforeDistance):0};
       };
       const applyFallbackFrame=fallback=>{
         if(fallback.frame!=null)return;
         fallback.frame=requestAnimationFrame(()=>{
           fallback.frame=null;
           if(state.browserTouchFallback!==fallback||this._mapGestureRecovery!==state)return;
-          const map=this._map,zoomDelta=fallback.zoomDelta,dx=fallback.panX,dy=fallback.panY;
-          fallback.zoomDelta=0;fallback.panX=0;fallback.panY=0;
-          if(Math.abs(zoomDelta)>.002&&Number.isFinite(fallback.centerX)&&Number.isFinite(fallback.centerY)){
-            const rect=mapEl.getBoundingClientRect();
-            map?.setZoomAround?.([fallback.centerX-rect.left,fallback.centerY-rect.top],(map.getZoom?.()||0)+zoomDelta,{animate:false});
+          const map=this._map;if(!map)return;
+          const after=[...fallback.points.values()].map(p=>({...p}));
+          const before=fallback.framePoints;
+          if(after.length===2&&before?.length===2){
+            const delta=twoFingerMotion(before,after);
+            const target=Math.max(map.getMinZoom?.()??0,Math.min(map.getMaxZoom?.()??18,
+              fallback.targetZoom+delta.zoomDelta));
+            fallback.targetZoom=target;
+            if(Math.abs(delta.zoomDelta)>0.0001){
+              const rect=mapEl.getBoundingClientRect();
+              map.setZoomAround([delta.center.x-rect.left,delta.center.y-rect.top],target,{animate:false});
+            }
+            // Abstand veraendert Zoom; nur gemeinsame Fingerbewegung verschiebt.
+            const pan=delta.centroidMove>Math.max(2.5,delta.pinchMove*.55);
+            if(pan)map.panBy([-delta.dx,-delta.dy],{animate:false});
+            const stamp=now();
+            if(stamp-state.lastFallbackLogAt>300){
+              state.lastFallbackLogAt=stamp;
+              diag("gesture.browser-touch-fallback-pinch",{zoomDelta:delta.zoomDelta,
+                targetZoom:target,actualZoom:map.getZoom?.(),pinchMove:delta.pinchMove,
+                centroidMove:delta.centroidMove,panApplied:pan,contacts:after.length});
+            }
+          }else if(after.length===1&&before?.length===1){
+            const dx=after[0].x-before[0].x,dy=after[0].y-before[0].y;
+            if(Math.hypot(dx,dy)>=1)map.panBy([-dx,-dy],{animate:false});
           }
-          // Leaflet erzeugt bei panBy pro Aufruf movestart und moveend.
-          // Deshalb nie pro Pixel-Event panBy aufrufen.
-          if(Math.abs(dx)+Math.abs(dy)>=1)map?.panBy?.([-dx,-dy],{animate:false});
-          const stamp=now();
-          if(stamp-state.lastFallbackLogAt>400){
-            state.lastFallbackLogAt=stamp;
-            diag("gesture.browser-touch-fallback-move",{mode:fallback.mode,contacts:fallback.points.size,dx,dy,zoomDelta});
-          }
+          fallback.framePoints=after;
         });
       };
       const moveFallback=(id,x,y)=>{
         const fallback=state.browserTouchFallback;
         if(!fallback?.active||!fallback.points.has(id))return;
-        const previous=fallback.points.get(id),dx=x-previous.x,dy=y-previous.y;
-        if(fallback.points.size===1){
-          fallback.panX+=dx;fallback.panY+=dy;
-        }else if(fallback.points.size===2){
-          const other=[...fallback.points.entries()].find(([key])=>key!==id)?.[1];
-          if(other){
-            const before=Math.hypot(previous.x-other.x,previous.y-other.y);
-            const after=Math.hypot(x-other.x,y-other.y);
-            if(before>14&&after>14)fallback.zoomDelta+=Math.log2(after/before);
-            fallback.panX+=dx/2;fallback.panY+=dy/2;
-            fallback.centerX=(x+other.x)/2;fallback.centerY=(y+other.y)/2;
-          }
-        }
+        const old=fallback.points.get(id);
         fallback.points.set(id,{x,y});
-        if(dx||dy)applyFallbackFrame(fallback);
+        if(old.x!==x||old.y!==y)applyFallbackFrame(fallback);
+      };
+      const fallbackContactsChanged=fallback=>{
+        if(!fallback?.active)return;
+        fallback.framePoints=[...fallback.points.values()].map(p=>({...p}));
+        fallback.targetZoom=this._map?.getZoom?.()??fallback.targetZoom;
+      };
+      const mapDoubleTap=(x,y,source)=>{
+        const map=this._map;if(!map||state.hardResetting||state.recovering||state.pointers.size)return false;
+        const zoom=map.getZoom?.()??0,target=Math.min(map.getMaxZoom?.()??18,Math.floor(zoom+1.00001));
+        if(target<=zoom)return false;
+        const rect=mapEl.getBoundingClientRect();
+        state.lastDoubleTapAt=now();
+        map.setZoomAround([x-rect.left,y-rect.top],target,{animate:true});
+        diag("gesture.doubletap.zoom",{source,fromZoom:zoom,toZoom:target});
+        return true;
+      };
+      const observeTap=(x,y,stamp)=>{
+        const previous=state.lastSingleTap;
+        state.lastSingleTap={x,y,at:stamp};
+        if(previous&&stamp-previous.at>45&&stamp-previous.at<350&&
+            Math.hypot(x-previous.x,y-previous.y)<28){
+          state.lastSingleTap=null;
+          mapDoubleTap(x,y,"pointer");
+        }
       };
       const reportedTouches=event=>Number(event?.touches?.length??0);
       const detectTouchPointerMismatch=(event,phase)=>{
@@ -800,9 +844,16 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const stalePrimary=event.isPrimary===true&&existing.length>0;
         const stalePinch=!!this._map?.touchZoom?._zooming&&existing.length===0;
         if(stalePrimary||stalePinch)this._recoverMapGestureState(stalePrimary?'new-primary-pointer':'stale-pinch-before-pointerdown',{force:true});
-        state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:stamp,surface:surfacePointer(event),x:event.clientX,y:event.clientY});
+        state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:stamp,surface:surfacePointer(event),
+          x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,startAt:stamp,moved:false,
+          hadMulti:state.pointers.size>0});
         if(state.browserTouchFallback?.mode==="pointer"&&surfacePointer(event)){
           state.browserTouchFallback.points.set(event.pointerId,{x:event.clientX,y:event.clientY});
+          fallbackContactsChanged(state.browserTouchFallback);
+        }
+        if(state.pointers.size>=2){
+          state.lastSingleTap=null;
+          for(const item of state.pointers.values())item.hadMulti=true;
         }
         const surfaceCount=this._mapGestureSurfacePointerCount(state);
         if(surfaceCount>=2)state.lastMultiPointerAt=stamp;
@@ -831,6 +882,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           if(meta.surface)state.lastSurfaceMoveAt=stamp;
           if(state.browserTouchFallback?.mode==="pointer"&&meta.surface)
             moveFallback(event.pointerId,event.clientX,event.clientY);
+          if(Math.hypot(event.clientX-meta.startX,event.clientY-meta.startY)>12)meta.moved=true;
           meta.x=event.clientX;meta.y=event.clientY;
         }
         if(this._mapGestureSurfacePointerCount(state)>=2)state.lastMultiPointerAt=stamp;
@@ -844,12 +896,16 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(!touchPointer(event))return;
         diag("input.pointerend",diagEvent(event));
         const meta=state.pointers.get(event.pointerId);state.pointers.delete(event.pointerId);
+        const stamp=now();
+        const singleTap=event.type==="pointerup"&&!!meta?.surface&&!meta.moved&&!meta.hadMulti&&
+          stamp-meta.startAt<330&&!state.pointers.size;
         if(state.browserTouchFallback?.mode==="pointer"){
           state.browserTouchFallback.points.delete(event.pointerId);
           if(!state.browserTouchFallback.points.size){
             stopFallback("pointer-end");state.touchIds.clear();state.multitouchDirty=false;
-          }
+          }else fallbackContactsChanged(state.browserTouchFallback);
         }
+        if(singleTap)observeTap(event.clientX,event.clientY,stamp);
         if(event.isPrimary===true)state.blockUntilPrimaryUp=false;
         if(state.synthesizing||state.recovering||state.hardResetting)return;
         queueMicrotask(()=>{
@@ -874,6 +930,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.browserTouchFallback?.mode==="touch"){
           for(const touch of Array.from(event.changedTouches||[]))
             state.browserTouchFallback.points.set(touch.identifier,{x:touch.clientX,y:touch.clientY});
+          fallbackContactsChanged(state.browserTouchFallback);
           if(event.cancelable)event.preventDefault();
           event.stopImmediatePropagation?.();
           return;
@@ -955,6 +1012,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           if(fallback.mode==="touch"){
             for(const touch of Array.from(event.changedTouches||[]))fallback.points.delete(touch.identifier);
             if(!fallback.points.size)stopFallback("touch-end");
+            else fallbackContactsChanged(fallback);
           }
           state.touchIds.clear();
           state.multitouchDirty=false;
@@ -998,6 +1056,15 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const suspendLifecycle=reason=>{
         state.blockUntilPrimaryUp=false;
         this._recoverMapGestureState(reason,{force:true});
+      };
+      state.handlers.dblclick=event=>{
+        if(!mapSurfaceEvent(event))return;
+        if(now()-state.lastDoubleTapAt<650){
+          if(event.cancelable)event.preventDefault();
+          event.stopImmediatePropagation?.();
+          diag("gesture.doubletap.native-suppressed");
+        }
+        // Desktop: Standardfunktion von Leaflet uebernimmt den Doppelklick.
       };
       const resumeLifecycle=reason=>{
         if(document.visibilityState==='hidden')return;
@@ -1088,6 +1155,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(touchCount>=3&&state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-touch');
       };
+      mapEl.addEventListener('dblclick',state.handlers.dblclick,true);
       mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
       mapEl.addEventListener('pointermove',state.handlers.pointermove,true);
       window.addEventListener('pointerdown',state.handlers.globalPointerDown,true);
@@ -1116,6 +1184,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       this._recoverMapGestureState('gesture-guard-teardown',{force:true});
       const {mapEl,handlers}=state;
       if(handlers){
+        mapEl?.removeEventListener('dblclick',handlers.dblclick,true);
         mapEl?.removeEventListener('pointerdown',handlers.pointerdown,true);mapEl?.removeEventListener('pointermove',handlers.pointermove,true);
         window.removeEventListener('pointerdown',handlers.globalPointerDown,true);window.removeEventListener('pointerup',handlers.globalPointerEnd,true);window.removeEventListener('pointercancel',handlers.globalPointerEnd,true);window.removeEventListener('touchstart',handlers.globalTouchStart,true);
         window.removeEventListener('pointerup',handlers.pointerend,true);window.removeEventListener('pointercancel',handlers.pointercancel,true);
@@ -1150,6 +1219,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const initialZoom = finiteNumber(this._config.initial_zoom) ?? 7;
         this._map = L.map(mapEl,{
           scrollWheelZoom:true,
+          doubleClickZoom:true,
           zoomControl:true,
           attributionControl:true,
           preferCanvas:true
