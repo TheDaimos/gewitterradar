@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41131r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41132r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.102",
+    "version": "1.2.103",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -223,6 +223,23 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/diagnostics/module-view.js"
   },
   {
+    "id": "diagnostics.map",
+    "version": "1.0.0",
+    "group": "Diagnose",
+    "function": "Kartendiagnose",
+    "subfunctions": [
+      "Mobile Live-Diagnose",
+      "Pointer- und Touch-Protokoll",
+      "Leaflet-Zustand",
+      "Gesten-Recovery",
+      "Ereignisringpuffer",
+      "JSON kopieren",
+      "JSON herunterladen",
+      "Minimierbare Diagnose"
+    ],
+    "file": "modules/diagnostics/map-diagnostics.js"
+  },
+  {
     "id": "diagnostics.cockpit",
     "version": "1.5.1",
     "group": "Diagnose",
@@ -252,7 +269,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -416,4 +433,4 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/history/chart.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.102",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.103",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
