@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41108r1";
+import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1592,6 +1592,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeLocationDropdown(false);
         this._syncHelpMenu();
         this._syncModuleView?.();
+        this._ensureMapDiagnostics?.();
         settingsBackdrop?.classList.add('open');
         settingsClose?.focus?.({ preventScroll:true });
       };
