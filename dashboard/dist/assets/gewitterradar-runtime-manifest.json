@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.26",
-  "build": "V4.11.26-DEV-2026-10-07",
-  "runtimeRevision": "41126r1",
-  "moduleSetId": "E411-26A1",
+  "productVersion": "4.11.27",
+  "build": "V4.11.27-DEV-2026-10-08",
+  "runtimeRevision": "41127r1",
+  "moduleSetId": "E411-27A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.97"
+      "version": "1.2.98"
     },
     {
       "id": "core.base-context",
@@ -83,7 +83,7 @@
     },
     {
       "id": "location.radii-map",
-      "version": "1.0.8"
+      "version": "1.0.9"
     },
     {
       "id": "map.strikes-warnings",
@@ -111,7 +111,7 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.4.8"
+      "version": "0.4.9"
     },
     {
       "id": "weather.legend-overlay",
@@ -126,5 +126,5 @@
       "version": "1.2.1"
     }
   ],
-  "displayVersion": "V4.11.26 DEV"
+  "displayVersion": "V4.11.27 DEV"
 }
