@@ -853,6 +853,11 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       state.handlers.touchmove=event=>{
         if(!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
+        if(state.browserTouchFallback?.active){
+          if(event.cancelable)event.preventDefault();
+          event.stopImmediatePropagation?.();
+          return;
+        }
         if(touchQuarantineActive()){
           if(event?.cancelable)event.preventDefault();
           event?.stopImmediatePropagation?.();
