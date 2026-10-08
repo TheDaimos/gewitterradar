@@ -40,10 +40,24 @@ function normalizeMeta(meta) {
   });
 }
 
+function sameIdentity(left, right) {
+  return !!left && !!right &&
+    left.id === right.id &&
+    left.version === right.version &&
+    left.file === right.file;
+}
+
 export function registerModule(meta) {
   const normalized = normalizeMeta(meta);
   const target = store();
   const existing = target.modules.get(normalized.id);
+  if (existing && sameIdentity(existing, normalized)) {
+    const duplicates = target.duplicates.get(normalized.id) || [];
+    if (!duplicates.length || duplicates.every((entry) => sameIdentity(entry, existing))) {
+      target.duplicates.delete(normalized.id);
+    }
+    return existing;
+  }
   if (existing) {
     const duplicates = target.duplicates.get(normalized.id) || [];
     duplicates.push(existing);
@@ -136,4 +150,4 @@ export function moduleRegistrySnapshot(expected = []) {
   return JSON.parse(JSON.stringify(moduleDiagnostics(expected)));
 }
 
-registerModule({id:"core.registry",version:"1.0.1",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});
+registerModule({id:"core.registry",version:"1.0.2",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});
