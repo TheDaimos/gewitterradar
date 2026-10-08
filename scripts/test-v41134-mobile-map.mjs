@@ -47,7 +47,7 @@ for(const marker of ['geo.focus.skipped','geo.focus.request','geo.focus.method']
 assert.ok(diag.includes('geo.focus.moveend'));
 const buildInfo=String(await read('custom_components/gewitterradar/build_info.py'));
 const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
-assert.match(buildInfo,/BUILD_VERSION = "4\\.11\\.34"/);
+assert.ok(buildInfo.includes('BUILD_VERSION = "4.11.34"'));
 assert.equal(provenance.productVersion,'4.11.34');
 assert.equal(provenance.build,'V4.11.34-DEV-2026-10-08');
 assert.equal(provenance.runtimeRevision,'41134r1');
