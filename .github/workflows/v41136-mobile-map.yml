@@ -1,15 +1,11 @@
-name: V4.11.36 gestures and double tap
+name: V4.11.36 gestures and double tap (historical)
 on:
-  push:
-    branches: [feature/v4.11-development, deploy/dev]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  gestures:
+  legacy:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Check pinch in/out, drag, double tap and build identity
-        run: node scripts/test-v41136-mobile-map.mjs
+      - run: node scripts/test-v41136-mobile-map.mjs

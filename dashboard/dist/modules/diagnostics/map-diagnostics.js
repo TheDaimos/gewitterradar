@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41136r1";
+import { defineModule } from "../core/runtime.js?v=41137r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.3",
+  version:"1.0.4",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -163,6 +163,20 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
 
     _mapDiagnosticLog(type,data={}){
       const state=this._mapDiagnosticState();
+      // Bei Ersatzbedienung feuert Leaflet pro Bildaufbau mehrere Start-/End-
+      // Ereignisse. Jede Einzelmeldung belegt sonst den 800er-Ringpuffer.
+      // Stattdessen Stichproben plus Anzahl ausgelassener Meldungen festhalten.
+      const motionType=/^leaflet\\.(?:movestart|moveend|zoomstart|zoomend|zoom)$/.test(String(type));
+      if(motionType&&this._mapGestureRecovery?.browserTouchFallback?.active){
+        const stamp=typeof performance!=="undefined"?performance.now():Date.now();
+        if(stamp-Number(state.lastMotionSampleAt||0)<160){
+          state.suppressedLeafletMotion=(state.suppressedLeafletMotion||0)+1;
+          return null;
+        }
+        state.lastMotionSampleAt=stamp;
+        data={...data,suppressedSinceLast:state.suppressedLeafletMotion||0};
+        state.suppressedLeafletMotion=0;
+      }
       const event={
         seq:++state.sequence,
         at:new Date().toISOString(),

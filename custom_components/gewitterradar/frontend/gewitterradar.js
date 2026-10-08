@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41136r1";
-/* Gewitterradar Card V4.11.36 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41137r1";
+/* Gewitterradar Card V4.11.37 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -25,7 +25,7 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41136r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','41137r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41114r1');
@@ -42,9 +42,9 @@ try {
   const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js');
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js');
-  const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41136r1');
+  const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41137r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
-  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41136r1');
+  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41137r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
   const clustersRecent = await gewitterradarImport('./modules/map/clusters-recent.js');
   const render = await gewitterradarImport('./modules/ui/render.js','41121r1');
