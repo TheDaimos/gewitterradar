@@ -45,4 +45,11 @@ assert.ok(!gesture.includes('window.addEventListener(\'touchmove\''),'No global 
 assert.ok(control.includes('geo.button.click'));
 for(const marker of ['geo.focus.skipped','geo.focus.request','geo.focus.method'])assert.ok(geo.includes(marker));
 assert.ok(diag.includes('geo.focus.moveend'));
-console.log('PASS V4.11.34: JS syntax, 3-way parity, 31 modules, versions, touch/Geo contracts');
+const buildInfo=String(await read('custom_components/gewitterradar/build_info.py'));
+const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
+assert.match(buildInfo,/BUILD_VERSION = "4\\.11\\.34"/);
+assert.equal(provenance.productVersion,'4.11.34');
+assert.equal(provenance.build,'V4.11.34-DEV-2026-10-08');
+assert.equal(provenance.runtimeRevision,'41134r1');
+assert.equal(provenance.moduleSetId,'E411-34A1');
+console.log('PASS V4.11.34: syntax, mirror parity, modules, touch/Geo and DRA version contracts');
