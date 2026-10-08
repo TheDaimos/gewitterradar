@@ -1,8 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41132r1";
+import { defineModule } from "../core/runtime.js?v=41133r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.0",
+  version:"1.0.1",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -48,6 +48,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         sequence:0,
         events:[],
         panelLevel:"full",
+        lastExpandedLevel:"full",
         open:false,
         liveTimer:null,
         attachedMap:null,
@@ -270,8 +271,20 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
     _mapDiagnosticSetLevel(level){
       const state=this._mapDiagnosticState(),panel=this.shadow?.getElementById("map-diagnostic-panel");
       const next=["full","compact","minimized"].includes(level)?level:"full";
+      if(next!=="minimized")state.lastExpandedLevel=next;
       state.panelLevel=next;
-      if(panel){panel.dataset.level=next;panel.classList.toggle("mapdiag-minimized",next==="minimized");panel.classList.toggle("mapdiag-compact",next==="compact");}
+      if(panel){
+        panel.dataset.level=next;
+        panel.classList.toggle("mapdiag-minimized",next==="minimized");
+        panel.classList.toggle("mapdiag-compact",next==="compact");
+        const toggle=panel.querySelector("[data-mapdiag-toggle-minimize]");
+        if(toggle){
+          const minimized=next==="minimized";
+          toggle.textContent=minimized?"+":"−";
+          toggle.setAttribute("aria-label",minimized?"Kartendiagnose wiederherstellen":"Kartendiagnose minimieren");
+          toggle.title=minimized?"Kartendiagnose wiederherstellen":"Kartendiagnose minimieren";
+        }
+      }
       this._mapDiagnosticRender();
     },
 
@@ -334,9 +347,13 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         panel.className="mapdiag-panel";
         panel.hidden=true;
         panel.dataset.level="full";
-        panel.innerHTML='<header class="mapdiag-head"><span class="mapdiag-title">Kartendiagnose</span><span class="mapdiag-mini-state" id="mapdiag-mini-state">bereit</span><button class="mapdiag-level-full" type="button" data-mapdiag-level="full">VOLL</button><button class="mapdiag-level-compact" type="button" data-mapdiag-level="compact">KOMPAKT</button><button type="button" data-mapdiag-level="minimized" aria-label="Kartendiagnose minimieren">−</button><button type="button" data-mapdiag-close aria-label="Kartendiagnose schließen">×</button></header><div class="mapdiag-body"><div class="mapdiag-grid"><div class="mapdiag-cell"><span>Zoom</span><strong id="mapdiag-zoom">—</strong></div><div class="mapdiag-cell"><span>Events</span><strong id="mapdiag-events">0</strong></div><div class="mapdiag-cell"><span>Dragging</span><strong id="mapdiag-dragging">—</strong></div><div class="mapdiag-cell"><span>TouchZoom</span><strong id="mapdiag-touchzoom">—</strong></div><div class="mapdiag-cell"><span>_zooming</span><strong id="mapdiag-zooming">—</strong></div><div class="mapdiag-cell"><span>_animatingZoom</span><strong id="mapdiag-animating">—</strong></div><div class="mapdiag-cell"><span>Pointer / Touch / Global</span><strong><span id="mapdiag-pointers">—</span> / <span id="mapdiag-touches">—</span> / <span id="mapdiag-global">—</span></strong></div><div class="mapdiag-cell"><span>Multitouch dirty</span><strong id="mapdiag-dirty">—</strong></div><div class="mapdiag-cell"><span>Quarantäne</span><strong id="mapdiag-quarantine">—</strong></div></div><dl class="mapdiag-detail"><dt>Letzter Recovery</dt><dd id="mapdiag-last-recovery">—</dd><dt>Letzte Anomalie</dt><dd id="mapdiag-last-anomaly">—</dd></dl><pre class="mapdiag-log" id="mapdiag-log"></pre><div class="mapdiag-actions"><button type="button" data-mapdiag-mark>MARKIEREN</button><button type="button" data-mapdiag-copy data-mapdiag-primary>JSON KOPIEREN</button><button type="button" data-mapdiag-download data-mapdiag-primary>JSON HERUNTERLADEN</button><button type="button" data-mapdiag-clear>LOG LEEREN</button></div></div>';
+        panel.innerHTML='<header class="mapdiag-head"><span class="mapdiag-title">Kartendiagnose</span><span class="mapdiag-mini-state" id="mapdiag-mini-state">bereit</span><button class="mapdiag-level-full" type="button" data-mapdiag-level="full">VOLL</button><button class="mapdiag-level-compact" type="button" data-mapdiag-level="compact">KOMPAKT</button><button type="button" data-mapdiag-toggle-minimize aria-label="Kartendiagnose minimieren" title="Kartendiagnose minimieren">−</button><button type="button" data-mapdiag-close aria-label="Kartendiagnose schließen">×</button></header><div class="mapdiag-body"><div class="mapdiag-grid"><div class="mapdiag-cell"><span>Zoom</span><strong id="mapdiag-zoom">—</strong></div><div class="mapdiag-cell"><span>Events</span><strong id="mapdiag-events">0</strong></div><div class="mapdiag-cell"><span>Dragging</span><strong id="mapdiag-dragging">—</strong></div><div class="mapdiag-cell"><span>TouchZoom</span><strong id="mapdiag-touchzoom">—</strong></div><div class="mapdiag-cell"><span>_zooming</span><strong id="mapdiag-zooming">—</strong></div><div class="mapdiag-cell"><span>_animatingZoom</span><strong id="mapdiag-animating">—</strong></div><div class="mapdiag-cell"><span>Pointer / Touch / Global</span><strong><span id="mapdiag-pointers">—</span> / <span id="mapdiag-touches">—</span> / <span id="mapdiag-global">—</span></strong></div><div class="mapdiag-cell"><span>Multitouch dirty</span><strong id="mapdiag-dirty">—</strong></div><div class="mapdiag-cell"><span>Quarantäne</span><strong id="mapdiag-quarantine">—</strong></div></div><dl class="mapdiag-detail"><dt>Letzter Recovery</dt><dd id="mapdiag-last-recovery">—</dd><dt>Letzte Anomalie</dt><dd id="mapdiag-last-anomaly">—</dd></dl><pre class="mapdiag-log" id="mapdiag-log"></pre><div class="mapdiag-actions"><button type="button" data-mapdiag-mark>MARKIEREN</button><button type="button" data-mapdiag-copy data-mapdiag-primary>JSON KOPIEREN</button><button type="button" data-mapdiag-download data-mapdiag-primary>JSON HERUNTERLADEN</button><button type="button" data-mapdiag-clear>LOG LEEREN</button></div></div>';
         this.shadow.append(panel);
         panel.querySelectorAll("[data-mapdiag-level]").forEach(node=>node.addEventListener("click",()=>this._mapDiagnosticSetLevel(node.dataset.mapdiagLevel)));
+        panel.querySelector("[data-mapdiag-toggle-minimize]")?.addEventListener("click",()=>{
+          const state=this._mapDiagnosticState();
+          this._mapDiagnosticSetLevel(state.panelLevel==="minimized"?(state.lastExpandedLevel||"compact"):"minimized");
+        });
         panel.querySelector("[data-mapdiag-close]")?.addEventListener("click",()=>this._closeMapDiagnostics());
         panel.querySelector("[data-mapdiag-mark]")?.addEventListener("click",()=>this._mapDiagnosticLog("manual.marker",{label:"Benutzermarkierung"}));
         panel.querySelector("[data-mapdiag-copy]")?.addEventListener("click",()=>this._copyMapDiagnostics());
