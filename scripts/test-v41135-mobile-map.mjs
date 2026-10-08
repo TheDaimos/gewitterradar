@@ -18,7 +18,7 @@ for(const relative of frontend.filter(f=>f.endsWith('.js'))){
 const version=String(await read('frontend/version.js'));
 const manifest=String(await read('frontend/module-manifest.js'));
 const runtime=JSON.parse(await read('frontend/assets/gewitterradar-runtime-manifest.json'));
-assert.match(version,/version:"4\.11\.34"/);
+assert.ok(version.includes('version:"4.11.35"'));
 assert.match(version,/runtimeRevision:"41135r1"/);
 assert.match(version,/moduleSetId:"E411-35A1"/);
 assert.equal(runtime.productVersion,'4.11.35');
