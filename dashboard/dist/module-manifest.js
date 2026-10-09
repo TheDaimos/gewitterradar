@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41144r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41145r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.19",
+    "version": "1.1.20",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
