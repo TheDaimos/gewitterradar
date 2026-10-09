@@ -35,7 +35,8 @@ jobs:
           for item in inventory:
               data=(root/item['file']).read_bytes()
               assert hashlib.sha256(data).hexdigest()==item['sha256'], item['file']
-              assert len(data)==item['sizeBytes'], item['file']
+              if 'sizeBytes' in item:
+                  assert len(data)==item['sizeBytes'], item['file']
           print(f'PASS: {len(inventory)} frontend assets verified')
           PY
       - name: Frontend JavaScript syntax
