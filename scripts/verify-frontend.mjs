@@ -29,7 +29,7 @@ const projectHubCk=await readFile(resolve(root,'frontend/project-hub/offline/ass
 const projectHubIcons=await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'));
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.19"',
+  '"version": "1.1.20"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -84,7 +84,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.6"',
+  'version:"1.3.7"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -123,7 +123,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.5"',
+  '"version": "1.1.14"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
@@ -132,7 +132,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.3.3"',
+  '"version": "1.3.9"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -155,7 +155,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "location.radii-map"',
-  '"version": "1.0.6"',
+  '"version": "1.0.19"',
   '_hardResetMapGestureHandlers',
   'rogue-single-pointer-zoom',
   'touch-pointer-mismatch',
@@ -175,13 +175,13 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.14"','displayVersion:"V4.11.14 DEV"','runtimeRevision:"41114r1"','moduleSetId:"E411-14A1"']){
+  for(const marker of ['version:"4.11.51"','displayVersion:"V4.11.51 DEV"','runtimeRevision:"41151r1"','moduleSetId:"E411-51A1"']){
     if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
-    for(const match of moduleText.matchAll(runtimeImport))if(match[1].startsWith('41')&&!['41114r1','41113r1','41112r1','41111r1','41110r1','41109r1','41108r1','41107r1','41105r1','41002r14','41002r15'].includes(match[1])){
+    for(const match of moduleText.matchAll(runtimeImport))if(Number(match[1].split('r')[0])>Number(version.match(/runtimeRevision:\"(\\d+)r\\d+\"/)?.[1]||0)){
       const line=moduleText.slice(0,match.index).split('\n').length;
       const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
       throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
@@ -189,14 +189,14 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   }
 }
 for(const marker of ['id:"weather.layer-menu"','version:"1.1.4"','buildWeatherLayerCatalog','SUBCATEGORY_LABELS','formatWeatherLayerCapabilityLabel','weatherLayerSubcategory','weather-router-subcategory','weather-layer-back-slot','data-weather-layer-action="subcategory"','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start','_bindMapDisplayMenuExtension','_setWeatherRadarEnabled','_setWeatherRadarTimelineVisible','data-weather-layer-action="timeline"','renderSignature','overflow-y:auto','overscroll-behavior:contain','available_only:true','.weather-layer-view [data-map-display-mode]{display:none!important}','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}'])if(!layerMenu.includes(marker))throw Error('WeatherRouter Layer Hub contract missing: '+marker);
-for(const marker of ['id:"weather.display-menu"','version:"0.3.1"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLayerMenuMarkup','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','opacities','balanced','soft'])if(!displayMenu.includes(marker))throw Error('WeatherRouter display menu contract missing: '+marker);
+for(const marker of ['id:"weather.display-menu"','version:"0.4.9"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLayerMenuMarkup','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','opacities','balanced','soft'])if(!displayMenu.includes(marker))throw Error('WeatherRouter display menu contract missing: '+marker);
 for(const marker of ['78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066','e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047','help-display-eye-open-master-1254.png','help-display-eye-closed-master-1254.png'])if(!displayMenu.includes(marker))throw Error('Final WeatherRouter eye asset contract missing: '+marker);
 if(displayMenu.includes('data-weather-display-eye-placeholder')||displayMenu.includes('<svg viewBox="0 0 56 48"'))throw Error('WeatherRouter final eye assets must fully replace the temporary SVG placeholder');
 for(const marker of ['precipitationStyleChanged','precipitationOpacityChanged','if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();','_weatherDisplayOpacity','_weatherDisplaySetTransparency','_weatherDisplayResetTransparency','data-weather-display-transparency','weather-display-panel .weather-display-opacity','_weatherDisplayApplyRasterPaneStyle','pane.style.willChange=style==="precise"?"auto":"filter"','8.5*zoomFactor','2.2*zoomFactor','contrast(1.075)'])if(!displayMenu.includes(marker))throw Error('WeatherRouter smoothing/transparency contract missing: '+marker);
 if(displayMenu.includes('node.style.transform=')||displayMenu.includes('transformOrigin'))throw Error('WeatherRouter raster styling must never overwrite Leaflet tile transforms');
-for(const marker of ['version:"1.3.4"','_weatherRadarNaturalOpacity','_weatherRadarEffectiveOpacity','_weatherRadarApplyDisplayOpacity','opacityOverride==null?effectiveOpacity','state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();'])if(!weatherRadar.includes(marker))throw Error('WeatherRouter precipitation opacity/smoothing integration missing: '+marker);
+for(const marker of ['version:"1.3.5"','_weatherRadarNaturalOpacity','_weatherRadarEffectiveOpacity','_weatherRadarApplyDisplayOpacity','opacityOverride==null?effectiveOpacity','state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();'])if(!weatherRadar.includes(marker))throw Error('WeatherRouter precipitation opacity/smoothing integration missing: '+marker);
 for(const marker of ['id:"weather.legend-overlay"','version:"0.1.1"','_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','weather-legend-header','width:min(430px','width:min(240px,100%)','data-weather-legend-hide','strict-origin-when-cross-origin','ResizeObserver'])if(!legendOverlay.includes(marker))throw Error('WeatherRouter compact legend overlay contract missing: '+marker);
-for(const marker of ['id:"ui.project-hub"','version:"1.1.15"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH','ABOUT_CLOSE_IMAGE','settingsCloseImage','project-hub-close-premium','width:48px!important','height:48px!important','width:38px;height:38px','top:4px!important','right:4px!important'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+for(const marker of ['id:"ui.project-hub"','version:"1.1.16"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH','ABOUT_CLOSE_IMAGE','settingsCloseImage','project-hub-close-premium','width:48px!important','height:48px!important','width:38px;height:38px','top:4px!important','right:4px!important'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
 if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');if(projectHub.includes('gewitterradar-about-close-premium.webp'))throw Error('Project Hub close must reuse Settings ABOUT_CLOSE_IMAGE instead of a guessed local asset path');
 if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/gewitterradar/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/gewitterradar/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==2500||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
@@ -206,7 +206,7 @@ for(const marker of ['gewitterradar-panel','gewitterradar-card','await import(".
 if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('https://thedaimos.github.io/weather-router-pub/')||!projectHubOffline.includes('project-page-action'))throw Error('Project Hub RC14 central runtime contract incomplete');
 for(const marker of ['inline-size:min(80px,calc(100% - 16px))','inline-size:min(94px,calc(100% - 16px))','inline-size:min(104px,calc(100% - 14px))','background-size:100% 600%'])if(!projectHubOffline.includes(marker))throw Error('Project Hub responsive project-logo scaling contract missing: '+marker);
 for(const marker of [
-  '"id": "ui.render"','"version": "1.0.2"',
+  '"id": "ui.render"','"version": "1.0.3"',
   "this._t('app.release_history')",
   "this._t('settings.cluster_resolution_select')",
   "this._t('settings.cluster_navigation_session_aria')"
@@ -321,7 +321,7 @@ for(const marker of [
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "map.clusters-recent"','"version": "1.0.3"',
+  '"id": "map.clusters-recent"','"version": "1.0.4"',
   "this._t('settings.cluster_navigation_to_session')",
   "this._t('settings.cluster_navigation_to_infinite')"
 ]){
