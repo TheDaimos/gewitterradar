@@ -30,7 +30,7 @@ const projectHubCk=await readFile(resolve(root,'frontend/project-hub/offline/ass
 const projectHubIcons=await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'));
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.20"',
+  '"version": "1.1.21"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
