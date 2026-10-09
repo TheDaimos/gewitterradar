@@ -1,0 +1,53 @@
+name: V4.11.50 settings navigation and runtime identity
+
+on:
+  push:
+    branches:
+      - feature/v4.11-development
+      - deploy/dev
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  settings-navigation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: V4.11.50 navigation and runtime regression
+        run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
+      - name: Frontend JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for root in frontend dashboard/dist custom_components/gewitterradar/frontend; do
+            node --check "$root/gewitterradar.js"
+            node --check "$root/module-manifest.js"
+            node --check "$root/modules/ui/controls.js"
+          done
+      - name: Backend and DRA identity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=Path('.')
+          version=(r/'frontend/version.js').read_text()
+          build=(r/'custom_components/gewitterradar/build_info.py').read_text()
+          provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
+          runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
+          assert 'version:"4.11.50"' in version
+          assert 'BUILD_VERSION = "4.11.50"' in build
+          assert runtime['productVersion']==provenance['productVersion']=='4.11.50'
+          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-50A1'
+          assert len(runtime['modules'])==31
+          print('PASS: current frontend/backend/DRA metadata consistent')
+          PY
