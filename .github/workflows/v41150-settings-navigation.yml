@@ -25,6 +25,8 @@ jobs:
           python-version: "3.13"
       - name: V4.11.50 navigation and runtime regression
         run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
+      - name: Deterministic frontend payload and asset hashes
+        run: node scripts/verify-frontend.mjs
       - name: Frontend JavaScript syntax
         shell: bash
         run: |
