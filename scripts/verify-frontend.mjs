@@ -358,9 +358,21 @@ const extractFrozenJson=(source,prefix,suffix)=>{
   const start=source.indexOf(prefix);
   if(start<0)throw Error('Locale registry prefix missing: '+prefix);
   const from=start+prefix.length;
-  const end=source.indexOf(suffix,from);
-  if(end<0)throw Error('Locale registry suffix missing: '+suffix);
-  return JSON.parse(source.slice(from,end));
+  const expectedClose={"{":"}","[":"]"};
+  if(!expectedClose[source[from]])throw Error('Locale registry is not a JSON object/array: '+prefix);
+  const stack=[];
+  let quoted=false,escaped=false;
+  for(let i=from;i<source.length;i++){
+    const c=source[i];
+    if(quoted){if(escaped)escaped=false;else if(c==="\\")escaped=true;else if(c==='"')quoted=false;continue;}
+    if(c==='"'){quoted=true;continue;}
+    if(expectedClose[c])stack.push(expectedClose[c]);
+    else if(c==='}'||c===']'){
+      if(stack.pop()!==c)throw Error('Unbalanced locale registry: '+prefix);
+      if(!stack.length)return JSON.parse(source.slice(from,i+1));
+    }
+  }
+  throw Error('Unclosed locale registry: '+prefix);
 };
 const settingsUiTranslations=extractFrozenJson(
   i18nSettings,
