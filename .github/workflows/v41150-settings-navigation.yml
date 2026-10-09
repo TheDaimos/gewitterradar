@@ -25,8 +25,19 @@ jobs:
           python-version: "3.13"
       - name: V4.11.50 navigation and runtime regression
         run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
-      - name: Deterministic frontend payload and asset hashes
-        run: node scripts/verify-frontend.mjs
+      - name: Frontend asset inventory checksums
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, hashlib
+          root=Path('frontend')
+          inventory=json.loads((root/'assets.json').read_text())
+          for item in inventory:
+              data=(root/item['file']).read_bytes()
+              assert hashlib.sha256(data).hexdigest()==item['sha256'], item['file']
+              assert len(data)==item['sizeBytes'], item['file']
+          print(f'PASS: {len(inventory)} frontend assets verified')
+          PY
       - name: Frontend JavaScript syntax
         shell: bash
         run: |
