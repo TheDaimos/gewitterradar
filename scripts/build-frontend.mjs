@@ -23,7 +23,9 @@ export async function expectedPayload(){
   const modules=JSON.parse(match[1]);
   if(modules.length!==31||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.50 module IDs invalid');
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
-  const expected=[...new Set(modules.map(item=>item.file))].sort();
+  // These eight auxiliary UI parts are imported by registered modules; they are not independent registered modules.
+  const support=['modules/fullscreen/compass-picker-chevron-left-brass.js','modules/fullscreen/compass-picker-chevron-left-silver.js','modules/fullscreen/compass-picker-chevron-right-brass.js','modules/fullscreen/compass-picker-chevron-right-silver.js','modules/instruments/medallion-arrow-calibration-1.js','modules/instruments/medallion-arrow-calibration-2.js','modules/instruments/medallion-arrow-calibration-3.js','modules/instruments/medallion-arrow-calibration-4.js'];
+  const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
   if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.50 module inventory mismatch');
   const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
   if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
@@ -31,6 +33,7 @@ export async function expectedPayload(){
     if(runtimeVersions.get(item.id)!==item.version)throw Error('Module version mismatch '+item.id);
     modular.set(item.file,await readFile(resolve(root,'frontend',item.file)));
   }
+  for(const name of support)modular.set(name,await readFile(resolve(root,'frontend',name)));
   const localeBytes=await readFile(resolve(root,'frontend/locales/about-locales.js'));
   localeSha=hash(localeBytes);
   localeSize=localeBytes.length;
