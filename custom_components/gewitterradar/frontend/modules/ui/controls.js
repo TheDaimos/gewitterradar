@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1665,6 +1665,41 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const navRoot=document.createElement('div');
       navRoot.className='gr-horizontal-root';
       navRoot.setAttribute('aria-label','Einstellungskategorien');
+      const speedKey='gr-horizontal-navigation-speed';
+      const speedOptions={Schnell:220,Mittel:440,Langsam:760};
+      let selectedSpeed='Mittel';
+      try { const stored=localStorage.getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
+      let navAnimating=false;
+      const animateNavigation=(outgoing,incoming,forward,complete)=>{
+        if(navAnimating)return;
+        navAnimating=true;
+        const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
+        // Keep two simultaneous, independent visual pages during the slide.
+        const pane=document.createElement('div');
+        pane.className='gr-horizontal-transition';
+        const from=document.createElement('div'),to=document.createElement('div');
+        from.className='gr-horizontal-slide-page';to.className='gr-horizontal-slide-page';
+        const oldContent=outgoing.cloneNode(true),newContent=incoming.cloneNode(true);
+        if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
+        if(newContent instanceof HTMLDetailsElement)newContent.open=true;
+        from.append(oldContent);to.append(newContent);
+        pane.append(from,to);
+        navBody.append(pane);
+        const distance=Math.max(280,navBody.clientWidth);
+        from.style.transform='translateX(0)';
+        to.style.transform='translateX('+(forward?distance:-distance)+'px)';
+        const clean=()=>{
+          pane.remove();
+          navAnimating=false;
+        };
+        if(!duration){complete();clean();return;}
+        // The original page stays on screen underneath until the transition finishes.
+        const easing='cubic-bezier(.22,.7,.2,1)';
+        const first=from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'});
+        const second=to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'});
+        const timeout=setTimeout(()=>{complete();clean();},duration+90);
+        Promise.allSettled([first.finished,second.finished]).then(()=>{if(!pane.isConnected)return;clearTimeout(timeout);complete();clean();});
+      };
       navSections.forEach(section=>{
         const summary=section.querySelector(':scope > summary');
         if(!summary)return;
@@ -1682,12 +1717,13 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         button.append(name,chevron);
         if(desc)button.title=desc;
         button.addEventListener('click',()=>{
-          navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
-          settingsBackdrop.classList.add('gr-horizontal-detail');
-          const title=this.shadow.getElementById('settings-dialog-title');
-          if(title)title.textContent=heading;
-          navBody?.scrollTo?.(0,0);
-          section.animate?.([{transform:'translateX(28px)',opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:250,easing:'ease-out'});
+          animateNavigation(navRoot,section,true,()=>{
+            navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
+            settingsBackdrop.classList.add('gr-horizontal-detail');
+            const title=this.shadow.getElementById('settings-dialog-title');
+            if(title)title.textContent=heading;
+            navBody?.scrollTo?.(0,0);
+          });
         });
         navRoot.append(button);
       });
@@ -1697,18 +1733,41 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       navBack.className='settings-language-button';
       navBack.textContent='‹ Zurück';
       navBack.addEventListener('click',()=>{
-        settingsBackdrop?.classList.remove('gr-horizontal-detail');
-        navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
-        const title=this.shadow.getElementById('settings-dialog-title');
-        if(title)title.textContent='Einstellungen';
-        navBody?.scrollTo?.(0,0);
-        navRoot.animate?.([{transform:'translateX(-28px)',opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:250,easing:'ease-out'});
+        const current=navSections.find(section=>section.classList.contains('gr-horizontal-current'));
+        if(!current)return;
+        animateNavigation(current,navRoot,false,()=>{
+          settingsBackdrop?.classList.remove('gr-horizontal-detail');
+          navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
+          const title=this.shadow.getElementById('settings-dialog-title');
+          if(title)title.textContent='Einstellungen';
+          navBody?.scrollTo?.(0,0);
+        });
       });
+      const speedRow=document.createElement('div');
+      speedRow.className='gr-horizontal-speed';
+      const speedLabel=document.createElement('label');
+      speedLabel.textContent='Seitenwechsel';
+      const speedSelect=document.createElement('select');
+      speedSelect.setAttribute('aria-label','Geschwindigkeit des Seitenwechsels');
+      for(const name of Object.keys(speedOptions)){const option=document.createElement('option');option.value=name;option.textContent=name;speedSelect.append(option);}
+      speedSelect.value=selectedSpeed;
+      speedSelect.addEventListener('change',()=>{selectedSpeed=speedSelect.value;try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}});
+      speedRow.append(speedLabel,speedSelect);
+      navRoot.prepend(speedRow);
       if(navBody&&navSections.length){
         navBody.prepend(navRoot);
         settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
         const style=document.createElement('style');
         style.textContent=`
+          #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
+          .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
+          .gr-horizontal-slide-page {position:absolute;inset:0;overflow:hidden;padding:4px 2px;background:#0b151c;will-change:transform;pointer-events:none}
+          .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;gap:8px}
+          .gr-horizontal-slide-page > details.settings-section {display:block!important}
+          .gr-horizontal-slide-page > details.settings-section > summary {display:none}
+          .gr-horizontal-slide-page > details.settings-section > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          .gr-horizontal-speed {display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 8px;padding:10px 12px;border:1px solid rgba(190,151,76,.32);border-radius:9px;color:#eed08a}
+          .gr-horizontal-speed select {min-height:38px;border-radius:7px;border:1px solid rgba(190,151,76,.5);background:#13232c;color:#f1daa5;padding:0 10px}
           #settings-open-horizontal {color:#83c9ff!important;filter:drop-shadow(0 0 4px rgba(45,150,255,.4))}
           #settings-open-horizontal svg g {stroke:#5bbdff!important}
           #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
