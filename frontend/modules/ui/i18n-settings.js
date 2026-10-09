@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41128r1";
+import { defineModule } from "../core/runtime.js?v=41141r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2467,6 +2467,11 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       });
       this._syncHelp();
       dialog.showModal();
+      // Load external translations once per opening, never recursively during rendering.
+      const openedLanguage=this._languageValue();
+      requestAboutLocale(openedLanguage,()=>{
+        if(this._helpDialog===dialog&&dialog.open&&this._languageValue()===openedLanguage)this._syncHelp();
+      });
       dialog.querySelector('.help-close').focus({preventScroll:true});
     },
 
@@ -2527,7 +2532,6 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         });
         content.scrollTop=scrollTop;this._helpLocale=help;
       }
-      requestAboutLocale(language,()=>{if(this._helpDialog===dialog&&this._languageValue()===language)this._syncHelp();});
     },
 
     _closeHelp(restoreFocus = true) {
