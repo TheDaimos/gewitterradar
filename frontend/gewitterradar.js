@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41152r1";
-/* Gewitterradar Card V4.11.52 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41153r1";
+/* Gewitterradar Card V4.11.53 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -25,16 +25,16 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41152r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','41153r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41114r1');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r10');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
   const skeleton = await gewitterradarImport('./modules/ui/skeleton.js','41145r1');
-  const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41152r1');
+  const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41153r1');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
-  const controls = await gewitterradarImport('./modules/ui/controls.js','41152r1');
+  const controls = await gewitterradarImport('./modules/ui/controls.js','41153r1');
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js','41144r1');
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
   const updateWatch = await gewitterradarImport('./modules/core/update-watch.js');

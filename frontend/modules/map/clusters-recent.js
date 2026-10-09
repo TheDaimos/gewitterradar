@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -190,6 +190,79 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       return prepared.map(({_draftIndex,_memberIds,...draft}) => draft);
     },
 
+    // Preserve real Leaflet marker nodes across HA refreshes. Cluster metadata
+    // is already assigned stable IDs by _stabilizeRenderedClusterIdentities.
+    // Replacing every node used to switch off all bubbles simultaneously.
+    _syncClusterBubbleMarkers(clusters,L) {
+      if (!this._map) return;
+      if (this._clusterBubbleMap !== this._map || !this._clusterBubbleLayer) {
+        this._clusterBubbleLayer?.remove?.();
+        this._clusterBubbleLayer = L.layerGroup().addTo(this._map);
+        this._clusterBubbleMap = this._map;
+        this._clusterBubbleMarkers = new Map();
+      }
+      const markers = this._clusterBubbleMarkers;
+      const seen = new Set();
+      const zoom = this._map.getZoom();
+      for (const cluster of clusters) {
+        const id = String(cluster.id);
+        seen.add(id);
+        const size = Math.round(cluster.size);
+        const cssClass = 'cluster-bubble' + (cluster.extreme ? ' extreme' : cluster.active ? ' active' : '');
+        const visual = [cluster.count,cssClass,cluster.color,size].join('|');
+        let record = markers.get(id);
+        if (!record) {
+          const icon = L.divIcon({
+            className:'cluster-icon',
+            html:`<div class="${cssClass}" style="--cluster-color:${cluster.color};--cluster-size:${size}px">${cluster.count}</div>`,
+            iconSize:[size,size],iconAnchor:[size/2,size/2]
+          });
+          const marker = L.marker([cluster.lat,cluster.lon],{icon,interactive:false}).addTo(this._clusterBubbleLayer);
+          record = {marker,visual,size};
+          markers.set(id,record);
+        } else {
+          const oldPoint = this._map.project(record.marker.getLatLng(),zoom);
+          const newPoint = this._map.project([cluster.lat,cluster.lon],zoom);
+          // Ignore subpixel center motion caused by repeated smoothing passes.
+          if (Math.hypot(newPoint.x-oldPoint.x,newPoint.y-oldPoint.y) > .75) {
+            record.marker.setLatLng([cluster.lat,cluster.lon]);
+          }
+          if (record.visual !== visual) {
+            const markerNode = record.marker.getElement?.();
+            const bubble = markerNode?.querySelector?.('.cluster-bubble');
+            if (bubble) {
+              if (bubble.className !== cssClass) bubble.className=cssClass;
+              if (bubble.textContent !== String(cluster.count)) bubble.textContent=String(cluster.count);
+              bubble.style.setProperty('--cluster-color',cluster.color);
+              bubble.style.setProperty('--cluster-size',size+'px');
+              if (record.size !== size) {
+                // Preserve the node: setIcon() would remove and recreate its DOM.
+                markerNode.style.width=size+'px';
+                markerNode.style.height=size+'px';
+                markerNode.style.marginLeft=(-size/2)+'px';
+                markerNode.style.marginTop=(-size/2)+'px';
+              }
+            } else {
+              // Defensive fallback for implementations without exposed marker DOM.
+              record.marker.setIcon(L.divIcon({
+                className:'cluster-icon',
+                html:`<div class="${cssClass}" style="--cluster-color:${cluster.color};--cluster-size:${size}px">${cluster.count}</div>`,
+                iconSize:[size,size],iconAnchor:[size/2,size/2]
+              }));
+            }
+            record.visual=visual;
+            record.size=size;
+          }
+        }
+      }
+      // Remove only clusters that truly disappeared, never the whole layer.
+      for (const [id,record] of markers) {
+        if (seen.has(id)) continue;
+        this._clusterBubbleLayer.removeLayer(record.marker);
+        markers.delete(id);
+      }
+    },
+
     _renderMapMarkers() {
       if (!this._mapReady || !this._markerLayer || !this._map) return;
       const allHistory = this._mapHistory || [];
@@ -202,7 +275,14 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       const grouped = this._hass?.states?.[this._mapGroupingEntity()]?.state !== 'off';
 
       if (grouped && this._suppressClusterRender) return;
+      if (!grouped) {
+        // Switching to individual strikes intentionally removes prior bubbles.
+        this._clusterBubbleLayer?.clearLayers?.();
+        this._clusterBubbleMarkers?.clear?.();
+      }
 
+      // This layer contains only individual crosses. Bubbles live in their own
+      // keyed layer and must never be cleared by a general HA re-render.
       this._markerLayer.clearLayers();
       this._renderedMapClusters = [];
 
@@ -410,14 +490,8 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
           extreme:cluster.extreme
         });
 
-        const icon = L.divIcon({
-          className:'cluster-icon',
-          html:`<div class="cluster-bubble ${cluster.extreme ? 'extreme' : cluster.active ? 'active' : ''}" style="--cluster-color:${cluster.color};--cluster-size:${cluster.size.toFixed(0)}px">${cluster.count}</div>`,
-          iconSize:[cluster.size,cluster.size],
-          iconAnchor:[cluster.size/2,cluster.size/2]
-        });
-        L.marker([cluster.lat,cluster.lon],{ icon,interactive:false }).addTo(this._markerLayer);
       }
+      this._syncClusterBubbleMarkers(stableClusters,L);
     },
 
     _recentStrikeInRadius(strike,filter,observationRadius,stormRadius,dangerRadius) {

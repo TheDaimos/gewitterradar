@@ -41,21 +41,21 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}", skeleton)
         self.assertEqual(skeleton.count('class="settings-footer-version" title="Kartenversion"'), 1)
         self.assertIn('            </div>\n            <div class="settings-footer-version"', skeleton)
-        self.assertIn("2026-10-09", (FRONTENDS[0] / "version.js").read_text())
+        self.assertIn("2026-10-10", (FRONTENDS[0] / "version.js").read_text())
 
     def test_runtime_manifest_is_current_and_complete(self):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.52"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.52")
-        self.assertEqual(runtime["runtimeRevision"], "41152r1")
-        self.assertEqual(runtime["moduleSetId"], "E411-52A1")
+        self.assertIn('version:"4.11.53"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.53")
+        self.assertEqual(runtime["runtimeRevision"], "41153r1")
+        self.assertEqual(runtime["moduleSetId"], "E411-53A1")
         self.assertEqual(len(runtime["modules"]), 31)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
         self.assertEqual(by_id["ui.controls"], "1.1.14")
         self.assertEqual(by_id["ui.skeleton"], "1.1.21")
-        self.assertEqual(by_id["core.manifest"], "1.2.113")
+        self.assertEqual(by_id["core.manifest"], "1.2.114")
         self.assertIn('"id": "ui.controls",\n    "version": "1.1.14"', manifest)
 
 
