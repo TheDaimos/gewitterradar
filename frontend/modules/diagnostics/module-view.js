@@ -2,10 +2,10 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.6",
+  version:"1.3.7",
   group:"Diagnose",
   function:"Module & Versionen",
-  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
+  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Fenster- und Ebenenübersicht","Diagnose kopieren","JSON herunterladen"],
   file:"modules/diagnostics/module-view.js"
 });
 
@@ -778,8 +778,48 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       return issues;
     },
 
+    _moduleLayerSnapshot(){
+      // Snapshot only on explicit export. Never install touch/pointer listeners.
+      const root=this.shadow;
+      if(!root)return {available:false,reason:"shadow root unavailable"};
+      const selectors=[
+        "#settings-backdrop","#settings-dialog","#settings-help","#settings-about",
+        "#help-shell","#help-shell .help-dialog","#about-shell","#about-shell dialog",
+        "#language-onboarding-dialog","#release-history-backdrop","#release-history-dialog",
+        "#map-fullscreen-dialog","#map-diagnostics-backdrop",
+        "#compass-calibration-modal-backdrop","#medallion-calibration-modal-backdrop",
+        "#v407-location-search-backdrop","[role=dialog]","dialog"
+      ];
+      const candidates=new Set();
+      const add=(node)=>{if(node instanceof Element)candidates.add(node);};
+      selectors.forEach(selector=>{try{root.querySelectorAll(selector).forEach(add);}catch(_){}});
+      root.querySelectorAll("dialog,[aria-modal=true],.open").forEach(node=>{
+        if(node.matches("dialog,[aria-modal=true]")||/modal|dialog|backdrop|popup|overlay/i.test(node.id+" "+String(node.className||"")))add(node);
+      });
+      const describe=(node)=>{
+        if(!(node instanceof Element))return null;
+        const css=getComputedStyle(node),rect=node.getBoundingClientRect();
+        const centerX=Math.min(innerWidth-1,Math.max(0,rect.left+rect.width/2));
+        const centerY=Math.min(innerHeight-1,Math.max(0,rect.top+rect.height/2));
+        const validCenter=rect.width>0&&rect.height>0&&centerX>=0&&centerY>=0&&centerX<innerWidth&&centerY<innerHeight;
+        const hits=validCenter&&typeof root.elementsFromPoint==="function"?root.elementsFromPoint(centerX,centerY).slice(0,7):[];
+        const short=(el)=>el?{tag:el.tagName.toLowerCase(),id:el.id||null,className:typeof el.className==="string"?el.className.slice(0,100):null}:null;
+        let ancestors=[],parent=node.parentElement;
+        while(parent&&ancestors.length<7){
+          const pc=getComputedStyle(parent);
+          if(pc.position!=="static"||pc.transform!=="none"||pc.isolation==="isolate"||pc.opacity!=="1"||pc.zIndex!=="auto"){
+            ancestors.push({...short(parent),position:pc.position,zIndex:pc.zIndex,transform:pc.transform==="none"?null:pc.transform.slice(0,100),opacity:pc.opacity,isolation:pc.isolation});
+          }
+          parent=parent.parentElement;
+        }
+        const centerHit=hits[0]||null;
+        return {...short(node),connected:node.isConnected,open:node instanceof HTMLDialogElement?node.open:null,modalAttribute:node.getAttribute("aria-modal"),hidden:node.hidden,display:css.display,visibility:css.visibility,opacity:css.opacity,position:css.position,zIndex:css.zIndex,pointerEvents:css.pointerEvents,transform:css.transform==="none"?null:css.transform.slice(0,100),rect:{x:Math.round(rect.x),y:Math.round(rect.y),width:Math.round(rect.width),height:Math.round(rect.height)},centerHit:short(centerHit),centerHitInside:!!(centerHit&&(centerHit===node||node.contains(centerHit))),hitStack:hits.map(short),stackingAncestors:ancestors};
+      };
+      return {available:true,capturedAt:new Date().toISOString(),viewport:{width:innerWidth,height:innerHeight},helpState:{dialogPresent:!!this._helpDialog,dialogOpen:!!this._helpDialog?.open,lastError:this._helpLastError||null},note:"Computed z-index is not a total paint order; native modal dialogs can be in the browser top layer. Center hit tests are indicative and can miss partial occlusion.",elements:[...candidates].slice(0,100).map(describe)};
+    },
+
     _moduleDiagnosticsPayload(){
-      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES)};
+      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES),layers:this._moduleLayerSnapshot()};
     },
 
     _moduleDeviationPayload(){
@@ -797,7 +837,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           loadedFingerprint:this._moduleRuntimeProbe?.loadedId||null,
           expectedFingerprint:this._moduleRuntimeProbe?.expectedId||null,
         },
-        deviations:issues
+        deviations:issues,
+        layers:this._moduleLayerSnapshot()
       };
     },
 
