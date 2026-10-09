@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.53 DEV – persistent keyed Leaflet cluster markers prevent simultaneous redraw flicker; existing gesture handling unchanged.",
+    "purpose": "V4.11.53 DEV – persistent keyed Leaflet markers stop synchronized bubble flicker; settings and Android touch gestures unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
