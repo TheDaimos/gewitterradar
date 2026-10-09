@@ -30,20 +30,24 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("const resizeDuration=duration;", text)
         self.assertIn("navBody.style.setProperty('overflow-y','hidden','important')", text)
         self.assertIn("navBody.style.removeProperty('overflow-y')", text)
+        self.assertIn("Keep the exact animated end height.", text)
+        self.assertIn("settingsDialog?.style.removeProperty('height'); // Restore natural size when opening", text)
+        self.assertIn("page.style.padding=bodyPadding.paddingTop", text)
+        self.assertIn(":not(.settings-signature-wrap):not(.settings-footer-version)", text)
 
     def test_runtime_manifest_is_current_and_complete(self):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.50"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.50")
-        self.assertEqual(runtime["runtimeRevision"], "41150r1")
-        self.assertEqual(runtime["moduleSetId"], "E411-50A1")
+        self.assertIn('version:"4.11.51"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.51")
+        self.assertEqual(runtime["runtimeRevision"], "41151r1")
+        self.assertEqual(runtime["moduleSetId"], "E411-51A1")
         self.assertEqual(len(runtime["modules"]), 31)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
-        self.assertEqual(by_id["ui.controls"], "1.1.13")
-        self.assertEqual(by_id["core.manifest"], "1.2.111")
-        self.assertIn('"id": "ui.controls",\n    "version": "1.1.13"', manifest)
+        self.assertEqual(by_id["ui.controls"], "1.1.14")
+        self.assertEqual(by_id["core.manifest"], "1.2.112")
+        self.assertIn('"id": "ui.controls",\n    "version": "1.1.14"', manifest)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1593,6 +1593,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         this._syncHelpMenu();
         this._syncModuleView?.();
         this._ensureMapDiagnostics?.();
+        settingsDialog?.style.removeProperty('height'); // Restore natural size when opening
         settingsBackdrop?.classList.add('open');
         settingsClose?.focus?.({ preventScroll:true });
       };
@@ -1603,6 +1604,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeLocationDropdown(false);
         closeRadiusKeypad(false);
         settingsBackdrop?.classList.remove('open');
+        settingsDialog?.style.removeProperty('height'); // Release animation lock after close
         settingsOpen?.focus?.({ preventScroll:true });
       };
 
@@ -1686,6 +1688,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
         if(newContent instanceof HTMLDetailsElement)newContent.open=true;
         from.append(oldContent);to.append(newContent);pane.append(from,to);
+        // Match real settings body padding: clones must not shift when removed.
+        const bodyPadding=getComputedStyle(navBody);
+        for(const page of [from,to]){
+          page.style.padding=bodyPadding.paddingTop+' '+bodyPadding.paddingRight+' '+bodyPadding.paddingBottom+' '+bodyPadding.paddingLeft;
+        }
         const distance=Math.max(280,navBody.clientWidth);
         const before=settingsDialog.getBoundingClientRect().height;
         settingsDialog.style.height=before+'px';
@@ -1722,7 +1729,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           navBody.classList.remove('gr-horizontal-animating');
           if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
           else navBody.style.removeProperty('overflow-y');
-          settingsDialog.style.removeProperty('height');
+          // Keep the exact animated end height. Returning to auto here
+          // caused the centered dialog to snap on Android, especially on Slow.
           navAnimating=false;
         };
         const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
@@ -1795,7 +1803,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const style=document.createElement('style');
         style.textContent=`
           #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
-          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important}
+          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition):not(.settings-signature-wrap):not(.settings-footer-version) {visibility:hidden!important}
+           #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > .settings-signature-wrap {position:relative;z-index:92;pointer-events:none}
+           #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > .settings-footer-version {visibility:visible!important;z-index:92}
           #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}
@@ -1804,7 +1814,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-backdrop.gr-horizontal-mode #settings-help {border-color:rgba(196,160,95,.34)!important;background:linear-gradient(120deg,rgba(157,119,46,.075),rgba(10,19,29,.8))!important}
 
           .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
-          .gr-horizontal-slide-page {position:absolute;inset:0;overflow:hidden;padding:4px 2px;background:#0b151c;will-change:transform;pointer-events:none}
+          .gr-horizontal-slide-page {position:absolute;inset:0;box-sizing:border-box;width:100%;overflow:hidden;background:#0b151c;will-change:transform;pointer-events:none}
           .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;gap:8px}
           .gr-horizontal-slide-page > details.settings-section {display:block!important}
           .gr-horizontal-slide-page > details.settings-section > summary {display:none}

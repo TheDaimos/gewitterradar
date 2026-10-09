@@ -1,4 +1,4 @@
-name: V4.11.50 settings navigation and runtime identity
+name: V4.11.51 settings navigation and runtime identity
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: V4.11.50 navigation and runtime regression
+      - name: V4.11.51 navigation and runtime regression
         run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
       - name: Frontend asset inventory checksums
         run: |
@@ -58,10 +58,10 @@ jobs:
           build=(r/'custom_components/gewitterradar/build_info.py').read_text()
           provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
           runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
-          assert 'version:"4.11.50"' in version
-          assert 'BUILD_VERSION = "4.11.50"' in build
-          assert runtime['productVersion']==provenance['productVersion']=='4.11.50'
-          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-50A1'
+          assert 'version:"4.11.51"' in version
+          assert 'BUILD_VERSION = "4.11.51"' in build
+          assert runtime['productVersion']==provenance['productVersion']=='4.11.51'
+          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-51A1'
           assert len(runtime['modules'])==31
           print('PASS: current frontend/backend/DRA metadata consistent')
           PY

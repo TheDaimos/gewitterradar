@@ -13,18 +13,18 @@ const diag=await read('frontend/modules/diagnostics/map-diagnostics.js');
 const version=await read('frontend/version.js'),manifest=await read('frontend/module-manifest.js');
 const runtime=JSON.parse(await read('frontend/assets/gewitterradar-runtime-manifest.json'));
 const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
-assert.ok(version.includes('version:"4.11.50"')&&version.includes('runtimeRevision:"41150r1"'));
-assert.equal(runtime.productVersion,'4.11.50');
-assert.equal(runtime.runtimeRevision,'41150r1');
-assert.equal(runtime.moduleSetId,'E411-50A1');
+assert.ok(version.includes('version:"4.11.51"')&&version.includes('runtimeRevision:"41151r1"'));
+assert.equal(runtime.productVersion,'4.11.51');
+assert.equal(runtime.runtimeRevision,'41151r1');
+assert.equal(runtime.moduleSetId,'E411-51A1');
 assert.equal(runtime.modules.length,31);
-for(const [id,v] of [['location.radii-map','1.0.19'],['diagnostics.map','1.0.5'],['core.manifest','1.2.111']]){
+for(const [id,v] of [['location.radii-map','1.0.19'],['diagnostics.map','1.0.5'],['core.manifest','1.2.112']]){
   assert.equal(runtime.modules.find(m=>m.id===id)?.version,v);
   assert.ok(manifest.includes('"id": "'+id+'"'));
 }
-assert.ok((await read('custom_components/gewitterradar/build_info.py')).includes('BUILD_VERSION = "4.11.50"'));
-assert.equal(provenance.productVersion,'4.11.50');
-assert.equal(provenance.moduleSetId,'E411-50A1');
+assert.ok((await read('custom_components/gewitterradar/build_info.py')).includes('BUILD_VERSION = "4.11.51"'));
+assert.equal(provenance.productVersion,'4.11.51');
+assert.equal(provenance.moduleSetId,'E411-51A1');
 // Funktionaler Test: Ein Doppeltipp rueckt den geografischen Ort in die Kartenmitte.
 const a=mapSource.indexOf('const anchorForDoubleTap='),b=mapSource.indexOf(';\n      const mapDoubleTap=',a);
 assert.ok(a>=0&&b>a,'Anchoring function missing');
@@ -64,7 +64,7 @@ assert.ok(mapSource.includes('combinedGestureCenter('),'Original pinch and pan m
 const {MODULE_META,EXPECTED_MODULES}=await import('../frontend/module-manifest.js');
 const {moduleRegistrySnapshot}=await import('../frontend/modules/core/registry.js?v=41108r1');
 const expectedManifest=EXPECTED_MODULES.find(item=>item.id==='core.manifest');
-assert.equal(expectedManifest?.version,'1.2.111');
+assert.equal(expectedManifest?.version,'1.2.112');
 assert.equal(MODULE_META.id,'core.manifest');
 assert.equal(MODULE_META.version,expectedManifest.version);
 assert.ok(manifest.includes('version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version'));
@@ -75,4 +75,4 @@ assert.equal(manifestRow?.status,'ok');
 assert.ok(!registered.duplicateIds.includes('core.manifest'));
 console.log('PASS: manifest metadata matches expected version in actual module registry');
 
-console.log('PASS V4.11.50: centered geographic double-tap, touch-only post-screenshot recognition, preserving pinch+pan, mirror parity, identity and syntax');
+console.log('PASS V4.11.51: centered geographic double-tap, touch-only post-screenshot recognition, preserving pinch+pan, mirror parity, identity and syntax');
