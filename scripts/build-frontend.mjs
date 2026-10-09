@@ -13,7 +13,28 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.14"')){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.50"')){
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
+  if(!versionText.includes('displayVersion:"V4.11.50 DEV"')||!versionText.includes('runtimeRevision:"41150r1"')||!versionText.includes('moduleSetId:"E411-50A1"'))throw Error('V4.11.50 canonical version mismatch');
+  if(runtime.productVersion!=='4.11.50'||runtime.runtimeRevision!=='41150r1'||runtime.moduleSetId!=='E411-50A1'||runtime.displayVersion!=='V4.11.50 DEV')throw Error('V4.11.50 runtime manifest mismatch');
+  const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
+  if(!match)throw Error('Cannot read current module contract');
+  const modules=JSON.parse(match[1]);
+  if(modules.length!==31||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.50 module IDs invalid');
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  const expected=[...new Set(modules.map(item=>item.file))].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.50 module inventory mismatch');
+  const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
+  if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
+  for(const item of modules){
+    if(runtimeVersions.get(item.id)!==item.version)throw Error('Module version mismatch '+item.id);
+    modular.set(item.file,await readFile(resolve(root,'frontend',item.file)));
+  }
+  const localeBytes=await readFile(resolve(root,'frontend/locales/about-locales.js'));
+  localeSha=hash(localeBytes);
+  localeSize=localeBytes.length;
+ }else if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.14"')){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   if(!versionText.includes('displayVersion:"V4.11.14 DEV"')||!versionText.includes('build:"V4.11.14-DEV-2026-10-07"')||!versionText.includes('runtimeRevision:"41114r1"')||!versionText.includes('moduleSetId:"E411-14A1"'))throw Error('V4.11.14 canonical version mismatch');
