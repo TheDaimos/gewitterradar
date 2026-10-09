@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41148r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41149r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
@@ -112,7 +112,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.project-hub",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "group": "Oberfläche",
     "function": "Daimos Project Hub",
     "subfunctions": ["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC14-Runtime"],
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.11",
+    "version": "1.1.12",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
