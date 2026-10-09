@@ -5,6 +5,11 @@ const path = require('node:path');
 const http = require('node:http');
 
 const root = path.resolve(__dirname, '..');
+const moduleViewSource = fs.readFileSync(path.resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
+const legacyIdsMatch = moduleViewSource.match(/MODULE_VIEW_IDS=Object\\.freeze\\((\\[[^\\]]+\\])\\)/);
+assert.ok(legacyIdsMatch,'The localized legacy module contract is missing');
+const legacyModuleIds = new Set(JSON.parse(legacyIdsMatch[1]));
+assert.equal(legacyModuleIds.size,26,'Legacy localized module contract changed unexpectedly');
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const file = path.resolve(root, '.' + decodeURIComponent(url.pathname));
@@ -462,7 +467,8 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
           assert.equal(row.localizedModuleRows.length,31,delivery+'/'+profile+' '+row.language+' all module rows present');
-          assert.equal(row.localizedModuleRows.filter((entry) => !['ui.project-hub','weather.layer-menu'].includes(entry.id )).length,29,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
+          const legacyRows=row.localizedModuleRows.filter((entry) => legacyModuleIds.has(entry.id));
+          assert.equal(legacyRows.length,legacyModuleIds.size,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
           assert.ok(projectHubRow?.name&&projectHubRow?.functions,delivery+'/'+profile+' '+row.language+' Project Hub manifest fallback populated');
           assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,31,delivery+'/'+profile+' '+row.language+' unique module ids');
@@ -473,8 +479,8 @@ const server = http.createServer((req, res) => {
           assert.ok(row.moduleSummaryParts[2]?.startsWith('· '),delivery+'/'+profile+' '+row.language+' module summary state separator');
           if (row.language === 'Ελληνικά') {
             const greek = /[\u0370-\u03ff\u1f00-\u1fff]/u;
-            assert.equal(row.localizedModuleRows.filter((entry) => !['ui.project-hub','weather.layer-menu'].includes(entry.id)).every((entry) => greek.test(entry.name)),true,delivery+'/'+profile+' Greek legacy module names fully localized');
-            assert.equal(row.localizedModuleRows.filter((entry) => !['ui.project-hub','weather.layer-menu'].includes(entry.id)).every((entry) => greek.test(entry.functions)),true,delivery+'/'+profile+' Greek legacy module functions fully localized');
+            assert.equal(legacyRows.every((entry) => greek.test(entry.name)),true,delivery+'/'+profile+' Greek legacy module names fully localized');
+            assert.equal(legacyRows.every((entry) => greek.test(entry.functions)),true,delivery+'/'+profile+' Greek legacy module functions fully localized');
             const greekText = row.localizedModuleRows.map((entry) => entry.name+' '+entry.functions).join(' | ');
             for (const forbidden of ['Diagnose & Kalibrierung','Module & Versionen','Kompass-Skala','Virtuelles Gewitter','Geladene Module','Soll/Ist-Vergleich','Bewegungsprofil','Trendberechnung']) {
               assert.equal(greekText.includes(forbidden),false,delivery+'/'+profile+' Greek module view contains no German metadata: '+forbidden);
