@@ -474,6 +474,14 @@ for(const [name,bytes] of packages){
 }
 const expectedChecksums=checks.sort().join('\n')+'\n';
 if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChecksums){
+ const actualRows=(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')).trimEnd().split('\\n');
+ const wantedRows=expectedChecksums.trimEnd().split('\\n');
+ console.error('Checksum row counts: actual='+actualRows.length+' expected='+wantedRows.length);
+ const divergences=[];
+ for(let i=0;i<Math.max(actualRows.length,wantedRows.length);i++) {
+   if(actualRows[i]!==wantedRows[i] && divergences.length<8)divergences.push({row:i+1,actual:actualRows[i],expected:wantedRows[i]});
+ }
+ console.error('First divergent checksum rows:',JSON.stringify(divergences));
  console.error('Expected package checksum rows:');
  for(const row of checks.filter(row=>row.includes('_pkg.yaml')).sort())console.error(row);
  throw Error('Checksum inventory stale');
