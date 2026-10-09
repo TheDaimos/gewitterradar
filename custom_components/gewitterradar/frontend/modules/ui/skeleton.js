@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -17,6 +17,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
     _buildSkeleton() {
       this._built = true;
       this.shadow = this.attachShadow({ mode: 'open' });
+      const buildMonthMatch=String(GEWITTERRADAR_BUILD || '').match(/(\d{4})-(\d{2})-\d{2}$/);
+      const displayedBuildMonth=buildMonthMatch ? buildMonthMatch[1]+'/'+buildMonthMatch[2] : BUILD_YYYY_MM;
 
       this.shadow.innerHTML = `
         <link rel="stylesheet" href="${LEAFLET_CSS_URL}" id="leaflet-css-link">
@@ -7325,14 +7327,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <div class="settings-footer-version" title="Kartenversion">${BUILD_YYYY_MM} · V${CARD_DISPLAY_VERSION}</div>
-
               <div class="settings-signature-wrap" aria-hidden="true">
                 <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
                   <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
                 </svg>
               </div>
             </div>
+            <div class="settings-footer-version" title="Kartenversion">${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}</div>
           </section>
         </div>
 
@@ -7507,7 +7508,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </div>
               <div class="release-history-head-actions">
-                <span class="release-history-current">${BUILD_YYYY_MM} · V${CARD_DISPLAY_VERSION}</span>
+                <span class="release-history-current">${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}</span>
                 <button class="release-history-close" id="release-history-close" type="button" aria-label="Close release history"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></button>
               </div>
             </div>

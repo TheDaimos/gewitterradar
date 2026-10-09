@@ -13,20 +13,20 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.51"')){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.52"')){
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
-  if(!versionText.includes('displayVersion:"V4.11.51 DEV"')||!versionText.includes('runtimeRevision:"41151r1"')||!versionText.includes('moduleSetId:"E411-51A1"'))throw Error('V4.11.51 canonical version mismatch');
-  if(runtime.productVersion!=='4.11.51'||runtime.runtimeRevision!=='41151r1'||runtime.moduleSetId!=='E411-51A1'||runtime.displayVersion!=='V4.11.51 DEV')throw Error('V4.11.51 runtime manifest mismatch');
+  if(!versionText.includes('displayVersion:"V4.11.52 DEV"')||!versionText.includes('runtimeRevision:"41152r1"')||!versionText.includes('moduleSetId:"E411-52A1"'))throw Error('V4.11.52 canonical version mismatch');
+  if(runtime.productVersion!=='4.11.52'||runtime.runtimeRevision!=='41152r1'||runtime.moduleSetId!=='E411-52A1'||runtime.displayVersion!=='V4.11.52 DEV')throw Error('V4.11.52 runtime manifest mismatch');
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');
   const modules=JSON.parse(match[1]);
-  if(modules.length!==31||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.51 module IDs invalid');
+  if(modules.length!==31||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.52 module IDs invalid');
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
   // These eight auxiliary UI parts are imported by registered modules; they are not independent registered modules.
   const support=['modules/fullscreen/compass-picker-chevron-left-brass.js','modules/fullscreen/compass-picker-chevron-left-silver.js','modules/fullscreen/compass-picker-chevron-right-brass.js','modules/fullscreen/compass-picker-chevron-right-silver.js','modules/instruments/medallion-arrow-calibration-1.js','modules/instruments/medallion-arrow-calibration-2.js','modules/instruments/medallion-arrow-calibration-3.js','modules/instruments/medallion-arrow-calibration-4.js'];
   const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
-  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.51 module inventory mismatch');
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.52 module inventory mismatch');
   const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
   if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
   for(const item of modules){
