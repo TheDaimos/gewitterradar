@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1657,6 +1657,93 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       releaseHistoryDialog?.addEventListener('click',(event) => event.stopPropagation());
 
+      // Experimental horizontal navigation reuses the existing settings controls and HA bindings.
+      // No second settings DOM / duplicate IDs / duplicate state.
+      const navGear=this.shadow.getElementById('settings-open-horizontal');
+      const navBody=settingsDialog?.querySelector('.settings-body');
+      const navSections=navBody?[...navBody.children].filter(el=>el.matches('details.settings-section')):[];
+      const navRoot=document.createElement('div');
+      navRoot.className='gr-horizontal-root';
+      navRoot.setAttribute('aria-label','Einstellungskategorien');
+      navSections.forEach(section=>{
+        const summary=section.querySelector(':scope > summary');
+        if(!summary)return;
+        const button=document.createElement('button');
+        button.type='button';
+        button.className='gr-horizontal-item settings-section';
+        const heading=summary.querySelector('.settings-section-title')?.textContent?.trim()||summary.textContent.trim();
+        const desc=summary.querySelector('.settings-section-sub')?.textContent?.trim()||'';
+        const name=document.createElement('span');
+        name.className='gr-horizontal-item-name';
+        name.textContent=heading;
+        const chevron=document.createElement('span');
+        chevron.className='gr-horizontal-chevron';
+        chevron.textContent='›';
+        button.append(name,chevron);
+        if(desc)button.title=desc;
+        button.addEventListener('click',()=>{
+          navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
+          settingsBackdrop.classList.add('gr-horizontal-detail');
+          const title=this.shadow.getElementById('settings-dialog-title');
+          if(title)title.textContent=heading;
+          navBody?.scrollTo?.(0,0);
+          section.animate?.([{transform:'translateX(28px)',opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:250,easing:'ease-out'});
+        });
+        navRoot.append(button);
+      });
+      const navBack=document.createElement('button');
+      navBack.type='button';
+      navBack.id='gr-horizontal-back';
+      navBack.className='settings-language-button';
+      navBack.textContent='‹ Zurück';
+      navBack.addEventListener('click',()=>{
+        settingsBackdrop?.classList.remove('gr-horizontal-detail');
+        navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent='Einstellungen';
+        navBody?.scrollTo?.(0,0);
+        navRoot.animate?.([{transform:'translateX(-28px)',opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:250,easing:'ease-out'});
+      });
+      if(navBody&&navSections.length){
+        navBody.prepend(navRoot);
+        settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
+        const style=document.createElement('style');
+        style.textContent=`
+          #settings-open-horizontal {color:#83c9ff!important;filter:drop-shadow(0 0 4px rgba(45,150,255,.4))}
+          #settings-open-horizontal svg g {stroke:#5bbdff!important}
+          #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
+          #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,
+          #settings-backdrop:not(.gr-horizontal-mode) #gr-horizontal-back {display:none!important}
+          #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:flex}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > .settings-premium-links,
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .gr-horizontal-root {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > details.settings-section.gr-horizontal-current {display:block!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail details.settings-section.gr-horizontal-current > summary {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail details.settings-section.gr-horizontal-current > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          #settings-backdrop.gr-horizontal-mode:not(.gr-horizontal-detail) #gr-horizontal-back {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail #gr-horizontal-back {display:inline-flex!important;margin-top:8px;align-items:center;min-height:34px;color:#eed08a}
+          .gr-horizontal-item {display:flex;align-items:center;justify-content:space-between;width:100%;min-height:55px;padding:12px 16px;text-align:left;cursor:pointer;color:inherit;font:inherit;border-radius:12px;background:linear-gradient(110deg,rgba(169,126,47,.055),rgba(255,255,255,.018) 30%,rgba(11,21,28,.58));border:1px solid rgba(190,151,76,.28)}
+          .gr-horizontal-item-name {font-weight:750;text-transform:uppercase;letter-spacing:.045em}
+          .gr-horizontal-chevron {font-size:27px;color:#e1b45b;line-height:1}
+          @media(prefers-reduced-motion:reduce){.gr-horizontal-root,.gr-horizontal-current{animation:none!important}}
+        `;
+        this.shadow.append(style);
+      }
+      navGear?.addEventListener('click',()=>{
+        openSettings();
+        settingsBackdrop?.classList.add('gr-horizontal-mode');
+        settingsBackdrop?.classList.remove('gr-horizontal-detail');
+        navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent='Einstellungen';
+      });
+      settingsOpen?.addEventListener('click',()=>{
+        settingsBackdrop?.classList.remove('gr-horizontal-mode','gr-horizontal-detail');
+        navSections.forEach(section=>section.classList.remove('gr-horizontal-current'));
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent='Einstellungen';
+      });
       settingsOpen?.addEventListener('click',openSettings);
       settingsClose?.addEventListener('click',closeSettings);
       settingsBackdrop?.addEventListener('click',(event) => {
