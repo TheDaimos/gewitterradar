@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1671,68 +1671,67 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       try { const stored=localStorage.getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
       let navAnimating=false;
       const animateNavigation=(outgoing,incoming,forward,complete)=>{
-        if(navAnimating)return;
+        if(navAnimating||!navBody||!settingsDialog)return;
         navAnimating=true;
         const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
-        // Keep two simultaneous, independent visual pages during the slide.
+        if(!duration){complete();navAnimating=false;return;}
         const pane=document.createElement('div');
         pane.className='gr-horizontal-transition';
+        pane.setAttribute('aria-hidden','true');
         const from=document.createElement('div'),to=document.createElement('div');
-        from.className='gr-horizontal-slide-page';to.className='gr-horizontal-slide-page';
+        from.className='gr-horizontal-slide-page';
+        to.className='gr-horizontal-slide-page';
         const oldContent=outgoing.cloneNode(true),newContent=incoming.cloneNode(true);
         if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
         if(newContent instanceof HTMLDetailsElement)newContent.open=true;
-        from.append(oldContent);to.append(newContent);
-        pane.append(from,to);
-        navBody.append(pane);
+        from.append(oldContent);to.append(newContent);pane.append(from,to);
         const distance=Math.max(280,navBody.clientWidth);
-        from.style.transform='translateX(0)';
-        to.style.transform='translateX('+(forward?distance:-distance)+'px)';
-        const finish=()=>{
-          // Freeze the old dialog height while swapping pages; then animate to the
-          // new natural height. Without this, short pages cause a final-frame jump.
-          const dialog=settingsDialog;
-          const before=dialog.getBoundingClientRect().height;
-          dialog.style.height=before+'px';
-          pane.remove();
-          complete();
-          dialog.style.height='auto';
-          const after=dialog.getBoundingClientRect().height;
-          dialog.style.height=before+'px';
-          if(!duration||Math.abs(after-before)<2){
-            dialog.style.removeProperty('height');
-            navAnimating=false;
-            return;
-          }
-          const resize=dialog.animate([{height:before+'px'},{height:after+'px'}],{
-            duration:Math.max(560,Math.min(duration+260,900)),easing:'cubic-bezier(.12,.88,.18,1)',fill:'forwards'
-          });
-          const settle=()=>{
-            resize.cancel();
-            dialog.style.removeProperty('height');
-            navAnimating=false;
-          };
-          resize.finished.then(settle,settle);
-        };
-        if(!duration){pane.remove();complete();navAnimating=false;return;}
-        // The original page stays on screen underneath until the transition finishes.
+        const before=settingsDialog.getBoundingClientRect().height;
+        settingsDialog.style.height=before+'px';
+        navBody.append(pane);
+        navBody.classList.add('gr-horizontal-animating');
+        // Switch the real controls under the snapshots BEFORE animation.
+        // Measuring the final intrinsic height prevents an end-frame layout jump.
+        complete();
+        settingsDialog.style.height='auto';
+        const after=settingsDialog.getBoundingClientRect().height;
+        settingsDialog.style.height=before+'px';
         const easing='cubic-bezier(.22,.7,.2,1)';
-        const first=from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'});
-        const second=to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'});
-        const timeout=setTimeout(()=>{if(pane.isConnected)finish();},duration+90);
-        Promise.allSettled([first.finished,second.finished]).then(()=>{if(!pane.isConnected)return;clearTimeout(timeout);finish();});
+        const resizeDuration=Math.max(560,Math.min(duration+260,900));
+        const runs=[
+          from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'}),
+          to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'})
+        ];
+        if(Math.abs(after-before)>=2)runs.push(settingsDialog.animate([{height:before+'px'},{height:after+'px'}],{
+          duration:resizeDuration,easing:'cubic-bezier(.12,.88,.18,1)',fill:'forwards'
+        }));
+        let done=false;
+        const finish=()=>{
+          if(done)return;
+          done=true;
+          clearTimeout(timeout);
+          settingsDialog.style.height=after+'px';
+          runs.forEach(animation=>animation.cancel());
+          pane.remove();
+          navBody.classList.remove('gr-horizontal-animating');
+          settingsDialog.style.removeProperty('height');
+          navAnimating=false;
+        };
+        const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
+        Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);
       };
-      navSections.forEach(section=>{
+      navSections.forEach((section,index)=>{
         const summary=section.querySelector(':scope > summary');
         if(!summary)return;
         const button=document.createElement('button');
         button.type='button';
         button.className='gr-horizontal-item settings-section';
         const heading=summary.querySelector('.settings-section-title')?.textContent?.trim()||summary.textContent.trim();
+        const numberedHeading=(index+1)+'. '+heading;
         const desc=summary.querySelector('.settings-section-sub')?.textContent?.trim()||'';
         const name=document.createElement('span');
         name.className='gr-horizontal-item-name';
-        name.textContent=heading;
+        name.textContent=numberedHeading;
         const chevron=document.createElement('span');
         chevron.className='gr-horizontal-chevron';
         chevron.textContent='›';
@@ -1743,7 +1742,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
             settingsBackdrop.classList.add('gr-horizontal-detail');
             const title=this.shadow.getElementById('settings-dialog-title');
-            if(title)title.textContent=heading;
+            if(title)title.textContent=numberedHeading;
             navBody?.scrollTo?.(0,0);
           });
         });
@@ -1782,6 +1781,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const style=document.createElement('style');
         style.textContent=`
           #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
+          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important}
+          #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+          #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
+          #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}
+          #settings-backdrop.gr-horizontal-mode #settings-about {border:1px solid rgba(244,205,128,.78)!important;background:linear-gradient(130deg,rgba(240,196,105,.28),rgba(124,86,35,.22) 48%,rgba(9,19,29,.96))!important;box-shadow:inset 0 1px 0 rgba(255,235,192,.24),0 0 18px rgba(202,146,45,.12),0 4px 12px rgba(0,0,0,.25)!important;color:#f6e4bb!important;font-weight:800}
+          #settings-backdrop.gr-horizontal-mode #settings-about .settings-premium-icon {filter:brightness(1.23) drop-shadow(0 0 5px rgba(242,194,105,.42))}
+          #settings-backdrop.gr-horizontal-mode #settings-help {border-color:rgba(196,160,95,.34)!important;background:linear-gradient(120deg,rgba(157,119,46,.075),rgba(10,19,29,.8))!important}
+
           .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
           .gr-horizontal-slide-page {position:absolute;inset:0;overflow:hidden;padding:4px 2px;background:#0b151c;will-change:transform;pointer-events:none}
           .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;gap:8px}
@@ -1796,7 +1803,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
           #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,
           #settings-backdrop:not(.gr-horizontal-mode) #gr-horizontal-back {display:none!important}
-          #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:flex}
+          /* The two settings links retain equal grid columns. */
           #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > .settings-premium-links,
           #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .gr-horizontal-root {display:none!important}
           #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > details.settings-section.gr-horizontal-current {display:block!important}
