@@ -181,7 +181,7 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
-    for(const match of moduleText.matchAll(runtimeImport))if(Number(match[1].split('r')[0])>Number(version.match(/runtimeRevision:\"(\\d+)r\\d+\"/)?.[1]||0)){
+    for(const match of moduleText.matchAll(runtimeImport))if(Number(match[1].split('r')[0])>Number(version.split('runtimeRevision:"')[1]?.split('r')[0]||0)){
       const line=moduleText.slice(0,match.index).split('\n').length;
       const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
       throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
