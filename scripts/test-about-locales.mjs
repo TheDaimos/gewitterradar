@@ -245,7 +245,7 @@ if (process.argv[2]) {
         await page.evaluate(() => {window.aboutCard._closeAbout(false,false);window.aboutCard._openHelp();});
         await page.waitForFunction(title => window.aboutCard._helpDialog?.querySelector('h2')?.textContent===title,locale.help.title);
         const helpActual=await page.evaluate(() => {const d=window.aboutCard._helpDialog;return {title:d.querySelector('h2').textContent,subtitle:d.querySelector('.help-subtitle').textContent,sections:[...d.querySelectorAll('.help-section')].map(node=>node.dataset.helpSection),yaml:d.querySelector('.help-code-wrap code').textContent,overflow:d.scrollWidth>d.clientWidth||d.querySelector('.help-content').scrollWidth>d.querySelector('.help-content').clientWidth,closeSize:[d.querySelector('.help-close').offsetWidth,d.querySelector('.help-close').offsetHeight]};});
-        assert.deepEqual(helpActual,clone({title:locale.help.title,subtitle:locale.help.subtitle,sections:[...locale.help.sections.map(section=>section.key),'instruments-v410'],yaml:model.recorderYaml,overflow:false,closeSize:[44,44]}),delivery+': '+language+' Help');
+        assert.deepEqual(helpActual,clone({title:locale.help.title,subtitle:locale.help.subtitle,sections:[...locale.help.sections.map(section=>section.key),'instruments-v410','weather-display-v411','weather-refresh-v411'],yaml:model.recorderYaml,overflow:false,closeSize:[44,44]}),delivery+': '+language+' Help');
         await page.evaluate(() => {window.aboutCard._closeHelp(false);window.aboutCard._openAbout();});
         await page.waitForFunction(title => window.aboutCard._aboutDialog?.querySelector('h2')?.textContent===title,locale.strings.title);
       }
