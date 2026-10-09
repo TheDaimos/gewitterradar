@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1688,17 +1688,39 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const distance=Math.max(280,navBody.clientWidth);
         from.style.transform='translateX(0)';
         to.style.transform='translateX('+(forward?distance:-distance)+'px)';
-        const clean=()=>{
+        const finish=()=>{
+          // Freeze the old dialog height while swapping pages; then animate to the
+          // new natural height. Without this, short pages cause a final-frame jump.
+          const dialog=settingsDialog;
+          const before=dialog.getBoundingClientRect().height;
+          dialog.style.height=before+'px';
           pane.remove();
-          navAnimating=false;
+          complete();
+          dialog.style.height='auto';
+          const after=dialog.getBoundingClientRect().height;
+          dialog.style.height=before+'px';
+          if(!duration||Math.abs(after-before)<2){
+            dialog.style.removeProperty('height');
+            navAnimating=false;
+            return;
+          }
+          const resize=dialog.animate([{height:before+'px'},{height:after+'px'}],{
+            duration:Math.min(duration,480),easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'
+          });
+          const settle=()=>{
+            resize.cancel();
+            dialog.style.removeProperty('height');
+            navAnimating=false;
+          };
+          resize.finished.then(settle,settle);
         };
-        if(!duration){complete();clean();return;}
+        if(!duration){pane.remove();complete();navAnimating=false;return;}
         // The original page stays on screen underneath until the transition finishes.
         const easing='cubic-bezier(.22,.7,.2,1)';
         const first=from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'});
         const second=to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'});
-        const timeout=setTimeout(()=>{complete();clean();},duration+90);
-        Promise.allSettled([first.finished,second.finished]).then(()=>{if(!pane.isConnected)return;clearTimeout(timeout);complete();clean();});
+        const timeout=setTimeout(()=>{if(pane.isConnected)finish();},duration+90);
+        Promise.allSettled([first.finished,second.finished]).then(()=>{if(!pane.isConnected)return;clearTimeout(timeout);finish();});
       };
       navSections.forEach(section=>{
         const summary=section.querySelector(':scope > summary');
