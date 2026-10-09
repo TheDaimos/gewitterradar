@@ -6,7 +6,7 @@ const http = require('node:http');
 
 const root = path.resolve(__dirname, '..');
 const moduleViewSource = fs.readFileSync(path.resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
-const legacyIdsMatch = moduleViewSource.match(/MODULE_VIEW_IDS=Object\\.freeze\\((\\[[^\\]]+\\])\\)/);
+const legacyIdsMatch = moduleViewSource.match(/MODULE_VIEW_IDS=Object\.freeze\((\[[^\]]+\])\)/);
 assert.ok(legacyIdsMatch,'The localized legacy module contract is missing');
 const legacyModuleIds = new Set(JSON.parse(legacyIdsMatch[1]));
 assert.equal(legacyModuleIds.size,26,'Legacy localized module contract changed unexpectedly');
