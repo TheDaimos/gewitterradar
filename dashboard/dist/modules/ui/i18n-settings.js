@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41141r1";
+import { defineModule } from "../core/runtime.js?v=41142r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.7",
+  "version": "1.3.8",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2465,13 +2465,31 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         if(event.shiftKey&&active===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&active===last){event.preventDefault();first.focus();}
         event.stopPropagation();
       });
-      this._syncHelp();
-      dialog.showModal();
-      // Load external translations once per opening, never recursively during rendering.
-      const openedLanguage=this._languageValue();
-      requestAboutLocale(openedLanguage,()=>{
-        if(this._helpDialog===dialog&&dialog.open&&this._languageValue()===openedLanguage)this._syncHelp();
-      });
+      const showHelpError=(stage,error)=>{
+        const message=error instanceof Error?error.message:String(error);
+        console.error('[Gewitterradar] Hilfe und Hinweise: '+stage,error);
+        this._helpLastError={stage,message,at:new Date().toISOString()};
+        const content=dialog.querySelector('.help-content');
+        content.replaceChildren();
+        const notice=document.createElement('div');
+        notice.setAttribute('role','alert');
+        notice.style.cssText='margin:16px;padding:15px;border:1px solid #d5a052;border-radius:8px;color:#ffe1a1;white-space:pre-wrap;overflow-wrap:anywhere';
+        notice.textContent='Hilfe konnte nicht vollständig geladen werden.\\nFehlerstelle: '+stage+'\\n'+message;
+        content.append(notice);
+      };
+      try { this._syncHelp(); } catch(error) { showHelpError('Hilfetexte aufbauen',error); }
+      try { dialog.showModal(); } catch(error) {
+        showHelpError('Dialog öffnen',error);
+        dialog.setAttribute('open','');
+      }
+      // Sprachdaten höchstens einmal je Dialogöffnung anfragen.
+      try {
+        const openedLanguage=this._languageValue();
+        requestAboutLocale(openedLanguage,()=>{
+          if(this._helpDialog!==dialog||!dialog.open||this._languageValue()!==openedLanguage)return;
+          try { this._syncHelp(); } catch(error) { showHelpError('Sprache aktualisieren',error); }
+        });
+      } catch(error) { showHelpError('Sprache anfordern',error); }
       dialog.querySelector('.help-close').focus({preventScroll:true});
     },
 
