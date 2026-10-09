@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1661,7 +1661,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // No second settings DOM / duplicate IDs / duplicate state.
       const navGear=this.shadow.getElementById('settings-open-horizontal');
       const navBody=settingsDialog?.querySelector('.settings-body');
-      const navSections=navBody?[...navBody.children].filter(el=>el.matches('details.settings-section')):[];
+      // Module diagnostics may add sections after control bindings have been installed.
+      let navSections=[];
       const navRoot=document.createElement('div');
       navRoot.className='gr-horizontal-root';
       navRoot.setAttribute('aria-label','Einstellungskategorien');
@@ -1697,13 +1698,18 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const after=settingsDialog.getBoundingClientRect().height;
         settingsDialog.style.height=before+'px';
         const easing='cubic-bezier(.22,.7,.2,1)';
-        const resizeDuration=Math.max(560,Math.min(duration+260,900));
+        // Match both animations: differing end times create a perceptible second height movement.
+        const resizeDuration=duration;
+        // Avoid scrollbar toggles during animated height changes (especially on Android Slow).
+        const previousOverflow=navBody.style.getPropertyValue('overflow-y');
+        const previousOverflowPriority=navBody.style.getPropertyPriority('overflow-y');
+        navBody.style.setProperty('overflow-y','hidden','important');
         const runs=[
           from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'}),
           to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'})
         ];
         if(Math.abs(after-before)>=2)runs.push(settingsDialog.animate([{height:before+'px'},{height:after+'px'}],{
-          duration:resizeDuration,easing:'cubic-bezier(.12,.88,.18,1)',fill:'forwards'
+          duration:resizeDuration,easing,fill:'forwards'
         }));
         let done=false;
         const finish=()=>{
@@ -1714,40 +1720,48 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           runs.forEach(animation=>animation.cancel());
           pane.remove();
           navBody.classList.remove('gr-horizontal-animating');
+          if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
+          else navBody.style.removeProperty('overflow-y');
           settingsDialog.style.removeProperty('height');
           navAnimating=false;
         };
         const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
         Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);
       };
-      navSections.forEach((section,index)=>{
-        const summary=section.querySelector(':scope > summary');
-        if(!summary)return;
-        const button=document.createElement('button');
-        button.type='button';
-        button.className='gr-horizontal-item settings-section';
-        const heading=summary.querySelector('.settings-section-title')?.textContent?.trim()||summary.textContent.trim();
-        const numberedHeading=(index+1)+'. '+heading;
-        const desc=summary.querySelector('.settings-section-sub')?.textContent?.trim()||'';
-        const name=document.createElement('span');
-        name.className='gr-horizontal-item-name';
-        name.textContent=numberedHeading;
-        const chevron=document.createElement('span');
-        chevron.className='gr-horizontal-chevron';
-        chevron.textContent='›';
-        button.append(name,chevron);
-        if(desc)button.title=desc;
-        button.addEventListener('click',()=>{
-          animateNavigation(navRoot,section,true,()=>{
-            navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
-            settingsBackdrop.classList.add('gr-horizontal-detail');
-            const title=this.shadow.getElementById('settings-dialog-title');
-            if(title)title.textContent=numberedHeading;
-            navBody?.scrollTo?.(0,0);
+      const refreshNavigationSections=()=>{
+        if(!navBody)return;
+        navSections=[...navBody.children].filter(el=>el.matches('details.settings-section'));
+        navRoot.querySelectorAll(':scope > .gr-horizontal-item').forEach(el=>el.remove());
+        navSections.forEach((section,index)=>{
+          const summary=section.querySelector(':scope > summary');
+          if(!summary)return;
+          const button=document.createElement('button');
+          button.type='button';
+          button.className='gr-horizontal-item settings-section';
+          const heading=summary.querySelector('.settings-section-title')?.textContent?.trim()||summary.textContent.trim();
+          const numberedHeading=(index+1)+'. '+heading;
+          const desc=summary.querySelector('.settings-section-sub')?.textContent?.trim()||'';
+          const name=document.createElement('span');
+          name.className='gr-horizontal-item-name';
+          name.textContent=numberedHeading;
+          const chevron=document.createElement('span');
+          chevron.className='gr-horizontal-chevron';
+          chevron.textContent='›';
+          button.append(name,chevron);
+          if(desc)button.title=desc;
+          button.addEventListener('click',()=>{
+            animateNavigation(navRoot,section,true,()=>{
+              navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
+              settingsBackdrop.classList.add('gr-horizontal-detail');
+              const title=this.shadow.getElementById('settings-dialog-title');
+              if(title)title.textContent=numberedHeading;
+              navBody?.scrollTo?.(0,0);
+            });
           });
+          navRoot.append(button);
         });
-        navRoot.append(button);
-      });
+      };
+      refreshNavigationSections();
       const navBack=document.createElement('button');
       navBack.type='button';
       navBack.id='gr-horizontal-back';
@@ -1820,6 +1834,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       }
       navGear?.addEventListener('click',()=>{
         openSettings();
+        refreshNavigationSections();
         settingsBackdrop?.classList.add('gr-horizontal-mode');
         settingsBackdrop?.classList.remove('gr-horizontal-detail');
         navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
