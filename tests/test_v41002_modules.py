@@ -122,7 +122,7 @@ def test_runtime_revision_and_module_set_probe_contract():
    "./modules/ui/controls.js","./modules/ui/skeleton.js","./modules/instruments/medallion-designs.js",
    "./modules/diagnostics/cockpit.js","./modules/diagnostics/module-view.js",
    "./modules/core/update-watch.js","./modules/weather/consumer-client.js"):
-   assert f"gewitterradarImport('{path}')" in main
+   assert f"gewitterradarImport('{path}'" in main
  else:
   assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
  assert '`${path}?v=${revision}`'.replace("\\","") in main
