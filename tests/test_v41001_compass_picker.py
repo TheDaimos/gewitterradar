@@ -82,7 +82,7 @@ def test_v41001_compass_picker_contract():
 
     # Picker-only contract: four local Retina modules are imported only by map-display.
     # Static picker assets preserve their own revision independently of the app.
-    picker_revision = re.search(r'compass-picker-chevron-left-brass\\.js\\?v=(\\d{5}r\\d+)', map_display)
+    picker_revision = re.search(r'compass-picker-chevron-left-brass\.js\?v=(\d{5}r\d+)', map_display)
     assert picker_revision
     cache = picker_revision.group(1) if is_v411 else "41002r13"
     if is_v411: assert int(cache.split("r")[0]) <= int(v411_cache.split("r")[0])

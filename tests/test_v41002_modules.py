@@ -31,7 +31,7 @@ def test_modules_carry_own_versions():
   assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
 def test_expected_module_versions_match_self_registration():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
- match=re.search(r'EXPECTED_MODULES=Object\\.freeze\\((\\[[\\s\\S]+?\\])\\.map\\(item=>Object\\.freeze\\(item\\)\\)\\)',manifest)
+ match=re.search(r'EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)',manifest)
  assert match
  modules=json.loads(match.group(1))
  expected={item["id"]:item["version"] for item in modules}
@@ -43,8 +43,8 @@ def test_expected_module_versions_match_self_registration():
    actual[item["id"]]=expected[item["id"]]
    continue
   source=(FRONTEND/item["file"]).read_text(encoding="utf-8")
-  id_match=re.search(r"""(?:["']?id["']?)\\s*:\\s*["']([^"']+)["']""",source)
-  version_match=re.search(r"""(?:["']?version["']?)\\s*:\\s*["']([^"']+)["']""",source)
+  id_match=re.search(r"""(?:["']?id["']?)\s*:\s*["']([^"']+)["']""",source)
+  version_match=re.search(r"""(?:["']?version["']?)\s*:\s*["']([^"']+)["']""",source)
   assert id_match and version_match,item["file"]
   assert id_match.group(1)==item["id"]
   actual[item["id"]]=version_match.group(1)
@@ -117,7 +117,7 @@ def test_runtime_revision_and_module_set_probe_contract():
    "./modules/core/card-lifecycle.js","./modules/location/radii-map.js",
    "./modules/weather/layer-menu.js","./modules/weather/precipitation-layer.js",
    "./modules/ui/project-hub.js"):
-   assert re.search(r"gewitterradarImport\\('"+re.escape(path)+r"',(?:'\\d+r\\d+'|[A-Za-z_.]+)\\)",main),path
+   assert re.search(r"gewitterradarImport\('"+re.escape(path)+r"',(?:'\d+r\d+'|[A-Za-z_.]+)\)",main),path
   for path in ("./modules/instruments/compass-selector.js","./modules/ui/i18n-settings.js",
    "./modules/ui/controls.js","./modules/ui/skeleton.js","./modules/instruments/medallion-designs.js",
    "./modules/diagnostics/cockpit.js","./modules/diagnostics/module-view.js",
@@ -141,11 +141,11 @@ def test_runtime_revision_and_module_set_probe_contract():
 def test_internal_module_import_cache_is_coherent():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
- latest=re.search(r'runtimeRevision:"(\\d{5})r\\d+"',version)
+ latest=re.search(r'runtimeRevision:"(\d{5})r\d+"',version)
  assert latest
  for path in sorted(FRONTEND.rglob("*.js")):
   text=path.read_text(encoding="utf-8")
-  for match in re.finditer(r'''import[^\\n]*?["']([^"']+\\.js)\\?v=(\\d{5})r(\\d+)["']''',text):
+  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(\d{5})r(\d+)["']''',text):
    module_path,revision,_=match.groups()
    assert (path.parent/module_path).resolve().is_file(),(path,module_path)
    assert int(revision)<=int(latest.group(1)),(path,revision)
