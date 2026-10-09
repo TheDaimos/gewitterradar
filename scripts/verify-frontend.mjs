@@ -20,6 +20,7 @@ const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.
 const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
 const nativePanel=await readFile(resolve(root,'frontend/panel.js'),'utf8');
 const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
+const weatherRadar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
 const displayMenu=await readFile(resolve(root,'frontend/modules/weather/display-menu.js'),'utf8');
 const legendOverlay=await readFile(resolve(root,'frontend/modules/weather/legend-overlay.js'),'utf8');
 const projectHubConfig=JSON.parse(await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'),'utf8'));
