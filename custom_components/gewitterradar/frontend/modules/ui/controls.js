@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1705,7 +1705,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             return;
           }
           const resize=dialog.animate([{height:before+'px'},{height:after+'px'}],{
-            duration:Math.min(duration,480),easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'
+            duration:Math.max(560,Math.min(duration+260,900)),easing:'cubic-bezier(.12,.88,.18,1)',fill:'forwards'
           });
           const settle=()=>{
             resize.cancel();
