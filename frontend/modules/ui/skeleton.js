@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.19",
+  "version": "1.1.20",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -6200,6 +6200,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <button class="top-chip settings-chip settings-chip-premium" id="settings-open" type="button"
                         title="Gewitterradar-Einstellungen öffnen" aria-label="Einstellungen öffnen">
                   <svg class="gear gear-welcome" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><defs><linearGradient id="mainview-settings-metal" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".62" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><g stroke="url(#mainview-settings-metal)"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/><circle cx="32" cy="32" r="17" opacity=".25"/></g></svg>
+                </button>
+                <button class="top-chip settings-chip settings-chip-premium" id="settings-open-horizontal" type="button" title="Neue horizontale Einstellungen testen" aria-label="Horizontale Einstellungen öffnen" style="color:#6cc6ff;border-color:rgba(73,170,255,.8);box-shadow:0 0 10px rgba(50,140,235,.3)">
+                  <svg class="gear gear-welcome" viewBox="0 0 64 64" fill="none" stroke="#66beff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/></svg>
                 </button>
                 </div>
               </div>
