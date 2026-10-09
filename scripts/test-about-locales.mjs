@@ -332,7 +332,7 @@ if (process.argv[2]) {
     assert.deepEqual(await retry.page.evaluate(() => {const d=window.probeCard._helpDialog;return {title:d.querySelector('h2').textContent,sections:d.querySelectorAll('.help-section').length};}),{title:model.locales.English.help.title,sections:12});
     const failedRequestCount = localeRequests.length;
     rejectExternalLocales = false;
-    await retry.page.evaluate(() => window.probeCard._syncHelp());
+    await retry.page.evaluate(() => window.probeCard._syncHelpMenu());
     await retry.page.waitForFunction(title => window.probeCard._helpDialog.querySelector('h2').textContent===title,
       allLocales.Dansk.help.title);
     assert.ok(localeRequests.length > failedRequestCount,'failed external import was not retried');
