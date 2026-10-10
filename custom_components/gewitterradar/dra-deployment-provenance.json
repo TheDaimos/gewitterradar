@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.53",
-  "build": "V4.11.53-DEV-2026-10-10",
-  "runtimeRevision": "41153r1",
-  "moduleSetId": "E411-53A1",
+  "productVersion": "4.11.54",
+  "build": "V4.11.54-DEV-2026-10-10",
+  "runtimeRevision": "41154r1",
+  "moduleSetId": "E411-54A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.53 DEV – persistent keyed Leaflet markers stop synchronized bubble flicker; settings and Android touch gestures unchanged.",
+    "purpose": "V4.11.54 DEV – persistent individual danger-zone lightning markers; V4.11.53 stable bubbles, radius geometry and touch handling retained.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
