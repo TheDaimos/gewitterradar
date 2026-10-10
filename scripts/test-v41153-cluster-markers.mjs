@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 
 const original=await readFile('frontend/modules/map/clusters-recent.js','utf8');
 assert.match(original, /_syncClusterBubbleMarkers\(stableClusters,L\)/);
-assert.match(original, /this\._markerLayer\.clearLayers\(\)/);
+assert.doesNotMatch(original, /this\._markerLayer\.clearLayers\(\)/);
 assert.doesNotMatch(original, /L\.marker\(\[cluster\.lat,cluster\.lon\],\{ icon,interactive:false \}\)\.addTo\(this\._markerLayer\)/);
 const adapted=original.replace(/^import[^\n]*\n/, 'const defineModule=(meta,factory)=>(CardClass,deps)=>{Object.defineProperties(CardClass.prototype,Object.getOwnPropertyDescriptors(factory(deps)));};\n');
 const mod=await import('data:text/javascript;base64,'+Buffer.from(adapted).toString('base64'));
