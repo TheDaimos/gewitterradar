@@ -30,7 +30,7 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-const isV41153Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41153r1";')
+const isV41154Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41154r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41108Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41108r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
@@ -53,22 +53,22 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV41153Dev) {
+if (isV41154Dev) {
   // Preserve the immutable V4.07.56 About geometry baseline; this branch
   // only registers the current V4.11 DEV identity and does not waive pixel tests.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  assert.ok(versionText.includes('version:"4.11.53"'));
-  assert.ok(versionText.includes('displayVersion:"V4.11.53 DEV"'));
-  assert.ok(versionText.includes('build:"V4.11.53-DEV-2026-10-10"'));
-  assert.ok(versionText.includes('runtimeRevision:"41153r1"'));
-  assert.ok(versionText.includes('moduleSetId:"E411-53A1"'));
-  assert.equal(runtime.productVersion, '4.11.53');
-  assert.equal(runtime.build, 'V4.11.53-DEV-2026-10-10');
-  assert.equal(runtime.runtimeRevision, '41153r1');
-  assert.equal(runtime.moduleSetId, 'E411-53A1');
+  assert.ok(versionText.includes('version:"4.11.54"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.54 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.54-DEV-2026-10-10"'));
+  assert.ok(versionText.includes('runtimeRevision:"41154r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-54A1"'));
+  assert.equal(runtime.productVersion, '4.11.54');
+  assert.equal(runtime.build, 'V4.11.54-DEV-2026-10-10');
+  assert.equal(runtime.runtimeRevision, '41154r1');
+  assert.equal(runtime.moduleSetId, 'E411-54A1');
   assert.equal(runtime.modules.length, 31);
 } else if (isV41108Dev) {
   // V4.11.08 adds the isolated Daimos Project Hub module only.
