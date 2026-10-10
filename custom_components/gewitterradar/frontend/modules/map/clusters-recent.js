@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -193,6 +193,66 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
     // Preserve real Leaflet marker nodes across HA refreshes. Cluster metadata
     // is already assigned stable IDs by _stabilizeRenderedClusterIdentities.
     // Replacing every node used to switch off all bubbles simultaneously.
+    // Persist individual lightning markers, especially within the 30 km danger zone.
+    _syncIndividualStrikeMarkers(strikes,L,now,dangerRadius) {
+      if (!this._map || !this._markerLayer || !L) return;
+      if (this._individualMarkerMap !== this._map || this._individualMarkerLayer !== this._markerLayer) {
+        this._individualMarkerMap = this._map;
+        this._individualMarkerLayer = this._markerLayer;
+        this._individualMarkerRecords = new Map();
+      }
+      const records = this._individualMarkerRecords;
+      const seen = new Set();
+      for (const strike of strikes || []) {
+        if (!Number.isFinite(strike?.lat) || !Number.isFinite(strike?.lon)) continue;
+        const id = String(strike.id ?? [strike.lat,strike.lon,strike.firstSeen].join(':'));
+        seen.add(id);
+        const status = this._strikeStatus(strike,now,dangerRadius);
+        const color = status === 'danger' ? C.danger : status === 'active' ? C.gold : C.blue;
+        const symbol = status === 'danger' ? '✦' : '+';
+        const visual = status + '|' + color;
+        let record = records.get(id);
+        if (!record) {
+          const icon = L.divIcon({
+            className:'strike-icon',
+            html:'<span class="strike-spark' + (status === 'danger' ? ' danger' : '') +
+              '" style="--strike-color:' + color + '">' + symbol + '</span>',
+            iconSize:[18,18],iconAnchor:[9,9]
+          });
+          const layer = L.marker([strike.lat,strike.lon],{icon,interactive:false}).addTo(this._markerLayer);
+          record = {marker:layer,lat:strike.lat,lon:strike.lon,visual};
+          records.set(id,record);
+        } else {
+          if (record.lat !== strike.lat || record.lon !== strike.lon) {
+            record.marker.setLatLng([strike.lat,strike.lon]);
+            record.lat = strike.lat;
+            record.lon = strike.lon;
+          }
+          if (record.visual !== visual) {
+            const node = record.marker.getElement?.()?.querySelector?.('.strike-spark');
+            if (node) {
+              node.className = 'strike-spark' + (status === 'danger' ? ' danger' : '');
+              node.style.setProperty('--strike-color',color);
+              node.textContent = symbol;
+            } else {
+              record.marker.setIcon(L.divIcon({
+                className:'strike-icon',
+                html:'<span class="strike-spark' + (status === 'danger' ? ' danger' : '') +
+                  '" style="--strike-color:' + color + '">' + symbol + '</span>',
+                iconSize:[18,18],iconAnchor:[9,9]
+              }));
+            }
+            record.visual = visual;
+          }
+        }
+      }
+      for (const [id,record] of records) {
+        if (seen.has(id)) continue;
+        this._markerLayer.removeLayer(record.marker);
+        records.delete(id);
+      }
+    },
+
     _syncClusterBubbleMarkers(clusters,L) {
       if (!this._map) return;
       if (this._clusterBubbleMap !== this._map || !this._clusterBubbleLayer) {
@@ -276,14 +336,14 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
 
       if (grouped && this._suppressClusterRender) return;
       if (!grouped) {
-        // Switching to individual strikes intentionally removes prior bubbles.
+        this._syncIndividualStrikeMarkers([],L,now,dangerRadius);
         this._clusterBubbleLayer?.clearLayers?.();
         this._clusterBubbleMarkers?.clear?.();
       }
 
       // This layer contains only individual crosses. Bubbles live in their own
       // keyed layer and must never be cleared by a general HA re-render.
-      this._markerLayer.clearLayers();
+      // Persistent individual markers are synced below; never clear all on HA refresh.
       this._renderedMapClusters = [];
 
       // Einzelblitz-Modus: filigrane diagonale Kreuze statt Punktwolken.
@@ -396,20 +456,9 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         else clusterCandidates.push({ strike:s,inObservation });
       }
 
-      const addStrike = (s) => {
-        const status = this._strikeStatus(s,now,dangerRadius);
-        const color = status === 'danger' ? C.danger : status === 'active' ? C.gold : C.blue;
-        const symbol = status === 'danger' ? '✦' : '+';
-        const icon = L.divIcon({
-          className:'strike-icon',
-          html:`<span class="strike-spark ${status === 'danger' ? 'danger' : ''}" style="--strike-color:${color}">${symbol}</span>`,
-          iconSize:[18,18],
-          iconAnchor:[9,9]
-        });
-        L.marker([s.lat,s.lon],{ icon,interactive:false }).addTo(this._markerLayer);
-      };
+      const addStrike = (s) => individual.push(s);
 
-      individual.forEach(addStrike);
+
 
       const cells = new Map();
       for (const item of clusterCandidates) {
@@ -491,6 +540,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         });
 
       }
+      this._syncIndividualStrikeMarkers(individual,L,now,dangerRadius);
       this._syncClusterBubbleMarkers(stableClusters,L);
     },
 
