@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.54 DEV – persistent individual danger-zone lightning markers; V4.11.53 stable bubbles, radius geometry and touch handling retained.",
+    "purpose": "V4.11.54 DEV – diagnostic-backed fix for flickering individual danger-zone lightning markers; preserves V4.11.53 clusters, radius geometry and Android touch handling.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
