@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -1950,6 +1950,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              unverändert als PNG-Datenstrom in einem Inline-SVG gerendert.
              Keine Rekonstruktion, keine Font-Abhängigkeit, keine neu erfundene
              Geometrie. Nur gleichmäßige Skalierung bei unverändertem Seitenverhältnis. */
+          /* Shell footer remains visible throughout horizontal page transitions. */
+          .settings-dialog > .settings-signature-wrap {
+            flex:0 0 auto;
+            box-sizing:border-box;
+            position:relative;
+            z-index:4;
+            pointer-events:none;
+          }
           .settings-signature-wrap {
             display:flex;
             justify-content:flex-end;
@@ -7327,11 +7335,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <div class="settings-signature-wrap" aria-hidden="true">
-                <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-                  <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
-                </svg>
-              </div>
+            </div>
+            <div class="settings-signature-wrap" aria-hidden="true">
+              <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
+              </svg>
             </div>
             <div class="settings-footer-version" title="Kartenversion">${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}</div>
           </section>
