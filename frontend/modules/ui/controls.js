@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1685,6 +1685,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         from.className='gr-horizontal-slide-page';
         to.className='gr-horizontal-slide-page';
         const oldContent=outgoing.cloneNode(true),newContent=incoming.cloneNode(true);
+        oldContent.setAttribute('aria-hidden','true');
+        newContent.setAttribute('aria-hidden','true');
         if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
         if(newContent instanceof HTMLDetailsElement)newContent.open=true;
         from.append(oldContent);to.append(newContent);pane.append(from,to);
@@ -1692,6 +1694,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const bodyPadding=getComputedStyle(navBody);
         for(const page of [from,to]){
           page.style.padding=bodyPadding.paddingTop+' '+bodyPadding.paddingRight+' '+bodyPadding.paddingBottom+' '+bodyPadding.paddingLeft;
+          page.style.boxSizing='border-box';
         }
         const distance=Math.max(280,navBody.clientWidth);
         const before=settingsDialog.getBoundingClientRect().height;
@@ -1723,7 +1726,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           if(done)return;
           done=true;
           clearTimeout(timeout);
-          settingsDialog.style.height=after+'px';
+          // Never re-lock a closed dialog at the end of an asynchronous transition.
+          if(settingsBackdrop?.classList.contains('open') && settingsBackdrop?.classList.contains('gr-horizontal-mode'))settingsDialog.style.height=after+'px';
+          else settingsDialog.style.removeProperty('height');
           runs.forEach(animation=>animation.cancel());
           pane.remove();
           navBody.classList.remove('gr-horizontal-animating');
@@ -1803,9 +1808,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const style=document.createElement('style');
         style.textContent=`
           #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
-          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition):not(.settings-signature-wrap):not(.settings-footer-version) {visibility:hidden!important}
-           #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > .settings-signature-wrap {position:relative;z-index:92;pointer-events:none}
-           #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > .settings-footer-version {visibility:visible!important;z-index:92}
+          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important}
           #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}
@@ -1815,8 +1818,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
           .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
           .gr-horizontal-slide-page {position:absolute;inset:0;box-sizing:border-box;width:100%;overflow:hidden;background:#0b151c;will-change:transform;pointer-events:none}
-          .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;gap:8px}
-          .gr-horizontal-slide-page > details.settings-section {display:block!important}
+          /* Preserve both sliding snapshots regardless of real detail-mode visibility. */
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;visibility:visible!important;gap:8px}
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > details.settings-section {display:block!important;visibility:visible!important}
           .gr-horizontal-slide-page > details.settings-section > summary {display:none}
           .gr-horizontal-slide-page > details.settings-section > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
           .gr-horizontal-speed {display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 8px;padding:10px 12px;border:1px solid rgba(190,151,76,.32);border-radius:9px;color:#eed08a}

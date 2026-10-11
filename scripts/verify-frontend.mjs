@@ -30,7 +30,7 @@ const projectHubCk=await readFile(resolve(root,'frontend/project-hub/offline/ass
 const projectHubIcons=await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'));
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.21"',
+  '"version": "1.1.22"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -124,7 +124,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.14"',
+  '"version": "1.1.15"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
@@ -176,7 +176,7 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.54"','displayVersion:"V4.11.54 DEV"','runtimeRevision:"41154r1"','moduleSetId:"E411-54A1"']){
+  for(const marker of ['version:"4.11.55"','displayVersion:"V4.11.55 DEV"','runtimeRevision:"41155r1"','moduleSetId:"E411-55A1"']){
     if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;

@@ -108,6 +108,8 @@ jobs:
 
       - name: V4.08 About geometry against protected V4.07.56 golden contract
         run: node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Verify horizontal settings animation in real browser
+        run: node scripts/test-v41154-settings-motion.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Both delivery browser suites
         run: |
