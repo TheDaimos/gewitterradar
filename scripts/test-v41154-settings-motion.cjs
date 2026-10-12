@@ -209,6 +209,46 @@ const server=http.createServer((req,res)=>{
         assert.equal(scroller.top,'77px',`${delivery}/${name} location list repositions during touch`);
         assert.equal(scroller.touchAction,'pan-y',`${delivery}/${name} native pan-y disabled`);
         assert.equal(scroller.overscroll,'contain',`${delivery}/${name} location scroll leaks to map`);
+        // Card camera must fly once per actual location change and leave
+        // manually moved map views undisturbed on later state refreshes.
+        const travel=await page.evaluate(()=>{
+          const card=window.aboutCard;
+          if(typeof card._syncReferenceMap!=='function')throw Error('Map reference sync missing');
+          const prev={map:card._map,option:card._mapReferenceOption,signature:card._mapReferenceSignature,
+            marker:card._homeMarker,obs:card._radiusCircle,storm:card._stormCircle,danger:card._dangerCircle};
+          const calls=[];
+          let center={lat:53.8,lng:9.9};
+          const map={getZoom:()=>8,getCenter:()=>center,
+            flyTo:(destination,zoom,options)=>calls.push({kind:'fly',destination,zoom,options}),
+            setView:(destination,zoom,options)=>calls.push({kind:'jump',destination,zoom,options})};
+          const tokyo={option:'tokyo',lat:35.6762,lon:139.6503,label:'Tokyo',available:true};
+          try{
+            card._map=map;card._homeMarker=card._radiusCircle=card._stormCircle=card._dangerCircle=null;
+            card._mapReferenceOption='kaltenkirchen';
+            card._syncReferenceMap(tokyo);
+            const first=[...calls];
+            card._syncReferenceMap(tokyo);
+            const refresh=calls.length;
+            center={lat:48.85,lng:2.35};
+            card._syncReferenceMap(tokyo);
+            const userPan=calls.length;
+            center={lat:35.6762,lng:139.6503};
+            card._syncReferenceMap({...tokyo,option:'another-tokyo'});
+            return {first,refresh,userPan,sameCoordinates:calls.length};
+          }finally{
+            card._map=prev.map;card._mapReferenceOption=prev.option;
+            card._mapReferenceSignature=prev.signature;card._homeMarker=prev.marker;
+            card._radiusCircle=prev.obs;card._stormCircle=prev.storm;card._dangerCircle=prev.danger;
+          }
+        });
+        assert.equal(travel.first.length,1,`${delivery}/${name} destination needs one camera movement`);
+        assert.equal(travel.first[0].kind,'fly',`${delivery}/${name} map snapped instead of flying`);
+        assert.deepEqual(travel.first[0].destination,[35.6762,139.6503]);
+        assert.equal(travel.first[0].zoom,8,`${delivery}/${name} original zoom must be retained`);
+        assert.ok(travel.first[0].options.duration>=2.5,`${delivery}/${name} no long-haul flight`);
+        assert.equal(travel.refresh,1,`${delivery}/${name} refresh restarted flight`);
+        assert.equal(travel.userPan,1,`${delivery}/${name} refresh undid manual movement`);
+        assert.equal(travel.sameCoordinates,1,`${delivery}/${name} unchanged coordinate repeated flight`);
         await context.close();
       }
     }

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -271,11 +271,27 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const optionChanged = this._mapReferenceOption !== reference.option;
 
       if (optionChanged) {
-        // Ein echter Wechsel des Bezugsstandorts darf weiterhin sofort dorthin
-        // springen. Danach bleibt die Karte vollständig in Benutzerhand:
-        // Zoomen/Verschieben wird auch dann NICHT mehr rückgängig gemacht, wenn
-        // der Bezugsstandort außerhalb des sichtbaren Kartenausschnitts liegt.
-        this._map.setView(latLng,this._map.getZoom(),{ animate:false });
+        // V4.11.62: animate real reference changes with Leaflet's smooth
+        // zoom-out/travel/zoom-in flight, preserving the current end zoom.
+        // Routine weather refreshes and manual map gestures never retrigger it.
+        const map=this._map;
+        const center=map.getCenter?.();
+        const lat=Number(center?.lat);
+        const lon=Number(center?.lng ?? center?.lon);
+        const hasCenter=Number.isFinite(lat)&&Number.isFinite(lon);
+        const lonDelta=hasCenter?Math.abs(((lon-reference.lon+540)%360)-180):Infinity;
+        const atTarget=hasCenter && Math.abs(lat-reference.lat)<.00002 && lonDelta<.00002;
+        if(!atTarget){
+          const zoom=map.getZoom();
+          const reducedMotion=!!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+          if(!reducedMotion && typeof map.flyTo==='function'){
+            const distanceKm=hasCenter?distanceBetweenKm(lat,lon,reference.lat,reference.lon):0;
+            const duration=distanceKm>1500?3.0:distanceKm>250?2.5:distanceKm>25?1.9:1.25;
+            map.flyTo(latLng,zoom,{animate:true,duration});
+          }else{
+            map.setView(latLng,zoom,{animate:false});
+          }
+        }
       }
 
       this._mapReferenceOption = reference.option;
