@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.56 DEV – Android motion-only correction: retain selected speed in snapshots, freeze hidden real menu subtrees during slide, isolate original signature and avoid header live blur during height motion; no weather, clusters, individual strikes or gesture changes.",
+    "purpose": "V4.11.56 DEV – Android settings motion-only correction: retain selected speed in snapshots, freeze hidden real menu subtrees during slide, isolate original signature and avoid header live blur during height motion; no weather, clusters, individual strikes or gesture changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
