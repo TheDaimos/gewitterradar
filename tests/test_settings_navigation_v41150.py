@@ -51,7 +51,7 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("selectedMenuStyle='classic'", text)
         self.assertIn("localStorage.setItem(menuStyleKey,selectedMenuStyle)", text)
         self.assertIn("settingsOpen?.setAttribute('data-menu-style',selectedMenuStyle)", text)
-        self.assertIn("navBody?.insertBefore(menuStyleRow,navRoot)", text)
+        self.assertIn("navBody?.insertBefore(menuStyleRow,navBody.querySelector(':scope > details.settings-section'))", text)
         self.assertIn("navRoot.insertBefore(menuStyleRow,speedRow.nextSibling)", text)
         self.assertIn('#settings-open-horizontal {display:none!important}', text)
 

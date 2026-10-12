@@ -11,3 +11,6 @@ Die Auswahl steht in der klassischen Menüansicht am Anfang und in der modernen 
 Die animierte Navigation aus V4.11.58 (drei Geschwindigkeiten, Größenänderung, Signatur und 110-ms-Überblendung am Ende) bleibt unverändert. Geändertes Laufzeitmodul: ausschließlich `ui.controls` auf 1.1.19, `core.manifest` auf 1.2.120. Release **V4.11.59 DEV**, `41159r1`, `E411-59A1`; Integration 0.25.0 unverändert. Drei Frontend-Auslieferungen, Prüfsummen, Identität und DRA-Metadaten synchronisiert.
 
 Zusätzliche Browserregression für beide Menüstile, einmaliges Zahnrad, goldene/blaue Auswahl, Speicherung und erneutes Öffnen. WeatherRouter, Karten-/Blitzmarker, Kartengesten und `ui.skeleton` bleiben unangetastet. Grüne CI ist noch keine Android-Realabnahme.
+
+## Tastaturbedienung – Regressionskorrektur
+In Klassisch steht die neue Auswahlzeile **unterhalb** der vorhandenen Schaltflächen „Über Gewitterradar“ und „Hilfe & Hinweise“, aber **oberhalb** der Baumstruktur. Dadurch bleibt die bestehende Tastaturfolge vom Schließen-Knopf zur Informationsschaltfläche unverändert. Diese Reihenfolge wird weiterhin durch den geschützten Browservertrag geprüft.

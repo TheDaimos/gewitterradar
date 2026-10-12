@@ -1970,7 +1970,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           navRoot.insertBefore(menuStyleRow,speedRow.nextSibling);
         }else{
           // Classic shows the selector before the familiar accordion.
-          navBody?.insertBefore(menuStyleRow,navRoot);
+          navBody?.insertBefore(menuStyleRow,navBody.querySelector(':scope > details.settings-section'));
         }
         settingsDialog?.style.removeProperty('height');
         navBody?.scrollTo?.(0,0);
