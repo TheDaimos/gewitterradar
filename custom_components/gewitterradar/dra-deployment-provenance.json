@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.60 DEV – scroll-safe Android location dropdown: preserve scroll across live position/contents changes and isolate touches from the map; preserve menus, markers and weather.",
+    "purpose": "V4.11.60 DEV – Android Standort-Einstellungen: Scrollposition im Standort-Dropdown erhalten, Wischgesten von der Karte entkoppeln; WeatherRouter, Kartenmarker und Menüanimation unverändert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
