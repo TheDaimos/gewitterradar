@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.19",
+  "version": "1.1.20",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -53,6 +53,40 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const settingsLocationButton = this.shadow.getElementById('settings-location-button');
       const locationDropdown = this.shadow.getElementById('location-dropdown');
       let locationDropdownAnchor = null;
+      // V4.11.60: standalone Android touch scrolling, isolated from map gesture handling.
+      let locationListTouching=false;
+      let locationListScrollGuard=0;
+      let locationListReleaseTimer=null;
+      if(locationDropdown){
+        locationDropdown.style.setProperty('touch-action','pan-y','important');
+        locationDropdown.style.setProperty('overscroll-behavior-y','contain');
+        locationDropdown.style.setProperty('-webkit-overflow-scrolling','touch');
+        const releaseTouch=()=>{
+          if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+          locationListReleaseTimer=setTimeout(()=>{
+            locationListTouching=false;
+            locationListScrollGuard=performance.now()+250;
+          },500);
+        };
+        locationDropdown.addEventListener('pointerdown',event=>event.stopPropagation());
+        locationDropdown.addEventListener('touchstart',event=>{
+          if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+          locationListTouching=true;event.stopPropagation();
+        },{passive:true});
+        locationDropdown.addEventListener('touchmove',event=>{
+          locationListTouching=true;event.stopPropagation();
+        },{passive:true});
+        locationDropdown.addEventListener('touchend',event=>{
+          event.stopPropagation();releaseTouch();
+        },{passive:true});
+        locationDropdown.addEventListener('touchcancel',event=>{
+          event.stopPropagation();releaseTouch();
+        },{passive:true});
+        locationDropdown.addEventListener('wheel',event=>event.stopPropagation(),{passive:true});
+        locationDropdown.addEventListener('scroll',()=>{
+          locationListScrollGuard=performance.now()+650;
+        },{passive:true});
+      }
       const settingsLocationMainToggle = this.shadow.getElementById('settings-location-main-toggle');
       const locationMainButton = this.shadow.getElementById('location-main-button');
       const settingsLanguageButton = this.shadow.getElementById('settings-language-button');
@@ -582,6 +616,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // bewusst dem bewährten Sprachmenü, verwendet aber die blaue Standortfarbe.
       const closeLocationDropdown = (returnFocus = false) => {
         const focusTarget = locationDropdownAnchor;
+        locationListTouching=false;
+        if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+        locationListReleaseTimer=null;
         locationDropdown?.classList.remove('open','map-adaptive','multicolumn','open-up','open-down');
         if (locationDropdown) {
           ['column-count','column-gap','column-fill','height','overflow-x'].forEach(name => locationDropdown.style.removeProperty(name));
@@ -596,6 +633,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
       const positionLocationDropdown = (anchor = settingsLocationButton) => {
         if (!anchor || !locationDropdown) return;
+        const alreadyOpen=locationDropdown.classList.contains('open');
+        if(alreadyOpen && (locationListTouching || performance.now()<locationListScrollGuard))return;
+        const previousScroll=alreadyOpen ? locationDropdown.scrollTop : 0;
+        const restoreScroll=()=>{
+          if(alreadyOpen && previousScroll>0)locationDropdown.scrollTop=previousScroll;
+        };
         locationDropdownAnchor = anchor;
         this._locationDropdownAnchor = anchor;
         const rect = anchor.getBoundingClientRect();
@@ -658,6 +701,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           const top = openBelow ? rect.bottom+gap : Math.max(viewportTop+margin,rect.top-gap-finalHeight);
           locationDropdown.style.top = `${Math.round(top)}px`;
           locationDropdown.style.visibility = '';
+          restoreScroll();
           return;
         }
 
@@ -719,6 +763,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           : Math.max(viewportTop+margin,rect.top-gap-finalHeight);
         locationDropdown.style.top = `${Math.round(top)}px`;
         locationDropdown.style.visibility = '';
+        restoreScroll();
       };
       this._positionLocationDropdown = positionLocationDropdown;
 
@@ -847,7 +892,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           appendHeader(text.removedPlaces);
           removedPlaces.forEach((place) => appendSavedRow(place,{removed:true}));
         }
+        const wasOpen=locationDropdown.classList.contains('open');
+        const previousScroll=wasOpen ? locationDropdown.scrollTop : 0;
         locationDropdown.replaceChildren(frag);
+        if(wasOpen && previousScroll>0)locationDropdown.scrollTop=previousScroll;
       };
 
 

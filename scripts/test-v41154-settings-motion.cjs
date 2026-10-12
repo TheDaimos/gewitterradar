@@ -162,6 +162,38 @@ const server=http.createServer((req,res)=>{
           root.getElementById('settings-open').click();
           if(!root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'))throw Error('Modern mode not retained');
         });
+        const scroller=await page.evaluate(()=>{
+          const root=window.aboutCard.shadowRoot;
+          const dropdown=root.getElementById('location-dropdown');
+          const anchor=root.getElementById('location-main-button');
+          const position=window.aboutCard._positionLocationDropdown;
+          if(!dropdown||!anchor||typeof position!=='function')throw Error('Missing location selector');
+          const old=dropdown.innerHTML,oldStyle=dropdown.getAttribute('style');
+          try{
+            dropdown.innerHTML=Array.from({length:60},(_,i)=>'<div class="location-saved-row" style="height:40px">Ort '+i+'</div>').join('');
+            position(anchor);
+            const style=getComputedStyle(dropdown);
+            const canScroll=dropdown.scrollHeight>dropdown.clientHeight;
+            dropdown.scrollTop=190;
+            position(anchor);
+            const retained=dropdown.scrollTop;
+            dropdown.dispatchEvent(new Event('touchstart',{bubbles:true}));
+            dropdown.style.top='77px';
+            position(anchor);
+            const top=dropdown.style.top;
+            dropdown.dispatchEvent(new Event('touchend',{bubbles:true}));
+            return {canScroll,retained,top,touchAction:style.touchAction,overscroll:style.overscrollBehaviorY};
+          }finally{
+            dropdown.innerHTML=old;
+            if(oldStyle===null)dropdown.removeAttribute('style');else dropdown.setAttribute('style',oldStyle);
+            dropdown.classList.remove('open');
+          }
+        });
+        assert.equal(scroller.canScroll,true,`${delivery}/${name} location list cannot scroll`);
+        assert.ok(scroller.retained>150,`${delivery}/${name} location list scroll jumps`);
+        assert.equal(scroller.top,'77px',`${delivery}/${name} location list repositions during touch`);
+        assert.equal(scroller.touchAction,'pan-y',`${delivery}/${name} native pan-y disabled`);
+        assert.equal(scroller.overscroll,'contain',`${delivery}/${name} location scroll leaks to map`);
         await context.close();
       }
     }

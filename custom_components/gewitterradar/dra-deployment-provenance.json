@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.59",
-  "build": "V4.11.59-DEV-2026-10-12",
-  "runtimeRevision": "41159r1",
-  "moduleSetId": "E411-59A1",
+  "productVersion": "4.11.60",
+  "build": "V4.11.60-DEV-2026-10-12",
+  "runtimeRevision": "41160r1",
+  "moduleSetId": "E411-60A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.59 DEV – user-selectable saved settings presentation: Classic gold accordion versus Modern blue animated navigation, with one visible settings gear. Preserve V4.11.58 motion, signature, weather and map-gesture behavior.",
+    "purpose": "V4.11.60 DEV – scroll-safe Android location dropdown: preserve scroll across live position/contents changes and isolate touches from the map; preserve menus, markers and weather.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

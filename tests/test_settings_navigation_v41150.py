@@ -55,6 +55,13 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("navRoot.insertBefore(menuStyleRow,speedRow.nextSibling)", text)
         self.assertIn('#settings-open-horizontal {display:none!important}', text)
 
+    def test_android_location_scroll_protection(self):
+        text=(FRONTENDS[0] / "modules/ui/controls.js").read_text()
+        self.assertIn("locationDropdown.style.setProperty('touch-action','pan-y','important')",text)
+        self.assertIn("locationListTouching || performance.now()<locationListScrollGuard",text)
+        self.assertIn("const previousScroll=alreadyOpen ? locationDropdown.scrollTop : 0",text)
+        self.assertIn("locationDropdown.scrollTop=previousScroll",text)
+
     def test_version_footer_anchored_to_dialog_and_current_build_month(self):
         skeleton = (FRONTENDS[0] / "modules/ui/skeleton.js").read_text()
         self.assertIn("const displayedBuildMonth=buildMonthMatch", skeleton)
@@ -67,16 +74,16 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.59"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.59")
-        self.assertEqual(runtime["runtimeRevision"], "41159r1")
-        self.assertEqual(runtime["moduleSetId"], "E411-59A1")
+        self.assertIn('version:"4.11.60"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.60")
+        self.assertEqual(runtime["runtimeRevision"], "41160r1")
+        self.assertEqual(runtime["moduleSetId"], "E411-60A1")
         self.assertEqual(len(runtime["modules"]), 31)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
-        self.assertEqual(by_id["ui.controls"], "1.1.19")
+        self.assertEqual(by_id["ui.controls"], "1.1.20")
         self.assertEqual(by_id["ui.skeleton"], "1.1.22")
-        self.assertEqual(by_id["core.manifest"], "1.2.120")
-        self.assertIn('"id": "ui.controls",\n    "version": "1.1.19"', manifest)
+        self.assertEqual(by_id["core.manifest"], "1.2.121")
+        self.assertIn('"id": "ui.controls",\n    "version": "1.1.20"', manifest)
 
 
 if __name__ == "__main__":
