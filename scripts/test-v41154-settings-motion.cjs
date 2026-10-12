@@ -95,6 +95,18 @@ const server=http.createServer((req,res)=>{
             assert.equal(middle.shown,true,`${delivery}/${name}/${speed}/${direction} invisible snapshot in flight`);
             assert.equal(middle.footerPresent,true,`${delivery}/${name}/${speed}/${direction} shell signature flicker`);
             assert.ok(middle.versionBottomDelta>0&&middle.versionBottomDelta<40,'Version footer positioning');
+            const handoff=await page.waitForFunction(()=>{
+              const root=window.aboutCard.shadowRoot;
+              const pane=root.querySelector('.gr-horizontal-transition');
+              if(pane?.dataset.grSettling!=='1')return false;
+              return {
+                snapshotRetained:pane.isConnected,
+                originalRevealed:!root.querySelector('#settings-dialog .settings-body').classList.contains('gr-horizontal-animating')
+              };
+            },{timeout:4000});
+            const state=await handoff.jsonValue();
+            assert.equal(state.snapshotRetained,true,`${delivery}/${name}/${speed}/${direction} missing snapshot at handoff`);
+            assert.equal(state.originalRevealed,true,`${delivery}/${name}/${speed}/${direction} original remained hidden`);
             await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'),{timeout:4000});
             const after=await page.evaluate(()=>{
               const root=window.aboutCard.shadowRoot;const dialog=root.getElementById('settings-dialog');

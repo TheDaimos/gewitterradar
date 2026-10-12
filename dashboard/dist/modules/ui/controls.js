@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1753,22 +1753,51 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
         }
         let done=false;
-        const finish=()=>{
-          if(done)return;
-          done=true;
-          clearTimeout(timeout);
-          // Never re-lock a closed dialog at the end of an asynchronous transition.
-          if(settingsBackdrop?.classList.contains('open') && settingsBackdrop?.classList.contains('gr-horizontal-mode'))settingsDialog.style.height=after+'px';
-          else settingsDialog.style.removeProperty('height');
-          runs.forEach(animation=>animation.cancel());
+        let cleaned=false;
+        let settleTimer=null;
+        const cleanup=()=>{
+          if(cleaned)return;
+          cleaned=true;
+          if(settleTimer!==null)clearTimeout(settleTimer);
           pane.remove();
+          runs.forEach(animation=>animation.cancel());
           navBody.classList.remove('gr-horizontal-animating');
           settingsBackdrop?.classList.remove('gr-horizontal-motion-active');
           if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
           else navBody.style.removeProperty('overflow-y');
-          // Keep the exact animated end height. Returning to auto here
-          // caused the centered dialog to snap on Android, especially on Slow.
+          if(!settingsBackdrop?.classList.contains('open'))settingsDialog.style.removeProperty('height');
           navAnimating=false;
+        };
+        const finish=()=>{
+          if(done)return;
+          done=true;
+          clearTimeout(timeout);
+          if(!settingsBackdrop?.classList.contains('open') || !settingsBackdrop.classList.contains('gr-horizontal-mode')){
+            settingsDialog.style.removeProperty('height');
+            cleanup();
+            return;
+          }
+          settingsDialog.style.height=after+'px';
+          runs.forEach(animation=>{
+            if(animation.playState==='running')try{animation.finish();}catch(_){}
+          });
+          // Reveal the final live menu below the still-opaque animation copy.
+          navBody.classList.remove('gr-horizontal-animating');
+          if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
+          else navBody.style.removeProperty('overflow-y');
+          pane.dataset.grSettling='1';
+          const dissolve=()=>{
+            if(cleaned)return;
+            if(!pane.isConnected || !settingsBackdrop?.classList.contains('open')){cleanup();return;}
+            const crossfade=pane.animate([{opacity:1},{opacity:0}],{
+              duration:110,easing:'ease-out',fill:'forwards'
+            });
+            crossfade.finished.then(cleanup,cleanup);
+          };
+          // Two frames allow the genuine destination to paint below the
+          // opaque snapshots before the composited 110ms crossfade begins.
+          settleTimer=setTimeout(cleanup,500);
+          requestAnimationFrame(()=>requestAnimationFrame(dissolve));
         };
         const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
         Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);

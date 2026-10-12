@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.57",
-  "build": "V4.11.57-DEV-2026-10-12",
-  "runtimeRevision": "41157r1",
-  "moduleSetId": "E411-57A1",
+  "productVersion": "4.11.58",
+  "build": "V4.11.58-DEV-2026-10-12",
+  "runtimeRevision": "41158r1",
+  "moduleSetId": "E411-58A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.57 DEV – Android settings motion: compositor scale instead of changing dialog height every frame; signature, marker persistence and gestures retained.",
+    "purpose": "V4.11.58 DEV – Android settings: prevent one-frame flicker at finish through live-content handoff and snapshot crossfade; preserve original signature, weather, map clusters, individual strike markers and gesture handling.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
