@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1714,7 +1714,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         complete();
         settingsDialog.style.height='auto';
         const after=settingsDialog.getBoundingClientRect().height;
-        settingsDialog.style.height=before+'px';
+        // Final layout stays fixed: composite its visual height, never relayout per frame.
+        settingsDialog.style.height=after+'px';
         // Isolate inactive controls only after measuring the actual destination.
         navBody.classList.add('gr-horizontal-animating');
         const easing='cubic-bezier(.22,.7,.2,1)';
@@ -1728,9 +1729,29 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'}),
           to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'})
         ];
-        if(Math.abs(after-before)>=2)runs.push(settingsDialog.animate([{height:before+'px'},{height:after+'px'}],{
-          duration:resizeDuration,easing,fill:'forwards'
-        }));
+        if(Math.abs(after-before)>=2 && before>0 && after>0){
+          const scaleStart=before/after;
+          const contentStart=after/before;
+          runs.push(settingsDialog.animate(
+            [{transform:'scaleY('+scaleStart+')'},{transform:'scaleY(1)'}],
+            {duration:resizeDuration,easing,fill:'forwards'}
+          ));
+          // Counter-scale typography and the existing, persistent original logo.
+          const fixedLayers=[
+            [settingsDialog.querySelector('.settings-dialog-head'),'50% 0%'],
+            [navBody,'50% 50%'],
+            [settingsDialog.querySelector('.settings-signature-wrap'),'50% 100%'],
+            [settingsDialog.querySelector('.settings-footer-version'),'50% 100%']
+          ];
+          for(const [part,origin] of fixedLayers){
+            if(!part)continue;
+            runs.push(part.animate(
+              [{transform:'scaleY('+contentStart+')',transformOrigin:origin},
+               {transform:'scaleY(1)',transformOrigin:origin}],
+              {duration:resizeDuration,easing,fill:'forwards'}
+            ));
+          }
+        }
         let done=false;
         const finish=()=>{
           if(done)return;
@@ -1826,7 +1847,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-backdrop.gr-horizontal-mode .settings-dialog > .settings-signature-wrap .settings-signature {transform:translate3d(0,0,0);backface-visibility:hidden}
           /* The nearly opaque heading does not need to live-blur the sliding layers. */
           #settings-backdrop.gr-horizontal-motion-active .settings-dialog-head {backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-          #settings-backdrop.gr-horizontal-motion-active .settings-dialog {contain:paint}
+          #settings-backdrop.gr-horizontal-motion-active .settings-dialog {contain:paint;will-change:transform;transform-origin:50% 50%}
           #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}

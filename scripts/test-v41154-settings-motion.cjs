@@ -61,11 +61,15 @@ const server=http.createServer((req,res)=>{
                 snapshotSpeed:pane.querySelector('select[aria-label="Geschwindigkeit des Seitenwechsels"]')?.value || null,
                 staticTreeHidden:[...body.children].some(el=>el!==pane && getComputedStyle(el).contentVisibility==='hidden'),
                 signatureComposited:getComputedStyle(signature).transform!=='none',
+                fixedHeight:Math.abs(parseFloat(dialog.style.height)-parseFloat(getComputedStyle(dialog).height))<1,
+                noHeightAnimation:dialog.getAnimations().every(a=>a.effect.getKeyframes().every(k=>!Object.hasOwn(k,'height'))),
               };
             },direction);
             assert.equal(started.snapshotSpeed,speed,`${delivery}/${name}/${speed}/${direction} cloned speed switched back to Schnell`);
             assert.equal(started.staticTreeHidden,true,`${delivery}/${name}/${speed}/${direction} live controls were still repainted under snapshots`);
             assert.equal(started.signatureComposited,true,`${delivery}/${name}/${speed}/${direction} signature not promoted`);
+            assert.equal(started.fixedHeight,true,`${delivery}/${name}/${speed}/${direction} dialog relayout still active`);
+            assert.equal(started.noHeightAnimation,true,`${delivery}/${name}/${speed}/${direction} a CSS height animation remains`);
             assert.equal(started.sourceVisible,true,`${delivery}/${name}/${speed}/${direction} outgoing snapshot hidden`);
             assert.equal(started.incomingVisible,true,`${delivery}/${name}/${speed}/${direction} incoming snapshot hidden`);
             assert.ok(Math.abs(started.width-started.viewportWidth)<3,`${delivery}/${name}/${speed}/${direction} snapshot width mismatch`);

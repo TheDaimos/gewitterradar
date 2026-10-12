@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.56",
-  "build": "V4.11.56-DEV-2026-10-12",
-  "runtimeRevision": "41156r1",
-  "moduleSetId": "E411-56A1",
+  "productVersion": "4.11.57",
+  "build": "V4.11.57-DEV-2026-10-12",
+  "runtimeRevision": "41157r1",
+  "moduleSetId": "E411-57A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.56 DEV – Android settings motion-only correction: retain selected speed in snapshots, freeze hidden real menu subtrees during slide, isolate original signature and avoid header live blur during height motion; no weather, clusters, individual strikes or gesture changes.",
+    "purpose": "V4.11.57 DEV – Android settings motion: compositor scale instead of changing dialog height every frame; signature, marker persistence and gestures retained.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
