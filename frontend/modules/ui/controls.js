@@ -1707,13 +1707,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const before=settingsDialog.getBoundingClientRect().height;
         settingsDialog.style.height=before+'px';
         navBody.append(pane);
-        navBody.classList.add('gr-horizontal-animating');
-        // Switch the real controls under the snapshots BEFORE animation.
-        // Measuring the final intrinsic height prevents an end-frame layout jump.
+        // Measure while real controls still participate in layout.
+        // content-visibility:hidden applied before measurement would collapse
+        // intrinsic content height and cause an incorrect Android end position.
+        // Synchronous updates below cannot expose an intermediate painted frame.
         complete();
         settingsDialog.style.height='auto';
         const after=settingsDialog.getBoundingClientRect().height;
         settingsDialog.style.height=before+'px';
+        // Isolate inactive controls only after measuring the actual destination.
+        navBody.classList.add('gr-horizontal-animating');
         const easing='cubic-bezier(.22,.7,.2,1)';
         // Match both animations: differing end times create a perceptible second height movement.
         const resizeDuration=duration;
