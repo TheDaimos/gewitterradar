@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1913,31 +1913,148 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           navBody?.scrollTo?.(0,0);
         });
       });
-      const speedRow=document.createElement('div');
-      speedRow.className='gr-horizontal-speed';
-      const speedLabel=document.createElement('label');
-      speedLabel.textContent='Seitenwechsel';
-      const speedSelect=document.createElement('select');
-      speedSelect.setAttribute('aria-label','Geschwindigkeit des Seitenwechsels');
-      for(const name of Object.keys(speedOptions)){const option=document.createElement('option');option.value=name;option.textContent=name;speedSelect.append(option);}
-      speedSelect.value=selectedSpeed;
-      speedSelect.addEventListener('change',()=>{selectedSpeed=speedSelect.value;try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}});
-      speedRow.append(speedLabel,speedSelect);
-      navRoot.prepend(speedRow);
-      const menuStyleRow=document.createElement('div');
-      menuStyleRow.className='gr-horizontal-speed gr-menu-style-row';
-      const menuStyleLabel=document.createElement('label');
-      menuStyleLabel.textContent='Menüdarstellung';
-      const menuStyleSelect=document.createElement('select');
-      menuStyleSelect.setAttribute('aria-label','Menüdarstellung');
-      for(const [value,label] of [['classic','Klassisch'],['modern','Modern']]){
-        const option=document.createElement('option');
-        option.value=value;option.textContent=label;
-        menuStyleSelect.append(option);
-      }
-      menuStyleSelect.value=selectedMenuStyle;
-      menuStyleLabel.append(menuStyleSelect);
-      menuStyleRow.append(menuStyleLabel);
+      // V4.11.61: both menus live in section 5 (Effekte & Animationen).
+      // Render the existing gold-dot dropdown design, not native mobile selects.
+      const effectsSection=this.shadow.getElementById('settings-aura-section');
+      const effectsControls=effectsSection?.querySelector(':scope > .settings-section-content');
+      const makeMenuChoice=(name,id,choices,initial,onChange)=>{
+        const row=document.createElement('div');
+        row.className='settings-row gr-menu-choice-row';
+        row.id=id+'-row';
+        const label=document.createElement('div');
+        label.className='settings-row-label';
+        label.textContent=name;
+        const button=document.createElement('button');
+        button.type='button';
+        button.id=id+'-button';
+        button.className='settings-language-button settings-control gr-menu-choice-button';
+        button.setAttribute('aria-label',name);
+        button.setAttribute('aria-haspopup','listbox');
+        button.setAttribute('aria-expanded','false');
+        const current=document.createElement('span');
+        current.className='settings-language-current';
+        const dot=document.createElement('i');
+        dot.className='settings-language-current-dot';
+        dot.setAttribute('aria-hidden','true');
+        const value=document.createElement('span');
+        value.className='gr-menu-choice-current';
+        value.id=id+'-value';
+        current.append(dot,value);
+        const chevron=document.createElement('span');
+        chevron.className='settings-language-chevron';
+        chevron.setAttribute('aria-hidden','true');
+        chevron.textContent='▾';
+        button.append(current,chevron);
+        row.append(label,button);
+        const dropdown=document.createElement('div');
+        dropdown.id=id+'-dropdown';
+        dropdown.className='language-dropdown gr-menu-choice-dropdown';
+        dropdown.setAttribute('role','listbox');
+        dropdown.setAttribute('aria-label',name);
+        // Same portal as other listboxes, outside the scroll-clipped settings body.
+        this.shadow.append(dropdown);
+        const close=(returnFocus=false)=>{
+          dropdown.classList.remove('open');
+          button.setAttribute('aria-expanded','false');
+          if(returnFocus)button.focus({preventScroll:true});
+        };
+        const set=(next)=>{
+          const chosen=choices.find(entry=>entry[0]===next)||choices[0];
+          value.textContent=chosen[1];
+          dropdown.querySelectorAll('.language-option').forEach(item=>{
+            const selected=item.dataset.grMenuOption===chosen[0];
+            item.classList.toggle('selected',selected);
+            item.setAttribute('aria-selected',String(selected));
+          });
+        };
+        for(const [choice,text] of choices){
+          const option=document.createElement('button');
+          option.type='button';
+          option.className='language-option';
+          option.dataset.grMenuOption=choice;
+          option.setAttribute('role','option');
+          const marker=document.createElement('i');
+          marker.className='language-option-dot';
+          marker.setAttribute('aria-hidden','true');
+          const caption=document.createElement('span');
+          caption.textContent=text;
+          option.append(marker,caption);
+          option.addEventListener('click',(event)=>{
+            event.preventDefault();event.stopPropagation();
+            set(choice);close(false);onChange(choice);
+          });
+          dropdown.append(option);
+        }
+        set(initial);
+        const open=()=>{
+          const rect=button.getBoundingClientRect();
+          const margin=8,gap=6;
+          const viewport=window.visualViewport;
+          const leftOffset=Number(viewport?.offsetLeft)||0;
+          const topOffset=Number(viewport?.offsetTop)||0;
+          const viewportWidth=Number(viewport?.width)||window.innerWidth;
+          const viewportHeight=Number(viewport?.height)||window.innerHeight;
+          const width=Math.min(290,Math.max(190,Math.round(rect.width)));
+          dropdown.style.width=width+'px';
+          dropdown.style.left=clamp(Math.round(rect.left+rect.width-width),leftOffset+margin,Math.max(leftOffset+margin,leftOffset+viewportWidth-width-margin))+'px';
+          dropdown.style.visibility='hidden';
+          dropdown.classList.add('open');
+          const height=dropdown.getBoundingClientRect().height;
+          const below=rect.bottom+gap;
+          const above=rect.top-height-gap;
+          dropdown.style.top=(below+height<=topOffset+viewportHeight-margin?below:Math.max(topOffset+margin,above))+'px';
+          dropdown.style.visibility='';
+          button.setAttribute('aria-expanded','true');
+        };
+        button.addEventListener('click',(event)=>{
+          event.preventDefault();event.stopPropagation();
+          if(dropdown.classList.contains('open')){close();return;}
+          this.shadow.querySelectorAll('.gr-menu-choice-dropdown.open').forEach(other=>{
+            other.classList.remove('open');
+            this.shadow.getElementById(other.id.replace('-dropdown','-button'))?.setAttribute('aria-expanded','false');
+          });
+          open();
+        });
+        button.addEventListener('keydown',(event)=>{
+          if(event.key==='ArrowDown' || event.key==='Enter' || event.key===' '){
+            if(!dropdown.classList.contains('open')){
+              event.preventDefault();open();
+            }
+          }
+        });
+        dropdown.addEventListener('keydown',(event)=>{
+          if(event.key==='Escape'){event.preventDefault();close(true);}
+        });
+        return {row,button,dropdown,set,close};
+      };
+      const menuStyleChoice=makeMenuChoice('Menüdarstellung','gr-menu-style',
+        [['classic','Klassisch'],['modern','Modern']],selectedMenuStyle,
+        value=>applyMenuStyle(value,true));
+      const speedChoice=makeMenuChoice('Menügeschwindigkeit','gr-menu-speed',
+        Object.keys(speedOptions).map(name=>[name,name]),selectedSpeed,
+        value=>{
+          selectedSpeed=value;
+          try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}
+        });
+      const menuStyleRow=menuStyleChoice.row;
+      const speedRow=speedChoice.row;
+      speedRow.classList.add('gr-menu-speed-row');
+      speedRow.hidden=selectedMenuStyle!=='modern';
+      effectsControls?.append(menuStyleRow,speedRow);
+      const closeMenuChoices=()=>{
+        menuStyleChoice.close();speedChoice.close();
+      };
+      // Close both menus on outside input, Escape and dialog dismissal.
+      document.addEventListener('pointerdown',event=>{
+        const path=event.composedPath?.()||[];
+        for(const choice of [menuStyleChoice,speedChoice]){
+          if(!path.includes(choice.button)&&!path.includes(choice.dropdown))choice.close();
+        }
+      },{capture:true});
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape')closeMenuChoices();
+      });
+      settingsClose?.addEventListener('click',closeMenuChoices);
       if(navBody&&navSections.length){
         navBody.prepend(navRoot);
         settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
@@ -1966,17 +2083,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > details.settings-section {display:block!important;visibility:visible!important}
           .gr-horizontal-slide-page > details.settings-section > summary {display:none}
           .gr-horizontal-slide-page > details.settings-section > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
-          .gr-horizontal-speed {display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 8px;padding:10px 12px;border:1px solid rgba(190,151,76,.32);border-radius:9px;color:#eed08a}
-          .gr-horizontal-speed select {min-height:38px;border-radius:7px;border:1px solid rgba(190,151,76,.5);background:#13232c;color:#f1daa5;padding:0 10px}
+          /* The new controls inherit the app's existing settings-row and language-dropdown styling. */
+          .gr-menu-choice-button {min-width:154px;max-width:60%;white-space:nowrap}
+          .gr-menu-choice-button .gr-menu-choice-current {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+          .gr-menu-speed-row[hidden] {display:none!important}
+          .gr-menu-choice-dropdown {z-index:2147483647}
           /* Only the primary settings gear is visible: gold for Classic, blue for Modern. */
           #settings-open-horizontal {display:none!important}
           #settings-open .gear-modern {display:none!important}
           #settings-open[data-menu-style="modern"] .gear-classic {display:none!important}
           #settings-open[data-menu-style="modern"] .gear-modern {display:block!important;stroke:#66beff!important;color:#66beff!important;filter:drop-shadow(0 0 6px rgba(55,150,245,.48))!important}
-          .gr-menu-style-row {min-width:0}
-          .gr-menu-style-row label {display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;font-weight:750}
-          .gr-menu-style-row select {max-width:48%;min-width:110px;font:inherit}
-          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .gr-menu-style-row {display:none}
           #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
           #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,
@@ -2001,7 +2117,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const modern=value==='modern' && !!navBody && navSections.length>0;
         selectedMenuStyle=modern?'modern':'classic';
         if(save)try{localStorage.setItem(menuStyleKey,selectedMenuStyle);}catch(_){}
-        menuStyleSelect.value=selectedMenuStyle;
+        menuStyleChoice.set(selectedMenuStyle);
+        speedRow.hidden=!modern;
+        closeMenuChoices();
         settingsOpen?.setAttribute('data-menu-style',selectedMenuStyle);
         settingsOpen?.setAttribute('title',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
         settingsOpen?.setAttribute('aria-label',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
@@ -2013,17 +2131,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         });
         const title=this.shadow.getElementById('settings-dialog-title');
         if(title)title.textContent='Einstellungen';
-        if(modern){
-          // Reuse the very same selector inside the animated category overview.
-          navRoot.insertBefore(menuStyleRow,speedRow.nextSibling);
-        }else{
-          // Classic shows the selector before the familiar accordion.
-          navBody?.insertBefore(menuStyleRow,navBody.querySelector(':scope > details.settings-section'));
-        }
+        // Keep the selected controls anchored in section 5, in both layouts.
+        // Returning from Modern restores the section where the choice was made.
+        if(!modern&&save&&effectsSection)effectsSection.open=true;
         settingsDialog?.style.removeProperty('height');
         navBody?.scrollTo?.(0,0);
       };
-      menuStyleSelect.addEventListener('change',()=>applyMenuStyle(menuStyleSelect.value,true));
       applyMenuStyle(selectedMenuStyle); // Restore persisted setting and gear color at startup.
       navGear?.addEventListener('click',()=>{
         openSettings();

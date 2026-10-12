@@ -31,10 +31,12 @@ const server=http.createServer((req,res)=>{
         });
         for(const speed of ['Langsam','Mittel','Schnell']){
           await page.evaluate(value=>{
-            const s=window.aboutCard.shadowRoot.querySelector('select[aria-label="Geschwindigkeit des Seitenwechsels"]');
-            assertSpeedControl(s,value);
-            s.value=value;s.dispatchEvent(new Event('change',{bubbles:true}));
-            function assertSpeedControl(node,key){if(!node)throw Error('Missing speed control '+key);}
+            const root=window.aboutCard.shadowRoot;
+            const button=root.getElementById('gr-menu-speed-button');
+            const option=root.querySelector('#gr-menu-speed-dropdown [data-gr-menu-option="'+value+'"]');
+            if(!button||!option)throw Error('Missing section 5 speed control '+value);
+            button.click();option.click();
+            if(root.getElementById('gr-menu-speed-value').textContent!==value)throw Error('Speed selection not applied');
           },speed);
           for(const direction of ['forward','back']){
             const started=await page.evaluate(direction=>{
@@ -58,7 +60,7 @@ const server=http.createServer((req,res)=>{
                 incomingVisible:getComputedStyle(second).display!=='none' && getComputedStyle(second).visibility!=='hidden',
                 width:pages[1].getBoundingClientRect().width,
                 viewportWidth:body.clientWidth,
-                snapshotSpeed:pane.querySelector('select[aria-label="Geschwindigkeit des Seitenwechsels"]')?.value || null,
+                snapshotSpeed:root.getElementById('gr-menu-speed-value')?.textContent || null,
                 staticTreeHidden:[...body.children].some(el=>el!==pane && getComputedStyle(el).contentVisibility==='hidden'),
                 signatureComposited:getComputedStyle(signature).transform!=='none',
                 fixedHeight:Math.abs(parseFloat(dialog.style.height)-parseFloat(getComputedStyle(dialog).height))<1,
@@ -130,37 +132,50 @@ const server=http.createServer((req,res)=>{
             assert.ok(Math.abs(after.height-after.naturalHeight)<4,`${delivery}/${name}/${speed}/${direction}: target height is inconsistent with natural layout: ${after.height} vs ${after.naturalHeight}`);
           }
         }
-        // The selected presentation is saved independently of animation speed.
+        // Both menus are under section 5 and use the existing dot-listbox style.
         const menuModes=await page.evaluate(()=>{
           const root=window.aboutCard.shadowRoot;
           const menu=root.getElementById('settings-open');
           const hiddenGear=root.getElementById('settings-open-horizontal');
-          const selector=root.querySelector('select[aria-label="Menüdarstellung"]');
-          if(!menu||!selector)throw Error('Missing settings gear or display selector');
-          if(getComputedStyle(hiddenGear).display!=='none')throw Error('Second visible settings gear');
+          const section=root.getElementById('settings-aura-section');
+          const styleButton=root.getElementById('gr-menu-style-button');
+          const speedRow=root.getElementById('gr-menu-speed-row');
+          const styleRow=root.getElementById('gr-menu-style-row');
+          const speedButton=root.getElementById('gr-menu-speed-button');
+          if(!menu||!section||!styleButton||!speedButton)throw Error('Section 5 dropdown controls missing');
+          if(getComputedStyle(hiddenGear).display!=='none')throw Error('Second settings gear visible');
+          if(!section.contains(styleRow)||!section.contains(speedRow))throw Error('Menu settings not under point 5');
+          if(getComputedStyle(styleButton).borderStyle==='none')throw Error('Not styled as settings dropdown');
+          if(!styleButton.classList.contains('settings-language-button')||!speedButton.classList.contains('settings-language-button'))throw Error('Existing listbox button styling not reused');
           const views=[];
           for(const style of ['classic','modern']){
-            selector.value=style;selector.dispatchEvent(new Event('change',{bubbles:true}));
+            styleButton.click();
+            const option=root.querySelector('#gr-menu-style-dropdown [data-gr-menu-option="'+style+'"]');
+            if(!option)throw Error('Missing dropdown option '+style);
+            option.click();
             views.push({
               selected:menu.dataset.menuStyle,
               modern:root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'),
-              placement:selector.closest('.gr-horizontal-root')?'modern':'classic',
+              speedHidden:speedRow.hidden,
+              fixedSection:section.contains(styleRow)&&section.contains(speedRow),
               gold:getComputedStyle(menu.querySelector('.gear-classic')).display!=='none',
               blue:getComputedStyle(menu.querySelector('.gear-modern')).display!=='none'
             });
           }
-          return {views,persisted:localStorage.getItem('gr-settings-menu-style')};
+          return {views,persisted:localStorage.getItem('gr-settings-menu-style'),
+            speedPersisted:localStorage.getItem('gr-horizontal-navigation-speed')};
         });
         assert.deepEqual(menuModes.views,[
-          {selected:'classic',modern:false,placement:'classic',gold:true,blue:false},
-          {selected:'modern',modern:true,placement:'modern',gold:false,blue:true}
-        ],`${delivery}/${name} menu presentation or icon color mismatch`);
-        assert.equal(menuModes.persisted,'modern',`${delivery}/${name} menu mode not saved`);
+          {selected:'classic',modern:false,speedHidden:true,fixedSection:true,gold:true,blue:false},
+          {selected:'modern',modern:true,speedHidden:false,fixedSection:true,gold:false,blue:true}
+        ],`${delivery}/${name} Point 5 menu presentation or speed visibility mismatch`);
+        assert.equal(menuModes.persisted,'modern',`${delivery}/${name} mode not persisted`);
+        assert.ok(['Schnell','Mittel','Langsam'].includes(menuModes.speedPersisted),`${delivery}/${name} speed not saved`);
         await page.evaluate(()=>{
           const root=window.aboutCard.shadowRoot;
           root.getElementById('settings-close').click();
           root.getElementById('settings-open').click();
-          if(!root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'))throw Error('Modern mode not retained');
+          if(!root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'))throw Error('Saved Modern mode not reopened');
         });
         const scroller=await page.evaluate(()=>{
           const root=window.aboutCard.shadowRoot;
