@@ -130,6 +130,38 @@ const server=http.createServer((req,res)=>{
             assert.ok(Math.abs(after.height-after.naturalHeight)<4,`${delivery}/${name}/${speed}/${direction}: target height is inconsistent with natural layout: ${after.height} vs ${after.naturalHeight}`);
           }
         }
+        // The selected presentation is saved independently of animation speed.
+        const menuModes=await page.evaluate(()=>{
+          const root=window.aboutCard.shadowRoot;
+          const menu=root.getElementById('settings-open');
+          const hiddenGear=root.getElementById('settings-open-horizontal');
+          const selector=root.querySelector('select[aria-label="Menüdarstellung"]');
+          if(!menu||!selector)throw Error('Missing settings gear or display selector');
+          if(getComputedStyle(hiddenGear).display!=='none')throw Error('Second visible settings gear');
+          const views=[];
+          for(const style of ['classic','modern']){
+            selector.value=style;selector.dispatchEvent(new Event('change',{bubbles:true}));
+            views.push({
+              selected:menu.dataset.menuStyle,
+              modern:root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'),
+              placement:selector.closest('.gr-horizontal-root')?'modern':'classic',
+              gold:getComputedStyle(menu.querySelector('.gear-classic')).display!=='none',
+              blue:getComputedStyle(menu.querySelector('.gear-modern')).display!=='none'
+            });
+          }
+          return {views,persisted:localStorage.getItem('gr-settings-menu-style')};
+        });
+        assert.deepEqual(menuModes.views,[
+          {selected:'classic',modern:false,placement:'classic',gold:true,blue:false},
+          {selected:'modern',modern:true,placement:'modern',gold:false,blue:true}
+        ],`${delivery}/${name} menu presentation or icon color mismatch`);
+        assert.equal(menuModes.persisted,'modern',`${delivery}/${name} menu mode not saved`);
+        await page.evaluate(()=>{
+          const root=window.aboutCard.shadowRoot;
+          root.getElementById('settings-close').click();
+          root.getElementById('settings-open').click();
+          if(!root.getElementById('settings-backdrop').classList.contains('gr-horizontal-mode'))throw Error('Modern mode not retained');
+        });
         await context.close();
       }
     }

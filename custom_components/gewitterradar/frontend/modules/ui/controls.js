@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1659,8 +1659,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       releaseHistoryDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      // Experimental horizontal navigation reuses the existing settings controls and HA bindings.
-      // No second settings DOM / duplicate IDs / duplicate state.
+      // Classic and Modern share the original settings controls and bindings.
       const navGear=this.shadow.getElementById('settings-open-horizontal');
       const navBody=settingsDialog?.querySelector('.settings-body');
       // Module diagnostics may add sections after control bindings have been installed.
@@ -1668,6 +1667,20 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const navRoot=document.createElement('div');
       navRoot.className='gr-horizontal-root';
       navRoot.setAttribute('aria-label','Einstellungskategorien');
+      const menuStyleKey='gr-settings-menu-style';
+      let selectedMenuStyle='classic';
+      try {
+        const savedMenuStyle=localStorage.getItem(menuStyleKey);
+        if(savedMenuStyle==='classic'||savedMenuStyle==='modern')selectedMenuStyle=savedMenuStyle;
+      } catch(_){}
+      // Reuse the gold and blue SVG designs with just one visible settings button.
+      const goldenGear=settingsOpen?.querySelector('svg.gear');
+      goldenGear?.classList.add('gear-classic');
+      const blueGear=navGear?.querySelector('svg.gear')?.cloneNode(true);
+      if(blueGear&&settingsOpen){
+        blueGear.classList.add('gear-modern');
+        settingsOpen.append(blueGear);
+      }
       const speedKey='gr-horizontal-navigation-speed';
       const speedOptions={Schnell:220,Mittel:440,Langsam:760};
       let selectedSpeed='Mittel';
@@ -1863,6 +1876,20 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       speedSelect.addEventListener('change',()=>{selectedSpeed=speedSelect.value;try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}});
       speedRow.append(speedLabel,speedSelect);
       navRoot.prepend(speedRow);
+      const menuStyleRow=document.createElement('div');
+      menuStyleRow.className='gr-horizontal-speed gr-menu-style-row';
+      const menuStyleLabel=document.createElement('label');
+      menuStyleLabel.textContent='Menüdarstellung';
+      const menuStyleSelect=document.createElement('select');
+      menuStyleSelect.setAttribute('aria-label','Menüdarstellung');
+      for(const [value,label] of [['classic','Klassisch'],['modern','Modern']]){
+        const option=document.createElement('option');
+        option.value=value;option.textContent=label;
+        menuStyleSelect.append(option);
+      }
+      menuStyleSelect.value=selectedMenuStyle;
+      menuStyleLabel.append(menuStyleSelect);
+      menuStyleRow.append(menuStyleLabel);
       if(navBody&&navSections.length){
         navBody.prepend(navRoot);
         settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
@@ -1893,8 +1920,15 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .gr-horizontal-slide-page > details.settings-section > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
           .gr-horizontal-speed {display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 8px;padding:10px 12px;border:1px solid rgba(190,151,76,.32);border-radius:9px;color:#eed08a}
           .gr-horizontal-speed select {min-height:38px;border-radius:7px;border:1px solid rgba(190,151,76,.5);background:#13232c;color:#f1daa5;padding:0 10px}
-          #settings-open-horizontal {color:#83c9ff!important;filter:drop-shadow(0 0 4px rgba(45,150,255,.4))}
-          #settings-open-horizontal svg g {stroke:#5bbdff!important}
+          /* Only the primary settings gear is visible: gold for Classic, blue for Modern. */
+          #settings-open-horizontal {display:none!important}
+          #settings-open .gear-modern {display:none!important}
+          #settings-open[data-menu-style="modern"] .gear-classic {display:none!important}
+          #settings-open[data-menu-style="modern"] .gear-modern {display:block!important;stroke:#66beff!important;color:#66beff!important;filter:drop-shadow(0 0 6px rgba(55,150,245,.48))!important}
+          .gr-menu-style-row {min-width:0}
+          .gr-menu-style-row label {display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;font-weight:750}
+          .gr-menu-style-row select {max-width:48%;min-width:110px;font:inherit}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .gr-menu-style-row {display:none}
           #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
           #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,
@@ -1914,22 +1948,45 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         `;
         this.shadow.append(style);
       }
+      const applyMenuStyle=(value,save=false)=>{
+        if(navAnimating)return;
+        const modern=value==='modern' && !!navBody && navSections.length>0;
+        selectedMenuStyle=modern?'modern':'classic';
+        if(save)try{localStorage.setItem(menuStyleKey,selectedMenuStyle);}catch(_){}
+        menuStyleSelect.value=selectedMenuStyle;
+        settingsOpen?.setAttribute('data-menu-style',selectedMenuStyle);
+        settingsOpen?.setAttribute('title',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
+        settingsOpen?.setAttribute('aria-label',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
+        settingsBackdrop?.classList.toggle('gr-horizontal-mode',modern);
+        settingsBackdrop?.classList.remove('gr-horizontal-detail');
+        navSections.forEach(section=>{
+          section.classList.remove('gr-horizontal-current');
+          section.open=false;
+        });
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent='Einstellungen';
+        if(modern){
+          // Reuse the very same selector inside the animated category overview.
+          navRoot.insertBefore(menuStyleRow,speedRow.nextSibling);
+        }else{
+          // Classic shows the selector before the familiar accordion.
+          navBody?.insertBefore(menuStyleRow,navRoot);
+        }
+        settingsDialog?.style.removeProperty('height');
+        navBody?.scrollTo?.(0,0);
+      };
+      menuStyleSelect.addEventListener('change',()=>applyMenuStyle(menuStyleSelect.value,true));
+      applyMenuStyle(selectedMenuStyle); // Restore persisted setting and gear color at startup.
       navGear?.addEventListener('click',()=>{
         openSettings();
         refreshNavigationSections();
-        settingsBackdrop?.classList.add('gr-horizontal-mode');
-        settingsBackdrop?.classList.remove('gr-horizontal-detail');
-        navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
-        const title=this.shadow.getElementById('settings-dialog-title');
-        if(title)title.textContent='Einstellungen';
+        applyMenuStyle('modern'); // Retain the existing hidden entry for browser contracts.
       });
       settingsOpen?.addEventListener('click',()=>{
-        settingsBackdrop?.classList.remove('gr-horizontal-mode','gr-horizontal-detail');
-        navSections.forEach(section=>section.classList.remove('gr-horizontal-current'));
-        const title=this.shadow.getElementById('settings-dialog-title');
-        if(title)title.textContent='Einstellungen';
+        openSettings();
+        refreshNavigationSections();
+        applyMenuStyle(selectedMenuStyle);
       });
-      settingsOpen?.addEventListener('click',openSettings);
       settingsClose?.addEventListener('click',closeSettings);
       settingsBackdrop?.addEventListener('click',(event) => {
         this._closeMapStartupDropdown?.(false);
