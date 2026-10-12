@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41155r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41156r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.116",
+    "version": "1.2.117",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1678,6 +1678,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         navAnimating=true;
         const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
         if(!duration){complete();navAnimating=false;return;}
+        settingsBackdrop?.classList.add('gr-horizontal-motion-active');
         const pane=document.createElement('div');
         pane.className='gr-horizontal-transition';
         pane.setAttribute('aria-hidden','true');
@@ -1685,6 +1686,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         from.className='gr-horizontal-slide-page';
         to.className='gr-horizontal-slide-page';
         const oldContent=outgoing.cloneNode(true),newContent=incoming.cloneNode(true);
+        // cloneNode does not carry live <select> selection state; preserve actual labels in both snapshots.
+        for(const [source,clone] of [[outgoing,oldContent],[incoming,newContent]]){
+          const originalSelects=source.querySelectorAll('select');
+          const clonedSelects=clone.querySelectorAll('select');
+          originalSelects.forEach((select,index)=>{if(clonedSelects[index])clonedSelects[index].value=select.value;});
+        }
         oldContent.setAttribute('aria-hidden','true');
         newContent.setAttribute('aria-hidden','true');
         if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
@@ -1732,6 +1739,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           runs.forEach(animation=>animation.cancel());
           pane.remove();
           navBody.classList.remove('gr-horizontal-animating');
+          settingsBackdrop?.classList.remove('gr-horizontal-motion-active');
           if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
           else navBody.style.removeProperty('overflow-y');
           // Keep the exact animated end height. Returning to auto here
@@ -1808,7 +1816,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const style=document.createElement('style');
         style.textContent=`
           #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
-          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important}
+          /* Avoid relayout/repaint of heavyweight real controls under the compositor snapshots. */
+          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important;content-visibility:hidden!important}
+          /* Keep the original gold signature as a precomposited, unmoving paint layer. */
+          #settings-backdrop.gr-horizontal-mode .settings-dialog > .settings-signature-wrap {transform:translate3d(0,0,0);backface-visibility:hidden;will-change:transform}
+          #settings-backdrop.gr-horizontal-mode .settings-dialog > .settings-signature-wrap .settings-signature {transform:translate3d(0,0,0);backface-visibility:hidden}
+          /* The nearly opaque heading does not need to live-blur the sliding layers. */
+          #settings-backdrop.gr-horizontal-motion-active .settings-dialog-head {backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+          #settings-backdrop.gr-horizontal-motion-active .settings-dialog {contain:paint}
           #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
           #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}
@@ -1817,7 +1832,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-backdrop.gr-horizontal-mode #settings-help {border-color:rgba(196,160,95,.34)!important;background:linear-gradient(120deg,rgba(157,119,46,.075),rgba(10,19,29,.8))!important}
 
           .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
-          .gr-horizontal-slide-page {position:absolute;inset:0;box-sizing:border-box;width:100%;overflow:hidden;background:#0b151c;will-change:transform;pointer-events:none}
+          .gr-horizontal-slide-page {position:absolute;inset:0;box-sizing:border-box;width:100%;overflow:hidden;background:#0b151c;will-change:transform;backface-visibility:hidden;contain:layout paint style;pointer-events:none}
           /* Preserve both sliding snapshots regardless of real detail-mode visibility. */
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;visibility:visible!important;gap:8px}
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > details.settings-section {display:block!important;visibility:visible!important}

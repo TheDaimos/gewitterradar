@@ -58,8 +58,14 @@ const server=http.createServer((req,res)=>{
                 incomingVisible:getComputedStyle(second).display!=='none' && getComputedStyle(second).visibility!=='hidden',
                 width:pages[1].getBoundingClientRect().width,
                 viewportWidth:body.clientWidth,
+                snapshotSpeed:pane.querySelector('select[aria-label="Geschwindigkeit des Seitenwechsels"]')?.value || null,
+                staticTreeHidden:[...body.children].some(el=>el!==pane && getComputedStyle(el).contentVisibility==='hidden'),
+                signatureComposited:getComputedStyle(signature).transform!=='none',
               };
             },direction);
+            assert.equal(started.snapshotSpeed,speed,`${delivery}/${name}/${speed}/${direction} cloned speed switched back to Schnell`);
+            assert.equal(started.staticTreeHidden,true,`${delivery}/${name}/${speed}/${direction} live controls were still repainted under snapshots`);
+            assert.equal(started.signatureComposited,true,`${delivery}/${name}/${speed}/${direction} signature not promoted`);
             assert.equal(started.sourceVisible,true,`${delivery}/${name}/${speed}/${direction} outgoing snapshot hidden`);
             assert.equal(started.incomingVisible,true,`${delivery}/${name}/${speed}/${direction} incoming snapshot hidden`);
             assert.ok(Math.abs(started.width-started.viewportWidth)<3,`${delivery}/${name}/${speed}/${direction} snapshot width mismatch`);

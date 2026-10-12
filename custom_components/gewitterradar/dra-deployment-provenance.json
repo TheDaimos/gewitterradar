@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.55",
-  "build": "V4.11.55-DEV-2026-10-11",
-  "runtimeRevision": "41155r1",
-  "moduleSetId": "E411-55A1",
+  "productVersion": "4.11.56",
+  "build": "V4.11.56-DEV-2026-10-12",
+  "runtimeRevision": "41156r1",
+  "moduleSetId": "E411-56A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.55 DEV – integration of validated individual strike marker persistence (V4.11.54) and synchronized horizontal settings transitions with shell-fixed signature; Android gestures and stable cluster bubbles retained.",
+    "purpose": "V4.11.56 DEV – Android motion-only correction: retain selected speed in snapshots, freeze hidden real menu subtrees during slide, isolate original signature and avoid header live blur during height motion; no weather, clusters, individual strikes or gesture changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
