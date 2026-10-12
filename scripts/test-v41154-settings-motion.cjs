@@ -96,7 +96,12 @@ const server=http.createServer((req,res)=>{
               const root=window.aboutCard.shadowRoot;const dialog=root.getElementById('settings-dialog');
               const body=dialog.querySelector('.settings-body');
               const footer=dialog.querySelector(':scope > .settings-footer-version');
-              return {height:dialog.getBoundingClientRect().height,
+              const lockedHeight=dialog.getBoundingClientRect().height;
+              const lockedCss=dialog.style.height;
+              dialog.style.removeProperty('height');
+              const naturalHeight=dialog.getBoundingClientRect().height;
+              dialog.style.height=lockedCss;
+              return {height:lockedHeight,naturalHeight,
                 dialogVisible:getComputedStyle(dialog).display!=='none',
                 bodyScrollable:body.scrollHeight>=body.clientHeight,
                 footerBottom:dialog.getBoundingClientRect().bottom-footer.getBoundingClientRect().bottom,
@@ -106,6 +111,7 @@ const server=http.createServer((req,res)=>{
             assert.ok(!after.horizontalOverflow,`${delivery}/${name}/${speed}/${direction} horizontal overflow`);
             assert.ok(after.footerBottom>0&&after.footerBottom<40,'Finished footer must remain anchored');
             assert.ok(after.height>140,'Dialog collapsed');
+            assert.ok(Math.abs(after.height-after.naturalHeight)<4,`${delivery}/${name}/${speed}/${direction}: target height is inconsistent with natural layout: ${after.height} vs ${after.naturalHeight}`);
           }
         }
         await context.close();
