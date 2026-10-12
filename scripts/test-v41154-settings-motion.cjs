@@ -249,6 +249,51 @@ const server=http.createServer((req,res)=>{
         assert.equal(travel.refresh,1,`${delivery}/${name} refresh restarted flight`);
         assert.equal(travel.userPan,1,`${delivery}/${name} refresh undid manual movement`);
         assert.equal(travel.sameCoordinates,1,`${delivery}/${name} unchanged coordinate repeated flight`);
+        // HA may publish a new saved place before the awaited service returns.
+        // No automatic camera flight must interrupt the older flyToBounds path.
+        const handoffResult=await page.evaluate(()=>{
+          const card=window.aboutCard;
+          const previous={
+            map:card._map,option:card._mapReferenceOption,signature:card._mapReferenceSignature,
+            handoff:card._referenceFlightHandoff,marker:card._homeMarker,
+            radius:card._radiusCircle,storm:card._stormCircle,danger:card._dangerCircle
+          };
+          const calls=[];
+          try{
+            card._map={
+              getCenter:()=>({lat:53.8,lng:9.9}),getZoom:()=>8,
+              flyTo:(...args)=>calls.push({method:'flyTo',args}),
+              setView:(...args)=>calls.push({method:'setView',args})
+            };
+            card._homeMarker=card._radiusCircle=card._stormCircle=card._dangerCircle=null;
+            card._mapReferenceOption='kaltenkirchen';
+            card._referenceFlightHandoff={
+              id:123,lat:35.6762,lon:139.6503,phase:'service',
+              until:Date.now()+6000
+            };
+            card._syncReferenceMap({option:'tokyo',lat:35.6762,lon:139.6503,label:'Tokyo',available:true});
+            const duringService={count:calls.length,option:card._mapReferenceOption};
+            card._referenceFlightHandoff.phase='flying';
+            card._syncReferenceMap({option:'tokyo-2',lat:35.6762,lon:139.6503,label:'Tokyo',available:true});
+            const duringOriginalFlight=calls.length;
+            card._referenceFlightHandoff=null;
+            card._syncReferenceMap({option:'osaka',lat:34.6937,lon:135.5023,label:'Osaka',available:true});
+            return {duringService,duringOriginalFlight,afterRelease:calls.map(x=>x.method)};
+          }finally{
+            card._map=previous.map;
+            card._mapReferenceOption=previous.option;
+            card._mapReferenceSignature=previous.signature;
+            card._referenceFlightHandoff=previous.handoff;
+            card._homeMarker=previous.marker;card._radiusCircle=previous.radius;
+            card._stormCircle=previous.storm;card._dangerCircle=previous.danger;
+          }
+        });
+        assert.deepEqual(handoffResult.duringService,{count:0,option:'tokyo'},
+          `${delivery}/${name} automatic flyTo interrupted saved-place service`);
+        assert.equal(handoffResult.duringOriginalFlight,0,
+          `${delivery}/${name} reference sync overrode saved-place flyToBounds`);
+        assert.deepEqual(handoffResult.afterRelease,['flyTo'],
+          `${delivery}/${name} ordinary location flight missing after handoff`);
         await context.close();
       }
     }

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.21",
+  "version": "1.1.22",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1042,15 +1042,34 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       };
       const v407UseCandidate = async (candidate) => {
         const data = {latitude:candidate.latitude,longitude:candidate.longitude,name:candidate.name || candidate.displayLabel};
-        if (this._hass?.services?.gewitterradar?.set_reference_coordinates) {
-          await this._hass.callService('gewitterradar','set_reference_coordinates',data);
-          return true;
+        // Claim the camera BEFORE invoking HA. The HA callback can arrive
+        // while the service promise is still pending and must not fly first.
+        const flightId=(this._referenceFlightSequence||0)+1;
+        this._referenceFlightSequence=flightId;
+        this._referenceFlightHandoff={
+          id:flightId,lat:Number(data.latitude),lon:Number(data.longitude),
+          phase:'service',until:Date.now()+12000
+        };
+        this._mapDiagnosticLog?.('geo.reference.handoff.prepared',{
+          flightId,lat:Number(data.latitude),lon:Number(data.longitude)
+        });
+        try{
+          if (this._hass?.services?.gewitterradar?.set_reference_coordinates) {
+            await this._hass.callService('gewitterradar','set_reference_coordinates',data);
+            if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff.phase='confirmed';
+            return true;
+          }
+          if (this._hass?.states?.['script.gewitterradar_set_reference_coordinates_dashboard']) {
+            await this._hass.callService('script','gewitterradar_set_reference_coordinates_dashboard',data);
+            if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff.phase='confirmed';
+            return true;
+          }
+          if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff=null;
+          return false;
+        }catch(error){
+          if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff=null;
+          throw error;
         }
-        if (this._hass?.states?.['script.gewitterradar_set_reference_coordinates_dashboard']) {
-          await this._hass.callService('script','gewitterradar_set_reference_coordinates_dashboard',data);
-          return true;
-        }
-        return false;
       };
 
       const V407_SAVED_TODO_PREFIX = 'GEWITTERRADAR_PLACE_V1\n';
@@ -1178,7 +1197,23 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           label:String(candidate?.name || candidate?.displayLabel || v407Text().savedPlaceFallback),
           available:true
         };
-        requestAnimationFrame(() => this._focusReferenceStormRadius?.(reference));
+        const handoff=this._referenceFlightHandoff;
+        if(handoff&&(Math.abs(handoff.lat-latitude)>.00002||Math.abs(handoff.lon-longitude)>.00002)){
+          this._mapDiagnosticLog?.('geo.reference.handoff.superseded',{
+            flightId:handoff.id,lat:latitude,lon:longitude
+          });
+          return;
+        }
+        if(handoff){
+          handoff.phase='flying';
+          handoff.until=Date.now()+5000;
+        }
+        requestAnimationFrame(() => {
+          this._mapDiagnosticLog?.('geo.reference.handoff.flight',{
+            flightId:handoff?.id??null,lat:latitude,lon:longitude
+          });
+          this._focusReferenceStormRadius?.(reference);
+        });
       };
 
       const v407EnsureLocationSearchDialog = () => {
@@ -2447,6 +2482,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // input_select. Gespeichert wird direkt die Entity-ID; dadurch bleibt die Auswahl nach App-/Browser-Neustart erhalten.
       const setLocationOption = async (option) => {
         if (!this._hass || !option) return;
+        // Explicit person/zone selection supersedes a saved-place handoff.
+        this._referenceFlightHandoff=null;
         this._settingsLocationPreview = option;
         clearTimeout(this._settingsLocationPreviewTimer);
         this._settingsLocationPreviewTimer = setTimeout(() => {

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -271,6 +271,18 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const optionChanged = this._mapReferenceOption !== reference.option;
 
       if (optionChanged) {
+        // V4.11.63: saved-place selection is a two-phase HA transaction.
+        // During confirmation, the UI owns the eventual flyToBounds flight;
+        // the reference sync must update markers without racing the camera.
+        const handoff=this._referenceFlightHandoff;
+        const held=!!handoff && Number(handoff.until)>Date.now();
+        if(handoff&&!held)this._referenceFlightHandoff=null;
+        if(held){
+          this._mapDiagnosticLog?.('geo.reference.handoff.deferred',{
+            option:reference.option,phase:handoff.phase,
+            lat:handoff.lat,lon:handoff.lon
+          });
+        }else{
         // V4.11.62: animate real reference changes with Leaflet's smooth
         // zoom-out/travel/zoom-in flight, preserving the current end zoom.
         // Routine weather refreshes and manual map gestures never retrigger it.
@@ -291,6 +303,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           }else{
             map.setView(latLng,zoom,{animate:false});
           }
+        }
         }
       }
 

@@ -70,6 +70,17 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("const optionChanged = this._mapReferenceOption !== reference.option",source)
         self.assertIn("if(!atTarget)",source)
 
+    def test_saved_place_flight_handoff(self):
+        controls=(FRONTENDS[0] / "modules/ui/controls.js").read_text()
+        location=(FRONTENDS[0] / "modules/location/radii-map.js").read_text()
+        self.assertIn("this._referenceFlightHandoff={",controls)
+        self.assertIn("phase:'service',until:Date.now()+12000",controls)
+        self.assertIn("handoff.phase='flying'",controls)
+        self.assertIn("this._focusReferenceStormRadius?.(reference)",controls)
+        self.assertIn("geo.reference.handoff.flight",controls)
+        self.assertIn("if(held)",location)
+        self.assertIn("geo.reference.handoff.deferred",location)
+
     def test_version_footer_anchored_to_dialog_and_current_build_month(self):
         skeleton = (FRONTENDS[0] / "modules/ui/skeleton.js").read_text()
         self.assertIn("const displayedBuildMonth=buildMonthMatch", skeleton)
@@ -82,16 +93,16 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.62"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.62")
-        self.assertEqual(runtime["runtimeRevision"], "41162r1")
-        self.assertEqual(runtime["moduleSetId"], "E411-62A1")
+        self.assertIn('version:"4.11.63"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.63")
+        self.assertEqual(runtime["runtimeRevision"], "41163r1")
+        self.assertEqual(runtime["moduleSetId"], "E411-63A1")
         self.assertEqual(len(runtime["modules"]), 31)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
-        self.assertEqual(by_id["ui.controls"], "1.1.21")
+        self.assertEqual(by_id["ui.controls"], "1.1.22")
         self.assertEqual(by_id["ui.skeleton"], "1.1.22")
-        self.assertEqual(by_id["core.manifest"], "1.2.123")
-        self.assertIn('"id": "ui.controls",\n    "version": "1.1.21"', manifest)
+        self.assertEqual(by_id["core.manifest"], "1.2.124")
+        self.assertIn('"id": "ui.controls",\n    "version": "1.1.22"', manifest)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.62",
-  "build": "V4.11.62-DEV-2026-10-12",
-  "runtimeRevision": "41162r1",
-  "moduleSetId": "E411-62A1",
+  "productVersion": "4.11.63",
+  "build": "V4.11.63-DEV-2026-10-12",
+  "runtimeRevision": "41163r1",
+  "moduleSetId": "E411-63A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.62 DEV – Standort-Einstellungen: restore animated Leaflet flyTo map-camera flight between saved places with zoom-out and zoom-in; preserve user zoom and prevent repeats during refresh or manual map gestures.",
+    "purpose": "V4.11.63 DEV – Standort-Einstellungen: avoid two competing camera flights during saved-place Home Assistant updates; retain original flyToBounds, existing Android dropdown fixes and settings.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
