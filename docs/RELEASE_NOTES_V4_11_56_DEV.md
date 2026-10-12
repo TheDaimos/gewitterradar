@@ -22,3 +22,6 @@
 
 ## Freigabegrenze
 **Der GitHub-Code ist keine Android-Realabnahme.** Erst vollständig grüne CI und kontrollierte Übernahme auf `deploy/dev`, danach DRA V1 und Android-Rückmeldung. Keine Änderungen an WeatherRouter, Gewitter-Cluster-/Einzelblitzlogik, Android-Gesten oder Kartendarstellung.
+
+## Schutznachtrag – Reihenfolge der Höhenmessung
+Die natürliche Zielhöhe wird *vor* der kurzzeitigen Aktivierung von `content-visibility:hidden` für die ursprünglichen Steuerbäume gemessen. Das verhindert, dass die gemessene Zielhöhe wegen ausgeblendeter Originalinhalte zu klein wird. Die bestehende Browserprüfung kontrolliert jetzt auch die Übereinstimmung zwischen fixierter Endhöhe und natürlicher Dialoghöhe für beide Richtungen und alle drei Geschwindigkeiten.
