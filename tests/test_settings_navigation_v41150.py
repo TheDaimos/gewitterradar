@@ -30,7 +30,7 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("const resizeDuration=duration;", text)
         self.assertIn("navBody.style.setProperty('overflow-y','hidden','important')", text)
         self.assertIn("navBody.style.removeProperty('overflow-y')", text)
-        self.assertIn("Keep the exact animated end height.", text)
+        self.assertIn("settingsDialog.style.height=after+'px'", text)
         self.assertIn("settingsDialog?.style.removeProperty('height'); // Restore natural size when opening", text)
         self.assertIn("page.style.padding=bodyPadding.paddingTop", text)
         self.assertIn("gr-horizontal-transition > .gr-horizontal-slide-page > .gr-horizontal-root", text)
