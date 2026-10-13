@@ -156,7 +156,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "location.radii-map"',
-  '"version": "1.0.21"',
+  '"version": "1.0.22"',
   '_hardResetMapGestureHandlers',
   'rogue-single-pointer-zoom',
   'touch-pointer-mismatch',
