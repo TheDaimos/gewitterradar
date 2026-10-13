@@ -2107,7 +2107,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       );
       const referenceZoomNote=document.createElement('span');
       referenceZoomNote.className='settings-row-note';
-      referenceZoomNote.textContent='Zielzoom der Kamerafahrt · manuelles Zoomen bleibt unveraendert';
+      referenceZoomNote.textContent='Zielzoom der Kamerafahrt · manuelles Zoomen bleibt unverändert';
       referenceZoomChoice.row.querySelector('.settings-row-label')?.append(referenceZoomNote);
       const menuStyleRow=menuStyleChoice.row;
       const speedRow=speedChoice.row;
