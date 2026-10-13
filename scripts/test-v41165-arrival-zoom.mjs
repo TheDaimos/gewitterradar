@@ -1,4 +1,4 @@
-// V4.11.67: real reference-focus module chooses exact arrival zoom or original radius fit.
+// V4.11.68: real reference-focus module chooses exact arrival zoom or original radius fit.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
@@ -43,4 +43,4 @@ assert.equal(focus('nonsense')[0],'flyToBounds');
 assert.equal(events.find(e=>e.type==='geo.focus.method')?.data.method,'flyToBounds');
 assert.equal(focus('8')[0],'flyTo');
 assert.equal(events.find(e=>e.type==='geo.focus.method')?.data.mode,'configured-zoom');
-console.log('PASS V4.11.67: dropdown choices, saved arrival zoom, fixed zoom flight, auto-radius fallback');
+console.log('PASS V4.11.68: dropdown choices, saved arrival zoom, fixed zoom flight, auto-radius fallback');
