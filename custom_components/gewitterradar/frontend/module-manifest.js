@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41163r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41164r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.124",
+    "version": "1.2.125",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.22",
+    "version": "1.1.23",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -269,7 +269,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [

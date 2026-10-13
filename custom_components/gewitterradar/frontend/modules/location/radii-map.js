@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -624,7 +624,11 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           }
         }catch(_error){}
         if(force||staleDrag){try{draggable?.finishDrag?.(true);}catch(_error){}}
-        if(force||stalePinch||staleDrag){try{map.stop?.();}catch(_error){}}
+        // Fokuswechsel ohne echte Kartengeste duerfen flyToBounds nicht abbrechen.
+        const activeMapTouch=!!(this._mapGestureSurfacePointerCount?.(state)||state.touchIds?.size||state.browserTouchFallback?.active);
+        if(stalePinch||staleDrag||(force&&activeMapTouch)){
+          try{map.stop?.();}catch(_error){}
+        }
         if(force){
           state.pointers.clear();state.touchIds.clear();
           const fallback=state.browserTouchFallback;
@@ -1150,9 +1154,19 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         if(state.synthesizing||state.recovering)return;
         this._recoverMapGestureState('pointercancel',{force:true});
       };
+      const lifecycleGestureDirty=()=>!!(
+        this._mapGestureSurfacePointerCount?.(state)||state.touchIds.size||state.globalPointers.size||
+        state.multitouchDirty||state.ghostPointerObserved||state.browserTouchFallback?.active||
+        this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving||
+        (state.L||window.L)?.Draggable?._dragging
+      );
       const suspendLifecycle=reason=>{
         state.touchTapCandidate=null;state.lastSingleTap=null;
         state.blockUntilPrimaryUp=false;
+        if(!lifecycleGestureDirty()){
+          diag('gesture.lifecycle.clean-skip',{reason});
+          return;
+        }
         this._recoverMapGestureState(reason,{force:true});
       };
       state.handlers.dblclick=event=>{
@@ -1175,8 +1189,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         state.lastReportedTouches=null;
         state.lastMultiPointerAt=0;
         state.lastGlobalMultiAt=0;
+        const dirty=lifecycleGestureDirty();
         state.globalPointers?.clear?.();
         state.lastSurfaceMoveAt=0;
+        if(!dirty){
+          diag('gesture.lifecycle.clean-skip',{reason});
+          return;
+        }
         this._hardResetMapGestureHandlers(reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
       };
       state.handlers.blur=()=>{diag("lifecycle.blur");suspendLifecycle('window-blur');};
