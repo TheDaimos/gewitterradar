@@ -44,7 +44,7 @@ assert.equal(runtime.modules.find(x=>x.id==='map.clusters-recent')?.version,'1.0
 assert.equal(runtime.modules.find(x=>x.id==='ui.controls')?.version,'1.1.26');
 assert.equal(runtime.modules.find(x=>x.id==='core.card-lifecycle')?.version,'1.0.6');
 assert.match(entry,/modules\/fullscreen\/map-display\.js','41108r10'/);
-assert.match(entry,/modules\/location\/radii-map\.js','41164r1'/);
+assert.match(entry,/modules\/location\/radii-map\.js','41168r1'/);
 assert.match(entry,/modules\/core\/card-lifecycle\.js','41114r1'/);
 assert.match(radiiMap,/_setupMapGestureRecovery/);
 assert.match(radiiMap,/_hardResetMapGestureHandlers/);
