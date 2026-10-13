@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -159,7 +159,15 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       if (!circle || !this._map || !reference) return;
       const latLng = [reference.lat,reference.lon];
       circle.setLatLng(latLng);
-      circle.setRadius(projectedRadiusPixels(this._map,reference,Number(radiusKm) || 0));
+      const radiusPx=projectedRadiusPixels(this._map,reference,Number(radiusKm)||0);
+      const size=this._map.getSize?.();
+      // V4.11.68: A 1000 km radius at zoom 17 can exceed one million pixels.
+      // Canvas/SVG allocation at that scale freezes iPadOS/WebKit and slows
+      // desktop fullscreen. Retain ALL real distances; hide only an oversized
+      // visual ring, whose border is normally well beyond the visible map.
+      const visualLimit=Math.min(8192,Math.max(2048,4*Math.max(1,Number(size?.x)||1,Number(size?.y)||1)));
+      const safeRadius=Number.isFinite(radiusPx)&&radiusPx<=visualLimit?Math.max(0,radiusPx):0;
+      circle.setRadius(safeRadius);
     },
 
     _radiusAuraSpecs(level,baseRadius = 1) {
