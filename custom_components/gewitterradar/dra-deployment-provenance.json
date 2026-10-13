@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.65 DEV – Einstellbare Zielzoomstufe (Automatisch oder 5 bis 15) nach gespeicherten Standortwechseln, Standard Zoom 8. Bestehende Android-Kamerafahrt, Menues und 3-Finger-Gestenschutz unveraendert.",
+    "purpose": "V4.11.65 DEV – Einstellungen: Auswaehlbare Zielzoomstufe (Automatisch oder 5 bis 15) nach gespeicherten Standortwechseln, Standard Zoom 8. Bestehende Android-Kamerafahrt, Menues und 3-Finger-Gestenschutz unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
