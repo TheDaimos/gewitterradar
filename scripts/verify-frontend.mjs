@@ -30,7 +30,7 @@ const projectHubCk=await readFile(resolve(root,'frontend/project-hub/offline/ass
 const projectHubIcons=await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'));
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.22"',
+  '"version": "1.1.23"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -85,7 +85,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.7"',
+  'version:"1.3.8"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
