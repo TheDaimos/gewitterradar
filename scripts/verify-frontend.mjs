@@ -124,7 +124,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.26"',
+  '"version": "1.1.27"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
