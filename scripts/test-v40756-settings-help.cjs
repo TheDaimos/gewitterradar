@@ -115,6 +115,7 @@ const server = http.createServer((req, res) => {
             }),
             sections: sections.length,
             moduleSection: !!root.querySelector('#settings-modules-section'),
+            dataSourcesSection: !!root.querySelector('#settings-data-sources-section'),
             weatherEngineSection: !!root.querySelector('#weather-engine-section'),
             weatherRadarSettings: !!root.querySelector('[data-weather-radar-settings="true"]'),
             weatherRadarToggle: !!root.getElementById('weather-radar-toggle'),
@@ -142,7 +143,7 @@ const server = http.createServer((req, res) => {
           metrics.iconResiduals.every((value) => Math.abs(value) <= 3),
           `${delivery}/${profile} icon alignment`,
         );
-        assert.equal(metrics.sections, 8, `${delivery}/${profile} settings sections including Weather-Engine and Module & Versionen`);
+        assert.equal(metrics.sections, 9, `${delivery}/${profile} settings sections including Weather-Engine, Module & Versionen and Datenquellen & Verbindungen`);
         assert.equal(metrics.weatherEngineSection, true, `${delivery}/${profile} Weather-Engine section`);
         assert.equal(metrics.weatherRadarSettings, true, `${delivery}/${profile} precipitation radar settings mounted`);
         assert.equal(metrics.weatherRadarToggle, true, `${delivery}/${profile} precipitation radar toggle mounted`);
@@ -151,6 +152,7 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.weatherRadarTimelineStatus, true, `${delivery}/${profile} radar timeline status mounted`);
         assert.equal(metrics.weatherRadarTimelineToggle, true, `${delivery}/${profile} radar timeline toggle mounted`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
+        assert.equal(metrics.dataSourcesSection, true, `${delivery}/${profile} Datenquellen & Verbindungen section`);
         assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
@@ -466,12 +468,12 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
-          assert.equal(row.localizedModuleRows.length,31,delivery+'/'+profile+' '+row.language+' all module rows present');
+          assert.equal(row.localizedModuleRows.length,33,delivery+'/'+profile+' '+row.language+' all module rows present');
           const legacyRows=row.localizedModuleRows.filter((entry) => legacyModuleIds.has(entry.id));
           assert.equal(legacyRows.length,legacyModuleIds.size,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
           assert.ok(projectHubRow?.name&&projectHubRow?.functions,delivery+'/'+profile+' '+row.language+' Project Hub manifest fallback populated');
-          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,31,delivery+'/'+profile+' '+row.language+' unique module ids');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,33,delivery+'/'+profile+' '+row.language+' unique module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');

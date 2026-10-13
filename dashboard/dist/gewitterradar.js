@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41168r1";
-/* Gewitterradar Card V4.11.68 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41169r1";
+/* Gewitterradar Card V4.11.69 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -19,29 +19,31 @@ let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapsho
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
 let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus, installProjectHub;
-let installCompassSelector, installDiagnostics, installModuleView, installMapDiagnostics, installCompassDesign;
+let installCompassSelector, installDiagnostics, installModuleView, installMapDiagnostics, installCompassDesign, installDataSourceDiagnostics, installBlitzortungSource;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
 let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherLayerMenu, installWeatherDisplayMenu, installWeatherLegendOverlay, installUpdateWatch;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41168r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','41169r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41114r1');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r10');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
-  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js','41145r1');
+  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js','41169r1');
   const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41163r1');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
   const controls = await gewitterradarImport('./modules/ui/controls.js','41167r1');
   const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js','41144r1');
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js');
+  const blitzortungSource = await gewitterradarImport('./modules/sources/blitzortung.js');
   const updateWatch = await gewitterradarImport('./modules/core/update-watch.js');
   const compassSelector = await gewitterradarImport('./modules/instruments/compass-selector.js');
   const medallionDesigns = await gewitterradarImport('./modules/instruments/medallion-designs.js');
   const diagnostics = await gewitterradarImport('./modules/diagnostics/cockpit.js');
-  const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js','41143r1');
+  const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js','41169r1');
+  const dataSourceDiagnostics = await gewitterradarImport('./modules/diagnostics/data-sources.js');
   const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41140r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41168r1');
@@ -71,11 +73,13 @@ try {
   ({ installControls } = controls);
   ({ installI18nSettings } = i18nSettings);
   ({ installSourceStatus } = sourceStatus);
+  ({ installBlitzortungSource } = blitzortungSource);
   ({ installUpdateWatch } = updateWatch);
   ({ installCompassSelector } = compassSelector);
   ({ installMedallionDesigns } = medallionDesigns);
   ({ installDiagnostics } = diagnostics);
   ({ installModuleView } = moduleView);
+  ({ installDataSourceDiagnostics } = dataSourceDiagnostics);
   ({ installMapDiagnostics } = mapDiagnostics);
   ({ installCompassDesign } = compassDesign);
   ({ installLocationRadiiMap } = locationRadiiMap);
@@ -140,10 +144,12 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installControls(GewitterradarCard,__moduleDeps);
   installI18nSettings(GewitterradarCard,__moduleDeps);
   installSourceStatus(GewitterradarCard,__moduleDeps);
+  installBlitzortungSource(GewitterradarCard,__moduleDeps);
   installUpdateWatch(GewitterradarCard,__moduleDeps);
   installCompassSelector(GewitterradarCard,__moduleDeps);
   installDiagnostics(GewitterradarCard,__moduleDeps);
   installModuleView(GewitterradarCard,__moduleDeps);
+  installDataSourceDiagnostics(GewitterradarCard,__moduleDeps);
   installMapDiagnostics(GewitterradarCard,__moduleDeps);
   installCompassDesign(GewitterradarCard,__moduleDeps);
   installLocationRadiiMap(GewitterradarCard,__moduleDeps);

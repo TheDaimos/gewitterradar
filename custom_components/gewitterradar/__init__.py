@@ -9,9 +9,9 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.components import frontend
+from homeassistant.components import frontend, websocket_api
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, ServiceCall, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
@@ -376,6 +376,90 @@ def _loaded_runtime(hass: HomeAssistant) -> GewitterradarRuntimeData:
     raise ServiceValidationError("Gewitterradar is not loaded")
 
 
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({"type": "gewitterradar/data_sources"})
+@callback
+def _ws_data_sources(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Return read-only, per-entry Blitzortung settings and linkage diagnostics.
+
+    Never update another integration's ConfigEntry. Config information is
+    exposed only to Home Assistant administrators via its authenticated WS API.
+    """
+    own_entries = [
+        item for item in hass.config_entries.async_entries(DOMAIN)
+        if item.state == ConfigEntryState.LOADED
+        and isinstance(getattr(item, "runtime_data", None), GewitterradarRuntimeData)
+    ]
+    trackers = sorted({
+        item.runtime_data.tracker_entity_id
+        for item in own_entries
+        if item.runtime_data.tracker_entity_id
+    })
+    registry = er.async_get(hass)
+    remote = []
+    for item in hass.config_entries.async_entries(BLITZORTUNG_DOMAIN):
+        location = item.data.get("location_entity")
+        config_type = item.data.get("config_type", "entity" if location else "coordinates")
+        is_linked = isinstance(location, str) and location in trackers
+        registered = er.async_entries_for_config_entry(registry, item.entry_id)
+        sensors = []
+        for entity in registered:
+            if entity.domain != "sensor":
+                continue
+            state = hass.states.get(entity.entity_id)
+            sensors.append({
+                "entityId": entity.entity_id,
+                "state": state.state if state is not None else None,
+                "available": state is not None and state.state not in ("unknown", "unavailable"),
+                "disabled": entity.disabled_by is not None,
+            })
+        options = item.options
+        remote.append({
+            "name": str(item.title),
+            "entryId": item.entry_id,
+            "state": item.state.value,
+            "loaded": item.state == ConfigEntryState.LOADED,
+            "configType": config_type,
+            "locationEntity": location if isinstance(location, str) else None,
+            "referenceTrackerLinked": is_linked,
+            "locationEntityAvailable": (
+                hass.states.get(location) is not None
+                and hass.states.get(location).state not in ("unknown", "unavailable")
+            ) if isinstance(location, str) else None,
+            "coordinates": {
+                "latitude": item.data.get("latitude"),
+                "longitude": item.data.get("longitude"),
+            } if config_type == "coordinates" else None,
+            "settings": {
+                "radius": options.get("radius", 100),
+                "timeWindow": options.get("time_window", 120),
+                "maxTrackedLightnings": options.get("max_tracked_lightnings", 100),
+                "defaultsUsed": [
+                    key for key in ("radius", "time_window", "max_tracked_lightnings")
+                    if key not in options
+                ],
+                "radiusUnit": str(hass.config.units.length_unit),
+            },
+            "sensors": sensors,
+        })
+    connection.send_result(msg["id"], {
+        "schema": "gewitterradar.data-sources.v1",
+        "integration": "blitzortung",
+        "integrationInstalled": bool(remote),
+        "entries": remote,
+        "referenceTrackers": trackers,
+        "linkedEntries": sum(1 for item in remote if item["referenceTrackerLinked"]),
+        "geoLocationEntities": sum(
+            1 for state in hass.states.async_all("geo_location")
+            if state.entity_id.startswith("geo_location.lightning_strike_")
+        ),
+        "note": "Geo-location count is global, not proof of connection health per entry.",
+    })
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Serve the card and register the V4.07 coordinate service once."""
     await hass.http.async_register_static_paths([
@@ -393,6 +477,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             call.data[SERVICE_FIELD_LONGITUDE],
             call.data[SERVICE_FIELD_NAME],
         )
+
+    websocket_api.async_register_command(hass, _ws_data_sources)
 
     hass.services.async_register(
         DOMAIN,

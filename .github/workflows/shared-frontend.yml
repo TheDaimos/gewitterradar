@@ -40,6 +40,9 @@ jobs:
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
+      - name: V4.11.69 data sources and Blitzortung connection contract
+        run: node scripts/test-v41169-data-sources.mjs
+
       - name: V4.11.08 Daimos Project Hub runtime
         run: node scripts/test-v41108-project-hub.mjs
 
