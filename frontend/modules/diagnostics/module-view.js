@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.7",
+  version:"1.3.8",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Fenster- und Ebenenübersicht","Diagnose kopieren","JSON herunterladen"],
