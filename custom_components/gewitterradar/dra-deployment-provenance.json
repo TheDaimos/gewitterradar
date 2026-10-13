@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.64",
-  "build": "V4.11.64-DEV-2026-10-13",
-  "runtimeRevision": "41164r1",
-  "moduleSetId": "E411-64A1",
+  "productVersion": "4.11.65",
+  "build": "V4.11.65-DEV-2026-10-13",
+  "runtimeRevision": "41165r1",
+  "moduleSetId": "E411-65A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.64 DEV – Kartendiagnose: sanfte Standort-Kamerafahrt trotz normalem Fokuswechsel; doppelte Flugauftraege geschuetzt; settings und Android-Gestenschutz unveraendert.",
+    "purpose": "V4.11.65 DEV – Einstellbare Zielzoomstufe (Automatisch oder 5 bis 15) nach gespeicherten Standortwechseln, Standard Zoom 8. Bestehende Android-Kamerafahrt, Menues und 3-Finger-Gestenschutz unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

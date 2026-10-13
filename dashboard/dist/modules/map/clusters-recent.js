@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -871,10 +871,26 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       this._mapDiagnosticGeoPending={requestId,lat,lon,startedAt:Date.now(),zoomBefore:this._map.getZoom?.()};
       this._mapDiagnosticLog?.("geo.focus.request",{requestId,lat,lon,stormRadius,observationRadius});
 
-      /* V3.988 – Geo-Location ist jetzt ein echter räumlicher Recenter:
-         nicht nur den Mittelpunkt setzen, sondern den eingestellten Gewitterradius
-         vollständig sichtbar machen. Leaflet bestimmt damit für Desktop/iPad/Mobile
-         selbst den passenden Zoom und fährt gleichzeitig sanft zur Bezugsposition. */
+      // V4.11.65: Der Anwender waehlt den Zielzoom fuer automatische
+      // Standort-Kamerafahrten. Kein Eingriff in die manuelle Kartenbedienung.
+      // 'auto' behaelt die bisherige Einpassung des Gewitterradius bei.
+      let arrivalZoomSetting='8';
+      try{arrivalZoomSetting=localStorage.getItem('gr-reference-arrival-zoom')??'8';}catch(_){}
+      if (/^(?:[5-9]|1[0-5])$/.test(arrivalZoomSetting) && typeof this._map.flyTo==='function') {
+        const minimum=finiteNumber(this._map.getMinZoom?.())??0;
+        const maximum=finiteNumber(this._map.getMaxZoom?.())??18;
+        const targetZoom=Math.min(maximum,Math.max(minimum,Number(arrivalZoomSetting)));
+        this._mapDiagnosticLog?.('geo.focus.method',{requestId,method:'flyTo',mode:'configured-zoom',zoom:targetZoom});
+        this._map.flyTo(center,targetZoom,{
+          animate:true,
+          duration:1.22,
+          easeLinearity:.22
+        });
+        return;
+      }
+
+      /* Automatisch: Leaflet passt den Gewitterradius an den Kartenausschnitt an.
+         Diese bewährte Methode bleibt für die Auswahl Automatisch erhalten. */
       if (L?.latLng && typeof this._map.flyToBounds === 'function') {
         const centerLatLng = L.latLng(lat,lon);
         const bounds = centerLatLng?.toBounds?.(stormRadius*2000);

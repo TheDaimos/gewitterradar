@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -2082,18 +2082,45 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           selectedSpeed=value;
           try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}
         });
+      // Zielzoom gilt ausschliesslich fuer die automatische Kartenfahrt zum Bezugspunkt.
+      // Die bisherige, radiusabhaengige Einpassung bleibt als Wahlmoeglichkeit erhalten.
+      const referenceZoomKey='gr-reference-arrival-zoom';
+      const referenceZoomChoices=[
+        ['auto','Automatisch (Radius)'],
+        ...Array.from({length:11},(_,index)=>{
+          const level=String(index+5);
+          return [level,'Zoomstufe '+level];
+        })
+      ];
+      let selectedReferenceZoom='8';
+      try{
+        const savedReferenceZoom=localStorage.getItem(referenceZoomKey);
+        if(referenceZoomChoices.some(entry=>entry[0]===savedReferenceZoom))selectedReferenceZoom=savedReferenceZoom;
+      }catch(_){}
+      const referenceZoomChoice=makeMenuChoice(
+        'Zoomstufe nach Standortwechsel','gr-reference-arrival-zoom',
+        referenceZoomChoices,selectedReferenceZoom,
+        value=>{
+          selectedReferenceZoom=value;
+          try{localStorage.setItem(referenceZoomKey,value);}catch(_){}
+        }
+      );
+      const referenceZoomNote=document.createElement('span');
+      referenceZoomNote.className='settings-row-note';
+      referenceZoomNote.textContent='Zielzoom der Kamerafahrt · manuelles Zoomen bleibt unveraendert';
+      referenceZoomChoice.row.querySelector('.settings-row-label')?.append(referenceZoomNote);
       const menuStyleRow=menuStyleChoice.row;
       const speedRow=speedChoice.row;
       speedRow.classList.add('gr-menu-speed-row');
       speedRow.hidden=selectedMenuStyle!=='modern';
-      effectsControls?.append(menuStyleRow,speedRow);
+      effectsControls?.append(menuStyleRow,speedRow,referenceZoomChoice.row);
       const closeMenuChoices=()=>{
-        menuStyleChoice.close();speedChoice.close();
+        menuStyleChoice.close();speedChoice.close();referenceZoomChoice.close();
       };
       // Close both menus on outside input, Escape and dialog dismissal.
       document.addEventListener('pointerdown',event=>{
         const path=event.composedPath?.()||[];
-        for(const choice of [menuStyleChoice,speedChoice]){
+        for(const choice of [menuStyleChoice,speedChoice,referenceZoomChoice]){
           if(!path.includes(choice.button)&&!path.includes(choice.dropdown))choice.close();
         }
       },{capture:true});
@@ -2133,6 +2160,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .gr-menu-choice-button {min-width:154px;max-width:60%;white-space:nowrap}
           .gr-menu-choice-button .gr-menu-choice-current {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
           .gr-menu-speed-row[hidden] {display:none!important}
+          #gr-reference-arrival-zoom-row .settings-row-note {display:block;margin-top:4px;font-size:.75rem;opacity:.72}
           .gr-menu-choice-dropdown {z-index:2147483647}
           /* Only the primary settings gear is visible: gold for Classic, blue for Modern. */
           #settings-open-horizontal {display:none!important}
