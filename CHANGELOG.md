@@ -1,5 +1,18 @@
 # Changelog
 
+## V4.11 DEV – zusammengeführter Entwicklungsstand bis V4.11.68 · 13.10.2026
+
+**Ausführliche Entwicklungs- und Verbesserungsübersicht:** [V4.11-Gesamtchronik](docs/RELEASE_NOTES_V4_11_GESAMTCHRONIK_DEV.md). Diese ergänzt die bestehenden Einzelversionsberichte, ersetzt sie nicht und ist **keine FINAL-Freigabe**.
+
+- **WeatherRouter:** Consumer-V1-Anbindung, providerneutraler Niederschlagsradar, räumliches Kachelvorladen, Zeitplayer mit Doppelpufferung; kompakte Legende, Transparenzregelung, Darstellungsprofile und konfigurierbares Aktualisierungsintervall. Weitere Wetterdienste und die vollständige WeatherRouter-Integration bleiben in Entwicklung.
+- **Bedienung:** Zentrale Project-Hub-Einbindung, klassische und moderne Einstellungen, verbesserte horizontale Menüanimationen, mobile Standortlisten und verschiedene gerätespezifische Darstellungsfehler korrigiert.
+- **Karte und Schutzfunktionen:** Android-3-Finger-Gestenschutz, dauerhaft wiederverwendete Cluster- und Einzelblitzmarker, bereinigte Moduldiagnose und stabilisierte Standort-Kamerafahrt.
+- **Standortzoom:** Einstellbare automatische Radiuseinpassung oder feste Zielzoomstufen 5–18 nach gespeichertem Standortwechsel.
+- **V4.11.68:** Schutz vor extrem großen grafischen Radiuskreisen/SVG-Auren. Anwender bestätigt in der Geräteprüfung flüssige Karte und moderne Menüführung, hohe Zoomstufen bis 18 und stabile Bedienung im bisherigen Testzeitraum. Die vorherige starke Verlangsamung wurde nicht mehr beobachtet. Akku- und Temperaturverbesserungen sind plausibel, aber noch nicht gemessen.
+- **Zurückgestellt:** Auf Android kann nach Companion-App-Neustart und Änderung der Zielzoomstufe einzig der erste Standortwechsel einmalig die vorherige Stufe verwenden; danach funktioniert die Auswahl korrekt. Mehrfach reproduziert, geringe Priorität.
+
+**Aktueller Stand:** V4.11.68 DEV · `41168r1` · `E411-68A1` · Integration `0.25.0`. Keine Änderung an `main` oder `deploy/dev` durch die Dokumentationsnachträge.
+
 ## V4.11.08 DEV · Project Hub Popup-Nachlauf · 2026-10-02
 
 - `ui.project-hub` auf **1.1.1**: Host-Popup liegt jetzt auf der obersten reservierten Ebene `2147483647` und damit sicher vor Settings (`2147483645`) sowie Moduldiagnose (`2147483646`).
