@@ -5,7 +5,7 @@ const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 const source=await read('frontend/modules/map/clusters-recent.js');
 const controls=await read('frontend/modules/ui/controls.js');
 assert.match(source,/"version": "1.0.8"/);
-assert.match(controls,/"version": "1.1.26"/);
+assert.match(controls,/"version": "1.1.27"/);
 for(const marker of ["gr-reference-arrival-zoom","Zoomstufe nach Standortwechsel","Automatisch (Radius)","length:14","selectedReferenceZoom='8'","referenceZoomChoice.row","referenceZoomChoice.close()"]){
   assert.ok(controls.includes(marker),'Missing settings dropdown marker: '+marker);
 }
