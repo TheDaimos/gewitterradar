@@ -1,6 +1,6 @@
 import {defineModule} from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.data-sources",version:"0.1.2",group:"Datenquellen & Verbindungen",
+  id:"diagnostics.data-sources",version:"0.1.3",group:"Datenquellen & Verbindungen",
   function:"Datenquellen – Übersicht und Diagnose",
   subfunctions:["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
   file:"modules/diagnostics/data-sources.js"
@@ -35,7 +35,7 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
       <div class="settings-section-content gr-sources-body">
         <style>
           #settings-data-sources-section .gr-sources-body{display:grid;gap:9px;padding:11px 12px;font-size:10px;line-height:1.5}
-          #settings-data-sources-section .gr-sources-tools{display:flex;gap:7px;flex-wrap:wrap}
+          #settings-data-sources-section .gr-sources-tools{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
           #settings-data-sources-section button.gr-sources-action{border:1px solid rgba(214,180,95,.48);border-radius:8px;padding:9px 12px;background:rgba(195,150,62,.10);color:#edd08e;font:800 10px system-ui;cursor:pointer;min-height:36px}
           #settings-data-sources-section .gr-source-card{padding:11px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(255,255,255,.025);display:grid;gap:7px}
           #settings-data-sources-section .gr-source-title{font-size:12px;font-weight:850;color:#f1db9e}
