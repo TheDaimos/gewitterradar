@@ -17,7 +17,6 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback, valid_entit
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
-import probatio
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.typing import ConfigType
 
@@ -379,7 +378,7 @@ def _loaded_runtime(hass: HomeAssistant) -> GewitterradarRuntimeData:
 
 
 @websocket_api.require_admin
-@websocket_api.websocket_command({probatio.Required("type"): "gewitterradar/data_sources"})
+@websocket_api.websocket_command({"type": "gewitterradar/data_sources"})
 @callback
 def _ws_data_sources(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
