@@ -730,6 +730,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       if(deviationBackdrop)this.shadow.append(deviationBackdrop);
       section.addEventListener("toggle",event=>{if(event.target===section&&section.open)this._syncModuleView();});
       this._syncModuleTranslations(section);
+      this._ensureDataSourcesSection?.();
       return section;
     },
 
@@ -819,7 +820,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     },
 
     _moduleDiagnosticsPayload(){
-      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES),layers:this._moduleLayerSnapshot()};
+      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES),dataSources:this._dataSourcesDiagnosticPayload?.()||null,layers:this._moduleLayerSnapshot()};
     },
 
     _moduleDeviationPayload(){
@@ -1086,6 +1087,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     },
 
     async _copyModuleDiagnostics(){
+      await this._refreshBlitzortungSources?.();
       const text=JSON.stringify(this._moduleDiagnosticsPayload(),null,2);
       try{
         await navigator.clipboard.writeText(text);
@@ -1096,7 +1098,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       }
     },
 
-    _downloadModuleDiagnostics(){
+    async _downloadModuleDiagnostics(){
+      await this._refreshBlitzortungSources?.();
       const payload=JSON.stringify(this._moduleDiagnosticsPayload(),null,2);
       const blob=new Blob([payload],{type:"application/json;charset=utf-8"});
       const url=URL.createObjectURL(blob);
