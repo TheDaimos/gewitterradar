@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.68 DEV – iPadOS/Desktop: Schutz vor millionenpixelgrossen Kartenradien und SVG-Auren, Gefahren-Innenschleier erhalten. Echte Entfernungen, Standort-Kamerafahrt und Zoomstufen 5-18 unveraendert. Android-Erstflug gesondert untersuchen.",
+    "purpose": "V4.11.68 DEV – iPadOS/Desktop: Schutz vor millionenpixelgrossen Kartenradien und SVG-Auren, Gefahren-Innenschleier erhalten. Echte Entfernungen, Standort-Kamerafahrt und Zoomstufen 5-18 unveraendert. Android-Erstflug gesondert untersuchen. Alle Einstellungen bleiben erhalten.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
