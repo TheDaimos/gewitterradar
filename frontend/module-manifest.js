@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.129",
+    "version": "1.2.130",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -221,6 +221,22 @@ export const EXPECTED_MODULES=Object.freeze([
       "JSON herunterladen"
     ],
     "file": "modules/diagnostics/module-view.js"
+  },
+  {
+    "id": "diagnostics.data-sources",
+    "version": "0.1.0",
+    "group": "Datenquellen & Verbindungen",
+    "function": "Datenquellen – Übersicht und Diagnose",
+    "subfunctions": ["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
+    "file": "modules/diagnostics/data-sources.js"
+  },
+  {
+    "id": "sources.blitzortung",
+    "version": "0.1.0",
+    "group": "Datenquellen & Verbindungen",
+    "function": "Blitzortung.org – Integration und Standorte",
+    "subfunctions": ["Integrationsstatus","Mehrere Standorte","Tracker-Kopplung","Einstellungen (Nur Lesen)","Sensorstatus","Diagnoseexport"],
+    "file": "modules/sources/blitzortung.js"
   },
   {
     "id": "diagnostics.map",
