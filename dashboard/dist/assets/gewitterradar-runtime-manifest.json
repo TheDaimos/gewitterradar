@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.66",
-  "build": "V4.11.66-DEV-2026-10-13",
-  "runtimeRevision": "41166r1",
-  "moduleSetId": "E411-66A1",
+  "productVersion": "4.11.67",
+  "build": "V4.11.67-DEV-2026-10-13",
+  "runtimeRevision": "41167r1",
+  "moduleSetId": "E411-67A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.127"
+      "version": "1.2.128"
     },
     {
       "id": "core.base-context",
@@ -47,7 +47,7 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.25"
+      "version": "1.1.26"
     },
     {
       "id": "ui.i18n-settings",
@@ -130,5 +130,5 @@
       "version": "1.2.1"
     }
   ],
-  "displayVersion": "V4.11.66 DEV"
+  "displayVersion": "V4.11.67 DEV"
 }

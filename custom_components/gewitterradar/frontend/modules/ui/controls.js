@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.25",
+  "version": "1.1.26",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -2162,11 +2162,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .gr-menu-speed-row[hidden] {display:none!important}
           #gr-reference-arrival-zoom-row .settings-row-note {display:block;margin-top:4px;font-size:.75rem;opacity:.72}
           .gr-menu-choice-dropdown {z-index:2147483647}
-          /* Only the primary settings gear is visible: gold for Classic, blue for Modern. */
-          #settings-open-horizontal {display:none!important}
-          #settings-open .gear-modern {display:none!important}
-          #settings-open[data-menu-style="modern"] .gear-classic {display:none!important}
-          #settings-open[data-menu-style="modern"] .gear-modern {display:block!important;stroke:#66beff!important;color:#66beff!important;filter:drop-shadow(0 0 6px rgba(55,150,245,.48))!important}
+          /* iPadOS: the legacy rule
+             #card-root.ipad-device .settings-chip-premium .gear-welcome
+             uses display:block!important. Stronger selectors must keep exactly
+             one SVG visible inside the single active settings button. */
+          #card-root #settings-open-horizontal {display:none!important}
+          #card-root #settings-open .gear-welcome.gear-modern {display:none!important}
+          #card-root #settings-open[data-menu-style="modern"] .gear-welcome.gear-classic {display:none!important}
+          #card-root #settings-open[data-menu-style="modern"] .gear-welcome.gear-modern {display:block!important;stroke:#66beff!important;color:#66beff!important;filter:drop-shadow(0 0 6px rgba(55,150,245,.48))!important}
           #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
           #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
           #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.66",
-  "build": "V4.11.66-DEV-2026-10-13",
-  "runtimeRevision": "41166r1",
-  "moduleSetId": "E411-66A1",
+  "productVersion": "4.11.67",
+  "build": "V4.11.67-DEV-2026-10-13",
+  "runtimeRevision": "41167r1",
+  "moduleSetId": "E411-67A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.66 DEV – Einstellungen: Zielzoom bei Standortwechsel von 5 bis 18 plus Automatisch, Vorgabe 8. Vorhandene Android-Kamerafahrt und Gestenschutz bleiben unveraendert.",
+    "purpose": "V4.11.67 DEV – iPadOS-Einstellungen: genau ein Zahnrad, gold bei Klassisch und blau bei Modern. Korrektur der CSS-Spezifitaet gegen die bestehende iPad-Anzeigeregel; Standortflug, Zoomstufen 5–18, Menuefuehrung und Gestenschutz unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
