@@ -468,12 +468,12 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
-          assert.equal(row.localizedModuleRows.length,31,delivery+'/'+profile+' '+row.language+' all module rows present');
+          assert.equal(row.localizedModuleRows.length,33,delivery+'/'+profile+' '+row.language+' all module rows present');
           const legacyRows=row.localizedModuleRows.filter((entry) => legacyModuleIds.has(entry.id));
           assert.equal(legacyRows.length,legacyModuleIds.size,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
           assert.ok(projectHubRow?.name&&projectHubRow?.functions,delivery+'/'+profile+' '+row.language+' Project Hub manifest fallback populated');
-          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,31,delivery+'/'+profile+' '+row.language+' unique module ids');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,33,delivery+'/'+profile+' '+row.language+' unique module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');
