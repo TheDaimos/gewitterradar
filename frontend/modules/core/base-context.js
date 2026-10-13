@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.7",
+  version:"1.0.8",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -6366,9 +6366,42 @@ export function createBaseContext(rootModuleUrl){
           .filter(item => Number.isFinite(Number(item?.radiusKm)) && Number(item.radiusKm) > 0)
           .sort((a,b) => Number(b.radiusKm)-Number(a.radiusKm));
 
+        // V4.11.68: WebKit must never rasterize million-pixel radius circles.
+        // At a tight zoom these radius boundaries are far outside the viewport.
+        // Keep real geographical radius values untouched; only cap visual work.
+        const view = this._map.getSize();
+        const safeOuter = Math.min(8192,Math.max(2048,4*Math.max(1,Number(view?.x)||1,Number(view?.y)||1)));
         items.forEach((item,index) => {
           const outer = projectedRadiusPixels(this._map,reference,Number(item.radiusKm));
           if (!Number.isFinite(outer) || outer <= 1) return;
+          if (outer > safeOuter) {
+            // The danger-area's faint interior veil must remain visible when
+            // the ENTIRE viewport is inside the actual geographic danger ring.
+            // One viewport-sized rect replaces an enormous SVG radial circle.
+            if (item.kind === 'danger') {
+              const farthest = Math.max(
+                Math.hypot(center.x,center.y),
+                Math.hypot(center.x-Number(view.x),center.y),
+                Math.hypot(center.x,center.y-Number(view.y)),
+                Math.hypot(center.x-Number(view.x),center.y-Number(view.y))
+              );
+              if (Number.isFinite(farthest) && outer >= farthest) {
+                const strength = clamp(Number(data?.intensity)||0,AURA_INTENSITY_MIN,AURA_INTENSITY_MAX)/AURA_INTENSITY_MAX;
+                const veilAlpha=.110*Math.pow(strength,1.70)*.55;
+                if (veilAlpha>0) {
+                  const veil=document.createElementNS(SVG_NS,'rect');
+                  veil.setAttribute('class','radius-aura-svg-viewport-veil');
+                  veil.setAttribute('width',String(Math.max(1,Number(view.x)||1)));
+                  veil.setAttribute('height',String(Math.max(1,Number(view.y)||1)));
+                  veil.setAttribute('fill',item.color||'#ff4949');
+                  veil.setAttribute('fill-opacity',String(veilAlpha));
+                  veil.setAttribute('pointer-events','none');
+                  this._svg.appendChild(veil);
+                }
+              }
+            }
+            return;
+          }
 
           const gradientId = `${this._uid}-${item.kind || index}`;
           const gradient = document.createElementNS(SVG_NS,'radialGradient');
