@@ -6349,7 +6349,7 @@ export function createBaseContext(rootModuleUrl){
       _clearVisuals() {
         if (!this._svg || !this._defs) return;
         this._defs.replaceChildren();
-        [...this._svg.querySelectorAll('circle.radius-aura-svg-circle')].forEach(node => node.remove());
+        [...this._svg.querySelectorAll('circle.radius-aura-svg-circle,rect.radius-aura-svg-viewport-veil')].forEach(node => node.remove());
       },
 
       _redraw() {
