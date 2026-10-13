@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.24",
+  "version": "1.1.25",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -2087,7 +2087,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const referenceZoomKey='gr-reference-arrival-zoom';
       const referenceZoomChoices=[
         ['auto','Automatisch (Radius)'],
-        ...Array.from({length:11},(_,index)=>{
+        ...Array.from({length:14},(_,index)=>{
           const level=String(index+5);
           return [level,'Zoomstufe '+level];
         })

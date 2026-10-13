@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -876,7 +876,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       // 'auto' behaelt die bisherige Einpassung des Gewitterradius bei.
       let arrivalZoomSetting='8';
       try{arrivalZoomSetting=localStorage.getItem('gr-reference-arrival-zoom')??'8';}catch(_){}
-      if (/^(?:[5-9]|1[0-5])$/.test(arrivalZoomSetting) && typeof this._map.flyTo==='function') {
+      if (/^(?:[5-9]|1[0-8])$/.test(arrivalZoomSetting) && typeof this._map.flyTo==='function') {
         const minimum=finiteNumber(this._map.getMinZoom?.())??0;
         const maximum=finiteNumber(this._map.getMaxZoom?.())??18;
         const targetZoom=Math.min(maximum,Math.max(minimum,Number(arrivalZoomSetting)));

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.65",
-  "build": "V4.11.65-DEV-2026-10-13",
-  "runtimeRevision": "41165r1",
-  "moduleSetId": "E411-65A1",
+  "productVersion": "4.11.66",
+  "build": "V4.11.66-DEV-2026-10-13",
+  "runtimeRevision": "41166r1",
+  "moduleSetId": "E411-66A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.65 DEV – Einstellungen: Auswaehlbare Zielzoomstufe (Automatisch oder 5 bis 15) nach gespeicherten Standortwechseln, Standard Zoom 8. Bestehende Android-Kamerafahrt, Menues und 3-Finger-Gestenschutz unveraendert.",
+    "purpose": "V4.11.66 DEV – Einstellungen: Zielzoom bei Standortwechsel von 5 bis 18 plus Automatisch, Vorgabe 8. Vorhandene Android-Kamerafahrt und Gestenschutz bleiben unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41165r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41166r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.126",
+    "version": "1.2.127",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -131,7 +131,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.24",
+    "version": "1.1.25",
     "group": "Oberfläche",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -294,7 +294,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
