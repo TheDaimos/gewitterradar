@@ -6160,7 +6160,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           <div class="shell">
             <div class="topbar">
               <div class="brand">
-                <div class="eyebrow" id="source-status"><span class="live-dot initializing" id="source-status-dot" aria-hidden="true"></span> Blitzortung.org · Live</div>
+                <!-- V4.11.69: Datenquellenstatus unter Diagnose > Datenquellen & Verbindungen. -->
                 <h1 class="title"><span>Gewitterradar</span><span class="app-version-badge" id="app-version-badge" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open release history" title="Release history">V${CARD_DISPLAY_VERSION}</span></h1>
                 <div class="subtitle" id="radar-subtitle">
                   <span id="radar-subtitle-location">Blitzeinschläge rund um Home</span><span class="subtitle-separator">·</span><span id="radar-subtitle-window">letzte ${HISTORY_MINUTES} Minuten</span>
