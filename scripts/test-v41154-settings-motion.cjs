@@ -132,6 +132,50 @@ const server=http.createServer((req,res)=>{
             assert.ok(Math.abs(after.height-after.naturalHeight)<4,`${delivery}/${name}/${speed}/${direction}: target height is inconsistent with natural layout: ${after.height} vs ${after.naturalHeight}`);
           }
         }
+        // V4.11.71: Datenquellen werden erst nach dem Navigationseffekt befuellt.
+        // Ausschliesslich synthetische Testwerte, keine echten Standorte/Entitaeten.
+        await page.evaluate(()=>{
+          const root=window.aboutCard.shadowRoot;
+          const section=root.getElementById('settings-data-sources-section');
+          const button=[...root.querySelectorAll('.gr-horizontal-root > .gr-horizontal-item')]
+            .find(item=>item.textContent.includes('Datenquellen'));
+          if(!section||section.dataset.grDynamicHeight!=='true'||!button)
+            throw Error('Dynamischer Datenquellenbereich fehlt');
+          button.click();
+        });
+        await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'),{timeout:5000});
+        const dynamicResult=await page.evaluate(()=>{
+          const root=window.aboutCard.shadowRoot;
+          const section=root.getElementById('settings-data-sources-section');
+          const host=section.querySelector('#data-sources-content');
+          if(!host)throw Error('Datenquellen-Inhalt nicht vorhanden');
+          const fragment=document.createDocumentFragment();
+          for(let i=0;i<42;i++){
+            const element=document.createElement('div');
+            element.style.minHeight='48px';
+            element.textContent='Synthetischer Diagnoseeintrag '+i;
+            fragment.append(element);
+          }
+          host.replaceChildren(fragment);
+          const dialog=root.getElementById('settings-dialog');
+          const body=dialog.querySelector('.settings-body');
+          const metrics={
+            selected:section.classList.contains('gr-horizontal-current'),
+            inlineHeight:dialog.style.height,
+            height:dialog.getBoundingClientRect().height,
+            scrollable:body.scrollHeight>body.clientHeight+300
+          };
+          body.scrollTop=body.scrollHeight;
+          metrics.canReachEnd=body.scrollTop>200;
+          host.replaceChildren();
+          return metrics;
+        });
+        assert.equal(dynamicResult.selected,true,delivery+'/'+name+' Datenquellen nicht aktiv');
+        assert.equal(dynamicResult.inlineHeight,'',delivery+'/'+name+' dynamische Dialoghoehe bleibt gesperrt');
+        assert.ok(dynamicResult.height>=500,delivery+'/'+name+' Dialog zu klein: '+dynamicResult.height);
+        assert.ok(dynamicResult.scrollable&&dynamicResult.canReachEnd,delivery+'/'+name+' Diagnoseende nicht erreichbar');
+        await page.evaluate(()=>window.aboutCard.shadowRoot.getElementById('gr-horizontal-back').click());
+        await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'),{timeout:5000});
         // Both menus are under section 5 and use the existing dot-listbox style.
         const menuModes=await page.evaluate(()=>{
           const root=window.aboutCard.shadowRoot;
