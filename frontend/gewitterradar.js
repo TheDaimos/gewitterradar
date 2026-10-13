@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41168r1";
-/* Gewitterradar Card V4.11.68 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=41169r1";
+/* Gewitterradar Card V4.11.69 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -25,7 +25,7 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','41168r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','41169r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','41114r1');
@@ -46,7 +46,7 @@ try {
   const dataSourceDiagnostics = await gewitterradarImport('./modules/diagnostics/data-sources.js');
   const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41140r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
-  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41168r1');
+  const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41169r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
   const clustersRecent = await gewitterradarImport('./modules/map/clusters-recent.js','41166r1');
   const render = await gewitterradarImport('./modules/ui/render.js','41121r1');
