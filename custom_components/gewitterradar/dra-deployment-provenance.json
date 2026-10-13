@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.71 DEV – Dynamische Datenquellenansicht im modernen Menue waechst nach Ende der Horizontalanimation. Kein Einfluss auf Karte, Tracker oder Datenquellen-Backend.",
+    "purpose": "V4.11.71 DEV – Dynamische Datenquellenansicht im modernen Menue waechst nach Ende der Horizontalanimation. Kein Einfluss auf Karte, Tracker oder Datenquellen-Backend. Einstellungen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
