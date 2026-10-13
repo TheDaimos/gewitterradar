@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.69",
-  "build": "V4.11.69-DEV-2026-10-13",
-  "runtimeRevision": "41169r1",
-  "moduleSetId": "E411-69A1",
+  "productVersion": "4.11.70",
+  "build": "V4.11.70-DEV-2026-10-13",
+  "runtimeRevision": "41170r1",
+  "moduleSetId": "E411-70A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.69 DEV – Datenquellen & Verbindungen mit separaten Blitzortung-Standorten, zugeordneten Trackern, lesbaren Einstellungen und Diagnoseexport; native HA-WebSocket-Pruefung (Admin). Kartendarstellung und Leistungsschutz aus V4.11.68 unveraendert. Nach Integration-Update HA-Neustart notwendig.",
+    "purpose": "V4.11.70 DEV – Datenquellen & Verbindungen mit separaten Blitzortung-Standorten, zugeordneten Trackern, lesbaren Einstellungen und Diagnoseexport; native HA-WebSocket-Pruefung (Admin). Kartendarstellung und Leistungsschutz aus V4.11.68 unveraendert. Nach Integration-Update HA-Neustart notwendig.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

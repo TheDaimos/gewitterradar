@@ -1,6 +1,6 @@
 import {defineModule} from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.data-sources",version:"0.1.0",group:"Datenquellen & Verbindungen",
+  id:"diagnostics.data-sources",version:"0.1.1",group:"Datenquellen & Verbindungen",
   function:"Datenquellen – Übersicht und Diagnose",
   subfunctions:["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
   file:"modules/diagnostics/data-sources.js"
@@ -137,13 +137,13 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
     catch(_error){const textarea=document.createElement("textarea");textarea.value=content;textarea.style.position="fixed";textarea.style.opacity="0";document.body.append(textarea);textarea.select();document.execCommand("copy");textarea.remove();}
     this._renderDataSourcesView();
   },
-  async _downloadDataSourcesDiagnostics(){
-    await this._refreshBlitzortungSources?.();
+  _downloadDataSourcesDiagnostics(){
+    // Gespeicherten Diagnose-Snapshot im Klickereignis sichern. Fuer neue Messungen zuerst Aktualisieren waehlen.
     const content=JSON.stringify(this._dataSourcesDiagnosticPayload(),null,2);
     const blob=new Blob([content],{type:"application/json;charset=utf-8"});
     const url=URL.createObjectURL(blob),anchor=document.createElement("a");
     anchor.href=url;anchor.download="gewitterradar-data-sources-"+new Date().toISOString().replace(/[:.]/g,"-")+".json";
-    document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
     this._renderDataSourcesView();
   }
 }));

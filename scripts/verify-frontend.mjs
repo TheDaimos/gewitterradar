@@ -85,7 +85,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.8"',
+  'version:"1.3.9"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -176,7 +176,7 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.69"','displayVersion:"V4.11.69 DEV"','runtimeRevision:"41169r1"','moduleSetId:"E411-69A1"']){
+  for(const marker of ['version:"4.11.70"','displayVersion:"V4.11.70 DEV"','runtimeRevision:"41170r1"','moduleSetId:"E411-70A1"']){
     if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;

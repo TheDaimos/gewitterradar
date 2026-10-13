@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.8",
+  version:"1.3.9",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Fenster- und Ebenenübersicht","Diagnose kopieren","JSON herunterladen"],
@@ -1098,8 +1098,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       }
     },
 
-    async _downloadModuleDiagnostics(){
-      await this._refreshBlitzortungSources?.();
+    _downloadModuleDiagnostics(){
+      // Direkt im Klickereignis herunterladen: WebSocket-Abfragen wuerden die Benutzeraktivierung verlieren.
       const payload=JSON.stringify(this._moduleDiagnosticsPayload(),null,2);
       const blob=new Blob([payload],{type:"application/json;charset=utf-8"});
       const url=URL.createObjectURL(blob);
@@ -1107,7 +1107,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       link.href=url;
       link.download=`gewitterradar-module-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),0);
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
     },
 
     async _copyModuleDeviationDiagnostics(){
@@ -1129,7 +1129,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       link.href=url;
       link.download=`gewitterradar-module-deviations-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),0);
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
     }
   };
 });

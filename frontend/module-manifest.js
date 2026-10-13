@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41169r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41170r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.130",
+    "version": "1.2.131",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -209,7 +209,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.8",
+    "version": "1.3.9",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -224,7 +224,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.data-sources",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "group": "Datenquellen & Verbindungen",
     "function": "Datenquellen – Übersicht und Diagnose",
     "subfunctions": ["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
