@@ -1204,11 +1204,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           });
           return;
         }
+        if(handoff?.phase==='flying'){
+          this._mapDiagnosticLog?.('geo.reference.handoff.duplicate-suppressed',{flightId:handoff.id,lat:latitude,lon:longitude});
+          return;
+        }
         if(handoff){
           handoff.phase='flying';
           handoff.until=Date.now()+5000;
         }
         requestAnimationFrame(() => {
+          if(handoff&&this._referenceFlightHandoff!==handoff)return;
           this._mapDiagnosticLog?.('geo.reference.handoff.flight',{
             flightId:handoff?.id??null,lat:latitude,lon:longitude
           });
@@ -1620,9 +1625,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const savedButton = event.target?.closest?.('.location-saved-option');
         if (savedButton) {
           event.preventDefault(); event.stopPropagation();
+          if(this._v407SavedPlaceUseBusy)return;
           const uid = String(savedButton.dataset.savedPlaceUid || '');
           const place = (Array.isArray(this._v407SavedPlaces) ? this._v407SavedPlaces : []).find((item) => String(item.uid || '') === uid);
           if (!place) return;
+          this._v407SavedPlaceUseBusy=true;
+          savedButton.disabled=true;
           try {
             const ok = await v407UseCandidate(place);
             if (!ok) throw new Error(v407Text().backendMissing);
@@ -1630,6 +1638,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             v407FocusCandidate(place);
           } catch (error) {
             console.warn('[Gewitterradar V4.07] Gespeicherter Ort konnte nicht verwendet werden.',error);
+          } finally {
+            this._v407SavedPlaceUseBusy=false;
+            if(savedButton.isConnected)savedButton.disabled=false;
           }
           return;
         }
