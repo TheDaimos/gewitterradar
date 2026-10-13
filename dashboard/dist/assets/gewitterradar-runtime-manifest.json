@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.70",
-  "build": "V4.11.70-DEV-2026-10-13",
-  "runtimeRevision": "41170r1",
-  "moduleSetId": "E411-70A1",
+  "productVersion": "4.11.71",
+  "build": "V4.11.71-DEV-2026-10-13",
+  "runtimeRevision": "41171r1",
+  "moduleSetId": "E411-71A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.131"
+      "version": "1.2.132"
     },
     {
       "id": "core.base-context",
@@ -47,7 +47,7 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.26"
+      "version": "1.1.27"
     },
     {
       "id": "ui.i18n-settings",
@@ -75,7 +75,7 @@
     },
     {
       "id": "diagnostics.data-sources",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "id": "sources.blitzortung",
@@ -138,5 +138,5 @@
       "version": "1.2.1"
     }
   ],
-  "displayVersion": "V4.11.70 DEV"
+  "displayVersion": "V4.11.71 DEV"
 }

@@ -1,6 +1,6 @@
 import {defineModule} from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.data-sources",version:"0.1.1",group:"Datenquellen & Verbindungen",
+  id:"diagnostics.data-sources",version:"0.1.2",group:"Datenquellen & Verbindungen",
   function:"Datenquellen – Übersicht und Diagnose",
   subfunctions:["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
   file:"modules/diagnostics/data-sources.js"
@@ -26,6 +26,8 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
     if(found)return found;
     const section=document.createElement("details");
     section.id="settings-data-sources-section";
+    // Asynchrone HA-Daten machen die natuerliche Hoehe variabel.
+    section.dataset.grDynamicHeight="true";
     section.className="settings-section settings-collapsible";
     section.innerHTML=`
       <summary class="settings-section-head"><div><div class="settings-section-title">Datenquellen &amp; Verbindungen</div>

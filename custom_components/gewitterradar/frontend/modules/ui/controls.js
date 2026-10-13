@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.26",
+  "version": "1.1.27",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1872,7 +1872,13 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           settingsBackdrop?.classList.remove('gr-horizontal-motion-active');
           if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
           else navBody.style.removeProperty('overflow-y');
-          if(!settingsBackdrop?.classList.contains('open'))settingsDialog.style.removeProperty('height');
+          // Dynamisch befuellte Diagnose darf nach dem horizontalen Wechsel
+          // nicht auf der vorher gemessenen Hoehe eingefroren bleiben.
+          const dynamicDetail=settingsBackdrop?.classList.contains('gr-horizontal-detail') &&
+            navSections.some(section=>section.classList.contains('gr-horizontal-current') &&
+              section.dataset.grDynamicHeight==='true');
+          if(!settingsBackdrop?.classList.contains('open') || dynamicDetail)
+            settingsDialog.style.removeProperty('height');
           navAnimating=false;
         };
         const finish=()=>{
