@@ -33,6 +33,26 @@ const count=draws.length;
 const crossing=drawVerifiedRasterMosaicTile(context,tile,[{...regional,coverage:dateline}]);
 assert.equal(crossing.drawn[0].rectangles,2);
 assert.equal(draws.length,count+2,"antimeridian draws two separate rectangles");
+const native512={...regional,render:{
+  tile_size:512,min_zoom:0,max_zoom:15,opacity:0.4
+}};
+const nativeDraws=[],opacitySeen=[];
+const ctxNative={
+  globalAlpha:1,
+  drawImage:(...args)=>{nativeDraws.push(args);opacitySeen.push(ctxNative.globalAlpha);}
+};
+const nativeResult=drawVerifiedRasterMosaicTile(ctxNative,tile,[native512],256);
+assert.equal(nativeResult.drawn.length,1);
+assert.equal(nativeDraws.length,1);
+assert.ok(nativeDraws[0][3]>nativeDraws[0][7]*1.99,
+ "512 native pixel coordinates must be scaled to 256 output tile");
+assert.equal(opacitySeen[0],0.4);
+assert.equal(ctxNative.globalAlpha,1,"source alpha must not leak into other providers");
+const zoomRejected=drawVerifiedRasterMosaicTile(ctxNative,{x:0,y:0,z:0},[
+  {...native512,render:{...native512.render,min_zoom:4}}
+]);
+assert.equal(zoomRejected.drawn.length,0);
+assert.equal(zoomRejected.rejected[0].reason,"outside_zoom_coverage");
 assert.throws(()=>drawVerifiedRasterMosaicTile(context,tile,Array(5).fill(base)),RangeError);
 assert.throws(()=>drawVerifiedRasterMosaicTile(context,tile,[base],2048),RangeError);
 const nothing=drawVerifiedRasterMosaicTile(context,{x:0,y:-1,z:1},[regional]);
