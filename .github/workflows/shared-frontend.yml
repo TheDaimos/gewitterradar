@@ -37,6 +37,9 @@ jobs:
       - name: V4.11 WeatherRouter Consumer V1 contract
         run: node scripts/test-v411-weather-router.mjs
 
+      - name: P7-010 provider-neutral Gewitterradar intent adapter
+        run: node scripts/test-p7-010-intent-contract.mjs
+
       - name: V4.11.76 synthetic precipitation raster and performance envelope
         run: node scripts/test-v41175-soft-raster.mjs
 
