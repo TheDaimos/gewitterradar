@@ -23,6 +23,13 @@ assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_ve
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),tile_url:"https://example.invalid?access_token=x"}]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),times:{...mk("x").times,valid_at:null}}]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[mk("x"),mk("x")]}));
+assert.equal(validateRasterMosaicV2({...one,layers:[
+  {...mk("reflectivity"),semantics:{...mk("x").semantics,
+    quantity:"radar_reflectivity",unit:null}}
+]}).layers[0].semantics.unit,null);
+assert.throws(()=>validateRasterMosaicV2({...one,layers:[
+  {...mk("badunit"),semantics:{...mk("x").semantics,unit:17}}
+]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_scope:"imaginary"}]}));
 const empty={...BASE,status:"unavailable",layers:[]};
 assert.equal(validateRasterMosaicV2(empty),empty);
