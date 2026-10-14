@@ -41,8 +41,11 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
       ||!bounds(layer.coverage)||!safeURL(layer.tile_url)
       ||typeof layer.attribution!=="string"||!layer.attribution
       ||!layer.legend||typeof layer.legend!=="object"
-      ||!layer.semantics||!["quantity","unit","measurement_method","observation_kind"]
+      ||!layer.semantics||!["quantity","measurement_method","observation_kind"]
           .every(k=>typeof layer.semantics[k]==="string"&&layer.semantics[k])
+      ||!("unit" in layer.semantics)
+      ||!(layer.semantics.unit===null||(typeof layer.semantics.unit==="string"
+          &&layer.semantics.unit.length>0))
       ||!layer.times||!time(layer.times.valid_at)
       ||!time(layer.times.retrieved_at)
       ||!number(layer.times.reference_delta_seconds)
