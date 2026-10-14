@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.75",
-  "build": "V4.11.75-DEV-2026-10-14",
-  "runtimeRevision": "41175r1",
-  "moduleSetId": "E411-75A1",
+  "productVersion": "4.11.76",
+  "build": "V4.11.76-DEV-2026-10-14",
+  "runtimeRevision": "41176r1",
+  "moduleSetId": "E411-76A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter-Darstellung: V4.11.75 DEV – Weich folgt ab Zoom 9 der nativen Kachel-Uebervergroesserung bei unveraendertem Maximalfilter; Farbkontrast leicht angepasst. Praezise, Ausgewogen, Auto und Radarkachel-Abfragen unveraendert. Leistungsreference V4.11.68 bewahren.",
+    "purpose": "WeatherRouter-Darstellung: V4.11.76 DEV – Weich folgt ab Zoom 9 der nativen Kachel-Uebervergroesserung bei unveraendertem Maximalfilter; Farbkontrast leicht angepasst. Praezise, Ausgewogen, Auto und Radarkachel-Abfragen unveraendert. Leistungsreference V4.11.68 bewahren.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
