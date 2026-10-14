@@ -82,11 +82,18 @@ export async function drawRasterMosaicTileFromUrls({
    try{
      let timer=null;
      let image;
+     const controller=typeof AbortController==="function"
+       ?new AbortController():null;
      try{
        image=await Promise.race([
-         Promise.resolve().then(()=>loadImage(url,layer)),
+         Promise.resolve().then(()=>loadImage(url,layer,{
+           signal:controller?.signal
+         })),
          new Promise((_resolve,reject)=>{
-           timer=setTimeout(()=>reject(new Error("raster_image_timeout")),timeoutMs);
+           timer=setTimeout(()=>{
+             controller?.abort();
+             reject(new Error("raster_image_timeout"));
+           },timeoutMs);
          })
        ]);
      }finally{
