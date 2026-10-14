@@ -97,10 +97,10 @@ assert.equal(stalled.drawn.length,0);
 assert.equal(stalled.rejected[0].reason,"image_request_failed");
 assert.equal(stallBudget.active,0,"timed-out request must release concurrency slot");
 assert.equal(stallBudget.used,1,"network attempt must still count toward budget");
-assert.throws(()=>drawRasterMosaicTileFromUrls({
+await assert.rejects(drawRasterMosaicTileFromUrls({
  context:{drawImage:()=>{}},tile,layers:[wms],
  budget:new RasterTileRequestBudget(1),timeoutMs:999999,loadImage
-}),/invalid/i);
+}),/Invalid/i);
 
 const wrapped=await drawRasterMosaicTileFromUrls({
  context:{drawImage:()=>{}},tile:{x:2,y:0,z:1},
