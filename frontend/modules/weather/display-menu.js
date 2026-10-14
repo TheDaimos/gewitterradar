@@ -304,8 +304,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     }
     state.zoomHandler=()=>{
       this._weatherDisplaySyncLegendBadge();
-      // Auch Weich muss die Glaettung nach einem Zoomwechsel neu berechnen.
-      if(!["auto","soft"].includes(this._weatherDisplayStyle("precipitation")))return;
+      if(this._weatherDisplayStyle("precipitation")!=="auto")return;
       this._weatherDisplayRefreshRenderedLayers();
     };
     state.zoomMap=map;
