@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.13",
+  version:"0.4.14",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -11,7 +11,6 @@ export const MODULE_META=Object.freeze({
 });
 
 const STORAGE_KEY="gewitterradar:weather-display:v1";
-let weatherDisplaySoftFilterSerial=0;
 const DEFAULT_POSITION=Object.freeze({x:.72,y:.16});
 const DEFAULT_EYE_POSITION=Object.freeze({x:0,y:1});
 const DEFAULT_STATE=Object.freeze({
@@ -79,15 +78,7 @@ export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
   // Nur Weich: leichte Kontrastreduktion gegen verbliebene Stufengrenzen.
   // Niederschlagskerne und Farbton/Saettigung bleiben weitgehend erhalten.
   const contrast=Math.max(.93,base.contrast-.012*Math.min(extraZoom,2));
-  // Nur im Nahzoom und nur bei Quellen, die noch nicht am alten Budget
-  // liegen: schwache, groessere Strukturrekonstruktion zusaetzlich zum
-  // bisherigen Weich-Profil. Kein zweiter Leaflet-Layer oder Timer.
-  const detailBlur=blur;
-  const broadBlur=Math.min(64,blur*(1.28+.025*Math.min(extraZoom,2)));
-  const broadWeight=Math.min(.32,.16*extraZoom);
-  const multiscale=extraZoom>0&&base.blur<48&&broadBlur>detailBlur+1
-    ? {detailBlur,broadBlur,broadWeight} : null;
-  return multiscale?{...base,blur,contrast,multiscale}:{...base,blur,contrast};
+  return {...base,blur,contrast};
 };
 const bool=(value,fallback)=>typeof value==="boolean"?value:fallback;
 const cloneDefault=()=>({
@@ -281,59 +272,6 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     return this._weatherDisplayRasterTuning(kind).blur;
   },
 
-  _weatherDisplayReleaseSoftFilter(pane){
-    const svg=pane?.__grSoftFilterSvg;
-    if(svg?.remove)svg.remove();
-    if(pane){delete pane.__grSoftFilterSvg;delete pane.__grSoftFilterId;}
-  },
-
-  _weatherDisplayEnsureSoftFilter(pane,tuning){
-    const settings=tuning?.multiscale;
-    if(!settings||typeof document==="undefined"||typeof CSS==="undefined"
-      ||!CSS.supports?.("filter","url(#gr-soft-filter-probe)"))return "";
-    let svg=pane.__grSoftFilterSvg;
-    if(!svg){
-      const root=pane.getRootNode?.();
-      const host=root?.appendChild?root:document.body;
-      if(!host?.appendChild)return "";
-      const ns="http://www.w3.org/2000/svg";
-      const make=name=>document.createElementNS(ns,name);
-      svg=make("svg");
-      svg.setAttribute("width","0");svg.setAttribute("height","0");
-      svg.setAttribute("aria-hidden","true");
-      svg.style.cssText="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none";
-      const defs=make("defs"),filter=make("filter");
-      const id="gr-weather-soft-"+(++weatherDisplaySoftFilterSerial);
-      filter.id=id;
-      filter.setAttribute("x","-25%");filter.setAttribute("y","-25%");
-      filter.setAttribute("width","150%");filter.setAttribute("height","150%");
-      filter.setAttribute("color-interpolation-filters","sRGB");
-      const detail=make("feGaussianBlur");
-      detail.setAttribute("in","SourceGraphic");
-      detail.setAttribute("result","detail");
-      const broad=make("feGaussianBlur");
-      broad.setAttribute("in","SourceGraphic");
-      broad.setAttribute("result","broad");
-      const mix=make("feComposite");
-      mix.setAttribute("in","detail");mix.setAttribute("in2","broad");
-      mix.setAttribute("operator","arithmetic");
-      mix.setAttribute("k1","0");mix.setAttribute("k4","0");
-      filter.append(detail,broad,mix);defs.append(filter);svg.append(defs);
-      try{host.appendChild(svg);}catch(_error){return "";}
-      pane.__grSoftFilterSvg=svg;
-      pane.__grSoftFilterId=id;
-    }
-    const filter=svg.querySelector("filter");
-    if(!filter)return "";
-    const [detail,broad,mix]=filter.children;
-    if(!detail||!broad||!mix)return "";
-    detail.setAttribute("stdDeviation",settings.detailBlur.toFixed(2));
-    broad.setAttribute("stdDeviation",settings.broadBlur.toFixed(2));
-    mix.setAttribute("k2",(1-settings.broadWeight).toFixed(3));
-    mix.setAttribute("k3",settings.broadWeight.toFixed(3));
-    return "url(#"+pane.__grSoftFilterId+")";
-  },
-
   _weatherDisplayApplyRasterPaneStyle(kind,pane){
     if(!pane?.style)return;
     const style=this._weatherDisplayStyle(kind);
@@ -350,19 +288,10 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       delete pane.dataset.weatherDisplayAutoBlur;
     }
     pane.style.willChange=style==="precise"?"auto":"filter";
-    const mixFilter=style==="soft"?this._weatherDisplayEnsureSoftFilter(pane,tuning):"";
-    if(!mixFilter)this._weatherDisplayReleaseSoftFilter(pane);
     if(style==="precise"){
       pane.style.filter="none";
     }else{
-      const blur=mixFilter||"blur("+tuning.blur.toFixed(2)+"px)";
-      pane.style.filter=blur+" saturate("+tuning.saturate.toFixed(3)+") contrast("+tuning.contrast.toFixed(3)+") brightness("+tuning.brightness.toFixed(3)+")";
-      // Nicht jeder Browser akzeptiert SVG-Filter auf HTML-Leaflet-Panes:
-      // In diesem Fall sofort auf das abgenommene Einzelprofil zurueck.
-      if(mixFilter&&!pane.style.filter.includes("url(")){
-        this._weatherDisplayReleaseSoftFilter(pane);
-        pane.style.filter="blur("+tuning.blur.toFixed(2)+"px) saturate("+tuning.saturate.toFixed(3)+") contrast("+tuning.contrast.toFixed(3)+") brightness("+tuning.brightness.toFixed(3)+")";
-      }
+      pane.style.filter="blur("+tuning.blur.toFixed(2)+"px) saturate("+tuning.saturate.toFixed(3)+") contrast("+tuning.contrast.toFixed(3)+") brightness("+tuning.brightness.toFixed(3)+")";
     }
   },
 
@@ -824,8 +753,6 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   },
 
   _teardownWeatherDisplay(){
-    const pane=this._map?.getPane?.("gr-weather-radar");
-    this._weatherDisplayReleaseSoftFilter(pane);
     const state=this.__weatherDisplayState;if(!state)return;
     state.generation+=1;state.probing=false;
     this._weatherDisplayCancelDrag();
