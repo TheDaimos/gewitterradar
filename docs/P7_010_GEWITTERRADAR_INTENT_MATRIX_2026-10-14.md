@@ -106,3 +106,22 @@ Jede Zuordnung enthält in der begleitenden JSON-Matrix zusätzlich Kontext, fac
 **Zuerst** die statische Prüfdatei gegen die reale WR-Capability-Map und das 33-Modul-Manifest prüfen; danach die Migration in einem separaten, vom aktuellen Gewitterradar-DRA-Stand ausgehenden Entwicklungszweig planen. Ein manueller HA-Test ist in diesem Inventarschritt **nicht** freigegeben. Bei Freigabe werden Capability-Nummer aus der aktuellen UI, technische ID, Resource, Profil, Kontext und zwei getrennt kopierbare Koordinaten angegeben.
 
 **P7-010 bleibt ACTIVE. P7-020 und P7-030 bleiben OPEN.**
+
+
+## Umsetzungsplan nach der Matrixabnahme (kein aktueller DRA-Auftrag)
+
+Der aktuelle operative Ausgangspunkt ist **V4.11.74 DEV / 33 Module**; der allgemeine Entwicklungszweig lag bei der Inventur noch auf V4.11.68. Die P7-010-Planung arbeitet deshalb in einem von `deploy/dev` abgezweigten, **isolierten Prüfzweig**, ohne die eigentlichen Runtime-Dateien zu ändern.
+
+**Fünf geordnete Migrationspakete**, sofern die spätere Implementierung freigegeben und fachlich erforderlich ist:
+
+1. **Vertrags-/Renderer-Grundlage:** bestehende Niederschlagsanbindung bewahren; für neue Resource-Typen sichtbare Zustände `ready`, `unavailable`, `degraded`, `profile_filtered` und Timeout/OFFLINE sauber trennen. Keine zweite Providerwahl im Consumer.
+2. **Amtliche Gefahren:** `weather.warning.official` mit differenzierten `event_filter.hazard_types` als `hazard_feed` aufnehmen. Provenienz/Geometrie/Schweregrad bleiben erhalten; keine Umdeutung lokaler Marker.
+3. **Zusätzliche Blitzbeobachtung:** `weather.lightning.observed.events` (`event_feed`) und `weather.lightning.observed.density` (`raster_tile`) nur bewusst zuschaltbar, mit eigener Legende und ohne automatische Vermischung mit der lokalen Blitzaufnahme. Die vorliegende Profilvorlage schließt zusätzliche Blitzfamilien zunächst aus.
+4. **Weitere Meteo-Werte und Raster:** Gewitterzellen, Bewölkung, Temperatur, Wind, Sicht usw. gemäß JSON-Matrix, aber nur mit eigenem geeigneten Renderer bzw. Punktausgabe und stets passenden Coverage-/Zeit-/Ressourcenverträgen.
+5. **Experten-Spezialdaten:** optische Satellitenbilder und `data_file`-Produkte erst mit spezifizierten Adaptern und klarer Kennzeichnung, kein impliziter Fallback.
+
+**Testbündel statt Testflut:** Zuerst alle notwendigen Code- und Schnittstellenänderungen gebündelt statisch prüfen. Danach in **einem einzigen DRA-Update** installieren und nur repräsentative Pflicht-Realtests pro neu eingeführter Ressourcenklasse durchführen. Bereits bestandene Niederschlags-/Profil-/Katalogtests nicht wiederholen. Zu jedem tatsächlichen HA-Test UI-Capability-Nummer, deutschen Namen, Unterauswahl, technische ID, Profil, Kontext, Ressource sowie getrennt kopierbare Latitude/Longitude vorgeben. Vor Implementierung keine fiktiven Prüfnummern oder angebliche Runtime-Pässe.
+
+**Modulsatz vollständigerfasst:** `docs/p7_010_gr_module_inventory.v1.json` enthält alle 33 registrierten Frontend-Module mit konkreter Rolle und Versionsstand; lokale Module bleiben ohne neue WeatherRouter-Abhängigkeit. Keine privaten Nutzerstandorte oder Exporte werden hier eingefügt.
+
+**P7-010 bleibt ACTIVE**, solange der verbindliche Migrations- und Abnahmepfad nicht formell geschlossen ist. P7-020/P7-030 werden nicht vorgezogen.

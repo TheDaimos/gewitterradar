@@ -8,6 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "docs/p7_010_gewitterradar_intent_matrix.v1.json"
 MANIFEST = ROOT / "frontend/module-manifest.js"
+
+INVENTORY = ROOT / "docs/p7_010_gr_module_inventory.v1.json"
 VERSION = ROOT / "frontend/version.js"
 CONSUMER = ROOT / "frontend/modules/weather/consumer-client.js"
 PRECIPITATION = ROOT / "frontend/modules/weather/precipitation-layer.js"
@@ -72,3 +74,26 @@ def test_routing_policy_does_not_absorb_local_features():
     assert not policy["consumer_scoring"]
     assert not policy["consumer_auto_coverage_decision"]
     assert matrix["phase_status"] == "ACTIVE"
+
+
+def test_complete_33_module_function_inventory():
+    snapshot = json.loads(INVENTORY.read_text(encoding="utf-8"))
+    current = _actual_modules()
+    assert snapshot["schema"] == "gewitterradar.p7_010.module_inventory.v1"
+    assert snapshot["source_manifest_sha"] == _blob_sha(MANIFEST.read_bytes())
+    assert len(snapshot["modules"]) == len(current) == 33
+    by_id = {item["id"]: item for item in snapshot["modules"]}
+    assert len(by_id) == 33
+    for module in current:
+        row = by_id[module["id"]]
+        assert row["file"] == module["file"]
+        assert row["version"] == module["version"]
+        assert row["group"] == module["group"]
+        assert row["weather_router_dependency"] == module["id"].startswith("weather.")
+    assert sum(x["weather_router_dependency"] for x in snapshot["modules"]) == 5
+    assert len([x for x in snapshot["modules"] if x["role"] == "implemented_layer"]) == 1
+    assert len([x for x in snapshot["modules"] if x["role"] == "contract_client"]) == 1
+    assert set(x["role"] for x in snapshot["modules"]) <= {
+        "contract_client", "implemented_layer", "capability_browser",
+        "view_only", "local_source", "retain_local",
+    }

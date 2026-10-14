@@ -1,0 +1,274 @@
+{
+  "schema": "gewitterradar.p7_010.module_inventory.v1",
+  "date": "2026-10-14",
+  "source_repo": "TheDaimos/gewitterradar",
+  "source_branch_at_snapshot": "deploy/dev",
+  "source_manifest_sha": "effbfec3ef5bcbe92c87a1d401b1fb4b1e576576",
+  "source_version": "4.11.74 DEV",
+  "modules": [
+    {
+      "id": "core.manifest",
+      "file": "module-manifest.js",
+      "version": "1.2.135",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.base-context",
+      "file": "modules/core/base-context.js",
+      "version": "1.0.8",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.registry",
+      "file": "modules/core/registry.js",
+      "version": "1.0.2",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.runtime",
+      "file": "modules/core/runtime.js",
+      "version": "1.0.2",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.card-lifecycle",
+      "file": "modules/core/card-lifecycle.js",
+      "version": "1.0.6",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "fullscreen.map-display",
+      "file": "modules/fullscreen/map-display.js",
+      "version": "1.0.32",
+      "group": "Vollbild",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.scroll-guard",
+      "file": "modules/ui/scroll-guard.js",
+      "version": "1.0.1",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.skeleton",
+      "file": "modules/ui/skeleton.js",
+      "version": "1.1.23",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.project-hub",
+      "file": "modules/ui/project-hub.js",
+      "version": "1.1.16",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "instruments.compass-scale",
+      "file": "modules/instruments/compass-scale.js",
+      "version": "1.0.1",
+      "group": "Instrumente",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.controls",
+      "file": "modules/ui/controls.js",
+      "version": "1.1.27",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.i18n-settings",
+      "file": "modules/ui/i18n-settings.js",
+      "version": "1.3.9",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.update-watch",
+      "file": "modules/core/update-watch.js",
+      "version": "1.0.0",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "core.source-status",
+      "file": "modules/core/source-status.js",
+      "version": "1.0.1",
+      "group": "Kern",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "instruments.compass-selector",
+      "file": "modules/instruments/compass-selector.js",
+      "version": "1.1.0",
+      "group": "Instrumente",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "instruments.medallion-designs",
+      "file": "modules/instruments/medallion-designs.js",
+      "version": "1.3.1",
+      "group": "Instrumente",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "diagnostics.module-view",
+      "file": "modules/diagnostics/module-view.js",
+      "version": "1.3.9",
+      "group": "Diagnose",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "diagnostics.data-sources",
+      "file": "modules/diagnostics/data-sources.js",
+      "version": "0.1.3",
+      "group": "Datenquellen & Verbindungen",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "sources.blitzortung",
+      "file": "modules/sources/blitzortung.js",
+      "version": "0.1.0",
+      "group": "Datenquellen & Verbindungen",
+      "role": "local_source",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "diagnostics.map",
+      "file": "modules/diagnostics/map-diagnostics.js",
+      "version": "1.0.5",
+      "group": "Diagnose",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "diagnostics.cockpit",
+      "file": "modules/diagnostics/cockpit.js",
+      "version": "1.5.1",
+      "group": "Diagnose",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "instruments.compass-design",
+      "file": "modules/instruments/compass-design.js",
+      "version": "1.0.1",
+      "group": "Instrumente",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "location.radii-map",
+      "file": "modules/location/radii-map.js",
+      "version": "1.0.23",
+      "group": "Standort & Radien",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "map.strikes-warnings",
+      "file": "modules/map/strikes-warnings.js",
+      "version": "1.0.1",
+      "group": "Karte",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "map.clusters-recent",
+      "file": "modules/map/clusters-recent.js",
+      "version": "1.0.8",
+      "group": "Karte",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "ui.render",
+      "file": "modules/ui/render.js",
+      "version": "1.0.3",
+      "group": "Oberfläche",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "instruments.compass",
+      "file": "modules/instruments/compass.js",
+      "version": "1.0.1",
+      "group": "Instrumente",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    },
+    {
+      "id": "weather.consumer-client",
+      "file": "modules/weather/consumer-client.js",
+      "version": "1.2.1",
+      "group": "Weather-Engine",
+      "role": "contract_client",
+      "weather_router_dependency": true
+    },
+    {
+      "id": "weather.precipitation-layer",
+      "file": "modules/weather/precipitation-layer.js",
+      "version": "1.3.5",
+      "group": "Weather-Engine",
+      "role": "implemented_layer",
+      "weather_router_dependency": true
+    },
+    {
+      "id": "weather.layer-menu",
+      "file": "modules/weather/layer-menu.js",
+      "version": "1.1.4",
+      "group": "Weather-Engine",
+      "role": "capability_browser",
+      "weather_router_dependency": true
+    },
+    {
+      "id": "weather.display-menu",
+      "file": "modules/weather/display-menu.js",
+      "version": "0.4.11",
+      "group": "Weather-Engine",
+      "role": "view_only",
+      "weather_router_dependency": true
+    },
+    {
+      "id": "weather.legend-overlay",
+      "file": "modules/weather/legend-overlay.js",
+      "version": "0.1.1",
+      "group": "Weather-Engine",
+      "role": "view_only",
+      "weather_router_dependency": true
+    },
+    {
+      "id": "history.chart",
+      "file": "modules/history/chart.js",
+      "version": "1.0.1",
+      "group": "Verlauf",
+      "role": "retain_local",
+      "weather_router_dependency": false
+    }
+  ]
+}
