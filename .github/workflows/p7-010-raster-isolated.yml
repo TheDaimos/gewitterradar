@@ -1,0 +1,51 @@
+name: P7-010 isolierte Raster-Mosaik-Abnahme
+
+on:
+  push:
+    branches:
+      - "feature/p7-010-*"
+    paths:
+      - "src/p7-010/**"
+      - "scripts/test-p7-010-*.mjs"
+      - ".github/workflows/p7-010-raster-isolated.yml"
+  pull_request:
+    paths:
+      - "src/p7-010/**"
+      - "scripts/test-p7-010-*.mjs"
+      - ".github/workflows/p7-010-raster-isolated.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mosaic-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Quellcode laden
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: P7-010 Syntax und alle isolierten Mosaiktests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for module in src/p7-010/*.js; do
+            node --check "$module"
+          done
+          count=0
+          for test in scripts/test-p7-010-*.mjs; do
+            echo "Pruefung: $test"
+            node "$test"
+            count=$((count+1))
+          done
+          if (( count < 7 )); then
+            echo "Unvollstaendiger P7-010-Pruefsatz: $count" >&2
+            exit 1
+          fi
+          echo "P7-010 OK: $count isolierte Tests"
