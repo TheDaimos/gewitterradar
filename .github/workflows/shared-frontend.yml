@@ -61,8 +61,8 @@ jobs:
       - name: P7-010 world viewport and antimeridian regression
         run: node scripts/test-p7-010-world-bbox.mjs
 
-      - name: P7-010 multi-source raster planning regression
-        run: node scripts/test-p7-010-mosaic-planner.mjs
+      - name: P7-010 V2 raster response contract regression
+        run: node scripts/test-p7-010-raster-mosaic-contract.mjs
 
       - name: P7-010 regional tile cropping regression
         run: node scripts/test-p7-010-raster-tile-clip.mjs
