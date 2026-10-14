@@ -16,7 +16,7 @@ const mk=(source_id,coverage,valid_at=timestamp,semantics=metadata)=>({
 });
 const broad=mk("provider_region_earth",{scope:"global"});
 const regional=mk("provider_region_one",local,timestamp,{...metadata,measurement_method:"radar"});
-const result=planRasterMosaic([regional,broad],{viewport,now,maxAgeMs:900,maxLayers:4});
+const result=planRasterMosaic([regional,broad],{viewport,now,maxAgeMs:900000,maxLayers:4});
 assert.equal(result.layers.length,2);
 assert.equal(result.layers[0].source_id,"provider_region_earth");
 assert.equal(result.layers[0].role,"broad_foundation");
@@ -26,15 +26,15 @@ assert.equal(result.layers[1].time_aligned,true);
 assert.equal(result.coverage_complete_proven,false);
 const old=mk("old_source",{scope:"global"},"2026-10-14T12:00:00Z");
 const unknown=mk("no_time",{scope:"global"},null);
-assert.equal(planRasterMosaic([old,unknown],{viewport,now,maxAgeMs:900}).layers.length,0);
-assert.equal(planRasterMosaic([{...broad,verified_coverage:false}],{viewport,now,maxAgeMs:900}).layers.length,0);
+assert.equal(planRasterMosaic([old,unknown],{viewport,now,maxAgeMs:900000}).layers.length,0);
+assert.equal(planRasterMosaic([{...broad,verified_coverage:false}],{viewport,now,maxAgeMs:900000}).layers.length,0);
 const other=mk("provider_region_two",{scope:"bbox",bbox:{west:-85,south:16,east:-60,north:35}},"2026-10-14T14:02:00Z");
 const fourth=mk("provider_region_three",{scope:"bbox",bbox:{west:-70,south:20,east:-50,north:42}},"2026-10-14T14:04:00Z");
-const expanded=planRasterMosaic([broad,regional,other,fourth],{viewport,now,maxAgeMs:900,maxLayers:4});
+const expanded=planRasterMosaic([broad,regional,other,fourth],{viewport,now,maxAgeMs:900000,maxLayers:4});
 assert.equal(expanded.layers.length,4,"dynamic regional providers must not be hardcoded");
 assert.equal(expanded.layers[0].source_id,"provider_region_earth");
 assert.equal(expanded.layers.find(x=>x.source_id==="provider_region_three").reference_delta_seconds,0);
-const limited=planRasterMosaic([broad,regional,other,fourth],{viewport,now,maxAgeMs:900,maxLayers:2});
+const limited=planRasterMosaic([broad,regional,other,fourth],{viewport,now,maxAgeMs:900000,maxLayers:2});
 assert.equal(limited.layers.length,2);
 assert.equal(limited.rejected.filter(x=>x.reason==="resource_limit").length,2);
 assert.ok(viewportOverlapFraction({west:170,south:-20,east:-170,north:20},
