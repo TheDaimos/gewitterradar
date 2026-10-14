@@ -70,6 +70,9 @@ jobs:
       - name: P7-010 bounded multi-source tile loading regression
         run: node scripts/test-p7-010-raster-mosaic-tile-loader.mjs
 
+      - name: P7-010 isolated Leaflet mosaic layer regression
+        run: node scripts/test-p7-010-raster-mosaic-grid-layer.mjs
+
       - name: P7-010 regional tile cropping regression
         run: node scripts/test-p7-010-raster-tile-clip.mjs
 
