@@ -1,0 +1,99 @@
+import assert from "node:assert/strict";
+import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
+ from "../src/p7-010/raster-mosaic-tile-loader.js";
+
+const time="2026-10-14T15:00:00Z";
+const full={west:-180,south:-90,east:180,north:90};
+const germany={west:5,south:46,east:16,north:56};
+function source(name,{coverage=full,scope="global",url=null,size=256}={}){
+ return {
+   source_id:name,resource_type:"raster_tile",
+   coverage_verified:true,coverage_scope:scope,coverage,
+   tile_url:url||"https://example.invalid/xyz/{z}/{x}/{y}.png",
+   render:{tile_size:size,min_zoom:0,max_zoom:18,opacity:0.6},
+   times:{valid_at:time,retrieved_at:time,reference_delta_seconds:0},
+   semantics:{quantity:"precipitation_rate",unit:"mm/h",
+      observation_kind:"observation",measurement_method:"radar"},
+   legend:{title:name},attribution:name
+ };
+}
+const tile={x:0,y:0,z:0};
+const wms=source("world_wms",{
+ url:"https://example.invalid/wms?bbox={bbox-epsg-3857}&layers=global"
+});
+const local=source("regional_dwd",{
+ coverage:germany,scope:"bbox",
+ url:"https://example.invalid/wms?bbox={bbox-epsg-3857}&layers=dwd"
+});
+const observed=[],paint=[];
+const budget=new RasterTileRequestBudget(3,{maxConcurrent:2});
+const loadImage=async (url,layer)=>{
+ observed.push([layer.source_id,url]);
+ return {width:layer.render.tile_size};
+};
+const result=await drawRasterMosaicTileFromUrls({
+ context:{globalAlpha:1,drawImage:(...args)=>paint.push(args)},
+ tile,layers:[wms,local],loadImage,budget
+});
+assert.deepEqual(result.drawn.map(x=>x.source_id),["world_wms","regional_dwd"]);
+assert.equal(budget.used,2);
+assert.ok(observed[0][1].includes("bbox=-20037508.3427892"));
+assert.ok(observed[1][1].includes("layers=dwd"));
+assert.ok(paint[1][7]<11,"DWD must only paint the German portion");
+assert.equal(result.rejected.length,0);
+
+const one=new RasterTileRequestBudget(1);
+const drawnWithOne=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile,layers:[wms,local],loadImage,budget:one
+});
+assert.deepEqual(drawnWithOne.drawn.map(x=>x.source_id),["world_wms"]);
+assert.equal(drawnWithOne.rejected[0].reason,"request_budget_exhausted");
+const again=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile,layers:[wms],loadImage,budget:one
+});
+assert.equal(again.drawn.length,0,"total tile budget persists across view tiles");
+
+const failed=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile,layers:[wms,local],
+ loadImage:async (_url,layer)=>{
+   if(layer.source_id==="regional_dwd")throw Error("synthetic WMS outage");
+   return {width:256};
+ },budget:new RasterTileRequestBudget(2)
+});
+assert.deepEqual(failed.drawn.map(x=>x.source_id),["world_wms"]);
+assert.equal(failed.rejected[0].reason,"image_request_failed");
+
+const requestCount=observed.length;
+const outside=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile:{x:0,y:0,z:2},layers:[local],
+ loadImage,budget:new RasterTileRequestBudget(3)
+});
+assert.equal(outside.drawn.length,0);
+assert.equal(outside.rejected[0].reason,"outside_tile_coverage");
+assert.equal(observed.length,requestCount,"out-of-area providers must not consume network");
+
+let active=0,maximum=0;
+const parallel=Array.from({length:4},(_,i)=>source("source_"+i));
+const limit=new RasterTileRequestBudget(4,{maxConcurrent:2});
+const concurrent=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile,layers:parallel,budget:limit,
+ loadImage:async ()=>{
+   active++;maximum=Math.max(maximum,active);
+   await new Promise(resolve=>setTimeout(resolve,4));
+   active--;return {width:256};
+ }
+});
+assert.equal(concurrent.drawn.length,4);
+assert.equal(maximum,2);
+assert.equal(limit.active,0);
+
+const wrapped=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile:{x:2,y:0,z:1},
+ layers:[source("xyz")],budget:new RasterTileRequestBudget(1),
+ loadImage:async url=>{
+   assert.ok(url.includes("/1/0/0.png"),"source request must canonicalize repeated world");
+   return {width:256};
+ }
+});
+assert.equal(wrapped.drawn.length,1);
+console.log("P7-010 bounded WMS/XYZ tile loading and fallback PASS");
