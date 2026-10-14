@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.73 DEV – Niederschlagsdarstellung: Ausgewogen nutzt das bisherige Weich-Profil; Weich nutzt die besonders sanfte Auto-Darstellung bei Zoom 6 als festes Profil. Praezise und Auto unveraendert, keine Datenquellen-, Karten- oder Trackeranpassungen.",
+    "purpose": "WeatherRouter-Darstellung: V4.11.73 DEV – Niederschlagsdarstellung: Ausgewogen nutzt das bisherige Weich-Profil; Weich nutzt die besonders sanfte Auto-Darstellung bei Zoom 6 als festes Profil. Praezise und Auto unveraendert, keine Datenquellen-, Karten- oder Trackeranpassungen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
