@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.77 DEV: iPad-Safari-Hotfix der Niederschlagsdarstellung Weich. Unsichere SVG-Mehrskalenglättung aus V4.11.76 deaktiviert; bewährter CSS-Blur-Funktionsweg aus V4.11.75 wiederhergestellt. Zoom 8, Praezise, Ausgewogen, Auto und Leistungsreferenz V4.11.68 unveraendert.",
+    "purpose": "WeatherRouter-Darstellung: V4.11.77 DEV: iPad-Safari-Hotfix der Niederschlagsdarstellung Weich. Unsichere SVG-Mehrskalenglättung aus V4.11.76 deaktiviert; bewährter CSS-Blur-Funktionsweg aus V4.11.75 wiederhergestellt. Zoom 8, Praezise, Ausgewogen, Auto und Leistungsreferenz V4.11.68 unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
