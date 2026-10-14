@@ -30,7 +30,7 @@ function defaultImageLoader(url){
  *    the corresponding V2 request, not from a user-editable provider response.
  */
 export function createRasterMosaicGridLayer(L,snapshot,{
- maxLayers=4,maxTileRequests=48,maxConcurrent=4,tileSize=256,
+ maxLayers=4,maxTileRequests=48,maxConcurrent=4,tileSize=256,timeoutMs=8000,
  loadImage=defaultImageLoader,
  createCanvas=()=>document.createElement("canvas"),
  onTileDiagnostics=null
@@ -58,10 +58,13 @@ export function createRasterMosaicGridLayer(L,snapshot,{
      // draws the exact ordered WR layers and calls done once settled.
      Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
        context:ctx,tile:coords,layers:checked.layers,
-       budget,loadImage,tileSize
+       budget,loadImage,tileSize,timeoutMs
      })).then(
        result=>{
-         if(typeof onTileDiagnostics==="function")onTileDiagnostics(result);
+         if(typeof onTileDiagnostics==="function"){
+           // Diagnostic hooks may not interrupt the visible tile lifecycle.
+           try{onTileDiagnostics(result);}catch(_){}
+         }
          done?.(null,canvas);
        },
        error=>{done?.(error,canvas);}
