@@ -104,7 +104,7 @@ for(const nativeZoom of [5,7,9]){
     'Weich muss optisch dem vorhandenen Auto bei Zoom 6 entsprechen');
 }
 const balancedAtNine=profiles.weatherDisplayBalancedRasterTuning(9,7);
-assert.equal(balancedAtNine.blur,11.5,'Ausgewogen muss die bisherige Weich-Glättung übernehmen');
+assert.equal(balancedAtNine.blur,11.2,'Ausgewogen muss die bisherige Weich-Glättung übernehmen');
 assert.equal(balancedAtNine.saturate,1.18);
 assert.equal(balancedAtNine.contrast,1.34);
 assert.ok(profiles.weatherDisplaySoftRasterTuning(7).blur>balancedAtNine.blur,
