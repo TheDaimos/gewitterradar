@@ -35,7 +35,7 @@ assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.vers
 assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.1.4');
 assert.equal(runtime.modules.find(x=>x.id==='weather.display-menu')?.version,'0.4.10');
 assert.equal(runtime.modules.find(x=>x.id==='weather.legend-overlay')?.version,'0.1.1');
-assert.match(entry,/modules\/weather\/display-menu\.js','41127r1'/);
+assert.match(entry,/modules\/weather\/display-menu\.js','41173r1'/);
 assert.match(entry,/modules\/weather\/legend-overlay\.js','41114r1'/);
 assert.match(entry,/modules\/weather\/layer-menu\.js','41109r1'/);
 assert.equal(runtime.modules.find(x=>x.id==='fullscreen.map-display')?.version,'1.0.32');
