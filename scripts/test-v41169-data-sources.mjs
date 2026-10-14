@@ -12,7 +12,7 @@ const [native,entry,skeleton,modules,dataSources,blitzortung,runtime]=await Prom
   read("frontend/assets/gewitterradar-runtime-manifest.json")
 ]);
 const manifest=JSON.parse(runtime);
-assert.equal(manifest.productVersion,"4.11.73");
+assert.equal(manifest.productVersion,"4.11.74");
 assert.equal(manifest.modules.length,33);
 for(const id of ["diagnostics.data-sources","sources.blitzortung"]){
   assert.equal(manifest.modules.filter(m=>m.id===id).length,1,id);
@@ -50,4 +50,4 @@ for(const file of ["gewitterradar.js","version.js","module-manifest.js","modules
     assert.equal(await read(target+file),primary,"Delivery parity: "+target+file);
   }
 }
-console.log("PASS: V4.11.73 sources, locations, read-only backend, admin control, dual frontend and V4.11.68 radius isolation.");
+console.log("PASS: V4.11.74 sources, locations, read-only backend, admin control, dual frontend and V4.11.68 radius isolation.");

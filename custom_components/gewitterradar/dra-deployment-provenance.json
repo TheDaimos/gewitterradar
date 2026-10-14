@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.73",
-  "build": "V4.11.73-DEV-2026-10-14",
-  "runtimeRevision": "41173r1",
-  "moduleSetId": "E411-73A1",
+  "productVersion": "4.11.74",
+  "build": "V4.11.74-DEV-2026-10-14",
+  "runtimeRevision": "41174r1",
+  "moduleSetId": "E411-74A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter-Darstellung: V4.11.73 DEV – Niederschlagsdarstellung: Ausgewogen nutzt das bisherige Weich-Profil; Weich nutzt die besonders sanfte Auto-Darstellung bei Zoom 6 als festes Profil. Praezise und Auto unveraendert, keine Datenquellen-, Karten- oder Trackeranpassungen.",
+    "purpose": "WeatherRouter-Darstellung: V4.11.74 DEV – Weich gleicht die vergroesserten Radar-Rasterkacheln ab Zoom 9 moderat und begrenzt geglaettet aus. Praezise, Ausgewogen, Auto und Radarkachel-Abfragen unveraendert. Leistungsreference V4.11.68 bewahren.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

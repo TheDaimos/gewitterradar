@@ -83,7 +83,7 @@ assert.deepEqual(
   'Provider-led capability names must be reordered for human scanning'
 );
 const displayMenuSource=await readFile(new URL('../frontend/modules/weather/display-menu.js',import.meta.url),'utf8');
-for(const marker of ['id:"weather.display-menu"','version:"0.4.10"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
+for(const marker of ['id:"weather.display-menu"','version:"0.4.11"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
 for(const marker of ['78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066','e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047','help-display-eye-open-master-1254.png','help-display-eye-closed-master-1254.png'])assert.ok(displayMenuSource.includes(marker),'Final WeatherRouter eye asset contract missing: '+marker);
 assert.equal(displayMenuSource.includes('data-weather-display-eye-placeholder'),false,'Final WeatherRouter eye assets must replace the placeholder SVG');
 for(const marker of ['precipitationStyleChanged','precipitationOpacityChanged','if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();','_weatherDisplayOpacity','_weatherDisplaySetTransparency','_weatherDisplayResetTransparency','data-weather-display-transparency','weather-display-panel .weather-display-opacity','_weatherDisplayApplyRasterPaneStyle','pane.style.willChange=style==="precise"?"auto":"filter"','5.6*zoomFactor','saturate:1.18,contrast:1.34'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter smoothing/transparency contract missing: '+marker);
@@ -100,14 +100,30 @@ for(const marker of ['renderSignature','overflow-y:auto','overscroll-behavior:co
 const profiles=await import(new URL('../frontend/modules/weather/display-menu.js',import.meta.url));
 for(const nativeZoom of [5,7,9]){
   const autoAtSix=profiles.weatherDisplayAutoRasterTuning(6,nativeZoom);
-  assert.deepEqual(profiles.weatherDisplaySoftRasterTuning(nativeZoom),autoAtSix,
-    'Weich muss optisch dem vorhandenen Auto bei Zoom 6 entsprechen');
+  assert.deepEqual(profiles.weatherDisplaySoftRasterTuning(6,nativeZoom),autoAtSix,
+    'Weich muss im Ausgangszoom dem bisherigen Auto bei Zoom 6 entsprechen');
+  assert.deepEqual(profiles.weatherDisplaySoftRasterTuning(8,nativeZoom),autoAtSix,
+    'Weich bei Zoom 8 ist der abgenommene optische Referenzstand');
+  const nine=profiles.weatherDisplaySoftRasterTuning(9,nativeZoom);
+  const ten=profiles.weatherDisplaySoftRasterTuning(10,nativeZoom);
+  assert.ok(nine.blur>autoAtSix.blur&&ten.blur>nine.blur,
+    'Weich muss die Pixelvergroesserung ab Zoom 9 zunehmend glaetten');
+  assert.ok(ten.blur<=Math.max(48,autoAtSix.blur),
+    'Leistungsschutz: Weich nie ueber das begrenzte Budget glaetten');
 }
+assert.deepEqual(profiles.weatherDisplaySoftRasterTuning(8,7).contrast,
+  profiles.weatherDisplayAutoRasterTuning(6,7).contrast);
+assert.ok(profiles.weatherDisplaySoftRasterTuning(10,7).blur<
+  profiles.weatherDisplayAutoRasterTuning(10,7).blur,
+  'Weich muss erkennbar weniger wolkig bleiben als Auto');
+assert.ok(displayMenuSource.includes('state.onZoom=')===false ||
+  displayMenuSource.includes('_weatherDisplayRefreshRenderedLayers'),
+  'Rasterstil darf Zoom-Aktualisierung nicht entfernen');
 const balancedAtNine=profiles.weatherDisplayBalancedRasterTuning(9,7);
 assert.equal(balancedAtNine.blur,11.2,'Ausgewogen muss die bisherige Weich-Glättung übernehmen');
 assert.equal(balancedAtNine.saturate,1.18);
 assert.equal(balancedAtNine.contrast,1.34);
-assert.ok(profiles.weatherDisplaySoftRasterTuning(7).blur>balancedAtNine.blur,
+assert.ok(profiles.weatherDisplaySoftRasterTuning(9,7).blur>balancedAtNine.blur,
   'Weich muss stärker glätten als Ausgewogen');
 assert.ok(profiles.weatherDisplayAutoRasterTuning(10,7).blur>profiles.weatherDisplayAutoRasterTuning(6,7).blur,
   'Auto muss weiterhin zoomabhängig sein');
