@@ -1,4 +1,4 @@
-// V4.11.75 legacy envelope, retained for V4.11.76: synthetic source-raster regression, no user images or locations.
+// V4.11.75 legacy envelope, retained for V4.11.77: synthetic source-raster regression, no user images or locations.
 // CSS blur is modelled as a one-dimensional Gaussian over an artificial raster
 // edge; this checks the intended relative effect, not real browser pixels.
 import assert from 'node:assert/strict';
@@ -61,4 +61,4 @@ const newStep=Math.abs(blurredPulse(120,120,400,next)-blurredPulse(112,120,400,n
 assert.ok(newStep<oldStep*.82,'Raster-Stufenkante muss deutlich flacher werden');
 assert.ok(blurredPulse(260,120,400,next)>.99,'Breites Niederschlagszentrum muss erhalten bleiben');
 assert.equal(weatherDisplayAutoRasterTuning(10,7).blur,220,'Auto-Referenz unverändert');
-console.log('PASS: V4.11.76 synthetische Rasterkante, Zoom 8/9/10, Quellenauflösung, Leistung und Fremdmodi.');
+console.log('PASS: V4.11.77 synthetische Rasterkante, Zoom 8/9/10, Quellenauflösung, Leistung und Fremdmodi.');
