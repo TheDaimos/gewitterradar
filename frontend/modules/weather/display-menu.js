@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.11",
+  version:"0.4.12",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -60,15 +60,25 @@ export const weatherDisplayBalancedRasterTuning=(zoom,maxNative)=>{
   const zoomFactor=Math.sqrt(overscale);
   return {blur:clamp(5.6*zoomFactor,5.6,11.5),saturate:1.18,contrast:1.34,brightness:.99};
 };
-// Ab Zoom 9 nehmen Quellpixel auf der Karte immer mehr Bildschirmflaeche ein.
-// Die Auto-Referenz von Zoom 6 bleibt bis Zoom 8 unveraendert; im Nahzoom
-// steigt nur die Glaettung massvoll an (im Gegensatz zum wolkigeren Auto).
+// Die Quellkacheln vergroessern sich ab maxNativeZoom exponentiell.
+// Weich erhaelt die akzeptierte Zoom-8-Referenz und folgt ab Zoom 9
+// der tatsaechlichen Quell-Uebervergroesserung (statt nur dem Kartenzähler).
+// Der alte Mindestanstieg bleibt fuer hochaufloesende Quellen erhalten.
+// Keine neue Render-Ebene/Schleife; Blur-Budget von V4.11.74 bleibt erhalten.
 export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
-  const base=weatherDisplayAutoRasterTuning(6,nativeZoom);
+  const sourceZoom=Number.isFinite(Number(nativeZoom))?Number(nativeZoom):7;
+  const base=weatherDisplayAutoRasterTuning(6,sourceZoom);
   const extraZoom=clamp(Number(zoom)-8,0,5);
-  const additionalBlur=extraZoom*Math.max(4,Math.min(12,base.blur*.30));
+  const baselineScale=Math.pow(2,clamp(8-sourceZoom,0,5));
+  const currentScale=Math.pow(2,clamp(Number(zoom)-sourceZoom,0,5));
+  const sourceGrowth=Math.max(0,currentScale-baselineScale);
+  const legacyAdditional=extraZoom*Math.max(4,Math.min(12,base.blur*.30));
+  const additionalBlur=Math.max(legacyAdditional,6*sourceGrowth);
   const blur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
-  return {...base,blur};
+  // Nur Weich: leichte Kontrastreduktion gegen verbliebene Stufengrenzen.
+  // Niederschlagskerne und Farbton/Saettigung bleiben weitgehend erhalten.
+  const contrast=Math.max(.93,base.contrast-.012*Math.min(extraZoom,2));
+  return {...base,blur,contrast};
 };
 const bool=(value,fallback)=>typeof value==="boolean"?value:fallback;
 const cloneDefault=()=>({

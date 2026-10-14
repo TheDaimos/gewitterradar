@@ -37,6 +37,9 @@ jobs:
       - name: V4.11 WeatherRouter Consumer V1 contract
         run: node scripts/test-v411-weather-router.mjs
 
+      - name: V4.11.75 synthetic precipitation raster and performance envelope
+        run: node scripts/test-v41175-soft-raster.mjs
+
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
