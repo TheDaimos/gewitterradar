@@ -43,21 +43,44 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      rejected.push({source_id:id,reason:"unknown_geographic_mask"});
      continue;
    }
-   const crops=rasterTilePixelCrops(tile,coverage,tileSize);
-   if(!crops.length){
+   const render=layer.render||{
+     tile_size:256,min_zoom:0,max_zoom:18,opacity:1
+   };
+   if(![128,256,512].includes(render.tile_size)
+     ||![render.min_zoom,render.max_zoom,render.opacity].every(Number.isFinite)
+     ||render.min_zoom<0||render.max_zoom>24
+     ||render.min_zoom>render.max_zoom||render.opacity<0||render.opacity>1){
+     rejected.push({source_id:id,reason:"invalid_render_parameters"});
+     continue;
+   }
+   if(tile.z<render.min_zoom||tile.z>render.max_zoom){
+     rejected.push({source_id:id,reason:"outside_zoom_coverage"});
+     continue;
+   }
+   const sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size);
+   const destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
+   if(!sourceCrops.length||sourceCrops.length!==destCrops.length){
      rejected.push({source_id:id,reason:"outside_tile_coverage"});
      continue;
    }
+   const previousAlpha=Number.isFinite(context.globalAlpha)?context.globalAlpha:1;
    let cropsPainted=0;
-   for(const r of crops){
-     // Draw source pixels 1:1; do not spread a regional image beyond bounds.
-     context.drawImage(layer.image,r.sx,r.sy,r.sw,r.sh,r.sx,r.sy,r.sw,r.sh);
-     cropsPainted++;
+   try{
+     context.globalAlpha=previousAlpha*render.opacity;
+     for(let index=0;index<sourceCrops.length;index++){
+       const from=sourceCrops[index],to=destCrops[index];
+       // Convert native tile pixel coordinates to viewport tile pixels.
+       context.drawImage(layer.image,from.sx,from.sy,from.sw,from.sh,
+         to.sx,to.sy,to.sw,to.sh);
+       cropsPainted++;
+     }
+   }finally{
+     context.globalAlpha=previousAlpha;
    }
    drawn.push({
      source_id:id,rectangles:cropsPainted,
      attribution:layer.attribution,times:layer.times,
-     semantics:layer.semantics,legend:layer.legend,
+     semantics:layer.semantics,legend:layer.legend,render,
    });
  }
  return {drawn,rejected,no_pixel_blending:true,tile_size:tileSize};
