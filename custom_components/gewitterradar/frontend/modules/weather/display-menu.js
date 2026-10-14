@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.9",
+  version:"0.4.10",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -37,6 +37,30 @@ const safeObject=value=>value&&typeof value==="object"&&!Array.isArray(value)?va
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const lerp=(from,to,t)=>from+(to-from)*t;
 const smoothstep=(edge0,edge1,value)=>{const t=clamp((Number(value)-edge0)/(edge1-edge0),0,1);return t*t*(3-2*t);};
+// Die Auto-Farbabstimmung bleibt unveraendert. "Weich" nutzt diese
+// Referenz bei Zoom 6 als festes Profil; Auto selbst bleibt zoomabhaengig.
+export const weatherDisplayAutoRasterTuning=(zoom,nativeZoom)=>{
+  const relativeZoom=zoom-nativeZoom+2;
+  const overZoom=clamp(relativeZoom,0,5);
+  const overscale=Math.pow(2,overZoom);
+  const cloud=smoothstep(-1.80,1.60,relativeZoom);
+  const cloudBlur=clamp(8.0+Math.max(0,overscale-1)*12.0,8.0,220);
+  const blur=lerp(1.05,cloudBlur,cloud);
+  return {
+    blur,
+    saturate:lerp(1.04,1.14,cloud),
+    contrast:lerp(1.07,.95,cloud),
+    brightness:lerp(1.0,.995,cloud),
+    overscale,
+    cloud
+  };
+};
+export const weatherDisplayBalancedRasterTuning=(zoom,maxNative)=>{
+  const overscale=Number.isFinite(maxNative)?Math.pow(2,clamp(zoom-maxNative,0,3)):1;
+  const zoomFactor=Math.sqrt(overscale);
+  return {blur:clamp(5.6*zoomFactor,5.6,11.5),saturate:1.18,contrast:1.34,brightness:.99};
+};
+export const weatherDisplaySoftRasterTuning=nativeZoom=>weatherDisplayAutoRasterTuning(6,nativeZoom);
 const bool=(value,fallback)=>typeof value==="boolean"?value:fallback;
 const cloneDefault=()=>({
   enabled:DEFAULT_STATE.enabled,
@@ -211,51 +235,18 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
 
     if(style==="precise")return {blur:0,saturate:1,contrast:1,brightness:1};
 
-    if(style==="balanced"){
-      const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
-      const overscale=Number.isFinite(maxNative)?Math.pow(2,clamp(safeZoom-maxNative,0,3)):1;
-      const zoomFactor=Math.sqrt(overscale);
-      return {blur:clamp(1.15*zoomFactor,1.15,2.4),saturate:1.06,contrast:1.10,brightness:1};
-    }
-
-    if(style==="soft"){
-      const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
-      const overscale=Number.isFinite(maxNative)?Math.pow(2,clamp(safeZoom-maxNative,0,3)):1;
-      const zoomFactor=Math.sqrt(overscale);
-      return {blur:clamp(5.6*zoomFactor,5.6,11.5),saturate:1.18,contrast:1.34,brightness:.99};
-    }
-
-    // Auto ist bewusst eine Komfortdarstellung.
-    // Entscheidend ist nicht allein die absolute Zoomstufe, sondern wie weit
-    // Leaflet die Wetterdaten bereits ueber ihre native Rasteraufloesung hinaus
-    // vergroessert. Je groesser eine Quellzelle auf dem Bildschirm wird, desto
-    // staerker wird die komplette Pane als zusammenhaengende Wetterflaeche
-    // geglaettet. Dadurch verschwinden im Nahzoom rechteckige Zellkanten und
-    // Farbstufen gehen kontinuierlich ineinander ueber.
     const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
     const nativeZoom=Number.isFinite(maxNative)?maxNative:7;
-    const relativeZoom=safeZoom-nativeZoom+2;
-    const overZoom=clamp(relativeZoom,0,5);
-    const overscale=Math.pow(2,overZoom);
 
-    // Auto beginnt die Entpixelung bereits kurz vor dem eigentlichen Overzoom
-    // und steigert sie danach deutlich. So werden Zellkanten frueh abgerundet,
-    // waehrend stark vergroesserte Quellpixel im Nahzoom praktisch vollstaendig
-    // zu einem zusammenhaengenden Wetterfeld verschmelzen.
-    const cloud=smoothstep(-1.80,1.60,relativeZoom);
-    const cloudBlur=clamp(8.0+Math.max(0,overscale-1)*12.0,8.0,220);
-    const blur=lerp(1.05,cloudBlur,cloud);
+    // Das bisherige Weich-Profil wird zum neuen Ausgewogen-Profil.
+    if(style==="balanced")return weatherDisplayBalancedRasterTuning(safeZoom,maxNative);
 
-    return {
-      blur,
-      saturate:lerp(1.04,1.14,cloud),
-      // Mit wachsender Glättung sinkt der Kontrast leicht, damit Gruen, Gelb,
-      // Orange und Rot ohne erneut harte Stufenkanten ineinander uebergehen.
-      contrast:lerp(1.07,.95,cloud),
-      brightness:lerp(1.0,.995,cloud),
-      overscale,
-      cloud
-    };
+    // Weich entspricht der deutlich sanfteren Auto-Optik bei Zoom 6.
+    // Im Gegensatz zu Auto bleibt es absichtlich ein festes Darstellungsprofil.
+    if(style==="soft")return weatherDisplaySoftRasterTuning(nativeZoom);
+
+    // Auto bleibt unveraendert zoom- und rasteraufloesungsabhaengig.
+    return weatherDisplayAutoRasterTuning(safeZoom,nativeZoom);
   },
 
   _weatherDisplayRasterBlur(kind){
