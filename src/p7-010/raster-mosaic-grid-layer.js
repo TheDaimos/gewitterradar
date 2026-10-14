@@ -10,11 +10,29 @@ import {
  RasterTileRequestBudget,drawRasterMosaicTileFromUrls
 } from "./raster-mosaic-tile-loader.js";
 
-function defaultImageLoader(url){
+function defaultImageLoader(url,_layer,{signal}={}){
  return new Promise((resolve,reject)=>{
    const image=new Image();
-   image.onload=()=>resolve(image);
-   image.onerror=()=>reject(new Error("Public raster image unavailable"));
+   let completed=false;
+   const cleanup=()=>{
+     image.onload=null;
+     image.onerror=null;
+     signal?.removeEventListener("abort",cancel);
+   };
+   const finish=(fn,value)=>{
+     if(completed)return;
+     completed=true;
+     cleanup();
+     fn(value);
+   };
+   const cancel=()=>{
+     image.src="";
+     finish(reject,new Error("Raster image cancelled"));
+   };
+   image.onload=()=>finish(resolve,image);
+   image.onerror=()=>finish(reject,new Error("Public raster image unavailable"));
+   if(signal?.aborted){cancel();return;}
+   signal?.addEventListener("abort",cancel,{once:true});
    // Deliberately no crossOrigin assumption. Display-only WMS imagery may
    // taint Canvas; pixel readback/export must not be inferred to be permitted.
    image.src=url;
