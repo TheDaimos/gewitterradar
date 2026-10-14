@@ -34,10 +34,10 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      rejected.push({source_id:id,reason:"unverified_or_incomplete_source"});
      continue;
    }
-   const coverage=layer.coverage?.scope==="global"
+   const coverage=layer.coverage_scope==="global"
      ?{scope:"global",verified:true}
-     :layer.coverage?.scope==="bbox"&&layer.coverage.bbox
-       ?{scope:"bbox",bbox:layer.coverage.bbox,verified:true}
+     :layer.coverage_scope==="bbox"&&layer.coverage
+       ?{scope:"bbox",bbox:layer.coverage,verified:true}
        :null;
    if(!coverage){
      rejected.push({source_id:id,reason:"unknown_geographic_mask"});
