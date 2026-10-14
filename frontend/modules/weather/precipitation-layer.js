@@ -159,10 +159,24 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const map=this._map;
     if(!map||typeof map.getBounds!=="function")return null;
     const bounds=map.getBounds();
-    const wrap=n=>((Number(n)+180)%360+360)%360-180;
-    const context={type:"bbox",west:wrap(bounds.getWest()),south:Math.max(-90,bounds.getSouth()),east:wrap(bounds.getEast()),north:Math.min(90,bounds.getNorth())};
-    const signature=[context.west,context.south,context.east,context.north].map(n=>n.toFixed(2)).join("|");
-    return {context,signature};
+    const west=Number(bounds.getWest());
+    const east=Number(bounds.getEast());
+    if(!Number.isFinite(west)||!Number.isFinite(east)||east<west)return null;
+    const span=east-west;
+    const wrap=n=>((n+180)%360+360)%360-180;
+    // Leaflet may display the world more than once on wide/mobile viewports.
+    // Never collapse a 360-degree (or wider) view to a zero-width bbox.
+    const world=span>=360;
+    const center=this._map.getCenter?.();
+    const focusLongitude=Number(center?.lng);
+    const focusLatitude=Number(center?.lat);
+    const context={type:"bbox",west:world?-180:wrap(west),south:Math.max(-90,bounds.getSouth()),east:world?180:wrap(east),north:Math.min(90,bounds.getNorth())};
+    const focus=Number.isFinite(focusLongitude)&&Number.isFinite(focusLatitude)
+      ?{latitude:Math.max(-90,Math.min(90,focusLatitude)),longitude:wrap(focusLongitude)}
+      :null;
+    // Focus stays outside Consumer V1 context until a versioned contract supports it.
+    const signature=[context.west,context.south,context.east,context.north,focus?.longitude??"",focus?.latitude??""].map(n=>typeof n==="number"?n.toFixed(2):n).join("|");
+    return {context,signature,focus,world};
   },
 
   _weatherRadarEnsureMapHooks(){

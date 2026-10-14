@@ -1,0 +1,87 @@
+/*
+ * P7-010 isolated Canvas composition helper; not wired into active GR.
+ * Requires preloaded, provider-eligible, verified raster tiles. The rendering
+ * order and provider decisions must come from WeatherRouter V2, not this file.
+ */
+import {rasterTilePixelCrops} from "./raster-tile-clip.js";
+
+const MAX_LAYERS=4;
+const MAX_TILE_SIZE=512;
+
+/**
+ * Draw independent raster images into one tile. The caller retains all
+ * per-source legends, measurement semantics, provenance and data timestamps.
+ * There is no numerical mixing, optical reconstruction or interpolation.
+ *
+ * @param {CanvasRenderingContext2D} context Destination Canvas 2D context
+ * @param {object} tile Leaflet-compatible {x,y,z}
+ * @param {Array<object>} layers Ordered WR mosaics, broad first
+ * @param {number} tileSize Tile edge size, validated resource budget
+ * @returns {object} Transparent audit of actually drawn layers
+ */
+export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
+ if(!context||typeof context.drawImage!=="function")throw new TypeError("Canvas context required");
+ if(!Array.isArray(layers)||layers.length>MAX_LAYERS)
+   throw new RangeError("Too many simultaneous layers");
+ if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
+   throw new RangeError("Invalid resource-bounded tile size");
+ const drawn=[],rejected=[];
+ for(const layer of layers){
+   const id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
+   if(!layer||!layer.image||layer.resource_type!=="raster_tile"
+     ||layer.coverage_verified!==true||!layer.attribution
+     ||!layer.semantics||!layer.times||!layer.legend){
+     rejected.push({source_id:id,reason:"unverified_or_incomplete_source"});
+     continue;
+   }
+   const coverage=layer.coverage_scope==="global"
+     ?{scope:"global",verified:true}
+     :layer.coverage_scope==="bbox"&&layer.coverage
+       ?{scope:"bbox",bbox:layer.coverage,verified:true}
+       :null;
+   if(!coverage){
+     rejected.push({source_id:id,reason:"unknown_geographic_mask"});
+     continue;
+   }
+   const render=layer.render||{
+     tile_size:256,min_zoom:0,max_zoom:18,opacity:1
+   };
+   if(![128,256,512].includes(render.tile_size)
+     ||![render.min_zoom,render.max_zoom,render.opacity].every(Number.isFinite)
+     ||render.min_zoom<0||render.max_zoom>24
+     ||render.min_zoom>render.max_zoom||render.opacity<0||render.opacity>1){
+     rejected.push({source_id:id,reason:"invalid_render_parameters"});
+     continue;
+   }
+   if(tile.z<render.min_zoom||tile.z>render.max_zoom){
+     rejected.push({source_id:id,reason:"outside_zoom_coverage"});
+     continue;
+   }
+   const sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size);
+   const destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
+   if(!sourceCrops.length||sourceCrops.length!==destCrops.length){
+     rejected.push({source_id:id,reason:"outside_tile_coverage"});
+     continue;
+   }
+   const previousAlpha=Number.isFinite(context.globalAlpha)?context.globalAlpha:1;
+   let cropsPainted=0;
+   try{
+     context.globalAlpha=previousAlpha*render.opacity;
+     for(let index=0;index<sourceCrops.length;index++){
+       const from=sourceCrops[index],to=destCrops[index];
+       // Convert native tile pixel coordinates to viewport tile pixels.
+       context.drawImage(layer.image,from.sx,from.sy,from.sw,from.sh,
+         to.sx,to.sy,to.sw,to.sh);
+       cropsPainted++;
+     }
+   }finally{
+     context.globalAlpha=previousAlpha;
+   }
+   drawn.push({
+     source_id:id,rectangles:cropsPainted,
+     attribution:layer.attribution,times:layer.times,
+     semantics:layer.semantics,legend:layer.legend,render,
+   });
+ }
+ return {drawn,rejected,no_pixel_blending:true,tile_size:tileSize};
+}
