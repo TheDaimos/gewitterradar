@@ -40,6 +40,11 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
       ||!["bbox","global"].includes(layer.coverage_scope)
       ||!bounds(layer.coverage)||!safeURL(layer.tile_url)
       ||typeof layer.attribution!=="string"||!layer.attribution
+      ||!layer.render||![128,256,512].includes(layer.render.tile_size)
+      ||!number(layer.render.min_zoom)||!number(layer.render.max_zoom)
+      ||layer.render.min_zoom<0||layer.render.max_zoom>24
+      ||layer.render.min_zoom>layer.render.max_zoom
+      ||!number(layer.render.opacity)||layer.render.opacity<0||layer.render.opacity>1
       ||!layer.legend||typeof layer.legend!=="object"
       ||!layer.semantics||!["quantity","measurement_method","observation_kind"]
           .every(k=>typeof layer.semantics[k]==="string"&&layer.semantics[k])
