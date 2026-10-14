@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter-Darstellung: V4.11.76 DEV – Weich folgt ab Zoom 9 der nativen Kachel-Uebervergroesserung bei unveraendertem Maximalfilter; Farbkontrast leicht angepasst. Praezise, Ausgewogen, Auto und Radarkachel-Abfragen unveraendert. Leistungsreference V4.11.68 bewahren.",
+    "purpose": "WeatherRouter-Darstellung V4.11.76 DEV: Weich ab Zoom 9 als begrenzte 2-Skalen-Mischglaettung auf einem Leaflet-Pane (kein Zweit-Layer, keine zusaetzlichen Kachelanfragen), Zoom 8 und Praezise/Ausgewogen/Auto unveraendert. SVG-Rueckfall auf V4.11.75; V4.11.68 Leistungsabnahme am iPad steht aus.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
