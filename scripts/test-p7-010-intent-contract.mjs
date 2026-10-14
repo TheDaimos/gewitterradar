@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {GEWITTERRADAR_ROUTING_INTENTS, resolveGewitterradarIntent} from "../frontend/modules/weather/intent-contract.js";
+import {GEWITTERRADAR_ROUTING_INTENTS, resolveGewitterradarIntent} from "../src/p7-010/intent-contract.js";
 
 const callLog = [];
 const consumer = {
