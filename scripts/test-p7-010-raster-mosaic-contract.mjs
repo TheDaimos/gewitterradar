@@ -8,6 +8,7 @@ const mk=(name,scope="bbox")=>({
  coverage_scope:scope,coverage:scope==="global"
  ?{west:-180,south:-90,east:180,north:90}
  :{west:5,south:46,east:16,north:56},
+ render:{tile_size:256,min_zoom:0,max_zoom:18,opacity:1},
  tile_url:"https://example.invalid/{z}/{x}/{y}.png",
  attribution:name,legend:{title:"Niederschlag"},
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
@@ -23,6 +24,16 @@ assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_ve
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),tile_url:"https://example.invalid?access_token=x"}]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),times:{...mk("x").times,valid_at:null}}]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[mk("x"),mk("x")]}));
+assert.throws(()=>validateRasterMosaicV2({...one,layers:[
+  {...mk("bad-native"),render:{tile_size:4096,min_zoom:0,max_zoom:18,opacity:1}}
+]}));
+assert.throws(()=>validateRasterMosaicV2({...one,layers:[
+  {...mk("bad-range"),render:{tile_size:256,min_zoom:17,max_zoom:7,opacity:1}}
+]}));
+assert.equal(validateRasterMosaicV2({...one,layers:[
+  {...mk("native-512"),render:{tile_size:512,min_zoom:2,max_zoom:14,opacity:0.6}}
+]}).layers[0].render.opacity,0.6);
+
 assert.equal(validateRasterMosaicV2({...one,layers:[
   {...mk("reflectivity"),semantics:{...mk("x").semantics,
     quantity:"radar_reflectivity",unit:null}}
