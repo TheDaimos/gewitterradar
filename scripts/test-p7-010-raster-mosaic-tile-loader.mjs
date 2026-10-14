@@ -88,11 +88,18 @@ assert.equal(maximum,2);
 assert.equal(limit.active,0);
 
 const stallBudget=new RasterTileRequestBudget(1);
+const stallSignals=[];
 const stalled=await drawRasterMosaicTileFromUrls({
  context:{drawImage:()=>{}},tile,layers:[wms],
  budget:stallBudget,timeoutMs:15,
- loadImage:()=>new Promise(()=>{}) // simulated permanently hung WMS
+ loadImage:(_url,_layer,{signal})=>{
+   stallSignals.push(signal);
+   return new Promise(()=>{}); // simulated permanently hung WMS
+ }
 });
+assert.equal(stallSignals.length,1);
+assert.equal(stallSignals[0]?.aborted,true,
+ "hanging WMS must receive an abort signal");
 assert.equal(stalled.drawn.length,0);
 assert.equal(stalled.rejected[0].reason,"image_request_failed");
 assert.equal(stallBudget.active,0,"timed-out request must release concurrency slot");
