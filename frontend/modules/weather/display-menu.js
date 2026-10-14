@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.10",
+  version:"0.4.11",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -60,7 +60,16 @@ export const weatherDisplayBalancedRasterTuning=(zoom,maxNative)=>{
   const zoomFactor=Math.sqrt(overscale);
   return {blur:clamp(5.6*zoomFactor,5.6,11.5),saturate:1.18,contrast:1.34,brightness:.99};
 };
-export const weatherDisplaySoftRasterTuning=nativeZoom=>weatherDisplayAutoRasterTuning(6,nativeZoom);
+// Ab Zoom 9 nehmen Quellpixel auf der Karte immer mehr Bildschirmflaeche ein.
+// Die Auto-Referenz von Zoom 6 bleibt bis Zoom 8 unveraendert; im Nahzoom
+// steigt nur die Glaettung massvoll an (im Gegensatz zum wolkigeren Auto).
+export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
+  const base=weatherDisplayAutoRasterTuning(6,nativeZoom);
+  const extraZoom=clamp(Number(zoom)-8,0,5);
+  const additionalBlur=extraZoom*Math.max(4,Math.min(12,base.blur*.30));
+  const blur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
+  return {...base,blur};
+};
 const bool=(value,fallback)=>typeof value==="boolean"?value:fallback;
 const cloneDefault=()=>({
   enabled:DEFAULT_STATE.enabled,
@@ -243,7 +252,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
 
     // Weich entspricht der deutlich sanfteren Auto-Optik bei Zoom 6.
     // Im Gegensatz zu Auto bleibt es absichtlich ein festes Darstellungsprofil.
-    if(style==="soft")return weatherDisplaySoftRasterTuning(nativeZoom);
+    if(style==="soft")return weatherDisplaySoftRasterTuning(safeZoom,nativeZoom);
 
     // Auto bleibt unveraendert zoom- und rasteraufloesungsabhaengig.
     return weatherDisplayAutoRasterTuning(safeZoom,nativeZoom);
@@ -295,7 +304,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     }
     state.zoomHandler=()=>{
       this._weatherDisplaySyncLegendBadge();
-      if(this._weatherDisplayStyle("precipitation")!=="auto")return;
+      // Auch Weich muss die Glaettung nach einem Zoomwechsel neu berechnen.
+      if(!["auto","soft"].includes(this._weatherDisplayStyle("precipitation")))return;
       this._weatherDisplayRefreshRenderedLayers();
     };
     state.zoomMap=map;
@@ -487,7 +497,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
         '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button></div>'+
         '<div class="weather-display-panel-body"><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
-        '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen und Weich sind feste Komfortprofile.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
+        '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto">Auto</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on">Ein</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off">Aus</button></div><div class="weather-display-card-note">Auto zeigt die wichtigste passende Legende. Ein zeigt alle aktiven WeatherRouter-Legenden. Aus blendet nur die Legende aus; Wetterlayer und Daten bleiben unverändert.</div></div></div>';
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>select.addEventListener("change",event=>{event.stopPropagation();const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";this._weatherDisplayPatch({styles:{[kind]:select.value}});}));
