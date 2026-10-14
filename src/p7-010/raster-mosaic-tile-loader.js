@@ -52,11 +52,13 @@ export class RasterTileRequestBudget {
  * so this helper performs no hidden browser or HA accesses.
  */
 export async function drawRasterMosaicTileFromUrls({
- context,tile,layers,loadImage,budget,tileSize=256
+ context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000
 }={}){
  if(!Array.isArray(layers)||layers.length>4||typeof loadImage!=="function"
    ||!(budget instanceof RasterTileRequestBudget))
    throw new TypeError("Invalid bounded mosaic tile request");
+ if(!Number.isInteger(timeoutMs)||timeoutMs<10||timeoutMs>15000)
+   throw new RangeError("Invalid raster image timeout");
  const results=await Promise.all(layers.map(async layer=>{
    const source_id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||layer.coverage_verified!==true||!layer.render){
@@ -78,7 +80,18 @@ export async function drawRasterMosaicTileFromUrls({
    const release=await budget.reserve();
    if(!release)return {source_id,reason:"request_budget_exhausted"};
    try{
-     const image=await loadImage(url,layer);
+     let timer=null;
+     let image;
+     try{
+       image=await Promise.race([
+         Promise.resolve().then(()=>loadImage(url,layer)),
+         new Promise((_resolve,reject)=>{
+           timer=setTimeout(()=>reject(new Error("raster_image_timeout")),timeoutMs);
+         })
+       ]);
+     }finally{
+       if(timer!==null)clearTimeout(timer);
+     }
      if(!image)return {source_id,reason:"empty_raster_image"};
      return {source_id,layer:{...layer,image}};
    }catch(_){
