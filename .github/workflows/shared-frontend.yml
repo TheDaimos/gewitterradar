@@ -58,6 +58,9 @@ jobs:
       - name: V4.11.06 Weather Engine diagnostics
         run: node scripts/test-v41106-weather-engine-diagnostics.mjs
 
+      - name: P7-010 world viewport and antimeridian regression
+        run: node scripts/test-p7-010-world-bbox.mjs
+
       - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
