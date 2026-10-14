@@ -106,8 +106,13 @@ for(const nativeZoom of [5,7,9]){
     'Weich bei Zoom 8 ist der abgenommene optische Referenzstand');
   const nine=profiles.weatherDisplaySoftRasterTuning(9,nativeZoom);
   const ten=profiles.weatherDisplaySoftRasterTuning(10,nativeZoom);
-  assert.ok(nine.blur>autoAtSix.blur&&ten.blur>nine.blur,
-    'Weich muss die Pixelvergroesserung ab Zoom 9 zunehmend glaetten');
+  if(autoAtSix.blur<48){
+    assert.ok(nine.blur>autoAtSix.blur&&ten.blur>nine.blur,
+      'Weich muss die Pixelvergroesserung ab Zoom 9 zunehmend glaetten');
+  }else{
+    assert.equal(nine.blur,autoAtSix.blur,'Schon sehr stark geglaettete Quellen bleiben begrenzt');
+    assert.equal(ten.blur,autoAtSix.blur,'Nahzoom darf das Leistungsbudget nicht erhoehen');
+  }
   assert.ok(ten.blur<=Math.max(48,autoAtSix.blur),
     'Leistungsschutz: Weich nie ueber das begrenzte Budget glaetten');
 }
