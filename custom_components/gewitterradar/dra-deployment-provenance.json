@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.77",
-  "build": "V4.11.77-DEV-2026-10-14",
-  "runtimeRevision": "41177r1",
-  "moduleSetId": "E411-77A1",
+  "productVersion": "4.11.78",
+  "build": "V4.11.78-DEV-2026-10-14",
+  "runtimeRevision": "41178r1",
+  "moduleSetId": "E411-78A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter-Darstellung: V4.11.77 DEV: iPad-Safari-Hotfix der Niederschlagsdarstellung Weich. Unsichere SVG-Mehrskalenglättung aus V4.11.76 deaktiviert; bewährter CSS-Blur-Funktionsweg aus V4.11.75 wiederhergestellt. Zoom 8, Praezise, Ausgewogen, Auto und Leistungsreferenz V4.11.68 unveraendert.",
+    "purpose": "WeatherRouter-Darstellung V4.11.78 DEV: Mehrskalenglättung von V4.11.76 ausschließlich für erkannte Chromium-Browser. iPadOS, iOS, macOS Safari und unbekannte Browser erhalten den bewährten CSS-Blur aus V4.11.75. Browserweiche vor SVG-Aufbau, kein zweiter Layer oder Timer. Reale iPad-Leistungs- und Sichtprüfung noch ausstehend.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
