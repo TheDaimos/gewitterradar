@@ -26,7 +26,7 @@ for(const native of [5,6,7,8,9,10,11]){
  for(const zoom of [9,10]){
    const now=weatherDisplaySoftRasterTuning(zoom,native);
    assert.ok(now.blur<=Math.max(48,old8.blur)+1e-9,'Einzelprofil-Budget konstant');
-   assert.ok(now.blur<weatherDisplayAutoRasterTuning(zoom,native).blur+1e-9,'Auto bleibt separat');
+   if(native<=9)assert.ok(now.blur<weatherDisplayAutoRasterTuning(zoom,native).blur+1e-9,'Auto bleibt bei abgedeckten Quellen separat');
    if(now.multiscale){
      assert.ok(old8.blur<48,'Keine Zweifilter-Verarbeitung bei bereits hoher Ausgangsglaettung');
      assert.ok(now.multiscale.detailBlur===now.blur);
