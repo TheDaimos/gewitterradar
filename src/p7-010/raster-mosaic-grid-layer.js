@@ -49,6 +49,7 @@ function defaultImageLoader(url,_layer,{signal}={}){
  */
 export function createRasterMosaicGridLayer(L,snapshot,{
  maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,timeoutMs=8000,
+ pane="gr-weather-radar",opacity=1,
  loadImage=defaultImageLoader,
  createCanvas=()=>document.createElement("canvas"),
  onTileDiagnostics=null
@@ -58,6 +59,9 @@ export function createRasterMosaicGridLayer(L,snapshot,{
    throw new TypeError("Leaflet GridLayer and raster loaders required");
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
    throw new RangeError("Invalid destination tile size");
+ if(typeof pane!=="string"||!pane.trim()||!Number.isFinite(opacity)
+   ||opacity<0||opacity>1)
+   throw new TypeError("Invalid renderer pane or opacity");
  const checked=validateRasterMosaicV2(snapshot,{maxLayers});
  const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
  const Composite=L.GridLayer.extend({
@@ -91,7 +95,8 @@ export function createRasterMosaicGridLayer(L,snapshot,{
    }
  });
  const layer=new Composite({
-   tileSize,
+   tileSize,pane,opacity,
+   attribution:checked.layers.map(item=>item.attribution).join(" · "),
    keepBuffer:1,
    updateWhenIdle:true,
  });
