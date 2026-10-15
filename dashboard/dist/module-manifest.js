@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41182r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41183r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.143",
+    "version": "1.2.144",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
