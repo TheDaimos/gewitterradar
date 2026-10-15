@@ -45,7 +45,13 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     if(!this.__rasterLabAdapters.has("precipitation")){
       this.__rasterLabAdapters.set("precipitation",{
         id:"precipitation",label:"Niederschlag",
-        getPane:()=>this._map?.getPane?.("gr-weather-radar")||null,
+        // A Leaflet pane may survive after its raster layer was removed.
+        // Only offer a renderer that currently exists on the map.
+        getPane:()=>{
+          const layer=this._weatherRadarState?.()?.layer;
+          return layer&&this._map?.hasLayer?.(layer)
+            ?this._map?.getPane?.("gr-weather-radar")||null:null;
+        },
         getNativeZoom:()=>Number(this._weatherRadarState?.()?.layer?.options?.maxNativeZoom),
         getTuning:()=>this._weatherDisplayRasterTuning?.("precipitation"),
         restore:()=>this._weatherDisplayRefreshRenderedLayers?.()
@@ -101,21 +107,34 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
   _rasterLabRefreshOptions(){
     const s=this.__rasterLabState,select=s?.root?.querySelector("[data-lab-layer]");
     if(!select)return;
-    select.replaceChildren();
     const catalog=[...RASTER_LAB_LAYER_CATALOG];
     for(const [id,adapter] of this._rasterLabAdapters()){
       if(!catalog.some(row=>row[0]===id))catalog.push([id,String(adapter.label||id)]);
     }
+    // Refresh renderer availability without destroying the active selection
+    // or the focused control. No polling, artificial sources or provider calls.
+    const remaining=new Set(catalog.map(row=>row[0]));
+    for(const option of [...select.options]){
+      if(!remaining.has(option.value))option.remove();
+    }
+    const usableIds=[];
     catalog.forEach(([id,name],index)=>{
       const adapter=this._rasterLabAdapters().get(id);
       const usable=!!adapter?.getPane?.();
-      const opt=document.createElement("option");
-      opt.value=id;opt.disabled=!usable;
-      opt.textContent=String(index+1).padStart(2,"0")+". "+name+(usable?"":" · noch nicht verfügbar");
-      select.append(opt);
+      let opt=[...select.options].find(option=>option.value===id);
+      if(!opt){opt=document.createElement("option");opt.value=id;}
+      if(usable)usableIds.push(id);
+      opt.disabled=!usable;
+      const label=String(index+1).padStart(2,"0")+". "+name+
+        (usable?"":" · noch nicht verfügbar");
+      if(opt.textContent!==label)opt.textContent=label;
+      if(select.options[index]!==opt)select.insertBefore(opt,select.options[index]||null);
     });
-    if(!this._rasterLabAdapters().get(s.selected)?.getPane?.())s.selected="precipitation";
-    select.value=s.selected;
+    if(!usableIds.includes(s.selected)){
+      s.selected=usableIds[0]||"precipitation";
+    }
+    if(select.value!==s.selected)select.value=s.selected;
+    this._rasterLabRenderValues?.();
   },
   _rasterLabRenderValues(){
     const s=this._rasterLabState(),root=s.root;if(!root)return;
