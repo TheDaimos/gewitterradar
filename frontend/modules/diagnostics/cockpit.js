@@ -1022,9 +1022,11 @@ return {
       this._diagnosticRegistry().forEach((entry)=>this._diagnosticsResizeObserver?.observe(entry.element));
       this._prepareDiagnosticAssets();
       this._syncDiagnosticUi();this._scheduleDiagnosticMeasure();
+      this._rasterLabEnsureTrigger?.();
     },
 
     _stopDiagnostics() {
+      this._rasterLabClose?.();
       if(!this._diagnostics)return;
       this._diagnostics.enabled=false;this._diagnostics.selecting=false;this._diagnostics.live=false;this._diagnostics.visualsVisible=true;this._diagnostics.grid='off';
       Object.keys(this._diagnostics.overlays||{}).forEach((key)=>{this._diagnostics.overlays[key]=false;});
