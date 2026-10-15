@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41180r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41181r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.141",
+    "version": "1.2.142",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -115,7 +115,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "1.1.16",
     "group": "Oberfläche",
     "function": "Daimos Project Hub",
-    "subfunctions": ["Signatur-Einstieg","Haupttitel-Einstieg","Host-Popup","Health-Probe","Online-/Offline-Status","Lokale RC14-Runtime"],
+    "subfunctions": [
+      "Signatur-Einstieg",
+      "Haupttitel-Einstieg",
+      "Host-Popup",
+      "Health-Probe",
+      "Online-/Offline-Status",
+      "Lokale RC14-Runtime"
+    ],
     "file": "modules/ui/project-hub.js"
   },
   {
@@ -227,7 +234,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "0.1.3",
     "group": "Datenquellen & Verbindungen",
     "function": "Datenquellen – Übersicht und Diagnose",
-    "subfunctions": ["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
+    "subfunctions": [
+      "Blitzortung-Untermodul",
+      "WeatherRouter-Status",
+      "Standorte je Konfiguration",
+      "Nur-Lesen-Einstellungen",
+      "Aktualisieren",
+      "JSON herunterladen"
+    ],
     "file": "modules/diagnostics/data-sources.js"
   },
   {
@@ -235,7 +249,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "0.1.0",
     "group": "Datenquellen & Verbindungen",
     "function": "Blitzortung.org – Integration und Standorte",
-    "subfunctions": ["Integrationsstatus","Mehrere Standorte","Tracker-Kopplung","Einstellungen (Nur Lesen)","Sensorstatus","Diagnoseexport"],
+    "subfunctions": [
+      "Integrationsstatus",
+      "Mehrere Standorte",
+      "Tracker-Kopplung",
+      "Einstellungen (Nur Lesen)",
+      "Sensorstatus",
+      "Diagnoseexport"
+    ],
     "file": "modules/sources/blitzortung.js"
   },
   {
@@ -257,7 +278,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -271,6 +292,22 @@ export const EXPECTED_MODULES=Object.freeze([
       "Leistung"
     ],
     "file": "modules/diagnostics/cockpit.js"
+  },
+  {
+    "id": "diagnostics.raster-lab",
+    "version": "0.1.0",
+    "group": "Diagnose",
+    "function": "Raster-Labor",
+    "subfunctions": [
+      "Nummerierte Layerauswahl",
+      "Live-Vorschau",
+      "Zoomprofile",
+      "Vergleich mit Referenz",
+      "Zwischenablage",
+      "JSON-Export",
+      "Sicherer Rückfall"
+    ],
+    "file": "modules/diagnostics/raster-lab.js"
   },
   {
     "id": "instruments.compass-design",
@@ -351,7 +388,14 @@ export const EXPECTED_MODULES=Object.freeze([
     "version": "1.2.1",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1",
-    "subfunctions": ["Discovery", "Capability-Katalog", "Resolve", "Quellenstatus", "Diagnose-Trace", "Weather Engine Diagnose"],
+    "subfunctions": [
+      "Discovery",
+      "Capability-Katalog",
+      "Resolve",
+      "Quellenstatus",
+      "Diagnose-Trace",
+      "Weather Engine Diagnose"
+    ],
     "file": "modules/weather/consumer-client.js"
   },
   {
@@ -397,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.17",
+    "version": "0.4.18",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [

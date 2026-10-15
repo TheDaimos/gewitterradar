@@ -12,8 +12,8 @@ const [native,entry,skeleton,modules,dataSources,blitzortung,runtime]=await Prom
   read("frontend/assets/gewitterradar-runtime-manifest.json")
 ]);
 const manifest=JSON.parse(runtime);
-assert.equal(manifest.productVersion,"4.11.80");
-assert.equal(manifest.modules.length,33);
+assert.equal(manifest.productVersion,"4.11.81");
+assert.equal(manifest.modules.length,34);
 for(const id of ["diagnostics.data-sources","sources.blitzortung"]){
   assert.equal(manifest.modules.filter(m=>m.id===id).length,1,id);
 }

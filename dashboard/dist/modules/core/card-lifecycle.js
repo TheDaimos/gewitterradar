@@ -1,7 +1,7 @@
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -455,6 +455,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     disconnectedCallback() {
+      this._rasterLabClose?.();
       this._stopRuntimeUpdateWatch?.();
       this._teardownWeatherRadar?.();
       this._teardownWeatherDisplay?.();
