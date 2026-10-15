@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41178r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41179r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.139",
+    "version": "1.2.140",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -397,7 +397,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.15",
+    "version": "0.4.16",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
