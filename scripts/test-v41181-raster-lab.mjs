@@ -43,7 +43,7 @@ const pane={
  style:{filter:"",opacity:"0.73",removeProperty(name){if(name==="opacity")this.opacity="";}}
 };
 let restored=0;
-card._map={getZoom:()=>12,getPane:name=>name==="gr-weather-radar"?pane:null};
+card._map={getZoom:()=>12,hasLayer:layer=>Boolean(layer),getPane:name=>name==="gr-weather-radar"?pane:null};
 card._weatherRadarState=()=>({layer:{options:{maxNativeZoom:7}}});
 card._weatherDisplayRasterTuning=()=>({blur:147,contrast:.936,saturate:1.132,brightness:.995});
 card._weatherDisplayRefreshRenderedLayers=()=>{restored++;pane.style.filter="blur(147px)";};
