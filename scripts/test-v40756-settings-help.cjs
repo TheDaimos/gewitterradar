@@ -473,7 +473,7 @@ const server = http.createServer((req, res) => {
           assert.equal(legacyRows.length,legacyModuleIds.size,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
           assert.ok(projectHubRow?.name&&projectHubRow?.functions,delivery+'/'+profile+' '+row.language+' Project Hub manifest fallback populated');
-          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,33,delivery+'/'+profile+' '+row.language+' unique module ids');
+          assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,34,delivery+'/'+profile+' '+row.language+' unique module ids');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert.match(row.moduleSummaryParts[3],/[0-9A-F]{4}-[0-9A-F]{4}$/,delivery+'/'+profile+' '+row.language+' module set fingerprint');
