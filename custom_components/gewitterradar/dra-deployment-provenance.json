@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.79 DEV: begrenzte zoomabhängige Nachregulierung ausschließlich im Modus Weich ab Zoom 11, Zoom 10 und niedrigere Stufen unverändert; keine neuen SVG-Filter, Rasterquellen oder Animationsebenen. Desktop-, Android- und iPad-Realabnahme offen.",
+    "purpose": "V4.11.79 DEV: Visualisierung – begrenzte zoomabhängige Nachregulierung ausschließlich im Modus Weich ab Zoom 11, Zoom 10 und niedrigere Stufen unverändert; keine neuen SVG-Filter, Rasterquellen oder Animationsebenen. Desktop-, Android- und iPad-Realabnahme offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
