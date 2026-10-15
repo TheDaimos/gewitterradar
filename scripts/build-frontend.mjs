@@ -38,7 +38,7 @@ export async function expectedPayload(){
   // stays at 34 modules; explicitly package these only on the opt-in branch.
   const mosaicSupport=['raster-compositor.js','raster-mosaic-consumer.js',
     'raster-mosaic-contract.js','raster-mosaic-grid-layer.js',
-    'raster-mosaic-tile-loader.js','raster-tile-clip.js','raster-tile-url.js'];
+    'raster-mosaic-tile-loader.js','raster-tile-clip.js','raster-tile-url.js','raster-mosaic-activation.js'];
   if(versionText.includes('version:"4.11.82"')){
     for(const filename of mosaicSupport){
       const name='p7-010/'+filename;
