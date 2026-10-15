@@ -136,7 +136,9 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const s=this.__rasterLabState;
     if(!s)return;
     const adapter=this._rasterLabAdapters().get(s.selected);
-    try{adapter?.restore?.();}catch(_){}
+    const wasPreview=s.preview;
+    s.preview=false;
+    try{adapter?.restore?.();}catch(_){}finally{s.preview=wasPreview;}
     const pane=adapter?.getPane?.();
     if(pane){
       const prior=s.opacityOriginal?.get(pane);
@@ -219,7 +221,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     if(!this._diagnostics?.enabled)return false;
     const s=this._rasterLabState();
     if(s.open){s.root?.focus?.();return true;}
-    s.open=true;s.preview=true;
+    s.open=true;s.preview=true;s.samples.clear();s.feedback="";
     const root=html("section","raster-lab","");
     root.tabIndex=-1;root.setAttribute("aria-label","Raster-Labor – Diagnose");
     root.style.cssText="position:fixed;z-index:2147483646;top:64px;right:12px;max-width:calc(100vw - 16px);width:330px;max-height:calc(100dvh - 72px);box-sizing:border-box;overflow:auto;color:#ecedf1;background:linear-gradient(150deg,#21242b,#12161c);border:1px solid #cfab62;border-radius:14px;box-shadow:0 12px 40px #000b;font:12px system-ui;padding:12px;overscroll-behavior:contain";
