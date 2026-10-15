@@ -19,7 +19,7 @@ let APPLICATION_META, EXPECTED_MODULES, moduleDiagnostics, moduleRegistrySnapsho
 let installCardLifecycle, installMapDisplay, installScrollGuard, installSkeleton;
 let installMedallionDesigns;
 let installCompassScale, installControls, installI18nSettings, installSourceStatus, installProjectHub;
-let installCompassSelector, installDiagnostics, installModuleView, installMapDiagnostics, installCompassDesign, installDataSourceDiagnostics, installBlitzortungSource;
+let installCompassSelector, installDiagnostics, installModuleView, installMapDiagnostics, installRasterLab, installCompassDesign, installDataSourceDiagnostics, installBlitzortungSource;
 let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, installRender;
 let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherLayerMenu, installWeatherDisplayMenu, installWeatherLegendOverlay, installUpdateWatch;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
@@ -45,6 +45,7 @@ try {
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js','41174r1');
   const dataSourceDiagnostics = await gewitterradarImport('./modules/diagnostics/data-sources.js');
   const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41140r1');
+  const rasterLab = await gewitterradarImport('./modules/diagnostics/raster-lab.js','41181r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','41168r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
@@ -81,6 +82,7 @@ try {
   ({ installModuleView } = moduleView);
   ({ installDataSourceDiagnostics } = dataSourceDiagnostics);
   ({ installMapDiagnostics } = mapDiagnostics);
+  ({ installRasterLab } = rasterLab);
   ({ installCompassDesign } = compassDesign);
   ({ installLocationRadiiMap } = locationRadiiMap);
   ({ installStrikesWarnings } = strikesWarnings);
@@ -162,6 +164,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
   installWeatherRadar(GewitterradarCard,__moduleDeps);
   installWeatherLayerMenu(GewitterradarCard,__moduleDeps);
   installWeatherDisplayMenu(GewitterradarCard,__moduleDeps);
+  installRasterLab(GewitterradarCard,__moduleDeps);
   installWeatherLegendOverlay(GewitterradarCard,__moduleDeps);
 
   window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={...window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,phase:'define-custom-element'};
