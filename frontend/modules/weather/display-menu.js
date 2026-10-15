@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.15",
+  version:"0.4.16",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -90,7 +90,11 @@ export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
   const sourceGrowth=Math.max(0,currentScale-baselineScale);
   const legacyAdditional=extraZoom*Math.max(4,Math.min(12,base.blur*.30));
   const additionalBlur=Math.max(legacyAdditional,6*sourceGrowth);
-  const blur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
+  // V4.11.79 Feinabstimmung: Zoom <=10 bleibt pixelgleich zum Referenzprofil.
+  // Ab 11 sanfter Mehrbedarf, begrenzt auf 6 px ohne neue Renderpassage.
+  const nearZoom=smoothstep(10,13,Number(zoom));
+  const previousBlur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
+  const blur=Math.min(Math.max(54,previousBlur),previousBlur+6*nearZoom);
   // Nur Weich: leichte Kontrastreduktion gegen verbliebene Stufengrenzen.
   // Niederschlagskerne und Farbton/Saettigung bleiben weitgehend erhalten.
   const contrast=Math.max(.93,base.contrast-.012*Math.min(extraZoom,2));

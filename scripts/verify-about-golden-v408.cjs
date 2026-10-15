@@ -30,7 +30,7 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-const isV41178Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41178r1";')
+const isV41179Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41179r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41163Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41168r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
@@ -55,22 +55,22 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV41178Dev) {
+if (isV41179Dev) {
   // Additional data-source modules do not change protected About geometry.
   // Keep the historical V4.11.68 contract and the browser golden comparison.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  assert.ok(versionText.includes('version:"4.11.78"'));
-  assert.ok(versionText.includes('displayVersion:"V4.11.78 DEV"'));
-  assert.ok(versionText.includes('build:"V4.11.78-DEV-2026-10-14"'));
-  assert.ok(versionText.includes('runtimeRevision:"41178r1"'));
-  assert.ok(versionText.includes('moduleSetId:"E411-78A1"'));
-  assert.equal(runtime.productVersion, '4.11.78');
-  assert.equal(runtime.build, 'V4.11.78-DEV-2026-10-14');
-  assert.equal(runtime.runtimeRevision, '41178r1');
-  assert.equal(runtime.moduleSetId, 'E411-78A1');
+  assert.ok(versionText.includes('version:"4.11.79"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.79 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.79-DEV-2026-10-15"'));
+  assert.ok(versionText.includes('runtimeRevision:"41179r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-79A1"'));
+  assert.equal(runtime.productVersion, '4.11.79');
+  assert.equal(runtime.build, 'V4.11.79-DEV-2026-10-15');
+  assert.equal(runtime.runtimeRevision, '41179r1');
+  assert.equal(runtime.moduleSetId, 'E411-79A1');
   assert.equal(runtime.modules.length, 33);
 } else if (isV41163Dev) {
   // Preserve the immutable V4.07.56 About geometry baseline; this branch
