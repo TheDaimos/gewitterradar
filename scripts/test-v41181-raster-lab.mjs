@@ -41,7 +41,7 @@ assert.equal(pane.style.opacity,"0.45");
 assert.ok(content.includes('Flächenverschmelzung'),"Blend control is required");
 state.samples.get(card._rasterLabKey(info)).values.blend=50;
 card._rasterLabReapplyPreview();
-assert.match(pane.style.filter,/blur\\(163\\.50px\\)/,
+assert.ok(pane.style.filter.includes("blur(163.50px)"),
   "50 percent should interpolate between accepted base and experimental blur");
 assert.equal(pane.dataset.rasterLabPreview,"true");
 state.preview=false;card._rasterLabRestore();
