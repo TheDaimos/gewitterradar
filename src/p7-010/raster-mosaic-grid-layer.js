@@ -96,6 +96,11 @@ export function createRasterMosaicGridLayer(L,snapshot,{
  });
  const layer=new Composite({
    tileSize,pane,opacity,
+   // Canonical XYZ geometry is bounded at z18; high Leaflet zoom levels
+   // must upscale already verified native tiles instead of requesting
+   // impossible z19+ tile coordinates.
+   maxNativeZoom:Math.min(18,Math.max(
+     ...checked.layers.map(item=>item.render.max_zoom))),
    attribution:checked.layers.map(item=>item.attribution).join(" · "),
    keepBuffer:1,
    updateWhenIdle:true,

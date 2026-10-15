@@ -43,6 +43,10 @@ const L=createRasterMosaicGridLayer(FakeLeaflet,response,{
  onTileDiagnostics:diag=>diagnostics.push(diag)
 });
 assert.equal(L.options.tileSize,256);
+assert.equal(L.options.maxNativeZoom,18);
+assert.equal(L.options.pane,"gr-weather-radar");
+assert.ok(L.options.attribution.includes("wide"));
+
 const tileResult=await new Promise((resolve,reject)=>{
  const tile=L.createTile({x:0,y:0,z:0},(err,canvas)=>
    err?reject(err):resolve(canvas));
