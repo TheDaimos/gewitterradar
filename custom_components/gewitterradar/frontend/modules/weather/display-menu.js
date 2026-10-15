@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.16",
+  version:"0.4.17",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
