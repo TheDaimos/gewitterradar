@@ -54,11 +54,15 @@ export class RasterTileRequestBudget {
 export async function drawRasterMosaicTileFromUrls({
  context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000
 }={}){
- if(!Array.isArray(layers)||layers.length>4||typeof loadImage!=="function"
+ if(!Array.isArray(layers)||layers.length>12||typeof loadImage!=="function"
    ||!(budget instanceof RasterTileRequestBudget))
    throw new TypeError("Invalid bounded mosaic tile request");
  if(!Number.isInteger(timeoutMs)||timeoutMs<10||timeoutMs>15000)
    throw new RangeError("Invalid raster image timeout");
+ // The WR snapshot may contain up to twelve sources across the whole map.
+ // Only actually covering sources consume the bounded four-source tile budget.
+ // Preserve the WR ordering; the consumer must never re-score providers.
+ let selectedForTile=0;
  const results=await Promise.all(layers.map(async layer=>{
    const source_id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||layer.coverage_verified!==true||!layer.render){
@@ -74,6 +78,9 @@ export async function drawRasterMosaicTileFromUrls({
        :null;
    if(!coverage||!rasterTilePixelCrops(tile,coverage,tileSize).length)
      return {source_id,reason:"outside_tile_coverage"};
+   if(selectedForTile>=4)
+     return {source_id,reason:"tile_source_budget_exhausted"};
+   selectedForTile++;
    let url;
    try{url=rasterTileUrl(layer.tile_url,tile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
