@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {MODULE_META,RASTER_LAB_LAYER_CATALOG,installRasterLab} from "../frontend/modules/diagnostics/raster-lab.js";
 assert.equal(MODULE_META.id,"diagnostics.raster-lab");
+assert.equal(MODULE_META.version,"0.1.1");
 assert.equal(RASTER_LAB_LAYER_CATALOG.length,16);
 assert.equal(new Set(RASTER_LAB_LAYER_CATALOG.map(x=>x[0])).size,16);
 assert.equal(RASTER_LAB_LAYER_CATALOG[0][0],"precipitation");
@@ -15,9 +16,28 @@ assert.match(content,/map-fullscreen-dialog/);
 assert.match(content,/hostObserver\?\.disconnect\(\)/);
 assert.ok(!content.includes("setInterval("),"DEV OFF: no periodic background work");
 assert.ok(!content.includes("requestAnimationFrame("),"DEV OFF: no animation loop");
+const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",import.meta.url),"utf8");
+const launchPosition=skeleton.indexOf('id="diagnostic-raster-lab"');
+const compassPosition=skeleton.indexOf('id="diagnostic-compass-calibration"');
+const medallionPosition=skeleton.indexOf('id="diagnostic-medallion-calibration"');
+const followingSection=skeleton.indexOf('id="diagnostic-grid-title"');
+assert.ok(compassPosition>=0&&medallionPosition>compassPosition);
+assert.ok(launchPosition>medallionPosition&&launchPosition<followingSection,
+  "Raster-Labor button must be fixed beside calibration tools at top");
+assert.ok(skeleton.includes(".diagnostic-console button.diagnostic-calibration-raster { grid-column:1 / -1;"),"top launcher spans both columns");
+assert.ok(!content.includes("host.append(btn)"),
+  "Do not append launch after scrollable console body");
 const C=class {};
 installRasterLab(C,{});
 const card=new C();
+const launch={dataset:{},handlers:[],addEventListener(type,fn){this.handlers.push({type,fn});}};
+card._diagnostics={enabled:true};card.shadow={getElementById:id=>id==="diagnostic-raster-lab"?launch:null};
+card._rasterLabEnsureTrigger();card._rasterLabEnsureTrigger();
+assert.equal(launch.handlers.length,1,"Attach only once per card instance");
+assert.equal(launch.handlers[0].type,"click");
+card._diagnostics.enabled=false;
+card._rasterLabEnsureTrigger();
+assert.equal(launch.handlers.length,1,"DEV OFF must not attach more handlers");
 const pane={
  dataset:{},
  style:{filter:"",opacity:"0.73",removeProperty(name){if(name==="opacity")this.opacity="";}}
@@ -58,4 +78,4 @@ assert.equal(card._rasterLabRegisterAdapter({id:"Invalid Space",getPane:()=>pane
 assert.equal(card._rasterLabRegisterAdapter({id:"future.precipitation.forecast",label:"Prognose",getPane:()=>pane,getTuning:()=>({}),restore:()=>{}}),true);
 assert.equal(card._rasterLabRegisterAdapter({id:"temperature",getPane:()=>pane,getTuning:()=>({blur:0}),restore:()=>{}}),true);
 state.open=false;state.preview=false;
-console.log("PASS V4.11.81: numbered future layers, real preview, source zoom, restore and DEV-OFF bounds");
+console.log("PASS V4.11.82: numbered future layers, real preview, source zoom, restore and DEV-OFF bounds");
