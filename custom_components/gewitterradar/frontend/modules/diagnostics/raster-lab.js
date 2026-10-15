@@ -56,7 +56,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
   // capability or provider endpoint. Registration does not activate the lab.
   _rasterLabRegisterAdapter(adapter){
     if(!adapter||typeof adapter.id!=="string"
-      ||!RASTER_LAB_LAYER_CATALOG.some(row=>row[0]===adapter.id)
+      ||!/^[a-z0-9][a-z0-9._-]{0,95}$/.test(adapter.id)
       ||typeof adapter.getPane!=="function"
       ||typeof adapter.getTuning!=="function"
       ||typeof adapter.restore!=="function")return false;
@@ -101,7 +101,11 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const s=this.__rasterLabState,select=s?.root?.querySelector("[data-lab-layer]");
     if(!select)return;
     select.replaceChildren();
-    RASTER_LAB_LAYER_CATALOG.forEach(([id,name],index)=>{
+    const catalog=[...RASTER_LAB_LAYER_CATALOG];
+    for(const [id,adapter] of this._rasterLabAdapters()){
+      if(!catalog.some(row=>row[0]===id))catalog.push([id,String(adapter.label||id)]);
+    }
+    catalog.forEach(([id,name],index)=>{
       const adapter=this._rasterLabAdapters().get(id);
       const usable=!!adapter?.getPane?.();
       const opt=document.createElement("option");
