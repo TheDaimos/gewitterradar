@@ -265,9 +265,10 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     root.append(note,field);
     const hint=html("p","","Nur temporäre CSS-Vorschau. Kein Speichern in Produkteinstellungen, keine zusätzlichen Wetterabfragen. Beim Schließen wird die Originaldarstellung wiederhergestellt.");
     hint.style.cssText="font-size:10px;line-height:1.4;opacity:.72";root.append(hint);
-    // Prefer the existing diagnostics top-layer host for fullscreen/diagnostic parity.
-    const host=this.shadow?.getElementById("diagnostic-console")||this.shadow;
-    host.append(root);s.root=root;
+    // The diagnostic console clips overflow; never nest a movable
+    // calibration window inside it. The independent shadow-root surface
+    // preserves viewport positioning and remains usable over the map.
+    this.shadow.append(root);s.root=root;
     const ctl=new AbortController();s.controller=ctl;const signal=ctl.signal;
     close.addEventListener("click",()=>this._rasterLabClose(),{signal});
     select.addEventListener("change",()=>{
