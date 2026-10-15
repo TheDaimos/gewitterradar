@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41181r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41182r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.142",
+    "version": "1.2.143",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.23",
+    "version": "1.1.24",
     "group": "Oberfläche",
     "function": "Grundgerüst",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
