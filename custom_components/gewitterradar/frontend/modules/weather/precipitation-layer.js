@@ -1,4 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
+import { prepareRasterMosaicV2 } from "../../p7-010/raster-mosaic-consumer.js";
+import { promotePreparedRasterMosaic } from "../../p7-010/raster-mosaic-activation.js";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
@@ -11,6 +13,7 @@ export const MODULE_META=Object.freeze({
 
 const CAPABILITY="weather.precipitation.layer";
 const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
+const MOSAIC_OPT_IN_KEY="gewitterradar:p7-010:mosaic-v2-opt-in";
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
@@ -128,9 +131,10 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
     if(!this.__weatherRadarState){
-      let enabled=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
+      let enabled=false,mosaicOptIn=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
       try{
         enabled=localStorage.getItem(STORAGE_KEY)==="1";
+        mosaicOptIn=localStorage.getItem(MOSAIC_OPT_IN_KEY)==="1";
         const storedProfile=localStorage.getItem(PRELOAD_PROFILE_STORAGE_KEY);
         if(storedProfile&&WEATHER_RADAR_PRELOAD_PROFILES[storedProfile])preloadProfile=storedProfile;
         const storedCustom=finite(localStorage.getItem(PRELOAD_CUSTOM_STORAGE_KEY));
@@ -146,7 +150,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       }catch(_error){}
       this.__weatherRadarState={
-        enabled,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
+        enabled,mosaicOptIn,mosaicSnapshot:null,mosaicLastError:null,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
@@ -223,6 +227,98 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
 
+  _setWeatherRadarMosaicOptIn(enabled){
+    const state=this._weatherRadarState();
+    state.mosaicOptIn=Boolean(enabled);
+    try{localStorage.setItem(MOSAIC_OPT_IN_KEY,state.mosaicOptIn?"1":"0");}catch(_){}
+    if(!state.mosaicOptIn&&state.mosaicSnapshot)this._weatherRadarRemoveLayer();
+    this._weatherRadarUpdateControls();
+    if(!state.enabled)return;
+    state.lastRequestAt=0;
+    if(state.inFlight){state.pending=true;return;}
+    void this._refreshWeatherRadar({reason:"mosaic-opt-in",force:true});
+  },
+
+  /**
+   * V2 is explicitly opt-in. Stage alongside existing V1, then promote only
+   * after an actual image was painted. Unknown contract, no covering pixels,
+   * partial retrieval failures or moved views retain the functional V1 path.
+   */
+  async _weatherRadarTryMosaic(viewport){
+    const state=this._weatherRadarState(),map=this._map;
+    if(!state.enabled||!state.mosaicOptIn||!map
+      ||typeof this._hass?.callWS!=="function")return false;
+    const isCurrent=()=>state.enabled&&state.mosaicOptIn&&this._map===map
+      &&this._weatherRadarViewport()?.signature===viewport.signature;
+    let painted=0,lastTileRequests=0,layer=null;
+    try{
+      const Leaflet=await loadLeafletJs();
+      if(!isCurrent())return false;
+      if(!map.getPane?.("gr-weather-radar")){
+        const pane=map.createPane("gr-weather-radar");
+        pane.style.zIndex="230";pane.style.pointerEvents="none";
+      }
+      const prepared=await prepareRasterMosaicV2({
+        callWS:message=>this._hass.callWS(message),
+        Leaflet,viewport:viewport.context,focus:viewport.focus,
+        maxLayers:12,maxTileRequests:48,maxDataAgeSeconds:900,
+        maxTimeDeltaSeconds:180,
+        layerOptions:{
+          pane:"gr-weather-radar",opacity:this._weatherRadarEffectiveOpacity(1),
+          tileSize:256,maxConcurrent:4,timeoutMs:7000,
+          onTileDiagnostics(result){
+            if(result?.drawn?.length)painted++;
+            if(Number.isInteger(result?.requests_used))lastTileRequests=result.requests_used;
+          }
+        }
+      });
+      if(prepared.mode!=="v2"||!isCurrent()){
+        state.mosaicLastError=prepared.reason||"stale_viewport";
+        return false;
+      }
+      layer=prepared.layer;
+      const promoted=await promotePreparedRasterMosaic({
+        map,layer,hasPainted:()=>painted>0,isCurrent,timeoutMs:9000
+      });
+      if(!promoted){
+        state.mosaicLastError="no_painted_raster_tile";
+        return false;
+      }
+      const old=state.layer;
+      state.layer=layer;
+      layer.__grRadarNaturalOpacity=1;
+      state.mosaicSnapshot={
+        status:prepared.response.status,
+        sourceCount:prepared.response.layers.length,
+        sources:prepared.response.layers.map(row=>({
+          id:row.source_id,attribution:row.attribution,
+          quantity:row.semantics.quantity,unit:row.semantics.unit,
+          method:row.semantics.measurement_method,
+          validAt:row.times.valid_at
+        })),
+        limitations:Array.isArray(prepared.response.limitations)
+          ?prepared.response.limitations.slice(0,15):[],
+        referenceTime:prepared.response.reference_time||null,
+        paintedTiles:painted,requestsUsed:lastTileRequests
+      };
+      state.mosaicLastError=null;
+      state.lastUnavailable=null;
+      if(old&&old!==layer)try{old.remove();}catch(_){}
+      this._weatherRadarRemoveTimelinePlayer();
+      state.timelineModel=null;state.timelineIndex=-1;
+      this._weatherRadarClearPreload();
+      this._weatherDisplayRefreshRenderedLayers?.();
+      this._rasterLabRefreshOptions?.();
+      this._weatherRadarRenderCurrentLegend();
+      this._weatherRadarUpdateControls();
+      return true;
+    }catch(_error){
+      if(layer)try{layer.remove();}catch(_){}
+      state.mosaicLastError="v2_preparation_failed";
+      return false;
+    }
+  },
+
   _weatherRadarNaturalOpacity(){
     const state=this._weatherRadarState();
     const live=finite(state.layer?.__grRadarNaturalOpacity);
@@ -290,6 +386,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarActivePayload(){
     const state=this._weatherRadarState();
+    if(state.mosaicSnapshot)return null;
     const payload=state.lastReady?.answer?.resource?.payload;
     const frame=state.timelineModel?.frames?.[state.timelineIndex];
     return payload&&frame?{...payload,tile_url:frame.tile_url}:payload||null;
@@ -634,6 +731,20 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarRenderCurrentLegend(){
     const state=this._weatherRadarState(),answer=state.lastReady?.answer;
+    if(state.mosaicSnapshot){
+      const snapshot=state.mosaicSnapshot;
+      this._weatherRadarRenderLegend({
+        family:"precipitation",capability:CAPABILITY,
+        heading:"Niederschlagsmosaik",
+        label:"Niederschlag · "+snapshot.sourceCount+" Quellen · Teilabdeckung",
+        subtitle:"Mehrquellenmosaik V2 · "+snapshot.sourceCount+" Quellen",
+        title:snapshot.sources.map(row=>row.id+" · "+row.method+" · "+row.validAt)
+          .join(" | ")+" · "+snapshot.limitations.join(" · "),
+        unit:"",entries:snapshot.sources.slice(0,8).map(row=>({label:row.id})),
+        priority:100
+      });
+      return;
+    }
     if(!answer)return;
     const payload=answer.resource?.payload||{},description=this._weatherRadarDescribe(answer);
     const frame=state.timelineModel?.frames?.[state.timelineIndex];
@@ -784,6 +895,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarRemoveTimelinePlayer();
     state.timelineModel=null;state.timelineIndex=-1;state.timelineLoadMessage=null;
     if(state.layer){try{state.layer.remove();}catch(_error){}state.layer=null;}
+    state.mosaicSnapshot=null;
+    this._rasterLabRefreshOptions?.();
     this._weatherRadarRenderLegend(null);
   },
 
@@ -836,7 +949,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const next=this._weatherRadarCreateLayer(L,payload,attribution);
       next.addTo(this._map);
       const old=state.layer;state.layer=next;
+      state.mosaicSnapshot=null;
       if(old)try{old.remove();}catch(_error){}
+      this._rasterLabRefreshOptions?.();
       this._weatherDisplayRefreshRenderedLayers?.();
       this._weatherDisplaySyncUi?.();
     }).catch(()=>{});
@@ -878,6 +993,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     try{
       const discovery=await this._weatherRouterDiscovery();
       if(!discovery?.ready){this._weatherRadarHandleUnavailable({unavailable:{code:discovery?.compatible?"router_not_ready":"capability_not_supported"}});return;}
+      if(state.mosaicOptIn&&await this._weatherRadarTryMosaic(viewport))return;
       const catalog=await this._weatherRouterCapabilities({filter:{domains:["weather"],resource_types:["raster_tile"],available_only:true}});
       const capability=catalog?.status==="ready"?catalog.capabilities.find(item=>item.id===CAPABILITY&&item.enabled&&item.available):null;
       if(!capability){this._weatherRadarHandleUnavailable({unavailable:{code:"capability_not_supported"}});return;}
@@ -899,6 +1015,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _weatherRadarUpdateControls(message=null){
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
+    const mosaicToggle=this.shadow?.getElementById("weather-radar-mosaic-toggle");
     const status=this.shadow?.getElementById("weather-radar-status");
     const timelineStatus=this.shadow?.getElementById("weather-radar-timeline-status");
     const timelineToggle=this.shadow?.getElementById("weather-radar-timeline-toggle");
@@ -907,6 +1024,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       toggle.textContent=state.enabled?"Ein":"Aus";
       toggle.dataset.active=state.enabled?"1":"0";
     }
+    if(mosaicToggle){mosaicToggle.setAttribute("aria-pressed",state.mosaicOptIn?"true":"false");mosaicToggle.textContent=state.mosaicOptIn?"Ein":"Aus";mosaicToggle.dataset.active=state.mosaicOptIn?"1":"0";}
     if(timelineToggle){timelineToggle.setAttribute("aria-pressed",state.timelineVisible?"true":"false");timelineToggle.textContent=state.timelineVisible?"Ein":"Aus";timelineToggle.dataset.active=state.timelineVisible?"1":"0";}
     if(timelineStatus){
       const frames=state.timelineModel?.frames?.length||0;
@@ -921,10 +1039,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!status)return;
     if(message){status.textContent=message;return;}
     if(!state.enabled){status.textContent="Aus · keine zusätzlichen Niederschlags-Anfragen";return;}
+    if(state.mosaicSnapshot&&state.layer){
+      const mosaic=state.mosaicSnapshot;
+      status.textContent="Aktiv · Mehrquellenmosaik V2 · "+mosaic.sourceCount+
+        " Quellen · "+mosaic.paintedTiles+" Kacheln nachgewiesen · "+
+        mosaic.requestsUsed+"/48 Rasterabrufe · Teilabdeckung";
+      return;
+    }
     if(state.lastReady){
       const d=this._weatherRadarDescribe(state.lastReady.answer);
       const frames=state.timelineModel?.frames?.length||0;
-      status.textContent="Aktiv · "+d.provider+" · "+d.ageText+(frames>1?" · "+frames+" Niederschlagszeitpunkte":"")+" · Abdeckung: "+d.coverage+(state.lastReady.answer.routing?.degraded?" · eingeschränkt":"");
+      status.textContent=(state.mosaicOptIn?"Mehrquellenversuch V2 · V1-Rückfall · ":"")+"Aktiv · "+d.provider+" · "+d.ageText+(frames>1?" · "+frames+" Niederschlagszeitpunkte":"")+" · Abdeckung: "+d.coverage+(state.lastReady.answer.routing?.degraded?" · eingeschränkt":"");
       return;
     }
     const code=state.lastUnavailable?.code;
@@ -953,6 +1078,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const toggle=document.createElement("button");toggle.className="settings-language-button settings-control";toggle.id="weather-radar-toggle";toggle.type="button";
     toggle.addEventListener("click",()=>this._setWeatherRadarEnabled(!this._weatherRadarState().enabled));
     row.append(label,toggle);
+
+    const mosaicRow=document.createElement("div");mosaicRow.className="settings-row";
+    const mosaicLabel=document.createElement("div");mosaicLabel.className="settings-row-label";
+    const mosaicTitle=document.createElement("div");mosaicTitle.textContent="Mehrquellenmosaik V2 · P7-010 (Versuch)";
+    const mosaicHint=document.createElement("div");
+    mosaicHint.textContent="Auslieferung standardmäßig abgeschaltet. V1 bleibt bis zu einer tatsächlich gezeichneten V2-Kachel erhalten; bei Fehlern wird auf V1 zurückgefallen.";
+    mosaicHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    mosaicLabel.append(mosaicTitle,mosaicHint);
+    const mosaicToggle=document.createElement("button");
+    mosaicToggle.type="button";mosaicToggle.id="weather-radar-mosaic-toggle";
+    mosaicToggle.className="settings-language-button settings-control";
+    mosaicToggle.addEventListener("click",()=>this._setWeatherRadarMosaicOptIn(!this._weatherRadarState().mosaicOptIn));
+    mosaicRow.append(mosaicLabel,mosaicToggle);
 
     const preloadRow=document.createElement("div");preloadRow.className="settings-row";
     const preloadLabel=document.createElement("div");preloadLabel.className="settings-row-label";
@@ -1011,7 +1149,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const statusRow=document.createElement("div");statusRow.className="settings-row";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
+    statusRow.append(status);block.append(row,mosaicRow,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
     const results=this.shadow?.getElementById("weather-engine-results")?.closest(".settings-row");
     if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
     this._weatherRadarUpdateControls();
