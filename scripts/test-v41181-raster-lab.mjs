@@ -10,6 +10,9 @@ for(const keyword of ["data-lab-layer","data-lab-ab","data-lab-reset","data-lab-
 "data-lab-export","_rasterLabRegisterAdapter","_rasterLabDownload",
 "_rasterLabCopy","_rasterLabClose","_rasterLabReapplyPreview",
 "AbortController","new WeakMap","map.off(\"zoomend\""])assert.ok(content.includes(keyword),keyword);
+assert.match(content,/_rasterLabHost\(/);
+assert.match(content,/map-fullscreen-dialog/);
+assert.match(content,/hostObserver\?\.disconnect\(\)/);
 assert.ok(!content.includes("setInterval("),"DEV OFF: no periodic background work");
 assert.ok(!content.includes("requestAnimationFrame("),"DEV OFF: no animation loop");
 const C=class {};
