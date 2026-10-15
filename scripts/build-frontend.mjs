@@ -34,6 +34,17 @@ export async function expectedPayload(){
     modular.set(item.file,await readFile(resolve(root,'frontend',item.file)));
   }
   for(const name of support)modular.set(name,await readFile(resolve(root,'frontend',name)));
+  // P7-010 helpers are unregistered support files: the canonical inventory
+  // stays at 34 modules; explicitly package these only on the opt-in branch.
+  const mosaicSupport=['raster-compositor.js','raster-mosaic-consumer.js',
+    'raster-mosaic-contract.js','raster-mosaic-grid-layer.js',
+    'raster-mosaic-tile-loader.js','raster-tile-clip.js','raster-tile-url.js'];
+  if(versionText.includes('version:"4.11.82"')){
+    for(const filename of mosaicSupport){
+      const name='p7-010/'+filename;
+      modular.set(name,await readFile(resolve(root,'frontend',name)));
+    }
+  }
   const localeBytes=await readFile(resolve(root,'frontend/locales/about-locales.js'));
   localeSha=hash(localeBytes);
   localeSize=localeBytes.length;
