@@ -11,7 +11,7 @@ for(const nativeZoom of [5,7,9,11]){
  for(const zoom of [8,9,10])assert.ok(Math.abs(soft(zoom,nativeZoom).blur-old(zoom))<1e-8);
  for(const zoom of [11,12,13]) {
   const updated=soft(zoom,nativeZoom).blur;
-  assert.ok(updated>=old(zoom)-1e-8 && updated<=Math.max(54,old(zoom))+1e-8);
+  assert.ok(updated>=old(zoom)-1e-8 && updated<=Math.max(205,old(zoom))+1e-8);
  }
 }
 console.log("Soft zoom 10 protected / bounded near-zoom tuning PASS");

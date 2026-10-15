@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.16",
+  version:"0.4.17",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -90,11 +90,19 @@ export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
   const sourceGrowth=Math.max(0,currentScale-baselineScale);
   const legacyAdditional=extraZoom*Math.max(4,Math.min(12,base.blur*.30));
   const additionalBlur=Math.max(legacyAdditional,6*sourceGrowth);
-  // V4.11.79 Feinabstimmung: Zoom <=10 bleibt pixelgleich zum Referenzprofil.
-  // Ab 11 sanfter Mehrbedarf, begrenzt auf 6 px ohne neue Renderpassage.
-  const nearZoom=smoothstep(10,13,Number(zoom));
+  // V4.11.80: Geografisch grobe 90-Grad-/L-Formen muessen im Nahzoom
+  // wie in der akzeptierten Zoom-10-Ansicht ineinander verlaufen.
+  // Der Zoom-10-Stand und alle niedrigeren Stufen bleiben exakt gleich.
   const previousBlur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
-  const blur=Math.min(Math.max(54,previousBlur),previousBlur+6*nearZoom);
+  const zoomBeyondTen=clamp(Number(zoom)-10,0,3);
+  const atTenSourceGrowth=Math.max(0,Math.pow(2,clamp(10-sourceZoom,0,5))-baselineScale);
+  const atTenAdditional=Math.max(2*Math.max(4,Math.min(12,base.blur*.30)),6*atTenSourceGrowth);
+  const acceptedTenBlur=Math.min(Math.max(48,base.blur),base.blur+atTenAdditional);
+  // Deutlich groesser als +6 px: 10/11/12/13 folgen ungefaehr
+  // 1 / 1.75 / 3.06 / 5.36, hoechstens 205 px statt Auto 220 px.
+  // Nur ein CSS-Filter pro Pane; keine weiteren Layer oder Hintergrundarbeit.
+  const cloudBlur=Math.min(205,acceptedTenBlur*Math.pow(1.75,zoomBeyondTen));
+  const blur=zoomBeyondTen>0?Math.max(previousBlur,cloudBlur):previousBlur;
   // Nur Weich: leichte Kontrastreduktion gegen verbliebene Stufengrenzen.
   // Niederschlagskerne und Farbton/Saettigung bleiben weitgehend erhalten.
   const contrast=Math.max(.93,base.contrast-.012*Math.min(extraZoom,2));
@@ -104,7 +112,7 @@ export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
   const detailBlur=blur;
   const broadBlur=Math.min(64,blur*(1.28+.025*Math.min(extraZoom,2)));
   const broadWeight=Math.min(.32,.16*extraZoom);
-  const multiscale=extraZoom>0&&base.blur<48&&broadBlur>detailBlur+1
+  const multiscale=zoomBeyondTen===0&&extraZoom>0&&base.blur<48&&broadBlur>detailBlur+1
     ? {detailBlur,broadBlur,broadWeight} : null;
   return multiscale?{...base,blur,contrast,multiscale}:{...base,blur,contrast};
 };
