@@ -73,14 +73,14 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     });
   },
   _rasterLabEnsureTrigger(){
+    // The launch control belongs to the fixed, always-visible calibration
+    // toolbar inside the scrollable diagnostic body. Never append a button
+    // after the body: the outer console clips those descendants.
     if(!this._diagnostics?.enabled)return;
-    const host=this.shadow?.getElementById("diagnostic-console");
-    if(!host||host.querySelector("[data-raster-lab-launch]"))return;
-    const btn=html("button","","Raster-Labor · Live-Darstellung");
-    btn.type="button";btn.dataset.rasterLabLaunch="true";
-    btn.style.cssText="display:block;margin:8px;padding:9px 12px;min-height:38px;border:1px solid #d5aa53;border-radius:9px;background:#22212a;color:#f2d28b;font:700 12px system-ui;cursor:pointer;touch-action:manipulation";
+    const btn=this.shadow?.getElementById("diagnostic-raster-lab");
+    if(!btn||btn.dataset.rasterLabBound==="true")return;
     btn.addEventListener("click",()=>this._rasterLabOpen());
-    host.append(btn);
+    btn.dataset.rasterLabBound="true";
   },
   _rasterLabAdapter(){
     return this._rasterLabAdapters().get(this._rasterLabState().selected)||null;
