@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.80",
-  "build": "V4.11.80-DEV-2026-10-15",
-  "runtimeRevision": "41180r1",
-  "moduleSetId": "E411-80A1",
+  "productVersion": "4.11.81",
+  "build": "V4.11.81-DEV-2026-10-15",
+  "runtimeRevision": "41181r1",
+  "moduleSetId": "E411-81A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.141"
+      "version": "1.2.142"
     },
     {
       "id": "core.base-context",
@@ -23,7 +23,7 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.6"
+      "version": "1.0.7"
     },
     {
       "id": "fullscreen.map-display",
@@ -87,7 +87,11 @@
     },
     {
       "id": "diagnostics.cockpit",
-      "version": "1.5.1"
+      "version": "1.5.2"
+    },
+    {
+      "id": "diagnostics.raster-lab",
+      "version": "0.1.0"
     },
     {
       "id": "instruments.compass-design",
@@ -123,7 +127,7 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.4.17"
+      "version": "0.4.18"
     },
     {
       "id": "weather.legend-overlay",
@@ -138,5 +142,5 @@
       "version": "1.2.1"
     }
   ],
-  "displayVersion": "V4.11.80 DEV"
+  "displayVersion": "V4.11.81 DEV"
 }
