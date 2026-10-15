@@ -48,6 +48,9 @@ jobs:
       - name: V4.11.79 Weich Zoom 10 reference and Zoom 11-13 bounds
         run: node scripts/test-soft-zoom11-13-2026-10-15.mjs
 
+      - name: V4.11.80 Weich cloud transitions and source-zoom safety
+        run: node scripts/test-v41180-soft-cloud-zoom11-13.mjs
+
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
