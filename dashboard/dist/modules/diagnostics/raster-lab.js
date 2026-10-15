@@ -19,6 +19,7 @@ export const RASTER_LAB_LAYER_CATALOG=Object.freeze([
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
 const FIELDS=Object.freeze({
   blur:[0,220,1,"Glättung","px"],
+  blend:[0,100,1,"Flächenverschmelzung","%"],
   contrast:[.5,1.6,.01,"Kontrast",""],
   saturate:[0,2,.01,"Farbsättigung",""],
   brightness:[.5,1.5,.01,"Helligkeit",""],
@@ -75,7 +76,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     if(!this._diagnostics?.enabled)return;
     const host=this.shadow?.getElementById("diagnostic-console");
     if(!host||host.querySelector("[data-raster-lab-launch]"))return;
-    const btn=html("button","","16. Raster-Labor · Darstellung");
+    const btn=html("button","","Raster-Labor · Live-Darstellung");
     btn.type="button";btn.dataset.rasterLabLaunch="true";
     btn.style.cssText="display:block;margin:8px;padding:9px 12px;min-height:38px;border:1px solid #d5aa53;border-radius:9px;background:#22212a;color:#f2d28b;font:700 12px system-ui;cursor:pointer;touch-action:manipulation";
     btn.addEventListener("click",()=>this._rasterLabOpen());
@@ -89,7 +90,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const adapter=this._rasterLabAdapter(),pane=adapter?.getPane?.(),native=Number(adapter?.getNativeZoom?.()),tuning=adapter?.getTuning?.()||{};
     const base={blur:clamp(tuning.blur||0,0,220),contrast:clamp(tuning.contrast??1,.5,1.6),
       saturate:clamp(tuning.saturate??1,0,2),brightness:clamp(tuning.brightness??1,.5,1.5),
-      opacity:1};
+      opacity:1,blend:100};
     return {adapter,pane,nativeZoom:Number.isFinite(native)?native:null,zoom:this._rasterLabZoom(),base};
   },
   _rasterLabKey(info){return this._rasterLabState().selected+":"+info.zoom+":"+(info.nativeZoom??"none");},
@@ -159,7 +160,8 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const v=this._rasterLabValues(info);
     if(!s.opacityOriginal.has(pane))s.opacityOriginal.set(pane,pane.style.opacity);
     this._weatherDisplayReleaseSoftFilter?.(pane);
-    pane.style.filter="blur("+fit(v.blur)+"px) saturate("+fit(v.saturate)+
+    const effectiveBlur=info.base.blur+(v.blur-info.base.blur)*clamp(v.blend??100,0,100)/100;
+    pane.style.filter="blur("+fit(effectiveBlur)+"px) saturate("+fit(v.saturate)+
       ") contrast("+fit(v.contrast)+") brightness("+fit(v.brightness)+")";
     pane.style.opacity=String(v.opacity);
     pane.dataset.rasterLabPreview="true";
@@ -229,7 +231,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const root=html("section","raster-lab","");
     root.tabIndex=-1;root.setAttribute("aria-label","Raster-Labor – Diagnose");
     root.style.cssText="position:fixed;z-index:2147483646;top:64px;right:12px;max-width:calc(100vw - 16px);width:330px;max-height:calc(100dvh - 72px);box-sizing:border-box;overflow:auto;color:#ecedf1;background:linear-gradient(150deg,#21242b,#12161c);border:1px solid #cfab62;border-radius:14px;box-shadow:0 12px 40px #000b;font:12px system-ui;padding:12px;overscroll-behavior:contain";
-    const head=html("div","","<strong style='color:#f2d28b'>16. Raster-Labor</strong> <small style='opacity:.7'>V4.11.81 DEV</small>");
+    const head=html("div","","<strong style='color:#f2d28b'>Raster-Labor</strong> <small style='opacity:.7'>V4.11.81 DEV</small>");
     head.style.cssText="display:flex;justify-content:space-between;gap:8px;align-items:center;cursor:grab;touch-action:none;min-height:34px";
     const close=html("button","","×");close.type="button";close.title="Schließen und Original wiederherstellen";
     close.style.cssText="min-width:40px;min-height:38px;color:#efd9a3;background:#222;border:1px solid #866d43;border-radius:9px";
@@ -291,7 +293,8 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     },{signal});
     root.querySelector("[data-lab-reset]").addEventListener("click",()=>{
       s.samples.delete(this._rasterLabKey(this._rasterLabSnapshot()));
-      s.preview=false;this._rasterLabApply();s.preview=true;this._rasterLabRenderValues();
+      s.preview=false;this._rasterLabApply();s.preview=true;
+      this._rasterLabApply();this._rasterLabRenderValues();
     },{signal});
     root.querySelector("[data-lab-copy]").addEventListener("click",()=>this._rasterLabCopy(),{signal});
     root.querySelector("[data-lab-export]").addEventListener("click",()=>this._rasterLabDownload(),{signal});
