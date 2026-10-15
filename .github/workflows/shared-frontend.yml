@@ -37,6 +37,15 @@ jobs:
       - name: V4.11 WeatherRouter Consumer V1 contract
         run: node scripts/test-v411-weather-router.mjs
 
+      # P7-010 pure prototype regression; no activation of Consumer V2 runtime.
+      - name: P7-010 global/regional mosaics against V4.11.78
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in scripts/test-p7-010-*.mjs; do
+            node "$test"
+          done
+
       - name: V4.11.78 synthetic precipitation raster and performance envelope
         run: node scripts/test-v41175-soft-raster.mjs
 
