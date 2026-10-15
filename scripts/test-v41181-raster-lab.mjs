@@ -24,8 +24,8 @@ const followingSection=skeleton.indexOf('id="diagnostic-grid-title"');
 assert.ok(compassPosition>=0&&medallionPosition>compassPosition);
 assert.ok(launchPosition>medallionPosition&&launchPosition<followingSection,
   "Raster-Labor button must be fixed beside calibration tools at top");
-assert.match(skeleton,/diagnostic-calibration-raster[^\\n]*grid-column:1 \\/ -1/);
-assert.doesNotMatch(content,/host\\.append\\(btn\\)/,
+assert.ok(skeleton.includes(".diagnostic-console button.diagnostic-calibration-raster { grid-column:1 / -1;"),"top launcher spans both columns");
+assert.ok(!content.includes("host.append(btn)"),
   "Do not append launch after scrollable console body");
 const C=class {};
 installRasterLab(C,{});
