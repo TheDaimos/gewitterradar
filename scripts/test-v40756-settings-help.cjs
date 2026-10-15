@@ -468,7 +468,7 @@ const server = http.createServer((req, res) => {
           assert.equal(row.tooltipMapWindowOpen,row.values['settings.map_window_open_aria'],delivery+'/'+profile+' '+row.language+' map-window hover title');
           assert.equal(row.tooltipMedallionMove,`${row.values['map.medallion_move']} · ${row.values['trend.label']}`,delivery+'/'+profile+' '+row.language+' medallion hover title');
           assert.equal(row.tooltipDevice,row.values['compass.fixed_compass_title'],delivery+'/'+profile+' '+row.language+' device compass hover title');
-          assert.equal(row.localizedModuleRows.length,33,delivery+'/'+profile+' '+row.language+' all module rows present');
+          assert.equal(row.localizedModuleRows.length,34,delivery+'/'+profile+' '+row.language+' all module rows present');
           const legacyRows=row.localizedModuleRows.filter((entry) => legacyModuleIds.has(entry.id));
           assert.equal(legacyRows.length,legacyModuleIds.size,delivery+'/'+profile+' '+row.language+' legacy localized module rows preserved');
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
