@@ -45,6 +45,9 @@ jobs:
           node scripts/test-v41176-soft-raster.mjs
           node scripts/test-v41178-platform-soft-raster.mjs
 
+      - name: V4.11.79 Weich Zoom 10 reference and Zoom 11-13 bounds
+        run: node scripts/test-soft-zoom11-13-2026-10-15.mjs
+
       - name: V4.11 canonical DEV identity
         run: node scripts/test-v411-identity.mjs
 
