@@ -118,4 +118,29 @@ const wrapped=await drawRasterMosaicTileFromUrls({
  }
 });
 assert.equal(wrapped.drawn.length,1);
+
+const twelve=Array.from({length:12},(_,i)=>
+  source("mosaic_"+i,{scope:i<8?"bbox":"global",
+    coverage:i<8?germany:full}));
+const globalOnly=[];
+const worldMosaic=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile:{x:0,y:0,z:0},layers:twelve,
+ budget:new RasterTileRequestBudget(12),
+ loadImage:async (_url,layer)=>{
+   globalOnly.push(layer.source_id);return {width:256};
+ }
+});
+assert.equal(globalOnly.length,4,"only covering sources reach the network");
+assert.deepEqual(globalOnly,["mosaic_8","mosaic_9","mosaic_10","mosaic_11"]);
+assert.equal(worldMosaic.requests_used,4);
+const allGlobal=Array.from({length:12},(_,i)=>source("global_"+i));
+const localBound=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile,layers:allGlobal,
+ budget:new RasterTileRequestBudget(12),
+ loadImage:async ()=>({width:256})
+});
+assert.equal(localBound.drawn.length,4,"twelve-source snapshot cannot multiply a single tile");
+assert.equal(localBound.rejected.filter(x=>x.reason==="tile_source_budget_exhausted").length,8);
+assert.equal(localBound.requests_used,4);
+
 console.log("P7-010 bounded WMS/XYZ tile loading and fallback PASS");
