@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.81 DEV: Raster-Labor mit nummerierter Layerauswahl, Live-Reglern, gerätebezogener Diagnose und sicheren JSON-/Zwischenablage-Exporten; visuell abgenommene Weich-Referenz V4.11.80 unverändert. Browser- und HA-Realabnahme offen.",
+    "purpose": "V4.11.81 DEV: Visualisierung – Raster-Labor mit nummerierter Layerauswahl, Live-Reglern, gerätebezogener Diagnose und sicheren JSON-/Zwischenablage-Exporten; visuell abgenommene Weich-Referenz V4.11.80 unverändert. Browser- und HA-Realabnahme offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
