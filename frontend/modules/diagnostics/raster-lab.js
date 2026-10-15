@@ -66,7 +66,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
   },
   _rasterLabState(){
     return this.__rasterLabState||(this.__rasterLabState={
-      open:false,active:false,selected:"precipitation",samples:new Map(),
+      open:false,active:false,selected:"precipitation",samples:new Map(),opacityOriginal:new WeakMap(),
       controller:null,root:null,preview:true,feedback:"",position:null,
       map:null,zoomHandler:null
     });
@@ -92,7 +92,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
       opacity:1};
     return {adapter,pane,nativeZoom:Number.isFinite(native)?native:null,zoom:this._rasterLabZoom(),base};
   },
-  _rasterLabKey(info){return this._rasterLabState().selected+":"+info.zoom;},
+  _rasterLabKey(info){return this._rasterLabState().selected+":"+info.zoom+":"+(info.nativeZoom??"none");},
   _rasterLabValues(info){
     const current=this._rasterLabState().samples.get(this._rasterLabKey(info));
     return current?.values||{...info.base};
@@ -137,6 +137,13 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     if(!s)return;
     const adapter=this._rasterLabAdapters().get(s.selected);
     try{adapter?.restore?.();}catch(_){}
+    const pane=adapter?.getPane?.();
+    if(pane){
+      const prior=s.opacityOriginal?.get(pane);
+      if(prior===undefined)pane.style.removeProperty("opacity");
+      else pane.style.opacity=prior;
+      delete pane.dataset.rasterLabPreview;
+    }
   },
   _rasterLabReapplyPreview(){
     const s=this.__rasterLabState;
@@ -144,6 +151,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const info=this._rasterLabSnapshot(),pane=info.pane;
     if(!pane)return;
     const v=this._rasterLabValues(info);
+    if(!s.opacityOriginal.has(pane))s.opacityOriginal.set(pane,pane.style.opacity);
     this._weatherDisplayReleaseSoftFilter?.(pane);
     pane.style.filter="blur("+fit(v.blur)+"px) saturate("+fit(v.saturate)+
       ") contrast("+fit(v.contrast)+") brightness("+fit(v.brightness)+")";
@@ -165,7 +173,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     s.controller?.abort();s.controller=null;
     try{this._rasterLabRestore();}finally{
       const pane=this._rasterLabAdapter()?.getPane?.();
-      if(pane){delete pane.dataset.rasterLabPreview;pane.style.removeProperty("opacity");}
+      if(pane)delete pane.dataset.rasterLabPreview;
       s.root?.remove();s.root=null;
     }
   },
