@@ -19,6 +19,13 @@ const mk=(name,scope="bbox")=>({
 const one={...BASE,layers:[mk("broad","global"),mk("regional")]};
 assert.equal(validateRasterMosaicV2(one),one);
 assert.throws(()=>validateRasterMosaicV2({...one,contract_version:1}));
+const twelve={...one,layers:Array.from({length:12},(_,i)=>mk("source_"+i))};
+assert.equal(validateRasterMosaicV2(twelve),twelve);
+assert.throws(()=>validateRasterMosaicV2({...one,layers:[
+  ...twelve.layers,mk("source_12")
+]}));
+assert.throws(()=>validateRasterMosaicV2(twelve,{maxLayers:4}));
+
 assert.throws(()=>validateRasterMosaicV2({...one,layers:Array(5).fill(mk("x"))}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_verified:false}]}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),tile_url:"https://example.invalid?access_token=x"}]}));

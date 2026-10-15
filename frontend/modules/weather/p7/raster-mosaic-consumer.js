@@ -20,7 +20,7 @@ function validViewport(b){
 
 /** Build one request using a pre-normalized map viewport (incl. full world). */
 export function buildRasterMosaicV2Request({
- viewport,focus,maxLayers=4,maxTileRequests=48,
+ viewport,focus,maxLayers=12,maxTileRequests=48,
  maxDataAgeSeconds=900,maxTimeDeltaSeconds=180,
  profileId=null
 }={}){
@@ -57,7 +57,7 @@ export function buildRasterMosaicV2Request({
  */
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
- maxLayers=4,maxTileRequests=48,maxDataAgeSeconds=900,
+ maxLayers=12,maxTileRequests=48,maxDataAgeSeconds=900,
  maxTimeDeltaSeconds=180,layerOptions={}
 }={}){
  const request=buildRasterMosaicV2Request({

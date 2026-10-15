@@ -9,6 +9,8 @@ const request=buildRasterMosaicV2Request({
 });
 assert.equal(request.type,"weather_router/consumer/resolve_mosaic");
 assert.equal(request.contract_version,2);
+assert.equal(buildRasterMosaicV2Request({viewport,focus}).limits.max_layers,12);
+
 assert.equal(request.context.focus.longitude,-76);
 assert.equal(request.limits.max_tile_requests,36);
 assert.equal("preferred_provider" in request,false);

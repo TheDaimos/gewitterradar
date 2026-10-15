@@ -48,7 +48,7 @@ function defaultImageLoader(url,_layer,{signal}={}){
  *    the corresponding V2 request, not from a user-editable provider response.
  */
 export function createRasterMosaicGridLayer(L,snapshot,{
- maxLayers=4,maxTileRequests=48,maxConcurrent=4,tileSize=256,timeoutMs=8000,
+ maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,timeoutMs=8000,
  loadImage=defaultImageLoader,
  createCanvas=()=>document.createElement("canvas"),
  onTileDiagnostics=null

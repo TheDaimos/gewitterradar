@@ -19,7 +19,7 @@ const safeURL=value=>{
    return true;
  }catch(_){return false;}
 };
-export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
+export function validateRasterMosaicV2(answer,{maxLayers=12}={}){
  if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12)
    throw new TypeError("Invalid mosaic resource budget");
  if(!answer||answer.contract_version!==2
