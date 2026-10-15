@@ -455,6 +455,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     disconnectedCallback() {
+      this._rasterLabClose?.();
       this._stopRuntimeUpdateWatch?.();
       this._teardownWeatherRadar?.();
       this._teardownWeatherDisplay?.();
