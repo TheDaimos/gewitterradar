@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.82 DEV: Fehlerbehebung – Raster-Labor-Schaltfläche oben bei den Kalibrierungswerkzeugen; Raster-Labor mit nummerierter Layerauswahl, Live-Reglern, gerätebezogener Diagnose und sicheren JSON-/Zwischenablage-Exporten; visuell abgenommene Weich-Referenz V4.11.80 unverändert. Browser- und HA-Realabnahme offen.",
+    "purpose": "V4.11.82 DEV: Visualisierung – Fehlerbehebung der Raster-Labor-Schaltfläche oben bei den Kalibrierungswerkzeugen; Raster-Labor mit nummerierter Layerauswahl, Live-Reglern, gerätebezogener Diagnose und sicheren JSON-/Zwischenablage-Exporten; visuell abgenommene Weich-Referenz V4.11.80 unverändert. Browser- und HA-Realabnahme offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
