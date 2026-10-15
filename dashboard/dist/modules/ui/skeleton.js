@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -4591,6 +4591,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .diagnostic-controls { display:flex;flex-wrap:wrap;gap:5px; }
           .diagnostic-calibration-controls { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px; }
           .diagnostic-console button.diagnostic-calibration-tool { min-height:30px;background:#111820;color:#c7d0d6; }
+           .diagnostic-console button.diagnostic-calibration-raster { grid-column:1 / -1;min-height:38px;border-color:rgba(216,164,64,.83);background:linear-gradient(125deg,rgba(113,76,20,.25),rgba(21,26,35,.96));color:#f4d188;font-weight:850;letter-spacing:.025em; }
           .diagnostic-console button.diagnostic-calibration-compass.active { border-color:#4ce9f5;color:#a9faff;background:rgba(15,142,155,.22);box-shadow:inset 0 0 0 1px rgba(76,233,245,.18),0 0 10px rgba(76,233,245,.20); }
           .diagnostic-console button.diagnostic-calibration-medallion.active { border-color:#be82ff;color:#dfbdff;background:rgba(116,55,174,.24);box-shadow:inset 0 0 0 1px rgba(190,130,255,.18),0 0 10px rgba(190,130,255,.20); }
           .diagnostic-readout { white-space:pre-wrap;user-select:text;margin:0;padding:7px;border-radius:6px;background:#02080d;color:#cde4ee;font:600 8px/1.35 ui-monospace,monospace;max-height:128px;overflow:auto; }
@@ -7419,6 +7420,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             </div><div class="diagnostic-calibration-controls">
               <button class="diagnostic-calibration-tool diagnostic-calibration-compass" id="diagnostic-compass-calibration" type="button" aria-pressed="false">Kompass-Kalibrierung</button>
               <button class="diagnostic-calibration-tool diagnostic-calibration-medallion" id="diagnostic-medallion-calibration" type="button" aria-pressed="false">Medaillon-Kalibrierung</button>
+              <button class="diagnostic-calibration-tool diagnostic-calibration-raster" id="diagnostic-raster-lab" type="button" data-raster-lab-launch="true" aria-label="Raster-Labor öffnen">Raster-Labor · Live-Darstellung</button>
             </div></div>
             <div class="diagnostic-console-section"><div class="diagnostic-console-section-title" id="diagnostic-grid-title">Raster</div><div class="diagnostic-controls">
               <button data-diagnostic-grid="off">AUS</button><button data-diagnostic-grid="coarse">GROB</button><button data-diagnostic-grid="fine">GROB + FEIN</button>
