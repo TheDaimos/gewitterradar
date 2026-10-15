@@ -94,7 +94,7 @@ export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
   // Ab 11 sanfter Mehrbedarf, begrenzt auf 6 px ohne neue Renderpassage.
   const nearZoom=smoothstep(10,13,Number(zoom));
   const previousBlur=Math.min(Math.max(48,base.blur),base.blur+additionalBlur);
-  const blur=Math.min(54,previousBlur+6*nearZoom);
+  const blur=Math.min(Math.max(54,previousBlur),previousBlur+6*nearZoom);
   // Nur Weich: leichte Kontrastreduktion gegen verbliebene Stufengrenzen.
   // Niederschlagskerne und Farbton/Saettigung bleiben weitgehend erhalten.
   const contrast=Math.max(.93,base.contrast-.012*Math.min(extraZoom,2));
