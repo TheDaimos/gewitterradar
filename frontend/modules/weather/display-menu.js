@@ -432,6 +432,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     if(!pane)return;
     this._weatherDisplayApplyRasterPaneStyle("precipitation",pane);
     pane.querySelectorAll("img").forEach(node=>this._weatherDisplayApplyRasterStyle("precipitation",node));
+    this._rasterLabReapplyPreview?.();
   },
 
   _weatherDisplayImplementedCapabilities(catalog){
