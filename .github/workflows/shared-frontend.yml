@@ -51,7 +51,7 @@ jobs:
       - name: V4.11.80 Weich cloud transitions and source-zoom safety
         run: node scripts/test-v41180-soft-cloud-zoom11-13.mjs
 
-      - name: V4.11.81 layer-aware raster lab, DEV off and reversible preview
+      - name: V4.11.82 raster-lab diagnostics toolbar visibility and safe launch
         run: node scripts/test-v41181-raster-lab.mjs
 
       - name: V4.11 canonical DEV identity
