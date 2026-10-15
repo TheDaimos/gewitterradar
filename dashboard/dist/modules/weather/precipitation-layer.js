@@ -158,11 +158,28 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _weatherRadarViewport(){
     const map=this._map;
     if(!map||typeof map.getBounds!=="function")return null;
-    const bounds=map.getBounds();
+    const bounds=map.getBounds(),center=map.getCenter?.();
+    const west=Number(bounds.getWest()),east=Number(bounds.getEast());
+    const south=Number(bounds.getSouth()),north=Number(bounds.getNorth());
+    if(![west,east,south,north].every(Number.isFinite)
+      ||north<=south||west===east)return null;
     const wrap=n=>((Number(n)+180)%360+360)%360-180;
-    const context={type:"bbox",west:wrap(bounds.getWest()),south:Math.max(-90,bounds.getSouth()),east:wrap(bounds.getEast()),north:Math.min(90,bounds.getNorth())};
-    const signature=[context.west,context.south,context.east,context.north].map(n=>n.toFixed(2)).join("|");
-    return {context,signature};
+    // A world-width viewport must be a true [-180,180] request. Wrapping
+    // both edges independently collapses spans of 360/720 degrees into a
+    // degenerate bbox and silently destroys the global weather mosaic.
+    const world=east-west>=360-1e-6;
+    const context={type:"bbox",west:world?-180:wrap(west),
+      south:Math.max(-90,south),east:world?180:wrap(east),
+      north:Math.min(90,north)};
+    if(context.north<=context.south)return null;
+    const focalLat=Number(center?.lat),focalLon=Number(center?.lng);
+    const focus={latitude:Math.max(-90,Math.min(90,
+      Number.isFinite(focalLat)?focalLat:(south+north)/2)),
+      longitude:wrap(Number.isFinite(focalLon)?focalLon:(west+east)/2)};
+    const signature=[context.west,context.south,context.east,context.north]
+      .map(n=>n.toFixed(2)).join("|")+
+      (world?"|"+focus.latitude.toFixed(2)+"|"+focus.longitude.toFixed(2):"");
+    return {context,signature,focus,world};
   },
 
   _weatherRadarEnsureMapHooks(){
