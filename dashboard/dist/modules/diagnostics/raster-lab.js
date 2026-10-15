@@ -69,7 +69,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     return this.__rasterLabState||(this.__rasterLabState={
       open:false,active:false,selected:"precipitation",samples:new Map(),opacityOriginal:new WeakMap(),
       controller:null,root:null,preview:true,feedback:"",position:null,
-      map:null,zoomHandler:null
+      map:null,zoomHandler:null,hostObserver:null
     });
   },
   _rasterLabEnsureTrigger(){
@@ -178,6 +178,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     s.open=false;s.preview=false;
     if(s.map&&s.zoomHandler)try{s.map.off("zoomend",s.zoomHandler);}catch(_){}
     s.map=null;s.zoomHandler=null;
+    s.hostObserver?.disconnect();s.hostObserver=null;
     s.controller?.abort();s.controller=null;
     try{this._rasterLabRestore();}finally{
       const pane=this._rasterLabAdapter()?.getPane?.();
@@ -223,6 +224,16 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     // One-shot cleanup, never recurring background work.
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   },
+  _rasterLabHost(){
+    const dialog=this.shadow?.getElementById("map-fullscreen-dialog");
+    return dialog?.open?dialog:this.shadow;
+  },
+  _rasterLabRelocate(){
+    const s=this.__rasterLabState;
+    if(!s?.open||!s.root)return;
+    const host=this._rasterLabHost();
+    if(host&&s.root.parentNode!==host)host.append(s.root);
+  },
   _rasterLabOpen(){
     if(!this._diagnostics?.enabled)return false;
     const s=this._rasterLabState();
@@ -265,9 +276,15 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     root.append(note,field);
     const hint=html("p","","Nur temporäre CSS-Vorschau. Kein Speichern in Produkteinstellungen, keine zusätzlichen Wetterabfragen. Beim Schließen wird die Originaldarstellung wiederhergestellt.");
     hint.style.cssText="font-size:10px;line-height:1.4;opacity:.72";root.append(hint);
-    // Prefer the existing diagnostics top-layer host for fullscreen/diagnostic parity.
-    const host=this.shadow?.getElementById("diagnostic-console")||this.shadow;
-    host.append(root);s.root=root;
+    // Never nest the floating lab inside the overflow-clipped diagnostics
+    // console. In modal fullscreen, use the dialog's native top layer;
+    // otherwise use the card ShadowRoot.
+    this._rasterLabHost().append(root);s.root=root;
+    const fullDialog=this.shadow?.getElementById("map-fullscreen-dialog");
+    if(fullDialog&&typeof MutationObserver!=="undefined"){
+      s.hostObserver=new MutationObserver(()=>this._rasterLabRelocate());
+      s.hostObserver.observe(fullDialog,{attributes:true,attributeFilter:["open"]});
+    }
     const ctl=new AbortController();s.controller=ctl;const signal=ctl.signal;
     close.addEventListener("click",()=>this._rasterLabClose(),{signal});
     select.addEventListener("change",()=>{
