@@ -43,6 +43,8 @@ const L=createRasterMosaicGridLayer(FakeLeaflet,response,{
  onTileDiagnostics:diag=>diagnostics.push(diag)
 });
 assert.equal(L.options.tileSize,256);
+assert.equal(L.options.maxNativeZoom,18,"mosaic canvas must stay visible above provider native z11");
+assert.equal(L.options.maxZoom,24,"Leaflet should overzoom raster display at high zoom");
 const tileResult=await new Promise((resolve,reject)=>{
  const tile=L.createTile({x:0,y:0,z:0},(err,canvas)=>
    err?reject(err):resolve(canvas));
