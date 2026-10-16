@@ -928,6 +928,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   async _weatherRadarTryMosaic(viewport,token){
     const state=this._weatherRadarState();
     const correlationId="gr-p7-"+Date.now().toString(36)+"-"+String(token);
+    state.v2CorrelationId=correlationId;
     const report=(phase,detail={})=>{
       const store=this._weatherEngineTraceStore?.();
       if(!store)return;
@@ -1046,7 +1047,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const contexts=Array.isArray(capability.spatial_contexts)?capability.spatial_contexts:[];
       const context=contexts.includes("bbox")?viewport.context:contexts.includes("global")?{type:"global"}:null;
       if(!context){this._weatherRadarHandleUnavailable({unavailable:{code:"requirements_not_met"}});return;}
-      const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]}});
+      const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]},consumerId:"gewitterradar",correlationId:state.v2CorrelationId||null});
       if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
       const applied=await this._weatherRadarApplyReady(answer,viewport,token);
