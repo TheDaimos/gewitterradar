@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.84",
-  "build": "V4.11.84-DEV-2026-10-16",
-  "runtimeRevision": "41184r1",
-  "moduleSetId": "E411-84A1",
+  "productVersion": "4.11.85",
+  "build": "V4.11.85-DEV-2026-10-16",
+  "runtimeRevision": "41185r1",
+  "moduleSetId": "E411-85A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.84 DEV: FLK-01 beseitigt unnötigen Neubau identischer Niederschlagsbilder; neue V1-Raster werden erst nach erfolgreichem Bildkachelladen sichtbar übernommen, alte Darstellung bei Ladefehler, Zeitüberschreitung und Kartenbewegung beibehalten. Weather Engine: Bedienoberfläche und sichtbarer aktiver Niederschlags-API-Status V1/V2 verbessert. Vorbereitung zum V2-Mosaik-Realtest. Geräteabnahme ausstehend.",
+    "purpose": "V4.11.85 DEV: P7-010 Consumer API V2, eigenständiger Schnittstellentest in Weather Engine, korrelierte V1/V2-Diagnose, 20-Sekunden-Grenze, regionale Raster-Mosaikdarstellung, Kachel-Abbruch und sichere sichtbare Ebenenübergabe. Gemeinsamer HA-Realtest ausstehend; FLK-01 weiterhin offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
