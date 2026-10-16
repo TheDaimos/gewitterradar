@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026/10 – V4.11.84 DEV (FLK-01, Weather Engine)
+
+- Niederschlag: Identische V1-Raster werden nicht neu erstellt; bei neuen Daten bleibt die bisherige Ebene bis zum vollständigen Laden erhalten. Veraltete, fehlerhafte oder abgebrochene Ersatzebenen werden sicher verworfen.
+- Weather Engine: kompakteres responsives Einstellungsraster, aktive API V1/V2 getrennt vom WeatherRouter-V1-Verbindungsstatus.
+- Versions-/DRA-Kennung: V4.11.84 DEV / 41184r1 / E411-84A1 / Integration 0.25.2. Geräte- und V2-Realabnahme ausstehend; Details in [Release Notes](docs/RELEASE_NOTES_V4_11_84_DEV.md).
+
+
 ## V4.11 DEV – zusammengeführter Entwicklungsstand bis V4.11.68 · 13.10.2026
 
 **Ausführliche Entwicklungs- und Verbesserungsübersicht:** [V4.11-Gesamtchronik](docs/RELEASE_NOTES_V4_11_GESAMTCHRONIK_DEV.md). Diese ergänzt die bestehenden Einzelversionsberichte, ersetzt sie nicht und ist **keine FINAL-Freigabe**.

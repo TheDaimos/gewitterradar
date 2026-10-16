@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.24",
+  "version": "1.1.25",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5874,6 +5874,72 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
           }
           #settings-diagnostic-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
+
+          /* V4.11.84: Weather-Engine – feste Spalten, kompakte Statusführung. */
+          #weather-engine-section>.settings-section-content>.gr-weather-row{
+            display:grid;grid-template-columns:minmax(0,1fr) 176px;column-gap:18px;align-items:center;
+            min-height:64px;padding:10px 12px;margin:0;border-bottom:1px solid rgba(185,176,145,.12);
+          }
+          #weather-engine-section>.settings-section-content>.gr-weather-row:last-of-type{border-bottom:0}
+          #weather-engine-section .gr-weather-caption{min-width:0;width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:4px;line-height:1.35}
+          #weather-engine-section .gr-weather-caption>strong{display:block;font-size:12px;font-weight:750;color:#f0e5cf}
+          #weather-engine-section .gr-weather-subtitle{font-size:11px;font-weight:450;color:#acb6bc;line-height:1.45}
+          #weather-engine-section .gr-weather-source-status{justify-self:stretch;text-align:center;font-size:11px;font-weight:650;color:#cedfcf}
+          #weather-engine-section .gr-weather-action{justify-self:stretch;width:100%;min-width:0;min-height:38px;padding:7px 10px;line-height:1.2;text-align:center}
+          #weather-engine-section .gr-weather-connection-status,#weather-engine-section .gr-weather-active-api{
+            display:block;max-width:100%;min-width:0;overflow-wrap:anywhere;font-size:11px;line-height:1.4
+          }
+          #weather-engine-section .gr-weather-connection-status{color:#dac08a}
+          #weather-engine-section .gr-weather-connection-status[data-state="ready"]{color:#abd7b6}
+          #weather-engine-section .gr-weather-connection-status[data-state="error"]{color:#e8b29c}
+          #weather-engine-section .gr-weather-active-api{color:#b4ccdc;font-weight:600}
+          #weather-engine-section .gr-weather-active-api[data-active-api="v2"]{color:#b0dabc}
+          #weather-engine-section>.settings-section-content>.gr-weather-results-row{display:block;padding:9px 12px;white-space:pre-line;overflow-wrap:anywhere;font-size:11px}
+          #weather-engine-section>.settings-section-content>.gr-weather-results-row[hidden]{display:none!important}
+          @media(max-width:540px){
+            #weather-engine-section>.settings-section-content>.gr-weather-row{
+              grid-template-columns:minmax(0,1fr);gap:8px;padding:11px 10px;min-height:0
+            }
+            #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
+            #weather-engine-section .gr-weather-action{justify-self:stretch;min-height:40px}
+          }
+
+          /* V4.11.84 – einheitliche Spalten und Abstände auch für Niederschlag. */
+          #weather-engine-section>.settings-section-content>.gr-weather-row{grid-template-columns:minmax(0,1fr) 260px}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row{
+            display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:center;
+            padding:11px 12px;margin:0;min-height:58px;border-bottom:1px solid rgba(185,176,145,.12);
+          }
+          #weather-engine-section [data-weather-radar-settings]>.settings-row[hidden]{display:none!important}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label{min-width:0;line-height:1.4}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label>div:first-child{font-weight:700;color:#f0e5cf}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>select{
+            min-height:38px;width:100%;min-width:0;justify-self:stretch
+          }
+          #weather-engine-section [data-weather-radar-settings]>.gr-weather-detail-status{
+            display:block;padding-top:7px;padding-bottom:8px;min-height:0
+          }
+          #weather-engine-section #weather-radar-preload-status,
+          #weather-engine-section #weather-radar-status{font-size:11px;color:#b4c7d0;line-height:1.45;overflow-wrap:anywhere}
+          #weather-engine-section .gr-weather-range-controls{
+            display:grid!important;grid-template-columns:minmax(40px,1fr) 74px 64px;
+            align-items:center;gap:8px!important;flex-wrap:nowrap!important;justify-content:stretch!important;
+            min-width:0;width:100%
+          }
+          #weather-engine-section .gr-weather-range-controls input[type="range"]{width:100%;min-width:0;margin:0}
+          #weather-engine-section .gr-weather-range-controls input[type="number"]{width:100%!important;min-width:0;box-sizing:border-box}
+          #weather-engine-section .gr-weather-range-controls span{font-size:11px;white-space:nowrap}
+          @media(max-width:680px){
+            #weather-engine-section>.settings-section-content>.gr-weather-row,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row{
+              grid-template-columns:minmax(0,1fr);gap:8px;padding:11px 10px;min-height:0
+            }
+            #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>select{min-height:40px}
+            #weather-engine-section .gr-weather-range-controls{grid-template-columns:minmax(40px,1fr) 74px 64px}
+          }
           /* V4.06 final premium settings shell and hierarchy. */
           .settings-dialog{--premium-gold:#c7a25b;--premium-gold-bright:#f1d58c;--premium-line:rgba(201,160,80,.34);border-color:var(--premium-line);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065)}
           .settings-premium-links{display:grid;grid-template-columns:1fr 1fr;gap:7px}.settings-premium-link{min-height:44px!important;border:1px solid rgba(190,149,69,.22)!important;border-radius:12px!important;background:linear-gradient(110deg,rgba(176,130,49,.08),rgba(12,22,29,.62))!important;box-shadow:inset 0 1px rgba(255,239,198,.055)}
@@ -7047,36 +7113,35 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Weather-Engine</div>
-                    <div class="settings-section-sub">Blitzortung.org &amp; WeatherRouter · hybride Datenquellen</div>
+                    <div class="settings-section-sub">Datenquellen und Niederschlagsdarstellung</div>
                   </div>
                 </summary>
                 <div class="settings-section-content">
-                  <div class="settings-row">
-                    <div class="settings-row-label">
-                      <div>Blitzortung.org · bestehende Primärquelle</div>
-                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Die produktive Blitzüberwachung bleibt unverändert aktiv.</div>
+                  <div class="settings-row gr-weather-row gr-weather-source-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong>Blitzortung.org</strong>
+                      <span class="gr-weather-subtitle">Bestehende Blitzüberwachung · unabhängig von WeatherRouter</span>
                     </div>
-                    <span id="weather-engine-blitz-status" style="font-size:.76rem;color:#c8d7ce">Bestehende Quelle</span>
+                    <span id="weather-engine-blitz-status" class="gr-weather-source-status">Bestehende Quelle</span>
                   </div>
-                  <div class="settings-row">
-                    <div class="settings-row-label">
-                      <div>WeatherRouter · Consumer API V1</div>
-                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Optionaler, unabhängiger Datenweg über Home Assistant.</div>
+                  <div class="settings-row gr-weather-row gr-weather-router-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong>WeatherRouter · Verbindung</strong>
+                      <span class="gr-weather-subtitle">Wetterdaten über Home Assistant</span>
+                      <span id="weather-engine-status" class="gr-weather-connection-status" role="status" aria-live="polite">Verbindung noch nicht geprüft</span>
+                      <span id="weather-engine-active-api" class="gr-weather-active-api" role="status">Niederschlag: keine aktive Darstellung</span>
                     </div>
-                    <button class="settings-language-button settings-control" id="weather-engine-check" type="button">Verbindung prüfen</button>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-check" type="button">Verbindung prüfen</button>
                   </div>
-                  <div class="settings-row">
-                    <div class="settings-row-label" id="weather-engine-status" role="status" aria-live="polite">Noch nicht geprüft</div>
-                  </div>
-                  <div class="settings-row">
-                    <div class="settings-row-label">
-                      <div>Datenangebot für den aktuellen Kartenausschnitt</div>
-                      <div style="font-size:.76rem;opacity:.68;margin-top:3px">Niederschlag, zusätzliche Blitzereignisse und amtliche Wetterwarnungen getrennt abfragen. Noch keine Aktivierung einer Kartenebene oder automatischen Ersatzversorgung.</div>
+                  <div class="settings-row gr-weather-row gr-weather-data-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong>Datenangebot · Kartenausschnitt</strong>
+                      <span class="gr-weather-subtitle">Niederschlag, zusätzliche Blitzdaten und amtliche Warnungen gezielt abfragen</span>
                     </div>
-                    <button class="settings-language-button settings-control" id="weather-engine-inspect" type="button" disabled>Abfragen</button>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-inspect" type="button" disabled>Daten prüfen</button>
                   </div>
-                  <div class="settings-row">
-                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite" style="white-space:pre-line;overflow-wrap:anywhere">Datenquellen bleiben bis zur Abfrage unberührt.</div>
+                  <div class="settings-row gr-weather-results-row" id="weather-engine-results-row" hidden>
+                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite">Noch keine Datenabfrage ausgeführt.</div>
                   </div>
                 </div>
               </details>

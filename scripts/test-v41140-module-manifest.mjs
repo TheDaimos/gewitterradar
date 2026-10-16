@@ -18,7 +18,7 @@ assert.ok(version.includes('version:"'+runtime.productVersion+'"'));
 assert.ok(version.includes('runtimeRevision:"'+runtime.runtimeRevision+'"'));
 assert.ok(version.includes('moduleSetId:"'+runtime.moduleSetId+'"'));
 assert.equal(new Set(runtime.modules.map(m=>m.id)).size,runtime.modules.length);
-assert.equal(runtime.modules.length,33);
+assert.equal(runtime.modules.length,34);
 for(const [id,v] of [['map.clusters-recent','1.0.8'],['location.radii-map','1.0.23'],['diagnostics.map','1.0.5']]){
   assert.equal(runtime.modules.find(m=>m.id===id)?.version,v);
   assert.ok(manifest.includes('"id": "'+id+'"'));
