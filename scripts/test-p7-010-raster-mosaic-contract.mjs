@@ -45,4 +45,24 @@ assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_sc
 const empty={...BASE,status:"unavailable",layers:[]};
 assert.equal(validateRasterMosaicV2(empty),empty);
 assert.throws(()=>validateRasterMosaicV2({...empty,layers:[mk("bad")]}));
+// Older global satellite images are permitted only by the explicitly
+// requested separate background ceiling; never by relaxing live radar freshness.
+const satellite={...mk("nasa_background","global"),
+ semantics:{...mk("x").semantics,measurement_method:"satellite_precipitation_estimate",observation_kind:"estimate"},
+ freshness_class:"older_background",quality_note:"older_satellite_background",
+ times:{...mk("x").times,age_seconds:22000,reference_delta_seconds:22000,observed_at:null}
+};
+const partial={...one,layers:[satellite,mk("dwd_fresh")]};
+assert.throws(()=>validateRasterMosaicV2(partial,{maxLayers:12}),TypeError);
+assert.equal(validateRasterMosaicV2(partial,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200}),partial);
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,coverage_scope:"bbox"}]},
+ {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,semantics:{...satellite.semantics,observation_kind:"observation"}}]},
+ {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,times:{...satellite.times,age_seconds:50000}}]},
+ {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
+assert.throws(()=>validateRasterMosaicV2(partial,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:800}),TypeError);
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,times:{...satellite.times,valid_at:"2026-10-14T15:00:00"}}]},
+ {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
+
 console.log("P7-010 pure GR V2 response contract validation PASS");
