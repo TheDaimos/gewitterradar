@@ -657,12 +657,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),answer=state.lastReady?.answer;
     if(state.v2Snapshot){
       const layers=state.v2Snapshot.layers;
-      const label="Niederschlag · "+layers.length+" Mosaikquellen";
+      const older=layers.filter(layer=>layer.freshness_class==="older_background");
+      const label="Niederschlag · "+layers.length+" Mosaikquellen"+(older.length?" · ältere Satellitengrundlage":"");
       this._weatherRadarRenderLegend({
         family:"precipitation",capability:CAPABILITY,heading:"Niederschlag",
-        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung",
+        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung"+(older.length?" · ältere Satellitenschätzung (kein aktuelles Radar)":""),
         title:[label,"Herkunft: "+layers.map(x=>x.attribution).join(" / "),
-          "Bezugszeit: "+(state.v2Snapshot.reference_time||"unbekannt"),
+          "Bezugszeit (UTC): "+(state.v2Snapshot.reference_time||"unbekannt"),
+          ...layers.map(layer=>"Quelle: "+layer.source_id+
+            " · "+(layer.freshness_class==="older_background"?"Ältere Satellitengrundlage":"aktuelle Quelle")+
+            " · Bildzeit (UTC): "+layer.times.valid_at+
+            " · Alter: "+(typeof layer.times.age_seconds==="number"?Math.round(layer.times.age_seconds/60)+" Min.":"unbekannt")+
+            " · Methode: "+layer.semantics.measurement_method+
+            (layer.quality_note?" · Hinweis: "+layer.quality_note:"")),
           ...(state.v2Snapshot.limitations||[])].join(" · "),
         legendTitle:"Niederschlagslegende",priority:100
       });
@@ -1025,7 +1032,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
-      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size,time_deviating:result.response?.layers?.some(layer=>layer.quality_note==="zeitlich_abweichend")===true});
+      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size,time_deviating:result.response?.layers?.some(layer=>layer.quality_note==="zeitlich_abweichend")===true,older_background_count:result.response?.layers?.filter(layer=>layer.freshness_class==="older_background").length||0});
       staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
@@ -1133,7 +1140,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.enabled){status.textContent="Aus · keine zusätzlichen Niederschlags-Anfragen";return;}
     if(state.v2Snapshot){
       status.textContent="Aktiv · WeatherRouter V2 · "+state.v2Snapshot.layers.length+
-        " räumlich abgegrenzte Quellen · Teilabdeckung";
+        " räumlich abgegrenzte Quellen · Teilabdeckung"+(state.v2Snapshot.layers.some(layer=>layer.freshness_class==="older_background")?" · ältere Satellitenschätzung, kein aktuelles Radar":"");
       return;
     }
     if(state.lastReady){
