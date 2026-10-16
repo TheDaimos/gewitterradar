@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.84 DEV: FLK-01 beseitigt unnötigen Neubau identischer Niederschlagsbilder; neue V1-Raster werden erst nach erfolgreichem Bildkachelladen sichtbar übernommen, alte Darstellung bei Ladefehler, Zeitüberschreitung und Kartenbewegung beibehalten. Weather-Engine-Bedienoberfläche und sichtbarer aktiver Niederschlags-API-Status V1/V2 verbessert. Vorbereitung zum V2-Mosaik-Realtest. Geräteabnahme ausstehend.",
+    "purpose": "V4.11.84 DEV: FLK-01 beseitigt unnötigen Neubau identischer Niederschlagsbilder; neue V1-Raster werden erst nach erfolgreichem Bildkachelladen sichtbar übernommen, alte Darstellung bei Ladefehler, Zeitüberschreitung und Kartenbewegung beibehalten. Weather Engine: Bedienoberfläche und sichtbarer aktiver Niederschlags-API-Status V1/V2 verbessert. Vorbereitung zum V2-Mosaik-Realtest. Geräteabnahme ausstehend.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
