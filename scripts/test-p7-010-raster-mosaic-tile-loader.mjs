@@ -105,6 +105,21 @@ assert.equal(overzoomDraws[0][2],128,"odd display y uses lower half of z11 sourc
 assert.equal(overzoomDraws[0][3],128,"global native source crop should halve at z12");
 assert.equal(overzoomDraws[0][7],256,"global image must cover full output tile");
 assert.equal(overzoomDraws[1][3],256,"regional radar stays at full native detail");
+// The same contract must remain displayable through the app's z17 range.
+const z17={x:Math.floor((10+180)/360*2**17),
+  y:Math.floor((1-Math.asinh(Math.tan(51*Math.PI/180))/Math.PI)/2*2**17),z:17};
+const z17Loads=[];
+const z17Result=await drawRasterMosaicTileFromUrls({
+ context:{globalAlpha:1,drawImage:()=>{}},tile:z17,
+ layers:[olderGlobal,detailedRegional],budget:new RasterTileRequestBudget(2),
+ loadImage:async (url,layer)=>{z17Loads.push({url,source:layer.source_id});return {width:256,height:256};}
+});
+assert.deepEqual(z17Result.drawn.map(x=>x.source_id),
+ ["satellite_global","regional_dwd_highzoom"]);
+assert.ok(z17Loads[0].url.includes("/11/"),"z17 global remains native z11");
+assert.ok(z17Loads[1].url.includes("/16/"),"z17 DWD remains at own native z16");
+assert.equal(z17Result.requests_used,2);
+
 const highZoomOverOcean=await drawRasterMosaicTileFromUrls({
  context:{globalAlpha:1,drawImage:()=>{}},
  tile:{x:1122,y:1766,z:12},
