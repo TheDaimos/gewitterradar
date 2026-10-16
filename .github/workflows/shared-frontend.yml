@@ -67,7 +67,9 @@ jobs:
         run: node scripts/test-v41105-weather-radar-player.mjs
 
       - name: V4.11.06 Weather Engine diagnostics
-        run: node scripts/test-v41106-weather-engine-diagnostics.mjs
+        run: |
+          node scripts/test-v41106-weather-engine-diagnostics.mjs
+          node scripts/test-p7-010-v2-age-comparison.mjs
 
       - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
