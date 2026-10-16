@@ -68,21 +68,28 @@ export async function prepareRasterMosaicV2({
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
+ let stage="transport";
  try{
    onDiagnostic?.({phase:"request",status:"sent",correlation_id:correlationId});
    const response=await callWS(request);
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
+   stage="contract_validation";
    validateRasterMosaicV2(response,{maxLayers});
-   if(response.status==="unavailable"||response.layers.length===0)
+   onDiagnostic?.({phase:"validated",status:response.status,layers:response.layers.length});
+   if(response.status==="unavailable"||response.layers.length===0){
+     onDiagnostic?.({phase:"unavailable",status:response.status,layers:0});
      return {mode:"fallback",reason:"no_usable_mosaic_source",responseStatus:response.status};
+   }
+   stage="layer_preparation";
    const layer=createRasterMosaicGridLayer(Leaflet,response,{
      ...layerOptions,maxLayers,maxTileRequests
    });
+   onDiagnostic?.({phase:"layer_prepared",status:response.status,layers:response.layers.length});
    return {mode:"v2",layer,response};
  }catch(error){
    const code=typeof error?.code==="string"?error.code:"";
-   const stage=error instanceof TypeError?"validation_or_render":"websocket_or_contract";
+   const reason=stage==="transport"?"websocket_or_contract":stage==="contract_validation"?"validation_or_render":"layer_preparation_failed";
    onDiagnostic?.({phase:stage,status:"error",error_code:code||error?.name||"unknown",correlation_id:correlationId});
-   return {mode:"fallback",reason:stage,errorCode:code||error?.name||"unknown"};
+   return {mode:"fallback",reason,errorCode:code||error?.name||"unknown"};
  }
 }
