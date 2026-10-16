@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.86",
-  "build": "V4.11.86-DEV-2026-10-16",
-  "runtimeRevision": "41186r1",
-  "moduleSetId": "E411-86A1",
+  "productVersion": "4.11.87",
+  "build": "V4.11.87-DEV-2026-10-16",
+  "runtimeRevision": "41187r1",
+  "moduleSetId": "E411-87A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.86 DEV: Weather Engine P7-010 Diagnosevergleich API V2 zwischen 900 und 43200 Sekunden Datenalter mit identischem Kartenkontext, begrenzten Zeit- und Kachelbudgets, gekoppelten WR-Korrelationskennungen und zeitgestempelter Qualitätsdiagnose. Kein produktives Aufweichen der 900-Sekunden-Grenze; V1-Rückfall und FLK-01 unberührt.",
+    "purpose": "V4.11.87 DEV: P7-010 WeatherRouter V0.10.152 Consumer V2 optional 12h older global satellite background, strict 900s regional radar, spatial mosaic clipping, V1 bounded UTC event windows and source freshness diagnostics. V1 fallback preserved. HA real mosaic test required.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
