@@ -1,5 +1,11 @@
 # Gewitterradar – Meilensteine
 
+### M25 – V4.11.84 FLK-01 und Weather-Engine-Realtestvorbereitung
+- V1-Bilddaten werden bei identischer Rasteradresse weiterverwendet; neue Rasterebenen werden erst nach vollständigem erfolgreichem Kachelladen sichtbar übernommen.
+- Weather-Engine-Einstellungen bereinigt, aktive Niederschlags-API V1/V2 klar ausgewiesen.
+- Produkt-/DRA-Identität V4.11.84 DEV / 41184r1 / E411-84A1 / Integration 0.25.2; Geräte- und WeatherRouter-V2-Realabnahme stehen aus.
+
+
 Status: **2026/09 · V4.10 – öffentlicher Finalisierungsstand.**  
 Native Integration: **0.22.0.**  
 Akzeptierter interner Ausgangsbuild: **V4.10.02 R40.**  
