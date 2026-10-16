@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {buildRasterMosaicV2Request,prepareRasterMosaicV2}
  from "../src/p7-010/raster-mosaic-consumer.js";
+import {validateRasterMosaicV2} from "../src/p7-010/raster-mosaic-contract.js";
 
 const viewport={west:-90,south:15,east:8,north:56};
 const focus={latitude:21,longitude:-76};
@@ -47,6 +48,25 @@ const response={
  contract_version:2,capability:"weather.precipitation.layer",
  status:"partial",viewport,reference_time:time,layers:[source]
 };
+// All offset-aware provider instants must describe one absolute UTC instant.
+// They must not be shifted by the weather map's geographic center.
+const utc="2026-10-16T12:00:00Z";
+const germany="2026-10-16T14:00:00+02:00";
+const honduras="2026-10-16T06:00:00-06:00";
+assert.equal(Date.parse(utc),Date.parse(germany));
+assert.equal(Date.parse(utc),Date.parse(honduras));
+const timezoneResponse={...response,reference_time:germany,layers:[
+ {...source,times:{...source.times,valid_at:honduras,retrieved_at:germany}}
+]};
+assert.equal(validateRasterMosaicV2(timezoneResponse,{maxLayers:12}),timezoneResponse);
+assert.equal(Date.parse(timezoneResponse.layers[0].times.valid_at),
+ Date.parse(timezoneResponse.reference_time));
+assert.throws(()=>validateRasterMosaicV2({...timezoneResponse,layers:[
+ {...source,times:{...source.times,valid_at:"2026-10-16T14:00:00"}}
+]},{maxLayers:12}),TypeError,"V2 must not silently assume timezone for naive data");
+assert.throws(()=>validateRasterMosaicV2({...timezoneResponse,reference_time:"2026-10-16T14:00:00"},
+ {maxLayers:12}),TypeError,"V2 reference time requires an offset");
+
 const L={GridLayer:{extend:spec=>class Grid{
  constructor(options){this.options=options;}
  createTile(...args){return spec.createTile.apply(this,args);}
