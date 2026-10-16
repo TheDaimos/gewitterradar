@@ -21,7 +21,7 @@ function validViewport(b){
 /** Build one request using a pre-normalized map viewport (incl. full world). */
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
- maxDataAgeSeconds=900,maxTimeDeltaSeconds=180,
+ maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,
  profileId=null,consumerId="gewitterradar",correlationId=null
 }={}){
  if(!validViewport(viewport)
@@ -33,6 +33,8 @@ export function buildRasterMosaicV2Request({
    ||maxTileRequests<1||maxTileRequests>256
    ||!Number.isInteger(maxDataAgeSeconds)
    ||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
+   ||(maxBackgroundAgeSeconds!==null&&(!Number.isInteger(maxBackgroundAgeSeconds)
+      ||maxBackgroundAgeSeconds<maxDataAgeSeconds||maxBackgroundAgeSeconds>86400))
    ||!Number.isInteger(maxTimeDeltaSeconds)
    ||maxTimeDeltaSeconds<0||maxTimeDeltaSeconds>86400
    ||(profileId!==null&&(typeof profileId!=="string"||!profileId.trim())))
@@ -44,6 +46,7 @@ export function buildRasterMosaicV2Request({
    context:{type:"bbox",...viewport,focus},
    time:{mode:"latest_coherent",
      max_data_age_seconds:maxDataAgeSeconds,
+     ...(maxBackgroundAgeSeconds!==null?{max_background_age_seconds:maxBackgroundAgeSeconds}:{}),
      max_time_delta_seconds:maxTimeDeltaSeconds},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
    ...(profileId!==null?{profile_id:profileId}:{}),
@@ -60,11 +63,11 @@ export function buildRasterMosaicV2Request({
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
  maxLayers=4,maxTileRequests=48,maxDataAgeSeconds=900,
- maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,onDiagnostic=null
+ maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
    viewport,focus,profileId,maxLayers,maxTileRequests,
-   maxDataAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,
+   maxDataAgeSeconds,maxBackgroundAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
@@ -74,10 +77,18 @@ export async function prepareRasterMosaicV2({
    const response=await callWS(request);
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
    stage="contract_validation";
-   validateRasterMosaicV2(response,{maxLayers});
+   validateRasterMosaicV2(response,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
    onDiagnostic?.({
      phase:"validated",status:response.status,layers:response.layers.length,
      time_deviating:response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend"),
+     older_background_count:response.layers.filter(layer=>layer.freshness_class==="older_background").length,
+     freshness_classes:response.layers.slice(0,12).map(layer=>({
+       source_id:layer.source_id,freshness_class:layer.freshness_class||"unknown",
+       age_seconds:layer.times?.age_seconds??null,
+       valid_at:layer.times?.valid_at||null,
+       quality_note:layer.quality_note||null,
+       measurement_method:layer.semantics?.measurement_method||null
+     })),
      source_ids:response.layers.map(layer=>layer.source_id).slice(0,12),
      limitations_count:Array.isArray(response.limitations)?response.limitations.length:0,
      limitations:Array.isArray(response.limitations)?response.limitations.slice(0,8).filter(x=>typeof x==="string").map(x=>x.slice(0,180)):[]
@@ -88,7 +99,7 @@ export async function prepareRasterMosaicV2({
    }
    stage="layer_preparation";
    const layer=createRasterMosaicGridLayer(Leaflet,response,{
-     ...layerOptions,maxLayers,maxTileRequests
+     ...layerOptions,maxLayers,maxTileRequests,maxDataAgeSeconds,maxBackgroundAgeSeconds
    });
    onDiagnostic?.({phase:"layer_prepared",status:response.status,layers:response.layers.length});
    return {mode:"v2",layer,response};
