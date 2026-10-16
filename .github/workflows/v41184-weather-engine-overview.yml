@@ -9,6 +9,7 @@ on:
       - 'dashboard/dist/modules/**'
       - 'custom_components/gewitterradar/frontend/modules/**'
       - 'scripts/test-v41184-weather-engine-overview.mjs'
+      - 'scripts/test-flk01-weather-radar-transition.mjs'
       - 'SHA256SUMS_FRONTEND.txt'
       - '.github/workflows/v41184-weather-engine-overview.yml'
   workflow_dispatch:
@@ -27,4 +28,6 @@ jobs:
           node --check frontend/modules/weather/consumer-client.js
           node --check frontend/modules/weather/precipitation-layer.js
       - name: Weather Engine responsive layout and active API
-        run: node scripts/test-v41184-weather-engine-overview.mjs
+        run: |
+          node scripts/test-v41184-weather-engine-overview.mjs
+          node scripts/test-flk01-weather-radar-transition.mjs
