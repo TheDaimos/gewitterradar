@@ -19,8 +19,11 @@ const safeURL=value=>{
    return true;
  }catch(_){return false;}
 };
-export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
- if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12)
+export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null}={}){
+ if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
+   ||!Number.isInteger(maxDataAgeSeconds)||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
+   ||(maxBackgroundAgeSeconds!==null&&(!Number.isInteger(maxBackgroundAgeSeconds)
+       ||maxBackgroundAgeSeconds<maxDataAgeSeconds||maxBackgroundAgeSeconds>86400)))
    throw new TypeError("Invalid mosaic resource budget");
  if(!answer||answer.contract_version!==2
   ||answer.capability!=="weather.precipitation.layer"
@@ -54,7 +57,20 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
       ||!layer.times||!time(layer.times.valid_at)
       ||!time(layer.times.retrieved_at)
       ||!number(layer.times.reference_delta_seconds)
-      ||layer.times.reference_delta_seconds<0)
+      ||layer.times.reference_delta_seconds<0
+      ||(layer.times.observed_at!==undefined&&layer.times.observed_at!==null&&!time(layer.times.observed_at))
+      ||(layer.times.age_seconds!==undefined&&(!number(layer.times.age_seconds)||layer.times.age_seconds<0))
+      ||(layer.freshness_class!==undefined&&!["current","older_background"].includes(layer.freshness_class))
+      ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
+      ||(layer.freshness_class==="older_background"&&(
+         maxBackgroundAgeSeconds===null
+         ||layer.coverage_scope!=="global"
+         ||layer.semantics.observation_kind!=="estimate"
+         ||!["satellite_precipitation_estimate","satellite_estimate"].includes(layer.semantics.measurement_method)
+         ||layer.quality_note!=="older_satellite_background"
+         ||!number(layer.times.age_seconds)
+         ||layer.times.age_seconds<=maxDataAgeSeconds
+         ||layer.times.age_seconds>maxBackgroundAgeSeconds)))
      throw new TypeError("Invalid, unverified or unsafe raster source");
    seen.add(layer.source_id);
  }
