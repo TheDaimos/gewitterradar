@@ -63,10 +63,10 @@ const stage=async fixture=>{
   await new Promise(resolve=>setTimeout(resolve,0));
   assert.equal(fixture.layers.length,1,"one staged replacement created");
   assert.equal(fixture.layers[0].added,true,"staged layer already in map");
-  return done;
+  return {done};
 };
 {
-  const f=make();const done=await stage(f);
+  const f=make();const {done}=await stage(f);
   assert.equal(f.old.removed,false,"old raster remains during staging");
   assert.equal(f.state.layer,f.old,"active raster remains unchanged");
   assert.equal(f.layers[0].opacity,0,"new raster remains invisible before tiles load");
@@ -90,7 +90,7 @@ const stage=async fixture=>{
   assert.equal(f.state.lastReady.answer,answer,"metadata may refresh without reloading images");
 }
 {
-  const f=make(),original=f.state.lastReady;const done=await stage(f);
+  const f=make(),original=f.state.lastReady;const {done}=await stage(f);
   f.layers[0].emit("tileerror");f.layers[0].emit("load");
   assert.equal(await done,false);
   assert.equal(f.old.removed,false);
@@ -99,7 +99,7 @@ const stage=async fixture=>{
   assert.equal(f.state.lastReady,original,"failed replacement must not change provider metadata");
 }
 {
-  const f=make(),original=f.state.lastReady;const done=await stage(f);
+  const f=make(),original=f.state.lastReady;const {done}=await stage(f);
   f.state.v1PendingCancel();
   assert.equal(await done,false);
   assert.equal(f.layers[0].removed,true);
@@ -107,7 +107,7 @@ const stage=async fixture=>{
   assert.equal(f.state.lastReady,original);
 }
 {
-  const f=make(),original=f.state.lastReady;const done=await stage(f);
+  const f=make(),original=f.state.lastReady;const {done}=await stage(f);
   f.state.v2Generation++;
   f.layers[0].emit("tileload");f.layers[0].emit("load");
   assert.equal(await done,false,"stale map generation does not replace active raster");
@@ -116,14 +116,14 @@ const stage=async fixture=>{
   assert.equal(f.state.lastReady,original);
 }
 {
-  const f=make();const done=await stage(f);
+  const f=make();const {done}=await stage(f);
   assert.equal(await done,false,"timed out replacement must not be committed");
   assert.equal(f.layers[0].removed,true);
   assert.equal(f.old.removed,false);
   assert.equal(f.state.layer,f.old);
 }
 {
-  const f=make();const done=await stage(f);
+  const f=make();const {done}=await stage(f);
   f.state.enabled=false;f.state.v1PendingCancel();
   assert.equal(await done,false,"disabled layer must never be resurrected");
   assert.equal(f.old.removed,false);
