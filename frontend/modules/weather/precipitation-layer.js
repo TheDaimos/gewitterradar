@@ -281,14 +281,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       pane.style.pointerEvents="none";
     }
     this._weatherDisplayApplyRasterPaneStyle?.("precipitation",map.getPane("gr-weather-radar"));
-    // Some Leaflet maps report Infinity when the base map has no finite
-    // ceiling. Never inherit the provider's native zoom (often 11) as the
-    // DISPLAY zoom ceiling: Leaflet must overzoom native imagery at z 12+.
-    const mapMaxZoom=finite(map.getMaxZoom?.());
-    const displayMaxZoom=Math.max(maxZoom,mapMaxZoom??0,20);
-    const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom:displayMaxZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
+    // Do not set GridLayer.maxZoom to the source's native max zoom.
+    // Omitting the display ceiling lets the map keep its own zoom limits.
+    // Leaflet reuses the source's native tiles at higher display zooms.
+    const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
     layer.__grRadarNativeMaxZoom=maxZoom;
-    layer.__grRadarDisplayMaxZoom=displayMaxZoom;
     layer.__grRadarNaturalOpacity=naturalOpacity;
     layer.__grRadarTileIdentity=[String(payload.tile_url||""),tileSize,minZoom,maxZoom].join("|");
     const template=String(payload.tile_url||"");
