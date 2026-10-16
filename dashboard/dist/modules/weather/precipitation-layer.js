@@ -857,6 +857,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarMountTimelinePlayer();
     this._scheduleWeatherRadarPreload("ready",180);
     this._weatherRadarRenderCurrentLegend();
+    this._rasterLabRefreshOptions?.();
     this._weatherRadarUpdateControls();
   },
 
@@ -910,6 +911,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
       this._weatherRadarRenderCurrentLegend();
+      this._rasterLabRefreshOptions?.();
       this._weatherRadarUpdateControls();
       return true;
     }catch(_){return false;}
