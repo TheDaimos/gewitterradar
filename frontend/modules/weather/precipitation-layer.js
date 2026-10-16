@@ -160,10 +160,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const map=this._map;
     if(!map||typeof map.getBounds!=="function")return null;
     const bounds=map.getBounds();
+    const west=Number(bounds.getWest()),east=Number(bounds.getEast());
+    if(!Number.isFinite(west)||!Number.isFinite(east)||east<west)return null;
     const wrap=n=>((Number(n)+180)%360+360)%360-180;
-    const context={type:"bbox",west:wrap(bounds.getWest()),south:Math.max(-90,bounds.getSouth()),east:wrap(bounds.getEast()),north:Math.min(90,bounds.getNorth())};
-    const signature=[context.west,context.south,context.east,context.north].map(n=>n.toFixed(2)).join("|");
-    return {context,signature};
+    const world=east-west>=360;
+    const context={type:"bbox",west:world?-180:wrap(west),south:Math.max(-90,bounds.getSouth()),east:world?180:wrap(east),north:Math.min(90,bounds.getNorth())};
+    if(context.north<=context.south||context.west===context.east)return null;
+    const center=map.getCenter?.();
+    const focus=Number.isFinite(Number(center?.lat))&&Number.isFinite(Number(center?.lng))
+      ?{latitude:clamp(Number(center.lat),-90,90),longitude:wrap(center.lng)}:null;
+    const signature=[context.west,context.south,context.east,context.north,focus?.longitude??"",focus?.latitude??""].map(n=>typeof n==="number"?n.toFixed(2):n).join("|");
+    return {context,focus,signature};
   },
 
   _weatherRadarEnsureMapHooks(){
