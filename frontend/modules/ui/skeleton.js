@@ -5903,6 +5903,44 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
             #weather-engine-section .gr-weather-action{justify-self:stretch;min-height:40px}
           }
+
+          /* V4.11.84 – einheitliche Spalten und Abstände auch für Niederschlag. */
+          #weather-engine-section>.settings-section-content>.gr-weather-row{grid-template-columns:minmax(0,1fr) 260px}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row{
+            display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:center;
+            padding:11px 12px;margin:0;min-height:58px;border-bottom:1px solid rgba(185,176,145,.12);
+          }
+          #weather-engine-section [data-weather-radar-settings]>.settings-row[hidden]{display:none!important}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label{min-width:0;line-height:1.4}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label>div:first-child{font-weight:700;color:#f0e5cf}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>select{
+            min-height:38px;width:100%;min-width:0;justify-self:stretch
+          }
+          #weather-engine-section [data-weather-radar-settings]>.settings-row:has(#weather-radar-preload-status),
+          #weather-engine-section [data-weather-radar-settings]>.settings-row:has(#weather-radar-status){
+            display:block;padding-top:7px;padding-bottom:8px;min-height:0
+          }
+          #weather-engine-section #weather-radar-preload-status,
+          #weather-engine-section #weather-radar-status{font-size:11px;color:#b4c7d0;line-height:1.45;overflow-wrap:anywhere}
+          #weather-engine-section .gr-weather-range-controls{
+            display:grid!important;grid-template-columns:minmax(40px,1fr) 74px 64px;
+            align-items:center;gap:8px!important;flex-wrap:nowrap!important;justify-content:stretch!important;
+            min-width:0;width:100%
+          }
+          #weather-engine-section .gr-weather-range-controls input[type="range"]{width:100%;min-width:0;margin:0}
+          #weather-engine-section .gr-weather-range-controls input[type="number"]{width:100%!important;min-width:0;box-sizing:border-box}
+          #weather-engine-section .gr-weather-range-controls span{font-size:11px;white-space:nowrap}
+          @media(max-width:680px){
+            #weather-engine-section>.settings-section-content>.gr-weather-row,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row{
+              grid-template-columns:minmax(0,1fr);gap:8px;padding:11px 10px;min-height:0
+            }
+            #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>select{min-height:40px}
+            #weather-engine-section .gr-weather-range-controls{grid-template-columns:minmax(40px,1fr) 74px 64px}
+          }
           /* V4.06 final premium settings shell and hierarchy. */
           .settings-dialog{--premium-gold:#c7a25b;--premium-gold-bright:#f1d58c;--premium-line:rgba(201,160,80,.34);border-color:var(--premium-line);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065)}
           .settings-premium-links{display:grid;grid-template-columns:1fr 1fr;gap:7px}.settings-premium-link{min-height:44px!important;border:1px solid rgba(190,149,69,.22)!important;border-radius:12px!important;background:linear-gradient(110deg,rgba(176,130,49,.08),rgba(12,22,29,.62))!important;box-shadow:inset 0 1px rgba(255,239,198,.055)}
