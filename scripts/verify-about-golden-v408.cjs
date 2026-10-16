@@ -30,7 +30,7 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-const isV41184Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41184r1";')
+const isV41184Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41185r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41163Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41168r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
@@ -62,14 +62,14 @@ if (isV41184Dev) {
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  assert.ok(versionText.includes('version:"4.11.84"'));
-  assert.ok(versionText.includes('displayVersion:"V4.11.84 DEV"'));
-  assert.ok(versionText.includes('build:"V4.11.84-DEV-2026-10-16"'));
-  assert.ok(versionText.includes('runtimeRevision:"41184r1"'));
+  assert.ok(versionText.includes('version:"4.11.85"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.85 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.85-DEV-2026-10-16"'));
+  assert.ok(versionText.includes('runtimeRevision:"41185r1"'));
   assert.ok(versionText.includes('moduleSetId:"E411-84A1"'));
-  assert.equal(runtime.productVersion, '4.11.84');
-  assert.equal(runtime.build, 'V4.11.84-DEV-2026-10-16');
-  assert.equal(runtime.runtimeRevision, '41184r1');
+  assert.equal(runtime.productVersion, '4.11.85');
+  assert.equal(runtime.build, 'V4.11.85-DEV-2026-10-16');
+  assert.equal(runtime.runtimeRevision, '41185r1');
   assert.equal(runtime.moduleSetId, 'E411-84A1');
   assert.equal(runtime.modules.length, 34);
 } else if (isV41163Dev) {
