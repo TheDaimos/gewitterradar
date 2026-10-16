@@ -38,24 +38,34 @@ export function createRasterMosaicGridLayer(L,snapshot,{
     throw new RangeError("Invalid tile size");
   const verified=validateRasterMosaicV2(snapshot,{maxLayers});
   const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
+  const pending=new Set();
   const Layer=L.GridLayer.extend({
     createTile(coords,done){
       const canvas=createCanvas();
+      const controller=typeof AbortController==="function"?new AbortController():null;
+      if(controller){canvas._p7RasterAbort=()=>controller.abort();pending.add(controller);}
       if(!canvas||typeof canvas.getContext!=="function")
         throw new TypeError("Canvas unavailable");
       canvas.width=tileSize;canvas.height=tileSize;
       const context=canvas.getContext("2d");
       if(!context){done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs
+        context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs,
+        signal:controller?.signal
       })).then(result=>{
-        try{onTileDiagnostics?.(result);}catch(_){}
-        done?.(null,canvas);
-      },error=>done?.(error,canvas));
+        if(!controller?.signal.aborted)try{onTileDiagnostics?.(result);}catch(_){}
+        done?.(controller?.signal.aborted?new Error("Raster tile cancelled"):null,canvas);
+      },error=>done?.(error,canvas)).finally(()=>{
+        if(controller)pending.delete(controller);
+        canvas._p7RasterAbort=null;
+      });
       return canvas;
     }
   });
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true});
   layer._p7RasterRequestBudget=budget;
+  layer._p7AbortPending=()=>{for(const controller of pending)controller.abort();};
+  layer.on?.("tileunload",event=>event?.tile?._p7RasterAbort?.());
+  layer.on?.("remove",()=>layer._p7AbortPending());
   return layer;
 }
