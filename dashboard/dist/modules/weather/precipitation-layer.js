@@ -168,9 +168,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(context.north<=context.south||context.west===context.east)return null;
     const center=map.getCenter?.();
     const focus=Number.isFinite(Number(center?.lat))&&Number.isFinite(Number(center?.lng))
-      ?{latitude:clamp(Number(center.lat),-90,90),longitude:wrap(center.lng)}:null;
+      ?{latitude:Math.max(-90,Math.min(90,Number(center.lat))),longitude:wrap(center.lng)}:null;
     const signature=[context.west,context.south,context.east,context.north,focus?.longitude??"",focus?.latitude??""].map(n=>typeof n==="number"?n.toFixed(2):n).join("|");
-    return {context,focus,signature};
+    return {context,focus,signature,world};
   },
 
   _weatherRadarEnsureMapHooks(){
