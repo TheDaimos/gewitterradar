@@ -204,6 +204,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(persist)try{localStorage.setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
     if(!state.enabled){
+      state.v2Generation++;
+      if(state.v2PendingLayer){try{state.v2PendingLayer.remove();}catch(_){}state.v2PendingLayer=null;}
       this._weatherRadarRemoveLayer();
       this._weatherRadarClearPreload();
       if(state.refreshTimer){clearInterval(state.refreshTimer);state.refreshTimer=null;}
@@ -920,11 +922,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return;
     }
     if(state.inFlight){state.pending=true;return;}
+    const token=++state.v2Generation;
     state.inFlight=true;state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
     this._weatherRadarUpdateControls("Niederschlag wird aktualisiert …");
     try{
       const discovery=await this._weatherRouterDiscovery();
       if(!discovery?.ready){this._weatherRadarHandleUnavailable({unavailable:{code:discovery?.compatible?"router_not_ready":"capability_not_supported"}});return;}
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
+      if(await this._weatherRadarTryMosaic(viewport,token))return;
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       const catalog=await this._weatherRouterCapabilities({filter:{domains:["weather"],resource_types:["raster_tile"],available_only:true}});
       const capability=catalog?.status==="ready"?catalog.capabilities.find(item=>item.id===CAPABILITY&&item.enabled&&item.available):null;
       if(!capability){this._weatherRadarHandleUnavailable({unavailable:{code:"capability_not_supported"}});return;}
@@ -932,6 +938,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const context=contexts.includes("bbox")?viewport.context:contexts.includes("global")?{type:"global"}:null;
       if(!context){this._weatherRadarHandleUnavailable({unavailable:{code:"requirements_not_met"}});return;}
       const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]}});
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
       this._weatherRadarApplyReady(answer,viewport);
     }catch(_error){
@@ -1088,6 +1095,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.timelineResizeObserver){try{state.timelineResizeObserver.disconnect();}catch(_error){}state.timelineResizeObserver=null;}
     state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=state.timelineTimer=null;
     state.timelinePlaying=false;
+    state.v2Generation++;
+    if(state.v2PendingLayer){try{state.v2PendingLayer.remove();}catch(_){}state.v2PendingLayer=null;}
     this._weatherRadarClearTimelineStage();
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
     state.preloadGeneration+=1;state.preloadQueue=[];state.preloadCache.clear();
