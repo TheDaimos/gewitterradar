@@ -65,12 +65,12 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       return canvas;
     }
   });
-  // Keep the mosaic visible above a provider's native max_zoom.
-  // GridLayer limits its own tile grid to Web-Mercator zoom 18, then Leaflet
-  // overzooms the canvas at higher map levels; the per-source loader handles
-  // lower individual native limits without reducing regional DWD detail.
+  // GridLayer retains the map's own zoom limits; no maxZoom display
+  // ceiling is installed here. The canvas grid is clamped to native z18
+  // and Leaflet enlarges it above z18. Each provider below z18 uses its
+  // independently cropped ancestor image without sacrificing DWD detail.
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true,
-    minZoom:0,maxZoom:24,maxNativeZoom:18});
+    maxNativeZoom:18});
   layer._p7RasterRequestBudget=budget;
   layer._p7AbortPending=()=>{budget.close();for(const controller of pending)controller.abort();};
   layer.on?.("tileunload",event=>event?.tile?._p7RasterAbort?.());
