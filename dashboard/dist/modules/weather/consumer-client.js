@@ -122,7 +122,7 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
       ||!Array.isArray(item.resource_types)||item.resource_types.length!==1
       ||!['event_feed','hazard_feed'].includes(item.resource_types[0]))
       return absent('capability_not_supported','Event time window not advertised');
-    const instant=value=>typeof value==='string'&&/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(value)&&Number.isFinite(Date.parse(value));
+    const instant=value=>typeof value==='string'&&/[zZ]$|[+-]\d\d:\d\d$/.test(value)&&Number.isFinite(Date.parse(value));
     if(!instant(start)||!instant(end)||Date.parse(start)>Date.parse(end)
       ||Date.parse(end)>Date.now()+300000
       ||!Number.isFinite(policy.max_window_days)
