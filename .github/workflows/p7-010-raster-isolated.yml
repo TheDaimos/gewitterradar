@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "feature/p7-010-*"
+      - "deploy/dev"
     paths:
       - "src/p7-010/**"
       - "scripts/test-p7-010-*.mjs"
