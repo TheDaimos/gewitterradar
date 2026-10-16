@@ -385,9 +385,9 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "group": "Weather-Engine",
-    "function": "WeatherRouter Consumer V1",
+    "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
       "Discovery",
       "Capability-Katalog",
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.6",
+    "version": "1.3.7",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
