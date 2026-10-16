@@ -53,12 +53,24 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      rejected.push({source_id:id,reason:"invalid_render_parameters"});
      continue;
    }
-   if(tile.z<render.min_zoom||tile.z>render.max_zoom){
+   if(tile.z<render.min_zoom){
      rejected.push({source_id:id,reason:"outside_zoom_coverage"});
      continue;
    }
-   const sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size);
+   const nativeTile=layer._p7SourceTile||tile;
+   const nativeScale=2**Math.max(0,tile.z-nativeTile.z);
+   const childX=((tile.x%nativeScale)+nativeScale)%nativeScale;
+   const childY=((tile.y%nativeScale)+nativeScale)%nativeScale;
    const destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
+   // The crop geometry is always calculated in the DISPLAY tile's geographic
+   // extent. For overzoom, transform it into the requested ancestor image's
+   // native pixels. Never expand the provider's verified regional boundary.
+   const sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size)
+     .map(crop=>({
+       sx:(childX*render.tile_size+crop.sx)/nativeScale,
+       sy:(childY*render.tile_size+crop.sy)/nativeScale,
+       sw:crop.sw/nativeScale,sh:crop.sh/nativeScale
+     }));
    if(!sourceCrops.length||sourceCrops.length!==destCrops.length){
      rejected.push({source_id:id,reason:"outside_tile_coverage"});
      continue;
