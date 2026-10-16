@@ -22,21 +22,46 @@ export class RasterTileRequestBudget {
    this.active=0;
    this.queue=[];
  }
- async reserve(){
-   if(this.used>=this.maxRequests)return null;
-   this.used++;
-   if(this.active<this.maxConcurrent){
-     this.active++;
+ async reserve(signal=null){
+   if(signal?.aborted||this.used>=this.maxRequests)return null;
+   // A waiting request holds no network slot and consumes no request budget.
+   if(this.active>=this.maxConcurrent){
+     const admitted=await new Promise(resolve=>{
+       const entry={resolve,signal,onAbort:null};
+       entry.onAbort=()=>{
+         const index=this.queue.indexOf(entry);
+         if(index>=0)this.queue.splice(index,1);
+         resolve(false);
+       };
+       signal?.addEventListener("abort",entry.onAbort,{once:true});
+       if(signal?.aborted)entry.onAbort();
+       else this.queue.push(entry);
+     });
+     if(!admitted)return null;
    }else{
-     await new Promise(resolve=>this.queue.push(resolve));
+     this.active++;
    }
+   if(signal?.aborted||this.used>=this.maxRequests){
+     this._releaseSlot();
+     return null;
+   }
+   this.used++;
    let released=false;
    return ()=>{
      if(released)return;
      released=true;
-     if(this.queue.length)this.queue.shift()();
-     else this.active--;
+     this._releaseSlot();
    };
+ }
+ _releaseSlot(){
+   while(this.queue.length){
+     const next=this.queue.shift();
+     next.signal?.removeEventListener("abort",next.onAbort);
+     if(next.signal?.aborted){next.resolve(false);continue;}
+     next.resolve(true);
+     return;
+   }
+   this.active=Math.max(0,this.active-1);
  }
 }
 
@@ -52,7 +77,7 @@ export class RasterTileRequestBudget {
  * so this helper performs no hidden browser or HA accesses.
  */
 export async function drawRasterMosaicTileFromUrls({
- context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000
+ context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000,signal=null
 }={}){
  if(!Array.isArray(layers)||layers.length>12||typeof loadImage!=="function"
    ||!(budget instanceof RasterTileRequestBudget))
@@ -84,19 +109,25 @@ export async function drawRasterMosaicTileFromUrls({
    let url;
    try{url=rasterTileUrl(layer.tile_url,tile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
-   const release=await budget.reserve();
-   if(!release)return {source_id,reason:"request_budget_exhausted"};
+   const release=await budget.reserve(signal);
+   if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
    try{
      let timer=null;
      let image;
      const controller=typeof AbortController==="function"
        ?new AbortController():null;
+     const abort=()=>controller?.abort();
+     signal?.addEventListener("abort",abort,{once:true});
+     if(signal?.aborted)abort();
      try{
        image=await Promise.race([
          Promise.resolve().then(()=>loadImage(url,layer,{
            signal:controller?.signal
          })),
          new Promise((_resolve,reject)=>{
+           const cancelled=()=>reject(new Error("raster_tile_cancelled"));
+           controller?.signal.addEventListener("abort",cancelled,{once:true});
+           if(controller?.signal.aborted){cancelled();return;}
            timer=setTimeout(()=>{
              controller?.abort();
              reject(new Error("raster_image_timeout"));
@@ -105,18 +136,22 @@ export async function drawRasterMosaicTileFromUrls({
        ]);
      }finally{
        if(timer!==null)clearTimeout(timer);
+       signal?.removeEventListener("abort",abort);
      }
+     if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
      if(!image)return {source_id,reason:"empty_raster_image"};
      return {source_id,layer:{...layer,image}};
    }catch(_){
-     return {source_id,reason:"image_request_failed"};
+     return {source_id,reason:signal?.aborted?"tile_cancelled":"image_request_failed"};
    }finally{
      release();
    }
  }));
  const prepared=results.filter(x=>x.layer).map(x=>x.layer);
  const rejected=results.filter(x=>!x.layer).map(({source_id,reason})=>({source_id,reason}));
- const drawn=drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);
+ const drawn=signal?.aborted
+   ?{drawn:[],rejected:[]}
+   :drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);
  return {
    ...drawn,
    rejected:[...rejected,...drawn.rejected],
