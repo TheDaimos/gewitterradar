@@ -29,6 +29,7 @@ function loadRasterImage(url,_source,{signal}={}){
 
 export function createRasterMosaicGridLayer(L,snapshot,{
   maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,
+  maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,
   timeoutMs=8000,loadImage=loadRasterImage,
   createCanvas=()=>document.createElement("canvas"),onTileDiagnostics=null
 }={}){
@@ -36,7 +37,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
     typeof createCanvas!=="function")throw new TypeError("Leaflet layer prerequisites missing");
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
-  const verified=validateRasterMosaicV2(snapshot,{maxLayers});
+  const verified=validateRasterMosaicV2(snapshot,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
   const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
   const pending=new Set();
   const Layer=L.GridLayer.extend({
