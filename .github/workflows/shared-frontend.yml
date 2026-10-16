@@ -35,7 +35,9 @@ jobs:
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
       - name: V4.11 WeatherRouter Consumer V1 contract
-        run: node scripts/test-v411-weather-router.mjs
+        run: |
+          node scripts/test-v411-weather-router.mjs
+          node scripts/test-p7-010-event-window.mjs
 
       - name: V4.11.78 synthetic precipitation raster and performance envelope
         run: node scripts/test-v41175-soft-raster.mjs
