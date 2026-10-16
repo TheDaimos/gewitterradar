@@ -78,4 +78,27 @@ assert.throws(()=>createRasterMosaicGridLayer(FakeLeaflet,
 assert.throws(()=>createRasterMosaicGridLayer(FakeLeaflet,
  {...response,layers:[{...response.layers[0],coverage_verified:false}]},
  {createCanvas,loadImage:async()=>({})}));
+
+const cancelledImages=[];
+let signalReady;
+const hasStarted=new Promise(resolve=>{signalReady=resolve;});
+const cancellable=createRasterMosaicGridLayer(FakeLeaflet,response,{
+ createCanvas,
+ loadImage:(_url,_src,{signal})=>{
+   cancelledImages.push(signal);
+   signalReady();
+   return new Promise(()=>{});
+ }
+});
+const cancellationFinished=new Promise(resolve=>{
+ const tile=cancellable.createTile({x:0,y:0,z:0},(error)=>resolve(error));
+ cancellable._testTile=tile;
+});
+await hasStarted;
+cancellable._p7AbortPending();
+const cancellationError=await cancellationFinished;
+assert.ok(cancellationError,"removed layer must report cancelled pending tile");
+assert.ok(cancelledImages.every(signal=>signal.aborted));
+assert.equal(cancellable._p7RasterRequestBudget.active,0);
+
 console.log("P7-010 isolated Leaflet GridLayer V2 contract, budget and fallback PASS");
