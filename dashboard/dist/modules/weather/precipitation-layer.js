@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js";
+import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41185r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
