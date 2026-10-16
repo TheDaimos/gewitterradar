@@ -1,3 +1,5 @@
+import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js';
+import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js';
 import { defineModule } from '../core/runtime.js?v=41109r1';
 export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.2',group:'Weather-Engine',function:'WeatherRouter Consumer V1',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
@@ -202,7 +204,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     return this.__weatherRouterClient;
   },
   _weatherEngineTraceStore(){
-    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],v2TestResult:null,max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
     return this.__weatherEngineTraceStore;
   },
   async _weatherRouterDiscovery(options){
@@ -239,6 +241,56 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
     }
   },
+  async _weatherEngineV2InterfaceTest(){
+    const store=this._weatherEngineTraceStore();
+    if(this.__weatherEngineV2TestRunning)return;
+    this.__weatherEngineV2TestRunning=true;
+    const id="gr-v2-test-"+Date.now().toString(36);
+    const started=performance.now();
+    const result={consumer_id:"gewitterradar",correlation_id:id,api_version:2,
+      started_at:new Date().toISOString(),status:"started",phases:[]};
+    store.v2TestResult=result;
+    const step=(phase,extra={})=>{result.phases.push({phase,at:new Date().toISOString(),...extra});};
+    try{
+      const viewport=this._weatherRadarViewport?.();
+      if(!viewport?.focus||!viewport.context)throw Object.assign(new Error("Kartenkontext fehlt"),{code:"missing_viewport"});
+      if(typeof this._hass?.callWS!=="function")throw Object.assign(new Error("Home Assistant WebSocket fehlt"),{code:"websocket_unavailable"});
+      step("preconditions_ok");
+      const request=buildRasterMosaicV2Request({
+        viewport:viewport.context,focus:viewport.focus,maxLayers:12,
+        maxTileRequests:12,consumerId:"gewitterradar",correlationId:id
+      });
+      step("request_validated");
+      let timer=null;
+      try{
+        const response=await Promise.race([
+          Promise.resolve().then(()=>{step("callws_dispatched");return this._hass.callWS(request);}),
+          new Promise((_resolve,reject)=>{timer=setTimeout(()=>{
+            reject(Object.assign(new Error("V2 client deadline exceeded"),{code:"gr_v2_client_timeout"}));
+          },20000);})
+        ]);
+        step("response",{response_status:String(response?.status||"missing")});
+        validateRasterMosaicV2(response,{maxLayers:12});
+        step("validated",{layers:response.layers.length});
+        result.status=response.status;
+        result.layer_count=response.layers.length;
+        result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
+        result.time_deviating=response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend");
+        result.limitations_count=Array.isArray(response.limitations)?response.limitations.length:0;
+        result.note="Schnittstellentest ohne Aktivierung des Kartenrenderers";
+      }finally{if(timer!==null)clearTimeout(timer);}
+    }catch(error){
+      result.status="error";
+      result.error_code=String(error?.code||error?.error?.code||error?.name||"unknown").slice(0,80);
+      step("error",{error_code:result.error_code});
+    }finally{
+      result.completed_at=new Date().toISOString();
+      result.duration_ms=Math.round(performance.now()-started);
+      this.__weatherEngineV2TestRunning=false;
+      this._weatherEngineDiagnosticRender?.();
+    }
+    return result;
+  },
   _weatherRouterReset(){this.__weatherRouterClient?.reset();const store=this._weatherEngineTraceStore();store.lastDiscovery=null;store.lastCatalog=null;},
 _weatherEngineDiagnosticPayload(){
     const store=this.__weatherEngineTraceStore||{items:[]};
@@ -273,6 +325,7 @@ _weatherEngineDiagnosticPayload(){
       traces:[...(store.items||[])],
       raw_consumer_exchanges:[...(store.rawExchanges||[])],
       v2_attempts:[...(store.v2Events||[])],
+      v2_interface_test:store.v2TestResult||null,
       local:{precipitation_radar:currentLayer}
     });
   },
@@ -345,6 +398,7 @@ _weatherEngineDiagnosticPayload(){
             <div class="we-card"><b>Letzte WR-Antwort</b><span id="weather-engine-diagnostic-response">—</span></div>
             <div class="we-card"><b>Sichtbarer Layer</b><span id="weather-engine-diagnostic-layer">—</span></div>
           </div>
+          <div class="we-card"><b>Consumer API V2 – Schnittstellentest</b><p style="font-size:11px;opacity:.8">Begrenzter WebSocket-Vertragstest ohne Veränderung der Karte oder zusätzliche Raster-Bildabrufe.</p><button id="weather-engine-v2-test" type="button">API V2 gezielt prüfen</button><div id="weather-engine-v2-test-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch nicht geprüft</div></div>
           <div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
           <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Niederschlag neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
           <div class="we-diagnostic-note">Die Filter beeinflussen nur die Diagnoseansicht. Providerwahl und WeatherRouter-Routing werden nicht verändert.</div>
@@ -359,6 +413,7 @@ _weatherEngineDiagnosticPayload(){
     root.getElementById('weather-engine-diagnostic-refresh')?.addEventListener('click',()=>this._weatherEngineDiagnosticRefresh({catalog:true}));
     root.getElementById('weather-engine-diagnostic-area')?.addEventListener('change',()=>this._weatherEngineDiagnosticRender());
     root.getElementById('weather-engine-diagnostic-capability')?.addEventListener('change',()=>this._weatherEngineDiagnosticRender());
+    root.getElementById('weather-engine-v2-test')?.addEventListener('click',async()=>{await this._weatherEngineV2InterfaceTest();});
     root.getElementById('weather-engine-diagnostic-resolve')?.addEventListener('click',async()=>{if(typeof this._refreshWeatherRadar==='function')await this._refreshWeatherRadar({reason:'weather-engine-diagnostic',force:true});this._weatherEngineDiagnosticRender();});
     root.getElementById('weather-engine-diagnostic-copy')?.addEventListener('click',async()=>{
       const data=this._weatherEngineDiagnosticFiltered();
@@ -434,6 +489,17 @@ _weatherEngineDiagnosticPayload(){
         rows.append(tr);
       }
     }
+    const v2Result=root.getElementById('weather-engine-v2-test-result');
+    if(v2Result){
+      const test=store.v2TestResult;
+      v2Result.textContent=!test?"Noch nicht geprüft":
+        "Status: "+test.status+" · "+(test.layer_count??0)+" Quellen · "+(test.duration_ms??"…")+" ms"+
+        (test.error_code?" · Fehler: "+test.error_code:"")+
+        "\\nKennung: "+test.correlation_id+
+        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"");
+    }
+    const v2Button=root.getElementById('weather-engine-v2-test');
+    if(v2Button)v2Button.disabled=Boolean(this.__weatherEngineV2TestRunning);
     const raw=root.getElementById('weather-engine-diagnostic-raw');if(raw)raw.textContent=pretty(data);
   },
 
