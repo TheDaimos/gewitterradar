@@ -874,6 +874,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const count=Math.ceil(Math.max(256,size.x)/256+2)*Math.ceil(Math.max(256,size.y)/256+2);
       let painted;
       const firstPaint=new Promise(resolve=>{painted=resolve;});
+      const readyTiles=new Set();
+      // A single painted tile does not establish a usable replacement view.
+      // At world zoom zero there can genuinely be only one tile.
+      const minReadyTiles=(this._map.getZoom?.()??0)<1?1:2;
       const result=await prepareRasterMosaicV2({
         callWS:query=>new Promise((resolve,reject)=>{
           const timer=setTimeout(()=>reject(new Error("V2 response timeout")),5000);
@@ -885,7 +889,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         layerOptions:{maxConcurrent:4,
-          onTileDiagnostics:item=>{if(item?.drawn?.length)painted(true);}}
+          onTileDiagnostics:item=>{
+            if(!item?.drawn?.length||!item.tile)return;
+            readyTiles.add([item.tile.z,item.tile.x,item.tile.y].join("/"));
+            if(readyTiles.size>=minReadyTiles)painted(true);
+          }}
       });
       if(result.mode!=="v2"||!current())return false;
       if(!this._map.getPane("gr-weather-radar")){
