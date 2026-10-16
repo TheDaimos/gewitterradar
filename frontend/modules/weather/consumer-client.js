@@ -473,11 +473,11 @@ _weatherEngineDiagnosticPayload(){
     const radar=data.local?.precipitation_radar;
 
     const router=root.getElementById('weather-engine-diagnostic-router');
-    if(router)router.textContent=!discovery?'Noch nicht geprüft':discovery.ready?'bereit · Consumer API V1':discovery.present?'vorhanden, nicht bereit':'nicht erreichbar';
+    if(router)router.textContent=!discovery?'Noch nicht geprüft':discovery.ready?'bereit · V1 registriert, V2 separat prüfen':discovery.present?'vorhanden, nicht bereit':'nicht erreichbar';
     const response=root.getElementById('weather-engine-diagnostic-response');
     if(response)response.textContent=last?statusLabel(last.answer)+' · '+last.capability:'Noch keine passende Anfrage aufgezeichnet';
     const layer=root.getElementById('weather-engine-diagnostic-layer');
-    if(layer)layer.textContent=!radar?'—':radar.layer_present?(radar.current_provider||'Layer vorhanden')+(radar.retained_previous_layer?' · Rückfall/letzten Stand gehalten':' · aktuell'):'kein WeatherRouter-Raster sichtbar';
+    if(layer)layer.textContent=!radar?'—':!radar.layer_present?'kein WeatherRouter-Raster sichtbar':radar.api_version===2?'API V2 · '+radar.mosaic_layer_count+' Mosaikquellen · sichtbar':('API V1 · '+(radar.current_provider||'Raster vorhanden')+(radar.retained_previous_layer?' · vorherige Darstellung gehalten':' · aktuell'));
 
     const rows=root.getElementById('weather-engine-diagnostic-rows');
     if(rows){
