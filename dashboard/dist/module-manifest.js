@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41186r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41187r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
@@ -385,7 +385,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.7",
+    "version": "1.3.8",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
