@@ -79,7 +79,8 @@ export async function prepareRasterMosaicV2({
      phase:"validated",status:response.status,layers:response.layers.length,
      time_deviating:response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend"),
      source_ids:response.layers.map(layer=>layer.source_id).slice(0,12),
-     limitations_count:Array.isArray(response.limitations)?response.limitations.length:0
+     limitations_count:Array.isArray(response.limitations)?response.limitations.length:0,
+     limitations:Array.isArray(response.limitations)?response.limitations.slice(0,8).filter(x=>typeof x==="string").map(x=>x.slice(0,180)):[]
    });
    if(response.status==="unavailable"||response.layers.length===0){
      onDiagnostic?.({phase:"unavailable",status:response.status,layers:0});
