@@ -52,14 +52,17 @@ const L={GridLayer:{extend:spec=>class Grid{
  createTile(...args){return spec.createTile.apply(this,args);}
 }}};
 const calls=[];
+const v2Phases=[];
 const active=await prepareRasterMosaicV2({
  callWS:async q=>{calls.push(q);return response;},
+ onDiagnostic:item=>v2Phases.push(item.phase),
  Leaflet:L,viewport,focus,maxTileRequests:4,
  layerOptions:{createCanvas:()=>({width:0,height:0,getContext:()=>({
    globalAlpha:1,drawImage:()=>{}
  })}),loadImage:async ()=>({width:256})}
 });
 assert.equal(active.mode,"v2");
+assert.deepEqual(v2Phases,["request","response","validated","layer_prepared"]);
 assert.equal(calls.length,1);
 assert.equal(calls[0].limits.max_tile_requests,4);
 assert.ok(active.layer._p7RasterRequestBudget);
@@ -93,4 +96,9 @@ const wrong=await prepareRasterMosaicV2({
 });
 assert.equal(wrong.mode,"fallback");
 assert.equal(wrong.reason,"validation_or_render");
+const renderedFail=await prepareRasterMosaicV2({
+ callWS:async()=>response,Leaflet:{GridLayer:{extend:()=>{throw new TypeError("grid failure");}}},viewport,focus
+});
+assert.equal(renderedFail.mode,"fallback");
+assert.equal(renderedFail.reason,"layer_preparation_failed");
 console.log("P7-010 opt-in V2 WS to Leaflet bridge and non-destructive V1 fallback PASS");
