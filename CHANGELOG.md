@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026/10 – V4.11.87 DEV (P7-010 – WR 0.10.152 V2-Mosaik)
+
+- Consumer V2 mit optionaler, ausdrücklich aktivierbarer älterer **globaler** Satellitengrundlage (bis 12 Std.) bei weiter strengem 15-Minuten-Limit für aktuelle Radarquellen.
+- V2-Validator, Legende und Diagnose unterscheiden Bildzeit UTC, Datenalter, `current` und `older_background`. Bestehende räumliche Begrenzung und Kachelbudgets bleiben erhalten.
+- Consumer V1 unterstützt begrenzte, vom WR-Katalog ausdrücklich zugelassene Ereigniszeitfenster, Ereignisstatus, Feed-Frische und Seitenaufteilung.
+- V1-Rückfall und gemeinsame Korrelationskennung unverändert. Mehrquellen-Karten-Realtest und FLK-01-Geräteabnahme weiterhin offen.
+
 ## 2026/10 – V4.11.86 DEV (P7-010 V2-Datenalter-Vergleich)
 
 - **Diagnose:** Zwei kontrollierte Consumer-V2-Anfragen (900 gegenüber 43200 Sekunden maximales Datenalter), ein gemeinsamer Kartenausschnitt und separate Korrelationskennungen zur Nachverfolgung im WR-API-Monitor.
