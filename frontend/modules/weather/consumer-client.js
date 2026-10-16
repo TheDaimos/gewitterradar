@@ -94,12 +94,12 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
       return catalog;
     }catch(error){return absent('temporarily_unavailable','Capability discovery failed',true);}
   }
-  async function resolve(capability,context,{requirements,eventFilter,consumerId='gewitterradar',correlationId=null}={}){
+  async function resolve(capability,context,{requirements,eventFilter,consumerId='gewitterradar',correlationId=null,time=null}={}){
     if(!validId(capability))throw new TypeError('Invalid public capability');
     const spatial=validateWeatherContext(context);
     const state=await discover();
     if(!state.ready)return absent(state.compatible?'router_not_ready':'capability_not_supported','WeatherRouter not ready');
-    const request={type:'weather_router/consumer/resolve',contract_version:WEATHER_ROUTER_CONTRACT,capability,context:spatial,time:{mode:'latest'}};
+    const request={type:'weather_router/consumer/resolve',contract_version:WEATHER_ROUTER_CONTRACT,capability,context:spatial,time:time||{mode:'latest'}};
     if(profile)request.profile_id=profile;
     request.consumer_id=consumerId;
     if(correlationId)request.correlation_id=correlationId;
@@ -108,8 +108,55 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
     try{return parseWeatherResolution(await callWS(request),capability);}
     catch(error){return absent('temporarily_unavailable','WeatherRouter request or response failed',true);}
   }
+  async function resolveEventWindow(capability,context,{
+    start,end,includeOngoing=false,maxFeedUpdateAgeSeconds=null,
+    page=1,pageSize=100,consumerId='gewitterradar',correlationId=null
+  }={}){
+    if(!validId(capability))throw new TypeError('Invalid event capability');
+    const catalog=await capabilities({filter:{resource_types:['event_feed','hazard_feed'],available_only:true}});
+    if(catalog.status!=='ready')return catalog;
+    const item=catalog.capabilities.find(row=>row.id===capability&&row.enabled&&row.available);
+    const policy=item?.event_time_options;
+    if(!item||!Array.isArray(item.time_modes)||!item.time_modes.includes('events_intersecting_window')
+      ||!policy||policy.mode!=='events_intersecting_window'
+      ||!Array.isArray(item.resource_types)||item.resource_types.length!==1
+      ||!['event_feed','hazard_feed'].includes(item.resource_types[0]))
+      return absent('capability_not_supported','Event time window not advertised');
+    const instant=value=>typeof value==='string'&&/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(value)&&Number.isFinite(Date.parse(value));
+    if(!instant(start)||!instant(end)||Date.parse(start)>Date.parse(end)
+      ||Date.parse(end)>Date.now()+300000
+      ||!Number.isFinite(policy.max_window_days)
+      ||Date.parse(end)-Date.parse(start)>policy.max_window_days*86400000
+      ||typeof includeOngoing!=='boolean'
+      ||!Number.isInteger(page)||page<1||page>Math.min(5,policy.max_pages||5)
+      ||!Number.isInteger(pageSize)||pageSize<1||pageSize>Math.min(200,policy.max_results||200)
+      ||(maxFeedUpdateAgeSeconds!==null&&
+          (!Number.isInteger(maxFeedUpdateAgeSeconds)||maxFeedUpdateAgeSeconds<60
+          ||maxFeedUpdateAgeSeconds>policy.max_feed_update_age_seconds)))
+      throw new TypeError('Invalid bounded UTC event window');
+    const time={
+      mode:'events_intersecting_window',
+      window:{start:new Date(Date.parse(start)).toISOString(),end:new Date(Date.parse(end)).toISOString()},
+      include_ongoing:includeOngoing,page,page_size:pageSize,
+      ...(maxFeedUpdateAgeSeconds===null?{}:{max_feed_update_age_seconds:maxFeedUpdateAgeSeconds})
+    };
+    const answer=await resolve(capability,context,{consumerId,correlationId,time});
+    if(answer?.status==='ready'){
+      const payload=answer.resource?.payload;
+      const metadata=payload?.event_time_policy;
+      if(!Array.isArray(payload?.events)||!metadata
+        ||!['fresh','stale','future','unknown'].includes(metadata.feed_status)
+        ||!Number.isInteger(metadata.page)||metadata.page!==page
+        ||!Number.isInteger(metadata.page_size)||metadata.page_size!==pageSize
+        ||typeof metadata.has_more!=='boolean'
+        ||payload.events.length>pageSize
+        ||payload.events.some(event=>typeof event.temporal_status!=='string'))
+        return absent('consumer_contract_invalid','Invalid event time response');
+    }
+    return answer;
+  }
   function reset(){discovery=null;catalogCache.clear();}
-  return Object.freeze({discover,capabilities,resolve,reset,get discovery(){return discovery;},get profileId(){return profile;}});
+  return Object.freeze({discover,capabilities,resolve,resolveEventWindow,reset,get discovery(){return discovery;},get profileId(){return profile;}});
 }
 
 const SENSITIVE_QUERY=/([?&](?:api[_-]?key|apikey|access[_-]?token|token|key|appid|password|secret)=)[^&#\s]+/gi;
@@ -204,7 +251,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     return this.__weatherRouterClient;
   },
   _weatherEngineTraceStore(){
-    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],v2TestResult:null,v2AgeComparison:null,max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],v2TestResult:null,v2AgeComparison:null,lastEventWindow:null,max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
     return this.__weatherEngineTraceStore;
   },
   async _weatherRouterDiscovery(options){
@@ -385,6 +432,25 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     }finally{finish();}
     return comparison;
   },
+  async _weatherRouterResolveEventWindow(capability,context,options){
+    // Reuse the existing V1 client and discovery; never introduce new routing.
+    const result=await this._weatherRouterClient().resolveEventWindow(capability,context,options);
+    const store=this._weatherEngineTraceStore();
+    const policy=result?.status==='ready'?result.resource?.payload?.event_time_policy:null;
+    store.lastEventWindow={
+      at:new Date().toISOString(),capability,status:result?.status||'unknown',
+      correlation_id:options?.correlationId||null,
+      event_count:result?.status==='ready'?result.resource?.payload?.events?.length||0:0,
+      page:policy?.page??null,page_size:policy?.page_size??null,
+      has_more:policy?.has_more??null,feed_status:policy?.feed_status??null,
+      feed_age_seconds:policy?.feed_age_seconds??null,
+      rejected_counts:policy?.rejected_counts||null,
+      temporal_statuses:result?.status==='ready'
+        ?result.resource.payload.events.slice(0,200).map(event=>event.temporal_status||'unknown'):[],
+      error_code:result?.unavailable?.code||null
+    };
+    return result;
+  },
   _weatherRouterReset(){this.__weatherRouterClient?.reset();const store=this._weatherEngineTraceStore();store.lastDiscovery=null;store.lastCatalog=null;},
 _weatherEngineDiagnosticPayload(){
     const store=this.__weatherEngineTraceStore||{items:[]};
@@ -421,6 +487,7 @@ _weatherEngineDiagnosticPayload(){
       v2_attempts:[...(store.v2Events||[])],
       v2_interface_test:store.v2TestResult||null,
       v2_age_comparison:store.v2AgeComparison||null,
+      event_window_last:store.lastEventWindow||null,
       local:{precipitation_radar:currentLayer}
     });
   },
