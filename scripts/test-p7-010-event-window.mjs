@@ -43,6 +43,8 @@ assert.equal(request.time.mode,'events_intersecting_window');
 assert.equal(request.time.window.start,'2026-09-30T22:00:00.000Z');
 assert.equal(request.time.page,2);
 assert.equal(request.time.page_size,100);
+assert.equal(request.time.include_ongoing,true);
+assert.equal(response.resource.payload.event_time_policy.has_more,true);
 assert.equal(request.time.max_feed_update_age_seconds,86400);
 assert.equal(request.correlation_id,'gr-event-p7-1');
 assert.equal(Object.hasOwn(request,'provider'),false);
