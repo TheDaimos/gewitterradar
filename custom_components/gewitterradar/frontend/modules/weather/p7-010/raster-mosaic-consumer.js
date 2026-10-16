@@ -22,7 +22,7 @@ function validViewport(b){
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
  maxDataAgeSeconds=900,maxTimeDeltaSeconds=180,
- profileId=null
+ profileId=null,consumerId="gewitterradar",correlationId=null
 }={}){
  if(!validViewport(viewport)
    ||!focus||!finite(focus.latitude)||!finite(focus.longitude)
@@ -47,6 +47,8 @@ export function buildRasterMosaicV2Request({
      max_time_delta_seconds:maxTimeDeltaSeconds},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
    ...(profileId!==null?{profile_id:profileId}:{}),
+   consumer_id:consumerId,
+   ...(correlationId?{correlation_id:correlationId}:{}),
  };
 }
 
@@ -58,24 +60,29 @@ export function buildRasterMosaicV2Request({
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
  maxLayers=4,maxTileRequests=48,maxDataAgeSeconds=900,
- maxTimeDeltaSeconds=180,layerOptions={}
+ maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
    viewport,focus,profileId,maxLayers,maxTileRequests,
-   maxDataAgeSeconds,maxTimeDeltaSeconds,
+   maxDataAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
  try{
+   onDiagnostic?.({phase:"request",status:"sent",correlation_id:correlationId});
    const response=await callWS(request);
+   onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
    validateRasterMosaicV2(response,{maxLayers});
    if(response.status==="unavailable"||response.layers.length===0)
-     return {mode:"fallback",reason:"no_usable_mosaic_source"};
+     return {mode:"fallback",reason:"no_usable_mosaic_source",responseStatus:response.status};
    const layer=createRasterMosaicGridLayer(Leaflet,response,{
      ...layerOptions,maxLayers,maxTileRequests
    });
    return {mode:"v2",layer,response};
- }catch(_){
-   return {mode:"fallback",reason:"v2_unavailable_or_invalid"};
+ }catch(error){
+   const code=typeof error?.code==="string"?error.code:"";
+   const stage=error instanceof TypeError?"validation_or_render":"websocket_or_contract";
+   onDiagnostic?.({phase:stage,status:"error",error_code:code||error?.name||"unknown",correlation_id:correlationId});
+   return {mode:"fallback",reason:stage,errorCode:code||error?.name||"unknown"};
  }
 }
