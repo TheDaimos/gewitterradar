@@ -7,7 +7,7 @@ const version=await readFile(new URL("../frontend/version.js",import.meta.url),"
 
 assert.match(version,/version:"4\.11\.87"/);
 assert.match(version,/runtimeRevision:"41187r1"/);
-assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.4'/);
+assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.5'/);
 assert.match(consumer,/gewitterradar\.weather_engine_diagnostic\.v1/);
 assert.match(consumer,/settings-weather-engine-diagnostics-toggle/);
 assert.match(consumer,/weather-engine-diagnostic-area/);
@@ -37,7 +37,7 @@ assert.match(consumer,/weather-engine-v2-test-result/);
 assert.match(consumer,/v2_interface_test/);
 assert.match(consumer,/correlation_id:id/);
 assert.match(consumer,/maxTileRequests:12/);
-assert.match(consumer,/validateRasterMosaicV2\(response,\{maxLayers:12\}\)/);
+assert.match(consumer,/validateRasterMosaicV2\(response,\{maxLayers:12,maxDataAgeSeconds:900/);
 assert.match(consumer,/20000/);
 assert.match(consumer,/Die Filter beeinflussen nur die Diagnoseansicht/);
 assert.match(consumer,/api\[_-\]\?key|apikey|access\[_-\]\?token/);
