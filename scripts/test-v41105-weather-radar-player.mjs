@@ -93,10 +93,10 @@ assert.match(source,/requirements:\{resource_types:\["raster_tile"\]\}/);
 assert.doesNotMatch(source,/source_classes:\["observation"\]/);
 assert.doesNotMatch(source,/\bdwd\b/i);
 assert.match(source,/maxNativeZoom:maxZoom/);
-assert.match(source,/const mapMaxZoom=finite\(map\.getMaxZoom\?\.\(\)\)/);
-assert.match(source,/displayMaxZoom=Math\.max\(maxZoom,mapMaxZoom\?\?0,20\)/,
- "z12+ must remain visible when Leaflet reports Infinity for map max zoom");
-assert.match(source,/layer\.__grRadarDisplayMaxZoom=displayMaxZoom/);
+assert.match(source,/const layer=L\.gridLayer\(\{pane:"gr-weather-radar",tileSize,minZoom,maxNativeZoom:maxZoom,/,
+ "z12+ overzoom must not impose a display zoom ceiling");
+assert.doesNotMatch(source,/maxZoom:displayMaxZoom/,
+ "provider native zoom must not become a map display limit");
 assert.match(source,/PRELOAD_CONCURRENCY=4/);
 assert.match(source,/TIMELINE_STAGE_TIMEOUT_MS=6000/);
 assert.match(source,/TIMELINE_PLAY_INTERVAL_MS=950/);
