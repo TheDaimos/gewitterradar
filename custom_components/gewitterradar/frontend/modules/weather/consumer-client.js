@@ -246,6 +246,10 @@ _weatherEngineDiagnosticPayload(){
     const currentLayer=radar?{
       enabled:Boolean(radar.enabled),
       layer_present:Boolean(radar.layer),
+      api_version:radar.v2Snapshot?2:radar.lastReady?1:null,
+      mosaic_status:radar.v2Snapshot?.status||null,
+      mosaic_layer_count:Array.isArray(radar.v2Snapshot?.layers)?radar.v2Snapshot.layers.length:0,
+      mosaic_sources:Array.isArray(radar.v2Snapshot?.layers)?radar.v2Snapshot.layers.map(item=>item.source_id).filter(id=>typeof id==='string').slice(0,12):[],
       current_provider:radar.lastReady?.answer?.provenance?.provider_name||null,
       current_capability:radar.lastReady?.answer?.capability||'weather.precipitation.layer',
       last_ready_at:radar.lastReady?.at?new Date(radar.lastReady.at).toISOString():null,
