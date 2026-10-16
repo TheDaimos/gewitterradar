@@ -1,5 +1,10 @@
 # Gewitterradar – Projektgeschichte
 
+## V4.11.84 DEV · 2026/10 – Niederschlagsübergabe und Weather Engine
+
+FLK-01: Der neue V1-Niederschlagsbildsatz ersetzt die alte Ebene erst nach erfolgreichem Laden; bei unveränderter Bildquelle wird gar kein Ebenenwechsel ausgeführt. Die Weather-Engine unterscheidet nun sichtbar zwischen V1-Verbindung und aktivem V1-/V2-Niederschlag. Die DEV-Auslieferung ermöglicht den anschließenden WeatherRouter-V2-Realtest; Geräteprüfung bleibt offen. [Release Notes](RELEASE_NOTES_V4_11_84_DEV.md).
+
+
 ## V4.11.08 DEV · 2026/10 – Daimos Project Hub
 
 Die Gewitterradar-Signatur erhält einen isolierten Einstieg in den zentralen Daimos Project Hub. `ui.project-hub` prüft nur ein technisches Health-Bild und öffnet entweder die separate GitHub-Pages-Projektübersicht oder eine lokal mitgelieferte Rückfallansicht. Remote-Inhalte werden nicht eingebettet. Dashboard und native Integration bleiben synchron; DRA nutzt unverändert den vollständigen Verzeichnisersatz. Die geschützte About-Darstellung bleibt unberührt.
