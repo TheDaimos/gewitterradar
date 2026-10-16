@@ -6,6 +6,7 @@
 - **V4.11: WeatherRouter, Fehler-/Warn-/Statusmeldungen, Lösungshinweise und überwachte Orte.**
 - **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.**
 - Verbindliche Detail-To-dos: docs/V4_11_TODO.md
+- **V4.12 verbindlich eingeplant: Geo-Sonde** als über das bestehende Layer-Menü aktivierbares Kartenwerkzeug für frei wählbare geografische Punkte und gezielte WeatherRouter-Fachabfragen. Planungsbeschluss: [V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md](V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md).
 
 Die zuvor als Zukunftspunkte geführten Themen **unterschiedliche Medaillons** sowie **Verbesserungen der Kompass- und Medaillon-Auswahl** sind Bestandteil von V4.10 und werden nicht länger als zukünftige Roadmap-Punkte geführt.
 
@@ -51,6 +52,20 @@ Vorgemerkt:
 - Ressourcenwirkung mehrerer Blitzortung-Abonnements, großer Radien und vieler Geo-Location-Ereignisse messen und verständlich absichern.
 
 Die vollständige V4.11-Sammlung einschließlich Textbeispielen, Diagnosezuständen, Bedienidee und technischen Leitplanken liegt in docs/V4_11_TODO.md.
+
+### V4.12 – Geo-Sonde: punktbezogene Fachinformationen (verbindlich eingeplant)
+
+**NEXT / VERSIONIERT – Produktentscheidung 16.10.2026.** Die Geo-Sonde gehört fest zum Funktionsumfang von **V4.12**; ihre Umsetzung beginnt nach ausdrücklicher Freigabe, ohne laufende V4.11-Arbeiten zu unterbrechen.
+
+- Aktivierung/Deaktivierung als Kartenwerkzeug im **bestehenden Layer-Menü**.
+- Beliebigen Kartenpunkt anklicken/antippen; Koordinaten präzise anzeigen und kopieren, Sonde sichtbar setzen und verschieben.
+- Kompakte verschiebbare Informationskarte, gezielte Abfrage bestehender geeigneter WeatherRouter-Fähigkeiten nach Latitude/Longitude und Thema.
+- Wetter-, Naturgefahren-, Meer-/Gezeiten- und Umweltinformationen modular anbieten, **nur soweit geeignete Quellen tatsächlich vorliegen**; Beispiele: Hurrikanregion, Arktis, Wüste, Nordseeküste, dokumentierte Pflanzenvorkommen.
+- Datenherkunft, Zeitpunkt, räumlicher Bezug, Messung/Modell/Prognose, Verfügbarkeit und Einschränkungen sichtbar machen.
+- Ausdrückliche Ressourcen- und Gestenschutzvorgaben; unabhängig von Blitzortung-Tracker, gespeicherten Orten und der Niederschlagsdarstellung.
+- Mehrere Sonden gleichzeitig, gespeicherte Sonden und Folgemodus als optionale **spätere** Erweiterungen, nicht Bestandteil der V4.12-Mindestabnahme.
+
+**Verbindliches Detaildokument:** [docs/V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md](V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md).
 
 ### V4.09.xx – HACS-Distribution und Update-Darstellung
 
