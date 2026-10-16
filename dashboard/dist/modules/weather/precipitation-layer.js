@@ -957,7 +957,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const minReadyTiles=(this._map.getZoom?.()??0)<1?1:2;
       const result=await prepareRasterMosaicV2({
         callWS:query=>new Promise((resolve,reject)=>{
-          const timer=setTimeout(()=>reject(new Error("V2 response timeout")),5000);
+          // Finite client ceiling while WR may perform multiple bounded stages.
+          const budgetMs=20000;
+          const timer=setTimeout(()=>{
+            const error=new Error("V2 client deadline exceeded");
+            error.code="gr_v2_client_timeout";
+            report("timeout",{elapsed_ms:budgetMs,error_code:error.code});
+            reject(error);
+          },budgetMs);
+          report("callws_dispatched",{timeout_ms:budgetMs});
           Promise.resolve().then(()=>this._hass.callWS(query)).then(
             value=>{clearTimeout(timer);resolve(value);},
             error=>{clearTimeout(timer);reject(error);}
@@ -988,6 +996,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const ready=await Promise.race([firstPaint,
         new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
       if(!ready||!current()){report("fallback",{reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});return false;}
+      report("raster_ready",{painted_tiles:readyTiles.size});
       const old=state.layer;
       state.layer=staged;state.v2PendingLayer=null;
       state.v2Snapshot=result.response;state.lastReady=null;state.lastUnavailable=null;
