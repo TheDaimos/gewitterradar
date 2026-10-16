@@ -27,7 +27,7 @@ assert.match(consumer,/Consumer-Schnittstelle V1/);
 assert.match(radar,/activeApi\.dataset\.activeApi=kind/);
 assert.match(radar,/Niederschlag: API V2/);
 assert.match(radar,/Niederschlag: API V1/);
-assert.match(radar,/this\._weatherRadarUpdateControls\(\);\s*}\)\.catch\(\(\)=>\{\}\)/);
+assert.match(radar,/async _weatherRadarApplyReady\(answer,viewport,token\)/);
 assert.equal((radar.match(/className="gr-weather-range-controls"/g)||[]).length,2);
 assert.equal((radar.match(/className="settings-row gr-weather-detail-status"/g)||[]).length,2);
 for(const name of ["modules/ui/skeleton.js","modules/weather/consumer-client.js",
