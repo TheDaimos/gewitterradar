@@ -99,7 +99,7 @@ export async function prepareRasterMosaicV2({
    }
    stage="layer_preparation";
    const layer=createRasterMosaicGridLayer(Leaflet,response,{
-     ...layerOptions,maxLayers,maxTileRequests
+     ...layerOptions,maxLayers,maxTileRequests,maxDataAgeSeconds,maxBackgroundAgeSeconds
    });
    onDiagnostic?.({phase:"layer_prepared",status:response.status,layers:response.layers.length});
    return {mode:"v2",layer,response};
