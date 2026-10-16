@@ -72,6 +72,48 @@ assert.equal(outside.drawn.length,0);
 assert.equal(outside.rejected[0].reason,"outside_tile_coverage");
 assert.equal(observed.length,requestCount,"out-of-area providers must not consume network");
 
+// A world source natively ending at zoom 11 must not disappear at zoom 12.
+// Per-source overzoom requests the z11 ancestor while fresh DWD keeps z12.
+const highZoom={x:2161,y:1371,z:12}; // 10°E, 51°N (German interior)
+const olderGlobal=source("satellite_global",{scope:"global"});
+olderGlobal.render.max_zoom=11;
+olderGlobal.semantics.observation_kind="estimate";
+olderGlobal.semantics.measurement_method="satellite_precipitation_estimate";
+const detailedRegional=source("regional_dwd_highzoom",{
+  scope:"bbox",coverage:germany,
+  url:"https://example.invalid/dwd/{z}/{x}/{y}.png"
+});
+detailedRegional.render.max_zoom=16;
+const overzoomUrls=[],overzoomDraws=[];
+const overzoom=await drawRasterMosaicTileFromUrls({
+ context:{globalAlpha:1,drawImage:(...args)=>overzoomDraws.push(args)},
+ tile:highZoom,layers:[olderGlobal,detailedRegional],
+ budget:new RasterTileRequestBudget(4),
+ loadImage:async (url,layer)=>{
+   overzoomUrls.push({url,source:layer.source_id});
+   return {width:256,height:256};
+ }
+});
+assert.deepEqual(overzoom.drawn.map(x=>x.source_id),
+ ["satellite_global","regional_dwd_highzoom"]);
+assert.ok(overzoomUrls[0].url.includes("/11/1080/685.png"),
+ "global satellite must request its native z11 ancestor");
+assert.ok(overzoomUrls[1].url.includes("/12/2161/1371.png"),
+ "regional radar must preserve its independent higher native zoom");
+assert.equal(overzoomDraws[0][1],128,"odd display x uses right half of z11 source");
+assert.equal(overzoomDraws[0][2],128,"odd display y uses lower half of z11 source");
+assert.equal(overzoomDraws[0][3],128,"global native source crop should halve at z12");
+assert.equal(overzoomDraws[0][7],256,"global image must cover full output tile");
+assert.equal(overzoomDraws[1][3],256,"regional radar stays at full native detail");
+const highZoomOverOcean=await drawRasterMosaicTileFromUrls({
+ context:{globalAlpha:1,drawImage:()=>{}},
+ tile:{x:1122,y:1766,z:12},
+ layers:[olderGlobal,detailedRegional],budget:new RasterTileRequestBudget(2),
+ loadImage:async()=>({width:256,height:256})
+});
+assert.deepEqual(highZoomOverOcean.drawn.map(x=>x.source_id),["satellite_global"],
+ "regional coverage cannot leak outside Europe at high zoom");
+
 let active=0,maximum=0;
 const parallel=Array.from({length:4},(_,i)=>source("source_"+i));
 const limit=new RasterTileRequestBudget(4,{maxConcurrent:2});
