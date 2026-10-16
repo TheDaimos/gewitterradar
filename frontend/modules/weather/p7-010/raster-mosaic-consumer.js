@@ -75,7 +75,12 @@ export async function prepareRasterMosaicV2({
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
    stage="contract_validation";
    validateRasterMosaicV2(response,{maxLayers});
-   onDiagnostic?.({phase:"validated",status:response.status,layers:response.layers.length});
+   onDiagnostic?.({
+     phase:"validated",status:response.status,layers:response.layers.length,
+     time_deviating:response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend"),
+     source_ids:response.layers.map(layer=>layer.source_id).slice(0,12),
+     limitations_count:Array.isArray(response.limitations)?response.limitations.length:0
+   });
    if(response.status==="unavailable"||response.layers.length===0){
      onDiagnostic?.({phase:"unavailable",status:response.status,layers:0});
      return {mode:"fallback",reason:"no_usable_mosaic_source",responseStatus:response.status};
