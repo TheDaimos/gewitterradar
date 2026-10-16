@@ -1168,6 +1168,22 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const toggle=document.createElement("button");toggle.className="settings-language-button settings-control";toggle.id="weather-radar-toggle";toggle.type="button";
     toggle.addEventListener("click",()=>this._setWeatherRadarEnabled(!this._weatherRadarState().enabled));
     row.append(label,toggle);
+    const backgroundRow=document.createElement("div");
+    backgroundRow.className="settings-row";
+    const backgroundLabel=document.createElement("div");
+    backgroundLabel.className="settings-row-label";
+    const backgroundTitle=document.createElement("div");
+    backgroundTitle.textContent="Ältere globale Satellitenschätzungen zulassen";
+    const backgroundHint=document.createElement("div");
+    backgroundHint.textContent="Freiwillig: bis 12 Stunden alte globale Satellitenschätzungen als eingeschränkte Grundversorgung. Kein aktuelles Radar. Regionale Radardaten bleiben auf 15 Minuten begrenzt.";
+    backgroundHint.style.cssText="font-size:.76rem;opacity:.75;margin-top:3px";
+    backgroundLabel.append(backgroundTitle,backgroundHint);
+    const backgroundToggle=document.createElement("button");
+    backgroundToggle.id="weather-radar-background-toggle";
+    backgroundToggle.type="button";
+    backgroundToggle.className="settings-language-button settings-control";
+    backgroundToggle.addEventListener("click",()=>this._setWeatherRadarOlderSatelliteBackground(!this._weatherRadarState().allowOlderSatelliteBackground));
+    backgroundRow.append(backgroundLabel,backgroundToggle);
 
     const preloadRow=document.createElement("div");preloadRow.className="settings-row";
     const preloadLabel=document.createElement("div");preloadLabel.className="settings-row-label";
@@ -1226,7 +1242,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const statusRow=document.createElement("div");statusRow.className="settings-row gr-weather-detail-status";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
+    statusRow.append(status);block.append(row,backgroundRow,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
     const dataRow=this.shadow?.getElementById("weather-engine-inspect")?.closest(".settings-row");
     if(dataRow?.parentNode===content)content.insertBefore(block,dataRow);else content.append(block);
     this._weatherRadarUpdateControls();
