@@ -952,6 +952,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       let painted;
       const firstPaint=new Promise(resolve=>{painted=resolve;});
       const readyTiles=new Set();
+      let gridLoaded=false;
+      const markReady=()=>{if(gridLoaded&&readyTiles.size>=minReadyTiles)painted(true);};
       // A single painted tile does not establish a usable replacement view.
       // At world zoom zero there can genuinely be only one tile.
       const minReadyTiles=(this._map.getZoom?.()??0)<1?1:2;
@@ -978,7 +980,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           onTileDiagnostics:item=>{
             if(!item?.drawn?.length||!item.tile)return;
             readyTiles.add([item.tile.z,item.tile.x,item.tile.y].join("/"));
-            if(readyTiles.size>=minReadyTiles)painted(true);
+            markReady();
           }}
       });
       if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return false;}
@@ -992,6 +994,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       staged.options.opacity=0;
       staged.__grRadarNaturalOpacity=0.58;
       state.v2PendingLayer=staged;
+      // Leaflet's load event means all currently required visible tiles have
+      // settled; two successful tiles alone could expose an incomplete map.
+      staged.on?.("load",()=>{gridLoaded=true;markReady();});
       staged.addTo(this._map);
       const ready=await Promise.race([firstPaint,
         new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
