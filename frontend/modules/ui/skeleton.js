@@ -5917,8 +5917,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #weather-engine-section [data-weather-radar-settings]>.settings-row>select{
             min-height:38px;width:100%;min-width:0;justify-self:stretch
           }
-          #weather-engine-section [data-weather-radar-settings]>.settings-row:has(#weather-radar-preload-status),
-          #weather-engine-section [data-weather-radar-settings]>.settings-row:has(#weather-radar-status){
+          #weather-engine-section [data-weather-radar-settings]>.gr-weather-detail-status{
             display:block;padding-top:7px;padding-bottom:8px;min-height:0
           }
           #weather-engine-section #weather-radar-preload-status,
