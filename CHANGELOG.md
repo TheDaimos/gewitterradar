@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026/10 – V4.11.86 DEV (P7-010 V2-Datenalter-Vergleich)
+
+- **Diagnose:** Zwei kontrollierte Consumer-V2-Anfragen (900 gegenüber 43200 Sekunden maximales Datenalter), ein gemeinsamer Kartenausschnitt und separate Korrelationskennungen zur Nachverfolgung im WR-API-Monitor.
+- **Zeitqualität:** V2-Ergebnis enthält nur sichere Quellenmetadaten zu UTC-Gültigkeitszeit, tatsächlichem Alter, Messmethode, Quellenstatus und redigierten WR-Einschränkungen; getrennte JSON-Rubrik `v2_age_comparison`.
+- **Kein Einfluss auf Kartenbetrieb:** Produktive 900-Sekunden-Altersgrenze, 180-Sekunden-Kohärenzfenster, Bildkacheln und V1-Rückfall bleiben unverändert.
+- **Auslieferung:** V4.11.86 DEV / `41186r1` / `E411-86A1` / HA `0.25.4`; Regressionen und Realabnahme getrennt.
+- **Realtests:** Zuerst V2-A/B-Diagnose mit zwei korrelierten WR-Monitoreinträgen; danach eigenständige Mosaikprüfung. Keine automatische Freigabe historischer NASA-Daten als aktueller Radarstand. FLK-01 separat.
+
 ## 2026/10 – V4.11.85 DEV (P7-010 Consumer API V2 – technischer Realtestkandidat)
 
 - **API V2:** Eigenständiger Schnittstellentest in der Weather Engine mit kontrollierter WebSocket-Anfrage, verbindlicher Korrelationskennung, Antwortvalidierung und begrenztem JSON-Diagnoseexport.
