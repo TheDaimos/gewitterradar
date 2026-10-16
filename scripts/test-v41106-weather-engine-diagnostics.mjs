@@ -7,7 +7,7 @@ const version=await readFile(new URL("../frontend/version.js",import.meta.url),"
 
 assert.match(version,/version:"4\.11\.85"/);
 assert.match(version,/runtimeRevision:"41185r1"/);
-assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.2'/);
+assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.3'/);
 assert.match(consumer,/gewitterradar\.weather_engine_diagnostic\.v1/);
 assert.match(consumer,/settings-weather-engine-diagnostics-toggle/);
 assert.match(consumer,/weather-engine-diagnostic-area/);
