@@ -12,6 +12,8 @@ export const MODULE_META=Object.freeze({
 
 const CAPABILITY="weather.precipitation.layer";
 const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
+const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
+const BACKGROUND_MAX_AGE_SECONDS=43200;
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
@@ -130,9 +132,10 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
     if(!this.__weatherRadarState){
-      let enabled=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
+      let enabled=false,allowOlderSatelliteBackground=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
       try{
         enabled=localStorage.getItem(STORAGE_KEY)==="1";
+        allowOlderSatelliteBackground=localStorage.getItem(BACKGROUND_STORAGE_KEY)==="1";
         const storedProfile=localStorage.getItem(PRELOAD_PROFILE_STORAGE_KEY);
         if(storedProfile&&WEATHER_RADAR_PRELOAD_PROFILES[storedProfile])preloadProfile=storedProfile;
         const storedCustom=finite(localStorage.getItem(PRELOAD_CUSTOM_STORAGE_KEY));
@@ -148,7 +151,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       }catch(_error){}
       this.__weatherRadarState={
-        enabled,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
+        enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
@@ -228,6 +231,16 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarEnsureMapHooks();
     if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
     await this._refreshWeatherRadar({reason:"enable",force:true});
+  },
+
+  _setWeatherRadarOlderSatelliteBackground(enabled){
+    const state=this._weatherRadarState();
+    const next=Boolean(enabled);
+    if(state.allowOlderSatelliteBackground===next)return;
+    state.allowOlderSatelliteBackground=next;
+    try{localStorage.setItem(BACKGROUND_STORAGE_KEY,next?"1":"0");}catch(_error){}
+    this._weatherRadarUpdateControls();
+    if(state.enabled)this._scheduleWeatherRadarRefresh("background-policy-change",0);
   },
 
   _weatherRadarNaturalOpacity(){
@@ -644,12 +657,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),answer=state.lastReady?.answer;
     if(state.v2Snapshot){
       const layers=state.v2Snapshot.layers;
-      const label="Niederschlag · "+layers.length+" Mosaikquellen";
+      const older=layers.filter(layer=>layer.freshness_class==="older_background");
+      const label="Niederschlag · "+layers.length+" Mosaikquellen"+(older.length?" · ältere Satellitengrundlage":"");
       this._weatherRadarRenderLegend({
         family:"precipitation",capability:CAPABILITY,heading:"Niederschlag",
-        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung",
+        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung"+(older.length?" · ältere Satellitenschätzung (kein aktuelles Radar)":""),
         title:[label,"Herkunft: "+layers.map(x=>x.attribution).join(" / "),
-          "Bezugszeit: "+(state.v2Snapshot.reference_time||"unbekannt"),
+          "Bezugszeit (UTC): "+(state.v2Snapshot.reference_time||"unbekannt"),
+          ...layers.map(layer=>"Quelle: "+layer.source_id+
+            " · "+(layer.freshness_class==="older_background"?"Ältere Satellitengrundlage":"aktuelle Quelle")+
+            " · Bildzeit (UTC): "+layer.times.valid_at+
+            " · Alter: "+(typeof layer.times.age_seconds==="number"?Math.round(layer.times.age_seconds/60)+" Min.":"unbekannt")+
+            " · Methode: "+layer.semantics.measurement_method+
+            (layer.quality_note?" · Hinweis: "+layer.quality_note:"")),
           ...(state.v2Snapshot.limitations||[])].join(" · "),
         legendTitle:"Niederschlagslegende",priority:100
       });
@@ -940,7 +960,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       report("skipped",{reason:!viewport.focus?"missing_focus":"websocket_unavailable"});
       return false;
     }
-    report("started");
+    report("started",{live_max_data_age_seconds:900,
+      background_max_age_seconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
+      satellite_background_opt_in:state.allowOlderSatelliteBackground===true});
     const current=()=>state.enabled&&state.v2Generation===token
       &&this._weatherRadarViewport()?.signature===viewport.signature;
     let timeout=null,staged=null;
@@ -974,8 +996,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           );
         }),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
-        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
+        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],older_background_count:event.older_background_count??0,freshness_classes:Array.isArray(event.freshness_classes)?event.freshness_classes.slice(0,12):[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
+        maxDataAgeSeconds:900,
+        maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
             if(!item?.drawn?.length||!item.tile)return;
@@ -1008,7 +1032,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
-      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size,time_deviating:result.response?.layers?.some(layer=>layer.quality_note==="zeitlich_abweichend")===true});
+      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size,time_deviating:result.response?.layers?.some(layer=>layer.quality_note==="zeitlich_abweichend")===true,older_background_count:result.response?.layers?.filter(layer=>layer.freshness_class==="older_background").length||0});
       staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
@@ -1080,6 +1104,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _weatherRadarUpdateControls(message=null){
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
+    const satelliteToggle=this.shadow?.getElementById("weather-radar-background-toggle");
+    if(satelliteToggle){satelliteToggle.setAttribute("aria-pressed",state.allowOlderSatelliteBackground?"true":"false");satelliteToggle.textContent=state.allowOlderSatelliteBackground?"Ein · bis 12 Std.":"Aus · nur aktuelle Daten";}
     const status=this.shadow?.getElementById("weather-radar-status");
     const activeApi=this.shadow?.getElementById("weather-engine-active-api");
     if(activeApi){
@@ -1114,7 +1140,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.enabled){status.textContent="Aus · keine zusätzlichen Niederschlags-Anfragen";return;}
     if(state.v2Snapshot){
       status.textContent="Aktiv · WeatherRouter V2 · "+state.v2Snapshot.layers.length+
-        " räumlich abgegrenzte Quellen · Teilabdeckung";
+        " räumlich abgegrenzte Quellen · Teilabdeckung"+(state.v2Snapshot.layers.some(layer=>layer.freshness_class==="older_background")?" · ältere Satellitenschätzung, kein aktuelles Radar":"");
       return;
     }
     if(state.lastReady){
@@ -1149,6 +1175,22 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const toggle=document.createElement("button");toggle.className="settings-language-button settings-control";toggle.id="weather-radar-toggle";toggle.type="button";
     toggle.addEventListener("click",()=>this._setWeatherRadarEnabled(!this._weatherRadarState().enabled));
     row.append(label,toggle);
+    const backgroundRow=document.createElement("div");
+    backgroundRow.className="settings-row";
+    const backgroundLabel=document.createElement("div");
+    backgroundLabel.className="settings-row-label";
+    const backgroundTitle=document.createElement("div");
+    backgroundTitle.textContent="Ältere globale Satellitenschätzungen zulassen";
+    const backgroundHint=document.createElement("div");
+    backgroundHint.textContent="Freiwillig: bis 12 Stunden alte globale Satellitenschätzungen als eingeschränkte Grundversorgung. Kein aktuelles Radar. Regionale Radardaten bleiben auf 15 Minuten begrenzt.";
+    backgroundHint.style.cssText="font-size:.76rem;opacity:.75;margin-top:3px";
+    backgroundLabel.append(backgroundTitle,backgroundHint);
+    const backgroundToggle=document.createElement("button");
+    backgroundToggle.id="weather-radar-background-toggle";
+    backgroundToggle.type="button";
+    backgroundToggle.className="settings-language-button settings-control";
+    backgroundToggle.addEventListener("click",()=>this._setWeatherRadarOlderSatelliteBackground(!this._weatherRadarState().allowOlderSatelliteBackground));
+    backgroundRow.append(backgroundLabel,backgroundToggle);
 
     const preloadRow=document.createElement("div");preloadRow.className="settings-row";
     const preloadLabel=document.createElement("div");preloadLabel.className="settings-row-label";
@@ -1207,7 +1249,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const statusRow=document.createElement("div");statusRow.className="settings-row gr-weather-detail-status";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-    statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
+    statusRow.append(status);block.append(row,backgroundRow,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
     const dataRow=this.shadow?.getElementById("weather-engine-inspect")?.closest(".settings-row");
     if(dataRow?.parentNode===content)content.insertBefore(block,dataRow);else content.append(block);
     this._weatherRadarUpdateControls();
