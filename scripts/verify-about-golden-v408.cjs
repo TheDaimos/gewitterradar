@@ -64,11 +64,11 @@ if (isV41184Dev) {
   assert.equal(v410ReleaseContract.status, 'FINAL');
   assert.ok(versionText.includes('version:"4.11.88"'));
   assert.ok(versionText.includes('displayVersion:"V4.11.88 DEV"'));
-  assert.ok(versionText.includes('build:"V4.11.88-DEV-2026-10-16"'));
+  assert.ok(versionText.includes('build:"V4.11.88-DEV-2026-10-17"'));
   assert.ok(versionText.includes('runtimeRevision:"41188r1"'));
   assert.ok(versionText.includes('moduleSetId:"E411-88A1"'));
   assert.equal(runtime.productVersion, '4.11.88');
-  assert.equal(runtime.build, 'V4.11.88-DEV-2026-10-16');
+  assert.equal(runtime.build, 'V4.11.88-DEV-2026-10-17');
   assert.equal(runtime.runtimeRevision, '41188r1');
   assert.equal(runtime.moduleSetId, 'E411-88A1');
   assert.equal(runtime.modules.length, 34);
