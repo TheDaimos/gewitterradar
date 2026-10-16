@@ -927,13 +927,25 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   async _weatherRadarTryMosaic(viewport,token){
     const state=this._weatherRadarState();
-    if(!viewport.focus||typeof this._hass?.callWS!=="function")return false;
+    const correlationId="gr-p7-"+Date.now().toString(36)+"-"+String(token);
+    const report=(phase,detail={})=>{
+      const store=this._weatherEngineTraceStore?.();
+      if(!store)return;
+      store.v2Events??=[];
+      store.v2Events.push({at:new Date().toISOString(),api_version:2,consumer_id:"gewitterradar",correlation_id:correlationId,phase,...detail});
+      if(store.v2Events.length>80)store.v2Events.splice(0,store.v2Events.length-80);
+    };
+    if(!viewport.focus||typeof this._hass?.callWS!=="function"){
+      report("skipped",{reason:!viewport.focus?"missing_focus":"websocket_unavailable"});
+      return false;
+    }
+    report("started");
     const current=()=>state.enabled&&state.v2Generation===token
       &&this._weatherRadarViewport()?.signature===viewport.signature;
     let timeout=null,staged=null;
     try{
       const L=await loadLeafletJs();
-      if(!current())return false;
+      if(!current()){report("stale_before_request");return false;}
       const size=this._map.getSize?.()||{x:800,y:600};
       const count=Math.ceil(Math.max(256,size.x)/256+2)*Math.ceil(Math.max(256,size.y)/256+2);
       let painted;
@@ -951,6 +963,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           );
         }),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
+        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
@@ -959,7 +972,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             if(readyTiles.size>=minReadyTiles)painted(true);
           }}
       });
-      if(result.mode!=="v2"||!current())return false;
+      if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return false;}
+      if(!current()){report("stale_after_response");return false;}
       if(!this._map.getPane("gr-weather-radar")){
         const pane=this._map.createPane("gr-weather-radar");
         pane.style.zIndex="230";pane.style.pointerEvents="none";
@@ -972,13 +986,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       staged.addTo(this._map);
       const ready=await Promise.race([firstPaint,
         new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
-      if(!ready||!current())return false;
+      if(!ready||!current()){report("fallback",{reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});return false;}
       const old=state.layer;
       state.layer=staged;state.v2PendingLayer=null;
       state.v2Snapshot=result.response;state.lastReady=null;state.lastUnavailable=null;
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
+      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size});
       staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
@@ -986,7 +1001,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._rasterLabRefreshOptions?.();
       this._weatherRadarUpdateControls();
       return true;
-    }catch(_){return false;}
+    }catch(error){report("exception",{error_code:typeof error?.code==="string"?error.code:error?.name||"unknown"});return false;}
     finally{
       if(timeout!==null)clearTimeout(timeout);
       if(staged&&state.v2PendingLayer===staged){
