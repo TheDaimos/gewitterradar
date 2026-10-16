@@ -240,7 +240,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     state.allowOlderSatelliteBackground=next;
     try{localStorage.setItem(BACKGROUND_STORAGE_KEY,next?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
-    if(state.enabled)this._scheduleWeatherRadarRefresh("background-policy-change",0);
+    if(state.enabled){
+      // A user-initiated change of the V2 time contract is immediately effective.
+      // Reset the same-viewport cooldown while retaining the visible V1/V2 layer.
+      state.lastRequestAt=0;
+      void this._refreshWeatherRadar({reason:"background-policy-change",force:true});
+    }
   },
 
   _weatherRadarNaturalOpacity(){
