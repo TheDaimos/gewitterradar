@@ -22,6 +22,7 @@ const VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS=60;
 const SAME_VIEW_MIN_MS=240000;
 const PRELOAD_CONCURRENCY=4;
 const TIMELINE_STAGE_TIMEOUT_MS=6000;
+const V1_LAYER_STAGE_TIMEOUT_MS=8000;
 const TIMELINE_PLAY_INTERVAL_MS=950;
 const TIMELINE_VISIBLE_STORAGE_KEY="gewitterradar:weather-engine:timeline-visible";
 const TIMELINE_POSITION_STORAGE_KEY="gewitterradar:weather-engine:timeline-position";
@@ -149,7 +150,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this.__weatherRadarState={
         enabled,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
-        timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,
+        timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
         inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null
       };
     }
@@ -188,6 +189,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const next=this._weatherRadarViewport()?.signature;
       if(next&&state.lastViewport&&next!==state.lastViewport){
         state.v2Generation++;
+        state.v1PendingCancel?.();
         if(state.v2PendingLayer){
           try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_){}
           state.v2PendingLayer=null;
@@ -216,6 +218,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarUpdateControls();
     if(!state.enabled){
       state.v2Generation++;
+      state.v1PendingCancel?.();
       if(state.v2PendingLayer){try{state.v2PendingLayer.remove();}catch(_){}state.v2PendingLayer=null;}
       this._weatherRadarRemoveLayer();
       this._weatherRadarClearPreload();
@@ -263,6 +266,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const displayMaxZoom=Math.max(maxZoom,finite(map.getMaxZoom?.())??maxZoom);
     const layer=L.gridLayer({pane:"gr-weather-radar",tileSize,minZoom,maxZoom:displayMaxZoom,maxNativeZoom:maxZoom,opacity,attribution:attribution||"",updateWhenIdle:true,keepBuffer:1});
     layer.__grRadarNaturalOpacity=naturalOpacity;
+    layer.__grRadarTileIdentity=[String(payload.tile_url||""),tileSize,minZoom,maxZoom].join("|");
     const template=String(payload.tile_url||"");
     layer.createTile=(coords,done)=>{
       const url=expandWeatherRasterTileUrl(template,coords);
@@ -843,23 +847,67 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     return {provider,ageText,coverage,limitations};
   },
 
-  _weatherRadarApplyReady(answer,viewport,token){
+  async _weatherRadarApplyReady(answer,viewport,token){
     const state=this._weatherRadarState();
-    state.v2Snapshot=null;
-    const payload=answer.resource.payload;
+    const payload=answer?.resource?.payload;
+    if(!payload?.tile_url)return false;
+    const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
+      &&this._weatherRadarViewport()?.signature===viewport.signature;
+    if(!current())return false;
     const description=this._weatherRadarDescribe(answer);
     const attribution=payload.attribution||answer.provenance?.attribution||description.provider;
-    loadLeafletJs().then(L=>{
-      if(!state.enabled||state.v2Generation!==token||!this._map
-        ||this._weatherRadarViewport()?.signature!==viewport.signature)return;
-      const next=this._weatherRadarCreateLayer(L,payload,attribution);
-      next.addTo(this._map);
-      const old=state.layer;state.layer=next;
-      if(old)try{old.remove();}catch(_error){}
-      this._weatherDisplayRefreshRenderedLayers?.();
-      this._weatherDisplaySyncUi?.();
-      this._weatherRadarUpdateControls();
-    }).catch(()=>{});
+    const tileIdentity=[String(payload.tile_url||""),Math.max(1,Math.round(finite(payload.tile_size)||256)),
+      Math.max(0,finite(payload.min_zoom)||0),
+      Math.max(Math.max(0,finite(payload.min_zoom)||0),finite(payload.max_zoom)||18)].join("|");
+    const previous=state.layer;
+    // Identical image addresses represent the same raster: refresh metadata,
+    // but never destroy/recreate a fully loaded layer on every V1 resolution.
+    const unchanged=Boolean(previous&&!state.v2Snapshot
+      &&previous.__grRadarTileIdentity===tileIdentity);
+    let next=null;
+    if(!unchanged){
+      let L;
+      try{L=await loadLeafletJs();}catch(_error){return false;}
+      if(!current())return false;
+      // Stage raster images invisibly. The displayed layer stays on the map
+      // until *all* staged tiles have completed successfully.
+      next=this._weatherRadarCreateLayer(L,payload,attribution,0);
+      const ready=await new Promise(resolve=>{
+        let settled=false,loaded=0,failed=0,timer=null;
+        const finish=ok=>{
+          if(settled)return;
+          settled=true;
+          if(timer!==null)clearTimeout(timer);
+          next.off?.("tileload",onLoaded);
+          next.off?.("tileerror",onError);
+          next.off?.("load",onComplete);
+          if(state.v1PendingLayer===next){state.v1PendingLayer=null;state.v1PendingCancel=null;}
+          resolve(ok);
+        };
+        const onLoaded=()=>{loaded++;};
+        const onError=()=>{failed++;};
+        const onComplete=()=>finish(loaded>0&&failed===0);
+        state.v1PendingLayer=next;
+        state.v1PendingCancel=()=>finish(false);
+        next.on("tileload",onLoaded);
+        next.on("tileerror",onError);
+        next.on("load",onComplete);
+        timer=setTimeout(()=>finish(false),V1_LAYER_STAGE_TIMEOUT_MS);
+        try{next.addTo(this._map);}catch(_error){finish(false);}
+      });
+      if(!ready||!current()){
+        try{next.remove();}catch(_error){}
+        return false;
+      }
+    }
+    // Commit the layer and source/timeline metadata as one coherent update.
+    // Only now is it safe to remove the previous raster.
+    if(next){
+      next.setOpacity(this._weatherRadarEffectiveOpacity(next.__grRadarNaturalOpacity));
+      state.layer=next;
+      if(previous)try{previous.remove();}catch(_error){}
+    }
+    state.v2Snapshot=null;
     state.lastReady={answer,viewport,at:Date.now()};
     state.lastUnavailable=null;
     this._weatherRadarStopTimelinePlayback();
@@ -871,7 +919,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._scheduleWeatherRadarPreload("ready",180);
     this._weatherRadarRenderCurrentLegend();
     this._rasterLabRefreshOptions?.();
+    this._weatherDisplayRefreshRenderedLayers?.();
+    this._weatherDisplaySyncUi?.();
     this._weatherRadarUpdateControls();
+    return true;
   },
 
   async _weatherRadarTryMosaic(viewport,token){
@@ -983,7 +1034,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]}});
       if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
-      this._weatherRadarApplyReady(answer,viewport,token);
+      const applied=await this._weatherRadarApplyReady(answer,viewport,token);
+      if(!applied&&state.v2Generation===token&&state.enabled){
+        this._weatherRadarHandleUnavailable({unavailable:{code:"replacement_not_ready"}});
+      }
     }catch(_error){
       state.lastUnavailable={code:"temporarily_unavailable"};
       this._weatherRadarUpdateControls();
@@ -1154,6 +1208,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=state.timelineTimer=null;
     state.timelinePlaying=false;
     state.v2Generation++;
+    state.v1PendingCancel?.();
     if(state.v2PendingLayer){try{state.v2PendingLayer.remove();}catch(_){}state.v2PendingLayer=null;}
     this._weatherRadarClearTimelineStage();
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
