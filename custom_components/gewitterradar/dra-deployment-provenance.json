@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.88 DEV: P7-010 source-specific native overzoom for zoom 12+ with regional coverage masking; V1 unbounded map zoom fix; WR 0.10.152 API V2 optional satellite background and bounded V1 event windows retained. HA real mosaic/zoom tests required.",
+    "purpose": "V4.11.88 DEV: P7-010 source-specific native overzoom for zoom 12+ with regional coverage masking; V1 unbounded map zoom fix; WeatherRouter 0.10.152 API V2 optional satellite background and bounded V1 event windows retained. HA real mosaic/zoom tests required.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
