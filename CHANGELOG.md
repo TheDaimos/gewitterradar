@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026/10 – V4.11.85 DEV (P7-010 Consumer API V2 – technischer Realtestkandidat)
+
+- **API V2:** Eigenständiger Schnittstellentest in der Weather Engine mit kontrollierter WebSocket-Anfrage, verbindlicher Korrelationskennung, Antwortvalidierung und begrenztem JSON-Diagnoseexport.
+- **Mehrquellenmosaik:** Bestehende P7-010-Mosaikmodule aktiv im Niederschlagskartenpfad; maximal zwölf Gesamtquellen und vier örtlich geeignete Quellen je Kachel. Bestehendes Quellenrouting verbleibt ausschließlich im WeatherRouter.
+- **Rasterlebenszyklus:** Ersatzebenen warten zusätzlich auf den Leaflet-Ladeabschluss; beim Entfernen werden laufende Kachelabrufe und die gemeinsame Warteschlange beendet. Keine Neubewertung von Anbietern in GR.
+- **Zeit und Ausfälle:** Unterscheidung von Transport-, Vertrags-, Vorbereitungs- und Darstellungsfehlern; zeitlich abweichende Teilmosaike werden diagnostiziert; gemeinsamer V1/V2-Korrelationsbezug; vorläufig 20 Sekunden Clientfrist.
+- **Version:** V4.11.85 DEV / `41185r1` / `E411-85A1` / native Integration `0.25.3`. Automatisierte Prüfungen und HA-Realtests sind getrennt zu bewerten.
+- **Abnahmegrenzen:** Echte API-V2-Monitor-Korrelation, geografisch korrektes Kuba–Atlantik–Europa-Mosaik und Geräteprüfung sind nicht allein durch den Code nachgewiesen. **FLK-01 bleibt offen.**
+
 ## 2026/10 – V4.11.84 DEV (FLK-01, Weather Engine)
 
 - Niederschlag: Identische V1-Raster werden nicht neu erstellt; bei neuen Daten bleibt die bisherige Ebene bis zum vollständigen Laden erhalten. Veraltete, fehlerhafte oder abgebrochene Ersatzebenen werden sicher verworfen.
