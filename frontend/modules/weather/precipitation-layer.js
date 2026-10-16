@@ -972,7 +972,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           );
         }),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
-        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null}),
+        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],limitations_count:event.limitations_count??null}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
@@ -1003,7 +1003,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
-      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size});
+      report("active",{status:result.response?.status||"ready",layers:result.response?.layers?.length||0,painted_tiles:readyTiles.size,time_deviating:result.response?.layers?.some(layer=>layer.quality_note==="zeitlich_abweichend")===true});
       staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
