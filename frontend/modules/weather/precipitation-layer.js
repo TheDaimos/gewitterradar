@@ -627,6 +627,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarRenderCurrentLegend(){
     const state=this._weatherRadarState(),answer=state.lastReady?.answer;
+    if(state.v2Snapshot){
+      const layers=state.v2Snapshot.layers;
+      const label="Niederschlag · "+layers.length+" Mosaikquellen";
+      this._weatherRadarRenderLegend({
+        family:"precipitation",capability:CAPABILITY,heading:"Niederschlag",
+        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung",
+        title:[label,"Herkunft: "+layers.map(x=>x.attribution).join(" / "),
+          "Bezugszeit: "+(state.v2Snapshot.reference_time||"unbekannt"),
+          ...(state.v2Snapshot.limitations||[])].join(" · "),
+        legendTitle:"Niederschlagslegende",priority:100
+      });
+      return;
+    }
     if(!answer)return;
     const payload=answer.resource?.payload||{},description=this._weatherRadarDescribe(answer);
     const frame=state.timelineModel?.frames?.[state.timelineIndex];
@@ -821,6 +834,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _weatherRadarApplyReady(answer,viewport){
     const state=this._weatherRadarState();
+    state.v2Snapshot=null;
     const payload=answer.resource.payload;
     const description=this._weatherRadarDescribe(answer);
     const attribution=payload.attribution||answer.provenance?.attribution||description.provider;
@@ -906,7 +920,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     state.lastUnavailable=answer?.unavailable||{code:"temporarily_unavailable"};
     const code=state.lastUnavailable.code||"temporarily_unavailable";
-    if(["outside_coverage","capability_not_supported","no_eligible_provider","router_disabled","router_not_ready","requirements_not_met","source_stale"].includes(code))this._weatherRadarRemoveLayer();
+    // A failed replacement must not erase an already rendered usable image.
     this._weatherRadarUpdateControls();
   },
 
@@ -975,6 +989,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!status)return;
     if(message){status.textContent=message;return;}
     if(!state.enabled){status.textContent="Aus · keine zusätzlichen Niederschlags-Anfragen";return;}
+    if(state.v2Snapshot){
+      status.textContent="Aktiv · WeatherRouter V2 · "+state.v2Snapshot.layers.length+
+        " räumlich abgegrenzte Quellen · Teilabdeckung";
+      return;
+    }
     if(state.lastReady){
       const d=this._weatherRadarDescribe(state.lastReady.answer);
       const frames=state.timelineModel?.frames?.length||0;
