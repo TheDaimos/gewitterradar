@@ -1097,6 +1097,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _weatherRadarUpdateControls(message=null){
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
+    const satelliteToggle=this.shadow?.getElementById("weather-radar-background-toggle");
+    if(satelliteToggle){satelliteToggle.setAttribute("aria-pressed",state.allowOlderSatelliteBackground?"true":"false");satelliteToggle.textContent=state.allowOlderSatelliteBackground?"Ein · bis 12 Std.":"Aus · nur aktuelle Daten";}
     const status=this.shadow?.getElementById("weather-radar-status");
     const activeApi=this.shadow?.getElementById("weather-engine-active-api");
     if(activeApi){
