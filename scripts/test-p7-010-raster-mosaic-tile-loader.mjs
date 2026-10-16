@@ -143,4 +143,39 @@ assert.equal(localBound.drawn.length,4,"twelve-source snapshot cannot multiply a
 assert.equal(localBound.rejected.filter(x=>x.reason==="tile_source_budget_exhausted").length,8);
 assert.equal(localBound.requests_used,4);
 
+
+const queuedBudget=new RasterTileRequestBudget(2,{maxConcurrent:1});
+const firstSlot=await queuedBudget.reserve();
+const queuedController=new AbortController();
+const queuedRequest=queuedBudget.reserve(queuedController.signal);
+await Promise.resolve();
+queuedController.abort();
+assert.equal(await queuedRequest,null,"aborted waiting tile must not acquire a slot");
+assert.equal(queuedBudget.used,1,"cancelled queue entries cannot consume budget");
+assert.equal(queuedBudget.queue.length,0,"cancelled tiles must leave the waiting queue");
+firstSlot();
+assert.equal(queuedBudget.active,0,"release must drain slots after queue cancellation");
+const secondSlot=await queuedBudget.reserve();
+assert.ok(secondSlot,"unused budget remains available after cancellation");
+secondSlot();
+
+const inFlightController=new AbortController();
+let launch;
+const launched=new Promise(resolve=>{launch=resolve;});
+const cancelledDrawing=drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{throw Error("aborted canvas must never be painted");}},
+ tile,layers:[wms],budget:new RasterTileRequestBudget(1),
+ signal:inFlightController.signal,
+ loadImage:(_url,_layer,{signal})=>{
+   launch(signal);
+   return new Promise(()=>{});
+ }
+});
+const cancellationSignal=await launched;
+inFlightController.abort();
+const cancelled=await cancelledDrawing;
+assert.equal(cancellationSignal.aborted,true);
+assert.equal(cancelled.drawn.length,0);
+assert.equal(cancelled.rejected[0].reason,"tile_cancelled");
+
 console.log("P7-010 bounded WMS/XYZ tile loading and fallback PASS");
