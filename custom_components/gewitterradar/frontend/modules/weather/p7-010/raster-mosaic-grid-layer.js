@@ -2,9 +2,9 @@
  * WeatherRouter alone selects and orders sources; this file draws verified
  * snapshots using a strict shared per-snapshot tile budget.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41185r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41187r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=41185r1";
+  from "./raster-mosaic-tile-loader.js?v=41187r1";
 
 function loadRasterImage(url,_source,{signal}={}){
   return new Promise((resolve,reject)=>{
