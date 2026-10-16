@@ -874,7 +874,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       let painted;
       const firstPaint=new Promise(resolve=>{painted=resolve;});
       const result=await prepareRasterMosaicV2({
-        callWS:query=>this._hass.callWS(query),
+        callWS:query=>new Promise((resolve,reject)=>{
+          const timer=setTimeout(()=>reject(new Error("V2 response timeout")),5000);
+          Promise.resolve().then(()=>this._hass.callWS(query)).then(
+            value=>{clearTimeout(timer);resolve(value);},
+            error=>{clearTimeout(timer);reject(error);}
+          );
+        }),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         layerOptions:{maxConcurrent:4,
