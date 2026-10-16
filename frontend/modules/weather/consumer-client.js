@@ -364,17 +364,17 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       if(typeof this._hass?.callWS!=="function")throw Object.assign(new Error("Home Assistant WebSocket fehlt"),{code:"websocket_unavailable"});
       // Both requests share the exact same spatial snapshot and all budgets.
       const id="gr-v2-age-"+Date.now().toString(36);
-      for(const age of [900,43200]){
+      for(const age of [null,43200]){
         const trial={
-          max_data_age_seconds:age,max_time_delta_seconds:180,
-          correlation_id:id+"-"+age,status:"started",layer_count:0,
+          max_data_age_seconds:900,max_background_age_seconds:age,max_time_delta_seconds:180,
+          correlation_id:id+"-"+(age===null?"strict":"background"),status:"started",layer_count:0,
           sources:[],limitations:[],started_at:new Date().toISOString()
         };
         comparison.requests.push(trial);
         this._weatherEngineDiagnosticRender?.();
         const request=buildRasterMosaicV2Request({
           viewport:{...viewport.context},focus:{...viewport.focus},
-          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:age,
+          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age,
           maxTimeDeltaSeconds:180,consumerId:"gewitterradar",
           correlationId:trial.correlation_id
         });
@@ -387,7 +387,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
               reject(Object.assign(new Error("V2 comparison deadline"),{code:"gr_v2_client_timeout"}));
             },20000);})
           ]);
-          validateRasterMosaicV2(response,{maxLayers:12});
+          validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age});
           trial.status=response.status;
           trial.layer_count=response.layers.length;
           trial.reference_time=response.reference_time||null;
@@ -399,7 +399,8 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
             return {
               source_id:String(layer.source_id).slice(0,120),
               valid_at:layer.times.valid_at,
-              age_seconds:Number.isFinite(millis)?Math.round((Date.now()-millis)/1000):null,
+              age_seconds:typeof layer.times.age_seconds==="number"?layer.times.age_seconds:(Number.isFinite(millis)?Math.round((Date.now()-millis)/1000):null),
+              freshness_class:layer.freshness_class||"unknown",
               reference_delta_seconds:layer.times.reference_delta_seconds,
               observation_kind:layer.semantics.observation_kind,
               measurement_method:layer.semantics.measurement_method,
@@ -421,7 +422,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
         strict?.status==="unavailable"&&strict.layer_count===0&&
         ["ready","partial"].includes(extended?.status)&&extended.layer_count>0;
       comparison.conclusion=comparison.age_filter_supported?
-        "Die größere Altersgrenze ermöglicht im Diagnosetest V2-Quellen; keine produktive Freigabe.":
+        "Der ausdrücklich freigegebene ältere Satellitenhintergrund ermöglicht im Diagnosetest V2-Quellen; die Karte bleibt unverändert.":
         strict?.status==="unavailable"&&extended?.status==="unavailable"?
           "Beide Anfragen unavailable; serverseitige Ablehnungsgründe prüfen.":
           "Ergebnisse einzeln anhand von Status, Alter und Quellen prüfen.";
@@ -672,7 +673,7 @@ _weatherEngineDiagnosticPayload(){
       comparisonLabel.textContent=!comparison?"Noch kein Vergleich durchgeführt":
         "Vergleich: "+comparison.status+
         "\\n"+(comparison.requests||[]).map(item=>
-          (item.max_data_age_seconds===900?"15 Minuten":"12 Stunden")+
+          (item.max_background_age_seconds===43200?"15 Min. Radar + 12 Std. globale Satellitengrundlage":"Nur 15 Min. Radar")+
           ": "+item.status+" · "+item.layer_count+" Quellen · "+(item.duration_ms??"…")+" ms"+
           (item.error_code?" · Fehler: "+item.error_code:"")+
           "\\nKennung: "+item.correlation_id+
