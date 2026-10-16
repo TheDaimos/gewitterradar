@@ -94,12 +94,12 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
       return catalog;
     }catch(error){return absent('temporarily_unavailable','Capability discovery failed',true);}
   }
-  async function resolve(capability,context,{requirements,eventFilter,consumerId='gewitterradar',correlationId=null}={}){
+  async function resolve(capability,context,{requirements,eventFilter,consumerId='gewitterradar',correlationId=null,time=null}={}){
     if(!validId(capability))throw new TypeError('Invalid public capability');
     const spatial=validateWeatherContext(context);
     const state=await discover();
     if(!state.ready)return absent(state.compatible?'router_not_ready':'capability_not_supported','WeatherRouter not ready');
-    const request={type:'weather_router/consumer/resolve',contract_version:WEATHER_ROUTER_CONTRACT,capability,context:spatial,time:{mode:'latest'}};
+    const request={type:'weather_router/consumer/resolve',contract_version:WEATHER_ROUTER_CONTRACT,capability,context:spatial,time:time||{mode:'latest'}};
     if(profile)request.profile_id=profile;
     request.consumer_id=consumerId;
     if(correlationId)request.correlation_id=correlationId;
@@ -108,8 +108,55 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
     try{return parseWeatherResolution(await callWS(request),capability);}
     catch(error){return absent('temporarily_unavailable','WeatherRouter request or response failed',true);}
   }
+  async function resolveEventWindow(capability,context,{
+    start,end,includeOngoing=false,maxFeedUpdateAgeSeconds=null,
+    page=1,pageSize=100,consumerId='gewitterradar',correlationId=null
+  }={}){
+    if(!validId(capability))throw new TypeError('Invalid event capability');
+    const catalog=await capabilities({filter:{resource_types:['event_feed','hazard_feed'],available_only:true}});
+    if(catalog.status!=='ready')return catalog;
+    const item=catalog.capabilities.find(row=>row.id===capability&&row.enabled&&row.available);
+    const policy=item?.event_time_options;
+    if(!item||!Array.isArray(item.time_modes)||!item.time_modes.includes('events_intersecting_window')
+      ||!policy||policy.mode!=='events_intersecting_window'
+      ||!Array.isArray(item.resource_types)||item.resource_types.length!==1
+      ||!['event_feed','hazard_feed'].includes(item.resource_types[0]))
+      return absent('capability_not_supported','Event time window not advertised');
+    const instant=value=>typeof value==='string'&&/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(value)&&Number.isFinite(Date.parse(value));
+    if(!instant(start)||!instant(end)||Date.parse(start)>Date.parse(end)
+      ||Date.parse(end)>Date.now()+300000
+      ||!Number.isFinite(policy.max_window_days)
+      ||Date.parse(end)-Date.parse(start)>policy.max_window_days*86400000
+      ||typeof includeOngoing!=='boolean'
+      ||!Number.isInteger(page)||page<1||page>Math.min(5,policy.max_pages||5)
+      ||!Number.isInteger(pageSize)||pageSize<1||pageSize>Math.min(200,policy.max_results||200)
+      ||(maxFeedUpdateAgeSeconds!==null&&
+          (!Number.isInteger(maxFeedUpdateAgeSeconds)||maxFeedUpdateAgeSeconds<60
+          ||maxFeedUpdateAgeSeconds>policy.max_feed_update_age_seconds)))
+      throw new TypeError('Invalid bounded UTC event window');
+    const time={
+      mode:'events_intersecting_window',
+      window:{start:new Date(Date.parse(start)).toISOString(),end:new Date(Date.parse(end)).toISOString()},
+      include_ongoing:includeOngoing,page,page_size:pageSize,
+      ...(maxFeedUpdateAgeSeconds===null?{}:{max_feed_update_age_seconds:maxFeedUpdateAgeSeconds})
+    };
+    const answer=await resolve(capability,context,{consumerId,correlationId,time});
+    if(answer?.status==='ready'){
+      const payload=answer.resource?.payload;
+      const metadata=payload?.event_time_policy;
+      if(!Array.isArray(payload?.events)||!metadata
+        ||!['fresh','stale','future','unknown'].includes(metadata.feed_status)
+        ||!Number.isInteger(metadata.page)||metadata.page!==page
+        ||!Number.isInteger(metadata.page_size)||metadata.page_size!==pageSize
+        ||typeof metadata.has_more!=='boolean'
+        ||payload.events.length>pageSize
+        ||payload.events.some(event=>typeof event.temporal_status!=='string'))
+        return absent('consumer_contract_invalid','Invalid event time response');
+    }
+    return answer;
+  }
   function reset(){discovery=null;catalogCache.clear();}
-  return Object.freeze({discover,capabilities,resolve,reset,get discovery(){return discovery;},get profileId(){return profile;}});
+  return Object.freeze({discover,capabilities,resolve,resolveEventWindow,reset,get discovery(){return discovery;},get profileId(){return profile;}});
 }
 
 const SENSITIVE_QUERY=/([?&](?:api[_-]?key|apikey|access[_-]?token|token|key|appid|password|secret)=)[^&#\s]+/gi;
@@ -204,7 +251,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     return this.__weatherRouterClient;
   },
   _weatherEngineTraceStore(){
-    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],v2TestResult:null,v2AgeComparison:null,max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],v2TestResult:null,v2AgeComparison:null,lastEventWindow:null,max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
     return this.__weatherEngineTraceStore;
   },
   async _weatherRouterDiscovery(options){
@@ -258,7 +305,9 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       step("preconditions_ok");
       const request=buildRasterMosaicV2Request({
         viewport:viewport.context,focus:viewport.focus,maxLayers:12,
-        maxTileRequests:12,consumerId:"gewitterradar",correlationId:id
+        maxTileRequests:12,maxDataAgeSeconds:900,
+        maxBackgroundAgeSeconds:this._weatherRadarState?.()?.allowOlderSatelliteBackground?43200:null,
+        consumerId:"gewitterradar",correlationId:id
       });
       step("request_validated");
       let timer=null;
@@ -270,12 +319,14 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
           },20000);})
         ]);
         step("response",{response_status:String(response?.status||"missing")});
-        validateRasterMosaicV2(response,{maxLayers:12});
+        validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:request.time.max_background_age_seconds??null});
         step("validated",{layers:response.layers.length});
-        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_time_delta_seconds:request.time.max_time_delta_seconds};
+        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_background_age_seconds:request.time.max_background_age_seconds??null,max_time_delta_seconds:request.time.max_time_delta_seconds};
         result.status=response.status;
         result.layer_count=response.layers.length;
         result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
+        result.background_source_count=response.layers.filter(layer=>layer.freshness_class==="older_background").length;
+        result.freshness_classes=response.layers.map(layer=>({source_id:layer.source_id,freshness_class:layer.freshness_class??"unknown",age_seconds:layer.times?.age_seconds??null,valid_at:layer.times?.valid_at||null,quality_note:layer.quality_note||null}));
         result.time_deviating=response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend");
         result.limitations_count=Array.isArray(response.limitations)?response.limitations.length:0;
         result.limitations=Array.isArray(response.limitations)?response.limitations.slice(0,8).filter(item=>typeof item==="string").map(item=>item.slice(0,180)):[];
@@ -317,17 +368,17 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       if(typeof this._hass?.callWS!=="function")throw Object.assign(new Error("Home Assistant WebSocket fehlt"),{code:"websocket_unavailable"});
       // Both requests share the exact same spatial snapshot and all budgets.
       const id="gr-v2-age-"+Date.now().toString(36);
-      for(const age of [900,43200]){
+      for(const age of [null,43200]){
         const trial={
-          max_data_age_seconds:age,max_time_delta_seconds:180,
-          correlation_id:id+"-"+age,status:"started",layer_count:0,
+          max_data_age_seconds:900,max_background_age_seconds:age,max_time_delta_seconds:180,
+          correlation_id:id+"-"+(age===null?"strict":"background"),status:"started",layer_count:0,
           sources:[],limitations:[],started_at:new Date().toISOString()
         };
         comparison.requests.push(trial);
         this._weatherEngineDiagnosticRender?.();
         const request=buildRasterMosaicV2Request({
           viewport:{...viewport.context},focus:{...viewport.focus},
-          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:age,
+          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age,
           maxTimeDeltaSeconds:180,consumerId:"gewitterradar",
           correlationId:trial.correlation_id
         });
@@ -340,7 +391,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
               reject(Object.assign(new Error("V2 comparison deadline"),{code:"gr_v2_client_timeout"}));
             },20000);})
           ]);
-          validateRasterMosaicV2(response,{maxLayers:12});
+          validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age});
           trial.status=response.status;
           trial.layer_count=response.layers.length;
           trial.reference_time=response.reference_time||null;
@@ -352,7 +403,8 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
             return {
               source_id:String(layer.source_id).slice(0,120),
               valid_at:layer.times.valid_at,
-              age_seconds:Number.isFinite(millis)?Math.round((Date.now()-millis)/1000):null,
+              age_seconds:typeof layer.times.age_seconds==="number"?layer.times.age_seconds:(Number.isFinite(millis)?Math.round((Date.now()-millis)/1000):null),
+              freshness_class:layer.freshness_class||"unknown",
               reference_delta_seconds:layer.times.reference_delta_seconds,
               observation_kind:layer.semantics.observation_kind,
               measurement_method:layer.semantics.measurement_method,
@@ -374,7 +426,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
         strict?.status==="unavailable"&&strict.layer_count===0&&
         ["ready","partial"].includes(extended?.status)&&extended.layer_count>0;
       comparison.conclusion=comparison.age_filter_supported?
-        "Die größere Altersgrenze ermöglicht im Diagnosetest V2-Quellen; keine produktive Freigabe.":
+        "Der ausdrücklich freigegebene ältere Satellitenhintergrund ermöglicht im Diagnosetest V2-Quellen; die Karte bleibt unverändert.":
         strict?.status==="unavailable"&&extended?.status==="unavailable"?
           "Beide Anfragen unavailable; serverseitige Ablehnungsgründe prüfen.":
           "Ergebnisse einzeln anhand von Status, Alter und Quellen prüfen.";
@@ -384,6 +436,25 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       comparison.error_code=String(error?.code||error?.name||"unknown").slice(0,80);
     }finally{finish();}
     return comparison;
+  },
+  async _weatherRouterResolveEventWindow(capability,context,options){
+    // Reuse the existing V1 client and discovery; never introduce new routing.
+    const result=await this._weatherRouterClient().resolveEventWindow(capability,context,options);
+    const store=this._weatherEngineTraceStore();
+    const policy=result?.status==='ready'?result.resource?.payload?.event_time_policy:null;
+    store.lastEventWindow={
+      at:new Date().toISOString(),capability,status:result?.status||'unknown',
+      correlation_id:options?.correlationId||null,
+      event_count:result?.status==='ready'?result.resource?.payload?.events?.length||0:0,
+      page:policy?.page??null,page_size:policy?.page_size??null,
+      has_more:policy?.has_more??null,feed_status:policy?.feed_status??null,
+      feed_age_seconds:policy?.feed_age_seconds??null,
+      rejected_counts:policy?.rejected_counts||null,
+      temporal_statuses:result?.status==='ready'
+        ?result.resource.payload.events.slice(0,200).map(event=>event.temporal_status||'unknown'):[],
+      error_code:result?.unavailable?.code||null
+    };
+    return result;
   },
   _weatherRouterReset(){this.__weatherRouterClient?.reset();const store=this._weatherEngineTraceStore();store.lastDiscovery=null;store.lastCatalog=null;},
 _weatherEngineDiagnosticPayload(){
@@ -421,6 +492,7 @@ _weatherEngineDiagnosticPayload(){
       v2_attempts:[...(store.v2Events||[])],
       v2_interface_test:store.v2TestResult||null,
       v2_age_comparison:store.v2AgeComparison||null,
+      event_window_last:store.lastEventWindow||null,
       local:{precipitation_radar:currentLayer}
     });
   },
@@ -605,7 +677,7 @@ _weatherEngineDiagnosticPayload(){
       comparisonLabel.textContent=!comparison?"Noch kein Vergleich durchgeführt":
         "Vergleich: "+comparison.status+
         "\\n"+(comparison.requests||[]).map(item=>
-          (item.max_data_age_seconds===900?"15 Minuten":"12 Stunden")+
+          (item.max_background_age_seconds===43200?"15 Min. Radar + 12 Std. globale Satellitengrundlage":"Nur 15 Min. Radar")+
           ": "+item.status+" · "+item.layer_count+" Quellen · "+(item.duration_ms??"…")+" ms"+
           (item.error_code?" · Fehler: "+item.error_code:"")+
           "\\nKennung: "+item.correlation_id+
