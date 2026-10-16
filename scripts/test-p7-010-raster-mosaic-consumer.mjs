@@ -83,10 +83,14 @@ assert.equal(failing.errorCode,"Error");
 assert.equal("layer" in failing,false,
  "caller must retain its existing V1 precipitation layer");
 
+const emptyEvents=[];
 const empty=await prepareRasterMosaicV2({
- callWS:async()=>({...response,status:"unavailable",layers:[]}),
+ callWS:async()=>({...response,status:"unavailable",layers:[],limitations:["Keine frischen Daten", "Coverage ungeprüft"]}),
+ onDiagnostic:event=>emptyEvents.push(event),
  Leaflet:L,viewport,focus
 });
+assert.deepEqual(emptyEvents.find(event=>event.phase==="validated")?.limitations,["Keine frischen Daten","Coverage ungeprüft"]);
+assert.equal(emptyEvents.find(event=>event.phase==="validated")?.limitations_count,2);
 assert.equal(empty.mode,"fallback");
 assert.equal(empty.reason,"no_usable_mosaic_source");
 
