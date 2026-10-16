@@ -17,7 +17,7 @@ function loadRasterImage(url,_source,{signal}={}){
       signal?.removeEventListener("abort",cancel);
       if(error)reject(error);else resolve(image);
     }
-    function cancel(){finish(new Error("Image request cancelled"));}
+    function cancel(){try{image.src="";}catch(_){}finish(new Error("Image request cancelled"));}
     image.onload=()=>finish(null);
     image.onerror=()=>finish(new Error("Image request unavailable"));
     if(signal?.aborted){cancel();return;}
@@ -42,13 +42,13 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   const Layer=L.GridLayer.extend({
     createTile(coords,done){
       const canvas=createCanvas();
-      const controller=typeof AbortController==="function"?new AbortController():null;
-      if(controller){canvas._p7RasterAbort=()=>controller.abort();pending.add(controller);}
       if(!canvas||typeof canvas.getContext!=="function")
         throw new TypeError("Canvas unavailable");
+      const controller=typeof AbortController==="function"?new AbortController():null;
+      if(controller){canvas._p7RasterAbort=()=>controller.abort();pending.add(controller);}
       canvas.width=tileSize;canvas.height=tileSize;
       const context=canvas.getContext("2d");
-      if(!context){done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
+      if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
         context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs,
         signal:controller?.signal
