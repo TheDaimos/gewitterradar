@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.86 DEV: P7-010 Diagnosevergleich API V2 zwischen 900 und 43200 Sekunden Datenalter mit identischem Kartenkontext, begrenzten Zeit- und Kachelbudgets, gekoppelten WR-Korrelationskennungen und zeitgestempelter Qualitätsdiagnose. Kein produktives Aufweichen der 900-Sekunden-Grenze; V1-Rückfall und FLK-01 unberührt.",
+    "purpose": "V4.11.86 DEV: Weather Engine P7-010 Diagnosevergleich API V2 zwischen 900 und 43200 Sekunden Datenalter mit identischem Kartenkontext, begrenzten Zeit- und Kachelbudgets, gekoppelten WR-Korrelationskennungen und zeitgestempelter Qualitätsdiagnose. Kein produktives Aufweichen der 900-Sekunden-Grenze; V1-Rückfall und FLK-01 unberührt.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
