@@ -184,7 +184,18 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
     }
     state.map=this._map;
-    state.onMove=()=>{this._scheduleWeatherRadarRefresh("viewport",900);this._scheduleWeatherRadarPreload("viewport",220);};
+    state.onMove=()=>{
+      const next=this._weatherRadarViewport()?.signature;
+      if(next&&state.lastViewport&&next!==state.lastViewport){
+        state.v2Generation++;
+        if(state.v2PendingLayer){
+          try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_){}
+          state.v2PendingLayer=null;
+        }
+      }
+      this._scheduleWeatherRadarRefresh("viewport",900);
+      this._scheduleWeatherRadarPreload("viewport",220);
+    };
     state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();state.onMove?.();};
     state.map.on("moveend",state.onMove);
     state.map.on("zoomend",state.onZoom);
