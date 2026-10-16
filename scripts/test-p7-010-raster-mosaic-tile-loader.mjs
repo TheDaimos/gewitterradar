@@ -159,6 +159,17 @@ const secondSlot=await queuedBudget.reserve();
 assert.ok(secondSlot,"unused budget remains available after cancellation");
 secondSlot();
 
+const closedBudget=new RasterTileRequestBudget(4,{maxConcurrent:1});
+const held=await closedBudget.reserve();
+const queuedAfterClose=closedBudget.reserve();
+await Promise.resolve();
+closedBudget.close();
+assert.equal(await queuedAfterClose,null,"closing a snapshot must resolve queued work");
+assert.equal(await closedBudget.reserve(),null,"closed snapshot must reject new work");
+assert.equal(closedBudget.used,1,"cancelled requests must not inflate tile budget");
+held();
+assert.equal(closedBudget.active,0,"closing pending work must release the last slot");
+
 const inFlightController=new AbortController();
 let launch;
 const launched=new Promise(resolve=>{launch=resolve;});
