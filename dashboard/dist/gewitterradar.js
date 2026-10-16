@@ -53,8 +53,8 @@ try {
   const render = await gewitterradarImport('./modules/ui/render.js','41121r1');
   const compass = await gewitterradarImport('./modules/instruments/compass.js');
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
-  const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js','41109r1');
-  const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','41119r1');
+  const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js','41185r1');
+  const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','41185r1');
   const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41109r1');
   const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','41185r1');
   const weatherLegendOverlay = await gewitterradarImport('./modules/weather/legend-overlay.js','41114r1');
