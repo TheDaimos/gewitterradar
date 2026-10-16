@@ -272,11 +272,13 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
         step("response",{response_status:String(response?.status||"missing")});
         validateRasterMosaicV2(response,{maxLayers:12});
         step("validated",{layers:response.layers.length});
+        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_time_delta_seconds:request.time.max_time_delta_seconds};
         result.status=response.status;
         result.layer_count=response.layers.length;
         result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
         result.time_deviating=response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend");
         result.limitations_count=Array.isArray(response.limitations)?response.limitations.length:0;
+        result.limitations=Array.isArray(response.limitations)?response.limitations.slice(0,8).filter(item=>typeof item==="string").map(item=>item.slice(0,180)):[];
         result.note="Schnittstellentest ohne Aktivierung des Kartenrenderers";
       }finally{if(timer!==null)clearTimeout(timer);}
     }catch(error){
@@ -496,7 +498,8 @@ _weatherEngineDiagnosticPayload(){
         "Status: "+test.status+" · "+(test.layer_count??0)+" Quellen · "+(test.duration_ms??"…")+" ms"+
         (test.error_code?" · Fehler: "+test.error_code:"")+
         "\\nKennung: "+test.correlation_id+
-        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"");
+        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"")+
+        (Array.isArray(test.limitations)&&test.limitations.length?"\\nWR-Einschränkungen: "+test.limitations.join(" · "):"");
     }
     const v2Button=root.getElementById('weather-engine-v2-test');
     if(v2Button)v2Button.disabled=Boolean(this.__weatherEngineV2TestRunning);
