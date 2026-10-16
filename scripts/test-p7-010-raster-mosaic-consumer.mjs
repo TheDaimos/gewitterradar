@@ -93,6 +93,44 @@ await new Promise((resolve,reject)=>{
 });
 assert.equal(active.layer._p7RasterRequestBudget.used,1);
 
+// WR V0.10.152: older NASA satellite is opt-in; fresh regional DWD stays separate.
+const olderGlobal={...source,
+ source_id:"nasa_gibs/satellite_precipitation_imerg_30min",
+ semantics:{...source.semantics,observation_kind:"estimate",
+ measurement_method:"satellite_precipitation_estimate"},
+ freshness_class:"older_background",quality_note:"older_satellite_background",
+ times:{...source.times,age_seconds:24000,reference_delta_seconds:24000,observed_at:null}
+};
+const freshRegional={...source,source_id:"dwd/radar",
+ coverage_scope:"bbox",coverage:{west:5,south:47,east:16,north:56},
+ freshness_class:"current",quality_note:"zeitlich_passend",
+ times:{...source.times,age_seconds:180,reference_delta_seconds:0},
+ semantics:{...source.semantics,observation_kind:"observation",measurement_method:"radar"}
+};
+const combined={...response,layers:[olderGlobal,freshRegional],status:"partial"};
+const opts={
+ callWS:async()=>combined,Leaflet:L,viewport,focus,
+ maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200,
+ layerOptions:{createCanvas:()=>({width:0,height:0,getContext:()=>({
+  globalAlpha:1,drawImage:()=>{}
+ })}),loadImage:async()=>({width:256})}
+};
+const mixed=await prepareRasterMosaicV2(opts);
+assert.equal(mixed.mode,"v2","older global background and fresh regional overlay may be prepared");
+assert.deepEqual(mixed.response.layers.map(x=>x.source_id),
+ ["nasa_gibs/satellite_precipitation_imerg_30min","dwd/radar"]);
+await new Promise((resolve,reject)=>mixed.layer.createTile(
+ {x:8,y:5,z:4},(err,tile)=>err?reject(err):resolve(tile)));
+assert.equal(mixed.layer._p7RasterRequestBudget.used,2,
+ "one Germany tile needs the broad satellite and verified regional radar");
+assert.equal((await prepareRasterMosaicV2({...opts,maxBackgroundAgeSeconds:null})).mode,"fallback");
+assert.equal(buildRasterMosaicV2Request({
+ viewport,focus,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200
+}).time.max_background_age_seconds,43200);
+assert.throws(()=>buildRasterMosaicV2Request({
+ viewport,focus,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:800
+}),TypeError);
+
 const failing=await prepareRasterMosaicV2({
  callWS:async()=>{throw Error("V2 unknown endpoint");},
  Leaflet:L,viewport,focus
