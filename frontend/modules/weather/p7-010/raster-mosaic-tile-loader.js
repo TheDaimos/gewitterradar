@@ -103,8 +103,17 @@ export async function drawRasterMosaicTileFromUrls({
      return {source_id,reason:"unverified_or_incomplete_source"};
    }
    const spec=layer.render;
-   if(tile.z<spec.min_zoom||tile.z>spec.max_zoom)
+   if(tile.z<spec.min_zoom)
      return {source_id,reason:"outside_zoom_coverage"};
+   // A provider's maximum native zoom is not its maximum DISPLAY zoom.
+   // Fetch the verified ancestor raster and crop the appropriate child area;
+   // high-resolution regional overlays retain their own native detail.
+   const nativeZoom=Math.min(tile.z,Math.floor(spec.max_zoom));
+   const difference=tile.z-nativeZoom;
+   const ancestorScale=2**difference;
+   const sourceTile=difference>0
+     ?{x:Math.floor(tile.x/ancestorScale),y:Math.floor(tile.y/ancestorScale),z:nativeZoom}
+     :tile;
    const coverage=layer.coverage_scope==="global"
      ?{scope:"global",verified:true}
      :layer.coverage_scope==="bbox"&&layer.coverage
@@ -116,7 +125,7 @@ export async function drawRasterMosaicTileFromUrls({
      return {source_id,reason:"tile_source_budget_exhausted"};
    selectedForTile++;
    let url;
-   try{url=rasterTileUrl(layer.tile_url,tile);}
+   try{url=rasterTileUrl(layer.tile_url,sourceTile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
    const release=await budget.reserve(signal);
    if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
@@ -149,7 +158,7 @@ export async function drawRasterMosaicTileFromUrls({
      }
      if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
      if(!image)return {source_id,reason:"empty_raster_image"};
-     return {source_id,layer:{...layer,image}};
+     return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
    }catch(_){
      return {source_id,reason:signal?.aborted?"tile_cancelled":"image_request_failed"};
    }finally{
