@@ -3,7 +3,7 @@
  * Requires preloaded, provider-eligible, verified raster tiles. The rendering
  * order and provider decisions must come from WeatherRouter V2, not this file.
  */
-import {rasterTilePixelCrops} from "./raster-tile-clip.js";
+import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41185r1";
 
 const MAX_LAYERS=4;
 const MAX_TILE_SIZE=512;
