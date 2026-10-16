@@ -21,9 +21,10 @@ export class RasterTileRequestBudget {
    this.used=0;
    this.active=0;
    this.queue=[];
+   this.closed=false;
  }
  async reserve(signal=null){
-   if(signal?.aborted||this.used>=this.maxRequests)return null;
+   if(this.closed||signal?.aborted||this.used>=this.maxRequests)return null;
    // A waiting request holds no network slot and consumes no request budget.
    if(this.active>=this.maxConcurrent){
      const admitted=await new Promise(resolve=>{
@@ -41,7 +42,7 @@ export class RasterTileRequestBudget {
    }else{
      this.active++;
    }
-   if(signal?.aborted||this.used>=this.maxRequests){
+   if(this.closed||signal?.aborted||this.used>=this.maxRequests){
      this._releaseSlot();
      return null;
    }
@@ -53,7 +54,15 @@ export class RasterTileRequestBudget {
      this._releaseSlot();
    };
  }
+ close(){
+   this.closed=true;
+   for(const entry of this.queue.splice(0)){
+     entry.signal?.removeEventListener("abort",entry.onAbort);
+     entry.resolve(false);
+   }
+ }
  _releaseSlot(){
+   if(this.closed){this.active=Math.max(0,this.active-1);return;}
    while(this.queue.length){
      const next=this.queue.shift();
      next.signal?.removeEventListener("abort",next.onAbort);
