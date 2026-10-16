@@ -12,8 +12,9 @@ const source={
  render:{tile_size:256,min_zoom:0,max_zoom:18,opacity:0.7},
  attribution:"Synthetic",legend:{title:"Example"},
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
- observation_kind:"observation",measurement_method:"satellite_estimate"},
- times:{valid_at:valid,retrieved_at:valid,reference_delta_seconds:0}
+ observation_kind:"estimate",measurement_method:"satellite_estimate"},
+ times:{valid_at:valid,retrieved_at:valid,reference_delta_seconds:0,age_seconds:20000},
+ freshness_class:"older_background",quality_note:"older_satellite_background"
 };
 const base={
  contract_version:2,capability:"weather.precipitation.layer",
@@ -27,7 +28,7 @@ card._weatherRadarViewport=()=>({context:viewport,focus});
 card._weatherEngineDiagnosticRender=()=>{};
 card._hass={callWS:async message=>{
  requests.push(message);
- if(message.time.max_data_age_seconds===900)
+ if(!Object.hasOwn(message.time,"max_background_age_seconds"))
    return {...base,status:"unavailable",layers:[],
      limitations:["Synthetic image older than fifteen minutes"]};
  return {...base,status:"partial",layers:[source],
@@ -41,7 +42,8 @@ assert.equal(result.schema,"gewitterradar.weather_engine_v2_age_comparison.v1");
 assert.equal(result.status,"completed");
 assert.equal(result.map_unchanged,true);
 assert.equal(result.age_filter_supported,true);
-assert.deepEqual(requests.map(q=>q.time.max_data_age_seconds),[900,43200]);
+assert.deepEqual(requests.map(q=>q.time.max_data_age_seconds),[900,900]);
+assert.deepEqual(requests.map(q=>q.time.max_background_age_seconds??null),[null,43200]);
 assert.deepEqual(requests.map(q=>q.time.max_time_delta_seconds),[180,180]);
 assert.equal(requests.length,2);
 assert.notEqual(requests[0].correlation_id,requests[1].correlation_id);
@@ -54,6 +56,7 @@ assert.deepEqual(requests.map(q=>q.context),[
 assert.equal(result.requests[0].status,"unavailable");
 assert.equal(result.requests[1].status,"partial");
 assert.equal(result.requests[1].sources[0].valid_at,valid);
+assert.equal(result.requests[1].sources[0].freshness_class,"older_background");
 assert.equal(result.requests[1].sources[0].measurement_method,"satellite_estimate");
 assert.equal(typeof result.requests[1].sources[0].age_seconds,"number");
 assert.equal(card._weatherRadarState().layer,beforeLayer);
