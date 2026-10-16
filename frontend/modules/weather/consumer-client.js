@@ -305,7 +305,9 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       step("preconditions_ok");
       const request=buildRasterMosaicV2Request({
         viewport:viewport.context,focus:viewport.focus,maxLayers:12,
-        maxTileRequests:12,consumerId:"gewitterradar",correlationId:id
+        maxTileRequests:12,maxDataAgeSeconds:900,
+        maxBackgroundAgeSeconds:this._weatherRadarState?.()?.allowOlderSatelliteBackground?43200:null,
+        consumerId:"gewitterradar",correlationId:id
       });
       step("request_validated");
       let timer=null;
@@ -317,12 +319,14 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
           },20000);})
         ]);
         step("response",{response_status:String(response?.status||"missing")});
-        validateRasterMosaicV2(response,{maxLayers:12});
+        validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:request.time.max_background_age_seconds??null});
         step("validated",{layers:response.layers.length});
-        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_time_delta_seconds:request.time.max_time_delta_seconds};
+        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_background_age_seconds:request.time.max_background_age_seconds??null,max_time_delta_seconds:request.time.max_time_delta_seconds};
         result.status=response.status;
         result.layer_count=response.layers.length;
         result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
+        result.background_source_count=response.layers.filter(layer=>layer.freshness_class==="older_background").length;
+        result.freshness_classes=response.layers.map(layer=>({source_id:layer.source_id,freshness_class:layer.freshness_class??"unknown",age_seconds:layer.times?.age_seconds??null,valid_at:layer.times?.valid_at||null,quality_note:layer.quality_note||null}));
         result.time_deviating=response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend");
         result.limitations_count=Array.isArray(response.limitations)?response.limitations.length:0;
         result.limitations=Array.isArray(response.limitations)?response.limitations.slice(0,8).filter(item=>typeof item==="string").map(item=>item.slice(0,180)):[];
