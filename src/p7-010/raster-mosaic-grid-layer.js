@@ -53,7 +53,9 @@ export function createRasterMosaicGridLayer(L,snapshot,{
         context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
-        if(!controller?.signal.aborted)try{onTileDiagnostics?.(result);}catch(_){}
+        if(!controller?.signal.aborted)try{
+          onTileDiagnostics?.({...result,tile:{x:coords.x,y:coords.y,z:coords.z}});
+        }catch(_){}
         done?.(controller?.signal.aborted?new Error("Raster tile cancelled"):null,canvas);
       },error=>done?.(error,canvas)).finally(()=>{
         if(controller)pending.delete(controller);
