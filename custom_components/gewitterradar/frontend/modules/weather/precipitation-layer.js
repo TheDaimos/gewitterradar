@@ -974,7 +974,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           );
         }),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
-        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],limitations_count:event.limitations_count??null}),
+        consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
