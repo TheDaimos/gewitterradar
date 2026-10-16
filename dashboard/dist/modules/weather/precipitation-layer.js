@@ -843,14 +843,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     return {provider,ageText,coverage,limitations};
   },
 
-  _weatherRadarApplyReady(answer,viewport){
+  _weatherRadarApplyReady(answer,viewport,token){
     const state=this._weatherRadarState();
     state.v2Snapshot=null;
     const payload=answer.resource.payload;
     const description=this._weatherRadarDescribe(answer);
     const attribution=payload.attribution||answer.provenance?.attribution||description.provider;
     loadLeafletJs().then(L=>{
-      if(!state.enabled||!this._map)return;
+      if(!state.enabled||state.v2Generation!==token||!this._map
+        ||this._weatherRadarViewport()?.signature!==viewport.signature)return;
       const next=this._weatherRadarCreateLayer(L,payload,attribution);
       next.addTo(this._map);
       const old=state.layer;state.layer=next;
@@ -981,7 +982,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const answer=await this._weatherRouterResolve(CAPABILITY,context,{requirements:{resource_types:["raster_tile"]}});
       if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
-      this._weatherRadarApplyReady(answer,viewport);
+      this._weatherRadarApplyReady(answer,viewport,token);
     }catch(_error){
       state.lastUnavailable={code:"temporarily_unavailable"};
       this._weatherRadarUpdateControls();
