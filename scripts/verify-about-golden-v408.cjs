@@ -66,11 +66,11 @@ if (isV41184Dev) {
   assert.ok(versionText.includes('displayVersion:"V4.11.85 DEV"'));
   assert.ok(versionText.includes('build:"V4.11.85-DEV-2026-10-16"'));
   assert.ok(versionText.includes('runtimeRevision:"41185r1"'));
-  assert.ok(versionText.includes('moduleSetId:"E411-84A1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-85A1"'));
   assert.equal(runtime.productVersion, '4.11.85');
   assert.equal(runtime.build, 'V4.11.85-DEV-2026-10-16');
   assert.equal(runtime.runtimeRevision, '41185r1');
-  assert.equal(runtime.moduleSetId, 'E411-84A1');
+  assert.equal(runtime.moduleSetId, 'E411-85A1');
   assert.equal(runtime.modules.length, 34);
 } else if (isV41163Dev) {
   // Preserve the immutable V4.07.56 About geometry baseline; this branch
