@@ -498,7 +498,8 @@ _weatherEngineDiagnosticPayload(){
         "Status: "+test.status+" · "+(test.layer_count??0)+" Quellen · "+(test.duration_ms??"…")+" ms"+
         (test.error_code?" · Fehler: "+test.error_code:"")+
         "\\nKennung: "+test.correlation_id+
-        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"");
+        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"")+
+        (Array.isArray(test.limitations)&&test.limitations.length?"\\nWR-Einschränkungen: "+test.limitations.join(" · "):"");
     }
     const v2Button=root.getElementById('weather-engine-v2-test');
     if(v2Button)v2Button.disabled=Boolean(this.__weatherEngineV2TestRunning);
