@@ -844,6 +844,62 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarUpdateControls();
   },
 
+  async _weatherRadarTryMosaic(viewport,token){
+    const state=this._weatherRadarState();
+    if(!viewport.focus||typeof this._hass?.callWS!=="function")return false;
+    const current=()=>state.enabled&&state.v2Generation===token
+      &&this._weatherRadarViewport()?.signature===viewport.signature;
+    let timeout=null,staged=null;
+    try{
+      const L=await loadLeafletJs();
+      if(!current())return false;
+      const size=this._map.getSize?.()||{x:800,y:600};
+      const count=Math.ceil(Math.max(256,size.x)/256+2)*Math.ceil(Math.max(256,size.y)/256+2);
+      let painted;
+      const firstPaint=new Promise(resolve=>{painted=resolve;});
+      const result=await prepareRasterMosaicV2({
+        callWS:query=>this._hass.callWS(query),
+        Leaflet:L,viewport:viewport.context,focus:viewport.focus,
+        maxLayers:12,maxTileRequests:clamp(count*4,48,256),
+        layerOptions:{maxConcurrent:4,
+          onTileDiagnostics:item=>{if(item?.drawn?.length)painted(true);}}
+      });
+      if(result.mode!=="v2"||!current())return false;
+      if(!this._map.getPane("gr-weather-radar")){
+        const pane=this._map.createPane("gr-weather-radar");
+        pane.style.zIndex="230";pane.style.pointerEvents="none";
+      }
+      staged=result.layer;
+      staged.options.pane="gr-weather-radar";
+      staged.options.opacity=0;
+      staged.__grRadarNaturalOpacity=0.58;
+      state.v2PendingLayer=staged;
+      staged.addTo(this._map);
+      const ready=await Promise.race([firstPaint,
+        new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
+      if(!ready||!current())return false;
+      const old=state.layer;
+      state.layer=staged;state.v2PendingLayer=null;
+      state.v2Snapshot=result.response;state.lastReady=null;state.lastUnavailable=null;
+      this._weatherRadarRemoveTimelinePlayer();
+      state.timelineModel=null;state.timelineIndex=-1;
+      this._weatherRadarClearPreload();
+      staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
+      if(old)try{old.remove();}catch(_){}
+      this._weatherDisplayRefreshRenderedLayers?.();
+      this._weatherRadarRenderCurrentLegend();
+      this._weatherRadarUpdateControls();
+      return true;
+    }catch(_){return false;}
+    finally{
+      if(timeout!==null)clearTimeout(timeout);
+      if(staged&&state.v2PendingLayer===staged){
+        try{staged.remove();}catch(_){}
+        state.v2PendingLayer=null;
+      }
+    }
+  },
+
   _weatherRadarHandleUnavailable(answer){
     const state=this._weatherRadarState();
     state.lastUnavailable=answer?.unavailable||{code:"temporarily_unavailable"};
