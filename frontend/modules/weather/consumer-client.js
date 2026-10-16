@@ -92,13 +92,15 @@ export function createWeatherRouterClient(callWS,{profileId=null}={}){
       return catalog;
     }catch(error){return absent('temporarily_unavailable','Capability discovery failed',true);}
   }
-  async function resolve(capability,context,{requirements,eventFilter}={}){
+  async function resolve(capability,context,{requirements,eventFilter,consumerId='gewitterradar',correlationId=null}={}){
     if(!validId(capability))throw new TypeError('Invalid public capability');
     const spatial=validateWeatherContext(context);
     const state=await discover();
     if(!state.ready)return absent(state.compatible?'router_not_ready':'capability_not_supported','WeatherRouter not ready');
     const request={type:'weather_router/consumer/resolve',contract_version:WEATHER_ROUTER_CONTRACT,capability,context:spatial,time:{mode:'latest'}};
     if(profile)request.profile_id=profile;
+    request.consumer_id=consumerId;
+    if(correlationId)request.correlation_id=correlationId;
     if(requirements!==undefined)request.requirements=requirements;
     if(eventFilter!==undefined)request.event_filter=eventFilter;
     try{return parseWeatherResolution(await callWS(request),capability);}
