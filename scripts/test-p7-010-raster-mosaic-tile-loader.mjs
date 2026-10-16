@@ -124,7 +124,7 @@ const twelve=Array.from({length:12},(_,i)=>
     coverage:i<8?germany:full}));
 const globalOnly=[];
 const worldMosaic=await drawRasterMosaicTileFromUrls({
- context:{drawImage:()=>{}},tile:{x:0,y:0,z:0},layers:twelve,
+ context:{drawImage:()=>{}},tile:{x:0,y:0,z:2},layers:twelve,
  budget:new RasterTileRequestBudget(12),
  loadImage:async (_url,layer)=>{
    globalOnly.push(layer.source_id);return {width:256};
