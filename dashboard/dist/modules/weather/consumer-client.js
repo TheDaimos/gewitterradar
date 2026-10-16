@@ -200,7 +200,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     return this.__weatherRouterClient;
   },
   _weatherEngineTraceStore(){
-    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
+    if(!this.__weatherEngineTraceStore)this.__weatherEngineTraceStore={items:[],rawExchanges:[],v2Events:[],max:80,sequence:0,exchangeSequence:0,lastDiscovery:null,lastCatalog:null};
     return this.__weatherEngineTraceStore;
   },
   async _weatherRouterDiscovery(options){
@@ -266,6 +266,7 @@ _weatherEngineDiagnosticPayload(){
       capability_catalog:store.lastCatalog||null,
       traces:[...(store.items||[])],
       raw_consumer_exchanges:[...(store.rawExchanges||[])],
+      v2_attempts:[...(store.v2Events||[])],
       local:{precipitation_radar:currentLayer}
     });
   },
