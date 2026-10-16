@@ -59,7 +59,8 @@ const make=()=>{
 };
 const stage=async fixture=>{
   const done=fixture.ui._weatherRadarApplyReady(answer,viewport,7);
-  await Promise.resolve();await Promise.resolve();
+  // Cross-context async module loading settles on a later microtask in Node VM.
+  await new Promise(resolve=>setTimeout(resolve,0));
   assert.equal(fixture.layers.length,1,"one staged replacement created");
   assert.equal(fixture.layers[0].added,true,"staged layer already in map");
   return done;
