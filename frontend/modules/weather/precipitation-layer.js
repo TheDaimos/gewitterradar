@@ -1093,7 +1093,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     customNumber.addEventListener("change",()=>syncCustom(customNumber.value));
     customControls.append(customRange,customNumber,percent);customRow.append(customLabel,customControls);
 
-    const preloadStatusRow=document.createElement("div");preloadStatusRow.className="settings-row";
+    const preloadStatusRow=document.createElement("div");preloadStatusRow.className="settings-row gr-weather-detail-status";
     const preloadStatus=document.createElement("div");preloadStatus.className="settings-row-label";preloadStatus.id="weather-radar-preload-status";preloadStatus.setAttribute("role","status");preloadStatus.setAttribute("aria-live","polite");
     preloadStatusRow.append(preloadStatus);
 
@@ -1120,7 +1120,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const timelineToggle=document.createElement("button");timelineToggle.className="settings-language-button settings-control";timelineToggle.id="weather-radar-timeline-toggle";timelineToggle.type="button";timelineToggle.addEventListener("click",()=>this._setWeatherRadarTimelineVisible(!this._weatherRadarState().timelineVisible));
     timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel,timelineToggle);
 
-    const statusRow=document.createElement("div");statusRow.className="settings-row";
+    const statusRow=document.createElement("div");statusRow.className="settings-row gr-weather-detail-status";
     const status=document.createElement("div");status.className="settings-row-label";status.id="weather-radar-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
     statusRow.append(status);block.append(row,preloadRow,customRow,preloadStatusRow,refreshIntervalRow,timelineRow,statusRow);
     const dataRow=this.shadow?.getElementById("weather-engine-inspect")?.closest(".settings-row");
