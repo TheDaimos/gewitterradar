@@ -100,5 +100,8 @@ const cancellationError=await cancellationFinished;
 assert.ok(cancellationError,"removed layer must report cancelled pending tile");
 assert.ok(cancelledImages.every(signal=>signal.aborted));
 assert.equal(cancellable._p7RasterRequestBudget.active,0);
+assert.equal(cancellable._p7RasterRequestBudget.closed,true);
+assert.equal(await cancellable._p7RasterRequestBudget.reserve(),null,
+ "removed raster cannot restart requests");
 
 console.log("P7-010 isolated Leaflet GridLayer V2 contract, budget and fallback PASS");
