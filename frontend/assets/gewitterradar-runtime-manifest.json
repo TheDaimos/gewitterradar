@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.85",
-  "build": "V4.11.85-DEV-2026-10-16",
-  "runtimeRevision": "41185r1",
-  "moduleSetId": "E411-85A1",
+  "productVersion": "4.11.86",
+  "build": "V4.11.86-DEV-2026-10-16",
+  "runtimeRevision": "41186r1",
+  "moduleSetId": "E411-86A1",
   "modules": [
     {
       "id": "core.manifest",
@@ -139,8 +139,8 @@
     },
     {
       "id": "weather.consumer-client",
-      "version": "1.2.3"
+      "version": "1.2.4"
     }
   ],
-  "displayVersion": "V4.11.85 DEV"
+  "displayVersion": "V4.11.86 DEV"
 }
