@@ -77,7 +77,7 @@ export async function prepareRasterMosaicV2({
    const response=await callWS(request);
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
    stage="contract_validation";
-   validateRasterMosaicV2(response,{maxLayers});
+   validateRasterMosaicV2(response,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
    onDiagnostic?.({
      phase:"validated",status:response.status,layers:response.layers.length,
      time_deviating:response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend"),
