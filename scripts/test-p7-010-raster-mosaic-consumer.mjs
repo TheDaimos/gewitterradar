@@ -9,6 +9,8 @@ const request=buildRasterMosaicV2Request({
 });
 assert.equal(request.type,"weather_router/consumer/resolve_mosaic");
 assert.equal(request.contract_version,2);
+assert.equal(request.consumer_id,"gewitterradar");
+assert.equal(buildRasterMosaicV2Request({viewport,focus,correlationId:"gr-p7-test"}).correlation_id,"gr-p7-test");
 assert.equal(request.context.focus.longitude,-76);
 assert.equal(request.limits.max_tile_requests,36);
 assert.equal("preferred_provider" in request,false);
@@ -73,7 +75,8 @@ const failing=await prepareRasterMosaicV2({
  Leaflet:L,viewport,focus
 });
 assert.equal(failing.mode,"fallback");
-assert.equal(failing.reason,"v2_unavailable_or_invalid");
+assert.equal(failing.reason,"websocket_or_contract");
+assert.equal(failing.errorCode,"Error");
 assert.equal("layer" in failing,false,
  "caller must retain its existing V1 precipitation layer");
 
@@ -89,4 +92,5 @@ const wrong=await prepareRasterMosaicV2({
  Leaflet:L,viewport,focus
 });
 assert.equal(wrong.mode,"fallback");
+assert.equal(wrong.reason,"validation_or_render");
 console.log("P7-010 opt-in V2 WS to Leaflet bridge and non-destructive V1 fallback PASS");
