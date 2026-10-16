@@ -858,6 +858,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(old)try{old.remove();}catch(_error){}
       this._weatherDisplayRefreshRenderedLayers?.();
       this._weatherDisplaySyncUi?.();
+      this._weatherRadarUpdateControls();
     }).catch(()=>{});
     state.lastReady={answer,viewport,at:Date.now()};
     state.lastUnavailable=null;
