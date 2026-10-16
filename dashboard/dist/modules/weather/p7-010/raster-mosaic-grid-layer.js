@@ -66,7 +66,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   });
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true});
   layer._p7RasterRequestBudget=budget;
-  layer._p7AbortPending=()=>{for(const controller of pending)controller.abort();};
+  layer._p7AbortPending=()=>{budget.close();for(const controller of pending)controller.abort();};
   layer.on?.("tileunload",event=>event?.tile?._p7RasterAbort?.());
   layer.on?.("remove",()=>layer._p7AbortPending());
   return layer;
