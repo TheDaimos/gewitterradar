@@ -7,9 +7,9 @@
  * enforces a finite shared image-request budget and draws in source order.
  * No provider ranking is performed here.
  */
-import {rasterTileUrl} from "./raster-tile-url.js?v=41185r1";
-import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41185r1";
-import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=41185r1";
+import {rasterTileUrl} from "./raster-tile-url.js?v=41187r1";
+import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41187r1";
+import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=41187r1";
 
 export class RasterTileRequestBudget {
  constructor(maxRequests,{maxConcurrent=4}={}){
