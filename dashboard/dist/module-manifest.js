@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41188r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41189r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
