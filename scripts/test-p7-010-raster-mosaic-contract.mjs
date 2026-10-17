@@ -73,7 +73,7 @@ assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
 ]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError,
  "only WR-verified product BBOX is eligible");
 // Keep the earlier regional-BBOX rejection explicitly in place.
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,coverage_scope:"bbox"}]},
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,coverage_scope:"bbox",coverage:{west:5,east:16,south:46,north:56}}]},
  {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
 // Almost-full, half-world and non-product BBOX claims are NOT world coverages.
 for(const coverage of [
