@@ -176,7 +176,7 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.89"','displayVersion:"V4.11.89 DEV"','runtimeRevision:"41189r1"','moduleSetId:"E411-89A1"']){
+  for(const marker of ['version:"4.11.90"','displayVersion:"V4.11.90 DEV"','runtimeRevision:"41190r1"','moduleSetId:"E411-90A1"']){
     if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
