@@ -195,7 +195,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.layer||!map?.hasLayer?.(state.layer))return false;
     if(state.v2Snapshot){
       return state.v2Snapshot.layers?.some(layer=>{
-        const age=Number(layer?.times?.age_seconds);
+        const age=layer?.times?.age_seconds;
+        const elapsed=state.v2SnapshotAt?Math.max(0,(Date.now()-state.v2SnapshotAt)/1000):0;
         const older=layer?.freshness_class==="older_background";
         return typeof age==="number"&&Number.isFinite(age)&&age>=0&&
           age<=((older&&state.allowOlderSatelliteBackground)?43200:900);
@@ -1051,7 +1052,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         correlation_id:state.v2CorrelationId||null});
       if(previous)try{previous.remove();}catch(_error){}
     }
-    state.v2Snapshot=null;state.v2RenderMetrics=null;
+    state.v2Snapshot=null;state.v2SnapshotAt=null;state.v2RenderMetrics=null;
     state.lastReady={answer,viewport,at:Date.now()};
     state.lastUnavailable=null;
     this._weatherRadarStopTimelinePlayback();
@@ -1235,7 +1236,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       state.layer=staged;state.v2PendingLayer=null;
       state.v2RenderMetrics={drawn_tiles:readyTiles.size,complete_tiles:geometricallyCompleteTiles.size,
         uncovered_tiles:uncovered.length,visible_tiles:visible.size};
-      state.v2Snapshot=result.response;state.v2LastPartial=null;state.lastReady=null;state.lastUnavailable=null;
+      state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();state.v2LastPartial=null;state.lastReady=null;state.lastUnavailable=null;
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
