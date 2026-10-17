@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.92 DEV: revoke 12h satellite consent for mounted/pending V1/V2 images, bounded reuse of native source rasters, blank-tile rejection and throttled V2 budget recovery; NASA+DWD HA acceptance pending.",
+    "purpose": "V4.11.92 DEV: WeatherRouter-V2-Niederschlagsdarstellung: sofortiger Widerruf der 12h-Satellitenfreigabe für aktive und ausstehende V1/V2-Bilder; begrenzte Wiederverwendung nativer Rasterquellen, Fehler bei leeren Kacheln, gedrosselte Ressourcenwiederherstellung. NASA+DWD-HA-Gesamtabnahme steht aus.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
