@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.88",
-  "build": "V4.11.88-DEV-2026-10-17",
-  "runtimeRevision": "41188r1",
-  "moduleSetId": "E411-88A1",
+  "productVersion": "4.11.89",
+  "build": "V4.11.89-DEV-2026-10-17",
+  "runtimeRevision": "41189r1",
+  "moduleSetId": "E411-89A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.88 DEV: P7-010 source-specific native overzoom for zoom 12+ with regional coverage masking; V1 unbounded map zoom fix; WeatherRouter 0.10.152 API V2 optional satellite background and bounded V1 event windows retained. HA real mosaic/zoom tests required.",
+    "purpose": "V4.11.89 DEV: P7-010 regional DWD edge cannot replace full V1 viewport without verified geographic and fully drawn raster tile coverage; bounded fallback with correlation preserved, WR 0.10.153 UTC P0 coordination. HA real-test pending; FLK-01 separate.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
