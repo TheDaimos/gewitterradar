@@ -33,4 +33,21 @@ let options;n._refreshWeatherRadar=async x=>{options=x;};
 n._setWeatherRadarOlderSatelliteBackground(false);
 assert.ok(next.layer);assert.equal(next.v2Generation,8);
 assert.deepEqual(options,{reason:"background-policy-change",force:true});
+const v1=new Card();let rejects=0;
+v1.__weatherRadarState={enabled:true,allowOlderSatelliteBackground:false};
+v1._weatherEngineMonitorEvent=()=>{rejects++;};
+const olderRadar={resource:{payload:{tile_url:"https://example.invalid/{z}/{x}/{y}.png"},
+  semantics:{observation_kind:"observation",measurement_method:"radar"}},
+  freshness:{age_seconds:20000}};
+assert.equal(await v1._weatherRadarApplyReady(olderRadar,{signature:"sample"},0),false);
+assert.equal(rejects,1,"stale radar must not evade the 900-second policy");
+v1.__weatherRadarState.allowOlderSatelliteBackground=true;
+assert.equal(await v1._weatherRadarApplyReady(olderRadar,{signature:"sample"},0),false,
+  "satellite consent must not make stale regional radar valid");
+const noSemantic={resource:{payload:{tile_url:"https://example.invalid/{z}/{x}/{y}.png"}},
+  freshness:{age_seconds:20000}};
+assert.equal(await v1._weatherRadarApplyReady(noSemantic,{signature:"sample"},0),false,
+  "unverified V1 imagery cannot be upgraded to older satellite background");
+assert.equal(weatherRadarNeedsConsentDetach({layer:{},lastReady:{at:Date.now(),answer:noSemantic}}),true,
+  "revocation removes old imagery even without satellite metadata");
 console.log("PASS: revocation detaches old satellites and invalidates outstanding V2 work");
