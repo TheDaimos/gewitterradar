@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.90",
-  "build": "V4.11.90-DEV-2026-10-17",
-  "runtimeRevision": "41190r1",
-  "moduleSetId": "E411-90A1",
+  "productVersion": "4.11.91",
+  "build": "V4.11.91-DEV-2026-10-17",
+  "runtimeRevision": "41191r1",
+  "moduleSetId": "E411-91A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.90 DEV: protect verified broad V1/V2 raster against regional V1 replacement; bounded V1/V2 display diagnostics with zoom, tile errors, swap decisions and user timestamp marker. HA real acceptance remains with operator.",
+    "purpose": "V4.11.91 DEV: accept only WR-verified full-world NASA satellite product BBOX as older V2 background with explicit 12h opt-in; retain 900s regional radar, V1 replacement guard, display diagnostics and zoom 12-17 tests. HA acceptance pending.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
