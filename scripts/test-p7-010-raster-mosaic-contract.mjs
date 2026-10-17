@@ -1,5 +1,17 @@
 import assert from "node:assert/strict";
+import {readFile} from "node:fs/promises";
 import {validateRasterMosaicV2} from "../src/p7-010/raster-mosaic-contract.js";
+// Contract source is identical across source-of-truth and both delivered apps.
+const validatorPaths=[
+ "../src/p7-010/raster-mosaic-contract.js",
+ "../frontend/modules/weather/p7-010/raster-mosaic-contract.js",
+ "../dashboard/dist/modules/weather/p7-010/raster-mosaic-contract.js",
+ "../custom_components/gewitterradar/frontend/modules/weather/p7-010/raster-mosaic-contract.js"
+];
+const validatorSource=await readFile(new URL(validatorPaths[0],import.meta.url),"utf8");
+for(const path of validatorPaths.slice(1))
+ assert.equal(await readFile(new URL(path,import.meta.url),"utf8"),validatorSource,
+   "delivered V2 world-BBOX validator must match the source of truth: "+path);
 const BASE={contract_version:2,capability:"weather.precipitation.layer",
  status:"partial",viewport:{west:-180,south:-70,east:180,north:70},
  reference_time:"2026-10-14T15:00:00Z"};
