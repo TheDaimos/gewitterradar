@@ -195,7 +195,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.layer||!map?.hasLayer?.(state.layer))return false;
     if(state.v2Snapshot){
       // Only the STILL time-valid source geometry may justify retaining a
-      // wide image. A fresh DWD sliver must never keep an expired NASA base.
+      // wide image. A fresh regional sliver must never keep an expired broad background.
       const elapsed=state.v2SnapshotAt?Math.max(0,(Date.now()-state.v2SnapshotAt)/1000):0;
       const valid=state.v2Snapshot.layers?.filter(layer=>{
         const age=layer?.times?.age_seconds;
