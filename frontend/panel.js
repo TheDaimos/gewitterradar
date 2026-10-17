@@ -1,9 +1,17 @@
+import {APPLICATION_RELEASE} from "./version.js?v=41193r1";
 const PANEL_TAG="gewitterradar-panel";
 const CARD_TAG="gewitterradar-card";
 
 async function ensureGewitterradarCard(){
-  if(!customElements.get(CARD_TAG))await import("./gewitterradar.js");
+  if(!customElements.get(CARD_TAG)){
+    // Never reuse the unversioned cached card module after a native panel update.
+    await import(`./gewitterradar.js?v=${APPLICATION_RELEASE.runtimeRevision}`);
+  }
   await customElements.whenDefined(CARD_TAG);
+  const active=globalThis.window?.__GEWITTERRADAR_BOOT_DIAGNOSTICS?.version;
+  if(active&&active!==APPLICATION_RELEASE.version)
+    throw new Error("Laufzeit veraltet: "+active+" statt "+APPLICATION_RELEASE.version+
+      ". Home Assistant und Browser vollständig neu laden.");
 }
 
 class GewitterradarPanel extends HTMLElement{

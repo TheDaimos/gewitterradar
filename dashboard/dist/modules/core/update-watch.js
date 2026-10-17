@@ -2,10 +2,10 @@ import { defineModule } from "./runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.update-watch",
-  version:"1.0.0",
+  version:"1.0.1",
   group:"Kern",
   function:"Frontend-Aktualisierung",
-  subfunctions:["Installierten Stand prüfen","Aktualisierungshinweis","Kontrollierte Vollneuladung"],
+  subfunctions:["Installierten Stand prüfen","Aktualisierungshinweis","Kontrollierte Neuladung mit Versionsschutz"],
   file:"modules/core/update-watch.js"
 });
 
@@ -14,6 +14,15 @@ const CHECK_INTERVAL_MS=60000;
 const AUTO_RELOAD_DELAY_MS=1800;
 const AUTO_RELOAD_GUARD_PREFIX="gewitterradar:runtime-auto-reload:";
 
+/** Preserve the HA route, existing search parameters and fragment on a real document navigation. */
+export function runtimeReloadUrl(href,target,nonce=Date.now()){
+  const id=String(target||"").trim();
+  if(!id)return null;
+  const url=new URL(href);
+  url.searchParams.set("_gr_runtime",id.slice(0,90));
+  url.searchParams.set("_gr_reload",String(nonce));
+  return url.href;
+}
 export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
   const {APPLICATION_META}=deps;
   return {
@@ -79,7 +88,7 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
         const text=document.createElement("span");text.dataset.role="text";text.style.cssText="flex:1;min-width:0";
         const button=document.createElement("button");button.type="button";button.dataset.role="reload";button.textContent="↻";
         button.style.cssText="width:32px;height:30px;border-radius:9px;border:1px solid rgba(224,180,79,.55);background:rgba(224,180,79,.12);color:#f3d985;font-size:18px;font-weight:900;cursor:pointer";
-        button.addEventListener("click",()=>this._reloadInstalledRuntime());
+        button.addEventListener("click",()=>this._reloadInstalledRuntime({source:"manual"}));
         banner.append(text,button);
         const card=root.querySelector("ha-card")||root.firstElementChild;
         if(card?.parentNode)card.parentNode.insertBefore(banner,card);else root.prepend(banner);
@@ -88,7 +97,13 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
       const target=installed?.displayVersion||installed?.productVersion||installed?.build||installed?.moduleSetId||"";
       const phrase=this._t?.("modules.runtime_stale")||"Frontend-Neuladung erforderlich";
       const text=banner.querySelector('[data-role="text"]');
-      if(text)text.textContent=target?phrase+" · "+loaded+" → "+target:phrase;
+      let attempted=false;
+      try{
+        const guard=this._runtimeUpdateTargetKey(installed);
+        attempted=Boolean(guard&&sessionStorage.getItem(AUTO_RELOAD_GUARD_PREFIX+guard)==="1");
+      }catch(_error){}
+      const suffix=attempted?" · Automatische Neuladung erfolglos: Home Assistant neu starten und JavaScript-Ressource prüfen.":"";
+      if(text)text.textContent=(target?phrase+" · "+loaded+" → "+target:phrase)+suffix;
       const button=banner.querySelector('[data-role="reload"]');
       if(button){
         button.title=phrase;
@@ -105,10 +120,19 @@ export const installUpdateWatch=defineModule(MODULE_META,(deps)=>{
       if(banner)banner.hidden=true;
     },
 
-    _reloadInstalledRuntime(){
+    _reloadInstalledRuntime({source="manual"}={}){
       const button=this.shadow?.querySelector('#gewitterradar-runtime-update-banner [data-role="reload"]');
       if(button)button.disabled=true;
-      try{window.location.reload();}catch(_error){try{window.location.href=window.location.href;}catch(_ignored){}}
+      if(typeof window==="undefined")return false;
+      const state=this._runtimeUpdateWatchState();
+      const target=this._runtimeUpdateTargetKey(state.last?.installed)||APPLICATION_META.runtimeRevision;
+      const destination=runtimeReloadUrl(window.location.href,target,Date.now());
+      if(!destination){if(button)button.disabled=false;return false;}
+      try{window.location.replace(destination);return true;}
+      catch(_error){
+        try{window.location.href=destination;return true;}
+        catch(_ignored){if(button)button.disabled=false;return false;}
+      }
     },
 
     _startRuntimeUpdateWatch(){
