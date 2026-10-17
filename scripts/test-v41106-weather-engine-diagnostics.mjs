@@ -49,5 +49,5 @@ assert.match(consumer,/weather-engine-display-marker/);
 assert.match(consumer,/weather-engine-display-rows/);
 assert.match(consumer,/user_marked_visual_failure/);
 assert.match(consumer,/v1_regional_replacement_prevented/);
-assert.match(consumer,/weather_engine_display_monitor\\.v1/);
+assert.match(consumer,/weather_engine_display_monitor\.v1/);
 console.log("PASS: V4.11.78 Weather Engine diagnostics expose provider-neutral service/capability filters, exact Consumer API exchanges, retained-layer state and secret-safe export controls.");
