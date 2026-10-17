@@ -11,6 +11,8 @@ const source=(id,coverage,scope="bbox",minZoom=0)=>({
 });
 const regional=source("regional",germany);
 const global=source("global",full,"global");
+const nasaWorldBbox=source("nasa_gibs/satellite_precipitation_imerg_30min",
+ full,"bbox"); // Machine-verified world coverage stays spatial scope "bbox".
 const tiny=measureRasterViewportCoverage([regional],cube,8);
 assert.equal(tiny.complete,false,"regional edge does not cover Cuba and Europe");
 assert.ok(tiny.fraction>0&&tiny.fraction<0.1);
@@ -36,12 +38,18 @@ assert.equal(measureRasterViewportCoverage([source("overlap",{west:-20,east:5,so
  {west:-20,east:20,south:20,north:30},8).fraction,1,"overlap must not double-count");
 const dateline={west:170,east:-170,south:-15,north:15};
 assert.equal(measureRasterViewportCoverage([global],dateline,9).complete,true);
+assert.equal(measureRasterViewportCoverage([nasaWorldBbox],dateline,9).complete,true,
+ "a verified NASA world-BBOX also wraps the antimeridian");
 assert.equal(measureRasterViewportCoverage([source("east",{west:170,east:180,south:-15,north:15}),
  source("west",{west:-180,east:-170,south:-15,north:15})],dateline,9).complete,true);
 assert.equal(measureRasterViewportCoverage([],cube,8).complete,false);
 // Regression: source-native zoom 11 is NOT a display-zoom ceiling. A global
 // foundation remains geographically eligible at 12, 13, 15 and 17.
 for(const displayZoom of [12,13,15,17]){
+ assert.equal(measureRasterViewportCoverage([nasaWorldBbox],cube,displayZoom).complete,true,
+  "NASA world BBOX with native max zoom 11 remains valid at zoom "+displayZoom);
+ assert.equal(measureRasterViewportCoverage([nasaWorldBbox,regional],cube,displayZoom).complete,true,
+  "NASA world-BBOX foundation plus DWD regional coverage at zoom "+displayZoom);
  assert.equal(measureRasterViewportCoverage([global],cube,displayZoom).complete,true,
   "global z11 native source must remain usable at display zoom "+displayZoom);
  assert.equal(measureRasterViewportCoverage([regional],cube,displayZoom).complete,false,
