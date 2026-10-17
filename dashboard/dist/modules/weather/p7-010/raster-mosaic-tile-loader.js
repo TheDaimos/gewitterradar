@@ -9,7 +9,7 @@
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=41188r1";
+import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=41189r1";
 
 export class RasterTileRequestBudget {
  constructor(maxRequests,{maxConcurrent=4}={}){
