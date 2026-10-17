@@ -4,7 +4,7 @@
  */
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=41189r1";
+  from "./raster-mosaic-tile-loader.js?v=41192r1";
 
 function loadRasterImage(url,_source,{signal}={}){
   return new Promise((resolve,reject)=>{
