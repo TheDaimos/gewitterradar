@@ -4,6 +4,7 @@
  * order and provider decisions must come from WeatherRouter V2, not this file.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41188r1";
 
 const MAX_LAYERS=4;
 const MAX_TILE_SIZE=512;
@@ -25,7 +26,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
    throw new RangeError("Too many simultaneous layers");
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
    throw new RangeError("Invalid resource-bounded tile size");
- const drawn=[],rejected=[];
+ const drawn=[],rejected=[],paintedRects=[];
  for(const layer of layers){
    const id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||!layer.image||layer.resource_type!=="raster_tile"
@@ -85,6 +86,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
        context.drawImage(layer.image,from.sx,from.sy,from.sw,from.sh,
          to.sx,to.sy,to.sw,to.sh);
        cropsPainted++;
+       paintedRects.push({sx:to.sx,sy:to.sy,sw:to.sw,sh:to.sh});
      }
    }finally{
      context.globalAlpha=previousAlpha;
@@ -95,5 +97,6 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      semantics:layer.semantics,legend:layer.legend,render,
    });
  }
- return {drawn,rejected,no_pixel_blending:true,tile_size:tileSize};
+ return {drawn,rejected,no_pixel_blending:true,tile_size:tileSize,
+   tile_coverage:measureRasterTileCoverage(paintedRects,tileSize)};
 }
