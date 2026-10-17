@@ -997,12 +997,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     // estimates require an explicit opt-in and positive semantic evidence.
     const sem=answer?.resource?.semantics||{};
     const age=answer?.freshness?.age_seconds;
-    const current=typeof age==="number"&&Number.isFinite(age)&&age>=0&&age<=900;
+    const currentAge=typeof age==="number"&&Number.isFinite(age)&&age>=0&&age<=900;
     const permittedSatellite=typeof age==="number"&&Number.isFinite(age)&&age>=0&&
       age<=BACKGROUND_MAX_AGE_SECONDS&&state.allowOlderSatelliteBackground===true&&
       sem.observation_kind==="estimate"&&
       String(sem.measurement_method||"").includes("satellite");
-    if(!current&&!permittedSatellite){
+    if(!currentAge&&!permittedSatellite){
       this._weatherEngineMonitorEvent?.("v1_raster_age_rejected",{
         older_background_opt_in:state.allowOlderSatelliteBackground,
         age_seconds:Number.isFinite(age)?age:null});
