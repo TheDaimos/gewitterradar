@@ -194,13 +194,18 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),map=this._map;
     if(!state.layer||!map?.hasLayer?.(state.layer))return false;
     if(state.v2Snapshot){
-      return state.v2Snapshot.layers?.some(layer=>{
+      // Only the STILL time-valid source geometry may justify retaining a
+      // wide image. A fresh DWD sliver must never keep an expired NASA base.
+      const elapsed=state.v2SnapshotAt?Math.max(0,(Date.now()-state.v2SnapshotAt)/1000):0;
+      const valid=state.v2Snapshot.layers?.filter(layer=>{
         const age=layer?.times?.age_seconds;
-        const elapsed=state.v2SnapshotAt?Math.max(0,(Date.now()-state.v2SnapshotAt)/1000):0;
         const older=layer?.freshness_class==="older_background";
         return typeof age==="number"&&Number.isFinite(age)&&age>=0&&
-          age<=((older&&state.allowOlderSatelliteBackground)?43200:900);
-      })===true;
+          age+elapsed<=((older&&state.allowOlderSatelliteBackground)?43200:900);
+      })||[];
+      const viewport=this._weatherRadarViewport();
+      return !!viewport&&measureRasterViewportCoverage(valid,viewport.context,
+        Number(map.getZoom?.()??0)).fraction>=0.90;
     }
     const record=state.lastReady;
     if(!record?.answer)return false;
