@@ -6,7 +6,7 @@
  * result. Failed/unsupported V2 requests return "fallback" instead of
  * removing a working radar layer.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41188r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
 import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=41189r1";
 
 const finite=n=>typeof n==="number"&&Number.isFinite(n);
