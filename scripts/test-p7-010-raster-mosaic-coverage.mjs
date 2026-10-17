@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {measureRasterViewportCoverage,measureRasterTileCoverage}
+import {measureRasterViewportCoverage,measureRasterTileCoverage,measureV1RasterCoverage,decideV1RasterSwap}
  from "../src/p7-010/raster-mosaic-coverage.js";
 
 const full={west:-180,east:180,south:-90,north:90};
@@ -65,3 +65,22 @@ assert.equal(measureRasterTileCoverage([],256).complete,false);
 assert.equal(measureRasterTileCoverage([{sx:100,sy:0,sw:156,sh:256}],256).complete,false);
 assert.equal(measureRasterTileCoverage([{sx:-20,sy:-20,sw:296,sh:296}],256).complete,true);
 console.log("P7-010 geographical viewport and successfully drawn raster tile crop union PASS");
+
+const oldV1={provenance:{provider_id:"nasa",spatial_coverage:{scope:"bbox",bbox:full}}};
+const edgeV1={provenance:{provider_id:"dwd",spatial_coverage:{scope:"bbox",bbox:germany}}};
+const globalWorld={west:-100,east:10,south:10,north:60};
+for(const zoom of [3,5,10,12,17]){
+ const guard=decideV1RasterSwap({previous:oldV1,next:edgeV1,viewport:globalWorld,zoom,previousUsable:true});
+ assert.equal(guard.allow,false,"DWD fringe cannot erase broad NASA at z"+zoom);
+ assert.ok(guard.old_fraction>=0.99&&guard.new_fraction<0.1);
+ assert.equal(decideV1RasterSwap({previous:oldV1,next:edgeV1,viewport:globalWorld,zoom,previousUsable:false}).allow,true,
+   "cold start or temporally invalid previous may use a regional image");
+ assert.equal(decideV1RasterSwap({previous:edgeV1,next:oldV1,viewport:globalWorld,zoom,previousUsable:true}).allow,true,
+   "broader layer can always replace narrower one");
+}
+const dwdOnly={west:8,east:12,south:48,north:52};
+assert.equal(measureV1RasterCoverage(edgeV1.provenance,dwdOnly,13).complete,true);
+assert.equal(decideV1RasterSwap({previous:oldV1,next:edgeV1,viewport:dwdOnly,zoom:13,previousUsable:true}).allow,true);
+assert.equal(measureV1RasterCoverage({},globalWorld,6).verified,false,"unknown footprint is never made global");
+assert.equal(decideV1RasterSwap({previous:oldV1,next:{provenance:{}},viewport:globalWorld,zoom:3,previousUsable:true}).allow,false,
+ "an unknown candidate cannot erase verified broad old images");
