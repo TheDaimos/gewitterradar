@@ -19,6 +19,17 @@ const safeURL=value=>{
    return true;
  }catch(_){return false;}
 };
+// This is a narrowly bounded eligibility check for *older* satellite data,
+// NOT a change of the reported spatial scope. WR must have verified the
+// product-specific full-world coverage; a service-level/unchecked BBOX is
+// never enough. No inference about actual nontransparent image pixels.
+const fullWorldEnvelope=layer=>layer.coverage_scope==="global"
+  ||(layer.coverage_scope==="bbox"
+     &&layer.coverage_verified===true
+     &&layer.coverage?.west===-180
+     &&layer.coverage?.east===180
+     &&layer.coverage?.south===-90
+     &&layer.coverage?.north===90);
 export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null}={}){
  if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
    ||!Number.isInteger(maxDataAgeSeconds)||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
@@ -64,7 +75,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
       ||(layer.freshness_class==="older_background"&&(
          maxBackgroundAgeSeconds===null
-         ||layer.coverage_scope!=="global"
+         ||!fullWorldEnvelope(layer)
          ||layer.semantics.observation_kind!=="estimate"
          ||!["satellite_precipitation_estimate","satellite_estimate"].includes(layer.semantics.measurement_method)
          ||layer.quality_note!=="older_satellite_background"
