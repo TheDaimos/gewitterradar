@@ -982,6 +982,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       let painted;
       const firstPaint=new Promise(resolve=>{painted=resolve;});
       const readyTiles=new Set();
+      const foundationTiles=new Set();
       let gridLoaded=false;
       const markReady=()=>{if(gridLoaded&&readyTiles.size>=minReadyTiles)painted(true);};
       // A single painted tile does not establish a usable replacement view.
@@ -1011,7 +1012,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
             if(!item?.drawn?.length||!item.tile)return;
-            readyTiles.add([item.tile.z,item.tile.x,item.tile.y].join("/"));
+            const tileKey=[item.tile.z,item.tile.x,item.tile.y].join("/");
+            readyTiles.add(tileKey);
+            if(item.drawn.some(drawn=>result?.response?.layers?.some(source=>
+              source.coverage_verified===true&&source.coverage_scope==="global"&&
+              source.source_id===drawn.source_id)))foundationTiles.add(tileKey);
             markReady();
           }}
       });
@@ -1046,8 +1051,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(!ready||!current()){report("fallback",{reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});return false;}
       // A successful Leaflet load and two painted tiles are not a proof
       // that all currently visible grid tiles have usable raster content.
-      const bounds=this._map.getPixelBounds?.();
-      const zoom=Math.round(this._map.getZoom?.()??-1);
+      const mapZoom=Math.round(this._map.getZoom?.()??-1);
+      const zoom=Math.min(mapZoom,18);
+      const mapBounds=this._map.getBounds?.();
+      const nw=mapBounds&&this._map.project?.(mapBounds.getNorthWest(),zoom);
+      const se=mapBounds&&this._map.project?.(mapBounds.getSouthEast(),zoom);
+      const bounds=nw&&se?{min:nw,max:se}:null;
       const visible=new Set();
       if(bounds&&zoom>=0&&zoom<=18){
         const world=2**zoom;
@@ -1058,9 +1067,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           for(let x=minX;x<=maxX;x++)visible.add(zoom+"/"+(((x%world)+world)%world)+"/"+y);
         }
       }
-      const uncovered=[...visible].filter(key=>!readyTiles.has(key));
+      const requiredTiles=result.response?.status==="partial"?foundationTiles:readyTiles;
+      const uncovered=[...visible].filter(key=>!requiredTiles.has(key));
       report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
-        painted_tiles:readyTiles.size,uncovered_tiles:uncovered.length});
+        painted_tiles:readyTiles.size,foundation_tiles:foundationTiles.size,
+        uncovered_tiles:uncovered.length});
       if(!visible.size||uncovered.length){
         report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
           uncovered_tiles:uncovered.length});
