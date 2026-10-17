@@ -178,6 +178,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const details={api_version:state.v2Snapshot?2:state.lastReady?1:null,
       provider_id:state.lastReady?.answer?.provenance?.provider_id||null,
       source_ids:state.v2Snapshot?.layers?.map(x=>x.source_id).slice(0,12)||[],
+      diagnostic_detail_enabled:Boolean(this.__weatherEngineTraceStore?.displayExtended),
       layer_present:!!layer,map_attached:mapAttached,pane_visible:pane?.style?.display!=="none",
       opacity:Number.isFinite(opacity)?opacity:null,visible_possible:visible,
       loaded_tiles:loaded,known_tiles:total,zoom:Number(map?.getZoom?.()??NaN),
@@ -196,13 +197,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return state.v2Snapshot.layers?.some(layer=>{
         const age=Number(layer?.times?.age_seconds);
         const older=layer?.freshness_class==="older_background";
-        return Number.isFinite(age)&&age>=0&&
+        return typeof age==="number"&&Number.isFinite(age)&&age>=0&&
           age<=((older&&state.allowOlderSatelliteBackground)?43200:900);
       })===true;
     }
     const record=state.lastReady;
     if(!record?.answer)return false;
-    const age=Number(record.answer.freshness?.age_seconds);
+    const age=record.answer.freshness?.age_seconds;
     const method=String(record.answer.resource?.semantics?.measurement_method||"");
     const isBackground=method.includes("satellite")&&
       record.answer.resource?.semantics?.observation_kind==="estimate";
@@ -367,7 +368,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       img.onload=()=>{
         const stats=layer.__grRadarTileMetrics;
         stats.loaded++;stats.max_tile_ms=Math.max(stats.max_tile_ms,Math.round(performance.now()-started));
-        if(stats.loaded===1||stats.loaded%32===0)
+        if(stats.loaded===1||stats.loaded%(this.__weatherEngineTraceStore?.displayExtended?4:32)===0)
           this._weatherEngineMonitorEvent?.("v1_tile_progress",{
             provider_api:1,zoom:coords.z,requested:stats.requested,
             loaded:stats.loaded,failed:stats.failed,max_tile_ms:stats.max_tile_ms});
@@ -1128,7 +1129,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
-            if(!item?.drawn?.length||!item.tile)return;
+            if(this.__weatherEngineTraceStore?.displayExtended&&item?.rejected?.length)
+               this._weatherEngineMonitorEvent?.("v2_tile_rejection",{
+                 zoom:item.tile?.z??null,count:item.rejected.length,
+                 correlation_id:correlationId,reason:item.rejected[0]?.reason||"unknown"});
+             if(!item?.drawn?.length||!item.tile)return;
             const world=2**item.tile.z;
             const tileKey=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
             readyTiles.add(tileKey);
@@ -1226,6 +1231,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       }
       report("raster_ready",{painted_tiles:readyTiles.size});
       const old=state.layer;
+      const oldApi=state.v2Snapshot?2:state.lastReady?1:null;
       state.layer=staged;state.v2PendingLayer=null;
       state.v2RenderMetrics={drawn_tiles:readyTiles.size,complete_tiles:geometricallyCompleteTiles.size,
         uncovered_tiles:uncovered.length,visible_tiles:visible.size};
@@ -1237,7 +1243,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
       this._weatherEngineMonitorEvent?.("v2_layer_swapped",{
         correlation_id:correlationId,source_ids:result.response.layers.map(l=>l.source_id),
-        from_api:old?(state.lastReady?1:2):null,to_api:2,visible_tiles:visible.size,
+        from_api:old?oldApi:null,to_api:2,visible_tiles:visible.size,
         complete_tiles:geometricallyCompleteTiles.size,zoom:Number(this._map?.getZoom?.()??0)});
       if(old)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
