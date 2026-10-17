@@ -39,6 +39,20 @@ assert.equal(measureRasterViewportCoverage([global],dateline,9).complete,true);
 assert.equal(measureRasterViewportCoverage([source("east",{west:170,east:180,south:-15,north:15}),
  source("west",{west:-180,east:-170,south:-15,north:15})],dateline,9).complete,true);
 assert.equal(measureRasterViewportCoverage([],cube,8).complete,false);
+// Regression: source-native zoom 11 is NOT a display-zoom ceiling. A global
+// foundation remains geographically eligible at 12, 13, 15 and 17.
+for(const displayZoom of [12,13,15,17]){
+ assert.equal(measureRasterViewportCoverage([global],cube,displayZoom).complete,true,
+  "global z11 native source must remain usable at display zoom "+displayZoom);
+ assert.equal(measureRasterViewportCoverage([regional],cube,displayZoom).complete,false,
+  "a DWD edge may not claim full coverage at zoom "+displayZoom);
+ assert.equal(measureRasterViewportCoverage([global,regional],cube,displayZoom).complete,true,
+  "global foundation and regional DWD overlay must coexist at zoom "+displayZoom);
+}
+// Provider-neutral regional union is valid without a global source when the
+// individual sources jointly cover the entire viewport.
+assert.equal(measureRasterViewportCoverage(adjacent,
+ {west:-20,east:20,south:20,north:30},17).complete,true);
 
 // Success means actual drawImage crop geometry, not merely any tile callback.
 const left={sx:0,sy:0,sw:128,sh:256};
