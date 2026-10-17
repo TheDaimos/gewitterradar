@@ -30,7 +30,8 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-const isV41184Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41191r1";')
+const isV411LatestDev = ["41192r1", "41191r1"].some(revision =>
+  frontendText.includes(`import { APPLICATION_RELEASE } from "./version.js?v=${revision}";`))
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41163Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41168r1";')
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
@@ -55,22 +56,26 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV41184Dev) {
+if (isV411LatestDev) {
   // Additional data-source modules do not change protected About geometry.
   // Keep the historical V4.11.68 contract and the browser golden comparison.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  assert.ok(versionText.includes('version:"4.11.91"'));
-  assert.ok(versionText.includes('displayVersion:"V4.11.91 DEV"'));
-  assert.ok(versionText.includes('build:"V4.11.91-DEV-2026-10-17"'));
-  assert.ok(versionText.includes('runtimeRevision:"41191r1"'));
-  assert.ok(versionText.includes('moduleSetId:"E411-91A1"'));
-  assert.equal(runtime.productVersion, '4.11.91');
-  assert.equal(runtime.build, 'V4.11.91-DEV-2026-10-17');
-  assert.equal(runtime.runtimeRevision, '41191r1');
-  assert.equal(runtime.moduleSetId, 'E411-91A1');
+  const expectedVersion = frontendText.includes('version.js?v=41192r1') ? '4.11.92' : '4.11.91';
+  const expectedRuntime = expectedVersion === '4.11.92' ? '41192r1' : '41191r1';
+  const expectedModules = expectedVersion === '4.11.92' ? 'E411-92A1' : 'E411-91A1';
+  const expectedBuild = `V${expectedVersion}-DEV-2026-10-17`;
+  assert.ok(versionText.includes(`version:"${expectedVersion}"`));
+  assert.ok(versionText.includes(`displayVersion:"V${expectedVersion} DEV"`));
+  assert.ok(versionText.includes(`build:"${expectedBuild}"`));
+  assert.ok(versionText.includes(`runtimeRevision:"${expectedRuntime}"`));
+  assert.ok(versionText.includes(`moduleSetId:"${expectedModules}"`));
+  assert.equal(runtime.productVersion, expectedVersion);
+  assert.equal(runtime.build, expectedBuild);
+  assert.equal(runtime.runtimeRevision, expectedRuntime);
+  assert.equal(runtime.moduleSetId, expectedModules);
   assert.equal(runtime.modules.length, 34);
 } else if (isV41163Dev) {
   // Preserve the immutable V4.07.56 About geometry baseline; this branch
