@@ -259,7 +259,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     state.lastReady=null;
     if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
     state.v2BudgetTimer=null;state.v2BudgetPending=false;
-    state.lastUnavailable={code:coverage.reason.includes("age")||coverage.reason.includes("expired")
+    state.lastUnavailable={code:["v1_age_invalid","v2_sources_expired"].includes(coverage.reason)
       ?"source_stale":"outside_coverage"};
     this._weatherRadarUpdateControls();
     this._weatherRadarVisualAudit("raster_detached_outside_coverage");
