@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.89",
-  "build": "V4.11.89-DEV-2026-10-17",
-  "runtimeRevision": "41189r1",
-  "moduleSetId": "E411-89A1",
+  "productVersion": "4.11.90",
+  "build": "V4.11.90-DEV-2026-10-17",
+  "runtimeRevision": "41190r1",
+  "moduleSetId": "E411-90A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.89 DEV: WeatherRouter P7-010 regional DWD edge cannot replace full V1 viewport without verified geographic and fully drawn raster tile coverage; bounded fallback with correlation preserved, WR 0.10.153 UTC P0 coordination. HA real-test pending; FLK-01 separate.",
+    "purpose": "V4.11.90 DEV: protect verified broad V1/V2 raster against regional V1 replacement; bounded V1/V2 display diagnostics with zoom, tile errors, swap decisions and user timestamp marker. HA real acceptance remains with operator.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
