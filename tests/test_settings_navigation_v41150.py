@@ -98,15 +98,15 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.93"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.93")
-        self.assertEqual(runtime["runtimeRevision"], "41193r1")
-        self.assertEqual(runtime["moduleSetId"], "E411-93A1")
+        self.assertIn('version:"4.11.94"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.94")
+        self.assertEqual(runtime["runtimeRevision"], "41194r1")
+        self.assertEqual(runtime["moduleSetId"], "E411-94A1")
         self.assertEqual(len(runtime["modules"]), 34)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
         self.assertEqual(by_id["ui.controls"], "1.1.27")
         self.assertEqual(by_id["ui.skeleton"], "1.1.25")
-        self.assertEqual(by_id["core.manifest"], "1.2.146")
+        self.assertEqual(by_id["core.manifest"], "1.2.147")
         self.assertIn('"id": "ui.controls",\n    "version": "1.1.27"', manifest)
 
 
