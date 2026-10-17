@@ -145,12 +145,12 @@ assert.equal(bboxWithoutOptIn.mode,"fallback");
 const bboxUnverified=await prepareRasterMosaicV2({
  ...opts,callWS:async()=>({...combinedBbox,layers:[
   {...olderBbox,coverage_verified:false},freshRegional
- ])});
+ ]})});
 assert.equal(bboxUnverified.mode,"fallback");
 const bboxRegional=await prepareRasterMosaicV2({
  ...opts,callWS:async()=>({...combinedBbox,layers:[
   {...olderBbox,coverage:{west:5,east:16,south:46,north:56}},freshRegional
- ])});
+ ]})});
 assert.equal(bboxRegional.mode,"fallback");
 assert.equal((await prepareRasterMosaicV2({...opts,maxBackgroundAgeSeconds:null})).mode,"fallback");
 assert.equal(buildRasterMosaicV2Request({
