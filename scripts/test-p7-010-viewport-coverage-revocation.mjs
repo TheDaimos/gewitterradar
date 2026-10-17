@@ -60,6 +60,23 @@ assert.equal(card._weatherRadarCullOutsideViewport(),true);
 assert.equal(removed,2);
 assert.equal(card.__weatherRadarState.v2Snapshot,null);
 
+// NASA's older world satellite must never bypass explicit consent.
+const nasaGlobal={
+ layer:{},allowOlderSatelliteBackground:false,v2SnapshotAt:t,
+ v2Snapshot:{layers:[{
+  source_id:"nasa_gibs/satellite_precipitation_imerg_30min",
+  coverage_verified:true,coverage_scope:"bbox",
+  coverage:{west:-180,east:180,south:-90,north:90},
+  render:{min_zoom:0,opacity:0.6},
+  times:{age_seconds:25500},freshness_class:"older_background"
+ }]}
+};
+assert.equal(weatherRadarActiveCoverage(nasaGlobal,cuba,7,t).fraction,0,
+  "old NASA background cannot bypass disabled 12h consent");
+nasaGlobal.allowOlderSatelliteBackground=true;
+assert.equal(weatherRadarActiveCoverage(nasaGlobal,cuba,7,t).fraction,1,
+  "verified world NASA envelope may be used only after explicit consent");
+
 // WR may return 'ready' for an old regional candidate even when the user's BBOX
 // is Cuba. Never stage its WMS URL outside verified spatial coverage.
 card.__weatherRadarState.lastReady=null;
