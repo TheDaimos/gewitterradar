@@ -1,10 +1,10 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41189r1";
+import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41191r1";
 import {measureRasterViewportCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=41190r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.11",
+  version:"1.3.12",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -1145,7 +1145,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             readyTiles.add(tileKey);
             if(item.tile_coverage?.complete===true)geometricallyCompleteTiles.add(tileKey);
             if(item.drawn.some(drawn=>result?.response?.layers?.some(source=>
-              source.coverage_verified===true&&source.coverage_scope==="global"&&
+              source.coverage_verified===true&&
+              (source.coverage_scope==="global"||
+                (source.coverage_scope==="bbox"&&
+                 source.coverage?.west===-180&&source.coverage?.east===180&&
+                 source.coverage?.south===-90&&source.coverage?.north===90))&&
               source.source_id===drawn.source_id)))foundationTiles.add(tileKey);
             markReady();
           }}
