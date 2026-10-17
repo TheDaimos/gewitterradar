@@ -80,3 +80,37 @@ export function measureRasterTileCoverage(rectangles,tileSize=256){
   const fraction=clamp(unionArea(clipped)/(tileSize*tileSize),0,1);
   return {fraction,complete:fraction>=1-1e-6,geometric_only:true};
 }
+
+/** Translate a V1 single-source provenanced envelope into auditable geometry.
+ * Never derive source coverage from provider names, tile success or the map.
+ */
+export function measureV1RasterCoverage(provenance,viewport,zoom=0){
+  const machine=provenance?.spatial_coverage;
+  const scope=machine?.scope;
+  const envelope=scope==="global"
+    ?{west:-180,east:180,south:-90,north:90}
+    :scope==="bbox"?machine?.bbox:null;
+  if(!envelope)return {fraction:0,complete:false,verified:false,geometric_only:true};
+  const result=measureRasterViewportCoverage([{
+    source_id:provenance?.provider_id||"v1",
+    coverage:envelope,coverage_verified:true,coverage_scope:scope,
+    render:{min_zoom:0,opacity:1}
+  }],viewport,zoom);
+  return {...result,verified:true};
+}
+
+/** Protect a loaded wide-area raster against a much narrower replacement.
+ * Old images still require the caller's temporal/consent check.
+ * A cold start is never blocked by coverage alone.
+ */
+export function decideV1RasterSwap({previous=null,next=null,viewport,zoom=0,previousUsable=false}={}){
+  const old=previous?.layers
+    ?measureRasterViewportCoverage(previous.layers,viewport,zoom)
+    :measureV1RasterCoverage(previous?.provenance,viewport,zoom);
+  const proposed=measureV1RasterCoverage(next?.provenance,viewport,zoom);
+  const oldFraction=old.fraction||0, newFraction=proposed.fraction||0;
+  const preserve=Boolean(previousUsable&&oldFraction>=0.90&&newFraction<0.90&&newFraction+0.10<oldFraction);
+  return {allow:!preserve,reason:preserve?"regional_cannot_replace_broad_raster":"replacement_allowed",
+    old_fraction:Number(oldFraction.toFixed(5)),new_fraction:Number(newFraction.toFixed(5)),
+    previous_verified:old.verified!==false&&oldFraction>0,next_verified:proposed.verified===true};
+}
