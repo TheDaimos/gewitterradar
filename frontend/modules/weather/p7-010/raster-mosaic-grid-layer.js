@@ -57,7 +57,9 @@ export function createRasterMosaicGridLayer(L,snapshot,{
         if(!controller?.signal.aborted)try{
           onTileDiagnostics?.({...result,tile:{x:coords.x,y:coords.y,z:coords.z}});
         }catch(_){}
-        done?.(controller?.signal.aborted?new Error("Raster tile cancelled"):null,canvas);
+        const error=controller?.signal.aborted?new Error("Raster tile cancelled")
+          :!result?.drawn?.length?new Error("Raster tile has no drawable source"):null;
+        done?.(error,canvas);
       },error=>done?.(error,canvas)).finally(()=>{
         if(controller)pending.delete(controller);
         canvas._p7RasterAbort=null;

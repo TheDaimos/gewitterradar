@@ -130,6 +130,15 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
     .replaceAll("{bbox-epsg-3857}",weatherRasterBbox3857(coords));
 };
 
+export function weatherRadarNeedsConsentDetach(state,now=Date.now()){
+  if(!state?.layer)return false;
+  if(state.v2Snapshot?.layers?.some(l=>l?.freshness_class==="older_background"))return true;
+  const a=state.lastReady?.answer,s=a?.resource?.semantics||{};
+  if(s.observation_kind!=="estimate"||!String(s.measurement_method||"").includes("satellite"))return false;
+  const age=a.freshness?.age_seconds;
+  return typeof age!=="number"||!Number.isFinite(age)||age<0||
+    age+Math.max(0,(now-(state.lastReady?.at??now))/1000)>900;
+}
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
     if(!this.__weatherRadarState){
@@ -155,7 +164,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
-        inFlight:false,pending:false,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null
+        inFlight:false,pending:false,pendingForce:false,v2BudgetPending:false,v2BudgetTimer:null,v2LastBudgetRecovery:0,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null
       };
     }
     return this.__weatherRadarState;
@@ -265,13 +274,28 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     return true;
   },
 
-  _scheduleWeatherRadarRefresh(reason="timer",delay=0){
+  _scheduleWeatherRadarRefresh(reason="timer",delay=0,{force=false}={}){
     const state=this._weatherRadarState();
     if(!state.enabled)return;
     if(state.debounceTimer)clearTimeout(state.debounceTimer);
-    state.debounceTimer=setTimeout(()=>{state.debounceTimer=null;this._refreshWeatherRadar({reason});},Math.max(0,delay));
+    state.debounceTimer=setTimeout(()=>{
+      state.debounceTimer=null;void this._refreshWeatherRadar({reason,force});
+    },Math.max(0,delay));
   },
-
+  _weatherRadarScheduleBudgetRecovery(snapshot){
+    const state=this._weatherRadarState();
+    if(!state.enabled||state.v2Snapshot!==snapshot||state.v2BudgetPending)return;
+    const delay=Math.max(250,15000-(Date.now()-(state.v2LastBudgetRecovery||0)));
+    state.v2BudgetPending=true;
+    state.v2BudgetTimer=setTimeout(()=>{
+      state.v2BudgetTimer=null;state.v2BudgetPending=false;
+      if(!state.enabled||state.v2Snapshot!==snapshot)return;
+      state.v2LastBudgetRecovery=Date.now();
+      this._weatherEngineMonitorEvent?.("v2_budget_recovery_requested",{minimum_interval_s:15});
+      void this._refreshWeatherRadar({reason:"raster-budget-recovery",force:true});
+    },delay);
+  },
+  
   async _setWeatherRadarEnabled(enabled,{persist=true}={}){
     const state=this._weatherRadarState();
     state.enabled=Boolean(enabled);
@@ -292,18 +316,29 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   },
 
   _setWeatherRadarOlderSatelliteBackground(enabled){
-    const state=this._weatherRadarState();
-    const next=Boolean(enabled);
+    const state=this._weatherRadarState(),next=Boolean(enabled);
     if(state.allowOlderSatelliteBackground===next)return;
     state.allowOlderSatelliteBackground=next;
     try{localStorage.setItem(BACKGROUND_STORAGE_KEY,next?"1":"0");}catch(_error){}
-    this._weatherRadarUpdateControls();
-    if(state.enabled){
-      // A user-initiated change of the V2 time contract is immediately effective.
-      // Reset the same-viewport cooldown while retaining the visible V1/V2 layer.
-      state.lastRequestAt=0;
-      void this._refreshWeatherRadar({reason:"background-policy-change",force:true});
+    state.v2Generation++; // Invalidate all in-flight V1/V2 replies on consent change.
+    state.v1PendingCancel?.();
+    if(state.v2PendingLayer){
+      try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_error){}
+      state.v2PendingLayer=null;
     }
+    if(!next&&weatherRadarNeedsConsentDetach(state)){
+      this._weatherEngineMonitorEvent?.("satellite_consent_revoked",{reason:"older_satellite_layer_invalid"});
+      this._weatherRadarRemoveLayer();
+      state.v2Snapshot=null;state.v2SnapshotAt=null;state.v2RenderMetrics=null;state.lastReady=null;
+      if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
+      state.v2BudgetTimer=null;state.v2BudgetPending=false;
+      this._weatherRadarVisualAudit("satellite_consent_revoked");
+    }
+    state.lastRequestAt=0;
+    this._weatherRadarUpdateControls();
+    if(!state.enabled)return;
+    if(state.inFlight){state.pending=true;state.pendingForce=true;}
+    else void this._refreshWeatherRadar({reason:"background-policy-change",force:true});
   },
 
   _weatherRadarNaturalOpacity(){
@@ -431,6 +466,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     if(!state.enabled)return;
     if(state.preloadTimer)clearTimeout(state.preloadTimer);
+    if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
+    state.v2BudgetTimer=null;state.v2BudgetPending=false;
     state.preloadTimer=setTimeout(()=>{state.preloadTimer=null;this._weatherRadarRunPreload();},Math.max(0,delay));
   },
 
@@ -955,6 +992,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const payload=answer?.resource?.payload;
     if(!payload?.tile_url)return false;
+    // Old satellite imagery must not reappear through a V1 fallback.
+    const sem=answer?.resource?.semantics||{};
+    if(sem.observation_kind==="estimate"&&String(sem.measurement_method||"").includes("satellite")){
+      const age=answer?.freshness?.age_seconds,limit=state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
+      if(typeof age!=="number"||!Number.isFinite(age)||age<0||age>limit){
+        this._weatherEngineMonitorEvent?.("v1_satellite_age_rejected",{consent:state.allowOlderSatelliteBackground,limit_seconds:limit});
+        return false;
+      }
+    }
     const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
       &&this._weatherRadarViewport()?.signature===viewport.signature;
     if(!current())return false;
@@ -1139,7 +1185,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
                this._weatherEngineMonitorEvent?.("v2_tile_rejection",{
                  zoom:item.tile?.z??null,count:item.rejected.length,
                  correlation_id:correlationId,reason:item.rejected[0]?.reason||"unknown"});
-             if(!item?.drawn?.length||!item.tile)return;
+             if(item?.rejected?.some(x=>x.reason==="request_budget_exhausted")&&
+              state.layer===staged&&state.v2Snapshot===result?.response)
+              this._weatherRadarScheduleBudgetRecovery(result.response);
+            if(!item?.drawn?.length||!item.tile)return;
             const world=2**item.tile.z;
             const tileKey=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
             readyTiles.add(tileKey);
@@ -1246,6 +1295,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       state.v2RenderMetrics={drawn_tiles:readyTiles.size,complete_tiles:geometricallyCompleteTiles.size,
         uncovered_tiles:uncovered.length,visible_tiles:visible.size};
       state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();state.v2LastPartial=null;state.lastReady=null;state.lastUnavailable=null;
+      if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
+      state.v2BudgetTimer=null;state.v2BudgetPending=false;
       this._weatherRadarRemoveTimelinePlayer();
       state.timelineModel=null;state.timelineIndex=-1;
       this._weatherRadarClearPreload();
@@ -1294,7 +1345,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._scheduleWeatherRadarRefresh(reason,minWait-(now-state.lastRequestAt)+50);
       return;
     }
-    if(state.inFlight){state.pending=true;return;}
+    if(state.inFlight){state.pending=true;state.pendingForce=state.pendingForce||force;return;}
     const token=++state.v2Generation;
     state.inFlight=true;state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
     this._weatherEngineMonitorEvent?.("refresh_started",{
@@ -1338,7 +1389,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._weatherRadarUpdateControls();
     }finally{
       state.inFlight=false;
-      if(state.pending){state.pending=false;this._scheduleWeatherRadarRefresh("pending",250);}
+      if(state.pending){
+        const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
+        this._scheduleWeatherRadarRefresh("pending",250,{force:forcePending});
+      }
     }
   },
 

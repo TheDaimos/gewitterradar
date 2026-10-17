@@ -22,6 +22,8 @@ export class RasterTileRequestBudget {
    this.active=0;
    this.queue=[];
    this.closed=false;
+   this.imageCache=new Map();
+   this.maxCachedImages=24;
  }
  async reserve(signal=null){
    if(this.closed||signal?.aborted||this.used>=this.maxRequests)return null;
@@ -54,8 +56,21 @@ export class RasterTileRequestBudget {
      this._releaseSlot();
    };
  }
+ getCachedImage(id,url){
+   if(this.closed)return null;
+   const key=id+"\n"+url,img=this.imageCache.get(key);
+   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);}
+   return img||null;
+ }
+ cacheImage(id,url,img){
+   if(this.closed||!img)return;
+   const key=id+"\n"+url;
+   this.imageCache.delete(key);this.imageCache.set(key,img);
+   while(this.imageCache.size>this.maxCachedImages)this.imageCache.delete(this.imageCache.keys().next().value);
+ }
  close(){
    this.closed=true;
+   this.imageCache.clear();
    for(const entry of this.queue.splice(0)){
      entry.signal?.removeEventListener("abort",entry.onAbort);
      entry.resolve(false);
@@ -127,6 +142,9 @@ export async function drawRasterMosaicTileFromUrls({
    let url;
    try{url=rasterTileUrl(layer.tile_url,sourceTile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
+   const cached=budget.getCachedImage(source_id,url);
+   if(cached&&!signal?.aborted)
+     return {source_id,layer:{...layer,image:cached,_p7SourceTile:sourceTile}};
    const release=await budget.reserve(signal);
    if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
    try{
@@ -158,6 +176,7 @@ export async function drawRasterMosaicTileFromUrls({
      }
      if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
      if(!image)return {source_id,reason:"empty_raster_image"};
+     budget.cacheImage(source_id,url,image);
      return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
    }catch(_){
      return {source_id,reason:signal?.aborted?"tile_cancelled":"image_request_failed"};
