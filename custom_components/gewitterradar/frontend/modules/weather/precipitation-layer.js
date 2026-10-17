@@ -1014,7 +1014,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
             if(!item?.drawn?.length||!item.tile)return;
-            const tileKey=[item.tile.z,item.tile.x,item.tile.y].join("/");
+            const world=2**item.tile.z;
+            const tileKey=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
             readyTiles.add(tileKey);
             if(item.tile_coverage?.complete===true)geometricallyCompleteTiles.add(tileKey);
             if(item.drawn.some(drawn=>result?.response?.layers?.some(source=>
