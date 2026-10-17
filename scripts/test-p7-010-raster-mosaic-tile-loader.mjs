@@ -51,7 +51,13 @@ assert.equal(drawnWithOne.rejected[0].reason,"request_budget_exhausted");
 const again=await drawRasterMosaicTileFromUrls({
  context:{drawImage:()=>{}},tile,layers:[wms],loadImage,budget:one
 });
-assert.equal(again.drawn.length,0,"total tile budget persists across view tiles");
+assert.equal(again.drawn.length,1,"identical downloaded ancestor can be reused");
+assert.equal(one.used,1,"cache hit does not count as another image request");
+const uncached=await drawRasterMosaicTileFromUrls({
+ context:{drawImage:()=>{}},tile:{x:1,y:0,z:1},layers:[wms],loadImage,budget:one
+});
+assert.equal(uncached.drawn.length,0,"new source image still obeys budget");
+assert.equal(uncached.rejected[0].reason,"request_budget_exhausted");
 
 const failed=await drawRasterMosaicTileFromUrls({
  context:{drawImage:()=>{}},tile,layers:[wms,local],

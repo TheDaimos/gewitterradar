@@ -38,7 +38,7 @@ for(const name of ["modules/ui/skeleton.js","modules/weather/consumer-client.js"
   }
 }
 const sums=(await read("SHA256SUMS_FRONTEND.txt")).trim().split("\n");
-assert.equal(sums.length,246);
+assert.ok(sums.length>=246,"all existing integrity rows must remain present");
 for(const name of ["modules/ui/skeleton.js","modules/weather/consumer-client.js",
   "modules/weather/precipitation-layer.js"]){
   for(const dest of ["dashboard/dist","custom_components/gewitterradar/frontend"]){

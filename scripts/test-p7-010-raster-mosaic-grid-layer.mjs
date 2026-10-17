@@ -56,10 +56,11 @@ assert.equal(painted.length,2);
 assert.ok(painted[1][7]<11,"local WMS only paints its verified area");
 assert.equal(diagnostics[0].requests_used,2);
 assert.equal(L._p7RasterRequestBudget.used,2);
-const afterExhaustion=await new Promise((resolve,reject)=>{
- L.createTile({x:1,y:0,z:1},(err,tile)=>err?reject(err):resolve(tile));
+const afterExhaustion=await new Promise(resolve=>{
+  L.createTile({x:1,y:0,z:1},(err,tile)=>resolve({err,tile}));
 });
-assert.ok(afterExhaustion);
+assert.ok(afterExhaustion.err,"budget exhaustion reports tileerror, not a loaded blank image");
+assert.ok(afterExhaustion.tile);
 assert.equal(requests.length,2,"shared V2 request budget must block further fetches");
 
 const noLocal=createRasterMosaicGridLayer(FakeLeaflet,response,{
