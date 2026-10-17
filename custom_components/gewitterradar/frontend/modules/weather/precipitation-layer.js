@@ -1017,6 +1017,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       });
       if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return false;}
       if(!current()){report("stale_after_response");return false;}
+      // A regional partial result may cover only the DWD fringe. In that case
+      // it must not replace the full V1 image, regardless of two painted tiles.
+      // The WR ordering and source choice remain untouched by this guard.
+      const hasVerifiedGlobalFoundation=result.response?.layers?.some(layer=>
+        layer.coverage_verified===true&&layer.coverage_scope==="global");
+      if(result.response?.status==="partial"&&!hasVerifiedGlobalFoundation){
+        report("v2_partial_no_full_viewport",{reason:"no_verified_global_foundation",
+          source_count:result.response?.layers?.length||0});
+        report("v1_fallback_started",{reason:"regional_partial"});
+        return false;
+      }
       if(!this._map.getPane("gr-weather-radar")){
         const pane=this._map.createPane("gr-weather-radar");
         pane.style.zIndex="230";pane.style.pointerEvents="none";
@@ -1033,6 +1044,29 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const ready=await Promise.race([firstPaint,
         new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
       if(!ready||!current()){report("fallback",{reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});return false;}
+      // A successful Leaflet load and two painted tiles are not a proof
+      // that all currently visible grid tiles have usable raster content.
+      const bounds=this._map.getPixelBounds?.();
+      const zoom=Math.round(this._map.getZoom?.()??-1);
+      const visible=new Set();
+      if(bounds&&zoom>=0&&zoom<=18){
+        const world=2**zoom;
+        const minX=Math.floor(bounds.min.x/256),maxX=Math.floor((bounds.max.x-0.000001)/256);
+        const minY=Math.floor(bounds.min.y/256),maxY=Math.floor((bounds.max.y-0.000001)/256);
+        for(let y=minY;y<=maxY;y++){
+          if(y<0||y>=world)continue;
+          for(let x=minX;x<=maxX;x++)visible.add(zoom+"/"+(((x%world)+world)%world)+"/"+y);
+        }
+      }
+      const uncovered=[...visible].filter(key=>!readyTiles.has(key));
+      report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
+        painted_tiles:readyTiles.size,uncovered_tiles:uncovered.length});
+      if(!visible.size||uncovered.length){
+        report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
+          uncovered_tiles:uncovered.length});
+        report("v1_fallback_started",{reason:"uncovered_visible_tiles"});
+        return false;
+      }
       report("raster_ready",{painted_tiles:readyTiles.size});
       const old=state.layer;
       state.layer=staged;state.v2PendingLayer=null;
