@@ -133,8 +133,9 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export function weatherRadarNeedsConsentDetach(state,now=Date.now()){
   if(!state?.layer)return false;
   if(state.v2Snapshot?.layers?.some(l=>l?.freshness_class==="older_background"))return true;
-  const a=state.lastReady?.answer,s=a?.resource?.semantics||{};
-  if(s.observation_kind!=="estimate"||!String(s.measurement_method||"").includes("satellite"))return false;
+  const a=state.lastReady?.answer;
+  if(!a)return false;
+  // A revoked age exception also invalidates V1 imagery without satellite labels.
   const age=a.freshness?.age_seconds;
   return typeof age!=="number"||!Number.isFinite(age)||age<0||
     age+Math.max(0,(now-(state.lastReady?.at??now))/1000)>900;
@@ -992,14 +993,20 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const payload=answer?.resource?.payload;
     if(!payload?.tile_url)return false;
-    // Old satellite imagery must not reappear through a V1 fallback.
+    // Fail closed for V1: radar is current for 900 s, older satellite
+    // estimates require an explicit opt-in and positive semantic evidence.
     const sem=answer?.resource?.semantics||{};
-    if(sem.observation_kind==="estimate"&&String(sem.measurement_method||"").includes("satellite")){
-      const age=answer?.freshness?.age_seconds,limit=state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-      if(typeof age!=="number"||!Number.isFinite(age)||age<0||age>limit){
-        this._weatherEngineMonitorEvent?.("v1_satellite_age_rejected",{consent:state.allowOlderSatelliteBackground,limit_seconds:limit});
-        return false;
-      }
+    const age=answer?.freshness?.age_seconds;
+    const current=typeof age==="number"&&Number.isFinite(age)&&age>=0&&age<=900;
+    const permittedSatellite=typeof age==="number"&&Number.isFinite(age)&&age>=0&&
+      age<=BACKGROUND_MAX_AGE_SECONDS&&state.allowOlderSatelliteBackground===true&&
+      sem.observation_kind==="estimate"&&
+      String(sem.measurement_method||"").includes("satellite");
+    if(!current&&!permittedSatellite){
+      this._weatherEngineMonitorEvent?.("v1_raster_age_rejected",{
+        older_background_opt_in:state.allowOlderSatelliteBackground,
+        age_seconds:Number.isFinite(age)?age:null});
+      return false;
     }
     const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
       &&this._weatherRadarViewport()?.signature===viewport.signature;
