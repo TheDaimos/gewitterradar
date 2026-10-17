@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.92",
-  "build": "V4.11.92-DEV-2026-10-17",
-  "runtimeRevision": "41192r1",
-  "moduleSetId": "E411-92A1",
+  "productVersion": "4.11.93",
+  "build": "V4.11.93-DEV-2026-10-18",
+  "runtimeRevision": "41193r1",
+  "moduleSetId": "E411-93A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.92 DEV: WeatherRouter-V2-Niederschlagsdarstellung: sofortiger Widerruf der 12h-Satellitenfreigabe für aktive und ausstehende V1/V2-Bilder; begrenzte Wiederverwendung nativer Rasterquellen, Fehler bei leeren Kacheln, gedrosselte Ressourcenwiederherstellung. NASA+DWD-HA-Gesamtabnahme steht aus.",
+    "purpose": "V4.11.93 DEV: Native HA Seitenleiste lädt Card-Version mit expliziter Laufzeitrevision; automatischer Versionswechsel verwendet einmalige navigierende Zwischenspeicherumgehung und zeigt Neustart-/Ressourcenhinweis. V2-Rasterregeln unverändert; NASA+DWD-HA-Realabnahme steht aus.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

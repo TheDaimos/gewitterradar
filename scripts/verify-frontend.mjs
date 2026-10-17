@@ -176,7 +176,7 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.92"','displayVersion:"V4.11.92 DEV"','runtimeRevision:"41192r1"','moduleSetId:"E411-92A1"']){
+  for(const marker of ['version:"4.11.93"','displayVersion:"V4.11.93 DEV"','runtimeRevision:"41193r1"','moduleSetId:"E411-93A1"']){
     if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
   }
   const runtimeImport=/\?v=(\d+r\d+)/g;
@@ -203,7 +203,7 @@ if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/project-hub/'
 if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
 if(projectHubAssetManifest.runtime_version!=='0.2.0-rc14'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC14 local asset contract mismatch');
 if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
-for(const marker of ['gewitterradar-panel','gewitterradar-card','await import("./gewitterradar.js")','card.setConfig({type:"custom:gewitterradar-card"})','set hass(value)'])if(!nativePanel.includes(marker))throw Error('Native sidebar panel contract missing: '+marker);
+for(const marker of ['gewitterradar-panel','gewitterradar-card','await import(`./gewitterradar.js?v=${APPLICATION_RELEASE.runtimeRevision}`)','card.setConfig({type:"custom:gewitterradar-card"})','set hass(value)'])if(!nativePanel.includes(marker))throw Error('Native sidebar panel contract missing: '+marker);
 if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('https://thedaimos.github.io/weather-router-pub/')||!projectHubOffline.includes('project-page-action'))throw Error('Project Hub RC14 central runtime contract incomplete');
 for(const marker of ['inline-size:min(80px,calc(100% - 16px))','inline-size:min(94px,calc(100% - 16px))','inline-size:min(104px,calc(100% - 14px))','background-size:100% 600%'])if(!projectHubOffline.includes(marker))throw Error('Project Hub responsive project-logo scaling contract missing: '+marker);
 for(const marker of [

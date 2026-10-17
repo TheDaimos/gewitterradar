@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=41192r1";
+import { APPLICATION_RELEASE } from "./version.js?v=41193r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.145",
+    "version": "1.2.146",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -164,7 +164,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.update-watch",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "group": "Kern",
     "function": "Frontend-Aktualisierung",
     "subfunctions": [
