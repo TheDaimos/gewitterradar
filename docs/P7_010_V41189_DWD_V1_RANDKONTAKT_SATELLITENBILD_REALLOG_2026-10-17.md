@@ -1,6 +1,9 @@
 # P7-010 · GR V4.11.89 · DWD-Randkontakt verdrängt die globale V1-Satellitenebene
 **Realer HA-Diagnoseexport:** `717a15f4-0ed8-447f-8a4e-25ee82e664b2.json` (vom Nutzer im GR-Chat bereitgestellt), `generated_at=2026-10-17T10:09:33.259Z`. **Status: reale Serverantworten nachgewiesen, Zeitpunkt des sichtbaren Bildverlustes nicht als eigenes Grafikereignis aufgezeichnet.**
 
+
+**WICHTIGE PRÄZISIERUNG aus der vollständigen GR-Datei:** In allen neun aufgezeichneten regulären V2-Start-Ereignissen ist `satellite_background_opt_in=true`. Der Nutzer hatte die optionale 12-Stunden-Satellitengrundlage **bereits eingeschaltet**. Dies widerlegt für diesen Export die Erklärung, NASA sei allein wegen eines deaktivierten Schalters ausgeschlossen. Der früher dokumentierte `scope=bbox` vs. `scope=global`-Vertragswiderspruch bleibt damit als konkrete WR-Codeursache besonders relevant; die tatsächlich ausgewerteten Server-Kandidatenablehnungen sind zusätzlich zu kontrollieren. Auch der isolierte V2-Schnittstellentest überträgt `max_background_age_seconds=43200` und liefert dennoch 0 Layer.
+
 ## Befund
 - `discovery.ready=true`, WR wieder betriebsbereit.
 - 17 separate V1-`resolve`-Anfragen während 10:07:52–10:09:19 UTC, **alle `ready`**: **12 DWD**, **5 NASA GIBS**; Antworten 113,6–169,3 ms, keine belegte langsame V1-Serverantwort.
