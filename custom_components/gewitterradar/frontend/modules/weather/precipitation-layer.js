@@ -1042,17 +1042,6 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         report("v1_fallback_started",{reason:"v2_partial_no_full_viewport"});
         return false;
       }
-      // A regional partial result may cover only the DWD fringe. In that case
-      // it must not replace the full V1 image, regardless of two painted tiles.
-      // The WR ordering and source choice remain untouched by this guard.
-      const hasVerifiedGlobalFoundation=result.response?.layers?.some(layer=>
-        layer.coverage_verified===true&&layer.coverage_scope==="global");
-      if(result.response?.status==="partial"&&!hasVerifiedGlobalFoundation){
-        report("v2_partial_no_full_viewport",{reason:"no_verified_global_foundation",
-          source_count:result.response?.layers?.length||0});
-        report("v1_fallback_started",{reason:"regional_partial"});
-        return false;
-      }
       if(!this._map.getPane("gr-weather-radar")){
         const pane=this._map.createPane("gr-weather-radar");
         pane.style.zIndex="230";pane.style.pointerEvents="none";
@@ -1087,7 +1076,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           for(let x=minX;x<=maxX;x++)visible.add(zoom+"/"+(((x%world)+world)%world)+"/"+y);
         }
       }
-      const requiredTiles=result.response?.status==="partial"?foundationTiles:readyTiles;
+      const requiredTiles=readyTiles; // complete drawn geometry, regardless of source scope
       const uncovered=[...visible].filter(key=>
         !requiredTiles.has(key)||!geometricallyCompleteTiles.has(key));
       report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
