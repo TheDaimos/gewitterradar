@@ -123,6 +123,35 @@ await new Promise((resolve,reject)=>mixed.layer.createTile(
  {x:8,y:5,z:4},(err,tile)=>err?reject(err):resolve(tile)));
 assert.equal(mixed.layer._p7RasterRequestBudget.used,2,
  "one Germany tile needs the broad satellite and verified regional radar");
+// WR V0.10.155: a verified product-specific NASA world BBOX, not
+// coverage_scope="global", is the valid older background on the wire.
+const olderBbox={...olderGlobal,coverage_scope:"bbox",coverage:{
+ west:-180,east:180,south:-90,north:90
+}};
+const combinedBbox={...combined,layers:[olderBbox,freshRegional]};
+const bboxResult=await prepareRasterMosaicV2({...opts,callWS:async()=>combinedBbox});
+assert.equal(bboxResult.mode,"v2","verified full-world BBOX must survive GR validation and staging");
+assert.equal(bboxResult.response.layers[0].coverage_scope,"bbox");
+assert.deepEqual(bboxResult.response.layers.map(x=>x.source_id),[
+ "nasa_gibs/satellite_precipitation_imerg_30min","dwd/radar"
+]);
+await new Promise((resolve,reject)=>bboxResult.layer.createTile(
+ {x:8,y:5,z:4},(err,tile)=>err?reject(err):resolve(tile)));
+assert.equal(bboxResult.layer._p7RasterRequestBudget.used,2,
+ "NASA world BBOX and current regional DWD contribute to same tile");
+const bboxWithoutOptIn=await prepareRasterMosaicV2({
+ ...opts,maxBackgroundAgeSeconds:null,callWS:async()=>combinedBbox});
+assert.equal(bboxWithoutOptIn.mode,"fallback");
+const bboxUnverified=await prepareRasterMosaicV2({
+ ...opts,callWS:async()=>({...combinedBbox,layers:[
+  {...olderBbox,coverage_verified:false},freshRegional
+ ])});
+assert.equal(bboxUnverified.mode,"fallback");
+const bboxRegional=await prepareRasterMosaicV2({
+ ...opts,callWS:async()=>({...combinedBbox,layers:[
+  {...olderBbox,coverage:{west:5,east:16,south:46,north:56}},freshRegional
+ ])});
+assert.equal(bboxRegional.mode,"fallback");
 assert.equal((await prepareRasterMosaicV2({...opts,maxBackgroundAgeSeconds:null})).mode,"fallback");
 assert.equal(buildRasterMosaicV2Request({
  viewport,focus,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200
