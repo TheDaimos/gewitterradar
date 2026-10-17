@@ -274,6 +274,12 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       phase:String(phase).slice(0,90),...safe};
     store.displayEvents.push(item);
     if(store.displayEvents.length>160)store.displayEvents.splice(0,store.displayEvents.length-160);
+    // A user-marked window is pinned, even after the ordinary ring overwrites
+    // events. Only forty following events, and at most six marks, are held.
+    for(const marker of store.displayMarkers||[]){
+      if(item.seq>marker.seq&&item.seq<=marker.seq+40&&marker.events?.length<81)
+        marker.events.push(item);
+    }
     return item;
   },
   _weatherEngineMarkFailure(){
@@ -284,8 +290,9 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
     });
     store.displayMarkers??=[];
     store.displayMarkers.push({at:marker.at,seq:marker.seq,
-      window_from_seq:Math.max(1,marker.seq-40),window_to_seq:marker.seq+40});
-    if(store.displayMarkers.length>12)store.displayMarkers.shift();
+      window_from_seq:Math.max(1,marker.seq-40),window_to_seq:marker.seq+40,
+      events:store.displayEvents.slice(-41)});
+    if(store.displayMarkers.length>6)store.displayMarkers.shift();
     this._weatherRadarVisualAudit?.("user_marked_snapshot");
     this._weatherEngineDiagnosticRender?.();
   },
