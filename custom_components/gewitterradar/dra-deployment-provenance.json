@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.89 DEV: P7-010 regional DWD edge cannot replace full V1 viewport without verified geographic and fully drawn raster tile coverage; bounded fallback with correlation preserved, WR 0.10.153 UTC P0 coordination. HA real-test pending; FLK-01 separate.",
+    "purpose": "V4.11.89 DEV: WeatherRouter P7-010 regional DWD edge cannot replace full V1 viewport without verified geographic and fully drawn raster tile coverage; bounded fallback with correlation preserved, WR 0.10.153 UTC P0 coordination. HA real-test pending; FLK-01 separate.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
