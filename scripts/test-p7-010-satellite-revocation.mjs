@@ -50,4 +50,8 @@ assert.equal(await v1._weatherRadarApplyReady(noSemantic,{signature:"sample"},0)
   "unverified V1 imagery cannot be upgraded to older satellite background");
 assert.equal(weatherRadarNeedsConsentDetach({layer:{},lastReady:{at:Date.now(),answer:noSemantic}}),true,
   "revocation removes old imagery even without satellite metadata");
+const freshV1={resource:{payload:{tile_url:"https://example.invalid/fresh"}},
+  freshness:{age_seconds:120}};
+assert.equal(weatherRadarNeedsConsentDetach({layer:{},lastReady:{at:Date.now(),answer:freshV1}}),false,
+  "fresh V1 raster stays mounted when only older satellite consent is revoked");
 console.log("PASS: revocation detaches old satellites and invalidates outstanding V2 work");
