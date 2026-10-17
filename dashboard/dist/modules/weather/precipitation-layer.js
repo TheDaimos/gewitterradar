@@ -1,5 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41188r1";
+import {measureRasterViewportCoverage} from "./p7-010/raster-mosaic-coverage.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
@@ -983,6 +984,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const firstPaint=new Promise(resolve=>{painted=resolve;});
       const readyTiles=new Set();
       const foundationTiles=new Set();
+      const geometricallyCompleteTiles=new Set();
       let gridLoaded=false;
       const markReady=()=>{if(gridLoaded&&readyTiles.size>=minReadyTiles)painted(true);};
       // A single painted tile does not establish a usable replacement view.
@@ -1014,6 +1016,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             if(!item?.drawn?.length||!item.tile)return;
             const tileKey=[item.tile.z,item.tile.x,item.tile.y].join("/");
             readyTiles.add(tileKey);
+            if(item.tile_coverage?.complete===true)geometricallyCompleteTiles.add(tileKey);
             if(item.drawn.some(drawn=>result?.response?.layers?.some(source=>
               source.coverage_verified===true&&source.coverage_scope==="global"&&
               source.source_id===drawn.source_id)))foundationTiles.add(tileKey);
@@ -1022,6 +1025,23 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       });
       if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return false;}
       if(!current()){report("stale_after_response");return false;}
+      const footprint=measureRasterViewportCoverage(
+        result.response.layers,viewport.context,this._map.getZoom?.()??0);
+      report("viewport_coverage",{
+        geographic_fraction:Number(footprint.fraction.toFixed(4)),
+        geographic_complete:footprint.complete,covered_sources:footprint.covered_sources,
+        coverage_type:"verified_envelopes_only"
+      });
+      if(!footprint.complete){
+        result.layer._p7AbortPending?.();
+        report("v2_partial_no_full_viewport",{
+          geographic_fraction:Number(footprint.fraction.toFixed(4)),
+          layers:result.response.layers.length,
+          reason:"geographic_viewport_not_fully_covered"
+        });
+        report("v1_fallback_started",{reason:"v2_partial_no_full_viewport"});
+        return false;
+      }
       // A regional partial result may cover only the DWD fringe. In that case
       // it must not replace the full V1 image, regardless of two painted tiles.
       // The WR ordering and source choice remain untouched by this guard.
@@ -1068,9 +1088,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       }
       const requiredTiles=result.response?.status==="partial"?foundationTiles:readyTiles;
-      const uncovered=[...visible].filter(key=>!requiredTiles.has(key));
+      const uncovered=[...visible].filter(key=>
+        !requiredTiles.has(key)||!geometricallyCompleteTiles.has(key));
       report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
         painted_tiles:readyTiles.size,foundation_tiles:foundationTiles.size,
+        geometrically_complete_tiles:geometricallyCompleteTiles.size,
+        coverage_type:"drawn_crop_geometry_not_nodata_pixels",
         uncovered_tiles:uncovered.length});
       if(!visible.size||uncovered.length){
         report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
