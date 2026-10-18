@@ -1497,8 +1497,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarUpdateControls("Niederschlag wird aktualisiert …");
     try{
       const discovery=await this._weatherRouterDiscovery();
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){
+        if(state.inFlightToken===token)state.pending=true;
+        return;
+      }
       if(!discovery?.ready){this._weatherRadarHandleUnavailable({unavailable:{code:discovery?.compatible?"router_not_ready":"capability_not_supported"}});return;}
-      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       const v2Started=performance.now();
       const v2Used=await this._weatherRadarTryMosaic(viewport,token);
       this._weatherEngineMonitorEvent?.("v2_attempt_completed",{
