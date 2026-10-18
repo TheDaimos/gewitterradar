@@ -12,7 +12,8 @@ Bei nahezu identischem Kartenausschnitt (Zoom 5, Kuba/Florida) zeigte die laufen
 - Ein durch Unterbrechung mehr als 35 Sekunden hängengebliebener V1-/V2-Vorgang wird per Generationsschutz entwertet. Der neue Vorgang kann beginnen. Trifft die alte Antwort später ein, darf sie weder die neue Abfrage entsperren noch eine alte Verfügbarkeitsmeldung zurückschreiben.
 - Wiederholte `focus`- und Sichtbarkeitsereignisse innerhalb von zwei Sekunden erzeugen keine mehrfachen erzwungenen Abfragen. Alle Ereignisbehandler werden beim Entfernen der Karte wieder abgemeldet.
 - Die regionale DWD-Bereinigung von V4.11.94 sowie die bewusst aktivierbare 12-Stunden-NASA-Grenze bleiben unverändert.
-- Neuer Regressionstest: `scripts/test-v41195-android-foreground.mjs`.
+- Fehlt trotz einer erfolgreichen Antwortprüfung noch eine verwendbare Rasterebene, erfolgt ein gebündelter erneuter Versuch frühestens nach 15 Sekunden statt erst nach der normalen 4–5-Minuten-Ruhezeit. Bei bestehendem gültigem Bild bleibt die längere Schonfrist erhalten. Das Wiederaufnehmen einer schon existierenden Karte fordert ebenfalls eine Erneuerung an. Ein Abfrageschwall entsteht dadurch nicht.
+- Neuer Regressionstest: `scripts/test-v41195-android-foreground.mjs` einschließlich geografisch unveränderter Karte ohne Niederschlagsbild.
 
 ## Abnahmegrenze
 

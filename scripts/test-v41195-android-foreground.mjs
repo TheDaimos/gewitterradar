@@ -84,4 +84,29 @@ resolves[1]({ready:false});
 await replacement;
 assert.equal(s.inFlight,false);
 assert.equal(s.inFlightToken,null);
+// A failed cold raster must be retried on the same viewport without waiting
+// four minutes; this also tests that the retry cannot spin faster than 15 s.
+const third=new Card(),state3=third._weatherRadarState();
+state3.enabled=true;
+state3.layer=null;
+state3.lastViewport="Cuba";
+state3.lastRequestAt=Date.now()-16000;
+third._weatherRadarEnsureMapHooks=()=>true;
+third._weatherRadarCullOutsideViewport=()=>false;
+third._weatherRadarViewport=()=>({signature:"Cuba",context:{west:-82,east:-75,south:18,north:24}});
+third._weatherRadarUpdateControls=()=>{};
+third._weatherRadarHandleUnavailable=()=>{};
+third._weatherEngineMonitorEvent=()=>{};
+third._weatherRouterDiscovery=async()=>({ready:false});
+const missing=[];
+third._scheduleWeatherRadarRefresh=(reason,delay,options)=>missing.push({reason,delay,options});
+await third._refreshWeatherRadar({reason:"timer"});
+assert.ok(missing.some(x=>x.reason==="missing-raster-retry"&&x.delay>=15000),
+  "missing raster must retry within the bounded 15-second interval");
+assert.equal(state3.inFlight,false);
+missing.length=0;
+state3.lastRequestAt=Date.now()-1000;
+await third._refreshWeatherRadar({reason:"timer"});
+assert.ok(missing.some(x=>x.reason==="timer"&&x.delay>10000),
+  "same-viewport retries are throttled, not continuous");
 console.log("PASS: Android foreground refresh, deduplication, cleanup and stale in-flight watchdog");
