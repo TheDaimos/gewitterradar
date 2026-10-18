@@ -3,7 +3,7 @@
 
 ## Aktuelle Priorität – Beschluss 18.10.2026
 
-- **V4.11: europäische Niederschlagsradarversorgung** (OPERA, nationale amtliche Radarprodukte, RainViewer-Härtung) mit weiterem P7-010-/V1-/V2-Regressionsschutz und stabiler GR-/WR-Anbindung.
+- **V4.11: vollständige europäische nationale Niederschlagsradarversorgung**, einschließlich UK/Skandinavien/Atlantikinseln/Türkei/Balkan/Osteuropa, **Kanada zusätzlich**, OPERA und RainViewer-Härtung; weitere national verfügbare Wetterdaten (Temperatur, Wind, Blitz, Hagel, amtliche Warnungen und weitere Capabilities) mit aufnehmen. P7-010-/V1-/V2-Regressionsschutz bleibt Voraussetzung.
 - **Zuerst** laufende GR-/WR-Realabnahme, WR-01c und GR-RF-02 abschließen; neue Quellen erst danach zulassen.
 - **V4.12: bisherige offene V4.11-Themen** (Systemstatus, Fehler-/Lösungshinweise, Tracker/Blitzortung, überwachte Orte etc.) **zusätzlich zur bereits verbindlich geplanten Geo-Sonde**.
 - Verbindliche Arbeitslisten: [V4_11_TODO.md](V4_11_TODO.md) und [V4_12_TODO.md](V4_12_TODO.md). Der Radarprovider-Ausbau erfolgt in [WeatherRouter](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/EUROPA_NIEDERSCHLAGSRADAR_TODO_2026-10-18.md).
@@ -37,7 +37,7 @@ Arbeitsregel aus den globalen Defaults:
 
 **ACTIVE / VERSIONIERT – neuer primärer Fokus per Beschluss 18.10.2026; Voraussetzung: laufende gemeinsame WR-/GR-Stabilisierung.**
 
-Schwerpunkt: regional gemessenes Niederschlagsradar für Europa, besonders OPERA/MeteoGate ORD und ergänzende nationale Radarprodukte (u. a. AEMET, RADAR-DPC, GeoSphere, MeteoSchweiz und DMI) sowie regelkonforme Nachbesserung des bereits eingebundenen RainViewer. Eine vollständige Bestandsaufnahme aller europäischen Länder ist erforderlich; Auflistung von Kandidaten ist keine Implementierung.
+Schwerpunkt: **ausdrücklich sämtliche öffentlich verfügbaren und rechtlich nutzbaren nationalen Niederschlagsradarprodukte Europas** (auch bei OPERA-Überdeckung), Kanada als Zusatzgebiet, OPERA/CIRRUS/NIMBUS und RainViewer. Einschließlich Frankreich, Belgien, Niederlande, sämtlicher nordischer Länder, Polen, Tschechien, Balkan, Türkei, Griechenland, Großbritannien und Atlantikinseln. Beim Quellen-Audit auch weitere nationale Temperaturen, Stationsmessungen, Wind/Sturm, Gewitter/Hagel, Warnungen, Modelle und Naturgefahren als WeatherRouter-Capabilities katalogisieren und nach fachlich/rechtlicher Prüfung umsetzen. Eine vollständige Inventur und Einzelabnahme je Quelle sind erforderlich; Kandidatenliste ist kein Implementierungsnachweis.
 
 WeatherRouter implementiert Anbieter, Datenzugang, zeitlichen/geografischen Vertrag und Routing. Gewitterradar bleibt providerneutral und nutzt die bestehenden V1-/V2-Schnittstellen. Erst laufende Regression/Realabnahme beenden, dann neue Quellen Schritt für Schritt integrieren.
 
