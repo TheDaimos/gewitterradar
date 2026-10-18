@@ -1479,7 +1479,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarCullOutsideViewport(viewport);
     const now=Date.now();
     this._weatherRadarRecoverExpiredRequest(now);
-    const minWait=state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
+    // With no mounted raster, the historic four-minute stable-image
+    // cooldown is inappropriate. Retry missing imagery at a bounded pace.
+    const minWait=!state.layer
+      ?Math.max(15000,state.viewportRefreshIntervalSeconds*1000)
+      :state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
     if(!force&&state.lastRequestAt&&now-state.lastRequestAt<minWait){
       this._weatherEngineMonitorEvent?.("refresh_deferred",{
         reason,wait_ms:Math.round(minWait-(now-state.lastRequestAt)),
@@ -1543,6 +1547,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         if(state.pending){
           const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
           this._scheduleWeatherRadarRefresh("pending",250,{force:forcePending});
+        }else if(state.enabled&&!state.layer&&this.isConnected!==false&&
+          (typeof document==="undefined"||document.visibilityState!=="hidden")){
+          // An unavailable first image must not stay blank until the next
+          // five-minute timer. One coalesced retry, no concurrent WS calls.
+          const delay=Math.max(15000,state.viewportRefreshIntervalSeconds*1000);
+          this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{delay_ms:delay});
+          this._scheduleWeatherRadarRefresh("missing-raster-retry",delay);
         }
       }
     }
@@ -1712,7 +1723,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarEnsureMapHooks();
     if(state.enabled){
       if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
-      this._scheduleWeatherRadarRefresh("resume",1200);
+      this._scheduleWeatherRadarRefresh("resume",1200,{force:true});
       this._scheduleWeatherRadarPreload("resume",1500);
     }
   },
