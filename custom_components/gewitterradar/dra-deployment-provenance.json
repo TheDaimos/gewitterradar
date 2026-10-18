@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.96 DEV GR-RF-01: render verified partial DWD precipitation, masked transparent geography, bounded visible V1 tile errors, preserved global coverage, unchanged UTC and explicit NASA time consent. Joint HA real acceptance remains open.",
+    "purpose": "V4.11.96 DEV GR-RF-01: render verified partial DWD precipitation, masked transparent geography, bounded visible V1 tile errors, preserved global coverage, unchanged UTC and explicit NASA time consent. Joint WeatherRouter and Gewitterradar HA real acceptance remains open.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
