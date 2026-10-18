@@ -4,7 +4,7 @@ import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.14",
+  version:"1.3.15",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -198,7 +198,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
-        inFlight:false,pending:false,pendingForce:false,v2BudgetPending:false,v2BudgetTimer:null,v2LastBudgetRecovery:0,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null
+        inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,
+        appHiddenAt:0,lastForegroundRefreshAt:0,visibilityHandler:null,pageShowHandler:null,focusHandler:null,
+        v2BudgetPending:false,v2BudgetTimer:null,v2LastBudgetRecovery:0,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null
       };
     }
     return this.__weatherRadarState;
@@ -339,6 +341,81 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     },delay);
   },
   
+  _weatherRadarRecoverExpiredRequest(now=Date.now(),reason="request-watchdog"){
+    const state=this._weatherRadarState();
+    if(!state.inFlight||!state.inFlightStartedAt||now-state.inFlightStartedAt<35000)return false;
+    const elapsed=now-state.inFlightStartedAt;
+    state.v2Generation++;
+    state.v1PendingCancel?.();
+    if(state.v2PendingLayer){
+      try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_error){}
+      state.v2PendingLayer=null;
+    }
+    // The old promise may settle later; its finally clause checks inFlightToken.
+    state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
+    state.pending=false;state.pendingForce=false;
+    this._weatherEngineMonitorEvent?.("radar_inflight_watchdog_recovered",{
+      reason,elapsed_ms:elapsed});
+    return true;
+  },
+  _weatherRadarOnAppVisible(source="visibilitychange"){
+    const state=this._weatherRadarState();
+    if(!state.enabled||this.isConnected===false)return false;
+    if(typeof document!=="undefined"&&document.visibilityState==="hidden"){
+      state.appHiddenAt=Date.now();return false;
+    }
+    const now=Date.now();
+    const awayMs=state.appHiddenAt?Math.max(0,now-state.appHiddenAt):0;
+    // Some Android WebViews suppress visibilitychange: focus can recover an
+    // idle visible app, but must not create a refresh storm during UI focus.
+    const idleFocus=source==="focus"&&now-(state.lastRequestAt||0)>=30000;
+    if(!state.appHiddenAt&&source!=="pageshow-persisted"&&!idleFocus)return false;
+    if(now-(state.lastForegroundRefreshAt||0)<2000)return false;
+    state.appHiddenAt=0;state.lastForegroundRefreshAt=now;
+    const unstuck=this._weatherRadarRecoverExpiredRequest(now,"app-foreground");
+    this._weatherRadarEnsureMapHooks();
+    this._weatherRadarCullOutsideViewport();
+    try{this._map?.invalidateSize?.({pan:false,animate:false});}catch(_error){}
+    this._weatherEngineMonitorEvent?.("weather_radar_app_foreground",{
+      source,away_ms:awayMs,expired_request_recovered:unstuck,
+      in_flight:state.inFlight});
+    // Keep a valid previous layer visible until a replacement is painted.
+    // An active request will preserve this forced refresh in pendingForce.
+    this._scheduleWeatherRadarRefresh("app-foreground",250,{force:true});
+    return true;
+  },
+  _weatherRadarAttachAppEvents(){
+    const state=this._weatherRadarState();
+    if(typeof document!=="undefined"&&!state.visibilityHandler){
+      state.visibilityHandler=()=>{
+        if(document.visibilityState==="hidden")state.appHiddenAt=Date.now();
+        else if(document.visibilityState==="visible")this._weatherRadarOnAppVisible("visibilitychange");
+      };
+      document.addEventListener("visibilitychange",state.visibilityHandler);
+      if(document.visibilityState==="hidden")state.appHiddenAt=Date.now();
+    }
+    if(typeof window!=="undefined"&&!state.pageShowHandler){
+      state.pageShowHandler=event=>{
+        if(event?.persisted)this._weatherRadarOnAppVisible("pageshow-persisted");
+      };
+      window.addEventListener("pageshow",state.pageShowHandler);
+    }
+    if(typeof window!=="undefined"&&!state.focusHandler){
+      state.focusHandler=()=>this._weatherRadarOnAppVisible("focus");
+      window.addEventListener("focus",state.focusHandler);
+    }
+  },
+  _weatherRadarDetachAppEvents(){
+    const state=this._weatherRadarState();
+    if(state.visibilityHandler&&typeof document!=="undefined")
+      document.removeEventListener("visibilitychange",state.visibilityHandler);
+    if(state.pageShowHandler&&typeof window!=="undefined")
+      window.removeEventListener("pageshow",state.pageShowHandler);
+    if(state.focusHandler&&typeof window!=="undefined")
+      window.removeEventListener("focus",state.focusHandler);
+    state.visibilityHandler=state.pageShowHandler=state.focusHandler=null;
+    state.appHiddenAt=0;
+  },
   async _setWeatherRadarEnabled(enabled,{persist=true}={}){
     const state=this._weatherRadarState();
     state.enabled=Boolean(enabled);
@@ -1401,6 +1478,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     // resolution, satellite consent and HTTP tile loading.
     this._weatherRadarCullOutsideViewport(viewport);
     const now=Date.now();
+    this._weatherRadarRecoverExpiredRequest(now);
     const minWait=state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
     if(!force&&state.lastRequestAt&&now-state.lastRequestAt<minWait){
       this._weatherEngineMonitorEvent?.("refresh_deferred",{
@@ -1411,7 +1489,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     if(state.inFlight){state.pending=true;state.pendingForce=state.pendingForce||force;return;}
     const token=++state.v2Generation;
-    state.inFlight=true;state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
+    state.inFlight=true;state.inFlightToken=token;state.inFlightStartedAt=now;
+    state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
     this._weatherEngineMonitorEvent?.("refresh_started",{
       reason,zoom:Number(this._map?.getZoom?.()??0),viewport:viewport.signature,
       older_background_opt_in:state.allowOlderSatelliteBackground,interval_s:state.viewportRefreshIntervalSeconds});
@@ -1449,13 +1528,19 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         this._weatherRadarHandleUnavailable({unavailable:{code:"replacement_not_ready"}});
       }
     }catch(_error){
-      state.lastUnavailable={code:"temporarily_unavailable"};
-      this._weatherRadarUpdateControls();
+      if(state.v2Generation===token){
+        state.lastUnavailable={code:"temporarily_unavailable"};
+        this._weatherRadarUpdateControls();
+      }
     }finally{
-      state.inFlight=false;
-      if(state.pending){
-        const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
-        this._scheduleWeatherRadarRefresh("pending",250,{force:forcePending});
+      // An expired pre-suspension request must never reset the lock of the
+      // replacement request started after foreground recovery.
+      if(state.inFlightToken===token){
+        state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
+        if(state.pending){
+          const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
+          this._scheduleWeatherRadarRefresh("pending",250,{force:forcePending});
+        }
       }
     }
   },
@@ -1620,6 +1705,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _resumeWeatherRadar(){
     const state=this._weatherRadarState();
+    this._weatherRadarAttachAppEvents();
     this._weatherRadarEnsureMapHooks();
     if(state.enabled){
       if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
@@ -1630,6 +1716,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _teardownWeatherRadar(){
     const state=this._weatherRadarState();
+    this._weatherRadarDetachAppEvents();
     if(state.debounceTimer)clearTimeout(state.debounceTimer);
     if(state.mapWaitTimer)clearTimeout(state.mapWaitTimer);
     if(state.refreshTimer)clearInterval(state.refreshTimer);
@@ -1645,6 +1732,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
     state.preloadGeneration+=1;state.preloadQueue=[];state.preloadCache.clear();
     if(state.map)try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
-    state.map=null;state.onMove=null;state.onZoom=null;state.inFlight=false;state.pending=false;
+    state.map=null;state.onMove=null;state.onZoom=null;
+    state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
+    state.pending=false;state.pendingForce=false;
   }
 });});
