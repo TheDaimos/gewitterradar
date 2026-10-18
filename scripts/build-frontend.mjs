@@ -13,20 +13,20 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.94"')){
+ if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.95"')){
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
-  if(!versionText.includes('displayVersion:"V4.11.94 DEV"')||!versionText.includes('runtimeRevision:"41194r1"')||!versionText.includes('moduleSetId:"E411-94A1"'))throw Error('V4.11.94 canonical version mismatch');
-  if(runtime.productVersion!=='4.11.94'||runtime.runtimeRevision!=='41194r1'||runtime.moduleSetId!=='E411-94A1'||runtime.displayVersion!=='V4.11.94 DEV')throw Error('V4.11.94 runtime manifest mismatch');
+  if(!versionText.includes('displayVersion:"V4.11.95 DEV"')||!versionText.includes('runtimeRevision:"41195r1"')||!versionText.includes('moduleSetId:"E411-95A1"'))throw Error('V4.11.95 canonical version mismatch');
+  if(runtime.productVersion!=='4.11.95'||runtime.runtimeRevision!=='41195r1'||runtime.moduleSetId!=='E411-95A1'||runtime.displayVersion!=='V4.11.95 DEV')throw Error('V4.11.95 runtime manifest mismatch');
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');
   const modules=JSON.parse(match[1]);
-  if(modules.length!==34||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.94 module IDs invalid');
+  if(modules.length!==34||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.95 module IDs invalid');
   const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
   // These eight auxiliary UI parts are imported by registered modules; they are not independent registered modules.
   const support=['modules/fullscreen/compass-picker-chevron-left-brass.js','modules/fullscreen/compass-picker-chevron-left-silver.js','modules/fullscreen/compass-picker-chevron-right-brass.js','modules/fullscreen/compass-picker-chevron-right-silver.js','modules/instruments/medallion-arrow-calibration-1.js','modules/instruments/medallion-arrow-calibration-2.js','modules/instruments/medallion-arrow-calibration-3.js','modules/instruments/medallion-arrow-calibration-4.js','modules/weather/p7-010/raster-tile-url.js','modules/weather/p7-010/raster-tile-clip.js','modules/weather/p7-010/raster-compositor.js','modules/weather/p7-010/raster-mosaic-contract.js','modules/weather/p7-010/raster-mosaic-tile-loader.js','modules/weather/p7-010/raster-mosaic-grid-layer.js','modules/weather/p7-010/raster-mosaic-consumer.js','modules/weather/p7-010/raster-mosaic-coverage.js'];
   const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
-  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.94 module inventory mismatch');
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.95 module inventory mismatch');
   const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
   if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
   for(const item of modules){

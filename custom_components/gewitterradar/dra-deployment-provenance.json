@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.94",
-  "build": "V4.11.94-DEV-2026-10-18",
-  "runtimeRevision": "41194r1",
-  "moduleSetId": "E411-94A1",
+  "productVersion": "4.11.95",
+  "build": "V4.11.95-DEV-2026-10-18",
+  "runtimeRevision": "41195r1",
+  "moduleSetId": "E411-95A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.94 DEV: fix P7-010 DWD regional overlay surviving Cuba↔Germany map changes; immediate geographic/time-valid culling of V1/V2 current layers, reject geographically invalid V1 cold replacements, preserve older satellite explicit opt-in. WeatherRouter NASA/DWD combined HA acceptance pending.",
+    "purpose": "V4.11.95 DEV: recover precipitation on Android Home Assistant app foreground/pageshow/focus without force-quit, retire timed-out pre-suspension V1/V2 requests safely, preserve verified active imagery during replacement. Geographic DWD culling and explicit NASA background consent retained. WeatherRouter joint HA real acceptance pending.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
