@@ -1,14 +1,13 @@
 # Gewitterradar – kanonische Roadmap
 
 
-## Aktuelle nächste Ausbaustufe nach V4.10
+## Aktuelle Priorität – Beschluss 18.10.2026
 
-- **V4.11: WeatherRouter, Fehler-/Warn-/Statusmeldungen, Lösungshinweise und überwachte Orte.**
-- **Implementierung von Wetterdiensten & Wetterereignissen durch WeatherRouter.**
-- Verbindliche Detail-To-dos: docs/V4_11_TODO.md
-- **V4.12 verbindlich eingeplant: Geo-Sonde** als über das bestehende Layer-Menü aktivierbares Kartenwerkzeug für frei wählbare geografische Punkte und gezielte WeatherRouter-Fachabfragen. Planungsbeschluss: [V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md](V4_12_GEO_SONDE_PLANUNGSBESCHLUSS_2026-10-16.md).
-
-Die zuvor als Zukunftspunkte geführten Themen **unterschiedliche Medaillons** sowie **Verbesserungen der Kompass- und Medaillon-Auswahl** sind Bestandteil von V4.10 und werden nicht länger als zukünftige Roadmap-Punkte geführt.
+- **V4.11: europäische Niederschlagsradarversorgung** (OPERA, nationale amtliche Radarprodukte, RainViewer-Härtung) mit weiterem P7-010-/V1-/V2-Regressionsschutz und stabiler GR-/WR-Anbindung.
+- **Zuerst** laufende GR-/WR-Realabnahme, WR-01c und GR-RF-02 abschließen; neue Quellen erst danach zulassen.
+- **V4.12: bisherige offene V4.11-Themen** (Systemstatus, Fehler-/Lösungshinweise, Tracker/Blitzortung, überwachte Orte etc.) **zusätzlich zur bereits verbindlich geplanten Geo-Sonde**.
+- Verbindliche Arbeitslisten: [V4_11_TODO.md](V4_11_TODO.md) und [V4_12_TODO.md](V4_12_TODO.md). Der Radarprovider-Ausbau erfolgt in [WeatherRouter](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/EUROPA_NIEDERSCHLAGSRADAR_TODO_2026-10-18.md).
+- Erreichte V4.11-DEV-Code- und Testergebnisse bleiben historisch erhalten; die Umpriorisierung löscht keine bereits umgesetzte Arbeit.
 
 ---
 
@@ -34,24 +33,21 @@ Arbeitsregel aus den globalen Defaults:
 
 ## NEXT / VERSIONIERT
 
-### V4.11 – WeatherRouter, Systemstatus, Fehlerbehebung und überwachte Orte
+### V4.11 – Europäisches Niederschlagsradar / Provider-Ausbau
 
-V4.11 ist die nächste funktionale Ausbaustufe nach V4.10. Der Schwerpunkt liegt nicht nur auf zusätzlichen Wetterdaten, sondern auf einem nachvollziehbaren Betriebs- und Fehlerbild für Gewitterradar.
+**ACTIVE / VERSIONIERT – neuer primärer Fokus per Beschluss 18.10.2026; Voraussetzung: laufende gemeinsame WR-/GR-Stabilisierung.**
 
-Vorgemerkt:
+Schwerpunkt: regional gemessenes Niederschlagsradar für Europa, besonders OPERA/MeteoGate ORD und ergänzende nationale Radarprodukte (u. a. AEMET, RADAR-DPC, GeoSphere, MeteoSchweiz und DMI) sowie regelkonforme Nachbesserung des bereits eingebundenen RainViewer. Eine vollständige Bestandsaufnahme aller europäischen Länder ist erforderlich; Auflistung von Kandidaten ist keine Implementierung.
 
-- WeatherRouter als Daten- und Provider-Schicht für zusätzliche Wetter-/Gefahreninformationen anbinden;
-- zentralen Systemstatus am Einstellungs-Zahnrad mit orange/rot, Fehleranzahl und kategorisiertem Status-Pop-up einführen;
-- Fehler, Einschränkungen und Hinweise mit konkreten Ursachen und passenden Lösungsschritten darstellen;
-- Blitzortung-/Tracker-Kopplung prüfen und bei fehlender Kopplung sichtbar warnen;
-- den tatsächlichen Blitzortung-Erfassungsradius diagnostisch einbeziehen und bei auffällig kleinem Radius verständlich hinweisen;
-- veraltete feste Annahmen wie sensor.home_lightning_counter durch dynamische Zuordnung zum tatsächlich gekoppelten Blitzortung-Eintrag ersetzen;
-- Hilfe & Hinweise um strukturierte Fehlerbehebung einschließlich Tracker-, Radius- und Datenquellen-Dokumentation erweitern;
-- unter Standorte & Speichern die benötigte Local-To-do-Liste aktiv prüfen und fehlende Persistenz sichtbar melden;
-- gespeicherte Orte als mögliche dauerhafte **überwachte Orte** vorsehen; mehrere parallele Standort-Tracker und zugehörige Blitzortung-Einträge fachlich und ressourcenseitig prüfen;
-- Ressourcenwirkung mehrerer Blitzortung-Abonnements, großer Radien und vieler Geo-Location-Ereignisse messen und verständlich absichern.
+WeatherRouter implementiert Anbieter, Datenzugang, zeitlichen/geografischen Vertrag und Routing. Gewitterradar bleibt providerneutral und nutzt die bestehenden V1-/V2-Schnittstellen. Erst laufende Regression/Realabnahme beenden, dann neue Quellen Schritt für Schritt integrieren.
 
-Die vollständige V4.11-Sammlung einschließlich Textbeispielen, Diagnosezuständen, Bedienidee und technischen Leitplanken liegt in docs/V4_11_TODO.md.
+**Verbindliche Detail-To-do:** [docs/V4_11_TODO.md](V4_11_TODO.md); ausführliche Providerliste und Abnahmekriterien in [WeatherRouter](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/EUROPA_NIEDERSCHLAGSRADAR_TODO_2026-10-18.md).
+
+### V4.12 – verschobene V4.11-Themen + Geo-Sonde
+
+Die **noch offenen** bisherigen V4.11-Themen (Systemstatus mit Warnsymbolen, Ursachen-/Lösungshinweise, Tracker-/Blitzortung-Diagnose, Hilfe, Standorte/Local-To-do, Monitored Areas mit Protokollierung, weitere Bedien-/Diagnosepunkte) sind in [docs/V4_12_TODO.md](V4_12_TODO.md) übernommen. Bereits umgesetzte V4.11-Funktionen gelten dort als historische Nachweise, nicht als neue V4.12-Arbeit.
+
+Die **Geo-Sonde** bleibt unverändert als eigenständiger, bereits am 16.10.2026 verbindlich eingeplanter Bestandteil von V4.12 erhalten (separater Detailbeschluss direkt nach diesem Abschnitt).
 
 ### V4.12 – Geo-Sonde: punktbezogene Fachinformationen (verbindlich eingeplant)
 
