@@ -53,6 +53,19 @@ Verbindliche technische Planungs-/Prüfliste: [WeatherRouter – Europa-Niedersc
 
 **Technisch verbindliche Details und vollständige Prüfliste:** [WeatherRouter-Radar- und Wetterdatenauftrag](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/EUROPA_NIEDERSCHLAGSRADAR_TODO_2026-10-18.md).
 
+## 1b. Quellen und Informationen vollständig entdecken – WeatherRouter als Datenzentrale
+
+**Neuer verbindlicher Zusatzauftrag:** Alle bereits in WeatherRouter vorhandenen Themen, Datenarten und Provider gegen die aktuellen, öffentlich zugänglichen nationalen Datenkataloge prüfen – **jede Fähigkeit gegen jede Quelle; jede Quelle gegen jede Fähigkeit**. Wenn ein Dienst neue sachlich erfassbare Informationen (z. B. UV, Sonneneinstrahlung, Sonnenauf-/untergang, Wind, Temperatur, Schnee, Pollen, Luftqualität, zusätzliche Warnungen oder Umwelt-/Naturgefahren-Daten) anbietet, den zentralen Themenkatalog erweitern und rückwirkend **alle bekannten Quellen** auf diese neu entdeckten Fähigkeiten untersuchen.
+
+Die verbindlichen Inventare liegen **nur zentral in WeatherRouter**, nicht dupliziert im Gewitterradar:
+- [Universeller Quellen- und Fähigkeitenkatalog](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/QUELLEN_UND_FAEHIGKEITEN_KATALOG_2026-10-18.md)
+- [Maschinenlesbarer Ausgangsbestand](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/quellen_faehigkeiten_katalog.v1.json)
+
+- [ ] Alle geeigneten, rechtlich erlaubten nationalen Datenprodukte nach fachlicher Prüfung in WeatherRouter-Capabilities integrieren, auch wenn der ursprüngliche Anlass das Regenradar war.
+- [ ] Eine neue Kategorie muss einen dokumentierten **erneuten Abgleich sämtlicher bereits bekannter Provider** auslösen.
+- [ ] GR bleibt Consumer der providerneutralen WeatherRouter-API; kein heimlicher Umbau der GR-Kartenschicht in ein Direkt-API-Sammelprogramm.
+- [ ] Die konkrete Radar-/P7-010-Realabnahme bleibt weiterhin vorgeschaltet; die Katalogarbeit ist **kein** Anlass für unkontrollierte parallele Runtime-Änderungen.
+
 ## 2. Klare Abgrenzung
 
 **V4.11** = stabile Gewitterradar-/WeatherRouter-Niederschlagsdarstellung **plus Erweiterung um Europas echte Radarmessungen**.  
