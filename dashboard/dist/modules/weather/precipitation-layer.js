@@ -1945,7 +1945,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.v2Snapshot){
       if(state.regionalHold){
         const remaining=Math.max(0,Math.ceil((state.regionalHold.deadlineAt-Date.now())/1000));
-        status.textContent="Aktiv · bisherige gültige DWD-/Satelliten-Ebene vorübergehend beibehalten · "
+        status.textContent="Aktiv · bisherige gültige Radar-/Satelliten-Ebene vorübergehend beibehalten · "
           +"erneute Quellenprüfung · maximal "+remaining+" s · UTC-Alter wird überwacht";
         return;
       }
