@@ -77,7 +77,7 @@ assert.equal(decide({previous:misorder}).reason,"prior_compositing_order_unverif
 const incompatible={...combined,layers:[nasa,
  {...dwd,semantics:{...dwd.semantics,quantity:"accumulation"}}]};
 assert.equal(decide({previous:incompatible}).reason,"precipitation_semantics_changed");
-const live={...combined,layers:[dwd]};
+const live={...nasaOnly,layers:[dwd]};
 assert.equal(decide({next:live}).reason,"replacement_has_live_sources");
 
 // GR-RF02-09: UTC time stays bounded by BOTH original WR age and valid_at.
