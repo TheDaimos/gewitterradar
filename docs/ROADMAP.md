@@ -1,6 +1,10 @@
 # Gewitterradar – kanonische Roadmap
 
 
+## Ergänzung 18.10.2026 – universeller Quellenkatalog im V4.11-Schwerpunkt
+
+Zum nationalen Radar-Vollausbau gehört die systematische Sichtung **sämtlicher öffentlich und rechtlich nutzbarer Datenprodukte** bekannter Quellen: nicht nur Regen, sondern unter anderem UV/Sonnenstrahlung, Sonnenauf-/untergang, Wind, Temperatur, Schnee, Pollen, Luftqualität, Sturm, Blitzereignisse, amtliche Gefahren und weitere fachliche Kategorien. Jeder neue Datenbereich löst eine rückwirkende Prüfung aller bekannten Quellen aus; jede neue Quelle wird gegen alle Datenbereiche geprüft. **Verbindlicher zentraler Katalog in [WeatherRouter](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/QUELLEN_UND_FAEHIGKEITEN_KATALOG_2026-10-18.md).** P7-010 und GR-RF-02 bleiben vorgeschaltete Stabilitätsgates.
+
 ## Aktuelle Priorität – Beschluss 18.10.2026
 
 - **V4.11: vollständige europäische nationale Niederschlagsradarversorgung**, einschließlich UK/Skandinavien/Atlantikinseln/Türkei/Balkan/Osteuropa, **Kanada zusätzlich**, OPERA und RainViewer-Härtung; weitere national verfügbare Wetterdaten (Temperatur, Wind, Blitz, Hagel, amtliche Warnungen und weitere Capabilities) mit aufnehmen. P7-010-/V1-/V2-Regressionsschutz bleibt Voraussetzung.
