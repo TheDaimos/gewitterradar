@@ -30,7 +30,7 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
-const isV411LatestDev = ["41196r1", "41195r1", "41194r1", "41193r1", "41192r1", "41191r1"].some(revision =>
+const isV411LatestDev = ["41197r1", "41196r1", "41195r1", "41194r1", "41193r1", "41192r1", "41191r1"].some(revision =>
   frontendText.includes(`import { APPLICATION_RELEASE } from "./version.js?v=${revision}";`))
   && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV41163Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41168r1";')
@@ -63,22 +63,25 @@ if (isV411LatestDev) {
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  const expectedVersion = frontendText.includes('version.js?v=41196r1') ? '4.11.96'
+  const expectedVersion = frontendText.includes('version.js?v=41197r1') ? '4.11.97'
+    : frontendText.includes('version.js?v=41196r1') ? '4.11.96'
     : frontendText.includes('version.js?v=41195r1') ? '4.11.95'
     : frontendText.includes('version.js?v=41194r1') ? '4.11.94'
     : frontendText.includes('version.js?v=41193r1') ? '4.11.93'
     : frontendText.includes('version.js?v=41192r1') ? '4.11.92' : '4.11.91';
-  const expectedRuntime = expectedVersion === '4.11.96' ? '41196r1'
+  const expectedRuntime = expectedVersion === '4.11.97' ? '41197r1'
+    : expectedVersion === '4.11.96' ? '41196r1'
     : expectedVersion === '4.11.95' ? '41195r1'
     : expectedVersion === '4.11.94' ? '41194r1'
     : expectedVersion === '4.11.93' ? '41193r1'
     : expectedVersion === '4.11.92' ? '41192r1' : '41191r1';
-  const expectedModules = expectedVersion === '4.11.96' ? 'E411-96A1'
+  const expectedModules = expectedVersion === '4.11.97' ? 'E411-97A1'
+    : expectedVersion === '4.11.96' ? 'E411-96A1'
     : expectedVersion === '4.11.95' ? 'E411-95A1'
     : expectedVersion === '4.11.94' ? 'E411-94A1'
     : expectedVersion === '4.11.93' ? 'E411-93A1'
     : expectedVersion === '4.11.92' ? 'E411-92A1' : 'E411-91A1';
-  const expectedBuild = `V${expectedVersion}-DEV-${["4.11.96","4.11.95","4.11.94","4.11.93"].includes(expectedVersion)?"2026-10-18":"2026-10-17"}`;
+  const expectedBuild = `V${expectedVersion}-DEV-${["4.11.97","4.11.96","4.11.95","4.11.94","4.11.93"].includes(expectedVersion)?"2026-10-18":"2026-10-17"}`;
   assert.ok(versionText.includes(`version:"${expectedVersion}"`));
   assert.ok(versionText.includes(`displayVersion:"V${expectedVersion} DEV"`));
   assert.ok(versionText.includes(`build:"${expectedBuild}"`));
