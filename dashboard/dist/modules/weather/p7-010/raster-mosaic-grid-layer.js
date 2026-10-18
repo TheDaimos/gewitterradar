@@ -5,6 +5,44 @@
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
   from "./raster-mosaic-tile-loader.js?v=41192r1";
+import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41190r1";
+
+/** Geographically expected raster area, including partial boundary tiles.
+ * A verified BBOX never implies opaque weather pixels.
+ */
+export function expectedRasterTileGeometry(layers,tile,tileSize=256){
+  const crops=[];
+  let selected=0;
+  for(const item of layers||[]){
+    if(item?.coverage_verified!==true||!item.render||item.render.opacity<=0
+      ||tile.z<item.render.min_zoom)continue;
+    const mask=item.coverage_scope==="global"?{scope:"global",verified:true}
+      :item.coverage_scope==="bbox"&&item.coverage
+        ?{scope:"bbox",bbox:item.coverage,verified:true}:null;
+    if(!mask)continue;
+    const area=rasterTilePixelCrops(tile,mask,tileSize);
+    if(!area.length)continue;
+    if(selected++>=4)break; // Same four relevant sources as the tile loader.
+    crops.push(...area);
+  }
+  return measureRasterTileCoverage(crops,tileSize);
+}
+
+/** An empty tile is valid only when geographic evidence expects no image.
+ * Image/network failures inside the verified envelope remain failures.
+ */
+export function classifyRasterTileResult(layers,tile,tileSize,result){
+  const expected=expectedRasterTileGeometry(layers,tile,tileSize);
+  const actual=result?.tile_coverage?.fraction||0;
+  const painted=(result?.drawn?.length||0)>0;
+  const status=expected.fraction<=0?"expected_transparent"
+    :painted&&actual+1e-5>=expected.fraction?"complete_verified_coverage"
+    :painted?"incomplete_image_coverage":"image_load_failed";
+  return {tile_status:status,expected_fraction:Number(expected.fraction.toFixed(6)),
+    drawn_fraction:Number(actual.toFixed(6)),
+    geographic_only:true,image_pixels_verified:false};
+}
 
 function loadRasterImage(url,_source,{signal}={}){
   return new Promise((resolve,reject)=>{
@@ -54,11 +92,15 @@ export function createRasterMosaicGridLayer(L,snapshot,{
         context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
+        const classification=classifyRasterTileResult(verified.layers,coords,tileSize,result);
         if(!controller?.signal.aborted)try{
-          onTileDiagnostics?.({...result,tile:{x:coords.x,y:coords.y,z:coords.z}});
+          onTileDiagnostics?.({...result,...classification,
+            tile:{x:coords.x,y:coords.y,z:coords.z}});
         }catch(_){}
+        const success=["expected_transparent","complete_verified_coverage"]
+          .includes(classification.tile_status);
         const error=controller?.signal.aborted?new Error("Raster tile cancelled")
-          :!result?.drawn?.length?new Error("Raster tile has no drawable source"):null;
+          :success?null:new Error("Raster tile missing verified image content");
         done?.(error,canvas);
       },error=>done?.(error,canvas)).finally(()=>{
         if(controller)pending.delete(controller);
