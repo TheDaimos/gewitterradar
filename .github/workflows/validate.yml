@@ -33,6 +33,11 @@ jobs:
           python-version: "3.14"
       - name: Verify deterministic HACS integration staging
         run: python scripts/verify-hacs-integration-package.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check WL-02 raster and coverage regression contracts
+        run: node --test tests/wl02-coverage-contract.test.mjs tests/wl02-raster-geometry.test.mjs
       - name: Check JSON metadata
         run: |
           python -m json.tool hacs.json >/dev/null
