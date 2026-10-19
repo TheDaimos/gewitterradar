@@ -4,8 +4,9 @@
  */
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=41192r1";
+  from "./raster-mosaic-tile-loader.js?v=41198r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
+import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41190r1";
 
 /** Geographically expected raster area, including partial boundary tiles.
@@ -76,6 +77,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
   const verified=validateRasterMosaicV2(snapshot,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
+  const renderLayers=rasterMosaicRenderOrder(verified.layers);
   const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
   const pending=new Set();
   const Layer=L.GridLayer.extend({
@@ -89,10 +91,10 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:verified.layers,loadImage,budget,tileSize,timeoutMs,
+        context,tile:coords,layers:renderLayers,loadImage,budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
-        const classification=classifyRasterTileResult(verified.layers,coords,tileSize,result);
+        const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
         if(!controller?.signal.aborted)try{
           onTileDiagnostics?.({...result,...classification,
             tile:{x:coords.x,y:coords.y,z:coords.z}});
@@ -115,6 +117,8 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   // independently cropped ancestor image without sacrificing DWD detail.
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true,
     maxNativeZoom:18});
+  layer._p7RasterRenderOrder=renderLayers.map(x=>({source_id:x.source_id,
+    freshness_class:x.freshness_class||"current"}));
   layer._p7RasterRequestBudget=budget;
   layer._p7AbortPending=()=>{budget.close();for(const controller of pending)controller.abort();};
   layer.on?.("tileunload",event=>event?.tile?._p7RasterAbort?.());

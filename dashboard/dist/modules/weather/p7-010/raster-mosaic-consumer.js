@@ -7,7 +7,7 @@
  * removing a working radar layer.
  */
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
-import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=41196r1";
+import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=41198r1";
 
 const finite=n=>typeof n==="number"&&Number.isFinite(n);
 

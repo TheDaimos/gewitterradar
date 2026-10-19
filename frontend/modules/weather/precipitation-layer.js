@@ -1,11 +1,11 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41196r1";
+import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=41198r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=41190r1";
 import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.17",
+  version:"1.3.18",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -621,8 +621,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     if(typeof document!=="undefined"&&!state.visibilityHandler){
       state.visibilityHandler=()=>{
-        if(document.visibilityState==="hidden")state.appHiddenAt=Date.now();
-        else if(document.visibilityState==="visible")this._weatherRadarOnAppVisible("visibilitychange");
+        if(document.visibilityState==="hidden"){
+          state.appHiddenAt=Date.now();
+          if(state.inFlight){
+            state.v2Generation++;
+            state.pending=true;state.pendingForce=true;
+            try{state.v2PendingLayer?._p7AbortPending?.();}catch(_error){}
+            this._weatherEngineMonitorEvent?.("radar_background_stage_paused",{
+              existing_layer_preserved:Boolean(state.layer),
+              request_generation_invalidated:true});
+          }
+        }else if(document.visibilityState==="visible")this._weatherRadarOnAppVisible("visibilitychange");
       };
       document.addEventListener("visibilitychange",state.visibilityHandler);
       if(document.visibilityState==="hidden")state.appHiddenAt=Date.now();
@@ -1396,7 +1405,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return false;
     }
     const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
-      &&this._weatherRadarViewport()?.signature===viewport.signature;
+      &&this._weatherRadarViewport()?.signature===viewport.signature
+      &&(typeof document==="undefined"||document.visibilityState!=="hidden");
     if(!current())return false;
     // V1 does not promise every selected source intersects the BBOX. A
     // no-coverage/unknown-coverage answer is never a valid replacement.
@@ -1583,7 +1593,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const readyTiles=new Set();
       const foundationTiles=new Set();
       const geometricallyCompleteTiles=new Set();
-      let gridLoaded=false;
+      let gridLoaded=false,stageTileSettled=0,stageMaxTileMs=0;
+      let stageLastError=null;
+      const observedOrders=[];
       const markReady=()=>{if(gridLoaded&&readyTiles.size>=minReadyTiles)painted(true);};
       // A single painted tile does not establish a usable replacement view.
       // At world zoom zero there can genuinely be only one tile.
@@ -1614,6 +1626,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
           onTileDiagnostics:item=>{
+            stageTileSettled++;
+            stageMaxTileMs=Math.max(stageMaxTileMs,Number(item?.duration_ms)||0);
+            if(item?.tile_status!=="expected_transparent"&&
+               item?.tile_status!=="complete_verified_coverage")
+              stageLastError=item?.rejected?.[0]?.reason||item?.tile_status||"unknown";
+            if(Array.isArray(item?.render_order)&&item.render_order.length&&observedOrders.length<12)
+              observedOrders.push(item.render_order.slice(0,4));
             if(this.__weatherEngineTraceStore?.displayExtended&&item?.rejected?.length)
                this._weatherEngineMonitorEvent?.("v2_tile_rejection",{
                  zoom:item.tile?.z??null,count:item.rejected.length,
@@ -1695,9 +1714,42 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       // settled; two successful tiles alone could expose an incomplete map.
       staged.on?.("load",()=>{gridLoaded=true;markReady();});
       staged.addTo(this._map);
-      const ready=await Promise.race([firstPaint,
-        new Promise(resolve=>{timeout=setTimeout(()=>resolve(false),6000);})]);
-      if(!ready||!current()){this._weatherEngineMonitorEvent?.("v2_stage_rejected",{correlation_id:correlationId,reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});report("fallback",{reason:ready?"stale_during_render":"insufficient_painted_tiles",painted_tiles:readyTiles.size});return false;}
+      // Progress-aware bounded staging: 8s individual image deadlines and
+      // four simultaneous requests can legitimately outlast the old 6s gate.
+      // No progress for 9s or a 20s hard limit fails closed.
+      const stageStart=Date.now();
+      const ready=await new Promise(resolve=>{
+        let finished=false,lastCount=stageTileSettled,lastProgressAt=stageStart;
+        const done=(ready,reason)=>{
+          if(finished)return;
+          finished=true;
+          if(timeout!==null)clearTimeout(timeout);
+          resolve({ready,reason});
+        };
+        firstPaint.then(()=>done(true,"grid_ready"),()=>done(false,"stage_failed"));
+        const check=()=>{
+          if(finished)return;
+          const at=Date.now();
+          if(!current())return done(false,"stale_or_background");
+          if(stageTileSettled!==lastCount){
+            lastCount=stageTileSettled;lastProgressAt=at;
+          }
+          if(gridLoaded)return done(false,"insufficient_painted_tiles");
+          if(at-stageStart>=20000)return done(false,"stage_deadline");
+          if(at-lastProgressAt>=9000)return done(false,"tile_progress_stalled");
+          timeout=setTimeout(check,250);
+        };
+        timeout=setTimeout(check,250);
+      });
+      if(!ready.ready||!current()){
+        const reason=current()?ready.reason:"stale_or_background";
+        const detail={correlation_id:correlationId,reason,
+          elapsed_ms:Date.now()-stageStart,painted_tiles:readyTiles.size,
+          settled_tiles:stageTileSettled,max_tile_ms:stageMaxTileMs,
+          last_tile_error:stageLastError,previous_layer_preserved:Boolean(state.layer)};
+        this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
+        report("fallback",detail);return false;
+      }
       // A successful Leaflet load and two painted tiles are not a proof
       // that all currently visible grid tiles have usable raster content.
       const mapZoom=Math.round(this._map.getZoom?.()??-1);
@@ -1733,7 +1785,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         eligible_tiles:visibleEligible.length,drawn_eligible_tiles:visibleDrawn.length,
         missing_eligible_tiles:uncovered.length,gaps_accepted:gapsAccepted});
       this._weatherEngineMonitorEvent?.("v2_draw_audit",{
-        correlation_id:correlationId,zoom:Number(this._map?.getZoom?.()??0),
+        correlation_id:correlationId,
+        stage_ms:Date.now()-stageStart,settled_tiles:stageTileSettled,
+        max_tile_ms:stageMaxTileMs,
+        render_order:staged._p7RasterRenderOrder||[],
+        observed_draw_orders:observedOrders,
+        zoom:Number(this._map?.getZoom?.()??0),
         visible_tiles:visible.size,drawn_tiles:readyTiles.size,
         complete_tiles:geometricallyCompleteTiles.size,uncovered_tiles:uncovered.length,
         expected_empty_tiles:visibleEmpty.length,eligible_tiles:visibleEligible.length,
@@ -1782,8 +1839,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         correlation_id:correlationId,source_ids:result.response.layers.map(l=>l.source_id),
         from_api:old?oldApi:null,to_api:2,visible_tiles:visible.size,
         retained_previous_replaced:Boolean(oldHold),
-        render_order:result.response.layers.map(l=>({source_id:l.source_id,
-          freshness_class:l.freshness_class||"current"})),
+        render_order:staged._p7RasterRenderOrder||[],
+        observed_draw_orders:observedOrders,
+        render_order_verified:observedOrders.length>0&&observedOrders.every(order=>
+          order.every((id,index)=>index===0||
+            (staged._p7RasterRenderOrder||[]).findIndex(x=>x.source_id===order[index-1])<
+            (staged._p7RasterRenderOrder||[]).findIndex(x=>x.source_id===id))),
+
         pixels_verified:false,
         complete_tiles:geometricallyCompleteTiles.size,zoom:Number(this._map?.getZoom?.()??0)});
       if(old)try{old.remove();}catch(_){}
@@ -1815,6 +1877,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   async _refreshWeatherRadar({reason="manual",force=false}={}){
     const state=this._weatherRadarState();
     if(!state.enabled)return;
+    if(typeof document!=="undefined"&&document.visibilityState==="hidden"){
+      if(!state.appHiddenAt){
+        state.appHiddenAt=Date.now();
+        this._weatherEngineMonitorEvent?.("radar_background_refresh_deferred",{
+          reason,previous_layer_preserved:Boolean(state.layer)});
+      }
+      state.pending=true;state.pendingForce=true;
+      return;
+    }
     if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600);return;}
     const viewport=this._weatherRadarViewport();if(!viewport)return;
     // Geographic validity is independent of request throttling, in-flight
@@ -1858,6 +1929,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         correlation_id:state.v2CorrelationId||null,
         elapsed_ms:Math.round(performance.now()-v2Started),active:v2Used});
       if(v2Used)return;
+      if(typeof document!=="undefined"&&document.visibilityState==="hidden"){
+        state.pending=true;state.pendingForce=true;return;
+      }
       if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
       const catalog=await this._weatherRouterCapabilities({filter:{domains:["weather"],resource_types:["raster_tile"],available_only:true}});
       const capability=catalog?.status==="ready"?catalog.capabilities.find(item=>item.id===CAPABILITY&&item.enabled&&item.available):null;

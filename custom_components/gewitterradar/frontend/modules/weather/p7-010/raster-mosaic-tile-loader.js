@@ -9,7 +9,7 @@
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=41189r1";
+import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 
 export class RasterTileRequestBudget {
  constructor(maxRequests,{maxConcurrent=4}={}){
@@ -111,8 +111,10 @@ export async function drawRasterMosaicTileFromUrls({
  // The WR snapshot may contain up to twelve sources across the whole map.
  // Only actually covering sources consume the bounded four-source tile budget.
  // Preserve the WR ordering; the consumer must never re-score providers.
+ const startedAt=Date.now();
+ const renderLayers=rasterMosaicRenderOrder(layers);
  let selectedForTile=0;
- const results=await Promise.all(layers.map(async layer=>{
+ const results=await Promise.all(renderLayers.map(async layer=>{
    const source_id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||layer.coverage_verified!==true||!layer.render){
      return {source_id,reason:"unverified_or_incomplete_source"};
@@ -191,6 +193,8 @@ export async function drawRasterMosaicTileFromUrls({
    :drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);
  return {
    ...drawn,
+   render_order:drawn.drawn.map(x=>x.source_id),
+   duration_ms:Math.max(0,Date.now()-startedAt),
    rejected:[...rejected,...drawn.rejected],
    requests_used:budget.used,
    requests_remaining:budget.maxRequests-budget.used,

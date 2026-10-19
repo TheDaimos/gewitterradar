@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.97",
-  "build": "V4.11.97-DEV-2026-10-18",
-  "runtimeRevision": "41197r1",
-  "moduleSetId": "E411-97A1",
+  "productVersion": "4.11.98",
+  "build": "V4.11.98-DEV-2026-10-19",
+  "runtimeRevision": "41198r1",
+  "moduleSetId": "E411-98A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.97 DEV GR-RF-02 WeatherRouter V2: temporarily retain verified, still-current regional DWD radar together with NASA on ambiguous coverage failure, enforce 45s/900s hard expiry and controlled retry, never override explicit invalidity, retain GR-RF-01 geography/UTC/opt-in and V1. Joint HA real acceptance pending.",
+    "purpose": "V4.11.98 DEV GR-RF-03: bounded progress-aware V2 staging, Firefox foreground recovery, freshness-correct audited Canvas order; GR-RF-01/02, V1/V2, UTC and consent remain protected. HA real acceptance pending.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

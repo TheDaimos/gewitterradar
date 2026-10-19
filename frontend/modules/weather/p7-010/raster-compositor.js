@@ -1,11 +1,23 @@
 /*
  * P7-010 isolated Canvas composition helper; not wired into active GR.
  * Requires preloaded, provider-eligible, verified raster tiles. The rendering
- * order and provider decisions must come from WeatherRouter V2, not this file.
+ * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41189r1";
 
+/** Presentation order only; WR still selects and prioritizes eligible sources.
+ * Older satellite estimates paint first; within the same freshness class
+ * preserve the original WR order. */
+export function rasterMosaicRenderOrder(layers){
+ if(!Array.isArray(layers))return [];
+ const rank=l=>l?.freshness_class==="older_background"||
+  (l?.semantics?.observation_kind==="estimate"&&
+   String(l?.semantics?.measurement_method||"").includes("satellite"))?0:1;
+ return layers.map((layer,index)=>({layer,index}))
+   .sort((a,b)=>rank(a.layer)-rank(b.layer)||a.index-b.index)
+   .map(x=>x.layer);
+}
 const MAX_LAYERS=4;
 const MAX_TILE_SIZE=512;
 
@@ -27,7 +39,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
    throw new RangeError("Invalid resource-bounded tile size");
  const drawn=[],rejected=[],paintedRects=[];
- for(const layer of layers){
+ for(const layer of rasterMosaicRenderOrder(layers)){
    const id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||!layer.image||layer.resource_type!=="raster_tile"
      ||layer.coverage_verified!==true||!layer.attribution
