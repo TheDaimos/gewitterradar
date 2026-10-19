@@ -10,6 +10,7 @@ export const MODULE_META=Object.freeze({
 });
 
 const CATALOG_REFRESH_MS=30000;
+const GENERIC_REFRESH_MS=300000; // V1-Wetterraster im sichtbaren, unbewegten Kartenfenster erneut auflösen.
 // Shared among WL-02 layers. Radar has its own established P7-010 budget;
 // do not silently replace or mutate that scheduler.
 const GENERIC_TILE_BUDGET={inFlight:0,maxInFlight:8};
@@ -24,6 +25,8 @@ const safeRasterUrl=url=>{
      url.includes("#")||/(?:token|apikey|api_key|password)=/i.test(url))return false;
   try{rasterTileUrl(url,{x:0,y:0,z:0});return true;}catch(_){return false;}
 };
+const safeLegendUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&
+  !/^https:\/\/[^/?#]*@/i.test(url)&&!url.includes("#")&&!/(?:token|apikey|api_key|password)=/i.test(url);
 export const parseGenericRasterCoverage=provenance=>{
   const spatial=provenance?.spatial_coverage;
   if(!spatial||typeof spatial!=="object")return null;
@@ -182,7 +185,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherGenericState(id){
     if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
-    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,ageSeconds:null,stale:false,observationKind:null,abortTiles:new Set(),hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null});
+    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,ageSeconds:null,stale:false,observationKind:null,abortTiles:new Set(),hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null,pollTimer:null});
     return this.__weatherGenericStates.get(id);
   },
   _weatherGenericDescribe(id){
@@ -202,7 +205,8 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(state.onMapMove&&state.hookMap){state.hookMap.off("moveend",state.onMapMove);state.hookMap.off("zoomend",state.onMapMove);}
     if(state.onVisibility&&typeof document!=="undefined")document.removeEventListener("visibilitychange",state.onVisibility);
     if(state.refreshTimer)clearTimeout(state.refreshTimer);
-    state.onMapMove=null;state.onVisibility=null;state.refreshTimer=null;state.hookMap=null;
+    if(state.pollTimer)clearInterval(state.pollTimer);
+    state.onMapMove=null;state.onVisibility=null;state.refreshTimer=null;state.pollTimer=null;state.hookMap=null;
   },
   _weatherGenericBind(id){
     const state=this._weatherGenericState(id),map=this._map;
@@ -213,6 +217,11 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     map?.on("moveend",state.onMapMove);map?.on("zoomend",state.onMapMove);
     state.onVisibility=()=>{if(document.visibilityState==="visible"&&state.enabled)state.onMapMove();};
     if(typeof document!=="undefined")document.addEventListener("visibilitychange",state.onVisibility);
+    state.pollTimer=setInterval(()=>{
+      if(!state.enabled||state.hookMap!==this._map||state.refreshTimer||
+        (typeof document!=="undefined"&&document.visibilityState==="hidden"))return;
+      void this._weatherGenericRefresh(id);
+    },GENERIC_REFRESH_MS);
   },
   async _weatherGenericToggle(id){
     if(!Object.hasOwn(GENERIC_RASTERS,id))return;
@@ -300,7 +309,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=loaded?"partial":"failed";state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,failed});this._weatherLayerMenuRender();});
     layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=loaded?(failed?"partial":"ready"):"unavailable";report("tile_cycle_complete",{loaded,failed,completed});this._weatherLayerMenuRender();});
     layer.on("loading",()=>{if(state.generation!==token)return;state.status="loading";});
-    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.legend=safeRasterUrl(payload?.legend?.url)?payload.legend.url:(typeof payload?.legend?.url==="string"&&/^https:\/\/[^\\s<>]+$/.test(payload.legend.url)?payload.legend.url:null);state.ageSeconds=Number.isFinite(answer.freshness?.age_seconds)?answer.freshness.age_seconds:null;state.observationKind=answer.resource?.semantics?.observation_kind||null;state.stale=answer.freshness?.stale===true;state.loaded=0;state.failed=0;
+    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.legend=safeLegendUrl(payload?.legend?.url)?payload.legend.url:null;state.ageSeconds=Number.isFinite(answer.freshness?.age_seconds)?answer.freshness.age_seconds:null;state.observationKind=answer.resource?.semantics?.observation_kind||null;state.stale=answer.freshness?.stale===true;state.loaded=0;state.failed=0;
     try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
     catch(_){this._weatherGenericDetach(id);state.status="failed";state.error="Karte konnte nicht eingebunden werden";}
     this._weatherLayerMenuRender();
@@ -332,6 +341,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       .weather-layer-quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.weather-layer-action,.weather-layer-category{appearance:none;border:1px solid rgba(255,112,149,.18);border-radius:10px;background:rgba(255,255,255,.028);color:#e8dce2;min-height:44px;padding:7px 8px;font:760 9.5px/1.2 inherit;cursor:pointer;touch-action:manipulation;text-align:left}.weather-layer-action[disabled]{cursor:default;opacity:.72}.weather-layer-action strong,.weather-layer-category strong{display:block;color:#ffd5e0;font-size:10px}.weather-layer-action small,.weather-layer-category small{display:block;margin-top:3px;opacity:.65;font-size:7.8px;font-weight:650}.weather-layer-action.active{border-color:rgba(103,226,168,.38);background:rgba(46,141,102,.12)}.weather-layer-action.busy{border-color:rgba(210,140,255,.42);box-shadow:0 0 14px rgba(203,84,255,.08)}
       .weather-layer-categories{display:grid;gap:4px}.weather-layer-category{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:42px}.weather-layer-category-count{font-size:8px;color:#cb92ad;padding-left:8px}
       .weather-layer-capabilities{display:grid;gap:5px}.weather-layer-capability{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;padding:7px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(5,7,12,.22)}.weather-layer-capability.focus{border-color:rgba(255,115,151,.35);box-shadow:0 0 16px rgba(203,84,255,.08)}.weather-layer-capability-name{font-size:9.5px;font-weight:800;color:#f8dae3}.weather-layer-capability-meta{margin-top:3px;font-size:7.5px;line-height:1.3;color:#ad9da5;overflow-wrap:anywhere}.weather-layer-capability-state{font-size:7.4px;line-height:1.25;text-align:right;color:#a98d9b;white-space:nowrap}
+      .weather-layer-legend-link{display:inline-flex;align-items:center;min-height:40px;color:#f0c478;text-decoration:underline;text-underline-offset:2px;touch-action:manipulation}
       .weather-layer-empty{padding:10px;border:1px dashed rgba(255,114,151,.17);border-radius:10px;font-size:8.5px;line-height:1.4;color:#bfaab4}.weather-layer-refresh{appearance:none;border:0;background:transparent;color:#b788a0;font:720 8px/1 inherit;padding:5px;cursor:pointer}
       @media(max-width:720px){.map-display-menu.weather-layer-view{width:min(290px,calc(100vw - 20px));min-width:min(290px,calc(100vw - 20px));max-width:min(290px,calc(100vw - 20px))}.weather-layer-panel{max-height:min(60vh,460px)}.weather-layer-entry,.weather-layer-action,.weather-layer-category{min-height:46px}}
       #card-root.ipad-device .weather-layer-entry,#card-root.ipad-device .weather-layer-action,#card-root.ipad-device .weather-layer-category,#card-root.ipad-device .weather-layer-back{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -435,7 +445,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherLayerMenuCapabilitiesMarkup(capabilities){
     const state=this._weatherLayerMenuState();
-    return `<div class="weather-layer-capabilities">${safeArray(capabilities).map(capability=>{const focus=state.focusCapability===capability.id,label=formatWeatherLayerCapabilityLabel(capability),meta=capabilityMetaLabel(capability);if(genericRasterId(capability)){const g=this._weatherGenericState(capability.id);return `<div class="weather-layer-capability"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)} · ${escapeHtml(g.provider||"Quelle ausstehend")} · ${escapeHtml(g.validAt||"UTC ausstehend")} · ${escapeHtml(g.attribution||"Attribution ausstehend")} · ${g.ageSeconds==null?"Alter unbekannt":Math.round(g.ageSeconds/60)+" Min. alt"} · ${escapeHtml(g.observationKind||"Datentyp unbekannt")} ${g.legend?" · Legende vorhanden":""} ${g.error?" · "+escapeHtml(g.error):""}</div></div><button class="weather-layer-action${g.enabled?" active":""}" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}">${escapeHtml(this._weatherGenericDescribe(capability.id))}</button></div>`;}if(rendererId(capability)==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}>${escapeHtml(layerState.label)}</button></div>`;}return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><div class="weather-layer-capability-state">verfügbar<br>Renderer folgt</div></div>`;}).join("")}</div>`;
+    return `<div class="weather-layer-capabilities">${safeArray(capabilities).map(capability=>{const focus=state.focusCapability===capability.id,label=formatWeatherLayerCapabilityLabel(capability),meta=capabilityMetaLabel(capability);if(genericRasterId(capability)){const g=this._weatherGenericState(capability.id);return `<div class="weather-layer-capability"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)} · ${escapeHtml(g.provider||"Quelle ausstehend")} · ${escapeHtml(g.validAt||"UTC ausstehend")} · ${escapeHtml(g.attribution||"Attribution ausstehend")} · ${g.ageSeconds==null?"Alter unbekannt":Math.round(g.ageSeconds/60)+" Min. alt"} · ${escapeHtml(g.observationKind||"Datentyp unbekannt")} ${g.legend?` · <a class="weather-layer-legend-link" href="${escapeHtml(g.legend)}" target="_blank" rel="noopener noreferrer" aria-label="Wetterlegende in neuem Fenster öffnen">Legende öffnen</a>`:""} ${g.error?" · "+escapeHtml(g.error):""}</div></div><button class="weather-layer-action${g.enabled?" active":""}" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}">${escapeHtml(this._weatherGenericDescribe(capability.id))}</button></div>`;}if(rendererId(capability)==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}>${escapeHtml(layerState.label)}</button></div>`;}return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><div class="weather-layer-capability-state">verfügbar<br>Renderer folgt</div></div>`;}).join("")}</div>`;
   },
 
   _weatherLayerMenuCategoryMarkup(categoryId){
