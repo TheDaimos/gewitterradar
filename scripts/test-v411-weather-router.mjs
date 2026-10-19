@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
 import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage} from '../frontend/modules/weather/layer-menu.js';
+import {rasterTileUrl} from '../frontend/modules/weather/p7-010/raster-tile-url.js';
 
 const calls=[];
 const mock=async request=>{
@@ -99,6 +100,15 @@ assert.deepEqual(
   {primary:'Frühjahrs-Giftlorchel',secondary:'Vorkommensdichte · GBIF',full:'Frühjahrs-Giftlorchel · Vorkommensdichte · GBIF'},
   'Provider-led capability names must be reordered for human scanning'
 );
+const wl02Source=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
+assert.ok(wl02Source.includes('rasterTileUrl(payload.tile_url,coords)'),'WL-02 must use the existing canonical tile URL expansion for WMS and XYZ');
+assert.ok(wl02Source.includes('rasterTileUrl(url,{x:0,y:0,z:0})'),'WL-02 must validate the complete raster template before creating a tile');
+assert.ok(wl02Source.includes('maxNativeZoom:Math.min(maxZoom,18)'),'WL-02 must respect the established maximum canonical tile zoom');
+assert.equal(rasterTileUrl('https://example.invalid/{z}/{x}/{y}.png',{z:1,x:1,y:1}),'https://example.invalid/1/1/1.png');
+const wl02WmsUrl=rasterTileUrl('https://example.invalid/wms?bbox={bbox-epsg-3857}',{z:0,x:0,y:0});
+assert.ok(wl02WmsUrl.startsWith('https://example.invalid/wms?bbox='),'WR EPSG:3857 WMS tiles must be expandable without a new architecture');
+assert.equal(wl02WmsUrl.includes('{bbox-epsg-3857}'),false,'No WMS placeholder may be passed through to the browser');
+assert.throws(()=>rasterTileUrl('https://example.invalid/wms?bbox={unknown}',{z:0,x:0,y:0}),TypeError,'Unknown WMS tokens must fail closed');
 const displayMenuSource=await readFile(new URL('../frontend/modules/weather/display-menu.js',import.meta.url),'utf8');
 for(const marker of ['id:"weather.display-menu"','version:"0.4.18"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','balanced','soft'])assert.ok(displayMenuSource.includes(marker),'WeatherRouter display menu contract missing: '+marker);
 for(const marker of ['78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066','e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047','help-display-eye-open-master-1254.png','help-display-eye-closed-master-1254.png'])assert.ok(displayMenuSource.includes(marker),'Final WeatherRouter eye asset contract missing: '+marker);
