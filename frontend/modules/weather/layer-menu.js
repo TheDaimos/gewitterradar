@@ -219,8 +219,9 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       !/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(validAt)){
       this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
     }
-    const L=await deps.loadLeafletJs?.();
-    if(!L||!state.enabled||token!==state.generation)return;
+    let L=null;try{L=await deps.loadLeafletJs?.();}catch(_error){state.status="failed";state.error="Leaflet konnte nicht geladen werden";this._weatherLayerMenuRender();return;}
+    if(!L){state.status="failed";state.error="Leaflet nicht verfügbar";this._weatherLayerMenuRender();return;}
+    if(!state.enabled||token!==state.generation)return;
     this._weatherGenericDetach(id);
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
