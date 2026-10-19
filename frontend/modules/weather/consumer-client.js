@@ -265,7 +265,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
         (typeof value==="number"&&Number.isFinite(value))||
         (typeof value==="string"&&value.length<=180))safe[key]=value;
       // RF04: keep only bounded, explicitly allowed Canvas audit shapes.
-      else if(key==="render_order"&&Array.isArray(value))
+      else if((key==="render_order"||key==="source_order")&&Array.isArray(value))
         safe[key]=value.slice(0,12).filter(x=>x&&typeof x==="object"&&
           typeof x.source_id==="string"&&x.source_id.length<=120)
           .map(x=>({source_id:x.source_id,
