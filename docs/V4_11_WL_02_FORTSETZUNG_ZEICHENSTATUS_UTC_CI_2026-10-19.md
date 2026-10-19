@@ -48,13 +48,15 @@
 
 **Getesteter Programm-HEAD:** `ed7e696819bcf92fc5102c6bc34716f9bde8fc93`. Kein älterer grüner Lauf wird als neue Abnahme dargestellt.
 
-| Workflow | GitHub-Lauf | Stand bei Erstellung, bis zur erneuten tatsächlichen GitHub-Rücklese nachziehen |
-|---|---|---|
-| V4.11.99 settings navigation and runtime identity | [39318858688](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858688) | **SUCCESS** |
-| Validate Gewitterradar integration | [39318858618](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858618) | **SUCCESS**, alle vier Jobs (package-contract, hacs-integration, hassfest, home-assistant-runtime) erfolgreich |
-| Validate shared Gewitterradar frontend | [39318858714](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858714) | **IN PROGRESS zum ursprünglichen Berichtsentwurf**; finalen Status per GitHub abrufen und oben nur anhand tatsächlicher Nachweise aktualisieren |
+| Workflow | GitHub-Lauf | Tatsächliche Jobkennung(en) | Verifizierter Status |
+|---|---|---|---|
+| V4.11.99 settings navigation and runtime identity | [39318858688](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858688) | `settings-navigation` **118287344570** | **COMPLETED/SUCCESS** |
+| Validate Gewitterradar integration | [39318858618](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858618) | `home-assistant-runtime` **118287343688**, `package-contract` **118287344237**, `hassfest` **118287344411**, `hacs-integration` **118287344423** | **ALLE VIER COMPLETED/SUCCESS** |
+| Validate shared Gewitterradar frontend | [39318858714](https://github.com/TheDaimos/gewitterradar/actions/runs/39318858714) | `shared-frontend` **118287344402** | **COMPLETED/SUCCESS** |
 
-Das ursprüngliche Manifest-/Spiegelproblem ist in der früheren **3/3-SUCCESS**-Prüfung vollständig behoben. Für diesen neuen Quellcode ist **vollständiger CI-PASS erst bei tatsächlich abgeschlossenem drittem Job** zu bestätigen.
+**Exakte Nachprüfung:** Die GitHub-Läufe wurden per API erneut geladen; alle drei gehören zu demselben Programm- und Prüfsummencommit `ed7e696819bcf92fc5102c6bc34716f9bde8fc93`. Alle Jobs sind abgeschlossen, kein Job hat fehlgeschlagene Schritte. Das vollständig gelesene Frontend-Jobprotokoll nennt ausdrücklich die bestandenen `scripts/test-v411-weather-router.mjs`-, `scripts/test-v411-identity.mjs`- und Auslieferungs-/Assetprüfungen (`PASS: active version contract, exact delivery parity, assets and packages verified`). Auch die Browserprüfsammlungen wurden vor `success` beendet.
+
+**Vollständiger öffentlicher CI-PASS für die dokumentierten Draw-Status-/UTC-Programmänderungen: JA (3/3).** Die vorherige Manifest-/Spiegelkorrektur bleibt gesichert. Die grünen Läufe **beweisen weder echte WR-Provider-Bildinhalte noch HA-REAL-PASS oder eine freigegebene DRA-Version**.
 
 ## 4. Was noch offen ist / exakter weiterer Entwicklungsauftrag
 
@@ -70,7 +72,7 @@ Das ursprüngliche Manifest-/Spiegelproblem ist in der früheren **3/3-SUCCESS**
 | Freigabe | Ergebnis |
 |---|---|
 | Konkreter CODE-PASS für dokumentierte Draw-Status-/UTC-Korrektur | **JA – Quellcode in drei Auslieferungsbäumen implementiert, zusätzliche direkte Regressionen vorhanden; Browser-CI-Prüfung siehe Abschnitt 3** |
-| Vollständiger öffentlicher CI-PASS für aktuellsten Code | **Nur wenn auch der dritte Workflow wirklich SUCCESS ist; vor Abschluss OFFEN** |
+| Vollständiger öffentlicher CI-PASS für aktuellsten geprüften Programmcode | **JA, 3/3 SUCCEEDED**, reale Job- und Laufkennungen siehe Abschnitt 3; HA-REAL bleibt gesondert **OFFEN** |
 | Vollständiger WL-02-HA-REAL-PASS | **NEIN** |
 | DRA-/Installationsfreigabe | **NEIN** |
 | WeatherRouter-Provider-/OPERA-Codeänderungen | **KEINE** |
