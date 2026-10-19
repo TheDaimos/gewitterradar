@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.99 DEV GR-RF-04: Weather Engine Diagnose: nachvollziehbare Canvas-Zeichenfolgen im geschuetzten Diagnoseexport; sonstige Kartenlogik unveraendert; HA-Realabnahme offen.",
+    "purpose": "V4.11.99 DEV GR-RF-04: Weather Engine Diagnose: nachvollziehbare Canvas-Zeichenfolgen im geschuetzten Diagnoseexport; sonstige Kartenlogik unveraendert; Bestaetigte outside_coverage-Fehlentscheidung im regionalen RF02-Ausfallschutz korrigiert; HA-Realabnahme offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

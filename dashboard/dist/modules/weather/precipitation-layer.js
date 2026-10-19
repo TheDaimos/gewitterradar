@@ -5,7 +5,7 @@ import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.18",
+  version:"1.3.19",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -225,6 +225,18 @@ export function decideV2RegionalRetention({
   if(!measured.length||!older.length)return no("no_previous_radar_and_satellite");
   const outcomes=Array.isArray(next.source_outcomes)?next.source_outcomes:[];
   const sourceEvidence=outcomes.filter(x=>measured.some(m=>m.source_id===x.source_id));
+  // Explicit per-source invalidity overrides any generic transient failure.\n  // A held regional raster MUST be dropped when its coverage or age is invalid.
+  const routing=next.routing||{};
+  const evidence=[...(Array.isArray(routing.coverage_preflight)?routing.coverage_preflight:[]),
+    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[]),
+    ...outcomes];
+  for(const l of measured){
+    if(evidence.some(item=>item.source_id===l.source_id&&
+      ["outside_coverage","outside_time_tolerance","no_fresh_verified_frame",
+        "profile_filtered","consent_revoked","source_stale","not_permitted",
+        "coverage_unverified"].includes(item.result||item.reason)))
+      return no("explicit_regional_rejection");
+  }
   const explicitTransient=sourceEvidence.some(x=>
     ["coverage_timeout","temporarily_unavailable","coverage_provider_error"].includes(x.result));
   const genericTransient=Array.isArray(next.limitations)&&next.limitations.some(x=>
@@ -250,19 +262,6 @@ export function decideV2RegionalRetention({
   if(nextUnits.size!==1||measured.some(l=>!nextUnits.has(
     String(l.semantics?.quantity)+"|"+String(l.semantics?.unit))))
     return no("precipitation_semantics_changed");
-  // Respect any *explicit* public reason if WR gains such a field later;
-  // current WR 0.10.158 puts granular preflight in diagnostics, not V2 replies.
-  const routing=next.routing||{};
-  const evidence=[...(Array.isArray(routing.coverage_preflight)?routing.coverage_preflight:[]),
-    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[]),
-    ...outcomes];
-  for(const l of measured){
-    if(evidence.some(item=>item.source_id===l.source_id&&
-      ["outside_coverage","outside_time_tolerance","no_fresh_verified_frame",
-        "profile_filtered","consent_revoked","source_stale","not_permitted",
-        "coverage_unverified"].includes(item.result||item.reason)))
-      return no("explicit_regional_rejection");
-  }
   const used=measureRasterViewportCoverage(measured,viewport,zoom);
   if(used.covered_sources<=0||used.fraction<=0)return no("regional_outside_viewport");
   const expiry=old.map(l=>v2RenderedSourceValidity(l,previousAt,{
