@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.98",
-  "build": "V4.11.98-DEV-2026-10-19",
-  "runtimeRevision": "41198r1",
-  "moduleSetId": "E411-98A1",
+  "productVersion": "4.11.99",
+  "build": "V4.11.99-DEV-2026-10-19",
+  "runtimeRevision": "41199r1",
+  "moduleSetId": "E411-99A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.98 DEV GR-RF-03: WeatherRouter V2 Visualisierung durch fortschrittsabhängigen Kachelaufbau, Firefox-Wiederaufnahme und tatsächliche Canvas-Zeichenpriorität. GR-RF-01/02, UTC, V1/V2 und Freigaben geschützt. HA-REAL-PASS offen.",
+    "purpose": "V4.11.99 DEV GR-RF-04: nachvollziehbare Canvas-Zeichenfolgen im geschuetzten Diagnoseexport; sonstige Kartenlogik unveraendert; HA-Realabnahme offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

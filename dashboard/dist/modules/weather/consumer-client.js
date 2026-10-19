@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.7',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.8',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -264,12 +264,25 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       if(value===null||typeof value==="boolean"||
         (typeof value==="number"&&Number.isFinite(value))||
         (typeof value==="string"&&value.length<=180))safe[key]=value;
+      // RF04: keep only bounded, explicitly allowed Canvas audit shapes.
+      else if(key==="render_order"&&Array.isArray(value))
+        safe[key]=value.slice(0,12).filter(x=>x&&typeof x==="object"&&
+          typeof x.source_id==="string"&&x.source_id.length<=120)
+          .map(x=>({source_id:x.source_id,
+            freshness_class:typeof x.freshness_class==="string"
+              ?x.freshness_class.slice(0,32):"unknown"}));
+      else if(key==="observed_draw_orders"&&Array.isArray(value))
+        safe[key]=value.slice(0,12).filter(Array.isArray).map(order=>
+          order.slice(0,4).filter(id=>typeof id==="string"&&id.length<=120));
       else if(Array.isArray(value)&&value.length<=12)
         safe[key]=value.filter(x=>typeof x==="string"&&x.length<=120);
       else if(key==="tile_metrics"&&value&&typeof value==="object")
         safe[key]=Object.fromEntries(Object.entries(value).filter(([k,v])=>
           /^[a-z_]+$/.test(k)&&typeof v==="number"&&Number.isFinite(v)).slice(0,12));
     }
+    if(phase==="v2_layer_swapped"&&safe.render_order_verified===true&&
+      (!Array.isArray(safe.observed_draw_orders)||!safe.observed_draw_orders.length))
+      safe.render_order_verified=false;
     const item={seq:++store.displaySequence,at:new Date().toISOString(),
       phase:String(phase).slice(0,90),...safe};
     store.displayEvents.push(item);

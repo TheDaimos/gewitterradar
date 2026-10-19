@@ -6,7 +6,7 @@ const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",impor
 const version=await readFile(new URL("../frontend/version.js",import.meta.url),"utf8");
 
 assert.match(version,/version:"4\.11\.98"/);
-assert.match(version,/runtimeRevision:"41198r1"/);
+assert.match(version,/runtimeRevision:"41199r1"/);
 assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.7'/);
 assert.match(consumer,/gewitterradar\.weather_engine_diagnostic\.v1/);
 assert.match(consumer,/settings-weather-engine-diagnostics-toggle/);
