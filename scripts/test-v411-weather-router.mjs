@@ -104,6 +104,12 @@ const wl02Source=await readFile(new URL('../frontend/modules/weather/layer-menu.
 assert.ok(wl02Source.includes('rasterTileUrl(payload.tile_url,coords)'),'WL-02 must use the existing canonical tile URL expansion for WMS and XYZ');
 assert.ok(wl02Source.includes('rasterTileUrl(url,{x:0,y:0,z:0})'),'WL-02 must validate the complete raster template before creating a tile');
 assert.ok(wl02Source.includes('maxNativeZoom:Math.min(maxZoom,18)'),'WL-02 must respect the established maximum canonical tile zoom');
+for(const marker of [
+  'GENERIC_REFRESH_MS=300000','state.pollTimer=setInterval(', 'clearInterval(state.pollTimer)',
+  'document.visibilityState==="hidden"', 'weather-layer-legend-link',
+  'safeLegendUrl(payload?.legend?.url)', 'rel="noopener noreferrer"'
+])assert.ok(wl02Source.includes(marker),'WL-02 must retain bounded foreground refresh and an attributable touch-friendly legend: '+marker);
+
 assert.equal(rasterTileUrl('https://example.invalid/{z}/{x}/{y}.png',{z:1,x:1,y:1}),'https://example.invalid/1/1/1.png');
 const wl02WmsUrl=rasterTileUrl('https://example.invalid/wms?bbox={bbox-epsg-3857}',{z:0,x:0,y:0});
 assert.ok(wl02WmsUrl.startsWith('https://example.invalid/wms?bbox='),'WR EPSG:3857 WMS tiles must be expandable without a new architecture');
