@@ -4,7 +4,7 @@
 **Repository:** `TheDaimos/gewitterradar` · einziger Entwicklungszweig `deploy/dev`  
 **Auslieferung:** **V4.11.99 DEV** · Build `V4.11.99-DEV-2026-10-19` · Runtime `41199r1` · Modulsatz `E411-99A1` · HA-Integration `0.25.17`  
 **WeatherRouter-Gegenstelle:** V0.10.161 DEV laut gemeinsamer Realabnahme (nicht durch dieses CI live installiert oder geprüft).  
-**Status:** CODE-Korrekturen integriert; P7-010/RF01–RF04 isolierte Tests erfolgreich; automatische vollständige Frontend-/HA-Prüfung und echte HA-Timeout-Realabnahme getrennt bewerten. **Kein HA-REAL-PASS.**
+**Status:** **CODE-PASS ✅ · CI-PASS ✅ · HA-REAL-PASS OFFEN**. CODE- und CI-Freigabe beziehen sich auf den geprüften technischen Stand `1ff491c51f8e29ddcd2edc73cb6f7db4efa3f6e2`; danach ausschließlich Dokumentationsänderungen.
 
 ## A – Tatsächlich nachgewiesene Ursache der Zeichenreihendiagnose
 
@@ -53,7 +53,12 @@ Die Zuordnung ist **kein** pauschaler Nachweis, dass jeder Fall in einer neu auf
 - Modul-/Android-Schutz-Workflow **SUCCESS**, Run **39234295299**.
 - Einstellungen/Laufzeitidentität **SUCCESS**, Run **39234643133** nach Versionsabgleich.
 - HA-Integration **SUCCESS**, Run **39234643070**.
-- Gemeinsamer Frontend-/Browserworkflow: finalen SUCCESS-Status für die **letzte** Quellstandauslieferung unabhängig verifizieren; vor dessen Nachweis **kein vollständiger CI-PASS**.
+- Gemeinsamer Frontend-/Browserworkflow **SUCCESS**, Run **39235365097**, geprüft auf Commit `1ff491c51f8e29ddcd2edc73cb6f7db4efa3f6e2`; einschließlich historischer geschützter About-Geometrie, Browser-Regressionsprüfungen, UI-Animation und **beider Auslieferungsvarianten**.
+- HA-Integration **SUCCESS**, Run **39235364938** (gleicher geprüfter Quellcommit).
+- Einstellungen/Laufzeitidentität **SUCCESS**, Run **39235364962** (gleicher geprüfter Quellcommit).
+- P7-010 18 isolierte Skripte **SUCCESS**, Run **39234511576**, plus Modul-/Android-Gate **SUCCESS**, Run **39234295299**; die nachfolgenden Änderungen an diesem Prüfstand betrafen nur benannte Test-/Auslieferungskontrollen und dokumentierte Sicherheitskorrektur, deren neue Regression durch den ebenfalls grünen P7-010-Lauf ausgeführt wurde.
+
+**Ergebnis: CODE-PASS und CI-PASS für V4.11.99.** Die bestehende HA-Realabnahme bleibt hinsichtlich des nicht erzwungenen realen DWD-Timeouts und der nach Installation erneuten Diagnoseprüfung **OFFEN**.
 
 Zwischenzeitlich rote Läufe dienten zur Fehlerentdeckung (RF02-Verletzung) bzw. zur Anpassung alter V4.11.98-Versionsprüfungen. Diese sind keine gültige Endabnahme für V4.11.99.
 
