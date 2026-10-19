@@ -259,7 +259,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(answer.resource?.type!=="raster_tile"||!safeRasterUrl(payload?.tile_url)||![256,512].includes(payload?.tile_size)||
       !Number.isInteger(maxZoom)||maxZoom<0||maxZoom>22||!Number.isInteger(minZoom)||minZoom<0||minZoom>maxZoom||
       !coverage||answer.freshness?.stale===true||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
-      !/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(validAt)){
+      !/[zZ]$|[+-]\d\d:\d\d$/.test(validAt)){
       this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
     }
     let L=null;try{L=await deps.loadLeafletJs?.();}catch(_error){state.status="failed";state.error="Leaflet konnte nicht geladen werden";this._weatherLayerMenuRender();return;}
