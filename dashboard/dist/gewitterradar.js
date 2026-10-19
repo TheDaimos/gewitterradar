@@ -55,7 +55,7 @@ try {
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js','41199r1');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','41199r1');
-  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41109r1');
+  const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','41199r1');
   const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','41199r1');
   const weatherLegendOverlay = await gewitterradarImport('./modules/weather/legend-overlay.js','41114r1');
 
