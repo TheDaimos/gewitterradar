@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus} from '../frontend/modules/weather/layer-menu.js';
 import {rasterTileUrl} from '../frontend/modules/weather/p7-010/raster-tile-url.js';
 
 const calls=[];
@@ -61,6 +61,11 @@ assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'preci
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
 assert.equal(layerCatalog.quick.find(x=>x.id==='clouds')?.renderer,'weather.satellite.clouds','Real WR satellite cloud raster must attach to the isolated generic renderer');
 assert.equal(layerCatalog.quick.find(x=>x.id==='wind')?.renderer,'weather.model.wind_10m.layer','Real WR wind model raster must attach to the isolated generic renderer');
+assert.equal(genericRasterCycleStatus({drawn:0,failed:0}),'unavailable','A complete Leaflet cycle of clipped transparent tiles is NOT a drawn map');
+assert.equal(genericRasterCycleStatus({drawn:0,failed:2}),'failed','Failures without painted tiles cannot be reported as partial success');
+assert.equal(genericRasterCycleStatus({drawn:1,failed:0}),'ready','A completed cycle with successful canvas draw operation is ready');
+assert.equal(genericRasterCycleStatus({drawn:1,failed:1}),'partial','Painted tiles plus failed tiles form a partial map');
+
 assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:5,south:47,east:16,north:56}}}),
   {scope:'bbox',west:5,south:47,east:16,north:56,antimeridian:false},'WR coverage must accept the canonical machine-readable bbox object');
 assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:170,south:-20,east:-170,north:20}}}),
@@ -101,6 +106,10 @@ assert.deepEqual(
   'Provider-led capability names must be reordered for human scanning'
 );
 const wl02Source=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
+for(const token of ['const drawnTiles=new WeakSet()','drawnTiles.add(canvas)','drawnTiles.has(tile)','genericRasterCycleStatus({drawn,failed})','drawn_means:"canvas_draw_operation_not_pixel_verification"']){
+  assert.ok(wl02Source.includes(token),'The live WL-02 canvas path must not treat clipped transparent tiles as drawn imagery: '+token);
+}
+
 assert.ok(wl02Source.includes('rasterTileUrl(payload.tile_url,coords)'),'WL-02 must use the existing canonical tile URL expansion for WMS and XYZ');
 assert.ok(wl02Source.includes('rasterTileUrl(url,{x:0,y:0,z:0})'),'WL-02 must validate the complete raster template before creating a tile');
 assert.ok(wl02Source.includes('maxNativeZoom:Math.min(maxZoom,18)'),'WL-02 must respect the established maximum canonical tile zoom');
