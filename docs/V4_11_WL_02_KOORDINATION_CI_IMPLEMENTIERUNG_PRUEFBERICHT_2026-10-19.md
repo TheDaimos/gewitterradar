@@ -65,14 +65,33 @@ Die nachfolgenden Nachträge dieses Berichts müssen die **exakt zugehörigen** 
 - Frühere separate GR-RF-04-Realzeitprüfung für DWD-`coverage_timeout`-Rückhaltung ist weiterhin offen und nicht durch diese WL-02-Korrekturen erledigt.
 - **V4.11.99 DEV** bleibt installierte Grundlage; **keine** neue Produkt-/Modulsatz-/HA-Integration-/DRA-Version allein durch Teiltests.
 
-## 6. Freigabeentscheidung (vor endgültiger CI-Nachtragsprüfung)
+## 6. Öffentliche CI-Abnahme auf dem letzten WL-02-Quellcodecommit
+
+**Fest geprüfter Quellcodecommit:** `6cef4a11804d01d8ee411f9020cc2c70b85c8a62`.
+
+| GitHub-Actions-Workflow | Run-ID | Job-ID(s) | Ergebnis |
+|---|---|---|---|
+| V4.11.99 settings navigation and runtime identity | [39315494673](https://github.com/TheDaimos/gewitterradar/actions/runs/39315494673) | `settings-navigation` **118275778393** | **SUCCESS** |
+| Validate Gewitterradar integration | [39315494642](https://github.com/TheDaimos/gewitterradar/actions/runs/39315494642) | `package-contract` **118275778187**, `hacs-integration` **118275778477**, `hassfest` **118275778684**, `home-assistant-runtime` **118275778799** | **ALLE VIER SUCCESS** |
+| Validate shared Gewitterradar frontend | [39315494702](https://github.com/TheDaimos/gewitterradar/actions/runs/39315494702) | `shared-frontend` **118275778626** | **SUCCESS** |
+
+**Direkt aus dem vollständigen erfolgreichen shared-frontend-Jobprotokoll:**
+
+- `node scripts/test-v411-weather-router.mjs`: `PASS: WeatherRouter Consumer V1, missing/offline distinction, hierarchical Layer Hub, WR display-menu and generic legend overlay.` – einschließlich der neu ergänzten Wolken-/Wind-Vertrags-, WMS-/XYZ-, Gebiet-, Timer- und Legendenregressionen.
+- `node scripts/test-v411-identity.mjs`: `PASS: V4.11.99 DEV identity synchronized across frontend, runtime and DRA provenance on the existing deploy/dev channel.`
+- Aus `scripts/verify-frontend.mjs`: `PASS: active version contract, exact delivery parity, assets and packages verified.`
+- Beide Auslieferungs-Browserprüfungen und die vollständigen weiteren Workflow-Schritte abgeschlossen; kein Job mit `failure`.
+
+**Diese CI-Prüfung weist die nachgewiesene Beseitigung der ursprünglichen Modulversions-/Spiegel-/SHA-Fehler sowie die neuen programmgesteuerten WL-02-Tests nach.** Sie ist ausdrücklich kein Ersatz für tatsächlich erfolgte Netzwerk-/HA-/Android-/iPad-Bildtests und keine DRA-Installationsfreigabe. Die Dokumentation wurde danach ergänzt; keine neue Produktversion oder Änderung der zu diesem CI-Lauf gehörenden Programmdateien.
+
+## 7. Abnahmeentscheidung nach erfolgreichem CI-Lauf
 
 | Prüffeld | Einordnung |
 |---|---|
 | Historische, präzise identifizierte CI-Ursachen | **KORRIGIERT** und in den drei genannten Pushläufen `e9aaade...` erfolgreich geprüft |
 | Frontend-/HA-/Dashboard-Spiegel und Assetinventur | **STAND BESTANDSGEPRÜFT** am aktuellen Code; nachträgliche gezielte WMS-/Timerregressionen brauchen neuen CI-Nachweis |
-| CODE-PASS für umfassende endgültige WL-02-Freigabe | **OFFEN**, da HA-naher echter Rastervertrag und Lastabnahme fehlen |
-| CI-PASS neuester WL-02-Nacharbeiten | **OFFEN BIS LAUFABSCHLUSS** |
+| CODE-PASS für ursprüngliche CI-Korrektur und konkrete WMS-/Timer-/Legendenänderungen | **JA – anhand vollständiger öffentlicher CI und kanonischer Dateiabgleiche**; umfassende WL-02-Ende-zu-Ende-Freigabe weiterhin **OFFEN**, da echte Providerbilder und Lastabnahme fehlen |
+| CI-PASS neuester WL-02-Nacharbeiten | **JA – drei zugehörige öffentliche Push-Workflows SUCCESS (oben exakt zugeordnet)**; das ist ein Code-/CI-Teilnachweis, kein vollständiger WL-02-HA-Bildnachweis |
 | HA-REAL-PASS | **OFFEN** |
 | DRA-/Installationsfreigabe | **NEIN** |
 
