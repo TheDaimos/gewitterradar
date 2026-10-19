@@ -32,6 +32,7 @@ assert.equal(decide({previousAt:now-910000}).retain,false,
  "4 old radar age invalid");
 assert.equal(decide({next:reply("outside_coverage")}).retain,false,
  "5 explicit invalid geography");
+assert.equal(decide({next:reply("outside_coverage")}).reason,"explicit_regional_rejection");
 assert.equal(decide({satelliteConsent:false}).retain,false,
  "6 revoked opt-in");
 const live={...old,layers:[nasa,dwd],status:"ready"};
