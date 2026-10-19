@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus,parseGenericRasterUtc} from '../frontend/modules/weather/layer-menu.js';
 import {rasterTileUrl} from '../frontend/modules/weather/p7-010/raster-tile-url.js';
 
 const calls=[];
@@ -61,6 +61,11 @@ assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'preci
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
 assert.equal(layerCatalog.quick.find(x=>x.id==='clouds')?.renderer,'weather.satellite.clouds','Real WR satellite cloud raster must attach to the isolated generic renderer');
 assert.equal(layerCatalog.quick.find(x=>x.id==='wind')?.renderer,'weather.model.wind_10m.layer','Real WR wind model raster must attach to the isolated generic renderer');
+assert.equal(parseGenericRasterUtc('2026-10-19T13:40:00Z'),'2026-10-19T13:40:00.000Z');
+assert.equal(parseGenericRasterUtc('2026-10-19T15:40:00+02:00'),'2026-10-19T13:40:00.000Z','Positive offset must become UTC');
+assert.equal(parseGenericRasterUtc('2026-10-19T09:40:00-04:00'),'2026-10-19T13:40:00.000Z','Negative offset must become UTC');
+for(const invalidTime of ['2026-10-19T13:40:00','2026-10-19T13:40:00+25:55','2026-10-19T13:40:00UTC','not-a-date',null,undefined])
+  assert.equal(parseGenericRasterUtc(invalidTime),null,'Non-explicit or malformed source time must fail closed');
 assert.equal(genericRasterCycleStatus({drawn:0,failed:0}),'unavailable','A complete Leaflet cycle of clipped transparent tiles is NOT a drawn map');
 assert.equal(genericRasterCycleStatus({drawn:0,failed:2}),'failed','Failures without painted tiles cannot be reported as partial success');
 assert.equal(genericRasterCycleStatus({drawn:1,failed:0}),'ready','A completed cycle with successful canvas draw operation is ready');
