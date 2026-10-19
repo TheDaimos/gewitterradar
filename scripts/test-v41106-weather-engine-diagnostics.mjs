@@ -5,9 +5,9 @@ const consumer=await readFile(new URL("../frontend/modules/weather/consumer-clie
 const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",import.meta.url),"utf8");
 const version=await readFile(new URL("../frontend/version.js",import.meta.url),"utf8");
 
-assert.match(version,/version:"4\.11\.98"/);
+assert.match(version,/version:"4\.11\.99"/);
 assert.match(version,/runtimeRevision:"41199r1"/);
-assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.7'/);
+assert.match(consumer,/id:'weather\.consumer-client',version:'1\.2\.8'/);
 assert.match(consumer,/gewitterradar\.weather_engine_diagnostic\.v1/);
 assert.match(consumer,/settings-weather-engine-diagnostics-toggle/);
 assert.match(consumer,/weather-engine-diagnostic-area/);
