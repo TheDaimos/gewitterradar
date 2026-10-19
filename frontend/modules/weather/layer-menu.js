@@ -173,7 +173,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherGenericState(id){
     if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
-    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,onMapMove:null,onVisibility:null,refreshTimer:null});
+    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null});
     return this.__weatherGenericStates.get(id);
   },
   _weatherGenericDescribe(id){
@@ -189,16 +189,16 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
   _weatherGenericUnbind(id){
     const state=this._weatherGenericState(id);
-    if(state.onMapMove&&state.map){state.map.off("moveend",state.onMapMove);state.map.off("zoomend",state.onMapMove);}
+    if(state.onMapMove&&state.hookMap){state.hookMap.off("moveend",state.onMapMove);state.hookMap.off("zoomend",state.onMapMove);}
     if(state.onVisibility&&typeof document!=="undefined")document.removeEventListener("visibilitychange",state.onVisibility);
     if(state.refreshTimer)clearTimeout(state.refreshTimer);
-    state.onMapMove=null;state.onVisibility=null;state.refreshTimer=null;
+    state.onMapMove=null;state.onVisibility=null;state.refreshTimer=null;state.hookMap=null;
   },
   _weatherGenericBind(id){
     const state=this._weatherGenericState(id),map=this._map;
-    if(state.onMapMove&&state.map===map)return;
+    if(state.onMapMove&&state.hookMap===map)return;
     this._weatherGenericUnbind(id);
-    state.map=map;
+    state.hookMap=map;
     state.onMapMove=()=>{if(!state.enabled)return;state.generation++;this._weatherGenericDetach(id);state.status="loading";if(state.refreshTimer)clearTimeout(state.refreshTimer);state.refreshTimer=setTimeout(()=>{state.refreshTimer=null;void this._weatherGenericRefresh(id);},900);};
     map?.on("moveend",state.onMapMove);map?.on("zoomend",state.onMapMove);
     state.onVisibility=()=>{if(document.visibilityState==="visible"&&state.enabled)state.onMapMove();};
