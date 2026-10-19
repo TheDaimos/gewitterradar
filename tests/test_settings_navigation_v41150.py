@@ -92,15 +92,15 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn("${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}", skeleton)
         self.assertEqual(skeleton.count('class="settings-footer-version" title="Kartenversion"'), 1)
         self.assertIn('            </div>\n            <div class="settings-signature-wrap"', skeleton)
-        self.assertIn("2026-10-18", (FRONTENDS[0] / "version.js").read_text())
+        self.assertIn("2026-10-19", (FRONTENDS[0] / "version.js").read_text())
 
     def test_runtime_manifest_is_current_and_complete(self):
         version = (FRONTENDS[0] / "version.js").read_text()
         runtime = json.loads((FRONTENDS[0] / "assets/gewitterradar-runtime-manifest.json").read_text())
         manifest = (FRONTENDS[0] / "module-manifest.js").read_text()
-        self.assertIn('version:"4.11.97"', version)
-        self.assertEqual(runtime["productVersion"], "4.11.97")
-        self.assertEqual(runtime["runtimeRevision"], "41197r1")
+        self.assertIn('version:"4.11.98"', version)
+        self.assertEqual(runtime["productVersion"], "4.11.98")
+        self.assertEqual(runtime["runtimeRevision"], "41198r1")
         self.assertEqual(runtime["moduleSetId"], "E411-97A1")
         self.assertEqual(len(runtime["modules"]), 34)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}

@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.98 DEV GR-RF-03: bounded progress-aware V2 staging, Firefox foreground recovery, freshness-correct audited Canvas order; GR-RF-01/02, V1/V2, UTC and consent remain protected. HA real acceptance pending.",
+    "purpose": "V4.11.98 DEV GR-RF-03: WeatherRouter V2 Visualisierung durch fortschrittsabhängigen Kachelaufbau, Firefox-Wiederaufnahme und tatsächliche Canvas-Zeichenpriorität. GR-RF-01/02, UTC, V1/V2 und Freigaben geschützt. HA-REAL-PASS offen.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
