@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41109r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.4",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.5",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -173,7 +173,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherGenericState(id){
     if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
-    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null});
+    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,onMapMove:null,onVisibility:null,refreshTimer:null});
     return this.__weatherGenericStates.get(id);
   },
   _weatherGenericDescribe(id){
@@ -187,17 +187,36 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(state.layer){try{state.map?.removeLayer(state.layer);}catch(_){}state.layer=null;}
     state.map=null;
   },
+  _weatherGenericUnbind(id){
+    const state=this._weatherGenericState(id);
+    if(state.onMapMove&&state.map){state.map.off("moveend",state.onMapMove);state.map.off("zoomend",state.onMapMove);}
+    if(state.onVisibility&&typeof document!=="undefined")document.removeEventListener("visibilitychange",state.onVisibility);
+    if(state.refreshTimer)clearTimeout(state.refreshTimer);
+    state.onMapMove=null;state.onVisibility=null;state.refreshTimer=null;
+  },
+  _weatherGenericBind(id){
+    const state=this._weatherGenericState(id),map=this._map;
+    if(state.onMapMove&&state.map===map)return;
+    this._weatherGenericUnbind(id);
+    state.map=map;
+    state.onMapMove=()=>{if(!state.enabled)return;state.generation++;this._weatherGenericDetach(id);state.status="loading";if(state.refreshTimer)clearTimeout(state.refreshTimer);state.refreshTimer=setTimeout(()=>{state.refreshTimer=null;void this._weatherGenericRefresh(id);},900);};
+    map?.on("moveend",state.onMapMove);map?.on("zoomend",state.onMapMove);
+    state.onVisibility=()=>{if(document.visibilityState==="visible"&&state.enabled)state.onMapMove();};
+    if(typeof document!=="undefined")document.addEventListener("visibilitychange",state.onVisibility);
+  },
   async _weatherGenericToggle(id){
     if(!Object.hasOwn(GENERIC_RASTERS,id))return;
     const state=this._weatherGenericState(id);
     state.enabled=!state.enabled;state.generation++;
-    if(!state.enabled){this._weatherGenericDetach(id);state.status="aus";state.error=null;this._weatherLayerMenuRender();return;}
+    if(!state.enabled){this._weatherGenericUnbind(id);this._weatherGenericDetach(id);state.status="aus";state.error=null;this._weatherLayerMenuRender();return;}
     state.status="loading";
+    this._weatherGenericBind(id);
     this._weatherLayerMenuRender();
     await this._weatherGenericRefresh(id);
   },
   async _weatherGenericRefresh(id){
     const state=this._weatherGenericState(id),token=++state.generation,map=this._map;
+    if(state.enabled&&state.map!==map)this._weatherGenericBind(id);
     if(!state.enabled||!map){state.status="unavailable";state.error="Karte nicht bereit";this._weatherLayerMenuRender();return;}
     if(typeof document!=="undefined"&&document.visibilityState==="hidden")return;
     const catalog=this._weatherLayerMenuState().model.capabilities.find(c=>c.id===id);
@@ -210,7 +229,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const correlation="gr-wl02-"+id.split(".").pop()+"-"+token+"-"+Date.now();
     const report=(phase,data={})=>this._weatherEngineMonitorEvent?.("generic_v1_raster",{capability:id,phase,correlation_id:correlation,...data});
     report("resolve_start");
-    const answer=await this._weatherRouterClient().resolve(id,bbox,{consumerId:"gewitterradar",correlationId:correlation,time:{mode:"latest"}});
+    let answer;try{answer=await this._weatherRouterClient().resolve(id,bbox,{consumerId:"gewitterradar",correlationId:correlation,time:{mode:"latest"}});}catch(_error){if(token===state.generation){this._weatherGenericDetach(id);state.status="failed";state.error="WeatherRouter nicht erreichbar";this._weatherLayerMenuRender();}return;}
     if(!state.enabled||token!==state.generation||map!==this._map)return;
     if(answer.status!=="ready"){this._weatherGenericDetach(id);state.status="unavailable";state.error=answer.unavailable?.code||"Keine Daten";report("unavailable",{code:state.error});this._weatherLayerMenuRender();return;}
     const payload=answer.resource?.payload,attribution=payload?.attribution||answer.provenance?.attribution;
@@ -229,13 +248,15 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
     const spatialBounds=coverage.scope==="global"?undefined:L.latLngBounds([[coverage.south,coverage.west],[coverage.north,coverage.east]]);
-    let loaded=0,failed=0;
+    let loaded=0,failed=0,completed=false;
     const layer=L.tileLayer(payload.tile_url,{pane:spec.pane,tileSize:payload.tile_size,minNativeZoom:minZoom,maxNativeZoom:maxZoom,
       bounds:spatialBounds,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
       attribution,updateWhenIdle:true,keepBuffer:0,errorTileUrl:""});
-    layer.on("tileload",()=>{if(state.generation!==token)return;loaded++;state.loaded=loaded;state.status=failed?"partial":"ready";report("tile_loaded",{loaded,failed});this._weatherLayerMenuRender();});
+    layer.on("tileload",()=>{if(state.generation!==token)return;loaded++;state.loaded=loaded;state.status="loading";report("tile_loaded",{loaded,failed});this._weatherLayerMenuRender();});
     layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=loaded?"partial":"failed";state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,failed});this._weatherLayerMenuRender();});
-    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.loaded=0;state.failed=0;
+    layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=loaded?(failed?"partial":"ready"):"unavailable";report("tile_cycle_complete",{loaded,failed,completed});this._weatherLayerMenuRender();});
+    layer.on("loading",()=>{if(state.generation!==token)return;state.status="loading";});
+    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.legend=payload?.legend?.url||null;state.loaded=0;state.failed=0;
     try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
     catch(_){this._weatherGenericDetach(id);state.status="failed";state.error="Karte konnte nicht eingebunden werden";}
     this._weatherLayerMenuRender();
@@ -438,5 +459,5 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   _bindMapDisplayMenuExtension(){const state=this._weatherLayerMenuState();if(state.bound||!this.shadow)return;state.bound=true;this._weatherLayerMenuEnsureStyle();this._weatherLayerMenuSyncEntry();if(this._hass)this._weatherLayerMenuProbe();},
   _mapDisplayMenuExtensionOpenChanged(open){const state=this._weatherLayerMenuState();if(!open){if(state.view!=="map-display")this._weatherLayerMenuSetView("map-display");return;}this._weatherLayerMenuProbe();},
   _syncMapDisplayMenuExtension(){this._weatherLayerMenuSyncEntry();if(this._weatherLayerMenuState().view!=="map-display")this._weatherLayerMenuRender();},
-  _teardownMapDisplayMenuExtension(){for(const id of Object.keys(GENERIC_RASTERS)){const layerState=this._weatherGenericState(id);layerState.generation++;layerState.enabled=false;layerState.status="aus";this._weatherGenericDetach(id);}const state=this._weatherLayerMenuState();state.generation+=1;state.probing=false;state.bound=false;state.view="map-display";state.category=null;state.subcategory=null;state.focusCapability=null;state.renderSignature=null;}
+  _teardownMapDisplayMenuExtension(){for(const id of Object.keys(GENERIC_RASTERS)){const layerState=this._weatherGenericState(id);layerState.generation++;this._weatherGenericUnbind(id);layerState.enabled=false;layerState.status="aus";this._weatherGenericDetach(id);}const state=this._weatherLayerMenuState();state.generation+=1;state.probing=false;state.bound=false;state.view="map-display";state.category=null;state.subcategory=null;state.focusCapability=null;state.renderSignature=null;}
 }));
