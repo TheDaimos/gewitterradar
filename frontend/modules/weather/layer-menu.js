@@ -9,6 +9,9 @@ export const MODULE_META=Object.freeze({
 });
 
 const CATALOG_REFRESH_MS=30000;
+// Shared among WL-02 layers. Radar has its own established P7-010 budget;
+// do not silently replace or mutate that scheduler.
+const GENERIC_TILE_BUDGET={inFlight:0,maxInFlight:8};
 
 const GENERIC_RASTERS=Object.freeze({
   "weather.satellite.clouds":{label:"Wolken",pane:"gr-wr-clouds",zIndex:215},
@@ -257,21 +260,19 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       attribution,updateWhenIdle:true,keepBuffer:0});
     const validCoverage=coverage.scope==="global"?{scope:"global",verified:true}:
       {scope:"bbox",verified:true,bbox:{west:coverage.west,south:coverage.south,east:coverage.east,north:coverage.north}};
-    let activeImages=0;
-    const maxImages=8;
     layer.createTile=(coords,done)=>{
       const canvas=document.createElement("canvas");
       canvas.width=payload.tile_size;canvas.height=payload.tile_size;
       const rects=rasterTilePixelCrops(coords,validCoverage,payload.tile_size);
       if(!rects.length){queueMicrotask(()=>done(null,canvas));return canvas;}
-      if(activeImages>=maxImages){queueMicrotask(()=>done(new Error("raster_tile_budget"),canvas));return canvas;}
+      if(GENERIC_TILE_BUDGET.inFlight>=GENERIC_TILE_BUDGET.maxInFlight){queueMicrotask(()=>done(new Error("raster_tile_budget"),canvas));return canvas;}
       const url=payload.tile_url.replace(/\\{z\\}/g,String(coords.z))
         .replace(/\\{x\\}/g,String(coords.x)).replace(/\\{y\\}/g,String(coords.y));
       const image=new Image();image.crossOrigin="anonymous";
-      activeImages++;
+      GENERIC_TILE_BUDGET.inFlight++;
       let settled=false;
       const finish=(error=null)=>{
-        if(settled)return;settled=true;activeImages=Math.max(0,activeImages-1);
+        if(settled)return;settled=true;GENERIC_TILE_BUDGET.inFlight=Math.max(0,GENERIC_TILE_BUDGET.inFlight-1);
         clearTimeout(timer);image.onload=null;image.onerror=null;state.abortTiles.delete(abort);done(error,canvas);
       };
       const abort=()=>{image.onload=null;image.onerror=null;image.src="";finish(new Error("tile_cancelled"));};
