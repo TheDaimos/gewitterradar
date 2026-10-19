@@ -15,12 +15,15 @@ const GENERIC_RASTERS=Object.freeze({
 });
 const genericRasterId=capability=>Object.hasOwn(GENERIC_RASTERS,capability?.id||"")&&capability?.resource_types?.includes("raster_tile")?capability.id:null;
 const safeRasterUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&["{z}","{x}","{y}"].every(key=>url.includes(key))&&!/(?:token|apikey|api_key|password)=/i.test(url);
-const verifiedRasterBbox=provenance=>{
+export const parseGenericRasterCoverage=provenance=>{
   const spatial=provenance?.spatial_coverage;
-  const bbox=Array.isArray(spatial?.bbox)?spatial.bbox:Array.isArray(spatial)?spatial:null;
-  if(!bbox||bbox.length!==4||bbox.some(x=>!Number.isFinite(x)))return null;
-  const [west,south,east,north]=bbox;
-  return west>=-180&&east<=180&&south>=-90&&north<=90&&west<east&&south<north?{west,south,east,north}:null;
+  if(!spatial||typeof spatial!=="object")return null;
+  if(spatial.scope==="global")return {scope:"global"};
+  if(spatial.scope!=="bbox"||!spatial.bbox||typeof spatial.bbox!=="object"||Array.isArray(spatial.bbox))return null;
+  const {west,south,east,north}=spatial.bbox;
+  if(![west,south,east,north].every(Number.isFinite)||west< -180||west>180||east< -180||east>180||
+    south< -90||north>90||south>=north||west===east)return null;
+  return {scope:"bbox",west,south,east,north,antimeridian:west>east};
 };
 
 const MAP_RESOURCE_TYPES=Object.freeze(new Set(["raster_tile","hazard_feed","event_feed","planetary_tile"]));
@@ -211,11 +214,11 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(!state.enabled||token!==state.generation||map!==this._map)return;
     if(answer.status!=="ready"){this._weatherGenericDetach(id);state.status="unavailable";state.error=answer.unavailable?.code||"Keine Daten";report("unavailable",{code:state.error});this._weatherLayerMenuRender();return;}
     const payload=answer.resource?.payload,attribution=payload?.attribution||answer.provenance?.attribution;
-    const maxZoom=payload?.max_zoom,minZoom=payload?.min_zoom??0,coverage=verifiedRasterBbox(answer.provenance);
+    const maxZoom=payload?.max_zoom,minZoom=payload?.min_zoom??0,coverage=parseGenericRasterCoverage(answer.provenance);
     const validAt=answer.freshness?.data_time||answer.freshness?.valid_at||answer.provenance?.valid_at;
     if(answer.resource?.type!=="raster_tile"||!safeRasterUrl(payload?.tile_url)||![256,512].includes(payload?.tile_size)||
       !Number.isInteger(maxZoom)||maxZoom<0||maxZoom>22||!Number.isInteger(minZoom)||minZoom<0||minZoom>maxZoom||
-      !coverage||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
+      (!coverage||coverage.antimeridian)||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
       !/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(validAt)){
       this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
     }
@@ -225,7 +228,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     this._weatherGenericDetach(id);
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
-    const spatialBounds=L.latLngBounds([[coverage.south,coverage.west],[coverage.north,coverage.east]]);
+    const spatialBounds=coverage.scope==="global"?undefined:L.latLngBounds([[coverage.south,coverage.west],[coverage.north,coverage.east]]);
     let loaded=0,failed=0;
     const layer=L.tileLayer(payload.tile_url,{pane:spec.pane,tileSize:payload.tile_size,minNativeZoom:minZoom,maxNativeZoom:maxZoom,
       bounds:spatialBounds,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
