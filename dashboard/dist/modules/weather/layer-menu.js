@@ -27,6 +27,8 @@ const safeRasterUrl=url=>{
 };
 const safeLegendUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&
   !/^https:\/\/[^/?#]*@/i.test(url)&&!url.includes("#")&&!/(?:token|apikey|api_key|password)=/i.test(url);
+export const genericRasterCycleStatus=({drawn=0,failed=0}={})=>
+  drawn>0?(failed>0?"partial":"ready"):(failed>0?"failed":"unavailable");
 export const parseGenericRasterCoverage=provenance=>{
   const spatial=provenance?.spatial_coverage;
   if(!spatial||typeof spatial!=="object")return null;
@@ -266,7 +268,8 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     this._weatherGenericDetach(id);
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
-    let loaded=0,failed=0,completed=false;
+    let loaded=0,drawn=0,skipped=0,failed=0,completed=false;
+    const drawnTiles=new WeakSet();
     // Reuse the established P7-010 geographic pixel-crop geometry.
     // A bounded browser image budget is intentionally separate from radar's scheduler.
     const layer=L.gridLayer({pane:spec.pane,tileSize:payload.tile_size,minZoom,
@@ -298,6 +301,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
           const ctx=canvas.getContext("2d");
           if(!ctx)throw new Error("canvas_unavailable");
           for(const rect of rects)ctx.drawImage(image,rect.sx,rect.sy,rect.sw,rect.sh,rect.sx,rect.sy,rect.sw,rect.sh);
+          drawnTiles.add(canvas); // Zeichenvorgang, noch keine Verifikation nichttransparenter Bildpixel.
           finish();
         }catch(_error){finish(new Error("tile_crop_failed"));}
       };
@@ -305,9 +309,9 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       image.src=url;
       return canvas;
     };
-    layer.on("tileload",()=>{if(state.generation!==token)return;loaded++;state.loaded=loaded;state.status="loading";report("tile_loaded",{loaded,failed});this._weatherLayerMenuRender();});
-    layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=loaded?"partial":"failed";state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,failed});this._weatherLayerMenuRender();});
-    layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=loaded?(failed?"partial":"ready"):"unavailable";report("tile_cycle_complete",{loaded,failed,completed});this._weatherLayerMenuRender();});
+    layer.on("tileload",({tile}={})=>{if(state.generation!==token)return;loaded++;if(tile&&drawnTiles.has(tile))drawn++;else skipped++;state.loaded=loaded;state.status="loading";report("tile_loaded",{loaded,drawn,skipped,failed});this._weatherLayerMenuRender();});
+    layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=genericRasterCycleStatus({drawn,failed});state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,drawn,skipped,failed});this._weatherLayerMenuRender();});
+    layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=genericRasterCycleStatus({drawn,failed});if(!drawn&&!failed)state.error="Keine gezeichneten Rasterkacheln innerhalb der Abdeckung";else if(!failed)state.error=null;report("tile_cycle_complete",{loaded,drawn,skipped,failed,completed,drawn_means:"canvas_draw_operation_not_pixel_verification"});this._weatherLayerMenuRender();});
     layer.on("loading",()=>{if(state.generation!==token)return;state.status="loading";});
     state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.legend=safeLegendUrl(payload?.legend?.url)?payload.legend.url:null;state.ageSeconds=Number.isFinite(answer.freshness?.age_seconds)?answer.freshness.age_seconds:null;state.observationKind=answer.resource?.semantics?.observation_kind||null;state.stale=answer.freshness?.stale===true;state.loaded=0;state.failed=0;
     try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
