@@ -174,7 +174,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherGenericState(id){
     if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
-    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null});
+    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,abortTiles:new Set(),hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null});
     return this.__weatherGenericStates.get(id);
   },
   _weatherGenericDescribe(id){
@@ -185,6 +185,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
   _weatherGenericDetach(id){
     const state=this._weatherGenericState(id);
+    for(const abort of state.abortTiles){try{abort();}catch(_){}}state.abortTiles.clear();
     if(state.layer){try{state.map?.removeLayer(state.layer);}catch(_){}state.layer=null;}
     state.map=null;
   },
@@ -271,8 +272,10 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       let settled=false;
       const finish=(error=null)=>{
         if(settled)return;settled=true;activeImages=Math.max(0,activeImages-1);
-        clearTimeout(timer);image.onload=null;image.onerror=null;done(error,canvas);
+        clearTimeout(timer);image.onload=null;image.onerror=null;state.abortTiles.delete(abort);done(error,canvas);
       };
+      const abort=()=>{image.onload=null;image.onerror=null;image.src="";finish(new Error("tile_cancelled"));};
+      state.abortTiles.add(abort);
       const timer=setTimeout(()=>{image.src="";finish(new Error("tile_timeout"));},12000);
       image.onload=()=>{
         if(!state.enabled||token!==state.generation){finish(new Error("stale_tile"));return;}
