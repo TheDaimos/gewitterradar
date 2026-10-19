@@ -8,6 +8,21 @@ export const MODULE_META=Object.freeze({
 });
 
 const CATALOG_REFRESH_MS=30000;
+
+const GENERIC_RASTERS=Object.freeze({
+  "weather.satellite.clouds":{label:"Wolken",pane:"gr-wr-clouds",zIndex:215},
+  "weather.model.wind_10m.layer":{label:"Wind 10 m",pane:"gr-wr-wind",zIndex:220}
+});
+const genericRasterId=capability=>Object.hasOwn(GENERIC_RASTERS,capability?.id||"")&&capability?.resource_types?.includes("raster_tile")?capability.id:null;
+const safeRasterUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&["{z}","{x}","{y}"].every(key=>url.includes(key))&&!/(?:token|apikey|api_key|password)=/i.test(url);
+const verifiedRasterBbox=provenance=>{
+  const spatial=provenance?.spatial_coverage;
+  const bbox=Array.isArray(spatial?.bbox)?spatial.bbox:Array.isArray(spatial)?spatial:null;
+  if(!bbox||bbox.length!==4||bbox.some(x=>!Number.isFinite(x)))return null;
+  const [west,south,east,north]=bbox;
+  return west>=-180&&east<=180&&south>=-90&&north<=90&&west<east&&south<north?{west,south,east,north}:null;
+};
+
 const MAP_RESOURCE_TYPES=Object.freeze(new Set(["raster_tile","hazard_feed","event_feed","planetary_tile"]));
 const MAP_SPATIAL_CONTEXTS=Object.freeze(new Set(["bbox","global"]));
 const DOMAIN_ORDER=Object.freeze(["weather","space","pollen","natural_hazards","civil_protection","aviation","biological_hazards","security"]);
@@ -22,7 +37,7 @@ const RESOURCE_LABELS=Object.freeze({raster_tile:"Kartenraster",hazard_feed:"Gef
 const safeArray=value=>Array.isArray(value)?value:[];
 const escapeHtml=value=>String(value??"").replace(/[&<>"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 const labelDomain=id=>DOMAIN_LABELS[id]||String(id||"Weitere").replaceAll("_"," ").replace(/(^|\s)\S/g,char=>char.toUpperCase());
-const rendererId=capability=>capability?.id===WEATHER_ROUTER_CAPABILITIES.precipitation?"precipitation":null;
+const rendererId=capability=>capability?.id===WEATHER_ROUTER_CAPABILITIES.precipitation?"precipitation":genericRasterId(capability);
 const resourceSummary=capability=>safeArray(capability?.resource_types).filter(type=>type in RESOURCE_LABELS).map(type=>RESOURCE_LABELS[type]).join(" · ")||"Kartenfähigkeit";
 const GROUPED_DOMAINS=Object.freeze(new Set(["weather","space","natural_hazards","biological_hazards"]));
 const SOURCE_LEADS=Object.freeze(new Set(["gbif","dwd","noaa","nasa","nasa gibs","eumetsat","eumetview","usgs","ecmwf","smhi","fmi","jma","met norway","open-meteo","rainviewer","glofas","bbk","nina","bmkg","bom","gdacs","smithsonian","aviation weather"]));
@@ -151,7 +166,77 @@ export function buildWeatherLayerCatalog(capabilities){
   return {capabilities:usable,categories,quick};
 }
 
-export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
+export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
+
+  _weatherGenericState(id){
+    if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
+    if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null});
+    return this.__weatherGenericStates.get(id);
+  },
+  _weatherGenericDescribe(id){
+    const state=this._weatherGenericState(id);
+    if(!state.enabled)return "Aus";
+    const labels={aus:"Aus",loading:"Lädt",ready:"Karte aktiv",partial:"Teilweise",unavailable:"Keine Daten",failed:"Fehler"};
+    return labels[state.status]||"Lädt";
+  },
+  _weatherGenericDetach(id){
+    const state=this._weatherGenericState(id);
+    if(state.layer){try{state.map?.removeLayer(state.layer);}catch(_){}state.layer=null;}
+    state.map=null;
+  },
+  async _weatherGenericToggle(id){
+    if(!Object.hasOwn(GENERIC_RASTERS,id))return;
+    const state=this._weatherGenericState(id);
+    state.enabled=!state.enabled;state.generation++;
+    if(!state.enabled){this._weatherGenericDetach(id);state.status="aus";state.error=null;this._weatherLayerMenuRender();return;}
+    state.status="loading";
+    this._weatherLayerMenuRender();
+    await this._weatherGenericRefresh(id);
+  },
+  async _weatherGenericRefresh(id){
+    const state=this._weatherGenericState(id),token=++state.generation,map=this._map;
+    if(!state.enabled||!map){state.status="unavailable";state.error="Karte nicht bereit";this._weatherLayerMenuRender();return;}
+    if(typeof document!=="undefined"&&document.visibilityState==="hidden")return;
+    const catalog=this._weatherLayerMenuState().model.capabilities.find(c=>c.id===id);
+    if(!genericRasterId(catalog)){this._weatherGenericDetach(id);state.status="unavailable";state.error="Nicht im aktuellen Katalog";this._weatherLayerMenuRender();return;}
+    const bounds=map.getBounds?.();
+    if(!bounds)return;
+    const bbox={type:"bbox",west:Math.max(-180,bounds.getWest()),south:Math.max(-85,bounds.getSouth()),east:Math.min(180,bounds.getEast()),north:Math.min(85,bounds.getNorth())};
+    if(!(bbox.east>bbox.west&&bbox.north>bbox.south)){state.status="unavailable";state.error="Kartenausschnitt nicht unterstützt";this._weatherLayerMenuRender();return;}
+    state.status="loading";state.error=null;this._weatherLayerMenuRender();
+    const correlation="gr-wl02-"+id.split(".").pop()+"-"+token+"-"+Date.now();
+    const report=(phase,data={})=>this._weatherEngineMonitorEvent?.("generic_v1_raster",{capability:id,phase,correlation_id:correlation,...data});
+    report("resolve_start");
+    const answer=await this._weatherRouterClient().resolve(id,bbox,{consumerId:"gewitterradar",correlationId:correlation,time:{mode:"latest"}});
+    if(!state.enabled||token!==state.generation||map!==this._map)return;
+    if(answer.status!=="ready"){this._weatherGenericDetach(id);state.status="unavailable";state.error=answer.unavailable?.code||"Keine Daten";report("unavailable",{code:state.error});this._weatherLayerMenuRender();return;}
+    const payload=answer.resource?.payload,attribution=payload?.attribution||answer.provenance?.attribution;
+    const maxZoom=payload?.max_zoom,minZoom=payload?.min_zoom??0,coverage=verifiedRasterBbox(answer.provenance);
+    const validAt=answer.freshness?.data_time||answer.freshness?.valid_at||answer.provenance?.valid_at;
+    if(answer.resource?.type!=="raster_tile"||!safeRasterUrl(payload?.tile_url)||![256,512].includes(payload?.tile_size)||
+      !Number.isInteger(maxZoom)||maxZoom<0||maxZoom>22||!Number.isInteger(minZoom)||minZoom<0||minZoom>maxZoom||
+      !coverage||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
+      !/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(validAt)){
+      this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
+    }
+    const L=await deps.loadLeafletJs?.();
+    if(!L||!state.enabled||token!==state.generation)return;
+    this._weatherGenericDetach(id);
+    const spec=GENERIC_RASTERS[id];
+    if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
+    const spatialBounds=L.latLngBounds([[coverage.south,coverage.west],[coverage.north,coverage.east]]);
+    let loaded=0,failed=0;
+    const layer=L.tileLayer(payload.tile_url,{pane:spec.pane,tileSize:payload.tile_size,minNativeZoom:minZoom,maxNativeZoom:maxZoom,
+      bounds:spatialBounds,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
+      attribution,updateWhenIdle:true,keepBuffer:0,errorTileUrl:""});
+    layer.on("tileload",()=>{if(state.generation!==token)return;loaded++;state.loaded=loaded;state.status=failed?"partial":"ready";report("tile_loaded",{loaded,failed});this._weatherLayerMenuRender();});
+    layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=loaded?"partial":"failed";state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,failed});this._weatherLayerMenuRender();});
+    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.loaded=0;state.failed=0;
+    try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
+    catch(_){this._weatherGenericDetach(id);state.status="failed";state.error="Karte konnte nicht eingebunden werden";}
+    this._weatherLayerMenuRender();
+  },
+
   _weatherLayerMenuState(){
     if(!this.__weatherLayerMenuState)this.__weatherLayerMenuState={bound:false,view:"map-display",category:null,subcategory:null,focusCapability:null,discovery:null,catalog:null,model:{capabilities:[],categories:[],quick:[]},probing:false,lastProbeAt:0,generation:0,busyCapability:null,renderSignature:null};
     return this.__weatherLayerMenuState;
@@ -267,7 +352,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
 
   _weatherLayerMenuQuickMarkup(){
     const state=this._weatherLayerMenuState();if(!state.model.quick.length)return "";
-    const quick=state.model.quick.map(item=>{const capability=item.capability;if(item.renderer==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(layerState.label)}</small></button>`;}return `<button class="weather-layer-action" type="button" data-weather-layer-action="focus" data-category="${escapeHtml(capability.domain)}" data-capability="${escapeHtml(capability.id)}"><strong>${escapeHtml(item.label)}</strong><small>${item.count>1?`${item.count} passende Kartenfähigkeiten`:`verfügbar · ${escapeHtml(resourceSummary(capability))}`}</small></button>`;}).join("");
+    const quick=state.model.quick.map(item=>{const capability=item.capability;if(genericRasterId(capability)){return `<button class="weather-layer-action${this._weatherGenericState(capability.id).enabled?" active":""}" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}"><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(this._weatherGenericDescribe(capability.id))}</small></button>`;}if(item.renderer==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(layerState.label)}</small></button>`;}return `<button class="weather-layer-action" type="button" data-weather-layer-action="focus" data-category="${escapeHtml(capability.domain)}" data-capability="${escapeHtml(capability.id)}"><strong>${escapeHtml(item.label)}</strong><small>${item.count>1?`${item.count} passende Kartenfähigkeiten`:`verfügbar · ${escapeHtml(resourceSummary(capability))}`}</small></button>`;}).join("");
     const hasPrecipitation=state.model.quick.some(item=>item.renderer==="precipitation");
     const timelineState=hasPrecipitation?this._weatherLayerMenuTimelineState():null;
     const timeline=timelineState?`<button class="weather-layer-action${timelineState.enabled?" active":""}" type="button" data-weather-layer-action="timeline"><strong>Zeitachse</strong><small>${escapeHtml(timelineState.label)}</small></button>`:"";
@@ -281,7 +366,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
 
   _weatherLayerMenuCapabilitiesMarkup(capabilities){
     const state=this._weatherLayerMenuState();
-    return `<div class="weather-layer-capabilities">${safeArray(capabilities).map(capability=>{const focus=state.focusCapability===capability.id,label=formatWeatherLayerCapabilityLabel(capability),meta=capabilityMetaLabel(capability);if(rendererId(capability)==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}>${escapeHtml(layerState.label)}</button></div>`;}return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><div class="weather-layer-capability-state">verfügbar<br>Renderer folgt</div></div>`;}).join("")}</div>`;
+    return `<div class="weather-layer-capabilities">${safeArray(capabilities).map(capability=>{const focus=state.focusCapability===capability.id,label=formatWeatherLayerCapabilityLabel(capability),meta=capabilityMetaLabel(capability);if(genericRasterId(capability)){const g=this._weatherGenericState(capability.id);return `<div class="weather-layer-capability"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)} · ${escapeHtml(g.provider||"Quelle ausstehend")} · ${escapeHtml(g.validAt||"UTC ausstehend")} ${g.error?" · "+escapeHtml(g.error):""}</div></div><button class="weather-layer-action${g.enabled?" active":""}" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}">${escapeHtml(this._weatherGenericDescribe(capability.id))}</button></div>`;}if(rendererId(capability)==="precipitation"){const layerState=this._weatherLayerMenuPrecipitationState();return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><button class="weather-layer-action${layerState.enabled?" active":""}${layerState.busy?" busy":""}" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" ${layerState.busy?"disabled":""}>${escapeHtml(layerState.label)}</button></div>`;}return `<div class="weather-layer-capability${focus?" focus":""}" title="${escapeHtml(label.full)}"><div><div class="weather-layer-capability-name">${escapeHtml(label.primary)}</div><div class="weather-layer-capability-meta">${escapeHtml(meta)}</div></div><div class="weather-layer-capability-state">verfügbar<br>Renderer folgt</div></div>`;}).join("")}</div>`;
   },
 
   _weatherLayerMenuCategoryMarkup(categoryId){
@@ -326,6 +411,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,()=>({
   },
 
   async _weatherLayerMenuToggle(capabilityId){
+    if(Object.hasOwn(GENERIC_RASTERS,capabilityId)){await this._weatherGenericToggle(capabilityId);return;}
     if(capabilityId!==WEATHER_ROUTER_CAPABILITIES.precipitation||typeof this._setWeatherRadarEnabled!=="function")return;
     const state=this._weatherLayerMenuState();if(state.busyCapability)return;state.busyCapability=capabilityId;this._weatherLayerMenuRender();
     try{const radar=this._weatherRadarState?.();await this._setWeatherRadarEnabled(!radar?.enabled);}catch(_error){}finally{state.busyCapability=null;this._weatherLayerMenuRender();this._weatherLayerMenuSyncEntry();}
