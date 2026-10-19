@@ -110,6 +110,19 @@ assert.equal(drawOrder[1].alpha,0.58);
 assert.equal(result.drawn.length,2);
 assert.equal(result.no_pixel_blending,true);
 
+// New WR 0.10.160 optional source_outcomes and verified Canvas paint order.
+const timeoutReply={...nasaOnly,limitations:[],
+ source_outcomes:[{source_id:dwd.source_id,result:"coverage_timeout"}]};
+const actualPaint=[{source_id:nasa.source_id},{source_id:dwd.source_id}];
+const timeoutDecision=decideV2RegionalRetention({...args,next:timeoutReply,
+ renderOrder:actualPaint});
+assert.equal(timeoutDecision.retain,true);
+assert.equal(timeoutDecision.coverage_timeout_proven,true);
+const outsideReply={...timeoutReply,
+ source_outcomes:[{source_id:dwd.source_id,result:"outside_coverage"}]};
+assert.equal(decideV2RegionalRetention({...args,next:outsideReply}).retain,false);
+assert.equal(decideV2RegionalRetention({...args,previous:{...combined,layers:[dwd,nasa]},
+ next:timeoutReply,renderOrder:actualPaint}).retain,true);
 // GR-RF02-07/08/09/11: exercise the production retention state machine,
 // timer allocation, one-shot expiration and recovery, not just a mock decision.
 class Card {}

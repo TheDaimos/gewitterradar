@@ -208,7 +208,7 @@ export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now(),satell
 export function decideV2RegionalRetention({
   previous,next,viewport,zoom=0,now=Date.now(),previousAt=null,
   satelliteConsent=false,drawnTiles=0,uncoveredTiles=0,
-  existingHold=null,previousMounted=false
+  existingHold=null,previousMounted=false,renderOrder=null
 }={}){
   const no=reason=>({retain:false,reason});
   if(!previousMounted||!previous?.layers?.length||!next?.layers?.length)
@@ -216,9 +216,6 @@ export function decideV2RegionalRetention({
   if(next.status!=="partial")return no("replacement_not_degraded");
   if(!satelliteConsent)return no("consent_revoked");
   if(!(drawnTiles>0)||uncoveredTiles!==0)return no("previous_image_incomplete");
-  if(!Array.isArray(next.limitations)||!next.limitations.some(
-    x=>typeof x==="string"&&x.includes("regionale Coverage-Anfragen waren nicht nutzbar")))
-    return no("no_transient_coverage_evidence");
   const old=previous.layers;
   const measured=old.filter(l=>l.freshness_class!=="older_background"
     &&["observation","observation_forecast"].includes(l.semantics?.observation_kind)
@@ -226,6 +223,13 @@ export function decideV2RegionalRetention({
     &&l.semantics.measurement_method.includes("radar"));
   const older=old.filter(l=>l.freshness_class==="older_background");
   if(!measured.length||!older.length)return no("no_previous_radar_and_satellite");
+  const outcomes=Array.isArray(next.source_outcomes)?next.source_outcomes:[];
+  const sourceEvidence=outcomes.filter(x=>measured.some(m=>m.source_id===x.source_id));
+  const explicitTransient=sourceEvidence.some(x=>
+    ["coverage_timeout","temporarily_unavailable","coverage_provider_error"].includes(x.result));
+  const genericTransient=Array.isArray(next.limitations)&&next.limitations.some(x=>
+    typeof x==="string"&&x.includes("regionale Coverage-Anfragen waren nicht nutzbar"));
+  if(!explicitTransient&&!genericTransient)return no("no_transient_coverage_evidence");
   if(!next.layers.every(l=>l.freshness_class==="older_background"
      &&l.semantics?.observation_kind==="estimate"
      &&["satellite_precipitation_estimate","satellite_estimate"].includes(
@@ -235,8 +239,11 @@ export function decideV2RegionalRetention({
     return no("regional_source_present");
   // The consumer MUST keep the WeatherRouter drawing order. A retained
   // composition is only safe when its live radar was painted after satellite.
-  if(Math.max(...older.map(l=>old.indexOf(l)))>=
-     Math.min(...measured.map(l=>old.indexOf(l))))
+  const verifiedDrawOrder=Array.isArray(renderOrder)&&renderOrder.length===old.length
+    &&old.every(l=>renderOrder.some(x=>x.source_id===l.source_id));
+  const paintedOrder=verifiedDrawOrder?renderOrder.map(x=>old.find(l=>l.source_id===x.source_id)):old;
+  if(Math.max(...older.map(l=>paintedOrder.indexOf(l)))>=
+     Math.min(...measured.map(l=>paintedOrder.indexOf(l))))
     return no("prior_compositing_order_unverified");
   const nextUnits=new Set(next.layers.map(l=>
     String(l.semantics?.quantity)+"|"+String(l.semantics?.unit)));
@@ -247,7 +254,8 @@ export function decideV2RegionalRetention({
   // current WR 0.10.158 puts granular preflight in diagnostics, not V2 replies.
   const routing=next.routing||{};
   const evidence=[...(Array.isArray(routing.coverage_preflight)?routing.coverage_preflight:[]),
-    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[])];
+    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[]),
+    ...outcomes];
   for(const l of measured){
     if(evidence.some(item=>item.source_id===l.source_id&&
       ["outside_coverage","outside_time_tolerance","no_fresh_verified_frame",
@@ -276,7 +284,7 @@ export function decideV2RegionalRetention({
     // Do not infer 'coverage_timeout' merely from an unavailable source.
     coverage_timeout_proven:evidence.some(x=>
       measured.some(m=>m.source_id===x.source_id)&&x.result==="coverage_timeout"),
-    render_order:old.map(x=>({source_id:x.source_id,
+    render_order:paintedOrder.map(x=>({source_id:x.source_id,
       freshness_class:x.freshness_class||"current"}))};
 }
 
@@ -412,7 +420,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       previousMounted:Boolean(state.layer&&this._map?.hasLayer?.(state.layer)),
       drawnTiles:state.v2RenderMetrics?.drawn_tiles??0,
       uncoveredTiles:state.v2RenderMetrics?.uncovered_tiles??Infinity,
-      existingHold:existing
+      existingHold:existing,
+      renderOrder:state.layer?._p7RasterRenderOrder||null
     });
     if(!decision.retain){
       if(existing&&["source_expired","time_unverified","hold_expired",
