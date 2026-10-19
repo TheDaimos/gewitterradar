@@ -27,6 +27,11 @@ const safeRasterUrl=url=>{
 };
 const safeLegendUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&
   !/^https:\/\/[^/?#]*@/i.test(url)&&!url.includes("#")&&!/(?:token|apikey|api_key|password)=/i.test(url);
+export const parseGenericRasterUtc=value=>{
+  if(typeof value!=="string"||!/(?:[zZ]|[+-]\d{2}:\d{2})$/.test(value))return null;
+  const millis=Date.parse(value);
+  return Number.isFinite(millis)?new Date(millis).toISOString():null;
+};
 export const genericRasterCycleStatus=({drawn=0,failed=0}={})=>
   drawn>0?(failed>0?"partial":"ready"):(failed>0?"failed":"unavailable");
 export const parseGenericRasterCoverage=provenance=>{
@@ -256,10 +261,10 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const payload=answer.resource?.payload,attribution=payload?.attribution||answer.provenance?.attribution;
     const maxZoom=payload?.max_zoom,minZoom=payload?.min_zoom??0,coverage=parseGenericRasterCoverage(answer.provenance);
     const validAt=answer.freshness?.data_time||answer.freshness?.valid_at||answer.provenance?.valid_at;
+    const normalizedValidAt=parseGenericRasterUtc(validAt);
     if(answer.resource?.type!=="raster_tile"||!safeRasterUrl(payload?.tile_url)||![256,512].includes(payload?.tile_size)||
       !Number.isInteger(maxZoom)||maxZoom<0||maxZoom>22||!Number.isInteger(minZoom)||minZoom<0||minZoom>maxZoom||
-      !coverage||answer.freshness?.stale===true||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
-      !/[zZ]$|[+-]\d\d:\d\d$/.test(validAt)){
+      !coverage||answer.freshness?.stale===true||typeof attribution!=="string"||!attribution.trim()||!normalizedValidAt){
       this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
     }
     let L=null;try{L=await deps.loadLeafletJs?.();}catch(_error){state.status="failed";state.error="Leaflet konnte nicht geladen werden";this._weatherLayerMenuRender();return;}
@@ -313,7 +318,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=genericRasterCycleStatus({drawn,failed});state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,drawn,skipped,failed});this._weatherLayerMenuRender();});
     layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=genericRasterCycleStatus({drawn,failed});if(!drawn&&!failed)state.error="Keine gezeichneten Rasterkacheln innerhalb der Abdeckung";else if(!failed)state.error=null;report("tile_cycle_complete",{loaded,drawn,skipped,failed,completed,drawn_means:"canvas_draw_operation_not_pixel_verification"});this._weatherLayerMenuRender();});
     layer.on("loading",()=>{if(state.generation!==token)return;state.status="loading";});
-    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=new Date(validAt).toISOString();state.attribution=attribution;state.legend=safeLegendUrl(payload?.legend?.url)?payload.legend.url:null;state.ageSeconds=Number.isFinite(answer.freshness?.age_seconds)?answer.freshness.age_seconds:null;state.observationKind=answer.resource?.semantics?.observation_kind||null;state.stale=answer.freshness?.stale===true;state.loaded=0;state.failed=0;
+    state.layer=layer;state.map=map;state.provider=answer.provenance?.provider_id||"WeatherRouter";state.validAt=normalizedValidAt;state.attribution=attribution;state.legend=safeLegendUrl(payload?.legend?.url)?payload.legend.url:null;state.ageSeconds=Number.isFinite(answer.freshness?.age_seconds)?answer.freshness.age_seconds:null;state.observationKind=answer.resource?.semantics?.observation_kind||null;state.stale=answer.freshness?.stale===true;state.loaded=0;state.failed=0;
     try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
     catch(_){this._weatherGenericDetach(id);state.status="failed";state.error="Karte konnte nicht eingebunden werden";}
     this._weatherLayerMenuRender();
