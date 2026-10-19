@@ -1,5 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41109r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41109r1";
+import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.layer-menu",version:"1.1.5",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
@@ -237,7 +238,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const validAt=answer.freshness?.data_time||answer.freshness?.valid_at||answer.provenance?.valid_at;
     if(answer.resource?.type!=="raster_tile"||!safeRasterUrl(payload?.tile_url)||![256,512].includes(payload?.tile_size)||
       !Number.isInteger(maxZoom)||maxZoom<0||maxZoom>22||!Number.isInteger(minZoom)||minZoom<0||minZoom>maxZoom||
-      (!coverage||coverage.antimeridian)||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
+      !coverage||typeof attribution!=="string"||!attribution.trim()||!validAt||!Number.isFinite(Date.parse(validAt))||
       !/[zZ]$|[+-]\\d\\d:\\d\\d$/.test(validAt)){
       this._weatherGenericDetach(id);state.status="failed";state.error="Rastervertrag unvollständig";report("contract_rejected");this._weatherLayerMenuRender();return;
     }
@@ -247,11 +248,45 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     this._weatherGenericDetach(id);
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
-    const spatialBounds=coverage.scope==="global"?undefined:L.latLngBounds([[coverage.south,coverage.west],[coverage.north,coverage.east]]);
     let loaded=0,failed=0,completed=false;
-    const layer=L.tileLayer(payload.tile_url,{pane:spec.pane,tileSize:payload.tile_size,minNativeZoom:minZoom,maxNativeZoom:maxZoom,
-      bounds:spatialBounds,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
-      attribution,updateWhenIdle:true,keepBuffer:0,errorTileUrl:""});
+    // Reuse the established P7-010 geographic pixel-crop geometry.
+    // A bounded browser image budget is intentionally separate from radar's scheduler.
+    const layer=L.gridLayer({pane:spec.pane,tileSize:payload.tile_size,minZoom,
+      maxNativeZoom:maxZoom,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
+      attribution,updateWhenIdle:true,keepBuffer:0});
+    const validCoverage=coverage.scope==="global"?{scope:"global",verified:true}:
+      {scope:"bbox",verified:true,bbox:{west:coverage.west,south:coverage.south,east:coverage.east,north:coverage.north}};
+    let activeImages=0;
+    const maxImages=8;
+    layer.createTile=(coords,done)=>{
+      const canvas=document.createElement("canvas");
+      canvas.width=payload.tile_size;canvas.height=payload.tile_size;
+      const rects=rasterTilePixelCrops(coords,validCoverage,payload.tile_size);
+      if(!rects.length){queueMicrotask(()=>done(null,canvas));return canvas;}
+      if(activeImages>=maxImages){queueMicrotask(()=>done(new Error("raster_tile_budget"),canvas));return canvas;}
+      const url=payload.tile_url.replace(/\\{z\\}/g,String(coords.z))
+        .replace(/\\{x\\}/g,String(coords.x)).replace(/\\{y\\}/g,String(coords.y));
+      const image=new Image();image.crossOrigin="anonymous";
+      activeImages++;
+      let settled=false;
+      const finish=(error=null)=>{
+        if(settled)return;settled=true;activeImages=Math.max(0,activeImages-1);
+        clearTimeout(timer);image.onload=null;image.onerror=null;done(error,canvas);
+      };
+      const timer=setTimeout(()=>{image.src="";finish(new Error("tile_timeout"));},12000);
+      image.onload=()=>{
+        if(!state.enabled||token!==state.generation){finish(new Error("stale_tile"));return;}
+        try{
+          const ctx=canvas.getContext("2d");
+          if(!ctx)throw new Error("canvas_unavailable");
+          for(const rect of rects)ctx.drawImage(image,rect.sx,rect.sy,rect.sw,rect.sh,rect.sx,rect.sy,rect.sw,rect.sh);
+          finish();
+        }catch(_error){finish(new Error("tile_crop_failed"));}
+      };
+      image.onerror=()=>finish(new Error("tile_image_failed"));
+      image.src=url;
+      return canvas;
+    };
     layer.on("tileload",()=>{if(state.generation!==token)return;loaded++;state.loaded=loaded;state.status="loading";report("tile_loaded",{loaded,failed});this._weatherLayerMenuRender();});
     layer.on("tileerror",()=>{if(state.generation!==token)return;failed++;state.failed=failed;state.status=loaded?"partial":"failed";state.error="Bildkachel konnte nicht geladen werden";report("tile_failed",{loaded,failed});this._weatherLayerMenuRender();});
     layer.on("load",()=>{if(state.generation!==token)return;completed=true;state.status=loaded?(failed?"partial":"ready"):"unavailable";report("tile_cycle_complete",{loaded,failed,completed});this._weatherLayerMenuRender();});
