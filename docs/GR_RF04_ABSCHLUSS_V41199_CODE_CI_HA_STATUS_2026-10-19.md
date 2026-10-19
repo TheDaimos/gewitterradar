@@ -4,7 +4,7 @@
 **Repository:** `TheDaimos/gewitterradar` · einziger Entwicklungszweig `deploy/dev`  
 **Auslieferung:** **V4.11.99 DEV** · Build `V4.11.99-DEV-2026-10-19` · Runtime `41199r1` · Modulsatz `E411-99A1` · HA-Integration `0.25.17`  
 **WeatherRouter-Gegenstelle:** V0.10.161 DEV laut gemeinsamer Realabnahme (nicht durch dieses CI live installiert oder geprüft).  
-**Status:** **CODE-PASS ✅ · CI-PASS ✅ · HA-REAL-PASS OFFEN**. CODE- und CI-Freigabe beziehen sich auf den geprüften technischen Stand `1ff491c51f8e29ddcd2edc73cb6f7db4efa3f6e2`; danach ausschließlich Dokumentationsänderungen.
+**Status:** **CODE-PASS ✅ · CI-PASS ✅ · HA-TEIL-PASS (Diagnose und normaler geografischer Wechsel) ✅ · vollständiger HA-REAL-PASS OFFEN**. CODE- und CI-Freigabe beziehen sich auf den geprüften technischen Stand `1ff491c51f8e29ddcd2edc73cb6f7db4efa3f6e2`; danach ausschließlich Dokumentationsänderungen.
 
 ## A – Tatsächlich nachgewiesene Ursache der Zeichenreihendiagnose
 
@@ -58,7 +58,7 @@ Die Zuordnung ist **kein** pauschaler Nachweis, dass jeder Fall in einer neu auf
 - Einstellungen/Laufzeitidentität **SUCCESS**, Run **39235364962** (gleicher geprüfter Quellcommit).
 - P7-010 18 isolierte Skripte **SUCCESS**, Run **39234511576**, plus Modul-/Android-Gate **SUCCESS**, Run **39234295299**; die nachfolgenden Änderungen an diesem Prüfstand betrafen nur benannte Test-/Auslieferungskontrollen und dokumentierte Sicherheitskorrektur, deren neue Regression durch den ebenfalls grünen P7-010-Lauf ausgeführt wurde.
 
-**Ergebnis: CODE-PASS und CI-PASS für V4.11.99.** Die bestehende HA-Realabnahme bleibt hinsichtlich des nicht erzwungenen realen DWD-Timeouts und der nach Installation erneuten Diagnoseprüfung **OFFEN**.
+**Ergebnis: CODE-PASS und CI-PASS für V4.11.99.** Die erneute HA-Diagnoseprüfung nach Installation wurde inzwischen erfolgreich dokumentiert; **offen bleibt der reale DWD-Coverage-Timeout mit regionaler 45-Sekunden-Zurückhaltung**.
 
 Zwischenzeitlich rote Läufe dienten zur Fehlerentdeckung (RF02-Verletzung) bzw. zur Anpassung alter V4.11.98-Versionsprüfungen. Diese sind keine gültige Endabnahme für V4.11.99.
 
@@ -69,10 +69,54 @@ Zwischenzeitlich rote Läufe dienten zur Fehlerentdeckung (RF02-Verletzung) bzw.
 - Produktiv geändert: `frontend/modules/weather/consumer-client.js` (Diagnose) und `frontend/modules/weather/precipitation-layer.js` (Prioritätsprüfung des regionalen Bestandsschutzes). Keine andere Mosaik-/Providerarchitektur.
 - Installation ausschließlich aus `TheDaimos/gewitterradar@deploy/dev` via Deploy Relay Agent, **Commit mit `deploy/dev` unmittelbar vor Installation prüfen**. Im DRA nach Installation Versions-/Runtime-/Modulsatz-/SHA-Identität auslesen; Browser-Cache vollständig aktualisieren.
 
-## Noch ausdrücklich offen für HA-REAL-PASS
 
-Eine **kontrollierte echte HA-/Firefox-Prüfung** der aktualisierten Diagnose mit gleichzeitiger DWD/NASA-Lieferung, einschließlich gleicher Korrelationskennung für `v2_draw_audit` und `v2_layer_swapped` sowie `observed_draw_orders`/Verifikationswert. Zusätzlich das Verhalten bei einer **tatsächlich** aufgetretenen DWD-`coverage_timeout`-Situation mit bestehendem, fachlich zulässigem Regionalradar messen; keine produktive Providerstörung zu Testzwecken. Die echten UTC-Originalalter, 45-s-Frist, Schutzende, Wiederherstellung und sichtbaren Kartenpixel getrennt anhand neuer synchroner GR-/WR-Exporte bestätigen. Die bereits früher gemeinsam akzeptierten Zoom-/Geografie-/Firefox-Realtests nur bei neuer Regression oder unpassendem Versionsstand erneut durchführen.
+## HA-Realabnahme nach Installation – 19.10.2026: dokumentierte Teilergebnisse
 
-Private vollständige Exporte ausschließlich nach `TheDaimos/Project-Log-And-Export`. WR-Koordination: `TheDaimos/weather-router-dev@deploy/dev/docs/p7-010-coordination/GR_TO_WR_2026-10-19_GR_RF04_V41199_DIAGNOSE_UND_REGIONALSCHUTZ.md`. Keine sensitiven Diagnose-Rohdaten im öffentlichen Repository.
+**Installationsstand:** Gewitterradar **V4.11.99 DEV**, WeatherRouter **V0.10.161 DEV**, nach HA-Neustart vom Benutzer bestätigt. Niederschlagsanzeige und die ausdrückliche Freigabe älterer Satellitendaten waren aktiv. Alle Zeitangaben gelten in **UTC**.
+
+**Nachweisbasis:** zwei neue GR-Weather-Engine-Exporte von **11:17:54 UTC** und **11:27:16 UTC** sowie korrelierte WR-API-Monitor-Exporte im zentralen **privaten** Export2Git-Archiv `TheDaimos/Project-Log-And-Export`. Gleiche V2-Korrelationskennungen und ihre WR-/GR-Ereignisse wurden abgeglichen. Sensible Rohdiagnosen, Kartenausschnittkoordinaten und Anfrage-URLs werden **nicht** öffentlich übernommen.
+
+### HA-Test 01 – Quellen- und Zeichenreihendiagnose: BESTANDEN
+
+- **Zoom 7:** vollständige **9/9** Kacheln, NASA-IMERG-Hintergrund und DWD-Radar gemeinsam im V2-Mosaik.
+- **Zoom 5:** vollständige **12/12** Kacheln; der GR-Export dokumentiert in `v2_draw_audit` und `v2_layer_swapped` für jeweils dieselbe Korrelationskennung nun tatsächlich gefüllte `render_order` und `observed_draw_orders` mit `render_order_verified: true`.
+- Bei **6** beobachteten Kacheln war die Zeichenoperationsfolge **NASA → DWD**, bei weiteren **6** ausschließlich **NASA**. Die fachliche WR-Priorität lautete NASA `composition.draw_order: 0` (älterer Hintergrund) und DWD `composition.draw_order: 1` (aktueller Vordergrund).
+- Die frühere widersprüchliche Kombination aus leeren Zeichenfolgen und positiver Verifikation trat bei diesen neuen Live-Ereignissen **nicht** auf.
+- `pixels_verified: false` und `image_pixels_verified: false` bleiben zutreffend: ein beobachteter Canvas-Zeichenaufruf ist **kein** Nachweis tatsächlicher meteorologischer Niederschlagspixel.
+- Letzter korrelierter WR-Aufruf ca. **11:16:06 UTC**: DWD-Daten ca. **66 s** alt, NASA-Daten ca. **6 h 46 min** alt. Verträge erfüllt (DWD maximal 900 s; NASA maximal 12 h mit Freigabe).
+
+**Abnahme:** korrigierte Diagnoseaufzeichnung im echten HA-Betrieb bestätigt. Keine belegte Fehlfunktion der Canvas-Zeichenreihenfolge.
+
+### HA-Test 02 – Deutschland → Kuba → Deutschland: BESTANDEN (regulärer geografischer Wechsel)
+
+| WR-Antwort → GR-Aktivierung (UTC) | Ort und Zoom | WR-Entscheidung | Tatsächlicher GR-Zustand |
+| --- | --- | --- | --- |
+| **11:25:18 → 11:25:20** | Kuba, Zoom 5 | NASA gewählt, alle 3 DWD-Kandidaten `outside_coverage` | ausschließlich NASA, **8/8** Kacheln |
+| **11:26:04 → 11:26:05** | Kuba, Zoom 6 | NASA gewählt, alle 3 DWD-Kandidaten `outside_coverage` | ausschließlich NASA, **12/12** Kacheln |
+| **11:26:19 → kein vollständiger Swap** | Rückweg nach Deutschland | NASA + DWD ausgewählt | laufender GR-Aufbau beim Tab-Hintergrundwechsel kontrolliert als `stale_or_background` verworfen |
+| **11:26:39 → 11:26:41** | Deutschland, Zoom 5 | NASA + DWD ausgewählt | V2-Mosaik automatisch wieder aktiv, **12/12** Kacheln |
+
+- WeatherRouter unterscheidet über Kuba ausdrücklich `outside_coverage` von `coverage_timeout`. Gewitterradar hält dort **keine zuvor aktive DWD-Ebene** zurück (`retained_previous_layer: false`).
+- Wiederherstellung nach Rückkehr aus dem Browser-Hintergrund ohne manuellen HA-Neustart oder erneute Seitenaktualisierung.
+- Auch hier wurde die gefüllte, verifizierte Zeichenoperationsreihenfolge korrekt aufgezeichnet. Über Kuba allein NASA, über Deutschland NASA vor DWD auf räumlich überdeckten Kacheln.
+- Beim letzten zusammengehörigen WR-Aufruf um **11:26:39 UTC** war DWD ca. **99 s**, NASA ca. **6 h 57 min** alt; beide Quellen vertragsgemäß.
+- `mosaic_status: partial` beschreibt keine fehlende sichtbare Kachel: alle erwarteten Kacheln vollständig, tatsächliche Niederschlagspixel nicht gemessen.
+
+**Abnahme:** geografischer Löschschutz und Wiederaufnahme der DWD-Regionalversorgung nach gewöhnlichem Kartenwechsel im HA-Betrieb bestätigt.
+
+### Status und Abnahmegrenzen
+
+| Prüfbereich | Ergebnis |
+| --- | --- |
+| Technische Korrekturen und produktionsnahe Regressionen | **CODE-PASS** |
+| Github-Prüfläufe auf dem dokumentierten Quellstand | **CI-PASS** |
+| HA-Test 01: echte korrigierte Zeichenreihendiagnose | **HA-TEIL-PASS** |
+| HA-Test 02: normaler geografischer Ausschluss / Wiederherstellung | **HA-TEIL-PASS** |
+| Reale DWD-`coverage_timeout`-Störung mit gültigem, bereits zurückgehaltenem Regionalmosaik | **HA-REAL-TEST OFFEN** |
+| Vollständiger GR-RF-04-`HA-REAL-PASS` auch für die spezielle 45-s-Fehlerfolge | **OFFEN** |
+
+**Abgrenzung:** Der bestätigte normale Übergang nach Kuba bei `outside_coverage` ist kein Live-Nachweis der besonderen Sicherheitsfolge, bei der eine **bereits laufende 45-Sekunden-Zurückhaltung** durch nachträglich gemeldetes `outside_coverage` sofort beendet wird. Diese Logik hat produktionsnahe automatisierte Prüfungen bestanden, jedoch **keinen echten DWD-Timeout in HA**.
+
+**Weiteres Vorgehen:** Die beiden real beobachteten Funktionsprüfungen sind abgeschlossen. Eine künstliche produktive Störung von WR oder DWD ist **nicht zulässig**. Ein später natürlich auftretender DWD-Abdeckungs-Timeout darf erst durch korrelierte, UTC-korrekte GR-/WR-Diagnosen einschließlich Haltebeginn, Originalalter, Fristende und Wiederherstellung als zusätzliche HA-Realabnahme gelten. Aus den aktuellen realen Tests folgt **kein unmittelbarer Auftrag für eine neue GR- oder WR-DEV-Version**.
 
 **C.K. – Eine Idee weiter gedacht.**
