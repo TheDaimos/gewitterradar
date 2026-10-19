@@ -221,7 +221,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
   async _weatherGenericRefresh(id){
     const state=this._weatherGenericState(id),token=++state.generation,map=this._map;
-    if(state.enabled&&state.map!==map)this._weatherGenericBind(id);
+    if(state.enabled&&state.hookMap!==map)this._weatherGenericBind(id);
     if(!state.enabled||!map){state.status="unavailable";state.error="Karte nicht bereit";this._weatherLayerMenuRender();return;}
     if(typeof document!=="undefined"&&document.visibilityState==="hidden")return;
     const catalog=this._weatherLayerMenuState().model.capabilities.find(c=>c.id===id);
