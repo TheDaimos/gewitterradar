@@ -1,6 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41109r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41109r1";
 import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
+import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.layer-menu",version:"1.1.5",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
@@ -18,7 +19,11 @@ const GENERIC_RASTERS=Object.freeze({
   "weather.model.wind_10m.layer":{label:"Wind 10 m",pane:"gr-wr-wind",zIndex:220}
 });
 const genericRasterId=capability=>Object.hasOwn(GENERIC_RASTERS,capability?.id||"")&&capability?.resource_types?.includes("raster_tile")?capability.id:null;
-const safeRasterUrl=url=>typeof url==="string"&&/^https:\/\/[^\s<>]+$/i.test(url)&&["{z}","{x}","{y}"].every(key=>url.includes(key))&&!/(?:token|apikey|api_key|password)=/i.test(url);
+const safeRasterUrl=url=>{
+  if(typeof url!=="string"||!/^https:\/\/[^\s<>]+$/i.test(url)||/^https:\/\/[^/?#]*@/i.test(url)||
+     url.includes("#")||/(?:token|apikey|api_key|password)=/i.test(url))return false;
+  try{rasterTileUrl(url,{x:0,y:0,z:0});return true;}catch(_){return false;}
+};
 export const parseGenericRasterCoverage=provenance=>{
   const spatial=provenance?.spatial_coverage;
   if(!spatial||typeof spatial!=="object")return null;
@@ -256,7 +261,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     // Reuse the established P7-010 geographic pixel-crop geometry.
     // A bounded browser image budget is intentionally separate from radar's scheduler.
     const layer=L.gridLayer({pane:spec.pane,tileSize:payload.tile_size,minZoom,
-      maxNativeZoom:maxZoom,noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
+      maxNativeZoom:Math.min(maxZoom,18),noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
       attribution,updateWhenIdle:true,keepBuffer:0});
     const validCoverage=coverage.scope==="global"?{scope:"global",verified:true}:
       {scope:"bbox",verified:true,bbox:{west:coverage.west,south:coverage.south,east:coverage.east,north:coverage.north}};
@@ -266,8 +271,8 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       const rects=rasterTilePixelCrops(coords,validCoverage,payload.tile_size);
       if(!rects.length){queueMicrotask(()=>done(null,canvas));return canvas;}
       if(GENERIC_TILE_BUDGET.inFlight>=GENERIC_TILE_BUDGET.maxInFlight){queueMicrotask(()=>done(new Error("raster_tile_budget"),canvas));return canvas;}
-      const url=payload.tile_url.replace(/\\{z\\}/g,String(coords.z))
-        .replace(/\\{x\\}/g,String(coords.x)).replace(/\\{y\\}/g,String(coords.y));
+      let url;try{url=rasterTileUrl(payload.tile_url,coords);}
+      catch(_){queueMicrotask(()=>done(new Error("raster_tile_url_invalid"),canvas));return canvas;}
       const image=new Image();image.crossOrigin="anonymous";
       GENERIC_TILE_BUDGET.inFlight++;
       let settled=false;
