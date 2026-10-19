@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage} from '../frontend/modules/weather/layer-menu.js';
 
 const calls=[];
 const mock=async request=>{
@@ -48,7 +48,7 @@ assert.equal(calls.at(-1).profile_id,'gewitterradar');
 assert.equal(calls.some(x=>Object.hasOwn(x,'provider')),false,'No provider selection in consumer requests');
 const layerCatalog=buildWeatherLayerCatalog([
   {id:WEATHER_ROUTER_CAPABILITIES.precipitation,domain:'weather',name:'Niederschlag',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['bbox'],phenomena:['precipitation'],family:'precipitation'},
-  {id:'weather.satellite.clouds',domain:'weather',name:'Wolken',enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],phenomena:['clouds'],family:'satellite',intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}},
+  {id:'weather.satellite.clouds',domain:'weather',name:'Wolken',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['global'],phenomena:['clouds'],family:'satellite',intent_contract:{kind:'visual_layer',resource_type:'raster_tile'}},
   {id:'weather.model.wind_10m.layer',domain:'weather',name:'Wind',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['bbox'],phenomena:['wind'],family:'model'},
   {id:'weather.point.uv_index',domain:'weather',name:'UV',enabled:true,available:true,resource_types:['value'],spatial_contexts:['point'],phenomena:['uv'],family:'point'},
   {id:'space.moon.tiles',domain:'space',name:'Mond',enabled:true,available:true,resource_types:['planetary_tile'],spatial_contexts:['global'],phenomena:[],family:'moon'},
@@ -58,6 +58,23 @@ assert.deepEqual(layerCatalog.quick.map(x=>x.id),['precipitation','clouds','wind
 assert.deepEqual(layerCatalog.categories.map(x=>x.id),['weather','space'],'Categories must derive from catalog domain metadata');
 assert.equal(layerCatalog.quick.find(x=>x.id==='precipitation')?.renderer,'precipitation','Existing precipitation renderer must be reused');
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['value'],spatial_contexts:['point']}),false,'Point values are not generic map layers');
+assert.equal(layerCatalog.quick.find(x=>x.id==='clouds')?.renderer,'weather.satellite.clouds','Real WR satellite cloud raster must attach to the isolated generic renderer');
+assert.equal(layerCatalog.quick.find(x=>x.id==='wind')?.renderer,'weather.model.wind_10m.layer','Real WR wind model raster must attach to the isolated generic renderer');
+assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:5,south:47,east:16,north:56}}}),
+  {scope:'bbox',west:5,south:47,east:16,north:56,antimeridian:false},'WR coverage must accept the canonical machine-readable bbox object');
+assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:170,south:-20,east:-170,north:20}}}),
+  {scope:'bbox',west:170,south:-20,east:-170,north:20,antimeridian:true},'A legitimate WR antimeridian crossing must not be misreported as an invalid bbox');
+assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'global'}}),{scope:'global'},'A verified global scope is distinct from a made-up world bbox');
+for(const spatial_coverage of [
+  {scope:'bbox',bbox:[5,47,16,56]}, {scope:'bbox',bbox:{west:5,east:5,south:47,north:56}},
+  {scope:'bbox',bbox:{west:5,east:16,south:57,north:56}},
+  {scope:'bbox',bbox:{west:Infinity,east:16,south:47,north:56}},
+  {scope:'bbox',bbox:{west:5,east:181,south:47,north:56}}, {scope:'future_scope'},
+  null
+]){
+  assert.equal(parseGenericRasterCoverage({spatial_coverage}),null,'Invalid or unsupported machine coverage must fail closed');
+}
+
 assert.equal(isWeatherLayerCapability({enabled:true,available:true,resource_types:['image_sequence'],spatial_contexts:['global'],intent_contract:{kind:'visual_layer',resource_type:'image_sequence'}}),true,'Explicit visual image sequences are map-suitable');
 const biologicalFixture=[
   {id:'biological_hazards.occurrence.false_morel.density',domain:'biological_hazards',name:'GBIF · Vorkommensdichte · Frühjahrs-Giftlorchel',enabled:true,available:true,resource_types:['raster_tile'],spatial_contexts:['global'],phenomena:['toxic_fungus','toxic'],family:'biological_occurrence_density'},
