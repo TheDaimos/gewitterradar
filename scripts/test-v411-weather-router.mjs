@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus,parseGenericRasterUtc,createGenericRasterTileBudget} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus,parseGenericRasterUtc,createGenericRasterTileBudget,genericRasterViewportBbox} from '../frontend/modules/weather/layer-menu.js';
 import {rasterTileUrl} from '../frontend/modules/weather/p7-010/raster-tile-url.js';
 
 const calls=[];
@@ -71,6 +71,10 @@ assert.equal(genericRasterCycleStatus({drawn:0,failed:2}),'failed','Failures wit
 assert.equal(genericRasterCycleStatus({drawn:1,failed:0}),'ready','A completed cycle with successful canvas draw operation is ready');
 assert.equal(genericRasterCycleStatus({drawn:1,failed:1}),'partial','Painted tiles plus failed tiles form a partial map');
 
+assert.deepEqual(genericRasterViewportBbox({west:170,east:190,south:-20,north:20}),{type:'bbox',west:170,south:-20,east:-170,north:20},'Unwrapped Leaflet date line must become WR antimeridian bbox');
+assert.deepEqual(genericRasterViewportBbox({west:190,east:210,south:-20,north:20}),{type:'bbox',west:-170,south:-20,east:-150,north:20},'Repeated longitude stays regional');
+assert.deepEqual(genericRasterViewportBbox({west:-190,east:190,south:-90,north:90}),{type:'bbox',west:-180,south:-85,east:180,north:85},'Full-world extent remains bounded');
+assert.equal(genericRasterViewportBbox({west:20,east:20,south:0,north:10}),null,'Invalid zero width');
 assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:5,south:47,east:16,north:56}}}),
   {scope:'bbox',west:5,south:47,east:16,north:56,antimeridian:false},'WR coverage must accept the canonical machine-readable bbox object');
 assert.deepEqual(parseGenericRasterCoverage({spatial_coverage:{scope:'bbox',bbox:{west:170,south:-20,east:-170,north:20}}}),
@@ -124,7 +128,7 @@ wl02Budget.finish(wl02Tickets[1]);wl02Budget.finish(wl02Tickets[2]);await Promis
 assert.deepEqual(wl02Budget.snapshot(),{inFlight:0,queued:0,maxInFlight:2,maxQueued:4},'No leaked capacity on cancel/finish');
 assert.throws(()=>createGenericRasterTileBudget({maxInFlight:0}),TypeError);
 const wl02Source=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
-for(const token of ['GENERIC_TILE_BUDGET.request(', 'GENERIC_TILE_BUDGET.finish(ticket)', 'tile_queue_full','map!==this._map','const drawnTiles=new WeakSet()','drawnTiles.add(canvas)','drawnTiles.has(tile)','genericRasterCycleStatus({drawn,failed})','drawn_means:"canvas_draw_operation_not_pixel_verification"']){
+for(const token of ['GENERIC_TILE_BUDGET.request(', 'GENERIC_TILE_BUDGET.finish(ticket)', 'tile_queue_full','map!==this._map','noWrap:false','genericRasterViewportBbox(','const drawnTiles=new WeakSet()','drawnTiles.add(canvas)','drawnTiles.has(tile)','genericRasterCycleStatus({drawn,failed})','drawn_means:"canvas_draw_operation_not_pixel_verification"']){
   assert.ok(wl02Source.includes(token),'The live WL-02 canvas path must not treat clipped transparent tiles as drawn imagery: '+token);
 }
 

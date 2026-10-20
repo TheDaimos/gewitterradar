@@ -69,6 +69,20 @@ export const parseGenericRasterUtc=value=>{
 };
 export const genericRasterCycleStatus=({drawn=0,failed=0}={})=>
   drawn>0?(failed>0?"partial":"ready"):(failed>0?"failed":"unavailable");
+// Leaflet may provide unwrapped world copies past +/-180 longitude.
+// Resolve the complete visible extent, including a genuine antimeridian crossing.
+export const genericRasterViewportBbox=({west,south,east,north}={})=>{
+  if(![west,south,east,north].every(Number.isFinite))return null;
+  const bottom=Math.max(-85,south),top=Math.min(85,north);
+  if(top<=bottom)return null;
+  let width=east-west;
+  if(width<0&&width> -360)width+=360;
+  if(width<=0)return null;
+  if(width>=360)return {type:"bbox",west:-180,south:bottom,east:180,north:top};
+  const wrap=lng=>((lng+180)%360+360)%360-180;
+  const w=wrap(west),e=wrap(west+width);
+  return w===e?null:{type:"bbox",west:w,south:bottom,east:e,north:top};
+};
 export const parseGenericRasterCoverage=provenance=>{
   const spatial=provenance?.spatial_coverage;
   if(!spatial||typeof spatial!=="object")return null;
@@ -284,8 +298,8 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(!genericRasterId(catalog)){this._weatherGenericDetach(id);state.status="unavailable";state.error="Nicht im aktuellen Katalog";this._weatherLayerMenuRender();return;}
     const bounds=map.getBounds?.();
     if(!bounds)return;
-    const bbox={type:"bbox",west:Math.max(-180,bounds.getWest()),south:Math.max(-85,bounds.getSouth()),east:Math.min(180,bounds.getEast()),north:Math.min(85,bounds.getNorth())};
-    if(!(bbox.east>bbox.west&&bbox.north>bbox.south)){state.status="unavailable";state.error="Kartenausschnitt nicht unterstützt";this._weatherLayerMenuRender();return;}
+    const bbox=genericRasterViewportBbox({west:bounds.getWest(),south:bounds.getSouth(),east:bounds.getEast(),north:bounds.getNorth()});
+    if(!bbox){state.status="unavailable";state.error="Kartenausschnitt nicht unterstützt";this._weatherLayerMenuRender();return;}
     state.status="loading";state.error=null;this._weatherLayerMenuRender();
     const correlation="gr-wl02-"+id.split(".").pop()+"-"+token+"-"+Date.now();
     const report=(phase,data={})=>this._weatherEngineMonitorEvent?.("generic_v1_raster",{capability:id,phase,correlation_id:correlation,...data});
@@ -313,7 +327,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     // Reuse the established P7-010 geographic pixel-crop geometry.
     // A bounded browser image budget is intentionally separate from radar's scheduler.
     const layer=L.gridLayer({pane:spec.pane,tileSize:payload.tile_size,minZoom,
-      maxNativeZoom:Math.min(maxZoom,18),noWrap:true,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
+      maxNativeZoom:Math.min(maxZoom,18),noWrap:false,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
       attribution,updateWhenIdle:true,keepBuffer:0});
     const validCoverage=coverage.scope==="global"?{scope:"global",verified:true}:
       {scope:"bbox",verified:true,bbox:{west:coverage.west,south:coverage.south,east:coverage.east,north:coverage.north}};
