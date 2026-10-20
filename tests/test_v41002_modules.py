@@ -141,11 +141,11 @@ def test_runtime_revision_and_module_set_probe_contract():
 def test_internal_module_import_cache_is_coherent():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
- latest=re.search(r'runtimeRevision:"(\d{5})r\d+"',version)
+ latest=re.search(r'runtimeRevision:"(\d{5,6})r\d+"',version)
  assert latest
  for path in sorted(FRONTEND.rglob("*.js")):
   text=path.read_text(encoding="utf-8")
-  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(\d{5})r(\d+)["']''',text):
+  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(\d{5,6})r(\d+)["']''',text):
    module_path,revision,_=match.groups()
    assert (path.parent/module_path).resolve().is_file(),(path,module_path)
    assert int(revision)<=int(latest.group(1)),(path,revision)
