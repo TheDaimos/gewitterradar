@@ -215,9 +215,15 @@ const server = http.createServer((req, res) => {
 
         await page.evaluate(() => window.aboutCard._medallionPickerDialog.querySelector('[data-medallion-preset="animation"]').click());
         const animA = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
-        await page.waitForTimeout(420);
-        const animB = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
-        assert.notEqual(animA, animB, `${delivery}/${profile} medallion diagnostic animation visibly changes transform`);
+        // Sample multiple animation frames rather than comparing two potentially
+        // identical phases of a periodic CSS rotation under a loaded CI runner.
+        let animationChanged = false;
+        for (let sample = 0; sample < 18 && !animationChanged; sample++) {
+          await page.waitForTimeout(85);
+          const animB = await page.evaluate(() => getComputedStyle(window.aboutCard._medallionPickerDialog.querySelector('.trend-medallion-arrow')).transform);
+          animationChanged = animB !== animA;
+        }
+        assert.ok(animationChanged, `${delivery}/${profile} medallion diagnostic animation visibly changes transform`);
 
         const diagnosticExitInOpenPicker = await page.evaluate(() => {
           const card=window.aboutCard,dialog=card._medallionPickerDialog;
