@@ -56,7 +56,22 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV411LatestDev) {
+if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411100r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+  // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
+  // golden/pixel/geometry checks below remain mandatory.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  for (const marker of ['version:"4.11.100"', 'displayVersion:"V4.11.100 DEV"', 'build:"V4.11.100-DEV-2026-10-20"', 'runtimeRevision:"411100r1"', 'moduleSetId:"E411-100A1"', 'integrationVersion:"0.25.18"']) {
+    assert.ok(versionText.includes(marker), 'DEV-TEST identity missing: ' + marker);
+  }
+  assert.equal(runtime.productVersion, '4.11.100');
+  assert.equal(runtime.build, 'V4.11.100-DEV-2026-10-20');
+  assert.equal(runtime.runtimeRevision, '411100r1');
+  assert.equal(runtime.moduleSetId, 'E411-100A1');
+  assert.equal(runtime.modules.length, 34);
+} else if (isV411LatestDev) {
   // Additional data-source modules do not change protected About geometry.
   // Keep the historical V4.11.68 contract and the browser golden comparison.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
