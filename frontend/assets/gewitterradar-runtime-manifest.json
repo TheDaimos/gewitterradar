@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.99",
-  "build": "V4.11.99-DEV-2026-10-19",
-  "runtimeRevision": "41199r1",
-  "moduleSetId": "E411-99A1",
+  "productVersion": "4.11.100",
+  "build": "V4.11.100-DEV-2026-10-20",
+  "runtimeRevision": "411100r1",
+  "moduleSetId": "E411-100A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.153"
+      "version": "1.2.154"
     },
     {
       "id": "core.base-context",
@@ -123,7 +123,7 @@
     },
     {
       "id": "weather.layer-menu",
-      "version": "1.1.5"
+      "version": "1.1.6"
     },
     {
       "id": "weather.display-menu",
@@ -142,5 +142,5 @@
       "version": "1.2.8"
     }
   ],
-  "displayVersion": "V4.11.99 DEV"
+  "displayVersion": "V4.11.100 DEV"
 }

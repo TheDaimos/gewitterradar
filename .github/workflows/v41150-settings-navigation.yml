@@ -1,4 +1,4 @@
-name: V4.11.99 settings navigation and runtime identity
+name: V4.11.100 settings navigation and runtime identity
 
 on:
   push:
@@ -23,11 +23,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: V4.11.99 navigation and runtime regression
+      - name: V4.11.100 navigation and runtime regression
         run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
-      - name: V4.11.99 native sidebar and controlled frontend reload
+      - name: V4.11.100 native sidebar and controlled frontend reload
         run: node scripts/test-v41193-runtime-reload.mjs
-      - name: V4.11.99 Android foreground precipitation recovery
+      - name: V4.11.100 Android foreground precipitation recovery
         run: node scripts/test-v41195-android-foreground.mjs
       - name: GR-RF-02 retain verified regional radar during transient WR coverage failures
         run: node scripts/test-p7-010-rf-02.mjs
@@ -78,10 +78,10 @@ jobs:
           build=(r/'custom_components/gewitterradar/build_info.py').read_text()
           provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
           runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
-          assert 'version:"4.11.99"' in version
-          assert 'BUILD_VERSION = "4.11.99"' in build
-          assert runtime['productVersion']==provenance['productVersion']=='4.11.99'
-          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-99A1'
+          assert 'version:"4.11.100"' in version
+          assert 'BUILD_VERSION = "4.11.100"' in build
+          assert runtime['productVersion']==provenance['productVersion']=='4.11.100'
+          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-100A1'
           assert len(runtime['modules'])==34
           print('PASS: current frontend/backend/DRA metadata consistent')
           PY
