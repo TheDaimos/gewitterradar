@@ -13,7 +13,42 @@ const CATALOG_REFRESH_MS=30000;
 const GENERIC_REFRESH_MS=300000; // V1-Wetterraster im sichtbaren, unbewegten Kartenfenster erneut auflösen.
 // Shared among WL-02 layers. Radar has its own established P7-010 budget;
 // do not silently replace or mutate that scheduler.
-const GENERIC_TILE_BUDGET={inFlight:0,maxInFlight:8};
+// Shared bounded FIFO for the two WL-02 layers; the radar scheduler remains unchanged.
+export const createGenericRasterTileBudget=({maxInFlight=8,maxQueued=64}={})=>{
+  if(!Number.isInteger(maxInFlight)||maxInFlight<1||!Number.isInteger(maxQueued)||maxQueued<1)
+    throw new TypeError("Invalid raster tile budget");
+  const queue=[];let inFlight=0,scheduled=false;
+  const schedule=()=>{
+    if(scheduled)return;
+    scheduled=true;
+    queueMicrotask(()=>{
+      scheduled=false;
+      while(inFlight<maxInFlight&&queue.length){
+        const job=queue.shift();
+        if(job.finished)continue;
+        job.active=true;inFlight++;
+        try{job.run();}catch(_error){job.fail();}
+      }
+    });
+  };
+  return {
+    request(run,fail=()=>{}){
+      if(typeof run!=="function"||typeof fail!=="function")throw new TypeError("Invalid tile task");
+      if(queue.length>=maxQueued)return null;
+      const job={run,fail,active:false,finished:false};
+      queue.push(job);schedule();return job;
+    },
+    finish(job){
+      if(!job||job.finished)return;
+      job.finished=true;
+      if(job.active){inFlight=Math.max(0,inFlight-1);job.active=false;}
+      else{const at=queue.indexOf(job);if(at>=0)queue.splice(at,1);}
+      schedule();
+    },
+    snapshot:()=>({inFlight,queued:queue.length,maxInFlight,maxQueued})
+  };
+};
+const GENERIC_TILE_BUDGET=createGenericRasterTileBudget();
 
 const GENERIC_RASTERS=Object.freeze({
   "weather.satellite.clouds":{label:"Wolken",pane:"gr-wr-clouds",zIndex:215},
@@ -269,7 +304,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     }
     let L=null;try{L=await deps.loadLeafletJs?.();}catch(_error){state.status="failed";state.error="Leaflet konnte nicht geladen werden";this._weatherLayerMenuRender();return;}
     if(!L){state.status="failed";state.error="Leaflet nicht verfügbar";this._weatherLayerMenuRender();return;}
-    if(!state.enabled||token!==state.generation)return;
+    if(!state.enabled||token!==state.generation||map!==this._map)return;
     this._weatherGenericDetach(id);
     const spec=GENERIC_RASTERS[id];
     if(!map.getPane(spec.pane)){const pane=map.createPane(spec.pane);pane.style.zIndex=String(spec.zIndex);pane.style.pointerEvents="none";}
@@ -287,31 +322,37 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       canvas.width=payload.tile_size;canvas.height=payload.tile_size;
       const rects=rasterTilePixelCrops(coords,validCoverage,payload.tile_size);
       if(!rects.length){queueMicrotask(()=>done(null,canvas));return canvas;}
-      if(GENERIC_TILE_BUDGET.inFlight>=GENERIC_TILE_BUDGET.maxInFlight){queueMicrotask(()=>done(new Error("raster_tile_budget"),canvas));return canvas;}
       let url;try{url=rasterTileUrl(payload.tile_url,coords);}
       catch(_){queueMicrotask(()=>done(new Error("raster_tile_url_invalid"),canvas));return canvas;}
       const image=new Image();image.crossOrigin="anonymous";
-      GENERIC_TILE_BUDGET.inFlight++;
-      let settled=false;
+      let settled=false,timer=null,ticket=null;
       const finish=(error=null)=>{
-        if(settled)return;settled=true;GENERIC_TILE_BUDGET.inFlight=Math.max(0,GENERIC_TILE_BUDGET.inFlight-1);
-        clearTimeout(timer);image.onload=null;image.onerror=null;state.abortTiles.delete(abort);done(error,canvas);
+        if(settled)return;settled=true;
+        clearTimeout(timer);image.onload=null;image.onerror=null;
+        state.abortTiles.delete(abort);GENERIC_TILE_BUDGET.finish(ticket);done(error,canvas);
       };
-      const abort=()=>{image.onload=null;image.onerror=null;image.src="";finish(new Error("tile_cancelled"));};
+      const abort=()=>{
+        image.onload=null;image.onerror=null;
+        if(ticket?.active){try{image.src="";}catch(_){}}
+        finish(new Error("tile_cancelled"));
+      };
       state.abortTiles.add(abort);
-      const timer=setTimeout(()=>{image.src="";finish(new Error("tile_timeout"));},12000);
-      image.onload=()=>{
-        if(!state.enabled||token!==state.generation){finish(new Error("stale_tile"));return;}
-        try{
-          const ctx=canvas.getContext("2d");
-          if(!ctx)throw new Error("canvas_unavailable");
-          for(const rect of rects)ctx.drawImage(image,rect.sx,rect.sy,rect.sw,rect.sh,rect.sx,rect.sy,rect.sw,rect.sh);
-          drawnTiles.add(canvas); // Zeichenvorgang, noch keine Verifikation nichttransparenter Bildpixel.
-          finish();
-        }catch(_error){finish(new Error("tile_crop_failed"));}
-      };
-      image.onerror=()=>finish(new Error("tile_image_failed"));
-      image.src=url;
+      ticket=GENERIC_TILE_BUDGET.request(()=>{
+        timer=setTimeout(()=>{try{image.src="";}catch(_){}finish(new Error("tile_timeout"));},12000);
+        image.onload=()=>{
+          if(!state.enabled||token!==state.generation){finish(new Error("stale_tile"));return;}
+          try{
+            const ctx=canvas.getContext("2d");
+            if(!ctx)throw new Error("canvas_unavailable");
+            for(const rect of rects)ctx.drawImage(image,rect.sx,rect.sy,rect.sw,rect.sh,rect.sx,rect.sy,rect.sw,rect.sh);
+            drawnTiles.add(canvas); // Draw operation, not proof of nontransparent data pixels.
+            finish();
+          }catch(_error){finish(new Error("tile_crop_failed"));}
+        };
+        image.onerror=()=>finish(new Error("tile_image_failed"));
+        try{image.src=url;}catch(_){finish(new Error("tile_image_failed"));}
+      },()=>finish(new Error("tile_scheduler_failed")));
+      if(!ticket)queueMicrotask(()=>finish(new Error("tile_queue_full")));
       return canvas;
     };
     layer.on("tileload",({tile}={})=>{if(state.generation!==token)return;loaded++;if(tile&&drawnTiles.has(tile))drawn++;else skipped++;state.loaded=loaded;state.status="loading";report("tile_loaded",{loaded,drawn,skipped,failed});this._weatherLayerMenuRender();});

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createWeatherRouterClient,validateWeatherContext,parseWeatherResolution,WEATHER_ROUTER_CAPABILITIES} from '../frontend/modules/weather/consumer-client.js';
-import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus,parseGenericRasterUtc} from '../frontend/modules/weather/layer-menu.js';
+import {buildWeatherLayerCatalog,isWeatherLayerCapability,formatWeatherLayerCapabilityLabel,weatherLayerSubcategory,parseGenericRasterCoverage,genericRasterCycleStatus,parseGenericRasterUtc,createGenericRasterTileBudget} from '../frontend/modules/weather/layer-menu.js';
 import {rasterTileUrl} from '../frontend/modules/weather/p7-010/raster-tile-url.js';
 
 const calls=[];
@@ -110,8 +110,21 @@ assert.deepEqual(
   {primary:'Frühjahrs-Giftlorchel',secondary:'Vorkommensdichte · GBIF',full:'Frühjahrs-Giftlorchel · Vorkommensdichte · GBIF'},
   'Provider-led capability names must be reordered for human scanning'
 );
+// WL-02: pending image tasks must wait for capacity, and queued cancels free slots.
+const wl02Budget=createGenericRasterTileBudget({maxInFlight:2,maxQueued:4});
+const wl02Started=[],wl02Tickets=[];
+for(let i=0;i<4;i++)wl02Tickets.push(wl02Budget.request(()=>wl02Started.push(i)));
+assert.equal(wl02Budget.request(()=>wl02Started.push(99)),null,'Queue overflow is bounded');
+await Promise.resolve();
+assert.deepEqual(wl02Started,[0,1],'No more than two image tasks may start');
+wl02Budget.finish(wl02Tickets[3]); // cancel before any image request
+wl02Budget.finish(wl02Tickets[0]);await Promise.resolve();
+assert.deepEqual(wl02Started,[0,1,2],'Pending task begins after release');
+wl02Budget.finish(wl02Tickets[1]);wl02Budget.finish(wl02Tickets[2]);await Promise.resolve();
+assert.deepEqual(wl02Budget.snapshot(),{inFlight:0,queued:0,maxInFlight:2,maxQueued:4},'No leaked capacity on cancel/finish');
+assert.throws(()=>createGenericRasterTileBudget({maxInFlight:0}),TypeError);
 const wl02Source=await readFile(new URL('../frontend/modules/weather/layer-menu.js',import.meta.url),'utf8');
-for(const token of ['const drawnTiles=new WeakSet()','drawnTiles.add(canvas)','drawnTiles.has(tile)','genericRasterCycleStatus({drawn,failed})','drawn_means:"canvas_draw_operation_not_pixel_verification"']){
+for(const token of ['GENERIC_TILE_BUDGET.request(', 'GENERIC_TILE_BUDGET.finish(ticket)', 'tile_queue_full','map!==this._map','const drawnTiles=new WeakSet()','drawnTiles.add(canvas)','drawnTiles.has(tile)','genericRasterCycleStatus({drawn,failed})','drawn_means:"canvas_draw_operation_not_pixel_verification"']){
   assert.ok(wl02Source.includes(token),'The live WL-02 canvas path must not treat clipped transparent tiles as drawn imagery: '+token);
 }
 
