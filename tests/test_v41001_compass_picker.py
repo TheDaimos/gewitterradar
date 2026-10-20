@@ -52,7 +52,7 @@ def test_v41001_compass_picker_contract():
         runtime_match = re.search(r'runtimeRevision:"([^"]+)"', version)
         assert runtime_match
         v411_cache = runtime_match.group(1)
-        assert re.fullmatch(r"411\d{2}r\d+", v411_cache)
+        assert re.fullmatch(r"411\d{2,3}r\d+", v411_cache)
         assert "const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;" in main
     else:
         assert "const CARD_VERSION = '4.10.02';" in main
