@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.11.101 DEV-TEST WL-02: WeatherRouter-V1 Wolken- und Windraster kontrolliert fuer HA DEV zur Realpruefung vorbereitet; Niederschlag V1/V2 und RF01-RF04 geschuetzt; kein HA-REAL-PASS und keine PROD-Freigabe.",
+    "purpose": "GR-WEICH-07 V4.11.101 DEV: kontrollierter DRA-V1-Sichttest der historisch abgestimmten Niederschlagsweichzeichnung auf HA DEV; WeatherRouter und V1/V2 unveraendert; keine automatische Installation, keine HA-REAL- oder PROD-Freigabe.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
