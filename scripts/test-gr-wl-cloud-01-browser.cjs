@@ -30,6 +30,23 @@ const get=async()=>{const buf=await page.screenshot();const {data,info}=await sh
 const baseline=await get();
 const status=await page.evaluate(()=>{const c=window.__c,a=c._rasterLabAdapters();return {rain:!!a.get("precipitation").getPane(),cloud:a.get("clouds").getAvailability(),wind:a.get("wind").getAvailability(),cloudPane:a.get("clouds").getPane()===document.getElementById("cloud")};});
 assert.deepEqual(status,{rain:true,cloud:"active",wind:"off",cloudPane:true});
+const ui=await page.evaluate(()=>{
+ const c=window.__c;
+ c.shadow={getElementById:()=>null,append:node=>document.body.append(node)};
+ c._diagnostics={enabled:true};
+ if(c._rasterLabOpen()!==true)throw new Error("Raster-Labor could not open");
+ const select=document.querySelector("[data-lab-layer]");
+ const clouds=[...select.options].find(o=>o.value==="clouds");
+ const wind=[...select.options].find(o=>o.value==="wind");
+ const before={cloudEnabled:!clouds.disabled,windDisabled:wind.disabled};
+ select.value="clouds";
+ select.dispatchEvent(new Event("change",{bubbles:true}));
+ const selected=c._rasterLabState().selected;
+ c._rasterLabClose();
+ return {...before,selected,closed:!c._rasterLabState().open};
+});
+assert.deepEqual(ui,{cloudEnabled:true,windDisabled:true,selected:"clouds",closed:true});
+
 await page.evaluate(()=>{
 const c=window.__c,s=c._rasterLabState();s.selected="clouds";s.open=true;s.preview=true;const info=c._rasterLabSnapshot();
 s.samples.set(c._rasterLabKey(info),{layer:"clouds",zoom:8,nativeZoom:9,values:{...info.base,blur:26,blend:100,opacity:.62}});
