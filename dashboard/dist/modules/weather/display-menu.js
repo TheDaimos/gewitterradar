@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=41109r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.18",
+  version:"0.4.19",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -37,12 +37,14 @@ const DEFAULT_STATE=Object.freeze({
   legendMode:"auto",
   position:DEFAULT_POSITION,
   eyePosition:DEFAULT_EYE_POSITION,
-  styles:Object.freeze({precipitation:"auto"}),
+  styles:Object.freeze({precipitation:"auto",clouds:"original"}),
   opacities:Object.freeze({precipitation:null})
 });
 export const WEATHER_DISPLAY_STYLES=Object.freeze({
-  precipitation:Object.freeze(["auto","precise","balanced","soft"])
+  precipitation:Object.freeze(["auto","precise","balanced","soft"]),
+  clouds:Object.freeze(["original","balanced"])
 });
+const CLOUD_BALANCED_BLURS=Object.freeze({2:0,5:0,6:3,7:6,8:10,9:10,10:10,11:11,12:19,13:20,14:23,15:24,16:23,17:24,18:29});
 const LABELS=Object.freeze({
   auto:"Auto",
   precise:"Präzise",
@@ -132,6 +134,7 @@ const normalizeState=input=>{
   const source=safeObject(input),styles=safeObject(source.styles),opacities=safeObject(source.opacities),position=safeObject(source.position),eyePosition=safeObject(source.eyePosition);
   const precipitation=WEATHER_DISPLAY_STYLES.precipitation.includes(styles.precipitation)?styles.precipitation:"auto";
   const legendMode=["auto","on","off"].includes(source.legendMode)?source.legendMode:"auto";
+  const clouds=WEATHER_DISPLAY_STYLES.clouds.includes(styles.clouds)?styles.clouds:"original";
   const precipitationOpacity=opacities.precipitation==null?null:clamp(opacities.precipitation,0,1);
   return {
     enabled:bool(source.enabled,false),
@@ -141,7 +144,7 @@ const normalizeState=input=>{
     legendMode,
     position:{x:clamp(position.x??DEFAULT_POSITION.x,0,1),y:clamp(position.y??DEFAULT_POSITION.y,0,1)},
     eyePosition:{x:clamp(eyePosition.x??DEFAULT_EYE_POSITION.x,0,1),y:clamp(eyePosition.y??DEFAULT_EYE_POSITION.y,0,1)},
-    styles:{precipitation},
+    styles:{precipitation,clouds},
     opacities:{precipitation:precipitationOpacity}
   };
 };
@@ -209,12 +212,14 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     const previous=state.config;
     const next=normalizeState({...previous,...safeObject(patch),styles:{...previous.styles,...safeObject(patch?.styles)},opacities:{...previous.opacities,...safeObject(patch?.opacities)},position:{...previous.position,...safeObject(patch?.position)},eyePosition:{...previous.eyePosition,...safeObject(patch?.eyePosition)}});
     const precipitationStyleChanged=next.styles?.precipitation!==previous.styles?.precipitation;
+    const cloudsStyleChanged=next.styles?.clouds!==previous.styles?.clouds;
     const precipitationOpacityChanged=next.opacities?.precipitation!==previous.opacities?.precipitation;
     const legendModeChanged=next.legendMode!==previous.legendMode;
     state.config=next;
     if(persist)this._weatherDisplayPersist();
     this._weatherDisplaySyncUi();
     if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();
+    if(cloudsStyleChanged)this._weatherDisplayApplyCloudStyle();
     if(precipitationOpacityChanged)this._weatherDisplayRefreshLayerOpacity("precipitation");
     if(legendModeChanged)this._weatherLegendSyncUi?.();
     return next;
@@ -429,9 +434,25 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       this._weatherDisplaySyncLegendBadge();
       // Auch Ausgewogen und Weich berechnen zoomabhaengige Filterwerte.
       this._weatherDisplayRefreshRenderedLayers();
+      this._weatherDisplayApplyCloudStyle();
     };
     state.zoomMap=map;
     map.on("zoomend",state.zoomHandler);
+  },
+
+  _weatherDisplayApplyCloudStyle(){
+    const state=this._weatherGenericState?.("weather.satellite.clouds");
+    const pane=this._map?.getPane?.("gr-wr-clouds");
+    if(!pane||!state?.enabled)return;
+    if(this._weatherDisplayStyle("clouds")==="balanced"){
+      const zoom=Math.round(Number(this._map?.getZoom?.())||0);
+      const blur=Object.hasOwn(CLOUD_BALANCED_BLURS,zoom)?CLOUD_BALANCED_BLURS[zoom]:0;
+      pane.style.filter=blur>0?"blur("+blur+"px)":"none";
+      pane.dataset.weatherCloudBalanced="true";
+    }else if(pane.dataset.weatherCloudBalanced==="true"){
+      pane.style.filter="";delete pane.dataset.weatherCloudBalanced;
+    }
+    this._rasterLabReapplyPreview?.();
   },
 
   _weatherDisplayRefreshRenderedLayers(){
@@ -621,6 +642,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
         '<div class="weather-display-panel-body"><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
+        '<div class="weather-display-card" data-weather-display-clouds-card><div class="weather-display-card-title">Wolken</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="clouds" aria-label="Darstellungsmodus Wolken"><option value="original">Original</option><option value="balanced">Ausgewogen</option></select></div><div class="weather-display-card-note">Ausgewogen verwendet die geprüften Wolken-Zoomwerte. Zoom 3 und 4 bleiben ohne zusätzliche Glättung.</div></div>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto">Auto</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on">Ein</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off">Aus</button></div><div class="weather-display-card-note">Auto zeigt die wichtigste passende Legende. Ein zeigt alle aktiven WeatherRouter-Legenden. Aus blendet nur die Legende aus; Wetterlayer und Daten bleiben unverändert.</div></div></div>';
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>select.addEventListener("change",event=>{event.stopPropagation();const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";this._weatherDisplayPatch({styles:{[kind]:select.value}});}));
