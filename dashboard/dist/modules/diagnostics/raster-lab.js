@@ -242,6 +242,10 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
   _rasterLabOpen(){
     if(!this._diagnostics?.enabled)return false;
     const s=this._rasterLabState();
+    // Bind known generic raster adapters even while switched off, so the
+    // dropdown distinguishes switched off from renderer not connected.
+    this._weatherGenericLabAdapter?.("weather.satellite.clouds");
+    this._weatherGenericLabAdapter?.("weather.model.wind_10m.layer");
     if(s.open){s.root?.focus?.();return true;}
     s.open=true;s.preview=true;s.samples.clear();s.feedback="";
     const root=html("section","raster-lab","");
