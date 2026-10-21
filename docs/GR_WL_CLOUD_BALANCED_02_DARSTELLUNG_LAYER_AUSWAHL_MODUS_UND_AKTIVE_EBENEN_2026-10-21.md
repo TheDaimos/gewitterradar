@@ -102,3 +102,17 @@ Nach eigenhändiger Installation zum Prüfen: „Darstellung“ über das Augenm
 **Keine Veränderung an WeatherRouter, UTC, V1-/V2-Verträgen, ursprünglichen vier Niederschlagsprofilen, HA DEV oder HA PROD; keine behauptete HA-Realabnahme.**
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 8. Endgültige GitHub-CI-Abnahme
+
+Der unveränderliche **Programmcommit `a0b9c72bbf1364e59c5d144b3870b05b5e47f431`** wurde auf GitHub nach Abschluss aller Jobs erneut überprüft. Drei wesentliche Push-Workflows bestätigten denselben `head_sha` sowie den Status **`completed / success`**:
+
+| Bereich | GitHub-Actions-Lauf | Ergebnis |
+| --- | --- | --- |
+| Gemeinsames Frontend, alle Spiegel, SHA-256 und bestehende Chromium-Regressionen | [39680758042](https://github.com/TheDaimos/gewitterradar/actions/runs/39680758042) | **SUCCESS** |
+| Einstellungen und zentrale Versions-/Runtime-Identität | [39680757969](https://github.com/TheDaimos/gewitterradar/actions/runs/39680757969) | **SUCCESS** |
+| Gewitterradar-Integration einschließlich aller Paket-/HACS-/Home-Assistant-Laufzeitprüfungen | [39680758020](https://github.com/TheDaimos/gewitterradar/actions/runs/39680758020) | **SUCCESS** |
+
+Der zuerst fehlgeschlagene Prüflauf hatte noch den alten festen Sollwert für das Modul `weather.display-menu` (`0.4.18` statt `0.4.19`) sowie einen fehlenden neuen SHA-256-Wert für den geänderten generischen Layer-Hub. Die Testdaten und die kanonische Prüfsummenliste wurden korrekt an die tatsächlichen unveränderten Sicherheits- und Lieferverträge angepasst; **keine Testsperre wurde abgeschaltet**. Im endgültigen Programmcommit waren alle drei Kernprüfungen grün.
+
+**Ergebnis:** V4.11.105 DEV ist **CI-geprüft und als vorläufiger HA-DEV-Sichttestkandidat verfügbar**, nicht auf HA DEV/PROD installiert und nicht realabgenommen. Die Übersicht über aktive Ebenen sowie die beiden Dropdowns benötigen noch die manuelle Android-/Desktop-Prüfung des Betreibers an tatsächlich geladenen Wetterkarten.
