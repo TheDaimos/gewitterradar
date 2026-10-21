@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.101",
-  "build": "V4.11.101-DEV-2026-10-21",
-  "runtimeRevision": "411101r1",
-  "moduleSetId": "E411-101A1",
+  "productVersion": "4.11.102",
+  "build": "V4.11.102-DEV-2026-10-21",
+  "runtimeRevision": "411102r1",
+  "moduleSetId": "E411-102A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WEICH-07 V4.11.101 DEV: kontrollierter DRA-V1-Sichttest der historisch abgestimmten Niederschlagsweichzeichnung auf HA DEV; WeatherRouter und V1/V2 unveraendert; keine automatische Installation, keine HA-REAL- oder PROD-Freigabe.",
+    "purpose": "GR-WL-CLOUD-01 V4.11.102 DEV: kontrollierter DRA-V1-Sichttest der historisch abgestimmten Niederschlagsweichzeichnung auf HA DEV; WeatherRouter und V1/V2 unveraendert; keine automatische Installation, keine HA-REAL- oder PROD-Freigabe.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
