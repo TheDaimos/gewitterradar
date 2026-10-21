@@ -61,6 +61,31 @@ const ui=await page.evaluate(()=>{
  return {...before,selected,closed:!c._rasterLabState().open};
 });
 assert.deepEqual(ui,{cloudEnabled:true,windDisabled:true,selected:"clouds",closed:true});
+const balanced=await page.evaluate(()=>{
+ const c=window.__c,s=c._rasterLabState();s.selected="clouds";
+ if(c._rasterLabOpen()!==true)throw Error("Raster-Labor cannot reopen");
+ const button=document.querySelector("[data-lab-cloud-balanced]");
+ if(!button||button.hidden)throw Error("Ausgewogen cloud preset not available");
+ button.click();
+ const expected=[[2,0],[5,0],[6,3],[7,6],[8,10],[9,10],
+  [10,10],[11,11],[12,19],[13,20],[14,23],[15,24],[16,23],[17,24],[18,29]];
+ for(const [zoom,blur] of expected){
+  const entry=s.samples.get("clouds:"+zoom);
+  if(entry?.values?.blur!==blur||entry.values?.blend!==100)throw Error("cloud profile mismatch z"+zoom);
+ }
+ if(s.samples.has("clouds:3")||s.samples.has("clouds:4"))throw Error("Missing unsampled zooms were fabricated");
+ if([...s.samples.keys()].some(k=>k.startsWith("precipitation:")))throw Error("Cloud preset contaminated rain");
+ const slider=Number(document.querySelector('[data-lab-field="blur"]').value);
+ if(slider!==10)throw Error("Current zoom 8 slider mismatch");
+ return {count:expected.length,currentZoomBlur:slider};
+});
+const balancedPreview=await get();
+assert.equal(balancedPreview.rain,baseline.rain,"balanced clouds changed rain pixel");
+assert.notEqual(balancedPreview.cloudEdge,baseline.cloudEdge,"balanced cloud preview did not affect pixel");
+fs.writeFileSync(out+"/cloud-balanced-preview.png",await page.screenshot());
+await page.evaluate(()=>{const c=window.__c;c._rasterLabClose();c._rasterLabState().samples.clear()});
+assert.equal((await get()).cloudEdge,baseline.cloudEdge,"balanced preset was not restored");
+
 
 await page.evaluate(()=>{
 const c=window.__c,s=c._rasterLabState();s.selected="clouds";s.open=true;s.preview=true;const info=c._rasterLabSnapshot();
