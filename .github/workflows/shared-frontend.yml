@@ -116,6 +116,20 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
 
+      - name: Fetch exact historical V4.11.81 commit for GR-WEICH-04
+        run: git fetch --no-tags --depth=1 origin 46754f6689b0b01f1a45287e21572ae04b90f3bd
+
+      - name: GR-WEICH-04 actual historical Chromium pixel comparison
+        run: node scripts/test-gr-weich-04-browser-history.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WEICH-04 pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-weich-04-browser-pixels
+          path: artwork/acceptance/gr-weich-04/
+          if-no-files-found: warn
+
       - name: Chromium SVG multiscale rendering regression
         run: node scripts/test-v41176-svg-filter-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
