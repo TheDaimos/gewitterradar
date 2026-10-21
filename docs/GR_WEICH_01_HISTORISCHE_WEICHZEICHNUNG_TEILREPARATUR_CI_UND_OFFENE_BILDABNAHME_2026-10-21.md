@@ -75,12 +75,12 @@ Neuer dauerhafter Test: `scripts/test-gr-weich-01-regression.mjs`; er sichert di
 
 **Fehlgeschlagener tatsächlicher Zwischenlauf:** `39573689683` (gemeinsames Frontend), Fehler `Checksum inventory stale` in `scripts/verify-frontend.mjs`, nicht ein behaupteter Glättungs-Bildfehler. Daraufhin wurde der Bestand korrekt neu geschrieben.
 
-**Echte Push-Läufe am finalen Programm-/Workflowcommit `e2806da22d9e8a678573078c019630c28365cfcf` (Abfragestand bei Berichterstellung):**
+**Echte Push-Läufe am letzten Programm-/Workflowcommit `e2806da22d9e8a678573078c019630c28365cfcf` (Abfragestand bei Berichterstellung):**
 - [GitHub Actions 39573984635 – V4.11.100 settings navigation and runtime identity](https://github.com/TheDaimos/gewitterradar/actions/runs/39573984635): **SUCCESS**.
 - [GitHub Actions 39573984655 – Validate Gewitterradar integration](https://github.com/TheDaimos/gewitterradar/actions/runs/39573984655): **SUCCESS**. HACS-Integration, Hassfest, Paketvertrag (einschließlich neu eingebundenem GR-WEICH-01-Test) und Home-Assistant-Testlauf erfolgreich.
-- [GitHub Actions 39573984683 – Validate shared Gewitterradar frontend](https://github.com/TheDaimos/gewitterradar/actions/runs/39573984683): **IN PROGRESS** bei letzter Prüfung, die Browser-Schutzprüfungen liefen ohne bis dahin gemeldeten Fehltritt. **Kein CI-Gesamt-PASS**, solange dieser Lauf nicht abschließend erfolgreich ist.
+- [GitHub Actions 39573984683 – Validate shared Gewitterradar frontend](https://github.com/TheDaimos/gewitterradar/actions/runs/39573984683): **SUCCESS**; der zuvor ausstehende gemeinsame Frontend-Lauf ist inzwischen erfolgreich abgeschlossen. Dies betrifft die vorhandenen Frontend-Schutzverträge, **nicht** einen historischen Weichzeichnungs-Pixelvergleich.
 
-Kein ausstehenden Lauf wurde als Erfolg ausgewiesen.
+**CI-PASS für den geprüften Teiländerungsstand:** Alle drei konkreten Push-Gates sind erfolgreich. Dieser CI-PASS gilt nicht als visuelle Abnahme oder vollständiger GR-WEICH-01-Abschluss.
 
 ## 7. Noch zwingend ausstehende Arbeiten – P1 bleibt offen
 
@@ -88,7 +88,7 @@ Kein ausstehenden Lauf wurde als Erfolg ausgewiesen.
 2. V4.11.82 anhand eines tatsächlich ausgeführten historischen Builds statt der früher fest codierten Labor-Kopfzeile mit heutigen synthetischen Kacheln vergleichen. **Die ursprünglich abgestimmte optische Wirkung aller vier Modi ist noch nicht belegt wiederhergestellt.**
 3. Für `maxNativeZoom` 8–12 die Differenz zwischen zulässiger URL-Zoomobergrenze und wirksamer Rasterauflösung fachlich aufklären. Erst mit diesem Nachweis den kleinsten semantisch korrekten Fix für die Profilstärken durchführen.
 4. Filterwirkung an tatsächlich sichtbaren Browserpixeln messen, insbesondere nach Kartenzoom/-bewegung, V1-/V2-Aufbau/Tausch, geografischem Quellenwechsel und Raster-Labor-Referenz/Versuch/Schließen. Frühere bloße CSS-`url(...)`-Akzeptanz reicht nicht.
-5. Abschließenden erfolgreichen Frontend-Push-Lauf und einen weiteren echten CI-Durchlauf nach **jeglicher** weiteren Programmänderung nachweisen; alle Auslieferungsspiegel, Manifest-/Prüfsummen- und DRA-Verträge erhalten.
+5. Bei jeder **weiteren** Programmänderung einen neuen erfolgreichen Push-Lauf am finalen Codecommit nachweisen; alle Auslieferungsspiegel, Manifest-/Prüfsummen- und DRA-Verträge erhalten.
 6. Bei später ausdrücklich freigegebener DRA-DEV-Installation erst korrelierte HA-/WeatherRouter-/Browser-Realtests durchführen. **Kein HA-REAL-PASS, kein PROD-PASS.**
 
 ## 8. Freigabematrix
@@ -98,7 +98,7 @@ Kein ausstehenden Lauf wurde als Erfolg ausgewiesen.
 | Historische Git-/Ursachenprüfung | **Teilweise nachgewiesen**; erster fehlerhafter Bildcommit offen |
 | Zwei konkrete technische Teilkorrekturen | **Committed** |
 | Neuer Schutztest innerhalb CI-Paketvertrag | **PASS** |
-| CI Gesamtfreigabe | **NOCH NICHT**: Frontend-Lauf war zuletzt in Bearbeitung |
+| CI-Gates des Teiländerungsstandes | **PASS**: alle drei Push-Workflows erfolgreich |
 | Historische optische Gleichwertigkeit | **NICHT nachgewiesen** |
 | Vollständiger GR-WEICH-01-Codeabschluss | **NEIN** |
 | DRA-DEV-READY / Installationsfreigabe | **NEIN** |
