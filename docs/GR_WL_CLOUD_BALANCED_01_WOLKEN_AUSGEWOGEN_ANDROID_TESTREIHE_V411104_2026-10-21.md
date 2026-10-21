@@ -97,3 +97,9 @@ Auf HA DEV nach eigenständiger Freigabe Wolken aktivieren, Raster-Labor öffnen
 **Entwicklungsentscheidung:** Die Testreihe dient der qualitativen Erprobung eines möglichen Wolkenmodus „Ausgewogen“. Eine spätere dauerhaft aktivierbare Wolkendarstellung wird erst nach manueller Android-/Desktop-Realabnahme gesondert entschieden.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 7. Abschließende GitHub-Rückprüfung der drei CI-Läufe
+
+Nach Abschluss der ursprünglich noch laufenden Frontend-Suite wurden die **tatsächlich finalisierten** GitHub-Actions-Run-Objekte für den unveränderlichen Programmcommit `67313aa7704e3a1f641258e714d497de43e0d8ba` erneut gelesen: **39672198911 = completed/success, 39672198875 = completed/success, 39672198969 = completed/success.** Der gemeinsame Frontend-Job enthält **keine fehlgeschlagenen Arbeitsschritte**; der neue Chromium-Test einschließlich Pixel-Artefaktsicherung war ebenfalls erfolgreich.
+
+**Abnahmestatus:** Die bestehende V4.11.104-DEV-Version ist damit als **CI-geprüfter, vorläufiger und rein betreiberseitig installierbarer Wolken-Ausgewogen-Raster-Labor-Testkandidat** vorbereitet. Vollständige produktive Wetterquellen-/HA-Realabnahme, Android-/Desktop-Bedienprüfung und tatsächliche DRA-Installation bleiben offen. **Keine automatische Installation, keine Änderung an VM 109 oder 101.**
