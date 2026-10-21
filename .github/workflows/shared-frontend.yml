@@ -130,6 +130,17 @@ jobs:
           path: artwork/acceptance/gr-weich-04/
           if-no-files-found: warn
 
+      - name: GR-WEICH-05 actual display-module and Raster-Labor Chromium pixels
+        run: node scripts/test-gr-weich-05-browser-integration.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WEICH-05 browser integration pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-weich-05-browser-integration-pixels
+          path: artwork/acceptance/gr-weich-05/
+          if-no-files-found: warn
+
       - name: Chromium SVG multiscale rendering regression
         run: node scripts/test-v41176-svg-filter-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
