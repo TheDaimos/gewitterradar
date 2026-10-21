@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WL-CLOUD-01 V4.11.102 DEV: kontrollierter DRA-V1-Sichttest der historisch abgestimmten Niederschlagsweichzeichnung auf HA DEV; WeatherRouter und V1/V2 unveraendert; keine automatische Installation, keine HA-REAL- oder PROD-Freigabe.",
+    "purpose": "GR-WL-CLOUD-01 V4.11.102 DEV: bestehendes Raster-Labor auf aktive Wolken- und geeignete Wind-Rasterebenen erweitert; Niederschlagsprofile, WeatherRouter, V1/V2 und UTC unveraendert; keine DRA-Installation, keine HA-REAL- oder PROD-Freigabe.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
