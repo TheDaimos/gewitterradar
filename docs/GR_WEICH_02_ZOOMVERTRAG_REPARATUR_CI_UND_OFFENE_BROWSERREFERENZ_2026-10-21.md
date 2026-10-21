@@ -57,7 +57,7 @@ Erster Frontend-Zwischenlauf `39576078687` hat erwartungsgemäß die veraltete D
 - [Validate Gewitterradar integration – 39576163210](https://github.com/TheDaimos/gewitterradar/actions/runs/39576163210)
 - [Validate shared Gewitterradar frontend – 39576163407](https://github.com/TheDaimos/gewitterradar/actions/runs/39576163407)
 
-**CI-Schlussstatus siehe ergänzte Prüfnotiz am Ende des Berichts.** Ein erfolgreicher CI-Lauf ist ausdrücklich keine historische Browser-Realabnahme.
+**CI-Schlussstatus: PASS aller drei Push-Läufe**, nach erneutem Lesen der tatsächlichen Laufzustände. Eine historische optische Abnahme folgt daraus nicht. Ein erfolgreicher CI-Lauf ist ausdrücklich keine historische Browser-Realabnahme.
 
 ## G. Offene Prüfungen und Sperren
 
@@ -73,3 +73,7 @@ Erster Frontend-Zwischenlauf `39576078687` hat erwartungsgemäß die veraltete D
 **Freigabe:** Korrektur der falschen Zoommetadaten-Interpretation programmiert; historisch gewünschte Bildwirkung als reale Browserpixel **noch nicht bewiesen**, daher kein GR-WEICH-02-VISUAL-PASS, kein DRA-DEV-READY, keine HA-DEV-/HA-PROD-Installation, kein HA-REAL-PASS.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## H. Nachprüfung der endgültigen CI-Ergebnisse
+
+Am Programm- und Prüfsummencommit `9f674947a5f6bac88ff4bc4c43aba02e5dd39a67` sind alle drei tatsächlich gestarteten öffentlichen Push-Workflows **completed / success**: Lauf `39576163331` (Einstellungen/Version), `39576163210` (Integration, einschließlich Paketvertrag und GR-WEICH-02-Prüfung) und `39576163407` (gemeinsames Frontend). Der zunächst wegen veralteter Prüfsummen fehlgeschlagene frühere Lauf wurde durch eine vollständige Neubildung der Prüfsummen behoben. Die Browser-Schutzausführung der Frontend-CI ist keine direkte Vergleichsmessung der historischen Regenraster und daher **kein GR-WEICH-02-VISUAL-PASS**.
