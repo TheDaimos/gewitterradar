@@ -567,6 +567,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
 
   _weatherLayerMenuRender(){
+    this._rasterLabRefreshOptions?.();
     const state=this._weatherLayerMenuState();if(state.view==="map-display")return;
     const panel=this.shadow?.querySelector('[data-weather-layer-panel="true"]');if(!panel)return;
     const category=state.category?state.model.categories.find(item=>item.id===state.category):null;
