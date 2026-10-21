@@ -75,3 +75,7 @@ Nach vollständiger Abnahme sind zwingend festzuhalten: unveränderliche Commit-
 ## 7. Verifizierter CI-Zwischenstand
 
 Am Programm-/Prüfcommit `29257e400a3dead1a00f3429c78362e3dc5017b2` wurden `39582002786` (Einstellungen/V4.11.100) und `39582002651` (Integration) jeweils als **completed/success** zurückgelesen. Im Frontend-Lauf `39582002828` wurden sowohl der neue GR-WEICH-05-Browserpixeltest als auch die Sicherung des zugehörigen Pixelartefakts mit **success** ausgeführt. Der Gesamt-Workflow war bei der letzten Prüfung noch mit den vorhandenen späteren Browserprüfungen beschäftigt; bis zu dessen erfolgreichem Abschluss wird **kein Gesamt-CI-PASS** behauptet.
+
+## 8. Abschließende CI-Rückprüfung
+
+Der zuvor als laufend dokumentierte gemeinsame Frontend-Workflow `39582002828` wurde über die echten Jobdaten zuletzt als **completed/success** verifiziert (keine fehlgeschlagenen Schritte). Gemeinsam mit `39582002786` (Einstellungen/Identität, success) und `39582002651` (Integration, success) ergibt sich damit **CI-PASS für den real ausgeführten isolierten GR-WEICH-05-Browsermodultest am Commit `29257e400a3dead1a00f3429c78362e3dc5017b2`**. Ungeprüfte produktive asynchrone V1-/V2-Ende-zu-Ende-Abläufe und der vollständige Labor-Dialog bleiben ausdrücklich offen; deswegen ist die Vorbereitung beziehungsweise Freigabe eines DRA-/HA-DEV-Testkandidaten weiterhin **gesperrt**.
