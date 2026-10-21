@@ -42,6 +42,8 @@ jobs:
         run: node scripts/test-gr-weich-01-regression.mjs
       - name: Check GR-WEICH-02 visual-resolution reference
         run: node scripts/test-gr-weich-02-visual-resolution.mjs
+      - name: Check GR-WEICH-03 DOM lifecycle regression
+        run: node scripts/test-gr-weich-03-dom-lifecycle.mjs
       - name: Check JSON metadata
         run: |
           python -m json.tool hacs.json >/dev/null
