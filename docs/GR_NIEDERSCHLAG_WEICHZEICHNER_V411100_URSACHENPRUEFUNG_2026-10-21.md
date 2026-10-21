@@ -51,3 +51,21 @@ Ein neuer bloßer `blur(48px)`-Minimalwert oder eine pauschale Umstellung auf `b
 | Installation / HA-REAL-PASS / PROD | **NEIN** |
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 5. Nachtrag nach Nutzerkorrektur – versionsübergreifende Regression, nicht Chromium-spezifisch
+
+**Nutzerbeobachtung vom 21.10.2026:** Derselbe sichtbare Ausfall von Auto/Weich tritt auf **Android und Desktop** auf; in früheren V4.11-Versionen war die Darstellung auf diesen Geräten nachweislich nach Nutzerbeobachtung korrekt. Der genaue letzte gute Stand ist noch unklar (**V4.11.99 oder davor**). iPad ist noch **nicht geprüft**. Die frühere Gewichtung auf Chromium als Haupterklärung war daher **zu eng und nicht bewiesen**. Es ist eine **plattformübergreifende zeitliche Regression** bis zum Gegenbeweis, kein belegter Browserfehler.
+
+### Neu durchgeführte GitHub-Historienprüfung
+
+Die echte GitHub-Commitliste für `frontend/modules/weather/display-menu.js` zeigt die **letzte Änderung bereits am 15.10.2026 (V4.11.81)**: `46754f6689b0b01f1a45287e21572ae04b90f3bd` (Modulkennung), vorher `115fb751c6e7a28563214a9fa3706b114ad853a9` (Raster-Labor-Anbindung). Für die nachfolgenden Versionen bis **V4.11.100** gibt es in diesem Pfad **keinen neueren Änderungscommit**. Damit liegt ein **neu eingeführter Fehler der Auto-/Weich-Formel gerade durch die Versionsanhebung auf 4.11.100** ohne weitere Nachweise **nicht nahe**.
+
+Dagegen wurde `frontend/modules/weather/precipitation-layer.js` in mehreren V4.11.88–99/P7-010/RF-Arbeitsschritten geändert, und der aktive Datenweg kann V1 oder V2 sein. Ein **anderer Rendererpfad, eine andere WR-Kachel- bzw. `max_zoom`-Metadatenkombination oder eine nicht erneut angewendete Pane-Formatierung** muss darum vorrangig untersucht werden. In dem aktuellen V2-Pfad wird die Ebene mit `staged.options.pane="gr-weather-radar"` zugeordnet und nach dem fertigen Tausch `_weatherDisplayRefreshRenderedLayers()` aufgerufen; dies ist ein konkreter Ansatzpunkt für die zeitliche Prüfung während Aufbau und Tausch, **noch kein bestätigter Fehler**.
+
+### Verbindlicher nächster Vergleich
+
+1. Git-Historie für die letzte vom Benutzer als gut wahrgenommene Version (V4.11.99 oder wenige Versionen davor) gegen V4.11.100 **nicht nur im Displaymodul**, sondern im V1-/V2-Niederschlagsrenderer, Kachelvertrag, Metadatenpfad und Stil-Lebenszyklus prüfen.
+2. Dieselben synthetischen Rasterdaten und Kartenzoomwerte mit gleichen `max_native_zoom`-Werten durch V1 und V2 schicken; den effektiv angewandten CSS-Filter am sichtbaren Pane **vor und nach Layer-Tausch** kontrollieren. Die Einstellung `Auto` bzw. `Weich` darf nicht bloß als Menütitel korrekt sein.
+3. Nach nachgewiesener Ursache kleinste Korrektur mit Tests durchführen; erst dann neue öffentliche CI-Läufe und kontrollierte DRA-DEV-Testfreigabe. Keine vermeintliche Chromium- oder iPad-Reparatur ins Blaue hinein.
+
+**Der Nachtrag korrigiert die Diagnosepriorität, beansprucht aber noch keinen erfolgreichen Codefix.**
