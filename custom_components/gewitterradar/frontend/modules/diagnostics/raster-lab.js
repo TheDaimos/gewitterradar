@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41127r1";
 import { APPLICATION_RELEASE } from "../../version.js?v=411102r1";
 
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.raster-lab",version:"0.1.2",group:"Diagnose",
+  id:"diagnostics.raster-lab",version:"0.1.3",group:"Diagnose",
   function:"Raster-Labor",subfunctions:["Nummerierte Layerauswahl","Live-Vorschau","Zoomprofile","Vergleich mit Referenz","Zwischenablage","JSON-Export","Sicherer Rückfall"],
   file:"modules/diagnostics/raster-lab.js"
 });
@@ -94,7 +94,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
       opacity:1,blend:100};
     return {adapter,pane,nativeZoom:Number.isFinite(native)?native:null,zoom:this._rasterLabZoom(),base};
   },
-  _rasterLabKey(info){return this._rasterLabState().selected+":"+info.zoom+":"+(info.nativeZoom??"none");},
+  _rasterLabKey(info){return this._rasterLabState().selected+":"+info.zoom;},
   _rasterLabValues(info){
     const current=this._rasterLabState().samples.get(this._rasterLabKey(info));
     return current?.values||{...info.base};
@@ -122,19 +122,33 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
   },
   _rasterLabRenderValues(){
     const s=this._rasterLabState(),root=s.root;if(!root)return;
-    const info=this._rasterLabSnapshot(),values=this._rasterLabValues(info);
+    const info=this._rasterLabSnapshot(),inspectZoom=s.inspectZoom??info.zoom;
+    const profile=s.samples.get(s.selected+":"+inspectZoom);
+    const values=profile?.values||{...info.base};
     for(const [key,parts] of Object.entries(FIELDS)){
       const range=root.querySelector('[data-lab-field="'+key+'"]');
       const output=root.querySelector('[data-lab-out="'+key+'"]');
-      if(range)range.value=String(values[key]);
+      if(range){range.value=String(values[key]);range.disabled=inspectZoom!==info.zoom;}
       if(output)output.textContent=fit(values[key])+" "+parts[4];
+    }
+    const profileSelect=root.querySelector("[data-lab-profile]");
+    if(profileSelect){
+      const selected=String(inspectZoom);profileSelect.replaceChildren();
+      const zooms=new Set([info.zoom]);
+      for(const item of s.samples.values())if(item.layer===s.selected)zooms.add(item.zoom);
+      for(const zoom of [...zooms].sort((a,b)=>a-b)){
+        const opt=document.createElement("option");opt.value=String(zoom);
+        opt.textContent="Zoom "+zoom+(s.samples.has(s.selected+":"+zoom)?" · Gespeichert":" · Noch kein Profil")+(zoom===info.zoom?" · Karte":"");
+        profileSelect.append(opt);
+      }
+      profileSelect.value=selected;
     }
     const line=root.querySelector("[data-lab-status]");
     const availability=info.adapter?.getAvailability?.()||(info.pane?"active":"unconnected");
     if(line)line.textContent="Kartenzoom "+info.zoom+" · native Quellzoomstufe "+
       (info.nativeZoom??"unbekannt")+" · "+family()+" · "+
       (info.pane?"Renderer bereit":availability==="off"?"Ebene ausgeschaltet":availability==="no-data"?"Keine Rasterdaten":availability==="loading"?"Raster lädt":"Renderer nicht angebunden")+
-      " · "+(s.preview?"Versuch":"Referenz");
+      " · "+(s.preview?"Versuch":"Referenz")+(inspectZoom!==info.zoom?" · Profilvergleich (nur Anzeige)":"");
     const status=root.querySelector("[data-lab-feedback]");
     if(status&&status.value!==s.feedback)status.value=s.feedback;
     root.querySelector("[data-lab-ab]")?.setAttribute("aria-pressed",String(s.preview));
@@ -247,7 +261,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     this._weatherGenericLabAdapter?.("weather.satellite.clouds");
     this._weatherGenericLabAdapter?.("weather.model.wind_10m.layer");
     if(s.open){s.root?.focus?.();return true;}
-    s.open=true;s.preview=true;s.samples.clear();s.feedback="";
+    s.open=true;s.preview=true;s.inspectZoom=null;s.samples.clear();s.feedback="";
     const root=html("section","raster-lab","");
     root.tabIndex=-1;root.setAttribute("aria-label","Raster-Labor – Diagnose");
     root.style.cssText="position:fixed;z-index:2147483646;top:64px;right:12px;max-width:calc(100vw - 16px);width:330px;max-height:calc(100dvh - 72px);box-sizing:border-box;overflow:auto;color:#ecedf1;background:linear-gradient(150deg,#21242b,#12161c);border:1px solid #cfab62;border-radius:14px;box-shadow:0 12px 40px #000b;font:12px system-ui;padding:12px;overscroll-behavior:contain";
@@ -260,6 +274,8 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const select=html("select","","");select.dataset.labLayer="true";
     select.style.cssText="width:100%;min-height:42px;background:#12171e;color:#f1d69a;border:1px solid #8a7246;border-radius:8px;padding:7px";root.append(select);
     const status=html("p","","");status.dataset.labStatus="true";status.style.cssText="line-height:1.5;font-size:11px;color:#bac6d3";root.append(status);
+    const profileLabel=html("label","","Zoomprofil anzeigen · Bearbeitung nur beim aktuellen Kartenzoom");profileLabel.style.display="block";root.append(profileLabel);
+    const profileSelect=html("select","","");profileSelect.dataset.labProfile="true";profileSelect.style.cssText=select.style.cssText;root.append(profileSelect);
     const grid=html("div","","");grid.style.cssText="display:grid;gap:9px";
     for(const [key,[min,max,step,title,unit]] of Object.entries(FIELDS)){
       const row=html("label","","");row.style.display="grid";row.style.gap="3px";
@@ -296,13 +312,15 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     }
     const ctl=new AbortController();s.controller=ctl;const signal=ctl.signal;
     close.addEventListener("click",()=>this._rasterLabClose(),{signal});
+    profileSelect.addEventListener("change",()=>{s.inspectZoom=Number(profileSelect.value);this._rasterLabRenderValues();},{signal});
     select.addEventListener("change",()=>{
-      this._rasterLabRestore();s.selected=select.value;s.feedback="";
+      this._rasterLabRestore();s.selected=select.value;s.inspectZoom=null;s.feedback="";
       this._rasterLabRenderValues();this._rasterLabApply();
     },{signal});
     root.addEventListener("input",event=>{
       const key=event.target?.dataset?.labField;
       if(key&&FIELDS[key]){
+        if(s.inspectZoom!==null&&s.inspectZoom!==this._rasterLabZoom())return;
         const info=this._rasterLabSnapshot(),old=this._rasterLabValues(info);
         const values={...old,[key]:clamp(event.target.value,FIELDS[key][0],FIELDS[key][1])};
         s.samples.set(this._rasterLabKey(info),{layer:s.selected,zoom:info.zoom,
@@ -340,7 +358,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     head.addEventListener("pointercancel",end,{signal});
     const map=this._map;
     if(map?.on){
-      s.map=map;s.zoomHandler=()=>{this._rasterLabApply();this._rasterLabRenderValues();};
+      s.map=map;s.zoomHandler=()=>{s.inspectZoom=null;this._rasterLabApply();this._rasterLabRenderValues();};
       map.on("zoomend",s.zoomHandler);
     }
     this._rasterLabRefreshOptions();this._rasterLabRenderValues();root.focus();
