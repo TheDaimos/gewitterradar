@@ -3,7 +3,7 @@ import {installWeatherDisplayMenu} from "../frontend/modules/weather/display-men
 import {installRasterLab} from "../frontend/modules/diagnostics/raster-lab.js";
 import {APPLICATION_RELEASE} from "../frontend/version.js";
 globalThis.window={devicePixelRatio:1,innerWidth:1024,innerHeight:768};
-globalThis.navigator={userAgent:"Node.js test",platform:"Node",maxTouchPoints:0};
+Object.defineProperty(globalThis,"navigator",{configurable:true,value:{userAgent:"Node.js test",platform:"Node",maxTouchPoints:0}});
 const Card=class {};
 installWeatherDisplayMenu(Card,{});
 installRasterLab(Card,{});
