@@ -638,12 +638,50 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.className="weather-display-panel";
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
-        '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button></div>'+
+        '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" style="width:30px;height:30px;border:1px solid #d6a64e;border-radius:50%;background:#171d25;color:#efc467;font:bold 20px Georgia,serif;cursor:pointer;flex-shrink:0">i</button><button class="weather-display-minimize" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button></div>'+
         '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
         '<div class="weather-display-card" data-weather-display-clouds-card><div class="weather-display-card-title">Wolken</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="clouds" aria-label="Darstellungsmodus Wolken"><option value="original">Original</option><option value="balanced">Ausgewogen</option></select></div><div class="weather-display-card-note">Ausgewogen verwendet die geprüften Wolken-Zoomwerte. Zoom 3 und 4 bleiben ohne zusätzliche Glättung.</div></div>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto">Auto</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on">Ein</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off">Aus</button></div><div class="weather-display-card-note">Auto zeigt die wichtigste passende Legende. Ein zeigt alle aktiven WeatherRouter-Legenden. Aus blendet nur die Legende aus; Wetterlayer und Daten bleiben unverändert.</div></div></div>';
+      const infoButton=panel.querySelector("[data-weather-display-info]");
+      const info= document.createElement("section");
+      info.dataset.weatherDisplayInfo="true";info.hidden=true;
+      info.setAttribute("aria-label","Aktive Wetterebenen und ihre Darstellung");
+      info.style.cssText="margin:8px 10px;padding:10px;border:1px solid rgba(225,184,99,.45);border-radius:10px;background:#18212b;color:#e7e9ed;font:11px/1.55 system-ui;max-height:38vh;overflow-y:auto";
+      panel.append(info);
+      const refreshInfo=()=>{
+        info.replaceChildren();
+        const heading=document.createElement("strong");heading.textContent="Aktive Wetterebenen";heading.style.color="#edca83";info.append(heading);
+        const add=(title,desc)=>{
+          const row=document.createElement("div");row.style.cssText="padding:7px 0;border-top:1px solid rgba(255,255,255,.12)";
+          const label=document.createElement("strong");label.textContent=title+" · ";label.style.color="#f1d398";
+          row.append(label,document.createTextNode(desc));info.append(row);
+        };
+        const radar=this._weatherRadarState?.();
+        if(radar?.layer){
+          const mode=this._weatherDisplayStyle("precipitation");
+          add("Niederschlag",(LABELS[mode]||mode)+" · Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
+        }
+        const generic=this.__weatherGenericStates;
+        if(generic instanceof Map){
+          for(const [id,state] of generic){
+            if(!state?.enabled)continue;
+            const isCloud=id==="weather.satellite.clouds";
+            const name=isCloud?"Wolken":id==="weather.model.wind_10m.layer"?"Wind (Raster)":id.split(".").slice(-2).join(" · ");
+            const mode=isCloud?this._weatherDisplayStyle("clouds"):"original";
+            const status=this._weatherGenericDescribe?.(id)||state.status||"Aktiv";
+            add(name,(isCloud?(mode==="balanced"?"Ausgewogen":"Original"):"Original")+" · "+status);
+          }
+        }
+        if(info.children.length===1){const empty=document.createElement("p");empty.textContent="Keine aktiven Wetter-Rasterebenen";info.append(empty);}
+      };
+      infoButton?.addEventListener("click",event=>{
+        event.preventDefault();event.stopPropagation();
+        info.hidden=!info.hidden;
+        infoButton.setAttribute("aria-expanded",String(!info.hidden));
+        if(!info.hidden)refreshInfo();
+      });
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       const layerSelect=panel.querySelector("[data-weather-display-layer-select]");
       const syncLayerChoice=()=>{
