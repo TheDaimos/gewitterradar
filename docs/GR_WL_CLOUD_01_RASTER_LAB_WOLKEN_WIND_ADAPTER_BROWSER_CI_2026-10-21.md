@@ -112,3 +112,30 @@ Wichtige Commits des Entwicklungsverlaufs: `ccf0bd1c48a073e65a965838f8619b2cfa8c
 - Keine WeatherRouter-Änderung, keine Veränderung von UTC, keine neue Rendererarchitektur, keine Schwächung von Sicherheits-/Authentifizierungs-, DRA- oder Verbraucher-Schnittstellenverträgen. **Keine automatische Installation.**
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 7. Abschließende echte GitHub-Actions-Abnahme – V4.11.102 DEV
+
+**Endgültiger unveränderlicher Programmcommit (einschließlich aller Prüfsummen):** `1b9100c6880af405e1a5a5578fab78f40979d8cd`. Die nachfolgende Dokumentationsarbeit verändert nicht den geprüften Programmstand.
+
+Alle drei zentralen GitHub-Actions-Läufe dieses **exakten Commits** wurden nach vollständigem Abschluss direkt über GitHub zurückgelesen und stehen ausdrücklich auf **`completed / success`**:
+
+| GitHub-Prüfung | Run-ID und Nachweis | Tatsächliches Ergebnis |
+| --- | --- | --- |
+| V4.11.102 Einstellungen, Version und Laufzeitidentität | [39605368650](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368650) | **SUCCESS** |
+| Gewitterradar-Integration | [39605368669](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368669) | **SUCCESS**, alle vier Jobs (`package-contract`, `hassfest`, `hacs-integration`, `home-assistant-runtime`) |
+| Gemeinsames Frontend, identische Spiegel und SHA256, ursprüngliche GR-WEICH-Prüfungen sowie GR-WL-CLOUD-01 | [39605368602](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368602) | **SUCCESS**, einschließlich realem Chromium-Pixeltest, Labor-Dialog und Artefakt-Upload |
+
+**Echter Beleg aus dem Browser-Jobsprotokoll (Chromium 151.0.7922.34):** Der Prüfschritt `GR-WL-CLOUD-01 active generic raster and Raster-Labor browser pixels` endete mit **SUCCESS** und protokollierte die folgenden aus tatsächlich gerenderten PNGs gemessenen Rotkanalwerte:
+
+| Messposition (synthetische Daten) | Vor Vorschau | Wolken-Vorschau | Nach Wiederherstellung |
+| --- | ---: | ---: | ---: |
+| Niederschlagsfläche | 208 | **208** | 208 |
+| Wolkenfläche (Kern) | 208 | **72** | 208 |
+| Wolkenfläche (Rand) | 17 | **53** | 17 |
+| Windfläche (nicht ausgewählt) | 208 | **208** | 208 |
+
+Die Vorschau verändert somit tatsächlich Wolkenpixel, **nicht** Niederschlags- oder Windpixel. Nach dem Schließen sind die geprüften Originalpixel exakt wiederhergestellt. Der Browserdialog meldete den Wolkenadapter `active`, Wind `off`, und bestätigte erfolgreich den Wechsel der Verfügbarkeit auf `off` bzw. `no-data`.
+
+**Originale GitHub-Actions-Bilddateien und JSON-Messung:** [GR-WL-CLOUD-01 Browserartefakt 12348058096](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368602/artifacts/12348058096) (`gr-wl-cloud-01-browser-evidence`, 25.319 Bytes, nicht abgelaufen). Daneben blieben die unabhängigen Originaltests [GR-WEICH-04-Pixelreferenz 12347933418](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368602/artifacts/12347933418) und [GR-WEICH-05-Browsermodule 12348033082](https://github.com/TheDaimos/gewitterradar/actions/runs/39605368602/artifacts/12348033082) erhalten.
+
+**Fachliche Freigabegrenze:** **CI-PASS für den vorliegenden DEV-Programmstand und die isolierte tatsächliche Chromium-Bildprüfung**. Die Browserprüfung ersetzt keine komplette asynchrone WeatherRouter-/Home-Assistant-Realintegration. Die Wolken-Labor-Prüfung mit tatsächlich auf VM 109 installierter V4.11.102, realen Providerdaten und Benutzerhandlung ist **noch nicht ausgeführt**. Die Installationssperre bleibt unverändert: **keine selbstständige DRA-Installation, keine Änderung an HA DEV/PROD und ausdrücklich kein HA-REAL-PASS.**
