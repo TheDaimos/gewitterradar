@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411104r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411105r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.18",
+    "version": "0.4.19",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
