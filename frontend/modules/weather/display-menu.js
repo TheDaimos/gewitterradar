@@ -290,8 +290,15 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
 
     if(style==="precise")return {blur:0,saturate:1,contrast:1,brightness:1};
 
-    const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
-    const nativeZoom=Number.isFinite(maxNative)?maxNative:7;
+    // Leaflet maxNativeZoom is a URL/tile request ceiling, NOT the
+    // meteorological image resolution. V2 mosaics expose z18 even when
+    // their provider tiles are lower-resolution ancestor images.
+    // Preserve the accepted historical z7 display reference unless a
+    // source-specific, explicitly measured visual resolution is available.
+    const layer=this._weatherRadarState?.().layer;
+    const measured=layer?.__grRadarVisualNativeZoom;
+    const nativeZoom=Number.isFinite(measured)&&measured>=0&&measured<=18?measured:7;
+    const maxNative=nativeZoom;
 
     // Das bisherige Weich-Profil wird zum neuen Ausgewogen-Profil.
     if(style==="balanced")return weatherDisplayBalancedRasterTuning(safeZoom,maxNative);
