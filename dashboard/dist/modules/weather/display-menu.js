@@ -420,7 +420,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     }
     state.zoomHandler=()=>{
       this._weatherDisplaySyncLegendBadge();
-      if(this._weatherDisplayStyle("precipitation")!=="auto")return;
+      // Auch Ausgewogen und Weich berechnen zoomabhaengige Filterwerte.
       this._weatherDisplayRefreshRenderedLayers();
     };
     state.zoomMap=map;

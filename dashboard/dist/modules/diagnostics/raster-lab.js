@@ -1,4 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41127r1";
+import { APPLICATION_RELEASE } from "../../version.js?v=411100r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.raster-lab",version:"0.1.1",group:"Diagnose",
@@ -194,7 +195,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     })).sort((a,b)=>a.layer.localeCompare(b.layer)||a.zoom-b.zoom);
     return {
       schema:"gewitterradar.raster-lab.v1",
-      application:"gewitterradar",version:"4.11.82",runtimeRevision:"41182r1",
+      application:"gewitterradar",version:APPLICATION_RELEASE.version,runtimeRevision:APPLICATION_RELEASE.runtimeRevision,
       capturedAt:new Date().toISOString(),
       device:{browser:family(),pixelRatio:window.devicePixelRatio||1,
         viewport:{width:window.innerWidth,height:window.innerHeight},
@@ -219,7 +220,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const text=JSON.stringify(this._rasterLabExport(),null,2),
       url=URL.createObjectURL(new Blob([text],{type:"application/json;charset=utf-8"})),
       a=document.createElement("a");
-    a.href=url;a.download="gewitterradar_raster-lab_4.11.82.json";
+    a.href=url;a.download="gewitterradar_raster-lab_"+APPLICATION_RELEASE.version+".json";
     document.body.append(a);a.click();a.remove();
     // One-shot cleanup, never recurring background work.
     setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -242,7 +243,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     const root=html("section","raster-lab","");
     root.tabIndex=-1;root.setAttribute("aria-label","Raster-Labor – Diagnose");
     root.style.cssText="position:fixed;z-index:2147483646;top:64px;right:12px;max-width:calc(100vw - 16px);width:330px;max-height:calc(100dvh - 72px);box-sizing:border-box;overflow:auto;color:#ecedf1;background:linear-gradient(150deg,#21242b,#12161c);border:1px solid #cfab62;border-radius:14px;box-shadow:0 12px 40px #000b;font:12px system-ui;padding:12px;overscroll-behavior:contain";
-    const head=html("div","","<strong style='color:#f2d28b'>Raster-Labor</strong> <small style='opacity:.7'>V4.11.82 DEV</small>");
+    const head=html("div","","<strong style='color:#f2d28b'>Raster-Labor</strong> <small style='opacity:.7'>"+APPLICATION_RELEASE.displayVersion+"</small>");
     head.style.cssText="display:flex;justify-content:space-between;gap:8px;align-items:center;cursor:grab;touch-action:none;min-height:34px";
     const close=html("button","","×");close.type="button";close.title="Schließen und Original wiederherstellen";
     close.style.cssText="min-width:40px;min-height:38px;color:#efd9a3;background:#222;border:1px solid #866d43;border-radius:9px";
