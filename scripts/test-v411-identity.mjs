@@ -40,7 +40,7 @@ assert.ok(watch.includes('runtimeReloadUrl'));
 assert.ok(watch.includes('window.location.replace(destination)'));
 assert.match(entry,/installRasterLab\(GewitterradarCard,__moduleDeps\)/);
 assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.version,'1.3.19');
-assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.1.6');
+assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.1.7');
 assert.equal(runtime.modules.find(x=>x.id==='weather.display-menu')?.version,'0.4.18');
 assert.equal(runtime.modules.find(x=>x.id==='weather.legend-overlay')?.version,'0.1.1');
 assert.match(entry,/modules\/weather\/display-menu\.js','411101r1'/);

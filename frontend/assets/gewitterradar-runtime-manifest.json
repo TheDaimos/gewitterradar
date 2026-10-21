@@ -91,7 +91,7 @@
     },
     {
       "id": "diagnostics.raster-lab",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "id": "instruments.compass-design",
@@ -123,7 +123,7 @@
     },
     {
       "id": "weather.layer-menu",
-      "version": "1.1.6"
+      "version": "1.1.7"
     },
     {
       "id": "weather.display-menu",
