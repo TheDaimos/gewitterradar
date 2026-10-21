@@ -27,7 +27,7 @@ const lab=clean('frontend/modules/diagnostics/raster-lab.js');
    await page.addScriptTag({content:display+'\nwindow.installDisplay=installWeatherDisplayMenu;'});
    await page.addScriptTag({content:lab+'\nwindow.installLab=installRasterLab;'});
    await page.evaluate(()=>{
-    const Card=class {};installDisplay(Card,{});installLab(Card,{});
+    const Card=class {};window.installDisplay(Card,{});window.installLab(Card,{});
     const card=new Card();let zoom=8,active={options:{maxNativeZoom:18}},seq=0;
     const listeners=new Map(),pane=document.getElementById('pane');
     card._map={getZoom:()=>zoom,getPane:(name)=>name==='gr-weather-radar'?pane:null,on:(event,fn)=>listeners.set(event,fn),off:(event)=>listeners.delete(event)};
