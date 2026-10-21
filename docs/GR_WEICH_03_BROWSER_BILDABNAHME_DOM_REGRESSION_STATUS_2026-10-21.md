@@ -79,3 +79,7 @@ Damit bleibt der Kern der Nutzerforderung — **tatsächliche, historische visue
 Wolken, Deckkraftumbau, Windfahnen, WeatherRouter, UTC, V1-/V2-Fachverträge, DWD, NASA und Sicherheitsregeln bleiben unverändert.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 9. Verifizierter CI-Zwischenstand am finalen Testcommit
+
+GitHub Actions `39578834100` (Einstellungen/Laufzeitversion) **completed/success**, `39578834014` (Integration) **completed/success** einschließlich des tatsächlichen neuen GR-WEICH-03-DOM-Tests im erfolgreichen Job `package-contract`. Gemeinsames Frontend `39578833992` war bei der letzten Abfrage noch **in_progress**, daher zu diesem Zeitpunkt **kein Gesamt-CI-PASS**. Auch ein späterer Erfolg wäre nicht gleichbedeutend mit der fehlenden historischen Pixelabnahme.
