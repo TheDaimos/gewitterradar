@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {MODULE_META,RASTER_LAB_LAYER_CATALOG,installRasterLab} from "../frontend/modules/diagnostics/raster-lab.js";
 assert.equal(MODULE_META.id,"diagnostics.raster-lab");
-assert.equal(MODULE_META.version,"0.1.3");
+assert.equal(MODULE_META.version,"0.1.4");
 assert.equal(RASTER_LAB_LAYER_CATALOG.length,16);
 assert.equal(new Set(RASTER_LAB_LAYER_CATALOG.map(x=>x[0])).size,16);
 assert.equal(RASTER_LAB_LAYER_CATALOG[0][0],"precipitation");

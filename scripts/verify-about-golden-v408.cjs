@@ -56,20 +56,20 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411103r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411104r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
   // golden/pixel/geometry checks below remain mandatory.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
-  for (const marker of ['version:"4.11.103"', 'displayVersion:"V4.11.103 DEV"', 'build:"V4.11.103-DEV-2026-10-21"', 'runtimeRevision:"411103r1"', 'moduleSetId:"E411-103A1"', 'integrationVersion:"0.25.18"']) {
+  for (const marker of ['version:"4.11.104"', 'displayVersion:"V4.11.104 DEV"', 'build:"V4.11.104-DEV-2026-10-21"', 'runtimeRevision:"411104r1"', 'moduleSetId:"E411-104A1"', 'integrationVersion:"0.25.18"']) {
     assert.ok(versionText.includes(marker), 'DEV-TEST identity missing: ' + marker);
   }
-  assert.equal(runtime.productVersion, '4.11.103');
-  assert.equal(runtime.build, 'V4.11.103-DEV-2026-10-21');
-  assert.equal(runtime.runtimeRevision, '411103r1');
-  assert.equal(runtime.moduleSetId, 'E411-103A1');
+  assert.equal(runtime.productVersion, '4.11.104');
+  assert.equal(runtime.build, 'V4.11.104-DEV-2026-10-21');
+  assert.equal(runtime.runtimeRevision, '411104r1');
+  assert.equal(runtime.moduleSetId, 'E411-104A1');
   assert.equal(runtime.modules.length, 34);
 } else if (isV411LatestDev) {
   // Additional data-source modules do not change protected About geometry.
