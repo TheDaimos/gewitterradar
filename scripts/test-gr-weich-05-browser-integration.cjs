@@ -5,7 +5,7 @@ const sharp=require('sharp');
 const {chromium}=require('playwright');
 const output='artwork/acceptance/gr-weich-05';
 fs.mkdirSync(output,{recursive:true});
-const clean=(path)=>fs.readFileSync(path,'utf8').replace(/^import [^\n]+\n/gm,'').replace(/\bexport\s+(?=(?:const|function|class)\b)/g,'');
+const clean=(path)=>fs.readFileSync(path,'utf8').replace(/^import [^\n]+\n/gm,'').replace(/\bexport\s+(?=(?:const|function|class)\b)/g,'').replace(/^export\s*\{[^}]*\};?\s*$/gm,'');
 const display=clean('frontend/modules/weather/display-menu.js');
 const lab=clean('frontend/modules/diagnostics/raster-lab.js');
 (async()=>{
