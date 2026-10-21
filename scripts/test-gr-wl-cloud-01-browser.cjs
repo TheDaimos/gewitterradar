@@ -10,7 +10,7 @@ await page.setContent('<!doctype html><body style="margin:0;background:#111b29">
 const tile=Buffer.alloc(210*210*4);for(let y=0;y<210;y++)for(let x=0;x<210;x++){const i=(y*210+x)*4,hit=x>30&&x<175&&y>30&&y<175;tile[i]=hit?229:0;tile[i+1]=hit?104:0;tile[i+2]=hit?50:0;tile[i+3]=hit?230:0;}
 const png=(await sharp(tile,{raw:{width:210,height:210,channels:4}}).png().toBuffer()).toString("base64");
 await page.evaluate(data=>{for(const id of ["rain","cloud","wind"]){const img=document.createElement("img");img.width=210;img.height=210;img.src="data:image/png;base64,"+data;document.getElementById(id).append(img);}},png);
-await page.evaluate(()=>{window.defineModule=(_m,f)=>(klass)=>Object.assign(klass.prototype,f());window.APPLICATION_RELEASE={version:"4.11.104",runtimeRevision:"411104r1",displayVersion:"V4.11.104 DEV"};window.WEATHER_ROUTER_CAPABILITIES={precipitation:"weather.radar.precipitation"};window.WEATHER_ROUTER_LOGO_IMAGE="";});
+await page.evaluate(()=>{window.defineModule=(_m,f)=>(klass)=>Object.assign(klass.prototype,f());window.APPLICATION_RELEASE={version:"4.11.105",runtimeRevision:"411105r1",displayVersion:"V4.11.105 DEV"};window.WEATHER_ROUTER_CAPABILITIES={precipitation:"weather.radar.precipitation"};window.WEATHER_ROUTER_LOGO_IMAGE="";});
 for(const [name,p] of [["installDisplay","frontend/modules/weather/display-menu.js"],["installLab","frontend/modules/diagnostics/raster-lab.js"],["installLayerMenu","frontend/modules/weather/layer-menu.js"]]){
  const code=clean(p);await page.addScriptTag({content:"(()=>{"+code+"\nwindow."+name+"="+({installDisplay:"installWeatherDisplayMenu",installLab:"installRasterLab",installLayerMenu:"installWeatherLayerMenu"}[name])+";})()"});
 }
