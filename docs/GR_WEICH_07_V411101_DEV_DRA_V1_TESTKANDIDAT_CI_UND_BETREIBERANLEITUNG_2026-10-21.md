@@ -16,7 +16,7 @@ Die historische optische Abstimmung der vier Modi wurde **nicht** geändert. GR-
 
 **Zur DRA-DEV-Versuchsvorbereitung vorgesehenes vollständiges Programmcommit:**
 
-`f8860556529993abe09c122ee8e10855db15ac89`
+`00c3cf1c8b73f18ee2c81c717bcbeae45689215f`
 
 **Git-Quelle:** `TheDaimos/gewitterradar`  
 **Git-Ref:** `deploy/dev`; soweit DRA V1 einen unveränderlichen Commit auswählbar macht, den obigen SHA ausdrücklich setzen. Vor der wirklichen Installation muss die tatsächliche DRA-Anzeige von Repository, Ref, Zielversion und SHA mit den Angaben dieses Berichts übereinstimmen.
@@ -56,9 +56,10 @@ Die Identität ist aus `frontend/version.js` direkt auf `deploy/dev` nachgelesen
 | `578e0dc93b97b15b5730e965c2900880fd29c7cf` | Kanonischen Frontend-Vertrag auf V4.11.101 umgestellt |
 | `5118746d7f4ede5cac0ff2cd48bd8ef8a06c63d7` | SHA256-Zeilen kanonisch nach Prüfsumme sortiert |
 | `daac93ec1370212610087518dd234b1cf774817b` | GitHub-Actions-Backend-/DRA-Identitätsprüfung auf 4.11.101 ausgerichtet |
-| **`f8860556529993abe09c122ee8e10855db15ac89`** | Abschließende DRA-V1-Provenienz mit zutreffendem Zweck und Installationssperren |
+| `f8860556529993abe09c122ee8e10855db15ac89` | Abschließende DRA-V1-Provenienz mit zutreffendem Zweck und Installationssperren; letzte Änderung an installierbaren Produktdateien |
+| **`00c3cf1c8b73f18ee2c81c717bcbeae45689215f`** | Schutzvergleich der historischen V4.08-Browserreferenz auf die neue V4.11.101-Identität ausgerichtet; abschließender **vollständig CI-geprüfter** Kandidat |
 
-**Wichtige Trennung:** Der feste Programmcommit ist `f886...`; eine nachfolgende reine Dokumentationsänderung auf `deploy/dev` ändert dessen SHA nicht. DRA muss **seine tatsächlich verwendete Ref/SHA** vor dem Eingriff anzeigen bzw. über die Quellenprüfung eindeutig bestimmen. Falls nur der bewegliche Branch-HEAD installiert werden kann, muss die SHA vor Start neu abgeglichen werden; nie eine Commitgleichheit behaupten, die DRA nicht belegt.
+**Wichtige Trennung:** Der zur Installation vorgegebene vollständig getestete Kandidatencommit ist `f886...`; eine nachfolgende reine Dokumentationsänderung auf `deploy/dev` ändert dessen SHA nicht. DRA muss **seine tatsächlich verwendete Ref/SHA** vor dem Eingriff anzeigen bzw. über die Quellenprüfung eindeutig bestimmen. Falls nur der bewegliche Branch-HEAD installiert werden kann, muss die SHA vor Start neu abgeglichen werden; nie eine Commitgleichheit behaupten, die DRA nicht belegt.
 
 ## 4. DRA V1 – tatsächlich verifizierter Installationsvertrag
 
@@ -76,7 +77,7 @@ Der echte Quellvertrag auf `deploy/dev` wurde aus `deploy-relay.json` zurückgel
 
 1. **Nur HA DEV VM 109** öffnen, im DRA prüfen, dass wirklich `Gewitterradar` und nicht WeatherRouter/DRA oder ein Sammelupdate gewählt ist; HA PROD VM 101 strikt ausschließen. Den bereits installierten Stand **V4.11.100** samt tatsächlicher Integration-/Runtime-Kennung und DRA-Installations-SHA dokumentieren.
 2. **Vorher eine rückspielbare Sicherung anlegen/verifizieren**, die Home-Assistant-Konfiguration, die Gewitterradar-Integration und gegebenenfalls den vorigen DRA-Transaktions-/Rückfallstand abdeckt; Sicherungskennung, Zeit, Rückfallverfahren und Quelle kontrollieren. Die Existenz eines konkret geeigneten Snapshots wurde **nicht** remote nachgewiesen.
-3. In **DRA V1** auf dem DEV-System die **Einzelinstallation Gewitterradar** vorbereiten, Repository `TheDaimos/gewitterradar` / Zweig `deploy/dev` prüfen. Falls die installierte DRA-Fassung eine Commit-Auswahl zulässt, SHA `f8860556529993abe09c122ee8e10855db15ac89` vorgeben. Vor Installationsbestätigung angezeigte alte und neue Version, Projekt, Ref, SHA, Zielpfade und Änderungsvorschau prüfen.
+3. In **DRA V1** auf dem DEV-System die **Einzelinstallation Gewitterradar** vorbereiten, Repository `TheDaimos/gewitterradar` / Zweig `deploy/dev` prüfen. Falls die installierte DRA-Fassung eine Commit-Auswahl zulässt, SHA `00c3cf1c8b73f18ee2c81c717bcbeae45689215f` vorgeben. Vor Installationsbestätigung angezeigte alte und neue Version, Projekt, Ref, SHA, Zielpfade und Änderungsvorschau prüfen.
 4. **Harter Abbruch vor jedem Schreiben**, wenn DRA auf `main`, PROD, falsche Projekt-/Ref-/SHA-Kombination oder nicht plausibel gesicherten Zielbestand zeigt. Ebenso stoppen, wenn der Branch sich seit dem Programmgate verändert hat und die Änderung nicht auf Dokumentation eingegrenzt wurde.
 5. **Die Installation erst mit eigener gesonderter Betreiberentscheidung** über DRA anstoßen. Der Entwicklungsauftrag führt keinerlei HA-/DRA-Schreib-, Neustart- oder Rollbackaktion aus. DRA V1 während der Transaktion verbunden lassen.
 6. Nach erfolgreicher Installationsphase den im Manifest verlangten **Home-Assistant-Neustart nur auf DEV** durchführen, sofern DRA ihn nicht bereits bestätigt ausgeführt hat. Nach Wiederanlauf zentral prüfen: `V4.11.101 DEV`, Build `V4.11.101-DEV-2026-10-21`, Runtime `411101r1`, Modulsatz `E411-101A1`, Integration `0.25.18`. Die sichtbare Version allein beweist nicht die deployte SHA: DRA-Transaktion/Dateibestand zusätzlich prüfen.
@@ -114,3 +115,19 @@ Die ursprünglichen GR-WEICH-01 bis GR-WEICH-05-Numerik- und Chromium-Browsertes
 **Freigabeumfang:** Für den Betreiber kann V4.11.101 nach bestätigten CI-Gates als **kontrollierter, vorläufiger HA-DEV-Sichttestkandidat** gelten. Weder DRA-Installation noch HA-DEV-/HA-PROD-Veränderung, HA-REAL-PASS, PROD-Freigabe, WeatherRouter-Änderung oder Eingriff in UTC-/V1-/V2-/Sicherheitsverträge wurde in dieser Entwicklungsaufgabe durchgeführt.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 8. Endgültig verifizierte V4.11.101-CI-Abnahme
+
+**Finaler, unveränderlicher Zielcommit:** `00c3cf1c8b73f18ee2c81c717bcbeae45689215f`. GitHub wurde für die tatsächlich abgeschlossenen Push-Workflows dieses Commits erneut abgefragt; alle drei stehen auf `completed / success`:
+
+| Prüfung | GitHub-Actions-Lauf | Ergebnis |
+| --- | --- | --- |
+| Einstellungen, Version, Panel, Backend-/DRA-Vertrag und Neuladen | [39593610714](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610714) | **PASS** |
+| Integration mit `package-contract`, `hassfest`, `hacs-integration` und `home-assistant-runtime` | [39593610605](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610605) | **PASS aller vier Jobs** |
+| Gemeinsames Frontend, Build, alle drei Spiegel, SHA256, historische und integrierte GR-WEICH-Browserpixel sowie geschützte Altversionen | [39593610585](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610585) | **PASS** |
+
+**Echte Bildnachweise am finalen CI-Commit:** [GR-WEICH-04 Chromium-Pixelartefakt 12343240175](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610585/artifacts/12343240175), [GR-WEICH-05 Browsermodul-Pixelartefakt 12341524918](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610585/artifacts/12341524918), [weiteres Frontend-Browserprüfartefakt 12343805627](https://github.com/TheDaimos/gewitterradar/actions/runs/39593610585/artifacts/12343805627). Diese isolierten Browsernachweise sind **keine HA-Realabnahme**. Die bisher noch offene produktive V1-/V2-Mehrquellen- und Raster-Labor-Gesamtintegration bleibt unverändert offen.
+
+Die anfänglich fehlerhaften echten Pushläufe wurden anhand ihrer Protokolle korrigiert: Festprüfungen verwiesen noch auf V4.11.100 und `411100r1`, anschließend enthielt die SHA256-Datei eine gültig neu berechnete, jedoch nicht kanonisch sortierte Liste. Zuletzt blockierte die historische V4.08-Browservergleichsprüfung die neue Identität; dieser Schutztest wurde auf V4.11.101 aktualisiert **ohne seine optischen Goldstandardwerte oder Abnahmebedingungen zu lockern**. Nach diesen Korrekturen sind die drei oben genannten abschließenden Pushläufe grün. Die vom Entwickler nach dem DRA-Provenienzcommit `f8860556529993abe09c122ee8e10855db15ac89` ergänzten Dateien sind lediglich dieser Markdown-Bericht und der Test `scripts/verify-about-golden-v408.cjs`, **keine weiteren Produkt- oder Frontenddateien** (per Git-Vergleich geprüft).
+
+**Freigabeentscheidung:** V4.11.101 DEV ist damit als **CI-geprüfter, vorläufiger DRA-V1-Sichttestkandidat für den Betreiber auf HA DEV VM 109 vorbereitet**. Die Betreiberinstallation bedarf weiter einer getrennten Entscheidung, der vorherigen Rückfallsicherung und der DRA-Auswahlprüfung; **keine Installation ist durch diese Aufgabe erfolgt**. HA PROD VM 101 ist ausgeschlossen; die visuelle Gesamt-/HA-Realabnahme ist nicht erfolgt.
