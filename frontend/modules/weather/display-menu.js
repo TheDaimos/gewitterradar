@@ -639,12 +639,22 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
         '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button></div>'+
-        '<div class="weather-display-panel-body"><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
+        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
         '<div class="weather-display-card" data-weather-display-clouds-card><div class="weather-display-card-title">Wolken</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="clouds" aria-label="Darstellungsmodus Wolken"><option value="original">Original</option><option value="balanced">Ausgewogen</option></select></div><div class="weather-display-card-note">Ausgewogen verwendet die geprüften Wolken-Zoomwerte. Zoom 3 und 4 bleiben ohne zusätzliche Glättung.</div></div>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto">Auto</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on">Ein</button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off">Aus</button></div><div class="weather-display-card-note">Auto zeigt die wichtigste passende Legende. Ein zeigt alle aktiven WeatherRouter-Legenden. Aus blendet nur die Legende aus; Wetterlayer und Daten bleiben unverändert.</div></div></div>';
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
+      const layerSelect=panel.querySelector("[data-weather-display-layer-select]");
+      const syncLayerChoice=()=>{
+        const kind=layerSelect?.value==="clouds"?"clouds":"precipitation";
+        const rain=panel.querySelector("[data-weather-display-precipitation-card]");
+        const clouds=panel.querySelector("[data-weather-display-clouds-card]");
+        if(rain)rain.style.display=kind==="precipitation"?"":"none";
+        if(clouds)clouds.style.display=kind==="clouds"?"":"none";
+      };
+      layerSelect?.addEventListener("change",event=>{event.stopPropagation();syncLayerChoice();});
+      syncLayerChoice();
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>select.addEventListener("change",event=>{event.stopPropagation();const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";this._weatherDisplayPatch({styles:{[kind]:select.value}});}));
       panel.querySelectorAll("[data-weather-display-transparency]").forEach(input=>input.addEventListener("input",event=>{event.stopPropagation();this._weatherDisplaySetTransparency(input.dataset.weatherDisplayTransparency,input.value);}));
       panel.querySelectorAll("[data-weather-display-transparency-reset]").forEach(button=>button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayResetTransparency(button.dataset.weatherDisplayTransparencyReset);}));
@@ -819,6 +829,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   _weatherDisplaySyncUi(){
     if(!this.shadow)return;
     const state=this._weatherDisplayState(),available=state.status==="ready",copy=this._weatherDisplayStatusCopy(),config=state.config;
+    const layerChoice=this.shadow.querySelector("[data-weather-display-layer-select]");
+    if(layerChoice){const kind=layerChoice.value==="clouds"?"clouds":"precipitation";const panel=layerChoice.closest("[id=weather-display-panel]");const rain=panel?.querySelector("[data-weather-display-precipitation-card]"),clouds=panel?.querySelector("[data-weather-display-clouds-card]");if(rain)rain.style.display=kind==="precipitation"?"":"none";if(clouds)clouds.style.display=kind==="clouds"?"":"none";}
     this._weatherDisplaySyncLegendBadge();
     const block=this.shadow.querySelector('[data-weather-display-settings="true"]');
     if(block){
