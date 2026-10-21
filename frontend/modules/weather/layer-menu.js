@@ -4,7 +4,7 @@ import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
 import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.6",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.7",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -239,6 +239,37 @@ export function buildWeatherLayerCatalog(capabilities){
 
 export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
+  _weatherGenericLabAdapter(id){
+    const spec=GENERIC_RASTERS[id];
+    if(!spec||!this._rasterLabRegisterAdapter)return;
+    if(!this.__weatherGenericLabOriginal)this.__weatherGenericLabOriginal=new WeakMap();
+    this._rasterLabRegisterAdapter({
+      id:id==="weather.satellite.clouds"?"clouds":id==="weather.model.wind_10m.layer"?"wind":id,
+      label:spec.label,
+      getAvailability:()=>{
+        const state=this._weatherGenericState(id);
+        if(!state.enabled)return "off";
+        if(state.status==="loading")return "loading";
+        if(!state.layer||!state.map||state.status==="unavailable"||state.status==="failed")return "no-data";
+        return state.status==="ready"||state.status==="partial"?"active":"no-data";
+      },
+      getPane:()=>{
+        const state=this._weatherGenericState(id);
+        if(!state.enabled||!state.layer||!state.map||!["ready","partial"].includes(state.status))return null;
+        return state.map.getPane?.(spec.pane)||null;
+      },
+      getNativeZoom:()=>this._weatherGenericState(id).layer?.options?.maxNativeZoom,
+      getTuning:()=>({blur:0,contrast:1,saturate:1,brightness:1}),
+      restore:()=>{
+        const pane=this._map?.getPane?.(spec.pane),original=pane&&this.__weatherGenericLabOriginal?.get(pane);
+        if(pane&&original){pane.style.filter=original.filter;pane.style.opacity=original.opacity;this.__weatherGenericLabOriginal.delete(pane);}
+      },
+      beforePreview:pane=>{
+        if(!this.__weatherGenericLabOriginal.has(pane))
+          this.__weatherGenericLabOriginal.set(pane,{filter:pane.style.filter,opacity:pane.style.opacity});
+      }
+    });
+  },
   _weatherGenericState(id){
     if(!this.__weatherGenericStates)this.__weatherGenericStates=new Map();
     if(!this.__weatherGenericStates.has(id))this.__weatherGenericStates.set(id,{enabled:false,status:"aus",generation:0,layer:null,map:null,error:null,loaded:0,failed:0,provider:null,validAt:null,attribution:null,legend:null,ageSeconds:null,stale:false,observationKind:null,abortTiles:new Set(),hookMap:null,onMapMove:null,onVisibility:null,refreshTimer:null,pollTimer:null});
@@ -252,6 +283,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
   _weatherGenericDetach(id){
     const state=this._weatherGenericState(id);
+    if(this.__rasterLabState?.selected===(id==="weather.satellite.clouds"?"clouds":id==="weather.model.wind_10m.layer"?"wind":id))this._rasterLabRestore?.();
     for(const abort of state.abortTiles){try{abort();}catch(_){}}state.abortTiles.clear();
     if(state.layer){try{state.map?.removeLayer(state.layer);}catch(_){}state.layer=null;}
     state.map=null;
@@ -283,6 +315,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(!Object.hasOwn(GENERIC_RASTERS,id))return;
     const state=this._weatherGenericState(id);
     state.enabled=!state.enabled;state.generation++;
+    this._weatherGenericLabAdapter(id);
     if(!state.enabled){this._weatherGenericUnbind(id);this._weatherGenericDetach(id);state.status="aus";state.error=null;this._weatherLayerMenuRender();return;}
     state.status="loading";
     this._weatherGenericBind(id);
@@ -377,6 +410,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     try{layer.addTo(map);report("layer_staged",{max_zoom:maxZoom,tile_size:payload.tile_size});}
     catch(_){this._weatherGenericDetach(id);state.status="failed";state.error="Karte konnte nicht eingebunden werden";}
     this._weatherLayerMenuRender();
+    this._rasterLabRefreshOptions?.();
   },
 
   _weatherLayerMenuState(){

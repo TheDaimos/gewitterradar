@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41127r1";
 import { APPLICATION_RELEASE } from "../../version.js?v=411101r1";
 
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.raster-lab",version:"0.1.1",group:"Diagnose",
+  id:"diagnostics.raster-lab",version:"0.1.2",group:"Diagnose",
   function:"Raster-Labor",subfunctions:["Nummerierte Layerauswahl","Live-Vorschau","Zoomprofile","Vergleich mit Referenz","Zwischenablage","JSON-Export","Sicherer Rückfall"],
   file:"modules/diagnostics/raster-lab.js"
 });
@@ -109,13 +109,15 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     }
     catalog.forEach(([id,name],index)=>{
       const adapter=this._rasterLabAdapters().get(id);
-      const usable=!!adapter?.getPane?.();
+      const availability=adapter?.getAvailability?.()||(adapter?"active":"unconnected");
+      const usable=availability==="active"&&!!adapter?.getPane?.();
+      const suffix=usable?"":availability==="off"?" · ausgeschaltet":availability==="no-data"?" · ohne Daten":availability==="loading"?" · lädt":" · noch nicht angebunden";
       const opt=document.createElement("option");
       opt.value=id;opt.disabled=!usable;
-      opt.textContent=String(index+1).padStart(2,"0")+". "+name+(usable?"":" · noch nicht verfügbar");
+      opt.textContent=String(index+1).padStart(2,"0")+". "+name+suffix;
       select.append(opt);
     });
-    if(!this._rasterLabAdapters().get(s.selected)?.getPane?.())s.selected="precipitation";
+    if(!this._rasterLabAdapters().has(s.selected))s.selected="precipitation";
     select.value=s.selected;
   },
   _rasterLabRenderValues(){
@@ -128,9 +130,10 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
       if(output)output.textContent=fit(values[key])+" "+parts[4];
     }
     const line=root.querySelector("[data-lab-status]");
+    const availability=info.adapter?.getAvailability?.()||(info.pane?"active":"unconnected");
     if(line)line.textContent="Kartenzoom "+info.zoom+" · native Quellzoomstufe "+
       (info.nativeZoom??"unbekannt")+" · "+family()+" · "+
-      (info.pane?"Renderer bereit":"Kein aktives Bild-Pane")+
+      (info.pane?"Renderer bereit":availability==="off"?"Ebene ausgeschaltet":availability==="no-data"?"Keine Rasterdaten":availability==="loading"?"Raster lädt":"Renderer nicht angebunden")+
       " · "+(s.preview?"Versuch":"Referenz");
     const status=root.querySelector("[data-lab-feedback]");
     if(status&&status.value!==s.feedback)status.value=s.feedback;
@@ -160,6 +163,7 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     if(!pane)return;
     const v=this._rasterLabValues(info);
     if(!s.opacityOriginal.has(pane))s.opacityOriginal.set(pane,pane.style.opacity);
+    info.adapter?.beforePreview?.(pane);
     this._weatherDisplayReleaseSoftFilter?.(pane);
     const effectiveBlur=info.base.blur+(v.blur-info.base.blur)*clamp(v.blend??100,0,100)/100;
     pane.style.filter="blur("+fit(effectiveBlur)+"px) saturate("+fit(v.saturate)+
