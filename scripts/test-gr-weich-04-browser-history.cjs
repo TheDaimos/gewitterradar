@@ -12,7 +12,7 @@ const out='artwork/acceptance/gr-weich-04';
 const extract=source=>{
  const start=source.indexOf('const safeObject='),end=source.indexOf('const bool=',start);
  assert.ok(start>=0&&end>start,'Cannot extract genuine raster functions');
- return vm.runInNewContext(source.slice(start,end).replace(/\\bexport\\s+(?=const\\s)/g,'')+';({weatherDisplayAutoRasterTuning,weatherDisplayBalancedRasterTuning,weatherDisplaySoftRasterTuning})');
+ return vm.runInNewContext(source.slice(start,end).replace(/\bexport\s+(?=const\s)/g,'')+';({weatherDisplayAutoRasterTuning,weatherDisplayBalancedRasterTuning,weatherDisplaySoftRasterTuning})');
 };
 const historicalSource=execFileSync('git',['show',history+':'+path],{encoding:'utf8',maxBuffer:4e6});
 const currentSource=readFileSync(path,'utf8');
