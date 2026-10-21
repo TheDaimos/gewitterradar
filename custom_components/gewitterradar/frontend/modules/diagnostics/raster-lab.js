@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41127r1";
 import { APPLICATION_RELEASE } from "../../version.js?v=411103r1";
 
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.raster-lab",version:"0.1.3",group:"Diagnose",
+  id:"diagnostics.raster-lab",version:"0.1.4",group:"Diagnose",
   function:"Raster-Labor",subfunctions:["Nummerierte Layerauswahl","Live-Vorschau","Zoomprofile","Vergleich mit Referenz","Zwischenablage","JSON-Export","Sicherer Rückfall"],
   file:"modules/diagnostics/raster-lab.js"
 });
@@ -149,6 +149,8 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
       (info.nativeZoom??"unbekannt")+" · "+family()+" · "+
       (info.pane?"Renderer bereit":availability==="off"?"Ebene ausgeschaltet":availability==="no-data"?"Keine Rasterdaten":availability==="loading"?"Raster lädt":"Renderer nicht angebunden")+
       " · "+(s.preview?"Versuch":"Referenz")+(inspectZoom!==info.zoom?" · Profilvergleich (nur Anzeige)":"");
+    const presetButton=root.querySelector("[data-lab-cloud-balanced]");
+    if(presetButton)presetButton.hidden=s.selected!=="clouds";
     const status=root.querySelector("[data-lab-feedback]");
     if(status&&status.value!==s.feedback)status.value=s.feedback;
     root.querySelector("[data-lab-ab]")?.setAttribute("aria-pressed",String(s.preview));
@@ -294,6 +296,10 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
       actions.append(b);
     }
     root.append(actions);
+    const balancedCloud=html("button","","Wolken · Ausgewogen als Versuch laden");
+    balancedCloud.type="button";balancedCloud.dataset.labCloudBalanced="true";
+    balancedCloud.style.cssText="width:100%;min-height:40px;border-radius:8px;background:#293443;color:#f2d590;border:1px solid #8d794b;font:600 11px system-ui;touch-action:manipulation";
+    root.append(balancedCloud);
     const note=html("label","","Bewertung / Auffälligkeiten");
     const field=html("textarea","","");field.dataset.labFeedback="true";field.rows=2;field.maxLength=400;
     field.placeholder="z. B. Zoom 12: L-Ecke verschwindet; iPad flüssig";
@@ -312,6 +318,21 @@ export const installRasterLab=defineModule(MODULE_META,()=>({
     }
     const ctl=new AbortController();s.controller=ctl;const signal=ctl.signal;
     close.addEventListener("click",()=>this._rasterLabClose(),{signal});
+    balancedCloud.addEventListener("click",()=>{
+      if(s.selected!=="clouds")return;
+      // Explicitly transcribed from the operator's Android GR Raster-Labor export.
+      // Zoom 3 and 4 were not sampled; leave their neutral reference untouched.
+      const profile=[[2,0],[5,0],[6,3],[7,6],[8,10],[9,10],
+        [10,10],[11,11],[12,19],[13,20],[14,23],[15,24],
+        [16,23],[17,24],[18,29]];
+      for(const [zoom,blur] of profile){
+        s.samples.set("clouds:"+zoom,{layer:"clouds",zoom,nativeZoom:9,
+          values:{blur,contrast:1,saturate:1,brightness:1,opacity:1,blend:100},
+          note:"Wolken · Ausgewogen · Android-Raster-Labor-Versuchsreihe"});
+      }
+      s.inspectZoom=null;s.preview=true;
+      this._rasterLabApply();this._rasterLabRenderValues();
+    },{signal});
     profileSelect.addEventListener("change",()=>{s.inspectZoom=Number(profileSelect.value);this._rasterLabRenderValues();},{signal});
     select.addEventListener("change",()=>{
       this._rasterLabRestore();s.selected=select.value;s.inspectZoom=null;s.feedback="";
