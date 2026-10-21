@@ -24,8 +24,8 @@ const lab=clean('frontend/modules/diagnostics/raster-lab.js');
    await page.locator('#pane').evaluate((pane,b64)=>{const img=document.createElement('img');img.src='data:image/png;base64,'+b64;img.width=256;img.height=256;pane.append(img)},png.toString('base64'));
    await page.locator('img').evaluate(img=>img.decode());
    await page.evaluate(()=>{window.defineModule=(_meta,factory)=>(klass)=>Object.assign(klass.prototype,factory());window.WEATHER_ROUTER_CAPABILITIES={precipitation:'weather.precipitation.layer'};window.APPLICATION_RELEASE={version:'4.11.100',runtimeRevision:'411100r1',displayVersion:'V4.11.100 DEV'};});
-   await page.addScriptTag({content:display+'\nwindow.installDisplay=installWeatherDisplayMenu;'});
-   await page.addScriptTag({content:lab+'\nwindow.installLab=installRasterLab;'});
+   await page.addScriptTag({content:'(()=>{'+display+'\nwindow.installDisplay=installWeatherDisplayMenu;})()'});
+   await page.addScriptTag({content:'(()=>{'+lab+'\nwindow.installLab=installRasterLab;})()'});
    await page.evaluate(()=>{
     const Card=class {};window.installDisplay(Card,{});window.installLab(Card,{});
     const card=new Card();let zoom=8,active={options:{maxNativeZoom:18}},seq=0;
