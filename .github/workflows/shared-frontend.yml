@@ -141,6 +141,17 @@ jobs:
           path: artwork/acceptance/gr-weich-05/
           if-no-files-found: warn
 
+      - name: GR-WL-CLOUD-01 active generic raster and Raster-Labor browser pixels
+        run: node scripts/test-gr-wl-cloud-01-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WL-CLOUD-01 synthetic browser pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-wl-cloud-01-browser-evidence
+          path: artwork/acceptance/gr-wl-cloud-01/
+          if-no-files-found: warn
+
       - name: Chromium SVG multiscale rendering regression
         run: node scripts/test-v41176-svg-filter-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
