@@ -91,3 +91,23 @@ Der bevorzugte Weg bleibt **DRA V1**, ausschließlich als Einzelprojekt **Gewitt
 **Keine DRA-Installation durchgeführt; kein HA-REAL-PASS; keine PROD-Freigabe.**
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 7. Tatsächlich geprüfter Programmstand, GitHub-Actions und Freigabegrenze
+
+**Exakter Programmcommit** (einschließlich letzter Testkorrektur, Quellcode und SHA-256-Prüfsummen): **`e4aaca4851a9876234e9a88a6f09749f0c043cb8`**. Die nachfolgenden reinen Dokumentationscommits verändern diesen installierbaren Programmstand nicht.
+
+Die GitHub-Actions-Nachweise sind diesem unveränderlichen Commit zugeordnet:
+
+| Prüfbereich | GitHub-Actions-Lauf | Direkt beobachteter Zustand |
+| --- | --- | --- |
+| V4.11.103 Einstellungen/Laufzeitidentität | [39615456806](https://github.com/TheDaimos/gewitterradar/actions/runs/39615456806) | **completed / success** |
+| Home-Assistant-Integration, HACS, hassfest und Paketvertrag | [39615456904](https://github.com/TheDaimos/gewitterradar/actions/runs/39615456904) | **completed / success**, sämtliche vier Jobs erfolgreich |
+| Gemeinsames Frontend mit Browser- und geschützten Regressionstests | [39615456699](https://github.com/TheDaimos/gewitterradar/actions/runs/39615456699) | Der zugehörige Job zeigte bei der letzten direkten Abfrage **sämtliche Arbeitsschritte erfolgreich abgeschlossen**, einschließlich der bestehenden GR-WEICH- und GR-WL-CLOUD-Browserpixeltests sowie beider Auslieferungsprüfungen; die GitHub-Laufübersicht meldete dabei noch **`in_progress` / `conclusion=null`**. Bis GitHub den vollständigen Workflow selbst auf `completed / success` gesetzt hat, ist dieser Lauf **nicht** als abschließend grüner Workflow zu bezeichnen. |
+
+Die Browserprüfung verwendet synthetische Wolkenbilder mit unabhängigem Niederschlags-Pane; echte Wetterrouter- und HA-DEV-Realtests erfolgen erst durch den Betreiber. Die V4.11.103-DEV-Version wurde im privaten Zweig bereitgestellt, aber **nicht auf Home Assistant installiert**.
+
+### Konkrete Auslieferungsanweisung nach grünem Frontend-Abschluss
+
+In DRA V1 auf HA DEV VM 109 ausschließlich **Gewitterradar** auswählen, Repository **`TheDaimos/gewitterradar`**, Ref **`deploy/dev`** und – soweit unterstützt – den unveränderlichen getesteten Programmcommit **`e4aaca4851a9876234e9a88a6f09749f0c043cb8`** vorgeben. Vor jeder Installation Sicherung und tatsächlichen bisherigen Installationsstand verifizieren, die endgültige Ref/SHA-Vorschau prüfen und **ausdrücklich selbst** die Installation freigeben. Das DRA-Manifest sieht nach der Installation einen Home-Assistant-Neustart vor. Keine automatische Installation und kein Eingriff in HA PROD VM 101. Wird die eingegebene Ref/Commit-Kombination in DRA nicht garantiert, Installation **abbrechen** und zunächst die tatsächlich ausgewählte SHA abgleichen.
+
+**Noch offen:** Sichttest auf Android/Desktop, erneuter Wolkenkachelaufbau bei Zoom 10 und 11, Bedienelemente während „Raster lädt“, Profilvergleich-Interaktion in der echten HA-Oberfläche, vollständiger asynchroner V1/V2-Datenpfad und abschließende HA-Realabnahme.
