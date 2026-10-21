@@ -71,3 +71,7 @@ Nach vollständiger Abnahme sind zwingend festzuhalten: unveränderliche Commit-
 **Unverrückbare Sperren:** Keine DRA-Installation, keine HA-DEV-/HA-PROD-Änderung (VM 109 / VM 101), kein HA-REAL-PASS, keine Änderung an WeatherRouter, UTC-/V1-/V2-/Sicherheitsverträgen, keine Wolken-/Windfahnen-/Deckkraftumbauten. Betreiberzustimmung bleibt Voraussetzung jeder späteren Installation.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 7. Verifizierter CI-Zwischenstand
+
+Am Programm-/Prüfcommit `29257e400a3dead1a00f3429c78362e3dc5017b2` wurden `39582002786` (Einstellungen/V4.11.100) und `39582002651` (Integration) jeweils als **completed/success** zurückgelesen. Im Frontend-Lauf `39582002828` wurden sowohl der neue GR-WEICH-05-Browserpixeltest als auch die Sicherung des zugehörigen Pixelartefakts mit **success** ausgeführt. Der Gesamt-Workflow war bei der letzten Prüfung noch mit den vorhandenen späteren Browserprüfungen beschäftigt; bis zu dessen erfolgreichem Abschluss wird **kein Gesamt-CI-PASS** behauptet.
