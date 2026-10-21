@@ -73,7 +73,7 @@ assert.equal(pane.dataset.rasterLabPreview,undefined);
 assert.equal(restored,1);
 const old=card._rasterLabKey(info);
 card._weatherRadarState=()=>({layer:{options:{maxNativeZoom:9}}});
-assert.notEqual(card._rasterLabKey(card._rasterLabSnapshot()),old);
+assert.equal(card._rasterLabKey(card._rasterLabSnapshot()),old,"temporary native-zoom changes must not clear the current zoom profile");
 assert.equal(card._rasterLabRegisterAdapter({id:"Invalid Space",getPane:()=>pane,getTuning:()=>({}),restore:()=>{}}),false);
 assert.equal(card._rasterLabRegisterAdapter({id:"future.precipitation.forecast",label:"Prognose",getPane:()=>pane,getTuning:()=>({}),restore:()=>{}}),true);
 assert.equal(card._rasterLabRegisterAdapter({id:"temperature",getPane:()=>pane,getTuning:()=>({blur:0}),restore:()=>{}}),true);
