@@ -78,3 +78,7 @@ Nach Korrekturen lief der echte historische Browser-Pixeltest erfolgreich im CI-
 **Sperren:** Keine DRA-Installation, keine HA-DEV-/HA-PROD-Änderung, kein HA-REAL-PASS, kein PROD-PASS. Weder WeatherRouter noch V1-/V2-/UTC-/Authentifizierungs- und Sicherheitsverträge oder andere Wettereigenschaften wurden verändert.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 7. Abschließende GitHub-Prüfung des finalen Testcommits
+
+Die drei echten Push-Workflows von `da37c7ab0ad273382ccd8e6201cb18a48e736fd0` wurden nach Fertigstellung erneut über GitHub ausgelesen: **39580187744 completed/success** (Versions- und Einstellungsvertrag), **39580187721 completed/success** (Gewitterradar-Integration einschließlich vorhandener GR-WEICH-01/02/03-Verträge) und **39580187819 completed/success** (gemeinsames Frontend einschließlich des jetzt tatsächlich durchgeführten historischen Chromium-Pixeltests und des hochgeladenen PNG/JSON-Bildartefakts). Alle drei Ergebnisse sind damit **CI-PASS für den isolierten Teststand**. Kein HA-REAL-PASS und keine Freigabe der weiterhin offenen vollständigen Karten-/Raster-Labor-Ende-zu-Ende-Prüfung.
