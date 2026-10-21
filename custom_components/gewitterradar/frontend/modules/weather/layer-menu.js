@@ -263,6 +263,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       restore:()=>{
         const pane=this._map?.getPane?.(spec.pane),original=pane&&this.__weatherGenericLabOriginal?.get(pane);
         if(pane&&original){pane.style.filter=original.filter;pane.style.opacity=original.opacity;this.__weatherGenericLabOriginal.delete(pane);}
+        if(pane)delete pane.dataset.rasterLabPreview;
       },
       beforePreview:pane=>{
         if(!this.__weatherGenericLabOriginal.has(pane))
