@@ -33,8 +33,8 @@ await page.evaluate(()=>{
  const initial=c._rasterLabSnapshot();
  s.samples.set("clouds:8",{layer:"clouds",zoom:8,nativeZoom:9,values:{...initial.base,blur:41,blend:22,opacity:1}});
  const original=state.layer;state.layer=null;state.status="loading";
- assertNotAvailable=c._rasterLabSnapshot().nativeZoom===null;
- if(!assertNotAvailable)throw Error("Native zoom should be unknown during replacement");
+ const nativeUnknown=c._rasterLabSnapshot().nativeZoom===null;
+ if(!nativeUnknown)throw Error("Native zoom should be unknown during replacement");
  const values=c._rasterLabValues(c._rasterLabSnapshot());
  if(values.blur!==41||values.blend!==22)throw Error("Zoom profile lost while cloud layer loads");
  state.layer=original;state.status="ready";
