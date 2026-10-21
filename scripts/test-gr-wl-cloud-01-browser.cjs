@@ -27,6 +27,21 @@ await page.evaluate(()=>{
  window.__c=c;window.__cloud=cloud;window.__wind=wind;window.__cloudId=cloudId;
 });
 const get=async()=>{const buf=await page.screenshot();const {data,info}=await sharp(buf).removeAlpha().raw().toBuffer({resolveWithObject:true});const red=(x,y)=>data[(y*info.width+x)*info.channels];return {rain:red(81,110),cloud:red(391,110),cloudEdge:red(376,110),wind:red(666,110)}};
+await page.evaluate(()=>{
+ const c=window.__c,s=c._rasterLabState(),state=window.__cloud;
+ s.selected="clouds";
+ const initial=c._rasterLabSnapshot();
+ s.samples.set("clouds:8",{layer:"clouds",zoom:8,nativeZoom:9,values:{...initial.base,blur:41,blend:22,opacity:1}});
+ const original=state.layer;state.layer=null;state.status="loading";
+ assertNotAvailable=c._rasterLabSnapshot().nativeZoom===null;
+ if(!assertNotAvailable)throw Error("Native zoom should be unknown during replacement");
+ const values=c._rasterLabValues(c._rasterLabSnapshot());
+ if(values.blur!==41||values.blend!==22)throw Error("Zoom profile lost while cloud layer loads");
+ state.layer=original;state.status="ready";
+ const after=c._rasterLabValues(c._rasterLabSnapshot());
+ if(after.blur!==41||after.blend!==22)throw Error("Zoom profile not restored after cloud layer reload");
+ s.samples.clear();
+});
 const baseline=await get();
 const status=await page.evaluate(()=>{const c=window.__c,a=c._rasterLabAdapters();return {rain:!!a.get("precipitation").getPane(),cloud:a.get("clouds").getAvailability(),wind:a.get("wind").getAvailability(),cloudPane:a.get("clouds").getPane()===document.getElementById("cloud")};});
 assert.deepEqual(status,{rain:true,cloud:"active",wind:"off",cloudPane:true});
