@@ -38,7 +38,7 @@ try{
   // On a warm valid image, no missing-image retry may be scheduled.
   calls.length=0;mode="ready";state.layer={remove(){}};
   state.lastRequestAt=Date.now()-9000;
-  await card._refreshWeatherRadar({reason:"warm-refresh"});
+  await card._refreshWeatherRadar({reason:"warm-refresh",force:true});
   assert.equal(state.coldStartRetries,0);
   assert.equal(calls.filter(x=>x.reason==="missing-raster-retry").length,0);
   // Stale discovery must not activate any mosaic and must request a new generation.
