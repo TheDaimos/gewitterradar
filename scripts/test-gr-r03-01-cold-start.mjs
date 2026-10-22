@@ -60,6 +60,7 @@ try{
   let releases=[];
   card._weatherRouterDiscovery=()=>new Promise(resolve=>{releases.push(resolve)});
   card._weatherRadarRecoverExpiredRequest=(_now,reason)=>{
+    if(reason===undefined)return false;
     assert.equal(reason,"cold-start-watchdog");
     state.v2Generation++;state.inFlight=false;state.inFlightToken=null;
     state.inFlightStartedAt=0;return true;
