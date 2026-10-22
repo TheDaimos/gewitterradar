@@ -64,7 +64,8 @@ try{
     state.v2Generation++;state.inFlight=false;state.inFlightToken=null;
     state.inFlightStartedAt=0;return true;
   };
-  state.coldStartRetries=0;state.pending=false;state.layer=null;
+  state.coldStartRetries=0;state.pending=false;state.layer=null;state.enabled=true;
+  state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
   try{
     const scheduledBefore=calls.filter(x=>x.reason==="cold-start-watchdog").length;
     for(let attempt=1;attempt<=4;attempt++){
@@ -72,7 +73,7 @@ try{
       const pending=card._refreshWeatherRadar({reason:"watchdog-simulation",force:true});
       await Promise.resolve();
       const timer=callbacks.pop();
-      assert.equal(typeof timer,"function");
+      assert.equal(typeof timer,"function","missing watchdog timer attempt "+attempt+" "+JSON.stringify({enabled:state.enabled,inFlight:state.inFlight,token:state.inFlightToken,lastRequestAt:state.lastRequestAt,callbacks:callbacks.length}));
       timer();
       assert.equal(state.coldStartRetries,Math.min(attempt,3));
       releases.pop()({ready:true});
