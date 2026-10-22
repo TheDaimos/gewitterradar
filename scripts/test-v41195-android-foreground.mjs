@@ -85,7 +85,7 @@ await replacement;
 assert.equal(s.inFlight,false);
 assert.equal(s.inFlightToken,null);
 // A failed cold raster must be retried on the same viewport without waiting
-// four minutes; this also tests that the retry cannot spin faster than 15 s.
+// four minutes; the R03 retry is now bounded to an 8 s cold-start window.
 const third=new Card(),state3=third._weatherRadarState();
 state3.enabled=true;
 state3.layer=null;
@@ -101,12 +101,12 @@ third._weatherRouterDiscovery=async()=>({ready:false});
 const missing=[];
 third._scheduleWeatherRadarRefresh=(reason,delay,options)=>missing.push({reason,delay,options});
 await third._refreshWeatherRadar({reason:"timer"});
-assert.ok(missing.some(x=>x.reason==="missing-raster-retry"&&x.delay>=15000),
-  "missing raster must retry within the bounded 15-second interval");
+assert.ok(missing.some(x=>x.reason==="missing-raster-retry"&&x.delay===8000),
+  "missing raster retry must use the bounded 8-second cold-start interval");
 assert.equal(state3.inFlight,false);
 missing.length=0;
 state3.lastRequestAt=Date.now()-1000;
 await third._refreshWeatherRadar({reason:"timer"});
-assert.ok(missing.some(x=>x.reason==="timer"&&x.delay>10000),
-  "same-viewport retries are throttled, not continuous");
+assert.ok(missing.some(x=>x.reason==="timer"&&x.delay>6000),
+  "same-viewport cold-start retries remain throttled, not continuous");
 console.log("PASS: Android foreground refresh, deduplication, cleanup and stale in-flight watchdog");
