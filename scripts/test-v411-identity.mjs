@@ -39,7 +39,7 @@ const watch=await read('frontend/modules/core/update-watch.js');
 assert.ok(watch.includes('runtimeReloadUrl'));
 assert.ok(watch.includes('window.location.replace(destination)'));
 assert.match(entry,/installRasterLab\(GewitterradarCard,__moduleDeps\)/);
-assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.version,'1.3.19');
+assert.equal(runtime.modules.find(x=>x.id==='weather.precipitation-layer')?.version,'1.3.20');
 assert.equal(runtime.modules.find(x=>x.id==='weather.layer-menu')?.version,'1.1.7');
 assert.equal(runtime.modules.find(x=>x.id==='weather.display-menu')?.version,'0.4.19');
 assert.equal(runtime.modules.find(x=>x.id==='weather.legend-overlay')?.version,'0.1.1');
