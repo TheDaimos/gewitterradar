@@ -129,3 +129,17 @@ Danach ausschließlich auf DEV: Karte mit aktiviertem Niederschlag öffnen, **St
 **Freigabegrenze:** Auch drei grüne CI-Prüfläufe wären **kein HA-REAL-PASS**. Ein endgültiger P1-Abschluss setzt einen reproduzierbar erfolgreichen Neustart-Realtest auf VM 109 voraus.
 
 **C.K. – Eine Idee weiter gedacht.**
+
+## 10. Abschließende GitHub-CI-Abnahme – verifizierter, festgepinnter Programmstand
+
+**Letzter Code-/Test-/Prüfsummencommit der V4.11.106 DEV:** **`93d54d7809592277d6565206e7dcf6a3cb55cc0f`**. Der vollständige SHA wurde unmittelbar über GitHub im Feld `head_sha` jedes abschließenden Prüflaufs wiedererkannt. Sämtliche nachfolgenden Berichtscommits ändern den geprüften Programmstand **nicht**.
+
+| Echte GitHub-Actions-Prüfung | Lauf | Unmittelbar abgelesener Endstatus |
+| --- | --- | --- |
+| Einstellungen, Laufzeitidentität, Android-Vordergrund-/Neustartwiederherstellung | [39748536220](https://github.com/TheDaimos/gewitterradar/actions/runs/39748536220) | **`completed / success`** |
+| Gewitterradar-Integration – Paketvertrag mit GR-R03-01-Test, HACS, hassfest, Home-Assistant-Laufzeit | [39748536268](https://github.com/TheDaimos/gewitterradar/actions/runs/39748536268) | **`completed / success`** |
+| Gemeinsames Frontend – geschützte Modultests, Lieferbaumspiegel, SHA-256, vorhandene Chromium-Browserprüfungen | [39748536231](https://github.com/TheDaimos/gewitterradar/actions/runs/39748536231) | **`completed / success`** |
+
+Die echten Prüfprotokolle wiesen zwischenzeitlich mehrere fehlgeschlagene **alte feste Sollwerte** nach (beispielsweise `weather.precipitation-layer 1.3.19` anstelle des tatsächlich erhöhten Moduls 1.3.20, eine feste 15-Sekunden-Kaltstarttestannahme sowie das alte Builddatum). Diese Assertions wurden auf die geänderten, weiterhin ausdrücklich getesteten Verträge umgestellt; keine Schutzprüfung wurde abgeschaltet. Der neue Test fand außerdem eine unkorrekte Unterscheidung zwischen dem normalen Watchdog-Vorabaufruf und der simulierten Ablaufzeit. Auch diese **Testisolierung** wurde korrigiert und anschließend im finalen Paketvertrag grün abgenommen.
+
+**Endgültiges technisches Urteil:** **CI-PASS** für den reproduzierbaren V4.11.106-Entwicklungskandidaten mit begrenzter Kaltstartwiederholung und generativer Absicherung gegen veraltete Antworten. **Keine reale HA-DEV-Bildabnahme:** Das konkrete ursprüngliche Unsichtbarkeitsereignis von R03 konnte ohne einen erneuten Betreiber-Neustartversuch und korrelierten Export nicht real reproduziert bzw. endgültig als behoben nachgewiesen werden. **Keine automatische DRA-Installation; keine Änderungen an VM 109 oder VM 101.** Die DRA-V1-Einzelinstallation ist weiterhin ausschließlich nach ausdrücklicher, getrennter Betreiberentscheidung zulässig.
