@@ -38,6 +38,8 @@ jobs:
           node-version: "22"
       - name: Check WL-02 raster and coverage regression contracts
         run: node --test tests/wl02-coverage-contract.test.mjs tests/wl02-raster-geometry.test.mjs
+      - name: GR-R03-01 cold-start reload and stale-request safety regression
+        run: node scripts/test-gr-r03-01-cold-start.mjs
       - name: Check GR-WEICH-01 zoom refresh and central raster-lab version
         run: node scripts/test-gr-weich-01-regression.mjs
       - name: Check GR-WEICH-02 visual-resolution reference
