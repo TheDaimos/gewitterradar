@@ -334,7 +334,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
-        inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,coldStartRetries:0,
+        inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,coldStartRetries:0,coldWatchdogTimer:null,
         appHiddenAt:0,lastForegroundRefreshAt:0,visibilityHandler:null,pageShowHandler:null,focusHandler:null,
         v2BudgetPending:false,v2BudgetTimer:null,v2LastBudgetRecovery:0,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null,
         regionalHold:null,regionalHoldTimer:null,regionalRecoveryTimer:null
@@ -596,6 +596,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     // The old promise may settle later; its finally clause checks inFlightToken.
     state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
+    if(state.coldWatchdogTimer){clearTimeout(state.coldWatchdogTimer);state.coldWatchdogTimer=null;}
     state.pending=false;state.pendingForce=false;
     this._weatherEngineMonitorEvent?.("radar_inflight_watchdog_recovered",{
       reason,elapsed_ms:elapsed});
@@ -1923,6 +1924,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.inFlight){state.pending=true;state.pendingForce=state.pendingForce||force;return;}
     const token=++state.v2Generation;
     state.inFlight=true;state.inFlightToken=token;state.inFlightStartedAt=now;
+    if(!state.layer){
+      if(state.coldWatchdogTimer)clearTimeout(state.coldWatchdogTimer);
+      state.coldWatchdogTimer=setTimeout(()=>{
+        state.coldWatchdogTimer=null;
+        if(!state.enabled||state.inFlightToken!==token||state.layer)return;
+        if(this._weatherRadarRecoverExpiredRequest(Date.now(),"cold-start-watchdog")){
+          this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{generation:token});
+          this._scheduleWeatherRadarRefresh("cold-start-watchdog",250,{force:true});
+        }
+      },36000);
+    }
     state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
     this._weatherEngineMonitorEvent?.("refresh_started",{
       reason,zoom:Number(this._map?.getZoom?.()??0),viewport:viewport.signature,
@@ -1975,6 +1987,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       // An expired pre-suspension request must never reset the lock of the
       // replacement request started after foreground recovery.
       if(state.inFlightToken===token){
+        if(state.coldWatchdogTimer){clearTimeout(state.coldWatchdogTimer);state.coldWatchdogTimer=null;}
         state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
         if(state.pending){
           const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
