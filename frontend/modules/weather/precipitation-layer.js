@@ -2094,7 +2094,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       router_disabled:"WeatherRouter deaktiviert",
       no_eligible_provider:"Keine geeignete Niederschlagsquelle verfügbar",
       requirements_not_met:"Niederschlagsquelle erfüllt die Anforderungen nicht",
-      capability_not_supported:"Niederschlags-Layer derzeit nicht verfügbar"
+      capability_not_supported:"Niederschlags-Layer derzeit nicht verfügbar",
+      cold_start_retry_exhausted:"Niederschlagsbild konnte trotz begrenzter Wiederholungen nicht geladen werden"
     }[code];
     status.textContent=label||"Aktiv · wartet auf Niederschlagsdaten";
   },
