@@ -18,6 +18,8 @@ const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite
 const BACKGROUND_MAX_AGE_SECONDS=43200;
 const REGIONAL_HOLD_LIMIT_MS=45000;
 const REGIONAL_HOLD_RETRY_MS=15000;
+const COLD_START_RETRY_MS=8000;
+const COLD_START_MAX_RETRIES=3;
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
@@ -332,7 +334,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
-        inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,
+        inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,coldStartRetries:0,
         appHiddenAt:0,lastForegroundRefreshAt:0,visibilityHandler:null,pageShowHandler:null,focusHandler:null,
         v2BudgetPending:false,v2BudgetTimer:null,v2LastBudgetRecovery:0,lastRequestAt:0,lastViewport:"",lastReady:null,lastUnavailable:null,v2LastPartial:null,v2RenderMetrics:null,
         regionalHold:null,regionalHoldTimer:null,regionalRecoveryTimer:null
@@ -669,6 +671,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   async _setWeatherRadarEnabled(enabled,{persist=true}={}){
     const state=this._weatherRadarState();
     state.enabled=Boolean(enabled);
+    if(!state.enabled)state.coldStartRetries=0;
     if(persist)try{localStorage.setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
     if(!state.enabled){
@@ -1906,8 +1909,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const incomplete=Boolean(state.regionalHold||state.v2RenderMetrics?.partial_geography
       ||state.v2RenderMetrics?.uncovered_tiles
       ||state.layer?.__grRadarTileMetrics?.failed);
-    const minWait=!state.layer||incomplete
-      ?Math.max(15000,state.viewportRefreshIntervalSeconds*1000)
+    const minWait=!state.layer
+      ?COLD_START_RETRY_MS
+      :incomplete?Math.max(15000,state.viewportRefreshIntervalSeconds*1000)
       :state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
     if(!force&&state.lastRequestAt&&now-state.lastRequestAt<minWait){
       this._weatherEngineMonitorEvent?.("refresh_deferred",{
@@ -1975,13 +1979,25 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         if(state.pending){
           const forcePending=state.pendingForce;state.pending=false;state.pendingForce=false;
           this._scheduleWeatherRadarRefresh("pending",250,{force:forcePending});
+        }else if(state.layer){
+          state.coldStartRetries=0;
         }else if(state.enabled&&!state.layer&&this.isConnected!==false&&
           (typeof document==="undefined"||document.visibilityState!=="hidden")){
-          // An unavailable first image must not stay blank until the next
-          // five-minute timer. One coalesced retry, no concurrent WS calls.
-          const delay=Math.max(15000,state.viewportRefreshIntervalSeconds*1000);
-          this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{delay_ms:delay});
-          this._scheduleWeatherRadarRefresh("missing-raster-retry",delay);
+          // Cold start: bounded recovery independent of the normal polling interval.
+          // Only the live request token can schedule it; stale results never mount.
+          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
+            state.coldStartRetries++;
+            this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{
+              delay_ms:COLD_START_RETRY_MS,attempt:state.coldStartRetries,
+              max_attempts:COLD_START_MAX_RETRIES});
+            this._weatherRadarUpdateControls("Niederschlagsbild wird geladen · erneuter Versuch "+state.coldStartRetries+"/"+COLD_START_MAX_RETRIES+" …");
+            this._scheduleWeatherRadarRefresh("missing-raster-retry",COLD_START_RETRY_MS);
+          }else{
+            state.lastUnavailable={code:"cold_start_retry_exhausted"};
+            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
+              attempts:state.coldStartRetries,active_layer:false});
+            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
+          }
         }
       }
     }
