@@ -22,8 +22,9 @@ function validViewport(b){
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
  maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,
- profileId=null,consumerId="gewitterradar",correlationId=null
+ profileId=null,consumerId="gewitterradar",correlationId=null,sourceRequest=null
 }={}){
+ if(sourceRequest!==null&&(sourceRequest?.provider_id!=="opera"||sourceRequest?.product_id!=="RATE"||Object.keys(sourceRequest).length!==2||maxDataAgeSeconds>900)) throw new TypeError("Unsupported OPERA source");
  if(!validViewport(viewport)
    ||!focus||!finite(focus.latitude)||!finite(focus.longitude)
    ||focus.latitude< -90||focus.latitude>90
@@ -50,6 +51,7 @@ export function buildRasterMosaicV2Request({
      max_time_delta_seconds:maxTimeDeltaSeconds},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
    ...(profileId!==null?{profile_id:profileId}:{}),
+   ...(sourceRequest!==null?{source_request:{provider_id:"opera",product_id:"RATE"}}:{}),
    consumer_id:consumerId,
    ...(correlationId?{correlation_id:correlationId}:{}),
  };
@@ -63,11 +65,11 @@ export function buildRasterMosaicV2Request({
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
  maxLayers=4,maxTileRequests=48,maxDataAgeSeconds=900,
- maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,onDiagnostic=null
+ maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,sourceRequest=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
    viewport,focus,profileId,maxLayers,maxTileRequests,
-   maxDataAgeSeconds,maxBackgroundAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,
+   maxDataAgeSeconds,maxBackgroundAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,sourceRequest,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
@@ -76,6 +78,23 @@ export async function prepareRasterMosaicV2({
    onDiagnostic?.({phase:"request",status:"sent",correlation_id:correlationId});
    const response=await callWS(request);
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
+   if(sourceRequest!==null){
+     const identityOk=response?.source_request?.provider_id==="opera"
+       &&response?.source_request?.product_id==="RATE"
+       &&response?.provider_id==="opera"&&response?.product_id==="RATE"
+       &&response?.correlation_id===correlationId;
+     const reason=!identityOk?"opera_identity_mismatch":
+       response?.raster_approved===true?"opera_positive_raster_not_yet_supported":
+       response?.status==="disabled"?"provider_disabled":
+       response?.status==="active_blocked"?"opera_raster_not_scientifically_approved":
+       "opera_unverified_response";
+     onDiagnostic?.({phase:"opera_status",status:String(response?.status||"invalid"),
+       provider_id:"opera",product_id:"RATE",block_reason:String(response?.block_reason||reason),
+       raster_approved:response?.raster_approved===true,correlation_id:correlationId});
+     return {mode:"opera_blocked",reason,status:response?.status||"invalid",
+       blockReason:response?.block_reason||reason,rasterApproved:false,
+       providerId:"opera",productId:"RATE",fallbackPerformed:false};
+   }
    stage="contract_validation";
    validateRasterMosaicV2(response,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
    onDiagnostic?.({
