@@ -1930,8 +1930,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         state.coldWatchdogTimer=null;
         if(!state.enabled||state.inFlightToken!==token||state.layer)return;
         if(this._weatherRadarRecoverExpiredRequest(Date.now(),"cold-start-watchdog")){
-          this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{generation:token});
-          this._scheduleWeatherRadarRefresh("cold-start-watchdog",250,{force:true});
+          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
+            state.coldStartRetries++;
+            this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{
+              generation:token,attempt:state.coldStartRetries,max_attempts:COLD_START_MAX_RETRIES});
+            this._scheduleWeatherRadarRefresh("cold-start-watchdog",COLD_START_RETRY_MS,{force:true});
+          }else{
+            state.lastUnavailable={code:"cold_start_retry_exhausted"};
+            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
+              attempts:state.coldStartRetries,active_layer:false,reason:"watchdog"});
+            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
+          }
         }
       },36000);
     }
