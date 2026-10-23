@@ -3,6 +3,8 @@
  * Not wired to the production precipitation layer or automatic provider routing.
  * No caching, URL tokens, or scientific raster approval.
  */
+import {buildRasterMosaicV2Request} from "./raster-mosaic-consumer.js?v=41198r1";
+
 const TEMPLATE=/^\/api\/weather_router\/opera_tile\/RATE\/(20\d{6}T\d{6}Z)\/\{z\}\/\{x\}\/\{y\}\.png$/;
 const NOTICE="OPERA-DIAGNOSE – GEOGRAFISCHE PIXELPOSITION UNGEPRÜFT";
 
@@ -103,4 +105,22 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      watermark.remove();
    }
  };
+}
+
+/** Explicit single-use diagnostic request; never activates normal precipitation. */
+export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,focus,
+ accessToken,correlationId,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
+ if(typeof callWS!=="function"||typeof correlationId!=="string"||!correlationId)
+   throw new TypeError("Authorized explicit diagnostic request required");
+ const request=buildRasterMosaicV2Request({
+   viewport,focus,correlationId,maxLayers:1,maxTileRequests:16,
+   maxDataAgeSeconds:900
+ });
+ request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true};
+ const response=await callWS(request);
+ const ready=validateOperaDiagnosticResponse(response,correlationId);
+ if(!ready)throw new Error("Invalid diagnostic authorization");
+ return mountOperaDiagnosticPane({
+   Leaflet,map,response,correlationId,accessToken,fetchImpl,documentRef,URLRef
+ });
 }
