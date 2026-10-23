@@ -20,7 +20,7 @@ test("diagnostic requires explicit server identity and scientific denial",()=>{
 });
 
 test("private HA URL uses bearer fetch without caching or redirects",()=>{
- assert.match(frontend,/^const TEMPLATE=\/\^\\\/api/m);
+ assert.ok(frontend.includes("api\\/weather_router\\/opera_tile"));
  assert.match(frontend,/Authorization:"Bearer "\+token/);
  assert.match(frontend,/credentials:"omit",cache:"no-store",redirect:"error"/);
  assert.match(frontend,/x-weatherrouter-scientific-status/);
