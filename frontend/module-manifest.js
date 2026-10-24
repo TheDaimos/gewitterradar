@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.154",
+    "version": "1.2.155",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -385,7 +385,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.8",
+    "version": "1.2.9",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
