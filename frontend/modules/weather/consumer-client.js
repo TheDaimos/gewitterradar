@@ -210,7 +210,7 @@ const statusLabel=answer=>{
 };
 
 /* Lazily bound to the CURRENT Home Assistant connection; no calls during boot. */
-export const installWeatherRouter=defineModule(MODULE_META,()=>({
+export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
   _weatherRouterClient(){
     if(!this.__weatherRouterClient)this.__weatherRouterClient=createWeatherRouterClient(async message=>{
       if(!this._hass||typeof this._hass.callWS!=='function')throw new Error('Home Assistant WebSocket unavailable');
@@ -365,7 +365,7 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=gr-opera-dev-1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
-        Leaflet:globalThis.L,map:this._map,viewport:viewport.context,focus:viewport.focus,
+        Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
         accessToken:token,correlationId
       });
       this.__operaDiagnosticPane=pane;
