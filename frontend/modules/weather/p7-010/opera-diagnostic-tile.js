@@ -10,6 +10,17 @@ const NOTICE="OPERA-DIAGNOSE – GEOGRAFISCHE PIXELPOSITION UNGEPRÜFT";
 
 export function validateOperaDiagnosticResponse(response, correlationId){
  const source=response?.source_request;
+ // Explicit server-side rejection is not an invalid client request. Preserve
+ // bounded, non-sensitive details for the operator without ever accepting tiles.
+ if(response && response.status!=="diagnostic_unverified"){
+   const status=String(response.status||"missing").slice(0,64);
+   const reason=String(response.block_reason||"unspecified").slice(0,96);
+   const error=new Error("WR OPERA gesperrt: "+status+" / "+reason);
+   error.code="opera_server_denied";
+   error.diagnostic={status,block_reason:reason,raster_approved:false,
+     layer_count:Array.isArray(response.layers)?response.layers.length:0};
+   throw error;
+ }
  if(!source||source.provider_id!=="opera"||source.product_id!=="RATE"
    ||source.diagnostic!==true||response.provider_id!=="opera"
    ||response.product_id!=="RATE"||response.correlation_id!==correlationId
