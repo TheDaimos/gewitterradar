@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.9',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.10',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -364,7 +364,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411107r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411108r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
@@ -377,7 +377,9 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     }catch(error){
       store.operaDiagnostic={status:'blocked',correlation_id:correlationId,
         at:new Date().toISOString(),scientific_approval:false,
-        reason:String(error?.message||error).slice(0,160)};
+        reason:String(error?.message||error).slice(0,160),
+        code:String(error?.code||'opera_client_error').slice(0,64),
+        server_diagnostic:error?.diagnostic||null};
       show('OPERA gesperrt: '+store.operaDiagnostic.reason);
     }finally{this.__operaRequestRunning=false;this._weatherEngineDiagnosticRender?.();}
   },
