@@ -18,7 +18,8 @@ export function validateOperaDiagnosticResponse(response, correlationId){
    const error=new Error("WR OPERA gesperrt: "+status+" / "+reason);
    error.code="opera_server_denied";
    error.diagnostic={status,block_reason:reason,raster_approved:false,
-     layer_count:Array.isArray(response.layers)?response.layers.length:0};
+     layer_count:Array.isArray(response.layers)?response.layers.length:0,
+     admission_gates:response.diagnostic_gates&&typeof response.diagnostic_gates==="object"?response.diagnostic_gates:null};
    throw error;
  }
  if(!source||source.provider_id!=="opera"||source.product_id!=="RATE"
