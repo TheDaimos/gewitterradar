@@ -343,6 +343,42 @@ export const installWeatherRouter=defineModule(MODULE_META,()=>({
       try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
     }
   },
+  async _weatherEngineOperaDiagnosticToggle(){
+    const store=this._weatherEngineTraceStore();
+    const status=this.shadow?.getElementById('weather-engine-opera-result');
+    const show=value=>{if(status)status.textContent=value;};
+    if(this.__operaDiagnosticPane){
+      this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;
+      store.operaDiagnostic={status:'closed',at:new Date().toISOString(),scientific_approval:false};
+      show('OPERA-Testdarstellung entfernt');return;
+    }
+    if(this._hass?.user?.is_admin!==true){show('Administratorberechtigung erforderlich');return;}
+    const token=this._hass?.auth?.data?.access_token;
+    const viewport=this._weatherRadarViewport?.();
+    if(!token||!viewport?.focus||!viewport?.context||!this._map||typeof this._hass?.callWS!=='function'){
+      show('Karte oder Home-Assistant-Anmeldung nicht verfügbar');return;
+    }
+    const correlationId='gr-opera-diagnostic-'+Date.now().toString(36);
+    store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
+    show('OPERA wird ausdrücklich diagnostisch angefordert …');
+    try{
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=gr-opera-dev-1');
+      const pane=await requestOperaDiagnosticPane({
+        callWS:request=>this._hass.callWS(request),
+        Leaflet:globalThis.L,map:this._map,viewport:viewport.context,focus:viewport.focus,
+        accessToken:token,correlationId
+      });
+      this.__operaDiagnosticPane=pane;
+      store.operaDiagnostic={status:'diagnostic_unverified',correlation_id:correlationId,
+        at:new Date().toISOString(),scientific_approval:false,notice:pane.notice};
+      show('OPERA – ungeprüfte Testdarstellung (erneut drücken zum Entfernen)');
+    }catch(error){
+      store.operaDiagnostic={status:'blocked',correlation_id:correlationId,
+        at:new Date().toISOString(),scientific_approval:false,
+        reason:String(error?.message||error).slice(0,160)};
+      show('OPERA gesperrt: '+store.operaDiagnostic.reason);
+    }
+  },
   async _weatherEngineV2InterfaceTest(){
     const store=this._weatherEngineTraceStore();
     if(this.__weatherEngineV2TestRunning||this.__weatherEngineV2ComparisonRunning)return;
@@ -553,6 +589,7 @@ _weatherEngineDiagnosticPayload(){
       raw_consumer_exchanges:[...(store.rawExchanges||[])],
       v2_attempts:[...(store.v2Events||[])],
       v2_interface_test:store.v2TestResult||null,
+       opera_diagnostic:store.operaDiagnostic||null,
       v2_age_comparison:store.v2AgeComparison||null,
       display_monitor:{
         schema:"gewitterradar.weather_engine_display_monitor.v1",
@@ -651,7 +688,7 @@ _weatherEngineDiagnosticPayload(){
             <div class="we-diagnostic-note">Nur vorhandene Karten-/Kachel-Ereignisse. Keine zusätzlichen Wetterabfragen oder Bildaufnahmen. Markierung umfasst 40 Ereignisse davor und danach.</div>
           </div>
           <div class="we-card"><b>Consumer API V2 – Schnittstellentest</b><p style="font-size:11px;opacity:.8">Begrenzter WebSocket-Vertragstest ohne Veränderung der Karte oder zusätzliche Raster-Bildabrufe.</p><button id="weather-engine-v2-test" type="button">API V2 gezielt prüfen</button><div id="weather-engine-v2-test-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch nicht geprüft</div><div class="we-diagnostic-actions" style="margin-top:9px"><button id="weather-engine-v2-compare" type="button">V2-Datenalter vergleichen (15 Min. / 12 Std.)</button></div><div class="we-diagnostic-note" style="margin-top:6px">Zwei getrennte, nacheinander ausgeführte V2-Anfragen mit gleichem Kartenausschnitt. Nur Diagnose: Die produktive 15-Minuten-Grenze und die Karte bleiben unverändert.</div><div id="weather-engine-v2-compare-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch kein Vergleich durchgeführt</div></div>
-          <div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
+          <div class="we-card"><b>OPERA – ungeprüfte Testdarstellung</b><p class="we-diagnostic-note">Nur Administratoren auf HA DEV VM 109. Keine Freigabe für Wetterwarnungen und Gefahrenbewertung.</p><button id="weather-engine-opera-toggle" type="button">OPERA-Testebene ein-/ausblenden</button><div id="weather-engine-opera-result" role="status">Nicht gestartet</div></div><div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
           <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Niederschlag neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
           <div class="we-diagnostic-note">Die Filter beeinflussen nur die Diagnoseansicht. Providerwahl und WeatherRouter-Routing werden nicht verändert.</div>
           <details><summary>Rohdaten</summary><pre class="we-diagnostic-raw" id="weather-engine-diagnostic-raw"></pre></details>
@@ -672,7 +709,8 @@ _weatherEngineDiagnosticPayload(){
       this._weatherEngineMonitorEvent("monitor_detail_changed",{detail_enabled:store.displayExtended});
       this._weatherEngineDiagnosticRender();
     });
-    root.getElementById('weather-engine-v2-test')?.addEventListener('click',async()=>{await this._weatherEngineV2InterfaceTest();});
+    root.getElementById('weather-engine-opera-toggle')?.addEventListener('click',()=>this._weatherEngineOperaDiagnosticToggle());
+     root.getElementById('weather-engine-v2-test')?.addEventListener('click',async()=>{await this._weatherEngineV2InterfaceTest();});
     root.getElementById('weather-engine-v2-compare')?.addEventListener('click',async()=>{await this._weatherEngineV2AgeComparisonTest();});
     root.getElementById('weather-engine-diagnostic-resolve')?.addEventListener('click',async()=>{if(typeof this._refreshWeatherRadar==='function')await this._refreshWeatherRadar({reason:'weather-engine-diagnostic',force:true});this._weatherEngineDiagnosticRender();});
     root.getElementById('weather-engine-diagnostic-copy')?.addEventListener('click',async()=>{
