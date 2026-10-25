@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.108",
-  "build": "V4.11.108-DEV-2026-10-24",
-  "runtimeRevision": "411108r1",
-  "moduleSetId": "E411-108A1",
+  "productVersion": "4.11.109",
+  "build": "V4.11.109-DEV-2026-10-24",
+  "runtimeRevision": "411109r1",
+  "moduleSetId": "E411-109A1",
   "modules": [
     {
       "id": "core.manifest",
@@ -142,5 +142,5 @@
       "version": "1.2.10"
     }
   ],
-  "displayVersion": "V4.11.108 DEV"
+  "displayVersion": "V4.11.109 DEV"
 }
