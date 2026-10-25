@@ -74,6 +74,19 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
  let disposed=false;
  const controllers=new Set();
  const urls=new Set();
+ const metrics={requested:0,loaded:0,failed:0,mounted:0,http_statuses:{},last_error:null};
+ const validMs=Date.parse(approved.validAt);
+ if(!Number.isFinite(validMs)||validMs>Date.now()||Date.now()-validMs>=900000)
+   throw new Error("opera_diagnostic_expired");
+ const updateStatus=()=>{
+   if(disposed)return;
+   const age=Math.max(0,Math.floor((Date.now()-validMs)/60000));
+   watermark.textContent="OPERA · UNGEPRÜFT · "+age+" Min. · "+(
+      metrics.loaded?"PNG geladen: "+metrics.loaded:
+      metrics.requested>metrics.failed?"Kacheln werden geladen":
+      metrics.failed?"Keine gültigen Kacheln":"Aktiv");
+ };
+ const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+900000-Date.now()));
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
      const image=documentRef.createElement("img");
@@ -81,6 +94,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      image.width=256;image.height=256;
      const controller=new AbortController();
      controllers.add(controller);
+     metrics.requested++;updateStatus();
      fetchOperaDiagnosticPng({
        template:approved.template,tile:coords,token:accessToken,
        fetchImpl,signal:controller.signal
@@ -89,9 +103,9 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
        const objectUrl=URLRef.createObjectURL(blob);
        urls.add(objectUrl);
        image.src=objectUrl;
-       image.onload=()=>done(null,image);
-       image.onerror=()=>done(new Error("diagnostic_png_decode_failed"),image);
-     }).catch(error=>{if(!disposed)done(error,image);})
+       image.onload=()=>{metrics.loaded++;metrics.mounted++;updateStatus();done(null,image);};
+       image.onerror=()=>{metrics.failed++;metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
+     }).catch(error=>{if(!disposed){metrics.failed++;metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
        .finally(()=>controllers.delete(controller));
      return image;
    }
@@ -104,11 +118,11 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
  const container=map.getContainer();
  container.appendChild(watermark);
  map.addLayer(layer);
- return {
-   notice:NOTICE,layer,
-   close(){
+ updateStatus();
+ function closePane(){
      if(disposed)return;
      disposed=true;
+     clearTimeout(expiry);
      for(const controller of controllers)controller.abort();
      controllers.clear();
      map.removeLayer(layer);
@@ -116,6 +130,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      urls.clear();
      watermark.remove();
    }
+ return {notice:NOTICE,layer,validAt:approved.validAt,metrics,close:closePane};
  };
 }
 
