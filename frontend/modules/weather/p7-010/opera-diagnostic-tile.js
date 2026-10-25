@@ -94,6 +94,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
       metrics.failed?"Keine gültigen Kacheln":"Aktiv");
  };
  const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+900000-Date.now()));
+ const ageRefresh=setInterval(()=>updateStatus(),30000);
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
      const image=documentRef.createElement("img");
@@ -130,6 +131,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      if(disposed)return;
      disposed=true;
      clearTimeout(expiry);
+     clearInterval(ageRefresh);
      for(const controller of controllers)controller.abort();
      controllers.clear();
      map.removeLayer(layer);
