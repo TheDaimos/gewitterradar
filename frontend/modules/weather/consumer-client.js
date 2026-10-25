@@ -372,7 +372,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       });
       this.__operaDiagnosticPane=pane;
       store.operaDiagnostic={status:'diagnostic_unverified',correlation_id:correlationId,
-        at:new Date().toISOString(),scientific_approval:false,notice:pane.notice};
+        at:new Date().toISOString(),scientific_approval:false,notice:pane.notice,
+        valid_at:pane.validAt||null,metrics:pane.metrics||null};
       show('OPERA – ungeprüfte Testdarstellung');
     }catch(error){
       store.operaDiagnostic={status:'blocked',correlation_id:correlationId,
@@ -864,7 +865,7 @@ _weatherEngineDiagnosticPayload(){
   },
 
   _weatherEngineDiagnosticClose(){
-    if(this.__operaDiagnosticPane){this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;this._weatherEngineTraceStore().operaDiagnostic={status:'closed',at:new Date().toISOString(),scientific_approval:false};}
+    // Closing the diagnostic WINDOW must never revoke the map-owned OPERA layer.
     const root=this.shadow,backdrop=root?.getElementById('weather-engine-diagnostic-backdrop'),toggle=root?.getElementById('settings-weather-engine-diagnostics-toggle');
     if(backdrop){backdrop.classList.remove('open');backdrop.setAttribute('aria-hidden','true');}
     toggle?.setAttribute('aria-checked','false');
