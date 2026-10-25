@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.10',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.11',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -365,7 +365,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411108r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411109r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
@@ -759,6 +759,17 @@ _weatherEngineDiagnosticPayload(){
     const store=this.__weatherEngineTraceStore||{items:[]};
     const operaButton=root.getElementById('weather-engine-opera-toggle');
     if(operaButton){operaButton.disabled=this.__operaRequestRunning===true||this._hass?.user?.is_admin!==true;operaButton.textContent=this.__operaRequestRunning?'OPERA-Testdarstellung wird geladen …':this.__operaDiagnosticPane?.active!==false&&this.__operaDiagnosticPane?'OPERA-Testdarstellung entfernen':'OPERA-Testdarstellung starten';}
+    const operaResult=root.getElementById('weather-engine-opera-result');
+    if(operaResult){
+      const pane=this.__operaDiagnosticPane;
+      const state=store.operaDiagnostic||{};
+      operaResult.textContent=pane?.active?(
+        'OPERA · UNGEPRÜFT · '+(pane.metrics?.loaded||0)+' PNG geladen · '+
+        (pane.metrics?.failed||0)+' Fehler'
+      ):pane?.active===false?'OPERA-Raster abgelaufen oder entfernt':
+        state.status==='blocked'?'OPERA gesperrt: '+String(state.reason||state.code||'unbekannt').slice(0,160):
+        'OPERA-Testdarstellung nicht aktiv';
+    }
     const capabilities=new Set((store.items||[]).map(item=>item.capability).filter(Boolean));
     for(const item of store.lastCatalog?.capabilities||[])if(item?.id)capabilities.add(item.id);
     const groups=[...new Set([...capabilities].map(capGroup))].sort((a,b)=>a.localeCompare(b,'de'));
