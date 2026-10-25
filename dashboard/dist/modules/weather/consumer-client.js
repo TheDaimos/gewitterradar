@@ -347,6 +347,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     const store=this._weatherEngineTraceStore();
     const status=this.shadow?.getElementById('weather-engine-opera-result');
     const show=value=>{if(status)status.textContent=value;};
+    if(this.__operaDiagnosticPane?.active===false)this.__operaDiagnosticPane=null;
     if(this.__operaDiagnosticPane){
       this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;
       store.operaDiagnostic={status:'closed',at:new Date().toISOString(),scientific_approval:false};
@@ -757,7 +758,7 @@ _weatherEngineDiagnosticPayload(){
     const root=this.shadow;if(!root)return;
     const store=this.__weatherEngineTraceStore||{items:[]};
     const operaButton=root.getElementById('weather-engine-opera-toggle');
-    if(operaButton){operaButton.disabled=this.__operaRequestRunning===true||this._hass?.user?.is_admin!==true;operaButton.textContent=this.__operaRequestRunning?'OPERA-Testdarstellung wird geladen …':this.__operaDiagnosticPane?'OPERA-Testdarstellung entfernen':'OPERA-Testdarstellung starten';}
+    if(operaButton){operaButton.disabled=this.__operaRequestRunning===true||this._hass?.user?.is_admin!==true;operaButton.textContent=this.__operaRequestRunning?'OPERA-Testdarstellung wird geladen …':this.__operaDiagnosticPane?.active!==false&&this.__operaDiagnosticPane?'OPERA-Testdarstellung entfernen':'OPERA-Testdarstellung starten';}
     const capabilities=new Set((store.items||[]).map(item=>item.capability).filter(Boolean));
     for(const item of store.lastCatalog?.capabilities||[])if(item?.id)capabilities.add(item.id);
     const groups=[...new Set([...capabilities].map(capGroup))].sort((a,b)=>a.localeCompare(b,'de'));
