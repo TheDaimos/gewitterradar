@@ -131,7 +131,6 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      watermark.remove();
    }
  return {notice:NOTICE,layer,validAt:approved.validAt,metrics,close:closePane};
- };
 }
 
 /** Explicit single-use diagnostic request; never activates normal precipitation. */
