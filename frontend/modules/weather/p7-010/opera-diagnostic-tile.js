@@ -56,12 +56,19 @@ export async function fetchOperaDiagnosticPng({template,tile,token,fetchImpl=fet
    credentials:"omit",cache:"no-store",redirect:"error",signal
  });
  if(!response.ok||response.headers.get("content-type")?.split(";")[0].trim()!=="image/png"
-   ||response.headers.get("x-weatherrouter-scientific-status")!=="unverified-diagnostic")
-   throw new Error("OPERA diagnostic HTTP authorization or response rejected");
+   ||response.headers.get("x-weatherrouter-scientific-status")!=="unverified-diagnostic"){
+   const error=new Error("OPERA diagnostic HTTP authorization or response rejected");
+   error.httpStatus=Number.isInteger(response.status)?response.status:0;
+   throw error;
+ }
  const bytes=new Uint8Array(await response.arrayBuffer());
  if(bytes.length<8||bytes.length>512*1024
    ||[137,80,78,71,13,10,26,10].some((value,index)=>bytes[index]!==value))
    throw new Error("Invalid OPERA diagnostic PNG");
+ // PNG IHDR must define a precisely 256 x 256 pixel tile, not just a signature.
+ if(bytes.length<24||new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength).getUint32(16)!==256
+   ||new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength).getUint32(20)!==256)
+   throw new Error("OPERA diagnostic PNG dimensions rejected");
  return new Blob([bytes],{type:"image/png"});
 }
 
@@ -105,7 +112,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
        image.src=objectUrl;
        image.onload=()=>{metrics.loaded++;metrics.mounted++;updateStatus();done(null,image);};
        image.onerror=()=>{metrics.failed++;metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
-     }).catch(error=>{if(!disposed){metrics.failed++;metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
+     }).catch(error=>{if(!disposed){metrics.failed++;if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
        .finally(()=>controllers.delete(controller));
      return image;
    }
