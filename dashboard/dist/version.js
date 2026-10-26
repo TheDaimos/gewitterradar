@@ -5,5 +5,5 @@ export const APPLICATION_RELEASE=Object.freeze({
   build:"V4.11.111-DEV-2026-10-27",
   runtimeRevision:"411111r1",
   moduleSetId:"E411-111A1",
-  integrationVersion:"0.25.19"
+  integrationVersion:"0.25.20"
 });
