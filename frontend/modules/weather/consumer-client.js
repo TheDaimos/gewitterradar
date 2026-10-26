@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.11',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.12',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -356,7 +356,10 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     if(this._hass?.user?.is_admin!==true){show('Administratorberechtigung erforderlich');return;}
     if(this.__operaRequestRunning)return;
     this.__operaRequestRunning=true;
-    const token=this._hass?.auth?.data?.access_token;
+    // HA frontend exposes authenticated WebSocket connection options; the legacy
+    // hass.auth.data location is not guaranteed in custom-card runtime.
+    const connectionAuth=this._hass?.connection?.options?.auth;
+    const token=connectionAuth?.accessToken || this._hass?.auth?.data?.access_token;
     const viewport=this._weatherRadarViewport?.();
     if(!token||!viewport?.focus||!viewport?.context||!this._map||typeof this._hass?.callWS!=='function'){
       this.__operaRequestRunning=false;show('Karte oder Home-Assistant-Anmeldung nicht verfügbar');return;
@@ -367,7 +370,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411109r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411110r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
