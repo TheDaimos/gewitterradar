@@ -5,38 +5,32 @@
  */
 import {buildRasterMosaicV2Request} from "./raster-mosaic-consumer.js?v=41198r1";
 
-const TEMPLATE=/^\/api\/weather_router\/opera_tile\/RATE\/(20\d{6}T\d{6}Z)\/\{z\}\/\{x\}\/\{y\}\.png$/;
-const NOTICE="OPERA-DIAGNOSE – GEOGRAFISCHE PIXELPOSITION UNGEPRÜFT";
+const TEMPLATE=/^\/api\/weather_router\/opera_preview\/RATE\/(20\d{6}T\d{6}Z)\/(north_first|south_first)\/\{z\}\/\{x\}\/\{y\}\.png$/;
+const NOTICE="UNVERIFIED / ENTWICKLUNGSVORSCHAU – geografische Orientierung nicht wissenschaftlich bestätigt";
+const ORIENTATIONS=new Set(["north_first","south_first"]);
 
-export function validateOperaDiagnosticResponse(response, correlationId){
- const source=response?.source_request;
- // Explicit server-side rejection is not an invalid client request. Preserve
- // bounded, non-sensitive details for the operator without ever accepting tiles.
- if(response && response.status!=="diagnostic_unverified"){
-   const status=String(response.status||"missing").slice(0,64);
-   const reason=String(response.block_reason||"unspecified").slice(0,96);
-   const error=new Error("WR OPERA gesperrt: "+status+" / "+reason);
-   error.code="opera_server_denied";
-   error.diagnostic={status,block_reason:reason,raster_approved:false,
-     layer_count:Array.isArray(response.layers)?response.layers.length:0,
-     admission_gates:response.diagnostic_gates&&typeof response.diagnostic_gates==="object"?response.diagnostic_gates:null};
-   throw error;
+export function validateOperaDiagnosticResponse(response,correlationId,orientation="north_first"){
+ if(!ORIENTATIONS.has(orientation))throw new TypeError("Ungültige OPERA-Orientierung");
+ if(response?.status!=="UNVERIFIED_DEV_PREVIEW"){
+   const error=new Error("OPERA-Vorschau gesperrt: "+String(response?.block_reason||response?.status||"keine Antwort").slice(0,110));
+   error.code="opera_preview_blocked";throw error;
  }
- if(!source||source.provider_id!=="opera"||source.product_id!=="RATE"
-   ||source.diagnostic!==true||response.provider_id!=="opera"
-   ||response.product_id!=="RATE"||response.correlation_id!==correlationId
-   ||response.status!=="diagnostic_unverified"||response.diagnostic_only!==true
-   ||response.raster_approved!==false||response.block_reason!=="scientific_evidence_missing"
+ const layer=response?.layers?.[0];
+ if(response.preview_only!==true||response.raster_approved!==false
+   ||response.scientific_status!=="UNVERIFIED / ENTWICKLUNGSVORSCHAU"
+   ||response.preview_orientation!==orientation||response.correlation_id!==correlationId
+   ||response.cache_policy!=="no-store"||response.max_age_seconds!==900
    ||!Array.isArray(response.layers)||response.layers.length!==1
-   ||!Array.isArray(response.tile_urls)||response.tile_urls.length!==1)
-   throw new TypeError("OPERA diagnostic authorization or contract rejected");
- const layer=response.layers[0];
- if(layer.scientific_status!=="UNVERIFIED_DIAGNOSTIC"||layer.product_id!=="RATE"
-   ||layer.provider_id!=="opera"||layer.render_mode!=="raster_tile"
-   ||layer.unit!=="mm/h"||layer.tile_url!==response.tile_urls[0]
-   ||!TEMPLATE.test(layer.tile_url))
-   throw new TypeError("Unverified OPERA tile metadata rejected");
- return Object.freeze({template:layer.tile_url,notice:NOTICE,validAt:response.valid_at});
+   ||!Array.isArray(response.tile_urls)||response.tile_urls.length!==1
+   ||layer?.provider_id!=="opera"||layer?.product_id!=="RATE"
+   ||layer?.render_mode!=="raster_tile"||layer?.tile_format!=="image/png"
+   ||layer?.orientation_hypothesis!==orientation||layer?.quality_status!=="UNVERIFIED"
+   ||layer?.nodata_handling!=="transparent_alpha_zero"
+   ||layer?.tile_url!==response.tile_urls[0]||!TEMPLATE.test(layer.tile_url)
+   ||!layer.tile_url.includes("/"+orientation+"/"))
+   throw new TypeError("OPERA-Vorschauvertrag abgelehnt");
+ return Object.freeze({template:layer.tile_url,notice:NOTICE,validAt:response.valid_at,
+   source:"opera/RATE",orientation,scientificStatus:response.scientific_status});
 }
 
 export function operaDiagnosticTileUrl(template,{z,x,y}){
@@ -56,7 +50,7 @@ export async function fetchOperaDiagnosticPng({template,tile,token,fetchImpl=fet
    credentials:"omit",cache:"no-store",redirect:"error",signal
  });
  if(!response.ok||response.headers.get("content-type")?.split(";")[0].trim()!=="image/png"
-   ||response.headers.get("x-weatherrouter-scientific-status")!=="unverified-diagnostic"){
+   ||!String(response.headers.get("x-weatherrouter-scientific-status")||"").toLowerCase().includes("unverified")){
    const error=new Error("OPERA diagnostic HTTP authorization or response rejected");
    error.httpStatus=Number.isInteger(response.status)?response.status:0;
    throw error;
@@ -73,9 +67,10 @@ export async function fetchOperaDiagnosticPng({template,tile,token,fetchImpl=fet
 }
 
 /* Temporary controlled diagnostic pane; never shares V1/V2 tile caches. */
-export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
+export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,orientation="north_first",opacity=0.7,
  accessToken,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
- const approved=validateOperaDiagnosticResponse(response,correlationId);
+ const approved=validateOperaDiagnosticResponse(response,correlationId,orientation);
+ if(!Number.isFinite(opacity)||opacity<0||opacity>1)throw new RangeError("Ungültige Transparenz");
  if(!Leaflet?.GridLayer?.extend||!map?.addLayer||typeof accessToken!=="string")
    throw new TypeError("Diagnostic map and access token required");
  let disposed=false;
@@ -88,7 +83,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
  const updateStatus=()=>{
    if(disposed)return;
    const age=Math.max(0,Math.floor((Date.now()-validMs)/60000));
-   watermark.textContent="OPERA · UNGEPRÜFT · "+age+" Min. · "+(
+   watermark.textContent="OPERA · "+approved.orientation+" · "+approved.validAt+" UTC · UNGEPRÜFT · "+age+" Min. · "+(
       metrics.loaded?"PNG geladen: "+metrics.loaded:
       metrics.requested>metrics.failed?"Kacheln werden geladen":
       metrics.failed?"Keine gültigen Kacheln":"Aktiv");
@@ -118,7 +113,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      return image;
    }
  });
- const layer=new Pane({tileSize:256,opacity:0.7,updateWhenIdle:true});
+ const layer=new Pane({tileSize:256,opacity,updateWhenIdle:true});
  const watermark=documentRef.createElement("div");
  watermark.textContent=NOTICE;
  watermark.setAttribute("role","status");
@@ -139,24 +134,26 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,
      urls.clear();
      watermark.remove();
    }
- return {notice:NOTICE,layer,validAt:approved.validAt,metrics,close:closePane,
+ return {notice:NOTICE,layer,validAt:approved.validAt,orientation,metrics,close:closePane,
+   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");layer.setOpacity(value);},
    get active(){return !disposed;}};
 }
 
 /** Explicit single-use diagnostic request; never activates normal precipitation. */
 export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,focus,
- accessToken,correlationId,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
+ accessToken,correlationId,orientation="north_first",opacity=0.7,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
  if(typeof callWS!=="function"||typeof correlationId!=="string"||!correlationId)
    throw new TypeError("Authorized explicit diagnostic request required");
  const request=buildRasterMosaicV2Request({
    viewport,focus,correlationId,maxLayers:1,maxTileRequests:16,
    maxDataAgeSeconds:900
  });
- request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true};
+ if(!ORIENTATIONS.has(orientation))throw new TypeError("Ungültige OPERA-Orientierung");
+ request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true,preview_orientation:orientation};
  const response=await callWS(request);
- const ready=validateOperaDiagnosticResponse(response,correlationId);
+ const ready=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!ready)throw new Error("Invalid diagnostic authorization");
  return mountOperaDiagnosticPane({
-   Leaflet,map,response,correlationId,accessToken,fetchImpl,documentRef,URLRef
+   Leaflet,map,response,correlationId,orientation,opacity,accessToken,fetchImpl,documentRef,URLRef
  });
 }
