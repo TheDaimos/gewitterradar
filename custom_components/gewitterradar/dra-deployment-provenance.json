@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.106",
-  "build": "V4.11.106-DEV-2026-10-22",
-  "runtimeRevision": "411106r1",
-  "moduleSetId": "E411-106A1",
+  "productVersion": "4.11.115",
+  "build": "V4.11.115-DEV-2026-10-27",
+  "runtimeRevision": "411115r1",
+  "moduleSetId": "E411-115A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WL-CLOUD-BALANCED-01 V4.11.106 DEV: bestehendes Raster-Labor auf aktive Wolken- und geeignete Wind-Rasterebenen erweitert; Niederschlagsprofile, WeatherRouter, V1/V2 und UTC unveraendert; keine DRA-Installation, keine HA-REAL- oder PROD-Freigabe.",
+    "purpose": "GR OPERA VIS-07 V4.11.115 DEV: DRA BUILD_VERSION und Auslieferungskennungen synchronisiert; keine OPERA-Freigabe oder HA-Realabnahme.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
