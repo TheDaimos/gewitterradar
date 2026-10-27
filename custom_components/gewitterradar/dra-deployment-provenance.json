@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.116",
-  "build": "V4.11.116-DEV-2026-10-27",
-  "runtimeRevision": "411116r1",
-  "moduleSetId": "E411-116A1",
+  "productVersion": "4.11.117",
+  "build": "V4.11.117-DEV-2026-10-27",
+  "runtimeRevision": "411117r1",
+  "moduleSetId": "E411-117A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR OPERA VIS-08: fehlende Modulversionsynchronisierung weather.consumer-client beheben. Keine OPERA-Freigabe.",
+    "purpose": "VIS-09: veralteten fixierten Import-Cache-Buster fuer WeatherRouter Consumer auf aktuelle Runtime revidiert; keine OPERA-Freigabe.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
