@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411112r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411113r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.160",
+    "version": "1.2.161",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -385,7 +385,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.13",
+    "version": "1.2.14",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
