@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411115r1";
-/* Gewitterradar Card V4.11.115 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=411116r1";
+/* Gewitterradar Card V4.11.116 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */

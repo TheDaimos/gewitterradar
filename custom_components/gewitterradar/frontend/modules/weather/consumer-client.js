@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.12',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.14',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
