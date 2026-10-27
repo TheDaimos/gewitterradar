@@ -114,9 +114,9 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      return image;
    }
  });
- const layer=new Pane({tileSize:256,opacity:0,updateWhenIdle:true});
- layer.on("loading",()=>{if(!disposed)layer.setOpacity(0);});
- layer.on("load",()=>{if(!disposed&&metrics.loaded>0)layer.setOpacity(opacity);});
+ // Previously loaded tiles remain visible during zoom transitions.
+ // Each individual tile remains hidden until its image onload succeeds.
+ const layer=new Pane({tileSize:256,opacity,updateWhenIdle:true});
  const watermark=documentRef.createElement("div");
  watermark.textContent=NOTICE;
  watermark.setAttribute("role","status");
@@ -138,7 +138,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      watermark.remove();
    }
  return {notice:NOTICE,layer,validAt:approved.validAt,orientation,metrics,close:closePane,
-   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;if(metrics.pending===0&&metrics.loaded>0)layer.setOpacity(value);},
+   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;layer.setOpacity(value);},
    get active(){return !disposed;}};
 }
 
