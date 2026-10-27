@@ -76,7 +76,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  let disposed=false;
  const controllers=new Set();
  const urls=new Set();
- const metrics={requested:0,loaded:0,failed:0,mounted:0,http_statuses:{},last_error:null};
+ const metrics={requested:0,loaded:0,failed:0,mounted:0,pending:0,http_statuses:{},last_error:null};
  const validMs=Date.parse(approved.validAt);
  if(!Number.isFinite(validMs)||validMs>Date.now()||Date.now()-validMs>=900000)
    throw new Error("opera_diagnostic_expired");
@@ -85,7 +85,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
    const age=Math.max(0,Math.floor((Date.now()-validMs)/60000));
    watermark.textContent="OPERA · "+approved.orientation+" · "+approved.validAt+" UTC · UNGEPRÜFT · "+age+" Min. · "+(
       metrics.loaded?"PNG geladen: "+metrics.loaded:
-      metrics.requested>metrics.failed?"Kacheln werden geladen":
+      metrics.pending>0?"Lade OPERA: "+metrics.loaded+" fertig · "+metrics.pending+" offen":
       metrics.failed?"Keine gültigen Kacheln":"Aktiv");
  };
  const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+900000-Date.now()));
@@ -93,11 +93,12 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
      const image=documentRef.createElement("img");
-     image.alt=NOTICE;
+     image.alt="";
+      image.style.visibility="hidden";
      image.width=256;image.height=256;
      const controller=new AbortController();
      controllers.add(controller);
-     metrics.requested++;updateStatus();
+     metrics.requested++;metrics.pending++;updateStatus();
      fetchOperaDiagnosticPng({
        template:approved.template,tile:coords,token:accessToken,
        fetchImpl,signal:controller.signal
@@ -106,9 +107,9 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
        const objectUrl=URLRef.createObjectURL(blob);
        urls.add(objectUrl);
        image.src=objectUrl;
-       image.onload=()=>{metrics.loaded++;metrics.mounted++;updateStatus();done(null,image);};
-       image.onerror=()=>{metrics.failed++;metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
-     }).catch(error=>{if(!disposed){metrics.failed++;if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
+       image.onload=()=>{metrics.loaded++;metrics.mounted++;metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
+       image.onerror=()=>{metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
+     }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
        .finally(()=>controllers.delete(controller));
      return image;
    }
