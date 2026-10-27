@@ -106,15 +106,17 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
        if(disposed||controller.signal.aborted)return;
        const objectUrl=URLRef.createObjectURL(blob);
        urls.add(objectUrl);
-       image.src=objectUrl;
        image.onload=()=>{metrics.loaded++;metrics.mounted++;metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
        image.onerror=()=>{metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
+       image.src=objectUrl;
      }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
        .finally(()=>controllers.delete(controller));
      return image;
    }
  });
- const layer=new Pane({tileSize:256,opacity,updateWhenIdle:true});
+ const layer=new Pane({tileSize:256,opacity:0,updateWhenIdle:true});
+ layer.on("loading",()=>{if(!disposed)layer.setOpacity(0);});
+ layer.on("load",()=>{if(!disposed&&metrics.loaded>0)layer.setOpacity(opacity);});
  const watermark=documentRef.createElement("div");
  watermark.textContent=NOTICE;
  watermark.setAttribute("role","status");
