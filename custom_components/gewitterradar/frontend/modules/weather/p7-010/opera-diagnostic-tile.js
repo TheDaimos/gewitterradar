@@ -136,7 +136,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      watermark.remove();
    }
  return {notice:NOTICE,layer,validAt:approved.validAt,orientation,metrics,close:closePane,
-   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");layer.setOpacity(value);},
+   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;if(metrics.pending===0&&metrics.loaded>0)layer.setOpacity(value);},
    get active(){return !disposed;}};
 }
 
