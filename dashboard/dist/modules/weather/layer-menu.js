@@ -1,10 +1,10 @@
 import { defineModule } from "../core/runtime.js?v=41109r1";
-import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=41109r1";
+import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=411118r1";
 import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
 import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.7",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.8",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
