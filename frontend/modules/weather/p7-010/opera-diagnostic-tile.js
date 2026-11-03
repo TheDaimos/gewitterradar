@@ -157,6 +157,21 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
  const response=await callWS(request);
  const ready=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!ready)throw new Error("Invalid diagnostic authorization");
+ // Never fan out PNG requests with a missing, expired or revoked HA token:
+ // an invalid Bearer token is counted as a failed login by HA's IP-ban policy.
+ // A single same-origin authentication probe must succeed before GridLayer
+ // can schedule any of its parallel requests.
+ if(typeof accessToken!=="string"||!accessToken)
+   throw new Error("opera_diagnostic_missing_auth");
+ const authProbe=await fetchImpl("/api/",{
+   method:"GET",headers:{Authorization:"Bearer "+accessToken,Accept:"application/json"},
+   credentials:"omit",cache:"no-store",redirect:"error"
+ });
+ if(!authProbe.ok){
+   const error=new Error("opera_diagnostic_auth_preflight_failed");
+   error.httpStatus=authProbe.status;
+   throw error;
+ }
  return mountOperaDiagnosticPane({
    Leaflet,map,response,correlationId,orientation,opacity,accessToken,fetchImpl,documentRef,URLRef
  });
