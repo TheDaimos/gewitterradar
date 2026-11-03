@@ -426,8 +426,17 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',valid_at:next.validAt,metrics:next.metrics,orientation:'north_first',at:new Date().toISOString()};
           show('OPERA · north_first · Zyklus automatisch übernommen');
         }catch(error){
-          store.operaDiagnostic={status:'waiting_for_wr',reason:String(error?.message||error).slice(0,100),at:new Date().toISOString()};
-          show('OPERA aktiv · Aktualisierung ausstehend');
+          const reason=String(error?.message||error).slice(0,100);
+          if(/auth_preflight|missing_auth|authentication|401|403/i.test(reason)){
+            this.__operaDiagnosticEnabled=false;
+            clearInterval(this.__operaDiagnosticTimer);this.__operaDiagnosticTimer=null;
+            this.__operaDiagnosticPane?.close();this.__operaDiagnosticPane=null;
+            store.operaDiagnostic={status:'auth_blocked',reason,at:new Date().toISOString()};
+            show('OPERA gestoppt · HA-Anmeldung prüfen');
+          }else{
+            store.operaDiagnostic={status:'waiting_for_wr',reason,at:new Date().toISOString()};
+            show('OPERA aktiv · Aktualisierung ausstehend');
+          }
         }finally{this.__operaCyclePollRunning=false;this._weatherEngineDiagnosticRender?.();}
       },30000);
       store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',orientation,correlation_id:correlationId,
