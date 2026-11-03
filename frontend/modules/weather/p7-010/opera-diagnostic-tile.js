@@ -30,7 +30,7 @@ export function validateOperaDiagnosticResponse(response,correlationId,orientati
    ||!layer.tile_url.includes("/"+orientation+"/"))
    throw new TypeError("OPERA-Vorschauvertrag abgelehnt");
  return Object.freeze({template:layer.tile_url,notice:NOTICE,validAt:response.valid_at,
-   source:"opera/RATE",orientation,maxAgeSeconds:response.max_age_seconds,scientificStatus:response.scientific_status});
+   source:"opera/RATE",orientation,maxAgeSeconds:response.max_age_seconds,ageStatus:response.preview_age_status==="stale"?"stale":"current",scientificStatus:response.scientific_status});
 }
 
 export function operaDiagnosticTileUrl(template,{z,x,y}){
@@ -88,6 +88,14 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
       metrics.loaded?"PNG geladen: "+metrics.loaded:
       metrics.pending>0?"Lade OPERA: "+metrics.loaded+" fertig · "+metrics.pending+" offen":
       metrics.failed?"Keine gültigen Kacheln":"Aktiv");
+   if(approved.ageStatus==="stale"){
+     const warning=documentRef.createElement("span");
+     warning.textContent=" ⚠️ 🕒";
+     warning.title="OPERA Daten veraltet";
+     warning.setAttribute("aria-label","OPERA Daten veraltet");
+     warning.style.cssText="pointer-events:auto;cursor:help";
+     watermark.appendChild(warning);
+   }
  };
  const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+approved.maxAgeSeconds*1000-Date.now()));
  const ageRefresh=setInterval(()=>updateStatus(),30000);
