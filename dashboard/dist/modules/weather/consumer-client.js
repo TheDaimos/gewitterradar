@@ -419,9 +419,19 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
           if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
           const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411127r1');
+          const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
-            correlationId:id,orientation:'north_first',opacity:Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100,accessToken:freshToken});
-          if(!this.__operaDiagnosticEnabled){next.close();return;}
+            correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken});
+          // Stage replacement transparently until the new cycle has decoded PNGs.
+          // The existing pane remains bound to its own WR-authorized lifetime.
+          let ready=false;
+          try{ready=await next.waitUntilReady(15000);}catch(error){next.close();throw error;}
+          if(!this.__operaDiagnosticEnabled||!ready||!next.active){
+            next.close();
+            if(!ready)show('OPERA aktiv · Neue Kacheln noch nicht darstellbar');
+            return;
+          }
+          next.setOpacity(requestedOpacity);
           current?.close();this.__operaDiagnosticPane=next;
           store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',valid_at:next.validAt,metrics:next.metrics,orientation:'north_first',at:new Date().toISOString()};
           show('OPERA · north_first · Zyklus automatisch übernommen');
