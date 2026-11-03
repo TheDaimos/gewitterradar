@@ -171,7 +171,8 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
  });
  if(!authProbe.ok){
    const error=new Error("opera_diagnostic_auth_preflight_failed");
-   error.httpStatus=authProbe.status;
+   error.httpStatus=Number.isInteger(authProbe.status)?authProbe.status:0;
+   error.code="opera_auth_preflight_http_"+String(error.httpStatus);
    throw error;
  }
  return mountOperaDiagnosticPane({
