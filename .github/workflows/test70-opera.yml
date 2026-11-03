@@ -4,37 +4,67 @@ on:
     branches:
       - feature/test70-wr-authoritative-2026-11-03
     paths:
-      - 'scripts/test70-release-ci.py'
       - '.github/workflows/test70-opera.yml'
+      - 'scripts/test70-release-ci.py'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: test70-gr-promote-deploy-dev
+  cancel-in-progress: false
+
 jobs:
-  opera-release-candidate:
+  promote-verified-release:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout public test branch
+      - name: Checkout latest deploy/dev (preserve all existing fixes)
         uses: actions/checkout@v4
         with:
+          ref: deploy/dev
           persist-credentials: true
+          fetch-depth: 0
+      - name: Checkout public TEST70 preparation script separately
+        uses: actions/checkout@v4
+        with:
+          ref: feature/test70-wr-authoritative-2026-11-03
+          path: test70-ci-input
+          persist-credentials: false
       - name: Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Node 22
+      - name: Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Create, build and validate V4.11.121 candidate
-        run: python scripts/test70-release-ci.py
-      - name: Commit verified candidate on public TEST70 branch
+      - name: Validate base identity and working tree
+        shell: bash
         run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "deploy/dev"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path("custom_components/gewitterradar/manifest.json").read_text())["version"]=="0.25.29"
+          assert 'version:"4.11.120"' in Path("frontend/version.js").read_text()
+          assert 'version:"4.11.120"' in Path("scripts/build-frontend.mjs").read_text()
+          PY
+      - name: Prepare, build and verify GR 4.11.121 from current deploy/dev
+        run: python test70-ci-input/scripts/test70-release-ci.py
+      - name: Commit only tracked version/build files after successful verification
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -u
-          git diff --cached --quiet && { echo "No version changes"; exit 1; }
-          git commit -m "release(test70): Gewitterradar 4.11.121 DEV verified candidate"
-          git push origin HEAD:feature/test70-wr-authoritative-2026-11-03
+          test -n "$(git diff --cached --name-only)"
+          git diff --cached --check
+          git commit -m "release(test70): Gewitterradar 4.11.121 DEV validated on deploy/dev"
+          git push origin HEAD:deploy/dev
+      - name: Print verified release commit
+        run: git log -1 --format='%H %s'
