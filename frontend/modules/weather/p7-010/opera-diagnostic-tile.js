@@ -148,6 +148,17 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      watermark.remove();
    }
  return {notice:NOTICE,layer,validAt:approved.validAt,orientation,metrics,close:closePane,
+   // Rendering gate: never remove the previous WR-authorized layer merely
+   // because a new Leaflet layer was constructed. Wait for PNG onload.
+   async waitUntilReady(timeoutMs=15000){
+     const deadline=Date.now()+timeoutMs;
+     while(!disposed&&Date.now()<deadline){
+       if(authRejected)throw new Error("opera_diagnostic_auth_revoked");
+       if(metrics.loaded>0&&metrics.pending===0)return true;
+       await new Promise(resolve=>setTimeout(resolve,150));
+     }
+     return !disposed&&metrics.loaded>0;
+   },
    setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;layer.setOpacity(value);},
    get active(){return !disposed;}};
 }
