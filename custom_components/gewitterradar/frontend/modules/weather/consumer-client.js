@@ -416,6 +416,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(typeof auth?.refreshAccessToken==='function')await auth.refreshAccessToken();
           const freshToken=auth?.accessToken||this._hass?.auth?.data?.access_token;
           if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
+          const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
+          if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
           const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411125r1');
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
             correlationId:id,orientation:'north_first',opacity:Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100,accessToken:freshToken});
