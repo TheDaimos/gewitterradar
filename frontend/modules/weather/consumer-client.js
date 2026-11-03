@@ -377,7 +377,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411122r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411123r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
