@@ -75,6 +75,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
    throw new TypeError("Diagnostic map and access token required");
  let disposed=false;
  const controllers=new Set();
+ let authRejected=false;
  const urls=new Set();
  const metrics={requested:0,loaded:0,failed:0,mounted:0,pending:0,http_statuses:{},last_error:null};
  const validMs=Date.parse(approved.validAt);
@@ -93,6 +94,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
      const image=documentRef.createElement("img");
+     if(authRejected){done(new Error("opera_diagnostic_auth_revoked"),image);return image;}
      image.alt="";
       image.style.visibility="hidden";
      image.width=256;image.height=256;
@@ -109,7 +111,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
        image.onload=()=>{metrics.loaded++;metrics.mounted++;metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
        image.onerror=()=>{metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
        image.src=objectUrl;
-     }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
+     }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;if(error.httpStatus===401||error.httpStatus===403){authRejected=true;for(const pending of controllers)pending.abort();}}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
        .finally(()=>controllers.delete(controller));
      return image;
    }
