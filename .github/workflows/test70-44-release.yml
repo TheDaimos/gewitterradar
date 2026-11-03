@@ -1,0 +1,48 @@
+name: TEST70-44 fixed north_first GR release
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'scripts/test70-44-release-ci.py'
+      - '.github/workflows/test70-44-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: test70-44
+  cancel-in-progress: false
+jobs:
+  verified-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy/dev
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check fixed north orientation
+        run: |
+          ! grep -q 'weather-engine-opera-orientation' frontend/modules/weather/consumer-client.js
+          ! grep -q 'const ORIENTATIONS=new Set(\["north_first","south_first"\])' frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          grep -q "const orientation='north_first'" frontend/modules/weather/consumer-client.js
+      - name: Build, integrity and regression
+        run: python scripts/test70-44-release-ci.py
+      - name: Check modified sources
+        run: |
+          node --check frontend/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          git diff --check
+      - name: Publish verified DEV release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git diff --cached --quiet && exit 1
+          git commit -m "release(test70-44): GR 4.11.125 DEV fixed north_first"
+          git push origin HEAD:deploy/dev
