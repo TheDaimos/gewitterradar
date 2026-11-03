@@ -359,6 +359,13 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     // HA frontend exposes authenticated WebSocket connection options; the legacy
     // hass.auth.data location is not guaranteed in custom-card runtime.
     const connectionAuth=this._hass?.connection?.options?.auth;
+    // The WebSocket can stay connected while its HTTP Bearer token expires.
+    // Ask HA's auth object for a refreshed token BEFORE any HTTP requests.
+    // A refresh failure must fail closed, never trigger a tile-request burst.
+    if(typeof connectionAuth?.refreshAccessToken==="function"){
+      try{await connectionAuth.refreshAccessToken();}
+      catch(_error){this.__operaRequestRunning=false;show('OPERA: HA-Anmeldung konnte nicht erneuert werden');return;}
+    }
     const token=connectionAuth?.accessToken || this._hass?.auth?.data?.access_token;
     const viewport=this._weatherRadarViewport?.();
     if(!token||!viewport?.focus||!viewport?.context||!this._map||typeof this._hass?.callWS!=='function'){
