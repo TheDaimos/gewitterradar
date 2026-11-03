@@ -347,9 +347,12 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     const store=this._weatherEngineTraceStore();
     const status=this.shadow?.getElementById('weather-engine-opera-result');
     const show=value=>{if(status)status.textContent=value;};
-    if(this.__operaDiagnosticPane?.active===false)this.__operaDiagnosticPane=null;
-    if(this.__operaDiagnosticPane){
-      this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;
+    if(this.__operaDiagnosticEnabled){
+      this.__operaDiagnosticEnabled=false;
+      if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
+      this.__operaDiagnosticTimer=null;
+      this.__operaDiagnosticPane?.close();
+      this.__operaDiagnosticPane=null;
       store.operaDiagnostic={status:'closed',at:new Date().toISOString(),scientific_approval:false};
       show('OPERA-Testdarstellung entfernt');this._weatherEngineDiagnosticRender?.();return;
     }
@@ -384,6 +387,47 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
         accessToken:token,correlationId,orientation,opacity
       });
       this.__operaDiagnosticPane=pane;
+      this.__operaDiagnosticEnabled=true;
+      if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
+      // Periodic WS requests ask WeatherRouter for a new authorized diagnostic
+      // frame. GR never selects an age limit or authorizes a stale frame.
+      this.__operaDiagnosticTimer=setInterval(async()=>{
+        if(!this.__operaDiagnosticEnabled||this.__operaCyclePollRunning)return;
+        this.__operaCyclePollRunning=true;
+        try{
+          const current=this.__operaDiagnosticPane;
+          const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=41198r1');
+          const vp=this._weatherRadarViewport?.();
+          if(!vp?.context||!vp?.focus||!this._map||typeof this._hass?.callWS!=='function')return;
+          const id='gr-opera-cycle-'+Date.now().toString(36);
+          const req=buildRasterMosaicV2Request({viewport:vp.context,focus:vp.focus,correlationId:id,maxLayers:1,maxTileRequests:16});
+          req.source_request={provider_id:'opera',product_id:'RATE',diagnostic:true,preview_orientation:'north_first'};
+          delete req.time.max_data_age_seconds;
+          const response=await this._hass.callWS(req);
+          if(!this.__operaDiagnosticEnabled)return;
+          if(response?.status!=='UNVERIFIED_DEV_PREVIEW'){
+            current?.close();this.__operaDiagnosticPane=null;
+            store.operaDiagnostic={status:'waiting_for_wr',reason:String(response?.block_reason||response?.status||'unavailable').slice(0,100),at:new Date().toISOString()};
+            show('OPERA aktiv · Warte auf WR-Freigabe');
+            return;
+          }
+          if(current?.active&&current.validAt===response.valid_at)return;
+          const auth=this._hass?.connection?.options?.auth;
+          if(typeof auth?.refreshAccessToken==='function')await auth.refreshAccessToken();
+          const freshToken=auth?.accessToken||this._hass?.auth?.data?.access_token;
+          if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
+          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411125r1');
+          const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
+            correlationId:id,orientation:'north_first',opacity:Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100,accessToken:freshToken});
+          if(!this.__operaDiagnosticEnabled){next.close();return;}
+          current?.close();this.__operaDiagnosticPane=next;
+          store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',valid_at:next.validAt,metrics:next.metrics,orientation:'north_first',at:new Date().toISOString()};
+          show('OPERA · north_first · Zyklus automatisch übernommen');
+        }catch(error){
+          store.operaDiagnostic={status:'waiting_for_wr',reason:String(error?.message||error).slice(0,100),at:new Date().toISOString()};
+          show('OPERA aktiv · Aktualisierung ausstehend');
+        }finally{this.__operaCyclePollRunning=false;this._weatherEngineDiagnosticRender?.();}
+      },30000);
       store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',orientation,correlation_id:correlationId,
         at:new Date().toISOString(),scientific_approval:false,notice:pane.notice,
         valid_at:pane.validAt||null,metrics:pane.metrics||null};
