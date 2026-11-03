@@ -1,0 +1,47 @@
+name: TEST70-42 GR 4.11.124 unique DRA release
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'scripts/test70-42-release-ci.py'
+      - '.github/workflows/test70-42-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: test70-42-gr-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy/dev
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify base
+        run: |
+          grep -q 'version:"4.11.123"' frontend/version.js
+          grep -q '"version": "0.25.32"' custom_components/gewitterradar/manifest.json
+      - name: Build and run regression
+        run: python scripts/test70-42-release-ci.py
+      - name: Check syntax and clean diffs
+        run: |
+          node --check frontend/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          git diff --check
+      - name: Publish verified version to public deploy/dev
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git diff --cached --quiet && exit 1
+          git commit -m "release(test70-42): Gewitterradar 4.11.124 DEV DRA version identity"
+          git push origin HEAD:deploy/dev
