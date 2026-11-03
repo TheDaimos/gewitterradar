@@ -1,0 +1,26 @@
+name: TEST70 OPERA WR-authoritative freshness
+on:
+  push:
+    branches:
+      - feature/test70-wr-authoritative-2026-11-03
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  opera-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: TEST70 OPERA WR-authoritative freshness contracts
+        run: node --test tests/test_gr_opera_wr_authoritative_freshness.mjs
+      - name: OPERA adapter JavaScript syntax
+        run: |
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          node --check custom_components/gewitterradar/frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          node --check dashboard/dist/modules/weather/p7-010/opera-diagnostic-tile.js
