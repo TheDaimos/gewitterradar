@@ -19,7 +19,7 @@ export function validateOperaDiagnosticResponse(response,correlationId,orientati
  if(response.preview_only!==true||response.raster_approved!==false
    ||response.scientific_status!=="UNVERIFIED / ENTWICKLUNGSVORSCHAU"
    ||response.preview_orientation!==orientation||response.correlation_id!==correlationId
-   ||response.cache_policy!=="no-store"||response.max_age_seconds!==900
+   ||response.cache_policy!=="no-store"||(!Number.isInteger(response.max_age_seconds)||response.max_age_seconds<900||response.max_age_seconds>3600)
    ||!Array.isArray(response.layers)||response.layers.length!==1
    ||!Array.isArray(response.tile_urls)||response.tile_urls.length!==1
    ||layer?.provider_id!=="opera"||layer?.product_id!=="RATE"
@@ -30,7 +30,7 @@ export function validateOperaDiagnosticResponse(response,correlationId,orientati
    ||!layer.tile_url.includes("/"+orientation+"/"))
    throw new TypeError("OPERA-Vorschauvertrag abgelehnt");
  return Object.freeze({template:layer.tile_url,notice:NOTICE,validAt:response.valid_at,
-   source:"opera/RATE",orientation,scientificStatus:response.scientific_status});
+   source:"opera/RATE",orientation,maxAgeSeconds:response.max_age_seconds,scientificStatus:response.scientific_status});
 }
 
 export function operaDiagnosticTileUrl(template,{z,x,y}){
@@ -78,7 +78,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const urls=new Set();
  const metrics={requested:0,loaded:0,failed:0,mounted:0,pending:0,http_statuses:{},last_error:null};
  const validMs=Date.parse(approved.validAt);
- if(!Number.isFinite(validMs)||validMs>Date.now()||Date.now()-validMs>=900000)
+ if(!Number.isFinite(validMs)||validMs>Date.now()||Date.now()-validMs>=approved.maxAgeSeconds*1000)
    throw new Error("opera_diagnostic_expired");
  const updateStatus=()=>{
    if(disposed)return;
@@ -88,7 +88,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
       metrics.pending>0?"Lade OPERA: "+metrics.loaded+" fertig · "+metrics.pending+" offen":
       metrics.failed?"Keine gültigen Kacheln":"Aktiv");
  };
- const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+900000-Date.now()));
+ const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+approved.maxAgeSeconds*1000-Date.now()));
  const ageRefresh=setInterval(()=>updateStatus(),30000);
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
@@ -148,11 +148,12 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
  if(typeof callWS!=="function"||typeof correlationId!=="string"||!correlationId)
    throw new TypeError("Authorized explicit diagnostic request required");
  const request=buildRasterMosaicV2Request({
-   viewport,focus,correlationId,maxLayers:1,maxTileRequests:16,
-   maxDataAgeSeconds:900
+   viewport,focus,correlationId,maxLayers:1,maxTileRequests:16
  });
  if(!ORIENTATIONS.has(orientation))throw new TypeError("Ungültige OPERA-Orientierung");
  request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true,preview_orientation:orientation};
+ // Explicit diagnostic contract: WeatherRouter alone owns freshness policy.
+ delete request.time.max_data_age_seconds;
  const response=await callWS(request);
  const ready=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!ready)throw new Error("Invalid diagnostic authorization");
