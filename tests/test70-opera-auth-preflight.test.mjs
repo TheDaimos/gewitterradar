@@ -15,4 +15,6 @@ test("OPERA tile fanout is gated by one HA bearer preflight on all shipped adapt
  assert.match(s,/if\(!authProbe\.ok\)/);
  assert.ok(s.indexOf("if(!authProbe.ok)")<s.indexOf("return mountOperaDiagnosticPane({"),"must gate before grid");
  assert.match(s,/opera_diagnostic_auth_preflight_failed/);
+ assert.match(s,/if\(error\.httpStatus===401\|\|error\.httpStatus===403\)/);
+ assert.match(s,/authRejected=true;for\(const pending of controllers\)pending\.abort\(\)/);
 });
