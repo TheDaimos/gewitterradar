@@ -216,7 +216,6 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
  if(!ORIENTATIONS.has(orientation))throw new TypeError("Ungültige OPERA-Orientierung");
  request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true,preview_orientation:orientation};
  // Explicit diagnostic contract: WeatherRouter alone owns freshness policy.
- delete request.time.max_data_age_seconds;
  const response=await callWS(request);
  const ready=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!ready)throw new Error("Invalid diagnostic authorization");
