@@ -965,7 +965,7 @@ _weatherEngineDiagnosticPayload(){
       comparisonLabel.textContent=!comparison?"Noch kein Vergleich durchgeführt":
         "Vergleich: "+comparison.status+
         "\\n"+(comparison.requests||[]).map(item=>
-          (item.max_background_age_seconds===43200?"15 Min. Radar + 12 Std. globale Satellitengrundlage":"Nur 15 Min. Radar")+
+          (item.allow_older_satellite_background===true?"WR-Gültigkeit · Satellitengrundlage erlaubt":"WR-Gültigkeit · ohne ältere Satellitengrundlage")+
           ": "+item.status+" · "+item.layer_count+" Quellen · "+(item.duration_ms??"…")+" ms"+
           (item.error_code?" · Fehler: "+item.error_code:"")+
           "\\nKennung: "+item.correlation_id+
