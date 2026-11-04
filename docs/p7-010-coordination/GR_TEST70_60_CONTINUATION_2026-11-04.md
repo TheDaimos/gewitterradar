@@ -17,3 +17,8 @@ Der öffentliche GR-Integrationslauf `41873918008` für `a8e69eef...` war bei de
 GR 4.11.136 noch kein auf VM109 realgetesteter Release; WR 0.10.285 ebenso nicht. Noch erforderlich: relevante CI auf demselben Commit, WR WSL2/Python-Gesamtregression, Version-/Asset-/DRA-Parität, danach echter HA-DEV-VM109-Test mit Desktop, Android und iPad, OPERA/DWD-Mosaik, Retry/Abbruch/401/403, Framewechsel und Seamless Handover. Keine Installationsfreigabe ohne diese Gates.
 
 **Keine privaten GitHub Actions; nur öffentliche GitHub Actions im Public-Repository.** Exporte ausschließlich `TheDaimos/Project-Log-And-Export@main`. PROD VM101 bleibt unangetastet. TEST69 ist abgeschlossen.
+
+## TEST70-61 – CI-Nachkorrektur
+Der Public-Frontend-Lauf `41873918171` deckte einen SyntaxError (`Invalid regular expression flags`) im neuen About-Identitäts-Test auf. Dieser Defekt wurde mit `227368c17074b0dfcc30260c0e862fafb5093c27` korrigiert. Die neue öffentliche Prüfserie `41874806297` (Shared Frontend), `41874806399` (Settings) und `41874806309` (HA-Integration) lief bei der letzten Abfrage noch; die Resultate sind daher nicht als bestanden behauptet. Die davor erfolgreich nachgewiesene HA-Integration des Commits `25bd743c...`: `41874341179` SUCCESS. Die isolierte P7-010-Abnahme für `a8e69eef...` wurde abgebrochen und ist **kein PASS**.
+
+Offene Gates unverändert: CI-Gesamterfolg auf identischem Code-Commit, WR-Python-Regressionssuite, Release-/Asset-/DRA-Parität, HA-DEV VM109 Live-Tests; **keine Installationsfreigabe**.
