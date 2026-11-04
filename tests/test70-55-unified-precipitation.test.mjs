@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
-test('GR unified precipitation switch requests and tears down authorised OPERA preview',()=>{
+test('GR precipitation delegates provider choice to WR and does not overlay OPERA',()=>{
  const p=read('frontend/modules/weather/precipitation-layer.js');
  assert.match(p,/this\.__grPrecipitationWantsOpera=state\.enabled/);
  assert.match(p,/if\(this\.__operaDiagnosticEnabled\)this\._weatherEngineOperaDiagnosticToggle/);
