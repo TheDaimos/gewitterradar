@@ -282,9 +282,8 @@ export function weatherRadarNeedsConsentDetach(state,now=Date.now()){
   const a=state.lastReady?.answer;
   if(!a)return false;
   // A revoked age exception also invalidates V1 imagery without satellite labels.
-  const age=a.freshness?.age_seconds;
-  return typeof age!=="number"||!Number.isFinite(age)||age<0||
-    age+Math.max(0,(now-(state.lastReady?.at??now))/1000)>900;
+  // V1 validity is a WR decision, never a local GR age cutoff.
+  return false;
 }
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
@@ -1410,21 +1409,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const payload=answer?.resource?.payload;
     if(!payload?.tile_url)return false;
-    // Fail closed for V1: radar is current for 900 s, older satellite
-    // estimates require an explicit opt-in and positive semantic evidence.
-    const sem=answer?.resource?.semantics||{};
-    const age=answer?.freshness?.age_seconds;
-    const currentAge=typeof age==="number"&&Number.isFinite(age)&&age>=0&&age<=900;
-    const permittedSatellite=typeof age==="number"&&Number.isFinite(age)&&age>=0&&
-      age<=BACKGROUND_MAX_AGE_SECONDS&&state.allowOlderSatelliteBackground===true&&
-      sem.observation_kind==="estimate"&&
-      String(sem.measurement_method||"").includes("satellite");
-    if(!currentAge&&!permittedSatellite){
-      this._weatherEngineMonitorEvent?.("v1_raster_age_rejected",{
-        older_background_opt_in:state.allowOlderSatelliteBackground,
-        age_seconds:Number.isFinite(age)?age:null});
-      return false;
-    }
+    // WR already selected and authorized the V1 radar resource.
+    // GR does not independently reject based on a fixed age.
     const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
       &&this._weatherRadarViewport()?.signature===viewport.signature
       &&(typeof document==="undefined"||document.visibilityState!=="hidden");
