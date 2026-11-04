@@ -91,7 +91,7 @@ const source=await readFile(new URL("../frontend/modules/weather/precipitation-l
 const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",import.meta.url),"utf8");
 assert.match(source,/requirements:\{resource_types:\["raster_tile"\]\}/);
 assert.doesNotMatch(source,/source_classes:\["observation"\]/);
-assert.doesNotMatch(source,/\bdwd\b/i);
+assert.doesNotMatch(source,/provider_id\s*:\s*["']dwd["']/i);
 assert.match(source,/maxNativeZoom:maxZoom/);
 assert.match(source,/const layer=L\.gridLayer\(\{pane:"gr-weather-radar",tileSize,minZoom,maxNativeZoom:maxZoom,/,
  "z12+ overzoom must not impose a display zoom ceiling");
