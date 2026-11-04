@@ -42,7 +42,7 @@ export function epsg3857TileBounds(tile){
  * location that was never authorized or has invalid geography.
  */
 export function rasterTileUrl(template,tile){
- if(typeof template!=="string"||!template.startsWith("https://"))
+ if(typeof template!=="string"||!(template.startsWith("https://")||\n    /^\\/api\\/weather_router\\/opera_tile\\/RATE\\/20\\d{6}T\\d{6}Z\\/\\{z\\}\\/\\{x\\}\\/\\{y\\}\\.png$/.test(template)))
    throw new TypeError("Expected a public HTTPS raster tile template");
  const canonical=canonicalRasterTile(tile);
  const valid=new Set(["z","x","y","bbox-epsg-3857"]);
