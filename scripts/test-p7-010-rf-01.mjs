@@ -20,7 +20,7 @@ const layer=(source_id,scope,coverage)=>({
   semantics:{quantity:"precipitation_rate",unit:"mm/h",
     observation_kind:"observation",measurement_method:"radar"},
   times:{valid_at:"2026-10-18T12:00:00Z",retrieved_at:"2026-10-18T12:00:00Z",
-    reference_delta_seconds:0,age_seconds:0}
+    reference_delta_seconds:0,age_seconds:0,valid_until:"2026-10-18T12:30:00Z"}
 });
 const regional=layer("dwd/radar_precipitation","bbox",dwd);
 const foundation=layer("nasa_gibs/satellite_precipitation_imerg_30min","bbox",full);
@@ -96,18 +96,20 @@ const cuba={west:-82,east:-75,south:19,north:24};
 const now=Date.now();
 const oldDwd={
  layer:{},v2SnapshotAt:now,allowOlderSatelliteBackground:false,
- v2Snapshot:{layers:[{...regional,times:{age_seconds:110}}]}
+ v2Snapshot:{layers:[{...regional,times:{...regional.times,age_seconds:110,valid_until:new Date(now+60000).toISOString()}}]}
 };
 assert.equal(weatherRadarActiveCoverage(oldDwd,cuba,5,now).fraction,0);
 assert.ok(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction>0);
 oldDwd.v2Snapshot.layers[0].times.age_seconds=1000;
-assert.equal(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction,0);
+assert.ok(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction>0,"WR valid_until, not 900 seconds, governs display");
+oldDwd.v2Snapshot.layers[0].times.valid_until=new Date(now-1000).toISOString();
+assert.equal(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction,0,"explicit WR deadline is respected");
 const oldSatellite={
  layer:{},v2SnapshotAt:now,allowOlderSatelliteBackground:false,
- v2Snapshot:{layers:[{...foundation,times:{age_seconds:25500},
+ v2Snapshot:{layers:[{...foundation,times:{...foundation.times,age_seconds:25500,valid_until:new Date(now+60000).toISOString()},
  freshness_class:"older_background"}]}
 };
-assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,0);
+assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,1,"GR cannot override the WR-authorized older background");
 oldSatellite.allowOlderSatelliteBackground=true;
 assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,1);
 
