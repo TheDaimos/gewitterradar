@@ -91,7 +91,7 @@ assert.equal(decideV1TileStage({loaded:0,failed:0,expected_empty:20}).accepted,f
 assert.equal(decideV1TileStage({loaded:15,failed:0}).partial,false);
 
 // GR-RF-01-10/11/12: old regional sources cannot migrate to Cuba or
-// bypass 900-second radar freshness or explicit older satellite consent.
+// impose client-side age rules beyond WR valid_until.
 const cuba={west:-82,east:-75,south:19,north:24};
 const now=Date.now();
 const oldDwd={
@@ -129,7 +129,7 @@ globalThis.document={createElement:kind=>{
    drawImage:(...args)=>drawnV1.push(args)})};
  const img={style:{},setAttribute(){}};
  Object.defineProperty(img,"src",{set(){queueMicrotask(()=>{
-    if(failImage)img.onerror?.();else img.onload?.();
+    if(failImage){failImage=false;img.onerror?.();}else img.onload?.();
  })}});
  return img;
 }};
@@ -147,13 +147,13 @@ try{
  assert.ok(drawnV1.length>0);
  failImage=true;
  const failed=await new Promise(resolve=>v1.createTile(selected,(error,tile)=>resolve({error,tile})));
- assert.ok(failed.error);
- assert.equal(v1.__grRadarTileMetrics.failed,1);
- assert.ok(observed.some(e=>e.name==="v1_tile_error"
-   &&e.detail.reason==="image_load_failed_unclassified"));
- assert.equal(v1.__grRadarTileMetrics.tile_errors.length,1);
- assert.ok(!v1.__grRadarTileMetrics.tile_errors[0].url,
-   "private WMS URLs must never enter the diagnostics");
+ assert.equal(failed.error,null,"transient failure is recovered by retrying this coordinate");
+ assert.equal(v1.__grRadarTileMetrics.failed,0);
+ assert.equal(v1.__grRadarTileMetrics.loaded,2);
+ assert.ok(observed.some(e=>e.name==="v1_tile_retry_scheduled"
+   &&e.detail.attempt===1),"only the failed coordinate schedules a retry");
+ assert.equal(v1.__grRadarTileMetrics.tile_errors.length,0,
+   "successful retry must not create a permanent failure");
 }finally{if(previousDocument===undefined)delete globalThis.document;
  else globalThis.document=previousDocument;}
 
