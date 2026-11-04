@@ -22,8 +22,9 @@ def test_closing_weather_engine_does_not_close_map_owned_opera():
     method=source.split("_weatherEngineDiagnosticClose(){",1)[1].split("_mountWeatherEngineDiagnostics()",1)[0]
     assert "__operaDiagnosticPane.close()" not in method
     assert "backdrop.classList.remove('open')" in method
-    assert "this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;" in source
-    assert "this.__operaDiagnosticPane?.active===false" in source
+    assert 'this.__operaDiagnosticPane?.close("user_toggle")' in source
+    assert "this.__operaDiagnosticPane=null;" in source
+    assert "pane?.active===false" in source
     assert "pane.metrics?.loaded" in source
 
 def test_opera_is_explicit_and_never_promotes_unverified_tiles():
@@ -34,7 +35,9 @@ def test_opera_is_explicit_and_never_promotes_unverified_tiles():
     assert "response.max_age_seconds" in source
     assert "getUint32(16)!==256" in source
     assert "getUint32(20)!==256" in source
-    assert "image.onload=()=>{metrics.loaded++" in source
+    assert "image.onload=()=>{" in source
+    assert "metrics.loaded++;metrics.mounted++;" in source
+    assert "tile_retry_scheduled" in source
     assert "get active(){return !disposed;}" in source
     assert "controller.abort()" in source
     assert "URLRef.revokeObjectURL" in source
