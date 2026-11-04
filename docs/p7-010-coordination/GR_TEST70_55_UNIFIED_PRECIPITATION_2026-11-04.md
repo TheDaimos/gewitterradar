@@ -15,3 +15,6 @@ WeatherRouter still classifies OPERA as diagnostic-only and scientifically UNVER
 
 ## Verification
 Code committed. CI configured, result not yet separately verified. HA DEV VM109 realtest of the change pending. WR code and HA PROD unchanged. No private GitHub Actions.
+
+## Public release verification, 2026-11-04
+The public GitHub Actions release flow created verified branch commit `2eed122d35641defeafa2e55767d0684170be5b3` with message `release(test70-55): GR 4.11.134 unified precipitation`. The branch includes `frontend/version.js` V4.11.134 DEV, runtime 411134r1 and integration 0.25.43. This establishes published source/dev release, not HA VM109 installation or live acceptance.
