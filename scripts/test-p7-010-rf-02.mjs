@@ -35,7 +35,8 @@ const params={previous,next,viewport,zoom:5,now,previousAt:now-60000,
 const held=decideV2RegionalRetention(params);
 assert.equal(held.retain,false,"same geographic foundation is not a degraded replacement");
 const less={...next,layers:[{...nasa,coverage:region}]};
-const retained=decideV2RegionalRetention({...params,next:less});
+const wide={west:-10,east:25,south:35,north:65};
+const retained=decideV2RegionalRetention({...params,next:less,viewport:wide});
 assert.equal(retained.retain,true,retained.reason);
 assert.equal(retained.deadlineAt,Date.parse(expiry));
 assert.equal(retained.reason,"waiting_for_complete_replacement");
