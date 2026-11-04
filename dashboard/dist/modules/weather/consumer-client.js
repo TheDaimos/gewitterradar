@@ -433,7 +433,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           // Stage replacement transparently until the new cycle has decoded PNGs.
           // The existing pane remains bound to its own WR-authorized lifetime.
           let ready=false;
-          try{ready=await next.waitUntilReady(15000);}catch(error){next.close("staging_error");throw error;}
+          try{ready=await next.waitUntilReady();}catch(error){next.close("staging_error");throw error;}
           if(!this.__operaDiagnosticEnabled||!ready||!next.active){
             next.close("staging_not_ready");
             if(!ready)show('OPERA aktiv · Neue Kacheln noch nicht darstellbar');
