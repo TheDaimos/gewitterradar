@@ -168,7 +168,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
 
 /** Explicit single-use diagnostic request; never activates normal precipitation. */
 export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,focus,
- accessToken,correlationId,orientation="north_first",opacity=0.7,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
+ accessToken,correlationId,orientation="north_first",opacity=0.7,fetchImpl=fetch,documentRef=document,URLRef=URL,onLifecycle=()=>{}}={}){
  if(typeof callWS!=="function"||typeof correlationId!=="string"||!correlationId)
    throw new TypeError("Authorized explicit diagnostic request required");
  const request=buildRasterMosaicV2Request({
@@ -198,6 +198,6 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
    throw error;
  }
  return mountOperaDiagnosticPane({
-   Leaflet,map,response,correlationId,orientation,opacity,accessToken,fetchImpl,documentRef,URLRef
+   Leaflet,map,response,correlationId,orientation,opacity,accessToken,fetchImpl,documentRef,URLRef,onLifecycle
  });
 }
