@@ -115,7 +115,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      let retries=0;
      const retry=(error)=>{
        if(disposed||controller.signal.aborted)return;
-       if(error?.httpStatus===401||error?.httpStatus===403){
+       if(error.httpStatus===401||error.httpStatus===403){
          authRejected=true;
          metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);
          controllers.delete(controller);
