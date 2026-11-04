@@ -46,6 +46,7 @@ matches[0]["sha256"] = hashlib.sha256(raw).hexdigest()
 matches[0]["sizeBytes"] = len(raw)
 inventory.write_text(json.dumps(entries,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
+assert "tile_retry_scheduled" in Path("frontend/modules/weather/p7-010/opera-diagnostic-tile.js").read_text()
 subprocess.run(["node","scripts/build-frontend.mjs"],check=True)
 subprocess.run(["sha256sum","-c","SHA256SUMS_FRONTEND.txt"],check=True,stdout=subprocess.DEVNULL)
 subprocess.run(["node","--test","tests/test_gr_opera_wr_authoritative_freshness.mjs","tests/test70-opera-auth-preflight.test.mjs","tests/wl02-coverage-contract.test.mjs","tests/wl02-raster-geometry.test.mjs"],check=True)
