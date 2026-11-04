@@ -39,12 +39,18 @@ def test_opera_is_explicit_and_never_promotes_unverified_tiles():
     assert "controller.abort()" in source
     assert "URLRef.revokeObjectURL" in source
 
-def test_version_109_is_coherent():
-    expected="4.11.109"
-    assert expected in (ROOT/"custom_components/gewitterradar/build_info.py").read_text()
-    for base in [ROOT/"frontend",ROOT/"dashboard/dist",ROOT/"custom_components/gewitterradar/frontend"]:
-        version=(base/"version.js").read_text(encoding="utf-8")
-        manifest=(base/"assets/gewitterradar-runtime-manifest.json").read_text(encoding="utf-8")
-        assert expected in version and expected in manifest
-        assert "E411-109A1" in version and manifest
-        assert '"version": "1.2.11"' in manifest
+def test_current_version_is_coherent():
+    import json
+    import re
+    version_text = (ROOT / "frontend/version.js").read_text(encoding="utf-8")
+    match = re.search(r'version:"([0-9.]+)"', version_text)
+    assert match is not None
+    expected = match.group(1)
+    for base in [ROOT / "frontend", ROOT / "dashboard/dist",
+                 ROOT / "custom_components/gewitterradar/frontend"]:
+        version = (base / "version.js").read_text(encoding="utf-8")
+        manifest = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
+        assert f'version:"{expected}"' in version
+        assert manifest["productVersion"] == expected
+        assert manifest["runtimeRevision"] in version
+        assert manifest["moduleSetId"] in version
