@@ -56,7 +56,7 @@ BLITZORTUNG_LOCATION_ENTITY_KEY: Final = "location_entity"
 # /gewitterradar static asset path.
 SIDEBAR_PANEL_URL_PATH: Final = "gewitterradar-panel"
 SIDEBAR_PANEL_WEB_COMPONENT: Final = "gewitterradar-panel"
-SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=411134r1"
+SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=411135r1"
 SIDEBAR_PANEL_ICON: Final = "mdi:weather-lightning"
 
 LANGUAGE_OPTIONS: Final = (
