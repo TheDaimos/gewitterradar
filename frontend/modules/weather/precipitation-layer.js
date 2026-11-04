@@ -1584,9 +1584,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       report("skipped",{reason:!viewport.focus?"missing_focus":"websocket_unavailable"});
       return false;
     }
-    report("started",{live_max_data_age_seconds:900,
-      background_max_age_seconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
-      satellite_background_opt_in:state.allowOlderSatelliteBackground===true});
+    report("started",{validity_authority:"weather_router"});
     const current=()=>state.enabled&&state.v2Generation===token
       &&this._weatherRadarViewport()?.signature===viewport.signature;
     let timeout=null,staged=null;
@@ -1629,8 +1627,6 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
         consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],older_background_count:event.older_background_count??0,freshness_classes:Array.isArray(event.freshness_classes)?event.freshness_classes.slice(0,12):[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
-        maxDataAgeSeconds:900,
-        maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
           getAccessToken:async()=>{
             const auth=this._hass?.connection?.options?.auth;
