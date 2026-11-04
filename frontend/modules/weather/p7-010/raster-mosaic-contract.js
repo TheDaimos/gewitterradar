@@ -9,7 +9,10 @@ const time=value=>typeof value==="string"&&/[zZ]$|[+-]\d\d:\d\d$/.test(value)
 const bounds=b=>b&&["west","east","south","north"].every(k=>number(b[k]))
   &&b.west>=-180&&b.west<=180&&b.east>=-180&&b.east<=180
   &&b.south>=-90&&b.north<=90&&b.north>b.south&&b.west!==b.east;
-const operaRateURL=(value,source)=>source==="opera/opera_rate_raster" && /^\\/api\\/weather_router\\/opera_tile\\/RATE\\/20\\d{6}T\\d{6}Z\\/\\{z\\}\\/\\{x\\}\\/\\{y\\}\\.png$/.test(value);\nconst safeURL=(value,source)=>{\n if(operaRateURL(value,source))return true;
+const operaRateURL=(value,source)=>source==="opera/opera_rate_raster"
+  && /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\{z\}\/\{x\}\/\{y\}\.png$/.test(value);
+const safeURL=(value,source)=>{
+ if(operaRateURL(value,source))return true;
  if(typeof value!=="string"||!value.startsWith("https://"))return false;
  try{
    const u=new URL(value);
