@@ -508,8 +508,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       step("preconditions_ok");
       const request=buildRasterMosaicV2Request({
         viewport:viewport.context,focus:viewport.focus,maxLayers:12,
-        maxTileRequests:12,maxDataAgeSeconds:900,
-        maxBackgroundAgeSeconds:this._weatherRadarState?.()?.allowOlderSatelliteBackground?43200:null,
+        maxTileRequests:12,
+        allowOlderSatelliteBackground:this._weatherRadarState?.()?.allowOlderSatelliteBackground===true,
         consumerId:"gewitterradar",correlationId:id
       });
       step("request_validated");
@@ -522,9 +522,9 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           },20000);})
         ]);
         step("response",{response_status:String(response?.status||"missing")});
-        validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:request.time.max_background_age_seconds??null});
+        validateRasterMosaicV2(response,{maxLayers:12});
         step("validated",{layers:response.layers.length});
-        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_background_age_seconds:request.time.max_background_age_seconds??null,max_time_delta_seconds:request.time.max_time_delta_seconds};
+        result.request_time_policy={authority:"weather_router",mode:request.time.mode,allow_older_satellite_background:request.time.allow_older_satellite_background===true};
         result.status=response.status;
         result.layer_count=response.layers.length;
         result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
@@ -548,7 +548,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     return result;
   },
   async _weatherEngineV2AgeComparisonTest(){
-    // Diagnostic-only A/B probe: the productive 900-s live policy remains untouched.
+    // Diagnostic-only A/B probe: WR decides source validity for both consent states.
     if(this.__weatherEngineV2ComparisonRunning||this.__weatherEngineV2TestRunning)return;
     this.__weatherEngineV2ComparisonRunning=true;
     const store=this._weatherEngineTraceStore();
@@ -556,7 +556,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       schema:"gewitterradar.weather_engine_v2_age_comparison.v1",
       consumer_id:"gewitterradar",api_version:2,
       started_at:new Date().toISOString(),status:"running",
-      time_mode:"latest_coherent",max_time_delta_seconds:180,
+      time_mode:"latest_coherent",validity_authority:"weather_router",
       requests:[],map_unchanged:true
     };
     store.v2AgeComparison=comparison;
@@ -571,18 +571,18 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       if(typeof this._hass?.callWS!=="function")throw Object.assign(new Error("Home Assistant WebSocket fehlt"),{code:"websocket_unavailable"});
       // Both requests share the exact same spatial snapshot and all budgets.
       const id="gr-v2-age-"+Date.now().toString(36);
-      for(const age of [null,43200]){
+      for(const allowBackground of [false,true]){
         const trial={
-          max_data_age_seconds:900,max_background_age_seconds:age,max_time_delta_seconds:180,
-          correlation_id:id+"-"+(age===null?"strict":"background"),status:"started",layer_count:0,
+          allow_older_satellite_background:allowBackground,
+          correlation_id:id+"-"+(allowBackground?"background":"current"),status:"started",layer_count:0,
           sources:[],limitations:[],started_at:new Date().toISOString()
         };
         comparison.requests.push(trial);
         this._weatherEngineDiagnosticRender?.();
         const request=buildRasterMosaicV2Request({
           viewport:{...viewport.context},focus:{...viewport.focus},
-          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age,
-          maxTimeDeltaSeconds:180,consumerId:"gewitterradar",
+          maxLayers:12,maxTileRequests:12,
+          allowOlderSatelliteBackground:allowBackground,consumerId:"gewitterradar",
           correlationId:trial.correlation_id
         });
         const started=performance.now();
@@ -594,7 +594,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
               reject(Object.assign(new Error("V2 comparison deadline"),{code:"gr_v2_client_timeout"}));
             },20000);})
           ]);
-          validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age});
+          validateRasterMosaicV2(response,{maxLayers:12});
           trial.status=response.status;
           trial.layer_count=response.layers.length;
           trial.reference_time=response.reference_time||null;
