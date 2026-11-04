@@ -606,6 +606,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     // A single WR-owned V2/V1 precipitation route chooses providers.
     // Never automatically overlay OPERA: this would hide DWD selections.
     if(!state.enabled){
+      // The event is an update hint only. Unsubscribe on normal switch-off.
+      const cycle=state.wrCycleSubscription;
+      if(cycle){cycle.closed=true;cycle.unsubscribe?.();state.wrCycleSubscription=null;}
       if(this.__operaDiagnosticEnabled)this._weatherEngineOperaDiagnosticToggle?.();
       state.v2Generation++;
       state.v1PendingCancel?.();
@@ -616,6 +619,26 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return;
     }
     this._weatherRadarEnsureMapHooks();
+    // Listen for WR's new-data notification. GR never chooses a provider or
+    // activates a separate OPERA plane; it simply re-queries WR's V2 mosaic.
+    if(!state.wrCycleSubscription){
+      const subscribe=this._hass?.connection?.subscribeEvents;
+      if(typeof subscribe==="function"){
+        const cycle={closed:false,unsubscribe:null};
+        state.wrCycleSubscription=cycle;
+        Promise.resolve(subscribe.call(this._hass.connection,event=>{
+          if(!state.enabled||cycle.closed)return;
+          if(event?.data?.product_id!=="RATE")return;
+          this._scheduleWeatherRadarRefresh("wr-raster-cycle",0);
+        },"weather_router_opera_cycle_available")).then(unsubscribe=>{
+          if(cycle.closed||state.wrCycleSubscription!==cycle)
+            unsubscribe?.();
+          else cycle.unsubscribe=typeof unsubscribe==="function"?unsubscribe:null;
+        }).catch(()=>{
+          if(state.wrCycleSubscription===cycle)state.wrCycleSubscription=null;
+        });
+      }
+    }
     if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
