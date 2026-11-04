@@ -76,6 +76,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const emit=(event,details={})=>{try{onLifecycle(event,{valid_at:approved.validAt,...details});}catch(_){}};
  let disposed=false;
  const controllers=new Set();
+ const retryTimers=new Set();
  let authRejected=false;
  const urls=new Set();
  const metrics={requested:0,loaded:0,failed:0,mounted:0,pending:0,http_statuses:{},last_error:null};
@@ -109,18 +110,52 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      const controller=new AbortController();
      controllers.add(controller);
      metrics.requested++;metrics.pending++;updateStatus();
-     fetchOperaDiagnosticPng({
-       template:approved.template,tile:coords,token:accessToken,
-       fetchImpl,signal:controller.signal
-     }).then(blob=>{
+     // General tile invariant: keep successful tiles and retry only this failed
+     // coordinate. Never discard sibling tiles or restart a whole cycle for 503.
+     let retries=0;
+     const retry=(error)=>{
        if(disposed||controller.signal.aborted)return;
-       const objectUrl=URLRef.createObjectURL(blob);
-       urls.add(objectUrl);
-       image.onload=()=>{metrics.loaded++;metrics.mounted++;if(metrics.loaded===1)emit("first_png_decoded",{requested:metrics.requested,loaded:metrics.loaded,pending:metrics.pending});metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
-       image.onerror=()=>{metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
-       image.src=objectUrl;
-     }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;if(error.httpStatus===401||error.httpStatus===403){authRejected=true;for(const pending of controllers)pending.abort();}}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
-       .finally(()=>controllers.delete(controller));
+       if(error?.httpStatus===401||error?.httpStatus===403){
+         authRejected=true;
+         metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);
+         controllers.delete(controller);
+         emit("tile_auth_revoked",{http_status:error.httpStatus});
+         for(const pending of controllers)pending.abort();
+         done(error,image);return;
+       }
+       retries++;
+       metrics.retry_attempts=(metrics.retry_attempts||0)+1;
+       metrics.last_error=String(error?.message||"opera_tile_retry").slice(0,80);
+       if(Number.isInteger(error?.httpStatus)){
+         const code=String(error.httpStatus);
+         metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;
+       }
+       emit("tile_retry_scheduled",{z:coords.z,x:coords.x,y:coords.y,attempt:retries,http_status:error?.httpStatus||null});
+       updateStatus();
+       // Retry pacing is transport backpressure, never a data-age deadline.
+       const delay=Math.min(5000,250*Math.pow(2,Math.min(retries-1,5)));
+       const timer=setTimeout(()=>{retryTimers.delete(timer);void attempt();},delay);
+       retryTimers.add(timer);
+     };
+     const attempt=async()=>{
+       if(disposed||controller.signal.aborted)return;
+       try{
+         const blob=await fetchOperaDiagnosticPng({template:approved.template,tile:coords,
+           token:accessToken,fetchImpl,signal:controller.signal});
+         if(disposed||controller.signal.aborted)return;
+         const objectUrl=URLRef.createObjectURL(blob);urls.add(objectUrl);
+         image.onload=()=>{
+           if(disposed||controller.signal.aborted)return;
+           metrics.loaded++;metrics.mounted++;
+           if(metrics.loaded===1)emit("first_png_decoded",{requested:metrics.requested,loaded:metrics.loaded,pending:metrics.pending});
+           metrics.pending=Math.max(0,metrics.pending-1);controllers.delete(controller);
+           image.style.visibility="visible";updateStatus();done(null,image);
+         };
+         image.onerror=()=>{URLRef.revokeObjectURL(objectUrl);urls.delete(objectUrl);retry(new Error("diagnostic_png_decode_failed"));};
+         image.src=objectUrl;
+       }catch(error){retry(error);}
+     };
+     void attempt();
      return image;
    }
  });
@@ -142,6 +177,8 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      disposed=true;
 
      clearInterval(ageRefresh);
+     for(const timer of retryTimers)clearTimeout(timer);
+     retryTimers.clear();
      for(const controller of controllers)controller.abort();
      controllers.clear();
      map.removeLayer(layer);
