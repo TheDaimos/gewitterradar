@@ -21,7 +21,7 @@ function validViewport(b){
 /** Build one request using a pre-normalized map viewport (incl. full world). */
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
- maxTimeDeltaSeconds=180,
+ allowOlderSatelliteBackground=false,
  profileId=null,consumerId="gewitterradar",correlationId=null,sourceRequest=null
 }={}){
  if(sourceRequest!==null&&(sourceRequest?.provider_id!=="opera"||sourceRequest?.product_id!=="RATE"||Object.keys(sourceRequest).length!==2)) throw new TypeError("Unsupported OPERA source");
@@ -32,8 +32,7 @@ export function buildRasterMosaicV2Request({
    ||!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
    ||!Number.isInteger(maxTileRequests)
    ||maxTileRequests<1||maxTileRequests>256
-   ||!Number.isInteger(maxTimeDeltaSeconds)
-   ||maxTimeDeltaSeconds<0||maxTimeDeltaSeconds>86400
+   ||typeof allowOlderSatelliteBackground!=="boolean"
    ||(profileId!==null&&(typeof profileId!=="string"||!profileId.trim())))
    throw new TypeError("Invalid bounded V2 raster mosaic context");
  return {
@@ -42,7 +41,7 @@ export function buildRasterMosaicV2Request({
    capability:"weather.precipitation.layer",
    context:{type:"bbox",...viewport,focus},
    time:{mode:"latest_coherent",
-     max_time_delta_seconds:maxTimeDeltaSeconds},
+     allow_older_satellite_background:allowOlderSatelliteBackground},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
    ...(profileId!==null?{profile_id:profileId}:{}),
    ...(sourceRequest!==null?{source_request:{provider_id:"opera",product_id:"RATE"}}:{}),
@@ -59,11 +58,11 @@ export function buildRasterMosaicV2Request({
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
  maxLayers=4,maxTileRequests=48,
- maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,sourceRequest=null,onDiagnostic=null
+ allowOlderSatelliteBackground=false,layerOptions={},consumerId="gewitterradar",correlationId=null,sourceRequest=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
    viewport,focus,profileId,maxLayers,maxTileRequests,
-   maxTimeDeltaSeconds,consumerId,correlationId,sourceRequest,
+   allowOlderSatelliteBackground,consumerId,correlationId,sourceRequest,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
