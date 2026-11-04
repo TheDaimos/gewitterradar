@@ -19,7 +19,7 @@ export function validateOperaDiagnosticResponse(response,correlationId,orientati
  if(response.preview_only!==true||response.raster_approved!==false
    ||response.scientific_status!=="UNVERIFIED / ENTWICKLUNGSVORSCHAU"
    ||response.preview_orientation!==orientation||response.correlation_id!==correlationId
-   ||response.cache_policy!=="no-store"||(!Number.isInteger(response.max_age_seconds)||response.max_age_seconds<900||response.max_age_seconds>3600)
+   ||response.cache_policy!=="no-store"||(!Number.isInteger(response.max_age_seconds)||response.max_age_seconds<=0)
    ||!Array.isArray(response.layers)||response.layers.length!==1
    ||!Array.isArray(response.tile_urls)||response.tile_urls.length!==1
    ||layer?.provider_id!=="opera"||layer?.product_id!=="RATE"
@@ -216,7 +216,6 @@ export async function requestOperaDiagnosticPane({callWS,Leaflet,map,viewport,fo
  if(!ORIENTATIONS.has(orientation))throw new TypeError("Ungültige OPERA-Orientierung");
  request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true,preview_orientation:orientation};
  // Explicit diagnostic contract: WeatherRouter alone owns freshness policy.
- delete request.time.max_data_age_seconds;
  const response=await callWS(request);
  const ready=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!ready)throw new Error("Invalid diagnostic authorization");
