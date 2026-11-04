@@ -681,6 +681,7 @@ _weatherEngineDiagnosticPayload(){
       v2_attempts:[...(store.v2Events||[])],
       v2_interface_test:store.v2TestResult||null,
        opera_diagnostic:store.operaDiagnostic||null,
+       opera_cycle_lifecycle:[...(store.opera_cycle_lifecycle||[])],
       v2_age_comparison:store.v2AgeComparison||null,
       display_monitor:{
         schema:"gewitterradar.weather_engine_display_monitor.v1",
