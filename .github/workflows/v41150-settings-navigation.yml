@@ -79,7 +79,7 @@ jobs:
           provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
           runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
           import re
-          current = re.search(r'version:"(4\\.11\\.\\d+)"', version)
+          current = re.search(r'version:"(4[.]11[.][0-9]+)"', version)
           assert current, 'Cannot read V4.11 runtime version'
           expected=current.group(1)
           assert f'BUILD_VERSION = "{expected}"' in build
