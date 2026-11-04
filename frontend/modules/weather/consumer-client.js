@@ -411,7 +411,6 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           const id='gr-opera-cycle-'+Date.now().toString(36);
           const req=buildRasterMosaicV2Request({viewport:vp.context,focus:vp.focus,correlationId:id,maxLayers:1,maxTileRequests:16});
           req.source_request={provider_id:'opera',product_id:'RATE',diagnostic:true,preview_orientation:'north_first'};
-          delete req.time.max_data_age_seconds;
           const response=await this._hass.callWS(req);
           operaTrace("cycle_poll_response",{status:String(response?.status||"missing"),valid_at:response?.valid_at||null,block_reason:String(response?.block_reason||"").slice(0,80)});
           if(!this.__operaDiagnosticEnabled)return;
