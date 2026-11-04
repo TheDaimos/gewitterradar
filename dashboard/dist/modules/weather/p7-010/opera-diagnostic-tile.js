@@ -68,11 +68,12 @@ export async function fetchOperaDiagnosticPng({template,tile,token,fetchImpl=fet
 
 /* Temporary controlled diagnostic pane; never shares V1/V2 tile caches. */
 export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,orientation="north_first",opacity=0.7,
- accessToken,fetchImpl=fetch,documentRef=document,URLRef=URL}={}){
+ accessToken,fetchImpl=fetch,documentRef=document,URLRef=URL,onLifecycle=()=>{}}={}){
  const approved=validateOperaDiagnosticResponse(response,correlationId,orientation);
  if(!Number.isFinite(opacity)||opacity<0||opacity>1)throw new RangeError("Ungültige Transparenz");
  if(!Leaflet?.GridLayer?.extend||!map?.addLayer||typeof accessToken!=="string")
    throw new TypeError("Diagnostic map and access token required");
+ const emit=(event,details={})=>{try{onLifecycle(event,{valid_at:approved.validAt,...details});}catch(_){}};
  let disposed=false;
  const controllers=new Set();
  let authRejected=false;
@@ -97,7 +98,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      watermark.appendChild(warning);
    }
  };
- const expiry=setTimeout(()=>{if(!disposed)closePane();},Math.max(1,validMs+approved.maxAgeSeconds*1000-Date.now()));
+ const expiry=setTimeout(()=>{if(!disposed){emit("expiry_timer_fired",{age_ms:Date.now()-validMs,max_age_seconds:approved.maxAgeSeconds});closePane("expiry");}},Math.max(1,validMs+approved.maxAgeSeconds*1000-Date.now()));
  const ageRefresh=setInterval(()=>updateStatus(),30000);
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
@@ -116,7 +117,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
        if(disposed||controller.signal.aborted)return;
        const objectUrl=URLRef.createObjectURL(blob);
        urls.add(objectUrl);
-       image.onload=()=>{metrics.loaded++;metrics.mounted++;metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
+       image.onload=()=>{metrics.loaded++;metrics.mounted++;if(metrics.loaded===1)emit("first_png_decoded",{requested:metrics.requested,loaded:metrics.loaded,pending:metrics.pending});metrics.pending=Math.max(0,metrics.pending-1);image.style.visibility="visible";updateStatus();done(null,image);};
        image.onerror=()=>{metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);metrics.last_error="diagnostic_png_decode_failed";updateStatus();done(new Error("diagnostic_png_decode_failed"),image);};
        image.src=objectUrl;
      }).catch(error=>{if(!disposed){metrics.failed++;metrics.pending=Math.max(0,metrics.pending-1);if(Number.isInteger(error?.httpStatus)){const code=String(error.httpStatus);metrics.http_statuses[code]=(metrics.http_statuses[code]||0)+1;if(error.httpStatus===401||error.httpStatus===403){authRejected=true;for(const pending of controllers)pending.abort();}}metrics.last_error=String(error?.message||"opera_tile_failed").slice(0,80);updateStatus();done(error,image);}})
@@ -134,9 +135,11 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const container=map.getContainer();
  container.appendChild(watermark);
  map.addLayer(layer);
+ emit("pane_mounted",{max_age_seconds:approved.maxAgeSeconds,expiry_at:new Date(validMs+approved.maxAgeSeconds*1000).toISOString(),opacity});
  updateStatus();
- function closePane(){
+ function closePane(reason="explicit_close"){
      if(disposed)return;
+     emit("pane_closed",{reason,loaded:metrics.loaded,pending:metrics.pending,failed:metrics.failed});
      disposed=true;
      clearTimeout(expiry);
      clearInterval(ageRefresh);
@@ -154,12 +157,12 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      const deadline=Date.now()+timeoutMs;
      while(!disposed&&Date.now()<deadline){
        if(authRejected)throw new Error("opera_diagnostic_auth_revoked");
-       if(metrics.loaded>0&&metrics.pending===0)return true;
+       if(metrics.loaded>0&&metrics.pending===0){emit("png_ready",{loaded:metrics.loaded,pending:metrics.pending});return true;}
        await new Promise(resolve=>setTimeout(resolve,150));
      }
-     return !disposed&&metrics.loaded>0;
+     const ready=!disposed&&metrics.loaded>0;emit("readiness_timeout",{ready,loaded:metrics.loaded,pending:metrics.pending});return ready;
    },
-   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;layer.setOpacity(value);},
+   setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;layer.setOpacity(value);emit("opacity_changed",{opacity:value});},
    get active(){return !disposed;}};
 }
 
