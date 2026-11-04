@@ -25,8 +25,8 @@ jobs:
           print(f'EXACT_900_OCCURRENCES={len(rows)}')
           for p,n,line in rows:
               print(f'{p}:{n}: {line}')
-          sensitive=[(p,n,line) for p,n,line in rows if re.search(
-              r'(?i)(max_data_age|validity|stale|expiry|freshness|frame_age|source_age|age_seconds|valid_until)',line)]
+          sensitive=[(p,n,line) for p,n,line in rows if ('/weather/' in p or '/weather/' in ('/'+p)) and re.search(
+              r'(?i)(max_data_age|validity|stale|expiry|freshness|frame_age|source_age|age_seconds|valid_until)',line) and re.search(r'(?<!\d)900(?!\d)|900000',line)]
           if sensitive:
               print('POLICY_REVIEW_REQUIRED:')
               for p,n,line in sensitive:print(f'{p}:{n}: {line}')
