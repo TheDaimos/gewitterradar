@@ -80,8 +80,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  const urls=new Set();
  const metrics={requested:0,loaded:0,failed:0,mounted:0,pending:0,http_statuses:{},last_error:null};
  const validMs=Date.parse(approved.validAt);
- if(!Number.isFinite(validMs)||validMs>Date.now()||Date.now()-validMs>=approved.maxAgeSeconds*1000)
-   throw new Error("opera_diagnostic_expired");
+ if(!Number.isFinite(validMs))throw new Error("opera_diagnostic_invalid_valid_at");
  const updateStatus=()=>{
    if(disposed)return;
    const age=Math.max(0,Math.floor((Date.now()-validMs)/60000));
@@ -98,7 +97,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      watermark.appendChild(warning);
    }
  };
- const expiry=setTimeout(()=>{if(!disposed){emit("expiry_timer_fired",{age_ms:Date.now()-validMs,max_age_seconds:approved.maxAgeSeconds});closePane("expiry");}},Math.max(1,validMs+approved.maxAgeSeconds*1000-Date.now()));
+ // No client-side deadline; WR remains authoritative for validity.
  const ageRefresh=setInterval(()=>updateStatus(),30000);
  const Pane=Leaflet.GridLayer.extend({
    createTile(coords,done){
@@ -141,7 +140,7 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
      if(disposed)return;
      emit("pane_closed",{reason,loaded:metrics.loaded,pending:metrics.pending,failed:metrics.failed});
      disposed=true;
-     clearTimeout(expiry);
+
      clearInterval(ageRefresh);
      for(const controller of controllers)controller.abort();
      controllers.clear();
@@ -153,14 +152,18 @@ export function mountOperaDiagnosticPane({Leaflet,map,response,correlationId,ori
  return {notice:NOTICE,layer,validAt:approved.validAt,orientation,metrics,close:closePane,
    // Rendering gate: never remove the previous WR-authorized layer merely
    // because a new Leaflet layer was constructed. Wait for PNG onload.
-   async waitUntilReady(timeoutMs=15000){
-     const deadline=Date.now()+timeoutMs;
-     while(!disposed&&Date.now()<deadline){
+   async waitUntilReady(){
+     // Only switch when every requested PNG is decoded successfully.
+     while(!disposed){
        if(authRejected)throw new Error("opera_diagnostic_auth_revoked");
-       if(metrics.loaded>0&&metrics.pending===0){emit("png_ready",{loaded:metrics.loaded,pending:metrics.pending});return true;}
+       if(metrics.requested>0&&metrics.pending===0){
+         const ready=metrics.loaded>0&&metrics.failed===0;
+         emit(ready?"png_ready":"png_incomplete",{loaded:metrics.loaded,failed:metrics.failed,pending:metrics.pending});
+         return ready;
+       }
        await new Promise(resolve=>setTimeout(resolve,150));
      }
-     const ready=!disposed&&metrics.loaded>0;emit("readiness_timeout",{ready,loaded:metrics.loaded,pending:metrics.pending});return ready;
+     return false;
    },
    setOpacity(value){if(!Number.isFinite(value)||value<0||value>1)throw new RangeError("Ungültige Transparenz");opacity=value;layer.setOpacity(value);emit("opacity_changed",{opacity:value});},
    get active(){return !disposed;}};
