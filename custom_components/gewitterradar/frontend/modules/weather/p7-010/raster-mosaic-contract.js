@@ -9,7 +9,10 @@ const time=value=>typeof value==="string"&&/[zZ]$|[+-]\d\d:\d\d$/.test(value)
 const bounds=b=>b&&["west","east","south","north"].every(k=>number(b[k]))
   &&b.west>=-180&&b.west<=180&&b.east>=-180&&b.east<=180
   &&b.south>=-90&&b.north<=90&&b.north>b.south&&b.west!==b.east;
-const safeURL=value=>{
+const operaRateURL=(value,source)=>source==="opera/opera_rate_raster"
+  && /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\{z\}\/\{x\}\/\{y\}\.png$/.test(value);
+const safeURL=(value,source)=>{
+ if(operaRateURL(value,source))return true;
  if(typeof value!=="string"||!value.startsWith("https://"))return false;
  try{
    const u=new URL(value);
@@ -52,7 +55,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||seen.has(layer.source_id)||layer.resource_type!=="raster_tile"
       ||layer.coverage_verified!==true
       ||!["bbox","global"].includes(layer.coverage_scope)
-      ||!bounds(layer.coverage)||!safeURL(layer.tile_url)
+      ||!bounds(layer.coverage)||!safeURL(layer.tile_url,layer.source_id)
       ||typeof layer.attribution!=="string"||!layer.attribution
       ||!layer.render||![128,256,512].includes(layer.render.tile_size)
       ||!number(layer.render.min_zoom)||!number(layer.render.max_zoom)
