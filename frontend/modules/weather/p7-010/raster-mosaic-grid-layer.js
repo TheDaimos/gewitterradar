@@ -50,7 +50,7 @@ async function loadRasterImage(url,source,{signal,getAccessToken}={}){
   // Tokens are obtained only from the HA session and never placed in URLs.
   if(url.startsWith("/api/weather_router/opera_tile/")){
     if(source?.source_id!=="opera/opera_rate_raster"||
-       !/^\\/api\\/weather_router\\/opera_tile\\/RATE\\/20\\d{6}T\\d{6}Z\\/\\d+\\/\\d+\\/\\d+\\.png$/.test(url))
+       !/^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url))
       throw new Error("untrusted_opera_tile_url");
     const token=typeof getAccessToken==="function"?await getAccessToken():null;
     if(!token)throw new Error("missing_opera_tile_authorization");
