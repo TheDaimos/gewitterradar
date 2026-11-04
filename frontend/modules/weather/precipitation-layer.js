@@ -829,8 +829,33 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             max_tile_ms:stats.max_tile_ms});
         done?.(null,element);
       };
-      img.onerror=()=>recordFailure("image_load_failed_unclassified",canvas||img);
-      img.src=url;
+      // TEST70-54: retry only this failed coordinate. A successful sibling
+      // is already owned by Leaflet and must never be requested again.
+      let retryAttempt=0,retryTimer=null,finished=false;
+      const unload=()=>{
+        finished=true;
+        if(retryTimer!==null)clearTimeout(retryTimer);
+        img.onload=null;img.onerror=null;
+      };
+      (canvas||img).__grAbortTileRetry=unload;
+      const load=()=>{if(!finished)img.src=url;};
+      const complete=img.onload;
+      img.onload=()=>{
+        if(finished)return;
+        finished=true;
+        if(retryTimer!==null)clearTimeout(retryTimer);
+        complete();
+      };
+      img.onerror=()=>{
+        if(finished)return;
+        retryAttempt++;
+        this._weatherEngineMonitorEvent?.("v1_tile_retry_scheduled",{
+          zoom:coords.z,x:coords.x,y:coords.y,attempt:retryAttempt});
+        const delay=Math.min(5000,250*2**Math.min(retryAttempt-1,5));
+        // Technical network backpressure; no WR-data age limit.
+        retryTimer=setTimeout(()=>{retryTimer=null;load();},delay);
+      };
+      load();
       return canvas||img;
     };
     return layer;
