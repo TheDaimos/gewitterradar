@@ -1,32 +1,44 @@
-name: GR TEST70-54 Selective Tile Retry
+name: GR TEST70-54 verified public release
 on:
   push:
     branches: [deploy/dev]
     paths:
-      - 'frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js'
-      - 'custom_components/gewitterradar/frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js'
-      - 'dashboard/dist/modules/weather/p7-010/raster-mosaic-tile-loader.js'
-      - 'tests/test70-54-selective-raster-retry.test.mjs'
+      - 'scripts/test70-54-release-ci.py'
       - '.github/workflows/test70-54-selective-retry.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: gr-test70-54-release
+  cancel-in-progress: false
 jobs:
-  selective-retry:
+  regression-and-release:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          ref: deploy/dev
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: JS syntax
-        run: node --check frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js
-      - name: Identical GR frontend distribution copies
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate V1 and V2 source code
         run: |
-          cmp frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js custom_components/gewitterradar/frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js
+          node --check frontend/modules/weather/precipitation-layer.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js
+          cmp frontend/modules/weather/precipitation-layer.js dashboard/dist/modules/weather/precipitation-layer.js
           cmp frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js dashboard/dist/modules/weather/p7-010/raster-mosaic-tile-loader.js
-      - name: GR TEST70-54 regressions
-        run: node --test tests/test70-54-selective-raster-retry.test.mjs tests/wl02-raster-geometry.test.mjs tests/wl02-coverage-contract.test.mjs
+      - name: Build synchronized version and run regression checks
+        run: python scripts/test70-54-release-ci.py
+      - name: Commit only after verified success
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git diff --cached --quiet && exit 1
+          git commit -m "release(test70-54): GR 4.11.133 selective tile retry"
+          git push origin HEAD:deploy/dev
