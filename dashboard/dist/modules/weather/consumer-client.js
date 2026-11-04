@@ -352,6 +352,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       this.__operaDiagnosticEnabled=false;
       if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
       this.__operaDiagnosticTimer=null;
+      if(this.__operaCycleEventUnsubscribe){try{this.__operaCycleEventUnsubscribe();}catch(_){}}
+      this.__operaCycleEventUnsubscribe=null;
       this.__operaDiagnosticPane?.close("user_toggle");
       operaTrace("user_toggle_off");
       this.__operaDiagnosticPane=null;
@@ -394,7 +396,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
       // Periodic WS requests ask WeatherRouter for a new authorized diagnostic
       // frame. GR never selects an age limit or authorizes a stale frame.
-      this.__operaDiagnosticTimer=setInterval(async()=>{
+      const pollOperaCycle=async()=>{
         if(!this.__operaDiagnosticEnabled||this.__operaCyclePollRunning)return;
         this.__operaCyclePollRunning=true;
         operaTrace("cycle_poll_started",{current_valid_at:this.__operaDiagnosticPane?.validAt||null});
@@ -447,6 +449,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           const reason=String(error?.message||error).slice(0,100);
           if(/auth_preflight|missing_auth|authentication|401|403/i.test(reason)){
             this.__operaDiagnosticEnabled=false;
+            if(this.__operaCycleEventUnsubscribe){try{this.__operaCycleEventUnsubscribe();}catch(_){}}
+            this.__operaCycleEventUnsubscribe=null;
             clearInterval(this.__operaDiagnosticTimer);this.__operaDiagnosticTimer=null;
             this.__operaDiagnosticPane?.close("auth_blocked");this.__operaDiagnosticPane=null;
             store.operaDiagnostic={status:'auth_blocked',reason,at:new Date().toISOString()};
@@ -456,7 +460,21 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
             show('OPERA aktiv · Aktualisierung ausstehend');
           }
         }finally{this.__operaCyclePollRunning=false;this._weatherEngineDiagnosticRender?.();}
-      },30000);
+      };
+      this.__operaDiagnosticTimer=setInterval(pollOperaCycle,30000);
+      // HA event bus push: hint only; V2 remains the sole authorization path.
+      const subscribe=this._hass?.connection?.subscribeEvents;
+      if(typeof subscribe==='function'){
+        Promise.resolve(subscribe.call(this._hass.connection,event=>{
+          const data=event?.data;
+          if(data?.provider_id!=='opera'||data?.product_id!=='RATE')return;
+          operaTrace('cycle_push_received',{stamp:String(data.stamp||'').slice(0,32)});
+          void pollOperaCycle();
+        },'weather_router_opera_cycle_available')).then(unsubscribe=>{
+          if(this.__operaDiagnosticEnabled&&typeof unsubscribe==='function')this.__operaCycleEventUnsubscribe=unsubscribe;
+          else if(typeof unsubscribe==='function')unsubscribe();
+        }).catch(error=>operaTrace('cycle_push_subscription_failed',{reason:String(error?.message||error).slice(0,80)}));
+      }
       store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',orientation,correlation_id:correlationId,
         at:new Date().toISOString(),scientific_approval:false,notice:pane.notice,
         valid_at:pane.validAt||null,metrics:pane.metrics||null};
