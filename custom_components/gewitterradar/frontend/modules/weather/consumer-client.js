@@ -345,13 +345,15 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
   },
   async _weatherEngineOperaDiagnosticToggle(){
     const store=this._weatherEngineTraceStore();
+    const operaTrace=(event,details={})=>{const events=store.opera_cycle_lifecycle||(store.opera_cycle_lifecycle=[]);events.push({at:new Date().toISOString(),mono_ms:Math.round(performance.now()),event,...details});if(events.length>120)events.splice(0,events.length-120);};
     const status=this.shadow?.getElementById('weather-engine-opera-result');
     const show=value=>{if(status)status.textContent=value;};
     if(this.__operaDiagnosticEnabled){
       this.__operaDiagnosticEnabled=false;
       if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
       this.__operaDiagnosticTimer=null;
-      this.__operaDiagnosticPane?.close();
+      this.__operaDiagnosticPane?.close("user_toggle");
+      operaTrace("user_toggle_off");
       this.__operaDiagnosticPane=null;
       store.operaDiagnostic={status:'closed',at:new Date().toISOString(),scientific_approval:false};
       show('OPERA-Testdarstellung entfernt');this._weatherEngineDiagnosticRender?.();return;
@@ -384,9 +386,10 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
-        accessToken:token,correlationId,orientation,opacity
+        accessToken:token,correlationId,orientation,opacity,onLifecycle:operaTrace
       });
       this.__operaDiagnosticPane=pane;
+      operaTrace("initial_pane_ready",{valid_at:pane.validAt});
       this.__operaDiagnosticEnabled=true;
       if(this.__operaDiagnosticTimer)clearInterval(this.__operaDiagnosticTimer);
       // Periodic WS requests ask WeatherRouter for a new authorized diagnostic
@@ -394,6 +397,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       this.__operaDiagnosticTimer=setInterval(async()=>{
         if(!this.__operaDiagnosticEnabled||this.__operaCyclePollRunning)return;
         this.__operaCyclePollRunning=true;
+        operaTrace("cycle_poll_started",{current_valid_at:this.__operaDiagnosticPane?.validAt||null});
         try{
           const current=this.__operaDiagnosticPane;
           const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=41198r1');
@@ -404,14 +408,15 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           req.source_request={provider_id:'opera',product_id:'RATE',diagnostic:true,preview_orientation:'north_first'};
           delete req.time.max_data_age_seconds;
           const response=await this._hass.callWS(req);
+          operaTrace("cycle_poll_response",{status:String(response?.status||"missing"),valid_at:response?.valid_at||null,block_reason:String(response?.block_reason||"").slice(0,80)});
           if(!this.__operaDiagnosticEnabled)return;
           if(response?.status!=='UNVERIFIED_DEV_PREVIEW'){
-            current?.close();this.__operaDiagnosticPane=null;
+            current?.close("wr_not_authorized");this.__operaDiagnosticPane=null;
             store.operaDiagnostic={status:'waiting_for_wr',reason:String(response?.block_reason||response?.status||'unavailable').slice(0,100),at:new Date().toISOString()};
             show('OPERA aktiv · Warte auf WR-Freigabe');
             return;
           }
-          if(current?.active&&current.validAt===response.valid_at)return;
+          if(current?.active&&current.validAt===response.valid_at){operaTrace('cycle_unchanged',{valid_at:response.valid_at});return;}
           const auth=this._hass?.connection?.options?.auth;
           if(typeof auth?.refreshAccessToken==='function')await auth.refreshAccessToken();
           const freshToken=auth?.accessToken||this._hass?.auth?.data?.access_token;
@@ -421,26 +426,29 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411128r1');
           const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
-            correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken});
+            correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken,onLifecycle:operaTrace});
+          operaTrace('cycle_staging_started',{from_valid_at:current?.validAt||null,to_valid_at:next.validAt});
           // Stage replacement transparently until the new cycle has decoded PNGs.
           // The existing pane remains bound to its own WR-authorized lifetime.
           let ready=false;
-          try{ready=await next.waitUntilReady(15000);}catch(error){next.close();throw error;}
+          try{ready=await next.waitUntilReady(15000);}catch(error){next.close("staging_error");throw error;}
           if(!this.__operaDiagnosticEnabled||!ready||!next.active){
-            next.close();
+            next.close("staging_not_ready");
             if(!ready)show('OPERA aktiv · Neue Kacheln noch nicht darstellbar');
             return;
           }
           next.setOpacity(requestedOpacity);
-          current?.close();this.__operaDiagnosticPane=next;
+          current?.close("cycle_swap");this.__operaDiagnosticPane=next;
+          operaTrace("cycle_swap_complete",{from_valid_at:current?.validAt||null,to_valid_at:next.validAt,loaded:next.metrics.loaded});
           store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',valid_at:next.validAt,metrics:next.metrics,orientation:'north_first',at:new Date().toISOString()};
           show('OPERA · north_first · Zyklus automatisch übernommen');
         }catch(error){
+          operaTrace("cycle_poll_error",{message:String(error?.message||error).slice(0,100)});
           const reason=String(error?.message||error).slice(0,100);
           if(/auth_preflight|missing_auth|authentication|401|403/i.test(reason)){
             this.__operaDiagnosticEnabled=false;
             clearInterval(this.__operaDiagnosticTimer);this.__operaDiagnosticTimer=null;
-            this.__operaDiagnosticPane?.close();this.__operaDiagnosticPane=null;
+            this.__operaDiagnosticPane?.close("auth_blocked");this.__operaDiagnosticPane=null;
             store.operaDiagnostic={status:'auth_blocked',reason,at:new Date().toISOString()};
             show('OPERA gestoppt · HA-Anmeldung prüfen');
           }else{
