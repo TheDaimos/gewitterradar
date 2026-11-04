@@ -672,6 +672,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   async _setWeatherRadarEnabled(enabled,{persist=true}={}){
     const state=this._weatherRadarState();
     state.enabled=Boolean(enabled);
+    this.__grPrecipitationWantsOpera=state.enabled;
     if(!state.enabled)state.coldStartRetries=0;
     if(persist)try{localStorage.setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
@@ -691,7 +692,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarEnsureMapHooks();
     if(!this.__operaDiagnosticEnabled&&!this.__operaRequestRunning
         &&this._hass?.user?.is_admin===true)
-      void this._weatherEngineOperaDiagnosticToggle?.();
+      void this._weatherEngineOperaDiagnosticToggle?.({autoFromPrecipitation:true});
     if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
