@@ -1669,6 +1669,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         maxDataAgeSeconds:900,
         maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
+          getAccessToken:async()=>{
+            const auth=this._hass?.connection?.options?.auth;
+            if(!auth?.accessToken&&typeof auth?.refreshAccessToken==="function")
+              await auth.refreshAccessToken();
+            return auth?.accessToken||this._hass?.auth?.data?.access_token||null;
+          },
           onTileDiagnostics:item=>{
             stageTileSettled++;
             stageMaxTileMs=Math.max(stageMaxTileMs,Number(item?.duration_ms)||0);
