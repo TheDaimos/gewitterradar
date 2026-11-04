@@ -16,7 +16,6 @@ const CAPABILITY="weather.precipitation.layer";
 const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
 const BACKGROUND_MAX_AGE_SECONDS=43200;
-const REGIONAL_HOLD_LIMIT_MS=45000;
 const REGIONAL_HOLD_RETRY_MS=15000;
 const COLD_START_RETRY_MS=8000;
 const COLD_START_MAX_RETRIES=3;
@@ -250,8 +249,9 @@ export function decideV2RegionalRetention({
   // The hold is tied to the exact installed old layer. Repeated NASA-only
   // responses may not extend the original deadline.
   const startedAt=existingHold?.startedAt??now;
-  const deadlineAt=Math.min(startedAt+REGIONAL_HOLD_LIMIT_MS,
-    ...expiry.map(x=>x.expiresAt));
+  // The old approved frame remains until the first WR-issued expiry.
+  // GR never creates an independent 45-second hold deadline.
+  const deadlineAt=Math.min(...expiry.map(x=>x.expiresAt));
   if(now>=deadlineAt)return no("hold_expired");
   return {retain:true,reason:"regional_coverage_unavailable_provisional",
     startedAt,deadlineAt,remaining_ms:Math.round(deadlineAt-now),
