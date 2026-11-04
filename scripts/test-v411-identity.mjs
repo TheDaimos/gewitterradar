@@ -13,6 +13,21 @@ const dra=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-
 const radiiMap=await read('frontend/modules/location/radii-map.js');
 const mapDisplay=await read('frontend/modules/fullscreen/map-display.js');
 const cardLifecycle=await read('frontend/modules/core/card-lifecycle.js');
+const releaseVersion=version.match(/version:"([^"]+)"/)?.[1];
+const runtimeRevision=version.match(/runtimeRevision:"([^"]+)"/)?.[1];
+const moduleSetId=version.match(/moduleSetId:"([^"]+)"/)?.[1];
+const integrationVersion=version.match(/integrationVersion:"([^"]+)"/)?.[1];
+assert.ok(releaseVersion&&runtimeRevision&&moduleSetId&&integrationVersion);
+assert.equal(runtime.productVersion,releaseVersion);
+assert.equal(runtime.runtimeRevision,runtimeRevision);
+assert.equal(runtime.moduleSetId,moduleSetId);
+assert.equal(JSON.parse(await read("custom_components/gewitterradar/manifest.json")).version,integrationVersion);
+assert.ok(entry.includes("version.js?v="+runtimeRevision));
+assert.equal(dra.productVersion,releaseVersion);
+assert.equal(dra.runtimeRevision,runtimeRevision);
+assert.equal(dra.moduleSetId,moduleSetId);
+// Preserve the historical exact V4.11.106 snapshot tests only for that release.
+if(releaseVersion==="4.11.106"){
 const expected='V4.11.106-DEV-2026-10-22';
 assert.match(entry,/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411106r1";/);
 assert.match(entry,/const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE\.runtimeRevision;/);
@@ -54,6 +69,7 @@ assert.equal(runtime.modules.find(x=>x.id==='core.card-lifecycle')?.version,'1.0
 assert.match(entry,/modules\/fullscreen\/map-display\.js','41108r10'/);
 assert.match(entry,/modules\/location\/radii-map\.js','41168r1'/);
 assert.match(entry,/modules\/core\/card-lifecycle\.js','411106r1'/);
+}
 assert.match(radiiMap,/_setupMapGestureRecovery/);
 assert.match(radiiMap,/_hardResetMapGestureHandlers/);
 assert.match(radiiMap,/rogue-single-pointer-zoom/);
@@ -84,4 +100,4 @@ assert.equal(dra.runtimeRevision,runtime.runtimeRevision);
 assert.equal(dra.moduleSetId,runtime.moduleSetId);
 assert.equal(dra.deployment.channel,'deploy/dev');
 assert.match(dra.deployment.purpose,/WeatherRouter|Visualisierung|Weather Engine|diagnostic|Project Hub|Seitenleiste|settings|Einstellungen/i);
-console.log('PASS: V4.11.106 DEV identity synchronized across frontend, runtime and DRA provenance on the existing deploy/dev channel.');
+console.log('PASS: current GR release identity synchronized across frontend, runtime and DRA provenance on deploy/dev.');
