@@ -45,7 +45,32 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
     geographic_only:true,image_pixels_verified:false};
 }
 
-function loadRasterImage(url,_source,{signal}={}){
+async function loadRasterImage(url,source,{signal,getAccessToken}={}){
+  // Authenticated HA OPERA route is never fetched by a naked <img>.
+  // Tokens are obtained only from the HA session and never placed in URLs.
+  if(url.startsWith("/api/weather_router/opera_tile/")){
+    if(source?.source_id!=="opera/opera_rate_raster"||
+       !/^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url))
+      throw new Error("untrusted_opera_tile_url");
+    const token=typeof getAccessToken==="function"?await getAccessToken():null;
+    if(!token)throw new Error("missing_opera_tile_authorization");
+    const response=await fetch(url,{method:"GET",credentials:"omit",redirect:"error",
+      cache:"no-store",signal,headers:{Authorization:"Bearer "+token,Accept:"image/png"}});
+    if(!response.ok)throw new Error("opera_tile_http_"+response.status);
+    if(!String(response.headers.get("content-type")||"").toLowerCase().includes("image/png"))
+      throw new Error("opera_tile_invalid_content_type");
+    const blob=await response.blob();
+    const objectURL=URL.createObjectURL(blob);
+    try{
+      return await new Promise((resolve,reject)=>{
+        const image=new Image();
+        image.onload=()=>resolve(image);
+        image.onerror=()=>reject(new Error("opera_tile_invalid_png"));
+        if(signal?.aborted){reject(new Error("opera_tile_cancelled"));return;}
+        image.src=objectURL;
+      });
+    }finally{URL.revokeObjectURL(objectURL);}
+  }
   return new Promise((resolve,reject)=>{
     const image=new Image();
     let settled=false;
@@ -69,7 +94,7 @@ function loadRasterImage(url,_source,{signal}={}){
 export function createRasterMosaicGridLayer(L,snapshot,{
   maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,
   maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,
-  timeoutMs=8000,loadImage=loadRasterImage,
+  timeoutMs=8000,loadImage=loadRasterImage,getAccessToken=null,
   createCanvas=()=>document.createElement("canvas"),onTileDiagnostics=null
 }={}){
   if(!L?.GridLayer?.extend||typeof loadImage!=="function"||
@@ -91,7 +116,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:renderLayers,loadImage,budget,tileSize,timeoutMs,
+        context,tile:coords,layers:renderLayers,\n        loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),\n        budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
