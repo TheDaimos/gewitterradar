@@ -675,7 +675,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.enabled)state.coldStartRetries=0;
     if(persist)try{localStorage.setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
+    // Niederschlag is the single normal UI switch. OPERA remains an explicitly
+    // unverified, admin-authorized DEV overlay; WR may deny it at any time.
+    // Never make the diagnostic pane's result a prerequisite for DWD/V1/V2.
     if(!state.enabled){
+      if(this.__operaDiagnosticEnabled)this._weatherEngineOperaDiagnosticToggle?.();
       state.v2Generation++;
       state.v1PendingCancel?.();
       if(state.v2PendingLayer){try{state.v2PendingLayer.remove();}catch(_){}state.v2PendingLayer=null;}
@@ -685,6 +689,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       return;
     }
     this._weatherRadarEnsureMapHooks();
+    if(!this.__operaDiagnosticEnabled&&!this.__operaRequestRunning
+        &&this._hass?.user?.is_admin===true)
+      void this._weatherEngineOperaDiagnosticToggle?.();
     if(!state.refreshTimer)state.refreshTimer=setInterval(()=>this._scheduleWeatherRadarRefresh("timer",0),REFRESH_MS);
     await this._refreshWeatherRadar({reason:"enable",force:true});
   },
