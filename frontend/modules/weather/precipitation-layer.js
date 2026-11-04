@@ -15,7 +15,6 @@ export const MODULE_META=Object.freeze({
 const CAPABILITY="weather.precipitation.layer";
 const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
-const BACKGROUND_MAX_AGE_SECONDS=43200;
 const REGIONAL_HOLD_RETRY_MS=15000;
 const COLD_START_RETRY_MS=8000;
 const COLD_START_MAX_RETRIES=3;
@@ -232,13 +231,9 @@ export function decideV1TileStage(stats){
     failure_ratio:eligible?failed/eligible:0};
 }
 
-export function weatherRadarNeedsConsentDetach(state,now=Date.now()){
-  if(!state?.layer)return false;
-  if(state.v2Snapshot?.layers?.some(l=>l?.freshness_class==="older_background"))return true;
-  const a=state.lastReady?.answer;
-  if(!a)return false;
-  // A revoked age exception also invalidates V1 imagery without satellite labels.
-  // V1 validity is a WR decision, never a local GR age cutoff.
+export function weatherRadarNeedsConsentDetach(_state,_now=Date.now()){
+  // GR cannot revoke a WR-approved source solely due to local preferences.
+  // A changed user preference is forwarded to WR on the next V2 request.
   return false;
 }
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
@@ -635,14 +630,6 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.v2PendingLayer){
       try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_error){}
       state.v2PendingLayer=null;
-    }
-    if(!next&&weatherRadarNeedsConsentDetach(state)){
-      this._weatherEngineMonitorEvent?.("satellite_consent_revoked",{reason:"older_satellite_layer_invalid"});
-      this._weatherRadarRemoveLayer();
-      state.v2Snapshot=null;state.v2SnapshotAt=null;state.v2RenderMetrics=null;state.lastReady=null;
-      if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
-      state.v2BudgetTimer=null;state.v2BudgetPending=false;
-      this._weatherRadarVisualAudit("satellite_consent_revoked");
     }
     state.lastRequestAt=0;
     this._weatherRadarUpdateControls();
