@@ -72,7 +72,6 @@ async function loadRasterImage(url,source,{signal,getAccessToken}={}){
     }finally{URL.revokeObjectURL(objectURL);}
   }
   return new Promise((resolve,reject)=>{
-  return new Promise((resolve,reject)=>{
     const image=new Image();
     let settled=false;
     function finish(error){
