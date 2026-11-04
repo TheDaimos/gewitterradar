@@ -858,6 +858,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       load();
       return canvas||img;
     };
+    layer.on?.("tileunload",event=>event?.tile?.__grAbortTileRetry?.());
+    layer.on?.("remove",()=>layer._tiles&&Object.values(layer._tiles).forEach(
+      entry=>entry?.el?.__grAbortTileRetry?.()));
     return layer;
   },
 
