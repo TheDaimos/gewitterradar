@@ -15,8 +15,6 @@ export const MODULE_META=Object.freeze({
 const CAPABILITY="weather.precipitation.layer";
 const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
-const BACKGROUND_MAX_AGE_SECONDS=43200;
-const REGIONAL_HOLD_LIMIT_MS=45000;
 const REGIONAL_HOLD_RETRY_MS=15000;
 const COLD_START_RETRY_MS=8000;
 const COLD_START_MAX_RETRIES=3;
@@ -143,26 +141,15 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
   if(!state?.layer||!viewport)return {fraction:0,verified:false,reason:"no_active_layer"};
   if(state.v2Snapshot){
     const elapsed=state.v2SnapshotAt?Math.max(0,(now-state.v2SnapshotAt)/1000):0;
-    const layers=state.v2Snapshot.layers?.filter(layer=>{
-      const age=layer?.times?.age_seconds;
-      const older=layer?.freshness_class==="older_background";
-      const limit=older&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-      return typeof age==="number"&&Number.isFinite(age)&&age>=0&&age+elapsed<=limit;
-    })||[];
+    const layers=state.v2Snapshot.layers?.filter(layer=>
+      v2RenderedSourceValidity(layer,state.v2SnapshotAt,{now}).valid)||[];
     const result=measureRasterViewportCoverage(layers,viewport,zoom);
     return {fraction:result.fraction,verified:result.covered_sources>0,
       reason:layers.length?"v2_geographic_coverage":"v2_sources_expired"};
   }
   const record=state.lastReady;
   if(!record?.answer)return {fraction:0,verified:false,reason:"no_v1_record"};
-  const age=record.answer.freshness?.age_seconds;
-  const sem=record.answer.resource?.semantics||{};
-  const isOlderSatellite=sem.observation_kind==="estimate"&&
-    String(sem.measurement_method||"").includes("satellite");
-  const limit=isOlderSatellite&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-  if(typeof age!=="number"||!Number.isFinite(age)||age<0||
-     age+Math.max(0,(now-(record.at??now))/1000)>limit)
-    return {fraction:0,verified:false,reason:"v1_age_invalid"};
+  // V1 data authority is WR; GR does not invent a second age cutoff.
   const result=measureV1RasterCoverage(record.answer.provenance,viewport,zoom);
   return {fraction:result.fraction,verified:result.verified===true,
     reason:result.verified?"v1_geographic_coverage":"v1_coverage_unverified"};
@@ -177,28 +164,16 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
  * No provider resolution, new candidate scoring or extension of data age.
  * A Canvas painted successfully does not prove nontransparent weather pixels.
  */
-export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now(),satelliteConsent=false}={}){
-  const age=layer?.times?.age_seconds;
-  const validAt=Date.parse(layer?.times?.valid_at||"");
-  const elapsed=(now-snapshotAt)/1000;
-  const older=layer?.freshness_class==="older_background";
-  const method=layer?.semantics?.measurement_method;
-  const satellite=layer?.semantics?.observation_kind==="estimate"
-    &&["satellite_precipitation_estimate","satellite_estimate"].includes(method);
-  const maxAge=older&&satellite&&satelliteConsent?BACKGROUND_MAX_AGE_SECONDS:900;
-  if(older&&(!satelliteConsent||!satellite))return {valid:false,reason:"consent_revoked"};
-  if(layer?.coverage_verified!==true||!layer?.coverage||!layer?.render
-    ||layer.render.opacity<=0)return {valid:false,reason:"coverage_unverified"};
-  if(!Number.isFinite(age)||age<0||!Number.isFinite(validAt)
-    ||!Number.isFinite(snapshotAt)||elapsed<0)
-    return {valid:false,reason:"time_unverified"};
-  // Check the absolute UTC source timestamp and the original WR age. Neither
-  // clock is permitted to reset merely because a later V2 request succeeded.
-  const actualAge=Math.max(age+elapsed,(now-validAt)/1000);
-  const expiresAt=Math.min(snapshotAt+(maxAge-age)*1000,validAt+maxAge*1000);
-  return {valid:actualAge<=maxAge&&now<expiresAt,
-    reason:actualAge<=maxAge&&now<expiresAt?"current":"source_expired",
-    expiresAt,age_seconds:actualAge};
+export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now()}={}){
+  // WR alone authorizes time validity. GR only follows the server's
+  // absolute deadline; it never derives a provider-specific age policy.
+  const expiry=Date.parse(layer?.times?.valid_until||"");
+  if(layer?.coverage_verified!==true||!layer?.coverage||!layer?.render||
+     layer.render.opacity<=0)return {valid:false,reason:"coverage_unverified"};
+  if(!Number.isFinite(expiry))return {valid:false,reason:"wr_expiry_missing"};
+  const valid=now<expiry;
+  return {valid,reason:valid?"wr_authorized":"wr_expired",
+    expiresAt:expiry,age_seconds:layer?.times?.age_seconds??null};
 }
 
 /** Decide if a previously verified, painted WR mosaic may temporarily survive
@@ -207,86 +182,43 @@ export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now(),satell
  * per-provider timeout: retention is provisional, never labelled a proven
  * 'coverage_timeout' unless WR explicitly reports that code.
  */
+/** Transport-only, provider-neutral retention of the previous WR-approved mosaic.
+ * GR never decides data age, source type or provider priority.
+ * A partial replacement does not destroy already painted, still authorized tiles.
+ */
 export function decideV2RegionalRetention({
   previous,next,viewport,zoom=0,now=Date.now(),previousAt=null,
-  satelliteConsent=false,drawnTiles=0,uncoveredTiles=0,
-  existingHold=null,previousMounted=false,renderOrder=null
+  drawnTiles=0,uncoveredTiles=0,existingHold=null,previousMounted=false,
+  renderOrder=null
 }={}){
   const no=reason=>({retain:false,reason});
   if(!previousMounted||!previous?.layers?.length||!next?.layers?.length)
     return no("no_mounted_mosaic");
-  if(next.status!=="partial")return no("replacement_not_degraded");
-  if(!satelliteConsent)return no("consent_revoked");
-  if(!(drawnTiles>0)||uncoveredTiles!==0)return no("previous_image_incomplete");
-  const old=previous.layers;
-  const measured=old.filter(l=>l.freshness_class!=="older_background"
-    &&["observation","observation_forecast"].includes(l.semantics?.observation_kind)
-    &&typeof l.semantics?.measurement_method==="string"
-    &&l.semantics.measurement_method.includes("radar"));
-  const older=old.filter(l=>l.freshness_class==="older_background");
-  if(!measured.length||!older.length)return no("no_previous_radar_and_satellite");
-  const outcomes=Array.isArray(next.source_outcomes)?next.source_outcomes:[];
-  const sourceEvidence=outcomes.filter(x=>measured.some(m=>m.source_id===x.source_id));
-  // Explicit per-source invalidity overrides any generic transient failure.\n  // A held regional raster MUST be dropped when its coverage or age is invalid.
-  const routing=next.routing||{};
-  const evidence=[...(Array.isArray(routing.coverage_preflight)?routing.coverage_preflight:[]),
-    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[]),
-    ...outcomes];
-  for(const l of measured){
-    if(evidence.some(item=>item.source_id===l.source_id&&
-      ["outside_coverage","outside_time_tolerance","no_fresh_verified_frame",
-        "profile_filtered","consent_revoked","source_stale","not_permitted",
-        "coverage_unverified"].includes(item.result||item.reason)))
-      return no("explicit_regional_rejection");
-  }
-  const explicitTransient=sourceEvidence.some(x=>
-    ["coverage_timeout","temporarily_unavailable","coverage_provider_error"].includes(x.result));
-  const genericTransient=Array.isArray(next.limitations)&&next.limitations.some(x=>
-    typeof x==="string"&&x.includes("regionale Coverage-Anfragen waren nicht nutzbar"));
-  if(!explicitTransient&&!genericTransient)return no("no_transient_coverage_evidence");
-  if(!next.layers.every(l=>l.freshness_class==="older_background"
-     &&l.semantics?.observation_kind==="estimate"
-     &&["satellite_precipitation_estimate","satellite_estimate"].includes(
-       l.semantics?.measurement_method)))
-    return no("replacement_has_live_sources");
-  if(measured.some(l=>next.layers.some(n=>n.source_id===l.source_id)))
-    return no("regional_source_present");
-  // The consumer MUST keep the WeatherRouter drawing order. A retained
-  // composition is only safe when its live radar was painted after satellite.
-  const verifiedDrawOrder=Array.isArray(renderOrder)&&renderOrder.length===old.length
-    &&old.every(l=>renderOrder.some(x=>x.source_id===l.source_id));
-  const paintedOrder=verifiedDrawOrder?renderOrder.map(x=>old.find(l=>l.source_id===x.source_id)):old;
-  if(Math.max(...older.map(l=>paintedOrder.indexOf(l)))>=
-     Math.min(...measured.map(l=>paintedOrder.indexOf(l))))
-    return no("prior_compositing_order_unverified");
-  const nextUnits=new Set(next.layers.map(l=>
-    String(l.semantics?.quantity)+"|"+String(l.semantics?.unit)));
-  if(nextUnits.size!==1||measured.some(l=>!nextUnits.has(
-    String(l.semantics?.quantity)+"|"+String(l.semantics?.unit))))
-    return no("precipitation_semantics_changed");
-  const used=measureRasterViewportCoverage(measured,viewport,zoom);
-  if(used.covered_sources<=0||used.fraction<=0)return no("regional_outside_viewport");
-  const expiry=old.map(l=>v2RenderedSourceValidity(l,previousAt,{
-    now,satelliteConsent}));
-  if(expiry.some(x=>!x.valid))return no(
-    expiry.find(x=>!x.valid)?.reason||"source_expired");
-  // The hold is tied to the exact installed old layer. Repeated NASA-only
-  // responses may not extend the original deadline.
+  if(next.status!=="partial")return no("replacement_not_partial");
+  if(!(drawnTiles>0)||uncoveredTiles!==0)return no("previous_tiles_not_ready");
+  const expiry=previous.layers.map(layer=>v2RenderedSourceValidity(layer,previousAt,{now}));
+  if(expiry.some(item=>!item.valid))
+    return no(expiry.find(item=>!item.valid)?.reason||"wr_expired");
+  const oldCoverage=measureRasterViewportCoverage(previous.layers,viewport,zoom);
+  const nextCoverage=measureRasterViewportCoverage(next.layers,viewport,zoom);
+  if(oldCoverage.covered_sources<=0||oldCoverage.fraction<=0)
+    return no("previous_outside_viewport");
+  if(nextCoverage.fraction>=oldCoverage.fraction)
+    return no("replacement_geography_not_reduced");
   const startedAt=existingHold?.startedAt??now;
-  const deadlineAt=Math.min(startedAt+REGIONAL_HOLD_LIMIT_MS,
-    ...expiry.map(x=>x.expiresAt));
-  if(now>=deadlineAt)return no("hold_expired");
-  return {retain:true,reason:"regional_coverage_unavailable_provisional",
-    startedAt,deadlineAt,remaining_ms:Math.round(deadlineAt-now),
-    retained_source_ids:measured.map(x=>x.source_id),
-    regional_coverage_fraction:Number(used.fraction.toFixed(5)),
-    current_age_seconds:Math.ceil(Math.max(...expiry.filter((v,i)=>measured.includes(old[i]))
-      .map(x=>x.age_seconds))),
-    // Do not infer 'coverage_timeout' merely from an unavailable source.
-    coverage_timeout_proven:evidence.some(x=>
-      measured.some(m=>m.source_id===x.source_id)&&x.result==="coverage_timeout"),
-    render_order:paintedOrder.map(x=>({source_id:x.source_id,
-      freshness_class:x.freshness_class||"current"}))};
+  const deadlineAt=Math.min(...expiry.map(item=>item.expiresAt));
+  if(now>=deadlineAt)return no("wr_expired");
+  return {
+    retain:true,reason:"waiting_for_complete_replacement",
+    startedAt,deadlineAt,remaining_ms:Math.max(0,Math.round(deadlineAt-now)),
+    retained_source_ids:previous.layers.map(layer=>layer.source_id),
+    regional_coverage_fraction:Number(oldCoverage.fraction.toFixed(5)),
+    current_age_seconds:Math.max(0,...expiry.map(item=>item.age_seconds||0)),
+    coverage_timeout_proven:false,
+    render_order:Array.isArray(renderOrder)?renderOrder:
+      previous.layers.map(layer=>({source_id:layer.source_id,
+        freshness_class:layer.freshness_class||"current"})),
+  };
 }
 
 export function decideV1TileStage(stats){
@@ -299,15 +231,10 @@ export function decideV1TileStage(stats){
     failure_ratio:eligible?failed/eligible:0};
 }
 
-export function weatherRadarNeedsConsentDetach(state,now=Date.now()){
-  if(!state?.layer)return false;
-  if(state.v2Snapshot?.layers?.some(l=>l?.freshness_class==="older_background"))return true;
-  const a=state.lastReady?.answer;
-  if(!a)return false;
-  // A revoked age exception also invalidates V1 imagery without satellite labels.
-  const age=a.freshness?.age_seconds;
-  return typeof age!=="number"||!Number.isFinite(age)||age<0||
-    age+Math.max(0,(now-(state.lastReady?.at??now))/1000)>900;
+export function weatherRadarNeedsConsentDetach(_state,_now=Date.now()){
+  // GR cannot revoke a WR-approved source solely due to local preferences.
+  // A changed user preference is forwarded to WR on the next V2 request.
+  return false;
 }
 export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLeafletJs}=deps;return ({
   _weatherRadarState(){
@@ -703,14 +630,6 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.v2PendingLayer){
       try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_error){}
       state.v2PendingLayer=null;
-    }
-    if(!next&&weatherRadarNeedsConsentDetach(state)){
-      this._weatherEngineMonitorEvent?.("satellite_consent_revoked",{reason:"older_satellite_layer_invalid"});
-      this._weatherRadarRemoveLayer();
-      state.v2Snapshot=null;state.v2SnapshotAt=null;state.v2RenderMetrics=null;state.lastReady=null;
-      if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);
-      state.v2BudgetTimer=null;state.v2BudgetPending=false;
-      this._weatherRadarVisualAudit("satellite_consent_revoked");
     }
     state.lastRequestAt=0;
     this._weatherRadarUpdateControls();
@@ -1433,21 +1352,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const payload=answer?.resource?.payload;
     if(!payload?.tile_url)return false;
-    // Fail closed for V1: radar is current for 900 s, older satellite
-    // estimates require an explicit opt-in and positive semantic evidence.
-    const sem=answer?.resource?.semantics||{};
-    const age=answer?.freshness?.age_seconds;
-    const currentAge=typeof age==="number"&&Number.isFinite(age)&&age>=0&&age<=900;
-    const permittedSatellite=typeof age==="number"&&Number.isFinite(age)&&age>=0&&
-      age<=BACKGROUND_MAX_AGE_SECONDS&&state.allowOlderSatelliteBackground===true&&
-      sem.observation_kind==="estimate"&&
-      String(sem.measurement_method||"").includes("satellite");
-    if(!currentAge&&!permittedSatellite){
-      this._weatherEngineMonitorEvent?.("v1_raster_age_rejected",{
-        older_background_opt_in:state.allowOlderSatelliteBackground,
-        age_seconds:Number.isFinite(age)?age:null});
-      return false;
-    }
+    // WR already selected and authorized the V1 radar resource.
+    // GR does not independently reject based on a fixed age.
     const current=()=>state.enabled&&state.v2Generation===token&&Boolean(this._map)
       &&this._weatherRadarViewport()?.signature===viewport.signature
       &&(typeof document==="undefined"||document.visibilityState!=="hidden");
@@ -1621,9 +1527,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       report("skipped",{reason:!viewport.focus?"missing_focus":"websocket_unavailable"});
       return false;
     }
-    report("started",{live_max_data_age_seconds:900,
-      background_max_age_seconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
-      satellite_background_opt_in:state.allowOlderSatelliteBackground===true});
+    report("started",{validity_authority:"weather_router"});
     const current=()=>state.enabled&&state.v2Generation===token
       &&this._weatherRadarViewport()?.signature===viewport.signature;
     let timeout=null,staged=null;
@@ -1666,8 +1570,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
         consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],older_background_count:event.older_background_count??0,freshness_classes:Array.isArray(event.freshness_classes)?event.freshness_classes.slice(0,12):[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
-        maxDataAgeSeconds:900,
-        maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
+        allowOlderSatelliteBackground:state.allowOlderSatelliteBackground===true,
         layerOptions:{maxConcurrent:4,
           getAccessToken:async()=>{
             const auth=this._hass?.connection?.options?.auth;
