@@ -183,87 +183,43 @@ export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now()}={}){
  * per-provider timeout: retention is provisional, never labelled a proven
  * 'coverage_timeout' unless WR explicitly reports that code.
  */
+/** Transport-only, provider-neutral retention of the previous WR-approved mosaic.
+ * GR never decides data age, source type or provider priority.
+ * A partial replacement does not destroy already painted, still authorized tiles.
+ */
 export function decideV2RegionalRetention({
   previous,next,viewport,zoom=0,now=Date.now(),previousAt=null,
-  satelliteConsent=false,drawnTiles=0,uncoveredTiles=0,
-  existingHold=null,previousMounted=false,renderOrder=null
+  drawnTiles=0,uncoveredTiles=0,existingHold=null,previousMounted=false,
+  renderOrder=null
 }={}){
   const no=reason=>({retain:false,reason});
   if(!previousMounted||!previous?.layers?.length||!next?.layers?.length)
     return no("no_mounted_mosaic");
-  if(next.status!=="partial")return no("replacement_not_degraded");
-  if(!satelliteConsent)return no("consent_revoked");
-  if(!(drawnTiles>0)||uncoveredTiles!==0)return no("previous_image_incomplete");
-  const old=previous.layers;
-  const measured=old.filter(l=>l.freshness_class!=="older_background"
-    &&["observation","observation_forecast"].includes(l.semantics?.observation_kind)
-    &&typeof l.semantics?.measurement_method==="string"
-    &&l.semantics.measurement_method.includes("radar"));
-  const older=old.filter(l=>l.freshness_class==="older_background");
-  if(!measured.length||!older.length)return no("no_previous_radar_and_satellite");
-  const outcomes=Array.isArray(next.source_outcomes)?next.source_outcomes:[];
-  const sourceEvidence=outcomes.filter(x=>measured.some(m=>m.source_id===x.source_id));
-  // Explicit per-source invalidity overrides any generic transient failure.\n  // A held regional raster MUST be dropped when its coverage or age is invalid.
-  const routing=next.routing||{};
-  const evidence=[...(Array.isArray(routing.coverage_preflight)?routing.coverage_preflight:[]),
-    ...(Array.isArray(routing.source_rejections)?routing.source_rejections:[]),
-    ...outcomes];
-  for(const l of measured){
-    if(evidence.some(item=>item.source_id===l.source_id&&
-      ["outside_coverage","outside_time_tolerance","no_fresh_verified_frame",
-        "profile_filtered","consent_revoked","source_stale","not_permitted",
-        "coverage_unverified"].includes(item.result||item.reason)))
-      return no("explicit_regional_rejection");
-  }
-  const explicitTransient=sourceEvidence.some(x=>
-    ["coverage_timeout","temporarily_unavailable","coverage_provider_error"].includes(x.result));
-  const genericTransient=Array.isArray(next.limitations)&&next.limitations.some(x=>
-    typeof x==="string"&&x.includes("regionale Coverage-Anfragen waren nicht nutzbar"));
-  if(!explicitTransient&&!genericTransient)return no("no_transient_coverage_evidence");
-  if(!next.layers.every(l=>l.freshness_class==="older_background"
-     &&l.semantics?.observation_kind==="estimate"
-     &&["satellite_precipitation_estimate","satellite_estimate"].includes(
-       l.semantics?.measurement_method)))
-    return no("replacement_has_live_sources");
-  if(measured.some(l=>next.layers.some(n=>n.source_id===l.source_id)))
-    return no("regional_source_present");
-  // The consumer MUST keep the WeatherRouter drawing order. A retained
-  // composition is only safe when its live radar was painted after satellite.
-  const verifiedDrawOrder=Array.isArray(renderOrder)&&renderOrder.length===old.length
-    &&old.every(l=>renderOrder.some(x=>x.source_id===l.source_id));
-  const paintedOrder=verifiedDrawOrder?renderOrder.map(x=>old.find(l=>l.source_id===x.source_id)):old;
-  if(Math.max(...older.map(l=>paintedOrder.indexOf(l)))>=
-     Math.min(...measured.map(l=>paintedOrder.indexOf(l))))
-    return no("prior_compositing_order_unverified");
-  const nextUnits=new Set(next.layers.map(l=>
-    String(l.semantics?.quantity)+"|"+String(l.semantics?.unit)));
-  if(nextUnits.size!==1||measured.some(l=>!nextUnits.has(
-    String(l.semantics?.quantity)+"|"+String(l.semantics?.unit))))
-    return no("precipitation_semantics_changed");
-  const used=measureRasterViewportCoverage(measured,viewport,zoom);
-  if(used.covered_sources<=0||used.fraction<=0)return no("regional_outside_viewport");
-  const expiry=old.map(l=>v2RenderedSourceValidity(l,previousAt,{
-    now,satelliteConsent}));
-  if(expiry.some(x=>!x.valid))return no(
-    expiry.find(x=>!x.valid)?.reason||"source_expired");
-  // The hold is tied to the exact installed old layer. Repeated NASA-only
-  // responses may not extend the original deadline.
+  if(next.status!=="partial")return no("replacement_not_partial");
+  if(!(drawnTiles>0)||uncoveredTiles!==0)return no("previous_tiles_not_ready");
+  const expiry=previous.layers.map(layer=>v2RenderedSourceValidity(layer,previousAt,{now}));
+  if(expiry.some(item=>!item.valid))
+    return no(expiry.find(item=>!item.valid)?.reason||"wr_expired");
+  const oldCoverage=measureRasterViewportCoverage(previous.layers,viewport,zoom);
+  const nextCoverage=measureRasterViewportCoverage(next.layers,viewport,zoom);
+  if(oldCoverage.covered_sources<=0||oldCoverage.fraction<=0)
+    return no("previous_outside_viewport");
+  if(nextCoverage.fraction>=oldCoverage.fraction)
+    return no("replacement_geography_not_reduced");
   const startedAt=existingHold?.startedAt??now;
-  // The old approved frame remains until the first WR-issued expiry.
-  // GR never creates an independent 45-second hold deadline.
-  const deadlineAt=Math.min(...expiry.map(x=>x.expiresAt));
-  if(now>=deadlineAt)return no("hold_expired");
-  return {retain:true,reason:"regional_coverage_unavailable_provisional",
-    startedAt,deadlineAt,remaining_ms:Math.round(deadlineAt-now),
-    retained_source_ids:measured.map(x=>x.source_id),
-    regional_coverage_fraction:Number(used.fraction.toFixed(5)),
-    current_age_seconds:Math.ceil(Math.max(...expiry.filter((v,i)=>measured.includes(old[i]))
-      .map(x=>x.age_seconds))),
-    // Do not infer 'coverage_timeout' merely from an unavailable source.
-    coverage_timeout_proven:evidence.some(x=>
-      measured.some(m=>m.source_id===x.source_id)&&x.result==="coverage_timeout"),
-    render_order:paintedOrder.map(x=>({source_id:x.source_id,
-      freshness_class:x.freshness_class||"current"}))};
+  const deadlineAt=Math.min(...expiry.map(item=>item.expiresAt));
+  if(now>=deadlineAt)return no("wr_expired");
+  return {
+    retain:true,reason:"waiting_for_complete_replacement",
+    startedAt,deadlineAt,remaining_ms:Math.max(0,Math.round(deadlineAt-now)),
+    retained_source_ids:previous.layers.map(layer=>layer.source_id),
+    regional_coverage_fraction:Number(oldCoverage.fraction.toFixed(5)),
+    current_age_seconds:Math.max(0,...expiry.map(item=>item.age_seconds||0)),
+    coverage_timeout_proven:false,
+    render_order:Array.isArray(renderOrder)?renderOrder:
+      previous.layers.map(layer=>({source_id:layer.source_id,
+        freshness_class:layer.freshness_class||"current"})),
+  };
 }
 
 export function decideV1TileStage(stats){
