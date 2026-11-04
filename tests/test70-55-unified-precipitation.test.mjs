@@ -6,7 +6,7 @@ test('GR precipitation delegates provider choice to WR and does not overlay OPER
  const p=read('frontend/modules/weather/precipitation-layer.js');
  assert.match(p,/this\.__grPrecipitationWantsOpera=state\.enabled/);
  assert.match(p,/if\(this\.__operaDiagnosticEnabled\)this\._weatherEngineOperaDiagnosticToggle/);
- assert.match(p,/this\._weatherEngineOperaDiagnosticToggle\?\.\(\{autoFromPrecipitation:true\}\)/);
+ assert.doesNotMatch(p,/this\._weatherEngineOperaDiagnosticToggle\?\.\(\{autoFromPrecipitation:true\}\)/);
 });
 test('GR ignores auto preview after precipitation is turned off',()=>{
  const c=read('frontend/modules/weather/consumer-client.js');
