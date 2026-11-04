@@ -1,0 +1,28 @@
+name: TEST70-54 V2 selective raster retry
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js'
+      - 'tests/test70-54-selective-raster-retry.test.mjs'
+      - '.github/workflows/test70-54-selective-retry.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  selective-retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js
+      - name: Check three shipped copies
+        run: |
+          cmp frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js custom_components/gewitterradar/frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js
+          cmp frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js dashboard/dist/modules/weather/p7-010/raster-mosaic-tile-loader.js
+      - name: Selective retry and raster regression
+        run: node --test tests/test70-54-selective-raster-retry.test.mjs tests/wl02-raster-geometry.test.mjs
