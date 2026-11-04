@@ -116,7 +116,9 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:renderLayers,\n        loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),\n        budget,tileSize,timeoutMs,
+        context,tile:coords,layers:renderLayers,
+        loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),
+        budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
