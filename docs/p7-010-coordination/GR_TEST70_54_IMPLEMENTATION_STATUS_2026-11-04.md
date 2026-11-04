@@ -28,3 +28,11 @@ General project rule: retry only failed tile/source requests and retain successf
 5. Diagnostics exported only to TheDaimos/Project-Log-And-Export@main.
 
 No private GitHub Actions. No production deployment.
+
+## Release verification addendum (2026-11-04)
+
+The public GR workflow generated release commit `5cff22d0d4728891472140b7a42b294b11f762cd` with author `github-actions[bot]`. Release workflow is configured to run syntax, parity, build and Node regression gates before publishing. The release commit is direct evidence that those configured steps completed, but a separate workflow run ID / full log has not been retrieved.
+
+Published GR identity: V4.11.133 DEV, integration 0.25.42, runtime 411133r1, modules E411-133A1. Verified identical Git blob SHAs across all three delivery copies for both `precipitation-layer.js` and `raster-mosaic-tile-loader.js`.
+
+**Not yet HA accepted:** No installation or live desktop/Android/iPad tile retry diagnosis from HA DEV VM 109. The public build does not constitute a production release. WR unchanged.
