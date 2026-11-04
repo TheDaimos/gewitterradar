@@ -1,0 +1,29 @@
+name: GR TEST70-58 WR authority contracts
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'frontend/modules/weather/**'
+      - 'tests/test70-58-wr-validity-authority.test.mjs'
+      - '.github/workflows/test70-58-wr-authority.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wr-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate active weather modules
+        run: |
+          node --check frontend/modules/weather/precipitation-layer.js
+          node --check frontend/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-consumer.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-contract.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-grid-layer.js
+          node --test tests/test70-58-wr-validity-authority.test.mjs
+          node --test tests/test70-57-opera-runtime-v2.test.mjs
