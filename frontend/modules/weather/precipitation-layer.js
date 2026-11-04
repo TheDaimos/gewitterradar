@@ -143,26 +143,15 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
   if(!state?.layer||!viewport)return {fraction:0,verified:false,reason:"no_active_layer"};
   if(state.v2Snapshot){
     const elapsed=state.v2SnapshotAt?Math.max(0,(now-state.v2SnapshotAt)/1000):0;
-    const layers=state.v2Snapshot.layers?.filter(layer=>{
-      const age=layer?.times?.age_seconds;
-      const older=layer?.freshness_class==="older_background";
-      const limit=older&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-      return typeof age==="number"&&Number.isFinite(age)&&age>=0&&age+elapsed<=limit;
-    })||[];
+    const layers=state.v2Snapshot.layers?.filter(layer=>
+      v2RenderedSourceValidity(layer,state.v2SnapshotAt,{now}).valid)||[];
     const result=measureRasterViewportCoverage(layers,viewport,zoom);
     return {fraction:result.fraction,verified:result.covered_sources>0,
       reason:layers.length?"v2_geographic_coverage":"v2_sources_expired"};
   }
   const record=state.lastReady;
   if(!record?.answer)return {fraction:0,verified:false,reason:"no_v1_record"};
-  const age=record.answer.freshness?.age_seconds;
-  const sem=record.answer.resource?.semantics||{};
-  const isOlderSatellite=sem.observation_kind==="estimate"&&
-    String(sem.measurement_method||"").includes("satellite");
-  const limit=isOlderSatellite&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-  if(typeof age!=="number"||!Number.isFinite(age)||age<0||
-     age+Math.max(0,(now-(record.at??now))/1000)>limit)
-    return {fraction:0,verified:false,reason:"v1_age_invalid"};
+  // V1 data authority is WR; GR does not invent a second age cutoff.
   const result=measureV1RasterCoverage(record.answer.provenance,viewport,zoom);
   return {fraction:result.fraction,verified:result.verified===true,
     reason:result.verified?"v1_geographic_coverage":"v1_coverage_unverified"};
