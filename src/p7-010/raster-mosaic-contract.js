@@ -9,7 +9,10 @@ const time=value=>typeof value==="string"&&/[zZ]$|[+-]\d\d:\d\d$/.test(value)
 const bounds=b=>b&&["west","east","south","north"].every(k=>number(b[k]))
   &&b.west>=-180&&b.west<=180&&b.east>=-180&&b.east<=180
   &&b.south>=-90&&b.north<=90&&b.north>b.south&&b.west!==b.east;
-const safeURL=value=>{
+const operaRateURL=(value,source)=>source==="opera/opera_rate_raster"
+  && /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\{z\}\/\{x\}\/\{y\}\.png$/.test(value);
+const safeURL=(value,source)=>{
+ if(operaRateURL(value,source))return true;
  if(typeof value!=="string"||!value.startsWith("https://"))return false;
  try{
    const u=new URL(value);
@@ -30,11 +33,8 @@ const fullWorldEnvelope=layer=>layer.coverage_scope==="global"
      &&layer.coverage?.east===180
      &&layer.coverage?.south===-90
      &&layer.coverage?.north===90);
-export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null}={}){
- if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
-   ||!Number.isInteger(maxDataAgeSeconds)||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
-   ||(maxBackgroundAgeSeconds!==null&&(!Number.isInteger(maxBackgroundAgeSeconds)
-       ||maxBackgroundAgeSeconds<maxDataAgeSeconds||maxBackgroundAgeSeconds>86400)))
+export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
+ if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12)
    throw new TypeError("Invalid mosaic resource budget");
  if(!answer||answer.contract_version!==2
   ||answer.capability!=="weather.precipitation.layer"
@@ -52,7 +52,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||seen.has(layer.source_id)||layer.resource_type!=="raster_tile"
       ||layer.coverage_verified!==true
       ||!["bbox","global"].includes(layer.coverage_scope)
-      ||!bounds(layer.coverage)||!safeURL(layer.tile_url)
+      ||!bounds(layer.coverage)||!safeURL(layer.tile_url,layer.source_id)
       ||typeof layer.attribution!=="string"||!layer.attribution
       ||!layer.render||![128,256,512].includes(layer.render.tile_size)
       ||!number(layer.render.min_zoom)||!number(layer.render.max_zoom)
@@ -73,15 +73,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||(layer.times.age_seconds!==undefined&&(!number(layer.times.age_seconds)||layer.times.age_seconds<0))
       ||(layer.freshness_class!==undefined&&!["current","older_background"].includes(layer.freshness_class))
       ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
-      ||(layer.freshness_class==="older_background"&&(
-         maxBackgroundAgeSeconds===null
-         ||!fullWorldEnvelope(layer)
-         ||layer.semantics.observation_kind!=="estimate"
-         ||!["satellite_precipitation_estimate","satellite_estimate"].includes(layer.semantics.measurement_method)
-         ||layer.quality_note!=="older_satellite_background"
-         ||!number(layer.times.age_seconds)
-         ||layer.times.age_seconds<=maxDataAgeSeconds
-         ||layer.times.age_seconds>maxBackgroundAgeSeconds)))
+      ||!time(layer.times.valid_until))
      throw new TypeError("Invalid, unverified or unsafe raster source");
    seen.add(layer.source_id);
  }
