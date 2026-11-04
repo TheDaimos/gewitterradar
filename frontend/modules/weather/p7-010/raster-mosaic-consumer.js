@@ -21,10 +21,10 @@ function validViewport(b){
 /** Build one request using a pre-normalized map viewport (incl. full world). */
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
- maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,
+ maxTimeDeltaSeconds=180,
  profileId=null,consumerId="gewitterradar",correlationId=null,sourceRequest=null
 }={}){
- if(sourceRequest!==null&&(sourceRequest?.provider_id!=="opera"||sourceRequest?.product_id!=="RATE"||Object.keys(sourceRequest).length!==2||maxDataAgeSeconds>900)) throw new TypeError("Unsupported OPERA source");
+ if(sourceRequest!==null&&(sourceRequest?.provider_id!=="opera"||sourceRequest?.product_id!=="RATE"||Object.keys(sourceRequest).length!==2)) throw new TypeError("Unsupported OPERA source");
  if(!validViewport(viewport)
    ||!focus||!finite(focus.latitude)||!finite(focus.longitude)
    ||focus.latitude< -90||focus.latitude>90
@@ -32,10 +32,6 @@ export function buildRasterMosaicV2Request({
    ||!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
    ||!Number.isInteger(maxTileRequests)
    ||maxTileRequests<1||maxTileRequests>256
-   ||!Number.isInteger(maxDataAgeSeconds)
-   ||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
-   ||(maxBackgroundAgeSeconds!==null&&(!Number.isInteger(maxBackgroundAgeSeconds)
-      ||maxBackgroundAgeSeconds<maxDataAgeSeconds||maxBackgroundAgeSeconds>86400))
    ||!Number.isInteger(maxTimeDeltaSeconds)
    ||maxTimeDeltaSeconds<0||maxTimeDeltaSeconds>86400
    ||(profileId!==null&&(typeof profileId!=="string"||!profileId.trim())))
@@ -46,8 +42,6 @@ export function buildRasterMosaicV2Request({
    capability:"weather.precipitation.layer",
    context:{type:"bbox",...viewport,focus},
    time:{mode:"latest_coherent",
-     max_data_age_seconds:maxDataAgeSeconds,
-     ...(maxBackgroundAgeSeconds!==null?{max_background_age_seconds:maxBackgroundAgeSeconds}:{}),
      max_time_delta_seconds:maxTimeDeltaSeconds},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
    ...(profileId!==null?{profile_id:profileId}:{}),
@@ -64,12 +58,12 @@ export function buildRasterMosaicV2Request({
  */
 export async function prepareRasterMosaicV2({
  callWS,Leaflet,viewport,focus,profileId=null,
- maxLayers=4,maxTileRequests=48,maxDataAgeSeconds=900,
+ maxLayers=4,maxTileRequests=48,
  maxBackgroundAgeSeconds=null,maxTimeDeltaSeconds=180,layerOptions={},consumerId="gewitterradar",correlationId=null,sourceRequest=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
    viewport,focus,profileId,maxLayers,maxTileRequests,
-   maxDataAgeSeconds,maxBackgroundAgeSeconds,maxTimeDeltaSeconds,consumerId,correlationId,sourceRequest,
+   maxTimeDeltaSeconds,consumerId,correlationId,sourceRequest,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
@@ -96,7 +90,7 @@ export async function prepareRasterMosaicV2({
        providerId:"opera",productId:"RATE",fallbackPerformed:false};
    }
    stage="contract_validation";
-   validateRasterMosaicV2(response,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
+   validateRasterMosaicV2(response,{maxLayers});
    onDiagnostic?.({
      phase:"validated",status:response.status,layers:response.layers.length,
      time_deviating:response.layers.some(layer=>layer.quality_note==="zeitlich_abweichend"),
@@ -118,7 +112,7 @@ export async function prepareRasterMosaicV2({
    }
    stage="layer_preparation";
    const layer=createRasterMosaicGridLayer(Leaflet,response,{
-     ...layerOptions,maxLayers,maxTileRequests,maxDataAgeSeconds,maxBackgroundAgeSeconds
+     ...layerOptions,maxLayers,maxTileRequests
    });
    onDiagnostic?.({phase:"layer_prepared",status:response.status,layers:response.layers.length});
    return {mode:"v2",layer,response};
