@@ -28,10 +28,10 @@ def test_closing_weather_engine_does_not_close_map_owned_opera():
 
 def test_opera_is_explicit_and_never_promotes_unverified_tiles():
     source=ADAPTERS[0].read_text(encoding="utf-8")
-    assert 'request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true}' in source
+    assert 'request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true,preview_orientation:orientation}' in source
     assert "response.raster_approved!==false" in source
-    assert "UNVERIFIED_DIAGNOSTIC" in source
-    assert "900000" in source
+    assert "UNVERIFIED_DEV_PREVIEW" in source
+    assert "response.max_age_seconds" in source
     assert "getUint32(16)!==256" in source
     assert "getUint32(20)!==256" in source
     assert "image.onload=()=>{metrics.loaded++" in source
