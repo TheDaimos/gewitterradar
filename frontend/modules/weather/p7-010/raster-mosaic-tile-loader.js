@@ -180,7 +180,7 @@ export async function drawRasterMosaicTileFromUrls({
      if(!image)return {source_id,reason:"empty_raster_image"};
      budget.cacheImage(source_id,url,image);
      return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
-   }catch(_){
+   }catch(error){
      return {source_id,reason:signal?.aborted?"tile_cancelled":"image_request_failed"};
    }finally{
      release();
