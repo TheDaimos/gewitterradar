@@ -384,7 +384,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411132r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411133r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
@@ -425,7 +425,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
           const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
           if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
-          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411132r1');
+          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411133r1');
           const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
             correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken,onLifecycle:operaTrace});
