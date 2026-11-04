@@ -33,11 +33,8 @@ const fullWorldEnvelope=layer=>layer.coverage_scope==="global"
      &&layer.coverage?.east===180
      &&layer.coverage?.south===-90
      &&layer.coverage?.north===90);
-export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null}={}){
- if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12
-   ||!Number.isInteger(maxDataAgeSeconds)||maxDataAgeSeconds<1||maxDataAgeSeconds>86400
-   ||(maxBackgroundAgeSeconds!==null&&(!Number.isInteger(maxBackgroundAgeSeconds)
-       ||maxBackgroundAgeSeconds<maxDataAgeSeconds||maxBackgroundAgeSeconds>86400)))
+export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
+ if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12)
    throw new TypeError("Invalid mosaic resource budget");
  if(!answer||answer.contract_version!==2
   ||answer.capability!=="weather.precipitation.layer"
@@ -76,15 +73,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||(layer.times.age_seconds!==undefined&&(!number(layer.times.age_seconds)||layer.times.age_seconds<0))
       ||(layer.freshness_class!==undefined&&!["current","older_background"].includes(layer.freshness_class))
       ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
-      ||(layer.freshness_class==="older_background"&&(
-         maxBackgroundAgeSeconds===null
-         ||!fullWorldEnvelope(layer)
-         ||layer.semantics.observation_kind!=="estimate"
-         ||!["satellite_precipitation_estimate","satellite_estimate"].includes(layer.semantics.measurement_method)
-         ||layer.quality_note!=="older_satellite_background"
-         ||!number(layer.times.age_seconds)
-         ||layer.times.age_seconds<=maxDataAgeSeconds
-         ||layer.times.age_seconds>maxBackgroundAgeSeconds)))
+      ||!time(layer.times.valid_until))
      throw new TypeError("Invalid, unverified or unsafe raster source");
    seen.add(layer.source_id);
  }
