@@ -28,9 +28,10 @@ test("OPERA request uses existing bounded V2 WebSocket contract",()=>{
  const r=buildRasterMosaicV2Request({viewport,focus,sourceRequest,correlationId:"opera-test-1"});
  assert.equal(r.type,"weather_router/consumer/resolve_mosaic");
  assert.deepEqual(r.source_request,sourceRequest);
- assert.equal(r.time.max_data_age_seconds,900);
+ assert.equal(Object.hasOwn(r.time,"max_data_age_seconds"),false);
+ assert.equal(r.time.allow_older_satellite_background,false);
  assert.equal(r.correlation_id,"opera-test-1");
- assert.throws(()=>buildRasterMosaicV2Request({viewport,focus,sourceRequest,maxDataAgeSeconds:901}),TypeError);
+ assert.throws(()=>buildRasterMosaicV2Request({viewport,focus,sourceRequest,allowOlderSatelliteBackground:"yes"}),TypeError);
 });
 test("automatic V2 does not set source_request",()=>{
  const r=buildRasterMosaicV2Request({viewport,focus,correlationId:"auto-test"});
