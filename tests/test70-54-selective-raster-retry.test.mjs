@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls} from '../frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js';
 
 const makeLayer=(id)=>({
- source_id:id, coverage_verified:true, coverage_scope:'global',
- render:{min_zoom:0,max_zoom:2,opacity:1},tile_url:'https://example.org/'+id+'/{z}/{x}/{y}.png'
+ source_id:id, resource_type:'raster_tile', attribution:'TEST', semantics:{observation_kind:'measurement'},times:{valid_at:'2026-11-04T10:00:00Z'},legend:{unit:'mm/h'},coverage_verified:true, coverage_scope:'global',
+ render:{tile_size:256,min_zoom:0,max_zoom:2,opacity:1},tile_url:'https://example.org/'+id+'/{z}/{x}/{y}.png'
 });
 const tile={z:0,x:0,y:0};
 const context={canvas:{width:256,height:256},save(){},restore(){},drawImage(){},beginPath(){},rect(){},clip(){},clearRect(){},globalAlpha:1};
