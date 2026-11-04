@@ -56,7 +56,7 @@ async function loadRasterImage(url,source,{signal,getAccessToken}={}){
     if(!token)throw new Error("missing_opera_tile_authorization");
     const response=await fetch(url,{method:"GET",credentials:"omit",redirect:"error",
       cache:"no-store",signal,headers:{Authorization:"Bearer "+token,Accept:"image/png"}});
-    if(!response.ok)throw new Error("opera_tile_http_"+response.status);
+    if(!response.ok){const error=new Error("opera_tile_http_"+response.status);error.httpStatus=response.status;throw error;}
     if(!String(response.headers.get("content-type")||"").toLowerCase().includes("image/png"))
       throw new Error("opera_tile_invalid_content_type");
     const blob=await response.blob();
