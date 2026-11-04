@@ -177,28 +177,16 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
  * No provider resolution, new candidate scoring or extension of data age.
  * A Canvas painted successfully does not prove nontransparent weather pixels.
  */
-export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now(),satelliteConsent=false}={}){
-  const age=layer?.times?.age_seconds;
-  const validAt=Date.parse(layer?.times?.valid_at||"");
-  const elapsed=(now-snapshotAt)/1000;
-  const older=layer?.freshness_class==="older_background";
-  const method=layer?.semantics?.measurement_method;
-  const satellite=layer?.semantics?.observation_kind==="estimate"
-    &&["satellite_precipitation_estimate","satellite_estimate"].includes(method);
-  const maxAge=older&&satellite&&satelliteConsent?BACKGROUND_MAX_AGE_SECONDS:900;
-  if(older&&(!satelliteConsent||!satellite))return {valid:false,reason:"consent_revoked"};
-  if(layer?.coverage_verified!==true||!layer?.coverage||!layer?.render
-    ||layer.render.opacity<=0)return {valid:false,reason:"coverage_unverified"};
-  if(!Number.isFinite(age)||age<0||!Number.isFinite(validAt)
-    ||!Number.isFinite(snapshotAt)||elapsed<0)
-    return {valid:false,reason:"time_unverified"};
-  // Check the absolute UTC source timestamp and the original WR age. Neither
-  // clock is permitted to reset merely because a later V2 request succeeded.
-  const actualAge=Math.max(age+elapsed,(now-validAt)/1000);
-  const expiresAt=Math.min(snapshotAt+(maxAge-age)*1000,validAt+maxAge*1000);
-  return {valid:actualAge<=maxAge&&now<expiresAt,
-    reason:actualAge<=maxAge&&now<expiresAt?"current":"source_expired",
-    expiresAt,age_seconds:actualAge};
+export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now()}={}){
+  // WR alone authorizes time validity. GR only follows the server's
+  // absolute deadline; it never derives a provider-specific age policy.
+  const expiry=Date.parse(layer?.times?.valid_until||"");
+  if(layer?.coverage_verified!==true||!layer?.coverage||!layer?.render||
+     layer.render.opacity<=0)return {valid:false,reason:"coverage_unverified"};
+  if(!Number.isFinite(expiry))return {valid:false,reason:"wr_expiry_missing"};
+  const valid=now<expiry;
+  return {valid,reason:valid?"wr_authorized":"wr_expired",
+    expiresAt:expiry,age_seconds:layer?.times?.age_seconds??null};
 }
 
 /** Decide if a previously verified, painted WR mosaic may temporarily survive
