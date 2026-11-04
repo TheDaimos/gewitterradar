@@ -343,7 +343,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
     }
   },
-  async _weatherEngineOperaDiagnosticToggle(){
+  async _weatherEngineOperaDiagnosticToggle({autoFromPrecipitation=false}={}){
     const store=this._weatherEngineTraceStore();
     const operaTrace=(event,details={})=>{const events=store.opera_cycle_lifecycle||(store.opera_cycle_lifecycle=[]);events.push({at:new Date().toISOString(),mono_ms:Math.round(performance.now()),event,...details});if(events.length>120)events.splice(0,events.length-120);};
     const status=this.shadow?.getElementById('weather-engine-opera-result');
@@ -390,6 +390,9 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
         accessToken:token,correlationId,orientation,opacity,onLifecycle:operaTrace
       });
+      if(autoFromPrecipitation&&!this.__grPrecipitationWantsOpera){
+        pane.close("precipitation_disabled_during_request");return;
+      }
       this.__operaDiagnosticPane=pane;
       operaTrace("initial_pane_ready",{valid_at:pane.validAt});
       this.__operaDiagnosticEnabled=true;
