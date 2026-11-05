@@ -102,7 +102,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   timeoutMs=8000,loadImage=null,accessToken=null,
   createCanvas=()=>document.createElement("canvas"),onTileDiagnostics=null
 }={}){
-  if(!L?.GridLayer?.extend||typeof loadImage!=="function"||
+  if(!L?.GridLayer?.extend||(loadImage!==null&&typeof loadImage!=="function")||
     typeof createCanvas!=="function")throw new TypeError("Leaflet layer prerequisites missing");
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
