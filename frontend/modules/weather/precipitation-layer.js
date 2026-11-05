@@ -143,7 +143,9 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
   if(!state?.layer||!viewport)return {fraction:0,verified:false,reason:"no_active_layer"};
   if(state.v2Snapshot){
     // The WR-authorized mosaic has no GR-managed expiry deadline.
-    const layers=state.v2Snapshot.layers||[];
+    const layers=(state.v2Snapshot.layers||[]).filter(layer=>
+      layer?.freshness_class!=="older_background"
+      ||state.allowOlderSatelliteBackground===true);
     const result=measureRasterViewportCoverage(layers,viewport,zoom);
     return {fraction:result.fraction,verified:result.covered_sources>0,
       reason:layers.length?"v2_geographic_coverage":"v2_sources_expired"};
