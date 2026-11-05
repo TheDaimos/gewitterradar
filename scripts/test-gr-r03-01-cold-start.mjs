@@ -28,13 +28,12 @@ try{
     await card._refreshWeatherRadar({reason:"cold-test"});
     assert.equal(state.inFlight,false);
     assert.equal(state.layer,null);
-    assert.equal(state.coldStartRetries,Math.min(attempt,3));
+    assert.equal(state.coldStartRetries,attempt);
   }
-  assert.equal(calls.filter(x=>x.reason==="missing-raster-retry").length,3);
-  assert.ok(calls.filter(x=>x.reason==="missing-raster-retry").every(x=>x.delay===8000));
-  assert.ok(events.some(x=>x.type==="missing_raster_retry_exhausted"));
-  assert.equal(state.lastUnavailable.code,"cold_start_retry_exhausted");
-  assert.ok(statuses.some(x=>x.includes("konnte nicht geladen werden")));
+  assert.equal(calls.filter(x=>x.reason==="missing-raster-retry").length,4);
+  assert.deepEqual(calls.filter(x=>x.reason==="missing-raster-retry").map(x=>x.delay),[8000,16000,32000,60000]);
+  assert.ok(events.some(x=>x.type==="missing_raster_retry_scheduled"));
+  assert.ok(statuses.some(x=>x.includes("erneuter Versuch")));
   // On a warm valid image, no missing-image retry may be scheduled.
   calls.length=0;mode="ready";state.layer={remove(){}};
   state.lastRequestAt=Date.now()-9000;
@@ -76,12 +75,12 @@ try{
       const timer=callbacks.pop();
       assert.equal(typeof timer,"function","missing watchdog timer attempt "+attempt+" "+JSON.stringify({enabled:state.enabled,inFlight:state.inFlight,token:state.inFlightToken,lastRequestAt:state.lastRequestAt,callbacks:callbacks.length}));
       timer();
-      assert.equal(state.coldStartRetries,Math.min(attempt,3));
+      assert.equal(state.coldStartRetries,attempt);
       releases.pop()({ready:true});
       await pending;
     }
-    assert.equal(calls.filter(x=>x.reason==="cold-start-watchdog").length-scheduledBefore,3);
-    assert.ok(events.some(x=>x.type==="missing_raster_retry_exhausted"&&x.details.reason==="watchdog"));
+    assert.equal(calls.filter(x=>x.reason==="cold-start-watchdog").length-scheduledBefore,4);
+    assert.ok(events.some(x=>x.type==="cold_start_request_recovered"));
   }finally{
     globalThis.setTimeout=originalSetTimeout;globalThis.clearTimeout=originalClearTimeout;
   }
