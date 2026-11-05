@@ -1870,7 +1870,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       state.pending=true;state.pendingForce=true;
       return;
     }
-    if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600);return;}
+    if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600,{force});return;}
     const viewport=this._weatherRadarViewport();if(!viewport)return;
     // Geographic validity is independent of request throttling, in-flight
     // resolution, satellite consent and HTTP tile loading.
