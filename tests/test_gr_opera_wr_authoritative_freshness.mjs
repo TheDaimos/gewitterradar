@@ -7,8 +7,8 @@ test("all shipped OPERA adapters use WR authoritative freshness",()=>{
  const texts=files.map(p=>readFileSync(new URL(p,root),"utf8"));
  assert.equal(texts[0],texts[1]);assert.equal(texts[1],texts[2]);
  for(const src of texts){
-  assert.match(src,/delete request\.time\.max_data_age_seconds/);
-  assert.match(src,/approved\.maxAgeSeconds\*1000/);
+  assert.match(src,/WeatherRouter alone owns freshness policy/);
+  assert.doesNotMatch(src,/validMs\s*\+\s*approved\.maxAgeSeconds/);
   assert.doesNotMatch(src,/response\.max_age_seconds!==900/);
   assert.doesNotMatch(src,/validMs\+900000/);
  }

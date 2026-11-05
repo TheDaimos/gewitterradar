@@ -47,3 +47,33 @@ test('TEST70-54: cached successful source is reused',async()=>{
  await run(load,budget);
  assert.equal(attempts,1);
 });
+
+test('OPERA retries an admitted coordinate beyond its initial attempt budget',async()=>{
+ const budget=new RasterTileRequestBudget(1);
+ let attempts=0;
+ const opera={...makeLayer('opera/opera_rate_raster'),
+  tile_url:'/api/weather_router/opera_tile/RATE/20261104T100000Z/{z}/{x}/{y}.png'};
+ const result=await run(async()=>{
+  if(++attempts<3){const error=new Error('temporarily unavailable');error.httpStatus=503;throw error;}
+  return {width:256,height:256};
+ },budget,[opera]);
+ assert.equal(attempts,3);
+ assert.equal(budget.used,1);
+ assert.equal(budget.active,0);
+ assert.equal(result.rejected.length,0);
+});
+
+test('OPERA retries stop on cancellation and release the transport slot',async()=>{
+ const budget=new RasterTileRequestBudget(1);
+ const controller=new AbortController();
+ const opera={...makeLayer('opera/opera_rate_raster'),
+  tile_url:'/api/weather_router/opera_tile/RATE/20261104T101500Z/{z}/{x}/{y}.png'};
+ let attempts=0;
+ const result=await drawRasterMosaicTileFromUrls({context,tile,layers:[opera],budget,
+  timeoutMs:100,signal:controller.signal,loadImage:async()=>{
+   attempts++;controller.abort();throw new Error('cancelled');
+  }});
+ assert.equal(attempts,1);
+ assert.equal(budget.active,0);
+ assert.equal(result.rejected[0].reason,'tile_cancelled');
+});

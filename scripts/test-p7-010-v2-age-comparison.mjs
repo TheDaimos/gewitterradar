@@ -13,7 +13,7 @@ const source={
  attribution:"Synthetic",legend:{title:"Example"},
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
  observation_kind:"estimate",measurement_method:"satellite_estimate"},
- times:{valid_at:valid,retrieved_at:valid,reference_delta_seconds:0,age_seconds:20000},
+ times:{valid_at:valid,valid_until:"2026-10-16T21:30:00Z",retrieved_at:valid,reference_delta_seconds:0,age_seconds:20000},
  freshness_class:"older_background",quality_note:"older_satellite_background"
 };
 const base={
@@ -28,7 +28,7 @@ card._weatherRadarViewport=()=>({context:viewport,focus});
 card._weatherEngineDiagnosticRender=()=>{};
 card._hass={callWS:async message=>{
  requests.push(message);
- if(!Object.hasOwn(message.time,"max_background_age_seconds"))
+ if(message.time.allow_older_satellite_background!==true)
    return {...base,status:"unavailable",layers:[],
      limitations:["Synthetic image older than fifteen minutes"]};
  return {...base,status:"partial",layers:[source],
@@ -42,9 +42,9 @@ assert.equal(result.schema,"gewitterradar.weather_engine_v2_age_comparison.v1");
 assert.equal(result.status,"completed");
 assert.equal(result.map_unchanged,true);
 assert.equal(result.age_filter_supported,true);
-assert.deepEqual(requests.map(q=>q.time.max_data_age_seconds),[900,900]);
-assert.deepEqual(requests.map(q=>q.time.max_background_age_seconds??null),[null,43200]);
-assert.deepEqual(requests.map(q=>q.time.max_time_delta_seconds),[180,180]);
+assert.deepEqual(requests.map(q=>q.time.max_data_age_seconds),[undefined,undefined]);
+assert.deepEqual(requests.map(q=>q.time.allow_older_satellite_background),[false,true]);
+assert.deepEqual(requests.map(q=>q.time.max_time_delta_seconds),[undefined,undefined]);
 assert.equal(requests.length,2);
 assert.notEqual(requests[0].correlation_id,requests[1].correlation_id);
 assert.equal(requests[0].contract_version,2);

@@ -2,9 +2,9 @@
  * WeatherRouter alone selects and orders sources; this file draws verified
  * snapshots using a strict shared per-snapshot tile budget.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411138r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=41198r1";
+  from "./raster-mosaic-tile-loader.js?v=411138r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41190r1";
@@ -37,7 +37,11 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
   const expected=expectedRasterTileGeometry(layers,tile,tileSize);
   const actual=result?.tile_coverage?.fraction||0;
   const painted=(result?.drawn?.length||0)>0;
+  const failedSource=result?.rejected?.some(item=>
+    item.source_id==="opera/opera_rate_raster"&&
+    !["outside_tile_coverage","outside_zoom_coverage"].includes(item.reason));
   const status=expected.fraction<=0?"expected_transparent"
+    :failedSource?"image_load_failed"
     :painted&&actual+1e-5>=expected.fraction?"complete_verified_coverage"
     :painted?"incomplete_image_coverage":"image_load_failed";
   return {tile_status:status,expected_fraction:Number(expected.fraction.toFixed(6)),
@@ -45,36 +49,40 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
     geographic_only:true,image_pixels_verified:false};
 }
 
-function loadRasterImage(url,source,{signal,accessToken=null}={}){
-  const localOpera=source?.source_id==="opera/opera_rate_raster"
-    &&new RegExp("^/api/weather_router/opera_tile/RATE/[0-9]{8}T[0-9]{6}Z/[0-9]+/[0-9]+/[0-9]+[.]png$").test(url);
-  if(source?.source_id==="opera/opera_rate_raster"){
-    if(!localOpera||typeof accessToken!=="string"||!accessToken)
-      return Promise.reject(new Error("Authenticated OPERA tile unavailable"));
-    return fetch(url,{method:"GET",headers:{
-      Authorization:"Bearer "+accessToken,Accept:"image/png"
-    },signal,cache:"no-store",credentials:"same-origin",redirect:"error"}).then(response=>{
-      if(!response.ok||!response.headers.get("content-type")?.toLowerCase().includes("image/png"))
-        throw new Error("Authenticated OPERA tile failed");
-      return response.blob();
-    }).then(blob=>new Promise((resolve,reject)=>{
-      const objectUrl=URL.createObjectURL(blob);
-      const img=new Image();
-      let ended=false;
-      const finish=(err)=>{
-        if(ended)return;
-        ended=true;img.onload=null;img.onerror=null;
-        signal?.removeEventListener("abort",cancel);
-        URL.revokeObjectURL(objectUrl);
-        err?reject(err):resolve(img);
-      };
-      const cancel=()=>{img.src="";finish(new Error("Image request cancelled"));};
-      img.onload=()=>finish(null);
-      img.onerror=()=>finish(new Error("Decoded OPERA tile unavailable"));
-      if(signal?.aborted){cancel();return;}
-      signal?.addEventListener("abort",cancel,{once:true});
-      img.src=objectUrl;
-    }));
+async function loadRasterImage(url,source,{signal,getAccessToken}={}){
+  // Authenticated HA OPERA route is never fetched by a naked <img>.
+  // Tokens are obtained only from the HA session and never placed in URLs.
+  if(url.startsWith("/api/weather_router/opera_tile/")){
+    if(source?.source_id!=="opera/opera_rate_raster"||
+       !/^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url))
+      throw new Error("untrusted_opera_tile_url");
+    const token=typeof getAccessToken==="function"?await getAccessToken():null;
+    if(!token)throw new Error("missing_opera_tile_authorization");
+    const response=await fetch(url,{method:"GET",credentials:"omit",redirect:"error",
+      cache:"no-store",signal,headers:{Authorization:"Bearer "+token,Accept:"image/png"}});
+    if(!response.ok){const error=new Error("opera_tile_http_"+response.status);error.httpStatus=response.status;throw error;}
+    if(!String(response.headers.get("content-type")||"").toLowerCase().includes("image/png"))
+      throw new Error("opera_tile_invalid_content_type");
+    const blob=await response.blob();
+    const objectURL=URL.createObjectURL(blob);
+    try{
+      return await new Promise((resolve,reject)=>{
+        const image=new Image();
+         let settled=false;
+         const finish=error=>{
+           if(settled)return;
+           settled=true;image.onload=null;image.onerror=null;
+           signal?.removeEventListener("abort",cancel);
+           error?reject(error):resolve(image);
+         };
+         const cancel=()=>{image.src="";finish(new Error("opera_tile_cancelled"));};
+         image.onload=()=>finish(null);
+         image.onerror=()=>finish(new Error("opera_tile_invalid_png"));
+         if(signal?.aborted){cancel();return;}
+         signal?.addEventListener("abort",cancel,{once:true});
+        image.src=objectURL;
+      });
+    }finally{URL.revokeObjectURL(objectURL);}
   }
   return new Promise((resolve,reject)=>{
     const image=new Image();
@@ -98,16 +106,14 @@ function loadRasterImage(url,source,{signal,accessToken=null}={}){
 
 export function createRasterMosaicGridLayer(L,snapshot,{
   maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,
-  maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,
-  timeoutMs=8000,loadImage=null,accessToken=null,
+  timeoutMs=8000,loadImage=loadRasterImage,getAccessToken=null,
   createCanvas=()=>document.createElement("canvas"),onTileDiagnostics=null
 }={}){
-  if(!L?.GridLayer?.extend||(loadImage!==null&&typeof loadImage!=="function")||
+  if(!L?.GridLayer?.extend||typeof loadImage!=="function"||
     typeof createCanvas!=="function")throw new TypeError("Leaflet layer prerequisites missing");
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
-  const verified=validateRasterMosaicV2(snapshot,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
-  const resolvedLoader=loadImage||((url,source,opts)=>loadRasterImage(url,source,{...opts,accessToken}));
+  const verified=validateRasterMosaicV2(snapshot,{maxLayers});
   const renderLayers=rasterMosaicRenderOrder(verified.layers);
   const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
   const pending=new Set();
@@ -122,7 +128,9 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:renderLayers,loadImage:resolvedLoader,budget,tileSize,timeoutMs,
+        context,tile:coords,layers:renderLayers,
+        loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),
+        budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
@@ -148,6 +156,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   // independently cropped ancestor image without sacrificing DWD detail.
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true,
     maxNativeZoom:18});
+  layer._p7OperaGeneration=verified.layers.some(source=>source.source_id==="opera/opera_rate_raster");
   layer._p7RasterRenderOrder=renderLayers.map(x=>({source_id:x.source_id,
     freshness_class:x.freshness_class||"current"}));
   layer._p7RasterRequestBudget=budget;

@@ -40,7 +40,7 @@ const source={
  tile_url:"https://example.invalid/tiles/{z}/{x}/{y}.png",
  render:{tile_size:256,min_zoom:0,max_zoom:18,opacity:0.7},
  attribution:"Public provider",legend:{title:"Rain"},
- times:{valid_at:time,retrieved_at:time,reference_delta_seconds:0},
+ times:{valid_at:time,valid_until:"2026-10-14T15:30:00Z",retrieved_at:time,reference_delta_seconds:0},
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
    observation_kind:"observation",measurement_method:"satellite_estimate"}
 };
@@ -110,7 +110,7 @@ const freshRegional={...source,source_id:"dwd/radar",
 const combined={...response,layers:[olderGlobal,freshRegional],status:"partial"};
 const opts={
  callWS:async()=>combined,Leaflet:L,viewport,focus,
- maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200,
+ maxLayers:12,maxTileRequests:12,allowOlderSatelliteBackground:true,
  layerOptions:{createCanvas:()=>({width:0,height:0,getContext:()=>({
   globalAlpha:1,drawImage:()=>{}
  })}),loadImage:async()=>({width:256})}
@@ -140,8 +140,8 @@ await new Promise((resolve,reject)=>bboxResult.layer.createTile(
 assert.equal(bboxResult.layer._p7RasterRequestBudget.used,2,
  "NASA world BBOX and current regional DWD contribute to same tile");
 const bboxWithoutOptIn=await prepareRasterMosaicV2({
- ...opts,maxBackgroundAgeSeconds:null,callWS:async()=>combinedBbox});
-assert.equal(bboxWithoutOptIn.mode,"fallback");
+ ...opts,allowOlderSatelliteBackground:false,callWS:async()=>combinedBbox});
+assert.equal(bboxWithoutOptIn.mode,"v2","GR validates WR responses; it does not impose its own satellite policy");
 const bboxUnverified=await prepareRasterMosaicV2({
  ...opts,callWS:async()=>({...combinedBbox,layers:[
   {...olderBbox,coverage_verified:false},freshRegional
@@ -151,13 +151,14 @@ const bboxRegional=await prepareRasterMosaicV2({
  ...opts,callWS:async()=>({...combinedBbox,layers:[
   {...olderBbox,coverage:{west:5,east:16,south:46,north:56}},freshRegional
  ]})});
-assert.equal(bboxRegional.mode,"fallback");
-assert.equal((await prepareRasterMosaicV2({...opts,maxBackgroundAgeSeconds:null})).mode,"fallback");
+assert.equal(bboxRegional.mode,"v2","WR owns source and coverage eligibility; GR checks verified geometry only");
+assert.equal((await prepareRasterMosaicV2({...opts,allowOlderSatelliteBackground:false})).mode,"v2");
 assert.equal(buildRasterMosaicV2Request({
- viewport,focus,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200
-}).time.max_background_age_seconds,43200);
+ viewport,focus,allowOlderSatelliteBackground:true
+}).time.allow_older_satellite_background,true);
+assert.equal("max_data_age_seconds" in request.time,false);
 assert.throws(()=>buildRasterMosaicV2Request({
- viewport,focus,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:800
+ viewport,focus,allowOlderSatelliteBackground:"yes"
 }),TypeError);
 
 const failing=await prepareRasterMosaicV2({

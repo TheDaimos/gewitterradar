@@ -52,7 +52,7 @@ card.__weatherRadarState.layer={};
 card.__weatherRadarState.v2Snapshot={layers:[{
  source_id:"dwd/radar_precipitation",coverage_verified:true,coverage_scope:"bbox",
  coverage:dwdExtent,render:{min_zoom:0,opacity:0.6},
- times:{age_seconds:110},freshness_class:"current"
+ times:{age_seconds:110,valid_until:new Date(t+60000).toISOString()},freshness_class:"current"
 }]};
 card.__weatherRadarState.v2SnapshotAt=t;
 assert.equal(weatherRadarActiveCoverage(card.__weatherRadarState,cuba,7,t).fraction,0);
@@ -60,7 +60,7 @@ assert.equal(card._weatherRadarCullOutsideViewport(),true);
 assert.equal(removed,2);
 assert.equal(card.__weatherRadarState.v2Snapshot,null);
 
-// NASA's older world satellite must never bypass explicit consent.
+// Only WR decides whether the satellite is authorized; GR renders the approved reply.
 const nasaGlobal={
  layer:{},allowOlderSatelliteBackground:false,v2SnapshotAt:t,
  v2Snapshot:{layers:[{
@@ -68,14 +68,14 @@ const nasaGlobal={
   coverage_verified:true,coverage_scope:"bbox",
   coverage:{west:-180,east:180,south:-90,north:90},
   render:{min_zoom:0,opacity:0.6},
-  times:{age_seconds:25500},freshness_class:"older_background"
+  times:{age_seconds:25500,valid_until:new Date(t+60000).toISOString()},freshness_class:"older_background"
  }]}
 };
-assert.equal(weatherRadarActiveCoverage(nasaGlobal,cuba,7,t).fraction,0,
-  "old NASA background cannot bypass disabled 12h consent");
+assert.equal(weatherRadarActiveCoverage(nasaGlobal,cuba,7,t).fraction,1,
+  "GR must not revoke a WR-authorized source using local preference");
 nasaGlobal.allowOlderSatelliteBackground=true;
 assert.equal(weatherRadarActiveCoverage(nasaGlobal,cuba,7,t).fraction,1,
-  "verified world NASA envelope may be used only after explicit consent");
+  "local satellite preference does not override WR authorization");
 
 // WR may return 'ready' for an old regional candidate even when the user's BBOX
 // is Cuba. Never stage its WMS URL outside verified spatial coverage.

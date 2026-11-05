@@ -176,9 +176,12 @@ if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map ges
   const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
   const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
   if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
-  for(const marker of ['version:"4.11.133"','displayVersion:"V4.11.133 DEV"','runtimeRevision:"411133r1"','moduleSetId:"E411-133A1"']){
-    if(!version.includes(marker))throw Error('V4.11.14 canonical identity missing: '+marker);
-  }
+  const getField=(name)=>version.match(new RegExp(name+':"([^"]+)"'))?.[1]||null;
+  const current=getField('version');
+  if(!/^4\.11\.\d+$/.test(current||'')||getField('displayVersion')!==('V'+current+' DEV')
+    ||!/^411\d+r1$/.test(getField('runtimeRevision')||'')
+    ||!/^E411-[^"]+$/.test(getField('moduleSetId')||''))
+    throw Error('Canonical frontend identity fields inconsistent');
   const runtimeImport=/\?v=(\d+r\d+)/g;
   for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
     const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');

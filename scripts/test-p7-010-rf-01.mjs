@@ -20,7 +20,7 @@ const layer=(source_id,scope,coverage)=>({
   semantics:{quantity:"precipitation_rate",unit:"mm/h",
     observation_kind:"observation",measurement_method:"radar"},
   times:{valid_at:"2026-10-18T12:00:00Z",retrieved_at:"2026-10-18T12:00:00Z",
-    reference_delta_seconds:0,age_seconds:0}
+    reference_delta_seconds:0,age_seconds:0,valid_until:"2026-10-18T12:30:00Z"}
 });
 const regional=layer("dwd/radar_precipitation","bbox",dwd);
 const foundation=layer("nasa_gibs/satellite_precipitation_imerg_30min","bbox",full);
@@ -91,23 +91,25 @@ assert.equal(decideV1TileStage({loaded:0,failed:0,expected_empty:20}).accepted,f
 assert.equal(decideV1TileStage({loaded:15,failed:0}).partial,false);
 
 // GR-RF-01-10/11/12: old regional sources cannot migrate to Cuba or
-// bypass 900-second radar freshness or explicit older satellite consent.
+// impose client-side age rules beyond WR valid_until.
 const cuba={west:-82,east:-75,south:19,north:24};
 const now=Date.now();
 const oldDwd={
  layer:{},v2SnapshotAt:now,allowOlderSatelliteBackground:false,
- v2Snapshot:{layers:[{...regional,times:{age_seconds:110}}]}
+ v2Snapshot:{layers:[{...regional,times:{...regional.times,age_seconds:110,valid_until:new Date(now+60000).toISOString()}}]}
 };
 assert.equal(weatherRadarActiveCoverage(oldDwd,cuba,5,now).fraction,0);
 assert.ok(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction>0);
 oldDwd.v2Snapshot.layers[0].times.age_seconds=1000;
-assert.equal(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction,0);
+assert.ok(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction>0,"WR valid_until, not 900 seconds, governs display");
+oldDwd.v2Snapshot.layers[0].times.valid_until=new Date(now-1000).toISOString();
+assert.equal(weatherRadarActiveCoverage(oldDwd,viewportWide,5,now).fraction,0,"explicit WR deadline is respected");
 const oldSatellite={
  layer:{},v2SnapshotAt:now,allowOlderSatelliteBackground:false,
- v2Snapshot:{layers:[{...foundation,times:{age_seconds:25500},
+ v2Snapshot:{layers:[{...foundation,times:{...foundation.times,age_seconds:25500,valid_until:new Date(now+60000).toISOString()},
  freshness_class:"older_background"}]}
 };
-assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,0);
+assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,1,"GR cannot override the WR-authorized older background");
 oldSatellite.allowOlderSatelliteBackground=true;
 assert.equal(weatherRadarActiveCoverage(oldSatellite,cuba,5,now).fraction,1);
 
@@ -127,7 +129,7 @@ globalThis.document={createElement:kind=>{
    drawImage:(...args)=>drawnV1.push(args)})};
  const img={style:{},setAttribute(){}};
  Object.defineProperty(img,"src",{set(){queueMicrotask(()=>{
-    if(failImage)img.onerror?.();else img.onload?.();
+    if(failImage){failImage=false;img.onerror?.();}else img.onload?.();
  })}});
  return img;
 }};
@@ -145,13 +147,13 @@ try{
  assert.ok(drawnV1.length>0);
  failImage=true;
  const failed=await new Promise(resolve=>v1.createTile(selected,(error,tile)=>resolve({error,tile})));
- assert.ok(failed.error);
- assert.equal(v1.__grRadarTileMetrics.failed,1);
- assert.ok(observed.some(e=>e.name==="v1_tile_error"
-   &&e.detail.reason==="image_load_failed_unclassified"));
- assert.equal(v1.__grRadarTileMetrics.tile_errors.length,1);
- assert.ok(!v1.__grRadarTileMetrics.tile_errors[0].url,
-   "private WMS URLs must never enter the diagnostics");
+ assert.equal(failed.error,null,"transient failure is recovered by retrying this coordinate");
+ assert.equal(v1.__grRadarTileMetrics.failed,0);
+ assert.equal(v1.__grRadarTileMetrics.loaded,2);
+ assert.ok(observed.some(e=>e.name==="v1_tile_retry_scheduled"
+   &&e.detail.attempt===1),"only the failed coordinate schedules a retry");
+ assert.equal(v1.__grRadarTileMetrics.tile_errors.length,0,
+   "successful retry must not create a permanent failure");
 }finally{if(previousDocument===undefined)delete globalThis.document;
  else globalThis.document=previousDocument;}
 

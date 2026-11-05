@@ -11,6 +11,26 @@ import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 
+// Completed OPERA frames have immutable timestamped URLs. Keep successful
+// decoded images across GridLayer replacement/abort cycles, so only missing
+// tiles require a network retry. This cache grants no validity: the current
+// WR V2 response must still select and authorize the source before lookup.
+const operaCompletedImages=new Map();
+const OPERA_COMPLETED_CACHE_LIMIT=64;
+function operaCompletedKey(id,url){
+  return id==="opera/opera_rate_raster" &&
+    /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url)
+    ?id+"\n"+url:null;
+}
+function retainCompletedOperaImage(id,url,image){
+  const key=operaCompletedKey(id,url);
+  if(!key||!image)return;
+  operaCompletedImages.delete(key);
+  operaCompletedImages.set(key,image);
+  while(operaCompletedImages.size>OPERA_COMPLETED_CACHE_LIMIT)
+    operaCompletedImages.delete(operaCompletedImages.keys().next().value);
+}
+
 export class RasterTileRequestBudget {
  constructor(maxRequests,{maxConcurrent=4}={}){
    if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>256
@@ -23,10 +43,10 @@ export class RasterTileRequestBudget {
    this.queue=[];
    this.closed=false;
    this.imageCache=new Map();
-   this.maxCachedImages=24;
+   this.maxCachedImages=maxRequests;
  }
- async reserve(signal=null){
-   if(this.closed||signal?.aborted||this.used>=this.maxRequests)return null;
+ async reserve(signal=null,{retry=false}={}){
+   if(this.closed||signal?.aborted||(!retry&&this.used>=this.maxRequests))return null;
    // A waiting request holds no network slot and consumes no request budget.
    if(this.active>=this.maxConcurrent){
      const admitted=await new Promise(resolve=>{
@@ -44,11 +64,11 @@ export class RasterTileRequestBudget {
    }else{
      this.active++;
    }
-   if(this.closed||signal?.aborted||this.used>=this.maxRequests){
+   if(this.closed||signal?.aborted||(!retry&&this.used>=this.maxRequests)){
      this._releaseSlot();
      return null;
    }
-   this.used++;
+   if(!retry)this.used++;
    let released=false;
    return ()=>{
      if(released)return;
@@ -58,13 +78,21 @@ export class RasterTileRequestBudget {
  }
  getCachedImage(id,url){
    if(this.closed)return null;
-   const key=id+"\n"+url,img=this.imageCache.get(key);
-   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);}
+   const key=id+"\n"+url;
+   let img=this.imageCache.get(key);
+   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);return img;}
+   const completedKey=operaCompletedKey(id,url);
+   img=completedKey?operaCompletedImages.get(completedKey):null;
+   if(img){
+     operaCompletedImages.delete(completedKey);
+     operaCompletedImages.set(completedKey,img);
+   }
    return img||null;
  }
  cacheImage(id,url,img){
    if(this.closed||!img)return;
    const key=id+"\n"+url;
+   retainCompletedOperaImage(id,url,img);
    this.imageCache.delete(key);this.imageCache.set(key,img);
    while(this.imageCache.size>this.maxCachedImages)this.imageCache.delete(this.imageCache.keys().next().value);
  }
@@ -147,44 +175,68 @@ export async function drawRasterMosaicTileFromUrls({
    const cached=budget.getCachedImage(source_id,url);
    if(cached&&!signal?.aborted)
      return {source_id,layer:{...layer,image:cached,_p7SourceTile:sourceTile}};
-   const release=await budget.reserve(signal);
-   if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
-   try{
-     let timer=null;
-     let image;
-     const controller=typeof AbortController==="function"
-       ?new AbortController():null;
-     const abort=()=>controller?.abort();
-     signal?.addEventListener("abort",abort,{once:true});
-     if(signal?.aborted)abort();
+   let retryCount=0;
+   while(!budget.closed&&!signal?.aborted){
+     // A retry reuses this admitted OPERA coordinate's request budget, while
+     // every attempt still acquires a bounded concurrent transport slot.
+     const opera=source_id==="opera/opera_rate_raster";
+     const release=await budget.reserve(signal,{retry:opera&&retryCount>0});
+     if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
+     let retry=false;
      try{
-       image=await Promise.race([
-         Promise.resolve().then(()=>loadImage(url,layer,{
-           signal:controller?.signal
-         })),
-         new Promise((_resolve,reject)=>{
-           const cancelled=()=>reject(new Error("raster_tile_cancelled"));
-           controller?.signal.addEventListener("abort",cancelled,{once:true});
-           if(controller?.signal.aborted){cancelled();return;}
-           timer=setTimeout(()=>{
-             controller?.abort();
-             reject(new Error("raster_image_timeout"));
-           },timeoutMs);
-         })
-       ]);
+       let timer=null;
+       let image;
+       const controller=typeof AbortController==="function"?new AbortController():null;
+       const abort=()=>controller?.abort();
+       signal?.addEventListener("abort",abort,{once:true});
+       if(signal?.aborted)abort();
+       try{
+         image=await Promise.race([
+           Promise.resolve().then(()=>loadImage(url,layer,{signal:controller?.signal})),
+           new Promise((_resolve,reject)=>{
+             const cancelled=()=>reject(new Error("raster_tile_cancelled"));
+             controller?.signal.addEventListener("abort",cancelled,{once:true});
+             if(controller?.signal.aborted){cancelled();return;}
+             timer=setTimeout(()=>{controller?.abort();reject(new Error("raster_image_timeout"));},timeoutMs);
+           })
+         ]);
+       }finally{
+         if(timer!==null)clearTimeout(timer);
+         signal?.removeEventListener("abort",abort);
+       }
+       if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
+       if(!image)throw new Error("empty_raster_image");
+       budget.cacheImage(source_id,url,image);
+       return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
+     }catch(error){
+       if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
+       if(error?.httpStatus===401||error?.httpStatus===403)
+         return {source_id,reason:"image_auth_rejected"};
+       retry=(opera||budget.used<budget.maxRequests)&&!budget.closed;
+       if(!retry)return {source_id,reason:"request_budget_exhausted"};
+       retryCount++;
      }finally{
-       if(timer!==null)clearTimeout(timer);
-       signal?.removeEventListener("abort",abort);
+       release();
      }
-     if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
-     if(!image)return {source_id,reason:"empty_raster_image"};
-     budget.cacheImage(source_id,url,image);
-     return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
-   }catch(_){
-     return {source_id,reason:signal?.aborted?"tile_cancelled":"image_request_failed"};
-   }finally{
-     release();
+     if(retry){
+       // Transport backpressure only. Successful source images remain cached.
+       const delay=Math.min(5000,250*2**Math.min(retryCount-1,5));
+       await new Promise(resolve=>{
+         let settled=false;
+         const finish=()=>{
+           if(settled)return;
+           settled=true;
+           clearTimeout(timer);
+           signal?.removeEventListener("abort",finish);
+           resolve();
+         };
+         const timer=setTimeout(finish,delay);
+         signal?.addEventListener("abort",finish,{once:true});
+         if(signal?.aborted)finish();
+       });
+     }
    }
+   return {source_id,reason:"tile_cancelled"};
  }));
  const prepared=results.filter(x=>x.layer).map(x=>x.layer);
  const rejected=results.filter(x=>!x.layer).map(({source_id,reason})=>({source_id,reason}));

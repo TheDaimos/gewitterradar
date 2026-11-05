@@ -78,10 +78,14 @@ jobs:
           build=(r/'custom_components/gewitterradar/build_info.py').read_text()
           provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
           runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
-          assert 'version:"4.11.106"' in version
-          assert 'BUILD_VERSION = "4.11.106"' in build
-          assert runtime['productVersion']==provenance['productVersion']=='4.11.106'
-          assert runtime['moduleSetId']==provenance['moduleSetId']=='E411-106A1'
-          assert len(runtime['modules'])==34
+          import re
+          current = re.search(r'version:"(4[.]11[.][0-9]+)"', version)
+          assert current, 'Cannot read V4.11 runtime version'
+          expected=current.group(1)
+          assert f'BUILD_VERSION = "{expected}"' in build
+          assert runtime['productVersion']==provenance['productVersion']==expected
+          for field in ('build','runtimeRevision','moduleSetId'):
+            assert runtime[field]==provenance[field], field
+          assert len(runtime['modules'])>=34
           print('PASS: current frontend/backend/DRA metadata consistent')
           PY

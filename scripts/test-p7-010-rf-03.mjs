@@ -21,7 +21,7 @@ const out=await drawRasterMosaicTileFromUrls({context:{globalAlpha:1,drawImage:(
 assert.deepEqual(out.render_order,["nasa","dwd"]);assert.ok(out.duration_ms>=25);
 const hung=await drawRasterMosaicTileFromUrls({context:{globalAlpha:1,drawImage:()=>{}},tile:{x:0,y:0,z:0},
  layers:[dwd],budget:new RasterTileRequestBudget(1),timeoutMs:20,loadImage:()=>new Promise(()=>{})});
-assert.equal(hung.drawn.length,0);assert.equal(hung.rejected[0].reason,"image_request_failed");
+assert.equal(hung.drawn.length,0);assert.equal(hung.rejected[0].reason,"request_budget_exhausted");
 const listeners=new Map(),windowListeners=new Map();
 globalThis.document={visibilityState:"visible",addEventListener:(k,f)=>listeners.set(k,f),removeEventListener:k=>listeners.delete(k)};
 globalThis.window={addEventListener:(k,f)=>windowListeners.set(k,f),removeEventListener:k=>windowListeners.delete(k)};

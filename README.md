@@ -1,3 +1,5 @@
+> **OPERA DEV · 2026/11 · V4.11.138 / HA 0.25.45:** [Installation mit WR 0.10.286](docs/OPERA_DEV_DELIVERY_2026-11-05.md). DEV VM109; HA-Realabnahme ausstehend.
+
 <div align="center">
 
 <a href="https://thedaimos.github.io/gewitterradar/">

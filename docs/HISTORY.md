@@ -1,3 +1,13 @@
+## V4.11.138 DEV · 2026/11 · Integration 0.25.45
+
+- OPERA als reguläre, ausschließlich von WeatherRouter ausgewählte Consumer-V2-Niederschlagsquelle.
+- Authentifizierte same-origin RATE-Kacheln mit Bearer-Header und Blob-Dekodierung; keine Tokens in URLs.
+- Neue Generationen laden verdeckt. Erfolgreiche Kacheln bleiben erhalten; ausschließlich fehlgeschlagene OPERA-Koordinaten werden mit begrenzter Parallelität erneut angefordert.
+- Kein Abbruch einer laufenden OPERA-Generation durch Staging-/Watchdog-Zeitlimits; kein V1-Fallback wegen vorübergehender OPERA-Kachelfehler. Umschaltung erst bei vollständig darstellbarem Sichtfeld.
+- WR-Metadaten bestimmen Gültigkeit und Veraltet-Kennzeichnung. Neue Radarzyklen und Policyänderungen lösen eine erzwungene V2-Aktualisierung aus.
+- Integration und Dashboard werden deterministisch aus derselben Quelle gebaut. Geschützte About-Inhalte unverändert.
+- DEV VM109: WR 0.10.286 und GR 0.25.45 per DRA installieren, HA neu starten, Frontend neu laden. Keine HA-Realabnahme; VM101 unverändert.
+
 # Gewitterradar – Projektgeschichte
 
 ## V4.11.84 DEV · 2026/10 – Niederschlagsübergabe und Weather Engine

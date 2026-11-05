@@ -197,3 +197,6 @@ assert.ok(profiles.weatherDisplaySoftRasterTuning(9,7).blur>balancedAtNine.blur,
 assert.ok(profiles.weatherDisplayAutoRasterTuning(10,7).blur>profiles.weatherDisplayAutoRasterTuning(6,7).blur,
   'Auto muss weiterhin zoomabhängig sein');
 console.log('PASS: WeatherRouter Consumer V1, missing/offline distinction, hierarchical Layer Hub, WR display-menu and generic legend overlay.');
+
+// WR owns all precipitation expiry and provider decisions.
+await import("../tests/test70-58-wr-validity-authority.test.mjs");

@@ -1,5 +1,5 @@
-import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=41191r1';
-import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=41191r1';
+import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411138r1';
+import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411138r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
 export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.14',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
@@ -343,7 +343,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
     }
   },
-  async _weatherEngineOperaDiagnosticToggle(){
+  async _weatherEngineOperaDiagnosticToggle({autoFromPrecipitation=false}={}){
     const store=this._weatherEngineTraceStore();
     const operaTrace=(event,details={})=>{const events=store.opera_cycle_lifecycle||(store.opera_cycle_lifecycle=[]);events.push({at:new Date().toISOString(),mono_ms:Math.round(performance.now()),event,...details});if(events.length>120)events.splice(0,events.length-120);};
     const status=this.shadow?.getElementById('weather-engine-opera-result');
@@ -384,12 +384,15 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411133r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411135r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
         accessToken:token,correlationId,orientation,opacity,onLifecycle:operaTrace
       });
+      if(autoFromPrecipitation&&!this.__grPrecipitationWantsOpera){
+        pane.close("precipitation_disabled_during_request");return;
+      }
       this.__operaDiagnosticPane=pane;
       operaTrace("initial_pane_ready",{valid_at:pane.validAt});
       this.__operaDiagnosticEnabled=true;
@@ -402,13 +405,12 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
         operaTrace("cycle_poll_started",{current_valid_at:this.__operaDiagnosticPane?.validAt||null});
         try{
           const current=this.__operaDiagnosticPane;
-          const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=41198r1');
+          const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=411138r1');
           const vp=this._weatherRadarViewport?.();
           if(!vp?.context||!vp?.focus||!this._map||typeof this._hass?.callWS!=='function')return;
           const id='gr-opera-cycle-'+Date.now().toString(36);
           const req=buildRasterMosaicV2Request({viewport:vp.context,focus:vp.focus,correlationId:id,maxLayers:1,maxTileRequests:16});
           req.source_request={provider_id:'opera',product_id:'RATE',diagnostic:true,preview_orientation:'north_first'};
-          delete req.time.max_data_age_seconds;
           const response=await this._hass.callWS(req);
           operaTrace("cycle_poll_response",{status:String(response?.status||"missing"),valid_at:response?.valid_at||null,block_reason:String(response?.block_reason||"").slice(0,80)});
           if(!this.__operaDiagnosticEnabled)return;
@@ -425,7 +427,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
           const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
           if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
-          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411133r1');
+          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411135r1');
           const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
             correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken,onLifecycle:operaTrace});
@@ -505,8 +507,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       step("preconditions_ok");
       const request=buildRasterMosaicV2Request({
         viewport:viewport.context,focus:viewport.focus,maxLayers:12,
-        maxTileRequests:12,maxDataAgeSeconds:900,
-        maxBackgroundAgeSeconds:this._weatherRadarState?.()?.allowOlderSatelliteBackground?43200:null,
+        maxTileRequests:12,
+        allowOlderSatelliteBackground:this._weatherRadarState?.()?.allowOlderSatelliteBackground===true,
         consumerId:"gewitterradar",correlationId:id
       });
       step("request_validated");
@@ -519,9 +521,9 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           },20000);})
         ]);
         step("response",{response_status:String(response?.status||"missing")});
-        validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:request.time.max_background_age_seconds??null});
+        validateRasterMosaicV2(response,{maxLayers:12});
         step("validated",{layers:response.layers.length});
-        result.request_time_policy={mode:request.time.mode,max_data_age_seconds:request.time.max_data_age_seconds,max_background_age_seconds:request.time.max_background_age_seconds??null,max_time_delta_seconds:request.time.max_time_delta_seconds};
+        result.request_time_policy={authority:"weather_router",mode:request.time.mode,allow_older_satellite_background:request.time.allow_older_satellite_background===true};
         result.status=response.status;
         result.layer_count=response.layers.length;
         result.source_ids=response.layers.map(layer=>layer.source_id).slice(0,12);
@@ -545,7 +547,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     return result;
   },
   async _weatherEngineV2AgeComparisonTest(){
-    // Diagnostic-only A/B probe: the productive 900-s live policy remains untouched.
+    // Diagnostic-only A/B probe: WR decides source validity for both consent states.
     if(this.__weatherEngineV2ComparisonRunning||this.__weatherEngineV2TestRunning)return;
     this.__weatherEngineV2ComparisonRunning=true;
     const store=this._weatherEngineTraceStore();
@@ -553,7 +555,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       schema:"gewitterradar.weather_engine_v2_age_comparison.v1",
       consumer_id:"gewitterradar",api_version:2,
       started_at:new Date().toISOString(),status:"running",
-      time_mode:"latest_coherent",max_time_delta_seconds:180,
+      time_mode:"latest_coherent",validity_authority:"weather_router",
       requests:[],map_unchanged:true
     };
     store.v2AgeComparison=comparison;
@@ -568,18 +570,18 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       if(typeof this._hass?.callWS!=="function")throw Object.assign(new Error("Home Assistant WebSocket fehlt"),{code:"websocket_unavailable"});
       // Both requests share the exact same spatial snapshot and all budgets.
       const id="gr-v2-age-"+Date.now().toString(36);
-      for(const age of [null,43200]){
+      for(const allowBackground of [false,true]){
         const trial={
-          max_data_age_seconds:900,max_background_age_seconds:age,max_time_delta_seconds:180,
-          correlation_id:id+"-"+(age===null?"strict":"background"),status:"started",layer_count:0,
+          allow_older_satellite_background:allowBackground,
+          correlation_id:id+"-"+(allowBackground?"background":"current"),status:"started",layer_count:0,
           sources:[],limitations:[],started_at:new Date().toISOString()
         };
         comparison.requests.push(trial);
         this._weatherEngineDiagnosticRender?.();
         const request=buildRasterMosaicV2Request({
           viewport:{...viewport.context},focus:{...viewport.focus},
-          maxLayers:12,maxTileRequests:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age,
-          maxTimeDeltaSeconds:180,consumerId:"gewitterradar",
+          maxLayers:12,maxTileRequests:12,
+          allowOlderSatelliteBackground:allowBackground,consumerId:"gewitterradar",
           correlationId:trial.correlation_id
         });
         const started=performance.now();
@@ -591,7 +593,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
               reject(Object.assign(new Error("V2 comparison deadline"),{code:"gr_v2_client_timeout"}));
             },20000);})
           ]);
-          validateRasterMosaicV2(response,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:age});
+          validateRasterMosaicV2(response,{maxLayers:12});
           trial.status=response.status;
           trial.layer_count=response.layers.length;
           trial.reference_time=response.reference_time||null;
@@ -962,7 +964,7 @@ _weatherEngineDiagnosticPayload(){
       comparisonLabel.textContent=!comparison?"Noch kein Vergleich durchgeführt":
         "Vergleich: "+comparison.status+
         "\\n"+(comparison.requests||[]).map(item=>
-          (item.max_background_age_seconds===43200?"15 Min. Radar + 12 Std. globale Satellitengrundlage":"Nur 15 Min. Radar")+
+          (item.allow_older_satellite_background===true?"WR-Gültigkeit · Satellitengrundlage erlaubt":"WR-Gültigkeit · ohne ältere Satellitengrundlage")+
           ": "+item.status+" · "+item.layer_count+" Quellen · "+(item.duration_ms??"…")+" ms"+
           (item.error_code?" · Fehler: "+item.error_code:"")+
           "\\nKennung: "+item.correlation_id+

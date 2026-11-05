@@ -13,7 +13,7 @@ const layer=(source_id,coverage_scope,coverage)=>({
  attribution:source_id,legend:{title:source_id},
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
   observation_kind:"observation",measurement_method:"radar"},
- times:{valid_at:time,retrieved_at:time,reference_delta_seconds:0}
+ times:{valid_at:time,valid_until:"2026-10-14T15:30:00Z",retrieved_at:time,reference_delta_seconds:0}
 });
 const response={
  contract_version:2,capability:"weather.precipitation.layer",

@@ -26,7 +26,7 @@ const mk=(name,scope="bbox")=>({
  semantics:{quantity:"precipitation_rate",unit:"mm/h",
   measurement_method:"radar",observation_kind:"observation"},
  times:{valid_at:"2026-10-14T15:00:00Z",retrieved_at:"2026-10-14T15:01:00Z",
-  reference_delta_seconds:0},
+  reference_delta_seconds:0,valid_until:"2026-10-14T15:30:00Z"},
 });
 const one={...BASE,layers:[mk("broad","global"),mk("regional")]};
 const operaTile="/api/weather_router/opera_tile/RATE/20261104T074000Z/{z}/{x}/{y}.png";
@@ -73,70 +73,31 @@ assert.throws(()=>validateRasterMosaicV2({...one,layers:[{...mk("x"),coverage_sc
 const empty={...BASE,status:"unavailable",layers:[]};
 assert.equal(validateRasterMosaicV2(empty),empty);
 assert.throws(()=>validateRasterMosaicV2({...empty,layers:[mk("bad")]}));
-// Older global satellite images are permitted only by the explicitly
-// requested separate background ceiling; never by relaxing live radar freshness.
+// WR alone decides whether a raster or older satellite estimate may be used.
+// GR validates only shape, verified coverage, URLs and mandatory WR expiry.
 const satellite={...mk("nasa_background","global"),
  semantics:{...mk("x").semantics,measurement_method:"satellite_precipitation_estimate",observation_kind:"estimate"},
  freshness_class:"older_background",quality_note:"older_satellite_background",
  times:{...mk("x").times,age_seconds:22000,reference_delta_seconds:22000,observed_at:null}
 };
 const partial={...one,layers:[satellite,mk("dwd_fresh")]};
-assert.throws(()=>validateRasterMosaicV2(partial,{maxLayers:12}),TypeError);
-assert.equal(validateRasterMosaicV2(partial,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200}),partial);
-
+assert.equal(validateRasterMosaicV2(partial,{maxLayers:12}),partial);
+assert.equal(validateRasterMosaicV2({...partial,layers:[{
+ ...satellite,times:{...satellite.times,age_seconds:50000}
+}]},{maxLayers:12}).layers.length,1,
+ "Client must not impose its own 12-hour age ceiling");
 const world={west:-180,east:180,south:-90,north:90};
 const olderWorldBbox={...satellite,coverage_scope:"bbox",coverage:{...world}};
 const worldBboxMosaic={...partial,layers:[olderWorldBbox,mk("dwd_fresh")]};
-// NASA's product-specific world BBOX remains a BBOX on the wire; it is
-// eligible as an opt-in older satellite estimate but not reclassified.
-assert.equal(validateRasterMosaicV2(worldBboxMosaic,{
- maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:43200
-}),worldBboxMosaic);
+assert.equal(validateRasterMosaicV2(worldBboxMosaic,{maxLayers:12}),worldBboxMosaic);
 assert.equal(worldBboxMosaic.layers[0].coverage_scope,"bbox");
-assert.equal(worldBboxMosaic.status,"partial");
-assert.throws(()=>validateRasterMosaicV2(worldBboxMosaic,{maxLayers:12}),TypeError,
- "never enable older background implicitly");
 assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
  {...olderWorldBbox,coverage_verified:false},mk("fresh")
-]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError,
- "only WR-verified product BBOX is eligible");
-// Keep the earlier regional-BBOX rejection explicitly in place.
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,coverage_scope:"bbox",coverage:{west:5,east:16,south:46,north:56}}]},
- {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-// Almost-full, half-world and non-product BBOX claims are NOT world coverages.
-for(const coverage of [
- {...world,west:-179.999},
- {...world,east:179.999},
- {...world,south:-89.999},
- {...world,north:89.999},
- {west:-180,east:180,south:46,north:56},
-]){
- assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
-   {...olderWorldBbox,coverage},mk("fresh")
- ]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-}
-// An older *regional* DWD radar is never an eligible older satellite base.
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{
- ...mk("dwd_radar_old"),freshness_class:"older_background",
- quality_note:"older_satellite_background",
- times:{...mk("dwd_radar_old").times,age_seconds:22000}
-}]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
- {...olderWorldBbox,times:{...olderWorldBbox.times,age_seconds:46800}}
-]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError,
- "older than 12 hours is forbidden");
-assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
- {...olderWorldBbox,quality_note:"current"}
-]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-assert.throws(()=>validateRasterMosaicV2({...worldBboxMosaic,layers:[
- {...olderWorldBbox,semantics:{...olderWorldBbox.semantics,measurement_method:"radar"}}
-]},{maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,semantics:{...satellite.semantics,observation_kind:"observation"}}]},
- {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,times:{...satellite.times,age_seconds:50000}}]},
- {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-assert.throws(()=>validateRasterMosaicV2(partial,{maxLayers:12,maxDataAgeSeconds:900,maxBackgroundAgeSeconds:800}),TypeError);
-assert.throws(()=>validateRasterMosaicV2({...partial,layers:[{...satellite,times:{...satellite.times,valid_at:"2026-10-14T15:00:00"}}]},
- {maxLayers:12,maxBackgroundAgeSeconds:43200}),TypeError);
-
-console.log("P7-010 pure GR V2 response contract validation PASS");
+]},{maxLayers:12}),TypeError);
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[
+ {...satellite,times:{...satellite.times,valid_until:null}}
+]},{maxLayers:12}),TypeError,"WR valid_until is mandatory");
+assert.throws(()=>validateRasterMosaicV2({...partial,layers:[
+ {...satellite,times:{...satellite.times,valid_at:"2026-10-14T15:00:00"}}
+]},{maxLayers:12}),TypeError);
+console.log("P7-010 WR-authoritative V2 response validation PASS");

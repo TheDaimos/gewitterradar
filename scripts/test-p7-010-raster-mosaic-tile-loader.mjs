@@ -67,7 +67,7 @@ const failed=await drawRasterMosaicTileFromUrls({
  },budget:new RasterTileRequestBudget(2)
 });
 assert.deepEqual(failed.drawn.map(x=>x.source_id),["world_wms"]);
-assert.equal(failed.rejected[0].reason,"image_request_failed");
+assert.equal(failed.rejected[0].reason,"request_budget_exhausted");
 
 const requestCount=observed.length;
 const outside=await drawRasterMosaicTileFromUrls({
@@ -164,7 +164,7 @@ assert.equal(stallSignals.length,1);
 assert.equal(stallSignals[0]?.aborted,true,
  "hanging WMS must receive an abort signal");
 assert.equal(stalled.drawn.length,0);
-assert.equal(stalled.rejected[0].reason,"image_request_failed");
+assert.equal(stalled.rejected[0].reason,"request_budget_exhausted");
 assert.equal(stallBudget.active,0,"timed-out request must release concurrency slot");
 assert.equal(stallBudget.used,1,"network attempt must still count toward budget");
 await assert.rejects(drawRasterMosaicTileFromUrls({

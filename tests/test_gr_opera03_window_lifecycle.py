@@ -23,7 +23,9 @@ def test_all_three_frontend_mirrors_match():
 
 def test_regular_precipitation_does_not_own_diagnostic_pane():
     precip = source("modules/weather/precipitation-layer.js")
-    assert "_weatherEngineOperaDiagnosticToggle" not in precip
+    # Disabling precipitation may close an already open diagnostic pane;
+    # ordinary precipitation must never start or own that pane.
+    assert "autoFromPrecipitation:true" not in precip
     assert "__operaDiagnosticPane" not in precip
     # WR Consumer V2 is the normal precipitation route.
     assert "prepareRasterMosaicV2" in precip
@@ -39,7 +41,7 @@ def test_opera_diagnostic_path_remains_admin_only_and_unapproved():
 
 
 def test_pinned_version_identity_is_consistent():
-    expected = "4.11.133"
+    expected = "4.11.138"
     build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text()
     assert f'BUILD_VERSION = "{expected}"' in build
     for base in FRONTENDS:
@@ -47,5 +49,5 @@ def test_pinned_version_identity_is_consistent():
         runtime = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text())
         assert f'version:"{expected}"' in version
         assert runtime["productVersion"] == expected
-        assert runtime["moduleSetId"] == "E411-133A1"
+        assert runtime["moduleSetId"] == "E411-138A1"
         assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1
