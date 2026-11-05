@@ -56,7 +56,24 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411133r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+  // Reference identity is exact. All immutable About browser geometry checks
+  // below remain mandatory and are not relaxed for the OPERA branch.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  for(const marker of ['version:"4.11.133"','displayVersion:"V4.11.133 DEV"',
+    'build:"V4.11.133-DEV-2026-10-27"','runtimeRevision:"411133r1"',
+    'moduleSetId:"E411-133A1"','integrationVersion:"0.25.42"']) {
+    assert.ok(versionText.includes(marker), 'V4.11.133 reference identity missing: '+marker);
+  }
+  assert.equal(runtime.productVersion, '4.11.133');
+  assert.equal(runtime.build, 'V4.11.133-DEV-2026-10-27');
+  assert.equal(runtime.runtimeRevision, '411133r1');
+  assert.equal(runtime.moduleSetId, 'E411-133A1');
+  assert.equal(runtime.modules.length, 34);
+} else if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
   // golden/pixel/geometry checks below remain mandatory.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
