@@ -1585,6 +1585,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const settledGeographicTiles=new Set();
       const expectedEmptyTiles=new Set();
       const expectedEligibleTiles=new Set();
+      let authorization=null;
       const result=await prepareRasterMosaicV2({
         callWS:query=>new Promise((resolve,reject)=>{
           // Finite client ceiling while WR may perform multiple bounded stages.
@@ -1606,12 +1607,28 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         allowOlderSatelliteBackground:state.allowOlderSatelliteBackground===true,
         layerOptions:{maxConcurrent:4,
-          getAccessToken:async()=>{
+          // Share the existing HA refresh/preflight procedure across this
+          // generation. A connected WebSocket can outlive its HTTP token;
+          // never fan out expired credentials to parallel tile requests.
+          getAccessToken:()=>authorization??=(async()=>{
             const auth=this._hass?.connection?.options?.auth;
-            if(!auth?.accessToken&&typeof auth?.refreshAccessToken==="function")
-              await auth.refreshAccessToken();
-            return auth?.accessToken||this._hass?.auth?.data?.access_token||null;
-          },
+            if(typeof auth?.refreshAccessToken==="function")await auth.refreshAccessToken();
+            const token=auth?.accessToken||this._hass?.auth?.data?.access_token;
+            if(!token){const error=new Error("missing_opera_tile_authorization");error.httpStatus=401;throw error;}
+            const control=new AbortController();
+            const timer=setTimeout(()=>control.abort(),8000);
+            let response;
+            try{
+              response=await fetch("/api/",{method:"GET",credentials:"omit",redirect:"error",
+                signal:control.signal,cache:"no-store",
+                headers:{Authorization:"Bearer "+token,Accept:"application/json"}});
+            }finally{clearTimeout(timer);}
+            if(!response.ok){const error=new Error("opera_auth_preflight_failed");error.httpStatus=response.status;throw error;}
+            return token;
+          })().catch(error=>{
+            if(error?.httpStatus!==401&&error?.httpStatus!==403)authorization=null;
+            throw error;
+          }),
           onTileDiagnostics:item=>{
             stageTileSettled++;
             stageMaxTileMs=Math.max(stageMaxTileMs,Number(item?.duration_ms)||0);
