@@ -22,7 +22,7 @@ const safeURL=value=>{
 const safeAuthenticatedOperaRateURL=(value,layer)=>
   layer?.source_id==="opera/opera_rate_raster"
   &&typeof value==="string"
-  &&/^\\/api\\/weather_router\\/opera_tile\\/RATE\\/[0-9]{8}T[0-9]{6}Z\\/\\{z\\}\\/\\{x\\}\\/\\{y\\}\\.png$/.test(value);
+  &&new RegExp("^/api/weather_router/opera_tile/RATE/[0-9]{8}T[0-9]{6}Z/[{]z[}]/[{]x[}]/[{]y[}][.]png$").test(value);
 
 // This is a narrowly bounded eligibility check for *older* satellite data,
 // NOT a change of the reported spatial scope. WR must have verified the
