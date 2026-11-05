@@ -19,8 +19,8 @@ const operaCompletedImages=new Map();
 const OPERA_COMPLETED_CACHE_LIMIT=64;
 function operaCompletedKey(id,url){
   return id==="opera/opera_rate_raster" &&
-    /^\\/api\\/weather_router\\/opera_tile\\/RATE\\/20\\d{6}T\\d{6}Z\\/\\d+\\/\\d+\\/\\d+\\.png$/.test(url)
-    ?id+"\\n"+url:null;
+    /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url)
+    ?id+"\n"+url:null;
 }
 function retainCompletedOperaImage(id,url,image){
   const key=operaCompletedKey(id,url);
