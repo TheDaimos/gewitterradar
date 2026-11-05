@@ -1,0 +1,29 @@
+name: OPERA router-owned V2 contract
+on:
+  push:
+    branches:
+      - feature/opera-ref-2026-11-04-router-owned
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check shipped GR modules
+        run: |
+          node --check src/p7-010/raster-mosaic-contract.js
+          node --check src/p7-010/raster-mosaic-grid-layer.js
+          node --check frontend/modules/weather/precipitation-layer.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-contract.js
+          node --check frontend/modules/weather/p7-010/raster-mosaic-grid-layer.js
+      - name: Check V2 contracts and authenticated OPERA tile URL
+        run: node scripts/test-p7-010-raster-mosaic-contract.mjs
+      - name: Verify WR-owned lifetime and selective tile retry
+        run: |
+          node --test tests/opera-wr-owned-lifetime.test.mjs
+          node --test tests/test70-54-selective-raster-retry.test.mjs
+      - name: Verify responsive geographic coverage
+        run: node scripts/test-p7-010-viewport-coverage-revocation.mjs
