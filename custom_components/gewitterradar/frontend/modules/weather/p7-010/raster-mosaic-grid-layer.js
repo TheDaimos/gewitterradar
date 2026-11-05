@@ -47,7 +47,7 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
 
 function loadRasterImage(url,source,{signal,accessToken=null}={}){
   const localOpera=source?.source_id==="opera/opera_rate_raster"
-    &&/^\\/api\\/weather_router\\/opera_tile\\/RATE\\/[0-9]{8}T[0-9]{6}Z\\/\\d+\\/\\d+\\/\\d+\\.png$/.test(url);
+    &&new RegExp("^/api/weather_router/opera_tile/RATE/[0-9]{8}T[0-9]{6}Z/[0-9]+/[0-9]+/[0-9]+[.]png$").test(url);
   if(source?.source_id==="opera/opera_rate_raster"){
     if(!localOpera||typeof accessToken!=="string"||!accessToken)
       return Promise.reject(new Error("Authenticated OPERA tile unavailable"));
