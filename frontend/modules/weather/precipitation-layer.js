@@ -142,27 +142,14 @@ export const expandWeatherRasterTileUrl=(template,coords)=>{
 export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now()){
   if(!state?.layer||!viewport)return {fraction:0,verified:false,reason:"no_active_layer"};
   if(state.v2Snapshot){
-    const elapsed=state.v2SnapshotAt?Math.max(0,(now-state.v2SnapshotAt)/1000):0;
-    const layers=state.v2Snapshot.layers?.filter(layer=>{
-      const age=layer?.times?.age_seconds;
-      const older=layer?.freshness_class==="older_background";
-      const limit=older&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-      return typeof age==="number"&&Number.isFinite(age)&&age>=0&&age+elapsed<=limit;
-    })||[];
+    // The WR-authorized mosaic has no GR-managed expiry deadline.
+    const layers=state.v2Snapshot.layers||[];
     const result=measureRasterViewportCoverage(layers,viewport,zoom);
     return {fraction:result.fraction,verified:result.covered_sources>0,
       reason:layers.length?"v2_geographic_coverage":"v2_sources_expired"};
   }
   const record=state.lastReady;
   if(!record?.answer)return {fraction:0,verified:false,reason:"no_v1_record"};
-  const age=record.answer.freshness?.age_seconds;
-  const sem=record.answer.resource?.semantics||{};
-  const isOlderSatellite=sem.observation_kind==="estimate"&&
-    String(sem.measurement_method||"").includes("satellite");
-  const limit=isOlderSatellite&&state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:900;
-  if(typeof age!=="number"||!Number.isFinite(age)||age<0||
-     age+Math.max(0,(now-(record.at??now))/1000)>limit)
-    return {fraction:0,verified:false,reason:"v1_age_invalid"};
   const result=measureV1RasterCoverage(record.answer.provenance,viewport,zoom);
   return {fraction:result.fraction,verified:result.verified===true,
     reason:result.verified?"v1_geographic_coverage":"v1_coverage_unverified"};
@@ -178,27 +165,18 @@ export function weatherRadarActiveCoverage(state,viewport,zoom=0,now=Date.now())
  * A Canvas painted successfully does not prove nontransparent weather pixels.
  */
 export function v2RenderedSourceValidity(layer,snapshotAt,{now=Date.now(),satelliteConsent=false}={}){
-  const age=layer?.times?.age_seconds;
-  const validAt=Date.parse(layer?.times?.valid_at||"");
-  const elapsed=(now-snapshotAt)/1000;
+  // WR decides whether the data may remain displayed; no GR age limit.
   const older=layer?.freshness_class==="older_background";
   const method=layer?.semantics?.measurement_method;
   const satellite=layer?.semantics?.observation_kind==="estimate"
     &&["satellite_precipitation_estimate","satellite_estimate"].includes(method);
-  const maxAge=older&&satellite&&satelliteConsent?BACKGROUND_MAX_AGE_SECONDS:900;
   if(older&&(!satelliteConsent||!satellite))return {valid:false,reason:"consent_revoked"};
   if(layer?.coverage_verified!==true||!layer?.coverage||!layer?.render
     ||layer.render.opacity<=0)return {valid:false,reason:"coverage_unverified"};
-  if(!Number.isFinite(age)||age<0||!Number.isFinite(validAt)
-    ||!Number.isFinite(snapshotAt)||elapsed<0)
-    return {valid:false,reason:"time_unverified"};
-  // Check the absolute UTC source timestamp and the original WR age. Neither
-  // clock is permitted to reset merely because a later V2 request succeeded.
-  const actualAge=Math.max(age+elapsed,(now-validAt)/1000);
-  const expiresAt=Math.min(snapshotAt+(maxAge-age)*1000,validAt+maxAge*1000);
-  return {valid:actualAge<=maxAge&&now<expiresAt,
-    reason:actualAge<=maxAge&&now<expiresAt?"current":"source_expired",
-    expiresAt,age_seconds:actualAge};
+  const age=layer?.times?.age_seconds;
+  const elapsed=Number.isFinite(snapshotAt)?Math.max(0,(now-snapshotAt)/1000):0;
+  return {valid:true,reason:"wr_authorized",expiresAt:null,
+    age_seconds:Number.isFinite(age)&&age>=0?age+elapsed:null};
 }
 
 /** Decide if a previously verified, painted WR mosaic may temporarily survive
