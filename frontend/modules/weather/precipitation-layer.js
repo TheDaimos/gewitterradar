@@ -1732,6 +1732,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           settled_tiles:stageTileSettled,max_tile_ms:stageMaxTileMs,
           last_tile_error:stageLastError,previous_layer_preserved:Boolean(state.layer)};
         this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
+        // Keep the mounted image and request a fresh, selectively cached
+        // replacement rather than waiting for the normal same-view interval.
+        if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-stage",REGIONAL_HOLD_RETRY_MS,{force:true});
         report("fallback",detail);return false;
       }
       // A successful Leaflet load and two painted tiles are not a proof
@@ -1782,8 +1785,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(!visible.size||!visibleDrawn.length||uncovered.length){
         report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
           uncovered_tiles:uncovered.length});
-        report("v1_fallback_started",{reason:"uncovered_visible_tiles"});
-        return false;
+        // Do not promote an incomplete replacement: retry only after the
+        // failed tiles have had an opportunity to recover.
+        if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-tiles",REGIONAL_HOLD_RETRY_MS,{force:true});
+        return true;
       }
       if(gapsAccepted)this._weatherEngineMonitorEvent?.("v2_partial_tile_errors_accepted",{
         correlation_id:correlationId,missing_eligible_tiles:uncovered.length,
