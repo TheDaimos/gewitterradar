@@ -1642,9 +1642,16 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,
         consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],older_background_count:event.older_background_count??0,freshness_classes:Array.isArray(event.freshness_classes)?event.freshness_classes.slice(0,12):[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
-        maxDataAgeSeconds:900,
+        // Consumer V2 requires a bounded request value. This is the upper
+        // limit of the WR-configurable OPERA window, not a browser expiry.
+        // WR still decides which candidate is fresh and eligible.
+        maxDataAgeSeconds:3600,
         maxBackgroundAgeSeconds:state.allowOlderSatelliteBackground?BACKGROUND_MAX_AGE_SECONDS:null,
         layerOptions:{maxConcurrent:4,
+          accessToken:this._hass?.auth?.data?.access_token
+            ??this._hass?.auth?.accessToken
+            ??this._hass?.connection?.options?.auth?.data?.access_token
+            ??null,
           onTileDiagnostics:item=>{
             stageTileSettled++;
             stageMaxTileMs=Math.max(stageMaxTileMs,Number(item?.duration_ms)||0);
