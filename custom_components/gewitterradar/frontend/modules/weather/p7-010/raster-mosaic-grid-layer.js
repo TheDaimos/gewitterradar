@@ -45,7 +45,37 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
     geographic_only:true,image_pixels_verified:false};
 }
 
-function loadRasterImage(url,_source,{signal}={}){
+function loadRasterImage(url,source,{signal,accessToken=null}={}){
+  const localOpera=source?.source_id==="opera/opera_rate_raster"
+    &&/^\\/api\\/weather_router\\/opera_tile\\/RATE\\/[0-9]{8}T[0-9]{6}Z\\/\\d+\\/\\d+\\/\\d+\\.png$/.test(url);
+  if(source?.source_id==="opera/opera_rate_raster"){
+    if(!localOpera||typeof accessToken!=="string"||!accessToken)
+      return Promise.reject(new Error("Authenticated OPERA tile unavailable"));
+    return fetch(url,{method:"GET",headers:{
+      Authorization:"Bearer "+accessToken,Accept:"image/png"
+    },signal,cache:"no-store",credentials:"same-origin",redirect:"error"}).then(response=>{
+      if(!response.ok||!response.headers.get("content-type")?.toLowerCase().includes("image/png"))
+        throw new Error("Authenticated OPERA tile failed");
+      return response.blob();
+    }).then(blob=>new Promise((resolve,reject)=>{
+      const objectUrl=URL.createObjectURL(blob);
+      const img=new Image();
+      let ended=false;
+      const finish=(err)=>{
+        if(ended)return;
+        ended=true;img.onload=null;img.onerror=null;
+        signal?.removeEventListener("abort",cancel);
+        URL.revokeObjectURL(objectUrl);
+        err?reject(err):resolve(img);
+      };
+      const cancel=()=>{img.src="";finish(new Error("Image request cancelled"));};
+      img.onload=()=>finish(null);
+      img.onerror=()=>finish(new Error("Decoded OPERA tile unavailable"));
+      if(signal?.aborted){cancel();return;}
+      signal?.addEventListener("abort",cancel,{once:true});
+      img.src=objectUrl;
+    }));
+  }
   return new Promise((resolve,reject)=>{
     const image=new Image();
     let settled=false;
@@ -69,7 +99,7 @@ function loadRasterImage(url,_source,{signal}={}){
 export function createRasterMosaicGridLayer(L,snapshot,{
   maxLayers=12,maxTileRequests=48,maxConcurrent=4,tileSize=256,
   maxDataAgeSeconds=900,maxBackgroundAgeSeconds=null,
-  timeoutMs=8000,loadImage=loadRasterImage,
+  timeoutMs=8000,loadImage=null,accessToken=null,
   createCanvas=()=>document.createElement("canvas"),onTileDiagnostics=null
 }={}){
   if(!L?.GridLayer?.extend||typeof loadImage!=="function"||
@@ -77,6 +107,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
   const verified=validateRasterMosaicV2(snapshot,{maxLayers,maxDataAgeSeconds,maxBackgroundAgeSeconds});
+  const resolvedLoader=loadImage||((url,source,opts)=>loadRasterImage(url,source,{...opts,accessToken}));
   const renderLayers=rasterMosaicRenderOrder(verified.layers);
   const budget=new RasterTileRequestBudget(maxTileRequests,{maxConcurrent});
   const pending=new Set();
@@ -91,7 +122,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:renderLayers,loadImage,budget,tileSize,timeoutMs,
+        context,tile:coords,layers:renderLayers,loadImage:resolvedLoader,budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
