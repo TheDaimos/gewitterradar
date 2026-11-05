@@ -19,6 +19,11 @@ const safeURL=value=>{
    return true;
  }catch(_){return false;}
 };
+const safeAuthenticatedOperaRateURL=(value,layer)=>
+  layer?.source_id==="opera/opera_rate_raster"
+  &&typeof value==="string"
+  &&/^\\/api\\/weather_router\\/opera_tile\\/RATE\\/[0-9]{8}T[0-9]{6}Z\\/\\{z\\}\\/\\{x\\}\\/\\{y\\}\\.png$/.test(value);
+
 // This is a narrowly bounded eligibility check for *older* satellite data,
 // NOT a change of the reported spatial scope. WR must have verified the
 // product-specific full-world coverage; a service-level/unchecked BBOX is
@@ -52,7 +57,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4,maxDataAgeSeconds=900
       ||seen.has(layer.source_id)||layer.resource_type!=="raster_tile"
       ||layer.coverage_verified!==true
       ||!["bbox","global"].includes(layer.coverage_scope)
-      ||!bounds(layer.coverage)||!safeURL(layer.tile_url)
+      ||!bounds(layer.coverage)||!(safeURL(layer.tile_url)||safeAuthenticatedOperaRateURL(layer.tile_url,layer))
       ||typeof layer.attribution!=="string"||!layer.attribution
       ||!layer.render||![128,256,512].includes(layer.render.tile_size)
       ||!number(layer.render.min_zoom)||!number(layer.render.max_zoom)
