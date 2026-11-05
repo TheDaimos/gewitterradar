@@ -29,6 +29,22 @@ const mk=(name,scope="bbox")=>({
   reference_delta_seconds:0},
 });
 const one={...BASE,layers:[mk("broad","global"),mk("regional")]};
+const operaTile="/api/weather_router/opera_tile/RATE/20261104T074000Z/{z}/{x}/{y}.png";
+const registeredOpera={...mk("opera/opera_rate_raster"),tile_url:operaTile};
+assert.equal(validateRasterMosaicV2({...BASE,layers:[registeredOpera]}).layers[0].tile_url,operaTile);
+for(const bad of [
+  operaTile+"?token=sensitive",
+  "//attacker.example/{z}/{x}/{y}.png",
+  "/api/weather_router/opera_tile/RATE/invalid/{z}/{x}/{y}.png",
+]){
+  assert.throws(()=>validateRasterMosaicV2({...BASE,layers:[
+    {...registeredOpera,tile_url:bad}
+  ]}),TypeError);
+}
+assert.throws(()=>validateRasterMosaicV2({...BASE,layers:[
+  {...mk("dwd/radar_precipitation"),tile_url:operaTile}
+]}),TypeError);
+
 assert.equal(validateRasterMosaicV2(one),one);
 assert.throws(()=>validateRasterMosaicV2({...one,contract_version:1}));
 assert.throws(()=>validateRasterMosaicV2({...one,layers:Array(5).fill(mk("x"))}));
