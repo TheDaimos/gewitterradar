@@ -11,6 +11,26 @@ import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 
+// Completed OPERA frames have immutable timestamped URLs. Keep successful
+// decoded images across GridLayer replacement/abort cycles, so only missing
+// tiles require a network retry. This cache grants no validity: the current
+// WR V2 response must still select and authorize the source before lookup.
+const operaCompletedImages=new Map();
+const OPERA_COMPLETED_CACHE_LIMIT=64;
+function operaCompletedKey(id,url){
+  return id==="opera/opera_rate_raster" &&
+    /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url)
+    ?id+"\n"+url:null;
+}
+function retainCompletedOperaImage(id,url,image){
+  const key=operaCompletedKey(id,url);
+  if(!key||!image)return;
+  operaCompletedImages.delete(key);
+  operaCompletedImages.set(key,image);
+  while(operaCompletedImages.size>OPERA_COMPLETED_CACHE_LIMIT)
+    operaCompletedImages.delete(operaCompletedImages.keys().next().value);
+}
+
 export class RasterTileRequestBudget {
  constructor(maxRequests,{maxConcurrent=4}={}){
    if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>256
@@ -58,13 +78,21 @@ export class RasterTileRequestBudget {
  }
  getCachedImage(id,url){
    if(this.closed)return null;
-   const key=id+"\n"+url,img=this.imageCache.get(key);
-   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);}
+   const key=id+"\n"+url;
+   let img=this.imageCache.get(key);
+   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);return img;}
+   const completedKey=operaCompletedKey(id,url);
+   img=completedKey?operaCompletedImages.get(completedKey):null;
+   if(img){
+     operaCompletedImages.delete(completedKey);
+     operaCompletedImages.set(completedKey,img);
+   }
    return img||null;
  }
  cacheImage(id,url,img){
    if(this.closed||!img)return;
    const key=id+"\n"+url;
+   retainCompletedOperaImage(id,url,img);
    this.imageCache.delete(key);this.imageCache.set(key,img);
    while(this.imageCache.size>this.maxCachedImages)this.imageCache.delete(this.imageCache.keys().next().value);
  }
