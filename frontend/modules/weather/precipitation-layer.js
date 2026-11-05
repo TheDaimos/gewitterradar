@@ -1735,7 +1735,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         // Keep the mounted image and request a fresh, selectively cached
         // replacement rather than waiting for the normal same-view interval.
         if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-stage",REGIONAL_HOLD_RETRY_MS,{force:true});
-        report("fallback",detail);return false;
+        report("fallback",detail);
+        // An incomplete V2 candidate must never trigger a lower-priority V1
+        // replacement while the already mounted WR-authorized mosaic is valid.
+        return Boolean(state.layer&&this._weatherRadarPreviousValid());
       }
       // A successful Leaflet load and two painted tiles are not a proof
       // that all currently visible grid tiles have usable raster content.
