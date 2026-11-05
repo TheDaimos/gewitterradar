@@ -109,4 +109,8 @@ state3.lastRequestAt=Date.now()-1000;
 await third._refreshWeatherRadar({reason:"timer"});
 assert.ok(missing.some(x=>x.reason==="timer"&&x.delay>6000),
   "same-viewport cold-start retries remain throttled, not continuous");
+// Automatic cold-start recovery remains live until teardown. Dispose the
+// synthetic cards so the test does not keep Node alive after its assertions.
+second._teardownWeatherRadar();
+third._teardownWeatherRadar();
 console.log("PASS: Android foreground refresh, deduplication, cleanup and stale in-flight watchdog");
