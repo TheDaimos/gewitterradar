@@ -492,9 +492,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _scheduleWeatherRadarRefresh(reason="timer",delay=0,{force=false}={}){
     const state=this._weatherRadarState();
     if(!state.enabled)return;
+    // A forced WR refresh (for example after returning to the foreground)
+    // must survive a later non-forced viewport/timer debounce. Otherwise a
+    // normal map event can silently cancel the requested server revalidation.
+    const preservedForce=Boolean(force||state.debounceRefreshForce);
+    state.debounceRefreshForce=preservedForce;
     if(state.debounceTimer)clearTimeout(state.debounceTimer);
     state.debounceTimer=setTimeout(()=>{
-      state.debounceTimer=null;void this._refreshWeatherRadar({reason,force});
+      state.debounceTimer=null;
+      const requestedForce=Boolean(state.debounceRefreshForce);
+      state.debounceRefreshForce=false;
+      void this._refreshWeatherRadar({reason,force:requestedForce});
     },Math.max(0,delay));
   },
   _weatherRadarScheduleBudgetRecovery(snapshot){
