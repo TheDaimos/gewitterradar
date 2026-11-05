@@ -17,7 +17,7 @@ const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
 const REGIONAL_HOLD_RETRY_MS=15000;
 const COLD_START_RETRY_MS=8000;
-const COLD_START_MAX_RETRIES=3;
+const COLD_START_RETRY_MAX_DELAY_MS=60000;
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
@@ -1902,17 +1902,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         state.coldWatchdogTimer=null;
         if(!state.enabled||state.inFlightToken!==token||state.layer)return;
         if(this._weatherRadarRecoverExpiredRequest(Date.now(),"cold-start-watchdog")){
-          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
-            state.coldStartRetries++;
-            this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{
-              generation:token,attempt:state.coldStartRetries,max_attempts:COLD_START_MAX_RETRIES});
-            this._scheduleWeatherRadarRefresh("cold-start-watchdog",COLD_START_RETRY_MS,{force:true});
-          }else{
-            state.lastUnavailable={code:"cold_start_retry_exhausted"};
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
-              attempts:state.coldStartRetries,active_layer:false,reason:"watchdog"});
-            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
-          }
+          state.coldStartRetries++;
+          const retryDelay=Math.min(COLD_START_RETRY_MAX_DELAY_MS,
+            COLD_START_RETRY_MS*Math.pow(2,Math.min(state.coldStartRetries-1,4)));
+          this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{
+            generation:token,attempt:state.coldStartRetries,retry_delay_ms:retryDelay});
+          this._scheduleWeatherRadarRefresh("cold-start-watchdog",retryDelay,{force:true});
         }
       },36000);
     }
@@ -1979,19 +1974,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           (typeof document==="undefined"||document.visibilityState!=="hidden")){
           // Cold start: bounded recovery independent of the normal polling interval.
           // Only the live request token can schedule it; stale results never mount.
-          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
-            state.coldStartRetries++;
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{
-              delay_ms:COLD_START_RETRY_MS,attempt:state.coldStartRetries,
-              max_attempts:COLD_START_MAX_RETRIES});
-            this._weatherRadarUpdateControls("Niederschlagsbild wird geladen · erneuter Versuch "+state.coldStartRetries+"/"+COLD_START_MAX_RETRIES+" …");
-            this._scheduleWeatherRadarRefresh("missing-raster-retry",COLD_START_RETRY_MS);
-          }else{
-            state.lastUnavailable={code:"cold_start_retry_exhausted"};
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
-              attempts:state.coldStartRetries,active_layer:false});
-            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
-          }
+          state.coldStartRetries++;
+          const retryDelay=Math.min(COLD_START_RETRY_MAX_DELAY_MS,
+            COLD_START_RETRY_MS*Math.pow(2,Math.min(state.coldStartRetries-1,4)));
+          this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{
+            delay_ms:retryDelay,attempt:state.coldStartRetries,active_layer:false});
+          this._weatherRadarUpdateControls("Niederschlagsbild wird geladen · erneuter Versuch "+state.coldStartRetries+" …");
+          this._scheduleWeatherRadarRefresh("missing-raster-retry",retryDelay);
         }
       }
     }
