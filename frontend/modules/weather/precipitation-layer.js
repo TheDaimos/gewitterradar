@@ -1847,6 +1847,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     finally{
       if(timeout!==null)clearTimeout(timeout);
       if(staged&&state.v2PendingLayer===staged){
+        // Cancel pending requests belonging to a rejected candidate. The
+        // already mounted previous raster must remain untouched.
+        try{staged._p7AbortPending?.();}catch(_){}
         try{staged.remove();}catch(_){}
         state.v2PendingLayer=null;
       }
