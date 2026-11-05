@@ -4,7 +4,7 @@
  */
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=41191r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=41198r1";
+  from "./raster-mosaic-tile-loader.js?v=411137r2";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41190r1";
