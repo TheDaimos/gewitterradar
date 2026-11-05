@@ -17,7 +17,7 @@ const STORAGE_KEY="gewitterradar:weather-engine:precipitation-enabled";
 const BACKGROUND_STORAGE_KEY="gewitterradar:weather-engine:allow-older-satellite-background";
 const REGIONAL_HOLD_RETRY_MS=15000;
 const COLD_START_RETRY_MS=8000;
-const COLD_START_MAX_RETRIES=3;
+const COLD_START_RETRY_MAX_DELAY_MS=60000;
 const PRELOAD_PROFILE_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-profile";
 const PRELOAD_CUSTOM_STORAGE_KEY="gewitterradar:weather-engine:precipitation-preload-custom-percent";
 const REFRESH_MS=300000;
@@ -258,7 +258,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       }catch(_error){}
       this.__weatherRadarState={
-        enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,mapWaitTimer:null,
+        enabled,allowOlderSatelliteBackground,preloadProfile,preloadCustomPercent,viewportRefreshIntervalSeconds,layer:null,map:null,onMove:null,refreshTimer:null,debounceTimer:null,debounceRefreshForce:false,mapWaitTimer:null,
         preloadTimer:null,preloadQueue:[],preloadCache:new Map(),preloadActive:0,preloadGeneration:0,preloadMetrics:null,
         timelineVisible,timelinePosition,timelineDragging:null,timelineResizeObserver:null,timelineModel:null,timelineIndex:-1,timelinePlaying:false,timelineTimer:null,timelineStageLayer:null,timelineStageIndex:-1,timelineStageToken:0,timelineStageReady:false,timelineStagePromise:null,timelineLoadMessage:null,v2Generation:0,v2Snapshot:null,v2PendingLayer:null,v1PendingLayer:null,v1PendingCancel:null,
         inFlight:false,inFlightToken:null,inFlightStartedAt:0,pending:false,pendingForce:false,coldStartRetries:0,coldWatchdogTimer:null,
@@ -492,9 +492,17 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _scheduleWeatherRadarRefresh(reason="timer",delay=0,{force=false}={}){
     const state=this._weatherRadarState();
     if(!state.enabled)return;
+    // A forced WR refresh (for example after returning to the foreground)
+    // must survive a later non-forced viewport/timer debounce. Otherwise a
+    // normal map event can silently cancel the requested server revalidation.
+    const preservedForce=Boolean(force||state.debounceRefreshForce);
+    state.debounceRefreshForce=preservedForce;
     if(state.debounceTimer)clearTimeout(state.debounceTimer);
     state.debounceTimer=setTimeout(()=>{
-      state.debounceTimer=null;void this._refreshWeatherRadar({reason,force});
+      state.debounceTimer=null;
+      const requestedForce=Boolean(state.debounceRefreshForce);
+      state.debounceRefreshForce=false;
+      void this._refreshWeatherRadar({reason,force:requestedForce});
     },Math.max(0,delay));
   },
   _weatherRadarScheduleBudgetRecovery(snapshot){
@@ -1724,6 +1732,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           settled_tiles:stageTileSettled,max_tile_ms:stageMaxTileMs,
           last_tile_error:stageLastError,previous_layer_preserved:Boolean(state.layer)};
         this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
+        // Keep the mounted image and request a fresh, selectively cached
+        // replacement rather than waiting for the normal same-view interval.
+        if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-stage",REGIONAL_HOLD_RETRY_MS,{force:true});
         report("fallback",detail);return false;
       }
       // A successful Leaflet load and two painted tiles are not a proof
@@ -1748,11 +1759,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const visibleDrawn=[...visible].filter(key=>readyTiles.has(key));
       const visibleEmpty=[...visible].filter(key=>expectedEmptyTiles.has(key));
       const visibleEligible=[...visible].filter(key=>expectedEligibleTiles.has(key));
-      const tolerableGaps=Math.min(2,Math.max(1,Math.floor(visibleEligible.length*0.1)));
-      const gapsAccepted=uncovered.length>0&&visibleDrawn.length>0
-        &&uncovered.length<=tolerableGaps&&
-        visibleDrawn.length/Math.max(1,visibleEligible.length)>=0.8
-        &&previousCoverage<0.90;
+      // A replacement is atomic: even one failed visible tile must not
+      // replace an already displayed mosaic or expose a partially built one.
+      // Expected transparent tiles count as complete, failed tiles do not.
+      const gapsAccepted=false;
       report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
         painted_tiles:readyTiles.size,foundation_tiles:foundationTiles.size,
         geometrically_complete_tiles:geometricallyCompleteTiles.size,
@@ -1772,11 +1782,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         expected_empty_tiles:visibleEmpty.length,eligible_tiles:visibleEligible.length,
         missing_eligible_tiles:uncovered.length,gaps_accepted:gapsAccepted,
         images_are_not_pixel_masks:true});
-      if(!visible.size||!visibleDrawn.length||(uncovered.length&&!gapsAccepted)){
+      if(!visible.size||!visibleDrawn.length||uncovered.length){
         report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
           uncovered_tiles:uncovered.length});
-        report("v1_fallback_started",{reason:"uncovered_visible_tiles"});
-        return false;
+        // Do not promote an incomplete replacement: retry only after the
+        // failed tiles have had an opportunity to recover.
+        if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-tiles",REGIONAL_HOLD_RETRY_MS,{force:true});
+        return true;
       }
       if(gapsAccepted)this._weatherEngineMonitorEvent?.("v2_partial_tile_errors_accepted",{
         correlation_id:correlationId,missing_eligible_tiles:uncovered.length,
@@ -1835,6 +1847,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     finally{
       if(timeout!==null)clearTimeout(timeout);
       if(staged&&state.v2PendingLayer===staged){
+        // Cancel pending requests belonging to a rejected candidate. The
+        // already mounted previous raster must remain untouched.
+        try{staged._p7AbortPending?.();}catch(_){}
         try{staged.remove();}catch(_){}
         state.v2PendingLayer=null;
       }
@@ -1862,7 +1877,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       state.pending=true;state.pendingForce=true;
       return;
     }
-    if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600);return;}
+    if(!this._weatherRadarEnsureMapHooks()){this._scheduleWeatherRadarRefresh(reason,600,{force});return;}
     const viewport=this._weatherRadarViewport();if(!viewport)return;
     // Geographic validity is independent of request throttling, in-flight
     // resolution, satellite consent and HTTP tile loading.
@@ -1894,17 +1909,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         state.coldWatchdogTimer=null;
         if(!state.enabled||state.inFlightToken!==token||state.layer)return;
         if(this._weatherRadarRecoverExpiredRequest(Date.now(),"cold-start-watchdog")){
-          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
-            state.coldStartRetries++;
-            this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{
-              generation:token,attempt:state.coldStartRetries,max_attempts:COLD_START_MAX_RETRIES});
-            this._scheduleWeatherRadarRefresh("cold-start-watchdog",COLD_START_RETRY_MS,{force:true});
-          }else{
-            state.lastUnavailable={code:"cold_start_retry_exhausted"};
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
-              attempts:state.coldStartRetries,active_layer:false,reason:"watchdog"});
-            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
-          }
+          state.coldStartRetries++;
+          const retryDelay=Math.min(COLD_START_RETRY_MAX_DELAY_MS,
+            COLD_START_RETRY_MS*Math.pow(2,Math.min(state.coldStartRetries-1,4)));
+          this._weatherEngineMonitorEvent?.("cold_start_request_recovered",{
+            generation:token,attempt:state.coldStartRetries,retry_delay_ms:retryDelay});
+          this._scheduleWeatherRadarRefresh("cold-start-watchdog",retryDelay,{force:true});
         }
       },36000);
     }
@@ -1971,19 +1981,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           (typeof document==="undefined"||document.visibilityState!=="hidden")){
           // Cold start: bounded recovery independent of the normal polling interval.
           // Only the live request token can schedule it; stale results never mount.
-          if(state.coldStartRetries<COLD_START_MAX_RETRIES){
-            state.coldStartRetries++;
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{
-              delay_ms:COLD_START_RETRY_MS,attempt:state.coldStartRetries,
-              max_attempts:COLD_START_MAX_RETRIES});
-            this._weatherRadarUpdateControls("Niederschlagsbild wird geladen · erneuter Versuch "+state.coldStartRetries+"/"+COLD_START_MAX_RETRIES+" …");
-            this._scheduleWeatherRadarRefresh("missing-raster-retry",COLD_START_RETRY_MS);
-          }else{
-            state.lastUnavailable={code:"cold_start_retry_exhausted"};
-            this._weatherEngineMonitorEvent?.("missing_raster_retry_exhausted",{
-              attempts:state.coldStartRetries,active_layer:false});
-            this._weatherRadarUpdateControls("Niederschlagsbild konnte nicht geladen werden · bitte Aktualisierung prüfen");
-          }
+          state.coldStartRetries++;
+          const retryDelay=Math.min(COLD_START_RETRY_MAX_DELAY_MS,
+            COLD_START_RETRY_MS*Math.pow(2,Math.min(state.coldStartRetries-1,4)));
+          this._weatherEngineMonitorEvent?.("missing_raster_retry_scheduled",{
+            delay_ms:retryDelay,attempt:state.coldStartRetries,active_layer:false});
+          this._weatherRadarUpdateControls("Niederschlagsbild wird geladen · erneuter Versuch "+state.coldStartRetries+" …");
+          this._scheduleWeatherRadarRefresh("missing-raster-retry",retryDelay);
         }
       }
     }
@@ -2183,6 +2187,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(state.timelineTimer)clearTimeout(state.timelineTimer);
     if(state.timelineResizeObserver){try{state.timelineResizeObserver.disconnect();}catch(_error){}state.timelineResizeObserver=null;}
     state.debounceTimer=state.mapWaitTimer=state.refreshTimer=state.preloadTimer=state.timelineTimer=null;
+    state.debounceRefreshForce=false;
     state.timelinePlaying=false;
     state.v2Generation++;
     state.v1PendingCancel?.();
