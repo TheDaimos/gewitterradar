@@ -33,6 +33,26 @@ test('GR precipitation delegates provider choice to WR and does not overlay OPER
  assert.match(p,/if\(this\.__operaDiagnosticEnabled\)this\._weatherEngineOperaDiagnosticToggle/);
  assert.doesNotMatch(p,/this\._weatherEngineOperaDiagnosticToggle\?\.\(\{autoFromPrecipitation:true\}\)/);
 });
+test('received OPERA remains reported when the hidden raster candidate is rejected',()=>{
+ class Card{}
+ installWeatherRouter(Card,{});
+ const card=new Card();
+ const response={layers:[{source_id:'opera/opera_rate_raster',times:{valid_at:'2026-11-05T15:30:00Z'}}],
+   source_outcomes:[{source_id:'opera/opera_rate_raster',result:'selected'}]};
+ const state={enabled:true,v2Snapshot:{layers:[{source_id:'dwd/radar_precipitation'}]},
+   v2ReceivedSnapshot:response,v2OperaTransport:{status:'image_policy_rejected',
+     http_status:403,tile_denial_code:'insecure_transport'}};
+ card._weatherRadarState=()=>state;
+ const status=card._weatherEngineOperaProviderState();
+ assert.equal(status.returned_by_wr,true);
+ assert.equal(status.selected,false,'received pixels have not yet been mounted');
+ assert.equal(status.routing_result,'selected');
+ assert.equal(status.tile_http_status,403);
+ assert.equal(status.tile_denial_code,'insecure_transport');
+ state.v2Snapshot=response;
+ state.v2OperaTransport={status:'displayed',http_status:200};
+ assert.equal(card._weatherEngineOperaProviderState().selected,true);
+});
 test('GR ignores auto preview after precipitation is turned off',()=>{
  const c=read('frontend/modules/weather/consumer-client.js');
  assert.match(c,/autoFromPrecipitation&&!this\.__grPrecipitationWantsOpera/);

@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=411138r1";
+import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=411140r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=41190r1";
 import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
@@ -1577,6 +1577,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const geometricallyCompleteTiles=new Set();
       let gridLoaded=false,stageTileSettled=0,stageMaxTileMs=0;
       let stageLastError=null;
+      let stageLastHttpStatus=null,stageLastDenialCode=null;
       const observedOrders=[];
       const markReady=()=>{if(gridLoaded&&readyTiles.size>=minReadyTiles)painted(true);};
       // A single painted tile does not establish a usable replacement view.
@@ -1630,6 +1631,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             throw error;
           }),
           onTileDiagnostics:item=>{
+            const operaError=item?.rejected?.find(row=>row.source_id==='opera/opera_rate_raster'&&
+              !['outside_tile_coverage','outside_zoom_coverage'].includes(row.reason));
+            if(current()&&operaError){
+              state.v2OperaTransport={status:operaError.reason,http_status:operaError.http_status||null,
+                tile_denial_code:operaError.tile_denial_code||null};
+              stageLastHttpStatus=operaError.http_status||null;
+              stageLastDenialCode=operaError.tile_denial_code||null;
+            }
             stageTileSettled++;
             stageMaxTileMs=Math.max(stageMaxTileMs,Number(item?.duration_ms)||0);
             if(item?.tile_status!=="expected_transparent"&&
@@ -1668,6 +1677,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       });
       if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return false;}
       if(!current()){report("stale_after_response");return false;}
+      // Receiving an authorized source and mounting decoded pixels are separate
+      // facts. Keep the response even when its hidden candidate fails to paint.
+      state.v2ReceivedSnapshot=result.response;
+      state.v2OperaTransport=result.response.layers.some(layer=>layer.source_id==='opera/opera_rate_raster')
+        ?{status:"loading",http_status:null,tile_denial_code:null}:null;
       if(this._weatherRadarRetainRegionalMosaic(result,viewport,correlationId,report))return true;
       const footprint=measureRasterViewportCoverage(
         result.response.layers,viewport.context,this._map.getZoom?.()??0);
@@ -1749,10 +1763,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       });
       if(!ready.ready||!current()){
         const reason=current()?ready.reason:"stale_or_background";
+        if(current()&&staged._p7OperaGeneration&&state.v2OperaTransport?.status==='loading')
+          state.v2OperaTransport={status:"stage_rejected",stage_rejection_reason:reason};
         const detail={correlation_id:correlationId,reason,
           elapsed_ms:Date.now()-stageStart,painted_tiles:readyTiles.size,
           settled_tiles:stageTileSettled,max_tile_ms:stageMaxTileMs,
-          last_tile_error:stageLastError,previous_layer_preserved:Boolean(state.layer)};
+          last_tile_error:stageLastError,last_tile_http_status:stageLastHttpStatus,
+          last_tile_denial_code:stageLastDenialCode,previous_layer_preserved:Boolean(state.layer)};
         this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
         // Keep the mounted image and request a fresh, selectively cached
         // replacement rather than waiting for the normal same-view interval.
@@ -1837,6 +1854,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         geographic_fraction:Number(footprint.fraction.toFixed(5)),
         image_pixels_verified:false};
       state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();
+      if(result.response.layers.some(layer=>layer.source_id==='opera/opera_rate_raster'))
+        state.v2OperaTransport={status:"displayed",http_status:200,tile_denial_code:null};
       if(footprint.complete)state.v2LastPartial=null;
       state.lastReady=null;state.lastUnavailable=null;
       if(state.v2BudgetTimer)clearTimeout(state.v2BudgetTimer);

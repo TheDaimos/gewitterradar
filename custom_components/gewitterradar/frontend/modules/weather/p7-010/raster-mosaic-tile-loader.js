@@ -11,6 +11,23 @@ import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 
+const operaTileDenialCodes=new Set([
+ "missing_authenticated_user","administrator_required","profile_not_authorized",
+ "insecure_transport","diagnostic_route_disabled","provider_disabled",
+ "diagnostic_registration_revoked","frame_expired","frame_in_future",
+ "invalid_frame_time","invalid_route_or_stamp","frame_not_registered",
+ "stamp_mismatch","scientific_admission_missing","missing_attribution",
+ "frame_registration_revoked"
+]);
+export function operaTileHttpError(response){
+ const error=new Error("opera_tile_http_"+response.status);
+ error.httpStatus=response.status;
+ const denial=response.headers.get("X-WeatherRouter-Tile-Denial");
+ if((response.status===401||response.status===403)&&operaTileDenialCodes.has(denial))
+   error.tileDenialCode=denial;
+ return error;
+}
+
 // Completed OPERA frames have immutable timestamped URLs. Keep successful
 // decoded images across GridLayer replacement/abort cycles, so only missing
 // tiles require a network retry. This cache grants no validity: the current
@@ -210,8 +227,13 @@ export async function drawRasterMosaicTileFromUrls({
        return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
      }catch(error){
        if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
-       if(error?.httpStatus===401||error?.httpStatus===403)
-         return {source_id,reason:"image_auth_rejected"};
+       if(error?.httpStatus===401||error?.httpStatus===403){
+         const code=operaTileDenialCodes.has(error.tileDenialCode)?error.tileDenialCode:null;
+         const policy=code&&!['missing_authenticated_user','administrator_required',
+           'profile_not_authorized'].includes(code)&&error.httpStatus!==401;
+         return {source_id,reason:policy?"image_policy_rejected":"image_auth_rejected",
+           http_status:error.httpStatus,...(code?{tile_denial_code:code}:{})};
+       }
        retry=(opera||budget.used<budget.maxRequests)&&!budget.closed;
        if(!retry)return {source_id,reason:"request_budget_exhausted"};
        retryCount++;
@@ -239,7 +261,8 @@ export async function drawRasterMosaicTileFromUrls({
    return {source_id,reason:"tile_cancelled"};
  }));
  const prepared=results.filter(x=>x.layer).map(x=>x.layer);
- const rejected=results.filter(x=>!x.layer).map(({source_id,reason})=>({source_id,reason}));
+ const rejected=results.filter(x=>!x.layer).map(({source_id,reason,http_status,tile_denial_code})=>
+   ({source_id,reason,...(http_status?{http_status}:{}),...(tile_denial_code?{tile_denial_code}:{})}));
  const drawn=signal?.aborted
    ?{drawn:[],rejected:[]}
    :drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);

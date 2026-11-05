@@ -345,12 +345,20 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
   },
   _weatherEngineOperaProviderState(){
     const radar=this._weatherRadarState?.();
-    const frame=radar?.v2Snapshot?.layers?.find(layer=>layer.source_id==='opera/opera_rate_raster');
-    const outcome=radar?.v2Snapshot?.source_outcomes?.find(row=>row.source_id==='opera/opera_rate_raster');
-    return {scope:'regular_consumer_v2',selected:Boolean(radar?.enabled&&frame),
+    const displayed=radar?.v2Snapshot?.layers?.find(layer=>layer.source_id==='opera/opera_rate_raster');
+    const received=radar?.v2ReceivedSnapshot||radar?.v2Snapshot;
+    const delivered=received?.layers?.find(layer=>layer.source_id==='opera/opera_rate_raster');
+    const frame=displayed||delivered;
+    const outcome=received?.source_outcomes?.find(row=>row.source_id==='opera/opera_rate_raster');
+    return {scope:'regular_consumer_v2',selected:Boolean(radar?.enabled&&displayed),
+      returned_by_wr:Boolean(delivered),transport_status:radar?.v2OperaTransport?.status||null,
+      tile_http_status:radar?.v2OperaTransport?.http_status||null,
+      tile_denial_code:radar?.v2OperaTransport?.tile_denial_code||null,
+      stage_rejection_reason:radar?.v2OperaTransport?.stage_rejection_reason||null,
       wr_authorized_frame:Boolean(frame),source_id:frame?.source_id||null,
       valid_at:frame?.times?.valid_at||null,valid_until:frame?.times?.valid_until||null,
-      stale:frame?.times?.stale===true,routing_result:outcome?.result||'not_returned_by_wr'};
+      stale:frame?.times?.stale===true,
+      routing_result:outcome?.result||(delivered?'returned_by_wr':'not_returned_by_wr')};
   },
 
   async _weatherEngineRefreshPrecipitation(){
@@ -893,7 +901,12 @@ _weatherEngineDiagnosticPayload(){
       const state=this._weatherEngineOperaProviderState();
       operaResult.textContent=state.selected
         ?'OPERA RATE · Consumer V2 · '+state.valid_at+(state.stale?' · von WR als veraltet gekennzeichnet':'')
-        :'OPERA derzeit nicht von WR geliefert · '+state.routing_result;
+        :state.returned_by_wr
+          ?'OPERA von WR geliefert · '+(state.transport_status==='image_auth_rejected'
+            ?'Bildzugriff abgewiesen':state.transport_status==='image_policy_rejected'
+              ?'Kachelrichtlinie: '+state.tile_denial_code:state.transport_status==='stage_rejected'
+                ?'Darstellung noch nicht vollständig':'Kacheln werden geladen')
+          :'OPERA derzeit nicht von WR geliefert · '+state.routing_result;
     }
     const capabilities=new Set((store.items||[]).map(item=>item.capability).filter(Boolean));
     for(const item of store.lastCatalog?.capabilities||[])if(item?.id)capabilities.add(item.id);

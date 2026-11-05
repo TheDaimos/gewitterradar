@@ -3,8 +3,8 @@
  * snapshots using a strict shared per-snapshot tile budget.
  */
 import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411138r1";
-import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls}
-  from "./raster-mosaic-tile-loader.js?v=411138r1";
+import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls,operaTileHttpError}
+  from "./raster-mosaic-tile-loader.js?v=411140r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
 import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
 import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41190r1";
@@ -49,7 +49,7 @@ export function classifyRasterTileResult(layers,tile,tileSize,result){
     geographic_only:true,image_pixels_verified:false};
 }
 
-async function loadRasterImage(url,source,{signal,getAccessToken}={}){
+export async function loadRasterImage(url,source,{signal,getAccessToken}={}){
   // Authenticated HA OPERA route is never fetched by a naked <img>.
   // Tokens are obtained only from the HA session and never placed in URLs.
   if(url.startsWith("/api/weather_router/opera_tile/")){
@@ -57,10 +57,10 @@ async function loadRasterImage(url,source,{signal,getAccessToken}={}){
        !/^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url))
       throw new Error("untrusted_opera_tile_url");
     const token=typeof getAccessToken==="function"?await getAccessToken():null;
-    if(!token)throw new Error("missing_opera_tile_authorization");
+    if(!token){const error=new Error("missing_opera_tile_authorization");error.httpStatus=401;throw error;}
     const response=await fetch(url,{method:"GET",credentials:"omit",redirect:"error",
       cache:"no-store",signal,headers:{Authorization:"Bearer "+token,Accept:"image/png"}});
-    if(!response.ok){const error=new Error("opera_tile_http_"+response.status);error.httpStatus=response.status;throw error;}
+    if(!response.ok)throw operaTileHttpError(response);
     if(!String(response.headers.get("content-type")||"").toLowerCase().includes("image/png"))
       throw new Error("opera_tile_invalid_content_type");
     const blob=await response.blob();
