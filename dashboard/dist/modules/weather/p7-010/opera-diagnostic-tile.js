@@ -6,7 +6,7 @@
 import {buildRasterMosaicV2Request} from "./raster-mosaic-consumer.js?v=41198r1";
 
 const TEMPLATE=/^\/api\/weather_router\/opera_preview\/RATE\/(20\d{6}T\d{6}Z)\/(north_first|south_first)\/\{z\}\/\{x\}\/\{y\}\.png$/;
-const NOTICE="UNVERIFIED / ENTWICKLUNGSVORSCHAU – geografische Orientierung nicht wissenschaftlich bestätigt";
+const NOTICE="OPERA RATE · isolierte Originaldiagnose · Einzelbild nicht für reguläre Bereitstellung zugelassen";
 const ORIENTATIONS=new Set(["north_first"]);
 
 export function validateOperaDiagnosticResponse(response,correlationId,orientation="north_first"){

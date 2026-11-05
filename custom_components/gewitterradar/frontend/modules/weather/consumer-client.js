@@ -343,6 +343,22 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       try{this._weatherEngineDiagnosticRender?.();}catch(_error){}
     }
   },
+  _weatherEngineOperaProviderState(){
+    const radar=this._weatherRadarState?.();
+    const frame=radar?.v2Snapshot?.layers?.find(layer=>layer.source_id==='opera/opera_rate_raster');
+    const outcome=radar?.v2Snapshot?.source_outcomes?.find(row=>row.source_id==='opera/opera_rate_raster');
+    return {scope:'regular_consumer_v2',selected:Boolean(radar?.enabled&&frame),
+      wr_authorized_frame:Boolean(frame),source_id:frame?.source_id||null,
+      valid_at:frame?.times?.valid_at||null,valid_until:frame?.times?.valid_until||null,
+      stale:frame?.times?.stale===true,routing_result:outcome?.result||'not_returned_by_wr'};
+  },
+
+  async _weatherEngineRefreshPrecipitation(){
+    if(!this._weatherRadarState?.()?.enabled)await this._setWeatherRadarEnabled?.(true);
+    else await this._refreshWeatherRadar?.({reason:'regular-consumer-v2-refresh',force:true});
+    this._weatherEngineDiagnosticRender?.();
+  },
+
   async _weatherEngineOperaDiagnosticToggle({autoFromPrecipitation=false}={}){
     const store=this._weatherEngineTraceStore();
     const operaTrace=(event,details={})=>{const events=store.opera_cycle_lifecycle||(store.opera_cycle_lifecycle=[]);events.push({at:new Date().toISOString(),mono_ms:Math.round(performance.now()),event,...details});if(events.length>120)events.splice(0,events.length-120);};
@@ -384,7 +400,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411135r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411139r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
@@ -427,7 +443,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
           const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
           if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
-          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411135r1');
+          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411139r1');
           const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
             correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken,onLifecycle:operaTrace});
@@ -480,7 +496,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
       store.operaDiagnostic={status:'UNVERIFIED_DEV_PREVIEW',orientation,correlation_id:correlationId,
         at:new Date().toISOString(),scientific_approval:false,notice:pane.notice,
         valid_at:pane.validAt||null,metrics:pane.metrics||null};
-      show('OPERA – ungeprüfte Testdarstellung');
+      show('OPERA · isolierte Originaldiagnose · keine reguläre Provideransicht');
     }catch(error){
       store.operaDiagnostic={status:'blocked',correlation_id:correlationId,
         at:new Date().toISOString(),scientific_approval:false,
@@ -700,7 +716,8 @@ _weatherEngineDiagnosticPayload(){
       raw_consumer_exchanges:[...(store.rawExchanges||[])],
       v2_attempts:[...(store.v2Events||[])],
       v2_interface_test:store.v2TestResult||null,
-       opera_diagnostic:store.operaDiagnostic||null,
+       opera_rate_provider:this._weatherEngineOperaProviderState(),
+       opera_diagnostic:store.operaDiagnostic?{...store.operaDiagnostic,scope:'legacy_preview_only',required_for_regular_provider:false}:null,
        opera_cycle_lifecycle:[...(store.opera_cycle_lifecycle||[])],
       v2_age_comparison:store.v2AgeComparison||null,
       display_monitor:{
@@ -800,7 +817,7 @@ _weatherEngineDiagnosticPayload(){
             <div class="we-diagnostic-note">Nur vorhandene Karten-/Kachel-Ereignisse. Keine zusätzlichen Wetterabfragen oder Bildaufnahmen. Markierung umfasst 40 Ereignisse davor und danach.</div>
           </div>
           <div class="we-card"><b>Consumer API V2 – Schnittstellentest</b><p style="font-size:11px;opacity:.8">Begrenzter WebSocket-Vertragstest ohne Veränderung der Karte oder zusätzliche Raster-Bildabrufe.</p><button id="weather-engine-v2-test" type="button">API V2 gezielt prüfen</button><div id="weather-engine-v2-test-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch nicht geprüft</div><div class="we-diagnostic-actions" style="margin-top:9px"><button id="weather-engine-v2-compare" type="button">V2-Datenalter vergleichen (15 Min. / 12 Std.)</button></div><div class="we-diagnostic-note" style="margin-top:6px">Zwei getrennte, nacheinander ausgeführte V2-Anfragen mit gleichem Kartenausschnitt. Nur Diagnose: Die produktive 15-Minuten-Grenze und die Karte bleiben unverändert.</div><div id="weather-engine-v2-compare-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch kein Vergleich durchgeführt</div></div>
-          <div class="we-card"><b>OPERA-Vorschau – Entwicklungsvorschau</b><p class="we-diagnostic-note">Geografische Orientierung noch nicht wissenschaftlich bestätigt. Nur Administratoren auf HA DEV VM 109; WR-Vorschau muss dort zuvor ausdrücklich freigegeben sein. Keine Verwendung für Warnungen.</p><div class="we-diagnostic-note">OPERA-Orientierung: north_first (Variante A, fest eingestellt).</div><label style="display:block;margin:8px 0">Deckkraft <input id="weather-engine-opera-opacity" type="range" min="0" max="100" value="70"></label><div class="we-diagnostic-note">RATE (mm/h): transparent = keine gültige Messung · farbige Pixel = Niederschlag; Maßstab und Georeferenz ungeprüft.</div><button id="weather-engine-opera-toggle" type="button">OPERA-Vorschau starten</button><div id="weather-engine-opera-result" role="status">Nicht gestartet</div></div><div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
+          <div class="we-card"><b>OPERA RATE · regulärer WR-Provider</b><p class="we-diagnostic-note">Die RATE-Verarbeitung einschließlich geografischer Orientierung ist mit TEST69 abgeschlossen. WeatherRouter prüft jeden aktuellen Frame und entscheidet über Verfügbarkeit und Provider-Auswahl. Die Darstellung erfolgt über die normale Niederschlagsebene; eine separate Vorschaufreigabe ist nicht erforderlich.</p><button id="weather-engine-opera-toggle" type="button">Niederschlag aktualisieren</button><div id="weather-engine-opera-result" role="status">Warte auf WR Consumer V2</div></div><div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
           <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Niederschlag neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
           <div class="we-diagnostic-note">Die Filter beeinflussen nur die Diagnoseansicht. Providerwahl und WeatherRouter-Routing werden nicht verändert.</div>
           <details><summary>Rohdaten</summary><pre class="we-diagnostic-raw" id="weather-engine-diagnostic-raw"></pre></details>
@@ -821,7 +838,7 @@ _weatherEngineDiagnosticPayload(){
       this._weatherEngineMonitorEvent("monitor_detail_changed",{detail_enabled:store.displayExtended});
       this._weatherEngineDiagnosticRender();
     });
-    root.getElementById('weather-engine-opera-toggle')?.addEventListener('click',()=>this._weatherEngineOperaDiagnosticToggle());
+    root.getElementById('weather-engine-opera-toggle')?.addEventListener('click',()=>this._weatherEngineRefreshPrecipitation());
     root.getElementById('weather-engine-opera-opacity')?.addEventListener('input',event=>{try{this.__operaDiagnosticPane?.setOpacity(Number(event.target.value)/100);}catch(_error){}});
 
 
@@ -867,17 +884,16 @@ _weatherEngineDiagnosticPayload(){
     const root=this.shadow;if(!root)return;
     const store=this.__weatherEngineTraceStore||{items:[]};
     const operaButton=root.getElementById('weather-engine-opera-toggle');
-    if(operaButton){operaButton.disabled=this.__operaRequestRunning===true||this._hass?.user?.is_admin!==true;operaButton.textContent=this.__operaRequestRunning?'OPERA-Testdarstellung wird geladen …':this.__operaDiagnosticPane?.active!==false&&this.__operaDiagnosticPane?'OPERA-Vorschau entfernen':'OPERA-Vorschau starten';}
+    if(operaButton){
+      operaButton.disabled=this._weatherRadarState?.()?.inFlight===true;
+      operaButton.textContent='Niederschlag aktualisieren';
+    }
     const operaResult=root.getElementById('weather-engine-opera-result');
     if(operaResult){
-      const pane=this.__operaDiagnosticPane;
-      const state=store.operaDiagnostic||{};
-      operaResult.textContent=pane?.active?(
-        'OPERA · '+String(pane.orientation||'')+' · '+String(pane.validAt||'')+' UTC · UNGEPRÜFT · '+(pane.metrics?.loaded||0)+' PNG geladen · '+
-        (pane.metrics?.failed||0)+' Fehler'
-      ):pane?.active===false?'OPERA-Raster abgelaufen oder entfernt':
-        state.status==='blocked'?'OPERA gesperrt: '+String(state.reason||state.code||'unbekannt').slice(0,160):
-        'OPERA-Testdarstellung nicht aktiv';
+      const state=this._weatherEngineOperaProviderState();
+      operaResult.textContent=state.selected
+        ?'OPERA RATE · Consumer V2 · '+state.valid_at+(state.stale?' · von WR als veraltet gekennzeichnet':'')
+        :'OPERA derzeit nicht von WR geliefert · '+state.routing_result;
     }
     const capabilities=new Set((store.items||[]).map(item=>item.capability).filter(Boolean));
     for(const item of store.lastCatalog?.capabilities||[])if(item?.id)capabilities.add(item.id);

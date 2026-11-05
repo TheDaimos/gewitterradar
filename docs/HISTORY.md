@@ -1,3 +1,11 @@
+## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
+
+- OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.
+- Normale WR-Lieferung wird separat von einer isolierten Originaldiagnose ausgewiesen. Anzeige übernimmt Quelle, Zeitstempel, Veraltet-Kennzeichnung und Auswahlgrund von WR; keine zusätzliche GR-Zeitpolitik.
+- Veraltete Behauptungen einer grundsätzlich ungeprüften geografischen Orientierung entfernt. TEST69 bleibt abgeschlossen; einzelne ungültige Originale bleiben gesperrt.
+- Authentifizierter Kacheltransport, vollständiger atomarer Generationswechsel und gezielte Wiederholung fehlgeschlagener Kacheln unverändert erhalten.
+- Paarung mit WR 0.10.287 DEV. Integration und Dashboard bytegleich aus derselben Quelle gebaut; geschützte About-Inhalte unverändert. Neue Realabnahme auf VM109 ausstehend, VM101 unverändert.
+
 ## V4.11.138 DEV · 2026/11 · Integration 0.25.45
 
 - OPERA als reguläre, ausschließlich von WeatherRouter ausgewählte Consumer-V2-Niederschlagsquelle.
