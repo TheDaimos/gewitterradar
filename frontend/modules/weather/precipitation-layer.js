@@ -1756,11 +1756,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const visibleDrawn=[...visible].filter(key=>readyTiles.has(key));
       const visibleEmpty=[...visible].filter(key=>expectedEmptyTiles.has(key));
       const visibleEligible=[...visible].filter(key=>expectedEligibleTiles.has(key));
-      const tolerableGaps=Math.min(2,Math.max(1,Math.floor(visibleEligible.length*0.1)));
-      const gapsAccepted=uncovered.length>0&&visibleDrawn.length>0
-        &&uncovered.length<=tolerableGaps&&
-        visibleDrawn.length/Math.max(1,visibleEligible.length)>=0.8
-        &&previousCoverage<0.90;
+      // A replacement is atomic: even one failed visible tile must not
+      // replace an already displayed mosaic or expose a partially built one.
+      // Expected transparent tiles count as complete, failed tiles do not.
+      const gapsAccepted=false;
       report("staged_tiles_actual_coverage",{visible_tiles:visible.size,
         painted_tiles:readyTiles.size,foundation_tiles:foundationTiles.size,
         geometrically_complete_tiles:geometricallyCompleteTiles.size,
@@ -1780,7 +1779,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         expected_empty_tiles:visibleEmpty.length,eligible_tiles:visibleEligible.length,
         missing_eligible_tiles:uncovered.length,gaps_accepted:gapsAccepted,
         images_are_not_pixel_masks:true});
-      if(!visible.size||!visibleDrawn.length||(uncovered.length&&!gapsAccepted)){
+      if(!visible.size||!visibleDrawn.length||uncovered.length){
         report("v2_swap_prevented_uncovered_tiles",{visible_tiles:visible.size,
           uncovered_tiles:uncovered.length});
         report("v1_fallback_started",{reason:"uncovered_visible_tiles"});
