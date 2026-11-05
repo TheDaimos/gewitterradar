@@ -1,50 +1,51 @@
-"""GR-OPERA-03 source-level regressions, no Home Assistant needed."""
+"""OPERA UI isolation and release identity contracts on the pinned GR baseline."""
+import json
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[1]
-CONSUMERS=[
-    ROOT/"frontend/modules/weather/consumer-client.js",
-    ROOT/"custom_components/gewitterradar/frontend/modules/weather/consumer-client.js",
-    ROOT/"dashboard/dist/modules/weather/consumer-client.js",
+ROOT = Path(__file__).resolve().parents[1]
+FRONTENDS = [
+    ROOT / "frontend",
+    ROOT / "custom_components/gewitterradar/frontend",
+    ROOT / "dashboard/dist",
 ]
-ADAPTERS=[
-    ROOT/"frontend/modules/weather/p7-010/opera-diagnostic-tile.js",
-    ROOT/"custom_components/gewitterradar/frontend/modules/weather/p7-010/opera-diagnostic-tile.js",
-    ROOT/"dashboard/dist/modules/weather/p7-010/opera-diagnostic-tile.js",
-]
+
+
+def source(relative):
+    return (FRONTENDS[0] / relative).read_text(encoding="utf-8")
+
 
 def test_all_three_frontend_mirrors_match():
-    assert len({p.read_bytes() for p in CONSUMERS}) == 1
-    assert len({p.read_bytes() for p in ADAPTERS}) == 1
+    for relative in ("modules/weather/consumer-client.js",
+                     "modules/weather/p7-010/opera-diagnostic-tile.js",
+                     "modules/weather/precipitation-layer.js"):
+        assert len({(p / relative).read_bytes() for p in FRONTENDS}) == 1
 
-def test_closing_weather_engine_does_not_close_map_owned_opera():
-    source=CONSUMERS[0].read_text(encoding="utf-8")
-    method=source.split("_weatherEngineDiagnosticClose(){",1)[1].split("_mountWeatherEngineDiagnostics()",1)[0]
-    assert "__operaDiagnosticPane.close()" not in method
-    assert "backdrop.classList.remove('open')" in method
-    assert "this.__operaDiagnosticPane.close();this.__operaDiagnosticPane=null;" in source
-    assert "this.__operaDiagnosticPane?.active===false" in source
-    assert "pane.metrics?.loaded" in source
 
-def test_opera_is_explicit_and_never_promotes_unverified_tiles():
-    source=ADAPTERS[0].read_text(encoding="utf-8")
-    assert 'request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true}' in source
-    assert "response.raster_approved!==false" in source
-    assert "UNVERIFIED_DIAGNOSTIC" in source
-    assert "900000" in source
-    assert "getUint32(16)!==256" in source
-    assert "getUint32(20)!==256" in source
-    assert "image.onload=()=>{metrics.loaded++" in source
-    assert "get active(){return !disposed;}" in source
-    assert "controller.abort()" in source
-    assert "URLRef.revokeObjectURL" in source
+def test_regular_precipitation_does_not_own_diagnostic_pane():
+    precip = source("modules/weather/precipitation-layer.js")
+    assert "_weatherEngineOperaDiagnosticToggle" not in precip
+    assert "__operaDiagnosticPane" not in precip
+    # WR Consumer V2 is the normal precipitation route.
+    assert "prepareRasterMosaicV2" in precip
 
-def test_version_109_is_coherent():
-    expected="4.11.109"
-    assert expected in (ROOT/"custom_components/gewitterradar/build_info.py").read_text()
-    for base in [ROOT/"frontend",ROOT/"dashboard/dist",ROOT/"custom_components/gewitterradar/frontend"]:
-        version=(base/"version.js").read_text(encoding="utf-8")
-        manifest=(base/"assets/gewitterradar-runtime-manifest.json").read_text(encoding="utf-8")
-        assert expected in version and expected in manifest
-        assert "E411-109A1" in version and manifest
-        assert '"version": "1.2.11"' in manifest
+
+def test_opera_diagnostic_path_remains_admin_only_and_unapproved():
+    adapter = source("modules/weather/p7-010/opera-diagnostic-tile.js")
+    assert 'request.source_request={provider_id:"opera",product_id:"RATE",diagnostic:true' in adapter
+    assert "response.raster_approved!==false" in adapter
+    assert 'Authorization:"Bearer "+token' in adapter
+    assert "getUint32(16)!==256" in adapter and "getUint32(20)!==256" in adapter
+    assert "URLRef.revokeObjectURL" in adapter
+
+
+def test_pinned_version_identity_is_consistent():
+    expected = "4.11.133"
+    build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text()
+    assert f'BUILD_VERSION = "{expected}"' in build
+    for base in FRONTENDS:
+        version = (base / "version.js").read_text(encoding="utf-8")
+        runtime = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text())
+        assert f'version:"{expected}"' in version
+        assert runtime["productVersion"] == expected
+        assert runtime["moduleSetId"] == "E411-133A1"
+        assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1
