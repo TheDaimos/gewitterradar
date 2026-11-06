@@ -1,16 +1,17 @@
-import {sourceTileGrant,sourceTileGrants,nasaTileDestination,leaseNasaTiles,configureNasaTransport} from "./nasa-spatial.js?v=411146r1";
+import {sourceTileGrant,sourceTileGrants,nasaTileDestination,leaseNasaTiles,configureNasaTransport,spatialTileBounds} from "./nasa-spatial.js?v=411147r1";
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=411146r1";
+import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=411147r1";
+import {plannedSourceTiles,retainProtectedRasterAreas} from './radar-mask.js?v=411147r1';
 /* P7-010: Leaflet rendering adapter for the existing WR V2 mosaic contract.
  * WeatherRouter alone selects and orders sources; this file draws verified
  * snapshots using a strict shared per-snapshot tile budget.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411146r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411147r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls,operaTileHttpError}
-  from "./raster-mosaic-tile-loader.js?v=411146r1";
+  from "./raster-mosaic-tile-loader.js?v=411147r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=411146r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411146r1";
+import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=411147r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411147r1";
 
 /** Geographically expected raster area, including partial boundary tiles.
  * A verified BBOX never implies opaque weather pixels.
@@ -25,10 +26,16 @@ export function expectedRasterTileGeometry(layers,tile,tileSize=256){
       :item.coverage_scope==="bbox"&&item.coverage
         ?{scope:"bbox",bbox:item.coverage,verified:true}:null;
     if(!mask)continue;
+    if(item.raster_plan&&plannedSourceTiles(item,tile).length===0)continue;
     const area=rasterTilePixelCrops(tile,mask,tileSize);
     if(!area.length)continue;
     if(selected++>=4)break; // Same four relevant sources as the tile loader.
-    crops.push(...area);
+    const planned=plannedSourceTiles(item,tile);
+    if(planned===null)crops.push(...area);
+    else for(const native of planned){
+      const sourceArea=rasterTilePixelCrops(tile,{scope:'bbox',bbox:spatialTileBounds(native.z,native.x,native.y),verified:true},tileSize);
+      for(const a of area)for(const b of sourceArea){const l=Math.max(a.sx,b.sx),t=Math.max(a.sy,b.sy),r=Math.min(a.sx+a.sw,b.sx+b.sw),bottom=Math.min(a.sy+a.sh,b.sy+b.sh);if(r>l&&bottom>t)crops.push({sx:l,sy:t,sw:r-l,sh:bottom-t});}
+    }
   }
   return measureRasterTileCoverage(crops,tileSize);
 }
@@ -140,7 +147,8 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   if(!Number.isInteger(tileSize)||tileSize<1||tileSize>512)
     throw new RangeError("Invalid tile size");
   const verified=validateRasterMosaicV2(snapshot,{maxLayers});
-  const deferredSource=verified.layers.find(layer=>layer.spatial_policy?.kind==="exclusive_tiles_v1");
+  if(verified.layers.some(layer=>layer.raster_plan?.plan_complete===false))throw new TypeError('Incomplete WR source plan cannot replace active generation');
+  const deferredSource=verified.layers.find(layer=>["exclusive_tiles_v1","radar_mask_v2"].includes(layer.spatial_policy?.kind));
   const renderLayers=rasterMosaicRenderOrder(verified.layers.filter(layer=>layer!==deferredSource));
   let nasaLease=null,nasaRevoked=false;const nasaCanvases=new Map();
   const getLease=()=>nasaLease??=(leaseNasaTiles(deferredSource,
@@ -155,7 +163,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       budget.imageCache.set(key,value);if(budget.imageCache.size>=budget.maxCachedImages)break;
     }
   }
-  const pending=new Set();
+  const pending=new Set(),actualTiles=new Map();
   const Layer=L.GridLayer.extend({
     createTile(coords,done){
       const canvas=createCanvas();
@@ -182,8 +190,8 @@ export function createRasterMosaicGridLayer(L,snapshot,{
           Promise.allSettled(grants.map(native=>lease.image(native).then(image=>{
             if(nasaRevoked||controller?.signal.aborted||!sourceTileGrants(deferredSource,coords).some(t=>t.x===native.x&&t.y===native.y))return;
             const result=drawVerifiedRasterMosaicTile(context,coords,[{...deferredSource,image,_p7SourceTile:native}],tileSize);
-            if(result.drawn.length)painted++;
-            try{onTileDiagnostics?.({...result,deferred:true,radar_expected:radarExpected,tile_status:painted===grants.length?"complete_verified_coverage":"deferred_partial",painted_source_tiles:painted,required_source_tiles:grants.length,tile:{...coords}});}catch(_){}
+            if(result.drawn.length)painted++;actualTiles.set(coords.z+"/"+coords.x+"/"+coords.y,{nasa_painted:painted,nasa_required:grants.length,mask_applied:result.drawn.some(d=>d.mask_applied)});
+            try{onTileDiagnostics?.({...result,deferred:true,radar_expected:radarExpected,tile_status:painted===grants.length?"complete_verified_coverage":"deferred_partial",source_images_complete:painted===grants.length,observation_coverage_verified:false,mask_applied:result.drawn.some(d=>d.mask_applied),painted_source_tiles:painted,required_source_tiles:grants.length,tile:{...coords}});}catch(_){}
           },()=>{
             if(!controller?.signal.aborted)try{onTileDiagnostics?.({deferred:true,radar_expected:radarExpected,tile_status:"deferred_image_failed",drawn:[],rejected:[{source_id:deferredSource.source_id,reason:"nasa_image_failed"}],tile:{...coords}});}catch(_){}
           }))).finally(()=>{nasaSettled=true;finish();});
@@ -196,6 +204,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
         budget,tileSize,timeoutMs,
         signal:controller?.signal
       })).then(result=>{
+        actualTiles.set(coords.z+"/"+coords.x+"/"+coords.y,{...actualTiles.get(coords.z+"/"+coords.x+"/"+coords.y),regular_sources:result.drawn.map(d=>({source_id:d.source_id,tile:d.source_tile})),failed:result.rejected});
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
         if(!controller?.signal.aborted)try{
           onTileDiagnostics?.({...result,...classification,
@@ -217,18 +226,27 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   // and Leaflet enlarges it above z18. Each provider below z18 uses its
   // independently cropped ancestor image without sacrificing DWD detail.
   const layer=new Layer({tileSize,keepBuffer:1,updateWhenIdle:true,
-    maxNativeZoom:18});
+    noWrap:false,maxNativeZoom:18});
   layer._p7Snapshot=verified;
   layer._p7DeferredNASA=Boolean(deferredSource);
   layer._p7ConfigureNASATransport=policy=>{if(deferredSource)configureNasaTransport(policy);};
   layer._p7NASADiagnostics=()=>nasaLease?.diagnostic()||{owned_tiles:0,persistent:false};
+  layer._p7SpatialDiagnostics=()=>{
+    const tiles=Object.values(layer._tiles||{}),worlds=new Set(),sources=new Set();
+    for(const entry of tiles){const c=entry.coords,n=2**c.z;worlds.add(Math.floor(c.x/n));for(const source of verified.layers)for(const native of plannedSourceTiles(source,c)||[])sources.add(source.source_id+':'+native.z+'/'+native.x+'/'+native.y);}
+    return {spatial_contract_version:verified.spatial_contract_version||1,map_zoom:layer._map?.getZoom?.(),world_copies:[...worlds].sort((a,b)=>a-b),
+      world_copy_tiles:tiles.slice(0,256).map(entry=>{const c=entry.coords,n=2**c.z,x=((c.x%n)+n)%n;return {display:{...c},canonical:{x,y:c.y,z:c.z},paint:actualTiles.get(c.z+'/'+x+'/'+c.y)||null};}),display_tiles:tiles.length,canonical_required_sources:[...sources],
+      actual_image_tiles:[...actualTiles.entries()].slice(-256),regular_images:budget.imageCache.size,regular_inflight:budget.inflight.size,cache_hits:budget.cacheHits,shared_requests:budget.sharedRequests,
+      source_plans_complete:verified.layers.every(s=>s.raster_plan?.plan_complete!==false),nasa_plan:verified.nasa_mosaic||null,
+      radar_mask:deferredSource?.spatial_policy?.radar_mask||null,spatial_planning:verified.spatial_planning||null};
+  };
   layer._p7OperaGeneration=verified.layers.some(source=>source.source_id==="opera/opera_rate_raster");
   layer._p7RasterRenderOrder=renderLayers.map(x=>({source_id:x.source_id,
     freshness_class:x.freshness_class||"current"}));
   layer._p7RasterRequestBudget=budget;
-  layer._p7RevokeDeferredNASA=()=>{nasaRevoked=true;nasaLease?.release();for(const [canvas,grants] of nasaCanvases){const ctx=canvas.getContext("2d");for(const native of grants){const r=nasaTileDestination(canvas._p7Coords,native,tileSize);ctx?.clearRect(r.x,r.y,r.width,r.height);}}nasaCanvases.clear();};
+  layer._p7RevokeDeferredNASA=()=>{nasaRevoked=true;nasaLease?.release();for(const [canvas,grants] of nasaCanvases){const ctx=canvas.getContext("2d");if(deferredSource.spatial_policy?.radar_mask){retainProtectedRasterAreas(ctx,deferredSource,canvas._p7Coords,tileSize);}else for(const native of grants){const r=nasaTileDestination(canvas._p7Coords,native,tileSize);ctx?.clearRect(r.x,r.y,r.width,r.height);}}nasaCanvases.clear();};
   layer._p7AbortPending=()=>{nasaLease?.release();budget.close();for(const controller of pending)controller.abort();};
-  layer.on?.("tileunload",event=>{nasaCanvases.delete(event?.tile);event?.tile?._p7RasterAbort?.();});
+  layer.on?.("tileunload",event=>{nasaCanvases.delete(event?.tile);const c=event?.tile?._p7Coords;if(c)actualTiles.delete(c.z+"/"+c.x+"/"+c.y);event?.tile?._p7RasterAbort?.();});
   layer.on?.("remove",()=>layer._p7AbortPending());
   return layer;
 }

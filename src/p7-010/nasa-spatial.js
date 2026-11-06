@@ -1,14 +1,16 @@
+import {validateRadarMask,plannedSourceTiles} from './radar-mask.js?v=411147r1';
 /* WR-authorized source-tile leases. No provider ranking, pixel inference or disk cache. */
 const NASA="nasa_gibs/satellite_precipitation_imerg_30min";
 export function validateSpatialPolicy(source){
  const p=source?.spatial_policy;
  if(p===undefined)return;
- if(source.source_id!==NASA||p?.kind!=="exclusive_tiles_v1"||!Number.isInteger(p.zoom)||p.zoom<0||p.zoom>6
+ if(source.source_id!==NASA||!["exclusive_tiles_v1","radar_mask_v2"].includes(p?.kind)||!Number.isInteger(p.zoom)||p.zoom<0||p.zoom>6
    ||p.padding_factor!==1.3||!Array.isArray(p.tiles)||p.tiles.length>48
-   ||p.reservation_status!=="verified_envelopes"
+   ||(p.kind==="exclusive_tiles_v1"?p.reservation_status!=="verified_envelopes":!["verified_observation_mask","authoritative_envelopes"].includes(p.reservation_status))
    ||p.tiles.some(t=>!Array.isArray(t)||t.length!==2||t.some(v=>!Number.isInteger(v)||v<0||v>=2**p.zoom))
    ||new Set(p.tiles.map(t=>t.join('/'))).size!==p.tiles.length)
    throw new TypeError("Invalid WR exclusive source tile grant");
+ if(p.kind==="radar_mask_v2")validateRadarMask(p.radar_mask);
 }
 export function sourceTileGrants(source,tile,now=Date.now()){
  if(!source?.spatial_policy)return [];
@@ -35,14 +37,16 @@ export function spatialTileBounds(z,x,y){
  return {west:x/n*360-180,east:(x+1)/n*360-180,north:lat(y),south:lat(y+1)};
 }
 export function spatialCoverageLayers(layers){
- return layers.flatMap(layer=>layer?.spatial_policy?layer.spatial_policy.tiles.map(([x,y])=>
-   ({...layer,coverage_scope:"bbox",coverage:spatialTileBounds(layer.spatial_policy.zoom,x,y)})):layer);
+ return layers.flatMap(layer=>{
+   const plan=layer?.raster_plan||layer?.spatial_policy;
+   return plan?plan.tiles.map(([x,y])=>({...layer,coverage_scope:"bbox",coverage:spatialTileBounds(plan.zoom,x,y)})):layer;
+ });
 }
 // The existing live-image lease manager: bounded independently of transport concurrency.
 const live=new Map(),queue=[];let active=0,wake=null,generation=0;
 const LIMIT=128;
 let configured=2,effective=2,revision=-1,until=0,restriction=null,successRun=0,timeouts=0,lastTimeoutAt=0;
-const totals={succeeded:0,failed:0,retried:0,overloads:0};
+const totals={succeeded:0,failed:0,retried:0,overloads:0,cache_reuses:0,shared_requests:0};
 function cancelled(){return new Error("nasa_tile_cancelled");}
 function configure(source){
  const p=source.transport_policy;
@@ -91,8 +95,8 @@ function pump(){
    }catch(error){
     if(timedOut)error=Object.assign(new Error("NASA transport timeout"),{code:"nasa_transport_timeout"});
     if(rec.owners.size){totals.failed++;overload(error);}
-    if(rec.owners.size&&rec.attempts<3&&![401,403,404].includes(error?.httpStatus)&&Date.now()<Date.parse(rec.source.times.valid_until)){
-      rec.started=false;rec.notBefore=Math.max(until,Date.now()+250*rec.attempts);queue.push(rec);
+    if(rec.owners.size&&![401,403,404].includes(error?.httpStatus)&&Date.now()<Date.parse(rec.source.times.valid_until)){
+      rec.started=false;rec.notBefore=Math.max(until,Date.now()+Math.min(30000,250*2**Math.min(rec.attempts,7)));queue.push(rec);
     }else{rec.failed=true;rec.reject(error);}
    }finally{clearTimeout(timer);rec.controller=null;active--;pump();}
   })();
@@ -116,6 +120,7 @@ export function leaseNasaTiles(source,urlForTile,load){
   image(tile){
    if(released||!sourceTileGrant(source,{...tile,z:source.spatial_policy.zoom}))return Promise.reject(cancelled());
    const rec=records.get(tile.x+'/'+tile.y);if(!rec)return Promise.reject(new Error("nasa_live_tile_limit"));
+   if(rec.image)totals.cache_reuses++;else if(rec.started)totals.shared_requests++;
    rec.owners.get(owner).visible=true;queueMicrotask(pump);return rec.promise;
   },
   release(){
@@ -127,8 +132,8 @@ export function leaseNasaTiles(source,urlForTile,load){
    records.clear();for(let i=queue.length-1;i>=0;i--)if(!queue[i].owners.size)queue.splice(i,1);pump();
   },
   diagnostic(){return {configured_parallelism:configured,effective_parallelism:Date.now()<until?0:effective,adaptive_concurrency_limit:effective,active_transports:active,waiting_tiles:queue.length,
-   successful_tiles:totals.succeeded,failed_attempts:totals.failed,retried_attempts:totals.retried,overload_events:totals.overloads,
+   successful_tiles:totals.succeeded,failed_attempts:totals.failed,retried_attempts:totals.retried,overload_events:totals.overloads,cache_reuses:totals.cache_reuses,shared_requests:totals.shared_requests,
    overload_limit:restriction,overload_until:until>Date.now()?new Date(until).toISOString():null,
-   live_entries:live.size,max_live_entries:LIMIT,estimated_decoded_bytes:live.size*256*256*4,owned_tiles:records.size,persistent:false};}
+   live_entries:live.size,max_live_entries:LIMIT,estimated_decoded_bytes:live.size*256*256*4,owned_tiles:records.size,owned_successful:[...records.values()].filter(r=>r.image).length,owned_missing:[...records.values()].filter(r=>!r.image).length,owned_failed:[...records.values()].filter(r=>r.failed).length,source_images_complete:[...records.values()].every(r=>r.image),persistent:false};}
  };
 }

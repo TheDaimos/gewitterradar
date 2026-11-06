@@ -1,3 +1,4 @@
+import {plannedSourceTiles} from './radar-mask.js?v=411147r1';
 /*
  * P7-010 experimental provider-neutral raster tile loading.
  * Still isolated from Gewitterradar's active V1 precipitation display.
@@ -9,7 +10,7 @@
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411146r1";
+import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411147r1";
 
 const operaTileDenialCodes=new Set([
  "missing_authenticated_user","administrator_required","profile_not_authorized",
@@ -59,7 +60,7 @@ export class RasterTileRequestBudget {
    this.active=0;
    this.queue=[];
    this.closed=false;
-   this.imageCache=new Map();
+   this.imageCache=new Map();this.inflight=new Map();this.cacheHits=0;this.sharedRequests=0;
    this.maxCachedImages=maxRequests;
  }
  async reserve(signal=null,{retry=false}={}){
@@ -97,7 +98,7 @@ export class RasterTileRequestBudget {
    if(this.closed)return null;
    const key=id+"\n"+url;
    let img=this.imageCache.get(key);
-   if(img){this.imageCache.delete(key);this.imageCache.set(key,img);return img;}
+   if(img){this.cacheHits++;this.imageCache.delete(key);this.imageCache.set(key,img);return img;}
    const completedKey=operaCompletedKey(id,url);
    img=completedKey?operaCompletedImages.get(completedKey):null;
    if(img){
@@ -113,8 +114,25 @@ export class RasterTileRequestBudget {
    this.imageCache.delete(key);this.imageCache.set(key,img);
    while(this.imageCache.size>this.maxCachedImages)this.imageCache.delete(this.imageCache.keys().next().value);
  }
+ sharedImage(key,signal,load){
+   if(this.closed||signal?.aborted)return Promise.reject(new Error('raster_tile_cancelled'));
+   let entry=this.inflight.get(key);
+   if(!entry){
+     const controller=new AbortController();entry={controller,owners:new Set()};
+     entry.promise=Promise.resolve().then(()=>load(controller.signal)).finally(()=>{if(this.inflight.get(key)===entry)this.inflight.delete(key);});
+     entry.promise.catch(()=>{});this.inflight.set(key,entry);
+   }else this.sharedRequests++;
+   const owner=Symbol();entry.owners.add(owner);
+   return new Promise((resolve,reject)=>{
+     let ended=false;
+     const finish=(error,image)=>{if(ended)return;ended=true;signal?.removeEventListener('abort',cancel);entry.owners.delete(owner);if(!entry.owners.size){entry.controller.abort();if(this.inflight.get(key)===entry)this.inflight.delete(key);}error?reject(error):resolve(image);};
+     const cancel=()=>finish(new Error('raster_tile_cancelled'));
+     signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
+     entry.promise.then(image=>finish(null,image),error=>finish(error));
+   });
+ }
  close(){
-   this.closed=true;
+   this.closed=true;for(const entry of this.inflight.values())entry.controller.abort();this.inflight.clear();
    this.imageCache.clear();
    for(const entry of this.queue.splice(0)){
      entry.signal?.removeEventListener("abort",entry.onAbort);
@@ -159,7 +177,12 @@ export async function drawRasterMosaicTileFromUrls({
  const startedAt=Date.now();
  const renderLayers=rasterMosaicRenderOrder(layers);
  let selectedForTile=0;
- const results=await Promise.all(renderLayers.map(async layer=>{
+ const fragments=renderLayers.flatMap(layer=>{
+   const planned=plannedSourceTiles(layer,tile);
+   return planned===null?[layer]:planned.map(native=>({...layer,_p7PlannedTile:native}));
+ });
+ const selectedIDs=new Set();
+ const results=await Promise.all(fragments.map(async layer=>{
    const source_id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||layer.coverage_verified!==true||!layer.render){
      return {source_id,reason:"unverified_or_incomplete_source"};
@@ -173,9 +196,9 @@ export async function drawRasterMosaicTileFromUrls({
    const nativeZoom=Math.min(tile.z,Math.floor(spec.max_zoom));
    const difference=tile.z-nativeZoom;
    const ancestorScale=2**difference;
-   const sourceTile=difference>0
+   const sourceTile=layer._p7PlannedTile||(difference>0
      ?{x:Math.floor(tile.x/ancestorScale),y:Math.floor(tile.y/ancestorScale),z:nativeZoom}
-     :tile;
+     :tile);
    const coverage=layer.coverage_scope==="global"
      ?{scope:"global",verified:true}
      :layer.coverage_scope==="bbox"&&layer.coverage
@@ -183,30 +206,32 @@ export async function drawRasterMosaicTileFromUrls({
        :null;
    if(!coverage||!rasterTilePixelCrops(tile,coverage,tileSize).length)
      return {source_id,reason:"outside_tile_coverage"};
-   if(selectedForTile>=4)
+   if(!selectedIDs.has(source_id)&&selectedIDs.size>=4)
      return {source_id,reason:"tile_source_budget_exhausted"};
-   selectedForTile++;
+   selectedForTile++;selectedIDs.add(source_id);
    let url;
    try{url=rasterTileUrl(layer.tile_url,sourceTile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
    const cached=budget.getCachedImage(source_id,url);
    if(cached&&!signal?.aborted)
      return {source_id,layer:{...layer,image:cached,_p7SourceTile:sourceTile}};
+   try{
+     const result=await budget.sharedImage(source_id+'\n'+url,signal,async sharedSignal=>{
    let retryCount=0;
-   while(!budget.closed&&!signal?.aborted){
+   while(!budget.closed&&!sharedSignal?.aborted){
      // A retry reuses this admitted OPERA coordinate's request budget, while
      // every attempt still acquires a bounded concurrent transport slot.
      const opera=source_id==="opera/opera_rate_raster";
-     const release=await budget.reserve(signal,{retry:opera&&retryCount>0});
-     if(!release)return {source_id,reason:signal?.aborted?"tile_cancelled":"request_budget_exhausted"};
+     const release=await budget.reserve(sharedSignal,{retry:opera&&retryCount>0});
+     if(!release)return {source_id,reason:sharedSignal?.aborted?"tile_cancelled":"request_budget_exhausted"};
      let retry=false;
      try{
        let timer=null;
        let image;
        const controller=typeof AbortController==="function"?new AbortController():null;
        const abort=()=>controller?.abort();
-       signal?.addEventListener("abort",abort,{once:true});
-       if(signal?.aborted)abort();
+       sharedSignal?.addEventListener("abort",abort,{once:true});
+       if(sharedSignal?.aborted)abort();
        try{
          image=await Promise.race([
            Promise.resolve().then(()=>loadImage(url,layer,{signal:controller?.signal})),
@@ -219,14 +244,14 @@ export async function drawRasterMosaicTileFromUrls({
          ]);
        }finally{
          if(timer!==null)clearTimeout(timer);
-         signal?.removeEventListener("abort",abort);
+         sharedSignal?.removeEventListener("abort",abort);
        }
-       if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
+       if(sharedSignal?.aborted)return {source_id,reason:"tile_cancelled"};
        if(!image)throw new Error("empty_raster_image");
        budget.cacheImage(source_id,url,image);
-       return {source_id,layer:{...layer,image,_p7SourceTile:sourceTile}};
+       return {source_id,image};
      }catch(error){
-       if(signal?.aborted)return {source_id,reason:"tile_cancelled"};
+       if(sharedSignal?.aborted)return {source_id,reason:"tile_cancelled"};
        if(error?.httpStatus===401||error?.httpStatus===403){
          const code=operaTileDenialCodes.has(error.tileDenialCode)?error.tileDenialCode:null;
          const policy=code&&!['missing_authenticated_user','administrator_required',
@@ -249,16 +274,20 @@ export async function drawRasterMosaicTileFromUrls({
            if(settled)return;
            settled=true;
            clearTimeout(timer);
-           signal?.removeEventListener("abort",finish);
+           sharedSignal?.removeEventListener("abort",finish);
            resolve();
          };
          const timer=setTimeout(finish,delay);
-         signal?.addEventListener("abort",finish,{once:true});
-         if(signal?.aborted)finish();
+         sharedSignal?.addEventListener("abort",finish,{once:true});
+         if(sharedSignal?.aborted)finish();
        });
      }
    }
    return {source_id,reason:"tile_cancelled"};
+     });
+     return result.image?{source_id,layer:{...layer,image:result.image,_p7SourceTile:sourceTile}}:result;
+   }catch(_){return {source_id,reason:'tile_cancelled'};}
+
  }));
  const prepared=results.filter(x=>x.layer).map(x=>x.layer);
  const rejected=results.filter(x=>!x.layer).map(({source_id,reason,http_status,tile_denial_code})=>

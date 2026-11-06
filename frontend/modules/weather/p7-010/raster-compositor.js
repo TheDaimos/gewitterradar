@@ -1,10 +1,11 @@
+import {maskedRasterTarget} from './radar-mask.js?v=411147r1';
 /*
  * P7-010 isolated Canvas composition helper; not wired into active GR.
  * Requires preloaded, provider-eligible, verified raster tiles. The rendering
  * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411146r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411147r1";
 
 /** Presentation order only; WR still selects and prioritizes eligible sources.
  * Older satellite estimates paint first; within the same freshness class
@@ -34,7 +35,7 @@ const MAX_TILE_SIZE=512;
  */
 export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
  if(!context||typeof context.drawImage!=="function")throw new TypeError("Canvas context required");
- if(!Array.isArray(layers)||layers.length>MAX_LAYERS)
+ if(!Array.isArray(layers)||layers.length>256||new Set(layers.map(l=>l?.source_id)).size>MAX_LAYERS)
    throw new RangeError("Too many simultaneous layers");
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
    throw new RangeError("Invalid resource-bounded tile size");
@@ -93,22 +94,25 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      continue;
    }
    const previousAlpha=Number.isFinite(context.globalAlpha)?context.globalAlpha:1;
-   let cropsPainted=0;
+   let cropsPainted=0,maskedRectangles=0;
+   const target=maskedRasterTarget(context,layer,tile,tileSize);
+   const paintContext=target?.context||context;
    try{
      context.globalAlpha=previousAlpha*render.opacity;
      for(let index=0;index<sourceCrops.length;index++){
        const from=sourceCrops[index],to=destCrops[index];
        // Convert native tile pixel coordinates to viewport tile pixels.
-       context.drawImage(layer.image,from.sx,from.sy,from.sw,from.sh,
+       paintContext.drawImage(layer.image,from.sx,from.sy,from.sw,from.sh,
          to.sx,to.sy,to.sw,to.sh);
        cropsPainted++;
        paintedRects.push({sx:to.sx,sy:to.sy,sw:to.sw,sh:to.sh});
      }
+     if(target)maskedRectangles=target.finish();
    }finally{
      context.globalAlpha=previousAlpha;
    }
    drawn.push({
-     source_id:id,rectangles:cropsPainted,
+     source_id:id,rectangles:cropsPainted,source_tile:{...nativeTile},mask_applied:Boolean(target),protected_rectangles:maskedRectangles,
      attribution:layer.attribution,times:layer.times,
      semantics:layer.semantics,legend:layer.legend,render,
    });

@@ -6,8 +6,8 @@
  * result. Failed/unsupported V2 requests return "fallback" instead of
  * removing a working radar layer.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411146r1";
-import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411146r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411147r1";
+import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411147r1";
 
 const finite=n=>typeof n==="number"&&Number.isFinite(n);
 
@@ -40,7 +40,7 @@ export function buildRasterMosaicV2Request({
    type:"weather_router/consumer/resolve_mosaic",
    contract_version:2,
    capability:"weather.precipitation.layer",
-   context:{type:"bbox",...viewport,focus,...(renderZoom!==null?{tile_zoom:renderZoom}:{})},
+   context:{type:"bbox",...viewport,focus,...(renderZoom!==null?{tile_zoom:renderZoom,raster_contract:2}:{})},
    time:{mode:"latest_coherent",
      allow_older_satellite_background:allowOlderSatelliteBackground},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
@@ -67,10 +67,10 @@ export async function prepareRasterMosaicV2({
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
    throw new TypeError("WeatherRouter WebSocket and Leaflet required");
- let stage="transport";
+ let stage="transport",receivedResponse=null;
  try{
    onDiagnostic?.({phase:"request",status:"sent",correlation_id:correlationId});
-   const response=await callWS(request);
+   const response=await callWS(request);receivedResponse=response;
    onDiagnostic?.({phase:"response",status:String(response?.status||"missing"),layers:Array.isArray(response?.layers)?response.layers.length:null,correlation_id:correlationId});
    if(sourceRequest!==null){
      const identityOk=response?.source_request?.provider_id==="opera"
@@ -120,7 +120,7 @@ export async function prepareRasterMosaicV2({
    const code=typeof error?.code==="string"?error.code:"";
    const reason=stage==="transport"?"websocket_or_contract":stage==="contract_validation"?"validation_or_render":"layer_preparation_failed";
    onDiagnostic?.({phase:stage,status:"error",error_code:code||error?.name||"unknown",correlation_id:correlationId});
-   return {mode:"fallback",reason,errorCode:code||error?.name||"unknown"};
+   return {mode:"fallback",reason,errorCode:code||error?.name||"unknown",response:receivedResponse};
  }
 }
 

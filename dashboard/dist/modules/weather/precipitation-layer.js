@@ -1,7 +1,7 @@
-import {precipitationLegendScales} from "./legend-overlay.js?v=411146r1";
+import {precipitationLegendScales} from "./legend-overlay.js?v=411147r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411146r1";
-import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411146r1";
+import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411147r1";
+import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411147r1";
 import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
@@ -1591,7 +1591,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     };
     if(!viewport.focus||typeof this._hass?.callWS!=="function"){
       report("skipped",{reason:!viewport.focus?"missing_focus":"websocket_unavailable"});
-      return state.nasaMosaicEnabled===true;
+      return state.nasaMosaicEnabled===true||state.spatialV2Required===true;
     }
     report("started",{validity_authority:"weather_router"});
     const current=()=>state.enabled&&state.v2Generation===token
@@ -1599,7 +1599,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     let timeout=null,staged=null;
     try{
       const L=await loadLeafletJs();
-      if(!current()){report("stale_before_request");return state.nasaMosaicEnabled===true;}
+      if(!current()){report("stale_before_request");return state.nasaMosaicEnabled===true||state.spatialV2Required===true;}
       const size=this._map.getSize?.()||{x:800,y:600};
       const count=Math.ceil(Math.max(256,size.x)/256+2)*Math.ceil(Math.max(256,size.y)/256+2);
       let painted;
@@ -1612,7 +1612,11 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       let stageLastHttpStatus=null,stageLastDenialCode=null;
       const observedOrders=[];
       const deferredTiles=new Set(),deferredPainted=new Set();
+      let preservePreviousNASA=false;
       const markReady=()=>{
+        // A valid mounted mosaic must not lose its successful satellite areas
+        // while a changed mask/source generation is only partly decoded.
+        if(preservePreviousNASA&&deferredPainted.size<deferredTiles.size)return;
         const required=staged?._p7DeferredNASA&&deferredTiles.size?Math.min(minReadyTiles,expectedEligibleTiles.size):minReadyTiles;
         if(gridLoaded&&readyTiles.size>=required&&(required>0||deferredPainted.size>0))painted(true);
       };
@@ -1663,6 +1667,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
                 state.v2RenderMetrics.deferred_nasa_tiles=deferredTiles.size;
                 state.v2RenderMetrics.painted_nasa_tiles=deferredPainted.size;
                 state.v2RenderMetrics.nasa_cache=staged._p7NASADiagnostics?.();
+                state.v2RenderMetrics.spatial=staged._p7SpatialDiagnostics?.();
               }
               this._weatherEngineMonitorEvent?.("v2_nasa_tile",{correlation_id:correlationId,status:item.tile_status,painted_tiles:deferredPainted.size,deferred_tiles:deferredTiles.size});
               markReady();return;
@@ -1711,8 +1716,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             markReady();
           }}
       });
-      if(current()&&result.response?.contract_version===2)state.nasaMosaicEnabled=result.response.nasa_mosaic?.enabled===true;
+      if(current()&&result.response?.contract_version===2){state.nasaMosaicEnabled=result.response.nasa_mosaic?.enabled===true;if(result.response.spatial_contract_version===2)state.spatialV2Required=true;}
       if(result.mode==="v2"&&current())state.replacementCache=null;
+      preservePreviousNASA=Boolean(current()&&state.layer&&state.v2Snapshot?.layers?.some(source=>source.spatial_policy)
+        &&result.response?.layers?.some(source=>source.spatial_policy)&&this._weatherRadarPreviousValid());
       const nasaState=result.response?.nasa_mosaic;
       if(current()&&nasaState?.metadata_pending&&nasaState.planning_cycle){
         if(state.nasaPlanningCycle!==nasaState.planning_cycle){state.nasaPlanningCycle=nasaState.planning_cycle;state.nasaPlanningRetries=0;}
@@ -1720,8 +1727,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           state.nasaReadyTimer=null;if(state.enabled)this._scheduleWeatherRadarRefresh("wr-nasa-metadata-ready",0,{force:true});
         },2000);
       }
-      if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return state.nasaMosaicEnabled===true;}
-      if(!current()){report("stale_after_response");return state.nasaMosaicEnabled===true;}
+      if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return state.nasaMosaicEnabled===true||state.spatialV2Required===true;}
+      if(!current()){report("stale_after_response");return state.nasaMosaicEnabled===true||state.spatialV2Required===true;}
       // Receiving an authorized source and mounting decoded pixels are separate
       // facts. Keep the response even when its hidden candidate fails to paint.
       state.v2ReceivedSnapshot=result.response;
@@ -1741,7 +1748,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(footprint.fraction<=0){
         report("v2_no_geographic_overlap",{reason:"outside_coverage"});
         result.layer._p7AbortPending?.();
-        return state.nasaMosaicEnabled===true;
+        return state.nasaMosaicEnabled===true||state.spatialV2Required===true;
       }
       if(!footprint.complete){
         minReadyTiles=1; // A small regional source can occupy only one visible tile.
@@ -1765,7 +1772,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           old_coverage_fraction:previousCoverage,
           new_coverage_fraction:Number(footprint.fraction.toFixed(5))});
         result.layer._p7AbortPending?.();
-        return state.nasaMosaicEnabled===true;
+        return state.nasaMosaicEnabled===true||state.spatialV2Required===true;
       }
       if(!this._map.getPane("gr-weather-radar")){
         const pane=this._map.createPane("gr-weather-radar");
@@ -1800,7 +1807,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           if(stageTileSettled!==lastCount){
             lastCount=stageTileSettled;lastProgressAt=at;
           }
-          const awaitingFirstNASA=staged._p7DeferredNASA&&deferredTiles.size>0&&expectedEligibleTiles.size===0&&deferredPainted.size===0;
+          const awaitingFirstNASA=staged._p7DeferredNASA&&deferredTiles.size>0&&
+            (expectedEligibleTiles.size===0&&deferredPainted.size===0||preservePreviousNASA&&deferredPainted.size<deferredTiles.size);
           if(gridLoaded&&!awaitingFirstNASA)return done(false,"insufficient_painted_tiles");
           if(awaitingFirstNASA&&at-stageStart>=26000)return done(false,"nasa_transport_deadline");
           if(!staged._p7OperaGeneration){
@@ -1888,7 +1896,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(previousCoverage>=0.90&&uncovered.length){
         report("v2_previous_broad_layer_preserved",{
           old_coverage_fraction:previousCoverage,missing_tiles:uncovered.length});
-        return state.nasaMosaicEnabled===true;
+        return state.nasaMosaicEnabled===true||state.spatialV2Required===true;
       }
       report("raster_ready",{painted_tiles:visibleDrawn.length,
         partial_geography:!footprint.complete,missing_tiles:uncovered.length});
@@ -1939,7 +1947,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       this._weatherRadarUpdateControls();
       this._weatherRadarVisualAudit("v2_active");
       return true;
-    }catch(error){report("exception",{error_code:typeof error?.code==="string"?error.code:error?.name||"unknown"});return state.nasaMosaicEnabled===true;}
+    }catch(error){report("exception",{error_code:typeof error?.code==="string"?error.code:error?.name||"unknown"});return state.nasaMosaicEnabled===true||state.spatialV2Required===true;}
     finally{
       if(timeout!==null)clearTimeout(timeout);
       if(staged&&state.v2PendingLayer===staged){
