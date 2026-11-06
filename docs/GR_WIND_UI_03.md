@@ -131,7 +131,7 @@ Keine allgemeine Wetterdatenkampagne. Keine wissenschaftliche Neuvalidierung. Au
 
 Die lokalen Browsermessungen im abschließenden synthetischen Prüflauf ergeben bei 120 bewegten Segmenten / neun Punkten geglättete Canvas-Zeichenkosten von ungefähr **0,46–0,59 ms**. Dies sind lokale Headless-Chrome-Messwerte, keine zugesicherte Bildrate und keine Messung auf einem echten Android-Gerät oder iPad. Eine physische VM109-/Companion-Abnahme steht aus.
 
-Öffentliche CI: `.github/workflows/gr-wind-ui-03.yml`, aufgerufen über den bereits registrierten Workflow `shared-frontend.yml@deploy/dev`. Für Version 4.11.149 wird ausschließlich der gezielte Wind-/Legenden-/Paketjob ausgeführt; die allgemeine historische Frontendkampagne wird übersprungen. Der genaue erfolgreiche Run ist beim Release dokumentiert. Private WR-Actions werden weder aktiviert noch ausgelöst.
+Öffentliche CI: `.github/workflows/gr-wind-ui-03.yml`, aufgerufen über den bereits registrierten Workflow `shared-frontend.yml@deploy/dev`. Für Version 4.11.149 wird ausschließlich der gezielte Wind-/Legenden-/Paketjob ausgeführt; die allgemeine historische Frontendkampagne wird übersprungen. Der erste Lauf bestand alle 14 Tests und den Paketabgleich, scheiterte aber beim Installieren des Browsers: `ubuntu-latest` lieferte inzwischen Ubuntu 26.04, das die festgelegte Playwright-Version 1.56.1 nicht unterstützt. Der Browserjob ist deshalb ausdrücklich auf Ubuntu 24.04 festgelegt. Der genaue erfolgreiche Run ist beim Release dokumentiert. Private WR-Actions werden weder aktiviert noch ausgelöst.
 
 ## Tatsächlich betroffene Dateien
 
