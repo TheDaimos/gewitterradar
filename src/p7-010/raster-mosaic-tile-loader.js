@@ -9,7 +9,7 @@
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=41198r1";
+import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411145r1";
 
 const operaTileDenialCodes=new Set([
  "missing_authenticated_user","administrator_required","profile_not_authorized",

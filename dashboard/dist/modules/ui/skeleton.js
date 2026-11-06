@@ -5977,12 +5977,16 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* V4.06 pass2: Welcome-derived 2px metal frame, reduced diffuse gold shadow. */
           .settings-dialog,
           .weather-legend-overlay.gr-premium-metal-surface,
+          .weather-display-panel.gr-premium-metal-surface,
+          .weather-display-minimize.gr-premium-metal-surface,
           .weather-display-opacity-reset.gr-premium-metal-surface,
           .weather-display-info.gr-premium-metal-surface{
             border:2px solid transparent;
             background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
             box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 8px rgba(215,164,67,.055)
           }
+          .weather-legend-overlay.gr-premium-metal-surface,.weather-display-panel.gr-premium-metal-surface{border-width:1px;box-shadow:0 8px 22px #0007,inset 0 1px #fff1}
+
           .settings-dialog::after{content:none!important}
           /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */
           .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}

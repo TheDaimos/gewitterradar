@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411144r1";
-/* Gewitterradar Card V4.11.144 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=411145r1";
+/* Gewitterradar Card V4.11.145 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -31,7 +31,7 @@ try {
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','411108r1');
   const mapDisplay = await gewitterradarImport('./modules/fullscreen/map-display.js','41108r10');
   const scrollGuard = await gewitterradarImport('./modules/ui/scroll-guard.js');
-  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js','411144r1');
+  const skeleton = await gewitterradarImport('./modules/ui/skeleton.js','411145r1');
   const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','41163r1');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
   const controls = await gewitterradarImport('./modules/ui/controls.js','41174r1');
@@ -54,10 +54,10 @@ try {
   const compass = await gewitterradarImport('./modules/instruments/compass.js');
   const historyChart = await gewitterradarImport('./modules/history/chart.js');
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js');
-  const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','411144r1');
+  const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','411145r1');
   const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','411108r1');
-  const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','411144r1');
-  const weatherLegendOverlay = await gewitterradarImport('./modules/weather/legend-overlay.js','411144r1');
+  const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','411145r1');
+  const weatherLegendOverlay = await gewitterradarImport('./modules/weather/legend-overlay.js','411145r1');
 
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);
   CARD_VERSION=APPLICATION_META.version;

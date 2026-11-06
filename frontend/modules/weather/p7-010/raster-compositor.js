@@ -4,7 +4,7 @@
  * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=41189r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411145r1";
 
 /** Presentation order only; WR still selects and prioritizes eligible sources.
  * Older satellite estimates paint first; within the same freshness class

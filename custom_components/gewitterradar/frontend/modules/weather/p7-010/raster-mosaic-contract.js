@@ -1,3 +1,4 @@
+import {validateSpatialPolicy} from "./nasa-spatial.js?v=411145r1";
 /*
  * P7-010: isolated read-only WeatherRouter V2 raster response validation.
  * No provider scoring, spatial source selection or fallback routing in GR.
@@ -75,6 +76,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
       ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
       ||!time(layer.times.valid_until))
      throw new TypeError("Invalid, unverified or unsafe raster source");
+   validateSpatialPolicy(layer);
    seen.add(layer.source_id);
  }
  return answer;

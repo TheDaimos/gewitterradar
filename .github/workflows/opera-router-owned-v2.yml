@@ -25,6 +25,6 @@ jobs:
         run: |
           node --test tests/opera-wr-owned-lifetime.test.mjs
           node --test tests/test70-54-selective-raster-retry.test.mjs
-          node --test tests/test70-55-unified-precipitation.test.mjs tests/test70-57-opera-runtime-v2.test.mjs
+          node --test tests/test70-55-unified-precipitation.test.mjs tests/test70-57-opera-runtime-v2.test.mjs tests/nasa-mosaic-ui04.test.mjs
       - name: Verify responsive geographic coverage
         run: node scripts/test-p7-010-viewport-coverage-revocation.mjs

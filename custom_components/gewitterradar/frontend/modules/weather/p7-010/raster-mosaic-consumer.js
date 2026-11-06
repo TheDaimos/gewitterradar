@@ -6,8 +6,8 @@
  * result. Failed/unsupported V2 requests return "fallback" instead of
  * removing a working radar layer.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411138r1";
-import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411142r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411145r1";
+import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411145r1";
 
 const finite=n=>typeof n==="number"&&Number.isFinite(n);
 
@@ -22,7 +22,7 @@ function validViewport(b){
 export function buildRasterMosaicV2Request({
  viewport,focus,maxLayers=4,maxTileRequests=48,
  allowOlderSatelliteBackground=false,
- profileId=null,consumerId="gewitterradar",correlationId=null,sourceRequest=null
+ renderZoom=null,profileId=null,consumerId="gewitterradar",correlationId=null,sourceRequest=null
 }={}){
  if(sourceRequest!==null&&(sourceRequest?.provider_id!=="opera"||sourceRequest?.product_id!=="RATE"||Object.keys(sourceRequest).length!==2)) throw new TypeError("Unsupported OPERA source");
  if(!validViewport(viewport)
@@ -35,11 +35,12 @@ export function buildRasterMosaicV2Request({
    ||typeof allowOlderSatelliteBackground!=="boolean"
    ||(profileId!==null&&(typeof profileId!=="string"||!profileId.trim())))
    throw new TypeError("Invalid bounded V2 raster mosaic context");
+ if(renderZoom!==null&&(!Number.isInteger(renderZoom)||renderZoom<0||renderZoom>18))throw new TypeError("Invalid render zoom");
  return {
    type:"weather_router/consumer/resolve_mosaic",
    contract_version:2,
    capability:"weather.precipitation.layer",
-   context:{type:"bbox",...viewport,focus},
+   context:{type:"bbox",...viewport,focus,...(renderZoom!==null?{tile_zoom:renderZoom}:{})},
    time:{mode:"latest_coherent",
      allow_older_satellite_background:allowOlderSatelliteBackground},
    limits:{max_layers:maxLayers,max_tile_requests:maxTileRequests},
@@ -56,12 +57,12 @@ export function buildRasterMosaicV2Request({
  * The V2 request never accepts any client-chosen provider list.
  */
 export async function prepareRasterMosaicV2({
- callWS,Leaflet,viewport,focus,profileId=null,
+ callWS,Leaflet,viewport,focus,profileId=null,renderZoom=null,
  maxLayers=4,maxTileRequests=48,
  allowOlderSatelliteBackground=false,layerOptions={},consumerId="gewitterradar",correlationId=null,sourceRequest=null,onDiagnostic=null
 }={}){
  const request=buildRasterMosaicV2Request({
-   viewport,focus,profileId,maxLayers,maxTileRequests,
+   viewport,focus,profileId,maxLayers,maxTileRequests,renderZoom,
    allowOlderSatelliteBackground,consumerId,correlationId,sourceRequest,
  });
  if(typeof callWS!=="function"||!Leaflet?.GridLayer?.extend)
@@ -107,7 +108,7 @@ export async function prepareRasterMosaicV2({
    });
    if(response.status==="unavailable"||response.layers.length===0){
      onDiagnostic?.({phase:"unavailable",status:response.status,layers:0});
-     return {mode:"fallback",reason:"no_usable_mosaic_source",responseStatus:response.status};
+     return {mode:"fallback",reason:"no_usable_mosaic_source",responseStatus:response.status,response};
    }
    stage="layer_preparation";
    const layer=createRasterMosaicGridLayer(Leaflet,response,{

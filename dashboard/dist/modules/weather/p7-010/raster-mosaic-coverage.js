@@ -1,3 +1,4 @@
+import {spatialCoverageLayers} from "./nasa-spatial.js?v=411145r1";
 /* P7-010: conservative geographic and drawn-pixel-geometry coverage audits.
  * A bounding box proves only a geographic envelope, NOT nontransparent
  * precipitation pixels or a provider's undisclosed NoData mask.
@@ -41,6 +42,7 @@ export function measureRasterViewportCoverage(layers,viewport,zoom=0){
   const views=segments(viewport),height=viewport?.north-viewport?.south;
   if(!views.length||!finite(height)||height<=0||!Array.isArray(layers))
     return {fraction:0,complete:false,covered_sources:0,geometric_only:true};
+  layers=spatialCoverageLayers(layers);
   let total=0,covered=0,used=new Set();
   for(const [vw,ve] of views){
     const width=ve-vw;

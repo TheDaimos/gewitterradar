@@ -1,5 +1,5 @@
-import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411138r1';
-import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411138r1';
+import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411145r1';
+import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411145r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
 export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.14',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
@@ -408,7 +408,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
     store.operaDiagnostic={status:'requesting',correlation_id:correlationId,at:new Date().toISOString(),scientific_approval:false};
     show('OPERA wird ausdrücklich diagnostisch angefordert …');
     try{
-      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411139r1');
+      const {requestOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411145r1');
       const pane=await requestOperaDiagnosticPane({
         callWS:request=>this._hass.callWS(request),
         Leaflet:await deps.loadLeafletJs(),map:this._map,viewport:viewport.context,focus:viewport.focus,
@@ -429,7 +429,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
         operaTrace("cycle_poll_started",{current_valid_at:this.__operaDiagnosticPane?.validAt||null});
         try{
           const current=this.__operaDiagnosticPane;
-          const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=411138r1');
+          const {buildRasterMosaicV2Request}=await import('./p7-010/raster-mosaic-consumer.js?v=411145r1');
           const vp=this._weatherRadarViewport?.();
           if(!vp?.context||!vp?.focus||!this._map||typeof this._hass?.callWS!=='function')return;
           const id='gr-opera-cycle-'+Date.now().toString(36);
@@ -451,7 +451,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(!freshToken)throw new Error('opera_diagnostic_missing_auth');
           const authCheck=await fetch('/api/',{headers:{Authorization:'Bearer '+freshToken,Accept:'application/json'},credentials:'omit',cache:'no-store',redirect:'error'});
           if(!authCheck.ok)throw new Error('opera_auth_preflight_http_'+authCheck.status);
-          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411139r1');
+          const {mountOperaDiagnosticPane}=await import('./p7-010/opera-diagnostic-tile.js?v=411145r1');
           const requestedOpacity=Number(this.shadow?.getElementById('weather-engine-opera-opacity')?.value??70)/100;
           const next=mountOperaDiagnosticPane({Leaflet:await deps.loadLeafletJs(),map:this._map,response,
             correlationId:id,orientation:'north_first',opacity:0,accessToken:freshToken,onLifecycle:operaTrace});
