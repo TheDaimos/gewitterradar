@@ -1,9 +1,9 @@
 import { defineModule } from '../core/runtime.js?v=41114r1';
-import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText } from './wind-data.js?v=411149r1';
-import { WindCanvas } from './wind-canvas.js?v=411149r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411149r1';
+import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText } from './wind-data.js?v=411150r1';
+import { WindCanvas } from './wind-canvas.js?v=411150r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411150r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.1.0',group:'Weather-Engine',function:'Konfigurierbare WR-Windpunktdarstellung',subfunctions:['Windfahnen','Richtungspfeile','lokale Strömungssegmente','persistente Symbolfarben','Premium-Windlegende','datenabhängige Grenzen'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.1.1',group:'Weather-Engine',function:'Konfigurierbare WR-Windpunktdarstellung',subfunctions:['Windfahnen','Richtungspfeile','lokale Strömungssegmente','persistente Symbolfarben','Premium-Windlegende','datenabhängige Grenzen'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -24,7 +24,7 @@ export const installWeatherWind=defineModule(MODULE_META,()=>({
    const style=document.createElement('style');style.id='weather-wind-style';style.textContent=`
    .weather-wind-panel{position:absolute;z-index:720;top:12px;right:12px;width:min(410px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;box-sizing:border-box;border:1px solid #cda85e88;border-radius:14px;padding:12px;background:linear-gradient(145deg,#121923f5,#080d14f7);box-shadow:0 14px 36px #0009;color:#e4e9ef;font:12px/1.45 system-ui;overscroll-behavior:contain;touch-action:pan-y}
    .weather-wind-panel[hidden]{display:none}.weather-wind-panel header{display:flex;align-items:center;gap:8px;color:#f1d38a;margin-bottom:10px}.weather-wind-panel header strong{flex:1}.weather-wind-panel button,.weather-wind-panel select{font:inherit;color:inherit;border:1px solid #b5985a66;background:#141e2a;border-radius:7px;padding:7px;cursor:pointer}.weather-wind-panel button:focus-visible,.weather-wind-panel select:focus-visible{outline:2px solid #f1d38a}.weather-wind-panel label{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:9px 0}.weather-wind-panel select{max-width:65%;min-width:0}.weather-wind-note{font-size:11px;color:#bac6d4;overflow-wrap:anywhere;margin:7px 0}.weather-wind-swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}.weather-wind-panel .weather-wind-swatch{height:30px;padding:4px;border-width:2px}.weather-wind-swatch i{display:block;height:9px;border-radius:3px;background:var(--wind-color)}.weather-wind-swatch[aria-pressed=true]{border-color:#f4d791;box-shadow:0 0 7px #d9a74488}.weather-wind-panel fieldset{margin:10px 0;padding:8px;border:1px solid #a5885355;border-radius:8px;min-width:0}.weather-wind-panel legend{color:#dfc081}.weather-wind-panel input[type=range]{width:42%;min-width:0}.weather-wind-panel details{margin-top:10px}.weather-wind-points{font-size:11px;overflow-wrap:anywhere}.weather-wind-panel img{display:block;width:24px;height:24px;object-fit:contain}.weather-wind-canvas{position:absolute;left:0;top:0;z-index:440;pointer-events:none;filter:none;opacity:1}.weather-wind-panel :disabled{opacity:.5;cursor:default}@media(max-width:430px){.weather-wind-panel{font-size:11px;padding:10px}.weather-wind-panel select{max-width:61%;font-size:11px}.weather-wind-swatches{gap:4px}}
-   `;this.shadow.append(style);
+   `;style.textContent+='.weather-wind-panel{z-index:2147483644}#weather-wind-legend-overlay{z-index:2147483644}.weather-wind-panel.embedded{position:static;z-index:auto;width:100%;max-height:none;padding:5px 0;border:0;box-shadow:none;background:transparent;overflow:visible}.weather-wind-panel.embedded [data-wind-action=close]{display:none}.weather-wind-panel.embedded header{margin-top:5px}.weather-wind-panel.embedded select{max-width:65%}';this.shadow.append(style);
   }
   let panel=this.shadow.getElementById('weather-wind-panel');
   if(!panel){panel=document.createElement('section');panel.id='weather-wind-panel';panel.className='weather-wind-panel gr-premium-metal-surface';panel.hidden=true;panel.setAttribute('role','region');panel.setAttribute('aria-label','Winddarstellung');card.append(panel);
@@ -33,7 +33,7 @@ export const installWeatherWind=defineModule(MODULE_META,()=>({
     if(button.dataset.windColor)this._weatherWindSet({color:button.dataset.windColor});
     if(button.dataset.windAction==='close'){panel.hidden=true;this.__windOpener?.focus?.();}
     if(button.dataset.windAction==='refresh')this._weatherWindQueue({force:true});
-    if(button.dataset.windAction==='legend'){const s=this._weatherWindState();s.legendOpen=!s.legendOpen;s.legend||=createWindLegend(this);updateWindLegend(s.legend,this);if(s.legendOpen)panel.hidden=true;}
+    if(button.dataset.windAction==='legend'){const s=this._weatherWindState();s.legendOpen=!s.legendOpen;s.legend||=createWindLegend(this);updateWindLegend(s.legend,this);if(s.legendOpen){panel.hidden=true;if(panel.classList.contains('embedded'))this._weatherDisplayPatch?.({enabled:false});}}
    });
    panel.addEventListener('change',event=>{const node=event.target,key=node.dataset.windSetting;if(!key)return;event.stopPropagation();const value=node.type==='checkbox'?node.checked:key==='fieldOpacity'?Number(node.value):node.value;
     this._weatherWindSet({[key]:value,...(key==='mode'&&value==='animated'?{animationExplicit:true}:{})});
@@ -43,10 +43,12 @@ export const installWeatherWind=defineModule(MODULE_META,()=>({
    for(const event of ['pointerdown','mousedown','dblclick','wheel','touchstart'])panel.addEventListener(event,e=>e.stopPropagation(),{passive:true});
   }return panel;
  },
- _weatherWindOpen(){
+ _weatherWindOpen({container=null,focus=true}={}){
   this.__windOpener=this.shadow?.activeElement;const panel=this._weatherWindEnsureUi();if(!panel)return;
   this._setMapDisplayMenuOpen?.(false);
-  this._weatherWindRender();panel.hidden=false;panel.querySelector('button')?.focus();this._resumeWeatherWind();
+  const target=container||this.shadow.getElementById('map-card');if(panel.parentElement!==target)target.append(panel);panel.classList.toggle('embedded',Boolean(container));
+  if(!container&&this._weatherDisplayState?.().config.enabled)this._weatherDisplayPatch?.({enabled:false});
+  this._weatherWindRender();panel.hidden=false;if(focus)panel.querySelector('button')?.focus();this._resumeWeatherWind();
  },
  _weatherWindRender(){
   const panel=this.shadow?.getElementById('weather-wind-panel');if(!panel)return;const s=this._weatherWindState(),c=s.config;

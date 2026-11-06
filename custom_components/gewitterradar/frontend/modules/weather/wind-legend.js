@@ -1,6 +1,6 @@
 import { installWeatherLegendOverlay } from './legend-overlay.js?v=411149r1';
-import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411149r1';
-import { drawWindGlyph } from './wind-canvas.js?v=411149r1';
+import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411150r1';
+import { drawWindGlyph } from './wind-canvas.js?v=411150r1';
 
 // Reuse the existing premium overlay, drag, bounds and chevrons with isolated storage.
 class WindLegend {}

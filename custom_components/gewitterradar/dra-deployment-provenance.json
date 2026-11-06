@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.149",
-  "build": "V4.11.149-DEV-2026-11-06",
-  "runtimeRevision": "411149r1",
-  "moduleSetId": "E411-149A1",
+  "productVersion": "4.11.150",
+  "build": "V4.11.150-DEV-2026-11-07",
+  "runtimeRevision": "411150r1",
+  "moduleSetId": "E411-150A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WIND-UI-03: opt-in WeatherRouter point wind barbs, flow arrows and local animated segments; no numeric spatial wind grid or pressure classification is available; WR295 and precipitation paths preserved.",
+    "purpose": "GR-WIND-FIX-01: WeatherRouter wind settings accessible from premium display and root/weather wind menus; bounded raster transport states and inert attribution text; protected WR295 precipitation unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

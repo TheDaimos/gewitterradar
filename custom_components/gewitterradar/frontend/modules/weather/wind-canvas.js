@@ -1,4 +1,4 @@
-import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411149r1';
+import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411150r1';
 
 // Symbols are local to WR-resolved points. This is deliberately not a spatial field sampler.
 export function drawWindGlyph(ctx,mode,speed,angle,color='#fff'){

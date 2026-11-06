@@ -78,7 +78,7 @@ test('point batching ignores obsolete responses and never queries on animation f
 });
 test('protected precipitation, V2 transport, mosaics, palettes and time policy stay byte-identical',async()=>{
  const base='d975a94be5d63eb09242a54920d8c3417205b41f',root='frontend/modules/weather/';
- for(const file of ['consumer-client.js','display-menu.js','p7-010/raster-compositor.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-consumer.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js','p7-010/raster-mosaic-coverage.js']){
+ for(const file of ['consumer-client.js','p7-010/raster-compositor.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-consumer.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js','p7-010/raster-mosaic-coverage.js']){
   assert.equal((await readFile(root+file,'utf8')).replaceAll('\r\n','\n'),execFileSync('git',['show',base+':'+root+file],{encoding:'utf8'}).replaceAll('\r\n','\n'),file);
  }
  const path=root+'precipitation-layer.js';assert.equal((await readFile(path,'utf8')).replace('legend-overlay.js?v=411149r1','legend-overlay.js?v=411148r1').replaceAll('\r\n','\n'),execFileSync('git',['show',base+':'+path],{encoding:'utf8'}).replaceAll('\r\n','\n'));

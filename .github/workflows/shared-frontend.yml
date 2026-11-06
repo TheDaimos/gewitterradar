@@ -14,6 +14,7 @@ jobs:
     outputs:
       legend_ui06: ${{ steps.scope.outputs.legend_ui06 }}
       wind_ui03: ${{ steps.scope.outputs.wind_ui03 }}
+      wind_fix01: ${{ steps.scope.outputs.wind_fix01 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,6 +23,7 @@ jobs:
         name: Restrict scoped DEV releases to their targeted acceptance
         run: |
           node -e "const fs=require('node:fs'); const text=fs.readFileSync('frontend/version.js','utf8'); console.log('legend_ui06='+text.includes('version:\"4.11.148\"')); console.log('wind_ui03='+text.includes('version:\"4.11.149\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('wind_fix01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.150\"'));" >> "$GITHUB_OUTPUT"
 
   legend-ui06:
     needs: release-scope
@@ -33,9 +35,14 @@ jobs:
     if: needs.release-scope.outputs.wind_ui03 == 'true'
     uses: ./.github/workflows/gr-wind-ui-03.yml
 
+  wind-fix01:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_fix01 == 'true'
+    uses: ./.github/workflows/gr-wind-fix-01.yml
+
   shared-frontend:
     needs: release-scope
-    if: needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true'
+    if: needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true' && needs.release-scope.outputs.wind_fix01 != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

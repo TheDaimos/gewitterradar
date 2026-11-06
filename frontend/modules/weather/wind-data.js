@@ -1,3 +1,4 @@
+import { weatherSourceText } from './source-text.js?v=411150r1';
 /* WR point-contract adapter and presentation math. No routing, age cutoff or field interpolation. */
 export const WIND_SPEED='weather.point.wind_speed',WIND_DIRECTION='weather.point.wind_direction';
 export const WIND_STORAGE='gewitterradar:wind-ui:v1';
@@ -44,12 +45,12 @@ export function windDestination(lat,lon,from,distance=100){
 }
 const instant=value=>typeof value==='string'&&/(?:Z|[+-]\d\d:\d\d)$/i.test(value)&&Number.isFinite(Date.parse(value))?new Date(value).toISOString():null;
 function pointValue(answer,id,quantity,unit){
- if(answer?.status!=='ready'||answer.capability!==id||answer.resource?.type!=='value'||answer.freshness?.stale===true)throw new Error('wr_wind_unavailable');
+ if(answer?.status!=='ready'||answer.capability!==id||answer.resource?.type!=='value'||answer.freshness?.stale===true){const code=String(answer?.unavailable?.code||answer?.status||'missing_response').replace(/[^a-z0-9_:-]/gi,'').slice(0,90);throw new Error('wr_wind_unavailable:'+code);}
  const s=answer.resource.semantics,v=answer.resource.payload?.values?.[id];
  if(s?.quantity!==quantity||typeof s.observation_kind!=='string'||!s.observation_kind||v?.unit!==unit||typeof v.value!=='number'||!Number.isFinite(v.value)||v.nodata===true||v.valid===false||v.quality_valid===false)throw new Error('wr_wind_invalid_value');
  const time=instant(v.valid_at||v.data_time||answer.freshness?.data_time),provider=answer.provenance?.provider_id;
  if(!time||typeof provider!=='string'||!provider)throw new Error('wr_wind_missing_provenance');
- return {value:v.value,time,provider,kind:s.observation_kind,attribution:answer.provenance.attribution||answer.provenance.provider_name||provider};
+ return {value:v.value,time,provider,kind:s.observation_kind,attribution:weatherSourceText(answer.provenance.attribution||answer.provenance.provider_name||provider)};
 }
 export function combineWindPoint(speed,direction,point){
  const a=pointValue(speed,WIND_SPEED,'wind_speed','m/s');
