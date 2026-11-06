@@ -9,6 +9,10 @@ export const MODULE_META=Object.freeze({
   file:"modules/weather/legend-overlay.js"
 });
 
+// Presentation snapshot generated from WR 0.10.289 RATE_COLORS; no raster recoloring.
+export const PRECIPITATION_LEGEND_ENTRIES=Object.freeze([{"value": 0.0, "label": ">0", "color": "#019934"}, {"value": 1.0, "label": "1", "color": "#4db31b"}, {"value": 2.0, "label": "2", "color": "#99cc01"}, {"value": 3.0, "label": "3", "color": "#cce601"}, {"value": 5.0, "label": "5", "color": "#ffff01"}, {"value": 7.5, "label": "7.5", "color": "#ffc401"}, {"value": 10.0, "label": "10", "color": "#ff8901"}, {"value": 15.0, "label": "15", "color": "#ff4501"}, {"value": 30.0, "label": "30", "color": "#fe0000"}, {"value": 45.0, "label": "45", "color": "#b20000"}, {"value": 75.0, "label": "75", "color": "#8b0000"}, {"value": 100.0, "label": "100", "color": "#6e0000"}, {"value": 150.0, "label": "150", "color": "#500000"}].map(Object.freeze));
+const precipitationModel={family:"precipitation",title:"Niederschlag",unit:"mm/h",entries:PRECIPITATION_LEGEND_ENTRIES,priority:100,active:true};
+const POSITION_KEY="gewitterradar:weather-legend-position:v1";
 const safeText=value=>typeof value==="string"&&value.trim()?value.trim():"";
 const safeValueText=value=>typeof value==="number"&&Number.isFinite(value)?String(value):safeText(value);
 const safeEntries=value=>Array.isArray(value)?value.map(entry=>({
@@ -47,6 +51,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       models:new Map(),
       resizeHandler:null,
       resizeObserver:null,
+      position:(()=>{try{const p=JSON.parse(localStorage.getItem(POSITION_KEY));return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:clamp(p.x,0,1),y:clamp(p.y,0,1)}:null;}catch(_){return null;}})(),
       mounted:false
     };
     return this.__weatherLegendState;
@@ -60,7 +65,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
   _weatherLegendSetModel(source,model){
     const state=this._weatherLegendState();
     const key=String(source||"weather-router");
-    const normalized=normalizeLegendModel(key,model);
+    const normalized=normalizeLegendModel(key,key==="precipitation"&&model?{...model,legendUrl:"",unit:"mm/h",entries:PRECIPITATION_LEGEND_ENTRIES}:model);
     if(normalized)state.models.set(key,normalized);else state.models.delete(key);
     this._weatherLegendSyncUi();
   },
@@ -81,6 +86,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     const mode=this._weatherLegendMode();
     if(mode==="off")return [];
     const active=this._weatherLegendActiveModels();
+    if(mode==="on"&&!active.some(model=>model.source==="precipitation"))active.unshift(normalizeLegendModel("precipitation",precipitationModel));
     return mode==="auto"?active.slice(0,1):active;
   },
 
@@ -98,6 +104,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       "@media(max-width:720px){.weather-legend-overlay{width:min(390px,calc(100% - 16px));padding:7px 8px;border-radius:12px}.weather-legend-title{font-size:9.3px}.weather-legend-subtitle{font-size:7px}.weather-legend-image{width:min(220px,100%)}.weather-legend-unit{font-size:7.5px}.weather-legend-hide{width:30px;height:30px}.weather-legend-entry{font-size:6.8px}.weather-legend-swatch{width:26px}}",
       "@media(max-width:430px){.weather-legend-overlay{width:calc(100% - 14px)}.weather-legend-image{width:min(190px,100%)}.weather-legend-subtitle{max-width:220px}.weather-legend-entries{gap:4px}.weather-legend-swatch{width:20px}.weather-legend-entry-label{max-width:44px}}"
     ].join("");
+    style.textContent+=".weather-legend-entries{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px 4px;overflow:visible}.weather-legend-swatch{width:100%;min-width:22px}.weather-legend-entry{width:100%;font-size:9px}.weather-legend-header{cursor:grab;touch-action:none}.weather-legend-subtitle{white-space:normal;overflow-wrap:anywhere}.weather-legend-overlay{max-height:calc(100% - 20px);overflow:auto}.weather-legend-note{font-size:9px;line-height:1.4;color:#aeb7c2}@media(max-width:430px){.weather-legend-entries{grid-template-columns:repeat(5,minmax(0,1fr))}}";
     this.shadow.append(style);
   },
 
@@ -122,6 +129,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
         event.preventDefault();event.stopPropagation();
         this._weatherDisplaySetLegendMode?.("off");
       });
+      this._weatherLegendBindDrag(host);
       card.append(host);
     }
     const state=this._weatherLegendState();
@@ -143,10 +151,50 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     if(!host||host.hidden||!card||!mapEl)return;
     const cardRect=card.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect();
     const footerHeight=clamp(cardRect.bottom-mapRect.bottom,0,Math.max(0,cardRect.height));
-    host.style.bottom=Math.round(footerHeight+10)+"px";
-    host.style.maxWidth=Math.max(160,Math.round(mapRect.width-16))+"px";
+    host.style.maxWidth=Math.max(0,Math.round(mapRect.width-16))+"px";
+    host.style.maxHeight=Math.max(0,Math.round(mapRect.height-16))+"px";
+    const bounds=this._weatherLegendBounds(host);
+    const position=this._weatherLegendState().position;
+    host.style.transform="none";host.style.bottom="auto";
+    host.style.left=(bounds.left+(bounds.right-bounds.left)*(position?.x??.5))+"px";
+    host.style.top=(bounds.top+(bounds.bottom-bounds.top)*(position?.y??1))+"px";
     const timeline=this.shadow?.querySelector?.('[data-weather-radar-player="true"]');
     if(timeline&&typeof this._weatherRadarApplyTimelinePosition==="function")requestAnimationFrame(()=>this._weatherRadarApplyTimelinePosition(timeline));
+  },
+
+  _weatherLegendBounds(host){
+    const card=this.shadow.getElementById("map-card").getBoundingClientRect();
+    const map=this.shadow.getElementById("map").getBoundingClientRect();
+    const left=Math.max(8,map.left-card.left+8),top=Math.max(8,map.top-card.top+8);
+    return {left,top,right:Math.max(left,map.right-card.left-host.offsetWidth-8),
+      bottom:Math.max(top,map.bottom-card.top-host.offsetHeight-8)};
+  },
+  _weatherLegendBindDrag(host){
+    let drag=null;
+    host.addEventListener("pointerdown",event=>{
+      if((event.button!==undefined&&event.button!==0)||event.target.closest("button")||!event.target.closest(".weather-legend-header"))return;
+      event.preventDefault();event.stopPropagation();
+      drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:parseFloat(host.style.left)||0,top:parseFloat(host.style.top)||0};
+      host.setPointerCapture?.(event.pointerId);
+    });
+    host.addEventListener("pointermove",event=>{
+      if(!drag||drag.id!==event.pointerId)return;
+      event.preventDefault();event.stopPropagation();
+      const b=this._weatherLegendBounds(host);
+      host.style.left=clamp(drag.left+event.clientX-drag.x,b.left,b.right)+"px";
+      host.style.top=clamp(drag.top+event.clientY-drag.y,b.top,b.bottom)+"px";
+    });
+    const end=event=>{
+      if(!drag||drag.id!==event.pointerId)return;
+      event.stopPropagation();drag=null;
+      const b=this._weatherLegendBounds(host);
+      const position={x:b.right>b.left?clamp((parseFloat(host.style.left)-b.left)/(b.right-b.left),0,1):0,
+        y:b.bottom>b.top?clamp((parseFloat(host.style.top)-b.top)/(b.bottom-b.top),0,1):0};
+      this._weatherLegendState().position=position;
+      try{localStorage.setItem(POSITION_KEY,JSON.stringify(position));}catch(_){}
+      try{host.releasePointerCapture?.(event.pointerId);}catch(_){}
+    };
+    for(const type of ["pointerup","pointercancel","lostpointercapture"])host.addEventListener(type,end);
   },
 
   _weatherLegendRenderVisual(model){
@@ -202,7 +250,13 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       const visual=document.createElement("div");visual.className="weather-legend-visual";
       const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
       item.title=model.details||[model.title,model.subtitle].filter(Boolean).join(" · ");
-      item.append(header,visual);fragment.append(item);
+      item.append(header,visual);
+      if(model.family==="precipitation"){
+        const note=document.createElement("div");note.className="weather-legend-note";
+        note.textContent="Intensitätsstufen in mm/h · DWD-Originalfarben können in Randbereichen abweichen. Zum Verschieben die Kopfzeile ziehen.";
+        item.append(note);
+      }
+      fragment.append(item);
     });
     list?.replaceChildren(fragment);
     requestAnimationFrame(()=>this._weatherLegendPosition());

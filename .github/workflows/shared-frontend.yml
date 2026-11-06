@@ -76,6 +76,9 @@ jobs:
       - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
 
+      - name: GR-LEGEND-UI-01 visibility and saved position
+        run: node --test tests/gr-legend-ui-01.test.mjs
+
       - name: Emit regenerated checksum inventory on failure
         if: failure()
         run: |
