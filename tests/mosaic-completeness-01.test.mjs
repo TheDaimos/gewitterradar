@@ -34,9 +34,9 @@ test('identical canonical images share a transport; unloading one world copy pre
  await new Promise(r=>setTimeout(r,10));assert.equal(loads,1);a.abort();complete();
  assert.equal((await first).drawn.length,0);assert.equal((await second).drawn.length,1);assert.equal(budget.used,1);assert.equal(budget.sharedRequests,1);budget.close();
 });
-test('many fragments from one source obey the source plan without consuming four-provider slots',async()=>{
+test('WR-planned fragments coexist with ordinary sources without consuming extra provider slots',async()=>{
  const source={...layer,raster_plan:{kind:'source_tiles_v1',zoom:2,tiles:[[0,0],[1,0],[2,0],[3,0],[0,1],[1,1]],padding_factor:1.3,plan_complete:true}};
  const budget=new RasterTileRequestBudget(48);let loads=0;
- const result=await drawRasterMosaicTileFromUrls({context:context(),tile:{z:0,x:0,y:0},layers:[source],budget,loadImage:async()=>{loads++;return {width:256,height:256};}});
- assert.equal(loads,6);assert.equal(result.drawn.length,6);assert.deepEqual(result.rejected,[]);budget.close();
+ const result=await drawRasterMosaicTileFromUrls({context:context(),tile:{z:0,x:0,y:0},layers:[source,{...layer,source_id:'nasa_gibs/satellite_precipitation_imerg_30min'}],budget,loadImage:async()=>{loads++;return {width:256,height:256};}});
+ assert.equal(loads,7);assert.equal(result.drawn.length,7);assert.deepEqual(result.rejected,[]);budget.close();
 });

@@ -22,6 +22,9 @@ gesamten 130-%-Ausschnitt. NASA wählt die feinste native Quellstufe bis z6, der
 vollständiges Gitter in 48 Kacheln passt. Anschließend werden nur vollständig
 geschützte Kacheln entfernt. Gemischte Kacheln bleiben mit verpflichtender Maske
 zugelassen. Keine geografische Teilmengenauswahl und keine Budgeterhöhung.
+Auch ein bereits von der regulären WR-Politik ausgewähltes NASA-Bild erhält
+die Radar-Zeichenausschlüsse. Dies aktiviert weder die optionale NASA-Ergänzung
+noch erweitert es deren Zeit-/Einwilligungsregeln.
 
 Auch reguläre Quellen erhalten `raster_plan: source_tiles_v1` mit ausdrücklichen
 WR-Koordinaten. OPERA verwendet bei kleinen Kartenzooms geeignete höher aufgelöste
@@ -108,8 +111,8 @@ erneuten Abruf weder am angegebenen lokalen Pfad noch als GR-Dateien im Reposito
 verfügbar; deren im Auftrag beschriebene Befunde werden nicht als selbst erneut
 ausgelesene GR-Nachweise ausgegeben.
 
-Gezielt lokal bestanden: 61 WR-NASA/V2-Vertragsfälle einschließlich des tatsächlichen WebSocket-Handlerpfads; 49 WR-Fälle plus
-16 vorhandene Subtests einschließlich fünf neuer direkt benötigter Prüfungen;
+Gezielt lokal bestanden: 61 WR-NASA/V2-Vertragsfälle einschließlich des tatsächlichen WebSocket-Handlerpfads; 50 WR-Fälle plus
+16 vorhandene Subtests einschließlich sechs neuer direkt benötigter Prüfungen;
 38 GR-Fälle einschließlich fünf neuer Masken-/World-Wrap-/Transportprüfungen.
 Eine vorhandene OPERA-Originaldatei belegt die Kategorien und die Zuordnung
 beobachteter Zellen in die neue Maske; 2000 bestehende Beobachtungspunkte bleiben

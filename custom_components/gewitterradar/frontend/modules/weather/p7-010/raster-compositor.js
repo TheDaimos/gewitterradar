@@ -37,6 +37,18 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
  if(!context||typeof context.drawImage!=="function")throw new TypeError("Canvas context required");
  if(!Array.isArray(layers)||layers.length>256||new Set(layers.map(l=>l?.source_id)).size>MAX_LAYERS)
    throw new RangeError("Too many simultaneous layers");
+ if(layers.length>MAX_LAYERS){
+   const keys=new Set();let ordinary=0;
+   for(const layer of layers){
+     const native=layer?._p7SourceTile,plan=layer?.raster_plan;
+     if(!plan){if(++ordinary>MAX_LAYERS)throw new RangeError('Too many ordinary layers');continue;}
+     const key=layer?.source_id+':'+native?.z+'/'+native?.x+'/'+native?.y;
+     if(!native||plan?.kind!=='source_tiles_v1'||native.z!==plan.zoom||
+       !plan.tiles.some(([x,y])=>x===native.x&&y===native.y)||keys.has(key))
+       throw new RangeError('Only distinct WR-planned fragments may exceed four images');
+     keys.add(key);
+   }
+ }
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
    throw new RangeError("Invalid resource-bounded tile size");
  const drawn=[],rejected=[],paintedRects=[];
