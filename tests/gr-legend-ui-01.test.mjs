@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {installWeatherLegendOverlay,PRECIPITATION_LEGEND_ENTRIES} from '../frontend/modules/weather/legend-overlay.js';
+import {installWeatherLegendOverlay,PRECIPITATION_LEGEND_ENTRIES,precipitationLegendScales} from '../frontend/modules/weather/legend-overlay.js';
 class Card{}
 installWeatherLegendOverlay(Card);
 const normalized=PRECIPITATION_LEGEND_ENTRIES.map(entry=>({...entry,value:String(entry.value)}));
@@ -11,12 +11,25 @@ test('existing legend manager handles forced on, auto, off and metadata-free V2 
  assert.equal(card._weatherLegendVisibleModels().length,0);
  mode='on';assert.equal(card._weatherLegendVisibleModels()[0].unit,'mm/h');
  mode='auto';
- card._weatherLegendSetModel('precipitation',{title:'Niederschlag',active:true});
- assert.deepEqual(card._weatherLegendVisibleModels()[0].entries,normalized);
- card._weatherLegendSetModel('precipitation',{title:'DWD',legendUrl:'https://example.org/legend.png'});
- assert.deepEqual(card._weatherLegendVisibleModels()[0].entries,normalized);
+ const scales=precipitationLegendScales([
+  {source_id:'opera/opera_rate_raster',legend:{entries:PRECIPITATION_LEGEND_ENTRIES,unit:'mm/h'}},
+  {source_id:'dwd/radar_precipitation',legend:{url:'https://example.org/dwd-actual.png'}}]);
+ card._weatherLegendSetModel('precipitation',{family:'precipitation',title:'Niederschlag',active:true,scales});
+ const visible=card._weatherLegendVisibleModels();
+ assert.equal(visible.length,2);
+ assert.deepEqual(visible.find(model=>model.source.includes('opera/')).entries,normalized);
+ assert.equal(visible.find(model=>model.source.includes('dwd/')).legendUrl,'https://example.org/dwd-actual.png');
+ assert.equal(visible.find(model=>model.source.includes('dwd/')).entries.length,0);
  mode='off';assert.equal(card._weatherLegendVisibleModels().length,0);
  card._weatherLegendClear('precipitation');mode='auto';assert.equal(card._weatherLegendVisibleModels().length,0);
+});
+test('WR metadata is authoritative; legacy frames and unknown providers never inherit a new palette',()=>{
+ const custom=[{value:1,label:'WR live',color:'#123456'}];
+ assert.equal(precipitationLegendScales([{source_id:'opera/opera_rate_raster',legend:{entries:custom}}])[0].entries,custom);
+ assert.equal(precipitationLegendScales([{source_id:'opera/opera_rate_raster'}])[0].entries.length,13);
+ assert.equal(PRECIPITATION_LEGEND_ENTRIES.length,15);
+ assert.match(precipitationLegendScales([{source_id:'dwd/radar_precipitation'}])[0].legendUrl,/GetLegendGraphic/);
+ assert.equal(precipitationLegendScales([{source_id:'unknown/provider'}])[0].entries[0].color,'');
 });
 test('normalized saved positions survive recreation and malformed storage is ignored',()=>{
  const previous=globalThis.localStorage;

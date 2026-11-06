@@ -1,3 +1,4 @@
+import {precipitationLegendScales} from "./legend-overlay.js?v=411143r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=411142r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=41190r1";
@@ -1185,7 +1186,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             " · Methode: "+layer.semantics.measurement_method+
             (layer.quality_note?" · Hinweis: "+layer.quality_note:"")),
           ...(state.v2Snapshot.limitations||[])].join(" · "),
-        legendTitle:"Niederschlagslegende",priority:100
+        scales:precipitationLegendScales(layers),legendTitle:"Niederschlagslegende",priority:100
       });
       return;
     }
@@ -1215,6 +1216,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       legendTitle:legend?.title||"Niederschlagslegende",
       unit:typeof semantics.unit==="string"?semantics.unit:"",
       entries,
+      scales:precipitationLegendScales([{source_id:description.provider==="opera"?"opera/opera_rate_raster":(answer.provenance?.provider_id||"weather")+"/"+(answer.provenance?.layer_id||"precipitation"),legend,semantics}]),
       priority:100
     });
   },
@@ -1348,6 +1350,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(typeof this._weatherLegendSetModel==="function"){
       if(!model){this._weatherLegendClear?.("precipitation");return;}
       this._weatherLegendSetModel("precipitation",{
+        scales:model.scales,
         family:model.family||"precipitation",
         capability:model.capability||CAPABILITY,
         title:model.heading||"Niederschlag",
