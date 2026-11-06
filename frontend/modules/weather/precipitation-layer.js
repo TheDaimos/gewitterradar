@@ -1,4 +1,4 @@
-import {precipitationLegendScales} from "./legend-overlay.js?v=411147r1";
+import {precipitationLegendScales} from "./legend-overlay.js?v=411148r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411147r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411147r1";

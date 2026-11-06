@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.147",
-  "build": "V4.11.147-DEV-2026-11-06",
-  "runtimeRevision": "411147r1",
-  "moduleSetId": "E411-147A1",
+  "productVersion": "4.11.148",
+  "build": "V4.11.148-DEV-2026-11-06",
+  "runtimeRevision": "411148r1",
+  "moduleSetId": "E411-148A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Complete WR-authorized source grids, frame-bound OPERA observation masks, actual canvas masking and canonical world-copy reuse; VM109 real acceptance pending.",
+    "purpose": "GR-LEGEND-UI-06: shared compatible DWD/OPERA radar legend with source-specific lower limits and UTC times; WR295 weather paths preserved.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

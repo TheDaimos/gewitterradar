@@ -1,0 +1,31 @@
+name: GR-LEGEND-UI-06 focused legend and package contract
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  legend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Shared radar legend and protected reference bytes
+        run: node --test tests/gr-legend-ui-01.test.mjs tests/gr-legend-ui-06.test.mjs
+      - name: Shipped frontend parity and version identity
+        run: |
+          node --check frontend/modules/weather/legend-overlay.js
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Existing install-package contract
+        run: python scripts/verify-hacs-integration-package.py

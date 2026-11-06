@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41114r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.1",
+  version:"0.1.2",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -30,6 +30,8 @@ export function precipitationLegendScales(layers){
     title:scale.title||legend.title||layer.source_id,unit:scale.unit||layer.semantics?.unit||"",
     entries:entries.length?entries:opera?LEGACY_OPERA_ENTRIES:[{label:"Keine verifizierten Farbmetadaten",color:""}],
     ticks:Array.isArray(scale.ticks)?scale.ticks:[],
+    radarComparison:entries.length?radarLegendIntervals(entries):null,
+    legendTime:typeof layer.times?.valid_at==="string"?layer.times.valid_at:"",
     subtitle:(snow?(quantity==="liquid_water_equivalent_snowfall_rate"?"Schneerate · Wasseräquivalent, keine Schneehöhe":"Schneefallrate"):opera?"RATE · WR-Farbstufen":"Originalfarben der Quelle")+
       (layer.source_id.includes("nasa_gibs/")?" · Satellitenschätzung":"")+
       (layer.times?.valid_at?" · "+layer.times.valid_at:"")+
@@ -44,15 +46,76 @@ export const legendProviders=models=>[...new Set(models.map(model=>{
  const id=model.source||model.id||"";
  return id.includes("dwd/")?"DWD":id.includes("opera/")?"OPERA":id.includes("nasa_gibs/")?"NASA":null;
 }).filter(Boolean))].sort((a,b)=>["DWD","OPERA","NASA"].indexOf(a)-["DWD","OPERA","NASA"].indexOf(b));
-export function groupIdenticalLegendScales(models){
- const groups=new Map();
- for(const model of models){
-  const signature=model.entries.length?JSON.stringify([model.family,model.quantity,model.unit,model.entries]):model.source;
-  if(groups.has(signature)){
-   const group=groups.get(signature);group.title+=" / "+model.title;
-  }else groups.set(signature,{...model});
+// Compare the existing WR interval labels, not a second precipitation table.
+// Unsupported/ambiguous metadata keep their separate source legends.
+function radarLegendIntervals(entries){
+ if(!Array.isArray(entries)||!entries.length)return null;
+ const result=[];
+ for(const entry of entries){
+  if(!entry||Object.keys(entry).some(k=>!["value","label","color"].includes(k)))return null;
+  const text=String(entry.label||"").trim().replaceAll(",",".");
+  const raw=typeof entry.value==="string"?entry.value.trim():entry.value;
+  const value=typeof raw==="number"?raw:typeof raw==="string"&&/^\d+(?:[.,]\d+)?$/.test(raw)?Number(raw.replace(",",".")):NaN;
+  const interval=/^(>)?(\d+(?:\.\d+)?)\s*[–-]\s*<(\d+(?:\.\d+)?)$/.exec(text);
+  const top=/^(?:≥|>=)(\d+(?:\.\d+)?)$/.exec(text);
+  if(!Number.isFinite(value)||value<0||(!interval&&!top))return null;
+  const lower=Number(interval?interval[2]:top[1]),upper=interval?Number(interval[3]):null;
+  if(value!==lower||(upper!==null&&upper<=lower))return null;
+  let color=String(entry.color||"").trim().toLowerCase();
+  if(/^#[a-f\d]{3}$/.test(color))color="#"+[...color.slice(1)].map(c=>c+c).join("");
+  if(!/^#[a-f\d]{6}$/.test(color))return null;
+  const previous=result.at(-1);
+  if(previous&&(previous.upper!==lower||interval?.[1]))return null;
+  result.push({lower,upper,lowerInclusive:!interval?.[1],upperInclusive:false,color});
  }
- return [...groups.values()];
+ return result;
+}
+const radarProvider=model=>{
+ const id=String(model.source||model.id||"").replace(/^precipitation:/,"");
+ return id==="dwd/radar_precipitation"?"DWD":id==="opera/opera_rate_raster"?"OPERA":null;
+};
+function radarTimeNote(models){
+ const times=models.map(model=>{
+  const raw=model.legendTime;
+  return typeof raw==="string"&&/(?:Z|[+-]\d\d:\d\d)$/i.test(raw)&&Number.isFinite(Date.parse(raw))?new Date(raw):null;
+ });
+ const differentDates=times.every(Boolean)&&times[0].toISOString().slice(0,10)!==times[1].toISOString().slice(0,10);
+ return models.map((model,index)=>{
+  const date=times[index];
+  if(!date)return radarProvider(model)+" Zeitpunkt nicht angegeben";
+  const iso=date.toISOString(),day=differentDates?iso.slice(8,10)+"."+iso.slice(5,7)+"."+iso.slice(0,4)+" ":"";
+  const time=iso.slice(11,date.getUTCSeconds()||date.getUTCMilliseconds()?23:16).replace(/\.000$/,"");
+  return radarProvider(model)+" "+day+time+" UTC";
+ }).join(" · ");
+}
+export function groupIdenticalLegendScales(models){
+ const result=models.map(model=>({...model}));
+ const dwd=result.findIndex(model=>radarProvider(model)==="DWD"),opera=result.findIndex(model=>radarProvider(model)==="OPERA");
+ if(dwd<0||opera<0)return result;
+ const pair=[result[dwd],result[opera]],a=pair[0],b=pair[1];
+ if(a.unit!=="mm/h"||b.unit!==a.unit||a.family!==b.family||a.quantity!==b.quantity||
+   (a.family&&a.family!=="precipitation")||(a.quantity&&a.quantity!=="precipitation_rate")||
+   JSON.stringify(a.ticks||[])!==JSON.stringify(b.ticks||[]))return result;
+ const descriptors=pair.map(model=>Object.hasOwn(model,"radarComparison")?model.radarComparison:radarLegendIntervals(model.entries));
+ const [left,right]=descriptors;
+ if(!left||!right||left.length!==right.length)return result;
+ const identical=JSON.stringify(left)===JSON.stringify(right);
+ const lowerOnly=!identical&&left.length>1&&left.at(-1).upper===null&&right.at(-1).upper===null&&
+   left[0].color===right[0].color&&left[0].upper===right[0].upper&&
+   JSON.stringify(left.slice(1))===JSON.stringify(right.slice(1));
+ if(!identical&&!lowerOnly)return result;
+ // Use one of the received tables unchanged; the asterisk qualifies its
+ // source-dependent first interval in both classes and bar presentation.
+ const base=left[0].lower<right[0].lower?a:b;
+ const number=value=>String(value).replace(".",",");
+ const lowerNote=lowerOnly?pair.map((model,index)=>radarProvider(model)+" "+
+   (descriptors[index][0].lowerInclusive?"ab ":">")+number(descriptors[index][0].lower)+" mm/h").join(" · "):"";
+ const merged={...base,title:"DWD / OPERA · Radar-Niederschlag",subtitle:"",
+   sources:pair.map(model=>model.source||model.id),sharedRadar:true,
+   lowerBoundaryNote:lowerNote?"* "+lowerNote:"",timeNote:radarTimeNote(pair),
+   details:pair.map(model=>[model.title,model.subtitle,model.legendTime].filter(Boolean).join(" · ")).join("\n")};
+ const first=Math.min(dwd,opera),last=Math.max(dwd,opera);
+ result[first]=merged;result.splice(last,1);return result;
 }
 
 const UI_KEY="gewitterradar:weather-legend-ui:v1";
@@ -86,6 +149,7 @@ const normalizeLegendModel=(source,input)=>{
     legendUrl,
     legendTitle:safeText(input.legendTitle)||title+" · Legende",
     unit:safeText(input.unit),quantity:safeText(input.quantity),
+    radarComparison:input.radarComparison||null,legendTime:safeText(input.legendTime),
     ticks:Array.isArray(input.ticks)?input.ticks.filter(t=>Number.isFinite(t.position)&&t.position>=0&&t.position<=1&&typeof t.label==="string").slice(0,32):[],
     entries,
     priority:Number.isFinite(Number(input.priority))?Number(input.priority):0,
@@ -289,14 +353,14 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
         const node=document.createElement("span");node.className="weather-legend-entry";
         const swatch=document.createElement("i");swatch.className="weather-legend-swatch";
         if(entry.color)swatch.style.setProperty("--weather-legend-color",entry.color);
-        const label=document.createElement("span");label.className="weather-legend-entry-label";label.textContent=entry.label||entry.value;
+        const label=document.createElement("span");label.className="weather-legend-entry-label";label.textContent=(entry.label||entry.value)+(model.lowerBoundaryNote&&entry===entries[0]?"*":"");
         node.append(swatch,label);scale.append(node);
       }
       return scale;
     }
     const box=document.createElement("div");box.className="weather-legend-bar-box";
     const bar=document.createElement("div");bar.className="weather-legend-discrete-bar";bar.setAttribute("aria-label","Diskrete Originalfarbklassen; Segmentbreite ist keine lineare Messwertachse");
-    for(const entry of entries){const segment=document.createElement("span");segment.style.backgroundColor=entry.color||"transparent";segment.title=(entry.label||entry.value)+" "+model.unit;bar.append(segment);}
+    for(const entry of entries){const segment=document.createElement("span");segment.style.backgroundColor=entry.color||"transparent";segment.title=(entry.label||entry.value)+" "+model.unit+(model.lowerBoundaryNote&&entry===entries[0]?" · "+model.lowerBoundaryNote:"");bar.append(segment);}
     box.append(bar);
     if(classes){
       // High-resolution original NASA tables remain inspectable class by class
@@ -310,7 +374,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     }
     const ticks=document.createElement("div");ticks.className="weather-legend-bar-ticks";
     const labels=model.ticks.length?model.ticks:entries.filter((_entry,index)=>index===0||index===entries.length-1||index%2===0).map(entry=>({position:entries.indexOf(entry)/entries.length,label:entries.indexOf(entry)===entries.length-1?"≥"+entry.value:entry.value==="0"?">0":entry.value||entry.label}));
-    for(const tick of labels){const label=document.createElement("span");label.style.left=(tick.position*100)+"%";label.textContent=tick.label;if(tick.position>=.92)label.className="last";ticks.append(label);}
+    for(const tick of labels){const label=document.createElement("span");label.style.left=(tick.position*100)+"%";label.textContent=tick.label+(model.lowerBoundaryNote&&tick===labels[0]?"*":"");if(tick.position>=.92)label.className="last";ticks.append(label);}
     box.append(ticks);return box;
   },
 
@@ -345,6 +409,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       const inner=document.createElement("div");inner.className="weather-legend-section-inner";body.append(inner);
       groupIdenticalLegendScales(members).forEach((model,index)=>{
       const item=document.createElement("div");item.className="weather-legend-item";item.dataset.weatherLegendSource=model.source;
+      item.dataset.weatherLegendSources=(model.sources||[model.source]).join(" ");
       const main=document.createElement("div");main.className="weather-legend-main";
       const title=document.createElement("div");title.className="weather-legend-title";title.textContent=model.title;
       main.append(title);
@@ -356,6 +421,9 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
       item.title=model.details||[model.title,model.subtitle].filter(Boolean).join(" · ");
       item.append(header,visual);
+      for(const text of [model.lowerBoundaryNote,model.timeNote])if(text){
+        const note=document.createElement("div");note.className="weather-legend-note";note.textContent=text;item.append(note);
+      }
       inner.append(item);
       });
       section.append(sectionHead,body);fragment.append(section);
