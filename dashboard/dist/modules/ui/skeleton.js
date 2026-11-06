@@ -5975,7 +5975,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           /* V4.06 accepted UI polish: premium frame and symmetric action tiles. */
           /* V4.06 pass2: Welcome-derived 2px metal frame, reduced diffuse gold shadow. */
-          .settings-dialog{
+          .settings-dialog,
+          .weather-legend-overlay.gr-premium-metal-surface,
+          .weather-display-opacity-reset.gr-premium-metal-surface,
+          .weather-display-info.gr-premium-metal-surface{
             border:2px solid transparent;
             background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
             box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 8px rgba(215,164,67,.055)

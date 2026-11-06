@@ -9,9 +9,9 @@ export const MODULE_META=Object.freeze({
   file:"modules/weather/legend-overlay.js"
 });
 
-// Presentation snapshot generated from WR 0.10.290 RATE_COLORS (forced reference only; active layers use WR metadata); no raster recoloring.
+// Presentation snapshot generated from WR 0.10.291 RATE_COLORS (forced reference only; active layers use WR metadata); no raster recoloring.
 export const LEGACY_OPERA_ENTRIES=Object.freeze([{"value": 0.0, "label": ">0", "color": "#019934"}, {"value": 1.0, "label": "1", "color": "#4db31b"}, {"value": 2.0, "label": "2", "color": "#99cc01"}, {"value": 3.0, "label": "3", "color": "#cce601"}, {"value": 5.0, "label": "5", "color": "#ffff01"}, {"value": 7.5, "label": "7.5", "color": "#ffc401"}, {"value": 10.0, "label": "10", "color": "#ff8901"}, {"value": 15.0, "label": "15", "color": "#ff4501"}, {"value": 30.0, "label": "30", "color": "#fe0000"}, {"value": 45.0, "label": "45", "color": "#b20000"}, {"value": 75.0, "label": "75", "color": "#8b0000"}, {"value": 100.0, "label": "100", "color": "#6e0000"}, {"value": 150.0, "label": "150", "color": "#500000"}].map(Object.freeze));
-export const PRECIPITATION_LEGEND_ENTRIES=Object.freeze([{"value": 0.0, "label": ">0–<0.2", "color": "#9ae6a5"}, {"value": 0.2, "label": "0.2–<0.4", "color": "#46bf68"}, {"value": 0.4, "label": "0.4–<1", "color": "#019934"}, {"value": 1.0, "label": "1–<2", "color": "#4db31b"}, {"value": 2.0, "label": "2–<3", "color": "#99cc01"}, {"value": 3.0, "label": "3–<5", "color": "#cce601"}, {"value": 5.0, "label": "5–<7.5", "color": "#ffff01"}, {"value": 7.5, "label": "7.5–<10", "color": "#ffc401"}, {"value": 10.0, "label": "10–<15", "color": "#ff8901"}, {"value": 15.0, "label": "15–<30", "color": "#ff4501"}, {"value": 30.0, "label": "30–<45", "color": "#fe0000"}, {"value": 45.0, "label": "45–<75", "color": "#b20000"}, {"value": 75.0, "label": "75–<100", "color": "#8b0000"}, {"value": 100.0, "label": "100–<150", "color": "#6e0000"}, {"value": 150.0, "label": "≥150", "color": "#500000"}].map(Object.freeze));
+export const PRECIPITATION_LEGEND_ENTRIES=Object.freeze([{"value": 0.0, "label": ">0–<0.2", "color": "#ccf4ff"}, {"value": 0.2, "label": "0.2–<0.4", "color": "#1acc9a"}, {"value": 0.4, "label": "0.4–<1", "color": "#019934"}, {"value": 1.0, "label": "1–<2", "color": "#4db31b"}, {"value": 2.0, "label": "2–<3", "color": "#99cc01"}, {"value": 3.0, "label": "3–<5", "color": "#cce601"}, {"value": 5.0, "label": "5–<7.5", "color": "#ffff01"}, {"value": 7.5, "label": "7.5–<10", "color": "#ffc401"}, {"value": 10.0, "label": "10–<15", "color": "#ff8901"}, {"value": 15.0, "label": "15–<30", "color": "#ff4501"}, {"value": 30.0, "label": "30–<45", "color": "#fe0000"}, {"value": 45.0, "label": "45–<75", "color": "#b20000"}, {"value": 75.0, "label": "75–<100", "color": "#cc0098"}, {"value": 100.0, "label": "100–<150", "color": "#6600cb"}, {"value": 150.0, "label": "≥150", "color": "#400066"}].map(Object.freeze));
 const precipitationModel={family:"precipitation",title:"Niederschlag",unit:"mm/h",entries:PRECIPITATION_LEGEND_ENTRIES,priority:100,active:true};
 
 export function precipitationLegendScales(layers){
@@ -25,8 +25,27 @@ export function precipitationLegendScales(layers){
     return {id:layer.source_id,title:legend.title||layer.source_id,legendUrl,
       unit:legend.unit||layer.semantics?.unit||"",entries:entries.length?entries:opera?LEGACY_OPERA_ENTRIES:
         legendUrl?[]:[{label:"Diese Quelle liefert keine Farbskala",color:""}],
-      subtitle:opera?"RATE · Klassen aus WeatherRouter":"Originalskala der gelieferten Quelle"};
+      subtitle:(opera?"RATE · Klassen aus WeatherRouter":"Originalskala der gelieferten Quelle")+
+        (layer.source_id.includes("nasa_gibs/")?" · Satellitenschätzung":"")+
+        (layer.times?.valid_at?" · Bildzeit "+layer.times.valid_at:"")+
+        (layer.freshness_class==="older_background"?" · älterer Hintergrund laut WR":"")};
   });
+}
+
+
+export const legendProviders=models=>[...new Set(models.map(model=>{
+ const id=model.source||model.id||"";
+ return id.includes("dwd/")?"DWD":id.includes("opera/")?"OPERA":id.includes("nasa_gibs/")?"NASA":null;
+}).filter(Boolean))].sort((a,b)=>["DWD","OPERA","NASA"].indexOf(a)-["DWD","OPERA","NASA"].indexOf(b));
+export function groupIdenticalLegendScales(models){
+ const groups=new Map();
+ for(const model of models){
+  const signature=model.entries.length?JSON.stringify([model.unit,model.entries]):model.source;
+  if(groups.has(signature)){
+   const group=groups.get(signature);group.title+=" / "+model.title;
+  }else groups.set(signature,{...model});
+ }
+ return [...groups.values()];
 }
 
 const POSITION_KEY="gewitterradar:weather-legend-position:v1";
@@ -68,6 +87,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       models:new Map(),
       resizeHandler:null,
       resizeObserver:null,
+      collapsed:false,anchor:null,
       position:(()=>{try{const p=JSON.parse(localStorage.getItem(POSITION_KEY));return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:clamp(p.x,0,1),y:clamp(p.y,0,1)}:null;}catch(_){return null;}})(),
       mounted:false
     };
@@ -134,6 +154,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       "@media(max-width:430px){.weather-legend-overlay{width:calc(100% - 14px)}.weather-legend-image{width:min(190px,100%)}.weather-legend-subtitle{max-width:220px}.weather-legend-entries{gap:4px}.weather-legend-swatch{width:20px}.weather-legend-entry-label{max-width:44px}}"
     ].join("");
     style.textContent+=".weather-legend-entries{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 4px;overflow:visible}.weather-legend-swatch{width:100%;min-width:22px}.weather-legend-entry{width:100%;font-size:10px}.weather-legend-entry-label{max-width:100%;white-space:normal;overflow:visible;font-variant-numeric:tabular-nums}.weather-legend-header{cursor:grab;touch-action:none}.weather-legend-subtitle{white-space:normal;overflow-wrap:anywhere}.weather-legend-overlay{max-height:calc(100% - 20px);overflow:auto}.weather-legend-note{font-size:9px;line-height:1.4;color:#aeb7c2}@media(max-width:430px){.weather-legend-entries{grid-template-columns:repeat(3,minmax(0,1fr))}}";
+    style.textContent+=".weather-legend-overlay.gr-premium-metal-surface{border-width:1px;box-shadow:0 8px 22px #0007,inset 0 1px #fff1;overflow:hidden;padding:6px 8px;width:min(410px,calc(100% - 16px))}.weather-legend-global-head{min-height:32px;gap:5px}.weather-legend-global-head>.weather-legend-title{white-space:normal;line-height:1.35;font-size:10px}.weather-legend-toggle{display:grid;place-items:center;width:30px;height:28px;border:0;border-radius:6px;background:transparent;cursor:pointer}.weather-legend-toggle .release-history-future-chevron{pointer-events:none}.weather-legend-content{display:grid;grid-template-rows:1fr;transition:grid-template-rows .42s cubic-bezier(.22,1,.36,1)}.weather-legend-overlay.collapsed .weather-legend-content{grid-template-rows:0fr}.weather-legend-scroll{min-height:0;overflow:hidden}.weather-legend-list{max-height:min(260px,var(--weather-legend-list-max,45vh));overflow-y:auto;overscroll-behavior:contain;padding-top:5px;scrollbar-width:thin}.weather-legend-item{gap:4px}.weather-legend-visual{padding:0}.weather-legend-title{font-size:9px}.weather-legend-subtitle{font-size:8px}.weather-legend-swatch{height:6px}.weather-legend-entry{font-size:9px}.weather-legend-entries{gap:5px 3px}.weather-legend-source-link{font-size:10px;color:var(--premium-gold-bright,#f1d58c);padding:5px}.weather-legend-toggle:focus-visible{outline:2px solid #f1d58c}@media(max-width:430px){.weather-legend-entries{grid-template-columns:repeat(5,minmax(0,1fr))}.weather-legend-entry{font-size:9px}}@media(prefers-reduced-motion:reduce){.weather-legend-content{transition:none}}";
     this.shadow.append(style);
   },
 
@@ -146,12 +167,24 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     if(!host){
       host=document.createElement("section");
       host.id="weather-legend-overlay";
-      host.className="weather-legend-overlay";
+      host.className="weather-legend-overlay gr-premium-metal-surface release-history-future";
+      host.setAttribute("open","");
       host.hidden=true;
       host.setAttribute("role","region");
       host.setAttribute("aria-label","WeatherRouter-Legende");
       host.setAttribute("aria-live","polite");
-      host.innerHTML='<div class="weather-legend-list" data-weather-legend-list></div>';
+      host.innerHTML='<div class="weather-legend-header weather-legend-global-head"><div class="weather-legend-title" data-weather-legend-heading>Niederschlagsintensität</div><div class="weather-legend-side"><button type="button" class="weather-legend-toggle" data-weather-legend-toggle aria-label="Legende ein- oder ausklappen" aria-expanded="true"><span class="release-history-future-chevron" aria-hidden="true"></span></button><button type="button" class="weather-legend-hide" data-weather-legend-hide aria-label="Legende ausblenden">×</button></div></div><div class="weather-legend-content"><div class="weather-legend-scroll"><div class="weather-legend-list" data-weather-legend-list></div></div></div>';
+      host.addEventListener("transitionend",()=>this._weatherLegendPosition());
+      host.querySelector("[data-weather-legend-toggle]").addEventListener("click",event=>{
+        event.preventDefault();event.stopPropagation();
+        const state=this._weatherLegendState();
+        state.anchor={left:parseFloat(host.style.left)||0,top:parseFloat(host.style.top)||0};
+        state.collapsed=!state.collapsed;
+        host.classList.toggle("collapsed",state.collapsed);host.toggleAttribute("open",!state.collapsed);
+        event.currentTarget.setAttribute("aria-expanded",String(!state.collapsed));
+        const content=host.querySelector(".weather-legend-content");content.inert=state.collapsed;
+        content.setAttribute("aria-hidden",String(state.collapsed));
+      });
       host.addEventListener("click",event=>{
         const button=event.target?.closest?.("[data-weather-legend-hide]");
         if(!button)return;
@@ -163,12 +196,12 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     }
     const state=this._weatherLegendState();
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>this._weatherLegendPosition());
+      state.resizeHandler=()=>{state.anchor=null;requestAnimationFrame(()=>this._weatherLegendPosition());};
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
     if(typeof ResizeObserver==="function"&&!state.resizeObserver){
-      state.resizeObserver=new ResizeObserver(()=>requestAnimationFrame(()=>this._weatherLegendPosition()));
+      state.resizeObserver=new ResizeObserver(()=>{state.anchor=null;requestAnimationFrame(()=>this._weatherLegendPosition());});
       state.resizeObserver.observe(card);
     }
     state.mounted=true;
@@ -182,11 +215,12 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     const footerHeight=clamp(cardRect.bottom-mapRect.bottom,0,Math.max(0,cardRect.height));
     host.style.maxWidth=Math.max(0,Math.round(mapRect.width-16))+"px";
     host.style.maxHeight=Math.max(0,Math.round(mapRect.height-16))+"px";
+    host.style.setProperty("--weather-legend-list-max",Math.max(0,Math.round(mapRect.height-68))+"px");
     const bounds=this._weatherLegendBounds(host);
     const position=this._weatherLegendState().position;
     host.style.transform="none";host.style.bottom="auto";
-    host.style.left=(bounds.left+(bounds.right-bounds.left)*(position?.x??.5))+"px";
-    host.style.top=(bounds.top+(bounds.bottom-bounds.top)*(position?.y??1))+"px";
+    host.style.left=clamp(this._weatherLegendState().anchor?.left??(bounds.left+(bounds.right-bounds.left)*(position?.x??.5)),bounds.left,bounds.right)+"px";
+    host.style.top=clamp(this._weatherLegendState().anchor?.top??(bounds.top+(bounds.bottom-bounds.top)*(position?.y??1)),bounds.top,bounds.bottom)+"px";
     const timeline=this.shadow?.querySelector?.('[data-weather-radar-player="true"]');
     if(timeline&&typeof this._weatherRadarApplyTimelinePosition==="function")requestAnimationFrame(()=>this._weatherRadarApplyTimelinePosition(timeline));
   },
@@ -220,6 +254,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       const position={x:b.right>b.left?clamp((parseFloat(host.style.left)-b.left)/(b.right-b.left),0,1):0,
         y:b.bottom>b.top?clamp((parseFloat(host.style.top)-b.top)/(b.bottom-b.top),0,1):0};
       this._weatherLegendState().position=position;
+      this._weatherLegendState().anchor={left:parseFloat(host.style.left),top:parseFloat(host.style.top)};
       try{localStorage.setItem(POSITION_KEY,JSON.stringify(position));}catch(_){}
       try{host.releasePointerCapture?.(event.pointerId);}catch(_){}
     };
@@ -227,16 +262,6 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
   },
 
   _weatherLegendRenderVisual(model){
-    if(model.legendUrl){
-      const img=document.createElement("img");
-      img.className="weather-legend-image";
-      img.src=model.legendUrl;
-      img.alt=model.legendTitle;
-      img.loading="lazy";
-      img.referrerPolicy="strict-origin-when-cross-origin";
-      img.addEventListener("load",()=>this._weatherLegendPosition(),{once:true});
-      return img;
-    }
     if(model.entries.length){
       const scale=document.createElement("div");
       scale.className="weather-legend-entries";
@@ -248,6 +273,12 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
         node.append(swatch,label);scale.append(node);
       }
       return scale;
+    }
+    if(model.legendUrl){
+      const link=document.createElement("a");link.className="weather-legend-source-link";
+      link.href=model.legendUrl;link.target="_blank";link.rel="noopener noreferrer";
+      link.referrerPolicy="strict-origin-when-cross-origin";
+      link.textContent="Originalfarbskala öffnen";return link;
     }
     return null;
   },
@@ -265,7 +296,11 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     host.hidden=false;
     host.classList.toggle("multiple",models.length>1);
     const fragment=document.createDocumentFragment();
-    models.forEach((model,index)=>{
+    const heading=host.querySelector("[data-weather-legend-heading]");
+    const providers=legendProviders(models);
+    heading.textContent=(models.some(model=>model.family==="precipitation")?"Niederschlagsintensität":"Wetterlegende")+
+      (providers.length?" · "+providers.join(" / "):" · Referenz");
+    groupIdenticalLegendScales(models).forEach((model,index)=>{
       const item=document.createElement("div");item.className="weather-legend-item";item.dataset.weatherLegendSource=model.source;
       const main=document.createElement("div");main.className="weather-legend-main";
       const title=document.createElement("div");title.className="weather-legend-title";title.textContent=model.title;
@@ -273,19 +308,11 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       if(model.subtitle){const sub=document.createElement("div");sub.className="weather-legend-subtitle";sub.textContent=model.subtitle;main.append(sub);}
       const side=document.createElement("div");side.className="weather-legend-side";
       if(model.unit){const unit=document.createElement("span");unit.className="weather-legend-unit";unit.textContent=model.unit;side.append(unit);}
-      if(index===0){
-        const hide=document.createElement("button");hide.type="button";hide.className="weather-legend-hide";hide.dataset.weatherLegendHide="true";hide.setAttribute("aria-label","WeatherRouter-Legende ausblenden");hide.title="Legende ausblenden";hide.textContent="×";side.append(hide);
-      }
       const header=document.createElement("div");header.className="weather-legend-header";header.append(main,side);
       const visual=document.createElement("div");visual.className="weather-legend-visual";
       const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
       item.title=model.details||[model.title,model.subtitle].filter(Boolean).join(" · ");
       item.append(header,visual);
-      if(model.family==="precipitation"){
-        const note=document.createElement("div");note.className="weather-legend-note";
-        note.textContent="Farben der jeweiligen Quelle · Kopfzeile zum Verschieben ziehen.";
-        item.append(note);
-      }
       fragment.append(item);
     });
     list?.replaceChildren(fragment);

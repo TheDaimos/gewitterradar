@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {installWeatherLegendOverlay,PRECIPITATION_LEGEND_ENTRIES,precipitationLegendScales} from '../frontend/modules/weather/legend-overlay.js';
+import {installWeatherLegendOverlay,PRECIPITATION_LEGEND_ENTRIES,precipitationLegendScales,legendProviders,groupIdenticalLegendScales} from '../frontend/modules/weather/legend-overlay.js';
 class Card{}
 installWeatherLegendOverlay(Card);
 const normalized=PRECIPITATION_LEGEND_ENTRIES.map(entry=>({...entry,value:String(entry.value)}));
@@ -22,6 +22,16 @@ test('existing legend manager handles forced on, auto, off and metadata-free V2 
  assert.equal(visible.find(model=>model.source.includes('dwd/')).entries.length,0);
  mode='off';assert.equal(card._weatherLegendVisibleModels().length,0);
  card._weatherLegendClear('precipitation');mode='auto';assert.equal(card._weatherLegendVisibleModels().length,0);
+});
+test('one dynamic heading and identical scales are grouped without hiding different provider colors',()=>{
+ const models=[{source:'precipitation:dwd/radar_precipitation',title:'DWD',unit:'mm/h',entries:normalized},
+ {source:'precipitation:opera/opera_rate_raster',title:'OPERA',unit:'mm/h',entries:normalized},
+ {source:'precipitation:nasa_gibs/satellite_precipitation_imerg_30min',title:'NASA',unit:'mm/h',entries:[],legendUrl:'https://example.org/nasa'}];
+ assert.deepEqual(legendProviders(models),['DWD','OPERA','NASA']);
+ assert.equal(groupIdenticalLegendScales(models).length,2);
+ assert.equal(models[0].title,'DWD','grouping must not mutate live source metadata');
+ const different={...models[0],entries:[{label:'other',value:'1',color:'#ff0000'}]};
+ assert.equal(groupIdenticalLegendScales([different,models[1]]).length,2);
 });
 test('WR metadata is authoritative; legacy frames and unknown providers never inherit a new palette',()=>{
  const custom=[{value:1,label:'WR live',color:'#123456'}];

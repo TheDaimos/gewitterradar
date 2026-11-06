@@ -41,7 +41,7 @@ def test_opera_diagnostic_path_remains_admin_only_and_unapproved():
 
 
 def test_pinned_version_identity_is_consistent():
-    expected = "4.11.143"
+    expected = "4.11.144"
     build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text()
     assert f'BUILD_VERSION = "{expected}"' in build
     for base in FRONTENDS:
@@ -49,5 +49,5 @@ def test_pinned_version_identity_is_consistent():
         runtime = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text())
         assert f'version:"{expected}"' in version
         assert runtime["productVersion"] == expected
-        assert runtime["moduleSetId"] == "E411-143A1"
+        assert runtime["moduleSetId"] == "E411-144A1"
         assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1
