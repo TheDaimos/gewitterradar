@@ -4,7 +4,7 @@
  * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411145r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411146r1";
 
 /** Presentation order only; WR still selects and prioritizes eligible sources.
  * Older satellite estimates paint first; within the same freshness class
@@ -74,16 +74,20 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
    const nativeScale=2**Math.max(0,tile.z-nativeTile.z);
    const childX=((tile.x%nativeScale)+nativeScale)%nativeScale;
    const childY=((tile.y%nativeScale)+nativeScale)%nativeScale;
-   const destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
-   // The crop geometry is always calculated in the DISPLAY tile's geographic
-   // extent. For overzoom, transform it into the requested ancestor image's
-   // native pixels. Never expand the provider's verified regional boundary.
-   const sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size)
-     .map(crop=>({
-       sx:(childX*render.tile_size+crop.sx)/nativeScale,
-       sy:(childY*render.tile_size+crop.sy)/nativeScale,
-       sw:crop.sw/nativeScale,sh:crop.sh/nativeScale
-     }));
+   let destCrops,sourceCrops;
+   if(nativeTile.z>tile.z){
+     const scale=2**(nativeTile.z-tile.z),world=2**tile.z;
+     if(Math.floor(nativeTile.x/scale)!==((tile.x%world)+world)%world||Math.floor(nativeTile.y/scale)!==tile.y){
+       rejected.push({source_id:id,reason:"outside_tile_coverage"});continue;
+     }
+     sourceCrops=rasterTilePixelCrops(nativeTile,coverage,render.tile_size);
+     destCrops=sourceCrops.map(crop=>({sx:((nativeTile.x%scale)+crop.sx/render.tile_size)*tileSize/scale,
+       sy:((nativeTile.y%scale)+crop.sy/render.tile_size)*tileSize/scale,sw:crop.sw/render.tile_size*tileSize/scale,sh:crop.sh/render.tile_size*tileSize/scale}));
+   }else{
+     destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
+     sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size).map(crop=>({sx:(childX*render.tile_size+crop.sx)/nativeScale,
+       sy:(childY*render.tile_size+crop.sy)/nativeScale,sw:crop.sw/nativeScale,sh:crop.sh/nativeScale}));
+   }
    if(!sourceCrops.length||sourceCrops.length!==destCrops.length){
      rejected.push({source_id:id,reason:"outside_tile_coverage"});
      continue;

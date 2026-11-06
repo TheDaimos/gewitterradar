@@ -81,7 +81,8 @@ test('all live generations share the finite decoded-image bound; retired grants 
  assert.doesNotMatch(method,/return false;/,'active WR spatial policy must never fall through to unrestricted V1 imagery');
  assert.match(method,/state\.nasaMosaicEnabled=result\.response\.nasa_mosaic\?\.enabled===true/);
 });
-test('real GR staging waits for first NASA-only paint, but mixed radar mounts without waiting for NASA',async()=>{
+test('real GR staging waits for first NASA-only paint, but mixed radar mounts without waiting for NASA',async t=>{
+ t.mock.method(globalThis,'fetch',async()=>new Response(new Uint8Array([137,80,78,71]),{headers:{'Content-Type':'image/png'}}));
  const priorImage=globalThis.Image,priorDocument=globalThis.document;
  let delay=450;
  globalThis.Image=class{width=256;height=256;set src(value){if(value)setTimeout(()=>this.onload?.(),value.includes('/radar/')?0:delay);}};

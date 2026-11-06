@@ -6,8 +6,8 @@
  * result. Failed/unsupported V2 requests return "fallback" instead of
  * removing a working radar layer.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411145r1";
-import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411145r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411146r1";
+import {createRasterMosaicGridLayer} from "./raster-mosaic-grid-layer.js?v=411146r1";
 
 const finite=n=>typeof n==="number"&&Number.isFinite(n);
 
@@ -121,5 +121,29 @@ export async function prepareRasterMosaicV2({
    const reason=stage==="transport"?"websocket_or_contract":stage==="contract_validation"?"validation_or_render":"layer_preparation_failed";
    onDiagnostic?.({phase:stage,status:"error",error_code:code||error?.name||"unknown",correlation_id:correlationId});
    return {mode:"fallback",reason,errorCode:code||error?.name||"unknown"};
+ }
+}
+
+export class BoundedMosaicRequests{
+ constructor(){this.active=0;this.waiting=null;}
+ run(send,{signal,timeoutMs=20000}={}){
+  return new Promise((resolve,reject)=>{
+   const entry={send,resolve,reject,signal,started:false};
+   const cancel=()=>{if(this.waiting===entry)this.waiting=null;reject(Object.assign(new Error("Superseded viewport"),{code:"gr_viewport_superseded"}));};
+   entry.cancel=cancel;signal?.addEventListener("abort",cancel,{once:true});
+   if(signal?.aborted){cancel();return;}
+   entry.start=()=>{
+    entry.started=true;this.active++;let settled=false;
+    const finish=(error,value)=>{
+     if(settled)return;settled=true;clearTimeout(timer);signal?.removeEventListener("abort",cancel);
+     this.active--;error?reject(error):resolve(value);
+     const next=this.waiting;if(next&&this.active<2){this.waiting=null;if(!next.signal?.aborted)next.start();else next.cancel();}
+    };
+    const timer=setTimeout(()=>finish(Object.assign(new Error("V2 client deadline exceeded"),{code:"gr_v2_client_timeout"})),timeoutMs);
+    Promise.resolve().then(send).then(value=>finish(null,value),error=>finish(error));
+   };
+   if(this.active<2)entry.start();
+   else{if(this.waiting){this.waiting.signal?.removeEventListener("abort",this.waiting.cancel);this.waiting.cancel();}this.waiting=entry;}
+  });
  }
 }

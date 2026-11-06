@@ -3,7 +3,7 @@
  * Not wired to the production precipitation layer or automatic provider routing.
  * No caching, URL tokens, or scientific raster approval.
  */
-import {buildRasterMosaicV2Request} from "./raster-mosaic-consumer.js?v=411145r1";
+import {buildRasterMosaicV2Request} from "./raster-mosaic-consumer.js?v=411146r1";
 
 const TEMPLATE=/^\/api\/weather_router\/opera_preview\/RATE\/(20\d{6}T\d{6}Z)\/(north_first|south_first)\/\{z\}\/\{x\}\/\{y\}\.png$/;
 const NOTICE="OPERA RATE · isolierte Originaldiagnose · Einzelbild nicht für reguläre Bereitstellung zugelassen";

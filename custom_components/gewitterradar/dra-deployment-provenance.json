@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.145",
-  "build": "V4.11.145-DEV-2026-11-06",
-  "runtimeRevision": "411145r1",
-  "moduleSetId": "E411-145A1",
+  "productVersion": "4.11.146",
+  "build": "V4.11.146-DEV-2026-11-06",
+  "runtimeRevision": "411146r1",
+  "moduleSetId": "E411-146A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-LEGEND-UI-04 and WeatherRouter-authorized exclusive NASA tile complement; VM109 real acceptance pending.",
+    "purpose": "WeatherRouter-authorized all-zoom viewport recovery, exact DWD RGB alignment and adaptive NASA concurrency; VM109 real acceptance pending.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

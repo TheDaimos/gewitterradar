@@ -1,4 +1,4 @@
-import {validateSpatialPolicy} from "./nasa-spatial.js?v=411145r1";
+import {validateSpatialPolicy} from "./nasa-spatial.js?v=411146r1";
 /*
  * P7-010: isolated read-only WeatherRouter V2 raster response validation.
  * No provider scoring, spatial source selection or fallback routing in GR.
@@ -77,6 +77,7 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
       ||!time(layer.times.valid_until))
      throw new TypeError("Invalid, unverified or unsafe raster source");
    validateSpatialPolicy(layer);
+   if(layer.transport_policy&&(layer.source_id!=="nasa_gibs/satellite_precipitation_imerg_30min"||!Number.isInteger(layer.transport_policy.max_parallel_downloads)||layer.transport_policy.max_parallel_downloads<2||layer.transport_policy.max_parallel_downloads>32||!Number.isInteger(layer.transport_policy.settings_revision)||layer.transport_policy.settings_revision<0))throw new TypeError("Invalid WR NASA transport policy");
    seen.add(layer.source_id);
  }
  return answer;

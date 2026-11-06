@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41127r1";
-import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411145r1";
+import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411146r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",

@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41109r1";
-import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=411145r1";
+import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=411146r1";
 import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
 import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 

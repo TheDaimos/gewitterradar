@@ -1,7 +1,7 @@
-import {precipitationLegendScales} from "./legend-overlay.js?v=411145r1";
+import {precipitationLegendScales} from "./legend-overlay.js?v=411146r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2} from "./p7-010/raster-mosaic-consumer.js?v=411145r1";
-import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411145r1";
+import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411146r1";
+import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411146r1";
 import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
@@ -452,7 +452,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const center=map.getCenter?.();
     const focus=Number.isFinite(Number(center?.lat))&&Number.isFinite(Number(center?.lng))
       ?{latitude:Math.max(-90,Math.min(90,Number(center.lat))),longitude:wrap(center.lng)}:null;
-    const signature=[context.west,context.south,context.east,context.north,focus?.longitude??"",focus?.latitude??""].map(n=>typeof n==="number"?n.toFixed(2):n).join("|");
+    const size=map.getSize?.()||{};
+    const signature=[map.getZoom?.()??0,size.x??0,size.y??0,context.west,context.south,context.east,context.north,focus?.longitude??"",focus?.latitude??""].map(n=>typeof n==="number"?n.toFixed(6):n).join("|");
     return {context,focus,signature,world};
   },
 
@@ -464,30 +465,39 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     if(state.map===this._map)return true;
     if(state.map){
-      try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
+      try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);if(state.onMove)state.map.off("resize",state.onMove);}catch(_error){}
     }
     state.map=this._map;
     state.onMove=()=>{
       const next=this._weatherRadarViewport()?.signature;
-      if(next&&state.lastViewport&&next!==state.lastViewport){
-        state.v2Generation++;
-        state.v1PendingCancel?.();
-        if(state.v2PendingLayer){
-          try{state.v2PendingLayer._p7AbortPending?.();state.v2PendingLayer.remove();}catch(_){}
-          state.v2PendingLayer=null;
-        }
-      }
+      if(!next||next===state.observedViewport)return;
+      state.observedViewport=next;
+      this._weatherRadarSupersedeRequest();
       // Detach regionally invalid imagery immediately, before asynchronous
       // WR requests return. A German WMS must not travel with the map to Cuba.
       this._weatherRadarCullOutsideViewport();
       this._weatherRadarVisualAudit("viewport_changed");
-      this._scheduleWeatherRadarRefresh("viewport",900);
+      this._scheduleWeatherRadarRefresh("viewport",250);
       this._scheduleWeatherRadarPreload("viewport",220);
     };
     state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();state.onMove?.();};
     state.map.on("moveend",state.onMove);
     state.map.on("zoomend",state.onZoom);
+    state.map.on("resize",state.onMove);
     return true;
+  },
+
+  _weatherRadarSupersedeRequest(){
+    const state=this._weatherRadarState();state.v2Generation++;
+    state.requestAbort?.abort();state.v1PendingCancel?.();
+    if(state.coldWatchdogTimer)clearTimeout(state.coldWatchdogTimer);state.coldWatchdogTimer=null;
+    const layer=state.v2PendingLayer;
+    if(layer){
+      state.replacementCache={images:new Map(layer._p7RasterRequestBudget?.imageCache||[]),snapshot:layer._p7Snapshot};
+      try{layer._p7AbortPending?.();layer.remove();}catch(_){}state.v2PendingLayer=null;
+    }
+    state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
+    state.pending=false;state.pendingForce=false;
   },
 
   _scheduleWeatherRadarRefresh(reason="timer",delay=0,{force=false}={}){
@@ -623,6 +633,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(cycle){cycle.closed=true;cycle.unsubscribe?.();state.wrCycleSubscription=null;}
       const policy=state.wrPolicySubscription;
       if(policy){policy.closed=true;policy.unsubscribe?.();state.wrPolicySubscription=null;}
+      state.requestAbort?.abort();if(state.nasaReadyTimer)clearTimeout(state.nasaReadyTimer);state.nasaReadyTimer=null;
       if(this.__operaDiagnosticEnabled)this._weatherEngineOperaDiagnosticToggle?.();
       state.v2Generation++;
       state.v1PendingCancel?.();
@@ -656,8 +667,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.wrPolicySubscription&&typeof this._hass?.connection?.subscribeEvents==="function"){
       const policy={closed:false,unsubscribe:null};state.wrPolicySubscription=policy;
       Promise.resolve(this._hass.connection.subscribeEvents(event=>{
-        if(state.enabled&&!policy.closed&&event?.data?.precipitation_policy_changed===true){
-          state.layer?._p7RevokeDeferredNASA?.();
+        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true)){
+          if(event.data.nasa_transport_changed===true&&event.data.nasa_transport_policy){state.layer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);state.v2PendingLayer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);}
+          if(event.data.precipitation_policy_changed===true)state.layer?._p7RevokeDeferredNASA?.();
+          if(event.data.nasa_metadata_ready===true&&state.inFlight)this._weatherRadarSupersedeRequest();
           if(event.data.nasa_imerg_complement===true&&state.v2Snapshot?.layers?.some(source=>
              source.source_id==="nasa_gibs/satellite_precipitation_imerg_30min"&&!source.spatial_policy))this._weatherRadarRemoveLayer();
           this._scheduleWeatherRadarRefresh("wr-precipitation-policy",0,{force:true});
@@ -1611,26 +1624,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const expectedEligibleTiles=new Set();
       let authorization=null;
       const result=await prepareRasterMosaicV2({
-        callWS:query=>new Promise((resolve,reject)=>{
-          // Finite client ceiling while WR may perform multiple bounded stages.
-          const budgetMs=20000;
-          const timer=setTimeout(()=>{
-            const error=new Error("V2 client deadline exceeded");
-            error.code="gr_v2_client_timeout";
-            report("timeout",{elapsed_ms:budgetMs,error_code:error.code});
-            reject(error);
-          },budgetMs);
-          report("callws_dispatched",{timeout_ms:budgetMs});
-          Promise.resolve().then(()=>this._hass.callWS(query)).then(
-            value=>{clearTimeout(timer);resolve(value);},
-            error=>{clearTimeout(timer);reject(error);}
-          );
-        }),
+        callWS:query=>(state.mosaicRequests??=new BoundedMosaicRequests()).run(()=>{
+          report("callws_dispatched",{timeout_ms:20000});return this._hass.callWS(query);
+        },{signal:state.requestAbort?.signal}),
         Leaflet:L,viewport:viewport.context,focus:viewport.focus,renderZoom:Math.min(18,Math.max(0,Math.round(this._map.getZoom?.()??0))),
         consumerId:"gewitterradar",correlationId,onDiagnostic:event=>report(event.phase,{status:event.status,error_code:event.error_code||null,layers:event.layers??null,time_deviating:event.time_deviating===true,source_ids:Array.isArray(event.source_ids)?event.source_ids:[],older_background_count:event.older_background_count??0,freshness_classes:Array.isArray(event.freshness_classes)?event.freshness_classes.slice(0,12):[],limitations_count:event.limitations_count??null,limitations:Array.isArray(event.limitations)?event.limitations.slice(0,8):[]}),
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         allowOlderSatelliteBackground:state.allowOlderSatelliteBackground===true,
-        layerOptions:{maxConcurrent:4,previousImageCache:state.layer?._p7RasterRequestBudget?.imageCache,previousSnapshot:state.v2Snapshot,
+        layerOptions:{maxConcurrent:4,previousImageCache:state.replacementCache?.images||state.layer?._p7RasterRequestBudget?.imageCache,previousSnapshot:state.replacementCache?.snapshot||state.v2Snapshot,
           // Share the existing HA refresh/preflight procedure across this
           // generation. A connected WebSocket can outlive its HTTP token;
           // never fan out expired credentials to parallel tile requests.
@@ -1656,7 +1657,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           onTileDiagnostics:item=>{
             if(item?.deferred&&item.tile){
               const world=2**item.tile.z,key=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
-              deferredTiles.add(key);settledGeographicTiles.add(key);
+              deferredTiles.add(key);if(!item.radar_expected)settledGeographicTiles.add(key);
               if(item.tile_status==="complete_verified_coverage")deferredPainted.add(key);
               if(state.layer===staged&&state.v2RenderMetrics){
                 state.v2RenderMetrics.deferred_nasa_tiles=deferredTiles.size;
@@ -1710,11 +1711,14 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             markReady();
           }}
       });
-      if(result.response?.contract_version===2)state.nasaMosaicEnabled=result.response.nasa_mosaic?.enabled===true;
+      if(current()&&result.response?.contract_version===2)state.nasaMosaicEnabled=result.response.nasa_mosaic?.enabled===true;
+      if(result.mode==="v2"&&current())state.replacementCache=null;
       const nasaState=result.response?.nasa_mosaic;
       if(current()&&nasaState?.metadata_pending&&nasaState.planning_cycle){
         if(state.nasaPlanningCycle!==nasaState.planning_cycle){state.nasaPlanningCycle=nasaState.planning_cycle;state.nasaPlanningRetries=0;}
-        if(++state.nasaPlanningRetries<=8)this._scheduleWeatherRadarRefresh("wr-nasa-metadata-ready",2000,{force:true});
+        if(++state.nasaPlanningRetries<=8&&!state.nasaReadyTimer)state.nasaReadyTimer=setTimeout(()=>{
+          state.nasaReadyTimer=null;if(state.enabled)this._scheduleWeatherRadarRefresh("wr-nasa-metadata-ready",0,{force:true});
+        },2000);
       }
       if(result.mode!=="v2"){report("fallback",{reason:result.reason,error_code:result.errorCode||null,response_status:result.responseStatus||null});return state.nasaMosaicEnabled===true;}
       if(!current()){report("stale_after_response");return state.nasaMosaicEnabled===true;}
@@ -1981,7 +1985,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const incomplete=Boolean(state.regionalHold||state.v2RenderMetrics?.partial_geography
       ||state.v2RenderMetrics?.uncovered_tiles
       ||state.layer?.__grRadarTileMetrics?.failed);
-    const minWait=!state.layer
+    const viewportChanged=state.lastViewport!==viewport.signature;
+    const minWait=viewportChanged?0:!state.layer
       ?COLD_START_RETRY_MS
       :incomplete?Math.max(15000,state.viewportRefreshIntervalSeconds*1000)
       :state.lastViewport===viewport.signature?SAME_VIEW_MIN_MS:state.viewportRefreshIntervalSeconds*1000;
@@ -1994,6 +1999,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     }
     if(state.inFlight){state.pending=true;state.pendingForce=state.pendingForce||force;return;}
     const token=++state.v2Generation;
+    state.requestAbort=new AbortController();
     state.inFlight=true;state.inFlightToken=token;state.inFlightStartedAt=now;
     if(!state.layer){
       if(state.coldWatchdogTimer)clearTimeout(state.coldWatchdogTimer);
@@ -2010,7 +2016,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         }
       },36000);
     }
-    state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;
+    state.pending=false;state.lastRequestAt=now;state.lastViewport=viewport.signature;state.observedViewport=viewport.signature;
     this._weatherEngineMonitorEvent?.("refresh_started",{
       reason,zoom:Number(this._map?.getZoom?.()??0),viewport:viewport.signature,
       older_background_opt_in:state.allowOlderSatelliteBackground,interval_s:state.viewportRefreshIntervalSeconds});
@@ -2031,7 +2037,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(typeof document!=="undefined"&&document.visibilityState==="hidden"){
         state.pending=true;state.pendingForce=true;return;
       }
-      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){if(state.inFlightToken===token)state.pending=true;return;}
       const catalog=await this._weatherRouterCapabilities({filter:{domains:["weather"],resource_types:["raster_tile"],available_only:true}});
       const capability=catalog?.status==="ready"?catalog.capabilities.find(item=>item.id===CAPABILITY&&item.enabled&&item.available):null;
       if(!capability){this._weatherRadarHandleUnavailable({unavailable:{code:"capability_not_supported"}});return;}
@@ -2047,7 +2053,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         correlation_id:state.v2CorrelationId||null,
         elapsed_ms:Math.round(performance.now()-v1Started),status:answer.status,
         provider_id:answer.provenance?.provider_id||null,age_seconds:answer.freshness?.age_seconds??null});
-      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){state.pending=true;return;}
+      if(state.v2Generation!==token||this._weatherRadarViewport()?.signature!==viewport.signature){if(state.inFlightToken===token)state.pending=true;return;}
       if(answer.status!=="ready"){this._weatherRadarHandleUnavailable(answer);return;}
       const applied=await this._weatherRadarApplyReady(answer,viewport,token);
       if(!applied&&state.v2Generation===token&&state.enabled){
@@ -2266,8 +2272,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(!state.wrPolicySubscription&&typeof this._hass?.connection?.subscribeEvents==="function"){
       const policy={closed:false,unsubscribe:null};state.wrPolicySubscription=policy;
       Promise.resolve(this._hass.connection.subscribeEvents(event=>{
-        if(state.enabled&&!policy.closed&&event?.data?.precipitation_policy_changed===true){
-          state.layer?._p7RevokeDeferredNASA?.();
+        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true)){
+          if(event.data.nasa_transport_changed===true&&event.data.nasa_transport_policy){state.layer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);state.v2PendingLayer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);}
+          if(event.data.precipitation_policy_changed===true)state.layer?._p7RevokeDeferredNASA?.();
+          if(event.data.nasa_metadata_ready===true&&state.inFlight)this._weatherRadarSupersedeRequest();
           if(event.data.nasa_imerg_complement===true&&state.v2Snapshot?.layers?.some(source=>
              source.source_id==="nasa_gibs/satellite_precipitation_imerg_30min"&&!source.spatial_policy))this._weatherRadarRemoveLayer();
           this._scheduleWeatherRadarRefresh("wr-precipitation-policy",0,{force:true});
@@ -2285,6 +2293,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
   _teardownWeatherRadar(){
     const state=this._weatherRadarState();
+    state.requestAbort?.abort();if(state.nasaReadyTimer)clearTimeout(state.nasaReadyTimer);state.nasaReadyTimer=null;
     for(const key of ["wrPolicySubscription","wrCycleSubscription"]){const sub=state[key];if(sub){sub.closed=true;sub.unsubscribe?.();state[key]=null;}}
     if(state.layer?._p7DeferredNASA)state.layer._p7AbortPending?.();
     this._weatherRadarClearRegionalHold();
@@ -2304,7 +2313,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarClearTimelineStage();
     this.shadow?.querySelector('[data-weather-radar-player="true"]')?.remove();
     state.preloadGeneration+=1;state.preloadQueue=[];state.preloadCache.clear();
-    if(state.map)try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);}catch(_error){}
+    if(state.map)try{if(state.onMove)state.map.off("moveend",state.onMove);if(state.onZoom)state.map.off("zoomend",state.onZoom);if(state.onMove)state.map.off("resize",state.onMove);}catch(_error){}
     state.map=null;state.onMove=null;state.onZoom=null;
     state.inFlight=false;state.inFlightToken=null;state.inFlightStartedAt=0;
     state.pending=false;state.pendingForce=false;
