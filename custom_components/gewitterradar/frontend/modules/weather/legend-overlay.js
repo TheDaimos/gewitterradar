@@ -234,6 +234,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       img.alt=model.legendTitle;
       img.loading="lazy";
       img.referrerPolicy="strict-origin-when-cross-origin";
+      img.addEventListener("load",()=>this._weatherLegendPosition(),{once:true});
       return img;
     }
     if(model.entries.length){
