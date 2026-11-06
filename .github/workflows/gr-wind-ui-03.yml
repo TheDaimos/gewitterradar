@@ -1,0 +1,39 @@
+name: GR-WIND-UI-03 focused wind and protected delivery
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  wind:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Fetch immutable protected GR148 reference
+        run: git fetch --no-tags --depth=1 origin d975a94be5d63eb09242a54920d8c3417205b41f
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Focused wind math, lifecycle and protected rain components
+        run: node --test tests/gr-wind-ui-03.test.mjs tests/gr-legend-ui-01.test.mjs
+      - name: Frontend delivery and version consistency
+        run: |
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+      - name: Install isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/wind-ui03" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/wind-ui03/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Desktop, Android and iPad viewport emulation; animation and lifecycle
+        env:
+          NODE_PATH: ${{ runner.temp }}/wind-ui03/node_modules
+        run: node scripts/test-gr-wind-ui-03-browser.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable HA package contract
+        run: python scripts/verify-hacs-integration-package.py

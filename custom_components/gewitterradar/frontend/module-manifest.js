@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411148r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411149r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.168",
+    "version": "1.2.169",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -322,7 +322,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.23",
+    "version": "1.0.24",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -423,7 +423,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -466,7 +466,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -491,6 +491,21 @@ export const EXPECTED_MODULES=Object.freeze([
       "120-Minuten-Diagramm"
     ],
     "file": "modules/history/chart.js"
+  },
+  {
+    "id": "weather.wind-display",
+    "version": "0.1.0",
+    "group": "Weather-Engine",
+    "function": "Konfigurierbare WR-Windpunktdarstellung",
+    "subfunctions": [
+      "Windfahnen",
+      "Richtungspfeile",
+      "lokale Strömungssegmente",
+      "persistente Symbolfarben",
+      "Premium-Windlegende",
+      "datenabhängige Grenzen"
+    ],
+    "file": "modules/weather/wind-display.js"
   }
 ].map(item=>Object.freeze(item)));
 export const MODULE_META=Object.freeze({id:"core.manifest",version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version,group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

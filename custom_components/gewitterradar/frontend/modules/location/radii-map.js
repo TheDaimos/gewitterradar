@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -1351,6 +1351,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           preferCanvas:true
         }).setView([home.lat,home.lon],initialZoom);
         this._setupMapGestureRecovery(L,mapEl);
+        this._resumeWeatherWind?.();
         this._mapDiagnosticAttachMap?.();
         this._mapDiagnosticLog?.("map.ready",{zoom:this._map?.getZoom?.(),touchZoomEnabled:!!this._map?.touchZoom?.enabled?.(),draggingEnabled:!!this._map?.dragging?.enabled?.()});
         // Leaflet's native zoom control exists only after asynchronous map creation.
