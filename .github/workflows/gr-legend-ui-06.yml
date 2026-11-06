@@ -1,6 +1,7 @@
 name: GR-LEGEND-UI-06 focused legend and package contract
 on:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -12,8 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 1
           persist-credentials: false
+      - name: Fetch immutable protected UI reference
+        run: git fetch --no-tags --depth=1 origin ab55f7b2bfee4a35511b2e95359572e8f2cae6da
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

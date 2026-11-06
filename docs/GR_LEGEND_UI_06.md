@@ -77,7 +77,11 @@ Weitere Änderungen betreffen ausschließlich Versions-/DRA-Metadaten,
 Modulmanifest und Runtime-Manifest, Frontend-Build-/Versionsprüfungen und deren
 vorhandene Integrations-/Dashboardkopien und Prüfsummen. Neue gezielte Prüfungen:
 `tests/gr-legend-ui-06.test.mjs` und der manuell gestartete öffentliche Workflow
-`.github/workflows/gr-legend-ui-06.yml`. Die bestehende Paketstruktur bleibt gleich.
+`.github/workflows/gr-legend-ui-06.yml`. Der vorhandene öffentliche Dispatcher
+`shared-frontend.yml` ruft für GR148 ausschließlich diesen gezielten Prüfpfad
+auf; die allgemeine Wetterdatenkampagne wird für diese UI-Version übersprungen.
+Andere Versionen behalten den bisherigen Workflow. Keine Änderung an `main`.
+Die bestehende Paketstruktur bleibt gleich.
 
 Die geschützte Referenz
 `weather-router-dev@deploy/dev:docs/p7-010-coordination/WR_GR_MOSAIC_REFERENCE_2026-11-06.md`

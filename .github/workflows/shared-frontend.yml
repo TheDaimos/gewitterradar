@@ -9,7 +9,26 @@ permissions:
   contents: read
 
 jobs:
+  release-scope:
+    runs-on: ubuntu-latest
+    outputs:
+      legend_ui06: ${{ steps.scope.outputs.legend_ui06 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: scope
+        name: Restrict GR148 to its authorized legend-only acceptance
+        run: node -e "const fs=require('node:fs'); console.log('legend_ui06='+fs.readFileSync('frontend/version.js','utf8').includes('version:\"4.11.148\"'));" >> "$GITHUB_OUTPUT"
+
+  legend-ui06:
+    needs: release-scope
+    if: needs.release-scope.outputs.legend_ui06 == 'true'
+    uses: ./.github/workflows/gr-legend-ui-06.yml
+
   shared-frontend:
+    needs: release-scope
+    if: needs.release-scope.outputs.legend_ui06 != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
