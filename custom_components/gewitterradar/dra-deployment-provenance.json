@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.152",
-  "build": "V4.11.152-DEV-2026-11-07",
-  "runtimeRevision": "411152r1",
-  "moduleSetId": "E411-152A1",
+  "productVersion": "4.11.153",
+  "build": "V4.11.153-DEV-2026-11-07",
+  "runtimeRevision": "411153r1",
+  "moduleSetId": "E411-153A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WR/GR-WIND-PERF-01: WeatherRouter-authorized windfield reuse, local 130 percent geographic buffer, prepared canvas vectors and colour handover, optional performance metrics and premium wind icons; protected weather architecture unchanged.",
+    "purpose": "GR-WIND-QUICKTOGGLE-01: original premium artwork, shared draggable map wind visibility switch, retained preferences, buffer and renderer; WeatherRouter 0.10.297 unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -30,7 +30,7 @@
     "protectedReference": "d975a94be5d63eb09242a54920d8c3417205b41f",
     "windFieldMinimumWeatherRouter": "0.10.296",
     "windCacheRecommendedWeatherRouter": "0.10.297",
-    "protectedWindReference": "c58359187ba9f07a753edbf4a00fdea97e57e114"
+    "protectedWindReference": "787497648a405bc27495d98ffdedd9206668fd4c"
   },
   "sourceReleaseTag": "v4.10"
 }

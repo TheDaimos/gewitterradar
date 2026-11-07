@@ -1,3 +1,10 @@
+## V4.11.153 DEV · 2026-11-07 · HA-Integration 0.25.60
+
+- Drei freigegebene Original-PNGs unverändert als Hi-Res-Master erhalten; verlustfreie WebP-Laufzeitbilder für Kartenschalter, Einstellungs-Zahnrad und Windfahne. Vorbereitete Premium-UI-Commits übernommen, SVG-Master aufbewahrt und inaktiv.
+- Direkter verschiebbarer Windschalter oben links mit gemeinsamem globalem Sichtbarkeitszustand. Alle Windoptionen einschließlich Farbfläche, Deckkraft und Pause bleiben erhalten; Windkachel und Einstellungsmenü synchron.
+- Bestehende Drag-Architektur, Painter und gültiger 130-%-Puffer wiederverwendet. Keine versteckte Animationsarbeit oder unnötigen identischen Feldabrufe beim Umschalten.
+- 41 gezielte Unit-/Vertragsprüfungen und fünf vollständige Desktop-/Android-/iPad-Browseransichten bestanden. Renderer/Interpolation unverändert; WeatherRouter 0.10.297 unverändert. Details: `docs/GR_WIND_QUICKTOGGLE_01.md`.
+
 ## V4.11.152 DEV · 2026-11-07 · HA-Integration 0.25.59
 
 - Bestehenden Wind-Canvas intern optimiert: vorbereitete Projektion, wiederverwendete Partikelzustände, exakte U/V-Lookups und kurzzeitige visuelle Richtungsglättung; gleiche Dichte und Farbpalette.

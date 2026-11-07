@@ -303,6 +303,36 @@
       "preferredPath": "artwork/help-icons/hires/help-display-eye-closed-master-1254.png",
       "gitBlobSha1": "8ab2541227d9dbc49a1e2f93ec95c60ea87be620",
       "sizeBytes": 1654280
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-animation-toggle-original-master.png",
+      "gitBlobSha1": "363005181ca857cadbd274eeeebbf7d744677011",
+      "sizeBytes": 1807618
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-barb-original-master.png",
+      "gitBlobSha1": "2fafcde16b937c30a5fd993efcb73404d1cb730a",
+      "sizeBytes": 1503388
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-settings-original-master.png",
+      "gitBlobSha1": "e3f902445a35cf7ab056c2e8c35f533156efe9a5",
+      "sizeBytes": 1504865
+    },
+    {
+      "label": "Retained inactive earlier wind SVG master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-barb-premium.svg",
+      "gitBlobSha1": "1799df6588595cb757531c8f187644246eb55c1a",
+      "sizeBytes": 2851
+    },
+    {
+      "label": "Retained inactive earlier wind SVG master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-settings-premium.svg",
+      "gitBlobSha1": "e0b26b5acb09ff732a15755f4c9ec56cef772bf3",
+      "sizeBytes": 2694
     }
   ]
 }

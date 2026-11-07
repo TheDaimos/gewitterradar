@@ -1,3 +1,5 @@
+> **GR 4.11.153 DEV / HA 0.25.60:** [Premium-Windschalter mit den drei freigegebenen Originalgrafiken](docs/GR_WIND_QUICKTOGGLE_01.md). Gemeinsamer Sichtbarkeitszustand, gespeicherte Windoptionen und verschiebbare Kartenbedienung. WR 0.10.297 bleibt unverändert; physische VM109-Abnahme offen.
+
 > **GR 4.11.152 DEV / HA 0.25.59:** [Windperformance, lokaler 130-%-Puffer und vorbereitete Farbflächen](docs/GR_WIND_PERF_01.md), empfohlen mit WR 0.10.297 / Loader 300. Bestehende Windoptik und Wetterdatenarchitektur erhalten. Manuelle VM109-Abnahme ausstehend.
 
 > **GR 4.11.151 DEV / HA 0.25.58:** [Numerisches Windfeld, Strömung und Windfarbfläche](docs/GR_WIND_ANIM_01.md) mit WR 0.10.296 / Loader 299. Manuelle VM109-Abnahme; ältere Hinweise darunter sind historisch.

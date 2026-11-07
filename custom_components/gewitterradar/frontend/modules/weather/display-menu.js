@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.21",
+  version:"0.4.22",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -711,12 +711,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       this._weatherDisplayBindPanelDrag(panel,panel.querySelector("[data-weather-display-drag-handle]"));
     }
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();});
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherWindPositionToggle?.();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
     if(!state.lifecycleAbortHandler){
-      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();};
+      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();this._weatherWindCancelToggleDrag?.();};
       window.addEventListener("blur",state.lifecycleAbortHandler,true);
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
@@ -755,20 +755,20 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     panel.style.top=(minTop+(maxTop-minTop)*clamp(source?.y??DEFAULT_POSITION.y,0,1))+"px";
   },
 
-  _weatherDisplayCancelEyeDrag(){
-    const state=this.__weatherDisplayState;if(!state?.eyeDrag)return;
-    const eye=this.shadow?.getElementById("weather-display-eye-control"),pointerId=state.eyeDrag.pointerId;
+  _weatherDisplayCancelEyeDrag(options=null){
+    const state=options?.state?.()||this.__weatherDisplayState;if(!state?.eyeDrag)return;
+    const eye=options?.element||this.shadow?.getElementById("weather-display-eye-control"),pointerId=state.eyeDrag.pointerId;
     state.eyeDrag=null;eye?.classList.remove("dragging");
     try{if(pointerId!=null&&eye?.hasPointerCapture?.(pointerId))eye.releasePointerCapture(pointerId);}catch(_error){}
-    requestAnimationFrame(()=>this._weatherDisplayPositionEye());
+    requestAnimationFrame(()=>options?options.position():this._weatherDisplayPositionEye());
   },
 
-  _weatherDisplayBindEyeDrag(eye){
+  _weatherDisplayBindEyeDrag(eye,options=null){
     if(!eye||eye.dataset.weatherDisplayEyeDragBound==="1")return;
     eye.dataset.weatherDisplayEyeDragBound="1";
     const begin=event=>{
       if(event.button!==undefined&&event.button!==0)return;
-      const state=this._weatherDisplayState(),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+      const state=(options?.state?.()||this._weatherDisplayState()),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
       if(!mapCard||!mapEl)return;
       event.stopPropagation();
       const rect=eye.getBoundingClientRect(),cardRect=mapCard.getBoundingClientRect();
@@ -777,7 +777,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       try{eye.setPointerCapture?.(event.pointerId);}catch(_error){}
     };
     const move=event=>{
-      const state=this._weatherDisplayState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      const state=(options?.state?.()||this._weatherDisplayState()),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
       event.preventDefault();event.stopPropagation();
       const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
@@ -790,8 +790,9 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       eye.style.bottom="auto";
     };
     const end=event=>{
-      const state=this._weatherDisplayState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      const state=(options?.state?.()||this._weatherDisplayState()),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
       event.stopPropagation();
+      if(event.type==='pointercancel'){state.eyeSuppressClickUntil=performance.now()+450;this._weatherDisplayCancelEyeDrag(options);return;}
       const moved=!!drag.moved,mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
       state.eyeDrag=null;eye.classList.remove("dragging");
       try{eye.releasePointerCapture?.(event.pointerId);}catch(_error){}
@@ -802,7 +803,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-rect.width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-rect.height-inset);
       const left=clamp(rect.left-cardRect.left,minLeft,maxLeft),top=clamp(rect.top-cardRect.top,minTop,maxTop);
       const x=maxLeft>minLeft?(left-minLeft)/(maxLeft-minLeft):0,y=maxTop>minTop?(top-minTop)/(maxTop-minTop):0;
-      if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});
+      if(options){if(moved)options.save({x,y});options.position();}
+      else if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});
       else this._weatherDisplayPositionEye(DEFAULT_EYE_POSITION);
     };
     eye.addEventListener("pointerdown",begin);
@@ -810,8 +812,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     eye.addEventListener("pointerup",end);
     eye.addEventListener("pointercancel",end);
     eye.addEventListener("lostpointercapture",event=>{
-      const state=this._weatherDisplayState();
-      if(state.eyeDrag?.pointerId===event.pointerId)this._weatherDisplayCancelEyeDrag();
+      const state=(options?.state?.()||this._weatherDisplayState());
+      if(state.eyeDrag?.pointerId===event.pointerId)this._weatherDisplayCancelEyeDrag(options);
     });
   },
 

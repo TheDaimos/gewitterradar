@@ -5,13 +5,13 @@ import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.10",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.11",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
 
-const WIND_BARB_ICON=new URL("../../assets/gr-wind-barb-premium.svg",import.meta.url).href;
-const WIND_SETTINGS_ICON=new URL("../../assets/gr-wind-settings-premium.svg",import.meta.url).href;
+const WIND_BARB_ICON=new URL('../../assets/gr-wind-barb-premium-v2-136.webp', import.meta.url).href;
+const WIND_SETTINGS_ICON=new URL('../../assets/gr-wind-settings-premium-v2-136.webp', import.meta.url).href;
 const CATALOG_REFRESH_MS=30000;
 const GENERIC_REFRESH_MS=300000; // V1-Wetterraster im sichtbaren, unbewegten Kartenfenster erneut auflösen.
 const GENERIC_RESOLVE_TIMEOUT_MS=20000,GENERIC_CYCLE_TIMEOUT_MS=30000;
@@ -466,12 +466,12 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
       .weather-layer-status{padding:7px 9px;border:1px solid rgba(255,106,145,.14);border-radius:10px;background:rgba(255,255,255,.025);font-size:9px;line-height:1.35;color:#d7c9d0}.weather-layer-status b{color:#ffb8cb}.weather-layer-status.ready b{color:#8be7b8}.weather-layer-status.warn b{color:#f2b377}
       .weather-layer-section{display:grid;gap:5px}.weather-layer-section-title{padding:0 3px;font-size:7.5px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:#b989a3}
       .weather-layer-quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.weather-layer-action,.weather-layer-category{appearance:none;border:1px solid rgba(255,112,149,.18);border-radius:10px;background:rgba(255,255,255,.028);color:#e8dce2;min-height:44px;padding:7px 8px;font:760 9.5px/1.2 inherit;cursor:pointer;touch-action:manipulation;text-align:left}.weather-layer-action[disabled]{cursor:default;opacity:.72}.weather-layer-action strong,.weather-layer-category strong{display:block;color:#ffd5e0;font-size:10px}.weather-layer-action small,.weather-layer-category small{display:block;margin-top:3px;opacity:.65;font-size:7.8px;font-weight:650}.weather-layer-action.active{border-color:rgba(103,226,168,.38);background:rgba(46,141,102,.12)}.weather-layer-action.busy{border-color:rgba(210,140,255,.42);box-shadow:0 0 14px rgba(203,84,255,.08)}
-      .weather-layer-wind-tile{min-height:44px;min-width:0;box-sizing:border-box;border:1px solid rgba(255,112,149,.18);border-radius:10px;background:rgba(255,255,255,.028);padding:5px 7px;display:flex;align-items:center;gap:4px}
+      .weather-layer-wind-tile{grid-column:1/-1;min-height:44px;min-width:0;box-sizing:border-box;border:1px solid rgba(255,112,149,.18);border-radius:10px;background:rgba(255,255,255,.028);padding:5px 7px;display:flex;align-items:center;gap:4px}
       .weather-layer-wind-tile.active{border-color:rgba(103,226,168,.38);background:rgba(46,141,102,.12)}
       .weather-layer-wind-label{flex:1;min-width:0;color:#e8dce2}.weather-layer-wind-label strong{display:block;color:#ffd5e0;font-size:10px}.weather-layer-wind-label small{display:block;margin-top:3px;opacity:.65;font-size:7.8px;font-weight:650}
       .weather-layer-wind-actions{display:flex;align-items:center;gap:1px;flex:0 0 auto}
-      .weather-layer-wind-icon{appearance:none;border:0;background:transparent;box-shadow:none;min-width:35px;min-height:40px;width:35px;height:40px;padding:2px;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-      .weather-layer-wind-icon img{width:30px;height:30px;object-fit:contain;pointer-events:none;display:block}
+      .weather-layer-wind-icon{appearance:none;border:0;background:transparent;box-shadow:none;min-width:44px;min-height:44px;width:44px;height:44px;padding:2px;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+      .weather-layer-wind-icon img{width:34px;height:34px;object-fit:contain;pointer-events:none;display:block}
       .weather-layer-wind-icon:focus-visible{outline:2px solid #f1d38a;outline-offset:-2px;border-radius:8px}
             .weather-layer-categories{display:grid;gap:4px}.weather-layer-category{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:42px}.weather-layer-category-count{font-size:8px;color:#cb92ad;padding-left:8px}
       .weather-layer-capabilities{display:grid;gap:5px}.weather-layer-capability{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;padding:7px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(5,7,12,.22)}.weather-layer-capability.focus{border-color:rgba(255,115,151,.35);box-shadow:0 0 16px rgba(203,84,255,.08)}.weather-layer-capability-name{font-size:9.5px;font-weight:800;color:#f8dae3}.weather-layer-capability-meta{margin-top:3px;font-size:7.5px;line-height:1.3;color:#ad9da5;overflow-wrap:anywhere}.weather-layer-capability-state{font-size:7.4px;line-height:1.25;text-align:right;color:#a98d9b;white-space:nowrap}
@@ -571,12 +571,12 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const state=this._weatherLayerMenuState();if(!state.model.quick.length)return "";
     const quick=state.model.quick.map(item=>{const capability=item.capability;
       if(item.id==="wind"||capability.id==="weather.model.wind_10m.layer"){
-        const active=this._weatherGenericState(capability.id).enabled;
+        const wind=this._weatherWindState?.(),active=wind?.config.visible===true;
         return `<div class="weather-layer-wind-tile${active?' active':''}" role="group" aria-label="Wind">
-          <div class="weather-layer-wind-label"><strong>Wind</strong><small>${escapeHtml(this._weatherGenericDescribe(capability.id))}</small></div>
+          <div class="weather-layer-wind-label"><strong>Wind</strong><small>${escapeHtml(active?(wind.status||"Ein"):"Aus")}</small></div>
           <div class="weather-layer-wind-actions">
             <button class="weather-layer-wind-icon" type="button" data-weather-layer-action="wind-settings" aria-label="Windanimation einstellen" title="Windanimation einstellen"><img src="${WIND_SETTINGS_ICON}" alt="" aria-hidden="true"></button>
-            <button class="weather-layer-wind-icon" type="button" data-weather-layer-action="toggle" data-capability="${escapeHtml(capability.id)}" aria-label="Wind ${active?'deaktivieren':'aktivieren'}" aria-pressed="${active?'true':'false'}" title="Wind ein- oder ausschalten"><img src="${WIND_BARB_ICON}" alt="" aria-hidden="true"></button>
+            <button class="weather-layer-wind-icon" type="button" data-weather-layer-action="wind-toggle" aria-label="Wind ${active?'deaktivieren':'aktivieren'}" aria-pressed="${active?'true':'false'}" title="Wind ein- oder ausschalten"><img src="${WIND_BARB_ICON}" alt="" aria-hidden="true"></button>
           </div>
         </div>`;
       }
@@ -660,6 +660,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(action==="back-category"){const category=button.dataset.category||this._weatherLayerMenuState().category;if(category)this._weatherLayerMenuSetView(`weather-router-category:${category}`,{category});return;}
     if(action==="refresh"){this._weatherLayerMenuProbe({refresh:true});return;}
     if(action==="display"){this._weatherDisplayOpenFromLayerMenu?.();return;}
+    if(action==="wind-toggle"){this._weatherWindToggle?.();return;}
     if(action==="wind-settings"){this._weatherWindOpen?.();return;}
     if(action==="toggle"){this._weatherLayerMenuToggle(button.dataset.capability);return;}
     if(action==="timeline"){const radar=this._weatherRadarState?.();this._setWeatherRadarTimelineVisible?.(!radar?.timelineVisible);return;}

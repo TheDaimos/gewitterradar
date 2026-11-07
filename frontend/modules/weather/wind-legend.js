@@ -1,7 +1,7 @@
 import { installWeatherLegendOverlay } from './legend-overlay.js?v=411149r1';
-import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411152r1';
-import { drawWindGlyph } from './wind-canvas.js?v=411152r1';
-import { WIND_FIELD_COLORS } from './wind-field.js?v=411152r1';
+import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411153r1';
+import { drawWindGlyph } from './wind-canvas.js?v=411153r1';
+import { WIND_FIELD_COLORS } from './wind-field.js?v=411153r1';
 
 // Reuse the existing premium overlay, drag, bounds and chevrons with isolated storage.
 class WindLegend {}
@@ -12,7 +12,7 @@ export function createWindLegend(owner){
  view.shadow={getElementById:id=>owner.shadow?.getElementById(id.startsWith('weather-legend-')?id.replace('weather-legend-','weather-wind-legend-'):id),
   append:node=>{if(node.id==='weather-legend-style')node.id='weather-wind-legend-style';owner.shadow?.append(node);}};
  view.__weatherLegendState={models:new Map(),resizeHandler:null,resizeObserver:null,collapsed:false,anchor:null,ui:state.config.legendUi,position:state.config.legendPosition,mounted:false};
- view._weatherLegendMode=()=>state.legendOpen?'auto':'off';
+ view._weatherLegendMode=()=>state.legendOpen&&state.config.visible?'auto':'off';
  view._weatherLegendSavePosition=position=>{state.config.legendPosition=position;owner._weatherWindSave();};
  view._weatherLegendSaveUi=ui=>{state.config.legendUi={...ui};owner._weatherWindSave();};
  view._weatherDisplaySetLegendMode=()=>{state.legendOpen=false;view._weatherLegendSyncUi();};

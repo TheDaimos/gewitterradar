@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411152r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411153r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.172",
+    "version": "1.2.173",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.32",
+    "version": "1.0.33",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -423,7 +423,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.10",
+    "version": "1.1.11",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.21",
+    "version": "0.4.22",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [

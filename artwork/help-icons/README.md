@@ -67,3 +67,17 @@ WeatherRouter state semantics:
 The asset metadata and SHA-256 identities are recorded in
 `help-display-eye-ASSET_MANIFEST.json` and `provenance.json`.
 
+
+## GR-WIND-QUICKTOGGLE-01 · freigegebene Originalgrafiken
+
+Die drei Original-PNGs bleiben byteidentisch in `hires/gr-wind-*-original-master.png`.
+Auflösungen: Strömungsschalter 1254×1254, Zahnrad und Windfahne je 1024×1024 RGBA.
+Keine Nachzeichnung, Neugenerierung, Beschneidung oder Farbänderung. Die im ersten
+Auftrag `77131.png` genannte Rolle übernimmt die tatsächlich übergebene Datei
+`04_Animierte_Pfeile_Premium_Transparent.png`.
+
+`gr-wind-originals-ASSET_MANIFEST.json` enthält Herkunft, SHA256 und verlustfreie
+136-/272-px-WebP-Ableitungen (LANCZOS, Seitenverhältnis/Alpha erhalten). Sichtbare
+Größe über CSS: Karte 48 px, Kachel 34 px in 44-px-Touchzielen. Die bisherigen
+SVG-Master bleiben dauerhaft erhalten, sind aber keine aktiven Windschalter-Assets.
+Alle fünf Masterinhalte sind im Hi-Res-Retentionsvertrag registriert.

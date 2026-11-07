@@ -1,5 +1,5 @@
-import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411152r1';
-import { sampleWindField,sampleWindFieldInto,windFieldStepValid,writeWindFieldColor,windFieldGlyphs,windFieldSnapshot,windFieldVisibleBounds,windFieldOverlaps } from './wind-field.js?v=411152r1';
+import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411153r1';
+import { sampleWindField,sampleWindFieldInto,windFieldStepValid,writeWindFieldColor,windFieldGlyphs,windFieldSnapshot,windFieldVisibleBounds,windFieldOverlaps } from './wind-field.js?v=411153r1';
 
 const DEG=Math.PI/180;
 export const windMercatorY=lat=>Math.log(Math.tan(Math.PI/4+Math.max(-89.9,Math.min(89.9,lat))*DEG/2))/DEG;

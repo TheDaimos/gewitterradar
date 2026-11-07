@@ -39,7 +39,7 @@ test('WR point pairs require ready state, proper units, quantity, provider, inst
 });
 test('eight central colours, opt-in defaults and durable settings preserve independent preferences',()=>{
  assert.equal(WIND_COLORS.length,8);assert.equal(new Set(WIND_COLORS.map(v=>v.hex)).size,8);
- assert.equal(normalizeWindConfig().enabled,false);assert.equal(normalizeWindConfig().mode,'barbs');assert.equal(normalizeWindConfig().animationExplicit,false);
+ assert.equal(normalizeWindConfig().visible,false);assert.equal(normalizeWindConfig().mode,'barbs');assert.equal(normalizeWindConfig().animationExplicit,false);
  const all={enabled:true,mode:'animated',color:'violet',colorMode:'pressure',highColor:'gold',lowColor:'blue',tempo:'fast',density:'high',paused:true,colorField:true,fieldOpacity:64,unit:'kn',animationExplicit:true,legendPosition:{x:.3,y:.7},legendUi:{view:'classes',rain:true,snow:false}};
  const saved=normalizeWindConfig(all);assert.deepEqual(readWindConfig({getItem:key=>{assert.equal(key,WIND_STORAGE);return JSON.stringify(saved);}}),saved);
  assert.equal(normalizeWindConfig({fieldOpacity:999}).fieldOpacity,100);assert.equal(normalizeWindConfig({mode:'junk',color:'red'}).mode,'barbs');
@@ -70,7 +70,7 @@ test('one delta-time scheduler: motion, pause, reduced motion, hidden tab, calm,
 });
 test('point batching ignores obsolete responses and never queries on animation frames',async()=>{
  globalThis.document={hidden:false};class Card{};installWeatherWind(Card);const card=new Card();card._weatherWindRender=()=>{};
- const s=card._weatherWindState();s.config.enabled=true;s.map={getSize:()=>({x:900,y:600}),containerPointToLatLng:([x,y])=>({lat:y/100,lng:x/100})};
+ const s=card._weatherWindState();s.config.visible=true;s.config.enabled=true;s.map={getSize:()=>({x:900,y:600}),containerPointToLatLng:([x,y])=>({lat:y/100,lng:x/100})};
  const deferred=[];let active=0,maxActive=0;
  card._weatherRouterResolve=(id,p)=>{active++;maxActive=Math.max(active,maxActive);return new Promise(resolve=>deferred.push(()=>{active--;resolve(answer(id,id===WIND_SPEED?8:270));}));};
  s.pending=true;const pending=card._weatherWindFetch();assert.equal(deferred.length,4);assert.equal(maxActive,4);
