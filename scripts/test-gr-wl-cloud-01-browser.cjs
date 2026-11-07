@@ -1,7 +1,7 @@
 // Real Chromium pixel regression: actual cloud adapter and existing Raster-Labor.
 const assert=require("node:assert/strict"),fs=require("node:fs"),sharp=require("sharp"),{chromium}=require("playwright");
 const out="artwork/acceptance/gr-wl-cloud-01";fs.mkdirSync(out,{recursive:true});
-const clean=p=>fs.readFileSync(p,"utf8").replace(/^import [^\n]+\n/gm,"").replace(/\bexport\s+(?=(?:const|function|class)\b)/g,"").replace(/^export\\s*\\{[^}]*\\};?\\s*$/gm,"").replaceAll("import.meta.url",JSON.stringify("https://example.test/frontend/modules/weather/layer-menu.js"));
+const clean=p=>fs.readFileSync(p,"utf8").replace(/^import [^\n]+\n/gm,"").replace(/\bexport\s+(?=(?:const|function|class)\b)/g,"").replace(/^export\s*\{[^}]*\};?\s*$/gm,"").replaceAll("import.meta.url",JSON.stringify("https://example.test/frontend/modules/weather/layer-menu.js"));
 (async()=>{
 const browser=await chromium.launch({headless:true,executablePath:process.argv[2]});
 try{
