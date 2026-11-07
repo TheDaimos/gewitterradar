@@ -121,4 +121,29 @@ Native Daten und lokale Messausgaben bleiben außerhalb der Quellcode-Repositori
 
 Die lokale Windows-Manipulationsprobe für den deterministischen Build scheiterte beim vorübergehenden Umschreiben einer JavaScriptdatei mit `UNKNOWN` im Dateisystem. Der Generator stellte die Auslieferung danach wieder her und die vollständige Paritätsprüfung bestand. Die öffentliche Linux-CI führt diese Manipulations-/Wiederherstellungsprüfung aus; der lokale Fehler wird nicht als bestandener Test ausgegeben.
 
-**Veröffentlichungsnachweise werden nach erfolgreicher öffentlicher CI und Paketprüfung im folgenden Release-Abschnitt ergänzt. Bis dahin ist dies keine Fertigmeldung.** Physische Android-/iPad-/HA-Abnahme, Fresh Install/Update und visuelle Wetterrealabnahme auf VM109 bleiben ausdrücklich offen. TEST69, historische Niederschlagsprüfkampagnen, geschützte Referenzen, bestehende Tags und `main` bleiben unangetastet.
+Physische Android-/iPad-/HA-Abnahme, Fresh Install/Update und visuelle Wetterrealabnahme auf VM109 bleiben ausdrücklich offen. TEST69, historische Niederschlagsprüfkampagnen, geschützte Referenzen, bestehende Tags und `main` bleiben unangetastet.
+
+
+## Verifizierter CI- und Paketnachweis
+
+* GR-Laufzeitimplementierung: `b0aff43ab843df7784122a3daad8a8f5d994b11b`.
+* Ergänzende reine HA-Testkorrektur: `70a7331d8ba2dd7141724c67caf0b21a0f32e1f5`; die ausgelieferten Runtime-Dateien sind gegenüber dem ersten Commit unverändert.
+* WR-Laufzeitimplementierung: `2a8ce11df87c1ea6366643d9076f3c4d5ba1e3c8`.
+* Öffentlicher synthetischer WR-Prüfstand: `77e6da0eacef65069551c01be3d7b047d6a6204d`. Keine private Implementierung exportiert.
+* [Öffentliche GR-Temperatur-/Browser-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42404693788): **success**, 49 gezielte Tests, fünf vollständige Browseransichten, Originalasset-Aufbewahrung, deterministischer Build einschließlich Manipulationsproben, 180 HA-Stagingdateien. Ausschließlich Temperatur-Scope; historische Kampagnen übersprungen.
+* [Öffentliche HA-/HACS-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42405022778): **success** in allen vier Jobs; HA-Tests, HACS, hassfest und Paket-/DRA-Vertrag. Der vorherige Lauf 42404696180 fand eine weitere feste 35-Modul-Annahme (`1 failed, 62 passed`). Sie wurde durch einen vollständigen ID-/Versionsvergleich mit dem aktuellen Manifest ersetzt; keine Produktfunktion wurde dafür verändert.
+* [Öffentliche WR-Vertrags-CI](https://github.com/TheDaimos/weather-router-dev-pub/actions/runs/42404693667): **success**, drei Prüfungen der vier ausdrücklich synthetischen Beispiele. Der lokale private Backendumfang bleibt gesondert mit 26 Tests dokumentiert.
+
+Installationspakete zur manuellen DEV-Abnahme, feste ZIP-Zeitstempel und aus Git gelesene Originalbytes:
+
+| Paket | Dateien | SHA256 |
+|---|---:|---|
+| `gewitterradar-0.25.63-dev.zip` | 180 | `00d043989445086ac2afed68ee763eda3663eb382501e4cab3a806f55b58cb15` |
+| `gewitterradar-dashboard-4.11.156-dev.zip` | 166 | `a148f7cc8e524b4a3c98f1d668558cd5cf9e76a65f55b8e95a7ac2c15267d4bb` |
+| `weather-router-0.10.298-dev.zip` | 163 | `d16e0ead2788ada2b9dd843961d77bbef47fb88af0f2915fd634b1525661e964` |
+
+Alle **164 gemeinsamen Frontenddateien** der HA-/Dashboard-ZIPs sind bytegleich. Das Dashboard enthält daneben zwei eigene Auslieferungsdateien. 36 registrierte Module, Runtime `411156r1`, Modulsatz `E411-156A1`, HA `0.25.63`, WR `0.10.298`, Loader `301` sind im Paketinhalt geprüft. Python-Syntax und ZIP-CRC geprüft. Dokumentations- und Testcommits ändern diese Runtime-ZIPs nicht.
+
+DRA-Quelle bleibt jeweils `deploy/dev`. Zugehörige DEV-Releases: [GR 4.11.156](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.156-dev) und [WR 0.10.298](https://github.com/TheDaimos/weather-router-dev/releases/tag/v0.10.298-dev). `deployment.json`, `changed-files.txt` und `SHA256SUMS.txt` im jeweiligen Release liefern die exakte Bereitstellungsidentität und vollständige Dateiliste. Die Veröffentlichungskontrolle prüft GitHub-Asset-Digests, Tag-Commit und ursprüngliche Referenzen. Der WR-Link erfordert Zugriff auf das private Repository.
+
+Die GitHub-Berichte werden nach dem Commit erneut gelesen und anhand ihrer Git-Blob-Identität geprüft. Es wird weder auf VM109 installiert noch eine Companion-Realabnahme behauptet. Private Actions bleiben deaktiviert; PROD VM101 bleibt unangetastet.
