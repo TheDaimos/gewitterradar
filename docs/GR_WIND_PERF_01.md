@@ -226,6 +226,7 @@ Geöffnete Wind-Unterbereiche und Scrollposition bleiben bei Zustandsupdates erh
   verzögerter Abruf, Fehler, Sperre, Freigabeablauf, Modellwechsel, Farbfläche allein,
   bestehende Rasterzustände, Touch, Tastatur, Persistenz und Premium-Icons erfolgreich.
 - Frontend-/Runtime-/DRA-Identität und 162 bytegleiche Integrationsdateien geprüft.
+- Paketabgleich: alle 146 Frontenddateien der HA-/Dashboard-ZIPs bytegleich.
 - **15 lokale WR-Prüfungen**: fünf Cache-, acht bestehende Feld-/Policy-/Transport-
   und zwei Versionsprüfungen. Öffentliche GR-CI verwendet ausschließlich öffentlichen
   Testcode und synthetische Felder, keine kopierten privaten WR-Quellen.
