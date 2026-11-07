@@ -154,7 +154,7 @@ for(const marker of ['precipitationStyleChanged','precipitationOpacityChanged','
 assert.equal(displayMenuSource.includes('node.style.transform='),false,'WeatherRouter raster styling must not overwrite Leaflet tile transforms');
 assert.equal(displayMenuSource.includes('transformOrigin'),false,'WeatherRouter raster styling must not set Leaflet tile transform origin');
 const legendOverlaySource=await readFile(new URL('../frontend/modules/weather/legend-overlay.js',import.meta.url),'utf8');
-for(const marker of ['id:"weather.legend-overlay"','version:"0.1.1"','_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','weather-legend-header','data-weather-legend-hide','data-weather-legend-view','weatherSectionToggle','weather-legend-discrete-bar'])assert.ok(legendOverlaySource.includes(marker),'WeatherRouter native legend overlay contract missing: '+marker);
+for(const marker of ['id:"weather.legend-overlay"','version:"0.1.3"','_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','weather-legend-header','data-weather-legend-hide','data-weather-legend-view','weatherSectionToggle','weather-legend-discrete-bar'])assert.ok(legendOverlaySource.includes(marker),'WeatherRouter native legend overlay contract missing: '+marker);
 assert.equal(legendOverlaySource.includes('document.createElement("a")'),false,'Legends must remain inside the dashboard');
 assert.equal(legendOverlaySource.includes('document.createElement("img")'),false,'Native classes replace external legend images');
 const precipitationSource=await readFile(new URL('../frontend/modules/weather/precipitation-layer.js',import.meta.url),'utf8');
