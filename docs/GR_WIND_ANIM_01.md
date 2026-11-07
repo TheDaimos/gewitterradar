@@ -227,6 +227,24 @@ WR-Paket: [WR 0.10.296 DEV](https://github.com/TheDaimos/weather-router-dev/rele
 `SHA256SUMS.txt` und `deployment.json` enthalten überprüfbare Paketidentität und
 Auslieferungscommit. Diese Berichte werden nach dem Push über GitHub erneut gelesen.
 
-Release-/CI-Abschluss wird nach dem öffentlichen Lauf ergänzt. Physische Android-,
-iPad- und HA-VM109-Abnahme steht aus. Kein TEST69, keine allgemeinen Wetterdaten-
-Testkampagnen, keine privaten Actions, keine Änderungen an `main` oder VM101.
+Implementierungscommit GR: `9bcfde7920c5bb59b8fa9b4cc62488f277672b78`.
+Implementierungscommit WR: `166535f7b55e0fe44f0ae16600acded5a8fc4d14`.
+[Gezielte öffentliche CI 42356476589](https://github.com/TheDaimos/gewitterradar/actions/runs/42356476589)
+ist erfolgreich: Release-Scope und `wind-anim01 / wind-field` grün, allgemeiner
+Frontendlauf und frühere UI-Testlinien übersprungen. Sie prüft exakt den genannten
+GR-Codecommit. Anschließende Berichtscommits ändern keinen geprüften Laufzeitcode.
+Der endgültige Auslieferungscommit steht in der Release-Identität `deployment.json`.
+
+Der erste öffentliche Push löste daneben bestehende Altworkflows aus.
+42356476543 / 42356476529 erwarten noch 34 statt der bereits zuvor vorhandenen
+35 Module. Der allgemeine Integrationslauf 42356476444 meldet diese alte Annahme
+und eine feste Produktversion 4.11.148; sein Abbruchversuch traf ihn bereits
+abgeschlossen. Diese historischen Assertionfehler wurden gelesen und nicht als
+grün ausgegeben oder durch Änderung geschützter Referenzen kaschiert. Sie sind
+kein Gate dieser begrenzten Wind-DEV-Linie. Der aktuelle gezielte Lauf prüft die
+korrekten 35 Module sowie die synchronisierte Version 4.11.151 / HA0.25.58.
+Keine erneute allgemeine Kampagne gestartet; spätere Berichtscommits nutzen
+`skip ci`. Private Actions waren und bleiben deaktiviert.
+
+Physische Android-, iPad- und HA-VM109-Abnahme steht aus. Kein TEST69, keine
+wissenschaftliche Neuberechnung, keine Änderungen an `main` oder VM101.
