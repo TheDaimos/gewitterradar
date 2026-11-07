@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 const radii=await read('frontend/modules/location/radii-map.js');
 const core=await read('frontend/modules/core/base-context.js');
-assert.match(radii,/"version": "1.0.23"/);
+assert.match(radii,/"version": "1.0.24"/);
 assert.match(core,/version:"1.0.8"/);
 assert.match(core,/if \(outer > safeOuter\) \{/);
 assert.match(core,/Math\.min\(8192,Math\.max\(2048,4\*/);
