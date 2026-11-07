@@ -178,3 +178,30 @@ Die dokumentierten Prüfungen sind Browseremulation mit synthetischen Wetterdate
 die physische Android-/iPad-/VM109-Realabnahme erfolgt erst durch den Nutzer nach
 manueller Installation. CI-/Commitnachweis wird nach dem Lauf ergänzt; dieser
 Bericht wird anschließend von GitHub zurückgelesen und per Blob abgeglichen.
+
+
+## Verifizierter öffentlicher Entwicklungsabschluss
+
+Implementierungscommit: `10950f765ba1ccde9487108f1cc07c1c1d613e2e`.
+Erste Laufzeitimplementierung: `a84ea2784820d41d68b3c3d938746f67a36e2655`.
+Der folgende reine Testcommit korrigiert die Eingabemodalität: Im ersten öffentlichen
+[Lauf 42389584301](https://github.com/TheDaimos/gewitterradar/actions/runs/42389584301) wurde nach
+Mausziehen nur programmatisch fokussiert, wodurch Chromium unter Linux noch keinen
+Tastatur-Fokusrahmen verlangte. Der Test verwendet jetzt zuerst einen echten
+Tab-Tastendruck und prüft weiterhin `:focus-visible`, Fokusrahmen und Space/Enter.
+Keine Laufzeitänderung und keine abgeschwächte Prüfung der Tastaturbedienbarkeit.
+
+Öffentliche CI [Run 42389929329](https://github.com/TheDaimos/gewitterradar/actions/runs/42389929329)
+**erfolgreich**, exakt auf diesem Codecommit. `release-scope` und
+`wind-quick01 / wind-quick-toggle` erfolgreich; allgemeine und historische
+Testkampagnen übersprungen. Alle 41 Unit-/Vertragstests, Hi-Res-Retention,
+Versions-/Asset-/Lieferidentität, vollständige Karte in fünf Viewports mit Touch/
+Tastatur und HACS-Installationsstaging bestanden. Keine privaten Actions.
+
+Dieser nachfolgende Commit ergänzt ausschließlich diesen Bericht. Der CI-geprüfte
+Laufzeitcode bleibt unverändert. Auslieferungscommit und tatsächliche SHA256 stehen
+im Release in `deployment.json` und `SHA256SUMS.txt`; `changed-files.txt` benennt
+die tatsächlich geänderten Dateien. Vor Veröffentlichung wird dieser Bericht über
+GitHub erneut gelesen und der Blob gegen den lokalen Commit geprüft. Die drei
+Original-PNGs sind zusätzlich im Originalarchiv des Releases nachprüfbar enthalten.
+Physische Android-/iPad-/VM109-Abnahme bleibt offen; keine automatische Installation.
