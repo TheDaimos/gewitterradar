@@ -1,3 +1,10 @@
+## V4.11.152 DEV · 2026-11-07 · HA-Integration 0.25.59
+
+- Bestehenden Wind-Canvas intern optimiert: vorbereitete Projektion, wiederverwendete Partikelzustände, exakte U/V-Lookups und kurzzeitige visuelle Richtungsglättung; gleiche Dichte und Farbpalette.
+- Begrenzter lokaler RAM-Puffer für 130 % Viewportbreite/-höhe, WR-Gültigkeit, LRU und World-Wrap. Nur sichtbare Fläche animiert; neue Generation samt vorbereiteter Farbfläche atomar übernehmen.
+- Farbflächen kooperativ vorbereiten und Bildpuffer wiederverwenden; optionale Performanceanzeige und vorhandene goldene Windmenü-Icons mit 44-px-Touchzielen.
+- 36 gezielte GR- und 15 lokale WR-Prüfungen, 15 vollständige Browseransichten. Kontrollierter Vergleich bei gleicher Dichte: mittlere Zeichenzeit 13,46→5,61 ms (CPU-Emulation), 5,81→1,85 ms (Desktop). Keine physische Geräte-/HA-Abnahme. Details: `docs/GR_WIND_PERF_01.md`.
+
 ## V4.11.151 DEV · 2026-11-07 · HA-Integration 0.25.58
 
 - Additive WR-V2-Windfeldfähigkeit für zusammenhängende numerische U-/V-Modelldaten; WR 0.10.296 / Loader 299 entscheidet über Quelle, NoData, Abdeckung und Freigabe.

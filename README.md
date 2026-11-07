@@ -1,3 +1,5 @@
+> **GR 4.11.152 DEV / HA 0.25.59:** [Windperformance, lokaler 130-%-Puffer und vorbereitete Farbflächen](docs/GR_WIND_PERF_01.md), empfohlen mit WR 0.10.297 / Loader 300. Bestehende Windoptik und Wetterdatenarchitektur erhalten. Manuelle VM109-Abnahme ausstehend.
+
 > **GR 4.11.151 DEV / HA 0.25.58:** [Numerisches Windfeld, Strömung und Windfarbfläche](docs/GR_WIND_ANIM_01.md) mit WR 0.10.296 / Loader 299. Manuelle VM109-Abnahme; ältere Hinweise darunter sind historisch.
 
 > **OPERA-Korrektur V4.11.139 DEV / HA 0.25.46:** [Installation mit WR 0.10.287](docs/OPERA_RATE_REAL_FIX_2026-11-05.md). Erneute VM109-Abnahme ausstehend.
