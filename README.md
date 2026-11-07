@@ -1,3 +1,5 @@
+> **GR 4.11.156 DEV / HA 0.25.63:** [Weltweite Temperatur, kohärente 850-hPa-Advektion, GeoPointContext und Celsius/Fahrenheit/Kelvin](docs/GR_TEMP_WORLD_01.md). Gemeinsame Auslieferung mit dem freigegebenen Original-Temperaturicon. Erfordert WR 0.10.298 / Loader 301; bestehender Wind-/Niederschlagspfad geschützt. Manuelle VM109-Abnahme offen.
+
 > **GR 4.11.153 DEV / HA 0.25.60:** [Premium-Windschalter mit den drei freigegebenen Originalgrafiken](docs/GR_WIND_QUICKTOGGLE_01.md). Gemeinsamer Sichtbarkeitszustand, gespeicherte Windoptionen und verschiebbare Kartenbedienung. WR 0.10.297 bleibt unverändert; physische VM109-Abnahme offen.
 
 > **GR 4.11.152 DEV / HA 0.25.59:** [Windperformance, lokaler 130-%-Puffer und vorbereitete Farbflächen](docs/GR_WIND_PERF_01.md), empfohlen mit WR 0.10.297 / Loader 300. Bestehende Windoptik und Wetterdatenarchitektur erhalten. Manuelle VM109-Abnahme ausstehend.

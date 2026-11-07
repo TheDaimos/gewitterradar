@@ -12,6 +12,7 @@ jobs:
   release-scope:
     runs-on: ubuntu-latest
     outputs:
+      temperature: ${{ steps.scope.outputs.temperature }}
       legend_ui06: ${{ steps.scope.outputs.legend_ui06 }}
       wind_ui03: ${{ steps.scope.outputs.wind_ui03 }}
       wind_fix01: ${{ steps.scope.outputs.wind_fix01 }}
@@ -30,6 +31,12 @@ jobs:
           node -e "console.log('wind_anim01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.151\"'));" >> "$GITHUB_OUTPUT"
           node -e "console.log('wind_perf01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.152\"'));" >> "$GITHUB_OUTPUT"
           node -e "console.log('wind_quick01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.153\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('temperature='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.156\"'));" >> "$GITHUB_OUTPUT"
+
+  temperature:
+    needs: release-scope
+    if: needs.release-scope.outputs.temperature == 'true'
+    uses: ./.github/workflows/gr-temp-world-01.yml
 
   legend-ui06:
     needs: release-scope
@@ -63,7 +70,7 @@ jobs:
 
   shared-frontend:
     needs: release-scope
-    if: needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true' && needs.release-scope.outputs.wind_fix01 != 'true' && needs.release-scope.outputs.wind_anim01 != 'true' && needs.release-scope.outputs.wind_perf01 != 'true' && needs.release-scope.outputs.wind_quick01 != 'true'
+    if: needs.release-scope.outputs.temperature != 'true' && needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true' && needs.release-scope.outputs.wind_fix01 != 'true' && needs.release-scope.outputs.wind_anim01 != 'true' && needs.release-scope.outputs.wind_perf01 != 'true' && needs.release-scope.outputs.wind_quick01 != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

@@ -1,3 +1,5 @@
+> **GR 4.11.156 DEV / HA 0.25.63:** [Weltweite Temperatur, kohärente 850-hPa-Advektion, GeoPointContext und Celsius/Fahrenheit/Kelvin](docs/GR_TEMP_WORLD_01.md). Gemeinsame Auslieferung mit dem freigegebenen Original-Temperaturicon. Erfordert WR 0.10.298 / Loader 301; bestehender Wind-/Niederschlagspfad geschützt. Manuelle VM109-Abnahme offen.
+
 ## V4.11.153 DEV · 2026-11-07 · HA-Integration 0.25.60
 
 - Drei freigegebene Original-PNGs unverändert als Hi-Res-Master erhalten; verlustfreie WebP-Laufzeitbilder für Kartenschalter, Einstellungs-Zahnrad und Windfahne. Vorbereitete Premium-UI-Commits übernommen, SVG-Master aufbewahrt und inaktiv.

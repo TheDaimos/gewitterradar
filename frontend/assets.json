@@ -83,9 +83,9 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "5e0503f125ae27a1a38f89fedb4b205840329f965cc9b8e5fb32a85b02609cc7",
+    "sha256": "e2372b5c60548dfccd3ba46644723325896149a0af353c97090e5fb34ab43858",
     "protected": false,
-    "sizeBytes": 2791
+    "sizeBytes": 2873
   },
   {
     "file": "assets/gewitterradar-trend-arrow-01.webp",
@@ -387,5 +387,15 @@
     "sha256": "190f354bc32e20087b0285bd2d3db53bf0c8d13bd2fd53062571dd8501003ff2",
     "protected": true,
     "referenced": false
+  },
+  {
+    "file": "assets/gr-temperature-premium-v1-136.webp",
+    "sha256": "85f3ce5b799fd04b8bcff46b7fefa3df7cf2127f6c322553702bec07dbbb51d2",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-temperature-premium-v1-272.webp",
+    "sha256": "544a76ead85e426b235c89d88237244c00f1884ee789f4f0ba7eff0022daa782",
+    "protected": true
   }
 ]

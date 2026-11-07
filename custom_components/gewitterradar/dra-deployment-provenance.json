@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.155",
-  "build": "V4.11.155-DEV-2026-11-07",
-  "runtimeRevision": "411155r1",
-  "moduleSetId": "E411-155A1",
+  "productVersion": "4.11.156",
+  "build": "V4.11.156-DEV-2026-11-07",
+  "runtimeRevision": "411156r1",
+  "moduleSetId": "E411-156A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WIND-QUICKTOGGLE-01: original premium artwork, shared draggable map wind visibility switch, retained preferences, buffer and renderer; WeatherRouter 0.10.297 unchanged.",
+    "purpose": "GR-TEMP-WORLD-01: WeatherRouter-authorized global temperature, coherent isobaric advection, GeoPointContext and original temperature artwork; protected wind performance and precipitation architecture.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -30,7 +30,9 @@
     "protectedReference": "d975a94be5d63eb09242a54920d8c3417205b41f",
     "windFieldMinimumWeatherRouter": "0.10.296",
     "windCacheRecommendedWeatherRouter": "0.10.297",
-    "protectedWindReference": "787497648a405bc27495d98ffdedd9206668fd4c"
+    "protectedWindReference": "787497648a405bc27495d98ffdedd9206668fd4c",
+    "temperatureMinimumWeatherRouter": "0.10.298",
+    "protectedTemperatureBaseline": "04b751fd3962150ed0369dba4428959e4a8e98bd"
   },
   "sourceReleaseTag": "v4.10"
 }

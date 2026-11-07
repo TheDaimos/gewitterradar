@@ -3,7 +3,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.22",
+  version:"0.4.23",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -643,7 +643,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
         '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize gr-premium-metal-surface" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button><button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info gr-premium-metal-surface">i</button></div>'+
-        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
+        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
         '<div class="weather-display-card" data-weather-display-clouds-card><div class="weather-display-card-title">Wolken</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="clouds" aria-label="Darstellungsmodus Wolken"><option value="original">Original</option><option value="balanced">Ausgewogen</option></select></div><div class="weather-display-card-note">Ausgewogen verwendet die geprüften Wolken-Zoomwerte. Zoom 3 und 4 bleiben ohne zusätzliche Glättung.</div></div>'+
@@ -691,6 +691,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       const layerSelect=panel.querySelector("[data-weather-display-layer-select]");
       const syncLayerChoice=()=>{
+        if(layerSelect?.value==='temperature'){layerSelect.value='precipitation';this._weatherTemperatureOpen?.();return;}
         const kind=['clouds','wind'].includes(layerSelect?.value)?layerSelect.value:'precipitation';
         panel.classList.toggle('wind-selected',kind==='wind');requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
         const rain=panel.querySelector("[data-weather-display-precipitation-card]");
@@ -711,12 +712,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       this._weatherDisplayBindPanelDrag(panel,panel.querySelector("[data-weather-display-drag-handle]"));
     }
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherWindPositionToggle?.();});
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
     if(!state.lifecycleAbortHandler){
-      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();this._weatherWindCancelToggleDrag?.();};
+      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();};
       window.addEventListener("blur",state.lifecycleAbortHandler,true);
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);

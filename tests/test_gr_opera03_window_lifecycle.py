@@ -1,5 +1,6 @@
 """OPERA UI isolation and release identity contracts on the pinned GR baseline."""
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,9 @@ def test_opera_diagnostic_path_remains_admin_only_and_unapproved():
 
 
 def test_pinned_version_identity_is_consistent():
-    expected = "4.11.148"
+    # The accepted release supplies identity; this regression protects parity,
+    # rather than pinning every future DEV release to the historical 4.11.148.
+    expected = re.search(r'version:"([0-9.]+)"', source("version.js")).group(1)
     build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text()
     assert f'BUILD_VERSION = "{expected}"' in build
     for base in FRONTENDS:
@@ -49,5 +52,5 @@ def test_pinned_version_identity_is_consistent():
         runtime = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text())
         assert f'version:"{expected}"' in version
         assert runtime["productVersion"] == expected
-        assert runtime["moduleSetId"] == "E411-148A1"
+        assert runtime["moduleSetId"] == "E411-" + expected.rsplit(".", 1)[1] + "A1"
         assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1

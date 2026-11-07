@@ -5,7 +5,7 @@ import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.11",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.12",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -487,6 +487,9 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     let wind=menu.querySelector('[data-weather-wind-entry]');
     if(!wind&&this._weatherWindOpen){wind=document.createElement('button');wind.type='button';wind.className='weather-layer-action';wind.dataset.weatherWindEntry='true';wind.textContent='Winddarstellung';wind.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();this._weatherWindOpen();});menu.append(wind);}
     if(wind)wind.hidden=state.view!=='map-display';
+    let temperature=menu.querySelector('[data-weather-temperature-entry]');
+    if(!temperature&&this._weatherTemperatureOpen){temperature=document.createElement('button');temperature.type='button';temperature.className='weather-layer-action';temperature.dataset.weatherTemperatureEntry='true';temperature.textContent='Temperatur';temperature.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();this._weatherTemperatureOpen();});menu.append(temperature);}
+    if(temperature)temperature.hidden=state.view!=='map-display';
     const shouldShow=Boolean(state.discovery?.present&&state.discovery?.compatible);
     let wrap=menu.querySelector('[data-weather-layer-entry-wrap="true"]');
     if(!shouldShow){wrap?.remove();return;}
@@ -590,7 +593,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   _weatherLayerMenuUiCategories(){
     const categories=[...this._weatherLayerMenuState().model.categories];
     if(this._weatherWindOpen&&!categories.some(item=>item.id==='weather'))categories.unshift({id:'weather',label:'Wetter',grouped:true,capabilities:[],groups:[{id:'wind',label:'Wind',capabilities:[]}]});
-    return categories;
+    return categories.map(category=>category.id==='weather'&&this._weatherTemperatureOpen?{...category,grouped:true,groups:[...(category.groups||[]).filter(g=>g.id!=='temperature'),{id:'temperature',label:'Temperatur',capabilities:[]}]}:category);
   },
   _weatherLayerMenuCategoriesMarkup(){
     const categories=this._weatherLayerMenuUiCategories();if(!categories.length)return '<div class="weather-layer-empty">Der Katalog enthält derzeit keine aktivierten und kartentauglichen Fähigkeiten.</div>';
@@ -611,7 +614,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherLayerMenuSubcategoryMarkup(categoryId,subcategoryId){
     const category=this._weatherLayerMenuUiCategories().find(item=>item.id===categoryId),group=category?.groups?.find(item=>item.id===subcategoryId);
-    const wind=categoryId==='weather'&&subcategoryId==='wind'?(this._weatherWindMenuMarkup?.()||''):'';
+    const wind=categoryId==='weather'?(subcategoryId==='wind'?(this._weatherWindMenuMarkup?.()||''):subcategoryId==='temperature'?(this._weatherTemperatureMenuMarkup?.()||''):''):'';
     if(!category||!group)return wind+'<div class="weather-layer-empty">Unterbereich ist im aktuellen Katalog nicht mehr verfügbar.</div>';
     return wind+this._weatherLayerMenuCapabilitiesMarkup(group.capabilities);
   },
@@ -634,7 +637,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const kicker=subgroup?(category?.label||"Fachbereich"):category?"Fachbereich":"Kartenebenen";
     const backAction=subgroup?"back-category":category?"back-hub":null;
     const back=backAction?`<button class="weather-layer-back" type="button" data-weather-layer-action="${backAction}" aria-label="Zurück">‹</button>`:'<span class="weather-layer-back-slot" aria-hidden="true"></span>';
-    const displayMarkup=(this._weatherDisplayLayerMenuMarkup?.()||"")+(this._weatherWindMenuMarkup?.()||"");
+    const displayMarkup=(this._weatherDisplayLayerMenuMarkup?.()||"")+(this._weatherWindMenuMarkup?.()||"")+(this._weatherTemperatureMenuMarkup?.()||"");
     const body=subgroup?this._weatherLayerMenuSubcategoryMarkup(category.id,subgroup.id):category?this._weatherLayerMenuCategoryMarkup(category.id):`${this._weatherLayerMenuStatusMarkup()}${displayMarkup}${this._weatherLayerMenuQuickMarkup()}${state.discovery?.ready&&state.catalog?.status==="ready"?this._weatherLayerMenuCategoriesMarkup():""}`;
     const refresh=!category&&state.discovery?.present&&state.discovery.compatible?'<button class="weather-layer-refresh" type="button" data-weather-layer-action="refresh">WeatherRouter neu prüfen</button>':"";
     const markup=`<div class="weather-layer-head">${back}<div class="weather-layer-head-main"><div class="weather-layer-kicker">${escapeHtml(kicker)}</div><div class="weather-layer-title">${escapeHtml(title)}</div></div><img class="weather-layer-logo" src="${escapeHtml(WEATHER_ROUTER_LOGO_IMAGE)}" alt="" aria-hidden="true"></div>${body}${refresh}`;
@@ -661,6 +664,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(action==="refresh"){this._weatherLayerMenuProbe({refresh:true});return;}
     if(action==="display"){this._weatherDisplayOpenFromLayerMenu?.();return;}
     if(action==="wind-toggle"){this._weatherWindToggle?.();return;}
+    if(action==="temperature-settings"){this._weatherTemperatureOpen?.();return;}
     if(action==="wind-settings"){this._weatherWindOpen?.();return;}
     if(action==="toggle"){this._weatherLayerMenuToggle(button.dataset.capability);return;}
     if(action==="timeline"){const radar=this._weatherRadarState?.();this._setWeatherRadarTimelineVisible?.(!radar?.timelineVisible);return;}

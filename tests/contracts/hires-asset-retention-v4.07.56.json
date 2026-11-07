@@ -333,6 +333,12 @@
       "preferredPath": "artwork/help-icons/hires/gr-wind-settings-premium.svg",
       "gitBlobSha1": "e0b26b5acb09ff732a15755f4c9ec56cef772bf3",
       "sizeBytes": 2694
+    },
+    {
+      "label": "Temperature World approved original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-temperature-premium-original.png",
+      "gitBlobSha1": "8580cd319c53204c2e365918f437651b6ace2146",
+      "sizeBytes": 1871509
     }
   ]
 }

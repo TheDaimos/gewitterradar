@@ -1,10 +1,11 @@
+import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411155r1';
 import { WindCanvas } from './wind-canvas.js?v=411155r1';
 import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411155r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411155r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.2',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.3',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -116,12 +117,12 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>({
   if(focusKey)panel.querySelector(`[data-wind-setting="${focusKey}"]`)?.focus();else if(focusColor)panel.querySelector(`[data-wind-color="${focusColor}"]`)?.focus();
  },
  _resumeWeatherWind(){
-  const s=this._weatherWindState();s.suspended=false;this._weatherWindEnsureToggle();
+  const s=this._weatherWindState();s.suspended=false;this._weatherWindEnsureToggle();this._resumeWeatherTemperature?.();
   if(!windDisplayActive(s.config)||!this._map)return;
   if(s.map===this._map){if(s.painter){s.painter.hidden=document.hidden;s.painter.canvas.hidden=false;}return;}
   this._weatherWindEnsureUi();this._weatherWindDetach();s.map=this._map;
   const canvas=document.createElement('canvas');canvas.className='weather-wind-canvas';canvas.setAttribute('aria-label','WR-Winddarstellung; Werte, Quellen und Zeitpunkte in der Windlegende');canvas.setAttribute('role','img');s.map.getContainer().append(canvas);
-  s.painter=new WindCanvas(s.map,canvas,{onMetrics:metrics=>{s.metrics=metrics;if(s.config.performanceDiagnostics)this._weatherWindPerfUpdate();}});
+  s.painter=new WindCanvas(s.map,canvas,{raf:requestWeatherFrame,cancel:cancelWeatherFrame,onMetrics:metrics=>{s.metrics=metrics;if(s.config.performanceDiagnostics)this._weatherWindPerfUpdate();}});
   s.onMove=()=>this._weatherWindQueue();s.map.on('moveend zoomend',s.onMove);
   s.onUnload=()=>this._weatherWindDetach();s.map.on('unload',s.onUnload);
   s.onVisibility=()=>{if(document.hidden){clearTimeout(s.refreshTimer);s.refreshTimer=null;s.generation++;s.pending=false;}else if(!windDisplayActive(s.config))this._weatherWindHide();else this._weatherWindQueue({force:true});};document.addEventListener('visibilitychange',s.onVisibility);
@@ -187,7 +188,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>({
   if(s.map&&s.onMove)s.map.off('moveend zoomend',s.onMove);if(s.map&&s.onUnload)s.map.off('unload',s.onUnload);if(s.onVisibility)document.removeEventListener('visibilitychange',s.onVisibility);
   s.painter?.destroy();s.painter=null;s.map=null;s.onMove=s.onUnload=s.onVisibility=null;
  },
- _teardownWeatherWind(){const s=this.__weatherWind;if(!s)return;this._weatherWindCancelToggleDrag();this._weatherWindDetach();s.cache.clear();s.field=null;s.suspended=true;s.legend?._teardownWeatherLegend();const panel=this.shadow?.getElementById('weather-wind-panel');if(panel)panel.hidden=true;},
+ _teardownWeatherWind(){this._teardownWeatherTemperature?.();const s=this.__weatherWind;if(!s)return;this._weatherWindCancelToggleDrag();this._weatherWindDetach();s.cache.clear();s.field=null;s.suspended=true;s.legend?._teardownWeatherLegend();const panel=this.shadow?.getElementById('weather-wind-panel');if(panel)panel.hidden=true;},
  _weatherWindPerfUpdate(force=false){const s=this._weatherWindState(),now=performance.now();if(!force&&now-(s.lastPerfUi||0)<1000)return;s.lastPerfUi=now;const node=this.shadow?.querySelector('[data-wind-performance]');if(!node)return;const m=s.metrics||{},cache=s.cache.summary(),n=v=>Number.isFinite(v)?v.toFixed(1):'–';node.textContent=s.config.performanceDiagnostics?`FPS ${n(m.fps)} · Render Ø ${n(m.meanRenderMs)} ms · P95 ${n(m.p95RenderMs)} ms · Max ${n(m.maxRenderMs)} ms · Sichtbar ${m.segments||0} / verwaltet ${m.particles||0} · Knoten ${m.fieldNodes||0} · Browsercache ${cache.hits} Treffer / ${cache.misses} Fehlzugriffe · ${cache.entries} Felder, ${(cache.bytes/1048576).toFixed(2)} MiB · Abruf ${n(s.timing.fetchMs)} ms · Aufbereitung ${n(s.timing.prepareMs)} ms · Farbfläche CPU ${n(m.colorPreparationCpuMs)} ms, gesamt ${n(m.colorPreparationWallMs)} ms · Generationen ${m.activeGenerations||0} aktiv, ${m.preparingGeneration?1:0} in Vorbereitung. Messung im aktuellen Browser; keine Erkennung von WLAN oder Mobilfunk.`:'Messung ausgeschaltet. Keine zusätzlichen Wetterabrufe.';},
  _weatherWindDiagnostics(){const s=this._weatherWindState();return {config:{...s.config},status:s.status,points:s.points.map(({lat,lon,speed,from,provider,validAt,kind})=>({lat,lon,speed,from,provider,validAt,kind})),errors:[...s.errors],metrics:s.metrics?{...s.metrics}:null,cache:s.cache.summary(),timing:{...s.timing},requests:s.requests,fieldCapability:s.field?'ready':s.fieldError||'not_requested',field:s.field?{id:s.field.id,nodes:s.field.grid.u.length,coverage:s.field.coverage,provider:s.field.provenance.provider_id,model_run:s.field.model_run,valid_at:s.field.valid_at,valid_until:s.field.valid_until,wrCache:s.field.delivery_diagnostics||null}:null,pressureCapability:'missing_authoritative_pressure_classification'};}
 }));

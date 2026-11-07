@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411155r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411156r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.175",
+    "version": "1.2.176",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.34",
+    "version": "1.0.35",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -151,7 +151,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "group": "Oberfläche",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -385,7 +385,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.14",
+    "version": "1.2.15",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
@@ -423,7 +423,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.11",
+    "version": "1.1.12",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.22",
+    "version": "0.4.23",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
@@ -506,6 +506,20 @@ export const EXPECTED_MODULES=Object.freeze([
       "Premium-Windlegende"
     ],
     "file": "modules/weather/wind-display.js"
+  },
+  {
+    "id": "weather.temperature-display",
+    "version": "0.1.0",
+    "group": "Weather-Engine",
+    "function": "Weltweite Temperatur und thermische Advektion",
+    "subfunctions": [
+      "Temperatur 2 m",
+      "native Temperaturwerte",
+      "Advektion 850 hPa",
+      "GeoPointContext",
+      "Premium-Kartenschalter"
+    ],
+    "file": "modules/weather/temperature-display.js"
   }
 ].map(item=>Object.freeze(item)));
 export const MODULE_META=Object.freeze({id:"core.manifest",version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version,group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
