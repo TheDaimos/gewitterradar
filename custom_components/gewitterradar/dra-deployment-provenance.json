@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.150",
-  "build": "V4.11.150-DEV-2026-11-07",
-  "runtimeRevision": "411150r1",
-  "moduleSetId": "E411-150A1",
+  "productVersion": "4.11.151",
+  "build": "V4.11.151-DEV-2026-11-07",
+  "runtimeRevision": "411151r1",
+  "moduleSetId": "E411-151A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-WIND-FIX-01: WeatherRouter wind settings accessible from premium display and root/weather wind menus; bounded raster transport states and inert attribution text; protected WR295 precipitation unchanged.",
+    "purpose": "WR-GR-WIND-ANIM-01: Native WeatherRouter Consumer V2 numeric 10-m wind field, continuous canvas flow, independent Beaufort-based speed colours; protected precipitation and repaired wind menus unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -27,7 +27,8 @@
     "manualEyeReferencesAutoApply": false,
     "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
     "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group",
-    "protectedReference": "d975a94be5d63eb09242a54920d8c3417205b41f"
+    "protectedReference": "d975a94be5d63eb09242a54920d8c3417205b41f",
+    "windFieldMinimumWeatherRouter": "0.10.296"
   },
   "sourceReleaseTag": "v4.10"
 }

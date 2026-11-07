@@ -1,20 +1,21 @@
 import { defineModule } from '../core/runtime.js?v=41114r1';
-import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText } from './wind-data.js?v=411150r1';
-import { WindCanvas } from './wind-canvas.js?v=411150r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411150r1';
+import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText } from './wind-data.js?v=411151r1';
+import { WindCanvas } from './wind-canvas.js?v=411151r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411151r1';
+import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport } from './wind-field.js?v=411151r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.1.1',group:'Weather-Engine',function:'Konfigurierbare WR-Windpunktdarstellung',subfunctions:['Windfahnen','Richtungspfeile','lokale Strömungssegmente','persistente Symbolfarben','Premium-Windlegende','datenabhängige Grenzen'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.2.0',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const installWeatherWind=defineModule(MODULE_META,()=>({
- _weatherWindState(){return this.__weatherWind||(this.__weatherWind={config:readWindConfig(),points:[],status:'Aus',errors:[],map:null,painter:null,batch:null,pending:false,generation:0,timer:null,refreshTimer:null,legend:null,legendOpen:false,metrics:null,suspended:false,requests:0});},
+ _weatherWindState(){return this.__weatherWind||(this.__weatherWind={config:readWindConfig(),points:[],field:null,fieldError:null,status:'Aus',errors:[],map:null,painter:null,batch:null,pending:false,generation:0,timer:null,refreshTimer:null,expiryTimer:null,legend:null,legendOpen:false,metrics:null,suspended:false,requests:0});},
  _weatherWindSave(){try{localStorage.setItem(WIND_STORAGE,JSON.stringify(this._weatherWindState().config));}catch(_){}},
- _weatherWindMenuMarkup(){return '<button type="button" class="weather-layer-action" data-weather-layer-action="wind-settings"><strong>Winddarstellung</strong><small>Windfahnen · Pfeile · lokale Strömung</small></button>';},
+ _weatherWindMenuMarkup(){return '<button type="button" class="weather-layer-action" data-weather-layer-action="wind-settings"><strong>Winddarstellung</strong><small>Windfahnen · Pfeile · Windfeld</small></button>';},
  _weatherWindSet(patch){
-  const s=this._weatherWindState(),was=s.config.enabled;
+  const s=this._weatherWindState(),was=s.config.enabled||s.config.colorField,oldField=s.config.mode==='animated'||s.config.colorField;
   s.config=normalizeWindConfig({...s.config,...patch});this._weatherWindSave();
-  if(s.config.enabled){this._resumeWeatherWind();s.painter?.update(s.points,s.config);if(!was)this._weatherWindQueue();}
+  if(s.config.enabled||s.config.colorField){this._resumeWeatherWind();s.painter?.update(s.points,s.config,s.field);if(!was||oldField!==(s.config.mode==='animated'||s.config.colorField))this._weatherWindQueue({force:true});}
   else{this._weatherWindDetach();s.status='Aus';}
   this._weatherWindRender();if(s.legend)updateWindLegend(s.legend,this);
  },
@@ -57,56 +58,72 @@ export const installWeatherWind=defineModule(MODULE_META,()=>({
   const select=(key,label,options,disabled=false)=>`<label>${label}<select data-wind-setting="${key}" ${disabled?'disabled':''}>${Object.entries(options).map(([id,name])=>`<option value="${id}" ${c[key]===id?'selected':''}>${name}</option>`).join('')}</select></label>`;
   panel.innerHTML=`<header><strong>Winddarstellung</strong><button type="button" data-wind-action="legend" aria-label="Windlegende"><img src="${INFO_URL}" alt=""></button><button type="button" data-wind-action="close" aria-label="Winddarstellung schließen">×</button></header>
   ${check('enabled','Windsymbole anzeigen')}${select('mode','Darstellungsart',MODES)}
-  <div class="weather-wind-note">Lokale 10-m-Windvektoren an WR-Abfragepunkten. Kein flächendeckendes Strömungsfeld.</div>
+  <div class="weather-wind-note">${s.field?'Zusammenhängendes numerisches 10-m-Modellwindfeld von WeatherRouter.':'Windfahnen und Pfeile verwenden WR-Punktwerte. Animation und Farbfläche fragen das numerische WR-Windfeld an.'}</div>
   <div role="group" aria-label="Symbolfarbe" class="weather-wind-swatches">${WIND_COLORS.map(v=>`<button type="button" class="weather-wind-swatch" data-wind-color="${v.id}" aria-label="${v.label}" aria-pressed="${c.color===v.id}" title="${v.label}"><i style="--wind-color:${v.hex}"></i></button>`).join('')}</div>
   ${select('colorMode','Farbmodus',{uniform:'Einheitliche Farbe',pressure:'Hoch-/Tiefdruck (nicht verfügbar)'})}
   <div class="weather-wind-note">${c.colorMode==='pressure'?'Einheitliche Farbe aktiv: ':''}WR liefert keine autoritative Hoch-/Tiefdruckklassifikation. Windrichtung allein ist dafür ungeeignet.</div>
   <details><summary>Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)</summary>${select('highColor','Hochdruck',Object.fromEntries(WIND_COLORS.map(v=>[v.id,v.label])))}${select('lowColor','Tiefdruck',Object.fromEntries(WIND_COLORS.map(v=>[v.id,v.label])))}</details>
   <fieldset><legend>Animation</legend>${select('tempo','Geschwindigkeit',{slow:'Langsam',normal:'Normal',fast:'Schnell'},c.mode!=='animated')}${select('density','Dichte',{low:'Gering',normal:'Normal',high:'Hoch'},c.mode!=='animated')}${check('paused','Animation pausieren',c.mode!=='animated')}<div class="weather-wind-note">Nur die Darstellung wird verändert. Keine zusätzlichen Wetterabfragen pro Bild.</div></fieldset>
-  <fieldset><legend>Windgeschwindigkeits-Farbfläche</legend><label>Ein / Aus<input type="checkbox" disabled aria-describedby="wind-field-reason"></label><div id="wind-field-reason" class="weather-wind-note">Datenbedingt nicht verfügbar: kein numerisches WR-Windraster mit gültiger räumlicher Abdeckung und NoData-Maske. Vorhandene gerenderte Windkacheln sind kein numerisches Windfeld.</div><label>Eigene Deckkraft<input type="range" min="0" max="100" step="1" data-wind-setting="fieldOpacity" value="${c.fieldOpacity}" aria-label="Windfarbflächen-Deckkraft (gespeicherte Einstellung)"><output>${c.fieldOpacity} %</output></label></fieldset>
+  <fieldset><legend>Windgeschwindigkeits-Farbfläche</legend>${check('colorField','Ein / Aus')}<div id="wind-field-reason" class="weather-wind-note">${s.field?'Beaufort-basierte Geschwindigkeitsskala aus numerischen U-/V-Werten. NoData bleibt transparent.':s.fieldError?'Kein autorisiertes WR-Windfeld: '+escape(s.fieldError)+'. Punktdarstellung bleibt unabhängig verfügbar.':'Erfordert die additive numerische WR-Windfeldfähigkeit. Gerenderte Windkacheln werden nicht in Messwerte umgedeutet.'}</div><label>Eigene Deckkraft<input type="range" min="0" max="100" step="1" data-wind-setting="fieldOpacity" value="${c.fieldOpacity}" aria-label="Windfarbflächen-Deckkraft"><output>${c.fieldOpacity} %</output></label></fieldset>
   ${select('unit','Geschwindigkeitseinheit',{'km/h':'km/h',kn:'kn',Bft:'Beaufort'})}
-  <div role="status" class="weather-wind-note" data-wind-status>${escape(s.status)} · ${s.points.length} Punkte</div><button type="button" data-wind-action="refresh" ${!c.enabled?'disabled':''}>WR-Wind aktualisieren</button>
+  <div role="status" class="weather-wind-note" data-wind-status>${escape(s.status)} · ${s.field?s.field.grid.u.length+' Gitterknoten':s.points.length+' Punkte'}</div><button type="button" data-wind-action="refresh" ${!c.enabled&&!c.colorField?'disabled':''}>WR-Wind aktualisieren</button>
+  ${s.field?`<div class="weather-wind-note">${escape(s.field.provenance.attribution)}<br>Modelllauf ${escape(s.field.model_run)}<br>Gültig ${escape(s.field.valid_at)} · WR-Freigabe bis ${escape(s.field.valid_until)}</div>`:''}
   <details><summary>Werte, Quellen und Zeitpunkte</summary><div class="weather-wind-points">${s.points.length?s.points.map(p=>`<p>${p.lat.toFixed(3)}°, ${p.lon.toFixed(3)}° · ${escape(windSpeedText(p.speed,c.unit))} · Herkunft ${p.from===null?'Windstille':p.from+'°'}<br>${escape(p.attribution)} · ${escape(p.validAt)} · ${escape(p.kind||'WR')}</p>`).join(''):'Keine kohärenten gültigen WR-Punktwerte.'}</div><div class="weather-wind-note">${escape([...new Set(s.errors)].join(' · '))}</div></details>`;
   if(focusKey)panel.querySelector(`[data-wind-setting="${focusKey}"]`)?.focus();else if(focusColor)panel.querySelector(`[data-wind-color="${focusColor}"]`)?.focus();
  },
  _resumeWeatherWind(){
   const s=this._weatherWindState();s.suspended=false;
-  if(!s.config.enabled||!this._map||s.map===this._map)return;
+  if((!s.config.enabled&&!s.config.colorField)||!this._map||s.map===this._map)return;
   this._weatherWindEnsureUi();this._weatherWindDetach();s.map=this._map;
-  const canvas=document.createElement('canvas');canvas.className='weather-wind-canvas';canvas.setAttribute('aria-label','WR-Windpunkte; Werte und Quellen in der Windlegende');canvas.setAttribute('role','img');s.map.getContainer().append(canvas);
+  const canvas=document.createElement('canvas');canvas.className='weather-wind-canvas';canvas.setAttribute('aria-label','WR-Winddarstellung; Werte, Quellen und Zeitpunkte in der Windlegende');canvas.setAttribute('role','img');s.map.getContainer().append(canvas);
   s.painter=new WindCanvas(s.map,canvas,{onMetrics:metrics=>s.metrics=metrics});
   s.onMove=()=>this._weatherWindQueue();s.map.on('moveend zoomend',s.onMove);
   s.onUnload=()=>this._weatherWindDetach();s.map.on('unload',s.onUnload);
   s.onVisibility=()=>{if(document.hidden){clearTimeout(s.refreshTimer);s.refreshTimer=null;s.generation++;s.pending=false;}else this._weatherWindQueue({force:true});};document.addEventListener('visibilitychange',s.onVisibility);
-  s.painter.update(s.points,s.config);this._weatherWindQueue({force:true});if(s.legend&&s.legendOpen)updateWindLegend(s.legend,this);
+  s.painter.update(s.points,s.config,s.field);this._weatherWindQueue({force:true});if(s.legend&&s.legendOpen)updateWindLegend(s.legend,this);
  },
  _weatherWindQueue({force=false}={}){
   const s=this._weatherWindState();clearTimeout(s.timer);
-  if(!s.config.enabled||s.suspended||!s.map||document.hidden)return;
-  const signature=JSON.stringify(windQueryPoints(s.map));
+  if((!s.config.enabled&&!s.config.colorField)||s.suspended||!s.map||document.hidden)return;
+  const signature=JSON.stringify(s.config.mode==='animated'||s.config.colorField?windFieldViewport(s.map):windQueryPoints(s.map));
   if(s.batch&&signature!==s.batchSignature)s.generation++;
-  if(!force&&signature===s.lastQuerySignature&&s.points.length){s.painter?.schedule();if(!s.refreshTimer)s.refreshTimer=setTimeout(()=>this._weatherWindQueue({force:true}),300000);return;}
+  if(!force&&signature===s.lastQuerySignature&&(s.field&&Date.now()<s.field.deadline||s.points.length)){s.pending=false;s.status=s.field?'WR-Windfeld verfügbar · 10-m-Modellvorhersage':'WR-Wind verfügbar · lokale Punktdarstellung';s.painter?.schedule();this._weatherWindRender();if(!s.refreshTimer)s.refreshTimer=setTimeout(()=>this._weatherWindQueue({force:true}),(s.field?.refresh_after_seconds||300)*1000);return;}
   clearTimeout(s.refreshTimer);s.refreshTimer=null;
   s.timer=setTimeout(()=>{s.timer=null;s.pending=true;this._weatherWindFetch();},250);
  },
  async _weatherWindFetch(){
-  const s=this._weatherWindState();if(s.batch||!s.pending||!s.config.enabled||s.suspended||document.hidden||!s.map)return;
-  s.pending=false;const generation=++s.generation,points=windQueryPoints(s.map),results=[],errors=[];let cursor=0;s.batchSignature=JSON.stringify(points);
+  const s=this._weatherWindState();if(s.batch||!s.pending||(!s.config.enabled&&!s.config.colorField)||s.suspended||document.hidden||!s.map)return;
+  s.pending=false;const generation=++s.generation,points=windQueryPoints(s.map),results=[],errors=[],needsField=s.config.mode==='animated'||s.config.colorField;let cursor=0;s.batchSignature=JSON.stringify(needsField?windFieldViewport(s.map):points);
   s.status='WR-Wind wird geladen';this._weatherWindRender();
   // At most two points (four existing WS requests) at once. An obsolete batch stops dispatching.
   const worker=async()=>{while(cursor<points.length&&generation===s.generation){const point=points[cursor++];s.requests+=2;
    try{const [speed,direction]=await Promise.all([this._weatherRouterResolve(WIND_SPEED,point),this._weatherRouterResolve(WIND_DIRECTION,point)]);if(generation!==s.generation)return;results.push(combineWindPoint(speed,direction,point));}
    catch(error){errors.push(error?.message||'wr_wind_unavailable');}
   }};
-  s.batch=Promise.all([worker(),worker()]);
-  try{await s.batch;if(generation!==s.generation||s.suspended)return;s.lastQuerySignature=s.batchSignature;s.points=results;s.errors=errors;s.status=results.length?'WR-Wind verfügbar · lokale Punktdarstellung':'Keine kohärenten WR-Windvektoren verfügbar';s.painter?.update(s.points,s.config);this._weatherWindRender();if(s.legend)updateWindLegend(s.legend,this);}
-  finally{s.batch=null;if(s.pending)this._weatherWindFetch();else if(s.config.enabled&&!s.suspended&&!document.hidden){s.refreshTimer=setTimeout(()=>this._weatherWindQueue({force:true}),300000);}}
+  let field=null,fieldError=null;
+  const resolve=async()=>{
+   if(needsField){
+    let timeout;try{
+     const request={type:WIND_FIELD_COMMAND,contract_version:2,capability:WIND_FIELD,context:{bbox:windFieldViewport(s.map)},time:{mode:'latest'},consumer_id:'gewitterradar'};
+     const profile=this._weatherRouterClient?.().profileId;if(profile)request.profile_id=profile;s.requests++;
+     const answer=await Promise.race([this._hass.callWS(request),new Promise((_,reject)=>timeout=setTimeout(()=>reject(new Error('wind_field_transport_timeout')),35000))]);
+     if(generation!==s.generation)return;field=parseWindField(answer);
+    }catch(error){fieldError=error?.message||error?.code||'wind_field_unavailable';errors.push(fieldError);}finally{clearTimeout(timeout);}
+   }
+   if(!field&&s.config.enabled&&generation===s.generation)await Promise.all([worker(),worker()]);
+  };
+  s.batch=resolve();
+  try{await s.batch;if(generation!==s.generation||s.suspended)return;s.lastQuerySignature=s.batchSignature;s.field=field;s.fieldError=fieldError;s.points=results;s.errors=errors;s.status=field?'WR-Windfeld verfügbar · 10-m-Modellvorhersage':results.length?'WR-Wind verfügbar · lokale Punktdarstellung':'Keine kohärenten WR-Windvektoren verfügbar';s.painter?.update(s.points,s.config,s.field);
+   clearTimeout(s.expiryTimer);s.expiryTimer=field?setTimeout(()=>{if(s.field?.id===field.id){s.field=null;s.painter?.update(s.points,s.config,null);s.status='WR-Windfeldfreigabe abgelaufen';this._weatherWindRender();if(s.legend)updateWindLegend(s.legend,this);this._weatherWindQueue({force:true});}},Math.max(1,field.deadline-Date.now())):null;
+   this._weatherEngineMonitorEvent?.('wind_field_resolution',{status:field?'ready':'unavailable',code:fieldError,nodes:field?.grid.u.length||0,provider:field?.provenance.provider_id,valid_at:field?.valid_at});
+   this._weatherWindRender();if(s.legend)updateWindLegend(s.legend,this);}
+  finally{s.batch=null;if(s.pending)this._weatherWindFetch();else if((s.config.enabled||s.config.colorField)&&!s.suspended&&!document.hidden){s.refreshTimer=setTimeout(()=>this._weatherWindQueue({force:true}),(s.field?.refresh_after_seconds||300)*1000);}}
  },
  _weatherWindDetach(){
-  const s=this._weatherWindState();s.generation++;s.pending=false;clearTimeout(s.timer);clearTimeout(s.refreshTimer);s.timer=s.refreshTimer=null;
+  const s=this._weatherWindState();s.generation++;s.pending=false;clearTimeout(s.timer);clearTimeout(s.refreshTimer);clearTimeout(s.expiryTimer);s.timer=s.refreshTimer=s.expiryTimer=null;
   if(s.map&&s.onMove)s.map.off('moveend zoomend',s.onMove);if(s.map&&s.onUnload)s.map.off('unload',s.onUnload);if(s.onVisibility)document.removeEventListener('visibilitychange',s.onVisibility);
   s.painter?.destroy();s.painter=null;s.map=null;s.onMove=s.onUnload=s.onVisibility=null;
  },
  _teardownWeatherWind(){const s=this.__weatherWind;if(!s)return;this._weatherWindDetach();s.suspended=true;s.legend?._teardownWeatherLegend();const panel=this.shadow?.getElementById('weather-wind-panel');if(panel)panel.hidden=true;},
- _weatherWindDiagnostics(){const s=this._weatherWindState();return {config:{...s.config},status:s.status,points:s.points.map(({lat,lon,speed,from,provider,validAt,kind})=>({lat,lon,speed,from,provider,validAt,kind})),errors:[...s.errors],metrics:s.metrics,requests:s.requests,fieldCapability:'missing_numeric_spatial_wind_grid',pressureCapability:'missing_authoritative_pressure_classification'};}
+ _weatherWindDiagnostics(){const s=this._weatherWindState();return {config:{...s.config},status:s.status,points:s.points.map(({lat,lon,speed,from,provider,validAt,kind})=>({lat,lon,speed,from,provider,validAt,kind})),errors:[...s.errors],metrics:s.metrics,requests:s.requests,fieldCapability:s.field?'ready':s.fieldError||'not_requested',field:s.field?{id:s.field.id,nodes:s.field.grid.u.length,coverage:s.field.coverage,provider:s.field.provenance.provider_id,model_run:s.field.model_run,valid_at:s.field.valid_at,valid_until:s.field.valid_until}:null,pressureCapability:'missing_authoritative_pressure_classification'};}
 }));

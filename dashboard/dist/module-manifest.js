@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411150r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411151r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.170",
+    "version": "1.2.171",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -494,16 +494,16 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "group": "Weather-Engine",
-    "function": "Konfigurierbare WR-Windpunktdarstellung",
+    "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
       "Windfahnen",
       "Richtungspfeile",
-      "lokale Strömungssegmente",
+      "numerisches Windfeld",
+      "Windgeschwindigkeits-Farbfläche",
       "persistente Symbolfarben",
-      "Premium-Windlegende",
-      "datenabhängige Grenzen"
+      "Premium-Windlegende"
     ],
     "file": "modules/weather/wind-display.js"
   }

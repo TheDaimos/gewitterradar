@@ -1,6 +1,7 @@
 import { installWeatherLegendOverlay } from './legend-overlay.js?v=411149r1';
-import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411150r1';
-import { drawWindGlyph } from './wind-canvas.js?v=411150r1';
+import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411151r1';
+import { drawWindGlyph } from './wind-canvas.js?v=411151r1';
+import { WIND_FIELD_COLORS } from './wind-field.js?v=411151r1';
 
 // Reuse the existing premium overlay, drag, bounds and chevrons with isolated storage.
 class WindLegend {}
@@ -36,21 +37,33 @@ export function createWindLegend(owner){
    paragraph('*Fiederwerte werden auf die nächsten 5 kn gerundet; unter 2,5 kn erscheint das Windstillesymbol. Dies bedeutet nicht zwingend exakt 0 m/s. 1 kn = 1,852 km/h.');
   }else if(c.mode==='arrows')paragraph('Die Pfeilspitze zeigt die Strömungsrichtung: wohin die Luft zieht. Die meteorologische Gradangabe bezeichnet dagegen die Herkunft.');
   else{
-   paragraph('Kurze Segmente zeigen die Strömungsrichtung am jeweils durch WR aufgelösten Punkt. Zwischen diesen Punkten wird kein Windfeld interpoliert.');
+   paragraph(state.field?'Kurze Segmente folgen dem zusammenhängenden numerischen 10-m-Windfeld. U-/V-Komponenten werden innerhalb gültiger Gitterzellen interpoliert; NoData wird nicht überbrückt.':'Kurze Segmente zeigen die Strömungsrichtung am jeweils durch WR aufgelösten Punkt. Zwischen isolierten Punkten wird kein Windfeld interpoliert.');
    paragraph('Mehr Wind bewegt die Segmente schneller; die begrenzte, nichtlineare Animation ist keine maßstäbliche Luftbewegung. Dichte: '+({low:'Gering',normal:'Normal',high:'Hoch'}[c.density])+'. Tempo: '+({slow:'Langsam',normal:'Normal',fast:'Schnell'}[c.tempo])+'.');
    paragraph(c.paused?'Animation pausiert.':!c.animationExplicit&&matchMedia('(prefers-reduced-motion: reduce)').matches?'Bewegung aufgrund der Systemeinstellung reduziert.':'Bei exakt 0 m/s wird keine Strömung erzeugt.');
   }
   paragraph('Symbolfarbe: '+WIND_COLORS.find(v=>v.id===c.color)?.label+'. Hoch-/Tiefdruckfarben sind ohne autoritative WR-Klassifikation nicht verfügbar.');
-  paragraph('Windgeschwindigkeits-Farbfläche datenbedingt nicht verfügbar: WR liefert gerenderte Windkacheln und Punktwerte, aber kein numerisches räumliches Windraster mit Abdeckung und NoData-Maske.');
-  const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Beaufort · definierte Untergrenzen (m/s)';details.append(summary);
-  paragraph('WR bestimmt Verfügbarkeit und Gültigkeit. Die dargestellten Punktwerte sind 10-m-Vorhersagewerte am angefragten Ort; keine Stationsmessungen und kein zusammenhängendes Windfeld.');
-  for(let i=0;i<BEAUFORT_LIMITS.length;i++){const p=document.createElement('div');p.textContent=i+' Bft: '+BEAUFORT_LIMITS[i]+' bis '+(i<12?'<'+BEAUFORT_LIMITS[i+1]:'unbegrenzt')+' m/s';details.append(p);}box.append(details);
-  if(!state.points.length)paragraph('Derzeit keine kohärenten WR-Windpunktwerte verfügbar.');
+  if(c.colorField){
+   const heading=document.createElement('strong');heading.textContent='Windgeschwindigkeit · '+c.unit;box.append(heading);
+   if(state.field){
+    const bar=document.createElement('div');bar.setAttribute('role','img');bar.setAttribute('aria-label','Windgeschwindigkeit von Beaufort 0 bis 12');bar.style.cssText='height:13px;margin:8px 0;border-radius:4px;border:1px solid #d0b16a66;background:linear-gradient(90deg,'+WIND_FIELD_COLORS.map((v,i)=>v+' '+i/12*100+'%').join(',')+')';box.append(bar);
+    const labels=document.createElement('div');labels.style.cssText='display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;font-size:10px';
+    for(const i of [0,4,8,12]){const label=document.createElement('span');label.textContent=windSpeedText(BEAUFORT_LIMITS[i],c.unit);labels.append(label);}box.append(labels);
+    paragraph('Der Balken zeigt gleich breite Beaufort-Stufen 0–12; die Beschriftung wird in die gewählte Einheit umgerechnet. Innerhalb jeder Stufe verlaufen die Farben stetig. Deckkraft '+c.fieldOpacity+' %; nur die Farbfläche ist betroffen.');
+   }else paragraph('Farbfläche angefordert, aber kein autorisiertes numerisches WR-Windfeld verfügbar: '+(state.fieldError||state.status)+'. Keine Fläche aus Punktwerten.');
+  }
+  const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Beaufort · Geschwindigkeitsklassen ('+c.unit+')';details.append(summary);
+  paragraph('WR bestimmt Verfügbarkeit, Quelle und Gültigkeit. '+(state.field?'Dargestellt ist eine 10-m-Modellvorhersage; keine Stationsmessung. Native Auflösung '+state.field.native_resolution_degrees+'°, übertragenes Gitter '+(state.field.grid.longitudes[1]-state.field.grid.longitudes[0]).toFixed(2)+'° × '+(state.field.grid.latitudes[1]-state.field.grid.latitudes[0]).toFixed(2)+'°.':'Die Punktwerte sind 10-m-Vorhersagen am angefragten Ort; keine Stationsmessungen und kein zusammenhängendes Windfeld.'));
+  if(state.field){
+   const f=state.field;paragraph(f.provenance.attribution);paragraph('Modelllauf (UTC): '+f.model_run);paragraph('Gültiger Modellzeitpunkt (UTC): '+f.valid_at);paragraph('WR-Freigabe bis (UTC): '+f.valid_until);
+   for(const [label,value] of [['Modellquelle',f.provenance.source_url],['Datenbereitstellung',f.provenance.delivery_url]]){try{const url=new URL(value);if(url.protocol!=='https:')continue;const link=document.createElement('a');link.href=url.href;link.textContent=label;link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='color:#edce82;margin-right:12px';box.append(link);}catch(_){}}
+  }
+  for(let i=0;i<BEAUFORT_LIMITS.length;i++){const p=document.createElement('div');p.style.borderLeft='8px solid '+WIND_FIELD_COLORS[i];p.style.paddingLeft='6px';p.textContent=i+' Bft: '+(c.unit!=='Bft'?windSpeedText(BEAUFORT_LIMITS[i],c.unit)+(i<12?' bis <'+windSpeedText(BEAUFORT_LIMITS[i+1],c.unit):' und mehr')+' · ':'')+BEAUFORT_LIMITS[i]+' bis '+(i<12?'<'+BEAUFORT_LIMITS[i+1]:'unbegrenzt')+' m/s';details.append(p);}box.append(details);
+  if(!state.points.length&&!state.field)paragraph('Derzeit keine kohärenten WR-Windpunktwerte verfügbar.');
   for(const p of state.points)paragraph(`${p.lat.toFixed(3)}°, ${p.lon.toFixed(3)}° · ${windSpeedText(p.speed,c.unit)} · Herkunft ${p.from===null?'Windstille':p.from+'°'} · ${p.attribution} · ${p.validAt} (${p.kind||'WR'})`);
   return box;
  };
  return view;
 }
 export function updateWindLegend(view,owner){
- const state=owner._weatherWindState();view._weatherLegendSetModel('wind',{family:'precipitation',title:'WR-Windpunktwerte · keine Flächeninterpolation',unit:state.config.unit,entries:[{label:'Wind',color:'#fff'}],active:true});
+ const state=owner._weatherWindState();view._weatherLegendSetModel('wind',{family:'precipitation',title:state.field?'WR-Windfeld · 10-m-Modellvorhersage':'WR-Windpunktwerte · keine Flächeninterpolation',unit:state.config.unit,entries:[{label:'Wind',color:'#fff'}],active:true});
 }

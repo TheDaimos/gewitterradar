@@ -1,3 +1,10 @@
+## V4.11.151 DEV · 2026-11-07 · HA-Integration 0.25.58
+
+- Additive WR-V2-Windfeldfähigkeit für zusammenhängende numerische U-/V-Modelldaten; WR 0.10.296 / Loader 299 entscheidet über Quelle, NoData, Abdeckung und Freigabe.
+- Bestehender Canvas um kontinuierliche, sanft ein-/ausblendende Strömungssegmente und unabhängig schaltbare Beaufort-Windfarbfläche erweitert. Subpixelrichtung bei Übersichtszoom korrigiert.
+- Vorhandene Windfahnen/Pfeile, acht Farben, Premium-Menüs, Windlegende und gespeicherte Einstellungen bleiben erhalten. Kein Druckfarbmodus ohne autoritative Klassifikation.
+- Gezielte vollständige Browserprüfungen und geschützte Niederschlags-/Legendenvergleiche; keine private CI oder automatische HA-Installation. Details: `docs/GR_WIND_ANIM_01.md`.
+
 ## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
 
 - OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.
