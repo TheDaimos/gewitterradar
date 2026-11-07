@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411153r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411154r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.173",
+    "version": "1.2.174",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.33",
+    "version": "1.0.34",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
