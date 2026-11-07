@@ -1,5 +1,6 @@
 """Regressionsprüfungen für das horizontale Gewitterradar-Einstellungsmenü."""
 import json
+import re
 from pathlib import Path
 import unittest
 
@@ -101,8 +102,13 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn('version:"' + runtime["productVersion"] + '"', version)
         self.assertIn('runtimeRevision:"' + runtime["runtimeRevision"] + '"', version)
         self.assertIn('moduleSetId:"' + runtime["moduleSetId"] + '"', version)
-        self.assertEqual(len(runtime["modules"]), 35)
+        expected = json.loads(re.search(
+            r"EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map", manifest
+        ).group(1))
+        self.assertEqual(len(runtime["modules"]), len(expected))
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
+        self.assertEqual(len(by_id), len(expected))
+        self.assertEqual(by_id, {item["id"]: item["version"] for item in expected})
         self.assertEqual(by_id["ui.controls"], "1.1.27")
         self.assertEqual(by_id["ui.skeleton"], "1.1.25")
         self.assertEqual(by_id["core.manifest"], next(x["version"] for x in runtime["modules"] if x["id"] == "core.manifest"))
