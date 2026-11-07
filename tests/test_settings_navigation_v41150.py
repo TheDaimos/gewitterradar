@@ -101,7 +101,7 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertIn('version:"' + runtime["productVersion"] + '"', version)
         self.assertIn('runtimeRevision:"' + runtime["runtimeRevision"] + '"', version)
         self.assertIn('moduleSetId:"' + runtime["moduleSetId"] + '"', version)
-        self.assertEqual(len(runtime["modules"]), 34)
+        self.assertEqual(len(runtime["modules"]), 35)
         by_id = {item["id"]: item["version"] for item in runtime["modules"]}
         self.assertEqual(by_id["ui.controls"], "1.1.27")
         self.assertEqual(by_id["ui.skeleton"], "1.1.25")
