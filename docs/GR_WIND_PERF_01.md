@@ -253,3 +253,27 @@ deaktiviert. Öffentliche CI wird gezielt per Dispatch gestartet; Commits verwen
 `skip ci`, damit keine historischen allgemeinen Workflows mitgestartet werden.
 CI-/Commitabschluss wird nach dem Lauf ergänzt; Berichte anschließend über GitHub
 erneut lesen und per Blob vergleichen. Physische VM109-/Android-/iPad-Abnahme offen.
+
+## Verifizierter Entwicklungsabschluss
+
+Implementierungscommits:
+- GR: `25399fe57dbbbb7bfc1ba0cb715140b09c7a35de`.
+- WR: `28b460394cbc4267c735a9981713bf28c2e8a75c`.
+
+Gezielte öffentliche CI **erfolgreich**:
+[Run 42376860298](https://github.com/TheDaimos/gewitterradar/actions/runs/42376860298),
+exakt GR-Codecommit `25399fe57dbbbb7bfc1ba0cb715140b09c7a35de`.
+`release-scope` und `wind-perf01 / wind-performance` erfolgreich; allgemeiner
+`shared-frontend`-Job und historische Kampagnen übersprungen. 36 gezielte GR-Tests,
+Versionen/Identität, vollständige Karte in allen 15 Desktop-/Android-/iPad-Ansichten,
+kurzer synthetischer Vorher/Nachher-Vergleich und Installationsstaging erfolgreich.
+Die 15 WR-Pythonprüfungen liefen ausschließlich lokal, keine private CI.
+
+Dieser nachfolgende Berichtscommit ändert ausschließlich diese Dokumentation.
+Der unveränderte Laufzeitcode bleibt exakt durch obigen CI-Codecommit identifiziert.
+Auslieferungscommit, Paketnamen und tatsächliche SHA256 stehen in den Releaseassets
+`deployment.json`, `changed-files.txt`, `SHA256SUMS.txt` der neuen DEV-Releases.
+Die Berichte werden nach dem Push über GitHub erneut gelesen und per Git-Blob
+gegen den lokalen Stand verglichen, bevor die Pakete veröffentlicht werden.
+Die Freigabe bezeichnet Entwicklungsbereitschaft zur manuellen VM109-Realabnahme;
+keine Behauptung einer durchgeführten physischen Companion-/HA-Abnahme.
