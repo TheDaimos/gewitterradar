@@ -1072,6 +1072,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
       }
       if (instrumentControls) instrumentControls.hidden = !fullscreenActive;
+      this._weatherWindSyncToggle?.();
       if (compassToggle) {
         compassToggle.classList.toggle('active',this._mapCompassVisible);
         compassToggle.setAttribute('aria-pressed',this._mapCompassVisible ? 'true' : 'false');
