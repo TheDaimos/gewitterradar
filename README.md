@@ -1,5 +1,12 @@
 > **GR 4.11.157 DEV / HA 0.25.64:** [Geschwungene Wind-/Advektionspfeile und dynamische Stromlinien](docs/GR_FLOW_CURVES_01_IMPLEMENTATION.md). Gemeinsame begrenzte Trajektoriengeometrie, gespeicherte Formen und 19 Sprachen. Klassische Modi bleiben Standard; WR 0.10.298 / Loader 301 unverändert. Manuelle VM109-Realabnahme offen.
 
+## V4.11.160 DEV · Premium UI Fix 02 · HA 0.25.67
+
+Eye-Header und metallische Einstellungsbereiche direkt wiederverwendet; Titel und Original-Chevrons einheitlich eingerückt. Long Press nach 600 ms mit nativer Callout-Unterdrückung, toleriertem Touch-Jitter und einem einzigen Aktivierungsweg für Kurzklick, getrennt von Drag. Bestehende Legenden, Wetterdaten und gespeicherte Einstellungen bleiben erhalten.
+
+[Implementierung und Prüfungen](docs/GR_PREMIUM_UI_FIX_02.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.160-dev). Physische Companion-/HA-Abnahme bleibt offen.
+
+
 ## V4.11.159 DEV · Premium UI Consolidation · HA 0.25.66
 
 Gemeinsame Eye-Premium-Komponenten für Wind, Temperatur, Legenden und Kartenansicht. Reparierte Legenden mit getrennten Erklärungen, Skalen und gespeicherter Minimierung; lesbare Klassen und autoritative Advektions-Farbgrenzen. Unabhängige Wind-Schnellaktionen und sichere Klick-/Drag-/600-ms-Long-Press-Bedienung mit Originalicons. Wetterdatenwege und Renderer bleiben geschützt.

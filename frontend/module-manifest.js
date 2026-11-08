@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411159r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411160r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.178",
+    "version": "1.2.179",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.26",
+    "version": "1.1.27",
     "group": "OberflÃ¤che",
     "function": "GrundgerÃ¼st",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.24",
+    "version": "0.4.25",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.5",
+    "version": "0.4.6",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
@@ -509,7 +509,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.temperature-display",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "group": "Weather-Engine",
     "function": "Weltweite Temperatur und thermische Advektion",
     "subfunctions": [

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.26",
+  "version": "1.1.27",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5987,6 +5987,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .weather-legend-overlay.gr-premium-metal-surface,
           .weather-display-panel.gr-premium-metal-surface,
           .weather-wind-panel.gr-premium-metal-surface,
+          .gr-premium-collapse.gr-premium-metal-surface,
           .map-display-menu.gr-premium-metal-surface,
           .weather-display-minimize.gr-premium-metal-surface,
           .weather-display-opacity-reset.gr-premium-metal-surface,

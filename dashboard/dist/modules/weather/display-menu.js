@@ -1,10 +1,10 @@
-import {ensurePremiumUi,PREMIUM_INFO} from './premium-ui.js?v=411159r1';
+import {ensurePremiumUi,PREMIUM_INFO} from './premium-ui.js?v=411160r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.24",
+  version:"0.4.25",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -18,8 +18,8 @@ const STORAGE_KEY="gewitterradar:weather-display:v1";
 const clearEyeReleaseClick=state=>{clearTimeout(state.eyeReleaseTimer);state.eyeReleaseCleanup?.();state.eyeReleaseCleanup=null;};
 const blockEyeReleaseClick=(owner,state,drag)=>{
  clearEyeReleaseClick(state);const root=owner.shadow;if(!root?.addEventListener)return;
- const block=event=>{if(!event.detail||Math.hypot(event.clientX-drag.startX,event.clientY-drag.startY)>12)return;event.preventDefault();event.stopImmediatePropagation();clearEyeReleaseClick(state);};
- const releaseRoot=globalThis.document||root,release=event=>{if(event.pointerId!==drag.pointerId)return;clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),event.type==='pointercancel'?0:450);},blur=()=>clearEyeReleaseClick(state);
+ const block=event=>{if(!event.detail||Math.hypot(event.clientX-(drag.releaseX??drag.startX),event.clientY-(drag.releaseY??drag.startY))>12)return;event.preventDefault();event.stopImmediatePropagation();clearEyeReleaseClick(state);};
+ const releaseRoot=globalThis.document||root,release=event=>{if(event.pointerId!==drag.pointerId)return;drag.releaseX=event.clientX;drag.releaseY=event.clientY;clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),event.type==='pointercancel'?0:450);},blur=()=>clearEyeReleaseClick(state);
  root.addEventListener('click',block,true);releaseRoot.addEventListener('pointerup',release,true);releaseRoot.addEventListener('pointercancel',release,true);globalThis.addEventListener?.('blur',blur);
  state.eyeReleaseCleanup=()=>{root.removeEventListener('click',block,true);releaseRoot.removeEventListener('pointerup',release,true);releaseRoot.removeEventListener('pointercancel',release,true);globalThis.removeEventListener?.('blur',blur);};
  state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),10000);
@@ -770,72 +770,79 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     panel.style.top=(minTop+(maxTop-minTop)*clamp(source?.y??DEFAULT_POSITION.y,0,1))+"px";
   },
 
-  _weatherDisplayCancelEyeDrag(options=null){
-    const state=options?.state?.()||this.__weatherDisplayState;if(!state?.eyeDrag)return;
-    const eye=options?.element||this.shadow?.getElementById("weather-display-eye-control"),pointerId=state.eyeDrag.pointerId;
-    clearTimeout(state.eyeDrag.longPressTimer);state.eyeDrag=null;eye?.classList.remove("dragging");
-    try{if(pointerId!=null&&eye?.hasPointerCapture?.(pointerId))eye.releasePointerCapture(pointerId);}catch(_error){}
-    requestAnimationFrame(()=>options?options.position():this._weatherDisplayPositionEye());
+  _weatherDisplayCancelEyeDrag(options=null,{keepReleaseClick=false}={}){
+    const state=options?.state?.()||this.__weatherDisplayState;if(!state)return;
+    if(!keepReleaseClick)clearEyeReleaseClick(state);
+    const drag=state.eyeDrag;if(!drag)return;
+    const eye=options?.element||this.shadow?.getElementById("weather-display-eye-control");
+    clearTimeout(drag.longPressTimer);state.eyeDrag=null;eye?.classList.remove("dragging","pressing");
+    try{if(drag.pointerId!=null&&eye?.hasPointerCapture?.(drag.pointerId))eye.releasePointerCapture(drag.pointerId);}catch(_error){}
+    if(drag.moved||!options)requestAnimationFrame(()=>options?options.position():this._weatherDisplayPositionEye());
   },
 
   _weatherDisplayBindEyeDrag(eye,options=null){
     if(!eye||eye.dataset.weatherDisplayEyeDragBound==="1")return;
     eye.dataset.weatherDisplayEyeDragBound="1";
+    const getState=()=>options?.state?.()||this._weatherDisplayState();
     const begin=event=>{
-      if(event.button!==undefined&&event.button!==0)return;
-      const state=(options?.state?.()||this._weatherDisplayState()),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
-      if(!mapCard||!mapEl)return;
-      event.stopPropagation();
+      if(event.isPrimary===false||event.button!==undefined&&event.button!==0)return;
+      const state=getState(),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+      if(!mapCard||!mapEl||state.eyeDrag)return;
+      if(options?.activate)event.preventDefault();event.stopPropagation();
+      clearEyeReleaseClick(state);
       const rect=eye.getBoundingClientRect(),cardRect=mapCard.getBoundingClientRect();
-      if(state.eyeDrag)return;
-      state.eyeDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,moved:false,longPressed:false};
-      if(options?.longPress){const drag=state.eyeDrag;drag.longPressTimer=setTimeout(()=>{if(state.eyeDrag!==drag||drag.moved)return;drag.longPressed=true;state.eyeSuppressClickUntil=performance.now()+1000;blockEyeReleaseClick(this,state,drag);options.longPress();},600);}
-      eye.classList.add("dragging");
+      const slop=options?.longPress?(event.pointerType==='touch'?12:event.pointerType==='pen'?8:6):6;
+      const drag=state.eyeDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,moved:false,longPressed:false,slop,phase:'pressing'};
+      if(options?.longPress){
+        eye.classList.add('pressing');
+        drag.longPressTimer=setTimeout(()=>{if(state.eyeDrag!==drag||drag.phase!=='pressing')return;drag.phase='longpress';drag.longPressed=true;eye.classList.remove('pressing');state.eyeSuppressClickUntil=performance.now()+1000;blockEyeReleaseClick(this,state,drag);options.longPress();},600);
+      }else eye.classList.add('dragging');
       try{eye.setPointerCapture?.(event.pointerId);}catch(_error){}
     };
     const move=event=>{
-      const state=(options?.state?.()||this._weatherDisplayState()),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      const state=getState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
       event.preventDefault();event.stopPropagation();
-      const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
+      if(drag.longPressed)return;
       const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
-      if(Math.hypot(dx,dy)>6){drag.moved=true;clearTimeout(drag.longPressTimer);}if(drag.longPressed)return;if(!drag.moved)return;
+      if(!drag.moved&&Math.hypot(dx,dy)>drag.slop){drag.moved=true;drag.phase='dragging';clearTimeout(drag.longPressTimer);eye.classList.remove('pressing');eye.classList.add('dragging');}
+      if(!drag.moved)return;
+      const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),width=eye.offsetWidth,height=eye.offsetHeight,inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
       const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
-      eye.style.left=clamp(drag.startLeft+dx,minLeft,maxLeft)+"px";
-      eye.style.top=clamp(drag.startTop+dy,minTop,maxTop)+"px";
-      eye.style.bottom="auto";
+      eye.style.left=clamp(drag.startLeft+dx,minLeft,maxLeft)+"px";eye.style.top=clamp(drag.startTop+dy,minTop,maxTop)+"px";eye.style.bottom="auto";
     };
     const end=event=>{
-      const state=(options?.state?.()||this._weatherDisplayState()),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
+      const state=getState(),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
       event.stopPropagation();
-      if(event.type==='pointercancel'){state.eyeSuppressClickUntil=performance.now()+450;this._weatherDisplayCancelEyeDrag(options);return;}
-      clearTimeout(drag.longPressTimer);const moved=!!drag.moved,mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
-      state.eyeDrag=null;eye.classList.remove("dragging");
+      if(event.type==='pointercancel'){state.eyeSuppressClickUntil=performance.now()+600;this._weatherDisplayCancelEyeDrag(options);return;}
+      if(options?.activate)event.preventDefault();
+      clearTimeout(drag.longPressTimer);state.eyeDrag=null;eye.classList.remove('dragging','pressing');
       try{eye.releasePointerCapture?.(event.pointerId);}catch(_error){}
-      if(moved||drag.longPressed)state.eyeSuppressClickUntil=performance.now()+600;
-      if(drag.longPressed)state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),450);
-      if(!mapCard||!mapEl)return;
+      if(drag.moved||drag.longPressed||options?.activate){
+        state.eyeSuppressClickUntil=performance.now()+600;
+        blockEyeReleaseClick(this,state,{...drag,startX:event.clientX,startY:event.clientY});clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),450);
+      }
+      if(!drag.moved&&options){if(!drag.longPressed)options.activate?.();return;}
+      const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),rect=eye.getBoundingClientRect(),inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
       const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-rect.width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-rect.height-inset);
       const left=clamp(rect.left-cardRect.left,minLeft,maxLeft),top=clamp(rect.top-cardRect.top,minTop,maxTop);
       const x=maxLeft>minLeft?(left-minLeft)/(maxLeft-minLeft):0,y=maxTop>minTop?(top-minTop)/(maxTop-minTop):0;
-      // A tap must keep its original hit target through the compatibility
-      // click. Re-running automatic obstacle placement on pointerup can move
-      // an unsaved control away before a touch browser dispatches that click.
-      if(options){if(moved){options.save({x,y});options.position();}}
-      else if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});
-      else this._weatherDisplayPositionEye(DEFAULT_EYE_POSITION);
+      if(options){options.save({x,y});options.position();}
+      else if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});else this._weatherDisplayPositionEye(DEFAULT_EYE_POSITION);
     };
-    eye.addEventListener("pointerdown",begin);
-    eye.addEventListener("pointermove",move);
-    eye.addEventListener("pointerup",end);
-    eye.addEventListener("pointercancel",end);
-    eye.addEventListener("lostpointercapture",event=>{
-      const state=(options?.state?.()||this._weatherDisplayState());
-      if(state.eyeDrag?.pointerId===event.pointerId)this._weatherDisplayCancelEyeDrag(options);
-    });
+    eye.addEventListener('pointerdown',begin);eye.addEventListener('pointermove',move);eye.addEventListener('pointerup',end);eye.addEventListener('pointercancel',end);
+    eye.addEventListener('lostpointercapture',event=>{const state=getState();if(state.eyeDrag?.pointerId===event.pointerId){state.eyeSuppressClickUntil=performance.now()+600;this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:state.eyeDrag.longPressed});}});
+    if(options?.longPress){
+      // Cancel native callouts/selection before a mobile UA claims the gesture.
+      // Touch events never activate an action; pointerup is the single action path.
+      eye.addEventListener('touchstart',event=>{event.preventDefault();event.stopPropagation();},{passive:false});
+      eye.addEventListener('contextmenu',event=>{event.preventDefault();event.stopPropagation();});
+      eye.style.webkitTouchCallout='none';eye.style.webkitUserSelect='none';eye.style.userSelect='none';
+    }
+    if(options?.activate)eye.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(event.detail===0&&!getState().eyeDrag&&performance.now()>=(getState().eyeSuppressClickUntil||0))options.activate();});
   },
 
   _weatherDisplayCancelDrag(){

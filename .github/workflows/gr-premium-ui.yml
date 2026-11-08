@@ -13,13 +13,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch protected source references
-        run: git fetch --no-tags --depth=1 origin ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
+        run: git fetch --no-tags --depth=1 origin 7185af7779549e163c00f5012311732260da4ba0 ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Targeted controls, state, palette, data-path and package checks
         run: |
-          node --test tests/gr-premium-ui.test.mjs tests/gr-wind-quicktoggle-01.test.mjs tests/gr-temp-world-01.test.mjs tests/gr-legend-ui-06.test.mjs tests/gr-legend-ui-01.test.mjs
+          node --test tests/gr-premium-ui-fix02.test.mjs tests/gr-premium-ui.test.mjs tests/gr-wind-quicktoggle-01.test.mjs tests/gr-temp-world-01.test.mjs tests/gr-legend-ui-06.test.mjs tests/gr-legend-ui-01.test.mjs
           node scripts/verify-hires-asset-retention.mjs
           node scripts/verify-frontend.mjs
           node scripts/test-v411-identity.mjs
@@ -33,11 +33,18 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/premium/node_modules
           GR_PREMIUM_OUTPUT: ${{ runner.temp }}/premium-browser
         run: node scripts/test-gr-premium-ui-browser.cjs
+      - name: Eye frame/header parity and native-callout/jitter handling in eight views
+        env:
+          NODE_PATH: ${{ runner.temp }}/premium/node_modules
+          GR_PREMIUM_FIX02_OUTPUT: ${{ runner.temp }}/premium-fix02-browser
+        run: node scripts/test-gr-premium-ui-fix02-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: premium-ui-synthetic-browser-results
-          path: ${{ runner.temp }}/premium-browser
+          path: |
+            ${{ runner.temp }}/premium-browser
+            ${{ runner.temp }}/premium-fix02-browser
           if-no-files-found: ignore
       - uses: actions/setup-python@v5
         with:

@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411159r1';
+import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411160r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
