@@ -1,5 +1,5 @@
 import { defineModule } from "../core/runtime.js?v=41127r1";
-import { APPLICATION_RELEASE } from "../../version.js?v=411161r1";
+import { APPLICATION_RELEASE } from "../../version.js?v=411162r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.raster-lab",version:"0.1.4",group:"Diagnose",

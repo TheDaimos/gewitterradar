@@ -1,3 +1,9 @@
+## V4.11.162 DEV · Snake Flow Fix 01 · HA 0.25.69
+
+Synchronisierte Live-Schnellregler für Länge, Tempo und Dichte; Detailregler bleiben während Touch-/Mauszügen im DOM. Langer Körper mit voller Deckkraft, einstellbarer Schwanzbeginn bei standardmäßig 67 %. Höhere Dichte bis Faktor 5, Zoom-3-Anpassung, kontrollierte räumliche Auffüllung und nachvollziehbare temporäre Lastbegrenzung mit Erholung. Vorhandene Modi und Winddatenwege bleiben erhalten.
+
+[Implementierung und Prüfungen](docs/GR_SNAKE_FLOW_FIX_01.md) · [Installierbares DEV-Release und aktualisierte Offline-Vorschau](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.162-dev). Physische Companion-/HA-Abnahme bleibt offen.
+
 ## V4.11.161 DEV · Schlangenförmige Animation · HA 0.25.68
 
 Zusätzlicher eigenständiger Windrenderer mit abgerundetem Kopf, verjüngtem Körper und transparentem Schwanz. Dieselben Partikel verlängern und verkürzen sich weich mit der lokalen WR-Windgeschwindigkeit. RK2, begrenzte geografische Historien und gemeinsamer Frame-Scheduler; zehn unabhängig gespeicherte Parameter im vorhandenen Premium-Windmenü. Bisherige Modi und Auswahl bleiben erhalten.

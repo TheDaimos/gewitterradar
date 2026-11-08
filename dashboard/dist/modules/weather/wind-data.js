@@ -1,4 +1,4 @@
-import {normalizeSnakeConfig} from './snake-config.js?v=411161r1';
+import {normalizeSnakeConfig} from './snake-config.js?v=411162r1';
 import { weatherSourceText } from './source-text.js?v=411150r1';
 /* WR point-contract adapter and presentation math. No routing, age cutoff or field interpolation. */
 export const WIND_SPEED='weather.point.wind_speed',WIND_DIRECTION='weather.point.wind_direction';

@@ -13,7 +13,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch protected source references
-        run: git fetch --no-tags --depth=1 origin 782c035129ce9e14ca0153fe4a26bff157ffacc0 7185af7779549e163c00f5012311732260da4ba0 ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
+        run: git fetch --no-tags --depth=1 origin 91fba29af0b3e765b898c1d4c4355adcfa810d98 782c035129ce9e14ca0153fe4a26bff157ffacc0 7185af7779549e163c00f5012311732260da4ba0 ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -38,7 +38,7 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/premium/node_modules
           GR_PREMIUM_FIX02_OUTPUT: ${{ runner.temp }}/premium-fix02-browser
         run: node scripts/test-gr-premium-ui-fix02-browser.cjs
-      - name: Independent Snake renderer, five views, throttled rendering and legacy return
+      - name: Snake controls, native touch, density, zoom 3, five views and legacy return
         env:
           NODE_PATH: ${{ runner.temp }}/premium/node_modules
           GR_SNAKE_OUTPUT: ${{ runner.temp }}/snake-browser

@@ -1,6 +1,6 @@
-import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411161r1';
-import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411161r1';
-import {snakeTargetLength,snakeVelocity,smoothSnakeLength} from './snake-config.js?v=411161r1';
+import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411162r1';
+import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411162r1';
+import {snakeTargetLength,snakeVelocity,smoothSnakeLength,snakeWidthFactor,snakeTailAlpha} from './snake-config.js?v=411162r1';
 export const SNAKE_HISTORY_CAPACITY=128,SNAKE_MESH_CAPACITY=40;
 const colors=new Map(),cache=new WeakMap(),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function extent(field){let b=cache.get(field);if(!b){const g=field.grid;b={x0:g.longitudes[0],x1:g.longitudes.at(-1),center:(g.longitudes[0]+g.longitudes.at(-1))/2,y0:windMercatorY(g.latitudes[0]),y1:windMercatorY(g.latitudes.at(-1)),cyclic:g.cyclic};cache.set(field,b);}return b;}
@@ -11,7 +11,7 @@ export function snakeSafeSpan(field,x0,y0,x1,y1){
 }
 export function createSnakeParticle(id){return {id,history:new Float64Array(SNAKE_HISTORY_CAPACITY*2),cursor:-1,count:0,lon:0,my:0,speed:0,length:0,targetLength:0,age:0,life:14,active:false,dying:false,deathAge:0};}
 export class SnakeGeometry{
- constructor(){this.sample=new Float64Array(5);this.xy=new Float64Array(SNAKE_MESH_CAPACITY*2);this.widths=new Float64Array(SNAKE_MESH_CAPACITY);this.arcs=new Float64Array(SNAKE_MESH_CAPACITY);this.raw=new Float64Array((SNAKE_HISTORY_CAPACITY+1)*2);this.rawArc=new Float64Array(SNAKE_HISTORY_CAPACITY+1);this.count=0;this.length=0;this.lookups=0;this.steps=0;}
+ constructor(){this.sample=new Float64Array(5);this.xy=new Float64Array(SNAKE_MESH_CAPACITY*2);this.edges=new Float64Array(SNAKE_MESH_CAPACITY*4);this.widths=new Float64Array(SNAKE_MESH_CAPACITY);this.arcs=new Float64Array(SNAKE_MESH_CAPACITY);this.raw=new Float64Array((SNAKE_HISTORY_CAPACITY+1)*2);this.rawArc=new Float64Array(SNAKE_HISTORY_CAPACITY+1);this.count=0;this.length=0;this.lookups=0;this.steps=0;}
  direction(field,x,y,p){this.lookups++;if(!sampleWindFieldInto(field,windMercatorLatitude(y),x,this.sample)||this.sample[2]<=0)return false;this.speed=this.sample[2];const u=this.sample[0]/this.speed,v=this.sample[1]/this.speed;this.dx=u*p.eastX+v*p.northX;this.dy=u*p.eastY+v*p.northY;return true;}
  append(a,x,y){a.cursor=(a.cursor+1)%SNAKE_HISTORY_CAPACITY;a.history[a.cursor*2]=x;a.history[a.cursor*2+1]=y;a.count=Math.min(SNAKE_HISTORY_CAPACITY,a.count+1);}
  // Bounded midpoint/RK2. Time integration also resamples local speed, not only direction.
@@ -30,12 +30,12 @@ export class SnakeGeometry{
   if(!this.direction(field,x,y,p))return false;
   // A bounded forward numerical pre-roll supplies a complete initial silhouette.
   // Every seed position follows the supplied field; no backward invented body.
-  let travelled=0;for(let i=0;i<100&&travelled<c.maxLength+3;i++){if(!this.step(field,a,p,0,c,1.25))break;travelled+=1.25;}
+  let travelled=0;for(let i=0;i<100&&travelled<snakeTargetLength(this.speed,c)+3;i++){if(!this.step(field,a,p,0,c,1.25))break;travelled+=1.25;}
   if(travelled<c.minLength||a.count<4)return false;
   a.targetLength=snakeTargetLength(a.speed,c);a.length=a.targetLength;a.active=true;return true;
  }
  advance(field,a,p,dt,c){
-  if(!a.active)return false;dt=clamp(Number.isFinite(dt)?dt:0,0,.05);if(a.dying){a.age+=dt;return true;}
+  if(!a.active)return false;dt=clamp(Number.isFinite(dt)?dt:0,0,.1);if(a.dying){a.age+=dt;return true;}
   if(!this.direction(field,a.lon,a.my,p))return false;
   const n=Math.max(1,Math.ceil(96*c.speed*dt/1.25)),h=dt/n;
   for(let i=0;i<n;i++){
@@ -52,28 +52,31 @@ export class SnakeGeometry{
   }
   const length=Math.min(clamp(a.length,c.minLength,c.maxLength),total);if(n<3||length<c.minLength*.75)return this.count=0;
   const ax=raw[2]-raw[0],ay=raw[3]-raw[1],bx=raw[(n-1)*2]-raw[(n-2)*2],by=raw[(n-1)*2+1]-raw[(n-2)*2+1],cos=(ax*bx+ay*by)/(Math.hypot(ax,ay)*Math.hypot(bx,by));
-  const count=Math.min(SNAKE_MESH_CAPACITY,Math.max(12,Math.ceil(length/(cos<.7?2:4))+1)),shift=360*Math.round((p.ox-a.lon)/360);let j=1,prevX=a.lon,prevY=a.my;
+  const count=Math.min(SNAKE_MESH_CAPACITY,Math.max(14,Math.ceil(length/(cos<.7?2:4))+1)),shift=360*Math.round((p.ox-a.lon)/360),bodyEnd=Math.round((count-1)*c.tailStart);let j=1,prevX=a.lon,prevY=a.my;
   for(let i=0;i<count;i++){
-   const t=i/(count-1),at=length*t;while(j<n-1&&arc[j]<at)j++;const q=clamp((at-arc[j-1])/(arc[j]-arc[j-1]),0,1),x=raw[(j-1)*2]+(raw[j*2]-raw[(j-1)*2])*q,y=raw[(j-1)*2+1]+(raw[j*2+1]-raw[(j-1)*2+1])*q;
+   const t=i<=bodyEnd?c.tailStart*i/bodyEnd:c.tailStart+(1-c.tailStart)*(i-bodyEnd)/(count-1-bodyEnd),at=length*t;while(j<n-1&&arc[j]<at)j++;const q=clamp((at-arc[j-1])/(arc[j]-arc[j-1]),0,1),x=raw[(j-1)*2]+(raw[j*2]-raw[(j-1)*2])*q,y=raw[(j-1)*2+1]+(raw[j*2+1]-raw[(j-1)*2+1])*q;
    const dx=x+shift-p.ox,dy=y-p.oy;this.xy[i*2]=dx*p.ex+dy*p.nx;this.xy[i*2+1]=dx*p.ey+dy*p.ny;this.arcs[i]=t;
-   this.widths[i]=Math.min(c.bodyWidth,length*.18)*.5*Math.pow(1-t,c.taper)*(1+(c.headSize-1)*Math.exp(-t*18));
+   this.widths[i]=Math.min(c.bodyWidth,length*.18)*.5*snakeWidthFactor(t,c);
    const radius=Math.max(this.widths[i],i?this.widths[i-1]:0)+.35,rx=(Math.abs(p.ax)+Math.abs(p.bx))*radius,ry=(Math.abs(p.ay)+Math.abs(p.by))*radius;
    if(!snakeSafeSpan(field,Math.min(x,prevX)-rx,Math.min(y,prevY)-ry,Math.max(x,prevX)+rx,Math.max(y,prevY)+ry))return this.count=0;prevX=x;prevY=y;
   }
-  this.count=count;this.length=length;return count;
+  this.count=count;this.length=length;this.bodyEnd=bodyEnd;this.profile=c;return count;
  }
  // A variable-width, closed ribbon mesh. Each band's alpha is a continuous
  // local gradient, rather than a screen-wide fade that fails inside a vortex.
  draw(ctx,color,alpha){
   if(this.count<3||alpha<=0)return;const xy=this.xy,w=this.widths,n=this.count;ctx.save();ctx.lineJoin='round';
   let rgb=colors.get(color);if(!rgb){rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16)).join(',');colors.set(color,rgb);}
-  let lastNX=0,lastNY=0,gradient,gradientEnd=0;
-  for(let i=0;i<n-1;i++){
-   const x=xy[i*2],y=xy[i*2+1],x1=xy[(i+1)*2],y1=xy[(i+1)*2+1],dx=x1-x,dy=y1-y,mag=Math.hypot(dx,dy);if(mag<.001)continue;
-   const nx=-dy/mag,ny=dx/mag,ax=i?lastNX:nx,ay=i?lastNY:ny;let bx=nx,by=ny;
-   if(i<n-2){const ux=xy[(i+2)*2]-x,uy=xy[(i+2)*2+1]-y,m=Math.hypot(ux,uy);if(m){bx=-uy/m;by=ux/m;}}
-   if(i>=gradientEnd){let end=Math.min(n-1,i+8);const ux=xy[end*2]-xy[(end-1)*2],uy=xy[end*2+1]-xy[(end-1)*2+1];if((dx*ux+dy*uy)/(mag*Math.hypot(ux,uy))<.7)end=Math.min(n-1,i+2);gradientEnd=end;gradient=ctx.createLinearGradient(x,y,xy[end*2],xy[end*2+1]);gradient.addColorStop(0,`rgba(${rgb},${alpha*Math.pow(1-this.arcs[i],.8)})`);gradient.addColorStop(1,`rgba(${rgb},${alpha*Math.pow(1-this.arcs[end],.8)})`);}ctx.fillStyle=gradient;
-   ctx.beginPath();ctx.moveTo(x+ax*w[i],y+ay*w[i]);ctx.lineTo(x1+bx*w[i+1],y1+by*w[i+1]);ctx.lineTo(x1-bx*w[i+1],y1-by*w[i+1]);ctx.lineTo(x-ax*w[i],y-ay*w[i]);ctx.closePath();ctx.fill();lastNX=bx;lastNY=by;
+  const edges=this.edges;
+  for(let i=0;i<n;i++){
+   const a=Math.max(0,i-1)*2,b=Math.min(n-1,i+1)*2,dx=xy[b]-xy[a],dy=xy[b+1]-xy[a+1],mag=Math.hypot(dx,dy)||1,nx=-dy/mag*w[i],ny=dx/mag*w[i];edges[i*4]=xy[i*2]+nx;edges[i*4+1]=xy[i*2+1]+ny;edges[i*4+2]=xy[i*2]-nx;edges[i*4+3]=xy[i*2+1]-ny;
+  }
+  // One continuous body polygon avoids thin seams and premature body fading.
+  for(let start=0;start<n-1;){
+   const end=start===0?this.bodyEnd:Math.min(n-1,start+2);
+   if(!start)ctx.fillStyle=`rgba(${rgb},${alpha})`;
+   else{const gradient=ctx.createLinearGradient(xy[start*2],xy[start*2+1],xy[end*2],xy[end*2+1]);gradient.addColorStop(0,`rgba(${rgb},${alpha*snakeTailAlpha(this.arcs[start],this.profile)})`);gradient.addColorStop(1,`rgba(${rgb},${alpha*snakeTailAlpha(this.arcs[end],this.profile)})`);ctx.fillStyle=gradient;}
+   ctx.beginPath();ctx.moveTo(edges[start*4],edges[start*4+1]);for(let j=start+1;j<=end;j++)ctx.lineTo(edges[j*4],edges[j*4+1]);for(let j=end;j>=start;j--)ctx.lineTo(edges[j*4+2],edges[j*4+3]);ctx.closePath();ctx.fill();start=end;
   }
   const dx=xy[0]-xy[2],dy=xy[1]-xy[3],angle=Math.atan2(dy,dx);ctx.globalAlpha=alpha;ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(xy[0],xy[1],Math.max(.45,w[0]*.85),Math.max(.5,w[0]),angle,0,Math.PI*2);ctx.fill();ctx.restore();
  }

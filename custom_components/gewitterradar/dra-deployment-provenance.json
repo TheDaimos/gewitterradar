@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.161",
-  "build": "V4.11.161-DEV-2026-11-08",
-  "runtimeRevision": "411161r1",
-  "moduleSetId": "E411-161A1",
+  "productVersion": "4.11.162",
+  "build": "V4.11.162-DEV-2026-11-08",
+  "runtimeRevision": "411162r1",
+  "moduleSetId": "E411-162A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR SNAKE FLOW ANIMATION: independent tapered trajectory renderer and settings using existing WeatherRouter wind fields; legacy renderers preserved.",
+    "purpose": "GR SNAKE FLOW FIX 01: synchronized live controls, late-tail silhouette, zoom density and temporary load recovery; WeatherRouter unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -37,7 +37,8 @@
     "protectedWeatherRouterReference": "1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5",
     "premiumUiBaseline": "ecad2624",
     "premiumUiFix02Baseline": "7185af7779549e163c00f5012311732260da4ba0",
-    "snakeBaseline": "782c035129ce9e14ca0153fe4a26bff157ffacc0"
+    "snakeBaseline": "782c035129ce9e14ca0153fe4a26bff157ffacc0",
+    "snakeFix01Baseline": "91fba29af0b3e765b898c1d4c4355adcfa810d98"
   },
   "sourceReleaseTag": "v4.10"
 }

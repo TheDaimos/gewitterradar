@@ -1,7 +1,7 @@
 import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=411160r1';
-import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411161r1';
-import {WIND_FIELD_COLORS} from './wind-field.js?v=411161r1';
-import {drawWindGlyph} from './wind-canvas.js?v=411161r1';
+import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411162r1';
+import {WIND_FIELD_COLORS} from './wind-field.js?v=411162r1';
+import {drawWindGlyph} from './wind-canvas.js?v=411162r1';
 export function createWindLegend(owner){
  const state=owner._weatherWindState();
  return createScientificLegend(owner,{prefix:'weather-wind-legend-',ui:state.config.legendUi,position:state.config.legendPosition,
