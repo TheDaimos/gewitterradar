@@ -479,7 +479,7 @@ for(const [name,bytes] of packages){
 const expectedChecksums=checks.sort().join('\n')+'\n';
 if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChecksums){
  console.error('Expected package checksum rows:');
- for(const row of checks.filter(row=>row.includes('_pkg.yaml')).sort())console.error(row);
+ console.error('EXPECTED_CHECKSUMS_BEGIN');for(const row of checks.sort())console.error(row);console.error('EXPECTED_CHECKSUMS_END');
  throw Error('Checksum inventory stale');
 }
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
