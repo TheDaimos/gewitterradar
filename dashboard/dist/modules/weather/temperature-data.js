@@ -2,7 +2,7 @@ import {temperatureDisplayValue,temperatureUnitSymbol} from './temperature-units
 export const TEMPERATURE_STORAGE='gewitterradar:temperature-ui:v1';
 export const TEMPERATURE_STOPS=Object.freeze([-40,-20,0,10,20,30,40,45,50]);
 export const TEMPERATURE_COLORS=Object.freeze(['#051b61','#1254d7','#10cbe2','#36b86d','#f1dc45','#f28a26','#dc3030','#dd237b','#8b38d9']);
-export const DEFAULT_TEMPERATURE=Object.freeze({schema:1,visible:false,surface:true,labels:true,advection:false,flowForm:'classic',flowLength:100,opacity:45,scheme:'premium',range:'auto',minC:-40,maxC:50,stops:TEMPERATURE_STOPS,labelDensity:'auto',fontSize:14,labelBackground:true,unit:'C',quality:'balanced',contrast:1,tempo:'normal',density:'normal',arrowSize:14,arrowOpacity:80,advectionStrength:1,transport:'both',threshold:0,paused:false,quickVisibility:'fullscreen',quickPositions:{},temperatureLegend:true,advectionLegend:true,legendPositions:{},inspector:false});
+export const DEFAULT_TEMPERATURE=Object.freeze({schema:1,visible:false,surface:true,labels:true,advection:false,flowForm:'classic',flowLength:100,opacity:45,scheme:'premium',range:'auto',minC:-40,maxC:50,stops:TEMPERATURE_STOPS,labelDensity:'auto',fontSize:14,labelBackground:true,unit:'C',quality:'balanced',contrast:1,tempo:'normal',density:'normal',arrowSize:14,arrowOpacity:80,advectionStrength:1,transport:'both',threshold:0,paused:false,quickVisibility:'fullscreen',quickPositions:{},temperatureLegend:true,advectionLegend:true,legendPositions:{},legendUi:{},inspector:false});
 const choice=(v,options,fallback)=>options.includes(v)?v:fallback;
 const clamp=(v,min,max,fallback)=>typeof v==='number'&&Number.isFinite(v)?Math.max(min,Math.min(max,v)):fallback;
 export function normalizeTemperatureConfig(input={}){
@@ -12,6 +12,7 @@ export function normalizeTemperatureConfig(input={}){
  if(c.minC>=c.maxC){c.minC=-40;c.maxC=50;}
  const stops=input.stops;if(Array.isArray(stops)&&stops.length===9&&stops.every((n,i)=>Number.isFinite(n)&&n>=-150&&n<=100&&(!i||n>stops[i-1]))&&stops[6]>=35&&stops[7]>=40&&stops[8]>=45)c.stops=[...stops];else c.stops=[...TEMPERATURE_STOPS];
  for(const key of ['quickPositions','legendPositions']){c[key]={};for(const [id,p] of Object.entries(input[key]||{}).slice(0,20))if(/^[a-z0-9:-]{1,80}$/.test(id)&&p&&[p.x,p.y].every(Number.isFinite))c[key][id]={x:clamp(p.x,0,1,0),y:clamp(p.y,0,1,0)};}
+ c.legendUi={};for(const kind of ['temperature','advection']){const ui=input.legendUi?.[kind];c.legendUi[kind]={view:ui?.view==='classes'?'classes':'bar',rain:ui?.rain===true,snow:false};}
  return c;
 }
 export function readTemperatureConfig(storage=globalThis.localStorage){try{return normalizeTemperatureConfig(JSON.parse(storage.getItem(TEMPERATURE_STORAGE))||{});}catch(_){return normalizeTemperatureConfig();}}
