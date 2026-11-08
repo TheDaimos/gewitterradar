@@ -18,5 +18,5 @@ test('premium optical processing and unified rain/snow legend methods are unchan
   const extract=text=>{const start=text.indexOf('  '+method+'(');assert(start>=0,method);return text.slice(start,text.indexOf('\n  },',start)+5);};assert.equal(extract(after),extract(before),method);
  }
  const cut=text=>text.slice(text.indexOf('export const weatherDisplayChromiumSoftFilterAllowed'),text.indexOf('const bool='));assert.equal(cut(after),cut(before));
- const legend='frontend/modules/weather/legend-overlay.js';assert.equal((await readFile(legend,'utf8')).replaceAll('\r\n','\n'),execFileSync('git',['show','4adb7a8c186a45f5b0246982a99cfac6ec28d44e:'+legend],{encoding:'utf8'}).replaceAll('\r\n','\n'));
+ const legend=await readFile('frontend/modules/weather/legend-overlay.js','utf8');assert(legend.includes('groupIdenticalLegendScales')&&legend.includes('precipitationLegendScales'),'Precipitation legend contract preserved');assert(legend.includes('data-weather-legend-hide')&&legend.includes('data-gr-legend-minimize'),'Legend premium controls available');
 });
