@@ -158,3 +158,12 @@ Eine tatsächliche Android-/iPad-/HA-Abnahme wird nicht behauptet. Die Installat
 und visuelle Realabnahme bleiben beim Betreiber. Keine automatische Installation,
 keine privaten Actions, keine Änderungen an WR, `main` oder PROD VM101,
 keine Wiederholung von TEST69. Endgültige Commit-/CI-/Paketnachweise folgen unten.
+
+
+Die erste öffentliche Frontend-CI meldete beim Pausenvergleich einen zeitlichen
+Testkonflikt: Die zuvor simulierte Wiederherstellung der Seitensichtbarkeit löst
+bereits einen vorhandenen WR-Hintergrundabruf aus. Dessen zulässige Frame-Übernahme
+war vor dem Bildvergleich noch nicht abgewartet. Die Prüfung wartet jetzt auf
+Timer-, Batch- und Übernahmeabschluss und verwendet zusätzlich einen absichtlich
+verzögerten Testtransport. Die ausgelieferten Renderer- und Paketdateien bleiben
+bei dieser Prüfkorrektur bytegleich; die finale CI wird am neuen Prüfcommit ausgeführt.
