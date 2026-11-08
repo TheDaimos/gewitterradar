@@ -110,7 +110,7 @@ class HorizontalSettingsV41150Tests(unittest.TestCase):
         self.assertEqual(len(by_id), len(expected))
         self.assertEqual(by_id, {item["id"]: item["version"] for item in expected})
         self.assertEqual(by_id["ui.controls"], "1.1.27")
-        self.assertEqual(by_id["ui.skeleton"], "1.1.25")
+        self.assertEqual(by_id["ui.skeleton"], "1.1.26")
         self.assertEqual(by_id["core.manifest"], next(x["version"] for x in runtime["modules"] if x["id"] == "core.manifest"))
         self.assertIn('"id": "ui.controls",\n    "version": "1.1.27"', manifest)
 

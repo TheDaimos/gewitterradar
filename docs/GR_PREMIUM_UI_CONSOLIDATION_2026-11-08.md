@@ -145,6 +145,12 @@ daraus neu erzeugt. Keine Änderung der Prüflogik und keine Abschwächung des
 Manipulationsschutzes. Die öffentlichen Prüfungen werden auf dem korrigierten
 Commit erneut ausgeführt; der erste Lauf ist kein Freigabenachweis.
 
+Der korrigierte öffentliche Frontendlauf 42477679718 bestand vollständig. Die
+parallele HA-Prüfung fand anschließend einen alten, fest auf Skeleton 1.1.25
+gesetzten Versionsvergleich (62 andere Tests bestanden). Der Vergleich wird auf
+die tatsächlich erhöhte Modulversion 1.1.26 aktualisiert; die übrigen Prüfungen
+bleiben erhalten. Der neue vollständige Nachweis folgt auf diesem Teststand.
+
 ## Betroffene Quellbereiche
 
 `frontend/modules/weather/{premium-ui,premium-legend,wind-legend,temperature-legend,
