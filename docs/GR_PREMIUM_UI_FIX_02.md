@@ -139,3 +139,20 @@ Die Wetterdatenprovider und WeatherRouter selbst werden nicht verändert.
 Abschließende vollständige Commit-SHAs, öffentliche CI-Läufe und Paketprüfsummen
 werden nach Abschluss der Prüfungen ergänzt. Installation und visuelle Realabnahme
 auf den Zielgeräten bleiben Aufgabe des Betreibers.
+
+
+## Abschließender Release-Nachweis
+
+Implementierungscommit: `b95d73672a6fe9ffeda38501af1ca234237d2188`.
+
+* [Öffentliche frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42484931044): **success**.
+* [Öffentliche ha-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42484933335): **success**.
+
+Installierbares [DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.160-dev).
+
+* `gewitterradar-0.25.67-dev.zip` · SHA256 `670e07c815ff5a0b3225ca9454d245c6fe6bf978c6d95e0a4f39ded9b58fd992` · 184 Dateien.
+* `gewitterradar-dashboard-4.11.160-dev.zip` · SHA256 `0f8737fab42ce2e8153379800cd24faa49f0b55ba414ed4276890394b8402960` · 170 Dateien.
+
+168 gemeinsame Frontend-Dateien sind zwischen HA und Dashboard bytegleich. ZIP-CRC, Python-Syntax und Paket-/Versionsidentität sind geprüft. Die Pakete werden aus dem Git-Archiv erzeugt; diese Berichtsergänzung verändert ihren Inhalt nicht.
+
+38 gezielte Funktions-/Schutztests und 14 vollständige Desktop-/Touch-Browseransichten erfolgreich. Öffentliche HA-/HACS-/hassfest-/DRA-Prüfungen erfolgreich. Keine physische Android-/iPad-/HA-Abnahme durchgeführt. Installation und visuelle Realabnahme bleiben beim Betreiber.
