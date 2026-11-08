@@ -34,3 +34,20 @@ Die vollständigen 308 SHA-256-Paketzeilen wurden direkt aus der öffentlichen C
 CI: https://github.com/TheDaimos/gewitterradar/actions/runs/42467413368
 
 **Freigabebeschränkung:** Die DRA-Produktversion ist weiterhin `4.11.157 DEV` / HA `0.25.64`. Diese Arbeit hat die Versionsnummer nicht erhöht, somit ist **keine neue Versionsnummer in DRA nachgewiesen**. Die Geräterealtests und die Bestätigung einer neuen installierbaren DRA-Version sind offen. Diese Angaben sind absichtlich von der bestandenen öffentlichen CI getrennt.
+
+## Nachtrag – Premium-Schließen und lesbare Klassen / neue Versionskennung
+
+Die von Benutzer-Screenshots belegten Folgeprobleme wurden auf `deploy/dev` behoben:
+- Die gemeinsame Legende lädt das vorhandene Premium-Schließen-Asset relativ zum ausgelieferten Frontend-Modul (`new URL('../../assets/gewitterradar-about-close-premium.webp', import.meta.url)`), statt eines je nach Hosting unzutreffenden absoluten `/local/`-Pfads.
+- Temperaturklassen sind in einer dreispaltigen, mobil lesbaren Farbchip-Rasterdarstellung mit eigenem Wert je Klasse organisiert. Advektionswerte erhalten eigene, voneinander getrennte Felder statt aneinandergeklebter Texte.
+- Neue **Gewitterradar V4.11.158 DEV / HA V0.25.65**, Runtime `411158r1`, Modulsatz `E411-158A1` in Frontend, Integrationsmanifest, Build-Info, DRA-Provenance und Build-Vertrag angeglichen.
+- Laufzeitmanifest-Asset-SHA sowie das SHA256SUMS-Verzeichnis mit 308 Paketdateien anhand öffentlicher CI berechnet und angeglichen.
+- Historische CI-Prüfungen für 36 vorhandene Module und dynamische V4.11-DEV-Identität angepasst, ohne den geschützten About-Golden-/Browservergleich zu entfernen.
+
+**Öffentliche CI: vollständig SUCCESS** für Implementierungscommit `dac628002b18136f83f9e96a490d3cd265649bd2`:
+- Shared Frontend: https://github.com/TheDaimos/gewitterradar/actions/runs/42469743114
+- Integration: https://github.com/TheDaimos/gewitterradar/actions/runs/42469743093
+- Settings / Runtime Identity: https://github.com/TheDaimos/gewitterradar/actions/runs/42469743089
+- 900s Audit: https://github.com/TheDaimos/gewitterradar/actions/runs/42469743084
+
+Die installierbare DRA-Metadatenkennung wurde auf V4.11.158 angehoben. **Die Anzeige eines Updates im DRA-Client und ein Gerätetest sind nicht direkt verifiziert.** WR wurde nicht verändert; die vorherige reale Funktionsreferenz bleibt geschützt.
