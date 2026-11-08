@@ -56,7 +56,8 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411148r1";')
+if (/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411\d+r1";/.test(frontendText)
+    && Number(frontendText.match(/version\.js\?v=(411\d+)r1/)?.[1]) >= 411148
     && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Current V4.11 development identity: read the actual release metadata.
   // The historical pixel/geometry golden tests below remain mandatory.
