@@ -1,5 +1,12 @@
 > **GR 4.11.157 DEV / HA 0.25.64:** [Geschwungene Wind-/Advektionspfeile und dynamische Stromlinien](docs/GR_FLOW_CURVES_01_IMPLEMENTATION.md). Gemeinsame begrenzte Trajektoriengeometrie, gespeicherte Formen und 19 Sprachen. Klassische Modi bleiben Standard; WR 0.10.298 / Loader 301 unverändert. Manuelle VM109-Realabnahme offen.
 
+## V4.11.159 DEV · Premium UI Consolidation · HA 0.25.66
+
+Gemeinsame Eye-Premium-Komponenten für Wind, Temperatur, Legenden und Kartenansicht. Reparierte Legenden mit getrennten Erklärungen, Skalen und gespeicherter Minimierung; lesbare Klassen und autoritative Advektions-Farbgrenzen. Unabhängige Wind-Schnellaktionen und sichere Klick-/Drag-/600-ms-Long-Press-Bedienung mit Originalicons. Wetterdatenwege und Renderer bleiben geschützt.
+
+[Implementierung und gezielte Prüfungen](docs/GR_PREMIUM_UI_CONSOLIDATION_2026-11-08.md). [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.159-dev). Physische Companion-/HA-Abnahme bleibt beim Betreiber.
+
+
 > **GR 4.11.156 DEV / HA 0.25.63:** [Weltweite Temperatur, kohärente 850-hPa-Advektion, GeoPointContext und Celsius/Fahrenheit/Kelvin](docs/GR_TEMP_WORLD_01.md). Gemeinsame Auslieferung mit dem freigegebenen Original-Temperaturicon. Erfordert WR 0.10.298 / Loader 301; bestehender Wind-/Niederschlagspfad geschützt. Manuelle VM109-Abnahme offen.
 
 > **GR 4.11.153 DEV / HA 0.25.60:** [Premium-Windschalter mit den drei freigegebenen Originalgrafiken](docs/GR_WIND_QUICKTOGGLE_01.md). Gemeinsamer Sichtbarkeitszustand, gespeicherte Windoptionen und verschiebbare Kartenbedienung. WR 0.10.297 bleibt unverändert; physische VM109-Abnahme offen.

@@ -1,7 +1,7 @@
 /* Additive WR Consumer V2 numeric-field contract and bounded spatial sampling.
  * No provider selection, model-age policy, field extrapolation or image decoding.
  */
-import { BEAUFORT_LIMITS } from './wind-data.js?v=411153r1';
+import { BEAUFORT_LIMITS } from './wind-data.js?v=411159r1';
 export const WIND_FIELD='weather.wind.field_10m';
 export const WIND_FIELD_COMMAND='weather_router/consumer/resolve_wind_field';
 export const WIND_FIELD_COLORS=Object.freeze(['#7750b3','#6751cc','#465bce','#2987d1','#20a9bd','#32b49c','#6fba71','#b8be55','#d9b84f','#e89a43','#ea7444','#df494b','#bb2a58']);

@@ -72,19 +72,20 @@ test('missing, inconsistent or unverifiable WR intervals never gain a shared sca
 test('reference palette and the protected weather data modules remain unchanged',async()=>{
  const {execFileSync}=await import('node:child_process');
  const baseline='ab55f7b2bfee4a35511b2e95359572e8f2cae6da';
- const files=['precipitation-layer.js','display-menu.js','layer-menu.js','p7-010/raster-compositor.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-consumer.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js'];
+ const files=['precipitation-layer.js','p7-010/raster-compositor.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-consumer.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js'];
  for(const name of files){const path='frontend/modules/weather/'+name;
   // Only the imported UI legend's cache revision changes in the radar entry.
   const actual=(await readFile(path,'utf8')).replace('legend-overlay.js?v=411148r1','legend-overlay.js?v=411147r1');
-  assert.equal(actual,execFileSync('git',['show',baseline+':'+path],{encoding:'utf8'}),path);
+  assert.equal(actual.replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE').replace(/\r\n/g,'\n'),execFileSync('git',['show',baseline+':'+path],{encoding:'utf8'}).replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE').replace(/\r\n/g,'\n'),path);
  }
  const old=execFileSync('git',['show',baseline+':frontend/modules/weather/legend-overlay.js'],{encoding:'utf8'});
  const current=await readFile('frontend/modules/weather/legend-overlay.js','utf8');
  for(const declaration of ['PRECIPITATION_LEGEND_ENTRIES','LEGACY_OPERA_ENTRIES']){
-  const line=text=>text.split('\n').find(s=>s.startsWith('export const '+declaration+'='));assert.equal(line(current),line(old));
+  const line=text=>text.split('\n').find(s=>s.startsWith('export const '+declaration+'='))?.trim();assert.equal(line(current),line(old));
  }
- for(const name of ['_weatherLegendEnsureStyle','_weatherLegendEnsureUi','_weatherLegendPosition','_weatherLegendBounds','_weatherLegendBindDrag']){
+ const uiBaseline=execFileSync('git',['show','ecad2624:frontend/modules/weather/legend-overlay.js'],{encoding:'utf8'});
+ for(const name of ['_weatherLegendPosition','_weatherLegendBounds','_weatherLegendBindDrag']){
   const method=text=>{const start=text.indexOf('  '+name+'(');return text.slice(start,text.indexOf('\n  },',start));};
-  assert.equal(method(current),method(old),name+' must retain premium design, viewport bounds and persisted dragging');
+  assert.equal(method(current).replace(/\r/g,''),method(uiBaseline).replace(/\r/g,''),name+' must retain premium design, viewport bounds and persisted dragging');
  }
 });

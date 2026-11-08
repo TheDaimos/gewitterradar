@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411158r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411159r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.177",
+    "version": "1.2.178",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -36,7 +36,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "function": "Modulregister",
     "subfunctions": [
       "Selbstregistrierung",
-      "Soll/Ist-Prüfung",
+      "Soll/Ist-PrÃ¼fung",
       "Diagnoseexport"
     ],
     "file": "modules/core/registry.js"
@@ -49,7 +49,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "subfunctions": [
       "Selbstregistrierung",
       "Methodeninstallation",
-      "Abhängigkeitsübergabe"
+      "AbhÃ¤ngigkeitsÃ¼bergabe"
     ],
     "file": "modules/core/runtime.js"
   },
@@ -72,7 +72,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "function": "Kartendarstellung",
     "subfunctions": [
       "Standard",
-      "Groß",
+      "GroÃŸ",
       "Vollbild",
       "separates Fenster",
       "Instrumentpositionen",
@@ -86,7 +86,7 @@ export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "ui.scroll-guard",
     "version": "1.0.1",
-    "group": "Oberfläche",
+    "group": "OberflÃ¤che",
     "function": "Scrollschutz",
     "subfunctions": [
       "Home-Assistant-Seitenleiste",
@@ -98,14 +98,14 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.25",
-    "group": "Oberfläche",
-    "function": "Grundgerüst",
+    "version": "1.1.26",
+    "group": "OberflÃ¤che",
+    "function": "GrundgerÃ¼st",
     "subfunctions": [
       "HTML",
       "CSS",
       "Dialoge",
-      "Menüstruktur",
+      "MenÃ¼struktur",
       "skalierbare Vollbild-Instrumente"
     ],
     "file": "modules/ui/skeleton.js"
@@ -113,7 +113,7 @@ export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "ui.project-hub",
     "version": "1.1.16",
-    "group": "Oberfläche",
+    "group": "OberflÃ¤che",
     "function": "Daimos Project Hub",
     "subfunctions": [
       "Signatur-Einstieg",
@@ -139,23 +139,23 @@ export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "ui.controls",
     "version": "1.1.27",
-    "group": "Oberfläche",
+    "group": "OberflÃ¤che",
     "function": "Bedienbindungen",
     "subfunctions": [
       "Klick",
       "Touch",
       "Formulare",
-      "Menüaktionen"
+      "MenÃ¼aktionen"
     ],
     "file": "modules/ui/controls.js"
   },
   {
     "id": "ui.i18n-settings",
     "version": "1.3.11",
-    "group": "Oberfläche",
+    "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
-      "Übersetzung",
+      "Ãœbersetzung",
       "About",
       "Einstellungen",
       "Hilfetexte"
@@ -168,7 +168,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "group": "Kern",
     "function": "Frontend-Aktualisierung",
     "subfunctions": [
-      "Installierten Stand prüfen",
+      "Installierten Stand prÃ¼fen",
       "Aktualisierungshinweis",
       "Kontrollierte Vollneuladung"
     ],
@@ -193,7 +193,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "subfunctions": [
       "Designauswahl",
       "Popup",
-      "Aura-unabhängige Designauswahl"
+      "Aura-unabhÃ¤ngige Designauswahl"
     ],
     "file": "modules/instruments/compass-selector.js"
   },
@@ -233,7 +233,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "id": "diagnostics.data-sources",
     "version": "0.1.3",
     "group": "Datenquellen & Verbindungen",
-    "function": "Datenquellen – Übersicht und Diagnose",
+    "function": "Datenquellen â€“ Ãœbersicht und Diagnose",
     "subfunctions": [
       "Blitzortung-Untermodul",
       "WeatherRouter-Status",
@@ -248,7 +248,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "id": "sources.blitzortung",
     "version": "0.1.0",
     "group": "Datenquellen & Verbindungen",
-    "function": "Blitzortung.org – Integration und Standorte",
+    "function": "Blitzortung.org â€“ Integration und Standorte",
     "subfunctions": [
       "Integrationsstatus",
       "Mehrere Standorte",
@@ -305,7 +305,7 @@ export const EXPECTED_MODULES=Object.freeze([
       "Vergleich mit Referenz",
       "Zwischenablage",
       "JSON-Export",
-      "Sicherer Rückfall"
+      "Sicherer RÃ¼ckfall"
     ],
     "file": "modules/diagnostics/raster-lab.js"
   },
@@ -341,7 +341,7 @@ export const EXPECTED_MODULES=Object.freeze([
     "subfunctions": [
       "Blitzaufnahme",
       "Warnanimation",
-      "Geräteorientierung"
+      "GerÃ¤teorientierung"
     ],
     "file": "modules/map/strikes-warnings.js"
   },
@@ -361,7 +361,7 @@ export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "ui.render",
     "version": "1.0.3",
-    "group": "Oberfläche",
+    "group": "OberflÃ¤che",
     "function": "Hauptrendering",
     "subfunctions": [
       "Status",
@@ -406,13 +406,13 @@ export const EXPECTED_MODULES=Object.freeze([
     "subfunctions": [
       "Raster-Kacheladapter",
       "Web-Mercator-BBOX",
-      "Quelle & Aktualität",
+      "Quelle & AktualitÃ¤t",
       "Abdeckung",
       "Darstellungslegende",
       "Darstellungstransparenz",
-      "Flächenglättung",
+      "FlÃ¤chenglÃ¤ttung",
       "Anfragebegrenzung",
-      "Räumlicher Vorladepuffer",
+      "RÃ¤umlicher Vorladepuffer",
       "Niederschlags-Zeitplayer",
       "Frame-Doppelpuffer",
       "Zeitachse ein/aus",
@@ -423,41 +423,41 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.12",
+    "version": "1.1.13",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
       "Consumer-V1-Erkennung",
-      "Kartenfähigkeiten",
+      "KartenfÃ¤higkeiten",
       "Schnellzugriff",
       "Fachbereiche",
       "Niederschlags-Layer",
       "Zeitachse",
-      "scrollbares Menü",
+      "scrollbares MenÃ¼",
       "stabile Desktop-Navigation",
-      "Status & Rücknavigation"
+      "Status & RÃ¼cknavigation"
     ],
     "file": "modules/weather/layer-menu.js"
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.23",
+    "version": "0.4.24",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
       "gemeinsamer Darstellungszustand",
       "Offline-Teaser",
       "Augen-Bedienelement",
-      "schwebendes Kartenmenü",
+      "schwebendes KartenmenÃ¼",
       "Pointer-Drag",
       "Positionsspeicherung",
       "Niederschlagsstile",
       "Legendenmodus",
       "finale Augenassets",
       "Leaflet-sichere Rasterstile",
-      "flächige Glättung",
+      "flÃ¤chige GlÃ¤ttung",
       "Hotspot-Erhalt",
-      "Transparenz im Kartenmenü",
+      "Transparenz im KartenmenÃ¼",
       "Transparenz je Darstellungsfamilie",
       "entkoppelter UI-Zustand",
       "Layer-Schnellzugriff"
@@ -466,7 +466,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -494,14 +494,14 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
       "Windfahnen",
       "Richtungspfeile",
       "numerisches Windfeld",
-      "Windgeschwindigkeits-Farbfläche",
+      "Windgeschwindigkeits-FarbflÃ¤che",
       "persistente Symbolfarben",
       "Premium-Windlegende"
     ],
@@ -509,7 +509,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.temperature-display",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "group": "Weather-Engine",
     "function": "Weltweite Temperatur und thermische Advektion",
     "subfunctions": [

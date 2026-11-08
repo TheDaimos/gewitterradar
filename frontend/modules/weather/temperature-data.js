@@ -12,7 +12,7 @@ export function normalizeTemperatureConfig(input={}){
  if(c.minC>=c.maxC){c.minC=-40;c.maxC=50;}
  const stops=input.stops;if(Array.isArray(stops)&&stops.length===9&&stops.every((n,i)=>Number.isFinite(n)&&n>=-150&&n<=100&&(!i||n>stops[i-1]))&&stops[6]>=35&&stops[7]>=40&&stops[8]>=45)c.stops=[...stops];else c.stops=[...TEMPERATURE_STOPS];
  for(const key of ['quickPositions','legendPositions']){c[key]={};for(const [id,p] of Object.entries(input[key]||{}).slice(0,20))if(/^[a-z0-9:-]{1,80}$/.test(id)&&p&&[p.x,p.y].every(Number.isFinite))c[key][id]={x:clamp(p.x,0,1,0),y:clamp(p.y,0,1,0)};}
- c.legendUi={};for(const kind of ['temperature','advection']){const ui=input.legendUi?.[kind];c.legendUi[kind]={view:ui?.view==='classes'?'classes':'bar',rain:ui?.rain===true,snow:false};}
+ c.legendUi={};for(const kind of ['temperature','advection']){const ui=input.legendUi?.[kind];c.legendUi[kind]={view:ui?.view==='classes'?'classes':'bar',rain:ui?.rain===true,snow:false,minimized:ui?.minimized===true,explanation:ui?.explanation===true};}
  return c;
 }
 export function readTemperatureConfig(storage=globalThis.localStorage){try{return normalizeTemperatureConfig(JSON.parse(storage.getItem(TEMPERATURE_STORAGE))||{});}catch(_){return normalizeTemperatureConfig();}}
@@ -25,5 +25,17 @@ export function writeTemperatureColor(kelvin,config,out,offset=0){
 }
 export function temperatureColor(kelvin,config){const a=[0,0,0,0];writeTemperatureColor(kelvin,config,a);return `rgb(${a[0]},${a[1]},${a[2]})`;}
 export function temperatureText(kelvin,unit='C',suffix=false,locale='de-DE'){if(!Number.isFinite(kelvin)||kelvin<=0)return '–';const value=temperatureDisplayValue(kelvin,unit);return (Math.round(value)||0).toLocaleString(locale)+(unit==='K'?' K':suffix?' '+temperatureUnitSymbol(unit):'°');}
-export function advectionColor(rate,strength=1){const n=rate*strength,a=Math.abs(n);return a<.05?'#e8edf1':n<0?(a<.4?'#6edbff':'#247aff'):(a<.4?'#ffab50':a<2?'#fa413b':'#e9449a');}
+export function advectionColor(rate,strength=1){const n=rate*strength,a=Math.abs(n);return a<ADVECTION_DISPLAY_LIMITS.neutral?'#e8edf1':n<0?(a<ADVECTION_DISPLAY_LIMITS.weak?'#6edbff':'#247aff'):(a<ADVECTION_DISPLAY_LIMITS.weak?'#ffab50':a<ADVECTION_DISPLAY_LIMITS.strongWarm?'#fa413b':'#e9449a');}
 export function temperatureLegendRange(field,c){const r=field?.temperature_range_kelvin;return c.range==='manual'?[c.minC,c.maxC]:r?[Math.floor((r.min-273.15)/10)*10,Math.ceil((r.max-273.15)/10)*10]:[c.stops[0],c.stops[8]];}
+
+// Existing renderer thresholds, exposed for the legend. No new meteorological classes.
+export const ADVECTION_DISPLAY_LIMITS=Object.freeze({neutral:.05,weak:.4,strongWarm:2});
+export function advectionLegendClasses(strength=1){
+ const {neutral:n,weak:w,strongWarm:h}=ADVECTION_DISPLAY_LIMITS,fmt=v=>Number((v/strength).toFixed(3)).toLocaleString('de-DE',{maximumFractionDigits:3});
+ return [{color:advectionColor(-w/strength,strength),label:'≤ −'+fmt(w)+' K/h'},
+ {color:advectionColor(-n/strength,strength),label:'> −'+fmt(w)+' bis ≤ −'+fmt(n)+' K/h'},
+ {color:advectionColor(0,strength),label:'> −'+fmt(n)+' bis < +'+fmt(n)+' K/h'},
+ {color:advectionColor(n/strength,strength),label:'≥ +'+fmt(n)+' bis < +'+fmt(w)+' K/h'},
+ {color:advectionColor(w/strength,strength),label:'≥ +'+fmt(w)+' bis < +'+fmt(h)+' K/h'},
+ {color:advectionColor(h/strength,strength),label:'≥ +'+fmt(h)+' K/h'}];
+}

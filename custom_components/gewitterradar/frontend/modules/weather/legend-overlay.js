@@ -1,8 +1,9 @@
 import { defineModule } from "../core/runtime.js?v=41114r1";
+import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411159r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.3",
+  version:"0.1.4",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -120,7 +121,7 @@ export function groupIdenticalLegendScales(models){
 
 const UI_KEY="gewitterradar:weather-legend-ui:v1";
 function readLegendUi(){
- try{const value=JSON.parse(localStorage.getItem(UI_KEY));return {view:value?.view==="classes"?"classes":"bar",rain:value?.rain===true,snow:value?.snow===true};}
+ try{const value=JSON.parse(localStorage.getItem(UI_KEY));return {view:value?.view==="classes"?"classes":"bar",rain:value?.rain===true,snow:value?.snow===true,minimized:value?.minimized===true};}
  catch(_){return {view:"bar",rain:false,snow:false};}
 }
 const POSITION_KEY="gewitterradar:weather-legend-position:v1";
@@ -238,6 +239,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
 
   _weatherLegendEnsureUi(){
     if(!this.shadow)return null;
+    ensurePremiumUi(this.shadow);
     const card=this.shadow.getElementById("map-card");
     if(!card)return null;
     this._weatherLegendEnsureStyle();
@@ -251,8 +253,9 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       host.setAttribute("role","region");
       host.setAttribute("aria-label","WeatherRouter-Legende");
       host.setAttribute("aria-live","polite");
-      host.innerHTML='<div class="weather-legend-header weather-legend-global-head"><div class="weather-legend-title" data-weather-legend-heading>Intensitäten</div><div class="gr-legend-actions"><button type="button" class="gr-legend-minimize" data-gr-legend-minimize aria-label="Legende minimieren" aria-expanded="true">−</button><button type="button" class="weather-legend-hide" data-weather-legend-hide aria-label="Legende schließen"><img alt="" aria-hidden="true"></button></div></div><div class="weather-legend-view-picker" role="group" aria-label="Legendenansicht"><button type="button" data-weather-legend-view="classes">Klassen</button><button type="button" data-weather-legend-view="bar">Balken</button></div><div class="weather-legend-list" data-weather-legend-list></div>';
-      host.querySelector("[data-weather-legend-hide] img").src=new URL("../../assets/gewitterradar-about-close-premium.webp",import.meta.url).href;
+      host.innerHTML='<div class="weather-legend-header weather-legend-global-head"><div class="weather-legend-title" data-weather-legend-heading>Intensitäten</div><div class="gr-legend-actions">'+premiumAction('legend-info','Erklärung','info').replace('data-premium-action="legend-info"','data-premium-legend-info')+premiumAction('legend-minimize','Legende minimieren','minimize').replace('data-premium-action="legend-minimize"','data-gr-legend-minimize')+premiumAction('legend-close','Legende schließen').replace('data-premium-action="legend-close"','data-weather-legend-hide')+'</div></div><div class="weather-legend-view-picker" role="group" aria-label="Legendenansicht"><button type="button" data-weather-legend-view="classes">Klassen</button><button type="button" data-weather-legend-view="bar">Balken</button></div><div class="weather-legend-list" data-weather-legend-list></div>';
+      host.querySelector('[data-weather-legend-hide]').classList.add('weather-legend-hide');
+      host.querySelector("[data-weather-legend-hide] img").src=this._weatherPremiumCloseAsset?.()||new URL("../../assets/gewitterradar-about-close-premium.webp",import.meta.url).href;
       host.addEventListener("transitionend",()=>this._weatherLegendPosition());
       host.addEventListener("click",event=>{
         const view=event.target.closest?.("[data-weather-legend-view]"),toggle=event.target.closest?.("[data-weather-section-toggle]");
@@ -270,7 +273,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
         else try{localStorage.setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}
       });
       host.addEventListener("click",event=>{
-        const mini=event.target?.closest?.("[data-gr-legend-minimize]");if(mini){event.preventDefault();event.stopPropagation();host.classList.toggle("gr-legend-minimized");const minimized=host.classList.contains("gr-legend-minimized");mini.setAttribute("aria-label",minimized?"Legende maximieren":"Legende minimieren");mini.setAttribute("aria-expanded",String(!minimized));mini.textContent=minimized?"+":"−";requestAnimationFrame(()=>this._weatherLegendPosition());return;}
+        const mini=event.target?.closest?.("[data-gr-legend-minimize]");if(mini){event.preventDefault();event.stopPropagation();const state=this._weatherLegendState(),minimized=state.ui.minimized=!state.ui.minimized;host.classList.toggle("gr-legend-minimized",minimized);mini.setAttribute("aria-label",minimized?"Legende maximieren":"Legende minimieren");mini.setAttribute("aria-expanded",String(!minimized));if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);else try{localStorage.setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}requestAnimationFrame(()=>this._weatherLegendPosition());return;}
         const button=event.target?.closest?.("[data-weather-legend-hide]");
         if(!button)return;
         event.preventDefault();event.stopPropagation();
@@ -384,6 +387,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
 
   _weatherLegendSyncUi(){
     const host=this._weatherLegendEnsureUi();if(!host)return;
+    host.classList.toggle("gr-legend-minimized",this._weatherLegendState().ui.minimized===true);
     const models=this._weatherLegendVisibleModels(),list=host.querySelector("[data-weather-legend-list]");
     if(!models.length){
       host.hidden=true;

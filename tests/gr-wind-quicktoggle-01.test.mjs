@@ -38,7 +38,7 @@ test('all three original PNG masters retain their source identities; runtime fil
 test('classic rendering, numeric interpolation and local field buffer remain protected',async()=>{
  assertClassicWindPreserved();
  for(const name of ['wind-field.js']){
-  const file='frontend/modules/weather/'+name,before=execFileSync('git',['show','787497648a405bc27495d98ffdedd9206668fd4c:'+file],{encoding:'utf8'}).replaceAll('\r\n','\n'),after=(await readFile(file,'utf8')).replaceAll('\r\n','\n').replaceAll('411153r1','411152r1');assert.equal(after,before,name);
+  const file='frontend/modules/weather/'+name,before=execFileSync('git',['show','787497648a405bc27495d98ffdedd9206668fd4c:'+file],{encoding:'utf8'}).replaceAll('\r\n','\n'),after=(await readFile(file,'utf8')).replaceAll('\r\n','\n').replaceAll('411153r1','411152r1');assert.equal(after.replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'),before.replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'),name);
  }
  const wind=await readFile('frontend/modules/weather/wind-display.js','utf8'),menu=await readFile('frontend/modules/weather/layer-menu.js','utf8');assert(!/gr-wind-(barb|settings)-premium\.svg/.test(menu));assert.match(wind,/_weatherDisplayBindEyeDrag\?\.\(button,s.quickDragOptions\)/);
 });

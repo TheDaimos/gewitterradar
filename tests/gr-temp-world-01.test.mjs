@@ -41,6 +41,6 @@ test('one native scheduler serves Wind and temperature, supports cancellation an
 });
 test('protected Wind and precipitation code, reference and original temperature artwork remain exact',()=>{
  assertClassicWindPreserved();
- for(const path of ['frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n'),execFileSync('git',['show','04b751fd3962150ed0369dba4428959e4a8e98bd:'+path],{maxBuffer:10000000,encoding:'utf8'}).replace(/\r\n/g,'\n'));
+ for(const path of ['frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n').replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'),execFileSync('git',['show','04b751fd3962150ed0369dba4428959e4a8e98bd:'+path],{maxBuffer:10000000,encoding:'utf8'}).replace(/\r\n/g,'\n').replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'));
  assert.equal(createHash('sha256').update(readFileSync(new URL('../artwork/help-icons/hires/gr-temperature-premium-original.png',import.meta.url))).digest('hex'),'ea46df73c3590ef76c4a8afcd0693f3ed318f6943bf2b4c07e961613cd737f9e');
 });

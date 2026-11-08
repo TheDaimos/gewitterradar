@@ -3,7 +3,7 @@ import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r
 import {windViewportProjection,windMercatorY,windMercatorLatitude,smoothWindDirection} from './wind-canvas.js?v=411157r1';
 import {prepareWindFieldLookup,windFieldStepValid} from './wind-field.js?v=411153r1';
 import {sampleScalarInto} from './temperature-field.js?v=411156r1';
-import {writeTemperatureColor,temperatureColor,temperatureText,advectionColor} from './temperature-data.js?v=411157r1';
+import {writeTemperatureColor,temperatureColor,temperatureText,advectionColor} from './temperature-data.js?v=411159r1';
 const ADV_NAMES=Object.freeze(['u','v','rate']);
 const paneSpecs=[['gr-temperature-surface',210],['gr-temperature-labels',432],['gr-temperature-advection',433]];
 export class TemperatureCanvas{

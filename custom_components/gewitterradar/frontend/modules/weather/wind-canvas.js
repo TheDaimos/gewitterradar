@@ -1,5 +1,5 @@
 import {FlowGeometry,flowIsCurved,flowLength} from './flow-geometry.js?v=411157r1';
-import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411157r1';
+import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411159r1';
 import { sampleWindField,sampleWindFieldInto,windFieldStepValid,writeWindFieldColor,windFieldGlyphs,windFieldSnapshot,windFieldVisibleBounds,windFieldOverlaps } from './wind-field.js?v=411153r1';
 
 const DEG=Math.PI/180;

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.25",
+  "version": "1.1.26",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -2974,6 +2974,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             box-shadow:0 15px 38px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.035);
             backdrop-filter:blur(16px);
           }
+          #map-display-switch:not(.weather-layer-view){width:min(244px,calc(100vw - 24px));min-width:0;max-width:calc(100vw - 24px);border-radius:15px}
+          #map-display-switch,#map-display-switch *{box-sizing:border-box}
+          #map-display-switch>*{min-width:0;max-width:100%}
+          #map-display-switch .weather-layer-entry-wrap{width:100%;min-width:0}
+          #map-display-switch .weather-layer-entry{width:100%;min-width:0;display:flex;gap:7px}
+          #map-display-switch .weather-layer-entry-label{min-width:0;flex:1;overflow-wrap:anywhere;white-space:normal}
+          #map-display-switch .weather-layer-entry img{flex:0 0 32px;max-width:32px;object-fit:contain}
+          #map-display-switch .map-display-btn{white-space:normal;min-width:0;width:100%}
           .map-display-menu[hidden] { display:none!important; }
           .map-display-menu::after {
             content:'';position:absolute;right:15px;bottom:-5px;width:9px;height:9px;
@@ -5978,6 +5986,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .settings-dialog,
           .weather-legend-overlay.gr-premium-metal-surface,
           .weather-display-panel.gr-premium-metal-surface,
+          .weather-wind-panel.gr-premium-metal-surface,
+          .map-display-menu.gr-premium-metal-surface,
           .weather-display-minimize.gr-premium-metal-surface,
           .weather-display-opacity-reset.gr-premium-metal-surface,
           .weather-display-info.gr-premium-metal-surface{
@@ -5985,8 +5995,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
             box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 8px rgba(215,164,67,.055)
           }
-          .weather-legend-overlay.gr-premium-metal-surface,.weather-display-panel.gr-premium-metal-surface{border-width:1px;box-shadow:0 8px 22px #0007,inset 0 1px #fff1}
+          .weather-legend-overlay.gr-premium-metal-surface,.weather-display-panel.gr-premium-metal-surface,.weather-wind-panel.gr-premium-metal-surface,.map-display-menu.gr-premium-metal-surface{border-width:1px;box-shadow:0 8px 22px #0007,inset 0 1px #fff1}
 
+          :is(.weather-display-panel,.weather-wind-panel,.weather-legend-overlay,.map-display-menu).gr-premium-metal-surface{border-radius:15px}
           .settings-dialog::after{content:none!important}
           /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */
           .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}

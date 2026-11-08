@@ -63,5 +63,5 @@ test('snow requires a matching physical quantity and unit; rain stays independen
  ]}}]);assert.equal(invalid.length,1);assert.equal(invalid[0].kind,'rain');
  const previous=globalThis.localStorage;
  try{globalThis.localStorage={getItem:key=>key.endsWith('ui:v1')?'{"view":"classes","rain":true,"snow":false}':null};
- assert.deepEqual(new Card()._weatherLegendState().ui,{view:'classes',rain:true,snow:false});}finally{globalThis.localStorage=previous;}
+ assert.deepEqual(new Card()._weatherLegendState().ui,{view:'classes',rain:true,snow:false,minimized:false});}finally{globalThis.localStorage=previous;}
 });

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.158",
-  "build": "V4.11.158-DEV-2026-11-08",
-  "runtimeRevision": "411158r1",
-  "moduleSetId": "E411-158A1",
+  "productVersion": "4.11.159",
+  "build": "V4.11.159-DEV-2026-11-08",
+  "runtimeRevision": "411159r1",
+  "moduleSetId": "E411-159A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR-FLOW-CURVES-01: WeatherRouter-authorized shared bounded RK2 trajectories, curved wind/advection arrows and streamlines; existing classic renderers, meteorological contracts and data paths preserved.",
+    "purpose": "GR PREMIUM UI CONSOLIDATION: shared Eye-menu settings surfaces, scientific legends, independent explanations and minimize state, safe click/drag/600ms long press, synchronized wind quick actions.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -34,7 +34,8 @@
     "temperatureMinimumWeatherRouter": "0.10.298",
     "protectedTemperatureBaseline": "04b751fd3962150ed0369dba4428959e4a8e98bd",
     "protectedFlowReference": "a607639ad2a6373c62e04ce8acfc39f72feb280a",
-    "protectedWeatherRouterReference": "1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5"
+    "protectedWeatherRouterReference": "1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5",
+    "premiumUiBaseline": "ecad2624"
   },
   "sourceReleaseTag": "v4.10"
 }

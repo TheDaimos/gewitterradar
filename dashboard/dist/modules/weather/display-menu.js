@@ -1,9 +1,10 @@
+import {ensurePremiumUi,PREMIUM_INFO} from './premium-ui.js?v=411159r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.23",
+  version:"0.4.24",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -11,6 +12,18 @@ export const MODULE_META=Object.freeze({
 });
 
 const STORAGE_KEY="gewitterradar:weather-display:v1";
+// Touch browsers may retarget their compatibility click into the newly opened
+// panel. Suppress only the release click near this long-press origin, including
+// label default activation; the button's own click handler is not sufficient.
+const clearEyeReleaseClick=state=>{clearTimeout(state.eyeReleaseTimer);state.eyeReleaseCleanup?.();state.eyeReleaseCleanup=null;};
+const blockEyeReleaseClick=(owner,state,drag)=>{
+ clearEyeReleaseClick(state);const root=owner.shadow;if(!root?.addEventListener)return;
+ const block=event=>{if(!event.detail||Math.hypot(event.clientX-drag.startX,event.clientY-drag.startY)>12)return;event.preventDefault();event.stopImmediatePropagation();clearEyeReleaseClick(state);};
+ const releaseRoot=globalThis.document||root,release=event=>{if(event.pointerId!==drag.pointerId)return;clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),event.type==='pointercancel'?0:450);},blur=()=>clearEyeReleaseClick(state);
+ root.addEventListener('click',block,true);releaseRoot.addEventListener('pointerup',release,true);releaseRoot.addEventListener('pointercancel',release,true);globalThis.addEventListener?.('blur',blur);
+ state.eyeReleaseCleanup=()=>{root.removeEventListener('click',block,true);releaseRoot.removeEventListener('pointerup',release,true);releaseRoot.removeEventListener('pointercancel',release,true);globalThis.removeEventListener?.('blur',blur);};
+ state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),10000);
+};
 let weatherDisplaySoftFilterSerial=0;
 // Die CSS-Filter-Schreibweise ist kein Nachweis der tatsaechlichen
 // SVG-Filterdarstellung: WebKit auf dem iPad zeigte ungefilterte Raster.
@@ -510,6 +523,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   },
 
   _weatherDisplayEnsureStyle(){
+    if(this.shadow)ensurePremiumUi(this.shadow);
     if(!this.shadow||this.shadow.getElementById("weather-display-style"))return;
     const style=document.createElement("style");
     style.id="weather-display-style";
@@ -642,7 +656,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.className="weather-display-panel gr-premium-metal-surface";
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
-        '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize gr-premium-metal-surface" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren">−</button><button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info gr-premium-metal-surface">i</button></div>'+
+        '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter · optische Aufbereitung</div></div><button class="weather-display-minimize gr-premium-metal-surface" type="button" data-weather-display-minimize aria-label="Darstellungsmenü minimieren"><span class="gr-minimize-glyph" aria-hidden="true"></span></button><button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info gr-premium-metal-surface"><img src="'+PREMIUM_INFO+'" alt="" style="width:28px;height:28px;object-fit:contain;pointer-events:none"></button></div>'+
         '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
         WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
@@ -759,7 +773,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
   _weatherDisplayCancelEyeDrag(options=null){
     const state=options?.state?.()||this.__weatherDisplayState;if(!state?.eyeDrag)return;
     const eye=options?.element||this.shadow?.getElementById("weather-display-eye-control"),pointerId=state.eyeDrag.pointerId;
-    state.eyeDrag=null;eye?.classList.remove("dragging");
+    clearTimeout(state.eyeDrag.longPressTimer);state.eyeDrag=null;eye?.classList.remove("dragging");
     try{if(pointerId!=null&&eye?.hasPointerCapture?.(pointerId))eye.releasePointerCapture(pointerId);}catch(_error){}
     requestAnimationFrame(()=>options?options.position():this._weatherDisplayPositionEye());
   },
@@ -773,7 +787,9 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       if(!mapCard||!mapEl)return;
       event.stopPropagation();
       const rect=eye.getBoundingClientRect(),cardRect=mapCard.getBoundingClientRect();
-      state.eyeDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,moved:false};
+      if(state.eyeDrag)return;
+      state.eyeDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,moved:false,longPressed:false};
+      if(options?.longPress){const drag=state.eyeDrag;drag.longPressTimer=setTimeout(()=>{if(state.eyeDrag!==drag||drag.moved)return;drag.longPressed=true;state.eyeSuppressClickUntil=performance.now()+1000;blockEyeReleaseClick(this,state,drag);options.longPress();},600);}
       eye.classList.add("dragging");
       try{eye.setPointerCapture?.(event.pointerId);}catch(_error){}
     };
@@ -782,7 +798,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       event.preventDefault();event.stopPropagation();
       const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
-      if(Math.hypot(dx,dy)>4)drag.moved=true;
+      if(Math.hypot(dx,dy)>6){drag.moved=true;clearTimeout(drag.longPressTimer);}if(drag.longPressed)return;if(!drag.moved)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),width=eye.offsetWidth,height=eye.offsetHeight,inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
       const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-height-inset);
@@ -794,17 +810,21 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       const state=(options?.state?.()||this._weatherDisplayState()),drag=state.eyeDrag;if(!drag||drag.pointerId!==event.pointerId)return;
       event.stopPropagation();
       if(event.type==='pointercancel'){state.eyeSuppressClickUntil=performance.now()+450;this._weatherDisplayCancelEyeDrag(options);return;}
-      const moved=!!drag.moved,mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
+      clearTimeout(drag.longPressTimer);const moved=!!drag.moved,mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
       state.eyeDrag=null;eye.classList.remove("dragging");
       try{eye.releasePointerCapture?.(event.pointerId);}catch(_error){}
-      if(moved)state.eyeSuppressClickUntil=performance.now()+450;
+      if(moved||drag.longPressed)state.eyeSuppressClickUntil=performance.now()+600;
+      if(drag.longPressed)state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),450);
       if(!mapCard||!mapEl)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),rect=eye.getBoundingClientRect(),inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
       const maxLeft=Math.max(minLeft,mapRect.right-cardRect.left-rect.width-inset),maxTop=Math.max(minTop,mapRect.bottom-cardRect.top-rect.height-inset);
       const left=clamp(rect.left-cardRect.left,minLeft,maxLeft),top=clamp(rect.top-cardRect.top,minTop,maxTop);
       const x=maxLeft>minLeft?(left-minLeft)/(maxLeft-minLeft):0,y=maxTop>minTop?(top-minTop)/(maxTop-minTop):0;
-      if(options){if(moved)options.save({x,y});options.position();}
+      // A tap must keep its original hit target through the compatibility
+      // click. Re-running automatic obstacle placement on pointerup can move
+      // an unsaved control away before a touch browser dispatches that click.
+      if(options){if(moved){options.save({x,y});options.position();}}
       else if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:{x,y}});
       else this._weatherDisplayPositionEye(DEFAULT_EYE_POSITION);
     };
@@ -916,7 +936,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       panel.hidden=!((available||this._weatherWindOpen)&&config.enabled);
       panel.classList.toggle("minimized",config.minimized);
       const minimize=panel.querySelector("[data-weather-display-minimize]");
-      if(minimize){minimize.textContent=config.minimized?"+":"−";minimize.setAttribute("aria-label",config.minimized?"Darstellungsmenü aufklappen":"Darstellungsmenü minimieren");}
+      if(minimize){minimize.setAttribute("aria-label",config.minimized?"Darstellungsmenü aufklappen":"Darstellungsmenü minimieren");}
       const glyph=panel.querySelector(".weather-display-eye-glyph");if(glyph)glyph.outerHTML=eyeAssetMarkup(true);
       const precipCard=panel.querySelector("[data-weather-display-precipitation-card]");if(precipCard)precipCard.hidden=!available;
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>{const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";select.value=config.styles?.[kind]||"auto";select.disabled=!available;});
