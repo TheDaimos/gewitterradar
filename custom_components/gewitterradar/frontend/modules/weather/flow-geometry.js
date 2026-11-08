@@ -7,6 +7,7 @@ const mercator=lat=>Math.log(Math.tan(Math.PI/4+Math.max(-89.9,Math.min(89.9,lat
 function bounds(field){let b=boundsCache.get(field);if(b?.lookup!==field.lookup){const g=field.grid,s=field.lookup;b={lookup:s,x0:s.x0,x1:s.x1,center:s.center,y0:mercator(g.latitudes[0]),y1:mercator(g.latitudes.at(-1)),cyclic:g.cyclic};boundsCache.set(field,b);}return b;}
 function covered(b,lon,my){lon+=360*Math.round((b.center-lon)/360);return Number.isFinite(lon)&&Number.isFinite(my)&&my>=b.y0&&my<=b.y1&&(b.cyclic||lon>=b.x0&&lon<=b.x1);}
 function safeStep(field,lon0,my0,lon1,my1){return field.lookup?.allValid?covered(bounds(field),lon0,my0)&&covered(bounds(field),lon1,my1):windFieldStepValid(field,latitude(my0),lon0,latitude(my1),lon1);}
+function safeCurveSpan(field,x0,y0,x1,y1,x2,y2){return field.lookup?.allValid?safeStep(field,x0,y0,x2,y2):safeStep(field,Math.min(x0,x1,x2),Math.min(y0,y1,y2),Math.max(x0,x1,x2),Math.max(y0,y1,y2));}
 export const flowLength=(speed,percent=100)=>Number.isFinite(speed)&&speed>0?Math.min(64,(7+33*(-Math.expm1(-speed/14)))*Math.max(.5,Math.min(1.5,(Number.isFinite(percent)?percent:100)/100))):0;
 export const flowVelocity=(speed,tempo='normal')=>Number.isFinite(speed)&&speed>0?70*(-Math.expm1(-speed/17))*({slow:.55,normal:1,fast:1.7}[tempo]||1):0;
 export const flowIsCurved=form=>form==='curved_arrows'||form==='curved_lines';
@@ -56,14 +57,14 @@ export class FlowGeometry{
    if(dist<.25)continue;if(!Number.isFinite(dist)||dist>Math.max(80,length*2))break;
    const tx=-sx/dist,ty=-sy/dist;turn+=Math.abs(Math.atan2(ux*ty-uy*tx,ux*tx+uy*ty));if(turn>2.4)break;ux=tx;uy=ty;
    const prev=(count-1)*2,older=Math.max(0,count-2)*2;
-   if(!safeStep(field,w[older],w[older+1],lon,my))break;
+   if(!safeCurveSpan(field,w[older],w[older+1],w[prev],w[prev+1],lon,my))break;
    const f=Math.min(1,(length-total)/dist);w[count*2]=w[prev]+dx*f;w[count*2+1]=w[prev+1]+dy*f;const x=w[count*2]-p.ox,y=w[count*2+1]-p.oy;xy[count*2]=x*p.ex+y*p.nx;xy[count*2+1]=x*p.ey+y*p.ny;total+=dist*f;count++;if(f<1||total>=length)break;
   }
   // Decimate rendering only; the full bounded geographic history remains intact.
   const budget=quality<.65?9:13;
   if(count>budget&&field.lookup?.allValid){const last=count-1;for(let i=1;i<budget;i++){const index=Math.round(i*last/(budget-1));xy[i*2]=xy[index*2];xy[i*2+1]=xy[index*2+1];}count=budget;}
   if(count>1){const d=Math.min(1.5,Math.hypot(xy[2]-xy[0],xy[3]-xy[1])*.35),lon=particle.lon-(this.dx*p.ax+this.dy*p.bx)*d,my=particle.my-(this.dx*p.ay+this.dy*p.by)*d;
-   if(!safeStep(field,particle.lon,particle.my,lon,my))count=0;}
+   if(!safeCurveSpan(field,particle.lon,particle.my,w[2],w[3],lon,my))count=0;}
   this.count=count;this.stats.points+=count;if(count>1)this.stats.curves++;return count;
  }
  path(ctx,count=this.count,headOnly=false){

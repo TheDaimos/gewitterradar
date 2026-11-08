@@ -95,7 +95,7 @@ Die ersten unbeschränkten Prototypen überschritten das gewünschte Kurvenbudge
 
 ## Gezielte Prüfungen und Grenzen
 
-Zwölf neue technische Tests behandeln konstante und rotierende Felder, dynamische Historie, Tangenten, enge/subpixelgroße Wirbel, begrenzte Länge/Geschwindigkeit, Delta-Zeit/Pause, ungültige Werte, NoData, Weltkopien, Rotation, Speicherbegrenzung, persistente Defaults, alle 19 Sprachverträge und unveränderte meteorologische Verträge. Dazu kommen die bisherigen 49 gezielten Wind-/Temperatur-/Legendenprüfungen.
+Dreizehn neue technische Tests behandeln konstante und rotierende Felder, dynamische Historie, Tangenten, enge/subpixelgroße Wirbel, begrenzte Länge/Geschwindigkeit, Delta-Zeit/Pause, ungültige Werte, NoData, Weltkopien, Rotation, Speicherbegrenzung, persistente Defaults, alle 19 Sprachverträge und unveränderte meteorologische Verträge. Eine eigene Maskenprüfung schützt zusätzlich historische Kurvenecken: Auch der Kontrollpunkt außerhalb einer geraden Endpunktverbindung wird vor Bézier-Rundung in der konservativen Zellhülle geprüft. Dazu kommen die bisherigen 49 gezielten Wind-/Temperatur-/Legendenprüfungen.
 
 Die früheren Ganzdatei-Sperren auf `wind-canvas.js` wurden für die ausdrücklich beauftragte Erweiterung präzisiert: Klassische Glyphengeometrie, Punktdarstellung, klassische Bewegung, ursprüngliche klassische Dichte, Scheduler-Methoden und Farbflächen-/Cachemethoden werden abschnittsweise bytegleich mit der akzeptierten Referenz verglichen. Numerischer Windfeldsampler, Temperaturvertrag, Kelvin-/Einheitenhilfe, Consumer-Transport, Niederschlagsrenderer und Referenzdateien bleiben weiterhin vollständig unverändert geprüft. Kein stilles Entfernen des Regressionsschutzes.
 

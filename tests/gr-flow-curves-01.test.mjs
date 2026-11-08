@@ -41,6 +41,10 @@ test('world copies use the same vector field, rotation changes screen geometry o
  const f=field(()=>[10,0],{min:-180,max:180,step:10,cyclic:true}),a=particle(179.99,0),b=particle(539.99,0),e=new FlowGeometry(),pr=projection();for(let i=0;i<10;i++){assert(e.advance(f,a,pr,.02,'normal',1));assert(e.advance(f,b,pr,.02,'normal',1));}assert(Math.abs(b.lon-a.lon-360)<1e-10);assert(a.lon>180);
  const c=particle(),d=particle();e.advance(f,c,projection(),.02,'normal',1);e.advance(f,d,projection(Math.PI/2),.02,'normal',1);assert(Math.abs(c.lon-d.lon)<1e-10);assert(Math.abs(c.my-d.my)<1e-10);
 });
+test('a changed mask cannot be rounded across an off-axis historical curve corner',()=>{
+ const f=field(()=>[-4.472,-8.944],{min:-1,max:1,step:.05}),nx=f.grid.longitudes.length;f.grid.valid_mask[22*nx+22]=0;delete f.lookup;prepareWindFieldLookup(f);
+ const p=particle(-.3,-.3),e=new FlowGeometry();p.flowPath={coords:new Float64Array(48),cursor:1,count:2,epoch:1};p.flowPath.coords.set([.3,-.3,0,.3]);e.dx=-1/Math.sqrt(5);e.dy=2/Math.sqrt(5);assert.equal(e.build(f,p,projection(),100),2,'the unsafe older corner is truncated before Bezier smoothing');
+});
 test('smoothing uses bounded quadratic control points and a tangential end, no large line-mode head',()=>{
  const f=field((x,y)=>[10,y*4]),p=particle(),e=new FlowGeometry(),pr=projection();for(let i=0;i<50;i++)e.advance(f,p,pr,.02,'normal',1);e.build(f,p,pr,30);
  const ops=[],ctx=new Proxy({},{set:(o,k,v)=>(o[k]=v,true),get:(o,k)=>k in o?o[k]:(...a)=>ops.push([k,...a])});e.draw(ctx,'curved_lines','#fff',.8);assert(ops.some(x=>x[0]==='quadraticCurveTo'));assert(!ops.some(x=>x[0]==='lineTo'));const last=ops.filter(x=>x[0]==='quadraticCurveTo').at(-1);assert(Math.abs((last[3]-last[1])*e.dy-(last[4]-last[2])*e.dx)<1e-8);ops.length=0;e.draw(ctx,'curved_arrows','#fff',.8);assert.equal(ops.filter(x=>x[0]==='lineTo').length,2);

@@ -9,7 +9,12 @@ const out=process.env.GR_TEMP_OUTPUT||path.join(os.tmpdir(),'gr-temp-world01-bro
   const context=await browser.newContext({viewport:{width,height},hasTouch:touch,isMobile:touch,deviceScaleFactor:1}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await f.route(page);
   await page.goto('http://127.0.0.1:'+f.server.address().port);await page.waitForFunction(()=>window.ready&&card._map);assert(await page.evaluate(()=>registry.ok));assert.equal(await page.evaluate(()=>registry.loadedCount),36);
   await page.evaluate(()=>{card._setMapDisplayMode('fullscreen',{persist:false});card._map.setView([48,8],6,{animate:false});});
-  const press=loc=>touch?loc.tap():loc.click();await press(page.locator('#weather-display-eye-control'));await page.locator('[data-weather-display-layer-select]').selectOption('temperature');
+  // Fullscreen relocates floating controls asynchronously. Wait for that layout
+  // before a touch gesture; tapping a moving control is correctly treated as drag.
+  await page.waitForTimeout(250);
+  const press=loc=>touch?loc.tap():loc.click();await press(page.locator('#weather-display-eye-control'));
+  try{await page.waitForFunction(()=>!card.shadow.getElementById('weather-display-panel').hidden,{},{timeout:5000});}catch(error){await page.screenshot({path:path.join(out,name+'-menu-failure.png')});console.error('Eye/menu state: '+JSON.stringify(await page.evaluate(()=>{const s=card._weatherDisplayState();return {enabled:s.config.enabled,drag:!!s.eyeDrag,suppressedUntil:s.eyeSuppressClickUntil,now:performance.now(),mode:card._mapDisplayMode};})));throw error;}
+  await page.locator('[data-weather-display-layer-select]').selectOption('temperature');
   await page.locator('#weather-temperature-panel').waitFor({state:'visible'});await press(page.locator('[data-temperature-action=close]'));
   await press(page.locator('#map-display-menu-toggle'));await press(page.locator('[data-weather-temperature-entry]'));await page.locator('#weather-temperature-panel').waitFor({state:'visible'});await press(page.locator('[data-temperature-action=close]'));
   await press(page.locator('#map-display-menu-toggle'));await press(page.locator('[data-weather-layer-entry]'));await press(page.locator('[data-weather-layer-action=category][data-category=weather]'));await press(page.locator('[data-weather-layer-action=subcategory][data-subcategory=temperature]'));await press(page.locator('[data-weather-layer-action=temperature-settings]'));
