@@ -19,3 +19,18 @@ Die öffentliche CI läuft nach den Quelländerungen erneut an. Zuletzt beobacht
 2. Legacy-Volltext-Schutztests ohne Schwächung der fachlichen Schutzkriterien aktualisieren.
 3. Frontend-Parität einschließlich Release-Verträgen, Hashes und installierbarer DRA-Pakete verifizieren.
 4. Öffentliche CI vollständig grün und gezielte Realtests auf DEV mit Android/iPad.
+
+## CI-Nachtrag: 08.11.2026 – Paketkonsistenz erfolgreich
+
+Die vollständigen 308 SHA-256-Paketzeilen wurden direkt aus der öffentlichen CI ermittelt und in `SHA256SUMS_FRONTEND.txt` übernommen (Commit `2c32b03775e676a61b27c547e78feb13b3f7e3ce`). Der kurzzeitig erweiterte Diagnoseausdruck wurde anschließend zurückgenommen.
+
+**Vollständig grün am geprüften Commit `f2376531302386122c92d9e2bdd9b29650631e5a`:**
+
+- Validate Gewitterradar integration: SUCCESS.
+- Validate shared Gewitterradar frontend: SUCCESS.
+- V4.11.106 settings navigation and runtime identity: SUCCESS.
+- TEST70-76 full repository 900-second audit: SUCCESS.
+
+CI: https://github.com/TheDaimos/gewitterradar/actions/runs/42467413368
+
+**Freigabebeschränkung:** Die DRA-Produktversion ist weiterhin `4.11.157 DEV` / HA `0.25.64`. Diese Arbeit hat die Versionsnummer nicht erhöht, somit ist **keine neue Versionsnummer in DRA nachgewiesen**. Die Geräterealtests und die Bestätigung einer neuen installierbaren DRA-Version sind offen. Diese Angaben sind absichtlich von der bestandenen öffentlichen CI getrennt.
