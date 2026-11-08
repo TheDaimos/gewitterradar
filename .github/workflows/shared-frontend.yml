@@ -35,7 +35,7 @@ jobs:
           node -e "console.log('wind_quick01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.153\"'));" >> "$GITHUB_OUTPUT"
           node -e "console.log('temperature='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.156\"'));" >> "$GITHUB_OUTPUT"
           node -e "console.log('flow_curves='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.157\"'));" >> "$GITHUB_OUTPUT"
-          node -e "const t=require('node:fs').readFileSync('frontend/version.js','utf8');console.log('premium_ui='+['4.11.159','4.11.160'].some(v=>t.includes('version:\"'+v+'\"')));" >> "$GITHUB_OUTPUT"
+          node -e "const t=require('node:fs').readFileSync('frontend/version.js','utf8');console.log('premium_ui='+['4.11.159','4.11.160','4.11.161'].some(v=>t.includes('version:\"'+v+'\"')));" >> "$GITHUB_OUTPUT"
 
   premium-ui:
     needs: release-scope

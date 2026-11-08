@@ -1,4 +1,4 @@
-import { WindFieldCache,windFieldSnapshot,windFieldGeneration } from './wind-field.js?v=411153r1';
+import { WindFieldCache,windFieldSnapshot,windFieldGeneration } from './wind-field.js?v=411161r1';
 export const TEMPERATURE_FIELD='weather.temperature.field_2m',TEMPERATURE_COMMAND='weather_router/consumer/resolve_temperature_field';
 export function prepareScalarGrid(g){const x=g.longitudes,y=g.latitudes;return {nx:x.length,ny:y.length,x0:x[0],y0:y[0],x1:x.at(-1),y1:y.at(-1),center:(x[0]+x.at(-1))/2,ix:1/(x[1]-x[0]),iy:1/(y[1]-y[0])};}
 function validateGrid(g,names){

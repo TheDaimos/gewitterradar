@@ -26,5 +26,5 @@ test('pointercancel, capture loss and explicit lifecycle cancellation leave no p
 test('Eye decoration and meteorological render/data paths remain exact except cache import identities',()=>{
  const before=p=>execFileSync('git',['show','7185af7779549e163c00f5012311732260da4ba0:'+p],{encoding:'utf8',maxBuffer:10000000}).replace(/\r/g,''),now=p=>readFileSync(p,'utf8').replace(/\r/g,''),norm=s=>s.replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE');
  const p='frontend/modules/weather/display-menu.js',part=s=>s.slice(s.indexOf('  _weatherDisplayEnsureStyle(){'),s.indexOf('  _weatherDisplayEnsure',s.indexOf('  _weatherDisplayEnsureStyle(){')+15));assert.equal(part(now(p)),part(before(p)),'actual Eye styling remains unchanged');
- for(const name of ['wind-data.js','wind-field.js','wind-canvas.js','temperature-data.js','temperature-field.js','temperature-canvas.js','frame-clock.js','consumer-client.js','precipitation-layer.js']){const p='frontend/modules/weather/'+name;assert.equal(norm(now(p)),norm(before(p)),name);}
+ for(const name of ['wind-field.js','wind-canvas.js','temperature-data.js','temperature-field.js','temperature-canvas.js','frame-clock.js','consumer-client.js','precipitation-layer.js']){const p='frontend/modules/weather/'+name;assert.equal(norm(now(p)),norm(before(p)),name);}
 });

@@ -1,3 +1,9 @@
+## V4.11.161 DEV · Schlangenförmige Animation · HA 0.25.68
+
+Zusätzlicher eigenständiger Windrenderer mit abgerundetem Kopf, verjüngtem Körper und transparentem Schwanz. Dieselben Partikel verlängern und verkürzen sich weich mit der lokalen WR-Windgeschwindigkeit. RK2, begrenzte geografische Historien und gemeinsamer Frame-Scheduler; zehn unabhängig gespeicherte Parameter im vorhandenen Premium-Windmenü. Bisherige Modi und Auswahl bleiben erhalten.
+
+[Implementierung und gezielte Prüfungen](docs/GR_SNAKE_FLOW_ANIMATION.md) · [Installierbares DEV-Release und Offline-Vorschau](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.161-dev). WeatherRouter unverändert; physische Companion-/HA-Abnahme offen.
+
 > **GR 4.11.157 DEV / HA 0.25.64:** [Geschwungene Wind-/Advektionspfeile und dynamische Stromlinien](docs/GR_FLOW_CURVES_01_IMPLEMENTATION.md). Gemeinsame begrenzte Trajektoriengeometrie, gespeicherte Formen und 19 Sprachen. Klassische Modi bleiben Standard; WR 0.10.298 / Loader 301 unverändert. Manuelle VM109-Realabnahme offen.
 
 ## V4.11.160 DEV · Premium UI Fix 02 · HA 0.25.67

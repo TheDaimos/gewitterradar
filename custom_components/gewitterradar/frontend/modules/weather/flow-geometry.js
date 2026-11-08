@@ -1,6 +1,6 @@
 /* Presentation-only short trajectories. Reuses WR vector cells and swept-mask safety.
  * No data requests, clocks, meteorological policy, noise or generated wind values. */
-import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411153r1';
+import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411161r1';
 const DEG=Math.PI/180,CAPACITY=24,boundsCache=new WeakMap();
 const latitude=y=>(2*Math.atan(Math.exp(y*DEG))-Math.PI/2)/DEG;
 const mercator=lat=>Math.log(Math.tan(Math.PI/4+Math.max(-89.9,Math.min(89.9,lat))*DEG/2))/DEG;

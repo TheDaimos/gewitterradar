@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.160",
-  "build": "V4.11.160-DEV-2026-11-08",
-  "runtimeRevision": "411160r1",
-  "moduleSetId": "E411-160A1",
+  "productVersion": "4.11.161",
+  "build": "V4.11.161-DEV-2026-11-08",
+  "runtimeRevision": "411161r1",
+  "moduleSetId": "E411-161A1",
   "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "GR PREMIUM UI FIX 02: reuse actual Eye settings frame/header/card styles; balanced section headings/chevrons; one pointer activation path with 600ms hold, native-callout prevention and touch slop.",
+    "purpose": "GR SNAKE FLOW ANIMATION: independent tapered trajectory renderer and settings using existing WeatherRouter wind fields; legacy renderers preserved.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -36,7 +36,8 @@
     "protectedFlowReference": "a607639ad2a6373c62e04ce8acfc39f72feb280a",
     "protectedWeatherRouterReference": "1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5",
     "premiumUiBaseline": "ecad2624",
-    "premiumUiFix02Baseline": "7185af7779549e163c00f5012311732260da4ba0"
+    "premiumUiFix02Baseline": "7185af7779549e163c00f5012311732260da4ba0",
+    "snakeBaseline": "782c035129ce9e14ca0153fe4a26bff157ffacc0"
   },
   "sourceReleaseTag": "v4.10"
 }

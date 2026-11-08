@@ -1,7 +1,7 @@
 import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=411160r1';
-import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411159r1';
-import {WIND_FIELD_COLORS} from './wind-field.js?v=411155r1';
-import {drawWindGlyph} from './wind-canvas.js?v=411157r1';
+import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411161r1';
+import {WIND_FIELD_COLORS} from './wind-field.js?v=411161r1';
+import {drawWindGlyph} from './wind-canvas.js?v=411161r1';
 export function createWindLegend(owner){
  const state=owner._weatherWindState();
  return createScientificLegend(owner,{prefix:'weather-wind-legend-',ui:state.config.legendUi,position:state.config.legendPosition,
@@ -16,7 +16,7 @@ export function createWindLegend(owner){
    }
    visual.append(legendScale(entries,view,{ticks:[0,4,8,12].map(i=>windSpeedText(BEAUFORT_LIMITS[i],c.unit))}));
    const explanation=legendParagraphs([
-    c.mode==='barbs'?'Der Schaft zeigt zur Windherkunft. Halbfieder 5 kn · Vollfieder 10 kn · Dreieck 50 kn. Kombinationen addieren sich. *Auf die nächsten 5 kn gerundet; unter 2,5 kn Windstillesymbol, nicht zwingend exakt 0 m/s. 1 kn = 1,852 km/h.':c.mode==='arrows'?'Die Pfeilspitze zeigt die Strömungsrichtung; die meteorologische Gradangabe bezeichnet die Herkunft.':f?'Segmente folgen dem numerischen 10-m-Windfeld. NoData wird nicht überbrückt.':'Segmente zeigen lokale WR-Punktvektoren; zwischen isolierten Punkten wird kein Feld erfunden.',
+    c.mode==='snake'?'Schlangenförmige Animation: ein eigener verjüngter Körper mit rundem Führungskopf. Die Körperbahn ist die begrenzte numerische Trajektorie; ihre Weglänge passt sich während der Bewegung weich an die lokale Windgeschwindigkeit an. Keine Tierbewegung, keine künstlichen Wirbel. Benötigt ein numerisches WR-Windfeld.':c.mode==='barbs'?'Der Schaft zeigt zur Windherkunft. Halbfieder 5 kn · Vollfieder 10 kn · Dreieck 50 kn. Kombinationen addieren sich. *Auf die nächsten 5 kn gerundet; unter 2,5 kn Windstillesymbol, nicht zwingend exakt 0 m/s. 1 kn = 1,852 km/h.':c.mode==='arrows'?'Die Pfeilspitze zeigt die Strömungsrichtung; die meteorologische Gradangabe bezeichnet die Herkunft.':f?'Segmente folgen dem numerischen 10-m-Windfeld. NoData wird nicht überbrückt.':'Segmente zeigen lokale WR-Punktvektoren; zwischen isolierten Punkten wird kein Feld erfunden.',
     c.mode==='animated'?'Die begrenzte, nichtlineare Bewegung ist visuell skaliert. Tempo '+c.tempo+' · Dichte '+c.density+(c.paused?' · pausiert.':'. Bei 0 m/s keine Strömung.'):'',
     c.mode==='animated'&&c.flowForm!=='classic'?owner._t('flow.'+(c.flowForm==='curved_arrows'?'arrowsHelp':'linesHelp')):'',
     'Die Farbskala zeigt gleich breite Beaufort-Stufen 0–12, keine lineare m/s-Achse. Innerhalb jeder Stufe verlaufen die Farben stetig. Symbolfarbe und Farbflächen-Deckkraft bleiben unabhängig.',

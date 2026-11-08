@@ -1,3 +1,4 @@
+import {normalizeSnakeConfig} from './snake-config.js?v=411161r1';
 import { weatherSourceText } from './source-text.js?v=411150r1';
 /* WR point-contract adapter and presentation math. No routing, age cutoff or field interpolation. */
 export const WIND_SPEED='weather.point.wind_speed',WIND_DIRECTION='weather.point.wind_direction';
@@ -8,18 +9,18 @@ export const WIND_COLORS=Object.freeze([
 ].map(([id,label,hex])=>Object.freeze({id,label,hex})));
 // WMO/JODC equivalent 10 m speed intervals, m/s; display conversion never changes source values.
 export const BEAUFORT_LIMITS=Object.freeze([0,.3,1.6,3.4,5.5,8,10.8,13.9,17.2,20.8,24.5,28.5,32.7]);
-export const DEFAULT_WIND=Object.freeze({schema:2,visible:false,enabled:true,barbsVisible:true,mode:'barbs',flowForm:'classic',flowLength:100,color:'white',colorMode:'uniform',highColor:'gold',lowColor:'violet',tempo:'normal',density:'normal',paused:false,animationExplicit:false,colorField:false,fieldOpacity:45,performanceDiagnostics:false,quickVisibility:'fullscreen',unit:'km/h',quickPositions:{},legendPosition:null,legendUi:{view:'classes',rain:false,snow:false}});
+export const DEFAULT_WIND=Object.freeze({schema:2,visible:false,enabled:true,snakeAnimationExplicit:false,barbsVisible:true,mode:'barbs',flowForm:'classic',flowLength:100,color:'white',colorMode:'uniform',highColor:'gold',lowColor:'violet',tempo:'normal',density:'normal',paused:false,animationExplicit:false,colorField:false,fieldOpacity:45,performanceDiagnostics:false,quickVisibility:'fullscreen',unit:'km/h',quickPositions:{},legendPosition:null,legendUi:{view:'classes',rain:false,snow:false}});
 const member=(value,allowed,fallback)=>allowed.includes(value)?value:fallback;
 export function normalizeWindConfig(input={}){
- const c={...DEFAULT_WIND};
- for(const key of ['enabled','barbsVisible','paused','animationExplicit','colorField','performanceDiagnostics'])if(typeof input[key]==='boolean')c[key]=input[key];
+ const c={...DEFAULT_WIND};c.snake=normalizeSnakeConfig(input.snake);
+ for(const key of ['enabled','snakeAnimationExplicit','barbsVisible','paused','animationExplicit','colorField','performanceDiagnostics'])if(typeof input[key]==='boolean')c[key]=input[key];
  // Schema 1 used the two feature flags as its only master switch. Preserve the
  // visible result; an entirely stopped legacy configuration gets ready-to-use barbs.
  if(typeof input.visible==='boolean')c.visible=input.visible;
  else{c.visible=input.enabled===true||input.colorField===true;if(!c.visible)c.enabled=true;}
  c.quickPositions={};for(const [key,p] of Object.entries(input.quickPositions||{}).slice(0,16))if(/^[a-z0-9:-]{1,80}$/.test(key)&&p&&[p.x,p.y].every(Number.isFinite))c.quickPositions[key]={x:Math.max(0,Math.min(1,p.x)),y:Math.max(0,Math.min(1,p.y))};
  c.quickVisibility=member(input.quickVisibility,['fullscreen','all','nonfullscreen','hidden'],'fullscreen');
- c.mode=member(input.mode,['barbs','arrows','animated'],c.mode);
+ c.mode=member(input.mode,['barbs','arrows','animated','snake'],c.mode);
  c.flowForm=member(input.flowForm,['classic','curved_arrows','curved_lines'],'classic');
  if(typeof input.flowLength==='number'&&Number.isFinite(input.flowLength))c.flowLength=Math.max(50,Math.min(150,input.flowLength));
  for(const key of ['color','highColor','lowColor'])c[key]=member(input[key],WIND_COLORS.map(v=>v.id),c[key]);
