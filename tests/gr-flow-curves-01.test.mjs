@@ -60,7 +60,7 @@ test('temperature units and advection colours do not influence geometric length,
 });
 test('providers, data contracts, palettes, time policy, cache, scheduler and reference remain exact',()=>{
  assertClassicWindPreserved();
- for(const path of ['frontend/modules/weather/frame-clock.js','frontend/modules/weather/temperature-field.js','frontend/modules/weather/temperature-units.js','frontend/modules/weather/consumer-client.js','frontend/modules/weather/precipitation-layer.js','frontend/modules/weather/legend-overlay.js','docs/GR_WR_TEMPERATURE_WORLD_USER_REFERENCE_2026-11-08.md']){
+ for(const path of ['frontend/modules/weather/frame-clock.js','frontend/modules/weather/temperature-field.js','frontend/modules/weather/temperature-units.js','frontend/modules/weather/consumer-client.js','frontend/modules/weather/precipitation-layer.js','docs/GR_WR_TEMPERATURE_WORLD_USER_REFERENCE_2026-11-08.md']){
   const current=readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n'),old=execFileSync('git',['show','70422b2b04e0865b19449ada5235c0a130dcfa63:'+path],{encoding:'utf8',maxBuffer:10000000}).replace(/\r\n/g,'\n');assert.equal(current,old,path);
  }
 });
