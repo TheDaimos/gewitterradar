@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {assertClassicWindPreserved} from './protected-wind-classic.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
@@ -34,8 +35,9 @@ test('all three original PNG masters retain their source identities; runtime fil
   for(const d of m.derivatives)assert.equal(createHash('sha256').update(await readFile('frontend/'+d.file)).digest('hex'),d.sha256);
  }
 });
-test('protected renderer, interpolation and local field buffer only change import cache revisions',async()=>{
- for(const name of ['wind-canvas.js','wind-field.js']){
+test('classic rendering, numeric interpolation and local field buffer remain protected',async()=>{
+ assertClassicWindPreserved();
+ for(const name of ['wind-field.js']){
   const file='frontend/modules/weather/'+name,before=execFileSync('git',['show','787497648a405bc27495d98ffdedd9206668fd4c:'+file],{encoding:'utf8'}).replaceAll('\r\n','\n'),after=(await readFile(file,'utf8')).replaceAll('\r\n','\n').replaceAll('411153r1','411152r1');assert.equal(after,before,name);
  }
  const wind=await readFile('frontend/modules/weather/wind-display.js','utf8'),menu=await readFile('frontend/modules/weather/layer-menu.js','utf8');assert(!/gr-wind-(barb|settings)-premium\.svg/.test(menu));assert.match(wind,/_weatherDisplayBindEyeDrag\?\.\(button,s.quickDragOptions\)/);

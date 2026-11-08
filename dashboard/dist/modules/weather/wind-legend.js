@@ -1,6 +1,6 @@
 import { installWeatherLegendOverlay } from './legend-overlay.js?v=411149r1';
-import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411153r1';
-import { drawWindGlyph } from './wind-canvas.js?v=411153r1';
+import { WIND_COLORS,BEAUFORT_LIMITS,windSpeedText } from './wind-data.js?v=411157r1';
+import { drawWindGlyph } from './wind-canvas.js?v=411157r1';
 import { WIND_FIELD_COLORS } from './wind-field.js?v=411153r1';
 
 // Reuse the existing premium overlay, drag, bounds and chevrons with isolated storage.
@@ -41,6 +41,7 @@ export function createWindLegend(owner){
    paragraph('Mehr Wind bewegt die Segmente schneller; die begrenzte, nichtlineare Animation ist keine maßstäbliche Luftbewegung. Dichte: '+({low:'Gering',normal:'Normal',high:'Hoch'}[c.density])+'. Tempo: '+({slow:'Langsam',normal:'Normal',fast:'Schnell'}[c.tempo])+'.');
    paragraph(c.paused?'Animation pausiert.':!c.animationExplicit&&matchMedia('(prefers-reduced-motion: reduce)').matches?'Bewegung aufgrund der Systemeinstellung reduziert.':'Bei exakt 0 m/s wird keine Strömung erzeugt.');
   }
+  if(c.mode==='animated'&&c.flowForm!=='classic'){paragraph(owner._t('flow.'+(c.flowForm==='curved_arrows'?'arrowsHelp':'linesHelp')));paragraph(owner._t('flow.direction')+': '+owner._t('flow.linesHelp'));}
   paragraph('Symbolfarbe: '+WIND_COLORS.find(v=>v.id===c.color)?.label+'. Hoch-/Tiefdruckfarben sind ohne autoritative WR-Klassifikation nicht verfügbar.');
   if(c.colorField){
    const heading=document.createElement('strong');heading.textContent='Windgeschwindigkeit · '+c.unit;box.append(heading);

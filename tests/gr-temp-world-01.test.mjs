@@ -8,6 +8,7 @@ import {TEMPERATURE_UNIT_TRANSLATIONS,temperatureDisplayValue,temperatureKelvinV
 import {parseTemperatureField,sampleScalarInto,TemperatureFieldCache,TEMPERATURE_FIELD} from '../frontend/modules/weather/temperature-field.js';
 import {GeoPointAdapters,createGeoPointContext} from '../frontend/modules/weather/geopoint-context.js';
 import {requestWeatherFrame,cancelWeatherFrame,weatherFrameClockState} from '../frontend/modules/weather/frame-clock.js';
+import {assertClassicWindPreserved} from './protected-wind-classic.mjs';
 const c=normalizeTemperatureConfig();
 const reply=()=>({schema:'weather_router.consumer.temperature_field.v2',contract_version:2,capability:TEMPERATURE_FIELD,status:'ready',frame:{id:'t',capability:TEMPERATURE_FIELD,unit:'K',height_m:2,kind:'model_forecast',model_run:'2026-11-07T12:00:00Z',valid_at:'2026-11-07T18:00:00Z',valid_until:new Date(Date.now()+600000).toISOString(),refresh_after_seconds:300,native_resolution_degrees:.25,provenance:{provider_id:'synthetic'},grid:{crs:'EPSG:4326',layout:'row_major_south_first',latitudes:[40,45,50],longitudes:[0,5,10],cyclic:false,valid_mask:Array(9).fill(1),values:[270,271,272,273,274,275,276,277,278]}}});
 test('central C/F/K conversions and inverse preserve Kelvin; K has no degree sign',()=>{
@@ -39,6 +40,7 @@ test('one native scheduler serves Wind and temperature, supports cancellation an
  let next=0,callback=null,cancelled=0;globalThis.requestAnimationFrame=f=>{next++;callback=f;return next;};globalThis.cancelAnimationFrame=()=>cancelled++;const ran=[];requestWeatherFrame(()=>ran.push('wind'));const t=requestWeatherFrame(()=>ran.push('temperature'));assert.equal(next,1);assert.equal(weatherFrameClockState().nativeRequests,1);cancelWeatherFrame(t);callback(100);assert.deepEqual(ran,['wind']);assert.equal(weatherFrameClockState().pending,0);const a=requestWeatherFrame(()=>{});cancelWeatherFrame(a);assert.equal(cancelled,1);
 });
 test('protected Wind and precipitation code, reference and original temperature artwork remain exact',()=>{
- for(const path of ['frontend/modules/weather/wind-canvas.js','frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','frontend/modules/weather/legend-overlay.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n'),execFileSync('git',['show','04b751fd3962150ed0369dba4428959e4a8e98bd:'+path],{maxBuffer:10000000,encoding:'utf8'}).replace(/\r\n/g,'\n'));
+ assertClassicWindPreserved();
+ for(const path of ['frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','frontend/modules/weather/legend-overlay.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n'),execFileSync('git',['show','04b751fd3962150ed0369dba4428959e4a8e98bd:'+path],{maxBuffer:10000000,encoding:'utf8'}).replace(/\r\n/g,'\n'));
  assert.equal(createHash('sha256').update(readFileSync(new URL('../artwork/help-icons/hires/gr-temperature-premium-original.png',import.meta.url))).digest('hex'),'ea46df73c3590ef76c4a8afcd0693f3ed318f6943bf2b4c07e961613cd737f9e');
 });

@@ -1,13 +1,14 @@
+import {FlowGeometry,flowIsCurved,flowLength} from './flow-geometry.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {windViewportProjection,windMercatorY,windMercatorLatitude,smoothWindDirection} from './wind-canvas.js?v=411155r1';
+import {windViewportProjection,windMercatorY,windMercatorLatitude,smoothWindDirection} from './wind-canvas.js?v=411157r1';
 import {prepareWindFieldLookup,windFieldStepValid} from './wind-field.js?v=411153r1';
 import {sampleScalarInto} from './temperature-field.js?v=411156r1';
-import {writeTemperatureColor,temperatureColor,temperatureText,advectionColor} from './temperature-data.js?v=411156r1';
+import {writeTemperatureColor,temperatureColor,temperatureText,advectionColor} from './temperature-data.js?v=411157r1';
 const ADV_NAMES=Object.freeze(['u','v','rate']);
 const paneSpecs=[['gr-temperature-surface',210],['gr-temperature-labels',432],['gr-temperature-advection',433]];
 export class TemperatureCanvas{
  constructor(map,onMetrics=()=>{}){
-  this.map=map;this.onMetrics=onMetrics;this.field=null;this.config={};this.frame=null;this.last=null;this.staticDirty=true;this.particles=[];this.scalar=new Float64Array(3);this.xy=new Float64Array(2);this.metrics={labels:0,arrows:0,draws:0,preparations:0};this.epoch=0;this.hidden=document.hidden;this.job=null;
+  this.flowGeometry=new FlowGeometry();this.map=map;this.onMetrics=onMetrics;this.field=null;this.config={};this.frame=null;this.last=null;this.staticDirty=true;this.particles=[];this.scalar=new Float64Array(3);this.xy=new Float64Array(2);this.metrics={labels:0,arrows:0,draws:0,preparations:0};this.epoch=0;this.hidden=document.hidden;this.job=null;
   this.canvases=paneSpecs.map(([name,z])=>{const pane=map.getPane(name)||map.createPane(name);pane.style.zIndex=String(z);pane.style.pointerEvents='none';const c=document.createElement('canvas');c.className='weather-temperature-canvas';c.style.cssText='position:absolute;pointer-events:none;filter:none';pane.append(c);return c;});this.contexts=this.canvases.map(c=>c.getContext('2d'));
   this.invalidate=()=>{this.staticDirty=true;this.schedule();};map.on('move zoom resize rotate viewreset',this.invalidate);
   this.visibility=()=>{this.hidden=document.hidden;this.last=null;if(this.hidden){this.stop();this.cancelPreparation();}else this.invalidate();};document.addEventListener('visibilitychange',this.visibility);
@@ -39,7 +40,7 @@ export class TemperatureCanvas{
   });
  }
  commit(field,c,image=null){
-  if(this.field?.model_run!==field?.model_run||this.field?.valid_at!==field?.valid_at)this.epoch++;
+  if(this.field?.model_run!==field?.model_run||this.field?.valid_at!==field?.valid_at||flowIsCurved(this.config.flowForm)!==flowIsCurved(c.flowForm))this.epoch++;
   if(image&&image!==this.image){this.spare=this.image?.canvas;this.image=image;}
   this.field=field;this.config=c;this.staticDirty=true;this.last=null;
   if(field?.advection?.status==='ready'){const a=field.advection;if(!a.windView){a.windView={grid:a.grid};prepareWindFieldLookup(a.windView);}}
@@ -69,18 +70,25 @@ export class TemperatureCanvas{
  seed(p,projection,s){
   const g=this.field.advection.grid;
   for(let k=0;k<12;k++){const x=Math.random()*s.x,y=Math.random()*s.y;p.lon=projection.ox+x*projection.ax+y*projection.bx;p.my=projection.oy+x*projection.ay+y*projection.by;
-   if(sampleScalarInto(g,windMercatorLatitude(p.my),p.lon,this.scalar,ADV_NAMES)&&Math.hypot(this.scalar[0],this.scalar[1])>.01){p.life=2.5+Math.random()*2;p.age=Math.random()*p.life;p.valid=true;return true;}
+   if(sampleScalarInto(g,windMercatorLatitude(p.my),p.lon,this.scalar,ADV_NAMES)&&Math.hypot(this.scalar[0],this.scalar[1])>.01){p.life=2.5+Math.random()*2;p.age=Math.random()*p.life;p.valid=true;if(p.flowPath)p.flowPath.count=0;return true;}
   }p.valid=false;return false;
  }
  drawArrows(ctx,p,s,dt){
   const c=this.config,a=this.field.advection,g=a.grid,target=Math.min(s.x<650?180:420,Math.max(12,Math.round(s.x*s.y/8500*({low:.6,normal:1,high:1.5}[c.density]))));
   while(this.particles.length<target)this.particles.push({valid:false});if(this.particles.length>target)this.particles.length=target;
+  const curves=flowIsCurved(c.flowForm),geometry=this.flowGeometry;geometry.resetStats();
   let count=0;ctx.lineCap='round';ctx.lineJoin='round';
   for(const particle of this.particles){
    if(!particle.valid||particle.age>particle.life){if(!this.seed(particle,p,s))continue;}
    const lat=windMercatorLatitude(particle.my);if(!sampleScalarInto(g,lat,particle.lon,this.scalar,ADV_NAMES)){particle.valid=false;continue;}
    const u=this.scalar[0],v=this.scalar[1],rate=this.scalar[2],speed=Math.hypot(u,v);if(speed<.01){particle.valid=false;continue;}p.screen(particle.lon,particle.my,this.xy);let x=this.xy[0],y=this.xy[1];
    if(x<0||y<0||x>s.x||y>s.y){particle.valid=false;continue;}
+   if(curves){
+    if(!geometry.advance(a.windView,particle,p,dt,c.tempo,this.epoch)){particle.valid=false;continue;}particle.age+=dt;
+    if(Math.abs(rate)<c.threshold||c.transport==='cold'&&rate>=0||c.transport==='warm'&&rate<=0)continue;
+    if(geometry.build(a.windView,particle,p,Math.min(64,flowLength(geometry.speed,c.flowLength)*c.arrowSize/14),s.x<650?.6:1)&&geometry.draw(ctx,c.flowForm,advectionColor(rate,c.advectionStrength),c.arrowOpacity/100*Math.sin(Math.PI*Math.min(1,particle.age/particle.life))))count++;
+    continue;
+   }
    const scale=Math.min(75,8+13*Math.sqrt(speed))*({slow:.55,normal:1,fast:1.6}[c.tempo]);smoothWindDirection(particle,u/speed,v/speed,1-Math.exp(-dt/.12),this.epoch);
    const dx=particle.du*p.eastX+particle.dv*p.northX,dy=particle.du*p.eastY+particle.dv*p.northY,nlon=particle.lon+dt*scale*(dx*p.ax+dy*p.bx),nmy=particle.my+dt*scale*(dx*p.ay+dy*p.by);
    if(!windFieldStepValid(a.windView,lat,particle.lon,windMercatorLatitude(nmy),nlon)){particle.valid=false;continue;}
@@ -88,10 +96,10 @@ export class TemperatureCanvas{
    if(Math.abs(rate)<c.threshold||c.transport==='cold'&&rate>=0||c.transport==='warm'&&rate<=0)continue;
    const len=c.arrowSize,alpha=c.arrowOpacity/100*Math.sin(Math.PI*Math.min(1,particle.age/particle.life));ctx.globalAlpha=Math.max(0,alpha);ctx.strokeStyle='#09101c99';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x-dx*len*.5,y-dy*len*.5);ctx.lineTo(x+dx*len*.5,y+dy*len*.5);ctx.stroke();ctx.strokeStyle=advectionColor(rate,c.advectionStrength);ctx.lineWidth=1.8;ctx.stroke();
    const tx=x+dx*len*.5,ty=y+dy*len*.5;ctx.beginPath();ctx.moveTo(tx-dx*4-dy*3,ty-dy*4+dx*3);ctx.lineTo(tx,ty);ctx.lineTo(tx-dx*4+dy*3,ty-dy*4-dx*3);ctx.stroke();count++;
-  }ctx.globalAlpha=1;return count;
+  }ctx.globalAlpha=1;this.metrics.curvePoints=geometry.stats.points;this.metrics.curves=geometry.stats.curves;this.metrics.curveSteps=geometry.stats.steps;this.metrics.curveHistoryBudgetBytes=this.particles.length*384;return count;
  }
  paint(time){
-  if(this.destroyed||this.hidden||!this.config.visible)return;const start=performance.now(),{s,ratio,p}=this.geometry(),c=this.config,f=this.field;if(!p)return;
+  if(this.destroyed||this.hidden||!this.config.visible)return;this.flowGeometry.resetStats();const start=performance.now(),{s,ratio,p}=this.geometry(),c=this.config,f=this.field;if(!p)return;
   const valid=f&&f.deadline>Date.now(),moving=valid&&c.advection&&f.advection.status==='ready'&&!c.paused&&!this.motion?.matches,dt=moving&&this.last!==null?Math.min(.05,Math.max(0,(time-this.last)/1000)):0;this.last=moving?time:null;
   if(this.staticDirty){
    for(const i of [0,1]){const ctx=this.contexts[i];ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,s.x,s.y);}
@@ -100,6 +108,7 @@ export class TemperatureCanvas{
    if(valid&&c.surface&&!this.covers()&&!this.job)this.prepare(f,c).then(image=>{if(image&&this.field===f&&this.config===c){this.spare=this.image?.canvas;this.image=image;this.staticDirty=true;this.schedule();}});
   }
   const ctx=this.contexts[2];ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,s.x,s.y);this.metrics.arrows=valid&&c.advection&&f.advection.status==='ready'?this.drawArrows(ctx,p,s,dt):0;
+  this.metrics.curvePoints=this.flowGeometry.stats.points;this.metrics.curves=this.flowGeometry.stats.curves;this.metrics.curveSteps=this.flowGeometry.stats.steps;
   this.metrics.draws++;this.metrics.renderMs=performance.now()-start;this.metrics.moving=moving;this.metrics.fieldNodes=f?.grid.values.length||0;this.onMetrics(this.metrics);if(moving)this.schedule();
  }
  destroy(){this.destroyed=true;this.stop();this.cancelPreparation();this.map.off('move zoom resize rotate viewreset',this.invalidate);document.removeEventListener('visibilitychange',this.visibility);this.motion?.removeEventListener?.('change',this.motionChanged);this.canvases.forEach(c=>c.remove());this.particles.length=0;this.field=this.image=this.spare=null;}

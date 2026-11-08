@@ -1,4 +1,5 @@
-import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411153r1';
+import {FlowGeometry,flowIsCurved,flowLength} from './flow-geometry.js?v=411157r1';
+import { WIND_COLORS,windBarbParts,windDestination } from './wind-data.js?v=411157r1';
 import { sampleWindField,sampleWindFieldInto,windFieldStepValid,writeWindFieldColor,windFieldGlyphs,windFieldSnapshot,windFieldVisibleBounds,windFieldOverlaps } from './wind-field.js?v=411153r1';
 
 const DEG=Math.PI/180;
@@ -79,7 +80,7 @@ export function visibleWindCopies(map,points){
 const seed=key=>{let n=2166136261;for(const c of key)n=Math.imul(n^c.charCodeAt(0),16777619);return (n>>>0)/4294967296;};
 export class WindCanvas {
  constructor(map,canvas,{raf=globalThis.requestAnimationFrame.bind(globalThis),cancel=globalThis.cancelAnimationFrame.bind(globalThis),now=()=>performance.now(),reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true,onMetrics=()=>{}}={}){
-  Object.assign(this,{map,canvas,raf,cancel,now,reduced,onMetrics});this.ctx=canvas.getContext('2d');this.points=[];this.phases=new Map();this.config={};this.clock=0;this.last=null;this.frame=null;this.destroyed=false;this.hidden=false;this.quality=1;this.cost=0;this.draws=0;
+  Object.assign(this,{map,canvas,raf,cancel,now,reduced,onMetrics});this.ctx=canvas.getContext('2d');this.flowGeometry=new FlowGeometry();this.flowEpoch=0;this.flowQuality=.6;this.points=[];this.phases=new Map();this.config={};this.clock=0;this.last=null;this.frame=null;this.destroyed=false;this.hidden=false;this.quality=1;this.cost=0;this.draws=0;
   this.field=null;this.particles=[];this.pool=[];this.fieldImage=null;this.spareImage=null;this.fieldDirty=true;this.mapMoving=false;this.fieldRenders=0;this.advected=0;this.projectionDirty=true;this.projection=null;this.scratch=new Float64Array(5);this.screenScratch=new Float64Array(2);this.metrics={};this.directionEpoch=0;this.lookups=0;this.colorJob=null;this.colorCpuMs=0;this.colorWallMs=0;this.lastFieldChange=null;this.perfCosts=new Float32Array(180);this.perfIntervals=new Float32Array(180);this.perfCount=0;this.perfCursor=0;this.perfPublished=0;this.lastPerfTime=null;
   this.overlapsView=true;this.overlapDirty=true;this.seedRetry=new Float64Array(2200);this.imageProjection=new Float64Array(6);
   this.invalidate=()=>{this.fieldDirty=true;this.projectionDirty=true;this.overlapDirty=true;this.seedRetry.fill(0);this.schedule();};
@@ -90,8 +91,9 @@ export class WindCanvas {
   map.on('move zoom resize rotate viewreset',this.invalidate);document.addEventListener('visibilitychange',this.visibility);this.hidden=document.hidden;
  }
  update(points,config,field=this.field,prepared=null){
+  if(flowIsCurved(this.config.flowForm)!==flowIsCurved(config.flowForm))this.flowEpoch++;
   const changed=this.field?.id!==field?.id,reset=changed||this.config.mode!==config.mode||this.config.paused!==config.paused||this.config.enabled!==config.enabled;
-  this.points=points;if(changed){const before=this.field?windFieldSnapshot(this.field):null,after=field?windFieldSnapshot(field):null;if(before!==after)this.directionEpoch++;this.fieldDirty=true;this.overlapDirty=true;this.seedRetry.fill(0);this.spareImage=this.fieldImage;this.fieldImage=prepared;this.lastFieldChange=Date.now();}else if(prepared)this.fieldImage=prepared;
+  this.points=points;if(changed){const before=this.field?windFieldSnapshot(this.field):null,after=field?windFieldSnapshot(field):null;if(before!==after){this.directionEpoch++;this.flowEpoch++;}this.fieldDirty=true;this.overlapDirty=true;this.seedRetry.fill(0);this.spareImage=this.fieldImage;this.fieldImage=prepared;this.lastFieldChange=Date.now();}else if(prepared)this.fieldImage=prepared;
   if(this.fieldImage&&field&&this.fieldImage.fieldId===field.id)this.fieldImage.deadline=field.deadline;
   this.field=field;this.config=config;if(!config.colorField)this.cancelPreparation();const keys=new Set(points.map(p=>p.key));for(const key of this.phases.keys())if(!keys.has(key))this.phases.delete(key);if(reset)this.last=null;this.schedule();
  }
@@ -100,6 +102,7 @@ export class WindCanvas {
  stop(){if(this.frame!==null)this.cancel(this.frame);this.frame=null;this.last=null;}
  paint(time){
   if(this.destroyed||this.hidden)return;
+  this.flowGeometry.resetStats();
   const start=this.now(),s=this.map.getSize(),ratio=Math.min(globalThis.devicePixelRatio||1,2,Math.sqrt(6000000/Math.max(1,s.x*s.y))),w=Math.max(1,Math.round(s.x*ratio)),h=Math.max(1,Math.round(s.y*ratio));
   if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;this.canvas.style.width=s.x+'px';this.canvas.style.height=s.y+'px';this.projectionDirty=true;}
   if(this.projectionDirty){this.projection=windViewportProjection(this.map,s);this.projectionDirty=false;}
@@ -130,9 +133,10 @@ export class WindCanvas {
   }
   const cost=Math.max(0,this.now()-start);this.cost=this.cost*.95+cost*.05;this.draws++;
   if(this.config.performanceDiagnostics){if(this.lastPerfTime!==null&&moving){this.perfCosts[this.perfCursor]=cost;this.perfIntervals[this.perfCursor]=time-this.lastPerfTime;this.perfCursor=(this.perfCursor+1)%180;this.perfCount=Math.min(180,this.perfCount+1);}this.lastPerfTime=moving?time:null;if(time-this.perfPublished>=1000&&this.perfCount){const costs=Array.from(this.perfCosts.subarray(0,this.perfCount)).sort((a,b)=>a-b),intervals=this.perfIntervals.subarray(0,this.perfCount),total=intervals.reduce((a,b)=>a+b,0);Object.assign(this.metrics,{fps:this.perfCount*1000/total,meanRenderMs:costs.reduce((a,b)=>a+b,0)/costs.length,p95RenderMs:costs[Math.floor(costs.length*.95)],maxRenderMs:costs.at(-1)});this.perfPublished=time;}}else{this.lastPerfTime=null;this.perfCount=this.perfCursor=0;}
-  if(this.cost>10)this.quality=Math.max(.3,this.quality-.025);else if(this.cost<4)this.quality=Math.min(1,this.quality+.002);
+  if(flowIsCurved(this.config.flowForm)&&this.config.mode==='animated'){if(this.cost>6)this.flowQuality=Math.max(.25,this.flowQuality-.007);else if(this.cost<3)this.flowQuality=Math.min(1,this.flowQuality+.0008);}
+  else{if(this.cost>10)this.quality=Math.max(.3,this.quality-.025);else if(this.cost<4)this.quality=Math.min(1,this.quality+.002);}
   if(!moving||!this.config.performanceDiagnostics)this.metrics.fps=null;
-  Object.assign(this.metrics,{diagnosticsEnabled:this.config.performanceDiagnostics===true,segments,points:this.points.length,copies:copies.length,draws:this.draws,renderCostMs:this.cost,densityFactor:this.quality,moving,fieldNodes:authorized?this.field.grid.u.length:0,fieldRenders:this.fieldRenders,particles:this.particles.length,advected:this.advected,vectorLookups:this.lookups,colorPreparationCpuMs:this.colorCpuMs,colorPreparationWallMs:this.colorWallMs,lastFieldChange:this.lastFieldChange,activeGenerations:authorized?1:0,preparingGeneration:!!this.colorJob});this.onMetrics(this.metrics);
+  Object.assign(this.metrics,{diagnosticsEnabled:this.config.performanceDiagnostics===true,segments,points:this.points.length,copies:copies.length,draws:this.draws,renderCostMs:this.cost,densityFactor:flowIsCurved(this.config.flowForm)&&this.config.mode==='animated'?this.flowQuality:this.quality,curveQuality:this.flowQuality,moving,fieldNodes:authorized?this.field.grid.u.length:0,fieldRenders:this.fieldRenders,particles:this.particles.length,advected:this.advected,vectorLookups:this.lookups,curvePoints:this.flowGeometry.stats.points,curves:this.flowGeometry.stats.curves,curveSteps:this.flowGeometry.stats.steps,curveHistoryBudgetBytes:(this.particles.length+this.pool.length)*384,colorPreparationCpuMs:this.colorCpuMs,colorPreparationWallMs:this.colorWallMs,lastFieldChange:this.lastFieldChange,activeGenerations:authorized?1:0,preparingGeneration:!!this.colorJob});this.onMetrics(this.metrics);
   if(moving)this.schedule();
  }
  cancelPreparation(){const job=this.colorJob;if(job){job.cancelled=true;clearTimeout(job.timer);if(job.cache!==this.fieldImage)this.spareImage=job.cache;job.resolve(null);this.colorJob=null;}}
@@ -170,13 +174,15 @@ export class WindCanvas {
   const ctx=this.ctx;ctx.save();ctx.globalAlpha=this.config.fieldOpacity/100;ctx.transform((points[2]-points[0])/cache.width,(points[3]-points[1])/cache.width,(points[4]-points[0])/cache.height,(points[5]-points[1])/cache.height,points[0],points[1]);ctx.imageSmoothingEnabled=true;ctx.drawImage(cache.image,0,0,cache.width,cache.height);ctx.restore();
  }
  paintParticles(size,dt,color){
+  const curves=flowIsCurved(this.config.flowForm)&&!!this.projection,geometry=this.flowGeometry;geometry.resetStats();
   const mobile=(globalThis.navigator?.hardwareConcurrency||4)<=4||size.x<650;
-  const target=Math.min(mobile?900:2200,Math.max(20,Math.round(size.x*size.y/({low:1800,normal:1000,high:600}[this.config.density]||1000)*this.quality)));
+  const classicTarget=Math.min(mobile?900:2200,Math.max(20,Math.round(size.x*size.y/({low:1800,normal:1000,high:600}[this.config.density]||1000)*this.quality)));
+  const target=curves?Math.min(mobile?450:1100,Math.max(20,Math.round(classicTarget/this.quality*this.flowQuality*.65))):classicTarget;
   if(this.particles.length>target){for(let i=target;i<this.particles.length;i++)if(this.particles[i])this.pool.push(this.particles[i]);this.particles.length=target;}
   const projection=this.projection,scratch=this.scratch,screen=this.screenScratch;
   const position=p=>{if(projection){if(p.my===undefined)p.my=windMercatorY(p.lat);projection.screen(p.lon,p.my,screen);if((screen[0]<-20||screen[0]>size.x+20)&&this.map.getCenter){const lon=p.lon+360*Math.round((this.map.getCenter().lng-p.lon)/360);projection.screen(lon,p.my,screen);if(screen[0]>=-20&&screen[0]<=size.x+20)p.lon=lon;else projection.screen(p.lon,p.my,screen);}return screen;}const xy=this.map.latLngToContainerPoint([p.lat,p.lon]);screen[0]=xy.x;screen[1]=xy.y;return screen;};
   const spawn=(index,initial=false,bucket=null,reuse=null)=>{
-   const p=reuse||this.pool.pop()||{};
+   const p=reuse||this.pool.pop()||{};if(p.flowPath)p.flowPath.count=0;
    // Stratified viewport seeding is visually uniform; only valid grid cells seed.
    const cols=Math.max(1,Math.ceil(Math.sqrt(target*size.x/size.y))),rows=Math.ceil(target/cols);
    for(let attempt=0;attempt<8;attempt++){
@@ -209,6 +215,13 @@ export class WindCanvas {
    let p=this.particles[i];if(!p){if(dt&&this.clock>=this.seedRetry[i])this.particles[i]=spawn(i);continue;}
    const xy=position(p),x=xy[0],y=xy[1];this.lookups++;
    if(!sampleWindFieldInto(this.field,p.lat,p.lon,scratch)||!scratch[2]||p.age>=p.life||x<-20||y<-20||x>size.x+20||y>size.y+20){if(dt)this.particles[i]=spawn(i,false,null,p);continue;}
+   if(curves){
+    if(!geometry.advance(this.field,p,projection,dt,this.config.tempo,this.flowEpoch)){if(dt){this.pool.push(p);this.particles[i]=null;}continue;}
+    if(dt){p.age+=dt;this.advected++;}
+    const alpha=Math.sin(Math.PI*Math.min(1,p.age/p.life))*p.brightness;
+    if(geometry.build(this.field,p,projection,flowLength(geometry.speed,this.config.flowLength),mobile?.6:this.flowQuality)&&geometry.draw(ctx,this.config.flowForm,color,alpha,outline))drawn++;
+    continue;
+   }
    const speed=scratch[2],u=scratch[0]/speed,v=scratch[1]/speed;
    smoothWindDirection(p,u,v,turn,this.directionEpoch);
    let dx,dy;if(projection){dx=p.du*projection.eastX+p.dv*projection.northX;dy=p.du*projection.eastY+p.dv*projection.northY;}else{const direction=projectedWind(this.map,{lat:p.lat,lon:p.lon,from:((Math.atan2(-p.du,-p.dv)/DEG)%360+360)%360},p.lon,basis);dx=Math.cos(direction.angle);dy=Math.sin(direction.angle);}

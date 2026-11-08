@@ -1,0 +1,53 @@
+name: GR-FLOW-CURVES-01 targeted rendering acceptance
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  flow-curves:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Protected user, temperature and classic rendering references
+        run: git fetch --no-tags --depth=1 origin 70422b2b04e0865b19449ada5235c0a130dcfa63 a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd 787497648a405bc27495d98ffdedd9206668fd4c d975a94be5d63eb09242a54920d8c3417205b41f 4adb7a8c186a45f5b0246982a99cfac6ec28d44e
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Bounded geometry, complete locales, classic paths and protected contracts
+        run: |
+          node --test tests/gr-flow-curves-01.test.mjs tests/gr-temp-world-01.test.mjs tests/gr-wind-quicktoggle-01.test.mjs tests/gr-wind-perf-01.test.mjs tests/gr-wind-anim-01.test.mjs tests/gr-wind-fix-01.test.mjs tests/gr-wind-ui-03.test.mjs tests/gr-legend-ui-01.test.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+          node scripts/test-frontend-build.mjs
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/flow" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/flow/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Complete card with classic, arrows and lines in five desktop/touch views
+        env:
+          NODE_PATH: ${{ runner.temp }}/flow/node_modules
+          GR_FLOW_OUTPUT: ${{ runner.temp }}/flow-browser
+        run: node scripts/test-gr-flow-curves-01-browser.cjs
+      - name: Protected temperature controls, units, masks and independent wind rendering
+        env:
+          NODE_PATH: ${{ runner.temp }}/flow/node_modules
+          GR_TEMP_OUTPUT: ${{ runner.temp }}/temperature-browser
+        run: node scripts/test-gr-temp-world-01-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flow-curves-synthetic-browser-results
+          path: |
+            ${{ runner.temp }}/flow-browser
+            ${{ runner.temp }}/temperature-browser
+          if-no-files-found: ignore
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable Home Assistant staging
+        run: python scripts/verify-hacs-integration-package.py

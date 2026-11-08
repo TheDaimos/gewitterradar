@@ -1,6 +1,6 @@
 /* Synthetic authenticated transport; the entire actual card/module tree/Leaflet is used. */
 const {fixture}=require('./wind-perf-browser-fixture.cjs');
-function temperatureFixture(){return fixture({extendHtml:html=>html.replace('window.cleanSource=weatherSourceText;',`window.cleanSource=weatherSourceText;
+function temperatureFixture({ref=null,decorate=html=>html}={}){return fixture({ref,extendHtml:html=>decorate(html.replace('window.cleanSource=weatherSourceText;',`window.cleanSource=weatherSourceText;
  window.temperatureRequests=[];window.temperatureTransport={mode:'ready',sequence:0,delay:0};window.temperaturePending=[];
  window.temperatureReply=query=>{
  const o=temperatureTransport,b=query.context.bbox,nx=65,ny=49,world=b.east-b.west>=360;
@@ -16,5 +16,5 @@ function temperatureFixture(){return fixture({extendHtml:html=>html.replace('win
   if(mode==='failure')throw Error('temperature_synthetic_transport');
   if(mode==='denied')return {status:'unavailable',unavailable:{code:'provider_disabled'}};
   return temperatureReply(query);
- }`)});}
+ }`))});}
 module.exports={temperatureFixture};

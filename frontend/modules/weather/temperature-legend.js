@@ -1,6 +1,6 @@
 import {temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
 import {installWeatherLegendOverlay} from './legend-overlay.js?v=411149r1';
-import {temperatureColor,temperatureText,temperatureLegendRange} from './temperature-data.js?v=411156r1';
+import {temperatureColor,temperatureText,temperatureLegendRange} from './temperature-data.js?v=411157r1';
 class ThermalLegend{}installWeatherLegendOverlay(ThermalLegend,{});
 export function createTemperatureLegend(owner,kind){
  const view=new ThermalLegend(),s=owner._weatherTemperatureState(),prefix='weather-'+kind+'-legend-',ensure=view._weatherLegendEnsureUi,sync=view._weatherLegendSyncUi;
@@ -24,6 +24,7 @@ export function createTemperatureLegend(owner,kind){
    const ticks=document.createElement('div');ticks.style.cssText='display:flex;justify-content:space-between;gap:5px;flex-wrap:wrap';for(const v of [min,(min+max)/2,max]){const t=document.createElement('span');t.textContent=temperatureText(v+273.15,c.unit,true,owner._locale());ticks.append(t);}box.append(ticks);
    p('Violett ausschließlich für extreme Hitze ab '+temperatureText(c.stops[8]+273.15,c.unit,true,owner._locale())+'. Darstellungsgrenzen sind keine Warnschwellen.');p('2-m-Modelltemperatur, keine Stationsmessung. Beschriftungen sind native Gitterwerte; deren Dichte erhöht die Datenauflösung nicht.');
   }else{
+   if(c.flowForm!=='classic')p(owner._t('flow.'+(c.flowForm==='curved_arrows'?'arrowsHelp':'linesHelp')));p(owner._t('flow.advectionHelp'));
    const row=document.createElement('div');row.style.cssText='height:14px;border-radius:4px;background:linear-gradient(90deg,#247aff,#6edbff,#e8edf1,#ffab50,#fa413b,#e9449a)';box.append(row);p('Blau: Kaltlufttransport · neutral: geringe Advektion · Orange/Rot: Warmlufttransport. Einheit K/h.');p('−v · ∇T auf gemeinsamer 850-hPa-Ebene. Pfeile folgen dem dortigen Wind; ihre Farbe beschreibt den horizontalen Temperaturtransport.');p('Keine unmittelbare lokale Temperaturänderung und kein 2-m-Temperaturtrend. Abweichung vom separat dargestellten 10-m-Wind ist möglich. Bereiche unter Modellboden, NoData und ungültige Gradienten bleiben ausgespart.');p('Die Bewegung ist visuell skaliert. '+(c.paused?'Animation pausiert.':'Tempo '+c.tempo+' · Dichte '+c.density+'.'));if(f?.advection.status!=='ready')p('Nicht verfügbar: '+(f?.advection.unavailable?.code||s.error||'Keine kohärenten Felder.'));
   }
   if(f){p(f.provenance.attribution);p('Modelllauf UTC: '+f.model_run+' · Gültig UTC: '+f.valid_at);p('WR-Freigabe bis UTC: '+f.valid_until+' · natives GFS-Gitter '+f.native_resolution_degrees+'°, übertragen '+(f.grid.longitudes[1]-f.grid.longitudes[0]).toFixed(2)+'° × '+(f.grid.latitudes[1]-f.grid.latitudes[0]).toFixed(2)+'°.');}else p(s.status);

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2243,6 +2243,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       });
       this._syncV410Tooltips();
       this._weatherTemperatureTranslate?.();
+      this._weatherWindTranslate?.();
     },
 
     _syncMapZoomTooltips() {
