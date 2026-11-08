@@ -13,13 +13,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch protected source references
-        run: git fetch --no-tags --depth=1 origin 91fba29af0b3e765b898c1d4c4355adcfa810d98 782c035129ce9e14ca0153fe4a26bff157ffacc0 7185af7779549e163c00f5012311732260da4ba0 ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
+        run: git fetch --no-tags --depth=1 origin efadf2cc7e0fd708ac20cf391637e2ccf8f0e7e5 ac73cb59abeac399c9fc24dcb78194ecef0c3e0b 91fba29af0b3e765b898c1d4c4355adcfa810d98 782c035129ce9e14ca0153fe4a26bff157ffacc0 7185af7779549e163c00f5012311732260da4ba0 ecad2624db0169d2b41a921d0158a4475be364e5 ab55f7b2bfee4a35511b2e95359572e8f2cae6da 787497648a405bc27495d98ffdedd9206668fd4c a607639ad2a6373c62e04ce8acfc39f72feb280a 04b751fd3962150ed0369dba4428959e4a8e98bd
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Targeted controls, state, palette, data-path and package checks
         run: |
-          node --test tests/gr-snake-flow.test.mjs tests/gr-premium-ui-fix02.test.mjs tests/gr-premium-ui.test.mjs tests/gr-wind-quicktoggle-01.test.mjs tests/gr-temp-world-01.test.mjs tests/gr-legend-ui-06.test.mjs tests/gr-legend-ui-01.test.mjs
+          node --test tests/gr-wind-studio.test.mjs tests/gr-snake-flow.test.mjs tests/gr-premium-ui-fix02.test.mjs tests/gr-premium-ui.test.mjs tests/gr-wind-quicktoggle-01.test.mjs tests/gr-temp-world-01.test.mjs tests/gr-legend-ui-06.test.mjs tests/gr-legend-ui-01.test.mjs
           node scripts/verify-hires-asset-retention.mjs
           node scripts/verify-frontend.mjs
           node scripts/test-v411-identity.mjs
@@ -43,6 +43,11 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/premium/node_modules
           GR_SNAKE_OUTPUT: ${{ runner.temp }}/snake-browser
         run: node scripts/test-gr-snake-flow-browser.cjs
+      - name: Integrated Wind Studio, six full-card views, profiles and JSON/CSV exchange
+        env:
+          NODE_PATH: ${{ runner.temp }}/premium/node_modules
+          GR_STUDIO_OUTPUT: ${{ runner.temp }}/studio-browser
+        run: node scripts/test-gr-wind-studio-browser.cjs
       - name: Standalone synthetic preview
         env:
           NODE_PATH: ${{ runner.temp }}/premium/node_modules
@@ -57,6 +62,7 @@ jobs:
             ${{ runner.temp }}/premium-browser
             ${{ runner.temp }}/premium-fix02-browser
             ${{ runner.temp }}/snake-browser
+            ${{ runner.temp }}/studio-browser
             ${{ runner.temp }}/snake-preview.html
           if-no-files-found: ignore
       - uses: actions/setup-python@v5

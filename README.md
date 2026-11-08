@@ -1,3 +1,9 @@
+## V4.11.163 DEV · Winddesign- & Animationsstudio · HA 0.25.70
+
+Optionales Studio unter Experteneinstellungen: gemeinsame Live-/Offline-Vorschau, getrennte Entwürfe, geschützte Standardprofile und lokale Benutzerprofile mit JSON-/CSV-Austausch und CSV-Teilimport. Nur Auf Karte anwenden übernimmt Entwurfswerte. Der positiv begutachtete Schlangenrenderer, alle elf Parameter, die bisherigen Regler und deren Speicherung bleiben unverändert.
+
+[Implementierung und Austauschformat](docs/GR_WIND_ANIMATION_STUDIO.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.163-dev). Keine automatische Installation; physische Companion-/HA-Abnahme offen.
+
 ## V4.11.162 DEV · Snake Flow Fix 01 · HA 0.25.69
 
 Synchronisierte Live-Schnellregler für Länge, Tempo und Dichte; Detailregler bleiben während Touch-/Mauszügen im DOM. Langer Körper mit voller Deckkraft, einstellbarer Schwanzbeginn bei standardmäßig 67 %. Höhere Dichte bis Faktor 5, Zoom-3-Anpassung, kontrollierte räumliche Auffüllung und nachvollziehbare temporäre Lastbegrenzung mit Erholung. Vorhandene Modi und Winddatenwege bleiben erhalten.
