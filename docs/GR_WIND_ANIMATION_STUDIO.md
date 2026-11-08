@@ -231,3 +231,21 @@ Physische Android-/iPad-/HA-Abnahme dieser neuen Version bleibt beim Betreiber.
 Keine automatische Installation, keine privaten Actions, keine Änderungen an WR,
 `main` oder PROD VM101 und keine Wiederholung von TEST69. Endgültige Commit-,
 öffentliche CI- und Paketnachweise werden nach erfolgreichem Abschluss ergänzt.
+
+
+## Abschließender Release-Nachweis
+
+Implementierungscommit: `f4ada7da433f532bceacaf1dd73c14a609e479ae`.
+
+* [Öffentliche frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42521639249): **success**.
+* [Öffentliche ha-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42521641678): **success**.
+
+Installierbares [DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.163-dev).
+
+* `gewitterradar-0.25.70-dev.zip` · SHA256 `ebb2092f63eb92929328d4f75623faee236c9e7362d4235e8047424fd63d89b7` · 190 Dateien.
+* `gewitterradar-dashboard-4.11.163-dev.zip` · SHA256 `92ac73d11036cb02ec94f00c2473513896701b5796e39823268402537516b290` · 176 Dateien.
+* `gewitterradar-snake-preview-4.11.163.html` · SHA256 `0ff3dfad2219c15fd348ff25fdd3c93cdcb7a0ac02b646e56b2b8de979a3d7aa` · 1 Dateien.
+
+174 gemeinsame Frontend-Dateien sind zwischen HA und Dashboard bytegleich. ZIP-CRC, Python-Syntax und Paket-/Versionsidentität sind geprüft. Die Pakete werden aus dem Git-Archiv erzeugt; diese Berichtsergänzung verändert ihren Inhalt nicht.
+
+60 gezielte Funktions-/Schutztests und 25 vollstaendige Desktop-/Touch-Browseransichten sowie drei Offline-Vorschauszenarien erfolgreich. Öffentliche HA-/HACS-/hassfest-/DRA-Prüfungen erfolgreich. Keine physische Android-/iPad-/HA-Abnahme durchgeführt. Installation und visuelle Realabnahme bleiben beim Betreiber.
