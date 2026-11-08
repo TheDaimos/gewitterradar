@@ -111,4 +111,56 @@ Boot-/Importkennungen, Runtime-/DRA-/HA-Metadaten, Source-, HA- und Dashboard-Ko
 
 Keine Änderungen und keine Actions im privaten WR-Repository. Öffentliche CI ausschließlich im GR-Repository; der öffentliche WR-Prüfstand benötigt ohne WR-Codeänderung keinen neuen Lauf. Die Referenz bleibt der dokumentierte Benutzerstand 156/298, nicht automatisch diese neue Version.
 
-**Release-Nachweise werden nach erfolgreicher öffentlicher CI und Paketprüfung ergänzt. Bis dahin keine Fertigmeldung.** Keine automatische Installation; die visuelle Realabnahme auf VM109 bleibt beim Betreiber.
+Keine automatische Installation; die visuelle Realabnahme auf VM109 bleibt beim Betreiber.
+
+
+## Abschließender Release-Nachweis
+
+* Ursprüngliche Implementierung: `b8c734a7b4b55b2c326085d7528e9d27420cb194`.
+* Abschließender Laufzeit-/Maskenschutz- und Teststand: `70075b8826d728bec361e47912605c325a3a90b2`.
+* Geschützte WR-Linie unverändert: `1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5`, WR 0.10.298 / Loader 301. Keine neue WR-Version erforderlich.
+* [Öffentliche Kurven-/Temperatur-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42461690329): **success**. 62 gezielte Tests, fünf vollständige Kurven-Browseransichten und fünf zusätzliche Temperatur-Regressionsansichten, alle neuen Spracheinstellungen, Originalasset-Schutz, deterministischer Build, Paketstaging und Versions-/Importidentität.
+* [Öffentliche HA-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42461692388): **success** in allen vier Jobs: 63 HA-Tests, HACS, hassfest und DRA-/Paketvertrag.
+
+Der erste öffentliche Frontendlauf 42460960140 bestand die Geometrie-/Sprachtests und die neuen Kurvenansichten, lief danach im zusätzlichen Android-Querformat-Menütest in einen Sichtbarkeits-Timeout. Der Test wartet jetzt auf das asynchrone Vollbildlayout vor dem Touch-Tap und prüft das sichtbare Menü vor der Auswahl. Für einen weiteren Fehlschlag werden Zustand und Screenshot der synthetischen Oberfläche erfasst; es gibt keinen stillen automatischen Klick-Retry. Die zusätzlichen strengeren Maskenhüllen für Bézierkontrollpunkte sind separat getestet und im erfolgreichen Abschlussstand enthalten. Der erste HA-Lauf 42460961700 war ebenfalls grün.
+
+### Kontrollierter Rendervergleich
+
+Je Messfenster 4,5 Sekunden im gleichen Chrome-/Leaflet-Aufbau mit festem synthetischem Wirbelfeld. Referenz und neuer klassischer Modus verwenden dieselbe hohe Dichte und feste klassische Qualität; neue Kurven verwenden ihre tatsächliche adaptive Produktionsdichte. Die Zeilen sind deshalb **kein Vergleich identischer Elementzahlen** zwischen kurzen klassischen Strichen und langen Kurven. Angegeben wird die Wind-Zeichenzeit; die zusätzliche Temperaturarbeit ist in der letzten Form über die Gesamt-Scriptzeit enthalten. Keine physische Geräte-, GPU- oder Frameratezusage.
+
+| Profil / Form | Ø ms | P95 ms | Max ms | Sichtbare Windelemente | Kurvenpunkte | Historie KiB | JS-Heap MiB |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| android-cpu6 / Referenz klassisch | 6.10 | 10.10 | 17.70 | 514 | 0 | 0.0 | 6.89 |
+| android-cpu6 / neu klassisch | 6.28 | 13.10 | 27.40 | 510 | 0 | 0.0 | 6.52 |
+| android-cpu6 / geschwungene Pfeile | 5.37 | 7.10 | 15.10 | 83 | 736 | 75.0 | 7.35 |
+| android-cpu6 / geschwungene Linien | 6.61 | 13.30 | 34.90 | 84 | 731 | 75.0 | 7.67 |
+| android-cpu6 / Linien + Temperatur/Advektion | 5.29 | 7.20 | 9.00 | 84 | 745 | 88.5 | 7.31 |
+| desktop / Referenz klassisch | 1.91 | 2.60 | 3.30 | 1738 | 0 | 0.0 | 7.07 |
+| desktop / neu klassisch | 1.97 | 2.80 | 4.40 | 1736 | 0 | 0.0 | 6.57 |
+| desktop / geschwungene Pfeile | 3.38 | 4.40 | 6.70 | 679 | 6028 | 256.9 | 7.26 |
+| desktop / geschwungene Linien | 3.93 | 5.00 | 6.70 | 682 | 6028 | 256.9 | 7.94 |
+| desktop / Linien + Temperatur/Advektion | 4.34 | 7.40 | 10.50 | 565 | 4987 | 303.0 | 7.44 |
+| ipad-cpu2 / Referenz klassisch | 6.20 | 8.60 | 10.50 | 1466 | 0 | 0.0 | 6.78 |
+| ipad-cpu2 / neu klassisch | 3.71 | 4.50 | 7.40 | 1480 | 0 | 0.0 | 7.46 |
+| ipad-cpu2 / geschwungene Pfeile | 5.23 | 8.10 | 11.20 | 281 | 2491 | 217.5 | 7.24 |
+| ipad-cpu2 / geschwungene Linien | 4.39 | 5.90 | 12.80 | 280 | 2472 | 217.5 | 8.07 |
+| ipad-cpu2 / Linien + Temperatur/Advektion | 4.39 | 5.30 | 6.20 | 281 | 2493 | 256.9 | 7.16 |
+
+Alle 15 Messfenster hatten **null zusätzliche Wetterabfragen**. Ein Rechenlastwechsel der neuen Kurven verändert den klassischen Dichtewert nicht. Android CPU×6 reduzierte die langen Kurven bis auf 84 verwaltete Windelemente; Desktop blieb bei ungefähr 685, iPad CPU×2 bei ungefähr 282. Diese Grenze ist eine bewusste Performanceanpassung und keine veränderte Windmessung.
+
+Die JS-Heap-Werte umfassen den gemessenen Browserkontext. Numerische Trailpuffer werden zusätzlich separat gezählt; GPU-/Canvas- und gesamter Prozessspeicher sind darin nicht vollständig enthalten. Einzelne Frame-Spitzen bis etwa 35 ms und Unterschiede zwischen kurzen Referenz-Messfenstern bleiben sichtbar; aus dem besseren Einzelwert eines Profils wird keine allgemeine Beschleunigung abgeleitet. Die zuvor dokumentierte stark teurere Prototypvariante wurde vor der Auslieferung ersetzt.
+
+Die separate Temperaturarbeit bei zusätzlicher Advektion betrug im letzten Frame des jeweiligen Fensters ungefähr 3,4 ms (Android CPU×6), 0,8 ms (Desktop) und 2,4 ms (iPad CPU×2); das sind Momentwerte, keine behaupteten mittleren Kosten. Die Gesamt-Scriptzeit im 4,5-s-Fenster lag mit beiden aktiven Visualisierungen bei ungefähr 2,09 / 1,29 / 1,60 Sekunden. Die Quellen der Vergleichswerte sind der reproduzierbare Benchmark und seine lokalen synthetischen Ausgaben, nicht eine Companion-Abnahme.
+
+### Installierbare DRA-Pakete
+
+| Paket | Dateien | SHA256 |
+|---|---:|---|
+| `gewitterradar-0.25.64-dev.zip` | 182 | `3ace3ccd823259d9e39075c918c1089236a1932b3e2d0bf2c02183165eb6ba31` |
+| `gewitterradar-dashboard-4.11.157-dev.zip` | 168 | `cbd6b96554f6ce2611af0c1da65245da9d8383cc7b0bbd27703c3a7a407bd4fe` |
+
+Alle **166 gemeinsamen Frontenddateien** der HA-/Dashboard-Pakete sind bytegleich. Die zusätzlichen zwei Dashboard-Auslieferungsdateien bleiben erhalten. 36 registrierte Module; GR 4.11.157, HA 0.25.64, Runtime 411157r1 und E411-157A1 sind direkt aus den ZIP-Inhalten geprüft. ZIP-CRC, Python-Syntax und Quellidentität der neuen Geometrie-/Sprachhelfer wurden geprüft. Dokumentationscommits verändern die Runtime-ZIPs nicht.
+
+DEV-Release: [GR 4.11.157 / HA 0.25.64](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.157-dev). Reguläre DRA-Quelle bleibt `TheDaimos/gewitterradar@deploy/dev`. Das Release enthält `deployment.json`, `changed-files.txt` und `SHA256SUMS.txt` mit dem endgültigen Bereitstellungscommit. Der Report wird nach dem Commit über GitHub vollständig zurückgelesen und anhand seines Git-Blobs verifiziert; GitHub-Asset-Digests werden vor und nach Veröffentlichung mit den lokalen SHA256 verglichen.
+
+Keine neue WR-Publikation und keine privaten GitHub Actions. Bestehende Referenzdateien und Release-Tags bleiben erhalten. Die neue Version ist erst nach Veröffentlichung entwicklungsseitig zur manuellen VM109-Realabnahme bereit. Es wurde weder automatisch installiert noch auf PROD VM101 zugegriffen.
