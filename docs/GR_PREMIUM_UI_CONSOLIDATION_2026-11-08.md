@@ -160,3 +160,20 @@ Importstellen und beide Auslieferungskopien. Dazu Versions-/Runtime-/DRA-Metadat
 Build-Inventar, Prüfsummen, gezielte Tests, öffentliche CI und diese Dokumentation.
 Wettertransport, numerische Felder, Radarmosaik und Animationsscheduler erhalten
 keine funktionalen Änderungen.
+
+
+## Abschließender Release-Nachweis
+
+Implementierungscommit: `ec195876de4f82e1147ad6678b195e5be8f848bd`.
+
+* [Öffentliche frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42477979577): **success**.
+* [Öffentliche ha-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42477981497): **success**.
+
+Installierbares [DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.159-dev).
+
+* `gewitterradar-0.25.66-dev.zip` · SHA256 `9a4dea318d160daf9f798f1a03fb333e55a64a8f695a40ddc909dbc88140b2eb` · 184 Dateien.
+* `gewitterradar-dashboard-4.11.159-dev.zip` · SHA256 `d85a46e92f02176c677aed8ae2210c550650f2b630c164b8bc97174b42a7ca47` · 170 Dateien.
+
+168 gemeinsame Frontend-Dateien sind zwischen HA und Dashboard bytegleich. ZIP-CRC, Python-Syntax und Paket-/Versionsidentität sind geprüft. Die Pakete werden aus dem Git-Archiv erzeugt; diese Berichtsergänzung verändert ihren Inhalt nicht.
+
+33 gezielte Funktions-/Schutztests und sechs vollständige Desktop-/Touch-Browseransichten erfolgreich. Öffentliche HA-/HACS-/hassfest-/DRA-Prüfungen erfolgreich. Keine physische Android-/iPad-/HA-Abnahme durchgeführt. Installation und visuelle Realabnahme bleiben beim Betreiber.
