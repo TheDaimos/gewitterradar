@@ -137,6 +137,14 @@ Originalasset-Retention, deterministischer Build einschließlich negativer
 Manipulationsprüfungen und installierbare HA-Paketstruktur. Öffentliche CI-Läufe,
 abschließende Commit-SHAs und Paketprüfsummen werden im Release-Nachweis ergänzt.
 
+Der erste öffentliche Frontendlauf 42477343029 fand eine Asset-SHA-Abweichung:
+Die lokale Windows-Datei des Runtime-Manifests war vor der durch Git festgelegten
+LF-Normalisierung gehasht worden. Die Auslieferungstexte sind jetzt auf diese
+kanonischen Git-Bytes normalisiert; Asset-Inventar und Frontend-Prüfsummen wurden
+daraus neu erzeugt. Keine Änderung der Prüflogik und keine Abschwächung des
+Manipulationsschutzes. Die öffentlichen Prüfungen werden auf dem korrigierten
+Commit erneut ausgeführt; der erste Lauf ist kein Freigabenachweis.
+
 ## Betroffene Quellbereiche
 
 `frontend/modules/weather/{premium-ui,premium-legend,wind-legend,temperature-legend,
