@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411169r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411170r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.186",
+    "version": "1.2.187",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.22",
+    "version": "1.3.23",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.28",
+    "version": "0.4.29",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -466,7 +466,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.10",
+    "version": "0.4.11",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
@@ -509,7 +509,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.temperature-display",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "group": "Weather-Engine",
     "function": "Weltweite Temperatur und thermische Advektion",
     "subfunctions": [
