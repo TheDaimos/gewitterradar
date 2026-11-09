@@ -55,4 +55,19 @@ Die öffentliche Integrations-CI wird gesondert ausgewiesen. Ihr Erfolg ist kein
 
 ## Abschlussnachweis
 
-Commit, öffentliche Prüfläufe und abschließender Referenzvergleich werden nach ihrer tatsächlichen Verifikation ergänzt.
+Die nachfolgenden Nachweise wurden nach Veröffentlichung des Implementierungscommits geprüft.
+
+
+## Verifizierter Abschluss
+
+Implementierungscommit: `fae28575711ee5723e44961852a0ff461b6e5fb2`.
+
+[Öffentliche Integrations-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42618632974): **Hassfest, Package-Contract und Home-Assistant-Runtime erfolgreich**. Der Gesamtworkflow ist wegen genau einer fehlgeschlagenen HACS-Lizenzprüfung **nicht grün**: GitHub erkennt die benutzerdefinierte Gemeinschaftslizenz als `NOASSERTION`; 9 von 10 HACS-Prüfungen sind erfolgreich. [HACS verlangt für diese Prüfung eine erkennbare, OSI-anerkannte Lizenz](https://hacs.xyz/docs/publish/include/#check-license). Die verbindlich vorgegebene Modell-B-Lizenz ist ausdrücklich keine solche Lizenz. Die bereits im Ausgangscommit vorhandene Lizenz wird deshalb weder verfälscht noch durch einen falschen SPDX-Bezeichner ersetzt; die Prüfung wird nicht abgeschaltet. Der HACS-Katalog-Lizenznachweis bleibt damit offen. Dies wird nicht als erfolgreicher HACS-Gesamtnachweis ausgegeben.
+
+Die installierbaren Dateien und Metadaten bleiben byteidentisch. DRA-Vertrag, HACS-Paketstaging und HA-Laufzeit wurden separat erfolgreich geprüft; eine reale Neuinstallation auf HA/Companion wurde nicht durchgeführt.
+
+Programm-, DRA-, HACS- und Versionsdateien unverändert; historische Branch-/Tag-SHAs sowie Releases, deren vollständige Release Notes und Asset-Identitäten gegen die Bestandsaufnahme unverändert verifiziert. Keine historische Referenz gelöscht oder umgebogen.
+
+Der unabhängig fortgeschriebene Live-Branch deploy/dev steht inzwischen auf `7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6` (20 Nachfolgecommits seit der Bestandsaufnahme `2e0aea85db7ce8c2724bd49bf55e21af91047292`). Der ursprüngliche Stand ist weiterhin Vorfahr; der Lizenzimplementierungscommit gehört nicht zu dieser Commitfolge. Dieser Auftrag hat deploy/dev nicht beschrieben oder zurückgesetzt.
+
+[Historisches V4.10-FINAL-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10) bleibt unverändert. Die aktuelle [Gemeinschaftslizenz](https://github.com/TheDaimos/gewitterradar/blob/main/LICENSE.md) gilt für den rechtmäßig darunter bereitgestellten aktuellen main-Quellstand; keine rückwirkende Umlizenzierung des historischen Tags.
