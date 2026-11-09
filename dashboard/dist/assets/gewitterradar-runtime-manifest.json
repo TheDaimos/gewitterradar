@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.170",
-  "build": "V4.11.170-DEV-2026-11-09",
-  "runtimeRevision": "411170r1",
-  "moduleSetId": "E411-170A1",
+  "productVersion": "4.11.171",
+  "build": "V4.11.171-DEV-2026-11-09",
+  "runtimeRevision": "411171r1",
+  "moduleSetId": "E411-171A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.187"
+      "version": "1.2.188"
     },
     {
       "id": "core.base-context",
@@ -47,7 +47,7 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.28"
+      "version": "1.1.29"
     },
     {
       "id": "ui.i18n-settings",
@@ -91,7 +91,7 @@
     },
     {
       "id": "diagnostics.raster-lab",
-      "version": "0.1.7"
+      "version": "0.1.8"
     },
     {
       "id": "instruments.compass-design",
@@ -150,5 +150,5 @@
       "version": "0.1.5"
     }
   ],
-  "displayVersion": "V4.11.170 DEV"
+  "displayVersion": "V4.11.171 DEV"
 }

@@ -16,7 +16,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.28",
+  "version": "1.1.29",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1805,7 +1805,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         settingsOpen.append(blueGear);
       }
       const speedKey='gr-horizontal-navigation-speed';
-      const speedOptions={Schnell:220,Mittel:440,Langsam:760};
+      const speedOptions={Schnell:220,Mittel:440,Langsam:760,'Ohne Animation':0};
       let selectedSpeed='Mittel';
       try { const stored=localStorage.getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
       let navAnimating=false;
@@ -1815,7 +1815,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if(navAnimating||!navBody||!settingsDialog)return;
         navAnimating=true;
         const duration=selectedMenuStyle!=='modern'||matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
-        if(!duration){complete();navAnimating=false;return;}
+        if(!duration){settingsDialog.style.removeProperty('height');complete();navAnimating=false;cancelNavigation=null;return;}
+        const sourceScrollTop=navBody.scrollTop;
         settingsBackdrop?.classList.add('gr-horizontal-motion-active');
         const pane=document.createElement('div');
         pane.className='gr-horizontal-transition';
@@ -1825,6 +1826,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         to.className='gr-horizontal-slide-page';
         const snapshotFor=(source)=>{
           const clone=source.cloneNode(true);
+          // Pages are hidden by the shared live navigator. A paint-only copy
+          // must not inherit that state (including WebView hidden handling).
+          clone.hidden=false;
+          clone.style.contentVisibility='visible';
           if(source===navRoot){
             const links=navBody.querySelector(':scope > .settings-premium-links')?.cloneNode(true);
             if(links){links.hidden=false;clone.append(links);}
@@ -1832,6 +1837,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           return clone;
         };
         const oldContent=snapshotFor(outgoing),newContent=snapshotFor(incoming);
+        oldContent.style.transform='translateY(-'+sourceScrollTop+'px)';
+        newContent.style.transform='translateY(-'+destinationScrollTop+'px)';
         // cloneNode does not carry live <select> selection state; preserve actual labels in both snapshots.
         for(const [source,clone] of [[outgoing,oldContent],[incoming,newContent]]){
           const originalSelects=source.querySelectorAll('select');
@@ -1870,6 +1877,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         // Final layout stays fixed: composite its visual height, never relayout per frame.
         settingsDialog.style.height=after+'px';
         navBody.scrollTop=destinationScrollTop;
+        const viewportHeight=navBody.clientHeight;
+        const positionPane=()=>{pane.style.top=navBody.scrollTop+'px';pane.style.bottom='auto';pane.style.height=viewportHeight+'px';};
+        positionPane();
         // Isolate inactive controls only after measuring the actual destination.
         navBody.classList.add('gr-horizontal-animating');
         const easing='cubic-bezier(.22,.7,.2,1)';
@@ -1879,6 +1889,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const previousOverflow=navBody.style.getPropertyValue('overflow-y');
         const previousOverflowPriority=navBody.style.getPropertyPriority('overflow-y');
         navBody.style.setProperty('overflow-y','hidden','important');
+        positionPane();
         const runs=[
           from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'}),
           to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'})
@@ -1909,9 +1920,15 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         let done=false;
         let cleaned=false;
         let settleTimer=null;
+        let startFrame=null;
+        // Start the existing WAAPI timelines together only after the new live
+        // layout/toggle work is ready to paint, rather than spending the short
+        // 220ms transition in synchronous layout on a mobile WebView.
+        for(const animation of runs){animation.pause();animation.currentTime=0;}
         const cleanup=()=>{
           if(cleaned)return;
           cleaned=true;
+          if(startFrame!==null)cancelAnimationFrame(startFrame);
           if(settleTimer!==null)clearTimeout(settleTimer);
           pane.remove();
           runs.forEach(animation=>animation.cancel());
@@ -1948,6 +1965,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           settingsDialog.style.height=after+'px';
           navBody.scrollTop=destinationScrollTop;
+          positionPane();
           runs.forEach(animation=>{
             if(animation.playState==='running')try{animation.finish();}catch(_){}
           });
@@ -1970,7 +1988,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           settleTimer=setTimeout(cleanup,500);
           requestAnimationFrame(()=>requestAnimationFrame(dissolve));
         };
-        const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
+        let timeout=null;
+        startFrame=requestAnimationFrame(()=>{
+          startFrame=null;if(cleaned||done)return;
+          positionPane();
+          const start=document.timeline.currentTime;
+          for(const animation of runs){animation.play();animation.startTime=start;}
+          timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
+        });
         cancelNavigation=()=>{done=true;clearTimeout(timeout);cleanup();};
         Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);
       };
