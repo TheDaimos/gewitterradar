@@ -77,4 +77,27 @@ Gezielte automatisierte Prüfungen vergleichen Wind-, Schlangen-, Temperatur-, N
 
 ## Verifizierte Veröffentlichung
 
-Implementierungscommit, tatsächlich abgeschlossene Prüfläufe und Paketprüfsummen werden nach ihrer Verifikation ergänzt. Installation und visuelle Realabnahme auf HA DEV VM109, Android und iPad bleiben beim Betreiber.
+Die nachfolgenden Nachweise wurden nach dem Implementierungscommit verifiziert. Installation und visuelle Realabnahme auf HA DEV VM109, Android und iPad bleiben beim Betreiber.
+
+
+## Tatsächlicher Abschlussnachweis
+
+Implementierungscommit: `2ba2403421684697eafa556054be9a4a416f9e3b`.
+
+Prüfvertrags-Commit: `c672c6f9ca0b4506980e027dfa60f08ce7a35a32`; ausschließlich bestehende Menü-/Metadaten-Prüfungen an die neue Struktur angepasst. Insbesondere werden Modul-ID und Version aus dem tatsächlichen MODULE_META-Block gelesen und mit Runtime-/Modulmanifest verglichen, statt eine frühere Versionsnummer oder die erste beliebige Menü-ID anzunehmen. Anwendungs- und Installationsdateien seit dem Implementierungscommit unverändert.
+
+* [Öffentliche gezielte Menü-/Frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42638072589): **success**.
+* [Öffentliche Integrations-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42639143830): Hassfest, Package-Contract und HA-Runtime jeweils **success**.
+
+**HACS-Lizenzprüfung bleibt offen:** `NOASSERTION` durch die bereits auf main hinterlegte benutzerdefinierte Modell-B-Lizenz. [Diese HACS-Prüfung verlangt eine erkannte OSI-Lizenz](https://hacs.xyz/docs/publish/include/#check-license). Die Lizenz und die HACS-Prüfung wurden in diesem Menüauftrag nicht verändert. Deshalb ist die allgemeine Integrations-CI insgesamt nicht grün; ihre übrigen Jobs sind erfolgreich. Kein falscher SPDX-Eintrag und kein Abschalten der Prüfung.
+
+10 gezielte Zustands-/Struktur-/Schutztests erfolgreich; vollständiger tatsächlicher GR-Modulbaum in 12 Menüansichten (klassisch/modern × sechs Desktop-/Touch-Viewports) und fünf Eye-/Hub-Ansichten erfolgreich. Geprüft wurden auch die tatsächlich sichtbare vollständige Diagnose, ihr Zustand in inert animierten Seitenabbildern, Entfernen/Wiederverbinden einer Karteninstanz und der einzelne History-Listener. Syntax, Original-Asset-Erhalt, Versionsidentität, deterministischer Build einschließlich Manipulationserkennung, HACS-Staging und DRA-Vertrag erfolgreich.
+
+Installationspakete aus dem unveränderten Git-Archiv dieses Implementierungscommits:
+
+* `gewitterradar-0.25.75-dev.zip` · 192 Dateien · SHA256 `0d239677a52561b8de4d47b64f29d4717179276e468adf79a64598f7933622c2`.
+* `gewitterradar-dashboard-4.11.168-dev.zip` · 178 Dateien · SHA256 `89a4cf1079a7ac1813f145dd4e821ed6a93c66ac1c3cdaf8d627c9f18ef2f14a`.
+
+ZIP-CRC, Python-Syntax, Metadaten und sämtliche gemeinsamen HA-/Dashboard-Frontendbytes sind geprüft. Die nachfolgende Berichtsergänzung verändert keinen Paketinhalt.
+
+[Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.168-dev) · [Bestehender DRA-Branch](https://github.com/TheDaimos/gewitterradar/tree/deploy/dev). DRA bleibt auf Projekt TheDaimos/gewitterradar, Quelltyp branch, Ref deploy/dev. Keine automatische Installation; reale HA-/Android-/iPad-Abnahme weiterhin offen. Keine Änderungen an main, historischen Referenzen, WeatherRouter oder VM101.
