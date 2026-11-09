@@ -1,4 +1,4 @@
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411166r1';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411167r1';
 import {ensurePremiumUi,PREMIUM_INFO,PREMIUM_CLOSE} from './premium-ui.js?v=411160r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
