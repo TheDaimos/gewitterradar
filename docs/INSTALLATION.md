@@ -1,4 +1,6 @@
-# Gewitterradar V4.07.57 – Installation
+> **Lizenzedition 2026-11-09:** Verwende ausschließlich [v4.10-model-b-20261109](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109). Modell B erfüllt die OSI-Lizenzprüfung des offiziellen HACS-Katalogs nicht. Custom-Repository-Download und Paketstaging werden separat geprüft; eine reale HACS-/HA-Neuinstallation ist damit nicht nachgewiesen.
+
+# Gewitterradar V4.10 FINAL – Installation
 
 Diese Anleitung beschreibt die beiden Auslieferungsformen von **Gewitterradar**:
 
@@ -7,8 +9,8 @@ Diese Anleitung beschreibt die beiden Auslieferungsformen von **Gewitterradar**:
 
 Beide gehören fachlich zu demselben Gewitterradar-Produktstand. Für eine produktive Installation sollte genau **eine** Auslieferungsform aktiv verwendet werden. Insbesondere dürfen nicht gleichzeitig mehrere Gewitterradar-JavaScript-Ressourcen oder mehrere aktive V4.06-/V4.07-Packages geladen werden.
 
-Aktueller öffentlicher Produktstand: **V4.07.57**  
-Native Integration: **0.19.1**  
+Aktueller öffentlicher Produktstand: **V4.10 FINAL**
+Native Integration: **0.22.0**
 Geschützte Laufzeitbasis: **V4.07.56**
 
 ---
@@ -252,11 +254,11 @@ Veraltete oder parallele Einträge entfernen bzw. deaktivieren. Insbesondere his
 
 oder Testpfade dürfen nicht zusätzlich geladen werden.
 
-Kanonische V4.07.57-Frontendidentität:
+Kanonische V4.10 FINAL-Frontendidentität:
 
 ```text
-Größe:  1.955.144 Bytes
-SHA256: ac921b5fc40f2d7f36733bb7262fdb1595790674695ad0eb83ccde8bc7146571
+Größe:  8.739 Bytes
+SHA256: 62f692b07e1bda236b956d9254215da0762396e67606297cfa52e6c26b20704e
 ```
 
 Nach einer Änderung an der Ressource den Browser vollständig neu laden. Bei hartnäckigem Frontend-Cache kann ein Hard-Reload des Browsers erforderlich sein.
@@ -267,7 +269,7 @@ Nach einer Änderung an der Ressource den Browser vollständig neu laden. Bei ha
 
 Nach Abschluss der Installation prüfen:
 
-- Gewitterradar zeigt **V4.07.57**;
+- Gewitterradar zeigt **V4.10 FINAL**;
 - nur eine Gewitterradar-JavaScript-Ressource ist aktiv;
 - Karte und Radien werden dargestellt;
 - Live-Blitze bzw. vorhandene 120-Minuten-Historie erscheinen;
@@ -352,6 +354,6 @@ Danach Home Assistant vollständig neu starten, Gewitterradar über **Einstellun
 - [`RECORDER.md`](RECORDER.md) – Schutz der Home-Assistant-Datenbank
 - [`MIGRATION_AND_ROLLBACK.md`](MIGRATION_AND_ROLLBACK.md) – Migration und Rückfall
 - [`REAL_INSTALL_FINDINGS_2026-09-06.md`](REAL_INSTALL_FINDINGS_2026-09-06.md) – Erkenntnisse aus Real-Install-Tests
-- [`RELEASE_NOTES_V4_07_57.md`](RELEASE_NOTES_V4_07_57.md) – V4.07.57-Dokumentations-/Installations-Patch
+- [`RELEASE_NOTES_V4_10.md`](RELEASE_NOTES_V4_10.md) – V4.10 FINAL-Dokumentations-/Installations-Patch
 - [`RELEASE_NOTES_V4_07_56.md`](RELEASE_NOTES_V4_07_56.md) – geschützte V4.07.56-Laufzeitbasis
 - [`GOLDEN_MASTER_POLICY.md`](GOLDEN_MASTER_POLICY.md) – Release-/Golden-Master-Prozess

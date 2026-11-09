@@ -1,3 +1,14 @@
+**Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
+
+> **V4.10 FINAL · Gemeinschaftslizenz Modell B · Lizenzedition 2026-11-09.**
+> Einzige aktuelle stabile offizielle Veröffentlichung: [v4.10-model-b-20261109](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109).
+> Anwendungscode, Frontend und Assets entsprechen dem freigegebenen V4.10-Golden-Master; native Integration **0.22.0**.
+> Dashboard: [V4.10 FINAL](https://github.com/TheDaimos/gewitterradar-dashboard/releases/tag/v4.10-model-b-20261109).
+> Frühere rechtmäßig gewährte GPL-Rechte bleiben bestehen; historische Fassungen werden nicht rückwirkend umlizenziert.
+> V4.11 DEV bleibt über den bestehenden DRA-Kanal `deploy/dev` verfügbar.
+> [Lizenz](LICENSE.md) · [Installationsanleitung](https://github.com/TheDaimos/gewitterradar/blob/main/docs/INSTALLATION.md).
+> Modell B ist keine OSI-anerkannte Lizenz: keine offizielle HACS-Katalog-Lizenzfreigabe. Benutzerdefinierte Repositories und manuelle Installation sind getrennte Wege.
+
 <div align="center">
 
 <img
@@ -15,7 +26,7 @@
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
 ![Version](https://img.shields.io/badge/Gewitterradar-V4.10-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
-![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
+![License](https://img.shields.io/badge/Code-Gemeinschaftslizenz%20Modell%20B-lightgrey)
 
 **[⚡ Native Integration installieren](#1-native-gewitterradar-integration)** ·
 **[🌩️ Funktionen](#was-gewitterradar-bereitstellt)** ·
@@ -336,7 +347,7 @@ Bei der nativen Variante zusätzlich prüfen, dass die Integration nach einem Ne
 
 # Projektstand, Qualität und Schutz
 
-Die V4.09-Version baut auf dem geschützten V4.08-Release und der weiterhin geschützten V4.07.56-Diagnosebasis auf. Für Entwicklung und Produktpflege gibt es nur **ein Gewitterradar**; Integration und Dashboard müssen denselben Produktstand ausliefern.
+V4.10 FINAL bewahrt die geschützten Vorgängerstufen und die weiterhin geschützte V4.07.56-Diagnosebasis. Für Entwicklung und Produktpflege gibt es nur **ein Gewitterradar**; Integration und Dashboard müssen denselben Produktstand ausliefern.
 
 Besonders geschützt sind:
 
@@ -375,13 +386,15 @@ Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische P
 
 # Lizenz und Branding
 
-Soweit nicht ausdrücklich reservierte Branding-Materialien oder Drittmaterial mit eigener Lizenz betroffen sind, stehen Quellcode und Dokumentation unter **GNU GPL Version 3 only (`GPL-3.0-only`)**.
+Die aktuelle Modell-B-Lizenzedition von Gewitterradar V4.10 FINAL steht unter der [Gewitterradar-Gemeinschaftslizenz](LICENSE.md).
 
-Copyright © 2026 **Christian Köhler / TheDaimos**.
+Copyright © 2026 **Christian Köhler / TheDaimos**. Originalentwicklung und ursprünglicher Urheber: **Christian Köhler**.
 
-Siehe [LICENSE](LICENSE), [COPYRIGHT.md](COPYRIGHT.md), [AUTHORS.md](AUTHORS.md) und [BRANDING.md](BRANDING.md).
+Private, nichtberufliche Nutzung und Entwicklung sind kostenlos. Kostenlose Weitergabe erfordert den vollständigen erforderlichen Quellcode und dieselben Lizenzbedingungen. Berufliche, dienstliche, organisatorische oder kommerzielle Nutzung erfordert vorherige ausdrückliche schriftliche Genehmigung. Maßgeblich ist der vollständige Lizenztext.
 
-Der Name **Gewitterradar**, Logos, Icons, Artwork und die visuelle Identität sind nicht Bestandteil der GPL-3.0-only-Freigabe. Forks und abgeleitete Projekte müssen ein eigenes Branding verwenden, sofern keine separate Erlaubnis vorliegt.
+Logos und Projektkennzeichen sind gesondert geschützt; ihre bestimmungsgemäße Darstellung ist gestattet. Siehe [BRANDING.md](BRANDING.md), [COPYRIGHT.md](COPYRIGHT.md) und [AUTHORS.md](AUTHORS.md).
+
+Modell B ist keine OSI-anerkannte Open-Source-Lizenz. Rechte Dritter und bereits rechtmäßig gewährte Rechte bleiben unberührt. Die Originalwidmung **Für Alkje** bleibt unverändert.
 
 ### R19 Medaillon-/Pfeil-Kalibrierung
 

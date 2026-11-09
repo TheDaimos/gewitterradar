@@ -1,31 +1,17 @@
-# Copyright and licensing
+# Gewitterradar – Urheberrecht
 
-Copyright © 2026 Christian Köhler / TheDaimos.
+Copyright (c) 2026 Christian Köhler.
 
-Except for the reserved materials described below and any third-party
-material carrying its own license notice, the source code and documentation
-in this repository are licensed under the GNU General Public License
-Version 3 only (`GPL-3.0-only`).
+**Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-See `LICENSE` for the complete license text.
+Der aktuelle V4.10-FINAL-Quellstand der Lizenzedition `v4.10-model-b-20261109` steht unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)** in [LICENSE.md](LICENSE.md), soweit die erforderlichen Rechte an den Bestandteilen vorliegen.
 
-## Reserved materials
+Private, nichtberufliche Nutzung und Entwicklung sind kostenlos. Die Weitergabe unveränderter und veränderter Fassungen ist nur kostenlos, unter denselben Lizenzbedingungen und mit vollständig kostenlos verfügbarem Quellcode gestattet.
 
-The GPL-3.0-only license does not grant rights to the Gewitterradar project
-name, logos, icons, artwork, visual identity or other branding assets.
+Für alle Forks und Weiterentwicklungen ist die ursprüngliche Urhebernennung **Christian Köhler** an erster Stelle verbindlich. Kommerzielle und berufliche Nutzung erfordert vorherige ausdrückliche schriftliche Genehmigung.
 
-In particular, the following are reserved branding materials:
+Logos und Projektkennzeichen: [BRANDING.md](BRANDING.md).
 
-- `artwork/brand/`
-- `custom_components/gewitterradar/brand/`
-- the Gewitterradar name and visual identity
-- official Gewitterradar logos and icons
+Rechte Dritter und rechtmäßig erteilte Rechte bleiben unberührt.
 
-These materials remain Copyright © 2026 Christian Köhler / TheDaimos.
-All rights reserved except for the limited permissions described in
-`BRANDING.md`.
-
-## Third-party material
-
-Third-party material, if present, remains subject to its respective license
-and copyright notices.
+Historische Releases und Tags behalten ihren ursprünglichen Lizenzstand. Bereits wirksam gewährte GPL-Nutzungsrechte werden nicht widerrufen.
