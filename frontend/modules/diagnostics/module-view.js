@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.9",
+  version:"1.3.10",
   group:"Diagnose",
   function:"Module & Versionen",
   subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Fenster- und Ebenenübersicht","Diagnose kopieren","JSON herunterladen"],
@@ -589,6 +589,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       section=document.createElement("details");
       section.className="settings-section settings-collapsible";
       section.id="settings-modules-section";
+      section.dataset.grDynamicHeight="true";
       section.innerHTML=`
         <summary class="settings-section-head">
           <div>

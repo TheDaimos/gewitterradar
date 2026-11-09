@@ -1,8 +1,10 @@
-import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
+import {readFile,mkdir,readdir} from 'node:fs/promises';
+import {writeFile} from './write-release-file.mjs';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {readAboutLocaleModel} from './verify-about-locales.mjs';
+import {APPLICATION_RELEASE} from '../frontend/version.js';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function walk(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await walk(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
@@ -13,11 +15,12 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.165"')){
+ if(text.includes("APPLICATION_RELEASE")&&/^4\.11\./.test(APPLICATION_RELEASE.version)&&Number(APPLICATION_RELEASE.version.split('.')[2])>=165){
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
-  if(!versionText.includes('displayVersion:"V4.11.165 DEV"')||!versionText.includes('runtimeRevision:"411165r1"')||!versionText.includes('moduleSetId:"E411-165A1"'))throw Error('V4.11.165 canonical version mismatch');
-  if(runtime.productVersion!=='4.11.165'||runtime.runtimeRevision!=='411165r1'||runtime.moduleSetId!=='E411-165A1'||runtime.displayVersion!=='V4.11.165 DEV')throw Error('V4.11.165 runtime manifest mismatch');
+  const release=APPLICATION_RELEASE,patch=release.version.split('.')[2];
+  if(release.displayVersion!==`V${release.version} DEV`||release.runtimeRevision!==`411${patch}r1`||release.moduleSetId!==`E411-${patch}A1`)throw Error('Canonical release identity mismatch');
+  for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');
   const modules=JSON.parse(match[1]);

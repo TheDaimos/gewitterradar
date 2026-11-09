@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411147r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411147r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.15',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.16',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -209,6 +209,40 @@ const statusLabel=answer=>{
   return answer.unavailable?.code||answer.status||'unbekannt';
 };
 
+// Presentation only: these labels describe observed integration/transport states,
+// never the meteorological validity or availability of an individual resource.
+export function weatherEngineSourceCards({lightning=null,lightningEntityStatus='initializing',discovery=null,exchange=null,haConnected=null}={}){
+  const card=(state,note,checkedAt=null)=>({state,label:{connected:'Verbunden',degraded:'Gestört',unreachable:'Nicht erreichbar',unknown:'Unbekannt'}[state],note,checkedAt});
+  let blitzortung=card('unknown','Noch kein belastbarer Quellenstatus');
+  if(haConnected===false)blitzortung=card('unreachable','Home-Assistant-Verbindung unterbrochen',lightning?.checkedAt);
+  else if(lightningEntityStatus==='available')blitzortung=card('connected','Konfigurierter HA-Blitzzähler verfügbar · kein Nachweis einer Verbindung zum externen Dienst',lightning?.checkedAt);
+  else if(lightningEntityStatus==='degraded'||lightning?.status==='degraded')blitzortung=card('degraded','Integration oder konfigurierter Blitzzähler eingeschränkt',lightning?.checkedAt);
+  else if(lightning?.status==='missing')blitzortung=card('unreachable','Blitzortung-Integration nicht vorhanden',lightning?.checkedAt);
+  else if(lightning?.status==='available')blitzortung=card('degraded','Integration geladen · konfigurierter Blitzzähler nicht verfügbar',lightning?.checkedAt);
+  else if(lightning?.error)blitzortung=card('unknown','Integrationsprüfung nicht verfügbar · lokale Quelle nicht bestätigt',lightning?.checkedAt);
+  else if(lightningEntityStatus==='missing')blitzortung=card('unknown','Konfigurierter Blitzzähler nicht vorhanden',lightning?.checkedAt);
+
+  let weatherRouter=card('unknown','Verbindung noch nicht geprüft');
+  const discoveryTime=Date.parse(discovery?.checked_at||'')||0,exchangeTime=Date.parse(exchange?.completed_at||'')||0;
+  if(haConnected===false)weatherRouter=card('unreachable','Home-Assistant-Verbindung unterbrochen');
+  else if(exchange&&exchangeTime>discoveryTime){
+    if(exchange.error)weatherRouter=card('unreachable','Letzter Consumer-Transport fehlgeschlagen',exchange.completed_at);
+    else if(exchange.response&&typeof exchange.response==='object'){
+      const response=exchange.response,code=String(response.unavailable?.code||'');
+      const recognized=typeof response.schema==='string'&&response.schema.startsWith('weather_router.');
+      const rejected=/unauthor|forbidden|incompatible|unsupported_contract|invalid_contract/i.test(code);
+      const notReady=response.ready===false||response.compatible===false;
+      weatherRouter=response.present===false?card('unreachable','WeatherRouter nicht vorhanden oder nicht erreichbar',exchange.completed_at):card(rejected||notReady||!recognized?'degraded':'connected',!recognized?'Consumer antwortet · Antwortformat nicht bestätigt':notReady?'Consumer antwortet · derzeit nicht betriebsbereit':rejected?'Consumer-Verbindung antwortet · Zugriff oder Vertrag abgewiesen':'Consumer API antwortet · Ressourcenstatus wird separat angezeigt',exchange.completed_at);
+    }
+  }
+  if(weatherRouter.state==='unknown'&&discovery){
+    if(discovery.reason==='discovery_unreachable'||discovery.present===false)weatherRouter=card('unreachable',discovery.present===false?'WeatherRouter nicht vorhanden oder nicht erreichbar':'Letzte Verbindungsprüfung nicht erreichbar',discovery.checked_at);
+    else if(discovery.ready===true&&discovery.compatible!==false)weatherRouter=card('connected','Consumer-Schnittstelle betriebsbereit',discovery.checked_at);
+    else if(discovery.present===true)weatherRouter=card('degraded',discovery.compatible===false?'Consumer-Schnittstelle nicht kompatibel':'WeatherRouter vorhanden · derzeit nicht betriebsbereit',discovery.checked_at);
+  }
+  return {blitzortung,weatherRouter};
+}
+
 /* Lazily bound to the CURRENT Home Assistant connection; no calls during boot. */
 export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
   _weatherRouterClient(){
@@ -246,6 +280,8 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
           if(store.rawExchanges.length>store.max)store.rawExchanges.splice(0,store.rawExchanges.length-store.max);
         }
         throw error;
+      }finally{
+        try{this._weatherEngineRenderSourceCards?.();}catch(_uiError){}
       }
     });
     return this.__weatherRouterClient;
@@ -312,6 +348,7 @@ export const installWeatherRouter=defineModule(MODULE_META,(deps)=>({
   async _weatherRouterDiscovery(options){
     const answer=await this._weatherRouterClient().discover(options);
     this._weatherEngineTraceStore().lastDiscovery={...answer,checked_at:new Date().toISOString()};
+    try{this._weatherEngineRenderSourceCards?.();}catch(_uiError){}
     return answer;
   },
   async _weatherRouterCapabilities(options){
@@ -765,9 +802,10 @@ _weatherEngineDiagnosticPayload(){
   _weatherEngineDiagnosticEnsureUi(){
     const root=this.shadow;
     if(!root)return;
-    const section=root.getElementById('settings-diagnostic-section');
+    this._weatherEnginePrepareSettingsUi();
+    const section=root.getElementById('settings-weather-diagnostics-section')||root.getElementById('settings-diagnostic-section');
     const content=section?.querySelector('.settings-section-content');
-    if(content&&!root.getElementById('settings-weather-engine-diagnostics-toggle')){
+    if(content&&section.id!=='settings-weather-diagnostics-section'&&!root.getElementById('settings-weather-engine-diagnostics-toggle')){
       const marker=[...content.children].find(node=>node.textContent?.trim()==='Testfunktionen');
       const row=document.createElement('div');
       row.className='settings-row';
@@ -776,7 +814,7 @@ _weatherEngineDiagnosticPayload(){
       if(marker)content.insertBefore(row,marker);else content.append(row);
       row.querySelector('button')?.addEventListener('click',()=>this._weatherEngineDiagnosticOpen());
     }
-    if(root.getElementById('weather-engine-diagnostic-backdrop'))return;
+    if(root.getElementById('weather-engine-diagnostic-backdrop')){this._weatherEngineEmbedDiagnostics();return;}
 
     const backdrop=document.createElement('div');
     backdrop.id='weather-engine-diagnostic-backdrop';
@@ -884,6 +922,7 @@ _weatherEngineDiagnosticPayload(){
       const url=URL.createObjectURL(blob),a=document.createElement('a');
       a.href=url;a.download='gewitterradar-weather-engine-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     });
+    this._weatherEngineEmbedDiagnostics();
   },
 
   async _weatherEngineDiagnosticRefresh({catalog=false}={}){
@@ -895,6 +934,7 @@ _weatherEngineDiagnosticPayload(){
 
   _weatherEngineDiagnosticRender(){
     this._weatherEngineDiagnosticEnsureUi();
+    this._weatherEngineRenderSourceCards();
     const root=this.shadow;if(!root)return;
     const store=this.__weatherEngineTraceStore||{items:[]};
     const operaButton=root.getElementById('weather-engine-opera-toggle');
@@ -1015,6 +1055,10 @@ _weatherEngineDiagnosticPayload(){
   _weatherEngineDiagnosticOpen(){
     this._weatherEngineDiagnosticEnsureUi();
     const root=this.shadow,backdrop=root?.getElementById('weather-engine-diagnostic-backdrop'),toggle=root?.getElementById('settings-weather-engine-diagnostics-toggle');
+    if(backdrop?.dataset.settingsEmbedded==='true'&&this._settingsNavigateTo){
+      this._settingsNavigateTo('settings-weather-diagnostics-section');
+      return;
+    }
     if(backdrop){backdrop.classList.add('open');backdrop.setAttribute('aria-hidden','false');}
     toggle?.setAttribute('aria-checked','true');
     this._weatherEngineDiagnosticRefresh({catalog:true});
@@ -1023,12 +1067,84 @@ _weatherEngineDiagnosticPayload(){
   _weatherEngineDiagnosticClose(){
     // Closing the diagnostic WINDOW must never revoke the map-owned OPERA layer.
     const root=this.shadow,backdrop=root?.getElementById('weather-engine-diagnostic-backdrop'),toggle=root?.getElementById('settings-weather-engine-diagnostics-toggle');
+    if(backdrop?.dataset.settingsEmbedded==='true'){
+      if(root?.getElementById('settings-weather-diagnostics-section')?.open)this._settingsNavigateBack?.();
+      return;
+    }
     if(backdrop){backdrop.classList.remove('open');backdrop.setAttribute('aria-hidden','true');}
     toggle?.setAttribute('aria-checked','false');
   },
 
+  _weatherEnginePrepareSettingsUi(){
+    const root=this.shadow,regular=root?.querySelector('#weather-engine-section > .settings-section-content');
+    if(!regular)return;
+    let cards=root.getElementById('weather-engine-source-cards');
+    if(!cards){
+      cards=document.createElement('div');cards.id='weather-engine-source-cards';cards.className='gr-weather-source-cards';
+      cards.innerHTML='<article class="gr-weather-source-card" data-weather-source-card="blitzortung"><strong>BLITZORTUNG.ORG</strong><span class="gr-weather-card-state" id="weather-engine-blitz-card-state" role="status" aria-live="polite">Unbekannt</span><span class="gr-weather-card-note" id="weather-engine-blitz-card-note"></span></article><article class="gr-weather-source-card" data-weather-source-card="weatherRouter"><strong>WEATHERROUTER</strong><span class="gr-weather-card-state" id="weather-engine-router-card-state" role="status" aria-live="polite">Unbekannt</span><span class="gr-weather-card-note" id="weather-engine-router-card-note"></span></article>';
+      const blitzStatus=root.getElementById('weather-engine-blitz-status');
+      if(blitzStatus){cards.querySelector('[data-weather-source-card="blitzortung"]').append(blitzStatus);blitzStatus.hidden=true;}
+      const activeApi=root.getElementById('weather-engine-active-api');
+      if(activeApi)cards.querySelector('[data-weather-source-card="weatherRouter"]').append(activeApi);
+      regular.querySelector('.gr-weather-source-row')?.remove();regular.prepend(cards);
+    }
+    const diagnostics=root.querySelector('#settings-weather-diagnostics-section > .settings-section-content');
+    if(diagnostics){
+      const nodes=[regular.querySelector('.gr-weather-router-row'),regular.querySelector('.gr-weather-data-row'),regular.querySelector('#weather-engine-results-row'),regular.querySelector('[data-weather-display-refresh]')?.closest('.weather-display-row')].filter(Boolean);
+      const pane=diagnostics.querySelector('#weather-engine-diagnostic-backdrop');
+      for(const node of nodes){if(pane)diagnostics.insertBefore(node,pane);else diagnostics.append(node);}
+    }
+    if(!root.getElementById('weather-engine-menu-status-style')){
+      const style=document.createElement('style');style.id='weather-engine-menu-status-style';style.textContent=`
+        .gr-weather-source-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:11px 12px}
+        .gr-weather-source-card{display:flex;flex-direction:column;gap:7px;min-width:0;padding:13px;border:1px solid rgba(211,169,83,.38);border-radius:12px;background:linear-gradient(135deg,rgba(171,124,43,.10),rgba(5,12,21,.65));box-shadow:inset 0 1px rgba(255,231,171,.11),0 3px 9px #0004}
+        .gr-weather-source-card>strong{font-size:11px;letter-spacing:.08em;color:#e6c67e;overflow-wrap:anywhere}
+        .gr-weather-card-state{display:flex;align-items:center;gap:7px;font-weight:750;font-size:12px;color:#b6becb}
+        .gr-weather-card-state::before{content:'';width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:currentColor}
+        .gr-weather-source-card[data-state="connected"] .gr-weather-card-state{color:#9fdbb1}.gr-weather-source-card[data-state="degraded"] .gr-weather-card-state{color:#efc473}.gr-weather-source-card[data-state="unreachable"] .gr-weather-card-state{color:#ee9b98}
+        .gr-weather-card-note,.gr-weather-source-card #weather-engine-active-api{font-size:10px;line-height:1.45;overflow-wrap:anywhere}
+        #settings-weather-diagnostics-section>.settings-section-content{padding:11px 12px;box-sizing:border-box}
+        #settings-weather-diagnostics-section .gr-weather-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;min-width:0}
+        #settings-weather-diagnostics-section .gr-weather-caption{min-width:0;display:flex;flex-direction:column;gap:4px}
+        #settings-weather-diagnostics-section .gr-weather-action{min-width:130px;max-width:100%;min-height:40px;white-space:normal}
+        #settings-weather-diagnostics-section .gr-weather-results-row{white-space:pre-line;overflow-wrap:anywhere;font-size:11px;padding:10px 0}
+        #settings-weather-diagnostics-section .gr-weather-results-row[hidden]{display:none!important}
+        /* Preserve the legacy ID rule's specificity even in ID-free inert snapshots. */
+        :is(#weather-engine-diagnostic-backdrop,[data-settings-embedded="true"])[data-settings-embedded="true"]{display:block;position:static;inset:auto;z-index:auto;padding:10px 0 0;background:none;backdrop-filter:none}
+        :is(#weather-engine-diagnostic-backdrop,[data-settings-embedded="true"])[data-settings-embedded="true"]>.we-diagnostic-dialog{width:100%;max-height:none;overflow:visible;border:0;border-radius:0;background:none;box-shadow:none}
+        :is(#weather-engine-diagnostic-backdrop,[data-settings-embedded="true"])[data-settings-embedded="true"] .we-diagnostic-head{display:none}
+        :is(#weather-engine-diagnostic-backdrop,[data-settings-embedded="true"])[data-settings-embedded="true"] .we-diagnostic-body{overflow:visible;padding:0;min-width:0}
+        @media(max-width:460px){.gr-weather-source-cards{grid-template-columns:minmax(0,1fr)}#settings-weather-diagnostics-section .gr-weather-row{align-items:stretch;flex-direction:column}}
+      `;root.append(style);
+    }
+    this._weatherEngineRenderSourceCards();
+  },
+  _weatherEngineRenderSourceCards(){
+    const root=this.shadow;if(!root?.getElementById('weather-engine-source-cards'))return;
+    const store=this.__weatherEngineTraceStore||{};
+    const states=weatherEngineSourceCards({lightning:this._blitzortungSourceSnapshot?.(),lightningEntityStatus:this._lightningSourceStatus?.(),discovery:store.lastDiscovery,exchange:store.rawExchanges?.at(-1),haConnected:this._hass?.connection?.connected});
+    for(const [key,value] of Object.entries(states)){
+      const card=root.querySelector('[data-weather-source-card="'+key+'"]');if(!card)continue;
+      if(card.dataset.state!==value.state)card.dataset.state=value.state;
+      const prefix=key==='blitzortung'?'blitz':'router';
+      const status=root.getElementById('weather-engine-'+prefix+'-card-state');if(status&&status.textContent!==value.label)status.textContent=value.label;
+      const note=root.getElementById('weather-engine-'+prefix+'-card-note'),text=value.note+(value.checkedAt?' · '+value.checkedAt:'');if(note&&note.textContent!==text)note.textContent=text;
+    }
+  },
+  _weatherEngineEmbedDiagnostics(){
+    const root=this.shadow,section=root?.getElementById('settings-weather-diagnostics-section'),content=section?.querySelector(':scope > .settings-section-content'),pane=root?.getElementById('weather-engine-diagnostic-backdrop');
+    if(!content||!pane)return;
+    if(pane.parentNode!==content)content.append(pane);
+    pane.dataset.settingsEmbedded='true';pane.setAttribute('aria-hidden','false');
+    const region=pane.querySelector('.we-diagnostic-dialog');region?.setAttribute('role','region');region?.removeAttribute('aria-modal');
+    if(!section.dataset.weatherEngineBound){
+      section.dataset.weatherEngineBound='true';section.dataset.grDynamicHeight='true';
+      section.addEventListener('toggle',()=>{if(section.open)this._weatherEngineDiagnosticRefresh({catalog:true});});
+    }
+  },
   _mountWeatherEngineDiagnostics(){this._weatherEngineDiagnosticEnsureUi();},
   _mountWeatherRouterSettings(){
+    this._weatherEnginePrepareSettingsUi();
     const root=this.shadow;
     const title=root?.querySelector('#weather-engine-section .settings-section-title');
     if(title&&!title.querySelector('[data-weather-router-logo]')){
@@ -1045,6 +1161,8 @@ _weatherEngineDiagnosticPayload(){
     const status=root?.getElementById('weather-engine-status');
     const results=root?.getElementById('weather-engine-results');
     if(!check||!inspect||!status||!results)return;
+    if(check.dataset.weatherEngineBound==='true')return;
+    check.dataset.weatherEngineBound='true';
     const show=(value,state='neutral')=>{status.textContent=value;status.dataset.state=state;};
     let currentCatalog=null;
     check.addEventListener('click',async()=>{

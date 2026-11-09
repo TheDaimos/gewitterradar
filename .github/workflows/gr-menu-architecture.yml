@@ -1,0 +1,52 @@
+name: GR Menu Architecture targeted acceptance
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  menu-architecture:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch protected pre-change menu reference
+        run: git fetch --no-tags --depth=1 origin 7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Targeted menus, source status and protected data paths
+        run: |
+          node --test tests/gr-menu-source-cards.test.mjs tests/gr-menu-architecture.test.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-frontend-build.mjs
+          node scripts/test-v411-identity.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          find frontend -name '*.js' -print0 | xargs -0 -n 1 node --check
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/menu" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/menu/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Full real module tree, classic and modern, touch and desktop
+        env:
+          NODE_PATH: ${{ runner.temp }}/menu/node_modules
+          GR_MENU_OUTPUT: ${{ runner.temp }}/menu-architecture-browser
+        run: |
+          node scripts/test-gr-menu-architecture-browser.cjs
+          node scripts/test-gr-menu-hub-eye-browser.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Unchanged DRA channel and installable integration
+        run: |
+          python scripts/verify-hacs-integration-package.py
+          python scripts/verify-deploy-relay-contract.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: menu-architecture-synthetic-browser-results
+          path: ${{ runner.temp }}/menu-architecture-browser
+          if-no-files-found: ignore

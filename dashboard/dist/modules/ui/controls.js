@@ -1,7 +1,22 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
+// One menu tree drives both presentations. Existing controls remain single DOM instances.
+export const SETTINGS_MENU_TREE=Object.freeze([
+  {id:'weather-engine-section',number:'1',title:'Weather-Engine'},
+  {id:'settings-language-section',number:'2',title:'Sprache'},
+  {id:'settings-location-section',number:'3',title:'Standort'},
+  {id:'settings-map-section',number:'4',title:'Kartendarstellung'},
+  {id:'settings-aura-section',number:'5',title:'Effekte & Animationen'},
+  {id:'settings-radii-section',number:'6',title:'Radien'},
+  {id:'settings-diagnostic-section',number:'7',title:'Diagnose Tools',children:Object.freeze([
+    {id:'settings-calibration-section',number:'7.1',title:'Kalibrierung'},
+    {id:'settings-weather-diagnostics-section',number:'7.2',title:'Weather-Engine'},
+    {id:'settings-data-sources-section',number:'7.3',title:'Datenquellen & Verbindungen'},
+    {id:'settings-modules-section',number:'7.4',title:'Module & Versionen'}
+  ].map(Object.freeze))}
+].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.27",
+  "version": "1.1.28",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1689,6 +1704,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         this._ensureMapDiagnostics?.();
         settingsDialog?.style.removeProperty('height'); // Restore natural size when opening
         settingsBackdrop?.classList.add('open');
+        this._settingsNavigationStart?.();
         settingsClose?.focus?.({ preventScroll:true });
       };
       const closeSettings = () => {
@@ -1698,6 +1714,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeLocationDropdown(false);
         closeRadiusKeypad(false);
         settingsBackdrop?.classList.remove('open');
+        this._settingsNavigationFinish?.();
         settingsDialog?.style.removeProperty('height'); // Release animation lock after close
         settingsOpen?.focus?.({ preventScroll:true });
       };
@@ -1758,6 +1775,18 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const navBody=settingsDialog?.querySelector('.settings-body');
       // Module diagnostics may add sections after control bindings have been installed.
       let navSections=[];
+      const menuEntries=SETTINGS_MENU_TREE.flatMap(entry=>[entry,...(entry.children||[])]);
+      const entryById=new Map(menuEntries.map(entry=>[entry.id,entry]));
+      const parentById=new Map(SETTINGS_MENU_TREE.flatMap(entry=>(entry.children||[]).map(child=>[child.id,entry.id])));
+      const pageScrollPositions=new Map();
+      let navPath=[];
+      const historyOwner='gr-settings-'+Math.random().toString(36).slice(2);
+      let historySession=0;
+      let navigationListening=false;
+      let navigationSession=false;
+      let closingHistory=false;
+      let historyRootDepth=0;
+      let suppressHistoryEvent=false;
       const navRoot=document.createElement('div');
       navRoot.className='gr-horizontal-root';
       navRoot.setAttribute('aria-label','Einstellungskategorien');
@@ -1780,10 +1809,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       let selectedSpeed='Mittel';
       try { const stored=localStorage.getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
       let navAnimating=false;
-      const animateNavigation=(outgoing,incoming,forward,complete)=>{
+      let cancelNavigation=null;
+      let pendingHistoryPath=null;
+      const animateNavigation=(outgoing,incoming,forward,complete,destinationScrollTop=0)=>{
         if(navAnimating||!navBody||!settingsDialog)return;
         navAnimating=true;
-        const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
+        const duration=selectedMenuStyle!=='modern'||matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
         if(!duration){complete();navAnimating=false;return;}
         settingsBackdrop?.classList.add('gr-horizontal-motion-active');
         const pane=document.createElement('div');
@@ -1792,12 +1823,27 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const from=document.createElement('div'),to=document.createElement('div');
         from.className='gr-horizontal-slide-page';
         to.className='gr-horizontal-slide-page';
-        const oldContent=outgoing.cloneNode(true),newContent=incoming.cloneNode(true);
+        const snapshotFor=(source)=>{
+          const clone=source.cloneNode(true);
+          if(source===navRoot){
+            const links=navBody.querySelector(':scope > .settings-premium-links')?.cloneNode(true);
+            if(links){links.hidden=false;clone.append(links);}
+          }
+          return clone;
+        };
+        const oldContent=snapshotFor(outgoing),newContent=snapshotFor(incoming);
         // cloneNode does not carry live <select> selection state; preserve actual labels in both snapshots.
         for(const [source,clone] of [[outgoing,oldContent],[incoming,newContent]]){
           const originalSelects=source.querySelectorAll('select');
           const clonedSelects=clone.querySelectorAll('select');
           originalSelects.forEach((select,index)=>{if(clonedSelects[index])clonedSelects[index].value=select.value;});
+          const originals=[source,...source.querySelectorAll('*')],copies=[clone,...clone.querySelectorAll('*')];
+          copies.forEach((node,index)=>{
+            node.removeAttribute('id');node.removeAttribute('name');
+            node.scrollTop=originals[index]?.scrollTop||0;
+            node.scrollLeft=originals[index]?.scrollLeft||0;
+          });
+          clone.inert=true;
         }
         oldContent.setAttribute('aria-hidden','true');
         newContent.setAttribute('aria-hidden','true');
@@ -1823,6 +1869,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const after=settingsDialog.getBoundingClientRect().height;
         // Final layout stays fixed: composite its visual height, never relayout per frame.
         settingsDialog.style.height=after+'px';
+        navBody.scrollTop=destinationScrollTop;
         // Isolate inactive controls only after measuring the actual destination.
         navBody.classList.add('gr-horizontal-animating');
         const easing='cubic-bezier(.22,.7,.2,1)';
@@ -1879,7 +1926,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               section.dataset.grDynamicHeight==='true');
           if(!settingsBackdrop?.classList.contains('open') || dynamicDetail)
             settingsDialog.style.removeProperty('height');
+          // Measuring the destination and unlocking a dynamic page can clamp
+          // the body scroll. Restore after those final layout mutations, not
+          // only when the new page first becomes visible.
+          if(settingsBackdrop?.classList.contains('open'))navBody.scrollTop=destinationScrollTop;
           navAnimating=false;
+          cancelNavigation=null;
+          if(pendingHistoryPath&&navigationSession){
+            const next=pendingHistoryPath;pendingHistoryPath=null;
+            queueMicrotask(()=>navigatePath(next,{record:false}));
+          }
         };
         const finish=()=>{
           if(done)return;
@@ -1891,6 +1947,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             return;
           }
           settingsDialog.style.height=after+'px';
+          navBody.scrollTop=destinationScrollTop;
           runs.forEach(animation=>{
             if(animation.playState==='running')try{animation.finish();}catch(_){}
           });
@@ -1905,6 +1962,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             const crossfade=pane.animate([{opacity:1},{opacity:0}],{
               duration:110,easing:'ease-out',fill:'forwards'
             });
+            runs.push(crossfade);
             crossfade.finished.then(cleanup,cleanup);
           };
           // Two frames allow the genuine destination to paint below the
@@ -1913,58 +1971,161 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           requestAnimationFrame(()=>requestAnimationFrame(dissolve));
         };
         const timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
+        cancelNavigation=()=>{done=true;clearTimeout(timeout);cleanup();};
         Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);
+      };
+      const headingFor=(entry)=>{
+        const section=this.shadow.getElementById(entry.id);
+        return section?.querySelector(':scope > summary .settings-section-title')?.textContent?.trim()||entry.title;
+      };
+      const numberedHeading=(entry)=>entry.number+(entry.number.includes('.')?' ':'. ')+headingFor(entry);
+      let navBack=null;
+      const showNavigationPage=()=>{
+        const activeId=navPath.at(-1),activeSection=this.shadow.getElementById(activeId||'');
+        settingsBackdrop?.classList.add('gr-settings-pages');
+        settingsBackdrop?.classList.toggle('gr-horizontal-detail',!!activeSection);
+        settingsBackdrop.dataset.settingsPath=navPath.join('/');
+        navRoot.hidden=!!activeSection;
+        for(const section of navSections){
+          const active=section===activeSection;
+          section.hidden=!active;
+          section.classList.toggle('gr-horizontal-current',active);
+          section.open=active;
+        }
+        const links=navBody?.querySelector(':scope > .settings-premium-links');
+        if(links)links.hidden=!!activeSection;
+        if(navBack)navBack.hidden=!activeSection;
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent=activeSection?numberedHeading(entryById.get(activeId)):'Einstellungen';
+      };
+      const ownedHistoryState=(path)=>({...((history.state&&typeof history.state==='object')?history.state:{}),grSettingsMenu:{owner:historyOwner,session:historySession,path:[...path]}});
+      const updateNavigationHistory=(previous,next)=>{
+        if(!navigationSession)return;
+        try{
+          if(next.length<previous.length){
+            suppressHistoryEvent=true;
+            history.go(next.length-previous.length);
+          }else{
+            const shared=next.slice(0,previous.length);
+            if(previous.length&&JSON.stringify(previous)!==JSON.stringify(shared))history.replaceState(ownedHistoryState(shared),'');
+            for(let depth=previous.length+1;depth<=next.length;depth++)history.pushState(ownedHistoryState(next.slice(0,depth)),'');
+          }
+          historyRootDepth=next.length;
+        }catch(_){navigationSession=false;}
+      };
+      const navigatePath=(next,{record=true,focus=true}={})=>{
+        if(navAnimating||!navBody)return false;
+        if(next.some(id=>!entryById.has(id)||!this.shadow.getElementById(id)))return false;
+        const previous=[...navPath],outgoing=this.shadow.getElementById(previous.at(-1)||'')||navRoot;
+        const incoming=this.shadow.getElementById(next.at(-1)||'')||navRoot;
+        if(previous.join('/')===next.join('/')){showNavigationPage();return true;}
+        pageScrollPositions.set(previous.join('/'),navBody.scrollTop);
+        closeMenuChoices?.();
+        const destinationScrollTop=pageScrollPositions.get(next.join('/'))||0;
+        animateNavigation(outgoing,incoming,next.length>=previous.length,()=>{
+          navPath=[...next];showNavigationPage();
+          navBody.scrollTop=destinationScrollTop;
+          if(record)updateNavigationHistory(previous,next);
+          if(focus)(next.length?navBack:navRoot.querySelector('button'))?.focus?.({preventScroll:true});
+        },destinationScrollTop);
+        return true;
+      };
+      const navigateTo=(sectionId)=>{
+        const entry=entryById.get(sectionId);
+        if(!entry)return false;
+        const parent=parentById.get(sectionId);
+        return navigatePath(parent?[parent,sectionId]:[sectionId]);
+      };
+      const renderNavigationList=(container,entries)=>{
+        if(!container)return;
+        for(const entry of entries){
+          let button=container.querySelector(':scope > [data-settings-target="'+entry.id+'"]');
+          if(!button){
+            button=document.createElement('button');button.type='button';
+            button.className='gr-horizontal-item settings-section';
+            button.dataset.settingsTarget=entry.id;
+            const name=document.createElement('span');name.className='gr-horizontal-item-name';
+            const chevron=document.createElement('span');chevron.className='gr-horizontal-chevron release-history-future-chevron';chevron.setAttribute('aria-hidden','true');
+            button.append(name,chevron);
+            button.addEventListener('click',()=>navigateTo(entry.id));
+            container.append(button);
+          }
+          button.querySelector('.gr-horizontal-item-name').textContent=numberedHeading(entry);
+          button.dataset.settingsNumber=entry.number;
+          button.title=this.shadow.getElementById(entry.id)?.querySelector(':scope > summary .settings-section-sub')?.textContent?.trim()||entry.title;
+        }
       };
       const refreshNavigationSections=()=>{
         if(!navBody)return;
-        navSections=[...navBody.children].filter(el=>el.matches('details.settings-section'));
-        navRoot.querySelectorAll(':scope > .gr-horizontal-item').forEach(el=>el.remove());
-        navSections.forEach((section,index)=>{
-          const summary=section.querySelector(':scope > summary');
-          if(!summary)return;
-          const button=document.createElement('button');
-          button.type='button';
-          button.className='gr-horizontal-item settings-section';
-          const heading=summary.querySelector('.settings-section-title')?.textContent?.trim()||summary.textContent.trim();
-          const numberedHeading=(index+1)+'. '+heading;
-          const desc=summary.querySelector('.settings-section-sub')?.textContent?.trim()||'';
-          const name=document.createElement('span');
-          name.className='gr-horizontal-item-name';
-          name.textContent=numberedHeading;
-          const chevron=document.createElement('span');
-          chevron.className='gr-horizontal-chevron';
-          chevron.textContent='›';
-          button.append(name,chevron);
-          if(desc)button.title=desc;
-          button.addEventListener('click',()=>{
-            animateNavigation(navRoot,section,true,()=>{
-              navSections.forEach(other=>{other.classList.toggle('gr-horizontal-current',other===section);other.open=other===section;});
-              settingsBackdrop.classList.add('gr-horizontal-detail');
-              const title=this.shadow.getElementById('settings-dialog-title');
-              if(title)title.textContent=numberedHeading;
-              navBody?.scrollTo?.(0,0);
-            });
-          });
-          navRoot.append(button);
-        });
+        navSections=menuEntries.map(entry=>this.shadow.getElementById(entry.id)).filter(Boolean);
+        renderNavigationList(navRoot,SETTINGS_MENU_TREE);
+        renderNavigationList(this.shadow.querySelector('[data-settings-diagnostic-menu]'),SETTINGS_MENU_TREE.at(-1).children);
+        showNavigationPage();
       };
+      this._settingsRefreshNavigation=refreshNavigationSections;
+      this._settingsNavigateTo=navigateTo;
+      this._settingsNavigateBack=()=>navPath.length?navigatePath(navPath.slice(0,-1)):false;
+      this._settingsNavigationState=()=>({path:[...navPath],style:selectedMenuStyle,animating:navAnimating,listening:navigationListening});
+      this._settingsNavigationStart=()=>{
+        if(navigationSession)return;
+        navPath=[];refreshNavigationSections();navBody.scrollTop=pageScrollPositions.get('')||0;
+        // A rapid close/reopen must not push a new session before the preceding
+        // history traversal has settled (mobile WebViews dispatch popstate later).
+        if(closingHistory)return;
+        historySession++;
+        try{history.pushState(ownedHistoryState([]),'');navigationSession=true;historyRootDepth=0;}catch(_){}
+      };
+      this._settingsNavigationFinish=()=>{
+        pendingHistoryPath=null;
+        cancelNavigation?.();
+        if(navigationSession){
+          navigationSession=false;
+          try{if(history.state?.grSettingsMenu?.owner===historyOwner&&history.state.grSettingsMenu.session===historySession){closingHistory=true;history.go(-(historyRootDepth+1));}}catch(_){closingHistory=false;}
+        }
+        suppressHistoryEvent=false;
+        pendingHistoryPath=null;
+      };
+      if(this._settingsPopstateHandler)window.removeEventListener('popstate',this._settingsPopstateHandler);
+      this._settingsPopstateHandler=(event)=>{
+        if(closingHistory){
+          closingHistory=false;
+          if(settingsBackdrop?.classList.contains('open'))this._settingsNavigationStart();
+          return;
+        }
+        if(suppressHistoryEvent){suppressHistoryEvent=false;return;}
+        if(!navigationSession||!settingsBackdrop?.classList.contains('open'))return;
+        const marker=event.state?.grSettingsMenu;
+        if(marker?.owner===historyOwner&&marker.session===historySession){
+          historyRootDepth=marker.path.length;
+          if(navAnimating)pendingHistoryPath=marker.path;
+          else navigatePath(marker.path,{record:false});
+        }else{
+          navigationSession=false;closeSettings();
+        }
+      };
+      this._resumeSettingsNavigation=()=>{
+        window.removeEventListener('popstate',this._settingsPopstateHandler);
+        navigationListening=!!this.isConnected;
+        if(navigationListening)window.addEventListener('popstate',this._settingsPopstateHandler);
+      };
+      this._teardownSettingsNavigation=()=>{
+        window.removeEventListener('popstate',this._settingsPopstateHandler);navigationListening=false;
+        pageScrollPositions.set(navPath.join('/'),navBody?.scrollTop||0);
+        navigationSession=false;closingHistory=false;suppressHistoryEvent=false;pendingHistoryPath=null;
+        settingsBackdrop?.classList.remove('open');cancelNavigation?.();closeMenuChoices?.();
+        settingsDialog?.style.removeProperty('height');
+        // Detachment may be caused by HA navigation. Never traverse its history.
+        try{if(history.state?.grSettingsMenu?.owner===historyOwner){const state={...history.state};delete state.grSettingsMenu;history.replaceState(state,'');}}catch(_){}
+        historySession++;
+      };
+      this._resumeSettingsNavigation();
       refreshNavigationSections();
-      const navBack=document.createElement('button');
-      navBack.type='button';
-      navBack.id='gr-horizontal-back';
-      navBack.className='settings-language-button';
-      navBack.textContent='‹ Zurück';
-      navBack.addEventListener('click',()=>{
-        const current=navSections.find(section=>section.classList.contains('gr-horizontal-current'));
-        if(!current)return;
-        animateNavigation(current,navRoot,false,()=>{
-          settingsBackdrop?.classList.remove('gr-horizontal-detail');
-          navSections.forEach(section=>{section.classList.remove('gr-horizontal-current');section.open=false;});
-          const title=this.shadow.getElementById('settings-dialog-title');
-          if(title)title.textContent='Einstellungen';
-          navBody?.scrollTo?.(0,0);
-        });
-      });
+      navBack=document.createElement('button');
+      navBack.type='button';navBack.id='gr-horizontal-back';navBack.className='settings-language-button';
+      const backChevron=document.createElement('span');backChevron.className='release-history-future-chevron';backChevron.setAttribute('aria-hidden','true');
+      const backLabel=document.createElement('span');backLabel.textContent='Zurück';
+      navBack.append(backChevron,backLabel);navBack.hidden=true;
+      navBack.addEventListener('click',()=>this._settingsNavigateBack());
       // V4.11.61: both menus live in section 5 (Effekte & Animationen).
       // Render the existing gold-dot dropdown design, not native mobile selects.
       const effectsSection=this.shadow.getElementById('settings-aura-section');
@@ -2136,6 +2297,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       settingsClose?.addEventListener('click',closeMenuChoices);
       if(navBody&&navSections.length){
         navBody.prepend(navRoot);
+        const links=navBody.querySelector(':scope > .settings-premium-links');
+        if(links)navBody.append(links);
         settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
         const style=document.createElement('style');
         style.textContent=`
@@ -2191,6 +2354,33 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .gr-horizontal-item {display:flex;align-items:center;justify-content:space-between;width:100%;min-height:55px;padding:12px 16px;text-align:left;cursor:pointer;color:inherit;font:inherit;border-radius:12px;background:linear-gradient(110deg,rgba(169,126,47,.055),rgba(255,255,255,.018) 30%,rgba(11,21,28,.58));border:1px solid rgba(190,151,76,.28)}
           .gr-horizontal-item-name {font-weight:750;text-transform:uppercase;letter-spacing:.045em}
           .gr-horizontal-chevron {font-size:27px;color:#e1b45b;line-height:1}
+          /* Both presentations use full pages in the original single settings shell. */
+          #settings-backdrop.gr-settings-pages .settings-body {position:relative;isolation:isolate;min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section {display:none!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current {display:block!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current > summary {display:none!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          #settings-backdrop.gr-settings-pages:not(.gr-horizontal-mode) .gr-horizontal-root {display:grid!important;gap:8px;padding:5px 0 15px}
+          #settings-backdrop.gr-settings-pages .settings-body > [hidden],
+          #settings-backdrop.gr-settings-pages .settings-body > .settings-premium-links[hidden],
+          #settings-backdrop.gr-settings-pages .gr-horizontal-root[hidden],
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back[hidden] {display:none!important}
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back:not([hidden]) {display:inline-flex!important;width:auto!important;min-width:0!important;max-width:100%;justify-content:flex-start!important;align-self:flex-start;flex:0 0 auto;gap:9px;align-items:center;min-height:36px;margin-top:8px;color:#eed08a}
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back .release-history-future-chevron {width:10px;height:10px;margin:0;transform:rotate(135deg);flex:0 0 auto}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-item {min-width:0;box-sizing:border-box;gap:16px}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-item-name {min-width:0;overflow-wrap:anywhere;line-height:1.35}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-chevron.release-history-future-chevron {width:11px;height:11px;margin:0 4px 0 0;transform:rotate(-45deg);flex:0 0 auto}
+          #settings-backdrop.gr-settings-pages details.settings-section.gr-settings-diagnostics-page {border:0;background:none;box-shadow:none;overflow:visible}
+          #settings-backdrop.gr-settings-pages details.settings-section.gr-settings-diagnostics-page > .settings-section-content[data-settings-diagnostic-menu] {display:grid!important;gap:8px;padding:0}
+          #settings-backdrop.gr-settings-pages .settings-dialog-head > div:first-child {min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-title {overflow-wrap:anywhere;line-height:1.2}
+          #settings-backdrop.gr-settings-pages .settings-footer-version {max-width:45%}
+          #settings-backdrop.gr-settings-pages .settings-footer-version > span {white-space:nowrap}
+          #settings-backdrop.gr-settings-pages .settings-dialog > .settings-signature-wrap {width:49%;max-width:49%;margin-left:auto}
+          #settings-backdrop.gr-settings-pages .settings-dialog > .settings-signature-wrap .settings-signature {max-width:100%}
+          #settings-backdrop.gr-settings-pages .settings-body > .settings-premium-links {grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-premium-links > button {min-width:0!important;white-space:normal!important;overflow-wrap:anywhere}
+          @media(max-height:420px){#settings-backdrop.gr-settings-pages .settings-dialog-head{padding-top:6px;padding-bottom:5px}#settings-backdrop.gr-settings-pages .settings-kicker{font-size:7px}#settings-backdrop.gr-settings-pages .settings-title{font-size:14px}#settings-backdrop.gr-settings-pages #gr-horizontal-back:not([hidden]){margin-top:3px;min-height:32px}#settings-backdrop.gr-settings-pages .settings-dialog>.settings-signature-wrap{min-height:40px}#settings-backdrop.gr-settings-pages .settings-signature{width:170px}}
           @media(prefers-reduced-motion:reduce){.gr-horizontal-root,.gr-horizontal-current{animation:none!important}}
         `;
         this.shadow.append(style);
@@ -2207,18 +2397,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         settingsOpen?.setAttribute('title',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
         settingsOpen?.setAttribute('aria-label',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
         settingsBackdrop?.classList.toggle('gr-horizontal-mode',modern);
-        settingsBackdrop?.classList.remove('gr-horizontal-detail');
-        navSections.forEach(section=>{
-          section.classList.remove('gr-horizontal-current');
-          section.open=false;
-        });
-        const title=this.shadow.getElementById('settings-dialog-title');
-        if(title)title.textContent='Einstellungen';
-        // Keep the selected controls anchored in section 5, in both layouts.
-        // Returning from Modern restores the section where the choice was made.
-        if(!modern&&save&&effectsSection)effectsSection.open=true;
+        showNavigationPage();
         settingsDialog?.style.removeProperty('height');
-        navBody?.scrollTo?.(0,0);
       };
       applyMenuStyle(selectedMenuStyle); // Restore persisted setting and gear color at startup.
       navGear?.addEventListener('click',()=>{
@@ -2241,21 +2421,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       settingsDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      // V3.99316 – vollständiges Accordion für den knappen Einstellungsdialog.
-      // Alle Gruppen starten geschlossen. Sobald eine Gruppe geöffnet wird,
-      // schließen sich alle übrigen Gruppen automatisch. Damit kann der Dialog
-      // auch auf kleineren Displays nicht durch mehrere gleichzeitig geöffnete
-      // Bereiche unnötig in die Höhe wachsen. Der interne Scrollbereich bleibt
-      // als Sicherheitsnetz für einzelne hohe Gruppen erhalten.
+      // Register dynamic pages once; form nodes and their listeners are never cloned for navigation.
       const settingsSections = new Set();
-      let settingsAccordionBusy = false;
       const registerSettingsSection = (section) => {
         if (!section || settingsSections.has(section)) return;
         settingsSections.add(section);
-        section.open = false;
+        if(!entryById.has(section.id))return;
+        section.querySelector(':scope > summary')?.addEventListener('click',event=>{
+          event.preventDefault();navigateTo(section.id);
+        });
         section.addEventListener('toggle',() => {
-          // Ein zugeklappter Abschnitt darf kein frei schwebendes Custom-Menü
-          // zurücklassen. Die Dropdown-Mechanik selbst bleibt unverändert.
           if (!section.open) {
             this._closeMapStartupDropdown?.(false);
             closeLanguageDropdown(false);
@@ -2263,17 +2438,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             closeLocationDropdown(false);
             return;
           }
-          if (settingsAccordionBusy) return;
-          settingsAccordionBusy = true;
-          this._closeMapStartupDropdown?.(false);
-          closeLanguageDropdown(false);
-          closeClusterResolutionDropdown(false);
-          closeLocationDropdown(false);
-          for (const other of settingsSections) {
-            if (other !== section && other.open) other.open = false;
-          }
-          settingsAccordionBusy = false;
+          if(!section.classList.contains('gr-horizontal-current'))navigateTo(section.id);
         });
+        refreshNavigationSections();
       };
       this._registerSettingsAccordionSection = registerSettingsSection;
       this.shadow.querySelectorAll('details.settings-collapsible').forEach(registerSettingsSection);

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.27",
+  "version": "1.1.28",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -17,7 +17,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
     _buildSkeleton() {
       this._built = true;
       this.shadow = this.attachShadow({ mode: 'open' });
-      const buildMonthMatch=String(GEWITTERRADAR_BUILD || '').match(/(\d{4})-(\d{2})-\d{2}$/);
+      const releaseMetadata=deps.APPLICATION_META;
+      const buildMonthMatch=String(releaseMetadata.build || '').match(/(\d{4})-(\d{2})-\d{2}$/);
       const displayedBuildMonth=buildMonthMatch ? buildMonthMatch[1]+'/'+buildMonthMatch[2] : BUILD_YYYY_MM;
 
       this.shadow.innerHTML = `
@@ -5848,7 +5849,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-about:active > span[aria-hidden="true"] {
             filter:brightness(.9) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92));
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-row-label {
+          #settings-calibration-section > .settings-section-content > .settings-row-label {
             box-sizing:border-box;
             width:100%;
             padding:9px 12px 4px 22px;
@@ -5858,30 +5859,30 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             line-height:1.25;
             letter-spacing:.055em;
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-row {
+          #settings-calibration-section > .settings-section-content > .settings-row {
             padding-left:34px;
             padding-right:12px;
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-test-grid {
+          #settings-calibration-section > .settings-section-content > .settings-test-grid {
             padding-left:34px;
             padding-right:12px;
           }
           @media(max-width:720px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:20px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:10px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:10px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding-left:20px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:10px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:10px; }
           }
           @media(max-height:720px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding:7px 9px 3px 20px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:9px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:9px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding:7px 9px 3px 20px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:9px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:9px; }
           }
           @media(max-width:520px) and (min-height:721px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:18px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:26px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding-left:18px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:26px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
           }
-          #settings-diagnostic-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
+          #settings-calibration-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
 
           /* V4.11.84: Weather-Engine – feste Spalten, kompakte Statusführung. */
           #weather-engine-section>.settings-section-content>.gr-weather-row{
@@ -5955,7 +5956,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .settings-premium-link:focus-visible{outline:2px solid rgba(255,225,161,.92)!important;outline-offset:1px!important}.settings-premium-link:focus-visible .settings-premium-icon{filter:brightness(1.15) drop-shadow(0 0 3px rgba(244,197,91,.42))}
           .settings-section{border-color:rgba(190,151,76,.22);background:linear-gradient(115deg,rgba(169,126,47,.055),rgba(255,255,255,.018) 30%,rgba(7,13,19,.36));box-shadow:inset 0 1px rgba(255,239,194,.045),0 2px 8px rgba(0,0,0,.18);transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}.settings-section[open]{border-color:rgba(224,180,87,.46);background:linear-gradient(115deg,rgba(177,132,47,.10),rgba(255,255,255,.022) 35%,rgba(7,13,19,.42));box-shadow:inset 0 1px rgba(255,243,207,.08),0 0 13px rgba(208,158,55,.08)}
           .settings-collapsible>.settings-section-head{align-items:center;min-height:44px}.settings-collapsible>.settings-section-head::after{content:'';width:13px;height:13px;border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;font-size:0;transform:rotate(45deg);margin:-6px 10px 0 0;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}.settings-collapsible[open]>.settings-section-head::after{transform:rotate(225deg);margin-top:7px;color:inherit;filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}
-          #settings-diagnostic-section>.settings-section-content>.settings-row-label{border-left:1px solid rgba(196,153,70,.24);background:linear-gradient(90deg,rgba(190,143,52,.045),transparent 72%)}
+          #settings-calibration-section>.settings-section-content>.settings-row-label{border-left:1px solid rgba(196,153,70,.24);background:linear-gradient(90deg,rgba(190,143,52,.045),transparent 72%)}
           .settings-signature-wrap{background:radial-gradient(ellipse at 82% 52%,rgba(201,151,51,.075),transparent 56%)}.settings-signature{filter:sepia(.16) saturate(1.28) brightness(1.08) contrast(1.035) drop-shadow(0 1px .5px rgba(255,226,158,.16)) drop-shadow(0 3px 5px rgba(0,0,0,.48))}
           @media(hover:hover) and (pointer:fine){.settings-premium-link:hover .settings-premium-icon{filter:brightness(1.14) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 3px rgba(238,188,72,.38))}.settings-collapsible>.settings-section-head:hover::after{filter:brightness(1.2) drop-shadow(0 0 3px rgba(240,193,82,.48))}}
           .settings-premium-link:active .settings-premium-icon{filter:brightness(.9) saturate(1.08)}
@@ -6001,7 +6002,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           :is(.weather-display-panel,.weather-wind-panel,.weather-legend-overlay,.map-display-menu).gr-premium-metal-surface{border-radius:15px}
           .settings-dialog::after{content:none!important}
           /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */
-          .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}
+          .settings-footer-version{position:absolute;left:18px;bottom:14px;z-index:3;display:grid;gap:3px;max-width:calc(100% - 130px);color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;line-height:1.35;white-space:normal;overflow-wrap:anywhere;user-select:none}
           @media(max-width:720px){.settings-footer-version{left:14px;bottom:15px}}
           .settings-chip.settings-chip-premium{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;flex:0 0 40px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}
           .settings-chip-premium .gear-welcome{display:block!important;width:30px;height:30px;min-width:30px;min-height:30px;overflow:visible;color:#e5bd69;stroke-width:3;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 2px 1.5px #0009) drop-shadow(0 -1px .4px #f5d5a555);transition:filter .16s ease,transform .16s ease}
@@ -7164,7 +7165,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </div>
                 </div>
               </details>
-              <details class="settings-section settings-collapsible">
+              <details class="settings-section settings-collapsible" id="settings-language-section">
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Sprache</div>
@@ -7190,7 +7191,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <details class="settings-section settings-collapsible">
+              <details class="settings-section settings-collapsible" id="settings-location-section">
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Standort</div>
@@ -7379,13 +7380,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <details class="settings-section settings-collapsible" id="settings-diagnostic-section">
+              <details class="settings-section settings-collapsible gr-settings-diagnostics-page" id="settings-diagnostic-section">
                 <summary class="settings-section-head">
                   <div>
-                    <div class="settings-section-title" id="settings-diagnostic-section-title">Kalibrierung &amp; Diagnose</div>
-                    <div class="settings-section-sub">Simulation und Diagnosewerkzeuge</div>
+                    <div class="settings-section-title" id="settings-tools-section-title">Diagnose Tools</div>
+                    <div class="settings-section-sub">Kalibrierung, Weather-Engine, Datenquellen und Module</div>
                   </div>
                 </summary>
+                <div class="settings-section-content" data-settings-diagnostic-menu></div>
+              </details>
+
+              <details class="settings-section settings-collapsible" id="settings-calibration-section">
+                <summary class="settings-section-head"><div><div class="settings-section-title">Kalibrierung</div><div class="settings-section-sub">Bestehende Einstell-, Referenz- und Testwerkzeuge</div></div></summary>
                 <div class="settings-section-content">
                   <div class="settings-row-label" id="settings-calibration-tools-label">Kalibrierungstools</div>
                   <div class="settings-row">
@@ -7420,13 +7426,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
+              <details class="settings-section settings-collapsible" id="settings-weather-diagnostics-section" data-gr-dynamic-height="true">
+                <summary class="settings-section-head"><div><div class="settings-section-title">Weather-Engine</div><div class="settings-section-sub">Verbindung, Wettertransport und vorhandene Diagnosen</div></div></summary>
+                <div class="settings-section-content"></div>
+              </details>
+
             </div>
             <div class="settings-signature-wrap" aria-hidden="true">
               <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
                 <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
               </svg>
             </div>
-            <div class="settings-footer-version" title="Kartenversion">${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}</div>
+            <div class="settings-footer-version" title="Kartenversion"><span>${displayedBuildMonth} · V${releaseMetadata.version}</span><span>Modulsatz-ID: ${releaseMetadata.moduleSetId}</span></div>
           </section>
         </div>
 

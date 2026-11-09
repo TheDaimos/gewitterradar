@@ -1,6 +1,6 @@
 import {defineModule} from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.data-sources",version:"0.1.3",group:"Datenquellen & Verbindungen",
+  id:"diagnostics.data-sources",version:"0.1.4",group:"Datenquellen & Verbindungen",
   function:"Datenquellen – Übersicht und Diagnose",
   subfunctions:["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
   file:"modules/diagnostics/data-sources.js"
@@ -123,6 +123,7 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
     const weather=card("WeatherRouter · Consumer V1");
     detail(weather,[["Letzter Discovery-Status",wr.status],["Letzte Discovery-Prüfung",wr.checkedAt]]);
     weather.append(create("div","gr-source-note",wr.note));
+    this._weatherEngineRenderSourceCards?.();
   },
   async _refreshDataSourcesView(){
     const section=this._ensureDataSourcesSection();

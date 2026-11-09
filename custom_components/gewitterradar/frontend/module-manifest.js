@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411167r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411168r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.184",
+    "version": "1.2.185",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.27",
+    "version": "1.1.28",
     "group": "OberflÃ¤che",
     "function": "GrundgerÃ¼st",
     "subfunctions": [
@@ -112,7 +112,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.project-hub",
-    "version": "1.1.16",
+    "version": "1.1.17",
     "group": "OberflÃ¤che",
     "function": "Daimos Project Hub",
     "subfunctions": [
@@ -138,7 +138,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.27",
+    "version": "1.1.28",
     "group": "OberflÃ¤che",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -151,7 +151,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.11",
+    "version": "1.3.12",
     "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -176,7 +176,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.source-status",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Datenquellenstatus",
     "subfunctions": [
@@ -216,7 +216,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.9",
+    "version": "1.3.10",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -231,7 +231,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.data-sources",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "group": "Datenquellen & Verbindungen",
     "function": "Datenquellen â€“ Ãœbersicht und Diagnose",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -385,7 +385,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.consumer-client",
-    "version": "1.2.15",
+    "version": "1.2.16",
     "group": "Weather-Engine",
     "function": "WeatherRouter Consumer V1/V2",
     "subfunctions": [
@@ -423,7 +423,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.14",
+    "version": "1.1.15",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.26",
+    "version": "0.4.27",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [

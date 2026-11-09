@@ -1,7 +1,7 @@
 import { defineModule } from "./runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "core.source-status",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "group": "Kern",
   "function": "Datenquellenstatus",
   "subfunctions": [
@@ -22,6 +22,7 @@ export const installSourceStatus=defineModule(MODULE_META,(deps)=>{const { CARD_
     },
 
     _renderLightningSourceStatus() {
+      try{this._weatherEngineRenderSourceCards?.();}catch(_uiError){}
       const wrap = this.shadow?.getElementById('source-status');
       const dot = this.shadow?.getElementById('source-status-dot');
       if (!wrap || !dot) return;

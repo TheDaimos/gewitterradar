@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.165",
-  "build": "V4.11.165-DEV-2026-11-09",
-  "runtimeRevision": "411165r1",
-  "moduleSetId": "E411-165A1",
-  "baselineFeatureHead": "d5113b164046e478fe018cb12cea91eb85697a3f",
+  "productVersion": "4.11.168",
+  "build": "V4.11.168-DEV-2026-11-09",
+  "runtimeRevision": "411168r1",
+  "moduleSetId": "E411-168A1",
+  "baselineFeatureHead": "7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Original Hi-Res precipitation map control with shared radar activation, Eye interactions and persistent icon settings; WeatherRouter unchanged.",
+    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

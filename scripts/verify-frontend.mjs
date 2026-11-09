@@ -1,6 +1,10 @@
 import {readFile,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {root,hash,expectedPayload,expectedHelpPayload,expectedDashboardPackages,destinations} from './build-frontend.mjs';
+const canonicalVersion=(await readFile(resolve(root,'frontend/version.js'),'utf8')).match(/version:"4\.11\.(\d+)"/)?.[1];
+if(Number(canonicalVersion)>=168){
+ await import('./verify-current-frontend.mjs');
+}else{
 const payload=await expectedPayload();
 const helpPayload=await expectedHelpPayload();
 const helpIndex=helpPayload.get('help/index.html')?.toString('utf8')||'';
@@ -485,3 +489,4 @@ if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChec
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
 console.log('PASS: active version contract, exact delivery parity, assets and packages verified.');
+}
