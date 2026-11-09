@@ -1,3 +1,9 @@
+## V4.11.165 DEV · Original-Niederschlagsicon · HA 0.25.72
+
+Freigegebenes 1254-px-PNG bytegleich im Masterbestand und in beiden Installationspaketen. Frei verschiebbarer Kartenschalter mit kurzem Klick für die gemeinsame Niederschlagsebene, 600-ms-Long-Press für die vorhandenen Eye-Einstellungen und gespeicherten Positionen. Vier unabhängige Sichtbarkeitsmodi, synchron zum bestehenden Schnellzugriff. Wind, Temperatur und meteorologische Datenwege bleiben unverändert.
+
+[Implementierung und Originalprüfsumme](docs/GR_PRECIPITATION_HIRES_ICON_01.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.165-dev). Physische Companion-/HA-Abnahme offen.
+
 ## V4.11.163 DEV · Winddesign- & Animationsstudio · HA 0.25.70
 
 Optionales Studio unter Experteneinstellungen: gemeinsame Live-/Offline-Vorschau, getrennte Entwürfe, geschützte Standardprofile und lokale Benutzerprofile mit JSON-/CSV-Austausch und CSV-Teilimport. Nur Auf Karte anwenden übernimmt Entwurfswerte. Der positiv begutachtete Schlangenrenderer, alle elf Parameter, die bisherigen Regler und deren Speicherung bleiben unverändert.

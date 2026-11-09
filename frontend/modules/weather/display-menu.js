@@ -1,10 +1,11 @@
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411165r1';
 import {ensurePremiumUi,PREMIUM_INFO} from './premium-ui.js?v=411160r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411147r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.25",
+  version:"0.4.26",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -158,7 +159,8 @@ const normalizeState=input=>{
     position:{x:clamp(position.x??DEFAULT_POSITION.x,0,1),y:clamp(position.y??DEFAULT_POSITION.y,0,1)},
     eyePosition:{x:clamp(eyePosition.x??DEFAULT_EYE_POSITION.x,0,1),y:clamp(eyePosition.y??DEFAULT_EYE_POSITION.y,0,1)},
     styles:{precipitation,clouds},
-    opacities:{precipitation:precipitationOpacity}
+    opacities:{precipitation:precipitationOpacity},
+    precipitationControl:normalizePrecipitationControl(source.precipitationControl)
   };
 };
 const errorStatus=discovery=>{
@@ -191,6 +193,7 @@ const eyeAssetMarkup=open=>{
 };
 
 export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
+  ...precipitationControlMethods,
   _weatherDisplayState(){
     if(this.__weatherDisplayState)return this.__weatherDisplayState;
     let saved=null;
@@ -725,13 +728,15 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
       mapCard.append(panel);
       this._weatherDisplayBindPanelDrag(panel,panel.querySelector("[data-weather-display-drag-handle]"));
     }
+    this._weatherPrecipitationEnsureToggle();
+    this._weatherPrecipitationEnsureSettings(panel);
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();});
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
     if(!state.lifecycleAbortHandler){
-      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();};
+      state.lifecycleAbortHandler=()=>{this._weatherDisplayCancelDrag?.();this._weatherDisplayCancelEyeDrag?.();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherPrecipitationCancelDrag?.();};
       window.addEventListener("blur",state.lifecycleAbortHandler,true);
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
@@ -984,6 +989,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,()=>({
     this._weatherDisplayReleaseSoftFilter(pane);
     const state=this.__weatherDisplayState;if(!state)return;
     state.generation+=1;state.probing=false;
+    this._weatherPrecipitationCancelDrag?.();
     this._weatherDisplayCancelDrag();
     if(state.resizeHandler){
       window.removeEventListener("resize",state.resizeHandler);

@@ -81,3 +81,14 @@ Auftrag `77131.png` genannte Rolle übernimmt die tatsächlich übergebene Datei
 Größe über CSS: Karte 48 px, Kachel 34 px in 44-px-Touchzielen. Die bisherigen
 SVG-Master bleiben dauerhaft erhalten, sind aber keine aktiven Windschalter-Assets.
 Alle fünf Masterinhalte sind im Hi-Res-Retentionsvertrag registriert.
+
+
+## GR-PRECIPITATION-HIRES-ICON-01 · freigegebenes Original
+
+`hires/gr-precipitation-premium-original.png`: unverändertes Original
+`niederschlag_icon_original_pixelgetreu_transparent.png`, 1254 × 1254 Pixel RGBA.
+SHA256 `df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274`. Dieselben PNG-Bytes liegen unter
+`frontend/assets/gr-precipitation-premium-original.png` und werden vollständig
+in HA-/Dashboard-Pakete übernommen. Keine Neugenerierung, Beschneidung,
+Farbänderung oder Neukodierung. Anzeige ausschließlich per CSS mit 50 px.
+Herkunft und Prüfsummen: `gr-precipitation-ASSET_MANIFEST.json`.

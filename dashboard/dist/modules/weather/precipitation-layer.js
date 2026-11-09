@@ -6,7 +6,7 @@ import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.20",
+  version:"1.3.21",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -2100,6 +2100,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   },
 
   _weatherRadarUpdateControls(message=null){
+    this._weatherPrecipitationSyncToggle?.();
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
     const satelliteToggle=this.shadow?.getElementById("weather-radar-background-toggle");

@@ -83,7 +83,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "07c9da768e13f7b27a7fc49907b869d794678af3a580198280379acc47ce4e2e",
+    "sha256": "e41d7686516fd9fec6b0da10c36faf5c0fa904f867cb78225cfdc783d21c3c2d",
     "protected": false,
     "sizeBytes": 2873
   },
@@ -396,6 +396,11 @@
   {
     "file": "assets/gr-temperature-premium-v1-272.webp",
     "sha256": "544a76ead85e426b235c89d88237244c00f1884ee789f4f0ba7eff0022daa782",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-precipitation-premium-original.png",
+    "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
     "protected": true
   }
 ]

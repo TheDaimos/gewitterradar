@@ -1,9 +1,9 @@
 export const APPLICATION_RELEASE=Object.freeze({
   id:"gewitterradar",
-  version:"4.11.163",
-  displayVersion:"V4.11.163 DEV",
-  build:"V4.11.163-DEV-2026-11-08",
-  runtimeRevision:"411163r1",
-  moduleSetId:"E411-163A1",
-  integrationVersion:"0.25.70"
+  version:"4.11.165",
+  displayVersion:"V4.11.165 DEV",
+  build:"V4.11.165-DEV-2026-11-09",
+  runtimeRevision:"411165r1",
+  moduleSetId:"E411-165A1",
+  integrationVersion:"0.25.72"
 });

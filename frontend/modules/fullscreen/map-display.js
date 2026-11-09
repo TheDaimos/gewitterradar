@@ -11,7 +11,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -987,7 +987,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         this._positionMapDisplayControl();
         this._positionMapClusterJumpOverlay();
         this._weatherWindPositionToggle?.();
-        this._weatherTemperaturePositionToggle?.();
+        this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();
         this._scheduleOpenLocationDropdownPosition();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
@@ -1074,7 +1074,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       }
       if (instrumentControls) instrumentControls.hidden = !fullscreenActive;
       this._weatherWindSyncToggle?.();
-      this._weatherTemperatureSyncToggle?.();
+      this._weatherTemperatureSyncToggle?.();this._weatherPrecipitationSyncToggle?.();
       if (compassToggle) {
         compassToggle.classList.toggle('active',this._mapCompassVisible);
         compassToggle.setAttribute('aria-pressed',this._mapCompassVisible ? 'true' : 'false');

@@ -5,7 +5,7 @@ import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.13",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.14",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -633,7 +633,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const kicker=subgroup?(category?.label||"Fachbereich"):category?"Fachbereich":"Kartenebenen";
     const backAction=subgroup?"back-category":category?"back-hub":null;
     const back=backAction?`<button class="weather-layer-back" type="button" data-weather-layer-action="${backAction}" aria-label="Zurück">‹</button>`:'<span class="weather-layer-back-slot" aria-hidden="true"></span>';
-    const displayMarkup=(this._weatherDisplayLayerMenuMarkup?.()||"")+(this._weatherWindMenuMarkup?.()||"")+(this._weatherTemperatureMenuMarkup?.()||"");
+    const displayMarkup=(this._weatherDisplayLayerMenuMarkup?.()||"")+(this._weatherWindMenuMarkup?.()||"")+(this._weatherTemperatureMenuMarkup?.()||"")+'<button class="weather-layer-action" type="button" data-weather-layer-action="precipitation-settings"><strong>Niederschlags-Kartenschalter</strong><small>Icon-Sichtbarkeit und Position einstellen</small></button>';
     const body=subgroup?this._weatherLayerMenuSubcategoryMarkup(category.id,subgroup.id):category?this._weatherLayerMenuCategoryMarkup(category.id):`${this._weatherLayerMenuStatusMarkup()}${displayMarkup}${this._weatherLayerMenuQuickMarkup()}${state.discovery?.ready&&state.catalog?.status==="ready"?this._weatherLayerMenuCategoriesMarkup():""}`;
     const refresh=!category&&state.discovery?.present&&state.discovery.compatible?'<button class="weather-layer-refresh" type="button" data-weather-layer-action="refresh">WeatherRouter neu prüfen</button>':"";
     const markup=`<div class="weather-layer-head">${back}<div class="weather-layer-head-main"><div class="weather-layer-kicker">${escapeHtml(kicker)}</div><div class="weather-layer-title">${escapeHtml(title)}</div></div><img class="weather-layer-logo" src="${escapeHtml(WEATHER_ROUTER_LOGO_IMAGE)}" alt="" aria-hidden="true"></div>${body}${refresh}`;
@@ -658,6 +658,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(action==="back-hub"){this._weatherLayerMenuSetView("weather-router");return;}
     if(action==="back-category"){const category=button.dataset.category||this._weatherLayerMenuState().category;if(category)this._weatherLayerMenuSetView(`weather-router-category:${category}`,{category});return;}
     if(action==="refresh"){this._weatherLayerMenuProbe({refresh:true});return;}
+    if(action==="precipitation-settings"){this._weatherPrecipitationOpen?.();return;}
     if(action==="display"){this._weatherDisplayOpenFromLayerMenu?.();return;}
     if(action==="wind-barbs-toggle"){const c=this._weatherWindState?.().config;if(c)this._weatherWindSet?.({barbsVisible:!c.barbsVisible});return;}
     if(action==="wind-toggle"){this._weatherWindToggle?.();return;}

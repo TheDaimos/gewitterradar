@@ -19,7 +19,8 @@
     "artwork/about-controls/provenance.json",
     "artwork/compass-chevron/README.md",
     "artwork/compass-chevron/provenance.json",
-    "artwork/weather-router/README.md"
+    "artwork/weather-router/README.md",
+    "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json"
   ],
   "protectedBlobs": [
     {
@@ -339,6 +340,12 @@
       "preferredPath": "artwork/help-icons/hires/gr-temperature-premium-original.png",
       "gitBlobSha1": "8580cd319c53204c2e365918f437651b6ace2146",
       "sizeBytes": 1871509
+    },
+    {
+      "label": "Approved precipitation original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-precipitation-premium-original.png",
+      "gitBlobSha1": "a1187d752bb21e048e1180b3ff37ddf4713e4b21",
+      "sizeBytes": 1407420
     }
   ]
 }
