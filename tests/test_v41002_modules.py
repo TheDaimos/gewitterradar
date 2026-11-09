@@ -43,8 +43,14 @@ def test_expected_module_versions_match_self_registration():
    actual[item["id"]]=expected[item["id"]]
    continue
   source=(FRONTEND/item["file"]).read_text(encoding="utf-8")
-  id_match=re.search(r"""(?:["']?id["']?)\s*:\s*["']([^"']+)["']""",source)
-  version_match=re.search(r"""(?:["']?version["']?)\s*:\s*["']([^"']+)["']""",source)
+  # Menu/configuration data can legitimately contain IDs before MODULE_META.
+  # Match the actual self-registration metadata rather than the first arbitrary ID.
+  metadata=re.search(r"const\s+MODULE_META\s*=\s*Object\.freeze\(\{([\s\S]*?)\}\)",source)
+  if item["id"]=="core.registry":
+   metadata=re.search(r'registerModule\(\{(id:"core\.registry"[\s\S]*?)\}\)',source)
+  assert metadata,item["file"]
+  id_match=re.search(r"""(?:["']?id["']?)\s*:\s*["']([^"']+)["']""",metadata.group(1))
+  version_match=re.search(r"""(?:["']?version["']?)\s*:\s*["']([^"']+)["']""",metadata.group(1))
   assert id_match and version_match,item["file"]
   assert id_match.group(1)==item["id"]
   actual[item["id"]]=version_match.group(1)
