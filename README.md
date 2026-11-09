@@ -15,7 +15,7 @@
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
 ![Version](https://img.shields.io/badge/Gewitterradar-V4.10-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
-![License](https://img.shields.io/badge/Code-GPL--3.0--only-lightgrey)
+![License](https://img.shields.io/badge/Lizenz-Modell%20B-lightgrey)
 
 **[⚡ Native Integration installieren](#1-native-gewitterradar-integration)** ·
 **[🌩️ Funktionen](#was-gewitterradar-bereitstellt)** ·
@@ -375,13 +375,19 @@ Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische P
 
 # Lizenz und Branding
 
-Soweit nicht ausdrücklich reservierte Branding-Materialien oder Drittmaterial mit eigener Lizenz betroffen sind, stehen Quellcode und Dokumentation unter **GNU GPL Version 3 only (`GPL-3.0-only`)**.
+**Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-Copyright © 2026 **Christian Köhler / TheDaimos**.
+Gewitterradar V4.10 FINAL wird unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)** veröffentlicht:
 
-Siehe [LICENSE](LICENSE), [COPYRIGHT.md](COPYRIGHT.md), [AUTHORS.md](AUTHORS.md) und [BRANDING.md](BRANDING.md).
+- Private, nichtberufliche Nutzung und Weiterentwicklung: kostenlos.
+- Forks und Weitergabe: ausschließlich kostenlos, mit vollständigem kostenlos verfügbarem Quellcode und unter denselben Bedingungen.
+- Urhebervermerk: Christian Köhler als ursprünglicher Urheber und Projektgründer verbindlich an erster Stelle.
+- Kommerzielle und berufliche Nutzung: nur mit vorheriger ausdrücklicher schriftlicher Genehmigung.
+- Logos und Kennzeichen: gesondert geschützt.
 
-Der Name **Gewitterradar**, Logos, Icons, Artwork und die visuelle Identität sind nicht Bestandteil der GPL-3.0-only-Freigabe. Forks und abgeleitete Projekte müssen ein eigenes Branding verwenden, sofern keine separate Erlaubnis vorliegt.
+Diese Gemeinschaftslizenz ist keine OSI-anerkannte Open-Source-Lizenz. Rechte Dritter bleiben unberührt.
+
+Volltext: [LICENSE.md](LICENSE.md) · [Urheberrecht](COPYRIGHT.md) · [Urheberliste](AUTHORS.md) · [Marken und Logos](BRANDING.md).
 
 ### R19 Medaillon-/Pfeil-Kalibrierung
 
