@@ -116,3 +116,14 @@ Bestehender DRA-Kanal: **TheDaimos/gewitterradar, deploy/dev**, unverändert.
 - [Deployment-Nachweis mit vollständigem Releasecommit](https://github.com/TheDaimos/gewitterradar/releases/download/v4.11.171-dev/deployment.json)
 
 Die Betreiberinstallation und visuelle Realabnahme auf VM109 bleiben offen.
+
+## Paketnachweis
+
+Implementierungscommit: `588377900cb06de7639b9c0824c4c3882900ea0c`.
+
+- `gewitterradar-0.25.78-dev.zip`: SHA256 `e280b65ebfc8934b560230d1bd1ece0e429e72937c93250729347b79f8ee143b`
+- `gewitterradar-dashboard-4.11.171-dev.zip`: SHA256 `36b36d108718c3449ed225f6f4c249df8351bc2da7051652ea5e1004df35cd6f`
+
+Der abschließende Dokumentationscommit ist zugleich das Releaseziel; seine
+volle SHA steht in `deployment.json` und im GitHub-Release. Die ZIP-Inhalte
+bleiben gegenüber dem Implementierungscommit unverändert.
