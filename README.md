@@ -1,9 +1,3 @@
-## V4.11.164 DEV · Windfarbfläche auf allen Weltkopien · HA 0.25.71
-
-Wiederverwendete Farbtextur für alle sichtbaren Weltkopien, korrekte Viewport-Abdeckung und sicherer Bildabschluss bei Zoom-/Größenwechseln. Keine zusätzlichen WR-Abfragen oder Windfeld-Cacheeinträge pro Kopie. Schlangenrenderer, elf Parameter, Studio und alle bisherigen Animationen bleiben unverändert.
-
-[Implementierung und gezielte Prüfungen](docs/GR_WIND_COLOR_WORLD_WRAP_FIX.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.164-dev). Physische Companion-/HA-Abnahme offen.
-
 ## V4.11.163 DEV · Winddesign- & Animationsstudio · HA 0.25.70
 
 Optionales Studio unter Experteneinstellungen: gemeinsame Live-/Offline-Vorschau, getrennte Entwürfe, geschützte Standardprofile und lokale Benutzerprofile mit JSON-/CSV-Austausch und CSV-Teilimport. Nur Auf Karte anwenden übernimmt Entwurfswerte. Der positiv begutachtete Schlangenrenderer, alle elf Parameter, die bisherigen Regler und deren Speicherung bleiben unverändert.
