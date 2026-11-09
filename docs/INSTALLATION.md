@@ -1,4 +1,4 @@
-> **Lizenzedition 2026-11-09:** Verwende ausschließlich [v4.10-model-b](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b). Modell B erfüllt die OSI-Lizenzprüfung des offiziellen HACS-Katalogs nicht. Custom-Repository-Download und Paketstaging werden separat geprüft; eine reale HACS-/HA-Neuinstallation ist damit nicht nachgewiesen.
+> **Lizenzedition 2026-11-09:** Verwende ausschließlich [v4.10-model-b-20261109](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109). Modell B erfüllt die OSI-Lizenzprüfung des offiziellen HACS-Katalogs nicht. Custom-Repository-Download und Paketstaging werden separat geprüft; eine reale HACS-/HA-Neuinstallation ist damit nicht nachgewiesen.
 
 # Gewitterradar V4.10 FINAL – Installation
 

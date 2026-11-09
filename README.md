@@ -1,9 +1,9 @@
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
 > **V4.10 FINAL · Gemeinschaftslizenz Modell B · Lizenzedition 2026-11-09.**
-> Einzige aktuelle stabile offizielle Veröffentlichung: [v4.10-model-b](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b).
+> Einzige aktuelle stabile offizielle Veröffentlichung: [v4.10-model-b-20261109](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109).
 > Anwendungscode, Frontend und Assets entsprechen dem freigegebenen V4.10-Golden-Master; native Integration **0.22.0**.
-> Dashboard: [V4.10 FINAL](https://github.com/TheDaimos/gewitterradar-dashboard/releases/tag/v4.10-model-b).
+> Dashboard: [V4.10 FINAL](https://github.com/TheDaimos/gewitterradar-dashboard/releases/tag/v4.10-model-b-20261109).
 > Frühere rechtmäßig gewährte GPL-Rechte bleiben bestehen; historische Fassungen werden nicht rückwirkend umlizenziert.
 > V4.11 DEV bleibt über den bestehenden DRA-Kanal `deploy/dev` verfügbar.
 > [Lizenz](LICENSE.md) · [Installationsanleitung](https://github.com/TheDaimos/gewitterradar/blob/main/docs/INSTALLATION.md).

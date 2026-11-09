@@ -4,7 +4,7 @@ Copyright (c) 2026 Christian Köhler.
 
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-Der aktuelle V4.10-FINAL-Quellstand der Lizenzedition `v4.10-model-b` steht unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)** in [LICENSE.md](LICENSE.md), soweit die erforderlichen Rechte an den Bestandteilen vorliegen.
+Der aktuelle V4.10-FINAL-Quellstand der Lizenzedition `v4.10-model-b-20261109` steht unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)** in [LICENSE.md](LICENSE.md), soweit die erforderlichen Rechte an den Bestandteilen vorliegen.
 
 Private, nichtberufliche Nutzung und Entwicklung sind kostenlos. Die Weitergabe unveränderter und veränderter Fassungen ist nur kostenlos, unter denselben Lizenzbedingungen und mit vollständig kostenlos verfügbarem Quellcode gestattet.
 
