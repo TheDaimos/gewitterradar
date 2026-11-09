@@ -1,3 +1,5 @@
+**Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
+
 <div align="center">
 
 <img
@@ -377,7 +379,7 @@ Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische P
 
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-Gewitterradar V4.10 FINAL wird unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)** veröffentlicht:
+Der aktuelle V4.10-FINAL-Quellstand auf `main` steht unter der **Gewitterradar-Gemeinschaftslizenz (Modell B)**:
 
 - Private, nichtberufliche Nutzung und Weiterentwicklung: kostenlos.
 - Forks und Weitergabe: ausschließlich kostenlos, mit vollständigem kostenlos verfügbarem Quellcode und unter denselben Bedingungen.
@@ -386,6 +388,8 @@ Gewitterradar V4.10 FINAL wird unter der **Gewitterradar-Gemeinschaftslizenz (Mo
 - Logos und Kennzeichen: gesondert geschützt.
 
 Diese Gemeinschaftslizenz ist keine OSI-anerkannte Open-Source-Lizenz. Rechte Dritter bleiben unberührt.
+
+Die Lizenzzuordnung gilt für den entsprechend berechtigten aktuellen Quellstand. Historische Releases, Tags und deren ursprüngliche Lizenzdateien bleiben unverändert; bereits wirksam gewährte GPL-Nutzungsrechte werden nicht widerrufen. Die bestehende Widmung **Für Alkje** bleibt erhalten. DRA-Projektkonfiguration und `deploy/dev` werden durch diese Konsolidierung nicht verändert.
 
 Volltext: [LICENSE.md](LICENSE.md) · [Urheberrecht](COPYRIGHT.md) · [Urheberliste](AUTHORS.md) · [Marken und Logos](BRANDING.md).
 
