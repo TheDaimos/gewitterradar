@@ -140,26 +140,41 @@ export class WindCanvas {
   if(moving)this.schedule();
  }
  cancelPreparation(){const job=this.colorJob;if(job){job.cancelled=true;clearTimeout(job.timer);if(job.cache!==this.fieldImage)this.spareImage=job.cache;job.resolve(null);this.colorJob=null;}}
- imageCoversView(cache,size){
+ // Colour-only projection: local Leaflet samples remain affine even when the
+ // viewport extends beyond the polar world edges at overview zooms.
+ fieldColorProjection(size){
+  if(this.map.options?.crs?.code!=='EPSG:3857')return null;
+  if(!this.projectionDirty&&this.colorProjectionRef===this.projection&&this.colorProjection?.sizeX===size.x&&this.colorProjection?.sizeY===size.y)return this.colorProjection;
+  const cx=size.x/2,cy=size.y/2,a=this.map.containerPointToLatLng([cx,cy]),b=this.map.containerPointToLatLng([cx+1,cy]),c=this.map.containerPointToLatLng([cx,cy+1]);
+  const ax=b.lng-a.lng,ay=windMercatorY(b.lat)-windMercatorY(a.lat),bx=c.lng-a.lng,by=windMercatorY(c.lat)-windMercatorY(a.lat),ox=a.lng-ax*cx-bx*cy,oy=windMercatorY(a.lat)-ay*cx-by*cy,det=ax*by-ay*bx;
+  if(!Number.isFinite(det)||Math.abs(det)<1e-20)return null;const ex=by/det,ey=-ay/det,nx=-bx/det,ny=ax/det;
+  this.colorProjectionRef=this.projection;return this.colorProjection={sizeX:size.x,sizeY:size.y,ox,oy,ax,ay,bx,by,ex,ey,nx,ny,screen(lon,y,out){const dx=lon-ox,dy=y-oy;out[0]=dx*ex+dy*nx;out[1]=dx*ey+dy*ny;return out;}};
+ }
+ fieldColorBounds(p,left,top,width,height){const x=p.ox+left*p.ax+top*p.bx,y=p.oy+left*p.ay+top*p.by;return {west:x+Math.min(0,width*p.ax)+Math.min(0,height*p.bx),east:x+Math.max(0,width*p.ax)+Math.max(0,height*p.bx),south:y+Math.min(0,width*p.ay)+Math.min(0,height*p.by),north:y+Math.max(0,width*p.ay)+Math.max(0,height*p.by)};}
+ imageCoversView(cache,size,projection=this.fieldColorProjection(size)){
   if(!cache||cache.fieldId!==this.field?.id||cache.deadline<=Date.now())return false;
   if(this.map.getZoom&&this.map.getZoom()>cache.zoom+.5)return false;
+  if(cache.box&&projection){const view=this.fieldColorBounds(projection,0,0,size.x,size.y),box=cache.box,epsilon=(box.north-box.south)/Math.max(1,cache.height)+1e-8;if(view.south<box.south-epsilon||view.north>box.north+epsilon)return false;if(box.fullWorld)return true;const shift=360*Math.round((cache.centerLon-(view.west+view.east)/2)/360);return view.west+shift>=box.west-epsilon&&view.east+shift<=box.east+epsilon;}
   const p=this.projection,out=this.screenScratch;if(!p||!cache.projection)return false;
-  for(const [x,y] of [[0,0],[size.x,0],[0,size.y],[size.x,size.y]]){let lon=p.ox+x*p.ax+y*p.bx;lon+=360*Math.round((cache.centerLon-lon)/360);cache.projection.screen(lon,p.oy+x*p.ay+y*p.by,out);if(out[0]<cache.left-1||out[0]>cache.left+cache.width+1||out[1]<cache.top-1||out[1]>cache.top+cache.height+1)return false;}return true;
+  const middle=p.ox+size.x*.5*p.ax+size.y*.5*p.bx,shift=360*Math.round((cache.centerLon-middle)/360);
+  for(const [x,y] of [[0,0],[size.x,0],[0,size.y],[size.x,size.y]]){cache.projection.screen(p.ox+x*p.ax+y*p.bx+shift,p.oy+x*p.ay+y*p.by,out);if(out[0]<cache.left-1||out[0]>cache.left+cache.width+1||out[1]<cache.top-1||out[1]>cache.top+cache.height+1)return false;}return true;
  }
  prepareField(field){
   if(!this.config.colorField||this.destroyed)return Promise.resolve(null);
-  const size=this.map.getSize(),projection=windViewportProjection(this.map,size),viewKey=JSON.stringify([field.id,size.x,size.y,projection?.ox,projection?.oy,projection?.ax,projection?.ay,projection?.bx,projection?.by]);
+  const size=this.map.getSize(),projection=this.fieldColorProjection(size),viewKey=JSON.stringify([field.id,size.x,size.y,projection?.ox,projection?.oy,projection?.ax,projection?.ay,projection?.bx,projection?.by]);
   if(this.colorJob?.key===viewKey)return this.colorJob.promise;this.cancelPreparation();
-  const left=-size.x*.15,top=-size.y*.15,width=size.x*1.3,height=size.y*1.3,step=Math.max(3,Math.sqrt(size.x*size.y/70000)),w=Math.max(1,Math.ceil(width/step)),h=Math.max(1,Math.ceil(height/step));
+  const left=-size.x*.15,top=-size.y*.15;let width=size.x*1.3,height=size.y*1.3,box=null;
+  if(projection){box=this.fieldColorBounds(projection,left,top,width,height);box.fullWorld=box.east-box.west>=360-1e-8;if(box.fullWorld){const wrap=this.map.options.crs.wrapLng||[-180,180];box.west=wrap[0];box.east=wrap[0]+360;}const scale=Math.hypot(projection.ex,projection.ey);width=(box.east-box.west)*scale;height=(box.north-box.south)*scale;}
+  const step=Math.max(3,Math.sqrt(width*height/118300)),w=Math.max(1,Math.ceil(width/step)),h=Math.max(1,Math.ceil(height/step));
   const spare=this.spareImage,image=spare?.image||document.createElement('canvas');this.spareImage=null;
   if(image.width!==w||image.height!==h){image.width=w;image.height=h;}const ctx=image.getContext('2d'),pixels=spare?.pixels?.width===w&&spare?.pixels?.height===h?spare.pixels:ctx.createImageData(w,h),scratch=new Float64Array(5),scaleX=width/w,scaleY=height/h,started=this.now();
-  const cache={image,pixels,width,height,left,top,projection,fieldId:field.id,deadline:field.deadline,zoom:this.map.getZoom?.()||0,centerLon:projection?projection.ox+size.x*.5*projection.ax+size.y*.5*projection.bx:this.map.getCenter?.().lng||0};
-  cache.world=projection?[[left,top],[left+width,top],[left,top+height]].map(([x,y])=>[projection.ox+x*projection.ax+y*projection.bx,projection.oy+x*projection.ay+y*projection.by]):null;
+  const cache={image,pixels,width,height,left,top,projection,box,fieldId:field.id,deadline:field.deadline,zoom:this.map.getZoom?.()||0,centerLon:box?(box.west+box.east)/2:this.map.getCenter?.().lng||0};
+  cache.world=box?[[box.west,box.north],[box.east,box.north],[box.west,box.south]]:null;
   cache.anchors=cache.world?null:[[left,top],[left+width,top],[left,top+height]].map(p=>this.map.containerPointToLatLng(p));
   const promise=new Promise(resolve=>{const job={key:viewKey,cache,resolve,row:0,cpu:0,cancelled:false};this.colorJob=job;
    const run=()=>{if(job.cancelled||this.destroyed||field.deadline<=Date.now()){if(this.colorJob===job)this.colorJob=null;resolve(null);return;}const begin=this.now();
-    do{const y=top+(job.row+.5)*scaleY,plain=projection&&Math.abs(projection.ay)<1e-10&&Math.abs(projection.bx)<1e-10,lat=plain?windMercatorLatitude(projection.oy+y*projection.by):null;
-     for(let x=0;x<w;x++){const sx=left+(x+.5)*scaleX,ll=projection?null:this.map.containerPointToLatLng([sx,y]),latitude=projection?(plain?lat:windMercatorLatitude(projection.oy+sx*projection.ay+y*projection.by)):ll.lat,lon=projection?projection.ox+sx*projection.ax+y*projection.bx:ll.lng,offset=(job.row*w+x)*4;
+    do{const y=top+(job.row+.5)*scaleY,lat=box?windMercatorLatitude(box.north-(job.row+.5)/h*(box.north-box.south)):null;
+     for(let x=0;x<w;x++){const ll=box?null:this.map.containerPointToLatLng([left+(x+.5)*scaleX,y]),latitude=box?lat:ll.lat,lon=box?box.west+(x+.5)/w*(box.east-box.west):ll.lng,offset=(job.row*w+x)*4;
       if(sampleWindFieldInto(field,latitude,lon,scratch))writeWindFieldColor(scratch[2],pixels.data,offset);else pixels.data[offset]=pixels.data[offset+1]=pixels.data[offset+2]=pixels.data[offset+3]=0;
      }job.row++;
     }while(job.row<h&&this.now()-begin<4);job.cpu+=this.now()-begin;
@@ -168,10 +183,17 @@ export class WindCanvas {
   });if(this.colorJob)this.colorJob.promise=promise;return promise;
  }
  paintField(size){
-  if(this.fieldDirty){if(this.imageCoversView(this.fieldImage,size))this.fieldDirty=false;else if(!this.mapMoving&&!this.colorJob){const field=this.field;this.prepareField(field).then(cache=>{if(cache&&!this.destroyed&&this.field===field){this.spareImage=this.fieldImage;this.fieldImage=cache;this.fieldDirty=false;this.schedule();}});}}
+  const projection=this.fieldColorProjection(size);
+  if(this.fieldDirty){if(this.imageCoversView(this.fieldImage,size,projection))this.fieldDirty=false;else if(!this.mapMoving&&!this.colorJob){const field=this.field;this.prepareField(field).then(cache=>{if(cache&&!this.destroyed&&this.field===field){this.spareImage=this.fieldImage;this.fieldImage=cache;this.fieldDirty=!this.imageCoversView(cache,this.map.getSize());this.schedule();}});}}
   const cache=this.fieldImage;if(!cache||cache.fieldId!==this.field?.id||cache.deadline<=Date.now())return;
-  const points=this.imageProjection;if(cache.world&&this.projection){const p=this.projection,offset=360*Math.round(((p.ox+size.x*.5*p.ax+size.y*.5*p.bx)-cache.centerLon)/360);for(let i=0;i<3;i++){const v=cache.world[i];p.screen(v[0]+offset,v[1],this.screenScratch);points[i*2]=this.screenScratch[0];points[i*2+1]=this.screenScratch[1];}}else for(let i=0;i<3;i++){const v=this.map.latLngToContainerPoint(cache.anchors[i]);points[i*2]=v.x;points[i*2+1]=v.y;}
-  const ctx=this.ctx;ctx.save();ctx.globalAlpha=this.config.fieldOpacity/100;ctx.transform((points[2]-points[0])/cache.width,(points[3]-points[1])/cache.width,(points[4]-points[0])/cache.height,(points[5]-points[1])/cache.height,points[0],points[1]);ctx.imageSmoothingEnabled=true;ctx.drawImage(cache.image,0,0,cache.width,cache.height);ctx.restore();
+  const ctx=this.ctx,points=this.imageProjection,box=cache.box,view=projection?this.fieldColorBounds(projection,0,0,size.x,size.y):null;
+  const draw=(shift,pattern=false)=>{
+   if(cache.world&&projection){for(let i=0;i<3;i++){const v=cache.world[i];projection.screen(v[0]+shift,v[1],this.screenScratch);points[i*2]=this.screenScratch[0];points[i*2+1]=this.screenScratch[1];}}else for(let i=0;i<3;i++){const v=this.map.latLngToContainerPoint(cache.anchors[i]);points[i*2]=v.x;points[i*2+1]=v.y;}
+   ctx.save();ctx.globalAlpha=this.config.fieldOpacity/100;ctx.transform((points[2]-points[0])/cache.image.width,(points[3]-points[1])/cache.image.width,(points[4]-points[0])/cache.image.height,(points[5]-points[1])/cache.image.height,points[0],points[1]);ctx.imageSmoothingEnabled=true;
+   if(pattern){cache.pattern||=ctx.createPattern(cache.image,'repeat-x');ctx.fillStyle=cache.pattern;const x0=Math.floor((view.west-box.west-shift)/360*cache.image.width)-1,x1=Math.ceil((view.east-box.west-shift)/360*cache.image.width)+1;ctx.fillRect(x0,0,x1-x0,cache.image.height);}else ctx.drawImage(cache.image,0,0);ctx.restore();
+  };
+  if(box&&projection){if(box.fullWorld)draw(360*Math.round(((view.west+view.east)/2-cache.centerLon)/360),true);else{const first=Math.ceil((view.west-box.east)/360),last=Math.floor((view.east-box.west)/360);for(let k=first;k<=last;k++)draw(k*360);}}
+  else draw(0);
  }
  paintParticles(size,dt,color){
   const curves=flowIsCurved(this.config.flowForm)&&!!this.projection,geometry=this.flowGeometry;geometry.resetStats();

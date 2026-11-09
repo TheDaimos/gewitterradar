@@ -1,0 +1,48 @@
+name: Wind colour field world-wrap targeted acceptance
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  wind-colour-wrap:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch exact pre-change source for protected-code comparison
+        run: git fetch --no-tags --depth=1 origin 4f6ebb910342d51708dac25d3f31e85c30e09595
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: World-wrap, numeric reuse and protected source guards
+        run: |
+          node --test tests/gr-wind-color-wrap.test.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+          node scripts/test-frontend-build.mjs
+          node --check frontend/modules/weather/wind-canvas.js
+          node --check frontend/modules/weather/wind-display.js
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/wrap" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/wrap/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Full GR card, eight world-wrap scenarios in six views including HiDPI
+        env:
+          NODE_PATH: ${{ runner.temp }}/wrap/node_modules
+          GR_COLOR_WRAP_OUTPUT: ${{ runner.temp }}/colour-wrap-browser
+        run: node scripts/test-gr-wind-color-wrap-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wind-colour-wrap-synthetic-browser-results
+          path: ${{ runner.temp }}/colour-wrap-browser
+          if-no-files-found: ignore
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable Home Assistant staging
+        run: python scripts/verify-hacs-integration-package.py
