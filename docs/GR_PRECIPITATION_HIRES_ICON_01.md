@@ -63,3 +63,20 @@ Erweitert: Display-Menü mit Unterkonfiguration und Lifecycle-Anbindung, Layer-M
 176 gemeinsame Frontend-Dateien sind in HA und Dashboard enthalten, einschließlich unverändertem Original-PNG. Erwartete Paketumfänge: HA 192 Dateien, Dashboard 178 Dateien. Vollständige Änderungsdateiliste und SHA256-Prüfsummen liegen dem Release bei.
 
 [Installierbares DEV-Release 4.11.165](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.165-dev). Tatsächliche Commit-/CI-/Paketnachweise werden nach erfolgreicher Prüfung und Bereitstellung unten ergänzt.
+
+
+## Abschließender Release-Nachweis
+
+Implementierungscommit: `4d55fd6446593f42cbeea4ea02b9cf86737ce46a`.
+
+* [Öffentliche frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42592381775): **success**.
+* [Öffentliche ha-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/42592385945): **success**.
+
+Installierbares [DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.165-dev).
+
+* `gewitterradar-0.25.72-dev.zip` · SHA256 `6108008645bd390d940a319711cdae9122063dbab0abc2f13da27950fa2931d9` · 192 Dateien.
+* `gewitterradar-dashboard-4.11.165-dev.zip` · SHA256 `eacf410734e1079f5f654487c7faf545664952c398338fd924e373b9fcf20c9b` · 178 Dateien.
+
+176 gemeinsame Frontend-Dateien sind zwischen HA und Dashboard bytegleich. ZIP-CRC, Python-Syntax und Paket-/Versionsidentität sind geprüft. Die Pakete werden aus dem Git-Archiv erzeugt; diese Berichtsergänzung verändert ihren Inhalt nicht.
+
+6 gezielte Funktions-/Schutztests und sechs vollstaendige Desktop-/Touch-Browseransichten erfolgreich. Originalbytes, gemeinsame Radaraktivierung, Klick, 600-ms-Long-Press, Drag, vier Sichtbarkeitsmodi, Persistenz, Reset, Orientierung und Premium-Komponenten geprueft. Wind, Temperatur und Wetterdatenwege unveraendert. Öffentliche HA-/HACS-/hassfest-/DRA-Prüfungen erfolgreich. Keine physische Android-/iPad-/HA-Abnahme durchgeführt. Installation und visuelle Realabnahme bleiben beim Betreiber.
