@@ -169,8 +169,11 @@ History/Abbruch/Persistenz geprüft. Keine neue Animationsengine.
 JavaScript-Syntax, `git diff --check`, 36 registrierte Module, aktuelle
 Releaseidentität und bytegleiche Frontend-/Checksum-Auslieferung bestanden.
 
-Gezielte öffentliche CI: vorhandener Workflow `gr-menu-architecture.yml`,
-isolierter Modus `eye_bubble_only=true` (alter umfassender Job bleibt übersprungen).
+Gezielte öffentliche CI: registrierter Einstieg `shared-frontend.yml`, dessen
+vorhandene Versionsrouting-Struktur für 4.11.174 ausschließlich den wiederverwendeten
+Workflow `gr-menu-architecture.yml` mit `eye_bubble_only=true` aufruft.
+Die alten umfassenden Jobs bleiben übersprungen. Die Routing-Erweiterung befindet
+sich ausschließlich auf `deploy/dev`; der Standardbranch bleibt unverändert.
 Der konkrete Run-Nachweis wird unten ergänzt. Keine privaten Actions.
 
 **Offene Sichtabnahme:** WebKit, physische Android-/iPad-/Companion-Geräte und
@@ -186,7 +189,7 @@ Sechs neue Hilfsmodule (fünf `eye-hub*` plus `compass-preview-style.js`), zwei
 bytegleiche Masterkopien, `display-menu.js`, UI-Hook in `layer-menu.js`,
 gemeinsame Kompass-Styles in `map-display.js`, Resolver-Erweiterung in
 `i18n-settings.js`, Build-Supportinventar, zwei gezielte Tests und isolierter
-öffentlicher Workflowmodus. Kanonische Versions-/Modul-/Runtime-/DRA-Provenienz-
+öffentlicher Workflowmodus mit vorhandenem Frontend-CI-Einstieg. Kanonische Versions-/Modul-/Runtime-/DRA-Provenienz-
 und HA-Metadaten sowie erzeugte Dashboard-/HA-Frontendkopien und Prüfsummen aktualisiert.
 
 Unverändert: moderne Navigationslogik/`SETTINGS_MENU_TREE`, WeatherRouter,
