@@ -94,5 +94,8 @@ jobs:
         run: |
           node scripts/test-eye-hub-fix-browser.cjs
           node scripts/test-eye-neon-quick-browser.cjs
+          node scripts/test-eye-organic-browser.cjs
       - name: Installable DEV payload identity and parity
-        run: python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"
+        run: |
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"
+          python scripts/verify-eye-organic-packages.py "$RUNNER_TEMP/eye-payload"

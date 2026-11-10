@@ -1,5 +1,5 @@
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=411176r1';
-import {eyeHubMethods} from './eye-hub.js?v=411176r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411177r1';
+import {eyeHubMethods} from './eye-hub.js?v=411177r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
@@ -7,10 +7,10 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.34",
+  version:"0.4.35",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
-  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes KartenmenÃ¼","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhÃ¤ngiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flÃ¤chige GlÃ¤ttung","Hotspot-Erhalt","Transparenz im KartenmenÃ¼","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
+  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
   file:"modules/weather/display-menu.js"
 });
 
@@ -68,7 +68,7 @@ export const WEATHER_DISPLAY_STYLES=Object.freeze({
 const CLOUD_BALANCED_BLURS=Object.freeze({2:0,5:0,6:3,7:6,8:10,9:10,10:10,11:11,12:19,13:20,14:23,15:24,16:23,17:24,18:29});
 const LABELS=Object.freeze({
   auto:"Auto",
-  precise:"PrÃ¤zise",
+  precise:"Präzise",
   balanced:"Ausgewogen",
   soft:"Weich"
 });
@@ -101,7 +101,7 @@ export const weatherDisplayBalancedRasterTuning=(zoom,maxNative)=>{
 };
 // Die Quellkacheln vergroessern sich ab maxNativeZoom exponentiell.
 // Weich erhaelt die akzeptierte Zoom-8-Referenz und folgt ab Zoom 9
-// der tatsaechlichen Quell-Uebervergroesserung (statt nur dem KartenzÃ¤hler).
+// der tatsaechlichen Quell-Uebervergroesserung (statt nur dem Kartenzähler).
 // Der alte Mindestanstieg bleibt fuer hochaufloesende Quellen erhalten.
 // Keine neue Render-Ebene/Schleife; Blur-Budget von V4.11.74 bleibt erhalten.
 export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
@@ -292,19 +292,19 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!badge)return;
     const style=this._weatherDisplayStyle("precipitation");
     const zoom=Number(this._map?.getZoom?.());
-    const zoomLabel=Number.isFinite(zoom)?(Number.isInteger(zoom)?String(zoom):zoom.toFixed(1)):"â€“";
-    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto")+" Â· Zoom "+zoomLabel;
+    const zoomLabel=Number.isFinite(zoom)?(Number.isInteger(zoom)?String(zoom):zoom.toFixed(1)):"–";
+    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
     badge.dataset.weatherDisplayStyle=style;
     badge.dataset.weatherDisplayZoom=zoomLabel;
     if(style==="auto"){
       const tuning=this._weatherDisplayRasterTuning("precipitation");
       const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
-      badge.title="Auto Â· Zoom "+zoomLabel+
-        (Number.isFinite(maxNative)?" Â· native "+maxNative:"")+
-        (Number.isFinite(tuning.overscale)?" Â· Overzoom "+tuning.overscale.toFixed(2)+"Ã—":"")+
-        (Number.isFinite(tuning.blur)?" Â· GlÃ¤ttung "+tuning.blur.toFixed(1)+" px":"");
+      badge.title="Auto · Zoom "+zoomLabel+
+        (Number.isFinite(maxNative)?" · native "+maxNative:"")+
+        (Number.isFinite(tuning.overscale)?" · Overzoom "+tuning.overscale.toFixed(2)+"×":"")+
+        (Number.isFinite(tuning.blur)?" · Glättung "+tuning.blur.toFixed(1)+" px":"");
     }else{
-      badge.title="Darstellung: "+(LABELS[style]||style||"Auto")+" Â· Zoom "+zoomLabel;
+      badge.title="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
     }
   },
 
@@ -583,12 +583,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
 
   _weatherDisplayStatusCopy(){
     const state=this._weatherDisplayState();
-    if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprÃ¼ft",note:"Status und DarstellungsfÃ¤higkeiten werden abgefragt."};
-    if(state.status==="missing")return {title:"WeatherRouter nicht installiert",note:"Die Darstellung bleibt sichtbar angekÃ¼ndigt, wird auf der Karte aber nicht als funktionslose Bedienung angeboten."};
-    if(state.status==="incompatible")return {title:"WeatherRouter erkannt, Consumer API nicht kompatibel",note:"Die Darstellungsfunktion bleibt deaktiviert, bis ein kompatibler Consumer-V1-Vertrag verfÃ¼gbar ist."};
-    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht bereit",note:"WeatherRouter ist offline, deaktiviert, startet noch oder die Consumer-Verbindung ist vorÃ¼bergehend nicht erreichbar. Gewitterradar lÃ¤uft unverÃ¤ndert weiter."};
-    if(state.status==="ready-empty")return {title:"WeatherRouter bereit",note:"Der aktuelle Katalog enthÃ¤lt noch keine von dieser Ausbaustufe unterstÃ¼tzte DarstellungsfÃ¤higkeit."};
-    return {title:"WeatherRouter bereit",note:"DarstellungsmenÃ¼ verfÃ¼gbar Â· aktuell Niederschlag als erster Renderer."};
+    if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprüft",note:"Status und Darstellungsfähigkeiten werden abgefragt."};
+    if(state.status==="missing")return {title:"WeatherRouter nicht installiert",note:"Die Darstellung bleibt sichtbar angekündigt, wird auf der Karte aber nicht als funktionslose Bedienung angeboten."};
+    if(state.status==="incompatible")return {title:"WeatherRouter erkannt, Consumer API nicht kompatibel",note:"Die Darstellungsfunktion bleibt deaktiviert, bis ein kompatibler Consumer-V1-Vertrag verfügbar ist."};
+    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht bereit",note:"WeatherRouter ist offline, deaktiviert, startet noch oder die Consumer-Verbindung ist vorübergehend nicht erreichbar. Gewitterradar läuft unverändert weiter."};
+    if(state.status==="ready-empty")return {title:"WeatherRouter bereit",note:"Der aktuelle Katalog enthält noch keine von dieser Ausbaustufe unterstützte Darstellungsfähigkeit."};
+    return {title:"WeatherRouter bereit",note:"Darstellungsmenü verfügbar · aktuell Niederschlag als erster Renderer."};
   },
 
   _mountWeatherDisplaySettings(){
@@ -604,17 +604,17 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       block.innerHTML=
         '<div class="weather-display-settings-head">'+eyeAssetMarkup(false)+'<div><div class="weather-display-settings-title">Darstellung</div><div class="weather-display-settings-status" data-weather-display-status></div></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Augen-Bedienelement<span class="weather-display-row-note">Direkter Zugriff auf der Karte</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="controlVisible" aria-label="Augen-Bedienelement auf der Karte anzeigen"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">DarstellungsmenÃ¼<span class="weather-display-row-note">Aktivieren ist nicht dasselbe wie Minimieren</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="enabled" aria-label="DarstellungsmenÃ¼ aktivieren"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Startzustand minimiert<span class="weather-display-row-note">Das MenÃ¼ bleibt dabei aktiv</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="minimized" aria-label="DarstellungsmenÃ¼ minimiert starten"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Position merken<span class="weather-display-row-note">Nur auf diesem GerÃ¤t und in diesem Browserprofil</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="rememberPosition" aria-label="Position des DarstellungsmenÃ¼s merken"></button></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung Â· Daten und Routing bleiben unverÃ¤ndert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Darstellungsmenü<span class="weather-display-row-note">Aktivieren ist nicht dasselbe wie Minimieren</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="enabled" aria-label="Darstellungsmenü aktivieren"></button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Startzustand minimiert<span class="weather-display-row-note">Das Menü bleibt dabei aktiv</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="minimized" aria-label="Darstellungsmenü minimiert starten"></button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Position merken<span class="weather-display-row-note">Nur auf diesem Gerät und in diesem Browserprofil</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="rememberPosition" aria-label="Position des Darstellungsmenüs merken"></button></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung · Daten und Routing bleiben unverändert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
           WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag Â· Transparenz<span class="weather-display-row-note">0 % = deckend Â· 100 % = unsichtbar Â· WR-Standard bleibt per ZurÃ¼cksetzen erhalten</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note">0 % = deckend · 100 % = unsichtbar · WR-Standard bleibt per Zurücksetzen erhalten</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Position zurÃ¼cksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>ZurÃ¼cksetzen</button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurÃ¼cksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">WeatherRouter-Status</div><button class="weather-display-action" type="button" data-weather-display-refresh>Neu prÃ¼fen</button></div>';
+        '<div class="weather-display-row"><div class="weather-display-row-label">Position zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>Zurücksetzen</button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">WeatherRouter-Status</div><button class="weather-display-action" type="button" data-weather-display-refresh>Neu prüfen</button></div>';
       const results=this.shadow.getElementById("weather-engine-results")?.closest(".settings-row");
       if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
       block.querySelectorAll("[data-weather-display-setting]").forEach(button=>button.addEventListener("click",()=>{
@@ -668,7 +668,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     let control=this.shadow.getElementById("weather-display-control");
     if(!control){
       control=document.createElement('button');control.id='weather-display-control';control.className='weather-display-control';control.type='button';
-      control.setAttribute('aria-label','DarstellungsmenÃ¼ Ã¶ffnen');control.setAttribute('aria-controls','weather-display-panel');control.innerHTML=displayControlMarkup();mapCard.append(control);
+      control.setAttribute('aria-label','Darstellungsmenü öffnen');control.setAttribute('aria-controls','weather-display-panel');control.innerHTML=displayControlMarkup();mapCard.append(control);
       state.displayControlDrag={eyeDrag:null,eyeSuppressClickUntil:0};
       const open=()=>this._weatherDisplayOpenFromLayerMenu();
       state.displayControlOptions={element:control,state:()=>state.displayControlDrag,position:()=>this._weatherDisplayPositionControl(),activate:open,longPress:open,save:position=>{if(state.config.rememberPosition)this._weatherDisplayPatch({displayControlPosition:position});}};
@@ -682,8 +682,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       panel.className="weather-display-panel gr-premium-metal-surface";
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
-        '<div class="weather-display-panel-head" data-weather-display-drag-handle><img class="weather-display-layer-master" src="'+new URL('../../assets/gr-weather-display-premium-original.png',import.meta.url).href+'" alt="" style="width:30px;height:30px;object-fit:contain;pointer-events:none">'+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter</div></div>'+premiumAction('minimize','DarstellungsmenÃ¼ minimieren','minimize').replace('data-premium-action="minimize"','data-premium-action="minimize" data-weather-display-minimize')+'<button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info"><img src="'+PREMIUM_INFO+'" alt="" style="width:28px;height:28px;object-fit:contain;pointer-events:none"></button><button type="button" data-weather-display-close aria-label="DarstellungsmenÃ¼ schlieÃŸen" title="SchlieÃŸen" class="weather-display-close"><img src="'+deps.ABOUT_CLOSE_IMAGE+'" alt="" draggable="false"></button></div>'+
-        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wÃ¤hlen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><section data-weather-quick-controls></section>'+
+        '<div class="weather-display-panel-head" data-weather-display-drag-handle><img class="weather-display-layer-master" src="'+new URL('../../assets/gr-weather-display-premium-original.png',import.meta.url).href+'" alt="" style="width:30px;height:30px;object-fit:contain;pointer-events:none">'+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter</div></div>'+premiumAction('minimize','Darstellungsmenü minimieren','minimize').replace('data-premium-action="minimize"','data-premium-action="minimize" data-weather-display-minimize')+'<button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info"><img src="'+PREMIUM_INFO+'" alt="" style="width:28px;height:28px;object-fit:contain;pointer-events:none"></button><button type="button" data-weather-display-close aria-label="Darstellungsmenü schließen" title="Schließen" class="weather-display-close"><img src="'+deps.ABOUT_CLOSE_IMAGE+'" alt="" draggable="false"></button></div>'+
+        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><section data-weather-quick-controls></section>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div></div>';
       const closeButton=panel.querySelector("[data-weather-display-close]");closeButton?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({enabled:false});});
       const infoButton=panel.querySelector("[data-weather-display-info]");
@@ -698,23 +698,23 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         const heading=document.createElement("strong");heading.textContent="Aktive Wetterebenen";heading.style.color="#edca83";info.append(heading);
         const add=(title,desc)=>{
           const row=document.createElement("div");row.style.cssText="padding:7px 0;border-top:1px solid rgba(255,255,255,.12)";
-          const label=document.createElement("strong");label.textContent=title+" Â· ";label.style.color="#f1d398";
+          const label=document.createElement("strong");label.textContent=title+" · ";label.style.color="#f1d398";
           row.append(label,document.createTextNode(desc));info.append(row);
         };
         const radar=this._weatherRadarState?.();
         if(radar?.layer){
           const mode=this._weatherDisplayStyle("precipitation");
-          add("Niederschlag",(LABELS[mode]||mode)+" Â· Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
+          add("Niederschlag",(LABELS[mode]||mode)+" · Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
         }
         const generic=this.__weatherGenericStates;
         if(generic instanceof Map){
           for(const [id,state] of generic){
             if(!state?.enabled)continue;
             const isCloud=id==="weather.satellite.clouds";
-            const name=isCloud?"Wolken":id==="weather.model.wind_10m.layer"?"Wind (Raster)":id.split(".").slice(-2).join(" Â· ");
+            const name=isCloud?"Wolken":id==="weather.model.wind_10m.layer"?"Wind (Raster)":id.split(".").slice(-2).join(" · ");
             const mode=isCloud?this._weatherDisplayStyle("clouds"):"original";
             const status=this._weatherGenericDescribe?.(id)||state.status||"Aktiv";
-            add(name,(isCloud?(mode==="balanced"?"Ausgewogen":"Original"):"Original")+" Â· "+status);
+            add(name,(isCloud?(mode==="balanced"?"Ausgewogen":"Original"):"Original")+" · "+status);
           }
         }
         if(info.children.length===1){const empty=document.createElement("p");empty.textContent="Keine aktiven Wetter-Rasterebenen";info.append(empty);}
@@ -738,7 +738,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherPrecipitationEnsureToggle();
     this._weatherPrecipitationEnsureSettings(panel);
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherDisplayPositionControl();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();});
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherDisplayPositionControl();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();this._eyeHubSyncIcons?.();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
@@ -948,7 +948,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     const block=this.shadow.querySelector('[data-weather-display-settings="true"]');
     if(block){
       block.classList.toggle("offline",!available);
-      const status=block.querySelector("[data-weather-display-status]");if(status)status.textContent=copy.title+" Â· "+copy.note;
+      const status=block.querySelector("[data-weather-display-status]");if(status)status.textContent=copy.title+" · "+copy.note;
       const headGlyph=block.querySelector(".weather-display-eye-glyph");if(headGlyph)headGlyph.outerHTML=eyeAssetMarkup(available&&config.enabled);
       block.querySelectorAll("[data-weather-display-setting]").forEach(button=>{
         const key=button.dataset.weatherDisplaySetting,on=Boolean(config[key]);
@@ -966,13 +966,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherDisplayEnsureMapUi();
     const eye=this.shadow.getElementById("weather-display-eye-control");
     const control=this.shadow.getElementById('weather-display-control');
-    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='DarstellungsmenÃ¼ Ã¶ffnen Â· 600 ms drÃ¼cken: Ã¶ffnen Â· Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
+    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
     const panel=this.shadow.getElementById("weather-display-panel");
     if(panel){
       panel.hidden=!((available||this._weatherWindOpen)&&config.enabled);
       panel.classList.toggle("minimized",config.minimized);
       const minimize=panel.querySelector("[data-weather-display-minimize]");
-      if(minimize){minimize.setAttribute("aria-label",config.minimized?"DarstellungsmenÃ¼ aufklappen":"DarstellungsmenÃ¼ minimieren");}
+      if(minimize){minimize.setAttribute("aria-label",config.minimized?"Darstellungsmenü aufklappen":"Darstellungsmenü minimieren");}
       const glyph=panel.querySelector(".weather-display-eye-glyph");if(glyph)glyph.outerHTML=eyeAssetMarkup(true);
       const precipCard=panel.querySelector("[data-weather-display-precipitation-card]");if(precipCard)precipCard.hidden=!available;
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>{const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";select.value=config.styles?.[kind]||"auto";select.disabled=!available;});
@@ -991,7 +991,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!this._weatherDisplayIsAvailable())return "";
     const config=this._weatherDisplayState().config;
     return '<button class="weather-layer-action weather-layer-display-entry'+(config.enabled?' active':'')+'" type="button" data-weather-layer-action="display"><strong>Darstellung</strong><small>'+(
-      config.enabled?(config.minimized?"aktiv Â· minimiert":"aktiv Â· geÃ¶ffnet"):"SchnellmenÃ¼ Ã¶ffnen"
+      config.enabled?(config.minimized?"aktiv · minimiert":"aktiv · geöffnet"):"Schnellmenü öffnen"
     )+'</small></button>';
   },
 
