@@ -241,3 +241,10 @@ Die Eye-JS-Spalte umfasst aktive Frames der Prüfsequenz, nicht GPU-Paintzeit. D
 ## Finale Cachekorrektur vor der Erstveröffentlichung
 
 Der Präsentationscache berücksichtigt auch Kartenursprung links/oben, damit ein verschobener Dashboard-Kartenbereich die Icons korrekt mitnimmt. Eine neue Browserassertion verschiebt den tatsächlichen Kartencontainer und prüft die erhaltene relative Iconposition.177 war noch nicht als Release veröffentlicht. Die finale Lieferung verwendet411177r2/E411-177A2, damit kein zwischenzeitlicher r1-Cache weiterverwendet wird. Der überholte öffentliche Lauf wurde abgebrochen; unten zählt nur der neue erfolgreiche Lauf auf dem finalen SHA. Der Buildvalidator prüft nun streng korrespondierende positive rN/AN-Paare statt ausschließlich r1/A1. Das erweitert die Cacheidentität, ohne Versions-/Modulparität zu lockern.
+
+## Finaler Paketnachweis
+
+Finaler Implementierungscommit: `c1f56983a6e28e19115ebac5be4b57465c02b9a4`. Urspruengliche Featureimplementierung: `36b60e267abebe892848d180d6e1b45b2b53a323`.
+
+- `gewitterradar-0.25.84-dev.zip`: SHA256 `4bef3241dbcae04ba397c9ce32a265ede075becc63acac9de67ec8755c2f4669`
+- `gewitterradar-dashboard-4.11.177-dev.zip`: SHA256 `c96d7d29e7b8ada53dc7c4bfd49487f6828868c68e91a6dff5d8dc885316d8f8`
