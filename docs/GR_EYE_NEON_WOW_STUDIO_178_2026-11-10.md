@@ -220,3 +220,27 @@ HA-/Dashboard-ZIPs aus committed Git-Baum, CRC und jede enthaltene UI-/WOW-Quell
 ## Gezielte Korrektur des bestehenden Layouttests
 
 Der erste öffentliche Lauf [42875697159](https://github.com/TheDaimos/gewitterradar/actions/runs/42875697159) schlug im alten mobilen Rastertest fehl: dessen Selektor sammelte nun auch die vier versteckten Regler des neuen eingeklappten Studios. Deren Null-Rechtecke gehörten nicht zum geprüften alten Raster. Der Test prüft jetzt ausdrücklich das ursprüngliche oberste Einstellungsraster; die neue WOW-Serie prüft zusätzlich alle vier tatsächlich aufgeklappten Studio-Regler auf horizontale Begrenzung. Keine Assertion wurde entfernt, keine Toleranz aufgeweitet und kein Frontend-/Paketbyte geändert. Der neue Lauf folgt unten.
+
+## Erfolgreiche öffentliche CI
+
+[Gezielter Eye-Bubble-/Neon-Studio-Lauf](https://github.com/TheDaimos/gewitterradar/actions/runs/42876508617), Quellcommit `0c876822e50d94765c0de3e61be37d42d623986f`. Bestehende Eye-Gesten-, Schnellmenü- und177-Regressionsserien sowie neue fünf WOW-Ansichten erfolgreich. Keine privaten Actions oder meteorologischen Prüfkampagnen.
+
+Ubuntu/Chromium-Emulation, je1,6s-RAF-Messfenster, synthetisches Schlangenwindfeld. Nullmessung nach Maximalbetrieb derselben Sitzung; adaptive Zustände können nachwirken.
+
+|Ansicht|Null p50/p95 ms|Max Karte p50/p95 ms|Max Vorschau p50/p95 ms|Zusatz-JS Karte Mittel/Max ms|
+|---|---|---|---|---|
+|desktop|16.7/16.7|16.7/33.3|33.3/49.9|2.75/12.60|
+|desktop-hidpi|33.3/33.4|33.3/50.0|66.7/66.7|3.81/12.10|
+|android|16.7/16.7|16.7/16.7|16.7/33.4|3.24/15.20|
+|android-landscape|16.7/16.7|16.7/16.8|16.7/33.3|3.14/15.10|
+|ipad|16.7/16.7|16.7/33.4|33.4/50.0|3.37/11.40|
+
+|Ansicht|Basis/Zusatzfilamente|Basis/Zusatzperlen|Brücken/Transfers|Zusatz-LOD|Canvas-/Sprite-/Geometriebytes Zusatz|
+|---|---|---|---|---|---|
+|desktop|36/12|612/197|7/4|2|1008704/65536/24576|
+|desktop-hidpi|24/12|240/149|7/4|2|1614224/65536/24576|
+|android|28/12|364/165|7/4|2|2162688/65536/24576|
+|android-landscape|28/12|364/165|7/5|2|2162688/65536/24576|
+|ipad|28/12|364/165|7/4|2|2162688/65536/24576|
+
+180 exakte nichtleere V177-Pixelvergleiche bestanden. Zusatzeffekte sind bei Null inaktiv; Originalfarben und Originalrenderer erhalten. Reale Geräte-/WebKit-/VM109-Sichtabnahme bleibt offen. Maximalstellung hat ausdrücklich messbare Zusatzlast. Der nachfolgende reine Berichtsnachtrag ändert keine installierbaren Dateien.
