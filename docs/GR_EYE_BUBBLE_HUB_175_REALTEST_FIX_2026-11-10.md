@@ -118,3 +118,11 @@ Implementierungscommit: `3f824bbc514678a55f46d427438e7404a07b7418`.
 - `gewitterradar-dashboard-4.11.175-dev.zip`: SHA256 `0c7f4a1f9c88a950adebbf614e480c1c469ef34f44b53784da53f1ba9b799720`
 
 The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
+
+## Oeffentliche gezielte CI
+
+Erfolgreich: [Eye Bubble Hub acceptance](https://github.com/TheDaimos/gewitterradar/actions/runs/42797991339).
+Gepruefter Quellcommit: `a76e8d225dce8abfc795b20fe4bbf8f583df043c`. Isolierter Eye-Job, Altjob uebersprungen.
+Enthaelt Modell-/Status-/Masterpruefung, vier vollstaendige Chromium-Modulbaumansichten mit Touch/Hold/Drag,
+Prozent-/Legacy-Persistenz und 300-Prozent-Randfaellen und installierbare Paketidentitaet.
+Der nachfolgende Berichtsnachtrag aendert keine installierbaren Dateien.
