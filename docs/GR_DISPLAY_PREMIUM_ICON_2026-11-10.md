@@ -109,6 +109,7 @@ Implementierungscommit: `55f2d643c1ed3f2b3ff31a61bf14c4c4d16511f1`.
 - `gewitterradar-0.25.79-dev.zip`: SHA256 `b3f1a701a6ceb77e16a476cb23953b77564677904d53355df8de9ea9edebb915`
 - `gewitterradar-dashboard-4.11.172-dev.zip`: SHA256 `131e95754fb6081970786b5aae8795f89ae856c6a13532c8fd0d56fb79d4f8fe`
 
-Der abschlieÃŸende Dokumentationscommit ist zugleich das Releaseziel; seine
-volle SHA steht in `deployment.json` und im GitHub-Release. Die ZIP-Inhalte
-bleiben gegenÃ¼ber dem Implementierungscommit unverÃ¤ndert.
+Releaseziel: `e41898985c6ca251fdd0636b12635a10c3545bcb`, ebenfalls in
+`deployment.json` und im GitHub-Release dokumentiert. Die ZIP-Inhalte sind
+gegenüber dem Implementierungscommit unverändert; spätere reine
+Dokumentationskorrekturen verändern diese Pakete nicht.
