@@ -109,3 +109,12 @@ Bestehende DRA-Quelle unverändert: `TheDaimos/gewitterradar`, `deploy/dev`.
 HA-ZIP, Dashboard-ZIP, `deployment.json` und `SHA256SUMS.txt` werden als neue
 Releaseassets veröffentlicht. Vollständige Commits, Paketprüfsummen und
 CI-Nachweis folgen unten nach tatsächlicher Erstellung/Verifikation.
+
+## Paketnachweis
+
+Implementierungscommit: `3f824bbc514678a55f46d427438e7404a07b7418`.
+
+- `gewitterradar-0.25.82-dev.zip`: SHA256 `183be92c4a74c86da65b7c8f36073cb301b6c76effbcd6e740c7fddf6e7ce713`
+- `gewitterradar-dashboard-4.11.175-dev.zip`: SHA256 `0c7f4a1f9c88a950adebbf614e480c1c469ef34f44b53784da53f1ba9b799720`
+
+The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
