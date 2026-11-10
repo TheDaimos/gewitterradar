@@ -86,11 +86,10 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/eye" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
           "$RUNNER_TEMP/eye/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Real module tree, synthetic I/O, touch Hub and protected navigation timeline
+      - name: Focused Eye realtest correction, complete module tree and touch viewports
         env:
           NODE_PATH: ${{ runner.temp }}/eye/node_modules
         run: |
-          GR_MENU_VIEW=android node scripts/test-eye-hub-browser.cjs
-          GR_MENU_VIEW=desktop node scripts/test-gr-menu-animation-restore.cjs
+          node scripts/test-eye-hub-fix-browser.cjs
       - name: Installable DEV payload identity and parity
         run: python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"

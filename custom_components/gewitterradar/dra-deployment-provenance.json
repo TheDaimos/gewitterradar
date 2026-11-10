@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.174",
-  "build": "V4.11.174-DEV-2026-11-10",
-  "runtimeRevision": "411174r1",
-  "moduleSetId": "E411-174A1",
-  "baselineFeatureHead": "5cbf9ea07b536138661e1c8b83153fd99dc157d0",
+  "productVersion": "4.11.175",
+  "build": "V4.11.175-DEV-2026-11-10",
+  "runtimeRevision": "411175r1",
+  "moduleSetId": "E411-175A1",
+  "baselineFeatureHead": "4aff02cdbc1ddc56cc37f1c33a895901d4d38eee",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
+    "purpose": "Eye realtest correction: always visible, compatible percent sizing, shared close asset and restrained Eye-only aura; weather data paths and DRA channel unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

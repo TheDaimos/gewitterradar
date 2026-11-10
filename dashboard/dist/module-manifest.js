@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411174r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411175r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.191",
+    "version": "1.2.192",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.32",
+    "version": "0.4.33",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [

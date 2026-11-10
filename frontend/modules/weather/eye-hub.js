@@ -1,6 +1,6 @@
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout} from './eye-hub-model.js?v=411174r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout} from './eye-hub-model.js?v=411175r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411174r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator} from './eye-hub-view.js?v=411174r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator} from './eye-hub-view.js?v=411175r1';
 export const eyeHubMethods={
  _eyeHubState(){
   if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(localStorage.getItem(EYE_HUB_KEY));}catch(_){}
@@ -16,7 +16,7 @@ export const eyeHubMethods={
  _eyeHubAssign(index,id){const s=this._eyeHubState();this._eyeHubPatch(assignEyeSlot(s.config,index,id,[...s.registry.entries.keys()]));},
  _eyeHubResize(delta){const s=this._eyeHubState(),result=resizeEyeSlots(s.config,delta,[...s.registry.entries.keys()]);if(result.blocked)return s.view?.message(this._t('eye.blocked',{slot:result.blocked}));this._eyeHubPatch(result.config);},
  _eyeHubReset(){this._eyeHubPatch(normalizeEyeConfig(null,[...this._eyeHubState().registry.entries.keys()]));},
- _eyeHubToggle(){const s=this._eyeHubState();if(!s.config.grouped)return;s.open=!s.open;s.signature=null;this._eyeHubSync();},
+ _eyeHubToggle(){const s=this._eyeHubState();if(!s.config.grouped)return this._eyeHubOpen();s.open=!s.open;s.signature=null;this._eyeHubSync();},
  _eyeHubClose(){const s=this.__eyeHub;if(!s)return;for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:!s.suspended&&!!options.state().eyeReleaseCleanup});s.bubbleOptions=[];s.open=false;s.signature=null;const root=this.shadow?.getElementById('eye-hub-bubbles');if(root){root.hidden=true;root.replaceChildren();}if(!s.suspended)this._eyeHubSync();},
  _eyeHubOpen(){const s=this._eyeHubState();this._eyeHubClose();const backdrop=this.shadow?.getElementById('settings-backdrop');if(backdrop?.classList.contains('open'))this.shadow.getElementById('settings-close')?.click();if(!s.view)s.view=new EyeConfigurator(this);s.view.open();},
  _eyeHubEnsureEye(card){
@@ -46,7 +46,7 @@ export const eyeHubMethods={
   // CSS controls presentation only; never overwrite the original hidden flags,
   // quickVisibility, per-view positions or meteorological settings.
   const assigned=new Set(visibleEyeSlots(c).map(v=>v.functionId));for(const [id,f] of s.registry.entries){const button=this.shadow.getElementById(f.button);if(button)button.classList.toggle('eye-hub-unassigned',!assigned.has(id));}
-  eye.hidden=!c.grouped;eye.setAttribute('aria-label',this._t('eye.title'));eye.setAttribute('aria-expanded',String(s.open));eye.title=this._t('eye.title')+' · '+this._t('eye.settings')+': 600 ms / F2';
+  eye.hidden=false;eye.setAttribute('aria-label',this._t('eye.title'));eye.setAttribute('aria-expanded',String(s.open));eye.title=this._t('eye.title')+' · '+this._t('eye.settings')+': 600 ms / F2';
   const signature=JSON.stringify([c,statuses,s.open,this._languageValue?.()]);
   if(signature!==s.signature){s.signature=signature;eye.innerHTML=eyeVisual(c,s.open,statuses);eye.style.setProperty('--eye-size',c.size+'px');eye.style.setProperty('--eye-target',Math.max(50,c.size)+'px');
    const root=this.shadow.getElementById('eye-hub-bubbles'),ids=visibleEyeSlots(c).filter(v=>v.functionId).map(v=>v.functionId);
@@ -61,17 +61,17 @@ export const eyeHubMethods={
    }}
    s.view?.update();
   }
-  if(c.grouped)this._eyeHubPosition();
+  this._eyeHubPosition();
  },
  _eyeHubPosition(){
-  const s=this.__eyeHub,eye=this.shadow?.getElementById('weather-display-eye-control'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!s?.config.grouped||!eye||!card||!map)return;
+  const s=this.__eyeHub,eye=this.shadow?.getElementById('weather-display-eye-control'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!s||!eye||!card||!map)return;
   const m=map.getBoundingClientRect(),cr=card.getBoundingClientRect(),width=eye.offsetWidth||50;if(!m.width||!m.height)return;
-  if(!this._weatherDisplayState().eyeDrag){const c=s.config,p=this._weatherDisplayState().config.rememberPosition?this._weatherDisplayState().config.eyePosition:{x:0,y:1},extent=Math.max(width/2,eyeRingRadius(c.size,Math.min(c.slots.length,8)-1)+7),pad=10;
+  if(!this._weatherDisplayState().eyeDrag){const c=s.config,p=this._weatherDisplayState().config.rememberPosition?this._weatherDisplayState().config.eyePosition:{x:0,y:1},extent=Math.max(width/2,c.size*.725,c.grouped?eyeRingRadius(c.size,Math.min(c.slots.length,8)-1)+10:0),pad=10;
    const left=m.left-cr.left+pad+(Math.max(0,m.width-width-pad*2))*p.x,top=m.top-cr.top+pad+Math.max(0,m.height-width-pad*2)*p.y;
    eye.style.left=Math.max(m.left-cr.left+extent+pad-width/2,Math.min(m.right-cr.left-extent-pad-width/2,left))+'px';eye.style.top=Math.max(m.top-cr.top+extent+pad-width/2,Math.min(m.bottom-cr.top-extent-pad-width/2,top))+'px';eye.style.bottom='auto';
   }
   const root=this.shadow.getElementById('eye-hub-bubbles');if(!root||root.hidden)return;const r=eye.getBoundingClientRect(),obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,#compass-instrument,.map-instrument,#map-medallion-overlay,#map-compass-overlay,.medallion-instrument')].map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height);
-  const points=eyeBubbleLayout(root.children.length,{x:r.left+r.width/2,y:r.top+r.height/2},m,obstacles);[...root.children].forEach((b,i)=>{b.hidden=!points[i];if(points[i]){b.style.left=points[i].x-cr.left-25+'px';b.style.top=points[i].y-cr.top-25+'px';}});
+  const points=eyeBubbleLayout(root.children.length,{x:r.left+r.width/2,y:r.top+r.height/2},m,obstacles,s.config.size);[...root.children].forEach((b,i)=>{b.hidden=!points[i];if(points[i]){b.style.left=points[i].x-cr.left-25+'px';b.style.top=points[i].y-cr.top-25+'px';}});
  },
  _eyeHubLegacyEyeRect(){
   const card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!card||!map)return null;const c=card.getBoundingClientRect(),m=map.getBoundingClientRect(),p=this._weatherDisplayState().config.eyePosition,width=matchMedia('(max-width:720px)').matches?46:44;

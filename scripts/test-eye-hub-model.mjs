@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,eyeAuraOn,eyeRingRadius,eyeBubbleLayout} from '../frontend/modules/weather/eye-hub-model.js';
+import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
 import {compassPreviewHalo,compassDialogSurface} from '../frontend/modules/fullscreen/compass-preview-style.js';
 import {createEyeRegistry} from '../frontend/modules/weather/eye-hub-registry.js';
 import {readFileSync} from 'node:fs';
@@ -17,6 +17,10 @@ for(const grouped of [false,true])for(const aura of [false,true])for(const activ
 for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [0,1,3,4,8,12]){const p=eyeBubbleLayout(count,{x:width/2,y:height/2},{left:0,top:0,right:width,bottom:height});assert.equal(p.length,count);p.forEach((a,i)=>{assert(a.x>=31&&a.x<=width-31&&a.y>=31&&a.y<=height-31);for(const b of p.slice(i+1))assert(Math.hypot(a.x-b.x,a.y-b.y)>=56);});}
 for(const state of ['open','closed'])assert(readFileSync('frontend/assets/gr-eye-'+state+'-master-1254.png').equals(readFileSync('artwork/help-icons/hires/help-display-eye-'+state+'-master-1254.png')));
 const roundtrip=normalizeEyeConfig(JSON.parse(JSON.stringify(defaults)));assert.deepEqual(roundtrip,defaults);
+for(const [percent,pixels] of [[100,42],[200,84],[300,126]]){assert.equal(eyeSizePixels(percent),pixels);assert.equal(eyeSizePercent(pixels),percent);}
+assert.equal(normalizeEyeConfig({size:72}).size,72);assert.equal(Math.round(eyeSizePercent(72)*10)/10,171.4);
+assert.equal(normalizeEyeConfig({size:500}).size,126);assert.equal(normalizeEyeConfig({size:1}).size,36);
+for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [1,4,8]){const radius=eyeRingRadius(126,count-1)+20;for(const x of [radius,width-radius])for(const y of [radius,height-radius]){const points=eyeBubbleLayout(count,{x,y},{left:0,top:0,right:width,bottom:height},[],126);assert.equal(points.length,count);for(const p of points)assert(Math.hypot(p.x-x,p.y-y)>100);}}
 const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/fullscreen/map-display.js'],{encoding:'utf8'});
 assert(old.includes(compassPreviewHalo('.compass-picker-stage')));assert(old.includes(compassDialogSurface('.compass-picker-dialog')));
 assert(readFileSync('frontend/modules/ui/controls.js').equals(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/ui/controls.js'])),'modern menu source byte-identical');

@@ -1,4 +1,4 @@
-import {eyeHubMethods} from './eye-hub.js?v=411174r1';
+import {eyeHubMethods} from './eye-hub.js?v=411175r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
@@ -6,7 +6,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.32",
+  version:"0.4.33",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -201,6 +201,7 @@ const eyeAssetMarkup=open=>{
 export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
   ...precipitationControlMethods,
   ...eyeHubMethods,
+  _eyeHubHeaderCloseIcon(){return deps.ABOUT_CLOSE_IMAGE;},
   _weatherDisplayState(){
     if(this.__weatherDisplayState)return this.__weatherDisplayState;
     let saved=null;

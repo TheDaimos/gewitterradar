@@ -31,7 +31,7 @@ jobs:
       - id: scope
         name: Restrict scoped DEV releases to their targeted acceptance
         run: |
-          node -e "console.log('eye_bubble='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.174\"'));" >> "$GITHUB_OUTPUT"
+          node -e "const t=require('node:fs').readFileSync('frontend/version.js','utf8');console.log('eye_bubble='+['4.11.174','4.11.175'].some(v=>t.includes('version:\"'+v+'\"')));" >> "$GITHUB_OUTPUT"
           node -e "console.log('menu_architecture='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.168\"'));" >> "$GITHUB_OUTPUT"
           node -e "console.log('precipitation_icon='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.165\"'));" >> "$GITHUB_OUTPUT"
           node -e "const fs=require('node:fs'); const text=fs.readFileSync('frontend/version.js','utf8'); console.log('legend_ui06='+text.includes('version:\"4.11.148\"')); console.log('wind_ui03='+text.includes('version:\"4.11.149\"'));" >> "$GITHUB_OUTPUT"
