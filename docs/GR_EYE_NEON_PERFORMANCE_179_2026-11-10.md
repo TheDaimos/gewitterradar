@@ -6,7 +6,7 @@ Ausgangsstand ist V4.11.178 auf `5a3f0a6b64978194991e8a94dacd6aa86195bc3a`. V4.1
 
 ## Android-Beobachtung und Profiling
 
-Die lokale Aufnahme `77771.mp4` hat 36,9 Sekunden und 1200 × 2608 Pixel. Sechs über die Aufnahme verteilte Einzelbilder zeigen die geschlossene Vorschau mit stark überlagerten Lichtfäden, wechselnden Farben und einem breiten Leuchthof. Der Betreiber meldet Ruckeln bei Maximalwerten. Die Aufnahme liefert keine instrumentierten Geräte-FPS. Sie wurde lokal betrachtet.
+Die lokale Aufnahme `77771.mp4` hat 36,9 Sekunden und 1200 × 2608 Pixel. Die sechs über die Aufnahme verteilten Stichproben enthalten die Reglereinstellungen und Ansichten der geschlossenen Vorschau. Darin sind stark überlagerte Lichtfäden, wechselnde Farben und ein breiter Leuchthof zu sehen. Der Betreiber meldet Ruckeln bei Maximalwerten. Die Aufnahme liefert keine instrumentierten Geräte-FPS. Sie wurde lokal betrachtet.
 
 V178 zeichnete die Lichtmaske bei jedem Draw neu. Im Desktop-Maximalprofil wurden über 108 Aufrufe 6680 Maskenstriche und 81 Blur-Durchläufe gezählt. Der Zusatzpfad kostete im Messfenster durchschnittlich 2,43 ms pro Draw. Die Kontaktprüfung beanspruchte in diesem Durchlauf insgesamt 0,2 ms gemessene JS-Zeit. Die Zählung zeigt den Umfang der wiederholten Maskenarbeit. Einzelne GPU- und Composite-Kosten lassen sich damit nicht bestimmen.
 
@@ -24,7 +24,7 @@ Die adaptive Stufe berücksichtigt die gemittelte Zusatz-JS-Zeit und die Framein
 
 `scripts/benchmark-eye-neon.cjs --baseline` lädt den V178-Releasecommit. Derselbe Aufruf ohne Option lädt die Arbeitsversion. Beide Läufe verwenden den vollständigen GR-Modulbaum mit synthetischem Windfeld in Chromium unter Windows. Der Harness zeichnet 108 Frames pro Szenario mit identischer Animationszeitfolge und misst nach 24 Aufwärmframes. Der kontrollierte Draw-Aufruf pro RAF beansprucht die Engine stärker als der Produktionsscheduler. Die Browser-Regressionen prüfen zusätzlich die regulären Menü- und Kartenpfade.
 
-`max` verwendet 127,8 % Eye-Größe, 128 % Icongröße, 85 % Kontrastschattierung und alle vier Studio-Regler bei 100 %. `preview` verwendet ein großes Eye mit 126 CSS-Pixeln und 1,25-facher Vorschauprojektion. `light-max` setzt nur die drei Lichtregler auf 100 %. `two` verwendet zwei aktive Farben. Die Pufferwerte enthalten Zusatzfläche und Masken. Die Zeiten enthalten keine getrennte GPU-Messung.
+`max` verwendet 127,8 % Eye-Größe, 128 % Icongröße, 85 % Kontrastschattierung und alle vier Studio-Regler bei 100 %. `preview` verwendet ein großes Eye mit 126 CSS-Pixeln und 1,25-facher Vorschauprojektion. `light-max` setzt nur die drei Lichtregler auf 100 %. `two` verwendet zwei aktive Farben. Die Pufferwerte enthalten Zusatzfläche und Masken. Die Zusatz-JS-Zeit stammt aus dem internen Timer der jeweiligen Version. Die neue Sichtbarkeitsprüfung liegt vor dem Zusatz-Timer. Ihr Aufwand ist im gesamten Draw-JS enthalten. Die Zeiten enthalten keine getrennte GPU-Messung.
 
 | Ansicht | Profil | Zusatz-JS ms V178 → V179 | RAF p50/p95 ms V178 → V179 | Draw-JS p95/max ms V178 → V179 | Maskenstriche V178 → V179 | Blur-Durchläufe V178 → V179 |
 |---|---|---:|---:|---:|---:|---:|
@@ -103,3 +103,27 @@ Implementierungscommit: `f62070a431e227a2b96a30a66f6a33066e35a0ec`.
 - `gewitterradar-dashboard-4.11.179-dev.zip`: SHA256 `8aa010148492fea75751cb5a0f0900ecc64e7d0b769d10da7b5fcccd45bebebd`
 
 HA-/Dashboard-ZIPs aus committed Git-Baum, CRC und jede enthaltene UI-/WOW-Quelle mit kanonischen UTF-8-Dateien verglichen. Deployment-Metadaten nennen den finalen Bericht-/Releasecommit; ZIP-Nutzdaten bleiben über reine Berichtsnachträge identisch.
+
+## Erfolgreiche öffentliche CI
+
+[Gezielter Eye-Bubble-/Neon-Studio-Lauf](https://github.com/TheDaimos/gewitterradar/actions/runs/42917487820), Quellcommit `f13b4f018bb85bff1cd929e5c39894ec5b533b88`. Bestehende Eye-Gesten-, Schnellmenü- und177-Regressionsserien sowie neue fünf WOW-Ansichten erfolgreich. Keine privaten Actions oder meteorologischen Prüfkampagnen.
+
+Ubuntu/Chromium-Emulation, je1,6s-RAF-Messfenster, synthetisches Schlangenwindfeld. Nullmessung nach Maximalbetrieb derselben Sitzung; adaptive Zustände können nachwirken.
+
+|Ansicht|Null p50/p95 ms|Max Karte p50/p95 ms|Max Vorschau p50/p95 ms|Zusatz-JS Karte Mittel/Max ms|
+|---|---|---|---|---|
+|desktop|16.7/16.7|16.7/16.8|33.4/50.1|1.98/7.60|
+|desktop-hidpi|33.3/50.0|33.4/50.0|83.4/116.7|2.18/9.10|
+|android|16.7/16.7|16.7/33.3|16.7/33.4|2.13/12.20|
+|android-landscape|16.7/16.7|16.7/33.2|16.7/33.4|2.05/9.60|
+|ipad|16.7/33.4|33.3/33.4|50.0/50.1|2.18/10.60|
+
+|Ansicht|Basis/Zusatzfilamente|Basis/Zusatzperlen|Brücken/Transfers|Zusatz-LOD|Canvas-/Sprite-/Geometriebytes Zusatz|
+|---|---|---|---|---|---|
+|desktop|28/20|364/132|5/3|1|779328/65536/15360|
+|desktop-hidpi|24/16|240/88|5/3|2|1384848/65536/15360|
+|android|28/20|364/132|5/3|1|1933312/65536/15360|
+|android-landscape|28/20|364/132|5/3|1|1933312/65536/15360|
+|ipad|28/16|364/116|5/3|2|1933312/65536/15360|
+
+180 exakte nichtleere V177-Pixelvergleiche bestanden. Zusatzeffekte sind bei Null inaktiv; Originalfarben und Originalrenderer erhalten. Reale Geräte-/WebKit-/VM109-Sichtabnahme bleibt offen. Maximalstellung hat ausdrücklich messbare Zusatzlast. Der nachfolgende reine Berichtsnachtrag ändert keine installierbaren Dateien.
