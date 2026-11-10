@@ -200,3 +200,12 @@ DRA weiterhin **TheDaimos/gewitterradar@deploy/dev**.
 - [Dashboard 4.11.174](https://github.com/TheDaimos/gewitterradar/releases/download/v4.11.174-dev/gewitterradar-dashboard-4.11.174-dev.zip)
 - [SHA256SUMS](https://github.com/TheDaimos/gewitterradar/releases/download/v4.11.174-dev/SHA256SUMS.txt)
 - [Deploymentidentität mit vollständigem Releasecommit](https://github.com/TheDaimos/gewitterradar/releases/download/v4.11.174-dev/deployment.json)
+
+## Paketnachweis
+
+Implementierungscommit: `922f5f9ff8517591bc4dfd8812efca4112f885c1`.
+
+- `gewitterradar-0.25.81-dev.zip`: SHA256 `a0bc354cc477c324ec174194769623324b8ccddc82abe17c526cb0a0415733cb`
+- `gewitterradar-dashboard-4.11.174-dev.zip`: SHA256 `d63c0e9f0a72135949d94d15ac3e98d44c75fdca9cf86415ebfbc4f45d095e16`
+
+The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
