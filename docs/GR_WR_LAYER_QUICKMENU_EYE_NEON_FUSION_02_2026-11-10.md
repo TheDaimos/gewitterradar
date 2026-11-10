@@ -223,3 +223,12 @@ Je Phase ca.900 ms. Browser-Emulation auf demselben Desktop, kein reales Mobilge
 | ipad | 16.7 / 16.7 | 16.8 / 33.3 | 0.54 / 1.10 |
 
 Median blieb in diesen kurzen Fenstern vergleichbar; HiDPI/iPad zeigen einzelne längere Frames. Daraus wird keine konstante Geräte-FPS oder abgeschlossene reale Performanceabnahme abgeleitet. Die Messung begründet den begrenzten dekorativen Modus.
+
+## Paketnachweis
+
+Implementierungscommit: `040329e42d135ea384f0a69c55daffdf6d924510`.
+
+- `gewitterradar-0.25.83-dev.zip`: SHA256 `d781e3dbfc5886ba9902eb6c70c69f5692fa4658f9a92b0b379fb9015aaa1a5c`
+- `gewitterradar-dashboard-4.11.176-dev.zip`: SHA256 `a13048db629df3efbe5ba4673ad06fed995f321906f2fb827a2b7fd6acbecfdb`
+
+The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
