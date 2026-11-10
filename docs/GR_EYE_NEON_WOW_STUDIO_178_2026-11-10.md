@@ -207,3 +207,12 @@ Windows/Chrome-Emulation, kurze1,6s-RAF-Fenster. Jede Ansicht36 exakte V177-Pixe
 |ipad|17.9/18.8|35.8/73.0|17.8/54.0|3.41/6.30|2162688|9|
 
 Diese Maximaltests zeigen reale zusätzliche Last. Die höhere Detailfülle ist optional; Zusatz-LOD wurde in den Ansichten aktiv. Keine Behauptung unveränderter FPS bei100/100/100. Der Nullmodus besitzt weiterhin keine Zusatzpuffer und pixelidentischen V177-Zeichenweg.
+
+## Implementierung und deterministische Installationspakete
+
+Implementierungscommit: `2053211a8f4235e92dc8e3a9650cbfdecfcace53`.
+
+- `gewitterradar-0.25.85-dev.zip`: SHA256 `97c40e619b0586cf88061659a0dcdf465b694af64cc2df16da809baf795af8fd`
+- `gewitterradar-dashboard-4.11.178-dev.zip`: SHA256 `74821802fca124a443a873986939bdbb5a9db38fc705fc5b84da22b9691e607e`
+
+HA-/Dashboard-ZIPs aus committed Git-Baum, CRC und jede enthaltene UI-/WOW-Quelle mit kanonischen UTF-8-Dateien verglichen. Deployment-Metadaten nennen den finalen Bericht-/Releasecommit; ZIP-Nutzdaten bleiben über reine Berichtsnachträge identisch.
