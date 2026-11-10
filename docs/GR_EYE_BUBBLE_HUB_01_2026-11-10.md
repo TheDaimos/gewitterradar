@@ -176,6 +176,11 @@ Die alten umfassenden Jobs bleiben übersprungen. Die Routing-Erweiterung befind
 sich ausschließlich auf `deploy/dev`; der Standardbranch bleibt unverändert.
 Der konkrete Run-Nachweis wird unten ergänzt. Keine privaten Actions.
 
+Die erste öffentliche Paritätsprüfung erkannte CRLF/LF-Unterschiede im lokal
+erzeugten Prüfsummenverzeichnis für drei neue Hilfsdateien. Die bereits
+committeten Runtime-Blobs und ZIPs enthielten korrekt LF. Das Verzeichnis wurde
+gegen diese kanonischen Bytes neu erzeugt; keine Runtime- oder Paketänderung.
+
 **Offene Sichtabnahme:** WebKit, physische Android-/iPad-/Companion-Geräte und
 VM109 wurden nicht geprüft. Keine automatische Installation; VM101 unverändert.
 **Sprachen:** Deutsch und Englisch vollständig über `_t()` integriert. Weitere
