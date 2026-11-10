@@ -237,3 +237,12 @@ Je Vergleichsfenster1,2s, identisch aktive synthetische Schlangenwinddarstellung
 | desktop / DPR1 | 17.7 / 18.2 | 17.6 / 18.6 | 1.99 / 2.90 |
 
 Die Eye-JS-Spalte umfasst aktive Frames der Prüfsequenz, nicht GPU-Paintzeit. Die vollständige Fünf-Ansichten-Serie wurde lokal geprüft; die CI ergänzt unten einen erneuten vollständigen Lauf auf dem tatsächlich ausgelieferten Quellcommit. Keine Geräte-FPS-Zusage aus kurzen Fenstern.
+
+## Paketnachweis
+
+Implementierungscommit: `36b60e267abebe892848d180d6e1b45b2b53a323`.
+
+- `gewitterradar-0.25.84-dev.zip`: SHA256 `f489b960b142e6c1c995b298224c5acb89e12311fb800ad70f0797dc184754e0`
+- `gewitterradar-dashboard-4.11.177-dev.zip`: SHA256 `86e85b36296ce35fb89707546fe8cdff22e0cd78e94f81c0ee00b01af9e4cd2f`
+
+The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
