@@ -94,3 +94,12 @@ DRA weiterhin **TheDaimos/gewitterradar@deploy/dev**.
 - [Deployment-Nachweis mit vollständigem Releasecommit](https://github.com/TheDaimos/gewitterradar/releases/download/v4.11.173-dev/deployment.json)
 
 Betreiberinstallation und physische Sichtabnahme bleiben offen.
+
+## Paketnachweis
+
+Implementierungscommit: `b4a452e34f0561e2dbcfcd6da1f2a209f4fc76a9`.
+
+- `gewitterradar-0.25.80-dev.zip`: SHA256 `984ff68a7c6bab5edf8837ae87584a2d70784b6cf37381ed1733cf861f4b57c3`
+- `gewitterradar-dashboard-4.11.173-dev.zip`: SHA256 `cb26109cd625e9acf5cf167ca07fdfd28145621c38a9ae48f7689e08bc174659`
+
+The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
