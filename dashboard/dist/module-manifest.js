@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411173r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411174r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.190",
+    "version": "1.2.191",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.36",
+    "version": "1.0.37",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -151,7 +151,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.12",
+    "version": "1.3.13",
     "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -423,7 +423,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.layer-menu",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "group": "Weather-Engine",
     "function": "WeatherRouter Layer Hub",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.31",
+    "version": "0.4.32",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [

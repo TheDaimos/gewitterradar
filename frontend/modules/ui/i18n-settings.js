@@ -1,7 +1,8 @@
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.12",
+  "version": "1.3.13",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2135,7 +2136,8 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const v410Fallback = V410_UI_TRANSLATIONS[LANGUAGE_DEFAULT] || V410_UI_TRANSLATIONS.English || {};
       const v410 = V410_UI_TRANSLATIONS[language] || v410Fallback;
       const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
-      let text = aboutKey
+      const eyeKey=key.startsWith('eye.')?key.slice(4):null;
+      let text = eyeKey ? EYE_HUB_TRANSLATIONS[language]?.[eyeKey] ?? EYE_HUB_TRANSLATIONS.English[eyeKey] ?? key : aboutKey
         ? resolveAboutLocale(language).strings[aboutKey] ?? key
         : v410[key] ?? extra[key] ?? table[key] ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
       return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
@@ -2174,6 +2176,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
 
     _applyStaticTranslations() {
       if (!this.shadow) return;
+      this._eyeHubSync?.();
       this._i18nTextNodeKeys = this._i18nTextNodeKeys || new WeakMap();
       this._i18nAttrKeys = this._i18nAttrKeys || new WeakMap();
 

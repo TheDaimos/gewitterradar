@@ -1,3 +1,4 @@
+import {eyeHubMethods} from './eye-hub.js?v=411174r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
@@ -5,7 +6,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.31",
+  version:"0.4.32",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -24,8 +25,8 @@ const clearEyeReleaseClick=state=>{clearTimeout(state.eyeReleaseTimer);state.eye
 const blockEyeReleaseClick=(owner,state,drag)=>{
  clearEyeReleaseClick(state);const root=owner.shadow;if(!root?.addEventListener)return;
  const block=event=>{if(!event.detail||Math.hypot(event.clientX-(drag.releaseX??drag.startX),event.clientY-(drag.releaseY??drag.startY))>12)return;event.preventDefault();event.stopImmediatePropagation();clearEyeReleaseClick(state);};
- const releaseRoot=globalThis.document||root,release=event=>{if(event.pointerId!==drag.pointerId)return;drag.releaseX=event.clientX;drag.releaseY=event.clientY;clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),event.type==='pointercancel'?0:450);},blur=()=>clearEyeReleaseClick(state);
- root.addEventListener('click',block,true);releaseRoot.addEventListener('pointerup',release,true);releaseRoot.addEventListener('pointercancel',release,true);globalThis.addEventListener?.('blur',blur);
+ const releaseRoot=globalThis.document||root,release=event=>{if(event.pointerId!==drag.pointerId)return;releaseRoot.removeEventListener('pointerup',release,true);releaseRoot.removeEventListener('pointercancel',release,true);drag.releaseX=event.clientX;drag.releaseY=event.clientY;clearTimeout(state.eyeReleaseTimer);state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),event.type==='pointercancel'?0:450);},blur=()=>clearEyeReleaseClick(state);
+ root.addEventListener('click',block,true);if(state.eyeDrag===drag){releaseRoot.addEventListener('pointerup',release,true);releaseRoot.addEventListener('pointercancel',release,true);}globalThis.addEventListener?.('blur',blur);
  state.eyeReleaseCleanup=()=>{root.removeEventListener('click',block,true);releaseRoot.removeEventListener('pointerup',release,true);releaseRoot.removeEventListener('pointercancel',release,true);globalThis.removeEventListener?.('blur',blur);};
  state.eyeReleaseTimer=setTimeout(()=>clearEyeReleaseClick(state),10000);
 };
@@ -199,6 +200,7 @@ const eyeAssetMarkup=open=>{
 
 export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
   ...precipitationControlMethods,
+  ...eyeHubMethods,
   _weatherDisplayState(){
     if(this.__weatherDisplayState)return this.__weatherDisplayState;
     let saved=null;
@@ -651,19 +653,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!mapCard)return;
     this._weatherDisplayEnsureStyle();
     this._weatherDisplayEnsureZoomSync();
-    let eye=this.shadow.getElementById("weather-display-eye-control");
-    if(!eye){
-      eye=document.createElement("button");
-      eye.id="weather-display-eye-control";
-      eye.className="weather-display-eye-control";
-      eye.type="button";
-      eye.setAttribute("aria-label","WeatherRouter-Darstellungsmenü");
-      eye.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();const state=this._weatherDisplayState();if(performance.now()<Number(state.eyeSuppressClickUntil||0))return;if(!this._weatherDisplayIsAvailable()&&!this._weatherWindOpen)return;this._weatherDisplayPatch({enabled:!state.config.enabled});});
-      mapCard.append(eye);
-      this._weatherDisplayBindEyeDrag(eye);
-    }else{
-      this._weatherDisplayBindEyeDrag(eye);
-    }
+    this._eyeHubEnsureEye(mapCard);
     let control=this.shadow.getElementById("weather-display-control");
     if(!control){
       control=document.createElement('button');control.id='weather-display-control';control.className='weather-display-control';control.type='button';
@@ -769,6 +759,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
   },
 
   _weatherDisplayPositionEye(position=this._weatherDisplayState().config.eyePosition){
+    if(this.__eyeHub)return this._eyeHubPosition();
     const state=this._weatherDisplayState();
     if(state.eyeDrag)return;
     const eye=this.shadow?.getElementById("weather-display-eye-control"),mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
@@ -798,7 +789,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     let left=minLeft,top=maxTop;
     if(position){left=minLeft+(maxLeft-minLeft)*position.x;top=minTop+(maxTop-minTop)*position.y;}
     else{
-      const eye=this.shadow.getElementById('weather-display-eye-control'),r=eye&&!eye.hidden?eye.getBoundingClientRect():null;
+      const eye=this.shadow.getElementById('weather-display-eye-control'),r=eye&&!eye.hidden?eye.getBoundingClientRect():this._eyeHubLegacyEyeRect();
       if(r){left=r.left-c.left;top=r.top-c.top-height-12;if(top<minTop){top=r.top-c.top;left=r.right-c.left+12;if(left>maxLeft)left=r.left-c.left-width-12;}}
     }
     control.style.left=clamp(left,minLeft,maxLeft)+'px';control.style.top=clamp(top,minTop,maxTop)+'px';control.style.bottom='auto';
@@ -980,13 +971,6 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     }
     this._weatherDisplayEnsureMapUi();
     const eye=this.shadow.getElementById("weather-display-eye-control");
-    if(eye){
-      eye.hidden=!((available||this._weatherWindOpen)&&config.controlVisible);
-      eye.classList.toggle("active",available&&config.enabled);
-      eye.innerHTML=eyeAssetMarkup(available&&config.enabled);
-      eye.setAttribute("aria-pressed",available&&config.enabled?"true":"false");
-      eye.title=config.enabled?"Darstellungsmenü deaktivieren":"Darstellungsmenü aktivieren";
-    }
     const control=this.shadow.getElementById('weather-display-control');
     if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
     const panel=this.shadow.getElementById("weather-display-panel");
@@ -1005,6 +989,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       if(!panel.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
       if(!eye.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionEye());
     }
+    this._eyeHubSync();
   },
 
   _weatherDisplayLayerMenuMarkup(){
@@ -1035,6 +1020,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherDisplayReleaseSoftFilter(pane);
     const state=this.__weatherDisplayState;if(!state)return;
     state.generation+=1;state.probing=false;
+    this._eyeHubSuspend();
     this._weatherDisplayCancelEyeDrag();
     this._weatherDisplayCancelControlDrag();
     this._weatherPrecipitationCancelDrag?.();

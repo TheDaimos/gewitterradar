@@ -5,7 +5,7 @@ import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.15",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.16",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -624,6 +624,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
 
   _weatherLayerMenuRender(){
+    this._eyeHubSync?.();
     this._rasterLabRefreshOptions?.();
     const state=this._weatherLayerMenuState();if(state.view==="map-display")return;
     const panel=this.shadow?.querySelector('[data-weather-layer-panel="true"]');if(!panel)return;

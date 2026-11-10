@@ -1,12 +1,21 @@
 name: GR Menu Architecture targeted acceptance
 on:
   workflow_call:
+    inputs:
+      eye_bubble_only:
+        type: boolean
+        default: false
   workflow_dispatch:
+    inputs:
+      eye_bubble_only:
+        description: 'Only focused Eye Bubble Hub acceptance'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
   menu-architecture:
-    if: github.repository == 'TheDaimos/gewitterradar'
+    if: github.repository == 'TheDaimos/gewitterradar' && inputs.eye_bubble_only != true
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -50,3 +59,38 @@ jobs:
           name: menu-architecture-synthetic-browser-results
           path: ${{ runner.temp }}/menu-architecture-browser
           if-no-files-found: ignore
+  eye-bubble:
+    if: github.repository == 'TheDaimos/gewitterradar' && inputs.eye_bubble_only == true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy/dev
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Eye state, protected menu, master assets and shipped frontend
+        run: |
+          node scripts/test-eye-hub-model.mjs
+          node --check frontend/modules/weather/eye-hub.js
+          node --check frontend/modules/weather/eye-hub-view.js
+          node scripts/verify-frontend.mjs
+          git diff --check HEAD~1 HEAD
+      - name: Existing isolated browser toolchain
+        run: |
+          npm install --prefix "$RUNNER_TEMP/eye" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/eye/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Real module tree, synthetic I/O, touch Hub and protected navigation timeline
+        env:
+          NODE_PATH: ${{ runner.temp }}/eye/node_modules
+        run: |
+          GR_MENU_VIEW=android node scripts/test-eye-hub-browser.cjs
+          GR_MENU_VIEW=desktop node scripts/test-gr-menu-animation-restore.cjs
+      - name: Installable DEV payload identity and parity
+        run: python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"

@@ -1,3 +1,4 @@
+import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";
 import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41108r1";
@@ -11,7 +12,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -228,11 +229,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       shell.id = 'compass-picker-shell-v41001';
       shell.innerHTML =
         '<style>' +
-        '.compass-picker-dialog{--picker-gold:#dfbc72;--picker-bright:#f7dfa1;box-sizing:border-box;width:min(560px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
+        compassDialogSurface('.compass-picker-dialog') +
         '.compass-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.compass-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
         '.compass-picker-dialog *{box-sizing:border-box}.compass-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.compass-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
         '.compass-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.compass-picker-close:focus,.compass-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.compass-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.compass-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
-        '.compass-picker-stage{position:relative;width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}.compass-picker-stage::before{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.40) 0%,rgba(255,255,252,.30) 20%,rgba(255,251,240,.18) 42%,rgba(255,247,230,.08) 60%,transparent 76%);filter:blur(16px);pointer-events:none;z-index:0}' +
+        '.compass-picker-stage{position:relative;width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}' + compassPreviewHalo('.compass-picker-stage') +
         '.compass-picker-stage .compass-instrument{position:relative;z-index:1;width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 11px rgba(255,255,255,.32)) drop-shadow(0 0 26px rgba(255,250,236,.17))}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
         '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
         '.compass-picker-nav-row{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +

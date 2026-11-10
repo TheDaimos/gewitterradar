@@ -83,7 +83,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "2a831245fa6f00b0fb4cbea0747878dc05be8d70c0d904d181aff7071f7b1ba0",
+    "sha256": "2cbadddb523e3477ed290ed0672cf5859d926874f8007155cf813c80a0fc786d",
     "protected": false,
     "sizeBytes": 2873
   },
@@ -406,6 +406,16 @@
   {
     "file": "assets/gr-weather-display-premium-original.png",
     "sha256": "c0c18f4f283e350fb9612ed620af426f2ac9f8d270e8a36016c29b1fc48cecf2",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-eye-open-master-1254.png",
+    "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-eye-closed-master-1254.png",
+    "sha256": "db78b467fb2dc91bb469390b68bb98968e615d6f721f98a743394ab4dd50d49f",
     "protected": true
   }
 ]
