@@ -19,7 +19,8 @@ export async function expectedPayload(){
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
   const release=APPLICATION_RELEASE,patch=release.version.split('.')[2];
-  if(release.displayVersion!==`V${release.version} DEV`||release.runtimeRevision!==`411${patch}r1`||release.moduleSetId!==`E411-${patch}A1`)throw Error('Canonical release identity mismatch');
+  const revision=release.runtimeRevision?.match(new RegExp(`^411${patch}r([1-9][0-9]*)$`))?.[1];
+  if(release.displayVersion!==`V${release.version} DEV`||!revision||release.moduleSetId!==`E411-${patch}A${revision}`)throw Error('Canonical release identity mismatch');
   for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');

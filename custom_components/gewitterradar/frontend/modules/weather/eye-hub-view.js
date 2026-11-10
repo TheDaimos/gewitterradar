@@ -1,7 +1,7 @@
-import {NEON_CSS} from './eye-neon.js?v=411177r1';
+import {NEON_CSS} from './eye-neon.js?v=411177r2';
 import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi} from './premium-ui.js?v=411170r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
-import {EYE_COLORS,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411177r1';
+import {EYE_COLORS,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411177r2';
 import {EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
 export const EYE_HUB_CSS=`
 ${NEON_CSS}

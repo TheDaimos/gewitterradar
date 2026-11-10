@@ -3,7 +3,7 @@
 10.11.2026 · `TheDaimos/gewitterradar@deploy/dev`.
 Basis: `7ece8f0b9a6a5896fa372f264ad34fde9a781abf` (geschützte Runtime176 plus Referenzdokument).
 Geschütztes Release176: `58cad1d2920f6d7035d95878f3df3e438b0eec67`.
-Neue Lieferung: **GR 4.11.177 DEV / HA 0.25.84 / 411177r1 / E411-177A1**.
+Neue Lieferung: **GR 4.11.177 DEV / HA 0.25.84 / 411177r2 / E411-177A2**.
 Diese Veröffentlichung erklärt177 ausdrücklich **nicht** zur neuen geschützten Referenz.
 
 ## Vorher/Nachher und visuelle Grundlage
@@ -157,7 +157,7 @@ Die vier Funktionsicons skalieren in Bubbles und als Einzelicons gleich. Touch-
 ziele bleiben mindestens50×50 CSS px; bei300% werden sie150×150. Darstellung und
 gespeicherte normierte Position werden mit tatsächlicher Zielgröße umgerechnet,
 am Kartenrand begrenzt und bei großen Einzelicons kollisionsarm platziert.
-Präsentationspositionen werden stabil zwischengespeichert, nicht in Benutzer-
+Präsentationspositionen werden nach Kartengröße und Kartenursprung stabil zwischengespeichert, nicht in Benutzer-
 Positionsschlüssel zurückgeschrieben. Tatsächliches Drag speichert wie bisher.
 
 Passen acht große Bubbles plus großes Eye nicht gleichzeitig in den Viewport,
@@ -238,11 +238,6 @@ Je Vergleichsfenster1,2s, identisch aktive synthetische Schlangenwinddarstellung
 
 Die Eye-JS-Spalte umfasst aktive Frames der Prüfsequenz, nicht GPU-Paintzeit. Die vollständige Fünf-Ansichten-Serie wurde lokal geprüft; die CI ergänzt unten einen erneuten vollständigen Lauf auf dem tatsächlich ausgelieferten Quellcommit. Keine Geräte-FPS-Zusage aus kurzen Fenstern.
 
-## Paketnachweis
+## Finale Cachekorrektur vor der Erstveröffentlichung
 
-Implementierungscommit: `36b60e267abebe892848d180d6e1b45b2b53a323`.
-
-- `gewitterradar-0.25.84-dev.zip`: SHA256 `f489b960b142e6c1c995b298224c5acb89e12311fb800ad70f0797dc184754e0`
-- `gewitterradar-dashboard-4.11.177-dev.zip`: SHA256 `86e85b36296ce35fb89707546fe8cdff22e0cd78e94f81c0ee00b01af9e4cd2f`
-
-The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
+Der Präsentationscache berücksichtigt auch Kartenursprung links/oben, damit ein verschobener Dashboard-Kartenbereich die Icons korrekt mitnimmt. Eine neue Browserassertion verschiebt den tatsächlichen Kartencontainer und prüft die erhaltene relative Iconposition.177 war noch nicht als Release veröffentlicht. Die finale Lieferung verwendet411177r2/E411-177A2, damit kein zwischenzeitlicher r1-Cache weiterverwendet wird. Der überholte öffentliche Lauf wurde abgebrochen; unten zählt nur der neue erfolgreiche Lauf auf dem finalen SHA. Der Buildvalidator prüft nun streng korrespondierende positive rN/AN-Paare statt ausschließlich r1/A1. Das erweitert die Cacheidentität, ohne Versions-/Modulparität zu lockern.

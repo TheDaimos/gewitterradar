@@ -1,7 +1,7 @@
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411177r1';
-import {EyeNeon} from './eye-neon.js?v=411177r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411177r2';
+import {EyeNeon} from './eye-neon.js?v=411177r2';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411177r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411177r2';
 export const eyeHubMethods={
  _eyeHubState(){
   if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(localStorage.getItem(EYE_HUB_KEY));}catch(_){}
@@ -96,7 +96,7 @@ export const eyeHubMethods={
   if(s.config.grouped||!m.width)return;
   const d=this.__weatherDisplayState,w=this.__weatherWind,temp=this.__weatherTemperature;
   if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag)return;
-  const key=JSON.stringify([size,m.width,m.height,this._mapDisplayMode,this._mapWindowMode,w?.config.quickPositions,temp?.config.quickPositions,d?.config.precipitationControl,d?.config.displayControlPosition]);
+  const key=JSON.stringify([size,m.left,m.top,m.width,m.height,this._mapDisplayMode,this._mapWindowMode,w?.config.quickPositions,temp?.config.quickPositions,d?.config.precipitationControl,d?.config.displayControlPosition]);
   if(s.iconLayoutKey!==key){s.iconLayoutKey=key;s.iconPlacements=new Map();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();this._weatherDisplayPositionControl?.();}
   const occupied=[],obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,#compass-instrument,.map-instrument,#map-medallion-overlay,#map-compass-overlay,.medallion-instrument,#weather-display-eye-control')].map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height),overlap=(p,r)=>p.x<r.right+5&&p.x+target>r.left-5&&p.y<r.bottom+5&&p.y+target>r.top-5;
   for(const {id,button} of buttons){if(button.hidden)continue;let p=s.iconPlacements.get(id);

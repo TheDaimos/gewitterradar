@@ -1,5 +1,5 @@
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=411177r1';
-import {eyeHubMethods} from './eye-hub.js?v=411177r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411177r2';
+import {eyeHubMethods} from './eye-hub.js?v=411177r2';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";

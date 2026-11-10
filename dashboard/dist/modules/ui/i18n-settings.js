@@ -1,4 +1,4 @@
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411177r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411177r2';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
