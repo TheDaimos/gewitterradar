@@ -216,3 +216,7 @@ Implementierungscommit: `2053211a8f4235e92dc8e3a9650cbfdecfcace53`.
 - `gewitterradar-dashboard-4.11.178-dev.zip`: SHA256 `74821802fca124a443a873986939bdbb5a9db38fc705fc5b84da22b9691e607e`
 
 HA-/Dashboard-ZIPs aus committed Git-Baum, CRC und jede enthaltene UI-/WOW-Quelle mit kanonischen UTF-8-Dateien verglichen. Deployment-Metadaten nennen den finalen Bericht-/Releasecommit; ZIP-Nutzdaten bleiben über reine Berichtsnachträge identisch.
+
+## Gezielte Korrektur des bestehenden Layouttests
+
+Der erste öffentliche Lauf [42875697159](https://github.com/TheDaimos/gewitterradar/actions/runs/42875697159) schlug im alten mobilen Rastertest fehl: dessen Selektor sammelte nun auch die vier versteckten Regler des neuen eingeklappten Studios. Deren Null-Rechtecke gehörten nicht zum geprüften alten Raster. Der Test prüft jetzt ausdrücklich das ursprüngliche oberste Einstellungsraster; die neue WOW-Serie prüft zusätzlich alle vier tatsächlich aufgeklappten Studio-Regler auf horizontale Begrenzung. Keine Assertion wurde entfernt, keine Toleranz aufgeweitet und kein Frontend-/Paketbyte geändert. Der neue Lauf folgt unten.
