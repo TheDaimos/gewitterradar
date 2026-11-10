@@ -1,8 +1,8 @@
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411174r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411176r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.13",
+  "version": "1.3.14",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [

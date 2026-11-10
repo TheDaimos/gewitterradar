@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.175",
-  "build": "V4.11.175-DEV-2026-11-10",
-  "runtimeRevision": "411175r1",
-  "moduleSetId": "E411-175A1",
-  "baselineFeatureHead": "4aff02cdbc1ddc56cc37f1c33a895901d4d38eee",
+  "productVersion": "4.11.176",
+  "build": "V4.11.176-DEV-2026-11-10",
+  "runtimeRevision": "411176r1",
+  "moduleSetId": "E411-176A1",
+  "baselineFeatureHead": "ee7965193475926c192941810ba24e5f0fbda7b9",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Eye realtest correction: always visible, compatible percent sizing, shared close asset and restrained Eye-only aura; weather data paths and DRA channel unchanged.",
+    "purpose": "Compact WR layer quick controls, independent cloud opacity and decorative Eye neon simulation; protected weather/wind renderers and DRA channel unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

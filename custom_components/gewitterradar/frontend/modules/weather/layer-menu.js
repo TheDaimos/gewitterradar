@@ -5,7 +5,7 @@ import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.16",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.17",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -378,8 +378,9 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     const drawnTiles=new WeakSet();
     // Reuse the established P7-010 geographic pixel-crop geometry.
     // A bounded browser image budget is intentionally separate from radar's scheduler.
+    state.naturalOpacity=Math.min(1,Math.max(0,payload.default_opacity??0.65));
     const layer=L.gridLayer({pane:spec.pane,tileSize:payload.tile_size,minZoom,
-      maxNativeZoom:Math.min(maxZoom,18),noWrap:false,opacity:Math.min(1,Math.max(0,payload.default_opacity??0.65)),
+      maxNativeZoom:Math.min(maxZoom,18),noWrap:false,opacity:id==="weather.satellite.clouds"?this._weatherDisplayOpacity?.("clouds",state.naturalOpacity)??state.naturalOpacity:state.naturalOpacity,
       attribution:escapeHtml(attribution),updateWhenIdle:true,keepBuffer:0});
     const validCoverage=coverage.scope==="global"?{scope:"global",verified:true}:
       {scope:"bbox",verified:true,bbox:{west:coverage.west,south:coverage.south,east:coverage.east,north:coverage.north}};
@@ -624,6 +625,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
   },
 
   _weatherLayerMenuRender(){
+    this._weatherQuickSync?.();
     this._eyeHubSync?.();
     this._rasterLabRefreshOptions?.();
     const state=this._weatherLayerMenuState();if(state.view==="map-display")return;

@@ -1,7 +1,8 @@
 // UI configuration only. No weather decisions, requests or expiry rules.
 export const EYE_HUB_KEY='gewitterradar:eye-bubble:v1';
 export const EYE_UI_SLOTS=8,EYE_CAPACITY=12;
-export const EYE_COLORS=Object.freeze(['#FF3DBB','#A66BFF','#377DFF','#28E3EA','#66FF66','#FFE84B','#FF9A32','#FF475D']);
+export const EYE_LEGACY_COLORS=Object.freeze(['#FF3DBB','#A66BFF','#377DFF','#28E3EA','#66FF66','#FFE84B','#FF9A32','#FF475D']);
+export const EYE_COLORS=Object.freeze(['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C']);
 export const EYE_FUNCTIONS=Object.freeze(['wind','temperature','precipitation','weather-display']);
 export const EYE_DEFAULT_COLORS=Object.freeze({wind:EYE_COLORS[3],temperature:EYE_COLORS[6],precipitation:EYE_COLORS[2],'weather-display':EYE_COLORS[0]});
 // Keep authoritative stored pixels compatible: 42 CSS px = 100%. Only the
@@ -13,8 +14,8 @@ export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
  const s=input&&typeof input==='object'&&!Array.isArray(input)?input:{},seen=new Set(),source=Array.isArray(s.slots)?s.slots:EYE_FUNCTIONS;
  const slots=source.slice(0,EYE_CAPACITY).map((item,i)=>{const id=typeof item==='string'?item:item?.functionId;const functionId=ids.includes(id)&&!seen.has(id)?id:null;if(functionId)seen.add(functionId);return {id:'slot-'+(i+1),functionId};});
  if(!slots.length)slots.push({id:'slot-1',functionId:null});
- const colors={};for(const id of ids)colors[id]=EYE_COLORS.includes(String(s.colors?.[id]).toUpperCase())?String(s.colors[id]).toUpperCase():EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];
- return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,size:bounded(s.size,42,36,126),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),slots,colors};
+ const colors={};for(const id of ids){const color=String(s.colors?.[id]).toUpperCase(),legacy=EYE_LEGACY_COLORS.indexOf(color);colors[id]=EYE_COLORS.includes(color)?color:legacy>=0?EYE_COLORS[legacy]:EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];}
+ return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),slots,colors};
 }
 export function assignEyeSlot(config,index,functionId,ids=EYE_FUNCTIONS){
  const c=normalizeEyeConfig(config,ids);if(index<0||index>=Math.min(c.slots.length,EYE_UI_SLOTS)||!ids.includes(functionId))return c;
@@ -29,6 +30,8 @@ export function resizeEyeSlots(config,delta,ids=EYE_FUNCTIONS){
 }
 export const visibleEyeSlots=c=>c.slots.slice(0,EYE_UI_SLOTS);
 export const eyeRingRadius=(size,index)=>size/2+5+index*(4+size/42);
+export const eyeGlowMargin=c=>8+c.intensity*.20;
+export const eyeGlowExtent=c=>eyeRingRadius(c.size,Math.min(8,c.slots.length)-1)+eyeGlowMargin(c);
 export const eyeAuraOn=(config,status)=>config.grouped&&config.aura&&status.active&&status.available;
 
 // Compact occupied bubbles; empty slots never reserve a position. Prefer the

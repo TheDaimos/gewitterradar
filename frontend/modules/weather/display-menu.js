@@ -1,4 +1,5 @@
-import {eyeHubMethods} from './eye-hub.js?v=411175r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411176r1';
+import {eyeHubMethods} from './eye-hub.js?v=411176r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
@@ -6,10 +7,10 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.33",
+  version:"0.4.34",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
-  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
+  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes KartenmenÃ¼","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhÃ¤ngiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flÃ¤chige GlÃ¤ttung","Hotspot-Erhalt","Transparenz im KartenmenÃ¼","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
   file:"modules/weather/display-menu.js"
 });
 
@@ -57,7 +58,8 @@ const DEFAULT_STATE=Object.freeze({
   position:DEFAULT_POSITION,
   eyePosition:DEFAULT_EYE_POSITION,
   styles:Object.freeze({precipitation:"auto",clouds:"original"}),
-  opacities:Object.freeze({precipitation:null})
+  quickLayer:"precipitation",
+  opacities:Object.freeze({precipitation:null,clouds:null,windSymbols:null})
 });
 export const WEATHER_DISPLAY_STYLES=Object.freeze({
   precipitation:Object.freeze(["auto","precise","balanced","soft"]),
@@ -66,7 +68,7 @@ export const WEATHER_DISPLAY_STYLES=Object.freeze({
 const CLOUD_BALANCED_BLURS=Object.freeze({2:0,5:0,6:3,7:6,8:10,9:10,10:10,11:11,12:19,13:20,14:23,15:24,16:23,17:24,18:29});
 const LABELS=Object.freeze({
   auto:"Auto",
-  precise:"Präzise",
+  precise:"PrÃ¤zise",
   balanced:"Ausgewogen",
   soft:"Weich"
 });
@@ -99,7 +101,7 @@ export const weatherDisplayBalancedRasterTuning=(zoom,maxNative)=>{
 };
 // Die Quellkacheln vergroessern sich ab maxNativeZoom exponentiell.
 // Weich erhaelt die akzeptierte Zoom-8-Referenz und folgt ab Zoom 9
-// der tatsaechlichen Quell-Uebervergroesserung (statt nur dem Kartenzähler).
+// der tatsaechlichen Quell-Uebervergroesserung (statt nur dem KartenzÃ¤hler).
 // Der alte Mindestanstieg bleibt fuer hochaufloesende Quellen erhalten.
 // Keine neue Render-Ebene/Schleife; Blur-Budget von V4.11.74 bleibt erhalten.
 export const weatherDisplaySoftRasterTuning=(zoom,nativeZoom)=>{
@@ -165,7 +167,8 @@ const normalizeState=input=>{
     eyePosition:{x:clamp(eyePosition.x??DEFAULT_EYE_POSITION.x,0,1),y:clamp(eyePosition.y??DEFAULT_EYE_POSITION.y,0,1)},
     displayControlPosition:source.displayControlPosition&&Number.isFinite(source.displayControlPosition.x)&&Number.isFinite(source.displayControlPosition.y)?{x:clamp(source.displayControlPosition.x,0,1),y:clamp(source.displayControlPosition.y,0,1)}:null,
     styles:{precipitation,clouds},
-    opacities:{precipitation:precipitationOpacity},
+    quickLayer:["precipitation","clouds","wind","temperature"].includes(source.quickLayer)?source.quickLayer:"precipitation",
+    opacities:{precipitation:precipitationOpacity,clouds:opacities.clouds==null?null:clamp(opacities.clouds,0,1),windSymbols:opacities.windSymbols==null?null:clamp(opacities.windSymbols,0,1)},
     precipitationControl:normalizePrecipitationControl(source.precipitationControl)
   };
 };
@@ -201,6 +204,7 @@ const eyeAssetMarkup=open=>{
 export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
   ...precipitationControlMethods,
   ...eyeHubMethods,
+  ...quickMethods,
   _eyeHubHeaderCloseIcon(){return deps.ABOUT_CLOSE_IMAGE;},
   _weatherDisplayState(){
     if(this.__weatherDisplayState)return this.__weatherDisplayState;
@@ -243,7 +247,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(persist)this._weatherDisplayPersist();
     this._weatherDisplaySyncUi();
     if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();
-    if(cloudsStyleChanged)this._weatherDisplayApplyCloudStyle();
+    if(cloudsStyleChanged||next.opacities.clouds!==previous.opacities.clouds)this._weatherDisplayApplyCloudStyle();
     if(precipitationOpacityChanged)this._weatherDisplayRefreshLayerOpacity("precipitation");
     if(legendModeChanged)this._weatherLegendSyncUi?.();
     return next;
@@ -260,6 +264,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
 
   _weatherDisplayNaturalOpacity(kind){
     if(kind==="precipitation")return clamp(this._weatherRadarNaturalOpacity?.()??0.58,0,1);
+    if(kind==="clouds")return clamp(this.__weatherGenericStates?.get("weather.satellite.clouds")?.naturalOpacity??.65,0,1);
     return 1;
   },
 
@@ -279,6 +284,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
 
   _weatherDisplayRefreshLayerOpacity(kind){
     if(kind==="precipitation")this._weatherRadarApplyDisplayOpacity?.();
+    if(kind==="clouds")this._weatherDisplayApplyCloudStyle();
   },
 
   _weatherDisplaySyncLegendBadge(){
@@ -286,19 +292,19 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!badge)return;
     const style=this._weatherDisplayStyle("precipitation");
     const zoom=Number(this._map?.getZoom?.());
-    const zoomLabel=Number.isFinite(zoom)?(Number.isInteger(zoom)?String(zoom):zoom.toFixed(1)):"–";
-    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
+    const zoomLabel=Number.isFinite(zoom)?(Number.isInteger(zoom)?String(zoom):zoom.toFixed(1)):"â€“";
+    badge.textContent="Darstellung: "+(LABELS[style]||style||"Auto")+" Â· Zoom "+zoomLabel;
     badge.dataset.weatherDisplayStyle=style;
     badge.dataset.weatherDisplayZoom=zoomLabel;
     if(style==="auto"){
       const tuning=this._weatherDisplayRasterTuning("precipitation");
       const maxNative=Number(this._weatherRadarState?.().layer?.options?.maxNativeZoom);
-      badge.title="Auto · Zoom "+zoomLabel+
-        (Number.isFinite(maxNative)?" · native "+maxNative:"")+
-        (Number.isFinite(tuning.overscale)?" · Overzoom "+tuning.overscale.toFixed(2)+"×":"")+
-        (Number.isFinite(tuning.blur)?" · Glättung "+tuning.blur.toFixed(1)+" px":"");
+      badge.title="Auto Â· Zoom "+zoomLabel+
+        (Number.isFinite(maxNative)?" Â· native "+maxNative:"")+
+        (Number.isFinite(tuning.overscale)?" Â· Overzoom "+tuning.overscale.toFixed(2)+"Ã—":"")+
+        (Number.isFinite(tuning.blur)?" Â· GlÃ¤ttung "+tuning.blur.toFixed(1)+" px":"");
     }else{
-      badge.title="Darstellung: "+(LABELS[style]||style||"Auto")+" · Zoom "+zoomLabel;
+      badge.title="Darstellung: "+(LABELS[style]||style||"Auto")+" Â· Zoom "+zoomLabel;
     }
   },
 
@@ -468,6 +474,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     const state=this._weatherGenericState?.("weather.satellite.clouds");
     const pane=this._map?.getPane?.("gr-wr-clouds");
     if(!pane||!state?.enabled)return;
+    const opacity=this._weatherDisplayOpacity("clouds",state.naturalOpacity??.65);
+    if(state.layer&&state.layer.options.opacity!==opacity)state.layer.setOpacity(opacity);
     if(this._weatherDisplayStyle("clouds")==="balanced"){
       const zoom=Math.round(Number(this._map?.getZoom?.())||0);
       const blur=Object.hasOwn(CLOUD_BALANCED_BLURS,zoom)?CLOUD_BALANCED_BLURS[zoom]:0;
@@ -559,6 +567,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       ".weather-layer-display-entry{grid-column:1/-1;border-color:rgba(236,185,91,.27)!important;background:linear-gradient(135deg,rgba(126,86,22,.17),rgba(108,35,92,.12))!important}.weather-layer-display-entry strong{color:#f2d48c!important}",
       "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}.weather-display-eye-control{width:46px;height:46px}}"
     ].join("");
+    style.textContent+=QUICK_CSS;
     style.textContent+=".weather-display-panel-head{grid-template-columns:28px minmax(0,1fr) 32px 30px;gap:4px}.weather-display-panel-head>div{min-width:0}.weather-display-panel-body,.weather-display-card{min-width:0}.weather-display-card-note{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere;max-width:100%;height:auto;line-height:1.5}.weather-display-panel .weather-display-opacity{display:grid;grid-template-columns:minmax(0,1fr) 38px 32px;gap:5px}.weather-display-opacity-label{grid-column:1/-1;white-space:normal}.weather-display-panel .weather-display-opacity input[type=range]{width:100%;min-width:0;box-sizing:border-box;margin:0}.weather-display-panel .weather-display-opacity output{min-width:0;margin:0}.weather-display-panel .weather-display-legend-button{flex:1 1 0;min-width:0;width:auto}.weather-display-panel.minimized{width:min(260px,calc(100% - 20px))}";
     style.textContent+=".weather-display-opacity-reset.gr-premium-metal-surface,.weather-display-info.gr-premium-metal-surface{display:grid;place-items:center;box-sizing:border-box;padding:0;min-width:0;width:32px;height:30px;border-width:1px;border-radius:8px;color:var(--premium-gold-bright,#f1d58c);box-shadow:inset 0 1px #fff3,0 2px 5px #0008;cursor:pointer;transition:filter .16s ease,transform .16s ease}.weather-display-opacity-reset.gr-premium-metal-surface{font-size:9px;font-weight:850;line-height:1;letter-spacing:.015em;text-align:center}.weather-display-info.gr-premium-metal-surface{width:30px;border-radius:50%;font-family:Georgia,serif;font-style:italic;font-size:19px;font-weight:700;line-height:1}.weather-display-opacity-reset.gr-premium-metal-surface:hover,.weather-display-info.gr-premium-metal-surface:hover{filter:brightness(1.14)}.weather-display-opacity-reset.gr-premium-metal-surface:active,.weather-display-info.gr-premium-metal-surface:active{transform:scale(.97);filter:brightness(.92)}.weather-display-opacity-reset.gr-premium-metal-surface:focus-visible,.weather-display-info.gr-premium-metal-surface:focus-visible{outline:2px solid #f1d58c;outline-offset:2px}";
     style.textContent+='.weather-display-panel-head{grid-template-columns:28px minmax(0,1fr) 32px 30px 36px!important}.weather-display-close{display:grid;place-items:center;box-sizing:border-box;width:36px;height:36px;min-width:36px;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.weather-display-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none}.weather-display-info{border:0!important;background:transparent!important;box-shadow:none!important;outline:none}.weather-display-info img{width:28px!important;height:28px!important}.weather-display-info:focus-visible,.weather-display-close:focus-visible{outline:2px solid #f1d58c;outline-offset:-2px}@media(max-width:720px){.weather-display-panel-head{grid-template-columns:28px minmax(0,1fr) 32px 30px 36px!important;gap:2px}}';
@@ -574,12 +583,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
 
   _weatherDisplayStatusCopy(){
     const state=this._weatherDisplayState();
-    if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprüft",note:"Status und Darstellungsfähigkeiten werden abgefragt."};
-    if(state.status==="missing")return {title:"WeatherRouter nicht installiert",note:"Die Darstellung bleibt sichtbar angekündigt, wird auf der Karte aber nicht als funktionslose Bedienung angeboten."};
-    if(state.status==="incompatible")return {title:"WeatherRouter erkannt, Consumer API nicht kompatibel",note:"Die Darstellungsfunktion bleibt deaktiviert, bis ein kompatibler Consumer-V1-Vertrag verfügbar ist."};
-    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht bereit",note:"WeatherRouter ist offline, deaktiviert, startet noch oder die Consumer-Verbindung ist vorübergehend nicht erreichbar. Gewitterradar läuft unverändert weiter."};
-    if(state.status==="ready-empty")return {title:"WeatherRouter bereit",note:"Der aktuelle Katalog enthält noch keine von dieser Ausbaustufe unterstützte Darstellungsfähigkeit."};
-    return {title:"WeatherRouter bereit",note:"Darstellungsmenü verfügbar · aktuell Niederschlag als erster Renderer."};
+    if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprÃ¼ft",note:"Status und DarstellungsfÃ¤higkeiten werden abgefragt."};
+    if(state.status==="missing")return {title:"WeatherRouter nicht installiert",note:"Die Darstellung bleibt sichtbar angekÃ¼ndigt, wird auf der Karte aber nicht als funktionslose Bedienung angeboten."};
+    if(state.status==="incompatible")return {title:"WeatherRouter erkannt, Consumer API nicht kompatibel",note:"Die Darstellungsfunktion bleibt deaktiviert, bis ein kompatibler Consumer-V1-Vertrag verfÃ¼gbar ist."};
+    if(state.status==="offline")return {title:"WeatherRouter erkannt, derzeit nicht bereit",note:"WeatherRouter ist offline, deaktiviert, startet noch oder die Consumer-Verbindung ist vorÃ¼bergehend nicht erreichbar. Gewitterradar lÃ¤uft unverÃ¤ndert weiter."};
+    if(state.status==="ready-empty")return {title:"WeatherRouter bereit",note:"Der aktuelle Katalog enthÃ¤lt noch keine von dieser Ausbaustufe unterstÃ¼tzte DarstellungsfÃ¤higkeit."};
+    return {title:"WeatherRouter bereit",note:"DarstellungsmenÃ¼ verfÃ¼gbar Â· aktuell Niederschlag als erster Renderer."};
   },
 
   _mountWeatherDisplaySettings(){
@@ -595,17 +604,17 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       block.innerHTML=
         '<div class="weather-display-settings-head">'+eyeAssetMarkup(false)+'<div><div class="weather-display-settings-title">Darstellung</div><div class="weather-display-settings-status" data-weather-display-status></div></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Augen-Bedienelement<span class="weather-display-row-note">Direkter Zugriff auf der Karte</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="controlVisible" aria-label="Augen-Bedienelement auf der Karte anzeigen"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Darstellungsmenü<span class="weather-display-row-note">Aktivieren ist nicht dasselbe wie Minimieren</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="enabled" aria-label="Darstellungsmenü aktivieren"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Startzustand minimiert<span class="weather-display-row-note">Das Menü bleibt dabei aktiv</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="minimized" aria-label="Darstellungsmenü minimiert starten"></button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Position merken<span class="weather-display-row-note">Nur auf diesem Gerät und in diesem Browserprofil</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="rememberPosition" aria-label="Position des Darstellungsmenüs merken"></button></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung · Daten und Routing bleiben unverändert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">DarstellungsmenÃ¼<span class="weather-display-row-note">Aktivieren ist nicht dasselbe wie Minimieren</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="enabled" aria-label="DarstellungsmenÃ¼ aktivieren"></button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Startzustand minimiert<span class="weather-display-row-note">Das MenÃ¼ bleibt dabei aktiv</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="minimized" aria-label="DarstellungsmenÃ¼ minimiert starten"></button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Position merken<span class="weather-display-row-note">Nur auf diesem GerÃ¤t und in diesem Browserprofil</span></div><button class="weather-display-switch" type="button" role="switch" data-weather-display-setting="rememberPosition" aria-label="Position des DarstellungsmenÃ¼s merken"></button></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung Â· Daten und Routing bleiben unverÃ¤ndert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
           WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note">0 % = deckend · 100 % = unsichtbar · WR-Standard bleibt per Zurücksetzen erhalten</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag Â· Transparenz<span class="weather-display-row-note">0 % = deckend Â· 100 % = unsichtbar Â· WR-Standard bleibt per ZurÃ¼cksetzen erhalten</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Position zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>Zurücksetzen</button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
-        '<div class="weather-display-row"><div class="weather-display-row-label">WeatherRouter-Status</div><button class="weather-display-action" type="button" data-weather-display-refresh>Neu prüfen</button></div>';
+        '<div class="weather-display-row"><div class="weather-display-row-label">Position zurÃ¼cksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>ZurÃ¼cksetzen</button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurÃ¼cksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">WeatherRouter-Status</div><button class="weather-display-action" type="button" data-weather-display-refresh>Neu prÃ¼fen</button></div>';
       const results=this.shadow.getElementById("weather-engine-results")?.closest(".settings-row");
       if(results?.parentNode===content)content.insertBefore(block,results);else content.append(block);
       block.querySelectorAll("[data-weather-display-setting]").forEach(button=>button.addEventListener("click",()=>{
@@ -640,6 +649,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         this._weatherDisplaySyncUi();
         this._weatherDisplayRefreshRenderedLayers();
         this._weatherDisplayRefreshLayerOpacity("precipitation");
+        this._weatherDisplayRefreshLayerOpacity("clouds");
         this._weatherLegendSyncUi?.();
       });
       block.querySelector("[data-weather-display-refresh]")?.addEventListener("click",()=>this._weatherDisplayProbe({refresh:true}));
@@ -658,7 +668,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     let control=this.shadow.getElementById("weather-display-control");
     if(!control){
       control=document.createElement('button');control.id='weather-display-control';control.className='weather-display-control';control.type='button';
-      control.setAttribute('aria-label','Darstellungsmenü öffnen');control.setAttribute('aria-controls','weather-display-panel');control.innerHTML=displayControlMarkup();mapCard.append(control);
+      control.setAttribute('aria-label','DarstellungsmenÃ¼ Ã¶ffnen');control.setAttribute('aria-controls','weather-display-panel');control.innerHTML=displayControlMarkup();mapCard.append(control);
       state.displayControlDrag={eyeDrag:null,eyeSuppressClickUntil:0};
       const open=()=>this._weatherDisplayOpenFromLayerMenu();
       state.displayControlOptions={element:control,state:()=>state.displayControlDrag,position:()=>this._weatherDisplayPositionControl(),activate:open,longPress:open,save:position=>{if(state.config.rememberPosition)this._weatherDisplayPatch({displayControlPosition:position});}};
@@ -672,16 +682,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       panel.className="weather-display-panel gr-premium-metal-surface";
       panel.setAttribute("aria-label","WeatherRouter-Darstellung");
       panel.innerHTML=
-        '<div class="weather-display-panel-head" data-weather-display-drag-handle>'+eyeAssetMarkup(true)+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter</div></div>'+premiumAction('minimize','Darstellungsmenü minimieren','minimize').replace('data-premium-action="minimize"','data-premium-action="minimize" data-weather-display-minimize')+'<button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info"><img src="'+PREMIUM_INFO+'" alt="" style="width:28px;height:28px;object-fit:contain;pointer-events:none"></button><button type="button" data-weather-display-close aria-label="Darstellungsmenü schließen" title="Schließen" class="weather-display-close"><img src="'+deps.ABOUT_CLOSE_IMAGE+'" alt="" draggable="false"></button></div>'+
-        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wählen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><div class="weather-display-card" data-weather-display-precipitation-card><div class="weather-display-card-title">Niederschlag</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
-        WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
-        '</select></div><div class="weather-display-card-note">Auto passt die Darstellung gleitend an die Zoomstufe an. Präzise bleibt rastertreu; Ausgewogen erhält die Konturen, Weich glättet im Nahzoom moderat stärker.</div><div class="weather-display-opacity"><span class="weather-display-opacity-label">Transparenz</span><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation" title="WeatherRouter-Standard">WR</button></div></div>'+
-        '<div class="weather-display-card" data-weather-display-clouds-card><div class="weather-display-card-title">Wolken</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="clouds" aria-label="Darstellungsmodus Wolken"><option value="original">Original</option><option value="balanced">Ausgewogen</option></select></div><div class="weather-display-card-note">Ausgewogen verwendet die geprüften Wolken-Zoomwerte. Zoom 3 und 4 bleiben ohne zusätzliche Glättung.</div></div>'+
+        '<div class="weather-display-panel-head" data-weather-display-drag-handle><img class="weather-display-layer-master" src="'+new URL('../../assets/gr-weather-display-premium-original.png',import.meta.url).href+'" alt="" style="width:30px;height:30px;object-fit:contain;pointer-events:none">'+'<div><div class="weather-display-panel-title">Darstellung</div><div class="weather-display-panel-sub">WeatherRouter</div></div>'+premiumAction('minimize','DarstellungsmenÃ¼ minimieren','minimize').replace('data-premium-action="minimize"','data-premium-action="minimize" data-weather-display-minimize')+'<button type="button" data-weather-display-info aria-label="Aktive Wetterebenen und Darstellungen anzeigen" title="Aktive Ebenen und Einstellungen" class="weather-display-info"><img src="'+PREMIUM_INFO+'" alt="" style="width:28px;height:28px;object-fit:contain;pointer-events:none"></button><button type="button" data-weather-display-close aria-label="DarstellungsmenÃ¼ schlieÃŸen" title="SchlieÃŸen" class="weather-display-close"><img src="'+deps.ABOUT_CLOSE_IMAGE+'" alt="" draggable="false"></button></div>'+
+        '<div class="weather-display-panel-body"><div class="weather-display-card"><div class="weather-display-card-title">Wetterebene</div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-layer-select aria-label="Wetterebene wÃ¤hlen"><option value="precipitation">Niederschlag</option><option value="clouds">Wolken</option><option value="wind">Wind</option><option value="temperature">Temperatur</option></select></div></div><section data-weather-quick-controls></section>'+
         '<div class="weather-display-card" data-weather-display-legend-card><div class="weather-display-card-title">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div></div>';
       const closeButton=panel.querySelector("[data-weather-display-close]");closeButton?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({enabled:false});});
       const infoButton=panel.querySelector("[data-weather-display-info]");
-      const windSlot=document.createElement('div');windSlot.dataset.weatherDisplayWindCard='true';windSlot.hidden=true;
-      panel.querySelector('.weather-display-panel-body').append(windSlot);
+      this._weatherQuickMount(panel);
       const info= document.createElement("section");
       info.dataset.weatherDisplayInfo="true";info.hidden=true;
       info.setAttribute("aria-label","Aktive Wetterebenen und ihre Darstellung");
@@ -692,23 +698,23 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         const heading=document.createElement("strong");heading.textContent="Aktive Wetterebenen";heading.style.color="#edca83";info.append(heading);
         const add=(title,desc)=>{
           const row=document.createElement("div");row.style.cssText="padding:7px 0;border-top:1px solid rgba(255,255,255,.12)";
-          const label=document.createElement("strong");label.textContent=title+" · ";label.style.color="#f1d398";
+          const label=document.createElement("strong");label.textContent=title+" Â· ";label.style.color="#f1d398";
           row.append(label,document.createTextNode(desc));info.append(row);
         };
         const radar=this._weatherRadarState?.();
         if(radar?.layer){
           const mode=this._weatherDisplayStyle("precipitation");
-          add("Niederschlag",(LABELS[mode]||mode)+" · Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
+          add("Niederschlag",(LABELS[mode]||mode)+" Â· Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
         }
         const generic=this.__weatherGenericStates;
         if(generic instanceof Map){
           for(const [id,state] of generic){
             if(!state?.enabled)continue;
             const isCloud=id==="weather.satellite.clouds";
-            const name=isCloud?"Wolken":id==="weather.model.wind_10m.layer"?"Wind (Raster)":id.split(".").slice(-2).join(" · ");
+            const name=isCloud?"Wolken":id==="weather.model.wind_10m.layer"?"Wind (Raster)":id.split(".").slice(-2).join(" Â· ");
             const mode=isCloud?this._weatherDisplayStyle("clouds"):"original";
             const status=this._weatherGenericDescribe?.(id)||state.status||"Aktiv";
-            add(name,(isCloud?(mode==="balanced"?"Ausgewogen":"Original"):"Original")+" · "+status);
+            add(name,(isCloud?(mode==="balanced"?"Ausgewogen":"Original"):"Original")+" Â· "+status);
           }
         }
         if(info.children.length===1){const empty=document.createElement("p");empty.textContent="Keine aktiven Wetter-Rasterebenen";info.append(empty);}
@@ -721,20 +727,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       });
       panel.querySelector("[data-weather-display-minimize]")?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayPatch({minimized:!this._weatherDisplayState().config.minimized});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       const layerSelect=panel.querySelector("[data-weather-display-layer-select]");
-      const syncLayerChoice=()=>{
-        if(layerSelect?.value==='temperature'){layerSelect.value='precipitation';this._weatherTemperatureOpen?.();return;}
-        const kind=['clouds','wind'].includes(layerSelect?.value)?layerSelect.value:'precipitation';
-        panel.classList.toggle('wind-selected',kind==='wind');requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
-        const rain=panel.querySelector("[data-weather-display-precipitation-card]");
-        const clouds=panel.querySelector("[data-weather-display-clouds-card]");
-        if(rain)rain.style.display=kind==="precipitation"?"":"none";
-        if(clouds)clouds.style.display=kind==="clouds"?"":"none";
-        windSlot.hidden=kind!=='wind';
-        panel.querySelector('[data-weather-display-legend-card]').hidden=kind==='wind';
-        if(kind==='wind'&&this._weatherDisplayState().config.enabled)this._weatherWindOpen?.({container:windSlot,focus:false});
-      };
-      layerSelect?.addEventListener("change",event=>{event.stopPropagation();syncLayerChoice();});
-      syncLayerChoice();
+      layerSelect?.addEventListener("change",event=>{event.stopPropagation();this._weatherDisplayPatch({quickLayer:layerSelect.value});requestAnimationFrame(()=>this._weatherDisplayPositionPanel());});
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>select.addEventListener("change",event=>{event.stopPropagation();const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";this._weatherDisplayPatch({styles:{[kind]:select.value}});}));
       panel.querySelectorAll("[data-weather-display-transparency]").forEach(input=>input.addEventListener("input",event=>{event.stopPropagation();this._weatherDisplaySetTransparency(input.dataset.weatherDisplayTransparency,input.value);}));
       panel.querySelectorAll("[data-weather-display-transparency-reset]").forEach(button=>button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();this._weatherDisplayResetTransparency(button.dataset.weatherDisplayTransparencyReset);}));
@@ -950,12 +943,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!this.shadow)return;
     const state=this._weatherDisplayState(),available=state.status==="ready",copy=this._weatherDisplayStatusCopy(),config=state.config;
     const layerChoice=this.shadow.querySelector("[data-weather-display-layer-select]");
-    if(layerChoice){const kind=['clouds','wind'].includes(layerChoice.value)?layerChoice.value:'precipitation';const panel=layerChoice.closest("[id=weather-display-panel]");panel?.classList.toggle("wind-selected",kind==="wind");const rain=panel?.querySelector("[data-weather-display-precipitation-card]"),clouds=panel?.querySelector("[data-weather-display-clouds-card]"),wind=panel?.querySelector('[data-weather-display-wind-card]');if(rain)rain.style.display=kind==="precipitation"?"":"none";if(clouds)clouds.style.display=kind==="clouds"?"":"none";if(wind){wind.hidden=kind!=='wind';const child=wind.querySelector('#weather-wind-panel');if(config.enabled&&kind==='wind'&&(!child||child.hidden))this._weatherWindOpen?.({container:wind,focus:false});}const legend=panel?.querySelector('[data-weather-display-legend-card]');if(legend)legend.hidden=kind==='wind';}
+    if(layerChoice){const panel=layerChoice.closest('[id=weather-display-panel]');panel?.classList.remove('wind-selected');const legend=panel?.querySelector('[data-weather-display-legend-card]');if(legend)legend.hidden=!['precipitation','clouds'].includes(config.quickLayer);}
     this._weatherDisplaySyncLegendBadge();
     const block=this.shadow.querySelector('[data-weather-display-settings="true"]');
     if(block){
       block.classList.toggle("offline",!available);
-      const status=block.querySelector("[data-weather-display-status]");if(status)status.textContent=copy.title+" · "+copy.note;
+      const status=block.querySelector("[data-weather-display-status]");if(status)status.textContent=copy.title+" Â· "+copy.note;
       const headGlyph=block.querySelector(".weather-display-eye-glyph");if(headGlyph)headGlyph.outerHTML=eyeAssetMarkup(available&&config.enabled);
       block.querySelectorAll("[data-weather-display-setting]").forEach(button=>{
         const key=button.dataset.weatherDisplaySetting,on=Boolean(config[key]);
@@ -973,13 +966,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherDisplayEnsureMapUi();
     const eye=this.shadow.getElementById("weather-display-eye-control");
     const control=this.shadow.getElementById('weather-display-control');
-    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
+    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='DarstellungsmenÃ¼ Ã¶ffnen Â· 600 ms drÃ¼cken: Ã¶ffnen Â· Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
     const panel=this.shadow.getElementById("weather-display-panel");
     if(panel){
       panel.hidden=!((available||this._weatherWindOpen)&&config.enabled);
       panel.classList.toggle("minimized",config.minimized);
       const minimize=panel.querySelector("[data-weather-display-minimize]");
-      if(minimize){minimize.setAttribute("aria-label",config.minimized?"Darstellungsmenü aufklappen":"Darstellungsmenü minimieren");}
+      if(minimize){minimize.setAttribute("aria-label",config.minimized?"DarstellungsmenÃ¼ aufklappen":"DarstellungsmenÃ¼ minimieren");}
       const glyph=panel.querySelector(".weather-display-eye-glyph");if(glyph)glyph.outerHTML=eyeAssetMarkup(true);
       const precipCard=panel.querySelector("[data-weather-display-precipitation-card]");if(precipCard)precipCard.hidden=!available;
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>{const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";select.value=config.styles?.[kind]||"auto";select.disabled=!available;});
@@ -990,6 +983,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       if(!panel.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionPanel());
       if(!eye.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionEye());
     }
+    this._weatherQuickSync();
     this._eyeHubSync();
   },
 
@@ -997,7 +991,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(!this._weatherDisplayIsAvailable())return "";
     const config=this._weatherDisplayState().config;
     return '<button class="weather-layer-action weather-layer-display-entry'+(config.enabled?' active':'')+'" type="button" data-weather-layer-action="display"><strong>Darstellung</strong><small>'+(
-      config.enabled?(config.minimized?"aktiv · minimiert":"aktiv · geöffnet"):"Schnellmenü öffnen"
+      config.enabled?(config.minimized?"aktiv Â· minimiert":"aktiv Â· geÃ¶ffnet"):"SchnellmenÃ¼ Ã¶ffnen"
     )+'</small></button>';
   },
 

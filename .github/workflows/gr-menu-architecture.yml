@@ -78,6 +78,8 @@ jobs:
       - name: Eye state, protected menu, master assets and shipped frontend
         run: |
           node scripts/test-eye-hub-model.mjs
+          node --check frontend/modules/weather/eye-neon.js
+          node --check frontend/modules/weather/display-quick.js
           node --check frontend/modules/weather/eye-hub.js
           node --check frontend/modules/weather/eye-hub-view.js
           node scripts/verify-frontend.mjs
@@ -91,5 +93,6 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/eye/node_modules
         run: |
           node scripts/test-eye-hub-fix-browser.cjs
+          node scripts/test-eye-neon-quick-browser.cjs
       - name: Installable DEV payload identity and parity
         run: python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"
