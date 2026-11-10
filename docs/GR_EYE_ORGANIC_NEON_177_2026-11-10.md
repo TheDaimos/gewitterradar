@@ -248,3 +248,23 @@ Finaler Implementierungscommit: `c1f56983a6e28e19115ebac5be4b57465c02b9a4`. Ursp
 
 - `gewitterradar-0.25.84-dev.zip`: SHA256 `4bef3241dbcae04ba397c9ce32a265ede075becc63acac9de67ec8755c2f4669`
 - `gewitterradar-dashboard-4.11.177-dev.zip`: SHA256 `c96d7d29e7b8ada53dc7c4bfd49487f6828868c68e91a6dff5d8dc885316d8f8`
+
+## Vollstaendige CI-Vergleichsmessung
+
+Ubuntu/Chromium-Emulation, je1,2s; 176-Referenzsource gegen den geprueften177-Commit. Keine physischen Geraetewerte.
+
+| Ansicht |176 p50/p95 ms|177 p50/p95 ms|Eye JS Mittel/Max ms|
+|---|---|---|---|
+|desktop|16.7/16.8|16.7/16.8|1.25/2.30|
+|desktop-hidpi|33.4/50.0|33.4/50.0|1.46/8.70|
+|android|16.7/16.8|16.7/16.7|1.19/2.20|
+|android-landscape|16.7/16.8|16.7/16.8|1.35/4.60|
+|ipad|16.7/33.4|16.8/33.4|1.38/12.70|
+
+## Oeffentliche gezielte CI
+
+Erfolgreich: [Eye Bubble Hub acceptance](https://github.com/TheDaimos/gewitterradar/actions/runs/42855855866).
+Gepruefter Quellcommit: `baa011eee6db48ae5605a996094ce08c23048606`. Isolierter Eye-Job, Altjob uebersprungen.
+Enthaelt Modell-/Status-/Masterpruefung, bestehende Eye-/Schnellmenue-Regression sowie fuenf organische Chromium-Ansichten,
+Touch/Hold/Drag, native Auswahl, echte Canvas-Filamentkreuzungen, stabile Bilder, Icon25-300-Prozent und relativen176-Vergleich und installierbare Paketidentitaet.
+Der nachfolgende Berichtsnachtrag aendert keine installierbaren Dateien.
