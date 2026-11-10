@@ -217,3 +217,11 @@ Implementierungscommit: `922f5f9ff8517591bc4dfd8812efca4112f885c1`.
 - `gewitterradar-dashboard-4.11.174-dev.zip`: SHA256 `d63c0e9f0a72135949d94d15ac3e98d44c75fdca9cf86415ebfbc4f45d095e16`
 
 The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
+
+## Oeffentliche gezielte CI
+
+Erfolgreich: [Eye Bubble Hub acceptance](https://github.com/TheDaimos/gewitterradar/actions/runs/42787328869).
+Gepruefter Quellcommit: `62f56a816bc7bad8bdcef6072751e1adebb7e3e5`. Isolierter Eye-Job, Altjob uebersprungen.
+Enthaelt Modell-/Status-/Masterpruefung, volle Android-Modulbaumpruefung,
+Desktop-Navigation mit vier Timeline-Modi und installierbare Paketidentitaet.
+Der nachfolgende Berichtsnachtrag aendert keine installierbaren Dateien.
