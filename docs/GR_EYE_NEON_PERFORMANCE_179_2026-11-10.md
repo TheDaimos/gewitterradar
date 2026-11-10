@@ -94,3 +94,12 @@ Die fünf Browserprofile sind Desktop, Desktop HiDPI, Android Hoch- und Querform
 ## Auslieferung
 
 Der DEV-Kanal bleibt `TheDaimos/gewitterradar@deploy/dev`. Die Lieferung umfasst die synchronisierten Frontend-Kopien, Runtime- und Modulkennungen, HA- und Dashboard-ZIPs, Deployment-Metadaten und SHA256-Prüfsummen. Die öffentliche Eye-CI und die Paketidentitäten folgen im Release-Nachweis.
+
+## Implementierung und deterministische Installationspakete
+
+Implementierungscommit: `f62070a431e227a2b96a30a66f6a33066e35a0ec`.
+
+- `gewitterradar-0.25.86-dev.zip`: SHA256 `1da012217841072b88c76d40866a56d13599230406bc86ff383b71746decd75a`
+- `gewitterradar-dashboard-4.11.179-dev.zip`: SHA256 `8aa010148492fea75751cb5a0f0900ecc64e7d0b769d10da7b5fcccd45bebebd`
+
+HA-/Dashboard-ZIPs aus committed Git-Baum, CRC und jede enthaltene UI-/WOW-Quelle mit kanonischen UTF-8-Dateien verglichen. Deployment-Metadaten nennen den finalen Bericht-/Releasecommit; ZIP-Nutzdaten bleiben über reine Berichtsnachträge identisch.
