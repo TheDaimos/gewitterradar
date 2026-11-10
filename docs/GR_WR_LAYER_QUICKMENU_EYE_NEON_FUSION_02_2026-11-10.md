@@ -213,6 +213,9 @@ neuen Tag verÃ¶ffentlicht. VollstÃ¤ndige Commits, PaketprÃ¼fsummen und erf
 ## Lokale Entwicklungsmessung (kurze Vergleichsfenster)
 
 Je Phase ca.900 ms. Browser-Emulation auf demselben Desktop, kein reales Mobilgerät.
+Die rAF-Spalten vergleichen die beiden Acht-Bahnen-Fenster. Die JS-Spalte
+fasst die aktiven Neonframes der gesamten Prüfsequenz (einschließlich Vorschau
+und unterschiedlicher Bahnanzahl) zusammen; sie misst keine GPU-Paintzeit.
 
 | Ansicht | rAF p50 ohne/mit Neon (ms) | rAF p95 ohne/mit Neon (ms) | Neon JS Mittel/Maximum (ms) |
 | --- | --- | --- | --- |
@@ -232,3 +235,11 @@ Implementierungscommit: `040329e42d135ea384f0a69c55daffdf6d924510`.
 - `gewitterradar-dashboard-4.11.176-dev.zip`: SHA256 `a13048db629df3efbe5ba4673ad06fed995f321906f2fb827a2b7fd6acbecfdb`
 
 The final documentation commit is the release target, recorded in deployment.json. ZIP payloads remain identical to the implementation commit.
+
+## Oeffentliche gezielte CI
+
+Erfolgreich: [Eye Bubble Hub acceptance](https://github.com/TheDaimos/gewitterradar/actions/runs/42819831081).
+Gepruefter Quellcommit: `f81ae13cb150f87ccf87f9338cf287c2488cae40`. Isolierter Eye-Job, Altjob uebersprungen.
+Enthaelt Modell-/Status-/Masterpruefung, bestehende Eye-Regression sowie fuenf vollstaendige Chromium-Neon-/Schnellmenueansichten,
+Touch/Hold/Drag, Neonbewegung, simulierte Panefilter und 300-Prozent-Randfaellen und installierbare Paketidentitaet.
+Der nachfolgende Berichtsnachtrag aendert keine installierbaren Dateien.
