@@ -5,7 +5,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.29",
+  version:"0.4.30",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -13,6 +13,10 @@ export const MODULE_META=Object.freeze({
 });
 
 const STORAGE_KEY="gewitterradar:weather-display:v1";
+// A 50px hit target matches the other weather controls. The original PNG's
+// gold ring spans 90.7% of its canvas: 49.5px gives their same ~45px visible ring.
+export const WEATHER_DISPLAY_CONTROL_ICON=new URL('../../assets/gr-weather-display-premium-original.png', import.meta.url).href;
+const displayControlMarkup=()=>'<img src="'+WEATHER_DISPLAY_CONTROL_ICON+'" alt="" width="50" height="50" draggable="false">';
 // Touch browsers may retarget their compatibility click into the newly opened
 // panel. Suppress only the release click near this long-press origin, including
 // label default activation; the button's own click handler is not sufficient.
@@ -542,13 +546,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       ".weather-display-legend-picker{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.weather-display-legend-button{appearance:none;min-height:31px;padding:5px 9px;border:1px solid rgba(255,255,255,.11);border-radius:8px;background:#111820;color:#bfc8d2;font:760 8.5px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-legend-button.active{border-color:rgba(240,202,112,.58);background:rgba(145,105,31,.20);color:#f2d88e;box-shadow:0 0 12px rgba(223,173,68,.08)}",
       ".weather-display-opacity{display:flex;align-items:center;gap:7px;min-width:190px;justify-content:flex-end}.weather-display-opacity input[type=range]{width:118px;accent-color:#d8aa4e;touch-action:manipulation}.weather-display-opacity output{min-width:39px;margin-right:7px;text-align:right;font-size:9px;font-weight:820;color:#f1d38a}.weather-display-opacity-reset{appearance:none;min-height:28px;padding:4px 7px;border:1px solid rgba(225,181,83,.24);border-radius:7px;background:rgba(255,255,255,.025);color:#d7c590;font:740 8px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-opacity-reset:disabled{opacity:.4;cursor:default}",
       ".weather-display-panel .weather-display-opacity{min-width:0;justify-content:stretch;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.065)}.weather-display-panel .weather-display-opacity input[type=range]{flex:1 1 auto;width:auto;min-width:0}.weather-display-opacity-label{font-size:8px;font-weight:760;color:#c9d0d8;white-space:nowrap}",
-      ".weather-display-eye-control{position:absolute;z-index:2147483645;left:10px;top:10px;bottom:auto;width:44px;height:44px;padding:0;border:1px solid rgba(232,188,91,.35);border-radius:13px;background:rgba(10,14,20,.94);display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 15px rgba(222,166,58,.09);backdrop-filter:blur(10px);cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}.weather-display-eye-control.dragging{cursor:grabbing}.weather-display-eye-control[hidden]{display:none!important}.weather-display-eye-control.active{border-color:rgba(240,202,112,.68);box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 18px rgba(240,202,112,.18)}",
+      ".weather-display-eye-control{position:absolute;z-index:2147483645;left:10px;top:10px;bottom:auto;width:50px;height:50px;min-width:50px;min-height:50px;box-sizing:border-box;padding:0;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;box-shadow:none;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}.weather-display-eye-control img{display:block;width:49.5px;height:49.5px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}.weather-display-eye-control:focus-visible{outline:2px solid #f4d791;outline-offset:2px}.weather-display-eye-control.dragging{cursor:grabbing}.weather-display-eye-control[hidden]{display:none!important}",
       ".weather-display-eye-glyph{display:grid;place-items:center;width:34px;height:34px;color:#e8c56b;pointer-events:none}.weather-display-eye-glyph img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7));pointer-events:none;user-select:none;-webkit-user-drag:none}",
       ".weather-display-panel{position:absolute;z-index:2147483644;width:min(286px,calc(100% - 20px));box-sizing:border-box;border:1px solid rgba(231,190,96,.34);border-radius:15px;background:linear-gradient(155deg,rgba(17,20,27,.97),rgba(12,13,20,.95));box-shadow:0 18px 46px rgba(0,0,0,.52),0 0 22px rgba(219,161,51,.08);backdrop-filter:blur(15px);color:#e7ebf0;overflow:hidden;pointer-events:auto}.weather-display-panel[hidden]{display:none!important}.weather-display-panel.minimized{width:min(184px,calc(100% - 20px))}.weather-display-panel.minimized .weather-display-panel-body{display:none}",
       ".weather-display-panel-head{min-height:46px;padding:5px 6px 5px 9px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;background:linear-gradient(90deg,rgba(177,128,36,.10),rgba(112,34,92,.08))}.weather-display-panel.dragging .weather-display-panel-head{cursor:grabbing}.weather-display-panel-title{font-size:11px;font-weight:860;color:#f1d38a}.weather-display-panel-sub{margin-top:2px;font-size:7.8px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-display-minimize{appearance:none;width:34px;height:32px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025);color:#d9c999;font:900 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-display-panel.minimized .weather-display-minimize{width:31px;height:29px;font-size:13px}",
       ".weather-display-panel-body{display:grid;gap:8px;padding:9px}.weather-display-card{padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.024)}.weather-display-card-title{font-size:10px;font-weight:840;color:#f1d48c;margin-bottom:6px}.weather-display-card-note{font-size:8px;line-height:1.42;opacity:.64;margin-top:6px}",
       ".weather-layer-display-entry{grid-column:1/-1;border-color:rgba(236,185,91,.27)!important;background:linear-gradient(135deg,rgba(126,86,22,.17),rgba(108,35,92,.12))!important}.weather-layer-display-entry strong{color:#f2d48c!important}",
-      "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}.weather-display-eye-control{width:46px;height:46px}}"
+      "@media(max-width:720px){.weather-display-panel{width:min(278px,calc(100% - 16px))}.weather-display-panel.minimized{width:min(172px,calc(100% - 16px))}.weather-display-panel-head{min-height:48px}.weather-display-panel .weather-display-style-select{width:146px;min-height:38px;font-size:10.5px}.weather-display-panel .weather-display-legend-button{flex-basis:60px;width:60px;min-width:60px;min-height:38px;font-size:10px;padding:6px 4px}}"
     ].join("");
     style.textContent+=".weather-display-panel-head{grid-template-columns:28px minmax(0,1fr) 32px 30px;gap:4px}.weather-display-panel-head>div{min-width:0}.weather-display-panel-body,.weather-display-card{min-width:0}.weather-display-card-note{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere;max-width:100%;height:auto;line-height:1.5}.weather-display-panel .weather-display-opacity{display:grid;grid-template-columns:minmax(0,1fr) 38px 32px;gap:5px}.weather-display-opacity-label{grid-column:1/-1;white-space:normal}.weather-display-panel .weather-display-opacity input[type=range]{width:100%;min-width:0;box-sizing:border-box;margin:0}.weather-display-panel .weather-display-opacity output{min-width:0;margin:0}.weather-display-panel .weather-display-legend-button{flex:1 1 0;min-width:0;width:auto}.weather-display-panel.minimized{width:min(260px,calc(100% - 20px))}";
     style.textContent+=".weather-display-opacity-reset.gr-premium-metal-surface,.weather-display-info.gr-premium-metal-surface{display:grid;place-items:center;box-sizing:border-box;padding:0;min-width:0;width:32px;height:30px;border-width:1px;border-radius:8px;color:var(--premium-gold-bright,#f1d58c);box-shadow:inset 0 1px #fff3,0 2px 5px #0008;cursor:pointer;transition:filter .16s ease,transform .16s ease}.weather-display-opacity-reset.gr-premium-metal-surface{font-size:9px;font-weight:850;line-height:1;letter-spacing:.015em;text-align:center}.weather-display-info.gr-premium-metal-surface{width:30px;border-radius:50%;font-family:Georgia,serif;font-style:italic;font-size:19px;font-weight:700;line-height:1}.weather-display-opacity-reset.gr-premium-metal-surface:hover,.weather-display-info.gr-premium-metal-surface:hover{filter:brightness(1.14)}.weather-display-opacity-reset.gr-premium-metal-surface:active,.weather-display-info.gr-premium-metal-surface:active{transform:scale(.97);filter:brightness(.92)}.weather-display-opacity-reset.gr-premium-metal-surface:focus-visible,.weather-display-info.gr-premium-metal-surface:focus-visible{outline:2px solid #f1d58c;outline-offset:2px}";
@@ -651,12 +655,16 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       eye.id="weather-display-eye-control";
       eye.className="weather-display-eye-control";
       eye.type="button";
-      eye.setAttribute("aria-label","WeatherRouter-Darstellungsmenü");
-      eye.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();const state=this._weatherDisplayState();if(performance.now()<Number(state.eyeSuppressClickUntil||0))return;if(!this._weatherDisplayIsAvailable()&&!this._weatherWindOpen)return;this._weatherDisplayPatch({enabled:!state.config.enabled});});
+      eye.setAttribute("aria-label","Darstellungsmenü öffnen");
+      eye.setAttribute("aria-controls","weather-display-panel");
+      eye.innerHTML=displayControlMarkup();
       mapCard.append(eye);
-      this._weatherDisplayBindEyeDrag(eye);
-    }else{
-      this._weatherDisplayBindEyeDrag(eye);
+      // Reuse the same Pointer/600ms-long-press/drag controller as Wind,
+      // Temperature and Precipitation, keeping the existing Eye position key.
+      const open=()=>this._weatherDisplayOpenFromLayerMenu();
+      state.eyeDragOptions={element:eye,state:()=>state,position:()=>this._weatherDisplayPositionEye(),activate:open,longPress:open,save:position=>{if(state.config.rememberPosition)this._weatherDisplayPatch({eyePosition:position});}};
+      this._weatherDisplayBindEyeDrag(eye,state.eyeDragOptions);
+      for(const type of ['mousedown','dblclick','touchstart'])eye.addEventListener(type,event=>event.stopPropagation(),{passive:true});
     }
     let panel=this.shadow.getElementById("weather-display-panel");
     if(!panel){
@@ -946,9 +954,8 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(eye){
       eye.hidden=!((available||this._weatherWindOpen)&&config.controlVisible);
       eye.classList.toggle("active",available&&config.enabled);
-      eye.innerHTML=eyeAssetMarkup(available&&config.enabled);
-      eye.setAttribute("aria-pressed",available&&config.enabled?"true":"false");
-      eye.title=config.enabled?"Darstellungsmenü deaktivieren":"Darstellungsmenü aktivieren";
+      eye.setAttribute("aria-expanded",config.enabled?"true":"false");
+      eye.title="Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben";
     }
     const panel=this.shadow.getElementById("weather-display-panel");
     if(panel){
@@ -996,6 +1003,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherDisplayReleaseSoftFilter(pane);
     const state=this.__weatherDisplayState;if(!state)return;
     state.generation+=1;state.probing=false;
+    this._weatherDisplayCancelEyeDrag(state.eyeDragOptions);
     this._weatherPrecipitationCancelDrag?.();
     this._weatherDisplayCancelDrag();
     if(state.resizeHandler){

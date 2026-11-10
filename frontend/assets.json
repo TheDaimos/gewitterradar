@@ -83,7 +83,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "ff0d99b9c91fe45c6d4b3803c21987caffb8f266de2ed9d94eaaf0abfdd72097",
+    "sha256": "ce2f71b824157f33763d6e301369dad34b156dfa906163300c7e1d86a6482de1",
     "protected": false,
     "sizeBytes": 2873
   },
@@ -401,6 +401,11 @@
   {
     "file": "assets/gr-precipitation-premium-original.png",
     "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-weather-display-premium-original.png",
+    "sha256": "c0c18f4f283e350fb9612ed620af426f2ac9f8d270e8a36016c29b1fc48cecf2",
     "protected": true
   }
 ]
