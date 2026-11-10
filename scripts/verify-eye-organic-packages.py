@@ -5,7 +5,7 @@ import sys, zipfile
 root = Path(__file__).resolve().parents[1]
 packages = sorted(Path(sys.argv[1]).glob('*.zip'))
 assert len(packages) == 2, 'Expected integration and dashboard packages'
-names = ['display-quick.js', 'eye-hub.js', 'eye-hub-view.js', 'eye-hub-model.js', 'eye-hub-locales.js', 'eye-neon.js']
+names = ['display-quick.js', 'eye-hub.js', 'eye-hub-view.js', 'eye-hub-model.js', 'eye-hub-locales.js', 'eye-neon.js', 'eye-neon-wow.js']
 for package in packages:
     with zipfile.ZipFile(package) as archive:
         assert archive.testzip() is None
@@ -19,4 +19,4 @@ for package in packages:
             if name == 'display-quick.js':
                 for label in ['Präzise', 'Strömungsdichte', 'Weiß', 'Türkis', 'Schlangenförmige']:
                     assert label in text, (package.name, label)
-        print('PASS actual ZIP CRC, UTF-8 labels and six canonical UI sources:', package.name)
+        print('PASS actual ZIP CRC, UTF-8 labels and canonical UI/WOW sources:', package.name)

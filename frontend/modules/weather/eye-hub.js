@@ -1,7 +1,7 @@
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411177r2';
-import {EyeNeon} from './eye-neon.js?v=411177r2';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411178r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411178r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411177r2';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411178r1';
 export const eyeHubMethods={
  _eyeHubState(){
   if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(localStorage.getItem(EYE_HUB_KEY));}catch(_){}
@@ -73,7 +73,7 @@ export const eyeHubMethods={
  _eyeHubPosition(){
   const s=this.__eyeHub,eye=this.shadow?.getElementById('weather-display-eye-control'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!s||!eye||!card||!map)return;
   const m=map.getBoundingClientRect(),cr=card.getBoundingClientRect(),width=eye.offsetWidth||50;if(!m.width||!m.height)return;
-  if(!this._weatherDisplayState().eyeDrag){const c=s.config,p=this._weatherDisplayState().config.rememberPosition?this._weatherDisplayState().config.eyePosition:{x:0,y:1},extent=Math.max(width/2,c.size*.725,c.grouped?eyeGlowExtent(c):0),pad=10;
+  if(!this._weatherDisplayState().eyeDrag){const c=s.config,p=this._weatherDisplayState().config.rememberPosition?this._weatherDisplayState().config.eyePosition:{x:0,y:1},extent=Math.max(width/2,c.size*.725,((c.grouped&&c.neonBloom)||c.backdropExtent)?Math.min(c.grouped?eyeStudioExtent(c):eyeBackdropDiameter(c)/2,Math.min(m.width,m.height)/2-10):(c.grouped?eyeGlowExtent(c):0)),pad=10;
    const left=m.left-cr.left+pad+(Math.max(0,m.width-width-pad*2))*p.x,top=m.top-cr.top+pad+Math.max(0,m.height-width-pad*2)*p.y;
    eye.style.left=Math.max(m.left-cr.left+extent+pad-width/2,Math.min(m.right-cr.left-extent-pad-width/2,left))+'px';eye.style.top=Math.max(m.top-cr.top+extent+pad-width/2,Math.min(m.bottom-cr.top-extent-pad-width/2,top))+'px';eye.style.bottom='auto';
   }
