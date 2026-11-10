@@ -1,5 +1,5 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411178r1";
-/* Gewitterradar Card V4.11.178 DEV – V4.09 FINAL als regressionsgeschützte Basis.
+import { APPLICATION_RELEASE } from "./version.js?v=411179r1";
+/* Gewitterradar Card V4.11.179 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
    V4.09.10 verwendet die freigegebene freigestellte Messing-Kompassgrafik als verbindliche Mini-Darstellung für den Vollbild-Kompassschalter und zentriert beide Instrument-Schalter geometrisch. */
@@ -25,7 +25,7 @@ let installCompass, installHistoryChart, installWeatherRouter, installWeatherRad
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','411178r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','411179r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','411168r1');
@@ -45,7 +45,7 @@ try {
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js','411168r1');
   const dataSourceDiagnostics = await gewitterradarImport('./modules/diagnostics/data-sources.js','411168r1');
   const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','41140r1');
-  const rasterLab = await gewitterradarImport('./modules/diagnostics/raster-lab.js','411178r1');
+  const rasterLab = await gewitterradarImport('./modules/diagnostics/raster-lab.js','411179r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','411149r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
@@ -56,7 +56,7 @@ try {
   const weatherRouter = await gewitterradarImport('./modules/weather/consumer-client.js','411168r1');
   const weatherRadar = await gewitterradarImport('./modules/weather/precipitation-layer.js','411170r1');
   const weatherLayerMenu = await gewitterradarImport('./modules/weather/layer-menu.js','411176r1');
-  const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','411178r1');
+  const weatherDisplayMenu = await gewitterradarImport('./modules/weather/display-menu.js','411179r1');
   const weatherLegendOverlay = await gewitterradarImport('./modules/weather/legend-overlay.js','411170r1');
   const weatherWind = await gewitterradarImport('./modules/weather/wind-display.js','411170r1');
   const weatherTemperature = await gewitterradarImport('./modules/weather/temperature-display.js','411170r1');

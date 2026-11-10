@@ -1,6 +1,6 @@
 // Real module tree + deterministic V177 pixel reference; all weather I/O is synthetic.
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),{flowFixture}=require('./flow-curves-browser-fixture.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const out=path.join(os.tmpdir(),'gr-eye-wow-178');fs.mkdirSync(out,{recursive:true});
+const out=path.join(os.tmpdir(),'gr-eye-wow-179');fs.mkdirSync(out,{recursive:true});
 const matrix=[['desktop',1280,900,false,1],['desktop-hidpi',1920,1080,false,1.5],['android',393,851,true,3],['android-landscape',851,393,true,3],['ipad',820,1180,true,2]];
 // Both original and current pages execute exactly this same reference harness.
 async function install(current){
@@ -25,9 +25,43 @@ try{for(const [name,width,height,touch,dpr] of matrix){if(process.env.GR_MENU_VI
  const composite=[];for(const extra of combinations){await page.evaluate(o=>prepare(o),{size:126,...extra});const image=await page.evaluate(()=>drawAt(10));composite.push(image.energy);if(!Object.keys(extra).length||Object.keys(extra).length===4)fs.writeFileSync(path.join(out,name+(Object.keys(extra).length?'-max-light':'-reference')+'.png'),Buffer.from(image.png.split(',')[1],'base64'));}
  assert(composite.at(-1)>composite[0]*1.5,'Max is unmistakably more luminous');
  await page.evaluate(()=>prepare({size:126,neonBrilliance:100,neonBloom:100,neonOrganics:100}));
- const contacts=await page.evaluate(()=>{const colours=JSON.stringify(testConfig.colors),snapshots=[];let transferred=false,maxBridges=0;for(let i=0;i<180;i++){const time=10+i/30;drawAt(time);const w=testSurface.wow;maxBridges=Math.max(maxBridges,w.bridges.length);transferred||=w.stats.transfers>0;for(const v of w.bridges){const source=v.source.strands[v.si].points,target=v.target.strands[v.ti].points,n=testSurface.stats.samples;const si=Math.round(v.sa/(Math.PI*2)*n)%n,ti=Math.round(v.ta/(Math.PI*2)*n)%n;const distance=Math.hypot(source[si*2]-target[ti*2],source[si*2+1]-target[ti*2+1]);if(!Number.isFinite(distance))throw Error('invalid contact');}if(i===30||i===31)snapshots.push(w.bridges.map(v=>({seed:v.seed,source:v.source.id,target:v.target.id,age:time-v.start,x:v.source.strands[v.si].points[Math.round(v.sa/(Math.PI*2)*testSurface.stats.samples)*2],y:v.source.strands[v.si].points[Math.round(v.sa/(Math.PI*2)*testSurface.stats.samples)*2+1]})));}return {maxBridges,transferred,coloursUnchanged:colours===JSON.stringify(testConfig.colors),snapshots,stats:testSurface.wow.stats};});assert(contacts.maxBridges>=1);assert(contacts.transferred);assert(contacts.coloursUnchanged);for(const a of contacts.snapshots[0]){const b=contacts.snapshots[1].find(b=>b.seed===a.seed);if(b)assert(Math.hypot(a.x-b.x,a.y-b.y)<2,'Continuous retained bridge endpoint');}assert.deepEqual(await page.evaluate(()=>testConfig.slots.map(s=>s.functionId)),['wind','precipitation'],'No temperature needed');
- const decay=await page.evaluate(()=>{const old=testSurface.wow.bridges.map(v=>v.seed);for(const r of testSurface.rings.values()){r.target=0;r.visibility=0;}for(let i=0;i<15;i++)drawAt(16+i/30);return testSurface.wow.bridges.every(v=>!old.includes(v.seed));});assert(decay);
+ const contacts=await page.evaluate(()=>{const colours=JSON.stringify(testConfig.colors),snapshots=[];let transferred=false,maxBridges=0;for(let i=0;i<180;i++){const time=10+i/30;testNeon.draw(testSurface,time,1/30);testNeon.stop();const w=testSurface.wow;maxBridges=Math.max(maxBridges,w.bridges.length);transferred||=w.stats.transfers>0;for(const v of w.bridges){const source=v.source.strands[v.si].points,target=v.target.strands[v.ti].points,n=testSurface.stats.samples;const si=Math.round(v.sa/(Math.PI*2)*n)%n,ti=Math.round(v.ta/(Math.PI*2)*n)%n;const distance=Math.hypot(source[si*2]-target[ti*2],source[si*2+1]-target[ti*2+1]);if(!Number.isFinite(distance))throw Error('invalid contact');}if(i===30||i===31)snapshots.push(w.bridges.map(v=>({seed:v.seed,source:v.source.id,target:v.target.id,age:time-v.start,x:v.source.strands[v.si].points[Math.round(v.sa/(Math.PI*2)*testSurface.stats.samples)*2],y:v.source.strands[v.si].points[Math.round(v.sa/(Math.PI*2)*testSurface.stats.samples)*2+1]})));}return {maxBridges,transferred,coloursUnchanged:colours===JSON.stringify(testConfig.colors),snapshots,stats:testSurface.wow.stats};});assert(contacts.maxBridges>=1);assert(contacts.transferred);assert(contacts.coloursUnchanged);for(const a of contacts.snapshots[0]){const b=contacts.snapshots[1].find(b=>b.seed===a.seed);if(b)assert(Math.hypot(a.x-b.x,a.y-b.y)<2,'Continuous retained bridge endpoint');}assert.deepEqual(await page.evaluate(()=>testConfig.slots.map(s=>s.functionId)),['wind','precipitation'],'No temperature needed');
+ const decay=await page.evaluate(()=>{const old=testSurface.wow.bridges.map(v=>v.seed);for(const r of testSurface.rings.values()){r.target=0;r.visibility=0;}for(let i=0;i<15;i++)testNeon.draw(testSurface,16+i/30,1/30);return testSurface.wow.bridges.every(v=>!old.includes(v.seed));});assert(decay);
  for(const mode of ['static','living']){await page.evaluate(o=>prepare(o),{size:126,mode,neonBrilliance:100,neonBloom:100,neonOrganics:100});if(mode==='static'){const a=await page.evaluate(()=>drawAt(10)),b=await page.evaluate(()=>drawAt(11));assert.equal(a.png,b.png);assert.equal(await page.evaluate(()=>testNeon.frame),null);assert.equal(b.wow.bridges,0);}else{const a=await page.evaluate(()=>drawAt(10)),b=await page.evaluate(()=>drawAt(10.033));assert.notEqual(a.png,b.png);}}
+ const optimized = await page.evaluate(async () => {
+  await prepare({size:126,colors:4,neonBrilliance:100,neonBloom:100,neonOrganics:100});
+  const state = testSurface.wow;
+  testNeon.draw(testSurface, 10, 1/30);
+  const before = state.bloomUpdates;
+  let maskStrokes = 0;
+  const stroke = state.ink.stroke.bind(state.ink);
+  state.ink.stroke = (...args) => { maskStrokes++; stroke(...args); };
+  testNeon.draw(testSurface, 10.03, 1/30);
+  const reused = before === state.bloomUpdates && maskStrokes === 0;
+  const initialFilaments = state.stats.filaments;
+  state.level = 2;
+  let transfer = false;
+  for (let i = 0; i < 160; i++) {
+   testNeon.draw(testSurface, 10.06 + i / 30, 1/30);
+   transfer ||= state.stats.transfers > 0;
+  }
+  const reduced = state.stats.filaments < initialFilaments && state.stats.filaments > 0;
+  const clip = document.createElement('div');
+  clip.style.cssText = 'position:fixed;left:0;top:0;width:50px;height:50px;overflow:hidden;transform:translateZ(0)';
+  document.body.append(clip);
+  clip.append(testHost);
+  testHost.style.left = testHost.style.top = '100px';
+  const hidden = !testNeon.visible(testSurface);
+  const work = state.cpuFrames;
+  testNeon.draw(testSurface, 20, 1/30);
+  const stopped = state.cpuFrames === work;
+  document.body.append(testHost);
+  testHost.style.left = testHost.style.top = '50%';
+  clip.remove();
+  testNeon.draw(testSurface, 20.03, 1/30);
+  return {reused, reduced, transfer, hidden, stopped, resumed:state.cpuFrames > work};
+ });
+ assert.deepEqual(optimized,{reused:true,reduced:true,transfer:true,hidden:true,stopped:true,resumed:true});
  await page.evaluate(()=>{testNeon.destroy();testHost.remove();card._setMapDisplayMode('fullscreen',{persist:false});for(const [id,v] of card._eyeHubState().registry.entries)card._eyeHubState().registry.entries.set(id,{...v,status:()=>({active:true,available:true})});card._eyeHubPatch({grouped:true,aura:true,size:126,intensity:100,brightness:100,glow:'living'});card._eyeHubOpen();});
  const dialog=page.locator('#eye-hub-config'),studio=dialog.locator('[data-section=neon-studio]');await dialog.waitFor({state:'visible'});await studio.locator('summary').click();await page.waitForTimeout(450);assert.equal(await studio.locator('summary').getAttribute('aria-expanded'),'true');const studioBox=await studio.boundingBox();for(const row of await studio.locator('[data-eye-option]').all()){const r=await row.boundingBox();assert(r&&r.x>=studioBox.x&&r.x+r.width<=studioBox.x+studioBox.width+1,'Expanded studio controls fit their panel');}
  const old=await page.evaluate(()=>{const {neonBrilliance,neonBloom,neonOrganics,backdropExtent,...rest}=card._eyeHubState().config;return rest;});

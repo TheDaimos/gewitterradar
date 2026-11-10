@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.178",
-  "build": "V4.11.178-DEV-2026-11-10",
-  "runtimeRevision": "411178r1",
-  "moduleSetId": "E411-178A1",
-  "baselineFeatureHead": "44298fc34cf881657855a99b5a5941edb67ca929",
+  "productVersion": "4.11.179",
+  "build": "V4.11.179-DEV-2026-11-10",
+  "runtimeRevision": "411179r1",
+  "moduleSetId": "E411-179A1",
+  "baselineFeatureHead": "5a3f0a6b64978194991e8a94dacd6aa86195bc3a",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Optional Eye Neon WOW Studio; additive brilliance, cached bloom, organic energy bridges and temporary colour transfer. Pixel-exact V177 zero path; weather, snake, compass and DRA channel unchanged.",
+    "purpose": "Optimize optional Eye Neon Studio mask, geometry, contact and visibility budgets above the pixel-exact V177 path.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

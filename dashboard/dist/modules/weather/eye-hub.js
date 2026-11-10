@@ -1,5 +1,5 @@
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411178r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411178r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411179r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
 import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411178r1';
 export const eyeHubMethods={
