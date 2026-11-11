@@ -11,6 +11,7 @@ on:
       - 'scripts/test-settings-vault-browser.cjs'
       - 'scripts/test-map-gesture-recovery-browser.cjs'
       - 'scripts/test-v41140-module-manifest.mjs'
+      - 'scripts/test-v41168-radius-render-guard.mjs'
       - 'tests/*settings-vault*'
       - 'tests/test_settings_vault.py'
       - 'tests/gr-premium-ui.test.mjs'
@@ -45,6 +46,7 @@ jobs:
           node scripts/test-frontend-build.mjs
           node scripts/test-v411-identity.mjs
           node scripts/test-v41140-module-manifest.mjs
+          node scripts/test-v41168-radius-render-guard.mjs
       - name: Install Chromium test dependencies
         run: |
           npm install --prefix "$RUNNER_TEMP/vault-deps" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4

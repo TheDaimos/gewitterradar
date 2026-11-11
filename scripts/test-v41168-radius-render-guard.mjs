@@ -4,8 +4,12 @@ import {readFile} from 'node:fs/promises';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 const radii=await read('frontend/modules/location/radii-map.js');
 const core=await read('frontend/modules/core/base-context.js');
-assert.match(radii,/"version": "1.0.24"/);
-assert.match(core,/version:"1.0.8"/);
+const {MODULE_META:radiiMeta}=await import('../frontend/modules/location/radii-map.js');
+const {MODULE_META:coreMeta}=await import('../frontend/modules/core/base-context.js');
+const {EXPECTED_MODULES}=await import('../frontend/module-manifest.js');
+for(const meta of [radiiMeta,coreMeta]){
+  assert.equal(meta.version,EXPECTED_MODULES.find(module=>module.id===meta.id)?.version);
+}
 assert.match(core,/if \(outer > safeOuter\) \{/);
 assert.match(core,/Math\.min\(8192,Math\.max\(2048,4\*/);
 assert.match(core,/radius-aura-svg-viewport-veil/);
