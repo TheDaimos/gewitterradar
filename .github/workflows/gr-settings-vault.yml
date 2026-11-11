@@ -10,6 +10,7 @@ on:
       - 'dashboard/dist/**'
       - 'scripts/test-settings-vault-browser.cjs'
       - 'scripts/test-map-gesture-recovery-browser.cjs'
+      - 'scripts/test-eye-hub-model.mjs'
       - 'scripts/test-v41140-module-manifest.mjs'
       - 'scripts/test-v41168-radius-render-guard.mjs'
       - 'tests/*settings-vault*'

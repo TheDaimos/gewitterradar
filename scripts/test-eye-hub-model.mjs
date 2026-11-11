@@ -44,10 +44,12 @@ for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind
 const stripBuildVersions=normaliseGeneratedModule;
 const precipitationPath='frontend/modules/weather/precipitation-layer.js';
 assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+precipitationPath],{encoding:'utf8'}),precipitationPath)),'protected precipitation implementation');
-// Keep the V179 window implementations with only the approved drag binding.
+// Keep the V179 window implementations with the shared drag binding and its
+// current state shape. Compatibility click suppression now lives on the card.
 for(const [file,scope] of [['wind-display.js','wind-settings'],['temperature-display.js','temperature-settings']]){
  const reference=execFileSync('git',['show','51fe26380bdd97b46fe7d979a2ef994b483cc430:frontend/modules/weather/'+file],{encoding:'utf8'})
   .replace(file==='wind-display.js'?'import {ensurePremiumUi,':'import {premiumAction,',file==='wind-display.js'?'import {bindPremiumPanelDrag,ensurePremiumUi,':'import {bindPremiumPanelDrag,premiumAction,')
+  .replace(',eyeSuppressClickUntil:0','')
   .replace('card.append(panel);',"card.append(panel);bindPremiumPanelDrag(panel,this.shadow?.getElementById('map'),'"+scope+"');");
  assert.equal(stripBuildVersions(readFileSync('frontend/modules/weather/'+file,'utf8')),stripBuildVersions(withVaultStorage(reference,file)),file+' protected V179 behavior');
 }
