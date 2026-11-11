@@ -23,6 +23,171 @@ function gestureFixture(ref) {
       };`)});
 }
 
+async function runEyeInterruptionMatrix() {
+  const shadow = card.shadowRoot;
+  const eye = shadow.getElementById('weather-display-eye-control');
+  const map = shadow.getElementById('map');
+  const wind = shadow.getElementById('weather-wind-toggle');
+  const temperature = shadow.getElementById('weather-temperature-toggle');
+  const state = card._weatherDisplayState();
+  const traces = [], hitTests = [];
+  card._mapDiagnosticLog = (type,data) => { if (type.startsWith('eye.gesture.')) traces.push({type,...data}); };
+  const check = (condition,message) => { if (!condition) throw new Error(message); };
+  const frame = () => new Promise(requestAnimationFrame);
+  const point = (id,target=eye) => {
+    const r=target.getBoundingClientRect();
+    return {id,target,x:r.left+r.width/2,y:r.top+r.height/2};
+  };
+  const pointer = (type,p,{primary=true,target=p.target}={}) => target.dispatchEvent(new PointerEvent(type,{
+    pointerType:'touch',pointerId:p.id,isPrimary:primary,button:0,clientX:p.x,clientY:p.y,
+    bubbles:true,composed:true,cancelable:true,
+  }));
+  const touch = (type,target,active,changed) => {
+    const make=p=>new Touch({identifier:p.id+1000,target:p.target,clientX:p.x,clientY:p.y});
+    return target.dispatchEvent(new TouchEvent(type,{touches:active.map(make),changedTouches:changed.map(make),
+      bubbles:true,composed:true,cancelable:type==='touchstart'||type==='touchmove'}));
+  };
+  let id=301;
+  const next=target=>point(id++,target);
+  const active=()=>state.eyeDrag;
+  const clean=(reason,{release=false}={})=>{
+    check(!active()&&!eye.classList.contains('pressing')&&!eye.classList.contains('dragging'),reason+': Eye still active');
+    check(!card._weatherControlGesture,reason+': global gesture guard survived');
+    if(!release)check(!card._weatherControlRelease,reason+': compatibility click guard survived');
+  };
+  const tap=()=>{
+    const p=next(),open=eye.getAttribute('aria-expanded');
+    pointer('pointerdown',p);pointer('pointerup',p);
+    check(eye.getAttribute('aria-expanded')!==open,'fresh tap did not activate Eye');
+  };
+  const mode=async mode=>{
+    card._setMapDisplayMode(mode,{persist:false,remember:false});
+    await frame();await frame();
+    eye.scrollIntoView({block:'nearest'});
+    const p=point(0),hit=shadow.elementFromPoint(p.x,p.y),style=getComputedStyle(eye);
+    hitTests.push({mode,hit:hit?.id||hit?.className,pointerEvents:style.pointerEvents,zIndex:style.zIndex});
+    check(shadow.getElementById(eye.id)===eye&&eye.contains(hit),'Eye not hit-testable in '+mode);
+  };
+  card._eyeHubPatch({grouped:true,aura:true});
+  card._weatherDisplayPatch({rememberPosition:true,eyePosition:{x:.35,y:.55}});
+  await mode('standard');
+
+  // V186 loses both tap and drag with this same-target, same-ID fresh sequence.
+  // Neither a global map pointer nor an overlay hit-test is involved.
+  let a=next();
+  pointer('pointerdown',a);
+  const orphan=active(),open=eye.getAttribute('aria-expanded');
+  check(orphan&&eye.classList.contains('pressing'),'fixture did not arm the first Eye contact');
+  pointer('pointerdown',a);
+  const replacement=active();
+  if(replacement===orphan)throw new Error('V186 trace '+JSON.stringify({mode:'standard',hit:hitTests[0],
+    oldPointer:orphan.pointerId,newPointer:a.id,isPrimary:true,pointerup:false,cancel:false,
+    capture:eye.hasPointerCapture(a.id),pressing:eye.classList.contains('pressing'),
+    releasePending:!!state.eyeReleaseCleanup,nextAccepted:false}));
+  check(orphan.listeners.signal.aborted,'orphan retained listeners');
+  pointer('pointerup',a);
+  check(eye.getAttribute('aria-expanded')!==open,'same-ID fresh contact could not tap');
+
+  for (const scenario of ['three-pointers','three-touches','touchcancel','empty touchcancel','pointercancel','lostpointercapture','touchend','blur','hidden']) {
+    a=next();const b=next(map),c=next(wind);
+    pointer('pointerdown',a);touch('touchstart',eye,[a],[a]);
+    const old=active(),count=traces.filter(t=>t.type==='eye.gesture.interrupted').length;
+    if(scenario==='three-pointers'){
+      pointer('pointerdown',b,{primary:false});touch('touchstart',map,[a,b],[b]);
+      check(pointer('pointerdown',c,{primary:false}),'third pointer default prevented');
+      touch('touchstart',wind,[a,b,c],[c]);
+      pointer('pointercancel',a,{target:temperature});
+      touch('touchcancel',temperature,[],[a,b,c]);
+    }
+    if(scenario==='three-touches'){
+      touch('touchstart',map,[a,b],[b]);
+      touch('touchstart',eye,[a,b,c],[c]);
+    }
+    if(scenario==='touchcancel')touch('touchcancel',temperature,[],[a]);
+    if(scenario==='empty touchcancel')touch('touchcancel',temperature,[],[]);
+    if(scenario==='pointercancel')pointer('pointercancel',a,{target:wind});
+    if(scenario==='lostpointercapture')pointer('lostpointercapture',a,{target:temperature});
+    if(scenario==='touchend'){touch('touchend',eye,[],[a]);await frame();await frame();}
+    if(scenario==='blur')window.dispatchEvent(new Event('blur'));
+    if(scenario==='hidden'){
+      Object.defineProperty(document,'hidden',{configurable:true,value:true});
+      Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});
+      document.dispatchEvent(new Event('visibilitychange'));
+      delete document.hidden;delete document.visibilityState;
+      document.dispatchEvent(new Event('visibilitychange'));
+    }
+    clean(scenario);
+    check(old.listeners.signal.aborted,scenario+': listener scope not aborted');
+    check(traces.filter(t=>t.type==='eye.gesture.interrupted').length===count+1,scenario+': terminal was duplicated');
+    tap();
+  }
+
+  // Touch-only input after an observed cancel can ignore the identified ghost.
+  a=next();
+  pointer('pointerdown',a);touch('touchstart',eye,[a],[a]);
+  touch('touchcancel',eye,[],[a]);
+  const fresh=next(),freshOpen=eye.getAttribute('aria-expanded');
+  pointer('pointerdown',fresh,{primary:false});
+  touch('touchstart',eye,[a,fresh],[fresh]);
+  check(active()?.source==='touch','new changed touch did not bypass ghost contact');
+  touch('touchend',eye,[a],[fresh]);
+  check(eye.getAttribute('aria-expanded')!==freshOpen,'touch-only tap did not activate');
+
+  // Interruption permits an immediate drag while retaining its saved position.
+  a=next();
+  pointer('pointerdown',a);pointer('lostpointercapture',a);
+  const drag=next(),before={...state.config.eyePosition};
+  pointer('pointerdown',drag);
+  const moved={...drag,x:drag.x+42,y:drag.y-30};
+  pointer('pointermove',moved);pointer('pointerup',moved);
+  check(state.config.eyePosition.x>before.x,'fresh Eye drag did not save its position');
+
+  // Long-press may open a dialog and lose capture before physical release.
+  const hold=next();
+  pointer('pointerdown',hold);
+  await new Promise(resolve=>setTimeout(resolve,620));
+  const view=card._eyeHubState().view;
+  check(view?.dialog.open&&card._weatherControlRelease,'fresh long-press did not open the dialog');
+  pointer('lostpointercapture',hold);
+  clean('long-press lost capture',{release:true});
+  const probe=document.createElement('button');
+  view.dialog.append(probe);
+  let clicks=0;
+  probe.addEventListener('click',()=>clicks++);
+  const click=pointerId=>probe.dispatchEvent(new PointerEvent('click',{pointerId,pointerType:'touch',detail:1,
+    clientX:hold.x,clientY:hold.y,bubbles:true,composed:true,cancelable:true}));
+  pointer('pointerup',hold,{target:probe});
+  click(hold.id);
+  check(clicks===0&&!card._weatherControlRelease,'matching release click escaped suppression');
+  // A separately delivered contact at the same position must pass immediately.
+  pointer('pointerdown',hold,{target:probe});
+  click(hold.id);
+  check(clicks===1,'independent click at the same location was blocked');
+  probe.remove();
+  view.close();
+
+  for(const nextMode of ['fullscreen','standard','fullscreen','standard']){
+    a=next();pointer('pointerdown',a);
+    const old=active();
+    await mode(nextMode);
+    clean(nextMode);
+    check(old.listeners.signal.aborted,nextMode+': mode left old listeners active');
+    tap();
+  }
+  a=next();pointer('pointerdown',a);
+  const old=active(),parent=card.parentNode;
+  card.remove();
+  clean('disconnect');
+  check(old.listeners.signal.aborted,'disconnect kept listener scope');
+  parent.append(card);
+  await mode('standard');
+  const starts=traces.filter(t=>t.type==='eye.gesture.begin').length;
+  tap();
+  check(traces.filter(t=>t.type==='eye.gesture.begin').length===starts+1,'remount duplicated the Eye binding');
+  const interruptions=traces.filter(t=>t.type==='eye.gesture.interrupted');
+  return {hitTests,interruptions};
+}
+
 async function runTouchMatrix() {
   const map = card._map;
   const shadow = card.shadowRoot;
@@ -289,6 +454,23 @@ async function weatherControlsAfterCancel(context, page) {
     return {x: rect.x + rect.width/2, y: rect.y + rect.height/2};
   };
   const dispatch = (type, touchPoints) => cdp.send('Input.dispatchTouchEvent', {type, touchPoints});
+  const eyeContact = {...await point(),id:11};
+  const other = await page.evaluate(() => {
+    const r=card._map.getContainer().getBoundingClientRect();
+    return [{x:r.left+r.width*.62,y:r.top+r.height*.36,id:12},{x:r.left+r.width*.76,y:r.top+r.height*.42,id:13}];
+  });
+  await dispatch('touchStart',[eyeContact]);
+  assert(await eye.evaluate(element=>{
+    const drag=card._weatherDisplayState().eyeDrag;
+    return drag?.source==='pointer'&&element.hasPointerCapture(drag.pointerId);
+  }), 'native Eye pointer must obtain capture');
+  await dispatch('touchStart',[eyeContact,other[0]]);
+  await dispatch('touchStart',[eyeContact,...other]);
+  await dispatch('touchCancel',[]);
+  await page.waitForFunction(()=>!card._weatherDisplayState().eyeDrag&&!card._weatherControlRelease);
+  await eye.tap();
+  assert.equal(await eye.getAttribute('aria-expanded'),'true','native Eye tap immediately after three contacts');
+  await eye.tap();
   await dispatch('touchStart', [await point()]);
   await page.locator('#eye-hub-config').waitFor({state: 'visible'});
   await dispatch('touchEnd', []);
@@ -301,6 +483,13 @@ async function weatherControlsAfterCancel(context, page) {
   const after = await point();
   assert(Math.hypot(after.x-before.x, after.y-before.y) > 20, 'Eye drag after cancellation');
   await cdp.detach();
+
+  for(const [kind,selector] of [['compass','#map-compass-overlay'],['medallion','#map-medallion-overlay']]){
+    await page.evaluate(kind=>card._setMapInstrumentVisible(kind,true),kind);
+    await page.locator(selector).tap();
+    await page.waitForFunction(kind=>card[kind==='compass'?'_compassPickerDialog':'_medallionPickerDialog']?.open,kind);
+    await page.evaluate(kind=>kind==='compass'?card._closeCompassPicker(false):card._closeMedallionPicker(false),kind);
+  }
 
   await page.evaluate(() => card._eyeHubPatch({grouped: false}));
   for (const selector of ['#weather-precipitation-toggle', '#weather-wind-toggle', '#weather-temperature-toggle']) {
@@ -316,7 +505,15 @@ async function weatherControlsAfterCancel(context, page) {
     const canvases = await page.locator(selector).evaluateAll(nodes => nodes.map(node => getComputedStyle(node).pointerEvents));
     assert(canvases.length && canvases.every(value => value === 'none'), selector + ' must leave the map hit target available');
   }
+  const hit=()=>eye.evaluate(element=>{
+    const r=element.getBoundingClientRect();
+    const target=element.getRootNode().elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+    return {id:target?.id,hit:element.contains(target),pointerEvents:getComputedStyle(element).pointerEvents};
+  });
+  const beforeWeatherCancel=await hit();
   await nativeGestures(context, page);
+  assert.deepEqual(await hit(),beforeWeatherCancel,'active weather overlays changed Eye hit testing after cancel');
+  console.log('PASS Eye hit test with active weather layers:',JSON.stringify(beforeWeatherCancel));
 }
 
 async function pointerAdapter(browser, fixture) {
@@ -353,7 +550,7 @@ async function pointerAdapter(browser, fixture) {
 }
 
 (async () => {
-  const fixture = gestureFixture(process.env.GR_GESTURE_REFERENCE || null);
+  const fixture = gestureFixture(process.env.GR_EYE_REFERENCE || process.env.GR_GESTURE_REFERENCE || null);
   await new Promise(resolve => fixture.server.listen(0, '127.0.0.1', resolve));
   const browser = await chromium.launch({headless: true, ...(process.env.CHROME_PATH ? {executablePath: process.env.CHROME_PATH} : {})});
   try {
@@ -366,6 +563,10 @@ async function pointerAdapter(browser, fixture) {
     }));
     await page.goto('http://127.0.0.1:' + fixture.server.address().port);
     await page.waitForFunction(() => window.ready && card._mapGestureRecovery?.handlers);
+    if(!process.env.GR_GESTURE_REFERENCE){
+      const eyeTrace=await page.evaluate(runEyeInterruptionMatrix);
+      console.log('PASS Eye interruption and hit testing:',JSON.stringify(eyeTrace));
+    }
     const interrupted = await page.evaluate(runTouchMatrix);
     await nativeGestures(context, page);
     await weatherControlsAfterCancel(context, page);

@@ -1,9 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411186r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411186r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411187r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.23",
+  "version": "1.3.24",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [

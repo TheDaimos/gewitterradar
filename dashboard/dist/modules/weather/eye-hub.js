@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411186r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411181r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411181r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411186r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411187r1';
 export const eyeHubMethods={
  _eyeHubState(){
   if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(settingsStorage(this).getItem(EYE_HUB_KEY));}catch(_){}
@@ -19,7 +19,7 @@ export const eyeHubMethods={
  _eyeHubResize(delta){const s=this._eyeHubState(),result=resizeEyeSlots(s.config,delta,[...s.registry.entries.keys()]);if(result.blocked)return s.view?.message(this._t('eye.blocked',{slot:result.blocked}));this._eyeHubPatch(result.config);},
  _eyeHubReset(){this._eyeHubPatch(normalizeEyeConfig(null,[...this._eyeHubState().registry.entries.keys()]));},
  _eyeHubToggle(){const s=this._eyeHubState();if(!s.config.grouped)return this._eyeHubOpen();s.open=!s.open;s.signature=null;this._eyeHubSync();},
- _eyeHubClose(){const s=this.__eyeHub;if(!s)return;for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:!s.suspended&&!!options.state().eyeReleaseCleanup});s.bubbleOptions=[];s.open=false;s.signature=null;const root=this.shadow?.getElementById('eye-hub-bubbles');if(root){root.hidden=true;root.replaceChildren();}if(!s.suspended)this._eyeHubSync();},
+ _eyeHubClose(){const s=this.__eyeHub;if(!s)return;for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:!s.suspended&&this._weatherControlRelease?.drag.state===options.state()});s.bubbleOptions=[];s.open=false;s.signature=null;const root=this.shadow?.getElementById('eye-hub-bubbles');if(root){root.hidden=true;root.replaceChildren();}if(!s.suspended)this._eyeHubSync();},
  _eyeHubOpen(){const s=this._eyeHubState();this._eyeHubClose();const backdrop=this.shadow?.getElementById('settings-backdrop');if(backdrop?.classList.contains('open'))this.shadow.getElementById('settings-close')?.click();if(!s.view)s.view=new EyeConfigurator(this);s.view.open();},
  _eyeHubEnsureEye(card){
   const s=this._eyeHubState();s.suspended=false;
@@ -58,7 +58,7 @@ export const eyeHubMethods={
    if(!root.hidden){for(const id of ids){const f=s.registry.entries.get(id);if(!f)continue;const template=document.createElement('template');template.innerHTML=eyeBubble(f,statuses[id],c,k=>this._t('eye.'+k));const fresh=template.content.firstElementChild;let button=[...root.querySelectorAll(':scope>.eye-hub-bubble')].find(b=>b.dataset.function===id);
     if(button){for(const attr of ['data-active','data-available','aria-label','title','style'])if(button.getAttribute(attr)!==fresh.getAttribute(attr))button.setAttribute(attr,fresh.getAttribute(attr));const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
     button=fresh;root.append(button);
-    const state={eyeDrag:null,eyeSuppressClickUntil:0},run=hold=>{this._eyeHubClose();(hold?f.hold:f.tap)();queueMicrotask(()=>this._eyeHubSync());};
+    const state={eyeDrag:null},run=hold=>{this._eyeHubClose();(hold?f.hold:f.tap)();queueMicrotask(()=>this._eyeHubSync());};
     const options={element:button,state:()=>state,activate:()=>run(false),longPress:()=>run(true),position:()=>this._eyeHubPosition(),save:()=>{}};s.bubbleOptions.push(options);this._weatherDisplayBindEyeDrag(button,options);
    }}
    s.view?.update();
@@ -112,5 +112,5 @@ export const eyeHubMethods={
   const card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!card||!map)return null;const c=card.getBoundingClientRect(),m=map.getBoundingClientRect(),p=this._weatherDisplayState().config.eyePosition,width=matchMedia('(max-width:720px)').matches?46:44;
   const left=m.left+10+Math.max(0,m.width-width-20)*p.x,top=m.top+10+Math.max(0,m.height-width-20)*p.y;return {left,top,right:left+width,bottom:top+width,width,height:width};
  },
- _eyeHubSuspend(){const s=this.__eyeHub;if(!s)return;s.suspended=true;s.neon?.destroy();s.neon=null;this._eyeHubClose();if(s.frame!==null)cancelAnimationFrame(s.frame);s.frame=null;s.observer?.disconnect();s.observer=null;document.removeEventListener('pointerdown',s.outside,true);window.removeEventListener('keydown',s.key,true);window.removeEventListener('blur',s.abort);window.removeEventListener('pagehide',s.abort);document.removeEventListener('visibilitychange',s.abort);s.view?.destroy();s.view=null;}
+ _eyeHubSuspend(reason='eye-suspend'){this._recoverWeatherControlGesture(reason);const s=this.__eyeHub;if(!s)return;s.suspended=true;s.neon?.destroy();s.neon=null;this._eyeHubClose();if(s.frame!==null)cancelAnimationFrame(s.frame);s.frame=null;s.observer?.disconnect();s.observer=null;document.removeEventListener('pointerdown',s.outside,true);window.removeEventListener('keydown',s.key,true);window.removeEventListener('blur',s.abort);window.removeEventListener('pagehide',s.abort);document.removeEventListener('visibilitychange',s.abort);s.view?.destroy();s.view=null;}
 };

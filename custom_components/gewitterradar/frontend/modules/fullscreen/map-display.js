@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411186r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";
@@ -13,7 +13,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -1132,6 +1132,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (!['standard','large','fullscreen'].includes(mode)) return;
       if (this._mapWindowMode && mode !== 'fullscreen') return;
       this._recoverMapGestureState?.('display-mode-change',{force:true});
+      if (this._mapDisplayMode !== mode) this._recoverWeatherControlGesture?.('display-mode-change');
       if (closeMenu) this._setMapDisplayMenuOpen(false);
       if (remember && !this._mapWindowMode) {
         try { settingsStorage(this).setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}

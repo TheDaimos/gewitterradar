@@ -1,5 +1,5 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411186r1';
-import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411186r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
+import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411187r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {installTemperatureUnitTranslations,temperatureInputValue,temperatureKelvinValue,temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
@@ -7,9 +7,9 @@ import {TEMPERATURE_STORAGE,readTemperatureConfig,normalizeTemperatureConfig,tem
 import {TEMPERATURE_FIELD,TEMPERATURE_COMMAND,parseTemperatureField,TemperatureFieldCache,sampleScalarInto} from './temperature-field.js?v=411162r1';
 import {windFieldViewport,windFieldVisibleBounds} from './wind-field.js?v=411162r1';
 import {TemperatureCanvas} from './temperature-canvas.js?v=411162r1';
-import {updateTemperatureLegends} from './temperature-legend.js?v=411186r1';
+import {updateTemperatureLegends} from './temperature-legend.js?v=411187r1';
 import {GeoPointAdapters} from './geopoint-context.js?v=411156r1';
-export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.11',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.12',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
 const ICON=new URL('../../assets/gr-temperature-premium-v1-136.webp', import.meta.url).href,ICON_HI=new URL('../../assets/gr-temperature-premium-v1-272.webp', import.meta.url).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const active=c=>c.visible&&(c.surface||c.labels||c.advection);
@@ -27,7 +27,7 @@ export const installWeatherTemperature=defineModule(MODULE_META,(deps={})=>{inst
  _weatherTemperatureEnsureToggle(){const card=this.shadow?.getElementById('map-card');if(!card)return;let button=this.shadow.getElementById('weather-temperature-toggle');if(!button){
   const style=document.createElement('style');style.textContent='.weather-temperature-toggle{position:absolute;z-index:650;left:10px;top:64px;width:50px;height:50px;min-width:50px;min-height:50px;box-sizing:border-box;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}.weather-temperature-toggle[hidden]{display:none!important}.weather-temperature-toggle img{display:block;width:50px;height:50px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}.weather-temperature-toggle[aria-pressed=false]{opacity:.65}.weather-temperature-toggle:focus-visible{outline:2px solid #f4d791;outline-offset:2px}.weather-temperature-toggle.dragging{cursor:grabbing}';this.shadow.append(style);
   button=document.createElement('button');button.type='button';button.id='weather-temperature-toggle';button.className='weather-temperature-toggle';const img=document.createElement('img');img.src=ICON;img.srcset=ICON_HI+' 4x';img.alt='';img.width=img.height=50;img.draggable=false;button.append(img);card.append(button);
-  const s=this._weatherTemperatureState();s.quickDrag={eyeDrag:null,eyeSuppressClickUntil:0};s.dragOptions={element:button,state:()=>s.quickDrag,position:()=>this._weatherTemperaturePositionToggle(),longPress:()=>this._weatherTemperatureOpen(),activate:()=>this._weatherTemperatureSet({visible:!s.config.visible}),save:p=>{s.config.quickPositions[this._weatherWindToggleLayout()]=p;this._weatherTemperatureSave();}};this._weatherDisplayBindEyeDrag?.(button,s.dragOptions);
+  const s=this._weatherTemperatureState();s.quickDrag={eyeDrag:null};s.dragOptions={element:button,state:()=>s.quickDrag,position:()=>this._weatherTemperaturePositionToggle(),longPress:()=>this._weatherTemperatureOpen(),activate:()=>this._weatherTemperatureSet({visible:!s.config.visible}),save:p=>{s.config.quickPositions[this._weatherWindToggleLayout()]=p;this._weatherTemperatureSave();}};this._weatherDisplayBindEyeDrag?.(button,s.dragOptions);
  for(const name of ['mousedown','dblclick','touchstart'])button.addEventListener(name,e=>e.stopPropagation(),{passive:true});
  }
  this._weatherTemperatureSyncToggle();requestAnimationFrame(()=>this._weatherTemperaturePositionToggle());},

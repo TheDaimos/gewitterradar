@@ -13,6 +13,7 @@ on:
       - 'scripts/test-v41140-module-manifest.mjs'
       - 'tests/*settings-vault*'
       - 'tests/test_settings_vault.py'
+      - 'tests/gr-premium-ui.test.mjs'
   workflow_dispatch:
 
 permissions:
@@ -37,6 +38,7 @@ jobs:
       - name: Client transactions and protected model checks
         run: |
           node --test tests/settings-vault-client.test.mjs
+          node --test --test-name-pattern 'one pointer gesture' tests/gr-premium-ui.test.mjs
           node scripts/test-eye-hub-model.mjs
           node scripts/test-eye-wow-model.mjs
           node scripts/verify-frontend.mjs

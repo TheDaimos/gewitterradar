@@ -26,14 +26,51 @@ test('collapsible UI storage is isolated without replacing existing weather pref
  const old=globalThis.localStorage,map=new Map();globalThis.localStorage={getItem:k=>map.get(k),setItem:(k,v)=>map.set(k,v)};try{savePremiumUi('wind-settings',{sections:{animation:false,field:true},minimized:true});savePremiumUi('temperature-settings',{sections:{advection:true}});assert.equal(readPremiumUi('wind-settings').sections.animation,false);assert(readPremiumUi('temperature-settings').sections.advection);assert(!readPremiumUi('temperature-settings').minimized);assert([...map.keys()].every(k=>k.startsWith('gewitterradar:premium-ui:v1:')));}finally{globalThis.localStorage=old;}
 });
 test('one pointer gesture discriminates click, 600ms long press, drag, cancel and capture loss',()=>{
- class Owner{}installWeatherDisplayMenu(Owner,{});const owner=new Owner(),events=new Map(),rect={left:0,top:0,right:800,bottom:600,width:800,height:600},button={dataset:{},offsetWidth:50,offsetHeight:50,style:{left:'10px',top:'10px'},classList:{add(){},remove(){}},getBoundingClientRect:()=>({...rect,left:10,top:10,width:50,height:50}),setPointerCapture(){},releasePointerCapture(){},hasPointerCapture:()=>true,addEventListener:(k,f)=>events.set(k,f)};owner.shadow={getElementById:()=>({getBoundingClientRect:()=>rect})};const state={eyeDrag:null},timers=new Map();let id=0,opened=0,saved=0,positioned=0;const set=globalThis.setTimeout,clear=globalThis.clearTimeout,raf=globalThis.requestAnimationFrame;globalThis.setTimeout=(f,ms)=>{timers.set(++id,{f,ms});return id;};globalThis.clearTimeout=i=>timers.delete(i);globalThis.requestAnimationFrame=()=>0;
- try{owner._weatherDisplayBindEyeDrag(button,{element:button,state:()=>state,longPress:()=>opened++,position(){positioned++;},save:()=>saved++});const e=(x=10,y=10)=>({button:0,pointerId:1,clientX:x,clientY:y,preventDefault(){},stopPropagation(){}});
-  events.get('pointerdown')(e());assert.equal([...timers.values()][0].ms,600);[...timers.values()][0].f();events.get('pointerup')(e());assert.equal(opened,1);assert(state.eyeSuppressClickUntil>performance.now());assert.equal(saved,0);assert.equal(positioned,0);
-  timers.clear();events.get('pointerdown')(e());events.get('pointermove')(e(30,30));assert.equal(timers.size,0);events.get('pointerup')(e(30,30));assert.equal(saved,1);assert.equal(opened,1);
-  events.get('pointerdown')(e());events.get('pointercancel')({...e(),type:'pointercancel'});assert.equal(timers.size,0);assert.equal(state.eyeDrag,null);
-  events.get('pointerdown')(e());events.get('lostpointercapture')(e());assert.equal(timers.size,0);assert.equal(state.eyeDrag,null);
-  events.get('pointerdown')(e());events.get('pointerup')(e());assert.equal(saved,1,'a short click does not move or save the control');assert.equal(positioned,1,'only a completed drag repositions the control');
- }finally{globalThis.setTimeout=set;globalThis.clearTimeout=clear;globalThis.requestAnimationFrame=raf;}
+ class Owner {}
+ installWeatherDisplayMenu(Owner,{});
+ const owner=new Owner(),win=new EventTarget(),root=new EventTarget(),button=new EventTarget();
+ const rect={left:0,top:0,right:800,bottom:600,width:800,height:600};
+ const state={eyeDrag:null},timers=new Map();
+ let captured=false,id=0,opened=0,saved=0,positioned=0;
+ owner.shadow=Object.assign(root,{ownerDocument:{defaultView:win},getElementById:()=>({getBoundingClientRect:()=>rect})});
+ Object.assign(button,{ownerDocument:root.ownerDocument,dataset:{},offsetWidth:50,offsetHeight:50,style:{left:'10px',top:'10px'},
+  classList:{add(){},remove(){}},getBoundingClientRect:()=>({...rect,left:10,top:10,width:50,height:50}),
+  setPointerCapture(){captured=true;},releasePointerCapture(){captured=false;},hasPointerCapture:()=>captured});
+ const send=(target,type,x=10,y=10)=>target.dispatchEvent(Object.assign(new Event(type,{cancelable:true}),{
+  button:0,pointerId:1,pointerType:'mouse',isPrimary:true,clientX:x,clientY:y,composedPath:()=>[button,root,win]
+ }));
+ const down=()=>{send(win,'pointerdown');send(button,'pointerdown');};
+ const set=globalThis.setTimeout,clear=globalThis.clearTimeout;
+ globalThis.setTimeout=(fn,ms)=>{timers.set(++id,{fn,ms});return id;};
+ globalThis.clearTimeout=key=>timers.delete(key);
+ try{
+  owner._weatherDisplayBindEyeDrag(button,{element:button,state:()=>state,longPress:()=>opened++,position(){positioned++;},save:()=>saved++});
+  down();
+  const [key,hold]=[...timers][0];
+  assert.equal(hold.ms,600);
+  timers.delete(key);hold.fn();
+  send(button,'pointerup');
+  assert.equal(opened,1);
+  assert(owner._weatherControlRelease);
+  assert.equal(saved,0);
+  assert.equal(positioned,0);
+  down();send(button,'pointermove',30,30);
+  assert.equal(timers.size,0);
+  send(button,'pointerup',30,30);
+  assert.equal(saved,1);
+  down();send(win,'pointercancel');
+  assert.equal(timers.size,0);
+  assert.equal(state.eyeDrag,null);
+  down();captured=false;send(win,'lostpointercapture');
+  assert.equal(timers.size,0);
+  assert.equal(state.eyeDrag,null);
+  down();send(button,'pointerup');
+  assert.equal(saved,1,'a short click does not move or save the control');
+  assert.equal(positioned,1,'only a completed drag repositions the control');
+ }finally{
+  owner._recoverWeatherControlGesture('test-cleanup');
+  globalThis.setTimeout=set;globalThis.clearTimeout=clear;
+ }
 });
 test('protected data acquisition, numeric rendering, masks, scheduler and reference remain exact except import cache keys',()=>{
  const files=['wind-canvas.js','wind-field.js','temperature-canvas.js','temperature-field.js','temperature-units.js','frame-clock.js','consumer-client.js','precipitation-layer.js','p7-010/raster-compositor.js','p7-010/raster-mosaic-consumer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/radar-mask.js'];const norm=s=>s.replace(/\r/g,'').replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE');

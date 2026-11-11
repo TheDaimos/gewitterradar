@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.186",
-  "build": "V4.11.186-DEV-2026-11-11",
-  "runtimeRevision": "411186r1",
-  "moduleSetId": "E411-186A1",
-  "baselineFeatureHead": "6848939678e08e26b364141d59f133adf4957015",
+  "productVersion": "4.11.187",
+  "build": "V4.11.187-DEV-2026-11-11",
+  "runtimeRevision": "411187r1",
+  "moduleSetId": "E411-187A1",
+  "baselineFeatureHead": "7ac535d9862a74af8335fad09a024a6736573592",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Leaflet gesture recovery and diagnostic coverage after an Android system screenshot.",
+    "purpose": "Eye and Aura touch recovery and diagnostics after an Android system screenshot.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

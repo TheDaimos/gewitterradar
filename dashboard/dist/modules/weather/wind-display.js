@@ -1,17 +1,17 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411186r1';
-import {WindStudio} from './wind-studio.js?v=411186r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
+import {WindStudio} from './wind-studio.js?v=411187r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411162r1';
 import {SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411162r1';
-import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411186r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411187r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411162r1';
 import { WindCanvas } from './wind-canvas.js?v=411162r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411186r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411187r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.17',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.18',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -62,7 +62,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
    .weather-wind-toggle[aria-pressed=true] img{filter:drop-shadow(0 0 3px #32b6e944)}.weather-wind-toggle.dragging{cursor:grabbing}.weather-wind-toggle:focus-visible{outline:2px solid #f4d791;outline-offset:2px}
    `;this.shadow.append(style);button=document.createElement('button');button.id='weather-wind-toggle';button.className='weather-wind-toggle';button.type='button';
    const image=document.createElement('img');image.src=new URL('../../assets/gr-wind-animation-toggle-premium-v1-136.webp', import.meta.url).href;image.srcset=new URL('../../assets/gr-wind-animation-toggle-premium-v1-272.webp', import.meta.url).href+' 4x';image.alt='';image.width=image.height=50;image.draggable=false;button.append(image);card.append(button);
-   const s=this._weatherWindState();s.quickDrag={eyeDrag:null,eyeSuppressClickUntil:0};s.quickDragOptions={element:button,state:()=>s.quickDrag,position:()=>this._weatherWindPositionToggle(),longPress:()=>this._weatherWindOpen(),activate:()=>this._weatherWindToggle(),save:position=>{s.config=normalizeWindConfig({...s.config,quickPositions:{...s.config.quickPositions,[this._weatherWindToggleLayout()]:position}});this._weatherWindSave();}};
+   const s=this._weatherWindState();s.quickDrag={eyeDrag:null};s.quickDragOptions={element:button,state:()=>s.quickDrag,position:()=>this._weatherWindPositionToggle(),longPress:()=>this._weatherWindOpen(),activate:()=>this._weatherWindToggle(),save:position=>{s.config=normalizeWindConfig({...s.config,quickPositions:{...s.config.quickPositions,[this._weatherWindToggleLayout()]:position}});this._weatherWindSave();}};
    this._weatherDisplayBindEyeDrag?.(button,s.quickDragOptions);
    for(const name of ['mousedown','dblclick','touchstart'])button.addEventListener(name,e=>e.stopPropagation(),{passive:true});
   }
