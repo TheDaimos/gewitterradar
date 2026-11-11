@@ -28,6 +28,17 @@ Die Browser-Fixtures verwenden Chromium mit Desktop-, Android- und iPad-Viewport
 
 Der erste veröffentlichte Vault-Vorabrelease V182 bestand die [Vault-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43038868443) und den [HA-Runtime-Test mit 70 bestandenen Tests](https://github.com/TheDaimos/gewitterradar/actions/runs/43038868374/job/130584972156). V183 ergänzt die Übernahme älterer Karten-Sichtbarkeitswerte und Medaillon-Review-Metadaten. Der HACS-Katalogjob meldete für das Repository `SPDX: NOASSERTION`; Paketstaging und Hassfest waren erfolgreich. Die allgemeine historische Frontend-CI erwartet weiterhin eine ältere Raster-Labor-Modulkennung.
 
+## V183-Releaseevidenz
+
+Releasecommit `4249c8fc3efe4154756439c6bf6306a9658cbdae`. Die [öffentliche Vault-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768338) bestand Migration und erneute Profilübernahme, Node-Tests, V177- und V180-Pixelvergleiche sowie den Paketbau. Die [HA-Runtime-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768350/job/130602204030) bestand 71 Tests. [HACS-Paketvertrag](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768350/job/130602204498), [Hassfest](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768350/job/130602204530) und [Navigation und Laufzeitkennung](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768253) sind grün. Der [separate HACS-Katalogcheck](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768350/job/130602204564) meldet weiterhin `SPDX: NOASSERTION`. Die [allgemeine Frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43043768275) scheitert am älteren Raster-Labor-Versionscheck.
+
+| Installationspaket | SHA-256 |
+|---|---|
+| `gewitterradar-0.25.90-dev.zip` | `948a3e28ba2503cfd2570365e8bdba8ebb5d0a70d2bccc638456fa49e38ad1da` |
+| `gewitterradar-dashboard-4.11.183-dev.zip` | `7df5d7746c8023f15fce1798926c553ec69abd7616a07399398dc87ac2dc9289` |
+
+Beide ZIPs, die Prüfsummen und die Lieferidentität liegen im [DEV-Vorabrelease](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.183-dev). Das Paket enthält 191 bytegleiche Frontend-Dateien in beiden Lieferpfaden.
+
 ## Reproduktion
 
 ```powershell
