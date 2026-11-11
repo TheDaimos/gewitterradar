@@ -1,6 +1,6 @@
 # Settings Vault · Architektur
 
-GR 4.11.182 DEV / HA 0.25.89 verwendet den Vault mit Schema 1. Dieses Schema ist unabhängig von der GR-Releaseversion. Die geschützte Vergleichsbasis ist GR 4.11.181 / HA 0.25.88, Tag `v4.11.181-dev`.
+GR 4.11.183 DEV / HA 0.25.90 verwendet den Vault mit Schema 1. Dieses Schema ist unabhängig von der GR-Releaseversion. Die geschützte Vergleichsbasis ist GR 4.11.181 / HA 0.25.88, Tag `v4.11.181-dev`.
 
 ## Eigentum und Zuordnung
 

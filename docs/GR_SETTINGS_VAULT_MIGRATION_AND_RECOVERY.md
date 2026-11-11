@@ -2,7 +2,7 @@
 
 ## Umstieg von V181
 
-1. HA DEV über den DRA-Kanal `TheDaimos/gewitterradar@deploy/dev` auf GR 4.11.182 DEV / HA 0.25.89 aktualisieren und Home Assistant neu starten.
+1. HA DEV über den DRA-Kanal `TheDaimos/gewitterradar@deploy/dev` auf GR 4.11.183 DEV / HA 0.25.90 aktualisieren und Home Assistant neu starten.
 2. Gewitterradar auf dem Gerät öffnen, auf dem die bisherigen Werte noch sichtbar sind. Unter **Bisherige Browsereinstellungen → Übernahme prüfen** zeigt die Vorschau lesbare Bereiche und Einträge mit Fehlern.
 3. Bei Bedarf **Lokale Originaldaten exportieren** verwenden. Der lokale Export enthält die Rohwerte der registrierten V181-Keys. Die alten Einstellungen waren an den Browser-Origin gebunden. Übernimm nur den Bestand, der diesem HA-Konto zugeordnet werden soll.
 4. Einen Gerätenamen wählen und **Browsereinstellungen übernehmen**. Der Server legt ein eigenes Profil an, bewahrt vollständige validierte Originale, erstellt einen Snapshot und bestätigt erst nach dem Store-Readback. Der Browser bindet das Profil nach einer weiteren Abfrage seiner ID und Revision. Ein wiederholter Versuch mit derselben Request-ID erhält dasselbe Profil.
@@ -11,6 +11,8 @@
 Bei teilweise ungültigen JSON-Objekten bleiben validierbare Felder und Presets erhalten. Beschädigte Rohdaten und unbekannte Felder bleiben im bisherigen lokalen Speicher und im lokalen Recovery-Export. Der Server speichert die validierten Originale sowie die Liste der Bereiche, die nur teilweise oder gar nicht übernommen werden konnten. Bei einem vollständig unlesbaren Bestand bleibt die Übernahme gesperrt. Ein unbekanntes Vault-Schema sperrt den Schreibpfad.
 
 V177–V181 verwenden dieselben Hauptkeys. Die bisherigen Normalisierer bleiben wirksam, etwa für alte Eye-Farbaliases, das bei fehlendem Feld deaktivierte `energyAccents`, Wind-Schema 1 und beide Cluster-Fallbacks. Opacity ist weiterhin ein Anteil von 0 bis 1. Die Anzeige „Transparenz“ verwendet 0 % für unsichtbar und 100 % für sichtbar. Eye–Aura-Abstand und Aura-Ringabstand bleiben zwei separate Werte.
+
+Seit V183 werden auch ältere als Text gespeicherte Karten-Sichtbarkeiten wie `false` und der Zeitstempel einer geänderten Medaillon-Augenreferenz übernommen. Wenn V182 solche Werte in einem Migrationshinweis gemeldet hat, kann der weiterhin vorhandene Browserbestand über **Erweitert → Browsereinstellungen erneut als Profil übernehmen** in ein neues Profil kopiert werden. Das vorhandene Profil bleibt auswählbar.
 
 ## Wieder zuordnen, sichern, zurücksetzen
 

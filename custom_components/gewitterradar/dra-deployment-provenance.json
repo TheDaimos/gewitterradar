@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.182",
-  "build": "V4.11.182-DEV-2026-11-11",
-  "runtimeRevision": "411182r1",
-  "moduleSetId": "E411-182A1",
-  "baselineFeatureHead": "f1dc313cb34f04b500b6895d523778d9be763abc",
+  "productVersion": "4.11.183",
+  "build": "V4.11.183-DEV-2026-11-11",
+  "runtimeRevision": "411183r1",
+  "moduleSetId": "E411-183A1",
+  "baselineFeatureHead": "65fe212ae1edd6cd43b9c66f5958ba51e22021b9",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Settings Vault for independent Home Assistant user and device profiles, legacy migration and recovery.",
+    "purpose": "Settings Vault preserves legacy card visibility flags and Medallion review metadata, with explicit browser reimport.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

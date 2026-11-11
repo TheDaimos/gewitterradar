@@ -1,7 +1,7 @@
 import {
   acquireSettingsSlot, releaseSettingsSlot, requestId, SettingsVaultClient,
-} from '../core/settings-vault.js?v=411182r1';
-import {APPLICATION_RELEASE} from '../../version.js?v=411182r1';
+} from '../core/settings-vault.js?v=411183r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411183r1';
 
 const TITLE = 'Userprofile & Sicherungen';
 const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
@@ -430,6 +430,17 @@ function mountMenu(owner) {
   if (client.bindingSaved === false) diagnostic.append(node('p', 'Die Gerätezuordnung konnte im Browser nicht gesichert werden.'));
   if (client.migrationIssues?.length) {
     diagnostic.append(node('p', 'Nicht übernommene Originale: ' + client.migrationIssues.join(', ')));
+    if (!client.recovery && Object.keys(client.legacy.values).length) {
+      diagnostic.append(button('Browsereinstellungen erneut als Profil übernehmen', () => void run(() => edit(async () => {
+        const {keys, issues} = await client.call('migration_preview', {legacy: client.legacy.values});
+        if (!keys.length) throw Object.assign(new Error(), {code: 'invalid_settings'});
+        const summary = keys.length + ' Einstellungsbereiche können übernommen werden.';
+        const partial = issues.length ? ' ' + issues.length + ' Bereiche sind unvollständig lesbar.' : '';
+        if (!confirm(summary + partial + ' Ein eigenständiges Profil anlegen?')) return;
+        await client.create('create', {name: profile.name.slice(0, 48) + ' – Browserimport', legacy: client.legacy.values}, {activate: false});
+        showProfiles();
+      }))));
+    }
   }
   if (client.conflictArchive) diagnostic.append(button('Letzten Konflikt exportieren', () => fileDownload(
     'gewitterradar-konflikt.json', JSON.stringify(client.conflictArchive, null, 2),

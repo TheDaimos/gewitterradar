@@ -225,6 +225,7 @@ TEMPERATURE_KEY = "gewitterradar:temperature-ui:v1"
 TIMEOUT = numeric_string(5000, 3600000)
 MAP_MODE = choice("standard", "large", "fullscreen")
 BIT = choice("0", "1")
+MAP_VISIBILITY = choice("0", "1", "false", "true")
 JSON_SETTINGS = {
     "gewitterradar:eye-bubble:v1": EYE,
     "gewitterradar:wind-ui:v1": WIND,
@@ -255,7 +256,7 @@ JSON_SETTINGS = {
                              "autoCenterYPercent", "effectiveCenterXPercent", "effectiveCenterYPercent"),
                             nullable(PERCENT)),
             **dict.fromkeys(("manualScale", "autoScale", "effectiveScale"), nullable(number(.35, 1.10))),
-            "reviewed": BOOL, "updatedAt": ISO_DATE,
+            "reviewed": BOOL, "updatedAt": ISO_DATE, "eyeReferenceChangedAt": ISO_DATE,
         }
     ),
 }
@@ -266,7 +267,7 @@ SCALAR_SETTINGS = {
     CORE + "trend-arrow-design": identifier,
     CORE + "medallion-design": identifier,
     CORE + "medallion-picker-preview-mode": choice("static", "animation"),
-    CORE + "map-cluster-jump-visible": BIT,
+    CORE + "map-cluster-jump-visible": MAP_VISIBILITY,
     "gewitterradar:v40804:cluster-jump-timeout": lambda v: v == "0" or TIMEOUT(v),
     "gewitterradar:v40802:cluster-jump-timeout": lambda v: v == "0" or TIMEOUT(v),
     "gewitterradar:v40804:cluster-jump-finite-timeout": TIMEOUT,
@@ -281,8 +282,8 @@ SCALAR_SETTINGS = {
     MAP + "last-map-display-mode": MAP_MODE,
     MAP + "startup-map-display": lambda v: v == "last" or MAP_MODE(v),
     MAP + "map-layer-symbol-style": choice("stack3d", "classic", "infinity"),
-    MAP + "map-compass-visible": BIT,
-    MAP + "map-medallion-visible": BIT,
+    MAP + "map-compass-visible": MAP_VISIBILITY,
+    MAP + "map-medallion-visible": MAP_VISIBILITY,
     RADAR + "precipitation-enabled": BIT,
     RADAR + "allow-older-satellite-background": BIT,
     RADAR + "precipitation-preload-profile": choice("off", "small", "normal", "large", "custom"),
@@ -317,7 +318,7 @@ def validate_value(key, value):
         invalid(f"Unsupported value for {key}" if validator else "Unknown settings key")
     if key == STUDIO_KEY:
         ids = {preset["id"] for preset in value["users"]}
-        names = {preset["name"].strip().casefold() for preset in value["users"]}
+        names = {preset["name"].strip().lower() for preset in value["users"]}
         if len(ids) != len(value["users"]) or len(names) != len(ids):
             invalid("Duplicate wind preset")
         selected = value.get("selected")
@@ -371,7 +372,7 @@ def salvage_legacy(key, raw):
             users = []
             for candidate in value["users"][:32]:
                 if _accepts(PRESET, candidate) and not any(
-                    saved["id"] == candidate["id"] or saved["name"].strip().casefold() == candidate["name"].strip().casefold()
+                    saved["id"] == candidate["id"] or saved["name"].strip().lower() == candidate["name"].strip().lower()
                     for saved in users
                 ):
                     users.append(candidate)

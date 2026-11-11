@@ -1,12 +1,15 @@
 // V4.11.68: real reference-focus module chooses exact arrival zoom or original radius fit.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {installClustersRecent} from '../frontend/modules/map/clusters-recent.js';
+import {installClustersRecent, MODULE_META as clustersMeta} from '../frontend/modules/map/clusters-recent.js';
+import {EXPECTED_MODULES} from '../frontend/module-manifest.js';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 const source=await read('frontend/modules/map/clusters-recent.js');
 const controls=await read('frontend/modules/ui/controls.js');
-assert.match(source,/"version": "1.0.9"/);
-assert.match(controls,/"version": "1.1.30"/);
+const version=id=>EXPECTED_MODULES.find(module=>module.id===id).version;
+assert.equal(clustersMeta.version,version('map.clusters-recent'));
+assert(source.includes('"version": "'+version('map.clusters-recent')+'"'));
+assert(controls.includes('"version": "'+version('ui.controls')+'"'));
 for(const marker of ["gr-reference-arrival-zoom","Zoomstufe nach Standortwechsel","Automatisch (Radius)","length:14","selectedReferenceZoom='8'","referenceZoomChoice.row","referenceZoomChoice.close()"]){
   assert.ok(controls.includes(marker),'Missing settings dropdown marker: '+marker);
 }

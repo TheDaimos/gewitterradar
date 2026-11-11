@@ -20,7 +20,9 @@ assert.ok(version.includes('moduleSetId:"'+runtime.moduleSetId+'"'));
 assert.equal(new Set(runtime.modules.map(m=>m.id)).size,runtime.modules.length);
 // The temperature/flow-capability module expanded the runtime inventory to 36.
 assert.equal(runtime.modules.length,36);
-for(const [id,v] of [['map.clusters-recent','1.0.9'],['location.radii-map','1.0.24'],['diagnostics.map','1.0.5']]){
+const {MODULE_META:clustersMeta}=await import('../frontend/modules/map/clusters-recent.js');
+assert.equal(clustersMeta.id,'map.clusters-recent');
+for(const [id,v] of [[clustersMeta.id,clustersMeta.version],['location.radii-map','1.0.24'],['diagnostics.map','1.0.5']]){
   assert.equal(runtime.modules.find(m=>m.id===id)?.version,v);
   assert.ok(manifest.includes('"id": "'+id+'"'));
 }

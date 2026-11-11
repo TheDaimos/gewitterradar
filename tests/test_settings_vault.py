@@ -80,6 +80,10 @@ async def test_real_store_restart_and_independent_profiles(hass):
         "precipitation": .27, "clouds": .62, "windSymbols": 0,
     }
     assert result["profile"]["settings"][STUDIO]["users"][0]["name"] == "Böenfront"
+    for key in ("gewitterradar:v409:map-compass-visible", "gewitterradar:v409:map-medallion-visible",
+                "gewitterradar:v41002:map-cluster-jump-visible"):
+        assert result["profile"]["settings"][key] == "false"
+    assert result["migrationIssues"] == []
     assert (await restarted.dispatch("user-1", "get", {"profileId": ipad["id"]}))["profile"] == ipad
 
 
@@ -180,6 +184,24 @@ async def test_legacy_partial_future_data_and_invalid_fields():
         await vault.dispatch("user-1", "patch", patch(profile, EYE, {"unknown": "value"}))
     with pytest.raises(VaultError, match="Profile not found"):
         await vault.dispatch("user-2", "get", {"profileId": profile["id"], "userId": "user-1"})
+
+
+async def test_legacy_preset_names_and_review_metadata_are_lossless():
+    vault = SettingsVault(FakeDisk())
+    studio = json.loads(LEGACY[STUDIO])
+    template = studio["users"][0]
+    studio["users"] = [{**template, "id": "user:first", "name": "Maße"},
+                       {**template, "id": "user:second", "name": "Masse"}]
+    studio["selected"] = "user:first"
+    key = "gewitterradar:v41002:medallion-arrow-visual-calibration-v2"
+    calibration = {
+        "schema": "gewitterradar.medallion-arrow-visual-calibration.v2", "version": 2,
+        "build": "V4.11.181-DEV-2026-11-11", "updatedAt": None,
+        "entries": {"eye::arrow": {"reviewed": False, "eyeReferenceChangedAt": "2026-11-11T10:30:00.000Z"}},
+    }
+    profile = await create(vault, legacy={STUDIO: json.dumps(studio), key: json.dumps(calibration)})
+    assert profile["settings"][STUDIO] == studio
+    assert profile["settings"][key] == calibration
 
 
 async def test_websocket_ownership_and_build(hass, hass_ws_client, hass_access_token, hass_read_only_access_token):

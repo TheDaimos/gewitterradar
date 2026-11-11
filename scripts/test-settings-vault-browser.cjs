@@ -6,9 +6,10 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const {flowFixture} = require('./flow-curves-browser-fixture.cjs');
 
 const legacy = JSON.parse(readFileSync(path.join(__dirname, '../tests/settings-vault-v181.json'), 'utf8'));
+const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8').match(/version:"([^"]+)"/)[1];
 const EYE = 'gewitterradar:eye-bubble:v1';
 const jsonKeys = Object.keys(legacy).filter(key => legacy[key].startsWith('{'));
-const mock = {profiles: {}, log: [], offline: false, deferGet: null};
+const mock = {profiles: {}, migrationIssues: new Map(), log: [], offline: false, deferGet: null};
 
 const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
 const decode = (key, raw) => jsonKeys.includes(key) ? JSON.parse(raw) : raw;
@@ -16,7 +17,7 @@ function serverCall(user, message) {
   return (async () => {
     const op = message.type.split('/').at(-1);
     assert.equal(message.schema, 1);
-    assert.equal(message.build, '4.11.182');
+    assert.equal(message.build, build);
     mock.log.push({user, op, request: message.request});
     if (mock.offline) return {error: 'disconnected'};
     const request = message.request;
@@ -28,6 +29,7 @@ function serverCall(user, message) {
       return {
         schema: 1, settingsKeys: Object.keys(legacy), jsonSettingsKeys: jsonKeys,
         recovery: false, profiles: Object.values(profiles).map(view), profile,
+        migrationIssues: mock.migrationIssues.get(request.profileId) || [],
       };
     }
     if (op === 'migration_preview') return {keys: Object.keys(request.legacy), issues: []};
@@ -81,7 +83,7 @@ async function open(browser, fixture, viewport, {user = 'a', initial} = {}) {
 }
 
 const values = page => page.evaluate(async () => {
-  const {readPremiumUi} = await import('/frontend/modules/weather/premium-ui.js?v=411182r1');
+  const {readPremiumUi} = await import('/frontend/modules/weather/premium-ui.js');
   const {WindStudioModel} = await import('/frontend/modules/weather/wind-studio-data.js');
   const eye = card._eyeHubState().config;
   const wind = card._weatherWindState().config;
@@ -97,6 +99,8 @@ const values = page => page.evaluate(async () => {
     windPanel: readPremiumUi('wind-settings', card),
     studio: studio.users,
     compass: card._mapCompassPosition, medallionScale: card._fullscreenInstrumentScale('medallion'),
+    compassVisible: card._mapCompassVisible, medallionVisible: card._mapMedallionVisible,
+    clusterJumpVisible: card._mapClusterJumpVisible,
     clusterTimeout: card._statusClusterBrowseTimeoutMs,
   };
 });
@@ -165,7 +169,6 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     await android.page.reload();
     await android.page.waitForFunction(() => window.card?._map && window.card._settingsVault?.profile);
     assert.equal((await values(android.page)).eyeGap, 23);
-    await android.context.close();
 
     // New context models complete client storage loss while HA keeps the server profile.
     const cleared = await open(browser, current, androidView);
@@ -189,6 +192,21 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     const secondUser = await open(browser, current, {width: 1024, height: 768}, {user: 'b'});
     await secondUser.page.getByText('Vorhandenes Profil verwenden', {exact: true}).click();
     await secondUser.page.getByText('Für dieses Konto ist noch kein Geräteprofil vorhanden.').waitFor();
+
+    // Profiles with a V182 migration issue can retry into a separate profile.
+    mock.migrationIssues.set(androidId, ['gewitterradar:v409:map-compass-visible']);
+    await android.page.reload();
+    await android.page.waitForFunction(() => window.card?._map);
+    await android.page.locator('gewitterradar-card').locator('#settings-open').click();
+    await android.page.getByRole('button', {name: 'Userprofile & Sicherungen', exact: true}).click();
+    await android.page.getByText('Erweitert', {exact: true}).click();
+    android.page.once('dialog', dialog => dialog.accept());
+    await android.page.getByRole('button', {name: 'Browsereinstellungen erneut als Profil übernehmen'}).click();
+    await android.page.getByRole('option', {name: 'Dieses Gerät – Browserimport'}).waitFor({state: 'attached'});
+    const imported = Object.values(mock.profiles.a).find(item => item.name === 'Dieses Gerät – Browserimport');
+    assert.notEqual(imported.id, androidId);
+    assert.equal(imported.settings['gewitterradar:v409:map-compass-visible'], 'false');
+    assert.equal(mock.profiles.a[androidId].settings[EYE].eyeAuraGap, 23);
     for (const result of [desktop, android, cleared, ipad, secondUser]) assert.deepEqual(result.errors, []);
     console.log('PASS: V181 effective settings, hydration before render, profile menu, offline retry, complete client storage loss, independent devices and accounts');
   } finally {

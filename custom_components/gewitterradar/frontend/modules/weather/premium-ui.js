@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411183r1';
 // Presentation only. Shared Eye-menu controls; no weather requests or policy.
 export const PREMIUM_CLOSE=new URL('../../assets/gewitterradar-about-close-premium.webp',import.meta.url).href;
 export const PREMIUM_INFO=new URL('../../assets/gewitterradar-help-info-premium-v1.webp',import.meta.url).href;

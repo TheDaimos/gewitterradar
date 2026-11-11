@@ -1,9 +1,9 @@
-# Settings Vault · Abnahme GR 4.11.182 DEV
+# Settings Vault · Abnahme GR 4.11.183 DEV
 
 | Identität | Wert |
 |---|---|
-| Gewitterradar / HA | 4.11.182 DEV / 0.25.89 |
-| Runtime / Module | `411182r1` / `E411-182A1` |
+| Gewitterradar / HA | 4.11.183 DEV / 0.25.90 |
+| Runtime / Module | `411183r1` / `E411-183A1` |
 | Branch und DRA | `TheDaimos/gewitterradar@deploy/dev` |
 | Geschützte Basis | `v4.11.181-dev` · `4587b76ca254fdc62cf179560fca9f61c1214133` |
 | Release-Prüfungen | [öffentliche Vault-CI](https://github.com/TheDaimos/gewitterradar/actions/workflows/gr-settings-vault.yml) und [HA-Integrations-CI](https://github.com/TheDaimos/gewitterradar/actions/workflows/validate.yml) |
@@ -25,6 +25,8 @@
 | Lieferparität | `verify-frontend.mjs` und `test-frontend-build.mjs` prüfen kanonische Kennungen, Lieferkopien, Prüfsummen und Erkennung veränderter Dateien. `build-dev-packages.py`, `verify-eye-organic-packages.py` und `verify-hacs-integration-package.py` prüfen die Installationsartefakte. |
 
 Die Browser-Fixtures verwenden Chromium mit Desktop-, Android- und iPad-Viewport und synthetischem HA-/WR-Transport. Die HA-Python-Tests prüfen Store und WebSocket getrennt. Die physische Android-Companion-Cachebereinigung, die Geräteabnahme und die Installation auf VM109 stehen als Betreiberprüfung aus. Siehe [Abnahmeprotokoll](GR_SETTINGS_VAULT_MIGRATION_AND_RECOVERY.md#betreiberabnahme-auf-android).
+
+Der erste veröffentlichte Vault-Vorabrelease V182 bestand die [Vault-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43038868443) und den [HA-Runtime-Test mit 70 bestandenen Tests](https://github.com/TheDaimos/gewitterradar/actions/runs/43038868374/job/130584972156). V183 ergänzt die Übernahme älterer Karten-Sichtbarkeitswerte und Medaillon-Review-Metadaten. Der HACS-Katalogjob meldete für das Repository `SPDX: NOASSERTION`; Paketstaging und Hassfest waren erfolgreich. Die allgemeine historische Frontend-CI erwartet weiterhin eine ältere Raster-Labor-Modulkennung.
 
 ## Reproduktion
 
