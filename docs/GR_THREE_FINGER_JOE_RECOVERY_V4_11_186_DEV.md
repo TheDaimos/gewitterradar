@@ -23,4 +23,6 @@ Wind-Snake- und Temperatur-Canvas lassen Hit-Tests zur Karte durch. Eye-Bubble, 
 
 Der Regressionstest verwendet Leaflet 1.9.4, die vollständige Karte, kontrollierte Touch-/Pointer-Abbrüche und native Chromium-Eingabe. Er prüft verspäteten dritten Kontakt, Teilende, verlorenes Capture, fehlendes Pointer-Ende, Blur, Sichtbarkeit, unmittelbar folgende Gesten, minimierte Bedienelemente, Kartenmodus und Remount. Die öffentlichen Prüfungen umfassen außerdem Vault-Profilzuordnung und Migration, V177/V180-Pixelvergleiche, V181-Einstellungsvergleich und Wind-/Temperatur-/Niederschlagsbedienung.
 
+Pakete, Commit, SHA-256 und öffentliche Prüfnachweise stehen im [DRA-Vorabrelease](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.186-dev).
+
 **OFFEN · Physische Android-/HyperOS-Abnahme.** In der Companion App in Standard-, Groß- und Vollbildmodus jeweils wiederholt einen Drei-Finger-Screenshot auslösen. Direkt danach ziehen, hinein- und herauspinchen, Eye antippen, lange drücken und verschieben. Wind und Temperatur umschalten und ein minimiertes Premium-Fenster bedienen. Bei einer erneuten Störung nach Möglichkeit die Kartendiagnose vor und nach der Geste exportieren. VM109 bleibt Teil dieser Betreiberprüfung.

@@ -3,6 +3,26 @@ const assert = require('node:assert/strict');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const {flowFixture} = require('./flow-curves-browser-fixture.cjs');
 
+const TILE = 'https://tiles.gesture-fixture.invalid';
+const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aXxQAAAAASUVORK5CYII=', 'base64');
+
+function gestureFixture(ref) {
+  return flowFixture({ref, decorate: html => html
+    .replace('window.catalog=[cap(WIND),',
+      "window.catalog=[cap('weather.precipitation.layer',{family:'radar',phenomena:['precipitation']}),cap(WIND),")
+    .replace('requests.push(structuredClone(query));', `requests.push(structuredClone(query));
+      if(query.capability==='weather.precipitation.layer')return {
+        schema:'weather_router.consumer.resolution.v1',contract_version:1,capability:query.capability,status:'ready',
+        intent_contract:{kind:'visual_layer',resource_type:'raster_tile',render_interchangeable:true,numeric_interchangeable:false},
+        resource:{type:'raster_tile',semantics:{data_origin:'synthetic',measurement_method:'synthetic',
+          observation_kind:'observation',quantity:'precipitation_rate',unit:'mm/h'},
+          payload:{tile_url:'${TILE}/{z}/{x}/{y}.png',tile_size:256,min_zoom:0,max_zoom:10,default_opacity:.6,
+            legend:{url:'${TILE}/legend.png'},attribution:'Synthetic precipitation'}},
+        provenance:{provider_id:'synthetic',provider_name:'Synthetic precipitation',spatial_coverage:{scope:'global'}},
+        routing:{},freshness:{data_time:new Date().toISOString(),stale:false}
+      };`)});
+}
+
 async function runTouchMatrix() {
   const map = card._map;
   const shadow = card.shadowRoot;
@@ -283,13 +303,15 @@ async function weatherControlsAfterCancel(context, page) {
   await cdp.detach();
 
   await page.evaluate(() => card._eyeHubPatch({grouped: false}));
-  for (const selector of ['#weather-wind-toggle', '#weather-temperature-toggle']) {
+  for (const selector of ['#weather-precipitation-toggle', '#weather-wind-toggle', '#weather-temperature-toggle']) {
     const toggle = page.locator(selector);
     const before = await toggle.getAttribute('aria-pressed');
     await toggle.tap();
     assert.notEqual(await toggle.getAttribute('aria-pressed'), before, selector + ' touch after cancellation');
   }
-  await page.waitForFunction(() => card._weatherWindState().snakePainter && card._weatherTemperatureState().painter?.image);
+  await page.waitForFunction(() => card._weatherWindState().snakePainter?.metrics.segments > 0 &&
+    card._weatherTemperatureState().painter?.image &&
+    Object.values(card._weatherRadarState().layer?._tiles || {}).some(tile => tile.loaded));
   for (const selector of ['.weather-wind-snake-canvas', '.weather-temperature-canvas']) {
     const canvases = await page.locator(selector).evaluateAll(nodes => nodes.map(node => getComputedStyle(node).pointerEvents));
     assert(canvases.length && canvases.every(value => value === 'none'), selector + ' must leave the map hit target available');
@@ -331,7 +353,7 @@ async function pointerAdapter(browser, fixture) {
 }
 
 (async () => {
-  const fixture = flowFixture({ref: process.env.GR_GESTURE_REFERENCE || null});
+  const fixture = gestureFixture(process.env.GR_GESTURE_REFERENCE || null);
   await new Promise(resolve => fixture.server.listen(0, '127.0.0.1', resolve));
   const browser = await chromium.launch({headless: true, ...(process.env.CHROME_PATH ? {executablePath: process.env.CHROME_PATH} : {})});
   try {
@@ -339,6 +361,9 @@ async function pointerAdapter(browser, fixture) {
     const page = await context.newPage(), errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await fixture.route(page);
+    await page.route(TILE + '/**', route => route.fulfill({
+      contentType: 'image/png', headers: {'Access-Control-Allow-Origin': '*'}, body: pixel,
+    }));
     await page.goto('http://127.0.0.1:' + fixture.server.address().port);
     await page.waitForFunction(() => window.ready && card._mapGestureRecovery?.handlers);
     const interrupted = await page.evaluate(runTouchMatrix);

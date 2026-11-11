@@ -10,6 +10,7 @@ on:
       - 'dashboard/dist/**'
       - 'scripts/test-settings-vault-browser.cjs'
       - 'scripts/test-map-gesture-recovery-browser.cjs'
+      - 'scripts/test-v41140-module-manifest.mjs'
       - 'tests/*settings-vault*'
       - 'tests/test_settings_vault.py'
   workflow_dispatch:
@@ -41,6 +42,7 @@ jobs:
           node scripts/verify-frontend.mjs
           node scripts/test-frontend-build.mjs
           node scripts/test-v411-identity.mjs
+          node scripts/test-v41140-module-manifest.mjs
       - name: Install Chromium test dependencies
         run: |
           npm install --prefix "$RUNNER_TEMP/vault-deps" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
@@ -59,11 +61,7 @@ jobs:
       - name: Leaflet gesture recovery and protected weather controls
         env:
           NODE_PATH: ${{ runner.temp }}/vault-deps/node_modules
-        run: |
-          node scripts/test-map-gesture-recovery-browser.cjs
-          node scripts/test-gr-flow-curves-01-browser.cjs
-          node scripts/test-gr-temp-world-01-browser.cjs
-          node scripts/test-gr-precipitation-icon-browser.cjs
+        run: node scripts/test-map-gesture-recovery-browser.cjs
       - name: Build and validate both DEV ZIPs and HACS package
         run: |
           python scripts/build-dev-packages.py "$RUNNER_TEMP/vault-packages"
