@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 
-const output = path.join(os.tmpdir(), 'gr-eye-179');
+const output = path.join(os.tmpdir(), process.env.GR_NEON_REFERENCE ? 'gr-eye-180' : 'gr-eye-179');
 fs.mkdirSync(output, { recursive: true });
 const views = [
   ['desktop', 1280, 900, 1], ['hidpi', 1920, 1080, 1.5],
@@ -15,7 +15,9 @@ const profiles = [
   ['zero', 0, 0, 4], ['moderate', 45, 40, 4], ['high', 80, 80, 4],
   ['light-max', 100, 0, 4], ['max', 100, 100, 4], ['two', 100, 100, 2]
 ];
-const reference = '5a3f0a6b64978194991e8a94dacd6aa86195bc3a';
+const reference = process.env.GR_NEON_REFERENCE || '5a3f0a6b64978194991e8a94dacd6aa86195bc3a';
+const referenceLabel = process.env.GR_NEON_REFERENCE ? '179' : '178';
+const candidateLabel = process.env.GR_NEON_REFERENCE ? '180' : '179';
 
 async function measure({ name, strength, extent, colors, preview }) {
   const { EyeNeonWow } = await import('/frontend/modules/weather/eye-neon-wow.js');
@@ -82,17 +84,17 @@ async function measure({ name, strength, extent, colors, preview }) {
     transfers,stats,phases,hidden,image};
 }
 
-async function livePreview(page) {
-  await page.evaluate(() => {
+async function livePreview(page, offsets) {
+  await page.evaluate(offsets => {
     const hub = card._eyeHubState();
     for (const [id, entry] of hub.registry.entries) {
       hub.registry.entries.set(id, {...entry, status: () => ({active:true,available:true})});
     }
     card._eyeHubPatch({grouped:true,aura:true,glow:'living',size:42*1.278,iconSize:128,
       backdrop:85,intensity:100,brightness:100,neonBrilliance:100,neonBloom:100,
-      neonOrganics:100,backdropExtent:100});
+      neonOrganics:100,backdropExtent:100,...offsets});
     card._eyeHubOpen();
-  });
+  },offsets);
   const preview = page.locator('#eye-hub-config [data-preview=closed]');
   await preview.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => card._eyeHubState().neon.surfaces.some(s => s.wow?.stats.transfers));
@@ -122,6 +124,7 @@ async function livePreview(page) {
 (async()=>{
   const useReference=process.argv.includes('--baseline');
   const live=process.argv.includes('--live-preview');
+  const maxGaps=process.argv.includes('--max-gaps');
   const fixture=flowFixture({ref:useReference?reference:null});
   await new Promise(resolve=>fixture.server.listen(0,'127.0.0.1',resolve));
   const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
@@ -136,9 +139,9 @@ async function livePreview(page) {
       await page.evaluate(()=>{card._setMapDisplayMode('fullscreen',{persist:false});card._weatherWindSet({visible:true,enabled:true,mode:'snake',snakeAnimationExplicit:true});});
       await page.waitForFunction(()=>card._weatherWindState().snakePainter);
       if (live) {
-        const row = await livePreview(page);
+        const row = await livePreview(page,maxGaps?{eyeAuraGap:30,auraRingGap:8}:{});
         await page.locator('#eye-hub-config [data-preview=closed]').screenshot({
-          path:path.join(output,(useReference?'178':'179')+'-'+view+'-live-preview.png')
+          path:path.join(output,(useReference?referenceLabel:candidateLabel)+'-'+view+(maxGaps?'-max-gaps':'')+'-live-preview.png')
         });
         results.push({view,...row});
         console.log(JSON.stringify({view,...row}));
@@ -149,7 +152,7 @@ async function livePreview(page) {
         const {image,...row}=await page.evaluate(measure,{name,strength,extent,colors,preview:name==='preview'});
         assert(row.hidden);
         if(name==='max'||name==='two'||name==='preview') {
-          fs.writeFileSync(path.join(output,(useReference?'178':'179')+'-'+view+'-'+name+'.png'),Buffer.from(image,'base64'));
+          fs.writeFileSync(path.join(output,(useReference?referenceLabel:candidateLabel)+'-'+view+'-'+name+'.png'),Buffer.from(image,'base64'));
           assert(row.transfers>0,'Transfer under full load');
         }
         results.push({view,...row});
@@ -157,6 +160,6 @@ async function livePreview(page) {
       }
       await page.close();
     }
-    fs.writeFileSync(path.join(output,(live?'live-':'')+(useReference?'baseline.json':'optimized.json')),JSON.stringify(results,null,2));
+    fs.writeFileSync(path.join(output,(maxGaps?'max-gaps-':'')+(live?'live-':'')+(useReference?'baseline.json':'optimized.json')),JSON.stringify(results,null,2));
   } finally {await browser.close();fixture.server.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

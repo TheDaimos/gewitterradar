@@ -1,5 +1,5 @@
 // Presentation only: the existing radar state and Eye interaction own all actions.
-import {enhancePremiumSections} from './premium-ui.js?v=411170r1';
+import {enhancePremiumSections} from './premium-ui.js?v=411180r1';
 export const PRECIPITATION_ICON=new URL('../../assets/gr-precipitation-premium-original.png', import.meta.url).href;
 // The PNG's visible gold ring spans ~77.6% of its source width; Wind and
 // Temperature span ~89.7%. 58px therefore gives the same ~45px ring as their

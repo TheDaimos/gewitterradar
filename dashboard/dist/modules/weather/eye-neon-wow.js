@@ -1,6 +1,6 @@
 // Optional presentation layers. The V177 renderer below remains the authority
 // for the original geometry, colours, timing, status fading and scheduling.
-import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411178r1';
+import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411180r1';
 const TAU=Math.PI*2,clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x);
 const enabled=c=>c.neonBrilliance>0||c.neonBloom>0||c.neonOrganics>0;
 const smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
@@ -364,7 +364,7 @@ export class EyeNeonWow extends EyeNeon{
    const bend = 3 + Math.sin(time * .35 + bridge.seed) * 3;
    const cx = (source[0] + target[0]) / 2 - dy / (distance || 1) * bend;
    const cy = (source[1] + target[1]) / 2 + dx / (distance || 1) * bend;
-   const proximity = clamp((35 - distance) / 15);
+   const proximity = clamp((35 + (state.config.auraRingGap || 0) * .75 - distance) / 15);
    const alpha = light * organics * smooth(progress / .13) *
     (1 - smooth((progress - .67) / .33)) * bridge.fade * proximity;
    const color = bridge.source.color;
@@ -427,7 +427,7 @@ export class EyeNeonWow extends EyeNeon{
  contact(surface, state, rings, samples, time, organics) {
   const count = rings.length;
   const serial = state.serial++;
-  const reach = 8 + 11 * organics;
+  const reach = 8 + 11 * organics + (surface.config.auraRingGap || 0) * .75;
   for (let offset = 0; offset < count; offset++) {
    const source = rings[(serial + offset) % count];
    const step = serial % 2 ? 1 : count - 1;

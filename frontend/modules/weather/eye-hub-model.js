@@ -15,7 +15,7 @@ export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
  const slots=source.slice(0,EYE_CAPACITY).map((item,i)=>{const id=typeof item==='string'?item:item?.functionId;const functionId=ids.includes(id)&&!seen.has(id)?id:null;if(functionId)seen.add(functionId);return {id:'slot-'+(i+1),functionId};});
  if(!slots.length)slots.push({id:'slot-1',functionId:null});
  const colors={};for(const id of ids){const color=String(s.colors?.[id]).toUpperCase(),legacy=EYE_LEGACY_COLORS.indexOf(color);colors[id]=EYE_COLORS.includes(color)?color:legacy>=0?EYE_COLORS[legacy]:EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];}
- return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),slots,colors};
+ return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),slots,colors};
 }
 export function assignEyeSlot(config,index,functionId,ids=EYE_FUNCTIONS){
  const c=normalizeEyeConfig(config,ids);if(index<0||index>=Math.min(c.slots.length,EYE_UI_SLOTS)||!ids.includes(functionId))return c;
@@ -29,9 +29,9 @@ export function resizeEyeSlots(config,delta,ids=EYE_FUNCTIONS){
  return {config:c,blocked:null};
 }
 export const visibleEyeSlots=c=>c.slots.slice(0,EYE_UI_SLOTS);
-export const eyeRingRadius=(size,index)=>size/2+5+index*(4+size/42);
+export const eyeRingRadius=(size,index,eyeAuraGap=0,auraRingGap=0)=>size/2+5+eyeAuraGap+index*(4+size/42+auraRingGap);
 export const eyeGlowMargin=c=>14+c.intensity*.24;
-export const eyeGlowExtent=c=>eyeRingRadius(c.size,Math.min(8,c.slots.length)-1)+eyeGlowMargin(c);
+export const eyeGlowExtent=c=>eyeRingRadius(c.size,Math.min(8,c.slots.length)-1,c.eyeAuraGap,c.auraRingGap)+eyeGlowMargin(c);
 export const eyeAuraOn=(config,status)=>config.grouped&&config.aura&&status.active&&status.available;
 
 // Compact occupied bubbles; empty slots never reserve a position. Prefer the
@@ -56,4 +56,4 @@ export const eyeIconTarget=percent=>Math.max(50,50*percent/100);
 
 // Optional visual bounds; at zero the V177 geometry remains unchanged.
 export const eyeBackdropDiameter=c=>c.size*1.45+c.size*.020*(c.backdropExtent||0);
-export const eyeStudioExtent=c=>Math.max(eyeGlowExtent(c)+(9+c.size*.30)*(c.neonBloom||0)/100,c.backdropExtent?eyeBackdropDiameter(c)/2:0);
+export const eyeStudioExtent=(c,bloom=c.neonBloom||0)=>Math.max(eyeGlowExtent(c)+(9+c.size*.30)*bloom/100,c.backdropExtent?eyeBackdropDiameter(c)/2:0);

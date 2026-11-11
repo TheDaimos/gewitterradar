@@ -1,5 +1,5 @@
 import {temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
-import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=411170r1';
+import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=411180r1';
 import {temperatureColor,temperatureText,temperatureLegendRange,advectionColor,advectionLegendClasses} from './temperature-data.js?v=411159r1';
 export function createTemperatureLegend(owner,kind){
  const s=owner._weatherTemperatureState(),temperature=kind==='temperature',narrow=(owner._map?.getSize().x||800)<720;

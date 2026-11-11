@@ -1,16 +1,16 @@
-import {WindStudio} from './wind-studio.js?v=411170r1';
+import {WindStudio} from './wind-studio.js?v=411180r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411162r1';
 import {SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411162r1';
-import {ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411170r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411180r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411162r1';
 import { WindCanvas } from './wind-canvas.js?v=411162r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411170r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411180r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.11',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.12',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -92,7 +92,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   }
   const sheet=this.shadow.getElementById('weather-wind-style');if(!sheet.dataset.windIcons){sheet.textContent+='.weather-wind-panel .weather-wind-icon{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent;box-shadow:none}.weather-wind-panel .weather-wind-icon img{width:34px;height:34px;object-fit:contain;pointer-events:none}.weather-wind-panel .weather-wind-icon:focus-visible{outline:2px solid #e7c16e;outline-offset:-2px}';sheet.dataset.windIcons='1';}
   let panel=this.shadow.getElementById('weather-wind-panel');
-  if(!panel){panel=document.createElement('section');panel.id='weather-wind-panel';panel.className='weather-wind-panel gr-premium-metal-surface';panel.hidden=true;panel.setAttribute('role','region');panel.setAttribute('aria-label','Winddarstellung');card.append(panel);
+  if(!panel){panel=document.createElement('section');panel.id='weather-wind-panel';panel.className='weather-wind-panel gr-premium-metal-surface';panel.hidden=true;panel.setAttribute('role','region');panel.setAttribute('aria-label','Winddarstellung');card.append(panel);bindPremiumPanelDrag(panel,this.shadow?.getElementById('map'),'wind-settings');
    panel.addEventListener('click',event=>{
     const button=event.target.closest('button');if(!button)return;event.stopPropagation();if(button.dataset.premiumAction==='minimize'){togglePremiumPanel(panel,'wind-settings');return;}
     if(button.dataset.windColor)this._weatherWindSet({color:button.dataset.windColor});

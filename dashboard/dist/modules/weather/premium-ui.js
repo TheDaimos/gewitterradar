@@ -24,6 +24,11 @@ export function ensurePremiumUi(shadow){
  .gr-scientific-visual{width:100%;min-width:0;display:grid;gap:8px}.gr-scale-bar{height:14px;border-radius:4px;margin-top:6px}.gr-scale-ticks{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;font-size:11px;font-variant-numeric:tabular-nums}.gr-scale-classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(108px,100%),1fr));gap:7px;width:100%;box-sizing:border-box}.gr-scale-class{display:grid;gap:4px;min-width:0;border:1px solid #b5985a44;border-radius:6px;padding:7px;box-sizing:border-box;background:#101a25;font-size:11px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.gr-scale-class i{height:7px;border-radius:3px;background:var(--scale-color)}.gr-legend-explanation{font:11px/1.5 system-ui;color:#bac6d4;overflow-wrap:anywhere}.gr-legend-explanation p{margin:6px 0}.gr-legend-source{font:10px/1.5 system-ui;color:#bac6d4;overflow-wrap:anywhere}.weather-legend-overlay.gr-scientific-legend{z-index:2147483647!important}#map-card:has(.weather-display-panel:not([hidden])) .gr-scientific-legend,#map-card:has(.weather-wind-panel:not([hidden]):not(.embedded)) .gr-scientific-legend{z-index:2147483643!important}.gr-scientific-legend .weather-legend-view-picker button{min-height:36px}.gr-scientific-legend .weather-legend-list{max-height:var(--weather-legend-list-max,45vh)}
  .weather-wind-panel:not(.embedded)>header.weather-display-panel-head{grid-template-columns:34px minmax(0,1fr) auto!important;column-gap:10px!important;padding:5px 14px 5px 10px!important}.weather-wind-panel:not(.embedded)>header .gr-premium-panel-actions>button{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;flex:0 0 40px!important}.weather-wind-panel:not(.embedded)>header .gr-premium-panel-actions{gap:4px}
  .weather-display-panel .weather-display-panel-head>button.weather-display-minimize,.weather-wind-panel:not(.embedded)>header.weather-display-panel-head .gr-premium-panel-actions>button.weather-display-minimize{width:40px!important;min-width:40px!important;height:30px!important;min-height:30px!important;border:1px solid #a68849!important;border-radius:8px!important;background:linear-gradient(145deg,#1c2530,#0d141d)!important;box-shadow:inset 0 1px #fff3,0 2px 5px #0008!important;color:#f1d58c;align-self:center}
+ @media(any-hover:hover) and (any-pointer:fine){
+   .weather-wind-panel:not(.embedded)>header.weather-display-panel-head{cursor:grab;user-select:none}
+   .weather-wind-panel:not(.embedded)[data-premium-dragging]>header.weather-display-panel-head{cursor:grabbing}
+   .weather-wind-panel:not(.embedded)>header img{-webkit-user-drag:none}
+ }
  @media(prefers-reduced-motion:reduce){.gr-collapse-body,.gr-premium-collapse>summary .release-history-future-chevron{transition:none}}
  `;shadow.append(style);
 }
@@ -53,3 +58,128 @@ export function enhancePremiumSections(panel,scope){
 }
 export function syncPremiumPanel(panel,scope){const ui=readPremiumUi(scope);panel.classList.toggle('minimized',ui.minimized===true);const b=panel.querySelector('[data-premium-action=minimize]');b?.setAttribute('aria-expanded',String(!ui.minimized));b?.setAttribute('aria-label',ui.minimized?'Menü maximieren':'Menü minimieren');}
 export function togglePremiumPanel(panel,scope){const ui=readPremiumUi(scope);ui.minimized=!ui.minimized;savePremiumUi(scope,ui);syncPremiumPanel(panel,scope);}
+
+// Position a standalone mouse-operated panel relative to the visible map.
+// Store travel fractions so a resized or minimized panel remains reachable.
+export function bindPremiumPanelDrag(panel, map, scope) {
+ if (!map) return;
+ const desktop = matchMedia('(any-hover: hover) and (any-pointer: fine)');
+ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+ const enabled = () => desktop.matches && panel.isConnected && !panel.hidden && !panel.classList.contains('embedded');
+ const properties = ['left', 'top', 'right', 'max-width', 'max-height'];
+ let drag, listeners;
+
+ function bounds() {
+  const container = panel.parentElement.getBoundingClientRect();
+  const region = map.getBoundingClientRect();
+  const inset = 12;
+  const left = Math.max(region.left, 0) + inset - container.left;
+  const top = Math.max(region.top, 0) + inset - container.top;
+  const right = Math.min(region.right, innerWidth) - inset - container.left;
+  const bottom = Math.min(region.bottom, innerHeight) - inset - container.top;
+  if (right <= left || bottom <= top) return null;
+  panel.style.maxWidth = right - left + 'px';
+  // Tall panels keep a usable scroll area even when moved downward.
+  const minimumHeight = Math.max(160, panel.firstElementChild?.offsetHeight || 0);
+  return {
+   left, top, right: Math.max(left, right - panel.offsetWidth),
+   bottom: Math.max(top, bottom - minimumHeight), bottomEdge: bottom, container
+  };
+ }
+
+ function place(left, top, area) {
+  panel.style.right = 'auto';
+  panel.style.left = clamp(left, area.left, area.right) + 'px';
+  const visibleTop = clamp(top, area.top, area.bottom);
+  panel.style.top = visibleTop + 'px';
+  panel.style.maxHeight = area.bottomEdge - visibleTop + 'px';
+ }
+
+ function restore() {
+  if (!enabled() || drag) return;
+  const area = bounds();
+  if (!area) return;
+  const saved = readPremiumUi(scope).panelPosition;
+  const x = Number.isFinite(saved?.x) ? clamp(saved.x, 0, 1) : 1;
+  const y = Number.isFinite(saved?.y) ? clamp(saved.y, 0, 1) : 0;
+  place(area.left + (area.right - area.left) * x, area.top + (area.bottom - area.top) * y, area);
+ }
+
+ function end(save) {
+  if (!drag) return;
+  const {id, moved} = drag;
+  drag = null;
+  delete panel.dataset.premiumDragging;
+  if (panel.hasPointerCapture(id)) panel.releasePointerCapture(id);
+  if (save && moved && enabled()) {
+   const area = bounds();
+   if (area) {
+    const ui = readPremiumUi(scope);
+    const rect = panel.getBoundingClientRect();
+    ui.panelPosition = {
+     x: area.right === area.left ? ui.panelPosition?.x ?? 1 : clamp((rect.left - area.container.left - area.left) / (area.right - area.left), 0, 1),
+     y: area.bottom === area.top ? ui.panelPosition?.y ?? 0 : clamp((rect.top - area.container.top - area.top) / (area.bottom - area.top), 0, 1)
+    };
+    savePremiumUi(scope, ui);
+   }
+  }
+  restore();
+ }
+
+ panel.addEventListener('pointerdown', event => {
+  if (!enabled() || event.pointerType !== 'mouse' || event.button !== 0 || drag) return;
+  if (!panel.firstElementChild?.matches('header') || !panel.firstElementChild.contains(event.target)) return;
+  if (event.target.closest('button, a, input, select, textarea, label, summary, [role=button], [contenteditable]')) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const rect = panel.getBoundingClientRect();
+  drag = {id:event.pointerId, x:event.clientX, y:event.clientY, left:rect.left, top:rect.top, moved:false};
+  panel.setPointerCapture(event.pointerId);
+ });
+ panel.addEventListener('pointermove', event => {
+  if (drag?.id !== event.pointerId) return;
+  const dx = event.clientX - drag.x;
+  const dy = event.clientY - drag.y;
+  if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+  if (!enabled()) { end(false); return; }
+  const area = bounds();
+  if (!area) return;
+  event.preventDefault();
+  event.stopPropagation();
+  drag.moved = true;
+  panel.dataset.premiumDragging = '';
+  place(drag.left + dx - area.container.left, drag.top + dy - area.container.top, area);
+ });
+ panel.addEventListener('pointerup', event => {
+  if (drag?.id !== event.pointerId) return;
+  event.preventDefault();
+  event.stopPropagation();
+  end(true);
+ });
+ for (const type of ['pointercancel', 'lostpointercapture']) {
+  panel.addEventListener(type, event => { if (drag?.id === event.pointerId) end(false); });
+ }
+
+ const resize = new ResizeObserver(restore);
+ new MutationObserver(() => {
+  if (enabled()) {
+   if (!listeners) {
+    listeners = new AbortController();
+    resize.observe(panel);
+    resize.observe(map);
+    window.addEventListener('resize', restore, {signal:listeners.signal});
+    window.addEventListener('scroll', event => {
+     if (!(event.target instanceof Node && panel.contains(event.target))) restore();
+    }, {capture:true, passive:true, signal:listeners.signal});
+    window.addEventListener('blur', () => end(false), {signal:listeners.signal});
+   }
+   restore();
+  } else {
+   end(false);
+   listeners?.abort();
+   listeners = null;
+   resize.disconnect();
+   for (const property of properties) panel.style.removeProperty(property);
+  }
+ }).observe(panel, {attributes:true, attributeFilter:['hidden','class']});
+}

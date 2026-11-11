@@ -1,13 +1,13 @@
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=411177r2';
-import {eyeHubMethods} from './eye-hub.js?v=411179r1';
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411170r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411170r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411180r1';
+import {eyeHubMethods} from './eye-hub.js?v=411180r1';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411180r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411180r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.37",
+  version:"0.4.38",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -269,12 +269,12 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
   },
 
   _weatherDisplayTransparencyPercent(kind){
-    return Math.round((1-this._weatherDisplayOpacity(kind,this._weatherDisplayNaturalOpacity(kind)))*100);
+    return Math.round(this._weatherDisplayOpacity(kind,this._weatherDisplayNaturalOpacity(kind))*100);
   },
 
   _weatherDisplaySetTransparency(kind,percent){
     const transparency=clamp(percent,0,100);
-    this._weatherDisplayPatch({opacities:{[kind]:1-transparency/100}});
+    this._weatherDisplayPatch({opacities:{[kind]:transparency/100}});
     return transparency;
   },
 
@@ -610,7 +610,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung · Daten und Routing bleiben unverändert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
           WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note">0 % = deckend · 100 % = unsichtbar · WR-Standard bleibt per Zurücksetzen erhalten</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="5" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note" data-weather-display-opacity-hint>0 % = unsichtbar · 100 % = vollständig sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Position zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>Zurücksetzen</button></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
@@ -957,7 +957,10 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       });
       block.querySelectorAll("[data-weather-display-precipitation-only]").forEach(row=>{row.hidden=!available;});
       block.querySelectorAll("[data-weather-display-style-select]").forEach(select=>{const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";select.value=config.styles?.[kind]||"auto";select.disabled=!available;});
-      block.querySelectorAll("[data-weather-display-transparency]").forEach(input=>{const kind=input.dataset.weatherDisplayTransparency,value=this._weatherDisplayTransparencyPercent(kind);input.value=String(value);input.disabled=!available;input.setAttribute("aria-valuetext",value+" % transparent");});
+      block.querySelectorAll("[data-weather-display-transparency]").forEach(input=>{const kind=input.dataset.weatherDisplayTransparency,value=this._weatherDisplayTransparencyPercent(kind);input.value=String(value);input.disabled=!available;input.setAttribute("aria-valuetext",value+" %");});
+      const opacityHint=block.querySelector("[data-weather-display-opacity-hint]");
+      const opacityHelp=this._weatherQuickT("opacityHelp");
+      if(opacityHint&&opacityHint.textContent!==opacityHelp)opacityHint.textContent=opacityHelp;
       block.querySelectorAll("[data-weather-display-transparency-value]").forEach(output=>{output.textContent=this._weatherDisplayTransparencyPercent(output.dataset.weatherDisplayTransparencyValue)+" %";});
       block.querySelectorAll("[data-weather-display-transparency-reset]").forEach(button=>{button.disabled=!available||config.opacities?.[button.dataset.weatherDisplayTransparencyReset]==null;});
       block.querySelectorAll("[data-weather-display-legend-mode]").forEach(button=>{const active=button.dataset.weatherDisplayLegendMode===config.legendMode;button.classList.toggle("active",active);button.setAttribute("aria-pressed",active?"true":"false");button.disabled=!available;});
@@ -976,7 +979,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       const glyph=panel.querySelector(".weather-display-eye-glyph");if(glyph)glyph.outerHTML=eyeAssetMarkup(true);
       const precipCard=panel.querySelector("[data-weather-display-precipitation-card]");if(precipCard)precipCard.hidden=!available;
       panel.querySelectorAll("[data-weather-display-style-select]").forEach(select=>{const kind=select.dataset.weatherDisplayStyleSelect||"precipitation";select.value=config.styles?.[kind]||"auto";select.disabled=!available;});
-      panel.querySelectorAll("[data-weather-display-transparency]").forEach(input=>{const kind=input.dataset.weatherDisplayTransparency,value=this._weatherDisplayTransparencyPercent(kind);input.value=String(value);input.setAttribute("aria-valuetext",value+" % transparent");});
+      panel.querySelectorAll("[data-weather-display-transparency]").forEach(input=>{const kind=input.dataset.weatherDisplayTransparency,value=this._weatherDisplayTransparencyPercent(kind);input.value=String(value);input.setAttribute("aria-valuetext",value+" %");});
       panel.querySelectorAll("[data-weather-display-transparency-value]").forEach(output=>{output.textContent=this._weatherDisplayTransparencyPercent(output.dataset.weatherDisplayTransparencyValue)+" %";});
       panel.querySelectorAll("[data-weather-display-transparency-reset]").forEach(button=>{button.disabled=config.opacities?.[button.dataset.weatherDisplayTransparencyReset]==null;});
       panel.querySelectorAll("[data-weather-display-legend-mode]").forEach(button=>{const active=button.dataset.weatherDisplayLegendMode===config.legendMode;button.classList.toggle("active",active);button.setAttribute("aria-pressed",active?"true":"false");});

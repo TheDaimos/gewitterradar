@@ -1,6 +1,6 @@
 // Decorative runtime filaments, independent of weather data and the wind engine.
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411178r1';
+import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411180r1';
 const TAU=Math.PI*2,clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x),smooth=x=>x*x*(3-2*x);
 const hash=(x,y,seed)=>{let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(seed,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
 function noise(x,y,seed){const a=Math.floor(x),b=Math.floor(y),u=smooth(x-a),v=smooth(y-b),p=hash(a,b,seed),q=hash(a+1,b,seed),r=hash(a,b+1,seed),s=hash(a+1,b+1,seed);return (p+(q-p)*u)*(1-v)+(r+(s-r)*u)*v;}
@@ -46,10 +46,10 @@ export class EyeNeon{
    s.config=config;const extent=eyeGlowExtent(config),scale=host.closest('.eye-preview-scene')?Math.max(1,host.getBoundingClientRect().width/(host.offsetWidth||1)):1;
    const ratio=Math.min(globalThis.devicePixelRatio||1,2,640/(extent*2))*Math.min(scale,1.5),pixels=Math.min(640,Math.ceil(extent*2*ratio));
    if(s.canvas.width!==pixels||s.extent!==extent){s.canvas.width=s.canvas.height=pixels;s.canvas.style.width=s.canvas.style.height=extent*2+'px';s.extent=extent;s.ratio=pixels/(extent*2);s.signature='';}
-   const signature=JSON.stringify([extent,config.size,config.intensity,config.brightness,config.glow,active]);const changed=s.signature!==signature;s.signature=signature;
+   const signature=JSON.stringify([extent,config.size,config.intensity,config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active]);const changed=s.signature!==signature;s.signature=signature;
    const live=config.glow==='living'&&!this.motion.matches;
    for(const r of s.rings.values())r.target=0;
-   for(const a of active){let r=s.rings.get(a.id);if(!r){r={...a,visibility:live?.01:1,target:1,halo:document.createElement('canvas'),sprite:sprite(a.color),strands:Array.from({length:10},(_,id)=>({id,points:new Float32Array(128*2)}))};s.rings.set(a.id,r);}if(r.color!==a.color)r.sprite=sprite(a.color);Object.assign(r,a,{target:1,radius:eyeRingRadius(config.size,a.index)});}
+   for(const a of active){let r=s.rings.get(a.id);if(!r){r={...a,visibility:live?.01:1,target:1,halo:document.createElement('canvas'),sprite:sprite(a.color),strands:Array.from({length:10},(_,id)=>({id,points:new Float32Array(128*2)}))};s.rings.set(a.id,r);}if(r.color!==a.color)r.sprite=sprite(a.color);Object.assign(r,a,{target:1,radius:eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)});}
    if(!live)for(const [id,r] of s.rings)if(!r.target){s.rings.delete(id);r.halo.width=r.halo.height=1;}
    if(changed){const start=performance.now();for(const r of s.rings.values())this.cacheHalo(s,r);this.metrics.cacheMs+=performance.now()-start;this.draw(s,performance.now()/1000,0,!live);}
    this.surfaces.push(s);this.intersection.observe(host);
