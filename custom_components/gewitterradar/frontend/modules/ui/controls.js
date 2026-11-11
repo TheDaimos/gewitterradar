@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411184r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411185r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -18,7 +18,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [

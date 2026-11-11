@@ -77,6 +77,26 @@ const TEMPLATE = `
   color: var(--vault-bright);
 }
 .gr-vault-setup :focus-visible { outline: 2px solid var(--vault-bright); outline-offset: 2px; }
+.gr-vault-setup .vault-name-field { position: relative; }
+.gr-vault-setup .vault-name-field input { padding-inline-end: 49px; }
+.gr-vault-setup .vault-name-clear {
+  position: absolute;
+  inset-inline-end: 1px;
+  inset-block-end: 1px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--vault-bright);
+  font-size: 22px;
+  line-height: 1;
+}
+.gr-vault-setup .vault-name-clear:is(:hover,:focus-visible) { background: rgba(201,160,80,.14); }
+.gr-vault-setup .vault-name-clear:focus-visible { outline-offset: -3px; }
 .gr-vault-setup button:disabled { opacity: .55; cursor: default; }
 .gr-vault-setup :is([role=status],[role=alert]) { overflow-wrap: anywhere; }
 .gr-vault-setup [role=alert] { color: #ffcfad; }
@@ -108,8 +128,11 @@ const TEMPLATE = `
     <button type="button" class="vault-link" data-action="back">Zurück</button>
   </div>
   <form class="vault-step" data-step="name" hidden>
-    <h3 data-name-heading>Neues Geräteprofil</h3>
-    <label>Profilname<input type="text" required maxlength="64" value="Dieses Gerät" autocomplete="off" data-focus></label>
+    <h3 data-name-heading tabindex="-1" data-focus>Neues Geräteprofil</h3>
+    <div class="vault-name-field">
+      <label>Profilname<input type="text" required maxlength="64" value="Dieses Gerät" autocomplete="off"></label>
+      <button type="button" class="vault-name-clear" data-action="clear-name" aria-label="Profilnamen löschen"><span aria-hidden="true">×</span></button>
+    </div>
     <p class="vault-muted" data-name-note hidden>Die bisherigen Browsereinstellungen bleiben für eine spätere Übernahme verfügbar.</p>
     <button type="submit" class="vault-primary" data-submit>Profil erstellen</button>
     <button type="button" class="vault-link" data-action="back">Zurück</button>
@@ -149,11 +172,17 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
   const alert = find('[role=alert]');
   const status = find('[data-action-status]');
   const form = find('form');
+  const clearName = action('clear-name');
+  const nameDrafts = new Map();
   let step = 'loading';
   let nameMode;
+  let nameDraft;
+  let keyboardListeners;
+  let tabNavigation = false;
   let busy = false;
 
   function show(next, focus = false) {
+    tabNavigation = false;
     step = next;
     for (const panel of root.querySelectorAll('[data-step]')) panel.hidden = panel.dataset.step !== next;
     alert.textContent = '';
@@ -213,11 +242,63 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
 
   function nameProfile(kind) {
     nameMode = kind;
-    input.value = 'Dieses Gerät';
+    const key = kind === 'copy' ? 'copy:' + picker.value : kind;
+    nameDraft = nameDrafts.get(key) ?? {value: input.defaultValue, selectSuggestion: true};
+    nameDrafts.set(key, nameDraft);
+    input.value = nameDraft.value;
+    clearName.hidden = !input.value;
     find('[data-name-heading]').textContent = {defaults: 'Neues Geräteprofil', copy: 'Eigenständige Profilkopie', legacy: 'Browsereinstellungen übernehmen'}[kind];
     find('[data-name-note]').hidden = kind !== 'defaults' || !Object.keys(client.legacy.values).length;
     show('name', true);
   }
+
+  function selectSuggestion() {
+    if (step !== 'name' || !nameDraft.selectSuggestion) return;
+    nameDraft.selectSuggestion = false;
+    if (input.value === input.defaultValue) input.select();
+  }
+
+  function updateDraft() {
+    nameDraft.value = input.value;
+    nameDraft.selectSuggestion = false;
+    clearName.hidden = !input.value;
+  }
+
+  // Focus can also be set by the card or by validation. Only Tab and an
+  // actual click/tap should select the untouched suggestion.
+  function connect() {
+    if (keyboardListeners) return;
+    keyboardListeners = new AbortController();
+    const capture = {capture: true, signal: keyboardListeners.signal};
+    root.ownerDocument.addEventListener('keydown', event => {
+      if (step === 'name' && event.isTrusted) tabNavigation = event.key === 'Tab';
+    }, capture);
+    const endTabNavigation = () => { tabNavigation = false; };
+    for (const type of ['focusin', 'keyup', 'pointerdown']) {
+      root.ownerDocument.addEventListener(type, endTabNavigation, capture);
+    }
+  }
+
+  function disconnect() {
+    keyboardListeners?.abort();
+    keyboardListeners = undefined;
+    tabNavigation = false;
+  }
+
+  connect();
+  input.addEventListener('focus', () => {
+    if (!tabNavigation) return;
+    if (nameDraft.selectSuggestion) selectSuggestion();
+    else {
+      // Chromium selects the whole field on Tab focus. Resume at the saved caret.
+      const caret = nameDraft.caret ?? input.value.length;
+      input.setSelectionRange(caret, caret);
+    }
+  });
+  input.addEventListener('blur', () => { nameDraft.caret = input.selectionEnd; });
+  input.addEventListener('click', event => { if (event.isTrusted) selectSuggestion(); });
+  input.addEventListener('input', updateDraft);
+  clearName.addEventListener('mousedown', event => event.preventDefault());
 
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -242,6 +323,11 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     defaults: () => nameProfile('defaults'),
     copy: () => nameProfile('copy'),
     migrate: () => nameProfile('legacy'),
+    'clear-name': () => {
+      input.value = '';
+      input.focus({preventScroll: true});
+      updateDraft();
+    },
     use: () => run(async () => { await client.choose(picker.value); boot(); }, 'Profil wird geladen …'),
     back: () => {
       if (step !== 'name' || nameMode === 'defaults') show('choose', true);
@@ -280,5 +366,8 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     if (control && !busy) actions[control.dataset.action]();
   });
 
-  return {present, remove: () => root.remove()};
+  return {present, connect, disconnect, remove: () => {
+    disconnect();
+    root.remove();
+  }};
 }

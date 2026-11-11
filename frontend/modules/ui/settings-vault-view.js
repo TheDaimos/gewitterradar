@@ -1,8 +1,8 @@
-import {mountVaultSetup} from './settings-vault-setup.js?v=411184r1';
+import {mountVaultSetup} from './settings-vault-setup.js?v=411185r1';
 import {
   acquireSettingsSlot, releaseSettingsSlot, requestId, SettingsVaultClient,
-} from '../core/settings-vault.js?v=411184r1';
-import {APPLICATION_RELEASE} from '../../version.js?v=411184r1';
+} from '../core/settings-vault.js?v=411185r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411185r1';
 
 const TITLE = 'Userprofile & Sicherungen';
 const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
@@ -467,6 +467,7 @@ export function installSettingsVault(Card, compatible) {
     },
   });
   proto.connectedCallback = function() {
+    this._vaultSetup?.connect();
     const client = this._settingsVault;
     if (client?.slot) {
       const slot = acquireSettingsSlot(this, this._vaultConfig, client.userId);
@@ -480,6 +481,7 @@ export function installSettingsVault(Card, compatible) {
     else initialize(this);
   };
   proto.disconnectedCallback = function() {
+    this._vaultSetup?.disconnect();
     const client = this._settingsVault;
     if (client) {
       releaseSettingsSlot(this, client.slot);

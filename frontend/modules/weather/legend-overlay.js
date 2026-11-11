@@ -1,10 +1,10 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411184r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411185r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411184r1';
+import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411185r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.10",
+  version:"0.1.11",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],

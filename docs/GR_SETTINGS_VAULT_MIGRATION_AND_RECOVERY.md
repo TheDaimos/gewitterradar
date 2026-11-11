@@ -2,7 +2,7 @@
 
 ## Umstieg von V181
 
-1. HA DEV über den DRA-Kanal `TheDaimos/gewitterradar@deploy/dev` auf GR 4.11.184 DEV / HA 0.25.91 aktualisieren und Home Assistant neu starten.
+1. HA DEV über den DRA-Kanal `TheDaimos/gewitterradar@deploy/dev` auf GR 4.11.185 DEV / HA 0.25.92 aktualisieren und Home Assistant neu starten.
 2. Gewitterradar auf dem Gerät öffnen, auf dem die bisherigen Werte noch sichtbar sind. Unter **Bisherige Browsereinstellungen → Übernahme prüfen** zeigt die Vorschau lesbare Bereiche und Einträge mit Fehlern.
 3. Bei Bedarf **Lokale Originaldaten exportieren** verwenden. Der lokale Export enthält die Rohwerte der registrierten V181-Keys. Die alten Einstellungen waren an den Browser-Origin gebunden. Übernimm nur den Bestand, der diesem HA-Konto zugeordnet werden soll.
 4. **Browsereinstellungen übernehmen** wählen, den Gerätenamen eingeben und **Profil erstellen** bestätigen. Der Server legt ein eigenes Profil an, bewahrt vollständige validierte Originale, erstellt einen Snapshot und bestätigt erst nach dem Store-Readback. Der Browser bindet das Profil nach einer weiteren Abfrage seiner ID und Revision. Ein wiederholter Versuch mit derselben Request-ID erhält dasselbe Profil.
@@ -25,8 +25,11 @@ Seit V183 werden auch ältere als Text gespeicherte Karten-Sichtbarkeiten wie `f
 
 ## Betreiberabnahme auf Android
 
-1. V184 auf VM109 installieren. GewitterRadar in der Android Companion App öffnen. Bei sichtbarer Profilwahl einige Sekunden warten, die Auswahl antippen und prüfen, dass das Fenster ruhig bleibt. Falls bereits ein Gerät zugeordnet ist, die Profilwahl in Schritt 4 prüfen.
-2. **Mit Standardeinstellungen starten** wählen, den vorgeschlagenen Namen ändern und das Profil anlegen. Der erste Touch muss den Namensschritt öffnen und die Bestätigung anschließend die Karte. Die App schließen und erneut öffnen. Das zugeordnete Profil muss automatisch starten.
-3. Ein individuelles Profil mit gruppierten Eye-Icons, animiertem Snake-Wind, Temperatur-Farbfläche ohne Zahlen, Regen-Opacity 27 % und verschobenem Windfenster verwenden. Unter **Userprofile & Sicherungen** auf **Gespeichert** warten.
-4. In derselben App **Einstellungen → Companion App → Problemlösungen → Frontend-Cache löschen** ausführen und GR erneut öffnen. Erscheint die Profilwahl, das individuelle Profil auswählen und **Dieses Profil zuordnen** antippen. Flackerfreiheit, Touchbedienung und Kartenstart prüfen. Die fünf wirksamen Darstellungswerte mit Schritt 3 vergleichen.
-5. HA DEV neu starten und erneut vergleichen. Bei einem zweiten Gerät dasselbe Konto verwenden, ein eigenes Profil anlegen und dessen Einstellungen ändern. Das individuelle Android-Profil erneut öffnen und die fünf Werte abgleichen.
+**OFFEN** · Installation und Betreiberprüfung auf DEV VM109 mit der echten Android Companion App.
+
+1. V185 auf VM109 installieren. GewitterRadar auf einem noch ungebundenen Android-Client öffnen. In der Profilwahl einige Sekunden warten und prüfen, dass die Oberfläche ruhig und bedienbar bleibt.
+2. **Mit Standardeinstellungen starten** antippen. Unter **Neues Geräteprofil** muss „Dieses Gerät“ sichtbar sein, während die Tastatur geschlossen bleibt. Das Namensfeld antippen, die vollständige Markierung prüfen und einen individuellen Namen tippen. Die Eingabe soll die Vorlage ersetzen. Den Cursor versetzen, einen Tippfehler korrigieren und den Namensschritt über **Zurück** erneut öffnen. Der Entwurf soll erhalten bleiben.
+3. **Profilnamen löschen** antippen. Das Feld soll leer und direkt wieder beschreibbar sein. Einen gültigen Namen eingeben und erst dann **Profil erstellen** antippen. Die Karte muss öffnen. Die App schließen und erneut öffnen. Das zugeordnete Profil muss automatisch starten.
+4. Auf dem Client mit V181-Originalen die Schritte unter **Umstieg von V181** ausführen. Wurde dort in Schritt 3 ein Standardprofil angelegt, sind die Originale weiterhin im Browser vorhanden. In diesem Fall **Userprofile & Sicherungen → Erweitert → Browsereinstellungen erneut als Profil übernehmen** nutzen. Gruppierte Eye-Icons, Snake-Wind, Temperatur-Farbfläche und Beschriftung, Niederschlagstransparenz sowie die Windfensterposition mit den V181-Einstellungen vergleichen. Unter **Userprofile & Sicherungen** auf **Gespeichert** warten.
+5. In derselben App **Einstellungen → Companion App → Problemlösungen → Frontend-Cache löschen** ausführen und GR erneut öffnen. Erscheint die Profilwahl, dasselbe individuelle Profil auswählen und **Dieses Profil zuordnen** antippen. Flackerfreiheit, Touchbedienung, Kartenstart und die Darstellungswerte prüfen.
+6. HA DEV neu starten und erneut vergleichen. Bei einem zweiten Gerät dasselbe Konto verwenden, ein eigenes Profil anlegen und dessen Einstellungen ändern. Das individuelle Android-Profil erneut öffnen und die Darstellungswerte abgleichen.

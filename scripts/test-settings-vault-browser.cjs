@@ -158,6 +158,76 @@ async function screenshotSetup(page, name) {
   await page.locator('.gr-vault-setup').screenshot({path: path.join(out, name + '.png')});
 }
 
+async function exerciseProfileName(page, {enter, heading, previous, name, touch = false}) {
+  const writes = () => mock.log.filter(entry => ['create', 'copy', 'patch'].includes(entry.op)).length;
+  const before = writes();
+  const input = page.getByRole('textbox', {name: 'Profilname'});
+  const title = page.getByRole('heading', {name: heading, exact: true});
+  const clear = page.getByRole('button', {name: 'Profilnamen löschen', exact: true});
+  const submit = page.getByRole('button', {name: 'Profil erstellen', exact: true});
+  const focused = locator => locator.evaluate(element => element === document.activeElement);
+  const selection = () => input.evaluate(element => [element.selectionStart, element.selectionEnd]);
+  const back = async () => {
+    await page.getByRole('button', {name: 'Zurück', exact: true}).click();
+    await previous.waitFor();
+  };
+  const focusName = (position = {x: 25, y: 21}) => touch ? input.tap({position}) : page.keyboard.press('Tab');
+
+  await enter();
+  assert(await focused(title), 'Opening the name step must keep focus out of the text field');
+  assert.equal(await input.inputValue(), 'Dieses Gerät');
+  await input.evaluate(element => { element.setSelectionRange(2, 2); element.focus(); element.click(); });
+  assert.deepEqual(await selection(), [2, 2], 'Programmatic focus/click must leave the selection alone');
+  await title.focus();
+  await focusName({x: 160, y: 21});
+  assert(await focused(input));
+  assert.deepEqual(await selection(), [0, 'Dieses Gerät'.length], 'First user focus must select the full suggestion');
+  await page.keyboard.insertText(name);
+  assert.equal(await input.inputValue(), name);
+  await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowRight');
+  assert.deepEqual(await selection(), [1, 1], 'Caret movement must work after typing');
+  await page.keyboard.insertText('x');
+  await page.keyboard.press('Backspace');
+  assert.equal(await input.inputValue(), name, 'Corrections must edit at the caret');
+  await title.focus();
+  await focusName();
+  const [start, end] = await selection();
+  assert.equal(start, end, 'A focus change must preserve the custom name without selecting it');
+  if (!touch) assert.equal(start, 1, 'Keyboard focus must return to the previous caret');
+  await back();
+  await enter();
+  assert(await focused(title));
+  assert.equal(await input.inputValue(), name, 'Back navigation must retain the draft');
+  await focusName({x: 100, y: 21});
+  const [returnedStart, returnedEnd] = await selection();
+  assert.equal(returnedStart, returnedEnd, 'Returning to the draft must not select it');
+  assert.equal(await clear.getAttribute('type'), 'button');
+  const target = await clear.boundingBox();
+  assert(target.width >= 44 && target.height >= 44, 'The clear button must have a touch-sized target');
+  if (touch) {
+    await clear.tap();
+    assert.equal(await input.inputValue(), '');
+    assert(await focused(input), 'Touch clear must return to editing');
+    await clear.waitFor({state: 'hidden'});
+    await page.keyboard.insertText(name);
+  }
+  await page.keyboard.press('Tab');
+  assert(await focused(clear));
+  assert.equal(await clear.evaluate(element => getComputedStyle(element).outlineStyle), 'solid');
+  await page.keyboard.press('Enter');
+  assert.equal(await input.inputValue(), '');
+  assert(await focused(input), 'Keyboard clear must return to editing');
+  await clear.waitFor({state: 'hidden'});
+  await submit.click();
+  assert(await input.evaluate(element => element.validity.valueMissing));
+  await input.fill('   ');
+  await submit.click();
+  await page.getByRole('alert').filter({hasText: 'Gib einen Namen für dieses Gerät ein.'}).waitFor();
+  assert.equal(writes(), before, 'Editing and invalid submissions must never write a profile');
+  await input.fill(name);
+}
+
 (async () => {
   const current = vaultFixture();
   const reference = flowFixture({ref: '4587b76ca254fdc62cf179560fca9f61c1214133'});
@@ -171,10 +241,11 @@ async function screenshotSetup(page, name) {
     assert(await refreshHaCard(desktop.page), 'HA state updates must not replace the profile picker');
     assert.equal(mock.log.filter(entry => entry.op === 'get').length, initialReads);
     assert.equal(await desktop.page.getByRole('textbox', {name: 'Profilname'}).count(), 0);
-    await desktop.page.getByRole('button', {name: 'Mit Standardeinstellungen starten'}).click();
+    const desktopDefaults = desktop.page.getByRole('button', {name: 'Mit Standardeinstellungen starten'});
+    await exerciseProfileName(desktop.page, {
+      enter: () => desktopDefaults.click(), heading: 'Neues Geräteprofil', previous: desktopDefaults, name: 'Desktop-Test',
+    });
     const nameInput = desktop.page.getByRole('textbox', {name: 'Profilname'});
-    assert.equal(await nameInput.inputValue(), 'Dieses Gerät');
-    await nameInput.fill('Desktop-Test');
     assert(await refreshHaCard(desktop.page, {partialUser: true}), 'Focus and the typed name must survive HA updates');
     assert.equal(await nameInput.inputValue(), 'Desktop-Test');
     mock.loseCreateReply = true;
@@ -212,9 +283,23 @@ async function screenshotSetup(page, name) {
     await android.page.getByRole('button', {name: 'Vorhandenes Profil verwenden'}).waitFor();
     assert.equal(await android.page.getByText('powered by WeatherRouter', {exact: true}).count(), 1);
     await screenshotSetup(android.page, 'android-setup');
+    const androidDefaults = android.page.getByRole('button', {name: 'Mit Standardeinstellungen starten'});
+    await exerciseProfileName(android.page, {
+      enter: () => androidDefaults.tap(), heading: 'Neues Geräteprofil', previous: androidDefaults,
+      name: 'Android-Test', touch: true,
+    });
+    await screenshotSetup(android.page, 'android-name');
+    await android.page.getByRole('button', {name: 'Zurück', exact: true}).tap();
     await android.page.getByRole('button', {name: 'Bisherige Browsereinstellungen'}).tap();
     await android.page.getByRole('button', {name: 'Übernahme prüfen'}).click();
-    await startProfile(android.page, 'Browsereinstellungen übernehmen');
+    const migrate = android.page.getByRole('button', {name: 'Browsereinstellungen übernehmen'});
+    await exerciseProfileName(android.page, {
+      enter: () => migrate.tap(), heading: 'Browsereinstellungen übernehmen', previous: migrate,
+      name: 'Android-Migration', touch: true,
+    });
+    await android.page.getByRole('textbox', {name: 'Profilname'}).fill('Dieses Gerät');
+    await android.page.getByRole('button', {name: 'Profil erstellen'}).tap();
+    await android.page.waitForFunction(() => window.ready && card._map && card._settingsVault?.profile);
     assert.deepEqual(await values(android.page), expected);
     assert.equal(await android.page.evaluate(key => localStorage.getItem(key), EYE), legacy[EYE]);
     assert.equal(mock.log.some(entry => entry.op === 'patch'), false);
@@ -264,8 +349,10 @@ async function screenshotSetup(page, name) {
     const copy = await open(browser, current, {width: 1024, height: 768});
     await copy.page.getByRole('button', {name: 'Vorhandenes Profil verwenden', exact: true}).click();
     await copy.page.getByRole('combobox', {name: 'Geräteprofil'}).selectOption(androidId);
-    await copy.page.getByRole('button', {name: 'Als eigenes Profil kopieren', exact: true}).click();
-    await copy.page.getByRole('textbox', {name: 'Profilname'}).fill('Android-Kopie');
+    const copyProfile = copy.page.getByRole('button', {name: 'Als eigenes Profil kopieren', exact: true});
+    await exerciseProfileName(copy.page, {
+      enter: () => copyProfile.click(), heading: 'Eigenständige Profilkopie', previous: copyProfile, name: 'Android-Kopie',
+    });
     await copy.page.getByRole('button', {name: 'Profil erstellen'}).click();
     await copy.page.waitForFunction(() => card._map && card._settingsVault.profile);
     const copiedId = await copy.page.evaluate(() => card._settingsVault.profileId);
@@ -309,7 +396,7 @@ async function screenshotSetup(page, name) {
     assert.deepEqual(mock.log.filter(entry => entry.user === 'offline').map(entry => entry.op), ['get', 'get']);
     mock.offline = false;
     for (const result of [desktop, android, cleared, ipad, copy, secondUser, offline]) assert.deepEqual(result.errors, []);
-    console.log('PASS: stable startup during HA/WS churn, idempotent retry, local recovery, V181 migration and rendering, cache loss, independent devices and accounts');
+    console.log('PASS: profile name touch and keyboard editing in all creation modes, stable startup during HA/WS churn, idempotent retry, local recovery, V181 migration and rendering, cache loss, independent devices and accounts');
   } finally {
     await browser.close();
     for (const f of fixtures) f.server.close();

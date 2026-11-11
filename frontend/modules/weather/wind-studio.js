@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411184r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411185r1';
 import {SnakePreview,SNAKE_SCENARIOS} from './snake-preview.js?v=411163r1';
 import {SNAKE_DEFAULTS,SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411162r1';
 import {WindStudioModel,importPreset,exportPresetJSON,exportPresetCSV,MAX_PRESET_BYTES} from './wind-studio-data.js?v=411163r1';
-import {PREMIUM_INFO,enhancePremiumSections} from './premium-ui.js?v=411184r1';
+import {PREMIUM_INFO,enhancePremiumSections} from './premium-ui.js?v=411185r1';
 const button=(action,label)=>`<button type="button" data-studio-action="${action}">${label}</button>`;
 const sections=(id,title,body,open=false)=>`<details data-section="studio-${id}" ${open?'open':''}><summary>${title}</summary>${body}</details>`;
 export function ensureWindStudioStyle(shadow){
