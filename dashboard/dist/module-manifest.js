@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411185r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411186r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.202",
+    "version": "1.2.203",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.41",
+    "version": "1.0.42",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -138,7 +138,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.33",
+    "version": "1.1.34",
     "group": "OberflÃ¤che",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -151,7 +151,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.22",
+    "version": "1.3.23",
     "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -187,7 +187,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-selector",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "group": "Instrumente",
     "function": "Kompassauswahl",
     "subfunctions": [
@@ -261,7 +261,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.map",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "group": "Diagnose",
     "function": "Kartendiagnose",
     "subfunctions": [
@@ -278,7 +278,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.5.6",
+    "version": "1.5.7",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.22",
+    "version": "0.1.23",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -322,7 +322,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.24",
+    "version": "1.0.25",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -347,7 +347,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.28",
+    "version": "1.3.29",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.43",
+    "version": "0.4.44",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -466,7 +466,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.16",
+    "version": "0.4.17",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
@@ -509,7 +509,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.temperature-display",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "group": "Weather-Engine",
     "function": "Weltweite Temperatur und thermische Advektion",
     "subfunctions": [

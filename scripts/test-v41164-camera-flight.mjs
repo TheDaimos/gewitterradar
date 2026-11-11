@@ -5,7 +5,6 @@ const radii=await readFile(new URL('../frontend/modules/location/radii-map.js',i
 const controls=await readFile(new URL('../frontend/modules/ui/controls.js',import.meta.url),'utf8');
 assert.match(radii,/gesture\.lifecycle\.clean-skip/);
 assert.match(radii,/if\(!lifecycleGestureDirty\(\)\)/);
-assert.match(radii,/if\(!dirty\)\{/);
 assert.match(controls,/geo\.reference\.handoff\.duplicate-suppressed/);
 assert.match(controls,/if\(handoff\?\.phase==='flying'\)/);
 assert.match(controls,/this\._v407SavedPlaceUseBusy=true/);
@@ -15,7 +14,7 @@ const methods=install();
 function recover({pinch=false,drag=false,touch=false}={}){
   let stops=0;
   const map={stop(){stops++},touchZoom:{_zooming:pinch,_moved:false,_animRequest:null},dragging:{_draggable:{_moving:drag,finishDrag(){}}}};
-  const state={L:{DomEvent:{off(){}},Draggable:{_dragging:false}},pointers:new Map(),touchIds:new Set(touch?[1]:[]),globalPointers:new Set(),browserTouchFallback:null,recovering:false};
+  const state={L:{DomEvent:{off(){}},Draggable:{_dragging:false}},pointers:new Map(),touchIds:new Set(touch?[1]:[]),globalPointers:new Map(),browserTouchFallback:null,gestureEpoch:0,recovering:false};
   const ctx={_map:map,_mapGestureRecovery:state,_mapGestureSurfacePointerCount(){return 0},_mapDiagnosticLog(){}};
   assert.equal(methods._recoverMapGestureState.call(ctx,'window-blur',{force:true}),true);
   return stops;

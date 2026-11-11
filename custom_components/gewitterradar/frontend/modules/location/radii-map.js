@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -512,7 +512,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       try{
         target.dispatchEvent(new PointerEvent('pointercancel',{
           pointerId:Number(pointerId),pointerType:pointerType||'touch',
-          bubbles:true,cancelable:false,isPrimary:false
+          // Leaflet's pointer-to-touch adapter observes the document capture
+          // phase. Cross the card's shadow root without bubbling to other controls.
+          composed:true,cancelable:false,isPrimary:false
         }));
         return true;
       }catch(_error){return false;}
@@ -609,10 +611,12 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     },
 
     _recoverMapGestureState(reason,{force=false,invalidate=false}={}) {
-      const state=this._mapGestureRecovery,map=this._map,L=state?.L||window.L;
+      const state=this._mapGestureRecovery,map=state?.map||this._map,L=state?.L||window.L;
       if(!state||!map||!L||state.recovering)return false;
       const touchZoom=map.touchZoom,draggable=map.dragging?._draggable;
-      const stalePinch=!!touchZoom?._zooming,staleDrag=!!(draggable?._moving||L.Draggable?._dragging);
+      const stalePinch=!!touchZoom?._zooming;
+      const pinchMoved=stalePinch&&touchZoom._moved;
+      const staleDrag=!!draggable&&(L.Draggable?._dragging===draggable||(!L.Draggable?._dragging&&draggable._moving));
       if(!force&&!stalePinch&&!staleDrag){
         if(invalidate)requestAnimationFrame(()=>map.invalidateSize?.({animate:false}));
         return false;
@@ -620,8 +624,28 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.recovering=true;
       this._mapDiagnosticLog?.("gesture.recovery.begin",{reason:String(reason||"unknown"),force:!!force,invalidate:!!invalidate,stalePinch,staleDrag});
       try{
-        if(force&&state.pointers.size){
-          for(const [pointerId,meta] of [...state.pointers])this._mapGestureSyntheticPointerCancel(pointerId,meta?.pointerType||'touch');
+        const activeMapTouch=!!(this._mapGestureSurfacePointerCount(state)||state.touchIds.size||state.browserTouchFallback?.active);
+        if(force){
+          const pointers=new Map(state.globalPointers);
+          for(const [id,meta] of state.pointers)if(meta.surface)pointers.set(id,meta);
+          state.gestureEpoch++;
+          state.pointers.clear();state.touchIds.clear();state.globalPointers.clear();
+          state.systemGesturePending=false;state.multitouchDirty=false;
+          state.touchTapCandidate=null;state.lastSingleTap=null;
+          state.blockUntilPrimaryUp=false;state.lastGlobalMultiAt=0;
+          state.lastMultiPointerAt=0;state.lastSurfaceMoveAt=0;
+          state.lastDirtyRecoveryAt=0;
+          if(state.quarantineTimer!=null)clearTimeout(state.quarantineTimer);
+          state.quarantineTimer=null;state.quarantineTouchSequence=false;state.quarantineUntil=0;
+          const fallback=state.browserTouchFallback;
+          if(fallback?.frame!=null)cancelAnimationFrame(fallback.frame);
+          if(fallback?.previousZoomSnap!=null&&map.options)map.options.zoomSnap=fallback.previousZoomSnap;
+          state.browserTouchFallback=null;
+          if(activeMapTouch)map.tapHold?._cancel?.();
+          for(const [id,meta] of pointers){
+            if(!L.Browser?.touchNative)this._mapGestureSyntheticPointerCancel(id,meta.pointerType);
+            try{if(meta.target?.hasPointerCapture?.(id))meta.target.releasePointerCapture(id);}catch(_error){}
+          }
         }
         try{
           if(touchZoom){
@@ -631,18 +655,16 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
             touchZoom._animRequest=null;touchZoom._zooming=false;touchZoom._moved=false;
           }
         }catch(_error){}
-        if(force||staleDrag){try{draggable?.finishDrag?.(true);}catch(_error){}}
+        if(staleDrag){try{draggable.finishDrag(true);}catch(_error){}}
         // Fokuswechsel ohne echte Kartengeste duerfen flyToBounds nicht abbrechen.
-        const activeMapTouch=!!(this._mapGestureSurfacePointerCount?.(state)||state.touchIds?.size||state.browserTouchFallback?.active);
-        if(stalePinch||staleDrag||(force&&activeMapTouch)){
+        if(pinchMoved){
+          // Leaflet 1.9.4 emitted zoomstart/movestart before its first frame.
+          // Finish that pair without starting a new animated zoom on cancel.
+          const zoom=map._limitZoom(map.getZoom());
+          if(zoom!==map.getZoom())map._move(map.getCenter(),zoom);
+          map._moveEnd(true);
+        }else if(stalePinch||staleDrag||(force&&activeMapTouch)){
           try{map.stop?.();}catch(_error){}
-        }
-        if(force){
-          state.pointers.clear();state.touchIds.clear();
-          const fallback=state.browserTouchFallback;
-          if(fallback?.frame!=null)cancelAnimationFrame(fallback.frame);
-          if(fallback?.previousZoomSnap!=null&&map?.options)map.options.zoomSnap=fallback.previousZoomSnap;
-          state.browserTouchFallback=null;
         }
         state.lastRecovery={reason:String(reason||'unknown'),at:Date.now(),stalePinch,staleDrag,forced:!!force};
       }finally{state.recovering=false;this._mapDiagnosticLog?.("gesture.recovery.end",{reason:String(reason||"unknown"),stalePinch,staleDrag});}
@@ -653,7 +675,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
     _setupMapGestureRecovery(L,mapEl) {
       if(!L||!mapEl||!this._map)return;
       this._teardownMapGestureRecovery?.();
-      const state={L,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,lastLifecycleResetAt:0,lastSystemGestureAt:0,systemGestureResetQueued:false,globalPointers:new Set(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,systemGestureTimers:[],browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0,lastSingleTap:null,lastDoubleTapAt:0,touchTapCandidate:null};
+      const state={L,map:this._map,mapEl,pointers:new Map(),touchIds:new Set(),handlers:{},recovering:false,hardResetting:false,synthesizing:false,lastRecovery:null,anomalyCount:0,lastAnomaly:null,lastReportedTouches:null,lastMultiPointerAt:0,lastSurfaceMoveAt:0,blockUntilPrimaryUp:false,lastWarnAt:0,gestureEpoch:0,systemGesturePending:false,interruptedTouchIds:new Set(),globalPointers:new Map(),lastGlobalMultiAt:0,multitouchDirty:false,lastDirtyRecoveryAt:0,quarantineTouchSequence:false,quarantineUntil:0,quarantineTimer:null,browserTouchFallback:null,lastFallbackLogAt:0,ghostPointerObserved:false,lastGhostObservationAt:0,lastSingleTap:null,lastDoubleTapAt:0,touchTapCandidate:null};
       this._mapGestureRecovery=state;
       const touchPointer=event=>event?.pointerType==='touch'||event?.pointerType==='pen';
       const now=()=>typeof performance!=='undefined'?performance.now():Date.now();
@@ -874,52 +896,48 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(event?.cancelable)event.preventDefault();
         event?.stopImmediatePropagation?.();
+        this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`,{invalidate:true,blockUntilPrimaryUp:false,anomaly:true,forceEnableConfigured:true});
         armTouchQuarantine(650);
         state.lastDirtyRecoveryAt=stamp;
-        state.multitouchDirty=false;
-        this._hardResetMapGestureHandlers(`touch-pointer-mismatch:${phase}`,{invalidate:true,blockUntilPrimaryUp:false,anomaly:true,forceEnableConfigured:true});
         return true;
       };
-      const postGestureEnd=()=>queueMicrotask(()=>requestAnimationFrame(()=>{
-        if(this._mapGestureRecovery===state&&!state.pointers.size&&!state.touchIds.size)this._recoverMapGestureState('gesture-end',{force:false});
-      }));
-      const scheduleSystemGestureReset=(reason)=>{
+      const recoverWhenIdle=callback=>{
+        const epoch=state.gestureEpoch;
+        requestAnimationFrame(()=>{
+          if(this._mapGestureRecovery===state&&state.gestureEpoch===epoch&&
+             !state.pointers.size&&!state.touchIds.size&&!state.globalPointers.size)callback();
+        });
+      };
+      const postGestureEnd=()=>recoverWhenIdle(()=>this._recoverMapGestureState('gesture-end'));
+      const rehydrateAfterMultitouch=reason=>recoverWhenIdle(()=>this._hardResetMapGestureHandlers(
+        reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true}
+      ));
+      const markSystemGesture=reason=>{
+        if(state.systemGesturePending)return;
+        state.systemGesturePending=true;
         state.touchTapCandidate=null;state.lastSingleTap=null;
-        const stamp=now();
-        if(state.systemGestureResetQueued||stamp-state.lastSystemGestureAt<1200){
-          diag("gesture.system-reset.coalesced",{reason});
-          return;
-        }
-        state.lastSystemGestureAt=stamp;
-        state.systemGestureResetQueued=true;
-        diag("gesture.system-reset.schedule",{reason});
-        for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
-        state.systemGestureTimers=[];
-        // Nur eine verzoegerte Ruecksetzung statt sofort + 220 ms + 700 ms.
-        state.systemGestureTimers.push(setTimeout(()=>{
-          if(this._mapGestureRecovery!==state)return;
-          state.systemGestureResetQueued=false;
-          state.systemGestureTimers=[];
-          const stale=!!(this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving);
-          if(stale||!state.pointers.size){
-            this._hardResetMapGestureHandlers(reason+"-settle",{invalidate:stale,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:stale});
-          }else diag("gesture.system-reset.deferred",{reason,livePointers:state.pointers.size});
-        },220));
+        diag("gesture.system-gesture", {reason});
+      };
+      const ownsPointer=id=>state.pointers.has(id)||state.globalPointers.has(id);
+      const ownsTouch=id=>state.touchIds.has(id)||
+        (state.browserTouchFallback?.mode==='touch'&&state.browserTouchFallback.points.has(id));
+      const ownsTouchEvent=event=>Array.from(event.changedTouches||[]).some(touch=>ownsTouch(touch.identifier));
+      const lifecycleGestureDirty=()=>{
+        const map=state.map,drag=map.dragging?._draggable;
+        return !!(state.systemGesturePending||state.pointers.size||state.globalPointers.size||state.touchIds.size||
+          state.browserTouchFallback?.active||map.touchZoom?._zooming||drag?._moving||(drag&&L.Draggable?._dragging===drag));
+      };
+      const interruptGesture=reason=>{
+        if(!lifecycleGestureDirty()||state.synthesizing||state.recovering||state.hardResetting)return;
+        const fallback=state.browserTouchFallback;
+        state.interruptedTouchIds=new Set([...state.touchIds,...(fallback?.mode==='touch'?fallback.points.keys():[])]);
+        this._recoverMapGestureState(reason,{force:true});
+        diag("gesture.interrupted",{reason});
       };
       state.handlers.pointerdown=event=>{
-        if(!touchPointer(event)||state.synthesizing)return;
+        if(!touchPointer(event)||state.synthesizing||!mapSurfaceEvent(event))return;
         diag("input.pointerdown",diagEvent(event));
-        if(interactiveMapTarget(event))return;
         const stamp=now();
-        if(state.lastSystemGestureAt&&stamp-state.lastSystemGestureAt<3000){
-          for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
-          state.systemGestureTimers=[];
-          state.systemGestureResetQueued=false;
-          if(this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving)
-            this._recoverMapGestureState('post-system-gesture-stale',{force:true});
-          state.lastSystemGestureAt=0;
-          state.lastGlobalMultiAt=0;
-        }
         const recentGlobalMulti=state.lastGlobalMultiAt&&stamp-state.lastGlobalMultiAt>120&&stamp-state.lastGlobalMultiAt<6000;
         const staleGlobalPointers=state.pointers.size===0&&state.globalPointers.size>1;
         const loneNonPrimary=event.isPrimary===false&&state.pointers.size===0;
@@ -949,6 +967,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         const stalePinch=!!this._map?.touchZoom?._zooming&&existing.length===0;
         if(stalePrimary||stalePinch)this._recoverMapGestureState(stalePrimary?'new-primary-pointer':'stale-pinch-before-pointerdown',{force:true});
         state.pointers.set(event.pointerId,{pointerType:event.pointerType||'touch',lastSeen:stamp,surface:surfacePointer(event),
+          target:eventPath(event)[0],
           x:event.clientX,y:event.clientY,startX:event.clientX,startY:event.clientY,startAt:stamp,moved:false,
           hadMulti:state.pointers.size>0});
         if(state.browserTouchFallback?.mode==="pointer"&&surfacePointer(event)){
@@ -965,9 +984,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         // Kartenflaeche ist auf Android/HyperOS typisch fuer die System-
         // Screenshot-Geste. Wir blockieren die Betriebssystemgeste nicht,
         // neutralisieren aber danach unseren internen Pinch-/Drag-Zustand.
-        if(surfaceCount>=3)scheduleSystemGestureReset('three-finger-system-gesture');
+        if(surfaceCount>=3)markSystemGesture('three-finger-system-gesture');
         queueMicrotask(()=>{
-          if(this._mapGestureRecovery!==state||state.hardResetting)return;
+          if(this._mapGestureRecovery!==state||state.hardResetting||!ownsPointer(event.pointerId))return;
           const touches=Array.from(event?.touches||[]);
           if(!touches.length)return;
           const known=new Set(state.pointers.keys());
@@ -978,7 +997,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         });
       };
       state.handlers.pointermove=event=>{
-        if(!touchPointer(event)||state.synthesizing)return;
+        if(!touchPointer(event)||state.synthesizing||state.systemGesturePending)return;
         const stamp=now();
         const meta=state.pointers.get(event.pointerId);
         if(meta){
@@ -997,7 +1016,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
       };
       state.handlers.pointerend=event=>{
-        if(!touchPointer(event))return;
+        if(!touchPointer(event)||state.synthesizing||!state.pointers.has(event.pointerId))return;
         diag("input.pointerend",diagEvent(event));
         const meta=state.pointers.get(event.pointerId);state.pointers.delete(event.pointerId);
         const stamp=now();
@@ -1011,27 +1030,37 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(singleTap)observeTap(event.clientX,event.clientY,stamp,"pointer");
         if(event.isPrimary===true)state.blockUntilPrimaryUp=false;
-        if(state.synthesizing||state.recovering||state.hardResetting)return;
-        queueMicrotask(()=>{
-          if(this._mapGestureRecovery!==state)return;
-          this._mapGestureSyntheticPointerCancel(event.pointerId,meta?.pointerType||event.pointerType||'touch');
-          if(!state.pointers.size&&!state.touchIds.size)postGestureEnd();
-        });
+        if(!state.pointers.size&&!state.touchIds.size)postGestureEnd();
       };
-      const syncTouches=event=>{state.touchIds.clear();for(const touch of Array.from(event?.touches||[]))state.touchIds.add(touch.identifier);};
+      const addTouches=event=>{
+        for(const touch of Array.from(event.changedTouches||[]))state.touchIds.add(touch.identifier);
+      };
       state.handlers.touchstart=event=>{
         diag("input.touchstart",diagEvent(event));
-        if(interactiveMapTarget(event))return;
+        if(!mapSurfaceEvent(event))return;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
+        if(state.systemGesturePending&&touchCount===1)interruptGesture('fresh-touch-after-system-gesture');
+        const changed=Array.from(event.changedTouches||[]);
+        if(!state.pointers.size&&!state.globalPointers.size&&touchCount===2&&changed.length===1&&
+          Array.from(event.touches).some(touch=>touch.identifier!==changed[0].identifier&&state.interruptedTouchIds.has(touch.identifier))){
+          state.ghostPointerObserved=true;
+        }
+        state.interruptedTouchIds.clear();
+        addTouches(event);
+        if(state.systemGesturePending)return;
         if(touchQuarantineActive()||(state.lastDirtyRecoveryAt&&stamp-state.lastDirtyRecoveryAt<300&&touchCount>=2)){
           if(!touchQuarantineActive())armTouchQuarantine(650);
           if(event?.cancelable)event.preventDefault();
           event?.stopImmediatePropagation?.();
-          syncTouches(event);
           return;
         }
         const tracked=this._mapGestureSurfacePointerCount(state);
         if(state.browserTouchFallback?.mode==="touch"){
+          if(new Set([...state.browserTouchFallback.points.keys(),...changed.map(touch=>touch.identifier)]).size>=3){
+            stopFallback("real-three-fingers");
+            markSystemGesture('three-finger-touch-fallback');
+            return;
+          }
           state.touchTapCandidate=null;state.lastSingleTap=null;
           for(const touch of Array.from(event.changedTouches||[]))
             state.browserTouchFallback.points.set(touch.identifier,{x:touch.clientX,y:touch.clientY});
@@ -1072,8 +1101,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(touchCount>=3){
           if(tracked<=2)diag("gesture.browser-touch-count-mismatch",{reportedTouches:touchCount,trackedPointers:tracked});
-          syncTouches(event);
-          if(tracked>=3||!state.ghostPointerObserved)scheduleSystemGestureReset('three-finger-touch-system-gesture');
+          if(tracked>=3||!state.ghostPointerObserved)markSystemGesture('three-finger-touch-system-gesture');
           return;
         }
         if(touchCount===1&&state.lastGlobalMultiAt&&stamp-state.lastGlobalMultiAt>120&&stamp-state.lastGlobalMultiAt<6000){
@@ -1082,15 +1110,12 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(detectTouchPointerMismatch(event,'start'))return;
         if(event?.touches?.length===1&&this._map?.touchZoom?._zooming){
-          if(event?.cancelable)event.preventDefault();
-          event?.stopImmediatePropagation?.();
-          this._hardResetMapGestureHandlers('single-touch-during-stale-pinch');
-          return;
+          interruptGesture('fresh-touch-during-stale-pinch');
+          addTouches(event);
         }
-        syncTouches(event);
       };
       state.handlers.touchmove=event=>{
-        if(!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
+        if(state.systemGesturePending||!mapEl.contains(event?.target)||interactiveMapTarget(event))return;
         if(state.browserTouchFallback?.active){
           if(state.browserTouchFallback.mode==="touch"){
             markTouchTapMove(event);
@@ -1113,7 +1138,13 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         detectTouchPointerMismatch(event,'move');
       };
       state.handlers.touchend=event=>{
+        if(!ownsTouchEvent(event))return;
         diag("input.touchend",diagEvent(event));
+        if(state.systemGesturePending){
+          interruptGesture('system-gesture-touchend');
+          return;
+        }
+        for(const touch of Array.from(event.changedTouches||[]))state.touchIds.delete(touch.identifier);
         if(state.browserTouchFallback?.active){
           const fallback=state.browserTouchFallback;
           if(fallback.mode==="touch"){
@@ -1122,11 +1153,9 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
             if(!fallback.points.size)stopFallback("touch-end");
             else fallbackContactsChanged(fallback);
           }
-          state.touchIds.clear();
           state.multitouchDirty=false;
           return;
         }
-        syncTouches(event);
         if(state.quarantineTouchSequence){
           clearTouchQuarantine();
           state.touchIds.clear();
@@ -1136,46 +1165,37 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           this._hardResetMapGestureHandlers('quarantined-touch-sequence-end',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           return;
         }
-        if(Number(event?.touches?.length||0)===0){
+        if(!state.touchIds.size){
+          if(!reportedTouches(event)&&(state.pointers.size||state.globalPointers.size)){
+            interruptGesture('touchend-without-pointerup');
+            return;
+          }
           const completedMulti=state.multitouchDirty;
           state.multitouchDirty=false;
           if(completedMulti){
-            queueMicrotask(()=>requestAnimationFrame(()=>{
-              if(this._mapGestureRecovery===state)this._hardResetMapGestureHandlers('multitouch-end-rehydrate',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
-            }));
+            rehydrateAfterMultitouch('multitouch-end-rehydrate');
             return;
           }
         }
         if(!state.touchIds.size&&!state.pointers.size)postGestureEnd();
       };
       state.handlers.touchcancel=event=>{
-        state.touchTapCandidate=null;state.lastSingleTap=null;
+        if(!ownsTouchEvent(event)&&!(state.touchIds.size&&!event.changedTouches?.length&&mapSurfaceEvent(event)))return;
         diag("input.touchcancel",diagEvent(event));
-        syncTouches(event);
-        clearTouchQuarantine();
-        if(Number(event?.touches?.length||0)===0)state.multitouchDirty=false;
-        this._hardResetMapGestureHandlers('touchcancel');
+        interruptGesture('touchcancel');
       };
       state.handlers.pointercancel=event=>{
-        if(touchPointer(event))diag("input.pointercancel",diagEvent(event));
-        if(touchPointer(event))state.pointers.delete(event.pointerId);
-        if(state.synthesizing||state.recovering)return;
-        this._recoverMapGestureState('pointercancel',{force:true});
+        if(state.synthesizing||!ownsPointer(event.pointerId))return;
+        diag("input."+event.type,diagEvent(event));
+        interruptGesture(event.type);
       };
-      const lifecycleGestureDirty=()=>!!(
-        this._mapGestureSurfacePointerCount?.(state)||state.touchIds.size||state.globalPointers.size||
-        state.multitouchDirty||state.ghostPointerObserved||state.browserTouchFallback?.active||
-        this._map?.touchZoom?._zooming||this._map?.dragging?._draggable?._moving||
-        (state.L||window.L)?.Draggable?._dragging
-      );
       const suspendLifecycle=reason=>{
         state.touchTapCandidate=null;state.lastSingleTap=null;
-        state.blockUntilPrimaryUp=false;
         if(!lifecycleGestureDirty()){
           diag('gesture.lifecycle.clean-skip',{reason});
           return;
         }
-        this._recoverMapGestureState(reason,{force:true});
+        interruptGesture(reason);
       };
       state.handlers.dblclick=event=>{
         if(!mapSurfaceEvent(event))return;
@@ -1188,27 +1208,12 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       };
       const resumeLifecycle=reason=>{
         if(document.visibilityState==='hidden')return;
-        state.touchTapCandidate=null;state.lastSingleTap=null;
-        const stamp=Date.now();
-        if(stamp-state.lastLifecycleResetAt<180)return;
-        state.lastLifecycleResetAt=stamp;
-        state.blockUntilPrimaryUp=false;
-        clearTouchQuarantine();
-        state.lastReportedTouches=null;
-        state.lastMultiPointerAt=0;
-        state.lastGlobalMultiAt=0;
-        const dirty=lifecycleGestureDirty();
-        state.globalPointers?.clear?.();
-        state.lastSurfaceMoveAt=0;
-        if(!dirty){
-          diag('gesture.lifecycle.clean-skip',{reason});
-          return;
-        }
-        this._hardResetMapGestureHandlers(reason,{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true});
+        suspendLifecycle(reason);
       };
-      state.handlers.blur=()=>{diag("lifecycle.blur");suspendLifecycle('window-blur');};
+      // Capture also sees focus changes between controls inside the card.
+      state.handlers.blur=event=>{if(event.target===window){diag("lifecycle.blur");suspendLifecycle('window-blur');}};
       state.handlers.pagehide=()=>suspendLifecycle('pagehide');
-      state.handlers.focus=()=>{diag("lifecycle.focus");resumeLifecycle('window-focus-resume');};
+      state.handlers.focus=event=>{if(event.target===window){diag("lifecycle.focus");resumeLifecycle('window-focus-resume');}};
       state.handlers.pageshow=()=>resumeLifecycle('pageshow-resume');
       state.handlers.visibility=()=>{diag("lifecycle.visibility",{state:document.visibilityState});return document.visibilityState==='hidden'
         ?suspendLifecycle('visibility-hidden')
@@ -1223,30 +1228,38 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       state.handlers.globalPointerDown=event=>{
         if(!touchPointer(event)||state.synthesizing)return;
         diag("input.global-pointerdown",diagEvent(event));
-        if(!mapSurfaceEvent(event))return;
+        if(!mapSurfaceEvent(event)){
+          if(state.globalPointers.size>=2)markSystemGesture('third-pointer-over-control');
+          return;
+        }
+        state.gestureEpoch++;
+        if(state.systemGesturePending&&(event.isPrimary===true||!ownsPointer(event.pointerId)))
+          interruptGesture('fresh-pointer-after-system-gesture');
         const stamp=now();
         const newPointer=!state.globalPointers.has(event.pointerId);
         if(state.multitouchDirty&&newPointer&&event.isPrimary===false&&!state.globalPointers.size){
           diag("gesture.non-primary-global-pointer",{pointerId:event.pointerId});
           state.multitouchDirty=false;
-        }else if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true||stamp-state.lastGlobalMultiAt>700)){
-          for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
-          state.systemGestureTimers=[];
+        }else if(state.multitouchDirty&&newPointer&&(state.globalPointers.size===0||event.isPrimary===true)){
           this._hardResetMapGestureHandlers('dirty-multitouch-before-new-pointer',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.multitouchDirty=false;
           state.lastDirtyRecoveryAt=stamp;
           state.globalPointers.clear();
         }
-        state.globalPointers.add(event.pointerId);
+        state.globalPointers.set(event.pointerId,{target:eventPath(event)[0],pointerType:event.pointerType});
         if(state.globalPointers.size>=2){
           state.multitouchDirty=true;
           state.lastGlobalMultiAt=stamp;
         }
-        if(state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-pointer');
+        if(state.globalPointers.size>=3)markSystemGesture('global-three-finger-pointer');
       };
       state.handlers.globalPointerEnd=event=>{
-        if(!touchPointer(event))return;
+        if(!touchPointer(event)||!ownsPointer(event.pointerId))return;
         diag("input.global-pointerend",diagEvent(event));
+        if(state.systemGesturePending){
+          interruptGesture('system-gesture-pointerup');
+          return;
+        }
         state.globalPointers.delete(event.pointerId);
         if(!state.globalPointers.size&&state.quarantineTouchSequence){
           clearTouchQuarantine();
@@ -1257,20 +1270,21 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
         }
         if(!state.globalPointers.size&&state.multitouchDirty&&!state.touchIds.size&&!state.browserTouchFallback?.active&&!state.ghostPointerObserved){
           state.multitouchDirty=false;
-          queueMicrotask(()=>requestAnimationFrame(()=>{
-            if(this._mapGestureRecovery===state)this._hardResetMapGestureHandlers('multipointer-end-rehydrate',{invalidate:true,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
-          }));
+          rehydrateAfterMultitouch('multipointer-end-rehydrate');
         }
+        state.handlers.pointerend(event);
       };
       state.handlers.globalTouchStart=event=>{
         diag("input.global-touchstart",diagEvent(event));
         if(!mapSurfaceEvent(event))return;
+        state.gestureEpoch++;
         const touchCount=Number(event?.touches?.length||0),stamp=now();
         if(touchCount>=3&&state.globalPointers.size<=2){
           diag("gesture.browser-touch-count-mismatch",{reportedTouches:touchCount,trackedPointers:state.globalPointers.size});
           return;
         }
-        if(!state.ghostPointerObserved&&!state.browserTouchFallback?.active&&state.multitouchDirty&&touchCount>=1&&stamp-state.lastGlobalMultiAt>700){
+        if(!state.ghostPointerObserved&&!state.browserTouchFallback?.active&&state.multitouchDirty&&
+          !state.globalPointers.size&&!state.touchIds.size&&touchCount>=1&&stamp-state.lastGlobalMultiAt>700){
           this._hardResetMapGestureHandlers('dirty-multitouch-before-new-touch',{invalidate:false,blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true,rebuildHandlers:true});
           state.lastDirtyRecoveryAt=stamp;
           state.multitouchDirty=false;
@@ -1279,17 +1293,16 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
           state.multitouchDirty=true;
           state.lastGlobalMultiAt=stamp;
         }
-        if(touchCount>=3&&state.globalPointers.size>=3)scheduleSystemGestureReset('global-three-finger-touch');
+        if(touchCount>=3&&state.globalPointers.size>=3)markSystemGesture('global-three-finger-touch');
       };
       mapEl.addEventListener('dblclick',state.handlers.dblclick,true);
       mapEl.addEventListener('pointerdown',state.handlers.pointerdown,true);
       mapEl.addEventListener('pointermove',state.handlers.pointermove,true);
       window.addEventListener('pointerdown',state.handlers.globalPointerDown,true);
       window.addEventListener('pointerup',state.handlers.globalPointerEnd,true);
-      window.addEventListener('pointercancel',state.handlers.globalPointerEnd,true);
-      window.addEventListener('touchstart',state.handlers.globalTouchStart,{capture:true,passive:true});
-      window.addEventListener('pointerup',state.handlers.pointerend,true);
       window.addEventListener('pointercancel',state.handlers.pointercancel,true);
+      window.addEventListener('lostpointercapture',state.handlers.pointercancel,true);
+      window.addEventListener('touchstart',state.handlers.globalTouchStart,{capture:true,passive:true});
       mapEl.addEventListener('touchstart',state.handlers.touchstart,{capture:true,passive:false});
       mapEl.addEventListener('touchmove',state.handlers.touchmove,{capture:true,passive:false});
       window.addEventListener('touchend',state.handlers.touchend,{capture:true,passive:true});
@@ -1302,29 +1315,25 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
 
     _resumeMapGestureRecovery() {
       const state=this._mapGestureRecovery,L=state?.L||window.L,mapEl=this.shadow?.getElementById('map');
-      if(this._map&&L&&mapEl&&(!state?.handlers||state.mapEl!==mapEl))this._setupMapGestureRecovery(L,mapEl);
+      if(this._map&&L&&mapEl&&(!state?.handlers||state.mapEl!==mapEl||state.map!==this._map))this._setupMapGestureRecovery(L,mapEl);
     },
 
     _teardownMapGestureRecovery() {
-      const state=this._mapGestureRecovery;if(!state)return;
+      const state=this._mapGestureRecovery;if(!state?.handlers)return;
       this._recoverMapGestureState('gesture-guard-teardown',{force:true});
       const {mapEl,handlers}=state;
       if(handlers){
         mapEl?.removeEventListener('dblclick',handlers.dblclick,true);
         mapEl?.removeEventListener('pointerdown',handlers.pointerdown,true);mapEl?.removeEventListener('pointermove',handlers.pointermove,true);
-        window.removeEventListener('pointerdown',handlers.globalPointerDown,true);window.removeEventListener('pointerup',handlers.globalPointerEnd,true);window.removeEventListener('pointercancel',handlers.globalPointerEnd,true);window.removeEventListener('touchstart',handlers.globalTouchStart,true);
-        window.removeEventListener('pointerup',handlers.pointerend,true);window.removeEventListener('pointercancel',handlers.pointercancel,true);
+        window.removeEventListener('pointerdown',handlers.globalPointerDown,true);window.removeEventListener('pointerup',handlers.globalPointerEnd,true);window.removeEventListener('touchstart',handlers.globalTouchStart,true);
+        window.removeEventListener('pointercancel',handlers.pointercancel,true);window.removeEventListener('lostpointercapture',handlers.pointercancel,true);
         mapEl?.removeEventListener('touchstart',handlers.touchstart,true);mapEl?.removeEventListener('touchmove',handlers.touchmove,true);window.removeEventListener('touchend',handlers.touchend,true);
         window.removeEventListener('touchcancel',handlers.touchcancel,true);window.removeEventListener('blur',handlers.blur,true);
         window.removeEventListener('focus',handlers.focus,true);window.removeEventListener('pagehide',handlers.pagehide,true);
         window.removeEventListener('pageshow',handlers.pageshow,true);document.removeEventListener('visibilitychange',handlers.visibility,true);
-        this._map?.off?.('zoom',handlers.mapZoom);
+        state.map.off?.('zoom',handlers.mapZoom);
       }
-      for(const timer of state.systemGestureTimers||[])clearTimeout(timer);
-      if(state.quarantineTimer!=null)clearTimeout(state.quarantineTimer);
-      state.quarantineTimer=null;state.quarantineTouchSequence=false;state.quarantineUntil=0;
-      state.systemGestureTimers=[];state.globalPointers?.clear?.();
-      state.handlers=null;state.pointers.clear();state.touchIds.clear();
+      state.handlers=null;
     },
 
     _initMap() {

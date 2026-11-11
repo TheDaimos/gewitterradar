@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41137r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.5",
+  version:"1.0.6",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -33,7 +33,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
     if(typeof value==="object"){
       const out={};
       for(const [key,item] of Object.entries(value).slice(0,60)){
-        if(typeof item==="function"||key==="L"||key==="mapEl"||key==="handlers"||key==="quarantineTimer"||key==="systemGestureTimers")continue;
+        if(typeof item==="function"||key==="L"||key==="mapEl"||key==="handlers"||key==="quarantineTimer")continue;
         try{out[key]=clean(item,depth+1);}catch(_error){out[key]="[unavailable]";}
       }
       return out;
@@ -67,7 +67,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
       return {
         pointers:[...(state.pointers||new Map()).entries()].map(([id,meta])=>({id:String(id),type:meta?.pointerType||null,surface:!!meta?.surface,lastSeen:safeNumber(meta?.lastSeen)})),
         touchIds:[...(state.touchIds||new Set())].map(String),
-        globalPointers:[...(state.globalPointers||new Set())].map(String),
+        globalPointers:[...(state.globalPointers?.keys()||[])].map(String),
         surfacePointers:this._mapGestureSurfacePointerCount?.(state)??null,
         lastReportedTouches:state.lastReportedTouches??null,
         lastMultiPointerAt:safeNumber(state.lastMultiPointerAt),
@@ -92,8 +92,8 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         recovering:!!state.recovering,
         hardResetting:!!state.hardResetting,
         synthesizing:!!state.synthesizing,
-        lastSystemGestureAt:safeNumber(state.lastSystemGestureAt),
-        systemGestureResetQueued:!!state.systemGestureResetQueued,
+        systemGesturePending:!!state.systemGesturePending,
+        interruptedTouchIds:[...(state.interruptedTouchIds||[])].map(String),
         lastRecovery:clean(state.lastRecovery),
         anomalyCount:Number(state.anomalyCount||0),
         lastAnomaly:clean(state.lastAnomaly),

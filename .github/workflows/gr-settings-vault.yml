@@ -9,6 +9,7 @@ on:
       - 'frontend/**'
       - 'dashboard/dist/**'
       - 'scripts/test-settings-vault-browser.cjs'
+      - 'scripts/test-map-gesture-recovery-browser.cjs'
       - 'tests/*settings-vault*'
       - 'tests/test_settings_vault.py'
   workflow_dispatch:
@@ -55,6 +56,14 @@ jobs:
           node scripts/test-settings-vault-browser.cjs
           node scripts/test-eye-wow-browser.cjs
           node scripts/test-eye-energy-browser.cjs
+      - name: Leaflet gesture recovery and protected weather controls
+        env:
+          NODE_PATH: ${{ runner.temp }}/vault-deps/node_modules
+        run: |
+          node scripts/test-map-gesture-recovery-browser.cjs
+          node scripts/test-gr-flow-curves-01-browser.cjs
+          node scripts/test-gr-temp-world-01-browser.cjs
+          node scripts/test-gr-precipitation-icon-browser.cjs
       - name: Build and validate both DEV ZIPs and HACS package
         run: |
           python scripts/build-dev-packages.py "$RUNNER_TEMP/vault-packages"
