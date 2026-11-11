@@ -53,3 +53,7 @@ Implementierungscommit `763a54a8099e95a0cff5ef18db263bfba0be3494`.
 - `gewitterradar-dashboard-4.11.180-dev.zip` · SHA256 `b605af80d13edcf3da551149379cc2f5c901e8c4f9ce90e9fc64dfab2a497b82`
 
 Beide ZIPs stammen aus dem committed Git-Baum. Geprüft wurden CRC, Versionsidentität, UTF-8 und die Dateiparität zwischen HA-Frontend und Dashboard. `deployment.json` bezeichnet den Releasecommit.
+
+## Öffentliche CI
+
+Der [gezielte öffentliche Eye-Prüflauf](https://github.com/TheDaimos/gewitterradar/actions/runs/42988289790) war erfolgreich. Geprüfter Quellstand `0e7c51445170b4c4a7dc9c3985566951d44dddac`. Die bestehenden Geste-, Schnellmenü- und Neonprüfungen, 180 nichtleere V177-Pixelvergleiche, die neuen V179-Vergleiche und Bedienprüfungen sowie die Verifikation beider Installationspakete bestanden. Die Browser-Viewports umfassen Desktop, Desktop HiDPI, Android Hoch- und Querformat sowie iPad für die bestehenden Eye-Regressionen. Die neuen V180-Interaktionen wurden auf Desktop und im Android-Viewport geprüft. Dieser Berichtsnachtrag enthält ausschließlich Dokumentation.
