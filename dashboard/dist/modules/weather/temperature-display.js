@@ -1,4 +1,5 @@
-import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411180r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
+import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411182r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {installTemperatureUnitTranslations,temperatureInputValue,temperatureKelvinValue,temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
@@ -6,16 +7,16 @@ import {TEMPERATURE_STORAGE,readTemperatureConfig,normalizeTemperatureConfig,tem
 import {TEMPERATURE_FIELD,TEMPERATURE_COMMAND,parseTemperatureField,TemperatureFieldCache,sampleScalarInto} from './temperature-field.js?v=411162r1';
 import {windFieldViewport,windFieldVisibleBounds} from './wind-field.js?v=411162r1';
 import {TemperatureCanvas} from './temperature-canvas.js?v=411162r1';
-import {updateTemperatureLegends} from './temperature-legend.js?v=411180r1';
+import {updateTemperatureLegends} from './temperature-legend.js?v=411182r1';
 import {GeoPointAdapters} from './geopoint-context.js?v=411156r1';
-export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.6',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.7',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
 const ICON=new URL('../../assets/gr-temperature-premium-v1-136.webp', import.meta.url).href,ICON_HI=new URL('../../assets/gr-temperature-premium-v1-272.webp', import.meta.url).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const active=c=>c.visible&&(c.surface||c.labels||c.advection);
 const names=['weather.temperature.field_2m','weather.wind.isobaric_850hpa','weather.temperature.advection_850hpa'];
 export const installWeatherTemperature=defineModule(MODULE_META,(deps={})=>{installTemperatureUnitTranslations(deps.I18N);installFlowTranslations(deps.I18N);return ({
- _weatherTemperatureState(){return this.__weatherTemperature||(this.__weatherTemperature={config:readTemperatureConfig(),field:null,painter:null,map:null,cache:new TemperatureFieldCache({budgetBytes:8*1048576,maxEntries:6}),status:'Aus',error:null,generation:0,pending:false,batch:null,timer:null,refreshTimer:null,expiryTimer:null,profile:null,metrics:null,requests:0,legends:{},geo:new GeoPointAdapters(),geoContext:null});},
- _weatherTemperatureSave(){try{localStorage.setItem(TEMPERATURE_STORAGE,JSON.stringify(this._weatherTemperatureState().config));}catch(_){}},
+ _weatherTemperatureState(){return this.__weatherTemperature||(this.__weatherTemperature={config:readTemperatureConfig(settingsStorage(this)),field:null,painter:null,map:null,cache:new TemperatureFieldCache({budgetBytes:8*1048576,maxEntries:6}),status:'Aus',error:null,generation:0,pending:false,batch:null,timer:null,refreshTimer:null,expiryTimer:null,profile:null,metrics:null,requests:0,legends:{},geo:new GeoPointAdapters(),geoContext:null});},
+ _weatherTemperatureSave(){try{settingsStorage(this).setItem(TEMPERATURE_STORAGE,JSON.stringify(this._weatherTemperatureState().config));}catch(_){}},
  _weatherTemperatureMenuMarkup(){return '<button type="button" class="weather-layer-action" data-weather-layer-action="temperature-settings"><strong>Temperatur</strong><small>Weltkarte · Werte · thermische Advektion</small></button>';},
  _weatherTemperatureSet(patch){const s=this._weatherTemperatureState(),old=s.config;s.config=normalizeTemperatureConfig({...old,...patch});this._weatherTemperatureSave();this._resumeWeatherTemperature();this._weatherTemperatureSyncToggle();
   if(!active(s.config)){s.generation++;s.pending=false;clearTimeout(s.timer);clearTimeout(s.refreshTimer);s.painter?.commit(s.field,s.config);s.status='Aus';}

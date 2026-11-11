@@ -1,7 +1,8 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import {SnakePreview,SNAKE_SCENARIOS} from './snake-preview.js?v=411163r1';
 import {SNAKE_DEFAULTS,SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411162r1';
 import {WindStudioModel,importPreset,exportPresetJSON,exportPresetCSV,MAX_PRESET_BYTES} from './wind-studio-data.js?v=411163r1';
-import {PREMIUM_INFO,enhancePremiumSections} from './premium-ui.js?v=411180r1';
+import {PREMIUM_INFO,enhancePremiumSections} from './premium-ui.js?v=411182r1';
 const button=(action,label)=>`<button type="button" data-studio-action="${action}">${label}</button>`;
 const sections=(id,title,body,open=false)=>`<details data-section="studio-${id}" ${open?'open':''}><summary>${title}</summary>${body}</details>`;
 export function ensureWindStudioStyle(shadow){
@@ -12,7 +13,7 @@ export function ensureWindStudioStyle(shadow){
 }
 export class WindStudio{
  constructor(owner,panel){
-  Object.assign(this,{owner,panel});ensureWindStudioStyle(owner.shadow);this.model=new WindStudioModel(owner._weatherWindState().config.snake);this.urls=new Set();this.root=document.createElement('section');this.root.className='wind-studio';this.root.setAttribute('aria-label','Winddesign- & Animationsstudio');this.staged=null;this.destroyed=false;
+  Object.assign(this,{owner,panel});ensureWindStudioStyle(owner.shadow);this.model=new WindStudioModel(owner._weatherWindState().config.snake,{storage:settingsStorage(owner)});this.urls=new Set();this.root=document.createElement('section');this.root.className='wind-studio';this.root.setAttribute('aria-label','Winddesign- & Animationsstudio');this.staged=null;this.destroyed=false;
   const range=key=>{const [min,max,step]=SNAKE_LIMITS[key];return `<label class="snake-slider"><span>${SNAKE_LABELS[key]}</span><input type="range" data-studio-param="${key}" min="${min}" max="${max}" step="${step}" aria-label="Entwurf: ${SNAKE_LABELS[key]}"><output></output></label>`;};
   const geometry=['minLength','maxLength','lengthScale','headSize','bodyWidth','taper','tailStart','opacity'];
   this.root.innerHTML=`<div class="studio-head"><h3>Winddesign- & Animationsstudio</h3><button type="button" class="studio-icon" data-studio-action="info" aria-label="Hinweise zum Studio" aria-expanded="false"><img src="${PREMIUM_INFO}" alt=""></button><button type="button" class="studio-icon" data-studio-action="close" aria-label="Studio schließen"><img alt="" data-studio-close></button></div>

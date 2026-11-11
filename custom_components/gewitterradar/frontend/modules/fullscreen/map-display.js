@@ -1,3 +1,4 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";
@@ -12,7 +13,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -63,7 +64,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if(Number.isFinite(this[property]))return clamp(this[property],.15,3);
       const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
       let value=1;
-      try{const stored=Number(localStorage.getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
+      try{const stored=Number(settingsStorage(this).getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
       this[property]=clamp(value,.15,3);
       return this[property];
     },
@@ -107,7 +108,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const property=isCompass?'_mapCompassScale':'_mapMedallionScale';
       const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
       this[property]=scale;
-      if(persist){try{localStorage.setItem(key,String(scale));}catch(_error){}}
+      if(persist){try{settingsStorage(this).setItem(key,String(scale));}catch(_error){}}
       this._applyFullscreenInstrumentScaleStyle(kind);
       this._syncFullscreenScaleControls(isCompass?this._compassPickerDialog:this._medallionPickerDialog,kind);
       this._scheduleMapDisplayResize?.();
@@ -311,7 +312,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const active = String(this._activeTrendArrowDesign || '').trim();
       if (designs.some((entry) => entry.id === active)) return active;
       let stored = '';
-      try { stored = String(localStorage.getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
+      try { stored = String(settingsStorage(this).getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
       const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
       this._activeTrendArrowDesign = resolved;
       return resolved;
@@ -327,7 +328,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         image.dataset.trendArrowDesign = descriptor.id;
       });
       if (persist) {
-        try { localStorage.setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
       }
       this._applyProductMedallionCalibration?.();
       return descriptor;
@@ -354,7 +355,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const active = String(this._activeMedallionDesign || '').trim();
       if (designs.some((entry) => entry.id === active)) return active;
       let stored = '';
-      try { stored = String(localStorage.getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
+      try { stored = String(settingsStorage(this).getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
       const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
       this._activeMedallionDesign = resolved;
       return resolved;
@@ -370,7 +371,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         image.dataset.medallionDesign = descriptor.id;
       });
       if (persist) {
-        try { localStorage.setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
       }
       this._applyProductMedallionCalibration?.();
       return descriptor;
@@ -394,7 +395,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _medallionPickerPreviewMode() {
       let mode=String(this._medallionPickerPreviewModeValue||'').trim();
       if(mode!=='static'&&mode!=='animation'){
-        try{mode=String(localStorage.getItem('gewitterradar:v41002:medallion-picker-preview-mode')||'static').trim();}catch(_error){mode='static';}
+        try{mode=String(settingsStorage(this).getItem('gewitterradar:v41002:medallion-picker-preview-mode')||'static').trim();}catch(_error){mode='static';}
       }
       if(mode!=='animation')mode='static';
       this._medallionPickerPreviewModeValue=mode;
@@ -404,7 +405,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _setMedallionPickerPreviewMode(mode,{persist=true}={}) {
       const next=mode==='animation'?'animation':'static';
       this._medallionPickerPreviewModeValue=next;
-      if(persist){try{localStorage.setItem('gewitterradar:v41002:medallion-picker-preview-mode',next);}catch(_error){}}
+      if(persist){try{settingsStorage(this).setItem('gewitterradar:v41002:medallion-picker-preview-mode',next);}catch(_error){}}
       this._syncMedallionPicker?.();
       return next;
     },
@@ -680,7 +681,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     },
 
     _persistMapMedallionPosition() {
-      try { localStorage.setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
     },
 
     _positionMapMedallionOverlay(position = this._mapMedallionPosition) {
@@ -721,7 +722,6 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       // V4.09.12 – bewusst nur noch der verbindliche 3D-Layerstapel.
       this._mapLayerSymbolStyle = 'stack3d';
       if (persist) {
-        try { localStorage.setItem(MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,'stack3d'); } catch (_error) {}
       }
       this._syncMapDisplayUi();
     },
@@ -730,20 +730,20 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const next = !!visible;
       if (kind === 'compass') {
         this._mapCompassVisible = next;
-        try { localStorage.setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
       } else if (kind === 'medallion') {
         this._mapMedallionVisible = next;
-        try { localStorage.setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
       } else if (kind === 'clusterJump') {
         this._mapClusterJumpVisible = next;
-        try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
       } else return;
       this._syncMapDisplayUi();
       this._scheduleMapDisplayResize();
     },
 
     _persistMapLocationPosition() {
-      try { localStorage.setItem(MAP_LOCATION_POSITION_STORAGE_KEY,JSON.stringify(this._mapLocationPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_LOCATION_POSITION_STORAGE_KEY,JSON.stringify(this._mapLocationPosition)); } catch (_error) {}
     },
 
     _positionMapLocationOverlay(position = this._mapLocationPosition) {
@@ -854,7 +854,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     },
 
     _persistMapCompassPosition() {
-      try { localStorage.setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
     },
 
     _positionMapDisplayControl() {
@@ -879,7 +879,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
     _persistMapClusterJumpPosition() {
       if (!this._mapClusterJumpPosition) return;
-      try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
     },
 
     _positionMapClusterJumpOverlay(position = this._mapClusterJumpPosition) {
@@ -973,7 +973,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _setMapStartupMode(mode) {
       if (!['standard','large','fullscreen','last'].includes(mode)) return;
       this._mapStartupMode = mode;
-      try { localStorage.setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
       this._syncMapDisplayUi();
     },
 
@@ -1134,7 +1134,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       this._recoverMapGestureState?.('display-mode-change',{force:true});
       if (closeMenu) this._setMapDisplayMenuOpen(false);
       if (remember && !this._mapWindowMode) {
-        try { localStorage.setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
       }
       if (mode === 'fullscreen') {
         if (this._mapDisplayMode !== 'fullscreen') {
@@ -1176,7 +1176,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         dialog.removeAttribute('open');
       }
       if (persist) {
-        try { localStorage.setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
       }
       this._syncMapDisplayUi();
       this._scheduleMapDisplayResize();

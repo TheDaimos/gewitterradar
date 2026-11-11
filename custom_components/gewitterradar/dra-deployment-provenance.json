@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.181",
-  "build": "V4.11.181-DEV-2026-11-11",
-  "runtimeRevision": "411181r1",
-  "moduleSetId": "E411-181A1",
-  "baselineFeatureHead": "ae88335f4824a81670d36155efed00f78c419f17",
+  "productVersion": "4.11.182",
+  "build": "V4.11.182-DEV-2026-11-11",
+  "runtimeRevision": "411182r1",
+  "moduleSetId": "E411-182A1",
+  "baselineFeatureHead": "f1dc313cb34f04b500b6895d523778d9be763abc",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
+    "purpose": "Settings Vault for independent Home Assistant user and device profiles, legacy migration and recovery.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

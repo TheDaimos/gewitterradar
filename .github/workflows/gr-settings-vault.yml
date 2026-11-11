@@ -1,0 +1,64 @@
+name: GR Settings Vault DEV acceptance
+
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - '.github/workflows/gr-settings-vault.yml'
+      - 'custom_components/gewitterradar/**'
+      - 'frontend/**'
+      - 'dashboard/dist/**'
+      - 'scripts/test-settings-vault-browser.cjs'
+      - 'tests/*settings-vault*'
+      - 'tests/test_settings_vault.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  vault-browser-and-packages:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Client transactions and protected model checks
+        run: |
+          node --test tests/settings-vault-client.test.mjs
+          node scripts/test-eye-hub-model.mjs
+          node scripts/test-eye-wow-model.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-frontend-build.mjs
+          node scripts/test-v411-identity.mjs
+      - name: Install Chromium test dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/vault-deps" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/vault-deps/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Vault migration and protected V177/V180/V181 browser comparisons
+        env:
+          NODE_PATH: ${{ runner.temp }}/vault-deps/node_modules
+        run: |
+          node scripts/test-settings-vault-browser.cjs
+          node scripts/test-eye-wow-browser.cjs
+          node scripts/test-eye-energy-browser.cjs
+      - name: Build and validate both DEV ZIPs and HACS package
+        run: |
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/vault-packages"
+          python scripts/verify-eye-organic-packages.py "$RUNNER_TEMP/vault-packages"
+          python scripts/verify-hacs-integration-package.py
+          (cd "$RUNNER_TEMP/vault-packages" && sha256sum --check SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gr-settings-vault-dev-packages
+          path: ${{ runner.temp }}/vault-packages/
+          if-no-files-found: error

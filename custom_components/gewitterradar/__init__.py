@@ -478,7 +478,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             call.data[SERVICE_FIELD_NAME],
         )
 
+    from .settings_vault import register_settings_vault
+
     websocket_api.async_register_command(hass, _ws_data_sources)
+    register_settings_vault(hass)
 
     hass.services.async_register(
         DOMAIN,

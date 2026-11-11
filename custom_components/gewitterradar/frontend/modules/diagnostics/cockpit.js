@@ -1,7 +1,8 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [
@@ -140,7 +141,7 @@ return {
       if(this._medallionEyeCalibrationDb?.schema==='gewitterradar.medallion-eye-calibration.v1')return this._medallionEyeCalibrationDb;
       let database=this._emptyMedallionEyeCalibrationDatabase();
       try{
-        const parsed=JSON.parse(localStorage.getItem(MEDALLION_EYE_CALIBRATION_STORAGE_KEY)||'null');
+        const parsed=JSON.parse(settingsStorage(this).getItem(MEDALLION_EYE_CALIBRATION_STORAGE_KEY)||'null');
         if(parsed?.schema===database.schema&&parsed.entries&&typeof parsed.entries==='object')database={...database,...parsed,entries:{...parsed.entries}};
       }catch(_error){}
       this._medallionEyeCalibrationDb=database;return database;
@@ -149,7 +150,7 @@ return {
     _persistMedallionEyeCalibrationDatabase(database=this._medallionEyeCalibrationDb) {
       if(!database)return null;
       database.build=GEWITTERRADAR_BUILD;database.updatedAt=new Date().toISOString();this._medallionEyeCalibrationDb=database;
-      try{localStorage.setItem(MEDALLION_EYE_CALIBRATION_STORAGE_KEY,JSON.stringify(database));}catch(_error){}
+      try{settingsStorage(this).setItem(MEDALLION_EYE_CALIBRATION_STORAGE_KEY,JSON.stringify(database));}catch(_error){}
       return database;
     },
 
@@ -260,7 +261,7 @@ return {
       if(this._medallionVisualCalibrationDb&&this._medallionVisualCalibrationDb.schema==='gewitterradar.medallion-arrow-visual-calibration.v2')return this._medallionVisualCalibrationDb;
       let database=this._emptyMedallionVisualCalibrationDatabase();
       try{
-        const parsed=JSON.parse(localStorage.getItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY)||'null');
+        const parsed=JSON.parse(settingsStorage(this).getItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY)||'null');
         if(parsed&&parsed.schema===database.schema&&parsed.entries&&typeof parsed.entries==='object')database={...database,...parsed,entries:{...parsed.entries}};
       }catch(_error){}
       this._medallionVisualCalibrationDb=database;return database;
@@ -269,7 +270,7 @@ return {
     _persistMedallionVisualCalibrationDatabase(database=this._medallionVisualCalibrationDb) {
       if(!database)return null;
       database.build=GEWITTERRADAR_BUILD;database.updatedAt=new Date().toISOString();this._medallionVisualCalibrationDb=database;
-      try{localStorage.setItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY,JSON.stringify(database));}catch(_error){}
+      try{settingsStorage(this).setItem(MEDALLION_VISUAL_CALIBRATION_STORAGE_KEY,JSON.stringify(database));}catch(_error){}
       return database;
     },
 
@@ -917,14 +918,14 @@ return {
 
       if(storm){storm.before(weather);storm.after(browser);}
 
-      let saved={};try{saved=JSON.parse(localStorage.getItem('gewitterradar:v40802:diagnostic-sections')||'{}')||{};}catch(_error){}
+      let saved={};try{saved=JSON.parse(settingsStorage(this).getItem('gewitterradar:v40802:diagnostic-sections')||'{}')||{};}catch(_error){}
       const makeGroup=(key,title,nodes,defaultOpen=false)=>{
         const items=nodes.filter(Boolean);if(!items.length)return null;const first=items[0],details=document.createElement('details'),summary=document.createElement('summary'),inner=document.createElement('div');
         details.className='diagnostic-lab-group';details.dataset.diagnosticLabGroup=key;summary.textContent=title;inner.className='diagnostic-lab-group-body';
         details.open=Object.prototype.hasOwnProperty.call(saved,key)?!!saved[key]:defaultOpen;first.before(details);details.append(summary,inner);items.forEach((node)=>inner.append(node));
         details.addEventListener('toggle',()=>{
           if(details.open&&matchMedia?.('(max-width:700px),(max-height:620px)')?.matches){body.querySelectorAll('.diagnostic-lab-group[open]').forEach((other)=>{if(other!==details)other.open=false;});}
-          const state={};body.querySelectorAll('.diagnostic-lab-group').forEach((group)=>{state[group.dataset.diagnosticLabGroup]=group.open;});try{localStorage.setItem('gewitterradar:v40802:diagnostic-sections',JSON.stringify(state));}catch(_error){}
+          const state={};body.querySelectorAll('.diagnostic-lab-group').forEach((group)=>{state[group.dataset.diagnosticLabGroup]=group.open;});try{settingsStorage(this).setItem('gewitterradar:v40802:diagnostic-sections',JSON.stringify(state));}catch(_error){}
         });
         return details;
       };
@@ -1004,12 +1005,12 @@ return {
       const handle=this.shadow.getElementById('diagnostic-console-drag');let drag=null;
       handle?.addEventListener('pointerdown',(event)=>{if(event.target.closest('button'))return;const rect=consoleNode.getBoundingClientRect();drag={id:event.pointerId,dx:event.clientX-rect.left,dy:event.clientY-rect.top};handle.setPointerCapture?.(event.pointerId);});
       handle?.addEventListener('pointermove',(event)=>{if(!drag||event.pointerId!==drag.id)return;const vv=window.visualViewport,width=vv?.width||innerWidth,height=vv?.height||innerHeight,header=handle.getBoundingClientRect(),reachableX=Math.max(80,Math.min(header.width,width)),reachableY=Math.max(36,Math.min(header.height,height)),left=Math.max(-consoleNode.offsetWidth+reachableX,Math.min(width-reachableX,event.clientX-drag.dx)),top=Math.max(0,Math.min(height-reachableY,event.clientY-drag.dy));consoleNode.style.left=`${Math.round(left)}px`;consoleNode.style.top=`${Math.round(top)}px`;this._diagnostics.position={left:Math.round(left),top:Math.round(top)};});
-      handle?.addEventListener('pointerup',(event)=>{if(drag?.id===event.pointerId){drag=null;try{localStorage.setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}}});
+      handle?.addEventListener('pointerup',(event)=>{if(drag?.id===event.pointerId){drag=null;try{settingsStorage(this).setItem('gewitterradar-diagnostic-position',JSON.stringify(this._diagnostics.position));}catch(_){}}});
     },
 
     _startDiagnostics() {
       if(this._diagnostics.enabled)return;this._diagnostics.enabled=true;this._diagnostics.startedAt=performance.now();
-      try{this._diagnostics.position=JSON.parse(localStorage.getItem('gewitterradar-diagnostic-position')||'null');this._diagnostics.columnMode=Number(localStorage.getItem('gewitterradar-diagnostic-columns'))===1?1:2;}catch(_){}
+      try{this._diagnostics.position=JSON.parse(settingsStorage(this).getItem('gewitterradar-diagnostic-position')||'null');this._diagnostics.columnMode=Number(settingsStorage(this).getItem('gewitterradar-diagnostic-columns'))===1?1:2;}catch(_){}
       const consoleNode=this.shadow?.getElementById('diagnostic-console');if(this._diagnostics.position&&consoleNode){consoleNode.style.left=`${this._diagnostics.position.left}px`;consoleNode.style.top=`${this._diagnostics.position.top}px`;}
       this._diagnosticsResizeHandler=()=>{this._diagnostics.resizeCallbacks+=1;this._clampDiagnosticConsole();this._scheduleDiagnosticMeasure();this._syncPickerDiagnostics?.();};
       window.addEventListener('resize',this._diagnosticsResizeHandler,{passive:true});window.visualViewport?.addEventListener('resize',this._diagnosticsResizeHandler,{passive:true});
@@ -1049,7 +1050,7 @@ return {
       const node=this.shadow?.getElementById('diagnostic-console'),head=this.shadow?.getElementById('diagnostic-console-drag');if(!node||!head)return;const vv=window.visualViewport,width=vv?.width||innerWidth,height=vv?.height||innerHeight,rect=node.getBoundingClientRect(),headRect=head.getBoundingClientRect(),reachableX=Math.max(80,Math.min(headRect.width,width)),reachableY=Math.max(36,Math.min(headRect.height,height)),left=Math.max(-rect.width+reachableX,Math.min(width-reachableX,rect.left)),top=Math.max(0,Math.min(height-reachableY,rect.top));node.style.left=`${Math.round(left)}px`;node.style.top=`${Math.round(top)}px`;
     },
 
-    _setDiagnosticColumnMode(columns) { this._diagnostics.columnMode=columns===1?1:2;try{localStorage.setItem('gewitterradar-diagnostic-columns',String(this._diagnostics.columnMode));}catch(_){}this._syncDiagnosticUi();this._clampDiagnosticConsole(); },
+    _setDiagnosticColumnMode(columns) { this._diagnostics.columnMode=columns===1?1:2;try{settingsStorage(this).setItem('gewitterradar-diagnostic-columns',String(this._diagnostics.columnMode));}catch(_){}this._syncDiagnosticUi();this._clampDiagnosticConsole(); },
 
     _applyDiagnosticPreset(preset) {
       const all={ids:true,boxes:true,centers:true,axes:true,diagonals:true,baselines:true,padding:true,margin:true,spacing:true,safe:true,overflow:true,parent:true,alignment:true};

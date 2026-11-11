@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.28",
+  "version": "1.1.29",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7129,6 +7129,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
             <div class="settings-body">
               <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true">ⓘ</span><span id="settings-about-label">Über Gewitterradar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
+              <details class="settings-section settings-collapsible" id="gr-vault-section">
+                <summary class="settings-section-head"><div class="settings-section-title">Userprofile &amp; Sicherungen</div></summary>
+                <div class="settings-section-content" id="gr-vault-content"></div>
+              </details>
               <details class="settings-section settings-collapsible" id="weather-engine-section">
                 <summary class="settings-section-head">
                   <div>

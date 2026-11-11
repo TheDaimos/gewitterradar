@@ -1,7 +1,8 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -875,7 +876,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       // Standort-Kamerafahrten. Kein Eingriff in die manuelle Kartenbedienung.
       // 'auto' behaelt die bisherige Einpassung des Gewitterradius bei.
       let arrivalZoomSetting='8';
-      try{arrivalZoomSetting=localStorage.getItem('gr-reference-arrival-zoom')??'8';}catch(_){}
+      try{arrivalZoomSetting=settingsStorage(this).getItem('gr-reference-arrival-zoom')??'8';}catch(_){}
       if (/^(?:[5-9]|1[0-8])$/.test(arrivalZoomSetting) && typeof this._map.flyTo==='function') {
         const minimum=finiteNumber(this._map.getMinZoom?.())??0;
         const maximum=finiteNumber(this._map.getMaxZoom?.())??18;
@@ -1074,7 +1075,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
     _setStatusClusterBrowseTimeoutV40802(timeoutMs) {
       const raw=Number(timeoutMs);const next=raw===0?0:(Number.isFinite(raw)?Math.max(5000,Math.min(3600000,Math.round(raw/1000)*1000)):10000);
       this._statusClusterBrowseTimeoutMs=next;if(next>0)this._statusClusterBrowseFiniteTimeoutMs=next;
-      try{localStorage.setItem('gewitterradar:v40804:cluster-jump-timeout',String(next));if(next>0)localStorage.setItem('gewitterradar:v40804:cluster-jump-finite-timeout',String(next));}catch(_error){}
+      try{settingsStorage(this).setItem('gewitterradar:v40804:cluster-jump-timeout',String(next));if(next>0)settingsStorage(this).setItem('gewitterradar:v40804:cluster-jump-finite-timeout',String(next));}catch(_error){}
       if(this._statusClusterBrowseActive)this._touchStatusClusterBrowseSessionV40802();else{this._updateStatusFocusUi?.();this._syncDiagnosticClusterBrowseV40802?.();}
     },
 

@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411181r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411182r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.198",
+    "version": "1.2.199",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -67,7 +67,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.37",
+    "version": "1.0.38",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
@@ -98,7 +98,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.28",
+    "version": "1.1.29",
     "group": "OberflÃ¤che",
     "function": "GrundgerÃ¼st",
     "subfunctions": [
@@ -138,7 +138,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.29",
+    "version": "1.1.30",
     "group": "OberflÃ¤che",
     "function": "Bedienbindungen",
     "subfunctions": [
@@ -151,7 +151,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.18",
+    "version": "1.3.19",
     "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
@@ -187,7 +187,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-selector",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "group": "Instrumente",
     "function": "Kompassauswahl",
     "subfunctions": [
@@ -278,7 +278,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.cockpit",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -295,7 +295,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.raster-lab",
-    "version": "0.1.18",
+    "version": "0.1.19",
     "group": "Diagnose",
     "function": "Raster-Labor",
     "subfunctions": [
@@ -347,7 +347,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -400,7 +400,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.precipitation-layer",
-    "version": "1.3.24",
+    "version": "1.3.25",
     "group": "Weather-Engine",
     "function": "Niederschlags-Kartenebene",
     "subfunctions": [
@@ -441,7 +441,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.display-menu",
-    "version": "0.4.39",
+    "version": "0.4.40",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellung",
     "subfunctions": [
@@ -466,7 +466,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.legend-overlay",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "group": "Weather-Engine",
     "function": "WeatherRouter-Darstellungslegende",
     "subfunctions": [
@@ -494,7 +494,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.wind-display",
-    "version": "0.4.12",
+    "version": "0.4.13",
     "group": "Weather-Engine",
     "function": "Konfigurierbare WR-Winddarstellung",
     "subfunctions": [
@@ -509,7 +509,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "weather.temperature-display",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "group": "Weather-Engine",
     "function": "Weltweite Temperatur und thermische Advektion",
     "subfunctions": [

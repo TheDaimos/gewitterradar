@@ -1,3 +1,4 @@
+import {withVaultStorage, normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
 import assert from 'node:assert/strict';
 import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,EYE_LEGACY_COLORS,EYE_ENERGY_MODES,EYE_ICON_METRICS,eyeIconTarget,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
 import {neonPoint,filamentPointInto,neonQualityStep} from '../frontend/modules/weather/eye-neon.js';
@@ -40,20 +41,20 @@ assert.equal(normalizeEyeConfig({size:500}).size,126);assert.equal(normalizeEyeC
 for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [1,4,8]){const radius=eyeRingRadius(126,count-1)+20;for(const x of [radius,width-radius])for(const y of [radius,height-radius]){const points=eyeBubbleLayout(count,{x,y},{left:0,top:0,right:width,bottom:height},[],126);assert.equal(points.length,count);for(const p of points)assert(Math.hypot(p.x-x,p.y-y)>100);}}
 const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/fullscreen/map-display.js'],{encoding:'utf8'});
 for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js'])assert(readFileSync('frontend/modules/weather/'+file).equals(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:frontend/modules/weather/'+file])),'protected source '+file);
-const stripBuildVersions=source=>source.replace(/\?v=[^'"\s]+/g,'').replace(/\r\n/g,'\n')
- .replace(/(export const MODULE_META\s*=\s*Object\.freeze\(\{\s*id:\s*['"][^'"]+['"],\s*version:\s*)(['"])[\d.]+\2/,'$1$2generated$2');
+const stripBuildVersions=normaliseGeneratedModule;
 const precipitationPath='frontend/modules/weather/precipitation-layer.js';
-assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+precipitationPath],{encoding:'utf8'})),'protected precipitation implementation');
+assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+precipitationPath],{encoding:'utf8'}),precipitationPath)),'protected precipitation implementation');
 // Keep the V179 window implementations with only the approved drag binding.
 for(const [file,scope] of [['wind-display.js','wind-settings'],['temperature-display.js','temperature-settings']]){
  const reference=execFileSync('git',['show','51fe26380bdd97b46fe7d979a2ef994b483cc430:frontend/modules/weather/'+file],{encoding:'utf8'})
   .replace(file==='wind-display.js'?'import {ensurePremiumUi,':'import {premiumAction,',file==='wind-display.js'?'import {bindPremiumPanelDrag,ensurePremiumUi,':'import {bindPremiumPanelDrag,premiumAction,')
   .replace('card.append(panel);',"card.append(panel);bindPremiumPanelDrag(panel,this.shadow?.getElementById('map'),'"+scope+"');");
- assert.equal(stripBuildVersions(readFileSync('frontend/modules/weather/'+file,'utf8')),stripBuildVersions(reference),file+' protected V179 behavior');
+ assert.equal(stripBuildVersions(readFileSync('frontend/modules/weather/'+file,'utf8')),stripBuildVersions(withVaultStorage(reference,file)),file+' protected V179 behavior');
 }
 for(const [id,owner] of [['weather.satellite.clouds','weather-display'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
 const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,true);assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,true);aggregateOwner.__weatherGenericStates.get('weather.satellite.clouds').status='failed';assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,false);
 assert(old.includes(compassPreviewHalo('.compass-picker-stage')));assert(old.includes(compassDialogSurface('.compass-picker-dialog')));
-assert(readFileSync('frontend/modules/ui/controls.js').equals(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/ui/controls.js'])),'modern menu source byte-identical');
+const controls='frontend/modules/ui/controls.js';
+assert.equal(stripBuildVersions(readFileSync(controls,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:'+controls],{encoding:'utf8'}),controls)),'modern menu source with the approved Vault entry');
 const owner={__weatherWind:{config:{visible:true,enabled:true,mode:'barbs'},points:[],errors:['synthetic_transport_failure']},__weatherTemperature:{config:{visible:true,surface:false,labels:false,advection:false}},_weatherRadarState:()=>({enabled:false}),__weatherDisplayState:{status:'ready'}};const registry=createEyeRegistry(owner);assert.equal(registry.entries.get('wind').status().available,false);owner.__weatherWind.points=[{}];assert.equal(registry.entries.get('wind').status().available,true);assert.equal(registry.entries.get('temperature').status().active,false);owner.__weatherTemperature.config.labels=true;assert.equal(registry.entries.get('temperature').status().active,true);owner.__weatherGenericStates=new Map([['clouds',{enabled:true,status:'partial'}]]);assert.equal(registry.entries.get('weather-display').status().active,true);
 console.log('PASS: Eye migration, slots 1–8/12, atomic moves, colors, ring identity, aura truth table, layout, original compass surface/halo and protected menu');

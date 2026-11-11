@@ -1,4 +1,4 @@
-import {APPLICATION_RELEASE} from "./version.js?v=411181r1";
+import {APPLICATION_RELEASE} from "./version.js?v=411182r1";
 const PANEL_TAG="gewitterradar-panel";
 const CARD_TAG="gewitterradar-card";
 
@@ -27,7 +27,7 @@ class GewitterradarPanel extends HTMLElement{
     style.textContent=`:host{display:block;width:100%;height:100%;min-height:100%;box-sizing:border-box;background:var(--primary-background-color,#111);overflow:auto}main{display:block;width:100%;min-height:100%;box-sizing:border-box}gewitterradar-card{display:block;width:100%}.panel-error{margin:24px;padding:16px;border:1px solid var(--error-color,#db4437);border-radius:12px;color:var(--primary-text-color,#fff);background:var(--card-background-color,#1c1c1c);font:500 14px/1.45 system-ui,sans-serif}`;
     const main=document.createElement("main");main.setAttribute("aria-label","Gewitterradar");this.shadowRoot.append(style,main);
   }
-  _ensureCard(){this._ensureShell();if(this._card)return;const card=document.createElement(CARD_TAG);card.setConfig({type:"custom:gewitterradar-card"});if(this._hass)card.hass=this._hass;this.shadowRoot.querySelector("main").replaceChildren(card);this._card=card}
+  _ensureCard(){this._ensureShell();if(this._card)return;const card=document.createElement(CARD_TAG);card.setConfig({type:"custom:gewitterradar-card",settings_vault_id:"native-panel"});if(this._hass)card.hass=this._hass;this.shadowRoot.querySelector("main").replaceChildren(card);this._card=card}
   _showError(error){this._ensureShell();const box=document.createElement("div");box.className="panel-error";box.textContent="Gewitterradar konnte nicht geladen werden. Bitte Home Assistant vollständig neu laden.";box.title=error instanceof Error?error.message:String(error);this.shadowRoot.querySelector("main").replaceChildren(box)}
 }
 if(!customElements.get(PANEL_TAG))customElements.define(PANEL_TAG,GewitterradarPanel);

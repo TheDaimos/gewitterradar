@@ -1,9 +1,10 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411180r1';
+import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=411182r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.7",
+  version:"0.1.8",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -120,8 +121,8 @@ export function groupIdenticalLegendScales(models){
 }
 
 const UI_KEY="gewitterradar:weather-legend-ui:v1";
-function readLegendUi(){
- try{const value=JSON.parse(localStorage.getItem(UI_KEY));return {view:value?.view==="classes"?"classes":"bar",rain:value?.rain===true,snow:value?.snow===true,minimized:value?.minimized===true};}
+function readLegendUi(owner){
+ try{const value=JSON.parse(settingsStorage(owner).getItem(UI_KEY));return {view:value?.view==="classes"?"classes":"bar",rain:value?.rain===true,snow:value?.snow===true,minimized:value?.minimized===true};}
  catch(_){return {view:"bar",rain:false,snow:false};}
 }
 const POSITION_KEY="gewitterradar:weather-legend-position:v1";
@@ -165,8 +166,8 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       models:new Map(),
       resizeHandler:null,
       resizeObserver:null,
-      collapsed:false,anchor:null,ui:readLegendUi(),
-      position:(()=>{try{const p=JSON.parse(localStorage.getItem(POSITION_KEY));return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:clamp(p.x,0,1),y:clamp(p.y,0,1)}:null;}catch(_){return null;}})(),
+      collapsed:false,anchor:null,ui:readLegendUi(this),
+      position:(()=>{try{const p=JSON.parse(settingsStorage(this).getItem(POSITION_KEY));return p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:clamp(p.x,0,1),y:clamp(p.y,0,1)}:null;}catch(_){return null;}})(),
       mounted:false
     };
     return this.__weatherLegendState;
@@ -270,10 +271,10 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
           toggle.setAttribute("aria-expanded",String(!state.ui[key]));body.inert=state.ui[key];
         }
         if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);
-        else try{localStorage.setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}
+        else try{settingsStorage(this).setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}
       });
       host.addEventListener("click",event=>{
-        const mini=event.target?.closest?.("[data-gr-legend-minimize]");if(mini){event.preventDefault();event.stopPropagation();const state=this._weatherLegendState(),minimized=state.ui.minimized=!state.ui.minimized;host.classList.toggle("gr-legend-minimized",minimized);mini.setAttribute("aria-label",minimized?"Legende maximieren":"Legende minimieren");mini.setAttribute("aria-expanded",String(!minimized));if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);else try{localStorage.setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}requestAnimationFrame(()=>this._weatherLegendPosition());return;}
+        const mini=event.target?.closest?.("[data-gr-legend-minimize]");if(mini){event.preventDefault();event.stopPropagation();const state=this._weatherLegendState(),minimized=state.ui.minimized=!state.ui.minimized;host.classList.toggle("gr-legend-minimized",minimized);mini.setAttribute("aria-label",minimized?"Legende maximieren":"Legende minimieren");mini.setAttribute("aria-expanded",String(!minimized));if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);else try{settingsStorage(this).setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}requestAnimationFrame(()=>this._weatherLegendPosition());return;}
         const button=event.target?.closest?.("[data-weather-legend-hide]");
         if(!button)return;
         event.preventDefault();event.stopPropagation();
@@ -344,7 +345,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
       this._weatherLegendState().position=position;
       this._weatherLegendState().anchor={left:parseFloat(host.style.left),top:parseFloat(host.style.top)};
       if(this._weatherLegendSavePosition)this._weatherLegendSavePosition(position);
-      else try{localStorage.setItem(POSITION_KEY,JSON.stringify(position));}catch(_){}
+      else try{settingsStorage(this).setItem(POSITION_KEY,JSON.stringify(position));}catch(_){}
       try{host.releasePointerCapture?.(event.pointerId);}catch(_){}
     };
     for(const type of ["pointerup","pointercancel","lostpointercapture"])host.addEventListener(type,end);

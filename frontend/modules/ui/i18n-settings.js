@@ -1,8 +1,9 @@
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411181r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.18",
+  "version": "1.3.19",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2423,7 +2424,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._closeLanguageOnboarding(true);
       if (deps.aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;
       let seen = 0;
-      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
+      try { seen = Number(settingsStorage(this).getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
       if (seen >= ABOUT_ONBOARDING_VERSION) return;
       this._openAbout();
     },
@@ -2918,8 +2919,8 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if (!this._aboutDialog) return;
       if (acknowledge) {
         try {
-          const seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0;
-          localStorage.setItem(ABOUT_STORAGE_KEY, String(Math.max(seen, ABOUT_ONBOARDING_VERSION)));
+          const seen = Number(settingsStorage(this).getItem(ABOUT_STORAGE_KEY)) || 0;
+          settingsStorage(this).setItem(ABOUT_STORAGE_KEY, String(Math.max(seen, ABOUT_ONBOARDING_VERSION)));
         } catch (_) {}
       }
       this._aboutDialog.close();

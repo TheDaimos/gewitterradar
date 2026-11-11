@@ -1,7 +1,8 @@
+import {settingsStorage} from './settings-vault.js?v=411182r1';
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -59,8 +60,8 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._statusClusterBrowseTimer = this._statusClusterBrowseTimer || null;
       this._statusClusterBrowseUiTimer = this._statusClusterBrowseUiTimer || null;
       try {
-        const savedRaw = localStorage.getItem('gewitterradar:v40804:cluster-jump-timeout');
-        const legacyRaw = localStorage.getItem('gewitterradar:v40802:cluster-jump-timeout');
+        const savedRaw = settingsStorage(this).getItem('gewitterradar:v40804:cluster-jump-timeout');
+        const legacyRaw = settingsStorage(this).getItem('gewitterradar:v40802:cluster-jump-timeout');
         const savedSource = savedRaw != null ? savedRaw : legacyRaw;
         if (savedSource != null) {
           const savedBrowseTimeout = Number(savedSource);
@@ -68,7 +69,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
             this._statusClusterBrowseTimeoutMs = Math.round(savedBrowseTimeout / 1000) * 1000;
           }
         }
-        const savedFiniteRaw = localStorage.getItem('gewitterradar:v40804:cluster-jump-finite-timeout');
+        const savedFiniteRaw = settingsStorage(this).getItem('gewitterradar:v40804:cluster-jump-finite-timeout');
         const savedFinite = Number(savedFiniteRaw);
         if (Number.isFinite(savedFinite) && savedFinite >= 5000 && savedFinite <= 3600000) {
           this._statusClusterBrowseFiniteTimeoutMs = Math.round(savedFinite / 1000) * 1000;
@@ -112,7 +113,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (!['standard','large','fullscreen','last'].includes(this._mapStartupMode)) {
         let storedStartupMode = 'last';
         try {
-          const savedStartup = localStorage.getItem(MAP_STARTUP_MODE_STORAGE_KEY);
+          const savedStartup = settingsStorage(this).getItem(MAP_STARTUP_MODE_STORAGE_KEY);
           if (['standard','large','fullscreen','last'].includes(savedStartup)) storedStartupMode = savedStartup;
         } catch (_error) {}
         this._mapStartupMode = storedStartupMode;
@@ -120,8 +121,8 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (!['standard','large','fullscreen'].includes(this._mapDisplayMode)) {
         let lastMapMode = 'standard';
         try {
-          const savedLast = localStorage.getItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY);
-          const legacySaved = localStorage.getItem(MAP_DISPLAY_MODE_STORAGE_KEY);
+          const savedLast = settingsStorage(this).getItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY);
+          const legacySaved = settingsStorage(this).getItem(MAP_DISPLAY_MODE_STORAGE_KEY);
           if (['standard','large','fullscreen'].includes(savedLast)) lastMapMode = savedLast;
           else if (legacySaved === 'large' || legacySaved === 'standard') lastMapMode = legacySaved;
         } catch (_error) {}
@@ -129,17 +130,14 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       }
       this._mapDisplayMenuOpen = !!this._mapDisplayMenuOpen;
       // V4.09.12 – der 3D-Layerstapel ist die einzige produktive Darstellung.
-      // Alte Classic-/Infinity-Werte werden aktiv migriert, damit kein Gerät
-      // nach einem Update wieder auf eine entfernte Symbolvariante zurückfällt.
       this._mapLayerSymbolStyle = 'stack3d';
-      try { localStorage.setItem(MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,'stack3d'); } catch (_error) {}
       this._mapDisplayBeforeFullscreen = ['standard','large'].includes(this._mapDisplayBeforeFullscreen)
         ? this._mapDisplayBeforeFullscreen
         : (this._mapDisplayMode === 'large' ? 'large' : 'standard');
       if (!this._mapCompassPosition || !Number.isFinite(this._mapCompassPosition.x) || !Number.isFinite(this._mapCompassPosition.y)) {
         this._mapCompassPosition = { x:.96,y:.72 };
         try {
-          const savedPosition = JSON.parse(localStorage.getItem(MAP_COMPASS_POSITION_STORAGE_KEY) || 'null');
+          const savedPosition = JSON.parse(settingsStorage(this).getItem(MAP_COMPASS_POSITION_STORAGE_KEY) || 'null');
           if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
             this._mapCompassPosition = {
               x:clamp(savedPosition.x,0,1),
@@ -151,21 +149,21 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (typeof this._mapCompassVisible !== 'boolean') {
         this._mapCompassVisible = true;
         try {
-          const saved = localStorage.getItem(MAP_COMPASS_VISIBLE_STORAGE_KEY);
+          const saved = settingsStorage(this).getItem(MAP_COMPASS_VISIBLE_STORAGE_KEY);
           if (saved === '0' || saved === 'false') this._mapCompassVisible = false;
         } catch (_error) {}
       }
       if (typeof this._mapMedallionVisible !== 'boolean') {
         this._mapMedallionVisible = true;
         try {
-          const saved = localStorage.getItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY);
+          const saved = settingsStorage(this).getItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY);
           if (saved === '0' || saved === 'false') this._mapMedallionVisible = false;
         } catch (_error) {}
       }
       if (!this._mapMedallionPosition || !Number.isFinite(this._mapMedallionPosition.x) || !Number.isFinite(this._mapMedallionPosition.y)) {
         this._mapMedallionPosition = { x:.04,y:.72 };
         try {
-          const savedPosition = JSON.parse(localStorage.getItem(MAP_MEDALLION_POSITION_STORAGE_KEY) || 'null');
+          const savedPosition = JSON.parse(settingsStorage(this).getItem(MAP_MEDALLION_POSITION_STORAGE_KEY) || 'null');
           if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
             this._mapMedallionPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
           }
@@ -174,7 +172,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (!this._mapLocationPosition || !Number.isFinite(this._mapLocationPosition.x) || !Number.isFinite(this._mapLocationPosition.y)) {
         this._mapLocationPosition = {x:1,y:0};
         try {
-          const savedPosition = JSON.parse(localStorage.getItem(MAP_LOCATION_POSITION_STORAGE_KEY) || 'null');
+          const savedPosition = JSON.parse(settingsStorage(this).getItem(MAP_LOCATION_POSITION_STORAGE_KEY) || 'null');
           if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
             this._mapLocationPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
           }
@@ -183,14 +181,14 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (typeof this._mapClusterJumpVisible !== 'boolean') {
         this._mapClusterJumpVisible = true;
         try {
-          const saved = localStorage.getItem('gewitterradar:v41002:map-cluster-jump-visible');
+          const saved = settingsStorage(this).getItem('gewitterradar:v41002:map-cluster-jump-visible');
           if (saved === '0' || saved === 'false') this._mapClusterJumpVisible = false;
         } catch (_error) {}
       }
       if (this._mapClusterJumpPosition === undefined) {
         this._mapClusterJumpPosition = null;
         try {
-          const savedPosition = JSON.parse(localStorage.getItem('gewitterradar:v41002:map-cluster-jump-position') || 'null');
+          const savedPosition = JSON.parse(settingsStorage(this).getItem('gewitterradar:v41002:map-cluster-jump-position') || 'null');
           if (savedPosition && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)) {
             this._mapClusterJumpPosition = {x:clamp(savedPosition.x,0,1),y:clamp(savedPosition.y,0,1)};
           }
@@ -313,9 +311,9 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       if (this._clusterResolutionProfileV40822 == null) {
         const allowedProfiles = new Set(['early','balanced','late','classic']);
         try {
-          let storedProfile = localStorage.getItem('gewitterradar:v40822:cluster-resolution-profile');
+          let storedProfile = settingsStorage(this).getItem('gewitterradar:v40822:cluster-resolution-profile');
           if (!allowedProfiles.has(storedProfile)) {
-            const legacyPolicy = localStorage.getItem('gewitterradar:v40801:cluster-policy');
+            const legacyPolicy = settingsStorage(this).getItem('gewitterradar:v40801:cluster-policy');
             storedProfile = legacyPolicy === 'zoned' ? 'balanced' : 'classic';
           }
           this._clusterResolutionProfileV40822 = allowedProfiles.has(storedProfile) ? storedProfile : 'classic';

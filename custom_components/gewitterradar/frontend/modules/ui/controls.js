@@ -1,3 +1,4 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -7,6 +8,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
   {id:'settings-map-section',number:'4',title:'Kartendarstellung'},
   {id:'settings-aura-section',number:'5',title:'Effekte & Animationen'},
   {id:'settings-radii-section',number:'6',title:'Radien'},
+  {id:'gr-vault-section',number:'',title:'Userprofile & Sicherungen'},
   {id:'settings-diagnostic-section',number:'7',title:'Diagnose Tools',children:Object.freeze([
     {id:'settings-calibration-section',number:'7.1',title:'Kalibrierung'},
     {id:'settings-weather-diagnostics-section',number:'7.2',title:'Weather-Engine'},
@@ -16,7 +18,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.29",
+  "version": "1.1.30",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -606,7 +608,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         event.stopPropagation();
         this._clusterResolutionProfileV40822 = nextProfile;
         try {
-          localStorage.setItem('gewitterradar:v40822:cluster-resolution-profile',nextProfile);
+          settingsStorage(this).setItem('gewitterradar:v40822:cluster-resolution-profile',nextProfile);
         } catch (_error) {}
         closeClusterResolutionDropdown(false);
         this._resetStatusClusterBrowse?.();
@@ -1793,7 +1795,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const menuStyleKey='gr-settings-menu-style';
       let selectedMenuStyle='classic';
       try {
-        const savedMenuStyle=localStorage.getItem(menuStyleKey);
+        const savedMenuStyle=settingsStorage(this).getItem(menuStyleKey);
         if(savedMenuStyle==='classic'||savedMenuStyle==='modern')selectedMenuStyle=savedMenuStyle;
       } catch(_){}
       // Reuse the gold and blue SVG designs with just one visible settings button.
@@ -1807,7 +1809,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const speedKey='gr-horizontal-navigation-speed';
       const speedOptions={Schnell:220,Mittel:440,Langsam:760,'Ohne Animation':0};
       let selectedSpeed='Mittel';
-      try { const stored=localStorage.getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
+      try { const stored=settingsStorage(this).getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
       let navAnimating=false;
       let cancelNavigation=null;
       let pendingHistoryPath=null;
@@ -2003,7 +2005,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const section=this.shadow.getElementById(entry.id);
         return section?.querySelector(':scope > summary .settings-section-title')?.textContent?.trim()||entry.title;
       };
-      const numberedHeading=(entry)=>entry.number+(entry.number.includes('.')?' ':'. ')+headingFor(entry);
+      const numberedHeading=(entry)=>entry.number ? entry.number+(entry.number.includes('.')?' ':'. ')+headingFor(entry) : headingFor(entry);
       let navBack=null;
       const showNavigationPage=()=>{
         const activeId=navPath.at(-1),activeSection=this.shadow.getElementById(activeId||'');
@@ -2272,7 +2274,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         Object.keys(speedOptions).map(name=>[name,name]),selectedSpeed,
         value=>{
           selectedSpeed=value;
-          try{localStorage.setItem(speedKey,selectedSpeed);}catch(_){}
+          try{settingsStorage(this).setItem(speedKey,selectedSpeed);}catch(_){}
         });
       // Zielzoom gilt ausschliesslich fuer die automatische Kartenfahrt zum Bezugspunkt.
       // Die bisherige, radiusabhaengige Einpassung bleibt als Wahlmoeglichkeit erhalten.
@@ -2286,7 +2288,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       ];
       let selectedReferenceZoom='8';
       try{
-        const savedReferenceZoom=localStorage.getItem(referenceZoomKey);
+        const savedReferenceZoom=settingsStorage(this).getItem(referenceZoomKey);
         if(referenceZoomChoices.some(entry=>entry[0]===savedReferenceZoom))selectedReferenceZoom=savedReferenceZoom;
       }catch(_){}
       const referenceZoomChoice=makeMenuChoice(
@@ -2294,7 +2296,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         referenceZoomChoices,selectedReferenceZoom,
         value=>{
           selectedReferenceZoom=value;
-          try{localStorage.setItem(referenceZoomKey,value);}catch(_){}
+          try{settingsStorage(this).setItem(referenceZoomKey,value);}catch(_){}
         }
       );
       const referenceZoomNote=document.createElement('span');
@@ -2414,7 +2416,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if(navAnimating)return;
         const modern=value==='modern' && !!navBody && navSections.length>0;
         selectedMenuStyle=modern?'modern':'classic';
-        if(save)try{localStorage.setItem(menuStyleKey,selectedMenuStyle);}catch(_){}
+        if(save)try{settingsStorage(this).setItem(menuStyleKey,selectedMenuStyle);}catch(_){}
         menuStyleChoice.set(selectedMenuStyle);
         speedRow.hidden=!modern;
         closeMenuChoices();

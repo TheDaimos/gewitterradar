@@ -1,4 +1,5 @@
-import {precipitationLegendScales} from "./legend-overlay.js?v=411180r1";
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
+import {precipitationLegendScales} from "./legend-overlay.js?v=411182r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411147r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411147r1";
@@ -6,7 +7,7 @@ import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.24",
+  version:"1.3.25",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -242,18 +243,18 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!this.__weatherRadarState){
       let enabled=false,allowOlderSatelliteBackground=false,preloadProfile="normal",preloadCustomPercent=30,timelineVisible=true,timelinePosition=null,viewportRefreshIntervalSeconds=VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS;
       try{
-        enabled=localStorage.getItem(STORAGE_KEY)==="1";
-        allowOlderSatelliteBackground=localStorage.getItem(BACKGROUND_STORAGE_KEY)==="1";
-        const storedProfile=localStorage.getItem(PRELOAD_PROFILE_STORAGE_KEY);
+        enabled=settingsStorage(this).getItem(STORAGE_KEY)==="1";
+        allowOlderSatelliteBackground=settingsStorage(this).getItem(BACKGROUND_STORAGE_KEY)==="1";
+        const storedProfile=settingsStorage(this).getItem(PRELOAD_PROFILE_STORAGE_KEY);
         if(storedProfile&&WEATHER_RADAR_PRELOAD_PROFILES[storedProfile])preloadProfile=storedProfile;
-        const storedCustom=finite(localStorage.getItem(PRELOAD_CUSTOM_STORAGE_KEY));
+        const storedCustom=finite(settingsStorage(this).getItem(PRELOAD_CUSTOM_STORAGE_KEY));
         if(storedCustom!=null)preloadCustomPercent=clamp(Math.round(storedCustom),0,100);
-        const storedViewportRefreshInterval=finite(localStorage.getItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY));
+        const storedViewportRefreshInterval=finite(settingsStorage(this).getItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY));
         if(storedViewportRefreshInterval!=null)viewportRefreshIntervalSeconds=clamp(Math.round(storedViewportRefreshInterval),VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS,VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);
-        const storedTimelineVisible=localStorage.getItem(TIMELINE_VISIBLE_STORAGE_KEY);
+        const storedTimelineVisible=settingsStorage(this).getItem(TIMELINE_VISIBLE_STORAGE_KEY);
         if(storedTimelineVisible==="0")timelineVisible=false;
         if(storedTimelineVisible==="1")timelineVisible=true;
-        const storedTimelinePosition=JSON.parse(localStorage.getItem(TIMELINE_POSITION_STORAGE_KEY)||"null");
+        const storedTimelinePosition=JSON.parse(settingsStorage(this).getItem(TIMELINE_POSITION_STORAGE_KEY)||"null");
         if(storedTimelinePosition&&finite(storedTimelinePosition.x)!=null&&finite(storedTimelinePosition.y)!=null){
           timelinePosition={x:clamp(finite(storedTimelinePosition.x),0,1),y:clamp(finite(storedTimelinePosition.y),0,1)};
         }
@@ -623,7 +624,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     state.enabled=Boolean(enabled);
     this.__grPrecipitationWantsOpera=state.enabled;
     if(!state.enabled)state.coldStartRetries=0;
-    if(persist)try{localStorage.setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
+    if(persist)try{settingsStorage(this).setItem(STORAGE_KEY,state.enabled?"1":"0");}catch(_error){}
     this._weatherRadarUpdateControls();
     // A single WR-owned V2/V1 precipitation route chooses providers.
     // Never automatically overlay OPERA: this would hide DWD selections.
@@ -688,7 +689,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),next=Boolean(enabled);
     if(state.allowOlderSatelliteBackground===next)return;
     state.allowOlderSatelliteBackground=next;
-    try{localStorage.setItem(BACKGROUND_STORAGE_KEY,next?"1":"0");}catch(_error){}
+    try{settingsStorage(this).setItem(BACKGROUND_STORAGE_KEY,next?"1":"0");}catch(_error){}
     state.v2Generation++; // Invalidate all in-flight V1/V2 replies on consent change.
     state.v1PendingCancel?.();
     if(state.v2PendingLayer){
@@ -956,7 +957,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _setWeatherRadarPreloadProfile(profile){
     const state=this._weatherRadarState();
     state.preloadProfile=WEATHER_RADAR_PRELOAD_PROFILES[profile]?profile:"normal";
-    try{localStorage.setItem(PRELOAD_PROFILE_STORAGE_KEY,state.preloadProfile);}catch(_error){}
+    try{settingsStorage(this).setItem(PRELOAD_PROFILE_STORAGE_KEY,state.preloadProfile);}catch(_error){}
     this._weatherRadarClearPreload();
     this._weatherRadarUpdatePreloadControls();
     this._scheduleWeatherRadarPreload("profile",80);
@@ -965,7 +966,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _setWeatherRadarPreloadCustomPercent(value){
     const state=this._weatherRadarState();
     state.preloadCustomPercent=clamp(Math.round(finite(value)??30),0,100);
-    try{localStorage.setItem(PRELOAD_CUSTOM_STORAGE_KEY,String(state.preloadCustomPercent));}catch(_error){}
+    try{settingsStorage(this).setItem(PRELOAD_CUSTOM_STORAGE_KEY,String(state.preloadCustomPercent));}catch(_error){}
     this._weatherRadarClearPreload();
     this._weatherRadarUpdatePreloadControls();
     if(state.preloadProfile==="custom")this._scheduleWeatherRadarPreload("custom",120);
@@ -974,7 +975,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _setWeatherRadarViewportRefreshInterval(value){
     const state=this._weatherRadarState();
     state.viewportRefreshIntervalSeconds=clamp(Math.round(finite(value)??VIEWPORT_REFRESH_INTERVAL_DEFAULT_SECONDS),VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS,VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);
-    try{localStorage.setItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY,String(state.viewportRefreshIntervalSeconds));}catch(_error){}
+    try{settingsStorage(this).setItem(VIEWPORT_REFRESH_INTERVAL_STORAGE_KEY,String(state.viewportRefreshIntervalSeconds));}catch(_error){}
     this._weatherRadarUpdateRefreshIntervalControls();
   },
 
@@ -1017,7 +1018,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _setWeatherRadarTimelineVisible(visible,{persist=true}={}){
     const state=this._weatherRadarState();
     state.timelineVisible=Boolean(visible);
-    if(persist)try{localStorage.setItem(TIMELINE_VISIBLE_STORAGE_KEY,state.timelineVisible?"1":"0");}catch(_error){}
+    if(persist)try{settingsStorage(this).setItem(TIMELINE_VISIBLE_STORAGE_KEY,state.timelineVisible?"1":"0");}catch(_error){}
     if(state.timelineVisible){
       if(state.timelineModel?.frames?.length>1)this._weatherRadarMountTimelinePlayer();
     }else{
@@ -1030,8 +1031,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
   _weatherRadarPersistTimelinePosition(){
     const position=this._weatherRadarState().timelinePosition;
     try{
-      if(position)localStorage.setItem(TIMELINE_POSITION_STORAGE_KEY,JSON.stringify(position));
-      else localStorage.removeItem(TIMELINE_POSITION_STORAGE_KEY);
+      if(position)settingsStorage(this).setItem(TIMELINE_POSITION_STORAGE_KEY,JSON.stringify(position));
+      else settingsStorage(this).removeItem(TIMELINE_POSITION_STORAGE_KEY);
     }catch(_error){}
   },
 

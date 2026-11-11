@@ -1,3 +1,4 @@
+import {withVaultStorage, normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
@@ -11,14 +12,13 @@ assert.deepEqual(normalizeEyeConfig(JSON.parse(JSON.stringify(max))),max);
 assert.equal(eyeBackdropDiameter(config),config.size*1.45);assert.equal(eyeStudioExtent(config),eyeGlowExtent(config));assert(eyeBackdropDiameter(max)>eyeBackdropDiameter(config)*2);
 // The original V177 draw/tick/cache/lifecycle source is literally retained.
 // Allow the geometry arguments and cache identity for the two opt-in offsets.
-const strip=s=>s.replace(/\?v=[^'"\s]+/g,'').replace(/\r\n/g,'\n')
- .replace(/(export const MODULE_META\s*=\s*Object\.freeze\(\{\n\s*id:\s*"weather\.precipitation-layer",\n\s*version:\s*)"[\d.]+"/,'$1"generated"');
+const strip=normaliseGeneratedModule;
 for(const file of ['frontend/modules/weather/eye-neon.js','frontend/modules/weather/snake-canvas.js','frontend/modules/weather/snake-geometry.js','frontend/modules/weather/snake-config.js','frontend/modules/weather/snake-preview.js','frontend/modules/weather/frame-clock.js','frontend/modules/ui/controls.js','frontend/modules/weather/precipitation-layer.js']){
  let reference;try{reference=execFileSync('git',['show',base+':'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch(e){if(file.endsWith('wind-snake.js'))continue;throw e;}
  if(file.endsWith('/eye-neon.js'))reference=reference
   .replace('config.brightness,config.glow,active','config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active')
   .replace('eyeRingRadius(config.size,a.index)','eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)');
- assert.equal(strip(readFileSync(file,'utf8')),strip(reference),file+' protected V177 body');
+ assert.equal(strip(readFileSync(file,'utf8')),strip(withVaultStorage(reference,file)),file+' protected V177 body');
 }
 for(const file of ['eye-hub-model.js','eye-hub-view.js','eye-hub-locales.js','eye-neon-wow.js'])assert(!/[\u00c3\u00c2\ufffd]/.test(readFileSync('frontend/modules/weather/'+file,'utf8')),'UTF-8 '+file);
 assert.equal(config.eyeAuraGap,0);

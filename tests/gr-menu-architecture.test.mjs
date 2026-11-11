@@ -4,11 +4,12 @@ import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {SETTINGS_MENU_TREE} from '../frontend/modules/ui/controls.js';
 import {APPLICATION_RELEASE} from '../frontend/version.js';
+import {normaliseGeneratedModule} from './with-settings-vault.mjs';
 const base='7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6',read=p=>readFileSync(p),original=p=>execFileSync('git',['show',base+':'+p],{maxBuffer:25*1024*1024});
-test('one immutable tree defines exactly seven root entries and four numbered diagnostic leaves',()=>{
- assert.deepEqual(SETTINGS_MENU_TREE.map(m=>[m.number,m.title]),[['1','Weather-Engine'],['2','Sprache'],['3','Standort'],['4','Kartendarstellung'],['5','Effekte & Animationen'],['6','Radien'],['7','Diagnose Tools']]);
+test('one immutable tree preserves the seven numbered entries and adds the Vault page',()=>{
+ assert.deepEqual(SETTINGS_MENU_TREE.map(m=>[m.number,m.title]),[['1','Weather-Engine'],['2','Sprache'],['3','Standort'],['4','Kartendarstellung'],['5','Effekte & Animationen'],['6','Radien'],['','Userprofile & Sicherungen'],['7','Diagnose Tools']]);
  assert.deepEqual(SETTINGS_MENU_TREE.at(-1).children.map(m=>[m.number,m.title]),[['7.1','Kalibrierung'],['7.2','Weather-Engine'],['7.3','Datenquellen & Verbindungen'],['7.4','Module & Versionen']]);
- const all=SETTINGS_MENU_TREE.flatMap(x=>[x,...(x.children||[])]);assert.equal(new Set(all.map(x=>x.id)).size,11);
+ const all=SETTINGS_MENU_TREE.flatMap(x=>[x,...(x.children||[])]);assert.equal(new Set(all.map(x=>x.id)).size,12);
  assert(Object.isFrozen(SETTINGS_MENU_TREE));for(const item of all)assert(Object.isFrozen(item));
 });
 test('release, runtime and DRA metadata identify the same new delivery',()=>{
@@ -31,11 +32,18 @@ test('module runtime/stale guard stays intact while its menu page gains natural 
  const oldVersion=old.match(/version:"([^"]+)"/)[1];
  const current=read(p).toString().replace(/version:"[^"]+"/,'version:"'+oldVersion+'"').replace('      section.dataset.grDynamicHeight="true";\n','');
  assert.equal(current,old);
- for(const p of ['frontend/modules/map/strikes-warnings.js','frontend/modules/map/clusters-recent.js'])assert(read(p).equals(original(p)),p);
+ const strikes='frontend/modules/map/strikes-warnings.js';
+ assert(read(strikes).equals(original(strikes)),strikes);
+ const clusters='frontend/modules/map/clusters-recent.js';
+ const expected="import {settingsStorage} from '../core/settings-vault.js';\n"+original(clusters).toString().replaceAll('localStorage.', 'settingsStorage(this).');
+ assert.equal(normaliseGeneratedModule(read(clusters).toString()),normaliseGeneratedModule(expected),clusters);
 });
-test('card lifecycle changes only optional settings navigation cleanup/resume hooks',()=>{
+test('card lifecycle keeps navigation hooks and changes only the settings storage path',()=>{
  const p='frontend/modules/core/card-lifecycle.js',old=original(p).toString(),v=old.match(/"version": "([^"]+)"/)[1];
  const now=read(p).toString().replace(/"version": "[^"]+"/,'"version": "'+v+'"')
   .replace('      this._resumeSettingsNavigation?.();\n','').replace('      this._teardownSettingsNavigation?.();\n','');
- assert.equal(now,old);
+ const expected="import {settingsStorage} from './settings-vault.js';\n"+old.replaceAll('localStorage.', 'settingsStorage(this).')
+  .replace('      // Alte Classic-/Infinity-Werte werden aktiv migriert, damit kein Gerät\n      // nach einem Update wieder auf eine entfernte Symbolvariante zurückfällt.\n','')
+  .replace("      try { settingsStorage(this).setItem(MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,'stack3d'); } catch (_error) {}\n",'');
+ assert.equal(normaliseGeneratedModule(now),normaliseGeneratedModule(expected));
 });

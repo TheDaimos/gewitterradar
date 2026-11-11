@@ -1,7 +1,8 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "instruments.compass-selector",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "group": "Instrumente",
   "function": "Kompassauswahl",
   "subfunctions": [
@@ -23,12 +24,11 @@ export const installCompassSelector=defineModule(MODULE_META,(deps)=>{const { CA
 
     _restorePersistedCompassDesign() {
       try {
-        const raw=localStorage.getItem(COMPASS_DESIGN_STORAGE_KEY);
+        const raw=settingsStorage(this).getItem(COMPASS_DESIGN_STORAGE_KEY);
         if(this._compassStorageDiagnostics){this._compassStorageDiagnostics.reads+=1;this._compassStorageDiagnostics.storageAvailable=true;this._compassStorageDiagnostics.lastReadValue=raw;this._compassStorageDiagnostics.lastReadAt=Date.now();}
         if(raw===null){if(this._compassStorageDiagnostics)this._compassStorageDiagnostics.lastRestoredDesign=null;return null;}
         const descriptor=COMPASS_DESIGNS.find((entry)=>String(entry.uiIndex)===raw.trim());
         if(descriptor){if(this._compassStorageDiagnostics)this._compassStorageDiagnostics.lastRestoredDesign=descriptor.id;return descriptor.id;}
-        localStorage.removeItem(COMPASS_DESIGN_STORAGE_KEY);
         if(this._compassStorageDiagnostics)this._compassStorageDiagnostics.lastRestoredDesign=null;
       } catch (_) {if(this._compassStorageDiagnostics)this._compassStorageDiagnostics.storageAvailable=false;return undefined;}
       return null;
@@ -41,8 +41,8 @@ export const installCompassSelector=defineModule(MODULE_META,(deps)=>{const { CA
       if(this._compassStorageDiagnostics){this._compassStorageDiagnostics.writes+=1;this._compassStorageDiagnostics.lastWriteAt=Date.now();}
       try{
         const storedValue=String(descriptor.uiIndex);
-        localStorage.setItem(COMPASS_DESIGN_STORAGE_KEY,storedValue);
-        const written=localStorage.getItem(COMPASS_DESIGN_STORAGE_KEY)===storedValue;
+        settingsStorage(this).setItem(COMPASS_DESIGN_STORAGE_KEY,storedValue);
+        const written=settingsStorage(this).getItem(COMPASS_DESIGN_STORAGE_KEY)===storedValue;
         if(this._compassStorageDiagnostics){this._compassStorageDiagnostics.storageAvailable=true;if(written)this._compassStorageDiagnostics.writeSuccesses+=1;}
         return written;
       }catch(_){if(this._compassStorageDiagnostics)this._compassStorageDiagnostics.storageAvailable=false;return false;}

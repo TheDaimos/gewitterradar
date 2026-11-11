@@ -1,0 +1,17 @@
+{
+  "gewitterradar:eye-bubble:v1": "{\"schema\":1,\"grouped\":true,\"aura\":true,\"glow\":\"living\",\"eyeAuraGap\":19,\"auraRingGap\":7,\"energyAccents\":\"subtle\",\"colors\":{\"wind\":\"#FFC442\",\"temperature\":\"#D8E6F3\"}}",
+  "gewitterradar:wind-ui:v1": "{\"schema\":2,\"visible\":true,\"enabled\":true,\"mode\":\"snake\",\"snakeAnimationExplicit\":true,\"snake\":{\"speed\":1.7,\"maxLength\":96,\"bodyWidth\":2.8},\"colorMode\":\"pressure\",\"highColor\":\"gold\",\"lowColor\":\"violet\"}",
+  "gewitterradar:wind-studio:v1": "{\"schemaVersion\":1,\"name\":\"Böenfront\",\"selected\":\"user:boeenfront\",\"users\":[{\"id\":\"user:boeenfront\",\"name\":\"Böenfront\",\"parameters\":{\"minLength\":12,\"maxLength\":96,\"lengthScale\":1.3,\"headSize\":1.5,\"bodyWidth\":2.8,\"taper\":1.3,\"tailStart\":0.67,\"opacity\":85,\"density\":1.2,\"speed\":1.7,\"response\":0.65}}]}",
+  "gewitterradar:temperature-ui:v1": "{\"schema\":1,\"visible\":true,\"surface\":true,\"labels\":false,\"opacity\":37}",
+  "gewitterradar:weather-display:v1": "{\"opacities\":{\"precipitation\":0.27,\"clouds\":0.62,\"windSymbols\":0},\"eyePosition\":{\"x\":0.24,\"y\":0.67},\"position\":{\"x\":0.34,\"y\":0.58}}",
+  "gewitterradar:weather-legend-ui:v1": "{\"view\":\"classes\",\"rain\":true,\"minimized\":true}",
+  "gewitterradar:weather-legend-position:v1": "{\"x\":0.12,\"y\":0.42}",
+  "gewitterradar:premium-ui:v1:wind-settings": "{\"minimized\":true,\"panelPosition\":{\"x\":0.27,\"y\":0.46},\"sections\":{\"experts\":true}}",
+  "gewitterradar:v409:map-compass-position": "{\"x\":0.23,\"y\":0.56}",
+  "gewitterradar:v41002:fullscreen-medallion-scale": "1.35",
+  "gewitterradar:v41002:medallion-picker-preview-mode": "animation",
+  "gewitterradar:v40802:cluster-jump-timeout": "14000",
+  "gewitterradar:v40801:cluster-policy": "zoned",
+  "gr-reference-arrival-zoom": "11",
+  "gewitterradar-about-onboarding-version": "1"
+}

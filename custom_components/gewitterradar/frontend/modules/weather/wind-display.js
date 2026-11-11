@@ -1,22 +1,23 @@
-import {WindStudio} from './wind-studio.js?v=411180r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
+import {WindStudio} from './wind-studio.js?v=411182r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411162r1';
 import {SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411162r1';
-import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411180r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411182r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411162r1';
 import { WindCanvas } from './wind-canvas.js?v=411162r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411180r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411182r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.12',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.13',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlowTranslations(deps.I18N);return ({
- _weatherWindState(){return this.__weatherWind||(this.__weatherWind={config:readWindConfig(),points:[],field:null,fieldError:null,status:'Aus',errors:[],cache:new WindFieldCache({budgetBytes:((globalThis.innerWidth||1024)<650||(globalThis.navigator?.deviceMemory||8)<=4?8:16)*1024*1024}),cacheProfile:null,timing:{fetchMs:null,prepareMs:null},map:null,painter:null,batch:null,pending:false,generation:0,timer:null,refreshTimer:null,expiryTimer:null,legend:null,legendOpen:false,metrics:null,suspended:false,requests:0});},
- _weatherWindSave(){try{localStorage.setItem(WIND_STORAGE,JSON.stringify(this._weatherWindState().config));}catch(_){}},
+ _weatherWindState(){return this.__weatherWind||(this.__weatherWind={config:readWindConfig(settingsStorage(this)),points:[],field:null,fieldError:null,status:'Aus',errors:[],cache:new WindFieldCache({budgetBytes:((globalThis.innerWidth||1024)<650||(globalThis.navigator?.deviceMemory||8)<=4?8:16)*1024*1024}),cacheProfile:null,timing:{fetchMs:null,prepareMs:null},map:null,painter:null,batch:null,pending:false,generation:0,timer:null,refreshTimer:null,expiryTimer:null,legend:null,legendOpen:false,metrics:null,suspended:false,requests:0});},
+ _weatherWindSave(){try{settingsStorage(this).setItem(WIND_STORAGE,JSON.stringify(this._weatherWindState().config));}catch(_){}},
  _weatherPremiumCloseAsset(){return deps.ABOUT_CLOSE_IMAGE;},
  _weatherWindMenuMarkup(){return '<button type="button" class="weather-layer-action" data-weather-layer-action="wind-settings"><strong>Winddarstellung</strong><small>Windfahnen · Pfeile · Windfeld</small></button>';},
  _weatherWindSet(patch,{render=true}={}){

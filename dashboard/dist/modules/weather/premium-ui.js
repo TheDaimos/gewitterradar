@@ -1,3 +1,4 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 // Presentation only. Shared Eye-menu controls; no weather requests or policy.
 export const PREMIUM_CLOSE=new URL('../../assets/gewitterradar-about-close-premium.webp',import.meta.url).href;
 export const PREMIUM_INFO=new URL('../../assets/gewitterradar-help-info-premium-v1.webp',import.meta.url).href;
@@ -6,8 +7,8 @@ export function premiumAction(action,label,icon='close'){
  return `<button type="button" class="gr-premium-action ${icon==='minimize'?'weather-display-minimize gr-premium-metal-surface':''}" data-premium-action="${action}" aria-label="${premiumEscape(label)}">${icon==='minimize'?'<span class="gr-minimize-glyph" aria-hidden="true"></span>':`<img src="${icon==='info'?PREMIUM_INFO:PREMIUM_CLOSE}" alt="" draggable="false">`}</button>`;
 }
 const key=scope=>'gewitterradar:premium-ui:v1:'+scope;
-export function readPremiumUi(scope){try{return JSON.parse(localStorage.getItem(key(scope)))||{};}catch(_){return {};}}
-export function savePremiumUi(scope,ui){try{localStorage.setItem(key(scope),JSON.stringify(ui));}catch(_){}}
+export function readPremiumUi(scope,owner){try{return JSON.parse(settingsStorage(owner).getItem(key(scope)))||{};}catch(_){return {};}}
+export function savePremiumUi(scope,ui,owner){try{settingsStorage(owner).setItem(key(scope),JSON.stringify(ui));}catch(_){}}
 export function ensurePremiumUi(shadow){
  if(shadow.getElementById('gr-premium-ui-style'))return;
  const style=document.createElement('style');style.id='gr-premium-ui-style';style.textContent=`
@@ -34,8 +35,8 @@ export function ensurePremiumUi(shadow){
 }
 // Keep native details/summary semantics and keyboard activation. Closing stays
 // mounted until its grid transition ends; updates use the saved target state.
-export function enhancePremiumSections(panel,scope){
- const ui=readPremiumUi(scope);let index=0;
+export function enhancePremiumSections(panel,scope,owner=panel.getRootNode().host){
+ const ui=readPremiumUi(scope,owner);let index=0;
  for(const detail of panel.querySelectorAll('details')){
   if(detail.dataset.premiumSection)continue;
   const summary=detail.querySelector(':scope>summary');if(!summary)continue;
@@ -50,18 +51,19 @@ export function enhancePremiumSections(panel,scope){
   const summary=event.target.closest('summary');if(!summary||!panel.contains(summary))return;
   const detail=summary.parentElement;if(!detail.dataset.premiumSection)return;
   event.preventDefault();event.stopPropagation();
-  const ui=readPremiumUi(scope),expanded=summary.getAttribute('aria-expanded')!=='true',inner=detail.querySelector(':scope>.gr-collapse-body>.gr-collapse-inner');
-  clearTimeout(detail.__premiumTimer);ui.sections={...ui.sections,[detail.dataset.premiumSection]:expanded};savePremiumUi(scope,ui);summary.setAttribute('aria-expanded',String(expanded));inner.inert=!expanded;detail.dispatchEvent(new CustomEvent('premiumsectionchange',{bubbles:true,detail:{id:detail.dataset.premiumSection,expanded}}));
+  const ui=readPremiumUi(scope,owner),expanded=summary.getAttribute('aria-expanded')!=='true',inner=detail.querySelector(':scope>.gr-collapse-body>.gr-collapse-inner');
+  clearTimeout(detail.__premiumTimer);ui.sections={...ui.sections,[detail.dataset.premiumSection]:expanded};savePremiumUi(scope,ui,owner);summary.setAttribute('aria-expanded',String(expanded));inner.inert=!expanded;detail.dispatchEvent(new CustomEvent('premiumsectionchange',{bubbles:true,detail:{id:detail.dataset.premiumSection,expanded}}));
   if(expanded){detail.open=true;detail.classList.add('gr-closing');requestAnimationFrame(()=>{if(detail.isConnected)detail.classList.remove('gr-closing');});}
   else{detail.classList.add('gr-closing');detail.__premiumTimer=setTimeout(()=>{if(summary.getAttribute('aria-expanded')==='false'){detail.open=false;detail.classList.remove('gr-closing');}},matchMedia('(prefers-reduced-motion: reduce)').matches?0:420);}
  });
 }
-export function syncPremiumPanel(panel,scope){const ui=readPremiumUi(scope);panel.classList.toggle('minimized',ui.minimized===true);const b=panel.querySelector('[data-premium-action=minimize]');b?.setAttribute('aria-expanded',String(!ui.minimized));b?.setAttribute('aria-label',ui.minimized?'Menü maximieren':'Menü minimieren');}
-export function togglePremiumPanel(panel,scope){const ui=readPremiumUi(scope);ui.minimized=!ui.minimized;savePremiumUi(scope,ui);syncPremiumPanel(panel,scope);}
+export function syncPremiumPanel(panel,scope,owner=panel.getRootNode().host){const ui=readPremiumUi(scope,owner);panel.classList.toggle('minimized',ui.minimized===true);const b=panel.querySelector('[data-premium-action=minimize]');b?.setAttribute('aria-expanded',String(!ui.minimized));b?.setAttribute('aria-label',ui.minimized?'Menü maximieren':'Menü minimieren');}
+export function togglePremiumPanel(panel,scope,owner=panel.getRootNode().host){const ui=readPremiumUi(scope,owner);ui.minimized=!ui.minimized;savePremiumUi(scope,ui,owner);syncPremiumPanel(panel,scope,owner);}
 
 // Position a standalone mouse-operated panel relative to the visible map.
 // Store travel fractions so a resized or minimized panel remains reachable.
 export function bindPremiumPanelDrag(panel, map, scope) {
+ const owner = panel.getRootNode().host;
  if (!map) return;
  const desktop = matchMedia('(any-hover: hover) and (any-pointer: fine)');
  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -99,7 +101,7 @@ export function bindPremiumPanelDrag(panel, map, scope) {
   if (!enabled() || drag) return;
   const area = bounds();
   if (!area) return;
-  const saved = readPremiumUi(scope).panelPosition;
+  const saved = readPremiumUi(scope,owner).panelPosition;
   const x = Number.isFinite(saved?.x) ? clamp(saved.x, 0, 1) : 1;
   const y = Number.isFinite(saved?.y) ? clamp(saved.y, 0, 1) : 0;
   place(area.left + (area.right - area.left) * x, area.top + (area.bottom - area.top) * y, area);
@@ -114,13 +116,13 @@ export function bindPremiumPanelDrag(panel, map, scope) {
   if (save && moved && enabled()) {
    const area = bounds();
    if (area) {
-    const ui = readPremiumUi(scope);
+    const ui = readPremiumUi(scope,owner);
     const rect = panel.getBoundingClientRect();
     ui.panelPosition = {
      x: area.right === area.left ? ui.panelPosition?.x ?? 1 : clamp((rect.left - area.container.left - area.left) / (area.right - area.left), 0, 1),
      y: area.bottom === area.top ? ui.panelPosition?.y ?? 0 : clamp((rect.top - area.container.top - area.top) / (area.bottom - area.top), 0, 1)
     };
-    savePremiumUi(scope, ui);
+    savePremiumUi(scope, ui, owner);
    }
   }
   restore();

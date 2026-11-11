@@ -1,16 +1,17 @@
+import {settingsStorage} from '../core/settings-vault.js?v=411182r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411181r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411181r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411181r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411182r1';
 export const eyeHubMethods={
  _eyeHubState(){
-  if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(localStorage.getItem(EYE_HUB_KEY));}catch(_){}
+  if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(settingsStorage(this).getItem(EYE_HUB_KEY));}catch(_){}
   const registry=createEyeRegistry(this);return this.__eyeHub={registry,config:normalizeEyeConfig(input,[...registry.entries.keys()]),open:false,signature:null,frame:null,bubbleOptions:[],suspended:false};
  },
  _eyeHubStatuses(){const s=this._eyeHubState(),out={};for(const [id,entry] of s.registry.entries){try{out[id]=entry.status();}catch(_){out[id]={active:false,available:false,detail:''};}}return out;},
  _eyeHubPatch(patch){
   const s=this._eyeHubState(),grouped=s.config.grouped;s.config=normalizeEyeConfig({...s.config,...patch},[...s.registry.entries.keys()]);
-  try{localStorage.setItem(EYE_HUB_KEY,JSON.stringify(s.config));}catch(_){}
+  try{settingsStorage(this).setItem(EYE_HUB_KEY,JSON.stringify(s.config));}catch(_){}
   if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherPrecipitationCancelDrag?.();this._eyeHubClose();}
   s.signature=null;this._eyeHubSync();
  },
