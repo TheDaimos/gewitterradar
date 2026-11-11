@@ -36,15 +36,19 @@ async function referencePixels(page) {
      intensity:100,brightness:100,neonBrilliance:neonBloom,neonBloom,neonOrganics:neonBloom,energyAccents:'off'}}]);
     const surface=renderer.surfaces[0];
     const wow=surface.wow;
-    if (wow) Object.assign(wow,{bridges:[],serial:0,nextContact:0,lastBloom:-Infinity,changed:10});
+    if (wow) Object.assign(wow,{bridges:[],serial:0,nextContact:0,lastBloom:-Infinity,changed:10,level:0,detail:1,goodSince:null});
     for(const ring of surface.rings.values())ring.visibility=1;
     for (let index=0;index<42;index++) {
+     // Drive the real adaptive logic with identical load on both releases.
+     // Host timing must not select different filament and bloom budgets.
+     if (wow) wow.cost = index < 26 ? 0 : 4;
      renderer.draw(surface,10+index/30,1/30);
      if (index%20!==0) continue;
      const png = surface.canvas.toDataURL();
      const nonempty = surface.canvas.getContext('2d').getImageData(0,0,surface.canvas.width,surface.canvas.height).data.some((v,i)=>i%4===3&&v>80);
      frames.push({nonempty,png,addon:wow?.canvas.toDataURL(),bloom:wow?.bloom.toDataURL(),
-      bridges:wow?.bridges.map(b=>[b.source.id,b.target.id,b.sa,b.ta]),transfers:wow?.stats.transfers,hasEnergy:!!surface.energy});
+      bridges:wow?.bridges.map(b=>[b.source.id,b.target.id,b.sa,b.ta]),transfers:wow?.stats.transfers,
+      quality:wow?.level,hasEnergy:!!surface.energy});
     }
     renderer.destroy();
    }
@@ -199,7 +203,11 @@ async function contactTests(page, name) {
    const errors=[];page.on('pageerror',error=>errors.push(error.message));
    const actual=await referencePixels(page);
    assert(actual.every(frame=>frame.nonempty&&!frame.hasEnergy));
-   for(let i=0;i<expected.length;i++)assert(JSON.stringify(actual[i])===JSON.stringify(expected[i]),`${name} V180 frame ${i}`);
+   assert(actual.some(frame=>frame.quality===0)&&actual.some(frame=>frame.quality===1));
+   for(let i=0;i<expected.length;i++){
+    const different=Object.keys(actual[i]).filter(key=>JSON.stringify(actual[i][key])!==JSON.stringify(expected[i][key]));
+    assert.deepEqual(different,[],`${name} V180 frame ${i}`);
+   }
    await controls(page,name);
    await contactTests(page,name);
    assert.deepEqual(errors,[]);

@@ -182,11 +182,11 @@ async def test_legacy_partial_future_data_and_invalid_fields():
         await vault.dispatch("user-2", "get", {"profileId": profile["id"], "userId": "user-1"})
 
 
-async def test_websocket_ownership_and_build(hass, hass_ws_client, hass_admin_user, hass_read_only_user):
+async def test_websocket_ownership_and_build(hass, hass_ws_client, hass_access_token, hass_read_only_access_token):
     assert await async_setup_component(hass, "websocket_api", {})
     register_settings_vault(hass)
-    admin = await hass_ws_client(hass, user=hass_admin_user)
-    reader = await hass_ws_client(hass, user=hass_read_only_user)
+    admin = await hass_ws_client(hass, hass_access_token)
+    reader = await hass_ws_client(hass, hass_read_only_access_token)
 
     async def send(client, operation, payload, *, build=BUILD_VERSION):
         await client.send_json_auto_id({
