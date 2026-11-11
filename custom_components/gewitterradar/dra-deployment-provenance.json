@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.180",
-  "build": "V4.11.180-DEV-2026-11-11",
-  "runtimeRevision": "411180r1",
-  "moduleSetId": "E411-180A1",
-  "baselineFeatureHead": "037b9d0c04d334d73820c495c1694d95d60f1cc5",
+  "productVersion": "4.11.181",
+  "build": "V4.11.181-DEV-2026-11-11",
+  "runtimeRevision": "411181r1",
+  "moduleSetId": "E411-181A1",
+  "baselineFeatureHead": "ae88335f4824a81670d36155efed00f78c419f17",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Configurable Eye and ring spacing, fixed Bloom preview projection, standalone desktop panel dragging and opacity-based WR transparency controls.",
+    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

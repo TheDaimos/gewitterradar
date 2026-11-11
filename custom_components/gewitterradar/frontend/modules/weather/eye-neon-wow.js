@@ -1,8 +1,11 @@
 // Optional presentation layers. The V177 renderer below remains the authority
 // for the original geometry, colours, timing, status fading and scheduling.
-import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411180r1';
+import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411181r1';
+import {EYE_MATERIALS} from './eye-hub-model.js?v=411181r1';
+import {paintEnergyAccents} from './eye-neon-energy.js?v=411181r1';
 const TAU=Math.PI*2,clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x);
 const enabled=c=>c.neonBrilliance>0||c.neonBloom>0||c.neonOrganics>0;
+const energyEnabled=c=>c.energyAccents&&c.energyAccents!=='off';
 const smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
 function point(out,p,n,angle){const f=fract(angle/TAU)*n,a=Math.floor(f),b=(a+1)%n,u=f-a;out[0]=p[a*2]*(1-u)+p[b*2]*u;out[1]=p[a*2+1]*(1-u)+p[b*2+1]*u;return out;}
 function filamentPath(points, samples) {
@@ -66,6 +69,7 @@ export class EyeNeonWow extends EyeNeon{
   // At zero, super.sync/draw run unchanged. No additional buffers or scheduler.
   super.sync(items);
   for(const s of this.surfaces){
+   if(s.energy&&!energyEnabled(s.config)){delete s.energy;this.draw(s,s.referenceTime??performance.now()/1000,0);}
    if(!enabled(s.config)){if(s.wow){dispose(s.wow);delete s.wow;this.draw(s,s.referenceTime??performance.now()/1000,0);}continue;}
    const signature=JSON.stringify([s.config.neonBrilliance,s.config.neonBloom,s.config.neonOrganics]);
    if (signature !== s.wow?.signature) {
@@ -76,12 +80,50 @@ export class EyeNeonWow extends EyeNeon{
  }
  release(s){if(s.wow)dispose(s.wow);super.release(s);}
  visible(surface) {
-  return super.visible(surface) && (!enabled(surface.config) || coversViewport(surface.host));
+  return super.visible(surface) && ((!enabled(surface.config) && !energyEnabled(surface.config)) || coversViewport(surface.host));
+ }
+
+ cacheHalo(surface, ring) {
+  super.cacheHalo(surface, ring);
+  const material = EYE_MATERIALS[ring.color];
+  if (!material) return;
+  const ctx = ring.halo.getContext('2d');
+  const radius = ring.radius;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, TAU);
+  ctx.strokeStyle = material.scatter;
+  ctx.lineWidth = 3.2;
+  ctx.globalAlpha = .30;
+  ctx.shadowColor = material.scatter;
+  ctx.shadowBlur = 3;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = .55;
+  ctx.strokeStyle = material.reflection;
+  for (let band = 0; band < 3; band++) {
+   const angle = band * 2.094 + ring.index * .63;
+   ctx.beginPath();
+   ctx.arc(0, 0, radius, angle, angle + .24 + band * .065);
+   ctx.globalAlpha = .32 + band * .14;
+   ctx.stroke();
+  }
+  ctx.restore();
+ }
+
+ drawEnergy(surface, time, forceStatic) {
+  if (surface.config.glow !== 'living' || forceStatic || this.motion.matches || document.hidden || this.blurred || !this.visible(surface)) {
+   delete surface.energy;
+   return;
+  }
+  paintEnergyAccents(surface, time, Math.max(this.quality.level, surface.wow?.level || 0));
  }
 
  draw(surface, time, dt, forceStatic = false) {
   super.draw(surface, time, dt, forceStatic);
   const config = surface.config;
+  if (energyEnabled(config)) this.drawEnergy(surface, time, forceStatic);
   if (!enabled(config)) return;
   const moving = config.glow === 'living' && !this.motion.matches && !forceStatic;
   if (moving && (document.hidden || this.blurred || !this.visible(surface))) return;
@@ -301,7 +343,7 @@ export class EyeNeonWow extends EyeNeon{
    ctx.lineWidth = .65 + brilliance * .6;
    ctx.globalAlpha = alpha * brilliance * (moving ? .70 : .95) * coverage;
    ctx.stroke(path);
-   ctx.strokeStyle = '#fffafa';
+   ctx.strokeStyle = EYE_MATERIALS[color]?.core || '#fffafa';
    ctx.lineWidth = .12 + brilliance * .18;
    ctx.globalAlpha = alpha * brilliance * .9 * coverage;
    ctx.stroke(path);

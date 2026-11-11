@@ -2,7 +2,12 @@
 export const EYE_HUB_KEY='gewitterradar:eye-bubble:v1';
 export const EYE_UI_SLOTS=8,EYE_CAPACITY=12;
 export const EYE_LEGACY_COLORS=Object.freeze(['#FF3DBB','#A66BFF','#377DFF','#28E3EA','#66FF66','#FFE84B','#FF9A32','#FF475D']);
-export const EYE_COLORS=Object.freeze(['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C']);
+export const EYE_MATERIALS=Object.freeze({
+ '#FFC442':Object.freeze({key:'electricGold',core:'#FFF3CB',reflection:'#FFE3A0',scatter:'#E7911F'}),
+ '#D8E6F3':Object.freeze({key:'silverChrome',core:'#F8FCFF',reflection:'#FFFFFF',scatter:'#819FBE'})
+});
+export const EYE_COLORS=Object.freeze(['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C',...Object.keys(EYE_MATERIALS)]);
+export const EYE_ENERGY_MODES=Object.freeze(['off','subtle','normal','strong']);
 export const EYE_FUNCTIONS=Object.freeze(['wind','temperature','precipitation','weather-display']);
 export const EYE_DEFAULT_COLORS=Object.freeze({wind:EYE_COLORS[3],temperature:EYE_COLORS[6],precipitation:EYE_COLORS[2],'weather-display':EYE_COLORS[0]});
 // Keep authoritative stored pixels compatible: 42 CSS px = 100%. Only the
@@ -15,7 +20,7 @@ export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
  const slots=source.slice(0,EYE_CAPACITY).map((item,i)=>{const id=typeof item==='string'?item:item?.functionId;const functionId=ids.includes(id)&&!seen.has(id)?id:null;if(functionId)seen.add(functionId);return {id:'slot-'+(i+1),functionId};});
  if(!slots.length)slots.push({id:'slot-1',functionId:null});
  const colors={};for(const id of ids){const color=String(s.colors?.[id]).toUpperCase(),legacy=EYE_LEGACY_COLORS.indexOf(color);colors[id]=EYE_COLORS.includes(color)?color:legacy>=0?EYE_COLORS[legacy]:EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];}
- return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),slots,colors};
+ return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),energyAccents:EYE_ENERGY_MODES.includes(s.energyAccents)?s.energyAccents:'off',slots,colors};
 }
 export function assignEyeSlot(config,index,functionId,ids=EYE_FUNCTIONS){
  const c=normalizeEyeConfig(config,ids);if(index<0||index>=Math.min(c.slots.length,EYE_UI_SLOTS)||!ids.includes(functionId))return c;

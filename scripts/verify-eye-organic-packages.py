@@ -6,6 +6,8 @@ root = Path(__file__).resolve().parents[1]
 packages = sorted(Path(sys.argv[1]).glob('*.zip'))
 assert len(packages) == 2, 'Expected integration and dashboard packages'
 names = ['display-quick.js', 'eye-hub.js', 'eye-hub-view.js', 'eye-hub-model.js', 'eye-hub-locales.js', 'eye-neon.js', 'eye-neon-wow.js']
+if (root / 'frontend/modules/weather/eye-neon-energy.js').exists():
+    names.append('eye-neon-energy.js')
 for package in packages:
     with zipfile.ZipFile(package) as archive:
         assert archive.testzip() is None

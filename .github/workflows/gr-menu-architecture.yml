@@ -98,6 +98,7 @@ jobs:
           node scripts/test-eye-organic-browser.cjs
           node scripts/test-eye-wow-browser.cjs
           node scripts/test-premium-geometry-browser.cjs
+          node scripts/test-eye-energy-browser.cjs
       - name: Installable DEV payload identity and parity
         run: |
           python scripts/build-dev-packages.py "$RUNNER_TEMP/eye-payload"

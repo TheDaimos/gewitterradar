@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,EYE_LEGACY_COLORS,EYE_ICON_METRICS,eyeIconTarget,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
+import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,EYE_LEGACY_COLORS,EYE_ENERGY_MODES,EYE_ICON_METRICS,eyeIconTarget,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
 import {neonPoint,filamentPointInto,neonQualityStep} from '../frontend/modules/weather/eye-neon.js';
 import {compassPreviewHalo,compassDialogSurface} from '../frontend/modules/fullscreen/compass-preview-style.js';
 import {createEyeRegistry,eyeLayerOwner} from '../frontend/modules/weather/eye-hub-registry.js';
@@ -13,6 +13,13 @@ for(const file of ['display-quick.js','display-menu.js','eye-hub-view.js','eye-h
 for(let slot=0;slot<4;slot++)for(let id=0;id<5;id++){const a=filamentPointInto([0,0],0,70,slot,id,.8,10,100),b=filamentPointInto([0,0],0,70,slot,id,.8,10+1/60,100);assert(Math.hypot(a[0]-b[0],a[1]-b[1])<1);assert.deepEqual(a,filamentPointInto([0,0],0,70,slot,id,.8,10,100));}
 const lod={level:0,changed:0,badSince:null,goodSince:null};for(let time=0;time<1400;time+=100)neonQualityStep(lod,40,8,time);assert.equal(lod.level,0);for(let time=1400;time<7000;time+=100)neonQualityStep(lod,40,8,time);assert.equal(lod.level,2);for(let time=7000;time<9000;time+=100)neonQualityStep(lod,16,1,time);assert.equal(lod.level,2);for(let time=9000;time<19000;time+=100)neonQualityStep(lod,16,1,time);assert.equal(lod.level,0);
 for(let i=0;i<8;i++)assert.equal(normalizeEyeConfig({colors:{wind:EYE_LEGACY_COLORS[i]}}).colors.wind,EYE_COLORS[i]);
+assert.deepEqual(EYE_COLORS,['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C','#FFC442','#D8E6F3']);
+const v180={grouped:true,size:71.82,eyeAuraGap:14,auraRingGap:5,neonBrilliance:75,neonBloom:39,neonOrganics:22,backdropExtent:16,
+ slots:['wind',null,'temperature','weather-display'],colors:{wind:'#39FF14',temperature:'#FF5F00','weather-display':'#B000FF'}};
+const normalized180=normalizeEyeConfig(v180);
+assert.equal(normalized180.energyAccents,'off');
+for(const energyAccents of EYE_ENERGY_MODES)assert.deepEqual(normalizeEyeConfig({...v180,energyAccents}),{...normalized180,energyAccents});
+assert.deepEqual(normalizeEyeConfig({...v180,energyAccents:'unsupported'}),normalized180);
 assert.equal(normalizeEyeConfig({colors:{wind:'<script>'}}).colors.wind,EYE_COLORS[3]);
 for(const a of [0,.7,1.9]){assert.notDeepEqual(neonPoint(50,1,a,0,100),neonPoint(50,1,a,1,100));assert.notDeepEqual(neonPoint(50,1,a,1,100),neonPoint(50,2,a,1,100));}
 let c=normalizeEyeConfig({...defaults,grouped:true,slots:['wind',null,'precipitation','weather-display']});assert.deepEqual(c.slots.map(v=>v.functionId),['wind',null,'precipitation','weather-display']);
