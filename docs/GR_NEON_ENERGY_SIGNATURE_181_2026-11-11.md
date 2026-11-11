@@ -52,3 +52,12 @@ In den lokalen Android-Vorschaubildern sind warmes Gold und kühles Chrome neben
 ## Lieferidentität
 
 GR **4.11.181 DEV** / HA **0.25.88**, Runtime `411181r1`, Modulsatz `E411-181A1`. Der DRA-Kanal bleibt `TheDaimos/gewitterradar@deploy/dev`. Die Bereitstellung führt keine Installation auf VM109 oder VM101 aus.
+
+## Installationspakete
+
+Implementierungscommit `298a6940fe426b41c768a712ad5245678cd7f2a6`.
+
+- `gewitterradar-0.25.88-dev.zip` · SHA256 `a38dceda5214ed01e9440a2a2398d01242f4c60ee612ef9e9dfe8f203ed7516a`
+- `gewitterradar-dashboard-4.11.181-dev.zip` · SHA256 `99804f34f01e43c9e915612c1efc2d764dc3613f2db86e2e06565b7c2c0665e4`
+
+Beide ZIPs stammen aus dem committed Git-Baum. Geprüft wurden CRC, Versionsidentität, UTF-8 und die Dateiparität zwischen HA-Frontend und Dashboard. `deployment.json` bezeichnet den Releasecommit.
