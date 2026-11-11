@@ -44,3 +44,12 @@ Windows, Chromium im Android-Viewport 393 × 851, DPR 3. Drei aufeinanderfolgend
 | V180, 30/8 px | 17,7 / 35,5 | 0,88 | 1.933.312 | 5 / 2 | 1 |
 
 Die Puffergröße bei Nullabständen blieb gleich. Der Lauf bei maximalem Abstand zeichnete auf rund 32 % mehr Pufferfläche. Unterschiede in den Zeitwerten enthalten Schwankungen der Browserlast und der adaptiven Stufe. Die drei kurzen Läufe liefern keine belastbare Aussage über Geräte-FPS oder einen allgemeinen Geschwindigkeitsgewinn. In den lokalen Vorschau-Aufnahmen blieb der Halo bei 30/8 px mit vier aktiven Farben vollständig im Rahmen.
+
+## Installationspakete
+
+Implementierungscommit `763a54a8099e95a0cff5ef18db263bfba0be3494`.
+
+- `gewitterradar-0.25.87-dev.zip` · SHA256 `3f216a9f1d4fbec4fef1ac1f02436485aac540b9356fb18a725972a987c27497`
+- `gewitterradar-dashboard-4.11.180-dev.zip` · SHA256 `b605af80d13edcf3da551149379cc2f5c901e8c4f9ce90e9fc64dfab2a497b82`
+
+Beide ZIPs stammen aus dem committed Git-Baum. Geprüft wurden CRC, Versionsidentität, UTF-8 und die Dateiparität zwischen HA-Frontend und Dashboard. `deployment.json` bezeichnet den Releasecommit.
