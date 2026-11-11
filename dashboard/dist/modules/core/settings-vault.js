@@ -1,4 +1,4 @@
-import {APPLICATION_RELEASE} from '../../version.js?v=411183r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411184r1';
 
 export const VAULT_SCHEMA = 1;
 const PREFIX = 'gewitterradar/settings/';
@@ -48,6 +48,15 @@ function codeError(code) {
   return Object.assign(new Error(code), {code});
 }
 
+function validProfileId(id) {
+  return typeof id === 'string' && /^[0-9a-f]{32}$/.test(id);
+}
+
+function validProfileHeader(profile) {
+  return validProfileId(profile?.id)
+    && typeof profile.name === 'string' && Number.isSafeInteger(profile.revision) && profile.revision > 0;
+}
+
 export function acquireSettingsSlot(owner, config, userId) {
   // The installation's own panel has a fixed slot. Lovelace can supply an
   // explicit slot; the first unlabelled card on each route gets a shared slot.
@@ -80,7 +89,8 @@ export class SettingsVaultClient extends EventTarget {
     this.compatible = compatible;
     this.delay = delay;
     this.binding = slot ? LOCAL_PREFIX + 'binding:' + slot : null;
-    this.profileId = this.binding ? localRead(this.storage, this.binding) : null;
+    const bound = this.binding ? localRead(this.storage, this.binding) : null;
+    this.profileId = validProfileId(bound) ? bound : null;
     this.status = 'loading';
     this.keys = new Set();
     this.jsonKeys = new Set();
@@ -92,28 +102,88 @@ export class SettingsVaultClient extends EventTarget {
   }
 
   setStatus(status, error = null) {
+    if (this.status === status && this.error === error) return;
     this.status = status;
     this.error = error;
     this.dispatchEvent(new Event('change'));
   }
 
   async call(op, request = {}) {
-    if (this.hass.user?.id !== this.userId) throw codeError('unauthorized');
+    if (this.retired || this.hass.user?.id !== this.userId) throw codeError('unauthorized');
+    if (this.localOnly) throw codeError('settings_unavailable');
     if (!this.compatible()) throw codeError('settings_reload');
     let timer;
     try {
-      return await Promise.race([
+      const result = await Promise.race([
         this.hass.callWS({
           type: PREFIX + op, schema: VAULT_SCHEMA, build: APPLICATION_RELEASE.version, request,
         }),
         new Promise((_, reject) => { timer = setTimeout(() => reject(codeError('settings_timeout')), 12000); }),
       ]);
+      if (this.retired || this.hass.user?.id !== this.userId) throw codeError('unauthorized');
+      return result;
     } finally {
       clearTimeout(timer);
     }
   }
 
-  async start() {
+  start({retry = false} = {}) {
+    if (this.starting) return this.starting;
+    if (this.retired || this.localOnly || (this.started && !(retry && this.canRetry))) {
+      return Promise.resolve(this.profile);
+    }
+    this.started = true;
+    this.starting = Promise.resolve().then(() => this.load()).finally(() => { this.starting = null; });
+    this.setStatus('loading');
+    return this.starting;
+  }
+
+  get canRetry() {
+    return !this.profile && !this.localOnly && ['offline', 'error'].includes(this.status);
+  }
+
+  get canOpenLocal() {
+    return this.canRetry && !this.retired && this.compatible() && this.error?.code !== 'unauthorized';
+  }
+
+  openLocal() {
+    if (!this.canOpenLocal || this.starting) throw codeError('settings_unavailable');
+    this.localOnly = true;
+    this.paused = true;
+    this.setStatus('local');
+  }
+
+  retire() {
+    this.retired = true;
+    this.paused = true;
+    clearTimeout(this.timer);
+  }
+
+  readLookup(result) {
+    if (!result || typeof result !== 'object') throw codeError('settings_storage');
+    if (result.schema !== VAULT_SCHEMA) throw codeError('settings_schema');
+    if (!Array.isArray(result.settingsKeys) || !result.settingsKeys.every(key => typeof key === 'string')
+      || !Array.isArray(result.jsonSettingsKeys) || !result.jsonSettingsKeys.every(key => result.settingsKeys.includes(key))
+      || !Array.isArray(result.profiles) || !result.profiles.every(validProfileHeader)
+      || typeof result.recovery !== 'boolean') throw codeError('settings_storage');
+    this.keys = new Set(result.settingsKeys);
+    this.jsonKeys = new Set(result.jsonSettingsKeys);
+    this.profiles = result.profiles;
+    this.recovery = result.recovery;
+    this.migrationIssues = Array.isArray(result.migrationIssues) ? result.migrationIssues : [];
+  }
+
+  validateProfile(profile, expectedId = profile?.id) {
+    if (!validProfileHeader(profile) || profile.id !== expectedId || !profile.settings
+      || Object.getPrototypeOf(profile.settings) !== Object.prototype) throw codeError('settings_storage');
+    for (const [key, value] of Object.entries(profile.settings)) {
+      if (!this.keys.has(key) || (this.jsonKeys.has(key)
+        ? !value || Object.getPrototypeOf(value) !== Object.prototype
+        : typeof value !== 'string')) throw codeError('settings_storage');
+    }
+  }
+
+  async load() {
     let result;
     try {
       try {
@@ -123,19 +193,25 @@ export class SettingsVaultClient extends EventTarget {
         this.profileId = null;
         result = await this.call('get');
       }
-      if (result.schema !== VAULT_SCHEMA) throw codeError('settings_schema');
-      this.keys = new Set(result.settingsKeys);
-      this.jsonKeys = new Set(result.jsonSettingsKeys);
-      this.profiles = result.profiles;
-      this.recovery = result.recovery;
+      this.readLookup(result);
       this.legacy = this.readLegacy();
-      this.migrationIssues = result.migrationIssues || [];
-      if (result.profile) this.hydrate(result.profile);
+      if (this.profileId) {
+        this.validateProfile(result.profile, this.profileId);
+        this.hydrate(result.profile);
+      }
       else this.setStatus(result.recovery ? 'recovery' : 'choose');
     } catch (error) {
       this.setStatus(this.failureStatus(error), error);
     }
     return this.profile;
+  }
+
+  async choose(profileId) {
+    const result = await this.call('get', {profileId});
+    this.readLookup(result);
+    this.validateProfile(result.profile, profileId);
+    if (result.recovery) this.hydrate(result.profile);
+    else this.select(result.profile);
   }
 
   readLegacy() {
@@ -166,6 +242,7 @@ export class SettingsVaultClient extends EventTarget {
   }
 
   hydrate(profile) {
+    this.validateProfile(profile);
     this.profile = profile;
     this.profileId = profile.id;
     if (this.bindingSaved === undefined) {
@@ -207,8 +284,10 @@ export class SettingsVaultClient extends EventTarget {
       if (receiptKey) localWrite(this.session, receiptKey, JSON.stringify(receipt));
     }
     const result = await this.call(op, {...fields, requestId: receipt.requestId});
+    this.validateProfile(result?.profile);
     const checked = await this.call('get', {profileId: result.profile.id});
-    if (checked.recovery || !checked.profile || checked.profile.revision < result.profile.revision) {
+    this.validateProfile(checked?.profile, result.profile.id);
+    if (checked.schema !== VAULT_SCHEMA || checked.recovery || checked.profile.revision < result.profile.revision) {
       throw codeError('settings_storage');
     }
     this.profiles = checked.profiles;
@@ -223,6 +302,7 @@ export class SettingsVaultClient extends EventTarget {
 
   select(profile) {
     if (this.dirty) throw codeError('settings_pending');
+    this.validateProfile(profile);
     this.bindingSaved = this.binding ? localWrite(this.storage, this.binding, profile.id) : false;
     this.hydrate(profile);
   }
@@ -232,6 +312,7 @@ export class SettingsVaultClient extends EventTarget {
   }
 
   getItem(key) {
+    if (this.localOnly) return localRead(this.storage, key);
     return Object.hasOwn(this.visible, key) ? this.visible[key] : null;
   }
 
@@ -244,7 +325,7 @@ export class SettingsVaultClient extends EventTarget {
   }
 
   change(key, after) {
-    if (!this.profile || this.recovery) {
+    if (this.retired || !this.profile || this.recovery) {
       throw codeError(this.recovery ? 'settings_storage' : 'settings_unavailable');
     }
     if (!this.compatible() || !this.keys.has(key)) {

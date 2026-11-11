@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411183r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411184r1';
 import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";
@@ -13,7 +13,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.39",
+  "version": "1.0.40",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [

@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.183",
-  "build": "V4.11.183-DEV-2026-11-11",
-  "runtimeRevision": "411183r1",
-  "moduleSetId": "E411-183A1",
+  "productVersion": "4.11.184",
+  "build": "V4.11.184-DEV-2026-11-11",
+  "runtimeRevision": "411184r1",
+  "moduleSetId": "E411-184A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.200"
+      "version": "1.2.201"
     },
     {
       "id": "core.base-context",
@@ -23,11 +23,11 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.11"
+      "version": "1.0.12"
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.39"
+      "version": "1.0.40"
     },
     {
       "id": "ui.scroll-guard",
@@ -47,11 +47,11 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.31"
+      "version": "1.1.32"
     },
     {
       "id": "ui.i18n-settings",
-      "version": "1.3.20"
+      "version": "1.3.21"
     },
     {
       "id": "core.update-watch",
@@ -63,7 +63,7 @@
     },
     {
       "id": "instruments.compass-selector",
-      "version": "1.1.2"
+      "version": "1.1.3"
     },
     {
       "id": "instruments.medallion-designs",
@@ -87,11 +87,11 @@
     },
     {
       "id": "diagnostics.cockpit",
-      "version": "1.5.4"
+      "version": "1.5.5"
     },
     {
       "id": "diagnostics.raster-lab",
-      "version": "0.1.20"
+      "version": "0.1.21"
     },
     {
       "id": "instruments.compass-design",
@@ -107,7 +107,7 @@
     },
     {
       "id": "map.clusters-recent",
-      "version": "1.0.10"
+      "version": "1.0.11"
     },
     {
       "id": "ui.render",
@@ -123,7 +123,7 @@
     },
     {
       "id": "weather.precipitation-layer",
-      "version": "1.3.26"
+      "version": "1.3.27"
     },
     {
       "id": "weather.layer-menu",
@@ -131,11 +131,11 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.4.41"
+      "version": "0.4.42"
     },
     {
       "id": "weather.legend-overlay",
-      "version": "0.1.9"
+      "version": "0.1.10"
     },
     {
       "id": "history.chart",
@@ -143,12 +143,12 @@
     },
     {
       "id": "weather.wind-display",
-      "version": "0.4.14"
+      "version": "0.4.15"
     },
     {
       "id": "weather.temperature-display",
-      "version": "0.1.8"
+      "version": "0.1.9"
     }
   ],
-  "displayVersion": "V4.11.183 DEV"
+  "displayVersion": "V4.11.184 DEV"
 }

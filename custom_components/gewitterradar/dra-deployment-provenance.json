@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.183",
-  "build": "V4.11.183-DEV-2026-11-11",
-  "runtimeRevision": "411183r1",
-  "moduleSetId": "E411-183A1",
-  "baselineFeatureHead": "65fe212ae1edd6cd43b9c66f5958ba51e22021b9",
+  "productVersion": "4.11.184",
+  "build": "V4.11.184-DEV-2026-11-11",
+  "runtimeRevision": "411184r1",
+  "moduleSetId": "E411-184A1",
+  "baselineFeatureHead": "da214bfb646d888e0313c1fd82c0e716b9c8d77c",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Settings Vault preserves legacy card visibility flags and Medallion review metadata, with explicit browser reimport.",
+    "purpose": "Stable Settings Vault startup and Premium device profile setup.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

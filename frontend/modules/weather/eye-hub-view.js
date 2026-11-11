@@ -1,5 +1,5 @@
 import {NEON_CSS} from './eye-neon.js?v=411181r1';
-import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411183r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411184r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
 import {EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411181r1';
 import {EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';

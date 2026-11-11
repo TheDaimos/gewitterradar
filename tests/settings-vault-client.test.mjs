@@ -19,7 +19,7 @@ function storage() {
 }
 const exception = code => Object.assign(new Error(code), {code});
 
-function environment({remote = structuredClone(payload), onPatch, compatible = () => true} = {}) {
+function environment({remote = structuredClone(payload), onGet, onPatch, compatible = () => true} = {}) {
   const local = storage();
   const session = storage();
   local.setItem('gewitterradar:vault:v1:binding:scope', ID);
@@ -30,6 +30,7 @@ function environment({remote = structuredClone(payload), onPatch, compatible = (
     callWS: async message => {
       calls.push(message);
       if (message.type.endsWith('/get')) {
+        await onGet?.(message.request);
         return {
           schema: 1, settingsKeys: [KEY], jsonSettingsKeys: [KEY], recovery: false,
           profiles: [remote], profile: structuredClone(remote),
@@ -113,4 +114,61 @@ test('mixed module identity and schema incompatibility fail before any patch', a
   await client.start();
   assert.equal(client.status, 'reload');
   assert.equal(calls.length, 0);
+});
+
+test('startup shares one read and only an explicit retry restarts a failed lookup', async () => {
+  let fail = true;
+  let release;
+  const waiting = new Promise(resolve => { release = resolve; });
+  const {makeClient, calls} = environment({onGet: async () => {
+    await waiting;
+    if (fail) throw exception('disconnected');
+  }});
+  const client = makeClient();
+  const initial = client.start();
+  assert.strictEqual(client.start(), initial);
+  assert.strictEqual(client.start({retry: true}), initial);
+  release();
+  await initial;
+  assert.equal(client.status, 'offline');
+  await client.start();
+  assert.equal(calls.length, 1);
+  fail = false;
+  await client.start({retry: true});
+  assert.equal(client.status, 'saved');
+  assert.equal(calls.length, 2);
+  await client.start({retry: true});
+  assert.equal(calls.length, 2);
+});
+
+test('malformed profiles are rejected before hydration and local recovery cannot persist', async () => {
+  const remote = {...payload, settings: {[KEY]: []}};
+  const {makeClient, calls, local} = environment({remote});
+  const client = makeClient();
+  await client.start();
+  assert.equal(client.status, 'error');
+  assert.equal(client.profile, undefined);
+  client.openLocal();
+  assert.equal(client.status, 'local');
+  assert.equal(client.getItem(KEY), '{"grouped":false}');
+  assert.throws(() => client.setItem(KEY, '{}'), {code: 'settings_unavailable'});
+  assert.throws(() => client.removeItem(KEY), {code: 'settings_unavailable'});
+  await client.start({retry: true});
+  assert.equal(calls.length, 1);
+  assert.equal(local.getItem('gewitterradar:vault:v1:binding:scope'), ID);
+  assert.equal(local.getItem(KEY), '{"grouped":false}');
+});
+
+test('an obsolete binding asks for the available profiles once and preserves the local hint', async () => {
+  const {makeClient, calls, local} = environment({onGet: request => {
+    if (request.profileId) throw exception('settings_not_found');
+  }});
+  const client = makeClient();
+  await client.start();
+  assert.equal(client.status, 'choose');
+  assert.equal(client.profileId, null);
+  assert.equal(local.getItem('gewitterradar:vault:v1:binding:scope'), ID);
+  assert.deepEqual(calls.map(message => message.request), [{profileId: ID}, {}]);
+  await client.start();
+  assert.equal(calls.length, 2);
 });

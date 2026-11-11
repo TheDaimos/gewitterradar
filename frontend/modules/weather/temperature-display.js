@@ -1,5 +1,5 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411183r1';
-import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411183r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411184r1';
+import {bindPremiumPanelDrag,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel,PREMIUM_CLOSE} from './premium-ui.js?v=411184r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {installTemperatureUnitTranslations,temperatureInputValue,temperatureKelvinValue,temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
@@ -7,9 +7,9 @@ import {TEMPERATURE_STORAGE,readTemperatureConfig,normalizeTemperatureConfig,tem
 import {TEMPERATURE_FIELD,TEMPERATURE_COMMAND,parseTemperatureField,TemperatureFieldCache,sampleScalarInto} from './temperature-field.js?v=411162r1';
 import {windFieldViewport,windFieldVisibleBounds} from './wind-field.js?v=411162r1';
 import {TemperatureCanvas} from './temperature-canvas.js?v=411162r1';
-import {updateTemperatureLegends} from './temperature-legend.js?v=411183r1';
+import {updateTemperatureLegends} from './temperature-legend.js?v=411184r1';
 import {GeoPointAdapters} from './geopoint-context.js?v=411156r1';
-export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.8',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.temperature-display',version:'0.1.9',group:'Weather-Engine',function:'Weltweite Temperatur und thermische Advektion',subfunctions:['Temperatur 2 m','native Temperaturwerte','Advektion 850 hPa','GeoPointContext','Premium-Kartenschalter'],file:'modules/weather/temperature-display.js'});
 const ICON=new URL('../../assets/gr-temperature-premium-v1-136.webp', import.meta.url).href,ICON_HI=new URL('../../assets/gr-temperature-premium-v1-272.webp', import.meta.url).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const active=c=>c.visible&&(c.surface||c.labels||c.advection);

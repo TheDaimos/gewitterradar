@@ -1,7 +1,8 @@
+import {mountVaultSetup} from './settings-vault-setup.js?v=411184r1';
 import {
   acquireSettingsSlot, releaseSettingsSlot, requestId, SettingsVaultClient,
-} from '../core/settings-vault.js?v=411183r1';
-import {APPLICATION_RELEASE} from '../../version.js?v=411183r1';
+} from '../core/settings-vault.js?v=411184r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411184r1';
 
 const TITLE = 'Userprofile & Sicherungen';
 const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
@@ -23,7 +24,7 @@ const ERRORS = {
   unknown_command: 'Die installierte HA-Integration stellt den Settings Vault noch nicht bereit.',
   vault_binding: 'Diese Karteninstanz benötigt eine eindeutige settings_vault_id oder verfügbaren Browserspeicher.',
 };
-const STYLE = '.gr-vault{display:grid;gap:12px;color:inherit}.gr-vault fieldset{display:grid;min-width:0;gap:8px;border:1px solid #cda96645;border-radius:12px;padding:10px;margin:0}.gr-vault legend{padding:0 6px;font-weight:700}.gr-vault :is(button,input,select){box-sizing:border-box;font:inherit;max-width:100%;min-height:38px;border:1px solid #cda96665;border-radius:8px;background:#17212d;color:#f5e6ca;padding:7px 10px}.gr-vault button{cursor:pointer;text-align:left;font-weight:650}.gr-vault button:disabled{opacity:.5;cursor:default}.gr-vault :focus-visible{outline:2px solid #efce86;outline-offset:2px}.gr-vault label,.gr-vault details[open]{display:grid;gap:6px}.gr-vault input[type=checkbox]{min-height:0;justify-self:start}.gr-vault .gr-vault-row{display:flex;flex-wrap:wrap;gap:8px}.gr-vault p{margin:0;overflow-wrap:anywhere}.gr-vault summary{cursor:pointer;padding:7px 0}.gr-vault [role=status]{color:#efce86}.gr-vault [role=alert]:empty{display:none}.gr-vault pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:12rem;overflow:auto}.gr-vault-setup{display:block;padding:16px;max-width:520px;margin:auto;color:var(--primary-text-color,#e8e4dc)}';
+const STYLE = '.gr-vault{display:grid;gap:12px;color:inherit}.gr-vault fieldset{display:grid;min-width:0;gap:8px;border:1px solid #cda96645;border-radius:12px;padding:10px;margin:0}.gr-vault legend{padding:0 6px;font-weight:700}.gr-vault :is(button,input,select){box-sizing:border-box;font:inherit;max-width:100%;min-height:38px;border:1px solid #cda96665;border-radius:8px;background:#17212d;color:#f5e6ca;padding:7px 10px}.gr-vault button{cursor:pointer;text-align:left;font-weight:650}.gr-vault button:disabled{opacity:.5;cursor:default}.gr-vault :focus-visible{outline:2px solid #efce86;outline-offset:2px}.gr-vault label,.gr-vault details[open]{display:grid;gap:6px}.gr-vault input[type=checkbox]{min-height:0;justify-self:start}.gr-vault .gr-vault-row{display:flex;flex-wrap:wrap;gap:8px}.gr-vault p{margin:0;overflow-wrap:anywhere}.gr-vault summary{cursor:pointer;padding:7px 0}.gr-vault [role=status]{color:#efce86}.gr-vault [role=alert]:empty{display:none}.gr-vault pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:12rem;overflow:auto}';
 
 function node(tag, content) {
   const element = document.createElement(tag);
@@ -122,94 +123,6 @@ function form(root, client) {
   return {content, run, error};
 }
 
-function setupView(owner, retry, boot) {
-  const client = owner._settingsVault;
-  let setup = owner.querySelector(':scope > .gr-vault-setup');
-  if (!setup) {
-    setup = node('ha-card');
-    setup.className = 'gr-vault-setup';
-    setup.style.cssText = 'display:block;padding:16px;max-width:520px;margin:auto';
-    owner.append(setup);
-  }
-  const {content, run} = form(setup, client);
-  content.prepend(node('strong', TITLE));
-  if (client.status === 'loading') return;
-  if (client.status === 'reload') {
-    content.append(button('Frontend neu laden', () => location.reload()));
-    return;
-  }
-  if (client.status !== 'choose' && client.status !== 'recovery') {
-    content.append(button('Erneut verbinden', () => void run(retry)));
-    return;
-  }
-
-  const nameInput = node('input');
-  nameInput.value = 'Dieses Gerät';
-  nameInput.maxLength = 64;
-  const picker = profileSelect(client.profiles);
-  const select = async () => {
-    const {profile} = await client.call('get', {profileId: picker.value});
-    if (client.recovery) client.hydrate(profile);
-    else client.select(profile);
-    boot();
-  };
-  const use = disclosure('Vorhandenes Profil verwenden');
-  if (client.profiles.length) {
-    use.append(field('Gespeichertes Profil', picker));
-    if (!client.recovery) {
-      use.append(button('Als eigenes Profil kopieren', () => void run(async () => {
-        await client.create('copy', {profileId: picker.value, name: nameInput.value});
-        boot();
-      })));
-      use.append(disclosure('Bestehende Zuordnung wiederherstellen',
-        node('p', 'Änderungen gelten danach für dieses gespeicherte Profil.'),
-        button('Dieses Profil zuordnen', () => void run(select))));
-    } else use.append(button('Sicherung ansehen', () => void run(select)));
-  } else use.append(node('p', 'Für dieses Konto ist noch kein Geräteprofil vorhanden.'));
-
-  const defaults = button('Mit Standardeinstellungen starten', () => void run(async () => {
-    if (Object.keys(client.legacy.values).length &&
-        !confirm('Die lokalen Einstellungen bleiben erhalten. Ein neues Profil mit Standardeinstellungen anlegen?')) return;
-    await client.create('create', {name: nameInput.value});
-    boot();
-  }));
-  defaults.disabled = client.recovery;
-  content.append(field('Anzeigename für ein neues Profil', nameInput), use, defaults);
-
-  if (!client.recovery && (Object.keys(client.legacy.values).length || client.legacy.unavailable)) {
-    const values = Object.keys(client.legacy.values);
-    const migration = disclosure('Bisherige Browsereinstellungen');
-    migration.open = true;
-    migration.append(node('p', values.length
-      ? values.length + ' lokale Einstellungsbereiche gefunden. Die Übernahme legt ein eigenes Profil an.'
-      : 'Der bisherige Browserspeicher konnte nicht gelesen werden.'));
-    const preview = node('div');
-    if (values.length) migration.append(
-      button('Übernahme prüfen', () => void run(async () => {
-        const result = await client.call('migration_preview', {legacy: client.legacy.values});
-        preview.replaceChildren(node('p', result.keys.length + ' übernehmbare Einstellungsbereiche.'));
-        if (result.issues.length) preview.append(node('p', 'Unvollständig lesbare Bereiche: ' + result.issues.join(', ')));
-        if (result.keys.length) preview.append(button('Browsereinstellungen übernehmen', () => void run(async () => {
-          await client.create('create', {name: nameInput.value, legacy: client.legacy.values});
-          boot();
-        })));
-      })), preview,
-      button('Lokale Originaldaten exportieren', () => fileDownload(
-        'gewitterradar-browser-recovery.json',
-        JSON.stringify({format: 'gewitterradar.legacy-recovery', ...client.legacy}, null, 2),
-      )),
-    );
-    if (client.legacy.unreadable.length) migration.append(node('p', 'Nicht lesbare Werte: ' + client.legacy.unreadable.length));
-    content.append(migration);
-  }
-  if (client.recovery && client.profiles.length) {
-    content.append(button('Sicherung exportieren', () => void run(async () => {
-      const {text} = await client.call('export');
-      fileDownload('gewitterradar-profile.json', text);
-    })));
-  }
-}
-
 const AREAS = [
   ['Eye und Aura', /eye-bubble|premium-ui:v1:eye-hub/],
   ['Wind und Wind-Studio', /wind-ui|wind-studio|premium-ui:v1:(?:weather-)?wind-/],
@@ -240,6 +153,11 @@ function mountMenu(owner) {
   if (!root) return;
   const client = owner._settingsVault;
   const {content, run} = form(root, client);
+  if (client?.localOnly) {
+    content.append(node('p', 'Lokale Ansicht · schreibgeschützt'),
+      button('Mit dem Profildienst verbinden', () => location.reload()));
+    return;
+  }
   if (!client?.profile) return;
   const profile = client.profile;
   const reloadWith = chosen => {
@@ -459,87 +377,119 @@ export function installSettingsVault(Card, compatible) {
   const connect = proto.connectedCallback;
   const disconnect = proto.disconnectedCallback;
 
-  function boot(owner) {
-    if (!owner.isConnected || owner._vaultBooted || !owner._vaultHass || !owner._vaultConfig) return;
+  function renderHass(owner) {
+    owner._vaultRenderedHass = owner._vaultHass;
+    setHass.call(owner, owner._vaultHass);
+  }
+
+  function resume(owner) {
+    if (owner._vaultActive || !owner.isConnected) return;
+    owner._vaultActive = true;
+    if (owner._vaultRenderedHass !== owner._vaultHass) renderHass(owner);
     const client = owner._settingsVault;
-    if (client && !client.profile) return;
-    const setup = owner.querySelector(':scope > .gr-vault-setup');
-    setup?.vaultStatusCleanup?.();
-    setup?.remove();
+    if (client && !client.localOnly) {
+      client.paused = false;
+      client.schedule();
+    }
+    connect.call(owner);
+  }
+
+  function boot(owner) {
+    if (!owner.isConnected || owner._vaultBooted || owner._vaultReloading) return;
+    const client = owner._settingsVault;
+    if (client && !client.profile && !client.localOnly) return;
+    owner._vaultSetup?.remove();
+    owner._vaultSetup = null;
     owner._vaultBooted = true;
     setConfig.call(owner, owner._vaultConfig);
-    setHass.call(owner, owner._vaultHass);
-    connect.call(owner);
+    resume(owner);
     mountMenu(owner);
   }
 
-  async function init(owner) {
+  async function lookup(owner, retry = false) {
+    const client = owner._settingsVault;
+    const flight = client.start({retry});
+    owner._vaultSetup?.present();
+    await flight;
+    if (owner._vaultReloading || owner._settingsVault !== client) return;
+    owner._vaultSetup?.present();
+    if (client.profile) boot(owner);
+  }
+
+  function initialize(owner) {
     const hass = owner._vaultHass;
-    if (!owner.isConnected || !owner._vaultConfig || !hass || owner._vaultBooted || owner._vaultStarting) return;
+    if (!owner.isConnected || !owner._vaultConfig || !hass || owner._vaultBooted || owner._vaultReloading) return;
+    // Once a client owns startup, HA state churn may refresh its transport but
+    // cannot restart profile resolution or replace the setup.
+    if (owner._settingsVault) {
+      boot(owner);
+      return;
+    }
     if (!hass.user?.id || typeof hass.callWS !== 'function') {
       if (hass.auth || hass.connection) return;
       boot(owner);
       return;
     }
-    owner._vaultStarting = true;
     const slot = acquireSettingsSlot(owner, owner._vaultConfig, hass.user.id);
-    const client = owner._settingsVault ||= new SettingsVaultClient(hass, slot, {compatible});
-    client.hass = hass;
-    client.paused = false;
-    const retry = () => init(owner);
-    const start = () => boot(owner);
-    client.setStatus('loading');
-    setupView(owner, retry, start);
-    try {
-      await client.start();
-      if (!owner.isConnected) return;
-      if (client.profile) boot(owner);
-      else setupView(owner, retry, start);
-    } finally {
-      owner._vaultStarting = false;
-    }
+    const client = owner._settingsVault = new SettingsVaultClient(hass, slot, {compatible});
+    client.paused = true;
+    owner._vaultSetup = mountVaultSetup(owner, client, {
+      retry: () => lookup(owner, true), boot: () => boot(owner), safeError, fileDownload,
+    });
+    void lookup(owner);
   }
 
   proto.setConfig = function(config) {
     this._vaultConfig = config || {};
+    if (this._vaultReloading) return;
     if (this._vaultBooted) setConfig.call(this, this._vaultConfig);
-    else void init(this);
+    else initialize(this);
   };
   Object.defineProperty(proto, 'hass', {
     configurable: true,
     get() { return this._vaultHass; },
     set(hass) {
-      const old = this._vaultHass;
-      if (old?.user?.id && old.user.id !== hass?.user?.id) {
-        // This element may still contain the previous user's profile. A fresh
-        // document is required before it can be displayed for another user.
+      if (this._vaultReloading) return;
+      const user = hass?.user?.id;
+      const previous = this._vaultHass?.user?.id;
+      if (previous && !user) return;
+      if (previous && previous !== user) {
+        this._vaultReloading = true;
         this.style.visibility = 'hidden';
-        if (this._settingsVault) this._settingsVault.paused = true;
+        this._settingsVault?.retire();
         location.reload();
         return;
       }
       this._vaultHass = hass;
       if (this._settingsVault) this._settingsVault.hass = hass;
-      if (this._vaultBooted) setHass.call(this, hass);
-      else void init(this);
+      if (this._vaultActive) renderHass(this);
+      else initialize(this);
     },
   });
   proto.connectedCallback = function() {
-    if (this._vaultBooted) {
-      if (this._settingsVault) {
-        this._settingsVault.paused = false;
-        this._settingsVault.schedule();
+    const client = this._settingsVault;
+    if (client?.slot) {
+      const slot = acquireSettingsSlot(this, this._vaultConfig, client.userId);
+      if (slot !== client.slot) {
+        releaseSettingsSlot(this, slot);
+        client.binding = null;
+        client.bindingSaved = false;
       }
-      connect.call(this);
-    } else void init(this);
+    }
+    if (this._vaultBooted && !this._vaultReloading) resume(this);
+    else initialize(this);
   };
   proto.disconnectedCallback = function() {
-    if (this._settingsVault) {
-      releaseSettingsSlot(this, this._settingsVault.slot);
-      this._settingsVault.paused = true;
-      if (this._settingsVault.dirty) void this._settingsVault.flush();
+    const client = this._settingsVault;
+    if (client) {
+      releaseSettingsSlot(this, client.slot);
+      client.paused = true;
+      if (client.dirty && !client.retired) void client.flush();
     }
-    if (this._vaultBooted) disconnect.call(this);
+    if (this._vaultActive) {
+      this._vaultActive = false;
+      disconnect.call(this);
+    }
   };
 }
 

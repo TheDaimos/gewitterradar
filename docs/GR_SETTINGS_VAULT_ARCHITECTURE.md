@@ -1,6 +1,6 @@
 # Settings Vault · Architektur
 
-GR 4.11.183 DEV / HA 0.25.90 verwendet den Vault mit Schema 1. Dieses Schema ist unabhängig von der GR-Releaseversion. Die geschützte Vergleichsbasis ist GR 4.11.181 / HA 0.25.88, Tag `v4.11.181-dev`.
+GR 4.11.184 DEV / HA 0.25.91 verwendet den Vault mit Schema 1. Dieses Schema ist unabhängig von der GR-Releaseversion. Die geschützte Vergleichsbasis ist GR 4.11.181 / HA 0.25.88, Tag `v4.11.181-dev`.
 
 ## Eigentum und Zuordnung
 
@@ -13,6 +13,8 @@ GR 4.11.183 DEV / HA 0.25.90 verwendet den Vault mit Schema 1. Dieses Schema ist
 ## Start und Schreibpfad
 
 `settings-vault.js` implementiert einen Adapter je Karteninstanz. Der Bootstrap holt das gewählte Profil und prüft Schema und Modulsatz vor Kartenkonfiguration und Rendererstart. Die registrierten Module verwenden weiterhin dieselben Normalisierer, Defaults und visuellen Werte wie V181. Ein neues Standardprofil speichert eine leere Menge von Überschreibungen. Die laufende GR-Version liefert die Defaults für bisher ungesetzte Felder. Die V181-Browserkeys werden in HA nur gelesen. Der herkömmliche Standalone-Modus ohne authentifiziertes HA-Objekt verwendet den lokalen Speicher.
+
+Ab V184 besitzt jede Karteninstanz genau einen Startvorgang. HA-Zustandsänderungen aktualisieren den Transport, während Auswahl, Formularfelder und Listener montiert bleiben. Bei einem fehlgeschlagenen Start kann der Nutzer erneut verbinden oder die Karte bewusst mit den bisherigen Browserwerten schreibgeschützt öffnen. Diese Ansicht speichert keine Vault-Einstellungen und schreibt die ursprüngliche Zuordnung nicht um. [Implementierungsbericht V184](GR_SETTINGS_VAULT_P0_STABILIZATION_V4_11_184.md)
 
 Bedieneingaben aktualisieren die Ansicht direkt. Der Adapter bündelt Schreibvorgänge für 350 ms und sendet je geändertem Speicherbereich die vorherige und die gewünschte Fassung. Der Server vergleicht die Blätter der beiden Fassungen. Arrays wie Slotlisten und Wind-Studio-Presets sind atomare Felder. Disjunkte Änderungen lassen sich zusammenführen. Überlappende Änderungen liefern einen Konflikt und beide Fassungen bleiben verfügbar. Eine explizite Konfliktauflösung lädt den aktuellen Stand und übernimmt die ausgewählte Fassung. Wiederherstellung, Import über ein Profil und Kopieren in ein Profil setzen eine Revisionsgrenze für ältere Schreibvorgänge.
 

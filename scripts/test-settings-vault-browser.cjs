@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {readFileSync} = require('node:fs');
+const {readFileSync, mkdirSync} = require('node:fs');
 const {randomUUID} = require('node:crypto');
 const path = require('node:path');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -9,7 +9,7 @@ const legacy = JSON.parse(readFileSync(path.join(__dirname, '../tests/settings-v
 const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8').match(/version:"([^"]+)"/)[1];
 const EYE = 'gewitterradar:eye-bubble:v1';
 const jsonKeys = Object.keys(legacy).filter(key => legacy[key].startsWith('{'));
-const mock = {profiles: {}, migrationIssues: new Map(), log: [], offline: false, deferGet: null};
+const mock = {profiles: {}, migrationIssues: new Map(), receipts: new Map(), log: [], offline: false, deferGet: null, loseCreateReply: false};
 
 const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
 const decode = (key, raw) => jsonKeys.includes(key) ? JSON.parse(raw) : raw;
@@ -34,12 +34,19 @@ function serverCall(user, message) {
     }
     if (op === 'migration_preview') return {keys: Object.keys(request.legacy), issues: []};
     if (op === 'create' || op === 'copy') {
+      const receipt = user + ':' + request.requestId;
+      if (mock.receipts.has(receipt)) return {profile: profiles[mock.receipts.get(receipt)]};
       const id = randomUUID().replaceAll('-', '');
       const settings = op === 'copy' ? profiles[request.profileId].settings : Object.fromEntries(
         Object.entries(request.legacy || {}).map(([key, value]) => [key, decode(key, value)]),
       );
       const profile = {id, name: request.name, revision: 1, updatedAt: new Date().toISOString(), settings};
       profiles[id] = structuredClone(profile);
+      mock.receipts.set(receipt, id);
+      if (mock.loseCreateReply) {
+        mock.loseCreateReply = false;
+        return {error: 'settings_storage'};
+      }
       return {profile};
     }
     if (op === 'patch') {
@@ -59,7 +66,7 @@ function serverCall(user, message) {
 function vaultFixture() {
   return flowFixture({decorate: html => html
     .replace("localStorage.setItem('gewitterradar-about-onboarding-version','1');", '')
-    .replace("card.hass={states:", "card.hass={user:{id:window.testUser,name:'Testbenutzer'},states:")
+    .replace("card.hass={states:", "card.hass={user:{id:window.testUser,name:'Testbenutzer'},auth:{},connection:new EventTarget(),connected:true,states:")
     .replace("callWS:async query=>{", "callWS:async query=>{\n if(query.type.startsWith('gewitterradar/settings/')){const result=await window.settingsVaultTestCall(query);if(result.error)throw Object.assign(new Error(result.error),{code:result.error});return result;}")
   });
 }
@@ -107,6 +114,7 @@ const values = page => page.evaluate(async () => {
 
 async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
   await page.getByRole('button', {name: label, exact: true}).click();
+  if (label !== 'Dieses Profil zuordnen') await page.getByRole('button', {name: 'Profil erstellen', exact: true}).click();
   try {
     await page.waitForFunction(() => window.ready && card._map && card._settingsVault?.profile, null, {timeout: 15000});
   } catch (error) {
@@ -119,6 +127,37 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
   }
 }
 
+async function refreshHaCard(page, {reattach = false, partialUser = false} = {}) {
+  return page.evaluate(async ({reattach, partialUser}) => {
+    const setup = card.querySelector('.gr-vault-setup');
+    const first = setup.querySelector('button, summary');
+    const focus = document.activeElement;
+    const text = focus?.value;
+    const hass = card.hass;
+    for (let i = 0; i < 8; i++) {
+      hass.connection.dispatchEvent(new Event(i % 2 === 0 ? 'ready' : 'disconnected'));
+      card.hass = {...hass, states: {...hass.states}, connected: i % 2 === 0};
+      card.setConfig({initial_zoom: 7});
+      if (partialUser && i === 2) card.hass = {...hass, user: undefined};
+      if (reattach && i === 4) {
+        const parent = card.parentNode;
+        card.remove();
+        parent.append(card);
+      }
+      await new Promise(requestAnimationFrame);
+    }
+    return setup.isConnected && setup.querySelector('button, summary') === first
+      && (reattach || (document.activeElement === focus && focus?.value === text));
+  }, {reattach, partialUser});
+}
+
+async function screenshotSetup(page, name) {
+  const out = process.env.GR_VAULT_SCREENSHOTS;
+  if (!out) return;
+  mkdirSync(out, {recursive: true});
+  await page.locator('.gr-vault-setup').screenshot({path: path.join(out, name + '.png')});
+}
+
 (async () => {
   const current = vaultFixture();
   const reference = flowFixture({ref: '4587b76ca254fdc62cf179560fca9f61c1214133'});
@@ -127,7 +166,29 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
   const browser = await chromium.launch({headless: true, ...(process.env.CHROME_PATH ? {executablePath: process.env.CHROME_PATH} : {})});
   try {
     const desktop = await open(browser, current, {width: 1240, height: 850});
-    await startProfile(desktop.page);
+    await desktop.page.getByRole('button', {name: 'Mit Standardeinstellungen starten', exact: true}).waitFor();
+    const initialReads = mock.log.filter(entry => entry.op === 'get').length;
+    assert(await refreshHaCard(desktop.page), 'HA state updates must not replace the profile picker');
+    assert.equal(mock.log.filter(entry => entry.op === 'get').length, initialReads);
+    assert.equal(await desktop.page.getByRole('textbox', {name: 'Profilname'}).count(), 0);
+    await desktop.page.getByRole('button', {name: 'Mit Standardeinstellungen starten'}).click();
+    const nameInput = desktop.page.getByRole('textbox', {name: 'Profilname'});
+    assert.equal(await nameInput.inputValue(), 'Dieses Gerät');
+    await nameInput.fill('Desktop-Test');
+    assert(await refreshHaCard(desktop.page, {partialUser: true}), 'Focus and the typed name must survive HA updates');
+    assert.equal(await nameInput.inputValue(), 'Desktop-Test');
+    mock.loseCreateReply = true;
+    await desktop.page.getByRole('button', {name: 'Profil erstellen'}).evaluate(button => { button.click(); button.click(); });
+    await desktop.page.getByRole('alert').filter({hasText: 'konnte den Speicherstand nicht bestätigen'}).waitFor();
+    assert.equal(await desktop.page.evaluate(() => Boolean(card._map)), false);
+    assert.equal(await nameInput.inputValue(), 'Desktop-Test');
+    assert.equal(mock.log.filter(entry => entry.op === 'create').length, 1);
+    await desktop.page.getByRole('button', {name: 'Profil erstellen'}).click();
+    await desktop.page.waitForFunction(() => card._map && card._settingsVault.profile);
+    const desktopCreates = mock.log.filter(entry => entry.op === 'create');
+    assert.equal(desktopCreates.length, 2);
+    assert.equal(desktopCreates[0].request.requestId, desktopCreates[1].request.requestId);
+    assert.equal(Object.values(mock.profiles.a).length, 1);
     assert.deepEqual(Object.values(mock.profiles.a)[0].settings, {});
 
     const androidView = {width: 393, height: 851};
@@ -140,10 +201,18 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     mock.deferGet = new Promise(resolve => { releaseGet = resolve; });
     const android = await open(browser, current, androidView, {initial: legacy});
     await android.page.getByRole('status', {name: ''}).filter({hasText: 'Profil wird geladen'}).waitFor();
+    const pendingReads = mock.log.filter(entry => entry.op === 'get').length;
+    assert(await refreshHaCard(android.page, {reattach: true, partialUser: true}));
+    assert.equal(mock.log.filter(entry => entry.op === 'get').length, pendingReads);
     assert.equal(await android.page.evaluate(() => Boolean(card._map)), false);
     assert.equal(mock.log.some(entry => entry.op === 'patch'), false);
     mock.deferGet = null;
     releaseGet();
+    await android.page.getByRole('heading', {name: 'GewitterRadar Pro'}).waitFor();
+    await android.page.getByRole('button', {name: 'Vorhandenes Profil verwenden'}).waitFor();
+    assert.equal(await android.page.getByText('powered by WeatherRouter', {exact: true}).count(), 1);
+    await screenshotSetup(android.page, 'android-setup');
+    await android.page.getByRole('button', {name: 'Bisherige Browsereinstellungen'}).tap();
     await android.page.getByRole('button', {name: 'Übernahme prüfen'}).click();
     await startProfile(android.page, 'Browsereinstellungen übernehmen');
     assert.deepEqual(await values(android.page), expected);
@@ -173,9 +242,11 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     // New context models complete client storage loss while HA keeps the server profile.
     const cleared = await open(browser, current, androidView);
     await cleared.page.getByRole('button', {name: 'Mit Standardeinstellungen starten'}).waitFor();
-    await cleared.page.getByText('Vorhandenes Profil verwenden', {exact: true}).click();
+    await cleared.page.getByRole('button', {name: 'Vorhandenes Profil verwenden', exact: true}).tap();
     await cleared.page.getByRole('combobox', {name: 'Geräteprofil'}).selectOption(androidId);
-    await cleared.page.getByText('Bestehende Zuordnung wiederherstellen', {exact: true}).click();
+    await screenshotSetup(cleared.page, 'android-existing');
+    assert(await refreshHaCard(cleared.page, {partialUser: true}));
+    assert.equal(await cleared.page.getByRole('combobox', {name: 'Geräteprofil'}).inputValue(), androidId);
     await startProfile(cleared.page, 'Dieses Profil zuordnen');
     assert.deepEqual(await values(cleared.page), {...expected, eyeGap: 23});
     assert.equal(await cleared.page.evaluate(key => localStorage.getItem(key), EYE), null);
@@ -183,14 +254,27 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     const ipad = await open(browser, current, {width: 820, height: 1180}, {
       initial: {...legacy, 'gewitterradar:wind-ui:v1': '{"visible":true,"mode":"arrows"}'},
     });
+    await ipad.page.getByRole('button', {name: 'Bisherige Browsereinstellungen'}).click();
     await ipad.page.getByRole('button', {name: 'Übernahme prüfen'}).click();
     await startProfile(ipad.page, 'Browsereinstellungen übernehmen');
     assert.equal((await values(ipad.page)).wind, 'arrows');
     assert.equal(Object.values(mock.profiles.a).length, 3);
     assert.equal(mock.profiles.a[androidId].settings['gewitterradar:wind-ui:v1'].mode, 'snake');
 
+    const copy = await open(browser, current, {width: 1024, height: 768});
+    await copy.page.getByRole('button', {name: 'Vorhandenes Profil verwenden', exact: true}).click();
+    await copy.page.getByRole('combobox', {name: 'Geräteprofil'}).selectOption(androidId);
+    await copy.page.getByRole('button', {name: 'Als eigenes Profil kopieren', exact: true}).click();
+    await copy.page.getByRole('textbox', {name: 'Profilname'}).fill('Android-Kopie');
+    await copy.page.getByRole('button', {name: 'Profil erstellen'}).click();
+    await copy.page.waitForFunction(() => card._map && card._settingsVault.profile);
+    const copiedId = await copy.page.evaluate(() => card._settingsVault.profileId);
+    assert.notEqual(copiedId, androidId);
+    assert.deepEqual(mock.profiles.a[copiedId].settings, mock.profiles.a[androidId].settings);
+    assert.deepEqual(await values(copy.page), {...expected, eyeGap: 23});
+
     const secondUser = await open(browser, current, {width: 1024, height: 768}, {user: 'b'});
-    await secondUser.page.getByText('Vorhandenes Profil verwenden', {exact: true}).click();
+    await secondUser.page.getByRole('button', {name: 'Vorhandenes Profil verwenden', exact: true}).click();
     await secondUser.page.getByText('Für dieses Konto ist noch kein Geräteprofil vorhanden.').waitFor();
 
     // Profiles with a V182 migration issue can retry into a separate profile.
@@ -207,8 +291,25 @@ async function startProfile(page, label = 'Mit Standardeinstellungen starten') {
     assert.notEqual(imported.id, androidId);
     assert.equal(imported.settings['gewitterradar:v409:map-compass-visible'], 'false');
     assert.equal(mock.profiles.a[androidId].settings[EYE].eyeAuraGap, 23);
-    for (const result of [desktop, android, cleared, ipad, secondUser]) assert.deepEqual(result.errors, []);
-    console.log('PASS: V181 effective settings, hydration before render, profile menu, offline retry, complete client storage loss, independent devices and accounts');
+    // Startup connection failure stays recoverable and never writes defaults.
+    mock.offline = true;
+    const offline = await open(browser, current, androidView, {user: 'offline', initial: legacy});
+    const retry = offline.page.getByRole('button', {name: 'Erneut verbinden'});
+    await retry.waitFor();
+    assert(await refreshHaCard(offline.page, {partialUser: true}));
+    assert.equal(mock.log.filter(entry => entry.user === 'offline').length, 1);
+    await retry.click();
+    await retry.waitFor();
+    assert.equal(mock.log.filter(entry => entry.user === 'offline').length, 2);
+    await offline.page.getByRole('button', {name: 'Karte mit lokalen Einstellungen öffnen'}).click();
+    await offline.page.waitForFunction(() => card._map && card._settingsVault.localOnly);
+    assert.deepEqual(await values(offline.page), expected);
+    await offline.page.evaluate(() => card._eyeHubPatch({eyeAuraGap: 3}));
+    assert.equal(await offline.page.evaluate(key => localStorage.getItem(key), EYE), legacy[EYE]);
+    assert.deepEqual(mock.log.filter(entry => entry.user === 'offline').map(entry => entry.op), ['get', 'get']);
+    mock.offline = false;
+    for (const result of [desktop, android, cleared, ipad, copy, secondUser, offline]) assert.deepEqual(result.errors, []);
+    console.log('PASS: stable startup during HA/WS churn, idempotent retry, local recovery, V181 migration and rendering, cache loss, independent devices and accounts');
   } finally {
     await browser.close();
     for (const f of fixtures) f.server.close();
