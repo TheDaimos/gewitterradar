@@ -1,19 +1,18 @@
 // V4.11.68: real reference-focus module chooses exact arrival zoom or original radius fit.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {installClustersRecent} from '../frontend/modules/map/clusters-recent.js';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 const source=await read('frontend/modules/map/clusters-recent.js');
 const controls=await read('frontend/modules/ui/controls.js');
-assert.match(source,/"version": "1.0.8"/);
-assert.match(controls,/"version": "1.1.27"/);
+assert.match(source,/"version": "1.0.9"/);
+assert.match(controls,/"version": "1.1.30"/);
 for(const marker of ["gr-reference-arrival-zoom","Zoomstufe nach Standortwechsel","Automatisch (Radius)","length:14","selectedReferenceZoom='8'","referenceZoomChoice.row","referenceZoomChoice.close()"]){
   assert.ok(controls.includes(marker),'Missing settings dropdown marker: '+marker);
 }
-const raw=source.replace(/^import [^\n]+\n/,'').replaceAll('export const','const');
-const install=new Function('defineModule',raw+'\nreturn installClustersRecent;')(
-  (_meta,factory)=>()=>factory({finiteNumber:value=>{const n=Number(value);return Number.isFinite(n)?n:null;}})
-);
-const methods=install();
+class Card {}
+installClustersRecent(Card,{finiteNumber:value=>{const n=Number(value);return Number.isFinite(n)?n:null;}});
+const methods=Card.prototype;
 const events=[];
 const calls=[];
 const bounds={isValid:()=>true,getCenter:()=>({lat:48.85,lng:2.35})};
@@ -27,7 +26,7 @@ const ctx={_map:map,_mapDiagnosticLog:(type,data)=>events.push({type,data}),_obs
 const reference={lat:48.85,lon:2.35};
 function focus(choice){
   calls.length=0;events.length=0;
-  global.localStorage={getItem:()=>choice};
+  ctx._settingsVault={getItem:key=>{assert.equal(key,'gr-reference-arrival-zoom');return choice;}};
   methods._focusReferenceStormRadius.call(ctx,reference);
   return calls[0];
 }

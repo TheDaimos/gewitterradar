@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {installClustersRecent} from '../frontend/modules/map/clusters-recent.js';
 const original=await readFile('frontend/modules/map/clusters-recent.js','utf8');
 assert.doesNotMatch(original,/this\._markerLayer\.clearLayers\(\)/);
 assert.match(original,/_syncIndividualStrikeMarkers\(individual,L,now,dangerRadius\)/);
 assert.match(original,/_syncIndividualStrikeMarkers\(\[\],L,now,dangerRadius\)/);
-const adapted=original.replace(/^import[^\n]*\n/,'const defineModule=(meta,factory)=>(CardClass,deps)=>{Object.defineProperties(CardClass.prototype,Object.getOwnPropertyDescriptors(factory(deps)));};\n');
-const mod=await import('data:text/javascript;base64,'+Buffer.from(adapted).toString('base64'));
 class Card {}
-mod.installClustersRecent(Card,{C:{danger:'#f34',gold:'#e9b',blue:'#39f'},ACTIVE_MINUTES:10});
+installClustersRecent(Card,{C:{danger:'#f34',gold:'#e9b',blue:'#39f'},ACTIVE_MINUTES:10});
 let created=0,removed=0,cleared=0,replaced=0;
 const L={
   divIcon(x){return x;},
