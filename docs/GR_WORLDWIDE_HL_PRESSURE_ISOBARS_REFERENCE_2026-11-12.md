@@ -60,3 +60,15 @@ GR konsumiert getrennt nach Datenart, aber mit kohärenten Zeit-/Provenienzmetad
 3. **Offizielle Open-Data-Referenzen:** [ECCC GDPS](https://github.com/ECCC-MSC/open-data/blob/master/docs/msc-data/nwp_gdps/readme_gdps-datamart_en.md), [ECMWF Open Data](https://www.ecmwf.int/en/forecasts/datasets/open-data), [FMI Modelldaten](https://en.ilmatieteenlaitos.fi/open-data-manual-forecast-models), [DWD NWP v1](https://opendata.dwd.de/weather/nwp/v1/m/).
 
 **Status bei Anlage:** Es wurden ausschließlich Recherche- und Architekturdateien erstellt. Kein WR-PMSL-/H/T-Datenabruf implementiert, keine neue WR-Capability offiziell live registriert, keine neue DRA-Version oder HA DEV-Installation behauptet. Weiteres Vorgehen: tatsächliche ECCC-GDPS GeoJSON auf WR DEV verifizieren, anschließend providerneutralen H/T-Vertrag und globale Isobaren-Fallbacks implementieren und testen.
+
+## Fortschreibung 12.11.2026 — Erster WR-Synoptic-Entwicklungsschritt
+
+**WR 0.10.299 DEV / Loader 302** hat jetzt implementierte Quellcodepfade für einen optionalen, authentifizierten `weather_router/consumer/resolve_synoptic`-V2-Consumer mit zwei getrennten Fähigkeiten:
+
+- `weather.synoptic.pressure_centers`: globale ECCC-GDPS-H/T-GeoJSON (mit strenger hPa-/Point-/Zeitvalidierung und Begrenzungen).
+- `weather.synoptic.isobars`: globale NOAA-GFS-Meereshöhendruckfelder über Unidata NCSS; 4-hPa-Marching-Squares-Kontursegmente im begrenzten Worker.
+
+Die Erweiterungen liegen im vorhandenen `eccc_geomet`- und `noaa_nws`-Provider und sind **nicht** mit der noch geplanten vollständigen DWD-/ECMWF-/MetCoOp-Multi-Provider-Fallbackarchitektur gleichzusetzen. **Tests sind geschrieben, aber nicht ausgeführt; keine reale ECCC-Propertyprobe, GFS-Liveantwort, HA DEV-VM109-Installation oder eigenständiges ZIP-/Release-Artefakt bestätigt.**
+
+**Technischer Umsetzungs-/Prüfbericht:** [WR 0.10.299 SYNOPTIC-01](https://github.com/TheDaimos/weather-router-dev/blob/deploy/dev/docs/p7-010-coordination/WR_SYNOPTIC_PMSL_DEV_IMPLEMENTATION_010299_2026-11-12.md).
+
