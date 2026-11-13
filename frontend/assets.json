@@ -3,7 +3,7 @@
     "file": "assets/gewitterradar-about-close-premium.webp",
     "sha256": "f78a0fe16dff96fccffb39606731e5d71b9f33c3facb51d92a5b7f1813b77e53",
     "protected": false,
-    "referenced": false,
+    "referenced": true,
     "retention": "legacy"
   },
   {
@@ -82,8 +82,13 @@
     "protected": false
   },
   {
+    "file": "assets/gewitterradar-help-info-premium-v1.webp",
+    "sha256": "afbe49f7e6bc1550ebe596eccd181b167c6a2dbcc1175e9fd859a10c4874059c",
+    "protected": false
+  },
+  {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "2dfa48d6222fda3ca0284487a4b50276bdece35338a7caad64d2756829fc11f0",
+    "sha256": "ff4876704ed3fe32ec879ff6cff5a49c7dd58b6b2aefd3fba71998fa5541ad14",
     "protected": false,
     "sizeBytes": 2958
   },
@@ -335,14 +340,39 @@
     "protected": true
   },
   {
-    "file": "assets/weather-router-emblem-v004-256.png",
-    "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
-    "protected": false
+    "file": "assets/gr-eye-closed-master-1254.png",
+    "sha256": "db78b467fb2dc91bb469390b68bb98968e615d6f721f98a743394ab4dd50d49f",
+    "protected": true
   },
   {
-    "file": "assets/gewitterradar-help-info-premium-v1.webp",
-    "sha256": "afbe49f7e6bc1550ebe596eccd181b167c6a2dbcc1175e9fd859a10c4874059c",
-    "protected": false
+    "file": "assets/gr-eye-open-master-1254.png",
+    "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-precipitation-premium-original.png",
+    "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-synoptic-high-low-isobars-premium-original.png",
+    "sha256": "ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-temperature-premium-v1-136.webp",
+    "sha256": "85f3ce5b799fd04b8bcff46b7fefa3df7cf2127f6c322553702bec07dbbb51d2",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-temperature-premium-v1-272.webp",
+    "sha256": "544a76ead85e426b235c89d88237244c00f1884ee789f4f0ba7eff0022daa782",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-weather-display-premium-original.png",
+    "sha256": "c0c18f4f283e350fb9612ed620af426f2ac9f8d270e8a36016c29b1fc48cecf2",
+    "protected": true
   },
   {
     "file": "assets/gr-wind-animation-toggle-premium-v1-136.webp",
@@ -353,17 +383,6 @@
     "file": "assets/gr-wind-animation-toggle-premium-v1-272.webp",
     "sha256": "442dc4da797d12b756ee1dbf9bd2b18e5c09e1ec829ab0bdc08fef2d72b69b2a",
     "protected": true
-  },
-  {
-    "file": "assets/gr-wind-settings-premium-v2-136.webp",
-    "sha256": "08635710bd6d348579b2d5ee91c1fcd664a2f7e5faedad622877878b502063fd",
-    "protected": true
-  },
-  {
-    "file": "assets/gr-wind-settings-premium-v2-272.webp",
-    "sha256": "452015c03841ed8c811d7982795b6e67a8427142e038b86c442f06f5aa68b3e4",
-    "protected": true,
-    "referenced": false
   },
   {
     "file": "assets/gr-wind-barb-premium-v2-136.webp",
@@ -377,50 +396,31 @@
     "referenced": false
   },
   {
-    "file": "assets/gr-wind-settings-premium.svg",
-    "sha256": "3055af4389ddd4bfd98648ea18b302055cb297b1825f5f4459512b12d64cfbc9",
-    "protected": true,
-    "referenced": false
-  },
-  {
     "file": "assets/gr-wind-barb-premium.svg",
     "sha256": "190f354bc32e20087b0285bd2d3db53bf0c8d13bd2fd53062571dd8501003ff2",
     "protected": true,
     "referenced": false
   },
   {
-    "file": "assets/gr-temperature-premium-v1-136.webp",
-    "sha256": "85f3ce5b799fd04b8bcff46b7fefa3df7cf2127f6c322553702bec07dbbb51d2",
+    "file": "assets/gr-wind-settings-premium-v2-136.webp",
+    "sha256": "08635710bd6d348579b2d5ee91c1fcd664a2f7e5faedad622877878b502063fd",
     "protected": true
   },
   {
-    "file": "assets/gr-temperature-premium-v1-272.webp",
-    "sha256": "544a76ead85e426b235c89d88237244c00f1884ee789f4f0ba7eff0022daa782",
-    "protected": true
+    "file": "assets/gr-wind-settings-premium-v2-272.webp",
+    "sha256": "452015c03841ed8c811d7982795b6e67a8427142e038b86c442f06f5aa68b3e4",
+    "protected": true,
+    "referenced": false
   },
   {
-    "file": "assets/gr-precipitation-premium-original.png",
-    "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
-    "protected": true
+    "file": "assets/gr-wind-settings-premium.svg",
+    "sha256": "3055af4389ddd4bfd98648ea18b302055cb297b1825f5f4459512b12d64cfbc9",
+    "protected": true,
+    "referenced": false
   },
   {
-    "file": "assets/gr-weather-display-premium-original.png",
-    "sha256": "c0c18f4f283e350fb9612ed620af426f2ac9f8d270e8a36016c29b1fc48cecf2",
-    "protected": true
-  },
-  {
-    "file": "assets/gr-eye-open-master-1254.png",
-    "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
-    "protected": true
-  },
-  {
-    "file": "assets/gr-eye-closed-master-1254.png",
-    "sha256": "db78b467fb2dc91bb469390b68bb98968e615d6f721f98a743394ab4dd50d49f",
-    "protected": true
-  },
-  {
-    "file": "assets/gr-synoptic-high-low-isobars-premium-original.png",
-    "sha256": "ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437",
-    "protected": true
+    "file": "assets/weather-router-emblem-v004-256.png",
+    "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
+    "protected": false
   }
 ]
