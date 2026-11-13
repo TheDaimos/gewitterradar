@@ -296,8 +296,16 @@ export async function drawRasterMosaicTileFromUrls({
        }
        // Two bounded transport retries. An absent OPERA tile must not
        // stall all other verified providers for an unbounded period.
-       retry=retryCount<2&&!budget.closed&&(opera||budget.used<budget.maxRequests);
-       if(!retry)return {source_id,reason:"request_budget_exhausted"};
+       // Non-retryable HTTP failures cannot be repaired by repeated
+       // downloads of the same missing native tile. Authorization was
+       // already handled above and remains strictly fail-closed.
+       if(Number.isInteger(error?.httpStatus)&&error.httpStatus>=400
+         &&error.httpStatus<500&&error.httpStatus!==429)
+         return {source_id,reason:"image_http_unavailable",
+           http_status:error.httpStatus};
+       retry=retryCount<1&&!budget.closed&&(opera||budget.used<budget.maxRequests);
+       if(!retry)return {source_id,
+         reason:retryCount>=1?"image_retry_exhausted":"request_budget_exhausted"};
        retryCount++;
      }finally{
        release();
