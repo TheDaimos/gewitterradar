@@ -20,7 +20,8 @@
     "artwork/compass-chevron/README.md",
     "artwork/compass-chevron/provenance.json",
     "artwork/weather-router/README.md",
-    "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json"
+    "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json",
+    "artwork/help-icons/gr-synoptic-high-low-isobars-ASSET_MANIFEST.json"
   ],
   "protectedBlobs": [
     {
@@ -346,6 +347,12 @@
       "preferredPath": "artwork/help-icons/hires/gr-precipitation-premium-original.png",
       "gitBlobSha1": "a1187d752bb21e048e1180b3ff37ddf4713e4b21",
       "sizeBytes": 1407420
+    },
+    {
+      "label": "Synoptic high/low and isobars original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png",
+      "gitBlobSha1": "fdb28c9ed13355d21a5b6a1213696b20d065930e",
+      "sizeBytes": 1992746
     }
   ]
 }
