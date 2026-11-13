@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "P1 precise typed WR-V2 synoptic status; fifth Eye slot Vault persistence, no resets",
+    "purpose": "P1 Synoptik: getypte WR-V2-Verfuegbarkeit, fuenfter Eye-Slot dauerhaft im Settings Vault; ohne Resets",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
