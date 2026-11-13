@@ -228,7 +228,14 @@ async def test_p1_fifth_synoptic_slot_survives_vault_restart_and_stale_four_slot
     """A stale four-function UI may change another field, never erase slot five."""
     disk = FakeDisk()
     vault = SettingsVault(disk)
-    before = await create(vault, legacy=LEGACY)
+    created = await create(vault, legacy=LEGACY)
+    # V181 predates slot assignment. Persist the four original Eye functions
+    # first, just as the upgraded frontend does, without resetting its legacy colors.
+    initial = deepcopy(created["settings"][EYE])
+    initial["slots"] = [{"id": f"slot-{i+1}", "functionId": function}
+                        for i, function in enumerate(("wind", "temperature",
+                                                       "precipitation", "weather-display"))]
+    before = (await vault.dispatch("user-1", "patch", patch(created, EYE, initial)))["profile"]
     original = deepcopy(before["settings"][EYE])
     assigned = deepcopy(original)
     assigned["slots"] = [*assigned["slots"], {"id": "slot-5", "functionId": "synoptic"}]
