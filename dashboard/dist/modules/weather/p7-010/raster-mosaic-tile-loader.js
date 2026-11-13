@@ -197,7 +197,7 @@ export class RasterTileRequestBudget {
  * so this helper performs no hidden browser or HA accesses.
  */
 export async function drawRasterMosaicTileFromUrls({
- context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000,signal=null
+ context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000,signal=null,onProgress=null
 }={}){
  if(!Array.isArray(layers)||layers.length>12||typeof loadImage!=="function"
    ||!(budget instanceof RasterTileRequestBudget))
@@ -215,7 +215,9 @@ export async function drawRasterMosaicTileFromUrls({
    return planned===null?[layer]:planned.map(native=>({...layer,_p7PlannedTile:native}));
  });
  const selectedIDs=new Set();
- const results=await Promise.all(fragments.map(async layer=>{
+ const settled=new Map();
+ const results=await Promise.all(fragments.map(async (layer,index)=>{
+  const result=await (async()=>{
    const source_id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||layer.coverage_verified!==true||!layer.render){
      return {source_id,reason:"unverified_or_incomplete_source"};
@@ -292,7 +294,9 @@ export async function drawRasterMosaicTileFromUrls({
          return {source_id,reason:policy?"image_policy_rejected":"image_auth_rejected",
            http_status:error.httpStatus,...(code?{tile_denial_code:code}:{})};
        }
-       retry=(opera||budget.used<budget.maxRequests)&&!budget.closed;
+       // Two bounded transport retries. An absent OPERA tile must not
+       // stall all other verified providers for an unbounded period.
+       retry=retryCount<2&&!budget.closed&&(opera||budget.used<budget.maxRequests);
        if(!retry)return {source_id,reason:"request_budget_exhausted"};
        retryCount++;
      }finally{
@@ -320,11 +324,19 @@ export async function drawRasterMosaicTileFromUrls({
      });
      return result.image?{source_id,layer:{...layer,image:result.image,_p7SourceTile:sourceTile}}:result;
    }catch(_){return {source_id,reason:'tile_cancelled'};}
-
+  })();
+  settled.set(index,result);
+  if(typeof onProgress==='function'&&!signal?.aborted){
+    const prepared=fragments.flatMap((_,i)=>settled.get(i)?.layer?[settled.get(i).layer]:[]);
+    if(prepared.length)try{onProgress({prepared,settled:settled.size,total:fragments.length});}catch(_){/* cosmetic callback must not block tile delivery */}
+  }
+  return result;
  }));
  const prepared=results.filter(x=>x.layer).map(x=>x.layer);
  const rejected=results.filter(x=>!x.layer).map(({source_id,reason,http_status,tile_denial_code})=>
    ({source_id,reason,...(http_status?{http_status}:{}),...(tile_denial_code?{tile_denial_code}:{})}));
+ if(typeof onProgress==="function"&&!signal?.aborted&&typeof context?.clearRect==="function")
+   context.clearRect(0,0,tileSize,tileSize);
  const drawn=signal?.aborted
    ?{drawn:[],rejected:[]}
    :drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);
