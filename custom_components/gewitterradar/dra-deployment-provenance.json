@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.195",
-  "build": "V4.11.195-DEV-2026-11-13",
-  "runtimeRevision": "411195r1",
-  "moduleSetId": "E411-195A1",
+  "productVersion": "4.11.197",
+  "build": "V4.11.197-DEV-2026-11-13",
+  "runtimeRevision": "411197r1",
+  "moduleSetId": "E411-197A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter standalone map control position stability and synchronized DEV runtime identity.",
+    "purpose": "Provider-isolierte Synoptik: ECCC H/T und NOAA GFS Isobaren mit Eye, Premium-Menü und migrierten Legacy-H/T-Farben; WR entscheidet Datenfreigabe.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -40,7 +40,8 @@
     "snakeBaseline": "782c035129ce9e14ca0153fe4a26bff157ffacc0",
     "snakeFix01Baseline": "91fba29af0b3e765b898c1d4c4355adcfa810d98",
     "windStudioBaseline": "ac73cb59abeac399c9fc24dcb78194ecef0c3e0b",
-    "precipitationControlBaseline": "5be2d8324b58220e37021248b0a2825c6435f87e"
+    "precipitationControlBaseline": "5be2d8324b58220e37021248b0a2825c6435f87e",
+    "synopticDeveloperStatus": "GR V2 vector source implementation; HA DEV and Android visual acceptance still required"
   },
   "sourceReleaseTag": "v4.10"
 }
