@@ -37,6 +37,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
+      - name: P1 fifth-slot schema, restart hydration and stale profile merge
+        run: python -m unittest discover -s tests -p 'test_synoptic_p1_schema.py' -v
       - name: Client transactions and protected model checks
         run: |
           node --test tests/settings-vault-client.test.mjs

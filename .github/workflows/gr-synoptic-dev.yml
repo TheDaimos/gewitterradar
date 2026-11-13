@@ -27,5 +27,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: P1 Settings Vault schema and stale-session merge regressions
+        run: python -m unittest discover -s tests -p 'test_synoptic_p1_schema.py' -v
       - name: Synoptic isolated contract and mirror checks
         run: node --test tests/synoptic-dev-v411198.test.mjs
