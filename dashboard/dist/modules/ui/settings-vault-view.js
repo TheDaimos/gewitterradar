@@ -1,8 +1,8 @@
 import {mountVaultSetup} from './settings-vault-setup.js?v=411185r1';
 import {
   acquireSettingsSlot, releaseSettingsSlot, requestId, SettingsVaultClient,
-} from '../core/settings-vault.js?v=411195r1';
-import {APPLICATION_RELEASE} from '../../version.js?v=411195r1';
+} from '../core/settings-vault.js?v=411207r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411207r1';
 
 const TITLE = 'Userprofile & Sicherungen';
 const MAX_IMPORT_BYTES = 2 * 1024 * 1024;

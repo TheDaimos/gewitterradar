@@ -2,7 +2,7 @@ import { defineModule } from "../core/runtime.js?v=41137r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.6",
+  version:"1.0.7",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -259,6 +259,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         environment:this._mapDiagnosticEnvironment(),
         map:this._mapDiagnosticLeafletSummary(),
         recovery:this._mapDiagnosticRecoverySummary(),
+        synoptic:this._weatherSynopticDiagnostic?.() ?? {moduleLoaded:false},
         diagnostic:{
           startedAt:state.startedAt,
           events:state.events.length,

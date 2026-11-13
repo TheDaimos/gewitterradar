@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411181r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411181r1';
-import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411203r1';
+import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411207r1';
 import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411187r1';
 
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -97,7 +97,7 @@ export const eyeHubMethods={
     if(button){for(const attr of ['data-active','data-available','aria-label','title','style'])if(button.getAttribute(attr)!==fresh.getAttribute(attr))button.setAttribute(attr,fresh.getAttribute(attr));const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
     button=fresh;root.append(button);
     const state={eyeDrag:null},run=hold=>{this._eyeHubClose();(hold?f.hold:f.tap)();queueMicrotask(()=>this._eyeHubSync());};
-    const options={element:button,state:()=>state,activate:()=>run(false),longPress:()=>run(true),position:()=>this._eyeHubPosition(),save:()=>{}};s.bubbleOptions.push(options);this._weatherDisplayBindEyeDrag(button,options);
+    const options={element:button,state:()=>state,activate:()=>run(false),longPress:()=>run(true),position:()=>this._eyeHubPosition(),save:()=>{},onDecision:f.onDecision};s.bubbleOptions.push(options);this._weatherDisplayBindEyeDrag(button,options);
    }}
    s.view?.update();
   }

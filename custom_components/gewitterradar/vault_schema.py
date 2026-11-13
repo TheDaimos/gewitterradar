@@ -250,7 +250,7 @@ JSON_SETTINGS = {
                      MAP + "map-location-position", CORE + "map-cluster-jump-position",
                      RADAR + "timeline-position"), POSITION),
     **{PREMIUM_PREFIX + scope: PREMIUM for scope in (
-        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control",
+        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control", "synoptic-settings",
         "weather-wind-legend-", "weather-temperature-legend-", "weather-advection-legend-",
     )},
     "gewitterradar:v40802:diagnostic-sections": mapping(BOOL, 128),

@@ -37,7 +37,9 @@ test('ECCC H/T GeoJSON and NOAA MultiLineString are parsed',()=>{
 });
 test('invalid meteorological geometry, wrong capability and expired grant are rejected',()=>{
  const a=response(cap.centers,{type:'Point',coordinates:[9,53]},{kind:'X',pressure_hpa:1024});assert.equal(parse(a,cap.centers),null);
- const b=response(cap.isobars,{type:'MultiLineString',coordinates:[[[9,53],[210,54]]]},{pressure_hpa:1008});assert.equal(parse(b,cap.isobars),null);
+ const wrapped=response(cap.isobars,{type:'MultiLineString',coordinates:[[[179,53],[181,54],[190,55]]]},{pressure_hpa:1008});
+ assert.equal(parse(wrapped,cap.isobars)?.geometry.features.length,1);
+ const b=response(cap.isobars,{type:'MultiLineString',coordinates:[[[9,53],[541,54]]]},{pressure_hpa:1008});assert.equal(parse(b,cap.isobars),null);
  const c=response(cap.centers,{type:'Point',coordinates:[9,53]},{kind:'H',pressure_hpa:1024});c.frame.valid_until=run;assert.equal(parse(c,cap.centers),null);
  assert.equal(parse(response(cap.centers,{type:'Point',coordinates:[9,53]},{kind:'H',pressure_hpa:1024}),cap.isobars),null);
 });

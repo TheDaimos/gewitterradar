@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -1423,6 +1423,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
 
         this._markerLayer = L.layerGroup().addTo(this._map);
         this._mapReady = true;
+        this._resumeWeatherSynoptic?.(L);
         if(this._diagnosticTimings&&!Number.isFinite(this._diagnosticTimings.mapReadyAt))this._diagnosticTimings.mapReadyAt=performance.now();
 
         this._map.on('moveend',() => this._renderMapMarkers());

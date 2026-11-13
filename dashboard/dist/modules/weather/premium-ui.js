@@ -62,12 +62,12 @@ export function togglePremiumPanel(panel,scope,owner=panel.getRootNode().host){c
 
 // Position a standalone mouse-operated panel relative to the visible map.
 // Store travel fractions so a resized or minimized panel remains reachable.
-export function bindPremiumPanelDrag(panel, map, scope) {
+export function bindPremiumPanelDrag(panel, map, scope, {touch=false}={}) {
  const owner = panel.getRootNode().host;
  if (!map) return;
  const desktop = matchMedia('(any-hover: hover) and (any-pointer: fine)');
  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
- const enabled = () => desktop.matches && panel.isConnected && !panel.hidden && !panel.classList.contains('embedded');
+ const enabled = () => (desktop.matches||touch) && panel.isConnected && !panel.hidden && !panel.classList.contains('embedded');
  const properties = ['left', 'top', 'right', 'max-width', 'max-height'];
  let drag, listeners;
 
@@ -129,7 +129,7 @@ export function bindPremiumPanelDrag(panel, map, scope) {
  }
 
  panel.addEventListener('pointerdown', event => {
-  if (!enabled() || event.pointerType !== 'mouse' || event.button !== 0 || drag) return;
+  if (!enabled() || (event.pointerType !== 'mouse' && !(touch&&event.pointerType==='touch')) || event.button !== 0 || drag) return;
   if (!panel.firstElementChild?.matches('header') || !panel.firstElementChild.contains(event.target)) return;
   if (event.target.closest('button, a, input, select, textarea, label, summary, [role=button], [contenteditable]')) return;
   event.preventDefault();

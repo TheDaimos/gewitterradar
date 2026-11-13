@@ -14,6 +14,7 @@ on:
       - 'custom_components/gewitterradar/frontend/**'
       - 'dashboard/dist/**'
       - 'tests/synoptic-dev-v411198.test.mjs'
+      - 'scripts/test-synoptic-browser.cjs'
       - '.github/workflows/gr-synoptic-dev.yml'
   workflow_dispatch:
 permissions:
@@ -21,7 +22,7 @@ permissions:
 jobs:
   synoptic-regression:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,3 +35,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_synoptic_p1_schema.py' -v
       - name: Synoptic isolated contract and mirror checks
         run: node --test tests/synoptic-dev-v411198.test.mjs
+      - run: npm install --no-save --package-lock=false playwright@1.56.1 leaflet@1.9.4
+      - run: npx playwright install --with-deps chromium
+      - name: Synoptic Leaflet and Android touch regression
+        run: node scripts/test-synoptic-browser.cjs

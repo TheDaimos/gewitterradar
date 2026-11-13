@@ -46,10 +46,15 @@ class SynopticVaultP1Tests(unittest.TestCase):
     def test_synoptic_own_settings_are_profile_keys(self):
         config = {"visible": False, "centers": True, "isobars": True,
                   "highColor": "#FFC442", "lowColor": "#B000FF",
+                  "opacity": .51, "centerOpacity": .4, "isobarOpacity": .73,
                   "quickPositions": {"standard": {"x": .32, "y": .44}}}
         self.assertIn(SYNOPTIC_KEY, schema.SETTINGS_KEYS)
         schema.validate_value(SYNOPTIC_KEY, config)
         self.assertEqual(json.loads(json.dumps(config)), config)
+        schema.validate_value("gewitterradar:premium-ui:v1:synoptic-settings", {
+            "sections": {"opacity": True}, "minimized": False,
+            "panelPosition": {"x": .3, "y": .4},
+        })
 
     def test_stale_four_slot_update_preserves_server_fifth_slot_and_aura(self):
         initial = eye_four()
