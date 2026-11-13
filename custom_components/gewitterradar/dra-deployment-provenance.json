@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.200",
-  "build": "V4.11.200-DEV-2026-11-13",
-  "runtimeRevision": "411200r1",
-  "moduleSetId": "E411-200A1",
+  "productVersion": "4.11.201",
+  "build": "V4.11.201-DEV-2026-11-13",
+  "runtimeRevision": "411201r1",
+  "moduleSetId": "E411-201A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Additive synoptic module with opt-in fifth Eye function, existing slots preserved, WPC regional fronts, protected wind and independent opacity.",
+    "purpose": "Synoptik premium front colors, hi-res close, WPC front line neon and independent label density, protected Eye defaults.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
