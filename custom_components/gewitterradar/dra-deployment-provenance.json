@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.201",
-  "build": "V4.11.201-DEV-2026-11-13",
-  "runtimeRevision": "411201r1",
-  "moduleSetId": "E411-201A1",
+  "productVersion": "4.11.202",
+  "build": "V4.11.202-DEV-2026-11-13",
+  "runtimeRevision": "411202r1",
+  "moduleSetId": "E411-202A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Synoptik premium front colors, hi-res close, WPC front line neon and independent label density, protected Eye defaults.",
+    "purpose": "Synoptic WR V2 real geometry with cache-correct installable mirrors, opt-in Eye, new WPC front regional lines and isolated premium controls.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

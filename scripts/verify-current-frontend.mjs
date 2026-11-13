@@ -9,7 +9,7 @@ const read=p=>readFile(resolve(root,p),'utf8');
 const entry=await read('frontend/gewitterradar.js'),manifest=await read('frontend/module-manifest.js');
 const runtime=JSON.parse(await read('frontend/assets/gewitterradar-runtime-manifest.json'));
 const modules=JSON.parse(manifest.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/)[1]);
-assert.equal(modules.length,37);assert(modules.some(m=>m.id==='weather.synoptic-display'));assert.equal(new Set(modules.map(m=>m.id)).size,modules.length);
+assert.equal(modules.length,37);assert.equal(new Set(modules.map(m=>m.id)).size,modules.length);
 for(const [k,v] of Object.entries({productVersion:release.version,displayVersion:release.displayVersion,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId}))assert.equal(runtime[k],v,'Runtime identity: '+k);
 assert.deepEqual(runtime.modules,modules.map(({id,version})=>({id,version})));
 for(const m of modules){

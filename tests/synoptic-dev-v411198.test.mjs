@@ -58,7 +58,7 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
  const manifest=read('frontend/module-manifest.js');
  assert.equal(runtime.productVersion,product);
  assert.equal(runtime.runtimeRevision,revision);
- assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.5'));
+ assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.6'));
  assert.match(manifest,/weather\.synoptic-display/);
 });
 

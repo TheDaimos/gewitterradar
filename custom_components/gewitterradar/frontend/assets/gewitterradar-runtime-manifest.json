@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.201",
-  "build": "V4.11.201-DEV-2026-11-13",
-  "runtimeRevision": "411201r1",
-  "moduleSetId": "E411-201A1",
+  "productVersion": "4.11.202",
+  "build": "V4.11.202-DEV-2026-11-13",
+  "runtimeRevision": "411202r1",
+  "moduleSetId": "E411-202A1",
   "modules": [
     {
       "id": "core.manifest",
@@ -151,8 +151,8 @@
     },
     {
       "id": "weather.synoptic-display",
-      "version": "0.1.5"
+      "version": "0.1.6"
     }
   ],
-  "displayVersion": "V4.11.201 DEV"
+  "displayVersion": "V4.11.202 DEV"
 }
