@@ -47,14 +47,17 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
    assert.equal(read(prefix+'/'+name),read('frontend/'+name),name+' mismatch in '+prefix);
   }
  }
- const version=JSON.parse(JSON.stringify(read('frontend/version.js')));
- assert.match(version,/4\.11\.200/);assert.match(version,/411201r1/);
+ const version=read('frontend/version.js');
+ const product=version.match(/version:"(4\\.11\\.\\d+)"/)?.[1], revision=version.match(/runtimeRevision:"([^"]+)"/)?.[1];
+ assert.ok(product&&revision,'application version and runtime revision must be declared');
+ assert.equal(revision,'411'+product.split('.').at(-1)+'r1');
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));
  const runtime=JSON.parse(read('frontend/assets/gewitterradar-runtime-manifest.json'));
  const manifest=read('frontend/module-manifest.js');
- assert.equal(runtime.productVersion,'4.11.201');
+ assert.equal(runtime.productVersion,product);
+ assert.equal(runtime.runtimeRevision,revision);
  assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.5'));
  assert.match(manifest,/weather\.synoptic-display/);
 });
