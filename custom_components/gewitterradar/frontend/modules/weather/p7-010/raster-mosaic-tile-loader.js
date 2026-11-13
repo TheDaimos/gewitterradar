@@ -46,8 +46,8 @@ const DWD_COMPLETED_TTL_MS=180000;
 function dwdCompletedKey(id,url,frameTime){
   return typeof id==="string"&&id.startsWith("dwd/")&&
     typeof url==="string"&&url.startsWith("https://")&&
-    typeof frameTime==="string"&&/^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$/.test(frameTime)
-    ?id+"\\n"+frameTime+"\\n"+url:null;
+    typeof frameTime==="string"&&/^20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(frameTime)
+    ?id+"\n"+frameTime+"\n"+url:null;
 }
 function getCompletedDWDImage(id,url,frameTime){
   const key=dwdCompletedKey(id,url,frameTime);
