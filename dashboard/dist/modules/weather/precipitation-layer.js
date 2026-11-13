@@ -7,7 +7,7 @@ import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.30",
+  version:"1.3.31",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungstransparenz","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -668,13 +668,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.wrPolicySubscription&&typeof this._hass?.connection?.subscribeEvents==="function"){
       const policy={closed:false,unsubscribe:null};state.wrPolicySubscription=policy;
       Promise.resolve(this._hass.connection.subscribeEvents(event=>{
-        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true)){
+        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true||event?.data?.dwd_coverage_verified===true)){
           if(event.data.nasa_transport_changed===true&&event.data.nasa_transport_policy){state.layer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);state.v2PendingLayer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);}
           if(event.data.precipitation_policy_changed===true)state.layer?._p7RevokeDeferredNASA?.();
           if(event.data.nasa_metadata_ready===true&&state.inFlight)this._weatherRadarSupersedeRequest();
           if(event.data.nasa_imerg_complement===true&&state.v2Snapshot?.layers?.some(source=>
              source.source_id==="nasa_gibs/satellite_precipitation_imerg_30min"&&!source.spatial_policy))this._weatherRadarRemoveLayer();
-          this._scheduleWeatherRadarRefresh("wr-precipitation-policy",0,{force:true});
+          this._scheduleWeatherRadarRefresh(event.data.dwd_coverage_verified===true?"wr-dwd-coverage-ready":"wr-precipitation-policy",0,{force:true});
         }
       },"weather_router_routing_changed")).then(unsubscribe=>{
         if(policy.closed||state.wrPolicySubscription!==policy)unsubscribe?.();
