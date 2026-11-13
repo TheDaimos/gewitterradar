@@ -124,3 +124,17 @@ Die Palette als reguläre Funktion des **neuen eigenständigen Synoptik-Premiumm
 **Migration:** Bereits gespeicherte H/T-Farben (Gold / Violett oder individuell gewählt) unverändert fachlich übernehmen; neue Farbkennungen rückwärtskompatibel im Settings-Vault normalisieren. Die bestehende Aura-/Eye-Farbpalette, deren Renderer, gespeicherte Ringfarben und Ringanimationen **nicht verändern**. Statt einer zweiten Kopie der zehn Aurawerte nach Möglichkeit vorhandene Farbdefinitionen referenzieren oder additive gemeinsame Palette ableiten. DWD-WMS-PNG ist kein GeoJSON-Vektor und bleibt bei eigenständiger Rasterfarbgebung.
 
 Diese Entscheidung ergänzt die vorherigen Farbregeln in Abschnitt 9 und ersetzt keine der dort geforderten Farboptionen.
+
+## 11. Betreiberentscheidung: Neon-Übergangslinie der Wetterfronten separat ein-/ausschalten
+
+**Verbindlich:** Die visuelle **Neon-Übergangslinie bzw. der Leuchtsaum entlang einer realen meteorologischen Frontengrenze** erhält im eigenständigen Synoptik-Premiummenü einen **separaten Ein-/Aus-Schalter** (beispielsweise `Neon-Übergangslinie` / `Leuchtende Frontgrenze`). Der Effekt ist optional und darf **nicht** fest mit der gesamten Frontendarstellung, den meteorologischen Symbolen oder dem allgemeinen Synoptik-Ein-/Aus-Schalter gekoppelt sein.
+
+- **Ein:** Eine tatsächlich von WR autorisierte Frontengeometrie wird entlang ihres Verlaufs mit der gewünschten hochwertigen Neon-/Glow-Linie visualisiert; die Frontensymbole (Dreiecke, Halbkreise und typgerechte Kombinationen) bleiben dabei fachlich korrekt und individuell sichtbar.
+- **Aus:** Ausschließlich die zusätzliche **Neon-Übergangslinie/der zusätzliche Glow** entfällt. Die eigentliche meteorologische Frontenlinie sowie vorhandene Frontensymbole bleiben bei aktiviertem Frontenlayer sichtbar. Die normalen H/T-Zentren und Isobaren sind davon unabhängig.
+- Zusätzlich ein **eigener Hauptschalter `Wetterfronten ein/aus`**, damit Fronten als Ganzes separat ausblendbar sind. Der Neon-Schalter darf den Fronten-Hauptschalter nicht ersetzen.
+- Die Einstellung persistent speichern (Settings Vault / Neustart / Update) und unmittelbar auf dem bereits geladenen Vektorlayer anwenden, **ohne neue WR-Datenabfrage**.
+- Die zentrale Synoptik-Transparenz, die Fronten-Deckkraft sowie gegebenenfalls Linienbreite/Glow-Stärke bleiben unabhängig und konsistent; die Neon-Übergangslinie darf keinen unkontrollierten Überstrahlungseffekt erzeugen.
+- **Keinesfalls Fronten aus der relativen Lage von H/T-Zentren oder Windvektoren erfinden.** Ohne echte, von WR gelieferte und typisierte Frontengeometrie bleibt die Frontenfunktion fachlich `nicht verfügbar` und zeichnet keine erfundene Grenze. Der Renderer kann hierfür vorbereitet werden; keine stillschweigende Live-Freigabe.
+- Bestehende Wind-, Temperatur-, Niederschlags- und Aura-/Eye-Neoneffekte bleiben unverändert.
+
+**Abnahme:** Bei vorhandenen echten Frontendaten lässt sich die leuchtende Übergangslinie im Synoptikmenü sichtbar an- und abschalten, **ohne** dabei Frontensymbole, normale Frontenlinie, H/T-Zentren oder Isobaren zu deaktivieren.
