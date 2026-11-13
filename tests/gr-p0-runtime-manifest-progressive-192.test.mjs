@@ -84,5 +84,5 @@ test('progressive callback receives already admitted fragments in WR order',asyn
   ['dwd/radar_precipitation','opera/opera_rate_raster']);
  assert.equal(budget.used,0);
  assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-grid-layer.js'),/onProgress:deferredSource\?null:/);
- assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-tile-loader.js'),/retryCount<2/);
+ assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-tile-loader.js'),/retryCount<1/);
 });
