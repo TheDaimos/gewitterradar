@@ -109,3 +109,18 @@ Neue eindeutige WR-/GR-/HA-/DRA-Versionsstände und konsistente synchronisierte 
 - **DWD-QFF-Raster ausdrücklich ausnehmen:** Ein WMS-PNG ist kein GeoJSON-Vektor. Für Raster gelten gegebenenfalls gesonderte originale Farbgebung bzw. eigenständig verifizierte numerische Rasterverarbeitung; bloße Opazität ist sofort möglich, frei einstellbare fachliche Druckfarben nicht ohne passende Daten.
 
 Die Palette als reguläre Funktion des **neuen eigenständigen Synoptik-Premiummenüs** implementieren; keine weitere manuelle große Testserie verlangen.
+
+## 10. Betreiberentscheidung: Aura-Farben plus erweiterte klassische Premium-Palette
+
+**Verbindlich:** Die Synoptik-Farbwahl umfasst **sämtliche vorhandenen Aura-Ring-Farben und zusätzlich klassische Grund- und Premiumfarben ohne Neon**. Die zuvor geforderte Auswahl – Gold, Silber, Weiß, Cyan, Türkis, Blau, Grün, Orange, Rot, Violett, Magenta und weitere hochwertige Varianten – bleibt bestehen. Keine Beschränkung auf die Aurafarben.
+
+**Autoritative zentrale Originalpalette:** `frontend/modules/weather/eye-hub-model.js`, `EYE_COLORS` und `EYE_MATERIALS`:
+- Bestehende Neon-Basisfarben (exakt): `#FF00CC` Magenta, `#B000FF` Violett, `#0066FF` Blau, `#00FFF0` Cyan, `#39FF14` Grün, `#FFFF00` Gelb, `#FF5F00` Orange, `#FF003C` Rot.
+- Vorhandene Premium-Materialfarben (exakt): `#FFC442` Electric Gold und `#D8E6F3` Silver/Chrome. Deren vorhandene Materialdefinitionen bei Bedarf wiederverwenden; keine neuen inkompatiblen Farbtöne erfinden.
+- Zusätzlich **klassische, nicht leuchtende Grundfarben** einschließlich Weiß, Gold, Silber, Cyan, Türkis, Blau, Grün, Gelb, Orange, Rot, Violett und Magenta, plus dezente dunklere oder pastellfarbene Alternativen. Die klassischen Farben sind **ohne Glow, Halo, Neon-Schein oder Energieeffekte** zeichnbar.
+
+**Bedienung:** Farbpalette übersichtlich als `Aura/Neon` und `Klassisch` anbieten. Hochdrucksymbole, Tiefdrucksymbole und Isobarenlinien können jeweils unabhängig aus **beiden** Gruppen wählen; Vorschau unmittelbar auf bereits geladenen WR-GeoJSON-Geometrien ohne erneuten Wetterabruf. Optionaler Leuchteffekt separat schaltbar und nur in GR umgesetzt; ein Aura-Farbton ist nicht automatisch gleichbedeutend mit Zwangsglow. Kontrast und Lesbarkeit der Druckwerte auf verschiedenen Kartengrundstilen gewährleisten.
+
+**Migration:** Bereits gespeicherte H/T-Farben (Gold / Violett oder individuell gewählt) unverändert fachlich übernehmen; neue Farbkennungen rückwärtskompatibel im Settings-Vault normalisieren. Die bestehende Aura-/Eye-Farbpalette, deren Renderer, gespeicherte Ringfarben und Ringanimationen **nicht verändern**. Statt einer zweiten Kopie der zehn Aurawerte nach Möglichkeit vorhandene Farbdefinitionen referenzieren oder additive gemeinsame Palette ableiten. DWD-WMS-PNG ist kein GeoJSON-Vektor und bleibt bei eigenständiger Rasterfarbgebung.
+
+Diese Entscheidung ergänzt die vorherigen Farbregeln in Abschnitt 9 und ersetzt keine der dort geforderten Farboptionen.
