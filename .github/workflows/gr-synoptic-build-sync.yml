@@ -2,7 +2,7 @@ name: GR Synoptik - synchronize public DEV delivery
 on:
   push:
     branches: [deploy/dev]
-    paths: ['.github/workflows/gr-synoptic-build-sync.yml']
+    paths: ['.github/workflows/gr-synoptic-build-sync.yml', 'frontend/version.js']
   workflow_dispatch:
 permissions:
   contents: write
