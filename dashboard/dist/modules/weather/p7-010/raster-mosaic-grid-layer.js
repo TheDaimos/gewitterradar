@@ -202,7 +202,21 @@ export function createRasterMosaicGridLayer(L,snapshot,{
         context,tile:coords,layers:renderLayers,
         loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),
         budget,tileSize,timeoutMs,
-        signal:controller?.signal
+        signal:controller?.signal,
+        // Render each WR-admitted source as it becomes ready, without a
+        // cross-provider wait. Deferred NASA remains on its existing separate
+        // protected mask pathway, where this clear/redraw is disabled.
+        onProgress:deferredSource?null:({prepared})=>{
+          if(controller?.signal.aborted||!prepared.length)return;
+          context.clearRect?.(0,0,tileSize,tileSize);
+          const partial=drawVerifiedRasterMosaicTile(context,coords,prepared,tileSize);
+          if(partial.drawn.length)try{onTileDiagnostics?.({
+            phase:"provider_partial_ready",progressive:true,
+            render_order:partial.drawn.map(row=>row.source_id),
+            painted_sources:partial.drawn.length,
+            tile:{x:coords.x,y:coords.y,z:coords.z}
+          });}catch(_){}
+        }
       })).then(result=>{
         actualTiles.set(coords.z+"/"+coords.x+"/"+coords.y,{...actualTiles.get(coords.z+"/"+coords.x+"/"+coords.y),regular_sources:result.drawn.map(d=>({source_id:d.source_id,tile:d.source_tile})),failed:result.rejected});
         const classification=classifyRasterTileResult(renderLayers,coords,tileSize,result);
