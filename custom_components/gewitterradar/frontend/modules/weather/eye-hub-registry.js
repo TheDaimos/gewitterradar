@@ -8,7 +8,7 @@ export function synopticEyeStatus(state){
  const active=state?.config?.visible===true;
  const now=Date.now();
  const valid=Object.values(state?.frames||{}).some(f=>f&&Number.isFinite(Date.parse(f.valid_until))&&Date.parse(f.valid_until)>now);
- const error=Object.values(state?.status||{}).some(v=>typeof v==='string'&&v.length>0);
+ const error=['centers','isobars','fronts','connection'].some(k=>typeof state?.status?.[k]==='string'&&state.status[k].length>0);
  const availability=valid?'available':state?.pending?'loading':error?'unavailable':active?'not-loaded':'off';
  return {active,available:availability!=='unavailable',availability,detail:availability==='off'?'Ausgeschaltet · Daten ungeprüft':availability==='not-loaded'?'Daten noch nicht geladen':availability==='loading'?'WR-V2-Abfrage läuft':availability==='unavailable'?'WR-V2: '+Object.values(state?.status||{}).filter(Boolean).join(' · '):Object.values(state?.status||{}).filter(Boolean).join(' · ')};
 }

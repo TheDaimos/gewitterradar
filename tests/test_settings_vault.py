@@ -222,3 +222,37 @@ async def test_websocket_ownership_and_build(hass, hass_ws_client, hass_access_t
     assert (await send(admin, "get", {}))["result"]["profiles"] == []
     assert (await send(admin, "get", {"profileId": profile_id}))["error"]["code"] == "settings_not_found"
     assert (await send(reader, "get", {"profileId": profile_id}, build="4.11.181"))["error"]["code"] == "settings_reload"
+
+
+async def test_p1_fifth_synoptic_slot_survives_vault_restart_and_stale_four_slot_update():
+    """A stale four-function UI may change another field, never erase slot five."""
+    disk = FakeDisk()
+    vault = SettingsVault(disk)
+    before = await create(vault, legacy=LEGACY)
+    original = deepcopy(before["settings"][EYE])
+    assigned = deepcopy(original)
+    assigned["slots"] = [*assigned["slots"], {"id": "slot-5", "functionId": "synoptic"}]
+    assigned["colors"] = {**assigned.get("colors", {}), "synoptic": "#FFC442"}
+    saved = (await vault.dispatch("user-1", "patch", patch(before, EYE, assigned)))["profile"]
+    assert saved["settings"][EYE]["slots"][-1]["functionId"] == "synoptic"
+    assert saved["settings"][EYE]["colors"]["synoptic"] == "#FFC442"
+    # Independent synoptic settings are now a registered/validated Vault key.
+    synoptic = {"visible": False, "centers": True, "isobars": True,
+                "highColor": "#FFC442", "lowColor": "#B000FF", "quickPositions": {}}
+    saved = (await vault.dispatch("user-1", "patch", patch(saved, "gewitterradar:synoptic-ui:v1", synoptic)))["profile"]
+    restarted = SettingsVault(disk)
+    hydrated = (await restarted.dispatch("user-1", "get", {"profileId": saved["id"]}))["profile"]
+    assert hydrated["settings"][EYE]["slots"][-1]["functionId"] == "synoptic"
+    assert hydrated["settings"]["gewitterradar:synoptic-ui:v1"] == synoptic
+    # A stale client still has four slots; its unrelated grouping change must
+    # retain the server's fifth slot, colors and synoptic configuration.
+    stale = deepcopy(original)
+    stale["grouped"] = not original["grouped"]
+    concurrent = (await restarted.dispatch("user-1", "patch", patch(before, EYE, stale)))["profile"]
+    assert concurrent["settings"][EYE]["slots"][-1]["functionId"] == "synoptic"
+    assert concurrent["settings"][EYE]["colors"]["synoptic"] == "#FFC442"
+    assert concurrent["settings"]["gewitterradar:synoptic-ui:v1"] == synoptic
+    again = SettingsVault(disk)
+    final = (await again.dispatch("user-1", "get", {"profileId": saved["id"]}))["profile"]
+    assert len(final["settings"][EYE]["slots"]) == len(original["slots"]) + 1
+    assert final["settings"][EYE]["slots"][-1]["functionId"] == "synoptic"
