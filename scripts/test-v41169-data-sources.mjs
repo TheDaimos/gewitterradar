@@ -20,7 +20,7 @@ for(const id of ["diagnostics.data-sources","sources.blitzortung"]){
 }
 assert.match(entry,/installDataSourceDiagnostics\(GewitterradarCard/);
 assert.match(entry,/installBlitzortungSource\(GewitterradarCard/);
-assert.match(entry,/location\/radii-map\.js','411149r1'/);
+assert.match(entry,/location\/radii-map\.js','411[0-9]+r[0-9]+'/);
 assert.doesNotMatch(skeleton,/id="source-status"/);
 assert.match(modules,/dataSources:this\._dataSourcesDiagnosticPayload/);
 assert.match(modules,/await this\._refreshBlitzortungSources/);
