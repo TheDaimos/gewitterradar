@@ -1614,6 +1614,18 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const observedOrders=[];
       const deferredTiles=new Set(),deferredPainted=new Set();
       let preservePreviousNASA=false;
+      let progressiveVisible=false;
+      const showAuthorizedProgress=()=>{
+        // Never expose an incomplete replacement above an existing valid
+        // generation. Without a valid previous image, verified individual
+        // source fragments are preferable to an otherwise blank viewport.
+        if(!staged||!current()||this._weatherRadarPreviousValid())return;
+        if(!progressiveVisible){
+          staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
+          progressiveVisible=true;
+          report('progressive_first_authorized_tile');
+        }
+      };
       const markReady=()=>{
         // A valid mounted mosaic must not lose its successful satellite areas
         // while a changed mask/source generation is only partly decoded.
@@ -1664,6 +1676,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
               const world=2**item.tile.z,key=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
               deferredTiles.add(key);if(!item.radar_expected)settledGeographicTiles.add(key);
               if(item.tile_status==="complete_verified_coverage")deferredPainted.add(key);
+              if(painted>0)showAuthorizedProgress();
               if(state.layer===staged&&state.v2RenderMetrics){
                 state.v2RenderMetrics.deferred_nasa_tiles=deferredTiles.size;
                 state.v2RenderMetrics.painted_nasa_tiles=deferredPainted.size;
@@ -1672,6 +1685,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
               }
               this._weatherEngineMonitorEvent?.("v2_nasa_tile",{correlation_id:correlationId,status:item.tile_status,painted_tiles:deferredPainted.size,deferred_tiles:deferredTiles.size});
               markReady();return;
+            }
+            if(item?.progressive===true&&item.painted_sources>0){
+              showAuthorizedProgress();
+              return; // An intermediate image is not a complete Leaflet tile.
             }
             const operaError=item?.rejected?.find(row=>row.source_id==='opera/opera_rate_raster'&&
               !['outside_tile_coverage','outside_zoom_coverage'].includes(row.reason));
@@ -1830,6 +1847,28 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           last_tile_error:stageLastError,last_tile_http_status:stageLastHttpStatus,
           last_tile_denial_code:stageLastDenialCode,previous_layer_preserved:Boolean(state.layer)};
         this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
+        // A cold viewport has no valid generation to preserve. Keep real,
+        // WR-admitted pixels that were already drawn, but label the mosaic
+        // partial and retry only its missing content. The previous-generation
+        // atomic swap contract remains mandatory when an old valid image exists.
+        if(current()&&progressiveVisible&&!this._weatherRadarPreviousValid()){
+          const old=state.layer;
+          state.layer=staged;state.v2PendingLayer=null;
+          state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();
+          state.v2RenderMetrics={drawn_tiles:readyTiles.size,
+            uncovered_tiles:Math.max(1,count-readyTiles.size),
+            partial_geography:true,progressive_partial:true,
+            image_pixels_verified:false};
+          state.lastReady=null;state.lastUnavailable=null;
+          if(old&&old!==staged)try{old.remove();}catch(_){}
+          this._weatherRadarRenderCurrentLegend();
+          this._weatherRadarUpdateControls();
+          report('progressive_partial_retained',{
+            painted_tiles:readyTiles.size,reason});
+          this._scheduleWeatherRadarRefresh('progressive-missing-tiles',
+            REGIONAL_HOLD_RETRY_MS,{force:true});
+          return true;
+        }
         // Keep the mounted image and request a fresh, selectively cached
         // replacement rather than waiting for the normal same-view interval.
         if(current())this._scheduleWeatherRadarRefresh("incomplete-v2-stage",REGIONAL_HOLD_RETRY_MS,{force:true});
