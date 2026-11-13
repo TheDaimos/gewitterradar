@@ -35,6 +35,38 @@ export function operaTileHttpError(response){
 // WR V2 response must still select and authorize the source before lookup.
 const operaCompletedImages=new Map();
 const OPERA_COMPLETED_CACHE_LIMIT=64;
+/* Short-lived, bounded DWD-only decoded image reuse across viewport changes.
+ * Frame time and full URL identify the pixel generation. A current WR-approved
+ * V2 layer is still required before lookup; this never authorizes a frame.
+ * NASA's no-store contract is deliberately excluded.
+ */
+const dwdCompletedImages=new Map();
+const DWD_COMPLETED_LIMIT=96;
+const DWD_COMPLETED_TTL_MS=180000;
+function dwdCompletedKey(id,url,frameTime){
+  return typeof id==="string"&&id.startsWith("dwd/")&&
+    typeof url==="string"&&url.startsWith("https://")&&
+    typeof frameTime==="string"&&/^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$/.test(frameTime)
+    ?id+"\\n"+frameTime+"\\n"+url:null;
+}
+function getCompletedDWDImage(id,url,frameTime){
+  const key=dwdCompletedKey(id,url,frameTime);
+  if(!key)return null;
+  const row=dwdCompletedImages.get(key);
+  if(!row)return null;
+  if(Date.now()-row.at>DWD_COMPLETED_TTL_MS){dwdCompletedImages.delete(key);return null;}
+  dwdCompletedImages.delete(key);dwdCompletedImages.set(key,row);
+  return row.image;
+}
+function retainCompletedDWDImage(id,url,frameTime,image){
+  const key=dwdCompletedKey(id,url,frameTime);
+  if(!key||!image)return;
+  dwdCompletedImages.delete(key);
+  dwdCompletedImages.set(key,{image,at:Date.now()});
+  while(dwdCompletedImages.size>DWD_COMPLETED_LIMIT)
+    dwdCompletedImages.delete(dwdCompletedImages.keys().next().value);
+}
+
 function operaCompletedKey(id,url){
   return id==="opera/opera_rate_raster" &&
     /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\d+\/\d+\/\d+\.png$/.test(url)
@@ -94,7 +126,7 @@ export class RasterTileRequestBudget {
      this._releaseSlot();
    };
  }
- getCachedImage(id,url){
+ getCachedImage(id,url,frameTime=null){
    if(this.closed)return null;
    const key=id+"\n"+url;
    let img=this.imageCache.get(key);
@@ -105,12 +137,13 @@ export class RasterTileRequestBudget {
      operaCompletedImages.delete(completedKey);
      operaCompletedImages.set(completedKey,img);
    }
-   return img||null;
+   return img||getCompletedDWDImage(id,url,frameTime)||null;
  }
- cacheImage(id,url,img){
+ cacheImage(id,url,img,frameTime=null){
    if(this.closed||!img)return;
    const key=id+"\n"+url;
    retainCompletedOperaImage(id,url,img);
+   retainCompletedDWDImage(id,url,frameTime,img);
    this.imageCache.delete(key);this.imageCache.set(key,img);
    while(this.imageCache.size>this.maxCachedImages)this.imageCache.delete(this.imageCache.keys().next().value);
  }
@@ -212,7 +245,7 @@ export async function drawRasterMosaicTileFromUrls({
    let url;
    try{url=rasterTileUrl(layer.tile_url,sourceTile);}
    catch(_){return {source_id,reason:"invalid_raster_tile_url"};}
-   const cached=budget.getCachedImage(source_id,url);
+   const cached=budget.getCachedImage(source_id,url,layer?.times?.valid_at);
    if(cached&&!signal?.aborted)
      return {source_id,layer:{...layer,image:cached,_p7SourceTile:sourceTile}};
    try{
@@ -248,7 +281,7 @@ export async function drawRasterMosaicTileFromUrls({
        }
        if(sharedSignal?.aborted)return {source_id,reason:"tile_cancelled"};
        if(!image)throw new Error("empty_raster_image");
-       budget.cacheImage(source_id,url,image);
+       budget.cacheImage(source_id,url,image,layer?.times?.valid_at);
        return {source_id,image};
      }catch(error){
        if(sharedSignal?.aborted)return {source_id,reason:"tile_cancelled"};
