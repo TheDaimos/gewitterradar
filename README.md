@@ -1,3 +1,6 @@
+
+> **Verbindlicher Entwicklungs-Bootstrap / Regressionsschutz (13.11.2026):** Vor neuen Provider-, Modul- oder Rendereränderungen [`docs/PROJECT_BOOTSTRAP.md`](docs/PROJECT_BOOTSTRAP.md) und [`docs/MODULE_PROVIDER_ISOLATION_GUARD_2026-11-13.md`](docs/MODULE_PROVIDER_ISOLATION_GUARD_2026-11-13.md) lesen. Funktionierende WR- und GR-Module dürfen durch neue Entwicklungen nicht eingeschränkt werden. Dies ist eine dokumentierte Pflicht, keine bereits implementierte technische CI-Sperre.
+
 ## V4.11.165 DEV · Original-Niederschlagsicon · HA 0.25.72
 
 Freigegebenes 1254-px-PNG bytegleich im Masterbestand und in beiden Installationspaketen. Frei verschiebbarer Kartenschalter mit kurzem Klick für die gemeinsame Niederschlagsebene, 600-ms-Long-Press für die vorhandenen Eye-Einstellungen und gespeicherten Positionen. Vier unabhängige Sichtbarkeitsmodi, synchron zum bestehenden Schnellzugriff. Wind, Temperatur und meteorologische Datenwege bleiben unverändert.
