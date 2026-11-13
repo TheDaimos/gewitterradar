@@ -138,3 +138,21 @@ Diese Entscheidung ergänzt die vorherigen Farbregeln in Abschnitt 9 und ersetzt
 - Bestehende Wind-, Temperatur-, Niederschlags- und Aura-/Eye-Neoneffekte bleiben unverändert.
 
 **Abnahme:** Bei vorhandenen echten Frontendaten lässt sich die leuchtende Übergangslinie im Synoptikmenü sichtbar an- und abschalten, **ohne** dabei Frontensymbole, normale Frontenlinie, H/T-Zentren oder Isobaren zu deaktivieren.
+
+## 12. Betreiberentscheidung: Frontensymbole separat ein-/ausschaltbar
+
+**Zusätzliche verbindliche Einstellung im eigenen Synoptik-Premiummenü:** `Meteorologische Frontensymbole anzeigen` **Ein/Aus**. Dies steuert separat die typgerechten **Dreiecke, Halbkreise und kombinierten meteorologischen Frontenzeichen** auf den Linien (Kaltfront, Warmfront, Okklusion, stationäre Front). Es verändert weder die zugrunde liegenden Frontengeometrien noch andere Wetterebenen.
+
+**Die Steuerung der Wetterfronten ist damit dreistufig und unabhängig:**
+1. `Wetterfronten anzeigen` – Hauptschalter für die gesamte Frontenebene.
+2. `Neon-Übergangslinie anzeigen` – ausschließlich zusätzlicher Leuchtsaum/Glow entlang der Frontgrenze, ohne die Grundlinie oder Symbole auszuschalten.
+3. `Meteorologische Frontensymbole anzeigen` – ausschließlich Dreiecke, Halbkreise und typgerechte Kombinationszeichen, unabhängig vom Neon-Schalter; die Grundlinie bleibt sichtbar.
+
+**Abnahmefälle bei echten WR-Frontendaten:**
+- Fronten **Ein**, Neon **Ein**, Symbole **Ein**: Grundlinie + leuchtende Übergangslinie + Frontensymbole.
+- Fronten **Ein**, Neon **Aus**, Symbole **Ein**: klassische Grundlinie + Frontensymbole.
+- Fronten **Ein**, Neon **Ein**, Symbole **Aus**: Grundlinie mit Neon-Effekt, keine Frontensymbole.
+- Fronten **Ein**, Neon **Aus**, Symbole **Aus**: nur die klassische Grundlinie.
+- Fronten **Aus**: alle Frontenkomponenten ausgeblendet; die individuellen Einstellungen bleiben für das nächste Einschalten gespeichert.
+
+Beide Subschalter **updatefest und unabhängig voneinander persistieren**, sofort ohne neuen WR-Abruf auf bereits geladene Vektorgeometrien anwenden und in der gleichen Premium-Menüoptik wie die übrigen Synoptik-Einstellungen anbieten. H/T-Zentren, Isobaren und die Wind-/Temperatur-/Niederschlagsdarstellungen bleiben hiervon unabhängig. Ohne autorisierte typisierte Frontengeometrien keine synthetischen Fronten anzeigen; verfügbarkeitsabhängige Schalter ehrlich kennzeichnen.
