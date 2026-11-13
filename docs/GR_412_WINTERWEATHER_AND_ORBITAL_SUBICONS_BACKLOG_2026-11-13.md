@@ -14,7 +14,8 @@ Der Betreiber hat die Bedeutung ausdrücklich präzisiert: **kleine kreisförmig
 
 - Bestehende WR-Haupticons bleiben erkennbar; ein Haupticon kann mehrere kreisförmige, visuell passende Satelliten-/Mond-Subicons im Orbit einblenden.
 - Ideen für Funktionen: beispielsweise Schnee, Nebel und Glätte als Unterfunktionen eines Haupticons „Winterwetter“; weitere WR-Funktionsgruppen später möglich.
-- Radius, Anzahl, Platzierung, Ein-/Ausklappen, Touch-Ziele, Kollisionserkennung an Displayrändern, Drag vs. Tap und Android-Gesten müssen vor Implementierung definiert werden.
+- **Interaktion (Vorschlag des Betreibers, 13.11.2026): Doppeltippen / Double-Press auf das Haupticon** zum Ein-/Ausklappen der kreisförmigen Orbital-Subicons, da **Short-Tap** bereits Ein/Aus und **Long-Press** bereits das Premiummenü auslöst. Bestehende Short-Tap-, Long-Press- und Drag-Semantik darf sich nicht verändern. Vor Umsetzung Double-Tap-Erkennung gegen bestehende Karten-Doppelzoom-Geste und Event-Bubbling prüfen; die Erkennung darf nicht versehentlich die Karte zoomen, und die erste Berührung darf nicht ungewollt den Hauptschalter toggeln. Konsequenz: Ggf. kleiner Double-Tap-Zeitpuffer für Short-Tap, daher Android-Gefühl und Latenz real testen, keine Verschlechterung erzwingen.
+- Radius, Anzahl, Platzierung, Touch-Ziele, Kollisionserkennung an Displayrändern, Drag vs. Tap und Android-Gesten müssen vor Implementierung definiert werden.
 - Hochwertige Metall-/Gold-/Aura-Optik passend zum bestehenden Premium-/Eye-Design, ohne vorhandene Eye-Slots, Icon-Layouts oder Gesten zu beschädigen.
 - Noch offen: genaue Anordnung, Konfigurierbarkeit, Maximalkapazität und Animation; keine implizite Designentscheidung.
 
