@@ -266,6 +266,9 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     const baseline = await open(browser, reference, androidView, {initial: legacy});
     await baseline.page.waitForFunction(() => window.ready && card._map);
     const expected = await values(baseline.page);
+    // The new fifth function is additive. Historical V181 baseline has four
+    // functions; retain all their original colors and compare only this new key.
+    expected.colors.synoptic = '#FFC442';
     await baseline.context.close();
 
     let releaseGet;
