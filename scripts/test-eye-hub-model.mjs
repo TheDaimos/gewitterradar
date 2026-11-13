@@ -51,8 +51,8 @@ assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBui
 const baseline195='e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6';
 const rootWeather='frontend/modules/weather/';
 const withoutWindHtUI=source=>source
-  .replace(/\\s+\\$\\{select\\('colorMode'[\\s\\S]*?(?=\\s+<details data-section="animation")/, '\\n  /* H/T UI migrated */')
-  .replace(/\\s+<!-- H\\/T-Farbsteuerung[^\\n]*-->/, '\\n  /* H/T UI migrated */');
+  .replace(/\s+\$\{select\('colorMode'[\s\S]*?(?=\s+<details data-section="animation")/, '\n  /* H/T UI migrated */')
+  .replace(/\s+<!-- H\/T-Farbsteuerung[^\n]*-->/, '\n  /* H/T UI migrated */');
 for(const name of ['wind-display.js','temperature-display.js']){
  const original=execFileSync('git',['show',baseline195+':'+rootWeather+name],{encoding:'utf8'});
  const installed=readFileSync(rootWeather+name,'utf8');
