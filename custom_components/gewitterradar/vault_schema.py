@@ -121,7 +121,7 @@ SNAKE_FIELDS = {
 }
 SNAKE = fields(SNAKE_FIELDS)
 FULL_SNAKE = fields(SNAKE_FIELDS, SNAKE_FIELDS)
-EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display")
+EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic")
 EYE_FUNCTION = choice(*EYE_FUNCTIONS)
 EYE_SLOT = fields({"id": identifier, "functionId": nullable(EYE_FUNCTION)}, ("functionId",))
 HEX = lambda value: isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", value) is not None
@@ -134,6 +134,17 @@ EYE = fields({
     "energyAccents": choice("off", "subtle", "normal", "strong"),
     "slots": sequence(lambda value: EYE_FUNCTION(value) or EYE_SLOT(value), 12),
     "colors": fields(dict.fromkeys(EYE_FUNCTIONS, HEX)),
+})
+SYNOPTIC = fields({
+    **dict.fromkeys(("visible", "centers", "isobars", "pressureLabels", "glow",
+                     "fronts", "frontNeon", "frontSymbols"), BOOL),
+    **dict.fromkeys(("highColor", "lowColor", "isobarColor"), HEX),
+    "highSize": number(14, 60), "lowSize": number(14, 60),
+    "lineWidth": number(.5, 6), "labelDensity": PERCENT,
+    **dict.fromkeys(("opacity", "centerOpacity", "isobarOpacity",
+                     "frontLineOpacity", "frontSymbolOpacity", "neonOpacity"), number(0, 1)),
+    "frontColors": fields(dict.fromkeys(("cold", "warm", "occluded", "stationaryCold", "stationaryWarm"), HEX)),
+    "quickPositions": mapping(POSITION, 24),
 })
 WIND_COLOR = choice("black", "white", "gold", "turquoise", "violet", "magenta", "blue", "green")
 WIND = fields({
@@ -228,6 +239,7 @@ BIT = choice("0", "1")
 MAP_VISIBILITY = choice("0", "1", "false", "true")
 JSON_SETTINGS = {
     "gewitterradar:eye-bubble:v1": EYE,
+    "gewitterradar:synoptic-ui:v1": SYNOPTIC,
     "gewitterradar:wind-ui:v1": WIND,
     STUDIO_KEY: STUDIO,
     TEMPERATURE_KEY: TEMPERATURE,

@@ -71,3 +71,27 @@ test('NOAA/WPC front geoJSON is typed and rejected on invented symbol side',()=>
  const c=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36]]},{front_type:'warm',symbol_side:'left',symbol_side_authorized:true});
  c.frame.unit='feature';assert.equal(parse(c,cap.fronts),null);
 });
+
+// P1: The backend profile schema must accept the newly added Eye function
+// and synoptic UI config. Neither an off layer nor an unqueried layer is a WR failure.
+test('P1 eye synoptic unavailable is based on verified WR failure, not off/unloaded frames', async () => {
+  const {synopticEyeStatus} = await import('../frontend/modules/weather/eye-hub-registry.js');
+  assert.equal(synopticEyeStatus({config:{visible:false},frames:{},status:{}}).availability,'off');
+  assert.equal(synopticEyeStatus({config:{visible:false},frames:{},status:{}}).available,true);
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},status:{}}).availability,'not-loaded');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:true,status:{}}).availability,'loading');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'}}).availability,'unavailable');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'}}).available,false);
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{centers:{valid_until:new Date(Date.now()+60000).toISOString()}},status:{isobars:'provider_unavailable'}}).availability,'available');
+});
+test('P1 Settings Vault schema accepts synoptic fifth slot and independent UI key',async()=>{
+ const fs=await import('node:fs');const source=fs.readFileSync('custom_components/gewitterradar/vault_schema.py','utf8');
+ assert.match(source,/EYE_FUNCTIONS = \\([^\\n]*"synoptic"/);
+ assert.match(source,/"gewitterradar:synoptic-ui:v1": SYNOPTIC/);
+ const {normalizeEyeConfig,assignEyeSlot}=await import('../frontend/modules/weather/eye-hub-model.js');
+ let config=normalizeEyeConfig({...normalizeEyeConfig(null),slots:[...normalizeEyeConfig(null).slots,{id:'slot-5',functionId:null}]});
+ config=assignEyeSlot(config,4,'synoptic');
+ for(let i=0;i<3;i++)config=normalizeEyeConfig(JSON.parse(JSON.stringify(config)));
+ assert.equal(config.slots.length,5);assert.equal(config.slots[4].functionId,'synoptic');
+ assert.equal(config.slots[0].functionId,'wind');assert.equal(config.slots[3].functionId,'weather-display');
+});

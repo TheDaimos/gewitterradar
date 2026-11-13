@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.202",
-  "build": "V4.11.202-DEV-2026-11-13",
-  "runtimeRevision": "411202r1",
-  "moduleSetId": "E411-202A1",
+  "productVersion": "4.11.203",
+  "build": "V4.11.203-DEV-2026-11-13",
+  "runtimeRevision": "411203r1",
+  "moduleSetId": "E411-203A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Synoptic WR V2 real geometry with cache-correct installable mirrors, opt-in Eye, new WPC front regional lines and isolated premium controls.",
+    "purpose": "P1 Synoptic WR V2 availability status and 5th Eye slot Settings Vault persistence; preserve all existing Eye and meteorological settings.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

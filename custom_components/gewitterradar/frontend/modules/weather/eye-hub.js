@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411181r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411181r1';
-import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411176r1';
+import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411203r1';
 import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411187r1';
 
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -49,7 +49,7 @@ export const eyeHubMethods={
  _eyeHubStatuses(){const s=this._eyeHubState(),out={};for(const [id,entry] of s.registry.entries){try{out[id]=entry.status();}catch(_){out[id]={active:false,available:false,detail:''};}}return out;},
  _eyeHubPatch(patch){
   const s=this._eyeHubState(),grouped=s.config.grouped;s.config=normalizeEyeConfig({...s.config,...patch},[...s.registry.entries.keys()]);
-  try{settingsStorage(this).setItem(EYE_HUB_KEY,JSON.stringify(s.config));}catch(_){}
+  try{settingsStorage(this).setItem(EYE_HUB_KEY,JSON.stringify(s.config));s.saveError=null;}catch(error){s.saveError=error;s.view?.message?.(this._t('eye.title')+': Einstellungen konnten nicht gespeichert werden ('+(error?.code||error?.message||'Settings Vault')+').');}
   if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherDisplayCancelEyeDrag?.(this.__weatherSynoptic?.quickDragOptions);this._weatherPrecipitationCancelDrag?.();this._eyeHubClose();}
   s.signature=null;this._eyeHubSync();
  },
