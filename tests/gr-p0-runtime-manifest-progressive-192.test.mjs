@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const roots=['custom_components/gewitterradar/frontend','frontend','dashboard/dist'];
 const read=(root,path)=>readFileSync(root+'/'+path,'utf8');
-const version='4.11.192',runtime='411192r1',moduleSet='E411-192A1';
+const version='4.11.193',runtime='411193r1',moduleSet='E411-193A1';
 
 test('installed runtime manifest matches loaded frontend, 36 modules, and all mirrored assets',()=>{
  for(const root of roots){
@@ -16,14 +16,14 @@ test('installed runtime manifest matches loaded frontend, 36 modules, and all mi
   assert.equal(manifest.runtimeRevision,runtime);
   assert.equal(manifest.moduleSetId,moduleSet);
   assert.equal(manifest.modules.length,36);
-  assert.match(product,/version:"4\.11\.192"/);
-  assert.match(product,/runtimeRevision:"411192r1"/);
-  assert.match(product,/moduleSetId:"E411-192A1"/);
-  assert.match(expected,/"id": "weather.precipitation-layer",\s*"version": "1\.3\.34"/);
-  assert.equal(manifest.modules.find(row=>row.id==='weather.precipitation-layer')?.version,'1.3.34');
+  assert.match(product,/version:"4\.11\.193"/);
+  assert.match(product,/runtimeRevision:"411193r1"/);
+  assert.match(product,/moduleSetId:"E411-193A1"/);
+  assert.match(expected,/"id": "weather.precipitation-layer",\s*"version": "1\.3\.35"/);
+  assert.equal(manifest.modules.find(row=>row.id==='weather.precipitation-layer')?.version,'1.3.35');
   assert.deepEqual(new Set(manifest.modules.map(x=>x.id)).size,36);
   const install=JSON.parse(readFileSync('custom_components/gewitterradar/manifest.json','utf8'));
-  assert.equal(install.version,'0.25.99');
+  assert.equal(install.version,'0.25.100');
  }
  for(const file of ['version.js','gewitterradar.js','module-manifest.js',
    'assets/gewitterradar-runtime-manifest.json',

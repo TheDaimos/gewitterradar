@@ -50,18 +50,18 @@ test('immutable DWD in-memory image cache keys must include verified source fram
 });
 
 test('the complete importer chain is revision-bumped to avoid stale cached modules',()=>{
- assert.match(read(roots[0],'modules/weather/precipitation-layer.js'),/raster-mosaic-consumer\.js\?v=411192r1/);
- assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-consumer.js'),/raster-mosaic-grid-layer\.js\?v=411192r1/);
- assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-grid-layer.js'),/raster-mosaic-tile-loader\.js\?v=411192r1/);
+ assert.match(read(roots[0],'modules/weather/precipitation-layer.js'),/raster-mosaic-consumer\.js\?v=411193r1/);
+ assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-consumer.js'),/raster-mosaic-grid-layer\.js\?v=411193r1/);
+ assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-grid-layer.js'),/raster-mosaic-tile-loader\.js\?v=411193r1/);
 });
 
 test('manifest, HA integration and DRA build are distinct and synchronized',()=>{
  const rel=read(roots[0],'version.js');
- assert.match(rel,/version:"4\.11\.192"/);
- assert.match(rel,/runtimeRevision:"411192r1"/);
- assert.match(rel,/integrationVersion:"0\.25\.99"/);
- assert.match(read(roots[0],'module-manifest.js'),/"version": "1\.3\.34"/);
+ assert.match(rel,/version:"4\.11\.193"/);
+ assert.match(rel,/runtimeRevision:"411193r1"/);
+ assert.match(rel,/integrationVersion:"0\.25\.100"/);
+ assert.match(read(roots[0],'module-manifest.js'),/"version": "1\.3\.35"/);
  const integration=JSON.parse(readFileSync('custom_components/gewitterradar/manifest.json','utf8'));
- assert.equal(integration.version,'0.25.99');
- assert.match(readFileSync('custom_components/gewitterradar/build_info.py','utf8'),/BUILD_VERSION = "4\.11\.192"/);
+ assert.equal(integration.version,'0.25.100');
+ assert.match(readFileSync('custom_components/gewitterradar/build_info.py','utf8'),/BUILD_VERSION = "4\.11\.193"/);
 });
