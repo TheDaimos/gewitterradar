@@ -11,7 +11,7 @@ import { WindCanvas } from './wind-canvas.js?v=411162r1';
 import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411187r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.18',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.19',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -51,7 +51,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   this._weatherWindUpdatePainters(s.points,s.field);s.painter?.stop();s.painter?.cancelPreparation();if(s.painter){s.painter.hidden=true;Object.assign(s.painter.metrics,{moving:false,segments:0,fps:null});}
   const canvas=s.painter?.canvas;if(canvas){canvas.hidden=true;s.painter.ctx.clearRect(0,0,canvas.width,canvas.height);}
  },
- _weatherWindToggleLayout(){const r=this.shadow?.getElementById('map')?.getBoundingClientRect();return [matchMedia('(pointer:coarse)').matches?'touch':'mouse',Math.min(innerWidth,innerHeight)<600?'phone':'large',r&&r.width>r.height?'landscape':'portrait',this._mapDisplayMode||'standard'].join(':');},
+ _weatherWindToggleLayout(r=this.shadow?.getElementById('map')?.getBoundingClientRect()){return [matchMedia('(pointer:coarse)').matches?'touch':'mouse',Math.min(innerWidth,innerHeight)<600?'phone':'large',r&&r.width>r.height?'landscape':'portrait',this._mapDisplayMode||'standard'].join(':');},
  _weatherWindEnsureToggle(){
   const card=this.shadow?.getElementById('map-card');if(!card)return;
   let button=this.shadow.getElementById('weather-wind-toggle');
@@ -62,24 +62,14 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
    .weather-wind-toggle[aria-pressed=true] img{filter:drop-shadow(0 0 3px #32b6e944)}.weather-wind-toggle.dragging{cursor:grabbing}.weather-wind-toggle:focus-visible{outline:2px solid #f4d791;outline-offset:2px}
    `;this.shadow.append(style);button=document.createElement('button');button.id='weather-wind-toggle';button.className='weather-wind-toggle';button.type='button';
    const image=document.createElement('img');image.src=new URL('../../assets/gr-wind-animation-toggle-premium-v1-136.webp', import.meta.url).href;image.srcset=new URL('../../assets/gr-wind-animation-toggle-premium-v1-272.webp', import.meta.url).href+' 4x';image.alt='';image.width=image.height=50;image.draggable=false;button.append(image);card.append(button);
-   const s=this._weatherWindState();s.quickDrag={eyeDrag:null};s.quickDragOptions={element:button,state:()=>s.quickDrag,position:()=>this._weatherWindPositionToggle(),longPress:()=>this._weatherWindOpen(),activate:()=>this._weatherWindToggle(),save:position=>{s.config=normalizeWindConfig({...s.config,quickPositions:{...s.config.quickPositions,[this._weatherWindToggleLayout()]:position}});this._weatherWindSave();}};
+   const s=this._weatherWindState();s.quickDrag={eyeDrag:null};s.quickDragOptions={element:button,state:()=>s.quickDrag,position:()=>this._eyeHubSyncIcons(),longPress:()=>this._weatherWindOpen(),activate:()=>this._weatherWindToggle(),save:position=>{s.config=normalizeWindConfig({...s.config,quickPositions:{...s.config.quickPositions,[this._weatherWindToggleLayout()]:position}});this._weatherWindSave();}};
    this._weatherDisplayBindEyeDrag?.(button,s.quickDragOptions);
    for(const name of ['mousedown','dblclick','touchstart'])button.addEventListener(name,e=>e.stopPropagation(),{passive:true});
+   requestAnimationFrame(()=>this._eyeHubSyncIcons());
   }
-  this._weatherWindSyncToggle();requestAnimationFrame(()=>this._weatherWindPositionToggle());
+  this._weatherWindSyncToggle();
  },
  _weatherWindCancelToggleDrag(){const options=this.__weatherWind?.quickDragOptions;if(options)this._weatherDisplayCancelEyeDrag?.(options);},
- _weatherWindPositionToggle(){
-  const s=this.__weatherWind,button=this.shadow?.getElementById('weather-wind-toggle'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!button||!card||!map||s?.quickDrag?.eyeDrag)return;
-  const r=map.getBoundingClientRect(),c=card.getBoundingClientRect();if(!r.width||!r.height)return;const x0=Math.max(0,r.left-c.left+10),y0=Math.max(0,r.top-c.top+10),x1=Math.max(x0,r.right-c.left-60),y1=Math.max(y0,r.bottom-c.top-60),position=s.config.quickPositions[this._weatherWindToggleLayout()];
-  let left=x0,top=y0;
-  if(position){left=x0+(x1-x0)*position.x;top=y0+(y1-y0)*position.y;}
-  else{
-   const obstacles=[...card.querySelectorAll('button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay')].filter(n=>n!==button&&!n.closest('.weather-wind-panel,.weather-display-panel,#map-display-menu')).map(n=>n.getBoundingClientRect()).filter(b=>b.width&&b.height);
-   outer:for(let y=y0;y<=y1;y+=54)for(let x=x0;x<=Math.min(x1,x0+216);x+=50)if(!obstacles.some(b=>c.left+x<b.right+3&&c.left+x+50>b.left-3&&c.top+y<b.bottom+3&&c.top+y+50>b.top-3)){left=x;top=y;break outer;}
-  }
-  button.style.left=left+'px';button.style.top=top+'px';
- },
  _weatherWindSyncToggle(){const s=this._weatherWindState(),button=this.shadow?.getElementById('weather-wind-toggle');if(!button)return;const mode=s.config.quickVisibility||'fullscreen',fullscreen=this._mapDisplayMode==='fullscreen'||this._mapWindowMode;button.hidden=mode==='hidden'||(mode==='fullscreen'&&!fullscreen)||(mode==='nonfullscreen'&&fullscreen);button.setAttribute('aria-pressed',String(s.config.visible));button.setAttribute('aria-label','Winddarstellung '+(s.config.visible?'ausschalten':'einschalten'));button.title='Winddarstellung '+(s.config.visible?'ausschalten':'einschalten')+' · '+(s.config.visible?s.status:'Aus');if(s.painter?.canvas)s.painter.canvas.hidden=!windDisplayActive(s.config);},
  _weatherWindEnsureUi(){
   ensurePremiumUi(this.shadow);this._weatherDisplayEnsureStyle?.();

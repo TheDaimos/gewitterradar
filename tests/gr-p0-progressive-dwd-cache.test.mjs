@@ -57,11 +57,11 @@ test('the complete importer chain is revision-bumped to avoid stale cached modul
 
 test('manifest, HA integration and DRA build are distinct and synchronized',()=>{
  const rel=read(roots[0],'version.js');
- assert.match(rel,/version:"4\.11\.194"/);
- assert.match(rel,/runtimeRevision:"411194r1"/);
- assert.match(rel,/integrationVersion:"0\.25\.101"/);
+ assert.match(rel,/version:"4\.11\.195"/);
+ assert.match(rel,/runtimeRevision:"411195r1"/);
+ assert.match(rel,/integrationVersion:"0\.25\.102"/);
  assert.match(read(roots[0],'module-manifest.js'),/"version": "1\.3\.36"/);
  const integration=JSON.parse(readFileSync('custom_components/gewitterradar/manifest.json','utf8'));
- assert.equal(integration.version,'0.25.101');
- assert.match(readFileSync('custom_components/gewitterradar/build_info.py','utf8'),/BUILD_VERSION = "4\.11\.194"/);
+ assert.equal(integration.version,'0.25.102');
+ assert.match(readFileSync('custom_components/gewitterradar/build_info.py','utf8'),/BUILD_VERSION = "4\.11\.195"/);
 });

@@ -1,14 +1,14 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {quickMethods,QUICK_CSS} from './display-quick.js?v=411187r1';
-import {eyeHubMethods} from './eye-hub.js?v=411187r1';
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411187r1';
+import {eyeHubMethods} from './eye-hub.js?v=411195r1';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411195r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411187r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.45",
+  version:"0.4.46",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -699,7 +699,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       control.setAttribute('aria-label','Darstellungsmenü öffnen');control.setAttribute('aria-controls','weather-display-panel');control.innerHTML=displayControlMarkup();mapCard.append(control);
       state.displayControlDrag={eyeDrag:null};
       const open=()=>this._weatherDisplayOpenFromLayerMenu();
-      state.displayControlOptions={element:control,state:()=>state.displayControlDrag,position:()=>this._weatherDisplayPositionControl(),activate:open,longPress:open,save:position=>{if(state.config.rememberPosition)this._weatherDisplayPatch({displayControlPosition:position});}};
+      state.displayControlOptions={element:control,state:()=>state.displayControlDrag,position:()=>this._eyeHubSyncIcons(),activate:open,longPress:open,save:position=>{if(state.config.rememberPosition)this._weatherDisplayPatch({displayControlPosition:position});}};
       this._weatherDisplayBindEyeDrag(control,state.displayControlOptions);
       for(const type of ['mousedown','dblclick','touchstart'])control.addEventListener(type,event=>event.stopPropagation(),{passive:true});
     }
@@ -766,7 +766,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherPrecipitationEnsureToggle();
     this._weatherPrecipitationEnsureSettings(panel);
     if(!state.resizeHandler){
-      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._weatherDisplayPositionControl();this._weatherWindPositionToggle?.();this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();this._eyeHubSyncIcons?.();});
+      state.resizeHandler=()=>requestAnimationFrame(()=>{this._weatherDisplayPositionPanel();this._weatherDisplayPositionEye();this._eyeHubSyncIcons();});
       window.addEventListener("resize",state.resizeHandler,{passive:true});
       window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
     }
@@ -780,7 +780,6 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
     }
-    requestAnimationFrame(()=>{this._weatherDisplayPositionEye();this._weatherDisplayPositionControl();});
     state.mounted=true;
   },
 
@@ -802,23 +801,6 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
 
   _weatherDisplayCancelControlDrag(){
     const options=this.__weatherDisplayState?.displayControlOptions;if(options)this._weatherDisplayCancelEyeDrag(options);
-  },
-
-  _weatherDisplayPositionControl(){
-    const state=this._weatherDisplayState();if(state.displayControlDrag?.eyeDrag)return;
-    const control=this.shadow?.getElementById('weather-display-control'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');
-    if(!control||control.hidden||!card||!map)return;
-    const c=card.getBoundingClientRect(),m=map.getBoundingClientRect(),width=control.offsetWidth,height=control.offsetHeight;
-    if(!c.width||!m.width||!width||!height)return;
-    const minLeft=Math.max(0,m.left-c.left+10),minTop=Math.max(0,m.top-c.top+10),maxLeft=Math.max(minLeft,m.right-c.left-width-10),maxTop=Math.max(minTop,m.bottom-c.top-height-10);
-    const position=state.config.rememberPosition?state.config.displayControlPosition:null;
-    let left=minLeft,top=maxTop;
-    if(position){left=minLeft+(maxLeft-minLeft)*position.x;top=minTop+(maxTop-minTop)*position.y;}
-    else{
-      const eye=this.shadow.getElementById('weather-display-eye-control'),r=eye&&!eye.hidden?eye.getBoundingClientRect():this._eyeHubLegacyEyeRect();
-      if(r){left=r.left-c.left;top=r.top-c.top-height-12;if(top<minTop){top=r.top-c.top;left=r.right-c.left+12;if(left>maxLeft)left=r.left-c.left-width-12;}}
-    }
-    control.style.left=clamp(left,minLeft,maxLeft)+'px';control.style.top=clamp(top,minTop,maxTop)+'px';control.style.bottom='auto';
   },
 
   _weatherDisplayPositionPanel(position=this._weatherDisplayState().config.position){
@@ -1123,7 +1105,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this._weatherDisplayEnsureMapUi();
     const eye=this.shadow.getElementById("weather-display-eye-control");
     const control=this.shadow.getElementById('weather-display-control');
-    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben';if(!control.hidden)requestAnimationFrame(()=>this._weatherDisplayPositionControl());}
+    if(control){control.hidden=!(available||this._weatherWindOpen);control.setAttribute('aria-expanded',String(config.enabled));control.title='Darstellungsmenü öffnen · 600 ms drücken: öffnen · Ziehen: verschieben';}
     const panel=this.shadow.getElementById("weather-display-panel");
     if(panel){
       panel.hidden=!((available||this._weatherWindOpen)&&config.enabled);

@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.187",
-  "build": "V4.11.187-DEV-2026-11-11",
-  "runtimeRevision": "411187r1",
-  "moduleSetId": "E411-187A1",
-  "baselineFeatureHead": "7ac535d9862a74af8335fad09a024a6736573592",
+  "productVersion": "4.11.195",
+  "build": "V4.11.195-DEV-2026-11-13",
+  "runtimeRevision": "411195r1",
+  "moduleSetId": "E411-195A1",
+  "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Eye and Aura touch recovery and diagnostics after an Android system screenshot.",
+    "purpose": "WeatherRouter standalone map control position stability and synchronized DEV runtime identity.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

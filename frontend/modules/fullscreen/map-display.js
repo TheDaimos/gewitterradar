@@ -13,7 +13,7 @@ import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-ca
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -987,8 +987,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         this._positionMapLocationOverlay();
         this._positionMapDisplayControl();
         this._positionMapClusterJumpOverlay();
-        this._weatherWindPositionToggle?.();
-        this._weatherTemperaturePositionToggle?.();this._weatherPrecipitationPositionToggle?.();
+        if(this.__eyeHub?.config.grouped===false){
+          this._weatherDisplayPositionEye?.();
+          this._eyeHubSyncIcons?.();
+        }
         this._scheduleOpenLocationDropdownPosition();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
