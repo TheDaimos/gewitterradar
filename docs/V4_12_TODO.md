@@ -10,6 +10,15 @@ Die bisherige V4.11-Themensammlung zu zentralem Systemstatus, Fehlerbehebung, Bl
 
 Die neu priorisierte **V4.11** konzentriert sich auf europäische Niederschlagsradardaten und die stabile WR-/GR-Anbindung: [V4_11_TODO.md](V4_11_TODO.md). Der eigentliche Provider-Ausbau erfolgt ausschließlich in `TheDaimos/weather-router-dev`.
 
+## Doppeltipp-Kalibrierung für Orbital-Untermenüs (Planung 4.12, 13.11.2026)
+
+- [ ] **Benutzerindividuelle Doppeltipp-Geschwindigkeit / maximale Tipp-Lücke** für die kleinen kreisförmigen Orbital-Subicons vorsehen. Ein interaktives Kalibrierungstool lässt den Anwender mehrere natürliche Doppeltipps ausführen und schlägt anschließend ein zu seinem Bedienrhythmus passendes Erkennungsfenster in Millisekunden vor.
+- [ ] **Manuelle Feinjustierung und Rücksetzen auf einen empfohlenen Standardwert** bereitstellen. Der Kalibrierungsvorschlag ist nicht erzwungen; Nutzende müssen ihn übernehmen oder verwerfen können. Individuelle Einstellung versioniert und dauerhaft im vorhandenen Einstellungsmechanismus speichern und nach Neustart wiederherstellen, ohne bestehende Konfigurationen zurückzusetzen.
+- [ ] Kalibrierung mit unmittelbarer, barrierearmer Rückmeldung für *erkannt*, *zu langsam* und *ungültige Drag-/Long-Press-Geste*. Unterschiedliche Touch-/Pointer-Geräte beachten; Test bei Android-typischem Tippen sowie Maus-Doppelklick.
+- [ ] **Gestenkonflikte verbindlich lösen:** Short-Tap = bisher Ein/Aus, Long-Press = bisher Premiummenü, Drag = bisher Verschieben, Double-Tap = nur Orbital-Untermenü. Keinen versehentlichen Einzel-Toggle beim ersten Tipp eines erkannten Doppeltipps, keine verzögerte oder doppelte Long-Press-Auslösung und keinen unerwünschten Karten-Doppelzoom. Latenz und Reaktionsgefühl auf echten Endgeräten abnehmen; kein unbemerktes globales Ändern bestehender Bedienung.
+- [ ] Doppel-Tipp-Toleranz (falls erforderlich: minimale Tap-Dauer, Positionsabweichung, Zeitabstand) robust begrenzen; keine unbegrenzt großen Zeitfenster, die versehentliche Doppeltipps und träge Short-Taps verursachen. Systemseitige Doppeltipp- oder Barrierefreiheitseinstellungen nach Möglichkeit berücksichtigen, nicht heimlich überschreiben.
+- [ ] Diese Punkte ausschließlich **für 4.12 vormerken**. Keine Umsetzung, kein Versionssprung und keine Laufzeitänderung in 4.11; geschützte Eye-/Wind-/Synoptik-Funktionen bewahren.
+
 ## 0. Geo-Sonde – bereits verbindlich für V4.12 beschlossen
 
 - [ ] Geo-Sonde als Werkzeug im bestehenden Karten-Layer-Menü planen und implementieren – ausdrücklich **nicht** durch die Verschiebung der V4.11-Themen verdrängen.

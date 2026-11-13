@@ -19,6 +19,17 @@ Der Betreiber hat die Bedeutung ausdrücklich präzisiert: **kleine kreisförmig
 - Hochwertige Metall-/Gold-/Aura-Optik passend zum bestehenden Premium-/Eye-Design, ohne vorhandene Eye-Slots, Icon-Layouts oder Gesten zu beschädigen.
 - Noch offen: genaue Anordnung, Konfigurierbarkeit, Maximalkapazität und Animation; keine implizite Designentscheidung.
 
+
+### Kalibrierung der Doppeltipp-Geschwindigkeit (zusätzlicher Beschluss, 13.11.2026)
+
+- **Eigener Kalibrierungsassistent:** Nutzer tippt mehrfach in seinem natürlichen Tempo doppelt auf ein Testicon. Das System misst die Abstände und schlägt ein individuelles Double-Tap-Erkennungsfenster (ms) vor.
+- **Frei anpassbar:** Vorschlag übernehmen oder ablehnen; Zeitfenster per Regler oder Zahl feineinstellen; Werkseinstellung wiederherstellen. Dauerhaft pro Benutzerprofil speichern, ohne bisherige Eye-, Premium- oder Wetter-Einstellungen zu überschreiben.
+- **Live-Feedback:** erfolgreich erkannt, zeitlicher Abstand zu groß, Bewegung/Long-Press statt Doppeltipp; verständliche Darstellung auch für Touch-/Android-Bedienung.
+- **Prioritäten und Sicherheit:** Single-Tap bleibt Ein/Aus, Long-Press bleibt Einstellungen, Drag bleibt Verschieben. Ein erkannter Doppeltipp darf nicht bereits im ersten Tipp das Haupticon umschalten und auch keinen Karten-Doppelzoom auslösen. Kurzer Puffer für Single-Tap nur soweit nötig und sorgfältig gegen Latenz abwägen; keine Verschlechterung vorhandener Gesten stillschweigend übernehmen.
+- **Technische Planung 4.12:** Zeitfenster und Bewegungstoleranz sinnvolle Grenzen geben, Pointer-Typen unterscheiden, Accessibility berücksichtigen, reale Android-Tests. Kalibrierung auf jene Haupticons beschränken, für die Double-Tap-Orbit aktiviert ist.
+
+**Status:** Vorgemerkt, nicht implementiert. Siehe auch [V4_12_TODO.md](V4_12_TODO.md).
+
 ## Technische Abgrenzung und Vorgehen
 
 - GewitterRadar **4.11 sauber abschließen** und funktionierende Synoptik und Windanimation schützen. **Keine** Realisierung dieser Features in 4.11.
