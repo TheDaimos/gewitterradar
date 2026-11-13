@@ -132,7 +132,7 @@ export async function expectedPayload(){
   const assetScanText=[text,...[...modular.values()].map(bytes=>bytes.toString('utf8'))].join('\n');
   const referenced=[...new Set([...assetScanText.matchAll(/new URL\('(?:\.\/|\.\.\/\.\.\/)assets\/([^'?]+)(?:\?[^']*)?',\s*(?:import\.meta\.url|rootModuleUrl)\)/g)].map(m=>'assets/'+m[1]))].sort();
  const active=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
- if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch');
+ if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch; needed='+referenced.filter(x=>!active.includes(x)).join(',')+'; extra='+active.filter(x=>!referenced.includes(x)).join(','));
  const projectHubRuntime=new Map([
   ['project-hub/project-hub-config.json',await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'))],
   ['project-hub/asset-manifest.json',await readFile(resolve(root,'frontend/project-hub/asset-manifest.json'))],
