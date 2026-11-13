@@ -1,0 +1,31 @@
+name: GR Synoptik DEV - targeted regression
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'frontend/modules/weather/synoptic-display.js'
+      - 'frontend/modules/weather/eye-hub*.js'
+      - 'frontend/modules/weather/display-menu.js'
+      - 'frontend/modules/weather/wind-display.js'
+      - 'frontend/gewitterradar.js'
+      - 'frontend/module-manifest.js'
+      - 'frontend/version.js'
+      - 'frontend/assets/gewitterradar-runtime-manifest.json'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'dashboard/dist/**'
+      - 'tests/synoptic-dev-v411198.test.mjs'
+      - '.github/workflows/gr-synoptic-dev.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synoptic-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synoptic isolated contract and mirror checks
+        run: node --test tests/synoptic-dev-v411198.test.mjs
