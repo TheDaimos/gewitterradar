@@ -43,15 +43,22 @@ const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:f
 for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js'])assert(readFileSync('frontend/modules/weather/'+file).equals(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:frontend/modules/weather/'+file])),'protected source '+file);
 const stripBuildVersions=normaliseGeneratedModule;
 const precipitationPath='frontend/modules/weather/precipitation-layer.js';
-assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+precipitationPath],{encoding:'utf8'}),precipitationPath)),'protected precipitation implementation');
+assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+precipitationPath],{encoding:'utf8'})),'protected precipitation implementation unchanged since GR 4.11.195');
 // Keep the V179 window implementations with the shared drag binding and its
 // current state shape. Compatibility click suppression now lives on the card.
-for(const [file,scope] of [['wind-display.js','wind-settings'],['temperature-display.js','temperature-settings']]){
- const reference=execFileSync('git',['show','51fe26380bdd97b46fe7d979a2ef994b483cc430:frontend/modules/weather/'+file],{encoding:'utf8'})
-  .replace(file==='wind-display.js'?'import {ensurePremiumUi,':'import {premiumAction,',file==='wind-display.js'?'import {bindPremiumPanelDrag,ensurePremiumUi,':'import {bindPremiumPanelDrag,premiumAction,')
-  .replace(',eyeSuppressClickUntil:0','')
-  .replace('card.append(panel);',"card.append(panel);bindPremiumPanelDrag(panel,this.shadow?.getElementById('map'),'"+scope+"');");
- assert.equal(stripBuildVersions(readFileSync('frontend/modules/weather/'+file,'utf8')),stripBuildVersions(withVaultStorage(reference,file)),file+' protected V179 behavior');
+// Protected module baseline is the approved GR 4.11.195 DEV HEAD before
+// the additive Synoptik feature. Wind is permitted only its H/T menu migration.
+const baseline195='e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6';
+const rootWeather='frontend/modules/weather/';
+const withoutWindHtUI=source=>source
+  .replace(/\\s+\\$\\{select\\('colorMode'[\\s\\S]*?(?=\\s+<details data-section="animation")/, '\\n  /* H/T UI migrated */')
+  .replace(/\\s+<!-- H\\/T-Farbsteuerung[^\\n]*-->/, '\\n  /* H/T UI migrated */');
+for(const name of ['wind-display.js','temperature-display.js']){
+ const original=execFileSync('git',['show',baseline195+':'+rootWeather+name],{encoding:'utf8'});
+ const installed=readFileSync(rootWeather+name,'utf8');
+ const expected=name==='wind-display.js'?withoutWindHtUI(original):original;
+ const actual=name==='wind-display.js'?withoutWindHtUI(installed):installed;
+ assert.equal(stripBuildVersions(actual),stripBuildVersions(expected),name+' protected baseline 4.11.195 outside approved H/T migration');
 }
 for(const [id,owner] of [['weather.satellite.clouds','weather-display'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
 const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,true);assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,true);aggregateOwner.__weatherGenericStates.get('weather.satellite.clouds').status='failed';assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,false);
