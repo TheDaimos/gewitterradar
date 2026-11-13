@@ -48,13 +48,23 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
   }
  }
  const version=JSON.parse(JSON.stringify(read('frontend/version.js')));
- assert.match(version,/4\.11\.198/);assert.match(version,/411198r1/);
+ assert.match(version,/4\.11\.198/);assert.match(version,/411199r1/);
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));
  const runtime=JSON.parse(read('frontend/assets/gewitterradar-runtime-manifest.json'));
  const manifest=read('frontend/module-manifest.js');
- assert.equal(runtime.productVersion,'4.11.198');
- assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.2'));
+ assert.equal(runtime.productVersion,'4.11.199');
+ assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.3'));
  assert.match(manifest,/weather\.synoptic-display/);
+});
+
+test('NOAA/WPC front geoJSON is typed and rejected on invented symbol side',()=>{
+ const a=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36],[-82,35]]},{front_type:'cold',intensity:null,symbol_side:null,symbol_side_authorized:false});
+ a.frame.unit='feature';assert.equal(parse(a,cap.fronts)?.geometry.features.length,1);
+ const b=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36]]},{front_type:'stationary',symbol_side:null,symbol_side_authorized:false});
+ b.frame.unit='feature';assert.equal(parse(b,cap.fronts)?.geometry.features[0].properties.front_type,'stationary');
+ b.frame.geometry.features[0].properties.front_type='fake';assert.equal(parse(b,cap.fronts),null);
+ const c=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36]]},{front_type:'warm',symbol_side:'left',symbol_side_authorized:true});
+ c.frame.unit='feature';assert.equal(parse(c,cap.fronts),null);
 });
