@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.207",
-  "build": "V4.11.207-DEV-2026-11-13",
-  "runtimeRevision": "411207r1",
-  "moduleSetId": "E411-207A1",
+  "productVersion": "4.11.208",
+  "build": "V4.11.208-DEV-2026-11-13",
+  "runtimeRevision": "411208r1",
+  "moduleSetId": "E411-208A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "P1 Synoptik: Kartenstart, WR-V2-Vektoren, Android-Premium-Gesten, Transparenz und Kartendiagnose",
+    "purpose": "P2 Synoptik: deckendes Premium-Metallmenü und visuelle Android-Farbauswahl",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -4,11 +4,64 @@ import {EYE_COLORS} from './eye-hub-model.js?v=411202r1';
 import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411207r1';
 import {canonicalWindBounds} from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.9',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.10',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);
 export const SYNOPTIC_PALETTE=Object.freeze([...new Set([...EYE_COLORS,...CLASSIC_COLORS])]);
+const COLOR_NAMES=Object.freeze({
+ '#FF00CC':'Neonpink','#B000FF':'Neonviolett','#0066FF':'Neonblau','#00FFF0':'Neontürkis',
+ '#39FF14':'Neongrün','#FFFF00':'Neongelb','#FF5F00':'Neonorange','#FF003C':'Neonrot',
+ '#FFC442':'Gold','#D8E6F3':'Eisblau','#FFFFFF':'Weiß','#FFE17A':'Champagner',
+ '#FF9B48':'Apricot','#ED4343':'Korallenrot','#9F2333':'Bordeaux','#D94BA8':'Magenta',
+ '#8758CE':'Violett','#377DFF':'Kornblumenblau','#36B7E9':'Himmelblau','#35C3B1':'Türkis','#4FBE76':'Smaragd'
+});
+const COLOR_FIELDS=Object.freeze({
+ highColor:'Hochdruckfarbe',lowColor:'Tiefdruckfarbe',isobarColor:'Linienfarbe',
+ cold:'Kaltfrontfarbe',warm:'Warmfrontfarbe',occluded:'Okklusionsfarbe',
+ stationaryCold:'Stationär: Kaltanteil',stationaryWarm:'Stationär: Warmanteil'
+});
+const SYNOPTIC_ICON=new URL('../../assets/gr-synoptic-high-low-isobars-premium-original.png',import.meta.url).href;
+const colorValue=(config,key)=>config[key]??config.frontColors[key];
+const colorName=color=>COLOR_NAMES[color]||'Eigene Farbe';
+const hexSwatch=value=>typeof value==='string'&&/^#[\da-f]{6}$/i.test(value)?value.toUpperCase():null;
+const PANEL_CSS=`
+ .weather-synoptic-panel.gr-premium-metal-surface,.weather-synoptic-colors{
+  box-sizing:border-box;border:2px solid transparent;border-radius:15px;color:#e4e9ef;
+  background-color:#101820;
+  background-image:radial-gradient(circle at 15% 0%,#e6b85517,transparent 34%),linear-gradient(180deg,#141c26,#070c12),linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c);
+  background-clip:padding-box,padding-box,border-box;
+  background-origin:padding-box,padding-box,border-box;
+  box-shadow:0 8px 22px #0009,inset 0 0 0 1px #ffecb526,inset 0 2px #fff4d518;
+  font:12px/1.45 system-ui
+ }
+ .weather-synoptic-panel{position:absolute;z-index:2147483644;top:12px;right:12px;display:flex;flex-direction:column;width:min(410px,calc(100% - 24px),calc(100vw - 24px));max-height:min(calc(100% - 24px),calc(100dvh - 24px));overflow:hidden}
+ .weather-synoptic-panel[hidden],.weather-synoptic-panel.minimized>[data-premium-content]{display:none}
+ .weather-synoptic-panel>header{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:8px;flex:none;padding:6px 8px;min-height:44px;border-bottom:1px solid #b5985a55;background:linear-gradient(105deg,#3b3021,#1d2834 64%,#121b25);touch-action:none;user-select:none;cursor:grab}
+ .weather-synoptic-panel>header>img{width:32px;height:32px;object-fit:contain;pointer-events:none}
+ .weather-synoptic-panel>header strong{color:#f1d58c;font-size:13px;line-height:1.25;min-width:0}
+ .weather-synoptic-panel>header .gr-premium-action,.weather-synoptic-colors .gr-premium-action{width:44px;height:44px;min-width:44px;flex-basis:44px;border-radius:9px}
+ .weather-synoptic-panel [data-premium-content]{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;padding:8px}
+ .weather-synoptic-panel .gr-premium-collapse{border:1px solid #b5985a66;border-radius:11px;background:linear-gradient(145deg,#202935,#101820 55%,#171b22);box-shadow:inset 0 1px #fff1}
+ .weather-synoptic-panel .gr-premium-collapse>summary{padding:5px 12px}
+ .weather-synoptic-panel .gr-collapse-inner{padding:0 10px 8px}
+ .weather-synoptic-panel label,.synoptic-color-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,45%);gap:8px;align-items:center;min-height:44px}
+ .weather-synoptic-panel label>input[type=checkbox]{width:26px;height:26px;justify-self:end;margin:0 9px 0 0;accent-color:#d5ab50}
+ .weather-synoptic-panel label>input[type=range]{box-sizing:border-box;width:100%;height:36px;min-width:0;margin:0;accent-color:#d5ab50;touch-action:pan-y}
+ .weather-synoptic-panel .eye-metal-button{color:#f1d58c;font:inherit}
+ .synoptic-color-row button{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0;padding:6px 8px;text-align:left}
+ .weather-synoptic-panel .eye-color-button{width:100%;height:auto;min-height:44px}
+ .weather-synoptic-panel .eye-color-button i,.weather-synoptic-colors .eye-color-choice i{display:block;flex:none;width:24px;height:24px;border-radius:50%;border:1px solid #ffffff70;background-color:var(--eye-color)}
+ .weather-synoptic-panel .eye-color-button i{margin:0}
+ .weather-synoptic-colors{padding:0;width:min(400px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
+ .weather-synoptic-colors[open]{display:flex;flex-direction:column}
+ .weather-synoptic-colors::backdrop{background:#020810bd}
+ .weather-synoptic-colors>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 10px;border-bottom:1px solid #b5985a55;color:#f1d58c}
+ .weather-synoptic-colors h3{margin:0;font:750 13px/1.3 system-ui}
+ .weather-synoptic-colors .eye-colors{display:grid;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;padding:10px;margin:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .weather-synoptic-colors .eye-color-choice{color:#f1d58c;cursor:pointer;touch-action:manipulation;min-height:58px;min-width:0}
+ .weather-synoptic-panel button:focus-visible,.weather-synoptic-colors button:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px}
+`;
 const defaults=Object.freeze({visible:false,centers:true,isobars:true,pressureLabels:true,highColor:'#FFC442',lowColor:'#B000FF',isobarColor:'#D8E6F3',highSize:28,lowSize:28,lineWidth:2,labelDensity:50,glow:false,opacity:1,centerOpacity:1,isobarOpacity:1,frontLineOpacity:1,frontSymbolOpacity:1,neonOpacity:1,fronts:false,frontNeon:true,frontSymbols:true,frontColors:{cold:'#0066FF',warm:'#FF003C',occluded:'#B000FF',stationaryCold:'#0066FF',stationaryWarm:'#FF003C'}});
 const clamp=(v,lo,hi,fallback)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):fallback;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -81,16 +134,30 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
  _weatherSynopticEnsureToggle(){
  const card=this.shadow?.getElementById('map-card');if(!card)return;
  let b=this.shadow.getElementById('weather-synoptic-toggle');
- if(!b){const style=document.createElement('style');style.id='weather-synoptic-toggle-style';style.textContent='.weather-synoptic-toggle{position:absolute;left:10px;top:10px;z-index:650;width:50px;height:50px;padding:0;border:0;background:transparent;border-radius:50%;cursor:grab;touch-action:none}.weather-synoptic-toggle[hidden]{display:none!important}.weather-synoptic-toggle img{display:block;width:50px;height:50px;object-fit:contain;pointer-events:none;filter:brightness(.72) saturate(.8)}.weather-synoptic-toggle[aria-pressed=true] img{filter:drop-shadow(0 0 4px #FFC44288)}';this.shadow.append(style);b=document.createElement('button');b.type='button';b.id='weather-synoptic-toggle';b.className='weather-synoptic-toggle';const img=document.createElement('img');img.src=new URL('../../assets/gr-synoptic-high-low-isobars-premium-original.png',import.meta.url).href;img.draggable=false;img.alt='';b.append(img);card.append(b);
+ if(!b){const style=document.createElement('style');style.id='weather-synoptic-toggle-style';style.textContent='.weather-synoptic-toggle{position:absolute;left:10px;top:10px;z-index:650;width:50px;height:50px;padding:0;border:0;background:transparent;border-radius:50%;cursor:grab;touch-action:none}.weather-synoptic-toggle[hidden]{display:none!important}.weather-synoptic-toggle img{display:block;width:50px;height:50px;object-fit:contain;pointer-events:none;filter:brightness(.72) saturate(.8)}.weather-synoptic-toggle[aria-pressed=true] img{filter:drop-shadow(0 0 4px #FFC44288)}';this.shadow.append(style);b=document.createElement('button');b.type='button';b.id='weather-synoptic-toggle';b.className='weather-synoptic-toggle';const img=document.createElement('img');img.src=SYNOPTIC_ICON;img.draggable=false;img.alt='';b.append(img);card.append(b);
  const state=this._weatherSynopticState();state.quickDrag={eyeDrag:null};const options={element:b,state:()=>state.quickDrag,position:()=>this._eyeHubSyncIcons(),longPress:()=>this._weatherSynopticOpen(),activate:()=>this._weatherSynopticToggle(),onDecision:action=>this._weatherSynopticDecision(action,'standalone'),save:p=>{state.config.quickPositions[this._weatherWindToggleLayout()]=p;this._weatherSynopticSave();}};state.quickDragOptions=options;this._weatherDisplayBindEyeDrag?.(b,options);for(const name of ['mousedown','dblclick','touchstart'])b.addEventListener(name,e=>e.stopPropagation(),{passive:true});
  }this._weatherSynopticSync();
  },
  _weatherSynopticEnsureUi(){
   const card=this.shadow?.getElementById('map-card');if(!card)return null;ensurePremiumUi(this.shadow);
-  if(!this.shadow.getElementById('weather-synoptic-style')){const style=document.createElement('style');style.id='weather-synoptic-style';style.textContent='.weather-synoptic-panel{position:absolute;z-index:2147483644;top:12px;right:12px;width:min(410px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;padding:12px;box-sizing:border-box;font:12px/1.45 system-ui;color:#e4e9ef;overscroll-behavior:contain;touch-action:pan-y}.weather-synoptic-panel[hidden],.weather-synoptic-panel.minimized>[data-premium-content]{display:none}.weather-synoptic-panel>header{touch-action:none}.weather-synoptic-panel strong{min-width:0;overflow-wrap:anywhere}.weather-synoptic-panel .gr-collapse-inner{padding:0 8px}.weather-synoptic-panel label{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 0}.weather-synoptic-panel select,.weather-synoptic-panel button{background:#14202d;color:#f1d38a;border:1px solid #b5985a66;border-radius:7px;padding:7px}.weather-synoptic-panel fieldset{border:1px solid #a5885355;border-radius:8px;margin:10px 0}.weather-synoptic-panel legend{color:#dfc081}.weather-synoptic-panel input[type=range]{width:46%}';this.shadow.append(style);}
+  if(!this.shadow.getElementById('weather-synoptic-style')){const style=document.createElement('style');style.id='weather-synoptic-style';style.textContent=PANEL_CSS;this.shadow.append(style);}
   let panel=this.shadow.getElementById('weather-synoptic-panel');if(!panel){panel=document.createElement('section');panel.id='weather-synoptic-panel';panel.className='weather-synoptic-panel gr-premium-metal-surface';panel.hidden=true;card.append(panel);bindPremiumPanelDrag(panel,this.shadow?.getElementById('map'),'synoptic-settings',{touch:true});
-   panel.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();if(b.dataset.premiumAction==='minimize')togglePremiumPanel(panel,'synoptic-settings');if(b.dataset.premiumAction==='close')this._weatherSynopticClose();if(b.dataset.synopticAction==='refresh')this._weatherSynopticQueue(true);});
-   const change=e=>{const n=e.target,k=n.dataset.synopticSetting,frontColor=n.dataset.synopticFrontColor;if((!k&&!frontColor)||(e.type==='input')!==(n.type==='range'))return;e.stopPropagation();if(frontColor){const c=this._weatherSynopticState().config;this._weatherSynopticSet({frontColors:{...c.frontColors,[frontColor]:n.value}});return;}this._weatherSynopticSet({[k]:n.type==='checkbox'?n.checked:n.type==='range'?Number(n.value):n.value});};
+   panel.setAttribute('aria-label','Synoptik-Einstellungen');
+   panel.addEventListener('click',event=>{
+    const button=event.target.closest('button');
+    if(!button)return;
+    event.stopPropagation();
+    if(button.dataset.synopticColor)this._weatherSynopticOpenColors(button);
+    if(button.dataset.premiumAction==='minimize')togglePremiumPanel(panel,'synoptic-settings');
+    if(button.dataset.premiumAction==='close')this._weatherSynopticClose();
+    if(button.dataset.synopticAction==='refresh')this._weatherSynopticQueue(true);
+   });
+   const change=event=>{
+    const input=event.target,key=input.dataset.synopticSetting;
+    if(!key||(event.type==='input')!==(input.type==='range'))return;
+    event.stopPropagation();
+    this._weatherSynopticSet({[key]:input.type==='checkbox'?input.checked:Number(input.value)});
+   };
    panel.addEventListener('input',change);
    panel.addEventListener('change',change);
    for(const name of ['pointerdown','mousedown','dblclick','touchstart','wheel'])panel.addEventListener(name,e=>e.stopPropagation(),{passive:true});
@@ -106,8 +173,79 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
   this._weatherSynopticSyncMenu();
   panel.querySelector('button')?.focus({preventScroll:true});
  },
- _weatherSynopticClose(){const panel=this.shadow?.getElementById('weather-synoptic-panel');if(panel)panel.hidden=true;},
- _weatherSynopticRenderMenu(){const panel=this.shadow?.getElementById('weather-synoptic-panel');if(!panel)return;const s=this._weatherSynopticState(),c=s.config;const check=(k,label)=>'<label>'+label+'<input data-synoptic-setting="'+k+'" type="checkbox" '+(c[k]?'checked':'')+'></label>';const range=(k,label,max,step=1)=>'<label>'+label+'<input data-synoptic-setting="'+k+'" type="range" min="0" max="'+max+'" step="'+step+'" value="'+c[k]+'"></label>';const color=(k,label)=>'<label>'+label+'<select data-synoptic-setting="'+k+'">'+SYNOPTIC_PALETTE.map(v=>'<option value="'+v+'" '+(v===c[k]?'selected':'')+'>'+v+'</option>').join('')+'</select></label>';const frontColor=(k,label)=>'<label>'+label+'<select data-synoptic-front-color="'+k+'">'+SYNOPTIC_PALETTE.map(v=>'<option value="'+v+'" '+(v===c.frontColors[k]?'selected':'')+'>'+v+'</option>').join('')+'</select></label>';panel.innerHTML='<header class="weather-display-panel-head" data-premium-drag-handle><strong>Synoptik · H/T, Isobaren & Fronten</strong>'+premiumAction('minimize','Synoptik minimieren','minimize')+premiumAction('close','Synoptik schließen')+'</header><div data-premium-content>'+check('visible','Synoptik sichtbar')+'<details open data-section="centers"><summary>Hoch- und Tiefdruck</summary>'+check('centers','H/T anzeigen')+check('pressureLabels','Druckwerte')+color('highColor','Hochdruckfarbe')+color('lowColor','Tiefdruckfarbe')+range('highSize','H-Größe',60)+range('lowSize','T-Größe',60)+'</details><details open data-section="isobars"><summary>Isobaren</summary>'+check('isobars','Isobaren anzeigen')+color('isobarColor','Linienfarbe')+range('lineWidth','Linienbreite',6,.5)+range('labelDensity','Beschriftungsdichte',100,5)+'</details><details open data-section="opacity"><summary>Darstellung</summary>'+check('glow','Neon-Effekt')+range('opacity','Synoptik gesamt',1,.01)+range('centerOpacity','H/T-Deckkraft',1,.01)+range('isobarOpacity','Isobaren-Deckkraft',1,.01)+'</details><details open data-section="fronts"><summary>Wetterfronten · NOAA WPC regional</summary><p>Wetterfronten werden nur aus typisierten offiziellen NOAA-WPC-Linien gezeichnet (Nordamerika). Frontsymbole benötigen zusätzlich eine bestätigte Richtung zur Symbolseite; diese liefert WPC hier noch nicht.</p>'+check('fronts','Wetterfronten anzeigen')+check('frontNeon','Neon-Übergangslinie')+check('frontSymbols','Meteorologische Symbole')+frontColor('cold','Kaltfrontfarbe')+frontColor('warm','Warmfrontfarbe')+frontColor('occluded','Okklusionsfarbe')+frontColor('stationaryCold','Stationär: Kaltanteil')+frontColor('stationaryWarm','Stationär: Warmanteil')+range('frontLineOpacity','Frontlinien-Deckkraft',1,.01)+range('neonOpacity','Fronten-Neon-Deckkraft',1,.01)+'</details><button type="button" data-synoptic-action="refresh">WR-Daten aktualisieren</button><p role="status" data-synoptic-status>'+esc(Object.entries(s.status).map(([k,v])=>k+': '+v).join(' · ')||'Noch keine Daten geladen')+'</p></div>';enhancePremiumSections(panel,'synoptic-settings');syncPremiumPanel(panel,'synoptic-settings');},
+ _weatherSynopticClose(){
+  const dialog=this.shadow?.getElementById('weather-synoptic-colors');
+  if(dialog?.open)dialog.close();
+  const panel=this.shadow?.getElementById('weather-synoptic-panel');
+  if(panel)panel.hidden=true;
+ },
+ _weatherSynopticOpenColors(opener){
+  const key=opener.dataset.synopticColor,label=COLOR_FIELDS[key];
+  const config=this._weatherSynopticState().config;
+  const selected=hexSwatch(colorValue(config,key));
+  let dialog=this.shadow.getElementById('weather-synoptic-colors');
+  if(!dialog){
+   dialog=document.createElement('dialog');
+   dialog.id='weather-synoptic-colors';
+   dialog.className='weather-synoptic-colors gr-premium-metal-surface';
+   dialog.setAttribute('aria-labelledby','weather-synoptic-color-title');
+   this.shadow.append(dialog);
+   dialog.addEventListener('click',event=>{
+    event.stopPropagation();
+    if(event.target===dialog){
+     const rect=dialog.getBoundingClientRect();
+     if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();
+     return;
+    }
+    const button=event.target.closest('button');
+    if(!button)return;
+    if(button.dataset.premiumAction==='close'){dialog.close();return;}
+    const color=button.dataset.synopticSwatch;
+    if(!color)return;
+    const field=dialog.dataset.colorField;
+    const current=this._weatherSynopticState().config;
+    if(color!==hexSwatch(colorValue(current,field))){
+     const patch=Object.hasOwn(current.frontColors,field)?{frontColors:{...current.frontColors,[field]:color}}:{[field]:color};
+     this._weatherSynopticSet(patch);
+    }
+    dialog.close();
+   });
+   dialog.addEventListener('close',()=>{
+    if(dialog.open)return;
+    const trigger=dialog.opener;
+    trigger?.setAttribute('aria-expanded','false');
+    if(trigger?.getClientRects().length)trigger.focus({preventScroll:true});
+   });
+  }
+  const palette=selected&&!SYNOPTIC_PALETTE.includes(selected)?[selected,...SYNOPTIC_PALETTE]:SYNOPTIC_PALETTE;
+  dialog.dataset.colorField=key;
+  dialog.opener=opener;
+  dialog.innerHTML='<header><h3 id="weather-synoptic-color-title">'+label+'</h3>'+premiumAction('close','Farbauswahl schließen')+'</header><div class="eye-colors" role="group" aria-label="Farbpalette">'+palette.map(color=>
+   '<button class="eye-color-choice" type="button" data-synoptic-swatch="'+color+'" aria-pressed="'+(color===selected)+'" title="'+color+'"><i aria-hidden="true" style="--eye-color:'+color+'"></i><span>'+colorName(color)+'</span></button>'
+  ).join('')+'</div>';
+  dialog.showModal();
+  opener.setAttribute('aria-expanded','true');
+  (dialog.querySelector('[aria-pressed=true]')||dialog.querySelector('button[data-synoptic-swatch]'))?.focus({preventScroll:true});
+ },
+ _weatherSynopticRenderMenu(){
+  const panel=this.shadow?.getElementById('weather-synoptic-panel');
+  if(!panel)return;
+  const check=(key,label)=>'<label><span>'+label+'</span><input data-synoptic-setting="'+key+'" type="checkbox"></label>';
+  const range=(key,label,min,max,step=1)=>'<label><span>'+label+'</span><input data-synoptic-setting="'+key+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'"></label>';
+  const color=key=>'<div class="synoptic-color-row"><span>'+COLOR_FIELDS[key]+'</span><button type="button" class="eye-color-button eye-metal-button" data-synoptic-color="'+key+'" aria-haspopup="dialog" aria-controls="weather-synoptic-colors" aria-expanded="false"><i aria-hidden="true"></i><span></span></button></div>';
+  const section=(id,title,content)=>'<details open data-section="'+id+'"><summary>'+title+'</summary>'+content+'</details>';
+  panel.innerHTML='<header data-premium-drag-handle><img src="'+SYNOPTIC_ICON+'" alt="" draggable="false"><strong>Synoptik · H/T, Isobaren &amp; Fronten</strong><div class="gr-premium-panel-actions">'+
+   premiumAction('minimize','Synoptik minimieren','minimize')+premiumAction('close','Synoptik schließen')+'</div></header><div data-premium-content>'+
+   check('visible','Synoptik sichtbar')+
+   section('centers','Hoch- und Tiefdruck',check('centers','H/T anzeigen')+check('pressureLabels','Druckwerte')+color('highColor')+color('lowColor')+range('highSize','H-Größe',14,60)+range('lowSize','T-Größe',14,60))+
+   section('isobars','Isobaren',check('isobars','Isobaren anzeigen')+color('isobarColor')+range('lineWidth','Linienbreite',.5,6,.5)+range('labelDensity','Beschriftungsdichte',0,100,5))+
+   section('opacity','Darstellung',check('glow','Neon-Effekt')+range('opacity','Synoptik gesamt',0,1,.01)+range('centerOpacity','H/T-Deckkraft',0,1,.01)+range('isobarOpacity','Isobaren-Deckkraft',0,1,.01))+
+   section('fronts','Wetterfronten · NOAA WPC regional','<p>Offizielle NOAA-WPC-Linien für Nordamerika. Frontsymbole setzen eine von WR bestätigte Symbolseite voraus.</p>'+check('fronts','Wetterfronten anzeigen')+check('frontNeon','Neon-Übergangslinie')+check('frontSymbols','Meteorologische Symbole')+
+    Object.keys(defaults.frontColors).map(color).join('')+range('frontLineOpacity','Frontlinien-Deckkraft',0,1,.01)+range('neonOpacity','Fronten-Neon-Deckkraft',0,1,.01))+
+   '<button class="eye-metal-button" type="button" data-synoptic-action="refresh">WR-Daten aktualisieren</button><p role="status" data-synoptic-status></p></div>';
+  enhancePremiumSections(panel,'synoptic-settings');
+  syncPremiumPanel(panel,'synoptic-settings');
+ },
  _weatherSynopticSyncMenu(){
   const panel=this.shadow?.getElementById('weather-synoptic-panel');
   if(!panel||panel.hidden)return;
@@ -117,9 +255,13 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    if(input.type==='checkbox')input.checked=value;
    else if(input.value!==String(value))input.value=String(value);
   }
-  for(const select of panel.querySelectorAll('[data-synoptic-front-color]')){
-   const value=c.frontColors[select.dataset.synopticFrontColor];
-   if(select.value!==value)select.value=value;
+  for(const button of panel.querySelectorAll('[data-synoptic-color]')){
+   const key=button.dataset.synopticColor,value=colorValue(c,key),color=hexSwatch(value);
+   const name=colorName(color),label=COLOR_FIELDS[key]+': '+name;
+   button.querySelector('i').style.setProperty('--eye-color',color||'transparent');
+   button.querySelector('span').textContent=name;
+   button.setAttribute('aria-label',label);
+   button.title=color||name;
   }
   const status=panel.querySelector('[data-synoptic-status]');
   const detail=Object.entries(s.status).map(([part,message])=>part+': '+message).join(' · ')||'Noch keine Daten geladen';

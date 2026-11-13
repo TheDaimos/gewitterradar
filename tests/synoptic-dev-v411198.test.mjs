@@ -9,7 +9,7 @@ const read=path=>readFileSync(resolve(root,path),'utf8');
 const base='frontend/modules/weather/synoptic-display.js';
 const cleaned=read(base).replace(/^import .*?;\s*$/gm,'').replace(/\bexport\s+/g,'').replaceAll('import.meta.url','"https://example.invalid"');
 const api=vm.runInNewContext(cleaned+';({normalizeSynopticConfig,parseSynopticFrame,synopticOpacity,SYNOPTIC_CAPABILITIES,SYNOPTIC_OPACITY_GROUPS})',{
- EYE_COLORS:['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C','#FFC442','#D8E6F3'],defineModule:()=>()=>{}
+ URL,EYE_COLORS:['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C','#FFC442','#D8E6F3'],defineModule:()=>()=>{}
 });
 const {normalizeSynopticConfig:normalize,parseSynopticFrame:parse,SYNOPTIC_CAPABILITIES:cap,synopticOpacity:opacity}=api;
 const valid=new Date(Date.now()+3600e3).toISOString(),run=new Date(Date.now()-3600e3).toISOString();

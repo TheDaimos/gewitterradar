@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411207r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411208r1";
 import { registerModule } from "./modules/core/registry.js?v=41108r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.210",
+    "version": "1.2.211",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -521,6 +521,6 @@ export const EXPECTED_MODULES=Object.freeze([
     ],
     "file": "modules/weather/temperature-display.js"
   }
- ,{"id":"weather.synoptic-display","version":"0.1.9","group":"Weather-Engine","function":"Synoptik H/T und Isobaren","subfunctions":["WR V2 H/T","WR V2 Isobaren","geografische Vektordarstellung","Premium-Konfiguration"],"file":"modules/weather/synoptic-display.js"}
+ ,{"id":"weather.synoptic-display","version":"0.1.10","group":"Weather-Engine","function":"Synoptik H/T und Isobaren","subfunctions":["WR V2 H/T","WR V2 Isobaren","geografische Vektordarstellung","Premium-Konfiguration"],"file":"modules/weather/synoptic-display.js"}
 ].map(item=>Object.freeze(item)));
 export const MODULE_META=Object.freeze({id:"core.manifest",version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version,group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

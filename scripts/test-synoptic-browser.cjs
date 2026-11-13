@@ -7,7 +7,7 @@ const original = 'gr-synoptic-high-low-isobars-premium-original.png';
 const fixtureHtml = html => html
   .replace('window.cleanSource=weatherSourceText;', `window.cleanSource=weatherSourceText;
     window.synopticRequests=[]; window.frontPending=null;
-    if(!localStorage.getItem('gewitterradar:synoptic-ui:v1'))localStorage.setItem('gewitterradar:synoptic-ui:v1',JSON.stringify({fronts:true}));
+    if(!localStorage.getItem('gewitterradar:synoptic-ui:v1'))localStorage.setItem('gewitterradar:synoptic-ui:v1',JSON.stringify({fronts:true,lowColor:'#123456',frontColors:{warm:'#789ABC'}}));
   `)
   .replace('requests.push(structuredClone(query));', `requests.push(structuredClone(query));
     if(query.type==='weather_router/consumer/resolve_synoptic'){
@@ -112,6 +112,80 @@ async function run() {
     await hold(icon);
     assert.deepEqual((await snapshot()).lastGesture,{action:'long-press',control:'standalone'});
     assert.equal(await icon.getAttribute('aria-pressed'),'true');
+    const palette=page.locator('#weather-synoptic-colors');
+    const colorField=key=>panel.locator('[data-synoptic-color='+key+']');
+    const swatches=palette.locator('[data-synoptic-swatch]');
+    const colors=await page.evaluate(async()=>{
+      const url=performance.getEntriesByType('resource').find(r=>r.name.includes('/synoptic-display.js?v=')).name;
+      return [...(await import(url)).SYNOPTIC_PALETTE];
+    });
+    for(const width of [360,393,412]){
+      await page.setViewportSize({width,height:851});
+      await page.waitForTimeout(500);
+      const layout=await panel.evaluate(p=>{
+        const rect=e=>{const {x,y,width,height,right,bottom}=e.getBoundingClientRect();return {x,y,width,height,right,bottom};};
+        const h=p.querySelector('header'),title=h.querySelector('strong'),body=p.querySelector('[data-premium-content]');
+        const css=getComputedStyle(p),map=p.parentElement.getBoundingClientRect();
+        return {panel:rect(p),title:rect(title),line:parseFloat(getComputedStyle(title).lineHeight),mapWidth:map.width,
+          actions:[...h.querySelectorAll('button')].map(rect),background:css.backgroundColor,opacity:css.opacity,
+          frame:css.backgroundClip,outerScroll:css.overflowY,innerScroll:getComputedStyle(body).overflowY,
+          overflow:body.scrollWidth-body.clientWidth,scrollable:body.scrollHeight>body.clientHeight};
+      });
+      assert.equal(layout.background,'rgb(16, 24, 32)');
+      assert.equal(layout.opacity,'1');
+      assert.equal(layout.frame,'padding-box, padding-box, border-box');
+      assert.equal(layout.outerScroll,'hidden');
+      assert.equal(layout.innerScroll,'auto');
+      assert(layout.scrollable&&layout.overflow<=1);
+      assert(layout.panel.x>=10&&layout.panel.right<=width-10&&layout.panel.bottom<=851-10);
+      assert(layout.panel.width>=Math.min(410,layout.mapWidth-24)-2);
+      assert(layout.title.height<=layout.line*2+.5&&layout.title.right<=layout.actions[0].x);
+      assert(layout.actions[0].right<=layout.actions[1].x&&layout.actions.every(b=>b.width>=44&&b.height>=44));
+    }
+    await page.setViewportSize({width:393,height:851});
+    // Allow the delayed map resize and its debounced WR requests to settle.
+    await page.waitForTimeout(1000);
+    await page.waitForFunction(()=>!card.__weatherSynoptic.pending);
+    const menuBody=panel.locator('[data-premium-content]');
+    const headerBefore=await panel.locator('header').boundingBox();
+    await drag(menuBody,0,-130);
+    await page.waitForFunction(()=>card.shadow.querySelector('#weather-synoptic-panel [data-premium-content]').scrollTop>20);
+    assert.deepEqual(await panel.locator('header').boundingBox(),headerBefore);
+    await menuBody.evaluate(body=>{body.scrollTop=0;});
+    await page.waitForTimeout(400);
+    assert.equal(await panel.locator('select').count(),0);
+    assert.equal(await panel.locator('[data-synoptic-color]').count(),8);
+    const beforeColors=await page.evaluate(()=>synopticRequests.length);
+    const pick=async(key,color)=>{
+      await colorField(key).tap();
+      await palette.waitFor();
+      await palette.locator('[data-synoptic-swatch="'+color+'"]').tap();
+      await palette.waitFor({state:'hidden'});
+    };
+    await colorField('lowColor').tap();
+    await palette.waitFor();
+    assert.equal(await palette.locator('[aria-pressed=true]').getAttribute('data-synoptic-swatch'),'#123456');
+    assert.deepEqual(await swatches.evaluateAll(nodes=>nodes.map(n=>n.dataset.synopticSwatch)),['#123456',...colors]);
+    const actualColors=await swatches.evaluateAll(nodes=>nodes.map(n=>{
+      const swatch=n.querySelector('i'),color=n.dataset.synopticSwatch;
+      const expected='rgb('+[1,3,5].map(i=>parseInt(color.slice(i,i+2),16)).join(', ')+')';
+      return getComputedStyle(swatch).backgroundColor===expected&&swatch.offsetWidth>=24&&n.textContent.trim()!==color;
+    }));
+    assert(actualColors.every(Boolean));
+    await page.keyboard.press('Escape');
+    await palette.waitFor({state:'hidden'});
+    await page.waitForFunction(()=>card.shadow.activeElement?.dataset.synopticColor==='lowColor');
+    await colorField('warm').tap();
+    assert.equal(await palette.locator('[aria-pressed=true]').getAttribute('data-synoptic-swatch'),'#789ABC');
+    await page.touchscreen.tap(3,3);
+    await palette.waitFor({state:'hidden'});
+    await pick('highColor','#FF00CC');
+    assert.equal(await page.locator('.gr-synoptic-center > div').evaluate(n=>getComputedStyle(n).color),'rgb(255, 0, 204)');
+    await pick('isobarColor','#4FBE76');
+    assert.equal(await page.evaluate(()=>card.__weatherSynoptic.layers.isobars.getLayers().find(l=>l instanceof L.Polyline).options.color),'#4FBE76');
+    await pick('cold','#FFE17A');
+    assert.equal(await page.evaluate(()=>card.__weatherSynoptic.config.frontColors.cold),'#FFE17A');
+    assert.equal(await page.evaluate(()=>synopticRequests.length),beforeColors);
     const opacitySection=panel.locator('details[data-section=opacity]');
     assert.equal(await opacitySection.locator('summary .release-history-future-chevron').count(),1);
     await opacitySection.locator('summary').tap();
@@ -182,6 +256,10 @@ async function run() {
       window.synopticFailure='outside';
       card._weatherSynopticSet({visible:true,fronts:false});
     });
+    assert.deepEqual(await page.evaluate(()=>{
+      const c=card.__weatherSynoptic.config;
+      return [c.highColor,c.lowColor,c.isobarColor,c.frontColors.cold,c.frontColors.warm];
+    }),['#FF00CC','#123456','#4FBE76','#FFE17A','#789ABC']);
     await page.waitForFunction(()=>card.__weatherSynoptic.requests.centers?.reason==='outside_viewport');
     assert.equal((await snapshot()).capabilities.centers.layerCount,0);
     await page.evaluate(()=>{window.synopticFailure='empty';card._weatherSynopticQueue(true);});
@@ -211,7 +289,7 @@ async function run() {
     await page.waitForFunction(()=>card.__weatherSynoptic.map===window.oldSynopticMap&&card.__weatherSynoptic.rendered.isobars===1);
     assert.deepEqual(errors,[]);
     await context.close();
-    console.log('PASS: cold Leaflet attach, independent WR-V2 render, redacted diagnosis, both touch gestures, premium panel, opacity and reload.');
+    console.log('PASS: opaque 360–412 px menu, touch scroll and swatches, Leaflet rendering, gestures, opacity, diagnosis and persistence.');
   } finally {
     await browser?.close();
     f.server.close();

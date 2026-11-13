@@ -8,7 +8,9 @@ const {flowFixture} = require('./flow-curves-browser-fixture.cjs');
 const legacy = JSON.parse(readFileSync(path.join(__dirname, '../tests/settings-vault-v181.json'), 'utf8'));
 const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8').match(/version:"([^"]+)"/)[1];
 const EYE = 'gewitterradar:eye-bubble:v1';
-const jsonKeys = Object.keys(legacy).filter(key => legacy[key].startsWith('{'));
+const SYNOPTIC = 'gewitterradar:synoptic-ui:v1';
+const settingsKeys = [...Object.keys(legacy), SYNOPTIC];
+const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC];
 const mock = {profiles: {}, migrationIssues: new Map(), receipts: new Map(), log: [], offline: false, deferGet: null, loseCreateReply: false};
 
 const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
@@ -27,7 +29,7 @@ function serverCall(user, message) {
       const profile = profiles[request.profileId];
       if (request.profileId && !profile) return {error: 'settings_not_found'};
       return {
-        schema: 1, settingsKeys: Object.keys(legacy), jsonSettingsKeys: jsonKeys,
+        schema: 1, settingsKeys, jsonSettingsKeys: jsonKeys,
         recovery: false, profiles: Object.values(profiles).map(view), profile,
         migrationIssues: mock.migrationIssues.get(request.profileId) || [],
       };
@@ -392,12 +394,17 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.evaluate(() => {
       card._eyeHubResize(1);
       card._eyeHubAssign(4, 'synoptic');
+      card._weatherSynopticSet({highColor:'#FF00CC',lowColor:'#123456',isobarColor:'#4FBE76',
+        frontColors:{...card._weatherSynopticState().config.frontColors,cold:'#FFE17A'},centerOpacity:.4});
     });
     await android.page.waitForFunction(() => card._settingsVault.status === 'saved'
       && card._eyeHubState().config.slots[4]?.functionId === 'synoptic');
     assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
     assert.deepEqual(mock.profiles.a[androidId].settings[EYE].slots.slice(0, 4), originalEye.slots);
     assert.equal(mock.profiles.a[androidId].settings[EYE].colors.synoptic, '#FFC442');
+    const persistedSynoptic=mock.profiles.a[androidId].settings[SYNOPTIC];
+    assert.equal(persistedSynoptic.lowColor,'#123456');
+    assert.equal(persistedSynoptic.frontColors.cold,'#FFE17A');
     await android.page.reload();
     await android.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
     const reloadedEye = await android.page.evaluate(() => card._eyeHubState().config);
@@ -406,6 +413,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.equal(reloadedEye.colors.synoptic, '#FFC442');
     assert.equal(reloadedEye.grouped, originalEye.grouped);
     assert.equal(reloadedEye.aura, originalEye.aura);
+    assert.deepEqual(await android.page.evaluate(()=>card._weatherSynopticState().config),persistedSynoptic);
     assert.equal(await android.page.evaluate(() => {
       card._eyeHubOpen();
       const present = Boolean(card._eyeHubState().view.dialog
@@ -416,6 +424,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await cleared.page.reload();
     await cleared.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
     assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.slots[4]?.functionId), 'synoptic');
+    assert.deepEqual(await cleared.page.evaluate(()=>card._weatherSynopticState().config),persistedSynoptic);
     assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
     // Startup connection failure stays recoverable and never writes defaults.
     mock.offline = true;
