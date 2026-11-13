@@ -105,6 +105,19 @@ jobs:
     if: needs.release-scope.outputs.wind_quick01 == 'true'
     uses: ./.github/workflows/gr-wind-quicktoggle-01.yml
 
+  weather-control-position:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 leaflet@1.9.4
+      - run: npx playwright install --with-deps chromium
+      - name: WeatherRouter map control position and touch regression
+        run: node scripts/test-weather-control-position-browser.cjs
+
   shared-frontend:
     needs: release-scope
     if: needs.release-scope.outputs.eye_bubble != 'true' && needs.release-scope.outputs.menu_architecture != 'true' && needs.release-scope.outputs.precipitation_icon != 'true' && needs.release-scope.outputs.premium_ui != 'true' && needs.release-scope.outputs.flow_curves != 'true' && needs.release-scope.outputs.temperature != 'true' && needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true' && needs.release-scope.outputs.wind_fix01 != 'true' && needs.release-scope.outputs.wind_anim01 != 'true' && needs.release-scope.outputs.wind_perf01 != 'true' && needs.release-scope.outputs.wind_quick01 != 'true'
@@ -209,15 +222,12 @@ jobs:
       # V4.07.57 is validated as a version/build-metadata-only patch over the
       # exact accepted V4.07.56 runtime, diagnostic and geometry baseline.
 
-      - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5 leaflet@1.9.4
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 sharp@0.34.5
 
       - name: Generate medallion/arrow fit matrix evidence
         run: node scripts/generate-medallion-arrow-fit-matrix.cjs
 
       - run: npx playwright install --with-deps chromium
-
-      - name: WeatherRouter map control position and touch regression
-        run: node scripts/test-weather-control-position-browser.cjs
 
       - name: Fetch exact historical V4.11.81 commit for GR-WEICH-04
         run: git fetch --no-tags --depth=1 origin 46754f6689b0b01f1a45287e21572ae04b90f3bd

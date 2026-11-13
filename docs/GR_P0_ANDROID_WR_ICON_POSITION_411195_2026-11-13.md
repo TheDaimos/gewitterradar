@@ -51,6 +51,8 @@ Chromium, Touch-Viewport 393 × 851, Vollbild, Icon-Größe 140 %, gespeicherte 
 | Kanonischer Frontend-Build und Deploy-Relay-Vertrag | 36 Modulversionen, 179 kanonische Frontend-Dateien, deterministischer Build, Prüfdateien, Hi-Res-Schutz und DRA-Rollback-Vertrag bestanden. |
 | Ältere Snapshot- und Niederschlagstests | Fünf fehlgeschlagene ältere Assertions und der Desktop-Timeout im alten Niederschlags-Browsertest wurden auch im unveränderten GR-4.11.194-Checkout reproduziert. Die aktuellen Positionstests prüfen die entsprechenden Icon-Aktionen direkt. |
 
+Die öffentliche CI meldete für den ersten Push die bereits im Ausgangsstand beobachteten Fehler im Raster-Labor-Snapshot und im geschützten Niederschlags-Snapshot des Vault-Workflows. Der Icon-Browsertest läuft als eigener Job, damit sein Ergebnis unabhängig von diesen historischen Prüfungen sichtbar ist. [Frontend-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43429833799) · [Vault-CI](https://github.com/TheDaimos/gewitterradar/actions/runs/43429833999)
+
 Die Änderung betrifft die Karten-UI und die Auslieferungsidentität. Hi-Res-Icon-Grafiken, Wetterrenderer, WR-Consumer, DWD-/OPERA-/NASA-Kachelpfade, Eye-Bubble-Grafik, Premium-Menüanimation und Kartendiagnose-Implementierung sind im Quellvergleich bytegleich. Im GR-Ausgangsstand existiert kein aktiver Synoptik-Renderer für einen End-to-End-Test. Die WeatherRouter-Provider wurden mit synthetischen Datenpfaden geprüft.
 
 ## DEV-Installation und offene Abnahme
