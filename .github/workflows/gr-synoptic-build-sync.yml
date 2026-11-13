@@ -25,13 +25,14 @@ jobs:
           import {createHash} from 'node:crypto';
           const path='frontend/assets.json';
           const list=JSON.parse(await readFile(path,'utf8'));
-          const targets=['assets/gewitterradar-runtime-manifest.json','assets/gr-synoptic-high-low-isobars-premium-original.png'];
+          const targets=['assets/gewitterradar-runtime-manifest.json','assets/gr-synoptic-high-low-isobars-premium-original.png','assets/gewitterradar-about-close-premium.webp'];
           for(const file of targets){
             const bytes=await readFile('frontend/'+file);
             const sha256=createHash('sha256').update(bytes).digest('hex');
             let item=list.find(x=>x.file===file);
             if(!item){item={file,sha256,protected:true};list.push(item);}
             item.sha256=sha256;
+            if(file==='assets/gewitterradar-about-close-premium.webp')item.referenced=true;
             if('sizeBytes' in item)item.sizeBytes=bytes.length;
           }
           list.sort((a,b)=>a.file.localeCompare(b.file,'en'));
