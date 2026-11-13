@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
