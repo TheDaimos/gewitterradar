@@ -78,10 +78,13 @@ test('P1 eye synoptic unavailable is based on verified WR failure, not off/unloa
   const {synopticEyeStatus} = await import('../frontend/modules/weather/eye-hub-registry.js');
   assert.equal(synopticEyeStatus({config:{visible:false},frames:{},status:{}}).availability,'off');
   assert.equal(synopticEyeStatus({config:{visible:false},frames:{},status:{}}).available,true);
+  assert.equal(synopticEyeStatus({config:{visible:false},frames:{},status:{centers:'provider_unavailable'},outcomes:{centers:'unavailable'}}).availability,'off');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},status:{centers:'ECCC · 2026-11-13T15:00:00Z'},outcomes:{centers:'ready'}}).availability,'not-loaded');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},status:{centers:'provider_unavailable'},outcomes:{centers:'unavailable'}}).availability,'unavailable');
   assert.equal(synopticEyeStatus({config:{visible:true},frames:{},status:{}}).availability,'not-loaded');
   assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:true,status:{}}).availability,'loading');
-  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'}}).availability,'unavailable');
-  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'}}).available,false);
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'},outcomes:{centers:'unavailable'}}).availability,'unavailable');
+  assert.equal(synopticEyeStatus({config:{visible:true},frames:{},pending:false,status:{centers:'provider_unavailable'},outcomes:{centers:'unavailable'}}).available,false);
   assert.equal(synopticEyeStatus({config:{visible:true},frames:{centers:{valid_until:new Date(Date.now()+60000).toISOString()}},status:{isobars:'provider_unavailable'}}).availability,'available');
 });
 test('P1 Settings Vault schema accepts synoptic fifth slot and independent UI key',async()=>{

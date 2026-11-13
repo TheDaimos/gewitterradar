@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.205",
-  "build": "V4.11.205-DEV-2026-11-13",
-  "runtimeRevision": "411205r1",
-  "moduleSetId": "E411-205A1",
+  "productVersion": "4.11.206",
+  "build": "V4.11.206-DEV-2026-11-13",
+  "runtimeRevision": "411206r1",
+  "moduleSetId": "E411-206A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "P1 Synoptic WR V2 availability status and 5th Eye slot Settings Vault persistence; preserve all existing Eye and meteorological settings.",
+    "purpose": "P1 precise typed WR-V2 synoptic status; fifth Eye slot Vault persistence, no resets",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -8,9 +8,10 @@ export function synopticEyeStatus(state){
  const active=state?.config?.visible===true;
  const now=Date.now();
  const valid=Object.values(state?.frames||{}).some(f=>f&&Number.isFinite(Date.parse(f.valid_until))&&Date.parse(f.valid_until)>now);
- const error=['centers','isobars','fronts','connection'].some(k=>typeof state?.status?.[k]==='string'&&state.status[k].length>0);
- const availability=valid?'available':state?.pending?'loading':error?'unavailable':active?'not-loaded':'off';
- return {active,available:availability!=='unavailable',availability,detail:availability==='off'?'Ausgeschaltet · Daten ungeprüft':availability==='not-loaded'?'Daten noch nicht geladen':availability==='loading'?'WR-V2-Abfrage läuft':availability==='unavailable'?'WR-V2: '+Object.values(state?.status||{}).filter(Boolean).join(' · '):Object.values(state?.status||{}).filter(Boolean).join(' · ')};
+ const failures=Object.entries(state?.outcomes||{}).some(([part,outcome])=>outcome==='unavailable'&&(part!=='fronts'||state?.config?.fronts===true));
+ const expired=Object.values(state?.frames||{}).some(f=>Number.isFinite(Date.parse(f?.valid_until))&&Date.parse(f.valid_until)<=now);
+ const availability=!active?'off':valid?'available':state?.pending?'loading':failures||expired?'unavailable':'not-loaded';
+ return {active,available:availability!=='unavailable',availability,detail:availability==='off'?'Ausgeschaltet · Daten ungeprüft':availability==='not-loaded'?'Daten noch nicht geladen':availability==='loading'?'WR-V2-Abfrage läuft':availability==='unavailable'?'WR-V2: '+(Object.values(state?.status||{}).filter(Boolean).join(' · ')||'Keine aktuell gültigen Daten'):Object.values(state?.status||{}).filter(Boolean).join(' · ')};
 }
 // Generic representations of these three main functions are already owned.
 export const eyeLayerOwner=id=>/precipitation|radar/.test(id)?'precipitation':/wind/.test(id)?'wind':/temperature/.test(id)?'temperature':'weather-display';
