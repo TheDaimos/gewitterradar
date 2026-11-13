@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.197",
-  "build": "V4.11.197-DEV-2026-11-13",
-  "runtimeRevision": "411197r1",
-  "moduleSetId": "E411-197A1",
+  "productVersion": "4.11.198",
+  "build": "V4.11.198-DEV-2026-11-13",
+  "runtimeRevision": "411198r1",
+  "moduleSetId": "E411-198A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Provider-isolierte Synoptik: ECCC H/T und NOAA GFS Isobaren mit Eye, Premium-Menü und migrierten Legacy-H/T-Farben; WR entscheidet Datenfreigabe.",
+    "purpose": "Synoptik-Renderer, Eye-Integration, H/T-Migration, gruppierbare Transparenzdomänen mit zentralen Steuerreglern",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

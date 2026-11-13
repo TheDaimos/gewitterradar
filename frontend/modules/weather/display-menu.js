@@ -8,7 +8,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.46",
+  version:"0.4.47",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -609,6 +609,11 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     this.shadow.append(style);
   },
 
+  _weatherDisplaySyncSynopticTransparencies(){
+    const c=this.__weatherSynoptic?.config;if(!c||!this.shadow)return;
+    this.shadow.querySelectorAll('[data-synoptic-opacity]').forEach(input=>{const key=input.dataset.synopticOpacity;if(!Object.hasOwn(c,key))return;const v=Math.round(c[key]*100);if(document.activeElement!==input)input.value=String(v);input.setAttribute('aria-valuetext',v+' %');});
+    this.shadow.querySelectorAll('[data-synoptic-opacity-value]').forEach(output=>{const key=output.dataset.synopticOpacityValue;if(Object.hasOwn(c,key))output.textContent=Math.round(c[key]*100)+' %';});
+  },
   _weatherDisplayStatusCopy(){
     const state=this._weatherDisplayState();
     if(state.probing||state.status==="checking")return {title:"WeatherRouter wird geprüft",note:"Status und Darstellungsfähigkeiten werden abgefragt."};
@@ -639,6 +644,9 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
           WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div></div>'+
         '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note" data-weather-display-opacity-hint>0 % = unsichtbar · 100 % = vollständig sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Synoptik · Synoptik gesamt<span class="weather-display-row-note">0 % unsichtbar · 100 % sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-synoptic-opacity="opacity" aria-label="Synoptik Synoptik gesamt Deckkraft"><output data-synoptic-opacity-value="opacity">100 %</output></div></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Synoptik · H/T-Zentren<span class="weather-display-row-note">0 % unsichtbar · 100 % sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-synoptic-opacity="centerOpacity" aria-label="Synoptik H/T-Zentren Deckkraft"><output data-synoptic-opacity-value="centerOpacity">100 %</output></div></div>'+
+        '<div class="weather-display-row"><div class="weather-display-row-label">Synoptik · Isobaren<span class="weather-display-row-note">0 % unsichtbar · 100 % sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-synoptic-opacity="isobarOpacity" aria-label="Synoptik Isobaren Deckkraft"><output data-synoptic-opacity-value="isobarOpacity">100 %</output></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Position zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>Zurücksetzen</button></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Auf Standard zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-all>Standard</button></div>'+
@@ -659,6 +667,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         if(!this._weatherDisplayIsAvailable())return;
         this._weatherDisplaySetLegendMode(button.dataset.weatherDisplayLegendMode);
       }));
+      block.querySelectorAll("[data-synoptic-opacity]").forEach(input=>input.addEventListener("input",()=>{const key=input.dataset.synopticOpacity;if(!key||!this._weatherSynopticSet)return;this._weatherSynopticSet({[key]:Number(input.value)/100});}));
       block.querySelectorAll("[data-weather-display-transparency]").forEach(input=>input.addEventListener("input",()=>{
         if(!this._weatherDisplayIsAvailable())return;
         this._weatherDisplaySetTransparency(input.dataset.weatherDisplayTransparency,input.value);
@@ -1075,7 +1084,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     });
   },
 
-  _weatherDisplaySyncUi(){
+  _weatherDisplaySyncUi(){this._weatherDisplaySyncSynopticTransparencies();
     if(!this.shadow)return;
     const state=this._weatherDisplayState(),available=state.status==="ready",copy=this._weatherDisplayStatusCopy(),config=state.config;
     const layerChoice=this.shadow.querySelector("[data-weather-display-layer-select]");
