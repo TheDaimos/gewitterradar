@@ -1,5 +1,8 @@
 # GewitterRadar – verbindlicher Entwicklungs-Bootstrap
 
+> **AKTUELLE OFFIZIELLE GESCHÜTZTE REFERENZ (Betreiberfreigabe 13.11.2026):** [WR 0.10.320 DEV / Loader 323 + GR 4.11.195 DEV / HA 0.25.102](WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md). Vor jeder Weiterentwicklung dieses Referenzpaar lesen, exakte Versions- und Commit-Identitäten beachten, geschützte Funktionen nicht regressieren. Ein neuerer Branch-HEAD ist nicht automatisch eine neue Freigabe.
+
+
 **Pflicht vor jeder substantiellen Änderung, auch nach Chatwechsel.** Nicht allein auf ChatGPT-Memory oder ältere Chatübergaben vertrauen.
 
 1. Aktuellen HEAD von `deploy/dev` des **eigenen und des Partner-Repositories** prüfen; installierte Version und reale Freigabe getrennt behandeln.
