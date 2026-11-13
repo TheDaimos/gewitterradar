@@ -100,5 +100,5 @@ assert.equal(dra.build,runtime.build);
 assert.equal(dra.runtimeRevision,runtime.runtimeRevision);
 assert.equal(dra.moduleSetId,runtime.moduleSetId);
 assert.equal(dra.deployment.channel,'deploy/dev');
-assert.match(dra.deployment.purpose,/WeatherRouter|OPERA|Visualisierung|Weather Engine|diagnostic|Project Hub|Seitenleiste|settings|Einstellungen/i);
+assert.match(dra.deployment.purpose,/WeatherRouter|OPERA|Visualisierung|Weather Engine|diagnostic|Project Hub|Seitenleiste|settings|Einstellungen|Synoptik|WPC|Fronten|Isobaren/i);
 console.log('PASS: current GR release identity synchronized across frontend, runtime and DRA provenance on deploy/dev.');
