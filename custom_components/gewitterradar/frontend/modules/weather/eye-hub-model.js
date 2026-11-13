@@ -9,6 +9,7 @@ export const EYE_MATERIALS=Object.freeze({
 export const EYE_COLORS=Object.freeze(['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C',...Object.keys(EYE_MATERIALS)]);
 export const EYE_ENERGY_MODES=Object.freeze(['off','subtle','normal','strong']);
 export const EYE_FUNCTIONS=Object.freeze(['wind','temperature','precipitation','weather-display','synoptic']);
+export const EYE_DEFAULT_SLOTS=Object.freeze(['wind','temperature','precipitation','weather-display']);
 export const EYE_DEFAULT_COLORS=Object.freeze({wind:EYE_COLORS[3],temperature:EYE_COLORS[6],precipitation:EYE_COLORS[2],'weather-display':EYE_COLORS[0],synoptic:EYE_COLORS[8]});
 // Keep authoritative stored pixels compatible: 42 CSS px = 100%. Only the
 // UI uses percent, so legacy 72px is preserved exactly until an explicit edit.
@@ -16,7 +17,7 @@ export const eyeSizePercent=pixels=>pixels/42*100;
 export const eyeSizePixels=percent=>Math.round(percent*42/100*1e6)/1e6;
 const bounded=(value,fallback,min,max)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
 export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
- const s=input&&typeof input==='object'&&!Array.isArray(input)?input:{},seen=new Set(),source=Array.isArray(s.slots)?s.slots:EYE_FUNCTIONS;
+ const s=input&&typeof input==='object'&&!Array.isArray(input)?input:{},seen=new Set(),source=Array.isArray(s.slots)?s.slots:EYE_DEFAULT_SLOTS;
  const slots=source.slice(0,EYE_CAPACITY).map((item,i)=>{const id=typeof item==='string'?item:item?.functionId;const functionId=ids.includes(id)&&!seen.has(id)?id:null;if(functionId)seen.add(functionId);return {id:'slot-'+(i+1),functionId};});
  if(!slots.length)slots.push({id:'slot-1',functionId:null});
  const colors={};for(const id of ids){const color=String(s.colors?.[id]).toUpperCase(),legacy=EYE_LEGACY_COLORS.indexOf(color);colors[id]=EYE_COLORS.includes(color)?color:legacy>=0?EYE_COLORS[legacy]:EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];}

@@ -48,14 +48,14 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
   }
  }
  const version=JSON.parse(JSON.stringify(read('frontend/version.js')));
- assert.match(version,/4\.11\.199/);assert.match(version,/411199r1/);
+ assert.match(version,/4\.11\.199/);assert.match(version,/411200r1/);
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));
  const runtime=JSON.parse(read('frontend/assets/gewitterradar-runtime-manifest.json'));
  const manifest=read('frontend/module-manifest.js');
- assert.equal(runtime.productVersion,'4.11.199');
- assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.3'));
+ assert.equal(runtime.productVersion,'4.11.200');
+ assert.ok(runtime.modules.some(v=>v.id==='weather.synoptic-display'&&v.version==='0.1.4'));
  assert.match(manifest,/weather\.synoptic-display/);
 });
 

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.199",
-  "build": "V4.11.199-DEV-2026-11-13",
-  "runtimeRevision": "411199r1",
-  "moduleSetId": "E411-199A1",
+  "productVersion": "4.11.200",
+  "build": "V4.11.200-DEV-2026-11-13",
+  "runtimeRevision": "411200r1",
+  "moduleSetId": "E411-200A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Add WPC-authorized regional typed front lines and optional glow without fake direction symbols; independently preserve ECCC/GFS.",
+    "purpose": "Additive synoptic module with opt-in fifth Eye function, existing slots preserved, WPC regional fronts, protected wind and independent opacity.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
