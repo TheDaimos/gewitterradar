@@ -85,4 +85,17 @@ test('progressive callback receives already admitted fragments in WR order',asyn
  assert.equal(budget.used,0);
  assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-grid-layer.js'),/onProgress:deferredSource\?null:/);
  assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-tile-loader.js'),/retryCount<1/);
+ const retryLayer=layers[0];
+ const failStatus=async status=>{
+  const trial=new RasterTileRequestBudget(8);
+  let attempts=0;
+  const result=await drawRasterMosaicTileFromUrls({
+   context:{},tile:{z:2,x:0,y:0},layers:[retryLayer],budget:trial,
+   loadImage:async()=>{attempts++;const err=new Error('synthetic');err.httpStatus=status;throw err;}
+  });
+  return {attempts,reason:result.rejected[0]?.reason};
+ };
+ const notFound=await failStatus(404),temporary=await failStatus(503);
+ assert.deepEqual(notFound,{attempts:1,reason:'image_http_unavailable'});
+ assert.deepEqual(temporary,{attempts:2,reason:'image_retry_exhausted'});
 });
