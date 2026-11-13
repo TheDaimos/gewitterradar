@@ -19,7 +19,8 @@ assert.ok(version.includes('runtimeRevision:"'+runtime.runtimeRevision+'"'));
 assert.ok(version.includes('moduleSetId:"'+runtime.moduleSetId+'"'));
 assert.equal(new Set(runtime.modules.map(m=>m.id)).size,runtime.modules.length);
 // The temperature/flow-capability module expanded the runtime inventory to 36.
-assert.equal(runtime.modules.length,36);
+assert.equal(runtime.modules.length,37);
+assert.ok(runtime.modules.some(m=>m.id==='weather.synoptic-display'),'Synoptic isolated module missing');
 const {MODULE_META:clustersMeta}=await import('../frontend/modules/map/clusters-recent.js');
 const {MODULE_META:radiiMeta}=await import('../frontend/modules/location/radii-map.js');
 const {MODULE_META:diagnosticsMeta}=await import('../frontend/modules/diagnostics/map-diagnostics.js');
