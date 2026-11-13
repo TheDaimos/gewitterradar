@@ -170,7 +170,7 @@ async function run() {
       card._eyeHubPatch({grouped:true});
       card._eyeHubToggle();
     });
-    assert.equal(await page.locator('.eye-hub-bubble:visible').count(), 5);
+    assert.equal(await page.locator('.eye-hub-bubble:visible').count(), 4); // Fifth Synoptic function is opt-in; four assigned defaults remain protected.
     for (const id of ids) assert.equal(await page.locator('#'+id).isHidden(), true);
     await page.evaluate(() => card._eyeHubPatch({grouped:false}));
     await waitForLayout(page);
