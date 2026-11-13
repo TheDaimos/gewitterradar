@@ -48,7 +48,7 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
   }
  }
  const version=JSON.parse(JSON.stringify(read('frontend/version.js')));
- assert.match(version,/4\.11\.198/);assert.match(version,/411199r1/);
+ assert.match(version,/4\.11\.199/);assert.match(version,/411199r1/);
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));
