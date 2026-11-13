@@ -93,3 +93,19 @@ Neue eindeutige WR-/GR-/HA-/DRA-Versionsstände und konsistente synchronisierte 
 - Dokumentierte neue Version(en), Commits, installierbare DEV-Artefakte, fokussierte Regressionen und ehrliche reale Abnahmegrenzen. Betreiber prüft anschließend nur die sichtbare Karten- und Menüfunktion auf DEV VM109.
 
 **Ausführung:** Entwicklungschat soll diese Anforderungen direkt in bestehendem Quellcode realisieren, nicht noch einmal nur analysieren oder planen.
+
+## 9. Ergänzung des Betreibers: großzügige Premium-Farbpalette für Vektor-Synoptik
+
+**Verbindliche Anforderung:** Die bisher im Windmenü gespeicherten H/T-Farben Gold und Violett sind **keine Beschränkung** der neuen Synoptik-Farbauswahl. Sie bleiben erhalten und werden beim ersten Start migriert; zusätzlich eine umfangreiche, hochwertige und konsistente Auswahl anbieten.
+
+**Technischer Grund:** WR liefert für `weather.synoptic.pressure_centers` GeoJSON-`Point`-Features mit `kind=H/L`, Positionen und `pressure_hpa`, für `weather.synoptic.isobars` GeoJSON-`MultiLineString`-Features mit Druckwerten. Die **Darstellungsfarben gehören ausschließlich zum GR-Renderer**, nicht zur WR-Providerentscheidung; keine neue Providerabfrage und keine Neuberechnung meteorologischer Daten allein wegen einer Farbwahl.
+
+- **Drei unabhängig konfigurierbare Farbgruppen:** Hochdruck-Symbole samt optionalen Druckwerten, Tiefdruck-Symbole samt optionalen Druckwerten, Isobarenlinien samt Druckwert-Beschriftungen. Optional getrennte Schriftfarbe, sofern die Premium-Oberfläche übersichtlich bleibt.
+- **Palette mindestens:** Weiß, Silber/Chrom, Gold, Gelb, Orange, Rot, Dunkelrot, Magenta/Pink, Violett, Blau, Cyan, Türkis, Grün; ggf. weitere bestehende GR-Farbvarianten anbieten. Die Auswahl muss ausreichend kontrastreich und auf unterschiedlichen Kartengrundstilen sichtbar bleiben.
+- Vorhandene gemeinsame Farb-/Swatch-Tokens und Premium-Bedienelemente bevorzugen; keine neue inkompatible Farbnamen-Speicherung erfinden. Falls neue Farbkennungen ergänzt werden, Normalisierung und Settings-Vault-Migration rückwärtskompatibel halten.
+- **Live-Vorschau:** Farbänderungen sofort auf den sichtbaren, bereits geladenen H/T- und Isobarengeometrien anwenden, ohne WR erneut abzufragen.
+- Opazität für jede der drei Gruppen und die zentrale Synoptik-Transparenz unterstützen; `0 %` bedeutet unsichtbar, `100 %` vollständig sichtbar; keine widersprüchliche additive Anwendung von Transparenz.
+- Keine Ableitung von H/T aus Windvektoren. Das bisherige Wind-Menü behält seine eigene Windfarbensteuerung und den geschützten Schlangenrenderer vollständig unverändert.
+- **DWD-QFF-Raster ausdrücklich ausnehmen:** Ein WMS-PNG ist kein GeoJSON-Vektor. Für Raster gelten gegebenenfalls gesonderte originale Farbgebung bzw. eigenständig verifizierte numerische Rasterverarbeitung; bloße Opazität ist sofort möglich, frei einstellbare fachliche Druckfarben nicht ohne passende Daten.
+
+Die Palette als reguläre Funktion des **neuen eigenständigen Synoptik-Premiummenüs** implementieren; keine weitere manuelle große Testserie verlangen.
