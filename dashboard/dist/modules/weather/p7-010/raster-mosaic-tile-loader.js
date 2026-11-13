@@ -128,7 +128,7 @@ export class RasterTileRequestBudget {
  }
  getCachedImage(id,url,frameTime=null){
    if(this.closed)return null;
-   const key=id+"\n"+url;
+   const key=id+"\n"+(frameTime||"unversioned")+"\n"+url;
    let img=this.imageCache.get(key);
    if(img){this.cacheHits++;this.imageCache.delete(key);this.imageCache.set(key,img);return img;}
    const completedKey=operaCompletedKey(id,url);
@@ -141,7 +141,7 @@ export class RasterTileRequestBudget {
  }
  cacheImage(id,url,img,frameTime=null){
    if(this.closed||!img)return;
-   const key=id+"\n"+url;
+   const key=id+"\n"+(frameTime||"unversioned")+"\n"+url;
    retainCompletedOperaImage(id,url,img);
    retainCompletedDWDImage(id,url,frameTime,img);
    this.imageCache.delete(key);this.imageCache.set(key,img);
@@ -249,7 +249,7 @@ export async function drawRasterMosaicTileFromUrls({
    if(cached&&!signal?.aborted)
      return {source_id,layer:{...layer,image:cached,_p7SourceTile:sourceTile}};
    try{
-     const result=await budget.sharedImage(source_id+'\n'+url,signal,async sharedSignal=>{
+     const result=await budget.sharedImage(source_id+'\n'+String(layer?.times?.valid_at||'unversioned')+'\n'+url,signal,async sharedSignal=>{
    let retryCount=0;
    while(!budget.closed&&!sharedSignal?.aborted){
      // A retry reuses this admitted OPERA coordinate's request budget, while
