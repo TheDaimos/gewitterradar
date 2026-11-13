@@ -8,6 +8,19 @@ Die bereits erreichten V4.11-DEV-Stände, implementierte Funktionen, Regressions
 
 Die bisherigen **noch offenen** V4.11-To-do-Themen (Systemstatus, Tracker-/Blitzortung-Diagnose, Hilfe/Fehlerbehebung, gespeicherte/überwachte Orte, Local-To-do sowie sonstige Punkte) sind nach [V4_12_TODO.md](V4_12_TODO.md) verschoben. Bereits erledigte V4.11-Aufgaben sind dort nur historische Nachweise; nicht wiederholen. Der verbindlich geplante V4.12-Bereich **Geo-Sonde** bleibt ebenfalls erhalten.
 
+## Vorgemerkt: Eye-Aura bis an die Kartenränder verschiebbar (gezielter 4.11-Fix)
+
+**Status 13.11.2026:** Vom Betreiber für eine spätere Sitzung freigegeben; **jetzt nicht implementieren** (geringes verbleibendes Codex-Wochenbudget). Nur gezielte Korrektur der bestehenden Drag-Grenzen; keine neue Funktion.
+
+- [ ] Eye-Haupticon mit Aura bis unmittelbar an **alle vier Kartenränder und -ecken** verschieben lassen (oben links, oben rechts, unten links, unten rechts). Derzeit wird die erreichbare Position vorzeitig begrenzt.
+- [ ] Beim Clamping ausschließlich das **eigentliche Eye-Haupticon / seine nutzbare Touchfläche** berücksichtigen, nicht den größeren Aura-/Glow-/Animationsradius. Das Haupticon muss vollständig sichtbar und bedienbar bleiben; Aura/Glow/Animation dürfen am Rand abgeschnitten werden.
+- [ ] Kleine Sicherheitsabstände für Android-Systemgesten, abgerundete Displayecken und Bedienbarkeit berücksichtigen, ohne die Position unnötig weit nach innen zu verschieben.
+- [ ] Randpositionen in den vorhandenen Eye-Positionseinstellungen dauerhaft speichern und nach Reload/Neustart korrekt wiederherstellen; bestehende Positionen nicht zurücksetzen.
+- [ ] Short-Tap, Long-Press, Drag, Aura-Design, Ring-/Animationsverhalten, Eye-Konfigurator, Slotbelegungen und Vault-Persistenz unverändert lassen; keine Änderungen an Wind, Synoptik, WR oder PROD VM101.
+- [ ] Später ausschließlich gezielt auf HA DEV VM109 und insbesondere Android in **allen vier Ecken** prüfen, ohne umfangreiche zusätzliche Testkampagnen.
+
+**Wichtig:** Vormerkung statt Implementierungsauftrag; kein Versionssprung und keine Laufzeitänderungen durch diesen Dokumentationseintrag.
+
 ## 0. Harte Voraussetzung – laufende gemeinsame Realabnahme
 
 - [ ] Bestehenden WR-/GR-P7-010-Realtest mit dem installierten Versionspaar **abschließen**, bevor neue europäische Provider installiert oder in das produktive Routing aufgenommen werden.
