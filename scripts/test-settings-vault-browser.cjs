@@ -381,6 +381,35 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.notEqual(imported.id, androidId);
     assert.equal(imported.settings['gewitterradar:v409:map-compass-visible'], 'false');
     assert.equal(mock.profiles.a[androidId].settings[EYE].eyeAuraGap, 23);
+
+    // P1: real configured fifth Eye function, saved by Settings Vault and
+    // rehydrated both on Android reload and on the independently bound client.
+    const originalEye = await android.page.evaluate(() => {
+      const c = card._eyeHubState().config;
+      return {slots: structuredClone(c.slots), colors: structuredClone(c.colors),
+              grouped: c.grouped, aura: c.aura};
+    });
+    await android.page.evaluate(() => {
+      card._eyeHubResize(1);
+      card._eyeHubAssign(4, 'synoptic');
+    });
+    await android.page.waitForFunction(() => card._settingsVault.status === 'saved'
+      && card._eyeHubState().config.slots[4]?.functionId === 'synoptic');
+    assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
+    assert.deepEqual(mock.profiles.a[androidId].settings[EYE].slots.slice(0, 4), originalEye.slots);
+    assert.equal(mock.profiles.a[androidId].settings[EYE].colors.synoptic, '#FFC442');
+    await android.page.reload();
+    await android.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
+    const reloadedEye = await android.page.evaluate(() => card._eyeHubState().config);
+    assert.equal(reloadedEye.slots[4].functionId, 'synoptic');
+    assert.deepEqual(reloadedEye.slots.slice(0, 4), originalEye.slots);
+    assert.equal(reloadedEye.colors.synoptic, '#FFC442');
+    assert.equal(reloadedEye.grouped, originalEye.grouped);
+    assert.equal(reloadedEye.aura, originalEye.aura);
+    await cleared.page.reload();
+    await cleared.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
+    assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.slots[4]?.functionId), 'synoptic');
+    assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
     // Startup connection failure stays recoverable and never writes defaults.
     mock.offline = true;
     const offline = await open(browser, current, androidView, {user: 'offline', initial: legacy});
