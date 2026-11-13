@@ -62,6 +62,6 @@ test('manifest, HA integration and DRA build are distinct and synchronized',()=>
  assert.match(rel,/integrationVersion:"0\.25\.99"/);
  assert.match(read(roots[0],'module-manifest.js'),/"version": "1\.3\.34"/);
  const integration=JSON.parse(readFileSync('custom_components/gewitterradar/manifest.json','utf8'));
- assert.equal(integration.version,'0.25.97');
+ assert.equal(integration.version,'0.25.99');
  assert.match(readFileSync('custom_components/gewitterradar/build_info.py','utf8'),/BUILD_VERSION = "4\.11\.192"/);
 });
