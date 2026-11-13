@@ -1,10 +1,10 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
 import {EYE_COLORS} from './eye-hub-model.js?v=411202r1';
-import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411207r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411207r1';
 import {canonicalWindBounds} from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.10',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.11',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);
@@ -41,6 +41,11 @@ const PANEL_CSS=`
  .weather-synoptic-panel>header>img{width:32px;height:32px;object-fit:contain;pointer-events:none}
  .weather-synoptic-panel>header strong{color:#f1d58c;font-size:13px;line-height:1.25;min-width:0}
  .weather-synoptic-panel>header .gr-premium-action,.weather-synoptic-colors .gr-premium-action{width:44px;height:44px;min-width:44px;flex-basis:44px;border-radius:9px}
+ /* Match the existing round Hi-Res close control used in Wind/Temperature/Display.
+    Only this header control changes; preserve all other premium buttons and gestures. */
+ .weather-synoptic-panel>header .weather-synoptic-close{display:grid;place-items:center;box-sizing:border-box;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;cursor:pointer;touch-action:manipulation}
+ .weather-synoptic-panel>header .weather-synoptic-close img{display:block!important;width:34px!important;height:34px!important;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+ .weather-synoptic-panel>header .weather-synoptic-close:focus-visible{outline:2px solid #e7c16e;outline-offset:-2px}
  .weather-synoptic-panel [data-premium-content]{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;padding:8px}
  .weather-synoptic-panel .gr-premium-collapse{border:1px solid #b5985a66;border-radius:11px;background:linear-gradient(145deg,#202935,#101820 55%,#171b22);box-shadow:inset 0 1px #fff1}
  .weather-synoptic-panel .gr-premium-collapse>summary{padding:5px 12px}
@@ -235,7 +240,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
   const color=key=>'<div class="synoptic-color-row"><span>'+COLOR_FIELDS[key]+'</span><button type="button" class="eye-color-button eye-metal-button" data-synoptic-color="'+key+'" aria-haspopup="dialog" aria-controls="weather-synoptic-colors" aria-expanded="false"><i aria-hidden="true"></i><span></span></button></div>';
   const section=(id,title,content)=>'<details open data-section="'+id+'"><summary>'+title+'</summary>'+content+'</details>';
   panel.innerHTML='<header data-premium-drag-handle><img src="'+SYNOPTIC_ICON+'" alt="" draggable="false"><strong>Synoptik · H/T, Isobaren &amp; Fronten</strong><div class="gr-premium-panel-actions">'+
-   premiumAction('minimize','Synoptik minimieren','minimize')+premiumAction('close','Synoptik schließen')+'</div></header><div data-premium-content>'+
+   premiumAction('minimize','Synoptik minimieren','minimize')+'<button type="button" class="gr-premium-action weather-synoptic-close" data-premium-action="close" aria-label="Synoptik schließen" title="Schließen"><img src="'+esc(deps.ABOUT_CLOSE_IMAGE||PREMIUM_CLOSE)+'" alt="" width="34" height="34" draggable="false"></button></div></header><div data-premium-content>'+
    check('visible','Synoptik sichtbar')+
    section('centers','Hoch- und Tiefdruck',check('centers','H/T anzeigen')+check('pressureLabels','Druckwerte')+color('highColor')+color('lowColor')+range('highSize','H-Größe',14,60)+range('lowSize','T-Größe',14,60))+
    section('isobars','Isobaren',check('isobars','Isobaren anzeigen')+color('isobarColor')+range('lineWidth','Linienbreite',.5,6,.5)+range('labelDensity','Beschriftungsdichte',0,100,5))+

@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.208",
-  "build": "V4.11.208-DEV-2026-11-13",
-  "runtimeRevision": "411208r1",
-  "moduleSetId": "E411-208A1",
+  "productVersion": "4.11.209",
+  "build": "V4.11.209-DEV-2026-11-13",
+  "runtimeRevision": "411209r1",
+  "moduleSetId": "E411-209A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "P2 Synoptik: deckendes Premium-Metallmenü und visuelle Android-Farbauswahl",
+    "purpose": "Synoptik Premiummenue: rundes Hi-Res-Schliessen-Icon wie Wind, Temperatur und Darstellung; Bedienung unveraendert.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
