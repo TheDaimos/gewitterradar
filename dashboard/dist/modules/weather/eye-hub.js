@@ -50,7 +50,7 @@ export const eyeHubMethods={
  _eyeHubPatch(patch){
   const s=this._eyeHubState(),grouped=s.config.grouped;s.config=normalizeEyeConfig({...s.config,...patch},[...s.registry.entries.keys()]);
   try{settingsStorage(this).setItem(EYE_HUB_KEY,JSON.stringify(s.config));}catch(_){}
-  if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherPrecipitationCancelDrag?.();this._eyeHubClose();}
+  if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherDisplayCancelEyeDrag?.(this.__weatherSynoptic?.quickDragOptions);this._weatherPrecipitationCancelDrag?.();this._eyeHubClose();}
   s.signature=null;this._eyeHubSync();
  },
  _eyeHubAssign(index,id){const s=this._eyeHubState();this._eyeHubPatch(assignEyeSlot(s.config,index,id,[...s.registry.entries.keys()]));},
@@ -134,7 +134,7 @@ export const eyeHubMethods={
   }
   if(s.config.grouped){s.iconLayoutKey=null;return;}
   const d=this.__weatherDisplayState,w=this.__weatherWind,temp=this.__weatherTemperature;
-  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag)return;
+  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||this.__weatherSynoptic?.quickDrag?.eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag)return;
   const mapRect=map.getBoundingClientRect(),cr=card.getBoundingClientRect();
   if(!mapRect.width||!mapRect.height)return;
   const relative=rect=>({left:rect.left-cr.left,top:rect.top-cr.top,right:rect.right-cr.left,bottom:rect.bottom-cr.top});
@@ -142,6 +142,7 @@ export const eyeHubMethods={
   const saved={
    wind:w?.config.quickPositions?.[layout],
    temperature:temp?.config.quickPositions?.[layout],
+   synoptic:this.__weatherSynoptic?.config?.quickPositions?.[layout],
    precipitation:d?.config.precipitationControl?.quickPositions?.[layout],
    'weather-display':d?.config.rememberPosition?d.config.displayControlPosition:null
   };

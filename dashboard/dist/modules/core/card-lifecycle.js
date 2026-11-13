@@ -2,7 +2,7 @@ import {settingsStorage} from './settings-vault.js?v=411187r1';
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -446,6 +446,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._resumeWeatherDisplay?.();
       this._resumeWeatherLegend?.();
       this._resumeWeatherWind?.();
+      this._resumeWeatherSynoptic?.();
       this._resumeMapGestureRecovery?.();
       // V3.86 – normaler Produktivbetrieb wieder aktiv.
       // Die alten Scroll-Gegenmechanismen werden bewusst NICHT aktiviert;
@@ -462,6 +463,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._teardownWeatherDisplay?.();
       this._teardownWeatherLegend?.();
       this._teardownWeatherWind?.();
+      this._teardownWeatherSynoptic?.();
       this._teardownMapGestureRecovery?.();
       this._closeLanguageOnboarding(false);
       this._closeHelp(false);
