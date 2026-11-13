@@ -406,6 +406,13 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.equal(reloadedEye.colors.synoptic, '#FFC442');
     assert.equal(reloadedEye.grouped, originalEye.grouped);
     assert.equal(reloadedEye.aura, originalEye.aura);
+    assert.equal(await android.page.evaluate(() => {
+      card._eyeHubOpen();
+      const present = Boolean(card._eyeHubState().view.dialog
+        .querySelector('[data-eye-slot="4"] [data-eye-function="synoptic"]'));
+      card._eyeHubState().view.close();
+      return present;
+    }), true, 'Android Eye configurator must visibly restore slot five');
     await cleared.page.reload();
     await cleared.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
     assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.slots[4]?.functionId), 'synoptic');

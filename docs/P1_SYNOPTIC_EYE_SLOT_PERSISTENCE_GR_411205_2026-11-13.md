@@ -1,6 +1,6 @@
 # P1-Folgeauftrag – Synoptik-Verfügbarkeit und fünfter Eye-Slot
 
-**Stand:** 13.11.2026 · **GR 4.11.205 DEV / HA 0.25.112** · Branch `deploy/dev` · WR weiterhin 0.10.322 DEV.
+**Stand:** 13.11.2026 · **GR 4.11.206 DEV / HA 0.25.113** · Branch `deploy/dev` · WR weiterhin 0.10.322 DEV.
 
 ## Reale Fehlerursachen
 
@@ -21,3 +21,11 @@ GR ruft nach Aktivierung `weather_router/consumer/resolve_synoptic` mit `contrac
 Die öffentlichen Tests `tests/synoptic-dev-v411198.test.mjs` und `tests/test_synoptic_p1_schema.py` prüfen die Statusfälle, gültige und ungültige Frames, Slot-Konfiguration, Server-Validierung, Serialisierung/erneute Hydration, einen konkurrierenden alten Vier-Slot-Stand und echten Conflict-Merge. `tests/test_settings_vault.py` enthält zusätzlich eine asynchrone End-to-End-Vault-Reboot-Regression mit isoliertem FakeDisk. Die vollständige HA-DEV-Abnahme und echter Providerabruf müssen nach der installierbaren DEV-Veröffentlichung auf VM109 erfolgen. Den ersten fehlerhaften Android-Sichttest ausdrücklich nicht als bestanden markieren.
 
 Die CI zur öffentlichen DEV-Auslieferung synchronisiert `frontend`, `custom_components/gewitterradar/frontend`, `dashboard/dist`, Asset-Prüfsummen und Packagemetadaten. Kein privater WR-Actions-Job.
+
+## Weiterführung und tatsächliche Abnahme
+
+Der zusätzliche Android-nahe Chromium-Test belegt den fünften Slot über `_eyeHubAssign(4, 'synoptic')`, prüft die abgeschlossene Settings-Vault-Speicherung, den wieder geöffneten Eye-Konfigurator, Reload auf demselben Gerät und Profil-Hydration in einem zweiten Browserkontext. Dies ist eine simulierte Browser-Abnahme mit gemocktem HA-Vault, **kein** echter Android-/VM109-Remotezugriff.
+
+Mit GR 4.11.206 werden **getypte** WR-V2-Ergebnisse pro Capability gespeichert (`ready`/`unavailable`). Erfolgreiche Herkunftstexte wie `ECCC · Uhrzeit` gelten nicht fälschlich als Fehler; ein ausgeschaltetes Overlay bleibt `off`, auch wenn vor dem Abschalten ein WR-Fehler vorlag. Nur bestätigte negative WR-Rückgaben, fehlgeschlagene Abfragen, abgelaufene Frames oder ein belegter Leaflet-Ausfall ergeben bei aktiviertem Overlay eine Nichtverfügbarkeitswarnung. Der bestehende GR-900-Sekunden-Verzicht und die WR-Providerentscheidung bleiben unverändert.
+
+Öffentliche, für GR 4.11.206 gezielte Synoptik-Regression: [Actions Run 43460752908](https://github.com/TheDaimos/gewitterradar/actions/runs/43460752908) **SUCCESS**. Öffentliche DEV-Auslieferung mit aktualisierten Spiegeln und Integritätsprüfsummen: [Actions Run 43460752888](https://github.com/TheDaimos/gewitterradar/actions/runs/43460752888) **SUCCESS**. HACS meldet weiterhin das vorbestehende `SPDX: NOASSERTION` der vereinbarten Modell-B-Lizenz; die Lizenz wurde ausdrücklich **nicht** geändert.
