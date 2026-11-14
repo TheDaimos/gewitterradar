@@ -19,6 +19,19 @@ Die neu priorisierte **V4.11** konzentriert sich auf europäische Niederschlagsr
 - [ ] Doppel-Tipp-Toleranz (falls erforderlich: minimale Tap-Dauer, Positionsabweichung, Zeitabstand) robust begrenzen; keine unbegrenzt großen Zeitfenster, die versehentliche Doppeltipps und träge Short-Taps verursachen. Systemseitige Doppeltipp- oder Barrierefreiheitseinstellungen nach Möglichkeit berücksichtigen, nicht heimlich überschreiben.
 - [ ] Diese Punkte ausschließlich **für 4.12 vormerken**. Keine Umsetzung, kein Versionssprung und keine Laufzeitänderung in 4.11; geschützte Eye-/Wind-/Synoptik-Funktionen bewahren.
 
+## DWD HymecNG – Niederschlagsarten über WeatherRouter (geplant für 4.12)
+
+**Status 14.11.2026:** Vom Betreiber vorgemerkt, keine Umsetzung mit verbleibenden 3 % Codex-Budget; keine Änderungen an 4.11, WR oder PROD.
+
+- [ ] In `TheDaimos/weather-router-dev` einen **eigenständigen, additiven HymecNG-Datenpfad** für DWD-Open-Data entwickeln. Originalformat und aktuelle Produktdokumentation zunächst anhand realer DWD-Dateien verifizieren; insbesondere HDF5-Struktur, Metadaten, Auflösung, Georeferenzierung, Aktualisierungsintervall und Kennzeichnungen der Niederschlagsklassen.
+- [ ] Abruf, robuste Dekodierung, Georeferenzierung, Zeitstempel/Validität, Cache, Timeouts, Datenlücken und Fehlerszenarien implementieren; keine Modifikation der bereits laufenden DWD-RV/RY-, OPERA- oder NASA-Provider.
+- [ ] Alle **tatsächlich vom DWD-Produkt belegten Klassen** vollständig und unverfälscht auf einen typisierten, providerneutralen WR-V2-Vertrag abbilden; insbesondere Regen, Schnee, Schneeregen/Mischformen, Hagel/Graupel und gefrierenden Niederschlag nur dann deklarieren, wenn durch den Klassenkatalog gedeckt. Keine Ableitung von Nebel aus HymecNG behaupten; Nebel benötigt andere Quellen.
+- [ ] Quellen- und Lizenzinformationen, Qualitätsflags, geografische Abdeckung, Beobachtung-vs.-Ableitung und Zeitgültigkeit fachlich korrekt ausweisen. Kein fälschlicher Europa- oder Weltabdeckungsanspruch.
+- [ ] Anschließend die getrennte GR-4.12-Darstellung (Schneeflockenanimation/Symbole, Niederschlagsarten, Premium-Regler) planen und implementieren; WR entscheidet allein über Provider, Produktgültigkeit und Routing.
+- [ ] Nur auf HA DEV VM109 abnehmen, mit echten DWD-Daten sowie realer Android-Darstellung. Vorhandene Wind-Schlangenanimation, Eye-/Aura-Zustände, Synoptik und Settings Vault als geschützte Referenzen behandeln; PROD VM101 unverändert lassen.
+
+Siehe [GR_412_WINTERWEATHER_AND_ORBITAL_SUBICONS_BACKLOG_2026-11-13.md](GR_412_WINTERWEATHER_AND_ORBITAL_SUBICONS_BACKLOG_2026-11-13.md).
+
 ## 0. Geo-Sonde – bereits verbindlich für V4.12 beschlossen
 
 - [ ] Geo-Sonde als Werkzeug im bestehenden Karten-Layer-Menü planen und implementieren – ausdrücklich **nicht** durch die Verschiebung der V4.11-Themen verdrängen.

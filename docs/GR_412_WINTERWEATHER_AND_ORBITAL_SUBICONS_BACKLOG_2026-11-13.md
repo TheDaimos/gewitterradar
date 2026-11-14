@@ -8,6 +8,19 @@
 2. **Nebel / Nebelbänke:** Eigenständige, bei Bedarf weich gezeichnete geografische Nebelfelder. DWD-Daten für Sichtweite, Nebelprognosen und amtliche Nebelwarnungen prüfen; tatsächliche Ortsauflösung respektieren.
 3. **Glatteis / gefrierender Regen / überfrierende Nässe:** Eigene Warn- und Zustandsvisualisierung, fachlich korrekt getrennte Phänomene inklusive Reifglätte. DWD-Daten/amtliche Warnungen vor der Umsetzung prüfen und Messung, Vorhersage und Warngebiet sauber unterscheiden.
 
+
+## DWD HymecNG als neue WR-Datenquelle – Beschluss 14.11.2026
+
+**Für 4.12 verbindlich vorgemerkt, nicht in 4.11 implementieren.** Der aktuelle WR 0.10.322 DEV unterstützt bestehende DWD-Radarprodukte, aber noch keinen eigenen HymecNG-Originaldaten-Decoder. Die bestehende Open-Meteo-Punktvorhersage `weather.point.snowfall` ist kein HymecNG-Ersatz und bleibt unberührt.
+
+- Offizielles HymecNG-Produkt, Dateiformat/HDF5, DWD-Klassenkatalog, Georeferenzierung, Zeitachse, Verfügbarkeit und Lizenz vor der Implementierung an echten Dateien prüfen.
+- **Additives WR-Modul** für Datenbeschaffung und vollständige Verarbeitung der tatsächlich verfügbaren Niederschlagsklassen, mit Qualitäts-/Gültigkeitsinformationen und sauberem Raster-/Capability-Vertrag auf WR V2. Nicht einfach RV/RY-Intensität als Niederschlagsart interpretieren.
+- Regen, Schnee, Schneeregen, Hagel, Graupel und gefrierenden Niederschlag ausschließlich anhand der belegten Produktklassen typisieren; Nebel separat über geeignete Sichtweiten-/Warn-/Modellprodukte behandeln.
+- Auf GR-Seite erst danach hochwertige, optionale Kartenvisualisierungen und Animationen mit Einstellreglern entwickeln; bestehende OPERA-, DWD-RV/RY-, NASA-, Synoptik-, Eye-/Aura- und Windfunktionen schützen.
+- Realtests nur auf HA DEV VM109 (einschließlich Android), keine Änderungen an PROD VM101. Umsetzung erst mit neuem Codex-Budget; die verbleibenden 3 % nicht hierfür verwenden.
+
+Die technischen Arbeitspakete stehen ergänzend in [V4_12_TODO.md](V4_12_TODO.md).
+
 ## Icons und Bedienung: „Monde“ = kreisförmige Orbit-Untermenüs
 
 Der Betreiber hat die Bedeutung ausdrücklich präzisiert: **kleine kreisförmige Untermenü-Icons, die wie Monde um ein Haupticon angeordnet sind.** Es geht **nicht** um astronomische Mondphasen oder Nachtbeleuchtung.
