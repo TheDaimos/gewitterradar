@@ -4,7 +4,7 @@ import {EYE_COLORS} from './eye-hub-model.js?v=411202r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411207r1';
 import {canonicalWindBounds} from './wind-field.js?v=411162r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.11',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.12',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);
@@ -41,6 +41,10 @@ const PANEL_CSS=`
  .weather-synoptic-panel>header>img{width:32px;height:32px;object-fit:contain;pointer-events:none}
  .weather-synoptic-panel>header strong{color:#f1d58c;font-size:13px;line-height:1.25;min-width:0}
  .weather-synoptic-panel>header .gr-premium-action,.weather-synoptic-colors .gr-premium-action{width:44px;height:44px;min-width:44px;flex-basis:44px;border-radius:9px}
+ /* Same compact premium minimize treatment as the working Wind display header.
+    Scope this override to the Synoptic header only; keep the round close untouched. */
+ .weather-synoptic-panel>header .gr-premium-panel-actions>button.weather-display-minimize{box-sizing:border-box;width:40px!important;min-width:40px!important;height:30px!important;min-height:30px!important;flex:0 0 40px!important;align-self:center;padding:0!important;border:1px solid #a68849!important;border-radius:8px!important;background:linear-gradient(145deg,#1c2530,#0d141d)!important;box-shadow:inset 0 1px #fff3,0 2px 5px #0008!important;color:#f1d58c}
+
  /* Match the existing round Hi-Res close control used in Wind/Temperature/Display.
     Only this header control changes; preserve all other premium buttons and gestures. */
  .weather-synoptic-panel>header .weather-synoptic-close{display:grid;place-items:center;box-sizing:border-box;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;cursor:pointer;touch-action:manipulation}

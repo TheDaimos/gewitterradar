@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.209",
-  "build": "V4.11.209-DEV-2026-11-13",
-  "runtimeRevision": "411209r1",
-  "moduleSetId": "E411-209A1",
+  "productVersion": "4.11.210",
+  "build": "V4.11.210-DEV-2026-11-15",
+  "runtimeRevision": "411210r1",
+  "moduleSetId": "E411-210A1",
   "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Synoptik Premiummenue: rundes Hi-Res-Schliessen-Icon wie Wind, Temperatur und Darstellung; Bedienung unveraendert.",
+    "purpose": "Synoptik: Minimieren-Design an Wind-Premiummenue angleichen; geschuetzte Funktionen unveraendert",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
