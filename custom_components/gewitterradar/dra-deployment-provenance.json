@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.210",
-  "build": "V4.11.210-DEV-2026-11-15",
-  "runtimeRevision": "411210r1",
-  "moduleSetId": "E411-210A1",
-  "baselineFeatureHead": "e994212c1becf0f60d9b559e61eb7e8f057bee89",
+  "productVersion": "4.11.211",
+  "build": "V4.11.211-DEV-2026-11-15",
+  "runtimeRevision": "411211r1",
+  "moduleSetId": "E411-211A1",
+  "baselineFeatureHead": "253dafabf44e5412fe59d8270b12ef113acfbce0",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Synoptik: Minimieren-Design an Wind-Premiummenue angleichen; geschuetzte Funktionen unveraendert",
+    "purpose": "Synoptic color-dialog close controls, visibility slider semantics and local WeatherRouter PRO wordmark",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

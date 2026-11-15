@@ -1,6 +1,6 @@
-import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411162r1';
-import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411162r1';
-import {snakeTargetLength,snakeVelocity,smoothSnakeLength,snakeWidthFactor,snakeTailAlpha} from './snake-config.js?v=411162r1';
+import {sampleWindFieldInto,windFieldStepValid} from './wind-field.js?v=411211r1';
+import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411211r1';
+import {snakeTargetLength,snakeVelocity,smoothSnakeLength,snakeWidthFactor,snakeTailAlpha} from './snake-config.js?v=411211r1';
 export const SNAKE_HISTORY_CAPACITY=128,SNAKE_MESH_CAPACITY=40;
 const colors=new Map(),cache=new WeakMap(),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function extent(field){let b=cache.get(field);if(!b){const g=field.grid;b={x0:g.longitudes[0],x1:g.longitudes.at(-1),center:(g.longitudes[0]+g.longitudes.at(-1))/2,y0:windMercatorY(g.latitudes[0]),y1:windMercatorY(g.latitudes.at(-1)),cyclic:g.cyclic};cache.set(field,b);}return b;}

@@ -56,6 +56,13 @@ class SynopticVaultP1Tests(unittest.TestCase):
             "panelPosition": {"x": .3, "y": .4},
         })
 
+    def test_wind_snake_profile_can_hide_particles(self):
+        key = "gewitterradar:wind-ui:v1"
+        for percent in (0, 25, 50, 75, 100):
+            schema.validate_value(key, {"snake": {"opacity": percent}})
+        with self.assertRaises(schema.VaultError):
+            schema.validate_value(key, {"snake": {"opacity": -1}})
+
     def test_stale_four_slot_update_preserves_server_fifth_slot_and_aura(self):
         initial = eye_four()
         current = json.loads(json.dumps(initial))

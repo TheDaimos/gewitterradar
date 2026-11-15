@@ -1,4 +1,4 @@
-import {SNAKE_DEFAULTS,SNAKE_LIMITS,normalizeSnakeConfig} from './snake-config.js?v=411162r1';
+import {SNAKE_DEFAULTS,SNAKE_LIMITS,normalizeSnakeConfig} from './snake-config.js?v=411211r1';
 export const STUDIO_STORAGE='gewitterradar:wind-studio:v1',PRESET_FORMAT='gr-wind-animation-preset',PRESET_RENDERER='snake-flow',MAX_PRESET_BYTES=65536,MAX_USER_PROFILES=32;
 const keys=Object.keys(SNAKE_LIMITS),meta=['format','schemaVersion','name','renderer'],plain=value=>value&&typeof value==='object'&&!Array.isArray(value)&&(Object.getPrototypeOf(value)===Object.prototype||Object.getPrototypeOf(value)===null);
 const fail=message=>{throw Error(message);};

@@ -40,10 +40,16 @@ assert.equal(normalizeEyeConfig({size:72}).size,72);assert.equal(Math.round(eyeS
 assert.equal(normalizeEyeConfig({size:500}).size,126);assert.equal(normalizeEyeConfig({size:1}).size,36);
 for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [1,4,8]){const radius=eyeRingRadius(126,count-1)+20;for(const x of [radius,width-radius])for(const y of [radius,height-radius]){const points=eyeBubbleLayout(count,{x,y},{left:0,top:0,right:width,bottom:height},[],126);assert.equal(points.length,count);for(const p of points)assert(Math.hypot(p.x-x,p.y-y)>100);}}
 const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/fullscreen/map-display.js'],{encoding:'utf8'});
-for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js'])assert(readFileSync('frontend/modules/weather/'+file).equals(execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:frontend/modules/weather/'+file])),'protected source '+file);
 const stripBuildVersions=normaliseGeneratedModule;
+for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js']){
+ const path='frontend/modules/weather/'+file;
+ let expected=execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+path],{encoding:'utf8'});
+ if(file==='snake-config.js')expected=expected.replace('opacity:[10,100,1]','opacity:[0,100,1]');
+ assert.equal(stripBuildVersions(readFileSync(path,'utf8')),stripBuildVersions(expected),'protected source '+file);
+}
 const precipitationPath='frontend/modules/weather/precipitation-layer.js';
-assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+precipitationPath],{encoding:'utf8'})),'protected precipitation implementation unchanged since GR 4.11.195');
+const precipitationBaseline=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+precipitationPath],{encoding:'utf8'});
+assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(precipitationBaseline.replace('Darstellungstransparenz','Darstellungsdeckkraft')),'protected precipitation implementation unchanged since GR 4.11.195');
 // Keep the V179 window implementations with the shared drag binding and its
 // current state shape. Compatibility click suppression now lives on the card.
 // Protected module baseline is the approved GR 4.11.195 DEV HEAD before

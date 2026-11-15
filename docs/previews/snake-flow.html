@@ -5,8 +5,8 @@
 <div id="map"><canvas id="flow"></canvas></div><div id="settings"></div><p><output id="tracked"></output></p><small id="metrics"></small>
 <p>Die Länge ist eine Wegstrecke entlang der Bahn. Glättung erfolgt in Sekunden, nicht pro Frame. Bewegung ist visuell skaliert. Identische Partikel behalten ihre ID beim Verlängern und Verkürzen. Keine zusätzlichen Geschwindigkeitsvektoren oder künstlichen Wellen.</p></main>
 <script type="module">
-import {SnakePreview} from '../../frontend/modules/weather/snake-preview.js?v=411163r1';
-import {SNAKE_DEFAULTS,SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from '../../frontend/modules/weather/snake-config.js?v=411163r1';
+import {SnakePreview} from '../../frontend/modules/weather/snake-preview.js?v=411211r1';
+import {SNAKE_DEFAULTS,SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from '../../frontend/modules/weather/snake-config.js?v=411211r1';
 const host=document.querySelector('#map');let config={snake:{...SNAKE_DEFAULTS,bodyWidth:2.3}},tracked=null;
 const preview=new SnakePreview(host,{parameters:config.snake,canvas:document.querySelector('#flow'),color:'#f5f6ff',onMetrics:m=>{document.querySelector('#metrics').textContent=`${m.particles} Partikel · Render Ø ${m.meanRenderMs.toFixed(2)} ms · Historien ${(m.historyBytes/1024).toFixed(0)} KiB · max. ${m.historyCapacity} Punkte/Partikel · Wunsch ${m.requestedParticles} · Zoomfaktor ${m.zoomFactor.toFixed(2)}`;const p=preview.renderer.particles.find(p=>p.active&&p.id===tracked)||preview.renderer.particles.find(p=>p.active&&p.age>1);if(p){tracked=p.id;document.querySelector('#tracked').textContent=`Dasselbe Partikel #${p.id}: ${p.speed.toFixed(1)} m/s · aktuelle Länge ${p.length.toFixed(1)} px · Ziel ${p.targetLength.toFixed(1)} px`;}}});
 window.snakePreview={get renderer(){return preview.renderer;},get field(){return preview.field;},get config(){return config;}};

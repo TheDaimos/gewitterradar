@@ -1,10 +1,10 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411211r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
 import {EYE_COLORS} from './eye-hub-model.js?v=411202r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411207r1';
-import {canonicalWindBounds} from './wind-field.js?v=411162r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411211r1';
+import {canonicalWindBounds} from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.12',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.13',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);
@@ -40,16 +40,16 @@ const PANEL_CSS=`
  .weather-synoptic-panel>header{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:8px;flex:none;padding:6px 8px;min-height:44px;border-bottom:1px solid #b5985a55;background:linear-gradient(105deg,#3b3021,#1d2834 64%,#121b25);touch-action:none;user-select:none;cursor:grab}
  .weather-synoptic-panel>header>img{width:32px;height:32px;object-fit:contain;pointer-events:none}
  .weather-synoptic-panel>header strong{color:#f1d58c;font-size:13px;line-height:1.25;min-width:0}
- .weather-synoptic-panel>header .gr-premium-action,.weather-synoptic-colors .gr-premium-action{width:44px;height:44px;min-width:44px;flex-basis:44px;border-radius:9px}
  /* Same compact premium minimize treatment as the working Wind display header.
     Scope this override to the Synoptic header only; keep the round close untouched. */
  .weather-synoptic-panel>header .gr-premium-panel-actions>button.weather-display-minimize{box-sizing:border-box;width:40px!important;min-width:40px!important;height:30px!important;min-height:30px!important;flex:0 0 40px!important;align-self:center;padding:0!important;border:1px solid #a68849!important;border-radius:8px!important;background:linear-gradient(145deg,#1c2530,#0d141d)!important;box-shadow:inset 0 1px #fff3,0 2px 5px #0008!important;color:#f1d58c}
 
- /* Match the existing round Hi-Res close control used in Wind/Temperature/Display.
-    Only this header control changes; preserve all other premium buttons and gestures. */
- .weather-synoptic-panel>header .weather-synoptic-close{display:grid;place-items:center;box-sizing:border-box;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;cursor:pointer;touch-action:manipulation}
- .weather-synoptic-panel>header .weather-synoptic-close img{display:block!important;width:34px!important;height:34px!important;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
- .weather-synoptic-panel>header .weather-synoptic-close:focus-visible{outline:2px solid #e7c16e;outline-offset:-2px}
+ .weather-synoptic-close{display:grid;place-items:center;box-sizing:border-box;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;cursor:pointer;touch-action:manipulation}
+ .weather-synoptic-close img{display:block!important;width:34px!important;height:34px!important;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;transition:transform .16s ease,filter .16s ease}
+ .weather-synoptic-close:focus-visible{outline:2px solid #e7c16e;outline-offset:-2px}
+ .weather-synoptic-close:active img{transform:scale(.97);filter:brightness(.92)}
+ @media(hover:hover) and (pointer:fine){.weather-synoptic-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
+ @media(prefers-reduced-motion:reduce){.weather-synoptic-close img{transition:none}}
  .weather-synoptic-panel [data-premium-content]{min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;padding:8px}
  .weather-synoptic-panel .gr-premium-collapse{border:1px solid #b5985a66;border-radius:11px;background:linear-gradient(145deg,#202935,#101820 55%,#171b22);box-shadow:inset 0 1px #fff1}
  .weather-synoptic-panel .gr-premium-collapse>summary{padding:5px 12px}
@@ -57,6 +57,8 @@ const PANEL_CSS=`
  .weather-synoptic-panel label,.synoptic-color-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,45%);gap:8px;align-items:center;min-height:44px}
  .weather-synoptic-panel label>input[type=checkbox]{width:26px;height:26px;justify-self:end;margin:0 9px 0 0;accent-color:#d5ab50}
  .weather-synoptic-panel label>input[type=range]{box-sizing:border-box;width:100%;height:36px;min-width:0;margin:0;accent-color:#d5ab50;touch-action:pan-y}
+ .weather-synoptic-panel label:has([data-synoptic-percent]){grid-template-columns:minmax(0,1fr) minmax(0,1fr) 38px}
+ .weather-synoptic-panel label output{text-align:right;font-variant-numeric:tabular-nums}
  .weather-synoptic-panel .eye-metal-button{color:#f1d58c;font:inherit}
  .synoptic-color-row button{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0;padding:6px 8px;text-align:left}
  .weather-synoptic-panel .eye-color-button{width:100%;height:auto;min-height:44px}
@@ -74,6 +76,7 @@ const PANEL_CSS=`
 const defaults=Object.freeze({visible:false,centers:true,isobars:true,pressureLabels:true,highColor:'#FFC442',lowColor:'#B000FF',isobarColor:'#D8E6F3',highSize:28,lowSize:28,lineWidth:2,labelDensity:50,glow:false,opacity:1,centerOpacity:1,isobarOpacity:1,frontLineOpacity:1,frontSymbolOpacity:1,neonOpacity:1,fronts:false,frontNeon:true,frontSymbols:true,frontColors:{cold:'#0066FF',warm:'#FF003C',occluded:'#B000FF',stationaryCold:'#0066FF',stationaryWarm:'#FF003C'}});
 const clamp=(v,lo,hi,fallback)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):fallback;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const synopticClose=(label,image)=>'<button type="button" class="gr-premium-action weather-synoptic-close" data-premium-action="close" aria-label="'+esc(label)+'" title="Schließen"><img src="'+esc(image)+'" alt="" width="34" height="34" draggable="false"></button>';
 export function normalizeSynopticConfig(v,legacy=null){
  const x=v&&typeof v==='object'&&!Array.isArray(v)?v:{};
  const legacyColor=(value,fallback)=>{if(typeof value!=='string')return fallback;const t=value.trim().toLowerCase();const named={gold:'#FFC442',violet:'#B000FF',purple:'#B000FF',blue:'#0066FF',red:'#FF003C',cyan:'#00FFF0',green:'#39FF14',orange:'#FF5F00',yellow:'#FFFF00',white:'#FFFFFF',silver:'#D8E6F3'};return named[t]||(/^#[0-9a-f]{6}$/i.test(t)?t.toUpperCase():fallback);};
@@ -165,7 +168,8 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
     const input=event.target,key=input.dataset.synopticSetting;
     if(!key||(event.type==='input')!==(input.type==='range'))return;
     event.stopPropagation();
-    this._weatherSynopticSet({[key]:input.type==='checkbox'?input.checked:Number(input.value)});
+    const value=input.type==='checkbox'?input.checked:Number(input.value);
+    this._weatherSynopticSet({[key]:input.hasAttribute('data-synoptic-percent')?value/100:value});
    };
    panel.addEventListener('input',change);
    panel.addEventListener('change',change);
@@ -229,7 +233,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
   const palette=selected&&!SYNOPTIC_PALETTE.includes(selected)?[selected,...SYNOPTIC_PALETTE]:SYNOPTIC_PALETTE;
   dialog.dataset.colorField=key;
   dialog.opener=opener;
-  dialog.innerHTML='<header><h3 id="weather-synoptic-color-title">'+label+'</h3>'+premiumAction('close','Farbauswahl schließen')+'</header><div class="eye-colors" role="group" aria-label="Farbpalette">'+palette.map(color=>
+  dialog.innerHTML='<header><h3 id="weather-synoptic-color-title">'+label+'</h3>'+synopticClose('Farbauswahl schließen',deps.ABOUT_CLOSE_IMAGE||PREMIUM_CLOSE)+'</header><div class="eye-colors" role="group" aria-label="Farbpalette">'+palette.map(color=>
    '<button class="eye-color-choice" type="button" data-synoptic-swatch="'+color+'" aria-pressed="'+(color===selected)+'" title="'+color+'"><i aria-hidden="true" style="--eye-color:'+color+'"></i><span>'+colorName(color)+'</span></button>'
   ).join('')+'</div>';
   dialog.showModal();
@@ -241,16 +245,17 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
   if(!panel)return;
   const check=(key,label)=>'<label><span>'+label+'</span><input data-synoptic-setting="'+key+'" type="checkbox"></label>';
   const range=(key,label,min,max,step=1)=>'<label><span>'+label+'</span><input data-synoptic-setting="'+key+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'"></label>';
+  const percent=(key,label)=>'<label><span>'+label+'</span><input data-synoptic-setting="'+key+'" data-synoptic-percent type="range" min="0" max="100" step="1" aria-label="'+label+'"><output aria-hidden="true"></output></label>';
   const color=key=>'<div class="synoptic-color-row"><span>'+COLOR_FIELDS[key]+'</span><button type="button" class="eye-color-button eye-metal-button" data-synoptic-color="'+key+'" aria-haspopup="dialog" aria-controls="weather-synoptic-colors" aria-expanded="false"><i aria-hidden="true"></i><span></span></button></div>';
   const section=(id,title,content)=>'<details open data-section="'+id+'"><summary>'+title+'</summary>'+content+'</details>';
   panel.innerHTML='<header data-premium-drag-handle><img src="'+SYNOPTIC_ICON+'" alt="" draggable="false"><strong>Synoptik · H/T, Isobaren &amp; Fronten</strong><div class="gr-premium-panel-actions">'+
-   premiumAction('minimize','Synoptik minimieren','minimize')+'<button type="button" class="gr-premium-action weather-synoptic-close" data-premium-action="close" aria-label="Synoptik schließen" title="Schließen"><img src="'+esc(deps.ABOUT_CLOSE_IMAGE||PREMIUM_CLOSE)+'" alt="" width="34" height="34" draggable="false"></button></div></header><div data-premium-content>'+
+   premiumAction('minimize','Synoptik minimieren','minimize')+synopticClose('Synoptik schließen',deps.ABOUT_CLOSE_IMAGE||PREMIUM_CLOSE)+'</div></header><div data-premium-content>'+
    check('visible','Synoptik sichtbar')+
    section('centers','Hoch- und Tiefdruck',check('centers','H/T anzeigen')+check('pressureLabels','Druckwerte')+color('highColor')+color('lowColor')+range('highSize','H-Größe',14,60)+range('lowSize','T-Größe',14,60))+
    section('isobars','Isobaren',check('isobars','Isobaren anzeigen')+color('isobarColor')+range('lineWidth','Linienbreite',.5,6,.5)+range('labelDensity','Beschriftungsdichte',0,100,5))+
-   section('opacity','Darstellung',check('glow','Neon-Effekt')+range('opacity','Synoptik gesamt',0,1,.01)+range('centerOpacity','H/T-Deckkraft',0,1,.01)+range('isobarOpacity','Isobaren-Deckkraft',0,1,.01))+
+   section('opacity','Darstellung',check('glow','Neon-Effekt')+percent('opacity','Synoptik-Deckkraft gesamt')+percent('centerOpacity','H/T-Deckkraft')+percent('isobarOpacity','Isobaren-Deckkraft'))+
    section('fronts','Wetterfronten · NOAA WPC regional','<p>Offizielle NOAA-WPC-Linien für Nordamerika. Frontsymbole setzen eine von WR bestätigte Symbolseite voraus.</p>'+check('fronts','Wetterfronten anzeigen')+check('frontNeon','Neon-Übergangslinie')+check('frontSymbols','Meteorologische Symbole')+
-    Object.keys(defaults.frontColors).map(color).join('')+range('frontLineOpacity','Frontlinien-Deckkraft',0,1,.01)+range('neonOpacity','Fronten-Neon-Deckkraft',0,1,.01))+
+    Object.keys(defaults.frontColors).map(color).join('')+percent('frontLineOpacity','Frontlinien-Deckkraft')+percent('neonOpacity','Fronten-Neon-Deckkraft'))+
    '<button class="eye-metal-button" type="button" data-synoptic-action="refresh">WR-Daten aktualisieren</button><p role="status" data-synoptic-status></p></div>';
   enhancePremiumSections(panel,'synoptic-settings');
   syncPremiumPanel(panel,'synoptic-settings');
@@ -262,6 +267,12 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
   for(const input of panel.querySelectorAll('[data-synoptic-setting]')){
    const value=c[input.dataset.synopticSetting];
    if(input.type==='checkbox')input.checked=value;
+   else if(input.hasAttribute('data-synoptic-percent')){
+    const percent=Math.round(value*100),label=percent+' %';
+    if(input.value!==String(percent))input.value=String(percent);
+    if(input.getAttribute('aria-valuetext')!==label)input.setAttribute('aria-valuetext',label);
+    if(input.nextElementSibling.textContent!==label)input.nextElementSibling.textContent=label;
+   }
    else if(input.value!==String(value))input.value=String(value);
   }
   for(const button of panel.querySelectorAll('[data-synoptic-color]')){

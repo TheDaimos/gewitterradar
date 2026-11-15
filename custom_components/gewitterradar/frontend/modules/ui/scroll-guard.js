@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.scroll-guard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "group": "Oberfläche",
   "function": "Scrollschutz",
   "subfunctions": [
@@ -699,6 +699,7 @@ export const installScrollGuard=defineModule(MODULE_META,(deps)=>{const { CARD_V
         this._settingsLocationPreviewTimer = null;
       }
       if (!this._built) this._buildSkeleton();
+      this._syncProBranding();
       const newStrikes = this._ingestStrikes(hass);
 
       const grouped = hass?.states?.[this._mapGroupingEntity()]?.state !== 'off';

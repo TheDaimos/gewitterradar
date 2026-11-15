@@ -1,7 +1,21 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
+const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
+const PRO_DISCOVERY_TIMEOUT = 8000;
+const PRO_DISCOVERY_INTERVAL = 60000;
+
+function confirmsLocalWeatherRouter(reply) {
+  return reply?.schema === 'weather_router.consumer.discovery.v1'
+    && reply.contract?.name === 'weather_router.consumer'
+    && Array.isArray(reply.contract.supported_versions)
+    && reply.contract.supported_versions.includes(1)
+    && reply.router?.ready === true
+    && reply.router.enabled === true
+    && reply.router.status === 'ready';
+}
+
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.29",
+  "version": "1.1.30",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -14,6 +28,80 @@ export const MODULE_META=Object.freeze({
   "file": "modules/ui/skeleton.js"
 });
 export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _syncProBranding() {
+      const connection = this._hass?.connection;
+      const title = this.shadow?.getElementById('overview-title');
+      if (this.__proBranding?.connection === connection) return;
+      this._stopProBranding();
+      if (!title || !this.isConnected || typeof connection?.sendMessagePromise !== 'function'
+          || typeof connection.addEventListener !== 'function') return;
+
+      const state = {connection, title, check:null, timer:null};
+      this.__proBranding = state;
+      state.clear = () => {
+        clearTimeout(state.timer);
+        clearTimeout(state.check?.timer);
+        state.check = null;
+        title.classList.remove('is-pro');
+      };
+      state.refresh = async () => {
+        if (!connection.connected || state.check) return;
+        const check = {expired:false};
+        state.check = check;
+        check.timer = setTimeout(() => {
+          check.expired = true;
+          title.classList.remove('is-pro');
+        }, PRO_DISCOVERY_TIMEOUT);
+        const current = () => this.__proBranding === state && state.check === check && connection.connected;
+        try {
+          // This command runs in the authenticated HA server of this card.
+          const reply = await connection.sendMessagePromise({type:'weather_router/consumer/discovery'});
+          if (!current() || check.expired) return;
+          if (!confirmsLocalWeatherRouter(reply)) {
+            title.classList.remove('is-pro');
+            return;
+          }
+          if (!state.image) {
+            const logo = new Image(1190, 348);
+            logo.alt = 'GewitterRadar PRO – powered by · WeatherRouter';
+            logo.className = 'pro-wordmark';
+            logo.draggable = false;
+            logo.src = PRO_WORDMARK;
+            await logo.decode();
+            if (!current() || check.expired) return;
+            title.prepend(logo);
+            state.image = logo;
+          }
+          title.classList.add('is-pro');
+        } catch {
+          if (current()) title.classList.remove('is-pro');
+        } finally {
+          clearTimeout(check.timer);
+          if (current()) {
+            state.check = null;
+            state.timer = setTimeout(state.refresh, PRO_DISCOVERY_INTERVAL);
+          }
+        }
+      };
+      state.ready = () => {
+        clearTimeout(state.timer);
+        void state.refresh();
+      };
+      connection.addEventListener('disconnected', state.clear);
+      connection.addEventListener('ready', state.ready);
+      state.ready();
+    },
+
+    _stopProBranding() {
+      const state = this.__proBranding;
+      if (!state) return;
+      this.__proBranding = null;
+      state.clear();
+      state.connection.removeEventListener('disconnected', state.clear);
+      state.connection.removeEventListener('ready', state.ready);
+      state.image?.remove();
+    },
+
     _buildSkeleton() {
       this._built = true;
       this.shadow = this.attachShadow({ mode: 'open' });
@@ -252,6 +340,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-weight:820;
             letter-spacing:-.035em;
           }
+          .brand .title .pro-wordmark { display:none; }
+          .brand .title.is-pro { display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px; }
+          .brand .title.is-pro .pro-wordmark { display:block;width:min(290px,100%);height:auto; }
+          .brand .title.is-pro .standard-wordmark { display:none; }
+          .brand .title.is-pro .app-version-badge { margin-left:0; }
 
           /* V3.974 – compact card-version plaque next to the app name.
              It is derived exclusively from CARD_VERSION; no helper can drift out of sync. */
@@ -6248,7 +6341,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             <div class="topbar">
               <div class="brand">
                 <!-- V4.11.69: Datenquellenstatus unter Diagnose > Datenquellen & Verbindungen. -->
-                <h1 class="title"><span>Gewitterradar</span><span class="app-version-badge" id="app-version-badge" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open release history" title="Release history">V${CARD_DISPLAY_VERSION}</span></h1>
+                <h1 class="title" id="overview-title"><span class="standard-wordmark">Gewitterradar</span><span class="app-version-badge" id="app-version-badge" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open release history" title="Release history">V${CARD_DISPLAY_VERSION}</span></h1>
                 <div class="subtitle" id="radar-subtitle">
                   <span id="radar-subtitle-location">Blitzeinschläge rund um Home</span><span class="subtitle-separator">·</span><span id="radar-subtitle-window">letzte ${HISTORY_MINUTES} Minuten</span>
                 </div>

@@ -13,9 +13,10 @@ test('P1 round Synoptic close uses exactly the established shared Hi-Res origina
  assert.match(wind,/deps\.ABOUT_CLOSE_IMAGE/);
  assert.match(display,/deps\.ABOUT_CLOSE_IMAGE/);
  assert.match(synoptic,/class="gr-premium-action weather-synoptic-close" data-premium-action="close"/);
- assert.match(synoptic,/esc\(deps\.ABOUT_CLOSE_IMAGE\|\|PREMIUM_CLOSE\)/);
- assert.match(synoptic,/\.weather-synoptic-panel>header \.weather-synoptic-close\{[^\n]*width:44px;height:44px;[^\n]*border-radius:50%!important/);
- assert.match(synoptic,/\.weather-synoptic-panel>header \.weather-synoptic-close img\{[^\n]*width:34px!important;height:34px!important;[^\n]*pointer-events:none/);
+ assert.match(synoptic,/synopticClose\('Synoptik schließen',deps\.ABOUT_CLOSE_IMAGE\|\|PREMIUM_CLOSE\)/);
+ assert.match(synoptic,/synopticClose\('Farbauswahl schließen',deps\.ABOUT_CLOSE_IMAGE\|\|PREMIUM_CLOSE\)/);
+ assert.match(synoptic,/\.weather-synoptic-close\{[^\n]*width:44px;height:44px;[^\n]*border-radius:50%!important/);
+ assert.match(synoptic,/\.weather-synoptic-close img\{[^\n]*width:34px!important;height:34px!important;[^\n]*pointer-events:none/);
 });
 
 test('Synoptic close tap is still routed through the existing panel listener and preserves menu controls',()=>{

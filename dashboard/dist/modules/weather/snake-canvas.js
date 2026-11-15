@@ -1,8 +1,8 @@
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {windViewportProjection} from './wind-canvas.js?v=411162r1';
-import {windFieldSnapshot,windFieldOverlaps,windFieldVisibleBounds} from './wind-field.js?v=411162r1';
-import {SnakeGeometry,createSnakeParticle,SNAKE_HISTORY_CAPACITY} from './snake-geometry.js?v=411162r1';
-import {normalizeSnakeConfig,snakeDensityPlan,adaptSnakeLoad} from './snake-config.js?v=411162r1';
+import {windViewportProjection} from './wind-canvas.js?v=411211r1';
+import {windFieldSnapshot,windFieldOverlaps,windFieldVisibleBounds} from './wind-field.js?v=411211r1';
+import {SnakeGeometry,createSnakeParticle,SNAKE_HISTORY_CAPACITY} from './snake-geometry.js?v=411211r1';
+import {normalizeSnakeConfig,snakeDensityPlan,adaptSnakeLoad} from './snake-config.js?v=411211r1';
 const fade=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
 export class SnakeCanvas{
  constructor(map,canvas,{raf=requestWeatherFrame,cancel=cancelWeatherFrame,onMetrics=()=>{},now=()=>performance.now(),random=Math.random}={}){

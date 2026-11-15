@@ -1,8 +1,8 @@
 // Shared by the offline configurator and the integrated Studio. Synthetic only.
-import {SnakeCanvas} from './snake-canvas.js?v=411162r1';
-import {normalizeSnakeConfig} from './snake-config.js?v=411162r1';
-import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411162r1';
-import {prepareWindFieldLookup} from './wind-field.js?v=411162r1';
+import {SnakeCanvas} from './snake-canvas.js?v=411211r1';
+import {normalizeSnakeConfig} from './snake-config.js?v=411211r1';
+import {windMercatorY,windMercatorLatitude} from './wind-canvas.js?v=411211r1';
+import {prepareWindFieldLookup} from './wind-field.js?v=411211r1';
 export const SNAKE_SCENARIOS=Object.freeze({weak:'A · Schwacher Wind',gradient:'B · Zunehmender und abnehmender Wind',vortex:'C · Rotierendes Windfeld'});
 export function makeSnakePreviewField(kind){
  if(!Object.hasOwn(SNAKE_SCENARIOS,kind))throw Error('Unbekanntes Vorschau-Szenario');

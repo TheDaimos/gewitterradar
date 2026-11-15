@@ -87,8 +87,14 @@
     "protected": false
   },
   {
+    "file": "assets/gewitterradar-pro-wordmark-v1.png",
+    "sha256": "a714d572d0ad00aa81240bcc22f7043f54d2897aec59860181be17909c83713e",
+    "protected": true,
+    "sizeBytes": 267546
+  },
+  {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "05a6ece0d97dfac3a2b434eb832d4d0739b9c4fee2d70294c53eafc6314d4563",
+    "sha256": "8bc6c8e090388b601aa906605af351d8304d7095084f167fb181b891622e128b",
     "protected": false,
     "sizeBytes": 2959
   },

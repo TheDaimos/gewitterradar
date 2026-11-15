@@ -140,7 +140,8 @@ async function run() {
       assert(layout.panel.x>=10&&layout.panel.right<=width-10&&layout.panel.bottom<=851-10);
       assert(layout.panel.width>=Math.min(410,layout.mapWidth-24)-2);
       assert(layout.title.height<=layout.line*2+.5&&layout.title.right<=layout.actions[0].x);
-      assert(layout.actions[0].right<=layout.actions[1].x&&layout.actions.every(b=>b.width>=44&&b.height>=44));
+      const [minimize,close]=layout.actions;
+      assert(minimize.right<=close.x&&minimize.width===40&&minimize.height===30&&close.width===44&&close.height===44);
     }
     await page.setViewportSize({width:393,height:851});
     // Allow the delayed map resize and its debounced WR requests to settle.
@@ -155,6 +156,22 @@ async function run() {
     await page.waitForTimeout(400);
     assert.equal(await panel.locator('select').count(),0);
     assert.equal(await panel.locator('[data-synoptic-color]').count(),8);
+    const paletteClose=palette.getByRole('button',{name:'Farbauswahl schließen'});
+    const roundClose=await panel.locator('.weather-synoptic-close img').getAttribute('src');
+    for(const field of await panel.locator('[data-synoptic-color]').all()){
+      for(const action of ['tap','click']){
+        await field[action]();
+        assert(await palette.isVisible());
+        assert.equal(await paletteClose.locator('img').getAttribute('src'),roundClose);
+        assert.deepEqual(await paletteClose.evaluate(button=>{
+          const img=button.querySelector('img'),css=getComputedStyle(button);
+          return [button.offsetWidth,button.offsetHeight,img.offsetWidth,img.offsetHeight,css.borderRadius,css.touchAction];
+        }),[44,44,34,34,'50%','manipulation']);
+        await paletteClose[action]();
+        await palette.waitFor({state:'hidden'});
+        await field.evaluate(node=>{if(node.getAttribute('aria-expanded')!=='false')throw Error('Color trigger did not collapse');});
+      }
+    }
     const beforeColors=await page.evaluate(()=>synopticRequests.length);
     const pick=async(key,color)=>{
       await colorField(key).tap();
@@ -199,7 +216,12 @@ async function run() {
     await page.waitForTimeout(400); // Chromium suppresses taps immediately after a native drag.
     const count=()=>page.evaluate(()=>synopticRequests.length);
     const before=await count();
-    await panel.locator('[data-synoptic-setting=opacity]').fill('0.51');
+    const panelOpacity=panel.getByRole('slider',{name:'Synoptik-Deckkraft gesamt'});
+    for(const value of [0,25,50,75,100,51]){
+      await panelOpacity.fill(String(value));
+      assert.equal(await panelOpacity.getAttribute('aria-valuetext'),value+' %');
+      assert.equal(await page.locator('.gr-synoptic-center').evaluate(n=>Number(getComputedStyle(n).opacity)),value/100);
+    }
     await panel.locator('[data-premium-action=close]').tap();
     await panel.waitFor({state:'hidden',timeout:3500});
     await page.locator('#weather-display-control').tap();
@@ -217,9 +239,26 @@ async function run() {
     assert.equal(await page.locator('.gr-synoptic-center').evaluate(n=>getComputedStyle(n).opacity),'0.4');
     assert.equal(await page.locator('.gr-synoptic-isobar-label').evaluate(n=>getComputedStyle(n).opacity),'0.73');
     assert.equal(await page.evaluate(()=>card.__weatherSynoptic.layers.isobars.getLayers().find(l=>l instanceof L.Polyline).options.opacity),.73);
+    const quickOpacity=central.getByRole('slider',{name:'Deckkraft',exact:true});
+    const quickLayer=central.locator('[data-weather-display-layer-select]');
+    for(const layer of ['precipitation','clouds','wind','temperature']){
+      await quickLayer.selectOption(layer);
+      for(const value of [0,25,50,75,100]){
+        await quickOpacity.fill(String(value));
+        assert.equal(await quickOpacity.getAttribute('aria-valuetext'),value+' %');
+        const actual=await page.evaluate(layer=>{
+          if(layer==='temperature')return card._weatherTemperatureState().config.opacity;
+          if(layer==='wind')return card._weatherDisplayOpacity('windSymbols',1)*100;
+          if(layer==='precipitation')return card._weatherRadarEffectiveOpacity()*100;
+          return card._weatherDisplayOpacity(layer,1)*100;
+        },layer);
+        assert.equal(actual,value);
+      }
+      await central.locator('[data-quick-reset]').click();
+    }
     await central.locator('[data-weather-display-close]').tap();
     await hold(icon);
-    assert.equal(await panel.locator('[data-synoptic-setting=isobarOpacity]').inputValue(),'0.73');
+    assert.equal(await panel.locator('[data-synoptic-setting=isobarOpacity]').inputValue(),'73');
     await panel.locator('[data-premium-action=close]').tap();
     await drag(icon,65,105);
     assert.equal(await icon.getAttribute('aria-pressed'),'true');

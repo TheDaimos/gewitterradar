@@ -1,17 +1,17 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411187r1';
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=411187r1';
-import {eyeHubMethods} from './eye-hub.js?v=411207r1';
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411195r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411187r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411211r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411211r1';
+import {eyeHubMethods} from './eye-hub.js?v=411211r1';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411211r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411211r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.48",
+  version:"0.4.49",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
-  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Transparenz im Kartenmenü","Transparenz je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
+  subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Deckkraft im Kartenmenü","Deckkraft je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
   file:"modules/weather/display-menu.js"
 });
 
@@ -663,7 +663,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag<span class="weather-display-row-note">Nur optische Aufbereitung · Daten und Routing bleiben unverändert</span></div><div class="weather-display-style-picker"><select class="weather-display-style-select" data-weather-display-style-select="precipitation" aria-label="Darstellungsmodus Niederschlag">'+
           WEATHER_DISPLAY_STYLES.precipitation.map(id=>'<option value="'+id+'">'+LABELS[id]+'</option>').join("")+
         '</select></div></div>'+
-        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Transparenz<span class="weather-display-row-note" data-weather-display-opacity-hint>0 % = unsichtbar · 100 % = vollständig sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-weather-display-transparency="precipitation" aria-label="Transparenz des Niederschlagslayers"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
+        '<div class="weather-display-row" data-weather-display-precipitation-only><div class="weather-display-row-label">Niederschlag · Deckkraft<span class="weather-display-row-note" data-weather-display-opacity-hint>0 % = unsichtbar · 100 % = vollständig sichtbar</span></div><div class="weather-display-opacity"><input type="range" min="0" max="100" step="1" data-weather-display-transparency="precipitation" aria-label="Deckkraft der Niederschlagsebene"><output data-weather-display-transparency-value="precipitation">0 %</output><button class="weather-display-opacity-reset gr-premium-metal-surface" type="button" data-weather-display-transparency-reset="precipitation">WR</button></div></div>'+
         this._weatherDisplaySynopticOpacityRows()+
         '<div class="weather-display-row"><div class="weather-display-row-label">Legende</div><div class="weather-display-legend-picker"><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="auto"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Auto</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="on"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.open.src+'" alt="" aria-hidden="true" draggable="false"><span>Ein</span></button><button class="weather-display-legend-button" type="button" data-weather-display-legend-mode="off"><img class="weather-display-legend-eye" src="'+WEATHER_DISPLAY_EYE_ASSETS.closed.src+'" alt="" aria-hidden="true" draggable="false"><span>Aus</span></button></div></div>'+
         '<div class="weather-display-row"><div class="weather-display-row-label">Position zurücksetzen</div><button class="weather-display-action" type="button" data-weather-display-reset-position>Zurücksetzen</button></div>'+
@@ -747,7 +747,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         const opacityCard=document.createElement('section');
         opacityCard.className='weather-display-card';
         opacityCard.dataset.weatherSynopticOpacity='true';
-        opacityCard.innerHTML='<div class="weather-display-card-title">Synoptik · Transparenz</div>'+this._weatherDisplaySynopticOpacityRows();
+        opacityCard.innerHTML='<div class="weather-display-card-title">Synoptik · Deckkraft</div>'+this._weatherDisplaySynopticOpacityRows();
         panel.querySelector('[data-weather-quick-controls]').after(opacityCard);
         this._weatherDisplayBindSynopticOpacities(opacityCard);
       }
@@ -767,7 +767,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         const radar=this._weatherRadarState?.();
         if(radar?.layer){
           const mode=this._weatherDisplayStyle("precipitation");
-          add("Niederschlag",(LABELS[mode]||mode)+" · Transparenz "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
+          add("Niederschlag",(LABELS[mode]||mode)+" · Deckkraft "+this._weatherDisplayTransparencyPercent("precipitation")+" %");
         }
         const generic=this.__weatherGenericStates;
         if(generic instanceof Map){

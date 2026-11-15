@@ -1,8 +1,8 @@
-import {settingsStorage} from './settings-vault.js?v=411187r1';
+import {settingsStorage} from './settings-vault.js?v=411211r1';
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -439,6 +439,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     connectedCallback() {
+      this._syncProBranding?.();
       this._resumeSettingsNavigation?.();
       this._maybeOpenAbout();
       this._startRuntimeUpdateWatch?.();
@@ -456,6 +457,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     disconnectedCallback() {
+      this._stopProBranding?.();
       this._teardownSettingsNavigation?.();
       this._rasterLabClose?.();
       this._stopRuntimeUpdateWatch?.();

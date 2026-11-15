@@ -116,7 +116,7 @@ LEGEND = fields({
 SNAKE_FIELDS = {
     "minLength": number(8, 24), "maxLength": number(30, 120), "lengthScale": number(.25, 3),
     "headSize": number(1, 2), "bodyWidth": number(1, 5), "taper": number(.6, 2.5),
-    "tailStart": number(.5, .8), "opacity": number(10, 100), "density": number(.35, 5),
+    "tailStart": number(.5, .8), "opacity": number(0, 100), "density": number(.35, 5),
     "speed": number(.25, 2.5), "response": number(.15, 3),
 }
 SNAKE = fields(SNAKE_FIELDS)
