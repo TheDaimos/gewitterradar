@@ -1,14 +1,83 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411213r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411213r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411214r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411214r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411213r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411214r1';
 
+const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
 const eyeIconObstacles = '.leaflet-control,#map-location-overlay,#compass-instrument,.map-instrument,#map-medallion-overlay,#map-compass-overlay,.medallion-instrument,#weather-display-eye-control';
 const clampPosition = (value, min, max) => Math.max(min, Math.min(max, value));
 const controlRect = (x, y, size) => ({left:x, top:y, right:x+size, bottom:y+size});
 const overlaps = (a, b, gap) => a.left<b.right+gap && a.right>b.left-gap && a.top<b.bottom+gap && a.bottom>b.top-gap;
+
+// Both drag and restored positions use local coordinates of the card's padding box.
+function measureEyeLayout(eye,card,map){
+ const m=map.getBoundingClientRect(),c=card.getBoundingClientRect(),r=eye.getBoundingClientRect();
+ if(!m.width||!m.height||!r.width||!r.height||!card.offsetWidth||!card.offsetHeight)return null;
+ const scaleX=c.width/card.offsetWidth,scaleY=c.height/card.offsetHeight;
+ const originX=c.left+card.clientLeft*scaleX,originY=c.top+card.clientTop*scaleY;
+ const width=r.width/scaleX,height=r.height/scaleY;
+ const local=rect=>({left:(rect.left-originX)/scaleX,top:(rect.top-originY)/scaleY,
+  right:(rect.right-originX)/scaleX,bottom:(rect.bottom-originY)/scaleY});
+ const range=bounds=>({left:bounds.left,top:bounds.top,
+  right:Math.max(bounds.left,bounds.right-width),bottom:Math.max(bounds.top,bounds.bottom-height)});
+ const win=eye.ownerDocument.defaultView,vv=win.visualViewport,css=win.getComputedStyle(eye);
+ const safe=side=>parseFloat(css.getPropertyValue('--eye-safe-'+side))||0;
+ const vx=vv?.offsetLeft||0,vy=vv?.offsetTop||0;
+ const viewport={left:Math.max(m.left,vx+safe('left')),top:Math.max(m.top,vy+safe('top')),
+  right:Math.min(m.right,vx+(vv?.width??win.innerWidth)-safe('right')),
+  bottom:Math.min(m.bottom,vy+(vv?.height??win.innerHeight)-safe('bottom'))};
+ // When the page scrolls the entire control out of view, keep the anchor on the map.
+ const fitX=viewport.right-viewport.left>=r.width,fitY=viewport.bottom-viewport.top>=r.height;
+ const visible={left:fitX?viewport.left:m.left,top:fitY?viewport.top:m.top,
+  right:fitX?viewport.right:m.right,bottom:fitY?viewport.bottom:m.bottom};
+ const clip=local(visible);
+ const fixed=[...card.querySelectorAll(eyeFixedControls)].map(node=>({node,left:node.offsetLeft,top:node.offsetTop,
+  width:node.offsetWidth,height:node.offsetHeight}));
+ return {originX,originY,scaleX,scaleY,width,height,clip,range:range(clip),storage:range(local(m)),fixed};
+}
+
+// The fixed map buttons yield only when the Eye would cover them. Read their
+// unshifted layout coordinates once per drag and apply a compositor translation.
+function clearEyeControls(fixed,clip,eye){
+ const gap=5,placed=[];
+ for(const control of fixed){
+  const {node,left,top,width,height}=control;
+  const rect={left,top,right:left+width,bottom:top+height};
+  let move=null;
+  if(width&&height&&overlaps(rect,eye,gap)){
+   const shifts=[[0,eye.top-rect.bottom-gap],[eye.left-rect.right-gap,0],
+    [eye.right-rect.left+gap,0],[0,eye.bottom-rect.top+gap]];
+   const options=shifts.map(([x,y])=>({x,y,left:left+x,right:rect.right+x,top:top+y,bottom:rect.bottom+y}));
+   move=options.sort((a,b)=>Math.abs(a.x+a.y)-Math.abs(b.x+b.y)).find(r=>
+    r.left>=clip.left&&r.right<=clip.right&&r.top>=clip.top&&r.bottom<=clip.bottom&&
+    !placed.some(o=>overlaps(r,o,gap))&&!fixed.some(o=>o!==control&&o.width&&o.height&&
+     overlaps(r,{left:o.left,right:o.left+o.width,top:o.top,bottom:o.top+o.height},gap)));
+  }
+  const translate=move?`${move.x}px ${move.y}px`:'';
+  if(node.style.translate!==translate)node.style.translate=translate;
+  if(node.id==='map-display-control'){
+   node.toggleAttribute('data-eye-clearance',Boolean(move));
+   const room=move?Math.max(44,move.bottom-clip.top-60)+'px':'';
+   if(node.style.getPropertyValue('--eye-menu-room')!==room)node.style.setProperty('--eye-menu-room',room);
+  }
+  if(width&&height)placed.push(move||rect);
+ }
+}
+
+function placeEye(eye,layout,left,top,paintClip){
+ const {clip,width,height,range}=layout;
+ left=clampPosition(left,range.left,range.right);
+ top=clampPosition(top,range.top,range.bottom);
+ const right=left+width,bottom=top+height;
+ Object.assign(paintClip,{left:clip.left-left-width/2,top:clip.top-top-height/2,
+  right:clip.right-left-width/2,bottom:clip.bottom-top-height/2});
+ clearEyeControls(layout.fixed,clip,{left,top,right,bottom});
+ const position={left:left+'px',top:top+'px',bottom:'auto',
+  clipPath:`inset(${clip.top-top}px ${right-clip.right}px ${bottom-clip.bottom}px ${clip.left-left}px)`};
+ for(const [key,value] of Object.entries(position))if(eye.style[key]!==value)eye.style[key]=value;
+}
 
 function defaultQuickPosition(bounds, obstacles) {
  const {left, top, right, bottom} = bounds;
@@ -44,7 +113,7 @@ function resolveIconCollision(preferred, bounds, target, occupied, obstacles) {
 export const eyeHubMethods={
  _eyeHubState(){
   if(this.__eyeHub)return this.__eyeHub;let input=null;try{input=JSON.parse(settingsStorage(this).getItem(EYE_HUB_KEY));}catch(_){}
-  const registry=createEyeRegistry(this);return this.__eyeHub={registry,config:normalizeEyeConfig(input,[...registry.entries.keys()]),open:false,signature:null,frame:null,bubbleOptions:[],suspended:false};
+  const registry=createEyeRegistry(this);return this.__eyeHub={registry,config:normalizeEyeConfig(input,[...registry.entries.keys()]),open:false,signature:null,frame:null,bubbleOptions:[],paintClip:{},suspended:false};
  },
  _eyeHubStatuses(){const s=this._eyeHubState(),out={};for(const [id,entry] of s.registry.entries){try{out[id]=entry.status();}catch(_){out[id]={active:false,available:false,detail:''};}}return out;},
  _eyeHubPatch(patch){
@@ -64,6 +133,8 @@ export const eyeHubMethods={
   if(!this.shadow.getElementById('eye-hub-style')){const style=document.createElement('style');style.id='eye-hub-style';style.textContent=EYE_HUB_CSS;this.shadow.append(style);}
   let eye=this.shadow.getElementById('weather-display-eye-control');if(!eye){eye=document.createElement('button');eye.type='button';eye.id='weather-display-eye-control';eye.className='weather-display-eye-control gr-eye-hub';eye.setAttribute('aria-controls','eye-hub-bubbles');eye.setAttribute('aria-label',this._t('eye.title'));card.append(eye);
    const options={element:eye,state:()=>this._weatherDisplayState(),activate:()=>this._eyeHubToggle(),longPress:()=>this._eyeHubOpen(),position:()=>this._eyeHubPosition(),save:p=>{if(this._weatherDisplayState().config.rememberPosition)this._weatherDisplayPatch({eyePosition:p});}};
+   options.measure=()=>{const map=this.shadow.getElementById('map');return map&&measureEyeLayout(eye,card,map);};
+   options.place=(layout,left,top)=>placeEye(eye,layout,left,top,s.paintClip);
    s.eyeOptions=options;this._weatherDisplayBindEyeDrag(eye,options);eye.addEventListener('pointermove',()=>{if(this._weatherDisplayState().eyeDrag?.moved&&s.open)this._eyeHubClose();});eye.addEventListener('keydown',e=>{if(e.key==='F2'||e.key==='ContextMenu'||e.shiftKey&&e.key==='F10'){e.preventDefault();this._eyeHubOpen();}});for(const type of ['mousedown','dblclick'])eye.addEventListener(type,e=>e.stopPropagation());
   }
   if(!this.shadow.getElementById('eye-hub-bubbles')){const root=document.createElement('div');root.id='eye-hub-bubbles';root.className='eye-hub-bubbles';root.hidden=true;root.setAttribute('role','group');root.setAttribute('aria-label',this._t('eye.title'));card.append(root);}
@@ -72,6 +143,12 @@ export const eyeHubMethods={
    const queue=()=>{if(s.suspended||s.frame!==null)return;s.frame=requestAnimationFrame(()=>{s.frame=null;this._eyeHubSync();});};
    s.observer=new MutationObserver(records=>{if(records.some(r=>{const n=r.target.nodeType===1?r.target:r.target.parentElement;return !n?.closest?.('#weather-display-eye-control,#eye-hub-bubbles');}))queue();});
    s.observer.observe(card,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-pressed','hidden','data-status']});
+   s.viewportChange=()=>{if(s.viewportFrame!=null)return;s.viewportFrame=requestAnimationFrame(()=>{s.viewportFrame=null;this._eyeHubPosition();});};
+   s.resizeObserver=new ResizeObserver(s.viewportChange);
+   const map=this.shadow.getElementById('map');
+   if(map)s.resizeObserver.observe(map);
+   window.addEventListener('scroll',s.viewportChange,{capture:true,passive:true});
+   window.visualViewport?.addEventListener('scroll',s.viewportChange,{passive:true});
    s.outside=e=>{const path=e.composedPath();if(s.open&&!path.includes(this.shadow.getElementById('weather-display-eye-control'))&&!path.includes(this.shadow.getElementById('eye-hub-bubbles')))this._eyeHubClose();};
    s.key=e=>{if(e.key==='Escape'&&s.open){e.stopPropagation();e.preventDefault();this._eyeHubClose();this.shadow.getElementById('weather-display-eye-control')?.focus();}};
    s.abort=()=>{this._eyeHubClose();s.view?.cancelDrag();if(document.hidden)s.view?.close();};
@@ -105,21 +182,54 @@ export const eyeHubMethods={
  },
  _eyeHubGlowSync(){
   const s=this.__eyeHub;if(!s||s.suspended)return;const items=[],eye=this.shadow?.getElementById('weather-display-eye-control');
-  if(eye&&!s.open&&!s.view?.dialog.open)items.push({host:eye,config:s.config,statuses:this._eyeHubStatuses()});
+  if(eye&&!s.open&&!s.view?.dialog.open)items.push({host:eye,config:s.config,statuses:this._eyeHubStatuses(),clip:s.paintClip});
   const view=s.view;if(view?.dialog.open&&!view.dialog.classList.contains('minimized')){const host=view.dialog.querySelector('[data-preview=closed] .eye-visual');if(host)items.push({host,config:s.config,statuses:view.simulation||this._eyeHubStatuses()});}
   if(!s.neon)s.neon=new EyeNeon();s.neon.sync(items);
  },
  _eyeHubPosition(){
-  const s=this.__eyeHub,eye=this.shadow?.getElementById('weather-display-eye-control'),card=this.shadow?.getElementById('map-card'),map=this.shadow?.getElementById('map');if(!s||!eye||!card||!map)return;
-  const m=map.getBoundingClientRect(),cr=card.getBoundingClientRect(),width=eye.offsetWidth||50;if(!m.width||!m.height)return;
-  if(!this._weatherDisplayState().eyeDrag){const c=s.config,p=this._weatherDisplayState().config.rememberPosition?this._weatherDisplayState().config.eyePosition:{x:0,y:1},extent=Math.max(width/2,c.size*.725,((c.grouped&&(c.neonBloom||c.eyeAuraGap||c.auraRingGap))||c.backdropExtent)?Math.min(c.grouped?eyeStudioExtent(c):eyeBackdropDiameter(c)/2,Math.min(m.width,m.height)/2-10):(c.grouped?eyeGlowExtent(c):0)),pad=10;
-   const left=m.left-cr.left+pad+(Math.max(0,m.width-width-pad*2))*p.x,top=m.top-cr.top+pad+Math.max(0,m.height-width-pad*2)*p.y;
-   eye.style.left=Math.max(m.left-cr.left+extent+pad-width/2,Math.min(m.right-cr.left-extent-pad-width/2,left))+'px';eye.style.top=Math.max(m.top-cr.top+extent+pad-width/2,Math.min(m.bottom-cr.top-extent-pad-width/2,top))+'px';eye.style.bottom='auto';
+  const s=this.__eyeHub,eye=this.shadow?.getElementById('weather-display-eye-control');
+  if(!s||!eye||s.suspended)return;
+  const state=this._weatherDisplayState();
+  if(state.eyeDrag)return;
+  const layout=s.eyeOptions?.measure();
+  if(!layout)return;
+  const p=state.config.rememberPosition?state.config.eyePosition:{x:0,y:1};
+  const {storage,originX,originY,scaleX,scaleY}=layout;
+  s.eyeOptions.place(layout,storage.left+(storage.right-storage.left)*p.x,storage.top+(storage.bottom-storage.top)*p.y);
+  const root=this.shadow.getElementById('eye-hub-bubbles');
+  if(!root||root.hidden)return;
+  const r=eye.getBoundingClientRect(),card=root.parentElement;
+  const obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,.map-compass-overlay,.map-medallion-overlay,.map-top-controls,#map-display-control,#map-instrument-controls,#weather-legend-overlay,#weather-wind-legend-overlay')]
+   .map(n=>n.getBoundingClientRect()).filter(rect=>rect.width&&rect.height);
+  const buttons=[...root.querySelectorAll(':scope>.eye-hub-bubble')];
+  const center={x:r.left+r.width/2,y:r.top+r.height/2};
+  // The same hit sizes apply in layout pixels, including scaled embeddings.
+  const bounds=layout.clip,toLocal=rect=>({left:(rect.left-originX)/scaleX,top:(rect.top-originY)/scaleY,
+   right:(rect.right-originX)/scaleX,bottom:(rect.bottom-originY)/scaleY});
+  const localCenter={x:(center.x-originX)/scaleX,y:(center.y-originY)/scaleY};
+  const blockers=[toLocal(r),...obstacles.map(toLocal)];
+  let iconSize=s.config.iconSize;
+  const bubblePoints=()=>eyeBubbleLayout(buttons.length,localCenter,bounds,blockers,layout.width,iconSize);
+  let points=bubblePoints(),pagerSlot=null;
+  if(points.length<buttons.length){
+   pagerSlot=eyePagerPosition(bounds,blockers);
+   if(pagerSlot){blockers.push(pagerSlot);points=bubblePoints();}
+   if(iconSize>100&&(!points.length||!pagerSlot)){iconSize=100;points=bubblePoints();}
   }
-  const root=this.shadow.getElementById('eye-hub-bubbles');if(!root||root.hidden)return;const r=eye.getBoundingClientRect(),obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,#compass-instrument,.map-instrument,#map-medallion-overlay,#map-compass-overlay,.medallion-instrument')].map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height);
-  const buttons=[...root.querySelectorAll(':scope>.eye-hub-bubble')],target=eyeIconTarget(s.config.iconSize),points=eyeBubbleLayout(buttons.length,{x:r.left+r.width/2,y:r.top+r.height/2},m,obstacles,s.config.size,s.config.iconSize),capacity=Math.max(1,points.length),pages=Math.ceil(buttons.length/capacity);s.bubblePages=pages;s.bubblePage=Math.min(s.bubblePage||0,pages-1);
-  buttons.forEach((b,i)=>{const index=i-s.bubblePage*capacity,p=points[index];b.hidden=!p;if(p){b.style.left=p.x-cr.left-target/2+'px';b.style.top=p.y-cr.top-target/2+'px';}});
-  let pager=root.querySelector('.eye-page-controls');if(pages>1){if(!pager){pager=document.createElement('div');pager.className='eye-page-controls';pager.innerHTML='<button type="button" data-eye-page="-1"></button><span></span><button type="button" data-eye-page="1"></button>';root.append(pager);pager.addEventListener('click',e=>{const b=e.target.closest('[data-eye-page]');if(!b)return;e.stopPropagation();s.bubblePage=(s.bubblePage+Number(b.dataset.eyePage)+s.bubblePages)%s.bubblePages;this._eyeHubPosition();});}
+  const capacity=Math.max(1,points.length),pages=Math.max(1,Math.ceil(buttons.length/capacity));
+  s.bubblePages=pages;s.bubblePage=Math.min(s.bubblePage||0,pages-1);
+  buttons.forEach((b,i)=>{
+   const point=points[i-s.bubblePage*capacity];
+   b.hidden=!point;
+   if(point){
+    const target=eyeIconTarget(iconSize),box=eyeIconBox(b.dataset.function,iconSize);
+    b.style.left=point.x-target/2+'px';b.style.top=point.y-target/2+'px';
+    b.style.width=b.style.height=target+'px';
+    const image=b.querySelector('img');image.style.width=image.style.height=box+'px';
+   }
+  });
+  let pager=root.querySelector('.eye-page-controls');if(pages>1&&pagerSlot){if(!pager){pager=document.createElement('div');pager.className='eye-page-controls';pager.innerHTML='<button type="button" data-eye-page="-1"></button><span></span><button type="button" data-eye-page="1"></button>';root.append(pager);pager.addEventListener('click',e=>{const b=e.target.closest('[data-eye-page]');if(!b)return;e.stopPropagation();s.bubblePage=(s.bubblePage+Number(b.dataset.eyePage)+s.bubblePages)%s.bubblePages;this._eyeHubPosition();});}
+   pager.style.left=pagerSlot.left+'px';pager.style.top=pagerSlot.top+'px';
    const prev=pager.querySelector('[data-eye-page="-1"]'),next=pager.querySelector('[data-eye-page="1"]');prev.textContent='‹';next.textContent='›';prev.setAttribute('aria-label',this._t('eye.previous'));next.setAttribute('aria-label',this._t('eye.next'));pager.querySelector('span').textContent=(s.bubblePage+1)+' / '+pages;
   }else pager?.remove();
 
@@ -150,7 +260,8 @@ export const eyeHubMethods={
   const eye=this.shadow.getElementById('weather-display-eye-control');
   const display=buttons.some(({id})=>id==='weather-display');
   const anchor=display&&!saved['weather-display']&&eye&&!eye.hidden?relative(eye.getBoundingClientRect()):null;
-  const key=JSON.stringify([size,m,layout,this._mapWindowMode,buttons.map(({id})=>[id,saved[id]]),anchor]);
+  const clearance=anchor?[...card.querySelectorAll(eyeFixedControls)].filter(node=>node.style.translate).map(node=>relative(node.getBoundingClientRect())):[];
+  const key=JSON.stringify([size,m,layout,this._mapWindowMode,buttons.map(({id})=>[id,saved[id]]),anchor,clearance]);
   const sameLayout=s.iconLayoutKey===key&&buttons.every(({id,button})=>s.iconPlacements.get(id)?.button===button);
   if(!sameLayout){
    const left=Math.max(0,m.left+10),top=Math.max(0,m.top+10);
@@ -168,7 +279,9 @@ export const eyeHubMethods={
    for(const {id,button} of buttons){
     const reserved=[...preferred].filter(([other])=>other!==id&&!placements.has(other)).map(([,p])=>controlRect(p.x,p.y,target));
     const point=preferred.get(id)||defaultQuickPosition(bounds,[...quick,...occupied,...reserved]);
-    const position=size===100?point:resolveIconCollision(point,grid,target,occupied,obstacles);
+    const avoidsEyeClearance=id==='weather-display'&&anchor&&clearance.some(rect=>overlaps(controlRect(point.x,point.y,target),rect,5));
+    const position=avoidsEyeClearance?resolveIconCollision(point,grid,target,occupied,[...obstacles,...clearance,anchor]):
+     size===100?point:resolveIconCollision(point,grid,target,occupied,obstacles);
     placements.set(id,{button,...position});
     occupied.push(controlRect(position.x,position.y,target));
    }
@@ -179,5 +292,27 @@ export const eyeHubMethods={
    for(const [k,v] of Object.entries({right:'auto',bottom:'auto',left:x+'px',top:y+'px'}))if(button.style[k]!==v)button.style[k]=v;
   }
  },
- _eyeHubSuspend(reason='eye-suspend'){this._recoverWeatherControlGesture(reason);const s=this.__eyeHub;if(!s)return;s.suspended=true;s.neon?.destroy();s.neon=null;this._eyeHubClose();if(s.frame!==null)cancelAnimationFrame(s.frame);s.frame=null;s.observer?.disconnect();s.observer=null;document.removeEventListener('pointerdown',s.outside,true);window.removeEventListener('keydown',s.key,true);window.removeEventListener('blur',s.abort);window.removeEventListener('pagehide',s.abort);document.removeEventListener('visibilitychange',s.abort);s.view?.destroy();s.view=null;}
+ _eyeHubSuspend(reason='eye-suspend'){
+  this._recoverWeatherControlGesture(reason);
+  const s=this.__eyeHub;
+  if(!s)return;
+  s.suspended=true;s.neon?.destroy();s.neon=null;this._eyeHubClose();
+  if(s.frame!==null)cancelAnimationFrame(s.frame);
+  if(s.viewportFrame!=null)cancelAnimationFrame(s.viewportFrame);
+  s.frame=s.viewportFrame=null;
+  s.observer?.disconnect();s.observer=null;s.resizeObserver?.disconnect();
+  for(const node of this.shadow?.querySelectorAll(eyeFixedControls)||[]){
+   node.style.removeProperty('translate');
+   node.style.removeProperty('--eye-menu-room');
+   node.removeAttribute('data-eye-clearance');
+  }
+  window.removeEventListener('scroll',s.viewportChange,true);
+  window.visualViewport?.removeEventListener('scroll',s.viewportChange);
+  document.removeEventListener('pointerdown',s.outside,true);
+  window.removeEventListener('keydown',s.key,true);
+  window.removeEventListener('blur',s.abort);
+  window.removeEventListener('pagehide',s.abort);
+  document.removeEventListener('visibilitychange',s.abort);
+  s.view?.destroy();s.view=null;
+ }
 };

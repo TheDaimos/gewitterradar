@@ -1,6 +1,6 @@
 // Decorative runtime filaments, independent of weather data and the wind engine.
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411213r1';
+import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411214r1';
 const TAU=Math.PI*2,clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x),smooth=x=>x*x*(3-2*x);
 const hash=(x,y,seed)=>{let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(seed,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
 function noise(x,y,seed){const a=Math.floor(x),b=Math.floor(y),u=smooth(x-a),v=smooth(y-b),p=hash(a,b,seed),q=hash(a+1,b,seed),r=hash(a,b+1,seed),s=hash(a+1,b+1,seed);return (p+(q-p)*u)*(1-v)+(r+(s-r)*u)*v;}
@@ -37,13 +37,13 @@ export class EyeNeon{
  release(s){s.canvas.remove();s.canvas.width=s.canvas.height=1;for(const r of s.rings.values()){r.halo.width=r.halo.height=1;}s.rings.clear();}
  sync(items){
   const old=this.surfaces;this.surfaces=[];this.intersection.disconnect();
-  for(const {host,config,statuses} of items){
+  for(const {host,config,statuses,clip} of items){
    if(!host||!config.grouped||!config.aura||!config.intensity||!config.brightness)continue;
    const active=visibleEyeSlots(config).flatMap((slot,index)=>eyeAuraOn(config,statuses[slot.functionId]||{},slot.functionId)?[{id:slot.functionId,index,color:config.colors[slot.functionId]}]:[]);
    let s=old.find(s=>s.host===host&&s.canvas.isConnected);
    if(!s&&!active.length)continue;
    if(!s){const canvas=document.createElement('canvas');canvas.className='eye-neon';canvas.setAttribute('aria-hidden','true');canvas.style.cssText='position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);pointer-events:none;z-index:1';host.append(canvas);s={host,canvas,ctx:canvas.getContext('2d',{alpha:true}),rings:new Map(),extent:0,signature:'',config};}
-   s.config=config;const extent=eyeGlowExtent(config),scale=host.closest('.eye-preview-scene')?Math.max(1,host.getBoundingClientRect().width/(host.offsetWidth||1)):1;
+   s.config=config;s.clip=clip;const extent=eyeGlowExtent(config),scale=host.closest('.eye-preview-scene')?Math.max(1,host.getBoundingClientRect().width/(host.offsetWidth||1)):1;
    const ratio=Math.min(globalThis.devicePixelRatio||1,2,640/(extent*2))*Math.min(scale,1.5),pixels=Math.min(640,Math.ceil(extent*2*ratio));
    if(s.canvas.width!==pixels||s.extent!==extent){s.canvas.width=s.canvas.height=pixels;s.canvas.style.width=s.canvas.style.height=extent*2+'px';s.extent=extent;s.ratio=pixels/(extent*2);s.signature='';}
    const signature=JSON.stringify([extent,config.size,config.intensity,config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active]);const changed=s.signature!==signature;s.signature=signature;
@@ -64,6 +64,7 @@ export class EyeNeon{
  draw(s,time,dt,forceStatic=false){
   const ctx=s.ctx,c=s.config,e=s.extent,ratio=s.ratio,moving=c.glow==='living'&&!this.motion.matches&&!forceStatic,brightness=Math.pow(c.brightness/100,.72),detail=this.detail,visualSize=c.size*(s.host.closest('.eye-preview-scene')?1.8:1),requested=(4+c.intensity*.045)*detail*(visualSize>100?1:Math.max(.75,c.size/140)),count=clamp(Math.ceil(requested),3,9),samples=visualSize>100?112:80;
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,s.canvas.width,s.canvas.height);ctx.setTransform(ratio,0,0,ratio,s.canvas.width/2,s.canvas.height/2);ctx.lineCap='round';ctx.lineJoin='round';
+  const clip=s.clip,cull=clip&&(clip.left>-e||clip.top>-e||clip.right<e||clip.bottom<e);
   let filaments=0,beads=0;
   for(const [id,r] of s.rings){r.visibility=moving?r.visibility+(r.target-r.visibility)*(-Math.expm1(-dt/.24)):r.target;if(r.visibility<.008&&!r.target){r.halo.width=r.halo.height=1;s.rings.delete(id);continue;}ctx.globalAlpha=brightness*r.visibility*(moving?.46:1);ctx.drawImage(r.halo,-e,-e,e*2,e*2);
    if(!moving){ctx.beginPath();ctx.arc(0,0,r.radius,0,TAU);ctx.strokeStyle=r.color;ctx.lineWidth=1.8;ctx.globalAlpha=brightness*r.visibility;ctx.stroke();ctx.strokeStyle='#fff6f5';ctx.lineWidth=.45;ctx.stroke();for(let i=0;i<3;i++){ctx.beginPath();const a=i*2.1+r.index*.83;ctx.arc(0,0,r.radius,a,a+.35);ctx.globalAlpha=brightness*r.visibility*.9;ctx.lineWidth=.75;ctx.stroke();}}else{ctx.beginPath();ctx.arc(0,0,r.radius,0,TAU);ctx.strokeStyle=r.color;ctx.lineWidth=.5;ctx.globalAlpha=brightness*r.visibility*.5;ctx.stroke();}
@@ -79,7 +80,12 @@ export class EyeNeon{
    for(let j=0;j<pearlCount;j++){
     const phase=(j/pearlCount+id*.381+r.index*.173+direction*time*speed+.018*Math.sin(time*.17+id+r.index))*TAU;
     along(this.scratch,points,samples,phase);const glint=.25+.75*(.5+.5*Math.sin(j*2.399+time*.34+id)),radius=.25+fract(j*.754+id*.327)*.8;
-    ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,this.scratch[0]-radius*2.5,this.scratch[1]-radius*2.5,radius*5,radius*5);beads++;
+    const x=this.scratch[0],y=this.scratch[1],half=radius*2.5,pad=half+1;
+    // Keep phase, strands and trails. Only the final sprite quad can be culled.
+    if(!cull||x+pad>=clip.left&&x-pad<=clip.right&&y+pad>=clip.top&&y-pad<=clip.bottom){
+     ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,x-half,y-half,half*2,half*2);
+    }
+    beads++;
     if(j%4===0){ctx.beginPath();ctx.moveTo(this.scratch[0],this.scratch[1]);for(let k=1;k<=5;k++){along(this.scratch,points,samples,phase-direction*k*.017);ctx.lineTo(this.scratch[0],this.scratch[1]);}ctx.strokeStyle=r.color;ctx.lineWidth=.65;ctx.globalAlpha=light*r.visibility*.8;ctx.stroke();}
    }
   }

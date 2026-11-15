@@ -46,15 +46,31 @@ export const eyeAuraOn=(config,status,id)=>config.grouped&&config.aura&&status.a
 export function eyeBubbleLayout(count,center,bounds,obstacles=[],eyeSize=42,iconSize=100){
  const size=Math.max(50,50*iconSize/100),half=size/2,pad=9,minDistance=Math.max(58,eyeSize/2+half+12),firstRadius=Math.max(76,minDistance+4),angle=Math.atan2((bounds.top+bounds.bottom)/2-center.y,(bounds.left+bounds.right)/2-center.x),points=[];
  const clear=p=>p.x-size/2>=bounds.left+pad&&p.x+size/2<=bounds.right-pad&&p.y-size/2>=bounds.top+pad&&p.y+size/2<=bounds.bottom-pad&&
-  Math.hypot(p.x-center.x,p.y-center.y)>minDistance&&!points.some(q=>Math.hypot(p.x-q.x,p.y-q.y)<size+9);
+  Math.hypot(p.x-center.x,p.y-center.y)>minDistance&&
+  points.every(q=>Math.abs(p.x-q.x)>=size+9||Math.abs(p.y-q.y)>=size+9)&&!blocked(p);
  const blocked=p=>obstacles.some(b=>p.x+half>b.left&&p.x-half<b.right&&p.y+half>b.top&&p.y-half<b.bottom);
  const candidates=[];for(const radius of [firstRadius,firstRadius+size+12,firstRadius+2*(size+12)])for(let i=0;i<24;i++){const a=angle+(i%2?1:-1)*Math.ceil(i/2)*Math.PI/12;candidates.push({x:center.x+Math.cos(a)*radius,y:center.y+Math.sin(a)*radius});}
  for(let i=0;i<count;i++){
-  let point=candidates.find(p=>clear(p)&&!blocked(p))||candidates.find(clear);
+  let point=candidates.find(clear);
   if(!point){for(let y=bounds.top+half+pad;y<=bounds.bottom-half-pad&&!point;y+=size+9)for(let x=bounds.left+half+pad;x<=bounds.right-half-pad&&!point;x+=size+9){const p={x,y};if(clear(p))point=p;}}
   if(point)points.push(point);
  }
  return points;
+}
+
+// Reserve the pager before placing bubbles, so its tap targets stay reachable.
+export function eyePagerPosition(bounds,obstacles){
+ const width=146,height=54,gap=8,centre=(bounds.left+bounds.right-width)/2;
+ const left=bounds.left+gap,right=bounds.right-width-gap;
+ if(left>right)return null;
+ const candidates=[centre,right];
+ for(let x=left;x<right;x+=12)candidates.push(x);
+ candidates.sort((a,b)=>Math.abs(a-centre)-Math.abs(b-centre));
+ for(let top=bounds.top+gap;top+height<=bounds.bottom-gap;top+=12)for(const x of candidates){
+  const r={left:x,top,right:x+width,bottom:top+height};
+  if(obstacles.every(o=>r.right<=o.left||r.left>=o.right||r.top>=o.bottom||r.bottom<=o.top))return r;
+ }
+ return null;
 }
 
 export const EYE_ICON_METRICS=Object.freeze({wind:{box:47*272/256,source:272,motif:256},temperature:{box:47*272/256,source:272,motif:256},precipitation:{box:47*1254/977,source:1254,motif:977},'weather-display':{box:47*1254/1145,source:1254,motif:1145}});

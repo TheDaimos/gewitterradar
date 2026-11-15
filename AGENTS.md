@@ -6,3 +6,7 @@
 ## Aktuell geschütztes WR-/GR-Referenzpaar – Betreiberfreigabe 13.11.2026
 
 **WR 0.10.320 DEV / Loader 323 + GR 4.11.195 DEV / HA 0.25.102**, Runtime `411195r1`, Modulset `E411-195A1`. Die verbindliche Akte ist [`docs/WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md`](docs/WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md). Bei neuen Modulen oder Providern zuerst diese Referenz und die Schutzregeln lesen; niemals die Referenz stillschweigend durch einen neueren ungeprüften HEAD ersetzen.
+
+## Eye-Randpositionierung (technischer DEV-Referenzkandidat)
+
+Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression für GR 4.11.214](docs/GR_EYE_EDGES_411214_2026-11-15.md) erhalten. Die Betreiberabnahme auf HA DEV VM109 und Android steht bis zur ausdrücklichen Freigabe aus.

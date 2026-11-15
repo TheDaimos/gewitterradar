@@ -1,7 +1,7 @@
 // Optional presentation layers. The V177 renderer below remains the authority
 // for the original geometry, colours, timing, status fading and scheduling.
-import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411213r1';
-import {EYE_MATERIALS} from './eye-hub-model.js?v=411213r1';
+import {EyeNeon,filamentPointInto} from './eye-neon.js?v=411214r1';
+import {EYE_MATERIALS} from './eye-hub-model.js?v=411214r1';
 import {paintEnergyAccents} from './eye-neon-energy.js?v=411181r1';
 const TAU=Math.PI*2,clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x);
 const enabled=c=>c.neonBrilliance>0||c.neonBloom>0||c.neonOrganics>0;

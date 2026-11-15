@@ -1,6 +1,6 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
 import {quickMethods,QUICK_CSS} from './display-quick.js?v=411212r1';
-import {eyeHubMethods} from './eye-hub.js?v=411213r1';
+import {eyeHubMethods} from './eye-hub.js?v=411214r1';
 import {cloudsControlMethods} from './clouds-control.js?v=411213r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411212r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411212r1';
@@ -9,7 +9,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.51",
+  version:"0.4.52",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Deckkraft im Kartenmenü","Deckkraft je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -906,15 +906,17 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       clearEyeReleaseClick(this);
       state.eyeInterruptedTouches=null;
       const rect=eye.getBoundingClientRect(),cardRect=mapCard.getBoundingClientRect();
+      const layout=options?.measure?.();
       const pointerType=source==='touch'?'touch':event.pointerType;
       const slop=options?.longPress?(pointerType==='touch'?12:pointerType==='pen'?8:6):6;
       const listeners=new AbortController(),capture={capture:true,signal:listeners.signal};
       const passive={...capture,passive:true},win=eye.ownerDocument.defaultView;
       const drag=state.eyeDrag={
-        eye,state,source,pointerType,listeners,pointerId:event.pointerId,touchId:point.identifier,
+        eye,state,source,pointerType,listeners,layout,pointerId:event.pointerId,touchId:point.identifier,
         pointerIds:new Set(source==='pointer'?[event.pointerId]:[]),
         touchIds:new Set(source==='touch'?[point.identifier]:[]),
-        startX:point.clientX,startY:point.clientY,startLeft:rect.left-cardRect.left,startTop:rect.top-cardRect.top,
+        startX:point.clientX,startY:point.clientY,startLeft:layout?(rect.left-layout.originX)/layout.scaleX:rect.left-cardRect.left,
+        startTop:layout?(rect.top-layout.originY)/layout.scaleY:rect.top-cardRect.top,
         moved:false,longPressed:false,slop
       };
       this._weatherControlGesture={drag,options};
@@ -994,6 +996,10 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       const dx=point.clientX-drag.startX,dy=point.clientY-drag.startY;
       if(!drag.moved&&Math.hypot(dx,dy)>drag.slop){drag.moved=true;clearTimeout(drag.longPressTimer);eye.classList.remove('pressing');eye.classList.add('dragging');}
       if(!drag.moved)return;
+      if(drag.layout){
+        options.place(drag.layout,drag.startLeft+dx/drag.layout.scaleX,drag.startTop+dy/drag.layout.scaleY);
+        return;
+      }
       const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),width=eye.offsetWidth,height=eye.offsetHeight,inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);
@@ -1010,6 +1016,13 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       this._mapDiagnosticLog?.('eye.gesture.end',{control:eye.id||eye.dataset.function,source:drag.source,
         pointerId:drag.pointerId,touchId:drag.touchId,moved:drag.moved,longPressed:drag.longPressed});
       if(!drag.moved&&options){if(!drag.longPressed){options.onDecision?.('short-tap');options.activate?.();}return;}
+      if(drag.layout){
+        const {storage}=drag.layout,previous=state.config.eyePosition;
+        const x=storage.right>storage.left?clamp((parseFloat(eye.style.left)-storage.left)/(storage.right-storage.left),0,1):previous.x;
+        const y=storage.bottom>storage.top?clamp((parseFloat(eye.style.top)-storage.top)/(storage.bottom-storage.top),0,1):previous.y;
+        options.save({x,y});options.position();
+        return;
+      }
       const mapCard=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");if(!mapCard||!mapEl)return;
       const cardRect=mapCard.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect(),rect=eye.getBoundingClientRect(),inset=10;
       const minLeft=Math.max(0,mapRect.left-cardRect.left+inset),minTop=Math.max(0,mapRect.top-cardRect.top+inset);

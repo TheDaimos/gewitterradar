@@ -10,8 +10,8 @@ const config=normalizeEyeConfig(old),max=normalizeEyeConfig({...config,...Object
 for(const key of Object.keys(config))if(!keys.includes(key))assert.deepEqual(max[key],config[key]);
 assert.deepEqual(normalizeEyeConfig(JSON.parse(JSON.stringify(max))),max);
 assert.equal(eyeBackdropDiameter(config),config.size*1.45);assert.equal(eyeStudioExtent(config),eyeGlowExtent(config));assert(eyeBackdropDiameter(max)>eyeBackdropDiameter(config)*2);
-// The original V177 draw/tick/cache/lifecycle source is literally retained.
-// Allow the geometry arguments and cache identity for the two opt-in offsets.
+// Protect the V177 draw/tick/cache/lifecycle with the approved geometric offsets,
+// optional Aura color and conservative viewport check around the final sprites.
 const strip=normaliseGeneratedModule;
 for(const file of ['frontend/modules/weather/eye-neon.js','frontend/modules/weather/snake-canvas.js','frontend/modules/weather/snake-geometry.js','frontend/modules/weather/snake-config.js','frontend/modules/weather/snake-preview.js','frontend/modules/weather/frame-clock.js','frontend/modules/ui/controls.js','frontend/modules/weather/precipitation-layer.js']){
  let reference;try{reference=execFileSync('git',['show',base+':'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch(e){if(file.endsWith('wind-snake.js'))continue;throw e;}
@@ -22,7 +22,18 @@ for(const file of ['frontend/modules/weather/eye-neon.js','frontend/modules/weat
  if(file.endsWith('/snake-config.js'))reference=reference.replace('opacity:[10,100,1]','opacity:[0,100,1]');
  if(file.endsWith('/eye-neon.js'))reference=reference
   .replace('config.brightness,config.glow,active','config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active')
-  .replace('eyeRingRadius(config.size,a.index)','eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)');
+  .replace('eyeRingRadius(config.size,a.index)','eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)')
+  .replace('eyeAuraOn(config,statuses[slot.functionId]||{})','eyeAuraOn(config,statuses[slot.functionId]||{},slot.functionId)')
+  .replace('{host,config,statuses}', '{host,config,statuses,clip}')
+  .replace('s.config=config;const extent', 's.config=config;s.clip=clip;const extent')
+  .replace('  let filaments=0,beads=0;', `  const clip=s.clip,cull=clip&&(clip.left>-e||clip.top>-e||clip.right<e||clip.bottom<e);
+  let filaments=0,beads=0;`)
+  .replace('    ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,this.scratch[0]-radius*2.5,this.scratch[1]-radius*2.5,radius*5,radius*5);beads++;', `    const x=this.scratch[0],y=this.scratch[1],half=radius*2.5,pad=half+1;
+    // Keep phase, strands and trails. Only the final sprite quad can be culled.
+    if(!cull||x+pad>=clip.left&&x-pad<=clip.right&&y+pad>=clip.top&&y-pad<=clip.bottom){
+     ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,x-half,y-half,half*2,half*2);
+    }
+    beads++;`);
  assert.equal(strip(readFileSync(file,'utf8')),strip(file.endsWith('/precipitation-layer.js')?reference:withVaultStorage(reference,file)),file+' protected approved body');
 }
 for(const file of ['eye-hub-model.js','eye-hub-view.js','eye-hub-locales.js','eye-neon-wow.js'])assert(!/[\u00c3\u00c2\ufffd]/.test(readFileSync('frontend/modules/weather/'+file,'utf8')),'UTF-8 '+file);
