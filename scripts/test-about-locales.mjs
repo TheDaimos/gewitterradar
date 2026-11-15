@@ -75,9 +75,13 @@ const settingsTranslationsStart = i18nModuleSource.indexOf(settingsTranslationsP
 const settingsTranslationsEnd = i18nModuleSource.indexOf(');\nconst V410_UI_TRANSLATIONS',settingsTranslationsStart);
 if (settingsTranslationsStart < 0 || settingsTranslationsEnd < 0) throw Error('Settings UI translation registry missing');
 const settingsUiTranslations = JSON.parse(i18nModuleSource.slice(settingsTranslationsStart + settingsTranslationsPrefix.length,settingsTranslationsEnd));
-const i18nContext = {};
+const i18nContext = {
+  URL,
+  moduleUrl: new URL('../frontend/modules/ui/i18n-settings.js',import.meta.url).href
+};
 const executableI18nModule = i18nModuleSource
   .replace(/^import\s+.*;\s*$/gm,'')
+  .replaceAll('import.meta.url','moduleUrl')
   .replace(/export const MODULE_META=/,'const MODULE_META=')
   .replace(/export const installI18nSettings=/,'globalThis.installI18nSettings=');
 i18nContext.defineModule = (_meta,factory) => {
