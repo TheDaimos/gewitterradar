@@ -1,8 +1,8 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411181r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411181r1';
-import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411207r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411212r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeRingRadius,eyeBubbleLayout,eyeGlowExtent,eyeIconBox,eyeIconTarget,eyeStudioExtent,eyeBackdropDiameter} from './eye-hub-model.js?v=411213r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411213r1';
+import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411213r1';
 
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
 const eyeIconObstacles = '.leaflet-control,#map-location-overlay,#compass-instrument,.map-instrument,#map-medallion-overlay,#map-compass-overlay,.medallion-instrument,#weather-display-eye-control';
@@ -50,7 +50,7 @@ export const eyeHubMethods={
  _eyeHubPatch(patch){
   const s=this._eyeHubState(),grouped=s.config.grouped;s.config=normalizeEyeConfig({...s.config,...patch},[...s.registry.entries.keys()]);
   try{settingsStorage(this).setItem(EYE_HUB_KEY,JSON.stringify(s.config));s.saveError=null;}catch(error){s.saveError=error;s.view?.message?.(this._t('eye.title')+': Einstellungen konnten nicht gespeichert werden ('+(error?.code||error?.message||'Settings Vault')+').');}
-  if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherDisplayCancelEyeDrag?.(this.__weatherSynoptic?.quickDragOptions);this._weatherPrecipitationCancelDrag?.();this._eyeHubClose();}
+  if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherDisplayCancelEyeDrag?.(this.__weatherSynoptic?.quickDragOptions);this._weatherPrecipitationCancelDrag?.();this._weatherCloudsCancelDrag?.();this._eyeHubClose();}
   s.signature=null;this._eyeHubSync();
  },
  _eyeHubAssign(index,id){const s=this._eyeHubState();this._eyeHubPatch(assignEyeSlot(s.config,index,id,[...s.registry.entries.keys()]));},
@@ -134,7 +134,7 @@ export const eyeHubMethods={
   }
   if(s.config.grouped){s.iconLayoutKey=null;return;}
   const d=this.__weatherDisplayState,w=this.__weatherWind,temp=this.__weatherTemperature;
-  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||this.__weatherSynoptic?.quickDrag?.eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag)return;
+  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||this.__weatherSynoptic?.quickDrag?.eyeDrag||this.__weatherCloudsDrag?.state().eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag)return;
   const mapRect=map.getBoundingClientRect(),cr=card.getBoundingClientRect();
   if(!mapRect.width||!mapRect.height)return;
   const relative=rect=>({left:rect.left-cr.left,top:rect.top-cr.top,right:rect.right-cr.left,bottom:rect.bottom-cr.top});
@@ -144,6 +144,7 @@ export const eyeHubMethods={
    temperature:temp?.config.quickPositions?.[layout],
    synoptic:this.__weatherSynoptic?.config?.quickPositions?.[layout],
    precipitation:d?.config.precipitationControl?.quickPositions?.[layout],
+   clouds:this._weatherCloudsConfig?.().positions[layout],
    'weather-display':d?.config.rememberPosition?d.config.displayControlPosition:null
   };
   const eye=this.shadow.getElementById('weather-display-eye-control');

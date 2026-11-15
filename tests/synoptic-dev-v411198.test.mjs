@@ -91,7 +91,7 @@ test('P1 eye synoptic unavailable is based on verified WR failure, not off/unloa
 });
 test('P1 Settings Vault schema accepts synoptic fifth slot and independent UI key',async()=>{
  const fs=await import('node:fs');const source=fs.readFileSync('custom_components/gewitterradar/vault_schema.py','utf8');
- assert.ok(source.includes('EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic")'));
+ assert.ok(source.includes('EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic", "clouds")'));
  assert.match(source,/"gewitterradar:synoptic-ui:v1": SYNOPTIC/);
  const {normalizeEyeConfig,assignEyeSlot}=await import('../frontend/modules/weather/eye-hub-model.js');
  let config=normalizeEyeConfig({...normalizeEyeConfig(null),slots:[...normalizeEyeConfig(null).slots,{id:'slot-5',functionId:null}]});

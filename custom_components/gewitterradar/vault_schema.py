@@ -121,7 +121,7 @@ SNAKE_FIELDS = {
 }
 SNAKE = fields(SNAKE_FIELDS)
 FULL_SNAKE = fields(SNAKE_FIELDS, SNAKE_FIELDS)
-EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic")
+EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic", "clouds")
 EYE_FUNCTION = choice(*EYE_FUNCTIONS)
 EYE_SLOT = fields({"id": identifier, "functionId": nullable(EYE_FUNCTION)}, ("functionId",))
 HEX = lambda value: isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", value) is not None
@@ -133,7 +133,7 @@ EYE = fields({
     "eyeAuraGap": number(0, 30), "auraRingGap": number(0, 8),
     "energyAccents": choice("off", "subtle", "normal", "strong"),
     "slots": sequence(lambda value: EYE_FUNCTION(value) or EYE_SLOT(value), 12),
-    "colors": fields(dict.fromkeys(EYE_FUNCTIONS, HEX)),
+    "colors": fields(dict.fromkeys(EYE_FUNCTIONS, lambda value: value == "none" or HEX(value))),
 })
 SYNOPTIC = fields({
     **dict.fromkeys(("visible", "centers", "isobars", "pressureLabels", "glow",
@@ -240,6 +240,7 @@ MAP_VISIBILITY = choice("0", "1", "false", "true")
 JSON_SETTINGS = {
     "gewitterradar:eye-bubble:v1": EYE,
     "gewitterradar:synoptic-ui:v1": SYNOPTIC,
+    "gewitterradar:clouds-ui:v1": fields({"enabled": BOOL, "positions": mapping(POSITION, 24)}),
     "gewitterradar:wind-ui:v1": WIND,
     STUDIO_KEY: STUDIO,
     TEMPERATURE_KEY: TEMPERATURE,
@@ -250,7 +251,7 @@ JSON_SETTINGS = {
                      MAP + "map-location-position", CORE + "map-cluster-jump-position",
                      RADAR + "timeline-position"), POSITION),
     **{PREMIUM_PREFIX + scope: PREMIUM for scope in (
-        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control", "synoptic-settings",
+        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control", "synoptic-settings", "clouds-settings",
         "weather-wind-legend-", "weather-temperature-legend-", "weather-advection-legend-",
     )},
     "gewitterradar:v40802:diagnostic-sections": mapping(BOOL, 128),

@@ -1,6 +1,6 @@
 // Decorative runtime filaments, independent of weather data and the wind engine.
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411181r1';
+import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411213r1';
 const TAU=Math.PI*2,clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x),smooth=x=>x*x*(3-2*x);
 const hash=(x,y,seed)=>{let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(seed,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
 function noise(x,y,seed){const a=Math.floor(x),b=Math.floor(y),u=smooth(x-a),v=smooth(y-b),p=hash(a,b,seed),q=hash(a+1,b,seed),r=hash(a,b+1,seed),s=hash(a+1,b+1,seed);return (p+(q-p)*u)*(1-v)+(r+(s-r)*u)*v;}
@@ -39,7 +39,7 @@ export class EyeNeon{
   const old=this.surfaces;this.surfaces=[];this.intersection.disconnect();
   for(const {host,config,statuses} of items){
    if(!host||!config.grouped||!config.aura||!config.intensity||!config.brightness)continue;
-   const active=visibleEyeSlots(config).flatMap((slot,index)=>eyeAuraOn(config,statuses[slot.functionId]||{})?[{id:slot.functionId,index,color:config.colors[slot.functionId]}]:[]);
+   const active=visibleEyeSlots(config).flatMap((slot,index)=>eyeAuraOn(config,statuses[slot.functionId]||{},slot.functionId)?[{id:slot.functionId,index,color:config.colors[slot.functionId]}]:[]);
    let s=old.find(s=>s.host===host&&s.canvas.isConnected);
    if(!s&&!active.length)continue;
    if(!s){const canvas=document.createElement('canvas');canvas.className='eye-neon';canvas.setAttribute('aria-hidden','true');canvas.style.cssText='position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);pointer-events:none;z-index:1';host.append(canvas);s={host,canvas,ctx:canvas.getContext('2d',{alpha:true}),rings:new Map(),extent:0,signature:'',config};}

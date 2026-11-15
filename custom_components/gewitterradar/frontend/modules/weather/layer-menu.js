@@ -2,10 +2,11 @@ import { defineModule } from "../core/runtime.js?v=41109r1";
 import { WEATHER_ROUTER_CAPABILITIES, WEATHER_ROUTER_LOGO_IMAGE } from "./consumer-client.js?v=411168r1";
 import { rasterTilePixelCrops } from "./p7-010/raster-tile-clip.js?v=41188r1";
 import { rasterTileUrl } from "./p7-010/raster-tile-url.js?v=41188r1";
+import { CLOUD_CAPABILITY } from './eye-hub-registry.js?v=411213r1';
 import { weatherSourceText } from './source-text.js?v=411150r1';
 
 export const MODULE_META=Object.freeze({
-  id:"weather.layer-menu",version:"1.1.17",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
+  id:"weather.layer-menu",version:"1.1.18",group:"Weather-Engine",function:"WeatherRouter Layer Hub",
   subfunctions:["Consumer-V1-Erkennung","Kartenfähigkeiten","Schnellzugriff","Fachbereiche","Unterkategorien","benutzerorientierte Capability-Namen","Niederschlags-Layer","Zeitachse","Darstellung-Schnellzugriff","scrollbares Menü","stabiler Navigationskopf","Status & Rücknavigation"],
   file:"modules/weather/layer-menu.js"
 });
@@ -331,6 +332,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
     if(!Object.hasOwn(GENERIC_RASTERS,id))return;
     const state=this._weatherGenericState(id);
     state.enabled=!state.enabled;state.generation++;
+    if(id===CLOUD_CAPABILITY)this._weatherCloudsSaveVisibility?.(state.enabled);
     this._weatherGenericLabAdapter(id);
     if(!state.enabled){this._weatherGenericUnbind(id);this._weatherGenericDetach(id);state.status="aus";state.error=null;this._weatherLayerMenuRender();return;}
     state.status="loading";
@@ -513,7 +515,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
         if(catalog?.status==="ready")state.model=buildWeatherLayerCatalog(catalog.capabilities);
       }
     }catch(_error){if(generation===state.generation){state.discovery=state.discovery||{present:false,compatible:false,ready:false};state.catalog=null;state.model={capabilities:[],categories:[],quick:[]};}}
-    finally{if(generation===state.generation){state.probing=false;this._weatherDisplaySyncFromWeatherLayerMenu?.(state.discovery,state.catalog);this._weatherLayerMenuSyncEntry();if(state.view!=="map-display")this._weatherLayerMenuRender();}}
+    finally{if(generation===state.generation){state.probing=false;this._weatherDisplaySyncFromWeatherLayerMenu?.(state.discovery,state.catalog);this._weatherCloudsResume?.();this._weatherCloudsSync?.();this._weatherLayerMenuSyncEntry();if(state.view!=="map-display")this._weatherLayerMenuRender();}}
   },
 
   _weatherLayerMenuSetView(view,{category=null,subcategory=null,focusCapability=null}={}){
@@ -626,6 +628,7 @@ export const installWeatherLayerMenu=defineModule(MODULE_META,(deps)=>({
 
   _weatherLayerMenuRender(){
     this._weatherQuickSync?.();
+    this._weatherCloudsSync?.();
     this._eyeHubSync?.();
     this._rasterLabRefreshOptions?.();
     const state=this._weatherLayerMenuState();if(state.view==="map-display")return;

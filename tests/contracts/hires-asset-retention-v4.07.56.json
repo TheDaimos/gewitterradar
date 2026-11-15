@@ -21,6 +21,7 @@
     "artwork/compass-chevron/provenance.json",
     "artwork/weather-router/README.md",
     "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json",
+    "artwork/help-icons/gr-clouds-ASSET_MANIFEST.json",
     "artwork/help-icons/gr-synoptic-high-low-isobars-ASSET_MANIFEST.json"
   ],
   "protectedBlobs": [
@@ -353,6 +354,18 @@
       "preferredPath": "artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png",
       "gitBlobSha1": "fdb28c9ed13355d21a5b6a1213696b20d065930e",
       "sizeBytes": 1992746
+    },
+    {
+      "label": "clouds-help original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-clouds-help-premium-original.png",
+      "gitBlobSha1": "1449c83f5b08d7ae1ce885c6b2706be126bec7ff",
+      "sizeBytes": 2234455
+    },
+    {
+      "label": "clouds-eye original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-clouds-eye-premium-original.png",
+      "gitBlobSha1": "3e3dbd6141b3315f7125d452fa93239015aa54e5",
+      "sizeBytes": 2052552
     }
   ]
 }

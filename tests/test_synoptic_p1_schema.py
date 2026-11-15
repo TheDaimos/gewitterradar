@@ -43,6 +43,21 @@ class SynopticVaultP1Tests(unittest.TestCase):
             schema.validate_value(EYE_KEY, {**latest, "slots": [*latest["slots"][:-1],
                 {"id": "slot-5", "functionId": "unsupported-provider"}]})
 
+    def test_clouds_and_no_aura_preserve_existing_fifth_slot(self):
+        profile = eye_four()
+        profile["slots"].extend([
+            {"id": "slot-5", "functionId": "synoptic"},
+            {"id": "slot-6", "functionId": "clouds"},
+        ])
+        profile["colors"].update({"clouds": "none", "synoptic": "#FFC442"})
+        schema.validate_value(EYE_KEY, profile)
+        schema.validate_value("gewitterradar:clouds-ui:v1", {
+            "enabled": True, "positions": {"touch:phone:portrait:fullscreen": {"x": .3, "y": .4}},
+        })
+        schema.validate_value("gewitterradar:premium-ui:v1:clouds-settings", {
+            "minimized": True, "panelPosition": {"x": .3, "y": .4},
+        })
+
     def test_synoptic_own_settings_are_profile_keys(self):
         config = {"visible": False, "centers": True, "isobars": True,
                   "highColor": "#FFC442", "lowColor": "#B000FF",

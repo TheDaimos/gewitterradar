@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "43c26abf0211dd84c5eb97dfaaeea85ca17c09c2bf9d2afb92212b264fbd4658",
+    "sha256": "f4100b9fd9389fa89341fb3a4a3987e12728ae117d93de7c2561b82a9ed3129a",
     "protected": false,
     "sizeBytes": 2960
   },
@@ -344,6 +344,18 @@
     "file": "assets/gewitterradar-trend-medallion.png",
     "sha256": "e54c26288716286fef786710672c17d90417c014ae99ffdf19fea55e7a6612c5",
     "protected": true
+  },
+  {
+    "file": "assets/gr-clouds-eye-premium-original.png",
+    "sha256": "8250e3e966b57956b0a7c291103fe48b2fdc7f4a2e408e9e0087b18feb3f48c1",
+    "protected": true,
+    "sizeBytes": 2052552
+  },
+  {
+    "file": "assets/gr-clouds-help-premium-original.png",
+    "sha256": "0873f23edc9309930c9d4af2dca3b1fca32e415196fe4a3d4290f88a987938b8",
+    "protected": true,
+    "sizeBytes": 2234455
   },
   {
     "file": "assets/gr-eye-closed-master-1254.png",

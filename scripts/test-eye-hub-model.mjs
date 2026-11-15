@@ -66,8 +66,14 @@ for(const name of ['wind-display.js','temperature-display.js']){
  const actual=name==='wind-display.js'?withoutWindHtUI(installed):installed;
  assert.equal(stripBuildVersions(actual),stripBuildVersions(expected),name+' protected baseline 4.11.195 outside approved H/T migration');
 }
-for(const [id,owner] of [['weather.satellite.clouds','weather-display'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
-const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,true);assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,true);aggregateOwner.__weatherGenericStates.get('weather.satellite.clouds').status='failed';assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().available,false);
+for(const [id,owner] of [['weather.satellite.clouds','clouds'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
+const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});
+const cloudRegistry=createEyeRegistry(aggregateOwner).entries;
+assert.equal(cloudRegistry.get('weather-display').status().active,false);
+assert.deepEqual(cloudRegistry.get('clouds').status(),{active:true,available:true,detail:'loading'});
+aggregateOwner.__weatherGenericStates.get('weather.satellite.clouds').status='failed';
+assert.deepEqual(cloudRegistry.get('clouds').status(),{active:true,available:false,detail:'failed'});
+assert.equal(cloudRegistry.get('weather-display').status().available,true);
 assert(old.includes(compassPreviewHalo('.compass-picker-stage')));assert(old.includes(compassDialogSurface('.compass-picker-dialog')));
 const controls='frontend/modules/ui/controls.js';
 assert.equal(stripBuildVersions(readFileSync(controls,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:'+controls],{encoding:'utf8'}),controls)),'modern menu source with the approved Vault entry');

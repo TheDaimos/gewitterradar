@@ -92,3 +92,10 @@ SHA256 `df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274`. Diese
 in HA-/Dashboard-Pakete übernommen. Keine Neugenerierung, Beschneidung,
 Farbänderung oder Neukodierung. Anzeige ausschließlich per CSS mit 50 px.
 Herkunft und Prüfsummen: `gr-precipitation-ASSET_MANIFEST.json`.
+
+## WeatherRouter clouds
+
+- [Eye medallion](hires/gr-clouds-eye-premium-original.png), 1254 × 1254 RGBA.
+- [Help and explanatory text](hires/gr-clouds-help-premium-original.png), 1536 × 1024 RGBA.
+
+The delivered PNGs are archived byte for byte. The [asset manifest](gr-clouds-ASSET_MANIFEST.json) records their origins, SHA-256 hashes and runtime paths.

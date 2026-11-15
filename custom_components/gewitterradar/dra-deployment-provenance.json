@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.212",
-  "build": "V4.11.212-DEV-2026-11-15",
-  "runtimeRevision": "411212r1",
-  "moduleSetId": "E411-212A1",
+  "productVersion": "4.11.213",
+  "build": "V4.11.213-DEV-2026-11-15",
+  "runtimeRevision": "411213r1",
+  "moduleSetId": "E411-213A1",
   "baselineFeatureHead": "92f2afe2313ffa494c8853d730fd06190eb4b1e3",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
+    "purpose": "WeatherRouter clouds Eye control, cloud-only opacity panel and optional Aura colour.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

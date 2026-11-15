@@ -9,8 +9,9 @@ const legacy = JSON.parse(readFileSync(path.join(__dirname, '../tests/settings-v
 const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8').match(/version:"([^"]+)"/)[1];
 const EYE = 'gewitterradar:eye-bubble:v1';
 const SYNOPTIC = 'gewitterradar:synoptic-ui:v1';
-const settingsKeys = [...Object.keys(legacy), SYNOPTIC];
-const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC];
+const CLOUDS = 'gewitterradar:clouds-ui:v1';
+const settingsKeys = [...Object.keys(legacy), SYNOPTIC, CLOUDS];
+const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC, CLOUDS];
 const mock = {profiles: {}, migrationIssues: new Map(), receipts: new Map(), log: [], offline: false, deferGet: null, loseCreateReply: false};
 
 const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
@@ -271,6 +272,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     // The new fifth function is additive. Historical V181 baseline has four
     // functions; retain all their original colors and compare only this new key.
     expected.colors.synoptic = '#FFC442';
+    expected.colors.clouds = '#D8E6F3';
     await baseline.context.close();
 
     let releaseGet;
@@ -394,6 +396,11 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.evaluate(() => {
       card._eyeHubResize(1);
       card._eyeHubAssign(4, 'synoptic');
+      card._eyeHubResize(1);
+      card._eyeHubAssign(5, 'clouds');
+      const eye = card._eyeHubState().config;
+      card._eyeHubPatch({colors: {...eye.colors, clouds: 'none'}});
+      card._weatherCloudsSaveVisibility(true);
       card._weatherSynopticSet({highColor:'#FF00CC',lowColor:'#123456',isobarColor:'#4FBE76',
         frontColors:{...card._weatherSynopticState().config.frontColors,cold:'#FFE17A'},centerOpacity:.4});
     });
@@ -402,6 +409,9 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
     assert.deepEqual(mock.profiles.a[androidId].settings[EYE].slots.slice(0, 4), originalEye.slots);
     assert.equal(mock.profiles.a[androidId].settings[EYE].colors.synoptic, '#FFC442');
+    assert.equal(mock.profiles.a[androidId].settings[EYE].slots[5].functionId, 'clouds');
+    assert.equal(mock.profiles.a[androidId].settings[EYE].colors.clouds, 'none');
+    assert.equal(mock.profiles.a[androidId].settings[CLOUDS].enabled, true);
     const persistedSynoptic=mock.profiles.a[androidId].settings[SYNOPTIC];
     assert.equal(persistedSynoptic.lowColor,'#123456');
     assert.equal(persistedSynoptic.frontColors.cold,'#FFE17A');
@@ -411,6 +421,9 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.equal(reloadedEye.slots[4].functionId, 'synoptic');
     assert.deepEqual(reloadedEye.slots.slice(0, 4), originalEye.slots);
     assert.equal(reloadedEye.colors.synoptic, '#FFC442');
+    assert.equal(reloadedEye.slots[5].functionId, 'clouds');
+    assert.equal(reloadedEye.colors.clouds, 'none');
+    assert.equal(await android.page.evaluate(() => card._weatherCloudsConfig().enabled), true);
     assert.equal(reloadedEye.grouped, originalEye.grouped);
     assert.equal(reloadedEye.aura, originalEye.aura);
     assert.deepEqual(await android.page.evaluate(()=>card._weatherSynopticState().config),persistedSynoptic);
@@ -424,6 +437,9 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await cleared.page.reload();
     await cleared.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
     assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.slots[4]?.functionId), 'synoptic');
+    assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.slots[5]?.functionId), 'clouds');
+    assert.equal(await cleared.page.evaluate(() => card._eyeHubState().config.colors.clouds), 'none');
+    assert.equal(await cleared.page.evaluate(() => card._weatherCloudsConfig().enabled), true);
     assert.deepEqual(await cleared.page.evaluate(()=>card._weatherSynopticState().config),persistedSynoptic);
     assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
     // Startup connection failure stays recoverable and never writes defaults.
