@@ -1,17 +1,17 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411211r1';
-import {WindStudio} from './wind-studio.js?v=411211r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
+import {WindStudio} from './wind-studio.js?v=411212r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411211r1';
 import {SNAKE_LIMITS,SNAKE_LABELS,snakeSettingText} from './snake-config.js?v=411211r1';
-import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411211r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411212r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411211r1';
 import { WindCanvas } from './wind-canvas.js?v=411211r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411211r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411212r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.21',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.22',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES={barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation'};
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -130,10 +130,10 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   <details data-section="snake"><summary>Schlangenförmige Animation</summary><p class="weather-wind-note">Eigener Renderer aus numerischen WR-Windvektoren. Kopf und langer Körper behalten ihre Breite; erst der einstellbare hintere Abschnitt läuft geometrisch und transparent aus. Die Länge passt sich während der Bewegung an.</p>${Object.keys(SNAKE_LIMITS).map(key=>snakeRange(key)).join('')}<button type="button" data-wind-action="snake-pause">${c.paused?'Animation fortsetzen':'Animation pausieren'}</button><p class="weather-wind-note">Größere Anpassungszeit bedeutet weichere Längenänderung. Schnellzugriffe und Detailregler verwenden jeweils denselben Wert. ${c.mode==='snake'&&!s.field?'Nicht verfügbar: numerisches WR-Windfeld erforderlich. Keine Flächenanimation aus Punktwerten.':''}</p><p class="weather-wind-note" data-snake-status></p></details>
   <details data-section="experts"><summary>Experteneinstellungen</summary><div data-studio-slot></div></details>
   <details data-section="field"><summary>Windgeschwindigkeits-Farbfläche</summary>${check('colorField','Ein / Aus')}<div id="wind-field-reason" class="weather-wind-note">${s.field?'Beaufort-basierte Geschwindigkeitsskala aus numerischen U-/V-Werten. NoData bleibt transparent.':s.fieldError?'Kein autorisiertes WR-Windfeld: '+escape(s.fieldError)+'. Punktdarstellung bleibt unabhängig verfügbar.':'Erfordert die additive numerische WR-Windfeldfähigkeit. Gerenderte Windkacheln werden nicht in Messwerte umgedeutet.'}</div><label>Eigene Deckkraft<input type="range" min="0" max="100" step="1" data-wind-setting="fieldOpacity" value="${c.fieldOpacity}" aria-label="Windfarbflächen-Deckkraft"><output>${c.fieldOpacity} %</output></label></details>
-  <div role="status" class="weather-wind-note" data-wind-status>${escape(s.status)} · ${s.field?s.field.grid.u.length+' Gitterknoten':s.points.length+' Punkte'}</div><button type="button" data-wind-action="refresh" ${!c.enabled&&!c.colorField?'disabled':''}>WR-Wind aktualisieren</button>
-  ${s.field?`<div class="weather-wind-note">${escape(s.field.provenance.attribution)}<br>Modelllauf ${escape(s.field.model_run)}<br>Gültig ${escape(s.field.valid_at)} · WR-Freigabe bis ${escape(s.field.valid_until)}</div>`:''}
   <details><summary>Werte, Quellen und Zeitpunkte</summary><div class="weather-wind-points">${s.points.length?s.points.map(p=>`<p>${p.lat.toFixed(3)}°, ${p.lon.toFixed(3)}° · ${escape(windSpeedText(p.speed,c.unit))} · Herkunft ${p.from===null?'Windstille':p.from+'°'}<br>${escape(p.attribution)} · ${escape(p.validAt)} · ${escape(p.kind||'WR')}</p>`).join(''):'Keine kohärenten gültigen WR-Punktwerte.'}</div><div class="weather-wind-note">${escape([...new Set(s.errors)].join(' · '))}</div></details>
-  <details><summary>Performance-Diagnose</summary>${check('performanceDiagnostics','Messung einschalten')}<div class="weather-wind-note" data-wind-performance>Messung im Browser; keine Aussage zur Verbindungsart oder zu einem anderen Gerät.</div></details></div>`;
+  <details><summary>Performance-Diagnose</summary>${check('performanceDiagnostics','Messung einschalten')}<div class="weather-wind-note" data-wind-performance>Messung im Browser; keine Aussage zur Verbindungsart oder zu einem anderen Gerät.</div></details>
+  <div class="weather-wind-source-status"><div role="status" class="weather-wind-note" data-wind-status>${s.field?'Numerisches WR-Windfeld':'WR-Windpunktdaten'}: ${escape(s.status)} · ${s.field?s.field.grid.u.length+' Gitterknoten':s.points.length+' Punkte'}</div><button type="button" data-wind-action="refresh" ${!c.enabled&&!c.colorField?'disabled':''}>Winddaten jetzt aktualisieren</button>
+  ${s.field?`<div class="weather-wind-note">${escape(s.field.provenance.attribution)}<br>Modelllauf ${escape(s.field.model_run)}<br>Gültig ${escape(s.field.valid_at)} · WR-Freigabe bis ${escape(s.field.valid_until)}</div>`:''}</div></div>`;
   enhancePremiumSections(panel,'wind-settings');syncPremiumPanel(panel,'wind-settings');this._weatherWindStudioMount(panel);
   this._weatherWindPerfUpdate(true);this._weatherWindSnakeStatus();
   panel.scrollTop=scrollTop;

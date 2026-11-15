@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.211",
-  "build": "V4.11.211-DEV-2026-11-15",
-  "runtimeRevision": "411211r1",
-  "moduleSetId": "E411-211A1",
-  "baselineFeatureHead": "253dafabf44e5412fe59d8270b12ef113acfbce0",
+  "productVersion": "4.11.212",
+  "build": "V4.11.212-DEV-2026-11-15",
+  "runtimeRevision": "411212r1",
+  "moduleSetId": "E411-212A1",
+  "baselineFeatureHead": "92f2afe2313ffa494c8853d730fd06190eb4b1e3",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Synoptic color-dialog close controls, visibility slider semantics and local WeatherRouter PRO wordmark",
+    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
