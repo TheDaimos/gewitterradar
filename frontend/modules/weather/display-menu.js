@@ -1,6 +1,6 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
 import {quickMethods,QUICK_CSS} from './display-quick.js?v=411212r1';
-import {eyeHubMethods} from './eye-hub.js?v=411214r1';
+import {eyeHubMethods} from './eye-hub.js?v=411215r1';
 import {cloudsControlMethods} from './clouds-control.js?v=411213r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411212r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411212r1';
@@ -9,7 +9,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.52",
+  version:"0.4.53",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Deckkraft im Kartenmenü","Deckkraft je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],

@@ -9,4 +9,4 @@
 
 ## Eye-Randpositionierung (technischer DEV-Referenzkandidat)
 
-Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression für GR 4.11.214](docs/GR_EYE_EDGES_411214_2026-11-15.md) erhalten. Die Betreiberabnahme auf HA DEV VM109 und Android steht bis zur ausdrücklichen Freigabe aus.
+Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression für GR 4.11.215](docs/GR_EYE_EDGES_411215_2026-11-15.md) erhalten. Die Betreiberabnahme auf HA DEV VM109 und Android steht bis zur ausdrücklichen Freigabe aus.

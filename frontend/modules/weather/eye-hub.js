@@ -1,8 +1,8 @@
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411214r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411214r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411215r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411215r1';
 import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411214r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411215r1';
 
 const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -199,7 +199,7 @@ export const eyeHubMethods={
   const root=this.shadow.getElementById('eye-hub-bubbles');
   if(!root||root.hidden)return;
   const r=eye.getBoundingClientRect(),card=root.parentElement;
-  const obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,.map-compass-overlay,.map-medallion-overlay,.map-top-controls,#map-display-control,#map-instrument-controls,#weather-legend-overlay,#weather-wind-legend-overlay')]
+  const obstacles=[...card.querySelectorAll('.leaflet-control,#map-location-overlay,.map-compass-overlay,.map-medallion-overlay,.map-top-controls,#map-display-control,#map-instrument-controls,#weather-legend-overlay,#weather-wind-legend-overlay,#map-cluster-jump-overlay')]
    .map(n=>n.getBoundingClientRect()).filter(rect=>rect.width&&rect.height);
   const buttons=[...root.querySelectorAll(':scope>.eye-hub-bubble')];
   const center={x:r.left+r.width/2,y:r.top+r.height/2};

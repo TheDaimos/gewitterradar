@@ -283,7 +283,30 @@ async function run() {
       await bubble.waitFor({timeout:3000});
     };
     await openEye();
+    // Reproduce the Linux corner case independent of fonts and fullscreen height.
+    const clusterCollision=await bubble.evaluate(button=>{
+      const cluster=card.shadow.getElementById('map-cluster-jump-overlay');
+      const parent=cluster.offsetParent||card.shadow.getElementById('map-card');
+      const original={left:cluster.style.left,top:cluster.style.top,hidden:cluster.hidden};
+      const r=button.getBoundingClientRect(),parentRect=parent.getBoundingClientRect();
+      cluster.hidden=false;
+      cluster.style.left=(r.left-parentRect.left+4)+'px';
+      cluster.style.top=(r.top-parentRect.top+4)+'px';
+      const overlaps=()=>{
+        const a=button.getBoundingClientRect(),b=cluster.getBoundingClientRect();
+        return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+      };
+      const blocked=overlaps();
+      card._eyeHubPosition();
+      return {original,blocked,resolved:!overlaps()};
+    });
+    assert(clusterCollision.blocked&&clusterCollision.resolved,'Synoptic bubble must avoid the visible Cluster button');
     await hold(bubble);
+    await page.locator('#map-cluster-jump-overlay').evaluate((cluster,original)=>{
+      cluster.hidden=original.hidden;
+      cluster.style.left=original.left;
+      cluster.style.top=original.top;
+    },clusterCollision.original);
     assert.deepEqual((await snapshot()).lastGesture,{action:'long-press',control:'eye'});
     assert.equal((await snapshot()).visible,true);
     await panel.locator('[data-premium-action=close]').tap();
