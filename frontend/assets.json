@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "676e9bc7d3f898f637579c1bd4c383e2c59320e717a0da1e2bb6b62ae4e862a9",
+    "sha256": "b92ef2d643668c8dbbd843d337da5dd539d31d6ef9198f0241f60ea43034f79a",
     "protected": false,
     "sizeBytes": 2960
   },
@@ -366,6 +366,11 @@
     "file": "assets/gr-eye-open-master-1254.png",
     "sha256": "e6e5ea0ed5de3fd674088c99e6edf5dc68a5381ba56c1e16521b499380e74098",
     "protected": true
+  },
+  {
+    "file": "assets/gr-help-pro-badge.svg",
+    "sha256": "01928af246b47ef3a6121385172bd97b2d5a6a4f9a6969e334d72e5d2a5f0276",
+    "protected": false
   },
   {
     "file": "assets/gr-precipitation-premium-original.png",

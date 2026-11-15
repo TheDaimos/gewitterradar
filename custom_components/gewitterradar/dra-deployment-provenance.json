@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.216",
-  "build": "V4.11.216-DEV-2026-11-15",
-  "runtimeRevision": "411216r1",
-  "moduleSetId": "E411-216A1",
-  "baselineFeatureHead": "55ba463ee878aa27928ecb37e36c6d3ef05dc482",
+  "productVersion": "4.11.217",
+  "build": "V4.11.217-DEV-2026-11-15",
+  "runtimeRevision": "411217r1",
+  "moduleSetId": "E411-217A1",
+  "baselineFeatureHead": "0a6bbf9a82e57ea9b022d191c57aa5e80d70fdb1",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Master Eye delayed touch recovery and WeatherRouter Help topics.",
+    "purpose": "Premium Help separates GewitterRadar Standard and WeatherRouter PRO.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

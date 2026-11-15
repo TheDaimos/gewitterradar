@@ -1,4 +1,4 @@
-import { APPLICATION_RELEASE } from "./version.js?v=411216r1";
+import { APPLICATION_RELEASE } from "./version.js?v=411217r1";
 /* Gewitterradar Card V4.11.216 DEV – V4.09 FINAL als regressionsgeschützte Basis.
    Der sichtbare Projektname ist Gewitterradar; die stabile Home-Assistant-Helper-Schnittstelle bleibt lightning_detection_*.
    ZULETZT/Recent, Kompass, Cluster sowie die iPad/WebKit-Schutzpfade bleiben regressionsgeschützt.
@@ -27,7 +27,7 @@ let installVault;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
-  const manifest = await gewitterradarImport('./module-manifest.js','411216r1');
+  const manifest = await gewitterradarImport('./module-manifest.js','411217r1');
   const registry = await gewitterradarImport('./modules/core/registry.js','41129r1');
   const baseContext = await gewitterradarImport('./modules/core/base-context.js');
   const cardLifecycle = await gewitterradarImport('./modules/core/card-lifecycle.js','411216r1');
@@ -37,7 +37,7 @@ try {
   const projectHub = await gewitterradarImport('./modules/ui/project-hub.js','411168r1');
   const compassScale = await gewitterradarImport('./modules/instruments/compass-scale.js');
   const controls = await gewitterradarImport('./modules/ui/controls.js','411216r1');
-  const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js','411216r1');
+  const i18nSettings = await gewitterradarImport('./modules/ui/i18n-settings.js','411217r1');
   const sourceStatus = await gewitterradarImport('./modules/core/source-status.js','411168r1');
   const blitzortungSource = await gewitterradarImport('./modules/sources/blitzortung.js');
   const updateWatch = await gewitterradarImport('./modules/core/update-watch.js','411108r1');
@@ -47,7 +47,7 @@ try {
   const moduleView = await gewitterradarImport('./modules/diagnostics/module-view.js','411168r1');
   const dataSourceDiagnostics = await gewitterradarImport('./modules/diagnostics/data-sources.js','411168r1');
   const mapDiagnostics = await gewitterradarImport('./modules/diagnostics/map-diagnostics.js','411216r1');
-  const rasterLab = await gewitterradarImport('./modules/diagnostics/raster-lab.js','411216r1');
+  const rasterLab = await gewitterradarImport('./modules/diagnostics/raster-lab.js','411217r1');
   const compassDesign = await gewitterradarImport('./modules/instruments/compass-design.js');
   const locationRadiiMap = await gewitterradarImport('./modules/location/radii-map.js','411216r1');
   const strikesWarnings = await gewitterradarImport('./modules/map/strikes-warnings.js');
@@ -64,7 +64,7 @@ try {
   const weatherTemperature = await gewitterradarImport('./modules/weather/temperature-display.js','411216r1');
   const weatherSynoptic = await gewitterradarImport('./modules/weather/synoptic-display.js','411216r1');
 
-  const {installSettingsVault, vaultModulesMatch} = await gewitterradarImport('./modules/ui/settings-vault-view.js','411216r1');
+  const {installSettingsVault, vaultModulesMatch} = await gewitterradarImport('./modules/ui/settings-vault-view.js','411217r1');
   installVault = (Card, deps) => installSettingsVault(Card, () =>
     vaultModulesMatch(deps.APPLICATION_META, deps.EXPECTED_MODULES, deps.moduleDiagnostics));
   ({ APPLICATION_META, EXPECTED_MODULES } = manifest);

@@ -1,10 +1,10 @@
-import {appendWeatherHelp} from './help-topics.js?v=411216r1';
+import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411217r1';
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
 import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411216r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.28",
+  "version": "1.3.29",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2447,6 +2447,25 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const shell = document.createElement('div');
       shell.id = 'help-shell';
       shell.innerHTML = '<style>' +
+        `
+        .help-standard-heading{margin:3px 4px 9px;color:var(--help-bright);font-size:1.06em;font-weight:730}
+        .help-pro-header{position:relative;margin:17px 0 12px;padding:10px 5px 0;text-align:center}
+        .help-pro-header::before{content:"";display:block;position:absolute;inset:0 0 auto;height:5px;pointer-events:none;
+          border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);
+          background:radial-gradient(ellipse at 50% 18%,#d2ebffbf,transparent 40%),
+            linear-gradient(180deg,#88b6ec,#3969a5 24%,#1a366b 56%,#14254c 78%,#45648d);
+          box-shadow:0 2px 3px #0008,inset 0 1px #a5caff70}
+        .help-pro-header h3{margin:0;line-height:1}
+        .help-pro-header h3 img{display:block;width:min(100%,219px);height:auto;margin:auto;pointer-events:none}
+        .help-pro-status{margin:4px 0 0;color:#c4d1df;font-size:.9em;line-height:1.3}
+        .help-pro-status[data-connected="true"]{color:#b2cde9}
+        .help-pro-label{white-space:nowrap}
+        .help-pro-badge{display:inline-block;width:2.85em;height:auto;margin-inline-start:.32em;vertical-align:-.24em;pointer-events:none;user-select:none}
+        .help-pro-badge-compact{width:2.55em;vertical-align:-.21em}
+        .help-dialog .help-section>summary>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+        .help-dialog.help-dialog{max-height:min(900px,calc(100dvh - max(16px,env(safe-area-inset-top) + env(safe-area-inset-bottom) + 8px)))!important}
+        @media(max-width:360px){.help-dialog .help-pro-featurelist>summary{grid-template-columns:108px minmax(0,1fr) 18px;gap:8px}.help-dialog .help-pro-featurelist .help-pro-brand,.help-dialog .help-pro-featurelist .help-pro-brand img{width:104px}}
+        ` +
         '.help-dialog{--help-gold:#dfbc72;--help-bright:#f7dfa1;box-sizing:border-box;width:min(760px,calc(100vw - 16px));max-width:calc(100vw - 16px);height:min(900px,calc(100dvh - 16px));max-height:calc(100dvh - 16px);padding:0;border:1px solid #c9a050;border-radius:13px;color:#d5dae0;background:radial-gradient(ellipse at 15% 0,#31445145,transparent 48%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;font:14px/1.48 Segoe UI,Arial,sans-serif;overflow:hidden;color-scheme:dark}' +
         '.help-dialog[open]{display:flex;flex-direction:column}.help-dialog::backdrop{background:#03070be0}.help-dialog *{box-sizing:border-box}.help-head{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr) 44px;align-items:center;gap:14px;padding:16px 12px 14px 18px;border-bottom:1px solid #a9874755;background:linear-gradient(180deg,#162630,#0b151c)}' +
         '.help-emblem{display:grid;place-items:center;width:44px;height:44px;border:1px solid #bc974f88;border-radius:50%;color:#f4d58e;background:radial-gradient(circle at 35% 28%,#f8e3a847,#8d652a42 45%,#09131a 72%);box-shadow:inset 0 1px #fff4,0 0 12px #d69a2130;font:700 23px/1 Georgia,serif}.help-head h2{margin:0;color:#f6e9cc;font-size:25px;line-height:1.15}.help-head p{margin:4px 0 0;color:#bfc7cf;font-size:13px}.help-close{width:44px;height:44px;border:0;background:transparent;color:#efd391;font-size:27px;border-radius:7px}.help-close:focus-visible,.help-copy:focus-visible,.help-dialog summary:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px}' +
@@ -2542,11 +2561,14 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           const subBody=document.createElement('div');subBody.className='help-inline-subentry-body';setHelpDiagnosticText(subBody,match[3].trim());
           sub.append(subTitle,subBody);target.append(sub);
         };
-        appendWeatherHelp(content,language,openKeys);
+        const sections=createHelpSections(content,language);
+        appendWeatherHelp(sections.pro,language,openKeys);
         help.sections.forEach((section,index)=>{
+          const proOnly=section.key==='weather-display-v411'||section.key==='weather-refresh-v411';
           const details=document.createElement('details');details.className='help-section';details.dataset.helpSection=section.key;details.open=openKeys.has(section.key)||(!this._helpLocale&&index===0);
           const summary=document.createElement('summary'),icon=document.createElement('span'),title=document.createElement('span'),chevron=document.createElement('span');
           icon.className='help-section-icon';icon.dataset.helpIcon=section.key;icon.setAttribute('aria-hidden','true');icon.innerHTML=premiumHelpIconImages[section.key]?'<img src="'+premiumHelpIconImages[section.key]+'" alt="" draggable="false">':(deterministicHelpIcons[section.key]||icons[section.key]||'•');title.textContent=section.title;chevron.className='help-chevron';chevron.setAttribute('aria-hidden','true');summary.append(icon,title,chevron);details.append(summary);
+          if(proOnly){title.textContent='';appendHelpProLabel(title,section.title);}
           const body=document.createElement('div');body.className='help-section-body';
           for(const text of section.paragraphs||[]){const p=document.createElement('p');setHelpDiagnosticText(p,text);body.append(p);}
           if(section.layerGraphic){const graphic=document.createElement('div');graphic.className='help-layer-graphic-card';const image=document.createElement('img');image.className='help-layer-graphic';image.src=MAP_LAYER_SYMBOL_STACK3D_IMAGE;image.alt=section.layerGraphicAlt||'3D layer';image.width=96;image.height=96;image.draggable=false;const caption=document.createElement('div');caption.className='help-layer-graphic-caption';setHelpDiagnosticText(caption,section.layerGraphicCaption||'');graphic.append(image,caption);body.append(graphic);}
@@ -2555,20 +2577,23 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           if(section.entries?.length){const dl=document.createElement('dl');dl.className='help-entries';for(const [entryIndex,entry] of section.entries.entries()){const [term,text]=Array.isArray(entry)?entry:[entry?.term??entry?.title??'',entry?.description??entry?.body??''];const dt=document.createElement('dt'),dd=document.createElement('dd');const recorderPriority=section.key==='defaults'&&/^Recorder\b/i.test(String(term));if(recorderPriority){dt.className='help-recorder-priority';dd.className='help-recorder-priority';}setHelpDiagnosticText(dt,term);dt.append(document.createTextNode(':'));if(section.key==='location'&&(entryIndex===2||entryIndex===5)){const value=String(text??'').trimStart().replace(/^[„“”‚‘’"'«»‹›]+\s*/,'');const actionMatch=entryIndex===5?value.match(/^★\s+\S+/):value.match(/^\S+/);if(actionMatch){const action=document.createElement('span');action.className=entryIndex===5?'help-action-token help-action-save':'help-action-token help-action-use';action.textContent=actionMatch[0].replace(/^[„“”‚‘’"'«»‹›]+|[„“”‚‘’"'«»‹›]+$/g,'');const rest=value.slice(actionMatch[0].length).replace(/^[\s„“”‚‘’"'«»‹›]+/,'');dd.append(action);if(rest){dd.append(document.createTextNode(' '));setHelpDiagnosticText(dd,rest);}}else appendHelpEntryValue(dd,text);}else appendHelpEntryValue(dd,text);dl.append(dt,dd);}body.append(dl);}
           if(section.recorder){const wrap=document.createElement('div');wrap.className='help-code-wrap';const pre=document.createElement('pre'),code=document.createElement('code'),button=document.createElement('button'),status=document.createElement('span');code.textContent=ABOUT_RECORDER_YAML;pre.append(code);button.className='help-copy';button.type='button';button.setAttribute('aria-label',help.copy);const copyImage=document.createElement('img');copyImage.src=ABOUT_COPY_IMAGE;copyImage.alt='';copyImage.width=34;copyImage.height=34;copyImage.draggable=false;button.append(copyImage);status.className='help-copy-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');wrap.append(pre,button,status);body.append(wrap);button.addEventListener('click',()=>this._copyHelpRecorder());}
           for(const text of section.notes||[]){const p=document.createElement('p');p.className='help-note';setHelpDiagnosticText(p,text);body.append(p);}
-          details.append(body);content.append(details);
+          if(section.key==='mapview')body.append(createHelpProMapNote(language));
+          details.append(body);
+          (proOnly?sections.pro:sections.standard).append(details);
         });
+        this._syncHelpProFeatureList(sections,language,openKeys);
         content.scrollTop=scrollTop;this._helpLocale=help;
-        this._syncHelpProFeatureList(content,language,openKeys);
       }
     },
 
-    _syncHelpProFeatureList(content,language,openKeys=new Set()) {
+    _syncHelpProFeatureList({pro,setConnected},language,openKeys) {
       const title=this.shadow?.getElementById('overview-title');
       const sync=()=>{
-        const entry=content.querySelector('.help-pro-featurelist');
+        const entry=pro.querySelector('.help-pro-featurelist');
         const connected=title?.dataset.proConnection==='ready';
+        setConnected(connected);
         if(connected)entry?.remove();
-        else if(!entry)appendWeatherHelp(content,language,openKeys,{onlyPro:true});
+        else if(!entry)appendWeatherHelp(pro,language,openKeys,{upgrade:true});
       };
       this._helpProObserver?.disconnect();
       if(title){
