@@ -99,9 +99,14 @@ async function run() {
     const touch=(type,point)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:point?[point]:[]});
     const center=async locator=>{const b=await locator.boundingBox();return {x:b.x+b.width/2,y:b.y+b.height/2};};
     const hold=async locator=>{
+      // Match a real touch on a stable, hit-testable control after the Eye opens.
+      await locator.tap({trial:true,timeout:4000});
       await touch('touchStart',await center(locator));
-      await panel.waitFor({state:'visible',timeout:4000});
-      await touch('touchEnd');
+      try {
+        await panel.waitFor({state:'visible',timeout:4000});
+      } finally {
+        await touch('touchEnd');
+      }
     };
     const drag=async (locator,dx,dy)=>{
       const start=await center(locator);
