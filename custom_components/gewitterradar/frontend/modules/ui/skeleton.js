@@ -15,7 +15,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.30",
+  "version": "1.1.31",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -38,11 +38,12 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
       const state = {connection, title, check:null, timer:null};
       this.__proBranding = state;
+      const showStandard = () => {title.classList.remove('is-pro');delete title.dataset.proConnection;};
       state.clear = () => {
         clearTimeout(state.timer);
         clearTimeout(state.check?.timer);
         state.check = null;
-        title.classList.remove('is-pro');
+        showStandard();
       };
       state.refresh = async () => {
         if (!connection.connected || state.check) return;
@@ -50,7 +51,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         state.check = check;
         check.timer = setTimeout(() => {
           check.expired = true;
-          title.classList.remove('is-pro');
+          showStandard();
         }, PRO_DISCOVERY_TIMEOUT);
         const current = () => this.__proBranding === state && state.check === check && connection.connected;
         try {
@@ -58,9 +59,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           const reply = await connection.sendMessagePromise({type:'weather_router/consumer/discovery'});
           if (!current() || check.expired) return;
           if (!confirmsLocalWeatherRouter(reply)) {
-            title.classList.remove('is-pro');
+            showStandard();
             return;
           }
+          check.confirmed = true;
+          title.dataset.proConnection = 'ready';
           if (!state.image) {
             const logo = new Image(1190, 348);
             logo.alt = 'GewitterRadar PRO – powered by · WeatherRouter';
@@ -74,7 +77,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           title.classList.add('is-pro');
         } catch {
-          if (current()) title.classList.remove('is-pro');
+          if (current()&&!check.confirmed)showStandard();
         } finally {
           clearTimeout(check.timer);
           if (current()) {

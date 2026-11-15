@@ -1,7 +1,8 @@
-import {NEON_CSS} from './eye-neon.js?v=411215r1';
+import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
+import {NEON_CSS} from './eye-neon.js?v=411216r1';
 import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411212r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
-import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411215r1';
+import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411216r1';
 import {EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
 export const EYE_HUB_CSS=`
 ${NEON_CSS}
@@ -64,7 +65,9 @@ export class EyeConfigurator{
   this.dialog.querySelector('header [data-premium-action=close] img').src=owner._eyeHubHeaderCloseIcon();
   const applyInput=e=>{const k=e.target.dataset.eyeKey;if(!k)return;const value=e.target.type==='checkbox'?e.target.checked:k==='size'?Math.max(36,Math.min(126,eyeSizePixels(Number(e.target.value)))):Number(e.target.value);if(this.owner._eyeHubState().config[k]!==value)this.owner._eyeHubPatch({[k]:value});};this.dialog.addEventListener('input',applyInput);this.dialog.addEventListener('change',applyInput);
   this.dialog.querySelector('[data-eye-energy]').addEventListener('change',e=>this.owner._eyeHubPatch({energyAccents:e.target.value}));
-  this.dialog.addEventListener('click',e=>this.click(e));this.dialog.addEventListener('pointerdown',e=>this.startDrag(e));this.dialog.addEventListener('pointermove',e=>this.moveDrag(e));this.dialog.addEventListener('pointerup',e=>this.endDrag(e));this.dialog.addEventListener('pointercancel',()=>this.cancelDrag());
+  this.dialog.addEventListener('click',e=>this.click(e));this.dialog.addEventListener('pointerdown',e=>this.startDrag(e));this.dialog.addEventListener('pointermove',e=>this.moveDrag(e));this.dialog.addEventListener('pointerup',e=>this.endDrag(e));this.dialog.addEventListener('pointercancel',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt)this.cancelDrag();});
+  this.dialog.addEventListener('lostpointercapture',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt&&!this.drag.source.hasPointerCapture(e.pointerId))this.cancelDrag();});
+  bindTouchDragFallback(owner,this.dialog,{active:()=>!!this.drag,start:e=>this.startDrag(e),move:e=>this.moveDrag(e),end:e=>this.endDrag(e),cancel:()=>this.cancelDrag()});
   this.dialog.addEventListener('keydown',e=>{if(e.key==='Tab'&&this.popup){const nodes=[...this.popup.querySelectorAll('button:not(:disabled),input:not(:disabled)')],active=this.owner.shadow.activeElement;if(e.shiftKey&&active===nodes[0]){e.preventDefault();nodes.at(-1)?.focus();}else if(!e.shiftKey&&active===nodes.at(-1)){e.preventDefault();nodes[0]?.focus();}}if(e.key==='Escape'&&(this.drag||this.popup)){e.preventDefault();e.stopPropagation();this.cancelDrag();this.closePopup();}});
   this.dialog.addEventListener('cancel',e=>{e.preventDefault();if(this.popup)this.closePopup();else this.close();});this.resize=new ResizeObserver(()=>{this.cancelDrag();this.previews();});this.resize.observe(this.dialog);this.abortDrag=()=>this.cancelDrag();window.addEventListener('resize',this.abortDrag);this.update();
  }
@@ -132,7 +135,7 @@ export class EyeConfigurator{
   if(b.dataset.eyeColor)return this.openColors(b,c);
   if(b.dataset.eyePaint){this.owner._eyeHubPatch({colors:{...c.colors,[b.dataset.eyePaintId]:b.dataset.eyePaint}});this.closePopup();}
  }
- startDrag(e){const source=e.target.closest('[data-eye-function]');if(!source||this.popup||e.isPrimary===false||e.button>0)return;e.stopPropagation();this.drag={source,id:source.dataset.eyeFunction,pointer:e.pointerId,x:e.clientX,y:e.clientY,moved:false};source.setPointerCapture?.(e.pointerId);}
+ startDrag(e){const source=e.target.closest('[data-eye-function]');if(!source||this.popup||this.drag||e.isPrimary===false||e.button>0)return;e.stopPropagation();this.drag={source,id:source.dataset.eyeFunction,pointer:e.pointerId,startedAt:e.timeStamp,x:e.clientX,y:e.clientY,moved:false};if(e.pointerId>=0)source.setPointerCapture?.(e.pointerId);}
  moveDrag(e){const d=this.drag;if(!d||d.pointer!==e.pointerId)return;if(!d.moved&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<8)return;e.preventDefault();e.stopPropagation();d.moved=true;const bounds=this.dialog.getBoundingClientRect();if(e.clientY<bounds.top+60)this.dialog.scrollTop-=24;else if(e.clientY>bounds.bottom-60)this.dialog.scrollTop+=24;if(!this.ghost){this.ghost=document.createElement('img');this.ghost.className='eye-drag-ghost';this.ghost.src=this.owner._eyeHubState().registry.entries.get(d.id).icon;this.dialog.append(this.ghost);}this.ghost.style.left=e.clientX-27+'px';this.ghost.style.top=e.clientY-27+'px';this.dialog.querySelectorAll('.eye-drop-target').forEach(n=>n.classList.remove('eye-drop-target'));const target=this.owner.shadow.elementFromPoint(e.clientX,e.clientY)?.closest('[data-eye-slot]');if(target&&!this.owner._eyeHubState().config.slots[Number(target.dataset.eyeSlot)].functionId)target.classList.add('eye-drop-target');}
  endDrag(e){const d=this.drag;if(!d||d.pointer!==e.pointerId)return;const target=this.owner.shadow.elementFromPoint(e.clientX,e.clientY)?.closest('[data-eye-slot]');if(d.moved){e.preventDefault();e.stopPropagation();this.suppressUntil=performance.now()+600;if(target)this.owner._eyeHubAssign(Number(target.dataset.eyeSlot),d.id);}this.cancelDrag();}
  cancelDrag(){const d=this.drag;this.drag=null;try{if(d?.source.hasPointerCapture?.(d.pointer))d.source.releasePointerCapture(d.pointer);}catch(_){}this.ghost?.remove();this.ghost=null;this.dialog.querySelectorAll('.eye-drop-target').forEach(n=>n.classList.remove('eye-drop-target'));}

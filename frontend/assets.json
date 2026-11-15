@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "051d42019fb5ff51bfe71290ee28297d870a8f011fd864b1bd9f5e6b31771184",
+    "sha256": "676e9bc7d3f898f637579c1bd4c383e2c59320e717a0da1e2bb6b62ae4e862a9",
     "protected": false,
     "sizeBytes": 2960
   },
@@ -378,6 +378,11 @@
     "protected": true
   },
   {
+    "file": "assets/gr-temperature-premium-original.png",
+    "sha256": "ea46df73c3590ef76c4a8afcd0693f3ed318f6943bf2b4c07e961613cd737f9e",
+    "protected": true
+  },
+  {
     "file": "assets/gr-temperature-premium-v1-136.webp",
     "sha256": "85f3ce5b799fd04b8bcff46b7fefa3df7cf2127f6c322553702bec07dbbb51d2",
     "protected": true
@@ -418,6 +423,11 @@
     "sha256": "190f354bc32e20087b0285bd2d3db53bf0c8d13bd2fd53062571dd8501003ff2",
     "protected": true,
     "referenced": false
+  },
+  {
+    "file": "assets/gr-wind-settings-original-master.png",
+    "sha256": "e6ff489587c5ce3770e036997824b417868c523bdf1ee526ad9c55754d5a76d9",
+    "protected": true
   },
   {
     "file": "assets/gr-wind-settings-premium-v2-136.webp",

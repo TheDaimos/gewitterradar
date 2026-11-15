@@ -1,8 +1,8 @@
 /* Test-only transport around the actual registered card and Leaflet. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process');
 const root=path.resolve(__dirname,'..');
-function fixture({ref=null,scope='bbox',extendHtml=null}={}){
- const files=new Map(),read=name=>{if(ref){if(!files.has(name))files.set(name,cp.execFileSync('git',['show',ref+':'+name],{cwd:root,maxBuffer:30*1024*1024}));return files.get(name);}return fs.readFileSync(path.join(root,name));};
+function fixture({ref=null,scope='bbox',extendHtml=null,delivery='frontend'}={}){
+ const files=new Map(),read=name=>{if(ref){if(!files.has(name))files.set(name,cp.execFileSync('git',['show',ref+':'+name],{cwd:root,maxBuffer:30*1024*1024}));return files.get(name);}return fs.readFileSync(path.join(root,name.replace(/^frontend\//,delivery+'/')));};
  const source=fs.readFileSync(path.join(__dirname,'test-gr-wind-fix-01-browser.cjs'),'utf8');let html=source.match(/const html=String.raw`([\s\S]*?)`;\r?\nconst server=/)[1];
  const revision=read('frontend/version.js').toString().match(/runtimeRevision:"([^"]+)"/)[1];html=html.replace('module-manifest.js?v=411150r1','module-manifest.js?v='+revision);
  html=html.replace('window.cleanSource=weatherSourceText;',`window.cleanSource=weatherSourceText;

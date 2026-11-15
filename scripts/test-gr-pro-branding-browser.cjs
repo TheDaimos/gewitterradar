@@ -59,8 +59,64 @@ async function assertLayout(page) {
   assert.match(layout.badge,/^V4\.11\.\d+ DEV$/);
 }
 
+async function assertHelp(page,connected,screenshot){
+  const title=page.locator('#overview-title');
+  assert.equal(await title.evaluate(node=>node.classList.contains('is-pro')),connected);
+  const discoveries=await page.evaluate(()=>discoveryCalls);
+  if(!await page.locator('#settings-backdrop.open').count())await page.locator('#settings-open').click();
+  await page.locator('#settings-help').click();
+  const dialog=page.locator('.help-dialog'),content=dialog.locator('.help-content');
+  await dialog.waitFor({state:'visible'});
+  const topics=['eye-controls','wr-wind','wr-information','wr-precipitation','wr-temperature','wr-clouds','wr-synoptic','wr-display'];
+  assert.deepEqual(await content.locator('.help-weather-topic:not(.help-pro-featurelist)').evaluateAll(nodes=>nodes.map(n=>n.dataset.helpSection)),topics);
+  assert.equal(await content.locator(':scope > details').first().getAttribute('data-help-section'),'eye-controls');
+  const upgrade=content.locator('[data-help-section=wr-pro]');
+  assert.equal(await upgrade.count(),connected?0:1);
+  for(const key of topics){
+    const topic=content.locator('[data-help-section='+key+']');
+    await topic.locator('summary').click();
+    const body=topic.locator('.help-section-body');
+    assert((await body.locator('p').first().textContent()).length>45);
+    assert(await topic.locator('summary img').evaluate(img=>img.complete&&img.naturalWidth>0));
+    if(key==='eye-controls'){
+      assert.match(await body.textContent(),/Usability/);
+      assert.match(await topic.locator('img').getAttribute('src'),/gr-eye-open-master/);
+    }
+    if(key==='wr-clouds'){
+      assert.match(await topic.locator('summary img').getAttribute('src'),/gr-clouds-eye-premium-original/);
+      assert.match(await body.locator('img').getAttribute('src'),/gr-clouds-help-premium-original/);
+    }
+    await topic.getByRole('button',{name:'Zur Übersicht'}).click();
+  }
+  if(!connected){
+    assert.equal(await content.locator(':scope > details').last().getAttribute('data-help-section'),'wr-pro');
+    await upgrade.locator('summary').click();
+    for(const label of ['Was ist WeatherRouter?','Wie bekomme ich GewitterRadar PRO?'])assert(await upgrade.getByText(label,{exact:true}).isVisible());
+    assert.equal(await upgrade.locator('li').count(),6);
+    assert.match(await upgrade.locator('summary img').getAttribute('src'),/pro-wordmark-v1/);
+    assert(await upgrade.locator('summary').evaluate(node=>{
+      const logo=node.querySelector('img').getBoundingClientRect();
+      const label=node.children[1].getBoundingClientRect();
+      return logo.right<=label.left&&label.width>70;
+    }),'feature list wordmark and title need separate visual space');
+    await upgrade.evaluate(node=>node.scrollIntoView({block:'start'}));
+  }else{
+    await content.locator('[data-help-section=eye-controls] summary').click();
+    await content.evaluate(node=>node.scrollTop=0);
+  }
+  assert(await dialog.evaluate(node=>{
+    const content=node.querySelector('.help-content');
+    const close=node.querySelector('.help-close img');
+    return close?.complete&&close.naturalWidth>0&&content.scrollWidth<=content.clientWidth+1;
+  }));
+  assert.equal(await page.evaluate(()=>discoveryCalls),discoveries,'Help reuses the existing Discovery state');
+  if(screenshot)await dialog.screenshot({path:screenshot});
+  await dialog.locator('.help-close').click();
+  assert.equal(await dialog.count(),0);
+}
+
 async function run() {
-  const f = fixture({extendHtml:html => html
+  const f = fixture({delivery:'custom_components/gewitterradar/frontend',extendHtml:html => html
     .replace('background:#121b24','background:#121b24;font-family:system-ui')
     .replace('card.hass={states:{', `card.hass={user:window.proTestUser,connection:window.proConnection,states:{
       'zone.hamburg':{state:'0',attributes:{friendly_name:'Hamburg',latitude:53.55,longitude:10}},
@@ -147,6 +203,17 @@ async function run() {
       assert(await phone.locator('#location-main-button').isVisible());
       if(width===393&&process.env.GR_TEST_SCREENSHOTS)await phone.locator('.topbar').screenshot({path:path.join(process.env.GR_TEST_SCREENSHOTS,'gr-411211-portrait.png')});
     }
+    await phone.setViewportSize({width:393,height:851});
+    const output=process.env.GR_HELP_SCREENSHOTS;
+    if(output)require('node:fs').mkdirSync(output,{recursive:true});
+    await assertHelp(phone,true,output&&path.join(output,'hilfe-pro.png'));
+    await phone.evaluate(()=>{proMode='missing';proConnection.dispatchEvent(new Event('ready'));});
+    await standard(phone).waitFor();
+    await assertHelp(phone,false,output&&path.join(output,'hilfe-standard.png'));
+    await phone.evaluate(()=>card._eyeHubOpen());
+    assert.match(await phone.locator('#eye-hub-config [data-eye-option=grouped]').textContent(),/Icon-Gruppierung/);
+    await phone.locator('#eye-hub-config [data-premium-action=close]').click();
+    console.log('PASS packaged Help in Standard and PRO, eight topic pages, on-page navigation and localised Eye settings');
     await phone.route('**/gewitterradar-pro-wordmark-v1.png',route => route.abort());
     await phone.reload();
     await phone.waitForFunction(() => window.ready && discoveryCalls===1 && !card.__proBranding.check);

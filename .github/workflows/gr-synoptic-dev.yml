@@ -18,6 +18,9 @@ on:
       - 'scripts/test-synoptic-browser.cjs'
       - 'scripts/test-clouds-eye-browser.cjs'
       - 'scripts/test-eye-edge-browser.cjs'
+      - 'scripts/test-delayed-eye-recovery-browser.cjs'
+      - 'frontend/modules/weather/control-touch.js'
+      - 'frontend/modules/ui/help-topics.js'
       - 'scripts/test-gr-pro-branding-browser.cjs'
       - '.github/workflows/gr-synoptic-dev.yml'
   workflow_dispatch:
@@ -47,5 +50,9 @@ jobs:
         run: node scripts/test-clouds-eye-browser.cjs
       - name: Eye edge positioning and visible Canvas parity
         run: node scripts/test-eye-edge-browser.cjs
-      - name: PRO wordmark and local Discovery regression
+      - name: Delayed Android touch recovery through ten seconds
+        run: node scripts/test-delayed-eye-recovery-browser.cjs
+      - name: Leaflet, pointer cancellation and native touch regression
+        run: node scripts/test-map-gesture-recovery-browser.cjs
+      - name: Installed Help in Standard and PRO with local Discovery
         run: node scripts/test-gr-pro-branding-browser.cjs

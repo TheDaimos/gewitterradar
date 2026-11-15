@@ -1,6 +1,7 @@
+import {controlTouchPoint,installControlTouchTracking,stopControlTouchTracking} from './control-touch.js?v=411216r1';
 import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
 import {quickMethods,QUICK_CSS} from './display-quick.js?v=411212r1';
-import {eyeHubMethods} from './eye-hub.js?v=411215r1';
+import {eyeHubMethods} from './eye-hub.js?v=411216r1';
 import {cloudsControlMethods} from './clouds-control.js?v=411213r1';
 import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411212r1';
 import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411212r1';
@@ -9,7 +10,7 @@ import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.53",
+  version:"0.4.54",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Deckkraft im Kartenmenü","Deckkraft je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
@@ -818,6 +819,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       window.addEventListener("pagehide",state.lifecycleAbortHandler,true);
       document.addEventListener("visibilitychange",state.lifecycleAbortHandler,true);
     }
+    installControlTouchTracking(this);
     state.mounted=true;
   },
 
@@ -878,7 +880,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     if(reason){
       if(drag.pointerType==='touch'){
         state.eyeInterruptedTouches=new Set(drag.touchIds);
-        state.eyeInterruptedDown=reason==='three-pointers'&&event.composedPath().includes(eye)
+        state.eyeInterruptedDown=reason==='three-pointers'&&event?.composedPath().includes(eye)
           ? {id:event.pointerId,time:event.timeStamp,x:event.clientX,y:event.clientY}:null;
       }
       this._mapDiagnosticLog?.('eye.gesture.interrupted',{
@@ -912,7 +914,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       const listeners=new AbortController(),capture={capture:true,signal:listeners.signal};
       const passive={...capture,passive:true},win=eye.ownerDocument.defaultView;
       const drag=state.eyeDrag={
-        eye,state,source,pointerType,listeners,layout,pointerId:event.pointerId,touchId:point.identifier,
+        eye,state,source,pointerType,listeners,layout,startedAt:event.timeStamp,pointerId:event.pointerId,touchId:point.identifier,
         pointerIds:new Set(source==='pointer'?[event.pointerId]:[]),
         touchIds:new Set(source==='touch'?[point.identifier]:[]),
         startX:point.clientX,startY:point.clientY,startLeft:layout?(rect.left-layout.originX)/layout.scaleX:rect.left-cardRect.left,
@@ -921,7 +923,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       };
       this._weatherControlGesture={drag,options};
       const interrupt=(reason,event,keepReleaseClick=false)=>this._weatherDisplayCancelEyeDrag(options,{reason,event,keepReleaseClick});
-      const ownsPointer=event=>source==='pointer'&&event.pointerId===drag.pointerId;
+      const ownsPointer=event=>source==='pointer'&&event.pointerId===drag.pointerId&&event.timeStamp>=drag.startedAt;
       const ownsTouch=event=>touches(event).some(touch=>touch.identifier===drag.touchId);
       win.addEventListener('pointerdown',event=>{
         if(event.pointerType!==pointerType)return;
@@ -971,6 +973,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
         eye.classList.add('pressing');
         drag.longPressTimer=setTimeout(()=>{
           if(state.eyeDrag!==drag||drag.moved)return;
+          if(this.__mapDiagnosticState?.open)this._mapDiagnosticLog('eye.gesture.long-press-timer',{pointerId:drag.pointerId,touchId:drag.touchId});
           drag.longPressed=true;eye.classList.remove('pressing');
           blockEyeReleaseClick(this,drag);
           options.onDecision?.('long-press');
@@ -1034,26 +1037,31 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
     };
     const ownsPointer=event=>{
       const drag=getState().eyeDrag;
-      return drag?.source==='pointer'&&drag.pointerId===event.pointerId;
+      return drag?.source==='pointer'&&drag.pointerId===event.pointerId&&event.timeStamp>=drag.startedAt;
     };
     eye.addEventListener('pointerdown',pointerDown);
     eye.addEventListener('pointermove',event=>{if(ownsPointer(event))move(event,event);});
     eye.addEventListener('pointerup',event=>{if(ownsPointer(event))end(event,event);});
     if(options?.longPress){
       eye.addEventListener('touchstart',event=>{
-        const state=getState(),changed=touches(event);
-        if(event.touches.length<3)event.preventDefault();
+        const state=getState(),old=state.eyeInterruptedTouches;
+        const touch=controlTouchPoint(this,event,old);
+        if(touch&&event.cancelable)event.preventDefault();
         event.stopPropagation();
-        if(state.eyeDrag||changed.length!==1||this._weatherControlGesture)return;
-        const touch=changed[0],old=state.eyeInterruptedTouches;
+        if(!touch){
+          if(this.__mapDiagnosticState?.open)this._mapDiagnosticLog('eye.gesture.touch-rejected',{
+            reason:'live-or-unknown-contacts',control:eye.id||eye.dataset.function,changed:touches(event).map(item=>item.identifier)
+          });
+          return;
+        }
+        if(state.eyeDrag||this._weatherControlGesture)return;
         const interrupted=state.eyeInterruptedDown;
         state.eyeInterruptedDown=null;
         if(interrupted&&event.timeStamp-interrupted.time<32&&
           Math.hypot(touch.clientX-interrupted.x,touch.clientY-interrupted.y)<=12)return;
         // A WebView can omit or mislabel the next PointerEvent after cancel.
         // Use a new changed touch only when any other IDs belong to the aborted input.
-        if(!old?.has(touch.identifier)&&Array.from(event.touches).every(item=>item.identifier===touch.identifier||old?.has(item.identifier)))
-          start(event,touch,'touch');
+        start(event,touch,'touch');
       },{passive:false});
       for(const [type,handle] of [['touchmove',move],['touchend',end]])eye.addEventListener(type,event=>{
         const drag=getState().eyeDrag;
@@ -1229,6 +1237,7 @@ export const installWeatherDisplayMenu=defineModule(MODULE_META,(deps={})=>({
       document.removeEventListener("visibilitychange",state.lifecycleAbortHandler,true);
       state.lifecycleAbortHandler=null;
     }
+    stopControlTouchTracking(this);
     state.mounted=false;
   }
 }));

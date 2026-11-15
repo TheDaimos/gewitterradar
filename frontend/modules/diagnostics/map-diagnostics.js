@@ -1,8 +1,9 @@
+import {bindTouchDragFallback} from '../weather/control-touch.js?v=411216r1';
 import { defineModule } from "../core/runtime.js?v=41137r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.map",
-  version:"1.0.7",
+  version:"1.0.8",
   group:"Diagnose",
   function:"Kartendiagnose",
   subfunctions:["Mobile Live-Diagnose","Pointer- und Touch-Protokoll","Leaflet-Zustand","Gesten-Recovery","Ereignisringpuffer","JSON kopieren","JSON herunterladen","Minimierbare Diagnose"],
@@ -390,6 +391,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
         panel.dataset.level="full";
         panel.innerHTML='<header class="mapdiag-head"><span class="mapdiag-title">Kartendiagnose</span><span class="mapdiag-mini-state" id="mapdiag-mini-state">bereit</span><button class="mapdiag-level-full" type="button" data-mapdiag-level="full">VOLL</button><button class="mapdiag-level-compact" type="button" data-mapdiag-level="compact">KOMPAKT</button><button type="button" data-mapdiag-toggle-minimize aria-label="Kartendiagnose minimieren" title="Kartendiagnose minimieren">−</button><button type="button" data-mapdiag-close aria-label="Kartendiagnose schließen">×</button></header><div class="mapdiag-body"><div class="mapdiag-grid"><div class="mapdiag-cell"><span>Zoom</span><strong id="mapdiag-zoom">—</strong></div><div class="mapdiag-cell"><span>Events</span><strong id="mapdiag-events">0</strong></div><div class="mapdiag-cell"><span>Dragging</span><strong id="mapdiag-dragging">—</strong></div><div class="mapdiag-cell"><span>TouchZoom</span><strong id="mapdiag-touchzoom">—</strong></div><div class="mapdiag-cell"><span>_zooming</span><strong id="mapdiag-zooming">—</strong></div><div class="mapdiag-cell"><span>_animatingZoom</span><strong id="mapdiag-animating">—</strong></div><div class="mapdiag-cell"><span>Pointer / Touch / Global</span><strong><span id="mapdiag-pointers">—</span> / <span id="mapdiag-touches">—</span> / <span id="mapdiag-global">—</span></strong></div><div class="mapdiag-cell"><span>Multitouch dirty</span><strong id="mapdiag-dirty">—</strong></div><div class="mapdiag-cell"><span>Quarantäne</span><strong id="mapdiag-quarantine">—</strong></div></div><dl class="mapdiag-detail"><dt>Letzter Recovery</dt><dd id="mapdiag-last-recovery">—</dd><dt>Letzte Anomalie</dt><dd id="mapdiag-last-anomaly">—</dd></dl><pre class="mapdiag-log" id="mapdiag-log"></pre><div class="mapdiag-actions"><button type="button" data-mapdiag-mark>MARKIEREN</button><button type="button" data-mapdiag-copy data-mapdiag-primary>JSON KOPIEREN</button><button type="button" data-mapdiag-download data-mapdiag-primary>JSON HERUNTERLADEN</button><button type="button" data-mapdiag-clear>LOG LEEREN</button></div></div>';
         this.shadow.append(panel);
+        this._bindMapDiagnosticPanelDrag(panel);
         panel.querySelectorAll("[data-mapdiag-level]").forEach(node=>node.addEventListener("click",()=>this._mapDiagnosticSetLevel(node.dataset.mapdiagLevel)));
         panel.querySelector("[data-mapdiag-toggle-minimize]")?.addEventListener("click",()=>{
           const state=this._mapDiagnosticState();
@@ -406,6 +408,43 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
       return button;
     },
 
+    _bindMapDiagnosticPanelDrag(panel){
+      const handle=panel.querySelector('.mapdiag-head'),state=this._mapDiagnosticState();
+      let drag;
+      handle.style.touchAction='none';
+      const cancel=()=>{
+        const id=drag?.id;
+        drag=null;
+        if(id>=0&&handle.hasPointerCapture(id))handle.releasePointerCapture(id);
+      };
+      const start=event=>{
+        if(panel.hidden||event.target.closest('button')||event.button!==0||event.isPrimary===false||drag)return false;
+        const r=panel.getBoundingClientRect();
+        drag={id:event.pointerId,startedAt:event.timeStamp,x:event.clientX-r.left,y:event.clientY-r.top};
+        if(event.pointerId>=0&&event.isTrusted)handle.setPointerCapture(event.pointerId);
+        event.stopPropagation();
+        return true;
+      };
+      const move=event=>{
+        if(!drag||drag.id!==event.pointerId)return;
+        const viewport=window.visualViewport,minX=viewport?.offsetLeft||0,minY=viewport?.offsetTop||0;
+        const maxX=minX+(viewport?.width||innerWidth)-Math.min(panel.offsetWidth,110);
+        const maxY=minY+(viewport?.height||innerHeight)-Math.min(handle.offsetHeight,36);
+        panel.style.left=Math.max(minX,Math.min(maxX,event.clientX-drag.x))+'px';
+        panel.style.top=Math.max(minY,Math.min(maxY,event.clientY-drag.y))+'px';
+        panel.style.right=panel.style.bottom='auto';
+        event.preventDefault();event.stopPropagation();
+      };
+      const end=event=>{
+        if(drag?.id!==event.pointerId||event.timeStamp<drag.startedAt)return;
+        if(event.type!=='lostpointercapture'||!handle.hasPointerCapture(event.pointerId))cancel();
+      };
+      for(const [type,handler] of [['pointerdown',start],['pointermove',move],['pointerup',end],['pointercancel',end],['lostpointercapture',end]])
+        handle.addEventListener(type,handler);
+      bindTouchDragFallback(this,handle,{active:()=>!!drag,start,move,end,cancel});
+      state.cancelPanelDrag=cancel;
+    },
+
     _openMapDiagnostics(){
       this._ensureMapDiagnostics();
       const state=this._mapDiagnosticState(),panel=this.shadow?.getElementById("map-diagnostic-panel");
@@ -420,6 +459,7 @@ export const installMapDiagnostics=defineModule(MODULE_META,(deps)=>{
 
     _closeMapDiagnostics(){
       const state=this._mapDiagnosticState(),panel=this.shadow?.getElementById("map-diagnostic-panel");
+      state.cancelPanelDrag?.();
       if(panel)panel.hidden=true;
       state.open=false;
       if(state.liveTimer!=null)clearInterval(state.liveTimer);
