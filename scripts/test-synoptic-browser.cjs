@@ -169,7 +169,10 @@ async function run() {
         }),[44,44,34,34,'50%','manipulation']);
         await paletteClose[action]();
         await palette.waitFor({state:'hidden'});
-        await field.evaluate(node=>{if(node.getAttribute('aria-expanded')!=='false')throw Error('Color trigger did not collapse');});
+        await page.waitForFunction(
+          key=>card.shadow.querySelector('[data-synoptic-color="'+key+'"]').getAttribute('aria-expanded')==='false',
+          await field.getAttribute('data-synoptic-color')
+        );
       }
     }
     const beforeColors=await page.evaluate(()=>synopticRequests.length);

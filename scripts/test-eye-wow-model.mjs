@@ -17,7 +17,9 @@ for(const file of ['frontend/modules/weather/eye-neon.js','frontend/modules/weat
  let reference;try{reference=execFileSync('git',['show',base+':'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch(e){if(file.endsWith('wind-snake.js'))continue;throw e;}
  // Precipitation accumulated independently reviewed WR-authority changes
  // before GR 4.11.195. Its protected entry baseline is that approved DEV head.
- if(file.endsWith('/precipitation-layer.js'))reference=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+file],{encoding:'utf8'});
+ if(file.endsWith('/precipitation-layer.js'))reference=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+file],{encoding:'utf8'})
+  .replace('Darstellungstransparenz','Darstellungsdeckkraft');
+ if(file.endsWith('/snake-config.js'))reference=reference.replace('opacity:[10,100,1]','opacity:[0,100,1]');
  if(file.endsWith('/eye-neon.js'))reference=reference
   .replace('config.brightness,config.glow,active','config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active')
   .replace('eyeRingRadius(config.size,a.index)','eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)');
