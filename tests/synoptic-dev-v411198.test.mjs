@@ -64,14 +64,16 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
  assert.match(manifest,/weather\.synoptic-display/);
 });
 
-test('NOAA/WPC front geoJSON is typed and rejected on invented symbol side',()=>{
+test('front GeoJSON requires either an authorized side or an explicitly unoriented line',()=>{
  const a=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36],[-82,35]]},{front_type:'cold',intensity:null,symbol_side:null,symbol_side_authorized:false});
  a.frame.unit='feature';assert.equal(parse(a,cap.fronts)?.geometry.features.length,1);
  const b=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36]]},{front_type:'stationary',symbol_side:null,symbol_side_authorized:false});
  b.frame.unit='feature';assert.equal(parse(b,cap.fronts)?.geometry.features[0].properties.front_type,'stationary');
  b.frame.geometry.features[0].properties.front_type='fake';assert.equal(parse(b,cap.fronts),null);
  const c=response(cap.fronts,{type:'LineString',coordinates:[[-80,37],[-81,36]]},{front_type:'warm',symbol_side:'left',symbol_side_authorized:true});
- c.frame.unit='feature';assert.equal(parse(c,cap.fronts),null);
+ c.frame.unit='feature';assert.ok(parse(c,cap.fronts));
+ c.frame.geometry.features[0].properties.symbol_side_authorized=false;
+ assert.equal(parse(c,cap.fronts),null);
 });
 
 // P1: The backend profile schema must accept the newly added Eye function

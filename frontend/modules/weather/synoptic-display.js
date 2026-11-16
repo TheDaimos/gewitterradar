@@ -1,10 +1,10 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411212r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411218r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
 import {EYE_COLORS} from './eye-hub-model.js?v=411202r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411212r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411218r1';
 import {canonicalWindBounds} from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.14',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.15',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);
@@ -95,7 +95,10 @@ export function parseSynopticFrame(answer,capability){
  const features=[];
  for(const entry of f.geometry.features){
   const g=entry?.geometry,p=entry?.properties;if(entry?.type!=='Feature'||!g||!p||!fronts&&!Number.isFinite(p.pressure_hpa))return null;
-  if(fronts){if(g.type!=='LineString'||!['cold','warm','occluded','stationary'].includes(p.front_type)||p.symbol_side_authorized!==false||p.symbol_side!==null||!Array.isArray(g.coordinates)||g.coordinates.length<2||g.coordinates.length>240||g.coordinates.some(point=>!validCoord(point)))return null;}
+  if(fronts){
+   const sideValid=p.symbol_side_authorized===true?['left','right'].includes(p.symbol_side):p.symbol_side_authorized===false&&p.symbol_side===null;
+   if(g.type!=='LineString'||!['cold','warm','occluded','stationary'].includes(p.front_type)||!sideValid||!Array.isArray(g.coordinates)||g.coordinates.length<2||g.coordinates.length>240||g.coordinates.some(point=>!validCoord(point)))return null;
+  }
   else if(centers){if(g.type!=='Point'||!['H','L'].includes(p.kind)||!validCoord(g.coordinates))return null;}
   else {if(!['LineString','MultiLineString'].includes(g.type))return null;const lines=g.type==='LineString'?[g.coordinates]:g.coordinates;if(!Array.isArray(lines)||lines.length>20000||lines.some(line=>!Array.isArray(line)||line.length<2||line.length>20000||line.some(point=>!validCoord(point,540))))return null;}
   features.push(entry);
@@ -124,6 +127,105 @@ function visibleLine(line,bounds,L,clip) {
 }
 export const SYNOPTIC_OPACITY_GROUPS=Object.freeze({centers:'centerOpacity',isobars:'isobarOpacity',frontLines:'frontLineOpacity',frontSymbols:'frontSymbolOpacity',frontNeon:'neonOpacity'});
 const opacity=(c,part)=>c.opacity*c[SYNOPTIC_OPACITY_GROUPS[part]||'isobarOpacity'];
+const frontsStatus=Object.freeze({
+ synoptic_fronts_no_coverage:'Keine geografische Frontenabdeckung',
+ synoptic_fronts_outside_wpc_region:'Keine geografische Frontenabdeckung',
+ synoptic_fronts_provider_unreachable:'Frontenprovider vorübergehend nicht erreichbar',
+ synoptic_fronts_cooldown:'Frontenprovider vorübergehend nicht erreichbar',
+ synoptic_timeout:'Frontenprovider vorübergehend nicht erreichbar',
+ synoptic_fronts_no_valid_data:'Keine gültigen Frontendaten',
+ synoptic_fronts_no_verified_bulletin:'Keine gültigen Frontendaten',
+ synoptic_fronts_loading:'Frontendaten werden geladen'
+});
+const frontStatus=(code)=>frontsStatus[code]||'Keine gültigen Frontendaten';
+
+function frontLineInView(path,bounds,L,clip){
+ const unwrapped=[];
+ for(const [lon,lat] of path){
+  const previous=unwrapped.at(-1)?.[0]??lon;
+  unwrapped.push([lon+360*Math.round((previous-lon)/360),lat]);
+ }
+ return visibleLine(unwrapped,bounds,L,clip);
+}
+
+function appendPath(paths,color,path){
+ if(!paths.has(color))paths.set(color,[]);
+ paths.get(color).push(path);
+}
+
+// Sample the projected source path at constant screen distances. Indexing from
+// the unclipped start keeps the alternating pattern stable while panning.
+export function frontSymbolPaths(L,map,points,properties,colors,pixelClip,paths){
+ const projected=points.map(point=>map.project(point));
+ const spacing=36,halfWidth=6,height=9;
+ let offset=0;
+ for(let i=1;i<projected.length;i++){
+  const start=projected[i-1],end=projected[i];
+  const dx=end.x-start.x,dy=end.y-start.y,length=Math.hypot(dx,dy);
+  if(!length)continue;
+  const clipped=L.LineUtil.clipSegment(start,end,pixelClip);
+  if(clipped){
+   const from=offset+start.distanceTo(clipped[0]),to=offset+start.distanceTo(clipped[1]);
+   const first=Math.max(0,Math.ceil((from-spacing/2)/spacing));
+   const ux=dx/length,uy=dy/length;
+   for(let index=first;index*spacing+spacing/2<=to;index++){
+    const distance=index*spacing+spacing/2-offset;
+    if(distance<0||distance>=length)continue;
+    const x=start.x+ux*distance,y=start.y+uy*distance;
+    const kind=properties.front_type,stationary=kind==='stationary';
+    const cold=kind==='cold'||(stationary||kind==='occluded')&&index%2===0;
+    const color=colors[stationary?(cold?'stationaryCold':'stationaryWarm'):kind];
+    const side=properties.symbol_side==='left'?-1:1;
+    const sign=stationary&&!cold?-side:side;
+    const point=(along,normal)=>map.unproject(L.point(x+along*ux-normal*uy*sign,y+along*uy+normal*ux*sign));
+    let ring;
+    if(properties.symbol_side_authorized){
+     ring=cold?[point(-halfWidth,0),point(0,height),point(halfWidth,0)]
+      :Array.from({length:9},(_,j)=>point(-halfWidth*Math.cos(j*Math.PI/8),height*Math.sin(j*Math.PI/8)));
+    }else{
+     // Centred diamonds and discs identify the type without implying a side.
+     ring=cold?[point(-4,0),point(0,4),point(4,0),point(0,-4)]
+      :Array.from({length:12},(_,j)=>point(4*Math.cos(j*Math.PI/6),4*Math.sin(j*Math.PI/6)));
+    }
+    appendPath(paths,color,[ring]);
+   }
+  }
+  offset+=length;
+ }
+}
+
+function renderFronts(L,map,group,frame,bounds,clip,c){
+ const regular=new Map(),stationary=[],symbols=new Map();
+ const drawSymbols=c.frontSymbols&&opacity(c,'frontSymbols')>0;
+ const pixelClip=drawSymbols?L.bounds(
+  map.project([bounds.north,bounds.west]).subtract([12,12]),
+  map.project([bounds.south,bounds.east]).add([12,12])):null;
+ let count=0;
+ for(const {geometry,properties} of frame.geometry.features){
+  const path=frontLineInView(geometry.coordinates,bounds,L,clip);
+  if(!path)continue;
+  const type=properties.front_type;
+  if(type==='stationary')stationary.push(path);
+  else appendPath(regular,c.frontColors[type],path);
+  if(drawSymbols)frontSymbolPaths(L,map,path,properties,c.frontColors,pixelClip,symbols);
+  count++;
+ }
+ const weight=Math.max(2,c.lineWidth+1),options={interactive:false,smoothFactor:0};
+ const addLine=(paths,color,dashArray,dashOffset)=>{
+  const style={...options,color,weight,dashArray,dashOffset};
+  if(c.frontNeon&&opacity(c,'frontNeon')>0)
+   group.addLayer(L.polyline(paths,{...style,weight:weight+11,opacity:opacity(c,'frontNeon')*.14}));
+  if(opacity(c,'frontLines')>0)group.addLayer(L.polyline(paths,{...style,opacity:opacity(c,'frontLines')}));
+ };
+ for(const [color,paths] of regular)addLine(paths,color);
+ if(stationary.length){
+  addLine(stationary,c.frontColors.stationaryCold,'18 18','0');
+  addLine(stationary,c.frontColors.stationaryWarm,'18 18','18');
+ }
+ for(const [color,paths] of symbols)
+  group.addLayer(L.polygon(paths,{...options,stroke:false,fillColor:color,fillOpacity:opacity(c,'frontSymbols')}));
+ return count;
+}
 const symbolHtml=(kind,pressure,c)=>{const high=kind==='H',color=high?c.highColor:c.lowColor,size=high?c.highSize:c.lowSize;return '<div style="font-weight:900;font-family:system-ui;text-align:center;white-space:nowrap;line-height:1.1;font-size:'+size+'px;color:'+color+';text-shadow:'+(c.glow?'0 0 8px '+color+',0 0 3px '+color:'0 1px 3px #07121b')+'">'+(high?'H':'T')+(c.pressureLabels?'<div style="font-size:11px">'+esc(pressure)+' hPa</div>':'')+'</div>';};
 export function synopticOpacity(config,part){return opacity(config,part);}
 export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
@@ -254,7 +356,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    section('centers','Hoch- und Tiefdruck',check('centers','H/T anzeigen')+check('pressureLabels','Druckwerte')+color('highColor')+color('lowColor')+range('highSize','H-Größe',14,60)+range('lowSize','T-Größe',14,60))+
    section('isobars','Isobaren',check('isobars','Isobaren anzeigen')+color('isobarColor')+range('lineWidth','Linienbreite',.5,6,.5)+range('labelDensity','Beschriftungsdichte',0,100,5))+
    section('opacity','Darstellung',check('glow','Neon-Effekt')+percent('opacity','Synoptik-Deckkraft gesamt')+percent('centerOpacity','H/T-Deckkraft')+percent('isobarOpacity','Isobaren-Deckkraft'))+
-   section('fronts','Wetterfronten · NOAA WPC regional','<p>Offizielle NOAA-WPC-Linien für Nordamerika. Frontsymbole setzen eine von WR bestätigte Symbolseite voraus.</p>'+check('fronts','Wetterfronten anzeigen')+check('frontNeon','Neon-Übergangslinie')+check('frontSymbols','Meteorologische Symbole')+
+   section('fronts','Wetterfronten','<p>WeatherRouter meldet Quelle und regionale Abdeckung. Bei unbekannter Symbolseite zeigen Rauten und Punkte den Frontentyp ohne Zugrichtung.</p>'+check('fronts','Wetterfronten anzeigen')+check('frontNeon','Neon-Übergangslinie')+check('frontSymbols','Meteorologische Symbole')+
     Object.keys(defaults.frontColors).map(color).join('')+percent('frontLineOpacity','Frontlinien-Deckkraft')+percent('neonOpacity','Fronten-Neon-Deckkraft'))+
    '<button class="eye-metal-button" type="button" data-synoptic-action="refresh">WR-Daten aktualisieren</button><p role="status" data-synoptic-status></p></div>';
   enhancePremiumSections(panel,'synoptic-settings');
@@ -309,6 +411,12 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    const frame=s.frames[part];
    if(!c.visible||!c[part]||!frameValid(frame))continue;
    const group=L.layerGroup(),labels=[];
+   if(part==='fronts'){
+    const count=renderFronts(L,map,group,frame,bounds,clip,c);
+    if(group.getLayers().length){group.addTo(map);s.layers[part]=group;}
+    s.rendered[part]=count;
+    continue;
+   }
    let count=0;
    for(const {geometry,properties} of frame.geometry.features){
     if(part==='centers'){
@@ -331,16 +439,6 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
       if(c.glow)group.addLayer(L.polyline(points,{...style,weight:c.lineWidth+7,opacity:style.opacity*.13}));
       group.addLayer(L.polyline(points,style));
       if(c.pressureLabels&&points.length>2)labels.push([points[Math.floor(points.length/2)],properties.pressure_hpa]);
-     }else{
-      const kind=properties.front_type,colors=c.frontColors;
-      const style={weight:Math.max(2,c.lineWidth+1),opacity:opacity(c,'frontLines'),interactive:false,smoothFactor:1};
-      const addLine=(segment,color)=>{
-       if(c.frontNeon)group.addLayer(L.polyline(segment,{...style,color,weight:style.weight+11,opacity:opacity(c,'frontNeon')*.14}));
-       group.addLayer(L.polyline(segment,{...style,color}));
-      };
-      if(kind==='stationary')for(let i=1;i<points.length;i++)addLine([points[i-1],points[i]],i%2?colors.stationaryCold:colors.stationaryWarm);
-      else addLine(points,colors[kind]);
-      // WR supplies no authorized symbol side.
      }
     }
     if(intersects)count++;
@@ -422,7 +520,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    for(const [part,frame] of Object.entries(s.frames)){
     if(frameValid(frame))continue;
     delete s.frames[part];
-    s.status[part]='Gültigkeit abgelaufen';
+    s.status[part]=part==='fronts'?'Keine gültigen Frontendaten · Gültigkeit abgelaufen':'Gültigkeit abgelaufen';
     s.outcomes[part]='unavailable';
    }
    this._weatherSynopticRender();
@@ -449,6 +547,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    if(requests.has(part)){s.queuedParts.add(part);return;}
    const capability=SYNOPTIC_CAPABILITIES[part];
    const entry=s.requests[part]={requested:true,started:false,completed:false,outcome:'loading',bbox:roundedBbox(bbox)};
+   if(part==='fronts')s.status.fronts=frameValid(s.frames.fronts)?'Frontendaten werden aktualisiert':'Frontendaten werden geladen';
    let timer;
    try{
     if(typeof this._hass?.callWS!=='function'){
@@ -473,7 +572,26 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
     entry.valid_until=safeTime(reply?.frame?.valid_until);
     entry.featureCount=Array.isArray(reply?.frame?.geometry?.features)?reply.frame.geometry.features.length:0;
     const frame=parseSynopticFrame(reply,capability);
-    if(frame?.geometry.features.length){
+    if(part==='fronts'){
+     const code=safeId(reply?.unavailable?.code);
+     entry.wrCode=code;
+     if(frame){
+      s.frames.fronts=frame;
+      this._weatherSynopticRender(part);
+      entry.outcome=s.rendered.fronts?'ready':'unavailable';
+      entry.reason=s.rendered.fronts?null:'outside_viewport';
+      const source=typeof frame.provenance.attribution==='string'?frame.provenance.attribution:entry.provider;
+      s.status.fronts=(s.rendered.fronts?'Frontendaten verfügbar':'Keine Fronten im aktuellen Kartenausschnitt')+' · '+source+' · '+frame.valid_at;
+      if(frame.quality_status==='retained')s.status.fronts+=' · Aktualisierung vorübergehend fehlgeschlagen';
+      if(frame.quality_status==='refreshing')s.status.fronts+=' · Frontendaten werden aktualisiert';
+     }else{
+      const transient=['synoptic_fronts_provider_unreachable','synoptic_fronts_cooldown','synoptic_timeout','synoptic_fronts_loading'].includes(code);
+      if(!transient){delete s.frames.fronts;this._weatherSynopticRender(part);}
+      entry.outcome=code?'unavailable':'error';
+      entry.reason=code?'wr_unavailable':'invalid_frame';
+      s.status.fronts=frontStatus(code);
+     }
+    }else if(frame?.geometry.features.length){
      s.frames[part]=frame;
      this._weatherSynopticRender(part);
      entry.outcome=s.rendered[part]?'ready':'unavailable';
@@ -498,7 +616,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
     entry.outcome='error';
     entry.wrCode=safeId(error?.code);
     entry.reason=entry.reason||'request_failed';
-    s.status[part]=entry.wrCode||entry.reason;
+    s.status[part]=part==='fronts'?'Frontenprovider vorübergehend nicht erreichbar':entry.wrCode||entry.reason;
    }finally{
     clearTimeout(timer);
     if(gen===s.generation){
@@ -536,7 +654,7 @@ export const installWeatherSynoptic=defineModule(MODULE_META,deps=>({
    mapAttached:Boolean(s.map),leafletReady:Boolean(s.L),visible:c.visible,
    overlayAttached:Object.values(s.layers).some(layer=>s.map?.hasLayer(layer)),
    overlayVisible:c.visible&&activeParts(c).some(part=>s.layers[part]&&
-    (part==='fronts'?(opacity(c,'frontLines')>0||c.frontNeon&&opacity(c,'frontNeon')>0):opacity(c,part)>0)),
+    (part==='fronts'?(opacity(c,'frontLines')>0||c.frontNeon&&opacity(c,'frontNeon')>0||c.frontSymbols&&opacity(c,'frontSymbols')>0):opacity(c,part)>0)),
    menuOpen:Boolean(panel&&!panel.hidden),lastGesture:s.gesture??null,capabilities,
    opacity:{total:c.opacity,centers:opacity(c,'centers'),isobars:opacity(c,'isobars')},
    centralControlsRegistered:this.shadow?.querySelectorAll('#weather-display-panel [data-synoptic-opacity]').length===3};

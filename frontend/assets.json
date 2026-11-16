@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "b92ef2d643668c8dbbd843d337da5dd539d31d6ef9198f0241f60ea43034f79a",
+    "sha256": "21a5683753f3f0d295556a9024d55fd19c0fc646834404de3723ffe1c2b746a1",
     "protected": false,
     "sizeBytes": 2960
   },
@@ -432,7 +432,8 @@
   {
     "file": "assets/gr-wind-settings-original-master.png",
     "sha256": "e6ff489587c5ce3770e036997824b417868c523bdf1ee526ad9c55754d5a76d9",
-    "protected": true
+    "protected": true,
+    "referenced": false
   },
   {
     "file": "assets/gr-wind-settings-premium-v2-136.webp",

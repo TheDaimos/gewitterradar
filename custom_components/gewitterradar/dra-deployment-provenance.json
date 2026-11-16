@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.217",
-  "build": "V4.11.217-DEV-2026-11-15",
-  "runtimeRevision": "411217r1",
-  "moduleSetId": "E411-217A1",
-  "baselineFeatureHead": "0a6bbf9a82e57ea9b022d191c57aa5e80d70fdb1",
+  "productVersion": "4.11.218",
+  "build": "V4.11.218-DEV-2026-11-16",
+  "runtimeRevision": "411218r1",
+  "moduleSetId": "E411-218A1",
+  "baselineFeatureHead": "c5dab860084f4fddc1a3db85ccc583f38423e75d",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Premium Help separates GewitterRadar Standard and WeatherRouter PRO.",
+    "purpose": "Help text and Wind shortcut artwork; regional WeatherRouter synoptic fronts and direction-aware symbols.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
@@ -42,7 +42,7 @@
     "windStudioBaseline": "ac73cb59abeac399c9fc24dcb78194ecef0c3e0b",
     "precipitationControlBaseline": "5be2d8324b58220e37021248b0a2825c6435f87e",
     "synopticDeveloperStatus": "GR V2 vector source implementation; HA DEV and Android visual acceptance still required",
-    "synopticFrontContract": "weather.synoptic.fronts (WeatherRouter 0.10.322 DEV), officially typed WPC surface analysis; symbol facing side not supplied"
+    "synopticFrontContract": "weather.synoptic.fronts (WeatherRouter 0.10.323 DEV); NOAA WPC typed surface analysis and neutral symbols when no side is supplied"
   },
   "sourceReleaseTag": "v4.10"
 }

@@ -16,6 +16,25 @@ const fixtureHtml = html => html
       const answer={schema:'weather_router.consumer.synoptic.v2',contract_version:2,capability};
       if(part==='fronts'){
         if(!window.frontCompleted)await new Promise(resolve=>{window.frontPending=resolve;});
+        if(window.frontMode){
+          const code=window.frontMode==='failure'?'synoptic_fronts_provider_unreachable':
+            window.frontMode==='outside'?'synoptic_fronts_no_coverage':null;
+          if(code)return {...answer,status:'unavailable',frame:null,unavailable:{code}};
+          const {west,east,south,north}=query.context.bbox,span=east-west;
+          const frontTypes=['cold','warm','occluded','stationary'];
+          const features=window.frontMode==='empty'?[]:frontTypes.map((type,i)=>{
+            const y=south+(north-south)*(.34+.1*i);
+            return {type:'Feature',geometry:{type:'LineString',coordinates:[
+              [west+.25*span,y],[west+.5*span,y],[west+.75*span,y]
+            ]},properties:{front_type:type,symbol_side_authorized:window.frontMode==='oriented',
+              symbol_side:window.frontMode==='oriented'?'left':null}};
+          });
+          const time=new Date(Date.now()-60000).toISOString();
+          return {...answer,status:'ready',frame:{capability,unit:'feature',
+            coverage:{crs:'EPSG:4326'},provenance:{provider_id:'noaa_nws',attribution:'NOAA WPC'},
+            model_run:time,valid_at:time,valid_until:new Date(Date.now()+600000).toISOString(),
+            geometry:{type:'FeatureCollection',features}}};
+        }
         return {...answer,status:'unavailable',frame:null,unavailable:{code:'synoptic_source_unavailable',sources:[{provider_id:'noaa_wpc'}]}};
       }
       const {west,east,south,north}=query.context.bbox, x=(west+east)/2, y=(south+north)/2;
@@ -357,6 +376,42 @@ async function run() {
       card._resumeWeatherSynoptic();
     });
     await page.waitForFunction(()=>card.__weatherSynoptic.map===window.oldSynopticMap&&card.__weatherSynoptic.rendered.isobars===1);
+    await page.evaluate(()=>{
+      window.frontMode='oriented';
+      card._map.setView([42,-100],7,{animate:false});
+      card._weatherSynopticSet({fronts:true,frontSymbols:true,frontNeon:false,frontLineOpacity:1,opacity:1});
+    });
+    await page.waitForFunction(()=>card.__weatherSynoptic.rendered.fronts===4);
+    const frontShapes=()=>page.evaluate(()=>{
+      const s=card.__weatherSynoptic;
+      return (s.layers.fronts?.getLayers()||[]).filter(layer=>layer instanceof L.Polygon)
+        .map(layer=>({color:layer.options.fillColor,pieces:layer.getLatLngs().map(([points])=>
+          points.map(point=>({lat:point.lat,lng:point.lng})))}));
+    });
+    let shapes=await frontShapes();
+    assert(shapes.some(layer=>layer.color==='#FFE17A'&&layer.pieces.some(p=>p.length===3&&p[1].lat>p[0].lat)));
+    assert(shapes.some(layer=>layer.color==='#789ABC'&&layer.pieces.some(p=>p.length===9&&p[4].lat>p[0].lat)));
+    assert(shapes.some(layer=>layer.color==='#B000FF'&&new Set(layer.pieces.map(p=>p.length)).size===2));
+    assert(shapes.some(layer=>layer.color==='#FF003C'&&layer.pieces.some(p=>p.length===9&&p[4].lat<p[0].lat)));
+    await page.evaluate(()=>card._weatherSynopticSet({frontSymbols:false}));
+    assert.deepEqual(await frontShapes(),[]);
+    await page.evaluate(async()=>{
+      window.frontMode='neutral';
+      card._weatherSynopticSet({frontSymbols:true});
+      await card._weatherSynopticFetch('fronts');
+    });
+    await page.waitForFunction(()=>card.__weatherSynoptic.requests.fronts?.completed&&
+      card.__weatherSynoptic.frames.fronts?.geometry.features[0].properties.symbol_side===null);
+    shapes=await frontShapes();
+    assert(shapes.every(layer=>layer.pieces.every(p=>p.length===4||p.length===12)));
+    await page.evaluate(async()=>{window.frontMode='failure';await card._weatherSynopticFetch('fronts');});
+    await page.waitForFunction(()=>card.__weatherSynoptic.requests.fronts?.wrCode==='synoptic_fronts_provider_unreachable');
+    assert.deepEqual(await frontShapes(),shapes);
+    await page.evaluate(async()=>{window.frontMode='empty';await card._weatherSynopticFetch('fronts');});
+    await page.waitForFunction(()=>card.__weatherSynoptic.status.fronts.startsWith('Keine Fronten im aktuellen'));
+    assert.deepEqual(await frontShapes(),[]);
+    await page.evaluate(async()=>{window.frontMode='outside';await card._weatherSynopticFetch('fronts');});
+    await page.waitForFunction(()=>card.__weatherSynoptic.status.fronts==='Keine geografische Frontenabdeckung');
     assert.deepEqual(errors,[]);
     await context.close();
     console.log('PASS: opaque 360–412 px menu, touch scroll and swatches, Leaflet rendering, gestures, opacity, diagnosis and persistence.');

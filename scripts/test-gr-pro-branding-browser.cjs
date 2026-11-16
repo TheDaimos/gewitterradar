@@ -128,11 +128,22 @@ async function assertHelp(page,connected,screenshots){
     const icon=topic.locator('summary .help-section-icon img');
     assert(await icon.evaluate(img=>img.complete&&img.naturalWidth>0));
     if(key==='eye-controls'){
-      assert.match(await body.textContent(),/Usability/);
       assert.match(await icon.getAttribute('src'),/gr-eye-open-master/);
       assert.equal(await topic.locator('.help-pro-badge').count(),0);
-      assert.match(await body.textContent(),/gehören zu GewitterRadar Standard/);
+      assert.match(await body.textContent(),/gehört zu GewitterRadar Standard/);
+      assert.match(await body.textContent(),/bis zu acht Slots/);
+      const inputs=await body.locator('.help-inline-icon img').evaluateAll(imgs=>imgs.map(img=>({
+        file:img.src.split('/').at(-1),loaded:img.complete&&img.naturalWidth>0,
+        height:img.getBoundingClientRect().height,font:parseFloat(getComputedStyle(img).fontSize)
+      })));
+      assert.deepEqual(inputs.map(img=>img.file),[
+        'gr-eye-open-master-1254.png','gr-precipitation-premium-original.png','gr-weather-display-premium-original.png'
+      ]);
+      assert(inputs.every(img=>img.loaded&&img.height<=img.font));
     }
+    if(key==='wr-wind')assert.match(await icon.getAttribute('src'),/gr-wind-animation-toggle-premium-v1-272\.webp$/);
+    if(key==='wr-precipitation')assert.match(await body.textContent(),/0 % Deckkraft.*transparent.*100 %.*deckend/);
+    if(key==='wr-temperature')assert.match(await body.textContent(),/mit den gewählten Ansichten ein- oder auszuschalten/);
     if(key==='wr-clouds'){
       assert.match(await icon.getAttribute('src'),/gr-clouds-eye-premium-original/);
       assert.match(await body.locator('img').getAttribute('src'),/gr-clouds-help-premium-original/);
