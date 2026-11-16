@@ -115,9 +115,16 @@ async function assertHelp(page,connected,screenshots){
           issues.push(summary.parentElement.dataset.helpSection);
         }
       }
-      return {issues,overflow:node.scrollWidth-node.clientWidth};
+      const articleIcons=[...node.querySelectorAll('.help-section:not(.help-pro-featurelist)>summary>.help-section-icon')];
+      const iconSizes=articleIcons.map(icon=>{
+        const {width,height}=icon.getBoundingClientRect();
+        return [width,height];
+      });
+      return {issues,iconSizes,overflow:node.scrollWidth-node.clientWidth};
     });
     assert.deepEqual(layout.issues,[],`Badge geometry at ${width}px`);
+    assert.equal(layout.iconSizes.length,proKeys.length+standardKeys.length);
+    assert(layout.iconSizes.every(([w,h])=>w===44&&h===44),`Article icon slots at ${width}px`);
     assert(layout.overflow<=1,`Horizontal overflow at ${width}px`);
   }
   await page.setViewportSize({width:393,height:851});
