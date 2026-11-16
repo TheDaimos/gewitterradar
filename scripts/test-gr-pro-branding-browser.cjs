@@ -70,7 +70,8 @@ async function assertHelp(page,connected,screenshots){
   const classic=content.locator('.help-standard'),pro=content.locator('.help-pro');
   const standardKeys=['prerequisites','radii','location','mapview','external_services','functions','defaults','troubleshooting','recorder','instruments-v410'];
   const topics=['eye-controls','wr-wind','wr-information','wr-precipitation','wr-temperature','wr-clouds','wr-synoptic','wr-display'];
-  const proKeys=[...topics,'weather-display-v411','weather-refresh-v411'];
+  const display='weather-display-v411',refresh='weather-refresh-v411';
+  const proKeys=[...topics.filter(key=>key!=='wr-information'),display,'wr-information',refresh];
   const keys=section=>section.locator(':scope > details').evaluateAll(nodes=>nodes.map(n=>n.dataset.helpSection));
   assert.deepEqual(await keys(classic),standardKeys);
   assert.deepEqual(await keys(pro),connected?proKeys:[...proKeys,'wr-pro']);
@@ -167,7 +168,7 @@ async function assertHelp(page,connected,screenshots){
     }
     await topic.getByRole('button',{name:'Zur Übersicht'}).click();
   }
-  for(const key of proKeys.slice(topics.length)){
+  for(const key of [display,refresh]){
     const topic=pro.locator(`[data-help-section=${key}]`);
     await topic.locator('summary').click();
     assert((await topic.locator('.help-section-body').innerText()).length>45);

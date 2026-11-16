@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.219",
-  "build": "V4.11.219-DEV-2026-11-16",
-  "runtimeRevision": "411219r1",
-  "moduleSetId": "E411-219A1",
-  "baselineFeatureHead": "77cfc8342f14f08d4f55f42e48c94f1d3aa3d0d7",
+  "productVersion": "4.11.220",
+  "build": "V4.11.220-DEV-2026-11-16",
+  "runtimeRevision": "411220r1",
+  "moduleSetId": "E411-220A1",
+  "baselineFeatureHead": "27fc4ecaf59b8d0e505f482a7cb9841acf7d1404",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Resize and reflow the three illustrated Eye Help paragraphs.",
+    "purpose": "Move the WeatherRouter information article next to the weather refresh article in Help.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

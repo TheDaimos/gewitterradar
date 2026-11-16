@@ -1,10 +1,10 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411219r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411219r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411219r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411220r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411220r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.31",
+  "version": "1.3.32",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2581,6 +2581,9 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           details.append(body);
           (proOnly?sections.pro:sections.standard).append(details);
         });
+        const weatherInformation=sections.pro.querySelector('[data-help-section="wr-information"]');
+        const weatherRefresh=sections.pro.querySelector('[data-help-section="weather-refresh-v411"]');
+        if(weatherInformation&&weatherRefresh)weatherRefresh.before(weatherInformation);
         this._syncHelpProFeatureList(sections,language,openKeys);
         content.scrollTop=scrollTop;this._helpLocale=help;
       }
