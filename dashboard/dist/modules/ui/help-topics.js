@@ -13,10 +13,10 @@ const icons = {
 
 const de = {
  eye:['Eye-Menü & Icon-Bedienung',
-  ['Tippen Sie auf das {eye}Eye-Icon, um in der gruppierten Ansicht die Funktionsicons einzublenden.',
+  [['eye','Tippen Sie auf das Eye-Icon, um die gruppierten Funktionsicons einzublenden.'],
    'Halten Sie das Eye-Icon länger gedrückt (Long-Press), um die Einstellungen für Position, Icon-Gruppierung, Aura-Ringe, Farben und Slot-Belegung zu öffnen. Diese Bedienung gehört zu GewitterRadar Standard.',
-   'Mit verbundenem WeatherRouter schalten Sie die Wetterebenen über ihre zugewiesenen Funktionsicons ein und aus. Halten Sie ein Funktionsicon, zum Beispiel das {precipitation}Niederschlags-Icon, länger gedrückt, um seine Einstellungen zu öffnen.',
-   'Im Eye-Kontextmenü können Sie die Darstellung anpassen und zusätzliche Slots hinzufügen und belegen. Über das {display}Darstellungs-Icon stellen Sie die Deckkraft einzelner Wetterebenen ein.',
+   ['precipitation','Halten Sie ein Funktionsicon wie das Niederschlags-Icon länger gedrückt, um seine Einstellungen zu öffnen. Mit verbundenem WeatherRouter schalten Sie die Wetterebenen über ihre zugewiesenen Funktionsicons ein und aus.'],
+   ['display','Über das Darstellungs-Icon stellen Sie die Deckkraft einzelner Wetterebenen ein. Im Eye-Kontextmenü können Sie die Darstellung anpassen und zusätzliche Slots hinzufügen und belegen.'],
    'Die Icon-Gruppierung hält die Karte übersichtlich. Bei deaktivierter Gruppierung erscheinen die zugewiesenen Funktionsicons einzeln. Ein Tipp auf das Eye-Icon öffnet dann die Eye-Einstellungen.',
    'Tippen Sie auf einen freien Slot oder ziehen Sie ein verfügbares Funktionsicon hinein. Die Benutzeroberfläche unterstützt bis zu acht Slots.',
    'Ein farbiger Statusring kennzeichnet eine aktive verfügbare Funktion. In den Glow-Einstellungen wählen Sie animierte Aura-Ringe, feststehende Statusringe oder deaktivieren die visuellen Effekte.']],
@@ -58,8 +58,9 @@ const de = {
 
 const en = {
  eye:['Eye menu & icon controls',[
-  'Tap the {eye}Eye icon to reveal the grouped shortcuts. Hold it to configure position, grouping, aura rings, colours and slots. These controls are part of GewitterRadar Standard.',
-  'With WeatherRouter connected, tap an assigned weather icon to toggle its layer. Hold an icon such as {precipitation}Precipitation to open its settings. Use {display}Display to adjust layer opacity.',
+  ['eye','Tap the Eye icon to reveal the grouped shortcuts. Hold it to configure position, grouping, aura rings, colours and slots. These controls are part of GewitterRadar Standard.'],
+  ['precipitation','Hold a weather icon such as Precipitation to open its settings. With WeatherRouter connected, tap an assigned weather icon to toggle its layer.'],
+  ['display','Use the Display icon to adjust the opacity of individual weather layers.'],
   'Grouping keeps the map clear. Turn it off to show assigned icons individually and open the Eye settings with a tap.',
   'Add slots in the Eye settings. Tap a free slot to assign it or drag an available icon into it. The interface supports up to eight slots. A coloured ring indicates an active available function. Use the glow settings for animated auras, fixed status rings or no effects.']],
  wind:['Wind display',[
@@ -100,20 +101,16 @@ function make(tag,text,className){
  return node;
 }
 
-function helpParagraph(text){
- const paragraph=make('p');
- for(const part of text.split(/(\{(?:eye|precipitation|display)\}[^\s]+)/)){
-  if(!part.startsWith('{')){paragraph.append(document.createTextNode(part));continue;}
-  const end=part.indexOf('}');
-  const label=make('span',null,'help-inline-icon');
-  const image=make('img');
-  image.src=icons[part.slice(1,end)];
-  image.alt='';
-  image.width=image.height=16;
-  image.draggable=false;
-  label.append(image,document.createTextNode(part.slice(end+1)));
-  paragraph.append(label);
- }
+function helpParagraph(content){
+ if(typeof content==='string')return make('p',content);
+ const [icon,text]=content;
+ const paragraph=make('p',null,'help-icon-paragraph');
+ const image=make('img');
+ image.src=icons[icon];
+ image.alt='';
+ image.width=image.height=42;
+ image.draggable=false;
+ paragraph.append(image,document.createTextNode(text));
  return paragraph;
 }
 

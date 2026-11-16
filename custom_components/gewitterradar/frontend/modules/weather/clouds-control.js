@@ -1,6 +1,6 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411218r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411219r1';
 import {CLOUD_CAPABILITY,CLOUD_EYE_ICON,cloudEyeStatus} from './eye-hub-registry.js?v=411213r1';
-import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411218r1';
+import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411219r1';
 
 const STORAGE_KEY='gewitterradar:clouds-ui:v1';
 const PANEL_SCOPE='clouds-settings';

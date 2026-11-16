@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.218",
-  "build": "V4.11.218-DEV-2026-11-16",
-  "runtimeRevision": "411218r1",
-  "moduleSetId": "E411-218A1",
-  "baselineFeatureHead": "c5dab860084f4fddc1a3db85ccc583f38423e75d",
+  "productVersion": "4.11.219",
+  "build": "V4.11.219-DEV-2026-11-16",
+  "runtimeRevision": "411219r1",
+  "moduleSetId": "E411-219A1",
+  "baselineFeatureHead": "77cfc8342f14f08d4f55f42e48c94f1d3aa3d0d7",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Help text and Wind shortcut artwork; regional WeatherRouter synoptic fronts and direction-aware symbols.",
+    "purpose": "Resize and reflow the three illustrated Eye Help paragraphs.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -132,14 +132,31 @@ async function assertHelp(page,connected,screenshots){
       assert.equal(await topic.locator('.help-pro-badge').count(),0);
       assert.match(await body.textContent(),/gehört zu GewitterRadar Standard/);
       assert.match(await body.textContent(),/bis zu acht Slots/);
-      const inputs=await body.locator('.help-inline-icon img').evaluateAll(imgs=>imgs.map(img=>({
-        file:img.src.split('/').at(-1),loaded:img.complete&&img.naturalWidth>0,
-        height:img.getBoundingClientRect().height,font:parseFloat(getComputedStyle(img).fontSize)
-      })));
-      assert.deepEqual(inputs.map(img=>img.file),[
-        'gr-eye-open-master-1254.png','gr-precipitation-premium-original.png','gr-weather-display-premium-original.png'
-      ]);
-      assert(inputs.every(img=>img.loaded&&img.height<=img.font));
+      for(const width of [320,393,851,1177]){
+        await page.setViewportSize({width,height:width===851?393:851});
+        const layout=await body.locator('.help-icon-paragraph > img').evaluateAll(imgs=>imgs.map(img=>{
+          const paragraph=img.parentElement,box=img.getBoundingClientRect();
+          const range=document.createRange();
+          range.selectNodeContents(paragraph.lastChild);
+          const lines=Array.from(range.getClientRects());
+          return {
+            file:img.src.split('/').at(-1),loaded:img.complete&&img.naturalWidth>0,
+            height:box.height,lineHeight:parseFloat(getComputedStyle(paragraph).lineHeight),
+            lineCount:lines.length,
+            alongside:lines.filter(line=>line.top<box.bottom&&line.left>=box.right-1).length,
+            beneath:lines.slice(2).every(line=>Math.abs(line.left-paragraph.getBoundingClientRect().left)<1),
+            overflows:paragraph.scrollWidth>paragraph.clientWidth+1
+          };
+        }));
+        assert.deepEqual(layout.map(img=>img.file),[
+          'gr-eye-open-master-1254.png','gr-precipitation-premium-original.png','gr-weather-display-premium-original.png'
+        ]);
+        assert(layout.every(img=>img.loaded&&Math.abs(img.height-2*img.lineHeight)<1&&
+          img.alongside===Math.min(2,img.lineCount)&&img.beneath&&!img.overflows),JSON.stringify({width,layout}));
+        if(width===393&&connected&&screenshots)
+          await topic.screenshot({path:path.join(screenshots,'hilfe-eye-icons.png'),animations:'disabled'});
+      }
+      await page.setViewportSize({width:393,height:851});
     }
     if(key==='wr-wind')assert.match(await icon.getAttribute('src'),/gr-wind-animation-toggle-premium-v1-272\.webp$/);
     if(key==='wr-precipitation')assert.match(await body.textContent(),/0 % Deckkraft.*transparent.*100 %.*deckend/);
