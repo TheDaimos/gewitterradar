@@ -50,7 +50,7 @@ const de = {
    'Die Ebene zeigt Wolken im verfügbaren Satellitenprodukt. Nutzen Sie Quellenzeit und Abdeckung. Die Wolkenebene ist separat von Wind und Niederschlag schaltbar.']],
  synoptic:['Hoch-/Tiefdruck, Isobaren & Fronten',
   ['Schalten Sie die Synoptik per Tipp ein. Gedrückthalten öffnet Einstellungen für H/T, Isobaren und verfügbare Fronten. H und T markieren Druckzentren. Isobaren verbinden Orte gleichen Luftdrucks in hPa.',
-   'ECCC liefert die verwendeten Druckzentren, NOAA/GFS die Isobaren und NOAA/WPC typisierte Fronten. Dreiecke kennzeichnen Kaltfronten, Halbkreise Warmfronten. Bei kombinierten Fronten unterscheiden Farbe und Symbolfolge den Typ. WPC-Abdeckung und Gültigkeit sind produktabhängig.']],
+   'ECCC liefert die Druckzentren, NOAA/GFS die Isobaren und NOAA/WPC typisierte Fronten. Dreiecke und Halbkreise setzen eine belegte Symbolseite voraus. Liefert der Anbieter diese Seite nicht, zeigen Rauten und Punkte den Frontentyp ohne Zugrichtung. Abdeckung und Gültigkeit hängen vom Produkt ab.']],
  display:['Ebenen & Deckkraft',
   ['Öffnen Sie „Darstellung“ im Eye oder im Kartenmenü. Wählen Sie die WeatherRouter-Ebene und regeln Sie deren Deckkraft. Je nach Ebene stehen Darstellungsstile, Legenden und Details im eigenen Long-Press-Menü bereit.']],
  pro:['Featurelist',
@@ -96,7 +96,7 @@ const en = {
   'Shading uses colours for different temperature ranges. Enable temperature values to add the modelled numbers to the map.',
   'Thermal advection shows the horizontal transport of warmer or colder air by wind. It helps identify large-scale temperature shifts and changes in air masses.']],
  clouds:['Clouds',['Tap the gold-rimmed icon to toggle WeatherRouter satellite clouds. Hold to choose Original or Balanced and set opacity. Check the satellite product’s source time and coverage.']],
- synoptic:['Highs, lows, isobars & fronts',['Tap to toggle synoptic overlays. Hold to configure H/L markers, equal-pressure lines in hPa and available fronts. ECCC supplies pressure centres, NOAA/GFS supplies isobars and NOAA/WPC supplies typed fronts. Triangles indicate cold fronts and semicircles warm fronts. Coverage and validity vary by product.']],
+ synoptic:['Highs, lows, isobars & fronts',['Tap to toggle synoptic overlays. Hold to configure H/L markers, equal-pressure lines in hPa and available fronts. ECCC supplies pressure centres, NOAA/GFS supplies isobars and NOAA/WPC supplies typed fronts. Triangles and semicircles require a confirmed symbol side. Otherwise diamonds and dots show the front type without indicating movement. Coverage and validity vary by product.']],
  display:['Layers & opacity',['Open Display in the Eye or map menu. Choose a WeatherRouter layer to adjust its opacity. Hold the individual weather icon for product-specific modes and legends.']],
  pro:['Featurelist',['Install and configure WeatherRouter in the same Home Assistant and enable its local consumer interface. The PRO artwork appears when the connection reports a ready runtime.'],
   ['Radar · DWD for Germany, OPERA for European coverage and optional NASA products. Sources can load in parallel and appear progressively where available.',
@@ -145,7 +145,7 @@ export function appendHelpProLabel(target,label,size='standard'){
  target.append(tail);
 }
 
-export function createHelpSections(content,language){
+export function createHelpSections(content,language,weatherHelp){
  const german=language==='Deutsch';
  const standard=make('section',null,'help-standard');
  const standardHeading=make('h3','GewitterRadar Standard','help-standard-heading');
@@ -174,13 +174,20 @@ export function createHelpSections(content,language){
   if(status.dataset.connected===String(connected))return;
   status.dataset.connected=String(connected);
   status.textContent=connected
-   ? (german?'WeatherRouter verbunden':'WeatherRouter connected')
-   : (german?'Optionale Erweiterung · WeatherRouter derzeit nicht verbunden':'Optional extension · WeatherRouter currently disconnected');
+   ? (weatherHelp?.labels.connected ?? (german?'WeatherRouter verbunden':'WeatherRouter connected'))
+   : (weatherHelp?.labels.disconnected ?? (german?'Optionale Erweiterung · WeatherRouter derzeit nicht verbunden':'Optional extension · WeatherRouter currently disconnected'));
  }};
 }
 
-export function createHelpProMapNote(language){
+export function createHelpProMapNote(language,weatherHelp){
  const german=language==='Deutsch';
+ if(weatherHelp){
+  const [before,after]=weatherHelp.labels.mapNote.split('{router}');
+  const note=make('p',before);
+  appendHelpProLabel(note,'WeatherRouter','compact');
+  note.append(document.createTextNode(after));
+  return note;
+ }
  const note=make('p',german?'Mit verbundenem ':'With a connection to ');
  appendHelpProLabel(note,'WeatherRouter','compact');
  note.append(document.createTextNode(german
@@ -189,8 +196,9 @@ export function createHelpProMapNote(language){
  return note;
 }
 
-export function appendWeatherHelp(content,language,openKeys,{upgrade=false}={}){
- const german=language==='Deutsch',copy=german?de:en;
+export function appendWeatherHelp(content,language,openKeys,{upgrade=false,weatherHelp}={}){
+ const german=language==='Deutsch',copy=weatherHelp?.topics??(german?de:en);
+ const labels=weatherHelp?.labels;
  const keys=upgrade?['pro']:Object.keys(copy).filter(key=>key!=='pro');
  for(const key of keys){
   const [label,paragraphs,features]=copy[key];
@@ -212,9 +220,9 @@ export function appendWeatherHelp(content,language,openKeys,{upgrade=false}={}){
   summary.append(icon,title,chevron);
   const body=make('div',null,'help-section-body');
   if(upgrade){
-   body.append(make('h3',german?'Was ist WeatherRouter?':'What is WeatherRouter?'));
-   body.append(make('p',german?'Ein zusätzlicher lokaler Datendienst in Home Assistant, der Wetterprodukte mehrerer Anbieter für GewitterRadar bereitstellt.':'An additional local data service in Home Assistant that provides weather products from multiple sources.'));
-   body.append(make('h3',german?'Wie bekomme ich GewitterRadar PRO?':'How do I get GewitterRadar PRO?'));
+   body.append(make('h3',labels?.what??(german?'Was ist WeatherRouter?':'What is WeatherRouter?')));
+   body.append(make('p',labels?.description??(german?'Ein zusätzlicher lokaler Datendienst in Home Assistant, der Wetterprodukte mehrerer Anbieter für GewitterRadar bereitstellt.':'An additional local data service in Home Assistant that provides weather products from multiple sources.')));
+   body.append(make('h3',labels?.how??(german?'Wie bekomme ich GewitterRadar PRO?':'How do I get GewitterRadar PRO?')));
   }
   if(key==='clouds'){
    const graphic=make('img',null,'help-layer-graphic');
@@ -239,11 +247,11 @@ export function appendWeatherHelp(content,language,openKeys,{upgrade=false}={}){
     const a=make('a',text,'help-maptiler-link');a.href=url;a.target='_blank';a.rel='noopener noreferrer';
     links.append(a,document.createTextNode('  '));
    }
-   body.append(links,make('h3',german?'Funktionen im Überblick':'Available features'));
+   body.append(links,make('h3',labels?.features??(german?'Funktionen im Überblick':'Available features')));
    const ul=make('ul');for(const text of features)ul.append(make('li',text));body.append(ul);
-   body.append(make('p',german?'Eye-Bedienung, Profile und Sicherungen sind bereits in GewitterRadar Standard verfügbar.':'Eye controls, profiles and backups are already available in GewitterRadar Standard.'));
+   body.append(make('p',labels?.standard??(german?'Eye-Bedienung, Profile und Sicherungen sind bereits in GewitterRadar Standard verfügbar.':'Eye controls, profiles and backups are already available in GewitterRadar Standard.')));
   }
-  const back=make('button',german?'Zur Übersicht':'Back to topics','eye-metal-button help-topic-back');
+  const back=make('button',labels?.back??(german?'Zur Übersicht':'Back to topics'),'eye-metal-button help-topic-back');
   back.type='button';back.addEventListener('click',()=>{details.open=false;summary.focus();});
   body.append(back);details.append(summary,body);content.append(details);
  }

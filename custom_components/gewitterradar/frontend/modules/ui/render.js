@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.render",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "group": "Oberfläche",
   "function": "Hauptrendering",
   "subfunctions": [
@@ -17,7 +17,9 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       if (!this._built || !this._hass) return;
       const aboutLabel = this.shadow.getElementById('settings-about-label');
       if (aboutLabel) aboutLabel.textContent = this._t('about.title');
-      if (this.shadow.getElementById('settings-backdrop')?.classList.contains('open')) this._syncHelpMenu();
+      const helpLanguageChanged = this._helpDialog?.open && this._helpRenderedLanguage !== this._languageValue();
+      if (helpLanguageChanged) this._syncHelp();
+      if (helpLanguageChanged || this.shadow.getElementById('settings-backdrop')?.classList.contains('open')) this._syncHelpMenu();
       this._maybeOpenAbout();
       if (this._aboutDialog?.open) this._syncAbout();
       if(this._diagnostics.enabled){if(!Number.isFinite(this._diagnosticTimings.firstRenderStartAt)){this._diagnosticTimings.firstRenderStartAt=performance.now();requestAnimationFrame(()=>{if(this._diagnostics.enabled&&!Number.isFinite(this._diagnosticTimings.firstRenderCompleteAt))this._diagnosticTimings.firstRenderCompleteAt=performance.now();});}this._diagnostics.renderCount+=1;}

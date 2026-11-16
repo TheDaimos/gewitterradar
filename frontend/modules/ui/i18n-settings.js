@@ -1,10 +1,10 @@
-import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411221r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411222r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411222r1';
+import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411223r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411223r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411223r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.34",
+  "version": "1.3.35",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -143,6 +143,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installed"
   },
   "Dansk": {
+    "map.compass_move": "Flyt kompasset på kortet",
+    "calibration.ring_cover": "Dækkende cirkel",
+    "calibration.ring_target": "Anbefalet overlap",
+    "calibration.ring_visual": "Skivens kant",
+    "calibration.ring_protected": "Beskyttet yderkant",
+    "calibration.ring_bounding": "Kompassets afgrænsning",
+    "calibration.ring_gap": "Ring for mellemrum og overlap (360°)",
+    "calibration.ring_backing": "Baggrundsudfyldning",
+    "calibration.tip_visual": "Skivens synlige yderkant. Den må gå lidt ind under metalrammen for at mindske mellemrum.",
+    "calibration.tip_protected": "Den yderste synlige kant af gradmarkeringerne. Metalrammen må ikke skære den af.",
+    "calibration.tip_backing": "Baggrundsfladen dækker hele den ujævne rammeåbning uden at forvrænge kompasset eller gradmarkeringerne.",
+    "calibration.tip_bounding": "Kompassets tekniske afgrænsning. Den kan omfatte gennemsigtige eller usynlige margener og bruges ikke til visuel tilpasning.",
+    "calibration.tip_gap": "Viser mellemrum og overlap mellem skive og rammeåbning hele vejen rundt.",
+    "calibration.tip_cover": "Viser den mindste cirkel, der dækker hele den målte rammeåbning.",
+    "calibration.tip_target": "Viser den anbefalede skivestørrelse med ekstra overlap under metalrammen.",
     "settings.cluster_resolution": "Klyngeopløsning",
     "settings.cluster_resolution_note": "Hvornår klynger opdeles i enkelte lynnedslag",
     "settings.cluster_navigation_session": "Klyngenavigation · sessionstid",
@@ -206,6 +221,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installeret"
   },
   "Español": {
+    "map.compass_move": "Mover la brújula en el mapa",
+    "calibration.ring_cover": "Círculo envolvente",
+    "calibration.ring_target": "Solapamiento recomendado",
+    "calibration.ring_visual": "Contorno de la esfera",
+    "calibration.ring_protected": "Contorno exterior protegido",
+    "calibration.ring_bounding": "Límites de la brújula",
+    "calibration.ring_gap": "Anillo de huecos y solapamientos (360°)",
+    "calibration.ring_backing": "Relleno de fondo",
+    "calibration.tip_visual": "Borde exterior visible de la esfera. Puede entrar ligeramente bajo el marco metálico para reducir los huecos.",
+    "calibration.tip_protected": "Borde visible más externo de las marcas de grados. El marco metálico no debe recortarlo.",
+    "calibration.tip_backing": "Superficie de fondo que cubre por completo la abertura irregular sin deformar la brújula ni las marcas.",
+    "calibration.tip_bounding": "Límite técnico del elemento de brújula. Puede incluir márgenes transparentes o invisibles y no se usa para el ajuste visual.",
+    "calibration.tip_gap": "Muestra dónde hay huecos o solapamientos entre la esfera y la abertura a lo largo de los 360°.",
+    "calibration.tip_cover": "Muestra el círculo más pequeño que cubre toda la abertura medida del marco.",
+    "calibration.tip_target": "Muestra el tamaño recomendado de la esfera con un solapamiento adicional bajo el marco metálico.",
     "settings.cluster_resolution": "Resolución de clústeres",
     "settings.cluster_resolution_note": "Cuándo los clústeres se dividen en rayos individuales",
     "settings.cluster_navigation_session": "Navegación de clústeres · duración de sesión",
@@ -269,6 +299,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Instalado"
   },
   "Français": {
+    "map.compass_move": "Déplacer la boussole sur la carte",
+    "calibration.ring_cover": "Cercle couvrant",
+    "calibration.ring_target": "Chevauchement recommandé",
+    "calibration.ring_visual": "Contour du cadran",
+    "calibration.ring_protected": "Contour extérieur protégé",
+    "calibration.ring_bounding": "Boîte englobante de la boussole",
+    "calibration.ring_gap": "Anneau des écarts et chevauchements (360°)",
+    "calibration.ring_backing": "Fond de compensation",
+    "calibration.tip_visual": "Contour visible extérieur du cadran. Il peut passer légèrement sous le cadre métallique pour réduire les espaces.",
+    "calibration.tip_protected": "Contour visible le plus extérieur des graduations. Le cadre métallique ne doit pas le couper.",
+    "calibration.tip_backing": "Surface derrière la boussole qui couvre l’ouverture irrégulière sans déformer le cadran ni ses graduations.",
+    "calibration.tip_bounding": "Limite technique de l’élément boussole. Elle peut inclure des marges transparentes ou invisibles et ne sert pas à l’ajustement visuel.",
+    "calibration.tip_gap": "Indique les écarts et chevauchements entre le cadran et l’ouverture sur tout le tour.",
+    "calibration.tip_cover": "Indique le plus petit cercle couvrant toute l’ouverture mesurée du cadre.",
+    "calibration.tip_target": "Indique la taille de cadran conseillée avec un chevauchement supplémentaire sous le cadre métallique.",
     "settings.cluster_resolution": "Résolution des clusters",
     "settings.cluster_resolution_note": "Quand les clusters se séparent en impacts individuels",
     "settings.cluster_navigation_session": "Navigation des clusters · durée de session",
@@ -332,6 +377,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installé"
   },
   "Nederlands": {
+    "map.compass_move": "Kompas op de kaart verplaatsen",
+    "calibration.ring_cover": "Afdekkende cirkel",
+    "calibration.ring_target": "Gewenste overlap",
+    "calibration.ring_visual": "Omtrek van de wijzerplaat",
+    "calibration.ring_protected": "Beschermde buitenrand",
+    "calibration.ring_bounding": "Begrenzingskader van het kompas",
+    "calibration.ring_gap": "Ring voor ruimte en overlap (360°)",
+    "calibration.ring_backing": "Opvulling achter het kompas",
+    "calibration.tip_visual": "Zichtbare buitenrand van de wijzerplaat. Die mag iets onder de metalen rand doorlopen om open ruimte te beperken.",
+    "calibration.tip_protected": "Buitenste zichtbare rand van de graadmarkeringen. De metalen rand mag die niet afsnijden.",
+    "calibration.tip_backing": "Extra oppervlak achter het kompas dat de onregelmatige opening vult zonder het kompas of de graadmarkeringen te vervormen.",
+    "calibration.tip_bounding": "Technische begrenzing van het kompaselement. Die kan transparante of onzichtbare marges bevatten en dient niet voor visuele inpassing.",
+    "calibration.tip_gap": "Toont over de volle 360° waar ruimte of overlap zit tussen wijzerplaat en frameopening.",
+    "calibration.tip_cover": "Toont de kleinste cirkel die de hele gemeten frameopening afdekt.",
+    "calibration.tip_target": "Toont de aanbevolen grootte van de wijzerplaat inclusief extra overlap onder de metalen rand.",
     "settings.cluster_resolution": "Clusterresolutie",
     "settings.cluster_resolution_note": "Wanneer clusters worden opgesplitst in afzonderlijke bliksems",
     "settings.cluster_navigation_session": "Clusternavigatie · sessieduur",
@@ -395,6 +455,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Geïnstalleerd"
   },
   "Polski": {
+    "map.compass_move": "Przesuń kompas na mapie",
+    "calibration.ring_cover": "Okrąg pokrywający",
+    "calibration.ring_target": "Zalecane zachodzenie",
+    "calibration.ring_visual": "Obrys tarczy",
+    "calibration.ring_protected": "Chroniony obrys zewnętrzny",
+    "calibration.ring_bounding": "Ramka ograniczająca kompas",
+    "calibration.ring_gap": "Pierścień przerw i zachodzenia (360°)",
+    "calibration.ring_backing": "Wypełnienie tła",
+    "calibration.tip_visual": "Zewnętrzny widoczny obrys tarczy. Może nieznacznie wchodzić pod metalową oprawę, aby zmniejszyć szczeliny.",
+    "calibration.tip_protected": "Najbardziej zewnętrzny widoczny obrys podziałki. Metalowa oprawa nie może go zasłaniać.",
+    "calibration.tip_backing": "Dodatkowa powierzchnia za kompasem, pokrywająca nieregularny otwór bez deformacji kompasu lub podziałki.",
+    "calibration.tip_bounding": "Techniczne granice elementu kompasu. Mogą obejmować przezroczyste lub niewidoczne marginesy i nie służą do dopasowania wizualnego.",
+    "calibration.tip_gap": "Pokazuje na całym obwodzie przerwy i miejsca zachodzenia między tarczą a otworem w oprawie.",
+    "calibration.tip_cover": "Pokazuje najmniejszy okrąg pokrywający cały zmierzony otwór oprawy.",
+    "calibration.tip_target": "Pokazuje zalecany rozmiar tarczy z dodatkowym zakładem pod metalową oprawą.",
     "settings.cluster_resolution": "Rozdzielczość klastrów",
     "settings.cluster_resolution_note": "Kiedy klastry są rozdzielane na pojedyncze wyładowania",
     "settings.cluster_navigation_session": "Nawigacja klastrów · czas sesji",
@@ -458,6 +533,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Zainstalowano"
   },
   "Português": {
+    "map.compass_move": "Mover a bússola no mapa",
+    "calibration.ring_cover": "Círculo de cobertura",
+    "calibration.ring_target": "Sobreposição recomendada",
+    "calibration.ring_visual": "Contorno do mostrador",
+    "calibration.ring_protected": "Contorno exterior protegido",
+    "calibration.ring_bounding": "Limites da bússola",
+    "calibration.ring_gap": "Anel de folgas e sobreposições (360°)",
+    "calibration.ring_backing": "Preenchimento de fundo",
+    "calibration.tip_visual": "Contorno exterior visível do mostrador. Pode passar um pouco sob o aro metálico para reduzir folgas.",
+    "calibration.tip_protected": "Contorno visível mais exterior das marcas de graus. O aro metálico não deve cortá-lo.",
+    "calibration.tip_backing": "Superfície atrás da bússola que cobre a abertura irregular sem deformar a bússola nem as marcas.",
+    "calibration.tip_bounding": "Limite técnico do elemento de bússola. Pode incluir margens transparentes ou invisíveis e não serve para o ajuste visual.",
+    "calibration.tip_gap": "Mostra, ao longo dos 360°, onde há folga ou sobreposição entre o mostrador e a abertura.",
+    "calibration.tip_cover": "Mostra o menor círculo que cobre toda a abertura medida do aro.",
+    "calibration.tip_target": "Mostra o tamanho recomendado do mostrador com sobreposição adicional sob o aro metálico.",
     "settings.cluster_resolution": "Resolução de clusters",
     "settings.cluster_resolution_note": "Quando os clusters se dividem em descargas individuais",
     "settings.cluster_navigation_session": "Navegação de clusters · duração da sessão",
@@ -521,6 +611,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Instalado"
   },
   "Svenska": {
+    "map.compass_move": "Flytta kompassen på kartan",
+    "calibration.ring_cover": "Täckande cirkel",
+    "calibration.ring_target": "Rekommenderad överlappning",
+    "calibration.ring_visual": "Tavlans kontur",
+    "calibration.ring_protected": "Skyddad ytterkontur",
+    "calibration.ring_bounding": "Kompassens begränsningsruta",
+    "calibration.ring_gap": "Ring för glapp och överlappning (360°)",
+    "calibration.ring_backing": "Bakgrundsfyllnad",
+    "calibration.tip_visual": "Kompasstavlans synliga ytterkant. Den får gå in något under metallramen för att minska glapp.",
+    "calibration.tip_protected": "Gradmarkeringarnas yttersta synliga kant. Metallramen får inte skära av den.",
+    "calibration.tip_backing": "Extra yta bakom kompassen som täcker den ojämna öppningen utan att förvränga kompassen eller gradmarkeringarna.",
+    "calibration.tip_bounding": "Kompassens tekniska avgränsning. Den kan omfatta genomskinliga eller osynliga marginaler och används inte för visuell inpassning.",
+    "calibration.tip_gap": "Visar glapp och överlappning mellan kompasstavlan och ramöppningen hela varvet runt.",
+    "calibration.tip_cover": "Visar den minsta cirkel som täcker hela den uppmätta ramöppningen.",
+    "calibration.tip_target": "Visar rekommenderad storlek på kompasstavlan med extra överlappning under metallramen.",
     "settings.cluster_resolution": "Klusterupplösning",
     "settings.cluster_resolution_note": "När kluster delas upp i enskilda blixtar",
     "settings.cluster_navigation_session": "Klusternavigering · sessionstid",
@@ -584,6 +689,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installerad"
   },
   "Italiano": {
+    "map.compass_move": "Sposta la bussola sulla mappa",
+    "calibration.ring_cover": "Cerchio di copertura",
+    "calibration.ring_target": "Sovrapposizione consigliata",
+    "calibration.ring_visual": "Contorno del quadrante",
+    "calibration.ring_protected": "Contorno esterno protetto",
+    "calibration.ring_bounding": "Riquadro della bussola",
+    "calibration.ring_gap": "Anello di spazi e sovrapposizioni (360°)",
+    "calibration.ring_backing": "Riempimento di fondo",
+    "calibration.tip_visual": "Contorno esterno visibile del quadrante. Può passare leggermente sotto la cornice metallica per ridurre gli spazi.",
+    "calibration.tip_protected": "Contorno visibile più esterno delle tacche dei gradi. La cornice metallica non deve tagliarlo.",
+    "calibration.tip_backing": "Superficie dietro la bussola che copre l’apertura irregolare senza deformare la bussola né le tacche.",
+    "calibration.tip_bounding": "Limite tecnico dell’elemento bussola. Può comprendere margini trasparenti o invisibili e non serve per l’allineamento visivo.",
+    "calibration.tip_gap": "Mostra lungo i 360° dove ci sono spazi o sovrapposizioni tra il quadrante e l’apertura.",
+    "calibration.tip_cover": "Mostra il cerchio più piccolo che copre l’intera apertura misurata della cornice.",
+    "calibration.tip_target": "Mostra la dimensione consigliata del quadrante con un margine aggiuntivo sotto la cornice metallica.",
     "settings.cluster_resolution": "Risoluzione cluster",
     "settings.cluster_resolution_note": "Quando i cluster vengono suddivisi in fulmini singoli",
     "settings.cluster_navigation_session": "Navigazione cluster · durata sessione",
@@ -647,6 +767,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installato"
   },
   "Norsk bokmål": {
+    "map.compass_move": "Flytt kompasset på kartet",
+    "calibration.ring_cover": "Dekningssirkel",
+    "calibration.ring_target": "Anbefalt overlapp",
+    "calibration.ring_visual": "Skivens omriss",
+    "calibration.ring_protected": "Beskyttet ytterkant",
+    "calibration.ring_bounding": "Kompassets avgrensningsboks",
+    "calibration.ring_gap": "Ring for åpninger og overlapp (360°)",
+    "calibration.ring_backing": "Bakgrunnsutfylling",
+    "calibration.tip_visual": "Kompasskivens synlige ytterkant. Den kan gå litt under metallrammen for å redusere åpninger.",
+    "calibration.tip_protected": "Den ytterste synlige kanten av gradstrekene. Metallrammen må ikke skjære den av.",
+    "calibration.tip_backing": "En ekstra bakgrunnsflate som dekker den ujevne åpningen uten å forvrenge kompasset eller gradstrekene.",
+    "calibration.tip_bounding": "Kompassets tekniske avgrensning. Den kan ha gjennomsiktige eller usynlige marger og brukes ikke til visuell tilpasning.",
+    "calibration.tip_gap": "Viser åpninger og overlapp mellom skiven og rammeåpningen hele veien rundt.",
+    "calibration.tip_cover": "Viser den minste sirkelen som dekker hele den målte rammeåpningen.",
+    "calibration.tip_target": "Viser anbefalt skivestørrelse med ekstra overlapp under metallrammen.",
     "settings.cluster_resolution": "Klyngeoppløsning",
     "settings.cluster_resolution_note": "Når klynger deles opp i enkeltutladninger",
     "settings.cluster_navigation_session": "Klyngenavigasjon · økttid",
@@ -710,6 +845,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installert"
   },
   "Suomi": {
+    "map.compass_move": "Siirrä kompassia kartalla",
+    "calibration.ring_cover": "Peittävä ympyrä",
+    "calibration.ring_target": "Suositeltu limitys",
+    "calibration.ring_visual": "Taulun ääriviiva",
+    "calibration.ring_protected": "Suojattu ulkoreuna",
+    "calibration.ring_bounding": "Kompassin rajauslaatikko",
+    "calibration.ring_gap": "Välys- ja limitysrengas (360°)",
+    "calibration.ring_backing": "Taustan täyttö",
+    "calibration.tip_visual": "Kompassitaulun näkyvä ulkoreuna. Se voi ulottua hieman metallikehyksen alle, jotta välys pienenee.",
+    "calibration.tip_protected": "Asteikon uloin näkyvä reuna. Metallikehys ei saa peittää sitä.",
+    "calibration.tip_backing": "Kompassin taustalla oleva lisäpinta peittää epäsäännöllisen aukon vääristämättä kompassia tai asteikkoa.",
+    "calibration.tip_bounding": "Kompassielementin tekninen rajaus. Se voi sisältää läpinäkyviä tai näkymättömiä reunoja, eikä sitä käytetä visuaaliseen sovittamiseen.",
+    "calibration.tip_gap": "Näyttää koko kierrokselta taulun ja kehysaukon välykset ja limitykset.",
+    "calibration.tip_cover": "Näyttää pienimmän ympyrän, joka peittää koko mitatun kehysaukon.",
+    "calibration.tip_target": "Näyttää suositellun taulukoon, jossa on lisälimitys metallikehyksen alla.",
     "settings.cluster_resolution": "Klusterien erottelu",
     "settings.cluster_resolution_note": "Milloin klusterit jaetaan yksittäisiksi salamoiksi",
     "settings.cluster_navigation_session": "Klusterinavigointi · istunnon kesto",
@@ -773,6 +923,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Asennettu"
   },
   "Čeština": {
+    "map.compass_move": "Posunout kompas na mapě",
+    "calibration.ring_cover": "Krycí kružnice",
+    "calibration.ring_target": "Doporučené překrytí",
+    "calibration.ring_visual": "Obrys ciferníku",
+    "calibration.ring_protected": "Chráněný vnější obrys",
+    "calibration.ring_bounding": "Ohraničující rámeček kompasu",
+    "calibration.ring_gap": "Prstenec mezer a překrytí (360°)",
+    "calibration.ring_backing": "Výplň pozadí",
+    "calibration.tip_visual": "Viditelný vnější obrys ciferníku. Může mírně zasahovat pod kovový rám, aby se zmenšila mezera.",
+    "calibration.tip_protected": "Nejzazší viditelný obrys stupnice. Kovový rám jej nesmí zakrýt.",
+    "calibration.tip_backing": "Dodatečná plocha za kompasem kryje nepravidelný otvor bez deformace kompasu nebo stupnice.",
+    "calibration.tip_bounding": "Technické ohraničení prvku kompasu. Může zahrnovat průhledné nebo neviditelné okraje a neslouží k vizuálnímu usazení.",
+    "calibration.tip_gap": "Ukazuje mezery a překrytí mezi ciferníkem a otvorem rámu po celém obvodu.",
+    "calibration.tip_cover": "Ukazuje nejmenší kružnici, která pokrývá celý změřený otvor rámu.",
+    "calibration.tip_target": "Ukazuje doporučenou velikost ciferníku s dodatečným přesahem pod kovovým rámem.",
     "settings.cluster_resolution": "Rozlišení shluků",
     "settings.cluster_resolution_note": "Kdy se shluky rozdělí na jednotlivé výboje",
     "settings.cluster_navigation_session": "Navigace shluků · délka relace",
@@ -836,6 +1001,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Nainstalováno"
   },
   "Ελληνικά": {
+    "map.compass_move": "Μετακίνηση πυξίδας στον χάρτη",
+    "calibration.ring_cover": "Κύκλος κάλυψης",
+    "calibration.ring_target": "Προτεινόμενη επικάλυψη",
+    "calibration.ring_visual": "Περίγραμμα καντράν",
+    "calibration.ring_protected": "Προστατευμένο εξωτερικό περίγραμμα",
+    "calibration.ring_bounding": "Πλαίσιο οριοθέτησης πυξίδας",
+    "calibration.ring_gap": "Δακτύλιος κενών και επικάλυψης (360°)",
+    "calibration.ring_backing": "Γέμισμα φόντου",
+    "calibration.tip_visual": "Το ορατό εξωτερικό περίγραμμα του καντράν. Μπορεί να μπαίνει λίγο κάτω από το μεταλλικό πλαίσιο για να περιορίζονται τα κενά.",
+    "calibration.tip_protected": "Το εξώτατο ορατό περίγραμμα των διαβαθμίσεων. Το μεταλλικό πλαίσιο δεν πρέπει να το καλύπτει.",
+    "calibration.tip_backing": "Επιπλέον επιφάνεια πίσω από την πυξίδα που καλύπτει το ακανόνιστο άνοιγμα χωρίς να παραμορφώνει την πυξίδα ή τις διαβαθμίσεις.",
+    "calibration.tip_bounding": "Το τεχνικό όριο του στοιχείου της πυξίδας. Μπορεί να περιέχει διαφανή ή αόρατα περιθώρια και δεν χρησιμοποιείται για οπτική προσαρμογή.",
+    "calibration.tip_gap": "Δείχνει σε όλη την περιφέρεια τα κενά και τις επικαλύψεις ανάμεσα στο καντράν και το άνοιγμα.",
+    "calibration.tip_cover": "Δείχνει τον μικρότερο κύκλο που καλύπτει ολόκληρο το μετρημένο άνοιγμα.",
+    "calibration.tip_target": "Δείχνει το προτεινόμενο μέγεθος καντράν με πρόσθετη επικάλυψη κάτω από το μεταλλικό πλαίσιο.",
     "settings.cluster_resolution": "Ανάλυση συστάδων",
     "settings.cluster_resolution_note": "Πότε οι συστάδες χωρίζονται σε μεμονωμένους κεραυνούς",
     "settings.cluster_navigation_session": "Πλοήγηση συστάδων · διάρκεια συνεδρίας",
@@ -899,6 +1079,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Εγκατεστημένο"
   },
   "Magyar": {
+    "map.compass_move": "Iránytű mozgatása a térképen",
+    "calibration.ring_cover": "Fedőkör",
+    "calibration.ring_target": "Ajánlott átfedés",
+    "calibration.ring_visual": "A számlap körvonala",
+    "calibration.ring_protected": "Védett külső körvonal",
+    "calibration.ring_bounding": "Az iránytű befoglaló téglalapja",
+    "calibration.ring_gap": "Hézag- és átfedésgyűrű (360°)",
+    "calibration.ring_backing": "Háttérkitöltés",
+    "calibration.tip_visual": "A számlap látható külső pereme. A hézag csökkentésére kissé a fémkeret alá nyúlhat.",
+    "calibration.tip_protected": "A fokbeosztás legkülső látható pereme. A fémkeret ezt nem takarhatja el.",
+    "calibration.tip_backing": "Az iránytű mögötti felület kitölti a szabálytalan keretnyílást az iránytű vagy a fokbeosztás torzítása nélkül.",
+    "calibration.tip_bounding": "Az iránytű elemének technikai határa. Átlátszó vagy láthatatlan margót is tartalmazhat, és nem használatos a vizuális illesztéshez.",
+    "calibration.tip_gap": "A teljes kerületen mutatja a számlap és a keretnyílás közötti hézagokat és átfedéseket.",
+    "calibration.tip_cover": "A legkisebb kört mutatja, amely lefedi a teljes mért keretnyílást.",
+    "calibration.tip_target": "A számlap ajánlott méretét mutatja, a fémkeret alatti többletátfedéssel.",
     "settings.cluster_resolution": "Klaszterfelbontás",
     "settings.cluster_resolution_note": "Mikor bomlanak a klaszterek egyedi villámokra",
     "settings.cluster_navigation_session": "Klaszternavigáció · munkamenet ideje",
@@ -962,6 +1157,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Telepítve"
   },
   "Boarisch": {
+    "map.compass_move": "Kompass auf da Kartn verschiam",
+    "calibration.ring_cover": "Deckkreis",
+    "calibration.ring_target": "Empfohlne Überdeckung",
+    "calibration.ring_visual": "Kontur vom Zifferblatt",
+    "calibration.ring_protected": "Gschützte Außenkontur",
+    "calibration.ring_bounding": "Begrenzungsrahmen vom Kompass",
+    "calibration.ring_gap": "Ring für Lückn und Überdeckung (360°)",
+    "calibration.ring_backing": "Hintergrundfüllung",
+    "calibration.tip_visual": "Sichtbare Außenkontur vom Zifferblatt. De derf a weng unta den Metollrahmen gehn, damit weniger frei bleibt.",
+    "calibration.tip_protected": "Da äußerste sichtbare Rand vo de Gradstrich. Da Metollrahmen derf eam ned abschneidn.",
+    "calibration.tip_backing": "De Fläch hintam Kompass deckt de unrunde Rahmenöffnung zua, ohne Kompass oder Gradstrich zum Verzerrn.",
+    "calibration.tip_bounding": "Technische Begrenzung vom Kompass. De ko an durchsichtig’n oder unsichtbarn Rand ham und is ned fürs optische Einpassn do.",
+    "calibration.tip_gap": "Zoagt rundum, wo zwischn Zifferblatt und Rahmenöffnung Lückn oder Überdeckung san.",
+    "calibration.tip_cover": "Zoagt an kloansten Kreis, der de ganze gmessne Rahmenöffnung zudeckt.",
+    "calibration.tip_target": "Zoagt d’ empfohlne Größ vom Zifferblatt mit mehr Überdeckung untam Metollrahmen.",
     "settings.cluster_resolution": "Cluster-Auflösung",
     "settings.cluster_resolution_note": "Wann d'Cluster in einzelne Blitz aufglöst werdn",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -1025,6 +1235,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installiert"
   },
   "Plattdüütsch": {
+    "map.compass_move": "Kompass op de Koort verschuven",
+    "calibration.ring_cover": "Deckkrink",
+    "calibration.ring_target": "Anraden Överdecken",
+    "calibration.ring_visual": "Ümreet vun de Wieserplaat",
+    "calibration.ring_protected": "Schuult buten Ümreet",
+    "calibration.ring_bounding": "Begrenzung vun den Kompass",
+    "calibration.ring_gap": "Ring för Lücken un Överdecken (360°)",
+    "calibration.ring_backing": "Achtergrunnfüllung",
+    "calibration.tip_visual": "Sichtbore Butenkant vun de Wieserplaat. Se dörv en bäten ünner den Metallrahmen gahn, dat de Lücken lütter warrt.",
+    "calibration.tip_protected": "De buterste sichtbore Kant vun de Gradstreken. De Metallrahmen dörv ehr nich afsnieden.",
+    "calibration.tip_backing": "En Flach achter den Kompass deckt dat unrunne Rahmenlock to, ahn den Kompass oder de Gradstreken to verteken.",
+    "calibration.tip_bounding": "Technische Begrenzung vun den Kompass. Dor kann en dörchsichtigen oder unsichtboren Rand bi wesen. För dat Inpassen na Ogen warrt se nich bruukt.",
+    "calibration.tip_gap": "Wiest rund üm de Wieserplaat, wo Lücken oder Överdecken sünd.",
+    "calibration.tip_cover": "Wiest den lüttsten Krink, de dat hele meten Rahmenlock todeckt.",
+    "calibration.tip_target": "Wiest de anraden Grött vun de Wieserplaat mit mehr Överdecken ünner den Metallrahmen.",
     "settings.cluster_resolution": "Cluster-Oplösen",
     "settings.cluster_resolution_note": "Wannehr Clusters in enkelte Blitzen oplööst warrt",
     "settings.cluster_navigation_session": "Cluster-Navigatschoon · Tied vun de Sitzung",
@@ -1088,6 +1313,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installeert"
   },
   "Sächs’sch": {
+    "map.compass_move": "Gompass off der Garde verschiebn",
+    "calibration.ring_cover": "Deggreis",
+    "calibration.ring_target": "Empfohlne Iberdeggung",
+    "calibration.ring_visual": "Gondur vom Zifferbladd",
+    "calibration.ring_protected": "Geschüzde Außengondur",
+    "calibration.ring_bounding": "Begrenzungsrahm vom Gompass",
+    "calibration.ring_gap": "Ring fir Ligg’n un Iberdeggung (360°)",
+    "calibration.ring_backing": "Hindergrundfüllung",
+    "calibration.tip_visual": "Sischdbare Außengondur vom Zifferbladd. De darf e Stück undorn Medallrahm gehn, damidd wenischer frei bleibd.",
+    "calibration.tip_protected": "De äußersde sischdbare Gande von de Gradstrische. Dor Medallrahm darf se nisch abschneidn.",
+    "calibration.tip_backing": "De Fläsche hinderm Gompass deggd de unrunde Rahmenöffnung ab, ohne Gompass oder Gradstrische zu verziehn.",
+    "calibration.tip_bounding": "Deschnische Begrenzung vom Gompass. Die gann durchsischa oder unsischdbarn Rand endhaldn un is nisch fürs obdische Einbassn da.",
+    "calibration.tip_gap": "Zeichd rundrum, wo Ligg’n oder Iberdeggung zwischn Zifferbladd un Rahmenöffnung sin.",
+    "calibration.tip_cover": "Zeichd den gleensdn Greis, der de ganze gemessne Rahmenöffnung abdeggd.",
+    "calibration.tip_target": "Zeichd de empfohlne Größe vom Zifferbladd midd mehr Iberdeggung undorm Medallrahm.",
     "settings.cluster_resolution": "Cluster-Ufflösung",
     "settings.cluster_resolution_note": "Wann de Cluster in einzelne Blitze uffgelöst werdn",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -1151,6 +1391,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installiert"
   },
   "Schwäbisch": {
+    "map.compass_move": "Kompass uff dr Karta verschieba",
+    "calibration.ring_cover": "Deckkreis",
+    "calibration.ring_target": "Empfohlene Überdeckung",
+    "calibration.ring_visual": "Kontur vom Zifferblatt",
+    "calibration.ring_protected": "Gschützte Außenkontur",
+    "calibration.ring_bounding": "Begrenzungsrahma vom Kompass",
+    "calibration.ring_gap": "Ring für Lücka ond Überdeckung (360°)",
+    "calibration.ring_backing": "Hindergrundfüllung",
+    "calibration.tip_visual": "Sichtbare Außenkontur vom Zifferblatt. Dia darf a bissle unter da Metallrahma ganga, dass weniger frei bleibt.",
+    "calibration.tip_protected": "D’ äußerschte sichtbare Kant vo de Gradstrich. Dr Metallrahma darf se net abschneida.",
+    "calibration.tip_backing": "D’ Fläch hinderem Kompass deckt d’ unrunde Rahmaöffnung ab, ohne Kompass oder Gradstrich zum Verzieha.",
+    "calibration.tip_bounding": "Technische Begrenzung vom Kompass. Dia kann an durchsichdiga oder unsichdbara Rand haba ond isch net fürs optische Eipassa do.",
+    "calibration.tip_gap": "Zeigt rondom, wo Lücka oder Überdeckung zwischa Zifferblatt ond Rahmaöffnung send.",
+    "calibration.tip_cover": "Zeigt da kloinschte Kreis, der d’ ganze gmessäne Rahmaöffnung abdeckt.",
+    "calibration.tip_target": "Zeigt d’ empfohlene Größ vom Zifferblatt mit mehr Überdeckung unterem Metallrahma.",
     "settings.cluster_resolution": "Cluster-Uflösung",
     "settings.cluster_resolution_note": "Wann d'Cluster in einzelne Blitze ufg'löst werdet",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -2021,7 +2276,7 @@ const V411_HELP_WEATHER_DISPLAY=Object.freeze({
   })
 });
 
-export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, resolveWeatherHelpLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _languageEntity() {
       return this._resolveSettingEntity('language',this._config.language_entity);
     },
@@ -2262,14 +2517,14 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncMapZoomTooltips();
     },
 
-    _helpWithV410(language,help) {
+    _helpWithV410(language,help,weatherHelp) {
       const instruments=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
       if(!help)return help;
       const sections=Array.isArray(help.sections)?[...help.sections]:[];
       if(instruments&&!sections.some((section)=>section?.key==='instruments-v410')){
         sections.push({key:'instruments-v410',title:instruments.title,paragraphs:[instruments.intro],entries:instruments.entries});
       }
-      const weatherDisplay=V411_HELP_WEATHER_DISPLAY[language]||V411_HELP_WEATHER_DISPLAY[LANGUAGE_DEFAULT]||V411_HELP_WEATHER_DISPLAY.English;
+      const weatherDisplay=weatherHelp?.profiles||V411_HELP_WEATHER_DISPLAY[language]||V411_HELP_WEATHER_DISPLAY[LANGUAGE_DEFAULT]||V411_HELP_WEATHER_DISPLAY.English;
       if(weatherDisplay&&!sections.some((section)=>section?.key==='weather-display-v411')){
         sections.push({key:'weather-display-v411',title:weatherDisplay.title,paragraphs:[weatherDisplay.intro],entries:weatherDisplay.entries});
       }
@@ -2431,6 +2686,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         .help-pro-status{margin:4px 0 0;color:#c4d1df;font-size:.9em;line-height:1.3}
         .help-pro-status[data-connected="true"]{color:#b2cde9}
         .help-pro-label{white-space:nowrap}
+        @media(max-width:380px){.help-dialog summary .help-pro-label{display:inline-block;max-inline-size:100%;white-space:normal;overflow-wrap:anywhere}}
         .help-pro-badge{display:inline-block;width:2.85em;height:auto;margin-inline-start:.32em;vertical-align:-.24em;pointer-events:none;user-select:none}
         .help-pro-badge-compact{width:2.55em;vertical-align:-.21em}
         .help-dialog .help-section>summary>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
@@ -2509,12 +2765,15 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
     _syncHelp() {
       const dialog=this._helpDialog;
       if(!dialog)return;
-      const language=this._languageValue(),locale=resolveAboutLocale(language),help=this._helpWithV410(language,locale.help);
+      const language=this._languageValue(),locale=resolveAboutLocale(language),weatherHelp=resolveWeatherHelpLocale?.(language),help=this._helpWithV410(language,locale.help,weatherHelp);
       dialog.querySelector('h2').textContent=help.title;
       dialog.querySelector('.help-subtitle').textContent=help.subtitle;
       dialog.querySelector('.help-close').setAttribute('aria-label',help.close);
       if(this._helpLocale!==help){
         const content=dialog.querySelector('.help-content'),openKeys=new Set([...content.querySelectorAll('details[open]')].map(node=>node.dataset.helpSection)),scrollTop=content.scrollTop;
+        const focused=this.shadow?.activeElement,focusedSection=focused?.closest('details[data-help-section]');
+        const helpControls='summary, button, a[href]';
+        const focusedIndex=focusedSection ? [...focusedSection.querySelectorAll(helpControls)].indexOf(focused) : -1;
         content.textContent='';
         const icons={prerequisites:'⌂',radii:'◎',location:'⌖',mapview:'▱',functions:'⚙','instruments-v410':'◆',defaults:'✓',troubleshooting:'!',recorder:'▤'};
         /* Deterministic Help icons remove platform font-baseline drift on iPad/iPad Pro. */
@@ -2547,8 +2806,8 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           const subBody=document.createElement('div');subBody.className='help-inline-subentry-body';setHelpDiagnosticText(subBody,match[3].trim());
           sub.append(subTitle,subBody);target.append(sub);
         };
-        const sections=createHelpSections(content,language);
-        appendWeatherHelp(sections.pro,language,openKeys);
+        const sections=createHelpSections(content,language,weatherHelp);
+        appendWeatherHelp(sections.pro,language,openKeys,{weatherHelp});
         help.sections.forEach((section,index)=>{
           const proOnly=section.key==='weather-display-v411';
           const details=document.createElement('details');details.className='help-section';details.dataset.helpSection=section.key;details.open=openKeys.has(section.key)||(!this._helpLocale&&index===0);
@@ -2563,25 +2822,31 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           if(section.entries?.length){const dl=document.createElement('dl');dl.className='help-entries';for(const [entryIndex,entry] of section.entries.entries()){const [term,text]=Array.isArray(entry)?entry:[entry?.term??entry?.title??'',entry?.description??entry?.body??''];const dt=document.createElement('dt'),dd=document.createElement('dd');const recorderPriority=section.key==='defaults'&&/^Recorder\b/i.test(String(term));if(recorderPriority){dt.className='help-recorder-priority';dd.className='help-recorder-priority';}setHelpDiagnosticText(dt,term);dt.append(document.createTextNode(':'));if(section.key==='location'&&(entryIndex===2||entryIndex===5)){const value=String(text??'').trimStart().replace(/^[„“”‚‘’"'«»‹›]+\s*/,'');const actionMatch=entryIndex===5?value.match(/^★\s+\S+/):value.match(/^\S+/);if(actionMatch){const action=document.createElement('span');action.className=entryIndex===5?'help-action-token help-action-save':'help-action-token help-action-use';action.textContent=actionMatch[0].replace(/^[„“”‚‘’"'«»‹›]+|[„“”‚‘’"'«»‹›]+$/g,'');const rest=value.slice(actionMatch[0].length).replace(/^[\s„“”‚‘’"'«»‹›]+/,'');dd.append(action);if(rest){dd.append(document.createTextNode(' '));setHelpDiagnosticText(dd,rest);}}else appendHelpEntryValue(dd,text);}else appendHelpEntryValue(dd,text);dl.append(dt,dd);}body.append(dl);}
           if(section.recorder){const wrap=document.createElement('div');wrap.className='help-code-wrap';const pre=document.createElement('pre'),code=document.createElement('code'),button=document.createElement('button'),status=document.createElement('span');code.textContent=ABOUT_RECORDER_YAML;pre.append(code);button.className='help-copy';button.type='button';button.setAttribute('aria-label',help.copy);const copyImage=document.createElement('img');copyImage.src=ABOUT_COPY_IMAGE;copyImage.alt='';copyImage.width=34;copyImage.height=34;copyImage.draggable=false;button.append(copyImage);status.className='help-copy-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');wrap.append(pre,button,status);body.append(wrap);button.addEventListener('click',()=>this._copyHelpRecorder());}
           for(const text of section.notes||[]){const p=document.createElement('p');p.className='help-note';setHelpDiagnosticText(p,text);body.append(p);}
-          if(section.key==='mapview')body.append(createHelpProMapNote(language));
+          if(section.key==='mapview')body.append(createHelpProMapNote(language,weatherHelp));
           details.append(body);
           (proOnly?sections.pro:sections.standard).append(details);
         });
         const weatherInformation=sections.pro.querySelector('[data-help-section="wr-information"]');
         if(weatherInformation)sections.pro.append(weatherInformation);
-        this._syncHelpProFeatureList(sections,language,openKeys);
+        this._syncHelpProFeatureList(sections,language,openKeys,weatherHelp);
         content.scrollTop=scrollTop;this._helpLocale=help;
+        if(focusedIndex>=0){
+          const replacement=[...content.querySelectorAll('details[data-help-section]')]
+            .find(node=>node.dataset.helpSection===focusedSection.dataset.helpSection);
+          replacement?.querySelectorAll(helpControls)[focusedIndex]?.focus({preventScroll:true});
+        }
       }
+      this._helpRenderedLanguage=language;
     },
 
-    _syncHelpProFeatureList({pro,setConnected},language,openKeys) {
+    _syncHelpProFeatureList({pro,setConnected},language,openKeys,weatherHelp) {
       const title=this.shadow?.getElementById('overview-title');
       const sync=()=>{
         const entry=pro.querySelector('.help-pro-featurelist');
         const connected=title?.dataset.proConnection==='ready';
         setConnected(connected);
         if(connected)entry?.remove();
-        else if(!entry)appendWeatherHelp(pro,language,openKeys,{upgrade:true});
+        else if(!entry)appendWeatherHelp(pro,language,openKeys,{upgrade:true,weatherHelp});
       };
       this._helpProObserver?.disconnect();
       if(title){

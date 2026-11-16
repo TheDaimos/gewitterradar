@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.222",
-  "build": "V4.11.222-DEV-2026-11-16",
-  "runtimeRevision": "411222r1",
-  "moduleSetId": "E411-222A1",
-  "baselineFeatureHead": "331102dbee6ad2a92b078ca376b2d2c6a6437a42",
+  "productVersion": "4.11.223",
+  "build": "V4.11.223-DEV-2026-11-16",
+  "runtimeRevision": "411223r1",
+  "moduleSetId": "E411-223A1",
+  "baselineFeatureHead": "25c3ef494c1d54440b9dd70344875de5ae877105",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Align the visible size of article icons in Standard and PRO Help.",
+    "purpose": "Localize Help, Eye and weather quick controls through the existing frontend catalogs.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -5,7 +5,7 @@ import {createRequire} from 'node:module';
 import {runInNewContext} from 'node:vm';
 import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readAboutLocaleModel,readExternalAboutLocales} from './verify-about-locales.mjs';
+import {readAboutLocaleModel,readExternalAboutLocales,validateWeatherHelp} from './verify-about-locales.mjs';
 
 const root = fileURLToPath(new URL('..',import.meta.url));
 const source = await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
@@ -65,7 +65,20 @@ for (const group of ['strings','settingLabels','settingPurposes','sourcePurposes
   assert.equal(model.resolve('Dansk'),model.locales.English);
   rejected++;
 }
-model.installExternal(model.externalAboutLocales,model.externalHelpLocales);
+const weatherHelp = model.externalWeatherHelpLocales;
+const externalNames = Object.keys(model.externalLocales);
+assert.equal(model.resolveWeatherHelp('Dansk'),undefined);
+for (const name of externalNames) {
+  const incomplete = clone(weatherHelp);
+  delete incomplete[name].topics.wind;
+  assert.throws(() => validateWeatherHelp(incomplete,externalNames),/Weather Help/);
+  incomplete[name].topics.wind = weatherHelp[name].topics.wind;
+  incomplete[name].labels.mapNote = incomplete[name].labels.mapNote.replace('{router}','WeatherRouter');
+  assert.throws(() => validateWeatherHelp(incomplete,externalNames),/Weather Help/);
+}
+model.installExternal(model.externalAboutLocales,model.externalHelpLocales,weatherHelp);
+for (const name of externalNames) assert.equal(model.resolveWeatherHelp(name),weatherHelp[name]);
+for (const name of ['Deutsch','English','__unknown__']) assert.equal(model.resolveWeatherHelp(name),undefined);
 for (const {value: language} of model.languages) assert.deepEqual(clone(model.resolve(language)),clone(allLocales[language]));
 console.log(`PASS: 2 native + 17 external complete bundles and ${rejected} invalid schema/runtime mutations; strict validation rejects every incomplete bundle.`);
 
@@ -333,12 +346,21 @@ if (process.argv[2]) {
       setting:model.locales.English.settingLabels.language,sources:clone(model.locales.English.sourcePurposes)});
     await retry.page.evaluate(() => {window.probeCard._closeAbout(false,false);window.probeCard._openHelp();});
     await retry.page.waitForFunction(title => window.probeCard._helpDialog?.querySelector('h2')?.textContent===title,model.locales.English.help.title);
-    assert.deepEqual(await retry.page.evaluate(() => {const d=window.probeCard._helpDialog;return {title:d.querySelector('h2').textContent,sections:d.querySelectorAll('.help-section').length};}),{title:model.locales.English.help.title,sections:12});
+    const readHelpProbe = () => {
+      const dialog=window.probeCard._helpDialog;
+      return {
+        information:dialog.querySelector('[data-help-section=wr-information] h4')?.textContent,
+        standard:dialog.querySelectorAll('.help-standard > details').length,
+        pro:dialog.querySelectorAll('.help-pro > details').length
+      };
+    };
+    assert.deepEqual(await retry.page.evaluate(readHelpProbe),{information:'Data source and status',standard:10,pro:10});
     const failedRequestCount = localeRequests.length;
     rejectExternalLocales = false;
     await retry.page.evaluate(() => window.probeCard._syncHelpMenu());
     await retry.page.waitForFunction(title => window.probeCard._helpDialog.querySelector('h2').textContent===title,
       allLocales.Dansk.help.title);
+    assert.deepEqual(await retry.page.evaluate(readHelpProbe),{information:weatherHelp.Dansk.topics.information[1][0][0],standard:10,pro:10});
     assert.ok(localeRequests.length > failedRequestCount,'failed external import was not retried');
     assert.ok(localeRequests.slice(beforeFailure).every(request=>request.search==='?hactag=retry'),'retry locale cache-buster mismatch');
     assert.deepEqual(retry.pageErrors,[],'external import failure escaped as an unhandled rejection');
