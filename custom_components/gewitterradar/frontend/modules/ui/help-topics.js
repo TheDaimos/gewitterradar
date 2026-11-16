@@ -25,9 +25,17 @@ const de = {
    'Windfahnen zeigen Windrichtung und Windstärke. Pfeile und animierte Strömungen zeigen die Richtung und Bewegung der Luftmassen. Die Wind-Farbflächen ordnen den Windgeschwindigkeiten Farben zu.',
    'Die schlangenförmige Strömungsanimation basiert auf meteorologischen Windvektoren. Die Länge der Strömungselemente kann sich mit der Windgeschwindigkeit ändern. Kürzere Elemente stehen für geringere, längere für höhere Geschwindigkeiten.',
    'Die Legende zeigt Maßeinheit, Datenquelle und Modellzeit. Modellwerte können von den vor Ort gemessenen Windverhältnissen abweichen.']],
- information:['Wetterinformationen',
-  ['Öffnen Sie die WetterRouter-Ebenen im Kartenmenü. Die Informationen zur Ebene zeigen Datenquelle, Daten- oder Modellzeit, Gültigkeit und Datenstatus, soweit geliefert.',
+ information:['Wetterinformationen',[
+  ['Datenquelle und Status',[
+   'Öffnen Sie die WetterRouter-Ebenen im Kartenmenü. Die Informationen zur Ebene zeigen Datenquelle, Daten- oder Modellzeit, Gültigkeit und Datenstatus, soweit geliefert.',
    'Beobachtungszeit, Modelllauf und Gültigkeitszeit haben unterschiedliche Bedeutungen. „Nicht verfügbar“ kann eine fehlende Quelle, Abdeckung oder gültige Ausgabe bedeuten. Eine leere Anzeige allein sagt nichts über das Wetter aus.']],
+  ['Aktualisierung nach Kartenbewegung',[
+   'Das Aktualisierungsintervall bestimmt, wie schnell GewitterRadar nach einer Kartenbewegung neue Wetterinformationen über WeatherRouter anfordern darf.'],[
+   ['Aktualisierungsintervall','Einstellbar von 2 bis 60 Sekunden. Standard sind 15 Sekunden.'],
+   ['Kleine Werte','2–5 Sekunden reagieren besonders schnell auf Kartenbewegungen, erzeugen aber mehr WeatherRouter-Anfragen.'],
+   ['Standard','15 Sekunden ist der ausgewogene Standardwert für Reaktionszeit und Anfragelast.'],
+   ['Große Werte','30–60 Sekunden reduzieren die Anzahl der Anfragen und sind besonders schonend.'],
+   ['Bewegungsfilter und manuelle Aktualisierung','Der kurze Bewegungsfilter nach dem Verschieben der Karte bleibt unabhängig davon aktiv. Eine ausdrücklich manuell ausgelöste Aktualisierung wird nicht durch dieses Intervall ausgebremst.']]]]],
  precipitation:['Niederschlag',
   ['Tippen Sie auf das Niederschlags-Icon, um die Radar-Darstellung ein- oder auszuschalten. Halten Sie es länger gedrückt (Long-Press), um Darstellung, Farbskala und Deckkraft einzustellen. Bei 0 % Deckkraft ist die Ebene vollständig transparent, bei 100 % vollständig deckend.',
    'Die Farbskala ordnet den Niederschlagsintensitäten Farben zu. „Präzise“ grenzt Intensitätsbereiche deutlicher ab. „Ausgewogen“ zeigt weichere Farbübergänge.',
@@ -68,7 +76,16 @@ const en = {
   'Barbs show wind direction and speed. Arrows and animated streamlines show how air moves. The wind shading assigns colours to speed ranges.',
   'The animated snake flow uses meteorological wind vectors. Its elements can grow longer with higher wind speeds.',
   'The legend shows units, data source and model time. Model values can differ from local measurements.']],
- information:['Weather information',['Use the WeatherRouter layer menu to find the source, observation or model time, validity and availability. An unavailable layer can mean missing coverage or a source without a valid product.']],
+ information:['Weather information',[
+  ['Data source and status',[
+   'Use the WeatherRouter layer menu to find the source, observation or model time, validity and availability. An unavailable layer can mean missing coverage or a source without a valid product.']],
+  ['Updates after moving the map',[
+   'The update interval controls how quickly GewitterRadar may request new weather information through WeatherRouter after the map is moved.'],[
+   ['Update interval','Adjustable from 2 to 60 seconds. The default is 15 seconds.'],
+   ['Low values','2–5 seconds responds quickly to map movement but increases WeatherRouter requests.'],
+   ['Default','15 seconds balances responsiveness and request load.'],
+   ['High values','30–60 seconds reduces the number of requests.'],
+   ['Movement filter and manual refresh','The short movement debounce remains active independently. An explicitly triggered manual refresh is not delayed by this interval.']]]]],
  precipitation:['Precipitation',[
   'Tap the precipitation icon to toggle radar. Hold it to configure display, colour scale and opacity. At 0% the layer is fully transparent. At 100% it is fully opaque.',
   'Colours correspond to precipitation intensities. Precise mode separates the intensity bands, while Balanced mode uses softer transitions.',
@@ -204,7 +221,18 @@ export function appendWeatherHelp(content,language,openKeys,{upgrade=false}={}){
    graphic.src=icons.cloudsHelp;graphic.alt='';graphic.draggable=false;
    body.append(graphic);
   }
-  for(const text of paragraphs)body.append(helpParagraph(text));
+  if(key==='information'){
+   for(const [heading,sectionParagraphs,entries] of paragraphs){
+    body.append(make('h4',heading));
+    for(const paragraph of sectionParagraphs)body.append(make('p',paragraph));
+    if(!entries)continue;
+    const list=make('dl',null,'help-entries');
+    for(const [term,description] of entries)list.append(make('dt',term),make('dd',description));
+    body.append(list);
+   }
+  }else{
+   for(const text of paragraphs)body.append(helpParagraph(text));
+  }
   if(upgrade){
    const links=make('p');
    for(const [url,text] of [[weatherRouterLink,'WeatherRouter'],[grLink,'GewitterRadar']]){

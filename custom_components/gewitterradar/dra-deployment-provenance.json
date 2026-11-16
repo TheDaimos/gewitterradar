@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.220",
-  "build": "V4.11.220-DEV-2026-11-16",
-  "runtimeRevision": "411220r1",
-  "moduleSetId": "E411-220A1",
-  "baselineFeatureHead": "27fc4ecaf59b8d0e505f482a7cb9841acf7d1404",
+  "productVersion": "4.11.221",
+  "build": "V4.11.221-DEV-2026-11-16",
+  "runtimeRevision": "411221r1",
+  "moduleSetId": "E411-221A1",
+  "baselineFeatureHead": "7e62b5f8b62ea9cd45b8173ad5eae923ebcd95ac",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Move the WeatherRouter information article next to the weather refresh article in Help.",
+    "purpose": "Combine weather information and map refresh guidance in one WeatherRouter Help article.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -70,8 +70,8 @@ async function assertHelp(page,connected,screenshots){
   const classic=content.locator('.help-standard'),pro=content.locator('.help-pro');
   const standardKeys=['prerequisites','radii','location','mapview','external_services','functions','defaults','troubleshooting','recorder','instruments-v410'];
   const topics=['eye-controls','wr-wind','wr-information','wr-precipitation','wr-temperature','wr-clouds','wr-synoptic','wr-display'];
-  const display='weather-display-v411',refresh='weather-refresh-v411';
-  const proKeys=[...topics.filter(key=>key!=='wr-information'),display,'wr-information',refresh];
+  const display='weather-display-v411';
+  const proKeys=[...topics.filter(key=>key!=='wr-information'),display,'wr-information'];
   const keys=section=>section.locator(':scope > details').evaluateAll(nodes=>nodes.map(n=>n.dataset.helpSection));
   assert.deepEqual(await keys(classic),standardKeys);
   assert.deepEqual(await keys(pro),connected?proKeys:[...proKeys,'wr-pro']);
@@ -159,6 +159,13 @@ async function assertHelp(page,connected,screenshots){
       }
       await page.setViewportSize({width:393,height:851});
     }
+    if(key==='wr-information'){
+      assert.deepEqual(await body.locator('h4').allTextContents(),['Datenquelle und Status','Aktualisierung nach Kartenbewegung']);
+      assert.equal(await body.locator('dt').count(),5);
+      assert.match(await body.textContent(),/2 bis 60 Sekunden.*15 Sekunden/);
+      assert.match(await body.textContent(),/manuell ausgelöste Aktualisierung/);
+      assert.match(await icon.getAttribute('src'),/weather-router-emblem-v004-256\.png$/);
+    }
     if(key==='wr-wind')assert.match(await icon.getAttribute('src'),/gr-wind-animation-toggle-premium-v1-272\.webp$/);
     if(key==='wr-precipitation')assert.match(await body.textContent(),/0 % Deckkraft.*transparent.*100 %.*deckend/);
     if(key==='wr-temperature')assert.match(await body.textContent(),/mit den gewählten Ansichten ein- oder auszuschalten/);
@@ -168,12 +175,10 @@ async function assertHelp(page,connected,screenshots){
     }
     await topic.getByRole('button',{name:'Zur Übersicht'}).click();
   }
-  for(const key of [display,refresh]){
-    const topic=pro.locator(`[data-help-section=${key}]`);
-    await topic.locator('summary').click();
-    assert((await topic.locator('.help-section-body').innerText()).length>45);
-    await topic.locator('summary').click();
-  }
+  const displayTopic=pro.locator(`[data-help-section=${display}]`);
+  await displayTopic.locator('summary').click();
+  assert((await displayTopic.locator('.help-section-body').innerText()).length>45);
+  await displayTopic.locator('summary').click();
   if(!connected){
     assert.equal(await pro.locator(':scope > details').last().getAttribute('data-help-section'),'wr-pro');
     await upgrade.locator('summary').click();

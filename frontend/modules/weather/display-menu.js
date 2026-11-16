@@ -1,16 +1,16 @@
 import {controlTouchPoint,installControlTouchTracking,stopControlTouchTracking} from './control-touch.js?v=411216r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411220r1';
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=411220r1';
-import {eyeHubMethods} from './eye-hub.js?v=411220r1';
-import {cloudsControlMethods} from './clouds-control.js?v=411220r1';
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411220r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411220r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411221r1';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=411221r1';
+import {eyeHubMethods} from './eye-hub.js?v=411221r1';
+import {cloudsControlMethods} from './clouds-control.js?v=411221r1';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=411221r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_INFO} from './premium-ui.js?v=411221r1';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411168r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.display-menu",
-  version:"0.4.57",
+  version:"0.4.58",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellung",
   subfunctions:["gemeinsamer Darstellungszustand","Offline-Teaser","Augen-Bedienelement","schwebendes Kartenmenü","Pointer-Drag","Positionsspeicherung","Niederschlagsstile","zoomabhängiger Auto-Modus","Legendenmodus","finale Augenassets","Leaflet-sichere Rasterstile","flächige Glättung","Hotspot-Erhalt","Deckkraft im Kartenmenü","Deckkraft je Darstellungsfamilie","entkoppelter UI-Zustand","Layer-Schnellzugriff"],
