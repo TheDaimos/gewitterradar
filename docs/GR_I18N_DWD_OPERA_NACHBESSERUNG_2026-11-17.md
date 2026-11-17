@@ -8,7 +8,7 @@ Die UI-Arbeiten betreffen sichtbare Texte und Aktionen in Einstellungen, Diagnos
 
 Runtime `411226r1`, Modulset `E411-226A1`, 37 registrierte Module. Der bestehende Katalog enthält 186 zusätzliche Einträge pro Variante, insgesamt 3.534 Werte. Der Audit vergleicht alle bisherigen Katalogwerte mit 4.11.225 und prüft Schlüssel, Platzhalter und Fallbacks in 19 Varianten. Griechisch wurde bei allen neuen Diagnoseeinträgen sprachlich überarbeitet. Für mehrere weitere Varianten wurden lokale maschinelle Entwürfe und manuell geprüfte Hauptbeschriftungen verwendet. Die idiomatische Endabnahme dieser übrigen Einträge und die Sichtung aller dynamischen Zustände im echten HA bleiben offen.
 
-Der Paketquellcommit ist `57b6ee5ef8a96f7dae88613656d1d6c09e9a5236`. Die Archivprüfung validierte 204 bytegleiche gemeinsame Frontend-Dateien. Der GitHub-DEV-Entwurf enthält die Metadaten und Prüfsummen für beide Lieferformen.
+Der Paketquellcommit ist `57b6ee5ef8a96f7dae88613656d1d6c09e9a5236`. Die Archivprüfung am Paketcommit `391f69103e65556a32132929711fafb747312b9b` validierte 204 bytegleiche gemeinsame Frontend-Dateien. Die GitHub-Digests stimmen mit den lokalen Prüfsummen überein. [GitHub-DEV-Entwurf](https://github.com/TheDaimos/gewitterradar/releases/tag/untagged-06985327ee611b200ea7)
 
 | Installationsarchiv | Dateien | SHA-256 |
 |---|---:|---|
@@ -24,7 +24,9 @@ Der Paketquellcommit ist `57b6ee5ef8a96f7dae88613656d1d6c09e9a5236`. Die Archivp
 | 005 | Das vorhandene runde Premium-Schließen-Asset sitzt in einer runden Hitbox. Das Bereitstellen der Wolkenebene und Minimieren verblieben in den bestehenden Pfaden. | Chromium-Wolkenlauf mit Tap, Hold und Drag |
 | 006 | PRO-Wortmarke und Signatur nutzen denselben Project-Hub-Einstieg. Das nach der WeatherRouter-Erkennung geladene Logo erhält Click- und Tastaturbedienung. | Chromium auf Desktop und touchfähigem Profil, übereinstimmendes Iframe-Ziel |
 
-Die Matrix lief mit dem gepackten HA-Frontend bei 320 px und dem Dashboard bei 1.177 px. Die Node-Suite bestand mit 182 von 203 Tests und denselben 21 Fehlernamen wie 4.11.225 sowie 4.11.222. Fünf synthetische Eye-Durchläufe mit Bedienung nach 0, 1, 2, 3, 5 und 10 Sekunden sowie verspätetem Capture-Verlust bestanden. Die reale VM109-Sitzung ließ sich im geöffneten Firefox-Fenster wegen fehlender URL-Policy-Unterstützung der Computer-Use-Funktion nicht verifizieren. Damit bleiben HA-Installation, physische Android-Abnahme und Real-Screenshots offen.
+Die Matrix lief mit dem gepackten HA-Frontend bei 320 px und dem Dashboard bei 1.177 px. Die Node-Suite bestand mit 182 von 203 Tests und denselben 21 Fehlernamen wie 4.11.225 sowie 4.11.222. Fünf synthetische Eye-Durchläufe mit Bedienung nach 0, 1, 2, 3, 5 und 10 Sekunden sowie verspätetem Capture-Verlust bestanden. Der Betreiber bestätigte die VM109-Sitzung in Mozilla Firefox. Computer Use blockierte die Browserprüfung, weil die URL-Policy für Firefox in dieser Windows-Sitzung nicht unterstützt wird. Damit bleiben HA-Installation, physische Android-Abnahme und Real-Screenshots offen.
+
+Neun von zwölf GitHub-Workflows bestanden. Die drei verbleibenden Fehler reproduzieren die dokumentierten 4.11.225-Befunde. Der WEICH-05-Stub lädt `import.meta` als klassisches Skript, die ältere Vault-Abnahme erwartet den unveränderten Consumer-Quelltext und HACS meldet SPDX `NOASSERTION`. Die gezielten Diagnose-, Wind-, Radar- und Paketprüfungen bestanden lokal. [Shared Frontend](https://github.com/TheDaimos/gewitterradar/actions/runs/44083642353), [Vault](https://github.com/TheDaimos/gewitterradar/actions/runs/44083642359), [HACS](https://github.com/TheDaimos/gewitterradar/actions/runs/44083642171)
 
 ## DWD/OPERA · reproduzierter Abdeckungsfehler
 
