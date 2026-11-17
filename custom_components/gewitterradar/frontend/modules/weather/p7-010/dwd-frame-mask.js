@@ -27,9 +27,16 @@ export function validateDwdFrameMask(layer){
 }
 
 export function bindDwdFrameMask(layers){
- const mask=layers.find(layer=>layer.source_id===DWD_RADAR)?.dwd_nodata_mask;
- if(!mask)return layers;
- return layers.map(layer=>layer.source_id===OPERA_RATE?{...layer,_p7DwdNoData:mask}:layer);
+ const radar=layers.find(layer=>layer.source_id===DWD_RADAR);
+ if(!radar)return layers;
+ return layers.map(layer=>{
+  if(layer.source_id!==OPERA_RATE)return layer;
+  const draw_exclusions=(layer.draw_exclusions||[]).filter(exclusion=>
+   exclusion.dwd_mask_source!==DWD_RADAR&&!(exclusion.scope==="bbox"&&
+    radar.coverage_scope==="bbox"&&["west","east","south","north"].every(key=>
+     exclusion.bbox?.[key]===radar.coverage?.[key])));
+  return {...layer,draw_exclusions};
+ });
 }
 
 function decodedMask(mask){
@@ -52,7 +59,7 @@ function decodedMask(mask){
    sums[(y+1)*stride+x+1]=row+sums[y*stride+x+1];
   }
  }
- state={sums,stride,tiles:new Map()};
+ state={sums,stride,tiles:new Map(),validTiles:new Map()};
  cache.set(mask,state);
  lastDecoded={mask,state};
  return state;
@@ -97,5 +104,33 @@ export function dwdNoDataRows(mask,tile,size){
  }
  if(state.tiles.size>=96)state.tiles.delete(state.tiles.keys().next().value);
  state.tiles.set(key,rows);
+ return rows;
+}
+
+/** Pixel centers are sampled in the native grid. Outside the grid is unknown. */
+export function dwdValidRows(mask,tile,size){
+ const world=2**tile.z,x=((tile.x%world)+world)%world;
+ const [west,south,east,north]=mask.bounds;
+ const lon=i=>(x+(i+.5)/size)/world*360-180;
+ const lat=i=>latitude((tile.y+(i+.5)/size)/world);
+ if(lon(size-1)<west||lon(0)>=east||lat(0)<=south||lat(size-1)>north)return [];
+ const {sums,stride,validTiles}=decodedMask(mask),key=tile.z+"/"+x+"/"+tile.y+"/"+size;
+ if(validTiles.has(key))return validTiles.get(key);
+ const columns=Array.from({length:size},(_,i)=>Math.floor((lon(i)-west)*mask.width/(east-west)));
+ const rows=Array.from({length:size},()=>[]);
+ for(let y=0;y<size;y++){
+  const row=Math.floor((north-lat(y))*mask.height/(north-south));
+  if(row<0||row>=mask.height)continue;
+  const a=row*stride,b=a+stride;
+  let start=null;
+  for(let i=0;i<=size;i++){
+   const col=columns[i];
+   const valid=col>=0&&col<mask.width&&sums[b+col+1]-sums[b+col]-sums[a+col+1]+sums[a+col]===0;
+   if(valid&&start===null)start=i;
+   if(!valid&&start!==null){rows[y].push([start,i]);start=null;}
+  }
+ }
+ if(validTiles.size>=96)validTiles.delete(validTiles.keys().next().value);
+ validTiles.set(key,rows);
  return rows;
 }

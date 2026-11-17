@@ -109,10 +109,13 @@ test('real GR staging waits for first NASA-only paint, but mixed radar mounts wi
   card._weatherRadarPreviousValid=()=>false;card._weatherRadarRetainRegionalMosaic=()=>false;card._weatherRadarEffectiveOpacity=()=>1;
   const events=[];card._weatherEngineMonitorEvent=(name,value)=>events.push({name,...value});
   delay=mixed?1400:450;const start=Date.now();
-  assert.equal(await card._weatherRadarTryMosaic(viewport,1),true);
+  const pending=card._weatherRadarTryMosaic(viewport,1);
+  while(!state.layer&&Date.now()-start<1800)await new Promise(resolve=>setTimeout(resolve,10));
   assert.equal(state.v2Snapshot,answer,JSON.stringify(events));
-  if(mixed){assert(Date.now()-start<1000,'slow NASA must not block radar');assert.equal(state.v2RenderMetrics.painted_nasa_tiles,0);}
-  else{assert.equal(state.v2RenderMetrics.painted_nasa_tiles,1);assert(Date.now()-start>=400);}
+  if(mixed)assert(Date.now()-start<1000,'slow NASA must not block the mounted radar');
+  else assert(Date.now()-start>=400);
+  assert.equal(await pending,true);
+  assert.equal(state.v2RenderMetrics.painted_nasa_tiles,1);
   state.layer._p7AbortPending();
   card._hass.callWS=async()=>({...answer,status:'unavailable',layers:[],nasa_mosaic:{enabled:true,metadata_pending:true,planning_cycle:'synthetic'}});
   assert.equal(await card._weatherRadarTryMosaic(viewport,1),true,'pending spatial policy blocks legacy V1 fallback');

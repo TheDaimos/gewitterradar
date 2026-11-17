@@ -1,4 +1,4 @@
-import {spatialCoverageLayers} from "./nasa-spatial.js?v=411227r1";
+import {spatialCoverageLayers} from "./nasa-spatial.js?v=411229r1";
 /* P7-010: conservative geographic and drawn-pixel-geometry coverage audits.
  * A bounding box proves only a geographic envelope, NOT nontransparent
  * precipitation pixels or a provider's undisclosed NoData mask.

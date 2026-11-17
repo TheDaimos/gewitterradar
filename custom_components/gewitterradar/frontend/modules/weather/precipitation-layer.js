@@ -1,13 +1,13 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411228r1';
-import {precipitationLegendScales} from "./legend-overlay.js?v=411228r1";
+import {settingsStorage} from '../core/settings-vault.js?v=411229r1';
+import {precipitationLegendScales} from "./legend-overlay.js?v=411229r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
-import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411228r1";
-import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411227r1";
+import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411229r1";
+import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411229r1";
 import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.49",
+  version:"1.3.50",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungsdeckkraft","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -414,7 +414,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     if(!state.layer||!viewport)return false;
     if(this._weatherRadarExpireRegionalHold())return true;
-    const compositeExpired=state.v2Snapshot?.layers?.some(l=>
+    const compositeExpired=state.v2Snapshot?.layers?.every(l=>
       !v2RenderedSourceValidity(l,state.v2SnapshotAt,{
         satelliteConsent:state.allowOlderSatelliteBackground}).valid);
     const coverage=weatherRadarActiveCoverage(state,viewport.context,
@@ -668,13 +668,13 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!state.wrPolicySubscription&&typeof this._hass?.connection?.subscribeEvents==="function"){
       const policy={closed:false,unsubscribe:null};state.wrPolicySubscription=policy;
       Promise.resolve(this._hass.connection.subscribeEvents(event=>{
-        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true||event?.data?.dwd_coverage_verified===true)){
+        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true||event?.data?.dwd_coverage_verified===true||event?.data?.dwd_mask_ready===true)){
           if(event.data.nasa_transport_changed===true&&event.data.nasa_transport_policy){state.layer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);state.v2PendingLayer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);}
           if(event.data.precipitation_policy_changed===true)state.layer?._p7RevokeDeferredNASA?.();
           if(event.data.nasa_metadata_ready===true&&state.inFlight)this._weatherRadarSupersedeRequest();
           if(event.data.nasa_imerg_complement===true&&state.v2Snapshot?.layers?.some(source=>
              source.source_id==="nasa_gibs/satellite_precipitation_imerg_30min"&&!source.spatial_policy))this._weatherRadarRemoveLayer();
-          this._scheduleWeatherRadarRefresh(event.data.dwd_coverage_verified===true?"wr-dwd-coverage-ready":"wr-precipitation-policy",0,{force:true});
+          this._scheduleWeatherRadarRefresh(event.data.dwd_coverage_verified===true||event.data.dwd_mask_ready===true?"wr-dwd-coverage-ready":"wr-precipitation-policy",0,{force:true});
         }
       },"weather_router_routing_changed")).then(unsubscribe=>{
         if(policy.closed||state.wrPolicySubscription!==policy)unsubscribe?.();
@@ -1637,25 +1637,34 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       let stageLastHttpStatus=null,stageLastDenialCode=null;
       const observedOrders=[];
       const deferredTiles=new Set(),deferredPainted=new Set();
-      let preservePreviousNASA=false;
       let progressiveVisible=false;
+      let previousLayer=null,previousApi=null;
+      const stageStart=Date.now();
       const showAuthorizedProgress=()=>{
-        // Never expose an incomplete replacement above an existing valid
-        // generation. Without a valid previous image, verified individual
-        // source fragments are preferable to an otherwise blank viewport.
-        if(!staged||!current()||this._weatherRadarPreviousValid())return;
+        if(!staged||!current())return;
         if(!progressiveVisible){
+          // All currently mounted tiles already own the authorized previous
+          // fragments. Only the decoded source footprints are replaced.
           staged.setOpacity(this._weatherRadarEffectiveOpacity(0.58));
           progressiveVisible=true;
-          report('progressive_first_authorized_tile');
+          this._weatherRadarClearRegionalHold();
+          state.layer=staged;state.v2PendingLayer=null;
+          state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();
+          state.v2RenderMetrics={drawn_tiles:1,progressive_partial:true};
+          state.lastReady=null;state.lastUnavailable=null;
+          if(previousLayer&&previousLayer!==staged)try{previousLayer.remove();}catch(_){}
+          this._weatherRadarRemoveTimelinePlayer();
+          state.timelineModel=null;state.timelineIndex=-1;
+          this._weatherRadarClearPreload();
+          this._weatherRadarRenderCurrentLegend();
+          this._weatherRadarUpdateControls();
+          report("progressive_first_authorized_tile",{elapsed_ms:Date.now()-stageStart,from_api:previousApi});
         }
       };
       const markReady=()=>{
-        // A valid mounted mosaic must not lose its successful satellite areas
-        // while a changed mask/source generation is only partly decoded.
-        if(preservePreviousNASA&&deferredPainted.size<deferredTiles.size)return;
         const required=staged?._p7DeferredNASA&&deferredTiles.size?Math.min(minReadyTiles,expectedEligibleTiles.size):minReadyTiles;
-        if(gridLoaded&&readyTiles.size>=required&&(required>0||deferredPainted.size>0))painted(true);
+        if(gridLoaded&&staged?._p7AllTransportsSettled?.()&&
+          readyTiles.size>=required&&(required>0||deferredPainted.size>0))painted(true);
       };
       // A single painted tile does not establish a usable replacement view.
       // At world zoom zero there can genuinely be only one tile.
@@ -1673,6 +1682,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         maxLayers:12,maxTileRequests:clamp(count*4,48,256),
         allowOlderSatelliteBackground:state.allowOlderSatelliteBackground===true,
         layerOptions:{maxConcurrent:4,previousImageCache:state.replacementCache?.images||state.layer?._p7RasterRequestBudget?.imageCache,previousSnapshot:state.replacementCache?.snapshot||state.v2Snapshot,
+          previousFragments:()=>state.layer?._p7CaptureFragments?.(),
           // Share the existing HA refresh/preflight procedure across this
           // generation. A connected WebSocket can outlive its HTTP token;
           // never fan out expired credentials to parallel tile requests.
@@ -1696,11 +1706,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             throw error;
           }),
           onTileDiagnostics:item=>{
+            if(item?.phase==="provider_removed"){
+              report(item.phase,{source_ids:item.removed,tile:item.tile,visibility:state.layer===staged?"mounted":"pending"});
+              return;
+            }
             if(item?.deferred&&item.tile){
               const world=2**item.tile.z,key=[item.tile.z,((item.tile.x%world)+world)%world,item.tile.y].join("/");
               deferredTiles.add(key);if(!item.radar_expected)settledGeographicTiles.add(key);
               if(item.tile_status==="complete_verified_coverage")deferredPainted.add(key);
-              if(painted>0)showAuthorizedProgress();
+              if(item.painted_source_tiles>0)showAuthorizedProgress();
               if(state.layer===staged&&state.v2RenderMetrics){
                 state.v2RenderMetrics.deferred_nasa_tiles=deferredTiles.size;
                 state.v2RenderMetrics.painted_nasa_tiles=deferredPainted.size;
@@ -1712,6 +1726,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
             }
             if(item?.progressive===true&&item.painted_sources>0){
               showAuthorizedProgress();
+              report(item.phase,{source_ids:item.render_order,tile:item.tile,compose_ms:item.compose_ms,
+                visibility:state.layer===staged?"mounted":"pending"});
               return; // An intermediate image is not a complete Leaflet tile.
             }
             const operaError=item?.rejected?.find(row=>row.source_id==='opera/opera_rate_raster'&&
@@ -1760,8 +1776,6 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       });
       if(current()&&result.response?.contract_version===2){state.nasaMosaicEnabled=result.response.nasa_mosaic?.enabled===true;if(result.response.spatial_contract_version===2)state.spatialV2Required=true;}
       if(result.mode==="v2"&&current())state.replacementCache=null;
-      preservePreviousNASA=Boolean(current()&&state.layer&&state.v2Snapshot?.layers?.some(source=>source.spatial_policy)
-        &&result.response?.layers?.some(source=>source.spatial_policy)&&this._weatherRadarPreviousValid());
       const nasaState=result.response?.nasa_mosaic;
       if(current()&&nasaState?.metadata_pending&&nasaState.planning_cycle){
         if(state.nasaPlanningCycle!==nasaState.planning_cycle){state.nasaPlanningCycle=nasaState.planning_cycle;state.nasaPlanningRetries=0;}
@@ -1821,6 +1835,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         pane.style.zIndex="230";pane.style.pointerEvents="none";
       }
       staged=result.layer;
+      previousLayer=state.layer;
+      previousApi=state.v2Snapshot?2:state.lastReady?1:null;
       staged.options.pane="gr-weather-radar";
       staged.options.opacity=0;
       staged.__grRadarNaturalOpacity=0.58;
@@ -1832,9 +1848,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       // Progress-aware bounded staging: 8s individual image deadlines and
       // four simultaneous requests can legitimately outlast the old 6s gate.
       // No progress for 9s or a 20s hard limit fails closed.
-      const stageStart=Date.now();
       const ready=await new Promise(resolve=>{
-        let finished=false,lastCount=stageTileSettled,lastProgressAt=stageStart;
+        let finished=false;
         const done=(ready,reason)=>{
           if(finished)return;
           finished=true;
@@ -1846,17 +1861,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           if(finished)return;
           const at=Date.now();
           if(!current())return done(false,"stale_or_background");
-          if(stageTileSettled!==lastCount){
-            lastCount=stageTileSettled;lastProgressAt=at;
-          }
-          const awaitingFirstNASA=staged._p7DeferredNASA&&deferredTiles.size>0&&
-            (expectedEligibleTiles.size===0&&deferredPainted.size===0||preservePreviousNASA&&deferredPainted.size<deferredTiles.size);
-          if(gridLoaded&&!awaitingFirstNASA)return done(false,"insufficient_painted_tiles");
-          if(awaitingFirstNASA&&at-stageStart>=26000)return done(false,"nasa_transport_deadline");
-          if(!staged._p7OperaGeneration){
-            if(!awaitingFirstNASA&&at-stageStart>=20000)return done(false,"stage_deadline");
-            if(!awaitingFirstNASA&&at-lastProgressAt>=9000)return done(false,"tile_progress_stalled");
-          }
+          markReady();
+          if(gridLoaded&&staged._p7AllTransportsSettled?.()&&
+            !readyTiles.size&&!deferredPainted.size)return done(false,"insufficient_painted_tiles");
+          if(at-stageStart>=26000)return done(false,"stage_deadline");
           timeout=setTimeout(check,250);
         };
         timeout=setTimeout(check,250);
@@ -1871,20 +1879,12 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
           last_tile_error:stageLastError,last_tile_http_status:stageLastHttpStatus,
           last_tile_denial_code:stageLastDenialCode,previous_layer_preserved:Boolean(state.layer)};
         this._weatherEngineMonitorEvent?.("v2_stage_rejected",detail);
-        // A cold viewport has no valid generation to preserve. Keep real,
-        // WR-admitted pixels that were already drawn, but label the mosaic
-        // partial and retry only its missing content. The previous-generation
-        // atomic swap contract remains mandatory when an old valid image exists.
-        if(current()&&progressiveVisible&&!this._weatherRadarPreviousValid()){
-          const old=state.layer;
-          state.layer=staged;state.v2PendingLayer=null;
-          state.v2Snapshot=result.response;state.v2SnapshotAt=Date.now();
+        if(current()&&progressiveVisible&&state.layer===staged){
           state.v2RenderMetrics={drawn_tiles:readyTiles.size,
             uncovered_tiles:Math.max(1,count-readyTiles.size),
             partial_geography:true,progressive_partial:true,
             image_pixels_verified:false};
           state.lastReady=null;state.lastUnavailable=null;
-          if(old&&old!==staged)try{old.remove();}catch(_){}
           this._weatherRadarRenderCurrentLegend();
           this._weatherRadarUpdateControls();
           report('progressive_partial_retained',{
@@ -1964,8 +1964,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       }
       report("raster_ready",{painted_tiles:visibleDrawn.length,
         partial_geography:!footprint.complete,missing_tiles:uncovered.length});
-      const old=state.layer;
-      const oldApi=state.v2Snapshot?2:state.lastReady?1:null;
+      const old=previousLayer;
+      const oldApi=previousApi;
       const oldHold=state.regionalHold;
       this._weatherRadarClearRegionalHold();
       state.layer=staged;state.v2PendingLayer=null;
@@ -2004,7 +2004,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
         pixels_verified:false,
         complete_tiles:geometricallyCompleteTiles.size,zoom:Number(this._map?.getZoom?.()??0)});
-      if(old)try{old.remove();}catch(_){}
+      if(old&&old!==staged)try{old.remove();}catch(_){}
       this._weatherDisplayRefreshRenderedLayers?.();
       this._weatherRadarRenderCurrentLegend();
       this._rasterLabRefreshOptions?.();
@@ -2358,7 +2358,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       if(!state.wrPolicySubscription&&typeof this._hass?.connection?.subscribeEvents==="function"){
       const policy={closed:false,unsubscribe:null};state.wrPolicySubscription=policy;
       Promise.resolve(this._hass.connection.subscribeEvents(event=>{
-        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true)){
+        if(state.enabled&&!policy.closed&&(event?.data?.precipitation_policy_changed===true||event?.data?.nasa_metadata_ready===true||event?.data?.nasa_transport_changed===true||event?.data?.dwd_coverage_verified===true||event?.data?.dwd_mask_ready===true)){
           if(event.data.nasa_transport_changed===true&&event.data.nasa_transport_policy){state.layer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);state.v2PendingLayer?._p7ConfigureNASATransport?.(event.data.nasa_transport_policy);}
           if(event.data.precipitation_policy_changed===true)state.layer?._p7RevokeDeferredNASA?.();
           if(event.data.nasa_metadata_ready===true&&state.inFlight)this._weatherRadarSupersedeRequest();

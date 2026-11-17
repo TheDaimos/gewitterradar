@@ -1,11 +1,11 @@
-import {maskedRasterTarget} from './radar-mask.js?v=411227r1';
+import {maskedRasterTarget} from './radar-mask.js?v=411229r1';
 /*
  * P7-010 isolated Canvas composition helper; not wired into active GR.
  * Requires preloaded, provider-eligible, verified raster tiles. The rendering
  * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411227r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411229r1";
 
 /** Presentation order only; WR still selects and prioritizes eligible sources.
  * Older satellite estimates paint first; within the same freshness class
@@ -21,6 +21,44 @@ export function rasterMosaicRenderOrder(layers){
 }
 const MAX_LAYERS=4;
 const MAX_TILE_SIZE=512;
+
+export function rasterImageGeometry(layer,tile,tileSize){
+ const coverage=layer.coverage_scope==="global"?{scope:"global",verified:true}
+   :{scope:"bbox",bbox:layer.coverage,verified:true};
+ const native=layer._p7SourceTile||tile;
+ const size=layer.render?.tile_size??256;
+ if(native.z>tile.z){
+  const scale=2**(native.z-tile.z),world=2**tile.z;
+  if(Math.floor(native.x/scale)!==((tile.x%world)+world)%world||Math.floor(native.y/scale)!==tile.y)
+   return {from:[],to:[]};
+  const from=rasterTilePixelCrops(native,coverage,size);
+  return {from,to:from.map(crop=>({
+   sx:((native.x%scale)+crop.sx/size)*tileSize/scale,
+   sy:((native.y%scale)+crop.sy/size)*tileSize/scale,
+   sw:crop.sw/size*tileSize/scale,sh:crop.sh/size*tileSize/scale}))};
+ }
+ const scale=2**(tile.z-native.z);
+ const world=2**tile.z,x=((tile.x%world)+world)%world;
+ if(Math.floor(x/scale)!==((native.x%2**native.z)+2**native.z)%2**native.z||
+    Math.floor(tile.y/scale)!==native.y)return {from:[],to:[]};
+ return {to:rasterTilePixelCrops(tile,coverage,tileSize),
+   from:rasterTilePixelCrops(tile,coverage,size).map(crop=>({
+    sx:((x%scale)*size+crop.sx)/scale,sy:((tile.y%scale)*size+crop.sy)/scale,
+    sw:crop.sw/scale,sh:crop.sh/scale}))};
+}
+
+function subtractRect(rect,cut){
+ const {sx:x,sy:y,sw:w,sh:h}=rect;
+ const l=Math.max(x,cut.sx),r=Math.min(x+w,cut.sx+cut.sw);
+ const t=Math.max(y,cut.sy),b=Math.min(y+h,cut.sy+cut.sh);
+ if(l>=r||t>=b)return [rect];
+ return [{sx:x,sy:y,sw:w,sh:t-y},{sx:x,sy:b,sw:w,sh:y+h-b},
+  {sx:x,sy:t,sw:l-x,sh:b-t},{sx:r,sy:t,sw:x+w-r,sh:b-t}].filter(c=>c.sw>0&&c.sh>0);
+}
+
+export function remainingRasterGeometry(rects,cuts){
+ return cuts.reduce((remaining,cut)=>remaining.flatMap(rect=>subtractRect(rect,cut)),rects);
+}
 
 /**
  * Draw independent raster images into one tile. The caller retains all
@@ -41,6 +79,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
    const keys=new Set();let ordinary=0;
    for(const layer of layers){
      const native=layer?._p7SourceTile,plan=layer?.raster_plan;
+     if(layer._p7ReplacementRects)continue; // Previously validated image.
      if(!plan){if(++ordinary>MAX_LAYERS)throw new RangeError('Too many ordinary layers');continue;}
      const key=layer?.source_id+':'+native?.z+'/'+native?.x+'/'+native?.y;
      if(!native||plan?.kind!=='source_tiles_v1'||native.z!==plan.zoom||
@@ -51,8 +90,15 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
  }
  if(!Number.isInteger(tileSize)||tileSize<1||tileSize>MAX_TILE_SIZE)
    throw new RangeError("Invalid resource-bounded tile size");
- const drawn=[],rejected=[],paintedRects=[];
- for(const layer of rasterMosaicRenderOrder(layers)){
+ const drawn=[],rejected=[],paintedRects=[],currentRects=[];
+ const dwdPainted=layers.filter(layer=>layer?.image&&layer.dwd_nodata_mask&&
+   tile.z>=layer.render.min_zoom).map(layer=>{
+   const crops=remainingRasterGeometry(rasterImageGeometry(layer,tile,tileSize).to,layer._p7ReplacementRects||[]);
+   return {mask:layer.dwd_nodata_mask,crops};
+ });
+ for(const item of rasterMosaicRenderOrder(layers)){
+   const layer=item?.source_id==="opera/opera_rate_raster"&&dwdPainted.length
+     ?{...item,_p7DwdPainted:dwdPainted}:item;
    const id=typeof layer?.source_id==="string"?layer.source_id:"unbekannt";
    if(!layer||!layer.image||layer.resource_type!=="raster_tile"
      ||layer.coverage_verified!==true||!layer.attribution
@@ -84,23 +130,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
      continue;
    }
    const nativeTile=layer._p7SourceTile||tile;
-   const nativeScale=2**Math.max(0,tile.z-nativeTile.z);
-   const childX=((tile.x%nativeScale)+nativeScale)%nativeScale;
-   const childY=((tile.y%nativeScale)+nativeScale)%nativeScale;
-   let destCrops,sourceCrops;
-   if(nativeTile.z>tile.z){
-     const scale=2**(nativeTile.z-tile.z),world=2**tile.z;
-     if(Math.floor(nativeTile.x/scale)!==((tile.x%world)+world)%world||Math.floor(nativeTile.y/scale)!==tile.y){
-       rejected.push({source_id:id,reason:"outside_tile_coverage"});continue;
-     }
-     sourceCrops=rasterTilePixelCrops(nativeTile,coverage,render.tile_size);
-     destCrops=sourceCrops.map(crop=>({sx:((nativeTile.x%scale)+crop.sx/render.tile_size)*tileSize/scale,
-       sy:((nativeTile.y%scale)+crop.sy/render.tile_size)*tileSize/scale,sw:crop.sw/render.tile_size*tileSize/scale,sh:crop.sh/render.tile_size*tileSize/scale}));
-   }else{
-     destCrops=rasterTilePixelCrops(tile,coverage,tileSize);
-     sourceCrops=rasterTilePixelCrops(tile,coverage,render.tile_size).map(crop=>({sx:(childX*render.tile_size+crop.sx)/nativeScale,
-       sy:(childY*render.tile_size+crop.sy)/nativeScale,sw:crop.sw/nativeScale,sh:crop.sh/nativeScale}));
-   }
+   const {from:sourceCrops,to:destCrops}=rasterImageGeometry(layer,tile,tileSize);
    if(!sourceCrops.length||sourceCrops.length!==destCrops.length){
      rejected.push({source_id:id,reason:"outside_tile_coverage"});
      continue;
@@ -118,6 +148,7 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
          to.sx,to.sy,to.sw,to.sh);
        cropsPainted++;
        paintedRects.push({sx:to.sx,sy:to.sy,sw:to.sw,sh:to.sh});
+       if(!layer._p7Retained)currentRects.push(to);
      }
      if(target)maskedRectangles=target.finish();
    }finally{
@@ -125,10 +156,12 @@ export function drawVerifiedRasterMosaicTile(context,tile,layers,tileSize=256){
    }
    drawn.push({
      source_id:id,rectangles:cropsPainted,source_tile:{...nativeTile},mask_applied:Boolean(target),protected_rectangles:maskedRectangles,
+     retained:Boolean(layer._p7Retained),
      attribution:layer.attribution,times:layer.times,
      semantics:layer.semantics,legend:layer.legend,render,
    });
  }
  return {drawn,rejected,no_pixel_blending:true,tile_size:tileSize,
-   tile_coverage:measureRasterTileCoverage(paintedRects,tileSize)};
+   tile_coverage:measureRasterTileCoverage(paintedRects,tileSize),
+   current_tile_coverage:measureRasterTileCoverage(currentRects,tileSize)};
 }

@@ -1,5 +1,5 @@
-import {plannedSourceTiles} from './radar-mask.js?v=411227r1';
-import {bindDwdFrameMask} from './dwd-frame-mask.js?v=411227r1';
+import {plannedSourceTiles} from './radar-mask.js?v=411229r1';
+import {bindDwdFrameMask} from './dwd-frame-mask.js?v=411229r1';
 /*
  * P7-010 experimental provider-neutral raster tile loading.
  * Still isolated from Gewitterradar's active V1 precipitation display.
@@ -11,7 +11,7 @@ import {bindDwdFrameMask} from './dwd-frame-mask.js?v=411227r1';
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411227r1";
+import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411229r1";
 
 const operaTileDenialCodes=new Set([
  "missing_authenticated_user","administrator_required","profile_not_authorized",
@@ -83,7 +83,7 @@ function retainCompletedOperaImage(id,url,image){
 }
 
 export class RasterTileRequestBudget {
- constructor(maxRequests,{maxConcurrent=4}={}){
+ constructor(maxRequests,{maxConcurrent=4,isolatedSources=[]}={}){
    if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>256
       ||!Number.isInteger(maxConcurrent)||maxConcurrent<1||maxConcurrent>8)
      throw new RangeError("Invalid raster tile request budget");
@@ -91,17 +91,27 @@ export class RasterTileRequestBudget {
    this.maxConcurrent=maxConcurrent;
    this.used=0;
    this.active=0;
+   this.isolatedSources=new Set(isolatedSources);
+   this.activeBySource=new Map();
    this.queue=[];
    this.closed=false;
    this.imageCache=new Map();this.inflight=new Map();this.cacheHits=0;this.sharedRequests=0;
    this.maxCachedImages=maxRequests;
  }
- async reserve(signal=null,{retry=false}={}){
+ _canStart(sourceId){
+   return this.active<this.maxConcurrent&&(!this.isolatedSources.has(sourceId)||
+     (this.activeBySource.get(sourceId)||0)<Math.max(1,Math.floor(this.maxConcurrent/this.isolatedSources.size)));
+ }
+ _occupy(sourceId){
+   this.active++;
+   if(sourceId)this.activeBySource.set(sourceId,(this.activeBySource.get(sourceId)||0)+1);
+ }
+ async reserve(signal=null,{retry=false,sourceId=null}={}){
    if(this.closed||signal?.aborted||(!retry&&this.used>=this.maxRequests))return null;
    // A waiting request holds no network slot and consumes no request budget.
-   if(this.active>=this.maxConcurrent){
+   if(!this._canStart(sourceId)){
      const admitted=await new Promise(resolve=>{
-       const entry={resolve,signal,onAbort:null};
+       const entry={resolve,signal,sourceId,onAbort:null};
        entry.onAbort=()=>{
          const index=this.queue.indexOf(entry);
          if(index>=0)this.queue.splice(index,1);
@@ -113,10 +123,10 @@ export class RasterTileRequestBudget {
      });
      if(!admitted)return null;
    }else{
-     this.active++;
+     this._occupy(sourceId);
    }
    if(this.closed||signal?.aborted||(!retry&&this.used>=this.maxRequests)){
-     this._releaseSlot();
+     this._releaseSlot(sourceId);
      return null;
    }
    if(!retry)this.used++;
@@ -124,7 +134,7 @@ export class RasterTileRequestBudget {
    return ()=>{
      if(released)return;
      released=true;
-     this._releaseSlot();
+     this._releaseSlot(sourceId);
    };
  }
  getCachedImage(id,url,frameTime=null){
@@ -173,16 +183,23 @@ export class RasterTileRequestBudget {
      entry.resolve(false);
    }
  }
- _releaseSlot(){
-   if(this.closed){this.active=Math.max(0,this.active-1);return;}
-   while(this.queue.length){
-     const next=this.queue.shift();
+ _releaseSlot(sourceId){
+   this.active=Math.max(0,this.active-1);
+   if(sourceId){
+     const count=this.activeBySource.get(sourceId)||0;
+     if(count<=1)this.activeBySource.delete(sourceId);
+     else this.activeBySource.set(sourceId,count-1);
+   }
+   if(this.closed)return;
+   for(let index=0;index<this.queue.length;){
+     const next=this.queue[index];
+     if(!next.signal?.aborted&&!this._canStart(next.sourceId)){index++;continue;}
+     this.queue.splice(index,1);
      next.signal?.removeEventListener("abort",next.onAbort);
      if(next.signal?.aborted){next.resolve(false);continue;}
+     this._occupy(next.sourceId);
      next.resolve(true);
-     return;
    }
-   this.active=Math.max(0,this.active-1);
  }
 }
 
@@ -198,7 +215,7 @@ export class RasterTileRequestBudget {
  * so this helper performs no hidden browser or HA accesses.
  */
 export async function drawRasterMosaicTileFromUrls({
- context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000,signal=null,onProgress=null
+ context,tile,layers,loadImage,budget,tileSize=256,timeoutMs=8000,signal=null,onProgress=null,draw=true
 }={}){
  if(!Array.isArray(layers)||layers.length>12||typeof loadImage!=="function"
    ||!(budget instanceof RasterTileRequestBudget))
@@ -258,7 +275,7 @@ export async function drawRasterMosaicTileFromUrls({
      // A retry reuses this admitted OPERA coordinate's request budget, while
      // every attempt still acquires a bounded concurrent transport slot.
      const opera=source_id==="opera/opera_rate_raster";
-     const release=await budget.reserve(sharedSignal,{retry:opera&&retryCount>0});
+     const release=await budget.reserve(sharedSignal,{retry:opera&&retryCount>0,sourceId:source_id});
      if(!release)return {source_id,reason:sharedSignal?.aborted?"tile_cancelled":"request_budget_exhausted"};
      let retry=false;
      try{
@@ -335,7 +352,7 @@ export async function drawRasterMosaicTileFromUrls({
    }catch(_){return {source_id,reason:'tile_cancelled'};}
   })();
   settled.set(index,result);
-  if(typeof onProgress==='function'&&!signal?.aborted){
+  if(result.layer&&typeof onProgress==='function'&&!signal?.aborted){
     const prepared=fragments.flatMap((_,i)=>settled.get(i)?.layer?[settled.get(i).layer]:[]);
     if(prepared.length)try{onProgress({prepared,settled:settled.size,total:fragments.length});}catch(_){/* cosmetic callback must not block tile delivery */}
   }
@@ -348,7 +365,7 @@ export async function drawRasterMosaicTileFromUrls({
    context.clearRect(0,0,tileSize,tileSize);
  const drawn=signal?.aborted
    ?{drawn:[],rejected:[]}
-   :drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize);
+   :draw?drawVerifiedRasterMosaicTile(context,tile,prepared,tileSize):{drawn:[],rejected:[],prepared};
  return {
    ...drawn,
    render_order:drawn.drawn.map(x=>x.source_id),

@@ -3,14 +3,15 @@ import {dwdNoDataRows} from '../frontend/modules/weather/p7-010/dwd-frame-mask.j
 import {drawVerifiedRasterMosaicTile} from '../frontend/modules/weather/p7-010/raster-compositor.js';
 import {validateRasterMosaicV2} from '../frontend/modules/weather/p7-010/raster-mosaic-contract.js';
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls} from '../frontend/modules/weather/p7-010/raster-mosaic-tile-loader.js';
+import {createRasterMosaicGridLayer} from '../frontend/modules/weather/p7-010/raster-mosaic-grid-layer.js';
 
-const time='2026-11-06T10:00:00Z',dwdId='dwd/radar_precipitation',operaId='opera/opera_rate_raster';
+const time=new Date(Date.now()-60000).toISOString(),dwdId='dwd/radar_precipitation',operaId='opera/opera_rate_raster';
 const bounds={west:0,south:0,east:180,north:85.0511287798066},tile={x:1,y:0,z:1};
 const mask={kind:'dwd_wcs_nodata_v1',valid_at:time,reference_at:time,width:4,height:1,
  bounds:[bounds.west,bounds.south,bounds.east,bounds.north],bits:btoa(String.fromCharCode(0b1100))};
 const source=(id,url)=>({
  source_id:id,tile_url:url,resource_type:'raster_tile',coverage_verified:true,coverage_scope:'bbox',coverage:bounds,
- render:{tile_size:256,min_zoom:0,max_zoom:1,opacity:1},times:{valid_at:time,retrieved_at:time,reference_delta_seconds:0,valid_until:'2026-11-06T10:15:00Z'},
+ render:{tile_size:256,min_zoom:0,max_zoom:1,opacity:1},times:{valid_at:time,retrieved_at:time,reference_delta_seconds:0,valid_until:new Date(Date.now()+60000).toISOString()},
  attribution:id,legend:{title:id},semantics:{quantity:'rate',unit:'mm/h',measurement_method:'radar',observation_kind:'observation'}
 });
 const dwd={...source(dwdId,'https://maps.dwd.de/geoserver/dwd/wms?layers=Niederschlagsradar&bbox={bbox-epsg-3857}&time='+time+'&dim_reference_time='+time),
@@ -69,7 +70,7 @@ for(const first of [dwdId,operaId]){
  await nextProgress;
  completions.get(first===dwdId?operaId:dwdId)();
  assert.equal((await draw).requests_used,2);
- assert.deepEqual(progress[0],first===dwdId?['DWD rain',null,null,null]:[null,null,'OPERA rain',null]);
+ assert.deepEqual(progress[0],first===dwdId?['DWD rain',null,null,null]:['OPERA rain','OPERA rain','OPERA rain',null]);
  assert.deepEqual(visible(target),['DWD rain',null,'OPERA rain',null]);
  const panned=canvas();
  await drawRasterMosaicTileFromUrls({context:panned.getContext(),tile:{...tile,x:3},layers,tileSize:4,budget,
@@ -79,4 +80,44 @@ for(const first of [dwdId,operaId]){
 }
 assert.deepEqual(dwdNoDataRows(mask,{x:3,y:0,z:2},4)[0],[[0,4]]);
 assert.deepEqual(dwdNoDataRows(mask,{x:0,y:0,z:1},4),[]);
-console.log('PASS DWD rain/zero/NoData, OPERA present/absent, both arrivals, zoom, pan and bounded cache');
+
+const Leaflet={GridLayer:{extend(implementation){return class {
+ constructor(options){this.options=options;Object.assign(this,implementation);}
+ on(){}
+};}}};
+const tick=()=>new Promise(resolve=>setImmediate(resolve));
+const coldDwd={...dwd,dwd_nodata_mask:undefined,tile_url:dwd.tile_url.replace(/&dim_reference_time=.*/,'')};
+const coldOpera={...opera,dwd_priority_source:dwdId,draw_exclusions:[{scope:'bbox',bbox:bounds}]};
+const queue=new Map();
+const oldGrid=createRasterMosaicGridLayer(Leaflet,{...snapshot,layers:[coldOpera,coldDwd]},{
+ tileSize:4,createCanvas:canvasFactory,loadImage:(_url,layer)=>new Promise(resolve=>queue.set(layer.source_id,resolve))
+});
+const oldImage=oldGrid.createTile(tile);
+await tick();
+queue.get(operaId)(images[operaId]);
+await tick();
+assert.deepEqual(visible(oldImage),['OPERA rain','OPERA rain','OPERA rain',null]);
+const replacement=new Map();
+const newTime=new Date(Date.now()-30000).toISOString();
+const nextDwd={...dwd,times:{...dwd.times,valid_at:newTime},dwd_nodata_mask:{...mask,valid_at:newTime,reference_at:newTime},
+ tile_url:dwd.tile_url.replaceAll(time,newTime)};
+const nextOpera={...opera,times:{...opera.times,valid_at:newTime},tile_url:opera.tile_url+'?replacement=1'};
+const newGrid=createRasterMosaicGridLayer(Leaflet,{...snapshot,layers:[nextOpera,nextDwd]},{
+ tileSize:4,createCanvas:canvasFactory,previousFragments:oldGrid._p7CaptureFragments(),
+ loadImage:(_url,layer)=>new Promise(resolve=>replacement.set(layer.source_id,resolve))
+});
+const newImage=newGrid.createTile(tile);
+assert.deepEqual(visible(newImage),visible(oldImage));
+oldGrid._p7AbortPending();
+await tick();
+replacement.get(dwdId)(images[dwdId]);
+await tick();
+assert.deepEqual(visible(newImage),['DWD rain',null,'OPERA rain',null]);
+replacement.get(operaId)({columns:[null,null,null,'new OPERA rain']});
+await tick();
+assert.deepEqual(visible(newImage),['DWD rain',null,null,'new OPERA rain']);
+queue.get(dwdId)?.({columns:['obsolete DWD']});
+await tick();
+assert.deepEqual(visible(newImage),['DWD rain',null,null,'new OPERA rain']);
+newGrid._p7AbortPending();
+console.log('PASS DWD rain/zero/NoData, cold mask, progressive generation, late response, zoom, pan and cache');

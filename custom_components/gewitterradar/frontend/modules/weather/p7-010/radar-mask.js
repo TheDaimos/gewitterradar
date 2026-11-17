@@ -1,6 +1,6 @@
 /* Execute WR observation grants. No inference from weather pixels or GR age policy. */
 import {rasterTilePixelCrops} from './raster-tile-clip.js?v=41188r1';
-import {dwdNoDataRows} from './dwd-frame-mask.js?v=411227r1';
+import {dwdNoDataRows,dwdValidRows} from './dwd-frame-mask.js?v=411229r1';
 const decoded=new WeakMap();
 const box=b=>b&&['west','east','south','north'].every(k=>Number.isFinite(b[k]))&&b.west>=-180&&b.west<=180&&b.east>=-180&&b.east<=180&&b.south>=-90&&b.north<=90&&b.north>b.south&&b.west!==b.east;
 export function validateExclusions(items){
@@ -30,7 +30,7 @@ export function plannedSourceTiles(source,tile){
  const scale=2**(p.zoom-tile.z);return p.tiles.filter(([sx,sy])=>Math.floor(sx/scale)===x&&Math.floor(sy/scale)===tile.y).map(([x,y])=>({x,y,z:p.zoom}));
 }
 export function protectedRasterRects(layer,tile,size=256){
- const mask=layer.spatial_policy?.radar_mask,rects=[];
+ const mask=layer.spatial_policy?.radar_mask,rects=[...(layer._p7ReplacementRects||[])];
  if(layer.dwd_nodata_mask){
   dwdNoDataRows(layer.dwd_nodata_mask,tile,size).forEach((row,sy)=>{
    for(const [sx,end] of row)rects.push({sx,sy,sw:end-sx,sh:1});
@@ -38,17 +38,17 @@ export function protectedRasterRects(layer,tile,size=256){
  }
  for(const exclusion of [...(layer.draw_exclusions||[]),...(mask?.exclusions||[])])for(const r of rasterTilePixelCrops(tile,{...exclusion,verified:true},size)){
   const left=Math.floor(r.sx),top=Math.floor(r.sy),right=Math.ceil(r.sx+r.sw),bottom=Math.ceil(r.sy+r.sh);
-  const release=exclusion.dwd_mask_source==="dwd/radar_precipitation"&&layer._p7DwdNoData;
-  const rows=release?dwdNoDataRows(release,tile,size):[];
-  if(!rows.length){rects.push({sx:left,sy:top,sw:right-left,sh:bottom-top});continue;}
-  for(let sy=top;sy<bottom;sy++){
-   let next=left;
-   for(const [start,end] of rows[sy]||[]){
-    if(end<=next||start>=right)continue;
-    if(start>next)rects.push({sx:next,sy,sw:start-next,sh:1});
-    next=Math.min(right,end);
+  rects.push({sx:left,sy:top,sw:right-left,sh:bottom-top});
+ }
+ for(const {mask:validity,crops} of layer._p7DwdPainted||[]){
+  const rows=dwdValidRows(validity,tile,size);
+  for(const crop of crops){
+   const left=Math.ceil(crop.sx-.5),right=Math.ceil(crop.sx+crop.sw-.5);
+   const top=Math.ceil(crop.sy-.5),bottom=Math.ceil(crop.sy+crop.sh-.5);
+   for(let sy=top;sy<bottom;sy++)for(const [start,end] of rows[sy]||[]){
+    const sx=Math.max(left,start),edge=Math.min(right,end);
+    if(edge>sx)rects.push({sx,sy,sw:edge-sx,sh:1});
    }
-   if(next<right)rects.push({sx:next,sy,sw:right-next,sh:1});
   }
  }
  if(!mask)return rects;
@@ -72,7 +72,7 @@ export function protectedRasterRects(layer,tile,size=256){
  return rects;
 }
 export function maskedRasterTarget(context,layer,tile,size){
- if(!layer.spatial_policy?.radar_mask&&!layer.draw_exclusions?.length&&!layer.dwd_nodata_mask)return null;
+ if(!layer.spatial_policy?.radar_mask&&!layer.draw_exclusions?.length&&!layer.dwd_nodata_mask&&!layer._p7DwdPainted?.length&&!layer._p7ReplacementRects?.length)return null;
  const create=context.canvas?.ownerDocument||globalThis.document;
  const canvas=context._p7MaskCanvas??=create?.createElement('canvas');
  if(!canvas)throw new Error('WR mask canvas unavailable');

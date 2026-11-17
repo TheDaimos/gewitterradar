@@ -2,12 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {APPLICATION_RELEASE as release} from '../frontend/version.js';
 
 const roots=['custom_components/gewitterradar/frontend','frontend','dashboard/dist'];
 const read=(root,path)=>readFileSync(root+'/'+path,'utf8');
-const version='4.11.195',runtime='411195r1',moduleSet='E411-195A1';
+const {version,runtimeRevision:runtime,moduleSetId:moduleSet,integrationVersion}=release;
+const canonicalModules=JSON.parse(read('frontend','assets/gewitterradar-runtime-manifest.json')).modules;
 
-test('installed runtime manifest matches loaded frontend, 36 modules, and all mirrored assets',()=>{
+test('installed runtime manifest matches the declared modules and all mirrored assets',()=>{
  for(const root of roots){
   const manifest=JSON.parse(read(root,'assets/gewitterradar-runtime-manifest.json'));
   const product=read(root,'version.js');
@@ -15,15 +17,16 @@ test('installed runtime manifest matches loaded frontend, 36 modules, and all mi
   assert.equal(manifest.productVersion,version);
   assert.equal(manifest.runtimeRevision,runtime);
   assert.equal(manifest.moduleSetId,moduleSet);
-  assert.equal(manifest.modules.length,36);
-  assert.match(product,/version:"4\.11\.195"/);
-  assert.match(product,/runtimeRevision:"411195r1"/);
-  assert.match(product,/moduleSetId:"E411-195A1"/);
-  assert.match(expected,/"id": "weather.precipitation-layer",\s*"version": "1\.3\.36"/);
-  assert.equal(manifest.modules.find(row=>row.id==='weather.precipitation-layer')?.version,'1.3.36');
-  assert.deepEqual(new Set(manifest.modules.map(x=>x.id)).size,36);
+  assert.deepEqual(manifest.modules,canonicalModules);
+  assert(product.includes(`version:"${version}"`));
+  assert(product.includes(`runtimeRevision:"${runtime}"`));
+  assert(product.includes(`moduleSetId:"${moduleSet}"`));
+  const radarVersion=manifest.modules.find(row=>row.id==='weather.precipitation-layer')?.version;
+  assert(radarVersion);
+  assert(expected.includes(`"version": "${radarVersion}"`));
+  assert.equal(new Set(manifest.modules.map(x=>x.id)).size,canonicalModules.length);
   const install=JSON.parse(readFileSync('custom_components/gewitterradar/manifest.json','utf8'));
-  assert.equal(install.version,'0.25.102');
+  assert.equal(install.version,integrationVersion);
  }
  for(const file of ['version.js','gewitterradar.js','module-manifest.js',
    'assets/gewitterradar-runtime-manifest.json',

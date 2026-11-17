@@ -1,6 +1,6 @@
-import {validateSpatialPolicy} from "./nasa-spatial.js?v=411227r1";
-import {validateSourcePlan,validateExclusions} from './radar-mask.js?v=411227r1';
-import {validateDwdFrameMask} from './dwd-frame-mask.js?v=411227r1';
+import {validateSpatialPolicy} from "./nasa-spatial.js?v=411229r1";
+import {validateSourcePlan,validateExclusions} from './radar-mask.js?v=411229r1';
+import {validateDwdFrameMask} from './dwd-frame-mask.js?v=411229r1';
 /*
  * P7-010: isolated read-only WeatherRouter V2 raster response validation.
  * No provider scoring, spatial source selection or fallback routing in GR.
@@ -88,6 +88,9 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
  const radar=answer.layers.find(l=>l.source_id==='opera/opera_rate_raster');
  const dwd=answer.layers.find(l=>l.source_id==='dwd/radar_precipitation');
  for(const layer of answer.layers){
+  if(layer.dwd_priority_source!==undefined&&(layer!==radar||
+    layer.dwd_priority_source!==dwd?.source_id||dwd.coverage_scope!=="bbox"))
+   throw new TypeError("Inconsistent WR DWD priority source");
   for(const exclusion of layer.draw_exclusions||[]){
    if(exclusion.dwd_mask_source!==undefined&&(layer!==radar||!dwd?.dwd_nodata_mask||
      exclusion.dwd_mask_source!==dwd.source_id||exclusion.scope!=="bbox"||
