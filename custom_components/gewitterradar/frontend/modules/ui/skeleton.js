@@ -15,7 +15,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -74,6 +74,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             if (!current() || check.expired) return;
             title.prepend(logo);
             state.image = logo;
+            this._bindProjectHubMainTitle?.();
           }
           title.classList.add('is-pro');
         } catch {
@@ -7232,7 +7233,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               <details class="settings-section settings-collapsible" id="weather-engine-section">
                 <summary class="settings-section-head">
                   <div>
-                    <div class="settings-section-title">Weather-Engine</div>
+                    <div class="settings-section-title"><span data-presentation-text="diag.weatherEngine">${this._t('diag.weatherEngine')}</span></div>
                     <div class="settings-section-sub" data-presentation-text="weather.source.settingsSubtitle">Datenquellen und Niederschlagsdarstellung</div>
                   </div>
                 </summary>
@@ -7246,22 +7247,22 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </div>
                   <div class="settings-row gr-weather-row gr-weather-router-row">
                     <div class="settings-row-label gr-weather-caption">
-                      <strong>WeatherRouter · Verbindung</strong>
-                      <span class="gr-weather-subtitle">Wetterdaten über Home Assistant</span>
-                      <span id="weather-engine-status" class="gr-weather-connection-status" role="status" aria-live="polite">Verbindung noch nicht geprüft</span>
+                      <strong>WeatherRouter</strong>
+                      <span class="gr-weather-subtitle" data-presentation-text="diag.weatherSubtitle">${this._t('diag.weatherSubtitle')}</span>
+                      <span id="weather-engine-status" class="gr-weather-connection-status" role="status" aria-live="polite" data-presentation-text="diag.notChecked">${this._t('diag.notChecked')}</span>
                       <span id="weather-engine-active-api" class="gr-weather-active-api" role="status">Niederschlag: keine aktive Darstellung</span>
                     </div>
-                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-check" type="button">Verbindung prüfen</button>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-check" type="button" data-presentation-text="diag.checkConnection">${this._t('diag.checkConnection')}</button>
                   </div>
                   <div class="settings-row gr-weather-row gr-weather-data-row">
                     <div class="settings-row-label gr-weather-caption">
-                      <strong>Datenangebot · Kartenausschnitt</strong>
-                      <span class="gr-weather-subtitle">Niederschlag, zusätzliche Blitzdaten und amtliche Warnungen gezielt abfragen</span>
+                      <strong data-presentation-text="weather.legend.currentView">${this._t('weather.legend.currentView')}</strong>
+                      <span class="gr-weather-subtitle"><span data-presentation-text="eye.precipitation">${this._t('eye.precipitation')}</span> · <span data-presentation-text="weather.layer.group.thunder_lightning">${this._t('weather.layer.group.thunder_lightning')}</span> · <span data-presentation-text="weather.layer.group.warnings">${this._t('weather.layer.group.warnings')}</span></span>
                     </div>
-                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-inspect" type="button" disabled>Daten prüfen</button>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-inspect" type="button" data-presentation-text="diag.checkData" disabled>${this._t('diag.checkData')}</button>
                   </div>
                   <div class="settings-row gr-weather-results-row" id="weather-engine-results-row" hidden>
-                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite">Noch keine Datenabfrage ausgeführt.</div>
+                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite"></div>
                   </div>
                 </div>
               </details>
@@ -7483,15 +7484,15 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               <details class="settings-section settings-collapsible gr-settings-diagnostics-page" id="settings-diagnostic-section">
                 <summary class="settings-section-head">
                   <div>
-                    <div class="settings-section-title" id="settings-tools-section-title">Diagnose Tools</div>
-                    <div class="settings-section-sub">Kalibrierung, Weather-Engine, Datenquellen und Module</div>
+                    <div class="settings-section-title" id="settings-tools-section-title" data-presentation-text="diag.tools">${this._t('diag.tools')}</div>
+                    <div class="settings-section-sub" data-presentation-text="diag.toolsSubtitle">${this._t('diag.toolsSubtitle')}</div>
                   </div>
                 </summary>
                 <div class="settings-section-content" data-settings-diagnostic-menu></div>
               </details>
 
               <details class="settings-section settings-collapsible" id="settings-calibration-section">
-                <summary class="settings-section-head"><div><div class="settings-section-title">Kalibrierung</div><div class="settings-section-sub">Bestehende Einstell-, Referenz- und Testwerkzeuge</div></div></summary>
+                <summary class="settings-section-head"><div><div class="settings-section-title" data-presentation-text="diag.calibration">${this._t('diag.calibration')}</div><div class="settings-section-sub" data-presentation-text="diag.calibrationSubtitle">${this._t('diag.calibrationSubtitle')}</div></div></summary>
                 <div class="settings-section-content">
                   <div class="settings-row-label" id="settings-calibration-tools-label">Kalibrierungstools</div>
                   <div class="settings-row">
@@ -7504,14 +7505,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                     <button class="settings-switch" id="settings-medallion-calibration-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Medaillon-Kalibrierung"></button>
                   </div>
-                  <div class="settings-row-label">Layout &amp; System</div>
+                  <div class="settings-row-label" data-presentation-text="diag.layout">${this._t('diag.layout')}</div>
                   <div class="settings-row">
                     <div class="settings-row-label" id="settings-diagnostics-label">Kalibrierung &amp; Diagnose</div>
                     <button class="settings-switch" id="settings-diagnostics-toggle" type="button" role="switch" aria-checked="false" aria-label="Diagnosemodus starten"></button>
                   </div>
-                  <div class="settings-row-label">Testfunktionen</div>
+                  <div class="settings-row-label" data-presentation-text="diag.tests">${this._t('diag.tests')}</div>
                   <div class="settings-row">
-                    <div class="settings-row-label">Warnsystem-Simulation</div>
+                    <div class="settings-row-label" data-presentation-text="diag.warningSimulation">${this._t('diag.warningSimulation')}</div>
                     <button class="settings-switch tests" id="settings-tests-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Warnsystem-Simulation"></button>
                   </div>
@@ -7527,7 +7528,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               </details>
 
               <details class="settings-section settings-collapsible" id="settings-weather-diagnostics-section" data-gr-dynamic-height="true">
-                <summary class="settings-section-head"><div><div class="settings-section-title">Weather-Engine</div><div class="settings-section-sub">Verbindung, Wettertransport und vorhandene Diagnosen</div></div></summary>
+                <summary class="settings-section-head"><div><div class="settings-section-title" data-presentation-text="diag.weatherEngine">${this._t('diag.weatherEngine')}</div><div class="settings-section-sub" data-presentation-text="diag.weatherSubtitle">${this._t('diag.weatherSubtitle')}</div></div></summary>
                 <div class="settings-section-content"></div>
               </details>
 

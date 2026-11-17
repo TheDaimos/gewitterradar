@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411147r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411147r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.17',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.18',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -178,10 +178,10 @@ const sanitize=value=>{
   return redactString(value);
 };
 const pretty=value=>JSON.stringify(sanitize(value),null,2);
-const fmtDate=value=>{
+const fmtDate=(value,locale='de-DE')=>{
   if(!value)return '—';
   const date=new Date(value);
-  return Number.isNaN(date.getTime())?String(value):date.toLocaleString('de-DE');
+  return Number.isNaN(date.getTime())?String(value):date.toLocaleString(locale);
 };
 const capGroup=id=>{
   const value=String(id||'').toLowerCase();
@@ -207,6 +207,25 @@ const statusLabel=answer=>{
   if(!answer)return 'Keine Antwort';
   if(answer.status==='ready')return 'ready';
   return answer.unavailable?.code||answer.status||'unbekannt';
+};
+const DIAGNOSTIC_GROUP_KEYS={
+  'Tornados / Wasserhosen':'diag.tornadoes',
+  'Gewitter & Blitze':'weather.layer.group.thunder_lightning',
+  'Niederschlag / Regen':'weather.layer.group.precipitation_radar',
+  'Schnee & Eis':'diag.snowIce',
+  'Wind':'eye.wind',
+  'Temperatur':'eye.temperature',
+  'Wolken':'eye.clouds',
+  'Luftdruck':'diag.airPressure',
+  'UV':null,
+  'Pollen':null,
+  'Wasser & Hochwasser':'weather.layer.group.flood',
+  'Erdbeben & Vulkane':'diag.seismicVolcano',
+  'Warnungen & Gefahren':'weather.layer.group.warnings',
+  'Satellit':'weather.layer.group.satellite',
+  'Sonne, Mond & Weltraum':'weather.layer.domain.space',
+  'Biologische Daten':'weather.layer.domain.biological_hazards',
+  'Weitere':'weather.layer.group.otherWeather'
 };
 
 // Presentation only: these labels describe observed integration/transport states,
@@ -802,15 +821,16 @@ _weatherEngineDiagnosticPayload(){
   _weatherEngineDiagnosticEnsureUi(){
     const root=this.shadow;
     if(!root)return;
+    const t=key=>this._t('diag.'+key);
     this._weatherEnginePrepareSettingsUi();
     const section=root.getElementById('settings-weather-diagnostics-section')||root.getElementById('settings-diagnostic-section');
     const content=section?.querySelector('.settings-section-content');
     if(content&&section.id!=='settings-weather-diagnostics-section'&&!root.getElementById('settings-weather-engine-diagnostics-toggle')){
-      const marker=[...content.children].find(node=>node.textContent?.trim()==='Testfunktionen');
+      const marker=content.querySelector(':scope > [data-presentation-text="diag.tests"]');
       const row=document.createElement('div');
       row.className='settings-row';
       row.dataset.weatherEngineDiagnostics='true';
-      row.innerHTML='<div class="settings-row-label"><div>Weather Engine</div><div style="font-size:.76rem;opacity:.68;margin-top:3px">WeatherRouter-Anfragen, Antworten, Routing, Coverage, Timeline und lokalen Rückfallzustand untersuchen.</div></div><button class="settings-switch" id="settings-weather-engine-diagnostics-toggle" type="button" role="switch" aria-checked="false" aria-label="Weather Engine Diagnose öffnen"></button>';
+      row.innerHTML=`<div class="settings-row-label"><div data-presentation-text="diag.weatherEngine">${t("weatherEngine")}</div><div style="font-size:.76rem;opacity:.68;margin-top:3px" data-presentation-text="diag.weatherSubtitle">${t("weatherSubtitle")}</div></div><button class="settings-switch" id="settings-weather-engine-diagnostics-toggle" type="button" role="switch" aria-checked="false" data-presentation-aria="diag.traceTitle" aria-label="${t("traceTitle")}"></button>`;
       if(marker)content.insertBefore(row,marker);else content.append(row);
       row.querySelector('button')?.addEventListener('click',()=>this._weatherEngineDiagnosticOpen());
     }
@@ -842,37 +862,37 @@ _weatherEngineDiagnosticPayload(){
       </style>
       <section class="we-diagnostic-dialog" role="dialog" aria-modal="true" aria-labelledby="weather-engine-diagnostic-title">
         <div class="we-diagnostic-head">
-          <div><div class="we-diagnostic-title" id="weather-engine-diagnostic-title">Weather Engine</div><div class="we-diagnostic-sub">Consumer Request → WeatherRouter → Antwort → lokaler Gewitterradar-Zustand</div></div>
-          <button class="we-diagnostic-close" id="weather-engine-diagnostic-close" type="button" aria-label="Weather Engine schließen">×</button>
+          <div><div class="we-diagnostic-title" id="weather-engine-diagnostic-title" data-presentation-text="diag.weatherEngine">${t("weatherEngine")}</div><div class="we-diagnostic-sub" data-presentation-text="diag.requestFlow">${t("requestFlow")}</div></div>
+          <button class="we-diagnostic-close" id="weather-engine-diagnostic-close" type="button" data-presentation-aria="eye.close" aria-label="${this._t('eye.close')}">×</button>
         </div>
         <div class="we-diagnostic-body">
           <div class="we-diagnostic-filter">
-            <label>Bereich<select id="weather-engine-diagnostic-area"><option>Alle</option></select></label>
-            <label>Capability<select id="weather-engine-diagnostic-capability"><option>Alle</option></select></label>
-            <button id="weather-engine-diagnostic-refresh" type="button">Aktualisieren</button>
+            <label><span data-presentation-text="diag.area">${t("area")}</span><select id="weather-engine-diagnostic-area"><option value="Alle" data-presentation-text="diag.all">${t("all")}</option></select></label>
+            <label><span data-presentation-text="diag.capability">${t("capability")}</span><select id="weather-engine-diagnostic-capability"><option value="Alle" data-presentation-text="diag.all">${t("all")}</option></select></label>
+            <button id="weather-engine-diagnostic-refresh" type="button" data-presentation-text="diag.refresh">${t("refresh")}</button>
           </div>
           <div class="we-diagnostic-summary">
             <div class="we-card"><b>WeatherRouter</b><span id="weather-engine-diagnostic-router">—</span></div>
-            <div class="we-card"><b>Letzte WR-Antwort</b><span id="weather-engine-diagnostic-response">—</span></div>
-            <div class="we-card"><b>Sichtbarer Layer</b><span id="weather-engine-diagnostic-layer">—</span></div>
+            <div class="we-card"><b data-presentation-text="diag.lastResponse">${t("lastResponse")}</b><span id="weather-engine-diagnostic-response">—</span></div>
+            <div class="we-card"><b data-presentation-text="diag.visibleLayer">${t("visibleLayer")}</b><span id="weather-engine-diagnostic-layer">—</span></div>
           </div>
           <div class="we-card">
-            <b>V1/V2-Darstellungsmonitor · Ebenen und Kacheln</b>
-            <div id="weather-engine-display-summary" style="font-size:11px;white-space:pre-wrap">Noch keine Darstellungsereignisse</div>
+            <b data-presentation-text="diag.displayMonitor">${t("displayMonitor")}</b>
+            <div id="weather-engine-display-summary" style="font-size:11px;white-space:pre-wrap" data-presentation-text="diag.noDisplayEvents">${t("noDisplayEvents")}</div>
             <div class="we-diagnostic-actions" style="margin:9px 0">
-              <button id="weather-engine-display-marker" type="button">Bildverlust jetzt markieren</button>
-              <button id="weather-engine-display-detail" type="button" aria-pressed="false">Erweiterte Darstellungsmessung: Aus</button>
+              <button id="weather-engine-display-marker" type="button" data-presentation-text="diag.markImageLoss">${t("markImageLoss")}</button>
+              <button id="weather-engine-display-detail" type="button" aria-pressed="false" data-presentation-text="diag.extendedMeasurement">${t("extendedMeasurement")}</button>
             </div>
             <div style="overflow:auto;max-height:240px">
-              <table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Ereignis</th><th>Zoom</th><th>API</th><th>Abdeckung / Ergebnis</th></tr></thead><tbody id="weather-engine-display-rows"></tbody></table>
+              <table class="we-diagnostic-table"><thead><tr><th data-presentation-text="diag.time">${t("time")}</th><th data-presentation-text="diag.event">${t("event")}</th><th>Zoom</th><th>API</th><th data-presentation-text="diag.coverageResult">${t("coverageResult")}</th></tr></thead><tbody id="weather-engine-display-rows"></tbody></table>
             </div>
-            <div class="we-diagnostic-note">Nur vorhandene Karten-/Kachel-Ereignisse. Keine zusätzlichen Wetterabfragen oder Bildaufnahmen. Markierung umfasst 40 Ereignisse davor und danach.</div>
+            <div class="we-diagnostic-note" data-presentation-text="diag.monitorHelp">${t("monitorHelp")}</div>
           </div>
-          <div class="we-card"><b>Consumer API V2 – Schnittstellentest</b><p style="font-size:11px;opacity:.8">Begrenzter WebSocket-Vertragstest ohne Veränderung der Karte oder zusätzliche Raster-Bildabrufe.</p><button id="weather-engine-v2-test" type="button">API V2 gezielt prüfen</button><div id="weather-engine-v2-test-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch nicht geprüft</div><div class="we-diagnostic-actions" style="margin-top:9px"><button id="weather-engine-v2-compare" type="button">V2-Datenalter vergleichen (15 Min. / 12 Std.)</button></div><div class="we-diagnostic-note" style="margin-top:6px">Zwei getrennte, nacheinander ausgeführte V2-Anfragen mit gleichem Kartenausschnitt. Nur Diagnose: Die produktive 15-Minuten-Grenze und die Karte bleiben unverändert.</div><div id="weather-engine-v2-compare-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap">Noch kein Vergleich durchgeführt</div></div>
-          <div class="we-card"><b>OPERA RATE · regulärer WR-Provider</b><p class="we-diagnostic-note">Die RATE-Verarbeitung einschließlich geografischer Orientierung ist mit TEST69 abgeschlossen. WeatherRouter prüft jeden aktuellen Frame und entscheidet über Verfügbarkeit und Provider-Auswahl. Die Darstellung erfolgt über die normale Niederschlagsebene; eine separate Vorschaufreigabe ist nicht erforderlich.</p><button id="weather-engine-opera-toggle" type="button">Niederschlag aktualisieren</button><div id="weather-engine-opera-result" role="status">Warte auf WR Consumer V2</div></div><div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th>Zeit</th><th>Bereich</th><th>Capability</th><th>Kontext</th><th>WR-Antwort</th><th>Provider</th><th>Dauer</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
-          <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button">Niederschlag neu auflösen</button><button id="weather-engine-diagnostic-copy" type="button">Diagnose kopieren</button><button id="weather-engine-diagnostic-json" type="button">JSON exportieren</button></div>
-          <div class="we-diagnostic-note">Die Filter beeinflussen nur die Diagnoseansicht. Providerwahl und WeatherRouter-Routing werden nicht verändert.</div>
-          <details><summary>Rohdaten</summary><pre class="we-diagnostic-raw" id="weather-engine-diagnostic-raw"></pre></details>
+          <div class="we-card"><b data-presentation-text="diag.interfaceTest">${t("interfaceTest")}</b><p style="font-size:11px;opacity:.8" data-presentation-text="diag.interfaceHelp">${t("interfaceHelp")}</p><button id="weather-engine-v2-test" type="button" data-presentation-text="diag.checkApi">${t("checkApi")}</button><div id="weather-engine-v2-test-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap" data-presentation-text="diag.notChecked">${t("notChecked")}</div><div class="we-diagnostic-actions" style="margin-top:9px"><button id="weather-engine-v2-compare" type="button" data-presentation-text="diag.compareAge">${t("compareAge")}</button></div><div class="we-diagnostic-note" style="margin-top:6px" data-presentation-text="diag.compareHelp">${t("compareHelp")}</div><div id="weather-engine-v2-compare-result" style="margin-top:8px;font-size:11px;white-space:pre-wrap" data-presentation-text="diag.noComparison">${t("noComparison")}</div></div>
+          <div class="we-card"><b data-presentation-text="diag.operaProvider">${t("operaProvider")}</b><p class="we-diagnostic-note" data-presentation-text="diag.operaHelp">${t("operaHelp")}</p><button id="weather-engine-opera-toggle" type="button" data-presentation-text="diag.refreshRain">${t("refreshRain")}</button><div id="weather-engine-opera-result" role="status" data-presentation-text="diag.waitingV2">${t("waitingV2")}</div></div><div style="overflow:auto"><table class="we-diagnostic-table"><thead><tr><th data-presentation-text="diag.time">${t("time")}</th><th data-presentation-text="diag.area">${t("area")}</th><th data-presentation-text="diag.capability">${t("capability")}</th><th data-presentation-text="diag.context">${t("context")}</th><th data-presentation-text="diag.lastResponse">${t("lastResponse")}</th><th data-presentation-text="diag.provider">${t("provider")}</th><th data-presentation-text="diag.duration">${t("duration")}</th></tr></thead><tbody id="weather-engine-diagnostic-rows"></tbody></table></div>
+          <div class="we-diagnostic-actions"><button id="weather-engine-diagnostic-resolve" type="button" data-presentation-text="diag.resolveRain">${t("resolveRain")}</button><button id="weather-engine-diagnostic-copy" type="button" data-presentation-text="diag.copyDiagnostics">${t("copyDiagnostics")}</button><button id="weather-engine-diagnostic-json" type="button" data-presentation-text="diag.exportJson">${t("exportJson")}</button></div>
+          <div class="we-diagnostic-note" data-presentation-text="diag.filterHelp">${t("filterHelp")}</div>
+          <details><summary data-presentation-text="diag.rawData">${t("rawData")}</summary><pre class="we-diagnostic-raw" id="weather-engine-diagnostic-raw"></pre></details>
         </div>
       </section>`;
     root.append(backdrop);
@@ -902,15 +922,15 @@ _weatherEngineDiagnosticPayload(){
       const last=data.traces?.at(-1);
       const radar=data.local?.precipitation_radar;
       const text=[
-        'Gewitterradar · Weather Engine Diagnose',
-        'Erzeugt: '+fmtDate(data.generated_at),
-        'Filter: '+data.filter.area+' / '+data.filter.capability,
-        'Letzte Antwort: '+(last?statusLabel(last.answer):'—'),
-        'Capability: '+(last?.capability||'—'),
-        'Kontext: '+pretty(last?.context||null),
-        'Provider: '+(last?.answer?.provenance?.provider_name||'—'),
-        'Sichtbarer Layer: '+(radar?.layer_present?(radar.current_provider||'vorhanden'):'keiner'),
-        'Rückfall gehalten: '+(radar?.retained_previous_layer?'ja':'nein'),
+        'GewitterRadar · '+t('traceTitle'),
+        t('generated')+': '+fmtDate(data.generated_at,this._locale()),
+        t('filters')+': '+(data.filter.area==='Alle'?t('all'):this._weatherEngineGroupLabel(data.filter.area))+' / '+(data.filter.capability==='Alle'?t('all'):data.filter.capability),
+        t('lastResponse')+': '+(last?statusLabel(last.answer):'—'),
+        t('capability')+': '+(last?.capability||'—'),
+        t('context')+': '+pretty(last?.context||null),
+        t('provider')+': '+(last?.answer?.provenance?.provider_name||'—'),
+        t('visibleLayer')+': '+(radar?.layer_present?(radar.current_provider||t('visible')):t('none')),
+        t('prevRetained')+': '+t(radar?.retained_previous_layer?'yes':'no'),
         '',
         pretty(data)
       ].join('\n');
@@ -937,22 +957,31 @@ _weatherEngineDiagnosticPayload(){
     this._weatherEngineRenderSourceCards();
     const root=this.shadow;if(!root)return;
     const store=this.__weatherEngineTraceStore||{items:[]};
+    const t=key=>this._t('diag.'+key);
+    const labeled=(key,value)=>t(key)+': '+value;
+    const ms=value=>(value??'…')+' ms';
+    const statusText=(status,code)=>{
+      const names={ready:'ready',partial:'limited',unavailable:'notReady',error:'error',failed:'error',checking:'checking',running:'checking',started:'checking',completed:'ready',not_checked:'notChecked'};
+      const label=Object.hasOwn(names,status)?t(names[status]):status||this._t('weather.source.unknown');
+      return code&&code!==status?label+' · '+code:label;
+    };
+    const answerText=answer=>answer?statusText(answer.status,answer.unavailable?.code):t('noMatchingTrace');
     const operaButton=root.getElementById('weather-engine-opera-toggle');
     if(operaButton){
       operaButton.disabled=this._weatherRadarState?.()?.inFlight===true;
-      operaButton.textContent='Niederschlag aktualisieren';
+      operaButton.textContent=t('refreshRain');
     }
     const operaResult=root.getElementById('weather-engine-opera-result');
     if(operaResult){
       const state=this._weatherEngineOperaProviderState();
       operaResult.textContent=state.selected
-        ?'OPERA RATE · Consumer V2 · '+state.valid_at+(state.stale?' · von WR als veraltet gekennzeichnet':'')
+        ?'OPERA RATE · Consumer V2 · '+state.valid_at+(state.stale?' · '+t('staleFrame'):'')
         :state.returned_by_wr
-          ?'OPERA von WR geliefert · '+(state.transport_status==='image_auth_rejected'
-            ?'Bildzugriff abgewiesen':state.transport_status==='image_policy_rejected'
-              ?'Kachelrichtlinie: '+state.tile_denial_code:state.transport_status==='stage_rejected'
-                ?'Darstellung noch nicht vollständig':'Kacheln werden geladen')
-          :'OPERA derzeit nicht von WR geliefert · '+state.routing_result;
+          ?t('returnedByRouter')+' · '+(state.transport_status==='image_auth_rejected'
+            ?t('imageDenied'):state.transport_status==='image_policy_rejected'
+              ?labeled('tilePolicy',state.tile_denial_code):state.transport_status==='stage_rejected'
+                ?t('incompleteDisplay'):t('loadingTiles'))
+          :t('notReturnedByRouter')+' · '+state.routing_result;
     }
     const capabilities=new Set((store.items||[]).map(item=>item.capability).filter(Boolean));
     for(const item of store.lastCatalog?.capabilities||[])if(item?.id)capabilities.add(item.id);
@@ -960,12 +989,12 @@ _weatherEngineDiagnosticPayload(){
     const area=root.getElementById('weather-engine-diagnostic-area');
     const capability=root.getElementById('weather-engine-diagnostic-capability');
     if(area){
-      const selected=area.value||'Alle';area.replaceChildren(new Option('Alle','Alle'),...groups.map(x=>new Option(x,x)));area.value=[...area.options].some(o=>o.value===selected)?selected:'Alle';
+      const selected=area.value||'Alle';area.replaceChildren(new Option(t('all'),'Alle'),...groups.map(x=>new Option(this._weatherEngineGroupLabel(x),x)));area.value=[...area.options].some(o=>o.value===selected)?selected:'Alle';
     }
     if(capability){
       const selected=capability.value||'Alle';const areaValue=area?.value||'Alle';
       const caps=[...capabilities].filter(id=>areaValue==='Alle'||capGroup(id)===areaValue).sort();
-      capability.replaceChildren(new Option('Alle','Alle'),...caps.map(id=>new Option(id,id)));capability.value=[...capability.options].some(o=>o.value===selected)?selected:'Alle';
+      capability.replaceChildren(new Option(t('all'),'Alle'),...caps.map(id=>new Option(id,id)));capability.value=[...capability.options].some(o=>o.value===selected)?selected:'Alle';
     }
     const data=this._weatherEngineDiagnosticFiltered();
     const traces=data.traces||[];
@@ -974,35 +1003,34 @@ _weatherEngineDiagnosticPayload(){
     const radar=data.local?.precipitation_radar;
 
     const router=root.getElementById('weather-engine-diagnostic-router');
-    if(router)router.textContent=!discovery?'Noch nicht geprüft':discovery.ready?'bereit · V1 registriert, V2 separat prüfen':discovery.present?'vorhanden, nicht bereit':'nicht erreichbar';
+    if(router)router.textContent=t(!discovery?'notChecked':discovery.ready?'ready':discovery.present?'notReady':'unreachable');
     const response=root.getElementById('weather-engine-diagnostic-response');
-    if(response)response.textContent=last?statusLabel(last.answer)+' · '+last.capability:'Noch keine passende Anfrage aufgezeichnet';
+    if(response)response.textContent=last?answerText(last.answer)+' · '+last.capability:t('noMatchingTrace');
     const layer=root.getElementById('weather-engine-diagnostic-layer');
-    if(layer)layer.textContent=!radar?'—':!radar.layer_present?'kein WeatherRouter-Raster sichtbar':radar.api_version===2?'API V2 · '+radar.mosaic_layer_count+' Mosaikquellen · sichtbar':('API V1 · '+(radar.current_provider||'Raster vorhanden')+(radar.retained_previous_layer?' · vorherige Darstellung gehalten':' · aktuell'));
+    if(layer)layer.textContent=!radar?'—':!radar.layer_present?t('noRasterVisible'):radar.api_version===2
+      ?'API V2 · '+this._t('weather.legend.mosaicSources',{count:radar.mosaic_layer_count})
+      :'API V1 · '+(radar.current_provider||t('visibleLayer'))+' · '+t(radar.retained_previous_layer?'retainedLayer':'current');
 
     const monitor=data.display_monitor||{},displayRows=root.getElementById('weather-engine-display-rows');
     const monitorSummary=root.getElementById('weather-engine-display-summary');
     if(monitorSummary){
       const counts=monitor.recent_counts||{};
-      monitorSummary.textContent="Ereignisse "+(monitor.events?.length||0)+
-        " · Markierungen "+(monitor.markers?.length||0)+
-        " · geschützte Wechsel "+(counts.v1_regional_replacement_prevented||0)+
-        " · Darstellungsverlust-Verdacht "+(counts.display_gap_suspected||0)+
-        "\\nV2-Versuche "+(counts.v2_attempt_completed||0)+
-        " · V1-Rückfälle "+(counts.v1_fallback_started||0)+
-        " · Kachelfehler "+(counts.v1_tile_error||0)+
-        " · Verdrängte ältere Ereignisse "+(monitor.dropped_events||0);
+      monitorSummary.textContent=[
+        labeled('events',monitor.events?.length||0),labeled('markers',monitor.markers?.length||0),
+        labeled('protectedSwitches',counts.v1_regional_replacement_prevented||0),labeled('suspectedGaps',counts.display_gap_suspected||0),
+        labeled('attemptsV2',counts.v2_attempt_completed||0),labeled('fallbacksV1',counts.v1_fallback_started||0),
+        labeled('tileErrors',counts.v1_tile_error||0),labeled('droppedEvents',monitor.dropped_events||0)
+      ].join(' · ');
     }
     const detailBtn=root.getElementById('weather-engine-display-detail');
-    if(detailBtn){detailBtn.textContent="Erweiterte Darstellungsmessung: "+
-      (monitor.detail_enabled?"Ein":"Aus");detailBtn.setAttribute("aria-pressed",String(monitor.detail_enabled));}
+    if(detailBtn){detailBtn.textContent=labeled('extendedMeasurement',this._t(monitor.detail_enabled?'eye.on':'eye.off'));detailBtn.setAttribute("aria-pressed",String(monitor.detail_enabled));}
     if(displayRows){
       displayRows.replaceChildren();
       for(const e of (monitor.events||[]).slice(-36).reverse()){
         const tr=document.createElement("tr");
         const info=["coverage_fraction","old_coverage_fraction","new_coverage_fraction","uncovered_tiles","loaded_tiles","reason","elapsed_ms"]
           .filter(k=>e[k]!==undefined).map(k=>k+"="+e[k]).join(" · ");
-        for(const value of [fmtDate(e.at),e.phase,e.zoom??"—",
+        for(const value of [fmtDate(e.at,this._locale()),e.phase,e.zoom??"—",
           e.api_version??e.to_api??"—",info||e.provider_id||e.correlation_id||"—"]){
           const td=document.createElement("td");td.textContent=String(value);tr.append(td);
         }
@@ -1015,19 +1043,21 @@ _weatherEngineDiagnosticPayload(){
       for(const item of traces.slice(-30).reverse()){
         const tr=document.createElement('tr');
         const provider=item.answer?.provenance?.provider_name||((item.answer?.provenance?.sources||[]).map(x=>x.provider_name).filter(Boolean).join(', ')||'—');
-        tr.innerHTML='<td>'+fmtDate(item.completed_at||item.started_at)+'</td><td>'+capGroup(item.capability)+'</td><td>'+String(item.capability||'—')+'</td><td>'+String(item.context?.type||'—')+'</td><td>'+statusLabel(item.answer)+'</td><td>'+String(provider)+'</td><td>'+String(item.duration_ms??'—')+' ms</td>';
+        for(const value of [fmtDate(item.completed_at||item.started_at,this._locale()),this._weatherEngineGroupLabel(capGroup(item.capability)),
+          item.capability||'—',item.context?.type||'—',answerText(item.answer),provider,ms(item.duration_ms)]){
+          const cell=document.createElement('td');cell.textContent=value;tr.append(cell);
+        }
         rows.append(tr);
       }
     }
     const v2Result=root.getElementById('weather-engine-v2-test-result');
     if(v2Result){
       const test=store.v2TestResult;
-      v2Result.textContent=!test?"Noch nicht geprüft":
-        "Status: "+test.status+" · "+(test.layer_count??0)+" Quellen · "+(test.duration_ms??"…")+" ms"+
-        (test.error_code?" · Fehler: "+test.error_code:"")+
-        "\\nKennung: "+test.correlation_id+
-        (test.time_deviating?"\\nHinweis: zeitlich abweichende Quelle":"")+
-        (Array.isArray(test.limitations)&&test.limitations.length?"\\nWR-Einschränkungen: "+test.limitations.join(" · "):"");
+      v2Result.textContent=!test?t('notChecked'):[
+        labeled('status',statusText(test.status,test.error_code)),labeled('sourceCount',test.layer_count??0),ms(test.duration_ms),
+        labeled('identifier',test.correlation_id),test.time_deviating&&t('timeMismatch'),
+        test.limitations?.length&&labeled('limitations',test.limitations.join(' · '))
+      ].filter(Boolean).join(' · ');
     }
     const v2Button=root.getElementById('weather-engine-v2-test');
     if(v2Button)v2Button.disabled=Boolean(this.__weatherEngineV2TestRunning||this.__weatherEngineV2ComparisonRunning);
@@ -1036,20 +1066,28 @@ _weatherEngineDiagnosticPayload(){
     const comparisonLabel=root.getElementById('weather-engine-v2-compare-result');
     if(comparisonLabel){
       const comparison=store.v2AgeComparison;
-      comparisonLabel.textContent=!comparison?"Noch kein Vergleich durchgeführt":
-        "Vergleich: "+comparison.status+
-        "\\n"+(comparison.requests||[]).map(item=>
-          (item.allow_older_satellite_background===true?"WR-Gültigkeit · Satellitengrundlage erlaubt":"WR-Gültigkeit · ohne ältere Satellitengrundlage")+
-          ": "+item.status+" · "+item.layer_count+" Quellen · "+(item.duration_ms??"…")+" ms"+
-          (item.error_code?" · Fehler: "+item.error_code:"")+
-          "\\nKennung: "+item.correlation_id+
-          (item.sources||[]).map(source=>"\\n"+source.source_id+" · gültig "+source.valid_at+
-            " · Alter "+source.age_seconds+" s · "+source.measurement_method).join("")+
-          (item.limitations?.length?"\\nHinweise: "+item.limitations.join(" · "):"")
-        ).join("\\n")+
-        (comparison.conclusion?"\\nAuswertung: "+comparison.conclusion:"");
+      const conclusion=comparison?.age_filter_supported?'olderDataHelped':
+        comparison?.requests?.length===2&&comparison.requests.every(item=>item.status==='unavailable')?'bothUnavailable':'reviewComparison';
+      comparisonLabel.textContent=!comparison?t('noComparison'):[
+        labeled('comparison',statusText(comparison.status)),
+        ...(comparison.requests||[]).flatMap(item=>[
+          labeled(item.allow_older_satellite_background?'allowSatellite':'denySatellite',statusText(item.status,item.error_code))+
+            ' · '+labeled('sourceCount',item.layer_count)+' · '+ms(item.duration_ms),
+          labeled('identifier',item.correlation_id),
+          ...(item.sources||[]).map(source=>[source.source_id,labeled('validAt',source.valid_at),
+            labeled('age',source.age_seconds+' s'),source.measurement_method].join(' · ')),
+          item.limitations?.length&&labeled('limitations',item.limitations.join(' · '))
+        ]),
+        comparison.error_code&&labeled('error',comparison.error_code),
+        comparison.conclusion&&labeled('conclusion',t(conclusion))
+      ].filter(Boolean).join('\n');
     }
     const raw=root.getElementById('weather-engine-diagnostic-raw');if(raw)raw.textContent=pretty(data);
+  },
+
+  _weatherEngineGroupLabel(group){
+    const key=DIAGNOSTIC_GROUP_KEYS[group];
+    return typeof key==='string'?this._t(key):group;
   },
 
   _weatherEngineDiagnosticOpen(){
@@ -1188,59 +1226,74 @@ _weatherEngineDiagnosticPayload(){
     if(!check||!inspect||!status||!results)return;
     if(check.dataset.weatherEngineBound==='true')return;
     check.dataset.weatherEngineBound='true';
-    const show=(value,state='neutral')=>{status.textContent=value;status.dataset.state=state;};
+    const t=key=>this._t('diag.'+key);
+    const show=(key,state='neutral',count=null)=>{
+      const label=document.createElement('span');
+      label.dataset.presentationText='diag.'+key;
+      label.textContent=t(key);
+      delete status.dataset.presentationText;
+      status.replaceChildren(label);
+      if(count!==null){
+        const capabilities=document.createElement('span');
+        capabilities.dataset.presentationText='diag.capability';
+        capabilities.textContent=t('capability');
+        status.append(' · ',capabilities,': '+count+' · Consumer API V1');
+      }
+      status.dataset.state=state;
+    };
     let currentCatalog=null;
     check.addEventListener('click',async()=>{
       check.disabled=true;inspect.disabled=true;currentCatalog=null;
-      show('Verbindung zu WeatherRouter wird geprüft …','checking');
+      show('checkingConnection','checking');
       try{
         this._weatherRouterReset();
         const state=await this._weatherRouterDiscovery({refresh:true});
-        if(!state.present){show('Nicht erreichbar oder nicht installiert','error');return;}
-        if(!state.compatible){show('Vorhanden · Consumer-Schnittstelle V1 nicht kompatibel','error');return;}
-        if(!state.ready){show('Vorhanden · derzeit nicht betriebsbereit','error');return;}
+        if(!state.present){show('unreachable','error');return;}
+        if(!state.compatible){show('invalidApi','error');return;}
+        if(!state.ready){show('notReady','error');return;}
         const found=await this._weatherRouterCapabilities({filter:{domains:['weather']}});
-        if(found.status!=='ready'){show('Verbindung vorhanden · Wetterfähigkeiten nicht abrufbar','error');return;}
+        if(found.status!=='ready'){show('capabilitiesUnavailable','error');return;}
         currentCatalog=found.capabilities;
         const usable=currentCatalog.filter(item=>item.enabled&&item.available);
-        show('Bereit · '+usable.length+' Wetterfähigkeiten · Consumer-Schnittstelle V1','ready');
+        show('ready','ready',usable.length);
         inspect.disabled=false;
-      }catch(_error){show('Verbindungsprüfung fehlgeschlagen','error');}
+      }catch(_error){show('connectionFailed','error');}
       finally{check.disabled=false;}
     });
     inspect.addEventListener('click',async()=>{
       if(!currentCatalog)return;
       results.closest('#weather-engine-results-row')?.removeAttribute('hidden');
       const map=this._map;
-      if(!map||typeof map.getBounds!=='function'){results.textContent='Die Karte ist noch nicht bereit. Bitte später erneut prüfen.';return;}
+      if(!map||typeof map.getBounds!=='function'){results.textContent=t('mapNotReady');return;}
       const bounds=map.getBounds(),center=map.getCenter();
       const wrap=n=>((n+180)%360+360)%360-180;
       const bbox={type:'bbox',west:wrap(bounds.getWest()),south:Math.max(-90,bounds.getSouth()),east:wrap(bounds.getEast()),north:Math.min(90,bounds.getNorth())};
       const point={type:'point',latitude:center.lat,longitude:wrap(center.lng)};
-      results.textContent='Frage drei Wetterinformationen für den sichtbaren Kartenausschnitt ab …';
+      results.textContent=t('requestingMapData');
       inspect.disabled=true;
       const wanted=[
-        ['weather.precipitation.layer','Niederschlag'],
-        ['weather.lightning.observed.events','Zusätzliche Blitzbeobachtungen'],
-        ['weather.warning.official','Amtliche Warnungen']
+        ['weather.precipitation.layer','eye.precipitation'],
+        ['weather.lightning.observed.events','weather.layer.group.thunder_lightning'],
+        ['weather.warning.official','weather.layer.group.warnings']
       ];
       const output=[];
       try{
-        for(const [id,label] of wanted){
+        for(const [id,labelKey] of wanted){
+          const label=this._t(labelKey);
           const entry=currentCatalog.find(item=>item.id===id);
-          if(!entry||!entry.enabled||!entry.available){output.push(label+': derzeit kein verfügbarer Ressourcenadapter.');continue;}
+          if(!entry||!entry.enabled||!entry.available){output.push(label+': '+t('unavailableAdapter'));continue;}
           const supported=entry.spatial_contexts||[];
           const context=supported.includes('bbox')?bbox:supported.includes('point')?point:supported.includes('global')?{type:'global'}:null;
-          if(!context){output.push(label+': kein passender räumlicher Anfragekontext.');continue;}
+          if(!context){output.push(label+': '+t('noSpatialContext'));continue;}
           const answer=await this._weatherRouterResolve(id,context);
-          if(answer.status!=='ready'){output.push(label+': '+(answer.unavailable?.code||'nicht verfügbar'));continue;}
-          const provider=answer.provenance?.mode==='aggregate'?(answer.provenance.sources||[]).map(x=>x.provider_name).join(', '):(answer.provenance?.provider_name||'Quelle nicht benannt');
+          if(answer.status!=='ready'){output.push([label,this._t('weather.layer.unavailable'),answer.unavailable?.code].filter(Boolean).join(' · '));continue;}
+          const provider=answer.provenance?.mode==='aggregate'?(answer.provenance.sources||[]).map(x=>x.provider_name).join(', '):(answer.provenance?.provider_name||t('unnamedSource'));
           const count=answer.resource.type==='event_feed'?answer.resource.payload.event_count:answer.resource.type==='hazard_feed'?answer.resource.payload.events.length:null;
-          const age=Number.isFinite(answer.freshness?.age_seconds)?' · Alter '+Math.round(answer.freshness.age_seconds)+' s':'';
-          output.push(label+': '+answer.resource.type+(count===null?'':' · '+count+' Ereignisse')+' · '+provider+age+(answer.routing?.degraded?' · eingeschränkt':''));
+          const age=Number.isFinite(answer.freshness?.age_seconds)?t('age')+': '+Math.round(answer.freshness.age_seconds)+' s':null;
+          output.push([label,answer.resource.type,count===null?null:t('events')+': '+count,provider,age,answer.routing?.degraded?t('limited'):null].filter(Boolean).join(' · '));
         }
         results.textContent=output.join('\n');
-      }catch(_error){results.textContent='Abfrage fehlgeschlagen. Die bestehende Blitzüberwachung bleibt unbeeinflusst.';}
+      }catch(_error){results.textContent=t('requestFailed');}
       finally{inspect.disabled=false;}
     });
   }

@@ -1,11 +1,11 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411223r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411225r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411225r1';
-import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411225r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411226r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411226r1';
+import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411226r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.37",
+  "version": "1.3.38",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2517,7 +2517,13 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncV410Tooltips();
       this.shadow.querySelectorAll('[data-presentation-text]').forEach(node=>{node.textContent=this._t(node.dataset.presentationText);});
       this.shadow.querySelectorAll('[data-presentation-aria]').forEach(node=>{node.setAttribute('aria-label',this._t(node.dataset.presentationAria));});
+      this.shadow.querySelectorAll('[data-presentation-title]').forEach(node=>{node.title=this._t(node.dataset.presentationTitle);});
+      this._bindProjectHubMainTitle?.();
+      this._bindProjectHubSignature?.();
       this._weatherEngineRenderSourceCards?.();
+      if(this.shadow.getElementById('weather-engine-diagnostic-backdrop'))this._weatherEngineDiagnosticRender?.();
+      if(this.shadow.getElementById('data-sources-content')?.childElementCount)this._renderDataSourcesView?.();
+      if(this.shadow.getElementById('map-diagnostic-panel')?.hidden===false)this._mapDiagnosticRender?.();
       this._weatherTemperatureTranslate?.();
       this._weatherWindTranslate?.();
       if(this.__weatherWind)this._weatherWindSyncToggle?.();

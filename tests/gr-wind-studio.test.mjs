@@ -33,11 +33,20 @@ test('the Studio and offline page share the same preview and renderer; protected
  const preview=readFileSync('frontend/modules/weather/snake-preview.js','utf8'),offline=readFileSync('docs/previews/snake-flow.html','utf8'),studio=readFileSync('frontend/modules/weather/wind-studio.js','utf8');assert(preview.includes('new SnakeCanvas('));assert(offline.includes('new SnakePreview('));assert(studio.includes('new SnakePreview('));assert(!studio.includes('new SnakeCanvas('));assert(!offline.includes('function makeField('));
  for(const name of ['snake-canvas.js','snake-geometry.js','snake-config.js','wind-canvas.js','wind-field.js','flow-geometry.js','temperature-canvas.js','consumer-client.js','frame-clock.js']){
   const path='frontend/modules/weather/'+name,ref=name==='consumer-client.js'?beforeRelease:'ac73cb59abeac399c9fc24dcb78194ecef0c3e0b';
-  // Source-card copy in the settings UI is localized independently of the transport.
+  const current=readFileSync(path,'utf8'),reference=withNewOpacityFloor(name,readAt(ref,path));
+  // Compare the transport byte-for-byte. The diagnostics labels and HTML are
+  // presentation; the settings UI must still issue the same provider calls.
   const transport=source=>name==='consumer-client.js'
-    ? source.replace(/  _weatherEngineRenderSourceCards\(\)\{[\s\S]*?(?=  _weatherEngineEmbedDiagnostics\(\))/,'')
+    ? source.replace(/const fmtDate[\s\S]*?(?=const capGroup)/,'')
+      .replace(/const DIAGNOSTIC_GROUP_KEYS[^]*?\n};\n/,'')
+      .replace(/  _weatherEngine(?:(?:DiagnosticEnsureUi)|(?:RenderSourceCards))\(\)\{[\s\S]*?(?=  _weatherEngine(?:DiagnosticOpen|EmbedDiagnostics)\(\))/g,'')
+      .replace(/  _mountWeatherRouterSettings\(\)\{[^]*(?=\n}\)\);)/,'')
       .replace(/(id:'weather\.consumer-client',version:')[^']+/, '$1MODULE_VERSION') : source;
-  assert.equal(withoutCache(transport(readFileSync(path,'utf8'))),withoutCache(transport(withNewOpacityFloor(name,readAt(ref,path)))),name);
+  assert.equal(withoutCache(transport(current)),withoutCache(transport(reference)),name);
+  if(name==='consumer-client.js'){
+   const providerCalls=source=>source.slice(source.indexOf('  _mountWeatherRouterSettings()')).match(/this\._weatherRouter(?:Reset|Discovery|Capabilities|Resolve)\([^\n]*?\)/g);
+   assert.deepEqual(providerCalls(current),providerCalls(reference),'settings provider calls');
+  }
  }
 });
 

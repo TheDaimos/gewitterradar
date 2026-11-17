@@ -19,11 +19,9 @@ assert.match(consumer,/Temperatur/);
 assert.match(consumer,/raw_consumer_exchanges/);
 assert.match(consumer,/weather_router\/consumer\//);
 assert.match(consumer,/retained_previous_layer/);
-assert.match(consumer,/Niederschlag neu auflösen/);
-assert.match(consumer,/Diagnose kopieren/);
-assert.match(consumer,/JSON exportieren/);
-assert.match(consumer,/API V2 gezielt prüfen/);
-assert.match(consumer,/V2-Datenalter vergleichen \(15 Min\. \/ 12 Std\.\)/);
+for(const key of ['resolveRain','copyDiagnostics','exportJson','checkApi','compareAge']){
+  assert.ok(consumer.includes('data-presentation-text="diag.'+key+'"'),key);
+}
 assert.match(consumer,/weather-engine-v2-compare-result/);
 assert.match(consumer,/v2_age_comparison/);
 assert.match(consumer,/resolveEventWindow/);
@@ -40,7 +38,7 @@ assert.match(consumer,/correlation_id:id/);
 assert.match(consumer,/maxTileRequests:12/);
 assert.match(consumer,/validateRasterMosaicV2\(response,\{maxLayers:12\}/);
 assert.match(consumer,/20000/);
-assert.match(consumer,/Die Filter beeinflussen nur die Diagnoseansicht/);
+assert.match(consumer,/data-presentation-text="diag\.filterHelp"/);
 assert.match(consumer,/api\[_-\]\?key|apikey|access\[_-\]\?token/);
 assert.match(skeleton,/this\._mountWeatherRouterSettings\?\.\(\);\s*this\._mountWeatherRadarSettings\?\.\(\);\s*this\._mountWeatherDisplaySettings\?\.\(\);\s*this\._mountWeatherEngineDiagnostics\?\.\(\);/);
 assert.doesNotMatch(consumer,/selected_provider\s*=\s*['"]dwd/i);

@@ -1,6 +1,6 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411225r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411226r1';
 import {CLOUD_CAPABILITY,CLOUD_EYE_ICON,cloudEyeStatus} from './eye-hub-registry.js?v=411213r1';
-import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411225r1';
+import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411226r1';
 
 const STORAGE_KEY='gewitterradar:clouds-ui:v1';
 const PANEL_SCOPE='clouds-settings';
@@ -42,6 +42,8 @@ export const cloudsControlMethods={
    #weather-clouds-panel{position:absolute;z-index:2147483644;top:12px;right:12px;width:min(360px,calc(100% - 24px));max-height:calc(100% - 24px);box-sizing:border-box;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;color:#e4e9ef;font:12px/1.45 system-ui}
    #weather-clouds-panel[hidden]{display:none}
    #weather-clouds-panel>header.weather-display-panel-head{touch-action:none}
+   #weather-clouds-panel .gr-premium-panel-actions>[data-premium-action="close"]{border-radius:50%!important;box-shadow:none}
+   #weather-clouds-panel .gr-premium-panel-actions>[data-premium-action="close"] img{width:34px!important;height:34px!important}
    #weather-clouds-panel label{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
    #weather-clouds-panel [data-cloud-opacity]{min-width:0;width:48%;accent-color:#d5ab50}
    #weather-clouds-panel .clouds-description{display:flex;align-items:center;gap:8px}
@@ -73,7 +75,10 @@ export const cloudsControlMethods={
  },
  _weatherCloudsClose(){
   const panel=this.shadow?.getElementById('weather-clouds-panel');
-  if(panel)panel.hidden=true;
+  if(!panel)return;
+  const restoreFocus=panel.contains(this.shadow.activeElement);
+  panel.hidden=true;
+  if(restoreFocus)this.__weatherCloudsFocus?.focus({preventScroll:true});
  },
  _weatherCloudsOpen(){
   const card=this.shadow?.getElementById('map-card');
@@ -86,7 +91,7 @@ export const cloudsControlMethods={
    panel.className='weather-wind-panel gr-premium-metal-surface';
    panel.setAttribute('aria-label',this._t('eye.clouds'));
    panel.hidden=true;
-   panel.innerHTML=`<header class="weather-display-panel-head"><img src="${CLOUD_EYE_ICON}" alt="" draggable="false"><strong data-cloud-title></strong><div class="gr-premium-panel-actions">${premiumAction('minimize',this._t('eye.minimize'),'minimize')}${premiumAction('close','Schließen')}</div></header>
+   panel.innerHTML=`<header class="weather-display-panel-head"><img src="${CLOUD_EYE_ICON}" alt="" draggable="false"><strong data-cloud-title></strong><div class="gr-premium-panel-actions">${premiumAction('minimize',this._t('eye.minimize'),'minimize')}${premiumAction('close',this._t('eye.close'))}</div></header>
     <div class="weather-wind-panel-body"><p class="clouds-description"><img src="${HELP_ICON}" alt=""><span data-cloud-description></span></p>
     <label><span data-cloud-visible-label></span><input type="checkbox" data-cloud-visible></label>
     <label><span data-cloud-style-label></span><select class="weather-display-style-select" data-cloud-style><option value="original"></option><option value="balanced"></option></select></label>
@@ -115,6 +120,7 @@ export const cloudsControlMethods={
   }
   this._setMapDisplayMenuOpen?.(false);
   if(this._weatherDisplayState().config.enabled)this._weatherDisplayPatch({enabled:false});
+  if(panel.hidden)this.__weatherCloudsFocus=this.shadow.activeElement;
   panel.hidden=false;
   syncPremiumPanel(panel,PANEL_SCOPE);
   this._weatherCloudsSync();

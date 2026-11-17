@@ -59,6 +59,23 @@ async function assertLayout(page) {
   assert.match(layout.badge,/^V4\.11\.\d+ DEV$/);
 }
 
+async function assertHubTriggers(page, useTouch=false){
+  const title=logo(page);
+  assert.equal(await title.getAttribute('role'),'button');
+  assert.equal(await title.getAttribute('tabindex'),'0');
+  if(useTouch)await title.tap();else await title.press('Enter');
+  const hub=page.locator('iframe[title="Daimos Project Hub"]');
+  await hub.waitFor();
+  const target=await hub.getAttribute('src');
+  await page.locator('.project-hub-close-premium').click();
+  await page.locator('#settings-open').click();
+  await page.locator('.settings-signature-wrap').click();
+  await hub.waitFor();
+  assert.equal(await hub.getAttribute('src'),target);
+  await page.locator('.project-hub-close-premium').click();
+  await page.locator('#settings-close').click();
+}
+
 async function assertHelp(page,connected,screenshots){
   const title=page.locator('#overview-title');
   assert.equal(await title.evaluate(node=>node.classList.contains('is-pro')),connected);
@@ -257,6 +274,7 @@ async function run() {
     assert.equal(assetRequests.length,0);
     await desktop.evaluate(() => finishDiscovery(proReply));
     await assertLayout(desktop);
+    await assertHubTriggers(desktop);
     assert(await desktop.locator('#location-main-button').isVisible());
     assert.equal(assetRequests.length,1);
     await desktop.evaluate(() => {for(let i=0;i<3;i++)card.hass={...card._hass};});
@@ -313,6 +331,7 @@ async function run() {
       if(width===393&&process.env.GR_TEST_SCREENSHOTS)await phone.locator('.topbar').screenshot({path:path.join(process.env.GR_TEST_SCREENSHOTS,'gr-411211-portrait.png')});
     }
     await phone.setViewportSize({width:393,height:851});
+    await assertHubTriggers(phone,true);
     const output=process.env.GR_HELP_SCREENSHOTS;
     if(output)require('node:fs').mkdirSync(output,{recursive:true});
     await assertHelp(phone,true,output);

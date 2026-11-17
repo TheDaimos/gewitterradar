@@ -79,6 +79,10 @@ function literals(ref){
 const current=inventory(source(),true);
 const previous=inventory(source(baseline));
 const carried=Object.fromEntries(entries(inventory(source(currentStart)).catalogs));
+const previousDelivery=inventory(source('4db38fd6c41d327c6d4ece126168927accf536a4'),true);
+const previousPresentation=Object.fromEntries(entries(previousDelivery.catalogs.PRESENTATION_LOCALES));
+const currentPresentation=Object.fromEntries(entries(current.catalogs.PRESENTATION_LOCALES));
+assert.deepEqual(Object.keys(previousPresentation).filter(key=>previousPresentation[key]!==currentPresentation[key]),[],'GR 4.11.225 presentation translations changed');
 assert.deepEqual(JSON.parse(JSON.stringify(current.languages)),JSON.parse(JSON.stringify(previous.languages)),'Registered languages changed');
 const before=Object.fromEntries(entries(previous.catalogs));
 const after=Object.fromEntries(entries(current.catalogs));
@@ -113,8 +117,9 @@ for(const [name,table] of Object.entries(presentation)) {
 const presentationReferences=new Set();
 for(const path of files('frontend').filter(path=>path.endsWith('.js')&&!path.includes('/locales/'))){
   const code=readFileSync(path,'utf8');
-  const entry=/\b_t\(\s*['"]((?:vault\.|weather\.(?:app|color|hub|layer|legend|menu|precip|source|status|studio|synoptic|temperature|weatherDisplay|wind)\.)[\w.]+)['"](?=\s*[,\)])/g;
+  const entry=/\b_t\(\s*['"]((?:diag\.|vault\.|weather\.(?:app|color|hub|layer|legend|menu|precip|source|status|studio|synoptic|temperature|weatherDisplay|wind)\.)[\w.]+)['"](?=\s*[,\)])/g;
   for(const [,key] of code.matchAll(entry))presentationReferences.add(key);
+  for(const [,key] of code.matchAll(/data-presentation-(?:text|aria|title)=["'](diag\.[\w.]+)["']/g))presentationReferences.add(key);
 }
 assert.deepEqual([...presentationReferences].filter(key=>!Object.hasOwn(presentation.English,key)),[],'Missing presentation references');
 const applicationCatalogs=['app','SETTINGS_UI_TRANSLATIONS','V410_UI_TRANSLATIONS'];

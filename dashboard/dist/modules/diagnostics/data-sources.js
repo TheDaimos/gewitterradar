@@ -1,6 +1,6 @@
 import {defineModule} from "../core/runtime.js?v=41129r1";
 export const MODULE_META=Object.freeze({
-  id:"diagnostics.data-sources",version:"0.1.4",group:"Datenquellen & Verbindungen",
+  id:"diagnostics.data-sources",version:"0.1.5",group:"Datenquellen & Verbindungen",
   function:"Datenquellen – Übersicht und Diagnose",
   subfunctions:["Blitzortung-Untermodul","WeatherRouter-Status","Standorte je Konfiguration","Nur-Lesen-Einstellungen","Aktualisieren","JSON herunterladen"],
   file:"modules/diagnostics/data-sources.js"
@@ -29,9 +29,10 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
     // Asynchrone HA-Daten machen die natuerliche Hoehe variabel.
     section.dataset.grDynamicHeight="true";
     section.className="settings-section settings-collapsible";
+    const t=key=>this._t("diag."+key);
     section.innerHTML=`
-      <summary class="settings-section-head"><div><div class="settings-section-title">Datenquellen &amp; Verbindungen</div>
-      <div class="settings-section-sub">Integrationen, Orte, Tracker und Einstellungen</div></div></summary>
+      <summary class="settings-section-head"><div><div class="settings-section-title" data-presentation-text="diag.sources">${t("sources")}</div>
+      <div class="settings-section-sub" data-presentation-text="diag.sourcesSubtitle">${t("sourcesSubtitle")}</div></div></summary>
       <div class="settings-section-content gr-sources-body">
         <style>
           #settings-data-sources-section .gr-sources-body{display:grid;gap:9px;padding:11px 12px;font-size:10px;line-height:1.5}
@@ -54,11 +55,11 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
           @media(max-width:540px){#settings-data-sources-section .gr-source-pairs{grid-template-columns:1fr;gap:2px}#settings-data-sources-section dt{margin-top:4px}}
         </style>
         <div class="gr-sources-tools">
-          <button class="gr-sources-action" id="data-sources-refresh" type="button">Aktualisieren</button>
-          <button class="gr-sources-action" id="data-sources-copy" type="button">JSON kopieren</button>
-          <button class="gr-sources-action" id="data-sources-download" type="button">JSON herunterladen</button>
+          <button class="gr-sources-action" id="data-sources-refresh" type="button" data-presentation-text="diag.refresh">${t("refresh")}</button>
+          <button class="gr-sources-action" id="data-sources-copy" type="button" data-presentation-text="diag.copyJson">${t("copyJson")}</button>
+          <button class="gr-sources-action" id="data-sources-download" type="button" data-presentation-text="diag.downloadJson">${t("downloadJson")}</button>
         </div>
-        <div class="gr-source-note" id="data-sources-checked">Noch nicht geprüft</div>
+        <div class="gr-source-note" id="data-sources-checked" role="status">${t("notChecked")}</div>
         <div id="data-sources-content"></div>
       </div>`;
     const modules=this.shadow.getElementById("settings-modules-section");
@@ -76,62 +77,70 @@ export const installDataSourceDiagnostics=defineModule(MODULE_META,()=>({
     const section=this.shadow?.getElementById("settings-data-sources-section");
     const root=section?.querySelector("#data-sources-content");
     if(!root)return;
+    const expanded=new Set(Array.from(root.querySelectorAll("details[open]"),entry=>entry.dataset.entryIndex));
+    const focusedRow=root.contains(this.shadow.activeElement)?this.shadow.activeElement?.closest("details")?.dataset.entryIndex:null;
     root.replaceChildren();
     const payload=this._dataSourcesDiagnosticPayload(),bo=payload.blitzortung,wr=payload.weatherRouter;
+    const t=key=>this._t("diag."+key),unknown=this._t("weather.source.unknown"),unavailable=this._t("weather.layer.unavailable");
+    const head=(key,text)=>t(key)+": "+text;
     const create=(name,cls,content)=>{const n=document.createElement(name);if(cls)n.className=cls;if(content!==undefined)n.textContent=String(content);return n;};
-    const line=(parent,label,value)=>{const dt=create("dt",null,label),dd=create("dd",null,value==null?"Unbekannt":value);parent.append(dt,dd);};
+    const line=(parent,label,value)=>{const dt=create("dt",null,label),dd=create("dd",null,value??unknown);parent.append(dt,dd);};
     const card=(title)=>{const n=create("div","gr-source-card");n.append(create("div","gr-source-title",title));root.append(n);return n;};
     const detail=(parent,entries)=>{const dl=create("dl","gr-source-pairs");for(const [key,val] of entries)line(dl,key,val);parent.append(dl);};
-    section.querySelector("#data-sources-checked").textContent="Blitzortung geprüft: "+(bo.checkedAt||"noch nicht")+" · Abfrage nur beim Öffnen oder Aktualisieren";
-    const blitz=card("Blitzortung.org · "+(bo.status==="available"?"Integration geladen":bo.status==="missing"?"Integration nicht vorhanden":bo.status==="degraded"?"Integration eingeschränkt":"Status unbekannt"));
-    if(bo.error)blitz.append(create("div","gr-source-note gr-source-warning","Backend-Prüfung nicht verfügbar: "+bo.error));
+    section.querySelector("#data-sources-checked").textContent=head("lastCheck",bo.checkedAt||t("notChecked"))+" · "+t("onlyWhenOpened");
+    const blitz=card("Blitzortung.org · "+({available:t("loaded"),missing:t("missing"),degraded:t("limited")}[bo.status]||unknown));
+    if(bo.error)blitz.append(create("div","gr-source-note gr-source-warning",head("backendUnavailable",bo.error)));
     detail(blitz,[
-      ["Zähler (lokale Kartenkonfiguration)",bo.counter?.entityId||"nicht konfiguriert"],
-      ["Zählerzustand",bo.counter?.exists?bo.counter.state:"Entität fehlt"],
-      ["Blitzortung-Konfigurationen",bo.installed===null?"nicht ermittelt":bo.entries.length],
-      ["Mit Gewitterradar gekoppelt",bo.linkedEntries===null?"nicht ermittelt":bo.linkedEntries],
-      ["Blitzereignisse in HA (gesamt)",bo.geoLocationEntities],
-      ["Gewitterradar-Tracker",bo.referenceTrackers?.join(", ")||"nicht ermittelt"]
+      [t("configuredCounter"),bo.counter?.entityId||t("notConfigured")],
+      [t("counterState"),bo.counter?.exists?bo.counter.state:t("entityMissing")],
+      [t("lightningConfigs"),bo.installed==null?t("notDetermined"):(bo.entries?.length??0)],
+      [t("linkedCount"),bo.linkedEntries??t("notDetermined")],
+      [t("lightningEvents"),bo.geoLocationEntities],
+      [t("trackers"),bo.referenceTrackers?.join(", ")||t("notDetermined")]
     ]);
     if(!bo.entries?.length)blitz.append(create("div","gr-source-note",
-      bo.error?"Die native Gewitterradar-Backend-Schnittstelle ist in dieser Ansicht möglicherweise nicht installiert. Es werden keine fremden Konfigurationsdaten geraten.":"Keine Blitzortung-Konfigurationseinträge gemeldet."));
+      t(bo.error?"noBlitzBackend":"noBlitzEntries")));
     for(const [index,entry] of (bo.entries||[]).entries()){
       const row=create("details","gr-source-entry");
-      row.append(create("summary",null,(index+1)+". "+(entry.name||"Standort")+" · "+(entry.loaded?"geladen":"nicht geladen")+(entry.referenceTrackerLinked?" · Gewitterradar gekoppelt":"")));
+      row.dataset.entryIndex=String(index);
+      row.open=expanded.has(row.dataset.entryIndex);
+      row.append(create("summary",null,(index+1)+". "+(entry.name||t("location"))+" · "+t(entry.loaded?"loaded":"notLoaded")+(entry.referenceTrackerLinked?" · "+t("linkedCount"):"")));
       detail(row,[
-        ["Konfigurationskennung",entry.entryId],
-        ["Integrationszustand",entry.state],
-        ["Standortmodus",entry.configType==="entity"?"Standortentität":"Feste Koordinaten"],
-        ["Standortentität",entry.locationEntity||"nicht verwendet"],
-        ["Standortentität verfügbar",entry.locationEntityAvailable===null?"nicht anwendbar":entry.locationEntityAvailable?"Ja":"Nein"],
-        ["Breitengrad",entry.coordinates?.latitude],
-        ["Längengrad",entry.coordinates?.longitude],
-        ["Gewitterradar-Tracker",entry.referenceTrackerLinked?"Gekoppelt":"Nicht gekoppelt"],
-        ["Erfassungsradius",entry.settings?.radius+" "+(entry.settings?.radiusUnit||"")],
-        ["Zeitfenster",entry.settings?.timeWindow+" Minuten"],
-        ["Maximal verfolgte Blitze",entry.settings?.maxTrackedLightnings],
-        ["Standardwerte statt gespeicherter Werte",(entry.settings?.defaultsUsed||[]).join(", ")||"Keine"],
-        ["Sensoren",entry.sensors?.length||0]
+        [t("configId"),entry.entryId],
+        [t("integrationState"),entry.state],
+        [t("locationMode"),t(entry.configType==="entity"?"locationEntity":"fixedCoordinates")],
+        [t("locationEntity"),entry.locationEntity||t("notUsed")],
+        [t("entityAvailable"),t(entry.locationEntityAvailable==null?"notApplicable":entry.locationEntityAvailable?"yes":"no")],
+        [t("latitude"),entry.coordinates?.latitude],
+        [t("longitude"),entry.coordinates?.longitude],
+        [t("trackers"),t(entry.referenceTrackerLinked?"linked":"notLinked")],
+        [t("radius"),entry.settings?.radius==null?null:entry.settings.radius+" "+(entry.settings.radiusUnit||"")],
+        [t("timeWindow"),entry.settings?.timeWindow==null?null:entry.settings.timeWindow+" min"],
+        [t("maximumStrikes"),entry.settings?.maxTrackedLightnings],
+        [t("defaultsUsed"),(entry.settings?.defaultsUsed||[]).join(", ")||t("none")],
+        [t("sensors"),entry.sensors?.length||0]
       ]);
-      for(const sensor of entry.sensors||[])detail(row,[[sensor.entityId,sensor.state??(sensor.disabled?"deaktiviert":"nicht verfügbar")]]);
+      for(const sensor of entry.sensors||[])detail(row,[[sensor.entityId,sensor.state??(sensor.disabled?t("disabled"):unavailable)]]);
       blitz.append(row);
+      if(row.dataset.entryIndex===focusedRow)row.querySelector("summary")?.focus({preventScroll:true});
     }
-    const saved=card("Gewitterradar · Standortauswahl und gespeicherte Referenzen");
-    detail(saved,[["Standort-Entität",bo.savedLocations?.entityId],["Aktuelle Auswahl",bo.savedLocations?.selected],["Auswahleinträge",bo.savedLocations?.options?.length||0]]);
+    const saved=card("GewitterRadar · "+t("savedLocations"));
+    detail(saved,[[t("locationEntity"),bo.savedLocations?.entityId],[t("currentSelection"),bo.savedLocations?.selected],[t("selectionEntries"),bo.savedLocations?.options?.length||0]]);
     if(bo.savedLocations?.options?.length){const list=create("ul","gr-source-list");for(const value of bo.savedLocations.options)list.append(create("li",null,value));saved.append(list);}
-    saved.append(create("div","gr-source-note","Die Standortauswahl stammt aus dem Home-Assistant-Helfer. Sie ist von den konfigurierten Blitzortung-Standorten zu unterscheiden."));
+    saved.append(create("div","gr-source-note",t("locationsHelp")));
     const weather=card("WeatherRouter · Consumer V1");
-    detail(weather,[["Letzter Discovery-Status",wr.status],["Letzte Discovery-Prüfung",wr.checkedAt]]);
-    weather.append(create("div","gr-source-note",wr.note));
+    const statusKey={not_checked:"notChecked",ready:"ready",unreachable:"unreachable",not_ready:"notReady"}[wr.status];
+    detail(weather,[[t("status"),statusKey?t(statusKey):wr.status],[t("lastCheck"),wr.checkedAt]]);
+    weather.append(create("div","gr-source-note",t("noExtraWeatherRequests")));
     this._weatherEngineRenderSourceCards?.();
   },
   async _refreshDataSourcesView(){
     const section=this._ensureDataSourcesSection();
     const button=section?.querySelector("#data-sources-refresh");
     if(button?.disabled)return;
-    if(button){button.disabled=true;button.textContent="Prüfung läuft …";}
+    if(button){button.disabled=true;button.dataset.presentationText="diag.checking";button.textContent=this._t("diag.checking");}
     try{await this._refreshBlitzortungSources?.();this._renderDataSourcesView();}
-    finally{if(button){button.disabled=false;button.textContent="Aktualisieren";}}
+    finally{if(button){button.disabled=false;button.dataset.presentationText="diag.refresh";button.textContent=this._t("diag.refresh");}}
   },
   async _copyDataSourcesDiagnostics(){
     await this._refreshBlitzortungSources?.();

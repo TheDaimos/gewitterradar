@@ -37,6 +37,9 @@ async function checkWeatherPanels(page, name, locale) {
   await wind.waitFor();
   assert.equal(await wind.locator('header strong').textContent(),locale['weather.wind.title']);
   assert.equal(await wind.locator('[data-wind-action=legend]').getAttribute('aria-label'),locale['weather.wind.legend']);
+  const performance = wind.locator('summary').filter({hasText:locale['diag.performance']});
+  assert.equal(await performance.count(),1,name+' wind diagnostics heading');
+  assert.equal(await wind.locator('[data-wind-performance]').textContent(),locale['diag.measureOff']);
   assert(await wind.evaluate(node=>node.scrollWidth-node.clientWidth)<=2,name+' wind panel horizontal overflow');
   await wind.locator('[data-wind-action=close]').click();
 
@@ -44,8 +47,41 @@ async function checkWeatherPanels(page, name, locale) {
   const temperature = page.locator('#weather-temperature-panel');
   await temperature.waitFor();
   assert.equal(await temperature.locator('header strong').textContent(),locale['weather.temperature.title']);
+  assert((await temperature.locator('[data-section=diagnostic] summary').textContent()).includes(locale['diag.displayDiagnostics']));
+  assert.equal(typeof JSON.parse(await temperature.locator('[data-temperature-metrics]').textContent()),'object');
   assert(await temperature.evaluate(node=>node.scrollWidth-node.clientWidth)<=2,name+' temperature panel horizontal overflow');
   await temperature.locator('[data-temperature-action=close]').click();
+}
+
+async function checkDiagnostics(page, name, locale) {
+  const t=key=>locale['diag.'+key];
+  await page.locator('#settings-open').click();
+  const navigation=page.locator('#settings-backdrop .gr-horizontal-root');
+  assert((await navigation.textContent()).includes(t('weatherEngine')),name+' weather navigation');
+  assert((await navigation.textContent()).includes(t('tools')),name+' diagnostic navigation');
+  await page.evaluate(() => card._settingsNavigateTo('settings-calibration-section'));
+  assert((await page.locator('#settings-calibration-section').innerText()).includes(t('layout')),name+' calibration');
+  await page.evaluate(() => card._settingsNavigateTo('settings-weather-diagnostics-section'));
+  const weather=page.locator('#settings-weather-diagnostics-section');
+  await weather.waitFor({state:'visible'});
+  for(const key of ['displayMonitor','interfaceTest','rawData','compareAge','copyDiagnostics']){
+    assert.equal(await weather.locator('[data-presentation-text="diag.'+key+'"]').textContent(),t(key),name+' weather diagnostics '+key);
+  }
+  assert.equal(await weather.locator('#weather-engine-display-detail').getAttribute('aria-pressed'),'false');
+  await weather.locator('#weather-engine-display-detail').click();
+  assert.equal(await weather.locator('#weather-engine-display-detail').getAttribute('aria-pressed'),'true');
+  await weather.locator('#weather-engine-display-detail').click();
+  const raw=weather.locator('#weather-engine-diagnostic-raw');
+  assert.equal(typeof JSON.parse(await raw.textContent()),'object');
+  await page.evaluate(() => card._settingsNavigateTo('settings-data-sources-section'));
+  await page.waitForFunction(() => card.shadow.getElementById('data-sources-content')?.childElementCount>=3);
+  const sources=page.locator('#settings-data-sources-section');
+  for(const key of ['copyJson','downloadJson','savedLocations','lastCheck']){
+    assert((await sources.innerText()).includes(t(key)),name+' sources '+key);
+  }
+  const overflow=await page.locator('#settings-backdrop .settings-body').evaluate(el=>el.scrollWidth-el.clientWidth);
+  assert(overflow<=2,name+' diagnostic settings overflow');
+  await page.locator('#settings-close').click();
 }
 
 async function checkLanguage(page, name, locale) {
@@ -145,6 +181,7 @@ async function run() {
           await page.evaluate(({key,value})=>card._hass.callService('input_select','select_option',{entity_id:key,option:value}),{key:languageEntity,value:language});
           await page.waitForFunction(value=>card._languageValue()===value,language);
           await checkWeatherPanels(page,language,PRESENTATION_LOCALES[language]);
+          await checkDiagnostics(page,language,PRESENTATION_LOCALES[language]);
         }
         await page.evaluate(()=>card._openProjectHub());
         const hub=page.frameLocator('iframe[title="Daimos Project Hub"]');

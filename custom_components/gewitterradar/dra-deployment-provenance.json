@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.225",
-  "build": "V4.11.225-DEV-2026-11-17",
-  "runtimeRevision": "411225r1",
-  "moduleSetId": "E411-225A1",
-  "baselineFeatureHead": "0d3f0fcd108e36746c13c529d6d134caae9410c6",
+  "productVersion": "4.11.226",
+  "build": "V4.11.226-DEV-2026-11-17",
+  "runtimeRevision": "411226r1",
+  "moduleSetId": "E411-226A1",
+  "baselineFeatureHead": "4db38fd6c41d327c6d4ece126168927accf536a4",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Refine synoptic, precipitation, wind and temperature terminology in the existing GR locale catalog.",
+    "purpose": "Localize WeatherRouter diagnostics and restore the Project Hub wordmark link and cloud close control.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

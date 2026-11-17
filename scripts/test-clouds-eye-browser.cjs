@@ -77,7 +77,11 @@ async function run(){
   assert.equal(await page.evaluate(()=>card._weatherDisplayState().config.opacities.precipitation),otherOpacity);
   await panel.locator('[data-cloud-style]').selectOption('balanced');
   assert.equal(await page.evaluate(()=>card._map.getPane('gr-wr-clouds').dataset.weatherCloudBalanced),'true');
-  await panel.locator('[data-premium-action=close]').tap();
+  const close=panel.locator('[data-premium-action=close]');
+  assert.match(await close.locator('img').getAttribute('src'),/gewitterradar-about-close-premium\.webp$/);
+  assert.equal(await close.evaluate(node=>getComputedStyle(node).borderRadius),'50%');
+  assert.equal(await close.evaluate(node=>node.getBoundingClientRect().width),40);
+  await close.tap();
 
   const start=await center(icon);
   await touch('touchStart',start);

@@ -1,6 +1,6 @@
 import { registerModule } from "../core/registry.js?v=41108r1";
 export const MODULE_META=Object.freeze({
-  id:"ui.project-hub",version:"1.1.18",group:"Oberfläche",function:"Daimos Project Hub",
+  id:"ui.project-hub",version:"1.1.19",group:"Oberfläche",function:"Daimos Project Hub",
   subfunctions:["Signatur-Einstieg","Haupttitel-Einstieg","Lokales Host-Popup","Projekt-/Kontakt-/GitHub-Navigation","Lokale RC14-Runtime"],
   file:"modules/ui/project-hub.js"
 });
@@ -83,8 +83,33 @@ function showPopup(card,status="local",fallback=DEFAULT_FALLBACK_PATH,settingsCl
   close.addEventListener("click",()=>closePopup(card));overlay.addEventListener("pointerdown",e=>{if(e.target===overlay)closePopup(card);});overlay.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closePopup(card);}});
   panel.append(closeStyle,nav,frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
 }
-function activateSignature(card){const sig=card?.shadow?.querySelector?.(".settings-signature-wrap");if(!sig||sig.dataset.projectHubBound==="1")return false;sig.dataset.projectHubBound="1";sig.removeAttribute("aria-hidden");sig.setAttribute("role","button");sig.setAttribute("tabindex","0");sig.setAttribute("aria-label",card._t("weather.hub.open"));sig.setAttribute("title","Daimos Project Hub");sig.style.cursor="pointer";sig.style.pointerEvents="auto";sig.style.touchAction="manipulation";sig.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};sig.addEventListener("click",open);sig.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
-function activateMainTitle(card){const title=card?.shadow?.querySelector?.(".topbar .brand .title > span:first-child");if(!title||title.dataset.projectHubBound==="1")return false;title.dataset.projectHubBound="1";title.setAttribute("role","button");title.setAttribute("tabindex","0");title.setAttribute("aria-label",card._t("weather.hub.open"));title.setAttribute("title","Daimos Project Hub");title.style.cursor="pointer";title.style.touchAction="manipulation";title.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};title.addEventListener("click",open);title.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
+function activateHubTrigger(card,trigger){
+  if(!trigger)return false;
+  trigger.setAttribute("aria-label",card._t("weather.hub.open"));
+  if(trigger.dataset.projectHubBound==="1")return false;
+  trigger.dataset.projectHubBound="1";
+  trigger.removeAttribute("aria-hidden");
+  trigger.setAttribute("role","button");
+  trigger.setAttribute("tabindex","0");
+  trigger.setAttribute("title","Daimos Project Hub");
+  trigger.style.cursor="pointer";
+  trigger.style.touchAction="manipulation";
+  trigger.style.webkitTapHighlightColor="transparent";
+  const open=event=>{event.preventDefault();event.stopPropagation();void card._openProjectHub?.();};
+  trigger.addEventListener("click",open);
+  trigger.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" ")open(event);});
+  return true;
+}
+function activateSignature(card){
+  const signature=card.shadow?.querySelector(".settings-signature-wrap");
+  if(signature)signature.style.pointerEvents="auto";
+  return activateHubTrigger(card,signature);
+}
+function activateMainTitle(card){
+  const standard=activateHubTrigger(card,card.shadow?.querySelector("#overview-title > .standard-wordmark"));
+  const pro=activateHubTrigger(card,card.shadow?.querySelector("#overview-title > .pro-wordmark"));
+  return standard||pro;
+}
 export function installProjectHub(CardClass,deps={}){registerModule(MODULE_META);const proto=CardClass?.prototype;if(!proto)throw new TypeError("ui.project-hub requires a card class");if(proto.__projectHubInstalled)return CardClass;const settingsCloseImage=typeof deps?.ABOUT_CLOSE_IMAGE==="string"?deps.ABOUT_CLOSE_IMAGE.trim():"";if(!settingsCloseImage)throw new TypeError("ui.project-hub requires the Settings ABOUT_CLOSE_IMAGE");const originalBuildSkeleton=proto._buildSkeleton;if(typeof originalBuildSkeleton!=="function")throw new TypeError("ui.project-hub requires ui.skeleton before installation");
   Object.defineProperties(proto,{__projectHubInstalled:{value:true,configurable:false,enumerable:false,writable:false},
     _bindProjectHubSignature:{configurable:true,writable:true,value:function(){return activateSignature(this);}},

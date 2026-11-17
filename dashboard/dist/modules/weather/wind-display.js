@@ -1,17 +1,17 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411225r1';
-import {WindStudio} from './wind-studio.js?v=411225r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411226r1';
+import {WindStudio} from './wind-studio.js?v=411226r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411211r1';
 import {SNAKE_LIMITS,snakeSettingText} from './snake-config.js?v=411211r1';
-import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411225r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411226r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411211r1';
 import { WindCanvas } from './wind-canvas.js?v=411211r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411225r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=411226r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.30',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.31',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES=['barbs','arrows','animated','snake'];
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -133,7 +133,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   <details data-section="experts"><summary>${localized('experts')}</summary><div data-studio-slot></div></details>
   <details data-section="field"><summary>${localized('field')}</summary>${check('colorField',localized('onOff'))}<div id="wind-field-reason" class="weather-wind-note">${s.field?localized('beaufortScale'):s.fieldError?localized('fieldDenied',{reason:s.fieldError}):localized('fieldRequired')}</div><label>${localized('ownOpacity')}<input type="range" min="0" max="100" step="1" data-wind-setting="fieldOpacity" value="${c.fieldOpacity}" aria-label="${localized('fieldOpacity')}"><output>${c.fieldOpacity} %</output></label></details>
   <details><summary>${localized('data')}</summary><div class="weather-wind-points">${s.points.length?s.points.map(p=>`<p>${p.lat.toFixed(3)}°, ${p.lon.toFixed(3)}° · ${escape(windSpeedText(p.speed,c.unit))} · ${escape(this._t('weather.legend.from',{value:p.from===null?this._t('weather.legend.calm'):p.from+'°'}))}<br>${escape(p.attribution)} · ${escape(p.validAt)} · ${escape(p.kind||'WR')}</p>`).join(''):localized('noPoints')}</div><div class="weather-wind-note">${escape([...new Set(s.errors)].join(' · '))}</div></details>
-  <details><summary>Performance-Diagnose</summary>${check('performanceDiagnostics','Messung einschalten')}<div class="weather-wind-note" data-wind-performance>Messung im Browser; keine Aussage zur Verbindungsart oder zu einem anderen Gerät.</div></details>
+  <details><summary>${escape(this._t('diag.performance'))}</summary>${check('performanceDiagnostics',escape(this._t('diag.measureOn')))}<div class="weather-wind-note" data-wind-performance>${escape(this._t('diag.measureLocal'))}</div></details>
   <div class="weather-wind-source-status"><div role="status" class="weather-wind-note" data-wind-status>${s.field?localized('fieldNumeric'):localized('pointData')}: ${escape(this._weatherStatusText(s.status))} · ${s.field?localized('gridCount',{count:s.field.grid.u.length}):localized('pointCount',{count:s.points.length})}</div><button type="button" data-wind-action="refresh" ${!c.enabled&&!c.colorField?'disabled':''}>${localized('refresh')}</button>
   ${s.field?`<div class="weather-wind-note">${escape(s.field.provenance.attribution)}<br>${escape(this._t('weather.legend.modelValidity',{run:s.field.model_run,valid:s.field.valid_at,until:s.field.valid_until}))}</div>`:''}</div></div>`;
   enhancePremiumSections(panel,'wind-settings');syncPremiumPanel(panel,'wind-settings');this._weatherWindStudioMount(panel);
@@ -215,5 +215,26 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   s.snakePainter?.destroy();s.snakePainter=null;s.painter?.destroy();s.painter=null;s.map=null;s.onMove=s.onUnload=s.onVisibility=null;
  },
  _teardownWeatherWind(){this._teardownWeatherTemperature?.();const s=this.__weatherWind;if(!s)return;s.studio?.destroy();s.studio=null;this._weatherWindCancelToggleDrag();this._weatherWindDetach();s.cache.clear();s.field=null;s.suspended=true;s.legend?._teardownWeatherLegend();const panel=this.shadow?.getElementById('weather-wind-panel');if(panel)panel.hidden=true;},
- _weatherWindPerfUpdate(force=false){const s=this._weatherWindState(),now=performance.now();if(!force&&now-(s.lastPerfUi||0)<1000)return;s.lastPerfUi=now;const node=this.shadow?.querySelector('[data-wind-performance]');if(!node)return;const m=s.metrics||{},cache=s.cache.summary(),n=v=>Number.isFinite(v)?v.toFixed(1):'–';node.textContent=s.config.performanceDiagnostics?`FPS ${n(m.fps)} · Render Ø ${n(m.meanRenderMs)} ms · P95 ${n(m.p95RenderMs)} ms · Max ${n(m.maxRenderMs)} ms · Sichtbar ${m.segments||0} / verwaltet ${m.particles||0} · Knoten ${m.fieldNodes||0} · Browsercache ${cache.hits} Treffer / ${cache.misses} Fehlzugriffe · ${cache.entries} Felder, ${(cache.bytes/1048576).toFixed(2)} MiB · Abruf ${n(s.timing.fetchMs)} ms · Aufbereitung ${n(s.timing.prepareMs)} ms · Farbfläche CPU ${n(m.colorPreparationCpuMs)} ms, gesamt ${n(m.colorPreparationWallMs)} ms · Generationen ${m.activeGenerations||0} aktiv, ${m.preparingGeneration?1:0} in Vorbereitung. Messung im aktuellen Browser; keine Erkennung von WLAN oder Mobilfunk.`:'Messung ausgeschaltet. Keine zusätzlichen Wetterabrufe.';},
+ _weatherWindPerfUpdate(force=false){
+  const s=this._weatherWindState(),now=performance.now();
+  if(!force&&now-(s.lastPerfUi||0)<1000)return;
+  s.lastPerfUi=now;
+  const node=this.shadow?.querySelector('[data-wind-performance]');
+  if(!node)return;
+  const t=key=>this._t('diag.'+key);
+  if(!s.config.performanceDiagnostics){node.textContent=t('measureOff');return;}
+  const m=s.metrics||{},cache=s.cache.summary(),n=value=>Number.isFinite(value)?value.toFixed(1):'–';
+  node.textContent=[
+   `FPS ${n(m.fps)}`,
+   `${t('renderTime')}: ${t('average')} ${n(m.meanRenderMs)} ms / P95 ${n(m.p95RenderMs)} ms / ${t('maximum')} ${n(m.maxRenderMs)} ms`,
+   `${t('visible')} ${m.segments||0} / ${t('managed')} ${m.particles||0}`,
+   `${t('nodes')}: ${m.fieldNodes||0}`,
+   `${t('browserCache')}: ${t('cacheHits')} ${cache.hits} / ${t('cacheMisses')} ${cache.misses} / ${t('fields')} ${cache.entries} (${(cache.bytes/1048576).toFixed(2)} MiB)`,
+   `${t('fetch')}: ${n(s.timing.fetchMs)} ms`,
+   `${t('preparation')}: ${n(s.timing.prepareMs)} ms`,
+   `${t('shading')}: CPU ${n(m.colorPreparationCpuMs)} ms / ${t('total')} ${n(m.colorPreparationWallMs)} ms`,
+   `${t('generations')}: ${m.activeGenerations||0} / ${t('preparing')} ${m.preparingGeneration?1:0}`,
+   t('measureLocal')
+  ].join(' · ');
+ },
  _weatherWindDiagnostics(){const s=this._weatherWindState();return {config:{...s.config},status:s.status,points:s.points.map(({lat,lon,speed,from,provider,validAt,kind})=>({lat,lon,speed,from,provider,validAt,kind})),errors:[...s.errors],metrics:s.metrics?{...s.metrics}:null,cache:s.cache.summary(),timing:{...s.timing},requests:s.requests,snake:s.snakePainter?{...s.snakePainter.metrics}:null,fieldCapability:s.field?'ready':s.fieldError||'not_requested',field:s.field?{id:s.field.id,nodes:s.field.grid.u.length,coverage:s.field.coverage,provider:s.field.provenance.provider_id,model_run:s.field.model_run,valid_at:s.field.valid_at,valid_until:s.field.valid_until,wrCache:s.field.delivery_diagnostics||null}:null,pressureCapability:'missing_authoritative_pressure_classification'};}});});
