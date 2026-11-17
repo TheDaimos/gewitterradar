@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
+import {PRESENTATION_LOCALES} from "../frontend/modules/ui/presentation-locales.js";
 import {
   expandWeatherRasterTileUrl,
   weatherRasterBbox3857,
@@ -101,15 +102,17 @@ assert.match(source,/PRELOAD_CONCURRENCY=4/);
 assert.match(source,/TIMELINE_STAGE_TIMEOUT_MS=6000/);
 assert.match(source,/TIMELINE_PLAY_INTERVAL_MS=950/);
 assert.match(source,/dataset\.weatherRadarPlayer="true"/);
-assert.match(source,/aria-label","Niederschlags-Zeitverlauf"/);
+assert.match(source,/setAttribute\("aria-label",this\._t\("weather\.precip\.timeline"\)\)/);
 assert.match(source,/_weatherRadarStageTimelineFrame/);
 assert.match(source,/timelineStagePromise/);
 assert.match(source,/_weatherRadarPrimeNextTimelineFrame/);
 assert.match(source,/requestAnimationFrame\(\(\)=>requestAnimationFrame\(resolve\)\)/);
-assert.match(source,/Niederschlags-Zeitverlauf/);
-assert.match(source,/Vergangenheit, Jetzt und Vorhersage/);
+assert.match(source,/this\._t\("weather\.precip\.timelineTimes",\{count:frames\}\)/);
+assert.equal(PRESENTATION_LOCALES.Deutsch["weather.precip.timeline"],"Niederschlags-Zeitverlauf");
+assert.match(PRESENTATION_LOCALES.Deutsch["weather.precip.timelineTimes"],/Vergangenheit, Jetzt und Vorhersage/);
 assert.match(source,/precipitation-preload-profile/);
-assert.match(source,/Normal · \+30 % je Seite · empfohlen/);
+assert.match(source,/\["normal","weather\.status\.radarPreloadNormal"\]/);
+assert.equal(PRESENTATION_LOCALES.Deutsch["weather.status.radarPreloadNormal"],"Normal · +30 % je Seite · empfohlen");
 assert.match(source,/maxTiles:48,maxBytes:16\*1024\*1024/);
 assert.match(skeleton,/this\._mountWeatherRouterSettings\?\.\(\);\s*this\._mountWeatherRadarSettings\?\.\(\);/);
 

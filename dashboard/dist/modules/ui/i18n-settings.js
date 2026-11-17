@@ -1,11 +1,11 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411223r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411224r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411224r1';
-import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411224r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411225r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411225r1';
+import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411225r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.36",
+  "version": "1.3.37",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [

@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.224",
-  "build": "V4.11.224-DEV-2026-11-17",
-  "runtimeRevision": "411224r1",
-  "moduleSetId": "E411-224A1",
-  "baselineFeatureHead": "1127927b98b087135b9340bf3871b20486c23bd1",
+  "productVersion": "4.11.225",
+  "build": "V4.11.225-DEV-2026-11-17",
+  "runtimeRevision": "411225r1",
+  "moduleSetId": "E411-225A1",
+  "baselineFeatureHead": "0d3f0fcd108e36746c13c529d6d134caae9410c6",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Localize weather controls, legends, Project Hub and device profile workflows through the existing GR language registry.",
+    "purpose": "Refine synoptic, precipitation, wind and temperature terminology in the existing GR locale catalog.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

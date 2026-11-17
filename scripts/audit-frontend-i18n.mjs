@@ -107,6 +107,8 @@ for(const [name,table] of Object.entries(presentation)) {
     assert(typeof value==='string'&&value.trim(),name+' '+key);
     assert.deepEqual(placeholders(value),placeholders(presentation.English[key]),name+' '+key);
   }
+  assert.match(table['weather.legend.advectionModel'],/−v · ∇T.*850[- ]hPa/,name+' thermal advection formula');
+  assert.match(table['weather.legend.windBarbs'],/5 kn.*10 kn.*50 kn.*2[.,]5.*1[.,]852 km\/[htu]/,name+' wind barb scale');
 }
 const presentationReferences=new Set();
 for(const path of files('frontend').filter(path=>path.endsWith('.js')&&!path.includes('/locales/'))){
