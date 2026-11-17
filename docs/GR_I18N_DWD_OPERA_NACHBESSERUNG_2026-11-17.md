@@ -8,6 +8,13 @@ Die UI-Arbeiten betreffen sichtbare Texte und Aktionen in Einstellungen, Diagnos
 
 Runtime `411226r1`, Modulset `E411-226A1`, 37 registrierte Module. Der bestehende Katalog enthält 186 zusätzliche Einträge pro Variante, insgesamt 3.534 Werte. Der Audit vergleicht alle bisherigen Katalogwerte mit 4.11.225 und prüft Schlüssel, Platzhalter und Fallbacks in 19 Varianten. Griechisch wurde bei allen neuen Diagnoseeinträgen sprachlich überarbeitet. Für mehrere weitere Varianten wurden lokale maschinelle Entwürfe und manuell geprüfte Hauptbeschriftungen verwendet. Die idiomatische Endabnahme dieser übrigen Einträge und die Sichtung aller dynamischen Zustände im echten HA bleiben offen.
 
+Der Paketquellcommit ist `57b6ee5ef8a96f7dae88613656d1d6c09e9a5236`. Die Archivprüfung validierte 204 bytegleiche gemeinsame Frontend-Dateien. Der GitHub-DEV-Entwurf enthält die Metadaten und Prüfsummen für beide Lieferformen.
+
+| Installationsarchiv | Dateien | SHA-256 |
+|---|---:|---|
+| `gewitterradar-0.25.133-dev.zip` | 222 | `d784e5daa23fb6b1eb072b669cf3fbd07f2d4c720c575c7102db705b1dd33aee` |
+| `gewitterradar-dashboard-4.11.226-dev.zip` | 206 | `effe0a09dcf87589892150eed76f57e40fc4e528bf7846f0ecccdd1b77926603` |
+
 | Nr. | Änderung | Nachweis |
 |---|---|---|
 | 001 | Wetterdaten, Diagnosewerkzeuge, Layout, Kartendiagnose und Testfunktionen in Menüs, Navigation und relevanten Beschriftungen | Chromium-Sprachmatrix, 19 Varianten |
@@ -21,7 +28,7 @@ Die Matrix lief mit dem gepackten HA-Frontend bei 320 px und dem Dashboard bei 1
 
 ## DWD/OPERA · reproduzierter Abdeckungsfehler
 
-1. Im laufenden WR-Code erzeugt `complete_spatial_plan()` in `raster_mosaic_spatial.py` die OPERA-`draw_exclusions` aus der gesamten `machine_coverage` jedes zugelassenen DWD-Layers. Der GR-Renderer `protectedRasterRects()` in `radar-mask.js` setzt diese Rechtecke um. Das Rechteck entscheidet auch dann, wenn die DWD-Zelle keine Daten enthält. Der echte OPERA-Wert ist für die Maskenentscheidung unerheblich.
+1. Im geprüften WR-DEV-Quellcode erzeugt `complete_spatial_plan()` in `raster_mosaic_spatial.py` die OPERA-`draw_exclusions` aus der gesamten `machine_coverage` jedes zugelassenen DWD-Layers. Der GR-Renderer `protectedRasterRects()` in `radar-mask.js` setzt diese Rechtecke um. Das Rechteck entscheidet auch dann, wenn die DWD-Zelle keine Daten enthält. Der echte OPERA-Wert ist für die Maskenentscheidung unerheblich.
 2. Der DWD veröffentlicht für seinen Layer `Niederschlagsradar` eine rechteckige Grenze von 1,4633° bis 18,7316° Ost und 45,6846° bis 56,2194° Nord. Die DWD-Stichprobe vom 17.11.2026 um 10:45 UTC verglich WCS-GeoTIFF und WMS-PNG desselben Layers mit gleichem räumlichen Raster und gleicher angeforderter Gültigkeitszeit. Das WCS-Produkt enthält getrennt positive Werte, echte Nullwerte und NoData. Die Publikation weist für den Layer zusätzlich eine Modelllauf-Dimension aus. Die GR-Betreiberaufnahme ließ sich keinem konkreten DWD-/OPERA-Lauf zuordnen. [DWD-WMS-Metadaten](https://maps.dwd.de/geoserver/dwd/wms?service=WMS&version=1.3.0&request=GetCapabilities), [DWD-WCS-Rasterschema](https://maps.dwd.de/geoserver/dwd/wcs?service=WCS&version=2.0.1&request=DescribeCoverage&coverageId=dwd__Niederschlagsradar)
 3. Das isolierte WMS-PNG enthält selbst violette Konturpixel. Der offizielle WMS-Stil weist der Klasse „Keine Daten“ ein teiltransparentes Grau zu. In der Stichprobe hatten 229.336 von 229.343 Zellen mit Rohwert −999 sichtbare Alpha-Werte. Alle 136 Roh-Nullzellen waren transparent. Auch zahlreiche mit dem TIFF-NoData-Sentinel gekennzeichnete Zellen waren transparent. Transparenz allein kann daher trockene Zellen und fehlende Werte nicht auseinanderhalten. [DWD-WMS-Stil](https://maps.dwd.de/geoserver/dwd/wms?service=WMS&version=1.1.1&request=GetStyles&layers=Niederschlagsradar)
 
