@@ -21,7 +21,8 @@ const settingsTables=(text)=>jsValues(text.slice(
   text.indexOf('const SETTINGS_UI_TRANSLATIONS='),text.indexOf('export const installI18nSettings=')),
 ['SETTINGS_UI_TRANSLATIONS','V410_UI_TRANSLATIONS','V410_HELP_INSTRUMENTS','V411_HELP_WEATHER_DISPLAY']);
 const externalTables=['ABOUT_EXTERNAL_LOCALES','HELP_EXTERNAL_LOCALES','HELP_EXTERNAL_LOCALES_V40731','HELP_EXTERNAL_LOCALES_V40753'];
-function inventory(read){
+const currentStart='1127927b98b087135b9340bf3871b20486c23bd1';
+function inventory(read, includePresentation=false){
   const model=loadAboutLocaleRuntime(read('frontend/gewitterradar.js'),read('frontend/modules/core/base-context.js'));
   const settings=settingsTables(read('frontend/modules/ui/i18n-settings.js'));
   const helpTopics=read('frontend/modules/ui/help-topics.js');
@@ -36,7 +37,8 @@ function inventory(read){
   const temp=jsValues(read('frontend/modules/weather/temperature-units.js'),['TEMPERATURE_UNIT_TRANSLATIONS']);
   const catalogs={embeddedAbout:model.locales,embeddedWeatherHelp:{Deutsch:de,English:en},
     app:Object.fromEntries(Object.entries(model.app).map(([name,value])=>[name,value.strings])),
-    ...settings,...ext,...eye,...flow,...temp};
+    ...settings,...ext,...eye,...flow,...temp,
+    ...(includePresentation?jsValues(read('frontend/modules/ui/presentation-locales.js'),['PRESENTATION_LOCALES']):{})};
   const native=['strings.json','translations/de.json','translations/en.json'].map(path=>[
     path,Object.fromEntries(entries(JSON.parse(read('custom_components/gewitterradar/'+path))))
   ]);
@@ -74,11 +76,13 @@ function literals(ref){
   }
   return {candidates:found,referenced:[...referenced].sort()};
 }
-const current=inventory(source());
+const current=inventory(source(),true);
 const previous=inventory(source(baseline));
+const carried=Object.fromEntries(entries(inventory(source(currentStart)).catalogs));
 assert.deepEqual(JSON.parse(JSON.stringify(current.languages)),JSON.parse(JSON.stringify(previous.languages)),'Registered languages changed');
 const before=Object.fromEntries(entries(previous.catalogs));
 const after=Object.fromEntries(entries(current.catalogs));
+assert.deepEqual(Object.keys(carried).filter(key=>carried[key]!==after[key]),[],'GR 4.11.223 translation values changed');
 const removed=Object.keys(before).filter(key=>!Object.hasOwn(after,key));
 assert.deepEqual(removed,[],'Existing locale keys removed');
 assert.deepEqual(current.native,previous.native,'Native HA translations changed');
@@ -94,6 +98,23 @@ for (const {value:name} of current.languages) {
     assert.deepEqual(placeholders(value),placeholders(reference[key]),name+' Eye '+key);
   }
 }
+const presentation = current.catalogs.PRESENTATION_LOCALES;
+const presentationKeys = Object.keys(presentation.English).sort();
+assert.deepEqual(Object.keys(presentation).sort(),Array.from(current.languages,entry=>entry.value).sort());
+for(const [name,table] of Object.entries(presentation)) {
+  assert.deepEqual(Object.keys(table).sort(),presentationKeys,name+' presentation keys');
+  for(const [key,value] of Object.entries(table)) {
+    assert(typeof value==='string'&&value.trim(),name+' '+key);
+    assert.deepEqual(placeholders(value),placeholders(presentation.English[key]),name+' '+key);
+  }
+}
+const presentationReferences=new Set();
+for(const path of files('frontend').filter(path=>path.endsWith('.js')&&!path.includes('/locales/'))){
+  const code=readFileSync(path,'utf8');
+  const entry=/\b_t\(\s*['"]((?:vault\.|weather\.(?:app|color|hub|layer|legend|menu|precip|source|status|studio|synoptic|temperature|weatherDisplay|wind)\.)[\w.]+)['"](?=\s*[,\)])/g;
+  for(const [,key] of code.matchAll(entry))presentationReferences.add(key);
+}
+assert.deepEqual([...presentationReferences].filter(key=>!Object.hasOwn(presentation.English,key)),[],'Missing presentation references');
 const applicationCatalogs=['app','SETTINGS_UI_TRANSLATIONS','V410_UI_TRANSLATIONS'];
 const applicationKeys=(catalogs,name)=>applicationCatalogs.flatMap(key=>Object.keys(catalogs[key][name]??{}));
 const uniqueAppKeys=(catalogs,name)=>new Set(applicationKeys(catalogs,name));
@@ -121,7 +142,7 @@ const counts=Object.fromEntries(current.languages.map(({value:name})=>{
     eyeFallbackKeys:Object.keys(current.catalogs.EYE_HUB_TRANSLATIONS.English).filter(key=>!eye.includes(key))}];
 }));
 const allLiterals=literals(process.argv.includes('--baseline')?baseline:null);
-const body={baseline,languages:current.languages,counts,removed,changed,
+const body={baseline,currentStart,languages:current.languages,counts,removed,changed,presentationKeys,presentationReferences:[...presentationReferences].sort(),
   native:Object.fromEntries(Object.entries(current.native).map(([name,keys])=>[name,Object.keys(keys).length])),
   added:Object.keys(after).filter(key=>!Object.hasOwn(before,key)),...allLiterals};
 if(process.argv.includes('--json'))console.log(JSON.stringify(body,null,2));

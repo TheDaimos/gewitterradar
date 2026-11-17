@@ -1,5 +1,5 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411223r1';
-import {precipitationLegendScales} from "./legend-overlay.js?v=411223r1";
+import {settingsStorage} from '../core/settings-vault.js?v=411224r1';
+import {precipitationLegendScales} from "./legend-overlay.js?v=411224r1";
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411194r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411147r1";
@@ -7,7 +7,7 @@ import {rasterTilePixelCrops} from "./p7-010/raster-tile-clip.js?v=41188r1";
 
 export const MODULE_META=Object.freeze({
   id:"weather.precipitation-layer",
-  version:"1.3.44",
+  version:"1.3.45",
   group:"Weather-Engine",
   function:"Niederschlags-Kartenebene",
   subfunctions:["Raster-Kacheladapter","Web-Mercator-BBOX","Quelle & Aktualität","Abdeckung","Darstellungslegende","Darstellungsdeckkraft","Flächenglättung","Anfragebegrenzung","einstellbares Wetter-Aktualisierungsintervall","Räumlicher Vorladepuffer","Niederschlags-Zeitplayer","Frame-Doppelpuffer","Zeitachse ein/aus","verschiebbare Zeitachse","Ressourcenschutz"],
@@ -986,7 +986,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const status=this.shadow?.getElementById("weather-radar-refresh-interval-status");
     if(range)range.value=String(state.viewportRefreshIntervalSeconds);
     if(number)number.value=String(state.viewportRefreshIntervalSeconds);
-    if(status)status.textContent=state.viewportRefreshIntervalSeconds+" Sek. · "+(state.viewportRefreshIntervalSeconds<=5?"schnell":state.viewportRefreshIntervalSeconds<=20?"ausgewogen":"schonend");
+    if(status)status.textContent=this._t("weather.precip.seconds",{count:state.viewportRefreshIntervalSeconds})+" · "+this._t(state.viewportRefreshIntervalSeconds<=5?"weather.status.refreshFast":state.viewportRefreshIntervalSeconds<=20?"weather.status.refreshBalanced":"weather.status.refreshGentle");
   },
 
   _weatherRadarUpdatePreloadControls(){
@@ -1003,7 +1003,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(!status)return;
     const payload=state.lastReady?.answer?.resource?.payload;
     const policy=this._weatherRadarPreloadPolicy(payload);
-    if(policy.percent<=0){status.textContent="Aus · nur der aktuell benötigte Kartenbereich wird geladen.";return;}
+    if(policy.percent<=0){status.textContent=this._t("weather.status.preloadDisabled");return;}
     const maxMb=Math.round(policy.maxBytes/1024/1024);
     const metrics=state.preloadMetrics;
     const ready=[...state.preloadCache.values()].filter(entry=>entry.status==="ready").length;
@@ -1117,7 +1117,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       const date=new Date(frame.timeMs);
       const now=new Date();
       const sameDay=date.getFullYear()===now.getFullYear()&&date.getMonth()===now.getMonth()&&date.getDate()===now.getDate();
-      return new Intl.DateTimeFormat(undefined,sameDay?{hour:"2-digit",minute:"2-digit"}:{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).format(date);
+      return new Intl.DateTimeFormat(this._locale(),sameDay?{hour:"2-digit",minute:"2-digit"}:{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).format(date);
     }catch(_error){return frame.time||"—";}
   },
 
@@ -1125,10 +1125,10 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const frame=state.timelineModel?.frames?.[index];
     const kind=String(frame?.kind||"").toLowerCase();
-    const labels={observation:"Beobachtung",estimate:"Schätzung",forecast:"Vorhersage",nowcast:"Nowcast",analysis:"Analyse",past:"Vergangenheit",current:"Jetzt"};
+    const labels={observation:this._t("weather.precip.observation"),estimate:this._t("weather.precip.estimate"),forecast:this._t("weather.precip.forecast"),nowcast:"Nowcast",analysis:this._t("weather.precip.analysis"),past:this._t("weather.precip.past"),current:this._t("weather.precip.now")};
     if(labels[kind])return labels[kind];
     const current=state.timelineModel?.currentIndex??-1;
-    return index<current?"Vergangenheit":index===current?"Jetzt":"Vorhersage";
+    return index<current?this._t("weather.precip.past"):index===current?this._t("weather.precip.now"):this._t("weather.precip.forecast");
   },
 
   _weatherRadarMountTimelinePlayer(){
@@ -1142,20 +1142,22 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
       root.dataset.weatherRadarPlayer="true";
       root.id="weather-radar-player";
       root.setAttribute("role","group");
-      root.setAttribute("aria-label","Niederschlags-Zeitverlauf");
+      root.setAttribute("aria-label",this._t("weather.precip.timeline"));
       root.style.cssText="position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:750;width:min(560px,calc(100% - 22px));box-sizing:border-box;padding:7px 9px 8px;border:1px solid rgba(125,184,239,.36);border-radius:14px;background:rgba(8,13,20,.88);box-shadow:0 8px 26px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e7edf5;pointer-events:auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
       const top=document.createElement("div");top.style.cssText="display:flex;align-items:center;gap:6px;min-width:0";
-      const drag=document.createElement("button");drag.type="button";drag.dataset.timelineDrag="true";drag.textContent="⠿";drag.title="Zeitachse verschieben";drag.setAttribute("aria-label","Zeitachse verschieben");drag.style.cssText="appearance:none;-webkit-appearance:none;width:30px;min-width:30px;height:30px;padding:0;border-radius:9px;border:1px solid rgba(125,184,239,.26);background:rgba(16,22,31,.92);color:#a9cceb;font-weight:900;font-size:15px;line-height:1;cursor:grab;touch-action:none";
-      const prev=document.createElement("button");prev.type="button";prev.dataset.timelineAction="prev";prev.textContent="‹";prev.title="Vorheriger Niederschlagszeitpunkt";
-      const play=document.createElement("button");play.type="button";play.dataset.timelineAction="play";play.title="Niederschlagsfolge abspielen";
-      const next=document.createElement("button");next.type="button";next.dataset.timelineAction="next";next.textContent="›";next.title="Nächster Niederschlagszeitpunkt";
-      const now=document.createElement("button");now.type="button";now.dataset.timelineAction="now";now.textContent="Jetzt";now.title="Zum aktuellen Niederschlagszeitpunkt";
+      const drag=document.createElement("button");drag.type="button";drag.dataset.timelineDrag="true";drag.textContent="⠿";drag.title=this._t("weather.precip.timelineDrag");drag.setAttribute("aria-label",this._t("weather.precip.timelineDrag"));drag.style.cssText="appearance:none;-webkit-appearance:none;width:30px;min-width:30px;height:30px;padding:0;border-radius:9px;border:1px solid rgba(125,184,239,.26);background:rgba(16,22,31,.92);color:#a9cceb;font-weight:900;font-size:15px;line-height:1;cursor:grab;touch-action:none";
+      const prev=document.createElement("button");prev.type="button";prev.dataset.timelineAction="prev";prev.textContent="‹";prev.title=this._t("weather.precip.previousTime");
+      const play=document.createElement("button");play.type="button";play.dataset.timelineAction="play";play.title=this._t("weather.precip.play");
+      const next=document.createElement("button");next.type="button";next.dataset.timelineAction="next";next.textContent="›";next.title=this._t("weather.precip.nextTime");
+      const now=document.createElement("button");now.type="button";now.dataset.timelineAction="now";now.textContent=this._t("weather.precip.now");now.title=this._t("weather.precip.jumpNow");
       [prev,play,next,now].forEach(button=>button.style.cssText="appearance:none;-webkit-appearance:none;min-width:34px;height:30px;padding:0 9px;border-radius:9px;border:1px solid rgba(246,195,68,.34);background:rgba(16,22,31,.92);color:#f3d16d;font-weight:850;font-size:13px;line-height:1;cursor:pointer;touch-action:manipulation");
       const label=document.createElement("div");label.dataset.timelineLabel="true";label.style.cssText="min-width:0;flex:1;text-align:center;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
       top.append(drag,prev,play,next,label,now);
-      const range=document.createElement("input");range.type="range";range.min="0";range.step="1";range.value="0";range.dataset.timelineRange="true";range.setAttribute("aria-label","Radarzeitpunkt");range.style.cssText="display:block;width:100%;height:22px;margin:2px 0 0;accent-color:#79bfff";
+      const range=document.createElement("input");range.type="range";range.min="0";range.step="1";range.value="0";range.dataset.timelineRange="true";range.setAttribute("aria-label",this._t("weather.precip.radarTime"));range.style.cssText="display:block;width:100%;height:22px;margin:2px 0 0;accent-color:#79bfff";
       const footer=document.createElement("div");footer.style.cssText="display:flex;justify-content:space-between;gap:8px;margin-top:-1px;font-size:9.5px;font-weight:700;letter-spacing:.02em;opacity:.68";
-      footer.innerHTML="<span>Vergangenheit</span><span>Jetzt</span><span>Vorhersage</span>";
+      for(const key of ['past','now','forecast']){
+        const span=document.createElement('span');span.dataset.timelineCaption=key;span.textContent=this._t('weather.precip.'+key);footer.append(span);
+      }
       root.append(top,range,footer);
       this._weatherRadarBindTimelineDrag(root,drag);
       root.addEventListener("click",event=>{
@@ -1183,6 +1185,20 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState(),model=state.timelineModel;
     const root=this.shadow?.querySelector('[data-weather-radar-player="true"]');
     if(!root||!model?.frames?.length)return;
+    const language=this._languageValue();
+    if(root.dataset.language!==language){
+      const t=key=>this._t('weather.precip.'+key);
+      root.dataset.language=language;
+      root.setAttribute('aria-label',t('timeline'));
+      const drag=root.querySelector('[data-timeline-drag]');
+      drag.title=t('timelineDrag');drag.setAttribute('aria-label',drag.title);
+      for(const [action,key] of [['prev','previousTime'],['next','nextTime'],['now','jumpNow']]){
+        root.querySelector('[data-timeline-action="'+action+'"]').title=t(key);
+      }
+      root.querySelector('[data-timeline-action=now]').textContent=t('now');
+      root.querySelector('[data-timeline-range]').setAttribute('aria-label',t('radarTime'));
+      root.querySelectorAll('[data-timeline-caption]').forEach(node=>{node.textContent=t(node.dataset.timelineCaption);});
+    }
     this._weatherRadarApplyTimelinePosition(root);
     const index=clamp(state.timelineIndex<0?model.currentIndex:state.timelineIndex,0,model.frames.length-1);
     const frame=model.frames[index];
@@ -1190,47 +1206,55 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     if(range){range.max=String(model.frames.length-1);range.value=String(index);}
     const label=root.querySelector('[data-timeline-label="true"]');
     if(label){
-      const status=state.timelineLoadMessage||this._weatherRadarTimelineKindLabel(index);
+      const messageKey={
+        'Lade Niederschlagszeitpunkt …':'weather.precip.loadingTime',
+        'Niederschlagszeitpunkt konnte nicht geladen werden':'weather.precip.failedTime'
+      }[state.timelineLoadMessage];
+      const status=messageKey?this._t(messageKey):state.timelineLoadMessage||this._weatherRadarTimelineKindLabel(index);
       label.textContent=status+" · "+this._weatherRadarTimelineTimeLabel(frame)+" · "+(index+1)+"/"+model.frames.length;
       label.title=frame.time;
     }
     const play=root.querySelector('[data-timeline-action="play"]');
-    if(play){play.textContent=state.timelinePlaying?"❚❚":"▶";play.title=state.timelinePlaying?"Wiedergabe anhalten":"Niederschlagsfolge abspielen";}
+    if(play){play.textContent=state.timelinePlaying?"❚❚":"▶";play.title=state.timelinePlaying?this._t("weather.precip.pause"):this._t("weather.precip.play");}
   },
 
   _weatherRadarRenderCurrentLegend(){
+    const t=this._t.bind(this), precipitation=t('eye.precipitation');
     const state=this._weatherRadarState(),answer=state.lastReady?.answer;
     if(state.v2Snapshot){
       const layers=state.v2Snapshot.layers;
       const older=layers.filter(layer=>layer.freshness_class==="older_background");
-      const label="Niederschlag · "+layers.length+" Mosaikquellen"+(older.length?" · ältere Satellitengrundlage":"");
+      const label=precipitation+" · "+t("weather.legend.mosaicSources",{count:layers.length})+(older.length?" · "+t("weather.legend.olderBackground"):"");
       this._weatherRadarRenderLegend({
-        family:"precipitation",capability:CAPABILITY,heading:"Niederschlag",
-        label,subtitle:"WeatherRouter V2 · partielle Bildabdeckung"+(older.length?" · ältere Satellitenschätzung (kein aktuelles Radar)":""),
-        title:[label,"Herkunft: "+layers.map(x=>x.attribution).join(" / "),
-          "Bezugszeit (UTC): "+(state.v2Snapshot.reference_time||"unbekannt"),
-          ...layers.map(layer=>"Quelle: "+layer.source_id+
-            " · "+(layer.times?.stale===true?"veraltet · von WR weiter bereitgestellt":layer.freshness_class==="older_background"?"Ältere Satellitengrundlage":"aktuelle Quelle")+
-            " · Bildzeit (UTC): "+layer.times.valid_at+
-            " · Alter: "+(typeof layer.times.age_seconds==="number"?Math.round(layer.times.age_seconds/60)+" Min.":"unbekannt")+
-            " · Methode: "+layer.semantics.measurement_method+
-            (layer.quality_note?" · Hinweis: "+layer.quality_note:"")),
+        family:"precipitation",capability:CAPABILITY,heading:precipitation,
+        label,subtitle:["WeatherRouter V2",t("weather.legend.partialCoverage"),older.length?t("weather.legend.olderSatellite"):null].filter(Boolean).join(" · "),
+        title:[label,t("weather.legend.source")+": "+layers.map(x=>x.attribution).join(" / "),
+          t("weather.legend.referenceTime")+": "+(state.v2Snapshot.reference_time||t("weather.source.unknown")),
+          ...layers.map(layer=>[
+            t("weather.legend.source")+": "+layer.source_id,
+            t(layer.times?.stale===true?"weather.legend.staleSource":layer.freshness_class==="older_background"?"weather.legend.olderSatellite":"weather.legend.currentSource"),
+            t("weather.legend.imageTime")+": "+layer.times.valid_at,
+            typeof layer.times.age_seconds==="number"?t("weather.layer.ageMinutes",{count:Math.round(layer.times.age_seconds/60)}):t("weather.layer.unknownAge"),
+            t("weather.legend.method")+": "+layer.semantics.measurement_method,
+            layer.quality_note?t("weather.legend.note")+": "+layer.quality_note:null
+          ].filter(Boolean).join(" · ")),
           ...(state.v2Snapshot.limitations||[])].join(" · "),
-        scales:precipitationLegendScales(layers),legendTitle:"Niederschlagslegende",priority:100
+        scales:precipitationLegendScales(layers,t),legendTitle:t("weather.legend.precipitation"),priority:100
       });
       return;
     }
     if(!answer)return;
     const payload=answer.resource?.payload||{},description=this._weatherRadarDescribe(answer);
     const frame=state.timelineModel?.frames?.[state.timelineIndex];
-    const timePart=frame?this._weatherRadarTimelineKindLabel(state.timelineIndex)+" · "+this._weatherRadarTimelineTimeLabel(frame):description.ageText;
+    const age=description.ageText==="Alter unbekannt"?t("weather.layer.unknownAge"):description.ageText;
+    const timePart=frame?this._weatherRadarTimelineKindLabel(state.timelineIndex)+" · "+this._weatherRadarTimelineTimeLabel(frame):age;
     const legend=payload.legend&&typeof payload.legend==="object"?payload.legend:null;
-    const label="Niederschlag · "+description.provider+" · "+timePart;
+    const label=precipitation+" · "+description.provider+" · "+timePart;
     const title=[
       label,
-      "Datenalter: "+description.ageText,
-      "Abdeckung: "+description.coverage,
-      answer.routing?.degraded?"Datenweg eingeschränkt":null,
+      t("weather.legend.dataAge")+": "+age,
+      t("weather.legend.coverage")+": "+(description.coverage==="aktueller Kartenausschnitt"?t("weather.legend.currentView"):description.coverage),
+      answer.routing?.degraded?t("weather.legend.restricted"):null,
       ...description.limitations
     ].filter(Boolean).join(" · ");
     const semantics=answer.resource?.semantics&&typeof answer.resource.semantics==="object"?answer.resource.semantics:{};
@@ -1238,15 +1262,15 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     this._weatherRadarRenderLegend({
       family:"precipitation",
       capability:CAPABILITY,
-      heading:"Niederschlag",
+      heading:precipitation,
       label,
       subtitle:description.provider+" · "+timePart,
       title,
       legendUrl:legend?.url||null,
-      legendTitle:legend?.title||"Niederschlagslegende",
+      legendTitle:legend?.title||t("weather.legend.precipitation"),
       unit:typeof semantics.unit==="string"?semantics.unit:"",
       entries,
-      scales:precipitationLegendScales([{source_id:description.provider==="opera"?"opera/opera_rate_raster":(answer.provenance?.provider_id||"weather")+"/"+(answer.provenance?.layer_id||"precipitation"),legend,semantics}]),
+      scales:precipitationLegendScales([{source_id:description.provider==="opera"?"opera/opera_rate_raster":(answer.provenance?.provider_id||"weather")+"/"+(answer.provenance?.layer_id||"precipitation"),legend,semantics}],t),
       priority:100
     });
   },
@@ -1387,7 +1411,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
         subtitle:model.subtitle||model.label||"",
         details:model.title||model.label||"",
         legendUrl:model.legendUrl||"",
-        legendTitle:model.legendTitle||"Niederschlagslegende",
+        legendTitle:model.legendTitle||this._t("weather.legend.precipitation"),
         unit:model.unit||"",
         entries:Array.isArray(model.entries)?model.entries:[],
         priority:Number.isFinite(Number(model.priority))?Number(model.priority):100,
@@ -1402,7 +1426,7 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     item=document.createElement("span");
     item.className="legend-item";
     item.dataset.weatherRadarLegend="true";
-    const text=document.createElement("span");text.textContent=model.label||"Niederschlag";
+    const text=document.createElement("span");text.textContent=model.label||this._t("eye.precipitation");
     item.append(text);host.append(item);item.title=model.title||model.label||"";
   },
 
@@ -2144,76 +2168,89 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const state=this._weatherRadarState();
     const toggle=this.shadow?.getElementById("weather-radar-toggle");
     const satelliteToggle=this.shadow?.getElementById("weather-radar-background-toggle");
-    if(satelliteToggle){satelliteToggle.setAttribute("aria-pressed",state.allowOlderSatelliteBackground?"true":"false");satelliteToggle.textContent=state.allowOlderSatelliteBackground?"Ein · bis 12 Std.":"Aus · nur aktuelle Daten";}
+    if(satelliteToggle){satelliteToggle.setAttribute("aria-pressed",state.allowOlderSatelliteBackground?"true":"false");satelliteToggle.textContent=state.allowOlderSatelliteBackground?this._t("weather.precip.backgroundOn"):this._t("weather.precip.backgroundOff");}
     const status=this.shadow?.getElementById("weather-radar-status");
     const activeApi=this.shadow?.getElementById("weather-engine-active-api");
     if(activeApi){
       const active=state.enabled&&Boolean(state.layer);
       const kind=active?(state.v2Snapshot?"v2":"v1"):"none";
       activeApi.dataset.activeApi=kind;
-      activeApi.textContent=!state.enabled?"Niederschlag: ausgeschaltet"
-        :!active?"Niederschlag: wartet auf Darstellung"
-        :kind==="v2"?"Niederschlag: API V2 · "+state.v2Snapshot.layers.length+" Mosaikquellen"
-        :"Niederschlag: API V1 · "+this._weatherRadarDescribe(state.lastReady?.answer).provider;
+      activeApi.textContent=!state.enabled?this._t("weather.precip.disabled")
+        :!active?this._t("weather.precip.awaitRender")
+        :kind==="v2"?this._t("eye.precipitation")+": API V2 · "+this._t("weather.legend.mosaicSources",{count:state.v2Snapshot.layers.length})
+        :this._t("eye.precipitation")+": API V1 · "+this._weatherRadarDescribe(state.lastReady?.answer).provider;
     }
     const timelineStatus=this.shadow?.getElementById("weather-radar-timeline-status");
     const timelineToggle=this.shadow?.getElementById("weather-radar-timeline-toggle");
     if(toggle){
       toggle.setAttribute("aria-pressed",state.enabled?"true":"false");
-      toggle.textContent=state.enabled?"Ein":"Aus";
+      toggle.textContent=this._t(state.enabled?"weather.layer.on":"weather.layer.off");
       toggle.dataset.active=state.enabled?"1":"0";
     }
-    if(timelineToggle){timelineToggle.setAttribute("aria-pressed",state.timelineVisible?"true":"false");timelineToggle.textContent=state.timelineVisible?"Ein":"Aus";timelineToggle.dataset.active=state.timelineVisible?"1":"0";}
+    if(timelineToggle){timelineToggle.setAttribute("aria-pressed",state.timelineVisible?"true":"false");timelineToggle.textContent=this._t(state.timelineVisible?"weather.layer.on":"weather.layer.off");timelineToggle.dataset.active=state.timelineVisible?"1":"0";}
     if(timelineStatus){
       const frames=state.timelineModel?.frames?.length||0;
       timelineStatus.textContent=!state.timelineVisible
-        ?"Aus · Zeitachse bleibt ausgeblendet"
+        ?this._t("weather.precip.timelineOff")
         :!state.enabled
-          ?"Ein · erscheint, sobald Niederschlag und eine Zeitreihe aktiv sind"
+          ?this._t("weather.precip.timelineWaiting")
           :frames>1
-            ?"Ein · "+frames+" Niederschlagszeitpunkte · Vergangenheit, Jetzt und Vorhersage"
-            :"Ein · aktive Quelle liefert derzeit keine mehrteilige Niederschlags-Zeitreihe";
+            ?this._t("weather.precip.timelineTimes",{count:frames})
+            :this._t("weather.precip.timelineNoSeries");
     }
     if(!status)return;
     if(message){status.textContent=message;return;}
-    if(!state.enabled){status.textContent="Aus · keine zusätzlichen Niederschlags-Anfragen";return;}
+    if(!state.enabled){status.textContent=this._t("weather.precip.noTraffic");return;}
+    const t=(key,vars)=>this._t('weather.precip.'+key,vars),active=this._t('weather.layer.on');
     if(state.v2Snapshot){
       if(state.regionalHold){
         const remaining=Math.max(0,Math.ceil((state.regionalHold.deadlineAt-Date.now())/1000));
-        status.textContent="Aktiv · bisherige gültige Radar-/Satelliten-Ebene vorübergehend beibehalten · "
-          +"erneute Quellenprüfung · maximal "+remaining+" s · UTC-Alter wird überwacht";
+        status.textContent=[active,t('retained'),t('recheckIn',{count:remaining})].join(' · ');
         return;
       }
-      status.textContent="Aktiv · WeatherRouter V2 · "+state.v2Snapshot.layers.length+
-        " räumlich abgegrenzte Quellen"+
-        (state.v2RenderMetrics?.partial_geography
-          ?" · TEILWEISE · "+Math.round((state.v2RenderMetrics.geographic_fraction||0)*100)+" % geografisch"
-          :" · geprüfte Sichtfeldgeometrie")+
-        (state.v2RenderMetrics?.uncovered_tiles?" · "+state.v2RenderMetrics.uncovered_tiles+" Kachelfehler":"")+
-        (state.v2Snapshot.layers.some(layer=>layer.freshness_class==="older_background")?" · ältere Satellitenschätzung, kein aktuelles Radar":"")+
-        (state.v2Snapshot.layers.some(layer=>layer.times?.stale===true)?" · veraltete Daten gemäß WR-Einstellung":"");
+      const metrics=state.v2RenderMetrics;
+      status.textContent=[active,'WeatherRouter V2',this._t('weather.legend.mosaicSources',{count:state.v2Snapshot.layers.length}),
+        metrics?.partial_geography?t('partialArea',{percent:Math.round((metrics.geographic_fraction||0)*100)}):t('viewportVerified'),
+        metrics?.uncovered_tiles?t('tileError',{count:metrics.uncovered_tiles}):null,
+        state.v2Snapshot.layers.some(layer=>layer.freshness_class==='older_background')?this._t('weather.legend.olderSatellite'):null,
+        state.v2Snapshot.layers.some(layer=>layer.times?.stale===true)?t('authorizedStale'):null
+      ].filter(Boolean).join(' · ');
       return;
     }
     if(state.lastReady){
       const d=this._weatherRadarDescribe(state.lastReady.answer);
       const frames=state.timelineModel?.frames?.length||0;
-      status.textContent="Aktiv · API V1 · "+d.provider+" · "+d.ageText+(frames>1?" · "+frames+" Niederschlagszeitpunkte":"")+" · Abdeckung: "+d.coverage+
-        (state.layer?.__grRadarTileMetrics?.failed?" · TEILWEISE · "+state.layer.__grRadarTileMetrics.failed+" Kachelfehler":"")+
-        (state.lastReady.answer.routing?.degraded?" · eingeschränkt":"");
+      const age=d.ageText==='Alter unbekannt'?this._t('weather.layer.unknownAge'):d.ageText;
+      const coverage=d.coverage==='aktueller Kartenausschnitt'?this._t('weather.legend.currentView'):d.coverage;
+      const failed=state.layer?.__grRadarTileMetrics?.failed;
+      status.textContent=[active,'API V1',d.provider,age,frames>1?t('timesCount',{count:frames}):null,
+        this._t('weather.legend.coverage')+': '+coverage,failed?t('tileError',{count:failed}):null,
+        state.lastReady.answer.routing?.degraded?t('viewLimited'):null
+      ].filter(Boolean).join(' · ');
       return;
     }
     const code=state.lastUnavailable?.code;
     const label={
-      outside_coverage:"Für diesen Kartenausschnitt keine Niederschlags-Abdeckung",
-      source_stale:"Niederschlagsquelle derzeit zu alt",
-      router_not_ready:"WeatherRouter nicht betriebsbereit",
-      router_disabled:"WeatherRouter deaktiviert",
-      no_eligible_provider:"Keine geeignete Niederschlagsquelle verfügbar",
-      requirements_not_met:"Niederschlagsquelle erfüllt die Anforderungen nicht",
-      capability_not_supported:"Niederschlags-Layer derzeit nicht verfügbar",
-      cold_start_retry_exhausted:"Niederschlagsbild konnte trotz begrenzter Wiederholungen nicht geladen werden"
+      outside_coverage:this._t("weather.precip.noCoverage"),
+      source_stale:this._t("weather.precip.tooOld"),
+      router_not_ready:this._t("weather.precip.routerNotReady"),
+      router_disabled:this._t("weather.precip.routerDisabled"),
+      no_eligible_provider:this._t("weather.precip.noProvider"),
+      requirements_not_met:this._t("weather.precip.requirement"),
+      capability_not_supported:this._t("weather.precip.notAvailable"),
+      cold_start_retry_exhausted:this._t("weather.precip.retryExhausted")
     }[code];
-    status.textContent=label||"Aktiv · wartet auf Niederschlagsdaten";
+    status.textContent=label||this._t("weather.precip.waiting");
+  },
+
+  _weatherRadarTranslate(){
+    const settings=this.shadow?.querySelector('[data-weather-radar-settings="true"]');
+    if(settings){
+      for(const node of settings.querySelectorAll('[data-precip-caption]'))node.textContent=this._t(node.dataset.precipCaption);
+      for(const node of settings.querySelectorAll('[data-precip-aria]'))node.setAttribute('aria-label',this._t(node.dataset.precipAria));
+      this._weatherRadarUpdateControls();
+    }
+    if(this.shadow?.querySelector('[data-weather-radar-player="true"]'))this._weatherRadarRenderTimelinePlayer();
   },
 
   _mountWeatherRadarSettings(){
@@ -2223,8 +2260,8 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const block=document.createElement("div");block.dataset.weatherRadarSettings="true";
     const row=document.createElement("div");row.className="settings-row";
     const label=document.createElement("div");label.className="settings-row-label";
-    const title=document.createElement("div");title.textContent="Niederschlag · Kartenebene";
-    const hint=document.createElement("div");hint.textContent="WeatherRouter wählt die geeignete Quelle. Blitzortung bleibt unabhängig aktiv.";hint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const title=document.createElement("div");title.dataset.precipCaption="weather.precip.mapLayer";title.textContent=this._t("weather.precip.mapLayer");
+    const hint=document.createElement("div");hint.dataset.precipCaption="weather.precip.chooseSource";hint.textContent=this._t("weather.precip.chooseSource");hint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
     label.append(title,hint);
     const toggle=document.createElement("button");toggle.className="settings-language-button settings-control";toggle.id="weather-radar-toggle";toggle.type="button";
     toggle.addEventListener("click",()=>this._setWeatherRadarEnabled(!this._weatherRadarState().enabled));
@@ -2234,9 +2271,9 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
     const backgroundLabel=document.createElement("div");
     backgroundLabel.className="settings-row-label";
     const backgroundTitle=document.createElement("div");
-    backgroundTitle.textContent="Ältere globale Satellitenschätzungen zulassen";
+    backgroundTitle.dataset.precipCaption="weather.precip.background";backgroundTitle.textContent=this._t("weather.precip.background");
     const backgroundHint=document.createElement("div");
-    backgroundHint.textContent="Freiwillig: bis 12 Stunden alte globale Satellitenschätzungen als eingeschränkte Grundversorgung. Kein aktuelles Radar. Regionale Radardaten bleiben auf 15 Minuten begrenzt.";
+    backgroundHint.dataset.precipCaption="weather.precip.backgroundHelp";backgroundHint.textContent=this._t("weather.precip.backgroundHelp");
     backgroundHint.style.cssText="font-size:.76rem;opacity:.75;margin-top:3px";
     backgroundLabel.append(backgroundTitle,backgroundHint);
     const backgroundToggle=document.createElement("button");
@@ -2248,26 +2285,26 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const preloadRow=document.createElement("div");preloadRow.className="settings-row";
     const preloadLabel=document.createElement("div");preloadLabel.className="settings-row-label";
-    const preloadTitle=document.createElement("div");preloadTitle.textContent="Niederschlags-Vorladebereich";
-    const preloadHint=document.createElement("div");preloadHint.textContent="Zusätzlicher Rand um den sichtbaren Kartenausschnitt. Sicherheitsgrenzen begrenzen Kacheln und geschätzten Bildspeicher.";preloadHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const preloadTitle=document.createElement("div");preloadTitle.dataset.precipCaption="weather.precip.preload";preloadTitle.textContent=this._t("weather.precip.preload");
+    const preloadHint=document.createElement("div");preloadHint.dataset.precipCaption="weather.precip.preloadHelp";preloadHint.textContent=this._t("weather.precip.preloadHelp");preloadHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
     preloadLabel.append(preloadTitle,preloadHint);
     const preloadSelect=document.createElement("select");preloadSelect.id="weather-radar-preload-profile";preloadSelect.className="settings-control";
     [
-      ["off","Aus · nur sichtbar"],
-      ["small","Klein · +15 % je Seite"],
-      ["normal","Normal · +30 % je Seite · empfohlen"],
-      ["large","Groß · +50 % je Seite"],
-      ["custom","Benutzerdefiniert"]
-    ].forEach(([value,text])=>{const option=document.createElement("option");option.value=value;option.textContent=text;preloadSelect.append(option);});
+      ["off","weather.status.radarPreloadOff"],
+      ["small","weather.status.radarPreloadSmall"],
+      ["normal","weather.status.radarPreloadNormal"],
+      ["large","weather.status.radarPreloadLarge"],
+      ["custom","weather.status.radarPreloadCustom"]
+    ].forEach(([value,text])=>{const option=document.createElement("option");option.value=value;option.dataset.precipCaption=text;option.textContent=this._t(text);preloadSelect.append(option);});
     preloadSelect.addEventListener("change",()=>this._setWeatherRadarPreloadProfile(preloadSelect.value));
     preloadRow.append(preloadLabel,preloadSelect);
 
     const customRow=document.createElement("div");customRow.className="settings-row";customRow.dataset.weatherRadarPreloadCustom="true";
-    const customLabel=document.createElement("div");customLabel.className="settings-row-label";customLabel.textContent="Benutzerdefinierter Kartenrand";
+    const customLabel=document.createElement("div");customLabel.className="settings-row-label";customLabel.dataset.precipCaption="weather.precip.customBorder";customLabel.textContent=this._t("weather.precip.customBorder");
     const customControls=document.createElement("div");customControls.className="gr-weather-range-controls";customControls.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end";
-    const customRange=document.createElement("input");customRange.type="range";customRange.min="0";customRange.max="100";customRange.step="5";customRange.id="weather-radar-preload-custom-range";customRange.setAttribute("aria-label","Benutzerdefinierter Niederschlags-Kartenrand in Prozent je Seite");
+    const customRange=document.createElement("input");customRange.type="range";customRange.min="0";customRange.max="100";customRange.step="5";customRange.id="weather-radar-preload-custom-range";customRange.dataset.precipAria="weather.precip.marginAria";customRange.setAttribute("aria-label",this._t("weather.precip.marginAria"));
     const customNumber=document.createElement("input");customNumber.type="number";customNumber.min="0";customNumber.max="100";customNumber.step="5";customNumber.id="weather-radar-preload-custom-number";customNumber.className="settings-control";customNumber.style.cssText="width:78px";
-    const percent=document.createElement("span");percent.textContent="% je Seite";percent.style.cssText="font-size:.78rem;opacity:.72";
+    const percent=document.createElement("span");percent.dataset.precipCaption="weather.precip.perSide";percent.textContent=this._t("weather.precip.perSide");percent.style.cssText="font-size:.78rem;opacity:.72";
     const syncCustom=value=>{this._setWeatherRadarPreloadCustomPercent(value);};
     customRange.addEventListener("input",()=>{customNumber.value=customRange.value;});
     customRange.addEventListener("change",()=>syncCustom(customRange.value));
@@ -2280,23 +2317,23 @@ export const installWeatherRadar=defineModule(MODULE_META,(deps)=>{const {loadLe
 
     const refreshIntervalRow=document.createElement("div");refreshIntervalRow.className="settings-row";
     const refreshIntervalLabel=document.createElement("div");refreshIntervalLabel.className="settings-row-label";
-    const refreshIntervalTitle=document.createElement("div");refreshIntervalTitle.textContent="Aktualisierungsintervall – Wetterinformationen";
-    const refreshIntervalHint=document.createElement("div");refreshIntervalHint.textContent="Legt fest, wie schnell WeatherRouter nach einer Kartenbewegung neue Wetterinformationen anfordern darf. Kürzer reagiert schneller, erzeugt aber mehr Anfragen.";refreshIntervalHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const refreshIntervalTitle=document.createElement("div");refreshIntervalTitle.dataset.precipCaption="weather.precip.refreshInterval";refreshIntervalTitle.textContent=this._t("weather.precip.refreshInterval");
+    const refreshIntervalHint=document.createElement("div");refreshIntervalHint.dataset.precipCaption="weather.precip.intervalHint";refreshIntervalHint.textContent=this._t("weather.precip.intervalHint");refreshIntervalHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
     const refreshIntervalStatus=document.createElement("div");refreshIntervalStatus.id="weather-radar-refresh-interval-status";refreshIntervalStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
     refreshIntervalLabel.append(refreshIntervalTitle,refreshIntervalHint,refreshIntervalStatus);
     const refreshIntervalControls=document.createElement("div");refreshIntervalControls.className="gr-weather-range-controls";refreshIntervalControls.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end";
-    const refreshIntervalRange=document.createElement("input");refreshIntervalRange.type="range";refreshIntervalRange.min=String(VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS);refreshIntervalRange.max=String(VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);refreshIntervalRange.step="1";refreshIntervalRange.id="weather-radar-refresh-interval-range";refreshIntervalRange.setAttribute("aria-label","Aktualisierungsintervall Wetterinformationen in Sekunden");
+    const refreshIntervalRange=document.createElement("input");refreshIntervalRange.type="range";refreshIntervalRange.min=String(VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS);refreshIntervalRange.max=String(VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);refreshIntervalRange.step="1";refreshIntervalRange.id="weather-radar-refresh-interval-range";refreshIntervalRange.dataset.precipAria="weather.precip.intervalAria";refreshIntervalRange.setAttribute("aria-label",this._t("weather.precip.intervalAria"));
     const refreshIntervalNumber=document.createElement("input");refreshIntervalNumber.type="number";refreshIntervalNumber.min=String(VIEWPORT_REFRESH_INTERVAL_MIN_SECONDS);refreshIntervalNumber.max=String(VIEWPORT_REFRESH_INTERVAL_MAX_SECONDS);refreshIntervalNumber.step="1";refreshIntervalNumber.id="weather-radar-refresh-interval-number";refreshIntervalNumber.className="settings-control";refreshIntervalNumber.style.cssText="width:72px";
-    const refreshIntervalUnit=document.createElement("span");refreshIntervalUnit.textContent="Sek.";refreshIntervalUnit.style.cssText="font-size:.78rem;opacity:.72";
-    refreshIntervalRange.addEventListener("input",()=>{refreshIntervalNumber.value=refreshIntervalRange.value;refreshIntervalStatus.textContent=refreshIntervalRange.value+" Sek.";});
+    const refreshIntervalUnit=document.createElement("span");refreshIntervalUnit.textContent=this._t("weather.precip.seconds",{count:""}).trim();refreshIntervalUnit.style.cssText="font-size:.78rem;opacity:.72";
+    refreshIntervalRange.addEventListener("input",()=>{refreshIntervalNumber.value=refreshIntervalRange.value;refreshIntervalStatus.textContent=this._t("weather.precip.seconds",{count:refreshIntervalRange.value});});
     refreshIntervalRange.addEventListener("change",()=>this._setWeatherRadarViewportRefreshInterval(refreshIntervalRange.value));
     refreshIntervalNumber.addEventListener("change",()=>this._setWeatherRadarViewportRefreshInterval(refreshIntervalNumber.value));
     refreshIntervalControls.append(refreshIntervalRange,refreshIntervalNumber,refreshIntervalUnit);refreshIntervalRow.append(refreshIntervalLabel,refreshIntervalControls);
 
     const timelineRow=document.createElement("div");timelineRow.className="settings-row";
     const timelineLabel=document.createElement("div");timelineLabel.className="settings-row-label";
-    const timelineTitle=document.createElement("div");timelineTitle.textContent="Niederschlags-Zeitverlauf";
-    const timelineHint=document.createElement("div");timelineHint.textContent="Ein-/ausblendbar, zusätzlich im WeatherRouter-Menü schaltbar und direkt auf der Karte verschiebbar.";timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
+    const timelineTitle=document.createElement("div");timelineTitle.dataset.precipCaption="weather.precip.timeline";timelineTitle.textContent=this._t("weather.precip.timeline");
+    const timelineHint=document.createElement("div");timelineHint.dataset.precipCaption="weather.precip.timelineHint";timelineHint.textContent=this._t("weather.precip.timelineHint");timelineHint.style.cssText="font-size:.76rem;opacity:.68;margin-top:3px";
     const timelineStatus=document.createElement("div");timelineStatus.id="weather-radar-timeline-status";timelineStatus.setAttribute("role","status");timelineStatus.setAttribute("aria-live","polite");timelineStatus.style.cssText="font-size:.76rem;opacity:.82;margin-top:5px";
     const timelineToggle=document.createElement("button");timelineToggle.className="settings-language-button settings-control";timelineToggle.id="weather-radar-timeline-toggle";timelineToggle.type="button";timelineToggle.addEventListener("click",()=>this._setWeatherRadarTimelineVisible(!this._weatherRadarState().timelineVisible));
     timelineLabel.append(timelineTitle,timelineHint,timelineStatus);timelineRow.append(timelineLabel,timelineToggle);

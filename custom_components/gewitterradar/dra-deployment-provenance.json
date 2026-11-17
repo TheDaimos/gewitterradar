@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.223",
-  "build": "V4.11.223-DEV-2026-11-16",
-  "runtimeRevision": "411223r1",
-  "moduleSetId": "E411-223A1",
-  "baselineFeatureHead": "25c3ef494c1d54440b9dd70344875de5ae877105",
+  "productVersion": "4.11.224",
+  "build": "V4.11.224-DEV-2026-11-17",
+  "runtimeRevision": "411224r1",
+  "moduleSetId": "E411-224A1",
+  "baselineFeatureHead": "1127927b98b087135b9340bf3871b20486c23bd1",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Localize Help, Eye and weather quick controls through the existing frontend catalogs.",
+    "purpose": "Localize weather controls, legends, Project Hub and device profile workflows through the existing GR language registry.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -33,14 +33,24 @@ test('the Studio and offline page share the same preview and renderer; protected
  const preview=readFileSync('frontend/modules/weather/snake-preview.js','utf8'),offline=readFileSync('docs/previews/snake-flow.html','utf8'),studio=readFileSync('frontend/modules/weather/wind-studio.js','utf8');assert(preview.includes('new SnakeCanvas('));assert(offline.includes('new SnakePreview('));assert(studio.includes('new SnakePreview('));assert(!studio.includes('new SnakeCanvas('));assert(!offline.includes('function makeField('));
  for(const name of ['snake-canvas.js','snake-geometry.js','snake-config.js','wind-canvas.js','wind-field.js','flow-geometry.js','temperature-canvas.js','consumer-client.js','frame-clock.js']){
   const path='frontend/modules/weather/'+name,ref=name==='consumer-client.js'?beforeRelease:'ac73cb59abeac399c9fc24dcb78194ecef0c3e0b';
-  assert.equal(withoutCache(readFileSync(path,'utf8')),withoutCache(withNewOpacityFloor(name,readAt(ref,path))),name);
+  // Source-card copy in the settings UI is localized independently of the transport.
+  const transport=source=>name==='consumer-client.js'
+    ? source.replace(/  _weatherEngineRenderSourceCards\(\)\{[\s\S]*?(?=  _weatherEngineEmbedDiagnostics\(\))/,'')
+      .replace(/(id:'weather\.consumer-client',version:')[^']+/, '$1MODULE_VERSION') : source;
+  assert.equal(withoutCache(transport(readFileSync(path,'utf8'))),withoutCache(transport(withNewOpacityFloor(name,readAt(ref,path)))),name);
  }
 });
 
 test('protected reference, defaults, eleven existing sliders, quick bindings and storage logic remain exact',()=>{
  const before=p=>readAt(beforeRelease,p).replace(/\r/g,''),now=p=>readFileSync(p,'utf8').replace(/\r/g,'');
  for(const name of ['snake-canvas.js','snake-geometry.js','snake-config.js','wind-data.js']){const p='frontend/modules/weather/'+name;assert.equal(withoutCache(now(p)),withoutCache(withNewOpacityFloor(name,before(p))),name);}
- const p='frontend/modules/weather/wind-display.js',old=before(p),current=now(p);for(const marker of ['const snakeRange=','<details data-section="animation">','<details data-section="snake">'])assert.equal(current.split('\n').find(line=>line.includes(marker)),old.split('\n').find(line=>line.includes(marker)),marker);
+ const p='frontend/modules/weather/wind-display.js',old=before(p),current=now(p);
+ const line=(s,marker)=>s.split('\n').find(text=>text.includes(marker));
+ assert.equal(line(current,'const snakeRange=').split('quick=false)')[1],line(old,'const snakeRange=').split('quick=false)')[1]);
+ for(const marker of ['<details data-section="animation">','<details data-section="snake">']) {
+  const controls=s=>Array.from(line(s,marker).matchAll(/snakeRange\('[^']+'|(?:data-section|data-wind-action|data-wind-setting)="[^"]+"|SNAKE_LIMITS\)\.map\(key=>snakeRange\(key\)\)/g),match=>match[0]);
+  assert.deepEqual(controls(current),controls(old),marker);
+ }
  const method=(s,a,b)=>s.slice(s.indexOf(a),s.indexOf(b));for(const [a,b] of [['_weatherWindSet(patch,',' _weatherWindUpdatePainters(points,field,'],['_weatherWindSyncSnakeControls(){','_weatherWindSnakeStatus(){']])assert.equal(withoutCache(method(current,a,b)),withoutCache(method(old,a,b)),a);
  const doc='docs/GR_SNAKE_FLOW_PROTECTED_REFERENCE_2026-11-08.md';assert.equal(now(doc),readAt('efadf2cc7e0fd708ac20cf391637e2ccf8f0e7e5',doc).replace(/\r/g,''));
 });

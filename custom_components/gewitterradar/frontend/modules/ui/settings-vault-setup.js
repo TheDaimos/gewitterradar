@@ -1,7 +1,7 @@
 // Uses the same product icon, gold accents and dark surfaces as the GR settings menu.
 const BRAND_ICON = new URL('../../assets/gewitterradar-brand-icon.png?v=404', import.meta.url).href;
 
-const TEMPLATE = `
+const template = t => `
 <style>
 .gr-vault-setup {
   --vault-gold: #c7a25b;
@@ -107,50 +107,50 @@ const TEMPLATE = `
   <div><h1>GewitterRadar Pro</h1><p>powered by WeatherRouter</p></div>
 </header>
 <div class="vault-body">
-  <div><h2>Userprofile &amp; Sicherungen</h2><p class="vault-muted">Einstellungen für dieses Gerät auswählen oder wiederherstellen.</p></div>
-  <div class="vault-step" data-step="loading"><p role="status">Profil wird geladen …</p></div>
+  <div><h2>${t('title')}</h2><p class="vault-muted">${t('setupIntro')}</p></div>
+  <div class="vault-step" data-step="loading"><p role="status">${t('loading')}</p></div>
   <div class="vault-step" data-step="choose" hidden>
-    <button type="button" class="vault-primary vault-choice" data-action="existing">Vorhandenes Profil verwenden</button>
-    <button type="button" class="vault-choice" data-action="defaults">Mit Standardeinstellungen starten</button>
-    <button type="button" class="vault-link" data-action="legacy" hidden>Bisherige Browsereinstellungen</button>
-    <p class="vault-muted" data-recovery hidden>Letzte gültige Sicherung · schreibgeschützt</p>
-    <button type="button" class="vault-link" data-action="export-server" hidden>Sicherung exportieren</button>
+    <button type="button" class="vault-primary vault-choice" data-action="existing">${t('existing')}</button>
+    <button type="button" class="vault-choice" data-action="defaults">${t('startDefaults')}</button>
+    <button type="button" class="vault-link" data-action="legacy" hidden>${t('browserSettings')}</button>
+    <p class="vault-muted" data-recovery hidden>${t('recovery')}</p>
+    <button type="button" class="vault-link" data-action="export-server" hidden>${t('exportBackup')}</button>
   </div>
   <div class="vault-step" data-step="existing" hidden>
-    <h3 tabindex="-1" data-focus>Geräteprofil auswählen</h3>
-    <p class="vault-muted" data-empty hidden>Für dieses Konto ist noch kein Geräteprofil vorhanden.</p>
-    <label data-profile-field>Gespeichertes Profil<select aria-label="Geräteprofil"></select></label>
-    <p class="vault-muted" data-link-note>Beim Zuordnen bleiben Änderungen mit diesem Profil verbunden. Eine Kopie ist unabhängig.</p>
+    <h3 tabindex="-1" data-focus>${t('choose')}</h3>
+    <p class="vault-muted" data-empty hidden>${t('noProfiles')}</p>
+    <label data-profile-field>${t('storedProfile')}<select aria-label="${t('deviceProfile')}"></select></label>
+    <p class="vault-muted" data-link-note>${t('linkNote')}</p>
     <div class="vault-actions">
-      <button type="button" class="vault-primary" data-action="use">Dieses Profil zuordnen</button>
-      <button type="button" data-action="copy">Als eigenes Profil kopieren</button>
+      <button type="button" class="vault-primary" data-action="use">${t('link')}</button>
+      <button type="button" data-action="copy">${t('copyOwn')}</button>
     </div>
-    <button type="button" class="vault-link" data-action="back">Zurück</button>
+    <button type="button" class="vault-link" data-action="back">${t('back')}</button>
   </div>
   <form class="vault-step" data-step="name" hidden>
-    <h3 data-name-heading tabindex="-1" data-focus>Neues Geräteprofil</h3>
+    <h3 data-name-heading tabindex="-1" data-focus>${t('newProfile')}</h3>
     <div class="vault-name-field">
-      <label>Profilname<input type="text" required maxlength="64" value="Dieses Gerät" autocomplete="off"></label>
-      <button type="button" class="vault-name-clear" data-action="clear-name" aria-label="Profilnamen löschen"><span aria-hidden="true">×</span></button>
+      <label>${t('profileName')}<input type="text" required maxlength="64" value="${t('thisDevice')}" autocomplete="off"></label>
+      <button type="button" class="vault-name-clear" data-action="clear-name" aria-label="${t('clearName')}"><span aria-hidden="true">×</span></button>
     </div>
-    <p class="vault-muted" data-name-note hidden>Die bisherigen Browsereinstellungen bleiben für eine spätere Übernahme verfügbar.</p>
-    <button type="submit" class="vault-primary" data-submit>Profil erstellen</button>
-    <button type="button" class="vault-link" data-action="back">Zurück</button>
+    <p class="vault-muted" data-name-note hidden>${t('migrateLater')}</p>
+    <button type="submit" class="vault-primary" data-submit>${t('create')}</button>
+    <button type="button" class="vault-link" data-action="back">${t('back')}</button>
   </form>
   <div class="vault-step" data-step="legacy" hidden>
-    <h3 tabindex="-1" data-focus>Bisherige Browsereinstellungen</h3>
+    <h3 tabindex="-1" data-focus>${t('browserSettings')}</h3>
     <p class="vault-muted" data-legacy-info></p>
-    <button type="button" data-action="preview">Übernahme prüfen</button>
+    <button type="button" data-action="preview">${t('previewMigration')}</button>
     <p class="vault-muted" data-legacy-preview hidden></p>
-    <button type="button" class="vault-primary" data-action="migrate" hidden>Browsereinstellungen übernehmen</button>
-    <button type="button" class="vault-link" data-action="export-local">Lokale Originaldaten exportieren</button>
-    <button type="button" class="vault-link" data-action="back">Zurück</button>
+    <button type="button" class="vault-primary" data-action="migrate" hidden>${t('migrate')}</button>
+    <button type="button" class="vault-link" data-action="export-local">${t('exportLocal')}</button>
+    <button type="button" class="vault-link" data-action="back">${t('back')}</button>
   </div>
   <div class="vault-step" data-step="error" hidden>
-    <button type="button" class="vault-primary" data-action="retry">Erneut verbinden</button>
-    <button type="button" class="vault-primary" data-action="reload" hidden>Frontend neu laden</button>
-    <button type="button" data-action="local" hidden>Karte mit lokalen Einstellungen öffnen</button>
-    <p class="vault-muted" data-local-note hidden>Die lokale Ansicht ist schreibgeschützt. Gespeicherte Profile bleiben für den nächsten Start verfügbar.</p>
+    <button type="button" class="vault-primary" data-action="retry">${t('reconnect')}</button>
+    <button type="button" class="vault-primary" data-action="reload" hidden>${t('reload')}</button>
+    <button type="button" data-action="local" hidden>${t('useLocal')}</button>
+    <p class="vault-muted" data-local-note hidden>${t('localNote')}</p>
   </div>
   <p role="status" data-action-status></p>
   <p role="alert"></p>
@@ -158,10 +158,11 @@ const TEMPLATE = `
 
 /** One mounted setup per card. Only an explicit action or its result changes the step. */
 export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDownload}) {
+  const t = (key, vars) => owner._t('vault.' + key, vars);
   const root = document.createElement('section');
   root.className = 'gr-vault-setup';
-  root.setAttribute('aria-label', 'Userprofile & Sicherungen');
-  root.innerHTML = TEMPLATE;
+  root.setAttribute('aria-label', t('title'));
+  root.innerHTML = template(key => t(key).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c])));
   root.querySelector('img').src = BRAND_ICON;
   owner.append(root);
 
@@ -212,11 +213,11 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     action('local').hidden = find('[data-local-note]').hidden = !client.canOpenLocal;
     show('error');
     alert.textContent = client.status === 'offline' && client.error?.code !== 'settings_timeout'
-      ? 'Keine Verbindung zum Profildienst. Prüfe die Verbindung zu Home Assistant.'
+      ? t('offlineHelp')
       : safeError(client.error);
   }
 
-  async function run(operation, message = 'Profil wird geprüft …') {
+  async function run(operation, message = t('checking')) {
     if (busy) return;
     busy = true;
     status.textContent = message;
@@ -236,7 +237,7 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     find('[data-link-note]').hidden = !available || client.recovery;
     action('copy').hidden = !available || client.recovery;
     action('use').hidden = !available;
-    action('use').textContent = client.recovery ? 'Sicherung ansehen' : 'Dieses Profil zuordnen';
+    action('use').textContent = client.recovery ? t('viewBackup') : t('link');
     show('existing', true);
   }
 
@@ -247,7 +248,7 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     nameDrafts.set(key, nameDraft);
     input.value = nameDraft.value;
     clearName.hidden = !input.value;
-    find('[data-name-heading]').textContent = {defaults: 'Neues Geräteprofil', copy: 'Eigenständige Profilkopie', legacy: 'Browsereinstellungen übernehmen'}[kind];
+    find('[data-name-heading]').textContent = {defaults: t('newProfile'), copy: t('independentCopy'), legacy: t('migrate')}[kind];
     find('[data-name-note]').hidden = kind !== 'defaults' || !Object.keys(client.legacy.values).length;
     show('name', true);
   }
@@ -305,7 +306,7 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     if (step !== 'name') return;
     const name = input.value.trim();
     if (!name) {
-      alert.textContent = 'Gib einen Namen für dieses Gerät ein.';
+      alert.textContent = t('nameRequired');
       input.focus();
       return;
     }
@@ -315,7 +316,7 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     void run(async () => {
       await client.create(nameMode === 'copy' ? 'copy' : 'create', fields);
       boot();
-    }, 'Profil wird angelegt …');
+    }, t('creating'));
   });
 
   const actions = {
@@ -328,7 +329,7 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
       input.focus({preventScroll: true});
       updateDraft();
     },
-    use: () => run(async () => { await client.choose(picker.value); boot(); }, 'Profil wird geladen …'),
+    use: () => run(async () => { await client.choose(picker.value); boot(); }, t('loading')),
     back: () => {
       if (step !== 'name' || nameMode === 'defaults') show('choose', true);
       else if (nameMode === 'copy') openExisting();
@@ -337,16 +338,16 @@ export function mountVaultSetup(owner, client, {retry, boot, safeError, fileDown
     legacy: () => {
       const count = Object.keys(client.legacy.values).length;
       find('[data-legacy-info]').textContent = count
-        ? count + ' lokale Einstellungsbereiche gefunden. Die Übernahme legt ein eigenes Profil an.'
-        : 'Der bisherige Browserspeicher konnte nicht gelesen werden.';
+        ? t('legacyFound', {count})
+        : t('legacyUnreadable');
       action('preview').hidden = action('export-local').hidden = !count;
       show('legacy', true);
     },
     preview: () => run(async () => {
       const result = await client.call('migration_preview', {legacy: client.legacy.values});
       const summary = find('[data-legacy-preview]');
-      summary.textContent = result.keys.length + ' übernehmbare Einstellungsbereiche.'
-        + (result.issues.length ? ' Unvollständig lesbar: ' + result.issues.join(', ') : '');
+      summary.textContent = t('importable', {count: result.keys.length})
+        + (result.issues.length ? ' ' + t('incomplete', {areas: result.issues.join(', ')}) : '');
       summary.hidden = false;
       action('migrate').hidden = !result.keys.length;
     }),

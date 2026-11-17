@@ -32,6 +32,7 @@ export async function expectedPayload(){
   if(Number(patch)>=181)support.push('modules/weather/eye-neon-energy.js');
   if(Number(patch)>=182)support.push('modules/core/settings-vault.js','modules/ui/settings-vault-view.js');
   if(Number(patch)>=184)support.push('modules/ui/settings-vault-setup.js');
+  if(Number(patch)>=224)support.push('modules/ui/presentation-locales.js');
   const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
   if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.165 module inventory mismatch');
   const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));

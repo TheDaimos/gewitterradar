@@ -23,6 +23,31 @@ function setup(html, languages) {
     },`);
 }
 
+async function checkWeatherPanels(page, name, locale) {
+  const panel = page.locator('#weather-synoptic-panel');
+  await page.evaluate(() => card._weatherSynopticOpen());
+  await panel.waitFor();
+  const fronts = panel.locator('[data-section=fronts] > summary');
+  assert((await fronts.textContent()).includes(locale['weather.synoptic.fronts']), name + ' fronts');
+  assert.equal(await panel.locator('[data-synoptic-setting=isobarOpacity]').getAttribute('aria-label'),locale['weather.synoptic.isobarOpacity']);
+  await panel.locator('header [data-premium-action=close]').click();
+
+  await page.evaluate(() => card._weatherWindOpen());
+  const wind = page.locator('#weather-wind-panel');
+  await wind.waitFor();
+  assert.equal(await wind.locator('header strong').textContent(),locale['weather.wind.title']);
+  assert.equal(await wind.locator('[data-wind-action=legend]').getAttribute('aria-label'),locale['weather.wind.legend']);
+  assert(await wind.evaluate(node=>node.scrollWidth-node.clientWidth)<=2,name+' wind panel horizontal overflow');
+  await wind.locator('[data-wind-action=close]').click();
+
+  await page.evaluate(() => card._weatherTemperatureOpen());
+  const temperature = page.locator('#weather-temperature-panel');
+  await temperature.waitFor();
+  assert.equal(await temperature.locator('header strong').textContent(),locale['weather.temperature.title']);
+  assert(await temperature.evaluate(node=>node.scrollWidth-node.clientWidth)<=2,name+' temperature panel horizontal overflow');
+  await temperature.locator('[data-temperature-action=close]').click();
+}
+
 async function checkLanguage(page, name, locale) {
   const overlay = page.locator('.help-dialog');
   await page.waitForFunction(({title, key}) =>
@@ -66,6 +91,7 @@ async function checkLanguage(page, name, locale) {
 async function run() {
   const fs = require('node:fs/promises');
   const {readExternalAboutLocales} = await import('./verify-about-locales.mjs');
+  const {PRESENTATION_LOCALES} = await import('../frontend/modules/ui/presentation-locales.js');
   const ext = readExternalAboutLocales(await fs.readFile('frontend/locales/about-locales.js','utf8')).weatherHelp;
   const languages = ['Deutsch','English',...Object.keys(ext)];
   const browser = await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH});
@@ -115,8 +141,17 @@ async function run() {
         const eyeWidth = await eye.evaluate(panel => panel.scrollWidth - panel.clientWidth);
         assert(eyeWidth<=1,'Eye panel overflows in Schwäbisch');
         await eye.locator('[data-premium-action=close]').click();
+        for(const language of languages){
+          await page.evaluate(({key,value})=>card._hass.callService('input_select','select_option',{entity_id:key,option:value}),{key:languageEntity,value:language});
+          await page.waitForFunction(value=>card._languageValue()===value,language);
+          await checkWeatherPanels(page,language,PRESENTATION_LOCALES[language]);
+        }
+        await page.evaluate(()=>card._openProjectHub());
+        const hub=page.frameLocator('iframe[title="Daimos Project Hub"]');
+        await hub.getByText(PRESENTATION_LOCALES.Schwäbisch['weather.hub.projects'],{exact:true}).waitFor();
+        await page.locator('.project-hub-close-premium').click();
         assert.deepEqual(errors,[]);
-        console.log(`PASS: ${delivery}, ${width}px, 19 languages on an open Help dialog and verified HA-state fixture reload.`);
+        console.log(`PASS: ${delivery}, ${width}px, open Help, Eye, synoptic, wind, temperature and HA-state fixture reload across 19 languages.`);
       } finally {
         await ctx.close();
         await new Promise(resolve => runner.server.close(resolve));

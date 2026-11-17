@@ -1,10 +1,11 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411223r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411223r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411223r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411224r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411224r1';
+import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411224r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.35",
+  "version": "1.3.36",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -15,6 +16,26 @@ export const MODULE_META=Object.freeze({
   ],
   "file": "modules/ui/i18n-settings.js"
 });
+const WEATHER_STATUS_TEXT = {
+  "Keine kohärenten WR-Windvektoren verfügbar": "weather.status.windUnavailable",
+  "Keine Windsymbole oder Farbfläche ausgewählt": "weather.status.noneSelected",
+  "WR-Wind verfügbar · lokale Punktdarstellung": "weather.status.windPoints",
+  "Nachladen fehlgeschlagen · vorhandenes WR-Windfeld bleibt freigegeben": "weather.status.windCached",
+  "WR-Windfeld verfügbar · 10-m-Modellvorhersage": "weather.status.windReady",
+  "WR-Windfeldfreigabe abgelaufen": "weather.status.windExpired",
+  "Schlangenförmige Animation nicht verfügbar · kein freigegebenes numerisches WR-Windfeld": "weather.status.snakeUnavailable",
+  "WR-Windfeld wird im Hintergrund nachgeladen": "weather.status.windRefreshing",
+  "WR-Wind wird geladen": "weather.status.windLoading",
+  "Temperatur wird im Hintergrund nachgeladen": "weather.status.tempRefreshing",
+  "WR-Temperatur wird geladen": "weather.status.tempLoading",
+  "Nachladen fehlgeschlagen · vorhandene Temperatur bleibt freigegeben": "weather.status.tempCached",
+  "Temperatur nicht verfügbar": "weather.status.tempUnavailable",
+  "Temperaturfeld verfügbar · 2-m-Modellvorhersage": "weather.status.tempReady",
+  "WR-Temperaturfreigabe abgelaufen": "weather.status.tempExpired",
+  "Advektion": "weather.status.advection",
+  "Aus": "weather.layer.off",
+  "nicht verfügbar": "weather.layer.unavailable"
+};
 const SETTINGS_UI_TRANSLATIONS=Object.freeze({
   "Deutsch": {
     "settings.cluster_resolution": "Cluster-Auflösung",
@@ -2277,13 +2298,14 @@ const V411_HELP_WEATHER_DISPLAY=Object.freeze({
 });
 
 export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, resolveWeatherHelpLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
-    _languageEntity() {
-      return this._resolveSettingEntity('language',this._config.language_entity);
+    _languageEntity(hass = this._hass, config = this._config) {
+      return this._resolveSettingEntity('language',config?.language_entity,hass);
     },
 
-    _languageValue(hass = this._hass) {
+    _languageValue(hass = this._hass ?? this._vaultHass) {
       if (this._languagePreview && LANGUAGE_DEFINITIONS.some((entry) => entry.value === this._languagePreview)) return this._languagePreview;
-      const raw = String(hass?.states?.[this._languageEntity()]?.state || '').trim();
+      const entity = this._languageEntity(hass,this._hass ? this._config : this._vaultConfig);
+      const raw = String(hass?.states?.[entity]?.state || '').trim();
       return LANGUAGE_DEFINITIONS.some((entry) => entry.value === raw) ? raw : LANGUAGE_DEFAULT;
     },
 
@@ -2371,10 +2393,26 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const eyeKey=key.startsWith('eye.')?key.slice(4):null;
       let text = eyeKey ? EYE_HUB_TRANSLATIONS[language]?.[eyeKey] ?? EYE_HUB_TRANSLATIONS.English[eyeKey] ?? key : aboutKey
         ? resolveAboutLocale(language).strings[aboutKey] ?? key
-        : v410[key] ?? extra[key] ?? table[key] ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
+        : v410[key] ?? extra[key] ?? table[key] ?? PRESENTATION_LOCALES[language]?.[key] ?? PRESENTATION_LOCALES.English[key]
+          ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
       return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
         Object.prototype.hasOwnProperty.call(vars,name) ? String(vars[name]) : `{${name}}`
       );
+    },
+
+    _weatherStatusText(value) {
+      if(typeof value!=='string')return value;
+      if(Object.hasOwn(WEATHER_STATUS_TEXT,value))return this._t(WEATHER_STATUS_TEXT[value]);
+      for(const [source,key] of Object.entries(WEATHER_STATUS_TEXT)){
+        if(value.startsWith(source+' · ')){
+          const detail=value.slice(source.length+3);
+          const translated=detail.startsWith('Advektion ')
+            ? this._t('weather.status.advection')+' '+this._weatherStatusText(detail.slice('Advektion '.length))
+            : this._weatherStatusText(detail);
+          return this._t(key)+' · '+translated;
+        }
+      }
+      return value;
     },
 
     _tp(base,count,vars = {}) {
@@ -2477,8 +2515,27 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         });
       });
       this._syncV410Tooltips();
+      this.shadow.querySelectorAll('[data-presentation-text]').forEach(node=>{node.textContent=this._t(node.dataset.presentationText);});
+      this.shadow.querySelectorAll('[data-presentation-aria]').forEach(node=>{node.setAttribute('aria-label',this._t(node.dataset.presentationAria));});
+      this._weatherEngineRenderSourceCards?.();
       this._weatherTemperatureTranslate?.();
       this._weatherWindTranslate?.();
+      if(this.__weatherWind)this._weatherWindSyncToggle?.();
+      if(this.__weatherTemperature)this._weatherTemperatureSyncToggle?.();
+      this._weatherSynopticSyncMenu?.();
+      if(this.__weatherLegendState?.mounted){
+        if(this.__weatherRadarState?.enabled)this._weatherRadarRenderCurrentLegend?.();
+        this._weatherLegendSyncUi?.();
+      }
+      this._weatherCloudsSync?.();
+      this._weatherPrecipitationSyncToggle?.();
+      this._weatherRadarTranslate?.();
+      if(this.__weatherDisplayState)this._weatherDisplaySyncUi?.();
+      if(this.__weatherLayerMenuState){
+        this._weatherLayerMenuSyncEntry?.();
+        this._weatherLayerMenuRender?.();
+      }
+      this._syncVaultLanguage?.();
       this._settingsRefreshNavigation?.();
     },
 
@@ -2531,11 +2588,11 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       return {...help,sections};
     },
 
-    _resolveSettingEntity(key,configured) {
+    _resolveSettingEntity(key,configured,hass = this._hass) {
       if (configured) return configured;
       const mapping = SETTING_ENTITIES[key];
       if (!mapping) return null;
-      const nativeState = this._hass?.states?.[mapping.native];
+      const nativeState = hass?.states?.[mapping.native];
       const nativeUsable = nativeState
         && nativeState.state !== 'unavailable'
         && nativeState.state !== 'unknown';

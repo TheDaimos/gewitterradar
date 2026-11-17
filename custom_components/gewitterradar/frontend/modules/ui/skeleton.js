@@ -15,7 +15,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.31",
+  "version": "1.1.32",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7233,7 +7233,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Weather-Engine</div>
-                    <div class="settings-section-sub">Datenquellen und Niederschlagsdarstellung</div>
+                    <div class="settings-section-sub" data-presentation-text="weather.source.settingsSubtitle">Datenquellen und Niederschlagsdarstellung</div>
                   </div>
                 </summary>
                 <div class="settings-section-content">

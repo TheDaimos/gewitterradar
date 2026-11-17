@@ -69,20 +69,22 @@ function serverCall(user, message) {
 function vaultFixture() {
   return flowFixture({decorate: html => html
     .replace("localStorage.setItem('gewitterradar-about-onboarding-version','1');", '')
+    .replace("state:'Deutsch',attributes:{options:['Deutsch','English']}", "state:window.testVaultLanguage||'Deutsch',attributes:{options:['Deutsch','English','Français','Ελληνικά']}")
     .replace("card.hass={states:", "card.hass={user:{id:window.testUser,name:'Testbenutzer'},auth:{},connection:new EventTarget(),connected:true,states:")
     .replace("callWS:async query=>{", "callWS:async query=>{\n if(query.type.startsWith('gewitterradar/settings/')){const result=await window.settingsVaultTestCall(query);if(result.error)throw Object.assign(new Error(result.error),{code:result.error});return result;}")
   });
 }
 
-async function open(browser, fixture, viewport, {user = 'a', initial} = {}) {
+async function open(browser, fixture, viewport, {user = 'a', initial, language = 'Deutsch'} = {}) {
   const context = await browser.newContext({viewport, hasTouch: viewport.width < 600});
-  await context.addInitScript(({user, initial}) => {
+  await context.addInitScript(({user, initial, language}) => {
     window.testUser = user;
+    window.testVaultLanguage = language;
     if (initial && !sessionStorage.getItem('vault-fixture-seeded')) {
       for (const [key, value] of Object.entries(initial)) localStorage.setItem(key, value);
       sessionStorage.setItem('vault-fixture-seeded', '1');
     }
-  }, {user, initial});
+  }, {user, initial, language});
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => { errors.push(error.message); console.error(error.message); });
@@ -323,6 +325,20 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.waitForFunction(() => card._settingsVault.status === 'offline');
     assert.equal(await android.page.evaluate(() => card._settingsVault.dirty), true);
     mock.offline = false;
+    const localized = await open(browser, current, {width:320,height:760}, {user:'localized',language:'Français'});
+    await localized.page.getByRole('heading',{name:'Profils et sauvegardes',exact:true}).waitFor();
+    await localized.page.locator('.gr-vault-setup [data-action=defaults]').click();
+    await localized.page.locator('.gr-vault-setup input[type=text]').fill('Mon téléphone');
+    await localized.page.locator('.gr-vault-setup [data-submit]').click();
+    await localized.page.waitForFunction(()=>card._map&&card._settingsVault?.profile?.name==='Mon téléphone');
+    const profileId = await localized.page.evaluate(()=>card._settingsVault.profile.id);
+    await localized.page.evaluate(()=>{
+      const key='input_select.lightning_detection_language';
+      card.hass={...card.hass,states:{...card.hass.states,[key]:{state:'Ελληνικά',attributes:{options:['Français','Ελληνικά']}}}};
+    });
+    await localized.page.waitForFunction(()=>card.shadow.getElementById('gr-vault-content').dataset.vaultLanguage==='Ελληνικά');
+    assert.equal(await localized.page.evaluate(()=>card._settingsVault.profile.id),profileId);
+    assert.deepEqual(localized.errors,[]);
     await android.page.evaluate(() => card._settingsVault.flush());
     await android.page.waitForFunction(() => card._settingsVault.status === 'saved');
     const androidId = await android.page.evaluate(() => card._settingsVault.profileId);

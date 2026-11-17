@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411223r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411224r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -18,7 +18,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.43",
+  "version": "1.1.44",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1791,7 +1791,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       let suppressHistoryEvent=false;
       const navRoot=document.createElement('div');
       navRoot.className='gr-horizontal-root';
-      navRoot.setAttribute('aria-label','Einstellungskategorien');
+      navRoot.setAttribute('aria-label',this._t('weather.app.settingsCategories'));
+      navRoot.dataset.presentationAria='weather.app.settingsCategories';
       const menuStyleKey='gr-settings-menu-style';
       let selectedMenuStyle='classic';
       try {
@@ -2023,7 +2024,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if(links)links.hidden=!!activeSection;
         if(navBack)navBack.hidden=!activeSection;
         const title=this.shadow.getElementById('settings-dialog-title');
-        if(title)title.textContent=activeSection?numberedHeading(entryById.get(activeId)):'Einstellungen';
+        if(title)title.textContent=activeSection?numberedHeading(entryById.get(activeId)):this._t('settings.title');
       };
       const ownedHistoryState=(path)=>({...((history.state&&typeof history.state==='object')?history.state:{}),grSettingsMenu:{owner:historyOwner,session:historySession,path:[...path]}});
       const updateNavigationHistory=(previous,next)=>{
@@ -2150,7 +2151,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       navBack=document.createElement('button');
       navBack.type='button';navBack.id='gr-horizontal-back';navBack.className='settings-language-button';
       const backChevron=document.createElement('span');backChevron.className='release-history-future-chevron';backChevron.setAttribute('aria-hidden','true');
-      const backLabel=document.createElement('span');backLabel.textContent='Zurück';
+      const backLabel=document.createElement('span');backLabel.textContent=this._t('vault.back');backLabel.dataset.presentationText='vault.back';
       navBack.append(backChevron,backLabel);navBack.hidden=true;
       navBack.addEventListener('click',()=>this._settingsNavigateBack());
       // V4.11.61: both menus live in section 5 (Effekte & Animationen).
@@ -2301,7 +2302,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       );
       const referenceZoomNote=document.createElement('span');
       referenceZoomNote.className='settings-row-note';
-      referenceZoomNote.textContent='Zielzoom der Kamerafahrt · manuelles Zoomen bleibt unverändert';
+      referenceZoomNote.textContent=this._t('weather.app.referenceZoom');referenceZoomNote.dataset.presentationText='weather.app.referenceZoom';
       referenceZoomChoice.row.querySelector('.settings-row-label')?.append(referenceZoomNote);
       const menuStyleRow=menuStyleChoice.row;
       const speedRow=speedChoice.row;
@@ -2421,8 +2422,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         speedRow.hidden=!modern;
         closeMenuChoices();
         settingsOpen?.setAttribute('data-menu-style',selectedMenuStyle);
-        settingsOpen?.setAttribute('title',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
-        settingsOpen?.setAttribute('aria-label',modern?'Einstellungen öffnen · Modern':'Einstellungen öffnen · Klassisch');
+        const settingsModeLabel=this._t('settings.open_aria')+' · '+this._t(modern?'weather.app.modern':'weather.app.classic');
+        settingsOpen?.setAttribute('title',settingsModeLabel);
+        settingsOpen?.setAttribute('aria-label',settingsModeLabel);
         settingsBackdrop?.classList.toggle('gr-horizontal-mode',modern);
         showNavigationPage();
         settingsDialog?.style.removeProperty('height');

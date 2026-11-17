@@ -1,7 +1,7 @@
 import {buildRasterMosaicV2Request} from './p7-010/raster-mosaic-consumer.js?v=411147r1';
 import {validateRasterMosaicV2} from './p7-010/raster-mosaic-contract.js?v=411147r1';
 import { defineModule } from '../core/runtime.js?v=41109r1';
-export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.16',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
+export const MODULE_META=Object.freeze({id:'weather.consumer-client',version:'1.2.17',group:'Weather-Engine',function:'WeatherRouter Consumer V1/V2',subfunctions:['Discovery','Capability-Katalog','Resolve','Quellenstatus','Diagnose-Trace','Weather Engine Diagnose'],file:'modules/weather/consumer-client.js'});
 /* WeatherRouter Consumer V1 – independent, read-only adapter.
  * No provider binding, no internal WeatherRouter import, no implicit HA/home location.
  * WeatherRouter is optional; this client never touches the existing Blitzortung pipeline.
@@ -1121,14 +1121,39 @@ _weatherEngineDiagnosticPayload(){
   },
   _weatherEngineRenderSourceCards(){
     const root=this.shadow;if(!root?.getElementById('weather-engine-source-cards'))return;
+    const noteKeys={
+      "Noch kein belastbarer Quellenstatus": "noConfirmedStatus",
+      "Home-Assistant-Verbindung unterbrochen": "haDisconnected",
+      "Konfigurierter HA-Blitzzähler verfügbar · kein Nachweis einer Verbindung zum externen Dienst": "lightningAvailable",
+      "Integration oder konfigurierter Blitzzähler eingeschränkt": "lightningLimited",
+      "Blitzortung-Integration nicht vorhanden": "lightningMissing",
+      "Integration geladen · konfigurierter Blitzzähler nicht verfügbar": "counterUnavailable",
+      "Integrationsprüfung nicht verfügbar · lokale Quelle nicht bestätigt": "integrationCheckUnavailable",
+      "Konfigurierter Blitzzähler nicht vorhanden": "counterMissing",
+      "Verbindung noch nicht geprüft": "routerUnchecked",
+      "WeatherRouter nicht vorhanden oder nicht erreichbar": "routerNotReachable",
+      "Letzte Verbindungsprüfung nicht erreichbar": "routerCheckFailed",
+      "Letzter Consumer-Transport fehlgeschlagen": "routerTransportFailed",
+      "Consumer antwortet · Antwortformat nicht bestätigt": "routerFormatUnknown",
+      "Consumer antwortet · derzeit nicht betriebsbereit": "routerNotReady",
+      "Consumer-Verbindung antwortet · Zugriff oder Vertrag abgewiesen": "routerContractRejected",
+      "Consumer API antwortet · Ressourcenstatus wird separat angezeigt": "routerResponse",
+      "Consumer-Schnittstelle betriebsbereit": "routerReady",
+      "Consumer-Schnittstelle nicht kompatibel": "routerIncompatible",
+      "WeatherRouter vorhanden · derzeit nicht betriebsbereit": "routerPresent"
+    };
     const store=this.__weatherEngineTraceStore||{};
     const states=weatherEngineSourceCards({lightning:this._blitzortungSourceSnapshot?.(),lightningEntityStatus:this._lightningSourceStatus?.(),discovery:store.lastDiscovery,exchange:store.rawExchanges?.at(-1),haConnected:this._hass?.connection?.connected});
     for(const [key,value] of Object.entries(states)){
       const card=root.querySelector('[data-weather-source-card="'+key+'"]');if(!card)continue;
       if(card.dataset.state!==value.state)card.dataset.state=value.state;
       const prefix=key==='blitzortung'?'blitz':'router';
-      const status=root.getElementById('weather-engine-'+prefix+'-card-state');if(status&&status.textContent!==value.label)status.textContent=value.label;
-      const note=root.getElementById('weather-engine-'+prefix+'-card-note'),text=value.note+(value.checkedAt?' · '+value.checkedAt:'');if(note&&note.textContent!==text)note.textContent=text;
+      const label=this._t('weather.source.'+value.state);
+      const status=root.getElementById('weather-engine-'+prefix+'-card-state');
+      if(status&&status.textContent!==label)status.textContent=label;
+      const note=root.getElementById('weather-engine-'+prefix+'-card-note'),noteKey=noteKeys[value.note];
+      const text=(noteKey?this._t('weather.source.'+noteKey):value.note)+(value.checkedAt?' · '+value.checkedAt:'');
+      if(note&&note.textContent!==text)note.textContent=text;
     }
   },
   _weatherEngineEmbedDiagnostics(){

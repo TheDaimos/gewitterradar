@@ -1,6 +1,6 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411223r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411224r1';
 import {CLOUD_CAPABILITY,CLOUD_EYE_ICON,cloudEyeStatus} from './eye-hub-registry.js?v=411213r1';
-import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411223r1';
+import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411224r1';
 
 const STORAGE_KEY='gewitterradar:clouds-ui:v1';
 const PANEL_SCOPE='clouds-settings';
@@ -134,6 +134,10 @@ export const cloudsControlMethods={
    button.title=title+' · '+summary;
   }
   if(!panel||panel.hidden)return;
+  for(const [action,key] of [['minimize','eye.minimize'],['close','eye.close']]){
+   const control=panel.querySelector('[data-premium-action="'+action+'"]'),label=this._t(key);
+   control.title=label;control.setAttribute('aria-label',label);
+  }
   const text=(selector,value)=>{
    const node=panel.querySelector(selector);
    if(node.textContent!==value)node.textContent=value;

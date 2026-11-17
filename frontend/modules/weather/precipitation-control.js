@@ -1,5 +1,5 @@
 // Presentation only: the existing radar state and Eye interaction own all actions.
-import {enhancePremiumSections} from './premium-ui.js?v=411223r1';
+import {enhancePremiumSections,premiumEscape} from './premium-ui.js?v=411224r1';
 export const PRECIPITATION_ICON=new URL('../../assets/gr-precipitation-premium-original.png', import.meta.url).href;
 // The PNG's visible gold ring spans ~77.6% of its source width; Wind and
 // Temperature span ~89.7%. 58px therefore gives the same ~45px ring as their
@@ -25,13 +25,32 @@ export const precipitationControlMethods={
  _weatherPrecipitationCancelDrag(){const s=this.__weatherDisplayState;if(s?.precipitationDragOptions)this._weatherDisplayCancelEyeDrag(s.precipitationDragOptions);},
  _weatherPrecipitationSyncToggle(){
   const b=this.shadow?.getElementById('weather-precipitation-toggle');if(!b)return;const c=this._weatherPrecipitationConfig(),full=Boolean(this._mapDisplayMode==='fullscreen'||this._mapWindowMode),enabled=this._weatherRadarState?.().enabled===true;
-  b.hidden=c.quickVisibility==='hidden'||c.quickVisibility==='fullscreen'&&!full||c.quickVisibility==='nonfullscreen'&&full;b.setAttribute('aria-pressed',String(enabled));b.setAttribute('aria-label','Niederschlag '+(enabled?'ausschalten':'einschalten'));b.title='Niederschlag '+(enabled?'ausschalten':'einschalten')+' · lange drücken: Kartenschalter einstellen';
-  const select=this.shadow.querySelector('[data-precipitation-control-visibility]');if(select)select.value=c.quickVisibility;
+  b.hidden=c.quickVisibility==='hidden'||c.quickVisibility==='fullscreen'&&!full||c.quickVisibility==='nonfullscreen'&&full;b.setAttribute('aria-pressed',String(enabled));const label=this._t(enabled?'weather.precip.toggleOff':'weather.precip.toggleOn');b.setAttribute('aria-label',label);b.title=label+' · '+this._t('weather.precip.holdSettings');
+  const select=this.shadow.querySelector('[data-precipitation-control-visibility]');
+  if(select){
+   select.value=c.quickVisibility;
+   const section=select.closest('[data-precipitation-control]');
+   const language=this._languageValue();
+   if(section.dataset.language!==language){
+    section.dataset.language=language;
+    select.setAttribute('aria-label',this._t('weather.menu.quickVisibility'));
+    for(const node of section.querySelectorAll('[data-precip-text]'))node.textContent=this._t(node.dataset.precipText);
+   }
+  }
  },
  _weatherPrecipitationEnsureSettings(panel){
   const parent=panel.querySelector('[data-weather-display-precipitation-card]');if(!parent||parent.querySelector('[data-precipitation-control]'))return;
   const section=document.createElement('details');section.className='weather-precipitation-settings';section.dataset.precipitationControl='true';section.dataset.section='precipitation-control';
-  section.innerHTML='<summary>Niederschlags-Kartenschalter</summary><p class="weather-display-card-note">Sichtbarkeit und Position des Icons sind unabhängig von der Niederschlagsdarstellung.</p><label>Kartenschalter anzeigen<select class="weather-display-style-select" data-precipitation-control-visibility aria-label="Niederschlags-Kartenschalter anzeigen"><option value="fullscreen">Nur im Vollbild</option><option value="all">In allen Kartenansichten</option><option value="nonfullscreen">Nur Standard und Groß</option><option value="hidden">Nirgends (ausblenden)</option></select></label><p class="weather-display-card-note">Kurzer Klick: Niederschlag ein/aus · 600 ms drücken: Einstellungen · Ziehen: Position speichern.</p><div class="weather-precipitation-actions"><button type="button" data-precipitation-control-action="position" class="weather-display-legend-button gr-premium-metal-surface">Position zurücksetzen</button><button type="button" data-precipitation-control-action="reset" class="weather-display-legend-button gr-premium-metal-surface">Icon-Einstellungen zurücksetzen</button></div>';
+  const caption=(key,tag='span')=>'<'+tag+' data-precip-text="'+key+'">'+premiumEscape(this._t(key))+'</'+tag+'>';
+  const note=key=>'<p class="weather-display-card-note">'+caption('weather.precip.'+key)+'</p>';
+  const options={fullscreen:'fullscreen',all:'allViews',nonfullscreen:'standardViews',hidden:'hideToggle'};
+  section.innerHTML='<summary>'+caption('weather.layer.precipitationToggle')+'</summary>'+note('iconNote')+
+   '<label>'+caption('weather.menu.quickVisibility')+'<select class="weather-display-style-select" data-precipitation-control-visibility>'+
+   Object.entries(options).map(([value,key])=>'<option value="'+value+'" data-precip-text="weather.menu.'+key+'">'+premiumEscape(this._t('weather.menu.'+key))+'</option>').join('')+
+   '</select></label>'+note('shortcuts')+'<div class="weather-precipitation-actions">'+
+   '<button type="button" data-precipitation-control-action="position" class="weather-display-legend-button gr-premium-metal-surface">'+caption('weather.menu.resetPosition')+'</button>'+
+   '<button type="button" data-precipitation-control-action="reset" class="weather-display-legend-button gr-premium-metal-surface">'+caption('weather.precip.resetIcon')+'</button></div>';
+
   parent.append(section);enhancePremiumSections(section.parentElement,'precipitation-control');
   section.addEventListener('change',e=>{if(e.target.matches('[data-precipitation-control-visibility]')){e.stopPropagation();this._weatherPrecipitationPatch({quickVisibility:e.target.value});}});
   section.addEventListener('click',e=>{const b=e.target.closest('[data-precipitation-control-action]');if(!b)return;e.preventDefault();e.stopPropagation();const action=b.dataset.precipitationControlAction;if(action==='info'){const note=section.querySelector('.weather-display-card-note');note?.scrollIntoView({block:'nearest'});return;}if(action==='close'){this._weatherDisplayPatch({enabled:false});return;}this._weatherPrecipitationPatch(action==='reset'?normalizePrecipitationControl():{quickPositions:{}});});this._weatherPrecipitationSyncToggle();

@@ -6,6 +6,7 @@ import {runInNewContext} from 'node:vm';
 import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readAboutLocaleModel,readExternalAboutLocales,validateWeatherHelp} from './verify-about-locales.mjs';
+import {PRESENTATION_LOCALES} from '../frontend/modules/ui/presentation-locales.js';
 
 const root = fileURLToPath(new URL('..',import.meta.url));
 const source = await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
@@ -90,6 +91,7 @@ if (settingsTranslationsStart < 0 || settingsTranslationsEnd < 0) throw Error('S
 const settingsUiTranslations = JSON.parse(i18nModuleSource.slice(settingsTranslationsStart + settingsTranslationsPrefix.length,settingsTranslationsEnd));
 const i18nContext = {
   URL,
+  PRESENTATION_LOCALES,
   moduleUrl: new URL('../frontend/modules/ui/i18n-settings.js',import.meta.url).href
 };
 const executableI18nModule = i18nModuleSource

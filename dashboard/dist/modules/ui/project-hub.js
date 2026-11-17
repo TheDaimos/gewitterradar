@@ -1,6 +1,6 @@
 import { registerModule } from "../core/registry.js?v=41108r1";
 export const MODULE_META=Object.freeze({
-  id:"ui.project-hub",version:"1.1.17",group:"Oberfläche",function:"Daimos Project Hub",
+  id:"ui.project-hub",version:"1.1.18",group:"Oberfläche",function:"Daimos Project Hub",
   subfunctions:["Signatur-Einstieg","Haupttitel-Einstieg","Lokales Host-Popup","Projekt-/Kontakt-/GitHub-Navigation","Lokale RC14-Runtime"],
   file:"modules/ui/project-hub.js"
 });
@@ -43,22 +43,24 @@ export async function resolveProjectHub(config){
   // navigation. A failed probe must not incorrectly force the local page.
   return Object.freeze({mode:"online",target:url,reason:"probe_unverified"});
 }
-function localViewUrl(status="checking",fallback=DEFAULT_FALLBACK_PATH){const safe=isLocalFallbackPath(fallback)?fallback:DEFAULT_FALLBACK_PATH,url=new URL(safe,PROJECT_HUB_BASE_URL);url.searchParams.set("v",POPUP_VERSION);if(status==="online"||status==="offline")url.searchParams.set("status",status);return url.href;}
+function localViewUrl(status="checking",fallback=DEFAULT_FALLBACK_PATH,card){const safe=isLocalFallbackPath(fallback)?fallback:DEFAULT_FALLBACK_PATH,url=new URL(safe,PROJECT_HUB_BASE_URL);url.searchParams.set("v",POPUP_VERSION);if(card?._languageValue){url.searchParams.set("language",card._languageValue());url.searchParams.set("locale",card._locale());}if(status==="online"||status==="offline")url.searchParams.set("status",status);return url.href;}
 function popupViewport(){const vv=window.visualViewport;return {width:Math.max(280,Math.round(vv?.width||window.innerWidth||760)),height:Math.max(240,Math.round(vv?.height||window.innerHeight||800))};}
 function applyPopupGeometry(panel,overlay){const {width,height}=popupViewport(),edge=width>=700&&height>=700?6:4,panelWidth=Math.min(780,Math.max(280,width-edge*2)),panelHeight=Math.min(1080,Math.max(240,height-edge*2));overlay.style.padding=`${edge}px`;panel.style.width=`${panelWidth}px`;panel.style.height=`${panelHeight}px`;panel.style.maxHeight=`${panelHeight}px`;}
 function closePopup(card){if(card?._projectHubResize){window.removeEventListener("resize",card._projectHubResize);window.visualViewport?.removeEventListener?.("resize",card._projectHubResize);}card?._projectHubOverlay?.remove?.();if(card){card._projectHubOverlay=null;card._projectHubFrame=null;card._projectHubClose=null;card._projectHubResize=null;}}
 function showPopup(card,status="local",fallback=DEFAULT_FALLBACK_PATH,settingsCloseImage=""){
   if(card._projectHubOverlay?.isConnected){card._projectHubResize?.();card._projectHubClose?.focus?.();return true;}
+  const t=key=>card._t("weather.hub."+key);
   const overlay=document.createElement("div");overlay.setAttribute("role","dialog");overlay.setAttribute("aria-modal","true");overlay.setAttribute("aria-label","Daimos Project Hub");
   Object.assign(overlay.style,{position:"fixed",inset:"0",zIndex:"2147483647",display:"grid",placeItems:"center",padding:"4px",background:"rgba(2,8,14,.76)",backdropFilter:"blur(5px)",overscrollBehavior:"contain"});
   const panel=document.createElement("div");Object.assign(panel.style,{position:"relative",display:"grid",gridTemplateRows:"auto minmax(0,1fr)",width:"min(780px,calc(100vw - 8px))",height:"calc(100dvh - 8px)",maxHeight:"1080px",borderRadius:"20px",overflow:"hidden",background:"#08111b",boxShadow:"0 24px 80px rgba(0,0,0,.58),0 0 0 1px rgba(233,187,102,.28)"});
   const frame=document.createElement("iframe");
   if(status==="checking"){
-    frame.srcdoc='<!doctype html><html lang="de"><meta charset="utf-8"><style>body{display:grid;place-items:center;min-height:95vh;background:#08111b;color:#e6c17b;font:16px system-ui;text-align:center}</style><body>Project Hub wird geladen …</body></html>';
-  }else frame.src=localViewUrl(status,fallback);
+    const loading=t("load").replace(/[&<>]/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;"})[character]);
+    frame.srcdoc='<!doctype html><html><meta charset="utf-8"><style>body{display:grid;place-items:center;min-height:95vh;background:#08111b;color:#e6c17b;font:16px system-ui;text-align:center}</style><body>'+loading+'</body></html>';
+  }else frame.src=localViewUrl(status,fallback,card);
   frame.title="Daimos Project Hub";frame.setAttribute("loading","eager");frame.setAttribute("referrerpolicy","no-referrer");Object.assign(frame.style,{display:"block",width:"100%",height:"100%",minHeight:"0",border:"0",background:"#08111b"});
-  const nav=document.createElement("nav");nav.className="project-hub-nav";nav.setAttribute("aria-label","Project Hub Navigation");
-  const links=[["Meine Projekte","https://thedaimos.github.io/project-hub/"],["Kontakt","#kontakt"],["GitHub","https://github.com/TheDaimos/project-hub"]];
+  const nav=document.createElement("nav");nav.className="project-hub-nav";nav.setAttribute("aria-label",t("navigation"));
+  const links=[[t("projects"),"https://thedaimos.github.io/project-hub/"],[t("contact"),"#kontakt"],["GitHub","https://github.com/TheDaimos/project-hub"]];
   for(const [index,[name,href]] of links.entries()){
     const item=document.createElement("span");item.className="project-hub-nav-item";
     if(index){const dot=document.createElement("span");dot.className="project-hub-middledot";dot.setAttribute("aria-hidden","true");dot.textContent="·";item.append(dot);}
@@ -76,13 +78,13 @@ function showPopup(card,status="local",fallback=DEFAULT_FALLBACK_PATH,settingsCl
 @media(hover:hover) and (pointer:fine){.project-hub-close-premium:hover{background:transparent!important}.project-hub-close-premium:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
 @media(hover:none) and (pointer:coarse){.project-hub-close-premium:focus-visible{outline:none!important}}
 `;
-  const close=document.createElement("button");close.type="button";close.className="project-hub-close-premium";close.setAttribute("aria-label","Project Hub schließen");
+  const close=document.createElement("button");close.type="button";close.className="project-hub-close-premium";close.setAttribute("aria-label",t("close"));
   const closeIcon=document.createElement("img");closeIcon.src=settingsCloseImage;closeIcon.alt="";closeIcon.width=38;closeIcon.height=38;closeIcon.draggable=false;close.append(closeIcon);
   close.addEventListener("click",()=>closePopup(card));overlay.addEventListener("pointerdown",e=>{if(e.target===overlay)closePopup(card);});overlay.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closePopup(card);}});
   panel.append(closeStyle,nav,frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
 }
-function activateSignature(card){const sig=card?.shadow?.querySelector?.(".settings-signature-wrap");if(!sig||sig.dataset.projectHubBound==="1")return false;sig.dataset.projectHubBound="1";sig.removeAttribute("aria-hidden");sig.setAttribute("role","button");sig.setAttribute("tabindex","0");sig.setAttribute("aria-label","Daimos Project Hub öffnen");sig.setAttribute("title","Daimos Project Hub");sig.style.cursor="pointer";sig.style.pointerEvents="auto";sig.style.touchAction="manipulation";sig.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};sig.addEventListener("click",open);sig.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
-function activateMainTitle(card){const title=card?.shadow?.querySelector?.(".topbar .brand .title > span:first-child");if(!title||title.dataset.projectHubBound==="1")return false;title.dataset.projectHubBound="1";title.setAttribute("role","button");title.setAttribute("tabindex","0");title.setAttribute("aria-label","Daimos Project Hub öffnen");title.setAttribute("title","Daimos Project Hub");title.style.cursor="pointer";title.style.touchAction="manipulation";title.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};title.addEventListener("click",open);title.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
+function activateSignature(card){const sig=card?.shadow?.querySelector?.(".settings-signature-wrap");if(!sig||sig.dataset.projectHubBound==="1")return false;sig.dataset.projectHubBound="1";sig.removeAttribute("aria-hidden");sig.setAttribute("role","button");sig.setAttribute("tabindex","0");sig.setAttribute("aria-label",card._t("weather.hub.open"));sig.setAttribute("title","Daimos Project Hub");sig.style.cursor="pointer";sig.style.pointerEvents="auto";sig.style.touchAction="manipulation";sig.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};sig.addEventListener("click",open);sig.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
+function activateMainTitle(card){const title=card?.shadow?.querySelector?.(".topbar .brand .title > span:first-child");if(!title||title.dataset.projectHubBound==="1")return false;title.dataset.projectHubBound="1";title.setAttribute("role","button");title.setAttribute("tabindex","0");title.setAttribute("aria-label",card._t("weather.hub.open"));title.setAttribute("title","Daimos Project Hub");title.style.cursor="pointer";title.style.touchAction="manipulation";title.style.webkitTapHighlightColor="transparent";const open=e=>{e?.preventDefault?.();e?.stopPropagation?.();void card._openProjectHub?.();};title.addEventListener("click",open);title.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;open(e);});return true;}
 export function installProjectHub(CardClass,deps={}){registerModule(MODULE_META);const proto=CardClass?.prototype;if(!proto)throw new TypeError("ui.project-hub requires a card class");if(proto.__projectHubInstalled)return CardClass;const settingsCloseImage=typeof deps?.ABOUT_CLOSE_IMAGE==="string"?deps.ABOUT_CLOSE_IMAGE.trim():"";if(!settingsCloseImage)throw new TypeError("ui.project-hub requires the Settings ABOUT_CLOSE_IMAGE");const originalBuildSkeleton=proto._buildSkeleton;if(typeof originalBuildSkeleton!=="function")throw new TypeError("ui.project-hub requires ui.skeleton before installation");
   Object.defineProperties(proto,{__projectHubInstalled:{value:true,configurable:false,enumerable:false,writable:false},
     _bindProjectHubSignature:{configurable:true,writable:true,value:function(){return activateSignature(this);}},

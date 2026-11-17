@@ -23,7 +23,7 @@ function fixture({ref=null,scope='bbox',extendHtml=null,delivery='frontend'}={})
  }`);
  if(extendHtml)html=extendHtml(html);
  const leaflet=process.env.LEAFLET_JS||require.resolve('leaflet/dist/leaflet.js'),leafletCss=process.env.LEAFLET_CSS||require.resolve('leaflet/dist/leaflet.css');
- const assetTypes={'.js':'text/javascript','.svg':'image/svg+xml'};
+ const assetTypes={'.js':'text/javascript','.svg':'image/svg+xml','.html':'text/html;charset=utf-8'};
  const server=http.createServer((req,res)=>{try{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(name==='/'){res.setHeader('Content-Type','text/html;charset=utf-8');return res.end(html);}if(name==='/leaflet.js'){res.setHeader('Content-Type','text/javascript');return res.end(fs.readFileSync(leaflet));}if(!name.startsWith('/frontend/')||name.includes('..')){res.writeHead(404);return res.end();}res.setHeader('Content-Type',assetTypes[path.extname(name)]||'application/octet-stream');res.end(read(name.slice(1)));}catch(_){res.writeHead(404);res.end();}});
  return {server,leafletCss,async route(page){await page.route('**/*',route=>{const url=route.request().url();if(url.includes('leaflet.css')&&!url.startsWith('http://127.0.0.1'))return route.fulfill({contentType:'text/css',body:fs.readFileSync(leafletCss)});if(!url.startsWith('http://127.0.0.1'))return route.fulfill({status:204,body:''});return route.continue();});}};
 }
