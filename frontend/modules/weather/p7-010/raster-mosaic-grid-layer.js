@@ -174,7 +174,18 @@ export function createRasterMosaicGridLayer(L,snapshot,{
       canvas.width=tileSize;canvas.height=tileSize;canvas._p7Coords={...coords};
       const context=canvas.getContext("2d");
       if(!context){if(controller)pending.delete(controller);done?.(new Error("Canvas2D unavailable"),canvas);return canvas;}
-      let radarSettled=false,nasaSettled=true;
+      let radarSettled=false,nasaSettled=true,notified=false;
+      let radarImages=[],nasaImages=[];
+      const notifyReady=()=>{if(!notified){notified=true;done?.(null,canvas);}};
+      let lastNASAResult={drawn:[]};
+      const repaint=()=>{
+        if(controller?.signal.aborted)return {drawn:[]};
+        context.clearRect?.(0,0,tileSize,tileSize);
+        lastNASAResult=!nasaRevoked&&nasaImages.length
+          ?drawVerifiedRasterMosaicTile(context,coords,nasaImages,tileSize):{drawn:[]};
+        return radarImages.length?drawVerifiedRasterMosaicTile(context,coords,radarImages,tileSize):{drawn:[]};
+      };
+      canvas._p7RepaintWithoutNASA=()=>{nasaImages=[];repaint();};
       const finish=()=>{if(radarSettled&&nasaSettled){if(controller)pending.delete(controller);canvas._p7RasterAbort=null;}};
       if(deferredSource&&!nasaRevoked){
         const lease=getLease(),grants=sourceTileGrants(deferredSource,coords);
@@ -184,12 +195,14 @@ export function createRasterMosaicGridLayer(L,snapshot,{
           queueMicrotask(()=>{
             if(controller?.signal.aborted)return;
             try{onTileDiagnostics?.({deferred:true,radar_expected:radarExpected,tile_status:"deferred_authorized",drawn:[],rejected:[],tile:{...coords}});}catch(_){}
-            if(!radarExpected)done?.(null,canvas);
+            if(!radarExpected)notifyReady();
           });
           let painted=0;
           Promise.allSettled(grants.map(native=>lease.image(native).then(image=>{
             if(nasaRevoked||controller?.signal.aborted||!sourceTileGrants(deferredSource,coords).some(t=>t.x===native.x&&t.y===native.y))return;
-            const result=drawVerifiedRasterMosaicTile(context,coords,[{...deferredSource,image,_p7SourceTile:native}],tileSize);
+            nasaImages.push({...deferredSource,image,_p7SourceTile:native});
+            repaint();notifyReady();
+            const result=lastNASAResult;
             if(result.drawn.length)painted++;actualTiles.set(coords.z+"/"+coords.x+"/"+coords.y,{nasa_painted:painted,nasa_required:grants.length,mask_applied:result.drawn.some(d=>d.mask_applied)});
             try{onTileDiagnostics?.({...result,deferred:true,radar_expected:radarExpected,tile_status:painted===grants.length?"complete_verified_coverage":"deferred_partial",source_images_complete:painted===grants.length,observation_coverage_verified:false,mask_applied:result.drawn.some(d=>d.mask_applied),painted_source_tiles:painted,required_source_tiles:grants.length,tile:{...coords}});}catch(_){}
           },()=>{
@@ -198,18 +211,21 @@ export function createRasterMosaicGridLayer(L,snapshot,{
           if(!radarExpected){radarSettled=true;return canvas;}
         }
       }
+      const auditCanvas=createCanvas();auditCanvas.width=tileSize;auditCanvas.height=tileSize;
+      const auditContext=auditCanvas.getContext("2d")||context;
       Promise.resolve().then(()=>drawRasterMosaicTileFromUrls({
-        context,tile:coords,layers:renderLayers,
+        context:auditContext,tile:coords,layers:renderLayers,
         loadImage:(url,source,options)=>loadImage(url,source,{...options,getAccessToken}),
         budget,tileSize,timeoutMs,
         signal:controller?.signal,
-        // Render each WR-admitted source as it becomes ready, without a
-        // cross-provider wait. Deferred NASA remains on its existing separate
-        // protected mask pathway, where this clear/redraw is disabled.
-        onProgress:deferredSource?null:({prepared})=>{
+        // NASA, OPERA and DWD independently reveal each admitted image.
+        // Recompose in WR priority order on every arrival, so an earlier
+        // request cannot overpaint a newer higher-priority provider.
+        onProgress:({prepared})=>{
           if(controller?.signal.aborted||!prepared.length)return;
-          context.clearRect?.(0,0,tileSize,tileSize);
-          const partial=drawVerifiedRasterMosaicTile(context,coords,prepared,tileSize);
+          radarImages=prepared;
+          const partial=repaint();
+          if(partial.drawn.length)notifyReady();
           if(partial.drawn.length)try{onTileDiagnostics?.({
             phase:"provider_partial_ready",progressive:true,
             render_order:partial.drawn.map(row=>row.source_id),
@@ -228,8 +244,8 @@ export function createRasterMosaicGridLayer(L,snapshot,{
           .includes(classification.tile_status);
         const error=controller?.signal.aborted?new Error("Raster tile cancelled")
           :success?null:new Error("Raster tile missing verified image content");
-        done?.(error,canvas);
-      },error=>done?.(error,canvas)).finally(()=>{
+        if(!notified){notified=true;done?.(error,canvas);}
+      },error=>{if(!notified){notified=true;done?.(error,canvas);}}).finally(()=>{
         radarSettled=true;finish();
       });
       return canvas;
@@ -258,7 +274,7 @@ export function createRasterMosaicGridLayer(L,snapshot,{
   layer._p7RasterRenderOrder=renderLayers.map(x=>({source_id:x.source_id,
     freshness_class:x.freshness_class||"current"}));
   layer._p7RasterRequestBudget=budget;
-  layer._p7RevokeDeferredNASA=()=>{nasaRevoked=true;nasaLease?.release();for(const [canvas,grants] of nasaCanvases){const ctx=canvas.getContext("2d");if(deferredSource.spatial_policy?.radar_mask){retainProtectedRasterAreas(ctx,deferredSource,canvas._p7Coords,tileSize);}else for(const native of grants){const r=nasaTileDestination(canvas._p7Coords,native,tileSize);ctx?.clearRect(r.x,r.y,r.width,r.height);}}nasaCanvases.clear();};
+  layer._p7RevokeDeferredNASA=()=>{nasaRevoked=true;nasaLease?.release();for(const [canvas] of nasaCanvases)canvas._p7RepaintWithoutNASA?.();nasaCanvases.clear();};
   layer._p7AbortPending=()=>{nasaLease?.release();budget.close();for(const controller of pending)controller.abort();};
   layer.on?.("tileunload",event=>{nasaCanvases.delete(event?.tile);const c=event?.tile?._p7Coords;if(c)actualTiles.delete(c.z+"/"+c.x+"/"+c.y);event?.tile?._p7RasterAbort?.();});
   layer.on?.("remove",()=>layer._p7AbortPending());

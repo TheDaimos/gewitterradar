@@ -75,7 +75,7 @@ test('all live generations share the finite decoded-image bound; retired grants 
  const L={GridLayer:{extend(methods){return class{constructor(){Object.assign(this,methods);}on(){}};}}};
  const layer=createRasterMosaicGridLayer(L,{contract_version:2,capability:'weather.precipitation.layer',status:'partial',viewport:source.coverage,layers:[source]},
   {createCanvas:()=>({getContext:()=>({globalAlpha:1,drawImage(){},clearRect(){clears++;}})}),loadImage:async()=>({width:256,height:256})});
- layer.createTile({z:2,x:0,y:1},()=>{});await tick();layer._p7RevokeDeferredNASA();assert.equal(clears,1);assert.equal(layer._p7NASADiagnostics().live_entries,0);layer._p7AbortPending();
+ layer.createTile({z:2,x:0,y:1},()=>{});await tick();layer._p7RevokeDeferredNASA();assert(clears>=1);assert.equal(layer._p7NASADiagnostics().live_entries,0);layer._p7AbortPending();
  const runtime=readFileSync(new URL('../frontend/modules/weather/precipitation-layer.js',import.meta.url),'utf8');
  const method=runtime.slice(runtime.indexOf('  async _weatherRadarTryMosaic('),runtime.indexOf('\n  _',runtime.indexOf('  async _weatherRadarTryMosaic(')+40));
  assert.doesNotMatch(method,/return false;/,'active WR spatial policy must never fall through to unrestricted V1 imagery');
