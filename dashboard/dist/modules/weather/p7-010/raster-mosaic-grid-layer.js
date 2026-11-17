@@ -1,17 +1,17 @@
-import {sourceTileGrant,sourceTileGrants,nasaTileDestination,leaseNasaTiles,configureNasaTransport,spatialTileBounds} from "./nasa-spatial.js?v=411147r1";
+import {sourceTileGrant,sourceTileGrants,nasaTileDestination,leaseNasaTiles,configureNasaTransport,spatialTileBounds} from "./nasa-spatial.js?v=411227r1";
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=411147r1";
-import {plannedSourceTiles,retainProtectedRasterAreas} from './radar-mask.js?v=411147r1';
+import {drawVerifiedRasterMosaicTile} from "./raster-compositor.js?v=411227r1";
+import {plannedSourceTiles,retainProtectedRasterAreas} from './radar-mask.js?v=411227r1';
 /* P7-010: Leaflet rendering adapter for the existing WR V2 mosaic contract.
  * WeatherRouter alone selects and orders sources; this file draws verified
  * snapshots using a strict shared per-snapshot tile budget.
  */
-import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411147r1";
+import {validateRasterMosaicV2} from "./raster-mosaic-contract.js?v=411227r1";
 import {RasterTileRequestBudget,drawRasterMosaicTileFromUrls,operaTileHttpError}
-  from "./raster-mosaic-tile-loader.js?v=411194r1";
+  from "./raster-mosaic-tile-loader.js?v=411227r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=411147r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411147r1";
+import {rasterMosaicRenderOrder} from "./raster-compositor.js?v=411227r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411227r1";
 
 /** Geographically expected raster area, including partial boundary tiles.
  * A verified BBOX never implies opaque weather pixels.

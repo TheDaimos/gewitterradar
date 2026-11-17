@@ -1,11 +1,11 @@
-import {maskedRasterTarget} from './radar-mask.js?v=411147r1';
+import {maskedRasterTarget} from './radar-mask.js?v=411227r1';
 /*
  * P7-010 isolated Canvas composition helper; not wired into active GR.
  * Requires preloaded, provider-eligible, verified raster tiles. The rendering
  * eligibility and provider priority come from WR; freshness controls display stacking.
  */
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411147r1";
+import {measureRasterTileCoverage} from "./raster-mosaic-coverage.js?v=411227r1";
 
 /** Presentation order only; WR still selects and prioritizes eligible sources.
  * Older satellite estimates paint first; within the same freshness class

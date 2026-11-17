@@ -1,4 +1,5 @@
-import {plannedSourceTiles} from './radar-mask.js?v=411147r1';
+import {plannedSourceTiles} from './radar-mask.js?v=411227r1';
+import {bindDwdFrameMask} from './dwd-frame-mask.js?v=411227r1';
 /*
  * P7-010 experimental provider-neutral raster tile loading.
  * Still isolated from Gewitterradar's active V1 precipitation display.
@@ -10,7 +11,7 @@ import {plannedSourceTiles} from './radar-mask.js?v=411147r1';
  */
 import {rasterTileUrl} from "./raster-tile-url.js?v=41188r1";
 import {rasterTilePixelCrops} from "./raster-tile-clip.js?v=41188r1";
-import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411147r1";
+import {drawVerifiedRasterMosaicTile,rasterMosaicRenderOrder} from "./raster-compositor.js?v=411227r1";
 
 const operaTileDenialCodes=new Set([
  "missing_authenticated_user","administrator_required","profile_not_authorized",
@@ -208,7 +209,7 @@ export async function drawRasterMosaicTileFromUrls({
  // Only actually covering sources consume the bounded four-source tile budget.
  // Preserve the WR ordering; the consumer must never re-score providers.
  const startedAt=Date.now();
- const renderLayers=rasterMosaicRenderOrder(layers);
+ const renderLayers=rasterMosaicRenderOrder(bindDwdFrameMask(layers));
  let selectedForTile=0;
  const fragments=renderLayers.flatMap(layer=>{
    const planned=plannedSourceTiles(layer,tile);

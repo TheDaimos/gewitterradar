@@ -50,9 +50,15 @@ test('immutable DWD in-memory image cache keys must include verified source fram
 });
 
 test('the complete importer chain is revision-bumped to avoid stale cached modules',()=>{
- assert.match(read(roots[0],'modules/weather/precipitation-layer.js'),/raster-mosaic-consumer\.js\?v=411194r1/);
- assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-consumer.js'),/raster-mosaic-grid-layer\.js\?v=411194r1/);
- assert.match(read(roots[0],'modules/weather/p7-010/raster-mosaic-grid-layer.js'),/raster-mosaic-tile-loader\.js\?v=411194r1/);
+ const release=read(roots[0],'version.js');
+ const runtime=release.match(/runtimeRevision:"(411\d+r\d+)"/)[1];
+ const expected=Number(runtime.match(/^411(\d+)r/)[1])>=227?runtime:'411194r1';
+ for(const [file,dependency] of [
+  ['precipitation-layer.js','raster-mosaic-consumer.js'],
+  ['p7-010/raster-mosaic-consumer.js','raster-mosaic-grid-layer.js'],
+  ['p7-010/raster-mosaic-grid-layer.js','raster-mosaic-tile-loader.js'],
+  ...(expected===runtime?[['p7-010/raster-mosaic-tile-loader.js','dwd-frame-mask.js']]:[])
+ ])assert.ok(read(roots[0],'modules/weather/'+file).includes(dependency+'?v='+expected),file);
 });
 
 test('manifest, HA integration and DRA build are distinct and synchronized',()=>{

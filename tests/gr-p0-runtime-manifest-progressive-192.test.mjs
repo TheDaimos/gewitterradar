@@ -51,6 +51,7 @@ test('progressive callback receives already admitted fragments in WR order',asyn
    .replace(/\bexport\s+(?=(?:const|let|function|class|async)\b)/g,'');
  const environment={
   plannedSourceTiles:()=>null,
+  bindDwdFrameMask:(await import('../frontend/modules/weather/p7-010/dwd-frame-mask.js')).bindDwdFrameMask,
   rasterMosaicRenderOrder:rows=>rows,
   rasterTilePixelCrops:()=>[{}],
   rasterTileUrl:url=>url,

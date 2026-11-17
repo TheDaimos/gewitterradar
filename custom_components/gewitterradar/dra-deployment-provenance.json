@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.226",
-  "build": "V4.11.226-DEV-2026-11-17",
-  "runtimeRevision": "411226r1",
-  "moduleSetId": "E411-226A1",
-  "baselineFeatureHead": "4db38fd6c41d327c6d4ece126168927accf536a4",
+  "productVersion": "4.11.227",
+  "build": "V4.11.227-DEV-2026-11-17",
+  "runtimeRevision": "411227r1",
+  "moduleSetId": "E411-227A1",
+  "baselineFeatureHead": "67ff4ab276f3627528f8e12b43673dd147e0d27d",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Localize WeatherRouter diagnostics and restore the Project Hub wordmark link and cloud close control.",
+    "purpose": "Apply WeatherRouter-authorized DWD frame validity to the existing OPERA mosaic renderer.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

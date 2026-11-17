@@ -1,5 +1,6 @@
-import {validateSpatialPolicy} from "./nasa-spatial.js?v=411147r1";
-import {validateSourcePlan,validateExclusions} from './radar-mask.js?v=411147r1';
+import {validateSpatialPolicy} from "./nasa-spatial.js?v=411227r1";
+import {validateSourcePlan,validateExclusions} from './radar-mask.js?v=411227r1';
+import {validateDwdFrameMask} from './dwd-frame-mask.js?v=411227r1';
 /*
  * P7-010: isolated read-only WeatherRouter V2 raster response validation.
  * No provider scoring, spatial source selection or fallback routing in GR.
@@ -80,11 +81,19 @@ export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
    validateSpatialPolicy(layer);
    validateSourcePlan(layer.raster_plan);
    if(layer.draw_exclusions!==undefined)validateExclusions(layer.draw_exclusions);
+   validateDwdFrameMask(layer);
    if(layer.transport_policy&&(layer.source_id!=="nasa_gibs/satellite_precipitation_imerg_30min"||!Number.isInteger(layer.transport_policy.max_parallel_downloads)||layer.transport_policy.max_parallel_downloads<2||layer.transport_policy.max_parallel_downloads>32||!Number.isInteger(layer.transport_policy.settings_revision)||layer.transport_policy.settings_revision<0))throw new TypeError("Invalid WR NASA transport policy");
    seen.add(layer.source_id);
  }
  const radar=answer.layers.find(l=>l.source_id==='opera/opera_rate_raster');
+ const dwd=answer.layers.find(l=>l.source_id==='dwd/radar_precipitation');
  for(const layer of answer.layers){
+  for(const exclusion of layer.draw_exclusions||[]){
+   if(exclusion.dwd_mask_source!==undefined&&(layer!==radar||!dwd?.dwd_nodata_mask||
+     exclusion.dwd_mask_source!==dwd.source_id||exclusion.scope!=="bbox"||
+     !["west","south","east","north"].every(key=>exclusion.bbox?.[key]===dwd.coverage[key])))
+    throw new TypeError("Inconsistent WR DWD overlap grant");
+  }
   const mask=layer.spatial_policy?.radar_mask;
   if(mask?.opera&&radar&&(Date.parse(mask.opera.valid_at)!==Date.parse(radar.times.valid_at)||mask.opera.generation!==radar.observation_coverage?.generation))throw new TypeError('WR mask/raster generation mismatch');
  }
