@@ -1,6 +1,6 @@
 import {STORM_EYE_ICON} from './eye-hub-registry.js?v=411230r1';
 import {eyeBubbleAuraEnabled,visibleEyeSlots} from './eye-hub-model.js?v=411233r1';
-import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=411239r1';
+import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=411240r1';
 
 export const stormLayout=owner=>owner._mapWindowMode?'window':owner._mapDisplayMode==='fullscreen'?'fullscreen':'standard';
 
@@ -143,15 +143,15 @@ export const stormBubbleMethods={
    this.__stormPanelLanguage=language;
    const t=key=>escape(this._t(key));
    const section=(id,title,content)=>`<details data-section="${id}" open><summary>${t(title)}</summary>${content}</details>`;
-   const toggle=(id,label)=>`<label>${t(label)}<input type="checkbox" role="switch" data-storm-setting="${id}"></label>`;
-   const select=(id,label,items)=>`<label>${t(label)}<select data-storm-setting="${id}">${items.map(([value,name])=>`<option value="${value}">${escape(name)}</option>`).join('')}</select></label>`;
+   const toggle=(id,label)=>`<label class="storm-toggle-setting"><span>${t(label)}</span><input type="checkbox" role="switch" data-storm-setting="${id}"></label>`;
+   const select=(id,label,items)=>`<label class="storm-select-setting"><span>${t(label)}</span><select data-storm-setting="${id}">${items.map(([value,name])=>`<option value="${value}">${escape(name)}</option>`).join('')}</select></label>`;
    const radius=kind=>`<label class="storm-radius-setting"><span>${t('radius.'+kind)}</span><input type="range" data-storm-setting="${kind}" aria-label="${t('radius.'+kind)}"><output></output></label>`;
    panel.setAttribute('aria-label',this._t('eye.storm'));
    panel.innerHTML=`<header class="weather-display-panel-head"><img src="${STORM_EYE_ICON}" alt=""><strong>${t('eye.storm')}</strong><div class="gr-premium-panel-actions">${premiumAction('close',this._t('eye.close'))}</div></header>
     <div class="weather-wind-panel-body">
      ${section('visibility','map.display_aria',toggle('visible','eye.stormVisible')+select('grouping','map.display_aria', [['grouped',this._t('map.grouped')],['individual',this._t('map.individual')]]))}
      ${section('cluster','settings.cluster_resolution',select('resolution','settings.cluster_resolution',this._clusterResolutionOptions())+toggle('navigation','eye.stormNavigation'))}
-     ${section('session','settings.cluster_navigation_session',`<label>${t('settings.cluster_navigation_range')}<input type="number" data-storm-setting="timeout" min="5" max="3600" step="1" inputmode="numeric"></label>`+toggle('infinite','settings.cluster_navigation_infinite'))}
+     ${section('session','settings.cluster_navigation_session',`<label class="storm-timeout-setting"><span>${t('settings.cluster_navigation_range')}</span><input type="number" data-storm-setting="timeout" min="5" max="3600" step="1" inputmode="numeric"></label>`+toggle('infinite','settings.cluster_navigation_infinite'))}
      ${section('effects','eye.stormEffects',toggle('animation','warning.animation')+radius('storm')+radius('danger'))}
      ${section('aura','eye.aura',toggle('aura','eye.bubbleAura'))}
     </div>`;

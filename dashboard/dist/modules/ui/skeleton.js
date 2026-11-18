@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411239r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411239r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411240r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411240r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -17,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.42",
+  "version": "1.1.43",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -449,7 +449,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             box-shadow:0 30px 90px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.025) inset,0 0 38px rgba(246,195,68,.045);
           }
           .release-history-head {
-            display:flex;
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto;
+            container-type:inline-size;
             align-items:center;
             justify-content:space-between;
             gap:12px;
@@ -458,8 +460,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             background:linear-gradient(180deg,rgba(17,23,32,.995),rgba(17,23,32,.94));
           }
           .release-history-kicker {
+            grid-column:1 / -1;
+            white-space:nowrap;
             color:var(--b-gold);
-            font-size:8px;
+            font-size:clamp(7px,2.5cqi,8px);
             font-weight:900;
             letter-spacing:.18em;
             text-transform:uppercase;
@@ -478,7 +482,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             gap:9px;
           }
           /* V4.07 TEST7: bilingual Release History and compact premium language switch. */
-          .release-history-heading{min-width:0}
+          .release-history-heading{display:contents}
           .release-history-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px}
           .release-history-title-row .release-history-title{margin-top:0}
           .release-history-language-toggle{display:inline-grid;grid-template-columns:repeat(2,36px);gap:2px;padding:2px;border:1px solid rgba(214,172,78,.34);border-radius:999px;background:rgba(4,9,14,.55);box-shadow:inset 0 1px rgba(255,239,194,.06)}

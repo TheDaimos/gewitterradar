@@ -1,6 +1,6 @@
 import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
 import {NEON_CSS} from './eye-neon.js?v=411233r1';
-import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411239r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411240r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
 import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleAuraEnabled,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411233r1';
 import {eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
@@ -12,9 +12,22 @@ ${NEON_CSS}
 .eye-hub-bubble[data-function=storm][aria-pressed=false] img{filter:saturate(.65) brightness(.68)}
 #weather-storm-panel{position:absolute;top:12px;right:12px;width:min(410px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y;font:12px/1.45 system-ui}
 #weather-storm-panel[hidden]{display:none}
-#weather-storm-panel .storm-radius-setting{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,36%) auto}
-#weather-storm-panel .storm-radius-setting input{width:100%;accent-color:#d8ae52}
-#weather-storm-panel input[type=number]{width:6em}
+#weather-storm-panel{container-type:inline-size;box-sizing:border-box;color:#e4e9ef}
+#weather-storm-panel .gr-collapse-inner{display:grid;gap:10px}
+#weather-storm-panel label{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 12px;min-width:0;min-height:44px;margin:0}
+#weather-storm-panel label>span{min-width:0;overflow-wrap:break-word}
+#weather-storm-panel .storm-select-setting{grid-template-columns:minmax(0,1fr)}
+#weather-storm-panel :is(select,input[type=number]){box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:44px;border:1px solid #b5985a66;border-radius:7px;padding:8px 10px;background:#141e2a;color:inherit;font:inherit;color-scheme:dark}
+#weather-storm-panel .storm-timeout-setting{grid-template-columns:minmax(0,1fr) minmax(80px,35%)}
+#weather-storm-panel input[type=checkbox]{width:24px;height:24px;margin:10px;accent-color:#d8ae52;cursor:pointer}
+#weather-storm-panel .storm-radius-setting{grid-template-columns:minmax(0,1fr) minmax(85px,36%) max-content}
+#weather-storm-panel .storm-radius-setting input{width:100%;min-width:0;min-height:44px;margin:0;accent-color:#d8ae52}
+#weather-storm-panel .storm-radius-setting output{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+#weather-storm-panel :is(select,input):focus-visible{outline:2px solid #f1d58c;outline-offset:2px}
+@container(max-width:340px){
+ #weather-storm-panel .storm-radius-setting{grid-template-columns:minmax(0,1fr) max-content}
+ #weather-storm-panel .storm-radius-setting>span{grid-column:1 / -1}
+}
 .eye-bubble-aura-setting{display:flex;gap:12px;justify-content:space-between;align-items:center;min-height:44px}
 .eye-bubble-aura-setting input{accent-color:#d8ae52;width:24px;height:24px}
 ${compassDialogSurface('.eye-hub-config')}
