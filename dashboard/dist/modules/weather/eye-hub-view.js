@@ -1,6 +1,6 @@
 import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
 import {NEON_CSS} from './eye-neon.js?v=411230r1';
-import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411231r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411232r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
 import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleAuraEnabled,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411230r1';
 import {eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
@@ -43,6 +43,18 @@ ${compassDialogSurface('.eye-hub-config')}
 #map-card[data-eye-grouped=false]>.weather-wind-toggle[aria-pressed=true] img{filter:none!important}#map-card[data-eye-grouped=false]>.weather-wind-toggle,#map-card[data-eye-grouped=false]>.weather-temperature-toggle,#map-card[data-eye-grouped=false]>.weather-precipitation-toggle,#map-card[data-eye-grouped=false]>.weather-display-control,#map-card[data-eye-grouped=false]>.weather-synoptic-toggle{box-shadow:none!important}
 @keyframes eye-bubble-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @media(max-width:540px){.eye-previews{grid-template-columns:minmax(0,1fr)}.eye-config-options{grid-template-columns:minmax(0,1fr)}.eye-config-options [data-eye-option]{grid-column:1;grid-row:auto}.eye-function-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.eye-slot-row{gap:5px;padding:7px;grid-template-columns:22px minmax(0,1fr) 44px 44px}.eye-color-button{width:42px}.eye-slot-clear{width:44px}.eye-slot-socket span{font-size:10px}.eye-hub-config{padding:10px}}
+.eye-slot-row{grid-template-areas:"number socket color clear"}
+.eye-slot-row>strong{grid-area:number}.eye-slot-row>.eye-slot-socket{grid-area:socket}
+.eye-slot-row>.eye-color-button{grid-area:color}.eye-slot-row>.eye-slot-clear{grid-area:clear}
+.eye-slot-aura{grid-area:aura;display:grid;gap:3px;min-width:0;font-size:11px;line-height:1.2;overflow-wrap:anywhere}
+.eye-slot-aura select{width:100%;min-width:0;padding:5px 7px;font:inherit;color:#f1d58c;color-scheme:dark}
+@media(min-width:541px){
+ .eye-slot-row:has(.eye-slot-aura){grid-template-columns:26px minmax(0,1fr) minmax(100px,20%) 52px 44px;grid-template-areas:"number socket aura color clear"}
+}
+@media(max-width:540px){
+ .eye-slot-row:has(.eye-slot-aura){grid-template-areas:"number socket color clear" ". aura aura aura"}
+ .eye-slot-aura{grid-template-columns:minmax(0,1fr) minmax(0,120px);align-items:center;gap:8px}
+}
 @media(prefers-reduced-motion:reduce){.eye-hub-bubble,.eye-config-options input::before{animation:none;transition:none}}
 `;
 export function eyeVisual(config,open,statuses){
@@ -75,6 +87,10 @@ export class EyeConfigurator{
   this.dialog.querySelector('header [data-premium-action=close] img').src=owner._eyeHubHeaderCloseIcon();
   const applyInput=e=>{const k=e.target.dataset.eyeKey;if(!k)return;const value=e.target.type==='checkbox'?e.target.checked:k==='size'?Math.max(36,Math.min(126,eyeSizePixels(Number(e.target.value)))):Number(e.target.value);if(this.owner._eyeHubState().config[k]!==value)this.owner._eyeHubPatch({[k]:value});};this.dialog.addEventListener('input',applyInput);this.dialog.addEventListener('change',applyInput);
   this.dialog.querySelector('[data-eye-energy]').addEventListener('change',e=>this.owner._eyeHubPatch({energyAccents:e.target.value}));
+  this.dialog.addEventListener('change',({target})=>{
+   const id=target.dataset.eyeSlotAura;
+   if(id)this.owner._eyeHubSetBubbleAura(id,target.value==='on');
+  });
   this.dialog.addEventListener('click',e=>this.click(e));this.dialog.addEventListener('pointerdown',e=>this.startDrag(e));this.dialog.addEventListener('pointermove',e=>this.moveDrag(e));this.dialog.addEventListener('pointerup',e=>this.endDrag(e));this.dialog.addEventListener('pointercancel',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt)this.cancelDrag();});
   this.dialog.addEventListener('lostpointercapture',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt&&!this.drag.source.hasPointerCapture(e.pointerId))this.cancelDrag();});
   bindTouchDragFallback(owner,this.dialog,{active:()=>!!this.drag,start:e=>this.startDrag(e),move:e=>this.moveDrag(e),end:e=>this.endDrag(e),cancel:()=>this.cancelDrag()});
@@ -89,7 +105,27 @@ export class EyeConfigurator{
   for(const input of this.dialog.querySelectorAll('[data-eye-key]')){const k=input.dataset.eyeKey,value=k==='size'?eyeSizePercent(c.size):c[k];if(input.type==='checkbox')input.checked=c[k];else if(this.owner.shadow.activeElement!==input)input.value=Math.round(value*10)/10;const out=this.dialog.querySelector(`[data-eye-output="${k}"]`);if(out){const label=new Intl.NumberFormat(this.owner._locale?.()||'de-DE',{maximumFractionDigits:1}).format(value)+(['eyeAuraGap','auraRingGap'].includes(k)?' px':' %');out.textContent=label;input.setAttribute('aria-valuetext',label);}}
   for(const b of this.dialog.querySelectorAll('[data-eye-glow]'))b.setAttribute('aria-pressed',String(b.dataset.eyeGlow===c.glow));
   this.dialog.querySelector('[data-eye-count]').textContent=this.t('slots')+' '+Math.min(c.slots.length,8)+' / 8';this.dialog.querySelector('[data-eye-action=plus]').disabled=c.slots.length>=8;this.dialog.querySelector('[data-eye-action=minus]').disabled=c.slots.length<=1;
-  const signature=JSON.stringify([c.slots,eyeEntryEnabled(s.registry.entries.get('storm')),this.owner._languageValue?.()]);if(signature!==this.signature){this.signature=signature;this.dialog.querySelector('.eye-slots').innerHTML=visibleEyeSlots(c).map((slot,index)=>{const saved=s.registry.entries.get(slot.functionId);const entry=eyeEntryEnabled(saved)?saved:null;return `<div class="eye-slot-row" data-eye-slot="${index}"><strong>${index+1}</strong><button type="button" class="eye-slot-socket" data-eye-assign="${index}" ${saved&&!entry?'disabled':''} ${entry?'data-eye-function="'+entry.id+'"':''} aria-label="${esc(this.t('choose',{slot:index+1}))}">${entry?`<img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>`:`<i class="eye-empty-socket"></i><span>${esc(this.t('empty'))}</span>`}</button><button type="button" class="eye-color-button" data-eye-color="${entry?.id||''}" ${entry?'':'disabled'} aria-label="${esc(this.t('color'))}"><i style="--eye-color:${entry?c.colors[entry.id]:'#333'}"></i></button><button type="button" class="eye-slot-clear" data-eye-clear="${index}" ${entry?'':'disabled'} aria-label="${esc(this.t('clear',{slot:index+1}))}"><img src="${PREMIUM_CLOSE}" alt=""></button></div>`;}).join('');this.dialog.querySelector('[data-eye-palette]').innerHTML=this.functionPalette();}
+  const signature=JSON.stringify([c.slots,eyeEntryEnabled(s.registry.entries.get('storm')),this.owner._languageValue?.()]);
+  if(signature!==this.signature){
+   this.signature=signature;
+   this.dialog.querySelector('.eye-slots').innerHTML=visibleEyeSlots(c).map((slot,index)=>{
+    const saved=s.registry.entries.get(slot.functionId),entry=eyeEntryEnabled(saved)?saved:null;
+    const name=entry?esc(this.t(entry.key)):'';
+    const auraLabel=esc(this.t('bubbleAura'));
+    return `<div class="eye-slot-row" data-eye-slot="${index}">
+     <strong>${index+1}</strong>
+     <button type="button" class="eye-slot-socket" data-eye-assign="${index}" ${saved&&!entry?'disabled':''} ${entry?'data-eye-function="'+entry.id+'"':''} aria-label="${esc(this.t('choose',{slot:index+1}))}">${entry?`<img src="${entry.icon}" alt=""><span>${name}</span>`:`<i class="eye-empty-socket"></i><span>${esc(this.t('empty'))}</span>`}</button>
+     ${entry?`<label class="eye-slot-aura"><span>${auraLabel}</span><select class="eye-metal-button" data-eye-slot-aura="${entry.id}" aria-label="${auraLabel} · ${name}"><option value="on">${esc(this.t('on'))}</option><option value="off">${esc(this.t('off'))}</option></select></label>`:''}
+     <button type="button" class="eye-color-button" data-eye-color="${entry?.id||''}" ${entry?'':'disabled'} aria-label="${esc(this.t('color'))}"><i style="--eye-color:${entry?c.colors[entry.id]:'#333'}"></i></button>
+     <button type="button" class="eye-slot-clear" data-eye-clear="${index}" ${entry?'':'disabled'} aria-label="${esc(this.t('clear',{slot:index+1}))}"><img src="${PREMIUM_CLOSE}" alt=""></button>
+    </div>`;
+   }).join('');
+   this.dialog.querySelector('[data-eye-palette]').innerHTML=this.functionPalette();
+  }
+  for(const select of this.dialog.querySelectorAll('[data-eye-slot-aura]')){
+   const value=eyeBubbleAuraEnabled(c,select.dataset.eyeSlotAura)?'on':'off';
+   if(select.value!==value)select.value=value;
+  }
   for(const b of this.dialog.querySelectorAll('[data-eye-color]')){const dot=b.querySelector('i'),color=c.colors[b.dataset.eyeColor];if(dot&&color){const none=color===EYE_NO_COLOR;dot.toggleAttribute('data-no-color',none);const swatch=none?'transparent':color,label=this.t(none?'noColor':'color');if(dot.style.getPropertyValue('--eye-color')!==swatch)dot.style.setProperty('--eye-color',swatch);if(b.getAttribute('aria-label')!==label)b.setAttribute('aria-label',label);}}
   if(this.dialog.open)this.previews();
  }

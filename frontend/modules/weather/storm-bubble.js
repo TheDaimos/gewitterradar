@@ -1,6 +1,6 @@
 import {STORM_EYE_ICON} from './eye-hub-registry.js?v=411230r1';
 import {eyeBubbleAuraEnabled,visibleEyeSlots} from './eye-hub-model.js?v=411230r1';
-import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=411231r1';
+import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=411232r1';
 
 export const stormLayout=owner=>owner._mapWindowMode?'window':owner._mapDisplayMode==='fullscreen'?'fullscreen':'standard';
 
@@ -155,6 +155,7 @@ export const stormBubbleMethods={
      ${section('effects','eye.stormEffects',toggle('animation','warning.animation')+radius('storm')+radius('danger'))}
      ${section('aura','eye.aura',toggle('aura','eye.bubbleAura'))}
     </div>`;
+   panel.querySelector('[data-premium-action=close] img').src=this._eyeHubHeaderCloseIcon();
    enhancePremiumSections(panel,'storm',this);
   }
   const states=this._hass?.states;

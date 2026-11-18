@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.231",
-  "build": "V4.11.231-DEV-2026-11-18",
-  "runtimeRevision": "411231r1",
-  "moduleSetId": "E411-231A1",
-  "baselineFeatureHead": "3f2590999c967e4a16dfdacb584a66869e0d2ed5",
+  "productVersion": "4.11.232",
+  "build": "V4.11.232-DEV-2026-11-18",
+  "runtimeRevision": "411232r1",
+  "moduleSetId": "E411-232A1",
+  "baselineFeatureHead": "acc0cfd366c72b982d64a98faa4bc28a232b4ccf",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Optional GewitterRadar PRO welcome after onboarding with profile-owned dismissal.",
+    "purpose": "Eye menu Settings for individual slot auras and the original round thunderstorm close icon.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
