@@ -1,12 +1,12 @@
 # GewitterRadar – Versionsverlauf: Ergänzung nach V4.10 und Roadmap
 
-**Stand: 18.11.2026 · redaktionelle Vorlage, keine Runtime-Änderung.**  
+**Stand: 18.11.2026 · aktualisierte redaktionelle Vorlage, keine Runtime-Änderung.**
 **Quelltext geprüft:** `frontend/modules/ui/skeleton.js`, bestehender Abschnitt `release-history-future` und historische `release-history-entry`-Karten. Bestehende Einträge V4.10 und älter sowie alle bereits aufgeführten Zukunftspunkte bleiben erhalten. Die angezeigte Version ist dynamisch; keine hartcodierte 4.11.233 erzeugen. Deutscher und englischer Verlauf sind konsistent zu halten.
 
 ## A – Zusätzliche Roadmap-Stichpunkte (bestehende Liste erweitern, nicht ersetzen)
 
 - **Schnee, Nebel und Winterwetter:** Erweiterte Wetterdarstellungen für Schneefall, Nebelbänke sowie Glätte und gefrierenden Niederschlag – ergänzt um kompakte orbitale Untermenüs.
-- **Aura und Geo-Sonde:** Dynamisch angeordnete Aura-Ringe sowie eine frei platzierbare Karten-Sonde für Koordinaten, lokale Wetterinformationen, Gezeiten (Ebbe und Flut), Ortszeit und Mondphase, sofern passende Daten verfügbar sind.
+- **Eye Hub, Aura und Geo-Sonde:** Dynamisch verdichtete Aura-Ringe in der Reihenfolge aktiver Wetter-Icons sowie eine frei platzierbare Karten-Sonde für Koordinaten, lokale Wetterinformationen, Gezeiten (Ebbe und Flut), Ortszeit und Mondphase, sofern passende Daten verfügbar sind.
 - **UV, Luftqualität und Pollen:** Zusätzliche, einzeln zuschaltbare Umweltinformationen über geeignete Wetter- und Umweltdatenquellen.
 - **Schwere Unwetter:** Erweiterte Visualisierung von Tornados, Superzellen, Hagel und weiteren Gefahrensituationen auf Grundlage fachlich belastbarer Daten.
 - **ISS am Himmel:** Aktuelle ISS-Position und Flugbahn sowie standortbezogene Zeitfenster für mögliche Sichtbarkeit am ausgewählten Beobachtungsort.
@@ -27,16 +27,22 @@ Version 4.11 stellt einen der größten Entwicklungsschritte von GewitterRadar d
 
 **Eye Hub – eine zentrale Steuerung für viele Funktionen:** Der Eye Hub führt Wetterebenen in frei belegbaren Hi-Res-Wetter-Icons zusammen. Eye Control verwaltet Slots, Gruppierung und Auren. Neon-Effekte, eigene Premiummenüs, Long-Press-Bedienung und die neue separat schaltbare Gewitterdarstellung erweitern die Kartensteuerung. Die Basisversion zeigt Gewitter weiterhin dauerhaft an.
 
+**Feiner abgestimmte Bedienung:** Für einzelne Wetter-Icons lassen sich Auren gezielt ein- und ausschalten; die Gewitterdarstellung ist in PRO über ein eigenes Wetter-Icon steuerbar, ohne die zugrunde liegende Überwachung, Warnlogik oder Historie abzuschalten. Das Eye-Control-Menü bündelt die persönlichen Einstellungen, während der Eye Hub als einheitliches Bedienkonzept erhalten bleibt.
+
 **Personalisierung und Geräteprofile:** Mit Settings Vault, Benutzer- und Geräteprofilen sowie gespeicherten Eye-Positionen, Slot-Belegungen, Farben und Darstellungsoptionen kann die Wetterkarte individuell eingerichtet und nach einem Neustart wiederhergestellt werden. Gleichzeitig wurden Android-, iPad- und Desktopbedienung, Diagnosen, Hilfen und alle 19 Sprachvarianten weiterentwickelt.
+
+**Klare Trennung von Basis und PRO:** Die Gewitterdarstellung bleibt in der Basisversion vollständig nutzbar. Ein zusätzlicher Hinweis nach der Begrüßung stellt bei nicht installiertem WeatherRouter die optionalen PRO-Wetterebenen vor, verlinkt das Projekt und lässt sich pro Profil dauerhaft ausblenden.
 
 **Entwicklungsleistung:** Hinter V4.11 liegen rund sieben Wochen intensive Entwicklungs-, Test- und Korrekturarbeit mit zahlreichen DEV-Iterationen, wiederholten Realtests, Quellanalysen und Leistungsoptimierungen. Die enge Entwicklung von GewitterRadar und WeatherRouter schuf sowohl neue Funktionen als auch die technische Grundlage für weitere Wetter- und Umweltmodule.
 
 **Abgrenzung:** Dies ist ein redaktioneller Rückblick auf die 4.11-DEV-Entwicklung und keine vorweggenommene FINAL-Abnahme. Vor einer Veröffentlichung gegen den tatsächlich freigegebenen FINAL-Stand prüfen.
 
+**Verbindliche öffentliche Begriffe:** *Eye Hub* bezeichnet das Bedienkonzept, *Eye Control* das Einstellungsmenü, *Wetter-Icons* die Funktionssymbole und *Aura* die optionalen Lichteffekte. Frühere interne Bezeichnungen mit „Bubble“ werden in Benutzerdokumentation und Versionsverlauf nicht verwendet.
+
 ## C – Einbauhinweise
 
 1. `release-history-future` in `frontend/modules/ui/skeleton.js` **nur um weitere `<li>`-Punkte ergänzen**; die sieben bisherigen `<li>` erhalten.
-2. Neue `release-history-entry` **zwischen** Future-`</details>` und bestehender V4.10-Karte einsetzen. Keine vorhandene Karte überschreiben, chronologische Reihenfolge beibehalten.
+2. Neue `release-history-entry` **erst nach der Freigabe von V4.11 FINAL** zwischen Future-`</details>` und bestehender V4.10-Karte einsetzen. Die bestehende Regel, dass der öffentliche Versionsverlauf nur FINAL-Versionen enthält, bleibt verbindlich. Keine vorhandene Karte überschreiben, chronologische Reihenfolge beibehalten.
 3. Vorhandene Versionsverlauf-CSS-Klassen, Modal-Geometrie, DE/EN-Umschalter, Scroll- und Schließen-Icon unverändert lassen.
 4. Englische Übersetzungen entsprechend ergänzen; nicht nur deutsche Texte anzeigen.
 5. Frontend-Spiegel, Modul-/Runtime-Manifeste und DRA-Versionierung nur über den kanonischen Build ausführen. Keine isolierte Änderung einer einzigen ausgelieferten Kopie.
