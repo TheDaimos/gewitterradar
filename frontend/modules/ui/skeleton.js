@@ -7777,6 +7777,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Improve checks and error detection for saved locations and the associated local To-do list.</li>
                       <li>Introduce monitored areas with independent background monitoring, optional event logging, deletion protection, and CSV/PDF export.</li>
                       <li>Standardize multilingual status, warning and error messages across all functions.</li>
+                      <li>Extend winter-weather maps with snow, fog and freezing precipitation, complemented by orbital submenus around weather icons.</li>
+                      <li>Add compact, dynamic Aura-ring layout and a map-based Geo Probe with coordinates, local time, moon phase, and tide information where suitable data is available.</li>
+                      <li>Provide optional UV, air quality and pollen information from suitable data sources.</li>
+                      <li>Explore scientifically grounded displays for tornadoes, supercells, hail and other severe weather.</li>
+                      <li>Show the ISS position and orbit, including possible visibility windows for the selected observation location.</li>
+                      <li>Introduce MapLibre as an additional map engine with shared weather layers and controls.</li>
+                      <li>Extend lightning event logs and configurable alerts for monitored locations.</li>
                     </ul>
                   </div>
                 </details>
@@ -7886,6 +7893,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Verbesserte Prüfung und Fehlererkennung für gespeicherte Standorte und die zugehörige lokale To-do-Liste.</li>
                       <li>Einführung überwachter Standorte (Monitored Areas) mit eigenständiger Hintergrundüberwachung, optionaler Ereignisprotokollierung, Löschschutz sowie CSV- und PDF-Export.</li>
                       <li>Vereinheitlichung der mehrsprachigen Status-, Warn- und Fehlermeldungen über sämtliche Funktionen hinweg.</li>
+                      <li>Erweiterte Darstellung von Schnee, Nebel und gefrierendem Niederschlag mit orbitalen Untermenüs für Wetter-Icons.</li>
+                      <li>Dynamische Anordnung der Aura-Ringe sowie eine Geo-Sonde für Kartenkoordinaten, lokale Zeit, Mondphase und – bei geeigneten Daten – Ebbe und Flut.</li>
+                      <li>Zusätzliche Wetter- und Umweltinformationen zu UV-Strahlung, Luftqualität und Pollenbelastung.</li>
+                      <li>Fachlich fundierte Darstellung von Tornados, Superzellen, Hagel und weiteren schweren Unwettern.</li>
+                      <li>ISS-Position und Flugbahn mit möglichen Sichtbarkeitszeiten für den ausgewählten Beobachtungsstandort.</li>
+                      <li>MapLibre als zusätzliche Kartenengine mit gemeinsam nutzbaren Wetterebenen und Bedienelementen.</li>
+                      <li>Erweiterte Blitzprotokollierung und konfigurierbare Alarmierung für überwachte Standorte.</li>
                     </ul>
                   </div>
                 </details>
