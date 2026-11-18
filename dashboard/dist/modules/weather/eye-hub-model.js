@@ -9,9 +9,9 @@ export const EYE_MATERIALS=Object.freeze({
 export const EYE_COLORS=Object.freeze(['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C',...Object.keys(EYE_MATERIALS)]);
 export const EYE_ENERGY_MODES=Object.freeze(['off','subtle','normal','strong']);
 export const EYE_NO_COLOR='none';
-export const EYE_FUNCTIONS=Object.freeze(['wind','temperature','precipitation','weather-display','synoptic','clouds']);
+export const EYE_FUNCTIONS=Object.freeze(['wind','temperature','precipitation','weather-display','synoptic','clouds','storm']);
 export const EYE_DEFAULT_SLOTS=Object.freeze(['wind','temperature','precipitation','weather-display']);
-export const EYE_DEFAULT_COLORS=Object.freeze({wind:EYE_COLORS[3],temperature:EYE_COLORS[6],precipitation:EYE_COLORS[2],'weather-display':EYE_COLORS[0],synoptic:EYE_COLORS[8],clouds:EYE_COLORS[9]});
+export const EYE_DEFAULT_COLORS=Object.freeze({wind:EYE_COLORS[3],temperature:EYE_COLORS[6],precipitation:EYE_COLORS[2],'weather-display':EYE_COLORS[0],synoptic:EYE_COLORS[8],clouds:EYE_COLORS[9],storm:EYE_COLORS[8]});
 // Keep authoritative stored pixels compatible: 42 CSS px = 100%. Only the
 // UI uses percent, so legacy 72px is preserved exactly until an explicit edit.
 export const eyeSizePercent=pixels=>pixels/42*100;
@@ -22,7 +22,13 @@ export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
  const slots=source.slice(0,EYE_CAPACITY).map((item,i)=>{const id=typeof item==='string'?item:item?.functionId;const functionId=ids.includes(id)&&!seen.has(id)?id:null;if(functionId)seen.add(functionId);return {id:'slot-'+(i+1),functionId};});
  if(!slots.length)slots.push({id:'slot-1',functionId:null});
  const colors={};for(const id of ids){const color=String(s.colors?.[id]).toUpperCase(),legacy=EYE_LEGACY_COLORS.indexOf(color);colors[id]=s.colors?.[id]===EYE_NO_COLOR?EYE_NO_COLOR:EYE_COLORS.includes(color)?color:legacy>=0?EYE_COLORS[legacy]:EYE_DEFAULT_COLORS[id]||EYE_COLORS[0];}
- return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),energyAccents:EYE_ENERGY_MODES.includes(s.energyAccents)?s.energyAccents:'off',slots,colors};
+ const bubbleAura=Object.fromEntries(ids.map(id=>[id,eyeBubbleAuraEnabled(s,id)]));
+ const stormPositions={};
+ for(const layout of ['standard','fullscreen','window']){
+  const p=s.stormPositions?.[layout];
+  if(Number.isFinite(p?.x)&&Number.isFinite(p?.y))stormPositions[layout]={x:bounded(p.x,0,0,1),y:bounded(p.y,0,0,1)};
+ }
+ return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,bubbleAura,stormVisible:s.stormVisible!==false,stormPositions,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),energyAccents:EYE_ENERGY_MODES.includes(s.energyAccents)?s.energyAccents:'off',slots,colors};
 }
 export function assignEyeSlot(config,index,functionId,ids=EYE_FUNCTIONS){
  const c=normalizeEyeConfig(config,ids);if(index<0||index>=Math.min(c.slots.length,EYE_UI_SLOTS)||!ids.includes(functionId))return c;
@@ -39,7 +45,8 @@ export const visibleEyeSlots=c=>c.slots.slice(0,EYE_UI_SLOTS);
 export const eyeRingRadius=(size,index,eyeAuraGap=0,auraRingGap=0)=>size/2+5+eyeAuraGap+index*(4+size/42+auraRingGap);
 export const eyeGlowMargin=c=>14+c.intensity*.24;
 export const eyeGlowExtent=c=>eyeRingRadius(c.size,Math.min(8,c.slots.length)-1,c.eyeAuraGap,c.auraRingGap)+eyeGlowMargin(c);
-export const eyeAuraOn=(config,status,id)=>config.grouped&&config.aura&&status.active&&status.available&&config.colors?.[id]!==EYE_NO_COLOR;
+export const eyeBubbleAuraEnabled=(config,id)=>typeof config.bubbleAura?.[id]==='boolean'?config.bubbleAura[id]:id!=='storm';
+export const eyeAuraOn=(config,status,id)=>config.grouped&&config.aura&&eyeBubbleAuraEnabled(config,id)&&status.active&&status.available&&config.colors?.[id]!==EYE_NO_COLOR;
 
 // Compact occupied bubbles; empty slots never reserve a position. Prefer the
 // direction with room toward the map centre, and reject overlaps/obstacles.

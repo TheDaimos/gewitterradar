@@ -2,6 +2,7 @@
 const asset=name=>new URL('../../assets/'+name,import.meta.url).href;
 export const CLOUD_CAPABILITY='weather.satellite.clouds';
 export const CLOUD_EYE_ICON=new URL('../../assets/gr-clouds-eye-premium-original.png',import.meta.url).href;
+export const STORM_EYE_ICON=new URL('../../assets/gr-storm-premium-original.png',import.meta.url).href;
 export const EYE_MASTERS=Object.freeze({open:new URL('../../assets/gr-eye-open-master-1254.png', import.meta.url).href,closed:new URL('../../assets/gr-eye-closed-master-1254.png', import.meta.url).href});
 const knownFailure=s=>Boolean(s?.fieldError||s?.error||s?.lastUnavailable||['failed','unavailable','error'].includes(s?.status));
 // An unqueried/off weather layer is NOT a failed WR provider. Only a completed
@@ -37,5 +38,13 @@ export function createEyeRegistry(owner){
   // Only layers without their own assigned function contribute here.
   return {active:enabled.length>0,available:enabled.length?enabled.some(s=>!knownFailure(s)):!['missing','offline','incompatible'].includes(d?.status),detail:d?.status||''};
  }});
+ add({
+  id:'storm',key:'storm',icon:STORM_EYE_ICON,button:'weather-storm-toggle',
+  enabled:()=>owner._weatherStormAvailable?.()===true,
+  tap:()=>owner._weatherStormSetVisible(!owner._weatherStormVisible()),
+  hold:()=>owner._weatherStormOpen(),
+  status:()=>({active:owner._weatherStormVisible?.()!==false,available:owner._weatherStormAvailable?.()===true})
+ });
  return {entries,add};
 }
+export const eyeEntryEnabled=entry=>Boolean(entry)&&entry.enabled?.()!==false;

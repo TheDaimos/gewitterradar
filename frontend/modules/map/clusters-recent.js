@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411229r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411230r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -258,7 +258,8 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       if (!this._map) return;
       if (this._clusterBubbleMap !== this._map || !this._clusterBubbleLayer) {
         this._clusterBubbleLayer?.remove?.();
-        this._clusterBubbleLayer = L.layerGroup().addTo(this._map);
+        this._clusterBubbleLayer = L.layerGroup();
+        if(this._weatherStormVisible?.()!==false)this._clusterBubbleLayer.addTo(this._map);
         this._clusterBubbleMap = this._map;
         this._clusterBubbleMarkers = new Map();
       }

@@ -1,8 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411229r1';
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411216r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411216r1';
-import {createEyeRegistry,EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411229r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411230r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411230r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411230r1';
+import {createEyeRegistry,eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411230r1';
+import {stormLayout} from './storm-bubble.js?v=411230r1';
 
 const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -122,9 +123,16 @@ export const eyeHubMethods={
   if(grouped!==s.config.grouped){this._weatherDisplayCancelEyeDrag();this._weatherDisplayCancelControlDrag();this._weatherWindCancelToggleDrag?.();this._weatherTemperatureCancelToggleDrag?.();this._weatherDisplayCancelEyeDrag?.(this.__weatherSynoptic?.quickDragOptions);this._weatherPrecipitationCancelDrag?.();this._weatherCloudsCancelDrag?.();this._eyeHubClose();}
   s.signature=null;this._eyeHubSync();
  },
- _eyeHubAssign(index,id){const s=this._eyeHubState();this._eyeHubPatch(assignEyeSlot(s.config,index,id,[...s.registry.entries.keys()]));},
+ _eyeHubSetBubbleAura(id,visible){
+  const s=this._eyeHubState();
+  if(eyeEntryEnabled(s.registry.entries.get(id)))this._eyeHubPatch({bubbleAura:{...s.config.bubbleAura,[id]:visible}});
+ },
+ _eyeHubAssign(index,id){const s=this._eyeHubState();if(eyeEntryEnabled(s.registry.entries.get(id)))this._eyeHubPatch(assignEyeSlot(s.config,index,id,[...s.registry.entries.keys()]));},
  _eyeHubResize(delta){const s=this._eyeHubState(),result=resizeEyeSlots(s.config,delta,[...s.registry.entries.keys()]);if(result.blocked)return s.view?.message(this._t('eye.blocked',{slot:result.blocked}));this._eyeHubPatch(result.config);},
- _eyeHubReset(){this._eyeHubPatch(normalizeEyeConfig(null,[...this._eyeHubState().registry.entries.keys()]));},
+ _eyeHubReset(){
+  const {registry,config}=this._eyeHubState();
+  this._eyeHubPatch({...normalizeEyeConfig(null,[...registry.entries.keys()]),stormVisible:config.stormVisible,stormPositions:config.stormPositions});
+ },
  _eyeHubToggle(){const s=this._eyeHubState();if(!s.config.grouped)return this._eyeHubOpen();s.open=!s.open;s.signature=null;this._eyeHubSync();},
  _eyeHubClose(){const s=this.__eyeHub;if(!s)return;for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:!s.suspended&&this._weatherControlRelease?.drag.state===options.state()});s.bubbleOptions=[];s.open=false;s.signature=null;const root=this.shadow?.getElementById('eye-hub-bubbles');if(root){root.hidden=true;root.replaceChildren();}if(!s.suspended)this._eyeHubSync();},
  _eyeHubOpen(){const s=this._eyeHubState();this._eyeHubClose();const backdrop=this.shadow?.getElementById('settings-backdrop');if(backdrop?.classList.contains('open'))this.shadow.getElementById('settings-close')?.click();if(!s.view)s.view=new EyeConfigurator(this);s.view.open();},
@@ -157,6 +165,7 @@ export const eyeHubMethods={
  },
  _eyeHubSync(){
   const s=this.__eyeHub;if(!s||s.suspended)return;const card=this.shadow?.getElementById('map-card'),eye=this.shadow?.getElementById('weather-display-eye-control');if(!card||!eye)return;
+  this._weatherStormSync?.(card,s);
   if(s.view&&s.view.language!==this._languageValue?.()){const open=s.view.dialog.open;s.view.destroy();s.view=new EyeConfigurator(this);if(open)s.view.open();}
   const c=s.config,statuses=this._eyeHubStatuses(),entry=this.shadow.getElementById('settings-eye-hub-open');if(entry)entry.textContent=this._t('eye.title');
   card.dataset.eyeGrouped=String(c.grouped);
@@ -166,12 +175,12 @@ export const eyeHubMethods={
   eye.hidden=false;eye.setAttribute('aria-label',this._t('eye.title'));eye.setAttribute('aria-expanded',String(s.open));eye.title=this._t('eye.title')+' · '+this._t('eye.settings')+': 600 ms / F2';
   const signature=JSON.stringify([c,statuses,s.open,this._languageValue?.()]);
   if(signature!==s.signature){s.signature=signature;syncEyeVisual(eye,c,s.open,statuses);eye.style.setProperty('--eye-size',c.size+'px');eye.style.setProperty('--eye-target',Math.max(50,c.size)+'px');
-   const root=this.shadow.getElementById('eye-hub-bubbles'),ids=visibleEyeSlots(c).filter(v=>v.functionId).map(v=>v.functionId);
+   const root=this.shadow.getElementById('eye-hub-bubbles'),ids=visibleEyeSlots(c).map(v=>v.functionId).filter(id=>eyeEntryEnabled(s.registry.entries.get(id)));
    root.hidden=!c.grouped||!s.open;
    const rebuild=JSON.stringify([...root.querySelectorAll(':scope>.eye-hub-bubble')].map(b=>b.dataset.function))!==JSON.stringify(root.hidden?[]:ids);
    if(rebuild){for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options);s.bubbleOptions=[];root.replaceChildren();}
    if(!root.hidden){for(const id of ids){const f=s.registry.entries.get(id);if(!f)continue;const template=document.createElement('template');template.innerHTML=eyeBubble(f,statuses[id],c,k=>this._t('eye.'+k));const fresh=template.content.firstElementChild;let button=[...root.querySelectorAll(':scope>.eye-hub-bubble')].find(b=>b.dataset.function===id);
-    if(button){for(const attr of ['data-active','data-available','aria-label','title','style'])if(button.getAttribute(attr)!==fresh.getAttribute(attr))button.setAttribute(attr,fresh.getAttribute(attr));const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
+    if(button){for(const attr of ['data-active','data-available','aria-pressed','aria-label','title','style']){const value=fresh.getAttribute(attr);if(value!==null&&button.getAttribute(attr)!==value)button.setAttribute(attr,value);}const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
     button=fresh;root.append(button);
     const state={eyeDrag:null},run=hold=>{this._eyeHubClose();(hold?f.hold:f.tap)();queueMicrotask(()=>this._eyeHubSync());};
     const options={element:button,state:()=>state,activate:()=>run(false),longPress:()=>run(true),position:()=>this._eyeHubPosition(),save:()=>{},onDecision:f.onDecision};s.bubbleOptions.push(options);this._weatherDisplayBindEyeDrag(button,options);
@@ -244,7 +253,7 @@ export const eyeHubMethods={
   }
   if(s.config.grouped){s.iconLayoutKey=null;return;}
   const d=this.__weatherDisplayState,w=this.__weatherWind,temp=this.__weatherTemperature;
-  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||this.__weatherSynoptic?.quickDrag?.eyeDrag||this.__weatherCloudsDrag?.state().eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag)return;
+  if(w?.quickDrag?.eyeDrag||temp?.quickDrag?.eyeDrag||this.__weatherSynoptic?.quickDrag?.eyeDrag||this.__weatherCloudsDrag?.state().eyeDrag||d?.precipitationDrag?.eyeDrag||d?.displayControlDrag?.eyeDrag||d?.eyeDrag||this.__stormQuick?.eyeDrag)return;
   const mapRect=map.getBoundingClientRect(),cr=card.getBoundingClientRect();
   if(!mapRect.width||!mapRect.height)return;
   const relative=rect=>({left:rect.left-cr.left,top:rect.top-cr.top,right:rect.right-cr.left,bottom:rect.bottom-cr.top});
@@ -255,7 +264,8 @@ export const eyeHubMethods={
    synoptic:this.__weatherSynoptic?.config?.quickPositions?.[layout],
    precipitation:d?.config.precipitationControl?.quickPositions?.[layout],
    clouds:this._weatherCloudsConfig?.().positions[layout],
-   'weather-display':d?.config.rememberPosition?d.config.displayControlPosition:null
+   'weather-display':d?.config.rememberPosition?d.config.displayControlPosition:null,
+   storm:s.config.stormPositions?.[stormLayout(this)]
   };
   const eye=this.shadow.getElementById('weather-display-eye-control');
   const display=buttons.some(({id})=>id==='weather-display');
@@ -314,5 +324,6 @@ export const eyeHubMethods={
   window.removeEventListener('pagehide',s.abort);
   document.removeEventListener('visibilitychange',s.abort);
   s.view?.destroy();s.view=null;
+  this._weatherStormClose?.(false);
  }
 };

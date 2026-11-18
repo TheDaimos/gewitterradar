@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.229",
-  "build": "V4.11.229-DEV-2026-11-17",
-  "runtimeRevision": "411229r1",
-  "moduleSetId": "E411-229A1",
-  "baselineFeatureHead": "541ae3ca672e3117e8db2d0a23beb110e1189e85",
+  "productVersion": "4.11.230",
+  "build": "V4.11.230-DEV-2026-11-18",
+  "runtimeRevision": "411230r1",
+  "moduleSetId": "E411-230A1",
+  "baselineFeatureHead": "470522887fdfab278d613d393459b94e72ffee51",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Frame-specific DWD priority and progressive WeatherRouter precipitation raster handover.",
+    "purpose": "Thunderstorm Eye Bubble, presentation-only toggle and per-bubble aura preferences.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

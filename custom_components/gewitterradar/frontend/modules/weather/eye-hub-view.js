@@ -1,12 +1,22 @@
 import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
-import {NEON_CSS} from './eye-neon.js?v=411216r1';
-import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411229r1';
+import {NEON_CSS} from './eye-neon.js?v=411230r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411230r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
-import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411216r1';
-import {EYE_MASTERS} from './eye-hub-registry.js?v=411213r1';
+import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleAuraEnabled,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411230r1';
+import {eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
 export const EYE_HUB_CSS=`
 ${NEON_CSS}
 #map-card[data-eye-grouped=false]>.eye-hub-unassigned{display:none!important}
+#map-card[data-storm-visible=false] #map-cluster-jump-overlay{display:none!important}
+.weather-storm-toggle{z-index:650}
+.eye-hub-bubble[data-function=storm][aria-pressed=false] img{filter:saturate(.65) brightness(.68)}
+#weather-storm-panel{position:absolute;top:12px;right:12px;width:min(410px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y;font:12px/1.45 system-ui}
+#weather-storm-panel[hidden]{display:none}
+#weather-storm-panel .storm-radius-setting{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,36%) auto}
+#weather-storm-panel .storm-radius-setting input{width:100%;accent-color:#d8ae52}
+#weather-storm-panel input[type=number]{width:6em}
+.eye-bubble-aura-setting{display:flex;gap:12px;justify-content:space-between;align-items:center;min-height:44px}
+.eye-bubble-aura-setting input{accent-color:#d8ae52;width:24px;height:24px}
 ${compassDialogSurface('.eye-hub-config')}
 .eye-hub-config{width:min(760px,calc(100vw - 20px));position:fixed;font:13px/1.45 system-ui;box-sizing:border-box;padding:12px}.eye-hub-config::backdrop{background:#03070be0;backdrop-filter:blur(2px)}
 .eye-hub-config *{box-sizing:border-box}.eye-hub-config button{font:inherit;cursor:pointer;touch-action:manipulation;color:#f1d58c}.eye-hub-config :focus-visible,.eye-hub-bubble:focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}
@@ -43,7 +53,7 @@ export function eyeVisual(config,open,statuses){
 export function eyeBubble(entry,status,config,t,preview=false){
  const color=config.colors[entry.id]===EYE_NO_COLOR?'transparent':config.colors[entry.id];
  const active=eyeAuraOn(config,status,entry.id)&&config.brightness>0,label=t(entry.key)+' · '+t(status.available?status.active?'on':'off':'unavailable');
- return `<button type="button" class="eye-hub-bubble" data-function="${entry.id}" data-active="${active}" data-available="${status.available}" aria-label="${esc(label)}" title="${esc(label+(status.detail?' · '+status.detail:''))}" ${preview?'data-eye-sim="'+entry.id+'" aria-pressed="'+Boolean(status.active)+'"':''} style="width:${eyeIconTarget(config.iconSize)}px;height:${eyeIconTarget(config.iconSize)}px;--eye-color:${color};--eye-color-soft:${active?color+'55':'transparent'};--eye-color-glow:${active?color+'33':'transparent'};--bubble-glow:${config.brightness/100*(1+config.intensity/45)}px"><img src="${entry.icon}" alt="" draggable="false" style="width:${eyeIconBox(entry.id,config.iconSize)}px;height:${eyeIconBox(entry.id,config.iconSize)}px">${!status.available?'<svg class="eye-warning" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" stroke="#352000" d="M10 1 19 18H1Z"/><path stroke="#19120b" stroke-width="2" d="M10 6v6m0 2v2"/></svg>':''}</button>`;
+ return `<button type="button" class="eye-hub-bubble" data-function="${entry.id}" data-active="${active}" data-available="${status.available}" aria-label="${esc(label)}" title="${esc(label+(status.detail?' · '+status.detail:''))}" ${preview?'data-eye-sim="'+entry.id+'"':''} ${preview||entry.id==='storm'?'aria-pressed="'+Boolean(status.active)+'"':''} style="width:${eyeIconTarget(config.iconSize)}px;height:${eyeIconTarget(config.iconSize)}px;--eye-color:${color};--eye-color-soft:${active?color+'55':'transparent'};--eye-color-glow:${active?color+'33':'transparent'};--bubble-glow:${config.brightness/100*(1+config.intensity/45)}px"><img src="${entry.icon}" alt="" draggable="false" style="width:${eyeIconBox(entry.id,config.iconSize)}px;height:${eyeIconBox(entry.id,config.iconSize)}px">${!status.available?'<svg class="eye-warning" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" stroke="#352000" d="M10 1 19 18H1Z"/><path stroke="#19120b" stroke-width="2" d="M10 6v6m0 2v2"/></svg>':''}</button>`;
 }
 
 // Keep decoded masters and gestures intact across status/metadata changes.
@@ -79,14 +89,14 @@ export class EyeConfigurator{
   for(const input of this.dialog.querySelectorAll('[data-eye-key]')){const k=input.dataset.eyeKey,value=k==='size'?eyeSizePercent(c.size):c[k];if(input.type==='checkbox')input.checked=c[k];else if(this.owner.shadow.activeElement!==input)input.value=Math.round(value*10)/10;const out=this.dialog.querySelector(`[data-eye-output="${k}"]`);if(out){const label=new Intl.NumberFormat(this.owner._locale?.()||'de-DE',{maximumFractionDigits:1}).format(value)+(['eyeAuraGap','auraRingGap'].includes(k)?' px':' %');out.textContent=label;input.setAttribute('aria-valuetext',label);}}
   for(const b of this.dialog.querySelectorAll('[data-eye-glow]'))b.setAttribute('aria-pressed',String(b.dataset.eyeGlow===c.glow));
   this.dialog.querySelector('[data-eye-count]').textContent=this.t('slots')+' '+Math.min(c.slots.length,8)+' / 8';this.dialog.querySelector('[data-eye-action=plus]').disabled=c.slots.length>=8;this.dialog.querySelector('[data-eye-action=minus]').disabled=c.slots.length<=1;
-  const signature=JSON.stringify([c.slots,this.owner._languageValue?.()]);if(signature!==this.signature){this.signature=signature;this.dialog.querySelector('.eye-slots').innerHTML=visibleEyeSlots(c).map((slot,index)=>{const entry=s.registry.entries.get(slot.functionId);return `<div class="eye-slot-row" data-eye-slot="${index}"><strong>${index+1}</strong><button type="button" class="eye-slot-socket" data-eye-assign="${index}" ${entry?'data-eye-function="'+entry.id+'"':''} aria-label="${esc(this.t('choose',{slot:index+1}))}">${entry?`<img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>`:`<i class="eye-empty-socket"></i><span>${esc(this.t('empty'))}</span>`}</button><button type="button" class="eye-color-button" data-eye-color="${entry?.id||''}" ${entry?'':'disabled'} aria-label="${esc(this.t('color'))}"><i style="--eye-color:${entry?c.colors[entry.id]:'#333'}"></i></button><button type="button" class="eye-slot-clear" data-eye-clear="${index}" ${entry?'':'disabled'} aria-label="${esc(this.t('clear',{slot:index+1}))}"><img src="${PREMIUM_CLOSE}" alt=""></button></div>`;}).join('');this.dialog.querySelector('[data-eye-palette]').innerHTML=this.functionPalette();}
+  const signature=JSON.stringify([c.slots,eyeEntryEnabled(s.registry.entries.get('storm')),this.owner._languageValue?.()]);if(signature!==this.signature){this.signature=signature;this.dialog.querySelector('.eye-slots').innerHTML=visibleEyeSlots(c).map((slot,index)=>{const saved=s.registry.entries.get(slot.functionId);const entry=eyeEntryEnabled(saved)?saved:null;return `<div class="eye-slot-row" data-eye-slot="${index}"><strong>${index+1}</strong><button type="button" class="eye-slot-socket" data-eye-assign="${index}" ${saved&&!entry?'disabled':''} ${entry?'data-eye-function="'+entry.id+'"':''} aria-label="${esc(this.t('choose',{slot:index+1}))}">${entry?`<img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>`:`<i class="eye-empty-socket"></i><span>${esc(this.t('empty'))}</span>`}</button><button type="button" class="eye-color-button" data-eye-color="${entry?.id||''}" ${entry?'':'disabled'} aria-label="${esc(this.t('color'))}"><i style="--eye-color:${entry?c.colors[entry.id]:'#333'}"></i></button><button type="button" class="eye-slot-clear" data-eye-clear="${index}" ${entry?'':'disabled'} aria-label="${esc(this.t('clear',{slot:index+1}))}"><img src="${PREMIUM_CLOSE}" alt=""></button></div>`;}).join('');this.dialog.querySelector('[data-eye-palette]').innerHTML=this.functionPalette();}
   for(const b of this.dialog.querySelectorAll('[data-eye-color]')){const dot=b.querySelector('i'),color=c.colors[b.dataset.eyeColor];if(dot&&color){const none=color===EYE_NO_COLOR;dot.toggleAttribute('data-no-color',none);const swatch=none?'transparent':color,label=this.t(none?'noColor':'color');if(dot.style.getPropertyValue('--eye-color')!==swatch)dot.style.setProperty('--eye-color',swatch);if(b.getAttribute('aria-label')!==label)b.setAttribute('aria-label',label);}}
   if(this.dialog.open)this.previews();
  }
- functionPalette(picker=false){const s=this.owner._eyeHubState();return [...s.registry.entries.values()].map(entry=>{const index=s.config.slots.findIndex(v=>v.functionId===entry.id);return `<button type="button" class="eye-function-choice" data-eye-function="${entry.id}" ${picker?'data-eye-pick="'+entry.id+'"':''} aria-pressed="${index>=0}"><img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>${index>=0?'<small>'+esc(this.t('assigned',{slot:index+1}))+'</small>':''}</button>`;}).join('');}
+ functionPalette(picker=false){const s=this.owner._eyeHubState();return [...s.registry.entries.values()].filter(eyeEntryEnabled).map(entry=>{const index=s.config.slots.findIndex(v=>v.functionId===entry.id);return `<button type="button" class="eye-function-choice" data-eye-function="${entry.id}" ${picker?'data-eye-pick="'+entry.id+'"':''} aria-pressed="${index>=0}"><img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>${index>=0?'<small>'+esc(this.t('assigned',{slot:index+1}))+'</small>':''}</button>`;}).join('');}
  previews(){
   if(!this.dialog.open||this.dialog.classList.contains('minimized'))return;
-  const s=this.owner._eyeHubState(),c=s.config,statuses=this.simulation||this.owner._eyeHubStatuses(),entries=visibleEyeSlots(c).filter(v=>v.functionId).map(v=>s.registry.entries.get(v.functionId));
+  const s=this.owner._eyeHubState(),c=s.config,statuses=this.simulation||this.owner._eyeHubStatuses(),entries=visibleEyeSlots(c).map(v=>s.registry.entries.get(v.functionId)).filter(eyeEntryEnabled);
   for(const stage of this.dialog.querySelectorAll('[data-preview]')){
    const open=stage.dataset.preview==='open',target=eyeIconTarget(c.iconSize);
    // Fit the complete halo once for this geometry. Bloom can then vary inside
@@ -116,9 +126,10 @@ export class EyeConfigurator{
    return `<button class="eye-color-choice" type="button" data-eye-paint="${color}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===color}"><i aria-hidden="true" style="--eye-color:${color}${preview}"></i><span>${esc(this.t(material?.key||names[index]))}</span></button>`;
   }).join('')+`<button class="eye-color-choice" type="button" data-eye-paint="${EYE_NO_COLOR}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===EYE_NO_COLOR}"><i data-no-color aria-hidden="true"></i><span>${esc(this.t('noColor'))}</span></button>`;
   popup.className='eye-hub-popup';
-  popup.innerHTML=`<section role="dialog" aria-label="${esc(this.t('color'))}"><h3>${esc(this.t('color'))}</h3><div class="eye-colors">${swatches}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;
+  popup.innerHTML=`<section role="dialog" aria-label="${esc(this.t('color'))}"><label class="eye-bubble-aura-setting">${esc(this.t('bubbleAura'))}<input type="checkbox" role="switch" data-eye-bubble-aura ${eyeBubbleAuraEnabled(config,id)?'checked':''}></label><h3>${esc(this.t('color'))}</h3><div class="eye-colors">${swatches}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;
   this.colorOpener=opener;this.popup=popup;this.dialog.append(popup);
   popup.querySelector('[data-eye-dismiss]').onclick=()=>this.closePopup();
+  popup.querySelector('[data-eye-bubble-aura]').onchange=event=>this.owner._eyeHubSetBubbleAura(id,event.target.checked);
   (popup.querySelector('[aria-pressed=true]')||popup.querySelector('button')).focus();
  }
  click(e){const b=e.target.closest('button');if(!b)return;e.stopPropagation();if(performance.now()<this.suppressUntil){e.preventDefault();return;}const s=this.owner._eyeHubState(),c=s.config;

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41132r1";
 export const MODULE_META=Object.freeze({
   "id": "location.radii-map",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "group": "Standort & Radien",
   "function": "Standort, Radien & Kartenstart",
   "subfunctions": [
@@ -220,16 +220,17 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
       const observation = this._observationRadiusValue();
       const storm = Math.min(this._stormRadiusValue(),observation);
       const danger = Math.min(this._dangerRadiusValue(),storm,observation);
+      const items=[{ kind:'observation',radiusKm:observation,color:C.gold }];
+      if(this._weatherStormVisible?.()!==false)items.push(
+        { kind:'storm',radiusKm:storm,color:C.blue },
+        { kind:'danger',radiusKm:danger,color:C.danger }
+      );
       layer.setData({
         enabled:true,
         width,
         intensity,
         reference:{ lat:reference.lat,lon:reference.lon },
-        items:[
-          { kind:'observation',radiusKm:observation,color:C.gold },
-          { kind:'storm',radiusKm:storm,color:C.blue },
-          { kind:'danger',radiusKm:danger,color:C.danger }
-        ]
+        items
       });
       if (force) layer._scheduleRedraw?.();
     },
@@ -1423,6 +1424,7 @@ export const installLocationRadiiMap=defineModule(MODULE_META,(deps)=>{const { C
 
         this._markerLayer = L.layerGroup().addTo(this._map);
         this._mapReady = true;
+        this._weatherStormSyncPresentation?.();
         this._resumeWeatherSynoptic?.(L);
         this._weatherCloudsResume?.();
         if(this._diagnosticTimings&&!Number.isFinite(this._diagnosticTimings.mapReadyAt))this._diagnosticTimings.mapReadyAt=performance.now();

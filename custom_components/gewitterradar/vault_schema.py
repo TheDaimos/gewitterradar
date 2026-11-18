@@ -121,7 +121,7 @@ SNAKE_FIELDS = {
 }
 SNAKE = fields(SNAKE_FIELDS)
 FULL_SNAKE = fields(SNAKE_FIELDS, SNAKE_FIELDS)
-EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic", "clouds")
+EYE_FUNCTIONS = ("wind", "temperature", "precipitation", "weather-display", "synoptic", "clouds", "storm")
 EYE_FUNCTION = choice(*EYE_FUNCTIONS)
 EYE_SLOT = fields({"id": identifier, "functionId": nullable(EYE_FUNCTION)}, ("functionId",))
 HEX = lambda value: isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", value) is not None
@@ -134,6 +134,9 @@ EYE = fields({
     "energyAccents": choice("off", "subtle", "normal", "strong"),
     "slots": sequence(lambda value: EYE_FUNCTION(value) or EYE_SLOT(value), 12),
     "colors": fields(dict.fromkeys(EYE_FUNCTIONS, lambda value: value == "none" or HEX(value))),
+    "bubbleAura": fields(dict.fromkeys(EYE_FUNCTIONS, BOOL)),
+    "stormVisible": BOOL,
+    "stormPositions": fields(dict.fromkeys(("standard", "fullscreen", "window"), POSITION)),
 })
 SYNOPTIC = fields({
     **dict.fromkeys(("visible", "centers", "isobars", "pressureLabels", "glow",
@@ -251,7 +254,7 @@ JSON_SETTINGS = {
                      MAP + "map-location-position", CORE + "map-cluster-jump-position",
                      RADAR + "timeline-position"), POSITION),
     **{PREMIUM_PREFIX + scope: PREMIUM for scope in (
-        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control", "synoptic-settings", "clouds-settings",
+        "eye-hub", "wind-settings", "temperature-settings", "precipitation-control", "synoptic-settings", "clouds-settings", "storm",
         "weather-wind-legend-", "weather-temperature-legend-", "weather-advection-legend-",
     )},
     "gewitterradar:v40802:diagnostic-sections": mapping(BOOL, 128),

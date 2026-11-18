@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "5d36db0a2f129ca262e35a403b7c8cc4604291be140a1de3a773fbcd35762533",
+    "sha256": "37c403239e53a7c5d05bceccf4a3fd6744c46e875ad0efdc17c6903fc9684468",
     "protected": false,
     "sizeBytes": 2961
   },
@@ -451,6 +451,12 @@
     "sha256": "3055af4389ddd4bfd98648ea18b302055cb297b1825f5f4459512b12d64cfbc9",
     "protected": true,
     "referenced": false
+  },
+  {
+    "file": "assets/gr-storm-premium-original.png",
+    "sha256": "bb8f4f65e18ca0febbe015f4790c35a314bef1e52d6cee7b5824c518c2452b89",
+    "sizeBytes": 2114584,
+    "protected": true
   },
   {
     "file": "assets/weather-router-emblem-v004-256.png",

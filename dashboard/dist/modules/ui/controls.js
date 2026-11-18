@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411229r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411230r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -18,7 +18,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.49",
+  "version": "1.1.50",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -30,6 +30,20 @@ export const MODULE_META=Object.freeze({
   "file": "modules/ui/controls.js"
 });
 export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _clusterResolutionOptions() {
+      const language=this._languageValue?.()||'Deutsch';
+      return ['early','balanced','late','classic'].map(profile=>[profile,getClusterResolutionProfileLabel(profile,language)]);
+    },
+
+    _setClusterResolutionProfile(profile) {
+      if(!this._clusterResolutionOptions().some(([id])=>id===profile))return;
+      this._clusterResolutionProfileV40822=profile;
+      try { settingsStorage(this).setItem('gewitterradar:v40822:cluster-resolution-profile',profile); } catch (_error) {}
+      this._resetStatusClusterBrowse?.();
+      this._renderMapMarkers?.();
+      this._render?.();
+    },
+
     _bindControls() {
       this._bindMapDisplayControls();
       this.shadow.getElementById('settings-about')?.addEventListener('click', () => this._openAbout(true));
@@ -449,7 +463,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       radiusKeypadDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      const CLUSTER_RESOLUTION_PROFILES = ['early','balanced','late','classic'];
 
       const closeClusterResolutionDropdown = (returnFocus = false) => {
         clusterResolutionDropdown?.classList.remove('open');
@@ -479,9 +492,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const renderClusterResolutionDropdown = () => {
         if (!clusterResolutionDropdown) return;
         const selected = this._clusterResolutionProfileV40822 || 'balanced';
-        const languageForLabels = this._languageValue?.() || 'Deutsch';
         const frag = document.createDocumentFragment();
-        CLUSTER_RESOLUTION_PROFILES.forEach((profile) => {
+        this._clusterResolutionOptions().forEach(([profile,profileLabel]) => {
           const button = document.createElement('button');
           button.type = 'button';
           button.className = `language-option${profile === selected ? ' selected' : ''}`;
@@ -492,7 +504,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           dot.className = 'language-option-dot';
           dot.setAttribute('aria-hidden','true');
           const label = document.createElement('span');
-          label.textContent = getClusterResolutionProfileLabel(profile,languageForLabels);
+          label.textContent = profileLabel;
           button.append(dot,label);
           frag.appendChild(button);
         });
@@ -603,17 +615,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       clusterResolutionDropdown?.addEventListener('click',(event) => {
         const option = event.target?.closest?.('[data-cluster-resolution-profile]');
         const nextProfile = option?.dataset?.clusterResolutionProfile;
-        if (!CLUSTER_RESOLUTION_PROFILES.includes(nextProfile)) return;
+        if (!nextProfile) return;
         event.preventDefault();
         event.stopPropagation();
-        this._clusterResolutionProfileV40822 = nextProfile;
-        try {
-          settingsStorage(this).setItem('gewitterradar:v40822:cluster-resolution-profile',nextProfile);
-        } catch (_error) {}
         closeClusterResolutionDropdown(false);
-        this._resetStatusClusterBrowse?.();
-        this._renderMapMarkers?.();
-        this._render?.();
+        this._setClusterResolutionProfile(nextProfile);
       });
 
       settingsDistanceUnitButtons.forEach((button) => {
@@ -2903,7 +2909,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         // Falls der echte 4-Sekunden-Cooldown noch läuft, passiert bewusst nichts.
         const beforeFlashAt = this._lastFlashAt;
         if (mode === 'danger') this._pulseDangerCount();
-        this._triggerWarningAnimation(mode);
+        this._triggerWarningAnimation(mode,{preview:true});
 
         // Nur wenn _triggerWarningAnimation() die Sequenz wirklich angenommen hat,
         // werden die Buttons sichtbar bis zum Ende derselben Sperrzeit deaktiviert.

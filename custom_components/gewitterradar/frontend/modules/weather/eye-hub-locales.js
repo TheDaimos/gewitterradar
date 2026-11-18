@@ -1,4 +1,4 @@
-import {QUICK_TRANSLATIONS} from './display-quick.js?v=411229r1';
+import {QUICK_TRANSLATIONS} from './display-quick.js?v=411230r1';
 // Consumed by the existing _t() resolver, with English as the technical fallback.
 const en={eyeAuraGap:'Eye–aura gap',auraRingGap:'Aura ring spacing',neonStudio:'Neon Studio',neonBrilliance:'Neon brilliance',neonBloom:'Bloom / halo strength',neonOrganics:'Organics / interweaving',backdropExtent:'Shading extent',restore177:'Restore V4.11.177 appearance',studioHint:'Optional additive light effects. At 0% the original V177 appearance is retained. Colour transfer is decorative and never changes function colours.',title:'Eye Bubble Hub',grouped:'Icon grouping',aura:'Show aura rings',size:'Eye size',iconSize:'Icon size',previous:'Previous icons',next:'Next icons',slots:'Slots',intensity:'Aura intensity',brightness:'Aura brightness',backdrop:'Eye contrast shading',reset:'Restore defaults',resetConfirm:'Restore the Eye configuration defaults? Existing icon positions and weather settings are retained.',closed:'Closed',open:'Open',wind:'Wind',synoptic:'Synoptic H/L & isobars',temperature:'Temperature',precipitation:'Precipitation',display:'WeatherRouter layers / Display',available:'Available main functions',empty:'Empty slot',clear:'Clear slot {slot}',choose:'Choose function for slot {slot}',color:'Aura colour',assigned:'Assigned to slot {slot}',blocked:'Slot {slot} is occupied. Clear its assignment first.',ok:'OK',cancel:'Cancel',apply:'Restore defaults',on:'Active',off:'Inactive',unavailable:'Currently unavailable',settings:'Settings',remove:'Remove last slot',add:'Add empty slot',hint:'Tap an empty socket or drag an icon into it. Assignments never change weather functions.',pink:'Neon pink',violet:'Neon violet',blue:'Neon blue',turquoise:'Neon turquoise',green:'Neon green',yellow:'Neon yellow',orange:'Neon orange',red:'Neon red',close:'Close',minimize:'Minimize / Maximize',preview:'Preview · Simulation',previewReset:'Use live status',glow:'Glow',static:'Static',living:'Living',tooSmall:'Open the configuration to assign functions.'};
 const de={eyeAuraGap:'Eye–Aura-Abstand',auraRingGap:'Aura-Ringabstand',neonStudio:'Neon-Studio',neonBrilliance:'Neon-Brillanz',neonBloom:'Bloom / Halo-Stärke',neonOrganics:'Organik / Verflechtung',backdropExtent:'Schattierungsumfang',restore177:'V4.11.177-Optik wiederherstellen',studioHint:'Optionale zusätzliche Lichteffekte. Bei 0 % bleibt die originale V177-Optik erhalten. Farbtransfer ist dekorativ und verändert keine Funktionsfarben.',title:'Eye-Bubble-Menü',grouped:'Icon-Gruppierung',aura:'Aura-Ringe anzeigen',size:'Eye-Größe',iconSize:'Icongröße',previous:'Vorherige Icons',next:'Weitere Icons',slots:'Slots',intensity:'Aura-Intensität',brightness:'Aura-Helligkeit',backdrop:'Kontrastschattierung hinter Eye',reset:'Standard wiederherstellen',resetConfirm:'Eye-Konfiguration auf Standard zurücksetzen? Iconpositionen und Wettereinstellungen bleiben erhalten.',closed:'Geschlossen',open:'Geöffnet',wind:'Wind',synoptic:'Synoptik H/T & Isobaren',temperature:'Temperatur',precipitation:'Niederschlag',display:'WeatherRouter-Layer / Darstellung',available:'Verfügbare Hauptfunktionen',empty:'Leere Fassung',clear:'Belegung von Slot {slot} entfernen',choose:'Funktion für Slot {slot} wählen',color:'Aura-Farbe',assigned:'Belegt in Slot {slot}',blocked:'Slot {slot} ist belegt. Bitte die Belegung zuerst über das Leeren-Symbol entfernen.',ok:'OK',cancel:'Abbrechen',apply:'Standard wiederherstellen',on:'Aktiv',off:'Inaktiv',unavailable:'Zurzeit nicht verfügbar',settings:'Einstellungen',remove:'Letzten Slot entfernen',add:'Leeren Slot hinzufügen',hint:'Leere Fassung antippen oder ein Icon hineinziehen. Die Zuordnung verändert keine Wetterfunktion.',pink:'Neon-Pink',violet:'Neon-Violett',blue:'Neon-Blau',turquoise:'Neon-Türkis',green:'Neon-Grün',yellow:'Neon-Gelb',orange:'Neon-Orange',red:'Neon-Rot',close:'Schließen',minimize:'Minimieren / Maximieren',preview:'Vorschau · Simulation',previewReset:'Live-Zustand übernehmen',glow:'Glow',static:'Feststehend',living:'Lebend',tooSmall:'Zum Belegen die Konfiguration öffnen.'};
@@ -1984,4 +1984,29 @@ const externalEye = {
   }
 };
 
-export const EYE_HUB_TRANSLATIONS=Object.freeze({English:en,Deutsch:de,...externalEye});
+const stormLabels={
+ English:['Thunderstorms','Show thunderstorms','Show aura','Cluster navigation','Storm effects'],
+ Deutsch:['Gewitter','Gewitterdarstellung anzeigen','Aura anzeigen','Cluster-Navigation','Unwetterdarstellung'],
+ Dansk:['Tordenvejr','Vis tordenvejr','Vis aura','Klyngenavigation','Tordenvejrseffekter'],
+ Español:['Tormentas','Mostrar tormentas','Mostrar aura','Navegación por grupos','Efectos de tormenta'],
+ Français:['Orages','Afficher les orages','Afficher l’aura','Navigation entre les groupes','Effets d’orage'],
+ Nederlands:['Onweer','Onweer tonen','Aura tonen','Clusternavigatie','Onweerseffecten'],
+ Polski:['Burze','Pokaż burze','Pokaż aurę','Nawigacja po klastrach','Efekty burzowe'],
+ Português:['Trovoadas','Mostrar trovoadas','Mostrar aura','Navegação por grupos','Efeitos de trovoada'],
+ Svenska:['Åska','Visa åska','Visa aura','Klusternavigering','Åskeffekter'],
+ Italiano:['Temporali','Mostra i temporali','Mostra l’aura','Navigazione tra i gruppi','Effetti dei temporali'],
+ 'Norsk bokmål':['Tordenvær','Vis tordenvær','Vis aura','Klyngenavigasjon','Tordenværseffekter'],
+ Suomi:['Ukkoset','Näytä ukkoset','Näytä aura','Ryhmissä siirtyminen','Ukkostehosteet'],
+ Čeština:['Bouřky','Zobrazit bouřky','Zobrazit auru','Navigace mezi shluky','Efekty bouřky'],
+ Ελληνικά:['Καταιγίδες','Εμφάνιση καταιγίδων','Εμφάνιση αύρας','Πλοήγηση στις ομάδες','Εφέ καταιγίδας'],
+ Magyar:['Zivatarok','Zivatarok megjelenítése','Aura megjelenítése','Navigálás a csoportok között','Zivatarhatások'],
+ Boarisch:['Gwitter','Gwitter ozoagn','Aura ozoagn','Cluster-Navigation','Unwetter-Effekt'],
+ Plattdüütsch:['Dunnerwedder','Dunnerwedder wiesen','Aura wiesen','Cluster-Navigatschoon','Dunnerwedder-Effekten'],
+ 'Sächs’sch':['Gewidder','Gewidder anzeischn','Aura anzeischn','Cluster-Navigation','Unwedder-Effegde'],
+ Schwäbisch:['Gwiddr','Gwiddr oizeiga','Aura oizeiga','Cluster-Navigation','Unweddereffekte']
+};
+const eyeLocales={English:en,Deutsch:de,...externalEye};
+export const EYE_HUB_TRANSLATIONS=Object.freeze(Object.fromEntries(Object.entries(eyeLocales).map(([language,copy])=>{
+ const [storm,stormVisible,bubbleAura,stormNavigation,stormEffects]=stormLabels[language];
+ return [language,{...copy,storm,stormVisible,bubbleAura,stormNavigation,stormEffects}];
+})));
