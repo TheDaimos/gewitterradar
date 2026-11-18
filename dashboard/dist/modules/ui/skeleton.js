@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411237r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411237r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411238r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411238r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -17,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.40",
+  "version": "1.1.41",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7813,91 +7813,139 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </div>
                 </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.10 · 2026/09</div>
-                  <h3>From monolith to modular Gewitterradar</h3>
+                  <h3>From monolith to modular Gewitterradar</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>In only a few months, Gewitterradar has grown enormously in functionality. V4.10 therefore makes a major change under the hood: the rapidly growing frontend was transformed from a monolith into a clearly structured modular architecture with independent functional building blocks. The former monolith was split into <strong>23 clearly separated modules</strong>. Each module has its own identity and version, allowing individual areas to be developed, tested and diagnosed much more precisely without having to touch large parts of the application for every change.</p>
                   <p><strong>Further interface and usability improvements:</strong> Compass and Medallion have evolved into independent instruments with their own selection, new designs and improved controls. Both can be positioned freely and resized in fullscreen mode. Settings and diagnostics have been structured more clearly, operation on desktop, iPad and Android has been further harmonized, and numerous details from tooltips to pop-ups and instrument controls have been refined. With the expanded compass selection plus 28 Medallion designs and 18 arrow variants, Gewitterradar can also be adapted much more closely to personal preferences.</p>
                   <p>V4.10 therefore changes more than Gewitterradar itself – it changes how Gewitterradar can be developed from now on.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.09 · 2026/09</div>
-                  <h3>Map views, fullscreen instruments & separate map window</h3>
+                  <h3>Map views, fullscreen instruments & separate map window</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>V4.09 adds the Standard, Large and Fullscreen map views with a per-device Default view, a separate storm-map window using the currently selected compass, movable fullscreen Compass and Medallion instruments with show/hide controls, a freely movable location pill with an adaptive menu for desktop, Android and iPad, the new 3D map-view selector with a responsive menu, and expanded Help &amp; Notes for map display, fullscreen controls and the separate map window.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.08 · 2026/09</div>
-                  <h3>Cluster resolution profiles & cluster navigation</h3>
+                  <h3>Cluster resolution profiles & cluster navigation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Cluster resolution was expanded with the profiles Early, Balanced, Late and Classic. The new cluster navigation provides a freely configurable session time with direct switching between the countdown and ∞ (Infinity) by clicking the status display. Classic, by contrast, uses the previous cluster display and resolution behavior from earlier versions. Help & Notes was updated consistently across all 19 supported languages.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.07 · 2026/09</div>
-                  <h3>Worldwide reference locations & saved places</h3>
+                  <h3>Worldwide reference locations & saved places</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Introduced worldwide place and postcode search with country grouping and ranking, a dedicated reference tracker, direct map focus, Blitzortung location-entity handoff, Local To-do saved places with reversible removal and recovery, duplicate-safe re-saving, network and firewall guidance, and refined location-menu behavior.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.06 · 2026/09</div>
-                  <h3>Unified product, help & premium refinement</h3>
+                  <h3>Unified product, help & premium refinement</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Unified the native integration and Dashboard delivery around one deterministic frontend, expanded About and Help to 15 languages plus 4 German dialect variants, added Recorder multi-device wildcard guidance and strengthened cross-device premium polish with real Android, iPad and iPad Pro acceptance.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.05 · 2026/09</div>
-                  <h3>Premium About Gewitterradar experience</h3>
+                  <h3>Premium About Gewitterradar experience</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Introduced the premium About Gewitterradar first-start onboarding and information experience, including the personal “Für Alkje” dedication and a Settings entry to reopen it, while preserving the proven lightning, radius, Recent/history and Home Assistant package behavior from V4.04.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.04 · 2026/09</div>
-                  <h3>HACS package staging</h3>
+                  <h3>HACS package staging</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>HACS now places the required Home Assistant helper package next to the installed card as app_gewitterradar_pkg.yaml. Users still copy or move that file manually to /config/packages/ because a HACS Dashboard repository cannot write outside its own www/community directory. Application logic and helper behavior remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.03 · 2026/09</div>
-                  <h3>HACS release asset priority fix</h3>
+                  <h3>HACS release asset priority fix</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Removed custom GitHub release assets from the HACS release so HACS falls through to the tagged dist tree and installs the card together with the complete assets directory. Application logic and helper behavior remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.02 · 2026/09</div>
-                  <h3>HACS packaging fix</h3>
+                  <h3>HACS packaging fix</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Corrected the HACS distribution so the card and all four external PNG assets are installed together. Card behavior, helper IDs, layouts and lightning-processing logic remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.01 · 2026/09</div>
-                  <h3>Asset optimization</h3>
+                  <h3>Asset optimization</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Conservatively right-sized and losslessly encoded the four external PNG assets for their actual interface render limits, retained generous HiDPI reserves, reduced the combined asset payload by about 61%, and refreshed asset cache keys without changing app behavior.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.00 · 2026/09</div>
-                  <h3>First stable release</h3>
+                  <h3>First stable release</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>First stable Gewitterradar release, consolidating live lightning visualization, three-zone storm assessment, responsive cross-device operation, 15 languages plus 4 German dialect variants, metric and imperial units, compass navigation, and 120-minute activity history into a hardened Home Assistant card.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.997 · 2026/08</div>
-                  <h3>Interface & usability refinement</h3>
+                  <h3>Interface & usability refinement</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Improved mobile layouts, responsive settings, radius controls, metric and imperial distance support, near-strike distance formatting, and direct radius editing from the map.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.996 · 2026/08</div>
-                  <h3>Release hardening</h3>
+                  <h3>Release hardening</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Removed obsolete diagnostic code while preserving iPad/WebKit safeguards, stable recent-activity updates, custom dropdown controls, and other regression-critical compatibility paths.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.994 · 2026/08</div>
-                  <h3>Stability, navigation & internationalization</h3>
+                  <h3>Stability, navigation & internationalization</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Stabilized cluster identity and browsing during live updates and zooming, refined individual-strike focus and compass behavior, added live data-source status, and expanded the interface toward the multilingual release line.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.993 · 2026/08</div>
-                  <h3>Pre-release feature consolidation</h3>
+                  <h3>Pre-release feature consolidation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Consolidated the three-radius model, aura and warning controls, 120-minute activity history, compass modes, reference-location selection, filtering, clustering, and responsive device layouts.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.98 · 2026/08</div>
-                  <h3>Core interface evolution</h3>
+                  <h3>Core interface evolution</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Established the mature Gewitterradar interface with live strike visualization, radius-based classification, recent activity, KPI panels, filters, clustering, and mobile/tablet adaptations.</p>
-                </article>
+                </div>
+                </details>
               </div>
               <div class="release-history-lang-panel" data-release-history-lang="de" hidden>
                 <!-- VERSIONSVERLAUF: Planung und frühere Versionen erhalten; keine einzelnen DEV-/TEST-Iterationen aufführen. -->
@@ -7941,91 +7989,139 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                   </div>
                 </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.10 · 2026/09</div>
-                  <h3>Vom Monolithen zum modularen Gewitterradar</h3>
+                  <h3>Vom Monolithen zum modularen Gewitterradar</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>In nur wenigen Monaten ist Gewitterradar funktional enorm gewachsen. V4.10 zieht daraus unter der Haube die Konsequenz: Aus dem schnell gewachsenen Frontend wurde eine klar gegliederte modulare Architektur mit eigenständigen Funktionsbausteinen. Der bisherige Monolith wurde dabei in <strong>23 klar abgegrenzte Module</strong> aufgeteilt. Jedes Modul besitzt eine eigene Identität und Versionierung und kann dadurch gezielter weiterentwickelt, geprüft und diagnostiziert werden. Änderungen an einzelnen Bereichen lassen sich so wesentlich sauberer durchführen, ohne für jede Anpassung große Teile der Anwendung gleichzeitig anfassen zu müssen.</p>
                   <p><strong>Weitere Verbesserungen an Oberfläche und Bedienung:</strong> Kompass und Medaillon wurden zu eigenständigen Instrumenten mit eigener Auswahl, neuen Designs und verbesserten Bedienmöglichkeiten. Beide lassen sich im Vollbild frei positionieren und in ihrer Größe anpassen. Einstellungen und Diagnosebereiche wurden übersichtlicher strukturiert, die Bedienung auf Desktop, iPad und Android weiter vereinheitlicht und zahlreiche kleinere Details – von Mouse-over-Texten über Pop-ups bis zu Instrumentsteuerungen – überarbeitet. Mit der erweiterten Kompassauswahl sowie 28 Medaillon-Designs und 18 Pfeilvarianten lässt sich Gewitterradar zudem stärker an den eigenen Geschmack anpassen.</p>
                   <p>V4.10 verändert damit nicht nur Gewitterradar – es verändert, wie Gewitterradar künftig weiterentwickelt werden kann.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.09 · 2026/09</div>
-                  <h3>Kartenansichten, Vollbild-Instrumente &amp; separates Kartenfenster</h3>
+                  <h3>Kartenansichten, Vollbild-Instrumente &amp; separates Kartenfenster</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>V4.09 ergänzt die Kartenansichten Standard, Groß und Vollbild mit gerätespezifischer Standardansicht, ein separates Gewitter-Kartenfenster mit dem aktuell ausgewählten Kompass, frei verschiebbare und ein-/ausblendbare Vollbild-Instrumente für Kompass und Medaillon, die frei bewegliche Standort-Pille mit adaptivem Standortmenü für Desktop, Android und iPad, den neuen 3D-Layer-Schalter mit responsivem Menü für die Kartenansicht sowie erweiterte Hilfe &amp; Hinweise zu Kartendarstellung, Vollbild-Bedienung und separatem Kartenfenster.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.08 · 2026/09</div>
-                  <h3>Cluster-Auflösungsprofile & Cluster-Navigation</h3>
+                  <h3>Cluster-Auflösungsprofile & Cluster-Navigation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die Cluster-Auflösung wurde um die Profile Früh, Ausgewogen, Spät und Klassisch erweitert. Die neue Cluster-Navigation besitzt eine frei wählbare Sitzungszeit mit direktem Wechsel zwischen Countdown und ∞ (Infinity) durch einen Klick in der Statusanzeige. Klassisch verwendet hingegen die bisherige Darstellung und Auflösung der Cluster aus früheren Versionen. Hilfe & Hinweise wurde einheitlich in allen 19 unterstützten Sprachen ergänzt.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.07 · 2026/09</div>
-                  <h3>Weltweite Referenzstandorte & gespeicherte Orte</h3>
+                  <h3>Weltweite Referenzstandorte & gespeicherte Orte</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Ergänzt wurden die weltweite Orts- und PLZ-Suche mit Ländergruppierung und Ranking, ein eigener Referenztracker, der direkte Kartenfokus, die Übergabe an Blitzortung über eine Standort-Entität, lokal gespeicherte Orte über Local To-do mit reversiblem Entfernen und Wiederherstellen, dublettensicheres erneutes Speichern, Netzwerk- und Firewall-Hinweise sowie ein verfeinertes Verhalten der Standortwahl.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.06 · 2026/09</div>
-                  <h3>Vereinheitlichung, Hilfe & Premium-Feinschliff</h3>
+                  <h3>Vereinheitlichung, Hilfe & Premium-Feinschliff</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Native Integration und Dashboard-Auslieferung wurden auf ein deterministisches Frontend vereinheitlicht. „Über Gewitterradar“ und „Hilfe & Hinweise“ wurden auf 15 Sprachen plus 4 deutsche Dialektvarianten erweitert, die Recorder-Hinweise für mehrere Geräte ergänzt und die Premium-Darstellung geräteübergreifend mit realen Android-, iPad- und iPad-Pro-Tests abgesichert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.05 · 2026/09</div>
-                  <h3>Premium-Erlebnis „Über Gewitterradar“</h3>
+                  <h3>Premium-Erlebnis „Über Gewitterradar“</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Einführung der hochwertigen „Über Gewitterradar“-Erststart- und Informationsansicht einschließlich der persönlichen Widmung „Für Alkje“ sowie eines Einstellungs-Eintrags zum erneuten Öffnen. Die bewährte Blitz-, Radien-, Verlauf-/Historien- und Home-Assistant-Paketlogik aus V4.04 blieb erhalten.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.04 · 2026/09</div>
-                  <h3>Bereitstellung des HACS-Pakets</h3>
+                  <h3>Bereitstellung des HACS-Pakets</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>HACS legt das benötigte Home-Assistant-Helferpaket nun neben der installierten Karte als app_gewitterradar_pkg.yaml ab. Da ein HACS-Dashboard-Repository nicht außerhalb seines eigenen www/community-Verzeichnisses schreiben darf, wird die Datei weiterhin manuell nach /config/packages/ kopiert oder verschoben. Anwendungslogik und Helferverhalten bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.03 · 2026/09</div>
-                  <h3>Korrektur der HACS-Release-Priorität</h3>
+                  <h3>Korrektur der HACS-Release-Priorität</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Eigene GitHub-Release-Artefakte wurden aus dem HACS-Release entfernt, damit HACS auf den markierten dist-Baum zurückfällt und die Karte zusammen mit dem vollständigen assets-Verzeichnis installiert. Anwendungslogik und Helferverhalten bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.02 · 2026/09</div>
-                  <h3>Korrektur der HACS-Paketierung</h3>
+                  <h3>Korrektur der HACS-Paketierung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die HACS-Auslieferung wurde korrigiert, sodass die Karte und alle vier externen PNG-Dateien gemeinsam installiert werden. Kartenverhalten, Helfer-IDs, Layouts und Blitzverarbeitung bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.01 · 2026/09</div>
-                  <h3>Optimierung der Bilddateien</h3>
+                  <h3>Optimierung der Bilddateien</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die vier externen PNG-Dateien wurden konservativ auf ihre tatsächlichen Darstellungsgrenzen abgestimmt und verlustfrei kodiert. Großzügige HiDPI-Reserven blieben erhalten, die gemeinsame Dateigröße sank um etwa 61 Prozent und die Cache-Kennungen wurden erneuert, ohne das Verhalten der Anwendung zu verändern.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.00 · 2026/09</div>
-                  <h3>Erste stabile Veröffentlichung</h3>
+                  <h3>Erste stabile Veröffentlichung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Erste stabile Gewitterradar-Version mit Live-Blitzdarstellung, dreistufiger Gewitterbewertung, geräteübergreifend anpassbarer Oberfläche, 15 Sprachen plus 4 deutschen Dialektvarianten, metrischen und imperialen Einheiten, Kompassnavigation und 120-Minuten-Aktivitätsverlauf.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.997 · 2026/08</div>
-                  <h3>Oberflächen- & Bedienungsfeinschliff</h3>
+                  <h3>Oberflächen- & Bedienungsfeinschliff</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Verbesserte Mobilansichten, anpassbare Einstellungen, Radiensteuerung, metrische und imperiale Entfernungsangaben, präzisere Anzeige sehr naher Blitze sowie direkte Bearbeitung der Radien aus der Karte.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.996 · 2026/08</div>
-                  <h3>Stabilisierung für die Veröffentlichung</h3>
+                  <h3>Stabilisierung für die Veröffentlichung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Veralteter Diagnosecode wurde entfernt, während iPad-/WebKit-Schutzmaßnahmen, stabile Aktualisierungen der jüngsten Aktivität, eigene Auswahlfelder und weitere regressionskritische Kompatibilitätspfade erhalten blieben.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.994 · 2026/08</div>
-                  <h3>Stabilität, Navigation & Internationalisierung</h3>
+                  <h3>Stabilität, Navigation & Internationalisierung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Cluster-Identität und Navigation bei Live-Aktualisierungen und Zoom wurden stabilisiert, der Fokus auf einzelne Blitze und das Kompassverhalten verfeinert, der Status der Live-Datenquelle ergänzt und die Oberfläche in Richtung der mehrsprachigen Veröffentlichung ausgebaut.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.993 · 2026/08</div>
-                  <h3>Bündelung der Vorab-Funktionen</h3>
+                  <h3>Bündelung der Vorab-Funktionen</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Zusammenführung des Drei-Radien-Modells, der Aura- und Warnsteuerung, des 120-Minuten-Aktivitätsverlaufs, der Kompassmodi, der Referenzstandortwahl, Filterung, Gruppierung und anpassbaren Geräteansichten.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.98 · 2026/08</div>
-                  <h3>Weiterentwicklung der Kernoberfläche</h3>
+                  <h3>Weiterentwicklung der Kernoberfläche</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Aufbau der ausgereiften Gewitterradar-Oberfläche mit Live-Blitzdarstellung, radienbasierter Klassifizierung, jüngster Aktivität, Kennzahlenfeldern, Filtern, Gruppierung sowie Mobil- und Tablet-Anpassungen.</p>
-                </article>
+                </div>
+                </details>
               </div>
             </div>
           </section>
