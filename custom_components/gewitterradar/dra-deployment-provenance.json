@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.232",
-  "build": "V4.11.232-DEV-2026-11-18",
-  "runtimeRevision": "411232r1",
-  "moduleSetId": "E411-232A1",
-  "baselineFeatureHead": "acc0cfd366c72b982d64a98faa4bc28a232b4ccf",
+  "productVersion": "4.11.233",
+  "build": "V4.11.233-DEV-2026-11-18",
+  "runtimeRevision": "411233r1",
+  "moduleSetId": "E411-233A1",
+  "baselineFeatureHead": "73d67444ed2f5ecbd4389405288e2ae93d10de69",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Eye menu Settings for individual slot auras and the original round thunderstorm close icon.",
+    "purpose": "WeatherRouter icon motif diameter calibration in Eye preview and map controls.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

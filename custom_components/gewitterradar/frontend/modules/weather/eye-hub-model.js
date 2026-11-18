@@ -80,7 +80,16 @@ export function eyePagerPosition(bounds,obstacles){
  return null;
 }
 
-export const EYE_ICON_METRICS=Object.freeze({wind:{box:47*272/256,source:272,motif:256},temperature:{box:47*272/256,source:272,motif:256},precipitation:{box:47*1254/977,source:1254,motif:977},'weather-display':{box:47*1254/1145,source:1254,motif:1145}});
+// Measure the motif across the alpha mask (alpha >= 32), excluding faint pixels outside the rim.
+export const EYE_ICON_METRICS=Object.freeze({
+ wind:{box:47*272/256,source:272,motif:256},
+ temperature:{box:47*272/256,source:272,motif:256},
+ precipitation:{box:47*1254/977,source:1254,motif:977},
+ 'weather-display':{box:47*1254/1145,source:1254,motif:1145},
+ synoptic:{box:47*1254/1214,source:1254,motif:1214},
+ clouds:{box:47*1254/1161,source:1254,motif:1161},
+ storm:{box:47*1254/1155,source:1254,motif:1155},
+});
 export const eyeIconBox=(id,percent=100)=>(EYE_ICON_METRICS[id]?.box||50)*percent/100;
 export const eyeIconTarget=percent=>Math.max(50,50*percent/100);
 
