@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.233",
-  "build": "V4.11.233-DEV-2026-11-18",
-  "runtimeRevision": "411233r1",
-  "moduleSetId": "E411-233A1",
-  "baselineFeatureHead": "73d67444ed2f5ecbd4389405288e2ae93d10de69",
+  "productVersion": "4.11.234",
+  "build": "V4.11.234-DEV-2026-11-18",
+  "runtimeRevision": "411234r1",
+  "moduleSetId": "E411-234A1",
+  "baselineFeatureHead": "c7246f4cc25d9d3d7be7a3f4f91e3009dee57191",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "WeatherRouter icon motif diameter calibration in Eye preview and map controls.",
+    "purpose": "P2 editorial Eye Hub / Eye Control / weather-icon terminology; feature freeze and WeatherRouter data paths unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

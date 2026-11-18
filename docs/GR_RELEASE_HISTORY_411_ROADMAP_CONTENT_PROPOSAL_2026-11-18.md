@@ -25,7 +25,7 @@ Version 4.11 stellt einen der größten Entwicklungsschritte von GewitterRadar d
 
 **Neue Wetterebenen und Analysen:** In der Karte kamen Niederschlagsinformationen unter anderem von DWD und OPERA, eine optionale NASA-Satellitenergänzung, unterschiedliche Windvisualisierungen einschließlich animierter Strömungen, Temperaturfelder, Wolken, Hoch- und Tiefdruckgebiete, Isobaren und meteorologische Wetterfronten hinzu. Die Wetterebenen sind individuell steuerbar; verfügbare Daten sollen unabhängig und schrittweise eingeblendet werden.
 
-**Eye – eine zentrale Steuerung für viele Funktionen:** Der Eye-Bubble-Hub führt Wetterebenen in frei belegbaren Hi-Res-Symbolen zusammen. Individuelle Auren, Neon-Effekte, eigene Premiummenüs, Long-Press-Bedienung und die neue separat schaltbare Gewitterdarstellung erweitern die Kartensteuerung. Die Basisversion zeigt Gewitter weiterhin dauerhaft an.
+**Eye Hub – eine zentrale Steuerung für viele Funktionen:** Der Eye Hub führt Wetterebenen in frei belegbaren Hi-Res-Wetter-Icons zusammen. Eye Control verwaltet Slots, Gruppierung und Auren. Neon-Effekte, eigene Premiummenüs, Long-Press-Bedienung und die neue separat schaltbare Gewitterdarstellung erweitern die Kartensteuerung. Die Basisversion zeigt Gewitter weiterhin dauerhaft an.
 
 **Personalisierung und Geräteprofile:** Mit Settings Vault, Benutzer- und Geräteprofilen sowie gespeicherten Eye-Positionen, Slot-Belegungen, Farben und Darstellungsoptionen kann die Wetterkarte individuell eingerichtet und nach einem Neustart wiederhergestellt werden. Gleichzeitig wurden Android-, iPad- und Desktopbedienung, Diagnosen, Hilfen und alle 19 Sprachvarianten weiterentwickelt.
 

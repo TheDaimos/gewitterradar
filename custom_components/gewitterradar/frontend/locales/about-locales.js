@@ -14490,7 +14490,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
     },
     "topics": {
       "eye": [
-        "Eye-Menü und Icon-Bedienung",
+        "Eye Hub und Wetter-Icons",
         [
           [
             "eye",
@@ -14503,7 +14503,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
           ],
           [
             "display",
-            "Über des Darstellungs-Icon stellst d Deckkraft für jede Ebene ei. Im Eye-Menü kannst außerdem neue Slots dazua doa und belegen."
+            "Über des Darstellungs-Icon stellst d Deckkraft für jede Ebene ei. In Eye Control kannst außerdem neue Slots dazua doa und belegen."
           ],
           "Schalt d Gruppierung aus, dann stehn de Icons einzeln do. A Tipp aufs Eye macht in dem Modus d Einstellungen auf.",
           "Tipp auf an freien Slot oder ziag a verfügbares Symbol hinein. Bis zu acht Slots san möglich.",
@@ -14649,7 +14649,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
     },
     "topics": {
       "eye": [
-        "Eye-Menü un de Symbole bedenen",
+        "Eye Hub un Wetter-Icons bedenen",
         [
           [
             "eye",
@@ -14662,7 +14662,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
           ],
           [
             "display",
-            "Mit dat Wies-Symbol stellst du de Deckkraft vun elke Lage in. In’t Eye-Menü kannst du ok Plätz dortodoen un beleggen."
+            "Mit dat Wies-Symbol stellst du de Deckkraft vun elke Lage in. In Eye Control kannst du ok Plätz dortodoen un beleggen."
           ],
           "Maak dat Gruppéren ut, wenn du de Symbole enkel sehn wullt. Denn maakt en Tipp op Eye de Instellen op.",
           "Tipp op en free Platz oder treck en Symbol dor rin. Acht Plätz sünd mööglich.",
@@ -14808,7 +14808,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
     },
     "topics": {
       "eye": [
-        "Eye-Menü un Symbole bedien’n",
+        "Eye Hub un Wetter-Icons bedien’n",
         [
           [
             "eye",
@@ -14821,7 +14821,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
           ],
           [
             "display",
-            "Mitm Darstellungs-Symbol stellste de Deckkraft je Ebene ein. Im Eye-Menü kannste außerdem Plätze dazunehm’ un belegen."
+            "Mitm Darstellungs-Symbol stellste de Deckkraft je Ebene ein. In Eye Control kannste außerdem Plätze dazunehm’ un belegen."
           ],
           "Mach de Gruppierung aus, wenn de de Symbole einzeln sehn willst. Dann öffnet ä Dipp aufs Eye de Einstellung’n.",
           "Dipp uff en freien Platz oder zieh ä verfügbares Symbol rein. Bis zu acht Plätze sinn möglich.",
@@ -14967,7 +14967,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
     },
     "topics": {
       "eye": [
-        "Eye-Menü ond Symbole bediena",
+        "Eye Hub ond Wetter-Icons bediena",
         [
           [
             "eye",
@@ -14980,7 +14980,7 @@ export const WEATHER_EXTERNAL_LOCALES = {
           ],
           [
             "display",
-            "Mit em Darstellungs-Symbol stellsch d Deckkraft von jeder Ebene ei. Im Eye-Menü kasch au Plätze dazudoa ond belega."
+            "Mit em Darstellungs-Symbol stellsch d Deckkraft von jeder Ebene ei. In Eye Control kasch au Plätze dazudoa ond belega."
           ],
           "Schalt d Gruppierung aus, dann siehsch d Symbole einzeln. In dem Modus macht a Tipp aufs Eye d Eistellunga auf.",
           "Tipp auf en freie Platz oder zieh a verfügbares Symbol nei. Es gibt bis zu acht Plätze.",

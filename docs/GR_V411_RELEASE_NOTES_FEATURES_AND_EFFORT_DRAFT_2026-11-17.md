@@ -53,9 +53,9 @@ Mit Version 4.11 wurde GewitterRadar von einer Blitz- und Niederschlagskarte zu 
 - **Synoptik-Premium-Menü:** Symbole, Linien, Neon-Effekte, Farbpaletten und getrennte Transparenzen sind individuell steuerbar.
 - **Eigener Eye-Slot:** Synoptik ist als zusätzliche Kartenfunktion erreichbar, ohne die bisherigen Schnellzugriffe zu ersetzen.
 
-## 6. Eye-Bubble-Hub & Premium-Bedienung
+## 6. Eye Hub & Premium-Bedienung
 
-- **Neuer Eye-Bubble-Hub:** Wetterfunktionen sind über eine zentrale, erweiterbare Eye-Steuerung erreichbar.
+- **Neuer Eye Hub:** Wetterfunktionen sind über zentrale, frei konfigurierbare Wetter-Icons erreichbar. **Eye Control** verwaltet Slots, Gruppierung und Auren.
 - **Bis zu acht sichtbare Funktionsplätze:** Die Belegung ist für weitere Slots vorbereitet und lässt sich auf Mobilgeräten auch ohne präzises Ziehen konfigurieren.
 - **Gruppiert oder einzeln:** Funktionssymbole können um das zentrale Eye angeordnet oder unabhängig auf der Karte platziert werden.
 - **Neon-Auren und Fusion:** Farbliche Lichtkränze und optionale Verbindungseffekte geben dem Hub seine charakteristische Premium-Optik.

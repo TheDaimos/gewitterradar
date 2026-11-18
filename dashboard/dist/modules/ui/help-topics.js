@@ -12,11 +12,11 @@ const icons = {
 };
 
 const de = {
- eye:['Eye-Menü & Icon-Bedienung',
+ eye:['Eye Hub & Wetter-Icons',
   [['eye','Tippen Sie auf das Eye-Icon, um die gruppierten Funktionsicons einzublenden.'],
    'Halten Sie das Eye-Icon länger gedrückt (Long-Press), um die Einstellungen für Position, Icon-Gruppierung, Aura-Ringe, Farben und Slot-Belegung zu öffnen. Diese Bedienung gehört zu GewitterRadar Standard.',
    ['precipitation','Halten Sie ein Funktionsicon wie das Niederschlags-Icon länger gedrückt, um seine Einstellungen zu öffnen. Mit verbundenem WeatherRouter schalten Sie die Wetterebenen über ihre zugewiesenen Funktionsicons ein und aus.'],
-   ['display','Über das Darstellungs-Icon stellen Sie die Deckkraft einzelner Wetterebenen ein. Im Eye-Kontextmenü können Sie die Darstellung anpassen und zusätzliche Slots hinzufügen und belegen.'],
+   ['display','Über das Darstellungs-Icon stellen Sie die Deckkraft einzelner Wetterebenen ein. In Eye Control können Sie die Darstellung anpassen und zusätzliche Slots hinzufügen und belegen.'],
    'Die Icon-Gruppierung hält die Karte übersichtlich. Bei deaktivierter Gruppierung erscheinen die zugewiesenen Funktionsicons einzeln. Ein Tipp auf das Eye-Icon öffnet dann die Eye-Einstellungen.',
    'Tippen Sie auf einen freien Slot oder ziehen Sie ein verfügbares Funktionsicon hinein. Die Benutzeroberfläche unterstützt bis zu acht Slots.',
    'Ein farbiger Statusring kennzeichnet eine aktive verfügbare Funktion. In den Glow-Einstellungen wählen Sie animierte Aura-Ringe, feststehende Statusringe oder deaktivieren die visuellen Effekte.']],
@@ -65,7 +65,7 @@ const de = {
 };
 
 const en = {
- eye:['Eye menu & icon controls',[
+ eye:['Eye Hub & weather icons',[
   ['eye','Tap the Eye icon to reveal the grouped shortcuts. Hold it to configure position, grouping, aura rings, colours and slots. These controls are part of GewitterRadar Standard.'],
   ['precipitation','Hold a weather icon such as Precipitation to open its settings. With WeatherRouter connected, tap an assigned weather icon to toggle its layer.'],
   ['display','Use the Display icon to adjust the opacity of individual weather layers.'],
