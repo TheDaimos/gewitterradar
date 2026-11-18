@@ -378,6 +378,12 @@
     "protected": true
   },
   {
+    "file": "assets/gr-storm-premium-original.png",
+    "sha256": "bb8f4f65e18ca0febbe015f4790c35a314bef1e52d6cee7b5824c518c2452b89",
+    "sizeBytes": 2114584,
+    "protected": true
+  },
+  {
     "file": "assets/gr-synoptic-high-low-isobars-premium-original.png",
     "sha256": "ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437",
     "protected": true
@@ -451,12 +457,6 @@
     "sha256": "3055af4389ddd4bfd98648ea18b302055cb297b1825f5f4459512b12d64cfbc9",
     "protected": true,
     "referenced": false
-  },
-  {
-    "file": "assets/gr-storm-premium-original.png",
-    "sha256": "bb8f4f65e18ca0febbe015f4790c35a314bef1e52d6cee7b5824c518c2452b89",
-    "sizeBytes": 2114584,
-    "protected": true
   },
   {
     "file": "assets/weather-router-emblem-v004-256.png",
