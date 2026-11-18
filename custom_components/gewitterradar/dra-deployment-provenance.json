@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.234",
-  "build": "V4.11.234-DEV-2026-11-18",
-  "runtimeRevision": "411234r1",
-  "moduleSetId": "E411-234A1",
-  "baselineFeatureHead": "c7246f4cc25d9d3d7be7a3f4f91e3009dee57191",
+  "productVersion": "4.11.235",
+  "build": "V4.11.235-DEV-2026-11-18",
+  "runtimeRevision": "411235r1",
+  "moduleSetId": "E411-235A1",
+  "baselineFeatureHead": "70a91fb599a1ebcdb65cbe41fd067c103f12c9d3",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "P2 editorial Eye Hub / Eye Control / weather-icon terminology; feature freeze and WeatherRouter data paths unchanged.",
+    "purpose": "Menu navigation, existing diagnostics separation and Premium UI alignment; WeatherRouter data paths unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

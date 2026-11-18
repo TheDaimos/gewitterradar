@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411234r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411235r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "diagnostics.cockpit",
-  "version": "1.5.27",
+  "version": "1.5.28",
   "group": "Diagnose",
   "function": "Diagnose & Kalibrierung",
   "subfunctions": [

@@ -1,8 +1,8 @@
 import {mountVaultSetup} from './settings-vault-setup.js?v=411224r1';
 import {
   acquireSettingsSlot, releaseSettingsSlot, requestId, SettingsVaultClient,
-} from '../core/settings-vault.js?v=411234r1';
-import {APPLICATION_RELEASE} from '../../version.js?v=411234r1';
+} from '../core/settings-vault.js?v=411235r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=411235r1';
 
 const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
 const ERRORS = {
