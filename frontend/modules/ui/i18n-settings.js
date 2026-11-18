@@ -1,11 +1,11 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411223r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411230r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411230r1';
-import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411226r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411231r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411231r1';
+import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.42",
+  "version": "1.3.43",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2712,10 +2712,11 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if (!this._languageOnboardingComplete()) { this._openLanguageOnboarding(); return; }
       if (deps.languageOnboardingOwner?._languageOnboardingSubmitting) return;
       this._closeLanguageOnboarding(true);
-      if (deps.aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;
+      this._proWelcomeStartupChecked = true;
+      if (deps.aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) { this._maybeShowProWelcome(); return; }
       let seen = 0;
       try { seen = Number(settingsStorage(this).getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
-      if (seen >= ABOUT_ONBOARDING_VERSION) return;
+      if (seen >= ABOUT_ONBOARDING_VERSION) { this._maybeShowProWelcome(); return; }
       this._openAbout();
     },
 
@@ -3194,6 +3195,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncAbout();
       dialog.showModal();
       deps.aboutClaimedVersion = ABOUT_ONBOARDING_VERSION;
+      if (!fromSettings) deps.aboutOnboardingOwner = this;
       const aboutClose = dialog.querySelector('[data-about-close]');
       const touchTablet = fromSettings && navigator.maxTouchPoints > 0 && Math.min(window.innerWidth, window.innerHeight) >= 700;
       dialog.classList.toggle('about-touch-tablet', touchTablet);
@@ -3287,9 +3289,11 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._aboutDialog.close();
       this._aboutDialog.parentElement.remove();
       this._aboutDialog = null;
+      if (deps.aboutOnboardingOwner === this) deps.aboutOnboardingOwner = null;
       const focus = this._aboutReturnFocus || this.shadow?.getElementById('settings-open');
       this._aboutReturnFocus = null;
       if (restoreFocus && focus?.isConnected) focus.focus({preventScroll:true});
+      if (restoreFocus) this._maybeShowProWelcome();
     },
 
     async _copyRecorderYaml(dialog, buttonSelector, statusSelector, strings) {

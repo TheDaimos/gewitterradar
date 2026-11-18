@@ -1,4 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411231r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411231r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -15,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.33",
+  "version": "1.1.34",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -36,28 +38,38 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       if (!title || !this.isConnected || typeof connection?.sendMessagePromise !== 'function'
           || typeof connection.addEventListener !== 'function') return;
 
-      const state = {connection, title, check:null, timer:null};
+      const state = {connection, title, check:null, timer:null, installation:'unknown'};
       this.__proBranding = state;
       const showStandard = () => {title.classList.remove('is-pro');delete title.dataset.proConnection;};
+      const setInstallation = status => {
+        state.installation = status;
+        if (status === 'absent') this._maybeShowProWelcome();
+        else this._proWelcomeDialog?.close();
+      };
       state.clear = () => {
         clearTimeout(state.timer);
         clearTimeout(state.check?.timer);
         state.check = null;
         showStandard();
+        setInstallation('unknown');
       };
       state.refresh = async () => {
         if (!connection.connected || state.check) return;
         const check = {expired:false};
+        const coreWasRunning = this._hass?.config?.state === 'RUNNING';
         state.check = check;
         check.timer = setTimeout(() => {
           check.expired = true;
           showStandard();
+          setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
         }, PRO_DISCOVERY_TIMEOUT);
         const current = () => this.__proBranding === state && state.check === check && connection.connected;
         try {
           // This command runs in the authenticated HA server of this card.
           const reply = await connection.sendMessagePromise({type:'weather_router/consumer/discovery'});
           if (!current() || check.expired) return;
+          if (reply?.schema === 'weather_router.consumer.discovery.v1') state.detectedInstallation = true;
+          setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
           if (!confirmsLocalWeatherRouter(reply)) {
             showStandard();
             return;
@@ -77,8 +89,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             this._bindProjectHubMainTitle?.();
           }
           title.classList.add('is-pro');
-        } catch {
-          if (current()&&!check.confirmed)showStandard();
+        } catch (error) {
+          if (current() && !check.confirmed) {
+            showStandard();
+            // Only Home Assistant's explicit missing command establishes absence.
+            const missing = !check.expired && error?.code === 'unknown_command'
+              && coreWasRunning && this._hass?.config?.state === 'RUNNING';
+            setInstallation(state.detectedInstallation ? 'installed' : missing ? 'absent' : 'unknown');
+          }
         } finally {
           clearTimeout(check.timer);
           if (current()) {
@@ -104,6 +122,26 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       state.connection.removeEventListener('disconnected', state.clear);
       state.connection.removeEventListener('ready', state.ready);
       state.image?.remove();
+    },
+
+    _maybeShowProWelcome() {
+      const branding = this.__proBranding;
+      if (deps.proWelcomeShown || this._mapWindowMode || !this._proWelcomeStartupChecked || !this.isConnected || !this._mapReady
+          || branding?.installation !== 'absent' || !branding.connection.connected
+          || this._hass?.config?.state !== 'RUNNING' || !this._languageOnboardingComplete()
+          || deps.aboutOnboardingOwner?._aboutDialog?.open
+          || this.shadow.querySelector('dialog[open], #settings-backdrop.open, #eye-hub-bubbles:not([hidden])')) return;
+      let storage;
+      try {
+        storage = settingsStorage(this);
+        if (storage.getItem(PRO_WELCOME_DISMISSED) === '1') return;
+      } catch (_) { return; }
+      const vault = this._settingsVault;
+      const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(PRO_WELCOME_DISMISSED));
+      this._proWelcomeDialog = openProWelcome(this, {
+        wordmark: PRO_WORDMARK, hero: ABOUT_HERO_IMAGE, close: ABOUT_CLOSE_IMAGE, layers: MAP_LAYER_SYMBOL_STACK3D_IMAGE,
+      }, storage, writable);
+      deps.proWelcomeShown = true;
     },
 
     _buildSkeleton() {
@@ -6082,6 +6120,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* V4.06 accepted UI polish: premium frame and symmetric action tiles. */
           /* V4.06 pass2: Welcome-derived 2px metal frame, reduced diffuse gold shadow. */
           .settings-dialog,
+          .gr-pro-welcome.gr-premium-metal-surface,.gr-pro-feature.gr-premium-metal-surface,
           .weather-legend-overlay.gr-premium-metal-surface,
           .weather-display-panel.gr-premium-metal-surface,
           .weather-wind-panel.gr-premium-metal-surface,

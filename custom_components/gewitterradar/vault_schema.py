@@ -294,6 +294,7 @@ SCALAR_SETTINGS = {
     "gr-horizontal-navigation-speed": choice("Schnell", "Mittel", "Langsam", "Ohne Animation"),
     "gewitterradar-last-compass-design": choice("1", "2", "3", "4", "5", "6"),
     "gewitterradar-about-onboarding-version": numeric_string(0, 1000000),
+    "gewitterradar-pro-welcome-dismissed": BIT,
     MAP + "map-display-mode": MAP_MODE,
     MAP + "last-map-display-mode": MAP_MODE,
     MAP + "startup-map-display": lambda v: v == "last" or MAP_MODE(v),
