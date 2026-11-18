@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411238r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411238r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411239r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411239r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -17,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.41",
+  "version": "1.1.42",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -436,6 +436,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             animation:settingsBackdropIn .18s ease-out both;
           }
           .release-history-dialog {
+            display:flex;
+            flex-direction:column;
             width:min(590px,100%);
             max-height:min(760px,calc(100dvh - 20px));
             overflow:hidden;
@@ -518,7 +520,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           @media(hover:hover) and (pointer:fine){.release-history-close:hover{background:transparent!important}.release-history-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
           @media(hover:none) and (pointer:coarse){.release-history-close:focus-visible{outline:none!important}}
           .release-history-body {
-            max-height:calc(min(760px,100dvh - 20px) - 60px);
+            flex:1 1 auto;
+            min-height:0;
             overflow-y:auto;
             -webkit-overflow-scrolling:touch;
             padding:11px 13px 14px;

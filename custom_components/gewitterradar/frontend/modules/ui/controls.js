@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411238r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411239r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -18,7 +18,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.58",
+  "version": "1.1.59",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -1759,6 +1759,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         syncReleaseHistoryLanguage();
         releaseHistoryBackdrop?.classList.add('open');
         releaseHistoryBackdrop?.setAttribute('aria-hidden','false');
+        // Always show the newest entry first. Mobile WebViews preserve an old
+        // scroll offset when the modal is hidden and opened again.
+        const historyBody = releaseHistoryDialog?.querySelector('.release-history-body');
+        if (historyBody) historyBody.scrollTop = 0;
         releaseHistoryClose?.focus?.({ preventScroll:true });
       };
       const closeReleaseHistory = (restoreFocus = true) => {
