@@ -23,6 +23,7 @@ assert(entry.includes('const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.ru
 assert(!entry.includes('GEWITTERRADAR_FEATURE_CACHE'));
 for(const p of ['frontend/gewitterradar.js','frontend/module-manifest.js','frontend/panel.js'])assert((await read(p)).includes('version.js?v='+release.runtimeRevision),'Stale release import '+p);
 assert((await read('custom_components/gewitterradar/build_info.py')).includes('BUILD_VERSION = "'+release.version+'"'));
+assert((await read('custom_components/gewitterradar/const.py')).includes('SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v='+release.runtimeRevision+'"'),'Stale sidebar panel module URL');
 assert.equal(JSON.parse(await read('custom_components/gewitterradar/manifest.json')).version,release.integrationVersion);
 const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
 for(const k of ['build','runtimeRevision','moduleSetId'])assert.equal(provenance[k],release[k]);
