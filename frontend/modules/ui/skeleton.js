@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411236r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411236r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411237r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411237r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -17,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.39",
+  "version": "1.1.40",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -550,6 +550,19 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-size:10.5px;
             line-height:1.48;
           }
+          .release-history-collapsible summary {
+            display:grid;
+            grid-template-columns:minmax(0,1fr) 18px;
+            align-items:center;
+            gap:10px;
+            list-style:none;
+            cursor:pointer;
+          }
+          .release-history-collapsible summary::-webkit-details-marker { display:none; }
+          .release-history-collapsible summary:focus-visible { outline:2px solid #e7c16e; outline-offset:3px; border-radius:5px; }
+          .release-history-collapsible[open] .release-history-future-chevron { transform:rotate(225deg); margin-top:5px; }
+          .release-history-collapsible-content { padding-top:9px; }
+          .release-history-collapsible-content p + p { margin-top:8px; }
           .release-history-plan-list {
             margin:4px 0 0;
             padding-left:17px;
@@ -7759,7 +7772,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             </div>
             <div class="release-history-body">
               <div class="release-history-lang-panel" data-release-history-lang="en">
-                <!-- PERMANENT RELEASE-HISTORY CONTRACT: keep this planning panel for the NEXT PUBLIC version. Release articles below are reserved for PUBLIC releases only; never add DEV/TEST iteration entries. -->
+                <!-- RELEASE-HISTORY CONTRACT: preserve the planning panel and previous version entries; never list individual DEV/TEST iterations. -->
                 <details class="release-history-future" open>
                   <summary>
                     <div class="release-history-future-heading">
@@ -7785,6 +7798,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Introduce MapLibre as an additional map engine with shared weather layers and controls.</li>
                       <li>Extend lightning event logs and configurable alerts for monitored locations.</li>
                     </ul>
+                  </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.11 · 2026/11</div><h3>GewitterRadar PRO – From thunderstorm radar to weather platform</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
+                  <p>Version 4.11 marks one of the largest development steps in GewitterRadar's history. The original lightning and thunderstorm visualization remains the heart of the standalone base version. With the optional WeatherRouter extension, GewitterRadar becomes <strong>GewitterRadar PRO</strong> – a modular, customizable weather platform.</p>
+                  <p><strong>WeatherRouter – one intelligent gateway for weather data:</strong> WeatherRouter was born from the need to bring different weather services together in a central, independently operating router. It evaluates provider availability, geographical coverage, freshness and suitability, then supplies weather information through shared interfaces. GewitterRadar concentrates on presenting the results.</p>
+                  <p><strong>New weather layers and analysis:</strong> DWD and OPERA precipitation radar, optional NASA satellite estimates, wind arrows and animated flows, temperature and cloud layers, high- and low-pressure systems, isobars and weather fronts. Available layers can appear progressively and are controlled individually.</p>
+                  <p><strong>Eye Hub and Eye Control:</strong> The central Eye Hub combines freely assignable high-resolution weather icons. Eye Control manages icon slots, grouping, optional individual Auras and appearance. Premium long-press settings allow finer adjustments. In PRO, thunderstorm visuals can also be hidden without stopping monitoring, alerts or history; the base version keeps storms visible.</p>
+                  <p><strong>Personalization and accessibility:</strong> Settings Vault, user and device profiles, persistent positions, icon layouts, colours and weather preferences, alongside improvements for desktop, iPad and Android. Help, diagnostics and all 19 language variants have been expanded. A dedicated welcome dialog introduces the optional PRO features when WeatherRouter is not installed.</p>
+                  <p><strong>Development effort:</strong> More than seven weeks of intensive work across GewitterRadar and WeatherRouter, numerous DEV iterations, performance tuning, real-device feedback and repeated corrections laid the foundation for future weather and environmental modules.</p>
                   </div>
                 </details>
 
@@ -7875,7 +7900,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </article>
               </div>
               <div class="release-history-lang-panel" data-release-history-lang="de" hidden>
-                <!-- PERMANENTER RELEASE-HISTORY-VERTRAG: Dieses Planungsfeld beschreibt die NÄCHSTE ÖFFENTLICHE Version. Darunter ausschließlich veröffentlichte Releases; keine DEV/TEST-Iterationseinträge. -->
+                <!-- VERSIONSVERLAUF: Planung und frühere Versionen erhalten; keine einzelnen DEV-/TEST-Iterationen aufführen. -->
                 <details class="release-history-future" open>
                   <summary>
                     <div class="release-history-future-heading">
@@ -7901,6 +7926,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>MapLibre als zusätzliche Kartenengine mit gemeinsam nutzbaren Wetterebenen und Bedienelementen.</li>
                       <li>Erweiterte Blitzprotokollierung und konfigurierbare Alarmierung für überwachte Standorte.</li>
                     </ul>
+                  </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.11 · 2026/11</div><h3>GewitterRadar PRO – Vom Gewitterradar zur Wetterplattform</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
+                  <p>Version 4.11 ist einer der größten Entwicklungsschritte von GewitterRadar. Die ursprüngliche Visualisierung von Blitzen und Gewittern bleibt das Herzstück der eigenständig nutzbaren Basisversion. Mit der optionalen Erweiterung WeatherRouter entsteht <strong>GewitterRadar PRO</strong> – eine modulare und individuell konfigurierbare Wetterplattform.</p>
+                  <p><strong>WeatherRouter – Wetterinformationen intelligent bündeln:</strong> WeatherRouter entstand aus dem Bedarf, unterschiedliche Wetterdienste über einen zentralen, eigenständig arbeitenden Router bereitzustellen. Er bewertet die Verfügbarkeit, räumliche Abdeckung, Aktualität und Eignung der Quellen und liefert die Informationen über gemeinsame Schnittstellen. GewitterRadar konzentriert sich auf ihre Darstellung.</p>
+                  <p><strong>Neue Wetterebenen und Analysen:</strong> Niederschlagsradar von DWD und OPERA, optionale NASA-Satellitenschätzungen, Windpfeile und animierte Strömungen, Temperatur- und Wolkenebenen sowie Hoch- und Tiefdruckgebiete, Isobaren und Wetterfronten. Verfügbare Ebenen können schrittweise erscheinen und einzeln gesteuert werden.</p>
+                  <p><strong>Eye Hub und Eye Control:</strong> Der zentrale Eye Hub vereint frei belegbare hochauflösende Wetter-Icons. Eye Control verwaltet Slots, Gruppierung, einzeln schaltbare Auren und die Darstellung. Hochwertige Long-Press-Menüs ermöglichen detaillierte Einstellungen. In PRO lassen sich Gewitter auf der Karte ausblenden, während Überwachung, Warnlogik und Historie weiterlaufen; in der Basisversion bleiben sie sichtbar.</p>
+                  <p><strong>Personalisierung und Bedienkomfort:</strong> Settings Vault, Benutzer- und Geräteprofile, dauerhaft gespeicherte Positionen, Icon-Belegungen, Farben und Wetterpräferenzen. Dazu kommen Verbesserungen für Desktop, iPad und Android sowie erweiterte Hilfen, Diagnosen und alle 19 Sprachvarianten. Ein eigener Begrüßungsdialog stellt die optionalen PRO-Funktionen vor, wenn WeatherRouter nicht installiert ist.</p>
+                  <p><strong>Entwicklungsleistung:</strong> Mehr als sieben Wochen intensiver Entwicklungsarbeit an GewitterRadar und WeatherRouter mit zahlreichen DEV-Iterationen, Leistungsoptimierungen, Rückmeldungen aus Gerätetests und wiederholten Korrekturen schufen die Grundlage für kommende Wetter- und Umweltmodule.</p>
                   </div>
                 </details>
 
