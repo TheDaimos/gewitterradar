@@ -50,6 +50,36 @@
 
 ---
 
+## GewitterRadar PRO 4.11 – Einblicke in die nächste Generation
+
+<div align="center">
+
+<img src="docs/assets/pro-showcase/gewitterradar-pro-wordmark-v1.png" width="660" alt="GewitterRadar PRO – powered by WeatherRouter, originaler blauer PRO-Stempel">
+
+**Eine Idee weiter gedacht. · Konzept und Entwicklung: Christian Köhler**
+
+</div>
+
+> [!NOTE]
+> Die folgenden Originalaufnahmen stammen aus **4.11.243 DEV / HA 0.25.150** (funktional und visuell abgenommener FINAL-Kandidat). **Der stabile Installationsstand dieses Repository-Zweigs bleibt 4.10 FINAL**. Zusätzliche PRO-Wetterebenen benötigen einen kompatibel eingerichteten WeatherRouter.
+
+GewitterRadar bewahrt seine bewährten Grundlagen: **weltweite Standortsuche**, Orte und Postleitzahlen, direkte Koordinaten, gespeicherte Referenzorte, Live-Blitze, Gewittercluster, Beobachtungs- und Gefahrenradien, Kompass und **120-Minuten-Verlauf**. PRO erweitert das Konzept um gemeinsam nutzbare Ebenen für Niederschlag, Wind einschließlich Snake Flow, Temperatur, Wolken und Synoptik mit Hoch-/Tiefdruckgebieten, Isobaren und Wetterfronten.
+
+<table>
+<tr>
+<td width="50%" valign="top"><a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=gewitter#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0112.jpg" alt="Gewitter und Blitzcluster" width="100%"></a><br><strong>Live-Blitze und Cluster</strong><br>Gewitteraktivität räumlich erfassen, lokale Wetterlagen beobachten und per Standortsuche in andere Regionen wechseln.</td>
+<td width="50%" valign="top"><a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=synoptik#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" alt="Wind und Synoptik" width="100%"></a><br><strong>Wind und Synoptik</strong><br>Animierte Windströmungen mit Isobaren und Hoch-/Tiefdrucksymbolen auf derselben Karte betrachten.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=wolken#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0127.jpg" alt="Wolken und Niederschlag" width="100%"></a><br><strong>Wolken und Niederschlag</strong><br>Satellitenartige Wolkenstrukturen und farbige Niederschlagsfelder gemeinsam erkunden.</td>
+<td width="50%" valign="top"><a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=eye-control#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-eye-control.png" alt="Eye Control" width="100%"></a><br><strong>Eye Hub und Eye Control</strong><br>Frei konfigurierbare Wetter-Icons, Auren und eine Touch-freundliche Steuerung der Wetterebenen.</td>
+</tr>
+</table>
+
+**[Alle sechs Ansichten mit Bildnavigation und mehrsprachigen Erklärungen öffnen](https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html#pro-gallery)** · **[Aktuelle DEV-Projektvorstellung](https://github.com/TheDaimos/gewitterradar/blob/deploy/dev/README.md)**
+
+---
+
 ## Schnellnavigation
 
 [Installation](#installation) · [View einrichten](#view-einrichten) · [Blitzortung koppeln](#blitzortung-koppeln) · [Recorder schützen](#recorder-schützen) · [Bestehende Installationen](#bestehende-installationen) · [Fehlersuche](#fehlersuche) · [Dokumentation](#dokumentation)
