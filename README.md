@@ -13,7 +13,7 @@
 ![Sprachen](https://img.shields.io/badge/Sprachvarianten-19-35b9b8)
 ![WeatherRouter](https://img.shields.io/badge/WeatherRouter-PRO--Datenebenen-6c8bff)
 
-**[Grundfunktionen](#die-grundfunktionen-von-gewitterradar)** · **[PRO-Funktionen](#was-gewitterradar-pro-besonders-macht)** · **[Interaktive Bildergalerie](https://thedaimos.github.io/project-hub/gewitterradar-pro.html)** · **[Installation](#installation-in-home-assistant)**
+**[Grundfunktionen](#die-grundfunktionen-von-gewitterradar)** · **[PRO-Funktionen](#was-gewitterradar-pro-besonders-macht)** · **[Interaktive Bildergalerie](https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html#pro-gallery)** · **[Installation](#installation-in-home-assistant)**
 
 **Konzept und Entwicklung: Christian Köhler**
 
@@ -23,12 +23,12 @@
 > **Stand dieser Entwicklungspräsentation:** GewitterRadar **4.11.243 DEV** / native Home-Assistant-Integration **0.25.150**. Diese Version wurde vom Betreiber funktional und visuell abgenommen und befindet sich im technischen FINAL-Freeze. Die hier gezeigten PRO-Funktionen stammen aus diesem Entwicklungsstand; die Veröffentlichung als `4.11 FINAL` erfolgt erst nach dem Release-Gate. Der produktive stabile Zweig auf `main` bleibt bis dahin **4.10 FINAL**.
 
 <p align="center">
-  <a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=synoptik#galerie"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" width="100%" alt="GewitterRadar PRO mit animierten Windströmungen, Wetterfeldern und synoptischen Isobaren – Galerie öffnen"></a>
+  <a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=synoptik#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" width="100%" alt="GewitterRadar PRO mit animierten Windströmungen, Wetterfeldern und synoptischen Isobaren – Galerie öffnen"></a>
 </p>
 
 *Ein Wetterbild aus mehreren Perspektiven: großräumige Strömungen, Temperatur- und Niederschlagsfelder sowie Druckgebiete direkt in der Karte. Originalaufnahme aus der 4.11-Entwicklung.*
 
-**[Großansicht mit Bildnavigation öffnen](https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=synoptik#galerie)** – mit Chevrons unter dem Bild, Tastaturpfeilen und Wischgesten.
+**[Großansicht mit Bildnavigation öffnen](https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=synoptik#pro-gallery)** – mit Chevrons unter dem Bild, Tastaturpfeilen und Wischgesten.
 
 ## Die Grundfunktionen von GewitterRadar
 
@@ -70,24 +70,24 @@ Die folgenden Aufnahmen zeigen **echte Bedienoberflächen aus der Entwicklung** 
 <table>
 <tr>
 <td width="50%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=gewitter#galerie"><img src="docs/assets/pro-showcase/gr-pro-0112.jpg" width="100%" alt="Dichte Gewitter- und Blitzaktivität mit vielen Ereignissymbolen – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=gewitter#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0112.jpg" width="100%" alt="Dichte Gewitter- und Blitzaktivität mit vielen Ereignissymbolen – Galerie öffnen"></a>
 <br><strong>Gewitterlage auf einen Blick</strong><br>
 Viele einzelne Ereignisse und Cluster lassen erkennen, wie sich Gewitteraktivität räumlich verteilt. Die Karte bleibt dabei navigierbar – von der regionalen Beobachtung bis zur großräumigen Ansicht.
 </td>
 <td width="50%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=wetter#galerie"><img src="docs/assets/pro-showcase/gr-pro-0118.jpg" width="100%" alt="Kombinierte Wetterdarstellung mit Niederschlags- und Temperaturfeldern – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=wetter#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0118.jpg" width="100%" alt="Kombinierte Wetterdarstellung mit Niederschlags- und Temperaturfeldern – Galerie öffnen"></a>
 <br><strong>Wetterebenen im Zusammenspiel</strong><br>
 Niederschlagsfarben und weitere meteorologische Felder liegen auf derselben Karte. So werden Übergänge und Zusammenhänge sichtbar, die in isolierten Einzelansichten leicht verloren gehen.
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=synoptik#galerie"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" width="100%" alt="Windströmungen, Isobaren und Hoch-/Tiefdruckzeichen über Mitteleuropa – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=synoptik#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" width="100%" alt="Windströmungen, Isobaren und Hoch-/Tiefdruckzeichen über Mitteleuropa – Galerie öffnen"></a>
 <br><strong>Wind trifft Synoptik</strong><br>
 Animierte Strömungslinien zeigen die Bewegungsrichtung des Windes, während Isobaren und Drucksymbole das großräumige Wettergeschehen erklären. Genau diese Überlagerung gehört zu den besonderen Stärken der PRO-Ausführung.
 </td>
 <td width="50%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=wolken#galerie"><img src="docs/assets/pro-showcase/gr-pro-0127.jpg" width="100%" alt="Satellitenartige Wolkenfelder mit farbiger Niederschlagsdarstellung – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=wolken#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0127.jpg" width="100%" alt="Satellitenartige Wolkenfelder mit farbiger Niederschlagsdarstellung – Galerie öffnen"></a>
 <br><strong>Wolken und Niederschlag</strong><br>
 Feine Wolkenstrukturen bilden den atmosphärischen Hintergrund; darüber macht die Niederschlagsebene aktive Wetterbereiche sichtbar. Eine anschauliche Ergänzung zum klassischen Radarbild.
 </td>
@@ -99,12 +99,12 @@ Feine Wolkenstrukturen bilden den atmosphärischen Hintergrund; darüber macht d
 <table>
 <tr>
 <td width="55%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=karte#galerie"><img src="docs/assets/pro-showcase/gr-pro-regional-map.png" width="100%" alt="GewitterRadar-Karte mit frei positionierbaren Wetter-Icons – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=karte#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-regional-map.png" width="100%" alt="GewitterRadar-Karte mit frei positionierbaren Wetter-Icons – Galerie öffnen"></a>
 <br><strong>Direkt auf der Karte</strong><br>
 Die Wetter-Icons dienen als intuitive Schaltzentrale. Mit wenigen Berührungen lassen sich Ansichten wechseln und Ebenen bedienen, ohne die Karte verlassen zu müssen.
 </td>
 <td width="45%" valign="top">
-<a href="https://thedaimos.github.io/project-hub/gewitterradar-pro.html?bild=eye-control#galerie"><img src="docs/assets/pro-showcase/gr-pro-eye-control.png" width="100%" alt="Eye Control mit geschlossenem Eye und gruppierten Wetter-Icons – Galerie öffnen"></a>
+<a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=eye-control#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-eye-control.png" width="100%" alt="Eye Control mit geschlossenem Eye und gruppierten Wetter-Icons – Galerie öffnen"></a>
 <br><strong>Eye Control</strong><br>
 Das zentrale Eye und die umliegenden Icons lassen sich konfigurieren. Die optionale Aura-Gestaltung macht die Steuerung nicht nur funktional, sondern zu einem eigenen visuellen Element.
 </td>
