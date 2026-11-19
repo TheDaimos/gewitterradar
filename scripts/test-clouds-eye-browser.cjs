@@ -78,7 +78,7 @@ async function run(){
   await panel.locator('[data-cloud-style]').selectOption('balanced');
   assert.equal(await page.evaluate(()=>card._map.getPane('gr-wr-clouds').dataset.weatherCloudBalanced),'true');
   const close=panel.locator('[data-premium-action=close]');
-  assert.match(await close.locator('img').getAttribute('src'),/gewitterradar-about-close-premium\.webp$/);
+  assert.equal(await close.locator('img').getAttribute('src'),await page.evaluate(()=>card._weatherPremiumCloseAsset()),'clouds close uses the Settings hi-res asset');
   assert.equal(await close.evaluate(node=>getComputedStyle(node).borderRadius),'50%');
   assert.equal(await close.evaluate(node=>node.getBoundingClientRect().width),40);
   await close.tap();

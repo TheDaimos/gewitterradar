@@ -1,6 +1,6 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411242r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411243r1';
 import {CLOUD_CAPABILITY,CLOUD_EYE_ICON,cloudEyeStatus} from './eye-hub-registry.js?v=411230r1';
-import {ensurePremiumUi,premiumAction,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411242r1';
+import {ensurePremiumUi,premiumAction,premiumEscape,PREMIUM_CLOSE,bindPremiumPanelDrag,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=411243r1';
 
 const STORAGE_KEY='gewitterradar:clouds-ui:v1';
 const PANEL_SCOPE='clouds-settings';
@@ -91,7 +91,7 @@ export const cloudsControlMethods={
    panel.className='weather-wind-panel gr-premium-metal-surface';
    panel.setAttribute('aria-label',this._t('eye.clouds'));
    panel.hidden=true;
-   panel.innerHTML=`<header class="weather-display-panel-head"><img src="${CLOUD_EYE_ICON}" alt="" draggable="false"><strong data-cloud-title></strong><div class="gr-premium-panel-actions">${premiumAction('minimize',this._t('eye.minimize'),'minimize')}${premiumAction('close',this._t('eye.close'))}</div></header>
+   panel.innerHTML=`<header class="weather-display-panel-head"><img src="${CLOUD_EYE_ICON}" alt="" draggable="false"><strong data-cloud-title></strong><div class="gr-premium-panel-actions">${premiumAction('minimize',this._t('eye.minimize'),'minimize')}<button type="button" class="gr-premium-action" data-premium-action="close" aria-label="${premiumEscape(this._t('eye.close'))}"><img src="${this._weatherPremiumCloseAsset?.()||PREMIUM_CLOSE}" alt="" width="34" height="34" draggable="false"></button></div></header>
     <div class="weather-wind-panel-body"><p class="clouds-description"><img src="${HELP_ICON}" alt=""><span data-cloud-description></span></p>
     <label><span data-cloud-visible-label></span><input type="checkbox" data-cloud-visible></label>
     <label><span data-cloud-style-label></span><select class="weather-display-style-select" data-cloud-style><option value="original"></option><option value="balanced"></option></select></label>
