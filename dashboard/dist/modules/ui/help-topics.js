@@ -251,8 +251,11 @@ export function appendWeatherHelp(content,language,openKeys,{upgrade=false,weath
    const ul=make('ul');for(const text of features)ul.append(make('li',text));body.append(ul);
    body.append(make('p',labels?.standard??(german?'Eye-Bedienung, Profile und Sicherungen sind bereits in GewitterRadar Standard verfügbar.':'Eye controls, profiles and backups are already available in GewitterRadar Standard.')));
   }
-  const back=make('button',labels?.back??(german?'Zur Übersicht':'Back to topics'),'eye-metal-button help-topic-back');
-  back.type='button';back.addEventListener('click',()=>{details.open=false;summary.focus();});
-  body.append(back);details.append(summary,body);content.append(details);
+  if(key==='eye'&&!upgrade){
+   const back=make('button',labels?.back??(german?'Zur Übersicht':'Back to topics'),'eye-metal-button help-topic-back');
+   back.type='button';back.addEventListener('click',()=>{details.open=false;summary.focus();});
+   body.append(back);
+  }
+  details.append(summary,body);content.append(details);
  }
 }

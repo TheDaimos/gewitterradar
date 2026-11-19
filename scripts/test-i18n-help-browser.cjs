@@ -101,14 +101,16 @@ async function checkLanguage(page, name, locale) {
     if (key === 'information') {
       assert.deepEqual(await article.locator('h4').allTextContents(),Array.from(locale.topics.information[1],part => part[0]));
       assert.equal(await article.locator('dt').count(),5);
-      assert.equal(await article.locator('.help-topic-back').textContent(),locale.labels.back);
     }
+    assert.equal(await article.locator('.help-topic-back').count(),key==='eye'?1:0,name+' '+key+' back button');
+    if(key==='eye')assert.equal(await article.locator('.help-topic-back').textContent(),locale.labels.back);
     await article.locator('summary').click();
   }
   const profiles = overlay.locator('[data-help-section=weather-display-v411]');
   assert((await profiles.locator('summary').textContent()).includes(locale.profiles.title));
   const featureList = overlay.locator('[data-help-section=wr-pro]');
   if (await featureList.count()) {
+    assert.equal(await featureList.locator('.help-topic-back').count(),0,name+' PRO back button');
     assert((await featureList.locator('summary').textContent()).includes(locale.topics.pro[0]));
     await featureList.locator('summary').click();
     assert((await featureList.innerText()).includes(locale.labels.features));

@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.11.240",
-  "build": "V4.11.240-DEV-2026-11-18",
-  "runtimeRevision": "411240r1",
-  "moduleSetId": "E411-240A1",
+  "productVersion": "4.11.241",
+  "build": "V4.11.241-DEV-2026-11-19",
+  "runtimeRevision": "411241r1",
+  "moduleSetId": "E411-241A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.243"
+      "version": "1.2.244"
     },
     {
       "id": "core.base-context",
@@ -23,11 +23,11 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.41"
+      "version": "1.0.42"
     },
     {
       "id": "fullscreen.map-display",
-      "version": "1.0.69"
+      "version": "1.0.70"
     },
     {
       "id": "ui.scroll-guard",
@@ -35,7 +35,7 @@
     },
     {
       "id": "ui.skeleton",
-      "version": "1.1.43"
+      "version": "1.1.44"
     },
     {
       "id": "ui.project-hub",
@@ -47,11 +47,11 @@
     },
     {
       "id": "ui.controls",
-      "version": "1.1.60"
+      "version": "1.1.61"
     },
     {
       "id": "ui.i18n-settings",
-      "version": "1.3.52"
+      "version": "1.3.53"
     },
     {
       "id": "core.update-watch",
@@ -63,7 +63,7 @@
     },
     {
       "id": "instruments.compass-selector",
-      "version": "1.1.31"
+      "version": "1.1.32"
     },
     {
       "id": "instruments.medallion-designs",
@@ -87,11 +87,11 @@
     },
     {
       "id": "diagnostics.cockpit",
-      "version": "1.5.33"
+      "version": "1.5.34"
     },
     {
       "id": "diagnostics.raster-lab",
-      "version": "0.1.49"
+      "version": "0.1.50"
     },
     {
       "id": "instruments.compass-design",
@@ -107,7 +107,7 @@
     },
     {
       "id": "map.clusters-recent",
-      "version": "1.0.39"
+      "version": "1.0.40"
     },
     {
       "id": "ui.render",
@@ -123,7 +123,7 @@
     },
     {
       "id": "weather.precipitation-layer",
-      "version": "1.3.61"
+      "version": "1.3.62"
     },
     {
       "id": "weather.layer-menu",
@@ -131,11 +131,11 @@
     },
     {
       "id": "weather.display-menu",
-      "version": "0.4.77"
+      "version": "0.4.78"
     },
     {
       "id": "weather.legend-overlay",
-      "version": "0.1.38"
+      "version": "0.1.39"
     },
     {
       "id": "history.chart",
@@ -143,16 +143,16 @@
     },
     {
       "id": "weather.wind-display",
-      "version": "0.4.45"
+      "version": "0.4.46"
     },
     {
       "id": "weather.temperature-display",
-      "version": "0.1.38"
+      "version": "0.1.39"
     },
     {
       "id": "weather.synoptic-display",
-      "version": "0.1.37"
+      "version": "0.1.38"
     }
   ],
-  "displayVersion": "V4.11.240 DEV"
+  "displayVersion": "V4.11.241 DEV"
 }
