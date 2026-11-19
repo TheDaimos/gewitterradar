@@ -48,11 +48,33 @@
       ['Villámok és csoportok','Csapadék és időjárási mezők','Szél és szinoptika','Felhők és csapadék','Időjárási ikonok a térképen','Eye Hub és Eye Control'],
       ['Villámok és csoportosított zivatarok a térképen.','Radarcsapadék és más mezők együtt.','Animált szél, izobárok és nyomásközpontok.','Felhőszerkezetek és csapadék.','Mozgatható ikonok a gyors hozzáféréshez.','Központi Eye, aurák és beállítható ikonok.']]
   };
+  // Release 4.11: replace the historical GPL description only in the new
+  // publication's offline help. Older GPL releases retain their own terms.
+  const licenseCopy = {
+    de: 'GewitterRadar 4.11 wird unter der Gemeinschaftslizenz Modell B von Christian Köhler veröffentlicht: private, nichtberufliche Nutzung und kostenlose Weitergabe mit vollständigem Quellcode sind nach den Lizenzbedingungen erlaubt. Berufliche und kommerzielle Nutzung erfordert eine vorherige schriftliche Genehmigung. Frühere GPL-Versionen behalten ihre damaligen Rechte.',
+    en: 'GewitterRadar 4.11 is released under Christian Köhler’s Model B community licence: private non-professional use and free redistribution with complete source code are permitted under its terms. Professional and commercial use requires prior written consent. Earlier GPL releases retain their original rights.',
+    da: 'GewitterRadar 4.11 udgives under Christian Köhlers fællesskabslicens Model B. Privat, ikke-erhvervsmæssig brug og gratis videredistribution med fuld kildekode er tilladt på licensens vilkår. Erhvervsmæssig brug kræver forudgående skriftlig tilladelse. Ældre GPL-versioner bevarer deres rettigheder.',
+    es: 'GewitterRadar 4.11 se publica con la licencia comunitaria Modelo B de Christian Köhler. Se permite el uso privado no profesional y la distribución gratuita con el código fuente completo según sus términos. El uso profesional o comercial requiere autorización previa por escrito. Las versiones GPL anteriores conservan sus derechos.',
+    fr: 'GewitterRadar 4.11 est publié sous la licence communautaire Modèle B de Christian Köhler. L’usage privé non professionnel et la redistribution gratuite avec le code source complet sont autorisés selon ses conditions. L’usage professionnel ou commercial exige une autorisation écrite préalable. Les anciennes versions GPL conservent leurs droits.',
+    nl: 'GewitterRadar 4.11 verschijnt onder Christian Köhlers gemeenschapslicentie Model B. Privégebruik buiten beroep en gratis verspreiding met volledige broncode zijn volgens de voorwaarden toegestaan. Zakelijk of commercieel gebruik vereist voorafgaande schriftelijke toestemming. Eerdere GPL-versies behouden hun rechten.',
+    pl: 'GewitterRadar 4.11 jest udostępniany na licencji społecznościowej Model B Christiana Köhlera. Prywatne, niezawodowe użytkowanie i bezpłatne rozpowszechnianie z pełnym kodem źródłowym są dozwolone na jej warunkach. Użycie zawodowe lub komercyjne wymaga uprzedniej pisemnej zgody. Starsze wersje GPL zachowują swoje prawa.',
+    pt: 'O GewitterRadar 4.11 é publicado sob a licença comunitária Modelo B de Christian Köhler. É permitido o uso privado não profissional e a redistribuição gratuita com o código-fonte completo, segundo os seus termos. O uso profissional ou comercial exige autorização prévia por escrito. As versões GPL anteriores mantêm os seus direitos.',
+    sv: 'GewitterRadar 4.11 publiceras under Christian Köhlers gemenskapslicens Modell B. Privat, icke-yrkesmässig användning och kostnadsfri spridning med fullständig källkod tillåts enligt villkoren. Yrkesmässig eller kommersiell användning kräver skriftligt förhandstillstånd. Äldre GPL-versioner behåller sina rättigheter.',
+    it: 'GewitterRadar 4.11 è pubblicato con la licenza comunitaria Modello B di Christian Köhler. L’uso privato non professionale e la ridistribuzione gratuita con il codice sorgente completo sono consentiti alle condizioni previste. L’uso professionale o commerciale richiede un’autorizzazione scritta preventiva. Le precedenti versioni GPL conservano i loro diritti.',
+    no: 'GewitterRadar 4.11 publiseres under Christian Köhlers fellesskapslisens Modell B. Privat, ikke-yrkesmessig bruk og gratis videreformidling med fullstendig kildekode er tillatt etter vilkårene. Yrkesmessig eller kommersiell bruk krever skriftlig forhåndstillatelse. Tidligere GPL-versjoner beholder sine rettigheter.',
+    fi: 'GewitterRadar 4.11 julkaistaan Christian Köhlerin yhteisölisenssillä Malli B. Yksityinen, ei-ammatillinen käyttö sekä maksuton jakelu täydellisen lähdekoodin kanssa ovat sallittuja ehtojen mukaan. Ammatillinen tai kaupallinen käyttö vaatii etukäteisen kirjallisen luvan. Aiemmat GPL-versiot säilyttävät oikeutensa.',
+    cs: 'GewitterRadar 4.11 je vydáván pod komunitní licencí Model B Christiana Köhlera. Soukromé neprofesionální použití a bezplatné šíření s úplným zdrojovým kódem jsou povoleny podle podmínek licence. Profesionální či komerční použití vyžaduje předchozí písemný souhlas. Starší verze GPL si zachovávají svá práva.',
+    el: 'Το GewitterRadar 4.11 διατίθεται με την κοινοτική άδεια Μοντέλο B του Christian Köhler. Επιτρέπεται η ιδιωτική μη επαγγελματική χρήση και η δωρεάν αναδιανομή με πλήρη πηγαίο κώδικα σύμφωνα με τους όρους. Η επαγγελματική ή εμπορική χρήση απαιτεί προηγούμενη γραπτή άδεια. Οι παλαιότερες εκδόσεις GPL διατηρούν τα δικαιώματά τους.',
+    hu: 'A GewitterRadar 4.11 Christian Köhler B modellű közösségi licence alatt jelenik meg. A magáncélú, nem szakmai használat és a teljes forráskóddal történő ingyenes terjesztés a feltételek szerint megengedett. A szakmai vagy kereskedelmi használathoz előzetes írásbeli engedély szükséges. A korábbi GPL-verziók jogai változatlanok.'
+  };
   function render(){
     const lang=content[document.documentElement.lang]||content.en;
     const keys={heading:lang[0],intro:lang[1],note:lang[2],nav:document.documentElement.lang==='de'?'PRO-Galerie':'PRO gallery'};
     for(let i=0;i<6;i++){keys['t'+i]=lang[3][i];keys['b'+i]=lang[4][i]}
     document.querySelectorAll('[data-pro]').forEach(el=>{el.textContent=keys[el.dataset.pro]||''});
+    const legal=document.querySelector('[data-k="lic_b"]');
+    if(legal)legal.replaceChildren(document.createTextNode(licenseCopy[document.documentElement.lang]||licenseCopy.en));
+    if(legal){const p=document.createElement('p'),a=document.createElement('a');a.href='LICENSE';a.textContent=document.documentElement.lang==='de'?'Verbindlicher Lizenztext (Modell B)':'Model B licence – full text';p.append(a);legal.append(p)}
   }
   render();
   document.querySelectorAll('.lang-option').forEach(button=>button.addEventListener('click',render));

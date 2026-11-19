@@ -149,7 +149,10 @@ export async function expectedPayload(){
  return payload;
 }
 export async function expectedHelpPayload(){
- const payload=new Map([['help/index.html',await readFile(resolve(root,'docs/gewitterradar-overview.html'))]]);
+ const payload=new Map([
+  ['help/index.html',await readFile(resolve(root,'docs/gewitterradar-overview.html'))],
+  ['help/LICENSE',await readFile(resolve(root,'LICENSE'))]
+ ]);
  for(const name of await walk(resolve(root,'docs/assets')))payload.set('help/assets/'+name,await readFile(resolve(root,'docs/assets',name)));
  return payload;
 }
