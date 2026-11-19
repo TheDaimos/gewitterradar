@@ -150,6 +150,6 @@ Für bestehende Package-Installationen gibt es die separate Dashboard-Variante u
 
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler.**
 
-Die rechtlich verbindlichen Bedingungen richten sich nach der **jeweils installierten Veröffentlichung und deren Lizenzdatei**. Historisch unter GPL veröffentlichte Fassungen behalten ihre damaligen Nutzungsrechte. Die geplante Gemeinschaftslizenz **Modell B** für künftige Veröffentlichungen ist im [Lizenzentwurf](docs/PROPOSED_COMMUNITY_LICENSE_CHRISTIAN_KOEHLER.md) beschrieben; diese README setzt keine neue Lizenz in Kraft.
+Die für die vorbereitete **4.11-FINAL-Neuveröffentlichung** vorgesehene [Gemeinschaftslizenz Modell B](LICENSE) erlaubt die kostenlose private, nichtberufliche Nutzung und die kostenlose Weitergabe bei offengelegtem vollständigem Quellcode. Berufliche und kommerzielle Nutzung bedarf einer vorherigen schriftlichen Genehmigung. **Originalentwicklung und ursprünglicher Urheber: Christian Köhler.** Historisch unter GPL veröffentlichte Fassungen behalten ihre damaligen Nutzungsrechte. Auf `release/v4.11-final-prep` ist die Lizenz für die Veröffentlichung vorbereitet; die bestehende DEV-Installation und 4.10 FINAL werden dadurch nicht neu lizenziert.
 
 <p align="center"><em>GewitterRadar PRO – Eine Idee weiter gedacht.</em><br><strong>Konzept und Entwicklung: Christian Köhler</strong></p>

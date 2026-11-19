@@ -1,31 +1,11 @@
-# Copyright and licensing
+# Urheberrecht und Lizenz
 
-Copyright © 2026 Christian Köhler / TheDaimos.
+Copyright © 2026 Christian Köhler.
 
-Except for the reserved materials described below and any third-party
-material carrying its own license notice, the source code and documentation
-in this repository are licensed under the GNU General Public License
-Version 3 only (`GPL-3.0-only`).
+**Originalentwicklung und ursprünglicher Urheber: Christian Köhler.**
 
-See `LICENSE` for the complete license text.
+Für unter der GewitterRadar-Gemeinschaftslizenz (Modell B) neu veröffentlichte Fassungen gelten die Bestimmungen in [`LICENSE`](LICENSE): private, nichtberufliche und nichtgewerbliche Nutzung sowie kostenlose Quellcode-offene Weitergabe nach deren Bedingungen; berufliche und kommerzielle Nutzung nur mit vorheriger schriftlicher Erlaubnis des Rechteinhabers.
 
-## Reserved materials
+Historisch unter GPL-3.0-only veröffentlichte Fassungen behalten ihre damals eingeräumten Rechte. Der damalige GPL-Text ist unverändert unter [`docs/licenses/GPL-3.0-only-historical.txt`](docs/licenses/GPL-3.0-only-historical.txt) archiviert. Diese Neulizenzierung hebt frühere Rechte nicht rückwirkend auf.
 
-The GPL-3.0-only license does not grant rights to the Gewitterradar project
-name, logos, icons, artwork, visual identity or other branding assets.
-
-In particular, the following are reserved branding materials:
-
-- `artwork/brand/`
-- `custom_components/gewitterradar/brand/`
-- the Gewitterradar name and visual identity
-- official Gewitterradar logos and icons
-
-These materials remain Copyright © 2026 Christian Köhler / TheDaimos.
-All rights reserved except for the limited permissions described in
-`BRANDING.md`.
-
-## Third-party material
-
-Third-party material, if present, remains subject to its respective license
-and copyright notices.
+Für Namen, Logos, Icons, Artwork und die visuelle Identität gelten die Regeln in [`BRANDING.md`](BRANDING.md). Rechte Dritter bleiben unberührt.
