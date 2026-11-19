@@ -36,6 +36,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Verify Model B release licence and offline translations
+        if: ${{ hashFiles('scripts/test-v411-final-license-help.mjs') != '' }}
+        run: node scripts/test-v411-final-license-help.mjs
       - name: Check WL-02 raster and coverage regression contracts
         run: node --test tests/wl02-coverage-contract.test.mjs tests/wl02-raster-geometry.test.mjs
       - name: GR-R03-01 cold-start reload and stale-request safety regression
