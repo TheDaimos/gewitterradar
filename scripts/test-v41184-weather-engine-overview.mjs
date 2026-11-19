@@ -23,10 +23,10 @@ assert.match(skeleton,/\.gr-weather-range-controls\{[\s\S]*?display:grid!importa
 assert.match(skeleton,/\.gr-weather-results-row\[hidden\]\{display:none!important\}/);
 assert.match(consumer,/status\.dataset\.state=state/);
 assert.match(consumer,/results\.closest\('#weather-engine-results-row'\)\?\.removeAttribute\('hidden'\)/);
-assert.match(consumer,/Consumer-Schnittstelle V1/);
+assert.match(consumer,/Consumer API V1/);
 assert.match(radar,/activeApi\.dataset\.activeApi=kind/);
-assert.match(radar,/Niederschlag: API V2/);
-assert.match(radar,/Niederschlag: API V1/);
+assert.match(radar,/this\._t\("eye\.precipitation"\)\+": API V2/);
+assert.match(radar,/this\._t\("eye\.precipitation"\)\+": API V1/);
 assert.match(radar,/async _weatherRadarApplyReady\(answer,viewport,token\)/);
 assert.equal((radar.match(/className="gr-weather-range-controls"/g)||[]).length,2);
 assert.equal((radar.match(/className="settings-row gr-weather-detail-status"/g)||[]).length,2);

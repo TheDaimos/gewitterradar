@@ -86,7 +86,20 @@ assert.deepEqual(Object.keys(previousPresentation).filter(key=>previousPresentat
 assert.deepEqual(JSON.parse(JSON.stringify(current.languages)),JSON.parse(JSON.stringify(previous.languages)),'Registered languages changed');
 const before=Object.fromEntries(entries(previous.catalogs));
 const after=Object.fromEntries(entries(current.catalogs));
-assert.deepEqual(Object.keys(carried).filter(key=>carried[key]!==after[key]),[],'GR 4.11.223 translation values changed');
+// The 4.11 FINAL Eye terminology decision intentionally superseded exactly
+// these legacy 4.11.223 strings. Continue rejecting every other modification.
+const allowedEyeHelpNames=['embeddedWeatherHelp.Deutsch','embeddedWeatherHelp.English',
+  ...['Boarisch','Plattdüütsch','Sächs’sch','Schwäbisch'].map(name=>'WEATHER_EXTERNAL_LOCALES.'+name+'.topics')];
+const allowedEyeHelpChanges=new Set(allowedEyeHelpNames.flatMap(prefix=>[
+  prefix+'.eye.0',...(prefix.endsWith('English')?[]:[prefix+'.eye.1.3.1'])]));
+const allowedEyeTitleChanges=new Set(current.languages.map(({value})=>'EYE_HUB_TRANSLATIONS.'+value+'.title'));
+const changedSince223=Object.keys(carried).filter(key=>carried[key]!==after[key]);
+assert.deepEqual(changedSince223.filter(key=>!allowedEyeHelpChanges.has(key)&&!allowedEyeTitleChanges.has(key)),[],
+  'Unapproved changes to GR 4.11.223 translation values');
+assert.deepEqual(changedSince223.filter(key=>allowedEyeHelpChanges.has(key)).sort(),
+  [...allowedEyeHelpChanges].sort(),'Expected Eye help terminology migration');
+assert.deepEqual(changedSince223.filter(key=>allowedEyeTitleChanges.has(key)).sort(),
+  [...allowedEyeTitleChanges].sort(),'Expected Eye Control product-name migration');
 const removed=Object.keys(before).filter(key=>!Object.hasOwn(after,key));
 assert.deepEqual(removed,[],'Existing locale keys removed');
 assert.deepEqual(current.native,previous.native,'Native HA translations changed');

@@ -1,28 +1,34 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {runInNewContext} from "node:vm";
+import {measureV1RasterCoverage,decideV1RasterSwap} from "../frontend/modules/weather/p7-010/raster-mosaic-coverage.js";
 
 const source=await readFile(new URL("../frontend/modules/weather/precipitation-layer.js",import.meta.url),"utf8");
+const stageHelperStart=source.indexOf('export function decideV1TileStage(stats){');
+const stageHelperEnd=source.indexOf('\nexport function weatherRadarNeedsConsentDetach',stageHelperStart);
+assert.ok(stageHelperStart>0&&stageHelperEnd>stageHelperStart,'current tile staging policy is present');
+const decideV1TileStage=runInNewContext('('+source.slice(stageHelperStart,stageHelperEnd).replace('export function ','function ')+')');
 const start=source.indexOf("  async _weatherRadarApplyReady(answer,viewport,token){");
 const end=source.indexOf("\n  async _weatherRadarTryMosaic(",start);
 assert.ok(start>0&&end>start,"real V1 transition method can be located");
 const methods=runInNewContext("({"+source.slice(start,end)+"})",{
-  loadLeafletJs:async()=>({}),setTimeout,clearTimeout,Date,Number,Math,
+  loadLeafletJs:async()=>({}),setTimeout,clearTimeout,Date,Number,Math,performance,
   finite:value=>Number.isFinite(Number(value))?Number(value):null,
+  measureV1RasterCoverage,decideV1RasterSwap,decideV1TileStage,
   weatherRadarTimelineModel:()=>({frames:[],currentIndex:-1}),
   V1_LAYER_STAGE_TIMEOUT_MS:90
 });
 const answer={
   resource:{payload:{tile_url:"https://tiles.example/raster-new/{z}/{x}/{y}",tile_size:256,
     min_zoom:0,max_zoom:7,default_opacity:.58}},
-  provenance:{provider_name:"Testquelle"},freshness:{data_time:"2026-10-16T10:00:00Z"}
+  provenance:{provider_name:"Testquelle",spatial_coverage:{scope:"global"}},freshness:{data_time:"2026-10-16T10:00:00Z"}
 };
 const viewport={signature:"v1",context:{type:"bbox",west:-20,east:20,south:0,north:40}};
 class FakeLayer{
-  constructor(name){this.name=name;this.handlers=new Map();this.removed=false;this.added=false;this.opacity=-1;}
+  constructor(name){this.name=name;this.handlers=new Map();this.removed=false;this.added=false;this.opacity=-1;this.__grRadarTileMetrics={loaded:0,failed:0,expected_empty:0,tile_errors:[]};}
   on(event,cb){if(!this.handlers.has(event))this.handlers.set(event,new Set());this.handlers.get(event).add(cb);return this;}
   off(event,cb){this.handlers.get(event)?.delete(cb);return this;}
-  emit(event){for(const cb of [...(this.handlers.get(event)||[])])cb();}
+  emit(event){if(event==='tileload')this.__grRadarTileMetrics.loaded++;if(event==='tileerror')this.__grRadarTileMetrics.failed++;for(const cb of [...(this.handlers.get(event)||[])])cb();}
   addTo(){this.added=true;return this;}
   setOpacity(value){this.opacity=value;return this;}
   remove(){this.removed=true;return this;}
@@ -30,7 +36,7 @@ class FakeLayer{
 const make=()=>{
   const old=new FakeLayer("previous");const layers=[];
   const state={enabled:true,v2Generation:7,v2Snapshot:null,layer:old,
-    lastReady:{answer:{provenance:{provider_name:"Vorher"}},at:99},lastUnavailable:null,
+    lastReady:{answer:{provenance:{provider_name:"Vorher",spatial_coverage:{scope:"global"}}},at:99},lastUnavailable:null,
     v1PendingLayer:null,v1PendingCancel:null};
   const events=[];
   const view=()=>viewport;
@@ -44,6 +50,9 @@ const make=()=>{
       layers.push(next);return next;
     },
     _weatherRadarEffectiveOpacity:()=>.64,
+    _weatherRadarPreviousValid:()=>true,
+    _weatherRadarClearRegionalHold:()=>{},
+    _weatherRadarVisualAudit:()=>{},
     _weatherRadarStopTimelinePlayback:()=>events.push("stop"),
     _weatherRadarClearTimelineStage:()=>events.push("clear-stage"),
     _weatherRadarMountTimelinePlayer:()=>events.push("mount-timeline"),
@@ -82,7 +91,7 @@ const stage=async fixture=>{
   assert.equal(f.state.v1PendingCancel,null);
 }
 {
-  const f=make();f.old.__grRadarTileIdentity=[answer.resource.payload.tile_url,256,0,7].join("|");
+  const f=make();f.old.__grRadarTileIdentity=[answer.resource.payload.tile_url,256,0,7,"global","null"].join("|");
   assert.equal(await f.ui._weatherRadarApplyReady(answer,viewport,7),true);
   assert.equal(f.layers.length,0,"identical URL never triggers raster recreation");
   assert.equal(f.old.removed,false,"identical raster remains visible");

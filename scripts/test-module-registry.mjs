@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { EXPECTED_MODULES, APPLICATION_META } from "../frontend/module-manifest.js";
 import { registerModule, loadedModules, moduleDiagnostics, moduleRegistrySnapshot } from "../frontend/modules/core/registry.js";
+import { APPLICATION_RELEASE } from "../frontend/version.js";
 
-assert.equal(APPLICATION_META.version, "4.10.02");
+assert.equal(APPLICATION_META.version, APPLICATION_RELEASE.version);
 assert.ok(EXPECTED_MODULES.length >= 10);
 assert.ok(loadedModules().some((item) => item.id === "core.manifest"));
 

@@ -366,6 +366,12 @@
       "preferredPath": "artwork/help-icons/hires/gr-clouds-eye-premium-original.png",
       "gitBlobSha1": "3e3dbd6141b3315f7125d452fa93239015aa54e5",
       "sizeBytes": 2052552
+    },
+    {
+      "label": "storm eye original premium PNG (GR 4.11.230)",
+      "preferredPath": "artwork/help-icons/hires/gr-storm-premium-original.png",
+      "gitBlobSha1": "e1d3ef5dd3b2af56fb12a46223ef09baa31f20a0",
+      "sizeBytes": 2114584
     }
   ]
 }
