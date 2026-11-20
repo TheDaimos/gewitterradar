@@ -137,6 +137,8 @@ async function run() {
       await icon.tap();
       if (index < 3) {
         assert.notEqual(await icon.getAttribute('aria-pressed'), pressed, id + ' short tap');
+        // A quick-toggle rerender reevaluates the live entitlement, absent here.
+        await page.evaluate(() => {card.shadow.getElementById('map-card').dataset.eyeProReady='true';});
         await icon.tap();
       } else {
         await panel.waitFor({state:'visible'});
