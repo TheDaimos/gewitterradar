@@ -1,0 +1,11 @@
+name: V4.11.34 mobile map regression (historical)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v41134-mobile-map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/test-v41134-mobile-map.mjs

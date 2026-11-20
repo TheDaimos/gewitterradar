@@ -1,0 +1,11 @@
+name: V4.11.36 gestures and double tap (historical)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  legacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/test-v41136-mobile-map.mjs

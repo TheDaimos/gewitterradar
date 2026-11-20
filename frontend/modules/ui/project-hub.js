@@ -1,0 +1,123 @@
+import { registerModule } from "../core/registry.js?v=41108r1";
+export const MODULE_META=Object.freeze({
+  id:"ui.project-hub",version:"1.1.19",group:"Oberfläche",function:"Daimos Project Hub",
+  subfunctions:["Signatur-Einstieg","Haupttitel-Einstieg","Lokales Host-Popup","Projekt-/Kontakt-/GitHub-Navigation","Lokale RC14-Runtime"],
+  file:"modules/ui/project-hub.js"
+});
+const PROJECT_HUB_BASE_URL=new URL("../../project-hub/",import.meta.url);
+const PROJECT_HUB_CONFIG_URL=new URL("project-hub-config.json",PROJECT_HUB_BASE_URL);
+const DEFAULT_FALLBACK_PATH="offline/index.html",DEFAULT_PROBE_TIMEOUT_MS=2500,POPUP_VERSION="0.2.0-rc14";
+const isHttpsUrl=v=>{try{return new URL(v).protocol==="https:";}catch{return false;}};
+const isLocalFallbackPath=v=>{if(typeof v!=="string")return false;const p=v.trim();return !!p&&!p.startsWith("/")&&!p.startsWith("//")&&!/^[a-z][a-z0-9+.-]*:/i.test(p);};
+const normalizedTimeout=v=>Number.isFinite(v)?Math.max(500,Math.min(10000,Number(v))):DEFAULT_PROBE_TIMEOUT_MS;
+export function normalizeProjectHubConfig(v){
+  if(!v||typeof v!=="object")return null;
+  return Object.freeze({schema_version:Number(v.schema_version)||1,runtime_version:String(v.runtime_version||POPUP_VERSION),
+    project_hub_url:typeof v.project_hub_url==="string"?v.project_hub_url.trim():"",
+    health_asset_url:typeof v.health_asset_url==="string"?v.health_asset_url.trim():"",
+    fallback_path:isLocalFallbackPath(v.fallback_path)?v.fallback_path.trim():DEFAULT_FALLBACK_PATH,
+    probe_timeout_ms:normalizedTimeout(v.probe_timeout_ms),open_mode:String(v.open_mode||"host-popup")});
+}
+async function loadProjectHubConfig(){try{const r=await fetch(PROJECT_HUB_CONFIG_URL.href,{cache:"no-store",credentials:"same-origin"});if(!r.ok)return null;return normalizeProjectHubConfig(await r.json());}catch{return null;}}
+function probeImage(url,timeoutMs){return new Promise(resolve=>{const image=new Image();let done=false;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);image.onload=null;image.onerror=null;resolve(ok);};const timer=setTimeout(()=>finish(false),timeoutMs);image.onload=()=>finish(true);image.onerror=()=>finish(false);image.src=`${url}${url.includes("?")?"&":"?"}project_hub_probe=${Date.now()}`;});}
+async function probeProjectPage(url,timeoutMs){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    // Opaque, cross-origin responses are sufficient for a reachability check.
+    // Reading the page is unnecessary and would require third-party CORS access.
+    await fetch(url,{mode:"no-cors",credentials:"omit",cache:"no-store",signal:controller.signal});
+    return true;
+  }catch{return false;}finally{clearTimeout(timer);}
+}
+export async function resolveProjectHub(config){
+  const n=normalizeProjectHubConfig(config),fallback=n?.fallback_path||DEFAULT_FALLBACK_PATH;
+  const url=n?.project_hub_url||"",health=n?.health_asset_url||"";
+  if(!n||!isHttpsUrl(url))return Object.freeze({mode:"offline",target:fallback,reason:"not_configured"});
+  if(navigator.onLine===false)return Object.freeze({mode:"offline",target:fallback,reason:"browser_offline"});
+  if(await probeProjectPage(url,n.probe_timeout_ms))
+    return Object.freeze({mode:"online",target:url,reason:"page_reachable"});
+  if(isHttpsUrl(health)&&await probeImage(health,n.probe_timeout_ms))
+    return Object.freeze({mode:"online",target:url,reason:"asset_reachable"});
+  // Home Assistant/WebView may block cross-origin fetch while allowing iframe
+  // navigation. A failed probe must not incorrectly force the local page.
+  return Object.freeze({mode:"online",target:url,reason:"probe_unverified"});
+}
+function localViewUrl(status="checking",fallback=DEFAULT_FALLBACK_PATH,card){const safe=isLocalFallbackPath(fallback)?fallback:DEFAULT_FALLBACK_PATH,url=new URL(safe,PROJECT_HUB_BASE_URL);url.searchParams.set("v",POPUP_VERSION);if(card?._languageValue){url.searchParams.set("language",card._languageValue());url.searchParams.set("locale",card._locale());}if(status==="online"||status==="offline")url.searchParams.set("status",status);return url.href;}
+function popupViewport(){const vv=window.visualViewport;return {width:Math.max(280,Math.round(vv?.width||window.innerWidth||760)),height:Math.max(240,Math.round(vv?.height||window.innerHeight||800))};}
+function applyPopupGeometry(panel,overlay){const {width,height}=popupViewport(),edge=width>=700&&height>=700?6:4,panelWidth=Math.min(780,Math.max(280,width-edge*2)),panelHeight=Math.min(1080,Math.max(240,height-edge*2));overlay.style.padding=`${edge}px`;panel.style.width=`${panelWidth}px`;panel.style.height=`${panelHeight}px`;panel.style.maxHeight=`${panelHeight}px`;}
+function closePopup(card){if(card?._projectHubResize){window.removeEventListener("resize",card._projectHubResize);window.visualViewport?.removeEventListener?.("resize",card._projectHubResize);}card?._projectHubOverlay?.remove?.();if(card){card._projectHubOverlay=null;card._projectHubFrame=null;card._projectHubClose=null;card._projectHubResize=null;}}
+function showPopup(card,status="local",fallback=DEFAULT_FALLBACK_PATH,settingsCloseImage=""){
+  if(card._projectHubOverlay?.isConnected){card._projectHubResize?.();card._projectHubClose?.focus?.();return true;}
+  const t=key=>card._t("weather.hub."+key);
+  const overlay=document.createElement("div");overlay.setAttribute("role","dialog");overlay.setAttribute("aria-modal","true");overlay.setAttribute("aria-label","Daimos Project Hub");
+  Object.assign(overlay.style,{position:"fixed",inset:"0",zIndex:"2147483647",display:"grid",placeItems:"center",padding:"4px",background:"rgba(2,8,14,.76)",backdropFilter:"blur(5px)",overscrollBehavior:"contain"});
+  const panel=document.createElement("div");Object.assign(panel.style,{position:"relative",display:"grid",gridTemplateRows:"auto minmax(0,1fr)",width:"min(780px,calc(100vw - 8px))",height:"calc(100dvh - 8px)",maxHeight:"1080px",borderRadius:"20px",overflow:"hidden",background:"#08111b",boxShadow:"0 24px 80px rgba(0,0,0,.58),0 0 0 1px rgba(233,187,102,.28)"});
+  const frame=document.createElement("iframe");
+  if(status==="checking"){
+    const loading=t("load").replace(/[&<>]/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;"})[character]);
+    frame.srcdoc='<!doctype html><html><meta charset="utf-8"><style>body{display:grid;place-items:center;min-height:95vh;background:#08111b;color:#e6c17b;font:16px system-ui;text-align:center}</style><body>'+loading+'</body></html>';
+  }else frame.src=localViewUrl(status,fallback,card);
+  frame.title="Daimos Project Hub";frame.setAttribute("loading","eager");frame.setAttribute("referrerpolicy","no-referrer");Object.assign(frame.style,{display:"block",width:"100%",height:"100%",minHeight:"0",border:"0",background:"#08111b"});
+  const nav=document.createElement("nav");nav.className="project-hub-nav";nav.setAttribute("aria-label",t("navigation"));
+  const links=[[t("projects"),"https://thedaimos.github.io/project-hub/"],[t("contact"),"#kontakt"],["GitHub","https://github.com/TheDaimos/project-hub"]];
+  for(const [index,[name,href]] of links.entries()){
+    const item=document.createElement("span");item.className="project-hub-nav-item";
+    if(index){const dot=document.createElement("span");dot.className="project-hub-middledot";dot.setAttribute("aria-hidden","true");dot.textContent="·";item.append(dot);}
+    const link=document.createElement("a");link.textContent=name;link.href=href;
+    if(href.startsWith("https:")){link.target="_blank";link.rel="noopener noreferrer";}
+    else link.addEventListener("click",event=>{event.preventDefault();frame.contentDocument?.querySelector(".contact")?.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});});
+    item.append(link);nav.append(item);
+  }
+  const closeStyle=document.createElement("style");closeStyle.textContent=`
+.project-hub-close-premium{position:absolute!important;top:4px!important;right:4px!important;margin:0!important;z-index:60!important;display:grid!important;place-items:center;width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:transparent!important;font-size:0!important;line-height:0!important;overflow:visible;box-shadow:none!important}
+.project-hub-close-premium img{display:block;width:38px;height:38px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}
+.project-hub-close-premium:focus-visible{outline:2px solid #e7c16e!important;outline-offset:-2px!important}
+.project-hub-close-premium:active img{transform:scale(.97);filter:brightness(.92)}
+.project-hub-nav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:3px 10px;box-sizing:border-box;min-height:56px;min-width:0;padding:7px 66px 7px 14px;border-bottom:1px solid rgba(233,187,102,.22);background:linear-gradient(145deg,rgba(19,31,45,.985),rgba(10,18,28,.985));font:700 12px/1.35 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.project-hub-nav-item{display:inline-flex;align-items:center;gap:10px;min-width:0}.project-hub-nav a{color:#e9bb66;text-decoration:none;min-height:36px;display:inline-flex;align-items:center;overflow-wrap:anywhere}.project-hub-nav a:hover{color:#f3d49b}.project-hub-nav a:focus-visible{outline:2px solid #e7c16e;outline-offset:2px}.project-hub-middledot{color:#b7894a;font-size:17px;letter-spacing:.28em;line-height:1;text-shadow:0 1px 0 rgba(255,230,175,.15),0 2px 8px rgba(0,0,0,.5);pointer-events:none}
+@media(hover:hover) and (pointer:fine){.project-hub-close-premium:hover{background:transparent!important}.project-hub-close-premium:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
+@media(hover:none) and (pointer:coarse){.project-hub-close-premium:focus-visible{outline:none!important}}
+`;
+  const close=document.createElement("button");close.type="button";close.className="project-hub-close-premium";close.setAttribute("aria-label",t("close"));
+  const closeIcon=document.createElement("img");closeIcon.src=settingsCloseImage;closeIcon.alt="";closeIcon.width=38;closeIcon.height=38;closeIcon.draggable=false;close.append(closeIcon);
+  close.addEventListener("click",()=>closePopup(card));overlay.addEventListener("pointerdown",e=>{if(e.target===overlay)closePopup(card);});overlay.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();closePopup(card);}});
+  panel.append(closeStyle,nav,frame,close);overlay.append(panel);document.body.append(overlay);card._projectHubOverlay=overlay;card._projectHubFrame=frame;card._projectHubClose=close;const resize=()=>applyPopupGeometry(panel,overlay);card._projectHubResize=resize;window.addEventListener("resize",resize,{passive:true});window.visualViewport?.addEventListener?.("resize",resize,{passive:true});resize();queueMicrotask(()=>close.focus());return true;
+}
+function activateHubTrigger(card,trigger){
+  if(!trigger)return false;
+  trigger.setAttribute("aria-label",card._t("weather.hub.open"));
+  if(trigger.dataset.projectHubBound==="1")return false;
+  trigger.dataset.projectHubBound="1";
+  trigger.removeAttribute("aria-hidden");
+  trigger.setAttribute("role","button");
+  trigger.setAttribute("tabindex","0");
+  trigger.setAttribute("title","Daimos Project Hub");
+  trigger.style.cursor="pointer";
+  trigger.style.touchAction="manipulation";
+  trigger.style.webkitTapHighlightColor="transparent";
+  const open=event=>{event.preventDefault();event.stopPropagation();void card._openProjectHub?.();};
+  trigger.addEventListener("click",open);
+  trigger.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" ")open(event);});
+  return true;
+}
+function activateSignature(card){
+  const signature=card.shadow?.querySelector(".settings-signature-wrap");
+  if(signature)signature.style.pointerEvents="auto";
+  return activateHubTrigger(card,signature);
+}
+function activateMainTitle(card){
+  const standard=activateHubTrigger(card,card.shadow?.querySelector("#overview-title > .standard-wordmark"));
+  const pro=activateHubTrigger(card,card.shadow?.querySelector("#overview-title > .pro-wordmark"));
+  return standard||pro;
+}
+export function installProjectHub(CardClass,deps={}){registerModule(MODULE_META);const proto=CardClass?.prototype;if(!proto)throw new TypeError("ui.project-hub requires a card class");if(proto.__projectHubInstalled)return CardClass;const settingsCloseImage=typeof deps?.ABOUT_CLOSE_IMAGE==="string"?deps.ABOUT_CLOSE_IMAGE.trim():"";if(!settingsCloseImage)throw new TypeError("ui.project-hub requires the Settings ABOUT_CLOSE_IMAGE");const originalBuildSkeleton=proto._buildSkeleton;if(typeof originalBuildSkeleton!=="function")throw new TypeError("ui.project-hub requires ui.skeleton before installation");
+  Object.defineProperties(proto,{__projectHubInstalled:{value:true,configurable:false,enumerable:false,writable:false},
+    _bindProjectHubSignature:{configurable:true,writable:true,value:function(){return activateSignature(this);}},
+    _bindProjectHubMainTitle:{configurable:true,writable:true,value:function(){return activateMainTitle(this);}},
+    _closeProjectHub:{configurable:true,writable:true,value:function(){closePopup(this);}},
+    // The shipped local hub opens immediately. Optional online presentation is
+    // an explicit external link, never a mandatory reachability prerequisite.
+    _openProjectHub:{configurable:true,writable:true,value:async function(){return showPopup(this,"local",DEFAULT_FALLBACK_PATH,settingsCloseImage);}},
+    _buildSkeleton:{configurable:true,writable:true,value:function(...args){const result=originalBuildSkeleton.apply(this,args);this._bindProjectHubSignature();this._bindProjectHubMainTitle();return result;}}});
+  return CardClass;
+}

@@ -1,0 +1,204 @@
+import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
+import {NEON_CSS} from './eye-neon.js?v=411233r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=411249r1';
+import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
+import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeBubbleAuraEnabled,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=411233r1';
+import {eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
+export const EYE_HUB_CSS=`
+${NEON_CSS}
+#map-card[data-eye-grouped=false]>.eye-hub-unassigned{display:none!important}
+#map-card[data-storm-visible=false] #map-cluster-jump-overlay{display:none!important}
+.weather-storm-toggle{z-index:650}
+.eye-hub-bubble[data-function=storm][aria-pressed=false] img{filter:saturate(.65) brightness(.68)}
+#weather-storm-panel{position:absolute;top:12px;right:12px;width:min(410px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y;font:12px/1.45 system-ui}
+#weather-storm-panel[hidden]{display:none}
+#weather-storm-panel{container-type:inline-size;box-sizing:border-box;color:#e4e9ef}
+#weather-storm-panel .gr-collapse-inner{display:grid;gap:10px}
+#weather-storm-panel label{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 12px;min-width:0;min-height:44px;margin:0}
+#weather-storm-panel label>span{min-width:0;overflow-wrap:break-word}
+#weather-storm-panel .storm-select-setting{grid-template-columns:minmax(0,1fr)}
+#weather-storm-panel :is(select,input[type=number]){box-sizing:border-box;width:100%;min-width:0;max-width:100%;min-height:44px;border:1px solid #b5985a66;border-radius:7px;padding:8px 10px;background:#141e2a;color:inherit;font:inherit;color-scheme:dark}
+#weather-storm-panel .storm-timeout-setting{grid-template-columns:minmax(0,1fr) minmax(80px,35%)}
+#weather-storm-panel input[type=checkbox]{width:24px;height:24px;margin:10px;accent-color:#d8ae52;cursor:pointer}
+#weather-storm-panel .storm-radius-setting{grid-template-columns:minmax(0,1fr) minmax(85px,36%) max-content}
+#weather-storm-panel .storm-radius-setting input{width:100%;min-width:0;min-height:44px;margin:0;accent-color:#d8ae52}
+#weather-storm-panel .storm-radius-setting output{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+#weather-storm-panel :is(select,input):focus-visible{outline:2px solid #f1d58c;outline-offset:2px}
+@container(max-width:340px){
+ #weather-storm-panel .storm-radius-setting{grid-template-columns:minmax(0,1fr) max-content}
+ #weather-storm-panel .storm-radius-setting>span{grid-column:1 / -1}
+}
+.eye-bubble-aura-setting{display:flex;gap:12px;justify-content:space-between;align-items:center;min-height:44px}
+.eye-bubble-aura-setting input{accent-color:#d8ae52;width:24px;height:24px}
+${compassDialogSurface('.eye-hub-config')}
+.eye-hub-config{width:min(760px,calc(100vw - 20px));position:fixed;font:13px/1.45 system-ui;box-sizing:border-box;padding:12px}.eye-hub-config::backdrop{background:#03070be0;backdrop-filter:blur(2px)}
+.eye-hub-config *{box-sizing:border-box}.eye-hub-config button{font:inherit;cursor:pointer;touch-action:manipulation;color:#f1d58c}.eye-hub-config :focus-visible,.eye-hub-bubble:focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}
+.eye-hub-config>header{display:flex;align-items:center;gap:10px;position:sticky;top:-12px;background:#091219;z-index:4;border-bottom:1px solid #d5ab5b66;padding:6px 0}.eye-hub-config>header>img{width:40px;height:40px;object-fit:contain}.eye-hub-config h2{font-size:16px;color:#f1d58c;flex:1;margin:0}.eye-hub-config.minimized>.eye-config-body{display:none}
+.eye-previews{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:12px 0}.eye-previews figure{margin:0;min-width:0;text-align:center;color:#f1d58c;border:1px solid #cda95055;border-radius:12px;background:#0a121bbb;padding:8px}
+.eye-preview-stage{position:relative;isolation:isolate;width:100%;max-width:300px;aspect-ratio:1;margin:auto}.eye-preview-scene{position:absolute;left:50%;top:50%;transform-origin:center;pointer-events:none}.eye-preview-scene>.eye-visual,.eye-preview-scene>.eye-preview-bubbles{position:absolute;inset:0}
+.eye-preview-stage::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(ellipse at 48% 42%,rgba(255,242,209,.13),rgba(225,211,185,.065) 35%,rgba(168,182,192,.025) 58%,transparent 74%);filter:blur(9px);pointer-events:none;z-index:0}
+.eye-config-options{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 18px}.eye-config-options label{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;min-width:0;flex-wrap:wrap}.eye-config-options input[type=range]{width:100%;min-width:0;accent-color:#d8ae52;touch-action:pan-y}.eye-config-options input[type=checkbox]{appearance:none;width:48px;height:27px;flex:0 0 48px;border:1px solid #d6ad5a99;border-radius:18px;background:#111a24;position:relative;cursor:pointer}.eye-config-options input[type=checkbox]::before{content:'';position:absolute;left:3px;top:3px;width:19px;height:19px;border-radius:50%;background:linear-gradient(#ffe5a2,#b68432);transition:transform .18s}.eye-config-options input:checked{background:#435d3f}.eye-config-options input:checked::before{transform:translateX(21px)}
+.eye-config-options [data-eye-option=grouped]{grid-column:1;grid-row:1}.eye-config-options [data-eye-option=aura]{grid-column:2;grid-row:1}.eye-config-options [data-eye-option=size]{grid-column:1;grid-row:2}.eye-config-options [data-eye-option=backdrop]{grid-column:1;grid-row:3}.eye-config-options [data-eye-option=intensity]{grid-column:2;grid-row:2}.eye-config-options [data-eye-option=brightness]{grid-column:2;grid-row:3}.eye-config-options [data-eye-option=iconSize]{grid-column:1;grid-row:4}
+.eye-neon-studio{margin:12px 0;padding:10px 14px;border:1px solid #c8a45f;border-radius:12px;background:linear-gradient(140deg,#29343c88,#08121bcc);box-shadow:inset 0 1px #fff2,0 3px 9px #0006}.eye-hub-config .eye-neon-studio>summary{padding:8px clamp(12px,3vw,18px);gap:12px;min-height:46px}.eye-neon-studio>summary .release-history-future-chevron{margin:0 4px}.eye-neon-studio .eye-config-options [data-eye-option]{grid-column:auto;grid-row:auto}.eye-neon-studio p{color:#bac6d4;font-size:11px}.eye-neon-studio .gr-collapse-inner{padding:5px 2px 9px}.eye-config-options output{color:#ffe1a1;margin-left:auto;font-variant-numeric:tabular-nums}.eye-slot-count{display:flex;gap:15px;justify-content:center;align-items:center;margin:14px 0}.eye-slot-count button,.eye-metal-button{border:1px solid #c8a45f;border-radius:9px;min-width:44px;min-height:44px;background:linear-gradient(145deg,#303b43,#0b141c 60%,#282418);box-shadow:inset 0 1px #fff3,0 3px 6px #0009;padding:8px 12px;color:#f1d58c}.eye-slot-count button{font-size:25px}.eye-slot-count button:disabled{opacity:.4;cursor:default}
+.eye-slots{display:grid;gap:8px}.eye-slot-row{display:grid;grid-template-columns:26px minmax(0,1fr) 52px 44px;gap:8px;align-items:center;padding:9px;border:1px solid #b2915270;border-radius:12px;background:linear-gradient(140deg,#26313a99,#08121bdd);box-shadow:inset 0 1px #fff1}.eye-slot-socket{display:flex;align-items:center;gap:8px;min-width:0;min-height:58px;padding:3px 5px;border:1px solid #c7a25b55;border-radius:32px;background:radial-gradient(ellipse at 20% 20%,#a88b4822,#0b1520 65%);text-align:left;touch-action:none!important}.eye-slot-socket img{width:50px;height:50px;object-fit:contain;flex-shrink:0;pointer-events:none}.eye-slot-socket span{min-width:0;overflow-wrap:anywhere;font-size:11px}.eye-empty-socket{display:block;width:46px;height:46px;flex-shrink:0;border-radius:50%;border:2px solid #d8b765;box-shadow:inset 0 0 0 2px #302612,0 0 0 1px #8b672b;background:radial-gradient(circle,#162635,#020910)}
+.eye-slot-row.eye-drop-target{border-color:#ffe8a5;box-shadow:0 0 0 2px #ffe8a566}.eye-color-button{width:48px;height:44px;border:1px solid #b5985a;border-radius:9px;background:#111c28}.eye-color-button i,.eye-color-choice i{display:block;border-radius:50%;width:24px;height:24px;margin:auto;background:var(--eye-color);box-shadow:0 0 9px var(--eye-color)}.eye-slot-clear{width:44px;height:44px;border:0;background:transparent;padding:3px}.eye-slot-clear img{width:30px;height:30px;pointer-events:none}.eye-slot-clear:disabled{opacity:.25;cursor:default}
+.eye-function-palette{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.eye-function-choice{min-width:0;min-height:88px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px;border:1px solid #ba985777;border-radius:10px;background:#101b27;touch-action:none!important;overflow-wrap:anywhere;font-size:11px!important}.eye-function-choice img{width:54px;height:54px;object-fit:contain;pointer-events:none}.eye-function-choice small{font-size:9px;color:#bac6d4}.eye-function-choice[aria-pressed=true]{border-color:#ffe1a1;background:#393021}
+.eye-hub-popup{position:fixed;inset:0;display:grid;place-items:center;z-index:20;background:#020810cc;padding:14px}.eye-hub-popup>section{max-height:85vh;overflow:auto;width:min(480px,100%);padding:16px;border:1px solid #d3ad61;border-radius:13px;background:linear-gradient(140deg,#253039,#08121b);box-shadow:0 20px 65px #000b}.eye-hub-popup .eye-function-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.eye-popup-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:12px}.eye-colors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}.eye-color-choice{border:1px solid #b5985a77;border-radius:9px;min-height:62px;background:#101b27;padding:6px}.eye-color-choice[aria-pressed=true]{outline:2px solid #ffe1a1;outline-offset:1px}.eye-color-choice span{display:block;font-size:10px;margin-top:5px;overflow-wrap:anywhere}.eye-color-button i[data-no-color],.eye-color-choice i[data-no-color]{background:linear-gradient(135deg,transparent 45%,#e0bf76 46% 54%,transparent 55%);border:1px solid #b5985a77;box-shadow:none}.eye-color-choice:focus-visible{outline:2px solid #fff0b3;outline-offset:2px}
+.eye-energy-setting{display:grid;grid-template-columns:minmax(0,1fr) minmax(105px,auto);align-items:center;gap:7px 10px;margin:8px 0 12px}.eye-energy-setting select{min-height:44px;min-width:0;max-width:100%;padding:6px 10px}.eye-energy-setting option{color:#f6e5bc;background:#121c28}.eye-energy-setting small{grid-column:1/-1;line-height:1.35;color:#c6cdd4}.eye-drag-ghost{position:fixed;pointer-events:none;z-index:30;width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 3px 6px #0009)}
+.eye-visual{pointer-events:none}.eye-master{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;z-index:2}.eye-backdrop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,.55) 12%,rgba(0,0,0,.30) 40%,rgba(0,0,0,.08) 62%,transparent 76%);z-index:0;pointer-events:none}.eye-status-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:0;opacity:var(--eye-brightness);background:radial-gradient(closest-side,transparent calc(100% - var(--eye-soft)),var(--eye-color-soft) calc(100% - 2px),var(--eye-color-core) calc(100% - .8px),transparent 100%);box-shadow:0 0 var(--eye-glow) var(--eye-color-glow);pointer-events:none;z-index:1}
+.weather-display-eye-control.gr-eye-hub{display:block;width:var(--eye-target)!important;height:var(--eye-target)!important;min-width:50px;min-height:50px;padding:0!important;border:0!important;background:transparent!important;border-radius:50%;box-shadow:none!important;backdrop-filter:none!important;overflow:visible;touch-action:none}.weather-display-eye-control.gr-eye-hub[hidden]{display:none!important}.gr-eye-hub{--eye-safe-left:env(safe-area-inset-left,0px);--eye-safe-right:env(safe-area-inset-right,0px);--eye-safe-top:env(safe-area-inset-top,0px);--eye-safe-bottom:env(safe-area-inset-bottom,0px)}
+#map-display-control[data-eye-clearance]>#map-display-switch{max-height:min(var(--eye-menu-room),78dvh);overflow:auto;overscroll-behavior:contain}
+#map-card:not([data-eye-pro-ready=true])>:is(#weather-display-control,#weather-wind-toggle,#weather-temperature-toggle,#weather-precipitation-toggle,#weather-synoptic-toggle,#weather-clouds-toggle,#weather-storm-toggle){display:none!important}
+.eye-hub-bubbles>.eye-page-controls{box-sizing:border-box;transform:none;width:146px;height:54px;justify-content:space-between}
+.gr-eye-hub .eye-master{width:var(--eye-size);height:var(--eye-size)}.gr-eye-hub:focus-visible{outline:2px solid #f1d58c;outline-offset:3px}
+.eye-hub-bubbles{position:absolute;inset:0;pointer-events:none;z-index:2147483645}.eye-hub-bubbles[hidden]{display:none!important}.eye-hub-bubble{position:absolute;width:50px;height:50px;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;pointer-events:auto;touch-action:none;animation:eye-bubble-in .16s ease-out}.eye-hub-bubble img{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:50px;object-fit:contain;pointer-events:none}.eye-hub-bubble[data-function=precipitation] img{width:58px;height:58px}.eye-hub-bubble[data-function=weather-display] img{width:49.5px;height:49.5px}.eye-hub-bubble[data-active=true]{box-shadow:0 0 1px .3px var(--eye-color-soft),0 0 var(--bubble-glow) var(--eye-color-glow)}.eye-hub-bubble[data-available=false] img{filter:grayscale(1) brightness(.65)}.eye-warning{position:absolute;right:-1px;top:-3px;z-index:3;width:16px;height:16px;color:#ffbe59;filter:drop-shadow(0 1px 1px #000);pointer-events:none}.eye-hub-bubble[hidden]{display:none!important}
+.eye-preview-bubbles{pointer-events:none}.eye-preview-bubbles .eye-hub-bubble{pointer-events:none;animation:none}.eye-preview-stage .eye-master{z-index:2}.eye-preview-stage .eye-status-ring{z-index:1}
+#map-card[data-eye-grouped=true]>.weather-wind-toggle,#map-card[data-eye-grouped=true]>.weather-temperature-toggle,#map-card[data-eye-grouped=true]>.weather-precipitation-toggle,#map-card[data-eye-grouped=true]>.weather-display-control,#map-card[data-eye-grouped=true]>.weather-synoptic-toggle,#map-card[data-eye-grouped=true]>.weather-clouds-toggle{display:none!important}
+#map-card[data-eye-grouped=false]>.weather-wind-toggle[aria-pressed=true] img{filter:none!important}#map-card[data-eye-grouped=false]>.weather-wind-toggle,#map-card[data-eye-grouped=false]>.weather-temperature-toggle,#map-card[data-eye-grouped=false]>.weather-precipitation-toggle,#map-card[data-eye-grouped=false]>.weather-display-control,#map-card[data-eye-grouped=false]>.weather-synoptic-toggle{box-shadow:none!important}
+@keyframes eye-bubble-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@media(max-width:540px){.eye-previews{grid-template-columns:minmax(0,1fr)}.eye-config-options{grid-template-columns:minmax(0,1fr)}.eye-config-options [data-eye-option]{grid-column:1;grid-row:auto}.eye-function-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.eye-slot-row{gap:5px;padding:7px;grid-template-columns:22px minmax(0,1fr) 44px 44px}.eye-color-button{width:42px}.eye-slot-clear{width:44px}.eye-slot-socket span{font-size:10px}.eye-hub-config{padding:10px}}
+.eye-slot-row{grid-template-areas:"number socket color clear"}
+.eye-slot-row>strong{grid-area:number}.eye-slot-row>.eye-slot-socket{grid-area:socket}
+.eye-slot-row>.eye-color-button{grid-area:color}.eye-slot-row>.eye-slot-clear{grid-area:clear}
+.eye-slot-aura{grid-area:aura;display:grid;gap:3px;min-width:0;font-size:11px;line-height:1.2;overflow-wrap:anywhere}
+.eye-slot-aura select{width:100%;min-width:0;padding:5px 7px;font:inherit;color:#f1d58c;color-scheme:dark}
+@media(min-width:541px){
+ .eye-slot-row:has(.eye-slot-aura){grid-template-columns:26px minmax(0,1fr) minmax(100px,20%) 52px 44px;grid-template-areas:"number socket aura color clear"}
+}
+@media(max-width:540px){
+ .eye-slot-row:has(.eye-slot-aura){grid-template-areas:"number socket color clear" ". aura aura aura"}
+ .eye-slot-aura{grid-template-columns:minmax(0,1fr) minmax(0,120px);align-items:center;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){.eye-hub-bubble,.eye-config-options input::before{animation:none;transition:none}}
+`;
+export function eyeVisual(config,open,statuses){
+ let html=`<span class="eye-backdrop" style="width:${eyeBackdropDiameter(config)}px;height:${eyeBackdropDiameter(config)}px;opacity:${config.backdrop/100}"></span>`;
+ if(!open)visibleEyeSlots(config).forEach((slot,index)=>{const status=statuses[slot.functionId];if(status&&eyeAuraOn(config,status,slot.functionId)){const diameter=eyeRingRadius(config.size,index,config.eyeAuraGap,config.auraRingGap)*2;html+=`<span class="eye-status-ring" data-ring-slot="${index+1}" style="width:${diameter}px;height:${diameter}px;--eye-color:${config.colors[slot.functionId]};--eye-color-soft:${config.colors[slot.functionId]}22;--eye-color-core:${config.colors[slot.functionId]}99;--eye-color-glow:${config.colors[slot.functionId]}44;--eye-brightness:${config.brightness/100};--eye-soft:${2+config.intensity/20}px;--eye-glow:${2+config.intensity/25}px"></span>`;}});
+ return html+`<img class="eye-master" src="${open?EYE_MASTERS.open:EYE_MASTERS.closed}" alt="" width="1254" height="1254" style="width:${config.size}px;height:${config.size}px" draggable="false">`;
+}
+export function eyeBubble(entry,status,config,t,preview=false){
+ const color=config.colors[entry.id]===EYE_NO_COLOR?'transparent':config.colors[entry.id];
+ const active=eyeAuraOn(config,status,entry.id)&&config.brightness>0,label=t(entry.key)+' · '+t(status.available?status.active?'on':'off':'unavailable');
+ return `<button type="button" class="eye-hub-bubble" data-function="${entry.id}" data-active="${active}" data-available="${status.available}" aria-label="${esc(label)}" title="${esc(label+(status.detail?' · '+status.detail:''))}" ${preview?'data-eye-sim="'+entry.id+'"':''} ${preview||entry.id==='storm'?'aria-pressed="'+Boolean(status.active)+'"':''} style="width:${eyeIconTarget(config.iconSize)}px;height:${eyeIconTarget(config.iconSize)}px;--eye-color:${color};--eye-color-soft:${active?color+'55':'transparent'};--eye-color-glow:${active?color+'33':'transparent'};--bubble-glow:${config.brightness/100*(1+config.intensity/45)}px"><img src="${entry.icon}" alt="" draggable="false" style="width:${eyeIconBox(entry.id,config.iconSize)}px;height:${eyeIconBox(entry.id,config.iconSize)}px">${!status.available?'<svg class="eye-warning" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" stroke="#352000" d="M10 1 19 18H1Z"/><path stroke="#19120b" stroke-width="2" d="M10 6v6m0 2v2"/></svg>':''}</button>`;
+}
+
+// Keep decoded masters and gestures intact across status/metadata changes.
+export function syncEyeVisual(host,config,open,statuses){
+ const template=document.createElement('template');template.innerHTML=eyeVisual(config,open,statuses);
+ const fresh=template.content,master=fresh.querySelector('.eye-master');let image=host.querySelector(':scope>.eye-master');
+ if(!image){image=master;host.append(image);}else{if(image.getAttribute('src')!==master.getAttribute('src'))image.setAttribute('src',master.getAttribute('src'));if(image.getAttribute('style')!==master.getAttribute('style'))image.setAttribute('style',master.getAttribute('style'));}
+ for(const selector of ['.eye-backdrop','.eye-status-ring']){
+  const desired=[...fresh.querySelectorAll(selector)],existing=[...host.querySelectorAll(':scope>'+selector)];
+  for(const node of desired){const old=selector==='.eye-status-ring'?existing.find(n=>n.dataset.ringSlot===node.dataset.ringSlot):existing[0];if(old){if(old.getAttribute('style')!==node.getAttribute('style'))old.setAttribute('style',node.getAttribute('style'));existing.splice(existing.indexOf(old),1);}else host.append(node);}
+  for(const node of existing)node.remove();
+ }
+}
+
+export class EyeConfigurator{
+ constructor(owner){this.owner=owner;this.language=owner._languageValue?.();this.t=(k,v)=>owner._t('eye.'+k,v);this.dialog=document.createElement('dialog');this.dialog.id='eye-hub-config';this.dialog.className='eye-hub-config';this.dialog.setAttribute('aria-label',this.t('title'));this.drag=null;this.suppressUntil=0;owner.shadow.append(this.dialog);
+  this.dialog.innerHTML=`<header><img src="${EYE_MASTERS.open}" alt=""><h2>${esc(this.t('title'))}</h2>${premiumAction('minimize',this.t('minimize'),'minimize')}${premiumAction('close',this.t('close'))}</header><div class="eye-config-body"><div class="eye-previews"><figure><figcaption>${esc(this.t('closed'))}</figcaption><div class="eye-preview-stage" data-preview="closed"></div></figure><figure><figcaption>${esc(this.t('open'))}</figcaption><div class="eye-preview-stage" data-preview="open"></div></figure></div><div class="eye-preview-caption"><p>${esc(this.t('preview'))}</p><button type="button" class="eye-metal-button" data-eye-action="preview-reset">${esc(this.t('previewReset'))}</button></div><div class="eye-config-options">${['grouped','aura'].map(k=>`<label data-eye-option="${k}">${esc(this.t(k))}<input type="checkbox" role="switch" data-eye-key="${k}"></label>`).join('')}${[['size',85.7,300],['iconSize',25,300],['backdrop',0,100],['intensity',0,100],['brightness',0,100]].map(([k,min,max])=>`<label data-eye-option="${k}"><span>${esc(this.t(k))}</span><output data-eye-output="${k}"></output><input type="range" min="${min}" max="${max}" step="${k==='size'?.1:1}" data-eye-key="${k}" aria-label="${esc(this.t(k))}"></label>`).join('')}</div><div class="eye-glow-choice" role="group" aria-label="${esc(this.t('glow'))}"><span>${esc(this.t('glow'))}</span>${['static','living'].map(v=>`<button type="button" class="eye-metal-button" data-eye-glow="${v}">${esc(this.t(v))}</button>`).join('')}</div><details class="eye-neon-studio gr-premium-metal-surface" data-section="neon-studio"><summary>${esc(this.t('neonStudio'))}</summary><div class="eye-config-options">${[['neonBrilliance',100],['neonBloom',100],['neonOrganics',100],['backdropExtent',100],['eyeAuraGap',30],['auraRingGap',8]].map(([k,max])=>`<label data-eye-option="${k}"><span>${esc(this.t(k))}</span><output data-eye-output="${k}"></output><input type="range" min="0" max="${max}" step="1" data-eye-key="${k}" aria-label="${esc(this.t(k))}"></label>`).join('')}</div><label class="eye-energy-setting"><span>${esc(this.t('energyAccents'))}</span><select class="eye-metal-button" data-eye-energy aria-describedby="eye-energy-hint">${EYE_ENERGY_MODES.map(mode=>`<option value="${mode}">${esc(this.t('energy_'+mode))}</option>`).join('')}</select><small id="eye-energy-hint">${esc(this.t('energyHelp'))}</small></label><p>${esc(this.t('studioHint'))}</p><button type="button" class="eye-metal-button" data-eye-action="restore177">${esc(this.t('restore177'))}</button></details><div class="eye-slot-count"><button class="eye-metal-button" type="button" data-eye-action="minus" aria-label="${esc(this.t('remove'))}">−</button><output data-eye-count></output><button class="eye-metal-button" type="button" data-eye-action="plus" aria-label="${esc(this.t('add'))}">+</button></div><div class="eye-slots"></div><p>${esc(this.t('hint'))}</p><h3>${esc(this.t('available'))}</h3><div class="eye-function-palette" data-eye-palette></div><button class="eye-metal-button" type="button" data-eye-action="reset">${esc(this.t('reset'))}</button><p role="status" data-eye-message></p></div>`;
+  ensurePremiumUi(owner.shadow);enhancePremiumSections(this.dialog,'eye-hub',owner);
+  this.dialog.querySelector('header [data-premium-action=close] img').src=owner._eyeHubHeaderCloseIcon();
+  const applyInput=e=>{const k=e.target.dataset.eyeKey;if(!k)return;const value=e.target.type==='checkbox'?e.target.checked:k==='size'?Math.max(36,Math.min(126,eyeSizePixels(Number(e.target.value)))):Number(e.target.value);if(this.owner._eyeHubState().config[k]!==value)this.owner._eyeHubPatch({[k]:value});};this.dialog.addEventListener('input',applyInput);this.dialog.addEventListener('change',applyInput);
+  this.dialog.querySelector('[data-eye-energy]').addEventListener('change',e=>this.owner._eyeHubPatch({energyAccents:e.target.value}));
+  this.dialog.addEventListener('change',({target})=>{
+   const id=target.dataset.eyeSlotAura;
+   if(id)this.owner._eyeHubSetBubbleAura(id,target.value==='on');
+  });
+  this.dialog.addEventListener('click',e=>this.click(e));this.dialog.addEventListener('pointerdown',e=>this.startDrag(e));this.dialog.addEventListener('pointermove',e=>this.moveDrag(e));this.dialog.addEventListener('pointerup',e=>this.endDrag(e));this.dialog.addEventListener('pointercancel',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt)this.cancelDrag();});
+  this.dialog.addEventListener('lostpointercapture',e=>{if(this.drag?.pointer===e.pointerId&&e.timeStamp>=this.drag.startedAt&&!this.drag.source.hasPointerCapture(e.pointerId))this.cancelDrag();});
+  bindTouchDragFallback(owner,this.dialog,{active:()=>!!this.drag,start:e=>this.startDrag(e),move:e=>this.moveDrag(e),end:e=>this.endDrag(e),cancel:()=>this.cancelDrag()});
+  this.dialog.addEventListener('keydown',e=>{if(e.key==='Tab'&&this.popup){const nodes=[...this.popup.querySelectorAll('button:not(:disabled),input:not(:disabled)')],active=this.owner.shadow.activeElement;if(e.shiftKey&&active===nodes[0]){e.preventDefault();nodes.at(-1)?.focus();}else if(!e.shiftKey&&active===nodes.at(-1)){e.preventDefault();nodes[0]?.focus();}}if(e.key==='Escape'&&(this.drag||this.popup)){e.preventDefault();e.stopPropagation();this.cancelDrag();this.closePopup();}});
+  this.dialog.addEventListener('cancel',e=>{e.preventDefault();if(this.popup)this.closePopup();else this.close();});this.resize=new ResizeObserver(()=>{this.cancelDrag();this.previews();});this.resize.observe(this.dialog);this.abortDrag=()=>this.cancelDrag();window.addEventListener('resize',this.abortDrag);this.update();
+ }
+ open(){this.simulation=this.owner._eyeHubStatuses();this.returnFocus=this.owner.shadow.activeElement;this.dialog.classList.toggle('minimized',readPremiumUi('eye-hub',this.owner).minimized===true);this.update();if(!this.dialog.open)this.dialog.showModal();requestAnimationFrame(()=>this.previews());}
+ close(){this.cancelDrag();this.closePopup();this.dialog.close();this.owner._eyeHubGlowSync?.();this.returnFocus?.focus?.();}
+ update(){
+  const s=this.owner._eyeHubState(),c=s.config;
+  this.dialog.querySelector('[data-eye-energy]').value=c.energyAccents;
+  for(const input of this.dialog.querySelectorAll('[data-eye-key]')){const k=input.dataset.eyeKey,value=k==='size'?eyeSizePercent(c.size):c[k];if(input.type==='checkbox')input.checked=c[k];else if(this.owner.shadow.activeElement!==input)input.value=Math.round(value*10)/10;const out=this.dialog.querySelector(`[data-eye-output="${k}"]`);if(out){const label=new Intl.NumberFormat(this.owner._locale?.()||'de-DE',{maximumFractionDigits:1}).format(value)+(['eyeAuraGap','auraRingGap'].includes(k)?' px':' %');out.textContent=label;input.setAttribute('aria-valuetext',label);}}
+  for(const b of this.dialog.querySelectorAll('[data-eye-glow]'))b.setAttribute('aria-pressed',String(b.dataset.eyeGlow===c.glow));
+  this.dialog.querySelector('[data-eye-count]').textContent=this.t('slots')+' '+Math.min(c.slots.length,8)+' / 8';this.dialog.querySelector('[data-eye-action=plus]').disabled=c.slots.length>=8;this.dialog.querySelector('[data-eye-action=minus]').disabled=c.slots.length<=1;
+  const signature=JSON.stringify([c.slots,eyeEntryEnabled(s.registry.entries.get('storm')),this.owner._languageValue?.()]);
+  if(signature!==this.signature){
+   this.signature=signature;
+   this.dialog.querySelector('.eye-slots').innerHTML=visibleEyeSlots(c).map((slot,index)=>{
+    const saved=s.registry.entries.get(slot.functionId),entry=eyeEntryEnabled(saved)?saved:null;
+    const name=entry?esc(this.t(entry.key)):'';
+    const auraLabel=esc(this.t('bubbleAura'));
+    return `<div class="eye-slot-row" data-eye-slot="${index}">
+     <strong>${index+1}</strong>
+     <button type="button" class="eye-slot-socket" data-eye-assign="${index}" ${saved&&!entry?'disabled':''} ${entry?'data-eye-function="'+entry.id+'"':''} aria-label="${esc(this.t('choose',{slot:index+1}))}">${entry?`<img src="${entry.icon}" alt=""><span>${name}</span>`:`<i class="eye-empty-socket"></i><span>${esc(this.t('empty'))}</span>`}</button>
+     ${entry?`<label class="eye-slot-aura"><span>${auraLabel}</span><select class="eye-metal-button" data-eye-slot-aura="${entry.id}" aria-label="${auraLabel} · ${name}"><option value="on">${esc(this.t('on'))}</option><option value="off">${esc(this.t('off'))}</option></select></label>`:''}
+     <button type="button" class="eye-color-button" data-eye-color="${entry?.id||''}" ${entry?'':'disabled'} aria-label="${esc(this.t('color'))}"><i style="--eye-color:${entry?c.colors[entry.id]:'#333'}"></i></button>
+     <button type="button" class="eye-slot-clear" data-eye-clear="${index}" ${entry?'':'disabled'} aria-label="${esc(this.t('clear',{slot:index+1}))}"><img src="${PREMIUM_CLOSE}" alt=""></button>
+    </div>`;
+   }).join('');
+   this.dialog.querySelector('[data-eye-palette]').innerHTML=this.functionPalette();
+  }
+  for(const select of this.dialog.querySelectorAll('[data-eye-slot-aura]')){
+   const value=eyeBubbleAuraEnabled(c,select.dataset.eyeSlotAura)?'on':'off';
+   if(select.value!==value)select.value=value;
+  }
+  for(const b of this.dialog.querySelectorAll('[data-eye-color]')){const dot=b.querySelector('i'),color=c.colors[b.dataset.eyeColor];if(dot&&color){const none=color===EYE_NO_COLOR;dot.toggleAttribute('data-no-color',none);const swatch=none?'transparent':color,label=this.t(none?'noColor':'color');if(dot.style.getPropertyValue('--eye-color')!==swatch)dot.style.setProperty('--eye-color',swatch);if(b.getAttribute('aria-label')!==label)b.setAttribute('aria-label',label);}}
+  if(this.dialog.open)this.previews();
+ }
+ functionPalette(picker=false){const s=this.owner._eyeHubState();return [...s.registry.entries.values()].filter(eyeEntryEnabled).map(entry=>{const index=s.config.slots.findIndex(v=>v.functionId===entry.id);return `<button type="button" class="eye-function-choice" data-eye-function="${entry.id}" ${picker?'data-eye-pick="'+entry.id+'"':''} aria-pressed="${index>=0}"><img src="${entry.icon}" alt=""><span>${esc(this.t(entry.key))}</span>${index>=0?'<small>'+esc(this.t('assigned',{slot:index+1}))+'</small>':''}</button>`;}).join('');}
+ previews(){
+  if(!this.dialog.open||this.dialog.classList.contains('minimized'))return;
+  const s=this.owner._eyeHubState(),c=s.config,statuses=this.simulation||this.owner._eyeHubStatuses(),entries=visibleEyeSlots(c).map(v=>s.registry.entries.get(v.functionId)).filter(eyeEntryEnabled);
+  for(const stage of this.dialog.querySelectorAll('[data-preview]')){
+   const open=stage.dataset.preview==='open',target=eyeIconTarget(c.iconSize);
+   // Fit the complete halo once for this geometry. Bloom can then vary inside
+   // the reserved space without changing the Eye or ring projection.
+   const extent=eyeStudioExtent(c,!open&&c.grouped&&c.aura?100:0);
+   const sceneSize=open?Math.max(300,2*extent+40,(Math.sqrt(entries.length)+1)*target+c.size):2*extent+24;
+   const scale=(stage.clientWidth||250)/sceneSize;
+   let scene=stage.querySelector('.eye-preview-scene');if(!scene){scene=document.createElement('div');scene.className='eye-preview-scene';scene.innerHTML='<div class="eye-visual"></div><div class="eye-preview-bubbles"></div>';stage.append(scene);}
+   scene.style.cssText=`width:${sceneSize}px;height:${sceneSize}px;transform:translate(-50%,-50%) scale(${scale})`;syncEyeVisual(scene.querySelector('.eye-visual'),c,open,statuses);
+   if(open){const root=scene.querySelector('.eye-preview-bubbles'),positions=eyeBubbleLayout(entries.length,{x:sceneSize/2,y:sceneSize/2},{left:0,top:0,right:sceneSize,bottom:sceneSize},[],c.size,c.iconSize),ids=new Set(entries.map(f=>f.id));for(const b of root.children)if(!ids.has(b.dataset.function))b.remove();
+    entries.forEach((entry,i)=>{const template=document.createElement('template');template.innerHTML=eyeBubble(entry,statuses[entry.id],c,this.t,true);const fresh=template.content.firstElementChild;let b=[...root.children].find(b=>b.dataset.function===entry.id);if(!b){b=fresh;root.append(b);}else{for(const a of ['data-active','data-available','aria-label','aria-pressed','style'])if(b.getAttribute(a)!==fresh.getAttribute(a))b.setAttribute(a,fresh.getAttribute(a));b.querySelector('img').style.cssText=fresh.querySelector('img').style.cssText;const warning=b.querySelector('.eye-warning'),next=fresh.querySelector('.eye-warning');if(!next)warning?.remove();else if(!warning)b.append(next);}b.hidden=!positions[i];if(positions[i]){b.style.left=positions[i].x-target/2+'px';b.style.top=positions[i].y-target/2+'px';}});
+   }
+  }this.owner._eyeHubGlowSync?.();
+ }
+ message(text,confirm=null){this.closePopup();const popup=document.createElement('div');popup.className='eye-hub-popup';popup.innerHTML=`<section role="dialog" aria-modal="true" aria-label="${esc(text)}"><p>${esc(text)}</p><div class="eye-popup-actions">${confirm?`<button type="button" class="eye-metal-button" data-eye-confirm>${esc(this.t('apply'))}</button>`:''}<button type="button" class="eye-metal-button" data-eye-dismiss>${esc(this.t(confirm?'cancel':'ok'))}</button></div></section>`;this.dialog.append(popup);this.popup=popup;popup.querySelector('[data-eye-confirm]')?.addEventListener('click',()=>{this.closePopup();confirm();});popup.querySelector('[data-eye-dismiss]').addEventListener('click',()=>this.closePopup());popup.querySelector('button').focus();}
+ closePopup(){
+  this.popup?.remove();this.popup=null;this.pickIndex=null;
+  this.colorOpener?.focus({preventScroll:true});this.colorOpener=null;
+ }
+ openColors(opener,config){
+  this.closePopup();
+  const id=opener.dataset.eyeColor,popup=document.createElement('div');
+  const names=['pink','violet','blue','turquoise','green','yellow','orange','red'];
+  const swatches=EYE_COLORS.map((color,index)=>{
+   const material=EYE_MATERIALS[color];
+   const preview=material?`;background:linear-gradient(150deg,${material.scatter},${color} 38%,${material.reflection} 48%,${color} 58%,${material.scatter})`:'';
+   return `<button class="eye-color-choice" type="button" data-eye-paint="${color}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===color}"><i aria-hidden="true" style="--eye-color:${color}${preview}"></i><span>${esc(this.t(material?.key||names[index]))}</span></button>`;
+  }).join('')+`<button class="eye-color-choice" type="button" data-eye-paint="${EYE_NO_COLOR}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===EYE_NO_COLOR}"><i data-no-color aria-hidden="true"></i><span>${esc(this.t('noColor'))}</span></button>`;
+  popup.className='eye-hub-popup';
+  popup.innerHTML=`<section role="dialog" aria-label="${esc(this.t('color'))}"><label class="eye-bubble-aura-setting">${esc(this.t('bubbleAura'))}<input type="checkbox" role="switch" data-eye-bubble-aura ${eyeBubbleAuraEnabled(config,id)?'checked':''}></label><h3>${esc(this.t('color'))}</h3><div class="eye-colors">${swatches}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;
+  this.colorOpener=opener;this.popup=popup;this.dialog.append(popup);
+  popup.querySelector('[data-eye-dismiss]').onclick=()=>this.closePopup();
+  popup.querySelector('[data-eye-bubble-aura]').onchange=event=>this.owner._eyeHubSetBubbleAura(id,event.target.checked);
+  (popup.querySelector('[aria-pressed=true]')||popup.querySelector('button')).focus();
+ }
+ click(e){const b=e.target.closest('button');if(!b)return;e.stopPropagation();if(performance.now()<this.suppressUntil){e.preventDefault();return;}const s=this.owner._eyeHubState(),c=s.config;
+  if(b.dataset.eyeSim){const id=b.dataset.eyeSim;this.simulation={...(this.simulation||this.owner._eyeHubStatuses()),[id]:{active:!this.simulation?.[id]?.active,available:true,detail:this.t('preview')}};this.previews();this.dialog.querySelector('[data-eye-sim="'+id+'"]')?.focus({preventScroll:true});return;}
+  if(b.dataset.eyeAction==='preview-reset'){this.simulation=this.owner._eyeHubStatuses();this.previews();return;}
+  if(b.dataset.eyeGlow)return this.owner._eyeHubPatch({glow:b.dataset.eyeGlow});
+  if(b.dataset.premiumAction==='close')return this.close();if(b.dataset.premiumAction==='minimize'){this.cancelDrag();this.dialog.classList.toggle('minimized');savePremiumUi('eye-hub',{minimized:this.dialog.classList.contains('minimized')},this.owner);this.previews();this.owner._eyeHubGlowSync?.();return;}
+  if(b.dataset.eyeAction==='plus'||b.dataset.eyeAction==='minus')return this.owner._eyeHubResize(b.dataset.eyeAction==='plus'?1:-1);
+  if(b.dataset.eyeAction==='restore177')return this.owner._eyeHubPatch({neonBrilliance:0,neonBloom:0,neonOrganics:0,backdropExtent:0});
+  if(b.dataset.eyeAction==='reset')return this.message(this.t('resetConfirm'),()=>this.owner._eyeHubReset());
+  if(b.hasAttribute('data-eye-clear')){const slots=c.slots.map((v,i)=>i===Number(b.dataset.eyeClear)?{...v,functionId:null}:v);return this.owner._eyeHubPatch({slots});}
+  if(b.hasAttribute('data-eye-assign')&&!b.dataset.eyeFunction){this.closePopup();this.pickIndex=Number(b.dataset.eyeAssign);const popup=document.createElement('div');popup.className='eye-hub-popup';popup.innerHTML=`<section role="dialog" aria-label="${esc(this.t('choose',{slot:this.pickIndex+1}))}"><h3>${esc(this.t('choose',{slot:this.pickIndex+1}))}</h3><div class="eye-function-palette">${this.functionPalette(true)}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;this.popup=popup;this.dialog.append(popup);popup.querySelector('[data-eye-dismiss]').onclick=()=>this.closePopup();popup.querySelector('button').focus();return;}
+  if(b.dataset.eyePick){const index=this.pickIndex;this.closePopup();return this.owner._eyeHubAssign(index,b.dataset.eyePick);}
+  if(b.dataset.eyeColor)return this.openColors(b,c);
+  if(b.dataset.eyePaint){this.owner._eyeHubPatch({colors:{...c.colors,[b.dataset.eyePaintId]:b.dataset.eyePaint}});this.closePopup();}
+ }
+ startDrag(e){const source=e.target.closest('[data-eye-function]');if(!source||this.popup||this.drag||e.isPrimary===false||e.button>0)return;e.stopPropagation();this.drag={source,id:source.dataset.eyeFunction,pointer:e.pointerId,startedAt:e.timeStamp,x:e.clientX,y:e.clientY,moved:false};if(e.pointerId>=0)source.setPointerCapture?.(e.pointerId);}
+ moveDrag(e){const d=this.drag;if(!d||d.pointer!==e.pointerId)return;if(!d.moved&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<8)return;e.preventDefault();e.stopPropagation();d.moved=true;const bounds=this.dialog.getBoundingClientRect();if(e.clientY<bounds.top+60)this.dialog.scrollTop-=24;else if(e.clientY>bounds.bottom-60)this.dialog.scrollTop+=24;if(!this.ghost){this.ghost=document.createElement('img');this.ghost.className='eye-drag-ghost';this.ghost.src=this.owner._eyeHubState().registry.entries.get(d.id).icon;this.dialog.append(this.ghost);}this.ghost.style.left=e.clientX-27+'px';this.ghost.style.top=e.clientY-27+'px';this.dialog.querySelectorAll('.eye-drop-target').forEach(n=>n.classList.remove('eye-drop-target'));const target=this.owner.shadow.elementFromPoint(e.clientX,e.clientY)?.closest('[data-eye-slot]');if(target&&!this.owner._eyeHubState().config.slots[Number(target.dataset.eyeSlot)].functionId)target.classList.add('eye-drop-target');}
+ endDrag(e){const d=this.drag;if(!d||d.pointer!==e.pointerId)return;const target=this.owner.shadow.elementFromPoint(e.clientX,e.clientY)?.closest('[data-eye-slot]');if(d.moved){e.preventDefault();e.stopPropagation();this.suppressUntil=performance.now()+600;if(target)this.owner._eyeHubAssign(Number(target.dataset.eyeSlot),d.id);}this.cancelDrag();}
+ cancelDrag(){const d=this.drag;this.drag=null;try{if(d?.source.hasPointerCapture?.(d.pointer))d.source.releasePointerCapture(d.pointer);}catch(_){}this.ghost?.remove();this.ghost=null;this.dialog.querySelectorAll('.eye-drop-target').forEach(n=>n.classList.remove('eye-drop-target'));}
+ destroy(){this.close();this.resize.disconnect();window.removeEventListener('resize',this.abortDrag);this.dialog.remove();}
+}

@@ -1,4 +1,219 @@
+## V4.11.165 DEV · Original-Niederschlagsicon · HA 0.25.72
+
+Freigegebenes 1254-px-PNG bytegleich im Masterbestand und in beiden Installationspaketen. Frei verschiebbarer Kartenschalter mit kurzem Klick für die gemeinsame Niederschlagsebene, 600-ms-Long-Press für die vorhandenen Eye-Einstellungen und gespeicherten Positionen. Vier unabhängige Sichtbarkeitsmodi, synchron zum bestehenden Schnellzugriff. Wind, Temperatur und meteorologische Datenwege bleiben unverändert.
+
+[Implementierung und Originalprüfsumme](docs/GR_PRECIPITATION_HIRES_ICON_01.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.165-dev). Physische Companion-/HA-Abnahme offen.
+
+## V4.11.163 DEV · Winddesign- & Animationsstudio · HA 0.25.70
+
+Optionales Studio unter Experteneinstellungen: gemeinsame Live-/Offline-Vorschau, getrennte Entwürfe, geschützte Standardprofile und lokale Benutzerprofile mit JSON-/CSV-Austausch und CSV-Teilimport. Nur Auf Karte anwenden übernimmt Entwurfswerte. Der positiv begutachtete Schlangenrenderer, alle elf Parameter, die bisherigen Regler und deren Speicherung bleiben unverändert.
+
+[Implementierung und Austauschformat](docs/GR_WIND_ANIMATION_STUDIO.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.163-dev). Keine automatische Installation; physische Companion-/HA-Abnahme offen.
+
+## V4.11.162 DEV · Snake Flow Fix 01 · HA 0.25.69
+
+Synchronisierte Live-Schnellregler für Länge, Tempo und Dichte; Detailregler bleiben während Touch-/Mauszügen im DOM. Langer Körper mit voller Deckkraft, einstellbarer Schwanzbeginn bei standardmäßig 67 %. Höhere Dichte bis Faktor 5, Zoom-3-Anpassung, kontrollierte räumliche Auffüllung und nachvollziehbare temporäre Lastbegrenzung mit Erholung. Vorhandene Modi und Winddatenwege bleiben erhalten.
+
+[Implementierung und Prüfungen](docs/GR_SNAKE_FLOW_FIX_01.md) · [Installierbares DEV-Release und aktualisierte Offline-Vorschau](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.162-dev). Physische Companion-/HA-Abnahme bleibt offen.
+
+## V4.11.161 DEV · Schlangenförmige Animation · HA 0.25.68
+
+Zusätzlicher eigenständiger Windrenderer mit abgerundetem Kopf, verjüngtem Körper und transparentem Schwanz. Dieselben Partikel verlängern und verkürzen sich weich mit der lokalen WR-Windgeschwindigkeit. RK2, begrenzte geografische Historien und gemeinsamer Frame-Scheduler; zehn unabhängig gespeicherte Parameter im vorhandenen Premium-Windmenü. Bisherige Modi und Auswahl bleiben erhalten.
+
+[Implementierung und gezielte Prüfungen](docs/GR_SNAKE_FLOW_ANIMATION.md) · [Installierbares DEV-Release und Offline-Vorschau](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.161-dev). WeatherRouter unverändert; physische Companion-/HA-Abnahme offen.
+
+> **GR 4.11.157 DEV / HA 0.25.64:** [Geschwungene Wind-/Advektionspfeile und dynamische Stromlinien](docs/GR_FLOW_CURVES_01_IMPLEMENTATION.md). Gemeinsame begrenzte Trajektoriengeometrie, gespeicherte Formen und 19 Sprachen. Klassische Modi bleiben Standard; WR 0.10.298 / Loader 301 unverändert. Manuelle VM109-Realabnahme offen.
+
+## V4.11.160 DEV · Premium UI Fix 02 · HA 0.25.67
+
+Eye-Header und metallische Einstellungsbereiche direkt wiederverwendet; Titel und Original-Chevrons einheitlich eingerückt. Long Press nach 600 ms mit nativer Callout-Unterdrückung, toleriertem Touch-Jitter und einem einzigen Aktivierungsweg für Kurzklick, getrennt von Drag. Bestehende Legenden, Wetterdaten und gespeicherte Einstellungen bleiben erhalten.
+
+[Implementierung und Prüfungen](docs/GR_PREMIUM_UI_FIX_02.md) · [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.160-dev). Physische Companion-/HA-Abnahme bleibt offen.
+
+
+## V4.11.159 DEV · Premium UI Consolidation · HA 0.25.66
+
+Gemeinsame Eye-Premium-Komponenten für Wind, Temperatur, Legenden und Kartenansicht. Reparierte Legenden mit getrennten Erklärungen, Skalen und gespeicherter Minimierung; lesbare Klassen und autoritative Advektions-Farbgrenzen. Unabhängige Wind-Schnellaktionen und sichere Klick-/Drag-/600-ms-Long-Press-Bedienung mit Originalicons. Wetterdatenwege und Renderer bleiben geschützt.
+
+[Implementierung und gezielte Prüfungen](docs/GR_PREMIUM_UI_CONSOLIDATION_2026-11-08.md). [Installierbares DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11.159-dev). Physische Companion-/HA-Abnahme bleibt beim Betreiber.
+
+
+> **GR 4.11.156 DEV / HA 0.25.63:** [Weltweite Temperatur, kohärente 850-hPa-Advektion, GeoPointContext und Celsius/Fahrenheit/Kelvin](docs/GR_TEMP_WORLD_01.md). Gemeinsame Auslieferung mit dem freigegebenen Original-Temperaturicon. Erfordert WR 0.10.298 / Loader 301; bestehender Wind-/Niederschlagspfad geschützt. Manuelle VM109-Abnahme offen.
+
+## V4.11.153 DEV · 2026-11-07 · HA-Integration 0.25.60
+
+- Drei freigegebene Original-PNGs unverändert als Hi-Res-Master erhalten; verlustfreie WebP-Laufzeitbilder für Kartenschalter, Einstellungs-Zahnrad und Windfahne. Vorbereitete Premium-UI-Commits übernommen, SVG-Master aufbewahrt und inaktiv.
+- Direkter verschiebbarer Windschalter oben links mit gemeinsamem globalem Sichtbarkeitszustand. Alle Windoptionen einschließlich Farbfläche, Deckkraft und Pause bleiben erhalten; Windkachel und Einstellungsmenü synchron.
+- Bestehende Drag-Architektur, Painter und gültiger 130-%-Puffer wiederverwendet. Keine versteckte Animationsarbeit oder unnötigen identischen Feldabrufe beim Umschalten.
+- 41 gezielte Unit-/Vertragsprüfungen und fünf vollständige Desktop-/Android-/iPad-Browseransichten bestanden. Renderer/Interpolation unverändert; WeatherRouter 0.10.297 unverändert. Details: `docs/GR_WIND_QUICKTOGGLE_01.md`.
+
+## V4.11.152 DEV · 2026-11-07 · HA-Integration 0.25.59
+
+- Bestehenden Wind-Canvas intern optimiert: vorbereitete Projektion, wiederverwendete Partikelzustände, exakte U/V-Lookups und kurzzeitige visuelle Richtungsglättung; gleiche Dichte und Farbpalette.
+- Begrenzter lokaler RAM-Puffer für 130 % Viewportbreite/-höhe, WR-Gültigkeit, LRU und World-Wrap. Nur sichtbare Fläche animiert; neue Generation samt vorbereiteter Farbfläche atomar übernehmen.
+- Farbflächen kooperativ vorbereiten und Bildpuffer wiederverwenden; optionale Performanceanzeige und vorhandene goldene Windmenü-Icons mit 44-px-Touchzielen.
+- 36 gezielte GR- und 15 lokale WR-Prüfungen, 15 vollständige Browseransichten. Kontrollierter Vergleich bei gleicher Dichte: mittlere Zeichenzeit 13,46→5,61 ms (CPU-Emulation), 5,81→1,85 ms (Desktop). Keine physische Geräte-/HA-Abnahme. Details: `docs/GR_WIND_PERF_01.md`.
+
+## V4.11.151 DEV · 2026-11-07 · HA-Integration 0.25.58
+
+- Additive WR-V2-Windfeldfähigkeit für zusammenhängende numerische U-/V-Modelldaten; WR 0.10.296 / Loader 299 entscheidet über Quelle, NoData, Abdeckung und Freigabe.
+- Bestehender Canvas um kontinuierliche, sanft ein-/ausblendende Strömungssegmente und unabhängig schaltbare Beaufort-Windfarbfläche erweitert. Subpixelrichtung bei Übersichtszoom korrigiert.
+- Vorhandene Windfahnen/Pfeile, acht Farben, Premium-Menüs, Windlegende und gespeicherte Einstellungen bleiben erhalten. Kein Druckfarbmodus ohne autoritative Klassifikation.
+- Gezielte vollständige Browserprüfungen und geschützte Niederschlags-/Legendenvergleiche; keine private CI oder automatische HA-Installation. Details: `docs/GR_WIND_ANIM_01.md`.
+
+## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
+
+- OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.
+- Normale WR-Lieferung wird separat von einer isolierten Originaldiagnose ausgewiesen. Anzeige übernimmt Quelle, Zeitstempel, Veraltet-Kennzeichnung und Auswahlgrund von WR; keine zusätzliche GR-Zeitpolitik.
+- Veraltete Behauptungen einer grundsätzlich ungeprüften geografischen Orientierung entfernt. TEST69 bleibt abgeschlossen; einzelne ungültige Originale bleiben gesperrt.
+- Authentifizierter Kacheltransport, vollständiger atomarer Generationswechsel und gezielte Wiederholung fehlgeschlagener Kacheln unverändert erhalten.
+- Paarung mit WR 0.10.287 DEV. Integration und Dashboard bytegleich aus derselben Quelle gebaut; geschützte About-Inhalte unverändert. Neue Realabnahme auf VM109 ausstehend, VM101 unverändert.
+
+## V4.11.138 DEV · 2026/11 · Integration 0.25.45
+
+- OPERA als reguläre, ausschließlich von WeatherRouter ausgewählte Consumer-V2-Niederschlagsquelle.
+- Authentifizierte same-origin RATE-Kacheln mit Bearer-Header und Blob-Dekodierung; keine Tokens in URLs.
+- Neue Generationen laden verdeckt. Erfolgreiche Kacheln bleiben erhalten; ausschließlich fehlgeschlagene OPERA-Koordinaten werden mit begrenzter Parallelität erneut angefordert.
+- Kein Abbruch einer laufenden OPERA-Generation durch Staging-/Watchdog-Zeitlimits; kein V1-Fallback wegen vorübergehender OPERA-Kachelfehler. Umschaltung erst bei vollständig darstellbarem Sichtfeld.
+- WR-Metadaten bestimmen Gültigkeit und Veraltet-Kennzeichnung. Neue Radarzyklen und Policyänderungen lösen eine erzwungene V2-Aktualisierung aus.
+- Integration und Dashboard werden deterministisch aus derselben Quelle gebaut. Geschützte About-Inhalte unverändert.
+- DEV VM109: WR 0.10.286 und GR 0.25.45 per DRA installieren, HA neu starten, Frontend neu laden. Keine HA-Realabnahme; VM101 unverändert.
+
 # Changelog
+
+## 2026/10 – V4.11.87 DEV (P7-010 – WR 0.10.152 V2-Mosaik)
+
+- Consumer V2 mit optionaler, ausdrücklich aktivierbarer älterer **globaler** Satellitengrundlage (bis 12 Std.) bei weiter strengem 15-Minuten-Limit für aktuelle Radarquellen.
+- V2-Validator, Legende und Diagnose unterscheiden Bildzeit UTC, Datenalter, `current` und `older_background`. Bestehende räumliche Begrenzung und Kachelbudgets bleiben erhalten.
+- Consumer V1 unterstützt begrenzte, vom WR-Katalog ausdrücklich zugelassene Ereigniszeitfenster, Ereignisstatus, Feed-Frische und Seitenaufteilung.
+- V1-Rückfall und gemeinsame Korrelationskennung unverändert. Mehrquellen-Karten-Realtest und FLK-01-Geräteabnahme weiterhin offen.
+
+## 2026/10 – V4.11.86 DEV (P7-010 V2-Datenalter-Vergleich)
+
+- **Diagnose:** Zwei kontrollierte Consumer-V2-Anfragen (900 gegenüber 43200 Sekunden maximales Datenalter), ein gemeinsamer Kartenausschnitt und separate Korrelationskennungen zur Nachverfolgung im WR-API-Monitor.
+- **Zeitqualität:** V2-Ergebnis enthält nur sichere Quellenmetadaten zu UTC-Gültigkeitszeit, tatsächlichem Alter, Messmethode, Quellenstatus und redigierten WR-Einschränkungen; getrennte JSON-Rubrik `v2_age_comparison`.
+- **Kein Einfluss auf Kartenbetrieb:** Produktive 900-Sekunden-Altersgrenze, 180-Sekunden-Kohärenzfenster, Bildkacheln und V1-Rückfall bleiben unverändert.
+- **Auslieferung:** V4.11.86 DEV / `41186r1` / `E411-86A1` / HA `0.25.4`; Regressionen und Realabnahme getrennt.
+- **Realtests:** Zuerst V2-A/B-Diagnose mit zwei korrelierten WR-Monitoreinträgen; danach eigenständige Mosaikprüfung. Keine automatische Freigabe historischer NASA-Daten als aktueller Radarstand. FLK-01 separat.
+
+## 2026/10 – V4.11.85 DEV (P7-010 Consumer API V2 – technischer Realtestkandidat)
+
+- **API V2:** Eigenständiger Schnittstellentest in der Weather Engine mit kontrollierter WebSocket-Anfrage, verbindlicher Korrelationskennung, Antwortvalidierung und begrenztem JSON-Diagnoseexport.
+- **Mehrquellenmosaik:** Bestehende P7-010-Mosaikmodule aktiv im Niederschlagskartenpfad; maximal zwölf Gesamtquellen und vier örtlich geeignete Quellen je Kachel. Bestehendes Quellenrouting verbleibt ausschließlich im WeatherRouter.
+- **Rasterlebenszyklus:** Ersatzebenen warten zusätzlich auf den Leaflet-Ladeabschluss; beim Entfernen werden laufende Kachelabrufe und die gemeinsame Warteschlange beendet. Keine Neubewertung von Anbietern in GR.
+- **Zeit und Ausfälle:** Unterscheidung von Transport-, Vertrags-, Vorbereitungs- und Darstellungsfehlern; zeitlich abweichende Teilmosaike werden diagnostiziert; gemeinsamer V1/V2-Korrelationsbezug; vorläufig 20 Sekunden Clientfrist.
+- **Version:** V4.11.85 DEV / `41185r1` / `E411-85A1` / native Integration `0.25.3`. Automatisierte Prüfungen und HA-Realtests sind getrennt zu bewerten.
+- **Abnahmegrenzen:** Echte API-V2-Monitor-Korrelation, geografisch korrektes Kuba–Atlantik–Europa-Mosaik und Geräteprüfung sind nicht allein durch den Code nachgewiesen. **FLK-01 bleibt offen.**
+
+## 2026/10 – V4.11.84 DEV (FLK-01, Weather Engine)
+
+- Niederschlag: Identische V1-Raster werden nicht neu erstellt; bei neuen Daten bleibt die bisherige Ebene bis zum vollständigen Laden erhalten. Veraltete, fehlerhafte oder abgebrochene Ersatzebenen werden sicher verworfen.
+- Weather Engine: kompakteres responsives Einstellungsraster, aktive API V1/V2 getrennt vom WeatherRouter-V1-Verbindungsstatus.
+- Versions-/DRA-Kennung: V4.11.84 DEV / 41184r1 / E411-84A1 / Integration 0.25.2. Geräte- und V2-Realabnahme ausstehend; Details in [Release Notes](docs/RELEASE_NOTES_V4_11_84_DEV.md).
+
+
+## V4.11 DEV – zusammengeführter Entwicklungsstand bis V4.11.68 · 13.10.2026
+
+**Ausführliche Entwicklungs- und Verbesserungsübersicht:** [V4.11-Gesamtchronik](docs/RELEASE_NOTES_V4_11_GESAMTCHRONIK_DEV.md). Diese ergänzt die bestehenden Einzelversionsberichte, ersetzt sie nicht und ist **keine FINAL-Freigabe**.
+
+- **WeatherRouter:** Consumer-V1-Anbindung, providerneutraler Niederschlagsradar, räumliches Kachelvorladen, Zeitplayer mit Doppelpufferung; kompakte Legende, Transparenzregelung, Darstellungsprofile und konfigurierbares Aktualisierungsintervall. Weitere Wetterdienste und die vollständige WeatherRouter-Integration bleiben in Entwicklung.
+- **Bedienung:** Zentrale Project-Hub-Einbindung, klassische und moderne Einstellungen, verbesserte horizontale Menüanimationen, mobile Standortlisten und verschiedene gerätespezifische Darstellungsfehler korrigiert.
+- **Karte und Schutzfunktionen:** Android-3-Finger-Gestenschutz, dauerhaft wiederverwendete Cluster- und Einzelblitzmarker, bereinigte Moduldiagnose und stabilisierte Standort-Kamerafahrt.
+- **Standortzoom:** Einstellbare automatische Radiuseinpassung oder feste Zielzoomstufen 5–18 nach gespeichertem Standortwechsel.
+- **V4.11.68:** Schutz vor extrem großen grafischen Radiuskreisen/SVG-Auren. Anwender bestätigt in der Geräteprüfung flüssige Karte und moderne Menüführung, hohe Zoomstufen bis 18 und stabile Bedienung im bisherigen Testzeitraum. Die vorherige starke Verlangsamung wurde nicht mehr beobachtet. Akku- und Temperaturverbesserungen sind plausibel, aber noch nicht gemessen.
+- **Zurückgestellt:** Auf Android kann nach Companion-App-Neustart und Änderung der Zielzoomstufe einzig der erste Standortwechsel einmalig die vorherige Stufe verwenden; danach funktioniert die Auswahl korrekt. Mehrfach reproduziert, geringe Priorität.
+
+**Aktueller Stand:** V4.11.68 DEV · `41168r1` · `E411-68A1` · Integration `0.25.0`. Keine Änderung an `main` oder `deploy/dev` durch die Dokumentationsnachträge.
+
+## V4.11.08 DEV · Project Hub Popup-Nachlauf · 2026-10-02
+
+- `ui.project-hub` auf **1.1.1**: Host-Popup liegt jetzt auf der obersten reservierten Ebene `2147483647` und damit sicher vor Settings (`2147483645`) sowie Moduldiagnose (`2147483646`).
+- Popup-Geometrie nutzt `visualViewport`/Viewport-Höhe dynamisch und darf auf großen Bildschirmen bis **1080 px** hoch werden; bei Rotation/Viewport-Änderung wird die Größe nachgeführt.
+- Inhalt und zentrale Project-Hub-Runtime V0.2 RC1 bleiben unverändert.
+- Modulsatz **E411-08A3**, native Integration **0.23.7**; gezielter Project-Hub-/Manifest-Cache-Buster **41108r3**.
+
+## V4.11.08 DEV · Project Hub V0.2 RC1 Nachlauf · 2026-10-02
+
+- `ui.project-hub` auf **1.1.0**: Signatur öffnet die lokale Project-Hub-Runtime unmittelbar als internes Host-Popup; kein verzögertes `window.open()` mehr.
+- Health-Probe aktualisiert nur den Online-/Offline-Status; Remote-HTML/JS wird weiterhin nicht in Gewitterradar eingebettet.
+- Zentralen Project-Hub-Stand **V0.2 RC1** übernommen: schlanke Runtime-HTML, lokale Retina-WebP-Assets, Desktop-Kopf weiter rechts, mobile Zentrierung.
+- Projektkarten besitzen zwei vertikale Aktionen: **GitHub** und **Projektseite**. Gewitterradar verweist auf seine Pages-Projektseite; übrige Projektseiten zeigen deaktiviert `Projektseite · folgt`.
+- Modulsatz **E411-08A2**, native Integration **0.23.6**. Produktversion und Runtime-Basis bleiben V4.11.08 / 41108r1.
+
+## V4.11.08 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
+
+- Daimos Project Hub als eigenständiges Laufzeitmodul `ui.project-hub@1.0.0`; die bestehende Signatur bleibt Darstellung und Einstiegspunkt.
+- Passive HTTPS-Bildprobe auf `health.svg`; kein Remote-HTML/JavaScript im Gewitterradar-Kontext.
+- Online wird die Pages-Root separat mit `noopener,noreferrer` geöffnet; offline/ungültig/Timeout nutzt die autarke lokale Miniansicht.
+- Dashboard und native Integration erhalten denselben Modul-, Konfigurations- und Offlinebestand; DRA transportiert ihn über den bestehenden `replace_directory`-Vertrag.
+- Rückfallpunkt: `freeze/v4.11-pre-project-hub-2026-10-02` auf `d5113b164046e478fe018cb12cea91eb85697a3f`.
+- Identität: `4.11.08`, `V4.11.08 DEV`, `V4.11.08-DEV-2026-10-02`, Runtime `41108r1`, Modulsatz `E411-08A1`, native Integration `0.23.5`.
+- `core.manifest` 1.2.54; **27 Laufzeitmodule**. About, Karte, Weather-Engine und Signaturgrafik bleiben unverändert.
+
+## V4.11.05 DEV · 2026/10 (Entwicklung, kein öffentlicher Release)
+
+- Erster providerneutraler **Radar-Zeitverlauf** direkt auf der Gewitterradar-Karte: Vergangenheit, aktueller Zeitpunkt und Vorhersage werden aus der vom WeatherRouter gelieferten Raster-Timeline abgeleitet.
+- Bedienung mit Zurück/Vor, **Jetzt**, Wiedergabe/Pause und Zeitregler. Der Player erscheint nur, wenn die geroutete Quelle tatsächlich mehrere Radarzeitpunkte liefert; Einzelbild-Quellen bleiben vollständig nutzbar.
+- Keine DWD-Sonderlogik im Gewitterradar: Anzahl und Zeitpunkte stammen vollständig aus Consumer V1. DWD kann aktuell bis zu 72 Analyse-/Vorhersageframes liefern, der Player nimmt jedoch keine feste Framezahl an.
+- Framewechsel mit **Doppelpufferung**: der nächste Rasterzeitpunkt wird unsichtbar vorbereitet und erst nach erfolgreichem Laden eingeblendet, um leere/helle Zwischenbilder zu vermeiden.
+- Während laufender Wiedergabe erhält die zeitliche Vorladung Vorrang vor dem großen räumlichen Zusatzpuffer; nach Pause oder manueller Auswahl wird der konfigurierte räumliche Puffer für den gewählten Zeitpunkt wieder aufgebaut.
+- Kartenlegende zeigt abhängig vom gewählten Frame **Vergangenheit / Jetzt / Vorhersage** sowie die zugehörige Uhrzeit.
+- Zeitplayer richtet seinen Abstand dynamisch nach der realen Höhe der Kartenlegende aus und wird in den Browserprofilen auf Desktop, iPad und Android auf Kartenbegrenzung und Überlappungsfreiheit geprüft.
+- Weather-Engine zeigt zusätzlich den Status **Radar-Zeitverlauf** und die tatsächlich verfügbare Anzahl von Radarzeitpunkten.
+- Kanonische DEV-Identität: Produkt `4.11.05`, Anzeige `V4.11.05 DEV`, Build `V4.11.05-DEV-2026-10-01`, Runtime `41105r1`, Modulsatz `E411-05A1`, native Integration `0.23.4`.
+- `weather.precipitation-layer` auf `1.2.0`, `core.manifest` auf `1.2.51`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- V4.11.04 bleibt die real abgenommene Radar-/Pufferbasis; V4.11.05 benötigt noch die reale Android-/DRA-Abnahme des Zeitverlaufs.
+
+## V4.11.04 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Behebt einen real entdeckten V4.11.02/V4.11.03-Fehler: Das Modul `weather.precipitation-layer` war geladen und vollständig implementiert, aber sein Einstellungsblock wurde beim Aufbau des Dialogs nicht eingehängt.
+- `ui.skeleton` ruft nun nach `_mountWeatherRouterSettings()` zusätzlich `_mountWeatherRadarSettings()` auf. Dadurch erscheinen in der Weather-Engine tatsächlich **„Niederschlagsradar · Kartenebene“** und **„Radar-Vorladebereich“**.
+- Regressionstest verschärft: Beide Auslieferungen werden auf Desktop, iPad, iPad Pro, Android Hochformat und Android Querformat explizit auf Radar-Schalter, Pufferprofil und Pufferstatus geprüft.
+- Kanonische DEV-Identität: Produkt `4.11.04`, Anzeige `V4.11.04 DEV`, Build `V4.11.04-DEV-2026-09-30`, Runtime `41104r1`, Modulsatz `E411-04A1`, native Integration `0.23.3`.
+- `ui.skeleton` auf `1.1.17`, `core.manifest` auf `1.2.50`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Der bereits in V4.11.03 erfolgreich real geprüfte automatische Updatewächter bleibt unverändert und soll beim Wechsel V4.11.03 → V4.11.04 erneut im Realbetrieb bestätigt werden.
+- Reale Android-Abnahme am 01.10.2026 bestanden: Radar-Schalter und Vorladepuffer sichtbar, DWD-Radardaten auf der Karte dargestellt, Attribution vorhanden und paralleler Blitzortung-/Instrumentenbetrieb ohne erkennbare Regression.
+
+## V4.11.03 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Niederschlagsradar um einen **konfigurierbaren räumlichen Vorladepuffer** erweitert, damit beim Verschieben und Zoomen der Karte bereits angrenzende Radarkacheln bereitstehen können.
+- Verständliche Pufferprofile: **Aus**, **Klein (+15 % je Seite)**, **Normal (+30 % je Seite, empfohlen)**, **Groß (+50 % je Seite)** und **Benutzerdefiniert (0–100 % je Seite)**.
+- Der Prozentwert bezieht sich bewusst auf jede Seite des aktuell sichtbaren Kartenausschnitts. `Normal` entspricht damit theoretisch bis zu 2,56× sichtbarer Fläche; die tatsächliche Vorladung wird zusätzlich begrenzt.
+- Harte Ressourcengrenzen verhindern unkontrolliertes Vorladen großer Ansichten: Klein max. 24 Zusatzkacheln / ca. 8 MiB, Normal 48 / ca. 16 MiB, Groß 96 / ca. 32 MiB, Benutzerdefiniert max. 128 Kacheln und ca. 40 MiB geschätzter dekodierter Bildspeicher.
+- Die Speichergrenze berücksichtigt die reale Kachelgröße; bei 512px-Kacheln reduziert sich deshalb automatisch die zulässige Kachelanzahl.
+- Maximal vier Vorladeanforderungen gleichzeitig; bei unsichtbarer Anwendung wird nicht aggressiv vorgeladen.
+- Bereits fertig vorgeladene Kacheln werden beim späteren echten Kartenbedarf wiederverwendet; alte, nicht mehr relevante Einträge werden begrenzt verdrängt.
+- Einstellungen zeigen Profil, Prozentwert, theoretischen Flächenfaktor, Kachel-/Speichergrenze sowie aktuelle Anzahl vorbereiteter und ladender Zusatzkacheln.
+- Kanonische DEV-Identität: Produkt `4.11.03`, Anzeige `V4.11.03 DEV`, Build `V4.11.03-DEV-2026-09-30`, Runtime `41103r1`, Modulsatz `E411-03A1`, native Integration `0.23.2`.
+- `weather.precipitation-layer` auf `1.1.0`, `core.manifest` auf `1.2.49`; Gesamtzahl bleibt bei 26 Laufzeitmodulen.
+- Zeitliche Radar-Pufferung mehrerer Vergangenheit-/Vorhersageframes ist bewusst noch nicht Bestandteil dieses Schritts; V4.11.03 puffert räumlich den aktuellen Radarzeitstand.
+- V4.10 FINAL und `main` bleiben unverändert; Entwicklungs-PR #28 bleibt Entwurf.
+
+## V4.11.02 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Erster produktiver, providerneutraler **Niederschlagsradar als Kartenebene** über WeatherRouter Consumer V1 (`weather.radar.precipitation`, Ressourcentyp `raster_tile`).
+- WeatherRouter entscheidet Quelle und Abdeckung; Gewitterradar enthält keine DWD-spezifische Routinglogik. XYZ- und WMS/BBOX-Kacheln werden unterstützt.
+- Kartenebene mit eigenem Leaflet-Bereich, konservativer Kachelpufferung, nativer Zoomgrenze mit sauberem Hochskalieren, schaltbarer Darstellung sowie Quelle, Datenalter, Abdeckung, Attribution und optionaler Provider-Legende.
+- Radar-Abfragen ressourcenschonend begrenzt: globaler Neuabruf, Ansichtswechsel und identische Ansichten besitzen getrennte Mindestintervalle; Kartenbewegungen werden entprellt.
+- Neue Module `weather.precipitation-layer@1.0.0` und `core.update-watch@1.0.0`; insgesamt **26 Laufzeitmodule** mit vollständiger Modulansicht in allen 19 Sprach-/Dialektvarianten.
+- Versions- und Cache-Vertrag vereinheitlicht: Produkt `4.11.02`, Anzeige `V4.11.02 DEV`, Build `V4.11.02-DEV-2026-09-30`, Runtime `41102r1`, Modulsatz `E411-02A1`, native Integration `0.23.1`.
+- Neuer Laufzeit-Updatewächter prüft das installierte Laufzeitmanifest ohne Browsercache und kann nach einem DRA-Update einmalig kontrolliert neu laden; die stabile Home-Assistant-Ressource bleibt unverändert registriert.
+- Der historische Browservertrag unterscheidet jetzt kanonische DEV-Laufzeiten von stabilen Veröffentlichungen, ohne den Schutz `stabile Version darf kein DEV tragen` aufzuweichen.
+- WeatherRouter Consumer V1 wurde ergänzend korrigiert, damit bereits vorhandene sichere Raster-Legenden nicht mehr beim Normalisieren verworfen werden.
+- Blitzortung bleibt als unabhängiger Datenpfad unverändert; die hybride Weather-Engine wird durch den neuen Radar-Layer nicht ersetzt.
+- Entwicklungs-PR #28 bleibt Entwurf; `main` und die eingefrorene V4.10 FINAL bleiben unverändert.
+
+## V4.11.01 DEV · 2026/09 (Entwicklung, kein öffentlicher Release)
+
+- Start auf der eingefrorenen Veröffentlichung `v4.10` / `3111e9d27a62adf97d37cccb8066cc9a0803c128` im Zweig `feature/v4.11-development`; V4.10 FINAL bleibt unverändert.
+- Eindeutige sichtbare DEV-Kennung aus dem Anwendungsmanifest; Hauptfenster, Build, DRA-`BUILD_VERSION`, Modul- und Laufzeitmanifest werden konsistent geprüft. Native Integration als Entwicklungsfassung 0.23.0.
+- Eigenständiger, optionaler WeatherRouter-Consumer-V1-Adapter über den authentifizierten Home-Assistant-WebSocket-Kanal: Discovery, Capability-Abfrage, Resolve, Ressourcentyp-Validierung und kontrollierte fachliche Nichtverfügbarkeit.
+- Neuer Einstellungsabschnitt „Weather-Engine“ mit Verbindungstest und expliziten, nur auf Anforderung ausgeführten Abfragen von Niederschlag, zusätzlichen Blitzbeobachtungen und amtlichen Warnungen, inklusive Quelle und Aktualität.
+- Transparentes WeatherRouter-V004-Emblem aus dem WeatherRouter-Grafikarchiv als 256px-PNG in beiden Auslieferungen; separate geschützte 512px-Rendition. Originalmaster im WeatherRouter-Repository unverändert.
+- Nun 24 Laufzeitmodule; Modulansicht für alle 19 Sprach-/Dialektvarianten um das WeatherRouter-Modul ergänzt.
+- Keine automatische Blitzquellen-Umschaltung, keine neue Niederschlags-Kartenebene und keine Monitored-Area-Backendaktivierung durch diesen ersten DEV-Kandidaten. Realer externer WeatherRouter-Consumer-Test und DRA-Abnahme stehen noch aus.
+- Entwicklungs-PR #28 bleibt Entwurf; weder `main` noch `v4.10` werden durch diesen Eintrag verändert.
+
 
 ## V4.10 FINAL · 2026/09 (2026-09-30)
 

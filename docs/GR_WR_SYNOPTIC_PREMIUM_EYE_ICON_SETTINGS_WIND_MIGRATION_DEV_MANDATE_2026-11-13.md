@@ -1,0 +1,158 @@
+# Verbindlicher Entwicklungsauftrag: Eigenes Synoptik-Premiummenü, Eye-Icon und vollständige Windmenü-Migration
+
+**Datum:** 13. November 2026 · **Ziel:** `TheDaimos/gewitterradar@deploy/dev` und WR-Anbindung `TheDaimos/weather-router-dev@deploy/dev`.
+
+**Betreiberforderung:** Das bereits im Master-Repo gespeicherte H/T-/Isobaren-Icon erhält einen eigenen Kartenschalter, ein **per Long-Press öffnendes eigenständiges Premiummenü im exakt gleichen hochwertigen Stil** wie das Windmenü. Die bisher im Windmenü falsch untergebrachte H/T-Farbsteuerung ist vollständig und verlustfrei in das neue Synoptikmenü zu migrieren.
+
+## 1. Master-Asset ist verbindlich
+
+Original-Icon: `artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png`  
+Quellcommit: `2b066d190ace941f315942f78ad017dc1c250be9`  
+Original SHA-256 (vom Codex-Asset-Commit gemeldet): `ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437`  
+GitHub: https://github.com/TheDaimos/gewitterradar/blob/2b066d190ace941f315942f78ad017dc1c250be9/artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png
+
+Das Original unverändert bewahren; kein zweiter Master, kein Redesign, keine Anpassung der H-/T-Pfeile. Für die tatsächliche Laufzeitdarstellung gegebenenfalls deterministisch abgeleitete optimierte Assets bauen, die zu diesem unveränderten Original rückverfolgbar sind.
+
+## 2. Das existierende Windmenü ist die Design- und Verhaltensreferenz
+
+Die Betreiber-Screenshot-Referenz zeigt dunkel gehaltene Premium-Flächen mit goldfarbenem feinem Metallrahmen, goldenen Abschnittsüberschriften, kompakten Controls, hochwertigen Chevron-/Minimieren-/Maximieren-/Schließen-Icons und einklappbaren Sektionen.
+
+**Keine optisch ähnliche Neuimplementierung:** Die tatsächlich vorhandenen Premium-Komponenten und CSS-Klassen der Wind- und Temperaturmenüs verwenden. Abstände, Header, Typografie, Rahmen, Goldakzente, Chevron-Animation, Schließen, Minimieren/Maximieren, Verschieben, Z-Index, Scrolling und Touch-/Pointer-Behandlung müssen dem Windmenü entsprechen. Bestehende Animationseinstellungen und die geschützten Hi-Res-Steuericons respektieren.
+
+Quellbeispiele:
+- `frontend/modules/weather/wind-display.js` – `_weatherWindEnsureUi`, `_weatherWindOpen`, `_weatherWindRender`;
+- `frontend/modules/weather/premium-ui.js` – `ensurePremiumUi`, `bindPremiumPanelDrag`, `premiumAction`, `enhancePremiumSections`, `syncPremiumPanel`, `togglePremiumPanel`;
+- `frontend/modules/weather/eye-hub-registry.js` – vorhandene Registrierungs- und Short-/Long-Press-Semantik;
+- `frontend/modules/weather/display-menu.js` – gemeinsame Transparenzsteuerung und Persistenz.
+
+## 3. Verbindliche Migration der bisherigen H/T-Felder aus Wind
+
+Aktuell stehen in `frontend/modules/weather/wind-display.js`, im Wind-Menü-Renderer unterhalb der Windfarben:
+- `Farbmodus`: `Einheitliche Farbe` / `Hoch-/Tiefdruck (nicht verfügbar)`;
+- erklärender Windhinweis `WR liefert keine autoritative Hoch-/Tiefdruckklassifikation. Windrichtung allein ist dafür ungeeignet.`;
+- `Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)` mit `Hochdruck` und `Tiefdruck`, siehe Screenshot des Betreibers.
+
+Diese **drei zusammenhängenden H/T-spezifischen UI-Elemente vollständig aus dem Windmenü herausnehmen** und fachlich korrekt in das neue Synoptik-Premiummenü integrieren. Im Windmenü verbleiben ausschließlich legitime Windfunktionen und die normale Wind-Symbolfarbe. **Windanimation, Windfahnen, Windfarbfläche, Windlegende und alle Schlangen-Parameter müssen optisch und funktional unverändert bleiben.**
+
+Der bisherige Persistenzort ist `WIND_STORAGE='gewitterradar:wind-ui:v1'` in `frontend/modules/weather/wind-data.js`, inklusive `colorMode`, `highColor`, `lowColor`; die bisherigen Standardwerte sind `highColor:'gold'` und `lowColor:'violet'`.
+
+**Migration ist verlustfrei und idempotent**:
+1. Beim ersten Erzeugen der Synoptik-Einstellungen die bereits gespeicherten H/T-Farben aus Wind übernehmen, wenn noch keine expliziten Synoptik-Farben gespeichert sind.
+2. Vorhandene explizite Synoptik-Farben niemals durch Altwerte überschreiben; auch `0`/false/andere gültige falsy-Einstellungen anderer Felder nicht durch Truthiness-Logik verwerfen.
+3. Die ursprünglichen Wind-Speicherwerte in Alt-/Rollback-Profilen zunächst erhalten und in der Wind-UI nicht mehr zur H/T-Steuerung verwenden; keine Datenverluste bei Downgrade/Settings-Vault/Neustart.
+4. Die alte Wind-`colorMode='pressure'`-Option **nicht** einfach auf echtes H/T-Rendering umdeuten: Windrichtung klassifiziert keine Hoch- und Tiefdruckgebiete. Wind-Farbmodus fachlich neutralisieren/legacy-kompatibel interpretieren, ohne gespeicherte Winddarstellung oder Farbpalette unbeabsichtigt zu ändern.
+5. Nach Migration H/T- und Isobarenfarben ausschließlich im neuen Synoptik-Modul verwalten. Einheitliche, gut unterscheidbare gespeicherte Farben sowie ggf. zusätzliche individuelle Isobarenlinienfarben anbieten.
+6. Bisherige H/T-Abschnitte dürfen im Windmenü nicht als Duplikat oder „inaktiv“ verbleiben.
+
+## 4. Synoptik-Bedienelement und Eye
+
+Das neue Icon als **reguläre fünfte Eye-Funktion** zusätzlich zu Wind, Temperatur, Niederschlag und Transparenz registrieren. Nicht vorhandene Slots/Icons überschreiben oder versteckt wiederverwenden. Bestands-Slotzuweisungen, frei positionierbare Icons, persistierte Positionen und der in GR 4.11.195 reparierte gemeinsame Layoutpfad bleiben erhalten.
+
+- **Short-Tap:** Synoptik-Gesamtdarstellung umschalten, ohne die getrennt gespeicherten Ein/Aus-Zustände von H/T und Isobaren zu verlieren.
+- **Long-Press:** eigenes Synoptik-Premiummenü öffnen, ohne gleichzeitig umzuschalten oder die Karte zu verschieben.
+- Drag: gleiche Geste, Positionsspeicherung und Kollisionsbehandlung wie andere ungruppierte WR-Icons.
+- Eye-Bubble: in der Hi-Res-Icon-Sammlung als wählbarer Slot registrieren, auch auf Android per Tippen auf leeren Slot und per Drag & Drop.
+- Kompatibel mit Gruppierung, Vollbild, Standard/Groß, Hoch-/Querformat, Close-/Minimize-/Chevron-Animationen. Keine Regression des Android-Icon-Flapping-Fixes.
+
+## 5. Eigenständiges Synoptik-Premiummenü
+
+Sinnvolle, getrennte Bereiche im vorhandenen Premium-Stil:
+1. **Hoch-/Tiefdruckgebiete**: Ein/Aus; H-/T-Symbolik, Druckwerte, Symboldarstellungsoptionen, gespeicherte Hoch- und Tiefdruckfarben aus Wind migriert.
+2. **Isobaren**: Ein/Aus; echte GeoJSON-Konturen, Druckbeschriftung, Liniendicke/-farbe, Beschriftungsdichte, Sichtbarkeit und Opazität.
+3. **Druckraster**: eigener Schalter/Option und Deckkraft nur bei nachgewiesener unterstützter WR-Quell- und Renderfähigkeit; ohne echte Daten als nicht verfügbar anzeigen, niemals synthetische Karte als READY.
+4. **Darstellung/Transparenz**: eigener Synoptik-Layer im gemeinsamen zentralen Transparenzsystem mit Semantik `0 % = unsichtbar` und `100 % = vollständig sichtbar`; dabei getrennte Regler für H/T-Zentren, Isobaren und ggf. Druckraster, sofern die vorhandene Architektur dies ermöglicht.
+5. **Quelle/Zeit/Status**: WR-gelieferter Provider, Modelllauf, Gültigkeit, Quelle/Attribution sowie echte `ready`/`unavailable`-Zustände.
+6. **Speichern/Zurücksetzen**: eigene Synoptik-Einstellungen updatefest und mit Settings-Vault kompatibel, ohne Windwerte zurückzusetzen.
+
+Statt eines isolierten Synoptik-Transparenzschalters ist **auch die Integration in den existierenden zentralen Transparenzlayer** Pflicht. Alle Synoptik-Sichtbarkeiten sind auf Gesamtschalter, Layer-Schalter und einzelne Opazitäten logisch konsistent abzubilden.
+
+## 6. Fachliche Datenversorgung: nicht länger auf alle Provider warten
+
+- WR-Test 231 liefert real `ready` mit 5 ECCC-GDPS-H/T-Zentren.
+- WR-Test 232 liefert real `ready` mit 12 NOAA-GFS-Isobaren.
+- WR-Test 233 liefert seit WR 0.10.321 / Loader 324 real `ready` mit DWD ICON-EU WMS-**Descriptor** (nicht automatisch bestätigte GetMap-PNG-Auslieferung).
+- WR-Test 234 liefert real `ready` mit index- und GRIB-Signatur-verifizierter ECMWF-IFS-**Dateireferenz**, `decoded:false`; kein automatisch fertiges Rendering.
+
+**Erst die realen H/T- und Isobaren-Geometrien darstellen!** Anschließend ergänzen, soweit technisch verifiziert, DWD-Druckraster und ECMWF-Decoding; sie dürfen keine bereits funktionierende GeoJSON-Visualisierung verzögern. WR entscheidet über Quelle, Datenfreigabe, Zeit/Freshness und Providerpriorität; GR zeichnet ausschließlich autorisierte Daten, ohne eigene 900-s-Grenze. Meteorologisch falsche Ableitung von H/T aus Wind ist verboten.
+
+## 7. Geschützter Stand und Regression
+
+**Geschütztes Paar:** WR 0.10.320 / GR 4.11.195 (HA 0.25.102; Runtime `411195r1`, Modulset `E411-195A1`). Neuere synoptische Quelländerung WR 0.10.321 ist noch keine neue Gesamt-Betreiberreferenz.
+
+Beide Repo-Guards `docs/MODULE_PROVIDER_ISOLATION_GUARD_2026-11-13.md` lesen. Kein Eingriff in OPERA/DWD/NASA-Niederschlag, Wind-Schlangenrenderer inkl. aller Einstellungen, Temperatur, Eye-Aura, Premium-Animation, Einstellungen oder gemeinsame Icon-Positionierung. Sicherstellen, dass die neue fünfte Funktion nicht die bestehenden vier Icons destabilisiert.
+
+Neue eindeutige WR-/GR-/HA-/DRA-Versionsstände und konsistente synchronisierte Frontend-Artefakte nur wenn betroffene installierbare Dateien geändert werden. PROD VM101 unverändert. Quell- und fokussierte UI-/Touch-/Persistenz-/Modulregression selbstständig ausführen, **keine neue 237er-Testserie, keine 474-Dateien-Archivprüfung und keine erneute wissenschaftliche Gesamtprüfung**.
+
+## 8. Definition of Done
+
+- Masteroriginal bleibt bytegleich und eindeutig im Repo; neues Icon erscheint korrekt im Eye-Konfigurator und als einzelner Kartenschalter.
+- Short-Tap steuert Gesamt-Synoptik; Long-Press öffnet tatsächlich ein **eigenständiges** Premiummenü mit identischem Metallrahmen, denselben Aktionen und gleichwertiger Touch-Bedienung wie Wind.
+- Die bisherigen H/T-Farbcontrols sind aus dem Windmenü verschwunden, gespeicherte `highColor`/`lowColor` in Synoptik migriert, Einstellungen bleiben bei Reload/Update/Reset konsistent.
+- Echte WR-GeoJSON-H/T-Zentren und Isobaren sind geografisch korrekt sichtbar, separat schaltbar und in der zentralen Transparenzebene steuerbar.
+- Fehler und Nichtverfügbarkeit eines neuen Synoptikproviders haben keinerlei Einfluss auf bestehende Wetterlayer.
+- Dokumentierte neue Version(en), Commits, installierbare DEV-Artefakte, fokussierte Regressionen und ehrliche reale Abnahmegrenzen. Betreiber prüft anschließend nur die sichtbare Karten- und Menüfunktion auf DEV VM109.
+
+**Ausführung:** Entwicklungschat soll diese Anforderungen direkt in bestehendem Quellcode realisieren, nicht noch einmal nur analysieren oder planen.
+
+## 9. Ergänzung des Betreibers: großzügige Premium-Farbpalette für Vektor-Synoptik
+
+**Verbindliche Anforderung:** Die bisher im Windmenü gespeicherten H/T-Farben Gold und Violett sind **keine Beschränkung** der neuen Synoptik-Farbauswahl. Sie bleiben erhalten und werden beim ersten Start migriert; zusätzlich eine umfangreiche, hochwertige und konsistente Auswahl anbieten.
+
+**Technischer Grund:** WR liefert für `weather.synoptic.pressure_centers` GeoJSON-`Point`-Features mit `kind=H/L`, Positionen und `pressure_hpa`, für `weather.synoptic.isobars` GeoJSON-`MultiLineString`-Features mit Druckwerten. Die **Darstellungsfarben gehören ausschließlich zum GR-Renderer**, nicht zur WR-Providerentscheidung; keine neue Providerabfrage und keine Neuberechnung meteorologischer Daten allein wegen einer Farbwahl.
+
+- **Drei unabhängig konfigurierbare Farbgruppen:** Hochdruck-Symbole samt optionalen Druckwerten, Tiefdruck-Symbole samt optionalen Druckwerten, Isobarenlinien samt Druckwert-Beschriftungen. Optional getrennte Schriftfarbe, sofern die Premium-Oberfläche übersichtlich bleibt.
+- **Palette mindestens:** Weiß, Silber/Chrom, Gold, Gelb, Orange, Rot, Dunkelrot, Magenta/Pink, Violett, Blau, Cyan, Türkis, Grün; ggf. weitere bestehende GR-Farbvarianten anbieten. Die Auswahl muss ausreichend kontrastreich und auf unterschiedlichen Kartengrundstilen sichtbar bleiben.
+- Vorhandene gemeinsame Farb-/Swatch-Tokens und Premium-Bedienelemente bevorzugen; keine neue inkompatible Farbnamen-Speicherung erfinden. Falls neue Farbkennungen ergänzt werden, Normalisierung und Settings-Vault-Migration rückwärtskompatibel halten.
+- **Live-Vorschau:** Farbänderungen sofort auf den sichtbaren, bereits geladenen H/T- und Isobarengeometrien anwenden, ohne WR erneut abzufragen.
+- Opazität für jede der drei Gruppen und die zentrale Synoptik-Transparenz unterstützen; `0 %` bedeutet unsichtbar, `100 %` vollständig sichtbar; keine widersprüchliche additive Anwendung von Transparenz.
+- Keine Ableitung von H/T aus Windvektoren. Das bisherige Wind-Menü behält seine eigene Windfarbensteuerung und den geschützten Schlangenrenderer vollständig unverändert.
+- **DWD-QFF-Raster ausdrücklich ausnehmen:** Ein WMS-PNG ist kein GeoJSON-Vektor. Für Raster gelten gegebenenfalls gesonderte originale Farbgebung bzw. eigenständig verifizierte numerische Rasterverarbeitung; bloße Opazität ist sofort möglich, frei einstellbare fachliche Druckfarben nicht ohne passende Daten.
+
+Die Palette als reguläre Funktion des **neuen eigenständigen Synoptik-Premiummenüs** implementieren; keine weitere manuelle große Testserie verlangen.
+
+## 10. Betreiberentscheidung: Aura-Farben plus erweiterte klassische Premium-Palette
+
+**Verbindlich:** Die Synoptik-Farbwahl umfasst **sämtliche vorhandenen Aura-Ring-Farben und zusätzlich klassische Grund- und Premiumfarben ohne Neon**. Die zuvor geforderte Auswahl – Gold, Silber, Weiß, Cyan, Türkis, Blau, Grün, Orange, Rot, Violett, Magenta und weitere hochwertige Varianten – bleibt bestehen. Keine Beschränkung auf die Aurafarben.
+
+**Autoritative zentrale Originalpalette:** `frontend/modules/weather/eye-hub-model.js`, `EYE_COLORS` und `EYE_MATERIALS`:
+- Bestehende Neon-Basisfarben (exakt): `#FF00CC` Magenta, `#B000FF` Violett, `#0066FF` Blau, `#00FFF0` Cyan, `#39FF14` Grün, `#FFFF00` Gelb, `#FF5F00` Orange, `#FF003C` Rot.
+- Vorhandene Premium-Materialfarben (exakt): `#FFC442` Electric Gold und `#D8E6F3` Silver/Chrome. Deren vorhandene Materialdefinitionen bei Bedarf wiederverwenden; keine neuen inkompatiblen Farbtöne erfinden.
+- Zusätzlich **klassische, nicht leuchtende Grundfarben** einschließlich Weiß, Gold, Silber, Cyan, Türkis, Blau, Grün, Gelb, Orange, Rot, Violett und Magenta, plus dezente dunklere oder pastellfarbene Alternativen. Die klassischen Farben sind **ohne Glow, Halo, Neon-Schein oder Energieeffekte** zeichnbar.
+
+**Bedienung:** Farbpalette übersichtlich als `Aura/Neon` und `Klassisch` anbieten. Hochdrucksymbole, Tiefdrucksymbole und Isobarenlinien können jeweils unabhängig aus **beiden** Gruppen wählen; Vorschau unmittelbar auf bereits geladenen WR-GeoJSON-Geometrien ohne erneuten Wetterabruf. Optionaler Leuchteffekt separat schaltbar und nur in GR umgesetzt; ein Aura-Farbton ist nicht automatisch gleichbedeutend mit Zwangsglow. Kontrast und Lesbarkeit der Druckwerte auf verschiedenen Kartengrundstilen gewährleisten.
+
+**Migration:** Bereits gespeicherte H/T-Farben (Gold / Violett oder individuell gewählt) unverändert fachlich übernehmen; neue Farbkennungen rückwärtskompatibel im Settings-Vault normalisieren. Die bestehende Aura-/Eye-Farbpalette, deren Renderer, gespeicherte Ringfarben und Ringanimationen **nicht verändern**. Statt einer zweiten Kopie der zehn Aurawerte nach Möglichkeit vorhandene Farbdefinitionen referenzieren oder additive gemeinsame Palette ableiten. DWD-WMS-PNG ist kein GeoJSON-Vektor und bleibt bei eigenständiger Rasterfarbgebung.
+
+Diese Entscheidung ergänzt die vorherigen Farbregeln in Abschnitt 9 und ersetzt keine der dort geforderten Farboptionen.
+
+## 11. Betreiberentscheidung: Neon-Übergangslinie der Wetterfronten separat ein-/ausschalten
+
+**Verbindlich:** Die visuelle **Neon-Übergangslinie bzw. der Leuchtsaum entlang einer realen meteorologischen Frontengrenze** erhält im eigenständigen Synoptik-Premiummenü einen **separaten Ein-/Aus-Schalter** (beispielsweise `Neon-Übergangslinie` / `Leuchtende Frontgrenze`). Der Effekt ist optional und darf **nicht** fest mit der gesamten Frontendarstellung, den meteorologischen Symbolen oder dem allgemeinen Synoptik-Ein-/Aus-Schalter gekoppelt sein.
+
+- **Ein:** Eine tatsächlich von WR autorisierte Frontengeometrie wird entlang ihres Verlaufs mit der gewünschten hochwertigen Neon-/Glow-Linie visualisiert; die Frontensymbole (Dreiecke, Halbkreise und typgerechte Kombinationen) bleiben dabei fachlich korrekt und individuell sichtbar.
+- **Aus:** Ausschließlich die zusätzliche **Neon-Übergangslinie/der zusätzliche Glow** entfällt. Die eigentliche meteorologische Frontenlinie sowie vorhandene Frontensymbole bleiben bei aktiviertem Frontenlayer sichtbar. Die normalen H/T-Zentren und Isobaren sind davon unabhängig.
+- Zusätzlich ein **eigener Hauptschalter `Wetterfronten ein/aus`**, damit Fronten als Ganzes separat ausblendbar sind. Der Neon-Schalter darf den Fronten-Hauptschalter nicht ersetzen.
+- Die Einstellung persistent speichern (Settings Vault / Neustart / Update) und unmittelbar auf dem bereits geladenen Vektorlayer anwenden, **ohne neue WR-Datenabfrage**.
+- Die zentrale Synoptik-Transparenz, die Fronten-Deckkraft sowie gegebenenfalls Linienbreite/Glow-Stärke bleiben unabhängig und konsistent; die Neon-Übergangslinie darf keinen unkontrollierten Überstrahlungseffekt erzeugen.
+- **Keinesfalls Fronten aus der relativen Lage von H/T-Zentren oder Windvektoren erfinden.** Ohne echte, von WR gelieferte und typisierte Frontengeometrie bleibt die Frontenfunktion fachlich `nicht verfügbar` und zeichnet keine erfundene Grenze. Der Renderer kann hierfür vorbereitet werden; keine stillschweigende Live-Freigabe.
+- Bestehende Wind-, Temperatur-, Niederschlags- und Aura-/Eye-Neoneffekte bleiben unverändert.
+
+**Abnahme:** Bei vorhandenen echten Frontendaten lässt sich die leuchtende Übergangslinie im Synoptikmenü sichtbar an- und abschalten, **ohne** dabei Frontensymbole, normale Frontenlinie, H/T-Zentren oder Isobaren zu deaktivieren.
+
+## 12. Betreiberentscheidung: Frontensymbole separat ein-/ausschaltbar
+
+**Zusätzliche verbindliche Einstellung im eigenen Synoptik-Premiummenü:** `Meteorologische Frontensymbole anzeigen` **Ein/Aus**. Dies steuert separat die typgerechten **Dreiecke, Halbkreise und kombinierten meteorologischen Frontenzeichen** auf den Linien (Kaltfront, Warmfront, Okklusion, stationäre Front). Es verändert weder die zugrunde liegenden Frontengeometrien noch andere Wetterebenen.
+
+**Die Steuerung der Wetterfronten ist damit dreistufig und unabhängig:**
+1. `Wetterfronten anzeigen` – Hauptschalter für die gesamte Frontenebene.
+2. `Neon-Übergangslinie anzeigen` – ausschließlich zusätzlicher Leuchtsaum/Glow entlang der Frontgrenze, ohne die Grundlinie oder Symbole auszuschalten.
+3. `Meteorologische Frontensymbole anzeigen` – ausschließlich Dreiecke, Halbkreise und typgerechte Kombinationszeichen, unabhängig vom Neon-Schalter; die Grundlinie bleibt sichtbar.
+
+**Abnahmefälle bei echten WR-Frontendaten:**
+- Fronten **Ein**, Neon **Ein**, Symbole **Ein**: Grundlinie + leuchtende Übergangslinie + Frontensymbole.
+- Fronten **Ein**, Neon **Aus**, Symbole **Ein**: klassische Grundlinie + Frontensymbole.
+- Fronten **Ein**, Neon **Ein**, Symbole **Aus**: Grundlinie mit Neon-Effekt, keine Frontensymbole.
+- Fronten **Ein**, Neon **Aus**, Symbole **Aus**: nur die klassische Grundlinie.
+- Fronten **Aus**: alle Frontenkomponenten ausgeblendet; die individuellen Einstellungen bleiben für das nächste Einschalten gespeichert.
+
+Beide Subschalter **updatefest und unabhängig voneinander persistieren**, sofort ohne neuen WR-Abruf auf bereits geladene Vektorgeometrien anwenden und in der gleichen Premium-Menüoptik wie die übrigen Synoptik-Einstellungen anbieten. H/T-Zentren, Isobaren und die Wind-/Temperatur-/Niederschlagsdarstellungen bleiben hiervon unabhängig. Ohne autorisierte typisierte Frontengeometrien keine synthetischen Fronten anzeigen; verfügbarkeitsabhängige Schalter ehrlich kennzeichnen.

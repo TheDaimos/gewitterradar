@@ -1,0 +1,32 @@
+name: TEST70-37 OPERA authentication guard (public)
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'frontend/modules/weather/p7-010/opera-diagnostic-tile.js'
+      - 'custom_components/gewitterradar/frontend/modules/weather/p7-010/opera-diagnostic-tile.js'
+      - 'dashboard/dist/modules/weather/p7-010/opera-diagnostic-tile.js'
+      - 'tests/test70-opera-auth-preflight.test.mjs'
+      - 'tests/test_gr_opera_wr_authoritative_freshness.mjs'
+      - '.github/workflows/test70-37-opera-auth-guard.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auth-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Authentication fail-closed and WR policy contract
+        run: node --test tests/test70-opera-auth-preflight.test.mjs tests/test_gr_opera_wr_authoritative_freshness.mjs
+      - name: Check shipped module syntax
+        run: |
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          node --check custom_components/gewitterradar/frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          node --check dashboard/dist/modules/weather/p7-010/opera-diagnostic-tile.js

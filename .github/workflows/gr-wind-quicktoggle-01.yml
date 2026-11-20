@@ -1,0 +1,40 @@
+name: GR-WIND-QUICKTOGGLE-01 original premium assets and synchronized visibility
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  wind-quick-toggle:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Protected wind and precipitation references
+        run: git fetch --no-tags --depth=1 origin 787497648a405bc27495d98ffdedd9206668fd4c d975a94be5d63eb09242a54920d8c3417205b41f 4adb7a8c186a45f5b0246982a99cfac6ec28d44e
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Original assets, retained masters, visibility, preferences and protected rendering
+        run: |
+          node scripts/verify-hires-asset-retention.mjs
+          node --test tests/gr-wind-quicktoggle-01.test.mjs tests/gr-wind-perf-01.test.mjs tests/gr-wind-anim-01.test.mjs tests/gr-wind-fix-01.test.mjs tests/gr-wind-ui-03.test.mjs tests/gr-legend-ui-01.test.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/wind-quick01" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/wind-quick01/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Complete card, real touch gestures, keyboard and three supplied raster icons in five viewports
+        env:
+          NODE_PATH: ${{ runner.temp }}/wind-quick01/node_modules
+          GR_WIND_QUICK_OUTPUT: ${{ runner.temp }}/wind-quick01-browser
+        run: node scripts/test-gr-wind-quicktoggle-01-browser.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable integration staging
+        run: python scripts/verify-hacs-integration-package.py

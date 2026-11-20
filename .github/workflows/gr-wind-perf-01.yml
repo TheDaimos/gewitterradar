@@ -1,0 +1,51 @@
+name: WR-GR-WIND-PERF-01 buffered wind and bounded preparation
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  wind-performance:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Immutable protected wind and precipitation references
+        run: git fetch --no-tags --depth=1 origin c58359187ba9f07a753edbf4a00fdea97e57e114 d975a94be5d63eb09242a54920d8c3417205b41f 4adb7a8c186a45f5b0246982a99cfac6ec28d44e
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Wind cache, geometry, direction, lifecycle and protected raster contracts
+        run: node --test tests/gr-wind-perf-01.test.mjs tests/gr-wind-anim-01.test.mjs tests/gr-wind-fix-01.test.mjs tests/gr-wind-ui-03.test.mjs tests/gr-legend-ui-01.test.mjs
+      - name: Delivery and version identity
+        run: |
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/wind-perf01" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/wind-perf01/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Complete card in desktop, Android and iPad viewports
+        env:
+          NODE_PATH: ${{ runner.temp }}/wind-perf01/node_modules
+          WIND_PERF_OUTPUT: ${{ runner.temp }}/wind-perf01-views
+        run: |
+          node scripts/test-gr-wind-perf-01-browser.cjs
+          node scripts/test-gr-wind-anim-01-browser.cjs
+          node scripts/test-gr-wind-fix-01-browser.cjs
+      - name: Short controlled renderer comparison, synthetic data and unchanged particle density
+        env:
+          NODE_PATH: ${{ runner.temp }}/wind-perf01/node_modules
+          WIND_PERF_OUTPUT: ${{ runner.temp }}/wind-perf01-benchmark
+          WIND_PERF_DURATION_MS: '2000'
+        run: |
+          WIND_PERF_REF=c58359187ba9f07a753edbf4a00fdea97e57e114 node scripts/benchmark-wind-perf-01.cjs
+          node scripts/benchmark-wind-perf-01.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable integration staging
+        run: python scripts/verify-hacs-integration-package.py

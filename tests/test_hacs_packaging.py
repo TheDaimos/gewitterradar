@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1]
 SPEC=importlib.util.spec_from_file_location("verify_hacs_integration_package",ROOT/"scripts"/"verify-hacs-integration-package.py");assert SPEC and SPEC.loader
 PACKAGING=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(PACKAGING)
 def test_hacs_manifest_describes_standard_integration_repository():
- assert json.loads((ROOT/"hacs.json").read_text(encoding="utf-8"))=={"name":"Gewitterradar Integration","homeassistant":"2026.9.0"}
+ assert json.loads((ROOT/"hacs.json").read_text(encoding="utf-8"))=={"name":"Gewitterradar Integration","homeassistant":"2026.9.0","render_readme":True}
 def test_standard_hacs_staging_is_complete_and_byte_identical(tmp_path):
  hashes=PACKAGING.verify(tmp_path);assert set(hashes)==PACKAGING.REQUIRED
  assert (tmp_path/"custom_components"/"gewitterradar"/"frontend"/"gewitterradar.js").is_file()

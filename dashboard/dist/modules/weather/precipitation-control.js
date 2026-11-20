@@ -1,0 +1,62 @@
+// Presentation only: the existing radar state and Eye interaction own all actions.
+import {enhancePremiumSections,premiumEscape} from './premium-ui.js?v=411249r1';
+export const PRECIPITATION_ICON=new URL('../../assets/gr-precipitation-premium-original.png', import.meta.url).href;
+// The PNG's visible gold ring spans ~77.6% of its source width; Wind and
+// Temperature span ~89.7%. 58px therefore gives the same ~45px ring as their
+// 50px images. The existing, accepted coarse-pointer size stays unchanged.
+export function normalizePrecipitationControl(value){
+ const source=value&&typeof value==='object'&&!Array.isArray(value)?value:{},quickPositions={};
+ for(const [key,p] of Object.entries(source.quickPositions||{}))if(/^(touch|mouse):(phone|large):(portrait|landscape):(standard|large|fullscreen)$/.test(key)&&p&&Number.isFinite(p.x)&&Number.isFinite(p.y))quickPositions[key]={x:Math.max(0,Math.min(1,p.x)),y:Math.max(0,Math.min(1,p.y))};
+ return {schema:1,quickVisibility:['fullscreen','all','nonfullscreen','hidden'].includes(source.quickVisibility)?source.quickVisibility:'fullscreen',quickPositions};
+}
+export const precipitationControlMethods={
+ _weatherPrecipitationConfig(){return this._weatherDisplayState().config.precipitationControl;},
+ _weatherPrecipitationPatch(patch){this._weatherDisplayPatch({precipitationControl:normalizePrecipitationControl({...this._weatherPrecipitationConfig(),...patch})});this._weatherPrecipitationSyncToggle();this._eyeHubSyncIcons();},
+ _weatherPrecipitationEnsureToggle(){
+  const card=this.shadow?.getElementById('map-card');if(!card)return;let button=this.shadow.getElementById('weather-precipitation-toggle');
+  if(!button){
+   const style=document.createElement('style');style.textContent='.weather-precipitation-toggle{position:absolute;z-index:650;overflow:visible;width:50px;height:50px;min-width:50px;min-height:50px;box-sizing:border-box;padding:0;border:0;border-radius:50%;background:transparent;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}.weather-precipitation-toggle[hidden]{display:none!important}.weather-precipitation-toggle img{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}@media(pointer:coarse){.weather-precipitation-toggle img{width:58px;height:58px}}.weather-precipitation-toggle[aria-pressed=false]{opacity:.65}.weather-precipitation-toggle[aria-pressed=true]{box-shadow:none}.weather-precipitation-toggle:focus-visible{outline:2px solid #f4d791;outline-offset:2px}.weather-precipitation-toggle.dragging{cursor:grabbing}.weather-precipitation-settings{font:11px/1.5 system-ui;padding:8px;box-sizing:border-box}.weather-precipitation-settings label{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;flex-wrap:wrap;padding:8px 0}.weather-precipitation-settings select{max-width:100%;min-width:0;box-sizing:border-box}.weather-precipitation-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.weather-precipitation-actions button{min-height:40px;max-width:100%;white-space:normal}#weather-display-panel .weather-precipitation-actions .weather-display-legend-button{flex:1 1 160px;width:auto;min-width:0;min-height:44px;padding:8px}.weather-precipitation-settings{position:relative}.weather-precipitation-settings>summary{padding:8px 12px!important;gap:12px}.weather-precipitation-settings>summary .release-history-future-chevron{margin:0 2px 0 auto;flex-shrink:0}.weather-precipitation-header-actions{display:none}.weather-precipitation-header-actions .gr-premium-action{width:36px;height:36px;min-width:36px;flex-basis:36px}.weather-precipitation-header-actions .gr-premium-action img{width:30px!important;height:30px!important}';this.shadow.append(style);
+   button=document.createElement('button');button.type='button';button.id='weather-precipitation-toggle';button.className='weather-precipitation-toggle';const img=document.createElement('img');img.src=PRECIPITATION_ICON;img.alt='';img.width=img.height=50;img.draggable=false;button.append(img);card.append(button);
+   const s=this._weatherDisplayState();s.precipitationDrag={eyeDrag:null};s.precipitationDragOptions={element:button,state:()=>s.precipitationDrag,position:()=>this._eyeHubSyncIcons(),longPress:()=>this._weatherPrecipitationOpen(),activate:()=>this._weatherLayerMenuToggle?.('weather.precipitation.layer'),save:position=>this._weatherPrecipitationPatch({quickPositions:{...this._weatherPrecipitationConfig().quickPositions,[this._weatherWindToggleLayout()]:position}})};
+   this._weatherDisplayBindEyeDrag(button,s.precipitationDragOptions);for(const type of ['mousedown','dblclick','touchstart'])button.addEventListener(type,e=>e.stopPropagation(),{passive:true});
+  }
+  this._weatherPrecipitationSyncToggle();
+ },
+ _weatherPrecipitationCancelDrag(){const s=this.__weatherDisplayState;if(s?.precipitationDragOptions)this._weatherDisplayCancelEyeDrag(s.precipitationDragOptions);},
+ _weatherPrecipitationSyncToggle(){
+  const b=this.shadow?.getElementById('weather-precipitation-toggle');if(!b)return;const c=this._weatherPrecipitationConfig(),full=Boolean(this._mapDisplayMode==='fullscreen'||this._mapWindowMode),enabled=this._weatherRadarState?.().enabled===true;
+  b.hidden=c.quickVisibility==='hidden'||c.quickVisibility==='fullscreen'&&!full||c.quickVisibility==='nonfullscreen'&&full;b.setAttribute('aria-pressed',String(enabled));const label=this._t(enabled?'weather.precip.toggleOff':'weather.precip.toggleOn');b.setAttribute('aria-label',label);b.title=label+' · '+this._t('weather.precip.holdSettings');
+  const select=this.shadow.querySelector('[data-precipitation-control-visibility]');
+  if(select){
+   select.value=c.quickVisibility;
+   const section=select.closest('[data-precipitation-control]');
+   const language=this._languageValue();
+   if(section.dataset.language!==language){
+    section.dataset.language=language;
+    select.setAttribute('aria-label',this._t('weather.menu.quickVisibility'));
+    for(const node of section.querySelectorAll('[data-precip-text]'))node.textContent=this._t(node.dataset.precipText);
+   }
+  }
+ },
+ _weatherPrecipitationEnsureSettings(panel){
+  const parent=panel.querySelector('[data-weather-display-precipitation-card]');if(!parent||parent.querySelector('[data-precipitation-control]'))return;
+  const section=document.createElement('details');section.className='weather-precipitation-settings';section.dataset.precipitationControl='true';section.dataset.section='precipitation-control';
+  const caption=(key,tag='span')=>'<'+tag+' data-precip-text="'+key+'">'+premiumEscape(this._t(key))+'</'+tag+'>';
+  const note=key=>'<p class="weather-display-card-note">'+caption('weather.precip.'+key)+'</p>';
+  const options={fullscreen:'fullscreen',all:'allViews',nonfullscreen:'standardViews',hidden:'hideToggle'};
+  section.innerHTML='<summary>'+caption('weather.layer.precipitationToggle')+'</summary>'+note('iconNote')+
+   '<label>'+caption('weather.menu.quickVisibility')+'<select class="weather-display-style-select" data-precipitation-control-visibility>'+
+   Object.entries(options).map(([value,key])=>'<option value="'+value+'" data-precip-text="weather.menu.'+key+'">'+premiumEscape(this._t('weather.menu.'+key))+'</option>').join('')+
+   '</select></label>'+note('shortcuts')+'<div class="weather-precipitation-actions">'+
+   '<button type="button" data-precipitation-control-action="position" class="weather-display-legend-button gr-premium-metal-surface">'+caption('weather.menu.resetPosition')+'</button>'+
+   '<button type="button" data-precipitation-control-action="reset" class="weather-display-legend-button gr-premium-metal-surface">'+caption('weather.precip.resetIcon')+'</button></div>';
+
+  parent.append(section);enhancePremiumSections(section.parentElement,'precipitation-control');
+  section.addEventListener('change',e=>{if(e.target.matches('[data-precipitation-control-visibility]')){e.stopPropagation();this._weatherPrecipitationPatch({quickVisibility:e.target.value});}});
+  section.addEventListener('click',e=>{const b=e.target.closest('[data-precipitation-control-action]');if(!b)return;e.preventDefault();e.stopPropagation();const action=b.dataset.precipitationControlAction;if(action==='info'){const note=section.querySelector('.weather-display-card-note');note?.scrollIntoView({block:'nearest'});return;}if(action==='close'){this._weatherDisplayPatch({enabled:false});return;}this._weatherPrecipitationPatch(action==='reset'?normalizePrecipitationControl():{quickPositions:{}});});this._weatherPrecipitationSyncToggle();
+ },
+ _weatherPrecipitationOpen(){
+  this._weatherDisplayOpenFromLayerMenu();const panel=this.shadow?.getElementById('weather-display-panel');if(!panel)return;const select=panel.querySelector('[data-weather-display-layer-select]');if(select){select.value='precipitation';select.dispatchEvent(new Event('change',{bubbles:true}));}
+  const section=panel.querySelector('[data-precipitation-control]');if(section){const summary=section.querySelector('summary');if(summary?.getAttribute('aria-expanded')!=='true')summary?.click();summary?.focus();requestAnimationFrame(()=>section.scrollIntoView({block:'nearest'}));}
+ }
+};

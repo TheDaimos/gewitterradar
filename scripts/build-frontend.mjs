@@ -1,8 +1,10 @@
-import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
+import {readFile,mkdir,readdir} from 'node:fs/promises';
+import {writeFile} from './write-release-file.mjs';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {readAboutLocaleModel} from './verify-about-locales.mjs';
+import {APPLICATION_RELEASE} from '../frontend/version.js';
 export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function walk(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await walk(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
@@ -10,8 +12,108 @@ async function modularPayload(contract){const wanted=Object.keys(contract.module
 export async function expectedPayload(){
  const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
  const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
+ const panel=await readFile(resolve(root,'frontend/panel.js'));
+ const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("const CARD_VERSION = '4.10';")){
+ if(text.includes("APPLICATION_RELEASE")&&/^4\.11\./.test(APPLICATION_RELEASE.version)&&Number(APPLICATION_RELEASE.version.split('.')[2])>=165){
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
+  const release=APPLICATION_RELEASE,patch=release.version.split('.')[2];
+  const revision=release.runtimeRevision?.match(new RegExp(`^411${patch}r([1-9][0-9]*)$`))?.[1];
+  const identityIsDev=release.displayVersion===`V${release.version} DEV`;
+  const identityIsFinal=release.version==='4.11.249'&&release.displayVersion==='V4.11 FINAL'&&/^V4\.11-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
+  if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E411-${patch}A${revision}`)throw Error('Canonical release identity mismatch');
+  for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
+  const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
+  if(!match)throw Error('Cannot read current module contract');
+  const modules=JSON.parse(match[1]);
+  if(modules.length!==37||!modules.some(x=>x.id==='weather.synoptic-display')||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.165 module IDs invalid');
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  // These eight auxiliary UI parts are imported by registered modules; they are not independent registered modules.
+  const support=['modules/weather/eye-neon-wow.js','modules/weather/eye-neon.js','modules/weather/display-quick.js','modules/weather/eye-hub.js','modules/weather/eye-hub-model.js','modules/weather/eye-hub-registry.js','modules/weather/eye-hub-view.js','modules/weather/eye-hub-locales.js','modules/fullscreen/compass-preview-style.js','modules/weather/precipitation-control.js','modules/weather/clouds-control.js','modules/weather/control-touch.js','modules/ui/help-topics.js','modules/weather/snake-preview.js','modules/weather/wind-studio-data.js','modules/weather/wind-studio.js','modules/weather/snake-config.js','modules/weather/snake-geometry.js','modules/weather/snake-canvas.js','modules/weather/premium-ui.js','modules/weather/premium-legend.js','modules/weather/flow-geometry.js','modules/weather/flow-locales.js','modules/weather/temperature-units.js','modules/weather/frame-clock.js','modules/weather/temperature-data.js','modules/weather/temperature-field.js','modules/weather/temperature-canvas.js','modules/weather/temperature-legend.js','modules/weather/geopoint-context.js','modules/weather/wind-field.js','modules/weather/source-text.js','modules/weather/wind-data.js','modules/weather/wind-canvas.js','modules/weather/wind-legend.js','modules/fullscreen/compass-picker-chevron-left-brass.js','modules/fullscreen/compass-picker-chevron-left-silver.js','modules/fullscreen/compass-picker-chevron-right-brass.js','modules/fullscreen/compass-picker-chevron-right-silver.js','modules/instruments/medallion-arrow-calibration-1.js','modules/instruments/medallion-arrow-calibration-2.js','modules/instruments/medallion-arrow-calibration-3.js','modules/instruments/medallion-arrow-calibration-4.js','modules/weather/p7-010/raster-tile-url.js','modules/weather/p7-010/raster-tile-clip.js','modules/weather/p7-010/raster-compositor.js','modules/weather/p7-010/raster-mosaic-contract.js','modules/weather/p7-010/raster-mosaic-tile-loader.js','modules/weather/p7-010/raster-mosaic-grid-layer.js','modules/weather/p7-010/raster-mosaic-consumer.js','modules/weather/p7-010/raster-mosaic-coverage.js','modules/weather/p7-010/opera-diagnostic-tile.js','modules/weather/p7-010/nasa-spatial.js','modules/weather/p7-010/radar-mask.js'];
+  if(Number(patch)>=181)support.push('modules/weather/eye-neon-energy.js');
+  if(Number(patch)>=230)support.push('modules/weather/storm-bubble.js');
+  if(Number(patch)>=231)support.push('modules/ui/pro-welcome.js');
+  if(Number(patch)>=182)support.push('modules/core/settings-vault.js','modules/ui/settings-vault-view.js');
+  if(Number(patch)>=184)support.push('modules/ui/settings-vault-setup.js');
+  if(Number(patch)>=224)support.push('modules/ui/presentation-locales.js');
+  if(Number(patch)>=227)support.push('modules/weather/p7-010/dwd-frame-mask.js');
+  const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.165 module inventory mismatch');
+  const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
+  if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
+  for(const item of modules){
+    if(runtimeVersions.get(item.id)!==item.version)throw Error('Module version mismatch '+item.id);
+    modular.set(item.file,await readFile(resolve(root,'frontend',item.file)));
+  }
+  for(const name of support)modular.set(name,await readFile(resolve(root,'frontend',name)));
+  const localeBytes=await readFile(resolve(root,'frontend/locales/about-locales.js'));
+  localeSha=hash(localeBytes);
+  localeSize=localeBytes.length;
+ }else if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.108"')){
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
+  if(!versionText.includes('displayVersion:"V4.11.108 DEV"')||!versionText.includes('runtimeRevision:"411108r1"')||!versionText.includes('moduleSetId:"E411-108A1"'))throw Error('V4.11.108 canonical version mismatch');
+  if(runtime.productVersion!=='4.11.108'||runtime.runtimeRevision!=='411108r1'||runtime.moduleSetId!=='E411-108A1'||runtime.displayVersion!=='V4.11.108 DEV')throw Error('V4.11.108 runtime manifest mismatch');
+  const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
+  if(!match)throw Error('Cannot read current module contract');
+  const modules=JSON.parse(match[1]);
+  if(modules.length!==34||new Set(modules.map(x=>x.id)).size!==modules.length)throw Error('V4.11.108 module IDs invalid');
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  // These eight auxiliary UI parts are imported by registered modules; they are not independent registered modules.
+  const support=['modules/weather/snake-preview.js','modules/weather/wind-studio-data.js','modules/weather/wind-studio.js','modules/fullscreen/compass-picker-chevron-left-brass.js','modules/fullscreen/compass-picker-chevron-left-silver.js','modules/fullscreen/compass-picker-chevron-right-brass.js','modules/fullscreen/compass-picker-chevron-right-silver.js','modules/instruments/medallion-arrow-calibration-1.js','modules/instruments/medallion-arrow-calibration-2.js','modules/instruments/medallion-arrow-calibration-3.js','modules/instruments/medallion-arrow-calibration-4.js','modules/weather/p7-010/raster-tile-url.js','modules/weather/p7-010/raster-tile-clip.js','modules/weather/p7-010/raster-compositor.js','modules/weather/p7-010/raster-mosaic-contract.js','modules/weather/p7-010/raster-mosaic-tile-loader.js','modules/weather/p7-010/raster-mosaic-grid-layer.js','modules/weather/p7-010/raster-mosaic-consumer.js','modules/weather/p7-010/raster-mosaic-coverage.js','modules/weather/p7-010/opera-diagnostic-tile.js','modules/weather/p7-010/nasa-spatial.js','modules/weather/p7-010/radar-mask.js'];
+  const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.108 module inventory mismatch');
+  const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
+  if(runtimeVersions.size!==modules.length)throw Error('Runtime module list incomplete');
+  for(const item of modules){
+    if(runtimeVersions.get(item.id)!==item.version)throw Error('Module version mismatch '+item.id);
+    modular.set(item.file,await readFile(resolve(root,'frontend',item.file)));
+  }
+  for(const name of support)modular.set(name,await readFile(resolve(root,'frontend',name)));
+  const localeBytes=await readFile(resolve(root,'frontend/locales/about-locales.js'));
+  localeSha=hash(localeBytes);
+  localeSize=localeBytes.length;
+ }else if(text.includes("APPLICATION_RELEASE")&&versionText.includes('version:"4.11.14"')){
+  const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  if(!versionText.includes('displayVersion:"V4.11.14 DEV"')||!versionText.includes('build:"V4.11.14-DEV-2026-10-07"')||!versionText.includes('runtimeRevision:"41114r1"')||!versionText.includes('moduleSetId:"E411-14A1"'))throw Error('V4.11.14 canonical version mismatch');
+  if(!manifestText.includes('export const APPLICATION_META=APPLICATION_RELEASE;')||!text.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||text.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 runtime revision source mismatch');
+  const old=final.moduleFiles,additional=['modules/weather/consumer-client.js','modules/core/update-watch.js','modules/weather/precipitation-layer.js','modules/weather/layer-menu.js','modules/weather/display-menu.js','modules/weather/legend-overlay.js','modules/ui/project-hub.js'];
+  const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();
+  const expected=[...Object.keys(old),...additional].sort();
+  if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.14 module inventory mismatch');
+  const consumer=await readFile(resolve(root,'frontend/modules/weather/consumer-client.js'),'utf8');
+  const radar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
+  const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
+  const watch=await readFile(resolve(root,'frontend/modules/core/update-watch.js'),'utf8');
+  if(!consumer.includes("id:'weather.consumer-client',version:'1.2.1'")||!manifestText.includes('"id": "weather.consumer-client"'))throw Error('WeatherRouter module identity mismatch');
+  if(!radar.includes('id:"weather.precipitation-layer"')||!radar.includes('version:"1.3.4"')||!radar.includes('{bbox-epsg-3857}')||!radar.includes('WEATHER_RADAR_PRELOAD_PROFILES')||!radar.includes('_weatherRadarEffectiveOpacity')||!radar.includes('_weatherRadarApplyDisplayOpacity')||!radar.includes('state.onZoom')||!manifestText.includes('"id": "weather.precipitation-layer"'))throw Error('Precipitation raster / opacity module identity mismatch');
+  if(!layerMenu.includes('id:"weather.layer-menu"')||!layerMenu.includes('version:"1.1.4"')||!layerMenu.includes('buildWeatherLayerCatalog')||!layerMenu.includes('SUBCATEGORY_LABELS')||!layerMenu.includes('formatWeatherLayerCapabilityLabel')||!layerMenu.includes('weather-router-subcategory')||!layerMenu.includes('weather-layer-back-slot')||!layerMenu.includes('grid-template-columns:42px 1fr 42px')||!layerMenu.includes('min-height:52px')||!layerMenu.includes('width:calc(100% + 5px)')||!layerMenu.includes('margin-right:-5px')||!layerMenu.includes('padding-right:8px')||!layerMenu.includes('.weather-layer-logo{width:27px;height:27px;justify-self:start')||!layerMenu.includes('.weather-layer-view [data-map-display-mode]{display:none!important}')||!layerMenu.includes('.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}')||!manifestText.includes('"id": "weather.layer-menu"'))throw Error('WeatherRouter layer-menu module identity mismatch');
+  const displayMenu=await readFile(resolve(root,'frontend/modules/weather/display-menu.js'),'utf8');
+  if(!displayMenu.includes('id:"weather.display-menu"')||!displayMenu.includes('version:"0.3.1"')||!displayMenu.includes('data-weather-display-eye=')||!displayMenu.includes('WEATHER_DISPLAY_EYE_ASSETS')||!displayMenu.includes('78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066')||!displayMenu.includes('e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047')||displayMenu.includes('data-weather-display-eye-placeholder')||!displayMenu.includes('_weatherDisplayBindPanelDrag')||!displayMenu.includes('precipitationStyleChanged')||!displayMenu.includes('precipitationOpacityChanged')||!displayMenu.includes('_weatherDisplaySetTransparency')||!displayMenu.includes('data-weather-display-transparency')||!displayMenu.includes('weather-display-panel .weather-display-opacity')||!displayMenu.includes('8.5*zoomFactor')||!displayMenu.includes('contrast(1.075)')||!displayMenu.includes('_weatherDisplayApplyRasterPaneStyle')||!displayMenu.includes('if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();')||displayMenu.includes('node.style.transform=')||displayMenu.includes('transformOrigin')||!manifestText.includes('"id": "weather.display-menu"'))throw Error('WeatherRouter display-menu / smoothing / transparency identity mismatch');
+  const legendOverlay=await readFile(resolve(root,'frontend/modules/weather/legend-overlay.js'),'utf8');
+  if(!legendOverlay.includes('id:"weather.legend-overlay"')||!legendOverlay.includes('version:"0.1.1"')||!legendOverlay.includes('_weatherLegendSetModel')||!legendOverlay.includes('_weatherLegendVisibleModels')||!legendOverlay.includes('weather-legend-header')||!legendOverlay.includes('width:min(430px')||!legendOverlay.includes('width:min(240px,100%)')||!legendOverlay.includes('data-weather-legend-hide')||!manifestText.includes('"id": "weather.legend-overlay"'))throw Error('WeatherRouter compact legend-overlay module identity mismatch');
+  if(!watch.includes('id:"core.update-watch"')||!watch.includes('cache:"no-store"')||!manifestText.includes('"id": "core.update-watch"'))throw Error('Runtime update-watch identity mismatch');
+  const mapDisplay=await readFile(resolve(root,'frontend/modules/fullscreen/map-display.js'),'utf8');
+  const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
+  const cardLifecycle=await readFile(resolve(root,'frontend/modules/core/card-lifecycle.js'),'utf8');
+  if(!mapDisplay.includes('"version": "1.0.32"')||!mapDisplay.includes("'display-mode-change',{force:true}"))throw Error('Map display gesture-recovery contract mismatch');
+  if(!radiiMap.includes('"version": "1.0.6"')||!radiiMap.includes('_setupMapGestureRecovery')||!radiiMap.includes('_hardResetMapGestureHandlers')||!radiiMap.includes('rogue-single-pointer-zoom')||!radiiMap.includes('touch-pointer-mismatch')||!radiiMap.includes('leaflet-stale-pointer-cache')||!radiiMap.includes("this._map.on?.('zoom',state.handlers.mapZoom)")||!radiiMap.includes("mapEl.addEventListener('touchmove'")||radiiMap.includes("window.addEventListener('touchmove'")||!radiiMap.includes('visibility-visible-resume')||!radiiMap.includes('blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true')||!radiiMap.includes('map.options?.touchZoom!==false')||!radiiMap.includes('map.options?.dragging!==false')||!radiiMap.includes("'touchend touchcancel'")||!radiiMap.includes('visibilitychange'))throw Error('Android map gesture-recovery contract mismatch');
+  if(!cardLifecycle.includes('"version": "1.0.6"')||!cardLifecycle.includes('_resumeMapGestureRecovery')||!cardLifecycle.includes('_teardownMapGestureRecovery')||!cardLifecycle.includes('_resumeWeatherLegend')||!cardLifecycle.includes('_teardownWeatherLegend'))throw Error('Map gesture-recovery / WeatherRouter legend lifecycle contract mismatch');
+  const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
+  if(!projectHub.includes('id:"ui.project-hub"')||!projectHub.includes('version:"1.1.15"')||!projectHub.includes('createElement("iframe")')||!manifestText.includes('"id": "ui.project-hub"'))throw Error('Project Hub module identity/security mismatch');
+  const allowedModified=new Set(['module-manifest.js','modules/ui/skeleton.js','modules/diagnostics/module-view.js','modules/core/card-lifecycle.js','modules/fullscreen/map-display.js','modules/location/radii-map.js','modules/weather/precipitation-layer.js']);
+  for(const name of actual){
+    const bytes=await readFile(resolve(root,'frontend',name));
+    if(old[name]&&!allowedModified.has(name)){
+      const normalized=Buffer.from(bytes.toString('utf8').replaceAll('41108r1','41002r13'),'utf8');
+      if(normalized.length!==old[name].sizeBytes||hash(normalized)!==old[name].sha256)throw Error('V4.10 protected module changed beyond runtime revision: '+name);
+    }
+    modular.set(name,bytes);
+  }
+  localeSha=final.localeSha256;localeSize=final.localeSizeBytes;
+ }else if(text.includes("const CARD_VERSION = '4.10';")){
   const final=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.10.json'),'utf8'));
   if(final.version!=='4.10'||final.status!=='FINAL'||final.acceptedCandidateSha256!=='c9940895892e05d0c424cc2d2b6d27f43c24d345f81f1227c4716f3d6404943e')throw Error('V4.10 contract provenance mismatch');
   if(source.length!==final.sizeBytes||hash(source)!==final.sha256)throw Error('V4.10 frontend checksum mismatch');
@@ -34,10 +136,17 @@ export async function expectedPayload(){
  readAboutLocaleModel(text,locale.toString(),await readFile(resolve(root,'frontend/modules/core/base-context.js'),'utf8'));
  const inventory=JSON.parse(await readFile(resolve(root,'frontend/assets.json'),'utf8'));
   const assetScanText=[text,...[...modular.values()].map(bytes=>bytes.toString('utf8'))].join('\n');
-  const referenced=[...new Set([...assetScanText.matchAll(/new URL\('(?:\.\/|\.\.\/\.\.\/)assets\/([^'?]+)(?:\?[^']*)?', (?:import\.meta\.url|rootModuleUrl)\)/g)].map(m=>'assets/'+m[1]))].sort();
+  const referenced=[...new Set([...assetScanText.matchAll(/new URL\('(?:\.\/|\.\.\/\.\.\/)assets\/([^'?]+)(?:\?[^']*)?',\s*(?:import\.meta\.url|rootModuleUrl)\)/g)].map(m=>'assets/'+m[1]))].sort();
  const active=inventory.filter(a=>a.referenced!==false).map(a=>a.file).sort();
- if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch');
- const payload=new Map([['gewitterradar.js',source],['locales/about-locales.js',locale],...modular]);
+ if(JSON.stringify(referenced)!==JSON.stringify(active))throw Error('Asset inventory/reference mismatch; needed='+referenced.filter(x=>!active.includes(x)).join(',')+'; extra='+active.filter(x=>!referenced.includes(x)).join(','));
+ const projectHubRuntime=new Map([
+  ['project-hub/project-hub-config.json',await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'))],
+  ['project-hub/asset-manifest.json',await readFile(resolve(root,'frontend/project-hub/asset-manifest.json'))],
+  ['project-hub/offline/index.html',await readFile(resolve(root,'frontend/project-hub/offline/index.html'))],
+  ['project-hub/offline/assets/ck-logo.webp',await readFile(resolve(root,'frontend/project-hub/offline/assets/ck-logo.webp'))],
+  ['project-hub/offline/assets/project-icons.webp',await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'))]
+ ]);
+ const payload=new Map([['gewitterradar.js',source],['panel.js',panel],...(versionSource?[['version.js',versionSource]]:[]),['locales/about-locales.js',locale],...modular,...projectHubRuntime]);
  for(const asset of inventory){const bytes=await readFile(resolve(root,'frontend',asset.file));if(hash(bytes)!==asset.sha256)throw Error('Asset SHA mismatch '+asset.file);payload.set(asset.file,bytes);}
  return payload;
 }

@@ -1,8 +1,8 @@
-import { registerModule } from "./registry.js?v=41002r13";
+import { registerModule } from "./registry.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.7",
+  version:"1.0.11",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -172,23 +172,23 @@ export function createBaseContext(rootModuleUrl){
   }
 
   const TREND_MEDALLION_IMAGE = new URL('./assets/gewitterradar-trend-medallion.png?v=409', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_11 = new URL('./assets/gewitterradar-trend-medallion-11.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_12 = new URL('./assets/gewitterradar-trend-medallion-12.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_13 = new URL('./assets/gewitterradar-trend-medallion-13.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_14 = new URL('./assets/gewitterradar-trend-medallion-14.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_15 = new URL('./assets/gewitterradar-trend-medallion-15.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_16 = new URL('./assets/gewitterradar-trend-medallion-16.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_17 = new URL('./assets/gewitterradar-trend-medallion-17.webp?v=41002r13', rootModuleUrl).href;
-  const TREND_MEDALLION_IMAGE_18 = new URL('./assets/gewitterradar-trend-medallion-18.webp?v=41002r13', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_02 = new URL('./assets/gewitterradar-trend-medallion-02.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_03 = new URL('./assets/gewitterradar-trend-medallion-03.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_04 = new URL('./assets/gewitterradar-trend-medallion-04.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_05 = new URL('./assets/gewitterradar-trend-medallion-05.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_06 = new URL('./assets/gewitterradar-trend-medallion-06.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_07 = new URL('./assets/gewitterradar-trend-medallion-07.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_08 = new URL('./assets/gewitterradar-trend-medallion-08.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_09 = new URL('./assets/gewitterradar-trend-medallion-09.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_10 = new URL('./assets/gewitterradar-trend-medallion-10.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_11 = new URL('./assets/gewitterradar-trend-medallion-11.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_12 = new URL('./assets/gewitterradar-trend-medallion-12.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_13 = new URL('./assets/gewitterradar-trend-medallion-13.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_14 = new URL('./assets/gewitterradar-trend-medallion-14.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_15 = new URL('./assets/gewitterradar-trend-medallion-15.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_16 = new URL('./assets/gewitterradar-trend-medallion-16.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_17 = new URL('./assets/gewitterradar-trend-medallion-17.webp?v=41108r1', rootModuleUrl).href;
+  const TREND_MEDALLION_IMAGE_18 = new URL('./assets/gewitterradar-trend-medallion-18.webp?v=41108r1', rootModuleUrl).href;
   const TREND_ARROW_IMAGE = new URL('./assets/gewitterradar-trend-arrow.png?v=409', rootModuleUrl).href;
   const MAP_COMPASS_TOGGLE_IMAGE = new URL('./assets/gewitterradar-compass-toggle.png?v=40910', rootModuleUrl).href;
   const COMPASS_METAL_FRAME_V1_IMAGE = new URL('./assets/gewitterradar-compass-frame-v1.png?v=404', rootModuleUrl).href;
@@ -252,7 +252,7 @@ export function createBaseContext(rootModuleUrl){
       - "sensor.*_lightning_counter"`;
   const ABOUT_STRINGS = {
     Deutsch: {
-      title:'Über Gewitterradar', close:'Schließen', understood:'Verstanden',
+      title:'Über GewitterRadar', close:'Schließen', understood:'Verstanden',
       subtitle:'Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.', claim:'Gewitter beobachten, Entwicklungen entdecken.',
       welcome:'Willkommen, Wetterbegeisterte!',
       intro:'Dieses Projekt ist für alle, die Gewitter, Blitze, Wetterphänomene und die faszinierende Dynamik unserer Atmosphäre begeistern. Gewitterradar hilft, die Natur besser zu verstehen, Entwicklungen frühzeitig zu erkennen und mit Respekt zu beobachten. Schön, dass du Teil dieser Community bist!',
@@ -927,7 +927,7 @@ export function createBaseContext(rootModuleUrl){
 
   const HELP_STRINGS = {
     Deutsch: {
-      menuTitle:'Hilfe & Hinweise', title:'Hilfe & Hinweise', subtitle:'Kurz erklärt, damit Gewitterradar zuverlässig und nachvollziehbar arbeitet.', close:'Hilfe schließen', copy:'YAML kopieren', copied:'Kopiert', copyFailed:'Kopieren nicht möglich – bitte den Code markieren.',
+      menuTitle:'Hilfe & Hinweise', title:'Hilfe & Hinweise', subtitle:'Funktionen und Einstellungen – einfach erklärt.', close:'Hilfe schließen', copy:'YAML kopieren', copied:'Kopiert', copyFailed:'Kopieren nicht möglich – bitte den Code markieren.',
       sections:[
         {key:'prerequisites',title:'Voraussetzungen',paragraphs:['Gewitterradar verarbeitet die Blitzdaten, die Home Assistant von der verwendeten Blitzortung-Datenquelle erhält. Prüfe dort den richtigen Referenzstandort und stelle den Quellradius mindestens so groß wie den Beobachtungsradius in Gewitterradar ein. Gewitterradar kann keine Blitze anzeigen oder auswerten, die von der Datenquelle bereits herausgefiltert wurden.'],notes:['Wenn mehrere Blitzortung-Geräte oder Beobachtungspunkte vorhanden sind, müssen die verwendeten Entitäten eindeutig zum gewünschten Referenzpunkt passen.']},
         {key:'radii',title:'Die Radien',paragraphs:['Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- und Beobachtungsradius. Die Bereiche sind Entfernungsschwellen, keine voneinander getrennten Datenquellen.','Unter „Cluster-Auflösung“ legst du fest, wann Cluster beim Hineinzoomen in Einzelblitze aufgelöst werden. Früh löst früher auf, Ausgewogen verwendet die bisherige zonenabhängige V4.08-Abstimmung und Spät hält Cluster länger zusammen.'],items:['Beobachtungsradius – äußerer Bereich für frühe Beobachtung.','Gewitterradius – näherer Bereich mit erhöhter Aufmerksamkeit.','Gefahrenradius – unmittelbarer Nahbereich mit besonders hoher Relevanz.'],featureBlocks:[{title:'Cluster-Navigation · Sitzungszeit',body:'bestimmt, wie lange eine begonnene Cluster-Navigation aktiv bleibt. Die Countdown-Zeit ist frei zwischen 5 und 3600 Sekunden einstellbar. {{INFINITY}} hält die Sitzung unbegrenzt offen. Countdown und {{INFINITY}} können während der Navigation direkt in der Statusanzeige umgeschaltet werden.',infinityAlt:'Unendlich'}],notes:['Der Gefahrenradius ist auf maximal 250 km begrenzt. Hinweise zu empfohlenen Ausgangswerten und zur erforderlichen Abstimmung mit der Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“.']},
@@ -941,7 +941,7 @@ export function createBaseContext(rootModuleUrl){
       ]
     },
     English: {
-      menuTitle:'Help & Notes', title:'Help & Notes', subtitle:'A concise guide to keep Gewitterradar reliable and easy to understand.', close:'Close help', copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.',
+      menuTitle:'Help & Notes', title:'Help & Notes', subtitle:'Features and settings – simply explained.', close:'Close help', copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.',
       sections:[
         {key:'prerequisites',title:'Prerequisites',paragraphs:['Gewitterradar processes the lightning data that Home Assistant receives from the configured lightning-detection source. Verify the correct reference location there and set the source radius at least as large as the observation radius in Gewitterradar. Gewitterradar cannot display or evaluate strikes that have already been filtered out by the source.'],notes:['If several lightning-detection devices or observation points are available, make sure the entities used belong to the intended reference point.']},
         {key:'radii',title:'The radii',paragraphs:['The radii are cumulative: a strike inside the danger radius also counts inside the storm radius and the observation radius. The areas are distance thresholds, not separate data sources.','“Cluster resolution” controls when clusters resolve into individual strikes while zooming in. Early resolves sooner, Balanced uses the previous zone-dependent V4.08 tuning, and Late keeps clusters together longer.'],items:['Observation radius – outer area for early observation.','Storm radius – closer area requiring increased attention.','Danger radius – immediate vicinity with particularly high relevance.'],featureBlocks:[{title:'Cluster navigation · session time',body:'controls how long an active cluster-navigation session remains active. The countdown can be set freely from 5 to 3600 seconds. {{INFINITY}} keeps the session open without a timeout. Countdown and {{INFINITY}} can be toggled directly in the status display while navigating.',infinityAlt:'Unlimited'}],notes:['The danger radius is limited to a maximum of 250 km. For recommended starting values and the required coordination with the Blitzortung app, see “Recommended defaults”.']},
@@ -1004,6 +1004,7 @@ export function createBaseContext(rootModuleUrl){
     return module.href;
   })();
   let aboutExternalLocales = null, aboutExternalLocalesLoading = null, aboutExternalLocaleAttempt = 0;
+  let externalWeatherHelp = null;
 
   function validateAboutLocales(locales, settings, languages, recorderYaml) {
     const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -1078,7 +1079,7 @@ export function createBaseContext(rootModuleUrl){
 
   // V4.09.23 – Help & Notes schema synchronized across all 19 language variants; DE/EN remain embedded, 17 variants stay in locales/about-locales.js.
   // V4.09.24 – Kartenansicht-Popup: Titel und drei Ansichtsoptionen in allen 19 App-Sprachen; Titel im kompakten Popup zentriert.
-  function installAboutExternalLocales(locales, helpLocales) {
+  function installAboutExternalLocales(locales, helpLocales, weatherHelp) {
     if (!locales || !helpLocales || Object.keys(locales).some(name => !Object.hasOwn(helpLocales,name)) || Object.keys(helpLocales).some(name => !Object.hasOwn(locales,name))) {
       throw Error('External About and Help locale registries differ');
     }
@@ -1090,6 +1091,7 @@ export function createBaseContext(rootModuleUrl){
       throw Error('External About locales must cover every non-native registered language');
     }
     aboutExternalLocales = complete;
+    externalWeatherHelp = weatherHelp ?? null;
     return complete;
   }
 
@@ -1099,10 +1101,14 @@ export function createBaseContext(rootModuleUrl){
     const url = new URL(ABOUT_LOCALE_MODULE_URL), attempt = aboutExternalLocaleAttempt++;
     if (attempt) url.hash = 'retry-' + attempt;
     aboutExternalLocalesLoading = import(url.href)
-      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES,module.HELP_EXTERNAL_LOCALES_V40753))
+      .then(module => installAboutExternalLocales(module.ABOUT_EXTERNAL_LOCALES,module.HELP_EXTERNAL_LOCALES_V40753,module.WEATHER_EXTERNAL_LOCALES))
       .catch(error => { console.warn('[Gewitterradar] External About/Help locale load failed:', error); return null; })
       .finally(() => { aboutExternalLocalesLoading = null; });
     return aboutExternalLocalesLoading;
+  }
+
+  function resolveWeatherHelpLocale(language) {
+    return ABOUT_EXTERNAL_LANGUAGE_NAMES.has(language) ? externalWeatherHelp?.[language] : undefined;
   }
 
   function requestAboutLocale(language, onLoaded) {
@@ -6349,7 +6355,7 @@ export function createBaseContext(rootModuleUrl){
       _clearVisuals() {
         if (!this._svg || !this._defs) return;
         this._defs.replaceChildren();
-        [...this._svg.querySelectorAll('circle.radius-aura-svg-circle')].forEach(node => node.remove());
+        [...this._svg.querySelectorAll('circle.radius-aura-svg-circle,rect.radius-aura-svg-viewport-veil')].forEach(node => node.remove());
       },
 
       _redraw() {
@@ -6366,9 +6372,42 @@ export function createBaseContext(rootModuleUrl){
           .filter(item => Number.isFinite(Number(item?.radiusKm)) && Number(item.radiusKm) > 0)
           .sort((a,b) => Number(b.radiusKm)-Number(a.radiusKm));
 
+        // V4.11.68: WebKit must never rasterize million-pixel radius circles.
+        // At a tight zoom these radius boundaries are far outside the viewport.
+        // Keep real geographical radius values untouched; only cap visual work.
+        const view = this._map.getSize();
+        const safeOuter = Math.min(8192,Math.max(2048,4*Math.max(1,Number(view?.x)||1,Number(view?.y)||1)));
         items.forEach((item,index) => {
           const outer = projectedRadiusPixels(this._map,reference,Number(item.radiusKm));
           if (!Number.isFinite(outer) || outer <= 1) return;
+          if (outer > safeOuter) {
+            // The danger-area's faint interior veil must remain visible when
+            // the ENTIRE viewport is inside the actual geographic danger ring.
+            // One viewport-sized rect replaces an enormous SVG radial circle.
+            if (item.kind === 'danger') {
+              const farthest = Math.max(
+                Math.hypot(center.x,center.y),
+                Math.hypot(center.x-Number(view.x),center.y),
+                Math.hypot(center.x,center.y-Number(view.y)),
+                Math.hypot(center.x-Number(view.x),center.y-Number(view.y))
+              );
+              if (Number.isFinite(farthest) && outer >= farthest) {
+                const strength = clamp(Number(data?.intensity)||0,AURA_INTENSITY_MIN,AURA_INTENSITY_MAX)/AURA_INTENSITY_MAX;
+                const veilAlpha=.110*Math.pow(strength,1.70)*.55;
+                if (veilAlpha>0) {
+                  const veil=document.createElementNS(SVG_NS,'rect');
+                  veil.setAttribute('class','radius-aura-svg-viewport-veil');
+                  veil.setAttribute('width',String(Math.max(1,Number(view.x)||1)));
+                  veil.setAttribute('height',String(Math.max(1,Number(view.y)||1)));
+                  veil.setAttribute('fill',item.color||'#ff4949');
+                  veil.setAttribute('fill-opacity',String(veilAlpha));
+                  veil.setAttribute('pointer-events','none');
+                  this._svg.appendChild(veil);
+                }
+              }
+            }
+            return;
+          }
 
           const gradientId = `${this._uid}-${item.kind || index}`;
           const gradient = document.createElementNS(SVG_NS,'radialGradient');
@@ -6446,7 +6485,7 @@ export function createBaseContext(rootModuleUrl){
   }
 
   // END GEWITTERRADAR LEGACY CORE
-  const context={CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD,GEWITTERRADAR_INFINITY_GFX,HELP_PREMIUM_ICON_VARIANT,HELP_REFINED_ICONS,HELP_REFINED_ICONS_V3,HELP_REFINED_ICONS_V4,HELP_REFINED_ICONS_V5,HELP_REFINED_ICONS_V6,HELP_PREMIUM_ICONS,BUILD_YYYY_MM,LEAFLET_JS,LEAFLET_CSS_URL,TREND_MEDALLION_IMAGE,TREND_ARROW_IMAGE,MAP_COMPASS_TOGGLE_IMAGE,COMPASS_METAL_FRAME_V1_IMAGE,COMPASS_METAL_FRAME_V2_IMAGE,COMPASS_METAL_FRAME_V3_IMAGE,COMPASS_METAL_FRAME_V4_IMAGE,COMPASS_METAL_FRAME_V5_IMAGE,COMPASS_SELECTOR_FRAME_IMAGES,COMPASS_DESIGNS,COMPASS_DESIGN_STORAGE_KEY,MAP_DISPLAY_MODE_STORAGE_KEY,MAP_LAST_DISPLAY_MODE_STORAGE_KEY,MAP_STARTUP_MODE_STORAGE_KEY,MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,MAP_LAYER_SYMBOL_STACK3D_IMAGE,MAP_COMPASS_POSITION_STORAGE_KEY,MAP_COMPASS_VISIBLE_STORAGE_KEY,MAP_MEDALLION_POSITION_STORAGE_KEY,MAP_MEDALLION_VISIBLE_STORAGE_KEY,MAP_LOCATION_POSITION_STORAGE_KEY,MAP_WINDOW_QUERY_KEY,MAP_WINDOW_VERSION_QUERY_KEY,LANGUAGE_INITIALIZATION_ENTITIES,ABOUT_ONBOARDING_VERSION,ABOUT_STORAGE_KEY,ABOUT_LOGO,ABOUT_HERO_IMAGE,ABOUT_DEDICATION_IMAGE,ABOUT_CLOSE_IMAGE,ABOUT_COPY_IMAGE,V407_LOCATION_SAFETY_ICON,V407_LOCATION_ADVICE_ICON,V407_COORDINATE_TARGET_TAB_ICON,V407_LOCATION_SEARCH_GLOBE_ICON,V407_LOCATION_SEARCH_LOUPE_ICON,V407_COORDINATE_TARGET_LIST_ICON,V407_COORDINATE_TEXTS,ABOUT_RECORDER_YAML,ABOUT_STRINGS,ABOUT_SETTING_ACCESSORS,ABOUT_SETTING_LABELS,ABOUT_SETTING_PURPOSES,ABOUT_SOURCE_PURPOSES,MEDALLION_DESIGNS,MEDALLION_UI,DIAGNOSTIC_UI,DIAGNOSTIC_VIRTUAL_STORM_UI,DIAGNOSTIC_MODE_LABEL,DIAGNOSTIC_SELECT_ACTIVE,DIAGNOSTIC_TERMS,DIAGNOSTIC_AUX,DIAGNOSTIC_OVERLAY_TERMS,DIAGNOSTIC_PERFORMANCE_UI,COMPASS_FRAME_OPENING_CACHE,_uiAsset7Base64,_uiAsset7ExpectedSha256,C,HISTORY_MINUTES,ACTIVE_MINUTES,HISTORY_BUCKET_MINUTES,FLASH_COOLDOWN_MS,FLASH_PULSE_COUNT,FLASH_GAP_MIN_MS,FLASH_GAP_MAX_MS,FLASH_CENTER_X_MIN,FLASH_CENTER_X_MAX,FLASH_CENTER_Y_MIN,FLASH_CENTER_Y_MAX,FLASH_MOBILE_VIEWPORT_MAX_WIDTH,LANGUAGE_HELPER_DEFAULT,DISTANCE_UNIT_HELPER_DEFAULT,KM_TO_MI,KM_TO_FT,METRIC_NEAR_THRESHOLD_KM,IMPERIAL_FEET_THRESHOLD_MI,AURA_ENABLED_HELPER_DEFAULT,AURA_WIDTH_HELPER_DEFAULT,AURA_INTENSITY_HELPER_DEFAULT,AURA_WIDTH_MIN,AURA_WIDTH_MAX,AURA_WIDTH_DEFAULT,AURA_INTENSITY_MIN,AURA_INTENSITY_MAX,AURA_INTENSITY_DEFAULT,LANGUAGE_DEFAULT,SETTING_ENTITIES,HELP_STRINGS,LANGUAGE_DEFINITIONS,ABOUT_LOCALES,ABOUT_EXTERNAL_LANGUAGE_NAMES,ABOUT_LOCALE_MODULE_URL,AGE_SHORT_UNITS,DISTANCE_UNIT_LABELS,I18N,I18N_STATIC_TEXT_KEYS,I18N_STATIC_ATTR_KEYS,CARDINALS,CARDINAL_NAMES,getClusterResolutionProfileLabel,loadLeafletJs,_uiAsset7VerifiedUri,validateAboutLocales,isAboutLocaleComplete,normalizeExternalHelpLocale,installAboutExternalLocales,loadAboutExternalLocales,requestAboutLocale,resolveAboutLocale,toCardinal,toCardinalName,clamp,finiteNumber,fmtNumber,bearingBetween,distanceBetweenKm,projectedRadiusPixels,installLeafletStrikeCanvas,installLeafletRadiusAuraSvg};
+  const context={CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD,GEWITTERRADAR_INFINITY_GFX,HELP_PREMIUM_ICON_VARIANT,HELP_REFINED_ICONS,HELP_REFINED_ICONS_V3,HELP_REFINED_ICONS_V4,HELP_REFINED_ICONS_V5,HELP_REFINED_ICONS_V6,HELP_PREMIUM_ICONS,BUILD_YYYY_MM,LEAFLET_JS,LEAFLET_CSS_URL,TREND_MEDALLION_IMAGE,TREND_ARROW_IMAGE,MAP_COMPASS_TOGGLE_IMAGE,COMPASS_METAL_FRAME_V1_IMAGE,COMPASS_METAL_FRAME_V2_IMAGE,COMPASS_METAL_FRAME_V3_IMAGE,COMPASS_METAL_FRAME_V4_IMAGE,COMPASS_METAL_FRAME_V5_IMAGE,COMPASS_SELECTOR_FRAME_IMAGES,COMPASS_DESIGNS,COMPASS_DESIGN_STORAGE_KEY,MAP_DISPLAY_MODE_STORAGE_KEY,MAP_LAST_DISPLAY_MODE_STORAGE_KEY,MAP_STARTUP_MODE_STORAGE_KEY,MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,MAP_LAYER_SYMBOL_STACK3D_IMAGE,MAP_COMPASS_POSITION_STORAGE_KEY,MAP_COMPASS_VISIBLE_STORAGE_KEY,MAP_MEDALLION_POSITION_STORAGE_KEY,MAP_MEDALLION_VISIBLE_STORAGE_KEY,MAP_LOCATION_POSITION_STORAGE_KEY,MAP_WINDOW_QUERY_KEY,MAP_WINDOW_VERSION_QUERY_KEY,LANGUAGE_INITIALIZATION_ENTITIES,ABOUT_ONBOARDING_VERSION,ABOUT_STORAGE_KEY,ABOUT_LOGO,ABOUT_HERO_IMAGE,ABOUT_DEDICATION_IMAGE,ABOUT_CLOSE_IMAGE,ABOUT_COPY_IMAGE,V407_LOCATION_SAFETY_ICON,V407_LOCATION_ADVICE_ICON,V407_COORDINATE_TARGET_TAB_ICON,V407_LOCATION_SEARCH_GLOBE_ICON,V407_LOCATION_SEARCH_LOUPE_ICON,V407_COORDINATE_TARGET_LIST_ICON,V407_COORDINATE_TEXTS,ABOUT_RECORDER_YAML,ABOUT_STRINGS,ABOUT_SETTING_ACCESSORS,ABOUT_SETTING_LABELS,ABOUT_SETTING_PURPOSES,ABOUT_SOURCE_PURPOSES,MEDALLION_DESIGNS,MEDALLION_UI,DIAGNOSTIC_UI,DIAGNOSTIC_VIRTUAL_STORM_UI,DIAGNOSTIC_MODE_LABEL,DIAGNOSTIC_SELECT_ACTIVE,DIAGNOSTIC_TERMS,DIAGNOSTIC_AUX,DIAGNOSTIC_OVERLAY_TERMS,DIAGNOSTIC_PERFORMANCE_UI,COMPASS_FRAME_OPENING_CACHE,_uiAsset7Base64,_uiAsset7ExpectedSha256,C,HISTORY_MINUTES,ACTIVE_MINUTES,HISTORY_BUCKET_MINUTES,FLASH_COOLDOWN_MS,FLASH_PULSE_COUNT,FLASH_GAP_MIN_MS,FLASH_GAP_MAX_MS,FLASH_CENTER_X_MIN,FLASH_CENTER_X_MAX,FLASH_CENTER_Y_MIN,FLASH_CENTER_Y_MAX,FLASH_MOBILE_VIEWPORT_MAX_WIDTH,LANGUAGE_HELPER_DEFAULT,DISTANCE_UNIT_HELPER_DEFAULT,KM_TO_MI,KM_TO_FT,METRIC_NEAR_THRESHOLD_KM,IMPERIAL_FEET_THRESHOLD_MI,AURA_ENABLED_HELPER_DEFAULT,AURA_WIDTH_HELPER_DEFAULT,AURA_INTENSITY_HELPER_DEFAULT,AURA_WIDTH_MIN,AURA_WIDTH_MAX,AURA_WIDTH_DEFAULT,AURA_INTENSITY_MIN,AURA_INTENSITY_MAX,AURA_INTENSITY_DEFAULT,LANGUAGE_DEFAULT,SETTING_ENTITIES,HELP_STRINGS,LANGUAGE_DEFINITIONS,ABOUT_LOCALES,ABOUT_EXTERNAL_LANGUAGE_NAMES,ABOUT_LOCALE_MODULE_URL,AGE_SHORT_UNITS,DISTANCE_UNIT_LABELS,I18N,I18N_STATIC_TEXT_KEYS,I18N_STATIC_ATTR_KEYS,CARDINALS,CARDINAL_NAMES,getClusterResolutionProfileLabel,loadLeafletJs,_uiAsset7VerifiedUri,validateAboutLocales,isAboutLocaleComplete,normalizeExternalHelpLocale,installAboutExternalLocales,loadAboutExternalLocales,requestAboutLocale,resolveAboutLocale,resolveWeatherHelpLocale,toCardinal,toCardinalName,clamp,finiteNumber,fmtNumber,bearingBetween,distanceBetweenKm,projectedRadiusPixels,installLeafletStrikeCanvas,installLeafletRadiusAuraSvg};
   Object.defineProperties(context,{
     languageOnboardingOwner:{enumerable:true,get:()=>languageOnboardingOwner,set:value=>{languageOnboardingOwner=value;}},
     aboutClaimedVersion:{enumerable:true,get:()=>aboutClaimedVersion,set:value=>{aboutClaimedVersion=value;}}

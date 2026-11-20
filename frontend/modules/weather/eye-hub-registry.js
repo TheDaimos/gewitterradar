@@ -1,0 +1,50 @@
+// Existing public UI actions and authoritative consumer/UI states only.
+const asset=name=>new URL('../../assets/'+name,import.meta.url).href;
+export const CLOUD_CAPABILITY='weather.satellite.clouds';
+export const CLOUD_EYE_ICON=new URL('../../assets/gr-clouds-eye-premium-original.png',import.meta.url).href;
+export const STORM_EYE_ICON=new URL('../../assets/gr-storm-premium-original.png',import.meta.url).href;
+export const EYE_MASTERS=Object.freeze({open:new URL('../../assets/gr-eye-open-master-1254.png', import.meta.url).href,closed:new URL('../../assets/gr-eye-closed-master-1254.png', import.meta.url).href});
+const knownFailure=s=>Boolean(s?.fieldError||s?.error||s?.lastUnavailable||['failed','unavailable','error'].includes(s?.status));
+// An unqueried/off weather layer is NOT a failed WR provider. Only a completed
+// negative consumer response or an actual connection failure can warn the Eye.
+export function synopticEyeStatus(state){
+ const active=state?.config?.visible===true;
+ const now=Date.now();
+ const valid=Object.entries(state?.frames||{}).some(([part,f])=>Date.parse(f?.valid_until)>now&&(!state.rendered||state.rendered[part]>0));
+ const failures=Object.entries(state?.outcomes||{}).some(([part,outcome])=>['unavailable','error'].includes(outcome)&&(part==='connection'||(part==='fronts'?state?.config?.fronts===true:state?.config?.[part]!==false)));
+ const expired=Object.values(state?.frames||{}).some(f=>Number.isFinite(Date.parse(f?.valid_until))&&Date.parse(f.valid_until)<=now);
+ const availability=!active?'off':valid?'available':state?.pending?'loading':failures||expired?'unavailable':'not-loaded';
+ return {active,available:availability!=='unavailable',availability,detail:availability==='off'?'Ausgeschaltet · Daten ungeprüft':availability==='not-loaded'?'Daten noch nicht geladen':availability==='loading'?'WR-V2-Abfrage läuft':availability==='unavailable'?'WR-V2: '+(Object.values(state?.status||{}).filter(Boolean).join(' · ')||'Keine aktuell gültigen Daten'):Object.values(state?.status||{}).filter(Boolean).join(' · ')};
+}
+export function cloudEyeStatus(owner){
+ const state=owner.__weatherGenericStates?.get(CLOUD_CAPABILITY),menu=owner.__weatherLayerMenuState;
+ const catalog=menu?.model?.capabilities?.find(c=>c.id===CLOUD_CAPABILITY);
+ const checked=menu?.discovery&&!menu.probing;
+ const missing=checked&&(!menu.discovery.ready||menu.catalog?.status==='ready'&&(!catalog||catalog.available===false));
+ const available=Boolean(state?.layer)||(!knownFailure(state)&&!missing);
+ return {active:Boolean(state?.enabled),available,detail:state?.error||state?.status||''};
+}
+// Generic representations of these three main functions are already owned.
+export const eyeLayerOwner=id=>id===CLOUD_CAPABILITY?'clouds':/precipitation|radar/.test(id)?'precipitation':/wind/.test(id)?'wind':/temperature/.test(id)?'temperature':'weather-display';
+export function createEyeRegistry(owner){
+ const entries=new Map(),add=entry=>{if(!/^[a-z][a-z0-9-]*$/.test(entry.id)||entries.has(entry.id))throw Error('Invalid/duplicate Eye function');entries.set(entry.id,Object.freeze(entry));};
+ add({id:'wind',key:'wind',icon:asset('gr-wind-animation-toggle-premium-v1-272.webp'),button:'weather-wind-toggle',tap:()=>owner._weatherWindToggle(),hold:()=>owner._weatherWindOpen(),status:()=>{const s=owner.__weatherWind,c=s?.config;return {active:!!(c?.visible&&(c.enabled||c.colorField)),available:(!knownFailure(s)&&!(s?.errors?.length&&!s?.points?.length&&!s?.field))||!!s?.field||!!(s?.points?.length&&!['animated','snake'].includes(c?.mode)),detail:s?.status||''};}});
+ add({id:'temperature',key:'temperature',icon:asset('gr-temperature-premium-v1-272.webp'),button:'weather-temperature-toggle',tap:()=>{const s=owner._weatherTemperatureState();owner._weatherTemperatureSet({visible:!s.config.visible});},hold:()=>owner._weatherTemperatureOpen(),status:()=>{const s=owner.__weatherTemperature;return {active:!!(s?.config?.visible&&(s.config.surface||s.config.labels||s.config.advection)),available:!knownFailure(s)||!!s?.field,detail:s?.status||''};}});
+ add({id:'precipitation',key:'precipitation',icon:asset('gr-precipitation-premium-original.png'),button:'weather-precipitation-toggle',tap:()=>owner._weatherLayerMenuToggle('weather.precipitation.layer'),hold:()=>owner._weatherPrecipitationOpen(),status:()=>{const s=owner._weatherRadarState?.(),catalog=owner.__weatherLayerMenuState?.model?.capabilities?.find(c=>c.id==='weather.precipitation.layer');return {active:!!s?.enabled,available:catalog?.available!==false&&!knownFailure(s),detail:s?.lastUnavailable?.code||''};}});
+ add({id:'synoptic',key:'synoptic',icon:asset('gr-synoptic-high-low-isobars-premium-original.png'),button:'weather-synoptic-toggle',tap:()=>owner._weatherSynopticToggle(),hold:()=>owner._weatherSynopticOpen(),onDecision:action=>owner._weatherSynopticDecision(action,'eye'),status:()=>synopticEyeStatus(owner.__weatherSynoptic||owner._weatherSynopticState?.())});
+ add({id:'clouds',key:'clouds',icon:CLOUD_EYE_ICON,button:'weather-clouds-toggle',tap:()=>owner._weatherLayerMenuToggle(CLOUD_CAPABILITY),hold:()=>owner._weatherCloudsOpen(),status:()=>cloudEyeStatus(owner)});
+ add({id:'weather-display',key:'display',icon:asset('gr-weather-display-premium-original.png'),button:'weather-display-control',tap:()=>owner._weatherDisplayOpenFromLayerMenu(),hold:()=>owner._weatherDisplayOpenFromLayerMenu(),status:()=>{
+  const enabled=[...(owner.__weatherGenericStates?.entries?.()||[])].filter(([id,s])=>eyeLayerOwner(id)==='weather-display'&&s.enabled).map(([,s])=>s),d=owner.__weatherDisplayState;
+  // Only layers without their own assigned function contribute here.
+  return {active:enabled.length>0,available:enabled.length?enabled.some(s=>!knownFailure(s)):!['missing','offline','incompatible'].includes(d?.status),detail:d?.status||''};
+ }});
+ add({
+  id:'storm',key:'storm',icon:STORM_EYE_ICON,button:'weather-storm-toggle',
+  enabled:()=>owner._weatherStormAvailable?.()===true,
+  tap:()=>owner._weatherStormSetVisible(!owner._weatherStormVisible()),
+  hold:()=>owner._weatherStormOpen(),
+  status:()=>({active:owner._weatherStormVisible?.()!==false,available:owner._weatherStormAvailable?.()===true})
+ });
+ return {entries,add};
+}
+export const eyeEntryEnabled=entry=>Boolean(entry)&&entry.enabled?.()!==false;

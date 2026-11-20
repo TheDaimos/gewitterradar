@@ -1,7 +1,8 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import {settingsStorage} from '../core/settings-vault.js?v=411249r1';
+import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.3",
+  "version": "1.0.48",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [
@@ -190,6 +191,140 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       return prepared.map(({_draftIndex,_memberIds,...draft}) => draft);
     },
 
+    // Preserve real Leaflet marker nodes across HA refreshes. Cluster metadata
+    // is already assigned stable IDs by _stabilizeRenderedClusterIdentities.
+    // Replacing every node used to switch off all bubbles simultaneously.
+    // Persist individual lightning markers, especially within the 30 km danger zone.
+    _syncIndividualStrikeMarkers(strikes,L,now,dangerRadius) {
+      if (!this._map || !this._markerLayer || !L) return;
+      if (this._individualMarkerMap !== this._map || this._individualMarkerLayer !== this._markerLayer) {
+        this._individualMarkerMap = this._map;
+        this._individualMarkerLayer = this._markerLayer;
+        this._individualMarkerRecords = new Map();
+      }
+      const records = this._individualMarkerRecords;
+      const seen = new Set();
+      for (const strike of strikes || []) {
+        if (!Number.isFinite(strike?.lat) || !Number.isFinite(strike?.lon)) continue;
+        const id = String(strike.id ?? [strike.lat,strike.lon,strike.firstSeen].join(':'));
+        seen.add(id);
+        const status = this._strikeStatus(strike,now,dangerRadius);
+        const color = status === 'danger' ? C.danger : status === 'active' ? C.gold : C.blue;
+        const symbol = status === 'danger' ? '✦' : '+';
+        const visual = status + '|' + color;
+        let record = records.get(id);
+        if (!record) {
+          const icon = L.divIcon({
+            className:'strike-icon',
+            html:'<span class="strike-spark' + (status === 'danger' ? ' danger' : '') +
+              '" style="--strike-color:' + color + '">' + symbol + '</span>',
+            iconSize:[18,18],iconAnchor:[9,9]
+          });
+          const layer = L.marker([strike.lat,strike.lon],{icon,interactive:false}).addTo(this._markerLayer);
+          record = {marker:layer,lat:strike.lat,lon:strike.lon,visual};
+          records.set(id,record);
+        } else {
+          if (record.lat !== strike.lat || record.lon !== strike.lon) {
+            record.marker.setLatLng([strike.lat,strike.lon]);
+            record.lat = strike.lat;
+            record.lon = strike.lon;
+          }
+          if (record.visual !== visual) {
+            const node = record.marker.getElement?.()?.querySelector?.('.strike-spark');
+            if (node) {
+              node.className = 'strike-spark' + (status === 'danger' ? ' danger' : '');
+              node.style.setProperty('--strike-color',color);
+              node.textContent = symbol;
+            } else {
+              record.marker.setIcon(L.divIcon({
+                className:'strike-icon',
+                html:'<span class="strike-spark' + (status === 'danger' ? ' danger' : '') +
+                  '" style="--strike-color:' + color + '">' + symbol + '</span>',
+                iconSize:[18,18],iconAnchor:[9,9]
+              }));
+            }
+            record.visual = visual;
+          }
+        }
+      }
+      for (const [id,record] of records) {
+        if (seen.has(id)) continue;
+        this._markerLayer.removeLayer(record.marker);
+        records.delete(id);
+      }
+    },
+
+    _syncClusterBubbleMarkers(clusters,L) {
+      if (!this._map) return;
+      if (this._clusterBubbleMap !== this._map || !this._clusterBubbleLayer) {
+        this._clusterBubbleLayer?.remove?.();
+        this._clusterBubbleLayer = L.layerGroup();
+        if(this._weatherStormVisible?.()!==false)this._clusterBubbleLayer.addTo(this._map);
+        this._clusterBubbleMap = this._map;
+        this._clusterBubbleMarkers = new Map();
+      }
+      const markers = this._clusterBubbleMarkers;
+      const seen = new Set();
+      const zoom = this._map.getZoom();
+      for (const cluster of clusters) {
+        const id = String(cluster.id);
+        seen.add(id);
+        const size = Math.round(cluster.size);
+        const cssClass = 'cluster-bubble' + (cluster.extreme ? ' extreme' : cluster.active ? ' active' : '');
+        const visual = [cluster.count,cssClass,cluster.color,size].join('|');
+        let record = markers.get(id);
+        if (!record) {
+          const icon = L.divIcon({
+            className:'cluster-icon',
+            html:`<div class="${cssClass}" style="--cluster-color:${cluster.color};--cluster-size:${size}px">${cluster.count}</div>`,
+            iconSize:[size,size],iconAnchor:[size/2,size/2]
+          });
+          const marker = L.marker([cluster.lat,cluster.lon],{icon,interactive:false}).addTo(this._clusterBubbleLayer);
+          record = {marker,visual,size};
+          markers.set(id,record);
+        } else {
+          const oldPoint = this._map.project(record.marker.getLatLng(),zoom);
+          const newPoint = this._map.project([cluster.lat,cluster.lon],zoom);
+          // Ignore subpixel center motion caused by repeated smoothing passes.
+          if (Math.hypot(newPoint.x-oldPoint.x,newPoint.y-oldPoint.y) > .75) {
+            record.marker.setLatLng([cluster.lat,cluster.lon]);
+          }
+          if (record.visual !== visual) {
+            const markerNode = record.marker.getElement?.();
+            const bubble = markerNode?.querySelector?.('.cluster-bubble');
+            if (bubble) {
+              if (bubble.className !== cssClass) bubble.className=cssClass;
+              if (bubble.textContent !== String(cluster.count)) bubble.textContent=String(cluster.count);
+              bubble.style.setProperty('--cluster-color',cluster.color);
+              bubble.style.setProperty('--cluster-size',size+'px');
+              if (record.size !== size) {
+                // Preserve the node: setIcon() would remove and recreate its DOM.
+                markerNode.style.width=size+'px';
+                markerNode.style.height=size+'px';
+                markerNode.style.marginLeft=(-size/2)+'px';
+                markerNode.style.marginTop=(-size/2)+'px';
+              }
+            } else {
+              // Defensive fallback for implementations without exposed marker DOM.
+              record.marker.setIcon(L.divIcon({
+                className:'cluster-icon',
+                html:`<div class="${cssClass}" style="--cluster-color:${cluster.color};--cluster-size:${size}px">${cluster.count}</div>`,
+                iconSize:[size,size],iconAnchor:[size/2,size/2]
+              }));
+            }
+            record.visual=visual;
+            record.size=size;
+          }
+        }
+      }
+      // Remove only clusters that truly disappeared, never the whole layer.
+      for (const [id,record] of markers) {
+        if (seen.has(id)) continue;
+        this._clusterBubbleLayer.removeLayer(record.marker);
+        markers.delete(id);
+      }
+    },
+
     _renderMapMarkers() {
       if (!this._mapReady || !this._markerLayer || !this._map) return;
       const allHistory = this._mapHistory || [];
@@ -202,8 +337,15 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       const grouped = this._hass?.states?.[this._mapGroupingEntity()]?.state !== 'off';
 
       if (grouped && this._suppressClusterRender) return;
+      if (!grouped) {
+        this._syncIndividualStrikeMarkers([],L,now,dangerRadius);
+        this._clusterBubbleLayer?.clearLayers?.();
+        this._clusterBubbleMarkers?.clear?.();
+      }
 
-      this._markerLayer.clearLayers();
+      // This layer contains only individual crosses. Bubbles live in their own
+      // keyed layer and must never be cleared by a general HA re-render.
+      // Persistent individual markers are synced below; never clear all on HA refresh.
       this._renderedMapClusters = [];
 
       // Einzelblitz-Modus: filigrane diagonale Kreuze statt Punktwolken.
@@ -316,20 +458,9 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
         else clusterCandidates.push({ strike:s,inObservation });
       }
 
-      const addStrike = (s) => {
-        const status = this._strikeStatus(s,now,dangerRadius);
-        const color = status === 'danger' ? C.danger : status === 'active' ? C.gold : C.blue;
-        const symbol = status === 'danger' ? '✦' : '+';
-        const icon = L.divIcon({
-          className:'strike-icon',
-          html:`<span class="strike-spark ${status === 'danger' ? 'danger' : ''}" style="--strike-color:${color}">${symbol}</span>`,
-          iconSize:[18,18],
-          iconAnchor:[9,9]
-        });
-        L.marker([s.lat,s.lon],{ icon,interactive:false }).addTo(this._markerLayer);
-      };
+      const addStrike = (s) => individual.push(s);
 
-      individual.forEach(addStrike);
+
 
       const cells = new Map();
       for (const item of clusterCandidates) {
@@ -410,14 +541,9 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
           extreme:cluster.extreme
         });
 
-        const icon = L.divIcon({
-          className:'cluster-icon',
-          html:`<div class="cluster-bubble ${cluster.extreme ? 'extreme' : cluster.active ? 'active' : ''}" style="--cluster-color:${cluster.color};--cluster-size:${cluster.size.toFixed(0)}px">${cluster.count}</div>`,
-          iconSize:[cluster.size,cluster.size],
-          iconAnchor:[cluster.size/2,cluster.size/2]
-        });
-        L.marker([cluster.lat,cluster.lon],{ icon,interactive:false }).addTo(this._markerLayer);
       }
+      this._syncIndividualStrikeMarkers(individual,L,now,dangerRadius);
+      this._syncClusterBubbleMarkers(stableClusters,L);
     },
 
     _recentStrikeInRadius(strike,filter,observationRadius,stormRadius,dangerRadius) {
@@ -727,24 +853,52 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
     },
 
     _focusReferenceStormRadius(reference = this._home()) {
-      if (!this._map || !reference) return;
+      if (!this._map || !reference){
+        this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"map-or-reference-missing"});
+        return;
+      }
       const lat = finiteNumber(reference.lat);
       const lon = finiteNumber(reference.lon);
-      if (lat == null || lon == null) return;
+      if (lat == null || lon == null){
+        this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"invalid-coordinates",lat,lon});
+        return;
+      }
 
       const observationRadius = Math.max(1,this._observationRadiusValue());
       const stormRadius = Math.max(5,Math.min(this._stormRadiusValue(),observationRadius));
       const L = window.L;
       const center = [lat,lon];
+      const requestId=(this._mapDiagnosticGeoRequestId||0)+1;
+      this._mapDiagnosticGeoRequestId=requestId;
+      this._mapDiagnosticGeoPending={requestId,lat,lon,startedAt:Date.now(),zoomBefore:this._map.getZoom?.()};
+      this._mapDiagnosticLog?.("geo.focus.request",{requestId,lat,lon,stormRadius,observationRadius});
 
-      /* V3.988 – Geo-Location ist jetzt ein echter räumlicher Recenter:
-         nicht nur den Mittelpunkt setzen, sondern den eingestellten Gewitterradius
-         vollständig sichtbar machen. Leaflet bestimmt damit für Desktop/iPad/Mobile
-         selbst den passenden Zoom und fährt gleichzeitig sanft zur Bezugsposition. */
+      // V4.11.65: Der Anwender waehlt den Zielzoom fuer automatische
+      // Standort-Kamerafahrten. Kein Eingriff in die manuelle Kartenbedienung.
+      // 'auto' behaelt die bisherige Einpassung des Gewitterradius bei.
+      let arrivalZoomSetting='8';
+      try{arrivalZoomSetting=settingsStorage(this).getItem('gr-reference-arrival-zoom')??'8';}catch(_){}
+      if (/^(?:[5-9]|1[0-8])$/.test(arrivalZoomSetting) && typeof this._map.flyTo==='function') {
+        const minimum=finiteNumber(this._map.getMinZoom?.())??0;
+        const maximum=finiteNumber(this._map.getMaxZoom?.())??18;
+        const targetZoom=Math.min(maximum,Math.max(minimum,Number(arrivalZoomSetting)));
+        this._mapDiagnosticLog?.('geo.focus.method',{requestId,method:'flyTo',mode:'configured-zoom',zoom:targetZoom});
+        this._map.flyTo(center,targetZoom,{
+          animate:true,
+          duration:1.22,
+          easeLinearity:.22
+        });
+        return;
+      }
+
+      /* Automatisch: Leaflet passt den Gewitterradius an den Kartenausschnitt an.
+         Diese bewährte Methode bleibt für die Auswahl Automatisch erhalten. */
       if (L?.latLng && typeof this._map.flyToBounds === 'function') {
         const centerLatLng = L.latLng(lat,lon);
         const bounds = centerLatLng?.toBounds?.(stormRadius*2000);
         if (bounds?.isValid?.()) {
+          const c=bounds.getCenter?.();
+          this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"flyToBounds",center:c?{lat:c.lat,lon:c.lng}:null});
           this._map.flyToBounds(bounds,{
             padding:[34,34],
             animate:true,
@@ -758,12 +912,14 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
       // Robuster Fallback für ungewöhnliche Leaflet-Builds.
       const currentZoom = finiteNumber(this._map.getZoom?.()) ?? 7;
       if (typeof this._map.flyTo === 'function') {
+        this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"flyTo",zoom:currentZoom});
         this._map.flyTo(center,currentZoom,{
           animate:true,
           duration:1.22,
           easeLinearity:.22
         });
       } else {
+        this._mapDiagnosticLog?.("geo.focus.method",{requestId,method:"setView",zoom:currentZoom});
         this._map.setView(center,currentZoom,{ animate:true });
       }
     },
@@ -920,7 +1076,7 @@ export const installClustersRecent=defineModule(MODULE_META,(deps)=>{const { CAR
     _setStatusClusterBrowseTimeoutV40802(timeoutMs) {
       const raw=Number(timeoutMs);const next=raw===0?0:(Number.isFinite(raw)?Math.max(5000,Math.min(3600000,Math.round(raw/1000)*1000)):10000);
       this._statusClusterBrowseTimeoutMs=next;if(next>0)this._statusClusterBrowseFiniteTimeoutMs=next;
-      try{localStorage.setItem('gewitterradar:v40804:cluster-jump-timeout',String(next));if(next>0)localStorage.setItem('gewitterradar:v40804:cluster-jump-finite-timeout',String(next));}catch(_error){}
+      try{settingsStorage(this).setItem('gewitterradar:v40804:cluster-jump-timeout',String(next));if(next>0)settingsStorage(this).setItem('gewitterradar:v40804:cluster-jump-finite-timeout',String(next));}catch(_error){}
       if(this._statusClusterBrowseActive)this._touchStatusClusterBrowseSessionV40802();else{this._updateStatusFocusUi?.();this._syncDiagnosticClusterBrowseV40802?.();}
     },
 

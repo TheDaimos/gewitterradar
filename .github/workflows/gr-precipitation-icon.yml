@@ -1,0 +1,51 @@
+name: Precipitation original Hi-Res control targeted acceptance
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  precipitation-icon:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch protected pre-change source
+        run: git fetch --no-tags --depth=1 origin 5be2d8324b58220e37021248b0a2825c6435f87e
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Original asset, persistent shared state and protected data paths
+        run: |
+          node --test tests/gr-precipitation-icon.test.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/test-v411-identity.mjs
+          node scripts/test-frontend-build.mjs
+          node --check frontend/modules/weather/precipitation-control.js
+          node --check frontend/modules/weather/display-menu.js
+          node --check frontend/modules/weather/layer-menu.js
+          node --check frontend/modules/weather/precipitation-layer.js
+          node --check frontend/modules/fullscreen/map-display.js
+      - name: Isolated browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/precip" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/precip/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Full GR card, original PNG, native gestures, menus and persistence in six views
+        env:
+          NODE_PATH: ${{ runner.temp }}/precip/node_modules
+          GR_PRECIP_ICON_OUTPUT: ${{ runner.temp }}/precipitation-icon-browser
+        run: node scripts/test-gr-precipitation-icon-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: precipitation-icon-synthetic-browser-results
+          path: ${{ runner.temp }}/precipitation-icon-browser
+          if-no-files-found: ignore
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Installable Home Assistant staging
+        run: python scripts/verify-hacs-integration-package.py

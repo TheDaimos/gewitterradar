@@ -1,0 +1,44 @@
+name: TEST70-50 post-release lifecycle callback integrity
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - '.github/workflows/test70-50-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy/dev
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify callbacks and all shipped copies
+        run: |
+          grep -q 'onLifecycle=()=>{}' frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          grep -q 'opera_cycle_lifecycle' frontend/modules/weather/consumer-client.js
+          cmp frontend/modules/weather/p7-010/opera-diagnostic-tile.js custom_components/gewitterradar/frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          cmp frontend/modules/weather/p7-010/opera-diagnostic-tile.js dashboard/dist/modules/weather/p7-010/opera-diagnostic-tile.js
+          cmp frontend/modules/weather/consumer-client.js custom_components/gewitterradar/frontend/modules/weather/consumer-client.js
+          cmp frontend/modules/weather/consumer-client.js dashboard/dist/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          node --check frontend/modules/weather/consumer-client.js
+      - name: Rebuild provenance and integrity after callback fix
+        run: |
+          node scripts/build-frontend.mjs
+          sha256sum -c SHA256SUMS_FRONTEND.txt
+          node --test tests/test_gr_opera_wr_authoritative_freshness.mjs tests/test70-opera-auth-preflight.test.mjs
+      - name: Commit only generated integrity changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if ! git diff --cached --quiet; then
+            git commit -m "build(test70-50): reconcile verified lifecycle diagnostics integrity"
+            git push origin HEAD:deploy/dev
+          fi

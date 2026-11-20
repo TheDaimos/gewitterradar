@@ -1,0 +1,11 @@
+{
+  "source_filename": "Glänzende Wetterkarte mit Hoch und Tief.png",
+  "master": "artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "sha256": "ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437",
+  "transformation": "None"
+}

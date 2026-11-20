@@ -1,7 +1,15 @@
-import {readFile,writeFile,unlink} from 'node:fs/promises';
+import {readFile,writeFile as directWriteFile,unlink} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import {resolve} from 'node:path';
 import {root,build} from './build-frontend.mjs';
+// Windows scanners can briefly retain a just-written probe file. Restore the
+// original even in that case; errors still fail closed after a bounded retry.
+async function writeFile(...args){
+ for(let attempt=0;;attempt++)try{return await directWriteFile(...args);}catch(error){
+  if(attempt>=9||!['UNKNOWN','EBUSY','EPERM','EACCES'].includes(error.code))throw error;
+  await new Promise(resolve=>setTimeout(resolve,50*(attempt+1)));
+ }
+}
 const verify=()=>execFileSync(process.execPath,['scripts/verify-frontend.mjs'],{cwd:root,stdio:'pipe'});
 verify();
 const before=await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'));

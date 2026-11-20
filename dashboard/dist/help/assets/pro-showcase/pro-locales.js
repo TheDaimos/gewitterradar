@@ -1,0 +1,70 @@
+/* GewitterRadar PRO gallery: additive localisation for the existing 15-language project page. */
+(() => {
+  'use strict';
+  const content = {
+    de: ['GewitterRadar PRO 4.11 – neue Wetteransichten','Zusätzlich zu Standortsuche, Radien, Clustern, Kompass und Verlauf zeigt GewitterRadar PRO neue kombinierbare Wetterebenen. Alle Bilder sind echte Aufnahmen. Zum Vergrößern anklicken und mit den Chevrons unter dem Bild navigieren.','Die gezeigte 4.11.243 ist ein DEV-/FINAL-Kandidat. WeatherRouter stellt zusätzliche Daten bereit; die Darstellung hängt von Datenverfügbarkeit und Abdeckung ab.',
+      ['Live-Blitze und Cluster','Niederschlag und Wetterfelder','Wind und Synoptik','Wolken und Niederschlag','Wetter-Icons auf der Karte','Eye Hub und Eye Control'],
+      ['Blitzereignisse und gruppierte Gewitteraktivität zeigen die Wetterlage auf einen Blick.','Radar-Niederschlag und weitere Wetterfelder werden auf derselben Karte kombiniert.','Animierte Windströmungen mit Isobaren sowie Hoch- und Tiefdrucksymbolen.','Wolkenstrukturen ergänzen die farbigen Niederschlagsdaten.','Frei positionierbare Wetter-Icons ermöglichen schnellen Zugriff auf Wetterebenen.','Das Eye, seine Auren und die frei konfigurierbaren Funktionssymbole.']],
+    en: ['GewitterRadar PRO 4.11 – new weather views','In addition to place search, radii, clusters, compass and history, PRO combines more weather layers. All images are genuine screenshots. Click to enlarge; use the chevrons below the image.','Version 4.11.243 shown here is a DEV/FINAL candidate. WeatherRouter supplies additional data; visibility depends on availability and coverage.',
+      ['Live lightning and clusters','Precipitation and weather fields','Wind and synoptics','Clouds and precipitation','Weather icons on the map','Eye Hub and Eye Control'],
+      ['Lightning events and grouped storm activity at a glance.','Radar precipitation and further weather fields together on one map.','Animated wind flows, isobars and high/low pressure symbols.','Cloud structures complement coloured precipitation data.','Freely positioned weather icons give quick access to layers.','The central Eye, its auras and configurable function icons.']],
+    da: ['GewitterRadar PRO 4.11 – nye vejrvisninger','Ud over stedsøgning, radier, klynger, kompas og historik kombinerer PRO flere vejrlag. Klik på billederne, og brug pilene nedenunder.','4.11.243 er en DEV-/FINAL-kandidat. Tilgængeligheden afhænger af WeatherRouter-data.',
+      ['Lyn og klynger','Nedbør og vejrdata','Vind og synoptik','Skyer og nedbør','Vejrikoner på kortet','Eye Hub og Eye Control'],
+      ['Lyn og grupperede uvejr vises på kortet.','Radarnedbør og andre vejrdata vises sammen.','Animeret vind, isobarer og høj-/lavtryk.','Skystrukturer kombineres med nedbør.','Flytbare ikoner giver hurtig adgang.','Det centrale Eye med auraer og valgbare ikoner.']],
+    es: ['GewitterRadar PRO 4.11 – nuevas vistas meteorológicas','Además de la búsqueda de lugares, radios, grupos, brújula e historial, PRO combina más capas meteorológicas. Pulsa una imagen y usa las flechas inferiores.','4.11.243 es una versión candidata DEV/FINAL. La disponibilidad depende de WeatherRouter.',
+      ['Rayos y grupos','Precipitación y campos meteorológicos','Viento y sinóptica','Nubes y precipitación','Iconos del tiempo en el mapa','Eye Hub y Eye Control'],
+      ['Rayos y tormentas agrupadas en el mapa.','Radar y campos meteorológicos combinados.','Viento animado, isobaras y presiones.','Estructuras nubosas y precipitación.','Iconos móviles para acceder a las capas.','Eye central, auras e iconos configurables.']],
+    fr: ['GewitterRadar PRO 4.11 – nouvelles vues météo','En plus de la recherche de lieux, des rayons, des groupes, de la boussole et de l’historique, PRO combine des couches météo. Cliquez sur une image puis utilisez les chevrons.','4.11.243 est une version candidate DEV/FINAL. La disponibilité dépend de WeatherRouter.',
+      ['Éclairs et groupes','Précipitations et champs météo','Vent et synoptique','Nuages et précipitations','Icônes météo sur la carte','Eye Hub et Eye Control'],
+      ['Éclairs et orages regroupés sur la carte.','Radar et champs météo superposés.','Vent animé, isobares et centres de pression.','Structures nuageuses et précipitations.','Icônes mobiles pour accéder aux couches.','Eye central, auras et icônes configurables.']],
+    nl: ['GewitterRadar PRO 4.11 – nieuwe weerbeelden','Naast locatiezoeken, cirkels, clusters, kompas en geschiedenis combineert PRO extra weerlagen. Klik op een afbeelding en gebruik de pijlen eronder.','4.11.243 is een DEV/FINAL-kandidaat. Beschikbaarheid hangt af van WeatherRouter.',
+      ['Bliksem en clusters','Neerslag en weervelden','Wind en synoptiek','Wolken en neerslag','Weerpictogrammen op de kaart','Eye Hub en Eye Control'],
+      ['Bliksem en gegroepeerde buien op de kaart.','Radarneerslag en weervelden samen.','Geanimeerde wind, isobaren en drukgebieden.','Wolkenstructuren en neerslag.','Verplaatsbare pictogrammen voor snelle toegang.','Centraal Eye, aura’s en instelbare pictogrammen.']],
+    pl: ['GewitterRadar PRO 4.11 – nowe widoki pogody','Oprócz wyszukiwania miejsc, promieni, klastrów, kompasu i historii PRO łączy kolejne warstwy pogody. Kliknij obraz i użyj strzałek poniżej.','4.11.243 to kandydat DEV/FINAL. Dostępność zależy od WeatherRouter.',
+      ['Błyskawice i klastry','Opady i pola pogodowe','Wiatr i synoptyka','Chmury i opady','Ikony pogody na mapie','Eye Hub i Eye Control'],
+      ['Błyskawice i skupiska burz na mapie.','Opady radarowe i inne pola pogody razem.','Animowany wiatr, izobary oraz wyże i niże.','Struktury chmur oraz opady.','Przesuwane ikony zapewniają szybki dostęp.','Centralne Eye, aury i ikony konfiguracji.']],
+    pt: ['GewitterRadar PRO 4.11 – novas vistas meteorológicas','Além da pesquisa de locais, raios, grupos, bússola e histórico, o PRO combina novas camadas meteorológicas. Clique na imagem e use as setas abaixo.','4.11.243 é candidata DEV/FINAL. A disponibilidade depende do WeatherRouter.',
+      ['Relâmpagos e grupos','Precipitação e campos meteorológicos','Vento e sinóptica','Nuvens e precipitação','Ícones meteorológicos no mapa','Eye Hub e Eye Control'],
+      ['Relâmpagos e tempestades agrupadas no mapa.','Radar e campos meteorológicos em conjunto.','Vento animado, isóbaras e centros de pressão.','Estruturas de nuvens e precipitação.','Ícones móveis para acesso rápido.','Eye central, auras e ícones configuráveis.']],
+    sv: ['GewitterRadar PRO 4.11 – nya vädervyer','Utöver platssökning, radier, kluster, kompass och historik kombinerar PRO fler väderlager. Klicka på bilden och använd pilarna nedanför.','4.11.243 är en DEV/FINAL-kandidat. Tillgänglighet beror på WeatherRouter.',
+      ['Blixtar och kluster','Nederbörd och väderfält','Vind och synoptik','Moln och nederbörd','Väderikoner på kartan','Eye Hub och Eye Control'],
+      ['Blixtar och samlade åskväder på kartan.','Radarnederbörd och väderfält tillsammans.','Animerad vind, isobarer och tryckområden.','Molnstrukturer och nederbörd.','Flyttbara ikoner för snabb åtkomst.','Centralt Eye med auror och valbara ikoner.']],
+    it: ['GewitterRadar PRO 4.11 – nuove viste meteo','Oltre a ricerca località, raggi, cluster, bussola e cronologia, PRO combina nuovi livelli meteo. Tocca un’immagine e usa le frecce sottostanti.','4.11.243 è una candidata DEV/FINAL. La disponibilità dipende da WeatherRouter.',
+      ['Fulmini e cluster','Precipitazioni e campi meteo','Vento e sinottica','Nuvole e precipitazioni','Icone meteo sulla mappa','Eye Hub ed Eye Control'],
+      ['Fulmini e temporali raggruppati sulla mappa.','Radar e campi meteo combinati.','Vento animato, isobare e centri di pressione.','Strutture nuvolose e precipitazioni.','Icone spostabili per accesso rapido.','Eye centrale, aure e icone configurabili.']],
+    no: ['GewitterRadar PRO 4.11 – nye værvisninger','I tillegg til stedsøk, radier, klynger, kompass og historikk kombinerer PRO flere værlag. Trykk på bildet og bruk pilene under.','4.11.243 er en DEV/FINAL-kandidat. Tilgjengelighet avhenger av WeatherRouter.',
+      ['Lyn og klynger','Nedbør og værfelt','Vind og synoptikk','Skyer og nedbør','Værikoner på kartet','Eye Hub og Eye Control'],
+      ['Lyn og grupperte tordenvær på kartet.','Radarnedbør og værfelt sammen.','Animert vind, isobarer og trykksentre.','Skystrukturer og nedbør.','Flyttbare ikoner for rask tilgang.','Sentralt Eye med auraer og valgbare ikoner.']],
+    fi: ['GewitterRadar PRO 4.11 – uusia säänäkymiä','Paikkahaun, säteiden, klustereiden, kompassin ja historian lisäksi PRO yhdistää uusia sääkerroksia. Napauta kuvaa ja käytä alla olevia nuolia.','4.11.243 on DEV/FINAL-ehdokas. Saatavuus riippuu WeatherRouterista.',
+      ['Salamat ja ryhmät','Sade ja sääkentät','Tuuli ja synoptiikka','Pilvet ja sade','Sääkuvakkeet kartalla','Eye Hub ja Eye Control'],
+      ['Salamat ja myrskyryhmät kartalla.','Tutkasade ja muut sääkentät yhdessä.','Animoitu tuuli, isobaarit ja painealueet.','Pilvirakenteet ja sade.','Siirrettävät kuvakkeet nopeaan käyttöön.','Keskeinen Eye, aurat ja säädettävät kuvakkeet.']],
+    cs: ['GewitterRadar PRO 4.11 – nové pohledy na počasí','Vedle hledání míst, poloměrů, shluků, kompasu a historie kombinuje PRO další meteorologické vrstvy. Klikněte na obrázek a použijte šipky dole.','4.11.243 je kandidát DEV/FINAL. Dostupnost závisí na WeatherRouter.',
+      ['Blesky a shluky','Srážky a meteorologická pole','Vítr a synoptika','Oblačnost a srážky','Ikony počasí na mapě','Eye Hub a Eye Control'],
+      ['Blesky a skupiny bouřek na mapě.','Radarové srážky a další pole společně.','Animovaný vítr, izobary a tlakové útvary.','Struktury oblaků a srážky.','Přesouvatelné ikony pro rychlý přístup.','Centrální Eye, aury a nastavitelné ikony.']],
+    el: ['GewitterRadar PRO 4.11 – νέες μετεωρολογικές προβολές','Εκτός από αναζήτηση τόπων, ακτίνες, ομάδες, πυξίδα και ιστορικό, το PRO συνδυάζει επιπλέον επίπεδα καιρού. Πατήστε εικόνα και χρησιμοποιήστε τα βέλη.','Η 4.11.243 είναι υποψήφια DEV/FINAL. Η διαθεσιμότητα εξαρτάται από το WeatherRouter.',
+      ['Κεραυνοί και ομάδες','Βροχόπτωση και μετεωρολογικά πεδία','Άνεμος και συνοπτική ανάλυση','Νέφη και βροχόπτωση','Εικονίδια καιρού στον χάρτη','Eye Hub και Eye Control'],
+      ['Κεραυνοί και ομάδες καταιγίδων στον χάρτη.','Συνδυασμός ραντάρ και καιρικών πεδίων.','Κινούμενος άνεμος, ισοβαρείς και πιέσεις.','Δομές νεφών και βροχόπτωση.','Μετακινούμενα εικονίδια για γρήγορη πρόσβαση.','Κεντρικό Eye, αύρες και ρυθμιζόμενα εικονίδια.']],
+    hu: ['GewitterRadar PRO 4.11 – új időjárási nézetek','A helykeresés, sugarak, csoportok, iránytű és előzmények mellett a PRO további időjárási rétegeket egyesít. Kattints a képre, majd használd az alatta lévő nyilakat.','A 4.11.243 DEV/FINAL-jelölt. Az elérhetőség a WeatherRouter adataitól függ.',
+      ['Villámok és csoportok','Csapadék és időjárási mezők','Szél és szinoptika','Felhők és csapadék','Időjárási ikonok a térképen','Eye Hub és Eye Control'],
+      ['Villámok és csoportosított zivatarok a térképen.','Radarcsapadék és más mezők együtt.','Animált szél, izobárok és nyomásközpontok.','Felhőszerkezetek és csapadék.','Mozgatható ikonok a gyors hozzáféréshez.','Központi Eye, aurák és beállítható ikonok.']]
+  };
+  function render(){
+    const lang=content[document.documentElement.lang]||content.en;
+    const keys={heading:lang[0],intro:lang[1],note:lang[2],nav:document.documentElement.lang==='de'?'PRO-Galerie':'PRO gallery'};
+    for(let i=0;i<6;i++){keys['t'+i]=lang[3][i];keys['b'+i]=lang[4][i]}
+    document.querySelectorAll('[data-pro]').forEach(el=>{el.textContent=keys[el.dataset.pro]||''});
+  }
+  render();
+  document.querySelectorAll('.lang-option').forEach(button=>button.addEventListener('click',render));
+  const nav=document.querySelector('.nav');const featureLink=nav?.querySelector('a[href="#features"]');
+  if(nav&&featureLink){const link=document.createElement('a');link.href='#pro-gallery';link.dataset.pro='nav';featureLink.insertAdjacentElement('afterend',link);render()}
+  let startX=null;const overlay=document.getElementById('gr-lightbox');
+  overlay?.addEventListener('touchstart',event=>{startX=event.changedTouches[0]?.clientX??null},{passive:true});
+  overlay?.addEventListener('touchend',event=>{if(startX===null)return;const d=(event.changedTouches[0]?.clientX??startX)-startX;startX=null;if(Math.abs(d)>45){const button=document.getElementById(d<0?'gr-lightbox-next':'gr-lightbox-prev');button?.click()}},{passive:true});
+  const imageById={'gewitter':'gr-pro-0112.jpg','wetter':'gr-pro-0118.jpg','synoptik':'gr-pro-0123.jpg','wolken':'gr-pro-0127.jpg','karte':'gr-pro-regional-map.png','eye-control':'gr-pro-eye-control.png'};
+  const requested=new URLSearchParams(location.search).get('bild');
+  if(Object.prototype.hasOwnProperty.call(imageById,requested)){
+    const link=document.querySelector(`.pro-gallery [data-lightbox-src="assets/pro-showcase/${imageById[requested]}"]`);
+    link?.click();
+  }
+})();

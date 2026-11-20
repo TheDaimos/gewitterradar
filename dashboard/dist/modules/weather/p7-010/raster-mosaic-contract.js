@@ -1,0 +1,105 @@
+import {validateSpatialPolicy} from "./nasa-spatial.js?v=411229r1";
+import {validateSourcePlan,validateExclusions} from './radar-mask.js?v=411229r1';
+import {validateDwdFrameMask} from './dwd-frame-mask.js?v=411229r1';
+/*
+ * P7-010: isolated read-only WeatherRouter V2 raster response validation.
+ * No provider scoring, spatial source selection or fallback routing in GR.
+ * The live Consumer V1 client and precipitation renderer are unaffected.
+ */
+const number=n=>typeof n==="number"&&Number.isFinite(n);
+const time=value=>typeof value==="string"&&/[zZ]$|[+-]\d\d:\d\d$/.test(value)
+  &&Number.isFinite(Date.parse(value));
+const bounds=b=>b&&["west","east","south","north"].every(k=>number(b[k]))
+  &&b.west>=-180&&b.west<=180&&b.east>=-180&&b.east<=180
+  &&b.south>=-90&&b.north<=90&&b.north>b.south&&b.west!==b.east;
+const operaRateURL=(value,source)=>source==="opera/opera_rate_raster"
+  && /^\/api\/weather_router\/opera_tile\/RATE\/20\d{6}T\d{6}Z\/\{z\}\/\{x\}\/\{y\}\.png$/.test(value);
+const safeURL=(value,source)=>{
+ if(operaRateURL(value,source))return true;
+ if(typeof value!=="string"||!value.startsWith("https://"))return false;
+ try{
+   const u=new URL(value);
+   if(u.protocol!=="https:"||!u.hostname||u.username||u.password||u.hash)return false;
+   for(const key of u.searchParams.keys())
+     if(["token","api_key","apikey","access_token","key","secret","password","authorization","appid"].includes(key.toLowerCase()))return false;
+   return true;
+ }catch(_){return false;}
+};
+// This is a narrowly bounded eligibility check for *older* satellite data,
+// NOT a change of the reported spatial scope. WR must have verified the
+// product-specific full-world coverage; a service-level/unchecked BBOX is
+// never enough. No inference about actual nontransparent image pixels.
+const fullWorldEnvelope=layer=>layer.coverage_scope==="global"
+  ||(layer.coverage_scope==="bbox"
+     &&layer.coverage_verified===true
+     &&layer.coverage?.west===-180
+     &&layer.coverage?.east===180
+     &&layer.coverage?.south===-90
+     &&layer.coverage?.north===90);
+export function validateRasterMosaicV2(answer,{maxLayers=4}={}){
+ if(!Number.isInteger(maxLayers)||maxLayers<1||maxLayers>12)
+   throw new TypeError("Invalid mosaic resource budget");
+ if(!answer||answer.contract_version!==2
+  ||answer.capability!=="weather.precipitation.layer"
+  ||!["ready","partial","unavailable"].includes(answer.status)
+  ||!bounds(answer.viewport)||!Array.isArray(answer.layers)
+  ||answer.layers.length>maxLayers)
+   throw new TypeError("Invalid or over-budget V2 raster mosaic");
+ if(answer.reference_time!==undefined&&answer.reference_time!==null
+  &&!time(answer.reference_time))throw new TypeError("Invalid mosaic reference time");
+ if(answer.status==="unavailable"&&answer.layers.length)
+   throw new TypeError("Unavailable mosaic cannot contain active layers");
+ const seen=new Set();
+ for(const layer of answer.layers){
+   if(!layer||typeof layer.source_id!=="string"||!layer.source_id
+      ||seen.has(layer.source_id)||layer.resource_type!=="raster_tile"
+      ||layer.coverage_verified!==true
+      ||!["bbox","global"].includes(layer.coverage_scope)
+      ||!bounds(layer.coverage)||!safeURL(layer.tile_url,layer.source_id)
+      ||typeof layer.attribution!=="string"||!layer.attribution
+      ||!layer.render||![128,256,512].includes(layer.render.tile_size)
+      ||!number(layer.render.min_zoom)||!number(layer.render.max_zoom)
+      ||layer.render.min_zoom<0||layer.render.max_zoom>24
+      ||layer.render.min_zoom>layer.render.max_zoom
+      ||!number(layer.render.opacity)||layer.render.opacity<0||layer.render.opacity>1
+      ||!layer.legend||typeof layer.legend!=="object"
+      ||!layer.semantics||!["quantity","measurement_method","observation_kind"]
+          .every(k=>typeof layer.semantics[k]==="string"&&layer.semantics[k])
+      ||!("unit" in layer.semantics)
+      ||!(layer.semantics.unit===null||(typeof layer.semantics.unit==="string"
+          &&layer.semantics.unit.length>0))
+      ||!layer.times||!time(layer.times.valid_at)
+      ||!time(layer.times.retrieved_at)
+      ||!number(layer.times.reference_delta_seconds)
+      ||layer.times.reference_delta_seconds<0
+      ||(layer.times.observed_at!==undefined&&layer.times.observed_at!==null&&!time(layer.times.observed_at))
+      ||(layer.times.age_seconds!==undefined&&(!number(layer.times.age_seconds)||layer.times.age_seconds<0))
+      ||(layer.freshness_class!==undefined&&!["current","older_background"].includes(layer.freshness_class))
+      ||(layer.quality_note!==undefined&&typeof layer.quality_note!=="string")
+      ||!time(layer.times.valid_until))
+     throw new TypeError("Invalid, unverified or unsafe raster source");
+   validateSpatialPolicy(layer);
+   validateSourcePlan(layer.raster_plan);
+   if(layer.draw_exclusions!==undefined)validateExclusions(layer.draw_exclusions);
+   validateDwdFrameMask(layer);
+   if(layer.transport_policy&&(layer.source_id!=="nasa_gibs/satellite_precipitation_imerg_30min"||!Number.isInteger(layer.transport_policy.max_parallel_downloads)||layer.transport_policy.max_parallel_downloads<2||layer.transport_policy.max_parallel_downloads>32||!Number.isInteger(layer.transport_policy.settings_revision)||layer.transport_policy.settings_revision<0))throw new TypeError("Invalid WR NASA transport policy");
+   seen.add(layer.source_id);
+ }
+ const radar=answer.layers.find(l=>l.source_id==='opera/opera_rate_raster');
+ const dwd=answer.layers.find(l=>l.source_id==='dwd/radar_precipitation');
+ for(const layer of answer.layers){
+  if(layer.dwd_priority_source!==undefined&&(layer!==radar||
+    layer.dwd_priority_source!==dwd?.source_id||dwd.coverage_scope!=="bbox"))
+   throw new TypeError("Inconsistent WR DWD priority source");
+  for(const exclusion of layer.draw_exclusions||[]){
+   if(exclusion.dwd_mask_source!==undefined&&(layer!==radar||!dwd?.dwd_nodata_mask||
+     exclusion.dwd_mask_source!==dwd.source_id||exclusion.scope!=="bbox"||
+     !["west","south","east","north"].every(key=>exclusion.bbox?.[key]===dwd.coverage[key])))
+    throw new TypeError("Inconsistent WR DWD overlap grant");
+  }
+  const mask=layer.spatial_policy?.radar_mask;
+  if(mask?.opera&&radar&&(Date.parse(mask.opera.valid_at)!==Date.parse(radar.times.valid_at)||mask.opera.generation!==radar.observation_coverage?.generation))throw new TypeError('WR mask/raster generation mismatch');
+ }
+ if(answer.spatial_contract_version!==undefined&&answer.spatial_contract_version!==2)throw new TypeError('Unsupported WR spatial contract');
+ return answer;
+}

@@ -1,0 +1,681 @@
+{
+  "browser": "157.0.8103.51",
+  "baseline": {
+    "during": {
+      "eye": {
+        "left": 10,
+        "top": 10,
+        "right": 82,
+        "bottom": 82,
+        "width": 72,
+        "height": 72
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 393,
+        "bottom": 784.421875,
+        "width": 393,
+        "height": 784.421875
+      },
+      "master": {
+        "left": 10,
+        "top": 10,
+        "right": 82,
+        "bottom": 82
+      },
+      "hit": true,
+      "hitInfo": {
+        "tag": "BUTTON",
+        "id": "weather-display-eye-control",
+        "cls": "weather-display-eye-control gr-eye-hub dragging",
+        "layers": [
+          [
+            "BUTTON",
+            "weather-display-eye-control",
+            "weather-display-eye-control gr-eye-hub dragging"
+          ],
+          [
+            "CANVAS",
+            "",
+            "leaflet-zoom-animated"
+          ],
+          [
+            "DIV",
+            "map",
+            "leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
+          ],
+          [
+            "DIV",
+            "map-card",
+            "map-card map-size-fullscreen"
+          ],
+          [
+            "DIALOG",
+            "map-fullscreen-dialog",
+            ""
+          ]
+        ]
+      },
+      "saved": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "after": {
+      "eye": {
+        "left": 105.75,
+        "top": 105.75,
+        "right": 177.75,
+        "bottom": 177.75,
+        "width": 72,
+        "height": 72
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 393,
+        "bottom": 784.421875,
+        "width": 393,
+        "height": 784.421875
+      },
+      "master": {
+        "left": 105.75,
+        "top": 105.75,
+        "right": 177.75,
+        "bottom": 177.75
+      },
+      "hit": true,
+      "hitInfo": {
+        "tag": "BUTTON",
+        "id": "weather-display-eye-control",
+        "cls": "weather-display-eye-control gr-eye-hub",
+        "layers": [
+          [
+            "BUTTON",
+            "weather-display-eye-control",
+            "weather-display-eye-control gr-eye-hub"
+          ],
+          [
+            "CANVAS",
+            "",
+            "leaflet-zoom-animated"
+          ],
+          [
+            "DIV",
+            "map",
+            "leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
+          ],
+          [
+            "DIV",
+            "map-card",
+            "map-card map-size-fullscreen"
+          ],
+          [
+            "DIALOG",
+            "map-fullscreen-dialog",
+            ""
+          ]
+        ]
+      },
+      "saved": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "matrix": [
+    {
+      "label": "Android-Portrait",
+      "results": [
+        {
+          "size": 42,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-right",
+          "left": 343,
+          "top": 734.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top-right",
+          "left": 343,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 734.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top",
+          "left": 171.5,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom",
+          "left": 171.5,
+          "top": 734.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "left",
+          "left": 0,
+          "top": 367.203,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "right",
+          "left": 343,
+          "top": 367.203,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-right",
+          "left": 267,
+          "top": 658.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-right",
+          "left": 267,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 658.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top",
+          "left": 133.5,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom",
+          "left": 133.5,
+          "top": 658.422,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "left",
+          "left": 0,
+          "top": 329.203,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "right",
+          "left": 267,
+          "top": 329.203,
+          "jumpX": 0,
+          "jumpY": 0
+        }
+      ]
+    },
+    {
+      "label": "Android-Landscape",
+      "results": [
+        {
+          "size": 42,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-right",
+          "left": 801,
+          "top": 308.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top-right",
+          "left": 801,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 308.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top",
+          "left": 400.5,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom",
+          "left": 400.5,
+          "top": 308.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "left",
+          "left": 0,
+          "top": 154.313,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "right",
+          "left": 801,
+          "top": 154.313,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-right",
+          "left": 725,
+          "top": 232.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-right",
+          "left": 725,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 232.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top",
+          "left": 362.5,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom",
+          "left": 362.5,
+          "top": 232.625,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "left",
+          "left": 0,
+          "top": 116.313,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "right",
+          "left": 725,
+          "top": 116.313,
+          "jumpX": 0,
+          "jumpY": 0
+        }
+      ]
+    },
+    {
+      "label": "Desktop",
+      "results": [
+        {
+          "size": 42,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-right",
+          "left": 1230,
+          "top": 819,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top-right",
+          "left": 1230,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 819,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "top",
+          "left": 615,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "bottom",
+          "left": 615,
+          "top": 819,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "left",
+          "left": 0,
+          "top": 409.5,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 42,
+          "name": "right",
+          "left": 1230,
+          "top": 409.5,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-left",
+          "left": 0,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-right",
+          "left": 1154,
+          "top": 743,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top-right",
+          "left": 1154,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom-left",
+          "left": 0,
+          "top": 743,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "top",
+          "left": 577,
+          "top": 0,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "bottom",
+          "left": 577,
+          "top": 743,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "left",
+          "left": 0,
+          "top": 371.5,
+          "jumpX": 0,
+          "jumpY": 0
+        },
+        {
+          "size": 126,
+          "name": "right",
+          "left": 1154,
+          "top": 371.5,
+          "jumpX": 0,
+          "jumpY": 0
+        }
+      ]
+    }
+  ],
+  "clip": {
+    "clipPath": "inset(0px -321px -712.422px 0px)",
+    "canvasExtends": true
+  },
+  "timing": {
+    "centre": {
+      "before": [
+        {
+          "cpu": 1.53125,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.306250000372529,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.346874998882413,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 2.009375000372529,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.728125000372529,
+          "drawImagePerFrame": 244
+        }
+      ],
+      "after": [
+        {
+          "cpu": 1.359375,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.353125000372529,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.581250000745058,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.674999998882413,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.875,
+          "drawImagePerFrame": 244
+        }
+      ],
+      "visiblePixelsEqual": true,
+      "differentChannels": 0,
+      "maxChannelDelta": 0
+    },
+    "edge": {
+      "before": [
+        {
+          "cpu": 1.546875,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.568749999627471,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.609375,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.546875,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.465624999254942,
+          "drawImagePerFrame": 244
+        }
+      ],
+      "after": [
+        {
+          "cpu": 1.349999999627471,
+          "drawImagePerFrame": 176.59375
+        },
+        {
+          "cpu": 1.556250000372529,
+          "drawImagePerFrame": 176.59375
+        },
+        {
+          "cpu": 1.400000000372529,
+          "drawImagePerFrame": 176.59375
+        },
+        {
+          "cpu": 1.421875,
+          "drawImagePerFrame": 176.59375
+        },
+        {
+          "cpu": 1.300000000745058,
+          "drawImagePerFrame": 176.59375
+        }
+      ],
+      "visiblePixelsEqual": true,
+      "differentChannels": 0,
+      "maxChannelDelta": 0
+    },
+    "corner": {
+      "before": [
+        {
+          "cpu": 1.534375000745058,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.128125000745058,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.090624999254942,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.121875001117587,
+          "drawImagePerFrame": 244
+        },
+        {
+          "cpu": 1.1625000014901161,
+          "drawImagePerFrame": 244
+        }
+      ],
+      "after": [
+        {
+          "cpu": 1.053124999627471,
+          "drawImagePerFrame": 118.8125
+        },
+        {
+          "cpu": 1.050000000745058,
+          "drawImagePerFrame": 118.8125
+        },
+        {
+          "cpu": 0.931250000372529,
+          "drawImagePerFrame": 118.8125
+        },
+        {
+          "cpu": 1.112499998882413,
+          "drawImagePerFrame": 118.8125
+        },
+        {
+          "cpu": 0.9375,
+          "drawImagePerFrame": 118.8125
+        }
+      ],
+      "visiblePixelsEqual": true,
+      "differentChannels": 0,
+      "maxChannelDelta": 0
+    }
+  }
+}

@@ -1,0 +1,33 @@
+name: V4.11.84 Weather Engine layout
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/modules/ui/skeleton.js'
+      - 'frontend/modules/weather/consumer-client.js'
+      - 'frontend/modules/weather/precipitation-layer.js'
+      - 'dashboard/dist/modules/**'
+      - 'custom_components/gewitterradar/frontend/modules/**'
+      - 'scripts/test-v41184-weather-engine-overview.mjs'
+      - 'scripts/test-flk01-weather-radar-transition.mjs'
+      - 'SHA256SUMS_FRONTEND.txt'
+      - '.github/workflows/v41184-weather-engine-overview.yml'
+  workflow_dispatch:
+
+jobs:
+  weather-engine-overview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: JavaScript syntax
+        run: |
+          node --check frontend/modules/ui/skeleton.js
+          node --check frontend/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/precipitation-layer.js
+      - name: Weather Engine responsive layout and active API
+        run: |
+          node scripts/test-v41184-weather-engine-overview.mjs
+          node scripts/test-flk01-weather-radar-transition.mjs

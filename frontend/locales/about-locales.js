@@ -1188,7 +1188,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Boarisch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zua",
       "understood": "Passt",
       "subtitle": "Für Wetterbegeisterte, de d’Blitzaktivität klar und guat verständlich verfolgen woin.",
@@ -1370,7 +1370,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Sächs’sch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zumachen",
       "understood": "Verstanden",
       "subtitle": "Für Wetterbegeisterde, die de Blitzaktivität klar un verständlich verfolgen wolln.",
@@ -1461,7 +1461,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Schwäbisch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zumacha",
       "understood": "Verstanda",
       "subtitle": "Für Wetterbegeischterte, die d’Blitzaktivität klar ond verständlich verfolge wellet.",
@@ -1556,7 +1556,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -1687,7 +1687,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -1818,7 +1818,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -1949,7 +1949,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -2080,7 +2080,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -2211,7 +2211,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -2342,7 +2342,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -2473,7 +2473,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -2604,7 +2604,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -2735,7 +2735,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -2866,7 +2866,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -2997,7 +2997,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -3128,7 +3128,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -3259,7 +3259,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s’Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3390,7 +3390,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3521,7 +3521,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3652,7 +3652,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s’Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3786,7 +3786,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -4014,7 +4014,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -4242,7 +4242,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -4470,7 +4470,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -4698,7 +4698,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -4926,7 +4926,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -5154,7 +5154,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -5382,7 +5382,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -5610,7 +5610,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -5838,7 +5838,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -6066,7 +6066,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -6294,7 +6294,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -6522,7 +6522,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -6750,7 +6750,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hüf zumacha",
     "copy": "YAML kopiern",
     "copied": "Kopiert",
@@ -6978,7 +6978,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hülp tomaken",
     "copy": "YAML koperen",
     "copied": "Kopeert",
@@ -7206,7 +7206,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilche zumachn",
     "copy": "YAML kopiern",
     "copied": "Kopierd",
@@ -7434,7 +7434,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilf zumacha",
     "copy": "YAML kopiera",
     "copied": "Kopiert",
@@ -7665,7 +7665,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -7944,7 +7944,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -8223,7 +8223,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -8502,7 +8502,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -8781,7 +8781,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -9060,7 +9060,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -9339,7 +9339,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -9618,7 +9618,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -9897,7 +9897,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -10176,7 +10176,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -10455,7 +10455,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -10734,7 +10734,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -11013,7 +11013,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -11292,7 +11292,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hüf zumacha",
     "copy": "YAML kopiern",
     "copied": "Kopiert",
@@ -11571,7 +11571,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hülp tomaken",
     "copy": "YAML koperen",
     "copied": "Kopeert",
@@ -11850,7 +11850,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilche zumachn",
     "copy": "YAML kopiern",
     "copied": "Kopierd",
@@ -12129,7 +12129,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilf zumacha",
     "copy": "YAML kopiera",
     "copied": "Kopiert",
@@ -12404,5 +12404,2712 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
         ]
       }
     ]
+  }
+};
+
+// WeatherRouter Help uses the existing lazy locale bundle.
+export const WEATHER_EXTERNAL_LOCALES = {
+  "Dansk": {
+    "labels": {
+      "back": "Tilbage til emner",
+      "connected": "WeatherRouter er tilsluttet",
+      "disconnected": "Valgfrit tillæg · WeatherRouter er ikke tilsluttet",
+      "what": "Hvad er WeatherRouter?",
+      "description": "En lokal datatjeneste i Home Assistant, der leverer vejrprodukter fra flere udbydere til GewitterRadar.",
+      "how": "Hvordan får jeg GewitterRadar PRO?",
+      "features": "Oversigt over funktioner",
+      "standard": "Eye, profiler og sikkerhedskopier findes allerede i GewitterRadar Standard.",
+      "mapNote": "Med {router} tilsluttet kan du vise lag for vind, temperatur, nedbør, skyer og synoptiske analyser. Dækning og aktualitet afhænger af kilden."
+    },
+    "topics": {
+      "eye": [
+        "Eye-menu og ikonbetjening",
+        [
+          [
+            "eye",
+            "Tryk på Eye for at vise de grupperede genveje."
+          ],
+          "Hold Eye nede for at indstille position, gruppering, auraringe, farver og pladser. Det er en del af GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Hold f.eks. nedbørsikonet nede for at åbne dets indstillinger. Med WeatherRouter tilsluttet slår et kort tryk det tilknyttede lag til eller fra."
+          ],
+          [
+            "display",
+            "Visningsikonet regulerer lagets dækevne. I Eye-menuen kan du også tilføje og tildele pladser."
+          ],
+          "Slå gruppering fra for at vise ikonerne separat. Et tryk på Eye åbner derefter indstillingerne.",
+          "Tryk på en ledig plads, eller træk et tilgængeligt ikon ind på den. Der er plads til op til otte ikoner.",
+          "En farvet ring viser en aktiv, tilgængelig funktion. Vælg animeret aura, fast statusring eller ingen effekter i glødindstillingerne."
+        ]
+      ],
+      "wind": [
+        "Vindvisning",
+        [
+          "Tryk på vindikonet for at slå laget til eller fra. Hold det nede for visningsformer, farver, animation og signaturforklaring.",
+          "Vindfaner viser retning og hastighed. Pile og animerede strømlinjer viser luftens bevægelse. Farverne svarer til hastighedsintervaller.",
+          "Den snoede animation bruger vindvektorer. Sporene kan blive længere, når vinden tiltager.",
+          "Signaturforklaringen viser enhed, kilde og modeltid. Modelværdier kan afvige fra lokale målinger."
+        ]
+      ],
+      "information": [
+        "Vejroplysninger",
+        [
+          [
+            "Datakilde og status",
+            [
+              "Åbn WeatherRouter-lagene i kortmenuen. Lagets oplysninger viser kilde, data- eller modeltid, gyldighed og status, når de foreligger.",
+              "Observationstid, modelkørsel og gyldighedstid er forskellige. Manglende kilde, dækning eller gyldige data kan gøre laget utilgængeligt. Et tomt kort siger ikke i sig selv noget om vejret."
+            ]
+          ],
+          [
+            "Opdatering efter flytning af kortet",
+            [
+              "Intervallet bestemmer, hvor snart GewitterRadar må anmode WeatherRouter om nye data efter en kortbevægelse."
+            ],
+            [
+              [
+                "Opdateringsinterval",
+                "Kan indstilles fra 2 til 60 sekunder. Standard er 15 sekunder."
+              ],
+              [
+                "Små værdier",
+                "2–5 sekunder giver hurtig respons og flere anmodninger."
+              ],
+              [
+                "Standard",
+                "15 sekunder afbalancerer reaktionstid og belastning."
+              ],
+              [
+                "Store værdier",
+                "30–60 sekunder giver færre anmodninger."
+              ],
+              [
+                "Bevægelsesfilter og manuel opdatering",
+                "Det korte bevægelsesfilter virker uafhængigt af intervallet. En manuel opdatering venter ikke på intervallet."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Nedbør",
+        [
+          "Tryk for at slå radarlaget til eller fra. Hold ikonet nede for visning, farveskala og dækevne. 0 % er gennemsigtigt, 100 % er helt dækkende.",
+          "Farverne viser nedbørsintensitet. Præcis adskiller intervallerne tydeligt. Afbalanceret giver blødere overgange.",
+          "WeatherRouter kan klargøre tysk DWD-radar og europæisk OPERA-radar parallelt. Aktiverede NASA-data kan supplere områder uden radar, når de er tilgængelige.",
+          "WeatherRouter vurderer dækning og gyldighed og vælger kilden. Områder kan vises trinvis, og nyere eller bedre data kan erstatte tidligere data. Se kilde og status for det viste."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Tryk for at slå de valgte visninger til eller fra. Hold ikonet nede for farvefelt, temperaturtal, enhed og termisk advektion.",
+          "Farvefeltet viser temperaturintervaller. Slå temperaturtal til for at se de beregnede værdier på kortet.",
+          "Termisk advektion viser, hvordan vinden fører varmere eller koldere luft vandret. Den gør større temperaturforskydninger og ændringer i luftmasser synlige."
+        ]
+      ],
+      "clouds": [
+        "Skydække",
+        [
+          "Ikonet med guldkant slår WeatherRouters satellitlag til eller fra. Hold det nede for at vælge Original eller Afbalanceret og ændre dækevnen.",
+          "Se produktets datatid og dækning. Skylaget kan styres uafhængigt af vind og nedbør."
+        ]
+      ],
+      "synoptic": [
+        "Høj- og lavtryk, isobarer og fronter",
+        [
+          "Tryk for at slå den synoptiske visning til eller fra. Hold nede for trykcentre, isobarer og tilgængelige fronter. Isobarer forbinder samme lufttryk i hPa.",
+          "ECCC leverer trykcentre, NOAA/GFS isobarer og NOAA/WPC klassificerede fronter. Trekanter og halvcirkler kræver en bekræftet symbolside. Ellers viser romber og punkter fronttypen uden bevægelsesretning. Dækning og gyldighed afhænger af produktet."
+        ]
+      ],
+      "display": [
+        "Lag og dækevne",
+        [
+          "Åbn Visning i Eye eller kortmenuen. Vælg et WeatherRouter-lag, og reguler dækevnen. Hold vejrikonet nede for visningsformer, signaturforklaring og detaljer."
+        ]
+      ],
+      "pro": [
+        "Funktionsliste",
+        [
+          "GewitterRadar PRO forbinder GewitterRadar med en fungerende WeatherRouter-integration i samme Home Assistant.",
+          "Installer og konfigurer WeatherRouter, og slå den lokale grænseflade til forbrugere til. PRO-mærket vises, når tjenesten er klar."
+        ],
+        [
+          "Radar · DWD for Tyskland, OPERA for Europa og NASA som supplement. Kilder kan forberedes parallelt og vises trinvis.",
+          "Vind · Faner, pile, hastighedsfarver og snoet animation.",
+          "Temperatur og skyer · Farvefelt, temperaturtal, advektion og satellitlag.",
+          "Synoptisk visning · Trykcentre, isobarer og tilgængelige fronter.",
+          "Dækning og datastatus · Afhænger af produkt, område og model. Se kilde, tid og status.",
+          "Eye, lagdækevne, gemte indstillinger, profiler og sikkerhedskopier."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Vejrvisning",
+      "intro": "Profilerne ændrer vejrlagets udseende. WeatherRouter bruger samme data og kildevalg.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Tilpasser sig blødt til zoom. Små strukturer bevares i oversigten, og celler udjævnes ved indzoomning."
+        },
+        {
+          "term": "Præcis",
+          "description": "Bevarer rasterstrukturen til teknisk aflæsning."
+        },
+        {
+          "term": "Afbalanceret",
+          "description": "Udjævner kanterne moderat og bevarer flere detaljer end Blød."
+        },
+        {
+          "term": "Blød",
+          "description": "Udjævner mere, så feltet fremstår sammenhængende."
+        }
+      ]
+    }
+  },
+  "Español": {
+    "labels": {
+      "back": "Volver a los temas",
+      "connected": "WeatherRouter conectado",
+      "disconnected": "Extensión opcional · WeatherRouter no está conectado",
+      "what": "¿Qué es WeatherRouter?",
+      "description": "Es un servicio de datos local adicional de Home Assistant que proporciona a GewitterRadar productos meteorológicos de varios proveedores.",
+      "how": "¿Cómo se obtiene GewitterRadar PRO?",
+      "features": "Funciones de un vistazo",
+      "standard": "Los controles de Eye, los perfiles y las copias de seguridad ya están disponibles en GewitterRadar Standard.",
+      "mapNote": "Con {router} conectado, se pueden mostrar capas de viento, temperatura, precipitación, nubosidad y análisis sinóptico. La cobertura y la actualidad dependen de la fuente."
+    },
+    "topics": {
+      "eye": [
+        "Menú Eye y manejo de los iconos",
+        [
+          [
+            "eye",
+            "Toque el icono de Eye para mostrar los accesos agrupados."
+          ],
+          "Manténgalo pulsado para configurar la posición, la agrupación, los anillos de aura, los colores y los espacios. Estos controles forman parte de GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Mantenga pulsado un icono como el de precipitación para abrir sus ajustes. Con WeatherRouter conectado, un toque cambia la visibilidad de la capa asignada."
+          ],
+          [
+            "display",
+            "El icono de visualización ajusta la opacidad de cada capa. En el menú Eye también puede añadir y asignar espacios."
+          ],
+          "Desactive la agrupación para ver los iconos por separado. En ese modo, un toque en Eye abre sus ajustes.",
+          "Toque un espacio vacío o arrastre un icono disponible hasta él. Se admiten hasta ocho espacios.",
+          "El anillo de color indica una función disponible y activa. En los ajustes de brillo puede usar auras animadas, anillos fijos o desactivar los efectos."
+        ]
+      ],
+      "wind": [
+        "Visualización del viento",
+        [
+          "Toque el icono del viento para activar la capa. Manténgalo pulsado para ajustar el modo, los colores, la animación y la leyenda.",
+          "Las barbas de viento muestran su dirección y velocidad. Las flechas y los trazos animados muestran el movimiento del aire. Los colores de la capa representan intervalos de velocidad.",
+          "La animación serpenteante utiliza vectores de viento. En general, los trazos se alargan al aumentar la velocidad.",
+          "La leyenda indica la unidad, la fuente y la hora del modelo. Los valores del modelo pueden diferir de las mediciones locales."
+        ]
+      ],
+      "information": [
+        "Información meteorológica",
+        [
+          [
+            "Fuente y estado de los datos",
+            [
+              "Abra las capas de WeatherRouter en el menú del mapa para consultar la fuente, la hora de los datos o del modelo, la validez y el estado disponibles.",
+              "La hora de observación, la ejecución del modelo y la hora de validez son conceptos distintos. Un estado no disponible puede deberse a la fuente, a la cobertura o a la falta de un producto válido. Un mapa vacío por sí solo no describe el tiempo."
+            ]
+          ],
+          [
+            "Actualización al mover el mapa",
+            [
+              "Este intervalo determina cuánto tarda GewitterRadar en poder solicitar datos nuevos a WeatherRouter después de mover el mapa."
+            ],
+            [
+              [
+                "Intervalo",
+                "Entre 2 y 60 segundos. El valor predeterminado es 15 segundos."
+              ],
+              [
+                "Valores bajos",
+                "De 2 a 5 segundos ofrecen una respuesta rápida y generan más solicitudes."
+              ],
+              [
+                "Valor predeterminado",
+                "15 segundos ofrecen un equilibrio entre rapidez y número de solicitudes."
+              ],
+              [
+                "Valores altos",
+                "De 30 a 60 segundos reducen el número de solicitudes."
+              ],
+              [
+                "Filtro de movimiento y actualización manual",
+                "El filtro breve de movimiento se aplica por separado. Las actualizaciones manuales se solicitan sin esperar este intervalo."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Precipitación",
+        [
+          "Toque el icono para activar el radar. Manténgalo pulsado para configurar la visualización, la escala de colores y la opacidad. Con el 0 % la capa es transparente y con el 100 % es opaca.",
+          "Los colores corresponden a intensidades de precipitación. Preciso separa mejor los intervalos y Equilibrado suaviza las transiciones.",
+          "WeatherRouter puede preparar en paralelo el radar alemán del DWD y el radar europeo de OPERA. Los datos NASA pueden complementar las zonas sin radar cuando están disponibles y habilitados.",
+          "WeatherRouter comprueba cobertura y validez y elige la fuente. Las zonas pueden aparecer por etapas y los datos más recientes o adecuados pueden sustituir a los anteriores. Consulte la fuente y el estado de los datos visibles."
+        ]
+      ],
+      "temperature": [
+        "Temperatura",
+        [
+          "Toque el icono para activar las vistas seleccionadas. Manténgalo pulsado para configurar el campo de color, los valores, las unidades y la advección térmica.",
+          "El campo de color distingue intervalos de temperatura. Active los valores para mostrar en el mapa las cifras calculadas por el modelo.",
+          "La advección térmica muestra el transporte horizontal de aire cálido o frío por el viento. Permite identificar desplazamientos de temperatura y cambios de masas de aire a gran escala."
+        ]
+      ],
+      "clouds": [
+        "Nubosidad",
+        [
+          "El icono dorado activa la capa satelital de WeatherRouter. Manténgalo pulsado para elegir Original o Equilibrado y ajustar la opacidad.",
+          "Consulte la hora y la cobertura del producto satelital. La capa de nubes se controla de forma independiente del viento y la precipitación."
+        ]
+      ],
+      "synoptic": [
+        "Altas y bajas presiones, isobaras y frentes",
+        [
+          "Toque el icono para activar el análisis sinóptico y manténgalo pulsado para ajustar los centros de presión, las isobaras y los frentes disponibles. Las isobaras unen puntos de igual presión en hPa.",
+          "ECCC aporta los centros, NOAA/GFS las isobaras y NOAA/WPC los frentes tipificados. Si se conoce el lado de los símbolos, los triángulos indican frentes fríos y los semicírculos frentes cálidos. En los demás casos se usan rombos y puntos sin indicar el avance. La cobertura y la validez dependen del producto."
+        ]
+      ],
+      "display": [
+        "Capas y opacidad",
+        [
+          "Abra Visualización desde Eye o desde el menú del mapa y elija una capa de WeatherRouter para ajustar su opacidad. Mantenga pulsado el icono meteorológico para ver sus estilos, leyendas y ajustes."
+        ]
+      ],
+      "pro": [
+        "Lista de funciones",
+        [
+          "GewitterRadar PRO conecta GewitterRadar a una integración de WeatherRouter operativa en el mismo Home Assistant.",
+          "Instale y configure WeatherRouter y active su interfaz local para aplicaciones. El distintivo PRO aparece cuando el servicio está listo."
+        ],
+        [
+          "Radar · DWD para Alemania, OPERA para Europa y NASA como complemento. Las fuentes pueden prepararse en paralelo y aparecer por etapas.",
+          "Viento · Barbas, flechas, campo de velocidad y animación serpenteante.",
+          "Temperatura y nubes · Campo de color, valores, advección y nubosidad satelital.",
+          "Análisis sinóptico · Centros de presión, isobaras y frentes disponibles.",
+          "Datos y cobertura · Varían según el producto, la región y el modelo. Consulte la fuente, la hora y el estado.",
+          "Controles Eye, opacidad, perfiles, ajustes guardados y copias de seguridad."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Visualización meteorológica",
+      "intro": "Los perfiles cambian el aspecto de la capa meteorológica. WeatherRouter conserva los datos y los criterios de selección de fuentes.",
+      "entries": [
+        {
+          "term": "Automático",
+          "description": "Adapta el suavizado al zoom. Mantiene los detalles en la vista general y mezcla gradualmente las celdas al acercarse."
+        },
+        {
+          "term": "Preciso",
+          "description": "Mantiene la estructura de la cuadrícula para su inspección técnica."
+        },
+        {
+          "term": "Equilibrado",
+          "description": "Suaviza moderadamente los bordes y conserva más detalle que Suave."
+        },
+        {
+          "term": "Suave",
+          "description": "Aplica un suavizado más intenso para obtener un campo continuo."
+        }
+      ]
+    }
+  },
+  "Français": {
+    "labels": {
+      "back": "Retour aux rubriques",
+      "connected": "WeatherRouter connecté",
+      "disconnected": "Extension facultative · WeatherRouter déconnecté",
+      "what": "Qu’est-ce que WeatherRouter ?",
+      "description": "Un service de données local dans Home Assistant fournit à GewitterRadar des produits météorologiques de plusieurs fournisseurs.",
+      "how": "Comment obtenir GewitterRadar PRO ?",
+      "features": "Fonctions disponibles",
+      "standard": "Les commandes Eye, les profils et les sauvegardes sont déjà disponibles dans GewitterRadar Standard.",
+      "mapNote": "Une connexion à {router} permet d’afficher des couches de vent, de température, de précipitations, de nuages et d’analyse synoptique. La couverture et l’actualité dépendent de la source."
+    },
+    "topics": {
+      "eye": [
+        "Menu Eye et commandes des icônes",
+        [
+          [
+            "eye",
+            "Touchez l’icône Eye pour afficher les raccourcis groupés."
+          ],
+          "Maintenez-la enfoncée pour régler la position, le regroupement, les anneaux d’aura, les couleurs et les emplacements. Ces commandes font partie de GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Maintenez une icône météo enfoncée, par exemple celle des précipitations, pour ouvrir ses réglages. Une pression brève affiche ou masque la couche associée lorsque WeatherRouter est connecté."
+          ],
+          [
+            "display",
+            "L’icône d’affichage règle l’opacité de chaque couche. Le menu Eye permet aussi d’ajouter et d’attribuer des emplacements."
+          ],
+          "Désactivez le regroupement pour voir les icônes séparément. Dans ce mode, une pression sur Eye ouvre ses réglages.",
+          "Touchez un emplacement libre ou faites-y glisser une icône disponible. L’interface accepte jusqu’à huit emplacements.",
+          "Un anneau coloré signale une fonction active et disponible. Les réglages de luminosité permettent de choisir une aura animée, un anneau fixe ou de désactiver les effets."
+        ]
+      ],
+      "wind": [
+        "Affichage du vent",
+        [
+          "Touchez l’icône du vent pour afficher ou masquer la couche. Maintenez-la enfoncée pour régler les modes, les couleurs, les animations et la légende.",
+          "Les barbules indiquent la direction et la vitesse du vent. Les flèches et les filets animés montrent le déplacement de l’air. Les aplats de couleur représentent des plages de vitesse.",
+          "L’animation sinueuse utilise des vecteurs de vent. Ses tracés peuvent s’allonger lorsque la vitesse augmente.",
+          "La légende indique l’unité, la source et l’heure du modèle. Les valeurs calculées peuvent différer des mesures locales."
+        ]
+      ],
+      "information": [
+        "Informations météorologiques",
+        [
+          [
+            "Source et état des données",
+            [
+              "Ouvrez les couches WeatherRouter dans le menu de la carte. Les détails de la couche indiquent la source, l’heure des données ou du modèle, la validité et l’état lorsque ces informations sont disponibles.",
+              "L’heure d’observation, l’heure du cycle du modèle et l’heure de validité sont distinctes. Une couche indisponible peut manquer de source, de couverture ou de données valides. Une carte vide ne suffit pas à décrire le temps."
+            ]
+          ],
+          [
+            "Actualisation après déplacement de la carte",
+            [
+              "L’intervalle détermine le délai avant lequel GewitterRadar peut demander de nouvelles données à WeatherRouter après un déplacement de la carte."
+            ],
+            [
+              [
+                "Intervalle d’actualisation",
+                "Réglable de 2 à 60 secondes. La valeur par défaut est de 15 secondes."
+              ],
+              [
+                "Valeurs basses",
+                "De 2 à 5 secondes, la réponse est rapide et les demandes sont plus nombreuses."
+              ],
+              [
+                "Valeur par défaut",
+                "15 secondes équilibrent la réactivité et la charge des demandes."
+              ],
+              [
+                "Valeurs élevées",
+                "De 30 à 60 secondes, les demandes sont moins fréquentes."
+              ],
+              [
+                "Filtre de mouvement et actualisation manuelle",
+                "Le bref filtre après déplacement reste actif indépendamment de cet intervalle. Une actualisation manuelle n’attend pas la fin de cet intervalle."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Précipitations",
+        [
+          "Touchez l’icône pour afficher ou masquer le radar. Maintenez-la enfoncée pour régler le rendu, l’échelle de couleurs et l’opacité. À 0 % la couche est transparente, à 100 % elle est opaque.",
+          "Les couleurs correspondent à l’intensité des précipitations. Précis sépare nettement les plages. Équilibré adoucit les transitions.",
+          "WeatherRouter peut préparer en parallèle le radar allemand du DWD et le radar européen d’OPERA. Les données NASA, si elles sont disponibles et activées, peuvent compléter les zones non couvertes.",
+          "WeatherRouter vérifie la couverture et la validité et choisit la source. Les zones peuvent s’afficher progressivement. Des données plus récentes ou mieux adaptées peuvent remplacer les précédentes. Consultez la source et l’état des données affichées."
+        ]
+      ],
+      "temperature": [
+        "Température",
+        [
+          "Touchez l’icône pour afficher ou masquer les vues sélectionnées. Maintenez-la enfoncée pour régler les aplats, les valeurs, les unités et l’advection thermique.",
+          "Les couleurs correspondent à des plages de température. L’option des valeurs ajoute sur la carte les températures calculées.",
+          "L’advection thermique montre le transport horizontal d’air plus chaud ou plus froid par le vent. Elle aide à repérer les déplacements de température et les changements de masses d’air."
+        ]
+      ],
+      "clouds": [
+        "Nébulosité",
+        [
+          "L’icône dorée affiche ou masque la couche satellite WeatherRouter. Maintenez-la enfoncée pour choisir Original ou Équilibré et régler l’opacité.",
+          "Consultez l’heure de la source et la couverture du produit satellite. Cette couche se commande séparément du vent et des précipitations."
+        ]
+      ],
+      "synoptic": [
+        "Anticyclones, dépressions, isobares et fronts",
+        [
+          "Touchez l’icône pour afficher le tracé synoptique. Maintenez-la enfoncée pour régler les centres de pression, les isobares et les fronts disponibles. Les isobares relient des points de même pression en hPa.",
+          "ECCC fournit les centres de pression, NOAA/GFS les isobares et NOAA/WPC les fronts classés par type. Les triangles et demi-cercles nécessitent un côté confirmé. Sinon, losanges et points indiquent le type de front sans signaler son déplacement. La couverture et la validité dépendent du produit."
+        ]
+      ],
+      "display": [
+        "Couches et opacité",
+        [
+          "Ouvrez Affichage depuis Eye ou le menu de la carte. Sélectionnez une couche WeatherRouter pour régler son opacité. Maintenez son icône enfoncée pour accéder au rendu, à la légende et aux réglages."
+        ]
+      ],
+      "pro": [
+        "Liste des fonctions",
+        [
+          "GewitterRadar PRO relie GewitterRadar à une intégration WeatherRouter opérationnelle dans la même instance Home Assistant.",
+          "Installez et configurez WeatherRouter, puis activez son interface locale. Le badge PRO apparaît lorsque le service est prêt."
+        ],
+        [
+          "Radar · DWD pour l’Allemagne, OPERA pour l’Europe et NASA en complément. Les sources peuvent être préparées en parallèle et s’afficher progressivement.",
+          "Vent · Barbules, flèches, couleurs par vitesse et animation sinueuse.",
+          "Température et nuages · Aplats, valeurs, advection et couche satellite.",
+          "Analyse synoptique · Centres de pression, isobares et fronts disponibles.",
+          "Données et couverture · Consultez la source, l’heure et l’état selon le produit, la région et le modèle.",
+          "Raccourcis Eye, opacité, réglages, profils et sauvegardes."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Affichage météo",
+      "intro": "Les profils modifient le rendu de la couche météo. WeatherRouter conserve ses données et ses critères de sélection des sources.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Adapte le rendu au zoom. Les petits détails restent visibles de loin. En zoomant, les cellules se fondent dans une surface continue."
+        },
+        {
+          "term": "Précis",
+          "description": "Préserve la structure de la grille pour une lecture technique."
+        },
+        {
+          "term": "Équilibré",
+          "description": "Atténue modérément les bords de la grille et préserve plus de détail que Doux."
+        },
+        {
+          "term": "Doux",
+          "description": "Lisse davantage les cellules pour un rendu plus continu."
+        }
+      ]
+    }
+  },
+  "Nederlands": {
+    "labels": {
+      "back": "Terug naar de onderwerpen",
+      "connected": "WeatherRouter verbonden",
+      "disconnected": "Optionele uitbreiding · WeatherRouter is niet verbonden",
+      "what": "Wat is WeatherRouter?",
+      "description": "Een extra lokale gegevensdienst in Home Assistant die GewitterRadar voorziet van weerproducten van verschillende aanbieders.",
+      "how": "Hoe krijg ik GewitterRadar PRO?",
+      "features": "Functies op een rij",
+      "standard": "Eye-bediening, profielen en back-ups zijn al beschikbaar in GewitterRadar Standard.",
+      "mapNote": "Met {router} verbonden zijn extra lagen voor wind, temperatuur, neerslag, wolken en synoptiek beschikbaar. Dekking en actualiteit hangen af van de gegevensbron."
+    },
+    "topics": {
+      "eye": [
+        "Eye-menu en bediening van pictogrammen",
+        [
+          [
+            "eye",
+            "Tik op Eye om de gegroepeerde snelkoppelingen te tonen."
+          ],
+          "Houd Eye ingedrukt om positie, groepering, auraringen, kleuren en plaatsen in te stellen. Dit hoort bij GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Houd een weerpictogram, bijvoorbeeld neerslag, ingedrukt om zijn instellingen te openen. Met WeatherRouter verbonden schakelt een tik de toegewezen laag."
+          ],
+          [
+            "display",
+            "Het weergavepictogram regelt de dekking per laag. In het Eye-menu kunt u ook plaatsen toevoegen en toewijzen."
+          ],
+          "Schakel groepering uit om de pictogrammen los te zien. Tik dan op Eye om de instellingen te openen.",
+          "Tik op een lege plaats of sleep er een beschikbaar pictogram naartoe. Er zijn maximaal acht plaatsen.",
+          "Een gekleurde ring geeft een actieve, beschikbare functie aan. Kies in de gloedinstellingen een bewegende aura, een vaste ring of geen effecten."
+        ]
+      ],
+      "wind": [
+        "Windweergave",
+        [
+          "Tik op het windpictogram om de laag te schakelen. Houd het ingedrukt voor modi, kleuren, animaties en legenda.",
+          "Windveren tonen richting en snelheid. Pijlen en bewegende stroomlijnen tonen de luchtbeweging. Het kleurvlak onderscheidt snelheidsbereiken.",
+          "De slingerende animatie gebruikt windvectoren. De tracés kunnen langer worden bij een hogere windsnelheid.",
+          "De legenda geeft eenheid, bron en modeltijd. Modelwaarden kunnen afwijken van lokale metingen."
+        ]
+      ],
+      "information": [
+        "Weerinformatie",
+        [
+          [
+            "Gegevensbron en status",
+            [
+              "Open de WeatherRouter-lagen in het kaartmenu. Laagdetails tonen de beschikbare bron, gegevens- of modeltijd, geldigheid en status.",
+              "Waarnemingstijd, modelrun en geldigheidstijd betekenen iets anders. Een ontbrekende bron, dekking of geldige uitvoer kan de laag onbeschikbaar maken. Een lege kaart zegt op zichzelf niets over het weer."
+            ]
+          ],
+          [
+            "Vernieuwen na kaartverplaatsing",
+            [
+              "Dit interval bepaalt na hoeveel tijd GewitterRadar na een kaartverplaatsing nieuwe weergegevens bij WeatherRouter mag opvragen."
+            ],
+            [
+              [
+                "Vernieuwingsinterval",
+                "Instelbaar van 2 tot 60 seconden. Standaard is 15 seconden."
+              ],
+              [
+                "Kleine waarden",
+                "2–5 seconden geven een snelle reactie en meer aanvragen."
+              ],
+              [
+                "Standaard",
+                "15 seconden is een balans tussen reactiesnelheid en belasting."
+              ],
+              [
+                "Grote waarden",
+                "30–60 seconden beperken het aantal aanvragen."
+              ],
+              [
+                "Bewegingsfilter en handmatig vernieuwen",
+                "Het korte bewegingsfilter blijft onafhankelijk actief. Handmatig vernieuwen hoeft niet op dit interval te wachten."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Neerslag",
+        [
+          "Tik op het pictogram om de radar te schakelen. Houd het ingedrukt voor weergave, kleurschaal en dekking. Bij 0% is de laag transparant en bij 100% ondoorzichtig.",
+          "De kleuren geven neerslagintensiteit aan. Nauwkeurig scheidt de bereiken scherper. Evenwichtig geeft zachtere overgangen.",
+          "WeatherRouter kan de Duitse DWD-radar en de Europese OPERA-radar parallel voorbereiden. Beschikbare en ingeschakelde NASA-gegevens kunnen gebieden buiten radardekking aanvullen.",
+          "WeatherRouter controleert geldigheid en dekking en kiest de bron. Kaartdelen kunnen geleidelijk verschijnen en nieuwere of geschiktere gegevens kunnen eerdere vervangen. Bron en status gelden voor de zichtbare gegevens."
+        ]
+      ],
+      "temperature": [
+        "Temperatuur",
+        [
+          "Tik op het pictogram om de gekozen weergaven te schakelen. Houd het ingedrukt om kleurvlak, temperatuurwaarden, eenheid en thermische advectie in te stellen.",
+          "De kleuren onderscheiden temperatuurbereiken. Met temperatuurwaarden ziet u de berekende waarden op de kaart.",
+          "Thermische advectie toont het horizontale transport van warmere of koudere lucht door de wind. Zo worden grootschalige temperatuurverschuivingen en veranderingen van luchtmassa’s zichtbaar."
+        ]
+      ],
+      "clouds": [
+        "Bewolking",
+        [
+          "Het goudomrande pictogram schakelt de satellietlaag. Houd het ingedrukt om Origineel of Evenwichtig te kiezen of de dekking aan te passen.",
+          "Controleer brontijd en dekking van het satellietproduct. Bewolking is onafhankelijk van wind en neerslag te schakelen."
+        ]
+      ],
+      "synoptic": [
+        "Hoge en lage druk, isobaren en fronten",
+        [
+          "Tik om de synoptische laag te schakelen. Houd ingedrukt voor drukcentra, isobaren en beschikbare fronten. Isobaren verbinden punten met gelijke druk in hPa.",
+          "ECCC levert drukcentra, NOAA/GFS isobaren en NOAA/WPC getypeerde fronten. Bij een bevestigde zijde staan driehoeken voor koufronten en halve cirkels voor warmtefronten. Anders tonen ruiten en stippen het type zonder trekrichting. Dekking en geldigheid hangen af van het product."
+        ]
+      ],
+      "display": [
+        "Lagen en dekking",
+        [
+          "Open Weergave via Eye of het kaartmenu. Kies de WeatherRouter-laag en regel haar dekking. Houd een weerpictogram ingedrukt voor stijlen, legenda en details."
+        ]
+      ],
+      "pro": [
+        "Functielijst",
+        [
+          "GewitterRadar PRO koppelt GewitterRadar aan een operationele WeatherRouter-integratie in dezelfde Home Assistant.",
+          "Installeer en configureer WeatherRouter en activeer de lokale interface. Het PRO-kenmerk verschijnt zodra de dienst gereed is."
+        ],
+        [
+          "Radar · DWD voor Duitsland, OPERA voor Europa en NASA als aanvulling. Bronnen kunnen parallel laden en stapsgewijs verschijnen.",
+          "Wind · Windveren, pijlen, snelheidskleuren en slingeranimatie.",
+          "Temperatuur en bewolking · Kleurvlak, waarden, advectie en satellietlaag.",
+          "Synoptiek · Drukcentra, isobaren en beschikbare getypeerde fronten.",
+          "Dekking en gegevensstatus · Afhankelijk van product, regio en model. Bekijk bron, tijd en status.",
+          "Eye, laagdekking, opgeslagen instellingen, profielen en back-ups."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Weerweergave",
+      "intro": "Weergaveprofielen regelen het uiterlijk van de weerlaag. WeatherRouter behoudt de gegevens en zijn keuze van de bronnen.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Past zich geleidelijk aan de zoom aan. In het overzicht blijft detail behouden. Bij inzoomen vloeien rastercellen steeds meer samen."
+        },
+        {
+          "term": "Nauwkeurig",
+          "description": "Houdt de rasterstructuur zo veel mogelijk intact."
+        },
+        {
+          "term": "Evenwichtig",
+          "description": "Verzacht harde rasterranden en houdt meer detail dan Zacht."
+        },
+        {
+          "term": "Zacht",
+          "description": "Sterkere vloeiende weergave met meer afvlakking."
+        }
+      ]
+    }
+  },
+  "Polski": {
+    "labels": {
+      "back": "Wróć do tematów",
+      "connected": "Połączono z WeatherRouter",
+      "disconnected": "Opcjonalne rozszerzenie · Brak połączenia z WeatherRouter",
+      "what": "Czym jest WeatherRouter?",
+      "description": "Lokalna usługa w Home Assistant, która dostarcza GewitterRadar dane pogodowe od różnych dostawców.",
+      "how": "Jak uzyskać GewitterRadar PRO?",
+      "features": "Przegląd funkcji",
+      "standard": "Sterowanie Eye, profile i kopie zapasowe są już dostępne w GewitterRadar Standard.",
+      "mapNote": "Po połączeniu z {router} dostępne są warstwy wiatru, temperatury, opadów, zachmurzenia i analizy synoptycznej. Zasięg i aktualność zależą od źródła."
+    },
+    "topics": {
+      "eye": [
+        "Menu Eye i obsługa ikon",
+        [
+          [
+            "eye",
+            "Dotknij ikony Eye, aby wyświetlić zgrupowane skróty."
+          ],
+          "Przytrzymaj Eye, aby ustawić położenie, grupowanie, pierścienie aury, kolory i miejsca na ikony. Te ustawienia należą do GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Przytrzymaj ikonę pogodową, np. opadów, aby otworzyć jej ustawienia. Po połączeniu z WeatherRouter krótkie dotknięcie przełącza przypisaną warstwę."
+          ],
+          [
+            "display",
+            "Ikona wyświetlania reguluje krycie warstw. W menu Eye możesz również dodawać i przypisywać miejsca."
+          ],
+          "Wyłącz grupowanie, aby wyświetlać ikony osobno. W tym trybie dotknięcie Eye otwiera ustawienia.",
+          "Dotknij wolnego miejsca lub przeciągnij na nie dostępną ikonę. Możesz użyć do ośmiu miejsc.",
+          "Kolorowy pierścień oznacza aktywną, dostępną funkcję. W ustawieniach poświaty wybierz animowaną aurę, stały pierścień lub wyłącz efekty."
+        ]
+      ],
+      "wind": [
+        "Wyświetlanie wiatru",
+        [
+          "Dotknij ikony wiatru, aby przełączyć warstwę. Przytrzymaj ją, aby ustawić tryby, kolory, animację i legendę.",
+          "Chorągiewki wskazują kierunek i prędkość wiatru. Strzałki i animowane linie pokazują ruch powietrza. Kolory odpowiadają przedziałom prędkości.",
+          "Wężykowata animacja korzysta z wektorów wiatru. Ślady mogą się wydłużać wraz ze wzrostem prędkości.",
+          "Legenda podaje jednostkę, źródło i czas modelu. Wyniki modelu mogą się różnić od lokalnych pomiarów."
+        ]
+      ],
+      "information": [
+        "Informacje pogodowe",
+        [
+          [
+            "Źródło i stan danych",
+            [
+              "Otwórz warstwy WeatherRouter w menu mapy. Szczegóły warstwy pokazują dostępne informacje o źródle, czasie danych lub modelu, ważności i stanie.",
+              "Czas obserwacji, przebieg modelu i czas ważności mają odrębne znaczenia. Warstwa może być niedostępna z powodu braku źródła, zasięgu lub ważnych danych. Pusta mapa sama w sobie nie opisuje pogody."
+            ]
+          ],
+          [
+            "Odświeżanie po przesunięciu mapy",
+            [
+              "Interwał określa, kiedy GewitterRadar może poprosić WeatherRouter o nowe dane po przesunięciu mapy."
+            ],
+            [
+              [
+                "Interwał odświeżania",
+                "Od 2 do 60 sekund. Domyślnie 15 sekund."
+              ],
+              [
+                "Małe wartości",
+                "2–5 sekund oznacza szybką reakcję i więcej zapytań."
+              ],
+              [
+                "Wartość domyślna",
+                "15 sekund równoważy szybkość i obciążenie."
+              ],
+              [
+                "Duże wartości",
+                "30–60 sekund zmniejsza liczbę zapytań."
+              ],
+              [
+                "Filtr ruchu i ręczne odświeżanie",
+                "Krótki filtr ruchu działa niezależnie od interwału. Ręczne odświeżanie nie czeka na upływ interwału."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Opady",
+        [
+          "Dotknij ikony, aby przełączyć radar. Przytrzymaj ją, aby ustawić wyświetlanie, skalę kolorów i krycie. Przy 0% warstwa jest przezroczysta, przy 100% nieprzezroczysta.",
+          "Kolory odpowiadają intensywności opadów. Precyzyjny wyraźniej rozdziela przedziały. Zrównoważony łagodzi przejścia.",
+          "WeatherRouter może równolegle przygotować niemiecki radar DWD i europejski radar OPERA. Dostępne i włączone dane NASA mogą uzupełniać obszary poza zasięgiem radaru.",
+          "WeatherRouter sprawdza zasięg i ważność oraz wybiera źródło. Obszary mapy mogą pojawiać się stopniowo. Nowsze lub lepiej dopasowane dane mogą zastępować poprzednie. Sprawdź źródło i stan widocznych danych."
+        ]
+      ],
+      "temperature": [
+        "Temperatura",
+        [
+          "Dotknij ikony, aby przełączyć wybrane widoki. Przytrzymaj ją, aby ustawić pole barwne, wartości, jednostkę i adwekcję termiczną.",
+          "Pole barwne rozróżnia zakresy temperatur. Włącz liczby, aby zobaczyć obliczone temperatury bezpośrednio na mapie.",
+          "Adwekcja termiczna pokazuje poziomy transport cieplejszego lub chłodniejszego powietrza przez wiatr. Pozwala dostrzec rozległe przesunięcia temperatur i zmiany mas powietrza."
+        ]
+      ],
+      "clouds": [
+        "Zachmurzenie",
+        [
+          "Ikona o złotym obramowaniu przełącza warstwę satelitarną. Przytrzymaj ją, aby wybrać tryb Oryginalny lub Zrównoważony i zmienić krycie.",
+          "Sprawdź czas danych i zasięg produktu. Warstwę chmur można przełączać niezależnie od wiatru i opadów."
+        ]
+      ],
+      "synoptic": [
+        "Wyże, niże, izobary i fronty",
+        [
+          "Dotknij ikony, aby przełączyć widok synoptyczny. Przytrzymaj ją, aby ustawić centra ciśnienia, izobary i dostępne fronty. Izobary łączą punkty o tym samym ciśnieniu w hPa.",
+          "ECCC dostarcza centra ciśnienia, NOAA/GFS izobary, a NOAA/WPC fronty z oznaczeniem typu. Trójkąty i półkola wymagają potwierdzonej strony symboli. W pozostałych przypadkach romby i kropki pokazują typ bez określania kierunku ruchu. Zasięg i ważność zależą od produktu."
+        ]
+      ],
+      "display": [
+        "Warstwy i krycie",
+        [
+          "Otwórz Wyświetlanie z menu Eye lub z menu mapy. Wybierz warstwę WeatherRouter i ustaw jej krycie. Przytrzymaj ikonę pogodową, aby zobaczyć style, legendę i ustawienia."
+        ]
+      ],
+      "pro": [
+        "Lista funkcji",
+        [
+          "GewitterRadar PRO łączy GewitterRadar z działającą integracją WeatherRouter w tej samej instancji Home Assistant.",
+          "Zainstaluj i skonfiguruj WeatherRouter oraz włącz lokalny interfejs danych. Oznaczenie PRO pojawi się, gdy usługa będzie gotowa."
+        ],
+        [
+          "Radar · DWD dla Niemiec, OPERA dla Europy i NASA jako uzupełnienie. Źródła mogą być przygotowywane równolegle i wyświetlane etapami.",
+          "Wiatr · Chorągiewki, strzałki, kolory prędkości i animacja wężykowa.",
+          "Temperatura i chmury · Pole barwne, wartości, adwekcja i warstwa satelitarna.",
+          "Synoptyka · Centra ciśnienia, izobary i dostępne fronty.",
+          "Zasięg i stan · Zależą od produktu, regionu i modelu. Sprawdź źródło, czas i stan.",
+          "Eye, krycie, zapisane ustawienia, profile i kopie zapasowe."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Wyświetlanie pogody",
+      "intro": "Profile zmieniają wygląd warstwy pogodowej. WeatherRouter zachowuje dane i kryteria wyboru źródeł.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Dostosowuje wygładzanie do skali mapy. Zachowuje detale w oddaleniu i stopniowo łączy komórki przy zbliżaniu."
+        },
+        {
+          "term": "Precyzyjny",
+          "description": "Zachowuje strukturę rastra do oceny technicznej."
+        },
+        {
+          "term": "Zrównoważony",
+          "description": "Umiarkowanie zmiękcza krawędzie i zachowuje więcej detali niż Łagodny."
+        },
+        {
+          "term": "Łagodny",
+          "description": "Silniej wygładza komórki, tworząc bardziej jednolite pole."
+        }
+      ]
+    }
+  },
+  "Português": {
+    "labels": {
+      "back": "Voltar aos tópicos",
+      "connected": "WeatherRouter ligado",
+      "disconnected": "Extensão opcional · WeatherRouter desligado",
+      "what": "O que é o WeatherRouter?",
+      "description": "Um serviço local de dados do Home Assistant que fornece ao GewitterRadar produtos meteorológicos de vários fornecedores.",
+      "how": "Como obter o GewitterRadar PRO?",
+      "features": "Funções disponíveis",
+      "standard": "Os controlos Eye, os perfis e as cópias de segurança já estão disponíveis no GewitterRadar Standard.",
+      "mapNote": "Com {router} ligado, pode apresentar camadas de vento, temperatura, precipitação, nebulosidade e análise sinóptica. A cobertura e a atualidade dependem da fonte."
+    },
+    "topics": {
+      "eye": [
+        "Menu Eye e controlo dos ícones",
+        [
+          [
+            "eye",
+            "Toque no Eye para mostrar os atalhos agrupados."
+          ],
+          "Mantenha o Eye premido para configurar a posição, o agrupamento, os anéis de aura, as cores e as posições dos ícones. Estes controlos fazem parte do GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Mantenha um ícone meteorológico, como o da precipitação, premido para abrir as suas definições. Com o WeatherRouter ligado, um toque ativa ou desativa a camada."
+          ],
+          [
+            "display",
+            "O ícone de visualização regula a opacidade da camada. Também pode adicionar e atribuir posições no menu Eye."
+          ],
+          "Desative o agrupamento para ver os ícones em separado. Nesse modo, um toque no Eye abre as definições.",
+          "Toque numa posição livre ou arraste um ícone disponível para lá. A interface suporta até oito posições.",
+          "O anel colorido indica uma função ativa e disponível. Pode escolher uma aura animada, um anel fixo ou desativar os efeitos nas definições de brilho."
+        ]
+      ],
+      "wind": [
+        "Visualização do vento",
+        [
+          "Toque no ícone do vento para alternar a camada. Mantenha-o premido para configurar modos, cores, animação e legenda.",
+          "As barbelas mostram direção e velocidade do vento. As setas e os traços animados mostram o movimento do ar. A cor distingue intervalos de velocidade.",
+          "A animação sinuosa utiliza vetores de vento. Os traços podem ficar mais compridos quando o vento acelera.",
+          "A legenda indica a unidade, a fonte e a hora do modelo. Os valores do modelo podem diferir das medições locais."
+        ]
+      ],
+      "information": [
+        "Informação meteorológica",
+        [
+          [
+            "Fonte e estado dos dados",
+            [
+              "Abra as camadas WeatherRouter no menu do mapa. Os detalhes mostram, quando disponíveis, a fonte, a hora dos dados ou do modelo, a validade e o estado.",
+              "A hora de observação, a execução do modelo e o tempo de validade têm significados distintos. Um estado indisponível pode indicar falta de fonte, cobertura ou produto válido. Um mapa vazio, por si só, não descreve o tempo."
+            ]
+          ],
+          [
+            "Atualização após mover o mapa",
+            [
+              "O intervalo determina quando o GewitterRadar pode pedir novos dados ao WeatherRouter depois de mover o mapa."
+            ],
+            [
+              [
+                "Intervalo",
+                "Pode ser ajustado entre 2 e 60 segundos. A predefinição é 15 segundos."
+              ],
+              [
+                "Valores baixos",
+                "De 2 a 5 segundos, a resposta é rápida e há mais pedidos."
+              ],
+              [
+                "Predefinição",
+                "15 segundos equilibram a rapidez com o número de pedidos."
+              ],
+              [
+                "Valores altos",
+                "De 30 a 60 segundos, há menos pedidos."
+              ],
+              [
+                "Filtro de movimento e atualização manual",
+                "O filtro breve de movimento é independente do intervalo. A atualização manual não precisa de esperar pelo intervalo."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Precipitação",
+        [
+          "Toque para alternar o radar. Mantenha premido para configurar a visualização, a escala de cores e a opacidade. A 0 % a camada é transparente, a 100 % é opaca.",
+          "As cores correspondem à intensidade da precipitação. Preciso separa melhor os intervalos. Equilibrado suaviza as transições.",
+          "O WeatherRouter pode preparar em paralelo o radar alemão do DWD e o radar europeu da OPERA. Os dados NASA disponíveis, se ativados, podem complementar áreas sem radar.",
+          "O WeatherRouter verifica a cobertura e a validade e escolhe a fonte. As áreas podem surgir progressivamente e ser atualizadas com dados mais recentes ou adequados. Consulte a fonte e o estado dos dados apresentados."
+        ]
+      ],
+      "temperature": [
+        "Temperatura",
+        [
+          "Toque para alternar as vistas escolhidas. Mantenha premido para configurar o campo de cores, os valores, as unidades e a advecção térmica.",
+          "As cores distinguem intervalos de temperatura. Ative os valores para mostrar no mapa as temperaturas calculadas.",
+          "A advecção térmica representa o transporte horizontal de ar mais quente ou mais frio pelo vento. Ajuda a observar deslocações de temperatura e mudanças das massas de ar."
+        ]
+      ],
+      "clouds": [
+        "Nebulosidade",
+        [
+          "O ícone dourado alterna a camada de satélite. Mantenha-o premido para escolher Original ou Equilibrado e ajustar a opacidade.",
+          "Consulte a hora dos dados e a cobertura do produto. A camada pode ser controlada independentemente do vento e da precipitação."
+        ]
+      ],
+      "synoptic": [
+        "Altas e baixas pressões, isóbaras e frentes",
+        [
+          "Toque para alternar a análise sinóptica. Mantenha premido para ajustar os centros de pressão, as isóbaras e as frentes disponíveis. As isóbaras unem pontos de igual pressão em hPa.",
+          "O ECCC fornece os centros de pressão, a NOAA/GFS as isóbaras e a NOAA/WPC as frentes classificadas. Os triângulos e semicírculos exigem um lado confirmado. Caso contrário, os losangos e os pontos indicam o tipo sem mostrar a direção de avanço. A cobertura e a validade dependem do produto."
+        ]
+      ],
+      "display": [
+        "Camadas e opacidade",
+        [
+          "Abra Visualização no menu Eye ou no menu do mapa. Escolha a camada WeatherRouter para ajustar a opacidade. Mantenha o ícone meteorológico premido para ver os estilos, a legenda e os detalhes."
+        ]
+      ],
+      "pro": [
+        "Lista de funções",
+        [
+          "O GewitterRadar PRO liga o GewitterRadar a uma integração WeatherRouter operacional na mesma instância do Home Assistant.",
+          "Instale e configure o WeatherRouter e ative a sua interface local de dados. O símbolo PRO aparece quando o serviço está pronto."
+        ],
+        [
+          "Radar · DWD para a Alemanha, OPERA para a Europa e NASA como complemento. As fontes podem ser preparadas em paralelo e apresentadas por etapas.",
+          "Vento · Barbelas, setas, cores de velocidade e animação sinuosa.",
+          "Temperatura e nuvens · Campo de cores, valores, advecção e camada de satélite.",
+          "Análise sinóptica · Centros de pressão, isóbaras e frentes disponíveis.",
+          "Cobertura e estado · Dependem do produto, região e modelo. Consulte a fonte, a hora e o estado.",
+          "Eye, opacidade, definições guardadas, perfis e cópias de segurança."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Visualização meteorológica",
+      "intro": "Os perfis ajustam o aspeto da camada. O WeatherRouter conserva os dados e os critérios de escolha das fontes.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Adapta o suavizamento ao zoom. A vista geral mantém os detalhes e, ao aproximar, as células misturam-se gradualmente."
+        },
+        {
+          "term": "Preciso",
+          "description": "Mantém a estrutura da grelha para análise técnica."
+        },
+        {
+          "term": "Equilibrado",
+          "description": "Suaviza moderadamente os limites e preserva mais detalhe que Suave."
+        },
+        {
+          "term": "Suave",
+          "description": "Cria um campo mais contínuo com suavizamento intenso."
+        }
+      ]
+    }
+  },
+  "Svenska": {
+    "labels": {
+      "back": "Tillbaka till ämnena",
+      "connected": "WeatherRouter är ansluten",
+      "disconnected": "Valfritt tillägg · WeatherRouter är frånkopplad",
+      "what": "Vad är WeatherRouter?",
+      "description": "En lokal datatjänst i Home Assistant som förser GewitterRadar med väderprodukter från flera leverantörer.",
+      "how": "Hur får jag GewitterRadar PRO?",
+      "features": "Funktioner i korthet",
+      "standard": "Eye-reglage, profiler och säkerhetskopior ingår redan i GewitterRadar Standard.",
+      "mapNote": "Med {router} ansluten kan kartan visa vind, temperatur, nederbörd, moln och synoptiska analyser. Täckning och aktualitet beror på källan."
+    },
+    "topics": {
+      "eye": [
+        "Eye-meny och ikonreglage",
+        [
+          [
+            "eye",
+            "Tryck på Eye för att visa de grupperade genvägarna."
+          ],
+          "Håll Eye nedtryckt för att ställa in position, gruppering, auraringar, färger och platser. Detta ingår i GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Håll en väderikon, till exempel nederbördsikonen, nedtryckt för att öppna inställningarna. När WeatherRouter är ansluten växlar en kort tryckning det tilldelade lagret."
+          ],
+          [
+            "display",
+            "Visningsikonen reglerar lagrens opacitet. Du kan även lägga till och tilldela platser i Eye-menyn."
+          ],
+          "Stäng av grupperingen för att visa ikonerna separat. Ett tryck på Eye öppnar då inställningarna.",
+          "Tryck på en ledig plats eller dra en tillgänglig ikon till den. Det finns upp till åtta platser.",
+          "En färgad ring visar att en tillgänglig funktion är aktiv. I glödinställningarna kan du välja animerad aura, fast ring eller avstängda effekter."
+        ]
+      ],
+      "wind": [
+        "Vindvisning",
+        [
+          "Tryck på vindikonen för att växla lagret. Håll den nedtryckt för lägen, färger, animering och teckenförklaring.",
+          "Vindbarber visar riktning och hastighet. Pilar och animerade strömlinjer visar luftrörelsen. Vindfältets färger står för olika hastighetsintervall.",
+          "Den slingrande animeringen använder vindvektorer. Spåren kan bli längre vid högre vindhastighet.",
+          "Teckenförklaringen visar enhet, källa och modelltid. Modellvärden kan skilja sig från lokala mätningar."
+        ]
+      ],
+      "information": [
+        "Väderinformation",
+        [
+          [
+            "Datakälla och status",
+            [
+              "Öppna WeatherRouter-lagren i kartmenyn. Lagrets detaljer visar källa, data- eller modelltid, giltighet och status där dessa uppgifter finns.",
+              "Observationstid, modellkörning och giltighetstid betyder olika saker. Lagret kan sakna källa, täckning eller giltiga data. En tom karta säger i sig ingenting om vädret."
+            ]
+          ],
+          [
+            "Uppdatering efter kartförflyttning",
+            [
+              "Intervallet styr hur snart GewitterRadar får begära nya data från WeatherRouter när kartan har flyttats."
+            ],
+            [
+              [
+                "Uppdateringsintervall",
+                "Ställbart från 2 till 60 sekunder. Standardvärdet är 15 sekunder."
+              ],
+              [
+                "Låga värden",
+                "2–5 sekunder ger snabb respons och fler förfrågningar."
+              ],
+              [
+                "Standardvärde",
+                "15 sekunder balanserar svarstid och belastning."
+              ],
+              [
+                "Höga värden",
+                "30–60 sekunder ger färre förfrågningar."
+              ],
+              [
+                "Rörelsefilter och manuell uppdatering",
+                "Det korta rörelsefiltret gäller oberoende av intervallet. En manuell uppdatering behöver inte vänta på intervallet."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Nederbörd",
+        [
+          "Tryck för att växla radarlagret. Håll ikonen nedtryckt för visning, färgskala och opacitet. 0 % är genomskinligt och 100 % är helt täckande.",
+          "Färgerna motsvarar nederbördsintensiteten. Exakt skiljer intervallen tydligt. Balanserad ger mjukare övergångar.",
+          "WeatherRouter kan förbereda tyska DWD och europeiska OPERA parallellt. Tillgängliga NASA-data kan komplettera områden utanför radartäckningen om de är aktiverade.",
+          "WeatherRouter kontrollerar täckning och giltighet och väljer källan. Kartdelar kan visas stegvis. Nyare eller bättre data kan ersätta tidigare data. Kontrollera källa och status."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Tryck för att växla valda visningar. Håll ikonen nedtryckt för färgfält, temperaturvärden, enheter och termisk advektion.",
+          "Färgerna visar temperaturintervall. Aktivera temperaturvärden för att lägga beräknade temperaturer på kartan.",
+          "Termisk advektion visar hur vinden för varmare eller kallare luft horisontellt. Det hjälper dig att se större temperaturförskjutningar och förändringar av luftmassor."
+        ]
+      ],
+      "clouds": [
+        "Molnighet",
+        [
+          "Ikonen med guldkant växlar WeatherRouters satellitlager. Håll den nedtryckt för Original, Balanserad och opacitet.",
+          "Kontrollera källtid och täckning. Molnlagret kan styras separat från vind och nederbörd."
+        ]
+      ],
+      "synoptic": [
+        "Högtryck, lågtryck, isobarer och fronter",
+        [
+          "Tryck för att växla den synoptiska vyn. Håll nedtryckt för att ställa in tryckcentra, isobarer och tillgängliga fronter. Isobarer binder samman lika lufttryck i hPa.",
+          "ECCC levererar tryckcentra, NOAA/GFS isobarer och NOAA/WPC fronter med angiven typ. Trianglar och halvcirklar kräver en bekräftad symbolsida. I övriga fall visar romber och prickar typen utan rörelseriktning. Täckning och giltighet beror på produkten."
+        ]
+      ],
+      "display": [
+        "Lager och opacitet",
+        [
+          "Öppna Visning i Eye eller kartmenyn. Välj ett WeatherRouter-lager och ställ in opaciteten. Håll ned väderikonen för stilar, teckenförklaring och detaljer."
+        ]
+      ],
+      "pro": [
+        "Funktionslista",
+        [
+          "GewitterRadar PRO kopplar GewitterRadar till en fungerande WeatherRouter-integration i samma Home Assistant.",
+          "Installera och konfigurera WeatherRouter och slå på det lokala konsumentgränssnittet. PRO-märket visas när tjänsten är redo."
+        ],
+        [
+          "Radar · DWD för Tyskland, OPERA för Europa och NASA som komplement. Källor kan förberedas parallellt och visas stegvis.",
+          "Vind · Barber, pilar, hastighetsfärger och slingrande animering.",
+          "Temperatur och moln · Färgfält, temperaturvärden, advektion och satellitlager.",
+          "Synoptik · Tryckcentra, isobarer och tillgängliga fronter.",
+          "Datatäckning och status · Beror på produkt, region och modell. Se källa, tid och status.",
+          "Eye, opacitet, sparade inställningar, profiler och säkerhetskopior."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Vädervisning",
+      "intro": "Visningsprofiler ändrar lagrets utseende. WeatherRouter behåller data och urvalskriterier.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Anpassar utjämningen till zoom. Detaljer bevaras i översikten. Vid inzoomning övergår cellerna gradvis i ett sammanhängande fält."
+        },
+        {
+          "term": "Exakt",
+          "description": "Behåller rutnätets struktur för teknisk granskning."
+        },
+        {
+          "term": "Balanserad",
+          "description": "Mjukar upp rutkanterna med fler detaljer än Mjuk."
+        },
+        {
+          "term": "Mjuk",
+          "description": "Ger ett mer sammanhängande färgfält med kraftigare utjämning."
+        }
+      ]
+    }
+  },
+  "Italiano": {
+    "labels": {
+      "back": "Torna agli argomenti",
+      "connected": "WeatherRouter connesso",
+      "disconnected": "Estensione facoltativa · WeatherRouter non connesso",
+      "what": "Che cos’è WeatherRouter?",
+      "description": "Un servizio dati locale di Home Assistant che fornisce a GewitterRadar prodotti meteorologici di diversi fornitori.",
+      "how": "Come si ottiene GewitterRadar PRO?",
+      "features": "Funzioni disponibili",
+      "standard": "I comandi Eye, i profili e le copie di sicurezza sono già disponibili in GewitterRadar Standard.",
+      "mapNote": "Con {router} collegato, si possono visualizzare strati per vento, temperatura, precipitazioni, nuvolosità e analisi sinottica. Copertura e aggiornamento dipendono dalla fonte."
+    },
+    "topics": {
+      "eye": [
+        "Menu Eye e comandi delle icone",
+        [
+          [
+            "eye",
+            "Tocca Eye per mostrare i comandi raggruppati."
+          ],
+          "Tieni premuto Eye per configurare posizione, raggruppamento, anelli dell’aura, colori e spazi. Sono comandi di GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Tieni premuta un’icona meteo, ad esempio quella delle precipitazioni, per aprire le impostazioni. Quando WeatherRouter è connesso, un tocco attiva o disattiva lo strato assegnato."
+          ],
+          [
+            "display",
+            "L’icona della visualizzazione regola l’opacità degli strati. Dal menu Eye puoi anche aggiungere e assegnare spazi."
+          ],
+          "Disattiva il raggruppamento per vedere le icone separatamente. In questo modo un tocco su Eye apre le impostazioni.",
+          "Tocca uno spazio libero o trascinaci un’icona disponibile. Si possono usare fino a otto spazi.",
+          "Un anello colorato indica una funzione attiva e disponibile. Nelle impostazioni di luminosità puoi scegliere un’aura animata, un anello fisso o disattivare gli effetti."
+        ]
+      ],
+      "wind": [
+        "Visualizzazione del vento",
+        [
+          "Tocca l’icona del vento per attivare o disattivare lo strato. Tienila premuta per regolare modalità, colori, animazione e legenda.",
+          "Le barbule mostrano direzione e velocità. Frecce e linee animate mostrano il movimento dell’aria. I colori indicano intervalli di velocità.",
+          "L’animazione sinuosa si basa sui vettori del vento. Le tracce possono allungarsi all’aumentare della velocità.",
+          "La legenda indica unità, fonte e ora del modello. I valori del modello possono differire dalle misure locali."
+        ]
+      ],
+      "information": [
+        "Informazioni meteorologiche",
+        [
+          [
+            "Fonte e stato dei dati",
+            [
+              "Apri gli strati WeatherRouter nel menu della mappa. I dettagli mostrano fonte, ora dei dati o del modello, validità e stato, quando disponibili.",
+              "L’ora di osservazione, la corsa del modello e l’ora di validità sono distinte. Uno strato non disponibile può essere privo di fonte, copertura o dati validi. Una mappa vuota non descrive da sola il tempo."
+            ]
+          ],
+          [
+            "Aggiornamento dopo lo spostamento della mappa",
+            [
+              "L’intervallo stabilisce quanto presto GewitterRadar può chiedere dati nuovi a WeatherRouter dopo uno spostamento della mappa."
+            ],
+            [
+              [
+                "Intervallo di aggiornamento",
+                "Regolabile da 2 a 60 secondi. Il valore predefinito è 15 secondi."
+              ],
+              [
+                "Valori bassi",
+                "Da 2 a 5 secondi la risposta è rapida e le richieste sono più frequenti."
+              ],
+              [
+                "Valore predefinito",
+                "15 secondi bilanciano rapidità e carico delle richieste."
+              ],
+              [
+                "Valori alti",
+                "Da 30 a 60 secondi le richieste si riducono."
+              ],
+              [
+                "Filtro di movimento e aggiornamento manuale",
+                "Il breve filtro dopo lo spostamento resta attivo indipendentemente dall’intervallo. Un aggiornamento manuale non deve attendere tale intervallo."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Precipitazioni",
+        [
+          "Tocca l’icona per attivare o disattivare il radar. Tienila premuta per regolare visualizzazione, scala cromatica e opacità. 0% è trasparente, 100% è opaco.",
+          "I colori indicano le intensità di precipitazione. Preciso separa le fasce. Bilanciato rende più graduali le transizioni.",
+          "WeatherRouter può preparare in parallelo il radar tedesco DWD e quello europeo OPERA. I dati NASA disponibili e attivati possono integrare le zone senza radar.",
+          "WeatherRouter verifica copertura e validità e sceglie la fonte. Le zone possono comparire gradualmente ed essere aggiornate con dati più recenti o adatti. Consulta fonte e stato dei dati visibili."
+        ]
+      ],
+      "temperature": [
+        "Temperatura",
+        [
+          "Tocca l’icona per attivare o disattivare le viste scelte. Tienila premuta per impostare campi di colore, valori, unità e avvezione termica.",
+          "I colori distinguono gli intervalli di temperatura. Attiva i valori per aggiungere alla mappa le temperature calcolate.",
+          "L’avvezione termica mostra il trasporto orizzontale di aria più calda o fredda da parte del vento. Aiuta a riconoscere spostamenti termici e cambiamenti delle masse d’aria."
+        ]
+      ],
+      "clouds": [
+        "Nuvolosità",
+        [
+          "L’icona con bordo dorato attiva o disattiva lo strato satellitare. Tienila premuta per scegliere Originale o Bilanciato e regolare l’opacità.",
+          "Consulta ora dei dati e copertura. Puoi controllare lo strato nuvoloso separatamente da vento e precipitazioni."
+        ]
+      ],
+      "synoptic": [
+        "Alte e basse pressioni, isobare e fronti",
+        [
+          "Tocca per attivare o disattivare la vista sinottica. Tieni premuto per configurare centri di pressione, isobare e fronti disponibili. Le isobare uniscono punti di uguale pressione in hPa.",
+          "ECCC fornisce i centri, NOAA/GFS le isobare e NOAA/WPC i fronti classificati. Triangoli e semicerchi richiedono un lato confermato. Altrimenti rombi e punti indicano il tipo senza mostrare la direzione del moto. Copertura e validità dipendono dal prodotto."
+        ]
+      ],
+      "display": [
+        "Strati e opacità",
+        [
+          "Apri Visualizzazione da Eye o dal menu della mappa. Seleziona uno strato WeatherRouter e regola l’opacità. Tieni premuta la relativa icona per stili, legenda e dettagli."
+        ]
+      ],
+      "pro": [
+        "Elenco delle funzioni",
+        [
+          "GewitterRadar PRO collega GewitterRadar a un’integrazione WeatherRouter operativa nella stessa istanza di Home Assistant.",
+          "Installa e configura WeatherRouter, poi attiva la sua interfaccia dati locale. Il distintivo PRO compare quando il servizio è pronto."
+        ],
+        [
+          "Radar · DWD per la Germania, OPERA per l’Europa e NASA come integrazione. Le fonti possono essere preparate in parallelo e visualizzate per fasi.",
+          "Vento · Barbule, frecce, colori di velocità e animazione sinuosa.",
+          "Temperatura e nuvole · Campo cromatico, valori, avvezione e strato satellitare.",
+          "Analisi sinottica · Centri di pressione, isobare e fronti disponibili.",
+          "Copertura e stato · Dipendono da prodotto, regione e modello. Consulta fonte, ora e stato.",
+          "Eye, opacità, impostazioni salvate, profili e copie di sicurezza."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Visualizzazione meteo",
+      "intro": "I profili cambiano l’aspetto dello strato. WeatherRouter conserva dati e criteri di scelta delle fonti.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Adatta il filtro allo zoom. I dettagli restano visibili da lontano e le celle si fondono gradualmente avvicinandosi."
+        },
+        {
+          "term": "Preciso",
+          "description": "Conserva la griglia per una lettura tecnica."
+        },
+        {
+          "term": "Bilanciato",
+          "description": "Sfuma i bordi mantenendo più dettagli di Morbido."
+        },
+        {
+          "term": "Morbido",
+          "description": "Applica un filtro più forte per un campo uniforme."
+        }
+      ]
+    }
+  },
+  "Norsk bokmål": {
+    "labels": {
+      "back": "Tilbake til emnene",
+      "connected": "WeatherRouter er tilkoblet",
+      "disconnected": "Valgfri utvidelse · WeatherRouter er frakoblet",
+      "what": "Hva er WeatherRouter?",
+      "description": "En lokal datatjeneste i Home Assistant som leverer værprodukter fra flere leverandører til GewitterRadar.",
+      "how": "Hvordan får jeg GewitterRadar PRO?",
+      "features": "Funksjoner i korte trekk",
+      "standard": "Eye, profiler og sikkerhetskopier er allerede med i GewitterRadar Standard.",
+      "mapNote": "Med {router} tilkoblet kan kartet vise vind, temperatur, nedbør, skyer og synoptiske analyser. Tilgjengelighet og aktualitet avhenger av kilden."
+    },
+    "topics": {
+      "eye": [
+        "Eye-meny og ikonbetjening",
+        [
+          [
+            "eye",
+            "Trykk på Eye for å vise de grupperte snarveiene."
+          ],
+          "Hold Eye inne for å stille inn plassering, gruppering, auraringer, farger og plasser. Dette inngår i GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Hold et værikon, for eksempel nedbørsikonet, inne for å åpne innstillingene. Med WeatherRouter tilkoblet slår et kort trykk laget av eller på."
+          ],
+          [
+            "display",
+            "Visningsikonet regulerer opasiteten per lag. Du kan også legge til og tildele plasser i Eye-menyen."
+          ],
+          "Slå av grupperingen for å vise ikonene hver for seg. Et trykk på Eye åpner da innstillingene.",
+          "Trykk på en ledig plass eller dra et tilgjengelig ikon dit. Grensesnittet har opptil åtte plasser.",
+          "En farget ring viser en aktiv og tilgjengelig funksjon. Glødinnstillingene tilbyr animert aura, fast ring eller effekter av."
+        ]
+      ],
+      "wind": [
+        "Vindvisning",
+        [
+          "Trykk på vindikonet for å slå laget av eller på. Hold inne for visningsmodi, farger, animasjon og tegnforklaring.",
+          "Vindpiler med fjær viser retning og hastighet. Piler og animerte strømmer viser luftbevegelse. Fargefeltet skiller hastighetsområder.",
+          "Den slyngende animasjonen bruker vindvektorer. Sporene kan bli lengre ved høyere vindhastighet.",
+          "Tegnforklaringen viser enhet, kilde og modelltid. Modellverdier kan avvike fra lokale målinger."
+        ]
+      ],
+      "information": [
+        "Værinformasjon",
+        [
+          [
+            "Datakilde og status",
+            [
+              "Åpne WeatherRouter-lagene i kartmenyen. Lagdetaljene viser kilde, data- eller modelltid, gyldighet og status når opplysningene er tilgjengelige.",
+              "Observasjonstid, modellkjøring og gyldighetstid betyr ulike ting. Et utilgjengelig lag kan mangle kilde, dekning eller gyldige data. Et tomt kart sier ikke noe om været i seg selv."
+            ]
+          ],
+          [
+            "Oppdatering når kartet flyttes",
+            [
+              "Intervallet styrer hvor snart GewitterRadar kan be WeatherRouter om nye data etter en kartbevegelse."
+            ],
+            [
+              [
+                "Oppdateringsintervall",
+                "Kan stilles fra 2 til 60 sekunder. Standard er 15 sekunder."
+              ],
+              [
+                "Lave verdier",
+                "2–5 sekunder gir rask respons og flere forespørsler."
+              ],
+              [
+                "Standard",
+                "15 sekunder balanserer reaksjonstid og belastning."
+              ],
+              [
+                "Høye verdier",
+                "30–60 sekunder gir færre forespørsler."
+              ],
+              [
+                "Bevegelsesfilter og manuell oppdatering",
+                "Det korte bevegelsesfilteret gjelder uavhengig av intervallet. Manuelle oppdateringer venter ikke på intervallet."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Nedbør",
+        [
+          "Trykk for å slå radarlaget av eller på. Hold ikonet inne for visning, fargeskala og opasitet. 0 % er gjennomsiktig og 100 % er helt dekkende.",
+          "Skalaen viser nedbørintensitet. Presis skiller intervallene tydelig. Balansert gir mykere overganger.",
+          "WeatherRouter kan klargjøre tysk DWD-radar og europeisk OPERA-radar parallelt. Tilgjengelige og aktiverte NASA-data kan supplere områder uten radar.",
+          "WeatherRouter sjekker gyldighet og dekning og velger kilden. Kartområder kan vises gradvis. Nyere eller bedre data kan erstatte tidligere data. Sjekk aktiv kilde og status."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Trykk for å veksle valgte visninger. Hold ikonet inne for fargeflater, temperaturverdier, enheter og termisk adveksjon.",
+          "Fargene skiller temperaturområder. Slå på temperaturverdier for å vise de beregnede tallene på kartet.",
+          "Termisk adveksjon viser hvordan vinden flytter varmere eller kaldere luft horisontalt. Det synliggjør store temperaturforskyvninger og endringer i luftmasser."
+        ]
+      ],
+      "clouds": [
+        "Skydekke",
+        [
+          "Ikonet med gullkant slår WeatherRouters satellittlag av eller på. Hold det inne for å velge Original eller Balansert og justere opasiteten.",
+          "Sjekk datatid og dekning. Skylaget styres uavhengig av vind og nedbør."
+        ]
+      ],
+      "synoptic": [
+        "Høytrykk, lavtrykk, isobarer og fronter",
+        [
+          "Trykk for å veksle synoptisk visning. Hold inne for trykksentre, isobarer og tilgjengelige fronter. Isobarer knytter sammen samme lufttrykk i hPa.",
+          "ECCC leverer trykksentre, NOAA/GFS isobarer og NOAA/WPC fronter sortert etter type. Trekanter og halvsirkler krever bekreftet symbolside. Ellers viser romber og prikker typen uten å angi bevegelsesretning. Dekning og gyldighet varierer med produktet."
+        ]
+      ],
+      "display": [
+        "Lag og opasitet",
+        [
+          "Åpne Visning fra Eye eller kartmenyen. Velg et WeatherRouter-lag for å justere opasiteten. Hold værikonet inne for stiler, tegnforklaring og detaljer."
+        ]
+      ],
+      "pro": [
+        "Funksjonsliste",
+        [
+          "GewitterRadar PRO kobler GewitterRadar til en aktiv WeatherRouter-integrasjon i samme Home Assistant.",
+          "Installer og konfigurer WeatherRouter og aktiver det lokale grensesnittet. PRO-merket vises når tjenesten er klar."
+        ],
+        [
+          "Radar · DWD for Tyskland, OPERA for Europa og NASA som supplement. Kilder kan forberedes parallelt og vises gradvis.",
+          "Vind · Vindfjær, piler, hastighetsfarger og slyngende animasjon.",
+          "Temperatur og skyer · Fargefelt, tall, adveksjon og satellittlag.",
+          "Synoptikk · Trykksentre, isobarer og tilgjengelige fronter.",
+          "Datadekning og status · Avhenger av produkt, område og modell. Se kilde, tid og status.",
+          "Eye, opasitet, lagrede innstillinger, profiler og sikkerhetskopier."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Værvisning",
+      "intro": "Visningsprofiler endrer lagets utseende. WeatherRouter beholder data og kildevalg.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Tilpasser utjevningen til zoom. Små detaljer beholdes i oversikten. Ved innzooming går cellene gradvis sammen."
+        },
+        {
+          "term": "Presis",
+          "description": "Bevarer rasterets struktur for teknisk avlesing."
+        },
+        {
+          "term": "Balansert",
+          "description": "Jevner ut rasterkantene og beholder mer detalj enn Myk."
+        },
+        {
+          "term": "Myk",
+          "description": "Jevner ut mer for et roligere og mer sammenhengende felt."
+        }
+      ]
+    }
+  },
+  "Suomi": {
+    "labels": {
+      "back": "Takaisin aiheisiin",
+      "connected": "WeatherRouter on yhdistetty",
+      "disconnected": "Valinnainen laajennus · WeatherRouter ei ole yhdistetty",
+      "what": "Mikä WeatherRouter on?",
+      "description": "Paikallinen Home Assistantin tietopalvelu, joka toimittaa eri tarjoajien säätuotteita GewitterRadarille.",
+      "how": "Miten saan GewitterRadar PRO:n?",
+      "features": "Toiminnot lyhyesti",
+      "standard": "Eye-ohjaimet, profiilit ja varmuuskopiot kuuluvat jo GewitterRadar Standardiin.",
+      "mapNote": "Kun {router} on yhdistetty, kartalla voi näyttää tuuli-, lämpötila-, sade-, pilvi- ja sääkarttatasot. Kattavuus ja tuoreus riippuvat lähteestä."
+    },
+    "topics": {
+      "eye": [
+        "Eye-valikko ja kuvakkeiden käyttö",
+        [
+          [
+            "eye",
+            "Näytä ryhmitellyt pikavalinnat napauttamalla Eye-kuvaketta."
+          ],
+          "Pidä Eye painettuna, kun haluat säätää sijaintia, ryhmittelyä, aurarenkaita, värejä tai kuvakepaikkoja. Nämä ohjaimet kuuluvat GewitterRadar Standardiin.",
+          [
+            "precipitation",
+            "Avaa esimerkiksi sadekuvakkeen asetukset pitämällä sitä painettuna. Kun WeatherRouter on yhdistetty, lyhyt napautus kytkee valitun tason päälle tai pois."
+          ],
+          [
+            "display",
+            "Näyttökuvakkeella säädetään kunkin tason peittävyyttä. Eye-valikossa voi myös lisätä ja täyttää kuvakepaikkoja."
+          ],
+          "Poista ryhmittely käytöstä, jos haluat nähdä kuvakkeet erillään. Silloin Eye-kuvakkeen napautus avaa asetukset.",
+          "Napauta tyhjää paikkaa tai vedä siihen käytettävissä oleva kuvake. Paikkoja on enintään kahdeksan.",
+          "Värirengas osoittaa, että käytettävissä oleva toiminto on aktiivinen. Hehkuasetuksissa voi valita animoidun auran, kiinteän renkaan tai poistaa tehosteet käytöstä."
+        ]
+      ],
+      "wind": [
+        "Tuulen näyttö",
+        [
+          "Kytke tuulitaso päälle tai pois napauttamalla tuulikuvaketta. Pidä painettuna, jos haluat muuttaa tiloja, värejä, animaatiota tai selitettä.",
+          "Tuuliväkäset näyttävät suunnan ja nopeuden. Nuolet ja animoidut virtaviivat näyttävät ilman liikkeen. Värit vastaavat nopeusvälejä.",
+          "Mutkitteleva animaatio perustuu tuulivektoreihin. Juovat voivat pidentyä tuulen nopeuden kasvaessa.",
+          "Selite näyttää yksikön, lähteen ja mallin aikaleiman. Malliarvot voivat poiketa paikallisista mittauksista."
+        ]
+      ],
+      "information": [
+        "Säätiedot",
+        [
+          [
+            "Tietolähde ja tila",
+            [
+              "Avaa WeatherRouter-tasot karttavalikosta. Tason tiedoissa näkyvät lähde, tiedon tai mallin aika, voimassaolo ja tila, jos ne ovat saatavilla.",
+              "Havaintoaika, malliajo ja voimassaoloaika tarkoittavat eri asioita. Tasolta voi puuttua lähde, kattavuus tai voimassa oleva aineisto. Tyhjä kartta ei yksin kerro säästä."
+            ]
+          ],
+          [
+            "Päivitys kartan siirtämisen jälkeen",
+            [
+              "Päivitysväli määrää, kuinka pian GewitterRadar voi pyytää WeatherRouterilta uutta aineistoa kartan siirtämisen jälkeen."
+            ],
+            [
+              [
+                "Päivitysväli",
+                "Säädettävissä välillä 2–60 sekuntia. Oletusarvo on 15 sekuntia."
+              ],
+              [
+                "Pienet arvot",
+                "2–5 sekuntia nopeuttaa vastetta ja lisää pyyntöjä."
+              ],
+              [
+                "Oletusarvo",
+                "15 sekuntia tasapainottaa vasteajan ja kuormituksen."
+              ],
+              [
+                "Suuret arvot",
+                "30–60 sekuntia vähentää pyyntöjä."
+              ],
+              [
+                "Liikesuodatin ja manuaalinen päivitys",
+                "Lyhyt liikesuodatin toimii päivitysvälistä riippumatta. Manuaalinen päivitys ei odota tämän välin päättymistä."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Sade",
+        [
+          "Kytke tutka napauttamalla kuvaketta. Pidä painettuna, jos haluat säätää esitystapaa, väriskaalaa ja peittävyyttä. 0 % on läpinäkyvä ja 100 % täysin peittävä.",
+          "Värit kuvaavat sateen voimakkuutta. Tarkka erottaa voimakkuusvälit selkeästi. Tasapainoinen pehmentää siirtymiä.",
+          "WeatherRouter voi valmistella Saksan DWD-tutkan ja Euroopan OPERA-tutkan rinnakkain. Saatavilla olevat käyttöön otetut NASA-tiedot voivat täydentää tutkan katvealueita.",
+          "WeatherRouter tarkistaa kattavuuden ja voimassaolon ja valitsee lähteen. Alueet voivat ilmestyä vaiheittain ja uudempi tai sopivampi aineisto voi korvata vanhan. Tarkista näkyvien tietojen lähde ja tila."
+        ]
+      ],
+      "temperature": [
+        "Lämpötila",
+        [
+          "Kytke valitut näkymät napauttamalla kuvaketta. Pidä painettuna säätääksesi värikenttää, arvoja, yksikköä ja lämpöadvektiota.",
+          "Värit erottavat lämpötila-alueet. Lämpötila-arvot voi lisätä kartalle laskettuina numeroina.",
+          "Lämpöadvektio näyttää lämpimämmän tai kylmemmän ilman vaakasuuntaisen kulkeutumisen tuulen mukana. Näin voi havaita laaja-alaisia lämpötilasiirtymiä ja ilmamassojen muutoksia."
+        ]
+      ],
+      "clouds": [
+        "Pilvisyys",
+        [
+          "Kultareunainen kuvake kytkee WeatherRouterin satelliittipilvet. Pidä sitä painettuna, jos haluat valita Alkuperäisen tai Tasapainoisen tai säätää peittävyyttä.",
+          "Tarkista lähteen aika ja kattavuus. Pilvitasoa voi ohjata tuulesta ja sateesta erillään."
+        ]
+      ],
+      "synoptic": [
+        "Korkea- ja matalapaineet, isobaarit ja rintamat",
+        [
+          "Kytke synoptinen näkymä napauttamalla kuvaketta. Pitkä painallus avaa painekeskusten, isobaarien ja saatavilla olevien rintamien asetukset. Isobaarit yhdistävät saman ilmanpaineen pisteet hPa-arvoina.",
+          "ECCC tuottaa painekeskukset, NOAA/GFS isobaarit ja NOAA/WPC tyypitetyt rintamat. Kolmiot ja puoliympyrät edellyttävät vahvistettua merkkipuolta. Muuten vinoneliöt ja pisteet ilmaisevat tyypin ilman liikesuuntaa. Kattavuus ja voimassaolo riippuvat tuotteesta."
+        ]
+      ],
+      "display": [
+        "Tasot ja peittävyys",
+        [
+          "Avaa Näyttö Eye- tai karttavalikosta. Valitse WeatherRouter-taso ja säädä sen peittävyyttä. Pitkä painallus sääkuvakkeesta avaa tyylit, selitteen ja tiedot."
+        ]
+      ],
+      "pro": [
+        "Toimintoluettelo",
+        [
+          "GewitterRadar PRO yhdistää GewitterRadarin toimivaan WeatherRouter-integraatioon samassa Home Assistantissa.",
+          "Asenna ja määritä WeatherRouter ja ota sen paikallinen tietorajapinta käyttöön. PRO-merkki näkyy, kun palvelu on valmis."
+        ],
+        [
+          "Tutka · DWD Saksassa, OPERA Euroopassa ja täydentävä NASA. Aineistoja voidaan valmistella rinnakkain ja näyttää vaiheittain.",
+          "Tuuli · Tuuliväkäset, nuolet, nopeusvärit ja mutkitteleva animaatio.",
+          "Lämpötila ja pilvet · Värikenttä, arvot, advektio ja satelliittitaso.",
+          "Synoptiikka · Painekeskukset, isobaarit ja saatavilla olevat rintamat.",
+          "Kattavuus ja tila · Riippuvat tuotteesta, alueesta ja mallista. Katso lähde, aika ja tila.",
+          "Eye, peittävyys, tallennetut asetukset, profiilit ja varmuuskopiot."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Säätasojen näyttö",
+      "intro": "Esitystavat muuttavat tason ulkoasua. WeatherRouter käyttää samoja tietoja ja lähteen valintaperusteita.",
+      "entries": [
+        {
+          "term": "Automaattinen",
+          "description": "Sovittaa tasoituksen zoomaukseen. Yleisnäkymässä pienetkin yksityiskohdat säilyvät. Lähennettäessä ruudut sulautuvat vähitellen yhteen."
+        },
+        {
+          "term": "Tarkka",
+          "description": "Säilyttää rasterirakenteen teknistä tarkastelua varten."
+        },
+        {
+          "term": "Tasapainoinen",
+          "description": "Pehmentää reunoja maltillisesti ja näyttää enemmän yksityiskohtia kuin Pehmeä."
+        },
+        {
+          "term": "Pehmeä",
+          "description": "Tasoittaa rasteria enemmän, jolloin kentästä tulee yhtenäisempi."
+        }
+      ]
+    }
+  },
+  "Čeština": {
+    "labels": {
+      "back": "Zpět na přehled témat",
+      "connected": "WeatherRouter je připojen",
+      "disconnected": "Volitelné rozšíření · WeatherRouter není připojen",
+      "what": "Co je WeatherRouter?",
+      "description": "Místní datová služba v Home Assistantu, která aplikaci GewitterRadar dodává meteorologické produkty od různých poskytovatelů.",
+      "how": "Jak získat GewitterRadar PRO?",
+      "features": "Přehled funkcí",
+      "standard": "Ovládání Eye, profily a zálohování jsou už součástí GewitterRadar Standard.",
+      "mapNote": "S připojeným {router} lze zobrazit vrstvy větru, teploty, srážek, oblačnosti a synoptické analýzy. Pokrytí a aktuálnost závisejí na zdroji."
+    },
+    "topics": {
+      "eye": [
+        "Nabídka Eye a ovládání ikon",
+        [
+          [
+            "eye",
+            "Klepnutím na Eye zobrazíte seskupené zkratky."
+          ],
+          "Podržením Eye otevřete nastavení polohy, seskupení, prstenců aury, barev a pozic ikon. Patří do GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Podržením ikony počasí, například srážek, otevřete její nastavení. Při připojeném WeatherRouteru krátké klepnutí přepne příslušnou vrstvu."
+          ],
+          [
+            "display",
+            "Ikonou zobrazení nastavíte krytí vrstvy. V nabídce Eye můžete také přidat a přiřadit pozice."
+          ],
+          "Vypněte seskupení, chcete-li vidět ikony samostatně. Klepnutím na Eye v tomto režimu otevřete nastavení.",
+          "Klepněte na volnou pozici nebo do ní přetáhněte dostupnou ikonu. Rozhraní podporuje až osm pozic.",
+          "Barevný prstenec označuje aktivní dostupnou funkci. Nastavení záře umožňuje animovanou auru, pevný prstenec nebo vypnutí efektů."
+        ]
+      ],
+      "wind": [
+        "Zobrazení větru",
+        [
+          "Klepnutím na ikonu větru přepnete vrstvu. Podržením nastavíte režim, barvy, animaci a legendu.",
+          "Větrné praporky udávají směr a rychlost. Šipky a animované proudnice ukazují pohyb vzduchu. Barvy odpovídají intervalům rychlosti.",
+          "Vlnivá animace používá větrné vektory. Stopy mohou být delší při vyšší rychlosti větru.",
+          "Legenda uvádí jednotku, zdroj a čas modelu. Hodnoty modelu se mohou lišit od místních měření."
+        ]
+      ],
+      "information": [
+        "Informace o počasí",
+        [
+          [
+            "Zdroj a stav dat",
+            [
+              "Otevřete vrstvy WeatherRouteru v nabídce mapy. Podrobnosti vrstvy uvádějí zdroj, čas dat nebo modelu, platnost a stav, pokud jsou k dispozici.",
+              "Čas pozorování, běh modelu a čas platnosti mají různý význam. Chybějící zdroj, pokrytí či platná data mohou vrstvu znepřístupnit. Prázdná mapa sama o počasí nevypovídá."
+            ]
+          ],
+          [
+            "Aktualizace po posunutí mapy",
+            [
+              "Interval určuje, kdy může GewitterRadar po posunutí mapy požádat WeatherRouter o nová data."
+            ],
+            [
+              [
+                "Interval aktualizace",
+                "Od 2 do 60 sekund. Výchozí hodnota je 15 sekund."
+              ],
+              [
+                "Nízké hodnoty",
+                "2–5 sekund znamená rychlou odezvu a více požadavků."
+              ],
+              [
+                "Výchozí hodnota",
+                "15 sekund vyvažuje odezvu a zatížení."
+              ],
+              [
+                "Vysoké hodnoty",
+                "30–60 sekund snižuje počet požadavků."
+              ],
+              [
+                "Filtr pohybu a ruční aktualizace",
+                "Krátký filtr pohybu funguje nezávisle na intervalu. Ruční aktualizace na jeho vypršení nečeká."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Srážky",
+        [
+          "Klepnutím přepnete radar. Podržením nastavíte zobrazení, barevnou stupnici a krytí. Při 0 % je vrstva průhledná a při 100 % plně kryje.",
+          "Barvy odpovídají intenzitě srážek. Přesný režim odděluje pásma. Vyvážený zjemňuje přechody.",
+          "WeatherRouter může připravit německý radar DWD a evropský OPERA souběžně. Zapnutá dostupná data NASA mohou doplnit oblasti bez radaru.",
+          "WeatherRouter ověřuje platnost a pokrytí a vybírá zdroj. Části mapy se mohou zobrazit postupně a novější či vhodnější data mohou nahradit předchozí. Zkontrolujte zdroj a stav zobrazených dat."
+        ]
+      ],
+      "temperature": [
+        "Teplota",
+        [
+          "Klepnutím přepnete vybraná zobrazení. Podržením nastavíte barevné pole, hodnoty, jednotky a teplotní advekci.",
+          "Barvy označují teplotní rozsahy. Zapněte hodnoty a vypočtené teploty se zobrazí na mapě jako čísla.",
+          "Teplotní advekce znázorňuje vodorovný přenos teplejšího či chladnějšího vzduchu větrem. Ukazuje plošné přesuny teplot a změny vzduchových hmot."
+        ]
+      ],
+      "clouds": [
+        "Oblačnost",
+        [
+          "Zlatě orámovaná ikona přepíná družicovou vrstvu. Podržením zvolíte Původní či Vyvážený režim nebo nastavíte krytí.",
+          "Zkontrolujte čas zdroje a pokrytí družicového produktu. Vrstvu oblačnosti lze přepínat nezávisle na větru a srážkách."
+        ]
+      ],
+      "synoptic": [
+        "Tlakové výše, níže, izobary a fronty",
+        [
+          "Klepnutím přepnete synoptické zobrazení. Podržením nastavíte centra tlaku, izobary a dostupné fronty. Izobary spojují místa se stejným tlakem v hPa.",
+          "ECCC dodává centra tlaku, NOAA/GFS izobary a NOAA/WPC klasifikované fronty. Trojúhelníky a půlkruhy vyžadují potvrzenou stranu značek. Jinak kosočtverce a tečky ukazují typ bez určení směru pohybu. Pokrytí a platnost závisejí na produktu."
+        ]
+      ],
+      "display": [
+        "Vrstvy a krytí",
+        [
+          "Otevřete Zobrazení z Eye nebo z nabídky mapy. Vyberte vrstvu WeatherRouteru a nastavte krytí. Podržením ikony počasí zobrazíte styly, legendu a podrobnosti."
+        ]
+      ],
+      "pro": [
+        "Přehled funkcí",
+        [
+          "GewitterRadar PRO propojuje aplikaci s funkční integrací WeatherRouter ve stejném Home Assistantu.",
+          "Nainstalujte a nastavte WeatherRouter a zapněte jeho místní datové rozhraní. Označení PRO se objeví, až bude služba připravena."
+        ],
+        [
+          "Radar · DWD pro Německo, OPERA pro Evropu a doplňková data NASA. Zdroje lze připravovat souběžně a ukazovat po částech.",
+          "Vítr · Praporky, šipky, rychlostní barvy a vlnivá animace.",
+          "Teplota a oblačnost · Barevné pole, čísla, advekce a družicová vrstva.",
+          "Synoptika · Centra tlaku, izobary a dostupné fronty.",
+          "Pokrytí a stav · Závisejí na produktu, oblasti a modelu. Podívejte se na zdroj, čas a stav.",
+          "Eye, krytí, uložená nastavení, profily a zálohy."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Zobrazení počasí",
+      "intro": "Profily mění vzhled vrstvy. WeatherRouter zachovává data a způsob výběru zdroje.",
+      "entries": [
+        {
+          "term": "Automaticky",
+          "description": "Přizpůsobuje vyhlazení přiblížení. V přehledu zachová detaily, při přiblížení postupně spojuje buňky rastru."
+        },
+        {
+          "term": "Přesný",
+          "description": "Zachovává strukturu rastru pro technické posouzení."
+        },
+        {
+          "term": "Vyvážený",
+          "description": "Zmírňuje ostré hrany a zachovává více detailů než Měkký."
+        },
+        {
+          "term": "Měkký",
+          "description": "Výrazněji vyhlazuje buňky do souvislé plochy."
+        }
+      ]
+    }
+  },
+  "Ελληνικά": {
+    "labels": {
+      "back": "Επιστροφή στα θέματα",
+      "connected": "Το WeatherRouter είναι συνδεδεμένο",
+      "disconnected": "Προαιρετική επέκταση · Το WeatherRouter δεν είναι συνδεδεμένο",
+      "what": "Τι είναι το WeatherRouter;",
+      "description": "Μια τοπική υπηρεσία δεδομένων στο Home Assistant που τροφοδοτεί το GewitterRadar με μετεωρολογικά προϊόντα διαφόρων παρόχων.",
+      "how": "Πώς αποκτώ το GewitterRadar PRO;",
+      "features": "Επισκόπηση λειτουργιών",
+      "standard": "Τα χειριστήρια Eye, τα προφίλ και τα αντίγραφα ασφαλείας είναι ήδη διαθέσιμα στο GewitterRadar Standard.",
+      "mapNote": "Με συνδεδεμένο το {router}, μπορείτε να εμφανίσετε επίπεδα ανέμου, θερμοκρασίας, υετού, νέφωσης και συνοπτικής ανάλυσης. Η κάλυψη και η επικαιρότητα εξαρτώνται από την πηγή."
+    },
+    "topics": {
+      "eye": [
+        "Μενού Eye και χειρισμός εικονιδίων",
+        [
+          [
+            "eye",
+            "Πατήστε το Eye για να εμφανιστούν οι ομαδοποιημένες συντομεύσεις."
+          ],
+          "Πατήστε παρατεταμένα το Eye για ρυθμίσεις θέσης, ομαδοποίησης, δακτυλίων αύρας, χρωμάτων και θέσεων εικονιδίων. Τα χειριστήρια ανήκουν στο GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Κρατήστε πατημένο ένα εικονίδιο καιρού, όπως του υετού, για τις ρυθμίσεις του. Με συνδεδεμένο WeatherRouter, ένα σύντομο πάτημα ενεργοποιεί ή απενεργοποιεί το αντίστοιχο επίπεδο."
+          ],
+          [
+            "display",
+            "Το εικονίδιο εμφάνισης ρυθμίζει την αδιαφάνεια κάθε επιπέδου. Στο μενού Eye μπορείτε επίσης να προσθέσετε και να εκχωρήσετε θέσεις."
+          ],
+          "Απενεργοποιήστε την ομαδοποίηση για ξεχωριστά εικονίδια. Τότε ένα πάτημα στο Eye ανοίγει τις ρυθμίσεις.",
+          "Πατήστε μια κενή θέση ή σύρετε σε αυτήν ένα διαθέσιμο εικονίδιο. Υποστηρίζονται έως οκτώ θέσεις.",
+          "Ο χρωματιστός δακτύλιος δείχνει διαθέσιμη ενεργή λειτουργία. Στις ρυθμίσεις λάμψης επιλέξτε κινούμενη αύρα, σταθερό δακτύλιο ή απενεργοποίηση των εφέ."
+        ]
+      ],
+      "wind": [
+        "Εμφάνιση ανέμου",
+        [
+          "Πατήστε το εικονίδιο ανέμου για εναλλαγή του επιπέδου. Κρατήστε το πατημένο για τύπους εμφάνισης, χρώματα, κίνηση και υπόμνημα.",
+          "Τα ανεμόσημα δείχνουν κατεύθυνση και ταχύτητα. Τα βέλη και οι κινούμενες γραμμές δείχνουν την κίνηση του αέρα. Τα χρώματα αντιστοιχούν σε διαστήματα ταχύτητας.",
+          "Η ελικοειδής κίνηση χρησιμοποιεί διανύσματα ανέμου. Τα ίχνη μπορεί να μακραίνουν με την αύξηση της ταχύτητας.",
+          "Το υπόμνημα δείχνει μονάδα, πηγή και ώρα μοντέλου. Οι τιμές του μοντέλου ενδέχεται να διαφέρουν από τοπικές μετρήσεις."
+        ]
+      ],
+      "information": [
+        "Μετεωρολογικές πληροφορίες",
+        [
+          [
+            "Πηγή και κατάσταση δεδομένων",
+            [
+              "Ανοίξτε τα επίπεδα WeatherRouter από το μενού χάρτη. Οι λεπτομέρειες δείχνουν πηγή, ώρα δεδομένων ή μοντέλου, ισχύ και κατάσταση, όταν είναι διαθέσιμες.",
+              "Η ώρα παρατήρησης, η εκτέλεση του μοντέλου και η ώρα ισχύος έχουν διαφορετική σημασία. Η έλλειψη πηγής, κάλυψης ή έγκυρων δεδομένων μπορεί να καταστήσει ένα επίπεδο μη διαθέσιμο. Ένας άδειος χάρτης δεν αρκεί για συμπέρασμα για τον καιρό."
+            ]
+          ],
+          [
+            "Ενημέρωση μετά τη μετακίνηση του χάρτη",
+            [
+              "Το διάστημα καθορίζει πόσο σύντομα μπορεί το GewitterRadar να ζητήσει νέα δεδομένα από το WeatherRouter μετά τη μετακίνηση του χάρτη."
+            ],
+            [
+              [
+                "Διάστημα ενημέρωσης",
+                "Ρυθμίζεται από 2 έως 60 δευτερόλεπτα. Η προεπιλογή είναι 15 δευτερόλεπτα."
+              ],
+              [
+                "Μικρές τιμές",
+                "Τα 2–5 δευτερόλεπτα δίνουν γρήγορη απόκριση και περισσότερα αιτήματα."
+              ],
+              [
+                "Προεπιλογή",
+                "Τα 15 δευτερόλεπτα εξισορροπούν ταχύτητα και φόρτο."
+              ],
+              [
+                "Μεγάλες τιμές",
+                "Τα 30–60 δευτερόλεπτα περιορίζουν τα αιτήματα."
+              ],
+              [
+                "Φίλτρο κίνησης και χειροκίνητη ενημέρωση",
+                "Το σύντομο φίλτρο κίνησης λειτουργεί ανεξάρτητα. Η χειροκίνητη ενημέρωση δεν περιμένει να λήξει το διάστημα."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Υετός",
+        [
+          "Πατήστε για εναλλαγή του ραντάρ. Κρατήστε πατημένο το εικονίδιο για εμφάνιση, κλίμακα χρωμάτων και αδιαφάνεια. Στο 0% το επίπεδο είναι διαφανές, στο 100% αδιαφανές.",
+          "Τα χρώματα δείχνουν ένταση του υετού. Η Ακριβής εμφάνιση ξεχωρίζει τις εντάσεις. Η Ισορροπημένη δίνει ομαλότερες μεταβάσεις.",
+          "Το WeatherRouter μπορεί να προετοιμάσει παράλληλα τα ραντάρ DWD της Γερμανίας και OPERA της Ευρώπης. Τα διαθέσιμα και ενεργοποιημένα δεδομένα NASA μπορούν να συμπληρώσουν περιοχές εκτός κάλυψης.",
+          "Το WeatherRouter ελέγχει ισχύ και κάλυψη και επιλέγει πηγή. Τα τμήματα του χάρτη εμφανίζονται σταδιακά. Νεότερα ή καταλληλότερα δεδομένα μπορούν να αντικαταστήσουν τα παλαιότερα. Ελέγξτε την πηγή και την κατάσταση."
+        ]
+      ],
+      "temperature": [
+        "Θερμοκρασία",
+        [
+          "Πατήστε για εναλλαγή των επιλεγμένων προβολών. Κρατήστε πατημένο το εικονίδιο για ρυθμίσεις χρωματικού πεδίου, τιμών, μονάδων και θερμικής μεταφοράς.",
+          "Τα χρώματα διακρίνουν περιοχές θερμοκρασίας. Η επιλογή τιμών προσθέτει στον χάρτη τις υπολογισμένες θερμοκρασίες.",
+          "Η θερμική μεταφορά δείχνει την οριζόντια μετακίνηση θερμότερου ή ψυχρότερου αέρα από τον άνεμο. Βοηθά να εντοπιστούν μεγάλες μετατοπίσεις θερμοκρασίας και αλλαγές αερίων μαζών."
+        ]
+      ],
+      "clouds": [
+        "Νέφωση",
+        [
+          "Το εικονίδιο με χρυσό περίγραμμα εναλλάσσει το δορυφορικό επίπεδο WeatherRouter. Κρατήστε το πατημένο για Αρχική ή Ισορροπημένη εμφάνιση και αδιαφάνεια.",
+          "Ελέγξτε την ώρα της πηγής και την κάλυψη του δορυφορικού προϊόντος. Η νέφωση ελέγχεται χωριστά από τον άνεμο και τον υετό."
+        ]
+      ],
+      "synoptic": [
+        "Υψηλές και χαμηλές πιέσεις, ισοβαρείς και μέτωπα",
+        [
+          "Πατήστε για εναλλαγή της συνοπτικής προβολής. Κρατήστε πατημένο το εικονίδιο για κέντρα πίεσης, ισοβαρείς και διαθέσιμα μέτωπα. Οι ισοβαρείς ενώνουν σημεία ίσης πίεσης σε hPa.",
+          "Το ECCC παρέχει κέντρα πίεσης, το NOAA/GFS ισοβαρείς και το NOAA/WPC μέτωπα με γνωστό τύπο. Τρίγωνα και ημικύκλια απαιτούν επιβεβαιωμένη πλευρά συμβόλων. Διαφορετικά, ρόμβοι και τελείες δείχνουν τον τύπο χωρίς κατεύθυνση κίνησης. Η κάλυψη και η ισχύς εξαρτώνται από το προϊόν."
+        ]
+      ],
+      "display": [
+        "Επίπεδα και αδιαφάνεια",
+        [
+          "Ανοίξτε την Εμφάνιση από το Eye ή το μενού χάρτη. Επιλέξτε επίπεδο WeatherRouter και ρυθμίστε την αδιαφάνειά του. Πατήστε παρατεταμένα το εικονίδιο καιρού για στυλ, υπόμνημα και λεπτομέρειες."
+        ]
+      ],
+      "pro": [
+        "Κατάλογος λειτουργιών",
+        [
+          "Το GewitterRadar PRO συνδέεται με μια λειτουργική ενσωμάτωση WeatherRouter στο ίδιο Home Assistant.",
+          "Εγκαταστήστε και ρυθμίστε το WeatherRouter και ενεργοποιήστε την τοπική διεπαφή δεδομένων. Το σήμα PRO εμφανίζεται όταν η υπηρεσία είναι έτοιμη."
+        ],
+        [
+          "Ραντάρ · DWD για Γερμανία, OPERA για Ευρώπη και NASA συμπληρωματικά. Οι πηγές μπορούν να προετοιμάζονται παράλληλα και να εμφανίζονται σταδιακά.",
+          "Άνεμος · Ανεμόσημα, βέλη, χρωματισμός ταχύτητας και ελικοειδής κινούμενη ροή.",
+          "Θερμοκρασία και νέφωση · Χρωματικό πεδίο, τιμές, θερμική μεταφορά και δορυφορικό επίπεδο.",
+          "Συνοπτική ανάλυση · Κέντρα πίεσης, ισοβαρείς και διαθέσιμα μέτωπα.",
+          "Κάλυψη και κατάσταση · Εξαρτώνται από προϊόν, περιοχή και μοντέλο. Δείτε πηγή, ώρα και κατάσταση.",
+          "Eye, αδιαφάνεια, αποθηκευμένες ρυθμίσεις, προφίλ και αντίγραφα ασφαλείας."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Εμφάνιση καιρού",
+      "intro": "Τα προφίλ αλλάζουν την όψη του επιπέδου. Το WeatherRouter διατηρεί τα δεδομένα και τα κριτήρια επιλογής πηγής.",
+      "entries": [
+        {
+          "term": "Αυτόματη",
+          "description": "Προσαρμόζει την εξομάλυνση στην κλίμακα. Κρατά λεπτομέρειες στην επισκόπηση και ενώνει σταδιακά τα κελιά με τη μεγέθυνση."
+        },
+        {
+          "term": "Ακριβής",
+          "description": "Διατηρεί τη δομή του πλέγματος για τεχνική εξέταση."
+        },
+        {
+          "term": "Ισορροπημένη",
+          "description": "Μαλακώνει τις ακμές και διατηρεί περισσότερες λεπτομέρειες από την Απαλή."
+        },
+        {
+          "term": "Απαλή",
+          "description": "Εφαρμόζει ισχυρότερη εξομάλυνση για πιο ενιαία απεικόνιση."
+        }
+      ]
+    }
+  },
+  "Magyar": {
+    "labels": {
+      "back": "Vissza a témákhoz",
+      "connected": "A WeatherRouter csatlakoztatva van",
+      "disconnected": "Választható bővítmény · A WeatherRouter nincs csatlakoztatva",
+      "what": "Mi a WeatherRouter?",
+      "description": "Helyi adatfolyam a Home Assistantban, amely különböző szolgáltatók időjárási termékeit adja át a GewitterRadarnak.",
+      "how": "Hogyan érhető el a GewitterRadar PRO?",
+      "features": "Funkciók áttekintése",
+      "standard": "Az Eye kezelése, a profilok és a biztonsági mentések már a GewitterRadar Standardban is elérhetők.",
+      "mapNote": "Csatlakoztatott {router} mellett szél-, hőmérséklet-, csapadék-, felhőzet- és szinoptikus rétegek jeleníthetők meg. A lefedettség és a frissesség az adatforrástól függ."
+    },
+    "topics": {
+      "eye": [
+        "Eye menü és az ikonok kezelése",
+        [
+          [
+            "eye",
+            "Az Eye ikonra koppintva megjelennek a csoportosított parancsikonok."
+          ],
+          "Tartsa lenyomva az Eye ikont a helyzet, a csoportosítás, az auragyűrűk, a színek és az ikonhelyek beállításához. Ez a GewitterRadar Standard része.",
+          [
+            "precipitation",
+            "Tartson lenyomva egy időjárási ikont, például a csapadékét, a beállításaihoz. Ha a WeatherRouter csatlakozik, rövid koppintással kapcsolható az adott réteg."
+          ],
+          [
+            "display",
+            "A megjelenítés ikon az egyes rétegek fedettségét állítja. Az Eye menüben új helyeket is hozzáadhat, és ikonokat rendelhet hozzájuk."
+          ],
+          "Kapcsolja ki a csoportosítást az ikonok külön megjelenítéséhez. Ekkor az Eye megérintése megnyitja a beállításokat.",
+          "Koppintson egy szabad helyre, vagy húzzon oda egy elérhető ikont. Legfeljebb nyolc hely használható.",
+          "A színes gyűrű aktív, elérhető funkciót jelez. A fényudvar beállításaiban animált aura, rögzített gyűrű vagy kikapcsolt effektus választható."
+        ]
+      ],
+      "wind": [
+        "Szél megjelenítése",
+        [
+          "A szél ikonra koppintva kapcsolható a réteg. Hosszú nyomással a nézetek, a színek, az animáció és a jelmagyarázat állítható.",
+          "A szélzászlók irányt és sebességet jeleznek. A nyilak és a mozgó vonalak a légáramlást mutatják. A színek különböző sebességtartományokat jelölnek.",
+          "A kígyózó animáció szélvektorokon alapul. A nyomvonalak nagyobb sebességnél hosszabbak lehetnek.",
+          "A jelmagyarázat megadja a mértékegységet, a forrást és a modell idejét. A modellértékek eltérhetnek a helyi mérésektől."
+        ]
+      ],
+      "information": [
+        "Időjárási információk",
+        [
+          [
+            "Adatforrás és állapot",
+            [
+              "Nyissa meg a WeatherRouter-rétegeket a térképmenüből. A réteg részletei megmutatják a forrást, az adat vagy modell idejét, az érvényességet és az állapotot, ha rendelkezésre állnak.",
+              "A megfigyelési idő, a modellfutás és az érvényességi idő különböző. A réteg hiányzó forrás, lefedettség vagy érvényes termék miatt lehet elérhetetlen. Egy üres térkép önmagában nem írja le az időjárást."
+            ]
+          ],
+          [
+            "Frissítés a térkép mozgatása után",
+            [
+              "Az intervallum határozza meg, mikor kérhet a GewitterRadar új adatokat a WeatherRoutertől a térkép mozgatása után."
+            ],
+            [
+              [
+                "Frissítési időköz",
+                "2 és 60 másodperc között állítható. Alapértéke 15 másodperc."
+              ],
+              [
+                "Kis értékek",
+                "2–5 másodpercnél gyors a válasz és több a kérés."
+              ],
+              [
+                "Alapérték",
+                "15 másodperc egyensúlyt teremt a gyorsaság és a terhelés között."
+              ],
+              [
+                "Nagy értékek",
+                "30–60 másodpercnél kevesebb kérés indul."
+              ],
+              [
+                "Mozgásszűrő és kézi frissítés",
+                "A rövid mozgásszűrő ettől függetlenül aktív. A kézi frissítés nem várja meg az időköz végét."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Csapadék",
+        [
+          "Koppintson a radar kapcsolásához. Tartsa lenyomva az ikont a nézet, a színskála és a fedettség beállításához. 0%-nál a réteg átlátszó, 100%-nál teljesen fed.",
+          "A színek a csapadék intenzitását mutatják. A Pontos elkülöníti a sávokat. A Kiegyensúlyozott lágyabb átmeneteket ad.",
+          "A WeatherRouter párhuzamosan készítheti elő a német DWD és az európai OPERA radar adatait. A rendelkezésre álló és engedélyezett NASA-adatok kiegészíthetik a radar által nem fedett területeket.",
+          "A WeatherRouter ellenőrzi az érvényességet és a lefedettséget, és forrást választ. A területek fokozatosan jelenhetnek meg. Az újabb vagy megfelelőbb adatok lecserélhetik a korábbiakat. Ellenőrizze a forrást és az állapotot."
+        ]
+      ],
+      "temperature": [
+        "Hőmérséklet",
+        [
+          "Koppintson a kiválasztott nézetek kapcsolásához. Hosszú nyomással állítható a színmező, az értékek, a mértékegység és a hőadvekció.",
+          "A színek hőmérséklet-tartományokat jelölnek. Az értékek bekapcsolásával a számított hőmérsékletek számként láthatók a térképen.",
+          "A hőadvekció azt mutatja, hogyan szállít a szél melegebb vagy hidegebb levegőt vízszintesen. Segít felismerni a nagy térségű hőmérséklet-eltolódást és a légtömegek változását."
+        ]
+      ],
+      "clouds": [
+        "Felhőzet",
+        [
+          "Az aranyszegélyű ikon kapcsolja a műholdas felhőréteget. Hosszan nyomva az Eredeti vagy Kiegyensúlyozott megjelenítést és a fedettséget állíthatja.",
+          "Nézze meg az adat idejét és a termék lefedettségét. A felhőréteg a széltől és a csapadéktól függetlenül kapcsolható."
+        ]
+      ],
+      "synoptic": [
+        "Magas és alacsony nyomás, izobárok és frontok",
+        [
+          "Koppintson a szinoptikus nézet kapcsolásához. Hosszan nyomva állíthatók a nyomási központok, izobárok és elérhető frontok. Az izobárok azonos légnyomású pontokat kötnek össze hPa-ban.",
+          "Az ECCC adja a nyomási központokat, a NOAA/GFS az izobárokat, a NOAA/WPC a típus szerint kódolt frontokat. Háromszög és félkör akkor jelenik meg, ha a jel oldala igazolt. Egyébként rombusz és pont jelzi a típust menetirány nélkül. A lefedettség és érvényesség termékfüggő."
+        ]
+      ],
+      "display": [
+        "Rétegek és fedettség",
+        [
+          "Nyissa meg a Megjelenítést az Eye vagy a térkép menüjében. Válasszon WeatherRouter-réteget, és állítsa a fedettségét. Hosszan nyomva az időjárási ikon stílusokat, jelmagyarázatot és részleteket nyit meg."
+        ]
+      ],
+      "pro": [
+        "Funkciólista",
+        [
+          "A GewitterRadar PRO az ugyanabban a Home Assistantban futó, működő WeatherRouter-integrációhoz csatlakoztatja a GewitterRadart.",
+          "Telepítse és állítsa be a WeatherRoutert, majd engedélyezze a helyi adatinterfészt. A PRO-jelzés akkor jelenik meg, amikor a szolgáltatás üzemkész."
+        ],
+        [
+          "Radar · DWD Németországban, OPERA Európában és kiegészítő NASA. A források párhuzamosan előkészíthetők és szakaszosan megjeleníthetők.",
+          "Szél · Szélzászlók, nyilak, sebességszínek és kígyózó animáció.",
+          "Hőmérséklet és felhőzet · Színmező, értékek, hőadvekció és műholdas réteg.",
+          "Szinoptika · Nyomási központok, izobárok és elérhető frontok.",
+          "Lefedettség és állapot · A terméktől, térségtől és modelltől függ. Nézze meg a forrást, az időt és az állapotot.",
+          "Eye, fedettség, mentett beállítások, profilok és biztonsági mentések."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Időjárás megjelenítése",
+      "intro": "A profilok a réteg megjelenését módosítják. A WeatherRouter megőrzi az adatokat és a forrásválasztás szempontjait.",
+      "entries": [
+        {
+          "term": "Automatikus",
+          "description": "A nagyításhoz igazítja a simítást. Távoli nézetben megtartja a részleteket, közelítve fokozatosan összemossa a cellákat."
+        },
+        {
+          "term": "Pontos",
+          "description": "Megőrzi a rácsszerkezetet a műszaki vizsgálathoz."
+        },
+        {
+          "term": "Kiegyensúlyozott",
+          "description": "Mérsékelten simít, és több részletet őriz meg, mint a Lágy."
+        },
+        {
+          "term": "Lágy",
+          "description": "Erősebben simít az összefüggőbb megjelenítésért."
+        }
+      ]
+    }
+  },
+  "Boarisch": {
+    "labels": {
+      "back": "Zruck zur Übersicht",
+      "connected": "WeatherRouter is verbunden",
+      "disconnected": "Freiwillige Erweiterung · WeatherRouter is grad ned verbunden",
+      "what": "Wos is WeatherRouter?",
+      "description": "A lokaler Datendienst in Home Assistant, der GewitterRadar Wetterprodukte von verschiedene Anbieter liefert.",
+      "how": "Wia kriag i GewitterRadar PRO?",
+      "features": "Funktionen auf oan Blick",
+      "standard": "Eye, Profile und Sicherungen san scho bei GewitterRadar Standard dabei.",
+      "mapNote": "Mit {router} kannst Wetterebenen für Wind, Temperatur, Niederschlag, Wolken und Synoptik anzeign. Abdeckung und Aktualität hängen von der Datenquelle ab."
+    },
+    "topics": {
+      "eye": [
+        "Eye Hub und Wetter-Icons",
+        [
+          [
+            "eye",
+            "Tipp aufs Eye, dann siegst de gruppierten Schnellschalter."
+          ],
+          "Halt s Eye länger druckt, dann kannst Position, Gruppierung, Aura-Ringe, Farben und Slots einstellen. Des ghört zu GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Halt a Wettersymbol länger druckt, etwa des fürs Radar, dann gehn seine Einstellungen auf. Mit WeatherRouter schaltest de zugehörige Ebene per kurzem Tipp ein und aus."
+          ],
+          [
+            "display",
+            "Über des Darstellungs-Icon stellst d Deckkraft für jede Ebene ei. In Eye Control kannst außerdem neue Slots dazua doa und belegen."
+          ],
+          "Schalt d Gruppierung aus, dann stehn de Icons einzeln do. A Tipp aufs Eye macht in dem Modus d Einstellungen auf.",
+          "Tipp auf an freien Slot oder ziag a verfügbares Symbol hinein. Bis zu acht Slots san möglich.",
+          "A farbiger Ring zoagt a aktive, verfügbare Funktion. Bei de Glow-Einstellungen kannst animierte Aura, feste Ringe oder gar koane Effekte wählen."
+        ]
+      ],
+      "wind": [
+        "Winddarstellung",
+        [
+          "Tipp aufs Wind-Icon zum Ein- und Ausschalten. Länger druckt halten öffnet Modi, Farben, Animation und Legende.",
+          "Windfahnen zoagn Richtung und Stärke. Pfeile und bewegte Linien zoagn, wia d Luft strömt. D Farbflächen stehn für unterschiedliche Windgeschwindigkeiten.",
+          "De schlängelnde Animation nutzt Windvektoren. Bei stärkerem Wind kenna d Spuren länger werdn.",
+          "D Legende nennt Einheit, Quelle und Modellzeit. De Modellwerte kenna von de örtlichen Messungen abweichen."
+        ]
+      ],
+      "information": [
+        "Wetterinformationen",
+        [
+          [
+            "Datenquelle und Status",
+            [
+              "Mach im Kartenmenü d WeatherRouter-Ebenen auf. Bei da jeweiligen Ebene siegst, soweit vorhanden, Quelle, Daten- oder Modellzeit, Gültigkeit und Status.",
+              "Beobachtungszeit, Modelllauf und Gültigkeitszeit san drei verschiedene Sachn. Fehlt a Quelle, d Abdeckung oder a gültiger Datensatz, is d Ebene eventuell ned verfügbar. A leere Karte allein sagt nix übers Wetter."
+            ]
+          ],
+          [
+            "Nachm Kartenverschiebn aktualisieren",
+            [
+              "Des Intervall bestimmt, wia bald GewitterRadar nachm Verschiebn neue Daten von WeatherRouter anfordern darf."
+            ],
+            [
+              [
+                "Aktualisierungsintervall",
+                "Von 2 bis 60 Sekunden einstellbar. Standard san 15 Sekunden."
+              ],
+              [
+                "Kloane Werte",
+                "2–5 Sekunden reagieren gschwind und erzeugen mehr Anfragen."
+              ],
+              [
+                "Standard",
+                "15 Sekunden san der Mittelweg zwischen Reaktionszeit und Anfragelast."
+              ],
+              [
+                "Große Werte",
+                "30–60 Sekunden sorgen für weniger Anfragen."
+              ],
+              [
+                "Bewegungsfilter und manuell aktualisieren",
+                "Da kurze Bewegungsfilter bleibt unabhängig aktiv. Wennst manuell aktualisierst, brauchst auf des Intervall ned warten."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Niederschlag",
+        [
+          "Tipp aufs Symbol zum Umschalten vom Radar. Länger druckt halten öffnet Darstellung, Farbskala und Deckkraft. Bei 0 % is d Ebene durchsichtig, bei 100 % deckend.",
+          "D Farben zoagn de Niederschlagsstärke. Präzise trennt de Intensitätsbereiche deutlich. Ausgewogen macht d Übergänge weicher.",
+          "WeatherRouter kann DWD für Deutschland und OPERA für Europa parallel vorbereiten. Verfügbare, aktivierte NASA-Daten kenna Lücken außerhalb vom Radar ergänzen.",
+          "WeatherRouter prüft Deckung und Gültigkeit und sucht d Quelle aus. Kartenteile kenna nach und nach kommen. Neuere oder passendere Daten kenna frühere ersetzen. Schau auf Quelle und Status."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Tipp aufs Icon, um de gewählten Ansichten zu schalten. Halt s länger druckt für Farbfläche, Temperaturwerte, Einheit und thermische Advektion.",
+          "D Farbfläche zoagt Temperaturbereiche. Aktivier d Temperaturwerte, dann siegst d berechneten Zahlen auf da Karte.",
+          "Thermische Advektion zoagt, wia da Wind wärmere oder kältere Luft waagrecht mitnimmt. Damit erkennst großräumige Temperaturverschiebungen und Änderungen der Luftmassen."
+        ]
+      ],
+      "clouds": [
+        "Wolken",
+        [
+          "Des goldene Icon schaltet de Satellitenwolken. Halt s länger druckt für Original, Ausgewogen und Deckkraft.",
+          "Schau auf Datenzeit und Abdeckung. De Wolken kannst unabhängig von Wind und Niederschlag schalten."
+        ]
+      ],
+      "synoptic": [
+        "Hochs, Tiefs, Isobaren und Fronten",
+        [
+          "Tipp zum Umschalten da Synoptik. Länger druckt halten öffnet Einstellungen für Druckzentren, Isobaren und verfügbare Fronten. Isobaren verbinden gleichen Luftdruck in hPa.",
+          "ECCC liefert Druckzentren, NOAA/GFS Isobaren und NOAA/WPC Fronten nach Typ. Dreiecke und Halbkreise brauchen a belegte Symbolseite. Sonst zoagn Rauten und Punkte den Typ ohne Zugrichtung. Abdeckung und Gültigkeit hängen vom Produkt ab."
+        ]
+      ],
+      "display": [
+        "Ebenen und Deckkraft",
+        [
+          "Mach Darstellung im Eye oder im Kartenmenü auf. Wähl a WeatherRouter-Ebene und stell d Deckkraft ei. Bei längerem Druck aufs Wettersymbol kriagst Stil, Legende und Details."
+        ]
+      ],
+      "pro": [
+        "Funktionsübersicht",
+        [
+          "GewitterRadar PRO verbindet GewitterRadar mit an betriebsbereiten WeatherRouter im selben Home Assistant.",
+          "Installier und konfigurier WeatherRouter und aktivier sei lokale Schnittstelle. S PRO-Zeichen kimmt, sobald da Dienst bereit is."
+        ],
+        [
+          "Radar · DWD für Deutschland, OPERA für Europa und NASA als Ergänzung. Quellen kenna parallel vorbereitet und nach und nach angezeigt werdn.",
+          "Wind · Fahnen, Pfeile, Geschwindigkeitsfarben und schlängelnde Animation.",
+          "Temperatur und Wolken · Farbfläche, Werte, Advektion und Satellitenebene.",
+          "Synoptik · Druckzentren, Isobaren und verfügbare Fronten.",
+          "Abdeckung und Status · Je nach Produkt, Gegend und Modell. Schau auf Quelle, Datenzeit und Status.",
+          "Eye, Deckkraft, gspeicherte Einstellungen, Profile und Sicherungen."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Wetterdarstellung",
+      "intro": "De Profile ändern, wia d Wetterebene ausschaut. WeatherRouter behält de Daten und sei Quellenauswahl.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Passt d Glättung an den Zoom an. In der Übersicht bleibn Details sichtbar. Beim Heranzoomen verlaufen d Zellen allmählich ineinander."
+        },
+        {
+          "term": "Präzise",
+          "description": "Lasst d Rasterstruktur für d technische Ansicht weitgehend so, wia s is."
+        },
+        {
+          "term": "Ausgewogen",
+          "description": "Glättet Kanten mäßig und behält mehr Struktur als Weich."
+        },
+        {
+          "term": "Weich",
+          "description": "Glättet stärker für a zusammenhängende Farbfläche."
+        }
+      ]
+    }
+  },
+  "Plattdüütsch": {
+    "labels": {
+      "back": "Torüch na de Themen",
+      "connected": "WeatherRouter is tokoppelt",
+      "disconnected": "Toordnen op Wunsch · WeatherRouter is nich tokoppelt",
+      "what": "Wat is WeatherRouter?",
+      "description": "En lokale Datendeenst in Home Assistant, de GewitterRadar Wedderprodukten vun verscheden Anbeders gifft.",
+      "how": "Wo krieg ik GewitterRadar PRO?",
+      "features": "Funkschonen in’n Överblick",
+      "standard": "Eye, Profilen un Sekerheitskopien sünd al in GewitterRadar Standard dorbi.",
+      "mapNote": "Mit {router} kannst du Lagen för Wind, Temperatur, Nedderfall, Wulken un Synoptik wiesen. Afdeckung un Aktualität hangt vun de Datenborn af."
+    },
+    "topics": {
+      "eye": [
+        "Eye Hub un Wetter-Icons bedenen",
+        [
+          [
+            "eye",
+            "Tipp op Eye, denn sühst du de tosamenfateten Kortwahlen."
+          ],
+          "Holl Eye länger drückt, wenn du Steed, Gruppéren, Aura-Ringen, Farven un Plätz instellen wullt. Dat höört to GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Holl en Weddersymbol drückt, to’n Bispeel Nedderfall, denn gaht de Instellen op. Mit WeatherRouter tokoppelt schalt en kort Tipp de Lage an oder ut."
+          ],
+          [
+            "display",
+            "Mit dat Wies-Symbol stellst du de Deckkraft vun elke Lage in. In Eye Control kannst du ok Plätz dortodoen un beleggen."
+          ],
+          "Maak dat Gruppéren ut, wenn du de Symbole enkel sehn wullt. Denn maakt en Tipp op Eye de Instellen op.",
+          "Tipp op en free Platz oder treck en Symbol dor rin. Acht Plätz sünd mööglich.",
+          "En farvigen Ring wiest, dat en verfügbore Funkschoon aktiv is. Bi den Glööd kannst du en bewegte Aura, en fasten Ring oder keen Effekten wählen."
+        ]
+      ],
+      "wind": [
+        "Wind wiesen",
+        [
+          "Tipp op dat Wind-Symbol, üm de Lage an oder uttoschalten. Länger drückt hollen maakt Wiesmodi, Farven, Animatschoon un Legenn op.",
+          "Windfahnen wiesen Richt un Gauigkeit. Pielen un bewegte Strööm wiesen, wo de Luft treckt. De Farven stahn för Gauigkeitsberieken.",
+          "De slingernde Animatschoon bruukt Windvektoren. Bi höger Windgauigkeit köönt de Sporen länger warrn.",
+          "De Legenn wiest Eenheit, Born un Modell-Tiet. Modellweerten köönt anners ween as de Meten vör Oort."
+        ]
+      ],
+      "information": [
+        "Wedderinformatschonen",
+        [
+          [
+            "Datenborn un Status",
+            [
+              "Maak de WeatherRouter-Lagen in’t Koortenmenü op. De Details wiesen Born, Daten- oder Modell-Tiet, Gülligkeit un Status, wenn dat lieferbor is.",
+              "Beobachtenstiet, Modellloop un Gülligkeitstiet sünd verscheden. De Lage kann nich dor ween, wenn Born, Afdeckung oder güllige Daten fehlt. En leddige Koort seggt för sik alleen nix över’t Wedder."
+            ]
+          ],
+          [
+            "Aktualiséren na’t Schuven vun de Koort",
+            [
+              "Dat Intervall seggt, wo bald GewitterRadar na’t Schuven niege Daten bi WeatherRouter anfragen kann."
+            ],
+            [
+              [
+                "Aktualiséren-Intervall",
+                "Vun 2 bet 60 Sekunnen instellbor. Standard sünd 15 Sekunnen."
+              ],
+              [
+                "Lütte Weerten",
+                "2–5 Sekunnen reageert gau un maakt mehr Anfragen."
+              ],
+              [
+                "Standard",
+                "15 Sekunnen sünd en Middelweg twüschen Tempo un Anfragenlast."
+              ],
+              [
+                "Grote Weerten",
+                "30–60 Sekunnen brengt weniger Anfragen."
+              ],
+              [
+                "Bewegensfilter un vun Hand aktualiséren",
+                "De korte Bewegensfilter blifft för sik an. En Aktualiséren vun Hand bruukt dat Intervall nich aftöven."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Nedderfall",
+        [
+          "Tipp op dat Symbol, üm Radar an oder uttoschalten. Länger drückt hollen maakt Wies, Farvskala un Deckkraft op. 0 % is dörsichtig, 100 % is vull deckt.",
+          "De Farven wiesen de Stärk vun’n Nedderfall. Nau trennt de Intensitäten düütlich. Utglieken maakt weekere Övergäng.",
+          "WeatherRouter kann DWD för Düütschland un OPERA för Europa gliektiedig vörbereiden. Verfügbore, anschaltete NASA-Daten köönt Butenberieken vun’t Radar ergänzen.",
+          "WeatherRouter pröövt Afdeckung un Gülligkeit un wählt den Born. Delen vun de Koort köönt Stück för Stück kamen. Nieger oder passender Daten köönt de olen Daten aflösen. Kiek op Born un Status."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Tipp op dat Symbol, üm de wählten Ansichten an oder uttoschalten. Länger drückt hollen maakt Farvflach, Temperaturweerten, Eenheit un thermische Advektion op.",
+          "De Farven stahn för Temperaturberieken. Wenn du de Weerten anschaltest, kummt de berekente Temperatur as Tall op de Koort.",
+          "Thermische Advektion wiest, wo de Wind warmeer oder köller Luft waagrecht verföhrt. So sühst du grote Temperaturverschuven un Wessel vun Luftmassen."
+        ]
+      ],
+      "clouds": [
+        "Wulken",
+        [
+          "Dat Symbol mit Goldrand schalt de Satellitenlage vun WeatherRouter. Holl dat drückt för Original, Utglieken un Deckkraft.",
+          "Kiek op Datentiet un Afdeckung. De Wulkenlage lett sik los vun Wind un Nedderfall schalten."
+        ]
+      ],
+      "synoptic": [
+        "Hoochdrück, Deeppdrück, Isobaren un Fronten",
+        [
+          "Tipp för Synoptik. Länger drückt hollen maakt Instellen för Drückzentren, Isobaren un verfügbore Fronten op. Isobaren verbinnt glieken Luftdrück in hPa.",
+          "ECCC levert Drückzentren, NOAA/GFS Isobaren un NOAA/WPC Fronten mit Typ. Dreekanten un Halfkregen bruukt en belegte Symbolsiet. Sünst wiesen Ruten un Pünkt den Typ ahn Treckricht. Afdeckung un Gülligkeit hangt vun dat Produkt af."
+        ]
+      ],
+      "display": [
+        "Lagen un Deckkraft",
+        [
+          "Maak Wies in Eye oder in’t Koortenmenü op. Wähl en WeatherRouter-Lage un stell ehr Deckkraft in. Länger drückt hollen wiest den Stil, de Legenn un Details."
+        ]
+      ],
+      "pro": [
+        "Funkschonen",
+        [
+          "GewitterRadar PRO koppelt GewitterRadar an en lopen WeatherRouter-Integratschoon in desülvige Home Assistant.",
+          "Installeer un stell WeatherRouter in, denn schalt de lokale Datenschnittsteed an. Dat PRO-Teeken kummt, wenn de Deenst praat is."
+        ],
+        [
+          "Radar · DWD för Düütschland, OPERA för Europa un NASA dorto. Born köönt gliektiedig vörbereidt un Schritt för Schritt wiest warrn.",
+          "Wind · Fahnen, Pielen, Farven för Gauigkeit un slingernde Animatschoon.",
+          "Temperatur un Wulken · Farvflach, Weerten, Advektion un Satellitenlage.",
+          "Synoptik · Drückzentren, Isobaren un verfügbore Fronten.",
+          "Afdeckung un Status · Je na Produkt, Rebeet un Modell. Kiek op Born, Tiet un Status.",
+          "Eye, Deckkraft, sekerte Instellen, Profilen un Sekerheitskopien."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Wedder wiesen",
+      "intro": "De Profilen ännert dat Utsehn vun de Wedderlage. WeatherRouter bruukt desülvigen Daten un Kriterien för den Born.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Passt de Glätten an den Zoom an. In’n Överblick blifft de Struktur. Bi’t Neegerkamen loopt de Rasterzellen na un na tosamen."
+        },
+        {
+          "term": "Nau",
+          "description": "Behöllt dat Raster för de technische Ansicht."
+        },
+        {
+          "term": "Utglieken",
+          "description": "Maakt Kanten wat weeker un behöllt mehr Struktur as Week."
+        },
+        {
+          "term": "Week",
+          "description": "Glättet starker, dat en tosamenhangen Feld entsteiht."
+        }
+      ]
+    }
+  },
+  "Sächs’sch": {
+    "labels": {
+      "back": "Zurüg zur Übersicht",
+      "connected": "WeatherRouter is v’rbundn",
+      "disconnected": "Zusatz auf Wunsch · WeatherRouter is grad ni v’rbundn",
+      "what": "Was issn WeatherRouter?",
+      "description": "Ä lokaler Datendienst in Home Assistant, d’r GewitterRadar mit Wedderprodugdn von verschiednen Anbietern versorcht.",
+      "how": "Wie kriesch ich GewitterRadar PRO?",
+      "features": "Fungdsionen im Überblick",
+      "standard": "Eye-Bedienung, Profile un Sicherung’n sin schon bei GewitterRadar Standard dabei.",
+      "mapNote": "Mit {router} zusamm’ kannste Ebenen für Wind, Temperatur, Niederschlach, Wolkn un Synoptik anzeign. Abdeggung un Aktualidäd häng’n von d’r Quelle ab."
+    },
+    "topics": {
+      "eye": [
+        "Eye Hub un Wetter-Icons bedien’n",
+        [
+          [
+            "eye",
+            "Dipp aufs Eye, dann siehste de gruppierdn Schnelldasten."
+          ],
+          "Hald s Eye länger gedrüggt, da kannste Position, Gruppierung, Aura-Ringe, Farben un Plätze einstelln. Das gehört zu GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Hald ä Weddersymbol länger gedrüggt, zum Beispill fürs Radar, da gehn seine Einstellung’n uff. Mit WeatherRouter schalteste de Ebene mit nem kurzen Dipp."
+          ],
+          [
+            "display",
+            "Mitm Darstellungs-Symbol stellste de Deckkraft je Ebene ein. In Eye Control kannste außerdem Plätze dazunehm’ un belegen."
+          ],
+          "Mach de Gruppierung aus, wenn de de Symbole einzeln sehn willst. Dann öffnet ä Dipp aufs Eye de Einstellung’n.",
+          "Dipp uff en freien Platz oder zieh ä verfügbares Symbol rein. Bis zu acht Plätze sinn möglich.",
+          "Ä farbiger Ring zeigt ä agdive, verfügbare Fungdsion. Bei de Leuchteinstellung’n kannste bewegte Aura, feste Ringe oder gar keene Effegde wählen."
+        ]
+      ],
+      "wind": [
+        "Winddarstellung",
+        [
+          "Dipp aufs Windsymbol, um de Ebene ein- oder auszuschaldn. Länger gedrüggt haldn öffnet Modi, Farben, Animazion un Legende.",
+          "Windfahnen zeign Richtung un Geschwindigkeit. Pfeile un bewegte Linien zeign, wie de Luft strömt. De Farben stehn für Geschwindigkeitsbereiche.",
+          "De schlängelnde Animazion nutzt Windvektoren. Bei mehr Wind könn de Spuren länger werdn.",
+          "De Legende nennt Einheit, Quelle un Modellzeit. Modellwerte könn von örtlichen Messung’n abweichen."
+        ]
+      ],
+      "information": [
+        "Wedderinformazionen",
+        [
+          [
+            "Datenquelle un Status",
+            [
+              "Mach im Kardnmenü de WeatherRouter-Ebenen uff. In de Ebenendetails siehste, wenn geliefert, Quelle, Daten- oder Modellzeit, Gültigkeit un Status.",
+              "Beobachtungszeit, Modelllauf un Gültigkeitszeit sinn verschieden. Ohne Quelle, Abdeggung oder güldche Daten kann de Ebene fehln. Ä leere Karde allein sagt nüscht übers Wedder."
+            ]
+          ],
+          [
+            "Aktualisiern nachm Kardnverschiebn",
+            [
+              "Das Intervall legt fest, wie bald GewitterRadar nachm Verschiebn neue Daten von WeatherRouter anfordern darf."
+            ],
+            [
+              [
+                "Aktualisierungsintervall",
+                "Von 2 bis 60 Sekunden einstellbar. Standard sinn 15 Sekunden."
+              ],
+              [
+                "Kleene Werte",
+                "2–5 Sekunden reagiern fix un bring’n mehr Anfragen."
+              ],
+              [
+                "Standard",
+                "15 Sekunden sinn d’r Mittelweg zwischn Tempo un Anfragelast."
+              ],
+              [
+                "Große Werte",
+                "30–60 Sekunden machn weniger Anfragen."
+              ],
+              [
+                "Bewegungsfilter un manuell aktualisiern",
+                "D’r kurze Bewegungsfilter bleibt unabhängig agdiv. Wenn de von Hand aktualisierst, musste nich uff das Intervall wardn."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Niederschlach",
+        [
+          "Dipp aufs Symbol, um s Radar umzuschaldn. Länger gedrüggt haldn öffnet Darstellung, Farbskala un Deckkraft. Bei 0 % is de Ebene durchsichtig, bei 100 % deckend.",
+          "De Farben zeign de Niederschlagsintensität. Präzise trennt de Stufen deutlicher. Ausgewog’n macht de Übergänge weicher.",
+          "WeatherRouter kann DWD für Deutschland un OPERA für Europa parallel vorbereitn. Verfügbare, eingeschaltete NASA-Daten könn außerhalb vom Radar ergänzen.",
+          "WeatherRouter prüft Deckung un Gültigkeit un wählt de Quelle. Kardnteile könn nacheinander komm’. Neuere oder passendere Daten könn de ältern ersetzen. Gugg uff Quelle un Status."
+        ]
+      ],
+      "temperature": [
+        "Temperadur",
+        [
+          "Dipp aufs Symbol zum Schaldn d’r gewählten Ansichten. Hald s länger gedrüggt für Farbfläche, Temperadurwerte, Einheit un thermische Advektion.",
+          "De Farbfläche unterscheidet Temperadur-Bereiche. Schald de Werte ein, dann stehn de berechneten Zahlen uff d’r Karde.",
+          "Thermische Advektion zeigt, wie d’r Wind wärmere oder kältere Luft waagerecht mitnimmt. So erkennst größere Temperaturverschiebung’n un Änderungen von Luftmassen."
+        ]
+      ],
+      "clouds": [
+        "Wolkn",
+        [
+          "Des goldgerahmte Symbol schaldet de Satellitenwolkn. Länger gedrüggt haldn für Original, Ausgewog’n un Deckkraft.",
+          "Gugg uff Datenzeit un Abdeggung. De Wolkn lassen sich unabhängig von Wind un Niederschlach schaldn."
+        ]
+      ],
+      "synoptic": [
+        "Hochs, Tiefs, Isobaren un Fronten",
+        [
+          "Dipp fürs Umschaldn d’r Synoptik. Länger gedrüggt haldn öffnet Druckzentren, Isobaren un verfügbare Fronten. Isobaren verbinden gleichen Luftdruck in hPa.",
+          "ECCC liefert Druckzentren, NOAA/GFS Isobaren un NOAA/WPC typisierte Fronten. Dreiecke un Halbkreise brauchn ä bestätigte Symbolseite. Sonst zeign Rauten un Punkte den Typ ohne Zugrichtung. Abdeggung un Gültigkeit hängen vom Produkt ab."
+        ]
+      ],
+      "display": [
+        "Ebenen un Deckkraft",
+        [
+          "Mach Darstellung im Eye oder Kardnmenü uff. Wähl ä WeatherRouter-Ebene un stell de Deckkraft ein. Länger gedrüggt haldn zeigt Stile, Legende un Details."
+        ]
+      ],
+      "pro": [
+        "Fungdsionsliste",
+        [
+          "GewitterRadar PRO verbindet GewitterRadar mit ner laufenden WeatherRouter-Integration im selben Home Assistant.",
+          "Installier un konfigurier WeatherRouter un schald de lokale Schnittstelle ein. Das PRO-Zeichn kommt, wenn d’r Dienst bereit is."
+        ],
+        [
+          "Radar · DWD für Deutschland, OPERA für Europa un NASA als Ergänzung. Quellen könn parallel vorbereitet un schrittweise gezeicht werdn.",
+          "Wind · Fahnen, Pfeile, Geschwindigkeitsfarben un schlängelnde Animazion.",
+          "Temperadur un Wolkn · Farbflächen, Werte, Advektion un Satellitenlage.",
+          "Synoptik · Druckzentren, Isobaren un verfügbare Fronten.",
+          "Abdeggung un Status · Hängen von Produkt, Gebiet un Modell ab. Gugg uff Quelle, Datenzeit un Status.",
+          "Eye, Deckkraft, gespeicherte Einstellung’n, Profile un Sicherung’n."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Wedderdarstellung",
+      "intro": "De Profile ändern, wie de Wedderebene aussieht. WeatherRouter behält Daten un Quellenauswahl bei.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Passt de Glättung an den Zoom an. In d’r Übersicht bleiben Details, beim Ranzoom’n fließen de Rasterzellen nach un nach zusamm’."
+        },
+        {
+          "term": "Präzise",
+          "description": "Erhält d’r Rasterstruktur für de technische Ansicht."
+        },
+        {
+          "term": "Ausgewog’n",
+          "description": "Glättet de Kanten mäßig un lässt mehr Struktur als Weich."
+        },
+        {
+          "term": "Weich",
+          "description": "Glättet stärker für ä zusammenhängende Fläche."
+        }
+      ]
+    }
+  },
+  "Schwäbisch": {
+    "labels": {
+      "back": "Zruck zur Übersicht",
+      "connected": "WeatherRouter isch verbonda",
+      "disconnected": "Freiwillige Erweiterung · WeatherRouter isch grad net verbonda",
+      "what": "Was isch WeatherRouter?",
+      "description": "En lokaler Datendienst in Home Assistant, der GewitterRadar Wetterprodukte von verschiedene Anbieter liefert.",
+      "how": "Wie krieg i GewitterRadar PRO?",
+      "features": "Funktionen im Überblick",
+      "standard": "D Eye-Bedienung, Profile ond Sicherunga send scho bei GewitterRadar Standard dabei.",
+      "mapNote": "Mit {router} kasch Ebene für Wind, Temperatur, Niederschlag, Wolka ond Synoptik anzeiga. D Abdeckung ond d Aktualität hängat von dr Quelle ab."
+    },
+    "topics": {
+      "eye": [
+        "Eye Hub ond Wetter-Icons bediena",
+        [
+          [
+            "eye",
+            "Tipp aufs Eye, dann siehsch d gruppierte Schnellschalter."
+          ],
+          "Halt s Eye länger druckt, dann kasch Position, Gruppierung, Aura-Ring, Farba ond Plätze eistella. Des ghört zu GewitterRadar Standard.",
+          [
+            "precipitation",
+            "Halt a Wettersymbol länger druckt, zum Beispiel fürs Radar. Dann gangat seine Eistellunga auf. Mit WeatherRouter schaltesch d Ebene mit em kurze Tipp."
+          ],
+          [
+            "display",
+            "Mit em Darstellungs-Symbol stellsch d Deckkraft von jeder Ebene ei. In Eye Control kasch au Plätze dazudoa ond belega."
+          ],
+          "Schalt d Gruppierung aus, dann siehsch d Symbole einzeln. In dem Modus macht a Tipp aufs Eye d Eistellunga auf.",
+          "Tipp auf en freie Platz oder zieh a verfügbares Symbol nei. Es gibt bis zu acht Plätze.",
+          "En farbiger Ring zeigt a aktive verfügbare Funktion. Bei de Glüheistellunga kasch animierte Aura, feste Ring oder gar koi Effekte wähla."
+        ]
+      ],
+      "wind": [
+        "Winddarstellung",
+        [
+          "Tipp aufs Windsymbol, um d Ebene ei- oder auszuschalta. Länger druckt halta macht Modi, Farba, Animation ond Legende auf.",
+          "Windfahna zeigat Richtung ond Geschwindigkeit. Pfeile ond bewegte Linie zeigat d Luftströmung. Farba stehnd für unterschiedliche Windgeschwindigkeita.",
+          "D schlängelnde Animation nutzt Windvektoren. Bei stärkerem Wind könnat d Spura länger werda.",
+          "D Legende zeigt Einheit, Quelle ond Modellzeit. De Modellwerte könnat von de örtliche Messunga abweicha."
+        ]
+      ],
+      "information": [
+        "Wetterinformationen",
+        [
+          [
+            "Datenquelle ond Status",
+            [
+              "Mach im Kartamenü d WeatherRouter-Ebena auf. Bei dr Ebene siehsch, soweit vorhanden, Quelle, Daten- oder Modellzeit, Gültigkeit ond Status.",
+              "Beobachtungszeit, Modelllauf ond Gültigkeitszeit send verschiedene Sacha. Fehlt a Quelle, d Abdeckung oder a gültigs Produkt, kann d Ebene net verfügbar sei. A leere Karta allein sagt nix übers Wetter."
+            ]
+          ],
+          [
+            "Nach em Kartaverschieba aktualisiera",
+            [
+              "S Intervall legt fescht, wie bald GewitterRadar nach em Verschieba neue Daten bei WeatherRouter anfordera darf."
+            ],
+            [
+              [
+                "Aktualisierungsintervall",
+                "Von 2 bis 60 Sekunda eistellbar. Standard send 15 Sekunda."
+              ],
+              [
+                "Kloine Werte",
+                "2–5 Sekunda reagierat schnell ond bringat mehr Anfraga."
+              ],
+              [
+                "Standard",
+                "15 Sekunda send dr Mittelweg zwischa Reaktionszeit ond Anfragelast."
+              ],
+              [
+                "Große Werte",
+                "30–60 Sekunda sorgat für weniger Anfraga."
+              ],
+              [
+                "Bewegungsfilter ond von Hand aktualisiera",
+                "Dr kurze Bewegungsfilter bleibt unabhängig aktiv. Wenn von Hand aktualisiersch, musch net aufs Intervall warta."
+              ]
+            ]
+          ]
+        ]
+      ],
+      "precipitation": [
+        "Niederschlag",
+        [
+          "Tipp zum Umschalta vom Radar. Länger druckt halta macht Darstellung, Farbskala ond Deckkraft auf. Bei 0 % isch d Ebene durchsichtig, bei 100 % voll deckend.",
+          "D Farba zeigat d Niederschlagsintensität. Präzis trennt d Stufa deutlicher. Ausgwoga macht d Übergäng weicher.",
+          "WeatherRouter kann DWD für Deutschland ond OPERA für Europa parallel vorbereita. Verfügbare eigschaltete NASA-Date könnat Bereiche außerhalb vom Radar ergänza.",
+          "WeatherRouter prüft Deckung ond Gültigkeit ond wählt d Quelle. Kartateil könnat nach ond nach komma. Neuere oder besser passende Date könnat ältere ersetza. Guck auf Quelle ond Status."
+        ]
+      ],
+      "temperature": [
+        "Temperatur",
+        [
+          "Tipp zum Umschalta von de gewählte Ansichte. Halt s Symbol länger druckt für Farbfläche, Temperaturwerte, Einheit ond thermische Advektion.",
+          "D Farbfläche unterscheidet Temperaturbereiche. Schalt d Werte ei, dann siehsch d berechnete Temperatura als Zahl auf dr Karta.",
+          "Thermische Advektion zeigt, wie dr Wind wärmere oder kältere Luft waagrecht mitnimmt. So erkennsch großräumige Temperaturverschiebunga ond Änderungen von Luftmassa."
+        ]
+      ],
+      "clouds": [
+        "Wolka",
+        [
+          "S goldg’rahmte Symbol schaltet d Satellitenwolka. Halt s druckt für Original, Ausgwoga ond Deckkraft.",
+          "Guck auf Datenzeit ond Abdeckung. D Wolkeschicht kasch unabhängig von Wind ond Niederschlag schalta."
+        ]
+      ],
+      "synoptic": [
+        "Hochs, Tiefs, Isobaren ond Fronta",
+        [
+          "Tipp, um d Synoptik umzuschalta. Länger druckt halta öffnet Druckzentren, Isobaren ond verfügbare Fronta. Isobaren verbindat Orte mit gleichem Luftdruck in hPa.",
+          "ECCC liefert Druckzentren, NOAA/GFS Isobaren ond NOAA/WPC Fronta mit Typ. Dreiecke ond Halbkreise braucht a bestätigte Symbolseite. Sonscht zeigat Rauta ond Punkte dr Typ ohne Zugrichtung. Abdeckung ond Gültigkeit hängat vom Produkt ab."
+        ]
+      ],
+      "display": [
+        "Ebena ond Deckkraft",
+        [
+          "Mach Darstellung im Eye oder im Kartamenü auf. Wähl a WeatherRouter-Ebene ond stell ihre Deckkraft ei. Länger druckt halta zeigt Stile, Legende ond Details."
+        ]
+      ],
+      "pro": [
+        "Funktionslischt",
+        [
+          "GewitterRadar PRO verbindet GewitterRadar mit ere betriebsbereite WeatherRouter-Integration im selba Home Assistant.",
+          "Installier ond konfigurier WeatherRouter ond schalt d lokale Schnittstelle ei. S PRO-Zeicha kommt, sobald dr Dienst bereit isch."
+        ],
+        [
+          "Radar · DWD für Deutschland, OPERA für Europa ond NASA als Ergänzung. Quellen könnat parallel vorbereitet ond nach ond nach gzeigt werda.",
+          "Wind · Fahna, Pfeile, Geschwindigkeitsfarba ond schlängelnde Animation.",
+          "Temperatur ond Wolka · Farbfläche, Werte, Advektion ond Satellitenlage.",
+          "Synoptik · Druckzentren, Isobaren ond verfügbare Fronta.",
+          "Abdeckung ond Status · Je nach Produkt, Gebiet ond Modell. Guck auf Quelle, Zeit ond Status.",
+          "Eye, Deckkraft, gspeicherte Eistellunga, Profile ond Sicherunga."
+        ]
+      ]
+    },
+    "profiles": {
+      "title": "WeatherRouter · Wetterdarstellung",
+      "intro": "D Profile ändrat s Ausseha von dr Wetterebene. WeatherRouter behält d Date ond d Regeln für d Auswahl dr Quelle.",
+      "entries": [
+        {
+          "term": "Auto",
+          "description": "Passt d Glättung an dr Zoom an. In dr Übersicht bleibat Details, beim Razoome verschmelzat d Zella langsam."
+        },
+        {
+          "term": "Präzis",
+          "description": "Behält d Rasterstruktur für d technische Ansicht."
+        },
+        {
+          "term": "Ausgwoga",
+          "description": "Glättet d Kanta mäßig ond behält mehr Struktur als Weich."
+        },
+        {
+          "term": "Weich",
+          "description": "Glättet stärker, damit a zusammenhängende Fläche entsteht."
+        }
+      ]
+    }
   }
 };

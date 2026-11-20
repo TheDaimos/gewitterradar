@@ -5,6 +5,7 @@ import json
 
 import pytest
 
+from homeassistant.components import frontend
 from homeassistant.components.number import ATTR_MAX, ATTR_MIN, ATTR_MODE, ATTR_STEP
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
@@ -36,6 +37,7 @@ from custom_components.gewitterradar.const import (
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
     CONF_SHOW_LOCATION_SELECTOR,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_STORM_RADIUS,
     CONF_STORM_SIMULATION,
     CONF_TRACKER_LATITUDE,
@@ -47,6 +49,7 @@ from custom_components.gewitterradar.const import (
     DOMAIN,
     LEGACY_IMPORT_VERSION,
     NAME,
+    SIDEBAR_PANEL_URL_PATH,
 )
 
 EXPECTED_DEFAULT_OPTIONS = {
@@ -64,6 +67,7 @@ EXPECTED_DEFAULT_OPTIONS = {
     "warning_animation": True,
     "storm_simulation": False,
     "show_location_selector": False,
+    "show_sidebar_panel": False,
     "compass_nearest_strike": False,
     "compass_device_orientation": False,
     "map_grouping": True,
@@ -168,12 +172,12 @@ async def _call_service(
 
 
 async def test_defaults_entities_ids_and_unique_ids(hass: HomeAssistant) -> None:
-    """Test all defaults and exactly 18 stable V4.07 native entities."""
+    """Test all defaults and exactly 17 setting entities plus the reference tracker."""
     entry = await _setup_entry(hass)
 
     assert DEFAULT_OPTIONS == EXPECTED_DEFAULT_OPTIONS
     assert entry.options == EXPECTED_DEFAULT_OPTIONS
-    assert len(entry.options) == 17
+    assert len(entry.options) == 18
     _assert_v407_entry_data(
         hass,
         entry,
@@ -605,3 +609,52 @@ async def test_global_legacy_confirmation_migrates_without_overwriting_native(ha
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.options["language_initialized"] is False
+
+async def test_sidebar_panel_option_registers_direct_card_and_persists(
+    hass: HomeAssistant,
+) -> None:
+    """Load the direct sidebar panel from ConfigEntry options without an entity."""
+    entry = await _setup_entry(
+        hass,
+        options={CONF_SHOW_SIDEBAR_PANEL: True},
+    )
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
+    assert hass.states.get("switch.gewitterradar_show_sidebar_panel") is None
+    assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
+    assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+
+
+async def test_legacy_sidebar_switch_registry_entry_is_removed(
+    hass: HomeAssistant,
+) -> None:
+    """Remove the obsolete 0.24 switch record during the integration upgrade."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=NAME,
+        data={},
+        options={},
+    )
+    entry.add_to_hass(hass)
+
+    registry = er.async_get(hass)
+    legacy = registry.async_get_or_create(
+        "switch",
+        DOMAIN,
+        CONF_SHOW_SIDEBAR_PANEL,
+        config_entry=entry,
+    )
+    assert registry.async_get(legacy.entity_id) is not None
+
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert registry.async_get(legacy.entity_id) is None
+    assert hass.states.get(legacy.entity_id) is None

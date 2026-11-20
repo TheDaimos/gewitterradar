@@ -1,0 +1,9 @@
+{
+  "task": "GR-4.11-STORM-BUBBLE",
+  "source_filename": "Goldener Gewitterring mit Blitz und Regen.png",
+  "master": "artwork/help-icons/hires/gr-storm-premium-original.png",
+  "runtime": "frontend/assets/gr-storm-premium-original.png",
+  "dimensions": [1254, 1254],
+  "color_type": "RGBA",
+  "sha256": "bb8f4f65e18ca0febbe015f4790c35a314bef1e52d6cee7b5824c518c2452b89"
+}

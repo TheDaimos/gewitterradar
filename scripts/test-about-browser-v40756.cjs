@@ -92,6 +92,22 @@ assert.equal(
 );
 transformed = transformed.replace(focusShiftFrom, focusShiftTo);
 
+// Preserve the stable-release assertion while allowing any canonical DEV
+// runtime to assert its own displayVersion. The source browser contract now
+// derives this from the runtime manifest, so the wrapper only verifies that
+// the generic protection survived the compatibility transformations above.
+const activeRuntime = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'),
+);
+if (String(activeRuntime.displayVersion || '').endsWith(' DEV')) {
+  assert.ok(
+    transformed.includes("const isDevelopmentRuntime=")
+      && transformed.includes("activeRuntime.displayVersion")
+      && transformed.includes("Stable release label still contains DEV"),
+    'Canonical DEV/stable release identity browser contract missing',
+  );
+}
+
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);
 

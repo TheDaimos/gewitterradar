@@ -4,6 +4,7 @@
 *.json text eol=lf
 *.png binary
 *.webp binary
+**/assets/gr-help-pro-badge.svg text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
 *.html text eol=lf

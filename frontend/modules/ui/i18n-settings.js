@@ -1,7 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411248r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411249r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411249r1';
+import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
+import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.3",
+  "version": "1.3.61",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -12,6 +16,26 @@ export const MODULE_META=Object.freeze({
   ],
   "file": "modules/ui/i18n-settings.js"
 });
+const WEATHER_STATUS_TEXT = {
+  "Keine kohärenten WR-Windvektoren verfügbar": "weather.status.windUnavailable",
+  "Keine Windsymbole oder Farbfläche ausgewählt": "weather.status.noneSelected",
+  "WR-Wind verfügbar · lokale Punktdarstellung": "weather.status.windPoints",
+  "Nachladen fehlgeschlagen · vorhandenes WR-Windfeld bleibt freigegeben": "weather.status.windCached",
+  "WR-Windfeld verfügbar · 10-m-Modellvorhersage": "weather.status.windReady",
+  "WR-Windfeldfreigabe abgelaufen": "weather.status.windExpired",
+  "Schlangenförmige Animation nicht verfügbar · kein freigegebenes numerisches WR-Windfeld": "weather.status.snakeUnavailable",
+  "WR-Windfeld wird im Hintergrund nachgeladen": "weather.status.windRefreshing",
+  "WR-Wind wird geladen": "weather.status.windLoading",
+  "Temperatur wird im Hintergrund nachgeladen": "weather.status.tempRefreshing",
+  "WR-Temperatur wird geladen": "weather.status.tempLoading",
+  "Nachladen fehlgeschlagen · vorhandene Temperatur bleibt freigegeben": "weather.status.tempCached",
+  "Temperatur nicht verfügbar": "weather.status.tempUnavailable",
+  "Temperaturfeld verfügbar · 2-m-Modellvorhersage": "weather.status.tempReady",
+  "WR-Temperaturfreigabe abgelaufen": "weather.status.tempExpired",
+  "Advektion": "weather.status.advection",
+  "Aus": "weather.layer.off",
+  "nicht verfügbar": "weather.layer.unavailable"
+};
 const SETTINGS_UI_TRANSLATIONS=Object.freeze({
   "Deutsch": {
     "settings.cluster_resolution": "Cluster-Auflösung",
@@ -140,6 +164,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installed"
   },
   "Dansk": {
+    "map.compass_move": "Flyt kompasset på kortet",
+    "calibration.ring_cover": "Dækkende cirkel",
+    "calibration.ring_target": "Anbefalet overlap",
+    "calibration.ring_visual": "Skivens kant",
+    "calibration.ring_protected": "Beskyttet yderkant",
+    "calibration.ring_bounding": "Kompassets afgrænsning",
+    "calibration.ring_gap": "Ring for mellemrum og overlap (360°)",
+    "calibration.ring_backing": "Baggrundsudfyldning",
+    "calibration.tip_visual": "Skivens synlige yderkant. Den må gå lidt ind under metalrammen for at mindske mellemrum.",
+    "calibration.tip_protected": "Den yderste synlige kant af gradmarkeringerne. Metalrammen må ikke skære den af.",
+    "calibration.tip_backing": "Baggrundsfladen dækker hele den ujævne rammeåbning uden at forvrænge kompasset eller gradmarkeringerne.",
+    "calibration.tip_bounding": "Kompassets tekniske afgrænsning. Den kan omfatte gennemsigtige eller usynlige margener og bruges ikke til visuel tilpasning.",
+    "calibration.tip_gap": "Viser mellemrum og overlap mellem skive og rammeåbning hele vejen rundt.",
+    "calibration.tip_cover": "Viser den mindste cirkel, der dækker hele den målte rammeåbning.",
+    "calibration.tip_target": "Viser den anbefalede skivestørrelse med ekstra overlap under metalrammen.",
     "settings.cluster_resolution": "Klyngeopløsning",
     "settings.cluster_resolution_note": "Hvornår klynger opdeles i enkelte lynnedslag",
     "settings.cluster_navigation_session": "Klyngenavigation · sessionstid",
@@ -203,6 +242,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installeret"
   },
   "Español": {
+    "map.compass_move": "Mover la brújula en el mapa",
+    "calibration.ring_cover": "Círculo envolvente",
+    "calibration.ring_target": "Solapamiento recomendado",
+    "calibration.ring_visual": "Contorno de la esfera",
+    "calibration.ring_protected": "Contorno exterior protegido",
+    "calibration.ring_bounding": "Límites de la brújula",
+    "calibration.ring_gap": "Anillo de huecos y solapamientos (360°)",
+    "calibration.ring_backing": "Relleno de fondo",
+    "calibration.tip_visual": "Borde exterior visible de la esfera. Puede entrar ligeramente bajo el marco metálico para reducir los huecos.",
+    "calibration.tip_protected": "Borde visible más externo de las marcas de grados. El marco metálico no debe recortarlo.",
+    "calibration.tip_backing": "Superficie de fondo que cubre por completo la abertura irregular sin deformar la brújula ni las marcas.",
+    "calibration.tip_bounding": "Límite técnico del elemento de brújula. Puede incluir márgenes transparentes o invisibles y no se usa para el ajuste visual.",
+    "calibration.tip_gap": "Muestra dónde hay huecos o solapamientos entre la esfera y la abertura a lo largo de los 360°.",
+    "calibration.tip_cover": "Muestra el círculo más pequeño que cubre toda la abertura medida del marco.",
+    "calibration.tip_target": "Muestra el tamaño recomendado de la esfera con un solapamiento adicional bajo el marco metálico.",
     "settings.cluster_resolution": "Resolución de clústeres",
     "settings.cluster_resolution_note": "Cuándo los clústeres se dividen en rayos individuales",
     "settings.cluster_navigation_session": "Navegación de clústeres · duración de sesión",
@@ -266,6 +320,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Instalado"
   },
   "Français": {
+    "map.compass_move": "Déplacer la boussole sur la carte",
+    "calibration.ring_cover": "Cercle couvrant",
+    "calibration.ring_target": "Chevauchement recommandé",
+    "calibration.ring_visual": "Contour du cadran",
+    "calibration.ring_protected": "Contour extérieur protégé",
+    "calibration.ring_bounding": "Boîte englobante de la boussole",
+    "calibration.ring_gap": "Anneau des écarts et chevauchements (360°)",
+    "calibration.ring_backing": "Fond de compensation",
+    "calibration.tip_visual": "Contour visible extérieur du cadran. Il peut passer légèrement sous le cadre métallique pour réduire les espaces.",
+    "calibration.tip_protected": "Contour visible le plus extérieur des graduations. Le cadre métallique ne doit pas le couper.",
+    "calibration.tip_backing": "Surface derrière la boussole qui couvre l’ouverture irrégulière sans déformer le cadran ni ses graduations.",
+    "calibration.tip_bounding": "Limite technique de l’élément boussole. Elle peut inclure des marges transparentes ou invisibles et ne sert pas à l’ajustement visuel.",
+    "calibration.tip_gap": "Indique les écarts et chevauchements entre le cadran et l’ouverture sur tout le tour.",
+    "calibration.tip_cover": "Indique le plus petit cercle couvrant toute l’ouverture mesurée du cadre.",
+    "calibration.tip_target": "Indique la taille de cadran conseillée avec un chevauchement supplémentaire sous le cadre métallique.",
     "settings.cluster_resolution": "Résolution des clusters",
     "settings.cluster_resolution_note": "Quand les clusters se séparent en impacts individuels",
     "settings.cluster_navigation_session": "Navigation des clusters · durée de session",
@@ -329,6 +398,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installé"
   },
   "Nederlands": {
+    "map.compass_move": "Kompas op de kaart verplaatsen",
+    "calibration.ring_cover": "Afdekkende cirkel",
+    "calibration.ring_target": "Gewenste overlap",
+    "calibration.ring_visual": "Omtrek van de wijzerplaat",
+    "calibration.ring_protected": "Beschermde buitenrand",
+    "calibration.ring_bounding": "Begrenzingskader van het kompas",
+    "calibration.ring_gap": "Ring voor ruimte en overlap (360°)",
+    "calibration.ring_backing": "Opvulling achter het kompas",
+    "calibration.tip_visual": "Zichtbare buitenrand van de wijzerplaat. Die mag iets onder de metalen rand doorlopen om open ruimte te beperken.",
+    "calibration.tip_protected": "Buitenste zichtbare rand van de graadmarkeringen. De metalen rand mag die niet afsnijden.",
+    "calibration.tip_backing": "Extra oppervlak achter het kompas dat de onregelmatige opening vult zonder het kompas of de graadmarkeringen te vervormen.",
+    "calibration.tip_bounding": "Technische begrenzing van het kompaselement. Die kan transparante of onzichtbare marges bevatten en dient niet voor visuele inpassing.",
+    "calibration.tip_gap": "Toont over de volle 360° waar ruimte of overlap zit tussen wijzerplaat en frameopening.",
+    "calibration.tip_cover": "Toont de kleinste cirkel die de hele gemeten frameopening afdekt.",
+    "calibration.tip_target": "Toont de aanbevolen grootte van de wijzerplaat inclusief extra overlap onder de metalen rand.",
     "settings.cluster_resolution": "Clusterresolutie",
     "settings.cluster_resolution_note": "Wanneer clusters worden opgesplitst in afzonderlijke bliksems",
     "settings.cluster_navigation_session": "Clusternavigatie · sessieduur",
@@ -392,6 +476,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Geïnstalleerd"
   },
   "Polski": {
+    "map.compass_move": "Przesuń kompas na mapie",
+    "calibration.ring_cover": "Okrąg pokrywający",
+    "calibration.ring_target": "Zalecane zachodzenie",
+    "calibration.ring_visual": "Obrys tarczy",
+    "calibration.ring_protected": "Chroniony obrys zewnętrzny",
+    "calibration.ring_bounding": "Ramka ograniczająca kompas",
+    "calibration.ring_gap": "Pierścień przerw i zachodzenia (360°)",
+    "calibration.ring_backing": "Wypełnienie tła",
+    "calibration.tip_visual": "Zewnętrzny widoczny obrys tarczy. Może nieznacznie wchodzić pod metalową oprawę, aby zmniejszyć szczeliny.",
+    "calibration.tip_protected": "Najbardziej zewnętrzny widoczny obrys podziałki. Metalowa oprawa nie może go zasłaniać.",
+    "calibration.tip_backing": "Dodatkowa powierzchnia za kompasem, pokrywająca nieregularny otwór bez deformacji kompasu lub podziałki.",
+    "calibration.tip_bounding": "Techniczne granice elementu kompasu. Mogą obejmować przezroczyste lub niewidoczne marginesy i nie służą do dopasowania wizualnego.",
+    "calibration.tip_gap": "Pokazuje na całym obwodzie przerwy i miejsca zachodzenia między tarczą a otworem w oprawie.",
+    "calibration.tip_cover": "Pokazuje najmniejszy okrąg pokrywający cały zmierzony otwór oprawy.",
+    "calibration.tip_target": "Pokazuje zalecany rozmiar tarczy z dodatkowym zakładem pod metalową oprawą.",
     "settings.cluster_resolution": "Rozdzielczość klastrów",
     "settings.cluster_resolution_note": "Kiedy klastry są rozdzielane na pojedyncze wyładowania",
     "settings.cluster_navigation_session": "Nawigacja klastrów · czas sesji",
@@ -455,6 +554,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Zainstalowano"
   },
   "Português": {
+    "map.compass_move": "Mover a bússola no mapa",
+    "calibration.ring_cover": "Círculo de cobertura",
+    "calibration.ring_target": "Sobreposição recomendada",
+    "calibration.ring_visual": "Contorno do mostrador",
+    "calibration.ring_protected": "Contorno exterior protegido",
+    "calibration.ring_bounding": "Limites da bússola",
+    "calibration.ring_gap": "Anel de folgas e sobreposições (360°)",
+    "calibration.ring_backing": "Preenchimento de fundo",
+    "calibration.tip_visual": "Contorno exterior visível do mostrador. Pode passar um pouco sob o aro metálico para reduzir folgas.",
+    "calibration.tip_protected": "Contorno visível mais exterior das marcas de graus. O aro metálico não deve cortá-lo.",
+    "calibration.tip_backing": "Superfície atrás da bússola que cobre a abertura irregular sem deformar a bússola nem as marcas.",
+    "calibration.tip_bounding": "Limite técnico do elemento de bússola. Pode incluir margens transparentes ou invisíveis e não serve para o ajuste visual.",
+    "calibration.tip_gap": "Mostra, ao longo dos 360°, onde há folga ou sobreposição entre o mostrador e a abertura.",
+    "calibration.tip_cover": "Mostra o menor círculo que cobre toda a abertura medida do aro.",
+    "calibration.tip_target": "Mostra o tamanho recomendado do mostrador com sobreposição adicional sob o aro metálico.",
     "settings.cluster_resolution": "Resolução de clusters",
     "settings.cluster_resolution_note": "Quando os clusters se dividem em descargas individuais",
     "settings.cluster_navigation_session": "Navegação de clusters · duração da sessão",
@@ -518,6 +632,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Instalado"
   },
   "Svenska": {
+    "map.compass_move": "Flytta kompassen på kartan",
+    "calibration.ring_cover": "Täckande cirkel",
+    "calibration.ring_target": "Rekommenderad överlappning",
+    "calibration.ring_visual": "Tavlans kontur",
+    "calibration.ring_protected": "Skyddad ytterkontur",
+    "calibration.ring_bounding": "Kompassens begränsningsruta",
+    "calibration.ring_gap": "Ring för glapp och överlappning (360°)",
+    "calibration.ring_backing": "Bakgrundsfyllnad",
+    "calibration.tip_visual": "Kompasstavlans synliga ytterkant. Den får gå in något under metallramen för att minska glapp.",
+    "calibration.tip_protected": "Gradmarkeringarnas yttersta synliga kant. Metallramen får inte skära av den.",
+    "calibration.tip_backing": "Extra yta bakom kompassen som täcker den ojämna öppningen utan att förvränga kompassen eller gradmarkeringarna.",
+    "calibration.tip_bounding": "Kompassens tekniska avgränsning. Den kan omfatta genomskinliga eller osynliga marginaler och används inte för visuell inpassning.",
+    "calibration.tip_gap": "Visar glapp och överlappning mellan kompasstavlan och ramöppningen hela varvet runt.",
+    "calibration.tip_cover": "Visar den minsta cirkel som täcker hela den uppmätta ramöppningen.",
+    "calibration.tip_target": "Visar rekommenderad storlek på kompasstavlan med extra överlappning under metallramen.",
     "settings.cluster_resolution": "Klusterupplösning",
     "settings.cluster_resolution_note": "När kluster delas upp i enskilda blixtar",
     "settings.cluster_navigation_session": "Klusternavigering · sessionstid",
@@ -581,6 +710,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installerad"
   },
   "Italiano": {
+    "map.compass_move": "Sposta la bussola sulla mappa",
+    "calibration.ring_cover": "Cerchio di copertura",
+    "calibration.ring_target": "Sovrapposizione consigliata",
+    "calibration.ring_visual": "Contorno del quadrante",
+    "calibration.ring_protected": "Contorno esterno protetto",
+    "calibration.ring_bounding": "Riquadro della bussola",
+    "calibration.ring_gap": "Anello di spazi e sovrapposizioni (360°)",
+    "calibration.ring_backing": "Riempimento di fondo",
+    "calibration.tip_visual": "Contorno esterno visibile del quadrante. Può passare leggermente sotto la cornice metallica per ridurre gli spazi.",
+    "calibration.tip_protected": "Contorno visibile più esterno delle tacche dei gradi. La cornice metallica non deve tagliarlo.",
+    "calibration.tip_backing": "Superficie dietro la bussola che copre l’apertura irregolare senza deformare la bussola né le tacche.",
+    "calibration.tip_bounding": "Limite tecnico dell’elemento bussola. Può comprendere margini trasparenti o invisibili e non serve per l’allineamento visivo.",
+    "calibration.tip_gap": "Mostra lungo i 360° dove ci sono spazi o sovrapposizioni tra il quadrante e l’apertura.",
+    "calibration.tip_cover": "Mostra il cerchio più piccolo che copre l’intera apertura misurata della cornice.",
+    "calibration.tip_target": "Mostra la dimensione consigliata del quadrante con un margine aggiuntivo sotto la cornice metallica.",
     "settings.cluster_resolution": "Risoluzione cluster",
     "settings.cluster_resolution_note": "Quando i cluster vengono suddivisi in fulmini singoli",
     "settings.cluster_navigation_session": "Navigazione cluster · durata sessione",
@@ -644,6 +788,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installato"
   },
   "Norsk bokmål": {
+    "map.compass_move": "Flytt kompasset på kartet",
+    "calibration.ring_cover": "Dekningssirkel",
+    "calibration.ring_target": "Anbefalt overlapp",
+    "calibration.ring_visual": "Skivens omriss",
+    "calibration.ring_protected": "Beskyttet ytterkant",
+    "calibration.ring_bounding": "Kompassets avgrensningsboks",
+    "calibration.ring_gap": "Ring for åpninger og overlapp (360°)",
+    "calibration.ring_backing": "Bakgrunnsutfylling",
+    "calibration.tip_visual": "Kompasskivens synlige ytterkant. Den kan gå litt under metallrammen for å redusere åpninger.",
+    "calibration.tip_protected": "Den ytterste synlige kanten av gradstrekene. Metallrammen må ikke skjære den av.",
+    "calibration.tip_backing": "En ekstra bakgrunnsflate som dekker den ujevne åpningen uten å forvrenge kompasset eller gradstrekene.",
+    "calibration.tip_bounding": "Kompassets tekniske avgrensning. Den kan ha gjennomsiktige eller usynlige marger og brukes ikke til visuell tilpasning.",
+    "calibration.tip_gap": "Viser åpninger og overlapp mellom skiven og rammeåpningen hele veien rundt.",
+    "calibration.tip_cover": "Viser den minste sirkelen som dekker hele den målte rammeåpningen.",
+    "calibration.tip_target": "Viser anbefalt skivestørrelse med ekstra overlapp under metallrammen.",
     "settings.cluster_resolution": "Klyngeoppløsning",
     "settings.cluster_resolution_note": "Når klynger deles opp i enkeltutladninger",
     "settings.cluster_navigation_session": "Klyngenavigasjon · økttid",
@@ -707,6 +866,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installert"
   },
   "Suomi": {
+    "map.compass_move": "Siirrä kompassia kartalla",
+    "calibration.ring_cover": "Peittävä ympyrä",
+    "calibration.ring_target": "Suositeltu limitys",
+    "calibration.ring_visual": "Taulun ääriviiva",
+    "calibration.ring_protected": "Suojattu ulkoreuna",
+    "calibration.ring_bounding": "Kompassin rajauslaatikko",
+    "calibration.ring_gap": "Välys- ja limitysrengas (360°)",
+    "calibration.ring_backing": "Taustan täyttö",
+    "calibration.tip_visual": "Kompassitaulun näkyvä ulkoreuna. Se voi ulottua hieman metallikehyksen alle, jotta välys pienenee.",
+    "calibration.tip_protected": "Asteikon uloin näkyvä reuna. Metallikehys ei saa peittää sitä.",
+    "calibration.tip_backing": "Kompassin taustalla oleva lisäpinta peittää epäsäännöllisen aukon vääristämättä kompassia tai asteikkoa.",
+    "calibration.tip_bounding": "Kompassielementin tekninen rajaus. Se voi sisältää läpinäkyviä tai näkymättömiä reunoja, eikä sitä käytetä visuaaliseen sovittamiseen.",
+    "calibration.tip_gap": "Näyttää koko kierrokselta taulun ja kehysaukon välykset ja limitykset.",
+    "calibration.tip_cover": "Näyttää pienimmän ympyrän, joka peittää koko mitatun kehysaukon.",
+    "calibration.tip_target": "Näyttää suositellun taulukoon, jossa on lisälimitys metallikehyksen alla.",
     "settings.cluster_resolution": "Klusterien erottelu",
     "settings.cluster_resolution_note": "Milloin klusterit jaetaan yksittäisiksi salamoiksi",
     "settings.cluster_navigation_session": "Klusterinavigointi · istunnon kesto",
@@ -770,6 +944,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Asennettu"
   },
   "Čeština": {
+    "map.compass_move": "Posunout kompas na mapě",
+    "calibration.ring_cover": "Krycí kružnice",
+    "calibration.ring_target": "Doporučené překrytí",
+    "calibration.ring_visual": "Obrys ciferníku",
+    "calibration.ring_protected": "Chráněný vnější obrys",
+    "calibration.ring_bounding": "Ohraničující rámeček kompasu",
+    "calibration.ring_gap": "Prstenec mezer a překrytí (360°)",
+    "calibration.ring_backing": "Výplň pozadí",
+    "calibration.tip_visual": "Viditelný vnější obrys ciferníku. Může mírně zasahovat pod kovový rám, aby se zmenšila mezera.",
+    "calibration.tip_protected": "Nejzazší viditelný obrys stupnice. Kovový rám jej nesmí zakrýt.",
+    "calibration.tip_backing": "Dodatečná plocha za kompasem kryje nepravidelný otvor bez deformace kompasu nebo stupnice.",
+    "calibration.tip_bounding": "Technické ohraničení prvku kompasu. Může zahrnovat průhledné nebo neviditelné okraje a neslouží k vizuálnímu usazení.",
+    "calibration.tip_gap": "Ukazuje mezery a překrytí mezi ciferníkem a otvorem rámu po celém obvodu.",
+    "calibration.tip_cover": "Ukazuje nejmenší kružnici, která pokrývá celý změřený otvor rámu.",
+    "calibration.tip_target": "Ukazuje doporučenou velikost ciferníku s dodatečným přesahem pod kovovým rámem.",
     "settings.cluster_resolution": "Rozlišení shluků",
     "settings.cluster_resolution_note": "Kdy se shluky rozdělí na jednotlivé výboje",
     "settings.cluster_navigation_session": "Navigace shluků · délka relace",
@@ -833,6 +1022,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Nainstalováno"
   },
   "Ελληνικά": {
+    "map.compass_move": "Μετακίνηση πυξίδας στον χάρτη",
+    "calibration.ring_cover": "Κύκλος κάλυψης",
+    "calibration.ring_target": "Προτεινόμενη επικάλυψη",
+    "calibration.ring_visual": "Περίγραμμα καντράν",
+    "calibration.ring_protected": "Προστατευμένο εξωτερικό περίγραμμα",
+    "calibration.ring_bounding": "Πλαίσιο οριοθέτησης πυξίδας",
+    "calibration.ring_gap": "Δακτύλιος κενών και επικάλυψης (360°)",
+    "calibration.ring_backing": "Γέμισμα φόντου",
+    "calibration.tip_visual": "Το ορατό εξωτερικό περίγραμμα του καντράν. Μπορεί να μπαίνει λίγο κάτω από το μεταλλικό πλαίσιο για να περιορίζονται τα κενά.",
+    "calibration.tip_protected": "Το εξώτατο ορατό περίγραμμα των διαβαθμίσεων. Το μεταλλικό πλαίσιο δεν πρέπει να το καλύπτει.",
+    "calibration.tip_backing": "Επιπλέον επιφάνεια πίσω από την πυξίδα που καλύπτει το ακανόνιστο άνοιγμα χωρίς να παραμορφώνει την πυξίδα ή τις διαβαθμίσεις.",
+    "calibration.tip_bounding": "Το τεχνικό όριο του στοιχείου της πυξίδας. Μπορεί να περιέχει διαφανή ή αόρατα περιθώρια και δεν χρησιμοποιείται για οπτική προσαρμογή.",
+    "calibration.tip_gap": "Δείχνει σε όλη την περιφέρεια τα κενά και τις επικαλύψεις ανάμεσα στο καντράν και το άνοιγμα.",
+    "calibration.tip_cover": "Δείχνει τον μικρότερο κύκλο που καλύπτει ολόκληρο το μετρημένο άνοιγμα.",
+    "calibration.tip_target": "Δείχνει το προτεινόμενο μέγεθος καντράν με πρόσθετη επικάλυψη κάτω από το μεταλλικό πλαίσιο.",
     "settings.cluster_resolution": "Ανάλυση συστάδων",
     "settings.cluster_resolution_note": "Πότε οι συστάδες χωρίζονται σε μεμονωμένους κεραυνούς",
     "settings.cluster_navigation_session": "Πλοήγηση συστάδων · διάρκεια συνεδρίας",
@@ -896,6 +1100,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Εγκατεστημένο"
   },
   "Magyar": {
+    "map.compass_move": "Iránytű mozgatása a térképen",
+    "calibration.ring_cover": "Fedőkör",
+    "calibration.ring_target": "Ajánlott átfedés",
+    "calibration.ring_visual": "A számlap körvonala",
+    "calibration.ring_protected": "Védett külső körvonal",
+    "calibration.ring_bounding": "Az iránytű befoglaló téglalapja",
+    "calibration.ring_gap": "Hézag- és átfedésgyűrű (360°)",
+    "calibration.ring_backing": "Háttérkitöltés",
+    "calibration.tip_visual": "A számlap látható külső pereme. A hézag csökkentésére kissé a fémkeret alá nyúlhat.",
+    "calibration.tip_protected": "A fokbeosztás legkülső látható pereme. A fémkeret ezt nem takarhatja el.",
+    "calibration.tip_backing": "Az iránytű mögötti felület kitölti a szabálytalan keretnyílást az iránytű vagy a fokbeosztás torzítása nélkül.",
+    "calibration.tip_bounding": "Az iránytű elemének technikai határa. Átlátszó vagy láthatatlan margót is tartalmazhat, és nem használatos a vizuális illesztéshez.",
+    "calibration.tip_gap": "A teljes kerületen mutatja a számlap és a keretnyílás közötti hézagokat és átfedéseket.",
+    "calibration.tip_cover": "A legkisebb kört mutatja, amely lefedi a teljes mért keretnyílást.",
+    "calibration.tip_target": "A számlap ajánlott méretét mutatja, a fémkeret alatti többletátfedéssel.",
     "settings.cluster_resolution": "Klaszterfelbontás",
     "settings.cluster_resolution_note": "Mikor bomlanak a klaszterek egyedi villámokra",
     "settings.cluster_navigation_session": "Klaszternavigáció · munkamenet ideje",
@@ -959,6 +1178,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Telepítve"
   },
   "Boarisch": {
+    "map.compass_move": "Kompass auf da Kartn verschiam",
+    "calibration.ring_cover": "Deckkreis",
+    "calibration.ring_target": "Empfohlne Überdeckung",
+    "calibration.ring_visual": "Kontur vom Zifferblatt",
+    "calibration.ring_protected": "Gschützte Außenkontur",
+    "calibration.ring_bounding": "Begrenzungsrahmen vom Kompass",
+    "calibration.ring_gap": "Ring für Lückn und Überdeckung (360°)",
+    "calibration.ring_backing": "Hintergrundfüllung",
+    "calibration.tip_visual": "Sichtbare Außenkontur vom Zifferblatt. De derf a weng unta den Metollrahmen gehn, damit weniger frei bleibt.",
+    "calibration.tip_protected": "Da äußerste sichtbare Rand vo de Gradstrich. Da Metollrahmen derf eam ned abschneidn.",
+    "calibration.tip_backing": "De Fläch hintam Kompass deckt de unrunde Rahmenöffnung zua, ohne Kompass oder Gradstrich zum Verzerrn.",
+    "calibration.tip_bounding": "Technische Begrenzung vom Kompass. De ko an durchsichtig’n oder unsichtbarn Rand ham und is ned fürs optische Einpassn do.",
+    "calibration.tip_gap": "Zoagt rundum, wo zwischn Zifferblatt und Rahmenöffnung Lückn oder Überdeckung san.",
+    "calibration.tip_cover": "Zoagt an kloansten Kreis, der de ganze gmessne Rahmenöffnung zudeckt.",
+    "calibration.tip_target": "Zoagt d’ empfohlne Größ vom Zifferblatt mit mehr Überdeckung untam Metollrahmen.",
     "settings.cluster_resolution": "Cluster-Auflösung",
     "settings.cluster_resolution_note": "Wann d'Cluster in einzelne Blitz aufglöst werdn",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -1022,6 +1256,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installiert"
   },
   "Plattdüütsch": {
+    "map.compass_move": "Kompass op de Koort verschuven",
+    "calibration.ring_cover": "Deckkrink",
+    "calibration.ring_target": "Anraden Överdecken",
+    "calibration.ring_visual": "Ümreet vun de Wieserplaat",
+    "calibration.ring_protected": "Schuult buten Ümreet",
+    "calibration.ring_bounding": "Begrenzung vun den Kompass",
+    "calibration.ring_gap": "Ring för Lücken un Överdecken (360°)",
+    "calibration.ring_backing": "Achtergrunnfüllung",
+    "calibration.tip_visual": "Sichtbore Butenkant vun de Wieserplaat. Se dörv en bäten ünner den Metallrahmen gahn, dat de Lücken lütter warrt.",
+    "calibration.tip_protected": "De buterste sichtbore Kant vun de Gradstreken. De Metallrahmen dörv ehr nich afsnieden.",
+    "calibration.tip_backing": "En Flach achter den Kompass deckt dat unrunne Rahmenlock to, ahn den Kompass oder de Gradstreken to verteken.",
+    "calibration.tip_bounding": "Technische Begrenzung vun den Kompass. Dor kann en dörchsichtigen oder unsichtboren Rand bi wesen. För dat Inpassen na Ogen warrt se nich bruukt.",
+    "calibration.tip_gap": "Wiest rund üm de Wieserplaat, wo Lücken oder Överdecken sünd.",
+    "calibration.tip_cover": "Wiest den lüttsten Krink, de dat hele meten Rahmenlock todeckt.",
+    "calibration.tip_target": "Wiest de anraden Grött vun de Wieserplaat mit mehr Överdecken ünner den Metallrahmen.",
     "settings.cluster_resolution": "Cluster-Oplösen",
     "settings.cluster_resolution_note": "Wannehr Clusters in enkelte Blitzen oplööst warrt",
     "settings.cluster_navigation_session": "Cluster-Navigatschoon · Tied vun de Sitzung",
@@ -1085,6 +1334,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installeert"
   },
   "Sächs’sch": {
+    "map.compass_move": "Gompass off der Garde verschiebn",
+    "calibration.ring_cover": "Deggreis",
+    "calibration.ring_target": "Empfohlne Iberdeggung",
+    "calibration.ring_visual": "Gondur vom Zifferbladd",
+    "calibration.ring_protected": "Geschüzde Außengondur",
+    "calibration.ring_bounding": "Begrenzungsrahm vom Gompass",
+    "calibration.ring_gap": "Ring fir Ligg’n un Iberdeggung (360°)",
+    "calibration.ring_backing": "Hindergrundfüllung",
+    "calibration.tip_visual": "Sischdbare Außengondur vom Zifferbladd. De darf e Stück undorn Medallrahm gehn, damidd wenischer frei bleibd.",
+    "calibration.tip_protected": "De äußersde sischdbare Gande von de Gradstrische. Dor Medallrahm darf se nisch abschneidn.",
+    "calibration.tip_backing": "De Fläsche hinderm Gompass deggd de unrunde Rahmenöffnung ab, ohne Gompass oder Gradstrische zu verziehn.",
+    "calibration.tip_bounding": "Deschnische Begrenzung vom Gompass. Die gann durchsischa oder unsischdbarn Rand endhaldn un is nisch fürs obdische Einbassn da.",
+    "calibration.tip_gap": "Zeichd rundrum, wo Ligg’n oder Iberdeggung zwischn Zifferbladd un Rahmenöffnung sin.",
+    "calibration.tip_cover": "Zeichd den gleensdn Greis, der de ganze gemessne Rahmenöffnung abdeggd.",
+    "calibration.tip_target": "Zeichd de empfohlne Größe vom Zifferbladd midd mehr Iberdeggung undorm Medallrahm.",
     "settings.cluster_resolution": "Cluster-Ufflösung",
     "settings.cluster_resolution_note": "Wann de Cluster in einzelne Blitze uffgelöst werdn",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -1148,6 +1412,21 @@ const SETTINGS_UI_TRANSLATIONS=Object.freeze({
     "modules.installed": "Installiert"
   },
   "Schwäbisch": {
+    "map.compass_move": "Kompass uff dr Karta verschieba",
+    "calibration.ring_cover": "Deckkreis",
+    "calibration.ring_target": "Empfohlene Überdeckung",
+    "calibration.ring_visual": "Kontur vom Zifferblatt",
+    "calibration.ring_protected": "Gschützte Außenkontur",
+    "calibration.ring_bounding": "Begrenzungsrahma vom Kompass",
+    "calibration.ring_gap": "Ring für Lücka ond Überdeckung (360°)",
+    "calibration.ring_backing": "Hindergrundfüllung",
+    "calibration.tip_visual": "Sichtbare Außenkontur vom Zifferblatt. Dia darf a bissle unter da Metallrahma ganga, dass weniger frei bleibt.",
+    "calibration.tip_protected": "D’ äußerschte sichtbare Kant vo de Gradstrich. Dr Metallrahma darf se net abschneida.",
+    "calibration.tip_backing": "D’ Fläch hinderem Kompass deckt d’ unrunde Rahmaöffnung ab, ohne Kompass oder Gradstrich zum Verzieha.",
+    "calibration.tip_bounding": "Technische Begrenzung vom Kompass. Dia kann an durchsichdiga oder unsichdbara Rand haba ond isch net fürs optische Eipassa do.",
+    "calibration.tip_gap": "Zeigt rondom, wo Lücka oder Überdeckung zwischa Zifferblatt ond Rahmaöffnung send.",
+    "calibration.tip_cover": "Zeigt da kloinschte Kreis, der d’ ganze gmessäne Rahmaöffnung abdeckt.",
+    "calibration.tip_target": "Zeigt d’ empfohlene Größ vom Zifferblatt mit mehr Überdeckung unterem Metallrahma.",
     "settings.cluster_resolution": "Cluster-Uflösung",
     "settings.cluster_resolution_note": "Wann d'Cluster in einzelne Blitze ufg'löst werdet",
     "settings.cluster_navigation_session": "Cluster-Navigation · Sitzungszeit",
@@ -1995,14 +2274,38 @@ const V410_HELP_INSTRUMENTS=Object.freeze({
   }
 });
 
-export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
-    _languageEntity() {
-      return this._resolveSettingEntity('language',this._config.language_entity);
+const V411_HELP_WEATHER_DISPLAY=Object.freeze({
+  Deutsch:Object.freeze({
+    title:"WeatherRouter · Wetterdarstellung",
+    intro:"Die Darstellungsprofile verändern ausschließlich die optische Aufbereitung der Wetterebene. Wetterdaten, Providerwahl und WeatherRouter-Routing bleiben unverändert.",
+    entries:Object.freeze([
+      Object.freeze({term:"Auto",description:"Komfortmodus mit gleitender Anpassung an die Zoomstufe. In der Fernsicht bleiben kleine Wetterstrukturen erhalten. Beim Heranzoomen werden vergrößerte Rasterzellen zunehmend zu einer fließenden, wolkenartigen Fläche geglättet; Farben und Intensitäten gehen weich ineinander über. Präzise bleibt separat wählbar."}),
+      Object.freeze({term:"Präzise",description:"Zeigt die Rasterstruktur möglichst unverändert und eignet sich für die technisch genaueste Betrachtung."}),
+      Object.freeze({term:"Ausgewogen",description:"Reduziert harte Rasterkanten moderat und behält mehr Struktur als Weich."}),
+      Object.freeze({term:"Weich",description:"Stärker flächige und ruhige Darstellung mit bewusster optischer Glättung."})
+    ])
+  }),
+  English:Object.freeze({
+    title:"WeatherRouter · Weather display",
+    intro:"Display profiles only change the visual treatment of the weather layer. Weather data, provider selection and WeatherRouter routing remain unchanged.",
+    entries:Object.freeze([
+      Object.freeze({term:"Auto",description:"Comfort mode with smooth zoom-dependent adjustment. Small weather structures remain visible in the wide view. As you zoom in, enlarged raster cells are increasingly blended into a continuous cloud-like field with smooth color and intensity transitions. Precise remains available separately."}),
+      Object.freeze({term:"Precise",description:"Keeps the raster structure as unchanged as possible for the most technical view."}),
+      Object.freeze({term:"Balanced",description:"Moderately reduces hard raster edges while retaining more structure than Soft."}),
+      Object.freeze({term:"Soft",description:"Provides a more area-based and calm presentation with deliberate visual smoothing."})
+    ])
+  })
+});
+
+export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, resolveWeatherHelpLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _languageEntity(hass = this._hass, config = this._config) {
+      return this._resolveSettingEntity('language',config?.language_entity,hass);
     },
 
-    _languageValue(hass = this._hass) {
+    _languageValue(hass = this._hass ?? this._vaultHass) {
       if (this._languagePreview && LANGUAGE_DEFINITIONS.some((entry) => entry.value === this._languagePreview)) return this._languagePreview;
-      const raw = String(hass?.states?.[this._languageEntity()]?.state || '').trim();
+      const entity = this._languageEntity(hass,this._hass ? this._config : this._vaultConfig);
+      const raw = String(hass?.states?.[entity]?.state || '').trim();
       return LANGUAGE_DEFINITIONS.some((entry) => entry.value === raw) ? raw : LANGUAGE_DEFAULT;
     },
 
@@ -2087,12 +2390,29 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const v410Fallback = V410_UI_TRANSLATIONS[LANGUAGE_DEFAULT] || V410_UI_TRANSLATIONS.English || {};
       const v410 = V410_UI_TRANSLATIONS[language] || v410Fallback;
       const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
-      let text = aboutKey
+      const eyeKey=key.startsWith('eye.')?key.slice(4):null;
+      let text = eyeKey ? EYE_HUB_TRANSLATIONS[language]?.[eyeKey] ?? EYE_HUB_TRANSLATIONS.English[eyeKey] ?? key : aboutKey
         ? resolveAboutLocale(language).strings[aboutKey] ?? key
-        : v410[key] ?? extra[key] ?? table[key] ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
+        : v410[key] ?? extra[key] ?? table[key] ?? PRESENTATION_LOCALES[language]?.[key] ?? PRESENTATION_LOCALES.English[key]
+          ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
       return String(text).replace(/\{([a-zA-Z0-9_]+)\}/g,(_,name) =>
         Object.prototype.hasOwnProperty.call(vars,name) ? String(vars[name]) : `{${name}}`
       );
+    },
+
+    _weatherStatusText(value) {
+      if(typeof value!=='string')return value;
+      if(Object.hasOwn(WEATHER_STATUS_TEXT,value))return this._t(WEATHER_STATUS_TEXT[value]);
+      for(const [source,key] of Object.entries(WEATHER_STATUS_TEXT)){
+        if(value.startsWith(source+' · ')){
+          const detail=value.slice(source.length+3);
+          const translated=detail.startsWith('Advektion ')
+            ? this._t('weather.status.advection')+' '+this._weatherStatusText(detail.slice('Advektion '.length))
+            : this._weatherStatusText(detail);
+          return this._t(key)+' · '+translated;
+        }
+      }
+      return value;
     },
 
     _tp(base,count,vars = {}) {
@@ -2126,6 +2446,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
 
     _applyStaticTranslations() {
       if (!this.shadow) return;
+      this._eyeHubSync?.();
       this._i18nTextNodeKeys = this._i18nTextNodeKeys || new WeakMap();
       this._i18nAttrKeys = this._i18nAttrKeys || new WeakMap();
 
@@ -2194,6 +2515,34 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         });
       });
       this._syncV410Tooltips();
+      this.shadow.querySelectorAll('[data-presentation-text]').forEach(node=>{node.textContent=this._t(node.dataset.presentationText);});
+      this.shadow.querySelectorAll('[data-presentation-aria]').forEach(node=>{node.setAttribute('aria-label',this._t(node.dataset.presentationAria));});
+      this.shadow.querySelectorAll('[data-presentation-title]').forEach(node=>{node.title=this._t(node.dataset.presentationTitle);});
+      this._bindProjectHubMainTitle?.();
+      this._bindProjectHubSignature?.();
+      this._weatherEngineRenderSourceCards?.();
+      if(this.shadow.getElementById('weather-engine-diagnostic-backdrop'))this._weatherEngineDiagnosticRender?.();
+      if(this.shadow.getElementById('data-sources-content')?.childElementCount)this._renderDataSourcesView?.();
+      if(this.shadow.getElementById('map-diagnostic-panel')?.hidden===false)this._mapDiagnosticRender?.();
+      this._weatherTemperatureTranslate?.();
+      this._weatherWindTranslate?.();
+      if(this.__weatherWind)this._weatherWindSyncToggle?.();
+      if(this.__weatherTemperature)this._weatherTemperatureSyncToggle?.();
+      this._weatherSynopticSyncMenu?.();
+      if(this.__weatherLegendState?.mounted){
+        if(this.__weatherRadarState?.enabled)this._weatherRadarRenderCurrentLegend?.();
+        this._weatherLegendSyncUi?.();
+      }
+      this._weatherCloudsSync?.();
+      this._weatherPrecipitationSyncToggle?.();
+      this._weatherRadarTranslate?.();
+      if(this.__weatherDisplayState)this._weatherDisplaySyncUi?.();
+      if(this.__weatherLayerMenuState){
+        this._weatherLayerMenuSyncEntry?.();
+        this._weatherLayerMenuRender?.();
+      }
+      this._syncVaultLanguage?.();
+      this._settingsRefreshNavigation?.();
     },
 
     _syncMapZoomTooltips() {
@@ -2231,19 +2580,25 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncMapZoomTooltips();
     },
 
-    _helpWithV410(language,help) {
-      const addition=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
-      if(!addition||!help)return help;
-      const sections=Array.isArray(help.sections)?help.sections:[];
-      if(sections.some((section)=>section?.key==='instruments-v410'))return help;
-      return {...help,sections:[...sections,{key:'instruments-v410',title:addition.title,paragraphs:[addition.intro],entries:addition.entries}]};
+    _helpWithV410(language,help,weatherHelp) {
+      const instruments=V410_HELP_INSTRUMENTS[language]||V410_HELP_INSTRUMENTS[LANGUAGE_DEFAULT]||V410_HELP_INSTRUMENTS.English;
+      if(!help)return help;
+      const sections=Array.isArray(help.sections)?[...help.sections]:[];
+      if(instruments&&!sections.some((section)=>section?.key==='instruments-v410')){
+        sections.push({key:'instruments-v410',title:instruments.title,paragraphs:[instruments.intro],entries:instruments.entries});
+      }
+      const weatherDisplay=weatherHelp?.profiles||V411_HELP_WEATHER_DISPLAY[language]||V411_HELP_WEATHER_DISPLAY[LANGUAGE_DEFAULT]||V411_HELP_WEATHER_DISPLAY.English;
+      if(weatherDisplay&&!sections.some((section)=>section?.key==='weather-display-v411')){
+        sections.push({key:'weather-display-v411',title:weatherDisplay.title,paragraphs:[weatherDisplay.intro],entries:weatherDisplay.entries});
+      }
+      return {...help,sections};
     },
 
-    _resolveSettingEntity(key,configured) {
+    _resolveSettingEntity(key,configured,hass = this._hass) {
       if (configured) return configured;
       const mapping = SETTING_ENTITIES[key];
       if (!mapping) return null;
-      const nativeState = this._hass?.states?.[mapping.native];
+      const nativeState = hass?.states?.[mapping.native];
       const nativeUsable = nativeState
         && nativeState.state !== 'unavailable'
         && nativeState.state !== 'unknown';
@@ -2357,10 +2712,11 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if (!this._languageOnboardingComplete()) { this._openLanguageOnboarding(); return; }
       if (deps.languageOnboardingOwner?._languageOnboardingSubmitting) return;
       this._closeLanguageOnboarding(true);
-      if (deps.aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) return;
+      this._proWelcomeStartupChecked = true;
+      if (deps.aboutClaimedVersion >= ABOUT_ONBOARDING_VERSION) { this._maybeShowProWelcome(); return; }
       let seen = 0;
-      try { seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
-      if (seen >= ABOUT_ONBOARDING_VERSION) return;
+      try { seen = Number(settingsStorage(this).getItem(ABOUT_STORAGE_KEY)) || 0; } catch (_) {}
+      if (seen >= ABOUT_ONBOARDING_VERSION) { this._maybeShowProWelcome(); return; }
       this._openAbout();
     },
 
@@ -2381,17 +2737,68 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const shell = document.createElement('div');
       shell.id = 'help-shell';
       shell.innerHTML = '<style>' +
-        '.help-dialog{--help-gold:#dfbc72;--help-bright:#f7dfa1;box-sizing:border-box;width:min(760px,calc(100vw - 16px));max-width:calc(100vw - 16px);height:min(900px,calc(100dvh - 16px));max-height:calc(100dvh - 16px);padding:0;border:1px solid #c9a050;border-radius:13px;color:#d5dae0;background:radial-gradient(ellipse at 15% 0,#31445145,transparent 48%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;font:14px/1.48 Segoe UI,Arial,sans-serif;overflow:hidden;color-scheme:dark}' +
+        `
+        .help-standard-heading{margin:3px 4px 9px;color:var(--help-bright);font-size:1.06em;font-weight:730}
+        .help-standard-header{position:relative;display:flex;align-items:center;justify-content:center;min-height:78px;margin:3px 0 12px;padding:10px 36px 0}
+        .help-standard-header::before{content:"";display:block;position:absolute;inset:0 0 auto;height:5px;pointer-events:none;
+          border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);
+          background:radial-gradient(ellipse at 50% 18%,#fff0c5bf,transparent 40%),linear-gradient(180deg,#ffe3a1,#c18b37 24%,#77521c 56%,#422b12 78%,#9b7238);
+          box-shadow:0 2px 3px #0008,inset 0 1px #ffe2a070}
+        .help-standard-heading{display:flex;align-items:center;justify-content:center;gap:11px;margin:0;text-align:center;line-height:1.2}
+        .help-standard-heading img{display:block;width:48px;height:48px;object-fit:contain;pointer-events:none}
+        .help-pro-header{position:relative;margin:17px 0 12px;padding:10px 5px 0;text-align:center}
+        .help-pro-header::before{content:"";display:block;position:absolute;inset:0 0 auto;height:5px;pointer-events:none;
+          border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);
+          background:radial-gradient(ellipse at 50% 18%,#d2ebffbf,transparent 40%),
+            linear-gradient(180deg,#88b6ec,#3969a5 24%,#1a366b 56%,#14254c 78%,#45648d);
+          box-shadow:0 2px 3px #0008,inset 0 1px #a5caff70}
+        .help-pro-header h3{margin:0;line-height:1}
+        .help-standard::after,.help-pro::after{content:"";display:block;height:5px;margin:11px 0 17px;pointer-events:none;border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);box-shadow:0 2px 3px #0008,inset 0 1px #a5caff70}
+        .help-pro::after{background:radial-gradient(ellipse at 50% 18%,#d2ebffbf,transparent 40%),linear-gradient(180deg,#88b6ec,#3969a5 24%,#1a366b 56%,#14254c 78%,#45648d)}
+        .help-standard::after{background:radial-gradient(ellipse at 50% 18%,#fff0c5bf,transparent 40%),linear-gradient(180deg,#ffe3a1,#c18b37 24%,#77521c 56%,#422b12 78%,#9b7238)}
+        .help-group-topics[hidden]{display:none!important}
+        .help-group-toggle{position:absolute;top:8px;right:5px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:0;border-radius:9px;background:transparent;cursor:pointer;color:#e2bb6f}
+        .help-group-toggle .help-chevron{display:block;border-color:#e2bb6f;pointer-events:none}
+        .help-pro .help-group-toggle .help-chevron{border-color:#88b6ec;filter:drop-shadow(0 0 2px #3d78c477)}
+        .help-group-toggle[aria-expanded=true] .help-chevron{transform:rotate(225deg);margin-top:6px;filter:brightness(1.2) drop-shadow(0 0 3px currentColor)}
+        .help-group-toggle:focus-visible{outline:2px solid currentColor;outline-offset:1px}
+        .help-pro-header h3 img{display:block;width:min(100%,219px);height:auto;margin:auto;pointer-events:none}
+        .help-pro-status{margin:4px 0 0;color:#c4d1df;font-size:.9em;line-height:1.3}
+        .help-pro-status[data-connected="true"]{color:#b2cde9}
+        .help-pro-label{white-space:nowrap}
+        @media(max-width:380px){.help-dialog summary .help-pro-label{display:inline-block;max-inline-size:100%;white-space:normal;overflow-wrap:anywhere}}
+        .help-pro-badge{display:inline-block;width:2.85em;height:auto;margin-inline-start:.32em;vertical-align:-.24em;pointer-events:none;user-select:none}
+        .help-pro-badge-compact{width:2.55em;vertical-align:-.21em}
+        .help-dialog .help-section>summary>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+        .help-dialog.help-dialog{max-height:min(900px,calc(100dvh - max(16px,env(safe-area-inset-top) + env(safe-area-inset-bottom) + 8px)))!important}
+        @media(max-width:360px){.help-dialog .help-pro-featurelist>summary{grid-template-columns:108px minmax(0,1fr) 18px;gap:8px}.help-dialog .help-pro-featurelist .help-section-icon.help-pro-brand,.help-dialog .help-pro-featurelist .help-pro-brand img{width:104px}}
+        ` +
+        '.help-dialog{--help-article-icon-size:44px;--help-gold:#dfbc72;--help-bright:#f7dfa1;box-sizing:border-box;width:min(760px,calc(100vw - 16px));max-width:calc(100vw - 16px);height:min(900px,calc(100dvh - 16px));max-height:calc(100dvh - 16px);padding:0;border:1px solid #c9a050;border-radius:13px;color:#d5dae0;background:radial-gradient(ellipse at 15% 0,#31445145,transparent 48%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;font:14px/1.48 Segoe UI,Arial,sans-serif;overflow:hidden;color-scheme:dark}' +
         '.help-dialog[open]{display:flex;flex-direction:column}.help-dialog::backdrop{background:#03070be0}.help-dialog *{box-sizing:border-box}.help-head{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr) 44px;align-items:center;gap:14px;padding:16px 12px 14px 18px;border-bottom:1px solid #a9874755;background:linear-gradient(180deg,#162630,#0b151c)}' +
         '.help-emblem{display:grid;place-items:center;width:44px;height:44px;border:1px solid #bc974f88;border-radius:50%;color:#f4d58e;background:radial-gradient(circle at 35% 28%,#f8e3a847,#8d652a42 45%,#09131a 72%);box-shadow:inset 0 1px #fff4,0 0 12px #d69a2130;font:700 23px/1 Georgia,serif}.help-head h2{margin:0;color:#f6e9cc;font-size:25px;line-height:1.15}.help-head p{margin:4px 0 0;color:#bfc7cf;font-size:13px}.help-close{width:44px;height:44px;border:0;background:transparent;color:#efd391;font-size:27px;border-radius:7px}.help-close:focus-visible,.help-copy:focus-visible,.help-dialog summary:focus-visible{outline:2px solid #ffe1a1;outline-offset:-2px}' +
-        '.help-content{min-height:0;overflow:auto;padding:10px;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#9a7f4755 transparent}.help-section{margin:0 0 8px;border:1px solid #8d713d70;border-radius:9px;background:linear-gradient(110deg,#a4843818,#0b171e70 30%,#15202645);box-shadow:inset 0 1px #ffe6ad0b;overflow:hidden}.help-section[open]{border-color:#c69d4f9c;box-shadow:inset 0 1px #fff2,0 0 11px #d69a2116}.help-dialog summary{display:grid;grid-template-columns:34px minmax(0,1fr) 20px;align-items:center;gap:11px;min-height:52px;padding:8px 13px;list-style:none;cursor:pointer;color:var(--help-bright);font-weight:700}.help-dialog summary::-webkit-details-marker{display:none}.help-section-icon{display:grid;place-items:center;width:31px;height:31px;border:1px solid #b68e486e;border-radius:50%;color:#e9c87e;background:linear-gradient(145deg,#8d672936,#071017);box-shadow:inset 0 1px #fff2;font-size:17px}.help-chevron{width:14px;height:14px;border-right:2px solid #dfbd72;border-bottom:2px solid #dfbd72;transform:rotate(45deg);transition:transform .16s ease,filter .16s ease;margin:-6px 3px 0 0;filter:drop-shadow(0 0 2px #d5a74955)}.help-section[open] .help-chevron{transform:rotate(225deg);margin-top:6px;filter:brightness(1.2) drop-shadow(0 0 3px #edc66d75)}' +
-        '.help-section-body{padding:0 15px 15px 58px;border-top:1px solid #a9874728}.help-section-body p{margin:12px 0 0}.help-section-body ul{margin:10px 0 0;padding-left:19px}.help-section-body li{margin:6px 0}.help-note{padding:9px 11px;border-left:2px solid #c69d50;background:#050d127a;color:#d9caa9}.help-entries{margin:8px 0 0}.help-entries dt{margin-top:9px;color:#efd18c;font-weight:700}.help-entries dd{margin:2px 0 0;color:#cbd1d7}.help-network-highlight{color:#f2cf82;font-weight:700;text-shadow:0 0 6px rgba(218,166,67,.16)}.help-maptiler-link,.help-coordinate-example{color:#f4cf79!important;font-weight:800;text-shadow:0 0 6px rgba(218,166,67,.20)}.help-maptiler-link{text-decoration:none;border-bottom:1px solid rgba(244,207,121,.42)}.help-maptiler-link:hover,.help-maptiler-link:focus-visible{color:#ffe3a0!important;border-bottom-color:#ffe3a0;outline:none}.help-code-wrap{position:relative;margin-top:12px;border:1px solid #8b723e55;border-radius:7px;background:#061017;overflow:hidden}.help-code-wrap pre{margin:0;padding:12px 62px 12px 13px;white-space:pre-wrap;overflow-wrap:anywhere;color:#cbd5df;font:12px/1.45 Consolas,"Liberation Mono",monospace}.help-copy{position:absolute;right:5px;top:4px;width:44px;height:44px;border:0;background:transparent;color:#efd391;font-size:22px}.help-copy-status{position:absolute;right:9px;bottom:3px;color:#f7dfa1;font-size:10px;background:#061017e8}' +
-        '@media(hover:hover) and (pointer:fine){.help-dialog summary:hover{background:#e1b85f0b}.help-close:hover,.help-copy:hover{color:#ffe4a3;filter:drop-shadow(0 0 3px #e0ad4c88)}}@media(max-width:520px){.help-dialog{font-size:13px}.help-head{grid-template-columns:42px minmax(0,1fr) 44px;gap:9px;padding-left:12px}.help-emblem{width:38px;height:38px}.help-head h2{font-size:21px}.help-head p{font-size:12px}.help-content{padding:7px}.help-section-body{padding:0 12px 13px}.help-dialog summary{grid-template-columns:31px minmax(0,1fr) 18px;padding:7px 10px}.help-code-wrap pre{font-size:10.5px;padding-left:9px}}' +
+        '.help-dialog .help-pro-featurelist>summary{grid-template-columns:126px minmax(0,1fr) 20px}.help-pro-featurelist .help-section-icon.help-pro-brand,.help-pro-featurelist .help-pro-brand img{width:118px;height:36px;object-fit:contain}.help-weather-topic h3{color:#efd18c}.help-weather-topic h4{margin:14px 0 0;color:#efd18c;font-size:1em}.help-weather-topic h4+p{margin-top:5px}.help-topic-back{margin:8px 0;min-height:44px}.help-content{min-height:0;overflow:auto;padding:10px;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#9a7f4755 transparent}.help-section{margin:0 0 8px;border:1px solid #8d713d70;border-radius:9px;background:linear-gradient(110deg,#a4843818,#0b171e70 30%,#15202645);box-shadow:inset 0 1px #ffe6ad0b;overflow:hidden}.help-section[open]{border-color:#c69d4f9c;box-shadow:inset 0 1px #fff2,0 0 11px #d69a2116}.help-dialog summary{display:grid;grid-template-columns:var(--help-article-icon-size) minmax(0,1fr) 20px;align-items:center;gap:11px;min-height:52px;padding:8px 13px;list-style:none;cursor:pointer;color:var(--help-bright);font-weight:700}.help-dialog summary::-webkit-details-marker{display:none}.help-section-icon{position:relative;display:grid;place-items:center;width:var(--help-article-icon-size);height:var(--help-article-icon-size);color:#e9c87e;font-size:32px;line-height:1;text-align:center}.help-chevron{width:14px;height:14px;border-right:2px solid #dfbd72;border-bottom:2px solid #dfbd72;transform:rotate(45deg);transition:transform .16s ease,filter .16s ease;margin:-6px 3px 0 0;filter:drop-shadow(0 0 2px #d5a74955)}.help-section[open] .help-chevron{transform:rotate(225deg);margin-top:6px;filter:brightness(1.2) drop-shadow(0 0 3px #edc66d75)}' +
+        '.help-section-body{padding:0 15px 15px 68px;border-top:1px solid #a9874728}.help-section-body p{margin:12px 0 0}.help-icon-paragraph{display:flow-root}.help-icon-paragraph>img{float:left;float:inline-start;width:2.96em;height:2.96em;width:2lh;height:2lh;object-fit:contain;margin-inline-end:.6em;pointer-events:none}.help-section-body ul{margin:10px 0 0;padding-left:19px}.help-section-body li{margin:6px 0}.help-note{padding:9px 11px;border-left:2px solid #c69d50;background:#050d127a;color:#d9caa9}.help-entries{margin:8px 0 0}.help-entries dt{margin-top:9px;color:#efd18c;font-weight:700}.help-entries dd{margin:2px 0 0;color:#cbd1d7}.help-network-highlight{color:#f2cf82;font-weight:700;text-shadow:0 0 6px rgba(218,166,67,.16)}.help-maptiler-link,.help-coordinate-example{color:#f4cf79!important;font-weight:800;text-shadow:0 0 6px rgba(218,166,67,.20)}.help-maptiler-link{text-decoration:none;border-bottom:1px solid rgba(244,207,121,.42)}.help-maptiler-link:hover,.help-maptiler-link:focus-visible{color:#ffe3a0!important;border-bottom-color:#ffe3a0;outline:none}.help-code-wrap{position:relative;margin-top:12px;border:1px solid #8b723e55;border-radius:7px;background:#061017;overflow:hidden}.help-code-wrap pre{margin:0;padding:12px 62px 12px 13px;white-space:pre-wrap;overflow-wrap:anywhere;color:#cbd5df;font:12px/1.45 Consolas,"Liberation Mono",monospace}.help-copy{position:absolute;right:5px;top:4px;width:44px;height:44px;border:0;background:transparent;color:#efd391;font-size:22px}.help-copy-status{position:absolute;right:9px;bottom:3px;color:#f7dfa1;font-size:10px;background:#061017e8}' +
+        '@media(hover:hover) and (pointer:fine){.help-dialog summary:hover{background:#e1b85f0b}.help-close:hover,.help-copy:hover{color:#ffe4a3;filter:drop-shadow(0 0 3px #e0ad4c88)}}@media(max-width:520px){.help-dialog{font-size:13px}.help-head{grid-template-columns:42px minmax(0,1fr) 44px;gap:9px;padding-left:12px}.help-emblem{width:38px;height:38px}.help-head h2{font-size:21px}.help-head p{font-size:12px}.help-content{padding:7px}.help-section-body{padding:0 12px 13px}.help-dialog summary{grid-template-columns:var(--help-article-icon-size) minmax(0,1fr) 18px;padding:7px 10px}.help-code-wrap pre{font-size:10.5px;padding-left:9px}}' +
+        `
+        .help-section-icon:not(.help-pro-brand)>img,.help-section-icon>svg{
+          position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+        }
+        .help-section-icon:not(.help-pro-brand)>img{width:var(--help-artwork-size,45px);height:var(--help-artwork-size,45px)}
+        .help-section-icon>svg{display:block;width:40px;height:40px;overflow:visible;filter:drop-shadow(0 0 2px rgba(226,180,74,.22))}
+        /* Adjust the image box for transparent padding in the original artwork. */
+        .help-section-icon:is([data-help-icon="radii"],[data-help-icon="instruments-v410"]){--help-artwork-size:47px}
+        .help-section-icon[data-help-icon="mapview"]{--help-artwork-size:34px}
+        .help-section-icon[data-help-icon="weather-display-v411"]{--help-artwork-size:50px}
+        .help-weather-topic:is([data-help-section="wr-wind"],[data-help-section="wr-temperature"],[data-help-section="wr-clouds"],[data-help-section="wr-display"]){--help-artwork-size:44px}
+        .help-weather-topic[data-help-section="wr-information"]{--help-artwork-size:43px}
+        .help-weather-topic[data-help-section="wr-synoptic"]{--help-artwork-size:42px}
+        .help-weather-topic[data-help-section="wr-precipitation"]{--help-artwork-size:52px}
+        ` +
         /* V4.06 accepted UI polish: stable Help frame and shared premium controls. */
-        '.help-dialog{position:relative;border-color:rgba(238,194,99,.94);box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.09),inset 0 1px rgba(255,247,224,.13),0 0 28px rgba(215,164,67,.14)}.help-dialog::after{content:"";position:absolute;inset:1px;border:1px solid rgba(255,222,148,.38);border-radius:11.75px;box-shadow:inset 0 0 0 1px rgba(120,76,12,.10),0 0 9px rgba(229,178,78,.08);pointer-events:none;z-index:40}.help-close{position:relative;display:grid;place-items:center;color:transparent;font-size:0;line-height:0;background:transparent}.help-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}.help-copy{display:grid;place-items:center;color:transparent;font-size:0;line-height:0}.help-copy img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}.help-section-icon{display:grid!important;place-items:center!important;line-height:0!important;text-align:center}.help-section-icon svg{display:block;width:24px;height:24px;overflow:visible;filter:drop-shadow(0 0 2px rgba(226,180,74,.22))}.help-section-icon[data-help-icon="prerequisites"] svg{width:27px;height:27px}.help-section-icon[data-help-icon="functions"] svg{width:25px;height:25px}.help-close:active img,.help-copy:active img{transform:scale(.97);filter:brightness(.92)}@media(hover:hover) and (pointer:fine){.help-dialog{border-color:rgba(244,201,108,.99);box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.10),inset 0 1px rgba(255,247,224,.14),0 0 0 1px rgba(246,203,110,.42),0 0 30px rgba(215,164,67,.16)}.help-dialog::after{border-color:rgba(255,228,158,.50);box-shadow:inset 0 0 0 1px rgba(120,76,12,.10),0 0 10px rgba(229,178,78,.11)}.help-close:hover,.help-copy:hover{filter:none;background:transparent}.help-close:hover img,.help-copy:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}@media(hover:none) and (pointer:coarse){.help-close:focus-visible{outline:none}}.help-dialog{border:2px solid transparent;background:radial-gradient(ellipse at 15% 0,#31445145,transparent 48%) padding-box,linear-gradient(#091219,#091219) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.07),inset 0 1px rgba(255,247,224,.10),0 0 8px rgba(215,164,67,.05)}.help-dialog::after{content:none!important}.help-section-icon[data-help-icon="functions"] svg{width:27px;height:27px;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 -1px .4px #f5d5a555)}' +
-        '.help-emblem{border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}.help-emblem img{display:block;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 3px #0008) drop-shadow(0 0 4px #d8a54b44)}.help-close img{width:38px!important;height:38px!important;filter:drop-shadow(0 2px 3px #0009) drop-shadow(0 0 3px #d9a84b44)}.help-section-icon{width:34px!important;height:34px!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}.help-section-icon img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 3px #0009) drop-shadow(0 0 3px #d7a2463d);transform:translateZ(0)}.help-section-icon[data-help-icon="external_services"] img{width:35px;height:35px}.help-section-icon[data-help-icon="functions"] img{width:34px;height:34px}.help-chevron{border-color:#f1ca74!important;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66)!important}@media(max-width:520px){.help-emblem img{width:38px;height:38px}.help-section-icon{width:33px!important;height:33px!important}.help-section-icon img{width:33px;height:33px}.help-section-icon[data-help-icon="external_services"] img{width:34px;height:34px}}' +
-        '.help-dialog{position:relative}.help-close{position:absolute!important;top:10px!important;right:10px!important;margin:0!important;z-index:60!important}.help-head{padding-right:64px!important}.help-close img{width:34px!important;height:34px!important;filter:none!important}.help-emblem img{width:42px!important;height:42px!important;object-fit:contain!important;object-position:50% 50%!important;filter:none!important;transform:none!important}.help-section-icon[data-help-icon="troubleshooting"] img{width:38px!important;height:38px!important;object-fit:contain!important;object-position:50% 50%!important;filter:none!important;transform:none!important}@media(max-width:520px){.help-emblem img{width:38px!important;height:38px!important}.help-section-icon[data-help-icon="troubleshooting"] img{width:36px!important;height:36px!important}}' +
-        '.help-radius-list{list-style:none!important;padding-left:0!important;margin-top:11px!important}.help-radius-item{display:flex;align-items:flex-start;gap:10px;margin:8px 0!important}.help-radius-bullet{display:inline-block;width:14px;height:14px;flex:0 0 14px;margin-top:.28em;border-radius:50%;background:var(--help-radius-metal);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2.2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2.2px));filter:drop-shadow(0 1px 1px #000b) drop-shadow(0 0 3px var(--help-radius-glow))}.help-radius-item[data-radius-tone="observation"]{--help-radius-metal:conic-gradient(from 215deg,#6b400c 0deg,#d89d2c 48deg,#fff3b5 86deg,#bb7617 145deg,#5a350c 205deg,#e7b646 270deg,#fff0a0 315deg,#6b400c 360deg);--help-radius-glow:#d9a84b66}.help-radius-item[data-radius-tone="storm"]{--help-radius-metal:conic-gradient(from 215deg,#17385a 0deg,#5b9bd3 48deg,#d9f1ff 86deg,#3471aa 145deg,#102b47 205deg,#74b9ea 270deg,#e5f6ff 315deg,#17385a 360deg);--help-radius-glow:#6fb7e866}.help-radius-item[data-radius-tone="danger"]{--help-radius-metal:conic-gradient(from 215deg,#5a1717 0deg,#b94b42 48deg,#ffd2c9 86deg,#98332d 145deg,#471111 205deg,#d8675b 270deg,#ffe0d8 315deg,#5a1717 360deg);--help-radius-glow:#d65a5066}.help-section[data-help-section="location"] .help-entries dt{margin-top:13px;padding-top:8px;border-top:1px solid rgba(198,157,79,.16)}.help-section[data-help-section="location"] .help-entries dt:first-child{border-top:0;padding-top:0}.help-inline-subentry{margin-top:13px;padding-top:8px;border-top:1px solid rgba(198,157,79,.16)}.help-inline-subentry-title{color:#efd18c;font-weight:700}.help-inline-subentry-body{margin-top:2px;color:#cbd1d7}.help-recorder-priority{border-left:3px solid #e0ad4c;background:linear-gradient(90deg,rgba(224,173,76,.15),rgba(224,173,76,.025))}.help-entries dt.help-recorder-priority{margin-top:14px;padding:9px 11px 3px;color:#ffe2a0}.help-entries dd.help-recorder-priority{margin-top:0;padding:3px 11px 10px;color:#f0dfb9}.help-section[data-help-section="recorder"] summary{background:linear-gradient(90deg,rgba(224,173,76,.13),rgba(224,173,76,.025))}.help-feature-block{margin:15px 0 4px;padding:11px 0 0;border-top:1px solid rgba(198,157,79,.18)}.help-feature-block-title{margin:0 0 5px;color:#efd18c;font-weight:700}.help-feature-block-body{margin:0;color:#cbd1d7}.help-inline-infinity-gfx{display:inline-block;width:32px;height:22px;object-fit:contain;vertical-align:-.37em;margin:0 3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.58));}.help-layer-graphic-card{margin:14px 0 5px;padding:4px 0 3px;display:grid;grid-template-columns:88px minmax(0,1fr);align-items:center;gap:14px;border:0;border-radius:0;background:transparent;box-shadow:none}.help-layer-graphic{display:block;width:82px;height:82px;object-fit:contain;filter:drop-shadow(0 6px 9px rgba(0,0,0,.52)) drop-shadow(0 0 6px rgba(246,195,68,.14))}.help-layer-graphic-caption{color:#d5dae0;font-weight:400;line-height:1.48}.help-section-icon[data-help-icon="mapview"]{width:34px!important;height:34px!important;border:1px solid rgba(205,164,79,.88)!important;border-radius:50%!important;background:radial-gradient(circle at 35% 28%,rgba(248,227,168,.18),rgba(141,101,42,.18) 48%,rgba(7,16,23,.96) 74%)!important;box-shadow:inset 0 1px rgba(255,240,195,.22),0 1px 3px rgba(0,0,0,.72),0 0 4px rgba(216,165,75,.20)!important;overflow:visible!important}.help-section-icon[data-help-icon="mapview"] img{width:25px;height:25px;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.58)) drop-shadow(0 0 2px rgba(218,166,67,.20))}@media(max-width:520px){.help-layer-graphic-card{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:4px 0 3px}.help-layer-graphic{width:82px;height:82px}}' +
+        '.help-dialog{position:relative;border-color:rgba(238,194,99,.94);box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.09),inset 0 1px rgba(255,247,224,.13),0 0 28px rgba(215,164,67,.14)}.help-dialog::after{content:"";position:absolute;inset:1px;border:1px solid rgba(255,222,148,.38);border-radius:11.75px;box-shadow:inset 0 0 0 1px rgba(120,76,12,.10),0 0 9px rgba(229,178,78,.08);pointer-events:none;z-index:40}.help-close{position:relative;display:grid;place-items:center;color:transparent;font-size:0;line-height:0;background:transparent}.help-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}.help-copy{display:grid;place-items:center;color:transparent;font-size:0;line-height:0}.help-copy img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}.help-close:active img,.help-copy:active img{transform:scale(.97);filter:brightness(.92)}@media(hover:hover) and (pointer:fine){.help-dialog{border-color:rgba(244,201,108,.99);box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.10),inset 0 1px rgba(255,247,224,.14),0 0 0 1px rgba(246,203,110,.42),0 0 30px rgba(215,164,67,.16)}.help-dialog::after{border-color:rgba(255,228,158,.50);box-shadow:inset 0 0 0 1px rgba(120,76,12,.10),0 0 10px rgba(229,178,78,.11)}.help-close:hover,.help-copy:hover{filter:none;background:transparent}.help-close:hover img,.help-copy:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}@media(hover:none) and (pointer:coarse){.help-close:focus-visible{outline:none}}.help-dialog{border:2px solid transparent;background:radial-gradient(ellipse at 15% 0,#31445145,transparent 48%) padding-box,linear-gradient(#091219,#091219) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;box-shadow:0 24px 90px #000c,inset 0 0 0 1px rgba(255,235,184,.07),inset 0 1px rgba(255,247,224,.10),0 0 8px rgba(215,164,67,.05)}.help-dialog::after{content:none!important}.help-section-icon[data-help-icon="functions"] svg{filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 -1px .4px #f5d5a555)}' +
+        '.help-emblem{border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}.help-emblem img{display:block;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 3px #0008) drop-shadow(0 0 4px #d8a54b44)}.help-close img{width:38px!important;height:38px!important;filter:drop-shadow(0 2px 3px #0009) drop-shadow(0 0 3px #d9a84b44)}.help-section-icon img{display:block;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 3px #0009) drop-shadow(0 0 3px #d7a2463d)}.help-chevron{border-color:#f1ca74!important;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66)!important}@media(max-width:520px){.help-emblem img{width:38px;height:38px}}' +
+        '.help-dialog{position:relative}.help-close{position:absolute!important;top:10px!important;right:10px!important;margin:0!important;z-index:60!important}.help-head{padding-right:64px!important}.help-close img{width:34px!important;height:34px!important;filter:none!important}.help-emblem img{width:42px!important;height:42px!important;object-fit:contain!important;object-position:50% 50%!important;filter:none!important;transform:none!important}.help-section-icon[data-help-icon="troubleshooting"] img{filter:none}@media(max-width:520px){.help-emblem img{width:38px!important;height:38px!important}}' +
+        '.help-radius-list{list-style:none!important;padding-left:0!important;margin-top:11px!important}.help-radius-item{display:flex;align-items:flex-start;gap:10px;margin:8px 0!important}.help-radius-bullet{display:inline-block;width:14px;height:14px;flex:0 0 14px;margin-top:.28em;border-radius:50%;background:var(--help-radius-metal);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2.2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2.2px));filter:drop-shadow(0 1px 1px #000b) drop-shadow(0 0 3px var(--help-radius-glow))}.help-radius-item[data-radius-tone="observation"]{--help-radius-metal:conic-gradient(from 215deg,#6b400c 0deg,#d89d2c 48deg,#fff3b5 86deg,#bb7617 145deg,#5a350c 205deg,#e7b646 270deg,#fff0a0 315deg,#6b400c 360deg);--help-radius-glow:#d9a84b66}.help-radius-item[data-radius-tone="storm"]{--help-radius-metal:conic-gradient(from 215deg,#17385a 0deg,#5b9bd3 48deg,#d9f1ff 86deg,#3471aa 145deg,#102b47 205deg,#74b9ea 270deg,#e5f6ff 315deg,#17385a 360deg);--help-radius-glow:#6fb7e866}.help-radius-item[data-radius-tone="danger"]{--help-radius-metal:conic-gradient(from 215deg,#5a1717 0deg,#b94b42 48deg,#ffd2c9 86deg,#98332d 145deg,#471111 205deg,#d8675b 270deg,#ffe0d8 315deg,#5a1717 360deg);--help-radius-glow:#d65a5066}.help-section[data-help-section="location"] .help-entries dt{margin-top:13px;padding-top:8px;border-top:1px solid rgba(198,157,79,.16)}.help-section[data-help-section="location"] .help-entries dt:first-child{border-top:0;padding-top:0}.help-inline-subentry{margin-top:13px;padding-top:8px;border-top:1px solid rgba(198,157,79,.16)}.help-inline-subentry-title{color:#efd18c;font-weight:700}.help-inline-subentry-body{margin-top:2px;color:#cbd1d7}.help-recorder-priority{border-left:3px solid #e0ad4c;background:linear-gradient(90deg,rgba(224,173,76,.15),rgba(224,173,76,.025))}.help-entries dt.help-recorder-priority{margin-top:14px;padding:9px 11px 3px;color:#ffe2a0}.help-entries dd.help-recorder-priority{margin-top:0;padding:3px 11px 10px;color:#f0dfb9}.help-section[data-help-section="recorder"] summary{background:linear-gradient(90deg,rgba(224,173,76,.13),rgba(224,173,76,.025))}.help-feature-block{margin:15px 0 4px;padding:11px 0 0;border-top:1px solid rgba(198,157,79,.18)}.help-feature-block-title{margin:0 0 5px;color:#efd18c;font-weight:700}.help-feature-block-body{margin:0;color:#cbd1d7}.help-inline-infinity-gfx{display:inline-block;width:32px;height:22px;object-fit:contain;vertical-align:-.37em;margin:0 3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.58));}.help-layer-graphic-card{margin:14px 0 5px;padding:4px 0 3px;display:grid;grid-template-columns:88px minmax(0,1fr);align-items:center;gap:14px;border:0;border-radius:0;background:transparent;box-shadow:none}.help-layer-graphic{display:block;width:82px;height:82px;object-fit:contain;filter:drop-shadow(0 6px 9px rgba(0,0,0,.52)) drop-shadow(0 0 6px rgba(246,195,68,.14))}.help-layer-graphic-caption{color:#d5dae0;font-weight:400;line-height:1.48}.help-section-icon[data-help-icon="mapview"]::before{content:"";position:absolute;inset:2px;border:1px solid rgba(205,164,79,.88);border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(248,227,168,.18),rgba(141,101,42,.18) 48%,rgba(7,16,23,.96) 74%);box-shadow:inset 0 1px rgba(255,240,195,.22),0 1px 3px rgba(0,0,0,.72),0 0 4px rgba(216,165,75,.20);pointer-events:none}.help-section-icon[data-help-icon="mapview"] img{filter:drop-shadow(0 1px 3px rgba(0,0,0,.58)) drop-shadow(0 0 2px rgba(218,166,67,.20))}@media(max-width:520px){.help-layer-graphic-card{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:4px 0 3px}.help-layer-graphic{width:82px;height:82px}}' +
         '.help-dialog{height:auto!important;min-height:0!important;max-height:min(900px,calc(100dvh - 16px))!important}.help-content{flex:0 1 auto}.help-process-highlight{display:inline-block;padding:1px 6px;border:1px solid rgba(225,190,110,.46);border-radius:5px;color:#e8d6a5!important;background:linear-gradient(180deg,rgba(104,76,29,.28),rgba(47,34,15,.32));box-shadow:inset 0 1px rgba(255,239,190,.10);font-weight:800;text-shadow:0 1px 1px rgba(0,0,0,.72)}.help-action-token{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;position:relative;font-weight:900;line-height:1;vertical-align:-.10em;-webkit-background-clip:border-box!important;background-clip:border-box!important}.help-action-save{height:1.56em;min-height:1.56em;padding:0 .52em;border:1px solid #b49753;border-radius:.29em;color:#f1dfad!important;letter-spacing:.008em;overflow:hidden;background:repeating-linear-gradient(0deg,rgba(255,255,255,.026) 0 1px,rgba(0,0,0,.025) 1px 3px),repeating-linear-gradient(96deg,rgba(255,255,255,.018) 0 1px,rgba(0,0,0,.020) 1px 4px),radial-gradient(ellipse at 30% 10%,rgba(255,244,201,.13) 0 8%,rgba(255,255,255,0) 40%),linear-gradient(180deg,#9a8040 0%,#665025 13%,#8b7135 38%,#6d5426 63%,#4a3516 100%);background-blend-mode:soft-light,soft-light,soft-light,normal;box-shadow:inset 0 0 0 1px rgba(35,23,6,.62),inset 0 0 0 2px rgba(238,210,141,.07),inset 0 1px 0 rgba(255,241,194,.24),inset 0 -2px 2px rgba(26,17,5,.52),inset 1px 0 0 rgba(255,228,164,.06),inset -1px 0 0 rgba(18,12,4,.44),0 1px 2px rgba(0,0,0,.66),0 0 0 1px rgba(12,8,2,.28);text-shadow:0 1px 0 rgba(20,13,3,.98),0 -1px 0 rgba(255,239,188,.16),0 0 1px rgba(255,224,145,.18)}.help-action-save:before{content:"";position:absolute;inset:2px;border:1px solid rgba(247,220,151,.11);border-radius:.18em;box-shadow:inset 0 1px 0 rgba(255,245,211,.08),inset 0 -1px 0 rgba(20,13,4,.32);pointer-events:none}.help-action-use{height:1.56em;min-height:1.56em;padding:0 .52em;border:1px solid #5d849c;border-radius:.29em;color:#e5edf2!important;letter-spacing:.008em;overflow:hidden;background:repeating-linear-gradient(0deg,rgba(255,255,255,.026) 0 1px,rgba(0,0,0,.025) 1px 3px),repeating-linear-gradient(96deg,rgba(255,255,255,.018) 0 1px,rgba(0,0,0,.020) 1px 4px),radial-gradient(ellipse at 30% 10%,rgba(219,241,255,.13) 0 8%,rgba(255,255,255,0) 40%),linear-gradient(180deg,#426d85 0%,#29495c 13%,#355d73 38%,#294b5f 63%,#1b3342 100%);background-blend-mode:soft-light,soft-light,soft-light,normal;box-shadow:inset 0 0 0 1px rgba(10,24,34,.62),inset 0 0 0 2px rgba(174,218,243,.07),inset 0 1px 0 rgba(225,246,255,.22),inset 0 -2px 2px rgba(7,18,25,.52),inset 1px 0 0 rgba(206,236,252,.06),inset -1px 0 0 rgba(7,17,24,.44),0 1px 2px rgba(0,0,0,.66),0 0 0 1px rgba(4,11,16,.28);text-shadow:0 1px 0 rgba(5,13,19,.98),0 -1px 0 rgba(222,244,255,.13),0 0 1px rgba(178,221,245,.16)}.help-action-use:before{content:"";position:absolute;inset:2px;border:1px solid rgba(174,218,243,.11);border-radius:.18em;box-shadow:inset 0 1px 0 rgba(226,246,255,.07),inset 0 -1px 0 rgba(7,18,25,.32);pointer-events:none}.help-action-delete,.help-action-restore{width:1.56em;height:1.56em;flex:0 0 1.56em;margin:0 .09em;padding:0;border-radius:50%;overflow:hidden;text-indent:-9999px;color:transparent!important;text-shadow:none!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 0 0 3px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 2px rgba(0,0,0,.48),0 0 0 1px rgba(0,0,0,.46),0 1px 2px rgba(0,0,0,.64)}.help-action-delete:before,.help-action-restore:before{position:absolute;left:50%;text-indent:0;font-family:Arial,Helvetica,sans-serif;font-weight:800;line-height:1;z-index:2;text-shadow:0 1px 0 rgba(0,0,0,.86),0 -1px 0 rgba(255,255,255,.10)}.help-action-delete:after,.help-action-restore:after{content:"";position:absolute;inset:2px;border-radius:50%;pointer-events:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.34)}.help-action-delete{border:1px solid #a25e57;background:repeating-conic-gradient(from 12deg,rgba(255,255,255,.022) 0deg 2deg,rgba(0,0,0,.030) 2deg 5deg),radial-gradient(circle at 33% 23%,rgba(255,224,215,.11) 0 7%,rgba(255,255,255,0) 29%),linear-gradient(180deg,#8d463f 0%,#5d2925 29%,#77362f 54%,#421a18 100%);background-blend-mode:soft-light,soft-light,normal}.help-action-delete:after{border:1px solid rgba(255,187,176,.16)}.help-action-delete:before{content:"×";top:50%;transform:translate(-50%,-54%);font-size:1.10em;color:#f0e5e1}.help-action-restore{border:1px solid #5d849c;background:repeating-conic-gradient(from 12deg,rgba(255,255,255,.022) 0deg 2deg,rgba(0,0,0,.030) 2deg 5deg),radial-gradient(circle at 33% 23%,rgba(219,241,255,.11) 0 7%,rgba(255,255,255,0) 29%),linear-gradient(180deg,#426d85 0%,#29495c 29%,#355d73 54%,#1b3342 100%);background-blend-mode:soft-light,soft-light,normal}.help-action-restore:after{border:1px solid rgba(174,218,243,.16)}.help-action-restore:before{content:"↶";top:43%;transform:translate(-50%,-50%);font-size:1.04em;color:#e5edf2}@supports(-webkit-touch-callout:none){@media(min-width:700px){.help-action-delete:before{top:50%;transform:translate(-50%,-50%);font-size:1.08em}.help-action-restore:before{content:"";top:50%;width:1.04em;height:1.04em;transform:translate(-50%,-50%);background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M9.5 5.5 5 10l4.5 4.5M5.6 10h6.9c3.9 0 6.5 2.2 6.5 5.4 0 2.9-2.2 5.1-5.3 5.1h-3.4%22 fill=%22none%22 stroke=%22%23121b21%22 stroke-width=%224.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M9.5 5.5 5 10l4.5 4.5M5.6 10h6.9c3.9 0 6.5 2.2 6.5 5.4 0 2.9-2.2 5.1-5.3 5.1h-3.4%22 fill=%22none%22 stroke=%22%23e5edf2%22 stroke-width=%222.35%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") center/contain no-repeat}}}' +
         '</style><dialog class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title"><header class="help-head"><span class="help-emblem" aria-hidden="true"><img src="' + HELP_REFINED_ICONS_V5.question + '" alt="" width="44" height="44" draggable="false"></span><div><h2 id="help-title"></h2><p class="help-subtitle"></p></div><button class="help-close" type="button" aria-label="Close"><img src="' + ABOUT_CLOSE_IMAGE + '" alt="" width="34" height="34" draggable="false"></button></header><div class="help-content"></div></dialog>';
       this._helpReturnFocus = this.shadow.activeElement;
@@ -2407,27 +2814,53 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         if(event.shiftKey&&active===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&active===last){event.preventDefault();first.focus();}
         event.stopPropagation();
       });
-      this._syncHelp();
-      dialog.showModal();
+      const showHelpError=(stage,error)=>{
+        const message=error instanceof Error?error.message:String(error);
+        console.error('[Gewitterradar] Hilfe und Hinweise: '+stage,error);
+        this._helpLastError={stage,message,at:new Date().toISOString()};
+        const content=dialog.querySelector('.help-content');
+        content.replaceChildren();
+        const notice=document.createElement('div');
+        notice.setAttribute('role','alert');
+        notice.style.cssText='margin:16px;padding:15px;border:1px solid #d5a052;border-radius:8px;color:#ffe1a1;white-space:pre-wrap;overflow-wrap:anywhere';
+        notice.textContent='Hilfe konnte nicht vollständig geladen werden.\\nFehlerstelle: '+stage+'\\n'+message;
+        content.append(notice);
+      };
+      try { this._syncHelp(); } catch(error) { showHelpError('Hilfetexte aufbauen',error); }
+      try { dialog.showModal(); } catch(error) {
+        showHelpError('Dialog öffnen',error);
+        dialog.setAttribute('open','');
+      }
+      // Sprachdaten höchstens einmal je Dialogöffnung anfragen.
+      try {
+        const openedLanguage=this._languageValue();
+        requestAboutLocale(openedLanguage,()=>{
+          if(this._helpDialog!==dialog||!dialog.open||this._languageValue()!==openedLanguage)return;
+          try { this._syncHelp(); } catch(error) { showHelpError('Sprache aktualisieren',error); }
+        });
+      } catch(error) { showHelpError('Sprache anfordern',error); }
       dialog.querySelector('.help-close').focus({preventScroll:true});
     },
 
     _syncHelp() {
       const dialog=this._helpDialog;
       if(!dialog)return;
-      const language=this._languageValue(),locale=resolveAboutLocale(language),help=this._helpWithV410(language,locale.help);
+      const language=this._languageValue(),locale=resolveAboutLocale(language),weatherHelp=resolveWeatherHelpLocale?.(language),help=this._helpWithV410(language,locale.help,weatherHelp);
       dialog.querySelector('h2').textContent=help.title;
       dialog.querySelector('.help-subtitle').textContent=help.subtitle;
       dialog.querySelector('.help-close').setAttribute('aria-label',help.close);
       if(this._helpLocale!==help){
         const content=dialog.querySelector('.help-content'),openKeys=new Set([...content.querySelectorAll('details[open]')].map(node=>node.dataset.helpSection)),scrollTop=content.scrollTop;
+        const focused=this.shadow?.activeElement,focusedSection=focused?.closest('details[data-help-section]');
+        const helpControls='summary, button, a[href]';
+        const focusedIndex=focusedSection ? [...focusedSection.querySelectorAll(helpControls)].indexOf(focused) : -1;
         content.textContent='';
         const icons={prerequisites:'⌂',radii:'◎',location:'⌖',mapview:'▱',functions:'⚙','instruments-v410':'◆',defaults:'✓',troubleshooting:'!',recorder:'▤'};
         /* Deterministic Help icons remove platform font-baseline drift on iPad/iPad Pro. */
         const premiumFunctionsIcon='<svg class="help-functions-welcome-gear" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><defs><linearGradient id="help-functions-welcome-metal" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".62" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><g stroke="url(#help-functions-welcome-metal)"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/><circle cx="32" cy="32" r="17" opacity=".25"/></g></svg>';
         const deterministicHelpIcons={prerequisites:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 10.5 12 3.5l8.5 7v9h-6v-5h-5v5h-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>',radii:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.7" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.25" fill="currentColor"/></svg>',location:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.8v4M12 17.2v4M2.8 12h4M17.2 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',functions:premiumFunctionsIcon,defaults:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.8 12.5 4.2 4.2 10.2-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',troubleshooting:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4.3v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="18.4" r="1.35" fill="currentColor"/></svg>',external_services:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.8c2.25 1.76 4.62 2.75 7.35 3.06v5.25c0 4.72-2.88 8.27-7.35 10.09-4.47-1.82-7.35-5.37-7.35-10.09V5.86C7.38 5.55 9.75 4.56 12 2.8Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><rect x="7.7" y="7.55" width="8.6" height="8.15" rx="1" fill="none" stroke="currentColor" stroke-width="1.45"/><path d="M9.35 9v1.55M10.7 9v1.55M12 9v1.55M13.3 9v1.55M14.65 9v1.55M9.1 11.7h5.8v2.05h-1.35v1.05h-3.1v-1.05H9.1Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',recorder:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3.8" width="14" height="16.4" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h8M8 12h8M8 16h8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'};
         const v410InstrumentHelpIcon='data:image/png;base64,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';
-        const premiumHelpIconImages={...HELP_PREMIUM_ICONS.sections,radii:HELP_REFINED_ICONS_V6.radii,mapview:MAP_LAYER_SYMBOL_STACK3D_IMAGE,troubleshooting:HELP_PREMIUM_ICONS.sections.recorder,recorder:HELP_REFINED_ICONS_V5.troubleshooting,'instruments-v410':v410InstrumentHelpIcon};
+        const premiumHelpIconImages={...HELP_PREMIUM_ICONS.sections,radii:HELP_REFINED_ICONS_V6.radii,mapview:MAP_LAYER_SYMBOL_STACK3D_IMAGE,troubleshooting:HELP_PREMIUM_ICONS.sections.recorder,recorder:HELP_REFINED_ICONS_V5.troubleshooting,'instruments-v410':v410InstrumentHelpIcon,'weather-display-v411':MAP_LAYER_SYMBOL_STACK3D_IMAGE};
         const helpNetworkTokenPattern=/https:\/\/www\.maptiler\.com\/tools\/coordinates\/|53\.837691,\s*9\.956105|★ Speichern|★ Save|Location entity|×|↶|device_tracker\.gewitterradar(?:_dashboard)?|gewitterradar\.set_reference_coordinates|a\/b\/c\.tile\.openstreetmap\.org|(?:\*\.)?(?:[a-z0-9-]+\.)+[a-z]{2,24}(?::\d{1,5})?|\b(?:HTTPS|HTTP|MQTT)\/TCP\s+\d{1,5}\b|\b(?:TCP|UDP)[ -]?\d{1,5}\b|\b(?:Open-Meteo(?: Geocoding)?|OpenStreetMap(?: Nominatim|-Kacheln|-Kachelserver|-tiles| tiles)?|Nominatim|Leaflet(?: 1\.9\.4)?|GitHub\/HACS|GitHub|HACS|Local(?:-|\s)to-do(?:-Liste|-list)?|Dashboard-Setz-Script|Companion App|DNS|TLS-Inspection|CORS)\b/gi;
         const helpTokenQuotePattern=/[„“”‚‘’"'«»‹›]/;
         const appendHelpNetworkText=(target,text)=>{
@@ -2453,26 +2886,63 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           const subBody=document.createElement('div');subBody.className='help-inline-subentry-body';setHelpDiagnosticText(subBody,match[3].trim());
           sub.append(subTitle,subBody);target.append(sub);
         };
+        const groupKeys={standard:'gr.help.group.standard.v1',pro:'gr.help.group.pro.v1'};
+        const collapsed={};
+        try{const storage=settingsStorage(this);for(const [name,key] of Object.entries(groupKeys))collapsed[name]=storage.getItem(key)==='1';}catch(_){}
+        const sections=createHelpSections(content,language,weatherHelp,{collapsed,onToggle:(name,value)=>{
+          try{settingsStorage(this).setItem(groupKeys[name],value?'1':'0');}catch(_){}
+        }});
+        appendWeatherHelp(sections.proTopics,language,openKeys,{weatherHelp});
         help.sections.forEach((section,index)=>{
+          const proOnly=section.key==='weather-display-v411';
           const details=document.createElement('details');details.className='help-section';details.dataset.helpSection=section.key;details.open=openKeys.has(section.key)||(!this._helpLocale&&index===0);
           const summary=document.createElement('summary'),icon=document.createElement('span'),title=document.createElement('span'),chevron=document.createElement('span');
           icon.className='help-section-icon';icon.dataset.helpIcon=section.key;icon.setAttribute('aria-hidden','true');icon.innerHTML=premiumHelpIconImages[section.key]?'<img src="'+premiumHelpIconImages[section.key]+'" alt="" draggable="false">':(deterministicHelpIcons[section.key]||icons[section.key]||'•');title.textContent=section.title;chevron.className='help-chevron';chevron.setAttribute('aria-hidden','true');summary.append(icon,title,chevron);details.append(summary);
+          if(proOnly){title.textContent='';appendHelpProLabel(title,section.title);}
           const body=document.createElement('div');body.className='help-section-body';
           for(const text of section.paragraphs||[]){const p=document.createElement('p');setHelpDiagnosticText(p,text);body.append(p);}
           if(section.layerGraphic){const graphic=document.createElement('div');graphic.className='help-layer-graphic-card';const image=document.createElement('img');image.className='help-layer-graphic';image.src=MAP_LAYER_SYMBOL_STACK3D_IMAGE;image.alt=section.layerGraphicAlt||'3D layer';image.width=96;image.height=96;image.draggable=false;const caption=document.createElement('div');caption.className='help-layer-graphic-caption';setHelpDiagnosticText(caption,section.layerGraphicCaption||'');graphic.append(image,caption);body.append(graphic);}
           if(section.items?.length){const ul=document.createElement('ul');if(section.key==='radii')ul.className='help-radius-list';for(const [itemIndex,text] of section.items.entries()){const li=document.createElement('li');if(section.key==='radii'){li.className='help-radius-item';li.dataset.radiusTone=['observation','storm','danger'][itemIndex]||'';const ring=document.createElement('span');ring.className='help-radius-bullet';ring.setAttribute('aria-hidden','true');li.append(ring);}setHelpDiagnosticText(li,text);ul.append(li);}body.append(ul);}
           if(section.featureBlocks?.length){for(const block of section.featureBlocks){const wrap=document.createElement('div');wrap.className='help-feature-block';const blockTitle=document.createElement('div');blockTitle.className='help-feature-block-title';setHelpDiagnosticText(blockTitle,block.title);const blockBody=document.createElement('div');blockBody.className='help-feature-block-body';const parts=String(block.body||'').split('{{INFINITY}}');parts.forEach((part,partIndex)=>{if(part)setHelpDiagnosticText(blockBody,part);if(partIndex<parts.length-1){const infinity=document.createElement('img');infinity.className='help-inline-infinity-gfx';infinity.src=GEWITTERRADAR_INFINITY_GFX;infinity.alt=block.infinityAlt||'Unendlich';infinity.width=32;infinity.height=22;infinity.draggable=false;blockBody.append(infinity);}});wrap.append(blockTitle,blockBody);body.append(wrap);}}
-          if(section.entries?.length){const dl=document.createElement('dl');dl.className='help-entries';for(const [entryIndex,[term,text]] of section.entries.entries()){const dt=document.createElement('dt'),dd=document.createElement('dd');const recorderPriority=section.key==='defaults'&&/^Recorder\b/i.test(String(term));if(recorderPriority){dt.className='help-recorder-priority';dd.className='help-recorder-priority';}setHelpDiagnosticText(dt,term);dt.append(document.createTextNode(':'));if(section.key==='location'&&(entryIndex===2||entryIndex===5)){const value=String(text??'').trimStart().replace(/^[„“”‚‘’"'«»‹›]+\s*/,'');const actionMatch=entryIndex===5?value.match(/^★\s+\S+/):value.match(/^\S+/);if(actionMatch){const action=document.createElement('span');action.className=entryIndex===5?'help-action-token help-action-save':'help-action-token help-action-use';action.textContent=actionMatch[0].replace(/^[„“”‚‘’"'«»‹›]+|[„“”‚‘’"'«»‹›]+$/g,'');const rest=value.slice(actionMatch[0].length).replace(/^[\s„“”‚‘’"'«»‹›]+/,'');dd.append(action);if(rest){dd.append(document.createTextNode(' '));setHelpDiagnosticText(dd,rest);}}else appendHelpEntryValue(dd,text);}else appendHelpEntryValue(dd,text);dl.append(dt,dd);}body.append(dl);}
+          if(section.entries?.length){const dl=document.createElement('dl');dl.className='help-entries';for(const [entryIndex,entry] of section.entries.entries()){const [term,text]=Array.isArray(entry)?entry:[entry?.term??entry?.title??'',entry?.description??entry?.body??''];const dt=document.createElement('dt'),dd=document.createElement('dd');const recorderPriority=section.key==='defaults'&&/^Recorder\b/i.test(String(term));if(recorderPriority){dt.className='help-recorder-priority';dd.className='help-recorder-priority';}setHelpDiagnosticText(dt,term);dt.append(document.createTextNode(':'));if(section.key==='location'&&(entryIndex===2||entryIndex===5)){const value=String(text??'').trimStart().replace(/^[„“”‚‘’"'«»‹›]+\s*/,'');const actionMatch=entryIndex===5?value.match(/^★\s+\S+/):value.match(/^\S+/);if(actionMatch){const action=document.createElement('span');action.className=entryIndex===5?'help-action-token help-action-save':'help-action-token help-action-use';action.textContent=actionMatch[0].replace(/^[„“”‚‘’"'«»‹›]+|[„“”‚‘’"'«»‹›]+$/g,'');const rest=value.slice(actionMatch[0].length).replace(/^[\s„“”‚‘’"'«»‹›]+/,'');dd.append(action);if(rest){dd.append(document.createTextNode(' '));setHelpDiagnosticText(dd,rest);}}else appendHelpEntryValue(dd,text);}else appendHelpEntryValue(dd,text);dl.append(dt,dd);}body.append(dl);}
           if(section.recorder){const wrap=document.createElement('div');wrap.className='help-code-wrap';const pre=document.createElement('pre'),code=document.createElement('code'),button=document.createElement('button'),status=document.createElement('span');code.textContent=ABOUT_RECORDER_YAML;pre.append(code);button.className='help-copy';button.type='button';button.setAttribute('aria-label',help.copy);const copyImage=document.createElement('img');copyImage.src=ABOUT_COPY_IMAGE;copyImage.alt='';copyImage.width=34;copyImage.height=34;copyImage.draggable=false;button.append(copyImage);status.className='help-copy-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');wrap.append(pre,button,status);body.append(wrap);button.addEventListener('click',()=>this._copyHelpRecorder());}
           for(const text of section.notes||[]){const p=document.createElement('p');p.className='help-note';setHelpDiagnosticText(p,text);body.append(p);}
-          details.append(body);content.append(details);
+          if(section.key==='mapview')body.append(createHelpProMapNote(language,weatherHelp));
+          details.append(body);
+          (proOnly?sections.proTopics:sections.standardTopics).append(details);
         });
+        const weatherInformation=sections.pro.querySelector('[data-help-section="wr-information"]');
+        if(weatherInformation)sections.proTopics.append(weatherInformation);
+        this._syncHelpProFeatureList(sections,language,openKeys,weatherHelp);
         content.scrollTop=scrollTop;this._helpLocale=help;
+        if(focusedIndex>=0){
+          const replacement=[...content.querySelectorAll('details[data-help-section]')]
+            .find(node=>node.dataset.helpSection===focusedSection.dataset.helpSection);
+          replacement?.querySelectorAll(helpControls)[focusedIndex]?.focus({preventScroll:true});
+        }
       }
-      requestAboutLocale(language,()=>{if(this._helpDialog===dialog&&this._languageValue()===language)this._syncHelp();});
+      this._helpRenderedLanguage=language;
+    },
+
+    _syncHelpProFeatureList({pro,setConnected},language,openKeys,weatherHelp) {
+      const title=this.shadow?.getElementById('overview-title');
+      const sync=()=>{
+        const entry=pro.querySelector('.help-pro-featurelist');
+        const connected=title?.dataset.proConnection==='ready';
+        setConnected(connected);
+        if(connected)entry?.remove();
+        else if(!entry)appendWeatherHelp(pro.querySelector('.help-group-topics'),language,openKeys,{upgrade:true,weatherHelp});
+      };
+      this._helpProObserver?.disconnect();
+      if(title){
+        this._helpProObserver=new MutationObserver(sync);
+        this._helpProObserver.observe(title,{attributes:true,attributeFilter:['data-pro-connection']});
+      }
+      sync();
     },
 
     _closeHelp(restoreFocus = true) {
+      this._helpProObserver?.disconnect();this._helpProObserver=null;
       if(!this._helpDialog)return;
       this._helpDialog.close();this._helpDialog.parentElement.remove();this._helpDialog=null;this._helpLocale=null;
       const focus=this._helpReturnFocus||this.shadow?.getElementById('settings-help');this._helpReturnFocus=null;
@@ -2746,6 +3216,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       this._syncAbout();
       dialog.showModal();
       deps.aboutClaimedVersion = ABOUT_ONBOARDING_VERSION;
+      if (!fromSettings) deps.aboutOnboardingOwner = this;
       const aboutClose = dialog.querySelector('[data-about-close]');
       const touchTablet = fromSettings && navigator.maxTouchPoints > 0 && Math.min(window.innerWidth, window.innerHeight) >= 700;
       dialog.classList.toggle('about-touch-tablet', touchTablet);
@@ -2832,16 +3303,18 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if (!this._aboutDialog) return;
       if (acknowledge) {
         try {
-          const seen = Number(localStorage.getItem(ABOUT_STORAGE_KEY)) || 0;
-          localStorage.setItem(ABOUT_STORAGE_KEY, String(Math.max(seen, ABOUT_ONBOARDING_VERSION)));
+          const seen = Number(settingsStorage(this).getItem(ABOUT_STORAGE_KEY)) || 0;
+          settingsStorage(this).setItem(ABOUT_STORAGE_KEY, String(Math.max(seen, ABOUT_ONBOARDING_VERSION)));
         } catch (_) {}
       }
       this._aboutDialog.close();
       this._aboutDialog.parentElement.remove();
       this._aboutDialog = null;
+      if (deps.aboutOnboardingOwner === this) deps.aboutOnboardingOwner = null;
       const focus = this._aboutReturnFocus || this.shadow?.getElementById('settings-open');
       this._aboutReturnFocus = null;
       if (restoreFocus && focus?.isConnected) focus.focus({preventScroll:true});
+      if (restoreFocus) this._maybeShowProWelcome();
     },
 
     async _copyRecorderYaml(dialog, buttonSelector, statusSelector, strings) {
