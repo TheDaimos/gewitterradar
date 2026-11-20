@@ -585,7 +585,7 @@ const server = http.createServer((req, res) => {
 
             const radii = await reveal('#settings-radii-section'.slice(1), '.settings-radius.danger');
             const diagnostic = await reveal(
-              '#settings-diagnostic-section'.slice(1),
+              '#settings-calibration-section'.slice(1),
               '.settings-test-grid',
             );
 
