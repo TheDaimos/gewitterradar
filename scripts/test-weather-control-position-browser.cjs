@@ -125,6 +125,7 @@ async function run() {
     assert.deepEqual(await coordinates(page), scaled, 'collision resolution at custom size');
     await page.evaluate(() => card._eyeHubPatch({iconSize: 100}));
     await waitForLayout(page);
+    await page.evaluate(() => {card.shadow.getElementById('map-card').dataset.eyeProReady='true';});
     const panelIds = ['weather-wind-panel', 'weather-temperature-panel', 'weather-display-panel', 'weather-display-panel'];
     const cdp = await context.newCDPSession(page);
     const touch = (type, point) => cdp.send('Input.dispatchTouchEvent', {
