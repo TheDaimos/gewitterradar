@@ -170,8 +170,9 @@ const server=http.createServer((req,res)=>{
       const toggleRights=settingsRefinement.toggles.map(rect=>rect.right),toggleSpread=Math.max(...toggleRights)-Math.min(...toggleRights);
       if(!fullPageSettings&&(level2Left<settingsRefinement.level1.left+4||level3Left<level2Left+4))throw Error(`${name}: diagnostic hierarchy indentation failed ${JSON.stringify({level1:settingsRefinement.level1.left,level2Left,level3Left})}`);
       if(toggleSpread>.5)throw Error(`${name}: settings toggle alignment shifted by ${toggleSpread}px`);
-      if(settingsRefinement.horizontalOverflow||settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1))throw Error(`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}`);
-      if(settingsRefinement.about.height<44||settingsRefinement.info.width<23.5||settingsRefinement.info.height<23.5||settingsRefinement.infoFontSize<20||settingsRefinement.infoBackground==='none')throw Error(`${name}: premium About icon regression ${JSON.stringify(settingsRefinement)}`);
+      if(settingsRefinement.horizontalOverflow||(!fullPageSettings&&settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1)))throw Error(`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}`);
+      if(!fullPageSettings&&(settingsRefinement.about.height<44||settingsRefinement.info.width<23.5||settingsRefinement.info.height<23.5||settingsRefinement.infoFontSize<20||settingsRefinement.infoBackground==='none'))throw Error(`${name}: premium About icon regression ${JSON.stringify(settingsRefinement)}`);
+      if(fullPageSettings){for(let depth=0;depth<2;depth++){await page.evaluate(()=>window.aboutCard._settingsNavigateBack());await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'));}}
       const aboutButton=page.locator('#settings-about'),aboutBoxBefore=await aboutButton.boundingBox();
       let hoverFilter=null,pressedFilter=null,pressedBox=null;
       if(!hasTouch){
