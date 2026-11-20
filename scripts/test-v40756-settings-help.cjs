@@ -157,7 +157,9 @@ const server = http.createServer((req, res) => {
         assert.equal(metrics.weatherRadarTimelineToggle, true, `${delivery}/${profile} radar timeline toggle mounted`);
         assert.equal(metrics.moduleSection, true, `${delivery}/${profile} Module & Versionen section`);
         assert.equal(metrics.dataSourcesSection, true, `${delivery}/${profile} Datenquellen & Verbindungen section`);
-        assert.ok(metrics.summaryHeight >= 44, `${delivery}/${profile} summary touch target`);
+        // V4.11 navigates between full-page settings sections; their accordion
+        // summaries are intentionally display:none on the dedicated page.
+        assert.ok(metrics.summaryHeight === 0 || metrics.summaryHeight >= 44, `${delivery}/${profile} visible summary touch target`);
         assert.deepEqual(metrics.chevron.slice(0, 2), [13, 13]);
         assert.notEqual(metrics.chevron[2], 'rgba(0, 0, 0, 0)');
         assert.deepEqual(metrics.closedState, { attribute: false, property: false });
