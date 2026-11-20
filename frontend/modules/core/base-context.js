@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.9",
+  version:"1.0.10",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -927,7 +927,7 @@ export function createBaseContext(rootModuleUrl){
 
   const HELP_STRINGS = {
     Deutsch: {
-      menuTitle:'Hilfe & Hinweise', title:'Hilfe & Hinweise', subtitle:'Kurz erklärt, damit Gewitterradar zuverlässig und nachvollziehbar arbeitet.', close:'Hilfe schließen', copy:'YAML kopieren', copied:'Kopiert', copyFailed:'Kopieren nicht möglich – bitte den Code markieren.',
+      menuTitle:'Hilfe & Hinweise', title:'Hilfe & Hinweise', subtitle:'Funktionen und Einstellungen – einfach erklärt.', close:'Hilfe schließen', copy:'YAML kopieren', copied:'Kopiert', copyFailed:'Kopieren nicht möglich – bitte den Code markieren.',
       sections:[
         {key:'prerequisites',title:'Voraussetzungen',paragraphs:['Gewitterradar verarbeitet die Blitzdaten, die Home Assistant von der verwendeten Blitzortung-Datenquelle erhält. Prüfe dort den richtigen Referenzstandort und stelle den Quellradius mindestens so groß wie den Beobachtungsradius in Gewitterradar ein. Gewitterradar kann keine Blitze anzeigen oder auswerten, die von der Datenquelle bereits herausgefiltert wurden.'],notes:['Wenn mehrere Blitzortung-Geräte oder Beobachtungspunkte vorhanden sind, müssen die verwendeten Entitäten eindeutig zum gewünschten Referenzpunkt passen.']},
         {key:'radii',title:'Die Radien',paragraphs:['Die Radien bauen aufeinander auf: Ein Blitz im Gefahrenradius zählt gleichzeitig zum Gewitter- und Beobachtungsradius. Die Bereiche sind Entfernungsschwellen, keine voneinander getrennten Datenquellen.','Unter „Cluster-Auflösung“ legst du fest, wann Cluster beim Hineinzoomen in Einzelblitze aufgelöst werden. Früh löst früher auf, Ausgewogen verwendet die bisherige zonenabhängige V4.08-Abstimmung und Spät hält Cluster länger zusammen.'],items:['Beobachtungsradius – äußerer Bereich für frühe Beobachtung.','Gewitterradius – näherer Bereich mit erhöhter Aufmerksamkeit.','Gefahrenradius – unmittelbarer Nahbereich mit besonders hoher Relevanz.'],featureBlocks:[{title:'Cluster-Navigation · Sitzungszeit',body:'bestimmt, wie lange eine begonnene Cluster-Navigation aktiv bleibt. Die Countdown-Zeit ist frei zwischen 5 und 3600 Sekunden einstellbar. {{INFINITY}} hält die Sitzung unbegrenzt offen. Countdown und {{INFINITY}} können während der Navigation direkt in der Statusanzeige umgeschaltet werden.',infinityAlt:'Unendlich'}],notes:['Der Gefahrenradius ist auf maximal 250 km begrenzt. Hinweise zu empfohlenen Ausgangswerten und zur erforderlichen Abstimmung mit der Blitzortung-App findest du unter „Empfohlene Grundeinstellungen“.']},
@@ -941,7 +941,7 @@ export function createBaseContext(rootModuleUrl){
       ]
     },
     English: {
-      menuTitle:'Help & Notes', title:'Help & Notes', subtitle:'A concise guide to keep Gewitterradar reliable and easy to understand.', close:'Close help', copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.',
+      menuTitle:'Help & Notes', title:'Help & Notes', subtitle:'Features and settings – simply explained.', close:'Close help', copy:'Copy YAML', copied:'Copied', copyFailed:'Copy unavailable — please select the code.',
       sections:[
         {key:'prerequisites',title:'Prerequisites',paragraphs:['Gewitterradar processes the lightning data that Home Assistant receives from the configured lightning-detection source. Verify the correct reference location there and set the source radius at least as large as the observation radius in Gewitterradar. Gewitterradar cannot display or evaluate strikes that have already been filtered out by the source.'],notes:['If several lightning-detection devices or observation points are available, make sure the entities used belong to the intended reference point.']},
         {key:'radii',title:'The radii',paragraphs:['The radii are cumulative: a strike inside the danger radius also counts inside the storm radius and the observation radius. The areas are distance thresholds, not separate data sources.','“Cluster resolution” controls when clusters resolve into individual strikes while zooming in. Early resolves sooner, Balanced uses the previous zone-dependent V4.08 tuning, and Late keeps clusters together longer.'],items:['Observation radius – outer area for early observation.','Storm radius – closer area requiring increased attention.','Danger radius – immediate vicinity with particularly high relevance.'],featureBlocks:[{title:'Cluster navigation · session time',body:'controls how long an active cluster-navigation session remains active. The countdown can be set freely from 5 to 3600 seconds. {{INFINITY}} keeps the session open without a timeout. Countdown and {{INFINITY}} can be toggled directly in the status display while navigating.',infinityAlt:'Unlimited'}],notes:['The danger radius is limited to a maximum of 250 km. For recommended starting values and the required coordination with the Blitzortung app, see “Recommended defaults”.']},

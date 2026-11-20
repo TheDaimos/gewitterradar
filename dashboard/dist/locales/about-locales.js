@@ -1556,7 +1556,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -1687,7 +1687,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -1818,7 +1818,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -1949,7 +1949,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -2080,7 +2080,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -2211,7 +2211,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -2342,7 +2342,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -2473,7 +2473,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -2604,7 +2604,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -2735,7 +2735,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -2866,7 +2866,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -2997,7 +2997,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -3128,7 +3128,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -3259,7 +3259,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s’Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3390,7 +3390,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3521,7 +3521,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3652,7 +3652,7 @@ export const HELP_EXTERNAL_LOCALES = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s’Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilfe schließen",
     "copy": "YAML kopieren",
     "copied": "Kopiert",
@@ -3786,7 +3786,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -4014,7 +4014,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -4242,7 +4242,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -4470,7 +4470,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -4698,7 +4698,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -4926,7 +4926,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -5154,7 +5154,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -5382,7 +5382,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -5610,7 +5610,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -5838,7 +5838,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -6066,7 +6066,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -6294,7 +6294,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -6522,7 +6522,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -6750,7 +6750,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hüf zumacha",
     "copy": "YAML kopiern",
     "copied": "Kopiert",
@@ -6978,7 +6978,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hülp tomaken",
     "copy": "YAML koperen",
     "copied": "Kopeert",
@@ -7206,7 +7206,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilche zumachn",
     "copy": "YAML kopiern",
     "copied": "Kopierd",
@@ -7434,7 +7434,7 @@ export const HELP_EXTERNAL_LOCALES_V40731 = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilf zumacha",
     "copy": "YAML kopiera",
     "copied": "Kopiert",
@@ -7665,7 +7665,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Dansk": {
     "menuTitle": "Hjælp & bemærkninger",
     "title": "Hjælp & bemærkninger",
-    "subtitle": "En kort vejledning, så Gewitterradar fungerer pålideligt og er let at forstå.",
+    "subtitle": "Funktioner og indstillinger – enkelt forklaret.",
     "close": "Luk hjælp",
     "copy": "Kopiér YAML",
     "copied": "Kopieret",
@@ -7944,7 +7944,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Español": {
     "menuTitle": "Ayuda y notas",
     "title": "Ayuda y notas",
-    "subtitle": "Una guía breve para que Gewitterradar funcione de forma fiable y comprensible.",
+    "subtitle": "Funciones y ajustes – explicados de forma sencilla.",
     "close": "Cerrar ayuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -8223,7 +8223,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Français": {
     "menuTitle": "Aide et remarques",
     "title": "Aide et remarques",
-    "subtitle": "Un guide concis pour que Gewitterradar reste fiable et facile à comprendre.",
+    "subtitle": "Fonctionnalités et paramètres – expliqués simplement.",
     "close": "Fermer l’aide",
     "copy": "Copier le YAML",
     "copied": "Copié",
@@ -8502,7 +8502,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Nederlands": {
     "menuTitle": "Hulp & aanwijzingen",
     "title": "Hulp & aanwijzingen",
-    "subtitle": "Een korte gids om Gewitterradar betrouwbaar en begrijpelijk te laten werken.",
+    "subtitle": "Functies en instellingen – eenvoudig uitgelegd.",
     "close": "Hulp sluiten",
     "copy": "YAML kopiëren",
     "copied": "Gekopieerd",
@@ -8781,7 +8781,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Polski": {
     "menuTitle": "Pomoc i wskazówki",
     "title": "Pomoc i wskazówki",
-    "subtitle": "Krótki przewodnik, aby Gewitterradar działał niezawodnie i był łatwy do zrozumienia.",
+    "subtitle": "Funkcje i ustawienia – prosto wyjaśnione.",
     "close": "Zamknij pomoc",
     "copy": "Kopiuj YAML",
     "copied": "Skopiowano",
@@ -9060,7 +9060,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Português": {
     "menuTitle": "Ajuda e notas",
     "title": "Ajuda e notas",
-    "subtitle": "Um guia breve para manter o Gewitterradar fiável e fácil de compreender.",
+    "subtitle": "Funcionalidades e definições – explicadas de forma simples.",
     "close": "Fechar ajuda",
     "copy": "Copiar YAML",
     "copied": "Copiado",
@@ -9339,7 +9339,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Svenska": {
     "menuTitle": "Hjälp och anvisningar",
     "title": "Hjälp och anvisningar",
-    "subtitle": "En kort guide som gör Gewitterradar tillförlitligt och lätt att förstå.",
+    "subtitle": "Funktioner och inställningar – enkelt förklarade.",
     "close": "Stäng hjälpen",
     "copy": "Kopiera YAML",
     "copied": "Kopierat",
@@ -9618,7 +9618,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Italiano": {
     "menuTitle": "Aiuto e note",
     "title": "Aiuto e note",
-    "subtitle": "Una guida concisa per mantenere Gewitterradar affidabile e facile da comprendere.",
+    "subtitle": "Funzioni e impostazioni – spiegate in modo semplice.",
     "close": "Chiudi aiuto",
     "copy": "Copia YAML",
     "copied": "Copiato",
@@ -9897,7 +9897,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Norsk bokmål": {
     "menuTitle": "Hjelp og merknader",
     "title": "Hjelp og merknader",
-    "subtitle": "En kort veiledning som holder Gewitterradar pålitelig og lett å forstå.",
+    "subtitle": "Funksjoner og innstillinger – enkelt forklart.",
     "close": "Lukk hjelp",
     "copy": "Kopier YAML",
     "copied": "Kopiert",
@@ -10176,7 +10176,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Suomi": {
     "menuTitle": "Ohje ja huomautukset",
     "title": "Ohje ja huomautukset",
-    "subtitle": "Tiivis opas Gewitterradarin luotettavaan ja ymmärrettävään käyttöön.",
+    "subtitle": "Toiminnot ja asetukset – selkeästi selitettynä.",
     "close": "Sulje ohje",
     "copy": "Kopioi YAML",
     "copied": "Kopioitu",
@@ -10455,7 +10455,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Čeština": {
     "menuTitle": "Nápověda a poznámky",
     "title": "Nápověda a poznámky",
-    "subtitle": "Stručný průvodce pro spolehlivý a srozumitelný provoz Gewitterradaru.",
+    "subtitle": "Funkce a nastavení – jednoduše vysvětlené.",
     "close": "Zavřít nápovědu",
     "copy": "Kopírovat YAML",
     "copied": "Zkopírováno",
@@ -10734,7 +10734,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Ελληνικά": {
     "menuTitle": "Βοήθεια και σημειώσεις",
     "title": "Βοήθεια και σημειώσεις",
-    "subtitle": "Ένας σύντομος οδηγός για αξιόπιστη και κατανοητή λειτουργία του Gewitterradar.",
+    "subtitle": "Λειτουργίες και ρυθμίσεις – με απλά λόγια.",
     "close": "Κλείσιμο βοήθειας",
     "copy": "Αντιγραφή YAML",
     "copied": "Αντιγράφηκε",
@@ -11013,7 +11013,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Magyar": {
     "menuTitle": "Súgó és megjegyzések",
     "title": "Súgó és megjegyzések",
-    "subtitle": "Rövid útmutató a Gewitterradar megbízható és érthető működéséhez.",
+    "subtitle": "Funkciók és beállítások – egyszerűen elmagyarázva.",
     "close": "Súgó bezárása",
     "copy": "YAML másolása",
     "copied": "Másolva",
@@ -11292,7 +11292,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Boarisch": {
     "menuTitle": "Hüf & Hinwais",
     "title": "Hüf & Hinwais",
-    "subtitle": "Kurz erklärt, damit s Gewitterradar zuverlässig und nachvollziehbar lafft.",
+    "subtitle": "Funktionen und Einstellungen – oafach erklärt.",
     "close": "Hüf zumacha",
     "copy": "YAML kopiern",
     "copied": "Kopiert",
@@ -11571,7 +11571,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Plattdüütsch": {
     "menuTitle": "Hülp & Henwiesen",
     "title": "Hülp & Henwiesen",
-    "subtitle": "Kort verklort, dormit Gewitterradar seker un good to verstahn arbeidt.",
+    "subtitle": "Funkschonen un Instellungen – eenfach verklort.",
     "close": "Hülp tomaken",
     "copy": "YAML koperen",
     "copied": "Kopeert",
@@ -11850,7 +11850,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Sächs’sch": {
     "menuTitle": "Hilche & Hinweese",
     "title": "Hilche & Hinweese",
-    "subtitle": "Gorz erklärt, damidd Gewitterradar zuverlässig un nachvollziehbar looft.",
+    "subtitle": "Funggsionen un Einstellunge – eenfach erklärt.",
     "close": "Hilche zumachn",
     "copy": "YAML kopiern",
     "copied": "Kopierd",
@@ -12129,7 +12129,7 @@ export const HELP_EXTERNAL_LOCALES_V40753 = {
   "Schwäbisch": {
     "menuTitle": "Hilf & Hinweis",
     "title": "Hilf & Hinweis",
-    "subtitle": "Kurz erklärt, dass s Gewitterradar zuverlässig ond nachvollziehbar lauft.",
+    "subtitle": "Funktionen ond Eistellunge – oifach erklärt.",
     "close": "Hilf zumacha",
     "copy": "YAML kopiera",
     "copied": "Kopiert",

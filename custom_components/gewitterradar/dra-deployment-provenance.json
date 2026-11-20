@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.246",
-  "build": "V4.11.246-DEV-2026-11-20",
-  "runtimeRevision": "411246r1",
-  "moduleSetId": "E411-246A1",
-  "baselineFeatureHead": "25762a8abe920661755e6d9c413922ff4fbd367d",
+  "productVersion": "4.11.247",
+  "build": "V4.11.247-DEV-2026-11-20",
+  "runtimeRevision": "411247r1",
+  "moduleSetId": "E411-247A1",
+  "baselineFeatureHead": "cf208c9d41d8115cc075afdc475251346887bfc8",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Hide all Eye Hub PRO weather quick icons along with the central Eye until WeatherRouter consumer discovery confirms a ready connection; preserve saved icon settings.",
+    "purpose": "Update Help & Notes subtitle consistently in all 19 user languages without changing help content or WeatherRouter behavior.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
