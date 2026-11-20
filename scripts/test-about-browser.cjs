@@ -157,7 +157,7 @@ const server=http.createServer((req,res)=>{
         const shadow=window.aboutCard.shadowRoot,rect=node=>{const r=node.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
         const textRect=node=>{const range=document.createRange();range.selectNodeContents(node);const boxes=[...range.getClientRects()];range.detach();if(!boxes.length)return rect(node);const left=Math.min(...boxes.map(box=>box.left)),top=Math.min(...boxes.map(box=>box.top)),right=Math.max(...boxes.map(box=>box.right)),bottom=Math.max(...boxes.map(box=>box.bottom));return {left,top,right,bottom,width:right-left,height:bottom-top};};
         const dialog=shadow.getElementById('settings-dialog'),body=dialog.querySelector('.settings-body'),section=shadow.getElementById(shadow.getElementById('settings-backdrop').classList.contains('gr-settings-pages')?'settings-calibration-section':'settings-diagnostic-section'),content=section.querySelector(':scope > .settings-section-content');
-        const level1=textRect(shadow.getElementById('settings-diagnostic-section-title'));
+        const level1=textRect(shadow.getElementById('settings-diagnostic-section-title')||section.querySelector(':scope > summary'));
         const level2=[...content.querySelectorAll(':scope > .settings-row-label')].map(node=>textRect(node));
         const rows=[...content.querySelectorAll(':scope > .settings-row')],level3=rows.map(row=>textRect(row.querySelector('.settings-row-label')));
         const toggles=rows.map(row=>row.querySelector('.settings-switch')).filter(Boolean).map(node=>rect(node));
