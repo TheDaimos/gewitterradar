@@ -9,7 +9,7 @@
 **Wetter, Gewitter und Atmosphäre – gemeinsam auf einer interaktiven Karte für Home Assistant.**
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Native%20Integration-41BDF5?logo=home-assistant&logoColor=white)
-![Release](https://img.shields.io/badge/4.11.243-DEV%20%2F%20FINAL--Kandidat-c99b42)
+![Release](https://img.shields.io/badge/4.11.244-DEV%20%2F%20FINAL--Kandidat-c99b42)
 ![Sprachen](https://img.shields.io/badge/Sprachvarianten-19-35b9b8)
 ![WeatherRouter](https://img.shields.io/badge/WeatherRouter-PRO--Datenebenen-6c8bff)
 
@@ -20,7 +20,7 @@
 </div>
 
 > [!IMPORTANT]
-> **Stand dieser Entwicklungspräsentation:** GewitterRadar **4.11.243 DEV** / native Home-Assistant-Integration **0.25.150**. Diese Version wurde vom Betreiber funktional und visuell abgenommen und befindet sich im technischen FINAL-Freeze. Die hier gezeigten PRO-Funktionen stammen aus diesem Entwicklungsstand; die Veröffentlichung als `4.11 FINAL` erfolgt erst nach dem Release-Gate. Der produktive stabile Zweig auf `main` bleibt bis dahin **4.10 FINAL**.
+> **Stand dieser Entwicklungspräsentation:** GewitterRadar **4.11.244 DEV** / native Home-Assistant-Integration **0.25.151** (technischer Fokusfix auf Basis der vom Betreiber funktional und visuell abgenommenen **4.11.243**). Der FINAL-Freeze bleibt bestehen; die Veröffentlichung als `4.11 FINAL` erfolgt erst nach dem Release-Gate. Der produktive stabile Zweig auf `main` bleibt bis dahin **4.10 FINAL**.
 
 <p align="center">
   <a href="https://thedaimos.github.io/gewitterradar/gewitterradar-overview.html?bild=synoptik#pro-gallery"><img src="docs/assets/pro-showcase/gr-pro-0123.jpg" width="100%" alt="GewitterRadar PRO mit animierten Windströmungen, Wetterfeldern und synoptischen Isobaren – Galerie öffnen"></a>

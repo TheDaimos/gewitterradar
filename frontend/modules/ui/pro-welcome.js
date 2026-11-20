@@ -1,4 +1,4 @@
-import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=411243r1';
+import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=411244r1';
 
 export const PRO_WELCOME_DISMISSED = 'gewitterradar-pro-welcome-dismissed';
 const WEATHER_ROUTER_GITHUB = 'https://github.com/TheDaimos/weather-router-pub';
@@ -80,8 +80,8 @@ export function openProWelcome(owner, images, storage, writable) {
   ];
   const shell = document.createElement('div');
   shell.innerHTML = `<style>${STYLE}</style>
-    <dialog class="gr-pro-welcome gr-premium-metal-surface" aria-labelledby="gr-pro-title" aria-describedby="gr-pro-intro gr-pro-note">
-      <button class="gr-pro-close" type="button" aria-label="${premiumEscape(owner._t('about.close'))}" autofocus>${art(images.close)}</button>
+    <dialog class="gr-pro-welcome gr-premium-metal-surface" tabindex="-1" aria-labelledby="gr-pro-title" aria-describedby="gr-pro-intro gr-pro-note">
+      <button class="gr-pro-close" type="button" aria-label="${premiumEscape(owner._t('about.close'))}">${art(images.close)}</button>
       <div class="gr-pro-scroll">
         <header class="gr-pro-hero" style="--gr-pro-storm:url('${images.hero}')">
           <img class="gr-pro-wordmark" src="${images.wordmark}" alt="GewitterRadar PRO – powered by · WeatherRouter" width="1190" height="348" draggable="false">
@@ -119,5 +119,9 @@ export function openProWelcome(owner, images, storage, writable) {
   }, {once:true});
   owner.shadow.append(shell);
   dialog.showModal();
+  // Keep focus inside the modal without painting a blue ring around the
+  // premium close artwork on initial open. Tab navigation still receives the
+  // existing :focus-visible indicator on interactive controls.
+  dialog.focus({preventScroll:true});
   return dialog;
 }

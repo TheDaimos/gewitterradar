@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.243",
-  "build": "V4.11.243-DEV-2026-11-19",
-  "runtimeRevision": "411243r1",
-  "moduleSetId": "E411-243A1",
-  "baselineFeatureHead": "af11c8d6c952a8384889354f71f20309e34d03e9",
+  "productVersion": "4.11.244",
+  "build": "V4.11.244-DEV-2026-11-20",
+  "runtimeRevision": "411244r1",
+  "moduleSetId": "E411-244A1",
+  "baselineFeatureHead": "a70a4da38b993427067ad741d5b1f06758493c18",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
