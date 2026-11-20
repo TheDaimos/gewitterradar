@@ -352,8 +352,8 @@ if (process.argv[2]) {
       const dialog=window.probeCard._helpDialog;
       return {
         information:dialog.querySelector('[data-help-section=wr-information] h4')?.textContent,
-        standard:dialog.querySelectorAll('.help-standard > details').length,
-        pro:dialog.querySelectorAll('.help-pro > details').length
+        standard:dialog.querySelectorAll('.help-standard .help-group-topics > details').length,
+        pro:dialog.querySelectorAll('.help-pro .help-group-topics > details').length
       };
     };
     assert.deepEqual(await retry.page.evaluate(readHelpProbe),{information:'Data source and status',standard:10,pro:10});

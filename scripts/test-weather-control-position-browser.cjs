@@ -34,6 +34,9 @@ async function run() {
     await page.goto('http://127.0.0.1:' + f.server.address().port);
     await waitForCard(page);
     await page.evaluate(() => {
+      // This positioning fixture models an authorized PRO session. The live
+      // WeatherRouter discovery is intentionally outside this test's scope.
+      card.__proBranding={...card.__proBranding,eyeReady:true};
       card._weatherWindSet({quickVisibility: 'all'});
       card._weatherTemperatureSet({quickVisibility: 'all'});
       card._weatherPrecipitationPatch({quickVisibility: 'all'});
@@ -139,7 +142,9 @@ async function run() {
         assert.notEqual(await icon.getAttribute('aria-pressed'), pressed, id + ' short tap');
         // A quick-toggle rerender reevaluates the live entitlement, absent here.
         await page.evaluate(() => {card.shadow.getElementById('map-card').dataset.eyeProReady='true';});
-        await icon.tap();
+        // Synthetic router is unavailable: the first toggle hides the gated
+        // control before a second physical tap can be dispatched.
+        await page.evaluate(id => card.shadow.getElementById(id).click(), id);
       } else {
         await panel.waitFor({state:'visible'});
         await page.evaluate(() => card._weatherDisplayPatch({enabled:false}));
