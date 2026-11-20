@@ -9,7 +9,118 @@ permissions:
   contents: read
 
 jobs:
+  release-scope:
+    runs-on: ubuntu-latest
+    outputs:
+      eye_bubble: ${{ steps.scope.outputs.eye_bubble }}
+      menu_architecture: ${{ steps.scope.outputs.menu_architecture }}
+      precipitation_icon: ${{ steps.scope.outputs.precipitation_icon }}
+      premium_ui: ${{ steps.scope.outputs.premium_ui }}
+      flow_curves: ${{ steps.scope.outputs.flow_curves }}
+      temperature: ${{ steps.scope.outputs.temperature }}
+      legend_ui06: ${{ steps.scope.outputs.legend_ui06 }}
+      wind_ui03: ${{ steps.scope.outputs.wind_ui03 }}
+      wind_fix01: ${{ steps.scope.outputs.wind_fix01 }}
+      wind_anim01: ${{ steps.scope.outputs.wind_anim01 }}
+      wind_perf01: ${{ steps.scope.outputs.wind_perf01 }}
+      wind_quick01: ${{ steps.scope.outputs.wind_quick01 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: scope
+        name: Restrict scoped DEV releases to their targeted acceptance
+        run: |
+          node -e "const t=require('node:fs').readFileSync('frontend/version.js','utf8');console.log('eye_bubble='+['4.11.174','4.11.175','4.11.176','4.11.177','4.11.178','4.11.179','4.11.180','4.11.181'].some(v=>t.includes('version:\"'+v+'\"')));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('menu_architecture='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.168\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('precipitation_icon='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.165\"'));" >> "$GITHUB_OUTPUT"
+          node -e "const fs=require('node:fs'); const text=fs.readFileSync('frontend/version.js','utf8'); console.log('legend_ui06='+text.includes('version:\"4.11.148\"')); console.log('wind_ui03='+text.includes('version:\"4.11.149\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('wind_fix01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.150\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('wind_anim01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.151\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('wind_perf01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.152\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('wind_quick01='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.153\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('temperature='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.156\"'));" >> "$GITHUB_OUTPUT"
+          node -e "console.log('flow_curves='+require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.11.157\"'));" >> "$GITHUB_OUTPUT"
+          node -e "const t=require('node:fs').readFileSync('frontend/version.js','utf8');console.log('premium_ui='+['4.11.159','4.11.160','4.11.161','4.11.162','4.11.163'].some(v=>t.includes('version:\"'+v+'\"')));" >> "$GITHUB_OUTPUT"
+
+  eye-bubble:
+    needs: release-scope
+    if: needs.release-scope.outputs.eye_bubble == 'true'
+    uses: ./.github/workflows/gr-menu-architecture.yml
+    with:
+      eye_bubble_only: true
+
+  menu-architecture:
+    needs: release-scope
+    if: needs.release-scope.outputs.menu_architecture == 'true'
+    uses: ./.github/workflows/gr-menu-architecture.yml
+
+  precipitation-icon:
+    needs: release-scope
+    if: needs.release-scope.outputs.precipitation_icon == 'true'
+    uses: ./.github/workflows/gr-precipitation-icon.yml
+
+  premium-ui:
+    needs: release-scope
+    if: needs.release-scope.outputs.premium_ui == 'true'
+    uses: ./.github/workflows/gr-premium-ui.yml
+
+  flow-curves:
+    needs: release-scope
+    if: needs.release-scope.outputs.flow_curves == 'true'
+    uses: ./.github/workflows/gr-flow-curves-01.yml
+
+  temperature:
+    needs: release-scope
+    if: needs.release-scope.outputs.temperature == 'true'
+    uses: ./.github/workflows/gr-temp-world-01.yml
+
+  legend-ui06:
+    needs: release-scope
+    if: needs.release-scope.outputs.legend_ui06 == 'true'
+    uses: ./.github/workflows/gr-legend-ui-06.yml
+
+  wind-ui03:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_ui03 == 'true'
+    uses: ./.github/workflows/gr-wind-ui-03.yml
+
+  wind-fix01:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_fix01 == 'true'
+    uses: ./.github/workflows/gr-wind-fix-01.yml
+
+  wind-anim01:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_anim01 == 'true'
+    uses: ./.github/workflows/gr-wind-anim-01.yml
+
+  wind-perf01:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_perf01 == 'true'
+    uses: ./.github/workflows/gr-wind-perf-01.yml
+
+  wind-quick01:
+    needs: release-scope
+    if: needs.release-scope.outputs.wind_quick01 == 'true'
+    uses: ./.github/workflows/gr-wind-quicktoggle-01.yml
+
+  weather-control-position:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm install --no-save --package-lock=false playwright@1.62.1 leaflet@1.9.4
+      - run: npx playwright install --with-deps chromium
+      - name: WeatherRouter map control position and touch regression
+        run: node scripts/test-weather-control-position-browser.cjs
+
   shared-frontend:
+    needs: release-scope
+    if: needs.release-scope.outputs.eye_bubble != 'true' && needs.release-scope.outputs.menu_architecture != 'true' && needs.release-scope.outputs.precipitation_icon != 'true' && needs.release-scope.outputs.premium_ui != 'true' && needs.release-scope.outputs.flow_curves != 'true' && needs.release-scope.outputs.temperature != 'true' && needs.release-scope.outputs.legend_ui06 != 'true' && needs.release-scope.outputs.wind_ui03 != 'true' && needs.release-scope.outputs.wind_fix01 != 'true' && needs.release-scope.outputs.wind_anim01 != 'true' && needs.release-scope.outputs.wind_perf01 != 'true' && needs.release-scope.outputs.wind_quick01 != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -19,7 +130,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Print V4.10.02 contract hashes
+      - name: Print frontend contract hashes
         run: |
           sha256sum frontend/gewitterradar.js
           wc -c frontend/gewitterradar.js
@@ -34,8 +145,50 @@ jobs:
           sha256sum frontend/assets/gewitterradar-runtime-manifest.json
           wc -c frontend/assets/gewitterradar-runtime-manifest.json
 
-      - name: Canonical V4.08 frontend contract
+      - name: V4.11 WeatherRouter Consumer V1 contract
+        run: |
+          node scripts/test-v411-weather-router.mjs
+          node scripts/test-p7-010-event-window.mjs
+
+      - name: V4.11.78 synthetic precipitation raster and performance envelope
+        run: node scripts/test-v41175-soft-raster.mjs
+
+      - name: V4.11.78 browser-specific raster fallback and multiscale guard
+        run: |
+          node scripts/test-v41176-soft-raster.mjs
+          node scripts/test-v41178-platform-soft-raster.mjs
+
+      - name: V4.11.79 Weich Zoom 10 reference and Zoom 11-13 bounds
+        run: node scripts/test-soft-zoom11-13-2026-10-15.mjs
+
+      - name: V4.11.80 Weich cloud transitions and source-zoom safety
+        run: node scripts/test-v41180-soft-cloud-zoom11-13.mjs
+
+      - name: V4.11.82 raster-lab diagnostics toolbar visibility and safe launch
+        run: node scripts/test-v41181-raster-lab.mjs
+
+      - name: V4.11 canonical DEV identity
+        run: node scripts/test-v411-identity.mjs
+
+      - name: V4.11.69 data sources and Blitzortung connection contract
+        run: node scripts/test-v41169-data-sources.mjs
+
+      - name: V4.11.08 Daimos Project Hub runtime
+        run: node scripts/test-v41108-project-hub.mjs
+
+      - name: V4.11.05 precipitation radar timeline player
+        run: node scripts/test-v41105-weather-radar-player.mjs
+
+      - name: V4.11.06 Weather Engine diagnostics
+        run: |
+          node scripts/test-v41106-weather-engine-diagnostics.mjs
+          node scripts/test-p7-010-v2-age-comparison.mjs
+
+      - name: Canonical frontend contract
         run: node scripts/verify-frontend.mjs
+
+      - name: GR-LEGEND-UI-01 visibility and saved position
+        run: node --test tests/gr-legend-ui-01.test.mjs
 
       - name: Emit regenerated checksum inventory on failure
         if: failure()
@@ -76,6 +229,45 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
+      - name: Fetch exact historical V4.11.81 commit for GR-WEICH-04
+        run: git fetch --no-tags --depth=1 origin 46754f6689b0b01f1a45287e21572ae04b90f3bd
+
+      - name: GR-WEICH-04 actual historical Chromium pixel comparison
+        run: node scripts/test-gr-weich-04-browser-history.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WEICH-04 pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-weich-04-browser-pixels
+          path: artwork/acceptance/gr-weich-04/
+          if-no-files-found: warn
+
+      - name: GR-WEICH-05 actual display-module and Raster-Labor Chromium pixels
+        run: node scripts/test-gr-weich-05-browser-integration.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WEICH-05 browser integration pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-weich-05-browser-integration-pixels
+          path: artwork/acceptance/gr-weich-05/
+          if-no-files-found: warn
+
+      - name: GR-WL-CLOUD-01 active generic raster and Raster-Labor browser pixels
+        run: node scripts/test-gr-wl-cloud-01-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
+      - name: Preserve GR-WL-CLOUD-01 synthetic browser pixel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gr-wl-cloud-01-browser-evidence
+          path: artwork/acceptance/gr-wl-cloud-01/
+          if-no-files-found: warn
+
+      - name: Chromium SVG multiscale rendering regression
+        run: node scripts/test-v41176-svg-filter-browser.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+
       - name: About locale registry and rendering
         run: node scripts/test-about-locales.mjs "$(node -p "require('playwright').chromium.executablePath()")"
 
@@ -93,6 +285,8 @@ jobs:
 
       - name: V4.08 About geometry against protected V4.07.56 golden contract
         run: node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")"
+      - name: Verify horizontal settings animation in real browser
+        run: node scripts/test-v41154-settings-motion.cjs "$(node -p "require('playwright').chromium.executablePath()")"
 
       - name: Both delivery browser suites
         run: |
@@ -115,3 +309,4 @@ jobs:
             frontend/assets/gewitterradar-trend-arrow.png
             frontend/assets/gewitterradar-trend-arrow-*.webp
           if-no-files-found: warn
+

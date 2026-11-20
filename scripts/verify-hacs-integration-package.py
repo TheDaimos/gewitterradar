@@ -6,8 +6,11 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/"custom_components"/"gewitterradar"
 FRONTEND_SOURCE=ROOT/"frontend"
-REQUIRED={"__init__.py","brand/icon.png","brand/icon@2x.png","build_info.py","config_flow.py","const.py","device_tracker.py","dra-deployment-provenance.json","manifest.json","number.py","select.py","services.yaml","strings.json","switch.py","translations/de.json","translations/en.json"}
+REQUIRED={"__init__.py","brand/icon.png","brand/icon@2x.png","build_info.py","config_flow.py","const.py","device_tracker.py","dra-deployment-provenance.json","manifest.json","number.py","select.py","services.yaml","settings_vault.py","strings.json","switch.py","translations/de.json","translations/en.json","vault_schema.py"}
 REQUIRED|={"frontend/"+path.relative_to(FRONTEND_SOURCE).as_posix() for path in FRONTEND_SOURCE.rglob("*") if path.is_file() and path.name!="assets.json"}
+# The packaged frontend has additional release assets; require exact source parity
+# without pinning this contract to a previous release's enumerated file list.
+REQUIRED|={path.relative_to(SOURCE).as_posix() for path in SOURCE.rglob("*") if path.is_file() and "__pycache__" not in path.parts and path.suffix!=".pyc"}
 FORBIDDEN_SUFFIXES={".patch",".pyc"}
 def digest(path:Path)->str:return hashlib.sha256(path.read_bytes()).hexdigest()
 def verify(stage_root:Path)->dict[str,str]:
@@ -21,7 +24,13 @@ def verify(stage_root:Path)->dict[str,str]:
  if forbidden:raise RuntimeError(f"Forbidden staged files: {forbidden}")
  manifest=json.loads(files["manifest.json"].read_text(encoding="utf-8"))
  build_version=(target/"build_info.py").read_text(encoding="utf-8")
- expected="0.22.0" if 'BUILD_VERSION = "4.10"' in build_version else "0.21.0" if 'BUILD_VERSION = "4.10.02"' in build_version else None
+ version_js=(FRONTEND_SOURCE/"version.js").read_text(encoding="utf-8")
+ import re
+ release=re.search(r'version:"([^"]+)"',version_js)
+ integration=re.search(r'integrationVersion:"([^"]+)"',version_js)
+ if not release or not integration or f'BUILD_VERSION = "{release.group(1)}"' not in build_version:
+  raise RuntimeError("Build metadata and frontend release version differ")
+ expected=integration.group(1)
  if manifest["domain"]!="gewitterradar" or manifest["version"]!=expected:raise RuntimeError("Unexpected integration manifest identity")
  source_hashes={name:digest(SOURCE/name) for name in sorted(files)}
  staged_hashes={name:digest(path) for name,path in sorted(files.items())}

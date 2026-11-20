@@ -1,6 +1,39 @@
+## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
+
+- OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.
+- Normale WR-Lieferung wird separat von einer isolierten Originaldiagnose ausgewiesen. Anzeige übernimmt Quelle, Zeitstempel, Veraltet-Kennzeichnung und Auswahlgrund von WR; keine zusätzliche GR-Zeitpolitik.
+- Veraltete Behauptungen einer grundsätzlich ungeprüften geografischen Orientierung entfernt. TEST69 bleibt abgeschlossen; einzelne ungültige Originale bleiben gesperrt.
+- Authentifizierter Kacheltransport, vollständiger atomarer Generationswechsel und gezielte Wiederholung fehlgeschlagener Kacheln unverändert erhalten.
+- Paarung mit WR 0.10.287 DEV. Integration und Dashboard bytegleich aus derselben Quelle gebaut; geschützte About-Inhalte unverändert. Neue Realabnahme auf VM109 ausstehend, VM101 unverändert.
+
+## V4.11.138 DEV · 2026/11 · Integration 0.25.45
+
+- OPERA als reguläre, ausschließlich von WeatherRouter ausgewählte Consumer-V2-Niederschlagsquelle.
+- Authentifizierte same-origin RATE-Kacheln mit Bearer-Header und Blob-Dekodierung; keine Tokens in URLs.
+- Neue Generationen laden verdeckt. Erfolgreiche Kacheln bleiben erhalten; ausschließlich fehlgeschlagene OPERA-Koordinaten werden mit begrenzter Parallelität erneut angefordert.
+- Kein Abbruch einer laufenden OPERA-Generation durch Staging-/Watchdog-Zeitlimits; kein V1-Fallback wegen vorübergehender OPERA-Kachelfehler. Umschaltung erst bei vollständig darstellbarem Sichtfeld.
+- WR-Metadaten bestimmen Gültigkeit und Veraltet-Kennzeichnung. Neue Radarzyklen und Policyänderungen lösen eine erzwungene V2-Aktualisierung aus.
+- Integration und Dashboard werden deterministisch aus derselben Quelle gebaut. Geschützte About-Inhalte unverändert.
+- DEV VM109: WR 0.10.286 und GR 0.25.45 per DRA installieren, HA neu starten, Frontend neu laden. Keine HA-Realabnahme; VM101 unverändert.
+
 # Gewitterradar – Projektgeschichte
 
+## V4.11.84 DEV · 2026/10 – Niederschlagsübergabe und Weather Engine
+
+FLK-01: Der neue V1-Niederschlagsbildsatz ersetzt die alte Ebene erst nach erfolgreichem Laden; bei unveränderter Bildquelle wird gar kein Ebenenwechsel ausgeführt. Die Weather-Engine unterscheidet nun sichtbar zwischen V1-Verbindung und aktivem V1-/V2-Niederschlag. Die DEV-Auslieferung ermöglicht den anschließenden WeatherRouter-V2-Realtest; Geräteprüfung bleibt offen. [Release Notes](RELEASE_NOTES_V4_11_84_DEV.md).
+
+
+## V4.11.08 DEV · 2026/10 – Daimos Project Hub
+
+Die Gewitterradar-Signatur erhält einen isolierten Einstieg in den zentralen Daimos Project Hub. `ui.project-hub` prüft nur ein technisches Health-Bild und öffnet entweder die separate GitHub-Pages-Projektübersicht oder eine lokal mitgelieferte Rückfallansicht. Remote-Inhalte werden nicht eingebettet. Dashboard und native Integration bleiben synchron; DRA nutzt unverändert den vollständigen Verzeichnisersatz. Die geschützte About-Darstellung bleibt unberührt.
+
 Dieses Dokument fasst die Entwicklungslinie zusammen, die für den gemeinsamen Produktstand von Dashboard-Karte und nativer Home-Assistant-Integration relevant ist. Technische Einzelschritte bleiben zusätzlich im `CHANGELOG.md` und in den spezialisierten Dokumenten unter `docs/` nachvollziehbar.
+
+## V4.11.01 DEV · 2026/09 – hybride Weather-Engine im Aufbau
+
+Auf Grundlage der veröffentlichten V4.10 FINAL beginnt die eigenständige V4.11-Entwicklung. Ziel ist eine hybride Weather-Engine: Blitzortung-Ereignisse werden künftig mit geeigneten WeatherRouter-Informationen über Niederschlag, Satelliten und Wettergefahren ergänzt; kontrollierte zusätzliche Blitzbeobachtungen und eine fachlich abgesicherte Ersatzversorgung sind nachfolgenden Schritten vorbehalten. Die Produktvision und ihre Modulgrenzen sind in `docs/V4_11_WEATHER_ENGINE_PLANUNGSBESCHLUSS_2026-09-30.md` verbindlich beschrieben.
+
+Der erste technische DEV-Stand bringt eine eindeutige Versionskennung, die optionale read-only Consumer-V1-Anbindung und einen ersten Einstellungsabschnitt für Verbindung und gezielte Datenabfragen. Beide Auslieferungsformen werden weiterhin bytegleich aus einer Quelle erzeugt. Das neue WeatherRouter-Modul ist in der Diagnose mit nun 24 Modulen und 19 lokalisierten Metadatensätzen enthalten. Noch keine automatische Umschaltung oder produktive Mischbewertung; der reale Ende-zu-Ende-Test mit installierter WeatherRouter-Integration steht aus. V4.10 bleibt der öffentliche, unveränderte Release.
 
 ## V4.10 · 2026/09 – Modularisierungsabschluss
 

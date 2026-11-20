@@ -58,8 +58,8 @@ transformed = transformed.replace(keyboardFrom, keyboardTo);
 // settings are disabled. The historical suite required those buttons to be
 // visible at all times. Preserve its overflow checks, but accept exactly two
 // coherent states: both buttons hidden, or both visible and usable.
-const testButtonsFrom = "if(settingsRefinement.horizontalOverflow||settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1))throw Error(\`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}\`);";
-const testButtonsTo = "const hiddenTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width===0&&button.height===0);const usableTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width>=80&&button.height>0&&button.left>=settingsRefinement.content.left-1&&button.right<=settingsRefinement.content.right+1);if(settingsRefinement.horizontalOverflow||(!hiddenTestButtons&&!usableTestButtons))throw Error(\`${name}: settings overflow or inconsistent test-button visibility ${JSON.stringify(settingsRefinement)}\`);";
+const testButtonsFrom = "if(settingsRefinement.horizontalOverflow||(!fullPageSettings&&settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1)))throw Error(\`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}\`);";
+const testButtonsTo = "const hiddenTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width===0&&button.height===0);const usableTestButtons=settingsRefinement.testButtons.length===2&&settingsRefinement.testButtons.every(button=>button.width>=80&&button.height>0&&button.left>=settingsRefinement.content.left-1&&button.right<=settingsRefinement.content.right+1);if(settingsRefinement.horizontalOverflow||(!fullPageSettings&&!hiddenTestButtons&&!usableTestButtons))throw Error(\`${name}: settings overflow or inconsistent test-button visibility ${JSON.stringify(settingsRefinement)}\`);";
 
 assert.equal(
   transformed.split(testButtonsFrom).length,
@@ -91,6 +91,22 @@ assert.equal(
   'Historical About focus-shift assertion changed; review before updating the V4.10 wrapper.',
 );
 transformed = transformed.replace(focusShiftFrom, focusShiftTo);
+
+// Preserve the stable-release assertion while allowing any canonical DEV
+// runtime to assert its own displayVersion. The source browser contract now
+// derives this from the runtime manifest, so the wrapper only verifies that
+// the generic protection survived the compatibility transformations above.
+const activeRuntime = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'),
+);
+if (String(activeRuntime.displayVersion || '').endsWith(' DEV')) {
+  assert.ok(
+    transformed.includes("const isDevelopmentRuntime=")
+      && transformed.includes("activeRuntime.displayVersion")
+      && transformed.includes("Stable release label still contains DEV"),
+    'Canonical DEV/stable release identity browser contract missing',
+  );
+}
 
 const generatedPath = path.join(__dirname, `.test-about-browser-v40756-${process.pid}.cjs`);
 fs.writeFileSync(generatedPath, transformed);

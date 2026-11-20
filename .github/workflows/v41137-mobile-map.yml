@@ -1,0 +1,11 @@
+name: V4.11.37 mobile map (historical)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  historical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/test-v41137-mobile-map.mjs

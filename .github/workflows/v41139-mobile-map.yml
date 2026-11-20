@@ -1,0 +1,13 @@
+name: V4.11.39 centered double tap and gesture safety
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  centered-doubletap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate geographic center, Android touch fallback and mirrors
+        run: node scripts/test-v41139-mobile-map.mjs

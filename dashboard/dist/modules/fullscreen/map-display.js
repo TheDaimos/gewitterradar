@@ -1,17 +1,19 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
-import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r13";
-import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r13";
-import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r13";
-import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";
-import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41002r13";
-import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41002r13";
-import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41002r13";
-import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41002r13";
+import {settingsStorage} from '../core/settings-vault.js?v=411249r1';
+import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
+import { defineModule } from "../core/runtime.js?v=41108r1";
+import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";
+import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41108r1";
+import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41108r1";
+import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41108r1";
+import { MEDALLION_ARROW_CALIBRATION_1 } from "../instruments/medallion-arrow-calibration-1.js?v=41108r1";
+import { MEDALLION_ARROW_CALIBRATION_2 } from "../instruments/medallion-arrow-calibration-2.js?v=41108r1";
+import { MEDALLION_ARROW_CALIBRATION_3 } from "../instruments/medallion-arrow-calibration-3.js?v=41108r1";
+import { MEDALLION_ARROW_CALIBRATION_4 } from "../instruments/medallion-arrow-calibration-4.js?v=41108r1";
 
 const MEDALLION_ARROW_PRODUCTION_CALIBRATION=Object.freeze({...MEDALLION_ARROW_CALIBRATION_1,...MEDALLION_ARROW_CALIBRATION_2,...MEDALLION_ARROW_CALIBRATION_3,...MEDALLION_ARROW_CALIBRATION_4});
 export const MODULE_META=Object.freeze({
   "id": "fullscreen.map-display",
-  "version": "1.0.30",
+  "version": "1.0.78",
   "group": "Vollbild",
   "function": "Kartendarstellung",
   "subfunctions": [
@@ -29,7 +31,9 @@ export const MODULE_META=Object.freeze({
 });
 export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, TREND_ARROW_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
     _teardownMapDisplayMode() {
+      this._recoverMapGestureState?.('map-display-teardown',{force:true});
       this._setMapDisplayMenuOpen(false);
+      this._teardownMapDisplayMenuExtension?.();
       this._closeMapStartupDropdown?.(false);
       if (this._mapStartupOutsidePointerHandler) {
         document.removeEventListener('pointerdown',this._mapStartupOutsidePointerHandler,true);
@@ -60,7 +64,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if(Number.isFinite(this[property]))return clamp(this[property],.15,3);
       const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
       let value=1;
-      try{const stored=Number(localStorage.getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
+      try{const stored=Number(settingsStorage(this).getItem(key));if(Number.isFinite(stored)&&stored>0)value=stored;}catch(_error){}
       this[property]=clamp(value,.15,3);
       return this[property];
     },
@@ -104,7 +108,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const property=isCompass?'_mapCompassScale':'_mapMedallionScale';
       const key=isCompass?'gewitterradar:v41002:fullscreen-compass-scale':'gewitterradar:v41002:fullscreen-medallion-scale';
       this[property]=scale;
-      if(persist){try{localStorage.setItem(key,String(scale));}catch(_error){}}
+      if(persist){try{settingsStorage(this).setItem(key,String(scale));}catch(_error){}}
       this._applyFullscreenInstrumentScaleStyle(kind);
       this._syncFullscreenScaleControls(isCompass?this._compassPickerDialog:this._medallionPickerDialog,kind);
       this._scheduleMapDisplayResize?.();
@@ -226,11 +230,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       shell.id = 'compass-picker-shell-v41001';
       shell.innerHTML =
         '<style>' +
-        '.compass-picker-dialog{--picker-gold:#dfbc72;--picker-bright:#f7dfa1;box-sizing:border-box;width:min(560px,calc(100vw - 20px));max-width:calc(100vw - 20px);margin:auto;padding:18px 18px 15px;border:1px solid #c9a050;border-radius:13px;color:#d1d4d9;background:radial-gradient(ellipse at 10% 20%,#24313945,transparent 64%),#091219;box-shadow:0 24px 90px #000c,inset 0 0 0 3px #cda9500c;max-height:calc(100vh - 20px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;color-scheme:dark}' +
+        compassDialogSurface('.compass-picker-dialog') +
         '.compass-picker-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.compass-picker-dialog::backdrop{background:#03070be0;backdrop-filter:blur(2px)}' +
         '.compass-picker-dialog *{box-sizing:border-box}.compass-picker-dialog button{font:inherit;cursor:pointer;touch-action:manipulation}.compass-picker-dialog :focus-visible{outline:2px solid #ffe1a1;outline-offset:2px}' +
         '.compass-picker-close{position:absolute;right:8px;top:8px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;z-index:5;appearance:none;-webkit-appearance:none}.compass-picker-close:focus,.compass-picker-close:focus-visible{outline:0!important;box-shadow:none!important}.compass-picker-close img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 7px #e4b25435)}.compass-picker-close:focus-visible img{filter:drop-shadow(0 0 9px #ffe1a180)}' +
-        '.compass-picker-stage{position:relative;width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}.compass-picker-stage::before{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.40) 0%,rgba(255,255,252,.30) 20%,rgba(255,251,240,.18) 42%,rgba(255,247,230,.08) 60%,transparent 76%);filter:blur(16px);pointer-events:none;z-index:0}' +
+        '.compass-picker-stage{position:relative;width:min(430px,72vmin);max-width:calc(100vw - 72px);aspect-ratio:1 / 1;display:grid;place-items:center;margin:10px auto 0;isolation:isolate}' + compassPreviewHalo('.compass-picker-stage') +
         '.compass-picker-stage .compass-instrument{position:relative;z-index:1;width:calc(100% / var(--compass-visual-stage-scale,1));max-width:none;flex:0 0 auto;cursor:default;filter:drop-shadow(0 12px 22px #0009) drop-shadow(0 0 11px rgba(255,255,255,.32)) drop-shadow(0 0 26px rgba(255,250,236,.17))}.compass-picker-stage .compass-instrument,.compass-picker-stage .compass-instrument *{pointer-events:none!important;touch-action:none!important}' +
         '.compass-picker-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-top:2px}' +
         '.compass-picker-nav-row{position:relative;display:grid;grid-template-columns:64px 82px 64px;align-items:center;justify-content:center;gap:13px}' +
@@ -308,7 +312,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const active = String(this._activeTrendArrowDesign || '').trim();
       if (designs.some((entry) => entry.id === active)) return active;
       let stored = '';
-      try { stored = String(localStorage.getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
+      try { stored = String(settingsStorage(this).getItem('gewitterradar:v41002:trend-arrow-design') || '').trim(); } catch (_error) {}
       const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
       this._activeTrendArrowDesign = resolved;
       return resolved;
@@ -324,7 +328,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         image.dataset.trendArrowDesign = descriptor.id;
       });
       if (persist) {
-        try { localStorage.setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:trend-arrow-design',descriptor.id); } catch (_error) {}
       }
       this._applyProductMedallionCalibration?.();
       return descriptor;
@@ -351,7 +355,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const active = String(this._activeMedallionDesign || '').trim();
       if (designs.some((entry) => entry.id === active)) return active;
       let stored = '';
-      try { stored = String(localStorage.getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
+      try { stored = String(settingsStorage(this).getItem('gewitterradar:v41002:medallion-design') || '').trim(); } catch (_error) {}
       const resolved = designs.some((entry) => entry.id === stored) ? stored : designs[0].id;
       this._activeMedallionDesign = resolved;
       return resolved;
@@ -367,7 +371,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         image.dataset.medallionDesign = descriptor.id;
       });
       if (persist) {
-        try { localStorage.setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:medallion-design',descriptor.id); } catch (_error) {}
       }
       this._applyProductMedallionCalibration?.();
       return descriptor;
@@ -391,7 +395,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _medallionPickerPreviewMode() {
       let mode=String(this._medallionPickerPreviewModeValue||'').trim();
       if(mode!=='static'&&mode!=='animation'){
-        try{mode=String(localStorage.getItem('gewitterradar:v41002:medallion-picker-preview-mode')||'static').trim();}catch(_error){mode='static';}
+        try{mode=String(settingsStorage(this).getItem('gewitterradar:v41002:medallion-picker-preview-mode')||'static').trim();}catch(_error){mode='static';}
       }
       if(mode!=='animation')mode='static';
       this._medallionPickerPreviewModeValue=mode;
@@ -401,7 +405,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _setMedallionPickerPreviewMode(mode,{persist=true}={}) {
       const next=mode==='animation'?'animation':'static';
       this._medallionPickerPreviewModeValue=next;
-      if(persist){try{localStorage.setItem('gewitterradar:v41002:medallion-picker-preview-mode',next);}catch(_error){}}
+      if(persist){try{settingsStorage(this).setItem('gewitterradar:v41002:medallion-picker-preview-mode',next);}catch(_error){}}
       this._syncMedallionPicker?.();
       return next;
     },
@@ -677,7 +681,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     },
 
     _persistMapMedallionPosition() {
-      try { localStorage.setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_MEDALLION_POSITION_STORAGE_KEY,JSON.stringify(this._mapMedallionPosition)); } catch (_error) {}
     },
 
     _positionMapMedallionOverlay(position = this._mapMedallionPosition) {
@@ -718,7 +722,6 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       // V4.09.12 – bewusst nur noch der verbindliche 3D-Layerstapel.
       this._mapLayerSymbolStyle = 'stack3d';
       if (persist) {
-        try { localStorage.setItem(MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY,'stack3d'); } catch (_error) {}
       }
       this._syncMapDisplayUi();
     },
@@ -727,20 +730,20 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       const next = !!visible;
       if (kind === 'compass') {
         this._mapCompassVisible = next;
-        try { localStorage.setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_COMPASS_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
       } else if (kind === 'medallion') {
         this._mapMedallionVisible = next;
-        try { localStorage.setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_MEDALLION_VISIBLE_STORAGE_KEY,next ? '1' : '0'); } catch (_error) {}
       } else if (kind === 'clusterJump') {
         this._mapClusterJumpVisible = next;
-        try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
+        try { settingsStorage(this).setItem('gewitterradar:v41002:map-cluster-jump-visible',next ? '1' : '0'); } catch (_error) {}
       } else return;
       this._syncMapDisplayUi();
       this._scheduleMapDisplayResize();
     },
 
     _persistMapLocationPosition() {
-      try { localStorage.setItem(MAP_LOCATION_POSITION_STORAGE_KEY,JSON.stringify(this._mapLocationPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_LOCATION_POSITION_STORAGE_KEY,JSON.stringify(this._mapLocationPosition)); } catch (_error) {}
     },
 
     _positionMapLocationOverlay(position = this._mapLocationPosition) {
@@ -851,7 +854,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     },
 
     _persistMapCompassPosition() {
-      try { localStorage.setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_COMPASS_POSITION_STORAGE_KEY,JSON.stringify(this._mapCompassPosition)); } catch (_error) {}
     },
 
     _positionMapDisplayControl() {
@@ -876,7 +879,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
 
     _persistMapClusterJumpPosition() {
       if (!this._mapClusterJumpPosition) return;
-      try { localStorage.setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
+      try { settingsStorage(this).setItem('gewitterradar:v41002:map-cluster-jump-position',JSON.stringify(this._mapClusterJumpPosition)); } catch (_error) {}
     },
 
     _positionMapClusterJumpOverlay(position = this._mapClusterJumpPosition) {
@@ -964,12 +967,13 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       if (menu) menu.hidden = !this._mapDisplayMenuOpen;
       if (toggle) toggle.setAttribute('aria-expanded',this._mapDisplayMenuOpen ? 'true' : 'false');
       wrap?.classList.toggle('menu-open',this._mapDisplayMenuOpen);
+      this._mapDisplayMenuExtensionOpenChanged?.(this._mapDisplayMenuOpen);
     },
 
     _setMapStartupMode(mode) {
       if (!['standard','large','fullscreen','last'].includes(mode)) return;
       this._mapStartupMode = mode;
-      try { localStorage.setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
+      try { settingsStorage(this).setItem(MAP_STARTUP_MODE_STORAGE_KEY,mode); } catch (_error) {}
       this._syncMapDisplayUi();
     },
 
@@ -983,6 +987,10 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         this._positionMapLocationOverlay();
         this._positionMapDisplayControl();
         this._positionMapClusterJumpOverlay();
+        if(this.__eyeHub?.config.grouped===false){
+          this._weatherDisplayPositionEye?.();
+          this._eyeHubSyncIcons?.();
+        }
         this._scheduleOpenLocationDropdownPosition();
       };
       requestAnimationFrame(() => requestAnimationFrame(kick));
@@ -1068,6 +1076,8 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         medallionOverlay.hidden = !fullscreenActive || !this._mapMedallionVisible;
       }
       if (instrumentControls) instrumentControls.hidden = !fullscreenActive;
+      this._weatherWindSyncToggle?.();
+      this._weatherTemperatureSyncToggle?.();this._weatherPrecipitationSyncToggle?.();
       if (compassToggle) {
         compassToggle.classList.toggle('active',this._mapCompassVisible);
         compassToggle.setAttribute('aria-pressed',this._mapCompassVisible ? 'true' : 'false');
@@ -1111,6 +1121,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       this.shadow.getElementById('settings-map-startup-dropdown')?.setAttribute('aria-label',this._t('settings.map_startup_select'));
       if (settingsWindowLabel) settingsWindowLabel.textContent = this._t('settings.map_window');
       if (settingsWindowNote) settingsWindowNote.textContent = this._t('settings.map_window_note');
+      this._syncMapDisplayMenuExtension?.();
       if (settingsWindowOpen) {
         settingsWindowOpen.textContent = this._t('settings.map_window_open');
         const windowLabel=this._t('settings.map_window_open_aria');
@@ -1122,9 +1133,11 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
     _setMapDisplayMode(mode,{persist=true,remember=true,closeMenu=true}={}) {
       if (!['standard','large','fullscreen'].includes(mode)) return;
       if (this._mapWindowMode && mode !== 'fullscreen') return;
+      this._recoverMapGestureState?.('display-mode-change',{force:true});
+      if (this._mapDisplayMode !== mode) this._recoverWeatherControlGesture?.('display-mode-change');
       if (closeMenu) this._setMapDisplayMenuOpen(false);
       if (remember && !this._mapWindowMode) {
-        try { localStorage.setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_LAST_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
       }
       if (mode === 'fullscreen') {
         if (this._mapDisplayMode !== 'fullscreen') {
@@ -1166,7 +1179,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
         dialog.removeAttribute('open');
       }
       if (persist) {
-        try { localStorage.setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
+        try { settingsStorage(this).setItem(MAP_DISPLAY_MODE_STORAGE_KEY,mode); } catch (_error) {}
       }
       this._syncMapDisplayUi();
       this._scheduleMapDisplayResize();
@@ -1646,6 +1659,7 @@ export const installMapDisplay=defineModule(MODULE_META,(deps)=>{const { CARD_VE
       locationOverlay?.addEventListener('touchend',finishLocationTouch,{passive:false,capture:true});
       locationOverlay?.addEventListener('touchcancel',finishLocationTouch,{passive:false,capture:true});
 
+      this._bindMapDisplayMenuExtension?.();
       this._syncMapDisplayUi();
       if (this._mapWindowMode) {
         queueMicrotask(() => this._setMapDisplayMode('fullscreen',{persist:false,remember:false,closeMenu:true}));

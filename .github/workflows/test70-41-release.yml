@@ -1,0 +1,47 @@
+name: TEST70-41 GR 4.11.123 auth token refresh release
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'scripts/test70-41-release-ci.py'
+      - '.github/workflows/test70-41-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: test70-41-gr-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: deploy/dev
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify base
+        run: |
+          grep -q 'version:"4.11.122"' frontend/version.js
+          grep -q '"version": "0.25.31"' custom_components/gewitterradar/manifest.json
+      - name: Build and run regression
+        run: python scripts/test70-41-release-ci.py
+      - name: Check syntax and clean diffs
+        run: |
+          node --check frontend/modules/weather/consumer-client.js
+          node --check frontend/modules/weather/p7-010/opera-diagnostic-tile.js
+          git diff --check
+      - name: Publish verified version on public branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git diff --cached --quiet && exit 1
+          git commit -m "release(test70-41): Gewitterradar 4.11.123 DEV refreshed OPERA auth"
+          git push origin HEAD:deploy/dev

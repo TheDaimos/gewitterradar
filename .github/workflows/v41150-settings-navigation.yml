@@ -1,0 +1,91 @@
+name: V4.11.106 settings navigation and runtime identity
+
+on:
+  push:
+    branches:
+      - feature/v4.11-development
+      - deploy/dev
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  settings-navigation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: V4.11.106 navigation and runtime regression
+        run: python -m unittest discover -s tests -p 'test_settings_navigation_v41150.py' -v
+      - name: V4.11.106 native sidebar and controlled frontend reload
+        run: node scripts/test-v41193-runtime-reload.mjs
+      - name: V4.11.106 Android foreground precipitation recovery
+        run: node scripts/test-v41195-android-foreground.mjs
+      - name: GR-RF-02 retain verified regional radar during transient WR coverage failures
+        run: node scripts/test-p7-010-rf-02.mjs
+      - name: GR-RF-01 regional precipitation partial coverage and tile errors
+        run: node scripts/test-p7-010-rf-01.mjs
+      - name: P7-010 Germany-to-Cuba stale DWD elimination regression
+        run: node scripts/test-p7-010-viewport-coverage-revocation.mjs
+      - name: Android camera-flight protection regression
+        run: node scripts/test-v41164-camera-flight.mjs
+      - name: Automatic location flight arrival zoom selection
+        run: node scripts/test-v41165-arrival-zoom.mjs
+      - name: WebKit oversized radius protection
+        run: node scripts/test-v41168-radius-render-guard.mjs
+      - name: Frontend asset inventory checksums
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, hashlib
+          root=Path('frontend')
+          inventory=json.loads((root/'assets.json').read_text())
+          for item in inventory:
+              data=(root/item['file']).read_bytes()
+              assert hashlib.sha256(data).hexdigest()==item['sha256'], item['file']
+              if 'sizeBytes' in item:
+                  assert len(data)==item['sizeBytes'], item['file']
+          print(f'PASS: {len(inventory)} frontend assets verified')
+          PY
+      - name: Cluster DOM stability and incremental marker updates
+        run: node scripts/test-v41153-cluster-markers.mjs
+      - name: Individual danger strike DOM stability
+        run: node scripts/test-v41154-individual-markers.mjs
+      - name: Frontend JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for root in frontend dashboard/dist custom_components/gewitterradar/frontend; do
+            node --check "$root/gewitterradar.js"
+            node --check "$root/module-manifest.js"
+            node --check "$root/modules/ui/controls.js"
+          done
+      - name: Backend and DRA identity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=Path('.')
+          version=(r/'frontend/version.js').read_text()
+          build=(r/'custom_components/gewitterradar/build_info.py').read_text()
+          provenance=json.loads((r/'custom_components/gewitterradar/dra-deployment-provenance.json').read_text())
+          runtime=json.loads((r/'frontend/assets/gewitterradar-runtime-manifest.json').read_text())
+          import re
+          current = re.search(r'version:"(4[.]11[.][0-9]+)"', version)
+          assert current, 'Cannot read V4.11 runtime version'
+          expected=current.group(1)
+          assert f'BUILD_VERSION = "{expected}"' in build
+          assert runtime['productVersion']==provenance['productVersion']==expected
+          for field in ('build','runtimeRevision','moduleSetId'):
+            assert runtime[field]==provenance[field], field
+          assert len(runtime['modules'])>=34
+          print('PASS: current frontend/backend/DRA metadata consistent')
+          PY

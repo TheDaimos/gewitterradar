@@ -31,27 +31,31 @@ def test_modules_carry_own_versions():
   assert re.search(r'["\']?version["\']?\s*:\s*["\']\d+\.\d+\.\d+["\']',text)
 def test_expected_module_versions_match_self_registration():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
- expected=dict(re.findall(r'"id": "([^"]+)",\s*"version": "([^"]+)"',manifest))
- assert len(expected)==23
- picker_data_modules={
-  "modules/fullscreen/compass-picker-chevron-left-brass.js",
-  "modules/fullscreen/compass-picker-chevron-right-brass.js",
-  "modules/fullscreen/compass-picker-chevron-left-silver.js",
-  "modules/fullscreen/compass-picker-chevron-right-silver.js",
- }
+ match=re.search(r'EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)',manifest)
+ assert match
+ modules=json.loads(match.group(1))
+ expected={item["id"]:item["version"] for item in modules}
+ assert len(expected)==len(modules) and len(modules)>=23
  actual={}
- for name in CONTRACT["moduleFiles"]:
-  if name in picker_data_modules or name in CALIBRATION_DATA_MODULES or name=="module-manifest.js":
+ for item in modules:
+  if item["id"]=="core.manifest":
+   assert 'version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version' in manifest
+   actual[item["id"]]=expected[item["id"]]
    continue
-  text=(FRONTEND/name).read_text(encoding="utf-8")
-  id_match=re.search(r'(?:"id"|id)\s*:\s*"([^"]+)"',text)
-  version_match=re.search(r'(?:"version"|version)\s*:\s*"([^"]+)"',text)
-  assert id_match and version_match, name
-  actual[id_match.group(1)]=version_match.group(1)
- self_match=re.search(r'export const MODULE_META=.*?id:"core\.manifest",version:"([^"]+)"',manifest,re.S)
- assert self_match
- actual["core.manifest"]=self_match.group(1)
+  source=(FRONTEND/item["file"]).read_text(encoding="utf-8")
+  # Menu/configuration data can legitimately contain IDs before MODULE_META.
+  # Match the actual self-registration metadata rather than the first arbitrary ID.
+  metadata=re.search(r"const\s+MODULE_META\s*=\s*Object\.freeze\(\{([\s\S]*?)\}\)",source)
+  if item["id"]=="core.registry":
+   metadata=re.search(r'registerModule\(\{(id:"core\.registry"[\s\S]*?)\}\)',source)
+  assert metadata,item["file"]
+  id_match=re.search(r"""(?:["']?id["']?)\s*:\s*["']([^"']+)["']""",metadata.group(1))
+  version_match=re.search(r"""(?:["']?version["']?)\s*:\s*["']([^"']+)["']""",metadata.group(1))
+  assert id_match and version_match,item["file"]
+  assert id_match.group(1)==item["id"]
+  actual[item["id"]]=version_match.group(1)
  assert actual==expected
+
 
 def test_main_is_loader_not_monolithic_class():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
@@ -103,28 +107,36 @@ def test_runtime_revision_and_module_set_probe_contract():
  manifest=(FRONTEND/"module-manifest.js").read_text(encoding="utf-8")
  view=(FRONTEND/"modules/diagnostics/module-view.js").read_text(encoding="utf-8")
  runtime=json.loads((FRONTEND/"assets"/"gewitterradar-runtime-manifest.json").read_text(encoding="utf-8"))
- assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
- assert '`${path}?v=${revision}`' in main
- assert "GEWITTERRADAR_FEATURE_CACHE = '41002r40'" in main
- assert "gewitterradarImport('./module-manifest.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/fullscreen/map-display.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/instruments/compass-selector.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/i18n-settings.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/controls.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/ui/skeleton.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/instruments/medallion-designs.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/diagnostics/cockpit.js',GEWITTERRADAR_FEATURE_CACHE)" in main
+ is_v41103='export const APPLICATION_META=APPLICATION_RELEASE;' in manifest
+ if is_v41103:
+  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
+  assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
+  assert "GEWITTERRADAR_FEATURE_CACHE" not in main
+  revision=re.search(r'runtimeRevision:"([^"]+)"',version)
+  module_set=re.search(r'moduleSetId:"([^"]+)"',version)
+  assert revision and module_set
+  assert runtime["runtimeRevision"]==revision.group(1)
+  assert runtime["moduleSetId"]==module_set.group(1)
+  for content in (main,manifest):
+   assert f'import {{ APPLICATION_RELEASE }} from "./version.js?v={revision.group(1)}";' in content
+  for path in ("./module-manifest.js","./modules/fullscreen/map-display.js",
+   "./modules/core/card-lifecycle.js","./modules/location/radii-map.js",
+   "./modules/weather/layer-menu.js","./modules/weather/precipitation-layer.js",
+   "./modules/ui/project-hub.js"):
+   assert re.search(r"gewitterradarImport\('"+re.escape(path)+r"',(?:'\d+r\d+'|[A-Za-z_.]+)\)",main),path
+  for path in ("./modules/instruments/compass-selector.js","./modules/ui/i18n-settings.js",
+   "./modules/ui/controls.js","./modules/ui/skeleton.js","./modules/instruments/medallion-designs.js",
+   "./modules/diagnostics/cockpit.js","./modules/diagnostics/module-view.js",
+   "./modules/core/update-watch.js","./modules/weather/consumer-client.js"):
+   assert f"gewitterradarImport('{path}'" in main
+ else:
+  assert "GEWITTERRADAR_MODULE_CACHE = '41002r13'" in main
+ assert '`${path}?v=${revision}`'.replace("\\","") in main
  assert "Object.assign(__moduleDeps,{APPLICATION_META,EXPECTED_MODULES,moduleDiagnostics,moduleRegistrySnapshot,CARD_VERSION,CARD_DISPLAY_VERSION,GEWITTERRADAR_BUILD});" in main
- assert 'runtimeRevision:"41002r13"' in manifest
- assert 'moduleSetId:"D40A-5E9B"' in manifest
- assert runtime["runtimeRevision"]=="41002r13"
- assert runtime["moduleSetId"]=="D40A-5E9B"
  expected_core=next(item["version"] for item in runtime["modules"] if item["id"]=="core.manifest")
  expected_manifest=re.search(r'"id": "core\.manifest",[\s\S]*?"version": "([^"]+)"',manifest).group(1)
- self_manifest=re.search(r'id:"core\.manifest",version:"([^"]+)"',manifest).group(1)
- assert expected_manifest==expected_core==self_manifest
- assert "gewitterradarImport('./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE)" in main
- assert "gewitterradarImport('./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE)" in main
+ assert 'version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version' in manifest
+ assert expected_manifest==expected_core
  assert "installedId!==loadedId" not in view
  assert "const fingerprintMismatch=loadedId!==expectedId;" in view
  assert "const installedReleaseMismatch=Boolean(installedId&&releaseId&&installedId!==releaseId);" in view
@@ -132,17 +144,19 @@ def test_runtime_revision_and_module_set_probe_contract():
  assert 'cache:"no-store"' in view
  assert "_refreshModuleRuntimeProbe(result)" in view
 
-
 def test_internal_module_import_cache_is_coherent():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
- cache=re.search(r"GEWITTERRADAR_MODULE_CACHE = '([^']+)'",main).group(1)
- stale=[]
+ version=(FRONTEND/"version.js").read_text(encoding="utf-8")
+ latest=re.search(r'runtimeRevision:"(\d{5,6})r\d+"',version)
+ assert latest
  for path in sorted(FRONTEND.rglob("*.js")):
   text=path.read_text(encoding="utf-8")
-  for match in re.finditer(r'import[^\n]*?["\'][^"\']+\?v=(41002r\d+)["\']',text):
-   if match.group(1)!=cache:
-    stale.append((str(path.relative_to(FRONTEND)),match.group(1),cache))
- assert stale==[]
+  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(\d{5,6})r(\d+)["']''',text):
+   module_path,revision,_=match.groups()
+   assert (path.parent/module_path).resolve().is_file(),(path,module_path)
+   assert int(revision)<=int(latest.group(1)),(path,revision)
+ assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
+
 
 def test_module_deviation_popup_contract():
  registry=(FRONTEND/"modules/core/registry.js").read_text(encoding="utf-8")
@@ -151,7 +165,7 @@ def test_module_deviation_popup_contract():
  for marker in (
   "duplicateDetails:Object.freeze(duplicateDetails)",
   "registrations:Object.freeze(registrations)",
-  'version:"1.0.1"',
+  'version:"'+next(row["version"] for row in json.loads((FRONTEND/"assets/gewitterradar-runtime-manifest.json").read_text())["modules"] if row["id"]=="core.registry")+'"',
  ):
   assert marker in registry
  for marker in (

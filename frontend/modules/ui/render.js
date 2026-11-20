@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.render",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "group": "Oberfläche",
   "function": "Hauptrendering",
   "subfunctions": [
@@ -17,7 +17,9 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
       if (!this._built || !this._hass) return;
       const aboutLabel = this.shadow.getElementById('settings-about-label');
       if (aboutLabel) aboutLabel.textContent = this._t('about.title');
-      if (this.shadow.getElementById('settings-backdrop')?.classList.contains('open')) this._syncHelpMenu();
+      const helpLanguageChanged = this._helpDialog?.open && this._helpRenderedLanguage !== this._languageValue();
+      if (helpLanguageChanged) this._syncHelp();
+      if (helpLanguageChanged || this.shadow.getElementById('settings-backdrop')?.classList.contains('open')) this._syncHelpMenu();
       this._maybeOpenAbout();
       if (this._aboutDialog?.open) this._syncAbout();
       if(this._diagnostics.enabled){if(!Number.isFinite(this._diagnosticTimings.firstRenderStartAt)){this._diagnosticTimings.firstRenderStartAt=performance.now();requestAnimationFrame(()=>{if(this._diagnostics.enabled&&!Number.isFinite(this._diagnosticTimings.firstRenderCompleteAt))this._diagnosticTimings.firstRenderCompleteAt=performance.now();});}this._diagnostics.renderCount+=1;}
@@ -478,6 +480,9 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
              <span class="map-legend-group map-legend-radii">
                <span class="legend-item" style="color:${C.blue}"><i class="legend-line"></i>${this._t('map.storm')} <span id="legend-storm-radius">${this._formatRadiusDistance(stormRadius).text}</span></span>
                <span class="legend-item" style="color:${C.danger}"><i class="legend-line"></i>${this._t('map.danger')} <span id="legend-danger-radius">${this._formatRadiusDistance(dangerRadius).text}</span></span>
+             </span>
+             <span class="map-legend-group map-legend-display">
+               <span class="legend-item legend-display-mode" id="legend-weather-display-mode">Darstellung: Auto</span>
              </span>`
           : `<span class="map-legend-group map-legend-primary">
                <span class="legend-item"><i class="legend-dot" style="--legend-color:#F3B51B"></i>${this._t('map.active_under',{minutes:ACTIVE_MINUTES})}</span>
@@ -488,7 +493,11 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
              <span class="map-legend-group map-legend-radii">
                <span class="legend-item" style="color:${C.blue}"><i class="legend-line"></i>${this._t('map.storm')} ${this._formatRadiusDistance(stormRadius).text}</span>
                <span class="legend-item" style="color:${C.danger}"><i class="legend-dot" style="--legend-color:${C.danger}"></i>${this._t('map.danger')} ${this._formatRadiusDistance(dangerRadius).text}</span>
+             </span>
+             <span class="map-legend-group map-legend-display">
+               <span class="legend-item legend-display-mode" id="legend-weather-display-mode">Darstellung: Auto</span>
              </span>`;
+        this._weatherDisplaySyncLegendBadge?.();
       }
 
       const allHistory = [...this._strikes.values()]

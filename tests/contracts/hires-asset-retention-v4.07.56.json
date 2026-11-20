@@ -8,7 +8,8 @@
     "artwork/location-search/hires",
     "artwork/location-search/legacy",
     "artwork/about-controls",
-    "artwork/compass-chevron/hires"
+    "artwork/compass-chevron/hires",
+    "artwork/weather-router/retained-renditions"
   ],
   "requiredMetadataPaths": [
     "docs/ASSET_RETENTION_POLICY.md",
@@ -17,7 +18,11 @@
     "artwork/location-search/README.md",
     "artwork/about-controls/provenance.json",
     "artwork/compass-chevron/README.md",
-    "artwork/compass-chevron/provenance.json"
+    "artwork/compass-chevron/provenance.json",
+    "artwork/weather-router/README.md",
+    "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json",
+    "artwork/help-icons/gr-clouds-ASSET_MANIFEST.json",
+    "artwork/help-icons/gr-synoptic-high-low-isobars-ASSET_MANIFEST.json"
   ],
   "protectedBlobs": [
     {
@@ -265,6 +270,108 @@
       "preferredPath": "artwork/help-icons/hires/help-instruments-v410-compass.svg",
       "gitBlobSha1": "82a3d4ac5d0cf20652414bef35415b3dbae4e3b7",
       "sizeBytes": 7034
+    },
+    {
+      "label": "Official WeatherRouter emblem V004 protected 512px rendition (master retained in WeatherRouter repository)",
+      "preferredPath": "artwork/weather-router/retained-renditions/weather-router-emblem-v004-512.png",
+      "gitBlobSha1": "2e4f3f09eaf242f55374a45abe27a2368640a40e",
+      "sizeBytes": 448948
+    },
+    {
+      "label": "Gewitterradar hero background - alpine storm variant",
+      "preferredPath": "artwork/help-icons/hires/Gewitter über dem alpinen Abendtal.png",
+      "gitBlobSha1": "294b9c1f192a90b756aa9a0a2fc4f37412aff896",
+      "sizeBytes": 2310963
+    },
+    {
+      "label": "Gewitterradar hero background - golden valley variant",
+      "preferredPath": "artwork/help-icons/hires/Goldenes Tal zwischen Sonne und Sturm.png",
+      "gitBlobSha1": "574a3ebee3ab7239ce8977f73efdcaf5a28ddd03",
+      "sizeBytes": 2187671
+    },
+    {
+      "label": "Gewitterradar hero background - forest storm master v1",
+      "preferredPath": "artwork/help-icons/hires/gewitterradar-hero-forest-storm-master-v1.png",
+      "gitBlobSha1": "0c6486a43e8aa20c8a632ad6b856ae0936eca7ff",
+      "sizeBytes": 2321853
+    },
+    {
+      "label": "V4.11 Weather display eye open master",
+      "preferredPath": "artwork/help-icons/hires/help-display-eye-open-master-1254.png",
+      "gitBlobSha1": "42da67baf569283badd646477b089dc1b8475b73",
+      "sizeBytes": 1697307
+    },
+    {
+      "label": "V4.11 Weather display eye closed master",
+      "preferredPath": "artwork/help-icons/hires/help-display-eye-closed-master-1254.png",
+      "gitBlobSha1": "8ab2541227d9dbc49a1e2f93ec95c60ea87be620",
+      "sizeBytes": 1654280
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-animation-toggle-original-master.png",
+      "gitBlobSha1": "363005181ca857cadbd274eeeebbf7d744677011",
+      "sizeBytes": 1807618
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-barb-original-master.png",
+      "gitBlobSha1": "2fafcde16b937c30a5fd993efcb73404d1cb730a",
+      "sizeBytes": 1503388
+    },
+    {
+      "label": "Wind quick-toggle original master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-settings-original-master.png",
+      "gitBlobSha1": "e3f902445a35cf7ab056c2e8c35f533156efe9a5",
+      "sizeBytes": 1504865
+    },
+    {
+      "label": "Retained inactive earlier wind SVG master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-barb-premium.svg",
+      "gitBlobSha1": "1799df6588595cb757531c8f187644246eb55c1a",
+      "sizeBytes": 2851
+    },
+    {
+      "label": "Retained inactive earlier wind SVG master",
+      "preferredPath": "artwork/help-icons/hires/gr-wind-settings-premium.svg",
+      "gitBlobSha1": "e0b26b5acb09ff732a15755f4c9ec56cef772bf3",
+      "sizeBytes": 2694
+    },
+    {
+      "label": "Temperature World approved original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-temperature-premium-original.png",
+      "gitBlobSha1": "8580cd319c53204c2e365918f437651b6ace2146",
+      "sizeBytes": 1871509
+    },
+    {
+      "label": "Approved precipitation original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-precipitation-premium-original.png",
+      "gitBlobSha1": "a1187d752bb21e048e1180b3ff37ddf4713e4b21",
+      "sizeBytes": 1407420
+    },
+    {
+      "label": "Synoptic high/low and isobars original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-synoptic-high-low-isobars-premium-original.png",
+      "gitBlobSha1": "fdb28c9ed13355d21a5b6a1213696b20d065930e",
+      "sizeBytes": 1992746
+    },
+    {
+      "label": "clouds-help original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-clouds-help-premium-original.png",
+      "gitBlobSha1": "1449c83f5b08d7ae1ce885c6b2706be126bec7ff",
+      "sizeBytes": 2234455
+    },
+    {
+      "label": "clouds-eye original premium PNG",
+      "preferredPath": "artwork/help-icons/hires/gr-clouds-eye-premium-original.png",
+      "gitBlobSha1": "3e3dbd6141b3315f7125d452fa93239015aa54e5",
+      "sizeBytes": 2052552
+    },
+    {
+      "label": "storm eye original premium PNG (GR 4.11.230)",
+      "preferredPath": "artwork/help-icons/hires/gr-storm-premium-original.png",
+      "gitBlobSha1": "e1d3ef5dd3b2af56fb12a46223ef09baa31f20a0",
+      "sizeBytes": 2114584
     }
   ]
 }

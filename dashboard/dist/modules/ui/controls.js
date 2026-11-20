@@ -1,7 +1,24 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import {settingsStorage} from '../core/settings-vault.js?v=411249r1';
+import { defineModule } from "../core/runtime.js?v=41132r1";
+// One menu tree drives both presentations. Existing controls remain single DOM instances.
+export const SETTINGS_MENU_TREE=Object.freeze([
+  {id:'weather-engine-section',number:'1',title:'Weather-Engine'},
+  {id:'settings-language-section',number:'2',title:'Sprache'},
+  {id:'settings-location-section',number:'3',title:'Standort'},
+  {id:'settings-map-section',number:'4',title:'Kartendarstellung'},
+  {id:'settings-aura-section',number:'5',title:'Effekte & Animationen'},
+  {id:'settings-radii-section',number:'6',title:'Radien'},
+  {id:'gr-vault-section',number:'',title:'Userprofile & Sicherungen'},
+  {id:'settings-diagnostic-section',number:'7',title:'Diagnose Tools',children:Object.freeze([
+    {id:'settings-calibration-section',number:'7.1',title:'Kalibrierung'},
+    {id:'settings-weather-diagnostics-section',number:'7.2',title:'Weather-Engine'},
+    {id:'settings-data-sources-section',number:'7.3',title:'Datenquellen & Verbindungen'},
+    {id:'settings-modules-section',number:'7.4',title:'Module & Versionen'}
+  ].map(Object.freeze))}
+].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.5",
+  "version": "1.1.69",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
@@ -13,6 +30,20 @@ export const MODULE_META=Object.freeze({
   "file": "modules/ui/controls.js"
 });
 export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _clusterResolutionOptions() {
+      const language=this._languageValue?.()||'Deutsch';
+      return ['early','balanced','late','classic'].map(profile=>[profile,getClusterResolutionProfileLabel(profile,language)]);
+    },
+
+    _setClusterResolutionProfile(profile) {
+      if(!this._clusterResolutionOptions().some(([id])=>id===profile))return;
+      this._clusterResolutionProfileV40822=profile;
+      try { settingsStorage(this).setItem('gewitterradar:v40822:cluster-resolution-profile',profile); } catch (_error) {}
+      this._resetStatusClusterBrowse?.();
+      this._renderMapMarkers?.();
+      this._render?.();
+    },
+
     _bindControls() {
       this._bindMapDisplayControls();
       this.shadow.getElementById('settings-about')?.addEventListener('click', () => this._openAbout(true));
@@ -53,6 +84,40 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const settingsLocationButton = this.shadow.getElementById('settings-location-button');
       const locationDropdown = this.shadow.getElementById('location-dropdown');
       let locationDropdownAnchor = null;
+      // V4.11.60: standalone Android touch scrolling, isolated from map gesture handling.
+      let locationListTouching=false;
+      let locationListScrollGuard=0;
+      let locationListReleaseTimer=null;
+      if(locationDropdown){
+        locationDropdown.style.setProperty('touch-action','pan-y','important');
+        locationDropdown.style.setProperty('overscroll-behavior-y','contain');
+        locationDropdown.style.setProperty('-webkit-overflow-scrolling','touch');
+        const releaseTouch=()=>{
+          if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+          locationListReleaseTimer=setTimeout(()=>{
+            locationListTouching=false;
+            locationListScrollGuard=performance.now()+250;
+          },500);
+        };
+        locationDropdown.addEventListener('pointerdown',event=>event.stopPropagation());
+        locationDropdown.addEventListener('touchstart',event=>{
+          if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+          locationListTouching=true;event.stopPropagation();
+        },{passive:true});
+        locationDropdown.addEventListener('touchmove',event=>{
+          locationListTouching=true;event.stopPropagation();
+        },{passive:true});
+        locationDropdown.addEventListener('touchend',event=>{
+          event.stopPropagation();releaseTouch();
+        },{passive:true});
+        locationDropdown.addEventListener('touchcancel',event=>{
+          event.stopPropagation();releaseTouch();
+        },{passive:true});
+        locationDropdown.addEventListener('wheel',event=>event.stopPropagation(),{passive:true});
+        locationDropdown.addEventListener('scroll',()=>{
+          locationListScrollGuard=performance.now()+650;
+        },{passive:true});
+      }
       const settingsLocationMainToggle = this.shadow.getElementById('settings-location-main-toggle');
       const locationMainButton = this.shadow.getElementById('location-main-button');
       const settingsLanguageButton = this.shadow.getElementById('settings-language-button');
@@ -398,7 +463,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       radiusKeypadDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      const CLUSTER_RESOLUTION_PROFILES = ['early','balanced','late','classic'];
 
       const closeClusterResolutionDropdown = (returnFocus = false) => {
         clusterResolutionDropdown?.classList.remove('open');
@@ -428,9 +492,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const renderClusterResolutionDropdown = () => {
         if (!clusterResolutionDropdown) return;
         const selected = this._clusterResolutionProfileV40822 || 'balanced';
-        const languageForLabels = this._languageValue?.() || 'Deutsch';
         const frag = document.createDocumentFragment();
-        CLUSTER_RESOLUTION_PROFILES.forEach((profile) => {
+        this._clusterResolutionOptions().forEach(([profile,profileLabel]) => {
           const button = document.createElement('button');
           button.type = 'button';
           button.className = `language-option${profile === selected ? ' selected' : ''}`;
@@ -441,7 +504,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           dot.className = 'language-option-dot';
           dot.setAttribute('aria-hidden','true');
           const label = document.createElement('span');
-          label.textContent = getClusterResolutionProfileLabel(profile,languageForLabels);
+          label.textContent = profileLabel;
           button.append(dot,label);
           frag.appendChild(button);
         });
@@ -552,17 +615,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       clusterResolutionDropdown?.addEventListener('click',(event) => {
         const option = event.target?.closest?.('[data-cluster-resolution-profile]');
         const nextProfile = option?.dataset?.clusterResolutionProfile;
-        if (!CLUSTER_RESOLUTION_PROFILES.includes(nextProfile)) return;
+        if (!nextProfile) return;
         event.preventDefault();
         event.stopPropagation();
-        this._clusterResolutionProfileV40822 = nextProfile;
-        try {
-          localStorage.setItem('gewitterradar:v40822:cluster-resolution-profile',nextProfile);
-        } catch (_error) {}
         closeClusterResolutionDropdown(false);
-        this._resetStatusClusterBrowse?.();
-        this._renderMapMarkers?.();
-        this._render?.();
+        this._setClusterResolutionProfile(nextProfile);
       });
 
       settingsDistanceUnitButtons.forEach((button) => {
@@ -582,6 +639,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // bewusst dem bewährten Sprachmenü, verwendet aber die blaue Standortfarbe.
       const closeLocationDropdown = (returnFocus = false) => {
         const focusTarget = locationDropdownAnchor;
+        locationListTouching=false;
+        if(locationListReleaseTimer!==null)clearTimeout(locationListReleaseTimer);
+        locationListReleaseTimer=null;
         locationDropdown?.classList.remove('open','map-adaptive','multicolumn','open-up','open-down');
         if (locationDropdown) {
           ['column-count','column-gap','column-fill','height','overflow-x'].forEach(name => locationDropdown.style.removeProperty(name));
@@ -596,6 +656,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
       const positionLocationDropdown = (anchor = settingsLocationButton) => {
         if (!anchor || !locationDropdown) return;
+        const alreadyOpen=locationDropdown.classList.contains('open');
+        if(alreadyOpen && (locationListTouching || performance.now()<locationListScrollGuard))return;
+        const previousScroll=alreadyOpen ? locationDropdown.scrollTop : 0;
+        const restoreScroll=()=>{
+          if(alreadyOpen && previousScroll>0)locationDropdown.scrollTop=previousScroll;
+        };
         locationDropdownAnchor = anchor;
         this._locationDropdownAnchor = anchor;
         const rect = anchor.getBoundingClientRect();
@@ -658,6 +724,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           const top = openBelow ? rect.bottom+gap : Math.max(viewportTop+margin,rect.top-gap-finalHeight);
           locationDropdown.style.top = `${Math.round(top)}px`;
           locationDropdown.style.visibility = '';
+          restoreScroll();
           return;
         }
 
@@ -719,6 +786,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           : Math.max(viewportTop+margin,rect.top-gap-finalHeight);
         locationDropdown.style.top = `${Math.round(top)}px`;
         locationDropdown.style.visibility = '';
+        restoreScroll();
       };
       this._positionLocationDropdown = positionLocationDropdown;
 
@@ -847,7 +915,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           appendHeader(text.removedPlaces);
           removedPlaces.forEach((place) => appendSavedRow(place,{removed:true}));
         }
+        const wasOpen=locationDropdown.classList.contains('open');
+        const previousScroll=wasOpen ? locationDropdown.scrollTop : 0;
         locationDropdown.replaceChildren(frag);
+        if(wasOpen && previousScroll>0)locationDropdown.scrollTop=previousScroll;
       };
 
 
@@ -994,15 +1065,34 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       };
       const v407UseCandidate = async (candidate) => {
         const data = {latitude:candidate.latitude,longitude:candidate.longitude,name:candidate.name || candidate.displayLabel};
-        if (this._hass?.services?.gewitterradar?.set_reference_coordinates) {
-          await this._hass.callService('gewitterradar','set_reference_coordinates',data);
-          return true;
+        // Claim the camera BEFORE invoking HA. The HA callback can arrive
+        // while the service promise is still pending and must not fly first.
+        const flightId=(this._referenceFlightSequence||0)+1;
+        this._referenceFlightSequence=flightId;
+        this._referenceFlightHandoff={
+          id:flightId,lat:Number(data.latitude),lon:Number(data.longitude),
+          phase:'service',until:Date.now()+12000
+        };
+        this._mapDiagnosticLog?.('geo.reference.handoff.prepared',{
+          flightId,lat:Number(data.latitude),lon:Number(data.longitude)
+        });
+        try{
+          if (this._hass?.services?.gewitterradar?.set_reference_coordinates) {
+            await this._hass.callService('gewitterradar','set_reference_coordinates',data);
+            if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff.phase='confirmed';
+            return true;
+          }
+          if (this._hass?.states?.['script.gewitterradar_set_reference_coordinates_dashboard']) {
+            await this._hass.callService('script','gewitterradar_set_reference_coordinates_dashboard',data);
+            if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff.phase='confirmed';
+            return true;
+          }
+          if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff=null;
+          return false;
+        }catch(error){
+          if(this._referenceFlightHandoff?.id===flightId)this._referenceFlightHandoff=null;
+          throw error;
         }
-        if (this._hass?.states?.['script.gewitterradar_set_reference_coordinates_dashboard']) {
-          await this._hass.callService('script','gewitterradar_set_reference_coordinates_dashboard',data);
-          return true;
-        }
-        return false;
       };
 
       const V407_SAVED_TODO_PREFIX = 'GEWITTERRADAR_PLACE_V1\n';
@@ -1130,7 +1220,28 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           label:String(candidate?.name || candidate?.displayLabel || v407Text().savedPlaceFallback),
           available:true
         };
-        requestAnimationFrame(() => this._focusReferenceStormRadius?.(reference));
+        const handoff=this._referenceFlightHandoff;
+        if(handoff&&(Math.abs(handoff.lat-latitude)>.00002||Math.abs(handoff.lon-longitude)>.00002)){
+          this._mapDiagnosticLog?.('geo.reference.handoff.superseded',{
+            flightId:handoff.id,lat:latitude,lon:longitude
+          });
+          return;
+        }
+        if(handoff?.phase==='flying'){
+          this._mapDiagnosticLog?.('geo.reference.handoff.duplicate-suppressed',{flightId:handoff.id,lat:latitude,lon:longitude});
+          return;
+        }
+        if(handoff){
+          handoff.phase='flying';
+          handoff.until=Date.now()+5000;
+        }
+        requestAnimationFrame(() => {
+          if(handoff&&this._referenceFlightHandoff!==handoff)return;
+          this._mapDiagnosticLog?.('geo.reference.handoff.flight',{
+            flightId:handoff?.id??null,lat:latitude,lon:longitude
+          });
+          this._focusReferenceStormRadius?.(reference);
+        });
       };
 
       const v407EnsureLocationSearchDialog = () => {
@@ -1537,9 +1648,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         const savedButton = event.target?.closest?.('.location-saved-option');
         if (savedButton) {
           event.preventDefault(); event.stopPropagation();
+          if(this._v407SavedPlaceUseBusy)return;
           const uid = String(savedButton.dataset.savedPlaceUid || '');
           const place = (Array.isArray(this._v407SavedPlaces) ? this._v407SavedPlaces : []).find((item) => String(item.uid || '') === uid);
           if (!place) return;
+          this._v407SavedPlaceUseBusy=true;
+          savedButton.disabled=true;
           try {
             const ok = await v407UseCandidate(place);
             if (!ok) throw new Error(v407Text().backendMissing);
@@ -1547,6 +1661,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             v407FocusCandidate(place);
           } catch (error) {
             console.warn('[Gewitterradar V4.07] Gespeicherter Ort konnte nicht verwendet werden.',error);
+          } finally {
+            this._v407SavedPlaceUseBusy=false;
+            if(savedButton.isConnected)savedButton.disabled=false;
           }
           return;
         }
@@ -1592,7 +1709,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeLocationDropdown(false);
         this._syncHelpMenu();
         this._syncModuleView?.();
+        this._ensureMapDiagnostics?.();
+        settingsDialog?.style.removeProperty('height'); // Restore natural size when opening
         settingsBackdrop?.classList.add('open');
+        this._settingsNavigationStart?.();
         settingsClose?.focus?.({ preventScroll:true });
       };
       const closeSettings = () => {
@@ -1602,6 +1722,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeLocationDropdown(false);
         closeRadiusKeypad(false);
         settingsBackdrop?.classList.remove('open');
+        this._settingsNavigationFinish?.();
+        settingsDialog?.style.removeProperty('height'); // Release animation lock after close
         settingsOpen?.focus?.({ preventScroll:true });
       };
 
@@ -1637,6 +1759,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         syncReleaseHistoryLanguage();
         releaseHistoryBackdrop?.classList.add('open');
         releaseHistoryBackdrop?.setAttribute('aria-hidden','false');
+        // Always show the newest entry first. Mobile WebViews preserve an old
+        // scroll offset when the modal is hidden and opened again.
+        const historyBody = releaseHistoryDialog?.querySelector('.release-history-body');
+        if (historyBody) historyBody.scrollTop = 0;
         releaseHistoryClose?.focus?.({ preventScroll:true });
       };
       const closeReleaseHistory = (restoreFocus = true) => {
@@ -1656,7 +1782,674 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       releaseHistoryDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      settingsOpen?.addEventListener('click',openSettings);
+      // Classic and Modern share the original settings controls and bindings.
+      const navGear=this.shadow.getElementById('settings-open-horizontal');
+      const navBody=settingsDialog?.querySelector('.settings-body');
+      // Module diagnostics may add sections after control bindings have been installed.
+      let navSections=[];
+      const menuEntries=SETTINGS_MENU_TREE.flatMap(entry=>[entry,...(entry.children||[])]);
+      const entryById=new Map(menuEntries.map(entry=>[entry.id,entry]));
+      const parentById=new Map(SETTINGS_MENU_TREE.flatMap(entry=>(entry.children||[]).map(child=>[child.id,entry.id])));
+      const pageScrollPositions=new Map();
+      let navPath=[];
+      const historyOwner='gr-settings-'+Math.random().toString(36).slice(2);
+      let historySession=0;
+      let navigationListening=false;
+      let navigationSession=false;
+      let closingHistory=false;
+      let historyRootDepth=0;
+      let suppressHistoryEvent=false;
+      const navRoot=document.createElement('div');
+      navRoot.className='gr-horizontal-root';
+      navRoot.setAttribute('aria-label',this._t('weather.app.settingsCategories'));
+      navRoot.dataset.presentationAria='weather.app.settingsCategories';
+      const menuStyleKey='gr-settings-menu-style';
+      let selectedMenuStyle='classic';
+      try {
+        const savedMenuStyle=settingsStorage(this).getItem(menuStyleKey);
+        if(savedMenuStyle==='classic'||savedMenuStyle==='modern')selectedMenuStyle=savedMenuStyle;
+      } catch(_){}
+      // Reuse the gold and blue SVG designs with just one visible settings button.
+      const goldenGear=settingsOpen?.querySelector('svg.gear');
+      goldenGear?.classList.add('gear-classic');
+      const blueGear=navGear?.querySelector('svg.gear')?.cloneNode(true);
+      if(blueGear&&settingsOpen){
+        blueGear.classList.add('gear-modern');
+        settingsOpen.append(blueGear);
+      }
+      const speedKey='gr-horizontal-navigation-speed';
+      const speedOptions={Schnell:220,Mittel:440,Langsam:760,'Ohne Animation':0};
+      let selectedSpeed='Mittel';
+      try { const stored=settingsStorage(this).getItem(speedKey);if(Object.hasOwn(speedOptions,stored))selectedSpeed=stored; } catch(_) {}
+      let navAnimating=false;
+      let cancelNavigation=null;
+      let pendingHistoryPath=null;
+      const animateNavigation=(outgoing,incoming,forward,complete,destinationScrollTop=0)=>{
+        if(navAnimating||!navBody||!settingsDialog)return;
+        navAnimating=true;
+        const duration=selectedMenuStyle!=='modern'||matchMedia('(prefers-reduced-motion: reduce)').matches?0:speedOptions[selectedSpeed];
+        if(!duration){settingsDialog.style.removeProperty('height');complete();navAnimating=false;cancelNavigation=null;return;}
+        const sourceScrollTop=navBody.scrollTop;
+        settingsBackdrop?.classList.add('gr-horizontal-motion-active');
+        const pane=document.createElement('div');
+        pane.className='gr-horizontal-transition';
+        pane.setAttribute('aria-hidden','true');
+        const from=document.createElement('div'),to=document.createElement('div');
+        from.className='gr-horizontal-slide-page';
+        to.className='gr-horizontal-slide-page';
+        const snapshotFor=(source)=>{
+          const clone=source.cloneNode(true);
+          // Pages are hidden by the shared live navigator. A paint-only copy
+          // must not inherit that state (including WebView hidden handling).
+          clone.hidden=false;
+          clone.style.contentVisibility='visible';
+          if(source===navRoot){
+            const links=navBody.querySelector(':scope > .settings-premium-links')?.cloneNode(true);
+            if(links){links.hidden=false;clone.append(links);}
+          }
+          return clone;
+        };
+        const oldContent=snapshotFor(outgoing),newContent=snapshotFor(incoming);
+        oldContent.style.transform='translateY(-'+sourceScrollTop+'px)';
+        newContent.style.transform='translateY(-'+destinationScrollTop+'px)';
+        // cloneNode does not carry live <select> selection state; preserve actual labels in both snapshots.
+        for(const [source,clone] of [[outgoing,oldContent],[incoming,newContent]]){
+          const originalSelects=source.querySelectorAll('select');
+          const clonedSelects=clone.querySelectorAll('select');
+          originalSelects.forEach((select,index)=>{if(clonedSelects[index])clonedSelects[index].value=select.value;});
+          const originals=[source,...source.querySelectorAll('*')],copies=[clone,...clone.querySelectorAll('*')];
+          copies.forEach((node,index)=>{
+            node.removeAttribute('id');node.removeAttribute('name');
+            node.scrollTop=originals[index]?.scrollTop||0;
+            node.scrollLeft=originals[index]?.scrollLeft||0;
+          });
+          clone.inert=true;
+        }
+        oldContent.setAttribute('aria-hidden','true');
+        newContent.setAttribute('aria-hidden','true');
+        if(oldContent instanceof HTMLDetailsElement)oldContent.open=true;
+        if(newContent instanceof HTMLDetailsElement)newContent.open=true;
+        from.append(oldContent);to.append(newContent);pane.append(from,to);
+        // Match real settings body padding: clones must not shift when removed.
+        const bodyPadding=getComputedStyle(navBody);
+        for(const page of [from,to]){
+          page.style.padding=bodyPadding.paddingTop+' '+bodyPadding.paddingRight+' '+bodyPadding.paddingBottom+' '+bodyPadding.paddingLeft;
+          page.style.boxSizing='border-box';
+        }
+        const distance=Math.max(280,navBody.clientWidth);
+        const before=settingsDialog.getBoundingClientRect().height;
+        settingsDialog.style.height=before+'px';
+        navBody.append(pane);
+        // Measure while real controls still participate in layout.
+        // content-visibility:hidden applied before measurement would collapse
+        // intrinsic content height and cause an incorrect Android end position.
+        // Synchronous updates below cannot expose an intermediate painted frame.
+        complete();
+        settingsDialog.style.height='auto';
+        const after=settingsDialog.getBoundingClientRect().height;
+        // Final layout stays fixed: composite its visual height, never relayout per frame.
+        settingsDialog.style.height=after+'px';
+        navBody.scrollTop=destinationScrollTop;
+        const viewportHeight=navBody.clientHeight;
+        const positionPane=()=>{pane.style.top=navBody.scrollTop+'px';pane.style.bottom='auto';pane.style.height=viewportHeight+'px';};
+        positionPane();
+        // Isolate inactive controls only after measuring the actual destination.
+        navBody.classList.add('gr-horizontal-animating');
+        const easing='cubic-bezier(.22,.7,.2,1)';
+        // Match both animations: differing end times create a perceptible second height movement.
+        const resizeDuration=duration;
+        // Avoid scrollbar toggles during animated height changes (especially on Android Slow).
+        const previousOverflow=navBody.style.getPropertyValue('overflow-y');
+        const previousOverflowPriority=navBody.style.getPropertyPriority('overflow-y');
+        navBody.style.setProperty('overflow-y','hidden','important');
+        positionPane();
+        const runs=[
+          from.animate([{transform:'translateX(0px)'},{transform:'translateX('+(forward?-distance:distance)+'px)'}],{duration,easing,fill:'forwards'}),
+          to.animate([{transform:'translateX('+(forward?distance:-distance)+'px)'},{transform:'translateX(0px)'}],{duration,easing,fill:'forwards'})
+        ];
+        if(Math.abs(after-before)>=2 && before>0 && after>0){
+          const scaleStart=before/after;
+          const contentStart=after/before;
+          runs.push(settingsDialog.animate(
+            [{transform:'scaleY('+scaleStart+')'},{transform:'scaleY(1)'}],
+            {duration:resizeDuration,easing,fill:'forwards'}
+          ));
+          // Counter-scale typography and the existing, persistent original logo.
+          const fixedLayers=[
+            [settingsDialog.querySelector('.settings-dialog-head'),'50% 0%'],
+            [navBody,'50% 50%'],
+            [settingsDialog.querySelector('.settings-signature-wrap'),'50% 100%'],
+            [settingsDialog.querySelector('.settings-footer-version'),'50% 100%']
+          ];
+          for(const [part,origin] of fixedLayers){
+            if(!part)continue;
+            runs.push(part.animate(
+              [{transform:'scaleY('+contentStart+')',transformOrigin:origin},
+               {transform:'scaleY(1)',transformOrigin:origin}],
+              {duration:resizeDuration,easing,fill:'forwards'}
+            ));
+          }
+        }
+        let done=false;
+        let cleaned=false;
+        let settleTimer=null;
+        let startFrame=null;
+        // Start the existing WAAPI timelines together only after the new live
+        // layout/toggle work is ready to paint, rather than spending the short
+        // 220ms transition in synchronous layout on a mobile WebView.
+        for(const animation of runs){animation.pause();animation.currentTime=0;}
+        const cleanup=()=>{
+          if(cleaned)return;
+          cleaned=true;
+          if(startFrame!==null)cancelAnimationFrame(startFrame);
+          if(settleTimer!==null)clearTimeout(settleTimer);
+          pane.remove();
+          runs.forEach(animation=>animation.cancel());
+          navBody.classList.remove('gr-horizontal-animating');
+          settingsBackdrop?.classList.remove('gr-horizontal-motion-active');
+          if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
+          else navBody.style.removeProperty('overflow-y');
+          // Dynamisch befuellte Diagnose darf nach dem horizontalen Wechsel
+          // nicht auf der vorher gemessenen Hoehe eingefroren bleiben.
+          const dynamicDetail=settingsBackdrop?.classList.contains('gr-horizontal-detail') &&
+            navSections.some(section=>section.classList.contains('gr-horizontal-current') &&
+              section.dataset.grDynamicHeight==='true');
+          if(!settingsBackdrop?.classList.contains('open') || dynamicDetail)
+            settingsDialog.style.removeProperty('height');
+          // Measuring the destination and unlocking a dynamic page can clamp
+          // the body scroll. Restore after those final layout mutations, not
+          // only when the new page first becomes visible.
+          if(settingsBackdrop?.classList.contains('open'))navBody.scrollTop=destinationScrollTop;
+          navAnimating=false;
+          cancelNavigation=null;
+          if(pendingHistoryPath&&navigationSession){
+            const next=pendingHistoryPath;pendingHistoryPath=null;
+            queueMicrotask(()=>navigatePath(next,{record:false}));
+          }
+        };
+        const finish=()=>{
+          if(done)return;
+          done=true;
+          clearTimeout(timeout);
+          if(!settingsBackdrop?.classList.contains('open') || !settingsBackdrop.classList.contains('gr-horizontal-mode')){
+            settingsDialog.style.removeProperty('height');
+            cleanup();
+            return;
+          }
+          settingsDialog.style.height=after+'px';
+          navBody.scrollTop=destinationScrollTop;
+          positionPane();
+          runs.forEach(animation=>{
+            if(animation.playState==='running')try{animation.finish();}catch(_){}
+          });
+          // Reveal the final live menu below the still-opaque animation copy.
+          navBody.classList.remove('gr-horizontal-animating');
+          if(previousOverflow)navBody.style.setProperty('overflow-y',previousOverflow,previousOverflowPriority);
+          else navBody.style.removeProperty('overflow-y');
+          pane.dataset.grSettling='1';
+          const dissolve=()=>{
+            if(cleaned)return;
+            if(!pane.isConnected || !settingsBackdrop?.classList.contains('open')){cleanup();return;}
+            const crossfade=pane.animate([{opacity:1},{opacity:0}],{
+              duration:110,easing:'ease-out',fill:'forwards'
+            });
+            runs.push(crossfade);
+            crossfade.finished.then(cleanup,cleanup);
+          };
+          // Two frames allow the genuine destination to paint below the
+          // opaque snapshots before the composited 110ms crossfade begins.
+          settleTimer=setTimeout(cleanup,500);
+          requestAnimationFrame(()=>requestAnimationFrame(dissolve));
+        };
+        let timeout=null;
+        startFrame=requestAnimationFrame(()=>{
+          startFrame=null;if(cleaned||done)return;
+          positionPane();
+          const start=document.timeline.currentTime;
+          for(const animation of runs){animation.play();animation.startTime=start;}
+          timeout=setTimeout(finish,Math.max(duration,resizeDuration)+300);
+        });
+        cancelNavigation=()=>{done=true;clearTimeout(timeout);cleanup();};
+        Promise.allSettled(runs.map(animation=>animation.finished)).then(finish);
+      };
+      const headingFor=(entry)=>{
+        const section=this.shadow.getElementById(entry.id);
+        return section?.querySelector(':scope > summary .settings-section-title')?.textContent?.trim()||entry.title;
+      };
+      const numberedHeading=(entry)=>entry.number ? entry.number+(entry.number.includes('.')?' ':'. ')+headingFor(entry) : headingFor(entry);
+      let navBack=null;
+      const showNavigationPage=()=>{
+        const activeId=navPath.at(-1),activeSection=this.shadow.getElementById(activeId||'');
+        settingsBackdrop?.classList.add('gr-settings-pages');
+        settingsBackdrop?.classList.toggle('gr-horizontal-detail',!!activeSection);
+        settingsBackdrop.dataset.settingsPath=navPath.join('/');
+        navRoot.hidden=!!activeSection;
+        for(const section of navSections){
+          const active=section===activeSection;
+          section.hidden=!active;
+          section.classList.toggle('gr-horizontal-current',active);
+          section.open=active;
+        }
+        const links=navBody?.querySelector(':scope > .settings-premium-links');
+        if(links)links.hidden=!!activeSection;
+        if(navBack)navBack.hidden=!activeSection;
+        const title=this.shadow.getElementById('settings-dialog-title');
+        if(title)title.textContent=activeSection?numberedHeading(entryById.get(activeId)):this._t('settings.title');
+      };
+      const ownedHistoryState=(path)=>({...((history.state&&typeof history.state==='object')?history.state:{}),grSettingsMenu:{owner:historyOwner,session:historySession,path:[...path]}});
+      const updateNavigationHistory=(previous,next)=>{
+        if(!navigationSession)return;
+        try{
+          if(next.length<previous.length){
+            suppressHistoryEvent=true;
+            history.go(next.length-previous.length);
+          }else{
+            const shared=next.slice(0,previous.length);
+            if(previous.length&&JSON.stringify(previous)!==JSON.stringify(shared))history.replaceState(ownedHistoryState(shared),'');
+            for(let depth=previous.length+1;depth<=next.length;depth++)history.pushState(ownedHistoryState(next.slice(0,depth)),'');
+          }
+          historyRootDepth=next.length;
+        }catch(_){navigationSession=false;}
+      };
+      const navigatePath=(next,{record=true,focus=true}={})=>{
+        if(navAnimating||!navBody)return false;
+        if(next.some(id=>!entryById.has(id)||!this.shadow.getElementById(id)))return false;
+        const previous=[...navPath],outgoing=this.shadow.getElementById(previous.at(-1)||'')||navRoot;
+        const incoming=this.shadow.getElementById(next.at(-1)||'')||navRoot;
+        if(previous.join('/')===next.join('/')){showNavigationPage();return true;}
+        pageScrollPositions.set(previous.join('/'),navBody.scrollTop);
+        closeMenuChoices?.();
+        const destinationScrollTop=pageScrollPositions.get(next.join('/'))||0;
+        animateNavigation(outgoing,incoming,next.length>=previous.length,()=>{
+          navPath=[...next];showNavigationPage();
+          navBody.scrollTop=destinationScrollTop;
+          if(record)updateNavigationHistory(previous,next);
+          if(focus)(next.length?navBack:navRoot.querySelector('button'))?.focus?.({preventScroll:true});
+        },destinationScrollTop);
+        return true;
+      };
+      const navigateTo=(sectionId)=>{
+        const entry=entryById.get(sectionId);
+        if(!entry)return false;
+        const parent=parentById.get(sectionId);
+        return navigatePath(parent?[parent,sectionId]:[sectionId]);
+      };
+      const renderNavigationList=(container,entries)=>{
+        if(!container)return;
+        for(const entry of entries){
+          let button=container.querySelector(':scope > [data-settings-target="'+entry.id+'"]');
+          if(!button){
+            button=document.createElement('button');button.type='button';
+            button.className='gr-horizontal-item settings-section';
+            button.dataset.settingsTarget=entry.id;
+            const name=document.createElement('span');name.className='gr-horizontal-item-name';
+            const chevron=document.createElement('span');chevron.className='gr-horizontal-chevron release-history-future-chevron';chevron.setAttribute('aria-hidden','true');
+            button.append(name,chevron);
+            button.addEventListener('click',()=>navigateTo(entry.id));
+            container.append(button);
+          }
+          button.querySelector('.gr-horizontal-item-name').textContent=numberedHeading(entry);
+          button.dataset.settingsNumber=entry.number;
+          button.title=this.shadow.getElementById(entry.id)?.querySelector(':scope > summary .settings-section-sub')?.textContent?.trim()||entry.title;
+        }
+      };
+      const refreshNavigationSections=()=>{
+        if(!navBody)return;
+        navSections=menuEntries.map(entry=>this.shadow.getElementById(entry.id)).filter(Boolean);
+        renderNavigationList(navRoot,SETTINGS_MENU_TREE);
+        renderNavigationList(this.shadow.querySelector('[data-settings-diagnostic-menu]'),SETTINGS_MENU_TREE.at(-1).children);
+        showNavigationPage();
+      };
+      this._settingsRefreshNavigation=refreshNavigationSections;
+      this._settingsNavigateTo=navigateTo;
+      this._settingsNavigateBack=()=>navPath.length?navigatePath(navPath.slice(0,-1)):false;
+      this._settingsNavigationState=()=>({path:[...navPath],style:selectedMenuStyle,animating:navAnimating,listening:navigationListening});
+      this._settingsNavigationStart=()=>{
+        if(navigationSession)return;
+        navPath=[];refreshNavigationSections();navBody.scrollTop=pageScrollPositions.get('')||0;
+        // A rapid close/reopen must not push a new session before the preceding
+        // history traversal has settled (mobile WebViews dispatch popstate later).
+        if(closingHistory)return;
+        historySession++;
+        try{history.pushState(ownedHistoryState([]),'');navigationSession=true;historyRootDepth=0;}catch(_){}
+      };
+      this._settingsNavigationFinish=()=>{
+        pendingHistoryPath=null;
+        cancelNavigation?.();
+        if(navigationSession){
+          navigationSession=false;
+          try{if(history.state?.grSettingsMenu?.owner===historyOwner&&history.state.grSettingsMenu.session===historySession){closingHistory=true;history.go(-(historyRootDepth+1));}}catch(_){closingHistory=false;}
+        }
+        suppressHistoryEvent=false;
+        pendingHistoryPath=null;
+      };
+      if(this._settingsPopstateHandler)window.removeEventListener('popstate',this._settingsPopstateHandler);
+      this._settingsPopstateHandler=(event)=>{
+        if(closingHistory){
+          closingHistory=false;
+          if(settingsBackdrop?.classList.contains('open'))this._settingsNavigationStart();
+          return;
+        }
+        if(suppressHistoryEvent){suppressHistoryEvent=false;return;}
+        if(!navigationSession||!settingsBackdrop?.classList.contains('open'))return;
+        const marker=event.state?.grSettingsMenu;
+        if(marker?.owner===historyOwner&&marker.session===historySession){
+          historyRootDepth=marker.path.length;
+          if(navAnimating)pendingHistoryPath=marker.path;
+          else navigatePath(marker.path,{record:false});
+        }else{
+          navigationSession=false;closeSettings();
+        }
+      };
+      this._resumeSettingsNavigation=()=>{
+        window.removeEventListener('popstate',this._settingsPopstateHandler);
+        navigationListening=!!this.isConnected;
+        if(navigationListening)window.addEventListener('popstate',this._settingsPopstateHandler);
+      };
+      this._teardownSettingsNavigation=()=>{
+        window.removeEventListener('popstate',this._settingsPopstateHandler);navigationListening=false;
+        pageScrollPositions.set(navPath.join('/'),navBody?.scrollTop||0);
+        navigationSession=false;closingHistory=false;suppressHistoryEvent=false;pendingHistoryPath=null;
+        settingsBackdrop?.classList.remove('open');cancelNavigation?.();closeMenuChoices?.();
+        settingsDialog?.style.removeProperty('height');
+        // Detachment may be caused by HA navigation. Never traverse its history.
+        try{if(history.state?.grSettingsMenu?.owner===historyOwner){const state={...history.state};delete state.grSettingsMenu;history.replaceState(state,'');}}catch(_){}
+        historySession++;
+      };
+      this._resumeSettingsNavigation();
+      refreshNavigationSections();
+      navBack=document.createElement('button');
+      navBack.type='button';navBack.id='gr-horizontal-back';navBack.className='settings-language-button';
+      const backChevron=document.createElement('span');backChevron.className='release-history-future-chevron';backChevron.setAttribute('aria-hidden','true');
+      const backLabel=document.createElement('span');backLabel.textContent=this._t('vault.back');backLabel.dataset.presentationText='vault.back';
+      navBack.append(backChevron,backLabel);navBack.hidden=true;
+      navBack.addEventListener('click',()=>this._settingsNavigateBack());
+      // V4.11.61: both menus live in section 5 (Effekte & Animationen).
+      // Render the existing gold-dot dropdown design, not native mobile selects.
+      const effectsSection=this.shadow.getElementById('settings-aura-section');
+      const effectsControls=effectsSection?.querySelector(':scope > .settings-section-content');
+      const makeMenuChoice=(name,id,choices,initial,onChange)=>{
+        const row=document.createElement('div');
+        row.className='settings-row gr-menu-choice-row';
+        row.id=id+'-row';
+        const label=document.createElement('div');
+        label.className='settings-row-label';
+        label.textContent=name;
+        const button=document.createElement('button');
+        button.type='button';
+        button.id=id+'-button';
+        button.className='settings-language-button settings-control gr-menu-choice-button';
+        button.setAttribute('aria-label',name);
+        button.setAttribute('aria-haspopup','listbox');
+        button.setAttribute('aria-expanded','false');
+        const current=document.createElement('span');
+        current.className='settings-language-current';
+        const dot=document.createElement('i');
+        dot.className='settings-language-current-dot';
+        dot.setAttribute('aria-hidden','true');
+        const value=document.createElement('span');
+        value.className='gr-menu-choice-current';
+        value.id=id+'-value';
+        current.append(dot,value);
+        const chevron=document.createElement('span');
+        chevron.className='settings-language-chevron';
+        chevron.setAttribute('aria-hidden','true');
+        chevron.textContent='▾';
+        button.append(current,chevron);
+        row.append(label,button);
+        const dropdown=document.createElement('div');
+        dropdown.id=id+'-dropdown';
+        dropdown.className='language-dropdown gr-menu-choice-dropdown';
+        dropdown.setAttribute('role','listbox');
+        dropdown.setAttribute('aria-label',name);
+        // Same portal as other listboxes, outside the scroll-clipped settings body.
+        this.shadow.append(dropdown);
+        const close=(returnFocus=false)=>{
+          dropdown.classList.remove('open');
+          button.setAttribute('aria-expanded','false');
+          if(returnFocus)button.focus({preventScroll:true});
+        };
+        const set=(next)=>{
+          const chosen=choices.find(entry=>entry[0]===next)||choices[0];
+          value.textContent=chosen[1];
+          dropdown.querySelectorAll('.language-option').forEach(item=>{
+            const selected=item.dataset.grMenuOption===chosen[0];
+            item.classList.toggle('selected',selected);
+            item.setAttribute('aria-selected',String(selected));
+          });
+        };
+        for(const [choice,text] of choices){
+          const option=document.createElement('button');
+          option.type='button';
+          option.className='language-option';
+          option.dataset.grMenuOption=choice;
+          option.setAttribute('role','option');
+          const marker=document.createElement('i');
+          marker.className='language-option-dot';
+          marker.setAttribute('aria-hidden','true');
+          const caption=document.createElement('span');
+          caption.textContent=text;
+          option.append(marker,caption);
+          option.addEventListener('click',(event)=>{
+            event.preventDefault();event.stopPropagation();
+            set(choice);close(false);onChange(choice);
+          });
+          dropdown.append(option);
+        }
+        set(initial);
+        const open=()=>{
+          const rect=button.getBoundingClientRect();
+          const margin=8,gap=6;
+          const viewport=window.visualViewport;
+          const leftOffset=Number(viewport?.offsetLeft)||0;
+          const topOffset=Number(viewport?.offsetTop)||0;
+          const viewportWidth=Number(viewport?.width)||window.innerWidth;
+          const viewportHeight=Number(viewport?.height)||window.innerHeight;
+          const width=Math.min(290,Math.max(190,Math.round(rect.width)));
+          dropdown.style.width=width+'px';
+          dropdown.style.left=clamp(Math.round(rect.left+rect.width-width),leftOffset+margin,Math.max(leftOffset+margin,leftOffset+viewportWidth-width-margin))+'px';
+          dropdown.style.visibility='hidden';
+          dropdown.classList.add('open');
+          const height=dropdown.getBoundingClientRect().height;
+          const below=rect.bottom+gap;
+          const above=rect.top-height-gap;
+          dropdown.style.top=(below+height<=topOffset+viewportHeight-margin?below:Math.max(topOffset+margin,above))+'px';
+          dropdown.style.visibility='';
+          button.setAttribute('aria-expanded','true');
+        };
+        button.addEventListener('click',(event)=>{
+          event.preventDefault();event.stopPropagation();
+          if(dropdown.classList.contains('open')){close();return;}
+          this.shadow.querySelectorAll('.gr-menu-choice-dropdown.open').forEach(other=>{
+            other.classList.remove('open');
+            this.shadow.getElementById(other.id.replace('-dropdown','-button'))?.setAttribute('aria-expanded','false');
+          });
+          open();
+        });
+        button.addEventListener('keydown',(event)=>{
+          if(event.key==='ArrowDown' || event.key==='Enter' || event.key===' '){
+            if(!dropdown.classList.contains('open')){
+              event.preventDefault();open();
+            }
+          }
+        });
+        dropdown.addEventListener('keydown',(event)=>{
+          if(event.key==='Escape'){event.preventDefault();close(true);}
+        });
+        return {row,button,dropdown,set,close};
+      };
+      const menuStyleChoice=makeMenuChoice('Menüdarstellung','gr-menu-style',
+        [['classic','Klassisch'],['modern','Modern']],selectedMenuStyle,
+        value=>applyMenuStyle(value,true));
+      const speedChoice=makeMenuChoice('Menügeschwindigkeit','gr-menu-speed',
+        Object.keys(speedOptions).map(name=>[name,name]),selectedSpeed,
+        value=>{
+          selectedSpeed=value;
+          try{settingsStorage(this).setItem(speedKey,selectedSpeed);}catch(_){}
+        });
+      // Zielzoom gilt ausschliesslich fuer die automatische Kartenfahrt zum Bezugspunkt.
+      // Die bisherige, radiusabhaengige Einpassung bleibt als Wahlmoeglichkeit erhalten.
+      const referenceZoomKey='gr-reference-arrival-zoom';
+      const referenceZoomChoices=[
+        ['auto','Automatisch (Radius)'],
+        ...Array.from({length:14},(_,index)=>{
+          const level=String(index+5);
+          return [level,'Zoomstufe '+level];
+        })
+      ];
+      let selectedReferenceZoom='8';
+      try{
+        const savedReferenceZoom=settingsStorage(this).getItem(referenceZoomKey);
+        if(referenceZoomChoices.some(entry=>entry[0]===savedReferenceZoom))selectedReferenceZoom=savedReferenceZoom;
+      }catch(_){}
+      const referenceZoomChoice=makeMenuChoice(
+        'Zoomstufe nach Standortwechsel','gr-reference-arrival-zoom',
+        referenceZoomChoices,selectedReferenceZoom,
+        value=>{
+          selectedReferenceZoom=value;
+          try{settingsStorage(this).setItem(referenceZoomKey,value);}catch(_){}
+        }
+      );
+      const referenceZoomNote=document.createElement('span');
+      referenceZoomNote.className='settings-row-note';
+      referenceZoomNote.textContent=this._t('weather.app.referenceZoom');referenceZoomNote.dataset.presentationText='weather.app.referenceZoom';
+      referenceZoomChoice.row.querySelector('.settings-row-label')?.append(referenceZoomNote);
+      const menuStyleRow=menuStyleChoice.row;
+      const speedRow=speedChoice.row;
+      speedRow.classList.add('gr-menu-speed-row');
+      speedRow.hidden=selectedMenuStyle!=='modern';
+      effectsControls?.append(menuStyleRow,speedRow,referenceZoomChoice.row);
+      const closeMenuChoices=()=>{
+        menuStyleChoice.close();speedChoice.close();referenceZoomChoice.close();
+      };
+      // Close both menus on outside input, Escape and dialog dismissal.
+      document.addEventListener('pointerdown',event=>{
+        const path=event.composedPath?.()||[];
+        for(const choice of [menuStyleChoice,speedChoice,referenceZoomChoice]){
+          if(!path.includes(choice.button)&&!path.includes(choice.dropdown))choice.close();
+        }
+      },{capture:true});
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape')closeMenuChoices();
+      });
+      settingsClose?.addEventListener('click',closeMenuChoices);
+      if(navBody&&navSections.length){
+        navBody.prepend(navRoot);
+        const links=navBody.querySelector(':scope > .settings-premium-links');
+        if(links)navBody.append(links);
+        settingsDialog?.querySelector('.settings-dialog-head > div')?.append(navBack);
+        const style=document.createElement('style');
+        style.textContent=`
+          #settings-backdrop.gr-horizontal-mode .settings-body {position:relative;isolation:isolate;overflow-x:hidden}
+          /* Avoid relayout/repaint of heavyweight real controls under the compositor snapshots. */
+          #settings-backdrop.gr-horizontal-mode .settings-body.gr-horizontal-animating > :not(.gr-horizontal-transition) {visibility:hidden!important;content-visibility:hidden!important}
+          /* Keep the original gold signature as a precomposited, unmoving paint layer. */
+          #settings-backdrop.gr-horizontal-mode .settings-dialog > .settings-signature-wrap {transform:translate3d(0,0,0);backface-visibility:hidden;will-change:transform}
+          #settings-backdrop.gr-horizontal-mode .settings-dialog > .settings-signature-wrap .settings-signature {transform:translate3d(0,0,0);backface-visibility:hidden}
+          /* The nearly opaque heading does not need to live-blur the sliding layers. */
+          #settings-backdrop.gr-horizontal-motion-active .settings-dialog-head {backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+          #settings-backdrop.gr-horizontal-motion-active .settings-dialog {contain:paint;will-change:transform;transform-origin:50% 50%}
+          #settings-backdrop.gr-horizontal-mode .settings-body > .settings-premium-links {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+          #settings-backdrop.gr-horizontal-mode .settings-premium-links > button {box-sizing:border-box;min-width:0!important;width:100%;white-space:normal!important;overflow-wrap:break-word;justify-content:center!important;text-align:center!important;padding:12px 8px!important}
+          #settings-backdrop.gr-horizontal-mode .settings-premium-links > button > span:last-child {min-width:0;white-space:normal;text-align:center!important;line-height:1.22}
+          #settings-backdrop.gr-horizontal-mode #settings-about {border:1px solid rgba(244,205,128,.78)!important;background:linear-gradient(130deg,rgba(240,196,105,.28),rgba(124,86,35,.22) 48%,rgba(9,19,29,.96))!important;box-shadow:inset 0 1px 0 rgba(255,235,192,.24),0 0 18px rgba(202,146,45,.12),0 4px 12px rgba(0,0,0,.25)!important;color:#f6e4bb!important;font-weight:800}
+          #settings-backdrop.gr-horizontal-mode #settings-about .settings-premium-icon {filter:brightness(1.23) drop-shadow(0 0 5px rgba(242,194,105,.42))}
+          #settings-backdrop.gr-horizontal-mode #settings-help {border-color:rgba(196,160,95,.34)!important;background:linear-gradient(120deg,rgba(157,119,46,.075),rgba(10,19,29,.8))!important}
+
+          .gr-horizontal-transition {position:absolute;inset:0;z-index:90;overflow:hidden;background:#0b151c;pointer-events:auto}
+          .gr-horizontal-slide-page {position:absolute;inset:0;box-sizing:border-box;width:100%;overflow:hidden;background:#0b151c;will-change:transform;backface-visibility:hidden;contain:layout paint style;pointer-events:none}
+          /* Preserve both sliding snapshots regardless of real detail-mode visibility. */
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > .gr-horizontal-root {display:grid!important;visibility:visible!important;gap:8px}
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-transition > .gr-horizontal-slide-page > details.settings-section {display:block!important;visibility:visible!important}
+          .gr-horizontal-slide-page > details.settings-section > summary {display:none}
+          .gr-horizontal-slide-page > details.settings-section > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          /* The new controls inherit the app's existing settings-row and language-dropdown styling. */
+          .gr-menu-choice-button {min-width:154px;max-width:60%;white-space:nowrap}
+          .gr-menu-choice-button .gr-menu-choice-current {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+          .gr-menu-speed-row[hidden] {display:none!important}
+          #gr-reference-arrival-zoom-row .settings-row-note {display:block;margin-top:4px;font-size:.75rem;opacity:.72}
+          .gr-menu-choice-dropdown {z-index:2147483647}
+          /* iPadOS: the legacy rule
+             #card-root.ipad-device .settings-chip-premium .gear-welcome
+             uses display:block!important. Stronger selectors must keep exactly
+             one SVG visible inside the single active settings button. */
+          #card-root #settings-open-horizontal {display:none!important}
+          #card-root #settings-open .gear-welcome.gear-modern {display:none!important}
+          #card-root #settings-open[data-menu-style="modern"] .gear-welcome.gear-classic {display:none!important}
+          #card-root #settings-open[data-menu-style="modern"] .gear-welcome.gear-modern {display:block!important;stroke:#66beff!important;color:#66beff!important;filter:drop-shadow(0 0 6px rgba(55,150,245,.48))!important}
+          #settings-backdrop.gr-horizontal-mode .settings-body > details.settings-section {display:none!important}
+          #settings-backdrop.gr-horizontal-mode .gr-horizontal-root {display:grid;gap:8px;padding:5px 0 15px}
+          #settings-backdrop:not(.gr-horizontal-mode) .gr-horizontal-root,
+          #settings-backdrop:not(.gr-horizontal-mode) #gr-horizontal-back {display:none!important}
+          /* The two settings links retain equal grid columns. */
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > .settings-premium-links,
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .gr-horizontal-root {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail .settings-body > details.settings-section.gr-horizontal-current {display:block!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail details.settings-section.gr-horizontal-current > summary {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail details.settings-section.gr-horizontal-current > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          #settings-backdrop.gr-horizontal-mode:not(.gr-horizontal-detail) #gr-horizontal-back {display:none!important}
+          #settings-backdrop.gr-horizontal-mode.gr-horizontal-detail #gr-horizontal-back {display:inline-flex!important;margin-top:8px;align-items:center;min-height:34px;color:#eed08a}
+          .gr-horizontal-item {display:flex;align-items:center;justify-content:space-between;width:100%;min-height:55px;padding:12px 16px;text-align:left;cursor:pointer;color:inherit;font:inherit;border-radius:12px;background:linear-gradient(110deg,rgba(169,126,47,.055),rgba(255,255,255,.018) 30%,rgba(11,21,28,.58));border:1px solid rgba(190,151,76,.28)}
+          .gr-horizontal-item-name {font-weight:750;text-transform:uppercase;letter-spacing:.045em}
+          .gr-horizontal-chevron {font-size:27px;color:#e1b45b;line-height:1}
+          /* Both presentations use full pages in the original single settings shell. */
+          #settings-backdrop.gr-settings-pages .settings-body {position:relative;isolation:isolate;min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section {display:none!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current {display:block!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current > summary {display:none!important}
+          #settings-backdrop.gr-settings-pages .settings-body > details.settings-section.gr-horizontal-current > .settings-section-content {display:block!important;max-height:none!important;overflow:visible!important}
+          #settings-backdrop.gr-settings-pages:not(.gr-horizontal-mode) .gr-horizontal-root {display:grid!important;gap:8px;padding:5px 0 15px}
+          #settings-backdrop.gr-settings-pages .settings-body > [hidden],
+          #settings-backdrop.gr-settings-pages .settings-body > .settings-premium-links[hidden],
+          #settings-backdrop.gr-settings-pages .gr-horizontal-root[hidden],
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back[hidden] {display:none!important}
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back:not([hidden]) {display:inline-flex!important;width:auto!important;min-width:0!important;max-width:100%;justify-content:flex-start!important;align-self:flex-start;flex:0 0 auto;gap:9px;align-items:center;min-height:36px;margin-top:8px;color:#eed08a}
+          #settings-backdrop.gr-settings-pages #gr-horizontal-back .release-history-future-chevron {width:10px;height:10px;margin:0;transform:rotate(135deg);flex:0 0 auto}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-item {min-width:0;box-sizing:border-box;gap:16px}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-item-name {min-width:0;overflow-wrap:anywhere;line-height:1.35}
+          #settings-backdrop.gr-settings-pages .gr-horizontal-chevron.release-history-future-chevron {width:11px;height:11px;margin:0 4px 0 0;transform:rotate(-45deg);flex:0 0 auto}
+          #settings-backdrop.gr-settings-pages details.settings-section.gr-settings-diagnostics-page {border:0;background:none;box-shadow:none;overflow:visible}
+          #settings-backdrop.gr-settings-pages details.settings-section.gr-settings-diagnostics-page > .settings-section-content[data-settings-diagnostic-menu] {display:grid!important;gap:8px;padding:0}
+          #settings-backdrop.gr-settings-pages .settings-dialog-head > div:first-child {min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-title {overflow-wrap:anywhere;line-height:1.2}
+          #settings-backdrop.gr-settings-pages .settings-footer-version {max-width:45%}
+          #settings-backdrop.gr-settings-pages .settings-footer-version > span {white-space:nowrap}
+          #settings-backdrop.gr-settings-pages .settings-dialog > .settings-signature-wrap {width:49%;max-width:49%;margin-left:auto}
+          #settings-backdrop.gr-settings-pages .settings-dialog > .settings-signature-wrap .settings-signature {max-width:100%}
+          #settings-backdrop.gr-settings-pages .settings-body > .settings-premium-links {grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+          #settings-backdrop.gr-settings-pages .settings-premium-links > button {min-width:0!important;white-space:normal!important;overflow-wrap:anywhere}
+          @media(max-height:420px){#settings-backdrop.gr-settings-pages .settings-dialog-head{padding-top:6px;padding-bottom:5px}#settings-backdrop.gr-settings-pages .settings-kicker{font-size:7px}#settings-backdrop.gr-settings-pages .settings-title{font-size:14px}#settings-backdrop.gr-settings-pages #gr-horizontal-back:not([hidden]){margin-top:3px;min-height:32px}#settings-backdrop.gr-settings-pages .settings-dialog>.settings-signature-wrap{min-height:40px}#settings-backdrop.gr-settings-pages .settings-signature{width:170px}}
+          @media(prefers-reduced-motion:reduce){.gr-horizontal-root,.gr-horizontal-current{animation:none!important}}
+        `;
+        this.shadow.append(style);
+      }
+      const applyMenuStyle=(value,save=false)=>{
+        if(navAnimating)return;
+        const modern=value==='modern' && !!navBody && navSections.length>0;
+        selectedMenuStyle=modern?'modern':'classic';
+        if(save)try{settingsStorage(this).setItem(menuStyleKey,selectedMenuStyle);}catch(_){}
+        menuStyleChoice.set(selectedMenuStyle);
+        speedRow.hidden=!modern;
+        closeMenuChoices();
+        settingsOpen?.setAttribute('data-menu-style',selectedMenuStyle);
+        const settingsModeLabel=this._t('settings.open_aria')+' · '+this._t(modern?'weather.app.modern':'weather.app.classic');
+        settingsOpen?.setAttribute('title',settingsModeLabel);
+        settingsOpen?.setAttribute('aria-label',settingsModeLabel);
+        settingsBackdrop?.classList.toggle('gr-horizontal-mode',modern);
+        showNavigationPage();
+        settingsDialog?.style.removeProperty('height');
+      };
+      applyMenuStyle(selectedMenuStyle); // Restore persisted setting and gear color at startup.
+      navGear?.addEventListener('click',()=>{
+        openSettings();
+        refreshNavigationSections();
+        applyMenuStyle('modern'); // Retain the existing hidden entry for browser contracts.
+      });
+      settingsOpen?.addEventListener('click',()=>{
+        openSettings();
+        refreshNavigationSections();
+        applyMenuStyle(selectedMenuStyle);
+      });
       settingsClose?.addEventListener('click',closeSettings);
       settingsBackdrop?.addEventListener('click',(event) => {
         this._closeMapStartupDropdown?.(false);
@@ -1667,21 +2460,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
       settingsDialog?.addEventListener('click',(event) => event.stopPropagation());
 
-      // V3.99316 – vollständiges Accordion für den knappen Einstellungsdialog.
-      // Alle Gruppen starten geschlossen. Sobald eine Gruppe geöffnet wird,
-      // schließen sich alle übrigen Gruppen automatisch. Damit kann der Dialog
-      // auch auf kleineren Displays nicht durch mehrere gleichzeitig geöffnete
-      // Bereiche unnötig in die Höhe wachsen. Der interne Scrollbereich bleibt
-      // als Sicherheitsnetz für einzelne hohe Gruppen erhalten.
+      // Register dynamic pages once; form nodes and their listeners are never cloned for navigation.
       const settingsSections = new Set();
-      let settingsAccordionBusy = false;
       const registerSettingsSection = (section) => {
         if (!section || settingsSections.has(section)) return;
         settingsSections.add(section);
-        section.open = false;
+        if(!entryById.has(section.id))return;
+        section.querySelector(':scope > summary')?.addEventListener('click',event=>{
+          event.preventDefault();navigateTo(section.id);
+        });
         section.addEventListener('toggle',() => {
-          // Ein zugeklappter Abschnitt darf kein frei schwebendes Custom-Menü
-          // zurücklassen. Die Dropdown-Mechanik selbst bleibt unverändert.
           if (!section.open) {
             this._closeMapStartupDropdown?.(false);
             closeLanguageDropdown(false);
@@ -1689,17 +2477,9 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             closeLocationDropdown(false);
             return;
           }
-          if (settingsAccordionBusy) return;
-          settingsAccordionBusy = true;
-          this._closeMapStartupDropdown?.(false);
-          closeLanguageDropdown(false);
-          closeClusterResolutionDropdown(false);
-          closeLocationDropdown(false);
-          for (const other of settingsSections) {
-            if (other !== section && other.open) other.open = false;
-          }
-          settingsAccordionBusy = false;
+          if(!section.classList.contains('gr-horizontal-current'))navigateTo(section.id);
         });
+        refreshNavigationSections();
       };
       this._registerSettingsAccordionSection = registerSettingsSection;
       this.shadow.querySelectorAll('details.settings-collapsible').forEach(registerSettingsSection);
@@ -1956,6 +2736,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       // input_select. Gespeichert wird direkt die Entity-ID; dadurch bleibt die Auswahl nach App-/Browser-Neustart erhalten.
       const setLocationOption = async (option) => {
         if (!this._hass || !option) return;
+        // Explicit person/zone selection supersedes a saved-place handoff.
+        this._referenceFlightHandoff=null;
         this._settingsLocationPreview = option;
         clearTimeout(this._settingsLocationPreviewTimer);
         this._settingsLocationPreviewTimer = setTimeout(() => {
@@ -2131,7 +2913,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         // Falls der echte 4-Sekunden-Cooldown noch läuft, passiert bewusst nichts.
         const beforeFlashAt = this._lastFlashAt;
         if (mode === 'danger') this._pulseDangerCount();
-        this._triggerWarningAnimation(mode);
+        this._triggerWarningAnimation(mode,{preview:true});
 
         // Nur wenn _triggerWarningAnimation() die Sequenz wirklich angenommen hat,
         // werden die Buttons sichtbar bis zum Ende derselben Sperrzeit deaktiviert.
@@ -2164,7 +2946,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       mapRecenter?.addEventListener('click', (event) => {
         event?.preventDefault?.();
         event?.stopPropagation?.();
-        if (!this._map) return;
+        this._mapDiagnosticLog?.("geo.button.click",{mapReady:!!this._map});
+        if (!this._map){this._mapDiagnosticLog?.("geo.focus.skipped",{reason:"map-not-ready"});return;}
         this._clearRecentStrikeTarget();
         this._resetStatusClusterBrowse();
         this._statusFocusIndex = -1;

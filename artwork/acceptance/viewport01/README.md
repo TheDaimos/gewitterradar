@@ -1,0 +1,1 @@
+Synthetische Raster auf echtem Leaflet 1.9.4. WR-Planung und GR-Darstellung aus den DEV-Arbeitsständen. Keine Originaldaten oder HA-Diagnoseexporte. Zooms 0–18 und beauftragte Regionswechsel ohne F5; VM109-Realabnahme separat ausstehend.

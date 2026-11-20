@@ -1,8 +1,15 @@
 import {readFile,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {root,hash,expectedPayload,expectedHelpPayload,expectedDashboardPackages,destinations} from './build-frontend.mjs';
+const canonicalVersion=(await readFile(resolve(root,'frontend/version.js'),'utf8')).match(/version:"4\.11\.(\d+)"/)?.[1];
+if(Number(canonicalVersion)>=168){
+ await import('./verify-current-frontend.mjs');
+}else{
 const payload=await expectedPayload();
 const helpPayload=await expectedHelpPayload();
+const helpIndex=helpPayload.get('help/index.html')?.toString('utf8')||'';
+if((helpIndex.match(/class="lang-option"/g)||[]).length!==15)throw Error('Gewitterradar project page must expose exactly 15 regular language options');
+for(const marker of ['data-k="languages_badge"','switch.gewitterradar_show_sidebar_panel','V4.11.14 DEV'])if(!helpIndex.includes(marker))throw Error('Gewitterradar multilingual project page contract missing: '+marker);
 const moduleView=await readFile(resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
 const skeleton=await readFile(resolve(root,'frontend/modules/ui/skeleton.js'),'utf8');
 const controls=await readFile(resolve(root,'frontend/modules/ui/controls.js'),'utf8');
@@ -14,9 +21,20 @@ const clustersRecent=await readFile(resolve(root,'frontend/modules/map/clusters-
 const diagnostics=await readFile(resolve(root,'frontend/modules/diagnostics/cockpit.js'),'utf8');
 const compassSelector=await readFile(resolve(root,'frontend/modules/instruments/compass-selector.js'),'utf8');
 const radiiMap=await readFile(resolve(root,'frontend/modules/location/radii-map.js'),'utf8');
+const projectHub=await readFile(resolve(root,'frontend/modules/ui/project-hub.js'),'utf8');
+const nativePanel=await readFile(resolve(root,'frontend/panel.js'),'utf8');
+const layerMenu=await readFile(resolve(root,'frontend/modules/weather/layer-menu.js'),'utf8');
+const weatherRadar=await readFile(resolve(root,'frontend/modules/weather/precipitation-layer.js'),'utf8');
+const displayMenu=await readFile(resolve(root,'frontend/modules/weather/display-menu.js'),'utf8');
+const legendOverlay=await readFile(resolve(root,'frontend/modules/weather/legend-overlay.js'),'utf8');
+const projectHubConfig=JSON.parse(await readFile(resolve(root,'frontend/project-hub/project-hub-config.json'),'utf8'));
+const projectHubOffline=await readFile(resolve(root,'frontend/project-hub/offline/index.html'),'utf8');
+const projectHubAssetManifest=JSON.parse(await readFile(resolve(root,'frontend/project-hub/asset-manifest.json'),'utf8'));
+const projectHubCk=await readFile(resolve(root,'frontend/project-hub/offline/assets/ck-logo.webp'));
+const projectHubIcons=await readFile(resolve(root,'frontend/project-hub/offline/assets/project-icons.webp'));
 for(const marker of [
   '"id": "ui.skeleton"',
-  '"version": "1.1.15"',
+  '"version": "1.1.27"',
   '.settings-body {',
   'grid-auto-rows:max-content;',
   'align-content:start;',
@@ -71,7 +89,7 @@ for(const marker of [
   if(!skeleton.includes(marker))throw Error('Settings scroll contract missing: '+marker);
 }
 for(const marker of [
-  'version:"1.3.5"',
+  'version:"1.3.9"',
   '>Modul-Details</button>',
   'gr-mod-summary-compact',
   '@media(max-width:540px)',
@@ -110,7 +128,7 @@ for(const marker of [
 
 for(const marker of [
   '"id": "ui.controls"',
-  '"version": "1.1.5"',
+  '"version": "1.1.27"',
   'const settingsSections = new Set()',
   'this._registerSettingsAccordionSection = registerSettingsSection',
   'this._closeMapStartupDropdown?.(false)'
@@ -119,7 +137,7 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "ui.i18n-settings"',
-  '"version": "1.3.3"',
+  '"version": "1.3.11"',
   'const SETTINGS_UI_TRANSLATIONS=Object.freeze(',
   'this._syncMapDisplayUi?.()',
   'modules.status.duplicate',
@@ -142,20 +160,62 @@ for(const marker of [
 }
 for(const marker of [
   '"id": "location.radii-map"',
-  '"version": "1.0.3"',
+  '"version": "1.0.24"',
+  '_hardResetMapGestureHandlers',
+  'rogue-single-pointer-zoom',
+  'touch-pointer-mismatch',
+  'leaflet-stale-pointer-cache',
+  "mapEl.addEventListener('touchmove'",
+  'visibility-visible-resume',
+  'blockUntilPrimaryUp:false,anomaly:false,forceEnableConfigured:true',
+  'map.options?.touchZoom!==false',
+  'map.options?.dragging!==false',
   'zoomControl:true',
   'this._syncMapZoomTooltips?.();'
 ]){
   if(!radiiMap.includes(marker))throw Error('Translated Leaflet zoom initialization missing: '+marker);
 }
-for(const marker of [
-  "'./modules/diagnostics/module-view.js',GEWITTERRADAR_FEATURE_CACHE",
-  "'./modules/location/radii-map.js',GEWITTERRADAR_FEATURE_CACHE"
-]){
-  if(!(await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8')).includes(marker))throw Error('R39 changed module must use feature cache: '+marker);
+if(radiiMap.includes("window.addEventListener('touchmove'"))throw Error('Map gesture recovery must never globally capture touchmove outside the Leaflet surface');
+{
+  const entry=await readFile(resolve(root,'frontend/gewitterradar.js'),'utf8');
+  const version=await readFile(resolve(root,'frontend/version.js'),'utf8');
+  if(!entry.includes("const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;")||entry.includes("GEWITTERRADAR_FEATURE_CACHE"))throw Error('V4.11.14 must use the canonical entry runtime revision');
+  const getField=(name)=>version.match(new RegExp(name+':"([^"]+)"'))?.[1]||null;
+  const current=getField('version');
+  if(!/^4\.11\.\d+$/.test(current||'')||getField('displayVersion')!==('V'+current+' DEV')
+    ||!/^411\d+r1$/.test(getField('runtimeRevision')||'')
+    ||!/^E411-[^"]+$/.test(getField('moduleSetId')||''))
+    throw Error('Canonical frontend identity fields inconsistent');
+  const runtimeImport=/\?v=(\d+r\d+)/g;
+  for(const relative of (await (async function walkJs(dir,prefix=''){const out=[];for(const e of await readdir(dir,{withFileTypes:true})){const n=prefix+e.name;if(e.isDirectory())out.push(...await walkJs(resolve(dir,e.name),n+'/'));else if(n.endsWith('.js'))out.push(n);}return out;})(resolve(root,'frontend/modules')))){
+    const moduleText=await readFile(resolve(root,'frontend/modules',relative),'utf8');
+    for(const match of moduleText.matchAll(runtimeImport))if(Number(match[1].split('r')[0])>Number(version.split('runtimeRevision:"')[1]?.split('r')[0]||0)){
+      const line=moduleText.slice(0,match.index).split('\n').length;
+      const context=moduleText.slice(Math.max(0,match.index-140),Math.min(moduleText.length,match.index+220)).replace(/\s+/g,' ');
+      throw Error('Stale module runtime revision in '+relative+': '+match[1]+' @ line '+line+' · '+context);
+    }
+  }
 }
+for(const marker of ['id:"weather.layer-menu"','version:"1.1.14"','buildWeatherLayerCatalog','SUBCATEGORY_LABELS','formatWeatherLayerCapabilityLabel','weatherLayerSubcategory','weather-router-subcategory','weather-layer-back-slot','data-weather-layer-action="subcategory"','grid-template-columns:42px 1fr 42px','min-height:52px','width:calc(100% + 5px)','margin-right:-5px','padding-right:8px','.weather-layer-logo{width:27px;height:27px;justify-self:start','_bindMapDisplayMenuExtension','_setWeatherRadarEnabled','_setWeatherRadarTimelineVisible','data-weather-layer-action="timeline"','renderSignature','overflow-y:auto','overscroll-behavior:contain','available_only:true','.weather-layer-view [data-map-display-mode]{display:none!important}','.weather-layer-view [data-weather-layer-entry-wrap]{display:none!important}'])if(!layerMenu.includes(marker))throw Error('WeatherRouter Layer Hub contract missing: '+marker);
+for(const marker of ['id:"weather.display-menu"','version:"0.4.26"','data-weather-display-eye="','_weatherDisplayBindPanelDrag','_weatherDisplayCancelDrag','lostpointercapture','lifecycleAbortHandler','incompatible','_weatherDisplayLayerMenuMarkup','_weatherDisplayLegendMode','_weatherDisplaySetLegendMode','data-weather-display-legend-mode','WEATHER_DISPLAY_EYE_ASSETS','WEATHER_DISPLAY_STYLES','opacities','balanced','soft'])if(!displayMenu.includes(marker))throw Error('WeatherRouter display menu contract missing: '+marker);
+for(const marker of ['78ff501e77c7969ec69ec96e9149913692d4d53c4b800cf131090af32f582066','e92e2920cfe449c72b334989528b176c89c00dd2cbeb0354a60a7d05fcc21047','help-display-eye-open-master-1254.png','help-display-eye-closed-master-1254.png'])if(!displayMenu.includes(marker))throw Error('Final WeatherRouter eye asset contract missing: '+marker);
+if(displayMenu.includes('data-weather-display-eye-placeholder')||displayMenu.includes('<svg viewBox="0 0 56 48"'))throw Error('WeatherRouter final eye assets must fully replace the temporary SVG placeholder');
+for(const marker of ['precipitationStyleChanged','precipitationOpacityChanged','if(precipitationStyleChanged)this._weatherDisplayRefreshRenderedLayers();','_weatherDisplayOpacity','_weatherDisplaySetTransparency','_weatherDisplayResetTransparency','data-weather-display-transparency','weather-display-panel .weather-display-opacity','_weatherDisplayApplyRasterPaneStyle','pane.style.willChange=style==="precise"?"auto":"filter"','weatherDisplaySoftRasterTuning','weatherDisplayAutoRasterTuning','weatherDisplayBalancedRasterTuning','5.6*zoomFactor','saturate:1.18,contrast:1.34'])if(!displayMenu.includes(marker))throw Error('WeatherRouter smoothing/transparency contract missing: '+marker);
+if(displayMenu.includes('node.style.transform=')||displayMenu.includes('transformOrigin'))throw Error('WeatherRouter raster styling must never overwrite Leaflet tile transforms');
+for(const marker of ['version:"1.3.21"','_weatherRadarNaturalOpacity','_weatherRadarEffectiveOpacity','_weatherRadarApplyDisplayOpacity','opacityOverride==null?effectiveOpacity','state.onZoom=()=>{this._weatherDisplayRefreshRenderedLayers?.();'])if(!weatherRadar.includes(marker))throw Error('WeatherRouter precipitation opacity/smoothing integration missing: '+marker);
+for(const marker of ['id:"weather.legend-overlay"','version:"0.1.4"','_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','weather-legend-header','weatherLegendToggle','gr-premium-metal-surface','release-history-future-chevron','groupIdenticalLegendScales','data-weather-legend-hide','data-weather-legend-view','weatherSectionToggle','ResizeObserver'])if(!legendOverlay.includes(marker))throw Error('WeatherRouter compact legend overlay contract missing: '+marker);
+if((legendOverlay.includes('document.createElement("img")')||legendOverlay.includes('document.createElement("a")')))throw Error('Weather legends must use compact metadata or source links, never unbounded upstream images');
+for(const marker of ['id:"ui.project-hub"','version:"1.1.16"','.settings-signature-wrap','.topbar .brand .title > span:first-child','activateMainTitle','new Image()','createElement("iframe")','zIndex:"2147483647"','visualViewport','host-popup','DEFAULT_FALLBACK_PATH','ABOUT_CLOSE_IMAGE','settingsCloseImage','project-hub-close-premium','width:48px!important','height:48px!important','width:38px;height:38px','top:4px!important','right:4px!important'])if(!projectHub.includes(marker))throw Error('Project Hub module contract missing: '+marker);
+if(projectHub.includes('eval('))throw Error('Project Hub must not use eval');if(projectHub.includes('gewitterradar-about-close-premium.webp'))throw Error('Project Hub close must reuse Settings ABOUT_CLOSE_IMAGE instead of a guessed local asset path');
+if(projectHubConfig.project_hub_url!=='https://thedaimos.github.io/project-hub/'||projectHubConfig.health_asset_url!=='https://thedaimos.github.io/project-hub/health.svg'||projectHubConfig.fallback_path!=='offline/index.html'||projectHubConfig.probe_timeout_ms!==3000||projectHubConfig.open_mode!=='host-popup')throw Error('Project Hub runtime configuration mismatch');
+if(/<img\b[^>]*\bsrc=["']https?:/i.test(projectHubOffline))throw Error('Project Hub offline view has an external image dependency');
+if(projectHubAssetManifest.runtime_version!=='0.2.0-rc14'||projectHubCk.length<40000||projectHubIcons.length<60000)throw Error('Project Hub RC14 local asset contract mismatch');
+if(projectHub.includes('window.open('))throw Error('Project Hub host adapter must not use delayed window.open');
+for(const marker of ['gewitterradar-panel','gewitterradar-card','await import(`./gewitterradar.js?v=${APPLICATION_RELEASE.runtimeRevision}`)','card.setConfig({type:"custom:gewitterradar-card"})','set hass(value)'])if(!nativePanel.includes(marker))throw Error('Native sidebar panel contract missing: '+marker);
+if(!projectHubOffline.includes('mailto:gewitterradar@gmx.de')||!projectHubOffline.includes('TheDaimos/gewitterradar')||!projectHubOffline.includes('https://thedaimos.github.io/weather-router-pub/')||!projectHubOffline.includes('project-page-action'))throw Error('Project Hub RC14 central runtime contract incomplete');
+for(const marker of ['inline-size:min(80px,calc(100% - 16px))','inline-size:min(94px,calc(100% - 16px))','inline-size:min(104px,calc(100% - 14px))','background-size:100% 600%'])if(!projectHubOffline.includes(marker))throw Error('Project Hub responsive project-logo scaling contract missing: '+marker);
 for(const marker of [
-  '"id": "ui.render"','"version": "1.0.2"',
+  '"id": "ui.render"','"version": "1.0.3"',
   "this._t('app.release_history')",
   "this._t('settings.cluster_resolution_select')",
   "this._t('settings.cluster_navigation_session_aria')"
@@ -163,7 +223,7 @@ for(const marker of [
   if(!render.includes(marker))throw Error('Rendered tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "fullscreen.map-display"','"version": "1.0.30"',
+  '"id": "fullscreen.map-display"','"version": "1.0.36"',
   "this._t('compass.picker_title')",
   "this._t('compass.picker_change')",
   "this._t('map.medallion_move')",
@@ -233,7 +293,7 @@ for(const marker of [
   if(!mapDisplay.includes(marker))throw Error('Map tooltip contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "diagnostics.cockpit"','"version": "1.5.1"',
+  '"id": "diagnostics.cockpit"','"version": "1.5.2"',
   '_syncPickerDiagnostics()',
   '_measureCompassPickerDiagnostics()',
   '_measureMedallionPickerDiagnostics()',
@@ -270,7 +330,7 @@ for(const marker of [
   if(!diagnostics.includes(marker))throw Error('Picker diagnostic contract missing: '+marker);
 }
 for(const marker of [
-  '"id": "map.clusters-recent"','"version": "1.0.3"',
+  '"id": "map.clusters-recent"','"version": "1.0.8"',
   "this._t('settings.cluster_navigation_to_session')",
   "this._t('settings.cluster_navigation_to_infinite')"
 ]){
@@ -283,7 +343,7 @@ for(const [source,label] of [[render,'render'],[mapDisplay,'map-display'],[clust
 }
 for(const marker of [
   'id:"core.base-context"',
-  'version:"1.0.7"',
+  'version:"1.0.8"',
   'const CLUSTER_RESOLUTION_LABELS=Object.freeze(',
   "['Cluster-Auflösung','settings.cluster_resolution']",
   "['Cluster-Navigation · Sitzungszeit','settings.cluster_navigation_session']"
@@ -306,9 +366,21 @@ const extractFrozenJson=(source,prefix,suffix)=>{
   const start=source.indexOf(prefix);
   if(start<0)throw Error('Locale registry prefix missing: '+prefix);
   const from=start+prefix.length;
-  const end=source.indexOf(suffix,from);
-  if(end<0)throw Error('Locale registry suffix missing: '+suffix);
-  return JSON.parse(source.slice(from,end));
+  const expectedClose={"{":"}","[":"]"};
+  if(!expectedClose[source[from]])throw Error('Locale registry is not a JSON object/array: '+prefix);
+  const stack=[];
+  let quoted=false,escaped=false;
+  for(let i=from;i<source.length;i++){
+    const c=source[i];
+    if(quoted){if(escaped)escaped=false;else if(c==="\\")escaped=true;else if(c==='"')quoted=false;continue;}
+    if(c==='"'){quoted=true;continue;}
+    if(expectedClose[c])stack.push(expectedClose[c]);
+    else if(c==='}'||c===']'){
+      if(stack.pop()!==c)throw Error('Unbalanced locale registry: '+prefix);
+      if(!stack.length)return JSON.parse(source.slice(from,i+1));
+    }
+  }
+  throw Error('Unclosed locale registry: '+prefix);
 };
 const settingsUiTranslations=extractFrozenJson(
   i18nSettings,
@@ -340,7 +412,7 @@ const moduleViewMeta=extractFrozenJson(
   'const MODULE_VIEW_META=Object.freeze(',
   ');\n  const modulePresentation'
 );
-if(moduleViewIds.length!==23)throw Error('Unexpected module-view metadata id count');
+if(moduleViewIds.length!==26)throw Error('Unexpected module-view metadata id count');
 if(Object.keys(moduleViewMeta).length!==registeredLanguages.length)throw Error('Unexpected module-view language count');
 for(const language of registeredLanguages){
   const entries=moduleViewMeta[language];
@@ -417,3 +489,4 @@ if(await readFile(resolve(root,'SHA256SUMS_FRONTEND.txt'),'utf8')!==expectedChec
 const hacs=JSON.parse(await readFile(resolve(root,'dashboard/hacs.json'),'utf8'));
 if(hacs.filename!=='gewitterradar.js'||hacs.zip_release)throw Error('Dashboard HACS package contract changed');
 console.log('PASS: active version contract, exact delivery parity, assets and packages verified.');
+}

@@ -1,11 +1,14 @@
 """Test the Gewitterradar config flow against Home Assistant."""
 
+from homeassistant.components import frontend
 from homeassistant.config_entries import SOURCE_USER, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 from custom_components.gewitterradar.const import (
+    CONF_LANGUAGE,
     CONF_LEGACY_IMPORT_VERSION,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_TRACKER_LATITUDE,
     CONF_TRACKER_LONGITUDE,
     CONF_TRACKER_NAME,
@@ -13,6 +16,7 @@ from custom_components.gewitterradar.const import (
     DOMAIN,
     LEGACY_IMPORT_VERSION,
     NAME,
+    SIDEBAR_PANEL_URL_PATH,
 )
 
 
@@ -68,3 +72,57 @@ async def test_single_config_entry_blocks_second_flow(hass: HomeAssistant) -> No
     assert second["type"] is FlowResultType.ABORT
     assert second["reason"] == "single_instance_allowed"
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
+
+
+async def test_options_flow_toggles_sidebar_preserves_options_and_reloads(
+    hass: HomeAssistant,
+) -> None:
+    """Use Configure to control the sidebar while preserving all native options."""
+    flow = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": SOURCE_USER},
+    )
+    created = await hass.config_entries.flow.async_configure(flow["flow_id"], {})
+    await hass.async_block_till_done()
+    entry = created["result"]
+
+    hass.config_entries.async_update_entry(
+        entry,
+        options={
+            **entry.options,
+            CONF_LANGUAGE: "Deutsch",
+            "future_option": "preserved",
+        },
+    )
+
+    options = await hass.config_entries.options.async_init(entry.entry_id)
+    assert options["type"] is FlowResultType.FORM
+    assert options["step_id"] == "init"
+
+    enabled = await hass.config_entries.options.async_configure(
+        options["flow_id"],
+        {CONF_SHOW_SIDEBAR_PANEL: True},
+    )
+    await hass.async_block_till_done()
+
+    assert enabled["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.state is ConfigEntryState.LOADED
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is True
+    assert entry.options[CONF_LANGUAGE] == "Deutsch"
+    assert entry.options["future_option"] == "preserved"
+    assert frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)
+    assert hass.states.get("switch.gewitterradar_show_sidebar_panel") is None
+
+    options = await hass.config_entries.options.async_init(entry.entry_id)
+    disabled = await hass.config_entries.options.async_configure(
+        options["flow_id"],
+        {CONF_SHOW_SIDEBAR_PANEL: False},
+    )
+    await hass.async_block_till_done()
+
+    assert disabled["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.state is ConfigEntryState.LOADED
+    assert entry.options[CONF_SHOW_SIDEBAR_PANEL] is False
+    assert entry.options[CONF_LANGUAGE] == "Deutsch"
+    assert entry.options["future_option"] == "preserved"
+    assert not frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH)

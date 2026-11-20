@@ -1,0 +1,21 @@
+{
+  "task": "GR-PRECIPITATION-HIRES-ICON-01",
+  "source_filename": "niederschlag_icon_original_pixelgetreu_transparent.png",
+  "master": "artwork/help-icons/hires/gr-precipitation-premium-original.png",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
+  "runtime": {
+    "file": "assets/gr-precipitation-premium-original.png",
+    "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "byte_identical_to_master": true
+  },
+  "transformation": "None; unmodified original PNG, CSS display size 50 px."
+}

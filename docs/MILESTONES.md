@@ -1,4 +1,28 @@
+## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
+
+- OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.
+- Normale WR-Lieferung wird separat von einer isolierten Originaldiagnose ausgewiesen. Anzeige übernimmt Quelle, Zeitstempel, Veraltet-Kennzeichnung und Auswahlgrund von WR; keine zusätzliche GR-Zeitpolitik.
+- Veraltete Behauptungen einer grundsätzlich ungeprüften geografischen Orientierung entfernt. TEST69 bleibt abgeschlossen; einzelne ungültige Originale bleiben gesperrt.
+- Authentifizierter Kacheltransport, vollständiger atomarer Generationswechsel und gezielte Wiederholung fehlgeschlagener Kacheln unverändert erhalten.
+- Paarung mit WR 0.10.287 DEV. Integration und Dashboard bytegleich aus derselben Quelle gebaut; geschützte About-Inhalte unverändert. Neue Realabnahme auf VM109 ausstehend, VM101 unverändert.
+
+## V4.11.138 DEV · 2026/11 · Integration 0.25.45
+
+- OPERA als reguläre, ausschließlich von WeatherRouter ausgewählte Consumer-V2-Niederschlagsquelle.
+- Authentifizierte same-origin RATE-Kacheln mit Bearer-Header und Blob-Dekodierung; keine Tokens in URLs.
+- Neue Generationen laden verdeckt. Erfolgreiche Kacheln bleiben erhalten; ausschließlich fehlgeschlagene OPERA-Koordinaten werden mit begrenzter Parallelität erneut angefordert.
+- Kein Abbruch einer laufenden OPERA-Generation durch Staging-/Watchdog-Zeitlimits; kein V1-Fallback wegen vorübergehender OPERA-Kachelfehler. Umschaltung erst bei vollständig darstellbarem Sichtfeld.
+- WR-Metadaten bestimmen Gültigkeit und Veraltet-Kennzeichnung. Neue Radarzyklen und Policyänderungen lösen eine erzwungene V2-Aktualisierung aus.
+- Integration und Dashboard werden deterministisch aus derselben Quelle gebaut. Geschützte About-Inhalte unverändert.
+- DEV VM109: WR 0.10.286 und GR 0.25.45 per DRA installieren, HA neu starten, Frontend neu laden. Keine HA-Realabnahme; VM101 unverändert.
+
 # Gewitterradar – Meilensteine
+
+### M25 – V4.11.84 FLK-01 und Weather-Engine-Realtestvorbereitung
+- V1-Bilddaten werden bei identischer Rasteradresse weiterverwendet; neue Rasterebenen werden erst nach vollständigem erfolgreichem Kachelladen sichtbar übernommen.
+- Weather-Engine-Einstellungen bereinigt, aktive Niederschlags-API V1/V2 klar ausgewiesen.
+- Produkt-/DRA-Identität V4.11.84 DEV / 41184r1 / E411-84A1 / Integration 0.25.2; Geräte- und WeatherRouter-V2-Realabnahme stehen aus.
+
 
 Status: **2026/09 · V4.10 – öffentlicher Finalisierungsstand.**  
 Native Integration: **0.22.0.**  

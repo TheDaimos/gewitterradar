@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.10",
-  "build": "V4.10-RELEASE-2026-09-30",
-  "runtimeRevision": "41002r13",
-  "moduleSetId": "D40A-5E9B",
-  "baselineFeatureHead": "bcf30fe2dc1b6b56625edf209b2373b956fb7fd4",
+  "productVersion": "4.11.249",
+  "build": "V4.11-FINAL-2026-11-20",
+  "runtimeRevision": "411249r1",
+  "moduleSetId": "E411-249A1",
+  "baselineFeatureHead": "20a56b41456e82e3c8afda25e15d89ac6ca61770",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,14 +18,31 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.10 public release identity from accepted R40; existing DRA channel unchanged",
-    "productBehaviorUnchanged": true,
+    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
+    "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
     "previousRealMatrixReason": "R18 real/CI parity accepted; R19 geometry/calibration remains unchanged; R20 is a diagnostic UI-only accordion refinement",
     "visualCalibrationAutoAppliesToProduction": false,
     "manualEyeReferencesAutoApply": false,
     "eyeReferenceWorkflow": "28 reviewed medallion circles -> recompute 504 pair fits -> optional pair overrides",
-    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group"
-  }
+    "diagnosticAccordion": "display, eye, arrow and fit/export groups; one open at a time; session-scoped last group",
+    "protectedReference": "d975a94be5d63eb09242a54920d8c3417205b41f",
+    "windFieldMinimumWeatherRouter": "0.10.296",
+    "windCacheRecommendedWeatherRouter": "0.10.297",
+    "protectedWindReference": "787497648a405bc27495d98ffdedd9206668fd4c",
+    "temperatureMinimumWeatherRouter": "0.10.298",
+    "protectedTemperatureBaseline": "04b751fd3962150ed0369dba4428959e4a8e98bd",
+    "protectedFlowReference": "a607639ad2a6373c62e04ce8acfc39f72feb280a",
+    "protectedWeatherRouterReference": "1b777a1b9593a5fd5b1f71ba6332ecb2883a39d5",
+    "premiumUiBaseline": "ecad2624",
+    "premiumUiFix02Baseline": "7185af7779549e163c00f5012311732260da4ba0",
+    "snakeBaseline": "782c035129ce9e14ca0153fe4a26bff157ffacc0",
+    "snakeFix01Baseline": "91fba29af0b3e765b898c1d4c4355adcfa810d98",
+    "windStudioBaseline": "ac73cb59abeac399c9fc24dcb78194ecef0c3e0b",
+    "precipitationControlBaseline": "5be2d8324b58220e37021248b0a2825c6435f87e",
+    "synopticDeveloperStatus": "GR V2 vector source implementation; HA DEV and Android visual acceptance still required",
+    "synopticFrontContract": "weather.synoptic.fronts (WeatherRouter 0.10.323 DEV); NOAA WPC typed surface analysis and neutral symbols when no side is supplied"
+  },
+  "sourceReleaseTag": "v4.10"
 }

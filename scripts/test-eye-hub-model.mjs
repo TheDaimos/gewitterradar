@@ -1,0 +1,81 @@
+import {withVaultStorage, normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
+import assert from 'node:assert/strict';
+import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,EYE_LEGACY_COLORS,EYE_ENERGY_MODES,EYE_ICON_METRICS,eyeIconTarget,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
+import {neonPoint,filamentPointInto,neonQualityStep} from '../frontend/modules/weather/eye-neon.js';
+import {compassPreviewHalo,compassDialogSurface} from '../frontend/modules/fullscreen/compass-preview-style.js';
+import {createEyeRegistry,eyeLayerOwner} from '../frontend/modules/weather/eye-hub-registry.js';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+const defaults=normalizeEyeConfig();assert.equal(defaults.grouped,false);assert.equal(defaults.aura,true);assert.deepEqual(defaults.slots.map(v=>v.functionId),['wind','temperature','precipitation','weather-display']);
+assert.equal(defaults.glow,'static');assert.equal(normalizeEyeConfig({glow:'living',size:72}).glow,'living');
+assert.equal(defaults.iconSize,100);assert.equal(normalizeEyeConfig({iconSize:1,size:72}).iconSize,25);assert.equal(normalizeEyeConfig({iconSize:900,size:72}).iconSize,300);assert.equal(normalizeEyeConfig({size:72}).size,72);
+assert.equal(eyeIconTarget(25),50);assert.equal(eyeIconTarget(300),150);for(const m of Object.values(EYE_ICON_METRICS))assert(Math.abs(m.box*m.motif/m.source-47)<.02);
+for(const file of ['display-quick.js','display-menu.js','eye-hub-view.js','eye-hub-locales.js','eye-hub.js'])assert(!/[\u00c3\u00c2\ufffd]/.test(readFileSync('frontend/modules/weather/'+file,'utf8')),'UTF-8 menu source '+file);
+for(let slot=0;slot<4;slot++)for(let id=0;id<5;id++){const a=filamentPointInto([0,0],0,70,slot,id,.8,10,100),b=filamentPointInto([0,0],0,70,slot,id,.8,10+1/60,100);assert(Math.hypot(a[0]-b[0],a[1]-b[1])<1);assert.deepEqual(a,filamentPointInto([0,0],0,70,slot,id,.8,10,100));}
+const lod={level:0,changed:0,badSince:null,goodSince:null};for(let time=0;time<1400;time+=100)neonQualityStep(lod,40,8,time);assert.equal(lod.level,0);for(let time=1400;time<7000;time+=100)neonQualityStep(lod,40,8,time);assert.equal(lod.level,2);for(let time=7000;time<9000;time+=100)neonQualityStep(lod,16,1,time);assert.equal(lod.level,2);for(let time=9000;time<19000;time+=100)neonQualityStep(lod,16,1,time);assert.equal(lod.level,0);
+for(let i=0;i<8;i++)assert.equal(normalizeEyeConfig({colors:{wind:EYE_LEGACY_COLORS[i]}}).colors.wind,EYE_COLORS[i]);
+assert.deepEqual(EYE_COLORS,['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C','#FFC442','#D8E6F3']);
+const v180={grouped:true,size:71.82,eyeAuraGap:14,auraRingGap:5,neonBrilliance:75,neonBloom:39,neonOrganics:22,backdropExtent:16,
+ slots:['wind',null,'temperature','weather-display'],colors:{wind:'#39FF14',temperature:'#FF5F00','weather-display':'#B000FF'}};
+const normalized180=normalizeEyeConfig(v180);
+assert.equal(normalized180.energyAccents,'off');
+for(const energyAccents of EYE_ENERGY_MODES)assert.deepEqual(normalizeEyeConfig({...v180,energyAccents}),{...normalized180,energyAccents});
+assert.deepEqual(normalizeEyeConfig({...v180,energyAccents:'unsupported'}),normalized180);
+assert.equal(normalizeEyeConfig({colors:{wind:'<script>'}}).colors.wind,EYE_COLORS[3]);
+for(const a of [0,.7,1.9]){assert.notDeepEqual(neonPoint(50,1,a,0,100),neonPoint(50,1,a,1,100));assert.notDeepEqual(neonPoint(50,1,a,1,100),neonPoint(50,2,a,1,100));}
+let c=normalizeEyeConfig({...defaults,grouped:true,slots:['wind',null,'precipitation','weather-display']});assert.deepEqual(c.slots.map(v=>v.functionId),['wind',null,'precipitation','weather-display']);
+assert.equal(eyeRingRadius(c.size,3),eyeRingRadius(defaults.size,3));assert.equal(resizeEyeSlots(defaults,-1).blocked,4);
+c=resizeEyeSlots(defaults,1).config;assert.equal(c.slots.length,5);assert.equal(c.slots[4].functionId,null);c=resizeEyeSlots(c,-1).config;assert.equal(c.slots.length,4);
+c=assignEyeSlot({...defaults,slots:['wind',null,'precipitation',null]},3,'wind');assert.deepEqual(c.slots.map(v=>v.functionId),[null,null,'precipitation','wind']);assert.equal(c.colors.wind,defaults.colors.wind);
+assert.deepEqual(assignEyeSlot(defaults,1,'wind').slots,defaults.slots,'occupied target protected');
+c=normalizeEyeConfig({slots:['wind','wind','unknown',null],colors:{wind:'#ff3dbb',temperature:'url(invalid)'},size:Infinity,brightness:-9});assert.deepEqual(c.slots.map(v=>v.functionId),['wind',null,null,null]);assert.equal(c.colors.wind,EYE_COLORS[0]);assert.equal(c.size,42);assert.equal(c.brightness,0);
+for(let i=0;i<10;i++)c=resizeEyeSlots(c,1).config;assert.equal(c.slots.length,8);c=normalizeEyeConfig({slots:Array(20).fill(null)});assert.equal(c.slots.length,12);assert.equal(resizeEyeSlots(c,1).config.slots.length,12);
+assert.equal(resizeEyeSlots(normalizeEyeConfig({slots:[null]}),-1).config.slots.length,1);
+for(const grouped of [false,true])for(const aura of [false,true])for(const active of [false,true])for(const available of [false,true])assert.equal(eyeAuraOn({...defaults,grouped,aura},{active,available}),grouped&&aura&&active&&available);
+for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [0,1,3,4,8,12]){const p=eyeBubbleLayout(count,{x:width/2,y:height/2},{left:0,top:0,right:width,bottom:height});assert.equal(p.length,count);p.forEach((a,i)=>{assert(a.x>=31&&a.x<=width-31&&a.y>=31&&a.y<=height-31);for(const b of p.slice(i+1))assert(Math.hypot(a.x-b.x,a.y-b.y)>=56);});}
+for(const state of ['open','closed'])assert(readFileSync('frontend/assets/gr-eye-'+state+'-master-1254.png').equals(readFileSync('artwork/help-icons/hires/help-display-eye-'+state+'-master-1254.png')));
+const roundtrip=normalizeEyeConfig(JSON.parse(JSON.stringify(defaults)));assert.deepEqual(roundtrip,defaults);
+for(const [percent,pixels] of [[100,42],[200,84],[300,126]]){assert.equal(eyeSizePixels(percent),pixels);assert.equal(eyeSizePercent(pixels),percent);}
+assert.equal(normalizeEyeConfig({size:72}).size,72);assert.equal(Math.round(eyeSizePercent(72)*10)/10,171.4);
+assert.equal(normalizeEyeConfig({size:500}).size,126);assert.equal(normalizeEyeConfig({size:1}).size,36);
+for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [1,4,8]){const radius=eyeRingRadius(126,count-1)+20;for(const x of [radius,width-radius])for(const y of [radius,height-radius]){const points=eyeBubbleLayout(count,{x,y},{left:0,top:0,right:width,bottom:height},[],126);assert.equal(points.length,count);for(const p of points)assert(Math.hypot(p.x-x,p.y-y)>100);}}
+const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/fullscreen/map-display.js'],{encoding:'utf8'});
+const stripBuildVersions=normaliseGeneratedModule;
+for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js']){
+ const path='frontend/modules/weather/'+file;
+ let expected=execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+path],{encoding:'utf8'});
+ if(file==='snake-config.js')expected=expected.replace('opacity:[10,100,1]','opacity:[0,100,1]');
+ assert.equal(stripBuildVersions(readFileSync(path,'utf8')),stripBuildVersions(expected),'protected source '+file);
+}
+const precipitationPath='frontend/modules/weather/precipitation-layer.js';
+const precipitationBaseline=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+precipitationPath],{encoding:'utf8'});
+assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(precipitationBaseline.replace('Darstellungstransparenz','Darstellungsdeckkraft')),'protected precipitation implementation unchanged since GR 4.11.195');
+// Keep the V179 window implementations with the shared drag binding and its
+// current state shape. Compatibility click suppression now lives on the card.
+// Protected module baseline is the approved GR 4.11.195 DEV HEAD before
+// the additive Synoptik feature. Wind is permitted only its H/T menu migration.
+const baseline195='e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6';
+const rootWeather='frontend/modules/weather/';
+const withoutWindHtUI=source=>source
+  .replace(/\s+\$\{select\('colorMode'[\s\S]*?(?=\s+<details data-section="animation")/, '\n  /* H/T UI migrated */')
+  .replace(/\s+<!-- H\/T-Farbsteuerung[^\n]*-->/, '\n  /* H/T UI migrated */');
+for(const name of ['wind-display.js','temperature-display.js']){
+ const original=execFileSync('git',['show',baseline195+':'+rootWeather+name],{encoding:'utf8'});
+ const installed=readFileSync(rootWeather+name,'utf8');
+ const expected=name==='wind-display.js'?withoutWindHtUI(original):original;
+ const actual=name==='wind-display.js'?withoutWindHtUI(installed):installed;
+ assert.equal(stripBuildVersions(actual),stripBuildVersions(expected),name+' protected baseline 4.11.195 outside approved H/T migration');
+}
+for(const [id,owner] of [['weather.satellite.clouds','clouds'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
+const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});
+const cloudRegistry=createEyeRegistry(aggregateOwner).entries;
+assert.equal(cloudRegistry.get('weather-display').status().active,false);
+assert.deepEqual(cloudRegistry.get('clouds').status(),{active:true,available:true,detail:'loading'});
+aggregateOwner.__weatherGenericStates.get('weather.satellite.clouds').status='failed';
+assert.deepEqual(cloudRegistry.get('clouds').status(),{active:true,available:false,detail:'failed'});
+assert.equal(cloudRegistry.get('weather-display').status().available,true);
+assert(old.includes(compassPreviewHalo('.compass-picker-stage')));assert(old.includes(compassDialogSurface('.compass-picker-dialog')));
+const controls='frontend/modules/ui/controls.js';
+assert.equal(stripBuildVersions(readFileSync(controls,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:'+controls],{encoding:'utf8'}),controls)),'modern menu source with the approved Vault entry');
+const owner={__weatherWind:{config:{visible:true,enabled:true,mode:'barbs'},points:[],errors:['synthetic_transport_failure']},__weatherTemperature:{config:{visible:true,surface:false,labels:false,advection:false}},_weatherRadarState:()=>({enabled:false}),__weatherDisplayState:{status:'ready'}};const registry=createEyeRegistry(owner);assert.equal(registry.entries.get('wind').status().available,false);owner.__weatherWind.points=[{}];assert.equal(registry.entries.get('wind').status().available,true);assert.equal(registry.entries.get('temperature').status().active,false);owner.__weatherTemperature.config.labels=true;assert.equal(registry.entries.get('temperature').status().active,true);owner.__weatherGenericStates=new Map([['clouds',{enabled:true,status:'partial'}]]);assert.equal(registry.entries.get('weather-display').status().active,true);
+console.log('PASS: Eye migration, slots 1–8/12, atomic moves, colors, ring identity, aura truth table, layout, original compass surface/halo and protected menu');

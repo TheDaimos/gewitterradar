@@ -1,11 +1,11 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import { defineModule } from "../core/runtime.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"diagnostics.module-view",
-  version:"1.3.5",
+  version:"1.3.10",
   group:"Diagnose",
   function:"Module & Versionen",
-  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Diagnose kopieren","JSON herunterladen"],
+  subfunctions:["Geladene Module","Soll/Ist-Vergleich","Versionsstatus","Modul-Details","Abweichungsdetails","Fenster- und Ebenenübersicht","Diagnose kopieren","JSON herunterladen"],
   file:"modules/diagnostics/module-view.js"
 });
 
@@ -33,7 +33,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Verlauf":"modules.group.history"
   }[group]||"modules.group.other");
 
-  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart"]);
+  const MODULE_VIEW_IDS=Object.freeze(["core.manifest","core.base-context","core.registry","core.runtime","core.card-lifecycle","fullscreen.map-display","ui.scroll-guard","ui.skeleton","instruments.compass-scale","ui.controls","ui.i18n-settings","core.source-status","instruments.compass-selector","instruments.medallion-designs","diagnostics.module-view","diagnostics.cockpit","instruments.compass-design","location.radii-map","map.strikes-warnings","map.clusters-recent","ui.render","instruments.compass","history.chart","weather.consumer-client","core.update-watch","weather.precipitation-layer"]);
   const MODULE_VIEW_META=Object.freeze({
   "Deutsch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -58,7 +58,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster & letzte Blitze|Cluster · Marker · Recent-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbindung|Verbindungserkennung · Fähigkeitenkatalog · Datenabruf · Quellenstatus",
+    "Oberflächen-Aktualisierung|Installierten Stand prüfen · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kartenebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle & Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "English": [
     "Module manifest|Target state · Product version · Build identifier",
@@ -83,7 +86,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters & recent strikes|Clusters · Markers · Recent list · Navigation",
     "Main rendering|Status · KPI · Lists · UI synchronization",
     "Compass|Motion profile · Animation · Rendering",
-    "Trend & history|Trend calculation · 120-minute chart"
+    "Trend & history|Trend calculation · 120-minute chart",
+    "WeatherRouter integration|Discovery · Capability catalog · Data request · Source status",
+    "Interface updates|Check installed version · Update notice · Controlled full reload",
+    "Precipitation radar map layer|Raster tile adapter · Web Mercator BBOX · Source & freshness · Coverage · Legend · Request limiting"
   ],
   "Dansk": [
     "Modulmanifest|Måltilstand · Produktversion · Build-id",
@@ -108,7 +114,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klynger og seneste lynnedslag|Klynger · Markører · Liste over seneste · Navigation",
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompas|Bevægelsesprofil · Animation · Rendering",
-    "Tendens og historik|Tendensberegning · 120-minutters diagram"
+    "Tendens og historik|Tendensberegning · 120-minutters diagram",
+    "WeatherRouter-integration|Forbindelseskontrol · Funktionskatalog · Dataforespørgsel · Kildestatus",
+    "Opdatering af brugerfladen|Kontrollér installeret version · Opdateringsmeddelelse · Kontrolleret fuld genindlæsning",
+    "Nedbørsradarlag på kortet|Rasterfliseadapter · Web-Mercator-BBOX · Kilde og aktualitet · Dækning · Signaturforklaring · Forespørgselsbegrænsning"
   ],
   "Español": [
     "Manifiesto de módulos|Estado objetivo · Versión del producto · Identificador de compilación",
@@ -133,7 +142,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clústeres y rayos recientes|Clústeres · Marcadores · Lista reciente · Navegación",
     "Renderizado principal|Estado · KPI · Listas · Sincronización de interfaz",
     "Brújula|Perfil de movimiento · Animación · Renderizado",
-    "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos"
+    "Tendencia e historial|Cálculo de tendencia · Gráfico de 120 minutos",
+    "Integración WeatherRouter|Detección · Catálogo de capacidades · Consulta de datos · Estado de la fuente",
+    "Actualización de la interfaz|Comprobar versión instalada · Aviso de actualización · Recarga completa controlada",
+    "Capa de radar de precipitación|Adaptador de teselas ráster · BBOX Web Mercator · Fuente y actualidad · Cobertura · Leyenda · Límite de consultas"
   ],
   "Français": [
     "Manifeste des modules|État cible · Version du produit · Identifiant de build",
@@ -158,7 +170,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters et impacts récents|Clusters · Marqueurs · Liste récente · Navigation",
     "Rendu principal|État · KPI · Listes · Synchronisation de l’interface",
     "Boussole|Profil de mouvement · Animation · Rendu",
-    "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes"
+    "Tendance et historique|Calcul de tendance · Graphique sur 120 minutes",
+    "Intégration WeatherRouter|Détection · Catalogue des capacités · Requête de données · État de la source",
+    "Mise à jour de l’interface|Vérifier la version installée · Avis d’actualisation · Rechargement complet contrôlé",
+    "Couche cartographique du radar de précipitations|Adaptateur de tuiles raster · BBOX Web Mercator · Source et fraîcheur · Couverture · Légende · Limitation des requêtes"
   ],
   "Nederlands": [
     "Modulemanifest|Doelstatus · Productversie · Buildkenmerk",
@@ -183,7 +198,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters en recente bliksem|Clusters · Markeringen · Recente lijst · Navigatie",
     "Hoofdweergave|Status · KPI · Lijsten · UI-synchronisatie",
     "Kompas|Bewegingsprofiel · Animatie · Rendering",
-    "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten"
+    "Trend en geschiedenis|Trendberekening · Diagram van 120 minuten",
+    "WeatherRouter-koppeling|Detectie · Functiecatalogus · Gegevensaanvraag · Bronstatus",
+    "Update van de interface|Geïnstalleerde versie controleren · Updatemelding · Gecontroleerd volledig herladen",
+    "Neerslagradarlaag|Rastertegeladapter · Web Mercator-BBOX · Bron en actualiteit · Dekking · Legenda · Aanvraagbegrenzing"
   ],
   "Polski": [
     "Manifest modułów|Stan docelowy · Wersja produktu · Identyfikator kompilacji",
@@ -208,7 +226,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klastry i ostatnie wyładowania|Klastry · Znaczniki · Lista ostatnich · Nawigacja",
     "Renderowanie główne|Stan · KPI · Listy · Synchronizacja interfejsu",
     "Kompas|Profil ruchu · Animacja · Renderowanie",
-    "Trend i historia|Obliczanie trendu · Wykres 120-minutowy"
+    "Trend i historia|Obliczanie trendu · Wykres 120-minutowy",
+    "Integracja WeatherRouter|Wykrywanie · Katalog możliwości · Pobieranie danych · Stan źródła",
+    "Aktualizacja interfejsu|Sprawdzenie zainstalowanej wersji · Powiadomienie o aktualizacji · Kontrolowane pełne przeładowanie",
+    "Warstwa radaru opadów|Adapter kafli rastrowych · BBOX Web Mercator · Źródło i aktualność · Zasięg · Legenda · Ograniczanie zapytań"
   ],
   "Português": [
     "Manifesto de módulos|Estado pretendido · Versão do produto · Identificador da compilação",
@@ -233,7 +254,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Clusters e descargas recentes|Clusters · Marcadores · Lista recente · Navegação",
     "Renderização principal|Estado · KPI · Listas · Sincronização da interface",
     "Bússola|Perfil de movimento · Animação · Renderização",
-    "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos"
+    "Tendência e histórico|Cálculo da tendência · Gráfico de 120 minutos",
+    "Integração WeatherRouter|Deteção · Catálogo de capacidades · Consulta de dados · Estado da fonte",
+    "Atualização da interface|Verificar versão instalada · Aviso de atualização · Recarregamento completo controlado",
+    "Camada de radar de precipitação|Adaptador de mosaicos raster · BBOX Web Mercator · Fonte e atualidade · Cobertura · Legenda · Limite de pedidos"
   ],
   "Svenska": [
     "Modulmanifest|Måltillstånd · Produktversion · Byggidentifierare",
@@ -258,7 +282,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Kluster och senaste blixtar|Kluster · Markörer · Senaste-lista · Navigering",
     "Huvudrendering|Status · KPI · Listor · UI-synkronisering",
     "Kompass|Rörelseprofil · Animation · Rendering",
-    "Trend och historik|Trendberäkning · 120-minutersdiagram"
+    "Trend och historik|Trendberäkning · 120-minutersdiagram",
+    "WeatherRouter-integration|Identifiering · Funktionskatalog · Dataförfrågan · Källstatus",
+    "Uppdatering av gränssnittet|Kontrollera installerad version · Uppdateringsmeddelande · Kontrollerad full omladdning",
+    "Kartlager för nederbördsradar|Rasterplatteadapter · Web Mercator-BBOX · Källa och aktualitet · Täckning · Teckenförklaring · Begränsning av förfrågningar"
   ],
   "Italiano": [
     "Manifesto dei moduli|Stato previsto · Versione prodotto · Identificatore build",
@@ -283,7 +310,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster e fulmini recenti|Cluster · Marcatori · Elenco recente · Navigazione",
     "Rendering principale|Stato · KPI · Elenchi · Sincronizzazione UI",
     "Bussola|Profilo di movimento · Animazione · Rendering",
-    "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti"
+    "Tendenza e cronologia|Calcolo tendenza · Grafico di 120 minuti",
+    "Integrazione WeatherRouter|Rilevamento · Catalogo funzionalità · Richiesta dati · Stato della fonte",
+    "Aggiornamento dell’interfaccia|Controllo versione installata · Avviso di aggiornamento · Ricaricamento completo controllato",
+    "Livello mappa radar precipitazioni|Adattatore tessere raster · BBOX Web Mercator · Fonte e attualità · Copertura · Legenda · Limitazione richieste"
   ],
   "Norsk bokmål": [
     "Modulmanifest|Måltilstand · Produktversjon · Bygg-ID",
@@ -308,7 +338,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klynger og siste lyn|Klynger · Markører · Siste-liste · Navigasjon",
     "Hovedrendering|Status · KPI · Lister · UI-synkronisering",
     "Kompass|Bevegelsesprofil · Animasjon · Rendering",
-    "Trend og historikk|Trendberegning · 120-minuttersdiagram"
+    "Trend og historikk|Trendberegning · 120-minuttersdiagram",
+    "WeatherRouter-integrasjon|Oppdagelse · Funksjonskatalog · Dataforespørsel · Kildestatus",
+    "Oppdatering av grensesnittet|Kontroller installert versjon · Oppdateringsvarsel · Kontrollert full omlasting",
+    "Kartlag for nedbørsradar|Rasterflisadapter · Web Mercator-BBOX · Kilde og aktualitet · Dekning · Tegnforklaring · Begrensning av forespørsler"
   ],
   "Suomi": [
     "Moduuliluettelo|Tavoitetila · Tuoteversio · Koontitunniste",
@@ -333,7 +366,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klusterit ja viimeisimmät salamat|Klusterit · Merkit · Viimeisimmät-lista · Navigointi",
     "Päärenderöinti|Tila · KPI · Listat · Käyttöliittymän synkronointi",
     "Kompassi|Liikeprofiili · Animaatio · Renderöinti",
-    "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio"
+    "Trendi ja historia|Trendin laskenta · 120 minuutin kaavio",
+    "WeatherRouter-liitäntä|Tunnistus · Ominaisuusluettelo · Tietopyyntö · Lähteen tila",
+    "Käyttöliittymän päivitys|Asennetun version tarkistus · Päivitysilmoitus · Hallittu täysi uudelleenlataus",
+    "Sadetutkan karttataso|Rasteritiilisovitin · Web Mercator -BBOX · Lähde ja ajantasaisuus · Kattavuus · Selite · Pyyntöjen rajoitus"
   ],
   "Čeština": [
     "Manifest modulů|Cílový stav · Verze produktu · Identifikátor buildu",
@@ -358,7 +394,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Shluky a poslední blesky|Shluky · Značky · Seznam posledních · Navigace",
     "Hlavní vykreslování|Stav · KPI · Seznamy · Synchronizace UI",
     "Kompas|Profil pohybu · Animace · Vykreslování",
-    "Trend a historie|Výpočet trendu · 120minutový graf"
+    "Trend a historie|Výpočet trendu · 120minutový graf",
+    "Integrace WeatherRouter|Zjištění připojení · Katalog funkcí · Dotaz na data · Stav zdroje",
+    "Aktualizace rozhraní|Kontrola nainstalované verze · Oznámení o aktualizaci · Řízené úplné znovunačtení",
+    "Mapová vrstva srážkového radaru|Adaptér rastrových dlaždic · BBOX Web Mercator · Zdroj a aktuálnost · Pokrytí · Legenda · Omezení požadavků"
   ],
   "Ελληνικά": [
     "Δηλωτικό λειτουργικών μονάδων|Αναμενόμενη κατάσταση · Έκδοση προϊόντος · Αναγνωριστικό build",
@@ -383,7 +422,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Συστάδες & πρόσφατοι κεραυνοί|Συστάδες · Δείκτες · Λίστα πρόσφατων · Πλοήγηση",
     "Κύρια απόδοση|Κατάσταση · KPI · Λίστες · Συγχρονισμός διεπαφής",
     "Πυξίδα|Προφίλ κίνησης · Κίνηση · Απόδοση",
-    "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών"
+    "Τάση & ιστορικό|Υπολογισμός τάσης · Διάγραμμα 120 λεπτών",
+    "Ενσωμάτωση δρομολόγησης καιρού|Ανακάλυψη · Κατάλογος δυνατοτήτων · Αίτημα δεδομένων · Κατάσταση πηγής",
+    "Ενημέρωση διεπαφής|Έλεγχος εγκατεστημένης έκδοσης · Ειδοποίηση ενημέρωσης · Ελεγχόμενη πλήρης επαναφόρτωση",
+    "Χαρτογραφικό επίπεδο ραντάρ υετού|Προσαρμογέας ψηφιδωτών ράστερ · Πλαίσιο Web Mercator · Πηγή και επικαιρότητα · Κάλυψη · Υπόμνημα · Περιορισμός αιτημάτων"
   ],
   "Magyar": [
     "Moduljegyzék|Célállapot · Termékverzió · Buildazonosító",
@@ -408,7 +450,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Klaszterek és legutóbbi villámok|Klaszterek · Jelölők · Legutóbbi lista · Navigáció",
     "Fő renderelés|Állapot · KPI · Listák · Felület szinkronizálása",
     "Iránytű|Mozgásprofil · Animáció · Renderelés",
-    "Trend és előzmények|Trendszámítás · 120 perces diagram"
+    "Trend és előzmények|Trendszámítás · 120 perces diagram",
+    "WeatherRouter-integráció|Felderítés · Képességkatalógus · Adatkérés · Forrásállapot",
+    "Felületfrissítés|Telepített verzió ellenőrzése · Frissítési értesítés · Vezérelt teljes újratöltés",
+    "Csapadékradar térképréteg|Rasztercsempe-adapter · Web Mercator BBOX · Forrás és frissesség · Lefedettség · Jelmagyarázat · Kérések korlátozása"
   ],
   "Boarisch": [
     "Modulmanifest|Sollstand · Produktversion · Build-Kennung",
@@ -433,7 +478,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster & letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend & Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Einbindung|Verbindungssuach · Fähigkeiten-Übersicht · Datenabfrog · Quellenstand",
+    "Oberfläch-Aktualisierung|Installiertn Stand prüffa · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kortnlag|Raster-Kacheladapter · Web-Mercator-BBOX · Quelln und Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "Plattdüütsch": [
     "Modulmanifest|Sollstand · Produktverschoon · Build-Kennen",
@@ -458,7 +506,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liest · Navigation",
     "Hööftrendering|Status · KPI · Listen · UI-Synchroniseren",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm"
+    "Trend un Verlauf|Trendbereken · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbinnen|Verbinnen prüfen · Funkschoonen-Kataloog · Datenafraag · Quellenstand",
+    "Böversiet-Aktualiseren|Installeerten Stand pröven · Aktualiseern-Henwies · Kuntrulleert heel neeladen",
+    "Nedderslagradar-Koortenlaag|Raster-Kacheladapter · Web-Mercator-BBOX · Born un Aktualität · Afdecken · Legenn · Anfraagbegrenzen"
   ],
   "Sächs’sch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -483,7 +534,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster un letzte Blitze|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Listen · UI-Synchronisierung",
     "Gombass|Bewegungsprofil · Animation · Rendering",
-    "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm"
+    "Trend un Verlauf|Trendberechnung · 120-Minuten-Diagramm",
+    "WeatherRouter-Anbindung|Verbindung prüfn · Fähichkeiten-Übersicht · Datenabfrage · Quellenstatus",
+    "Oberfläschn-Aktualisierung|Installierten Stand brüfn · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kartenebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle un Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ],
   "Schwäbisch": [
     "Modulmanifest|Sollstand · Produktversion · Buildkennung",
@@ -508,7 +562,10 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     "Cluster ond letzte Blitz|Cluster · Marker · Letzte-Liste · Navigation",
     "Hauptrendering|Status · KPI · Lista · UI-Synchronisierung",
     "Kompass|Bewegungsprofil · Animation · Rendering",
-    "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm"
+    "Trend ond Verlauf|Trendberechnung · 120-Minuta-Diagramm",
+    "WeatherRouter-Einbindung|Verbindung prüfa · Fähigkeita-Katalog · Datenaafrog · Quellastatus",
+    "Oberfläch-Aktualisierung|Installierta Stand prüafa · Aktualisierungshinweis · Kontrollierte Vollneuladung",
+    "Niederschlagsradar-Kardaebene|Raster-Kacheladapter · Web-Mercator-BBOX · Quelle ond Aktualität · Abdeckung · Legende · Anfragebegrenzung"
   ]
 });
   const modulePresentation=(language,row)=>{
@@ -532,6 +589,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       section=document.createElement("details");
       section.className="settings-section settings-collapsible";
       section.id="settings-modules-section";
+      section.dataset.grDynamicHeight="true";
       section.innerHTML=`
         <summary class="settings-section-head">
           <div>
@@ -673,6 +731,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       if(deviationBackdrop)this.shadow.append(deviationBackdrop);
       section.addEventListener("toggle",event=>{if(event.target===section&&section.open)this._syncModuleView();});
       this._syncModuleTranslations(section);
+      this._ensureDataSourcesSection?.();
       return section;
     },
 
@@ -721,8 +780,48 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       return issues;
     },
 
+    _moduleLayerSnapshot(){
+      // Snapshot only on explicit export. Never install touch/pointer listeners.
+      const root=this.shadow;
+      if(!root)return {available:false,reason:"shadow root unavailable"};
+      const selectors=[
+        "#settings-backdrop","#settings-dialog","#settings-help","#settings-about",
+        "#help-shell","#help-shell .help-dialog","#about-shell","#about-shell dialog",
+        "#language-onboarding-dialog","#release-history-backdrop","#release-history-dialog",
+        "#map-fullscreen-dialog","#map-diagnostics-backdrop",
+        "#compass-calibration-modal-backdrop","#medallion-calibration-modal-backdrop",
+        "#v407-location-search-backdrop","[role=dialog]","dialog"
+      ];
+      const candidates=new Set();
+      const add=(node)=>{if(node instanceof Element)candidates.add(node);};
+      selectors.forEach(selector=>{try{root.querySelectorAll(selector).forEach(add);}catch(_){}});
+      root.querySelectorAll("dialog,[aria-modal=true],.open").forEach(node=>{
+        if(node.matches("dialog,[aria-modal=true]")||/modal|dialog|backdrop|popup|overlay/i.test(node.id+" "+String(node.className||"")))add(node);
+      });
+      const describe=(node)=>{
+        if(!(node instanceof Element))return null;
+        const css=getComputedStyle(node),rect=node.getBoundingClientRect();
+        const centerX=Math.min(innerWidth-1,Math.max(0,rect.left+rect.width/2));
+        const centerY=Math.min(innerHeight-1,Math.max(0,rect.top+rect.height/2));
+        const validCenter=rect.width>0&&rect.height>0&&centerX>=0&&centerY>=0&&centerX<innerWidth&&centerY<innerHeight;
+        const hits=validCenter&&typeof root.elementsFromPoint==="function"?root.elementsFromPoint(centerX,centerY).slice(0,7):[];
+        const short=(el)=>el?{tag:el.tagName.toLowerCase(),id:el.id||null,className:typeof el.className==="string"?el.className.slice(0,100):null}:null;
+        let ancestors=[],parent=node.parentElement;
+        while(parent&&ancestors.length<7){
+          const pc=getComputedStyle(parent);
+          if(pc.position!=="static"||pc.transform!=="none"||pc.isolation==="isolate"||pc.opacity!=="1"||pc.zIndex!=="auto"){
+            ancestors.push({...short(parent),position:pc.position,zIndex:pc.zIndex,transform:pc.transform==="none"?null:pc.transform.slice(0,100),opacity:pc.opacity,isolation:pc.isolation});
+          }
+          parent=parent.parentElement;
+        }
+        const centerHit=hits[0]||null;
+        return {...short(node),connected:node.isConnected,open:node instanceof HTMLDialogElement?node.open:null,modalAttribute:node.getAttribute("aria-modal"),hidden:node.hidden,display:css.display,visibility:css.visibility,opacity:css.opacity,position:css.position,zIndex:css.zIndex,pointerEvents:css.pointerEvents,transform:css.transform==="none"?null:css.transform.slice(0,100),rect:{x:Math.round(rect.x),y:Math.round(rect.y),width:Math.round(rect.width),height:Math.round(rect.height)},centerHit:short(centerHit),centerHitInside:!!(centerHit&&(centerHit===node||node.contains(centerHit))),hitStack:hits.map(short),stackingAncestors:ancestors};
+      };
+      return {available:true,capturedAt:new Date().toISOString(),viewport:{width:innerWidth,height:innerHeight},helpState:{dialogPresent:!!this._helpDialog,dialogOpen:!!this._helpDialog?.open,lastError:this._helpLastError||null},note:"Computed z-index is not a total paint order; native modal dialogs can be in the browser top layer. Center hit tests are indicative and can miss partial occlusion.",elements:[...candidates].slice(0,100).map(describe)};
+    },
+
     _moduleDiagnosticsPayload(){
-      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES)};
+      return {application:APPLICATION_META,capturedAt:new Date().toISOString(),runtimeProbe:this._moduleRuntimeProbe||null,diagnostics:moduleRegistrySnapshot(EXPECTED_MODULES),dataSources:this._dataSourcesDiagnosticPayload?.()||null,layers:this._moduleLayerSnapshot()};
     },
 
     _moduleDeviationPayload(){
@@ -740,7 +839,8 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
           loadedFingerprint:this._moduleRuntimeProbe?.loadedId||null,
           expectedFingerprint:this._moduleRuntimeProbe?.expectedId||null,
         },
-        deviations:issues
+        deviations:issues,
+        layers:this._moduleLayerSnapshot()
       };
     },
 
@@ -820,7 +920,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
         block.className="gr-mod-group";
         const groupTitle=document.createElement("div");
         groupTitle.className="gr-mod-group-title";
-        groupTitle.textContent=this._t?.(groupTranslationKey(group))||group;
+        groupTitle.textContent=group==="Weather-Engine"?"Weather-Engine":(this._t?.(groupTranslationKey(group))||group);
         block.append(groupTitle);
         for(const row of rows.sort((a,b)=>modulePresentation(this._languageValue?.()||"Deutsch",a).name.localeCompare(modulePresentation(this._languageValue?.()||"Deutsch",b).name,this._locale?.()||"de"))){
           const item=document.createElement("details");
@@ -988,6 +1088,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     },
 
     async _copyModuleDiagnostics(){
+      await this._refreshBlitzortungSources?.();
       const text=JSON.stringify(this._moduleDiagnosticsPayload(),null,2);
       try{
         await navigator.clipboard.writeText(text);
@@ -999,6 +1100,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
     },
 
     _downloadModuleDiagnostics(){
+      // Direkt im Klickereignis herunterladen: WebSocket-Abfragen wuerden die Benutzeraktivierung verlieren.
       const payload=JSON.stringify(this._moduleDiagnosticsPayload(),null,2);
       const blob=new Blob([payload],{type:"application/json;charset=utf-8"});
       const url=URL.createObjectURL(blob);
@@ -1006,7 +1108,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       link.href=url;
       link.download=`gewitterradar-module-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),0);
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
     },
 
     async _copyModuleDeviationDiagnostics(){
@@ -1028,7 +1130,7 @@ export const installModuleView=defineModule(MODULE_META,(deps)=>{
       link.href=url;
       link.download=`gewitterradar-module-deviations-${APPLICATION_META.version}.json`;
       document.body.append(link);link.click();link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),0);
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
     }
   };
 });

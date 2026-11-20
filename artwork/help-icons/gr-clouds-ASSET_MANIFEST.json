@@ -1,0 +1,28 @@
+{
+  "originals": [
+    {
+      "role": "clouds-help",
+      "source_filename": "Luxuriöse Silberwolken mit Goldrand.png",
+      "master": "artwork/help-icons/hires/gr-clouds-help-premium-original.png",
+      "runtime": "assets/gr-clouds-help-premium-original.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "0873f23edc9309930c9d4af2dca3b1fca32e415196fe4a3d4290f88a987938b8"
+    },
+    {
+      "role": "clouds-eye",
+      "source_filename": "Silberne Gewitterwolken im goldenen Medaillon.png",
+      "master": "artwork/help-icons/hires/gr-clouds-eye-premium-original.png",
+      "runtime": "assets/gr-clouds-eye-premium-original.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "8250e3e966b57956b0a7c291103fe48b2fdc7f4a2e408e9e0087b18feb3f48c1"
+    }
+  ]
+}

@@ -69,7 +69,7 @@ try {
     states['select.gewitterradar_language'].state=language;card.hass={...hass};
     if(!['Deutsch','English'].includes(language))for(let attempt=0;dialog.querySelector('h2').textContent==='About Gewitterradar'&&attempt<100;attempt++)await new Promise(resolve=>setTimeout(resolve,10));
     const title=dialog.querySelector('h2').textContent;
-    assert(language==='Deutsch'?title==='Über Gewitterradar':language==='English'?title==='About Gewitterradar':title!==''&&title!=='About Gewitterradar','language locale '+language);
+    assert(language==='Deutsch'?title==='Über GewitterRadar':language==='English'?title==='About Gewitterradar':title!==''&&title!=='About Gewitterradar','language locale '+language);
     assert(dialog.querySelector('.about-dedication h3').textContent!=='','dedication localized');
   }
   states['select.gewitterradar_language'].state='Deutsch';card.hass={...hass};

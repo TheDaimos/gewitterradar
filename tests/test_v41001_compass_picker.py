@@ -41,13 +41,23 @@ def test_v41001_compass_picker_contract():
 
     # The protected R40 behaviour applies unchanged to both its DEV build and V4.10 FINAL.
     is_final = "const CARD_VERSION = '4.10';" in main
+    is_v411 = "CARD_VERSION=APPLICATION_META.version;" in main
+    v411_cache = None
     if is_final:
         assert "const CARD_DISPLAY_VERSION = '4.10';" in main
         assert "V4.10-RELEASE-2026-09-30" in main
+    elif is_v411:
+        version = (FRONTEND / "version.js").read_text(encoding="utf-8")
+        assert "CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');" in main
+        runtime_match = re.search(r'runtimeRevision:"([^"]+)"', version)
+        assert runtime_match
+        v411_cache = runtime_match.group(1)
+        assert re.fullmatch(r"411\d{2,3}r\d+", v411_cache)
+        assert "const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;" in main
     else:
         assert "const CARD_VERSION = '4.10.02';" in main
         assert "V4.10.02-MODULAR-DEV-R40-2026-09-30" in main
-    assert "const GEWITTERRADAR_MODULE_CACHE = '41002r13';" in main
+        assert "const GEWITTERRADAR_MODULE_CACHE = '41002r13';" in main
 
     # Preserve the established picker behaviour.
     for marker in (
@@ -71,11 +81,16 @@ def test_v41001_compass_picker_contract():
         assert marker in source
 
     # Picker-only contract: four local Retina modules are imported only by map-display.
+    # Static picker assets preserve their own revision independently of the app.
+    picker_revision = re.search(r'compass-picker-chevron-left-brass\.js\?v=(\d{5}r\d+)', map_display)
+    assert picker_revision
+    cache = picker_revision.group(1) if is_v411 else "41002r13"
+    if is_v411: assert int(cache.split("r")[0]) <= int(v411_cache.split("r")[0])
     imports = (
-        'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41002r13";',
-        'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v=41002r13";',
-        'import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v=41002r13";',
-        'import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v=41002r13";',
+        f'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v={cache}";',
+        f'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v={cache}";',
+        f'import COMPASS_PICKER_LEFT_SILVER from "./compass-picker-chevron-left-silver.js?v={cache}";',
+        f'import COMPASS_PICKER_RIGHT_SILVER from "./compass-picker-chevron-right-silver.js?v={cache}";',
     )
     for marker in imports:
         assert marker in map_display

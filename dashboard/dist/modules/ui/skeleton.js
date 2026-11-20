@@ -1,7 +1,24 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import { defineModule } from "../core/runtime.js?v=41121r1";
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411249r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411249r1';
+const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
+const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
+const PRO_DISCOVERY_TIMEOUT = 8000;
+const PRO_DISCOVERY_INTERVAL = 60000;
+
+function confirmsLocalWeatherRouter(reply) {
+  return reply?.schema === 'weather_router.consumer.discovery.v1'
+    && reply.contract?.name === 'weather_router.consumer'
+    && Array.isArray(reply.contract.supported_versions)
+    && reply.contract.supported_versions.includes(1)
+    && reply.router?.ready === true
+    && reply.router.enabled === true
+    && reply.router.status === 'ready';
+}
+
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.15",
+  "version": "1.1.52",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -14,9 +31,136 @@ export const MODULE_META=Object.freeze({
   "file": "modules/ui/skeleton.js"
 });
 export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERSION, CARD_DISPLAY_VERSION, GEWITTERRADAR_BUILD, GEWITTERRADAR_INFINITY_GFX, HELP_PREMIUM_ICON_VARIANT, HELP_REFINED_ICONS, HELP_REFINED_ICONS_V3, HELP_REFINED_ICONS_V4, HELP_REFINED_ICONS_V5, HELP_REFINED_ICONS_V6, HELP_PREMIUM_ICONS, BUILD_YYYY_MM, LEAFLET_JS, LEAFLET_CSS_URL, getClusterResolutionProfileLabel, loadLeafletJs, TREND_MEDALLION_IMAGE, TREND_ARROW_IMAGE, MAP_COMPASS_TOGGLE_IMAGE, COMPASS_METAL_FRAME_V1_IMAGE, COMPASS_METAL_FRAME_V2_IMAGE, COMPASS_METAL_FRAME_V3_IMAGE, COMPASS_METAL_FRAME_V4_IMAGE, COMPASS_METAL_FRAME_V5_IMAGE, COMPASS_SELECTOR_FRAME_IMAGES, COMPASS_DESIGNS, COMPASS_DESIGN_STORAGE_KEY, MAP_DISPLAY_MODE_STORAGE_KEY, MAP_LAST_DISPLAY_MODE_STORAGE_KEY, MAP_STARTUP_MODE_STORAGE_KEY, MAP_LAYER_SYMBOL_STYLE_STORAGE_KEY, MAP_LAYER_SYMBOL_STACK3D_IMAGE, MAP_COMPASS_POSITION_STORAGE_KEY, MAP_COMPASS_VISIBLE_STORAGE_KEY, MAP_MEDALLION_POSITION_STORAGE_KEY, MAP_MEDALLION_VISIBLE_STORAGE_KEY, MAP_LOCATION_POSITION_STORAGE_KEY, MAP_WINDOW_QUERY_KEY, MAP_WINDOW_VERSION_QUERY_KEY, LANGUAGE_INITIALIZATION_ENTITIES, ABOUT_ONBOARDING_VERSION, ABOUT_STORAGE_KEY, ABOUT_LOGO, ABOUT_HERO_IMAGE, ABOUT_DEDICATION_IMAGE, ABOUT_CLOSE_IMAGE, ABOUT_COPY_IMAGE, V407_LOCATION_SAFETY_ICON, V407_LOCATION_ADVICE_ICON, V407_COORDINATE_TARGET_TAB_ICON, V407_LOCATION_SEARCH_GLOBE_ICON, V407_LOCATION_SEARCH_LOUPE_ICON, V407_COORDINATE_TARGET_LIST_ICON, V407_COORDINATE_TEXTS, ABOUT_RECORDER_YAML, ABOUT_STRINGS, ABOUT_SETTING_ACCESSORS, ABOUT_SETTING_LABELS, ABOUT_SETTING_PURPOSES, ABOUT_SOURCE_PURPOSES, MEDALLION_DESIGNS, MEDALLION_UI, DIAGNOSTIC_UI, DIAGNOSTIC_VIRTUAL_STORM_UI, DIAGNOSTIC_MODE_LABEL, DIAGNOSTIC_SELECT_ACTIVE, DIAGNOSTIC_TERMS, DIAGNOSTIC_AUX, DIAGNOSTIC_OVERLAY_TERMS, DIAGNOSTIC_PERFORMANCE_UI, COMPASS_FRAME_OPENING_CACHE, _uiAsset7Base64, _uiAsset7ExpectedSha256, _uiAsset7VerifiedUri, C, HISTORY_MINUTES, ACTIVE_MINUTES, HISTORY_BUCKET_MINUTES, FLASH_COOLDOWN_MS, FLASH_PULSE_COUNT, FLASH_GAP_MIN_MS, FLASH_GAP_MAX_MS, FLASH_CENTER_X_MIN, FLASH_CENTER_X_MAX, FLASH_CENTER_Y_MIN, FLASH_CENTER_Y_MAX, FLASH_MOBILE_VIEWPORT_MAX_WIDTH, LANGUAGE_HELPER_DEFAULT, DISTANCE_UNIT_HELPER_DEFAULT, KM_TO_MI, KM_TO_FT, METRIC_NEAR_THRESHOLD_KM, IMPERIAL_FEET_THRESHOLD_MI, AURA_ENABLED_HELPER_DEFAULT, AURA_WIDTH_HELPER_DEFAULT, AURA_INTENSITY_HELPER_DEFAULT, AURA_WIDTH_MIN, AURA_WIDTH_MAX, AURA_WIDTH_DEFAULT, AURA_INTENSITY_MIN, AURA_INTENSITY_MAX, AURA_INTENSITY_DEFAULT, LANGUAGE_DEFAULT, SETTING_ENTITIES, HELP_STRINGS, LANGUAGE_DEFINITIONS, ABOUT_LOCALES, ABOUT_EXTERNAL_LANGUAGE_NAMES, ABOUT_LOCALE_MODULE_URL, validateAboutLocales, isAboutLocaleComplete, normalizeExternalHelpLocale, installAboutExternalLocales, loadAboutExternalLocales, requestAboutLocale, resolveAboutLocale, AGE_SHORT_UNITS, DISTANCE_UNIT_LABELS, I18N, I18N_STATIC_TEXT_KEYS, I18N_STATIC_ATTR_KEYS, CARDINALS, CARDINAL_NAMES, toCardinal, toCardinalName, clamp, finiteNumber, fmtNumber, bearingBetween, distanceBetweenKm, projectedRadiusPixels, installLeafletStrikeCanvas, installLeafletRadiusAuraSvg }=deps;return {
+    _syncProBranding() {
+      const connection = this._hass?.connection;
+      const title = this.shadow?.getElementById('overview-title');
+      if (this.__proBranding?.connection === connection) return;
+      this._stopProBranding();
+      if (!title || !this.isConnected || typeof connection?.sendMessagePromise !== 'function'
+          || typeof connection.addEventListener !== 'function') return;
+
+      const state = {connection, title, check:null, timer:null, installation:'unknown'};
+      this.__proBranding = state;
+      const showStandard = () => {title.classList.remove('is-pro');delete title.dataset.proConnection;};
+      const setEyeAvailability = ready => {
+        if (state.eyeReady === ready) return;
+        state.eyeReady = ready;
+        this._eyeHubSync?.();
+      };
+      const setInstallation = status => {
+        state.installation = status;
+        if (status === 'absent') this._maybeShowProWelcome();
+        else this._proWelcomeDialog?.close();
+      };
+      state.clear = () => {
+        clearTimeout(state.timer);
+        clearTimeout(state.check?.timer);
+        state.check = null;
+        showStandard();
+        setEyeAvailability(false);
+        setInstallation('unknown');
+      };
+      state.refresh = async () => {
+        if (!connection.connected || state.check) return;
+        const check = {expired:false};
+        const coreWasRunning = this._hass?.config?.state === 'RUNNING';
+        state.check = check;
+        check.timer = setTimeout(() => {
+          check.expired = true;
+          showStandard();
+          setEyeAvailability(false);
+          setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
+        }, PRO_DISCOVERY_TIMEOUT);
+        const current = () => this.__proBranding === state && state.check === check && connection.connected;
+        try {
+          // This command runs in the authenticated HA server of this card.
+          const reply = await connection.sendMessagePromise({type:'weather_router/consumer/discovery'});
+          if (!current() || check.expired) return;
+          if (reply?.schema === 'weather_router.consumer.discovery.v1') state.detectedInstallation = true;
+          setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
+          if (!confirmsLocalWeatherRouter(reply)) {
+            showStandard();
+            setEyeAvailability(false);
+            return;
+          }
+          check.confirmed = true;
+          setEyeAvailability(true);
+          title.dataset.proConnection = 'ready';
+          if (!state.image) {
+            const logo = new Image(1190, 348);
+            logo.alt = 'GewitterRadar PRO – powered by · WeatherRouter';
+            logo.className = 'pro-wordmark';
+            logo.draggable = false;
+            logo.src = PRO_WORDMARK;
+            await logo.decode();
+            if (!current() || check.expired) return;
+            title.prepend(logo);
+            state.image = logo;
+            this._bindProjectHubMainTitle?.();
+          }
+          title.classList.add('is-pro');
+        } catch (error) {
+          if (current() && !check.confirmed) {
+            showStandard();
+            setEyeAvailability(false);
+            // Only Home Assistant's explicit missing command establishes absence.
+            const missing = !check.expired && error?.code === 'unknown_command'
+              && coreWasRunning && this._hass?.config?.state === 'RUNNING';
+            setInstallation(state.detectedInstallation ? 'installed' : missing ? 'absent' : 'unknown');
+          }
+        } finally {
+          clearTimeout(check.timer);
+          if (current()) {
+            state.check = null;
+            state.timer = setTimeout(state.refresh, PRO_DISCOVERY_INTERVAL);
+          }
+        }
+      };
+      state.ready = () => {
+        clearTimeout(state.timer);
+        void state.refresh();
+      };
+      connection.addEventListener('disconnected', state.clear);
+      connection.addEventListener('ready', state.ready);
+      state.ready();
+    },
+
+    _stopProBranding() {
+      const state = this.__proBranding;
+      if (!state) return;
+      this.__proBranding = null;
+      state.clear();
+      state.connection.removeEventListener('disconnected', state.clear);
+      state.connection.removeEventListener('ready', state.ready);
+      state.image?.remove();
+    },
+
+    _maybeShowProWelcome() {
+      const branding = this.__proBranding;
+      if (deps.proWelcomeShown || this._mapWindowMode || !this._proWelcomeStartupChecked || !this.isConnected || !this._mapReady
+          || branding?.installation !== 'absent' || !branding.connection.connected
+          || this._hass?.config?.state !== 'RUNNING' || !this._languageOnboardingComplete()
+          || deps.aboutOnboardingOwner?._aboutDialog?.open
+          || this.shadow.querySelector('dialog[open], #settings-backdrop.open, #eye-hub-bubbles:not([hidden])')) return;
+      let storage;
+      try {
+        storage = settingsStorage(this);
+        if (storage.getItem(PRO_WELCOME_DISMISSED) === '1') return;
+      } catch (_) { return; }
+      const vault = this._settingsVault;
+      const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(PRO_WELCOME_DISMISSED));
+      this._proWelcomeDialog = openProWelcome(this, {
+        wordmark: PRO_WORDMARK, hero: ABOUT_HERO_IMAGE, close: ABOUT_CLOSE_IMAGE, layers: MAP_LAYER_SYMBOL_STACK3D_IMAGE,
+      }, storage, writable);
+      deps.proWelcomeShown = true;
+    },
+
     _buildSkeleton() {
       this._built = true;
       this.shadow = this.attachShadow({ mode: 'open' });
+      const releaseMetadata=deps.APPLICATION_META;
+      const buildMonthMatch=String(releaseMetadata.build || '').match(/(\d{4})-(\d{2})-\d{2}$/);
+      const displayedBuildMonth=buildMonthMatch ? buildMonthMatch[1]+'/'+buildMonthMatch[2] : BUILD_YYYY_MM;
 
       this.shadow.innerHTML = `
         <link rel="stylesheet" href="${LEAFLET_CSS_URL}" id="leaflet-css-link">
@@ -249,6 +393,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-weight:820;
             letter-spacing:-.035em;
           }
+          .brand .title .pro-wordmark { display:none; }
+          .brand .title.is-pro { display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px; }
+          .brand .title.is-pro .pro-wordmark { display:block;width:min(290px,100%);height:auto; }
+          .brand .title.is-pro .standard-wordmark { display:none; }
+          .brand .title.is-pro .app-version-badge { margin-left:0; }
 
           /* V3.974 – compact card-version plaque next to the app name.
              It is derived exclusively from CARD_VERSION; no helper can drift out of sync. */
@@ -298,6 +447,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             animation:settingsBackdropIn .18s ease-out both;
           }
           .release-history-dialog {
+            display:flex;
+            flex-direction:column;
             width:min(590px,100%);
             max-height:min(760px,calc(100dvh - 20px));
             overflow:hidden;
@@ -309,7 +460,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             box-shadow:0 30px 90px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.025) inset,0 0 38px rgba(246,195,68,.045);
           }
           .release-history-head {
-            display:flex;
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto;
+            container-type:inline-size;
             align-items:center;
             justify-content:space-between;
             gap:12px;
@@ -318,8 +471,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             background:linear-gradient(180deg,rgba(17,23,32,.995),rgba(17,23,32,.94));
           }
           .release-history-kicker {
+            grid-column:1 / -1;
+            white-space:nowrap;
             color:var(--b-gold);
-            font-size:8px;
+            font-size:clamp(7px,2.5cqi,8px);
             font-weight:900;
             letter-spacing:.18em;
             text-transform:uppercase;
@@ -338,7 +493,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             gap:9px;
           }
           /* V4.07 TEST7: bilingual Release History and compact premium language switch. */
-          .release-history-heading{min-width:0}
+          .release-history-heading{display:contents}
           .release-history-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px}
           .release-history-title-row .release-history-title{margin-top:0}
           .release-history-language-toggle{display:inline-grid;grid-template-columns:repeat(2,36px);gap:2px;padding:2px;border:1px solid rgba(214,172,78,.34);border-radius:999px;background:rgba(4,9,14,.55);box-shadow:inset 0 1px rgba(255,239,194,.06)}
@@ -380,7 +535,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           @media(hover:hover) and (pointer:fine){.release-history-close:hover{background:transparent!important}.release-history-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}
           @media(hover:none) and (pointer:coarse){.release-history-close:focus-visible{outline:none!important}}
           .release-history-body {
-            max-height:calc(min(760px,100dvh - 20px) - 60px);
+            flex:1 1 auto;
+            min-height:0;
             overflow-y:auto;
             -webkit-overflow-scrolling:touch;
             padding:11px 13px 14px;
@@ -412,6 +568,19 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-size:10.5px;
             line-height:1.48;
           }
+          .release-history-collapsible summary {
+            display:grid;
+            grid-template-columns:minmax(0,1fr) 18px;
+            align-items:center;
+            gap:10px;
+            list-style:none;
+            cursor:pointer;
+          }
+          .release-history-collapsible summary::-webkit-details-marker { display:none; }
+          .release-history-collapsible summary:focus-visible { outline:2px solid #e7c16e; outline-offset:3px; border-radius:5px; }
+          .release-history-collapsible[open] .release-history-future-chevron { transform:rotate(225deg); margin-top:5px; }
+          .release-history-collapsible-content { padding-top:9px; }
+          .release-history-collapsible-content p + p { margin-top:8px; }
           .release-history-plan-list {
             margin:4px 0 0;
             padding-left:17px;
@@ -1948,6 +2117,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
              unverändert als PNG-Datenstrom in einem Inline-SVG gerendert.
              Keine Rekonstruktion, keine Font-Abhängigkeit, keine neu erfundene
              Geometrie. Nur gleichmäßige Skalierung bei unverändertem Seitenverhältnis. */
+          /* Shell footer remains visible throughout horizontal page transitions. */
+          .settings-dialog > .settings-signature-wrap {
+            flex:0 0 auto;
+            box-sizing:border-box;
+            position:relative;
+            z-index:4;
+            pointer-events:none;
+          }
           .settings-signature-wrap {
             display:flex;
             justify-content:flex-end;
@@ -2964,6 +3141,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             box-shadow:0 15px 38px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.035);
             backdrop-filter:blur(16px);
           }
+          #map-display-switch:not(.weather-layer-view){width:min(244px,calc(100vw - 24px));min-width:0;max-width:calc(100vw - 24px);border-radius:15px}
+          #map-display-switch,#map-display-switch *{box-sizing:border-box}
+          #map-display-switch>*{min-width:0;max-width:100%}
+          #map-display-switch .weather-layer-entry-wrap{width:100%;min-width:0}
+          #map-display-switch .weather-layer-entry{width:100%;min-width:0;display:flex;gap:7px}
+          #map-display-switch .weather-layer-entry-label{min-width:0;flex:1;overflow-wrap:anywhere;white-space:normal}
+          #map-display-switch .weather-layer-entry img{flex:0 0 32px;max-width:32px;object-fit:contain}
+          #map-display-switch .map-display-btn{white-space:normal;min-width:0;width:100%}
           .map-display-menu[hidden] { display:none!important; }
           .map-display-menu::after {
             content:'';position:absolute;right:15px;bottom:-5px;width:9px;height:9px;
@@ -3271,6 +3456,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             font-size:10px;
           }
           .legend-item { display:inline-flex;align-items:center;gap:6px;white-space:nowrap; }
+          .legend-display-mode { color:rgba(224,190,111,.90);font-weight:760;letter-spacing:.01em; }
+          .legend-display-mode::before { content:"◉";color:#d9ad4e;font-size:8px;opacity:.88; }
           /* V4.07.54 – Legendenstruktur: Radien bilden nur im Hochformat eine
              feste zweite Zeile. Im Querformat bleiben beide Gruppen Bestandteil
              derselben Zeile. Keine Geraete-Sonderlogik, nur Ausrichtung. */
@@ -4579,6 +4766,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .diagnostic-controls { display:flex;flex-wrap:wrap;gap:5px; }
           .diagnostic-calibration-controls { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px; }
           .diagnostic-console button.diagnostic-calibration-tool { min-height:30px;background:#111820;color:#c7d0d6; }
+           .diagnostic-console button.diagnostic-calibration-raster { grid-column:1 / -1;min-height:38px;border-color:rgba(216,164,64,.83);background:linear-gradient(125deg,rgba(113,76,20,.25),rgba(21,26,35,.96));color:#f4d188;font-weight:850;letter-spacing:.025em; }
           .diagnostic-console button.diagnostic-calibration-compass.active { border-color:#4ce9f5;color:#a9faff;background:rgba(15,142,155,.22);box-shadow:inset 0 0 0 1px rgba(76,233,245,.18),0 0 10px rgba(76,233,245,.20); }
           .diagnostic-console button.diagnostic-calibration-medallion.active { border-color:#be82ff;color:#dfbdff;background:rgba(116,55,174,.24);box-shadow:inset 0 0 0 1px rgba(190,130,255,.18),0 0 10px rgba(190,130,255,.20); }
           .diagnostic-readout { white-space:pre-wrap;user-select:text;margin:0;padding:7px;border-radius:6px;background:#02080d;color:#cde4ee;font:600 8px/1.35 ui-monospace,monospace;max-height:128px;overflow:auto; }
@@ -5812,6 +6000,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             filter:drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 2px rgba(232,181,65,.28));
             transition:filter .16s ease;
           }
+          #settings-about > .settings-premium-icon > img {
+            display:block;
+            width:24px;
+            height:24px;
+            object-fit:contain;
+            pointer-events:none;
+          }
           #settings-about:focus-visible { outline:none; }
           #settings-about:focus-visible > span[aria-hidden="true"] {
             outline:2px solid rgba(255,225,161,.92);
@@ -5827,7 +6022,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           #settings-about:active > span[aria-hidden="true"] {
             filter:brightness(.9) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92));
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-row-label {
+          #settings-calibration-section > .settings-section-content > .settings-row-label {
             box-sizing:border-box;
             width:100%;
             padding:9px 12px 4px 22px;
@@ -5837,30 +6032,96 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             line-height:1.25;
             letter-spacing:.055em;
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-row {
+          #settings-calibration-section > .settings-section-content > .settings-row {
             padding-left:34px;
             padding-right:12px;
           }
-          #settings-diagnostic-section > .settings-section-content > .settings-test-grid {
+          #settings-calibration-section > .settings-section-content > .settings-test-grid {
             padding-left:34px;
             padding-right:12px;
           }
           @media(max-width:720px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:20px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:10px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:10px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding-left:20px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:10px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:10px; }
           }
           @media(max-height:720px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding:7px 9px 3px 20px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:9px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:9px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding:7px 9px 3px 20px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:30px;padding-right:9px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:30px;padding-right:9px; }
           }
           @media(max-width:520px) and (min-height:721px) {
-            #settings-diagnostic-section > .settings-section-content > .settings-row-label { padding-left:18px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-row { padding-left:26px; }
-            #settings-diagnostic-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
+            #settings-calibration-section > .settings-section-content > .settings-row-label { padding-left:18px; }
+            #settings-calibration-section > .settings-section-content > .settings-row { padding-left:26px; }
+            #settings-calibration-section > .settings-section-content > .settings-test-grid { padding-left:26px; }
           }
-          #settings-diagnostic-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
+          #settings-calibration-section[open]>.settings-section-content{padding-bottom:22px!important;scroll-padding-bottom:22px}
+
+          /* V4.11.84: Weather-Engine – feste Spalten, kompakte Statusführung. */
+          #weather-engine-section>.settings-section-content>.gr-weather-row{
+            display:grid;grid-template-columns:minmax(0,1fr) 176px;column-gap:18px;align-items:center;
+            min-height:64px;padding:10px 12px;margin:0;border-bottom:1px solid rgba(185,176,145,.12);
+          }
+          #weather-engine-section>.settings-section-content>.gr-weather-row:last-of-type{border-bottom:0}
+          #weather-engine-section .gr-weather-caption{min-width:0;width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:4px;line-height:1.35}
+          #weather-engine-section .gr-weather-caption>strong{display:block;font-size:12px;font-weight:750;color:#f0e5cf}
+          #weather-engine-section .gr-weather-subtitle{font-size:11px;font-weight:450;color:#acb6bc;line-height:1.45}
+          #weather-engine-section .gr-weather-source-status{justify-self:stretch;text-align:center;font-size:11px;font-weight:650;color:#cedfcf}
+          #weather-engine-section .gr-weather-action{justify-self:stretch;width:100%;min-width:0;min-height:38px;padding:7px 10px;line-height:1.2;text-align:center}
+          #weather-engine-section .gr-weather-connection-status,#weather-engine-section .gr-weather-active-api{
+            display:block;max-width:100%;min-width:0;overflow-wrap:anywhere;font-size:11px;line-height:1.4
+          }
+          #weather-engine-section .gr-weather-connection-status{color:#dac08a}
+          #weather-engine-section .gr-weather-connection-status[data-state="ready"]{color:#abd7b6}
+          #weather-engine-section .gr-weather-connection-status[data-state="error"]{color:#e8b29c}
+          #weather-engine-section .gr-weather-active-api{color:#b4ccdc;font-weight:600}
+          #weather-engine-section .gr-weather-active-api[data-active-api="v2"]{color:#b0dabc}
+          #weather-engine-section>.settings-section-content>.gr-weather-results-row{display:block;padding:9px 12px;white-space:pre-line;overflow-wrap:anywhere;font-size:11px}
+          #weather-engine-section>.settings-section-content>.gr-weather-results-row[hidden]{display:none!important}
+          @media(max-width:540px){
+            #weather-engine-section>.settings-section-content>.gr-weather-row{
+              grid-template-columns:minmax(0,1fr);gap:8px;padding:11px 10px;min-height:0
+            }
+            #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
+            #weather-engine-section .gr-weather-action{justify-self:stretch;min-height:40px}
+          }
+
+          /* V4.11.84 – einheitliche Spalten und Abstände auch für Niederschlag. */
+          #weather-engine-section>.settings-section-content>.gr-weather-row{grid-template-columns:minmax(0,1fr) 260px}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row{
+            display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:center;
+            padding:11px 12px;margin:0;min-height:58px;border-bottom:1px solid rgba(185,176,145,.12);
+          }
+          #weather-engine-section [data-weather-radar-settings]>.settings-row[hidden]{display:none!important}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label{min-width:0;line-height:1.4}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>.settings-row-label>div:first-child{font-weight:700;color:#f0e5cf}
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+          #weather-engine-section [data-weather-radar-settings]>.settings-row>select{
+            min-height:38px;width:100%;min-width:0;justify-self:stretch
+          }
+          #weather-engine-section [data-weather-radar-settings]>.gr-weather-detail-status{
+            display:block;padding-top:7px;padding-bottom:8px;min-height:0
+          }
+          #weather-engine-section #weather-radar-preload-status,
+          #weather-engine-section #weather-radar-status{font-size:11px;color:#b4c7d0;line-height:1.45;overflow-wrap:anywhere}
+          #weather-engine-section .gr-weather-range-controls{
+            display:grid!important;grid-template-columns:minmax(40px,1fr) 74px 64px;
+            align-items:center;gap:8px!important;flex-wrap:nowrap!important;justify-content:stretch!important;
+            min-width:0;width:100%
+          }
+          #weather-engine-section .gr-weather-range-controls input[type="range"]{width:100%;min-width:0;margin:0}
+          #weather-engine-section .gr-weather-range-controls input[type="number"]{width:100%!important;min-width:0;box-sizing:border-box}
+          #weather-engine-section .gr-weather-range-controls span{font-size:11px;white-space:nowrap}
+          @media(max-width:680px){
+            #weather-engine-section>.settings-section-content>.gr-weather-row,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row{
+              grid-template-columns:minmax(0,1fr);gap:8px;padding:11px 10px;min-height:0
+            }
+            #weather-engine-section .gr-weather-source-status{justify-self:start;text-align:left}
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>button,
+            #weather-engine-section [data-weather-radar-settings]>.settings-row>select{min-height:40px}
+            #weather-engine-section .gr-weather-range-controls{grid-template-columns:minmax(40px,1fr) 74px 64px}
+          }
           /* V4.06 final premium settings shell and hierarchy. */
           .settings-dialog{--premium-gold:#c7a25b;--premium-gold-bright:#f1d58c;--premium-line:rgba(201,160,80,.34);border-color:var(--premium-line);background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065)}
           .settings-premium-links{display:grid;grid-template-columns:1fr 1fr;gap:7px}.settings-premium-link{min-height:44px!important;border:1px solid rgba(190,149,69,.22)!important;border-radius:12px!important;background:linear-gradient(110deg,rgba(176,130,49,.08),rgba(12,22,29,.62))!important;box-shadow:inset 0 1px rgba(255,239,198,.055)}
@@ -5868,7 +6129,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           .settings-premium-link:focus-visible{outline:2px solid rgba(255,225,161,.92)!important;outline-offset:1px!important}.settings-premium-link:focus-visible .settings-premium-icon{filter:brightness(1.15) drop-shadow(0 0 3px rgba(244,197,91,.42))}
           .settings-section{border-color:rgba(190,151,76,.22);background:linear-gradient(115deg,rgba(169,126,47,.055),rgba(255,255,255,.018) 30%,rgba(7,13,19,.36));box-shadow:inset 0 1px rgba(255,239,194,.045),0 2px 8px rgba(0,0,0,.18);transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}.settings-section[open]{border-color:rgba(224,180,87,.46);background:linear-gradient(115deg,rgba(177,132,47,.10),rgba(255,255,255,.022) 35%,rgba(7,13,19,.42));box-shadow:inset 0 1px rgba(255,243,207,.08),0 0 13px rgba(208,158,55,.08)}
           .settings-collapsible>.settings-section-head{align-items:center;min-height:44px}.settings-collapsible>.settings-section-head::after{content:'';width:13px;height:13px;border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;font-size:0;transform:rotate(45deg);margin:-6px 10px 0 0;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}.settings-collapsible[open]>.settings-section-head::after{transform:rotate(225deg);margin-top:7px;color:inherit;filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}
-          #settings-diagnostic-section>.settings-section-content>.settings-row-label{border-left:1px solid rgba(196,153,70,.24);background:linear-gradient(90deg,rgba(190,143,52,.045),transparent 72%)}
+          #settings-calibration-section>.settings-section-content>.settings-row-label{border-left:1px solid rgba(196,153,70,.24);background:linear-gradient(90deg,rgba(190,143,52,.045),transparent 72%)}
           .settings-signature-wrap{background:radial-gradient(ellipse at 82% 52%,rgba(201,151,51,.075),transparent 56%)}.settings-signature{filter:sepia(.16) saturate(1.28) brightness(1.08) contrast(1.035) drop-shadow(0 1px .5px rgba(255,226,158,.16)) drop-shadow(0 3px 5px rgba(0,0,0,.48))}
           @media(hover:hover) and (pointer:fine){.settings-premium-link:hover .settings-premium-icon{filter:brightness(1.14) saturate(1.08) drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 3px rgba(238,188,72,.38))}.settings-collapsible>.settings-section-head:hover::after{filter:brightness(1.2) drop-shadow(0 0 3px rgba(240,193,82,.48))}}
           .settings-premium-link:active .settings-premium-icon{filter:brightness(.9) saturate(1.08)}
@@ -5896,14 +6157,26 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           /* V4.06 accepted UI polish: premium frame and symmetric action tiles. */
           /* V4.06 pass2: Welcome-derived 2px metal frame, reduced diffuse gold shadow. */
-          .settings-dialog{
+          .settings-dialog,
+          .gr-pro-welcome.gr-premium-metal-surface,.gr-pro-feature.gr-premium-metal-surface,
+          .weather-legend-overlay.gr-premium-metal-surface,
+          .weather-display-panel.gr-premium-metal-surface,
+          .weather-wind-panel.gr-premium-metal-surface,
+          .gr-premium-collapse.gr-premium-metal-surface,
+          .map-display-menu.gr-premium-metal-surface,
+          .weather-display-minimize.gr-premium-metal-surface,
+          .weather-display-opacity-reset.gr-premium-metal-surface,
+          .weather-display-info.gr-premium-metal-surface{
             border:2px solid transparent;
             background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
             box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 8px rgba(215,164,67,.055)
           }
+          .weather-legend-overlay.gr-premium-metal-surface,.weather-display-panel.gr-premium-metal-surface,.weather-wind-panel.gr-premium-metal-surface,.map-display-menu.gr-premium-metal-surface{border-width:1px;box-shadow:0 8px 22px #0007,inset 0 1px #fff1}
+
+          :is(.weather-display-panel,.weather-wind-panel,.weather-legend-overlay,.map-display-menu).gr-premium-metal-surface{border-radius:15px}
           .settings-dialog::after{content:none!important}
           /* V4.06 pass5: Settings version lives in the persistent dialog shell, not the transient About style. */
-          .settings-footer-version{position:absolute;left:18px;bottom:18px;z-index:3;color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;white-space:nowrap;user-select:none}
+          .settings-footer-version{position:absolute;left:18px;bottom:14px;z-index:3;display:grid;gap:3px;max-width:calc(100% - 130px);color:#747d8a;font-size:8.2px;font-weight:720;letter-spacing:.08em;line-height:1.35;white-space:normal;overflow-wrap:anywhere;user-select:none}
           @media(max-width:720px){.settings-footer-version{left:14px;bottom:15px}}
           .settings-chip.settings-chip-premium{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;flex:0 0 40px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}
           .settings-chip-premium .gear-welcome{display:block!important;width:30px;height:30px;min-width:30px;min-height:30px;overflow:visible;color:#e5bd69;stroke-width:3;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 2px 1.5px #0009) drop-shadow(0 -1px .4px #f5d5a555);transition:filter .16s ease,transform .16s ease}
@@ -6148,8 +6421,8 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           <div class="shell">
             <div class="topbar">
               <div class="brand">
-                <div class="eyebrow" id="source-status"><span class="live-dot initializing" id="source-status-dot" aria-hidden="true"></span> Blitzortung.org · Live</div>
-                <h1 class="title"><span>Gewitterradar</span><span class="app-version-badge" id="app-version-badge" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open release history" title="Release history">V${CARD_DISPLAY_VERSION}</span></h1>
+                <!-- V4.11.69: Datenquellenstatus unter Diagnose > Datenquellen & Verbindungen. -->
+                <h1 class="title" id="overview-title"><span class="standard-wordmark">Gewitterradar</span><span class="app-version-badge" id="app-version-badge" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open release history" title="Release history">V${CARD_DISPLAY_VERSION}</span></h1>
                 <div class="subtitle" id="radar-subtitle">
                   <span id="radar-subtitle-location">Blitzeinschläge rund um Home</span><span class="subtitle-separator">·</span><span id="radar-subtitle-window">letzte ${HISTORY_MINUTES} Minuten</span>
                 </div>
@@ -6198,6 +6471,9 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 <button class="top-chip settings-chip settings-chip-premium" id="settings-open" type="button"
                         title="Gewitterradar-Einstellungen öffnen" aria-label="Einstellungen öffnen">
                   <svg class="gear gear-welcome" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><defs><linearGradient id="mainview-settings-metal" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff0bc"/><stop offset=".28" stop-color="#e8bd60"/><stop offset=".48" stop-color="#92703a"/><stop offset=".62" stop-color="#ffe2a0"/><stop offset="1" stop-color="#b58b44"/></linearGradient></defs><g stroke="url(#mainview-settings-metal)"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/><circle cx="32" cy="32" r="17" opacity=".25"/></g></svg>
+                </button>
+                <button class="top-chip settings-chip settings-chip-premium" id="settings-open-horizontal" type="button" title="Neue horizontale Einstellungen testen" aria-label="Horizontale Einstellungen öffnen" style="color:#6cc6ff;border-color:rgba(73,170,255,.8);box-shadow:0 0 10px rgba(50,140,235,.3)">
+                  <svg class="gear gear-welcome" viewBox="0 0 64 64" fill="none" stroke="#66beff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M27 7Q32 5 37 7L38 14L43 17L50 14Q55 18 57 23L52 28V36L57 41Q55 46 50 50L43 47L38 50L37 57Q32 59 27 57L26 50L21 47L14 50Q9 46 7 41L12 36V28L7 23Q9 18 14 14L21 17L26 14Z"/><circle cx="32" cy="32" r="11"/></svg>
                 </button>
                 </div>
               </div>
@@ -7026,8 +7302,48 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             </div>
 
             <div class="settings-body">
-              <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true">ⓘ</span><span id="settings-about-label">Über Gewitterradar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
-              <details class="settings-section settings-collapsible">
+              <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true"><img src="${SETTINGS_ABOUT_INFO}" alt="" draggable="false"></span><span id="settings-about-label">Über GewitterRadar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
+              <details class="settings-section settings-collapsible" id="gr-vault-section">
+                <summary class="settings-section-head"><div class="settings-section-title">Userprofile &amp; Sicherungen</div></summary>
+                <div class="settings-section-content" id="gr-vault-content"></div>
+              </details>
+              <details class="settings-section settings-collapsible" id="weather-engine-section">
+                <summary class="settings-section-head">
+                  <div>
+                    <div class="settings-section-title"><span data-presentation-text="diag.weatherEngine">${this._t('diag.weatherEngine')}</span></div>
+                    <div class="settings-section-sub" data-presentation-text="weather.source.settingsSubtitle">Datenquellen und Niederschlagsdarstellung</div>
+                  </div>
+                </summary>
+                <div class="settings-section-content">
+                  <div class="settings-row gr-weather-row gr-weather-source-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong>Blitzortung.org</strong>
+                      <span class="gr-weather-subtitle">Bestehende Blitzüberwachung · unabhängig von WeatherRouter</span>
+                    </div>
+                    <span id="weather-engine-blitz-status" class="gr-weather-source-status">Bestehende Quelle</span>
+                  </div>
+                  <div class="settings-row gr-weather-row gr-weather-router-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong>WeatherRouter</strong>
+                      <span class="gr-weather-subtitle" data-presentation-text="diag.weatherSubtitle">${this._t('diag.weatherSubtitle')}</span>
+                      <span id="weather-engine-status" class="gr-weather-connection-status" role="status" aria-live="polite" data-presentation-text="diag.notChecked">${this._t('diag.notChecked')}</span>
+                      <span id="weather-engine-active-api" class="gr-weather-active-api" role="status">Niederschlag: keine aktive Darstellung</span>
+                    </div>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-check" type="button" data-presentation-text="diag.checkConnection">${this._t('diag.checkConnection')}</button>
+                  </div>
+                  <div class="settings-row gr-weather-row gr-weather-data-row">
+                    <div class="settings-row-label gr-weather-caption">
+                      <strong data-presentation-text="weather.legend.currentView">${this._t('weather.legend.currentView')}</strong>
+                      <span class="gr-weather-subtitle"><span data-presentation-text="eye.precipitation">${this._t('eye.precipitation')}</span> · <span data-presentation-text="weather.layer.group.thunder_lightning">${this._t('weather.layer.group.thunder_lightning')}</span> · <span data-presentation-text="weather.layer.group.warnings">${this._t('weather.layer.group.warnings')}</span></span>
+                    </div>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-inspect" type="button" data-presentation-text="diag.checkData" disabled>${this._t('diag.checkData')}</button>
+                  </div>
+                  <div class="settings-row gr-weather-results-row" id="weather-engine-results-row" hidden>
+                    <div class="settings-row-label" id="weather-engine-results" role="status" aria-live="polite"></div>
+                  </div>
+                </div>
+              </details>
+              <details class="settings-section settings-collapsible" id="settings-language-section">
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Sprache</div>
@@ -7053,7 +7369,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <details class="settings-section settings-collapsible">
+              <details class="settings-section settings-collapsible" id="settings-location-section">
                 <summary class="settings-section-head">
                   <div>
                     <div class="settings-section-title">Standort</div>
@@ -7242,13 +7558,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <details class="settings-section settings-collapsible" id="settings-diagnostic-section">
+              <details class="settings-section settings-collapsible gr-settings-diagnostics-page" id="settings-diagnostic-section">
                 <summary class="settings-section-head">
                   <div>
-                    <div class="settings-section-title" id="settings-diagnostic-section-title">Kalibrierung &amp; Diagnose</div>
-                    <div class="settings-section-sub">Simulation und Diagnosewerkzeuge</div>
+                    <div class="settings-section-title" id="settings-tools-section-title" data-presentation-text="diag.tools">${this._t('diag.tools')}</div>
+                    <div class="settings-section-sub" data-presentation-text="diag.toolsSubtitle">${this._t('diag.toolsSubtitle')}</div>
                   </div>
                 </summary>
+                <div class="settings-section-content" data-settings-diagnostic-menu></div>
+              </details>
+
+              <details class="settings-section settings-collapsible" id="settings-calibration-section">
+                <summary class="settings-section-head"><div><div class="settings-section-title" data-presentation-text="diag.calibration">${this._t('diag.calibration')}</div><div class="settings-section-sub" data-presentation-text="diag.calibrationSubtitle">${this._t('diag.calibrationSubtitle')}</div></div></summary>
                 <div class="settings-section-content">
                   <div class="settings-row-label" id="settings-calibration-tools-label">Kalibrierungstools</div>
                   <div class="settings-row">
@@ -7261,14 +7582,14 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                     <button class="settings-switch" id="settings-medallion-calibration-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Medaillon-Kalibrierung"></button>
                   </div>
-                  <div class="settings-row-label">Layout &amp; System</div>
+                  <div class="settings-row-label" data-presentation-text="diag.layout">${this._t('diag.layout')}</div>
                   <div class="settings-row">
                     <div class="settings-row-label" id="settings-diagnostics-label">Kalibrierung &amp; Diagnose</div>
                     <button class="settings-switch" id="settings-diagnostics-toggle" type="button" role="switch" aria-checked="false" aria-label="Diagnosemodus starten"></button>
                   </div>
-                  <div class="settings-row-label">Testfunktionen</div>
+                  <div class="settings-row-label" data-presentation-text="diag.tests">${this._t('diag.tests')}</div>
                   <div class="settings-row">
-                    <div class="settings-row-label">Warnsystem-Simulation</div>
+                    <div class="settings-row-label" data-presentation-text="diag.warningSimulation">${this._t('diag.warningSimulation')}</div>
                     <button class="settings-switch tests" id="settings-tests-toggle" type="button"
                             role="switch" aria-checked="false" aria-label="Warnsystem-Simulation"></button>
                   </div>
@@ -7283,14 +7604,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </details>
 
-              <div class="settings-footer-version" title="Kartenversion">${BUILD_YYYY_MM} · V${CARD_DISPLAY_VERSION}</div>
+              <details class="settings-section settings-collapsible" id="settings-weather-diagnostics-section" data-gr-dynamic-height="true">
+                <summary class="settings-section-head"><div><div class="settings-section-title" data-presentation-text="diag.weatherEngine">${this._t('diag.weatherEngine')}</div><div class="settings-section-sub" data-presentation-text="diag.weatherSubtitle">${this._t('diag.weatherSubtitle')}</div></div></summary>
+                <div class="settings-section-content"></div>
+              </details>
 
-              <div class="settings-signature-wrap" aria-hidden="true">
-                <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-                  <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
-                </svg>
-              </div>
             </div>
+            <div class="settings-signature-wrap" aria-hidden="true">
+              <svg class="settings-signature" viewBox="0 0 1982 563" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                <image id="settings-signature-image" x="0" y="0" width="1982" height="563" preserveAspectRatio="xMidYMid meet"></image>
+              </svg>
+            </div>
+            <div class="settings-footer-version" title="Kartenversion"><span>${displayedBuildMonth} · V${releaseMetadata.version}</span><span>Modulsatz-ID: ${releaseMetadata.moduleSetId}</span></div>
           </section>
         </div>
 
@@ -7368,6 +7693,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             </div><div class="diagnostic-calibration-controls">
               <button class="diagnostic-calibration-tool diagnostic-calibration-compass" id="diagnostic-compass-calibration" type="button" aria-pressed="false">Kompass-Kalibrierung</button>
               <button class="diagnostic-calibration-tool diagnostic-calibration-medallion" id="diagnostic-medallion-calibration" type="button" aria-pressed="false">Medaillon-Kalibrierung</button>
+              <button class="diagnostic-calibration-tool diagnostic-calibration-raster" id="diagnostic-raster-lab" type="button" data-raster-lab-launch="true" aria-label="Raster-Labor öffnen">Raster-Labor · Live-Darstellung</button>
             </div></div>
             <div class="diagnostic-console-section"><div class="diagnostic-console-section-title" id="diagnostic-grid-title">Raster</div><div class="diagnostic-controls">
               <button data-diagnostic-grid="off">AUS</button><button data-diagnostic-grid="coarse">GROB</button><button data-diagnostic-grid="fine">GROB + FEIN</button>
@@ -7465,13 +7791,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 </div>
               </div>
               <div class="release-history-head-actions">
-                <span class="release-history-current">${BUILD_YYYY_MM} · V${CARD_DISPLAY_VERSION}</span>
+                <span class="release-history-current">${displayedBuildMonth} · V${CARD_DISPLAY_VERSION}</span>
                 <button class="release-history-close" id="release-history-close" type="button" aria-label="Close release history"><img src="${ABOUT_CLOSE_IMAGE}" alt="" width="34" height="34" draggable="false"></button>
               </div>
             </div>
             <div class="release-history-body">
               <div class="release-history-lang-panel" data-release-history-lang="en">
-                <!-- PERMANENT RELEASE-HISTORY CONTRACT: keep this planning panel for the NEXT PUBLIC version. Release articles below are reserved for PUBLIC releases only; never add DEV/TEST iteration entries. -->
+                <!-- RELEASE-HISTORY CONTRACT: preserve the planning panel and previous version entries; never list individual DEV/TEST iterations. -->
                 <details class="release-history-future" open>
                   <summary>
                     <div class="release-history-future-heading">
@@ -7489,98 +7815,165 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Improve checks and error detection for saved locations and the associated local To-do list.</li>
                       <li>Introduce monitored areas with independent background monitoring, optional event logging, deletion protection, and CSV/PDF export.</li>
                       <li>Standardize multilingual status, warning and error messages across all functions.</li>
+                      <li>Extend winter-weather maps with snow, fog and freezing precipitation, complemented by orbital submenus around weather icons.</li>
+                      <li>Add compact, dynamic Aura-ring layout in Eye Control and a map-based Geo Probe with coordinates, local time, moon phase, and tide information where suitable data is available.</li>
+                      <li>Provide optional UV, air quality and pollen information from suitable data sources.</li>
+                      <li>Explore scientifically grounded displays for tornadoes, supercells, hail and other severe weather.</li>
+                      <li>Show the ISS position and orbit, including possible visibility windows for the selected observation location.</li>
+                      <li>Introduce MapLibre as an additional map engine with shared weather layers and controls.</li>
+                      <li>Extend lightning event logs and configurable alerts for monitored locations.</li>
                     </ul>
                   </div>
                 </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.11 · 2026/11</div><h3>GewitterRadar PRO – From thunderstorm radar to weather platform</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
+                  <p>Version 4.11 marks one of the largest development steps in GewitterRadar's history. The original lightning and thunderstorm visualization remains the heart of the standalone base version. With the optional WeatherRouter extension, GewitterRadar becomes <strong>GewitterRadar PRO</strong> – a modular, customizable weather platform.</p>
+                  <p><strong>WeatherRouter – one intelligent gateway for weather data:</strong> WeatherRouter was born from the need to bring different weather services together in a central, independently operating router. It evaluates provider availability, geographical coverage, freshness and suitability, then supplies weather information through shared interfaces. GewitterRadar concentrates on presenting the results.</p>
+                  <p><strong>New weather layers and analysis:</strong> DWD and OPERA precipitation radar, optional NASA satellite estimates, wind arrows and animated flows, temperature and cloud layers, high- and low-pressure systems, isobars and weather fronts. Available layers can appear progressively and are controlled individually.</p>
+                  <p><strong>Eye Hub and Eye Control:</strong> The central Eye Hub combines freely assignable high-resolution weather icons. Eye Control manages icon slots, grouping, optional individual Auras and appearance. Premium long-press settings allow finer adjustments. In PRO, thunderstorm visuals can also be hidden without stopping monitoring, alerts or history; the base version keeps storms visible.</p>
+                  <p><strong>Personalization and accessibility:</strong> Settings Vault, user and device profiles, persistent positions, icon layouts, colours and weather preferences, alongside improvements for desktop, iPad and Android. Help, diagnostics and all 19 language variants have been expanded. A dedicated welcome dialog introduces the optional PRO features when WeatherRouter is not installed.</p>
+                  <p><strong>Development effort:</strong> More than seven weeks of intensive work across GewitterRadar and WeatherRouter, numerous DEV iterations, performance tuning, real-device feedback and repeated corrections laid the foundation for future weather and environmental modules.</p>
+                  </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.10 · 2026/09</div>
-                  <h3>From monolith to modular Gewitterradar</h3>
+                  <h3>From monolith to modular Gewitterradar</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>In only a few months, Gewitterradar has grown enormously in functionality. V4.10 therefore makes a major change under the hood: the rapidly growing frontend was transformed from a monolith into a clearly structured modular architecture with independent functional building blocks. The former monolith was split into <strong>23 clearly separated modules</strong>. Each module has its own identity and version, allowing individual areas to be developed, tested and diagnosed much more precisely without having to touch large parts of the application for every change.</p>
                   <p><strong>Further interface and usability improvements:</strong> Compass and Medallion have evolved into independent instruments with their own selection, new designs and improved controls. Both can be positioned freely and resized in fullscreen mode. Settings and diagnostics have been structured more clearly, operation on desktop, iPad and Android has been further harmonized, and numerous details from tooltips to pop-ups and instrument controls have been refined. With the expanded compass selection plus 28 Medallion designs and 18 arrow variants, Gewitterradar can also be adapted much more closely to personal preferences.</p>
                   <p>V4.10 therefore changes more than Gewitterradar itself – it changes how Gewitterradar can be developed from now on.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.09 · 2026/09</div>
-                  <h3>Map views, fullscreen instruments & separate map window</h3>
+                  <h3>Map views, fullscreen instruments & separate map window</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>V4.09 adds the Standard, Large and Fullscreen map views with a per-device Default view, a separate storm-map window using the currently selected compass, movable fullscreen Compass and Medallion instruments with show/hide controls, a freely movable location pill with an adaptive menu for desktop, Android and iPad, the new 3D map-view selector with a responsive menu, and expanded Help &amp; Notes for map display, fullscreen controls and the separate map window.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.08 · 2026/09</div>
-                  <h3>Cluster resolution profiles & cluster navigation</h3>
+                  <h3>Cluster resolution profiles & cluster navigation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Cluster resolution was expanded with the profiles Early, Balanced, Late and Classic. The new cluster navigation provides a freely configurable session time with direct switching between the countdown and ∞ (Infinity) by clicking the status display. Classic, by contrast, uses the previous cluster display and resolution behavior from earlier versions. Help & Notes was updated consistently across all 19 supported languages.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.07 · 2026/09</div>
-                  <h3>Worldwide reference locations & saved places</h3>
+                  <h3>Worldwide reference locations & saved places</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Introduced worldwide place and postcode search with country grouping and ranking, a dedicated reference tracker, direct map focus, Blitzortung location-entity handoff, Local To-do saved places with reversible removal and recovery, duplicate-safe re-saving, network and firewall guidance, and refined location-menu behavior.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.06 · 2026/09</div>
-                  <h3>Unified product, help & premium refinement</h3>
+                  <h3>Unified product, help & premium refinement</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Unified the native integration and Dashboard delivery around one deterministic frontend, expanded About and Help to 15 languages plus 4 German dialect variants, added Recorder multi-device wildcard guidance and strengthened cross-device premium polish with real Android, iPad and iPad Pro acceptance.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.05 · 2026/09</div>
-                  <h3>Premium About Gewitterradar experience</h3>
+                  <h3>Premium About Gewitterradar experience</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Introduced the premium About Gewitterradar first-start onboarding and information experience, including the personal “Für Alkje” dedication and a Settings entry to reopen it, while preserving the proven lightning, radius, Recent/history and Home Assistant package behavior from V4.04.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.04 · 2026/09</div>
-                  <h3>HACS package staging</h3>
+                  <h3>HACS package staging</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>HACS now places the required Home Assistant helper package next to the installed card as app_gewitterradar_pkg.yaml. Users still copy or move that file manually to /config/packages/ because a HACS Dashboard repository cannot write outside its own www/community directory. Application logic and helper behavior remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.03 · 2026/09</div>
-                  <h3>HACS release asset priority fix</h3>
+                  <h3>HACS release asset priority fix</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Removed custom GitHub release assets from the HACS release so HACS falls through to the tagged dist tree and installs the card together with the complete assets directory. Application logic and helper behavior remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.02 · 2026/09</div>
-                  <h3>HACS packaging fix</h3>
+                  <h3>HACS packaging fix</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Corrected the HACS distribution so the card and all four external PNG assets are installed together. Card behavior, helper IDs, layouts and lightning-processing logic remain unchanged.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.01 · 2026/09</div>
-                  <h3>Asset optimization</h3>
+                  <h3>Asset optimization</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Conservatively right-sized and losslessly encoded the four external PNG assets for their actual interface render limits, retained generous HiDPI reserves, reduced the combined asset payload by about 61%, and refreshed asset cache keys without changing app behavior.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.00 · 2026/09</div>
-                  <h3>First stable release</h3>
+                  <h3>First stable release</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>First stable Gewitterradar release, consolidating live lightning visualization, three-zone storm assessment, responsive cross-device operation, 15 languages plus 4 German dialect variants, metric and imperial units, compass navigation, and 120-minute activity history into a hardened Home Assistant card.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.997 · 2026/08</div>
-                  <h3>Interface & usability refinement</h3>
+                  <h3>Interface & usability refinement</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Improved mobile layouts, responsive settings, radius controls, metric and imperial distance support, near-strike distance formatting, and direct radius editing from the map.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.996 · 2026/08</div>
-                  <h3>Release hardening</h3>
+                  <h3>Release hardening</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Removed obsolete diagnostic code while preserving iPad/WebKit safeguards, stable recent-activity updates, custom dropdown controls, and other regression-critical compatibility paths.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.994 · 2026/08</div>
-                  <h3>Stability, navigation & internationalization</h3>
+                  <h3>Stability, navigation & internationalization</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Stabilized cluster identity and browsing during live updates and zooming, refined individual-strike focus and compass behavior, added live data-source status, and expanded the interface toward the multilingual release line.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.993 · 2026/08</div>
-                  <h3>Pre-release feature consolidation</h3>
+                  <h3>Pre-release feature consolidation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Consolidated the three-radius model, aura and warning controls, 120-minute activity history, compass modes, reference-location selection, filtering, clustering, and responsive device layouts.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.98 · 2026/08</div>
-                  <h3>Core interface evolution</h3>
+                  <h3>Core interface evolution</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Established the mature Gewitterradar interface with live strike visualization, radius-based classification, recent activity, KPI panels, filters, clustering, and mobile/tablet adaptations.</p>
-                </article>
+                </div>
+                </details>
               </div>
               <div class="release-history-lang-panel" data-release-history-lang="de" hidden>
-                <!-- PERMANENTER RELEASE-HISTORY-VERTRAG: Dieses Planungsfeld beschreibt die NÄCHSTE ÖFFENTLICHE Version. Darunter ausschließlich veröffentlichte Releases; keine DEV/TEST-Iterationseinträge. -->
+                <!-- VERSIONSVERLAUF: Planung und frühere Versionen erhalten; keine einzelnen DEV-/TEST-Iterationen aufführen. -->
                 <details class="release-history-future" open>
                   <summary>
                     <div class="release-history-future-heading">
@@ -7598,95 +7991,162 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Verbesserte Prüfung und Fehlererkennung für gespeicherte Standorte und die zugehörige lokale To-do-Liste.</li>
                       <li>Einführung überwachter Standorte (Monitored Areas) mit eigenständiger Hintergrundüberwachung, optionaler Ereignisprotokollierung, Löschschutz sowie CSV- und PDF-Export.</li>
                       <li>Vereinheitlichung der mehrsprachigen Status-, Warn- und Fehlermeldungen über sämtliche Funktionen hinweg.</li>
+                      <li>Erweiterte Darstellung von Schnee, Nebel und gefrierendem Niederschlag mit orbitalen Untermenüs für Wetter-Icons.</li>
+                      <li>Dynamische Anordnung der Aura-Ringe in Eye Control sowie eine Geo-Sonde für Kartenkoordinaten, lokale Zeit, Mondphase und – bei geeigneten Daten – Ebbe und Flut.</li>
+                      <li>Zusätzliche Wetter- und Umweltinformationen zu UV-Strahlung, Luftqualität und Pollenbelastung.</li>
+                      <li>Fachlich fundierte Darstellung von Tornados, Superzellen, Hagel und weiteren schweren Unwettern.</li>
+                      <li>ISS-Position und Flugbahn mit möglichen Sichtbarkeitszeiten für den ausgewählten Beobachtungsstandort.</li>
+                      <li>MapLibre als zusätzliche Kartenengine mit gemeinsam nutzbaren Wetterebenen und Bedienelementen.</li>
+                      <li>Erweiterte Blitzprotokollierung und konfigurierbare Alarmierung für überwachte Standorte.</li>
                     </ul>
                   </div>
                 </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.11 · 2026/11</div><h3>GewitterRadar PRO – Vom Gewitterradar zur Wetterplattform</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
+                  <p>Version 4.11 ist einer der größten Entwicklungsschritte von GewitterRadar. Die ursprüngliche Visualisierung von Blitzen und Gewittern bleibt das Herzstück der eigenständig nutzbaren Basisversion. Mit der optionalen Erweiterung WeatherRouter entsteht <strong>GewitterRadar PRO</strong> – eine modulare und individuell konfigurierbare Wetterplattform.</p>
+                  <p><strong>WeatherRouter – Wetterinformationen intelligent bündeln:</strong> WeatherRouter entstand aus dem Bedarf, unterschiedliche Wetterdienste über einen zentralen, eigenständig arbeitenden Router bereitzustellen. Er bewertet die Verfügbarkeit, räumliche Abdeckung, Aktualität und Eignung der Quellen und liefert die Informationen über gemeinsame Schnittstellen. GewitterRadar konzentriert sich auf ihre Darstellung.</p>
+                  <p><strong>Neue Wetterebenen und Analysen:</strong> Niederschlagsradar von DWD und OPERA, optionale NASA-Satellitenschätzungen, Windpfeile und animierte Strömungen, Temperatur- und Wolkenebenen sowie Hoch- und Tiefdruckgebiete, Isobaren und Wetterfronten. Verfügbare Ebenen können schrittweise erscheinen und einzeln gesteuert werden.</p>
+                  <p><strong>Eye Hub und Eye Control:</strong> Der zentrale Eye Hub vereint frei belegbare hochauflösende Wetter-Icons. Eye Control verwaltet Slots, Gruppierung, einzeln schaltbare Auren und die Darstellung. Hochwertige Long-Press-Menüs ermöglichen detaillierte Einstellungen. In PRO lassen sich Gewitter auf der Karte ausblenden, während Überwachung, Warnlogik und Historie weiterlaufen; in der Basisversion bleiben sie sichtbar.</p>
+                  <p><strong>Personalisierung und Bedienkomfort:</strong> Settings Vault, Benutzer- und Geräteprofile, dauerhaft gespeicherte Positionen, Icon-Belegungen, Farben und Wetterpräferenzen. Dazu kommen Verbesserungen für Desktop, iPad und Android sowie erweiterte Hilfen, Diagnosen und alle 19 Sprachvarianten. Ein eigener Begrüßungsdialog stellt die optionalen PRO-Funktionen vor, wenn WeatherRouter nicht installiert ist.</p>
+                  <p><strong>Entwicklungsleistung:</strong> Mehr als sieben Wochen intensiver Entwicklungsarbeit an GewitterRadar und WeatherRouter mit zahlreichen DEV-Iterationen, Leistungsoptimierungen, Rückmeldungen aus Gerätetests und wiederholten Korrekturen schufen die Grundlage für kommende Wetter- und Umweltmodule.</p>
+                  </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.10 · 2026/09</div>
-                  <h3>Vom Monolithen zum modularen Gewitterradar</h3>
+                  <h3>Vom Monolithen zum modularen Gewitterradar</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>In nur wenigen Monaten ist Gewitterradar funktional enorm gewachsen. V4.10 zieht daraus unter der Haube die Konsequenz: Aus dem schnell gewachsenen Frontend wurde eine klar gegliederte modulare Architektur mit eigenständigen Funktionsbausteinen. Der bisherige Monolith wurde dabei in <strong>23 klar abgegrenzte Module</strong> aufgeteilt. Jedes Modul besitzt eine eigene Identität und Versionierung und kann dadurch gezielter weiterentwickelt, geprüft und diagnostiziert werden. Änderungen an einzelnen Bereichen lassen sich so wesentlich sauberer durchführen, ohne für jede Anpassung große Teile der Anwendung gleichzeitig anfassen zu müssen.</p>
                   <p><strong>Weitere Verbesserungen an Oberfläche und Bedienung:</strong> Kompass und Medaillon wurden zu eigenständigen Instrumenten mit eigener Auswahl, neuen Designs und verbesserten Bedienmöglichkeiten. Beide lassen sich im Vollbild frei positionieren und in ihrer Größe anpassen. Einstellungen und Diagnosebereiche wurden übersichtlicher strukturiert, die Bedienung auf Desktop, iPad und Android weiter vereinheitlicht und zahlreiche kleinere Details – von Mouse-over-Texten über Pop-ups bis zu Instrumentsteuerungen – überarbeitet. Mit der erweiterten Kompassauswahl sowie 28 Medaillon-Designs und 18 Pfeilvarianten lässt sich Gewitterradar zudem stärker an den eigenen Geschmack anpassen.</p>
                   <p>V4.10 verändert damit nicht nur Gewitterradar – es verändert, wie Gewitterradar künftig weiterentwickelt werden kann.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.09 · 2026/09</div>
-                  <h3>Kartenansichten, Vollbild-Instrumente &amp; separates Kartenfenster</h3>
+                  <h3>Kartenansichten, Vollbild-Instrumente &amp; separates Kartenfenster</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>V4.09 ergänzt die Kartenansichten Standard, Groß und Vollbild mit gerätespezifischer Standardansicht, ein separates Gewitter-Kartenfenster mit dem aktuell ausgewählten Kompass, frei verschiebbare und ein-/ausblendbare Vollbild-Instrumente für Kompass und Medaillon, die frei bewegliche Standort-Pille mit adaptivem Standortmenü für Desktop, Android und iPad, den neuen 3D-Layer-Schalter mit responsivem Menü für die Kartenansicht sowie erweiterte Hilfe &amp; Hinweise zu Kartendarstellung, Vollbild-Bedienung und separatem Kartenfenster.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.08 · 2026/09</div>
-                  <h3>Cluster-Auflösungsprofile & Cluster-Navigation</h3>
+                  <h3>Cluster-Auflösungsprofile & Cluster-Navigation</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die Cluster-Auflösung wurde um die Profile Früh, Ausgewogen, Spät und Klassisch erweitert. Die neue Cluster-Navigation besitzt eine frei wählbare Sitzungszeit mit direktem Wechsel zwischen Countdown und ∞ (Infinity) durch einen Klick in der Statusanzeige. Klassisch verwendet hingegen die bisherige Darstellung und Auflösung der Cluster aus früheren Versionen. Hilfe & Hinweise wurde einheitlich in allen 19 unterstützten Sprachen ergänzt.</p>
-                </article>
+                </div>
+                </details>
 
-                <article class="release-history-entry">
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.07 · 2026/09</div>
-                  <h3>Weltweite Referenzstandorte & gespeicherte Orte</h3>
+                  <h3>Weltweite Referenzstandorte & gespeicherte Orte</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Ergänzt wurden die weltweite Orts- und PLZ-Suche mit Ländergruppierung und Ranking, ein eigener Referenztracker, der direkte Kartenfokus, die Übergabe an Blitzortung über eine Standort-Entität, lokal gespeicherte Orte über Local To-do mit reversiblem Entfernen und Wiederherstellen, dublettensicheres erneutes Speichern, Netzwerk- und Firewall-Hinweise sowie ein verfeinertes Verhalten der Standortwahl.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.06 · 2026/09</div>
-                  <h3>Vereinheitlichung, Hilfe & Premium-Feinschliff</h3>
+                  <h3>Vereinheitlichung, Hilfe & Premium-Feinschliff</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Native Integration und Dashboard-Auslieferung wurden auf ein deterministisches Frontend vereinheitlicht. „Über Gewitterradar“ und „Hilfe & Hinweise“ wurden auf 15 Sprachen plus 4 deutsche Dialektvarianten erweitert, die Recorder-Hinweise für mehrere Geräte ergänzt und die Premium-Darstellung geräteübergreifend mit realen Android-, iPad- und iPad-Pro-Tests abgesichert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.05 · 2026/09</div>
-                  <h3>Premium-Erlebnis „Über Gewitterradar“</h3>
+                  <h3>Premium-Erlebnis „Über Gewitterradar“</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Einführung der hochwertigen „Über Gewitterradar“-Erststart- und Informationsansicht einschließlich der persönlichen Widmung „Für Alkje“ sowie eines Einstellungs-Eintrags zum erneuten Öffnen. Die bewährte Blitz-, Radien-, Verlauf-/Historien- und Home-Assistant-Paketlogik aus V4.04 blieb erhalten.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.04 · 2026/09</div>
-                  <h3>Bereitstellung des HACS-Pakets</h3>
+                  <h3>Bereitstellung des HACS-Pakets</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>HACS legt das benötigte Home-Assistant-Helferpaket nun neben der installierten Karte als app_gewitterradar_pkg.yaml ab. Da ein HACS-Dashboard-Repository nicht außerhalb seines eigenen www/community-Verzeichnisses schreiben darf, wird die Datei weiterhin manuell nach /config/packages/ kopiert oder verschoben. Anwendungslogik und Helferverhalten bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.03 · 2026/09</div>
-                  <h3>Korrektur der HACS-Release-Priorität</h3>
+                  <h3>Korrektur der HACS-Release-Priorität</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Eigene GitHub-Release-Artefakte wurden aus dem HACS-Release entfernt, damit HACS auf den markierten dist-Baum zurückfällt und die Karte zusammen mit dem vollständigen assets-Verzeichnis installiert. Anwendungslogik und Helferverhalten bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.02 · 2026/09</div>
-                  <h3>Korrektur der HACS-Paketierung</h3>
+                  <h3>Korrektur der HACS-Paketierung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die HACS-Auslieferung wurde korrigiert, sodass die Karte und alle vier externen PNG-Dateien gemeinsam installiert werden. Kartenverhalten, Helfer-IDs, Layouts und Blitzverarbeitung bleiben unverändert.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.01 · 2026/09</div>
-                  <h3>Optimierung der Bilddateien</h3>
+                  <h3>Optimierung der Bilddateien</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Die vier externen PNG-Dateien wurden konservativ auf ihre tatsächlichen Darstellungsgrenzen abgestimmt und verlustfrei kodiert. Großzügige HiDPI-Reserven blieben erhalten, die gemeinsame Dateigröße sank um etwa 61 Prozent und die Cache-Kennungen wurden erneuert, ohne das Verhalten der Anwendung zu verändern.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V4.00 · 2026/09</div>
-                  <h3>Erste stabile Veröffentlichung</h3>
+                  <h3>Erste stabile Veröffentlichung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Erste stabile Gewitterradar-Version mit Live-Blitzdarstellung, dreistufiger Gewitterbewertung, geräteübergreifend anpassbarer Oberfläche, 15 Sprachen plus 4 deutschen Dialektvarianten, metrischen und imperialen Einheiten, Kompassnavigation und 120-Minuten-Aktivitätsverlauf.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.997 · 2026/08</div>
-                  <h3>Oberflächen- & Bedienungsfeinschliff</h3>
+                  <h3>Oberflächen- & Bedienungsfeinschliff</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Verbesserte Mobilansichten, anpassbare Einstellungen, Radiensteuerung, metrische und imperiale Entfernungsangaben, präzisere Anzeige sehr naher Blitze sowie direkte Bearbeitung der Radien aus der Karte.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.996 · 2026/08</div>
-                  <h3>Stabilisierung für die Veröffentlichung</h3>
+                  <h3>Stabilisierung für die Veröffentlichung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Veralteter Diagnosecode wurde entfernt, während iPad-/WebKit-Schutzmaßnahmen, stabile Aktualisierungen der jüngsten Aktivität, eigene Auswahlfelder und weitere regressionskritische Kompatibilitätspfade erhalten blieben.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.994 · 2026/08</div>
-                  <h3>Stabilität, Navigation & Internationalisierung</h3>
+                  <h3>Stabilität, Navigation & Internationalisierung</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Cluster-Identität und Navigation bei Live-Aktualisierungen und Zoom wurden stabilisiert, der Fokus auf einzelne Blitze und das Kompassverhalten verfeinert, der Status der Live-Datenquelle ergänzt und die Oberfläche in Richtung der mehrsprachigen Veröffentlichung ausgebaut.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.993 · 2026/08</div>
-                  <h3>Bündelung der Vorab-Funktionen</h3>
+                  <h3>Bündelung der Vorab-Funktionen</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Zusammenführung des Drei-Radien-Modells, der Aura- und Warnsteuerung, des 120-Minuten-Aktivitätsverlaufs, der Kompassmodi, der Referenzstandortwahl, Filterung, Gruppierung und anpassbaren Geräteansichten.</p>
-                </article>
-                <article class="release-history-entry">
+                </div>
+                </details>
+                <details class="release-history-entry release-history-collapsible">
+                  <summary><div>
                   <div class="release-history-version">V3.98 · 2026/08</div>
-                  <h3>Weiterentwicklung der Kernoberfläche</h3>
+                  <h3>Weiterentwicklung der Kernoberfläche</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content">
                   <p>Aufbau der ausgereiften Gewitterradar-Oberfläche mit Live-Blitzdarstellung, radienbasierter Klassifizierung, jüngster Aktivität, Kennzahlenfeldern, Filtern, Gruppierung sowie Mobil- und Tablet-Anpassungen.</p>
-                </article>
+                </div>
+                </details>
               </div>
             </div>
           </section>
@@ -7704,6 +8164,10 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       this._applyCompassDesign(this._persistedCompassDesign || 'C');
       this._applyStaticTranslations();
       this._bindControls();
+      this._mountWeatherRouterSettings?.();
+      this._mountWeatherRadarSettings?.();
+      this._mountWeatherDisplaySettings?.();
+      this._mountWeatherEngineDiagnostics?.();
       this._initMap();
       this._setupOrientationCapabilityProbe();
     },

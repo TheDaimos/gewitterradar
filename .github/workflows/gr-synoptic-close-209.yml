@@ -1,0 +1,22 @@
+name: GR Synoptik Hi-Res Close - targeted DEV check
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - '.github/workflows/gr-synoptic-close-209.yml'
+      - 'frontend/modules/weather/synoptic-display.js'
+      - 'tests/synoptic-close-icon-411209.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  close-gesture-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Round close medallion, original asset and touch-event wiring
+        run: node --test tests/synoptic-close-icon-411209.test.mjs

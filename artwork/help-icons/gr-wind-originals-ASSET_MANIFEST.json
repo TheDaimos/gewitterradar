@@ -1,0 +1,98 @@
+{
+  "task": "GR-WIND-QUICKTOGGLE-01",
+  "originals": [
+    {
+      "source_filename": "04_Animierte_Pfeile_Premium_Transparent.png",
+      "master": "artwork/help-icons/hires/gr-wind-animation-toggle-original-master.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "4d664316ba1ef49d60330cbcff23de84e4ca03ee558deb891401ca10da0f0a26",
+      "derivatives": [
+        {
+          "file": "assets/gr-wind-animation-toggle-premium-v1-136.webp",
+          "sha256": "cc3488a1fd4054585d4ce77b01a68467c3a7d93e0a8787fdace1949fca9f205a",
+          "protected": true,
+          "dimensions": [
+            136,
+            136
+          ],
+          "bytes": 28064
+        },
+        {
+          "file": "assets/gr-wind-animation-toggle-premium-v1-272.webp",
+          "sha256": "442dc4da797d12b756ee1dbf9bd2b18e5c09e1ec829ab0bdc08fef2d72b69b2a",
+          "protected": true,
+          "dimensions": [
+            272,
+            272
+          ],
+          "bytes": 86378
+        }
+      ]
+    },
+    {
+      "source_filename": "02_Einstellungen_Premium_Transparent.png",
+      "master": "artwork/help-icons/hires/gr-wind-settings-original-master.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256": "e6ff489587c5ce3770e036997824b417868c523bdf1ee526ad9c55754d5a76d9",
+      "derivatives": [
+        {
+          "file": "assets/gr-wind-settings-premium-v2-136.webp",
+          "sha256": "08635710bd6d348579b2d5ee91c1fcd664a2f7e5faedad622877878b502063fd",
+          "protected": true,
+          "dimensions": [
+            136,
+            136
+          ],
+          "bytes": 29276
+        },
+        {
+          "file": "assets/gr-wind-settings-premium-v2-272.webp",
+          "sha256": "452015c03841ed8c811d7982795b6e67a8427142e038b86c442f06f5aa68b3e4",
+          "protected": true,
+          "dimensions": [
+            272,
+            272
+          ],
+          "bytes": 92478
+        }
+      ]
+    },
+    {
+      "source_filename": "01_Windfahne_Premium_Transparent.png",
+      "master": "artwork/help-icons/hires/gr-wind-barb-original-master.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256": "46030087a5490b60d56655f0faf0ac3fd6b548242877f08ffcc3c25a80ac1bbc",
+      "derivatives": [
+        {
+          "file": "assets/gr-wind-barb-premium-v2-136.webp",
+          "sha256": "9fd8a714b6bd8afbdf4d68a5b247d0720dce11772c694bc9b6e4b8b1080f882f",
+          "protected": true,
+          "dimensions": [
+            136,
+            136
+          ],
+          "bytes": 30640
+        },
+        {
+          "file": "assets/gr-wind-barb-premium-v2-272.webp",
+          "sha256": "9599fbb13308b0949959c4f9a78a4e9c7ec6db691d28cc69a075cdeb27dbb61c",
+          "protected": true,
+          "dimensions": [
+            272,
+            272
+          ],
+          "bytes": 97610
+        }
+      ]
+    }
+  ]
+}

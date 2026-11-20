@@ -15,7 +15,13 @@ def test_manifest_is_valid_and_single_entry() -> None:
 
     assert manifest["domain"] == "gewitterradar"
     build_info = (INTEGRATION / "build_info.py").read_text(encoding="utf-8")
-    expected = "0.22.0" if 'BUILD_VERSION = "4.10"' in build_info else "0.21.0"
+    release_file = (ROOT / "frontend" / "version.js").read_text(encoding="utf-8")
+    import re
+    release = re.search(r'version:"([^"]+)"', release_file)
+    integration = re.search(r'integrationVersion:"([^"]+)"', release_file)
+    assert release is not None and integration is not None
+    assert f'BUILD_VERSION = "{release.group(1)}"' in build_info
+    expected = integration.group(1)
     assert manifest["version"] == expected
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
@@ -28,6 +34,7 @@ def test_manifest_is_valid_and_single_entry() -> None:
         "input_select",
     ]
     assert manifest["requirements"] == []
+    assert manifest["dependencies"] == ["http"]
 
 
 def test_python_sources_parse() -> None:
@@ -51,6 +58,8 @@ def test_translation_files_are_valid_and_complete() -> None:
         assert translations["title"] == "Gewitterradar"
         assert "user" in translations["config"]["step"]
         assert "single_instance_allowed" in translations["config"]["abort"]
+        assert "init" in translations["options"]["step"]
+        assert "show_sidebar_panel" in translations["options"]["step"]["init"]["data"]
 
 
 def test_native_entity_platforms_exist() -> None:

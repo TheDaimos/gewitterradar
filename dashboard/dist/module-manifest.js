@@ -1,9 +1,10 @@
-import { registerModule } from "./modules/core/registry.js?v=41002r13";
-export const APPLICATION_META=Object.freeze({id:"gewitterradar",version:"4.10",displayVersion:"V4.10",build:"V4.10-RELEASE-2026-09-30",runtimeRevision:"41002r13",moduleSetId:"D40A-5E9B"});
+import { APPLICATION_RELEASE } from "./version.js?v=411249r1";
+import { registerModule } from "./modules/core/registry.js?v=41108r1";
+export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.46",
+    "version": "1.2.252",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -15,7 +16,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.base-context",
-    "version": "1.0.7",
+    "version": "1.0.11",
     "group": "Kern",
     "function": "Konstanten & gemeinsame Helfer",
     "subfunctions": [
@@ -30,31 +31,31 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.registry",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Modulregister",
     "subfunctions": [
       "Selbstregistrierung",
-      "Soll/Ist-Prüfung",
+      "Soll/Ist-PrÃ¼fung",
       "Diagnoseexport"
     ],
     "file": "modules/core/registry.js"
   },
   {
     "id": "core.runtime",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Modul-Laufzeit",
     "subfunctions": [
       "Selbstregistrierung",
       "Methodeninstallation",
-      "Abhängigkeitsübergabe"
+      "AbhÃ¤ngigkeitsÃ¼bergabe"
     ],
     "file": "modules/core/runtime.js"
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.2",
+    "version": "1.0.50",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -66,12 +67,12 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "fullscreen.map-display",
-    "version": "1.0.30",
+    "version": "1.0.78",
     "group": "Vollbild",
     "function": "Kartendarstellung",
     "subfunctions": [
       "Standard",
-      "Groß",
+      "GroÃŸ",
       "Vollbild",
       "separates Fenster",
       "Instrumentpositionen",
@@ -84,8 +85,8 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.scroll-guard",
-    "version": "1.0.1",
-    "group": "Oberfläche",
+    "version": "1.0.2",
+    "group": "OberflÃ¤che",
     "function": "Scrollschutz",
     "subfunctions": [
       "Home-Assistant-Seitenleiste",
@@ -97,17 +98,32 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.skeleton",
-    "version": "1.1.15",
-    "group": "Oberfläche",
-    "function": "Grundgerüst",
+    "version": "1.1.52",
+    "group": "OberflÃ¤che",
+    "function": "GrundgerÃ¼st",
     "subfunctions": [
       "HTML",
       "CSS",
       "Dialoge",
-      "Menüstruktur",
+      "MenÃ¼struktur",
       "skalierbare Vollbild-Instrumente"
     ],
     "file": "modules/ui/skeleton.js"
+  },
+  {
+    "id": "ui.project-hub",
+    "version": "1.1.19",
+    "group": "OberflÃ¤che",
+    "function": "Daimos Project Hub",
+    "subfunctions": [
+      "Signatur-Einstieg",
+      "Haupttitel-Einstieg",
+      "Host-Popup",
+      "Health-Probe",
+      "Online-/Offline-Status",
+      "Lokale RC14-Runtime"
+    ],
+    "file": "modules/ui/project-hub.js"
   },
   {
     "id": "instruments.compass-scale",
@@ -122,24 +138,24 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.controls",
-    "version": "1.1.5",
-    "group": "Oberfläche",
+    "version": "1.1.69",
+    "group": "OberflÃ¤che",
     "function": "Bedienbindungen",
     "subfunctions": [
       "Klick",
       "Touch",
       "Formulare",
-      "Menüaktionen"
+      "MenÃ¼aktionen"
     ],
     "file": "modules/ui/controls.js"
   },
   {
     "id": "ui.i18n-settings",
-    "version": "1.3.3",
-    "group": "Oberfläche",
+    "version": "1.3.61",
+    "group": "OberflÃ¤che",
     "function": "Sprache & Einstellungen",
     "subfunctions": [
-      "Übersetzung",
+      "Ãœbersetzung",
       "About",
       "Einstellungen",
       "Hilfetexte"
@@ -147,8 +163,20 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/ui/i18n-settings.js"
   },
   {
-    "id": "core.source-status",
+    "id": "core.update-watch",
     "version": "1.0.1",
+    "group": "Kern",
+    "function": "Frontend-Aktualisierung",
+    "subfunctions": [
+      "Installierten Stand prÃ¼fen",
+      "Aktualisierungshinweis",
+      "Kontrollierte Vollneuladung"
+    ],
+    "file": "modules/core/update-watch.js"
+  },
+  {
+    "id": "core.source-status",
+    "version": "1.0.2",
     "group": "Kern",
     "function": "Datenquellenstatus",
     "subfunctions": [
@@ -159,13 +187,13 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "instruments.compass-selector",
-    "version": "1.1.0",
+    "version": "1.1.40",
     "group": "Instrumente",
     "function": "Kompassauswahl",
     "subfunctions": [
       "Designauswahl",
       "Popup",
-      "Aura-unabhängige Designauswahl"
+      "Aura-unabhÃ¤ngige Designauswahl"
     ],
     "file": "modules/instruments/compass-selector.js"
   },
@@ -188,7 +216,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "diagnostics.module-view",
-    "version": "1.3.5",
+    "version": "1.3.10",
     "group": "Diagnose",
     "function": "Module & Versionen",
     "subfunctions": [
@@ -202,8 +230,55 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/diagnostics/module-view.js"
   },
   {
+    "id": "diagnostics.data-sources",
+    "version": "0.1.5",
+    "group": "Datenquellen & Verbindungen",
+    "function": "Datenquellen â€“ Ãœbersicht und Diagnose",
+    "subfunctions": [
+      "Blitzortung-Untermodul",
+      "WeatherRouter-Status",
+      "Standorte je Konfiguration",
+      "Nur-Lesen-Einstellungen",
+      "Aktualisieren",
+      "JSON herunterladen"
+    ],
+    "file": "modules/diagnostics/data-sources.js"
+  },
+  {
+    "id": "sources.blitzortung",
+    "version": "0.1.0",
+    "group": "Datenquellen & Verbindungen",
+    "function": "Blitzortung.org â€“ Integration und Standorte",
+    "subfunctions": [
+      "Integrationsstatus",
+      "Mehrere Standorte",
+      "Tracker-Kopplung",
+      "Einstellungen (Nur Lesen)",
+      "Sensorstatus",
+      "Diagnoseexport"
+    ],
+    "file": "modules/sources/blitzortung.js"
+  },
+  {
+    "id": "diagnostics.map",
+    "version": "1.0.9",
+    "group": "Diagnose",
+    "function": "Kartendiagnose",
+    "subfunctions": [
+      "Mobile Live-Diagnose",
+      "Pointer- und Touch-Protokoll",
+      "Leaflet-Zustand",
+      "Gesten-Recovery",
+      "Ereignisringpuffer",
+      "JSON kopieren",
+      "JSON herunterladen",
+      "Minimierbare Diagnose"
+    ],
+    "file": "modules/diagnostics/map-diagnostics.js"
+  },
+  {
     "id": "diagnostics.cockpit",
-    "version": "1.5.1",
+    "version": "1.5.42",
     "group": "Diagnose",
     "function": "Diagnose & Kalibrierung",
     "subfunctions": [
@@ -219,6 +294,22 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/diagnostics/cockpit.js"
   },
   {
+    "id": "diagnostics.raster-lab",
+    "version": "0.1.58",
+    "group": "Diagnose",
+    "function": "Raster-Labor",
+    "subfunctions": [
+      "Nummerierte Layerauswahl",
+      "Live-Vorschau",
+      "Zoomprofile",
+      "Vergleich mit Referenz",
+      "Zwischenablage",
+      "JSON-Export",
+      "Sicherer RÃ¼ckfall"
+    ],
+    "file": "modules/diagnostics/raster-lab.js"
+  },
+  {
     "id": "instruments.compass-design",
     "version": "1.0.1",
     "group": "Instrumente",
@@ -231,7 +322,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "location.radii-map",
-    "version": "1.0.3",
+    "version": "1.0.28",
     "group": "Standort & Radien",
     "function": "Standort, Radien & Kartenstart",
     "subfunctions": [
@@ -244,19 +335,19 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "map.strikes-warnings",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "group": "Karte",
     "function": "Blitze & Warnungen",
     "subfunctions": [
       "Blitzaufnahme",
       "Warnanimation",
-      "Geräteorientierung"
+      "GerÃ¤teorientierung"
     ],
     "file": "modules/map/strikes-warnings.js"
   },
   {
     "id": "map.clusters-recent",
-    "version": "1.0.3",
+    "version": "1.0.48",
     "group": "Karte",
     "function": "Cluster & letzte Blitze",
     "subfunctions": [
@@ -269,8 +360,8 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "ui.render",
-    "version": "1.0.2",
-    "group": "Oberfläche",
+    "version": "1.0.4",
+    "group": "OberflÃ¤che",
     "function": "Hauptrendering",
     "subfunctions": [
       "Status",
@@ -293,6 +384,104 @@ export const EXPECTED_MODULES=Object.freeze([
     "file": "modules/instruments/compass.js"
   },
   {
+    "id": "weather.consumer-client",
+    "version": "1.2.21",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter Consumer V1/V2",
+    "subfunctions": [
+      "Discovery",
+      "Capability-Katalog",
+      "Resolve",
+      "Quellenstatus",
+      "Diagnose-Trace",
+      "Weather Engine Diagnose"
+    ],
+    "file": "modules/weather/consumer-client.js"
+  },
+  {
+    "id": "weather.precipitation-layer",
+    "version": "1.3.70",
+    "group": "Weather-Engine",
+    "function": "Niederschlags-Kartenebene",
+    "subfunctions": [
+      "Raster-Kacheladapter",
+      "Web-Mercator-BBOX",
+      "Quelle & AktualitÃ¤t",
+      "Abdeckung",
+      "Darstellungslegende",
+      "Darstellungsdeckkraft",
+      "FlÃ¤chenglÃ¤ttung",
+      "Anfragebegrenzung",
+      "RÃ¤umlicher Vorladepuffer",
+      "Niederschlags-Zeitplayer",
+      "Frame-Doppelpuffer",
+      "Zeitachse ein/aus",
+      "verschiebbare Zeitachse",
+      "Ressourcenschutz"
+    ],
+    "file": "modules/weather/precipitation-layer.js"
+  },
+  {
+    "id": "weather.layer-menu",
+    "version": "1.1.24",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter Layer Hub",
+    "subfunctions": [
+      "Consumer-V1-Erkennung",
+      "KartenfÃ¤higkeiten",
+      "Schnellzugriff",
+      "Fachbereiche",
+      "Niederschlags-Layer",
+      "Zeitachse",
+      "scrollbares MenÃ¼",
+      "stabile Desktop-Navigation",
+      "Status & RÃ¼cknavigation"
+    ],
+    "file": "modules/weather/layer-menu.js"
+  },
+  {
+    "id": "weather.display-menu",
+    "version": "0.4.86",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter-Darstellung",
+    "subfunctions": [
+      "gemeinsamer Darstellungszustand",
+      "Offline-Teaser",
+      "Augen-Bedienelement",
+      "schwebendes KartenmenÃ¼",
+      "Pointer-Drag",
+      "Positionsspeicherung",
+      "Niederschlagsstile",
+      "Legendenmodus",
+      "finale Augenassets",
+      "Leaflet-sichere Rasterstile",
+      "flÃ¤chige GlÃ¤ttung",
+      "Hotspot-Erhalt",
+      "Deckkraft im Kartenmenü",
+      "Deckkraft je Darstellungsfamilie",
+      "entkoppelter UI-Zustand",
+      "Layer-Schnellzugriff"
+    ],
+    "file": "modules/weather/display-menu.js"
+  },
+  {
+    "id": "weather.legend-overlay",
+    "version": "0.1.47",
+    "group": "Weather-Engine",
+    "function": "WeatherRouter-Darstellungslegende",
+    "subfunctions": [
+      "generisches Legendenmodell",
+      "Auto/Ein/Aus",
+      "WR-Metadaten",
+      "Bildlegenden",
+      "strukturierte Skalen",
+      "Kartenoverlay",
+      "mehrere aktive Legenden",
+      "sichere Kartenposition"
+    ],
+    "file": "modules/weather/legend-overlay.js"
+  },
+  {
     "id": "history.chart",
     "version": "1.0.1",
     "group": "Verlauf",
@@ -302,6 +491,48 @@ export const EXPECTED_MODULES=Object.freeze([
       "120-Minuten-Diagramm"
     ],
     "file": "modules/history/chart.js"
+  },
+  {
+    "id": "weather.wind-display",
+    "version": "0.4.54",
+    "group": "Weather-Engine",
+    "function": "Konfigurierbare WR-Winddarstellung",
+    "subfunctions": [
+      "Windfahnen",
+      "Richtungspfeile",
+      "numerisches Windfeld",
+      "Windgeschwindigkeits-FarbflÃ¤che",
+      "persistente Symbolfarben",
+      "Premium-Windlegende"
+    ],
+    "file": "modules/weather/wind-display.js"
+  },
+  {
+    "id": "weather.temperature-display",
+    "version": "0.1.47",
+    "group": "Weather-Engine",
+    "function": "Weltweite Temperatur und thermische Advektion",
+    "subfunctions": [
+      "Temperatur 2 m",
+      "native Temperaturwerte",
+      "Advektion 850 hPa",
+      "GeoPointContext",
+      "Premium-Kartenschalter"
+    ],
+    "file": "modules/weather/temperature-display.js"
+  },
+  {
+    "id": "weather.synoptic-display",
+    "version": "0.1.46",
+    "group": "Weather-Engine",
+    "function": "Synoptik H/T und Isobaren",
+    "subfunctions": [
+      "WR V2 H/T",
+      "WR V2 Isobaren",
+      "geografische Vektordarstellung",
+      "Premium-Konfiguration"
+    ],
+    "file": "modules/weather/synoptic-display.js"
   }
 ].map(item=>Object.freeze(item)));
-export const MODULE_META=Object.freeze({id:"core.manifest",version:"1.2.46",group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);
+export const MODULE_META=Object.freeze({id:"core.manifest",version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version,group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

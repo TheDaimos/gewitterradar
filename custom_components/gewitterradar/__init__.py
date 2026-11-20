@@ -9,18 +9,21 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components import frontend, websocket_api
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, ServiceCall, callback, valid_entity_id
 from homeassistant.exceptions import ConfigEntryError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     BLITZORTUNG_DOMAIN,
     BLITZORTUNG_LOCATION_ENTITY_KEY,
+    BOOLEAN_OPTION_KEYS,
     COMPASS_DESIGN_OPTIONS,
     CONF_COMPASS_DESIGN,
     CONF_DANGER_RADIUS,
@@ -30,6 +33,7 @@ from .const import (
     CONF_LANGUAGE_INITIALIZED,
     CONF_OBSERVATION_RADIUS,
     CONF_REFERENCE_LOCATION,
+    CONF_SHOW_SIDEBAR_PANEL,
     CONF_STORM_RADIUS,
     CONF_TRACKER_LATITUDE,
     CONF_TRACKER_LONGITUDE,
@@ -43,6 +47,7 @@ from .const import (
     LEGACY_IMPORT_VERSION,
     LOCATION_DISCOVERY_DOMAINS,
     LOCATION_DOMAINS,
+    NAME,
     NUMBER_LIMITS,
     PLATFORMS,
     SERVICE_FIELD_LATITUDE,
@@ -50,7 +55,10 @@ from .const import (
     SERVICE_FIELD_NAME,
     SERVICE_SET_REFERENCE_COORDINATES,
     SIGNAL_REFERENCE_COORDINATES_UPDATED,
-    SWITCH_KEYS,
+    SIDEBAR_PANEL_ICON,
+    SIDEBAR_PANEL_MODULE_URL,
+    SIDEBAR_PANEL_URL_PATH,
+    SIDEBAR_PANEL_WEB_COMPONENT,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -74,6 +82,53 @@ _SET_REFERENCE_COORDINATES_SCHEMA = vol.Schema(
         vol.Optional(SERVICE_FIELD_NAME, default=DEFAULT_TRACKER_NAME): cv.string,
     }
 )
+
+
+async def _async_register_sidebar_panel(hass: HomeAssistant) -> None:
+    """Expose the normal Gewitterradar card directly in the HA sidebar."""
+    if frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH):
+        return
+    frontend.async_register_built_in_panel(
+        hass,
+        component_name="custom",
+        sidebar_title=NAME,
+        sidebar_icon=SIDEBAR_PANEL_ICON,
+        frontend_url_path=SIDEBAR_PANEL_URL_PATH,
+        config={
+            "_panel_custom": {
+                "name": SIDEBAR_PANEL_WEB_COMPONENT,
+                "embed_iframe": False,
+                "trust_external": False,
+                "handle_safe_area": False,
+                "module_url": SIDEBAR_PANEL_MODULE_URL,
+            }
+        },
+        require_admin=False,
+    )
+
+
+@callback
+def _async_remove_sidebar_panel(hass: HomeAssistant) -> None:
+    """Remove the Gewitterradar sidebar panel if it is registered."""
+    if frontend.async_panel_exists(hass, SIDEBAR_PANEL_URL_PATH):
+        frontend.async_remove_panel(
+            hass,
+            SIDEBAR_PANEL_URL_PATH,
+            warn_if_unknown=False,
+        )
+
+
+@callback
+def _async_remove_legacy_sidebar_switch_entity(hass: HomeAssistant) -> None:
+    """Remove the obsolete 0.24 sidebar switch registry record."""
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id(
+        "switch",
+        DOMAIN,
+        CONF_SHOW_SIDEBAR_PANEL,
+    )
+    if entity_id is not None:
+        registry.async_remove(entity_id)
 
 
 def _validate_options(options: dict[str, Any]) -> None:
@@ -109,7 +164,7 @@ def _validate_options(options: dict[str, Any]) -> None:
             "<= observation_radius"
         )
 
-    for key in SWITCH_KEYS:
+    for key in BOOLEAN_OPTION_KEYS:
         if not isinstance(options[key], bool):
             raise ValueError(f"Invalid {key}: {options[key]!r}")
 
@@ -172,7 +227,7 @@ def _legacy_value(hass: HomeAssistant, key: str) -> Any:
             return _NO_LEGACY_VALUE
         return int(value) if value.is_integer() else value
 
-    if key in SWITCH_KEYS:
+    if key in BOOLEAN_OPTION_KEYS:
         if raw == "on":
             return True
         if raw == "off":
@@ -321,6 +376,90 @@ def _loaded_runtime(hass: HomeAssistant) -> GewitterradarRuntimeData:
     raise ServiceValidationError("Gewitterradar is not loaded")
 
 
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({"type": "gewitterradar/data_sources"})
+@callback
+def _ws_data_sources(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Return read-only, per-entry Blitzortung settings and linkage diagnostics.
+
+    Never update another integration's ConfigEntry. Config information is
+    exposed only to Home Assistant administrators via its authenticated WS API.
+    """
+    own_entries = [
+        item for item in hass.config_entries.async_entries(DOMAIN)
+        if item.state == ConfigEntryState.LOADED
+        and isinstance(getattr(item, "runtime_data", None), GewitterradarRuntimeData)
+    ]
+    trackers = sorted({
+        item.runtime_data.tracker_entity_id
+        for item in own_entries
+        if item.runtime_data.tracker_entity_id
+    })
+    registry = er.async_get(hass)
+    remote = []
+    for item in hass.config_entries.async_entries(BLITZORTUNG_DOMAIN):
+        location = item.data.get("location_entity")
+        config_type = item.data.get("config_type", "entity" if location else "coordinates")
+        is_linked = isinstance(location, str) and location in trackers
+        registered = er.async_entries_for_config_entry(registry, item.entry_id)
+        sensors = []
+        for entity in registered:
+            if entity.domain != "sensor":
+                continue
+            state = hass.states.get(entity.entity_id)
+            sensors.append({
+                "entityId": entity.entity_id,
+                "state": state.state if state is not None else None,
+                "available": state is not None and state.state not in ("unknown", "unavailable"),
+                "disabled": entity.disabled_by is not None,
+            })
+        options = item.options
+        remote.append({
+            "name": str(item.title),
+            "entryId": item.entry_id,
+            "state": item.state.value,
+            "loaded": item.state == ConfigEntryState.LOADED,
+            "configType": config_type,
+            "locationEntity": location if isinstance(location, str) else None,
+            "referenceTrackerLinked": is_linked,
+            "locationEntityAvailable": (
+                hass.states.get(location) is not None
+                and hass.states.get(location).state not in ("unknown", "unavailable")
+            ) if isinstance(location, str) else None,
+            "coordinates": {
+                "latitude": item.data.get("latitude"),
+                "longitude": item.data.get("longitude"),
+            } if config_type == "coordinates" else None,
+            "settings": {
+                "radius": options.get("radius", 100),
+                "timeWindow": options.get("time_window", 120),
+                "maxTrackedLightnings": options.get("max_tracked_lightnings", 100),
+                "defaultsUsed": [
+                    key for key in ("radius", "time_window", "max_tracked_lightnings")
+                    if key not in options
+                ],
+                "radiusUnit": str(hass.config.units.length_unit),
+            },
+            "sensors": sensors,
+        })
+    connection.send_result(msg["id"], {
+        "schema": "gewitterradar.data-sources.v1",
+        "integration": "blitzortung",
+        "integrationInstalled": bool(remote),
+        "entries": remote,
+        "referenceTrackers": trackers,
+        "linkedEntries": sum(1 for item in remote if item["referenceTrackerLinked"]),
+        "geoLocationEntities": sum(
+            1 for state in hass.states.async_all("geo_location")
+            if state.entity_id.startswith("geo_location.lightning_strike_")
+        ),
+        "note": "Geo-location count is global, not proof of connection health per entry.",
+    })
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Serve the card and register the V4.07 coordinate service once."""
     await hass.http.async_register_static_paths([
@@ -338,6 +477,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             call.data[SERVICE_FIELD_LONGITUDE],
             call.data[SERVICE_FIELD_NAME],
         )
+
+    from .settings_vault import register_settings_vault
+
+    websocket_api.async_register_command(hass, _ws_data_sources)
+    register_settings_vault(hass)
 
     hass.services.async_register(
         DOMAIN,
@@ -376,11 +520,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
     if options != entry.options or data != entry.data:
         hass.config_entries.async_update_entry(entry, data=data, options=options)
 
+    _async_remove_legacy_sidebar_switch_entity(hass)
     entry.runtime_data = GewitterradarRuntimeData(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    if options[CONF_SHOW_SIDEBAR_PANEL]:
+        await _async_register_sidebar_panel(hass)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry) -> bool:
     """Unload a Gewitterradar config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unloaded:
+        _async_remove_sidebar_panel(hass)
+    return unloaded

@@ -30,12 +30,253 @@ const v410ReleaseContract = JSON.parse(fs.readFileSync(path.join(root, 'tests/co
 const frontend = fs.readFileSync(path.join(root, 'frontend/gewitterradar.js'));
 const frontendText = frontend.toString('utf8');
 const frontendSha = crypto.createHash('sha256').update(frontend).digest('hex');
+const isV411LatestDev = ["41199r1", "41198r1", "41197r1", "41196r1", "41195r1", "41194r1", "41193r1", "41192r1", "41191r1"].some(revision =>
+  frontendText.includes(`import { APPLICATION_RELEASE } from "./version.js?v=${revision}";`))
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41163Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41168r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41108Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41108r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41107Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41107r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41106Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41106r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41105Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41105r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41104Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41104r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41103Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41103r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41102Dev = frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=41102r1";')
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
+const isV41101Dev = frontendText.includes("const GEWITTERRADAR_FEATURE_CACHE = '41101r1';")
+  && frontendText.includes("CARD_VERSION=APPLICATION_META.version;");
 const isV410Release = frontendText.includes("const CARD_VERSION = '4.10';");
 const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (isV410Release) {
+if (/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411\d+r1";/.test(frontendText)
+    && Number(frontendText.match(/version\.js\?v=(411\d+)r1/)?.[1]) >= 411148
+    && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+  // Current V4.11 development identity: read the actual release metadata.
+  // The historical pixel/geometry golden tests below remain mandatory.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  const get = key => versionText.match(new RegExp(key + ':"([^"]+)"'))?.[1];
+  assert.equal(runtime.productVersion, get('version'));
+  assert.equal(runtime.build, get('build'));
+  assert.equal(runtime.runtimeRevision, get('runtimeRevision'));
+  assert.equal(runtime.moduleSetId, get('moduleSetId'));
+  assert.equal(get('displayVersion'), get('build')?.includes('-FINAL-') ? 'V4.11 FINAL' : 'V' + get('version') + ' DEV');
+} else if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
+  // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
+  // golden/pixel/geometry checks below remain mandatory.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  for (const marker of ['version:"4.11.106"', 'displayVersion:"V4.11.106 DEV"', 'build:"V4.11.106-DEV-2026-10-22"', 'runtimeRevision:"411106r1"', 'moduleSetId:"E411-106A1"', 'integrationVersion:"0.25.18"']) {
+    assert.ok(versionText.includes(marker), 'DEV-TEST identity missing: ' + marker);
+  }
+  assert.equal(runtime.productVersion, '4.11.106');
+  assert.equal(runtime.build, 'V4.11.106-DEV-2026-10-22');
+  assert.equal(runtime.runtimeRevision, '411106r1');
+  assert.equal(runtime.moduleSetId, 'E411-106A1');
+  assert.equal(runtime.modules.length, 34);
+} else if (isV411LatestDev) {
+  // Additional data-source modules do not change protected About geometry.
+  // Keep the historical V4.11.68 contract and the browser golden comparison.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  const expectedVersion = frontendText.includes('version.js?v=41199r1') ? '4.11.99'
+    : frontendText.includes('version.js?v=41198r1') ? '4.11.98'
+    : frontendText.includes('version.js?v=41197r1') ? '4.11.97'
+    : frontendText.includes('version.js?v=41196r1') ? '4.11.96'
+    : frontendText.includes('version.js?v=41195r1') ? '4.11.95'
+    : frontendText.includes('version.js?v=41194r1') ? '4.11.94'
+    : frontendText.includes('version.js?v=41193r1') ? '4.11.93'
+    : frontendText.includes('version.js?v=41192r1') ? '4.11.92' : '4.11.91';
+  const expectedRuntime = expectedVersion === '4.11.99' ? '41199r1'
+    : expectedVersion === '4.11.98' ? '41198r1'
+    : expectedVersion === '4.11.97' ? '41197r1'
+    : expectedVersion === '4.11.96' ? '41196r1'
+    : expectedVersion === '4.11.95' ? '41195r1'
+    : expectedVersion === '4.11.94' ? '41194r1'
+    : expectedVersion === '4.11.93' ? '41193r1'
+    : expectedVersion === '4.11.92' ? '41192r1' : '41191r1';
+  const expectedModules = expectedVersion === '4.11.99' ? 'E411-99A1'
+    : expectedVersion === '4.11.98' ? 'E411-98A1'
+    : expectedVersion === '4.11.97' ? 'E411-97A1'
+    : expectedVersion === '4.11.96' ? 'E411-96A1'
+    : expectedVersion === '4.11.95' ? 'E411-95A1'
+    : expectedVersion === '4.11.94' ? 'E411-94A1'
+    : expectedVersion === '4.11.93' ? 'E411-93A1'
+    : expectedVersion === '4.11.92' ? 'E411-92A1' : 'E411-91A1';
+  const expectedBuild = `V${expectedVersion}-DEV-${["4.11.99","4.11.98"].includes(expectedVersion) ? "2026-10-19" : ["4.11.97","4.11.96","4.11.95","4.11.94","4.11.93"].includes(expectedVersion)?"2026-10-18":"2026-10-17"}`;
+  assert.ok(versionText.includes(`version:"${expectedVersion}"`));
+  assert.ok(versionText.includes(`displayVersion:"V${expectedVersion} DEV"`));
+  assert.ok(versionText.includes(`build:"${expectedBuild}"`));
+  assert.ok(versionText.includes(`runtimeRevision:"${expectedRuntime}"`));
+  assert.ok(versionText.includes(`moduleSetId:"${expectedModules}"`));
+  assert.equal(runtime.productVersion, expectedVersion);
+  assert.equal(runtime.build, expectedBuild);
+  assert.equal(runtime.runtimeRevision, expectedRuntime);
+  assert.equal(runtime.moduleSetId, expectedModules);
+  assert.equal(runtime.modules.length, 34);
+} else if (isV41163Dev) {
+  // Preserve the immutable V4.07.56 About geometry baseline; this branch
+  // only registers the current V4.11 DEV identity and does not waive pixel tests.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.68"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.68 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.68-DEV-2026-10-13"'));
+  assert.ok(versionText.includes('runtimeRevision:"41168r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-68A1"'));
+  assert.equal(runtime.productVersion, '4.11.68');
+  assert.equal(runtime.build, 'V4.11.68-DEV-2026-10-13');
+  assert.equal(runtime.runtimeRevision, '41168r1');
+  assert.equal(runtime.moduleSetId, 'E411-68A1');
+  assert.equal(runtime.modules.length, 31);
+} else if (isV41108Dev) {
+  // V4.11.08 adds the isolated Daimos Project Hub module only.
+  // Protected About geometry remains identical to the established golden baseline.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.08"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.08 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.08-DEV-2026-10-02"'));
+  assert.ok(versionText.includes('runtimeRevision:"41108r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-08A6"'));
+  assert.equal(runtime.productVersion, '4.11.08');
+  assert.equal(runtime.build, 'V4.11.08-DEV-2026-10-02');
+  assert.equal(runtime.runtimeRevision, '41108r1');
+  assert.equal(runtime.moduleSetId, 'E411-08A6');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41107Dev) {
+  // V4.11.07 changes WeatherRouter precipitation routing and diagnostics only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.07"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.07 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.07-DEV-2026-10-01"'));
+  assert.ok(versionText.includes('runtimeRevision:"41107r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-07A1"'));
+  assert.equal(runtime.productVersion, '4.11.07');
+  assert.equal(runtime.build, 'V4.11.07-DEV-2026-10-01');
+  assert.equal(runtime.runtimeRevision, '41107r1');
+  assert.equal(runtime.moduleSetId, 'E411-07A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41106Dev) {
+  // V4.11.06 adds Weather Engine diagnostics only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.06"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.06 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.06-DEV-2026-10-01"'));
+  assert.ok(versionText.includes('runtimeRevision:"41106r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-06A1"'));
+  assert.equal(runtime.productVersion, '4.11.06');
+  assert.equal(runtime.build, 'V4.11.06-DEV-2026-10-01');
+  assert.equal(runtime.runtimeRevision, '41106r1');
+  assert.equal(runtime.moduleSetId, 'E411-06A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41105Dev) {
+  // V4.11.05 adds the provider-neutral radar timeline player only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.05"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.05 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.05-DEV-2026-10-01"'));
+  assert.ok(versionText.includes('runtimeRevision:"41105r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-05A1"'));
+  assert.equal(runtime.productVersion, '4.11.05');
+  assert.equal(runtime.build, 'V4.11.05-DEV-2026-10-01');
+  assert.equal(runtime.runtimeRevision, '41105r1');
+  assert.equal(runtime.moduleSetId, 'E411-05A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41104Dev) {
+  // V4.11.04 repairs the real settings mount for the already protected radar module.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.04"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.04 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.04-DEV-2026-09-30"'));
+  assert.ok(versionText.includes('runtimeRevision:"41104r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-04A1"'));
+  assert.equal(runtime.productVersion, '4.11.04');
+  assert.equal(runtime.build, 'V4.11.04-DEV-2026-09-30');
+  assert.equal(runtime.runtimeRevision, '41104r1');
+  assert.equal(runtime.moduleSetId, 'E411-04A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41103Dev) {
+  // V4.11.03 adds bounded precipitation-radar preloading only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.03"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.03 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.03-DEV-2026-09-30"'));
+  assert.ok(versionText.includes('runtimeRevision:"41103r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-03A1"'));
+  assert.equal(runtime.productVersion, '4.11.03');
+  assert.equal(runtime.build, 'V4.11.03-DEV-2026-09-30');
+  assert.equal(runtime.runtimeRevision, '41103r1');
+  assert.equal(runtime.moduleSetId, 'E411-03A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41102Dev) {
+  // V4.11.02 changes delivery/versioning and Weather-Engine modules only.
+  // About geometry remains protected by the same immutable browser baseline below.
+  const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(versionText.includes('version:"4.11.02"'));
+  assert.ok(versionText.includes('displayVersion:"V4.11.02 DEV"'));
+  assert.ok(versionText.includes('build:"V4.11.02-DEV-2026-09-30"'));
+  assert.ok(versionText.includes('runtimeRevision:"41102r1"'));
+  assert.ok(versionText.includes('moduleSetId:"E411-02A1"'));
+  assert.equal(runtime.productVersion, '4.11.02');
+  assert.equal(runtime.build, 'V4.11.02-DEV-2026-09-30');
+  assert.equal(runtime.runtimeRevision, '41102r1');
+  assert.equal(runtime.moduleSetId, 'E411-02A1');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV41101Dev) {
+  // New DEV builds retain the immutable V4.10 source contract as historical evidence,
+  // while the actual V4.11 About geometry is still verified against the protected
+  // V4.07.56 baseline by the browser portion of this test (below).
+  const appManifest = fs.readFileSync(path.join(root, 'frontend/module-manifest.js'), 'utf8');
+  const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
+  assert.equal(v410ReleaseContract.version, '4.10');
+  assert.equal(v410ReleaseContract.status, 'FINAL');
+  assert.ok(appManifest.includes('version:"4.11.01",displayVersion:"V4.11.01 DEV",build:"V4.11.01-DEV-2026-09-30"'));
+  assert.ok(appManifest.includes('moduleSetId:"E411-01A3"'));
+  assert.equal(runtime.productVersion, '4.11.01');
+  assert.equal(runtime.build, 'V4.11.01-DEV-2026-09-30');
+  assert.equal(runtime.moduleSetId, 'E411-01A3');
+  assert.ok(frontendText.includes("CARD_DISPLAY_VERSION=APPLICATION_META.displayVersion.replace(/^V/,'');"));
+} else if (isV410Release) {
   assert.equal(v410ReleaseContract.version, '4.10');
   assert.equal(v410ReleaseContract.status, 'FINAL');
   assert.ok(frontendText.includes("const CARD_DISPLAY_VERSION = '4.10';"));
@@ -63,7 +304,7 @@ if (isV410Release) {
   assert.equal(frontend.length, modularContract.sizeBytes, 'V4.10.02 frontend size differs from modular contract');
   assert.equal(frontendSha, modularContract.sha256, 'V4.10.02 frontend differs from modular contract');
 } else {
-  assert.fail('Frontend is not covered by the V4.09 release, V4.10.01 development, or V4.10.02 modular contract');
+  assert.fail('Frontend is not covered by V4.09/V4.10 historical or V4.11 DEV identity contracts');
 }
 
 const tolerance = contract.browserBaseline.geometryTolerancePx;

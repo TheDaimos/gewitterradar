@@ -1,0 +1,27 @@
+name: GR TEST70-55 Unified Precipitation
+on:
+  push:
+    branches: [deploy/dev]
+    paths:
+      - 'frontend/modules/weather/precipitation-layer.js'
+      - 'frontend/modules/weather/consumer-client.js'
+      - 'tests/test70-55-unified-precipitation.test.mjs'
+      - '.github/workflows/test70-55-unified-precipitation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JS syntax and component parity
+        run: |
+          node --check frontend/modules/weather/precipitation-layer.js
+          node --check frontend/modules/weather/consumer-client.js
+          node --test tests/test70-55-unified-precipitation.test.mjs

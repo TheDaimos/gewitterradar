@@ -1,11 +1,11 @@
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-> **V4.10 FINAL · Gemeinschaftslizenz Modell B · Lizenzedition 2026-11-09.**
-> Einzige aktuelle stabile offizielle Veröffentlichung: [v4.10-model-b-20261109](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109).
-> Anwendungscode, Frontend und Assets entsprechen dem freigegebenen V4.10-Golden-Master; native Integration **0.22.0**.
-> Dashboard: [V4.10 FINAL](https://github.com/TheDaimos/gewitterradar-dashboard/releases/tag/v4.10-model-b-20261109).
+> **V4.11 FINAL · Gemeinschaftslizenz Modell B.**
+> Aktueller stabiler Release: [v4.11](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11).
+> Geprüfte Entwicklungsbasis **4.11.249**, native Integration **0.25.156**, WeatherRouter **1.0.2 FINAL**.
+> Vorheriger Rückfallstand: [V4.10 FINAL Modell B](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109).
 > Frühere rechtmäßig gewährte GPL-Rechte bleiben bestehen; historische Fassungen werden nicht rückwirkend umlizenziert.
-> V4.11 DEV bleibt über den bestehenden DRA-Kanal `deploy/dev` verfügbar.
+> Der Entwicklungszweig `deploy/dev` bleibt für künftige Änderungen getrennt.
 > [Lizenz](LICENSE.md) · [Installationsanleitung](https://github.com/TheDaimos/gewitterradar/blob/main/docs/INSTALLATION.md).
 > Modell B ist keine OSI-anerkannte Lizenz: keine offizielle HACS-Katalog-Lizenzfreigabe. Benutzerdefinierte Repositories und manuelle Installation sind getrennte Wege.
 
@@ -24,7 +24,7 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/Gewitterradar-V4.10-c9a45b)
+![Version](https://img.shields.io/badge/GewitterRadar-V4.11%20FINAL-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
 ![License](https://img.shields.io/badge/Lizenz-Modell%20B-lightgrey)
 

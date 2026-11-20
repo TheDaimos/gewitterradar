@@ -1,7 +1,7 @@
-import { defineModule } from "../core/runtime.js?v=41002r13";
+import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.strikes-warnings",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "group": "Karte",
   "function": "Blitze & Warnungen",
   "subfunctions": [
@@ -275,7 +275,10 @@ export const installStrikesWarnings=defineModule(MODULE_META,(deps)=>{const { CA
       return overlay;
     },
 
-    _triggerWarningAnimation(mode = 'danger') {
+    _triggerWarningAnimation(mode = 'danger', {preview=false}={}) {
+      if(!preview&&this._weatherStormVisible?.()===false)return;
+      const presentationRevision=this.__stormFlashRevision;
+      const stillVisible=()=>preview||presentationRevision===this.__stormFlashRevision;
       const now = Date.now();
       if (now - this._lastFlashAt < FLASH_COOLDOWN_MS) return;
       this._lastFlashAt = now;
@@ -387,13 +390,16 @@ export const installStrikesWarnings=defineModule(MODULE_META,(deps)=>{const { CA
         void element.offsetWidth;
 
         requestAnimationFrame(() => {
+          if(!stillVisible())return;
           element.style.opacity = String(peak);
 
           setTimeout(() => {
+            if(!stillVisible())return;
             element.style.transition = `opacity ${Math.max(55,Math.round(duration * .30))}ms linear`;
             element.style.opacity = String(shoulder);
 
             setTimeout(() => {
+              if(!stillVisible())return;
               element.style.transition = `opacity ${Math.max(70,Math.round(duration * .54))}ms linear`;
               element.style.opacity = '0';
             },Math.max(18,Math.round(duration * .22)));
@@ -465,6 +471,7 @@ export const installStrikesWarnings=defineModule(MODULE_META,(deps)=>{const { CA
         elapsed += randomInt(FLASH_GAP_MIN_MS,FLASH_GAP_MAX_MS);
 
         setTimeout(() => {
+          if(!stillVisible())return;
           const center = randomCenter();
           const useAmbient = Math.random() < .48;
 
@@ -483,6 +490,7 @@ export const installStrikesWarnings=defineModule(MODULE_META,(deps)=>{const { CA
 
       const cleanupAfter = Math.max(2200,elapsed + 500);
       setTimeout(() => {
+        if(!stillVisible())return;
         if (!isPhoneLike) {
           overlay.classList.remove('fire');
         }
