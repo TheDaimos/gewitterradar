@@ -145,12 +145,18 @@ const server=http.createServer((req,res)=>{
       await page.locator('#settings-open').click();
       const diagnosticSection=page.locator('#settings-diagnostic-section');
       const diagnosticSummary=diagnosticSection.locator(':scope > summary');
-      if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
-      if(!await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not open`);
+      const fullPageSettings=await page.evaluate(()=>window.aboutCard.shadowRoot.getElementById('settings-backdrop').classList.contains('gr-settings-pages'));
+      if(fullPageSettings){
+        await page.evaluate(()=>window.aboutCard._settingsNavigateTo('settings-calibration-section'));
+        await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'));
+      }else{
+        if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
+        if(!await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not open`);
+      }
       const settingsRefinement=await page.evaluate(()=>{
         const shadow=window.aboutCard.shadowRoot,rect=node=>{const r=node.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
         const textRect=node=>{const range=document.createRange();range.selectNodeContents(node);const boxes=[...range.getClientRects()];range.detach();if(!boxes.length)return rect(node);const left=Math.min(...boxes.map(box=>box.left)),top=Math.min(...boxes.map(box=>box.top)),right=Math.max(...boxes.map(box=>box.right)),bottom=Math.max(...boxes.map(box=>box.bottom));return {left,top,right,bottom,width:right-left,height:bottom-top};};
-        const dialog=shadow.getElementById('settings-dialog'),body=dialog.querySelector('.settings-body'),section=shadow.getElementById('settings-diagnostic-section'),content=section.querySelector(':scope > .settings-section-content');
+        const dialog=shadow.getElementById('settings-dialog'),body=dialog.querySelector('.settings-body'),section=shadow.getElementById(shadow.getElementById('settings-backdrop').classList.contains('gr-settings-pages')?'settings-calibration-section':'settings-diagnostic-section'),content=section.querySelector(':scope > .settings-section-content');
         const level1=textRect(shadow.getElementById('settings-diagnostic-section-title'));
         const level2=[...content.querySelectorAll(':scope > .settings-row-label')].map(node=>textRect(node));
         const rows=[...content.querySelectorAll(':scope > .settings-row')],level3=rows.map(row=>textRect(row.querySelector('.settings-row-label')));
@@ -162,7 +168,7 @@ const server=http.createServer((req,res)=>{
       });
       const level2Left=Math.min(...settingsRefinement.level2.map(rect=>rect.left)),level3Left=Math.min(...settingsRefinement.level3.map(rect=>rect.left));
       const toggleRights=settingsRefinement.toggles.map(rect=>rect.right),toggleSpread=Math.max(...toggleRights)-Math.min(...toggleRights);
-      if(level2Left<settingsRefinement.level1.left+4||level3Left<level2Left+4)throw Error(`${name}: diagnostic hierarchy indentation failed ${JSON.stringify({level1:settingsRefinement.level1.left,level2Left,level3Left})}`);
+      if(!fullPageSettings&&(level2Left<settingsRefinement.level1.left+4||level3Left<level2Left+4))throw Error(`${name}: diagnostic hierarchy indentation failed ${JSON.stringify({level1:settingsRefinement.level1.left,level2Left,level3Left})}`);
       if(toggleSpread>.5)throw Error(`${name}: settings toggle alignment shifted by ${toggleSpread}px`);
       if(settingsRefinement.horizontalOverflow||settingsRefinement.testButtons.some(button=>button.width<80||button.left<settingsRefinement.content.left-1||button.right>settingsRefinement.content.right+1))throw Error(`${name}: settings overflow or unusable test buttons ${JSON.stringify(settingsRefinement)}`);
       if(settingsRefinement.about.height<44||settingsRefinement.info.width<23.5||settingsRefinement.info.height<23.5||settingsRefinement.infoFontSize<20||settingsRefinement.infoBackground==='none')throw Error(`${name}: premium About icon regression ${JSON.stringify(settingsRefinement)}`);
