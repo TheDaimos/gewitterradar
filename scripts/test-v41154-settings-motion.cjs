@@ -137,11 +137,9 @@ const server=http.createServer((req,res)=>{
         await page.evaluate(()=>{
           const root=window.aboutCard.shadowRoot;
           const section=root.getElementById('settings-data-sources-section');
-          const button=[...root.querySelectorAll('.gr-horizontal-root > .gr-horizontal-item')]
-            .find(item=>item.textContent.includes('Datenquellen'));
-          if(!section||!button)
+          if(!section||typeof window.aboutCard._settingsNavigateTo!=='function')
             throw Error('Dynamischer Datenquellenbereich fehlt');
-          button.click();
+          window.aboutCard._settingsNavigateTo('settings-data-sources-section');
         });
         await page.waitForFunction(()=>!window.aboutCard.shadowRoot.querySelector('.gr-horizontal-transition'),{timeout:5000});
         const dynamicResult=await page.evaluate(()=>{
