@@ -179,7 +179,7 @@ const server=http.createServer((req,res)=>{
     assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
     assert.equal(await page.locator('.about-dialog[open]').count(),0);
     await page.evaluate(()=>{window.fail=false;window.hass.states[window.entity]={state:'English',attributes:{options:[...window.card._languageOnboardingDialog.querySelectorAll('input')].map(input=>input.value)}};window.hass.states[window.marker]={state:'off',attributes:{}};window.cards.forEach(card=>card.hass=window.hass);});
-    await confirm(page);assert.equal(await page.locator('.about-dialog h2').textContent(),'Über Gewitterradar');
+    await confirm(page);assert.equal(await page.locator('.about-dialog h2').textContent(),'Über GewitterRadar');
     await context.close();
    }
    // Preview exclusion and ownership release when a card is removed.
