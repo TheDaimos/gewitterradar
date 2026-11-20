@@ -60,6 +60,9 @@
     fitForce.remove();card._applyCompassDesign('A');await wait(150);
     const interactions={};
     let before=card._activeCompassDesign;card._stepCompassDesign(1);await wait(100);interactions.selectionOff=before!==card._activeCompassDesign;
+    // The legacy layout fixture can remain detached while the current card
+    // lifecycle initializes diagnostics only after joining the document.
+    card._diagnostics??={enabled:false,selecting:false,visualsVisible:true,live:true,grid:'coarse',overlays:{},position:null,resizeCallbacks:0,mutationEvents:0,mutationRegions:{map:0,diagnostics:0,app:0},layoutShifts:[],longTasks:[],performanceObservers:[],responsiveHistory:[],assetDimensions:{},virtualStorm:{scenario:'off',ownedIds:[],cellCount:1},weatherLab:{lightning:{}}};
     card._startDiagnostics();before=card._activeCompassDesign;card._stepCompassDesign(1);await wait(100);interactions.selectionInactive=before!==card._activeCompassDesign;
     shadow.getElementById('diagnostic-select').click();before=card._activeCompassDesign;card._stepCompassDesign(1);await wait(100);interactions.selectionOnBeforePanel=before!==card._activeCompassDesign;
     panel.click();await wait(100);interactions.freePanelSelectsC=card._diagnostics.selected==='C';before=card._activeCompassDesign;card._stepCompassDesign(1);await wait(100);interactions.selectionOnC=before!==card._activeCompassDesign;
