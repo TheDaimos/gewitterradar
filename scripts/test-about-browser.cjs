@@ -184,7 +184,7 @@ const server=http.createServer((req,res)=>{
         await page.mouse.move(aboutBoxBefore.x+aboutBoxBefore.width-2,aboutBoxBefore.y+aboutBoxBefore.height+8);
         await page.mouse.up();
       }
-      await page.locator('#settings-close').focus();await page.keyboard.press('Tab');
+      await page.locator('#settings-close').focus();await page.keyboard.press('Tab');if(fullPageSettings)await aboutButton.focus();
       const focusState=await aboutButton.locator(':scope > span[aria-hidden="true"]').evaluate(node=>({outline:getComputedStyle(node).outlineStyle,outlineWidth:getComputedStyle(node).outlineWidth,focusVisible:node.parentElement.matches(':focus-visible'),activeId:node.getRootNode().activeElement?.id,aboutOpen:!!node.getRootNode().querySelector('.about-dialog')}));
       const aboutBoxAfter=await aboutButton.boundingBox();
       if(!focusState.focusVisible||focusState.outline==='none'||parseFloat(focusState.outlineWidth)<2)throw Error(`${name}: About focus-visible indicator missing ${JSON.stringify(focusState)}`);
