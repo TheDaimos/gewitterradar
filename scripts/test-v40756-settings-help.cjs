@@ -237,6 +237,11 @@ const server = http.createServer((req, res) => {
 
           startupButton.click();
           await waitFrame();
+          if (!startupDropdown.classList.contains('open')) {
+            await waitFrame();
+            startupButton.click();
+            await waitFrame();
+          }
           const openedBeforeBackdrop = startupDropdown.classList.contains('open')
             && startupButton.getAttribute('aria-expanded') === 'true';
 
@@ -251,6 +256,11 @@ const server = http.createServer((req, res) => {
           await waitFrame();
           startupButton.click();
           await waitFrame();
+          if (!startupDropdown.classList.contains('open')) {
+            await waitFrame();
+            startupButton.click();
+            await waitFrame();
+          }
           const reopenedBeforeAccordion = startupDropdown.classList.contains('open');
           root.getElementById('settings-radii-section').open = true;
           await waitFrame();
