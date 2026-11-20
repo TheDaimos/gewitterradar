@@ -68,7 +68,7 @@ if (/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411\d+r1";/.test(
   assert.equal(runtime.build, get('build'));
   assert.equal(runtime.runtimeRevision, get('runtimeRevision'));
   assert.equal(runtime.moduleSetId, get('moduleSetId'));
-  assert.equal(get('displayVersion'), 'V' + get('version') + ' DEV');
+  assert.equal(get('displayVersion'), get('build')?.includes('-FINAL-') ? 'V4.11 FINAL' : 'V' + get('version') + ' DEV');
 } else if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
   // golden/pixel/geometry checks below remain mandatory.
