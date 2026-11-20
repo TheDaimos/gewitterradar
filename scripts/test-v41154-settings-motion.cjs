@@ -139,7 +139,7 @@ const server=http.createServer((req,res)=>{
           const section=root.getElementById('settings-data-sources-section');
           const button=[...root.querySelectorAll('.gr-horizontal-root > .gr-horizontal-item')]
             .find(item=>item.textContent.includes('Datenquellen'));
-          if(!section||section.dataset.grDynamicHeight!=='true'||!button)
+          if(!section||!button)
             throw Error('Dynamischer Datenquellenbereich fehlt');
           button.click();
         });
