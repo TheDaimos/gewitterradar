@@ -100,7 +100,9 @@ const server = http.createServer((req, res) => {
             stateNode.style.removeProperty('transition');
           }
 
-          const summary = openedNode.querySelector('summary');
+          // The first V4.11 settings section is a compact status section;
+          // measure the Weather-Engine accordion's actual touch target.
+          const summary = root.querySelector('#weather-engine-section summary');
           const after = getComputedStyle(summary, '::after');
           const signature = getComputedStyle(root.querySelector('.settings-signature'));
           const sections = [...root.querySelectorAll('.settings-collapsible')];
