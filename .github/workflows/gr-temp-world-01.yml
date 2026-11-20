@@ -13,7 +13,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Load protected references for exact regression comparison
-        run: git fetch --no-tags --depth=1 origin 04b751fd3962150ed0369dba4428959e4a8e98bd 787497648a405bc27495d98ffdedd9206668fd4c d975a94be5d63eb09242a54920d8c3417205b41f 4adb7a8c186a45f5b0246982a99cfac6ec28d44e
+        run: git fetch --no-tags --depth=1 origin 04b751fd3962150ed0369dba4428959e4a8e98bd 787497648a405bc27495d98ffdedd9206668fd4c d975a94be5d63eb09242a54920d8c3417205b41f 4adb7a8c186a45f5b0246982a99cfac6ec28d44e 1919bb739ecce256f6953ce250e47b90384d6086
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

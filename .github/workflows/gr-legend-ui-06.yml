@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
       - name: Fetch immutable protected UI reference
-        run: git fetch --no-tags --depth=1 origin ab55f7b2bfee4a35511b2e95359572e8f2cae6da
+        run: git fetch --no-tags --depth=1 origin ab55f7b2bfee4a35511b2e95359572e8f2cae6da 1919bb739ecce256f6953ce250e47b90384d6086
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

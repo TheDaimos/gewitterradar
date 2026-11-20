@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch protected pre-change menu reference
-        run: git fetch --no-tags --depth=1 origin 7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6
+        run: git fetch --no-tags --depth=1 origin 7213b7aeffba5c6bc6fd2afb6bd74f84c88632b6 1919bb739ecce256f6953ce250e47b90384d6086
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

@@ -13,7 +13,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Fetch protected pre-change source
-        run: git fetch --no-tags --depth=1 origin 5be2d8324b58220e37021248b0a2825c6435f87e
+        run: git fetch --no-tags --depth=1 origin 5be2d8324b58220e37021248b0a2825c6435f87e 1919bb739ecce256f6953ce250e47b90384d6086
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
