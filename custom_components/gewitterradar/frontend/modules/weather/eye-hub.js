@@ -1,9 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411244r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411245r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411233r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411233r1';
 import {createEyeRegistry,eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411244r1';
-import {stormLayout} from './storm-bubble.js?v=411244r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411245r1';
+import {stormLayout} from './storm-bubble.js?v=411245r1';
 
 const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -133,13 +133,13 @@ export const eyeHubMethods={
   const {registry,config}=this._eyeHubState();
   this._eyeHubPatch({...normalizeEyeConfig(null,[...registry.entries.keys()]),stormVisible:config.stormVisible,stormPositions:config.stormPositions});
  },
- _eyeHubToggle(){const s=this._eyeHubState();if(!s.config.grouped)return this._eyeHubOpen();s.open=!s.open;s.signature=null;this._eyeHubSync();},
+ _eyeHubToggle(){if(!this.__proBranding?.eyeReady)return;const s=this._eyeHubState();if(!s.config.grouped)return this._eyeHubOpen();s.open=!s.open;s.signature=null;this._eyeHubSync();},
  _eyeHubClose(){const s=this.__eyeHub;if(!s)return;for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options,{keepReleaseClick:!s.suspended&&this._weatherControlRelease?.drag.state===options.state()});s.bubbleOptions=[];s.open=false;s.signature=null;const root=this.shadow?.getElementById('eye-hub-bubbles');if(root){root.hidden=true;root.replaceChildren();}if(!s.suspended)this._eyeHubSync();},
- _eyeHubOpen(){const s=this._eyeHubState();this._eyeHubClose();const backdrop=this.shadow?.getElementById('settings-backdrop');if(backdrop?.classList.contains('open'))this.shadow.getElementById('settings-close')?.click();if(!s.view)s.view=new EyeConfigurator(this);s.view.open();},
+ _eyeHubOpen(){if(!this.__proBranding?.eyeReady)return;const s=this._eyeHubState();this._eyeHubClose();const backdrop=this.shadow?.getElementById('settings-backdrop');if(backdrop?.classList.contains('open'))this.shadow.getElementById('settings-close')?.click();if(!s.view)s.view=new EyeConfigurator(this);s.view.open();},
  _eyeHubEnsureEye(card){
   const s=this._eyeHubState();s.suspended=false;
   if(!this.shadow.getElementById('eye-hub-style')){const style=document.createElement('style');style.id='eye-hub-style';style.textContent=EYE_HUB_CSS;this.shadow.append(style);}
-  let eye=this.shadow.getElementById('weather-display-eye-control');if(!eye){eye=document.createElement('button');eye.type='button';eye.id='weather-display-eye-control';eye.className='weather-display-eye-control gr-eye-hub';eye.setAttribute('aria-controls','eye-hub-bubbles');eye.setAttribute('aria-label',this._t('eye.title'));card.append(eye);
+  let eye=this.shadow.getElementById('weather-display-eye-control');if(!eye){eye=document.createElement('button');eye.type='button';eye.id='weather-display-eye-control';eye.className='weather-display-eye-control gr-eye-hub';eye.hidden=true;eye.setAttribute('aria-controls','eye-hub-bubbles');eye.setAttribute('aria-label',this._t('eye.title'));card.append(eye);
    const options={element:eye,state:()=>this._weatherDisplayState(),activate:()=>this._eyeHubToggle(),longPress:()=>this._eyeHubOpen(),position:()=>this._eyeHubPosition(),save:p=>{if(this._weatherDisplayState().config.rememberPosition)this._weatherDisplayPatch({eyePosition:p});}};
    options.measure=()=>{const map=this.shadow.getElementById('map');return map&&measureEyeLayout(eye,card,map);};
    options.place=(layout,left,top)=>placeEye(eye,layout,left,top,s.paintClip);
@@ -165,9 +165,20 @@ export const eyeHubMethods={
  },
  _eyeHubSync(){
   const s=this.__eyeHub;if(!s||s.suspended)return;const card=this.shadow?.getElementById('map-card'),eye=this.shadow?.getElementById('weather-display-eye-control');if(!card||!eye)return;
+  const available=this.__proBranding?.eyeReady===true;
+  eye.hidden=!available;
+  const root=this.shadow.getElementById('eye-hub-bubbles'),entry=this.shadow.getElementById('settings-eye-hub-open');
+  if(entry?.parentElement)entry.parentElement.hidden=!available;
+  if(!available){
+   if(s.open)this._eyeHubClose();
+   if(root)root.hidden=true;
+   if(s.view?.dialog.open)s.view.close();
+   s.neon?.sync([]);
+   return;
+  }
   this._weatherStormSync?.(card,s);
   if(s.view&&s.view.language!==this._languageValue?.()){const open=s.view.dialog.open;s.view.destroy();s.view=new EyeConfigurator(this);if(open)s.view.open();}
-  const c=s.config,statuses=this._eyeHubStatuses(),entry=this.shadow.getElementById('settings-eye-hub-open');if(entry)entry.textContent=this._t('eye.title');
+  const c=s.config,statuses=this._eyeHubStatuses();if(entry)entry.textContent=this._t('eye.title');
   card.dataset.eyeGrouped=String(c.grouped);
   // CSS controls presentation only; never overwrite the original hidden flags,
   // quickVisibility, per-view positions or meteorological settings.

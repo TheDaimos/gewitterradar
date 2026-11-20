@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.244",
-  "build": "V4.11.244-DEV-2026-11-20",
-  "runtimeRevision": "411244r1",
-  "moduleSetId": "E411-244A1",
-  "baselineFeatureHead": "a70a4da38b993427067ad741d5b1f06758493c18",
+  "productVersion": "4.11.245",
+  "build": "V4.11.245-DEV-2026-11-20",
+  "runtimeRevision": "411245r1",
+  "moduleSetId": "E411-245A1",
+  "baselineFeatureHead": "40082b6af175d3ef3d23a18cd0d308f25014602d",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
+    "purpose": "Show Eye Hub only while local WeatherRouter consumer discovery confirms a ready PRO connection; preserve weather data paths and settings.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -1,6 +1,6 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411244r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411244r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411245r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411245r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
@@ -17,7 +17,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.47",
+  "version": "1.1.48",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -41,6 +41,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const state = {connection, title, check:null, timer:null, installation:'unknown'};
       this.__proBranding = state;
       const showStandard = () => {title.classList.remove('is-pro');delete title.dataset.proConnection;};
+      const setEyeAvailability = ready => {
+        if (state.eyeReady === ready) return;
+        state.eyeReady = ready;
+        this._eyeHubSync?.();
+      };
       const setInstallation = status => {
         state.installation = status;
         if (status === 'absent') this._maybeShowProWelcome();
@@ -51,6 +56,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         clearTimeout(state.check?.timer);
         state.check = null;
         showStandard();
+        setEyeAvailability(false);
         setInstallation('unknown');
       };
       state.refresh = async () => {
@@ -61,6 +67,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         check.timer = setTimeout(() => {
           check.expired = true;
           showStandard();
+          setEyeAvailability(false);
           setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
         }, PRO_DISCOVERY_TIMEOUT);
         const current = () => this.__proBranding === state && state.check === check && connection.connected;
@@ -72,9 +79,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
           if (!confirmsLocalWeatherRouter(reply)) {
             showStandard();
+            setEyeAvailability(false);
             return;
           }
           check.confirmed = true;
+          setEyeAvailability(true);
           title.dataset.proConnection = 'ready';
           if (!state.image) {
             const logo = new Image(1190, 348);
@@ -92,6 +101,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         } catch (error) {
           if (current() && !check.confirmed) {
             showStandard();
+            setEyeAvailability(false);
             // Only Home Assistant's explicit missing command establishes absence.
             const missing = !check.expired && error?.code === 'unknown_command'
               && coreWasRunning && this._hass?.config?.state === 'RUNNING';
