@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.247",
-  "build": "V4.11.247-DEV-2026-11-20",
-  "runtimeRevision": "411247r1",
-  "moduleSetId": "E411-247A1",
-  "baselineFeatureHead": "cf208c9d41d8115cc075afdc475251346887bfc8",
+  "productVersion": "4.11.248",
+  "build": "V4.11.248-DEV-2026-11-20",
+  "runtimeRevision": "411248r1",
+  "moduleSetId": "E411-248A1",
+  "baselineFeatureHead": "0915a2e108616c7209b63e6a087b76ae7ab571de",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Update Help & Notes subtitle consistently in all 19 user languages without changing help content or WeatherRouter behavior.",
+    "purpose": "Add independently collapsible Standard and PRO help topics with preserved PRO branding, original gold logo, matched blue/gold rules and Vault-persisted state.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

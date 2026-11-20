@@ -1,11 +1,11 @@
-import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411241r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411247r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411247r1';
+import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411248r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411248r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411248r1';
 import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.59",
+  "version": "1.3.60",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2739,6 +2739,13 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       shell.innerHTML = '<style>' +
         `
         .help-standard-heading{margin:3px 4px 9px;color:var(--help-bright);font-size:1.06em;font-weight:730}
+        .help-standard-header{position:relative;display:flex;align-items:center;justify-content:center;min-height:78px;margin:3px 0 12px;padding:10px 36px 0}
+        .help-standard-header::before{content:"";display:block;position:absolute;inset:0 0 auto;height:5px;pointer-events:none;
+          border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);
+          background:radial-gradient(ellipse at 50% 18%,#fff0c5bf,transparent 40%),linear-gradient(180deg,#ffe3a1,#c18b37 24%,#77521c 56%,#422b12 78%,#9b7238);
+          box-shadow:0 2px 3px #0008,inset 0 1px #ffe2a070}
+        .help-standard-heading{display:flex;align-items:center;justify-content:center;gap:11px;margin:0;text-align:center;line-height:1.2}
+        .help-standard-heading img{display:block;width:48px;height:48px;object-fit:contain;pointer-events:none}
         .help-pro-header{position:relative;margin:17px 0 12px;padding:10px 5px 0;text-align:center}
         .help-pro-header::before{content:"";display:block;position:absolute;inset:0 0 auto;height:5px;pointer-events:none;
           border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);
@@ -2746,6 +2753,15 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
             linear-gradient(180deg,#88b6ec,#3969a5 24%,#1a366b 56%,#14254c 78%,#45648d);
           box-shadow:0 2px 3px #0008,inset 0 1px #a5caff70}
         .help-pro-header h3{margin:0;line-height:1}
+        .help-standard::after,.help-pro::after{content:"";display:block;height:5px;margin:11px 0 17px;pointer-events:none;border-radius:50%;mask-image:linear-gradient(90deg,transparent,#000 11% 89%,transparent);box-shadow:0 2px 3px #0008,inset 0 1px #a5caff70}
+        .help-pro::after{background:radial-gradient(ellipse at 50% 18%,#d2ebffbf,transparent 40%),linear-gradient(180deg,#88b6ec,#3969a5 24%,#1a366b 56%,#14254c 78%,#45648d)}
+        .help-standard::after{background:radial-gradient(ellipse at 50% 18%,#fff0c5bf,transparent 40%),linear-gradient(180deg,#ffe3a1,#c18b37 24%,#77521c 56%,#422b12 78%,#9b7238)}
+        .help-group-topics[hidden]{display:none!important}
+        .help-group-toggle{position:absolute;top:8px;right:5px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:0;border-radius:9px;background:transparent;cursor:pointer;color:#e2bb6f}
+        .help-group-toggle .help-chevron{display:block;border-color:#e2bb6f;pointer-events:none}
+        .help-pro .help-group-toggle .help-chevron{border-color:#88b6ec;filter:drop-shadow(0 0 2px #3d78c477)}
+        .help-group-toggle[aria-expanded=true] .help-chevron{transform:rotate(225deg);margin-top:6px;filter:brightness(1.2) drop-shadow(0 0 3px currentColor)}
+        .help-group-toggle:focus-visible{outline:2px solid currentColor;outline-offset:1px}
         .help-pro-header h3 img{display:block;width:min(100%,219px);height:auto;margin:auto;pointer-events:none}
         .help-pro-status{margin:4px 0 0;color:#c4d1df;font-size:.9em;line-height:1.3}
         .help-pro-status[data-connected="true"]{color:#b2cde9}
@@ -2870,8 +2886,13 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           const subBody=document.createElement('div');subBody.className='help-inline-subentry-body';setHelpDiagnosticText(subBody,match[3].trim());
           sub.append(subTitle,subBody);target.append(sub);
         };
-        const sections=createHelpSections(content,language,weatherHelp);
-        appendWeatherHelp(sections.pro,language,openKeys,{weatherHelp});
+        const groupKeys={standard:'gr.help.group.standard.v1',pro:'gr.help.group.pro.v1'};
+        const collapsed={};
+        try{const storage=settingsStorage(this);for(const [name,key] of Object.entries(groupKeys))collapsed[name]=storage.getItem(key)==='1';}catch(_){}
+        const sections=createHelpSections(content,language,weatherHelp,{collapsed,onToggle:(name,value)=>{
+          try{settingsStorage(this).setItem(groupKeys[name],value?'1':'0');}catch(_){}
+        }});
+        appendWeatherHelp(sections.proTopics,language,openKeys,{weatherHelp});
         help.sections.forEach((section,index)=>{
           const proOnly=section.key==='weather-display-v411';
           const details=document.createElement('details');details.className='help-section';details.dataset.helpSection=section.key;details.open=openKeys.has(section.key)||(!this._helpLocale&&index===0);
@@ -2888,10 +2909,10 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
           for(const text of section.notes||[]){const p=document.createElement('p');p.className='help-note';setHelpDiagnosticText(p,text);body.append(p);}
           if(section.key==='mapview')body.append(createHelpProMapNote(language,weatherHelp));
           details.append(body);
-          (proOnly?sections.pro:sections.standard).append(details);
+          (proOnly?sections.proTopics:sections.standardTopics).append(details);
         });
         const weatherInformation=sections.pro.querySelector('[data-help-section="wr-information"]');
-        if(weatherInformation)sections.pro.append(weatherInformation);
+        if(weatherInformation)sections.proTopics.append(weatherInformation);
         this._syncHelpProFeatureList(sections,language,openKeys,weatherHelp);
         content.scrollTop=scrollTop;this._helpLocale=help;
         if(focusedIndex>=0){
@@ -2910,7 +2931,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         const connected=title?.dataset.proConnection==='ready';
         setConnected(connected);
         if(connected)entry?.remove();
-        else if(!entry)appendWeatherHelp(pro,language,openKeys,{upgrade:true,weatherHelp});
+        else if(!entry)appendWeatherHelp(pro.querySelector('.help-group-topics'),language,openKeys,{upgrade:true,weatherHelp});
       };
       this._helpProObserver?.disconnect();
       if(title){

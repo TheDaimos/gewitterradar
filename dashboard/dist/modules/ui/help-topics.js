@@ -10,6 +10,7 @@ const icons = {
  display: new URL('../../assets/gr-weather-display-premium-original.png', import.meta.url).href,
  pro: new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href
 };
+const standardLogo=new URL('../../assets/gewitterradar-brand-icon.png',import.meta.url).href;
 
 const de = {
  eye:['Eye Hub & Wetter-Icons',
@@ -145,13 +146,16 @@ export function appendHelpProLabel(target,label,size='standard'){
  target.append(tail);
 }
 
-export function createHelpSections(content,language,weatherHelp){
+export function createHelpSections(content,language,weatherHelp,{collapsed={},onToggle=()=>{}}={}){
  const german=language==='Deutsch';
  const standard=make('section',null,'help-standard');
- const standardHeading=make('h3','GewitterRadar Standard','help-standard-heading');
+ const standardHeader=make('header',null,'help-standard-header');
+ const standardHeading=make('h3',null,'help-standard-heading');
  standardHeading.id='gr-help-standard-heading';
+ const standardImage=make('img');standardImage.src=standardLogo;standardImage.alt='';standardImage.width=48;standardImage.height=48;standardImage.draggable=false;
+ standardHeading.append(standardImage,document.createTextNode('GewitterRadar Standard'));
  standard.setAttribute('aria-labelledby',standardHeading.id);
- standard.append(standardHeading);
+ standardHeader.append(standardHeading);
 
  const pro=make('section',null,'help-pro');
  const header=make('header',null,'help-pro-header');
@@ -169,8 +173,22 @@ export function createHelpSections(content,language,weatherHelp){
  header.append(proHeading,status);
  pro.setAttribute('aria-labelledby',proHeading.id);
  pro.append(header);
+ const group=(section,head,name,label)=>{
+  const body=make('div',null,'help-group-topics');body.id='gr-help-'+name+'-topics';
+  const button=make('button',null,'help-group-toggle');button.type='button';button.setAttribute('aria-label',label);
+  button.setAttribute('aria-controls',body.id);
+  const chevron=make('span',null,'help-chevron');chevron.setAttribute('aria-hidden','true');button.append(chevron);
+  const update=isCollapsed=>{button.setAttribute('aria-expanded',String(!isCollapsed));body.hidden=isCollapsed;section.dataset.collapsed=String(isCollapsed);};
+  update(Boolean(collapsed[name]));
+  button.addEventListener('click',()=>{const next=!body.hidden;update(next);onToggle(name,next);});
+  head.append(button);section.append(body);
+  return body;
+ };
+ const standardTopics=group(standard,standardHeader,'standard','GewitterRadar Standard');
+ const proTopics=group(pro,header,'pro','GewitterRadar PRO');
+ standard.prepend(standardHeader);
  content.append(standard,pro);
- return {standard,pro,setConnected(connected){
+ return {standard,pro,standardTopics,proTopics,setConnected(connected){
   if(status.dataset.connected===String(connected))return;
   status.dataset.connected=String(connected);
   status.textContent=connected

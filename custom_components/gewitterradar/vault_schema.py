@@ -295,6 +295,8 @@ SCALAR_SETTINGS = {
     "gewitterradar-last-compass-design": choice("1", "2", "3", "4", "5", "6"),
     "gewitterradar-about-onboarding-version": numeric_string(0, 1000000),
     "gewitterradar-pro-welcome-dismissed": BIT,
+    "gr.help.group.standard.v1": BIT,
+    "gr.help.group.pro.v1": BIT,
     MAP + "map-display-mode": MAP_MODE,
     MAP + "last-map-display-mode": MAP_MODE,
     MAP + "startup-map-display": lambda v: v == "last" or MAP_MODE(v),
