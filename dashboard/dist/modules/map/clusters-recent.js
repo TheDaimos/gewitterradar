@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411245r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411246r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "map.clusters-recent",
-  "version": "1.0.44",
+  "version": "1.0.45",
   "group": "Karte",
   "function": "Cluster & letzte Blitze",
   "subfunctions": [

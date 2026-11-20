@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.245",
-  "build": "V4.11.245-DEV-2026-11-20",
-  "runtimeRevision": "411245r1",
-  "moduleSetId": "E411-245A1",
-  "baselineFeatureHead": "40082b6af175d3ef3d23a18cd0d308f25014602d",
+  "productVersion": "4.11.246",
+  "build": "V4.11.246-DEV-2026-11-20",
+  "runtimeRevision": "411246r1",
+  "moduleSetId": "E411-246A1",
+  "baselineFeatureHead": "25762a8abe920661755e6d9c413922ff4fbd367d",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Show Eye Hub only while local WeatherRouter consumer discovery confirms a ready PRO connection; preserve weather data paths and settings.",
+    "purpose": "Hide all Eye Hub PRO weather quick icons along with the central Eye until WeatherRouter consumer discovery confirms a ready connection; preserve saved icon settings.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
