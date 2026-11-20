@@ -198,8 +198,10 @@ const server=http.createServer((req,res)=>{
       settingsRefinement.hoverFilter=hoverFilter;
       settingsRefinement.pressedFilter=pressedFilter;
       if(process.argv[3]&&['desktop','ipad-portrait','android-portrait'].includes(name))await page.screenshot({path:path.join(process.argv[3],`settings-${name}-diagnostics.png`)});
-      if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
-      if(await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not close`);
+      if(!fullPageSettings){
+        if(hasTouch)await diagnosticSummary.tap();else await diagnosticSummary.click();
+        if(await diagnosticSection.evaluate(node=>node.open))throw Error(`${name}: settings accordion did not close`);
+      }
       await page.locator('#settings-close').click();
       await page.evaluate(()=>window.aboutCard._openAbout());
       await page.keyboard.press('Shift+Tab');
