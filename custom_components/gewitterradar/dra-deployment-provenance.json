@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.248",
-  "build": "V4.11.248-DEV-2026-11-20",
-  "runtimeRevision": "411248r1",
-  "moduleSetId": "E411-248A1",
-  "baselineFeatureHead": "0915a2e108616c7209b63e6a087b76ae7ab571de",
+  "productVersion": "4.11.249",
+  "build": "V4.11.249-DEV-2026-11-20",
+  "runtimeRevision": "411249r1",
+  "moduleSetId": "E411-249A1",
+  "baselineFeatureHead": "20a56b41456e82e3c8afda25e15d89ac6ca61770",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Add independently collapsible Standard and PRO help topics with preserved PRO branding, original gold logo, matched blue/gold rules and Vault-persisted state.",
+    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -2,7 +2,7 @@ import { registerModule } from "./registry.js?v=41108r1";
 
 export const MODULE_META=Object.freeze({
   id:"core.base-context",
-  version:"1.0.10",
+  version:"1.0.11",
   group:"Kern",
   function:"Konstanten & gemeinsame Helfer",
   subfunctions:["Assets","Konstanten","Sprache","Speichergrundlagen","Geometrie","Leaflet-Helfer"],
@@ -252,7 +252,7 @@ export function createBaseContext(rootModuleUrl){
       - "sensor.*_lightning_counter"`;
   const ABOUT_STRINGS = {
     Deutsch: {
-      title:'Über Gewitterradar', close:'Schließen', understood:'Verstanden',
+      title:'Über GewitterRadar', close:'Schließen', understood:'Verstanden',
       subtitle:'Für Wetterbegeisterte, die Blitzaktivität klar und verständlich verfolgen möchten.', claim:'Gewitter beobachten, Entwicklungen entdecken.',
       welcome:'Willkommen, Wetterbegeisterte!',
       intro:'Dieses Projekt ist für alle, die Gewitter, Blitze, Wetterphänomene und die faszinierende Dynamik unserer Atmosphäre begeistern. Gewitterradar hilft, die Natur besser zu verstehen, Entwicklungen frühzeitig zu erkennen und mit Respekt zu beobachten. Schön, dass du Teil dieser Community bist!',

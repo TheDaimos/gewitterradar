@@ -1188,7 +1188,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Boarisch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zua",
       "understood": "Passt",
       "subtitle": "Für Wetterbegeisterte, de d’Blitzaktivität klar und guat verständlich verfolgen woin.",
@@ -1370,7 +1370,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Sächs’sch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zumachen",
       "understood": "Verstanden",
       "subtitle": "Für Wetterbegeisterde, die de Blitzaktivität klar un verständlich verfolgen wolln.",
@@ -1461,7 +1461,7 @@ export const ABOUT_EXTERNAL_LOCALES = {
   },
   "Schwäbisch": {
     "strings": {
-      "title": "Über Gewitterradar",
+      "title": "Über GewitterRadar",
       "close": "Zumacha",
       "understood": "Verstanda",
       "subtitle": "Für Wetterbegeischterte, die d’Blitzaktivität klar ond verständlich verfolge wellet.",

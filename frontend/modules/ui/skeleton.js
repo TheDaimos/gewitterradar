@@ -1,7 +1,8 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411248r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411248r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411249r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411249r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
+const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
 const PRO_DISCOVERY_INTERVAL = 60000;
 
@@ -17,7 +18,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.51",
+  "version": "1.1.52",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -5999,6 +6000,13 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             filter:drop-shadow(0 1px 0 rgba(49,29,5,.92)) drop-shadow(0 0 2px rgba(232,181,65,.28));
             transition:filter .16s ease;
           }
+          #settings-about > .settings-premium-icon > img {
+            display:block;
+            width:24px;
+            height:24px;
+            object-fit:contain;
+            pointer-events:none;
+          }
           #settings-about:focus-visible { outline:none; }
           #settings-about:focus-visible > span[aria-hidden="true"] {
             outline:2px solid rgba(255,225,161,.92);
@@ -7294,7 +7302,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             </div>
 
             <div class="settings-body">
-              <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true">ⓘ</span><span id="settings-about-label">Über Gewitterradar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
+              <div class="settings-premium-links"><button class="settings-language-button settings-premium-link" id="settings-about" type="button"><span class="settings-premium-icon" aria-hidden="true"><img src="${SETTINGS_ABOUT_INFO}" alt="" draggable="false"></span><span id="settings-about-label">Über GewitterRadar</span></button><button class="settings-language-button settings-premium-link" id="settings-help" type="button"><span class="settings-premium-icon" aria-hidden="true">?</span><span id="settings-help-label">Hilfe &amp; Hinweise</span></button></div>
               <details class="settings-section settings-collapsible" id="gr-vault-section">
                 <summary class="settings-section-head"><div class="settings-section-title">Userprofile &amp; Sicherungen</div></summary>
                 <div class="settings-section-content" id="gr-vault-content"></div>
