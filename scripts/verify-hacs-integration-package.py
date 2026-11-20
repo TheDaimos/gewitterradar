@@ -8,6 +8,9 @@ SOURCE=ROOT/"custom_components"/"gewitterradar"
 FRONTEND_SOURCE=ROOT/"frontend"
 REQUIRED={"__init__.py","brand/icon.png","brand/icon@2x.png","build_info.py","config_flow.py","const.py","device_tracker.py","dra-deployment-provenance.json","manifest.json","number.py","select.py","services.yaml","settings_vault.py","strings.json","switch.py","translations/de.json","translations/en.json","vault_schema.py"}
 REQUIRED|={"frontend/"+path.relative_to(FRONTEND_SOURCE).as_posix() for path in FRONTEND_SOURCE.rglob("*") if path.is_file() and path.name!="assets.json"}
+# The packaged frontend has additional release assets; require exact source parity
+# without pinning this contract to a previous release's enumerated file list.
+REQUIRED|={path.relative_to(SOURCE).as_posix() for path in SOURCE.rglob("*") if path.is_file() and "__pycache__" not in path.parts and path.suffix!=".pyc"}
 FORBIDDEN_SUFFIXES={".patch",".pyc"}
 def digest(path:Path)->str:return hashlib.sha256(path.read_bytes()).hexdigest()
 def verify(stage_root:Path)->dict[str,str]:

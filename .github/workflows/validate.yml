@@ -9,14 +9,16 @@ permissions:
   contents: read
 
 jobs:
-  hacs-integration:
+  hacs-custom-integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: HACS integration validation
-        uses: hacs/action@main
-        with:
-          category: integration
+      # Model B is deliberately not OSI/SPDX recognized. Official HACS catalog
+      # admission cannot pass its license check; custom repositories are supported.
+      - name: Verify custom HACS integration staging and Model B license
+        run: |
+          python scripts/verify-hacs-integration-package.py
+          grep -q 'Gemeinschaftslizenz' LICENSE
 
   hassfest:
     runs-on: ubuntu-latest

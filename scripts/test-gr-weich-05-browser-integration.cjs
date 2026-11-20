@@ -5,7 +5,7 @@ const sharp=require('sharp');
 const {chromium}=require('playwright');
 const output='artwork/acceptance/gr-weich-05';
 fs.mkdirSync(output,{recursive:true});
-const clean=(path)=>fs.readFileSync(path,'utf8').replace(/^import [^\n]+\n/gm,'').replace(/\bexport\s+(?=(?:const|function|class)\b)/g,'').replace(/^export\s*\{[^}]*\};?\s*$/gm,'');
+const clean=(path)=>fs.readFileSync(path,'utf8').replace(/^import [^\n]+\n/gm,'').replace(/\bexport\s+(?=(?:const|function|class)\b)/g,'').replace(/^export\s*\{[^}]*\};?\s*$/gm,'').replaceAll('import.meta.url',JSON.stringify('https://example.test/frontend/modules/weather/display-menu.js'));
 const display=clean('frontend/modules/weather/display-menu.js');
 const lab=clean('frontend/modules/diagnostics/raster-lab.js');
 (async()=>{
@@ -24,7 +24,10 @@ const lab=clean('frontend/modules/diagnostics/raster-lab.js');
    await page.locator('#pane').evaluate((pane,b64)=>{const img=document.createElement('img');img.src='data:image/png;base64,'+b64;img.width=256;img.height=256;pane.append(img)},png.toString('base64'));
    await page.locator('img').evaluate(img=>img.decode());
    await page.evaluate(()=>{window.defineModule=(_meta,factory)=>(klass)=>Object.assign(klass.prototype,factory());window.WEATHER_ROUTER_CAPABILITIES={precipitation:'weather.precipitation.layer'};window.APPLICATION_RELEASE={version:'4.11.100',runtimeRevision:'411100r1',displayVersion:'V4.11.100 DEV'};});
-   await page.addScriptTag({content:'(()=>{'+display+'\nwindow.installDisplay=installWeatherDisplayMenu;})()'});
+   // The production module now composes Pro controls from separate imports.
+   // This raster-only fixture supplies inert counterparts for those controls.
+   const rasterFixtureImports='const precipitationControlMethods={},cloudsControlMethods={},eyeHubMethods={},stormBubbleMethods={},quickMethods={},QUICK_CSS="",normalizePrecipitationControl=()=>({}),settingsStorage={};';
+   await page.addScriptTag({content:'(()=>{'+rasterFixtureImports+display+'\nwindow.installDisplay=installWeatherDisplayMenu;})()'});
    await page.addScriptTag({content:'(()=>{'+lab+'\nwindow.installLab=installRasterLab;})()'});
    await page.evaluate(()=>{
     const Card=class {};window.installDisplay(Card,{});window.installLab(Card,{});

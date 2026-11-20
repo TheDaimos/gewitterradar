@@ -68,6 +68,9 @@ async function run() {
     for (const mode of ['standard', 'large', 'fullscreen']) {
       await page.evaluate(mode => card._setMapDisplayMode(mode, {persist: false}), mode);
       await page.waitForTimeout(500); // includes both deferred map resize callbacks
+      // This position-only fixture has no live WR entitlement. Unmask the
+      // synthetic controls without altering production's Pro availability gate.
+      await page.evaluate(() => {card.shadow.getElementById('map-card').dataset.eyeProReady='true';});
       for (const id of ids) assert.equal(await page.locator('#' + id).isVisible(), true, id);
       const trace = await page.evaluate(async ids => {
         const buttons = ids.map(id => card.shadow.getElementById(id));
