@@ -1,3 +1,9 @@
+## V4.11.250 DEV · First steps & useful tips · HA 0.25.157
+
+Zusätzliches Einrichtungsfenster nach Begrüßung und gegebenenfalls Pro-Hinweis, mit erkanntem Standard-/PRO-Branding, metallischem Goldrahmen und vier unabhängig geprüften Einrichtungspunkten. Bestätigte Punkte erscheinen grün mit Häkchen. Erneutes Prüfen und Ausblenden im Benutzer-/Geräteprofil sind möglich. Integration und Dashboard werden gemeinsam gebaut.
+
+[Umsetzung, Schutzumfang und Prüfnachweise](docs/GR_FIRST_STEPS_411250_2026-11-21.md). Reale HA-DEV-/Android-Abnahme offen. V4.11 FINAL bleibt historisch unverändert.
+
 ## V4.11.165 DEV · Original-Niederschlagsicon · HA 0.25.72
 
 Freigegebenes 1254-px-PNG bytegleich im Masterbestand und in beiden Installationspaketen. Frei verschiebbarer Kartenschalter mit kurzem Klick für die gemeinsame Niederschlagsebene, 600-ms-Long-Press für die vorhandenen Eye-Einstellungen und gespeicherten Positionen. Vier unabhängige Sichtbarkeitsmodi, synchron zum bestehenden Schnellzugriff. Wind, Temperatur und meteorologische Datenwege bleiben unverändert.

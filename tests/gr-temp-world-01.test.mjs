@@ -9,6 +9,7 @@ import {parseTemperatureField,sampleScalarInto,TemperatureFieldCache,TEMPERATURE
 import {GeoPointAdapters,createGeoPointContext} from '../frontend/modules/weather/geopoint-context.js';
 import {requestWeatherFrame,cancelWeatherFrame,weatherFrameClockState} from '../frontend/modules/weather/frame-clock.js';
 import {assertClassicWindPreserved} from './protected-wind-classic.mjs';
+import {normaliseGeneratedModule} from './with-settings-vault.mjs';
 const c=normalizeTemperatureConfig();
 const reply=()=>({schema:'weather_router.consumer.temperature_field.v2',contract_version:2,capability:TEMPERATURE_FIELD,status:'ready',frame:{id:'t',capability:TEMPERATURE_FIELD,unit:'K',height_m:2,kind:'model_forecast',model_run:'2026-11-07T12:00:00Z',valid_at:'2026-11-07T18:00:00Z',valid_until:new Date(Date.now()+600000).toISOString(),refresh_after_seconds:300,native_resolution_degrees:.25,provenance:{provider_id:'synthetic'},grid:{crs:'EPSG:4326',layout:'row_major_south_first',latitudes:[40,45,50],longitudes:[0,5,10],cyclic:false,valid_mask:Array(9).fill(1),values:[270,271,272,273,274,275,276,277,278]}}});
 test('central C/F/K conversions and inverse preserve Kelvin; K has no degree sign',()=>{
@@ -41,6 +42,6 @@ test('one native scheduler serves Wind and temperature, supports cancellation an
 });
 test('protected Wind and precipitation code, reference and original temperature artwork remain exact',()=>{
  assertClassicWindPreserved();
- for(const path of ['frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(readFileSync(new URL('../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n').replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'),execFileSync('git',['show','1919bb739ecce256f6953ce250e47b90384d6086:'+path],{maxBuffer:10000000,encoding:'utf8'}).replace(/\r\n/g,'\n').replace(/(\.js\?v=)\d+r\d+/g,'$1CACHE'));
+ for(const path of ['frontend/modules/weather/wind-field.js','frontend/modules/weather/precipitation-layer.js','docs/GR_WR_TEMPERATURE_GEOPOINT_BASELINE_2026-11-07.md'])assert.equal(normaliseGeneratedModule(readFileSync(new URL('../'+path,import.meta.url),'utf8')),normaliseGeneratedModule(execFileSync('git',['show','1919bb739ecce256f6953ce250e47b90384d6086:'+path],{maxBuffer:10000000,encoding:'utf8'})));
  assert.equal(createHash('sha256').update(readFileSync(new URL('../artwork/help-icons/hires/gr-temperature-premium-original.png',import.meta.url))).digest('hex'),'ea46df73c3590ef76c4a8afcd0693f3ed318f6943bf2b4c07e961613cd737f9e');
 });

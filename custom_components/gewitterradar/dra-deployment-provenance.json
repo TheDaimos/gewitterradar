@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.249",
-  "build": "V4.11-FINAL-2026-11-20",
-  "runtimeRevision": "411249r1",
-  "moduleSetId": "E411-249A1",
-  "baselineFeatureHead": "20a56b41456e82e3c8afda25e15d89ac6ca61770",
+  "productVersion": "4.11.250",
+  "build": "V4.11.250-DEV-2026-11-21",
+  "runtimeRevision": "411250r1",
+  "moduleSetId": "E411-250A1",
+  "baselineFeatureHead": "f63f094949f3f2e082a6f4ff2d5e52940b4c6e00",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
+    "purpose": "Add First steps & useful tips after welcome and optional PRO notice, with isolated read-only setup checks; retain protected weather paths and FINAL baseline.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

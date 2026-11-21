@@ -35,6 +35,8 @@ jobs:
           python-version: "3.14"
       - name: Verify deterministic HACS integration staging
         run: python scripts/verify-hacs-integration-package.py
+      - name: Check isolated onboarding status logic
+        run: python scripts/test-first-steps-status.py
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

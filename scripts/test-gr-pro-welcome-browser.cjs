@@ -133,6 +133,7 @@ async function run() {
     await initial.page.evaluate(() => { card._render(); welcomeConnection.dispatchEvent(new Event('ready')); });
     await initial.page.waitForFunction(() => !card.__proBranding.check);
     assert.equal(await initial.dialog.count(), 0);
+    await initial.page.locator('.gr-first-steps[open] [data-first-done]').click();
     await initial.page.locator('#settings-open').click();
     assert(await initial.page.locator('#settings-backdrop').isVisible());
     assert.deepEqual(initial.errors, []);
