@@ -61,7 +61,7 @@ jobs:
         id: golden
         run: |
           set -euo pipefail
-          scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.11 dist/source-archives
+          bash scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.11 dist/source-archives
           (cd dist/source-archives && for checksums in *_SHA256SUMS.txt; do sha256sum -c "$checksums"; done)
           unzip -tq '${{ steps.golden.outputs.zip_path }}'
           git bundle verify '${{ steps.golden.outputs.bundle_path }}'
