@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.253",
-  "build": "V4.11.253-DEV-2026-11-21",
-  "runtimeRevision": "411253r1",
-  "moduleSetId": "E411-253A1",
-  "baselineFeatureHead": "4c913712d4d4fe6603f7da41b77aebe04a0df542",
+  "productVersion": "4.11.254",
+  "build": "V4.11.254-DEV-2026-11-21",
+  "runtimeRevision": "411254r1",
+  "moduleSetId": "E411-254A1",
+  "baselineFeatureHead": "20cd25748ef8ca83e8a2a9b341e5978b1edfd182",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
+    "purpose": "Location selector enabled by default for fresh setups; explicit settings retained.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

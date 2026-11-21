@@ -56,7 +56,7 @@ BLITZORTUNG_LOCATION_ENTITY_KEY: Final = "location_entity"
 # /gewitterradar static asset path.
 SIDEBAR_PANEL_URL_PATH: Final = "gewitterradar-panel"
 SIDEBAR_PANEL_WEB_COMPONENT: Final = "gewitterradar-panel"
-SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=411253r1"
+SIDEBAR_PANEL_MODULE_URL: Final = "/gewitterradar/panel.js?v=411254r1"
 SIDEBAR_PANEL_ICON: Final = "mdi:weather-lightning"
 
 LANGUAGE_OPTIONS: Final = (
@@ -103,7 +103,7 @@ DEFAULT_OPTIONS: Final = {
     CONF_AURA_EFFECTS: True,
     CONF_WARNING_ANIMATION: True,
     CONF_STORM_SIMULATION: False,
-    CONF_SHOW_LOCATION_SELECTOR: False,
+    CONF_SHOW_LOCATION_SELECTOR: True,
     CONF_SHOW_SIDEBAR_PANEL: False,
     CONF_COMPASS_NEAREST_STRIKE: False,
     CONF_COMPASS_DEVICE_ORIENTATION: False,
