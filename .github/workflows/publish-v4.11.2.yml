@@ -32,12 +32,8 @@ jobs:
           node scripts/sync-dev-release.mjs "$base"
           python - <<'PY'
           from pathlib import Path
-          import json,hashlib
-          p=Path('frontend/version.js'); s=p.read_text(); assert 'displayVersion:"V4.11.254 DEV"' in s
-          p.write_text(s.replace('displayVersion:"V4.11.254 DEV"','displayVersion:"V4.11.2 FINAL"').replace('V4.11.254-DEV-','V4.11.2-FINAL-'))
-          p=Path('frontend/assets/gewitterradar-runtime-manifest.json'); d=json.loads(p.read_text()); d['build']=d['build'].replace('V4.11.254-DEV-','V4.11.2-FINAL-'); d['displayVersion']='V4.11.2 FINAL'; p.write_text(json.dumps(d,indent=2)+'\n')
-          a=Path('frontend/assets.json'); rows=json.loads(a.read_text()); row=next(x for x in rows if x['file']=='assets/gewitterradar-runtime-manifest.json'); raw=p.read_bytes(); row['sha256']=hashlib.sha256(raw).hexdigest(); row['sizeBytes']=len(raw); a.write_text(json.dumps(rows,indent=2)+'\n')
-          p=Path('custom_components/gewitterradar/dra-deployment-provenance.json'); d=json.loads(p.read_text()); d['build']=d['build'].replace('V4.11.254-DEV-','V4.11.2-FINAL-'); d['deployment']['purpose']='Location selector enabled by default for fresh setups; explicit settings retained.'; p.write_text(json.dumps(d,indent=2)+'\n')
+          import json
+          p=Path('custom_components/gewitterradar/dra-deployment-provenance.json'); d=json.loads(p.read_text()); d['deployment']['purpose']='Location selector enabled by default for fresh setups; explicit settings retained.'; p.write_text(json.dumps(d,indent=2)+'\n')
           Path('docs/RELEASE_NOTES_V4_11_2_FINAL.md').write_text('# GewitterRadar V4.11.2 FINAL – Standortwahl\n\nDie Standortwahl in der Hauptansicht ist bei Neuinstallationen standardmäßig eingeschaltet. Bereits gespeicherte Einstellungen bleiben erhalten. Alle anderen Standardeinstellungen und Wetterfunktionen bleiben unverändert.\n\nInterne Produktversion 4.11.254, HA-Integration 0.25.161.\n')
           PY
           node scripts/build-frontend.mjs
