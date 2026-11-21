@@ -1,4 +1,4 @@
-import {premiumEscape} from '../weather/premium-ui.js?v=411251r1';
+import {premiumEscape} from '../weather/premium-ui.js?v=411252r1';
 
 export const FIRST_STEPS_DISMISSED = 'gewitterradar-first-steps-dismissed';
 const TEXT = {
@@ -70,6 +70,7 @@ const STYLE = `
  .gr-first-list li[data-state=complete] .gr-first-label,.gr-first-check{color:#7ce5a4}
  .gr-first-list li[data-state=complete] .gr-first-check{display:inline}
  .gr-first-list small{display:block;margin-top:5px;color:#c2c9d2;font-size:12px;line-height:1.5}
+ .gr-first-list .gr-first-admin{color:#e3c17d}
  .gr-first-list .gr-first-unknown{color:#d2bd92}.gr-first-unknown[hidden]{display:none}
  .gr-first-yaml{margin:10px 0 0;padding:12px;border:1px solid #b99a483b;border-radius:7px;
    white-space:pre-wrap;overflow-wrap:anywhere;direction:ltr;text-align:left;font:12px/1.6 Consolas,monospace;color:#e6d3ac;background:#060b10}

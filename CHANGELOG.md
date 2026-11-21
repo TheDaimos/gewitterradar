@@ -1,3 +1,7 @@
+## V4.11.252 DEV · Administratorhinweis in Premium-Gold · HA 0.25.159
+
+Der Hinweis zu erforderlichen HA-Administratorrechten im Einrichtungsdialog wird dezent im vorhandenen Premium-Gold dargestellt. Keine funktionalen Änderungen an Prüfungen, Dialogablauf, Providern oder Wetterdarstellung. Bereitstellung nur auf `deploy/dev` für DRA-Sichtprüfung, kein FINAL-Release.
+
 ## V4.11.251 DEV · First Steps & Useful Tips · HA 0.25.158
 
 - Einheitlicher Titel „First Steps & Useful Tips“ und erneuter Aufruf über „Hilfe und Hinweise“, auch nach dem Ausblenden des automatischen Dialogs.
