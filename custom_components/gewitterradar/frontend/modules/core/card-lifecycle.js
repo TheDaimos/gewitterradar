@@ -1,8 +1,8 @@
-import {settingsStorage} from './settings-vault.js?v=411250r1';
+import {settingsStorage} from './settings-vault.js?v=411251r1';
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [

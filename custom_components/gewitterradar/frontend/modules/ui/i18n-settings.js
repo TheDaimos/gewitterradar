@@ -1,11 +1,11 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411248r1';
-import {settingsStorage} from '../core/settings-vault.js?v=411250r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411250r1';
+import {settingsStorage} from '../core/settings-vault.js?v=411251r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=411251r1';
 import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.62",
+  "version": "1.3.63",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2892,6 +2892,13 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
         const sections=createHelpSections(content,language,weatherHelp,{collapsed,onToggle:(name,value)=>{
           try{settingsStorage(this).setItem(groupKeys[name],value?'1':'0');}catch(_){}
         }});
+        const firstStepsLink=document.createElement('button');
+        firstStepsLink.type='button';
+        firstStepsLink.className='help-first-steps-link';
+        firstStepsLink.textContent='First Steps & Useful Tips';
+        firstStepsLink.style.cssText='display:block;width:100%;min-height:44px;margin:0 0 12px;padding:10px 14px;border:1px solid #c7a15c;border-radius:9px;background:linear-gradient(#25323b,#101a22);color:#f5dc9e;font-size:14px;font-weight:600;cursor:pointer;text-align:start';
+        firstStepsLink.addEventListener('click',()=>{this._closeHelp(false);this._reopenFirstStepsFromHelp();});
+        sections.standardTopics.prepend(firstStepsLink);
         appendWeatherHelp(sections.proTopics,language,openKeys,{weatherHelp});
         help.sections.forEach((section,index)=>{
           const proOnly=section.key==='weather-display-v411';

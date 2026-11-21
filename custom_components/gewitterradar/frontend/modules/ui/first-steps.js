@@ -1,4 +1,4 @@
-import {premiumEscape} from '../weather/premium-ui.js?v=411250r1';
+import {premiumEscape} from '../weather/premium-ui.js?v=411251r1';
 
 export const FIRST_STEPS_DISMISSED = 'gewitterradar-first-steps-dismissed';
 const TEXT = {
@@ -11,6 +11,7 @@ const TEXT = {
     installedHelp:'Home Assistant → Einstellungen → Geräte & Dienste → Blitzortung hinzufügen.',
     linkedHelp:'In Blitzortung als „Location entity“ den GewitterRadar-Tracker wählen: nativ device_tracker.gewitterradar, Dashboard device_tracker.gewitterradar_dashboard.',
     recorderHelp:'Die vier Blitzquellen im vorhandenen recorder:-Abschnitt ausschließen und Home Assistant neu starten. Die Live-Blitzdaten bleiben verfügbar.',
+    recorderAdmin:'HA-Administratorrechte erforderlich',
     todoHelp:'Einstellungen → Geräte & Dienste → Integration hinzufügen → Local to-do. Die Liste exakt „Gewitterradar Orte“ nennen.',
     refresh:'Erneut prüfen', checking:'Einrichtung wird geprüft …',
     unknown:'Nicht automatisch prüfbar. Bitte die Einrichtung in Home Assistant kontrollieren.',
@@ -25,6 +26,7 @@ const TEXT = {
     installedHelp:'Home Assistant → Settings → Devices & services → add Blitzortung.',
     linkedHelp:'In Blitzortung, select the GewitterRadar tracker as “Location entity”: native device_tracker.gewitterradar, dashboard device_tracker.gewitterradar_dashboard.',
     recorderHelp:'Exclude the four lightning sources in the existing recorder: section and restart Home Assistant. Live lightning data remains available.',
+    recorderAdmin:'HA administrator permissions required',
     todoHelp:'Settings → Devices & services → Add integration → Local to-do. Name the list exactly “Gewitterradar Orte”.',
     refresh:'Check again', checking:'Checking your setup …',
     unknown:'Cannot be checked automatically. Please check the setup in Home Assistant.',
@@ -94,10 +96,11 @@ export function openFirstSteps(owner, images, storage, writable) {
       <header class="gr-first-head">
         <div class="gr-first-brand"></div>
       </header>
-      <div class="gr-first-body"><h2 id="gr-first-title">First steps &amp; useful tips</h2><p>${esc(text.intro)}</p>
+      <div class="gr-first-body"><h2 id="gr-first-title">First Steps &amp; Useful Tips</h2><p>${esc(text.intro)}</p>
         <ul class="gr-first-list">${ROWS.map(([key]) => `<li data-check="${key}" data-state="unknown">
           <span class="gr-first-label">${esc(text[key])}</span><span class="gr-first-check" aria-hidden="true">✓</span>
           <small>${esc(text[key + 'Help'])}</small><small class="gr-first-unknown">${esc(text.unknown)}</small>
+          ${key === 'recorder' ? `<small class="gr-first-admin">${esc(text.recorderAdmin)}</small>` : ''}
           ${key === 'recorder' ? `<pre class="gr-first-yaml">${esc(images.recorderYaml)}</pre>` : ''}
         </li>`).join('')}</ul>
       </div>

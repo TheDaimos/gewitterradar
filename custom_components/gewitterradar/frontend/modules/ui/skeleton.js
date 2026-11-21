@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411250r1';
-import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=411250r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411250r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411251r1';
+import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=411251r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411251r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
@@ -19,7 +19,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.53",
+  "version": "1.1.54",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -185,6 +185,18 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       this._firstStepsDialog = openFirstSteps(this, {
         logo: ABOUT_LOGO, wordmark: PRO_WORDMARK, close: ABOUT_CLOSE_IMAGE, recorderYaml: ABOUT_RECORDER_YAML,
         onClose: () => { if (deps.firstStepsOwner === this) deps.firstStepsOwner = null; },
+      }, storage, writable);
+      deps.firstStepsShown = true;
+    },
+
+    _reopenFirstStepsFromHelp() {
+      if (!this.isConnected || !this.shadow || this._firstStepsDialog?.open) return;
+      let storage;
+      try { storage = settingsStorage(this); } catch (_) { return; }
+      const vault = this._settingsVault;
+      const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(FIRST_STEPS_DISMISSED));
+      this._firstStepsDialog = openFirstSteps(this, {
+        logo: ABOUT_LOGO, wordmark: PRO_WORDMARK, close: ABOUT_CLOSE_IMAGE, recorderYaml: ABOUT_RECORDER_YAML,
       }, storage, writable);
       deps.firstStepsShown = true;
     },

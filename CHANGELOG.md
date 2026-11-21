@@ -1,3 +1,9 @@
+## V4.11.251 DEV · First Steps & Useful Tips · HA 0.25.158
+
+- Einheitlicher Titel „First Steps & Useful Tips“ und erneuter Aufruf über „Hilfe und Hinweise“, auch nach dem Ausblenden des automatischen Dialogs.
+- Recorder-Prüfpunkt mit kurzem Hinweis „HA-Administratorrechte erforderlich“ (Deutsch und Englisch).
+- Begrüßungsreihenfolge und Wetterfunktionen unverändert. Frontend-Build und Setup-Status-Tests bestanden; HA-DEV-/Browser-Realabnahme offen.
+
 ## V4.11.250 DEV · First steps & useful tips · HA 0.25.157
 
 Zusätzliches Einrichtungsfenster nach Begrüßung und gegebenenfalls Pro-Hinweis, mit erkanntem Standard-/PRO-Branding, metallischem Goldrahmen und vier unabhängig geprüften Einrichtungspunkten. Bestätigte Punkte erscheinen grün mit Häkchen. Erneutes Prüfen und Ausblenden im Benutzer-/Geräteprofil sind möglich. Integration und Dashboard werden gemeinsam gebaut.
