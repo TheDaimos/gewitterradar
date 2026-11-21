@@ -1,0 +1,62 @@
+name: Publish GewitterRadar V4.11.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v4.11.1.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify follow-up release source
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          grep -Fq 'version:"4.11.253"' frontend/version.js
+          test "$(python -c 'import json; print(json.load(open("custom_components/gewitterradar/manifest.json"))["version"])')" = '0.25.160'
+      - name: Verify complete delivery
+        run: |
+          set -euo pipefail
+          node scripts/verify-frontend.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-source-archive-contract.mjs
+          python scripts/verify-hacs-integration-package.py
+      - name: Create verified archive
+        run: |
+          set -euo pipefail
+          bash scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.11.1 dist/source-archives
+          (cd dist/source-archives && for checksums in *_SHA256SUMS.txt; do sha256sum -c "$checksums"; done)
+          unzip -tq dist/source-archives/*.zip
+          git bundle verify dist/source-archives/*.bundle
+      - name: Preserve recovery archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: GewitterRadar_V4.11.1_GOLDEN_MASTER
+          path: dist/source-archives/*
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish immutable maintenance release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v4.11.1 >/dev/null 2>&1; then
+            echo "Release v4.11.1 already exists; refusing to overwrite"
+            exit 1
+          fi
+          gh release create v4.11.1 dist/source-archives/* --target "$GITHUB_SHA" --title 'GewitterRadar V4.11.1 – First Steps & Useful Tips' --notes-file docs/RELEASE_NOTES_V4_11_1_FINAL.md --latest
+          gh release view v4.11.1 --json tagName,isDraft,isPrerelease,url,targetCommitish
