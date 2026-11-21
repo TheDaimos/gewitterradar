@@ -1,4 +1,4 @@
-import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=411249r1';
+import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=411253r1';
 
 export const PRO_WELCOME_DISMISSED = 'gewitterradar-pro-welcome-dismissed';
 const WEATHER_ROUTER_GITHUB = 'https://github.com/TheDaimos/weather-router-pub';
@@ -116,6 +116,8 @@ export function openProWelcome(owner, images, storage, writable) {
   dialog.addEventListener('close', () => {
     shell.remove();
     if (owner._proWelcomeDialog === dialog) owner._proWelcomeDialog = null;
+    images.onClose?.();
+    owner._maybeShowFirstSteps?.();
   }, {once:true});
   owner.shadow.append(shell);
   dialog.showModal();

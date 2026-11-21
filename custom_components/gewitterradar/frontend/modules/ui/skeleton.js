@@ -1,6 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411249r1';
-import { settingsStorage } from '../core/settings-vault.js?v=411249r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=411253r1';
+import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=411253r1';
+import { settingsStorage } from '../core/settings-vault.js?v=411253r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
@@ -18,7 +19,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.52",
+  "version": "1.1.56",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -46,6 +47,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if (state.eyeReady === ready) return;
         state.eyeReady = ready;
         this._eyeHubSync?.();
+        this._firstStepsDialog?.updateBrand();
       };
       const setInstallation = status => {
         state.installation = status;
@@ -59,6 +61,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         showStandard();
         setEyeAvailability(false);
         setInstallation('unknown');
+        this._firstStepsDialog?.invalidateChecks();
       };
       state.refresh = async () => {
         if (!connection.connected || state.check) return;
@@ -70,6 +73,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           showStandard();
           setEyeAvailability(false);
           setInstallation(state.detectedInstallation ? 'installed' : 'unknown');
+          this._maybeShowFirstSteps();
         }, PRO_DISCOVERY_TIMEOUT);
         const current = () => this.__proBranding === state && state.check === check && connection.connected;
         try {
@@ -113,6 +117,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           if (current()) {
             state.check = null;
             state.timer = setTimeout(state.refresh, PRO_DISCOVERY_INTERVAL);
+            this._maybeShowFirstSteps();
           }
         }
       };
@@ -137,6 +142,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
 
     _maybeShowProWelcome() {
       const branding = this.__proBranding;
+      if (deps.proWelcomeShown || branding?.installation !== 'absent') { this._maybeShowFirstSteps(); return; }
       if (deps.proWelcomeShown || this._mapWindowMode || !this._proWelcomeStartupChecked || !this.isConnected || !this._mapReady
           || branding?.installation !== 'absent' || !branding.connection.connected
           || this._hass?.config?.state !== 'RUNNING' || !this._languageOnboardingComplete()
@@ -145,14 +151,54 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       let storage;
       try {
         storage = settingsStorage(this);
-        if (storage.getItem(PRO_WELCOME_DISMISSED) === '1') return;
+        if (storage.getItem(PRO_WELCOME_DISMISSED) === '1') { this._maybeShowFirstSteps(); return; }
       } catch (_) { return; }
       const vault = this._settingsVault;
       const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(PRO_WELCOME_DISMISSED));
       this._proWelcomeDialog = openProWelcome(this, {
         wordmark: PRO_WORDMARK, hero: ABOUT_HERO_IMAGE, close: ABOUT_CLOSE_IMAGE, layers: MAP_LAYER_SYMBOL_STACK3D_IMAGE,
+        onClose: () => { if (deps.proWelcomeOwner === this) deps.proWelcomeOwner = null; },
       }, storage, writable);
+      deps.proWelcomeOwner = this;
       deps.proWelcomeShown = true;
+    },
+
+    _maybeShowFirstSteps() {
+      const branding = this.__proBranding;
+      if (deps.firstStepsShown || deps.firstStepsOwner || this._mapWindowMode || !this._proWelcomeStartupChecked
+          || !this.isConnected || !this._mapReady || !this._languageOnboardingComplete()
+          || this._hass?.config?.state !== 'RUNNING' || !branding?.connection.connected
+          || (branding.check && !branding.check.expired)
+          || deps.proWelcomeOwner?._proWelcomeDialog?.open
+          || deps.aboutOnboardingOwner?._aboutDialog?.open
+          || this.shadow.querySelector('dialog[open], #settings-backdrop.open, #eye-hub-bubbles:not([hidden])')) return;
+      let storage;
+      try {
+        storage = settingsStorage(this);
+        if (storage.getItem(FIRST_STEPS_DISMISSED) === '1') return;
+        if (branding.installation === 'absent' && !deps.proWelcomeShown
+            && storage.getItem(PRO_WELCOME_DISMISSED) !== '1') return;
+      } catch (_) { return; }
+      const vault = this._settingsVault;
+      const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(FIRST_STEPS_DISMISSED));
+      deps.firstStepsOwner = this;
+      this._firstStepsDialog = openFirstSteps(this, {
+        logo: ABOUT_LOGO, wordmark: PRO_WORDMARK, close: ABOUT_CLOSE_IMAGE, recorderYaml: ABOUT_RECORDER_YAML,
+        onClose: () => { if (deps.firstStepsOwner === this) deps.firstStepsOwner = null; },
+      }, storage, writable);
+      deps.firstStepsShown = true;
+    },
+
+    _reopenFirstStepsFromHelp() {
+      if (!this.isConnected || !this.shadow || this._firstStepsDialog?.open) return;
+      let storage;
+      try { storage = settingsStorage(this); } catch (_) { return; }
+      const vault = this._settingsVault;
+      const writable = !vault || (vault.profile && !vault.recovery && !vault.retired && vault.keys.has(FIRST_STEPS_DISMISSED));
+      this._firstStepsDialog = openFirstSteps(this, {
+        logo: ABOUT_LOGO, wordmark: PRO_WORDMARK, close: ABOUT_CLOSE_IMAGE, recorderYaml: ABOUT_RECORDER_YAML,
+      }, storage, writable);
+      deps.firstStepsShown = true;
     },
 
     _buildSkeleton() {

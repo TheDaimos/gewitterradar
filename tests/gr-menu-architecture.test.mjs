@@ -14,13 +14,16 @@ test('one immutable tree preserves the seven numbered entries and adds the Vault
 });
 test('release, runtime and DRA metadata identify the same new delivery',()=>{
  const r=APPLICATION_RELEASE,rt=JSON.parse(read('frontend/assets/gewitterradar-runtime-manifest.json')),p=JSON.parse(read('custom_components/gewitterradar/dra-deployment-provenance.json'));
- assert.equal(r.version,original('frontend/version.js').toString().match(/version:"([^"]+)"/)[1], 'accepted V4.11.249 source identity');
+ const baselineVersion=original('frontend/version.js').toString().match(/version:"([^"]+)"/)[1];
+ assert.equal(baselineVersion,'4.11.249','protected FINAL source identity');
+ assert.match(r.version,/^4\.11\.\d+$/);
+ assert(Number(r.version.split('.')[2])>=249,'new deliveries must not replace the protected FINAL with an older version');
  for(const [k,v] of Object.entries({productVersion:r.version,build:r.build,runtimeRevision:r.runtimeRevision,moduleSetId:r.moduleSetId})){assert.equal(rt[k],v);assert.equal(p[k],v);}
  assert.equal(JSON.parse(read('custom_components/gewitterradar/manifest.json')).version,r.integrationVersion);
  assert(read('custom_components/gewitterradar/build_info.py').toString().includes('BUILD_VERSION = "'+r.version+'"'));
 });
-test('all wind, temperature, precipitation/mosaic and vector data/rendering files remain byte-identical',()=>{
- for(const name of ['wind-data.js','wind-field.js','wind-canvas.js','wind-display.js','wind-studio.js','wind-studio-data.js','snake-config.js','snake-geometry.js','snake-canvas.js','temperature-data.js','temperature-field.js','temperature-canvas.js','temperature-display.js','temperature-units.js','frame-clock.js','legend-overlay.js','precipitation-layer.js','p7-010/raster-tile-url.js','p7-010/raster-tile-clip.js','p7-010/raster-mosaic-consumer.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-coverage.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js']){const p='frontend/modules/weather/'+name;assert(read(p).equals(original(p)),name);}
+test('all wind, temperature, precipitation/mosaic and vector logic remains identical apart from generated module metadata',()=>{
+ for(const name of ['wind-data.js','wind-field.js','wind-canvas.js','wind-display.js','wind-studio.js','wind-studio-data.js','snake-config.js','snake-geometry.js','snake-canvas.js','temperature-data.js','temperature-field.js','temperature-canvas.js','temperature-display.js','temperature-units.js','frame-clock.js','legend-overlay.js','precipitation-layer.js','p7-010/raster-tile-url.js','p7-010/raster-tile-clip.js','p7-010/raster-mosaic-consumer.js','p7-010/raster-mosaic-contract.js','p7-010/raster-mosaic-grid-layer.js','p7-010/raster-mosaic-tile-loader.js','p7-010/raster-mosaic-coverage.js','p7-010/nasa-spatial.js','p7-010/radar-mask.js']){const p='frontend/modules/weather/'+name;assert.equal(normaliseGeneratedModule(read(p).toString()),normaliseGeneratedModule(original(p).toString()),name);}
 });
 test('DRA source/channel, licenses, historical references and original icon bytes stay untouched',()=>{
  for(const p of ['deploy-relay.json','deploy-relay-channel.json','docs/GR_SNAKE_FLOW_PROTECTED_REFERENCE_2026-11-08.md','docs/GR_WR_TEMPERATURE_WORLD_USER_REFERENCE_2026-11-08.md'])assert.equal(read(p).toString().replaceAll('\r\n','\n'),original(p).toString().replaceAll('\r\n','\n'),p);
@@ -40,7 +43,8 @@ test('module runtime/stale guard stays intact in the accepted final source',()=>
 });
 test('card lifecycle preserves the accepted navigation and vault hooks',()=>{
  const p='frontend/modules/core/card-lifecycle.js',old=original(p).toString(),now=read(p).toString();
- assert.equal(normaliseGeneratedModule(now),normaliseGeneratedModule(old));
+ const expected=old.replace('    disconnectedCallback() {','    disconnectedCallback() {\n      this._firstStepsDialog?.close();\n      this._proWelcomeDialog?.close();');
+ assert.equal(normaliseGeneratedModule(now),normaliseGeneratedModule(expected));
  assert.match(now,/settingsStorage/);
  assert.match(now,/_resumeSettingsNavigation/);
  assert.match(now,/_teardownSettingsNavigation/);

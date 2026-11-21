@@ -46,6 +46,8 @@ jobs:
         run: |
           node scripts/test-gr-menu-architecture-browser.cjs
           node scripts/test-gr-menu-hub-eye-browser.cjs
+          node scripts/test-first-steps-browser.cjs
+          node scripts/test-gr-pro-welcome-browser.cjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'

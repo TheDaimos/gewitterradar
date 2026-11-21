@@ -34,6 +34,7 @@ export async function expectedPayload(){
   if(Number(patch)>=181)support.push('modules/weather/eye-neon-energy.js');
   if(Number(patch)>=230)support.push('modules/weather/storm-bubble.js');
   if(Number(patch)>=231)support.push('modules/ui/pro-welcome.js');
+  if(Number(patch)>=250)support.push('modules/ui/first-steps.js');
   if(Number(patch)>=182)support.push('modules/core/settings-vault.js','modules/ui/settings-vault-view.js');
   if(Number(patch)>=184)support.push('modules/ui/settings-vault-setup.js');
   if(Number(patch)>=224)support.push('modules/ui/presentation-locales.js');
