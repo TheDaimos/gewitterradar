@@ -1,6 +1,7 @@
-import {premiumEscape} from '../weather/premium-ui.js?v=411252r1';
+import {premiumEscape} from '../weather/premium-ui.js?v=411253r1';
 
 export const FIRST_STEPS_DISMISSED = 'gewitterradar-first-steps-dismissed';
+const INFO_ICON = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const TEXT = {
   de: {
     intro:'Deine Einrichtung auf einen Blick. Erledigte Schritte werden grün und erhalten ein Häkchen.',
@@ -13,6 +14,11 @@ const TEXT = {
     recorderHelp:'Die vier Blitzquellen im vorhandenen recorder:-Abschnitt ausschließen und Home Assistant neu starten. Die Live-Blitzdaten bleiben verfügbar.',
     recorderAdmin:'HA-Administratorrechte erforderlich',
     todoHelp:'Einstellungen → Geräte & Dienste → Integration hinzufügen → Local to-do. Die Liste exakt „Gewitterradar Orte“ nennen.',
+    installedWhy:'Die Blitzortung.org-Integration liefert die Blitzereignisse, die GewitterRadar auf der Karte auswerten und darstellen kann.',
+    linkedWhy:'Die Zuordnung zum GewitterRadar-Tracker legt den Bezugsstandort fest, für den Blitzortung.org Entfernungen und Richtungen ermittelt.',
+    recorderWhy:'Dringend empfohlen: Die von Blitzortung.org gemeldeten Blitzeinschläge können sehr viele Zustandsänderungen erzeugen und die Home-Assistant-Datenbank massiv anwachsen lassen. Die Empfehlung bezieht sich auf die Blitzdaten von Blitzortung.org – nicht auf eine von GewitterRadar verursachte Datenflut. Die Live-Blitzdaten bleiben erhalten.',
+    todoWhy:'GewitterRadar verwendet die Local-To-do-Liste „Gewitterradar Orte“ als zentralen Speicher für Deine gespeicherten Ortsfavoriten, etwa Städte und Länder. Ohne diese Liste steht die Ortssuche mit Favoritenspeicherung nicht vollständig zur Verfügung.',
+    whyLabel:'Warum ist das sinnvoll?',
     refresh:'Erneut prüfen', checking:'Einrichtung wird geprüft …',
     unknown:'Nicht automatisch prüfbar. Bitte die Einrichtung in Home Assistant kontrollieren.',
     complete:'Erledigt', pending:'Noch offen', close:'Schließen',
@@ -28,6 +34,11 @@ const TEXT = {
     recorderHelp:'Exclude the four lightning sources in the existing recorder: section and restart Home Assistant. Live lightning data remains available.',
     recorderAdmin:'HA administrator permissions required',
     todoHelp:'Settings → Devices & services → Add integration → Local to-do. Name the list exactly “Gewitterradar Orte”.',
+    installedWhy:'The Blitzortung.org integration supplies lightning events that GewitterRadar can evaluate and display on the map.',
+    linkedWhy:'Linking the GewitterRadar tracker defines the reference location used by Blitzortung.org for lightning distance and direction calculations.',
+    recorderWhy:'Strongly recommended: Lightning strikes reported by Blitzortung.org may cause a very large number of state changes and dramatically increase the Home Assistant database size. This recommendation concerns Blitzortung.org lightning data — not database growth caused by GewitterRadar. Live lightning data remains available.',
+    todoWhy:'GewitterRadar uses the Local to-do list “Gewitterradar Orte” as its central storage for saved place favourites, such as cities and countries. Without the list, location search with favourite storage is not fully available.',
+    whyLabel:'Why is this useful?',
     refresh:'Check again', checking:'Checking your setup …',
     unknown:'Cannot be checked automatically. Please check the setup in Home Assistant.',
     complete:'Completed', pending:'Still open', close:'Close',
@@ -63,13 +74,24 @@ const STYLE = `
  .gr-first-body h2{margin:0 0 8px;font-size:clamp(23px,4.8vw,32px);line-height:1.2;color:#f6dc9f}
  .gr-first-body>p{margin:0 0 20px;color:#cbd2db}
  .gr-first-list{padding:0;margin:0;list-style:none;display:grid;gap:10px}
- .gr-first-list li{position:relative;min-width:0;padding:14px 14px 14px 30px;border:1px solid #bd96513d;
+ .gr-first-list li{position:relative;min-width:0;padding:0;border:1px solid #bd96513d;
    border-radius:10px;background:linear-gradient(120deg,#a17c2520,transparent 65%);overflow-wrap:anywhere}
- .gr-first-list li::before{content:'•';position:absolute;left:13px;top:12px;color:#dbb872;font-size:20px}
+ .gr-first-list li::before{content:'•';position:absolute;left:13px;top:12px;color:#dbb872;font-size:20px;pointer-events:none}
+ .gr-first-item>summary{display:flex;align-items:center;gap:9px;min-height:56px;padding:12px 13px 12px 30px;cursor:pointer;list-style:none;touch-action:manipulation}
+ .gr-first-item>summary::-webkit-details-marker,.gr-first-why>summary::-webkit-details-marker{display:none}
+ .gr-first-item>summary .gr-first-label{min-width:0;flex:1}
+ .gr-first-chevron{display:block;flex:none;width:10px;height:10px;border-right:2px solid #dfbc72;border-bottom:2px solid #dfbc72;transform:rotate(45deg);transition:transform .16s ease}
+ .gr-first-item[open]>summary .gr-first-chevron,.gr-first-why[open]>summary .gr-first-chevron{transform:rotate(225deg)}
+ .gr-first-detail{padding:0 14px 14px 30px;border-top:1px solid #b994482e}
+ .gr-first-why{margin-top:10px;border-top:1px solid #b994482e}
+ .gr-first-why>summary{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-height:44px;padding:4px 1px;cursor:pointer;list-style:none;touch-action:manipulation}
+ .gr-first-why>summary img{width:30px;height:30px;object-fit:contain;pointer-events:none}
+ .gr-first-why>p{margin:1px 0 6px;padding:10px 12px;border:1px solid #b9944833;border-radius:8px;background:#af883213;color:#d4d8df;font-size:12px;line-height:1.55}
+ .gr-first-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
  .gr-first-label{font-weight:650}.gr-first-check{display:none;margin-inline-start:10px;font-size:20px;line-height:1}
  .gr-first-list li[data-state=complete] .gr-first-label,.gr-first-check{color:#7ce5a4}
  .gr-first-list li[data-state=complete] .gr-first-check{display:inline}
- .gr-first-list small{display:block;margin-top:5px;color:#c2c9d2;font-size:12px;line-height:1.5}
+ .gr-first-list small{display:block;margin-top:8px;color:#c2c9d2;font-size:12px;line-height:1.5}
  .gr-first-list .gr-first-admin{color:#e3c17d}
  .gr-first-list .gr-first-unknown{color:#d2bd92}.gr-first-unknown[hidden]{display:none}
  .gr-first-yaml{margin:10px 0 0;padding:12px;border:1px solid #b99a483b;border-radius:7px;
@@ -81,7 +103,7 @@ const STYLE = `
    background:linear-gradient(#22303b,#111820);color:#edf0f5;font:inherit;cursor:pointer;touch-action:manipulation}
  .gr-first-footer button:disabled{opacity:.65;cursor:wait}
  .gr-first-status{flex-basis:100%;margin:0;font-size:12px;color:#cbd2db;min-height:1.5em}
- .gr-first-steps :focus-visible{outline:2px solid #f6d37e;outline-offset:2px}
+ .gr-first-steps :focus-visible{outline:2px solid #f6d37e;outline-offset:-2px}
  @media(max-width:480px){.gr-first-head{padding:20px 56px 15px 16px}.gr-first-brand{min-height:58px;gap:8px}
    .gr-first-brand>img{width:48px;height:48px}.gr-first-body{padding:18px 16px}.gr-first-footer{padding:0 16px 16px}
    .gr-first-brand strong{font-size:24px}.gr-first-yaml{font-size:11px}}
@@ -99,10 +121,18 @@ export function openFirstSteps(owner, images, storage, writable) {
       </header>
       <div class="gr-first-body"><h2 id="gr-first-title">First Steps &amp; Useful Tips</h2><p>${esc(text.intro)}</p>
         <ul class="gr-first-list">${ROWS.map(([key]) => `<li data-check="${key}" data-state="unknown">
-          <span class="gr-first-label">${esc(text[key])}</span><span class="gr-first-check" aria-hidden="true">✓</span>
-          <small>${esc(text[key + 'Help'])}</small><small class="gr-first-unknown">${esc(text.unknown)}</small>
-          ${key === 'recorder' ? `<small class="gr-first-admin">${esc(text.recorderAdmin)}</small>` : ''}
-          ${key === 'recorder' ? `<pre class="gr-first-yaml">${esc(images.recorderYaml)}</pre>` : ''}
+          <details class="gr-first-item"><summary>
+            <span class="gr-first-label">${esc(text[key])}</span><span class="gr-first-check" aria-hidden="true">✓</span>
+            <span class="gr-first-chevron" aria-hidden="true"></span>
+          </summary><div class="gr-first-detail">
+            <small>${esc(text[key + 'Help'])}</small><small class="gr-first-unknown">${esc(text.unknown)}</small>
+            ${key === 'recorder' ? `<small class="gr-first-admin">${esc(text.recorderAdmin)}</small>` : ''}
+            ${key === 'recorder' ? `<pre class="gr-first-yaml">${esc(images.recorderYaml)}</pre>` : ''}
+            <details class="gr-first-why"><summary aria-label="${esc(text.whyLabel)}" title="${esc(text.whyLabel)}">
+              <img src="${esc(INFO_ICON)}" alt="" draggable="false"><span class="gr-first-chevron" aria-hidden="true"></span>
+              <span class="gr-first-sr-only">${esc(text.whyLabel)}</span>
+            </summary><p>${esc(text[key + 'Why'])}</p></details>
+          </div></details>
         </li>`).join('')}</ul>
       </div>
       <footer class="gr-first-footer">
@@ -115,6 +145,10 @@ export function openFirstSteps(owner, images, storage, writable) {
     <button class="gr-first-close" type="button" aria-label="${esc(text.close)}"><img src="${esc(images.close)}" alt="" draggable="false"></button>
   </dialog>`;
   const dialog = shell.querySelector('dialog'), status = dialog.querySelector('.gr-first-status');
+  // Only one primary step expands at a time; the nested explanation remains optional.
+  for (const item of dialog.querySelectorAll('.gr-first-item')) item.addEventListener('toggle', () => {
+    if (item.open) for (const other of dialog.querySelectorAll('.gr-first-item')) if (other !== item) other.open = false;
+  });
   const refresh = dialog.querySelector('[data-first-refresh]');
   let active = true, request = null;
   const render = reply => {

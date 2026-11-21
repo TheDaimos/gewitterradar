@@ -83,6 +83,18 @@ function initialize(options) {
       assert.equal(await ordered.page.locator('dialog[open]').count(),1);
       assert.equal(await ordered.dialog.locator('.gr-first-scroll').evaluate(node => node.scrollTop),0,'start at branding/header');
       assert.equal(await ordered.dialog.locator('li').count(),4);
+      assert.equal(await ordered.dialog.locator('.gr-first-item[open]').count(),0,'compact initial checklist');
+      await ordered.dialog.locator('[data-check="recorder"] .gr-first-item>summary').click();
+      assert.equal(await ordered.dialog.locator('.gr-first-item[open]').count(),1);
+      assert.equal(await ordered.dialog.locator('[data-check="recorder"] .gr-first-why[open]').count(),0,'why initially collapsed');
+      await ordered.dialog.locator('[data-check="recorder"] .gr-first-why>summary').click();
+      assert(await ordered.dialog.locator('[data-check="recorder"] .gr-first-why p').isVisible());
+      assert.match(await ordered.dialog.locator('[data-check="recorder"] .gr-first-why p').innerText(),/Blitzortung\.org/);
+      assert(await ordered.dialog.locator('[data-check="recorder"] .gr-first-why img').evaluate(img => img.complete && img.naturalWidth > 0),'premium info asset');
+      await ordered.dialog.locator('[data-check="todo"] .gr-first-item>summary').click();
+      await ordered.page.waitForFunction(() => card._firstStepsDialog.querySelectorAll('.gr-first-item[open]').length === 1);
+      assert.equal(await ordered.dialog.locator('[data-check="recorder"] .gr-first-item[open]').count(),0,'single expanded point');
+      assert.match(await ordered.dialog.locator('[data-check="todo"] .gr-first-why p').textContent(),/Ortsfavoriten/);
       await ordered.page.waitForFunction(() => setupCalls === 1 && !card._firstStepsDialog.querySelector('[data-first-refresh]').disabled);
       assert.deepEqual(await ordered.dialog.locator('li').evaluateAll(rows => rows.map(row => row.dataset.state)),['complete','pending','unknown','complete']);
       assert.equal(await ordered.dialog.locator('.gr-first-check:visible').count(),2);

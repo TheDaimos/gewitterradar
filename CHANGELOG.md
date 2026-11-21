@@ -1,3 +1,7 @@
+## V4.11.253 DEV · Klappbare First Steps mit Hintergrundinfos · HA 0.25.160
+
+Alle vier Einrichtungspunkte werden als kompakte, einzeln aufklappbare Prüfpunkte mit sichtbarem Status dargestellt. Innerhalb des jeweiligen Einrichtungstexts öffnet das originale Hi-Res-Info-i mit Chevron eine gesonderte Begründung (Deutsch/Englisch). Die Recorder-Erläuterung benennt ausdrücklich die Daten von Blitzortung.org als Ursache des möglichen Datenbankwachstums und stellt klar, dass GewitterRadar selbst nicht von den Ausschlüssen betroffen ist. Die Local-To-do-Erklärung beschreibt die Liste „Gewitterradar Orte“ als Speicher der Ortsfavoriten. Kein Eingriff in Backend-Prüfungen, Wetterfunktionen oder bestehende Referenzstände; DRA-DEV-Sichtprüfung offen.
+
 ## V4.11.252 DEV · Administratorhinweis in Premium-Gold · HA 0.25.159
 
 Der Hinweis zu erforderlichen HA-Administratorrechten im Einrichtungsdialog wird dezent im vorhandenen Premium-Gold dargestellt. Keine funktionalen Änderungen an Prüfungen, Dialogablauf, Providern oder Wetterdarstellung. Bereitstellung nur auf `deploy/dev` für DRA-Sichtprüfung, kein FINAL-Release.
