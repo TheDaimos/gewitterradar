@@ -63,8 +63,8 @@ jobs:
           set -euo pipefail
           bash scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.11 dist/source-archives
           (cd dist/source-archives && for checksums in *_SHA256SUMS.txt; do sha256sum -c "$checksums"; done)
-          unzip -tq '${{ steps.golden.outputs.zip_path }}'
-          git bundle verify '${{ steps.golden.outputs.bundle_path }}'
+          unzip -tq dist/source-archives/*.zip
+          git bundle verify dist/source-archives/*.bundle
       - name: Preserve release recovery archive
         uses: actions/upload-artifact@v4
         with:
