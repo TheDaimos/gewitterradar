@@ -1,0 +1,157 @@
+{
+  "sourceCommit": "b0d84a0b1ccd3c3223fea8241fdd10761f132bab",
+  "physicalDeviceAcceptance": false,
+  "workflowRuns": [
+    {
+      "id": 45042578380,
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578380"
+    },
+    {
+      "id": 45042578118,
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578118"
+    },
+    {
+      "id": 45042578123,
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578123"
+    },
+    {
+      "id": 45042578342,
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578342"
+    },
+    {
+      "id": 45042578369,
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578369"
+    },
+    {
+      "id": 45042578286,
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578286"
+    },
+    {
+      "id": 45042578304,
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578304"
+    },
+    {
+      "id": 45042578120,
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578120"
+    },
+    {
+      "id": 45042578272,
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578272"
+    },
+    {
+      "id": 45042578351,
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578351"
+    },
+    {
+      "id": 45042578336,
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578336"
+    },
+    {
+      "id": 45042578325,
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45042578325"
+    }
+  ],
+  "legendHub": [
+    {
+      "name": "desktop",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": true,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "portrait",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": false,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "landscape",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": false,
+      "reducedMotion": true,
+      "reload": true
+    }
+  ],
+  "aura": [
+    {
+      "name": "desktop",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "portrait",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "landscape",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    }
+  ]
+}

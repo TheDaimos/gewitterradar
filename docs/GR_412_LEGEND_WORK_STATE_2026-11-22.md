@@ -1,13 +1,9 @@
-# V4.12 – fortsetzbarer Arbeitsstand
+# V4.12 – technischer Abschluss
 
-Stand: 22.11.2026; Branch `deploy/dev`, gesicherter Funktionscommit `6eaf80b2a122af9943448c4eaab65f5a98d24ccb` bereits veröffentlicht. Aura-Basis weiterhin unverändert `b184aa475d7dede993bf9ed7e699c9dfffba7248`.
+**ERLEDIGT:** Aura separat als v4.12.3-dev geschützt. Legend Hub mit sämtlichen vorgesehenen Darstellungs-, Bedienungs-, Skalen-, Sprach- und Profilfunktionen abgeschlossen. Finaler Quellcommit `b0d84a0b1ccd3c3223fea8241fdd10761f132bab`, GR 4.12.6 DEV / HA 0.25.167, Runtime `4126r1`, Modulset `E412-6A1`. Alle öffentlichen Gates dieses Quellstands PASS. Installierbare ZIPs, Manifest und SHA-256-Inventar aus genau diesem Commit.
 
-- **ERLEDIGT:** Aura, separat geprüfter/installierbarer Release v4.12.3-dev und geschützte technische Referenz. Ergebnisse unter `docs/GR_412_AURA_REFERENCE_2026-11-22.md` sind weiter gültig.
-- **ERLEDIGT:** Legend Hub 4.12.4 / HA 0.25.165 implementiert und eingecheckt, einschließlich neun Hilfsmodulen, gemeinsamer Skalen, nativer Legendenadapter, Vault-Schema, 19 Sprachvarianten und beider byteidentischer PNG-Originale samt Retentionsvertrag. Noch kein Legend-Hub-Release.
-- **ERLEDIGT, lokal:** 2184 Layoutkombinationen; tatsächliches Vault-Schema inklusive negativer Fälle; Eye-/WOW-Modell- und 19 Python-Quellverträge; statische Python/JSON/YAML-Prüfung; kanonischer Build-/Spiegel-/Versionsabgleich mit 207 Kern-Dateien. Desktop-Hub-Matrix mit 112 Layoutfällen, acht Rand-Drags, 72 Skalenfällen, Long-Press, Slot-Tausch, freier Kartenfläche, reduzierter Bewegung und Reload bestanden. Teilnachweis `.task412-work/legend-evidence/desktop-results.json`.
-- **ERLEDIGT:** Beide Touch-Formate; Feld-/Einheiten-/Provider-Isolation; authentifizierte Vault-Persistenz; exakt reversible Quellvergleichsadapter mit vollständigem Schutz der übrigen Wetterlogik; deterministischer Build mit negativen Manipulationsproben; HACS/DRA- und Retentionsprüfungen. Details im [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md).
-- **ERLEDIGT:** V4.12.5 `525a4e24b01db339db874818bd44f5dec3d7d42a` vollständig öffentlich grün: breite Frontend-/Golden-/Aura-/Legend-Hub-Matrix, HA, Vault/Neon/Energie/Gesten/Pakete, Synoptik/Touch/Help und übrige Verträge. Kein Zwischenkandidat wurde als Release publiziert.
-- **AKTUELLER SCHRITT:** V4.12.6 / HA 0.25.167 ergänzt ausschließlich den Schutz uniformer Temperaturfelder und Slot-Drag-Abbruch. Gezielter Desktoplauf einschließlich tatsächlichem synthetischem 0-°C-/32-°F-Feld und Modelltest PASS. Vollständigen finalen CI-Freeze abwarten, Pakete aus dessen exakt geprüftem Commit erzeugen, nicht aus älteren Kandidaten.
-- **OFFEN:** Finale öffentliche CI-Ergebnisse, installierbare ZIPs/SHA-Manifest aus dem geprüften Commit, abschließende Belege und DEV-Prerelease. Quelltag exakt auf geprüften Commit setzen, keine FINAL-/PROD-Promotion.
+[Finaler Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md) mit CI-Links, Rohbelegen, Paketidentitäten, fachlichen Grenzen und Veröffentlichungslink. Der DEV-Tag bleibt auf dem exakt geprüften Quellcommit; spätere Berichtscommits besitzen unveränderte Produktbäume. V4.11.03 FINAL und alle vorhandenen Referenzen bleiben geschützt.
 
-Vollständige Originalanforderungen liegen unverändert in der angehängten Auftragsdatei. Arbeit ausschließlich inkrementell fortführen. `.task412-work/` enthält lokale Testprotokolle und Zwischenartefakte; nicht pauschal committen. Alte Nutzerdateien/Arbeitsordner nicht löschen. VM109/physisches Android nicht als getestet ausgeben; VM101 und WR unverändert lassen.
+**Externe Abnahme offen:** physisches Android und Betreiberinstallation auf HA DEV VM109. PROD VM101 und WR wurden nicht verändert. Keine technische Prüfung als Hardware-/Betreiberfreigabe ausgeben.
+
+Lokale Pakete: `.task412-work/legend-release-v4126/`. Nicht ältere 4.12.4-/4.12.5-Pakete veröffentlichen. Andere vorhandene Nutzer-/Arbeitsordner nicht löschen.

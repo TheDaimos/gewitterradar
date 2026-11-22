@@ -1,6 +1,6 @@
 # GewitterRadar PRO V4.12 – Legend Hub und gemeinsame Legenden
 
-Kandidat **GR 4.12.6 DEV / HA 0.25.167**, Runtime `4126r1`, Modulset `E412-6A1`, Build `V4.12.6-DEV-2026-11-22`. Branch `deploy/dev`. Der öffentliche CI-/Paketabschluss wird nach dem Kandidaten-Commit unten ergänzt; dieser Bericht behauptet noch keinen abgeschlossenen Release.
+DEV-Abschluss **GR 4.12.6 DEV / HA 0.25.167**, Runtime `4126r1`, Modulset `E412-6A1`, Build `V4.12.6-DEV-2026-11-22`. Branch `deploy/dev`. Exakt geprüfter und für den DEV-Prerelease eingefrorener Quellcommit: `b0d84a0b1ccd3c3223fea8241fdd10761f132bab`. Vollständige öffentliche CI und installierbare Pakete sind unten nachgewiesen.
 
 ## Geschützte Ausgangsstände
 
@@ -66,8 +66,22 @@ V4.12.4-Nachlauf `3eea1b6aa538a26d1438c0007d98f65c9262aa66`: öffentlicher Vault
 
 V4.12.5 `525a4e24b01db339db874818bd44f5dec3d7d42a`: sämtliche öffentlichen Gates PASS, einschließlich [breitem Frontend, strengem Linux-Golden und kompletter Aura-/Legend-Hub-Matrix](https://github.com/TheDaimos/gewitterradar/actions/runs/45041392088), [Vault/Paketen/Neon/Energie/Gesten](https://github.com/TheDaimos/gewitterradar/actions/runs/45041392064), [HA](https://github.com/TheDaimos/gewitterradar/actions/runs/45041392050) und [Synoptik/Touch/Help](https://github.com/TheDaimos/gewitterradar/actions/runs/45041392089). Gültige Zwischenbelege bleiben erhalten.
 
-Der abschließende gezielte Randfall-Nachlauf **V4.12.6 / HA 0.25.167** ergänzt den Schutz vollständig einheitlicher Temperaturfelder: tatsächlicher Einzelwert, konstante Originalfarbe und genau eine mittig angeordnete Beschriftung statt einer künstlichen oberen Temperatur. Modelltest und tatsächlicher synthetischer 0-°C-/32-°F-Feldlauf lokal PASS. Abgebrochene Slot-Drags verlieren außerdem ihren zuvor gemerkten Index. Wetterrenderer und wissenschaftliche Paletten bleiben unverändert. Auf diesem Stand folgt der finale öffentliche Freeze.
+Der abschließende gezielte Randfall-Nachlauf **V4.12.6 / HA 0.25.167** ergänzt den Schutz vollständig einheitlicher Temperaturfelder: tatsächlicher Einzelwert, konstante Originalfarbe und genau eine mittig angeordnete Beschriftung statt einer künstlichen oberen Temperatur. Modelltest und tatsächlicher synthetischer 0-°C-/32-°F-Feldlauf lokal PASS. Abgebrochene Slot-Drags verlieren außerdem ihren zuvor gemerkten Index. Wetterrenderer und wissenschaftliche Paletten bleiben unverändert. Auf diesem Stand erfolgte der finale öffentliche Freeze.
 
-Öffentliche CI, eindeutiger Quellcommit, Paket-Digests und DEV-Release werden nach dem Kandidatenlauf ergänzt. DRA-Konfiguration und Kanal bleiben unverändert. Geplant ist ausschließlich ein neuer DEV-Prerelease mit Integration-/Dashboard-ZIP, `deployment.json` und SHA-256-Inventar.
+**Finaler Quellstand:** [`b0d84a0b1ccd3c3223fea8241fdd10761f132bab`](https://github.com/TheDaimos/gewitterradar/commit/b0d84a0b1ccd3c3223fea8241fdd10761f132bab). [DEV-Prerelease v4.12.6-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.6-dev). Der Tag und die installierbaren ZIPs stammen aus exakt diesem geprüften Commit; spätere Berichtscommits ändern keine Produktdateien.
+
+Öffentlich PASS: [breites Frontend, strenger Linux-About-Golden, komplette Aura-/Legend-Hub-/Rand-/Recovery-/Profil-/Neon-Matrix](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578325), [Vault, Energie-/Pixelvergleiche, Gesten und ZIPs](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578336), [HA-Runtime/Hassfest/HACS](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578272), [Synoptik, Clouds, Touch und Help](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578351), [Navigation](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578286), [Raster-Mosaik](https://github.com/TheDaimos/gewitterradar/actions/runs/45042578369). Alle übrigen öffentlichen Läufe dieses Quellstands ebenfalls PASS; vollständiges Inventar und rohe Browserergebnisse unter [CI-Belege](evidence/gr-v412-legend/ci-results.json).
+
+Drei tatsächliche Browserformate, zusammen 336 Hub-Layouts, 216 Erscheinungsfälle und 24 Rand-Drags. Der Desktop-Feldlauf enthält den echten synthetischen Uniformfeld-Fall mit genau 32 °F, Transport-/Werteisolation und Temperaturverweigerung bei erhaltenem Windfeld. Die authentifizierte Vault-Matrix prüft Reload, Geräte-/Kontentrennung und gespeicherte Hub-/Skalenpräferenzen. Keine Hardwareabnahme daraus ableiten.
+
+| Paket | Dateien | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| `gewitterradar-0.25.167-dev.zip` | 247 | 43523187 | `053f0603e380148fb55191c0b52cd7c8c1ffd2efeb2175e943e6f39b265fac41` |
+| `gewitterradar-dashboard-4.12.6-dev.zip` | 230 | 42927208 | `c58347b7730a7f4eab99cc916d288cfc72ff4fe7e85df711a7ece071ee372356` |
+
+228 gemeinsame Frontenddateien bytegleich; 207 Kern-Frontenddateien und 108 modulare Dateien. ZIP-CRC und jeder archivierte Dateiinhalt gegen den exakten Git-Quellstand geprüft. Beide ursprünglichen PNGs enthalten. [Deploymentmanifest](evidence/gr-v412-legend/deployment.json) und [SHA-256-Inventar](evidence/gr-v412-legend/SHA256SUMS.txt). DRA-Kanal `deploy/dev`, Repository-Contents-Modus, Integrationsziel und Neustartvertrag unverändert; keine DRA-Konfigurationsänderung.
+
+Linux-Browserbilder aus genau diesem CI-Lauf: [Desktop Compact Glass](evidence/gr-v412-legend/desktop-compact.png), [Touch Hochformat](evidence/gr-v412-legend/portrait-compact.png).
+
 
 **Nicht durchgeführt:** Installation/Betreiberabnahme auf HA DEV VM109 und physischem Android. **Nicht geändert:** PROD VM101, WeatherRouter, FINAL-Tags und geschützte Referenzen.
