@@ -1,0 +1,184 @@
+{
+  "sourceCommit": "eb2673573fb9d593818bbacdf1a1069714f291d4",
+  "physicalDeviceAcceptance": "operator performs acceptance",
+  "reuseProof": {
+    "unchangedProductCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+    "identicalTrees": {
+      "frontend": "52bb2f5c617a4afd4a917208eb82378d4a66441c",
+      "custom_components/gewitterradar": "9175120471a17d970558dbd4d03184dbf7827380",
+      "dashboard/dist": "b66173cf99c0ae89c5d708e4d330c3f8455ef38f",
+      ".github": "504ecb286d533de05f2c91e452b3448d27dd2715",
+      "tests": "900d55faa5f04b43c4e4c1a9179e5c69c21d5cfd"
+    },
+    "changedFiles": [
+      "docs/GR_412_MINIMAL_LEGENDS_WORK_STATE_2026-11-22.md",
+      "scripts/test-v412-minimal-browser.cjs"
+    ],
+    "strategy": "Reuse successful runs only for identical product/workflow/tests trees; the sole changed browser test is rerun in the final shared frontend workflow."
+  },
+  "workflowRuns": [
+    {
+      "id": 45072262889,
+      "testedCommit": "eb2673573fb9d593818bbacdf1a1069714f291d4",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45072262889"
+    },
+    {
+      "id": 45070495130,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070495130"
+    },
+    {
+      "id": 45070494856,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494856"
+    },
+    {
+      "id": 45070494764,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494764"
+    },
+    {
+      "id": 45070494864,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494864"
+    },
+    {
+      "id": 45070494919,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494919"
+    },
+    {
+      "id": 45070494840,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494840"
+    },
+    {
+      "id": 45072262918,
+      "testedCommit": "eb2673573fb9d593818bbacdf1a1069714f291d4",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45072262918"
+    },
+    {
+      "id": 45072262847,
+      "testedCommit": "eb2673573fb9d593818bbacdf1a1069714f291d4",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45072262847"
+    },
+    {
+      "id": 45070494862,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494862"
+    },
+    {
+      "id": 45070494812,
+      "testedCommit": "e6f93652d14f7d18dc5c39cf7e1a94711977eb8e",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45070494812"
+    },
+    {
+      "id": 45072262970,
+      "testedCommit": "eb2673573fb9d593818bbacdf1a1069714f291d4",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45072262970"
+    }
+  ],
+  "legendHub": [
+    {
+      "name": "desktop",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": true,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "portrait",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": false,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "landscape",
+      "independentLayers": true,
+      "layouts": 112,
+      "longPress": true,
+      "slotEditing": true,
+      "freeMapOnly": true,
+      "edgeDrags": 8,
+      "appearances": 72,
+      "eyeCoexistence": true,
+      "categorical": true,
+      "fieldIsolation": false,
+      "reducedMotion": true,
+      "reload": true
+    }
+  ],
+  "aura": [
+    {
+      "name": "desktop",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "portrait",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    },
+    {
+      "name": "landscape",
+      "counts": "1–8",
+      "sparse": true,
+      "transition": true,
+      "stableTargets": true,
+      "edges": 8,
+      "reducedMotion": true,
+      "reload": true
+    }
+  ]
+}

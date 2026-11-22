@@ -34,4 +34,51 @@ Vorherbilder stammen direkt aus dem unveränderlichen Git-Baum `b0d84a0b…`, mi
 
 ## Lieferabschluss
 
-Die finale Nachbesserung wird als 4.12.8 DEV / HA 0.25.169 mit eigener Cachekennung geprüft. Der unveröffentlichte Kandidat 4.12.7 bestand zwölf öffentliche Ketten; die abschließende Bildkontrolle zeigte eine Überlagerung der Standardposition mit Kartenbedienelementen. Der Platzierungsalgorithmus berücksichtigt jetzt auch enge gültige Zwischenräume, Cluster-Navigation und andere sichtbare Legenden. Die gezielte Browserprüfung verlangt zusätzlich eine tatsächlich erreichbare Info-Taste und unverdeckte Messwerte an jeder aufgenommenen Standardposition. Windfiederbeispiele und vollständige Klassentabellen bleiben im expliziten Info-Popup; die Windlegende selbst bleibt ein schlanker Skalenkörper. Finale Belege und Pakete werden nach dem neuen Quelllauf ergänzt.
+**Geprüfter Quellcommit:** [`eb2673573fb9d593818bbacdf1a1069714f291d4`](https://github.com/TheDaimos/gewitterradar/commit/eb2673573fb9d593818bbacdf1a1069714f291d4). [Installierbarer DEV-Prerelease v4.12.8-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.8-dev). DEV-Tag und Pakete stammen aus diesem exakten Commit. Ein nachfolgender Berichtscommit verändert die Produktbäume nicht.
+
+**Zwölf öffentliche Prüfketten für den identischen Produktstand PASS.** Nach der reinen Test-Timingkorrektur wurden die geänderte Legendenmatrix und die automatisch gestarteten Ketten erneut ausgeführt. Unverändert gültige grüne Läufe von `e6f93652…` wurden ressourcenschonend übernommen: Frontend, Integration, Dashboard, Workflows und bestehende Tests besitzen identische Git-Bäume; ausschließlich die Wartebedingung im neuen Minimal-Browsertest und der Arbeitsbericht unterscheiden sich. Jeder Lauf ist mit seiner tatsächlichen Quell-SHA und dem Baumvergleich dokumentiert. [Vollständiges CI-Inventar und Aura-/Hub-Ergebnisse](evidence/gr-v412-minimal/ci-results.json), [neue Minimal-/Drag-/Motivmatrix](evidence/gr-v412-minimal/minimal-results.json). Darin: tatsächliche Alpha-Pixelgrenzen der Originalgrafiken, alle sechs Körper-/Info-Drags je Format, unveränderte Leaflet-Karte, Profilpositionen nach Reload, Drei-Finger-Recovery und Größenwechsel. Der authentifizierte Vault-Lauf prüft außerdem Wechsel zwischen zwei HA-Profilen und zurück. Der letzte Linux-Lauf enthält ebenfalls den strengen About-Golden-Vergleich; die bekannten Windows-Schriftmetrikunterschiede wurden nicht durch Toleranzänderungen verdeckt.
+
+- [Frontend / Aura / Legenden / strenger Golden](https://github.com/TheDaimos/gewitterradar/actions/runs/45072262970)
+- [Vault / Profile / Pixel / Pakete](https://github.com/TheDaimos/gewitterradar/actions/runs/45070494862)
+- [HA-Runtime / Hassfest / HACS](https://github.com/TheDaimos/gewitterradar/actions/runs/45072262847)
+- [Synoptik / Clouds / Touch / Help](https://github.com/TheDaimos/gewitterradar/actions/runs/45070494812)
+
+### Tatsächlich gemessene Flächenreduktion
+
+| Ansicht / Legende | Vorher (CSS px) | Nachher (CSS px) | Weniger Fläche |
+| --- | ---: | ---: | ---: |
+| desktop / Niederschlag | 304.0 × 264.8 | 339.0 × 58.0 | 75.6 % |
+| desktop / Wind | 304.0 × 853.0 | 339.0 × 56.0 | 92.7 % |
+| desktop / Temperatur | 304.0 × 347.0 | 339.0 × 56.0 | 82.0 % |
+| portrait / Niederschlag | 304.0 × 264.8 | 339.0 × 58.0 | 75.6 % |
+| portrait / Wind | 304.0 × 768.0 | 339.0 × 56.0 | 91.9 % |
+| portrait / Temperatur | 304.0 × 347.0 | 339.0 × 56.0 | 82.0 % |
+
+Die vollständigen Windfiederbeispiele stehen im expliziten Info-Popup; der Instrumentkörper enthält ausschließlich die kompakte Geschwindigkeitsskala. Die Bildlegenden und kategorischen Synoptiksymbole verwenden dieselbe Instrumenthülle.
+
+### Vorher-/Nachher-Bilder aus dem geprüften Linux-Lauf
+
+Synthetische HA-/WR-Umgebung, tatsächliches Frontend; mobile Browseremulation mit DPR 2. Vorher unveränderlicher Git-Baum `b0d84a0b…`, nachher exakt der oben genannte Quellcommit.
+
+| Vergleich | Desktop | Touch-Hochformat |
+| --- | --- | --- |
+| Legend Hub | [Vorher](evidence/gr-v412-minimal/desktop-before-hub.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-hub.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-hub.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-hub.png) |
+| Niederschlag | [Vorher](evidence/gr-v412-minimal/desktop-before-precipitation.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-precipitation.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-precipitation.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-precipitation.png) |
+| Wind | [Vorher](evidence/gr-v412-minimal/desktop-before-wind.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-wind.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-wind.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-wind.png) |
+| Temperatur | [Vorher](evidence/gr-v412-minimal/desktop-before-temperature.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-temperature.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-temperature.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-temperature.png) |
+| Compact horizontal | [Vorher](evidence/gr-v412-minimal/desktop-before-horizontal.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-horizontal.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-horizontal.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-horizontal.png) |
+| Compact vertikal | [Vorher](evidence/gr-v412-minimal/desktop-before-vertical.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-vertical.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-vertical.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-vertical.png) |
+| Mehrere Legenden | [Vorher](evidence/gr-v412-minimal/desktop-before-multiple.png) · [Nachher](evidence/gr-v412-minimal/desktop-after-multiple.png) | [Vorher](evidence/gr-v412-minimal/portrait-before-multiple.png) · [Nachher](evidence/gr-v412-minimal/portrait-after-multiple.png) |
+
+### Installation und Paketintegrität
+
+Die ZIPs wurden aus den originalen Git-Blobs des finalen Commits erzeugt und sind bytegleich mit den erfolgreich geprüften Linux-CI-Paketen aus Lauf 45070494862. Die Deploymentmetadaten nennen den finalen Testquellcommit. Jeder der 248 Integrations- und 231 Dashboard-Dateiinhalte wurde zusätzlich gegen die originalen Git-Blobs des Quellcommits geprüft; ZIP-CRC ist fehlerfrei. 229 gemeinsame Frontenddateien sind bytegleich, die Kernprüfung umfasst 208 Frontenddateien und 37 registrierte Module. Hi-Res-Retention: 60 geschützte Inhalte, 61 Pfade und zwölf Metadatendateien vollständig erhalten.
+
+| Paket | Dateien | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| `gewitterradar-0.25.169-dev.zip` | 248 | 43522637 | `c6c11a7d81dd27f1f49d6160c8767e453121c0f2be10132cec1f3cbe8f45a5fd` |
+| `gewitterradar-dashboard-4.12.8-dev.zip` | 231 | 42926734 | `85432646f6b78dcad59e6758be2a2c1d4e89a93f3fa8f1919198cd79392adea9` |
+
+[Deploymentmanifest](evidence/gr-v412-minimal/deployment.json), [SHA-256-Inventar](evidence/gr-v412-minimal/SHA256SUMS.txt), [Prüfung der originalen Git-Blobs](evidence/gr-v412-minimal/original-blob-verification.json). Das Integrationspaket enthält **HA 0.25.169** einschließlich des erweiterten Vault-Schemas; für die neue Transparenzpersistenz Integration und Frontend zusammen aktualisieren. Das Dashboard-ZIP liegt zusätzlich bei. Vorhandene DRA-Quelle `TheDaimos/gewitterradar`, `deploy/dev`, Integrationsziel und Neustartvertrag bleiben unverändert.
+
+**Reale Abnahme:** Der Betreiber übernimmt Installation und Prüfung auf HA DEV VM109 / physischem Android selbst, wie während der Umsetzung ausdrücklich festgelegt. Durch den Agenten wurden keine VM-Installationen vorgenommen. VM101, WeatherRouter, FINAL- und Aura-Referenztags bleiben unverändert.
