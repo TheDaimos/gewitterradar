@@ -1,13 +1,12 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4126r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4127r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=4126r1';
-import {decorateLegend} from './legend-hub-view.js?v=4126r1';
-import {legendOptions} from './legend-preferences.js?v=4126r1';
-import {renderLegendScale} from './legend-scale.js?v=4126r1';
+import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4127r1';
+import {legendOptions} from './legend-preferences.js?v=4127r1';
+import {renderLegendScale} from './legend-scale.js?v=4127r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.58",
+  version:"0.1.59",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -224,154 +223,21 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     return mode==="auto"?(["precipitation","snow"].includes(active[0]?.family)?active.filter(model=>["precipitation","snow"].includes(model.family)):active.slice(0,1)):active;
   },
 
-  _weatherLegendEnsureStyle(){
-    if(!this.shadow||this.shadow.getElementById("weather-legend-style"))return;
-    const style=document.createElement("style");
-    style.id="weather-legend-style";
-    style.textContent=[
-      ".weather-legend-overlay{position:absolute;z-index:710;left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 20px));box-sizing:border-box;padding:8px 10px;border:1px solid rgba(231,190,96,.32);border-radius:13px;background:linear-gradient(155deg,rgba(13,17,23,.96),rgba(8,11,16,.94));box-shadow:0 12px 32px rgba(0,0,0,.44),0 0 18px rgba(219,161,51,.07);backdrop-filter:blur(13px);color:#e7ebf0;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}",
-      ".weather-legend-overlay[hidden]{display:none!important}.weather-legend-list{display:grid;gap:8px}.weather-legend-item{display:grid;grid-template-columns:1fr;gap:7px;min-width:0}.weather-legend-header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}.weather-legend-main{min-width:0;flex:1 1 auto}.weather-legend-title{font-size:10px;font-weight:850;color:#f1d38a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-legend-subtitle{margin-top:2px;font-size:7.7px;line-height:1.25;color:#aeb7c2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
-      ".weather-legend-visual{min-width:0;display:flex;align-items:center;justify-content:center;padding:1px 0 2px}.weather-legend-image{display:block;width:min(240px,100%);height:auto;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.92);box-shadow:inset 0 0 0 1px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.16)}",
-      ".weather-legend-entries{display:flex;align-items:flex-start;justify-content:center;gap:7px;min-width:0;overflow:hidden;width:100%}.weather-legend-entry{display:grid;justify-items:center;gap:2px;min-width:0;font-size:7.2px;color:#c9d0d8}.weather-legend-swatch{width:32px;height:6px;border-radius:999px;background:var(--weather-legend-color,rgba(255,255,255,.18));box-shadow:0 0 7px color-mix(in srgb,var(--weather-legend-color,transparent) 35%,transparent)}.weather-legend-entry-label{max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
-      ".weather-legend-side{display:flex;align-items:center;gap:7px;flex:0 0 auto}.weather-legend-unit{font-size:8px;font-weight:800;color:#d6c184;white-space:nowrap}.weather-legend-hide{appearance:none;width:28px;height:28px;padding:0;border:1px solid rgba(255,255,255,.10);border-radius:8px;background:rgba(255,255,255,.025);color:#d9c999;font:850 15px/1 inherit;cursor:pointer;touch-action:manipulation}.weather-legend-hide:hover{border-color:rgba(240,202,112,.42);background:rgba(145,105,31,.12)}",
-      ".weather-legend-overlay.multiple{padding-block:8px}.weather-legend-overlay.multiple .weather-legend-item+.weather-legend-item{padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}",
-      "@media(max-width:720px){.weather-legend-overlay{width:min(390px,calc(100% - 16px));padding:7px 8px;border-radius:12px}.weather-legend-title{font-size:9.3px}.weather-legend-subtitle{font-size:7px}.weather-legend-image{width:min(220px,100%)}.weather-legend-unit{font-size:7.5px}.weather-legend-hide{width:30px;height:30px}.weather-legend-entry{font-size:6.8px}.weather-legend-swatch{width:26px}}",
-      "@media(max-width:430px){.weather-legend-overlay{width:calc(100% - 14px)}.weather-legend-image{width:min(190px,100%)}.weather-legend-subtitle{max-width:220px}.weather-legend-entries{gap:4px}.weather-legend-swatch{width:20px}.weather-legend-entry-label{max-width:44px}}"
-    ].join("");
-    style.textContent+=".weather-legend-entries{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 4px;overflow:visible}.weather-legend-swatch{width:100%;min-width:22px}.weather-legend-entry{width:100%;font-size:10px}.weather-legend-entry-label{max-width:100%;white-space:normal;overflow:visible;font-variant-numeric:tabular-nums}.weather-legend-header{cursor:grab;touch-action:none}.weather-legend-subtitle{white-space:normal;overflow-wrap:anywhere}.weather-legend-overlay{max-height:calc(100% - 20px);overflow:auto}.weather-legend-note{font-size:9px;line-height:1.4;color:#aeb7c2}@media(max-width:430px){.weather-legend-entries{grid-template-columns:repeat(3,minmax(0,1fr))}}";
-    style.textContent+=".weather-legend-overlay.gr-premium-metal-surface{border-width:1px;overflow:hidden;padding:6px 8px;width:min(410px,calc(100% - 16px))}.weather-legend-global-head{min-height:32px;gap:5px}.weather-legend-global-head>.weather-legend-title{white-space:normal;line-height:1.35;font-size:10px}.weather-legend-toggle{display:grid;place-items:center;width:30px;height:28px;border:0;border-radius:6px;background:transparent;cursor:pointer}.weather-legend-toggle .release-history-future-chevron{pointer-events:none}.weather-legend-content{display:grid;grid-template-rows:1fr;transition:grid-template-rows .42s cubic-bezier(.22,1,.36,1)}.weather-legend-overlay.collapsed .weather-legend-content{grid-template-rows:0fr}.weather-legend-scroll{min-height:0;overflow:hidden}.weather-legend-list{max-height:min(260px,var(--weather-legend-list-max,45vh));overflow-y:auto;overscroll-behavior:contain;padding-top:5px;scrollbar-width:thin}.weather-legend-item{gap:4px}.weather-legend-visual{padding:0}.weather-legend-title{font-size:9px}.weather-legend-subtitle{font-size:8px}.weather-legend-swatch{height:6px}.weather-legend-entry{font-size:9px}.weather-legend-entries{gap:5px 3px}.weather-legend-source-link{font-size:10px;color:var(--premium-gold-bright,#f1d58c);padding:5px}.weather-legend-toggle:focus-visible{outline:2px solid #f1d58c}@media(max-width:430px){.weather-legend-entries{grid-template-columns:repeat(5,minmax(0,1fr))}.weather-legend-entry{font-size:9px}}@media(prefers-reduced-motion:reduce){.weather-legend-content{transition:none}}";
-    style.textContent+=".gr-legend-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}.gr-legend-actions button{width:29px;height:29px;display:grid;place-items:center;border:1px solid rgba(220,169,68,.65);border-radius:9px;background:linear-gradient(145deg,#1c242e,#0b1119);color:#f1d58c;box-shadow:inset 0 1px 0 #ffffff18;cursor:pointer;font-size:19px}.gr-legend-actions button:focus-visible,.weather-legend-view-picker button:focus-visible{outline:2px solid #f1d58c}.gr-legend-actions .weather-legend-hide img{width:19px;height:19px;object-fit:contain}.weather-legend-overlay.gr-legend-minimized .weather-legend-view-picker,.weather-legend-overlay.gr-legend-minimized .weather-legend-list{display:none!important}.gr-thermal-classes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:6px}.gr-thermal-classes span{font-size:10px;color:#f1d58c;padding:4px 2px;text-align:center;background:#16202a;border-radius:4px}.gr-advection-scale{display:flex;justify-content:space-between;gap:2px;color:#f1d58c;font-size:10px;margin:4px 0 8px}.gr-advection-scale.classes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.gr-advection-scale.classes span{border-top:5px solid #e0b961;padding-top:4px;text-align:center;font-size:9px}.weather-legend-view-picker button.active{border-color:#eac46e!important;background:linear-gradient(140deg,#5b411a,#161f27)!important;color:#ffdc82!important;box-shadow:0 0 10px #d9a44555}.weather-legend-list{max-height:var(--weather-legend-list-max,70vh);gap:4px;padding-top:2px;overflow-y:auto}.weather-legend-view-picker{display:flex;justify-content:flex-end;gap:4px;padding:2px 0}.weather-legend-view-picker button{border:1px solid var(--premium-line,#b58e4955);border-radius:6px;background:#101820;color:#c8c1ad;padding:4px 8px;font-size:9px;cursor:pointer}.weather-legend-view-picker button.active{color:#f1d58c;background:#62471844}.weather-legend-section{border:0!important;background:transparent!important;border-radius:0!important;margin:0!important;padding:0!important;box-shadow:none!important}.weather-legend-section-head{display:flex;align-items:center;justify-content:space-between;min-height:26px;color:#f1d58c;font-size:10px}.weather-legend-section-head button{height:26px}.weather-legend-section-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .42s cubic-bezier(.22,1,.36,1)}.weather-legend-section.collapsed .weather-legend-section-body{grid-template-rows:0fr}.weather-legend-section-inner{min-height:0;overflow:hidden;display:grid;gap:5px}.weather-legend-item{gap:2px}.weather-legend-item .weather-legend-title{white-space:normal;overflow:visible}.weather-legend-subtitle{line-height:1.25}.weather-legend-discrete-bar{display:flex;width:100%;height:10px;border-radius:3px;overflow:hidden}.weather-legend-discrete-bar>span{flex:1;min-width:0}.weather-legend-bar-box{width:100%;min-width:0}.weather-legend-bar-ticks{position:relative;height:18px;margin-top:2px;font-size:8px;font-variant-numeric:tabular-nums;color:#d2d5d8}.weather-legend-bar-ticks>span{position:absolute;white-space:nowrap;transform:translateX(-35%)}.weather-legend-bar-ticks>span:first-child{transform:none}.weather-legend-bar-ticks>span.last{transform:translateX(-100%)}.weather-legend-class-inspector{display:flex;gap:5px;align-items:center;margin-top:3px}.weather-legend-class-inspector select{min-width:0;flex:1;background:#131b24;border:1px solid #b58e4955;border-radius:5px;color:#e4e1d7;font-size:10px;padding:3px}.weather-legend-inspected-color{width:26px;height:18px;border-radius:3px}.weather-legend-entries{gap:4px 3px}.weather-legend-swatch{height:5px}@media(prefers-reduced-motion:reduce){.weather-legend-section-body{transition:none}}";
-    this.shadow.append(style);
-  },
-
+  _weatherLegendEnsureStyle(){},
   _weatherLegendEnsureUi(){
-    if(!this.shadow)return null;
-    ensurePremiumUi(this.shadow);
-    const card=this.shadow.getElementById("map-card");
-    if(!card)return null;
-    this._weatherLegendEnsureStyle();
-    let host=this.shadow.getElementById("weather-legend-overlay");
-    if(!host){
-      host=document.createElement("section");
-      host.id="weather-legend-overlay";
-      host.className="weather-legend-overlay gr-premium-metal-surface";
-      host.setAttribute("open","");
-      host.hidden=true;
-      host.setAttribute("role","region");
-      host.setAttribute("aria-live","polite");
-      host.innerHTML='<div class="weather-legend-header weather-legend-global-head"><div class="weather-legend-title" data-weather-legend-heading></div><div class="gr-legend-actions">'+premiumAction('legend-info',this._t('weather.legend.info'),'info').replace('data-premium-action="legend-info"','data-premium-legend-info')+premiumAction('legend-minimize',this._t('weather.legend.minimize'),'minimize').replace('data-premium-action="legend-minimize"','data-gr-legend-minimize')+premiumAction('legend-close',this._t('weather.legend.close')).replace('data-premium-action="legend-close"','data-weather-legend-hide')+'</div></div><div class="weather-legend-view-picker" role="group"><button type="button" data-weather-legend-view="classes"></button><button type="button" data-weather-legend-view="bar"></button></div><div class="weather-legend-list" data-weather-legend-list></div>';
-      host.querySelector('[data-weather-legend-hide]').classList.add('weather-legend-hide');
-      host.querySelector("[data-weather-legend-hide] img").src=this._weatherPremiumCloseAsset?.()||new URL("../../assets/gewitterradar-about-close-premium.webp",import.meta.url).href;
-      host.addEventListener("transitionend",()=>this._weatherLegendPosition());
-      host.addEventListener("click",event=>{
-        const view=event.target.closest?.("[data-weather-legend-view]"),toggle=event.target.closest?.("[data-weather-section-toggle]");
-        if(!view&&!toggle)return;
-        event.preventDefault();event.stopPropagation();
-        const state=this._weatherLegendState();state.anchor={left:parseFloat(host.style.left)||0,top:parseFloat(host.style.top)||0};
-        if(view){state.ui.view=view.dataset.weatherLegendView;this._weatherLegendSyncUi();}
-        else{
-          const key=toggle.dataset.weatherSectionToggle;state.ui[key]=!state.ui[key];
-          const section=toggle.closest(".weather-legend-section"),body=section.querySelector(".weather-legend-section-body");
-          section.toggleAttribute("open",!state.ui[key]);section.classList.toggle("collapsed",state.ui[key]);
-          toggle.setAttribute("aria-expanded",String(!state.ui[key]));body.inert=state.ui[key];
-        }
-        if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);
-        else try{settingsStorage(this).setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}
-      });
-      host.addEventListener("click",event=>{
-        const mini=event.target?.closest?.("[data-gr-legend-minimize]");if(mini){event.preventDefault();event.stopPropagation();const state=this._weatherLegendState(),minimized=state.ui.minimized=!state.ui.minimized;host.classList.toggle("gr-legend-minimized",minimized);mini.setAttribute("aria-label",this._t(minimized?"weather.legend.maximize":"weather.legend.minimize"));mini.setAttribute("aria-expanded",String(!minimized));if(this._weatherLegendSaveUi)this._weatherLegendSaveUi(state.ui);else try{settingsStorage(this).setItem(UI_KEY,JSON.stringify(state.ui));}catch(_){}requestAnimationFrame(()=>this._weatherLegendPosition());return;}
-        const button=event.target?.closest?.("[data-weather-legend-hide]");
-        if(!button)return;
-        event.preventDefault();event.stopPropagation();
-        this._weatherDisplaySetLegendMode?.("off");
-      });
-      this._weatherLegendBindDrag(host);
-      card.append(host);
-    }
+    if(!this.shadow?.getElementById('map-card'))return null;
     const state=this._weatherLegendState();
-    if(!state.resizeHandler){
-      state.resizeHandler=()=>{state.anchor=null;requestAnimationFrame(()=>this._weatherLegendPosition());};
-      window.addEventListener("resize",state.resizeHandler,{passive:true});
-      window.visualViewport?.addEventListener?.("resize",state.resizeHandler,{passive:true});
-    }
-    if(typeof ResizeObserver==="function"&&!state.resizeObserver){
-      state.resizeObserver=new ResizeObserver(()=>{state.anchor=null;requestAnimationFrame(()=>this._weatherLegendPosition());});
-      state.resizeObserver.observe(card);
-    }
-    const t=key=>this._t('weather.legend.'+key);
-    host.setAttribute('aria-label','WeatherRouter · '+t('legend'));
-    host.querySelector('.weather-legend-view-picker').setAttribute('aria-label',t('view'));
-    for(const [selector,key] of [
-      ['[data-premium-legend-info]','info'],['[data-gr-legend-minimize]',state.ui.minimized?'maximize':'minimize'],
-      ['[data-weather-legend-hide]','close']
-    ]){
-      const control=host.querySelector(selector), label=t(key);
-      control.title=label;control.setAttribute('aria-label',label);
-    }
-    for(const button of host.querySelectorAll('[data-weather-legend-view]')) button.textContent=t(button.dataset.weatherLegendView);
-    state.mounted=true;
-    return host;
+    state.instrument||=createLegendInstrument(this,{id:'precipitation',elementId:'weather-legend-overlay',title:()=>this._t('weather.legend.rainIntensity'),position:state.position,savePosition:p=>{state.position=p;try{settingsStorage(this).setItem(POSITION_KEY,JSON.stringify(p));}catch(_){}},onResize:()=>this._weatherLegendSyncUi()});
+    state.mounted=true;return state.instrument.host;
   },
+  _weatherLegendPosition(){this._weatherLegendState().instrument?.place();},
+  _weatherLegendBounds(host){return instrumentBounds(this,host).storage;},
 
-  _weatherLegendPosition(){
-    const host=this.shadow?.getElementById("weather-legend-overlay"),card=this.shadow?.getElementById("map-card"),mapEl=this.shadow?.getElementById("map");
-    if(!host||host.hidden||!card||!mapEl)return;
-    const cardRect=card.getBoundingClientRect(),mapRect=mapEl.getBoundingClientRect();
-    const footerHeight=clamp(cardRect.bottom-mapRect.bottom,0,Math.max(0,cardRect.height));
-    host.style.maxWidth=Math.max(0,Math.round(mapRect.width-16))+"px";
-    host.style.maxHeight=Math.max(0,Math.round(mapRect.height-16))+"px";
-    host.style.setProperty("--weather-legend-list-max",Math.max(0,Math.round(mapRect.height-94))+"px");
-    const bounds=this._weatherLegendBounds(host);
-    const position=this._weatherLegendState().position;
-    host.style.transform="none";host.style.bottom="auto";
-    host.style.left=clamp(this._weatherLegendState().anchor?.left??(bounds.left+(bounds.right-bounds.left)*(position?.x??.5)),bounds.left,bounds.right)+"px";
-    host.style.top=clamp(this._weatherLegendState().anchor?.top??(bounds.top+(bounds.bottom-bounds.top)*(position?.y??1)),bounds.top,bounds.bottom)+"px";
-    const timeline=this.shadow?.querySelector?.('[data-weather-radar-player="true"]');
-    if(timeline&&typeof this._weatherRadarApplyTimelinePosition==="function")requestAnimationFrame(()=>this._weatherRadarApplyTimelinePosition(timeline));
-  },
-
-  _weatherLegendBounds(host){
-    const card=this.shadow.getElementById("map-card").getBoundingClientRect();
-    const map=this.shadow.getElementById("map").getBoundingClientRect();
-    const left=Math.max(8,map.left-card.left+8),top=Math.max(8,map.top-card.top+8);
-    return {left,top,right:Math.max(left,map.right-card.left-host.offsetWidth-8),
-      bottom:Math.max(top,map.bottom-card.top-host.offsetHeight-8)};
-  },
-  _weatherLegendBindDrag(host){
-    let drag=null;
-    host.addEventListener("pointerdown",event=>{
-      if((event.button!==undefined&&event.button!==0)||event.target.closest("button")||!event.target.closest(".weather-legend-header"))return;
-      event.preventDefault();event.stopPropagation();
-      drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:parseFloat(host.style.left)||0,top:parseFloat(host.style.top)||0};
-      host.setPointerCapture?.(event.pointerId);
-    });
-    host.addEventListener("pointermove",event=>{
-      if(!drag||drag.id!==event.pointerId)return;
-      event.preventDefault();event.stopPropagation();
-      const b=this._weatherLegendBounds(host);
-      host.style.left=clamp(drag.left+event.clientX-drag.x,b.left,b.right)+"px";
-      host.style.top=clamp(drag.top+event.clientY-drag.y,b.top,b.bottom)+"px";
-    });
-    const end=event=>{
-      if(!drag||drag.id!==event.pointerId)return;
-      event.stopPropagation();drag=null;
-      const b=this._weatherLegendBounds(host);
-      const position={x:b.right>b.left?clamp((parseFloat(host.style.left)-b.left)/(b.right-b.left),0,1):0,
-        y:b.bottom>b.top?clamp((parseFloat(host.style.top)-b.top)/(b.bottom-b.top),0,1):0};
-      this._weatherLegendState().position=position;
-      this._weatherLegendState().anchor={left:parseFloat(host.style.left),top:parseFloat(host.style.top)};
-      if(this._weatherLegendSavePosition)this._weatherLegendSavePosition(position);
-      else try{settingsStorage(this).setItem(POSITION_KEY,JSON.stringify(position));}catch(_){}
-      try{host.releasePointerCapture?.(event.pointerId);}catch(_){}
-    };
-    for(const type of ["pointerup","pointercancel","lostpointercapture"])host.addEventListener(type,end);
-  },
-
-  _weatherLegendRenderVisual(model,{nativeOnly=false}={}){
+  _weatherLegendRenderVisual(model,{nativeOnly=false,view=this._weatherLegendState().ui.view}={}){
     const entries=model.entries;
     if(!entries.length){const text=document.createElement("div");text.className="weather-legend-note";text.textContent=this._t("weather.legend.missingColors");return text;}
-    const classes=this._weatherLegendState().ui.view==="classes";
-    if(!nativeOnly){const box=document.createElement('div');box.append(renderLegendScale(model,legendOptions(this,['precipitation','snow'].includes(model.family)?'precipitation':'other'),Math.max(100,(this.shadow?.getElementById('map')?.clientWidth||430)-50)));if(classes){const native=this._weatherLegendRenderVisual(model,{nativeOnly:true});native.classList.add('lh-native-classes');box.append(native);}return box;}
+    const classes=view==="classes";
+    if(!nativeOnly){const c=legendOptions(this,['precipitation','snow'].includes(model.family)?'precipitation':'other'),map=this.shadow?.getElementById('map');return renderLegendScale(model,c,Math.max(60,c.orientation==='vertical'?(map?.clientHeight||600)-55:(map?.clientWidth||430)-74));}
     if(classes&&entries.length<=24){
       const scale=document.createElement("div");scale.className="weather-legend-entries";
       for(const entry of entries){
@@ -405,58 +271,15 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
 
   _weatherLegendSyncUi(){
     const host=this._weatherLegendEnsureUi();if(!host)return;
-    decorateLegend(this,'precipitation',host);
-    host.classList.toggle("gr-legend-minimized",this._weatherLegendState().ui.minimized===true);
-    const models=this._weatherLegendVisibleModels(),list=host.querySelector("[data-weather-legend-list]");
-    if(!models.length){
-      host.hidden=true;
-      if(list)list.replaceChildren();
-      const timeline=this.shadow?.querySelector?.('[data-weather-radar-player="true"]');
-      if(timeline&&typeof this._weatherRadarApplyTimelinePosition==="function")requestAnimationFrame(()=>this._weatherRadarApplyTimelinePosition(timeline));
-      return;
+    const state=this._weatherLegendState(),instrument=state.instrument,models=groupIdenticalLegendScales(this._weatherLegendVisibleModels().filter(m=>['precipitation','snow'].includes(m.family)),this._t.bind(this));
+    instrument.setVisible(models.length>0);if(!models.length)return;
+    const c=legendOptions(this,'precipitation'),map=this.shadow.getElementById('map'),available=c.orientation==='vertical'?(map.clientHeight-55)/models.length:map.clientWidth-74,nodes=[];
+    for(const model of models){
+      const item=document.createElement('div');item.dataset.weatherLegendSource=model.source;item.dataset.weatherLegendSources=(model.sources||[model.source]).join(' ');
+      if(models.length>1){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=model.title;item.append(caption);}
+      item.append(renderLegendScale(model,c,available));if(model.lowerBoundaryNote){const note=document.createElement('span');note.className='lh-instrument-caption';note.textContent='*';item.append(note);}nodes.push(item);
     }
-    host.hidden=false;
-    host.classList.toggle("multiple",models.length>1);
-    const fragment=document.createDocumentFragment();
-    const heading=host.querySelector("[data-weather-legend-heading]");
-    const providers=legendProviders(models);
-    heading.textContent=(models.some(model=>model.family==="snow")?this._t("weather.legend.intensities"):models.some(model=>model.family==="precipitation")?this._t("weather.legend.rainIntensity"):this._t("weather.legend.legend"))+
-      (providers.length?" · "+providers.join(" / "):" · "+this._t("weather.legend.reference"));
-    host.querySelectorAll("[data-weather-legend-view]").forEach(button=>{const active=button.dataset.weatherLegendView===this._weatherLegendState().ui.view;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
-    for(const family of ["precipitation","snow"]){
-      const members=models.filter(model=>model.family===family);
-      if(!members.length)continue;
-      const key=family==="snow"?"snow":"rain",collapsed=this._weatherLegendState().ui[key];
-      const section=document.createElement("section");section.className="weather-legend-section release-history-future";section.classList.toggle("collapsed",collapsed);section.toggleAttribute("open",!collapsed);
-      const sectionHead=document.createElement("div");sectionHead.className="weather-legend-section-head";
-      const name=document.createElement("strong");name.textContent=this._t(family==="snow"?"weather.legend.snowIntensity":"weather.legend.rainIntensity");
-      const toggle=document.createElement("button");toggle.type="button";toggle.className="weather-legend-toggle";toggle.dataset.weatherSectionToggle=key;toggle.dataset.weatherLegendToggle="true";toggle.setAttribute("aria-label",this._t("weather.legend.toggle",{name:name.textContent}));toggle.setAttribute("aria-expanded",String(!collapsed));
-      const chevron=document.createElement("span");chevron.className="release-history-future-chevron";chevron.setAttribute("aria-hidden","true");toggle.append(chevron);sectionHead.append(name,toggle);
-      const body=document.createElement("div");body.className="weather-legend-section-body";body.inert=collapsed;
-      const inner=document.createElement("div");inner.className="weather-legend-section-inner";body.append(inner);
-      groupIdenticalLegendScales(members,this._t.bind(this)).forEach((model,index)=>{
-      const item=document.createElement("div");item.className="weather-legend-item";item.dataset.weatherLegendSource=model.source;
-      item.dataset.weatherLegendSources=(model.sources||[model.source]).join(" ");
-      const main=document.createElement("div");main.className="weather-legend-main";
-      const title=document.createElement("div");title.className="weather-legend-title";title.textContent=model.title;
-      main.append(title);
-      if(model.subtitle){const sub=document.createElement("div");sub.className="weather-legend-subtitle";sub.textContent=model.subtitle;main.append(sub);}
-      const side=document.createElement("div");side.className="weather-legend-side";
-      if(model.unit){const unit=document.createElement("span");unit.className="weather-legend-unit";unit.textContent=model.unit;side.append(unit);}
-      const header=document.createElement("div");header.className="weather-legend-header";header.append(main,side);
-      const visual=document.createElement("div");visual.className="weather-legend-visual";
-      const visualNode=this._weatherLegendRenderVisual(model);if(visualNode)visual.append(visualNode);
-      item.title=model.details||[model.title,model.subtitle].filter(Boolean).join(" · ");
-      item.append(header,visual);
-      for(const text of [model.lowerBoundaryNote,model.timeNote])if(text){
-        const note=document.createElement("div");note.className="weather-legend-note";note.textContent=text;item.append(note);
-      }
-      inner.append(item);
-      });
-      section.append(sectionHead,body);fragment.append(section);
-    }
-    list?.replaceChildren(fragment);
-    requestAnimationFrame(()=>this._weatherLegendPosition());
+    instrument.update(nodes,box=>{for(const model of models){const title=document.createElement('h4');title.textContent=model.title;box.append(title,this._weatherLegendRenderVisual(model,{nativeOnly:true}));for(const text of [model.subtitle,model.details,model.lowerBoundaryNote,model.timeNote,model.legendTime])if(text){const p=document.createElement('p');p.textContent=text;box.append(p);}}});
   },
 
   _weatherLegendDiagnostics(){
@@ -470,12 +293,6 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
   },
 
   _teardownWeatherLegend(){
-    const state=this.__weatherLegendState;if(!state)return;
-    if(state.resizeHandler){
-      window.removeEventListener("resize",state.resizeHandler);
-      window.visualViewport?.removeEventListener?.("resize",state.resizeHandler);
-      state.resizeHandler=null;
-    }
-    state.resizeObserver?.disconnect?.();state.resizeObserver=null;state.mounted=false;
+    const state=this.__weatherLegendState;if(!state)return;state.instrument?.destroy();state.instrument=null;state.mounted=false;
   }
 }));

@@ -21,7 +21,7 @@ else:
 print('PASS: actual Vault schema accepts both layouts and unchanged legacy profiles, rejects invalid values')
 
 hub = 'gewitterradar:legend-hub:v1'
-settings = {hub: {'schema': 1, 'icon': 2, 'slots': ['wind', None, 'temperature'],
+settings = {hub: {'schema': 1, 'icon': 2, 'glassTransparency': 65, 'slots': ['wind', None, 'temperature'],
                  'position': {'x': 1, 'y': 0}, 'direction': 'vertical', 'autoClose': False,
                  'legends': {'temperature': {'presentation': 'compact', 'orientation': 'vertical',
                      'size': 'XL', 'density': 'detailed', 'style': 'thermometer', 'material': 'platinum',
@@ -29,7 +29,7 @@ settings = {hub: {'schema': 1, 'icon': 2, 'slots': ['wind', None, 'temperature']
                      'shadow': True, 'outline': True, 'mode': 'on'}}}}
 assert schema.validate_settings(settings) == settings
 assert schema.decode_value(hub, schema.encode_value(hub, settings[hub])) == settings[hub]
-for invalid in [{'icon': 3}, {'slots': ['invented']}, {'slots': ['wind'] * 13},
+for invalid in [{'glassTransparency': -1}, {'glassTransparency': 101}, {'glassTransparency': '65'}, {'icon': 3}, {'slots': ['invented']}, {'slots': ['wind'] * 13},
                 {'legends': {'wind': {'size': 'XXL'}}}, {'position': {'x': 2, 'y': 0}}]:
     try:
         schema.validate_settings({hub: invalid})

@@ -42,9 +42,11 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
           GR_LEGEND_EVIDENCE: ${{ runner.temp }}/legend-evidence
+          GR_MINIMAL_EVIDENCE: ${{ runner.temp }}/minimal-evidence
         run: |
           node scripts/test-v412-aura-browser.cjs
           node scripts/test-v412-legend-browser.cjs
+          node scripts/test-v412-minimal-browser.cjs
           node scripts/test-eye-edge-browser.cjs
           node scripts/test-delayed-eye-recovery-browser.cjs
           node scripts/test-settings-vault-browser.cjs
@@ -56,4 +58,5 @@ jobs:
           path: |
             ${{ runner.temp }}/aura-evidence
             ${{ runner.temp }}/legend-evidence
+            ${{ runner.temp }}/minimal-evidence
           if-no-files-found: ignore

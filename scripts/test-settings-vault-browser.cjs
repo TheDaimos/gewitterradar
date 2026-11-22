@@ -440,7 +440,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     const hubBefore = await android.page.evaluate(async () => {
       const {saveLegendHub,patchLegend} = await import('/frontend/modules/weather/legend-preferences.js?v='+
         (await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision);
-      saveLegendHub(card,{icon:2,direction:'vertical',position:{x:.9,y:.1},slots:['wind',null,'temperature','advection']});
+      saveLegendHub(card,{glassTransparency:77,icon:2,direction:'vertical',position:{x:.9,y:.1},slots:['wind',null,'temperature','advection']});
       patchLegend(card,'temperature',{presentation:'compact',orientation:'vertical',size:'XL',density:'detailed',style:'thermometer',material:'brass',labels:'inside',ticks:'inside',foreground:'mint',autoInvert:true,mode:'on'});
       return card.__legendHub.config;
     });
@@ -477,6 +477,35 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     assert.deepEqual(await cleared.page.evaluate(()=>card._weatherDisplayState().config.eyePosition), {x:1,y:0});
     assert.deepEqual(await cleared.page.evaluate(()=>card._weatherSynopticState().config),persistedSynoptic);
     assert.equal(mock.profiles.a[androidId].settings[EYE].slots[4].functionId, 'synoptic');
+    // Actual instrument pointer handlers persist through the existing six stores,
+    // then server-backed profile switching restores each profile independently.
+    const positions = await android.page.evaluate(async () => {
+      const {patchLegend} = await import('/frontend/modules/weather/legend-preferences.js?v='+(await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision);
+      const result={};let index=0;
+      for(const id of ['precipitation','wind','temperature','advection','synoptic','other']){
+        patchLegend(card,id,{mode:'on'});
+        const view=id==='precipitation'?card:id==='wind'?card._weatherWindState().legend:['temperature','advection'].includes(id)?card._weatherTemperatureState().legends[id]:card.__legendHub.extra.get(id),instrument=view._weatherLegendState().instrument;
+        instrument.setPosition({x:.1+index*.04,y:.15+index*.04});instrument.place();
+        const r=instrument.host.getBoundingClientRect(),props={pointerId:100+index,pointerType:'touch',isPrimary:true,button:0,bubbles:true,composed:true};
+        for(const [type,dx,dy]of [['pointerdown',0,0],['pointermove',30,24],['pointerup',30,24]])instrument.host.dispatchEvent(new PointerEvent(type,{...props,clientX:r.left+15+dx,clientY:r.top+10+dy}));
+        result[id]=view._weatherLegendState().position;index++;
+      }
+      return result;
+    });
+    await android.page.evaluate(()=>card._settingsVault.flush());
+    await android.page.waitForFunction(()=>card._settingsVault.status==='saved');
+    assert.equal(mock.profiles.a[androidId].settings[HUB].glassTransparency,77);
+    assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:weather-legend-position:v1'],positions.precipitation);
+    assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:wind-ui:v1'].legendPosition,positions.wind);
+    for(const id of ['temperature','advection'])assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:temperature-ui:v1'].legendPositions[id],positions[id]);
+    for(const id of ['synoptic','other'])assert.deepEqual(mock.profiles.a[androidId].settings[HUB].extraPositions[id],positions[id]);
+    await android.page.evaluate(id=>card._settingsVault.choose(id),copiedId);await android.page.reload();
+    await android.page.waitForFunction(()=>window.card?._map&&card._settingsVault?.profile);
+    assert.equal(await android.page.evaluate(()=>card.__legendHub.config.glassTransparency),65,'other profile keeps its default');
+    await android.page.evaluate(id=>card._settingsVault.choose(id),androidId);await android.page.reload();
+    await android.page.waitForFunction(()=>window.card?._map&&card._settingsVault?.profile);
+    assert.equal(await android.page.evaluate(()=>card.__legendHub.config.glassTransparency),77);
+    assert.deepEqual(await android.page.evaluate(()=>({precipitation:card._weatherLegendState().position,wind:card._weatherWindState().config.legendPosition,temperature:card._weatherTemperatureState().config.legendPositions.temperature,advection:card._weatherTemperatureState().config.legendPositions.advection,synoptic:card.__legendHub.config.extraPositions.synoptic,other:card.__legendHub.config.extraPositions.other})),positions,'profile switch restores all six positions');
     // Startup connection failure stays recoverable and never writes defaults.
     mock.offline = true;
     const offline = await open(browser, current, androidView, {user: 'offline', initial: legacy});

@@ -1,35 +1,27 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4126r1';
-import {ensurePremiumUi,enhancePremiumSections,PREMIUM_INFO} from './premium-ui.js?v=4126r1';
-import {decorateLegend} from './legend-hub-view.js?v=4126r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=4127r1';
+import {createLegendInstrument} from './legend-instrument.js?v=4127r1';
+import {legendOptions} from './legend-preferences.js?v=4127r1';
 import {legendDescriptor} from './legend-registry.js?v=4126r1';
-import {renderLegendScale} from './legend-scale.js?v=4126r1';
+import {renderLegendScale} from './legend-scale.js?v=4127r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
-// Reuse the existing overlay's event delegation, pointer drag, bounds and teardown.
-// A scientific view must not pass through the precipitation-only family renderer.
+// Shared minimal instrument; native render callbacks still supply all scientific
+// classes, symbols, provenance and explanatory content to the explicit info popup.
 export function createScientificLegend(owner,{prefix,id=prefix.replace(/^weather-|-legend-$/g,''),ui,position,visible,saveUi,savePosition,close,title,render}){
- const view=new ScientificLegend(),ensure=view._weatherLegendEnsureUi;
- view._t=owner._t.bind(owner);
- view.shadow={getElementById:id=>owner.shadow?.getElementById(id.startsWith('weather-legend-')?id.replace('weather-legend-',prefix):id),append:node=>{if(node.id==='weather-legend-style')node.id=prefix+'style';owner.shadow.append(node);}};
- view.__weatherLegendState={models:new Map(),resizeHandler:null,resizeObserver:null,collapsed:false,anchor:null,ui:{view:'bar',rain:false,snow:false,...ui},position,mounted:false};
+ const view=new ScientificLegend();view._t=owner._t.bind(owner);view.shadow=owner.shadow;
+ view.__weatherLegendState={models:new Map(),ui:{view:'bar',rain:false,snow:false,...ui},position,mounted:false};
  view._weatherLegendMode=()=>visible()?'auto':'off';view._weatherLegendSaveUi=saveUi;view._weatherLegendSavePosition=savePosition;view._weatherDisplaySetLegendMode=close;
- view._weatherPremiumCloseAsset=()=>owner._weatherPremiumCloseAsset?.();
- view._weatherLegendEnsureUi=function(){ensurePremiumUi(owner.shadow);const host=ensure.call(this);if(host){host.id=prefix+'overlay';host.classList.add('gr-scientific-legend');host.setAttribute('aria-label',title());}return host;};
+ view._weatherLegendEnsureUi=function(){const state=this._weatherLegendState();state.instrument||=createLegendInstrument(owner,{id,elementId:prefix+'overlay',title,position:state.position,savePosition:p=>{state.position=p;savePosition(p);},onResize:()=>this._weatherLegendSyncUi()});state.mounted=true;return state.instrument.host;};
  view._weatherLegendSyncUi=function(){
-  const host=this._weatherLegendEnsureUi();if(!host)return;host.hidden=!this._weatherLegendVisibleModels().length;owner._legendHubStatus?.();if(host.hidden)return;
-  const options=decorateLegend(owner,id,host),ui=this._weatherLegendState().ui;host.querySelector('[data-weather-legend-heading]').textContent=title();host.classList.toggle('gr-legend-minimized',ui.minimized===true);
-  const mini=host.querySelector('[data-gr-legend-minimize]');mini.setAttribute('aria-expanded',String(!ui.minimized));mini.setAttribute('aria-label',owner._t(ui.minimized?'weather.legend.maximize':'weather.legend.minimize'));
-  host.querySelectorAll('[data-weather-legend-view]').forEach(b=>{const selected=b.dataset.weatherLegendView===ui.view;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});
-  const {visual,explanation,source}=render(ui.view),list=host.querySelector('[data-weather-legend-list]'),model=legendDescriptor(owner,id);list.replaceChildren();
-  if(model){list.append(renderLegendScale(model,options,options.orientation==='vertical'?Math.max(100,(owner.shadow.getElementById('map')?.clientHeight||600)-140):Math.max(100,(owner.shadow.getElementById('map')?.clientWidth||430)-50)));if(ui.view==='classes'){visual.classList.add('lh-native-classes');list.append(visual);}}
-  else list.append(visual);
-  const detail=document.createElement('details');detail.dataset.section='explanation';detail.className='gr-legend-explanation';const summary=document.createElement('summary'),icon=document.createElement('img');icon.src=PREMIUM_INFO;icon.alt='';icon.style.cssText='width:28px;height:28px;object-fit:contain';summary.append(icon,document.createTextNode(owner._t('weather.legend.info')));detail.append(summary,explanation);list.append(detail);if(source)list.append(source);
-  // Explanation state belongs to this legend's stored UI, not its minimization.
-  enhancePremiumSections(host,prefix);detail.open=ui.explanation===true;summary.setAttribute('aria-expanded',String(detail.open));detail.querySelector('.gr-collapse-inner').inert=!detail.open;
-  requestAnimationFrame(()=>this._weatherLegendPosition());
+  this._weatherLegendEnsureUi();const state=this._weatherLegendState(),instrument=state.instrument,shown=this._weatherLegendVisibleModels().length>0;instrument.setVisible(shown);owner._legendHubStatus?.();if(!shown)return;
+  const c=legendOptions(owner,id),native=render(state.ui.view),model=legendDescriptor(owner,id),map=owner.shadow.getElementById('map'),available=c.orientation==='vertical'?map.clientHeight-55:map.clientWidth-74;
+  const nodes=[model?renderLegendScale(model,c,available):native.visual];
+  // Barbs encode direction/speed with symbols; keep those examples beside the
+  // scale, while the original Beaufort table stays available in the info popup.
+  if(id==='wind'&&owner._weatherWindState().config.mode==='barbs'&&native.visual.firstElementChild)nodes.unshift(native.visual.firstElementChild);
+  instrument.update(nodes,box=>{const detail=render(state.ui.view);box.append(detail.visual);box.append(detail.explanation);if(detail.source)box.append(detail.source);});
  };
- // The common section enhancer animates independently; persist in the existing
- // legend config as well so config exports and normalization retain the state.
- const originalEnsure=view._weatherLegendEnsureUi;view._weatherLegendEnsureUi=function(){const host=originalEnsure.call(this);if(host&&!host.dataset.scientificBound){host.dataset.scientificBound='true';host.addEventListener('premiumsectionchange',event=>{if(event.detail.id!=='explanation')return;const ui=this._weatherLegendState().ui;ui.explanation=event.detail.expanded;this._weatherLegendSaveUi(ui);});host.querySelector('[data-premium-legend-info]')?.addEventListener('click',()=>{const ui=this._weatherLegendState().ui;if(ui.minimized){ui.minimized=false;this._weatherLegendSaveUi(ui);this._weatherLegendSyncUi();}host.querySelector('summary')?.click();});}return host;};
+ view._weatherLegendPosition=()=>view._weatherLegendState().instrument?.place();
+ view._teardownWeatherLegend=()=>{const state=view._weatherLegendState();state.instrument?.destroy();state.instrument=null;state.mounted=false;};
  return view;
 }
 export function legendParagraphs(lines){const box=document.createElement('div');for(const text of lines.filter(Boolean)){const p=document.createElement('p');p.textContent=text;box.append(p);}return box;}

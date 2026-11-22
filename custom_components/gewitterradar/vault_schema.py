@@ -245,7 +245,7 @@ JSON_SETTINGS = {
     "gewitterradar:legend-hub:v1": fields({
         "schema": choice(1), "icon": choice(1, 2),
         "direction": choice("dynamic", "left", "right", "up", "down", "horizontal", "vertical"),
-        "autoClose": BOOL, "position": POSITION, "extraPositions": mapping(POSITION, 2), "extraUi": mapping(LEGEND, 2),
+        "autoClose": BOOL, "glassTransparency": number(0, 100), "position": POSITION, "extraPositions": mapping(POSITION, 2), "extraUi": mapping(LEGEND, 2),
         "slots": sequence(nullable(choice("precipitation", "wind", "temperature", "advection", "synoptic", "other")), 12),
         "legends": mapping(fields({
             "presentation": choice("premium", "compact"), "orientation": choice("horizontal", "vertical"),

@@ -14,9 +14,9 @@ try{for(const [name,width,height,touch]of [['desktop',1280,900,false],['portrait
  assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled,synoptic:card._weatherSynopticState().config.visible})),modes,'legend actions never toggle weather layers');
  await page.screenshot({path:path.join(out,name+'-legends.png')});
  await page.evaluate(()=>views.openLegendConfig(card,'synoptic'));assert(await page.locator('[data-lh-key=density]').isDisabled());assert(await page.locator('[data-lh-key=orientation]').isEnabled());assert(await page.locator('[data-lh-key=foreground]').isEnabled());await page.locator('.lh-dialog [data-lh-close]').click();
- // Close through the native X and reopen through the hub. The visibility
- // override is the new explicit mode, legacy layer preferences are inherited.
- await page.locator('#weather-temperature-legend-overlay').focus();await page.locator('#weather-temperature-legend-overlay [data-weather-legend-hide]').click();assert(await page.locator('#weather-temperature-legend-overlay').isHidden());
+ // The Hub exclusively owns visibility; instruments have no window controls.
+ assert.equal(await page.locator('.lh-instrument [data-weather-legend-hide],.lh-instrument [data-lh-config],.lh-instrument [data-gr-legend-minimize]').count(),0);
+ await page.locator('#legend-hub-popout [data-legend-id=temperature]').click();assert(await page.locator('#weather-temperature-legend-overlay').isHidden());
  await page.locator('#legend-hub-popout [data-legend-id=temperature]').click();assert(await page.locator('#weather-temperature-legend-overlay').isVisible());
  await page.evaluate(()=>{for(const id of ['wind','temperature','advection','synoptic','other'])preferences.patchLegend(card,id,{mode:'off'});card._weatherDisplaySetLegendMode('off');});
  // Every preference/direction/count is exercised in the actual layout.
@@ -52,11 +52,12 @@ try{for(const [name,width,height,touch]of [['desktop',1280,900,false],['portrait
   const c={orientation,size,labels,ticks,presentation:cases%2?'premium':'compact',density:['coarse','medium','detailed'][cases%3],style:['clean','precision','thermometer'][cases%3],material:['brass','platinum','gold','silver','black'][cases%5],mode:'on'};preferences.patchLegend(card,'temperature',c);const host=card.shadow.getElementById('weather-temperature-legend-overlay'),scale=host.querySelector('.lh-scale'),rects=[...scale.querySelectorAll('.lh-label')].map(n=>n.getBoundingClientRect());
   for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){const a=rects[i],b=rects[j];if(a.left<b.right-.1&&a.right>b.left+.1&&a.top<b.bottom-.1&&a.bottom>b.top+.1)throw Error('Label collision '+JSON.stringify(c));}
   if(labels==='inside'&&ticks==='inside')for(const a of rects)for(const n of scale.querySelectorAll('.lh-mark')){const b=n.getBoundingClientRect();if(a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)throw Error('Inside lanes overlap '+JSON.stringify(c));}
+  const box=scale.getBoundingClientRect();for(const a of rects)if(a.left<box.left-.5||a.right>box.right+.5||a.top<box.top-.5||a.bottom>box.bottom+.5)throw Error('Label outside scale '+JSON.stringify(c));
   if(!scale.classList.contains(c.style)||host.dataset.presentation!==c.presentation)throw Error('Appearance not rendered');cases++;
  }return cases;});assert.equal(appearances,72);
  await page.evaluate(()=>preferences.patchLegend(card,'temperature',{presentation:'compact',orientation:'horizontal',size:'M',labels:'after',ticks:'inside',style:'thermometer',mode:'on'}));await page.waitForTimeout(150);await page.screenshot({path:path.join(out,name+'-compact.png')});
  // Configuration UI and keyboard focus, not just the internal patch API.
- await page.locator('#weather-temperature-legend-overlay [data-lh-config]').click();await page.locator('[data-lh-key=orientation]').selectOption('vertical');await page.locator('[data-lh-key=foreground]').selectOption('gold');await page.locator('[data-lh-key=shadow]').uncheck();await page.locator('[data-lh-key=outline]').uncheck();await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.legends.temperature.foreground),'gold');
+ await page.evaluate(()=>views.openLegendConfig(card,'temperature'));await page.locator('[data-lh-key=orientation]').selectOption('vertical');await page.locator('[data-lh-key=foreground]').selectOption('gold');await page.locator('[data-lh-key=shadow]').uncheck();await page.locator('[data-lh-key=outline]').uncheck();await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.legends.temperature.foreground),'gold');
  // Actual synthetic fields: legend preferences/units cannot fetch or alter
  // native weather values; a denied temperature provider leaves Wind intact.
  if(name==='desktop'){

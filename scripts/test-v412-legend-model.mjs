@@ -11,6 +11,7 @@ import {DEFAULT_TEMPERATURE,temperatureColor} from '../frontend/modules/weather/
 import {BEAUFORT_LIMITS} from '../frontend/modules/weather/wind-data.js';
 import {WIND_FIELD_COLORS} from '../frontend/modules/weather/wind-field.js';
 const c=normalizeLegendHub();assert.equal(c.icon,1);assert.equal(c.legends.wind.mode,'inherit');assert.deepEqual(normalizeLegendHub(JSON.parse(JSON.stringify(c))),c);
+assert.equal(c.glassTransparency,65);for(const [input,expected]of [[-1,0],[0,0],[65,65],[100,100],[101,100],[NaN,65],['65',65]])assert.equal(normalizeLegendHub({glassTransparency:input}).glassTransparency,expected);
 assert.deepEqual(assignLegendSlot(c,0,'wind').slots,['wind','precipitation','temperature','synoptic']);assert.deepEqual(assignLegendSlot(c,1,null).slots,['precipitation',null,'temperature','synoptic']);
 for(const [key,values]of Object.entries(LEGEND_OPTIONS))for(const value of values)assert.equal(normalizeLegendOptions({[key]:value})[key],value);assert.equal(normalizeLegendOptions({size:'unsafe'}).size,'M');assert.equal(normalizeLegendHub({slots:[]}).slots.length,1);assert.equal(normalizeLegendHub({slots:Array(30).fill(null)}).slots.length,12);
 let geometries=0;for(const [w,h]of [[1280,860],[393,780],[851,363]])for(let count=1;count<=13;count++)for(const direction of ['dynamic','left','right','up','down','horizontal','vertical'])for(const [x,y]of [[0,0],[1,0],[0,1],[1,1],[.5,0],[.5,1],[0,.5],[1,.5]]){
