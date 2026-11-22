@@ -156,7 +156,10 @@ assert.equal(displayMenuSource.includes('transformOrigin'),false,'WeatherRouter 
 const legendOverlaySource=await readFile(new URL('../frontend/modules/weather/legend-overlay.js',import.meta.url),'utf8');
 const {EXPECTED_MODULES}=await import('../frontend/module-manifest.js');
 const versionMarker=id=>'version:"'+EXPECTED_MODULES.find(module=>module.id===id).version+'"';
-for(const marker of ['id:"weather.legend-overlay"',versionMarker('weather.legend-overlay'),'_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','weather-legend-header','data-weather-legend-hide','data-weather-legend-view','weatherSectionToggle','weather-legend-discrete-bar'])assert.ok(legendOverlaySource.includes(marker),'WeatherRouter native legend overlay contract missing: '+marker);
+for(const marker of ['id:"weather.legend-overlay"',versionMarker('weather.legend-overlay'),'_weatherLegendSetModel','_weatherLegendClear','_weatherLegendVisibleModels','_weatherLegendRenderVisual','weather-legend-overlay','createLegendInstrument','savePosition:','weather-legend-discrete-bar'])assert.ok(legendOverlaySource.includes(marker),'WeatherRouter native legend overlay contract missing: '+marker);
+const legendInstrumentSource=await readFile(new URL('../frontend/modules/weather/legend-instrument.js',import.meta.url),'utf8');
+for(const marker of ['host.append(body,info)','PREMIUM_INFO','_weatherDisplayBindEyeDrag','instrumentBounds','savePosition(p)'])assert.ok(legendInstrumentSource.includes(marker),'Minimal native legend contract missing: '+marker);
+for(const marker of ['weather-legend-global-head','data-weather-legend-hide','data-gr-legend-minimize','data-lh-config'])assert.equal((legendOverlaySource+legendInstrumentSource).includes(marker),false,'Removed local window controls must stay absent: '+marker);
 assert.equal(legendOverlaySource.includes('document.createElement("a")'),false,'Legends must remain inside the dashboard');
 assert.equal(legendOverlaySource.includes('document.createElement("img")'),false,'Native classes replace external legend images');
 const precipitationSource=await readFile(new URL('../frontend/modules/weather/precipitation-layer.js',import.meta.url),'utf8');
