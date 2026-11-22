@@ -50,6 +50,15 @@ def _diff(source: Path, target: Path) -> dict[str, list[str]]:
     return result
 
 
+def _build_version(path: Path) -> str:
+    for node in ast.parse(path.read_text(encoding="utf-8")).body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "BUILD_VERSION" for t in node.targets):
+            value = ast.literal_eval(node.value)
+            assert isinstance(value, str)
+            return value
+    raise AssertionError("Build version missing: " + str(path))
+
+
 def _verify_rollback_source(rollback_root: Path, current_integration: Path) -> None:
     rollback_manifest = json.loads(
         (rollback_root / "deploy-relay.json").read_text(encoding="utf-8")
@@ -66,16 +75,20 @@ def _verify_rollback_source(rollback_root: Path, current_integration: Path) -> N
 
     rollback_integration = rollback_root / "custom_components" / "gewitterradar"
     assert rollback_integration.is_dir()
-    rollback_build = (rollback_integration / "build_info.py").read_text(encoding="utf-8")
-    assert 'BUILD_VERSION = "4.09"' in rollback_build
+    rollback_version = _build_version(rollback_integration / "build_info.py")
+    current_version = _build_version(current_integration / "build_info.py")
+    assert rollback_version != current_version, "rollback must use a distinct build"
     rollback_plan = _diff(rollback_integration, current_integration)
     modular_removals = [
         name for name in rollback_plan["remove"]
         if name.startswith("frontend/modules/")
     ]
-    assert modular_removals, (
-        "V4.09 rollback must remove V4.10 modular files instead of leaving a mixed tree"
-    )
+    if rollback_version == "4.09":
+        assert modular_removals, (
+            "V4.09 rollback must remove V4.10 modular files instead of leaving a mixed tree"
+        )
+    else:
+        assert rollback_plan["change"], "rollback source must differ from the candidate"
     assert (
         "frontend/gewitterradar.js" in rollback_plan["change"]
         or "frontend/gewitterradar.js" in rollback_plan["unchanged"]
@@ -88,9 +101,14 @@ def _verify_rollback_source(rollback_root: Path, current_integration: Path) -> N
         shutil.copytree(rollback_integration, restored)
         converged = _diff(rollback_integration, restored)
         assert not converged["add"] and not converged["change"] and not converged["remove"]
-        assert not (restored / "frontend" / "modules").exists(), (
-            "rollback left V4.10 modular files behind"
-        )
+        if rollback_version == "4.09":
+            assert not (restored / "frontend" / "modules").exists(), (
+                "rollback left V4.10 modular files behind"
+            )
+        else:
+            assert _files(restored / "frontend" / "modules") == _files(rollback_integration / "frontend" / "modules"), (
+                "rollback must restore the exact protected modular tree"
+            )
 
 
 def main() -> None:

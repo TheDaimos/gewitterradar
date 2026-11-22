@@ -10,3 +10,7 @@
 ## Eye-Randpositionierung (technischer DEV-Referenzkandidat)
 
 Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression für GR 4.11.215](docs/GR_EYE_EDGES_411215_2026-11-15.md) erhalten. Die Betreiberabnahme auf HA DEV VM109 und Android steht bis zur ausdrücklichen Freigabe aus.
+
+## V4.12-Aura (eigenständiger technischer Zwischenstand)
+
+Vor Änderungen am Legend Hub die [technische Aura-Referenz GR 4.12.1](docs/GR_412_AURA_REFERENCE_2026-11-22.md) und ihre Regressionen erhalten: dynamische Ringprojektion, stabile Slot-/Pointer-Identität, reduzierte Bewegung, Randpositionierung und Vault-Persistenz. Keine neue Betreiberfreigabe ableiten; V4.11.03 FINAL und das bestehende WR-/GR-Referenzpaar bleiben geschützt.

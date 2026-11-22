@@ -42,7 +42,7 @@ async function open(browser,view,baseline=false){
  page.on('pageerror',e=>errors.push(e.message));
  await f.route(page);
  const url='http://127.0.0.1:'+f.server.address().port;
- const ready=()=>page.waitForFunction(()=>window.ready&&card._mapReady&&card._eyeHubState());
+ const ready=()=>page.waitForFunction(baseline=>window.ready&&card._mapReady&&card._eyeHubState()&&(baseline||card.__proBranding?.eyeReady),baseline);
  await page.goto(url);
  await ready();
  await page.evaluate(()=>{
@@ -53,6 +53,7 @@ async function open(browser,view,baseline=false){
  const cdp=view.hasTouch&&await context.newCDPSession(page);
  const touch=(type,points=[])=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:points});
  async function drag(x,y){
+  assert(!await page.locator('#eye-hub-config').isVisible(),'edge drag starts without a modal');
   const {eye,map}=await rects(page);
   const start={x:eye.left+eye.width/2,y:eye.top+eye.height/2};
   const end={x:map.left+(x===0?2:x===1?map.width-2:map.width*x),y:map.top+(y===0?2:y===1?map.height-2:map.height*y)};

@@ -1,4 +1,4 @@
-import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=411254r1';
+import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4121r1';
 import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411211r1';
 import {WIND_FIELD_COLORS} from './wind-field.js?v=411211r1';
 import {drawWindGlyph} from './wind-canvas.js?v=411211r1';

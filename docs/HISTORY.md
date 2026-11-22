@@ -1,3 +1,7 @@
+## V4.12.1 DEV · 2026/11 · HA-Integration 0.25.162
+
+Separater technischer Aura-Zwischenstand: dynamische Ringkompaktierung, stabile Iconidentität, ruhige endliche Übergänge und bestehende Rand-/Touch-Schutzpfade. V4.11.03 FINAL bleibt Ausgangsreferenz; HA-/Android-Betreiberabnahme separat. Details: [Aura-Referenz](GR_412_AURA_REFERENCE_2026-11-22.md).
+
 ## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
 
 - OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.

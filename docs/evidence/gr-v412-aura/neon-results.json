@@ -1,0 +1,2327 @@
+[
+  {
+    "name": "desktop",
+    "dpr": 1,
+    "comparisons": 36,
+    "curves": {
+      "neonBrilliance": [
+        {
+          "value": 0,
+          "energy": 1355768,
+          "outer": 9954,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1544567,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.20000004768371582,
+            "cpuMeanMs": 0.9000000158945719,
+            "cpuMaxMs": 2,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1766591,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.7333333492279053,
+            "cpuMaxMs": 1.3000000715255737,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1975425,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 0.5333333412806193,
+            "cpuMaxMs": 1,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 2190526,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.30000007152557373,
+            "cpuMeanMs": 0.6250000298023224,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonBloom": [
+        {
+          "value": 0,
+          "energy": 1355768,
+          "outer": 9954,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1896024,
+          "outer": 44836,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.799999992052714,
+            "cpuMaxMs": 1.7000000476837158,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 544912,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 2609855,
+          "outer": 159225,
+          "wow": {
+            "cpuMs": 0.6999999284744263,
+            "cpuMeanMs": 0.6666666666666666,
+            "cpuMaxMs": 1.2000000476837158,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 593028,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 3454830,
+          "outer": 373527,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.5666666825612386,
+            "cpuMaxMs": 0.8999999761581421,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 647748,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 4415215,
+          "outer": 701323,
+          "wow": {
+            "cpuMs": 0.30000007152557373,
+            "cpuMeanMs": 0.5000000397364298,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 704512,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonOrganics": [
+        {
+          "value": 0,
+          "energy": 1355768,
+          "outer": 9954,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1372057,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.7999999523162842,
+            "cpuMeanMs": 0.9666666189829508,
+            "cpuMaxMs": 1.6999999284744263,
+            "filaments": 4,
+            "beads": 12,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1418997,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.7333333492279053,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 6,
+            "beads": 24,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1494807,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.700000007947286,
+            "cpuMaxMs": 1,
+            "filaments": 10,
+            "beads": 50,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 1587581,
+          "outer": 9954,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.925000011920929,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 12,
+            "beads": 60,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 204312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ]
+    },
+    "composite": [
+      1355768,
+      2190526,
+      4415215,
+      1587581,
+      1355768,
+      4630777,
+      4803020,
+      4987604
+    ],
+    "contacts": {
+      "maxBridges": 6,
+      "transferred": true,
+      "coloursUnchanged": true,
+      "snapshots": [
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1,
+            "x": -17.780029296875,
+            "y": 70.61013793945312
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7333333333333325,
+            "x": -45.25139236450195,
+            "y": 60.971893310546875
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.4666666666666668,
+            "x": 45.93940353393555,
+            "y": -54.94974136352539
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.1999999999999993,
+            "x": 71.04084014892578,
+            "y": 0.48475542664527893
+          }
+        ],
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1.0333333333333332,
+            "x": -17.774829864501953,
+            "y": 70.62295532226562
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7666666666666657,
+            "x": -45.25211715698242,
+            "y": 60.97035598754883
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.5,
+            "x": 45.92952346801758,
+            "y": -54.927127838134766
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.2333333333333325,
+            "x": 71.06063079833984,
+            "y": 0.49235665798187256
+          }
+        ]
+      ],
+      "stats": {
+        "cpuMs": 0.6999999284744263,
+        "cpuMeanMs": 0.887912086733095,
+        "cpuMaxMs": 2.5,
+        "filaments": 12,
+        "beads": 96,
+        "bridges": 6,
+        "transfers": 1,
+        "quality": 0,
+        "bloomUpdates": 37,
+        "canvasBytes": 704512,
+        "spriteBytes": 32768,
+        "geometryBytes": 7680,
+        "frameTime": 15.966666666666667,
+        "phases": null
+      }
+    },
+    "performanceResult": {
+      "p50": 8.5,
+      "p95": 116.5,
+      "base": {
+        "frames": 70,
+        "cpuMs": 366.5,
+        "maxMs": 20.699999928474426,
+        "cacheMs": 1.8000000715255737,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        {
+          "cpuMs": 0.7999999523162842,
+          "cpuMeanMs": 1.6166666547457378,
+          "cpuMaxMs": 5.700000047683716,
+          "filaments": 16,
+          "beads": 99,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 11,
+          "canvasBytes": 779328,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 36.9189,
+          "phases": null
+        }
+      ]
+    },
+    "nullPerformance": {
+      "p50": 16.700000000004366,
+      "p95": 108.5,
+      "base": {
+        "frames": 100,
+        "cpuMs": 435.4000002145767,
+        "maxMs": 20.699999928474426,
+        "cacheMs": 1.8000000715255737,
+        "paths": 4,
+        "filaments": 20,
+        "beads": 180,
+        "quality": 2
+      },
+      "extra": [
+        null
+      ]
+    },
+    "previewPerformance": {
+      "p50": 8.5,
+      "p95": 25.099999999998545,
+      "base": {
+        "frames": 140,
+        "cpuMs": 614.6000000238419,
+        "maxMs": 20.699999928474426,
+        "cacheMs": 2.3000000715255737,
+        "paths": 4,
+        "filaments": 20,
+        "beads": 300,
+        "quality": 2
+      },
+      "extra": [
+        {
+          "cpuMs": 2,
+          "cpuMeanMs": 1.814285709744408,
+          "cpuMaxMs": 3.299999952316284,
+          "filaments": 24,
+          "beads": 161,
+          "bridges": 6,
+          "transfers": 3,
+          "quality": 0,
+          "bloomUpdates": 14,
+          "canvasBytes": 779328,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 42.412099999999995,
+          "phases": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "desktop-hidpi",
+    "dpr": 1.5,
+    "comparisons": 36,
+    "curves": {
+      "neonBrilliance": [
+        {
+          "value": 0,
+          "energy": 1348414,
+          "outer": 9839,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1527199,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 0.8999999761581421,
+            "cpuMaxMs": 2,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1739303,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.6333333253860474,
+            "cpuMaxMs": 1,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1960180,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.6999999682108561,
+            "cpuMaxMs": 1.1999999284744263,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 2169701,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 0.5666666825612386,
+            "cpuMaxMs": 1,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonBloom": [
+        {
+          "value": 0,
+          "energy": 1348414,
+          "outer": 9839,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1889041,
+          "outer": 43382,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.7000000476837158,
+            "cpuMaxMs": 1.4000000953674316,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 857412,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 2606350,
+          "outer": 159823,
+          "wow": {
+            "cpuMs": 0.9000000953674316,
+            "cpuMeanMs": 0.7000000476837158,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 967312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 3453077,
+          "outer": 374578,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.6666667064030966,
+            "cpuMaxMs": 1.3000000715255737,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1087012,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 4408997,
+          "outer": 697238,
+          "wow": {
+            "cpuMs": 0.40000009536743164,
+            "cpuMeanMs": 0.5000000397364298,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1216512,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonOrganics": [
+        {
+          "value": 0,
+          "energy": 1348414,
+          "outer": 9839,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1364562,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 1.5,
+            "cpuMeanMs": 1.200000007947286,
+            "cpuMaxMs": 1.7000000476837158,
+            "filaments": 4,
+            "beads": 12,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1410836,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.6999999284744263,
+            "cpuMeanMs": 0.8666666348775228,
+            "cpuMaxMs": 1.2000000476837158,
+            "filaments": 6,
+            "beads": 24,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1485877,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 0.7999999523162842,
+            "cpuMeanMs": 0.8333333333333334,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 10,
+            "beads": 50,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 1577682,
+          "outer": 9839,
+          "wow": {
+            "cpuMs": 1.100000023841858,
+            "cpuMeanMs": 1.3666666746139526,
+            "cpuMaxMs": 2.100000023841858,
+            "filaments": 12,
+            "beads": 60,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 459692,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ]
+    },
+    "composite": [
+      1348414,
+      2169701,
+      4408997,
+      1577682,
+      1348414,
+      4620441,
+      4796361,
+      4976538
+    ],
+    "contacts": {
+      "maxBridges": 6,
+      "transferred": true,
+      "coloursUnchanged": true,
+      "snapshots": [
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1,
+            "x": -17.780029296875,
+            "y": 70.61013793945312
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7333333333333325,
+            "x": -45.25139236450195,
+            "y": 60.971893310546875
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.4666666666666668,
+            "x": 45.93940353393555,
+            "y": -54.94974136352539
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.1999999999999993,
+            "x": 71.04084014892578,
+            "y": 0.48475542664527893
+          }
+        ],
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1.0333333333333332,
+            "x": -17.774829864501953,
+            "y": 70.62295532226562
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7666666666666657,
+            "x": -45.25211715698242,
+            "y": 60.97035598754883
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.5,
+            "x": 45.92952346801758,
+            "y": -54.927127838134766
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.2333333333333325,
+            "x": 71.06063079833984,
+            "y": 0.49235665798187256
+          }
+        ]
+      ],
+      "stats": {
+        "cpuMs": 0.6000000238418579,
+        "cpuMeanMs": 0.987362638934628,
+        "cpuMaxMs": 2.200000047683716,
+        "filaments": 12,
+        "beads": 96,
+        "bridges": 6,
+        "transfers": 1,
+        "quality": 0,
+        "bloomUpdates": 37,
+        "canvasBytes": 1216512,
+        "spriteBytes": 32768,
+        "geometryBytes": 7680,
+        "frameTime": 15.966666666666667,
+        "phases": null
+      }
+    },
+    "performanceResult": {
+      "p50": 58.400000000001455,
+      "p95": 266.7000000000007,
+      "base": {
+        "frames": 95,
+        "cpuMs": 554.1000000238419,
+        "maxMs": 9.299999952316284,
+        "cacheMs": 1.5,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        {
+          "cpuMs": 1.4000000953674316,
+          "cpuMeanMs": 2.1032258118352583,
+          "cpuMaxMs": 5.300000071525574,
+          "filaments": 16,
+          "beads": 98,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 11,
+          "canvasBytes": 1384848,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 13.6935,
+          "phases": null
+        }
+      ]
+    },
+    "nullPerformance": {
+      "p50": 41.70000000000073,
+      "p95": 125.20000000000073,
+      "base": {
+        "frames": 122,
+        "cpuMs": 625.799999833107,
+        "maxMs": 9.299999952316284,
+        "cacheMs": 1.5,
+        "paths": 4,
+        "filaments": 24,
+        "beads": 240,
+        "quality": 2
+      },
+      "extra": [
+        null
+      ]
+    },
+    "previewPerformance": {
+      "p50": 41.60000000000218,
+      "p95": 58.400000000001455,
+      "base": {
+        "frames": 159,
+        "cpuMs": 776.6999999284744,
+        "maxMs": 9.299999952316284,
+        "cacheMs": 1.9000000953674316,
+        "paths": 4,
+        "filaments": 20,
+        "beads": 300,
+        "quality": 2
+      },
+      "extra": [
+        {
+          "cpuMs": 1.5,
+          "cpuMeanMs": 1.5837837844281584,
+          "cpuMaxMs": 4.100000023841858,
+          "filaments": 16,
+          "beads": 86,
+          "bridges": 4,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 11,
+          "canvasBytes": 1384848,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 19.8037,
+          "phases": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "android",
+    "dpr": 3,
+    "comparisons": 36,
+    "curves": {
+      "neonBrilliance": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1520976,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 1.3666666348775227,
+            "cpuMaxMs": 3.299999952316284,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1727165,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.5666666428248087,
+            "cpuMaxMs": 0.7999999523162842,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1945781,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.2999999523162842,
+            "cpuMeanMs": 0.4666666587193807,
+            "cpuMaxMs": 0.8999999761581421,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 2155445,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.6999999284744263,
+            "cpuMeanMs": 0.7750000059604645,
+            "cpuMaxMs": 1.2000000476837158,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonBloom": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1886805,
+          "outer": 44222,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.7333333094914755,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1290916,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 2603741,
+          "outer": 159687,
+          "wow": {
+            "cpuMs": 1,
+            "cpuMeanMs": 0.7249999940395355,
+            "cpuMaxMs": 1.6999999284744263,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1487376,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 3453000,
+          "outer": 376505,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.45000001788139343,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1701508,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 4406673,
+          "outer": 695324,
+          "wow": {
+            "cpuMs": 0.8999999761581421,
+            "cpuMeanMs": 0.799999992052714,
+            "cpuMaxMs": 1.5,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1933312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonOrganics": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1360161,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 1,
+            "cpuMeanMs": 1.100000023841858,
+            "cpuMaxMs": 1.8000000715255737,
+            "filaments": 4,
+            "beads": 12,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1406358,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.7333333492279053,
+            "cpuMaxMs": 1.2000000476837158,
+            "filaments": 6,
+            "beads": 24,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1480922,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.8333333333333334,
+            "cpuMaxMs": 1.2999999523162842,
+            "filaments": 10,
+            "beads": 50,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 1572196,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.8999999761581421,
+            "cpuMeanMs": 0.9333333174387614,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 12,
+            "beads": 60,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ]
+    },
+    "composite": [
+      1344102,
+      2155445,
+      4406673,
+      1572196,
+      1344102,
+      4614370,
+      4793789,
+      4970935
+    ],
+    "contacts": {
+      "maxBridges": 6,
+      "transferred": true,
+      "coloursUnchanged": true,
+      "snapshots": [
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1,
+            "x": -17.780029296875,
+            "y": 70.61013793945312
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7333333333333325,
+            "x": -45.25139236450195,
+            "y": 60.971893310546875
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.4666666666666668,
+            "x": 45.93940353393555,
+            "y": -54.94974136352539
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.1999999999999993,
+            "x": 71.04084014892578,
+            "y": 0.48475542664527893
+          }
+        ],
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1.0333333333333332,
+            "x": -17.774829864501953,
+            "y": 70.62295532226562
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7666666666666657,
+            "x": -45.25211715698242,
+            "y": 60.97035598754883
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.5,
+            "x": 45.92952346801758,
+            "y": -54.927127838134766
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.2333333333333325,
+            "x": 71.06063079833984,
+            "y": 0.49235665798187256
+          }
+        ]
+      ],
+      "stats": {
+        "cpuMs": 1,
+        "cpuMeanMs": 0.942857142988142,
+        "cpuMaxMs": 1.7000000476837158,
+        "filaments": 12,
+        "beads": 96,
+        "bridges": 6,
+        "transfers": 1,
+        "quality": 0,
+        "bloomUpdates": 37,
+        "canvasBytes": 1933312,
+        "spriteBytes": 32768,
+        "geometryBytes": 7680,
+        "frameTime": 15.966666666666667,
+        "phases": null
+      }
+    },
+    "performanceResult": {
+      "p50": 8.399999999999636,
+      "p95": 33.400000000001455,
+      "base": {
+        "frames": 82,
+        "cpuMs": 413.99999964237213,
+        "maxMs": 10.299999952316284,
+        "cacheMs": 1.3000000715255737,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        {
+          "cpuMs": 1,
+          "cpuMeanMs": 1.4415094425093453,
+          "cpuMaxMs": 3.799999952316284,
+          "filaments": 20,
+          "beads": 132,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 1,
+          "bloomUpdates": 13,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 15.3381,
+          "phases": null
+        }
+      ]
+    },
+    "nullPerformance": {
+      "p50": 8.30000000000291,
+      "p95": 16.69999999999709,
+      "base": {
+        "frames": 129,
+        "cpuMs": 519.999999165535,
+        "maxMs": 10.299999952316284,
+        "cacheMs": 1.3000000715255737,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        null
+      ]
+    },
+    "previewPerformance": {
+      "p50": 8.400000000001455,
+      "p95": 41.60000000000218,
+      "base": {
+        "frames": 177,
+        "cpuMs": 750.2999988794327,
+        "maxMs": 10.299999952316284,
+        "cacheMs": 1.600000023841858,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 560,
+        "quality": 1
+      },
+      "extra": [
+        {
+          "cpuMs": 1.5,
+          "cpuMeanMs": 1.6400000023841859,
+          "cpuMaxMs": 3.100000023841858,
+          "filaments": 24,
+          "beads": 173,
+          "bridges": 6,
+          "transfers": 3,
+          "quality": 0,
+          "bloomUpdates": 16,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 20.4563,
+          "phases": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "android-landscape",
+    "dpr": 3,
+    "comparisons": 36,
+    "curves": {
+      "neonBrilliance": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1520976,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 1,
+            "cpuMaxMs": 2.100000023841858,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1727165,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.3999999761581421,
+            "cpuMeanMs": 0.8333333333333334,
+            "cpuMaxMs": 1.7999999523162842,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1945781,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.40000009536743164,
+            "cpuMeanMs": 0.700000007947286,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 2155445,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.2999999523162842,
+            "cpuMeanMs": 0.5333333015441895,
+            "cpuMaxMs": 0.8999999761581421,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonBloom": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1886805,
+          "outer": 44222,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.700000007947286,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1290916,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 2603741,
+          "outer": 159687,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.7000000476837158,
+            "cpuMaxMs": 1.3000000715255737,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1487376,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 3453000,
+          "outer": 376505,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.7333333492279053,
+            "cpuMaxMs": 1.5,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1701508,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 4406673,
+          "outer": 695324,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.5666666428248087,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1933312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonOrganics": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1360161,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 1,
+            "cpuMeanMs": 0.9333333174387614,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 4,
+            "beads": 12,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1406358,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.9000000158945719,
+            "cpuMaxMs": 1.7000000476837158,
+            "filaments": 6,
+            "beads": 24,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1480922,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7999999523162842,
+            "cpuMeanMs": 1.099999984105428,
+            "cpuMaxMs": 1.6999999284744263,
+            "filaments": 10,
+            "beads": 50,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 1572196,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.8999999761581421,
+            "cpuMeanMs": 1.00000003973643,
+            "cpuMaxMs": 1.3000000715255737,
+            "filaments": 12,
+            "beads": 60,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ]
+    },
+    "composite": [
+      1344102,
+      2155445,
+      4406673,
+      1572196,
+      1344102,
+      4614370,
+      4793789,
+      4970935
+    ],
+    "contacts": {
+      "maxBridges": 6,
+      "transferred": true,
+      "coloursUnchanged": true,
+      "snapshots": [
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1,
+            "x": -17.780029296875,
+            "y": 70.61013793945312
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7333333333333325,
+            "x": -45.25139236450195,
+            "y": 60.971893310546875
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.4666666666666668,
+            "x": 45.93940353393555,
+            "y": -54.94974136352539
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.1999999999999993,
+            "x": 71.04084014892578,
+            "y": 0.48475542664527893
+          }
+        ],
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1.0333333333333332,
+            "x": -17.774829864501953,
+            "y": 70.62295532226562
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7666666666666657,
+            "x": -45.25211715698242,
+            "y": 60.97035598754883
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.5,
+            "x": 45.92952346801758,
+            "y": -54.927127838134766
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.2333333333333325,
+            "x": 71.06063079833984,
+            "y": 0.49235665798187256
+          }
+        ]
+      ],
+      "stats": {
+        "cpuMs": 1,
+        "cpuMeanMs": 0.948351651757628,
+        "cpuMaxMs": 2.200000047683716,
+        "filaments": 12,
+        "beads": 96,
+        "bridges": 6,
+        "transfers": 1,
+        "quality": 0,
+        "bloomUpdates": 37,
+        "canvasBytes": 1933312,
+        "spriteBytes": 32768,
+        "geometryBytes": 7680,
+        "frameTime": 15.966666666666667,
+        "phases": null
+      }
+    },
+    "performanceResult": {
+      "p50": 33.29999999999927,
+      "p95": 58.29999999999927,
+      "base": {
+        "frames": 88,
+        "cpuMs": 485.299999833107,
+        "maxMs": 12.299999952316284,
+        "cacheMs": 1.5000001192092896,
+        "paths": 4,
+        "filaments": 36,
+        "beads": 612,
+        "quality": 0
+      },
+      "extra": [
+        {
+          "cpuMs": 1.399999976158142,
+          "cpuMeanMs": 1.4944444475350556,
+          "cpuMaxMs": 3.399999976158142,
+          "filaments": 16,
+          "beads": 112,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 12,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 14.1403,
+          "phases": null
+        }
+      ]
+    },
+    "nullPerformance": {
+      "p50": 33.30000000000109,
+      "p95": 125.09999999999854,
+      "base": {
+        "frames": 121,
+        "cpuMs": 602.4999995231628,
+        "maxMs": 12.299999952316284,
+        "cacheMs": 1.5000001192092896,
+        "paths": 4,
+        "filaments": 32,
+        "beads": 480,
+        "quality": 1
+      },
+      "extra": [
+        null
+      ]
+    },
+    "previewPerformance": {
+      "p50": 124.90000000000146,
+      "p95": 266.7000000000007,
+      "base": {
+        "frames": 149,
+        "cpuMs": 741.799999833107,
+        "maxMs": 12.299999952316284,
+        "cacheMs": 1.9000002145767212,
+        "paths": 4,
+        "filaments": 24,
+        "beads": 408,
+        "quality": 2
+      },
+      "extra": [
+        {
+          "cpuMs": 0.8999999761581421,
+          "cpuMeanMs": 1.5892857228006636,
+          "cpuMaxMs": 3.799999952316284,
+          "filaments": 16,
+          "beads": 86,
+          "bridges": 5,
+          "transfers": 5,
+          "quality": 2,
+          "bloomUpdates": 12,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 20.3672,
+          "phases": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "ipad",
+    "dpr": 2,
+    "comparisons": 36,
+    "curves": {
+      "neonBrilliance": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1520976,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 1.3333333333333333,
+            "cpuMaxMs": 3,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1727165,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.7666666507720947,
+            "cpuMaxMs": 1.2999999523162842,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1945781,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.7333333492279053,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 2155445,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.2999999523162842,
+            "cpuMeanMs": 0.6999999682108561,
+            "cpuMaxMs": 1.399999976158142,
+            "filaments": 0,
+            "beads": 30,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonBloom": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1886805,
+          "outer": 44222,
+          "wow": {
+            "cpuMs": 0.5,
+            "cpuMeanMs": 0.9333333571751913,
+            "cpuMaxMs": 2.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1290916,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 2603741,
+          "outer": 159687,
+          "wow": {
+            "cpuMs": 0.40000009536743164,
+            "cpuMeanMs": 0.5333333810170492,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1487376,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 3453000,
+          "outer": 376505,
+          "wow": {
+            "cpuMs": 0.6000000238418579,
+            "cpuMeanMs": 0.5333333412806193,
+            "cpuMaxMs": 0.8999999761581421,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1701508,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 4406673,
+          "outer": 695324,
+          "wow": {
+            "cpuMs": 0.7000000476837158,
+            "cpuMeanMs": 0.6666667064030966,
+            "cpuMaxMs": 1.2000000476837158,
+            "filaments": 0,
+            "beads": 0,
+            "bridges": 0,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 2,
+            "canvasBytes": 1933312,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ],
+      "neonOrganics": [
+        {
+          "value": 0,
+          "energy": 1344102,
+          "outer": 9964,
+          "wow": null
+        },
+        {
+          "value": 25,
+          "energy": 1360161,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 1,
+            "cpuMeanMs": 1.3000000317891438,
+            "cpuMaxMs": 2.600000023841858,
+            "filaments": 4,
+            "beads": 12,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 50,
+          "energy": 1406358,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7999999523162842,
+            "cpuMeanMs": 0.799999992052714,
+            "cpuMaxMs": 1.100000023841858,
+            "filaments": 6,
+            "beads": 24,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 75,
+          "energy": 1480922,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.7999999523162842,
+            "cpuMeanMs": 0.8999999364217123,
+            "cpuMaxMs": 1.1999999284744263,
+            "filaments": 10,
+            "beads": 50,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        },
+        {
+          "value": 100,
+          "energy": 1572196,
+          "outer": 9964,
+          "wow": {
+            "cpuMs": 0.8999999761581421,
+            "cpuMeanMs": 1.1333333253860474,
+            "cpuMaxMs": 1.5,
+            "filaments": 12,
+            "beads": 60,
+            "bridges": 1,
+            "transfers": 0,
+            "quality": 0,
+            "bloomUpdates": 0,
+            "canvasBytes": 817224,
+            "spriteBytes": 32768,
+            "geometryBytes": 7680,
+            "frameTime": 10,
+            "phases": null
+          }
+        }
+      ]
+    },
+    "composite": [
+      1344102,
+      2155445,
+      4406673,
+      1572196,
+      1344102,
+      4614370,
+      4793789,
+      4970935
+    ],
+    "contacts": {
+      "maxBridges": 6,
+      "transferred": true,
+      "coloursUnchanged": true,
+      "snapshots": [
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1,
+            "x": -17.780029296875,
+            "y": 70.61013793945312
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7333333333333325,
+            "x": -45.25139236450195,
+            "y": 60.971893310546875
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.4666666666666668,
+            "x": 45.93940353393555,
+            "y": -54.94974136352539
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.1999999999999993,
+            "x": 71.04084014892578,
+            "y": 0.48475542664527893
+          }
+        ],
+        [
+          {
+            "seed": 0,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 1.0333333333333332,
+            "x": -17.774829864501953,
+            "y": 70.62295532226562
+          },
+          {
+            "seed": 1,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.7666666666666657,
+            "x": -45.25211715698242,
+            "y": 60.97035598754883
+          },
+          {
+            "seed": 2,
+            "source": "wind",
+            "target": "precipitation",
+            "age": 0.5,
+            "x": 45.92952346801758,
+            "y": -54.927127838134766
+          },
+          {
+            "seed": 3,
+            "source": "precipitation",
+            "target": "wind",
+            "age": 0.2333333333333325,
+            "x": 71.06063079833984,
+            "y": 0.49235665798187256
+          }
+        ]
+      ],
+      "stats": {
+        "cpuMs": 1.1999999284744263,
+        "cpuMeanMs": 0.9747252726292872,
+        "cpuMaxMs": 2.299999952316284,
+        "filaments": 12,
+        "beads": 96,
+        "bridges": 6,
+        "transfers": 1,
+        "quality": 0,
+        "bloomUpdates": 37,
+        "canvasBytes": 1933312,
+        "spriteBytes": 32768,
+        "geometryBytes": 7680,
+        "frameTime": 15.966666666666667,
+        "phases": null
+      }
+    },
+    "performanceResult": {
+      "p50": 41.600000000000364,
+      "p95": 83.20000000000073,
+      "base": {
+        "frames": 91,
+        "cpuMs": 470.7000002861023,
+        "maxMs": 8.200000047683716,
+        "cacheMs": 1.600000023841858,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        {
+          "cpuMs": 1.399999976158142,
+          "cpuMeanMs": 1.5642856983911424,
+          "cpuMaxMs": 3.1999999284744263,
+          "filaments": 16,
+          "beads": 100,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 11,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 16.9387,
+          "phases": null
+        }
+      ]
+    },
+    "nullPerformance": {
+      "p50": 25.100000000002183,
+      "p95": 50.10000000000218,
+      "base": {
+        "frames": 128,
+        "cpuMs": 573.7000002861023,
+        "maxMs": 8.200000047683716,
+        "cacheMs": 1.600000023841858,
+        "paths": 4,
+        "filaments": 28,
+        "beads": 364,
+        "quality": 1
+      },
+      "extra": [
+        null
+      ]
+    },
+    "previewPerformance": {
+      "p50": 58.29999999999927,
+      "p95": 66.70000000000073,
+      "base": {
+        "frames": 171,
+        "cpuMs": 776.4000002145767,
+        "maxMs": 8.200000047683716,
+        "cacheMs": 1.9000000953674316,
+        "paths": 4,
+        "filaments": 24,
+        "beads": 384,
+        "quality": 2
+      },
+      "extra": [
+        {
+          "cpuMs": 0.7000000476837158,
+          "cpuMeanMs": 1.4545454518361525,
+          "cpuMaxMs": 3.299999952316284,
+          "filaments": 16,
+          "beads": 88,
+          "bridges": 5,
+          "transfers": 3,
+          "quality": 2,
+          "bloomUpdates": 11,
+          "canvasBytes": 1933312,
+          "spriteBytes": 65536,
+          "geometryBytes": 15360,
+          "frameTime": 22.140400000000003,
+          "phases": null
+        }
+      ]
+    }
+  }
+]

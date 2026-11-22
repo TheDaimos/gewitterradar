@@ -1,3 +1,7 @@
+## V4.12.1 DEV · 2026/11 · HA-Integration 0.25.162
+
+Erster eigenständiger V4.12-DEV-Meilenstein: dynamische Aura-Anordnung vor Beginn des Legend Hubs. Technischer Schutzanker und Testgrenzen: [Aura-Referenz](GR_412_AURA_REFERENCE_2026-11-22.md). Keine neue Betreiber-/FINAL-Freigabe und keine Änderung an PROD.
+
 ## V4.11.139 DEV · 2026/11 · HA-Integration 0.25.46
 
 - OPERA-Diagnosekarte verwendet die reguläre Niederschlagsebene und Consumer V2 statt des für registrierte Frames ungeeigneten Vorschaupfads.

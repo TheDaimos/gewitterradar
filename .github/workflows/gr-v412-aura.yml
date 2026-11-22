@@ -1,0 +1,53 @@
+name: GR V4.12 Aura regression
+on:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  aura:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Model, schema, source isolation and delivery
+        run: |
+          pip install PyYAML
+          node scripts/test-v412-aura-model.mjs
+          node scripts/test-eye-hub-model.mjs
+          node scripts/test-eye-wow-model.mjs
+          python scripts/test-v412-vault-schema.py
+          node --test tests/wl02-coverage-contract.test.mjs tests/gr-wind-fix-01.test.mjs tests/gr-temp-world-01.test.mjs tests/synoptic-dev-v411198.test.mjs tests/gr-menu-architecture.test.mjs
+          node scripts/test-v411-identity.mjs
+          node scripts/test-frontend-build.mjs
+          python scripts/check-static.py
+      - name: Browser dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/aura" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
+          "$RUNNER_TEMP/aura/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Aura, edges, recovery, profiles and neon pixels
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
+        run: |
+          node scripts/test-v412-aura-browser.cjs
+          node scripts/test-eye-edge-browser.cjs
+          node scripts/test-delayed-eye-recovery-browser.cjs
+          node scripts/test-settings-vault-browser.cjs
+          node scripts/test-eye-wow-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v412-aura-synthetic-browser-evidence
+          path: ${{ runner.temp }}/aura-evidence
+          if-no-files-found: ignore

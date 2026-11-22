@@ -28,7 +28,7 @@ export function normalizeEyeConfig(input,ids=EYE_FUNCTIONS){
   const p=s.stormPositions?.[layout];
   if(Number.isFinite(p?.x)&&Number.isFinite(p?.y))stormPositions[layout]={x:bounded(p.x,0,0,1),y:bounded(p.y,0,0,1)};
  }
- return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,bubbleAura,stormVisible:s.stormVisible!==false,stormPositions,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),energyAccents:EYE_ENERGY_MODES.includes(s.energyAccents)?s.energyAccents:'off',slots,colors};
+ return {schema:1,grouped:s.grouped===true,aura:s.aura!==false,auraLayout:s.auraLayout==='dynamic'?'dynamic':'fixed',bubbleAura,stormVisible:s.stormVisible!==false,stormPositions,glow:s.glow==='living'?'living':'static',size:bounded(s.size,42,36,126),iconSize:bounded(s.iconSize,100,25,300),intensity:bounded(s.intensity,45,0,100),brightness:bounded(s.brightness,65,0,100),backdrop:bounded(s.backdrop,25,0,100),neonBrilliance:bounded(s.neonBrilliance,0,0,100),neonBloom:bounded(s.neonBloom,0,0,100),neonOrganics:bounded(s.neonOrganics,0,0,100),backdropExtent:bounded(s.backdropExtent,0,0,100),eyeAuraGap:Math.round(bounded(s.eyeAuraGap,0,0,30)),auraRingGap:Math.round(bounded(s.auraRingGap,0,0,8)),energyAccents:EYE_ENERGY_MODES.includes(s.energyAccents)?s.energyAccents:'off',slots,colors};
 }
 export function assignEyeSlot(config,index,functionId,ids=EYE_FUNCTIONS){
  const c=normalizeEyeConfig(config,ids);if(index<0||index>=Math.min(c.slots.length,EYE_UI_SLOTS)||!ids.includes(functionId))return c;
@@ -48,14 +48,35 @@ export const eyeGlowExtent=c=>eyeRingRadius(c.size,Math.min(8,c.slots.length)-1,
 export const eyeBubbleAuraEnabled=(config,id)=>typeof config.bubbleAura?.[id]==='boolean'?config.bubbleAura[id]:id!=='storm';
 export const eyeAuraOn=(config,status,id)=>config.grouped&&config.aura&&eyeBubbleAuraEnabled(config,id)&&status.active&&status.available&&config.colors?.[id]!==EYE_NO_COLOR;
 
+// Logical slot identity also seeds the established neon effects. Only the
+// visual ring index compacts; inactive layers remain in the separate icon list.
+export function eyeAuraRings(config,statuses){
+ const rings=[];
+ visibleEyeSlots(config).forEach((slot,index)=>{
+  const id=slot.functionId;
+  if(id&&eyeAuraOn(config,statuses[id]||{},id))rings.push({id,index,visualIndex:config.auraLayout==='dynamic'?rings.length:index,color:config.colors[id]});
+ });
+ return rings;
+}
+
 // Compact occupied bubbles; empty slots never reserve a position. Prefer the
 // direction with room toward the map centre, and reject overlaps/obstacles.
-export function eyeBubbleLayout(count,center,bounds,obstacles=[],eyeSize=42,iconSize=100){
- const size=Math.max(50,50*iconSize/100),half=size/2,pad=9,minDistance=Math.max(58,eyeSize/2+half+12),firstRadius=Math.max(76,minDistance+4),angle=Math.atan2((bounds.top+bounds.bottom)/2-center.y,(bounds.left+bounds.right)/2-center.x),points=[];
+export function eyeBubbleLayout(count,center,bounds,obstacles=[],eyeSize=42,iconSize=100,{gap=0,balanced=false}={}){
+ const size=Math.max(50,50*iconSize/100),half=size/2,pad=9,minDistance=Math.max(58,eyeSize/2+half+12+gap),firstRadius=Math.max(76,minDistance+4),angle=Math.atan2((bounds.top+bounds.bottom)/2-center.y,(bounds.left+bounds.right)/2-center.x),points=[];
  const clear=p=>p.x-size/2>=bounds.left+pad&&p.x+size/2<=bounds.right-pad&&p.y-size/2>=bounds.top+pad&&p.y+size/2<=bounds.bottom-pad&&
   Math.hypot(p.x-center.x,p.y-center.y)>minDistance&&
   points.every(q=>Math.abs(p.x-q.x)>=size+9||Math.abs(p.y-q.y)>=size+9)&&!blocked(p);
  const blocked=p=>obstacles.some(b=>p.x+half>b.left&&p.x-half<b.right&&p.y+half>b.top&&p.y-half<b.bottom);
+ if(balanced&&count>0){
+  // Prefer an evenly spaced orbit when it fits. Keep the proven edge/obstacle
+  // solver and pagination for narrow maps and oversized touch targets.
+  for(let radius=firstRadius;radius<=firstRadius+2*(size+12);radius+=12){
+   points.length=0;
+   for(let i=0;i<count;i++){const a=angle+i*Math.PI*2/count,p={x:center.x+Math.cos(a)*radius,y:center.y+Math.sin(a)*radius};if(!clear(p))break;points.push(p);}
+   if(points.length===count)return points;
+  }
+  points.length=0;
+ }
  const candidates=[];for(const radius of [firstRadius,firstRadius+size+12,firstRadius+2*(size+12)])for(let i=0;i<24;i++){const a=angle+(i%2?1:-1)*Math.ceil(i/2)*Math.PI/12;candidates.push({x:center.x+Math.cos(a)*radius,y:center.y+Math.sin(a)*radius});}
  for(let i=0;i<count;i++){
   let point=candidates.find(clear);

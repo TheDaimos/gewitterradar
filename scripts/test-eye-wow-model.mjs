@@ -1,9 +1,9 @@
-import {withVaultStorage, normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
+import {normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {normalizeEyeConfig,eyeBackdropDiameter,eyeStudioExtent,eyeGlowExtent,eyeRingRadius} from '../frontend/modules/weather/eye-hub-model.js';
-const base='2a644f206483ca696482a0b8f2396b264e7b040a',keys=['neonBrilliance','neonBloom','neonOrganics','backdropExtent'];
+const keys=['neonBrilliance','neonBloom','neonOrganics','backdropExtent'];
 for(const key of keys){assert.equal(normalizeEyeConfig()[key],0);for(const [raw,value] of [[-3,0],[103,100],[Infinity,0],[NaN,0],[27,27],['54',54]])assert.equal(normalizeEyeConfig({[key]:raw})[key],value);}
 const old={grouped:true,aura:true,size:72,iconSize:200,intensity:57,brightness:68,backdrop:33,glow:'living',slots:['wind',null,'precipitation'],colors:{wind:'#00FFF0',precipitation:'#FF00CC'}};
 const config=normalizeEyeConfig(old),max=normalizeEyeConfig({...config,...Object.fromEntries(keys.map(k=>[k,100]))});
@@ -14,27 +14,19 @@ assert.equal(eyeBackdropDiameter(config),config.size*1.45);assert.equal(eyeStudi
 // optional Aura color and conservative viewport check around the final sprites.
 const strip=normaliseGeneratedModule;
 for(const file of ['frontend/modules/weather/eye-neon.js','frontend/modules/weather/snake-canvas.js','frontend/modules/weather/snake-geometry.js','frontend/modules/weather/snake-config.js','frontend/modules/weather/snake-preview.js','frontend/modules/weather/frame-clock.js','frontend/modules/ui/controls.js','frontend/modules/weather/precipitation-layer.js']){
- let reference;try{reference=execFileSync('git',['show',base+':'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch(e){if(file.endsWith('wind-snake.js'))continue;throw e;}
- // Precipitation accumulated independently reviewed WR-authority changes
- // before GR 4.11.195. Its protected entry baseline is that approved DEV head.
- if(file.endsWith('/precipitation-layer.js'))reference=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+file],{encoding:'utf8'})
-  .replace('Darstellungstransparenz','Darstellungsdeckkraft');
- if(file.endsWith('/snake-config.js'))reference=reference.replace('opacity:[10,100,1]','opacity:[0,100,1]');
- if(file.endsWith('/eye-neon.js'))reference=reference
-  .replace('config.brightness,config.glow,active','config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active')
-  .replace('eyeRingRadius(config.size,a.index)','eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)')
-  .replace('eyeAuraOn(config,statuses[slot.functionId]||{})','eyeAuraOn(config,statuses[slot.functionId]||{},slot.functionId)')
-  .replace('{host,config,statuses}', '{host,config,statuses,clip}')
-  .replace('s.config=config;const extent', 's.config=config;s.clip=clip;const extent')
-  .replace('  let filaments=0,beads=0;', `  const clip=s.clip,cull=clip&&(clip.left>-e||clip.top>-e||clip.right<e||clip.bottom<e);
-  let filaments=0,beads=0;`)
-  .replace('    ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,this.scratch[0]-radius*2.5,this.scratch[1]-radius*2.5,radius*5,radius*5);beads++;', `    const x=this.scratch[0],y=this.scratch[1],half=radius*2.5,pad=half+1;
-    // Keep phase, strands and trails. Only the final sprite quad can be culled.
-    if(!cull||x+pad>=clip.left&&x-pad<=clip.right&&y+pad>=clip.top&&y-pad<=clip.bottom){
-     ctx.globalAlpha=light*r.visibility*glint;ctx.drawImage(r.sprite,x-half,y-half,half*2,half*2);
-    }
-    beads++;`);
- assert.equal(strip(readFileSync(file,'utf8')),strip(file.endsWith('/precipitation-layer.js')?reference:withVaultStorage(reference,file)),file+' protected approved body');
+ // V4.12 deliberately changes only ring projection/finite layout transitions.
+ // Keep exact FINAL guards on the filament math, halo cache and lifecycle;
+ // test the modified orchestration with the pixel and V4.12 browser matrices.
+ if(file.endsWith('/eye-neon.js')){
+  const reference=execFileSync('git',['show','af70fe2bf85a88fdea402cf46e3bd6a11903189b:'+file],{encoding:'utf8'}),actual=readFileSync(file,'utf8');
+  const exports=s=>s.slice(s.indexOf('export function filamentPointInto'),s.indexOf('function curve('));
+  assert.equal(exports(actual),exports(reference),'protected filament geometry and adaptive quality');
+  const method=(s,name)=>s.match(new RegExp('\\n '+name+'\\([^]*?(?=\\n [a-zA-Z]+\\(|\\n})'))?.[0];
+  for(const name of ['visible','release','cacheHalo','stop','destroy']){assert(method(actual,name),'missing neon '+name);assert.equal(method(actual,name),method(reference,name),'protected neon '+name);}
+  continue;
+ }
+ const reference=execFileSync('git',['show','af70fe2bf85a88fdea402cf46e3bd6a11903189b:'+file],{encoding:'utf8',maxBuffer:25*1024*1024});
+ assert.equal(strip(readFileSync(file,'utf8')),strip(reference),file+' protected FINAL body');
 }
 for(const file of ['eye-hub-model.js','eye-hub-view.js','eye-hub-locales.js','eye-neon-wow.js'])assert(!/[\u00c3\u00c2\ufffd]/.test(readFileSync('frontend/modules/weather/'+file,'utf8')),'UTF-8 '+file);
 assert.equal(config.eyeAuraGap,0);
@@ -48,4 +40,4 @@ for(const size of [36,42,126])for(let index=0;index<8;index++){
   assert(Math.abs(eyeRingRadius(size,index,gap,spacing)-original-gap-index*spacing)<1e-9);
  }
 }
-console.log('PASS WOW additive defaults/ranges, protected V177 rendering source, independent extent and persistence schema');
+console.log('PASS WOW additive defaults/ranges, protected FINAL filament math/cache/lifecycle, independent extent and persistence schema');

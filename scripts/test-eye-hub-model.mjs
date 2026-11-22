@@ -1,4 +1,4 @@
-import {withVaultStorage, normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
+import {normaliseGeneratedModule} from '../tests/with-settings-vault.mjs';
 import assert from 'node:assert/strict';
 import {normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,EYE_COLORS,EYE_LEGACY_COLORS,EYE_ENERGY_MODES,EYE_ICON_METRICS,eyeIconTarget,eyeAuraOn,eyeRingRadius,eyeBubbleLayout,eyeSizePercent,eyeSizePixels} from '../frontend/modules/weather/eye-hub-model.js';
 import {neonPoint,filamentPointInto,neonQualityStep} from '../frontend/modules/weather/eye-neon.js';
@@ -41,30 +41,19 @@ assert.equal(normalizeEyeConfig({size:500}).size,126);assert.equal(normalizeEyeC
 for(const [width,height] of [[393,851],[851,393],[1280,900]])for(const count of [1,4,8]){const radius=eyeRingRadius(126,count-1)+20;for(const x of [radius,width-radius])for(const y of [radius,height-radius]){const points=eyeBubbleLayout(count,{x,y},{left:0,top:0,right:width,bottom:height},[],126);assert.equal(points.length,count);for(const p of points)assert(Math.hypot(p.x-x,p.y-y)>100);}}
 const old=execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:frontend/modules/fullscreen/map-display.js'],{encoding:'utf8'});
 const stripBuildVersions=normaliseGeneratedModule;
+// The operator's V4.12 order protects the published V4.11.03 FINAL source.
+const finalSource=path=>execFileSync('git',['show','af70fe2bf85a88fdea402cf46e3bd6a11903189b:'+path],{encoding:'utf8',maxBuffer:25*1024*1024});
 for(const file of ['snake-canvas.js','snake-config.js','snake-geometry.js','wind-canvas.js','wind-data.js','wind-field.js','temperature-data.js','temperature-canvas.js','temperature-field.js','consumer-client.js']){
  const path='frontend/modules/weather/'+file;
- let expected=execFileSync('git',['show','ee7965193475926c192941810ba24e5f0fbda7b9:'+path],{encoding:'utf8'});
- if(file==='snake-config.js')expected=expected.replace('opacity:[10,100,1]','opacity:[0,100,1]');
- assert.equal(stripBuildVersions(readFileSync(path,'utf8')),stripBuildVersions(expected),'protected source '+file);
+ assert.equal(stripBuildVersions(readFileSync(path,'utf8')),stripBuildVersions(finalSource(path)),'protected FINAL source '+file);
 }
 const precipitationPath='frontend/modules/weather/precipitation-layer.js';
-const precipitationBaseline=execFileSync('git',['show','e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6:'+precipitationPath],{encoding:'utf8'});
-assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(precipitationBaseline.replace('Darstellungstransparenz','Darstellungsdeckkraft')),'protected precipitation implementation unchanged since GR 4.11.195');
-// Keep the V179 window implementations with the shared drag binding and its
-// current state shape. Compatibility click suppression now lives on the card.
-// Protected module baseline is the approved GR 4.11.195 DEV HEAD before
-// the additive Synoptik feature. Wind is permitted only its H/T menu migration.
-const baseline195='e8e24ccb10f60277c5cdd4a8f5d32a11a8aa9fd6';
+assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBuildVersions(finalSource(precipitationPath)),'protected FINAL precipitation implementation');
+// Protect the published FINAL, including the already accepted H/T migration.
 const rootWeather='frontend/modules/weather/';
-const withoutWindHtUI=source=>source
-  .replace(/\s+\$\{select\('colorMode'[\s\S]*?(?=\s+<details data-section="animation")/, '\n  /* H/T UI migrated */')
-  .replace(/\s+<!-- H\/T-Farbsteuerung[^\n]*-->/, '\n  /* H/T UI migrated */');
 for(const name of ['wind-display.js','temperature-display.js']){
- const original=execFileSync('git',['show',baseline195+':'+rootWeather+name],{encoding:'utf8'});
  const installed=readFileSync(rootWeather+name,'utf8');
- const expected=name==='wind-display.js'?withoutWindHtUI(original):original;
- const actual=name==='wind-display.js'?withoutWindHtUI(installed):installed;
- assert.equal(stripBuildVersions(actual),stripBuildVersions(expected),name+' protected baseline 4.11.195 outside approved H/T migration');
+ assert.equal(stripBuildVersions(installed),stripBuildVersions(finalSource(rootWeather+name)),name+' protected FINAL implementation');
 }
 for(const [id,owner] of [['weather.satellite.clouds','clouds'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);
 const aggregateOwner={__weatherDisplayState:{status:'ready'},_weatherRadarState:()=>({enabled:true}),__weatherGenericStates:new Map([['weather.model.wind_10m.layer',{enabled:true,status:'ready'}]])};assert.equal(createEyeRegistry(aggregateOwner).entries.get('weather-display').status().active,false);aggregateOwner.__weatherGenericStates.set('weather.satellite.clouds',{enabled:true,status:'loading'});
@@ -76,6 +65,6 @@ assert.deepEqual(cloudRegistry.get('clouds').status(),{active:true,available:fal
 assert.equal(cloudRegistry.get('weather-display').status().available,true);
 assert(old.includes(compassPreviewHalo('.compass-picker-stage')));assert(old.includes(compassDialogSurface('.compass-picker-dialog')));
 const controls='frontend/modules/ui/controls.js';
-assert.equal(stripBuildVersions(readFileSync(controls,'utf8')),stripBuildVersions(withVaultStorage(execFileSync('git',['show','5cbf9ea07b536138661e1c8b83153fd99dc157d0:'+controls],{encoding:'utf8'}),controls)),'modern menu source with the approved Vault entry');
+assert.equal(stripBuildVersions(readFileSync(controls,'utf8')),stripBuildVersions(finalSource(controls)),'modern menu source with the approved Vault entry');
 const owner={__weatherWind:{config:{visible:true,enabled:true,mode:'barbs'},points:[],errors:['synthetic_transport_failure']},__weatherTemperature:{config:{visible:true,surface:false,labels:false,advection:false}},_weatherRadarState:()=>({enabled:false}),__weatherDisplayState:{status:'ready'}};const registry=createEyeRegistry(owner);assert.equal(registry.entries.get('wind').status().available,false);owner.__weatherWind.points=[{}];assert.equal(registry.entries.get('wind').status().available,true);assert.equal(registry.entries.get('temperature').status().active,false);owner.__weatherTemperature.config.labels=true;assert.equal(registry.entries.get('temperature').status().active,true);owner.__weatherGenericStates=new Map([['clouds',{enabled:true,status:'partial'}]]);assert.equal(registry.entries.get('weather-display').status().active,true);
 console.log('PASS: Eye migration, slots 1–8/12, atomic moves, colors, ring identity, aura truth table, layout, original compass surface/halo and protected menu');

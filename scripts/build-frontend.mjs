@@ -15,14 +15,14 @@ export async function expectedPayload(){
  const panel=await readFile(resolve(root,'frontend/panel.js'));
  const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
  let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
- if(text.includes("APPLICATION_RELEASE")&&/^4\.11\./.test(APPLICATION_RELEASE.version)&&Number(APPLICATION_RELEASE.version.split('.')[2])>=165){
+ if(text.includes("APPLICATION_RELEASE")&&(/^4\.12\./.test(APPLICATION_RELEASE.version)||/^4\.11\./.test(APPLICATION_RELEASE.version)&&Number(APPLICATION_RELEASE.version.split('.')[2])>=165)){
   const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
   const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
-  const release=APPLICATION_RELEASE,patch=release.version.split('.')[2];
-  const revision=release.runtimeRevision?.match(new RegExp(`^411${patch}r([1-9][0-9]*)$`))?.[1];
+  const release=APPLICATION_RELEASE,releasePatch=release.version.split('.')[2],series=release.version.split('.').slice(0,2).join(''),patch=series==='412'?999:releasePatch;
+  const revision=release.runtimeRevision?.match(new RegExp(`^${series}${releasePatch}r([1-9][0-9]*)$`))?.[1];
   const identityIsDev=release.displayVersion===`V${release.version} DEV`;
   const identityIsFinal=release.version==='4.11.249'&&release.displayVersion==='V4.11 FINAL'&&/^V4\.11-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
-  if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E411-${patch}A${revision}`)throw Error('Canonical release identity mismatch');
+  if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
   for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');

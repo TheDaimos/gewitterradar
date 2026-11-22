@@ -50,9 +50,9 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
   }
  }
  const version=read('frontend/version.js');
- const product=version.match(/version:"(4\.11\.\d+)"/)?.[1], revision=version.match(/runtimeRevision:"([^"]+)"/)?.[1];
+ const product=version.match(/version:"(4\.(?:11|12)\.\d+)"/)?.[1], revision=version.match(/runtimeRevision:"([^"]+)"/)?.[1];
  assert.ok(product&&revision,'application version and runtime revision must be declared');
- assert.equal(revision,'411'+product.split('.').at(-1)+'r1');
+ assert.equal(revision,product.split('.').slice(0,2).join('')+product.split('.').at(-1)+'r1');
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));

@@ -1,10 +1,27 @@
 /* Test-only transport around the actual registered card and Leaflet. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process');
 const root=path.resolve(__dirname,'..');
-function fixture({ref=null,scope='bbox',extendHtml=null,delivery='frontend'}={}){
- const files=new Map(),read=name=>{if(ref){if(!files.has(name))files.set(name,cp.execFileSync('git',['show',ref+':'+name],{cwd:root,maxBuffer:30*1024*1024}));return files.get(name);}return fs.readFileSync(path.join(root,name.replace(/^frontend\//,delivery+'/')));};
+const referenceFiles=new Map();
+function referenceTree(ref){
+ if(referenceFiles.has(ref))return referenceFiles.get(ref);
+ // Windows process startup per historical asset can exceed navigation timeouts.
+ // Read the exact immutable Git tree once, without extracting or rewriting it.
+ const archive=cp.execFileSync('git',['archive','--format=tar',ref,'frontend'],{cwd:root,maxBuffer:256*1024*1024}),files=new Map();
+ const field=(offset,length)=>archive.subarray(offset,offset+length).toString('utf8').replace(/\0.*$/s,'');
+ for(let offset=0;offset+512<=archive.length;){
+  if(archive[offset]===0)break;
+  const name=field(offset,100),prefix=field(offset+345,155),size=parseInt(field(offset+124,12).trim()||'0',8),type=field(offset+156,1);
+  if(!Number.isFinite(size)||size<0||offset+512+size>archive.length)throw Error('Invalid reference archive');
+  if(type==='0'||type==='')files.set(prefix?prefix+'/'+name:name,archive.subarray(offset+512,offset+512+size));
+  offset+=512+Math.ceil(size/512)*512;
+ }
+ referenceFiles.set(ref,files);return files;
+}
+function fixture({ref=null,scope='bbox',extendHtml=null,delivery='frontend',onboarding=false}={}){
+ const files=ref?referenceTree(ref):null,read=name=>{if(ref){if(!files.has(name))throw Error('Missing reference asset '+name);return files.get(name);}return fs.readFileSync(path.join(root,name.replace(/^frontend\//,delivery+'/')));};
  const source=fs.readFileSync(path.join(__dirname,'test-gr-wind-fix-01-browser.cjs'),'utf8');let html=source.match(/const html=String.raw`([\s\S]*?)`;\r?\nconst server=/)[1];
- const revision=read('frontend/version.js').toString().match(/runtimeRevision:"([^"]+)"/)[1];html=html.replace('module-manifest.js?v=411150r1','module-manifest.js?v='+revision);
+ const revision=read('frontend/version.js').toString().match(/runtimeRevision:"([^"]+)"/)[1];html=html.replace('module-manifest.js?v=411150r1','module-manifest.js?v='+revision)
+  .replace('router:{ready:routerReady,enabled:true}',"router:{ready:routerReady,enabled:true,status:routerReady?'ready':'starting'}");
  html=html.replace('window.cleanSource=weatherSourceText;',`window.cleanSource=weatherSourceText;
  window.windTransport={scope:${JSON.stringify(scope)},delay:0,mode:'ready',model:'Synthetic field',run:'2026-11-07T06:00:00Z',validAt:'2026-11-07T12:00:00Z',provider:'synthetic',sequence:0};window.windRequests=[];window.windPending=[];
  const makeWindField=(query,options)=>{
@@ -21,7 +38,14 @@ function fixture({ref=null,scope='bbox',extendHtml=null,delivery='frontend'}={})
   if(options.mode==='unavailable'||options.mode==='denied')return {schema:'weather_router.consumer.wind_field.v2',contract_version:2,capability:query.capability,status:'unavailable',unavailable:{code:options.mode==='denied'?'provider_disabled':'source_unavailable'}};
   return makeWindField(query,options);
  }`);
+ // Modern PRO discovery uses the HA connection, while weather fixtures use
+ // callWS. Expose the same synthetic transport through the real public shape.
+ if(!onboarding)html=html.replace('document.body.append(card);',`localStorage.setItem('gewitterradar-pro-welcome-dismissed','1');localStorage.setItem('gewitterradar-first-steps-dismissed','1');document.body.append(card);`);
  if(extendHtml)html=extendHtml(html);
+ // Legacy local-storage fixtures intentionally have no authenticated account.
+ // Attach discovery after their synchronous local boot; authenticated Vault
+ // fixtures supply their own complete connection/user transport unchanged.
+ html=html.replace('document.body.append(card);',`document.body.append(card);queueMicrotask(()=>{if(card._hass&&!card._hass.connection){card._hass.connection=Object.assign(new EventTarget(),{connected:true,sendMessagePromise:query=>card._hass.callWS(query)});card._syncProBranding?.();}});`);
  const leaflet=process.env.LEAFLET_JS||require.resolve('leaflet/dist/leaflet.js'),leafletCss=process.env.LEAFLET_CSS||require.resolve('leaflet/dist/leaflet.css');
  const assetTypes={'.js':'text/javascript','.svg':'image/svg+xml','.html':'text/html;charset=utf-8'};
  const server=http.createServer((req,res)=>{try{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(name==='/'){res.setHeader('Content-Type','text/html;charset=utf-8');return res.end(html);}if(name==='/leaflet.js'){res.setHeader('Content-Type','text/javascript');return res.end(fs.readFileSync(leaflet));}if(!name.startsWith('/frontend/')||name.includes('..')){res.writeHead(404);return res.end();}res.setHeader('Content-Type',assetTypes[path.extname(name)]||'application/octet-stream');res.end(read(name.slice(1)));}catch(_){res.writeHead(404);res.end();}});

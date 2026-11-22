@@ -41,7 +41,7 @@ async function run() {
     [OTHER_PROFILE, {id:OTHER_PROFILE,name:'Second profile',revision:1,settings:{[ABOUT]:'1'}}],
   ]);
   const patches = [];
-  const f = fixture({delivery:'custom_components/gewitterradar/frontend',extendHtml:html => html
+  const f = fixture({onboarding:true,delivery:'custom_components/gewitterradar/frontend',extendHtml:html => html
     .replace('card.hass={states:{', 'card.hass={user:welcomeTest.user,connection:welcomeConnection,states:{')
     .replace("state:'Deutsch',attributes:{options:", "state:welcomeTest.language,attributes:{options:")
     .replace('config:{latitude:50', 'config:{state:welcomeTest.state,latitude:50')

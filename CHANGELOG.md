@@ -1,3 +1,10 @@
+## V4.12.1 DEV · 2026/11 · Dynamische Aura-Anordnung · HA 0.25.162
+
+- Separater Aura-Zwischenstand vor dem Legend Hub, ausgehend von V4.11.03 FINAL und dem aktuellen DEV-HEAD.
+- Wählbare dynamische Ringkompaktierung in Slot-Reihenfolge, gleichmäßige Iconverteilung bei ausreichendem Platz und endliche Übergänge. Bestehende Profile behalten die feste Anordnung; reduzierte Bewegung wird berücksichtigt.
+- Erhaltene Slot-/Pointer-Identität, Eye-Anker, Randpositionen, Touch-Recovery, Neon Fusion und unabhängige Wetterfunktionen. Profilpersistenz im bestehenden Vault, Texte für alle 19 Sprachvarianten.
+- Technische Referenz und tatsächliche Prüfgrenzen: `docs/GR_412_AURA_REFERENCE_2026-11-22.md`. HA DEV VM109 und physisches Android bleiben gesondert abzunehmen. Kein FINAL und keine PROD-Änderung.
+
 ## V4.11.254 DEV · First-Steps-Checkbox und gespeicherter Profilzustand · HA 0.25.161
 
 - Beim erneuten Öffnen von „First Steps & Useful Tips“ über „Hilfe und Hinweise“ zeigt die Checkbox den tatsächlich im aktiven Settings-Vault-Profil gespeicherten Zustand an.

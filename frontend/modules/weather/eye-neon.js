@@ -1,6 +1,6 @@
 // Decorative runtime filaments, independent of weather data and the wind engine.
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
-import {visibleEyeSlots,eyeRingRadius,eyeGlowExtent,eyeAuraOn} from './eye-hub-model.js?v=411233r1';
+import {eyeAuraRings,eyeRingRadius,eyeGlowExtent} from './eye-hub-model.js?v=4121r1';
 const TAU=Math.PI*2,clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),fract=x=>x-Math.floor(x),smooth=x=>x*x*(3-2*x);
 const hash=(x,y,seed)=>{let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(seed,1442695041);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
 function noise(x,y,seed){const a=Math.floor(x),b=Math.floor(y),u=smooth(x-a),v=smooth(y-b),p=hash(a,b,seed),q=hash(a+1,b,seed),r=hash(a,b+1,seed),s=hash(a+1,b+1,seed);return (p+(q-p)*u)*(1-v)+(r+(s-r)*u)*v;}
@@ -39,19 +39,31 @@ export class EyeNeon{
   const old=this.surfaces;this.surfaces=[];this.intersection.disconnect();
   for(const {host,config,statuses,clip} of items){
    if(!host||!config.grouped||!config.aura||!config.intensity||!config.brightness)continue;
-   const active=visibleEyeSlots(config).flatMap((slot,index)=>eyeAuraOn(config,statuses[slot.functionId]||{},slot.functionId)?[{id:slot.functionId,index,color:config.colors[slot.functionId]}]:[]);
+   const active=eyeAuraRings(config,statuses);
    let s=old.find(s=>s.host===host&&s.canvas.isConnected);
    if(!s&&!active.length)continue;
    if(!s){const canvas=document.createElement('canvas');canvas.className='eye-neon';canvas.setAttribute('aria-hidden','true');canvas.style.cssText='position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0);pointer-events:none;z-index:1';host.append(canvas);s={host,canvas,ctx:canvas.getContext('2d',{alpha:true}),rings:new Map(),extent:0,signature:'',config};}
    s.config=config;s.clip=clip;const extent=eyeGlowExtent(config),scale=host.closest('.eye-preview-scene')?Math.max(1,host.getBoundingClientRect().width/(host.offsetWidth||1)):1;
    const ratio=Math.min(globalThis.devicePixelRatio||1,2,640/(extent*2))*Math.min(scale,1.5),pixels=Math.min(640,Math.ceil(extent*2*ratio));
    if(s.canvas.width!==pixels||s.extent!==extent){s.canvas.width=s.canvas.height=pixels;s.canvas.style.width=s.canvas.style.height=extent*2+'px';s.extent=extent;s.ratio=pixels/(extent*2);s.signature='';}
-   const signature=JSON.stringify([extent,config.size,config.intensity,config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active]);const changed=s.signature!==signature;s.signature=signature;
+   const signature=JSON.stringify([extent,config.size,config.intensity,config.brightness,config.glow,config.eyeAuraGap||0,config.auraRingGap||0,active]);const changed=s.signature!==signature||this.motion.matches&&this.transitioning(s);s.signature=signature;
    const live=config.glow==='living'&&!this.motion.matches;
    for(const r of s.rings.values())r.target=0;
-   for(const a of active){let r=s.rings.get(a.id);if(!r){r={...a,visibility:live?.01:1,target:1,halo:document.createElement('canvas'),sprite:sprite(a.color),strands:Array.from({length:10},(_,id)=>({id,points:new Float32Array(128*2)}))};s.rings.set(a.id,r);}if(r.color!==a.color)r.sprite=sprite(a.color);Object.assign(r,a,{target:1,radius:eyeRingRadius(config.size,a.index,config.eyeAuraGap,config.auraRingGap)});}
+   for(const a of active){
+    let r=s.rings.get(a.id);
+    const radius=eyeRingRadius(config.size,a.visualIndex,config.eyeAuraGap,config.auraRingGap);
+    if(!r){r={...a,radius,targetRadius:radius,visibility:live?.01:1,target:1,halo:document.createElement('canvas'),sprite:sprite(a.color),strands:Array.from({length:10},(_,id)=>({id,points:new Float32Array(128*2)}))};s.rings.set(a.id,r);}
+    if(r.color!==a.color)r.sprite=sprite(a.color);
+    if(r.targetRadius!==radius){
+     r.fromRadius=r.radius;r.targetRadius=radius;r.layoutStart=performance.now()/1000;
+    }
+    // A media change can arrive between a layout update and its first frame.
+    // Settle existing transitions even when this sync has the same target.
+    if(this.motion.matches)r.radius=radius;
+    Object.assign(r,a,{target:1});
+   }
    if(!live)for(const [id,r] of s.rings)if(!r.target){s.rings.delete(id);r.halo.width=r.halo.height=1;}
-   if(changed){const start=performance.now();for(const r of s.rings.values())this.cacheHalo(s,r);this.metrics.cacheMs+=performance.now()-start;this.draw(s,performance.now()/1000,0,!live);}
+   if(changed){const start=performance.now();for(const r of s.rings.values()){const radius=r.radius;r.radius=r.targetRadius;this.cacheHalo(s,r);r.radius=radius;}this.metrics.cacheMs+=performance.now()-start;this.draw(s,performance.now()/1000,0,!live);}
    this.surfaces.push(s);this.intersection.observe(host);
   }
   for(const s of old)if(!this.surfaces.includes(s))this.release(s);this.schedule();
@@ -66,7 +78,9 @@ export class EyeNeon{
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,s.canvas.width,s.canvas.height);ctx.setTransform(ratio,0,0,ratio,s.canvas.width/2,s.canvas.height/2);ctx.lineCap='round';ctx.lineJoin='round';
   const clip=s.clip,cull=clip&&(clip.left>-e||clip.top>-e||clip.right<e||clip.bottom<e);
   let filaments=0,beads=0;
-  for(const [id,r] of s.rings){r.visibility=moving?r.visibility+(r.target-r.visibility)*(-Math.expm1(-dt/.24)):r.target;if(r.visibility<.008&&!r.target){r.halo.width=r.halo.height=1;s.rings.delete(id);continue;}ctx.globalAlpha=brightness*r.visibility*(moving?.46:1);ctx.drawImage(r.halo,-e,-e,e*2,e*2);
+  for(const [id,r] of s.rings){
+   if(r.radius!==r.targetRadius){const progress=this.motion.matches?1:clamp((time-r.layoutStart)/.24,0,1);r.radius=r.fromRadius+(r.targetRadius-r.fromRadius)*smooth(progress);if(progress===1)r.radius=r.targetRadius;}
+   r.visibility=moving?r.visibility+(r.target-r.visibility)*(-Math.expm1(-dt/.24)):r.target;if(r.visibility<.008&&!r.target){r.halo.width=r.halo.height=1;s.rings.delete(id);continue;}ctx.globalAlpha=brightness*r.visibility*(moving?.46:1);const haloExtent=e*r.radius/r.targetRadius;ctx.drawImage(r.halo,-haloExtent,-haloExtent,haloExtent*2,haloExtent*2);
    if(!moving){ctx.beginPath();ctx.arc(0,0,r.radius,0,TAU);ctx.strokeStyle=r.color;ctx.lineWidth=1.8;ctx.globalAlpha=brightness*r.visibility;ctx.stroke();ctx.strokeStyle='#fff6f5';ctx.lineWidth=.45;ctx.stroke();for(let i=0;i<3;i++){ctx.beginPath();const a=i*2.1+r.index*.83;ctx.arc(0,0,r.radius,a,a+.35);ctx.globalAlpha=brightness*r.visibility*.9;ctx.lineWidth=.75;ctx.stroke();}}else{ctx.beginPath();ctx.arc(0,0,r.radius,0,TAU);ctx.strokeStyle=r.color;ctx.lineWidth=.5;ctx.globalAlpha=brightness*r.visibility*.5;ctx.stroke();}
   }
   if(moving)for(let id=0;id<count;id++)for(const r of s.rings.values()){
@@ -91,8 +105,9 @@ export class EyeNeon{
   }
   s.stats={filaments,beads,colors:[...s.rings.values()].map(r=>r.color),activeColors:[...s.rings.values()].filter(r=>r.target).map(r=>r.color),samples,pixels:s.canvas.width,cacheBytes:[...s.rings.values()].reduce((sum,r)=>sum+r.halo.width*r.halo.height*4,0)};this.metrics.paths=s.rings.size;this.metrics.filaments=filaments;this.metrics.beads=beads;
  }
- schedule(){if(this.destroyed)return;const live=!document.hidden&&!this.blurred&&!this.motion.matches&&this.surfaces.some(s=>s.config.glow==='living'&&s.rings.size&&this.visible(s));if(!live){this.stop();return;}if(this.frame===null)this.frame=requestWeatherFrame(t=>this.tick(t));}
- tick(time){this.frame=null;const delta=this.tickLast?Math.min(150,time-this.tickLast):16.7;this.tickLast=time;this.gap=this.gap*.96+delta*.04;neonQualityStep(this.quality,this.gap,this.cost,time);const interval=[33,42,55][this.quality.level];if(time-this.last>=interval){const start=performance.now(),dt=Math.min(.12,(time-this.last)/1000);this.detail+=([1,.76,.55][this.quality.level]-this.detail)*(-Math.expm1(-dt/.8));for(const s of this.surfaces)if(s.config.glow==='living'&&this.visible(s))this.draw(s,time/1000,dt);const cpu=performance.now()-start;this.cost=this.cost*.9+cpu*.1;this.metrics.frames++;this.metrics.cpuMs+=cpu;this.metrics.maxMs=Math.max(this.metrics.maxMs,cpu);this.metrics.quality=this.quality.level;this.last=time;}this.schedule();}
+ transitioning(s){return [...s.rings.values()].some(r=>r.radius!==r.targetRadius);}
+ schedule(){if(this.destroyed)return;const live=!document.hidden&&!this.blurred&&!this.motion.matches&&this.surfaces.some(s=>(s.config.glow==='living'||this.transitioning(s))&&s.rings.size&&this.visible(s));if(!live){this.stop();return;}if(this.frame===null)this.frame=requestWeatherFrame(t=>this.tick(t));}
+ tick(time){this.frame=null;const delta=this.tickLast?Math.min(150,time-this.tickLast):16.7;this.tickLast=time;this.gap=this.gap*.96+delta*.04;neonQualityStep(this.quality,this.gap,this.cost,time);const interval=[33,42,55][this.quality.level];if(time-this.last>=interval){const start=performance.now(),dt=Math.min(.12,(time-this.last)/1000);this.detail+=([1,.76,.55][this.quality.level]-this.detail)*(-Math.expm1(-dt/.8));for(const s of this.surfaces)if((s.config.glow==='living'||this.transitioning(s))&&this.visible(s))this.draw(s,time/1000,dt);const cpu=performance.now()-start;this.cost=this.cost*.9+cpu*.1;this.metrics.frames++;this.metrics.cpuMs+=cpu;this.metrics.maxMs=Math.max(this.metrics.maxMs,cpu);this.metrics.quality=this.quality.level;this.last=time;}this.schedule();}
  stop(){if(this.frame!==null)cancelWeatherFrame(this.frame);this.frame=null;this.tickLast=0;}
  destroy(){this.destroyed=true;this.stop();this.intersection.disconnect();this.motion.removeEventListener('change',this.motionChange);document.removeEventListener('visibilitychange',this.visibility);window.removeEventListener('blur',this.blur);window.removeEventListener('focus',this.focus);window.removeEventListener('pagehide',this.blur);window.removeEventListener('pageshow',this.focus);for(const s of this.surfaces)this.release(s);this.surfaces=[];}
 }

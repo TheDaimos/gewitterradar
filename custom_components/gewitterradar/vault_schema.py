@@ -130,6 +130,7 @@ EYE = fields({
     "size": number(36, 126), "iconSize": number(25, 300),
     **dict.fromkeys(("intensity", "brightness", "backdrop", "neonBrilliance", "neonBloom",
                      "neonOrganics", "backdropExtent"), PERCENT),
+    "auraLayout": choice("fixed", "dynamic"),
     "eyeAuraGap": number(0, 30), "auraRingGap": number(0, 8),
     "energyAccents": choice("off", "subtle", "normal", "strong"),
     "slots": sequence(lambda value: EYE_FUNCTION(value) or EYE_SLOT(value), 12),

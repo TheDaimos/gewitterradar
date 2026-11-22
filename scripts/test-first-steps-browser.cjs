@@ -56,7 +56,7 @@ function initialize(options) {
 
 (async () => {
   for (const delivery of ['custom_components/gewitterradar/frontend','dashboard/dist']) {
-    const f = fixture({delivery,extendHtml:html => html
+    const f = fixture({onboarding:true,delivery,extendHtml:html => html
       .replace('card.hass={states:{', "card.hass={user:setupUser,connection:setupConnection,states:{")
       .replace("state:'Deutsch',attributes:{options:", "state:setupOptions.english?'English':'Deutsch',attributes:{options:")
       .replace('config:{latitude:50', "config:{state:'RUNNING',latitude:50")

@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.11.254",
-  "build": "V4.11.254-DEV-2026-11-22",
-  "runtimeRevision": "411254r1",
-  "moduleSetId": "E411-254A1",
-  "baselineFeatureHead": "0b6fa29439a1bdeeffad9fb94ddac35475cbc579",
+  "productVersion": "4.12.1",
+  "build": "V4.12.1-DEV-2026-11-22",
+  "runtimeRevision": "4121r1",
+  "moduleSetId": "E412-1A1",
+  "baselineFeatureHead": "ad521c476a046d53ef8308bb252243d9c584ea35",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Refresh Home Assistant sidebar panel module URL with runtime revision; no WeatherRouter data-path changes.",
+    "purpose": "V4.12 dynamic Aura layout and finite transitions in Eye Control; preserved touch recovery, Settings Vault and WeatherRouter data paths.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

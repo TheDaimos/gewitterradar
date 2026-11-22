@@ -1,9 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=411254r1';
-import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=411233r1';
-import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=411233r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4121r1';
+import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=4121r1';
+import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=4121r1';
 import {createEyeRegistry,eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=411254r1';
-import {stormLayout} from './storm-bubble.js?v=411254r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=4121r1';
+import {stormLayout} from './storm-bubble.js?v=4121r1';
 
 const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -190,13 +190,20 @@ export const eyeHubMethods={
    const root=this.shadow.getElementById('eye-hub-bubbles'),ids=visibleEyeSlots(c).map(v=>v.functionId).filter(id=>eyeEntryEnabled(s.registry.entries.get(id)));
    root.hidden=!c.grouped||!s.open;
    const rebuild=JSON.stringify([...root.querySelectorAll(':scope>.eye-hub-bubble')].map(b=>b.dataset.function))!==JSON.stringify(root.hidden?[]:ids);
-   if(rebuild){for(const options of s.bubbleOptions)this._weatherDisplayCancelEyeDrag(options);s.bubbleOptions=[];root.replaceChildren();}
+   if(rebuild){
+    const keep=new Set(root.hidden?[]:ids);
+    s.bubbleOptions=s.bubbleOptions.filter(options=>{if(keep.has(options.element.dataset.function))return true;this._weatherDisplayCancelEyeDrag(options);options.element.remove();return false;});
+   }
    if(!root.hidden){for(const id of ids){const f=s.registry.entries.get(id);if(!f)continue;const template=document.createElement('template');template.innerHTML=eyeBubble(f,statuses[id],c,k=>this._t('eye.'+k));const fresh=template.content.firstElementChild;let button=[...root.querySelectorAll(':scope>.eye-hub-bubble')].find(b=>b.dataset.function===id);
-    if(button){for(const attr of ['data-active','data-available','aria-pressed','aria-label','title','style']){const value=fresh.getAttribute(attr);if(value!==null&&button.getAttribute(attr)!==value)button.setAttribute(attr,value);}const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
+    if(button){for(const attr of ['data-active','data-available','aria-pressed','aria-label','title']){const value=fresh.getAttribute(attr);if(value!==null&&button.getAttribute(attr)!==value)button.setAttribute(attr,value);}for(const property of fresh.style)if(button.style.getPropertyValue(property)!==fresh.style.getPropertyValue(property))button.style.setProperty(property,fresh.style.getPropertyValue(property));const oldImage=button.querySelector('img'),nextImage=fresh.querySelector('img');if(oldImage.getAttribute('style')!==nextImage.getAttribute('style'))oldImage.setAttribute('style',nextImage.getAttribute('style'));const oldWarning=button.querySelector('.eye-warning'),warning=fresh.querySelector('.eye-warning');if(!warning)oldWarning?.remove();else if(!oldWarning)button.append(warning);continue;}
     button=fresh;root.append(button);
     const state={eyeDrag:null},run=hold=>{this._eyeHubClose();(hold?f.hold:f.tap)();queueMicrotask(()=>this._eyeHubSync());};
     const options={element:button,state:()=>state,activate:()=>run(false),longPress:()=>run(true),position:()=>this._eyeHubPosition(),save:()=>{},onDecision:f.onDecision};s.bubbleOptions.push(options);this._weatherDisplayBindEyeDrag(button,options);
    }}
+   if(!root.hidden&&JSON.stringify([...root.querySelectorAll(':scope>.eye-hub-bubble')].map(b=>b.dataset.function))!==JSON.stringify(ids)){
+    const nodes=new Map([...root.querySelectorAll(':scope>.eye-hub-bubble')].map(b=>[b.dataset.function,b]));
+    for(const id of ids)root.append(nodes.get(id));
+   }
    s.view?.update();
   }
   this._eyeHubPosition();this._eyeHubSyncIcons();this._eyeHubGlowSync();this._weatherQuickSync?.();
@@ -230,7 +237,7 @@ export const eyeHubMethods={
   const localCenter={x:(center.x-originX)/scaleX,y:(center.y-originY)/scaleY};
   const blockers=[toLocal(r),...obstacles.map(toLocal)];
   let iconSize=s.config.iconSize;
-  const bubblePoints=()=>eyeBubbleLayout(buttons.length,localCenter,bounds,blockers,layout.width,iconSize);
+  const bubblePoints=()=>eyeBubbleLayout(buttons.length,localCenter,bounds,blockers,layout.width,iconSize,{gap:s.config.eyeAuraGap,balanced:s.config.auraLayout==='dynamic'});
   let points=bubblePoints(),pagerSlot=null;
   if(points.length<buttons.length){
    pagerSlot=eyePagerPosition(bounds,blockers);

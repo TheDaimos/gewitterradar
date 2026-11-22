@@ -1,0 +1,32 @@
+[
+  {
+    "name": "desktop",
+    "counts": "1–8",
+    "sparse": true,
+    "transition": true,
+    "stableTargets": true,
+    "edges": 8,
+    "reducedMotion": true,
+    "reload": true
+  },
+  {
+    "name": "portrait",
+    "counts": "1–8",
+    "sparse": true,
+    "transition": true,
+    "stableTargets": true,
+    "edges": 8,
+    "reducedMotion": true,
+    "reload": true
+  },
+  {
+    "name": "landscape",
+    "counts": "1–8",
+    "sparse": true,
+    "transition": true,
+    "stableTargets": true,
+    "edges": 8,
+    "reducedMotion": true,
+    "reload": true
+  }
+]

@@ -70,7 +70,7 @@ function vaultFixture() {
   return flowFixture({decorate: html => html
     .replace("localStorage.setItem('gewitterradar-about-onboarding-version','1');", '')
     .replace("state:'Deutsch',attributes:{options:['Deutsch','English']}", "state:window.testVaultLanguage||'Deutsch',attributes:{options:['Deutsch','English','Français','Ελληνικά']}")
-    .replace("card.hass={states:", "card.hass={user:{id:window.testUser,name:'Testbenutzer'},auth:{},connection:new EventTarget(),connected:true,states:")
+    .replace("card.hass={states:", "card.hass={user:{id:window.testUser,name:'Testbenutzer'},auth:{},connection:Object.assign(new EventTarget(),{connected:true,sendMessagePromise:query=>card.hass.callWS(query)}),connected:true,states:")
     .replace("callWS:async query=>{", "callWS:async query=>{\n if(query.type.startsWith('gewitterradar/settings/')){const result=await window.settingsVaultTestCall(query);if(result.error)throw Object.assign(new Error(result.error),{code:result.error});return result;}")
   });
 }
@@ -235,7 +235,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
 
 (async () => {
   const current = vaultFixture();
-  const reference = flowFixture({ref: '4587b76ca254fdc62cf179560fca9f61c1214133'});
+  const reference = flowFixture({ref: 'af70fe2bf85a88fdea402cf46e3bd6a11903189b'});
   const fixtures = [current, reference];
   for (const f of fixtures) await new Promise(resolve => f.server.listen(0, '127.0.0.1', resolve));
   const browser = await chromium.launch({headless: true, ...(process.env.CHROME_PATH ? {executablePath: process.env.CHROME_PATH} : {})});
@@ -269,7 +269,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
 
     const androidView = {width: 393, height: 851};
     const baseline = await open(browser, reference, androidView, {initial: legacy});
-    await baseline.page.waitForFunction(() => window.ready && card._map);
+    await baseline.page.waitForFunction(() => window.ready && card._map,null,{timeout:12000}).catch(async error=>{console.error('Vault FINAL baseline',JSON.stringify(await baseline.page.evaluate(()=>({ready:window.ready,boot:window.__GEWITTERRADAR_BOOT_DIAGNOSTICS,vaultBooted:card._vaultBooted,vaultPending:!!card._vaultHass,user:card._vaultHass?.user,local:!!card._hass,map:!!card._map,body:document.body.innerText,shadow:card.shadow?.innerHTML?.slice(-1000)}))));throw error;});
     const expected = await values(baseline.page);
     // The new fifth function is additive. Historical V181 baseline has four
     // functions; retain all their original colors and compare only this new key.
@@ -321,7 +321,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
 
     // Opt-in save confirmation and retry after a WebSocket interruption.
     mock.offline = true;
-    await android.page.evaluate(() => card._eyeHubPatch({eyeAuraGap: 23}));
+    await android.page.evaluate(() => card._eyeHubPatch({eyeAuraGap: 23,auraLayout:'dynamic'}));
     await android.page.waitForFunction(() => card._settingsVault.status === 'offline');
     assert.equal(await android.page.evaluate(() => card._settingsVault.dirty), true);
     mock.offline = false;
@@ -343,9 +343,11 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.waitForFunction(() => card._settingsVault.status === 'saved');
     const androidId = await android.page.evaluate(() => card._settingsVault.profileId);
     assert.equal(mock.profiles.a[androidId].settings[EYE].eyeAuraGap, 23);
+    assert.equal(mock.profiles.a[androidId].settings[EYE].auraLayout, 'dynamic');
     await android.page.reload();
     await android.page.waitForFunction(() => window.card?._map && window.card._settingsVault?.profile);
     assert.equal((await values(android.page)).eyeGap, 23);
+    assert.equal(await android.page.evaluate(()=>card._eyeHubState().config.auraLayout),'dynamic');
 
     // New context models complete client storage loss while HA keeps the server profile.
     const cleared = await open(browser, current, androidView);
