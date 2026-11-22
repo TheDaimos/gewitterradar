@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.5",
-  "build": "V4.12.5-DEV-2026-11-22",
-  "runtimeRevision": "4125r1",
-  "moduleSetId": "E412-5A1",
-  "baselineFeatureHead": "3eea1b6aa538a26d1438c0007d98f65c9262aa66",
+  "productVersion": "4.12.6",
+  "build": "V4.12.6-DEV-2026-11-22",
+  "runtimeRevision": "4126r1",
+  "moduleSetId": "E412-6A1",
+  "baselineFeatureHead": "525a4e24b01db339db874818bd44f5dec3d7d42a",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub Dialogfokus und lokalisierte Skalenintervalle; WeatherRouter unverändert",
+    "purpose": "Legend Hub einheitliche Temperaturfelder und Slot-Drag-Abbruch; WeatherRouter unverändert",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

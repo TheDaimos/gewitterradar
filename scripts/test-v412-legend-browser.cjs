@@ -66,6 +66,8 @@ try{for(const [name,width,height,touch]of [['desktop',1280,900,false],['portrait
   await page.evaluate(()=>{preferences.patchLegend(card,'wind',{mode:'on',presentation:'compact'});preferences.patchLegend(card,'temperature',{mode:'on',density:'detailed'});card._weatherTemperatureSet({unit:'F'});});
   assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().field.id,temp:card._weatherTemperatureState().field.id,values:Array.from(card._weatherTemperatureState().field.grid.values),windRequests:windRequests.length,tempRequests:temperatureRequests.length})),science,'legend changes and unit conversion leave transport/values unchanged');
   assert.match(await page.locator('#weather-temperature-legend-overlay').textContent(),/\u00b0F/);
+  await page.evaluate(()=>{temperatureTransport.mode='uniform';card._weatherTemperatureQueue({force:true});});await page.waitForFunction(()=>{const r=card._weatherTemperatureState().field?.temperature_range_kelvin;return r?.min===273.15&&r?.max===273.15;});
+  assert.deepEqual(await page.locator('#weather-temperature-legend-overlay .lh-scale .lh-label').allTextContents(),['32 \u00b0F'],'uniform source field retains exactly one actual value');
   await page.evaluate(()=>{temperatureTransport.mode='denied';card._weatherTemperatureQueue({force:true});});await page.waitForFunction(()=>!card._weatherTemperatureState().field&&card._weatherTemperatureState().error);
   assert.equal(await page.evaluate(()=>card._weatherWindState().field.id),science.wind,'temperature denial isolates Wind');
   await page.evaluate(()=>{temperatureTransport.mode='ready';card._weatherTemperatureSet({visible:false});card._weatherWindSet({visible:false});});

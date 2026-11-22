@@ -1,8 +1,8 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4125r1';
-import {ensurePremiumUi,enhancePremiumSections,PREMIUM_INFO} from './premium-ui.js?v=4125r1';
-import {decorateLegend} from './legend-hub-view.js?v=4125r1';
-import {legendDescriptor} from './legend-registry.js?v=4125r1';
-import {renderLegendScale} from './legend-scale.js?v=4124r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=4126r1';
+import {ensurePremiumUi,enhancePremiumSections,PREMIUM_INFO} from './premium-ui.js?v=4126r1';
+import {decorateLegend} from './legend-hub-view.js?v=4126r1';
+import {legendDescriptor} from './legend-registry.js?v=4126r1';
+import {renderLegendScale} from './legend-scale.js?v=4126r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
 // Reuse the existing overlay's event delegation, pointer drag, bounds and teardown.
 // A scientific view must not pass through the precipitation-only family renderer.

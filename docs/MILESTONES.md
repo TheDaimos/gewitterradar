@@ -1,3 +1,7 @@
+## V4.12.6 DEV · 2026/11 · HA 0.25.167
+
+Legend-Hub-Abschluss mit zusätzlichem Uniformfeld-Schutz. Unveränderte Palette und genau ein realer Wert bei identischen Extrema; kein künstlicher Skalenbereich. Geschützte Aura-/FINAL-Referenzen bleiben erhalten.
+
 ## V4.12.5 DEV · 2026/11 · HA 0.25.166
 
 Legend-Hub-Abschluss mit Linux-Fokuskorrektur und lokalisierter Skalenbeschreibung. Aura-Referenz v4.12.3-dev und V4.11.03 FINAL bleiben geschützt; keine PROD-Promotion.

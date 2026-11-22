@@ -1,3 +1,9 @@
+## V4.12.6 DEV · 2026/11 · Einheitliche Temperaturfelder · HA 0.25.167
+
+- Eine vollständig einheitliche Temperaturfläche behält ihren tatsächlichen Einzelwert. Die Legende erzeugt weder einen zusätzlichen oberen Wert noch einen künstlichen Farbverlauf.
+- Abgebrochene native Slot-Drags verlieren ihr Drop-Ziel; keine versehentliche spätere Neuzuordnung.
+- Übrige Legendenfunktionen und geschützte Aura-/Wetterlogik unverändert. Installierbarer DEV-Abschluss ist V4.12.6.
+
 ## V4.12.5 DEV · 2026/11 · Dialogfokus und lokalisierte Intervalle · HA 0.25.166
 
 - Native Dialog-Fokusrückgabe erhalten; eine verspätete manuelle Rückgabe kann keinen anschließenden F2-Aufruf mehr auf ein vorheriges Icon umlenken.

@@ -1,11 +1,11 @@
-import {legendHubState,saveLegendHub,legendVisible,patchLegend} from './legend-preferences.js?v=4125r1';
-import {legendEntries,legendTitle} from './legend-registry.js?v=4125r1';
+import {legendHubState,saveLegendHub,legendVisible,patchLegend} from './legend-preferences.js?v=4126r1';
+import {legendEntries,legendTitle} from './legend-registry.js?v=4126r1';
 import {legendHubLayout,intersects} from './legend-hub-layout.js?v=4124r1';
-import {ensureLegendHubStyle,LEGEND_HUB_ICONS,openHubConfig,openLegendConfig,legendText} from './legend-hub-view.js?v=4125r1';
-import {createWindLegend,updateWindLegend} from './wind-legend.js?v=4125r1';
-import {updateTemperatureLegends} from './temperature-legend.js?v=4125r1';
-import {createScientificLegend,legendParagraphs} from './premium-legend.js?v=4125r1';
-import {frontSymbolPaths} from './synoptic-display.js?v=4125r1';
+import {ensureLegendHubStyle,LEGEND_HUB_ICONS,openHubConfig,openLegendConfig,legendText} from './legend-hub-view.js?v=4126r1';
+import {createWindLegend,updateWindLegend} from './wind-legend.js?v=4126r1';
+import {updateTemperatureLegends} from './temperature-legend.js?v=4126r1';
+import {createScientificLegend,legendParagraphs} from './premium-legend.js?v=4126r1';
+import {frontSymbolPaths} from './synoptic-display.js?v=4126r1';
 const controls='.leaflet-control,#weather-display-eye-control,#map-display-control,#map-instrument-controls,#compass-instrument,#map-location-overlay,.eye-hub-bubble';
 function geometry(owner){const card=owner.shadow?.getElementById('map-card'),map=owner.shadow?.getElementById('map');if(!card||!map)return null;const a=card.getBoundingClientRect(),m=map.getBoundingClientRect(),sx=a.width/card.offsetWidth,sy=a.height/card.offsetHeight,local=r=>({left:(r.left-a.left)/sx,top:(r.top-a.top)/sy,right:(r.right-a.left)/sx,bottom:(r.bottom-a.top)/sy});const win=owner.ownerDocument.defaultView,vv=win.visualViewport,css=win.getComputedStyle(legendHubState(owner).button||card),safe=k=>parseFloat(css.getPropertyValue('--lh-safe-'+k))||0,vx=vv?.offsetLeft||0,vy=vv?.offsetTop||0,clip={left:Math.max(m.left,vx+safe('left')),top:Math.max(m.top,vy+safe('top')),right:Math.min(m.right,vx+(vv?.width??win.innerWidth)-safe('right')),bottom:Math.min(m.bottom,vy+(vv?.height??win.innerHeight)-safe('bottom'))},visible=clip.right-clip.left>=74&&clip.bottom-clip.top>=74?clip:m;return {card,map,local,bounds:local({left:visible.left+10,top:visible.top+10,right:visible.right-10,bottom:visible.bottom-10})};}
 function obstacles(owner,g){return [...owner.shadow.querySelectorAll(controls)].filter(n=>!n.hidden&&n.getBoundingClientRect().width).map(n=>g.local(n.getBoundingClientRect()));}

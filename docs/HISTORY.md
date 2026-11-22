@@ -1,3 +1,7 @@
+## V4.12.6 DEV · 2026/11 · HA 0.25.167
+
+Einheitliche Temperaturfelder erhalten eine einzige tatsächliche Skalenbeschriftung ohne erfundenen oberen Grenzwert. Abgebrochene Slot-Drags werden verworfen. Abschließender DEV-Kandidat nach vollständig grünem 4.12.5-Zwischenstand; [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md).
+
 ## V4.12.5 DEV · 2026/11 · HA 0.25.166
 
 Gezielter Nachlauf des Legend-Hub-Kandidaten: native Dialog-Fokusverwaltung und lokalisierte Advektionsintervalle, fachliche Daten unverändert. Installierbarer DEV-Abschluss und CI-Belege im [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md).

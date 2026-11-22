@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4125r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4126r1';
 import {LEGEND_HUB_KEY,normalizeLegendHub} from './legend-hub-model.js?v=4124r1';
 export function legendHubState(owner){if(!owner.__legendHub){let value;try{value=JSON.parse(settingsStorage(owner).getItem(LEGEND_HUB_KEY));}catch{}owner.__legendHub={config:normalizeLegendHub(value),open:false,locked:null,eyeDrag:null};}return owner.__legendHub;}
 export function saveLegendHub(owner,patch){const s=legendHubState(owner);s.config=normalizeLegendHub({...s.config,...patch});settingsStorage(owner).setItem(LEGEND_HUB_KEY,JSON.stringify(s.config));owner._legendHubRefresh?.();return s.config;}
