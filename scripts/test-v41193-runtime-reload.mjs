@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {runtimeReloadUrl,installUpdateWatch} from "../frontend/modules/core/update-watch.js";
+import {APPLICATION_RELEASE} from '../frontend/version.js';
 
 const original="https://ha.example.invalid/gewitterradar-panel?view=radar&keep=yes#zoom-8";
 const next=runtimeReloadUrl(original,"E411-100A1",123456789);
@@ -29,10 +30,10 @@ assert.equal(new URL(navigations[0]).searchParams.get("_gr_runtime"),"E411-100A1
 assert.equal(new URL(navigations[0]).searchParams.get("view"),"radar");
 assert.equal(new URL(navigations[0]).hash,"#zoom-8");
 const panel=await readFile(new URL("../frontend/panel.js",import.meta.url),"utf8");
-assert.ok(/version\.js\?v=411\d+r1/.test(panel));
+assert.ok(panel.includes('version.js?v='+APPLICATION_RELEASE.runtimeRevision));
 assert.ok(panel.includes('gewitterradar.js?v='));
 assert.equal(panel.includes('await import("./gewitterradar.js")'),false);
 assert.ok(panel.includes('__GEWITTERRADAR_BOOT_DIAGNOSTICS'));
 const native=await readFile(new URL("../custom_components/gewitterradar/const.py",import.meta.url),"utf8");
-assert.ok(/panel\.js\?v=411\d+r1/.test(native));
+assert.ok(native.includes('panel.js?v='+APPLICATION_RELEASE.runtimeRevision));
 console.log("PASS: versioned native sidebar, full navigation and finite-reload guard");

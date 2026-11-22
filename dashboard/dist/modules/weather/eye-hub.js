@@ -1,9 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4122r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4123r1';
 import {EYE_HUB_KEY,normalizeEyeConfig,assignEyeSlot,resizeEyeSlots,visibleEyeSlots,eyeBubbleLayout,eyePagerPosition,eyeIconBox,eyeIconTarget} from './eye-hub-model.js?v=4121r1';
 import {EyeNeonWow as EyeNeon} from './eye-neon-wow.js?v=4121r1';
 import {createEyeRegistry,eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
-import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=4122r1';
-import {stormLayout} from './storm-bubble.js?v=4122r1';
+import {EYE_HUB_CSS,eyeVisual,eyeBubble,EyeConfigurator,syncEyeVisual} from './eye-hub-view.js?v=4123r1';
+import {stormLayout} from './storm-bubble.js?v=4123r1';
 
 const eyeFixedControls='#map-display-control,#map-instrument-controls';
 const quickControlObstacles = 'button,.leaflet-control,#map-location-overlay,[role=alert],#weather-legend-overlay,#weather-wind-legend-overlay';
@@ -246,16 +246,23 @@ export const eyeHubMethods={
   }
   const capacity=Math.max(1,points.length),pages=Math.max(1,Math.ceil(buttons.length/capacity));
   s.bubblePages=pages;s.bubblePage=Math.min(s.bubblePage||0,pages-1);
+  const previousRects=buttons.map(b=>toLocal(b.getBoundingClientRect())),settle=[];
   buttons.forEach((b,i)=>{
    const point=points[i-s.bubblePage*capacity];
    b.hidden=!point;
    if(point){
     const target=eyeIconTarget(iconSize),box=eyeIconBox(b.dataset.function,iconSize);
+    const previous=previousRects[i],next={left:point.x-target/2,top:point.y-target/2,right:point.x+target/2,bottom:point.y+target/2};
+    const swept={left:Math.min(previous.left,next.left),top:Math.min(previous.top,next.top),right:Math.max(previous.right,next.right),bottom:Math.max(previous.bottom,next.bottom)};
+    // An obstacle can appear under a settled bubble. Never leave its tap target
+    // blocked during a CSS transition, or animate through a fixed map control.
+    if(previous.right>previous.left&&blockers.some(o=>overlaps(swept,o,0))){b.style.transition='none';settle.push(b);}
     b.style.left=point.x-target/2+'px';b.style.top=point.y-target/2+'px';
     b.style.width=b.style.height=target+'px';
     const image=b.querySelector('img');image.style.width=image.style.height=box+'px';
    }
   });
+  if(settle.length){root.getBoundingClientRect();for(const b of settle)b.style.removeProperty('transition');}
   let pager=root.querySelector('.eye-page-controls');if(pages>1&&pagerSlot){if(!pager){pager=document.createElement('div');pager.className='eye-page-controls';pager.innerHTML='<button type="button" data-eye-page="-1"></button><span></span><button type="button" data-eye-page="1"></button>';root.append(pager);pager.addEventListener('click',e=>{const b=e.target.closest('[data-eye-page]');if(!b)return;e.stopPropagation();s.bubblePage=(s.bubblePage+Number(b.dataset.eyePage)+s.bubblePages)%s.bubblePages;this._eyeHubPosition();});}
    pager.style.left=pagerSlot.left+'px';pager.style.top=pagerSlot.top+'px';
    const prev=pager.querySelector('[data-eye-page="-1"]'),next=pager.querySelector('[data-eye-page="1"]');prev.textContent='‹';next.textContent='›';prev.setAttribute('aria-label',this._t('eye.previous'));next.setAttribute('aria-label',this._t('eye.next'));pager.querySelector('span').textContent=(s.bubblePage+1)+' / '+pages;

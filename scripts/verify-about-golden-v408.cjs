@@ -56,10 +56,10 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-if (/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411\d+r1";/.test(frontendText)
-    && Number(frontendText.match(/version\.js\?v=(411\d+)r1/)?.[1]) >= 411148
+const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12)(\d+)r1";/);
+if (currentRevision && (Number(currentRevision[1])>=12||Number(currentRevision[2])>=148)
     && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
-  // Current V4.11 development identity: read the actual release metadata.
+  // Current V4.11/V4.12 identity: read the actual release metadata.
   // The historical pixel/geometry golden tests below remain mandatory.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));
@@ -68,6 +68,9 @@ if (/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=411\d+r1";/.test(
   assert.equal(runtime.build, get('build'));
   assert.equal(runtime.runtimeRevision, get('runtimeRevision'));
   assert.equal(runtime.moduleSetId, get('moduleSetId'));
+  const [major,minor,patch]=get('version').split('.');
+  assert.equal(get('runtimeRevision'),major+minor+patch+'r1');
+  assert.equal(get('moduleSetId'),'E'+major+minor+'-'+patch+'A1');
   assert.equal(get('displayVersion'), get('build')?.includes('-FINAL-') ? 'V4.11 FINAL' : 'V' + get('version') + ' DEV');
 } else if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser

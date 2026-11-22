@@ -37,12 +37,15 @@ const frame=page=>page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>req
   const before=await page.evaluate(()=>{
    const s=card._eyeHubState();window.savedRadius=s.neon.surfaces[0].rings.get('weather-display').radius;
    card._eyeHubSetBubbleAura('temperature',false);
-   const r=s.neon.surfaces[0].rings.get('weather-display');return {from:savedRadius,current:r.radius,target:r.targetRadius};
+   const n=s.neon,surface=n.surfaces[0],r=surface.rings.get('weather-display'),current=r.radius;
+   // Inspect the actual Canvas renderer at a deterministic midpoint. Wall-clock
+   // sleeps can miss a 240-ms transition on a busy shared CI runner.
+   n.stop();n.draw(surface,r.layoutStart+.12,.12);const middle=r.radius;
+   n.draw(surface,r.layoutStart+.4,.12);n.schedule();
+   return {from:savedRadius,current,middle,target:r.targetRadius};
   });
   assert(before.current>before.target,'radius begins at previous geometry');
-  await page.waitForTimeout(90);
-  const middle=await page.evaluate(()=>card._eyeHubState().neon.surfaces[0].rings.get('weather-display').radius);
-  assert(middle<before.from&&middle>before.target,'finite smooth radius transition');
+  assert(before.middle<before.from&&before.middle>before.target,'finite smooth radius transition');
   await page.waitForTimeout(400);
   assert.equal(await page.evaluate(()=>card._eyeHubState().neon.frame),null,'static mode stops scheduling');
   await page.evaluate(()=>card._eyeHubToggle());await frame(page);
@@ -54,6 +57,13 @@ const frame=page=>page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>req
   assert(stable.same,'existing pointer target survives slot changes');
   assert.deepEqual(stable.ids,['weather-display','wind','precipitation'],'configured order and inactive icon retained');
   await page.waitForTimeout(350);
+  assert(await page.evaluate(()=>{
+   const button=card.shadow.querySelector('#eye-hub-bubbles [data-function=wind]'),cluster=card.shadow.getElementById('map-cluster-jump-overlay');
+   const parent=cluster.offsetParent||card.shadow.getElementById('map-card'),r=button.getBoundingClientRect(),p=parent.getBoundingClientRect();
+   const old={hidden:cluster.hidden,left:cluster.style.left,top:cluster.style.top};cluster.hidden=false;cluster.style.left=r.left-p.left+4+'px';cluster.style.top=r.top-p.top+4+'px';
+   card._eyeHubPosition();const a=button.getBoundingClientRect(),b=cluster.getBoundingClientRect(),clear=a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom;
+   cluster.hidden=old.hidden;cluster.style.left=old.left;cluster.style.top=old.top;card._eyeHubPosition();return clear;
+  }),'new fixed obstacle is avoided immediately, including during transitions');
   for(const [x,y] of [[0,0],[1,0],[0,1],[1,1],[.5,0],[.5,1],[0,.5],[1,.5]]){
    await page.evaluate(({x,y})=>card._weatherDisplayPatch({eyePosition:{x,y}}),{x,y});await page.waitForTimeout(300);
    const hit=await page.evaluate(()=>{

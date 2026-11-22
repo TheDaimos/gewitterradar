@@ -317,9 +317,9 @@ async function run() {
       };
       const blocked=overlaps();
       card._eyeHubPosition();
-      return {original,blocked,resolved:!overlaps()};
+      return {original,blocked,resolved:!overlaps(),button:button.getBoundingClientRect().toJSON(),cluster:cluster.getBoundingClientRect().toJSON(),style:button.style.cssText,drag:!!card._weatherDisplayState().eyeDrag,storm:card.shadow.getElementById('map-card').dataset.stormVisible,clusterDisplay:getComputedStyle(cluster).display};
     });
-    assert(clusterCollision.blocked&&clusterCollision.resolved,'Synoptic bubble must avoid the visible Cluster button');
+    assert(clusterCollision.blocked&&clusterCollision.resolved,'Synoptic bubble must avoid the visible Cluster button '+JSON.stringify(clusterCollision));
     await hold(bubble);
     await page.locator('#map-cluster-jump-overlay').evaluate((cluster,original)=>{
       cluster.hidden=original.hidden;

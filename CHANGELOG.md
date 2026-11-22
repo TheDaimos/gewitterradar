@@ -1,3 +1,8 @@
+## V4.12.3 DEV · 2026/11 · Sofortige Aura-Hindernisauflösung · HA 0.25.164
+
+- Neu eingeblendete Kartenknöpfe bleiben sofort erreichbar. Normale Slotänderungen behalten ihre weichen Übergänge; eine notwendige Ausweichbewegung durch belegte Trefferflächen wird unmittelbar in eine sichere Lage korrigiert.
+- Bestehende Synoptik-, Aura-, Rand- und Energie-Regressionsfälle lokal erneut geprüft. Weitere reine Testannahmen zu Runtime-/Modulkennungen und der bestehenden vollständigen Aura-Farbpalette aktualisiert; strenge About-Golden-Geometrie bleibt unverändert.
+
 ## V4.12.2 DEV · 2026/11 · Aura-CI-Nachlauf · HA 0.25.163
 
 - Versions- und Cache-Vertragsprüfungen für die neue 4.12-Serie, einschließlich chronologisch korrekter Prüfung alter und neuer Modulrevisionen. Die breiten bestehenden Gates bleiben aktiv; die zusätzliche Aura-Matrix wird im öffentlichen Workflow aufgerufen.

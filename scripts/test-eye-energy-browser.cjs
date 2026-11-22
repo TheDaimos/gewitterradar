@@ -79,7 +79,7 @@ async function controls(page, name) {
  for (const [id,color,label] of [['wind','#FFC442','Electric Gold'],['temperature','#D8E6F3',/Chrome/]]) {
   const opener=panel.locator(`[data-eye-color=${id}]`);
   await opener.click();
-  assert.equal(await palette.locator('button').count(),10);
+  assert.deepEqual(await palette.locator('button').evaluateAll(nodes=>nodes.map(n=>n.dataset.eyePaint)),['#FF00CC','#B000FF','#0066FF','#00FFF0','#39FF14','#FFFF00','#FF5F00','#FF003C','#FFC442','#D8E6F3','none']);
   assert(await palette.locator('[aria-pressed=true]').evaluate(node=>node.matches(':focus')));
   const swatch=palette.locator(`[data-eye-paint="${color}"]`);
   assert.match(await swatch.innerText(),new RegExp(label));
