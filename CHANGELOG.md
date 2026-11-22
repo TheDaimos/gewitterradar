@@ -1,3 +1,8 @@
+## V4.12.2 DEV · 2026/11 · Aura-CI-Nachlauf · HA 0.25.163
+
+- Versions- und Cache-Vertragsprüfungen für die neue 4.12-Serie, einschließlich chronologisch korrekter Prüfung alter und neuer Modulrevisionen. Die breiten bestehenden Gates bleiben aktiv; die zusätzliche Aura-Matrix wird im öffentlichen Workflow aufgerufen.
+- Bereits verwendeten Recorder als optionale Nachstart-Abhängigkeit deklariert. Aura-Geometrie, Wetterverträge und Benutzerprofile behalten das geprüfte 4.12.1-Verhalten. Öffentlicher CI-Nachweis vor Beginn des Legend Hubs erforderlich.
+
 ## V4.12.1 DEV · 2026/11 · Dynamische Aura-Anordnung · HA 0.25.162
 
 - Separater Aura-Zwischenstand vor dem Legend Hub, ausgehend von V4.11.03 FINAL und dem aktuellen DEV-HEAD.

@@ -52,7 +52,9 @@ def test_v41001_compass_picker_contract():
         runtime_match = re.search(r'runtimeRevision:"([^"]+)"', version)
         assert runtime_match
         v411_cache = runtime_match.group(1)
-        assert re.fullmatch(r"411\d{2,3}r\d+", v411_cache)
+        product = re.search(r'version:"([0-9.]+)"', version).group(1)
+        series = "".join(product.split(".")[:2])
+        assert v411_cache == series + product.split(".")[-1] + "r1"
         assert "const GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision;" in main
     else:
         assert "const CARD_VERSION = '4.10.02';" in main
@@ -85,7 +87,9 @@ def test_v41001_compass_picker_contract():
     picker_revision = re.search(r'compass-picker-chevron-left-brass\.js\?v=(\d{5}r\d+)', map_display)
     assert picker_revision
     cache = picker_revision.group(1) if is_v411 else "41002r13"
-    if is_v411: assert int(cache.split("r")[0]) <= int(v411_cache.split("r")[0])
+    if is_v411:
+        order = lambda value: (int(value.split("r")[0][:3]), int(value.split("r")[0][3:]), int(value.split("r")[1]))
+        assert order(cache) <= order(v411_cache)
     imports = (
         f'import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v={cache}";',
         f'import COMPASS_PICKER_RIGHT_BRASS from "./compass-picker-chevron-right-brass.js?v={cache}";',

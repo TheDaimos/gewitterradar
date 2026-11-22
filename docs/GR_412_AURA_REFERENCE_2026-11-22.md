@@ -1,6 +1,6 @@
 # GR V4.12.1 DEV – technische Aura-Referenz
 
-GR **4.12.1 DEV**, HA **0.25.162**, Runtime `4121r1`, Modulset `E412-1A1`, Build `V4.12.1-DEV-2026-11-22`. Separater Zwischenstand vor dem Legend Hub. Unveränderlicher Quellanker: Release-Tag `v4.12.1-dev`; vollständiger Quellcommit und Paketprüfsummen im zugehörigen `deployment.json`. Der konkrete Liefercommit wird nach Paketbildung in der Arbeitsakte ergänzt.
+GR **4.12.1 DEV**, HA **0.25.162**, Runtime `4121r1`, Modulset `E412-1A1`, Build `V4.12.1-DEV-2026-11-22`. Separater Zwischenstand vor dem Legend Hub. Unveränderlicher Quellanker: **`66c078b72f8140656bb0ea925a1086818a484e30`**, [DEV-Release `v4.12.1-dev`](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.1-dev). Integrations- und Dashboard-Paket sowie `deployment.json` und Prüfsummen sind veröffentlicht. Ein späterer reiner Dokumentations-HEAD verändert diesen Quellanker nicht.
 
 Die Veröffentlichung `v4.11.3` / V4.11.03 FINAL (`af70fe2bf85a88fdea402cf46e3bd6a11903189b`) bleibt die geschützte Ausgangsreferenz. WR-/GR-Betreiberreferenz vom 13.11. und die Eye-Randreferenz bleiben erhalten. Dies ist eine geschützte **technische Implementierungsreferenz**, keine erfundene neue Betreiberabnahme auf HA DEV VM109 oder Android.
 

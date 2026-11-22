@@ -32,6 +32,7 @@ def test_manifest_is_valid_and_single_entry() -> None:
         "input_boolean",
         "input_number",
         "input_select",
+        "recorder",
     ]
     assert manifest["requirements"] == []
     assert manifest["dependencies"] == ["http"]

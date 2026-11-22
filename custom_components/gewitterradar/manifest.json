@@ -4,7 +4,8 @@
   "after_dependencies": [
     "input_boolean",
     "input_number",
-    "input_select"
+    "input_select",
+    "recorder"
   ],
   "codeowners": [
     "@TheDaimos"
@@ -19,5 +20,5 @@
   "issue_tracker": "https://github.com/TheDaimos/gewitterradar/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.25.162"
+  "version": "0.25.163"
 }

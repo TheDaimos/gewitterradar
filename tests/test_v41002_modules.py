@@ -147,14 +147,17 @@ def test_runtime_revision_and_module_set_probe_contract():
 def test_internal_module_import_cache_is_coherent():
  main=(FRONTEND/"gewitterradar.js").read_text(encoding="utf-8")
  version=(FRONTEND/"version.js").read_text(encoding="utf-8")
- latest=re.search(r'runtimeRevision:"(\d{5,6})r\d+"',version)
+ latest=re.search(r'runtimeRevision:"(4\d{3,})r(\d+)"',version)
  assert latest
+ product=re.search(r'version:"([0-9.]+)"',version).group(1)
+ assert latest.group(1)=="".join(product.split("."))
+ order=lambda number,revision:(int(number[:3]),int(number[3:]),int(revision))
  for path in sorted(FRONTEND.rglob("*.js")):
   text=path.read_text(encoding="utf-8")
-  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(\d{5,6})r(\d+)["']''',text):
+  for match in re.finditer(r'''import[^\n]*?["']([^"']+\.js)\?v=(4\d{3,})r(\d+)["']''',text):
    module_path,revision,_=match.groups()
    assert (path.parent/module_path).resolve().is_file(),(path,module_path)
-   assert int(revision)<=int(latest.group(1)),(path,revision)
+   assert order(revision,match.group(3))<=order(latest.group(1),latest.group(2)),(path,revision)
  assert "GEWITTERRADAR_MODULE_CACHE = APPLICATION_RELEASE.runtimeRevision" in main
 
 

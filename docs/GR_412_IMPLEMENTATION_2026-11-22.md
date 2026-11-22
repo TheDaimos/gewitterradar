@@ -13,3 +13,19 @@ Teil 1 betrifft ausschließlich Eye-UI-Geometrie, sichtbare Aura-Zuordnung, endl
 Unbetroffen bleiben WR-Providerwahl, Freshness/Coverage, DWD-/OPERA-/NASA-Kacheln, Wind-Schlangenrenderer, Temperatur- und Synoptikdaten. Keine Datenverträge oder Wetterentscheidungen ändern. Bestehende Vertragsregressionen ausführen. PROD VM101 bleibt unverändert.
 
 Teil 2 beginnt erst nach separat dokumentiertem, geprüftem und installierbar bereitgestelltem Aura-Zwischenstand. Ergebnisse, Versionen, Quellcommits und tatsächliche Testgrenzen werden hier beziehungsweise im zugehörigen Prüfbericht ergänzt.
+
+## Zwischenabschluss Teil 1
+
+Technische Aura-Referenz **4.12.1 DEV / HA 0.25.162**, Runtime `4121r1`, Modulset `E412-1A1`, Quellcommit **`66c078b72f8140656bb0ea925a1086818a484e30`** auf `deploy/dev` bereitgestellt. [Eigenständiger DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.1-dev) mit installierbaren, inhaltsgeprüften Integration-/Dashboard-ZIPs, `deployment.json` und SHA-256-Inventar. Paketidentitäten zusätzlich unter `docs/evidence/gr-v412-aura/`.
+
+Integration: 236 Dateien, SHA-256 `bba04b2794d398c177afcbe9e1830fa74a4951366dcddbfe88c09f2715a59e68`. Dashboard: 219 Dateien, SHA-256 `ee8e6a30e8ecbc05b60e7548391c1dbe42806d32e2d091a67eda543fc5e14cf7`. 217 Frontenddateien im Paket sind bytegleich; das kanonische Build-Gate zählt davon separat 196 Kern-Frontenddateien plus zusätzliche Hilfeseiten/Assets.
+
+Prüfbericht: [geschützte technische Aura-Referenz](GR_412_AURA_REFERENCE_2026-11-22.md). Alle dort konkret benannten lokalen Prüfungen PASS, einschließlich 29 Wetter-/Menüverträgen, drei neuen Aura-Browserformaten, alter Rand-/Recovery-/Vault-Matrix und 180 Neon-Pixelvergleichen. HACS-/DRA-Prüfung einschließlich Rückfall auf den exakten FINAL-Modulbaum PASS. Keine HA-Installation oder physische Android-Abnahme behauptet. PROD VM101 unverändert. Der technische Zwischenabschluss erlaubt jetzt den Beginn von Teil 2; die neue Aura-Referenz bleibt dabei geschützt.
+
+## Öffentlicher CI-Nachlauf vor Teil 2
+
+Die nach dem Push gestarteten öffentlichen Gates auf `66c078b7` ergänzten den lokalen Nachweis: HA 2026.9.0 / Python 3.14 führte 81 Tests aus, davon 78 PASS und drei ausschließlich wegen fest auf 4.11 beziehungsweise fünfstellige Runtimekennungen zugeschnittener Testannahmen fehlgeschlagen. Der Shared-Frontend-Lauf stoppte ebenfalls an einer alten 411-RegEx. Hassfest verlangt zusätzlich die Deklaration des bereits von First Steps verwendeten optionalen Recorder-Moduls. Nachweise: [HA/Hassfest-Lauf](https://github.com/TheDaimos/gewitterradar/actions/runs/45020728701), [Frontend-Lauf](https://github.com/TheDaimos/gewitterradar/actions/runs/45020728744).
+
+Die veröffentlichte 4.12.1 wird nicht überschrieben. Neuer Nachlauf **4.12.2 DEV / HA 0.25.163**, Runtime `4122r1`, Modulset `E412-2A1`: Runtime-/Modulidentität wird aus der tatsächlichen Serie abgeleitet; Importrevisionen werden nach Serie, Patch und Revision statt als unterschiedlich lange Dezimalzahlen verglichen. Der vorhandene Recorder bleibt optional unter `after_dependencies`; keine neue Pflichtabhängigkeit und keine Änderung an Wetter-/Aura-Geometrie. Das vorhandene breite Shared-Frontend-Gate bleibt aktiv; zusätzlich wird die neue vollständige Aura-Matrix aus dem öffentlichen Workflow aufgerufen.
+
+Lokal: 19 tatsächliche reine Python-Frontend-Vertragsfunktionen, 17 Node-Modell-/Vertragsbefehle aus dem breiten Shared-Workflow, Build-/Manipulationsproben, Aura-Modell, Vault-Schema und statische Prüfung PASS. HA-Runtime und Hassfest werden erneut öffentlich ausgeführt. **Teil 2 beginnt erst nach Klärung dieses zusätzlichen CI-Nachlaufs.** Die zuvor bestätigten lokalen Ergebnisse werden nicht als grüne öffentliche CI ausgegeben.

@@ -52,5 +52,6 @@ def test_pinned_version_identity_is_consistent():
         runtime = json.loads((base / "assets/gewitterradar-runtime-manifest.json").read_text())
         assert f'version:"{expected}"' in version
         assert runtime["productVersion"] == expected
-        assert runtime["moduleSetId"] == "E411-" + expected.rsplit(".", 1)[1] + "A1"
+        series = "".join(expected.split(".")[:2])
+        assert runtime["moduleSetId"] == "E" + series + "-" + expected.rsplit(".", 1)[1] + "A1"
         assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1

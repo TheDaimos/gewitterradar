@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.1",
-  "build": "V4.12.1-DEV-2026-11-22",
-  "runtimeRevision": "4121r1",
-  "moduleSetId": "E412-1A1",
-  "baselineFeatureHead": "ad521c476a046d53ef8308bb252243d9c584ea35",
+  "productVersion": "4.12.2",
+  "build": "V4.12.2-DEV-2026-11-22",
+  "runtimeRevision": "4122r1",
+  "moduleSetId": "E412-2A1",
+  "baselineFeatureHead": "66c078b72f8140656bb0ea925a1086818a484e30",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.12 dynamic Aura layout and finite transitions in Eye Control; preserved touch recovery, Settings Vault and WeatherRouter data paths.",
+    "purpose": "V4.12 Aura CI compatibility and optional recorder declaration; WeatherRouter and Aura geometry unchanged.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
