@@ -1,16 +1,18 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const fs = require('node:fs');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const {fixture} = require('./wind-perf-browser-fixture.cjs');
+const expectedDisplayVersion=fs.readFileSync(path.join(__dirname,'../frontend/version.js'),'utf8').match(/displayVersion:"([^"]+)"/)[1];
 
 function initBranding(mode) {
   const user = 'pro-browser-test';
   const about = 'gewitterradar-about-onboarding-version';
-  const profile = {id:'a'.repeat(32),name:'Desktop and mobile',revision:1,settings:{[about]:'1'}};
+  const profile = {id:'a'.repeat(32),name:'Desktop and mobile',revision:1,settings:{[about]:'1','gewitterradar-pro-welcome-dismissed':'1','gewitterradar-first-steps-dismissed':'1'}};
   const slot = encodeURIComponent(JSON.stringify([user,location.pathname.replace(/\/+$/,''),'']));
   localStorage.setItem('gewitterradar:vault:v1:binding:'+slot,profile.id);
   window.proTestUser = {id:user,name:'Test account'};
-  window.proTestSettings = {schema:1,settingsKeys:[about],jsonSettingsKeys:[],profiles:[profile],profile,recovery:false};
+  window.proTestSettings = {schema:1,settingsKeys:Object.keys(profile.settings),jsonSettingsKeys:[],profiles:[profile],profile,recovery:false};
   window.proMode = mode;
   window.discoveryCalls = 0;
   window.proReply = {
@@ -56,7 +58,7 @@ async function assertLayout(page) {
   assert(Math.abs(layout.image.width/layout.image.height-layout.ratio)<.01);
   assert(layout.image.left>=0&&layout.image.right<=layout.width&&layout.image.width<=290);
   assert.deepEqual(layout.collisions,[]);
-  assert.match(layout.badge,/^V4\.11\.\d+ DEV$/);
+  assert.equal(layout.badge,expectedDisplayVersion);
 }
 
 async function assertHubTriggers(page, useTouch=false){
@@ -89,7 +91,7 @@ async function assertHelp(page,connected,screenshots){
   const topics=['eye-controls','wr-wind','wr-information','wr-precipitation','wr-temperature','wr-clouds','wr-synoptic','wr-display'];
   const display='weather-display-v411';
   const proKeys=[...topics.filter(key=>key!=='wr-information'),display,'wr-information'];
-  const keys=section=>section.locator(':scope > details').evaluateAll(nodes=>nodes.map(n=>n.dataset.helpSection));
+  const keys=section=>section.locator(':scope > .help-group-topics > details').evaluateAll(nodes=>nodes.map(n=>n.dataset.helpSection));
   assert.deepEqual(await keys(classic),standardKeys);
   assert.deepEqual(await keys(pro),connected?proKeys:[...proKeys,'wr-pro']);
   assert.deepEqual(await content.locator(':scope > section').evaluateAll(nodes=>nodes.map(node=>node.className)),['help-standard','help-pro']);
@@ -197,14 +199,16 @@ async function assertHelp(page,connected,screenshots){
       assert.match(await icon.getAttribute('src'),/gr-clouds-eye-premium-original/);
       assert.match(await body.locator('img').getAttribute('src'),/gr-clouds-help-premium-original/);
     }
-    await topic.getByRole('button',{name:'Zur Übersicht'}).click();
+    // FINAL keeps the summary/chevron as the article close control.
+    await topic.locator(':scope > summary').click();
+    assert.equal(await topic.evaluate(node=>node.open),false);
   }
   const displayTopic=pro.locator(`[data-help-section=${display}]`);
   await displayTopic.locator('summary').click();
   assert((await displayTopic.locator('.help-section-body').innerText()).length>45);
   await displayTopic.locator('summary').click();
   if(!connected){
-    assert.equal(await pro.locator(':scope > details').last().getAttribute('data-help-section'),'wr-pro');
+    assert.equal(await pro.locator(':scope > .help-group-topics > details').last().getAttribute('data-help-section'),'wr-pro');
     await upgrade.locator('summary').click();
     for(const label of ['Was ist WeatherRouter?','Wie bekomme ich GewitterRadar PRO?'])assert(await upgrade.getByText(label,{exact:true}).isVisible());
     assert.equal(await upgrade.locator('li').count(),6);
@@ -338,6 +342,8 @@ async function run() {
     await phone.evaluate(()=>{proMode='missing';proConnection.dispatchEvent(new Event('ready'));});
     await standard(phone).waitFor();
     await assertHelp(phone,false,output);
+    await phone.evaluate(()=>{proMode='ready';proConnection.dispatchEvent(new Event('ready'));});
+    await phone.waitForFunction(()=>card.__proBranding?.eyeReady===true);
     await phone.evaluate(()=>card._eyeHubOpen());
     assert.match(await phone.locator('#eye-hub-config [data-eye-option=grouped]').textContent(),/Icon-Gruppierung/);
     await phone.locator('#eye-hub-config [data-premium-action=close]').click();
