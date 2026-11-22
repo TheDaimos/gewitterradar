@@ -1,6 +1,6 @@
 # GewitterRadar PRO V4.12 – Legend Hub und gemeinsame Legenden
 
-Kandidat **GR 4.12.4 DEV / HA 0.25.165**, Runtime `4124r1`, Modulset `E412-4A1`, Build `V4.12.4-DEV-2026-11-22`. Branch `deploy/dev`. Der öffentliche CI-/Paketabschluss wird nach dem Kandidaten-Commit unten ergänzt; dieser Bericht behauptet noch keinen abgeschlossenen Release.
+Kandidat **GR 4.12.5 DEV / HA 0.25.166**, Runtime `4125r1`, Modulset `E412-5A1`, Build `V4.12.5-DEV-2026-11-22`. Branch `deploy/dev`. Der öffentliche CI-/Paketabschluss wird nach dem Kandidaten-Commit unten ergänzt; dieser Bericht behauptet noch keinen abgeschlossenen Release.
 
 ## Geschützte Ausgangsstände
 
@@ -61,6 +61,8 @@ Beide 1254×1254-RGBA-Dateien sind byteidentisch in Runtime und dauerhaft gesch�
 ## Veröffentlichung und offene Realabnahme
 
 Erster gesicherter Funktionscommit: `6eaf80b2a122af9943448c4eaab65f5a98d24ccb`, auf `deploy/dev` bereitgestellt. Retentionsprüfung nach dem Commit PASS: 60 geschützte Inhaltsidentitäten, 61 vorhandene Artwork-Pfade und zwölf Metadatendateien. Die erste öffentliche Runde bestand HA-/HACS-/Raster-/WR-Autoritäts- und Positionsprüfungen. Drei Prüfketten stoppten an derselben rein textuellen Scope-Allowlist: „Legend Hub“ war als neuer DRA-Zweck noch nicht registriert. Die präzise Testergänzung akzeptiert diese neue Funktionsbezeichnung; Produktbäume, Versionsstände und DRA-Zwecktext bleiben unverändert. Der nachfolgende öffentliche Lauf wird separat dokumentiert.
+
+V4.12.4-Nachlauf `3eea1b6aa538a26d1438c0007d98f65c9262aa66`: öffentlicher Vault-/Neon-/Energie-/Gesture-/Paketlauf [PASS](https://github.com/TheDaimos/gewitterradar/actions/runs/45040663864), [HA-Gate PASS](https://github.com/TheDaimos/gewitterradar/actions/runs/45040555195), [Navigation PASS](https://github.com/TheDaimos/gewitterradar/actions/runs/45040555221). Alle 30 Wetter-/Quellverträge und die Aura-Browsermatrix bestanden. Die neue Legend-Hub-Matrix fand beim anschließenden F2-Aufruf eine verspätete manuelle Fokus-Rückgabe des zuvor geschlossenen Dialogs. **V4.12.5 / HA 0.25.166** entfernt ausschließlich diese zusätzliche Rückgabe und verwendet die native Dialog-Fokusverwaltung. Außerdem übernimmt die neue Advektionsbeschreibung nun dieselbe Intervallübersetzung wie die native Legende; Werte, Klassengrenzen und Farben bleiben unverändert. Kein 4.12.4-Release veröffentlicht oder nachträglich umgeschrieben.
 
 Öffentliche CI, eindeutiger Quellcommit, Paket-Digests und DEV-Release werden nach dem Kandidatenlauf ergänzt. DRA-Konfiguration und Kanal bleiben unverändert. Geplant ist ausschließlich ein neuer DEV-Prerelease mit Integration-/Dashboard-ZIP, `deployment.json` und SHA-256-Inventar.
 

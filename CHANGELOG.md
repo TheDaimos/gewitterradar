@@ -1,3 +1,9 @@
+## V4.12.5 DEV · 2026/11 · Dialogfokus und lokalisierte Intervalle · HA 0.25.166
+
+- Native Dialog-Fokusrückgabe erhalten; eine verspätete manuelle Rückgabe kann keinen anschließenden F2-Aufruf mehr auf ein vorheriges Icon umlenken.
+- Advektionsintervalle in gemeinsamer Skalenbeschreibung und Tooltips verwenden die bestehende Intervallübersetzung. Native Werte, Grenzen und Paletten bleiben gleich.
+- V4.12.4 bleibt als geprüfter Funktionskandidat nachvollziehbar; installierbarer DEV-Abschluss ist V4.12.5. Keine FINAL- oder PROD-Promotion.
+
 ## V4.12.4 DEV · 2026/11 · Legend Hub · HA 0.25.165
 
 - Unabhängiger verschiebbarer Legend Hub mit zwei byteidentischen Original-PNGs, 1–12 Slots, Leerplätzen, Reihenfolge, Drag/Drop und Touch-Alternativen, gebundener Ausklapprichtung und Freiflächen-Autoschließen.

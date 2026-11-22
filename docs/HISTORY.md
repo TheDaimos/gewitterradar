@@ -1,3 +1,7 @@
+## V4.12.5 DEV · 2026/11 · HA 0.25.166
+
+Gezielter Nachlauf des Legend-Hub-Kandidaten: native Dialog-Fokusverwaltung und lokalisierte Advektionsintervalle, fachliche Daten unverändert. Installierbarer DEV-Abschluss und CI-Belege im [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md).
+
 ## V4.12.4 DEV · 2026/11 · HA 0.25.165
 
 Legend Hub und gemeinsame Legenden mit unabhängiger Sichtbarkeit, eigenen Positionen, zwei Originalsymbolen, konfigurierbaren Skalen und vorhandener Profilpersistenz. Technischer Bericht: [Legend Hub](GR_412_LEGEND_REPORT_2026-11-22.md). Aura-Zwischenreferenz bleibt v4.12.3-dev.

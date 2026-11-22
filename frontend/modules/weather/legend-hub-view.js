@@ -1,6 +1,6 @@
 import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4124r1';
-import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4124r1';
-import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4124r1';
+import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4125r1';
+import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4125r1';
 import {renderLegendScale} from './legend-scale.js?v=4124r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 export const legendText=(owner,key)=>owner._t('legendHub.'+key);
@@ -18,7 +18,7 @@ export function ensureLegendHubStyle(owner){if(owner.shadow.getElementById('lege
  @keyframes lh-open{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}@media(prefers-reduced-motion:reduce){.lh-popout{animation:none}.lh-window *{transition:none!important}}@media(max-width:430px){.lh-window .gr-legend-actions button{width:44px}.lh-dialog{font-size:12px}.lh-form label{gap:6px}.lh-main{width:50px;height:50px}}
  `;owner.shadow.append(style);}
 export const LEGEND_HUB_ICONS=[new URL('../../assets/gr-legend-hub-1-original.png',import.meta.url).href,new URL('../../assets/gr-legend-hub-2-original.png',import.meta.url).href];
-function openDialog(owner,title,render){ensureLegendHubStyle(owner);owner.__legendConfig?.close();owner.__legendConfig?.remove();const dialog=document.createElement('dialog');dialog.className='lh-dialog';dialog.setAttribute('aria-label',title);dialog.innerHTML='<header><h3></h3><button type="button" data-lh-close></button></header><div class="lh-form"></div>';dialog.querySelector('h3').textContent=title;const close=dialog.querySelector('[data-lh-close]');close.textContent='×';close.setAttribute('aria-label',owner._t('weather.legend.close'));close.onclick=()=>dialog.close();dialog.addEventListener('close',()=>{dialog.remove();if(owner.__legendConfig===dialog)owner.__legendConfig=null;owner.__legendOpener?.focus?.();});owner.shadow.append(dialog);owner.__legendConfig=dialog;render(dialog.querySelector('.lh-form'));dialog.showModal();return dialog;}
+function openDialog(owner,title,render){ensureLegendHubStyle(owner);owner.__legendConfig?.close();owner.__legendConfig?.remove();const dialog=document.createElement('dialog');dialog.className='lh-dialog';dialog.setAttribute('aria-label',title);dialog.innerHTML='<header><h3></h3><button type="button" data-lh-close></button></header><div class="lh-form"></div>';dialog.querySelector('h3').textContent=title;const close=dialog.querySelector('[data-lh-close]');close.textContent='×';close.setAttribute('aria-label',owner._t('weather.legend.close'));close.onclick=()=>dialog.close();dialog.addEventListener('close',()=>{dialog.remove();if(owner.__legendConfig===dialog)owner.__legendConfig=null;});owner.shadow.append(dialog);owner.__legendConfig=dialog;render(dialog.querySelector('.lh-form'));dialog.showModal();return dialog;}
 const select=(label,key,values,current,labels=v=>v)=>`<label><span>${esc(label)}</span><select data-lh-key="${key}">${values.map(v=>`<option value="${v}" ${current===v?'selected':''}>${esc(labels(v))}</option>`).join('')}</select></label>`;
 const check=(label,key,value)=>`<label><span>${esc(label)}</span><input type="checkbox" data-lh-key="${key}" ${value?'checked':''}></label>`;
 export function openLegendConfig(owner,id){const t=k=>legendText(owner,k);openDialog(owner,t('configure')+' · '+legendTitle(owner,id),form=>{

@@ -1,3 +1,7 @@
+## V4.12.5 DEV · 2026/11 · HA 0.25.166
+
+Legend-Hub-Abschluss mit Linux-Fokuskorrektur und lokalisierter Skalenbeschreibung. Aura-Referenz v4.12.3-dev und V4.11.03 FINAL bleiben geschützt; keine PROD-Promotion.
+
 ## V4.12.4 DEV · 2026/11 · HA 0.25.165
 
 Legend Hub ergänzt den zuvor separat gesicherten Aura-Meilenstein. Native Wetterskalen, Einstellungen und Provider bleiben maßgeblich; gemeinsame Darstellung und unabhängige Legendenbedienung sind additiv. [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md). DEV VM109/Android-Betreiberabnahme getrennt, VM101 unverändert.
