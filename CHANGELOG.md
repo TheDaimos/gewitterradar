@@ -1,3 +1,9 @@
+## V4.11.03 · First Steps: Checkbox-Zustand wiederhergestellt
+
+- Beim manuellen Öffnen über Hilfe & Hinweise wird der gespeicherte Zustand von „Diesen Hinweis nicht mehr anzeigen“ angezeigt.
+- Wird der Haken entfernt, öffnet sich der Einrichtungsdialog beim nächsten Anwendungsstart automatisch erneut.
+- Die bestehende profilbezogene Speicherung, die Chevron-Inhalte und Wetterfunktionen bleiben unverändert.
+
 ## V4.11.253 DEV · Klappbare First Steps mit Hintergrundinfos · HA 0.25.160
 
 Alle vier Einrichtungspunkte werden als kompakte, einzeln aufklappbare Prüfpunkte mit sichtbarem Status dargestellt. Innerhalb des jeweiligen Einrichtungstexts öffnet das originale Hi-Res-Info-i mit Chevron eine gesonderte Begründung (Deutsch/Englisch). Die Recorder-Erläuterung benennt ausdrücklich die Daten von Blitzortung.org als Ursache des möglichen Datenbankwachstums und stellt klar, dass GewitterRadar selbst nicht von den Ausschlüssen betroffen ist. Die Local-To-do-Erklärung beschreibt die Liste „Gewitterradar Orte“ als Speicher der Ortsfavoriten. Kein Eingriff in Backend-Prüfungen, Wetterfunktionen oder bestehende Referenzstände; DRA-DEV-Sichtprüfung offen.

@@ -216,6 +216,9 @@ export function openFirstSteps(owner, images, storage, writable) {
     }
   };
   const checkbox = dialog.querySelector('input');
+  // The checkbox must reflect the active profile even when reopened from Help.
+  try { checkbox.checked = storage.getItem(FIRST_STEPS_DISMISSED) === '1'; }
+  catch (_) { checkbox.disabled = true; status.textContent = owner._t('vault.genericError'); }
   checkbox.addEventListener('change', () => {
     try {
       if (checkbox.checked) storage.setItem(FIRST_STEPS_DISMISSED, '1');
