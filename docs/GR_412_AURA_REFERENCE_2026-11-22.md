@@ -1,6 +1,20 @@
-# GR V4.12.1 DEV – technische Aura-Referenz
+# GR V4.12.3 DEV – technische Aura-Referenz
 
-GR **4.12.1 DEV**, HA **0.25.162**, Runtime `4121r1`, Modulset `E412-1A1`, Build `V4.12.1-DEV-2026-11-22`. Separater Zwischenstand vor dem Legend Hub. Unveränderlicher Quellanker: **`66c078b72f8140656bb0ea925a1086818a484e30`**, [DEV-Release `v4.12.1-dev`](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.1-dev). Integrations- und Dashboard-Paket sowie `deployment.json` und Prüfsummen sind veröffentlicht. Ein späterer reiner Dokumentations-HEAD verändert diesen Quellanker nicht.
+## Geschützter technischer Lieferanker vor dem Legend Hub
+
+**GR 4.12.3 DEV / HA 0.25.164**, Build `V4.12.3-DEV-2026-11-22`, Runtime `4123r1`, Modulset `E412-3A1`. [Eigenständiger DEV-Release](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.3-dev), vollständiger Quellanker **`b96f1e350eb054972bfffe3e9a631069c4c5d358`**. Integration und Dashboard, `deployment.json` und SHA-256-Inventar sind veröffentlicht und gegen die GitHub-Asset-Digests verifiziert.
+
+Die Produktbäume sind byteidentisch zum Funktionscommit `380df6ddbdd81dd288ac6d695b5885a543785648` und zum vollständig geprüften Teststand `ec1d48c61f5fd58cffbbbe46451b2cfbb15df630`: Git-Tree `frontend` = `27db6c0d7a80ad585f6d142c89b865821f19494c`, Integration = `f8f59acefe13c22ee5beb102eb511b68c8014c64`. Der letzte Quell-HEAD ergänzt ausschließlich zwei Prüfberichtzeilen. Das ist ein expliziter Inhaltsnachweis, keine ungeprüfte Gleichsetzung eines neueren HEAD mit einer Freigabe.
+
+Öffentlich PASS: [breites Linux-Frontend, strenger About-Golden-Master und Aura-Matrix](https://github.com/TheDaimos/gewitterradar/actions/runs/45025632375), [HA 2026.9.0 / Hassfest / HACS / Pakete](https://github.com/TheDaimos/gewitterradar/actions/runs/45025632498), [vollständige Synoptik-/Touch-/Cloud-/Recovery-/Help-Kette](https://github.com/TheDaimos/gewitterradar/actions/runs/45025632406), [Navigation](https://github.com/TheDaimos/gewitterradar/actions/runs/45025632505). Wiederholungen nach reinem Dokumentations- bzw. Release-Tag-Push sind getrennte Läufe auf denselben Produktbäumen und ersetzen diese Quellanker nicht.
+
+SHA-256: Integration `1dcef061d09ae386c7870632954bad63d137d9890c445bd19d158bc1bc0e7e2a`, Dashboard `645561b6618a74cf5d931bbc4c1bb1368fddcd27bde871c07338e2e817e322d8`. 236 beziehungsweise 219 Paketdateien, 217 gemeinsame Frontenddateien bytegleich. Keine reale HA-DEV-/Android-Installation oder Betreiberabnahme behauptet; bestehende Betreiberreferenzen bleiben gültig.
+
+Die 4.12.3-Anordnung schützt auch während Übergängen die aktuellen Hindernisse: normale Slotänderungen bleiben weich, ein bereits blockierter oder durch ein Kartenbedienelement verlaufender Trefferbereich wird sofort in die sichere Ziellage korrigiert. Reduzierte Bewegung und statischer Scheduler-Stopp sind geprüft. Diese technische Aura-Referenz ist bei Teil 2 vollständig zu erhalten.
+
+## Historischer erster Aura-Zwischenstand 4.12.1
+
+GR **4.12.1 DEV**, HA **0.25.162**, Runtime `4121r1`, Modulset `E412-1A1`, Build `V4.12.1-DEV-2026-11-22`. Historischer erster Kandidat, durch 4.12.3 ergänzt. Unveränderlicher Quellanker: **`66c078b72f8140656bb0ea925a1086818a484e30`**, [DEV-Release `v4.12.1-dev`](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.1-dev). Veröffentlichte Quellen und Pakete werden nicht überschrieben.
 
 Die Veröffentlichung `v4.11.3` / V4.11.03 FINAL (`af70fe2bf85a88fdea402cf46e3bd6a11903189b`) bleibt die geschützte Ausgangsreferenz. WR-/GR-Betreiberreferenz vom 13.11. und die Eye-Randreferenz bleiben erhalten. Dies ist eine geschützte **technische Implementierungsreferenz**, keine erfundene neue Betreiberabnahme auf HA DEV VM109 oder Android.
 
