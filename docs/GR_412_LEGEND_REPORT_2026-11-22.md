@@ -1,0 +1,65 @@
+# GewitterRadar PRO V4.12 – Legend Hub und gemeinsame Legenden
+
+Kandidat **GR 4.12.4 DEV / HA 0.25.165**, Runtime `4124r1`, Modulset `E412-4A1`, Build `V4.12.4-DEV-2026-11-22`. Branch `deploy/dev`. Der öffentliche CI-/Paketabschluss wird nach dem Kandidaten-Commit unten ergänzt; dieser Bericht behauptet noch keinen abgeschlossenen Release.
+
+## Geschützte Ausgangsstände
+
+V4.11.03 FINAL bleibt unverändert: Tag `v4.11.3`, Commit `af70fe2bf85a88fdea402cf46e3bd6a11903189b`. Vor dem Legend Hub wurde die vollständig geprüfte, separat installierbare [Aura-Referenz v4.12.3-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.3-dev) gesichert; verbindliche [Referenzakte](GR_412_AURA_REFERENCE_2026-11-22.md). Legend-Hub-Basis: `b184aa475d7dede993bf9ed7e699c9dfffba7248`. WR bleibt unverändert; keine privaten WR-Actions und keine Änderung an PROD VM101.
+
+## Umsetzung
+
+| Bereich | Verhalten |
+| --- | --- |
+| Hub | Eigenständig verschiebbares Frosted Glass mit zwei wählbaren, unveränderten RGBA-Original-PNGs; Variante 1 als Standard. |
+| Slots | 1–12 Plätze, Leerplätze, Zuordnung und Reihenfolge; Desktop-Drag/Drop sowie Select-/Pfeilbedienung für Touch und Tastatur. Wetter-Icons stammen aus der vorhandenen Eye-Registry. |
+| Bedienung | Kurzer Tipp schaltet ausschließlich die betreffende Legende. Langer Druck bzw. F2 öffnet Einstellungen. Eigene Dialoge und eigener Hub-Anker. |
+| Ausklappen | Dynamisch, links/rechts/oben/unten, horizontal/vertikal. Richtung bleibt während des Öffnens gebunden; bevorzugte Richtung wird in sicheren Kartenraum geklemmt. Sehr kleine Karten erhalten einen begrenzten, scrollbar erreichbaren Slotbereich. |
+| Kartenbedienung | Autoschließen nur bei freier Kartenfläche, einschließlich des Vollbild-Kartendialogs. Zoom, Schalter, Fenster und Menüs bleiben ausgenommen. Alternativ bleibt der Hub offen. |
+| Unabhängigkeit | Legenden können bei ausgeschaltetem Wetterlayer angezeigt werden. Keine Wetterabfragen, Layer-Schalter oder Providerentscheidungen durch Hub-Schalter. |
+| Darstellung | Premium-Fenster und Compact Glass, eigenes X, horizontale/vertikale Anordnung, S/M/L/XL, eigene vorhandene native Positionen. Kategoriale Zusatzfenster besitzen getrennte neue Positionen. Überdeckte Fenster lassen sich durch Fokus oder sichtbare Oberfläche nach vorn holen. |
+| Skalen | Clean, Precision und Thermometer Premium; Messing, Platin, Gold, Silber, Schwarz; grobe, mittlere und detaillierte Beschriftung; unabhängige Text-/Strichpositionen. |
+| Innenskala | Getrennte Farb-/Strich- und Zahlenzonen, horizontal und vertikal. Zahlen und Striche erhalten eigene Flächen. |
+| Text | Automatische lokale Kontrastwahl, optionale automatische Invertierung, Weiß/Schwarz/Eisblau/Mint/Champagner/Gold, unabhängig schaltbarer Schatten und Kontur. Für automatische Kontrastwahl wird mindestens 4,5:1 gegen den tatsächlich gezeichneten Zahlenhintergrund geprüft. |
+| Persistenz | Bestehender Settings Vault; Profile, Server-Schema, Reload und Geräte-/Kontentrennung. Neue Darstellungspräferenzen im additiven Schlüssel `gewitterradar:legend-hub:v1`; vorhandene native Legendenpositionen bleiben maßgeblich. |
+| Sprache/Zugänglichkeit | 19 Sprachvarianten, beschriftete Schalter, sichtbarer Fokus, Tastatur/F2/Escape, Touch-Alternativen und reduzierte Bewegung. |
+
+Die neue Anzeigepräferenz `inherit/on/off` beschreibt zusätzlich, ob eine Legende unabhängig vom aktiven Wetterlayer erscheinen soll. Bestandsprofile erben unverändert ihre native Anzeige. Bestehende Checkboxen werden über ihre bisherigen Konfigurationen gespeichert und wahrheitsgemäß gespiegelt; vorhandene meteorologische Informationen oder Positionen werden nicht in einer zweiten Wetter-Registry gehalten.
+
+## Fachliche Differenzierung und kompatible Grenzen
+
+Niederschlag übernimmt die verifizierten WR-Paletten einschließlich der ursprünglichen 15 Regenklassen, Schnee-Quantitäten, Einheiten, Quellgruppen, NASA-Originalklassen und Zeitangaben. Fehlende Paletten werden ausdrücklich als fehlend angezeigt. Wind übernimmt die vorhandenen Beaufort-Grenzen und Windfeldfarben; Temperatur die vorhandene temperaturabhängige Palette und C/F/K-Umrechnung. Advektion bleibt bei den tatsächlichen K/h-Klassen und ihrer neutralen Nullzone. Klassenachsen werden nicht als erfundene lineare Messwertachsen dargestellt.
+
+Synoptik besitzt kategoriale H/T-, Isobaren- und Frontsymbole statt einer erfundenen Regenbogenskala. Die Frontgeometrie wird mit der vorhandenen nativen Symbolfunktion erzeugt. Numerische Skalenoptionen sind bei kategorialen Symbolen beziehungsweise reinen Bildlegenden begründet deaktiviert und in allen 19 Varianten erklärt. Darstellung, Orientierung, Größe, Textfarbe/Effekte, Position und Sichtbarkeit bleiben konfigurierbar. Weitere tatsächlich vorhandene WR-Legenden werden über ihre Originalmodelle bzw. Originalbilder angezeigt.
+
+Der Hub weicht vorhandenen Eye-/Kartenbedienelementen aus. Bei einer späteren Eye-Bewegung wird nur die neue Hub-Platzierung neu geprüft; der geschützte Eye-Anker wird nicht geändert. Fenster dürfen auf kleinen Displays überlappen und bleiben über Fokus/Hub-Schalter bedienbar. Physische Android-/WebView-Eigenheiten und tatsächliche HA-DEV-Installation bleiben separat abzunehmen.
+
+## Lokale Nachweise vor öffentlichem CI-Abschluss
+
+| Prüfung | Tatsächliches Ergebnis |
+| --- | --- |
+| Modell | PASS: 2184 Geometrien, Richtungsbindung, 1–12 Slots, alle Präferenzen, Beschriftungspriorität, lokaler Kontrast und 19 vollständige Sprachsätze. |
+| Hub-Browser | PASS: Desktop 1280×900, Touch 393×851 und 851×393; je 112 Layoutfälle, acht Rand-Drags und 72 Skalenfälle, Slot-Änderung, Long-Press, freie Kartenfläche, reduzierte Bewegung und Reload. |
+| Feld-Nachlauf | PASS: echte Karten-/Rendererintegration mit synthetischen Wind-/Temperaturfeldern. Legendenänderungen und °F-Umrechnung verändern weder Abfragezahl noch Kelvinwerte; Temperaturverweigerung löscht das Windfeld nicht. |
+| Authentifizierter Vault | PASS: Hub-/Skalenwerte werden im synthetischen HA-Profil gespeichert und nach Reload wiederhergestellt; kein paralleler Browser-Schlüssel. Bestehende Mehrgeräte-/Konten-, Migration-, Konflikt-/Wiederholungs- und Offlinefälle ebenfalls bestanden. |
+| Tatsächliches Python-Schema | PASS: vollständiger Roundtrip und Ablehnung ungültiger Symbole, Slots, Größen und Positionen. Kein HA-Runtime-Test vorgetäuscht. |
+| Quellschutz | PASS: gesamte geschützte Aura-Implementierung entspricht nach Entfernen generierter Versionen exakt `b184aa47`; gesamte Wettermodule entsprechen außerhalb präziser UI-Adapter exakt FINAL. Regen-/Schnee-Paletten, WR-Metadaten, Quellgruppierung und Modellnormalisierung unverändert. |
+| Bestehende Verträge | PASS: 27 unveränderte Wetter-/Skalen-Vertragsfälle; die beiden betroffenen Ganzdateivergleiche wurden um eine exakt reversible UI-Allowlist und separaten vollständigen Wissenschaftsvergleich ergänzt und bestanden danach. |
+| Build/Metadaten | PASS: kanonischer Build, 37 registrierte Module, 207 Kern-Frontenddateien, identische Spiegel/Checksummen und konsistente Versionen. |
+| Paketvorprüfungen | PASS: HACS-Staging mit 247 bytegleichen Dateien; DRA-Kontrakt mit 108 modularen Dateien. Installierbare finale ZIPs werden erst aus dem eingecheckten Kandidaten erzeugt. |
+| Statisch | PASS: Python/JSON/YAML und bestehende Metadatenverträge; 19 tatsächlich ausgeführte reine Python-Vertragsfunktionen. Diagnoseprüfer bestätigt seinen eingefrorenen Vertrag; sein historischer Monolith-Detektor ist kein aktueller modularer Browsernachweis. |
+
+Die lokale Windows-About-Golden-Referenz besitzt bereits im unveränderten Vergleichsstand einen dokumentierten Font-/Layoutunterschied. Dieser Toleranzwert wurde nicht gelockert. Der strenge öffentliche Linux-Golden-Test wird auf dem finalen Kandidaten erneut ausgeführt. Vorhandene gültige Aura-Nachweise wurden nicht neu implementiert oder als neue Hardwareabnahme ausgegeben.
+
+## Assets
+
+Beide 1254×1254-RGBA-Dateien sind byteidentisch in Runtime und dauerhaft geschütztem Masterbereich. [Provenienz](../artwork/legend-hub/provenance.json), [Retentionsvertrag](../tests/contracts/hires-asset-retention-v4.07.56.json).
+
+- Symbol 1: SHA-256 `aafd3864028822f005c177e0001a2646fb8a82594a95a494bb4db79e0f6e8af7`, 2.411.557 Bytes.
+- Symbol 2: SHA-256 `29317b30eec77fa85a2e412d1183584f91eefdeb3abb7455237b40ee7465f5ec`, 2.164.559 Bytes.
+- Kein vorhandener Master gelöscht oder ersetzt. Das Compact-X verwendet das bestehende Close-Asset mit reinem CSS-Platinfinish; sein Original bleibt erhalten.
+
+## Veröffentlichung und offene Realabnahme
+
+Öffentliche CI, eindeutiger Quellcommit, Paket-Digests und DEV-Release werden nach dem Kandidatenlauf ergänzt. DRA-Konfiguration und Kanal bleiben unverändert. Geplant ist ausschließlich ein neuer DEV-Prerelease mit Integration-/Dashboard-ZIP, `deployment.json` und SHA-256-Inventar.
+
+**Nicht durchgeführt:** Installation/Betreiberabnahme auf HA DEV VM109 und physischem Android. **Nicht geändert:** PROD VM101, WeatherRouter, FINAL-Tags und geschützte Referenzen.

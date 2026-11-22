@@ -1,3 +1,11 @@
+## V4.12.4 DEV · 2026/11 · Legend Hub · HA 0.25.165
+
+- Unabhängiger verschiebbarer Legend Hub mit zwei byteidentischen Original-PNGs, 1–12 Slots, Leerplätzen, Reihenfolge, Drag/Drop und Touch-Alternativen, gebundener Ausklapprichtung und Freiflächen-Autoschließen.
+- Gemeinsame Premium-/Compact-Glass-Legenden für Niederschlag, Wind, Temperatur, Advektion, Synoptik und weitere vorhandene WR-Legenden. Wetter-Schalter und Providerpfade bleiben getrennt.
+- Horizontale/vertikale Skalen, S/M/L/XL, drei Beschriftungsdichten, Clean/Precision/Thermometer Premium, fünf Strichmaterialien, unabhängige Text-/Strichpositionen und getrennte Innenzonen; lokale Kontrastwahl und automatische Invertierung.
+- Additive Persistenz im bestehenden Settings Vault, native Positionen/Präferenzen erhalten, 19 Sprachvarianten. Beide Hi-Res-Master dauerhaft geschützt. Aura-Referenz v4.12.3-dev und V4.11.03 FINAL bleiben unverändert.
+- Prüfbericht und tatsächliche Abnahmegrenzen: `docs/GR_412_LEGEND_REPORT_2026-11-22.md`. Ausschließlich DEV; keine Änderung an VM101.
+
 ## V4.12.3 DEV · 2026/11 · Sofortige Aura-Hindernisauflösung · HA 0.25.164
 
 - Neu eingeblendete Kartenknöpfe bleiben sofort erreichbar. Normale Slotänderungen behalten ihre weichen Übergänge; eine notwendige Ausweichbewegung durch belegte Trefferflächen wird unmittelbar in eine sichere Lage korrigiert.

@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.3",
-  "build": "V4.12.3-DEV-2026-11-22",
-  "runtimeRevision": "4123r1",
-  "moduleSetId": "E412-3A1",
-  "baselineFeatureHead": "23c1a578867c649e48f859d3dc771562ed309bfa",
+  "productVersion": "4.12.4",
+  "build": "V4.12.4-DEV-2026-11-22",
+  "runtimeRevision": "4124r1",
+  "moduleSetId": "E412-4A1",
+  "baselineFeatureHead": "b184aa475d7dede993bf9ed7e699c9dfffba7248",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "V4.12 Aura obstacle recovery keeps map controls immediately operable; WeatherRouter data paths unchanged.",
+    "purpose": "Legend Hub und gemeinsame Legenden; WR unverändert",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

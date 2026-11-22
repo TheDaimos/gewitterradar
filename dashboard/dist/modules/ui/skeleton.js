@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=4123r1';
-import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=4123r1';
-import { settingsStorage } from '../core/settings-vault.js?v=4123r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=4124r1';
+import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=4124r1';
+import { settingsStorage } from '../core/settings-vault.js?v=4124r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
@@ -19,7 +19,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.60",
+  "version": "1.1.61",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -7862,7 +7862,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Introduce monitored areas with independent background monitoring, optional event logging, deletion protection, and CSV/PDF export.</li>
                       <li>Standardize multilingual status, warning and error messages across all functions.</li>
                       <li>Extend winter-weather maps with snow, fog and freezing precipitation, complemented by orbital submenus around weather icons.</li>
-                      <li>Add compact, dynamic Aura-ring layout in Eye Control and a map-based Geo Probe with coordinates, local time, moon phase, and tide information where suitable data is available.</li>
+                      <li>Add a map-based Geo Probe with coordinates, local time, moon phase, and tide information where suitable data is available.</li>
                       <li>Provide optional UV, air quality and pollen information from suitable data sources.</li>
                       <li>Explore scientifically grounded displays for tornadoes, supercells, hail and other severe weather.</li>
                       <li>Show the ISS position and orbit, including possible visibility windows for the selected observation location.</li>
@@ -7870,6 +7870,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Extend lightning event logs and configurable alerts for monitored locations.</li>
                     </ul>
                   </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.12 DEV · 2026/11</div><h3>GewitterRadar PRO – Dynamic Auras and Legend Hub</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content"><p><strong>V4.12 DEV:</strong> Eye Control offers optional dynamic Aura-ring arrangement with stable weather-icon identities and reduced-motion support. The separately protected Aura milestone precedes the Legend Hub.</p><p><strong>Legend Hub:</strong> A separate draggable glass hub with two original symbols, configurable slots and opening directions. Short taps control legends independently of weather layers; long press opens individual settings. Premium and Compact Glass share verified weather scales, orientation, sizes, label density, tick materials and local text contrast. Profiles retain all preferences through Settings Vault.</p><p>All 19 language variants remain supported. V4.11.03 FINAL stays protected; this DEV delivery requires separate HA DEV and physical Android acceptance.</p></div>
                 </details>
 
                 <details class="release-history-entry release-history-collapsible" open>
@@ -8038,7 +8043,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Einführung überwachter Standorte (Monitored Areas) mit eigenständiger Hintergrundüberwachung, optionaler Ereignisprotokollierung, Löschschutz sowie CSV- und PDF-Export.</li>
                       <li>Vereinheitlichung der mehrsprachigen Status-, Warn- und Fehlermeldungen über sämtliche Funktionen hinweg.</li>
                       <li>Erweiterte Darstellung von Schnee, Nebel und gefrierendem Niederschlag mit orbitalen Untermenüs für Wetter-Icons.</li>
-                      <li>Dynamische Anordnung der Aura-Ringe in Eye Control sowie eine Geo-Sonde für Kartenkoordinaten, lokale Zeit, Mondphase und – bei geeigneten Daten – Ebbe und Flut.</li>
+                      <li>Eine Geo-Sonde für Kartenkoordinaten, lokale Zeit, Mondphase und – bei geeigneten Daten – Ebbe und Flut.</li>
                       <li>Zusätzliche Wetter- und Umweltinformationen zu UV-Strahlung, Luftqualität und Pollenbelastung.</li>
                       <li>Fachlich fundierte Darstellung von Tornados, Superzellen, Hagel und weiteren schweren Unwettern.</li>
                       <li>ISS-Position und Flugbahn mit möglichen Sichtbarkeitszeiten für den ausgewählten Beobachtungsstandort.</li>
@@ -8046,6 +8051,11 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <li>Erweiterte Blitzprotokollierung und konfigurierbare Alarmierung für überwachte Standorte.</li>
                     </ul>
                   </div>
+                </details>
+
+                <details class="release-history-entry release-history-collapsible" open>
+                  <summary><div><div class="release-history-version">V4.12 DEV · 2026/11</div><h3>GewitterRadar PRO – Dynamische Auren und Legend Hub</h3></div><span class="release-history-future-chevron" aria-hidden="true"></span></summary>
+                  <div class="release-history-collapsible-content"><p><strong>V4.12 DEV:</strong> Eye Control bietet eine optionale dynamische Aura-Anordnung mit stabilen Wetter-Icons und Unterstützung reduzierter Bewegung. Der separat geschützte Aura-Meilenstein geht dem Legend Hub voraus.</p><p><strong>Legend Hub:</strong> Eigenständig verschiebbarer Glas-Hub mit zwei Originalsymbolen, frei belegbaren Slots und Ausklapprichtungen. Kurzer Tipp schaltet Legenden unabhängig vom Wetterlayer; langer Druck öffnet die individuellen Einstellungen. Premium und Compact Glass verwenden geprüfte Wetterskalen mit Ausrichtung, Größen, Beschriftungsdichte, Strichmaterialien und lokalem Textkontrast. Einstellungen bleiben im Settings-Vault-Profil erhalten.</p><p>Alle 19 Sprachvarianten bleiben erhalten. V4.11.03 FINAL bleibt geschützt; diese DEV-Auslieferung benötigt eine getrennte Abnahme auf HA DEV und physischem Android.</p></div>
                 </details>
 
                 <details class="release-history-entry release-history-collapsible" open>

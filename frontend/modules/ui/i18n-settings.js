@@ -1,11 +1,12 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411248r1';
-import {settingsStorage} from '../core/settings-vault.js?v=4123r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=4123r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4124r1';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=4124r1';
+import {LEGEND_HUB_TRANSLATIONS} from '../weather/legend-hub-locales.js?v=4124r1';
 import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.i18n-settings",
-  "version": "1.3.69",
+  "version": "1.3.70",
   "group": "Oberfläche",
   "function": "Sprache & Einstellungen",
   "subfunctions": [
@@ -2391,7 +2392,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       const v410 = V410_UI_TRANSLATIONS[language] || v410Fallback;
       const aboutKey = key.startsWith('about.') ? key.slice(6) : null;
       const eyeKey=key.startsWith('eye.')?key.slice(4):null;
-      let text = eyeKey ? EYE_HUB_TRANSLATIONS[language]?.[eyeKey] ?? EYE_HUB_TRANSLATIONS.English[eyeKey] ?? key : aboutKey
+      let text = key.startsWith('legendHub.') ? LEGEND_HUB_TRANSLATIONS[language]?.[key.slice(10)] ?? LEGEND_HUB_TRANSLATIONS.English[key.slice(10)] ?? key : eyeKey ? EYE_HUB_TRANSLATIONS[language]?.[eyeKey] ?? EYE_HUB_TRANSLATIONS.English[eyeKey] ?? key : aboutKey
         ? resolveAboutLocale(language).strings[aboutKey] ?? key
         : v410[key] ?? extra[key] ?? table[key] ?? PRESENTATION_LOCALES[language]?.[key] ?? PRESENTATION_LOCALES.English[key]
           ?? v410Fallback[key] ?? extraFallback[key] ?? fallback[key] ?? I18N['Deutsch']?.strings?.[key] ?? key;
@@ -2526,6 +2527,7 @@ export const installI18nSettings=defineModule(MODULE_META,(deps)=>{const { CARD_
       if(this.shadow.getElementById('map-diagnostic-panel')?.hidden===false)this._mapDiagnosticRender?.();
       this._weatherTemperatureTranslate?.();
       this._weatherWindTranslate?.();
+      this._legendHubTranslate?.();
       if(this.__weatherWind)this._weatherWindSyncToggle?.();
       if(this.__weatherTemperature)this._weatherTemperatureSyncToggle?.();
       this._weatherSynopticSyncMenu?.();

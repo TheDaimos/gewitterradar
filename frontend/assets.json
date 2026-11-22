@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "6ba682ec17db7213c9e5fd49e08b36c3e83ee69b048586b447b14538e895ef91",
+    "sha256": "e2dffe868ce1ed653b418fa28ed4ffbbcd0b12930e83aaccf17285f0c4963041",
     "protected": false,
     "sizeBytes": 2952
   },
@@ -462,5 +462,15 @@
     "file": "assets/weather-router-emblem-v004-256.png",
     "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
     "protected": false
+  },
+  {
+    "file": "assets/gr-legend-hub-1-original.png",
+    "sha256": "aafd3864028822f005c177e0001a2646fb8a82594a95a494bb4db79e0f6e8af7",
+    "protected": true
+  },
+  {
+    "file": "assets/gr-legend-hub-2-original.png",
+    "sha256": "29317b30eec77fa85a2e412d1183584f91eefdeb3abb7455237b40ee7465f5ec",
+    "protected": true
   }
 ]

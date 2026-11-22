@@ -10,8 +10,9 @@ const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8
 const EYE = 'gewitterradar:eye-bubble:v1';
 const SYNOPTIC = 'gewitterradar:synoptic-ui:v1';
 const CLOUDS = 'gewitterradar:clouds-ui:v1';
-const settingsKeys = [...Object.keys(legacy), SYNOPTIC, CLOUDS];
-const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC, CLOUDS];
+const HUB = 'gewitterradar:legend-hub:v1';
+const settingsKeys = [...Object.keys(legacy), SYNOPTIC, CLOUDS, HUB];
+const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC, CLOUDS, HUB];
 const mock = {profiles: {}, migrationIssues: new Map(), receipts: new Map(), log: [], offline: false, deferGet: null, loseCreateReply: false};
 
 const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
@@ -436,9 +437,20 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     const persistedSynoptic=mock.profiles.a[androidId].settings[SYNOPTIC];
     assert.equal(persistedSynoptic.lowColor,'#123456');
     assert.equal(persistedSynoptic.frontColors.cold,'#FFE17A');
+    const hubBefore = await android.page.evaluate(async () => {
+      const {saveLegendHub,patchLegend} = await import('/frontend/modules/weather/legend-preferences.js?v='+
+        (await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision);
+      saveLegendHub(card,{icon:2,direction:'vertical',position:{x:.9,y:.1},slots:['wind',null,'temperature','advection']});
+      patchLegend(card,'temperature',{presentation:'compact',orientation:'vertical',size:'XL',density:'detailed',style:'thermometer',material:'brass',labels:'inside',ticks:'inside',foreground:'mint',autoInvert:true,mode:'on'});
+      return card.__legendHub.config;
+    });
+    await android.page.waitForFunction(() => card._settingsVault.status === 'saved');
+    assert.deepEqual(mock.profiles.a[androidId].settings[HUB],hubBefore,'Hub stored in authenticated HA profile');
+    assert.equal(await android.page.evaluate(key=>localStorage.getItem(key),HUB),null,'No parallel browser-only Hub store');
     await android.page.reload();
     await android.page.waitForFunction(() => window.card?._map && card._settingsVault?.profile);
     const reloadedEye = await android.page.evaluate(() => card._eyeHubState().config);
+    assert.deepEqual(await android.page.evaluate(()=>card.__legendHub.config),hubBefore,'authenticated profile restores all Hub/scale fields');
     assert.equal(reloadedEye.slots[4].functionId, 'synoptic');
     assert.deepEqual(reloadedEye.slots.slice(0, 4), originalEye.slots);
     assert.equal(reloadedEye.colors.synoptic, '#FFC442');

@@ -1,17 +1,18 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4123r1';
-import {WindStudio} from './wind-studio.js?v=4123r1';
+import {legendVisible,patchLegend} from './legend-preferences.js?v=4124r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4124r1';
+import {WindStudio} from './wind-studio.js?v=4124r1';
 import {SnakeCanvas} from './snake-canvas.js?v=411211r1';
 import {SNAKE_LIMITS,snakeSettingText} from './snake-config.js?v=411211r1';
-import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=4123r1';
+import {bindPremiumPanelDrag,ensurePremiumUi,premiumAction,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=4124r1';
 import {installFlowTranslations,flowOptions} from './flow-locales.js?v=411157r1';
 import {requestWeatherFrame,cancelWeatherFrame} from './frame-clock.js?v=411156r1';
 import { defineModule } from '../core/runtime.js?v=41114r1';
 import { WIND_COLORS,WIND_STORAGE,WIND_SPEED,WIND_DIRECTION,readWindConfig,normalizeWindConfig,combineWindPoint,windQueryPoints,windSpeedText,windDisplayActive,effectiveWindConfig } from './wind-data.js?v=411211r1';
 import { WindCanvas } from './wind-canvas.js?v=411211r1';
-import { createWindLegend,updateWindLegend } from './wind-legend.js?v=4123r1';
+import { createWindLegend,updateWindLegend } from './wind-legend.js?v=4124r1';
 import { WIND_FIELD,WIND_FIELD_COMMAND,parseWindField,windFieldViewport,windFieldVisibleBounds,WindFieldCache } from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.62',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.wind-display',version:'0.4.63',group:'Weather-Engine',function:'Konfigurierbare WR-Winddarstellung',subfunctions:['Windfahnen','Richtungspfeile','numerisches Windfeld','Windgeschwindigkeits-Farbfläche','persistente Symbolfarben','Premium-Windlegende'],file:'modules/weather/wind-display.js'});
 const MODES=['barbs','arrows','animated','snake'];
 const INFO_URL=new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -90,7 +91,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
     if(button.dataset.windAction==='close'){panel.hidden=true;this.__windOpener?.focus?.();}
     if(button.dataset.windAction==='snake-pause')this._weatherWindSet({paused:!this._weatherWindState().config.paused});
     if(button.dataset.windAction==='refresh')this._weatherWindQueue({force:true});
-    if(button.dataset.windAction==='legend'){const s=this._weatherWindState();s.legendOpen=!s.legendOpen;s.legend||=createWindLegend(this);updateWindLegend(s.legend,this);if(s.legendOpen){panel.hidden=true;if(panel.classList.contains('embedded'))this._weatherDisplayPatch?.({enabled:false});}}
+    if(button.dataset.windAction==='legend'){const s=this._weatherWindState();s.legendOpen=!legendVisible(this,'wind',s.legendOpen&&s.config.visible);patchLegend(this,'wind',{mode:s.legendOpen?'on':'off'});s.legend||=createWindLegend(this);updateWindLegend(s.legend,this);if(s.legendOpen){panel.hidden=true;if(panel.classList.contains('embedded'))this._weatherDisplayPatch?.({enabled:false});}}
    });
    const snakeInput=event=>{const node=event.target,key=node.dataset.snakeSetting;if(!key)return false;this._weatherWindSet({snake:{...this._weatherWindState().config.snake,[key]:Number(node.value)}},{render:false});event.stopPropagation();return true;};
    panel.addEventListener('input',snakeInput);
@@ -151,7 +152,7 @@ export const installWeatherWind=defineModule(MODULE_META,(deps={})=>{installFlow
   s.onMove=()=>this._weatherWindQueue();s.map.on('moveend zoomend',s.onMove);
   s.onUnload=()=>this._weatherWindDetach();s.map.on('unload',s.onUnload);
   s.onVisibility=()=>{if(document.hidden){clearTimeout(s.refreshTimer);s.refreshTimer=null;s.generation++;s.pending=false;}else if(!windDisplayActive(s.config))this._weatherWindHide();else this._weatherWindQueue({force:true});};document.addEventListener('visibilitychange',s.onVisibility);
-  this._weatherWindUpdatePainters(s.points,s.field);this._weatherWindQueue();if(s.legend&&s.legendOpen)updateWindLegend(s.legend,this);
+  this._weatherWindUpdatePainters(s.points,s.field);this._weatherWindQueue();if(s.legend)updateWindLegend(s.legend,this);
  },
  _weatherWindQueue({force=false}={}){
   const s=this._weatherWindState();clearTimeout(s.timer);

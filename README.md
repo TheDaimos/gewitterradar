@@ -1,3 +1,5 @@
+> **Entwicklung auf `deploy/dev`: V4.12.4 DEV / HA 0.25.165.** Legend Hub und dynamische Auren: [Prüfbericht](docs/GR_412_LEGEND_REPORT_2026-11-22.md). Die separat gesicherte [Aura-Referenz v4.12.3-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.3-dev) und V4.11.03 FINAL bleiben geschützt. DEV ist keine neue FINAL- oder Betreiberfreigabe.
+
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
 > **V4.11 FINAL · Gemeinschaftslizenz Modell B.**

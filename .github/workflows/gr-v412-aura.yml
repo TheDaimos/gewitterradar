@@ -1,4 +1,4 @@
-name: GR V4.12 Aura regression
+name: GR V4.12 Aura and Legend Hub regression
 on:
   workflow_dispatch:
   workflow_call:
@@ -24,6 +24,8 @@ jobs:
         run: |
           pip install PyYAML
           node scripts/test-v412-aura-model.mjs
+          node scripts/test-v412-legend-model.mjs
+          node scripts/test-v412-legend-isolation.mjs
           node scripts/test-eye-hub-model.mjs
           node scripts/test-eye-wow-model.mjs
           python scripts/test-v412-vault-schema.py
@@ -39,8 +41,10 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
+          GR_LEGEND_EVIDENCE: ${{ runner.temp }}/legend-evidence
         run: |
           node scripts/test-v412-aura-browser.cjs
+          node scripts/test-v412-legend-browser.cjs
           node scripts/test-eye-edge-browser.cjs
           node scripts/test-delayed-eye-recovery-browser.cjs
           node scripts/test-settings-vault-browser.cjs
@@ -49,5 +53,7 @@ jobs:
         if: always()
         with:
           name: v412-aura-synthetic-browser-evidence
-          path: ${{ runner.temp }}/aura-evidence
+          path: |
+            ${{ runner.temp }}/aura-evidence
+            ${{ runner.temp }}/legend-evidence
           if-no-files-found: ignore

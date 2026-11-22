@@ -242,6 +242,21 @@ MAP_MODE = choice("standard", "large", "fullscreen")
 BIT = choice("0", "1")
 MAP_VISIBILITY = choice("0", "1", "false", "true")
 JSON_SETTINGS = {
+    "gewitterradar:legend-hub:v1": fields({
+        "schema": choice(1), "icon": choice(1, 2),
+        "direction": choice("dynamic", "left", "right", "up", "down", "horizontal", "vertical"),
+        "autoClose": BOOL, "position": POSITION, "extraPositions": mapping(POSITION, 2), "extraUi": mapping(LEGEND, 2),
+        "slots": sequence(nullable(choice("precipitation", "wind", "temperature", "advection", "synoptic", "other")), 12),
+        "legends": mapping(fields({
+            "presentation": choice("premium", "compact"), "orientation": choice("horizontal", "vertical"),
+            "size": choice("S", "M", "L", "XL"), "density": choice("coarse", "medium", "detailed"),
+            "style": choice("clean", "precision", "thermometer"),
+            "material": choice("brass", "platinum", "gold", "silver", "black"),
+            "labels": choice("before", "inside", "after"), "ticks": choice("before", "inside", "after"),
+            "foreground": choice("auto", "white", "black", "ice", "mint", "champagne", "gold"), "autoInvert": BOOL, "shadow": BOOL, "outline": BOOL,
+            "mode": choice("inherit", "on", "off"),
+        }), 6),
+    }),
     "gewitterradar:eye-bubble:v1": EYE,
     "gewitterradar:synoptic-ui:v1": SYNOPTIC,
     "gewitterradar:clouds-ui:v1": fields({"enabled": BOOL, "positions": mapping(POSITION, 24)}),

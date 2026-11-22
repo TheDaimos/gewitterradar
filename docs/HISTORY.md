@@ -1,3 +1,15 @@
+## V4.12.4 DEV · 2026/11 · HA 0.25.165
+
+Legend Hub und gemeinsame Legenden mit unabhängiger Sichtbarkeit, eigenen Positionen, zwei Originalsymbolen, konfigurierbaren Skalen und vorhandener Profilpersistenz. Technischer Bericht: [Legend Hub](GR_412_LEGEND_REPORT_2026-11-22.md). Aura-Zwischenreferenz bleibt v4.12.3-dev.
+
+## V4.12.3 DEV · 2026/11 · HA 0.25.164
+
+Separat installierbare und geschützte technische Aura-Referenz nach vollständigen öffentlichen Frontend-/HA-Gates. Keine Betreiberabnahme daraus ableiten. [Referenzakte](GR_412_AURA_REFERENCE_2026-11-22.md).
+
+## V4.12.2 DEV · 2026/11 · HA 0.25.163
+
+Versions-/Cache-Gates für die 4.12-Serie und optionale Recorder-Nachstartabhängigkeit; Aura-Implementierung erhalten.
+
 ## V4.12.1 DEV · 2026/11 · HA-Integration 0.25.162
 
 Separater technischer Aura-Zwischenstand: dynamische Ringkompaktierung, stabile Iconidentität, ruhige endliche Übergänge und bestehende Rand-/Touch-Schutzpfade. V4.11.03 FINAL bleibt Ausgangsreferenz; HA-/Android-Betreiberabnahme separat. Details: [Aura-Referenz](GR_412_AURA_REFERENCE_2026-11-22.md).

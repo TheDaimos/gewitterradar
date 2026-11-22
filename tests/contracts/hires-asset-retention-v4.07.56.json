@@ -9,7 +9,8 @@
     "artwork/location-search/legacy",
     "artwork/about-controls",
     "artwork/compass-chevron/hires",
-    "artwork/weather-router/retained-renditions"
+    "artwork/weather-router/retained-renditions",
+    "artwork/legend-hub/hires"
   ],
   "requiredMetadataPaths": [
     "docs/ASSET_RETENTION_POLICY.md",
@@ -22,7 +23,8 @@
     "artwork/weather-router/README.md",
     "artwork/help-icons/gr-precipitation-ASSET_MANIFEST.json",
     "artwork/help-icons/gr-clouds-ASSET_MANIFEST.json",
-    "artwork/help-icons/gr-synoptic-high-low-isobars-ASSET_MANIFEST.json"
+    "artwork/help-icons/gr-synoptic-high-low-isobars-ASSET_MANIFEST.json",
+    "artwork/legend-hub/provenance.json"
   ],
   "protectedBlobs": [
     {
@@ -279,7 +281,7 @@
     },
     {
       "label": "Gewitterradar hero background - alpine storm variant",
-      "preferredPath": "artwork/help-icons/hires/Gewitter über dem alpinen Abendtal.png",
+      "preferredPath": "artwork/help-icons/hires/Gewitter \u00c3\u00bcber dem alpinen Abendtal.png",
       "gitBlobSha1": "294b9c1f192a90b756aa9a0a2fc4f37412aff896",
       "sizeBytes": 2310963
     },
@@ -372,6 +374,18 @@
       "preferredPath": "artwork/help-icons/hires/gr-storm-premium-original.png",
       "gitBlobSha1": "e1d3ef5dd3b2af56fb12a46223ef09baa31f20a0",
       "sizeBytes": 2114584
+    },
+    {
+      "label": "Legend Hub original 1 master",
+      "preferredPath": "artwork/legend-hub/hires/gr-legend-hub-1-original.png",
+      "gitBlobSha1": "9e4cbc0d2c926b06d84c249f64092aa891fd4b71",
+      "sizeBytes": 2411557
+    },
+    {
+      "label": "Legend Hub original 2 master",
+      "preferredPath": "artwork/legend-hub/hires/gr-legend-hub-2-original.png",
+      "gitBlobSha1": "85e646dab5284d5ccc2d3d31db1acb9330bd293c",
+      "sizeBytes": 2164559
     }
   ]
 }

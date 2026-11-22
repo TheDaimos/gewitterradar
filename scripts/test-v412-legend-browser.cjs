@@ -1,0 +1,78 @@
+/* Actual card/Leaflet, synthetic HA/WR transport; emulation is not device acceptance. */
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {temperatureFixture:fixture}=require('./temperature-browser-fixture.cjs');
+const out=process.env.GR_LEGEND_EVIDENCE||path.resolve('.task412-work/legend-evidence');fs.mkdirSync(out,{recursive:true});
+(async()=>{const f=fixture();await new Promise(r=>f.server.listen(0,'127.0.0.1',r));const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})}),results=[];
+try{for(const [name,width,height,touch]of [['desktop',1280,900,false],['portrait',393,851,true],['landscape',851,393,true]]){
+ if(process.env.GR_LEGEND_SCENARIOS&&!process.env.GR_LEGEND_SCENARIOS.split(',').includes(name))continue;console.log('Legend scenario: '+name);const context=await browser.newContext({viewport:{width,height},hasTouch:touch,deviceScaleFactor:2}),page=await context.newPage(),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message);});await f.route(page);await page.goto('http://127.0.0.1:'+f.server.address().port);await page.waitForFunction(()=>window.ready&&card._mapReady&&card.__proBranding?.eyeReady);
+ await page.evaluate(async()=>{card._setMapDisplayMode('fullscreen',{persist:false});window.lh=card.__legendHub;window.preferences=await import('/frontend/modules/weather/legend-preferences.js?v=4124r1');window.views=await import('/frontend/modules/weather/legend-hub-view.js?v=4124r1');});
+ assert(await page.locator('#legend-hub-control').isVisible(),'hub available after readiness');
+ await page.locator('#legend-hub-control').click();assert(await page.locator('#legend-hub-popout').isVisible());
+ const modes=await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled,synoptic:card._weatherSynopticState().config.visible}));
+ for(const id of ['wind','temperature','precipitation','synoptic']){await page.locator(`#legend-hub-popout [data-legend-id="${id}"]`).click();assert(await page.locator(`#weather-${id==='precipitation'?'':id+'-'}legend-overlay`).isVisible(),id+' legend opens with layer off');}
+ assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled,synoptic:card._weatherSynopticState().config.visible})),modes,'legend actions never toggle weather layers');
+ await page.screenshot({path:path.join(out,name+'-legends.png')});
+ await page.evaluate(()=>views.openLegendConfig(card,'synoptic'));assert(await page.locator('[data-lh-key=density]').isDisabled());assert(await page.locator('[data-lh-key=orientation]').isEnabled());assert(await page.locator('[data-lh-key=foreground]').isEnabled());await page.locator('.lh-dialog [data-lh-close]').click();
+ // Close through the native X and reopen through the hub. The visibility
+ // override is the new explicit mode, legacy layer preferences are inherited.
+ await page.locator('#weather-temperature-legend-overlay').focus();await page.locator('#weather-temperature-legend-overlay [data-weather-legend-hide]').click();assert(await page.locator('#weather-temperature-legend-overlay').isHidden());
+ await page.locator('#legend-hub-popout [data-legend-id=temperature]').click();assert(await page.locator('#weather-temperature-legend-overlay').isVisible());
+ await page.evaluate(()=>{for(const id of ['wind','temperature','advection','synoptic','other'])preferences.patchLegend(card,id,{mode:'off'});card._weatherDisplaySetLegendMode('off');});
+ // Every preference/direction/count is exercised in the actual layout.
+ let layouts=0;
+ for(const direction of ['dynamic','left','right','up','down','horizontal','vertical'])for(const count of [1,4,8,12])for(const [x,y]of [[0,0],[1,0],[0,1],[1,1]]){
+  const fit=await page.evaluate(({direction,count,x,y})=>{lh.open=false;lh.locked=null;preferences.saveLegendHub(card,{direction,position:{x,y},slots:Array.from({length:count},(_,i)=>['wind','temperature',null,'precipitation','synoptic','advection','other'][i%7])});lh.open=true;card._legendHubRefresh();const panel=lh.popout.getBoundingClientRect(),map=card.shadow.getElementById('map').getBoundingClientRect(),locked=lh.locked;card._legendHubRefresh();return {inside:panel.left>=map.left&&panel.top>=map.top&&panel.right<=map.right&&panel.bottom<=map.bottom,locked:locked===lh.locked,buttons:lh.popout.querySelectorAll('[data-legend-slot]').length};},{direction,count,x,y});assert(fit.inside&&fit.locked&&fit.buttons===count,JSON.stringify({name,direction,count,x,y,fit}));layouts++;
+ }
+ await page.evaluate(()=>{lh.open=false;lh.locked=null;preferences.saveLegendHub(card,{slots:['wind','temperature','precipitation','synoptic'],direction:'dynamic',position:{x:.2,y:.2}});lh.open=true;card._legendHubRefresh();});
+ // Long press reaches configuration without toggling a legend.
+ const windSlot=page.locator('#legend-hub-popout [data-legend-id=wind]');await windSlot.dispatchEvent('pointerdown',{pointerId:71,pointerType:touch?'touch':'mouse',button:0,isPrimary:true,clientX:0,clientY:0});await page.waitForTimeout(680);assert(await page.locator('.lh-dialog').isVisible());await windSlot.dispatchEvent('pointerup',{pointerId:71,pointerType:touch?'touch':'mouse',button:0,isPrimary:true});assert.equal(await page.evaluate(()=>lh.config.legends.wind.mode),'off');await page.locator('.lh-dialog [data-lh-close]').click();
+ // Long press main symbol; tap selects and arrow controls provide a touch
+ // alternative to native desktop drag/drop.
+ await page.locator('#legend-hub-control').focus();await page.keyboard.press('F2');assert(await page.locator('.lh-dialog').isVisible());await page.locator('[data-lh-icon="2"]').click();await page.locator('[data-lh-key=count]').selectOption('6');await page.locator('[data-lh-slot="4"]').selectOption('advection');await page.locator('[data-lh-slot="5"]').selectOption('other');await page.locator('[data-lh-move="4"][data-delta="-1"]').click();assert.equal(await page.evaluate(()=>lh.config.slots[3]),'advection');
+ if(!touch){await page.locator('[data-lh-row="0"] > span').dragTo(page.locator('[data-lh-row="2"] > span'));assert.equal(await page.evaluate(()=>lh.config.slots[2]),'wind');}
+ await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.icon),2);assert(await page.locator('#legend-hub-popout').isVisible(),'dialog interactions retain popout');
+ for(const id of ['advection','other']){await page.locator('#legend-hub-popout [data-legend-id='+id+']').click();assert(await page.locator('#weather-'+id+'-legend-overlay').isVisible());await page.locator('#legend-hub-popout [data-legend-id='+id+']').click();assert(await page.locator('#weather-'+id+'-legend-overlay').isHidden());}
+ // Free map clicks close; interactive map controls and menus do not.
+ await page.locator('.leaflet-control-zoom-in').click();assert(await page.locator('#legend-hub-popout').isVisible(),'zoom is not free map area');
+ await page.evaluate(()=>{window.lhClicks=[];card.shadow.getElementById('map-card').addEventListener('click',e=>lhClicks.push(e.composedPath().map(n=>n?.tagName+'#'+n?.id+'.'+n?.className)),{capture:true});});
+ const free=await page.evaluate(()=>{const map=card.shadow.getElementById('map'),r=map.getBoundingClientRect();for(let y=r.top+100;y<r.bottom-20;y+=35)for(let x=r.left+100;x<r.right-20;x+=35){const n=card.shadow.elementFromPoint(x,y);if(n&&map.contains(n)&&!n.closest('button,a,input,select,.leaflet-control,.leaflet-interactive,.weather-legend-overlay,.lh-popout,.lh-main,[role=button]'))return{x,y};}return null;});assert(free,'free map test point');await page.mouse.click(free.x,free.y);assert(await page.locator('#legend-hub-popout').isHidden(),JSON.stringify(await page.evaluate(()=>({clicks:lhClicks,autoClose:lh.config.autoClose,open:lh.open}))));
+ await page.evaluate(()=>{preferences.saveLegendHub(card,{autoClose:false});lh.open=true;card._legendHubRefresh();});await page.mouse.click(free.x,free.y);assert(await page.locator('#legend-hub-popout').isVisible(),'fixed open mode');
+ // Shared pointer recovery and normalized saved position at all map edges.
+ await page.evaluate(()=>{lh.open=false;card._legendHubRefresh();});
+ for(const [x,y]of [[0,0],[1,0],[0,1],[1,1],[.5,0],[.5,1],[0,.5],[1,.5]]){const r=await page.locator('#legend-hub-control').boundingBox(),map=await page.locator('#map').boundingBox();await page.mouse.move(r.x+r.width/2,r.y+r.height/2);await page.mouse.down();await page.mouse.move(map.x+30+x*(map.width-60),map.y+30+y*(map.height-60),{steps:5});await page.mouse.up();assert(await page.evaluate(()=>{const r=lh.button.getBoundingClientRect(),m=card.shadow.getElementById('map').getBoundingClientRect();return !lh.eyeDrag&&lh.config.position.x>=0&&lh.config.position.x<=1&&lh.config.position.y>=0&&lh.config.position.y<=1&&r.left>=m.left&&r.right<=m.right&&r.top>=m.top&&r.bottom<=m.bottom;}),'drag/clamp/recovery '+x+','+y);}
+ // Moving the existing Eye onto the saved hub location must leave the Eye
+ // anchor untouched and make the new presentation control yield instead.
+ await page.evaluate(()=>{preferences.saveLegendHub(card,{position:{x:0,y:1}});card._eyeHubPatch({grouped:true});card._weatherDisplayPatch({rememberPosition:true,eyePosition:{x:0,y:1}});});
+ await page.waitForFunction(()=>{const a=card.__legendHub.button.getBoundingClientRect(),b=card.shadow.getElementById('weather-display-eye-control').getBoundingClientRect();return a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom;});
+ assert.deepEqual(await page.evaluate(()=>card._weatherDisplayState().config.eyePosition),{x:0,y:1},'existing Eye anchor preserved');await page.evaluate(()=>card._eyeHubPatch({grouped:false}));
+ // All appearance values and all label/tick placement combinations. Measure
+ // actual DOM glyph boxes instead of merely asserting configuration strings.
+ const appearances=await page.evaluate(()=>{let cases=0;for(const orientation of ['horizontal','vertical'])for(const size of ['S','M','L','XL'])for(const labels of ['before','inside','after'])for(const ticks of ['before','inside','after']){
+  const c={orientation,size,labels,ticks,presentation:cases%2?'premium':'compact',density:['coarse','medium','detailed'][cases%3],style:['clean','precision','thermometer'][cases%3],material:['brass','platinum','gold','silver','black'][cases%5],mode:'on'};preferences.patchLegend(card,'temperature',c);const host=card.shadow.getElementById('weather-temperature-legend-overlay'),scale=host.querySelector('.lh-scale'),rects=[...scale.querySelectorAll('.lh-label')].map(n=>n.getBoundingClientRect());
+  for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){const a=rects[i],b=rects[j];if(a.left<b.right-.1&&a.right>b.left+.1&&a.top<b.bottom-.1&&a.bottom>b.top+.1)throw Error('Label collision '+JSON.stringify(c));}
+  if(labels==='inside'&&ticks==='inside')for(const a of rects)for(const n of scale.querySelectorAll('.lh-mark')){const b=n.getBoundingClientRect();if(a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)throw Error('Inside lanes overlap '+JSON.stringify(c));}
+  if(!scale.classList.contains(c.style)||host.dataset.presentation!==c.presentation)throw Error('Appearance not rendered');cases++;
+ }return cases;});assert.equal(appearances,72);
+ await page.evaluate(()=>preferences.patchLegend(card,'temperature',{presentation:'compact',orientation:'horizontal',size:'M',labels:'after',ticks:'inside',style:'thermometer',mode:'on'}));await page.waitForTimeout(150);await page.screenshot({path:path.join(out,name+'-compact.png')});
+ // Configuration UI and keyboard focus, not just the internal patch API.
+ await page.locator('#weather-temperature-legend-overlay [data-lh-config]').click();await page.locator('[data-lh-key=orientation]').selectOption('vertical');await page.locator('[data-lh-key=foreground]').selectOption('gold');await page.locator('[data-lh-key=shadow]').uncheck();await page.locator('[data-lh-key=outline]').uncheck();await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.legends.temperature.foreground),'gold');
+ // Actual synthetic fields: legend preferences/units cannot fetch or alter
+ // native weather values; a denied temperature provider leaves Wind intact.
+ if(name==='desktop'){
+  await page.evaluate(()=>{card._weatherWindSet({visible:true,mode:'animated',animationExplicit:true,colorField:true});card._weatherTemperatureSet({visible:true,advection:true});});
+  await page.waitForFunction(()=>card._weatherWindState().field&&card._weatherTemperatureState().field?.advection.status==='ready');
+  const science=await page.evaluate(()=>({wind:card._weatherWindState().field.id,temp:card._weatherTemperatureState().field.id,values:Array.from(card._weatherTemperatureState().field.grid.values),windRequests:windRequests.length,tempRequests:temperatureRequests.length}));
+  await page.evaluate(()=>{preferences.patchLegend(card,'wind',{mode:'on',presentation:'compact'});preferences.patchLegend(card,'temperature',{mode:'on',density:'detailed'});card._weatherTemperatureSet({unit:'F'});});
+  assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().field.id,temp:card._weatherTemperatureState().field.id,values:Array.from(card._weatherTemperatureState().field.grid.values),windRequests:windRequests.length,tempRequests:temperatureRequests.length})),science,'legend changes and unit conversion leave transport/values unchanged');
+  assert.match(await page.locator('#weather-temperature-legend-overlay').textContent(),/\u00b0F/);
+  await page.evaluate(()=>{temperatureTransport.mode='denied';card._weatherTemperatureQueue({force:true});});await page.waitForFunction(()=>!card._weatherTemperatureState().field&&card._weatherTemperatureState().error);
+  assert.equal(await page.evaluate(()=>card._weatherWindState().field.id),science.wind,'temperature denial isolates Wind');
+  await page.evaluate(()=>{temperatureTransport.mode='ready';card._weatherTemperatureSet({visible:false});card._weatherWindSet({visible:false});});
+ }
+ // Reduced motion disables finite popout animation, and reload restores all
+ // preferences via the same storage adapter as existing settings.
+ await page.emulateMedia({reducedMotion:'reduce'});await page.evaluate(()=>{lh.open=true;card._legendHubRefresh();});assert.equal(await page.evaluate(()=>getComputedStyle(lh.popout).animationName),'none');
+ const saved=await page.evaluate(()=>JSON.parse(JSON.stringify(lh.config)));await page.reload();await page.waitForFunction(()=>window.ready&&card._mapReady&&card.__legendHub);assert.deepEqual(await page.evaluate(()=>card.__legendHub.config),saved,'reload persistence');
+ assert.deepEqual(errors,[]);results.push({name,independentLayers:true,layouts,longPress:true,slotEditing:true,freeMapOnly:true,edgeDrags:8,appearances,eyeCoexistence:true,categorical:true,fieldIsolation:name==='desktop',reducedMotion:true,reload:true});fs.writeFileSync(path.join(out,name+'-results.json'),JSON.stringify(results.at(-1),null,2)+'\n');console.log(name+': all Legend Hub checks passed');await context.close();
+}}finally{await browser.close();f.server.closeAllConnections();await new Promise(r=>f.server.close(r));}fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2)+'\n');console.log('PASS V4.12 Legend browser: '+JSON.stringify(results));})().catch(e=>{console.error(e);process.exitCode=1;});

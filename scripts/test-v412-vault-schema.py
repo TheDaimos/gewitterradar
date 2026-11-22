@@ -19,3 +19,22 @@ except schema.VaultError:
 else:
     raise AssertionError('Unknown arrangement accepted')
 print('PASS: actual Vault schema accepts both layouts and unchanged legacy profiles, rejects invalid values')
+
+hub = 'gewitterradar:legend-hub:v1'
+settings = {hub: {'schema': 1, 'icon': 2, 'slots': ['wind', None, 'temperature'],
+                 'position': {'x': 1, 'y': 0}, 'direction': 'vertical', 'autoClose': False,
+                 'legends': {'temperature': {'presentation': 'compact', 'orientation': 'vertical',
+                     'size': 'XL', 'density': 'detailed', 'style': 'thermometer', 'material': 'platinum',
+                     'labels': 'inside', 'ticks': 'inside', 'foreground': 'auto',
+                     'shadow': True, 'outline': True, 'mode': 'on'}}}}
+assert schema.validate_settings(settings) == settings
+assert schema.decode_value(hub, schema.encode_value(hub, settings[hub])) == settings[hub]
+for invalid in [{'icon': 3}, {'slots': ['invented']}, {'slots': ['wind'] * 13},
+                {'legends': {'wind': {'size': 'XXL'}}}, {'position': {'x': 2, 'y': 0}}]:
+    try:
+        schema.validate_settings({hub: invalid})
+    except schema.VaultError:
+        pass
+    else:
+        raise AssertionError(f'Invalid Legend Hub accepted: {invalid}')
+print('PASS: actual Vault schema round-trips Legend Hub appearance, position, empty slots; rejects unsafe values')

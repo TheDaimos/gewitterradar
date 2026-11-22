@@ -1,9 +1,12 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4123r1';
-import {ensurePremiumUi,enhancePremiumSections,PREMIUM_INFO} from './premium-ui.js?v=4123r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=4124r1';
+import {ensurePremiumUi,enhancePremiumSections,PREMIUM_INFO} from './premium-ui.js?v=4124r1';
+import {decorateLegend} from './legend-hub-view.js?v=4124r1';
+import {legendDescriptor} from './legend-registry.js?v=4124r1';
+import {renderLegendScale} from './legend-scale.js?v=4124r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
 // Reuse the existing overlay's event delegation, pointer drag, bounds and teardown.
 // A scientific view must not pass through the precipitation-only family renderer.
-export function createScientificLegend(owner,{prefix,ui,position,visible,saveUi,savePosition,close,title,render}){
+export function createScientificLegend(owner,{prefix,id=prefix.replace(/^weather-|-legend-$/g,''),ui,position,visible,saveUi,savePosition,close,title,render}){
  const view=new ScientificLegend(),ensure=view._weatherLegendEnsureUi;
  view._t=owner._t.bind(owner);
  view.shadow={getElementById:id=>owner.shadow?.getElementById(id.startsWith('weather-legend-')?id.replace('weather-legend-',prefix):id),append:node=>{if(node.id==='weather-legend-style')node.id=prefix+'style';owner.shadow.append(node);}};
@@ -12,11 +15,13 @@ export function createScientificLegend(owner,{prefix,ui,position,visible,saveUi,
  view._weatherPremiumCloseAsset=()=>owner._weatherPremiumCloseAsset?.();
  view._weatherLegendEnsureUi=function(){ensurePremiumUi(owner.shadow);const host=ensure.call(this);if(host){host.id=prefix+'overlay';host.classList.add('gr-scientific-legend');host.setAttribute('aria-label',title());}return host;};
  view._weatherLegendSyncUi=function(){
-  const host=this._weatherLegendEnsureUi();if(!host)return;host.hidden=!this._weatherLegendVisibleModels().length;if(host.hidden)return;
-  const ui=this._weatherLegendState().ui;host.querySelector('[data-weather-legend-heading]').textContent=title();host.classList.toggle('gr-legend-minimized',ui.minimized===true);
+  const host=this._weatherLegendEnsureUi();if(!host)return;host.hidden=!this._weatherLegendVisibleModels().length;owner._legendHubStatus?.();if(host.hidden)return;
+  const options=decorateLegend(owner,id,host),ui=this._weatherLegendState().ui;host.querySelector('[data-weather-legend-heading]').textContent=title();host.classList.toggle('gr-legend-minimized',ui.minimized===true);
   const mini=host.querySelector('[data-gr-legend-minimize]');mini.setAttribute('aria-expanded',String(!ui.minimized));mini.setAttribute('aria-label',owner._t(ui.minimized?'weather.legend.maximize':'weather.legend.minimize'));
   host.querySelectorAll('[data-weather-legend-view]').forEach(b=>{const selected=b.dataset.weatherLegendView===ui.view;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});
-  const {visual,explanation,source}=render(ui.view),list=host.querySelector('[data-weather-legend-list]');list.replaceChildren(visual);
+  const {visual,explanation,source}=render(ui.view),list=host.querySelector('[data-weather-legend-list]'),model=legendDescriptor(owner,id);list.replaceChildren();
+  if(model){list.append(renderLegendScale(model,options,options.orientation==='vertical'?Math.max(100,(owner.shadow.getElementById('map')?.clientHeight||600)-140):Math.max(100,(owner.shadow.getElementById('map')?.clientWidth||430)-50)));if(ui.view==='classes'){visual.classList.add('lh-native-classes');list.append(visual);}}
+  else list.append(visual);
   const detail=document.createElement('details');detail.dataset.section='explanation';detail.className='gr-legend-explanation';const summary=document.createElement('summary'),icon=document.createElement('img');icon.src=PREMIUM_INFO;icon.alt='';icon.style.cssText='width:28px;height:28px;object-fit:contain';summary.append(icon,document.createTextNode(owner._t('weather.legend.info')));detail.append(summary,explanation);list.append(detail);if(source)list.append(source);
   // Explanation state belongs to this legend's stored UI, not its minimization.
   enhancePremiumSections(host,prefix);detail.open=ui.explanation===true;summary.setAttribute('aria-expanded',String(detail.open));detail.querySelector('.gr-collapse-inner').inert=!detail.open;

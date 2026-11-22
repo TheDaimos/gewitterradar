@@ -1,10 +1,13 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4123r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4124r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=4123r1';
+import {ensurePremiumUi,premiumAction} from './premium-ui.js?v=4124r1';
+import {decorateLegend} from './legend-hub-view.js?v=4124r1';
+import {legendOptions} from './legend-preferences.js?v=4124r1';
+import {renderLegendScale} from './legend-scale.js?v=4124r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.55",
+  version:"0.1.56",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -193,18 +196,18 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
           const item=normalizeLegendModel(id,{...model,...scale,scales:undefined,family:scale.kind==="snow"?"snow":"precipitation"});
           if(item)state.models.set(id,item);
         }
-        this._weatherLegendSyncUi();return;
+        this._weatherLegendSyncUi();this._legendHubRefresh?.();return;
       }
     }
     const normalized=normalizeLegendModel(key,model);
     if(normalized)state.models.set(key,normalized);else state.models.delete(key);
-    this._weatherLegendSyncUi();
+    this._weatherLegendSyncUi();this._legendHubRefresh?.();
   },
 
   _weatherLegendClear(source){
     const state=this._weatherLegendState();
     if(source==null)state.models.clear();else for(const id of state.models.keys())if(id===String(source)||id.startsWith(String(source)+":"))state.models.delete(id);
-    this._weatherLegendSyncUi();
+    this._weatherLegendSyncUi();this._legendHubRefresh?.();
   },
 
   _weatherLegendActiveModels(){
@@ -364,10 +367,11 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     for(const type of ["pointerup","pointercancel","lostpointercapture"])host.addEventListener(type,end);
   },
 
-  _weatherLegendRenderVisual(model){
+  _weatherLegendRenderVisual(model,{nativeOnly=false}={}){
     const entries=model.entries;
     if(!entries.length){const text=document.createElement("div");text.className="weather-legend-note";text.textContent=this._t("weather.legend.missingColors");return text;}
     const classes=this._weatherLegendState().ui.view==="classes";
+    if(!nativeOnly){const box=document.createElement('div');box.append(renderLegendScale(model,legendOptions(this,['precipitation','snow'].includes(model.family)?'precipitation':'other'),Math.max(100,(this.shadow?.getElementById('map')?.clientWidth||430)-50)));if(classes){const native=this._weatherLegendRenderVisual(model,{nativeOnly:true});native.classList.add('lh-native-classes');box.append(native);}return box;}
     if(classes&&entries.length<=24){
       const scale=document.createElement("div");scale.className="weather-legend-entries";
       for(const entry of entries){
@@ -401,6 +405,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
 
   _weatherLegendSyncUi(){
     const host=this._weatherLegendEnsureUi();if(!host)return;
+    decorateLegend(this,'precipitation',host);
     host.classList.toggle("gr-legend-minimized",this._weatherLegendState().ui.minimized===true);
     const models=this._weatherLegendVisibleModels(),list=host.querySelector("[data-weather-legend-list]");
     if(!models.length){

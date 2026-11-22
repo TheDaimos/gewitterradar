@@ -1,4 +1,5 @@
-import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4123r1';
+import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4124r1';
+import {legendVisible,patchLegend} from './legend-preferences.js?v=4124r1';
 import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411211r1';
 import {WIND_FIELD_COLORS} from './wind-field.js?v=411211r1';
 import {drawWindGlyph} from './wind-canvas.js?v=411211r1';
@@ -6,7 +7,7 @@ export function createWindLegend(owner){
  const state=owner._weatherWindState();
  const t=(key,vars)=>owner._t('weather.legend.'+key,vars);
  return createScientificLegend(owner,{prefix:'weather-wind-legend-',ui:state.config.legendUi,position:state.config.legendPosition,
-  visible:()=>state.legendOpen&&state.config.visible,saveUi:ui=>{state.config.legendUi={...ui};owner._weatherWindSave();},savePosition:p=>{state.config.legendPosition=p;owner._weatherWindSave();},close:()=>{state.legendOpen=false;state.legend?._weatherLegendSyncUi();},title:()=>t('wind10m'),
+  visible:()=>legendVisible(owner,'wind',state.legendOpen&&state.config.visible),saveUi:ui=>{state.config.legendUi={...ui};owner._weatherWindSave();},savePosition:p=>{state.config.legendPosition=p;owner._weatherWindSave();},close:()=>{state.legendOpen=false;patchLegend(owner,'wind',{mode:'off'});state.legend?._weatherLegendSyncUi();},title:()=>t('wind10m'),
   render:view=>{
    const c=state.config,f=state.field,color=WIND_COLORS.find(v=>v.id===c.color)?.hex||'#fff';
    const entries=BEAUFORT_LIMITS.map((v,i)=>({color:WIND_FIELD_COLORS[i],label:i+' Bft · '+(i<12

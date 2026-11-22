@@ -52,7 +52,20 @@ assert.equal(stripBuildVersions(readFileSync(precipitationPath,'utf8')),stripBui
 // Protect the published FINAL, including the already accepted H/T migration.
 const rootWeather='frontend/modules/weather/';
 for(const name of ['wind-display.js','temperature-display.js']){
- const installed=readFileSync(rootWeather+name,'utf8');
+ let installed=readFileSync(rootWeather+name,'utf8');
+ // V4.12.4 explicitly routes legend controls through the presentation-only
+ // preferences adapter. Reverse precisely these UI edits, then compare the
+ // ENTIRE remaining native module to FINAL (fetch/cache/render included).
+ if(installed.includes("from './legend-preferences.js")){
+  installed=installed.replace(/^import \{(?:legendVisible,)?patchLegend\} from '\.\/legend-preferences\.js\?v=[^']+';\r?\n/,'');
+  if(name==='wind-display.js'){
+   assert(installed.includes("s.legendOpen=!legendVisible(this,'wind',s.legendOpen&&s.config.visible);patchLegend(this,'wind',{mode:s.legendOpen?'on':'off'});"));
+   installed=installed.replace("s.legendOpen=!legendVisible(this,'wind',s.legendOpen&&s.config.visible);patchLegend(this,'wind',{mode:s.legendOpen?'on':'off'});",'s.legendOpen=!s.legendOpen;').replace('this._weatherWindQueue();if(s.legend)updateWindLegend','this._weatherWindQueue();if(s.legend&&s.legendOpen)updateWindLegend');
+  }else{
+   const adapter="for(const kind of ['temperature','advection'])if(Object.hasOwn(patch,kind+'Legend'))patchLegend(this,kind,{mode:'inherit'});";
+   assert(installed.includes(adapter));installed=installed.replace(adapter,'');
+  }
+ }
  assert.equal(stripBuildVersions(installed),stripBuildVersions(finalSource(rootWeather+name)),name+' protected FINAL implementation');
 }
 for(const [id,owner] of [['weather.satellite.clouds','clouds'],['weather.model.wind_10m.layer','wind'],['weather.temperature.layer','temperature'],['weather.precipitation.layer','precipitation']])assert.equal(eyeLayerOwner(id),owner);

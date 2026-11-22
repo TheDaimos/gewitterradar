@@ -1,12 +1,13 @@
 import {temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
-import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4123r1';
+import {legendVisible,patchLegend} from './legend-preferences.js?v=4124r1';
+import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4124r1';
 import {temperatureColor,temperatureText,temperatureLegendRange,advectionColor,advectionLegendClasses} from './temperature-data.js?v=411159r1';
 export function createTemperatureLegend(owner,kind){
  const s=owner._weatherTemperatureState(),temperature=kind==='temperature',narrow=(owner._map?.getSize().x||800)<720;
  const t=(key,vars)=>owner._t('weather.legend.'+key,vars);
  return createScientificLegend(owner,{prefix:'weather-'+kind+'-legend-',ui:s.config.legendUi[kind],position:s.config.legendPositions[kind]||{x:temperature||narrow?0:1,y:narrow&&!temperature?.48:.98},
-  visible:()=>s.config.visible&&s.config[temperature?'temperatureLegend':'advectionLegend']&&(temperature||s.config.advection),
-  saveUi:ui=>{s.config.legendUi[kind]={...ui};owner._weatherTemperatureSave();},savePosition:p=>{s.config.legendPositions[kind]=p;owner._weatherTemperatureSave();},close:()=>owner._weatherTemperatureSet({[temperature?'temperatureLegend':'advectionLegend']:false}),title:()=>t(temperature?'temperature2m':'advection850'),
+  visible:()=>legendVisible(owner,kind,s.config.visible&&s.config[temperature?'temperatureLegend':'advectionLegend']&&(temperature||s.config.advection)),
+  saveUi:ui=>{s.config.legendUi[kind]={...ui};owner._weatherTemperatureSave();},savePosition:p=>{s.config.legendPositions[kind]=p;owner._weatherTemperatureSave();},close:()=>patchLegend(owner,kind,{mode:'off'}),title:()=>t(temperature?'temperature2m':'advection850'),
   render:view=>{
    const c=s.config,f=s.field,fmt=v=>temperatureText(v+273.15,c.unit,true,owner._locale());let visual,explanation;
    if(temperature){
@@ -31,4 +32,4 @@ export function createTemperatureLegend(owner,kind){
   }
  });
 }
-export function updateTemperatureLegends(owner){const s=owner._weatherTemperatureState();for(const kind of ['temperature','advection']){if(!s.legends[kind]&&s.config.visible&&s.config[kind==='temperature'?'temperatureLegend':'advectionLegend'])s.legends[kind]=createTemperatureLegend(owner,kind);s.legends[kind]?._weatherLegendSetModel(kind,{family:'temperature',title:kind,unit:kind==='temperature'?temperatureUnitSymbol(s.config.unit):'K/h',entries:[{label:kind,color:'#fff'}],active:true});}}
+export function updateTemperatureLegends(owner){const s=owner._weatherTemperatureState();for(const kind of ['temperature','advection']){if(!s.legends[kind]&&legendVisible(owner,kind,s.config.visible&&s.config[kind==='temperature'?'temperatureLegend':'advectionLegend']))s.legends[kind]=createTemperatureLegend(owner,kind);s.legends[kind]?._weatherLegendSetModel(kind,{family:'temperature',title:kind,unit:kind==='temperature'?temperatureUnitSymbol(s.config.unit):'K/h',entries:[{label:kind,color:'#fff'}],active:true});}}

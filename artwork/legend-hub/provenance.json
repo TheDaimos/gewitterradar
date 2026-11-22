@@ -1,0 +1,28 @@
+{
+  "suppliedBy": "Christian",
+  "suppliedOn": "2026-11-22",
+  "policy": "docs/ASSET_RETENTION_POLICY.md",
+  "transformation": "none; byte-identical originals in master and runtime",
+  "assets": [
+    {
+      "source": "LegendHub_1.png",
+      "master": "artwork/legend-hub/hires/gr-legend-hub-1-original.png",
+      "runtime": "frontend/assets/gr-legend-hub-1-original.png",
+      "sha256": "aafd3864028822f005c177e0001a2646fb8a82594a95a494bb4db79e0f6e8af7",
+      "sizeBytes": 2411557,
+      "width": 1254,
+      "height": 1254,
+      "pngColorType": 6
+    },
+    {
+      "source": "LegendHub_2.png",
+      "master": "artwork/legend-hub/hires/gr-legend-hub-2-original.png",
+      "runtime": "frontend/assets/gr-legend-hub-2-original.png",
+      "sha256": "29317b30eec77fa85a2e412d1183584f91eefdeb3abb7455237b40ee7465f5ec",
+      "sizeBytes": 2164559,
+      "width": 1254,
+      "height": 1254,
+      "pngColorType": 6
+    }
+  ]
+}

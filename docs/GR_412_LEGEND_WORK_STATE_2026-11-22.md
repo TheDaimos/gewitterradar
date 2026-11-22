@@ -1,0 +1,11 @@
+# V4.12 – fortsetzbarer Arbeitsstand
+
+Stand: 22.11.2026; Branch `deploy/dev`, letzter veröffentlichter Commit `b184aa475d7dede993bf9ed7e699c9dfffba7248`.
+
+- **ERLEDIGT:** Aura, separat geprüfter/installierbarer Release v4.12.3-dev und geschützte technische Referenz. Ergebnisse unter `docs/GR_412_AURA_REFERENCE_2026-11-22.md` sind weiter gültig.
+- **TEILWEISE:** Legend Hub 4.12.4 / HA 0.25.165 liegt als umfangreicher lokaler Diff vor, einschließlich neun Hilfsmodulen, gemeinsamer Skalen, nativer Legendenadapter, Vault-Schema, 19 Sprachvarianten und beider byteidentischer PNG-Originale samt Retentionsvertrag. Noch kein Legend-Hub-Release.
+- **ERLEDIGT, lokal:** 2184 Layoutkombinationen; tatsächliches Vault-Schema inklusive negativer Fälle; Eye-/WOW-Modell- und 19 Python-Quellverträge; statische Python/JSON/YAML-Prüfung; kanonischer Build-/Spiegel-/Versionsabgleich mit 207 Kern-Dateien. Desktop-Hub-Matrix mit 112 Layoutfällen, acht Rand-Drags, 72 Skalenfällen, Long-Press, Slot-Tausch, freier Kartenfläche, reduzierter Bewegung und Reload bestanden. Teilnachweis `.task412-work/legend-evidence/desktop-results.json`.
+- **AKTUELLER SCHRITT:** Touch-Matrix fortsetzen. Zuletzt entdeckt: bestehende Premium-Z-Index-Regeln überlagerten den Hub; präzise lokale Ebenen korrigiert. Mehrere große Fenster dürfen einander überdecken, müssen per Tastatur/Fokus oder sichtbarer Oberfläche nach vorn geholt werden können; hierfür nativen Fensterfokus und kompakte kategoriale Synoptik-Gruppierung ergänzt. Vollbild-Kartendialog darf nicht als Einstellungsdialog den Freiflächenklick verhindern; korrigiert und im Desktop geprüft.
+- **OFFEN:** übrige Touch-Fälle und kleine Nachläufe, authentifizierte Hub-Profilpersistenz, gezielte Legenden-/Wetterregressionen; bestehende Quellvergleichstests um exakt autorisierte UI-Adapter ergänzen (keine Wetterlogik ausnehmen); vollständige öffentliche CI auf finalem Kandidaten; Dokumentation/Changelog/History, Commit, ZIP-/SHA-/DRA-Prüfung, neuer DEV-Prerelease.
+
+Vollständige Originalanforderungen liegen unverändert in der angehängten Auftragsdatei. Arbeit ausschließlich inkrementell fortführen. `.task412-work/` enthält lokale Testprotokolle und Zwischenartefakte; nicht pauschal committen. Alte Nutzerdateien/Arbeitsordner nicht löschen. VM109/physisches Android nicht als getestet ausgeben; VM101 und WR unverändert lassen.
