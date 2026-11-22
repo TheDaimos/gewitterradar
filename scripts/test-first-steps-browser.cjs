@@ -129,6 +129,18 @@ function initialize(options) {
       await ordered.page.reload();
       await ordered.page.waitForFunction(() => window.ready && card._mapReady && !card.__proBranding.check);
       assert.equal(await ordered.dialog.count(),0,'persisted dismissal survives reload');
+      await ordered.page.evaluate(() => card._reopenFirstStepsFromHelp());
+      await ordered.dialog.waitFor();
+      assert.equal(await ordered.dialog.locator('input[type=checkbox]').isChecked(),true,
+        'manual reopening reflects persisted dismissal');
+      await ordered.dialog.locator('input[type=checkbox]').uncheck();
+      await ordered.page.waitForFunction(key => !Object.hasOwn(setupProfile.settings,key),FIRST);
+      await ordered.dialog.locator('[data-first-done]').click();
+      await ordered.page.reload();
+      await ordered.page.waitForFunction(() => window.ready && card._mapReady && !card.__proBranding.check);
+      await ordered.dialog.waitFor();
+      assert.equal(await ordered.dialog.locator('input[type=checkbox]').isChecked(),false,
+        'cleared dismissal reenables automatic opening');
       assert.deepEqual(ordered.errors,[]); await ordered.page.close();
 
       const multiple = await launch();

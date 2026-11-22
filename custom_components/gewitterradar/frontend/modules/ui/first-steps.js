@@ -1,4 +1,4 @@
-import {premiumEscape} from '../weather/premium-ui.js?v=411253r1';
+import {premiumEscape} from '../weather/premium-ui.js?v=411254r1';
 
 export const FIRST_STEPS_DISMISSED = 'gewitterradar-first-steps-dismissed';
 const INFO_ICON = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
@@ -216,6 +216,10 @@ export function openFirstSteps(owner, images, storage, writable) {
     }
   };
   const checkbox = dialog.querySelector('input');
+  // Reflect the currently selected profile on every opening, including Help.
+  // Reading must not mutate the persisted dismissal preference.
+  try { checkbox.checked = storage.getItem(FIRST_STEPS_DISMISSED) === '1'; }
+  catch (_) { checkbox.disabled = true; status.textContent = owner._t('vault.genericError'); }
   checkbox.addEventListener('change', () => {
     try {
       if (checkbox.checked) storage.setItem(FIRST_STEPS_DISMISSED, '1');

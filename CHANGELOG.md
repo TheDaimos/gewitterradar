@@ -1,3 +1,9 @@
+## V4.11.254 DEV · First-Steps-Checkbox und gespeicherter Profilzustand · HA 0.25.161
+
+- Beim erneuten Öffnen von „First Steps & Useful Tips“ über „Hilfe und Hinweise“ zeigt die Checkbox den tatsächlich im aktiven Settings-Vault-Profil gespeicherten Zustand an.
+- Entfernen des Hakens reaktiviert das automatische Öffnen bei einem späteren Anwendungsstart; die bestehende profilbezogene Speicherung und die anderen Onboarding-Fenster bleiben unverändert.
+- Browser-Regressionstest für manuelles Wiederöffnen, persistierten Haken, Deaktivieren und erneutes automatisches Öffnen.
+
 ## V4.11.253 DEV · Klappbare First Steps mit Hintergrundinfos · HA 0.25.160
 
 Alle vier Einrichtungspunkte werden als kompakte, einzeln aufklappbare Prüfpunkte mit sichtbarem Status dargestellt. Innerhalb des jeweiligen Einrichtungstexts öffnet das originale Hi-Res-Info-i mit Chevron eine gesonderte Begründung (Deutsch/Englisch). Die Recorder-Erläuterung benennt ausdrücklich die Daten von Blitzortung.org als Ursache des möglichen Datenbankwachstums und stellt klar, dass GewitterRadar selbst nicht von den Ausschlüssen betroffen ist. Die Local-To-do-Erklärung beschreibt die Liste „Gewitterradar Orte“ als Speicher der Ortsfavoriten. Kein Eingriff in Backend-Prüfungen, Wetterfunktionen oder bestehende Referenzstände; DRA-DEV-Sichtprüfung offen.
