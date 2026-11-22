@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.7",
-  "build": "V4.12.7-DEV-2026-11-22",
-  "runtimeRevision": "4127r1",
-  "moduleSetId": "E412-7A1",
-  "baselineFeatureHead": "7efc8c067f31a0347c318f48d7e95d4cc5543e12",
+  "productVersion": "4.12.8",
+  "build": "V4.12.8-DEV-2026-11-22",
+  "runtimeRevision": "4128r1",
+  "moduleSetId": "E412-8A1",
+  "baselineFeatureHead": "8a35cba4d7c65a4c2bf84c964dc7312433ad95ec",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Minimalistische frei bewegliche Wetterlegenden und Legend-Hub-Glas; WeatherRouter unverändert",
+    "purpose": "Minimallegenden: erreichbare Standardpositionen ohne Überlagerung von Kartenkontrollen; WeatherRouter unverändert",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

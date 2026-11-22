@@ -1,6 +1,6 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4127r1';
-import {createLegendInstrument} from './legend-instrument.js?v=4127r1';
-import {legendOptions} from './legend-preferences.js?v=4127r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=4128r1';
+import {createLegendInstrument} from './legend-instrument.js?v=4128r1';
+import {legendOptions} from './legend-preferences.js?v=4128r1';
 import {legendDescriptor} from './legend-registry.js?v=4126r1';
 import {renderLegendScale} from './legend-scale.js?v=4127r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
@@ -13,11 +13,9 @@ export function createScientificLegend(owner,{prefix,id=prefix.replace(/^weather
  view._weatherLegendEnsureUi=function(){const state=this._weatherLegendState();state.instrument||=createLegendInstrument(owner,{id,elementId:prefix+'overlay',title,position:state.position,savePosition:p=>{state.position=p;savePosition(p);},onResize:()=>this._weatherLegendSyncUi()});state.mounted=true;return state.instrument.host;};
  view._weatherLegendSyncUi=function(){
   this._weatherLegendEnsureUi();const state=this._weatherLegendState(),instrument=state.instrument,shown=this._weatherLegendVisibleModels().length>0;instrument.setVisible(shown);owner._legendHubStatus?.();if(!shown)return;
-  const c=legendOptions(owner,id),native=render(state.ui.view),model=legendDescriptor(owner,id),map=owner.shadow.getElementById('map'),available=c.orientation==='vertical'?map.clientHeight-55:map.clientWidth-74;
+  const c=legendOptions(owner,id),model=legendDescriptor(owner,id),native=model?null:render(state.ui.view),map=owner.shadow.getElementById('map'),available=c.orientation==='vertical'?map.clientHeight-55:map.clientWidth-74;
   const nodes=[model?renderLegendScale(model,c,available):native.visual];
-  // Barbs encode direction/speed with symbols; keep those examples beside the
-  // scale, while the original Beaufort table stays available in the info popup.
-  if(id==='wind'&&owner._weatherWindState().config.mode==='barbs'&&native.visual.firstElementChild)nodes.unshift(native.visual.firstElementChild);
+  // Native symbol examples and full class tables remain in the explicit info popup.
   instrument.update(nodes,box=>{const detail=render(state.ui.view);box.append(detail.visual);box.append(detail.explanation);if(detail.source)box.append(detail.source);});
  };
  view._weatherLegendPosition=()=>view._weatherLegendState().instrument?.place();

@@ -1,9 +1,9 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4127r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4128r1';
 import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4127r1';
-import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4127r1';
+import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4128r1';
 import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4126r1';
 import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=4127r1';
-import {PREMIUM_CLOSE} from './premium-ui.js?v=4127r1';
+import {PREMIUM_CLOSE} from './premium-ui.js?v=4128r1';
 export const legendText=(owner,key)=>owner._t('legendHub.'+key);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function ensureLegendHubStyle(owner){ensureLegendScaleStyle(owner.shadow);if(owner.shadow.getElementById('legend-hub-style'))return;const style=document.createElement('style');style.id='legend-hub-style';style.textContent=`

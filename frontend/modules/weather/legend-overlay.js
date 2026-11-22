@@ -1,12 +1,12 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4127r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4128r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4127r1';
-import {legendOptions} from './legend-preferences.js?v=4127r1';
+import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4128r1';
+import {legendOptions} from './legend-preferences.js?v=4128r1';
 import {renderLegendScale} from './legend-scale.js?v=4127r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.59",
+  version:"0.1.60",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],

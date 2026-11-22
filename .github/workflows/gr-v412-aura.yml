@@ -47,6 +47,7 @@ jobs:
           node scripts/test-v412-aura-browser.cjs
           node scripts/test-v412-legend-browser.cjs
           node scripts/test-v412-minimal-browser.cjs
+          node scripts/test-v412-placement-browser.cjs
           node scripts/test-eye-edge-browser.cjs
           node scripts/test-delayed-eye-recovery-browser.cjs
           node scripts/test-settings-vault-browser.cjs

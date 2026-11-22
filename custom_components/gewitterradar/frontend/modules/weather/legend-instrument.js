@@ -1,9 +1,10 @@
 import {ensureLegendScaleStyle} from './legend-scale.js?v=4127r1';
-import {PREMIUM_INFO} from './premium-ui.js?v=4127r1';
-import {legendOptions} from './legend-preferences.js?v=4127r1';
+import {PREMIUM_INFO} from './premium-ui.js?v=4128r1';
+import {legendOptions} from './legend-preferences.js?v=4128r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const controlObstacles='.leaflet-control,#weather-display-eye-control,#map-display-control,#map-display-menu-toggle,#map-instrument-controls,#compass-instrument,#map-location-overlay,#map-cluster-jump-overlay,.eye-hub-bubble,.lh-main,.lh-popout,[data-weather-radar-player],button[data-weather-display-eye-drag-bound="1"]:not(.lh-slot):not(.lh-instrument-info)';
 // The same instrument shell serves numeric scales, categorical symbols and WR images.
 // Positions remain in the owning legend's existing profile settings.
 export function ensureInstrumentStyle(shadow){
@@ -25,12 +26,17 @@ export function instrumentBounds(owner,host){
 
 function clearInstrumentPosition(owner,host,b,wanted){
  const card=owner.shadow.getElementById('map-card').getBoundingClientRect(),sx=card.width/owner.shadow.getElementById('map-card').offsetWidth||1,sy=card.height/owner.shadow.getElementById('map-card').offsetHeight||1,w=host.offsetWidth,h=host.offsetHeight;
- const obstacles=[...owner.shadow.querySelectorAll('.leaflet-control,#weather-display-eye-control,#map-display-control,#map-instrument-controls,#compass-instrument,#map-location-overlay,.eye-hub-bubble,.lh-main,.lh-popout,[data-weather-radar-player],button[data-weather-display-eye-drag-bound="1"]:not(.lh-slot):not(.lh-instrument-info)')].filter(n=>!n.hidden&&n.getBoundingClientRect().width).map(n=>{const r=n.getBoundingClientRect();return {left:(r.left-card.left)/sx,top:(r.top-card.top)/sy,right:(r.right-card.left)/sx,bottom:(r.bottom-card.top)/sy};});
- const clear=(x,y)=>obstacles.every(o=>x+w<=o.left||x>=o.right||y+h<=o.top||y>=o.bottom);
- if(clear(wanted.x,wanted.y))return wanted;
- const xs=[wanted.x,b.left,b.right,...obstacles.flatMap(o=>[o.left-w-5,o.right+5])],ys=[wanted.y,b.top,b.bottom,...obstacles.flatMap(o=>[o.top-h-5,o.bottom+5])];let best=null;
- for(const rawX of xs)for(const rawY of ys){const x=clamp(rawX,b.left,b.right),y=clamp(rawY,b.top,b.bottom),distance=Math.hypot(x-wanted.x,y-wanted.y);if((!best||distance<best.distance)&&clear(x,y))best={x,y,distance};}
- return best||wanted;
+ const obstacles=[...owner.shadow.querySelectorAll(controlObstacles+',.lh-instrument:not([hidden])')].filter(n=>n!==host&&!n.hidden&&n.getBoundingClientRect().width&&(!n.matches('.lh-instrument')||n.style.left)).map(n=>{const r=n.getBoundingClientRect();return {decorative:n.id==='compass-instrument'&&getComputedStyle(n).pointerEvents==='none',left:(r.left-card.left)/sx,top:(r.top-card.top)/sy,right:(r.right-card.left)/sx,bottom:(r.bottom-card.top)/sy};});
+ // Prefer a completely clear rectangle; a noninteractive compass surround may
+ // yield when a narrow map has no such rectangle. Interactive controls never do.
+ for(const group of [obstacles,obstacles.filter(o=>!o.decorative)]){
+  const clear=(x,y)=>group.every(o=>x+w<=o.left||x>=o.right||y+h<=o.top||y>=o.bottom);
+  if(clear(wanted.x,wanted.y))return wanted;
+  const xs=[wanted.x,b.left,b.right,...group.flatMap(o=>[o.left-w-5,o.right+5,o.left-w,o.right])],ys=[wanted.y,b.top,b.bottom,...group.flatMap(o=>[o.top-h-5,o.bottom+5,o.top-h,o.bottom])];let best=null;
+  for(const rawX of xs)for(const rawY of ys){const x=clamp(rawX,b.left,b.right),y=clamp(rawY,b.top,b.bottom),distance=Math.hypot(x-wanted.x,y-wanted.y);if((!best||distance<best.distance)&&clear(x,y))best={x,y,distance};}
+  if(best)return best;
+ }
+ return wanted;
 }
 
 export function createLegendInstrument(owner,{id,elementId,title,position,savePosition,onResize=()=>{}}){
@@ -57,5 +63,7 @@ export function createLegendInstrument(owner,{id,elementId,title,position,savePo
  const schedule=()=>{if(!frame)frame=requestAnimationFrame(()=>{frame=null;place();});};
  window.addEventListener('resize',schedule,{signal:abort.signal});window.visualViewport?.addEventListener('resize',schedule,{signal:abort.signal});window.visualViewport?.addEventListener('scroll',schedule,{signal:abort.signal});
  let mapSize='';const observer=new ResizeObserver(()=>{if(destroyed)return;const map=owner.shadow.getElementById('map'),size=map.clientWidth+','+map.clientHeight;if(mapSize&&size!==mapSize)onResize();mapSize=size;schedule();});observer.observe(host);observer.observe(owner.shadow.getElementById('map'));
- return {host,body,info,state,place,update(nodes,explain){const c=legendOptions(owner,id),ink=legendInk('#0b1520',c.foreground,c.autoInvert);host.dataset.presentation=c.presentation;host.dataset.orientation=c.orientation;host.setAttribute('aria-label',title());info.setAttribute('aria-label',owner._t('weather.legend.info')+' · '+title());host.style.setProperty('--lh-category-size',({S:20,M:24,L:28,XL:32})[c.size]+'px');host.style.setProperty('--lh-category-ink',ink.color);host.style.setProperty('--lh-category-shadow',c.shadow?'0 1px 3px #000':'none');host.style.setProperty('--lh-category-outline',c.outline?'.25px #0008':'0px transparent');body.replaceChildren(...nodes);renderInfo=explain;if(!popup.hidden){popup.replaceChildren();const h=document.createElement('h4');h.textContent=title();popup.append(h);renderInfo(popup);}schedule();},setVisible(visible){host.hidden=!visible;if(!visible)closeInfo();},setPosition(p){if(p)state.config.eyePosition=p;place();},destroy(){destroyed=true;closeInfo();abort.abort();observer.disconnect();cancelAnimationFrame(frame);for(const options of bindings)owner._weatherDisplayCancelEyeDrag?.(options);host.remove();popup.remove();}};
+ // Native controls settle and move independently of map or legend dimensions.
+ const controlObserver=new MutationObserver(records=>{if(destroyed)return;if(records.some(r=>!r.target.closest?.('.lh-instrument,.lh-instrument-popup')&&(r.target.matches?.(controlObstacles)||r.type==='childList'&&[...r.addedNodes].some(n=>n.matches?.(controlObstacles)||n.querySelector?.(controlObstacles)))))schedule();});controlObserver.observe(owner.shadow.getElementById('map-card'),{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});
+ return {host,body,info,state,place,update(nodes,explain){const c=legendOptions(owner,id),ink=legendInk('#0b1520',c.foreground,c.autoInvert);host.dataset.presentation=c.presentation;host.dataset.orientation=c.orientation;host.setAttribute('aria-label',title());info.setAttribute('aria-label',owner._t('weather.legend.info')+' · '+title());host.style.setProperty('--lh-category-size',({S:20,M:24,L:28,XL:32})[c.size]+'px');host.style.setProperty('--lh-category-ink',ink.color);host.style.setProperty('--lh-category-shadow',c.shadow?'0 1px 3px #000':'none');host.style.setProperty('--lh-category-outline',c.outline?'.25px #0008':'0px transparent');body.replaceChildren(...nodes);renderInfo=explain;if(!popup.hidden){popup.replaceChildren();const h=document.createElement('h4');h.textContent=title();popup.append(h);renderInfo(popup);}schedule();},setVisible(visible){host.hidden=!visible;if(!visible)closeInfo();},setPosition(p){if(p)state.config.eyePosition=p;place();},destroy(){destroyed=true;closeInfo();abort.abort();observer.disconnect();controlObserver.disconnect();cancelAnimationFrame(frame);for(const options of bindings)owner._weatherDisplayCancelEyeDrag?.(options);host.remove();popup.remove();}};
 }
