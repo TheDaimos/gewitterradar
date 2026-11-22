@@ -60,6 +60,8 @@ Beide 1254×1254-RGBA-Dateien sind byteidentisch in Runtime und dauerhaft gesch�
 
 ## Veröffentlichung und offene Realabnahme
 
+Erster gesicherter Funktionscommit: `6eaf80b2a122af9943448c4eaab65f5a98d24ccb`, auf `deploy/dev` bereitgestellt. Retentionsprüfung nach dem Commit PASS: 60 geschützte Inhaltsidentitäten, 61 vorhandene Artwork-Pfade und zwölf Metadatendateien. Die erste öffentliche Runde bestand HA-/HACS-/Raster-/WR-Autoritäts- und Positionsprüfungen. Drei Prüfketten stoppten an derselben rein textuellen Scope-Allowlist: „Legend Hub“ war als neuer DRA-Zweck noch nicht registriert. Die präzise Testergänzung akzeptiert diese neue Funktionsbezeichnung; Produktbäume, Versionsstände und DRA-Zwecktext bleiben unverändert. Der nachfolgende öffentliche Lauf wird separat dokumentiert.
+
 Öffentliche CI, eindeutiger Quellcommit, Paket-Digests und DEV-Release werden nach dem Kandidatenlauf ergänzt. DRA-Konfiguration und Kanal bleiben unverändert. Geplant ist ausschließlich ein neuer DEV-Prerelease mit Integration-/Dashboard-ZIP, `deployment.json` und SHA-256-Inventar.
 
 **Nicht durchgeführt:** Installation/Betreiberabnahme auf HA DEV VM109 und physischem Android. **Nicht geändert:** PROD VM101, WeatherRouter, FINAL-Tags und geschützte Referenzen.
