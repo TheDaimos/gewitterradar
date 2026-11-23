@@ -1,0 +1,70 @@
+{
+  "syntheticTransport": true,
+  "physicalDevices": false,
+  "results": [
+    {
+      "delivery": "custom_components/gewitterradar/frontend",
+      "name": "desktop",
+      "lang": "de",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamische Auren und Legend Hub\n\nV4.12 DEV: Eye Control bietet eine optionale dynamische Aura-Anordnung mit stabilen Wetter-Icons und Unterstützung reduzierter Bewegung.\n\nLegend Hub: Eigenständig verschiebbarer Glas-Hub mit zwei Originalsymbolen, frei belegbaren Slots und Ausklapprichtungen. Kurzer Tipp schaltet Legenden unabhängig vom Wetterlayer; langer Druck öffnet die individuellen Einstellungen.\n\nWetterlegenden passend zur Karte: Schlanke, frei verschiebbare Legenden erklären Niederschlag, Wind, Temperatur und synoptische Symbole direkt auf der Karte. Ausrichtung, Größe und Beschriftung lassen sich individuell wählen. Premium bietet eine markante Metallfassung; Compact Glass wirkt leichter und erlaubt eine unabhängig einstellbare Glasdeckkraft sowie Platin- oder Goldrahmen. Das Benutzerprofil merkt sich Einstellungen und Positionen.\n\nIm Verlauf von V4.12 verfeinert: Übersichtlichere Live-Vorschauen, hochwertigere Material- und Farbauswahlen, stabile Legendenpositionen und dauerhaft erreichbare Wetter-Icons im Hub machen die tägliche Bedienung komfortabler. Die Wetterkarte bleibt im Mittelpunkt.",
+      "screenshot": ".task412-history/ha-desktop-de.png"
+    },
+    {
+      "delivery": "custom_components/gewitterradar/frontend",
+      "name": "desktop",
+      "lang": "en",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamic Auras and Legend Hub\n\nV4.12 DEV: Eye Control offers optional dynamic Aura-ring arrangement with stable weather-icon identities and reduced-motion support.\n\nLegend Hub: A separate draggable glass hub with two original symbols, configurable slots and opening directions. Short taps control legends independently of weather layers; long press opens individual settings.\n\nWeather legends that fit your map: Slim, freely movable legends explain precipitation, wind, temperature and synoptic symbols directly on the map. Choose horizontal or vertical layouts, sizes and labels. Premium provides a pronounced metallic surround; Compact Glass offers a lighter appearance with independently adjustable glass opacity and platinum or gold frames. Your profile retains the settings and positions.\n\nRefined throughout V4.12: Clearer live previews, richer material and colour choices, stable legend positions and weather icons that stay accessible in the hub make everyday use smoother. The weather map remains the focus.",
+      "screenshot": ".task412-history/ha-desktop-en.png"
+    },
+    {
+      "delivery": "custom_components/gewitterradar/frontend",
+      "name": "android",
+      "lang": "de",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamische Auren und Legend Hub\n\nV4.12 DEV: Eye Control bietet eine optionale dynamische Aura-Anordnung mit stabilen Wetter-Icons und Unterstützung reduzierter Bewegung.\n\nLegend Hub: Eigenständig verschiebbarer Glas-Hub mit zwei Originalsymbolen, frei belegbaren Slots und Ausklapprichtungen. Kurzer Tipp schaltet Legenden unabhängig vom Wetterlayer; langer Druck öffnet die individuellen Einstellungen.\n\nWetterlegenden passend zur Karte: Schlanke, frei verschiebbare Legenden erklären Niederschlag, Wind, Temperatur und synoptische Symbole direkt auf der Karte. Ausrichtung, Größe und Beschriftung lassen sich individuell wählen. Premium bietet eine markante Metallfassung; Compact Glass wirkt leichter und erlaubt eine unabhängig einstellbare Glasdeckkraft sowie Platin- oder Goldrahmen. Das Benutzerprofil merkt sich Einstellungen und Positionen.\n\nIm Verlauf von V4.12 verfeinert: Übersichtlichere Live-Vorschauen, hochwertigere Material- und Farbauswahlen, stabile Legendenpositionen und dauerhaft erreichbare Wetter-Icons im Hub machen die tägliche Bedienung komfortabler. Die Wetterkarte bleibt im Mittelpunkt.",
+      "screenshot": ".task412-history/ha-android-de.png"
+    },
+    {
+      "delivery": "custom_components/gewitterradar/frontend",
+      "name": "android",
+      "lang": "en",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamic Auras and Legend Hub\n\nV4.12 DEV: Eye Control offers optional dynamic Aura-ring arrangement with stable weather-icon identities and reduced-motion support.\n\nLegend Hub: A separate draggable glass hub with two original symbols, configurable slots and opening directions. Short taps control legends independently of weather layers; long press opens individual settings.\n\nWeather legends that fit your map: Slim, freely movable legends explain precipitation, wind, temperature and synoptic symbols directly on the map. Choose horizontal or vertical layouts, sizes and labels. Premium provides a pronounced metallic surround; Compact Glass offers a lighter appearance with independently adjustable glass opacity and platinum or gold frames. Your profile retains the settings and positions.\n\nRefined throughout V4.12: Clearer live previews, richer material and colour choices, stable legend positions and weather icons that stay accessible in the hub make everyday use smoother. The weather map remains the focus.",
+      "screenshot": ".task412-history/ha-android-en.png"
+    },
+    {
+      "delivery": "dashboard/dist",
+      "name": "desktop",
+      "lang": "de",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamische Auren und Legend Hub\n\nV4.12 DEV: Eye Control bietet eine optionale dynamische Aura-Anordnung mit stabilen Wetter-Icons und Unterstützung reduzierter Bewegung.\n\nLegend Hub: Eigenständig verschiebbarer Glas-Hub mit zwei Originalsymbolen, frei belegbaren Slots und Ausklapprichtungen. Kurzer Tipp schaltet Legenden unabhängig vom Wetterlayer; langer Druck öffnet die individuellen Einstellungen.\n\nWetterlegenden passend zur Karte: Schlanke, frei verschiebbare Legenden erklären Niederschlag, Wind, Temperatur und synoptische Symbole direkt auf der Karte. Ausrichtung, Größe und Beschriftung lassen sich individuell wählen. Premium bietet eine markante Metallfassung; Compact Glass wirkt leichter und erlaubt eine unabhängig einstellbare Glasdeckkraft sowie Platin- oder Goldrahmen. Das Benutzerprofil merkt sich Einstellungen und Positionen.\n\nIm Verlauf von V4.12 verfeinert: Übersichtlichere Live-Vorschauen, hochwertigere Material- und Farbauswahlen, stabile Legendenpositionen und dauerhaft erreichbare Wetter-Icons im Hub machen die tägliche Bedienung komfortabler. Die Wetterkarte bleibt im Mittelpunkt.",
+      "screenshot": ".task412-history/dashboard-desktop-de.png"
+    },
+    {
+      "delivery": "dashboard/dist",
+      "name": "desktop",
+      "lang": "en",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamic Auras and Legend Hub\n\nV4.12 DEV: Eye Control offers optional dynamic Aura-ring arrangement with stable weather-icon identities and reduced-motion support.\n\nLegend Hub: A separate draggable glass hub with two original symbols, configurable slots and opening directions. Short taps control legends independently of weather layers; long press opens individual settings.\n\nWeather legends that fit your map: Slim, freely movable legends explain precipitation, wind, temperature and synoptic symbols directly on the map. Choose horizontal or vertical layouts, sizes and labels. Premium provides a pronounced metallic surround; Compact Glass offers a lighter appearance with independently adjustable glass opacity and platinum or gold frames. Your profile retains the settings and positions.\n\nRefined throughout V4.12: Clearer live previews, richer material and colour choices, stable legend positions and weather icons that stay accessible in the hub make everyday use smoother. The weather map remains the focus.",
+      "screenshot": ".task412-history/dashboard-desktop-en.png"
+    },
+    {
+      "delivery": "dashboard/dist",
+      "name": "android",
+      "lang": "de",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamische Auren und Legend Hub\n\nV4.12 DEV: Eye Control bietet eine optionale dynamische Aura-Anordnung mit stabilen Wetter-Icons und Unterstützung reduzierter Bewegung.\n\nLegend Hub: Eigenständig verschiebbarer Glas-Hub mit zwei Originalsymbolen, frei belegbaren Slots und Ausklapprichtungen. Kurzer Tipp schaltet Legenden unabhängig vom Wetterlayer; langer Druck öffnet die individuellen Einstellungen.\n\nWetterlegenden passend zur Karte: Schlanke, frei verschiebbare Legenden erklären Niederschlag, Wind, Temperatur und synoptische Symbole direkt auf der Karte. Ausrichtung, Größe und Beschriftung lassen sich individuell wählen. Premium bietet eine markante Metallfassung; Compact Glass wirkt leichter und erlaubt eine unabhängig einstellbare Glasdeckkraft sowie Platin- oder Goldrahmen. Das Benutzerprofil merkt sich Einstellungen und Positionen.\n\nIm Verlauf von V4.12 verfeinert: Übersichtlichere Live-Vorschauen, hochwertigere Material- und Farbauswahlen, stabile Legendenpositionen und dauerhaft erreichbare Wetter-Icons im Hub machen die tägliche Bedienung komfortabler. Die Wetterkarte bleibt im Mittelpunkt.",
+      "screenshot": ".task412-history/dashboard-android-de.png"
+    },
+    {
+      "delivery": "dashboard/dist",
+      "name": "android",
+      "lang": "en",
+      "overflow": false,
+      "text": "V4.12 DEV · 2026/11\nGewitterRadar PRO – Dynamic Auras and Legend Hub\n\nV4.12 DEV: Eye Control offers optional dynamic Aura-ring arrangement with stable weather-icon identities and reduced-motion support.\n\nLegend Hub: A separate draggable glass hub with two original symbols, configurable slots and opening directions. Short taps control legends independently of weather layers; long press opens individual settings.\n\nWeather legends that fit your map: Slim, freely movable legends explain precipitation, wind, temperature and synoptic symbols directly on the map. Choose horizontal or vertical layouts, sizes and labels. Premium provides a pronounced metallic surround; Compact Glass offers a lighter appearance with independently adjustable glass opacity and platinum or gold frames. Your profile retains the settings and positions.\n\nRefined throughout V4.12: Clearer live previews, richer material and colour choices, stable legend positions and weather icons that stay accessible in the hub make everyday use smoother. The weather map remains the focus.",
+      "screenshot": ".task412-history/dashboard-android-en.png"
+    }
+  ]
+}
