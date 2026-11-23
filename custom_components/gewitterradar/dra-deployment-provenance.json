@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.14",
-  "build": "V4.12.14-DEV-2026-11-23",
-  "runtimeRevision": "41214r1",
-  "moduleSetId": "E412-14A1",
-  "baselineFeatureHead": "c8905ee4101f2f2c0c25335b9cd8b72fc93ea468",
+  "productVersion": "4.12.15",
+  "build": "V4.12.15-DEV-2026-11-23",
+  "runtimeRevision": "41215r1",
+  "moduleSetId": "E412-15A1",
+  "baselineFeatureHead": "761bf3d290bf63dd6d4be60eebf3fe450438e916",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub fixed slot drag return without changing shared controls or appearance",
+    "purpose": "User-facing release history for dynamic Auras and Legend Hub",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
