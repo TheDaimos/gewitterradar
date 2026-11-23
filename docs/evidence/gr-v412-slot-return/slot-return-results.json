@@ -1,0 +1,108 @@
+[
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulation": false,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel",
+      "capture"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": false,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "native HTML drag/drop",
+    "reload": true,
+    "profiles": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "touchEmulation": true,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": true,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "touch arrow",
+    "reload": true,
+    "profiles": false,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulation": true,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": true,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "touch arrow",
+    "reload": true,
+    "profiles": true,
+    "errors": []
+  }
+]

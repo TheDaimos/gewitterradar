@@ -1,0 +1,146 @@
+{
+  "baselineSource": "2557a7394060be686456597484d9779179ec6e59",
+  "baselineDocumentation": "c8905ee4101f2f2c0c25335b9cd8b72fc93ea468",
+  "scope": "one exact local Legend Hub slot adapter; no shared binder, CSS, appearance, placement or persistence changes",
+  "unchangedBodies": [
+    "frontend/modules/core/card-lifecycle.js",
+    "frontend/modules/core/settings-vault.js",
+    "frontend/modules/diagnostics/cockpit.js",
+    "frontend/modules/diagnostics/raster-lab.js",
+    "frontend/modules/fullscreen/map-display.js",
+    "frontend/modules/instruments/compass-selector.js",
+    "frontend/modules/map/clusters-recent.js",
+    "frontend/modules/ui/controls.js",
+    "frontend/modules/ui/first-steps.js",
+    "frontend/modules/ui/i18n-settings.js",
+    "frontend/modules/ui/pro-welcome.js",
+    "frontend/modules/ui/settings-vault-view.js",
+    "frontend/modules/ui/skeleton.js",
+    "frontend/modules/weather/clouds-control.js",
+    "frontend/modules/weather/display-menu.js",
+    "frontend/modules/weather/display-quick.js",
+    "frontend/modules/weather/eye-hub-locales.js",
+    "frontend/modules/weather/eye-hub-view.js",
+    "frontend/modules/weather/eye-hub.js",
+    "frontend/modules/weather/legend-hub-view.js",
+    "frontend/modules/weather/legend-instrument.js",
+    "frontend/modules/weather/legend-overlay.js",
+    "frontend/modules/weather/legend-preferences.js",
+    "frontend/modules/weather/precipitation-control.js",
+    "frontend/modules/weather/precipitation-layer.js",
+    "frontend/modules/weather/premium-legend.js",
+    "frontend/modules/weather/premium-ui.js",
+    "frontend/modules/weather/storm-bubble.js",
+    "frontend/modules/weather/synoptic-display.js",
+    "frontend/modules/weather/temperature-display.js",
+    "frontend/modules/weather/temperature-legend.js",
+    "frontend/modules/weather/wind-display.js",
+    "frontend/modules/weather/wind-legend.js",
+    "frontend/modules/weather/wind-studio.js",
+    "frontend/modules/weather/control-touch.js",
+    "frontend/modules/weather/eye-hub-model.js",
+    "frontend/modules/weather/eye-hub-registry.js",
+    "frontend/modules/weather/eye-neon.js",
+    "frontend/modules/weather/eye-neon-wow.js",
+    "frontend/modules/weather/eye-neon-energy.js",
+    "frontend/modules/weather/legend-hub-model.js",
+    "frontend/modules/weather/legend-hub-locales.js",
+    "frontend/modules/weather/legend-scale.js",
+    "frontend/modules/weather/legend-precipitation.js",
+    "custom_components/gewitterradar/vault_schema.py"
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45241406181,
+      "testedCommit": "2557a7394060be686456597484d9779179ec6e59",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45241406181"
+    },
+    {
+      "id": 45241406093,
+      "testedCommit": "2557a7394060be686456597484d9779179ec6e59",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45241406093"
+    },
+    {
+      "id": 45241406285,
+      "testedCommit": "2557a7394060be686456597484d9779179ec6e59",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45241406285"
+    },
+    {
+      "id": 45241406294,
+      "testedCommit": "2557a7394060be686456597484d9779179ec6e59",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45241406294"
+    },
+    {
+      "id": 45238384745,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384745"
+    },
+    {
+      "id": 45238384927,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384927"
+    },
+    {
+      "id": 45238384803,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384803"
+    },
+    {
+      "id": 45238384833,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384833"
+    },
+    {
+      "id": 45238384642,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384642"
+    },
+    {
+      "id": 45238384706,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238384706"
+    },
+    {
+      "id": 45238385027,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238385027"
+    },
+    {
+      "id": 45238385032,
+      "testedCommit": "d507b25cb6bf6fa6efc88700af330898edc4f549",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45238385032"
+    }
+  ],
+  "guards": [
+    "whole Hub module inverse-equal except local slot adapter",
+    "full common pointer/touch binder unchanged",
+    "all Eye/Aura and shared CSS bodies unchanged",
+    "all legend position/glass/frame/swatch bodies unchanged",
+    "slot editor, models, schema and Vault unchanged",
+    "no graphics changed"
+  ]
+}

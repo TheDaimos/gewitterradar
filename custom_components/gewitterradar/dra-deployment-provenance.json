@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.13",
-  "build": "V4.12.13-DEV-2026-11-23",
-  "runtimeRevision": "41213r1",
-  "moduleSetId": "E412-13A1",
-  "baselineFeatureHead": "60da476a9e6a3bbaecc817af40937bc86486dc51",
+  "productVersion": "4.12.14",
+  "build": "V4.12.14-DEV-2026-11-23",
+  "runtimeRevision": "41214r1",
+  "moduleSetId": "E412-14A1",
+  "baselineFeatureHead": "c8905ee4101f2f2c0c25335b9cd8b72fc93ea468",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub stable user positions, independent Compact Glass frames and premium swatches",
+    "purpose": "Legend Hub fixed slot drag return without changing shared controls or appearance",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

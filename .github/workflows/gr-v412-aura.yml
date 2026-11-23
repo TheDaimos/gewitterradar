@@ -27,6 +27,7 @@ jobs:
           GR_POLISH_PROOF: ${{ runner.temp }}/polish-evidence/source-proof.json
           GR_SWATCH_PROOF: ${{ runner.temp }}/swatch-evidence/source-proof.json
           GR_GLASS_PROOF: ${{ runner.temp }}/glass-evidence/source-proof.json
+          GR_SLOT_RETURN_PROOF: ${{ runner.temp }}/slot-return-evidence/source-proof.json
         run: |
           if node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.10\"')?0:1)"; then
             node scripts/test-v412-premium-scope.mjs
@@ -44,6 +45,10 @@ jobs:
             node scripts/test-v412-glass-model.mjs
             echo "focused=true" >> "$GITHUB_OUTPUT"
             echo "glass=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.14\"')?0:1)"; then
+            node scripts/test-v412-slot-return-scope.mjs
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "slot_return=true" >> "$GITHUB_OUTPUT"
           else
             echo "focused=false" >> "$GITHUB_OUTPUT"
           fi
@@ -84,7 +89,7 @@ jobs:
           node scripts/test-settings-vault-browser.cjs
           node scripts/test-eye-wow-browser.cjs
       - name: Focused premium dialog, units and source information acceptance
-        if: steps.ui_scope.outputs.focused == 'true' && steps.ui_scope.outputs.polish != 'true' && steps.ui_scope.outputs.swatch != 'true' && steps.ui_scope.outputs.glass != 'true'
+        if: steps.ui_scope.outputs.focused == 'true' && steps.ui_scope.outputs.polish != 'true' && steps.ui_scope.outputs.swatch != 'true' && steps.ui_scope.outputs.glass != 'true' && steps.ui_scope.outputs.slot_return != 'true'
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_PREMIUM_EVIDENCE: ${{ runner.temp }}/premium-evidence
@@ -107,6 +112,12 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_GLASS_EVIDENCE: ${{ runner.temp }}/glass-evidence
         run: node scripts/test-v412-glass-browser.cjs
+      - name: Legend Hub fixed slots, outside drops, cancellation and profile recovery
+        if: steps.ui_scope.outputs.slot_return == 'true'
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_SLOT_RETURN_EVIDENCE: ${{ runner.temp }}/slot-return-evidence
+        run: node scripts/test-v412-slot-return-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -120,4 +131,5 @@ jobs:
             ${{ runner.temp }}/polish-evidence
             ${{ runner.temp }}/swatch-evidence
             ${{ runner.temp }}/glass-evidence
+            ${{ runner.temp }}/slot-return-evidence
           if-no-files-found: ignore
