@@ -1,0 +1,908 @@
+[
+  {
+    "baseline": "4.12.10",
+    "initial": {
+      "width": 822,
+      "overflow": false,
+      "columns": 1,
+      "lengths": [
+        60,
+        60,
+        60
+      ],
+      "transforms": [
+        "none",
+        "none",
+        "none"
+      ],
+      "labels": [
+        2,
+        1,
+        1
+      ],
+      "tiles": []
+    }
+  },
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulation": false,
+    "initial": {
+      "width": 750,
+      "overflow": false,
+      "columns": 2,
+      "lengths": [
+        292.74,
+        292.74,
+        598.5999999999999
+      ],
+      "transforms": [
+        "none",
+        "none",
+        "none"
+      ],
+      "labels": [
+        5,
+        5,
+        5
+      ],
+      "tiles": [
+        {
+          "width": 357,
+          "span": ""
+        },
+        {
+          "width": 357,
+          "span": ""
+        },
+        {
+          "width": 730,
+          "span": "1 / -1"
+        }
+      ]
+    },
+    "lengthProof": [
+      {
+        "id": "wind",
+        "lengths": [
+          525.6,
+          598.5999999999999,
+          671.6,
+          730
+        ]
+      },
+      {
+        "id": "temperature",
+        "lengths": [
+          525.6,
+          598.5999999999999,
+          671.6,
+          730
+        ]
+      }
+    ],
+    "hubGeometry": {
+      "width": 496,
+      "columns": 1,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 180,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 180,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        }
+      ]
+    },
+    "arrows": [
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      }
+    ],
+    "centers": [
+      {
+        "direction": "horizontal",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005444449100764359,
+            "dy": -0.0014566911274300764,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0.00000762939453125,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0.0000152587890625,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": 0,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007733358720827255,
+            "dy": -0.009707583194710878,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.001743237557775501,
+            "dy": -0.013176657936810443,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "vertical",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.00553227839856163,
+            "dy": -0.0015027838650780723,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": -0.000003814697265625,
+            "dy": -0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": -0.000003814697265625,
+            "dy": -0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": -0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007852672960211748,
+            "dy": -0.009833376943788608,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.0017753278619636603,
+            "dy": -0.01337721245135981,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "dynamic",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005564438669296123,
+            "dy": -0.0015033922697398339,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0,
+            "dy": -0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0.0000152587890625,
+            "dy": -0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": -0.000030517578125,
+            "dy": -0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.00789492666433489,
+            "dy": -0.009920841198777453,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.0017831732401418776,
+            "dy": -0.013464457680754549,
+            "pressed": "false"
+          }
+        ]
+      }
+    ],
+    "previewOnly": true,
+    "reorderReload": true,
+    "realLongPress": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "touchEmulation": true,
+    "initial": {
+      "width": 750,
+      "overflow": false,
+      "columns": 2,
+      "lengths": [
+        292.74,
+        292.74,
+        598.5999999999999
+      ],
+      "transforms": [
+        "none",
+        "none",
+        "none"
+      ],
+      "labels": [
+        5,
+        5,
+        5
+      ],
+      "tiles": [
+        {
+          "width": 357,
+          "span": ""
+        },
+        {
+          "width": 357,
+          "span": ""
+        },
+        {
+          "width": 730,
+          "span": "1 / -1"
+        }
+      ]
+    },
+    "lengthProof": [
+      {
+        "id": "wind",
+        "lengths": [
+          525.6,
+          598.5999999999999,
+          671.6,
+          730
+        ]
+      },
+      {
+        "id": "temperature",
+        "lengths": [
+          525.6,
+          598.5999999999999,
+          671.6,
+          730
+        ]
+      }
+    ],
+    "hubGeometry": {
+      "width": 496,
+      "columns": 1,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 180,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 180,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 345,
+          "height": 46
+        }
+      ]
+    },
+    "arrows": [
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      }
+    ],
+    "centers": [
+      {
+        "direction": "horizontal",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005482833351237559,
+            "dy": -0.0014767806495683544,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0.00000762939453125,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": -0.0000152587890625,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": 0.0000152587890625,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007789575312131092,
+            "dy": -0.009777525395293196,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.001761696555377057,
+            "dy": -0.013273868834573932,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "vertical",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005597201260655993,
+            "dy": -0.0015050714666244858,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": -0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": -0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": -0.000003814697265625,
+            "dy": 0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007946811414413446,
+            "dy": -0.009967128625930854,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.001787711938987968,
+            "dy": -0.01351563668140443,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "dynamic",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005646007483079529,
+            "dy": -0.0015008856425140493,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0.00000762939453125,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0.0000152587890625,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": -0.0000152587890625,
+            "dy": 0.00000762939453125,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.00803782875266279,
+            "dy": -0.010056199069225613,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.001810028222166693,
+            "dy": -0.01365413391988568,
+            "pressed": "false"
+          }
+        ]
+      }
+    ],
+    "previewOnly": true,
+    "reorderReload": true,
+    "realLongPress": true,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulation": true,
+    "initial": {
+      "width": 333,
+      "overflow": false,
+      "columns": 1,
+      "lengths": [
+        280,
+        280,
+        280
+      ],
+      "transforms": [
+        "none",
+        "none",
+        "none"
+      ],
+      "labels": [
+        5,
+        5,
+        5
+      ],
+      "tiles": [
+        {
+          "width": 313,
+          "span": ""
+        },
+        {
+          "width": 313,
+          "span": ""
+        },
+        {
+          "width": 313,
+          "span": ""
+        }
+      ]
+    },
+    "lengthProof": [
+      {
+        "id": "wind",
+        "lengths": [
+          225.35999999999999,
+          280,
+          313,
+          313
+        ]
+      },
+      {
+        "id": "temperature",
+        "lengths": [
+          225.35999999999999,
+          280,
+          313,
+          313
+        ]
+      }
+    ],
+    "hubGeometry": {
+      "width": 359,
+      "columns": 1,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 147.390625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 147.390625,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 208,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 208,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 208,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 208,
+          "height": 46
+        }
+      ]
+    },
+    "arrows": [
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      },
+      {
+        "disabled": false,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, -1, 1, 0, 0, 0)",
+        "delta": "-1"
+      },
+      {
+        "disabled": true,
+        "w": 44,
+        "h": 44,
+        "rotation": "matrix(0, 1, -1, 0, 0, 0)",
+        "delta": "1"
+      }
+    ],
+    "centers": [
+      {
+        "direction": "horizontal",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005489052767956082,
+            "dy": -0.0014696136425982331,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": -0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": 0,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007792373973586564,
+            "dy": -0.009785337311200237,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.0017397696511807226,
+            "dy": -0.013276752672709335,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "vertical",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005619610325567237,
+            "dy": -0.0015231045809400712,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0.0000019073486328125,
+            "dy": 0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0.0000019073486328125,
+            "dy": -0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": 0.0000019073486328125,
+            "dy": -0.0000152587890625,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.007985442068772386,
+            "dy": -0.010025681491129035,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.0017953550226224024,
+            "dy": -0.0136270477440803,
+            "pressed": "false"
+          }
+        ]
+      },
+      {
+        "direction": "dynamic",
+        "result": [
+          {
+            "id": "precipitation",
+            "dx": -0.005647504158567074,
+            "dy": -0.0015235913047035865,
+            "pressed": "true"
+          },
+          {
+            "id": "wind",
+            "dx": 0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "temperature",
+            "dx": 0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "advection",
+            "dx": 0.000003814697265625,
+            "dy": 0,
+            "pressed": "false"
+          },
+          {
+            "id": "synoptic",
+            "dx": -0.008022271845327111,
+            "dy": -0.010071311841215902,
+            "pressed": "false"
+          },
+          {
+            "id": "other",
+            "dx": -0.0018053085229823296,
+            "dy": -0.01368487052366163,
+            "pressed": "false"
+          }
+        ]
+      }
+    ],
+    "previewOnly": true,
+    "reorderReload": true,
+    "realLongPress": true,
+    "errors": []
+  }
+]

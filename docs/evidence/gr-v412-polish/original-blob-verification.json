@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+  "packageOrigin": "original Git blobs, per-process core.autocrlf=false",
+  "packages": [
+    {
+      "name": "gewitterradar-0.25.172-dev.zip",
+      "originalGitBlobsVerified": 250,
+      "crc": "pass",
+      "sha256": "e28def9ec0d796996c1b30081e49d3f4baf7d4886f0dec3d1cf1bec2deaf4905"
+    },
+    {
+      "name": "gewitterradar-dashboard-4.12.11-dev.zip",
+      "originalGitBlobsVerified": 233,
+      "crc": "pass",
+      "sha256": "b86712e999d36a18043656de6b8a5905ee65a2a3f981c5c701034e3efc322d03"
+    }
+  ],
+  "autocrlfConversion": false,
+  "frontendParityFiles": 231,
+  "linuxCIRun": 45203833982,
+  "identicalToLinuxCI": true
+}

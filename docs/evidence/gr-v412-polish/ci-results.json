@@ -1,0 +1,149 @@
+{
+  "sourceCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+  "scope": "three presentation modules; targeted desktop/tablet/Android browser test and mandatory public gates",
+  "workflowRuns": [
+    {
+      "id": 45203833908,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833908"
+    },
+    {
+      "id": 45203833982,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833982"
+    },
+    {
+      "id": 45203833900,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833900"
+    },
+    {
+      "id": 45203833886,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833886"
+    },
+    {
+      "id": 45203834088,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834088"
+    },
+    {
+      "id": 45203834301,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834301"
+    },
+    {
+      "id": 45203833902,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833902"
+    },
+    {
+      "id": 45203834003,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834003"
+    },
+    {
+      "id": 45203833980,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833980"
+    },
+    {
+      "id": 45203834093,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834093"
+    },
+    {
+      "id": 45203834008,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834008"
+    },
+    {
+      "id": 45203834028,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834028"
+    }
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45192108965,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108965"
+    },
+    {
+      "id": 45192108650,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108650"
+    },
+    {
+      "id": 45192109100,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192109100"
+    },
+    {
+      "id": 45192108591,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108591"
+    },
+    {
+      "id": 45192108460,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108460"
+    },
+    {
+      "id": 45192108826,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108826"
+    },
+    {
+      "id": 45192108685,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108685"
+    },
+    {
+      "id": 45192108684,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108684"
+    }
+  ],
+  "physicalDeviceAcceptance": "operator"
+}
