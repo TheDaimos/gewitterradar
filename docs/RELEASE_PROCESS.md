@@ -104,6 +104,16 @@ Ein Release ist blockiert, wenn insbesondere einer der folgenden Bestandteile fe
 
 Eine absichtliche Änderung des Schutzvertrags erfordert vorab ausdrückliche Benutzerfreigabe, Anpassung von Schutzdokumentation und Contract-Test sowie erneute Abnahme der betroffenen Diagnosefunktionen.
 
+## Technische Ausführung und KI-Agenten – bewährter GitHub-Weg
+
+**Verbindliche Schritt-für-Schritt-Anleitung:** [FINALIZATION_RUNBOOK.md](FINALIZATION_RUNBOOK.md).
+
+Die tatsächliche Veröffentlichungsmethode hängt von den verfügbaren GitHub-Tools ab: Fehlende direkte Funktionen für Release-Erstellung oder Workflow-Dispatch sind **kein** Nachweis fehlender Repository-Berechtigungen. Agenten müssen zunächst `admin`/`push` live prüfen und existierende, berechtigte GitHub-Actions-Workflows inspizieren. Bei passender Autorisierung dürfen eng begrenzte `on: push`-Workflows den Release über `gh` im GitHub-Runner ausführen, jedoch ausschließlich hinter unveränderten PRE-MERGE-, Post-Merge-, Golden-Master- und Paket-Gates.
+
+**Bewiesener Referenzfall:** V4.12 FINAL vom 23.11.2026; alter `main`-SHA `af70fe2bf85a88fdea402cf46e3bd6a11903189b`, FINAL-Commit und öffentlicher Tag `c712a2526faeb55b9cc1926a656268611f56e776`, erfolgreiche Publish-Run-ID `45279857677`, PRE-MERGE-Run `45274845031`. Das Runbook dokumentiert Workflow-Pfade, Testfehler und Abhilfen.
+
+**Achtung:** Diese Werte und V4.12-Workflows enthalten fest kodierte Branches, SHAs und Run-IDs. Für zukünftige Versionen müssen die passenden Parameter ermittelt und geprüft werden. Kein historischer Workflow darf blind wiederverwendet werden. Ein generischer Ein-Klick-Finalize-Workflow ist noch nicht implementiert. Release-Notizen und Recovery-Archive sind nach erfolgreicher Veröffentlichung unabhängig vom CI-Lauf aufzufinden und zu verifizieren.
+
 ## PRE-MERGE-Snapshot und Golden Master
 
 `docs/GOLDEN_MASTER_POLICY.md` ist bei jeder wesentlichen Promotion nach `main` verbindlich.
