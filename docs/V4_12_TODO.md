@@ -1,4 +1,6 @@
 # Gewitterradar V4.12 – To-do-Sammlung (Übernahme der bisherigen V4.11-Themen)
+> **Roadmap-Korrektur 23.11.2026:** Der Abschnitt **6. Überwachte Orte / Monitored Areas** wird vollständig nach **GewitterRadar V4.13** verlagert und dort als eigenständiges Modul umgesetzt. Seine folgenden Einträge bleiben hier **nur als historische Planungsreferenz** erhalten. Verbindlich sind das [Monitored-Areas-Fachkonzept](MONITORED_AREAS_V412_KONZEPT_2026-11-23.md) und der [kleinschrittige Implementierungsplan](MONITORED_AREAS_V412_IMPLEMENTIERUNGSPLAN.md), beide inzwischen V4.13 zugeordnet. **V4.12/Legend Hub wird unabhängig fertiggestellt; keine Monitored-Areas-Arbeit und kein Release-Blocker in V4.12.** Diese Korrektur verlagert nicht automatisch alle anderen V4.12-To-dos.
+
 
 Stand: 18.10.2026 · Status: **NEXT / Planung, nicht pauschal implementierungsfreigegeben**
 
