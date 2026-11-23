@@ -1,0 +1,780 @@
+[
+  {
+    "baseline": "4.12.12",
+    "before": {
+      "precipitation": {
+        "left": 326.85,
+        "top": 212.3
+      },
+      "wind": {
+        "left": 331.75,
+        "top": 150.297
+      },
+      "temperature": {
+        "left": 331.75,
+        "top": 384.297
+      }
+    },
+    "activity": {
+      "frames": 45,
+      "dataUpdates": 15,
+      "changes": [
+        {
+          "frame": 0,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 1,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 2,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 3,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 4,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 5,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 6,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 7,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 8,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 9,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 10,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 11,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 12,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 13,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 14,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 15,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 16,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 17,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 18,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 19,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 20,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 21,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 22,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 23,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 24,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 25,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 26,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 27,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 28,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 29,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 30,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 31,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 32,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 33,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 34,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 35,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 36,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 37,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 38,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 39,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 40,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 41,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 42,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 43,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        },
+        {
+          "frame": 44,
+          "id": "precipitation",
+          "left": "326.85px",
+          "top": "212.297px"
+        }
+      ],
+      "manualOffsets": [
+        {
+          "id": "precipitation",
+          "dx": 5.684341886080802e-14,
+          "dy": -0.002999999999985903
+        },
+        {
+          "id": "wind",
+          "dx": 0,
+          "dy": -95.00299999999999
+        },
+        {
+          "id": "temperature",
+          "dx": 0,
+          "dy": 138.99700000000004
+        }
+      ]
+    }
+  },
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulation": false,
+    "clustered": {
+      "precipitation": {
+        "left": 247,
+        "top": 263
+      },
+      "wind": {
+        "left": 252,
+        "top": 268
+      },
+      "temperature": {
+        "left": 257,
+        "top": 273
+      }
+    },
+    "activity": {
+      "frames": 90,
+      "dataUpdates": 30,
+      "changes": []
+    },
+    "mapUnchanged": true,
+    "infoStable": true,
+    "infoDrag": true,
+    "hideShowStable": true,
+    "rotationSettled": true,
+    "reload": true,
+    "profiles": true,
+    "premium": {
+      "width": 342,
+      "height": 64,
+      "alpha": "0.95",
+      "blur": "blur(14px)",
+      "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+      "frameVisible": "1",
+      "weight": "2px",
+      "opacity": "1",
+      "padding": "7px 5px 7px 9px",
+      "shadow": "rgba(0, 0, 0, 0.4) 0px 4px 16px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px inset"
+    },
+    "compact": {
+      "width": 332,
+      "height": 53,
+      "alpha": "0.5",
+      "blur": "blur(7px)",
+      "frame": "linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "frameVisible": "1",
+      "weight": "2.5px",
+      "opacity": "1",
+      "padding": "3px 2px 3px 4px",
+      "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+    },
+    "opacityStates": [
+      {
+        "value": 0,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 50,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 100,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      }
+    ],
+    "frameWeights": [
+      "0.8px",
+      "1.5px",
+      "2.5px"
+    ],
+    "frameGeometryConstant": true,
+    "gradients": [
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(39, 54, 71), rgb(216, 228, 235) 50%, rgb(39, 54, 71))",
+      "linear-gradient(90deg, rgb(216, 223, 230), rgb(231, 235, 240) 50%, rgb(216, 223, 230))",
+      "linear-gradient(90deg, rgb(17, 19, 24), rgb(50, 52, 56) 50%, rgb(17, 19, 24))",
+      "linear-gradient(90deg, rgb(188, 236, 255), rgb(213, 243, 255) 50%, rgb(188, 236, 255))",
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(246, 228, 191), rgb(249, 238, 215) 50%, rgb(246, 228, 191))",
+      "linear-gradient(90deg, rgb(244, 214, 139), rgb(248, 230, 183) 50%, rgb(244, 214, 139))"
+    ],
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "touchEmulation": true,
+    "clustered": {
+      "precipitation": {
+        "left": 195.8,
+        "top": 223.4
+      },
+      "wind": {
+        "left": 200.8,
+        "top": 228.4
+      },
+      "temperature": {
+        "left": 205.8,
+        "top": 233.4
+      }
+    },
+    "activity": {
+      "frames": 90,
+      "dataUpdates": 30,
+      "changes": []
+    },
+    "mapUnchanged": true,
+    "infoStable": true,
+    "infoDrag": true,
+    "hideShowStable": true,
+    "rotationSettled": true,
+    "reload": true,
+    "profiles": false,
+    "premium": {
+      "width": 342,
+      "height": 64,
+      "alpha": "0.95",
+      "blur": "blur(14px)",
+      "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+      "frameVisible": "1",
+      "weight": "2px",
+      "opacity": "1",
+      "padding": "7px 5px 7px 9px",
+      "shadow": "rgba(0, 0, 0, 0.4) 0px 4px 16px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px inset"
+    },
+    "compact": {
+      "width": 332,
+      "height": 53,
+      "alpha": "0.5",
+      "blur": "blur(7px)",
+      "frame": "linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "frameVisible": "1",
+      "weight": "2.5px",
+      "opacity": "1",
+      "padding": "3px 2px 3px 4px",
+      "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+    },
+    "opacityStates": [
+      {
+        "value": 0,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 50,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 100,
+        "preview": {
+          "width": 578,
+          "height": 40,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      }
+    ],
+    "frameWeights": [
+      "0.8px",
+      "1.5px",
+      "2.5px"
+    ],
+    "frameGeometryConstant": true,
+    "gradients": [
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(39, 54, 71), rgb(216, 228, 235) 50%, rgb(39, 54, 71))",
+      "linear-gradient(90deg, rgb(216, 223, 230), rgb(231, 235, 240) 50%, rgb(216, 223, 230))",
+      "linear-gradient(90deg, rgb(17, 19, 24), rgb(50, 52, 56) 50%, rgb(17, 19, 24))",
+      "linear-gradient(90deg, rgb(188, 236, 255), rgb(213, 243, 255) 50%, rgb(188, 236, 255))",
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(246, 228, 191), rgb(249, 238, 215) 50%, rgb(246, 228, 191))",
+      "linear-gradient(90deg, rgb(244, 214, 139), rgb(248, 230, 183) 50%, rgb(244, 214, 139))"
+    ],
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulation": true,
+    "clustered": {
+      "precipitation": {
+        "left": 29,
+        "top": 248.3
+      },
+      "wind": {
+        "left": 43,
+        "top": 253.3
+      },
+      "temperature": {
+        "left": 43,
+        "top": 258.3
+      }
+    },
+    "activity": {
+      "frames": 90,
+      "dataUpdates": 30,
+      "changes": []
+    },
+    "mapUnchanged": true,
+    "infoStable": true,
+    "infoDrag": true,
+    "hideShowStable": true,
+    "rotationSettled": true,
+    "reload": true,
+    "profiles": true,
+    "premium": {
+      "width": 342,
+      "height": 64,
+      "alpha": "0.95",
+      "blur": "blur(14px)",
+      "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+      "frameVisible": "1",
+      "weight": "2px",
+      "opacity": "1",
+      "padding": "7px 5px 7px 9px",
+      "shadow": "rgba(0, 0, 0, 0.4) 0px 4px 16px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px inset"
+    },
+    "compact": {
+      "width": 332,
+      "height": 53,
+      "alpha": "0.5",
+      "blur": "blur(7px)",
+      "frame": "linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "frameVisible": "1",
+      "weight": "2.5px",
+      "opacity": "1",
+      "padding": "3px 2px 3px 4px",
+      "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+    },
+    "opacityStates": [
+      {
+        "value": 0,
+        "preview": {
+          "width": 317,
+          "height": 40,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0",
+          "blur": "blur(0px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 50,
+        "preview": {
+          "width": 317,
+          "height": 40,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "0.5",
+          "blur": "blur(7px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      },
+      {
+        "value": 100,
+        "preview": {
+          "width": 317,
+          "height": 40,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        },
+        "actual": {
+          "width": 332,
+          "height": 53,
+          "alpha": "1",
+          "blur": "blur(14px)",
+          "frame": "linear-gradient(130deg, rgb(88, 108, 128) 0%, rgb(239, 248, 255) 17%, rgb(129, 151, 172) 31%, rgb(220, 232, 241) 49%, rgb(69, 94, 118) 70%, rgb(200, 219, 233) 88%, rgb(99, 123, 144) 100%)",
+          "frameVisible": "1",
+          "weight": "0.8px",
+          "opacity": "1",
+          "padding": "3px 2px 3px 4px",
+          "shadow": "rgba(0, 0, 0, 0.2) 0px 2px 6px 0px"
+        }
+      }
+    ],
+    "frameWeights": [
+      "0.8px",
+      "1.5px",
+      "2.5px"
+    ],
+    "frameGeometryConstant": true,
+    "gradients": [
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(39, 54, 71), rgb(216, 228, 235) 50%, rgb(39, 54, 71))",
+      "linear-gradient(90deg, rgb(216, 223, 230), rgb(231, 235, 240) 50%, rgb(216, 223, 230))",
+      "linear-gradient(90deg, rgb(17, 19, 24), rgb(50, 52, 56) 50%, rgb(17, 19, 24))",
+      "linear-gradient(90deg, rgb(188, 236, 255), rgb(213, 243, 255) 50%, rgb(188, 236, 255))",
+      "linear-gradient(90deg, rgb(185, 255, 228), rgb(212, 255, 238) 50%, rgb(185, 255, 228))",
+      "linear-gradient(90deg, rgb(246, 228, 191), rgb(249, 238, 215) 50%, rgb(246, 228, 191))",
+      "linear-gradient(90deg, rgb(244, 214, 139), rgb(248, 230, 183) 50%, rgb(244, 214, 139))"
+    ],
+    "errors": []
+  }
+]
