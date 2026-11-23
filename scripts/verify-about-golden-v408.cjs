@@ -56,7 +56,7 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12)(\d+)r1";/);
+const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12)(\d+)r([1-9][0-9]*)";/);
 if (currentRevision && (Number(currentRevision[1])>=12||Number(currentRevision[2])>=148)
     && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Current V4.11/V4.12 identity: read the actual release metadata.
@@ -69,9 +69,9 @@ if (currentRevision && (Number(currentRevision[1])>=12||Number(currentRevision[2
   assert.equal(runtime.runtimeRevision, get('runtimeRevision'));
   assert.equal(runtime.moduleSetId, get('moduleSetId'));
   const [major,minor,patch]=get('version').split('.');
-  assert.equal(get('runtimeRevision'),major+minor+patch+'r1');
-  assert.equal(get('moduleSetId'),'E'+major+minor+'-'+patch+'A1');
-  assert.equal(get('displayVersion'), get('build')?.includes('-FINAL-') ? 'V4.11 FINAL' : 'V' + get('version') + ' DEV');
+  assert.equal(get('runtimeRevision'),major+minor+patch+'r'+currentRevision[3]);
+  assert.equal(get('moduleSetId'),'E'+major+minor+'-'+patch+'A'+currentRevision[3]);
+  assert.equal(get('displayVersion'), get('build')?.includes('-FINAL-') ? 'V'+major+'.'+minor+' FINAL' : 'V' + get('version') + ' DEV');
 } else if (frontendText.includes('import { APPLICATION_RELEASE } from "./version.js?v=411106r1";') && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Exact DEV-TEST identity; historical V4.09/V4.10 contracts and all browser
   // golden/pixel/geometry checks below remain mandatory.
