@@ -1,4 +1,5 @@
 name: Publish GewitterRadar PRO V4.12 FINAL
+# Stable release retry after strict canonical runtime revision regression tests.
 on:
   push:
     branches: [main]
